@@ -140,7 +140,7 @@ public class AttributeLinkDisplayerController extends TilesAction
             Matcher matcher = p.matcher(key);
             if (matcher.matches()) {
 
-                String configKey = matcher.group(1);
+                String dbName = matcher.group(1);
                 className = matcher.group(2);
                 taxId = matcher.group(4);
                 String attrName = matcher.group(5);
@@ -157,12 +157,12 @@ public class AttributeLinkDisplayerController extends TilesAction
 
                 ConfigMap config;
 
-                if (linkConfigs.containsKey(configKey)) {
-                    config = linkConfigs.get(configKey);
+                if (linkConfigs.containsKey(dbName)) {
+                    config = linkConfigs.get(dbName);
                 } else {
                     config = new ConfigMap();
                     config.put("attributeName", attrName);
-                    linkConfigs.put(configKey, config);
+                    linkConfigs.put(dbName, config);
                 }
 
                 Object attrValue = null;
@@ -175,7 +175,7 @@ public class AttributeLinkDisplayerController extends TilesAction
                         if (imo != null) {
                             attrValue = TypeUtil.getFieldValue(imo, attrName);
                         } else { //it's a bag!
-                            attrValue = getIdList(bag, os, attrName);
+                            attrValue = getIdList(bag, os, dbName, attrName);
                             if (!taxId.equalsIgnoreCase("*")) {
                             taxIds = getTaxIds (bag, os);
 
@@ -234,11 +234,12 @@ public class AttributeLinkDisplayerController extends TilesAction
      * @see
      * @param bag the bag
      * @param os  the object store
-     * @param attrName the attribute name
+     * @param dbName the database to link to
+     * @param attrName the attribute name (identifier, omimId, etc)
      * @return the string of comma separated identifiers
      *    */
 
-    public String getIdList(InterMineBag bag, ObjectStore os, String attrName) {
+    public String getIdList(InterMineBag bag, ObjectStore os, String dbName, String attrName) {
         Results results;
 
         Query q = new Query();
@@ -269,7 +270,11 @@ public class AttributeLinkDisplayerController extends TilesAction
         results = os.executeSingleton(q);
         results.setBatchSize(10000);
 
-        return StringUtil.join(results, ",");
+        if (dbName.equalsIgnoreCase("flybase")) {
+            return StringUtil.join(results, "|");            
+        } else {
+            return StringUtil.join(results, ",");
+        }
 }
 
     /**
