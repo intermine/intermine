@@ -136,6 +136,7 @@ public class ChadoDBConverter extends BioDBConverter
         if (dataSourceName == null) {
             throw new IllegalArgumentException("dataSourceName not set in ChadoDBConverter");
         }
+        /*
         if (getTaxonIdInt() == -1) {
             throw new IllegalArgumentException("taxonId not set in ChadoDBConverter");
         }
@@ -145,7 +146,14 @@ public class ChadoDBConverter extends BioDBConverter
         if (genus == null) {
             throw new IllegalArgumentException("genus not set in ChadoDBConverter");
         }
-        chadoOrganismId = getChadoOrganismId(connection);
+        if (StringUtils.isEmpty(processors)) {
+            throw new IllegalArgumentException("processors not set in ChadoDBConverter");
+        }
+        */
+        if (getTaxonIdInt() != -1 && species != null && genus != null) {
+            // the organism isn't used by all processors
+            chadoOrganismId = getChadoOrganismId(connection);
+        }
 
         String[] bits = processors.trim().split("[ \\t]+");
         for (int i = 0; i < bits.length; i++) {
