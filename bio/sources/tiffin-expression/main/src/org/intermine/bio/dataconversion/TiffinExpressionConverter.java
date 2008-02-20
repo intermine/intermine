@@ -104,7 +104,7 @@ public class TiffinExpressionConverter extends FileConverter
         if (termItems.containsKey(expressionDescription)) {
             return termItems.get(expressionDescription);
         } else {
-            Item expressionTermItem = createItem("mRNAExpressionTerm");
+            Item expressionTermItem = createItem("MRNAExpressionTerm");
             expressionTermItem.setAttribute("name", expressionDescription);
             termItems.put(expressionDescription, expressionTermItem);
             return expressionTermItem;
