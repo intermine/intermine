@@ -57,7 +57,7 @@ import org.intermine.web.logic.tagging.TagTypes;
 /**
  * Implementation of <strong>Action</strong> that assembles data for viewing an
  * object.
- *
+ * 
  * @author Mark Woodbridge
  * @author Thomas Riley
  */
@@ -200,7 +200,7 @@ public class ObjectDetailsController extends InterMineAction
      * For a given FieldDescriptor, look up its 'aspect:' tags and place it in
      * the correct map within placementRefsAndCollections. If categorised,
      * remove it from the supplied miscRefs map.
-     *
+     * 
      * @param fd the FieldDecriptor (a references or collection)
      * @param taggedType 'reference' or 'collection'
      * @param dispRef the corresponding DisplayReference or DisplayCollection
@@ -228,7 +228,7 @@ public class ObjectDetailsController extends InterMineAction
                 return;
             } else {
                 if (tagName.startsWith(AspectController.ASPECT_PREFIX)) {
-                    Map<String, DisplayField> refs = placementRefsAndCollections.get(tagName);
+                    Map<String, DisplayField> refs = placementRefsAndCollections.get(tagName); 
                     if (refs != null) {
                         refs.put(fd.getName(), dispRef);
                         miscRefs.remove(fd.getName());
@@ -240,7 +240,7 @@ public class ObjectDetailsController extends InterMineAction
 
     /**
      * Removes field from placements.
-     *
+     * 
      * @param name
      * @param placementRefsAndCollections
      */
@@ -294,7 +294,7 @@ public class ObjectDetailsController extends InterMineAction
 
     /**
      * Make a new DisplayObject from the given object.
-     *
+     * 
      * @param session
      *            used to get WEB_PROPERTIES and DISPLAYERS Maps
      * @param object
@@ -317,9 +317,62 @@ public class ObjectDetailsController extends InterMineAction
                 webPropertiesMap, classKeys);
     }
 
-    private String getBags(ObjectStore os, HttpSession session,
+    private static String getBags(ObjectStore os, HttpSession session,
             ServletContext servletContext, Integer id, boolean isGlobal) {
 
+        Results results = getBagsAsResults(os, session, servletContext, id, isGlobal);
+        StringBuffer sb = new StringBuffer();
+        for (Object object : results) {
+            List list = (List) object;
+            if (sb.length() != 0) {
+                sb.append(",");
+            }
+            sb.append(list.get(0));
+        }
+        return sb.toString();
+    }
+    
+    private static List<String> getGlobalBagsIds(HttpSession session, Integer id) {
+        ObjectStore os = (ObjectStore) session.getServletContext().
+            getAttribute(Constants.OBJECTSTORE);
+        Results results = getBagsAsResults(os, session, session.getServletContext(), id, true);
+        List<String> ret = new ArrayList<String>();
+        for (Object object : results) {
+            List list = (List) object;
+            ret.add(list.get(0).toString());
+        }
+        return ret;
+    }
+    
+    /**
+     * Returns global bags containing object with specified id.
+     * @param session session
+     * @param objectId object id
+     * @return bags
+     */
+    public static List<InterMineBag> getGlobalBags(HttpSession session, Integer objectId) {
+        List<InterMineBag> ret = new ArrayList<InterMineBag>();
+        
+        List<String> list = getGlobalBagsIds(session, objectId);
+        SearchRepository searchRepository = (SearchRepository) session.getServletContext().
+            getAttribute(Constants.GLOBAL_SEARCH_REPOSITORY);
+        Map<String, ? extends WebSearchable> webSearchables = 
+            searchRepository.getWebSearchableMap(TagTypes.BAG);
+        
+        for (WebSearchable webSearchable : webSearchables.values()) {
+            InterMineBag bag = (InterMineBag) webSearchable;
+            ObjectStoreBag osb = bag.getOsb();
+            Integer i = new Integer(osb.getBagId());
+           // check that this is in our list
+           if (list.contains(i.toString())) {
+              ret.add(bag);
+           }
+        }
+        return ret;        
+    }
+    
+    private static Results getBagsAsResults(ObjectStore os, HttpSession session,
+            ServletContext servletContext, Integer id, boolean isGlobal) {
         Map webSearchables = null;
         // get all of the bags with this object
         if (isGlobal) {
@@ -349,15 +402,6 @@ public class ObjectDetailsController extends InterMineAction
         q.addToSelect(osbo);
 
         // this should return all bags with that object
-        Results results = os.execute(q);
-        StringBuffer sb = new StringBuffer();
-        for (Object object : results) {
-            List list = (List) object;
-            if (sb.length() != 0) {
-                sb.append(",");
-            }
-            sb.append(list.get(0));
-        }
-        return sb.toString();
-    }
+        return os.execute(q);
+    }    
 }
