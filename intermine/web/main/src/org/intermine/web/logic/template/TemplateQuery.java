@@ -104,7 +104,7 @@ public class TemplateQuery extends PathQuery implements WebSearchable
      * @param node  a PathNode with editable constraints
      * @return      List of Constraints for Node
      */
-    public List getEditableConstraints(PathNode node) {
+    public List<Constraint> getEditableConstraints(PathNode node) {
         return getEditableConstraints(node.getPathString());
     }
 
