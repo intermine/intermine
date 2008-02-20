@@ -21,6 +21,7 @@ import org.intermine.path.Path;
 import org.intermine.web.logic.bag.InterMineBag;
 import org.intermine.web.logic.query.Constraint;
 import org.intermine.web.logic.query.MainHelper;
+import org.intermine.web.logic.query.OrderBy;
 import org.intermine.web.logic.query.PathNode;
 import org.intermine.web.logic.query.PathQuery;
 import org.intermine.web.logic.widget.WidgetURLQuery;
@@ -57,13 +58,22 @@ public class PathwayURLQuery implements WidgetURLQuery
         PathQuery q = new PathQuery(model);
 
         List<Path> view = new ArrayList<Path>();
-        view.add(MainHelper.makePath(model, q, "Gene.identifier"));
-        view.add(MainHelper.makePath(model, q, "Gene.primaryIdentifier"));
-        view.add(MainHelper.makePath(model, q, "Gene.name"));
-        view.add(MainHelper.makePath(model, q, "Gene.organism.name"));
-        view.add(MainHelper.makePath(model, q, "Gene.pathways.identifier"));
-        view.add(MainHelper.makePath(model, q, "Gene.pathways.name"));
-
+        
+        Path geneSecondaryIdentifier = MainHelper.makePath(model, q, "Gene.secondaryIdentifier");
+        Path genePrimaryIdentifier = MainHelper.makePath(model, q, "Gene.primaryIdentifier");
+        Path geneName = MainHelper.makePath(model, q, "Gene.name");
+        Path organismName = MainHelper.makePath(model, q, "Gene.organism.name");
+        
+        Path pathwayIdentifier = MainHelper.makePath(model, q, "Gene.pathways.identifier");
+        Path pathwayName = MainHelper.makePath(model, q, "Gene.pathways.name");
+        
+        view.add(genePrimaryIdentifier);
+        view.add(geneSecondaryIdentifier);
+        view.add(geneName);
+        view.add(organismName);
+        view.add(pathwayIdentifier);
+        view.add(pathwayName);
+        
         q.setView(view);
 
         String bagType = bag.getType();
@@ -84,6 +94,13 @@ public class PathwayURLQuery implements WidgetURLQuery
         q.setConstraintLogic("A and B");
         q.syncLogicExpression("and");
 
+        List<OrderBy>  sortOrder = new ArrayList<OrderBy>();
+        sortOrder.add(new OrderBy(pathwayIdentifier, "asc"));
+        sortOrder.add(new OrderBy(pathwayName, "asc"));
+        sortOrder.add(new OrderBy(organismName, "asc"));
+        sortOrder.add(new OrderBy(genePrimaryIdentifier, "asc"));
+        q.setSortOrder(sortOrder);
+        
         return q;
     }
 }

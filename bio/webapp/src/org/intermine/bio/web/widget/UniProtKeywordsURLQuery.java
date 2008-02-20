@@ -21,6 +21,7 @@ import org.intermine.path.Path;
 import org.intermine.web.logic.bag.InterMineBag;
 import org.intermine.web.logic.query.Constraint;
 import org.intermine.web.logic.query.MainHelper;
+import org.intermine.web.logic.query.OrderBy;
 import org.intermine.web.logic.query.PathNode;
 import org.intermine.web.logic.query.PathQuery;
 import org.intermine.web.logic.widget.WidgetURLQuery;
@@ -55,12 +56,21 @@ public class UniProtKeywordsURLQuery implements WidgetURLQuery
         Model model = os.getModel();
         PathQuery q = new PathQuery(model);
 
+        
+        Path identifier = MainHelper.makePath(model, q, "Protein.primaryIdentifier");
+        Path sec = MainHelper.makePath(model, q, "Protein.secondaryIdentifier");
+        Path organism = MainHelper.makePath(model, q, "Protein.organism.shortName");
+        Path name = MainHelper.makePath(model, q, "Protein.keywords.name");
+        Path descr =  MainHelper.makePath(model, q, "Protein.keywords.description");            
+
+        
         List<Path> view = new ArrayList<Path>();
-        view.add(MainHelper.makePath(model, q, "Protein.identifier"));
-        view.add(MainHelper.makePath(model, q, "Protein.primaryAccession"));
-        view.add(MainHelper.makePath(model, q, "Protein.organism.name"));
-        view.add(MainHelper.makePath(model, q, "Protein.keywords.name"));
-        view.add(MainHelper.makePath(model, q, "Protein.keywords.description"));
+        view.add(identifier);
+        view.add(sec);
+        view.add(organism);
+        view.add(name);
+        view.add(descr);
+        
         q.setView(view);
 
         String bagType = bag.getType();
@@ -78,7 +88,12 @@ public class UniProtKeywordsURLQuery implements WidgetURLQuery
 
         q.setConstraintLogic("A and B");
         q.syncLogicExpression("and");
-
+        
+        List<OrderBy>  sortOrder = new ArrayList<OrderBy>();
+        sortOrder.add(new OrderBy(name, "asc"));
+        sortOrder.add(new OrderBy(identifier, "asc"));
+        q.setSortOrder(sortOrder);
+        
         return q;
     }
 }

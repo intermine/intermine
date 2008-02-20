@@ -21,6 +21,7 @@ import org.intermine.path.Path;
 import org.intermine.web.logic.bag.InterMineBag;
 import org.intermine.web.logic.query.Constraint;
 import org.intermine.web.logic.query.MainHelper;
+import org.intermine.web.logic.query.OrderBy;
 import org.intermine.web.logic.query.PathNode;
 import org.intermine.web.logic.query.PathQuery;
 import org.intermine.web.logic.widget.WidgetURLQuery;
@@ -56,16 +57,27 @@ public class PublicationURLQuery implements WidgetURLQuery
         PathQuery q = new PathQuery(model);
 
         List<Path> view = new ArrayList<Path>();
-        view.add(MainHelper.makePath(model, q, "Gene.identifier"));
-        view.add(MainHelper.makePath(model, q, "Gene.primaryIdentifier"));
-        view.add(MainHelper.makePath(model, q, "Gene.name"));
-        view.add(MainHelper.makePath(model, q, "Gene.organism.name"));
-        view.add(MainHelper.makePath(model, q, "Gene.publications.title"));
-        view.add(MainHelper.makePath(model, q, "Gene.publications.firstAuthor"));
-        view.add(MainHelper.makePath(model, q, "Gene.publications.journal"));
-        view.add(MainHelper.makePath(model, q, "Gene.publications.year"));
-        view.add(MainHelper.makePath(model, q, "Gene.publications.pubMedId"));
-
+        
+        Path geneSecondaryIdentifier = MainHelper.makePath(model, q, "Gene.secondaryIdentifier");
+        Path genePrimaryIdentifier = MainHelper.makePath(model, q, "Gene.primaryIdentifier");
+        Path geneName = MainHelper.makePath(model, q, "Gene.name");
+        Path organismName = MainHelper.makePath(model, q, "Gene.organism.name");        
+        Path title = MainHelper.makePath(model, q, "Gene.publications.title");
+        Path author = MainHelper.makePath(model, q, "Gene.publications.firstAuthor");
+        Path journal = MainHelper.makePath(model, q, "Gene.publications.journal");
+        Path year = MainHelper.makePath(model, q, "Gene.publications.year");
+        Path pubmedid = MainHelper.makePath(model, q, "Gene.publications.pubMedId");
+        
+        view.add(genePrimaryIdentifier);
+        view.add(geneSecondaryIdentifier);
+        view.add(geneName);
+        view.add(organismName);
+        view.add(title);
+        view.add(author);
+        view.add(journal);
+        view.add(year);
+        view.add(pubmedid);
+        
         q.setView(view);
 
         String bagType = bag.getType();
@@ -85,6 +97,12 @@ public class PublicationURLQuery implements WidgetURLQuery
         q.setConstraintLogic("A and B");
         q.syncLogicExpression("and");
 
+        List<OrderBy>  sortOrder = new ArrayList<OrderBy>();
+        sortOrder.add(new OrderBy(pubmedid, "asc"));
+        sortOrder.add(new OrderBy(genePrimaryIdentifier, "asc"));
+        
+        q.setSortOrder(sortOrder);
+        
         return q;
     }
 }

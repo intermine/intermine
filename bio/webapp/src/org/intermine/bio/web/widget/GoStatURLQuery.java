@@ -21,6 +21,7 @@ import org.intermine.path.Path;
 import org.intermine.web.logic.bag.InterMineBag;
 import org.intermine.web.logic.query.Constraint;
 import org.intermine.web.logic.query.MainHelper;
+import org.intermine.web.logic.query.OrderBy;
 import org.intermine.web.logic.query.PathNode;
 import org.intermine.web.logic.query.PathQuery;
 import org.intermine.web.logic.widget.WidgetURLQuery;
@@ -66,7 +67,7 @@ public class GoStatURLQuery implements WidgetURLQuery
          Path actualGoName = null;
          Path actualGoId = null;
 
-         if (bag.getType().toLowerCase().equals("protein")) {
+         if (bag.getType().equalsIgnoreCase("protein")) {
 
              geneSecondaryIdentifier 
                          = MainHelper.makePath(model, q, "Protein.genes.secondaryIdentifier");
@@ -87,7 +88,7 @@ public class GoStatURLQuery implements WidgetURLQuery
          } else {
 
              geneSecondaryIdentifier = MainHelper.makePath(model, q, "Gene.secondaryIdentifier");
-             genePrimaryIdentifier = MainHelper.makePath(model, q, "Gene.primaryAccession");
+             genePrimaryIdentifier = MainHelper.makePath(model, q, "Gene.primaryIdentifier");
              geneName = MainHelper.makePath(model, q, "Gene.name");
              organismName = MainHelper.makePath(model, q, "Gene.organism.name");
              goId = MainHelper.makePath(model, q, "Gene.allGoAnnotation.identifier");
@@ -97,9 +98,9 @@ public class GoStatURLQuery implements WidgetURLQuery
              actualGoId = MainHelper.makePath(model,
                                               q, "Gene.allGoAnnotation.actualGoTerms.identifier");
          }
-
-         view.add(geneSecondaryIdentifier);
+         
          view.add(genePrimaryIdentifier);
+         view.add(geneSecondaryIdentifier);
          view.add(geneName);
          view.add(organismName);
          view.add(goId);
@@ -147,6 +148,15 @@ public class GoStatURLQuery implements WidgetURLQuery
          q.setConstraintLogic("A and B and C");
          q.syncLogicExpression("and");
 
+         List<OrderBy>  sortOrder = new ArrayList<OrderBy>();
+         sortOrder.add(new OrderBy(goId, "asc"));
+         sortOrder.add(new OrderBy(goName, "asc"));
+         sortOrder.add(new OrderBy(actualGoName, "asc"));
+         sortOrder.add(new OrderBy(actualGoId, "asc"));
+         sortOrder.add(new OrderBy(organismName, "asc"));
+         sortOrder.add(new OrderBy(genePrimaryIdentifier, "asc"));
+         q.setSortOrder(sortOrder);
+        
         return q;
     }
 }

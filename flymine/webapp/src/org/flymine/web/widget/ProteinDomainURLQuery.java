@@ -17,9 +17,11 @@ import org.intermine.objectstore.query.ConstraintOp;
 
 import org.intermine.metadata.Model;
 import org.intermine.objectstore.ObjectStore;
+import org.intermine.path.Path;
 import org.intermine.web.logic.bag.InterMineBag;
 import org.intermine.web.logic.query.Constraint;
 import org.intermine.web.logic.query.MainHelper;
+import org.intermine.web.logic.query.OrderBy;
 import org.intermine.web.logic.query.PathNode;
 import org.intermine.web.logic.query.PathQuery;
 import org.intermine.web.logic.widget.WidgetURLQuery;
@@ -54,7 +56,7 @@ public class ProteinDomainURLQuery implements WidgetURLQuery
         Model model = os.getModel();
         PathQuery q = new PathQuery(model);
 
-        List view = new ArrayList();
+        List<Path> view = new ArrayList<Path>();
         String bagType = bag.getType();
 
         ConstraintOp constraintOp = ConstraintOp.IN;
@@ -62,33 +64,34 @@ public class ProteinDomainURLQuery implements WidgetURLQuery
         String label = null, id = null, code = q.getUnusedConstraintCode();
         Constraint c = new Constraint(constraintOp, constraintValue, false, label, code, id, null);
         q.addNode(bagType).getConstraints().add(c);
+        
+        Path secondaryIdentifier = null;
+        Path primaryIdentifier = MainHelper.makePath(model, q, bagType + ".primaryIdentifier");
+        Path name = MainHelper.makePath(model, q, bagType + ".name");
+        Path organism = MainHelper.makePath(model, q, bagType + ".organism.name");
+        Path domainIdentifier = null;
+        Path domainName = null;
 
         if (bagType.equalsIgnoreCase("gene")) {
-
-            view.add(MainHelper.makePath(model, q, "Gene.secondaryIdentifier"));
-            view.add(MainHelper.makePath(model, q, "Gene.primaryIdentifier"));
-            view.add(MainHelper.makePath(model, q, "Gene.name"));
-            view.add(MainHelper.makePath(model, q, "Gene.organism.name"));
-            view.add(MainHelper.makePath(model, q, "Gene.proteins.proteinDomains.identifier"));
-            view.add(MainHelper.makePath(model, q, "Gene.proteins.proteinDomains.name"));
-            q.setView(view);
-
+            
+            secondaryIdentifier = MainHelper.makePath(model, q, "Gene.secondaryIdentifier");
+            domainIdentifier =  MainHelper.makePath(model, q, 
+                                                    "Gene.proteins.proteinDomains.identifier");
+            domainName =  MainHelper.makePath(model, q, "Gene.proteins.proteinDomains.name");
+            
             constraintOp = ConstraintOp.LOOKUP;
             code = q.getUnusedConstraintCode();
             PathNode interproNode = q.addNode("Gene.proteins.proteinDomains");
             Constraint interproConstraint
             = new Constraint(constraintOp, key, false, label, code, id, null);
             interproNode.getConstraints().add(interproConstraint);
-        }
-        else if (bagType.equalsIgnoreCase("protein")) {
-            view.add(MainHelper.makePath(model, q, "Protein.primaryIdentifier"));
-            view.add(MainHelper.makePath(model, q, "Protein.primaryAccession"));
-            view.add(MainHelper.makePath(model, q, "Protein.name"));
-            view.add(MainHelper.makePath(model, q, "Protein.organism.name"));
-            view.add(MainHelper.makePath(model, q, "Protein.proteinDomains.identifier"));
-            view.add(MainHelper.makePath(model, q, "Protein.proteinDomains.name"));
-            q.setView(view);
+            
+        } else if (bagType.equalsIgnoreCase("protein")) {
 
+            secondaryIdentifier = MainHelper.makePath(model, q, "Protein.primaryAccession");
+            domainIdentifier =  MainHelper.makePath(model, q, "Protein.proteinDomains.identifier");
+            domainName =  MainHelper.makePath(model, q, "Protein.proteinDomains.name");
+            
             constraintOp = ConstraintOp.LOOKUP;
             code = q.getUnusedConstraintCode();
             PathNode interproNode = q.addNode("Protein.proteinDomains");
@@ -96,13 +99,28 @@ public class ProteinDomainURLQuery implements WidgetURLQuery
             = new Constraint(constraintOp, key, false, label, code, id, null);
             interproNode.getConstraints().add(interproConstraint);
         }
-        else {
-            //?
-        }
+
+        view.add(primaryIdentifier);
+        view.add(secondaryIdentifier);
+        view.add(name);
+        view.add(organism);
+        view.add(domainIdentifier);
+        view.add(domainName);
+        q.setView(view);
+        
 
         q.setConstraintLogic("A and B");
         q.syncLogicExpression("and");
-
+        
+        List<OrderBy>  sortOrder = new ArrayList<OrderBy>();   
+        sortOrder.add(new OrderBy(domainIdentifier, "asc"));
+        sortOrder.add(new OrderBy(domainName, "asc"));
+        sortOrder.add(new OrderBy(primaryIdentifier, "asc"));
+        sortOrder.add(new OrderBy(secondaryIdentifier, "asc"));
+        sortOrder.add(new OrderBy(name, "asc"));
+        sortOrder.add(new OrderBy(organism, "asc"));
+        q.setSortOrder(sortOrder);
+        
         return q;
     }
 }
