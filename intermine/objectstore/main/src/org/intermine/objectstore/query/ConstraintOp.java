@@ -21,7 +21,7 @@ import java.util.ArrayList;
  */
 public class ConstraintOp
 {
-    private static List values = new ArrayList();
+    private static List<ConstraintOp> values = new ArrayList<ConstraintOp>();
     private final String name;
 
     /** Require that the two arguments are equal */
@@ -156,5 +156,25 @@ public class ConstraintOp
             return OR;
         }
         throw new IllegalArgumentException("Unknown op");
+    }
+    
+    /**
+     * Get ConstraintOp for given operation code. 
+     * @param operationCode operation as string 
+     * @return ConstraintOp if operation code is valid else null
+     */
+    public static ConstraintOp getConstraintOp(String operationCode) {
+        if (operationCode == null) return null;
+        String opCode = operationCode.trim().toUpperCase();
+        for (ConstraintOp op : values) {
+            if (op.getName().equalsIgnoreCase(opCode)) {
+                return op;
+            }
+        }
+        return null;
+    }
+    
+    private String getName() {
+        return name;
     }
 }
