@@ -21,6 +21,7 @@ import org.intermine.path.Path;
 import org.intermine.web.logic.bag.InterMineBag;
 import org.intermine.web.logic.query.Constraint;
 import org.intermine.web.logic.query.MainHelper;
+import org.intermine.web.logic.query.OrderBy;
 import org.intermine.web.logic.query.PathNode;
 import org.intermine.web.logic.query.PathQuery;
 import org.intermine.web.logic.widget.WidgetURLQuery;
@@ -56,13 +57,22 @@ public class UniProtFeaturesURLQuery implements WidgetURLQuery
         PathQuery q = new PathQuery(model);
 
         List<Path> view = new ArrayList<Path>();
-        view.add(MainHelper.makePath(model, q, "Protein.identifier"));
-        view.add(MainHelper.makePath(model, q, "Protein.primaryAccession"));
-        view.add(MainHelper.makePath(model, q, "Protein.organism.shortName"));
-        view.add(MainHelper.makePath(model, q, "Protein.features.feature.name"));
-        view.add(MainHelper.makePath(model, q, "Protein.features.description"));
-        view.add(MainHelper.makePath(model, q, "Protein.features.begin"));
-        view.add(MainHelper.makePath(model, q, "Protein.features.end"));
+
+        Path identifier = MainHelper.makePath(model, q, "Protein.primaryIdentifier");
+        Path sec = MainHelper.makePath(model, q, "Protein.secondaryIdentifier");
+        Path organism = MainHelper.makePath(model, q, "Protein.organism.shortName");
+        Path name = MainHelper.makePath(model, q, "Protein.features.feature.name");
+        Path descr =  MainHelper.makePath(model, q, "Protein.features.description");            
+        Path begin = MainHelper.makePath(model, q, "Protein.features.begin");
+        Path end = MainHelper.makePath(model, q, "Protein.features.end");
+
+        view.add(identifier);
+        view.add(sec);
+        view.add(organism);
+        view.add(name);
+        view.add(descr);
+        view.add(begin);
+        view.add(end);
         q.setView(view);
 
         String bagType = bag.getType();
@@ -81,6 +91,11 @@ public class UniProtFeaturesURLQuery implements WidgetURLQuery
         q.setConstraintLogic("A and B");
         q.syncLogicExpression("and");
 
+        List<OrderBy>  sortOrder = new ArrayList<OrderBy>();
+        sortOrder.add(new OrderBy(name, "asc"));
+        sortOrder.add(new OrderBy(identifier, "asc"));
+        q.setSortOrder(sortOrder);
+        
         return q;
     }
 }
