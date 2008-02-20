@@ -24,7 +24,7 @@
     </fields>
   </class>
 
-  <class className="org.flymine.model.genomic.TiffinExpressionTerm">
+  <class className="org.flymine.model.genomic.mRNAExpressionTerm">
     <fields>
       <fieldconfig fieldExpr="name"/>
     </fields>
