@@ -49,7 +49,7 @@ import org.apache.commons.collections.map.MultiKeyMap;
 import org.apache.log4j.Logger;
 
 /**
- *
+ * A processor for the chado sequence module.
  * @author Kim Rutherford
  */
 public class ChadoSequenceProcessor extends ChadoProcessor
