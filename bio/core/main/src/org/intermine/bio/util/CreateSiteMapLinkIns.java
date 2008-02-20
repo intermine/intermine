@@ -24,8 +24,11 @@ import org.intermine.objectstore.query.ResultsRow;
 import org.intermine.objectstore.query.iql.IqlQuery;
 
 /**
- * Create file to make site map
- *
+ * Generate sitemaps for the webapp.  Creates seven maps.  One contains each page of the webapp.
+ * The remaining six contain links to the object pages for three organisms' proteins and genes.
+ * We chop them up this way because sitemaps can't contain more than 50,000 entries.  The search
+ * engines know about these maps because they are listed in sitemap_index.xml which is generated
+ * with the website.  We also submit them manually via google and yahoo's websites.
  * @author Julie Sullivan
  */
 public class CreateSiteMapLinkIns
@@ -40,13 +43,13 @@ public class CreateSiteMapLinkIns
     private static final String EXT = ".xml";
     private static String date;
     private static final String PREFIX = "http://www.flymine.org/query/";
-    private static final String WEIGHT = "0.5";
-    private static final String STARTWEIGHT = "0.8";
+    private static final String OBJECTDETAILSWEIGHT = "0.8";
+    private static final String WEBPAGEWEIGHT = "1.0";
 
     /**
-     * Create sitemap
+     * Create sitemaps
      * NOTE: Sitemaps can't contain more than 50000 entries or be over 10MB.  See sitemap.org.
-     * @param os ObjectStore to find Genes in
+     * @param os ObjectStore to find object in
      * @param outputFile file to write to
      * @throws Exception if anything goes wrong
      */
@@ -64,20 +67,20 @@ public class CreateSiteMapLinkIns
         String[] bioentity = {"gene", "protein"};
         String[] ids = {"180454", "7227", "7237"};
 
-
         // Only create new files if they don't already exist, we have no input file
         // to compare dates to so must rely on output directory being cleaned to
         // force creation of new sitemaps.
-        for (String e : bioentity) {
+        for (String o : bioentity) {
             for (String id : ids) {
-                File newFile = new File(outputFile + id + e + EXT);
+                File newFile = new File(outputFile + id + o + EXT);
                 if (!newFile.exists()) {
                     writer = startFile(newFile);
-                    Iterator i = getResults(os, e, id);
+                    Iterator i = getResults(os, o, id);
                     while (i.hasNext()) {
                         ResultsRow r =  (ResultsRow) i.next();
                         String identifier = (String) r.get(0);
-                        writer.write(getURL(LOC + identifier + "&amp;class=" + e, WEIGHT));
+                        writer.write(getURL(LOC + identifier 
+                                            + "&amp;class=" + o, OBJECTDETAILSWEIGHT));
                     }
                     closeFile(writer);
                 }
@@ -152,7 +155,7 @@ public class CreateSiteMapLinkIns
         // TODO get these from config file
         String[] pages = {"begin.do", "templates.do", "bag.do?subtab=view", "dataCategories.do"};
         for (String s : pages) {
-            writer.write(getURL(PREFIX + s, STARTWEIGHT));
+            writer.write(getURL(PREFIX + s, WEBPAGEWEIGHT));
         }
     }
 
