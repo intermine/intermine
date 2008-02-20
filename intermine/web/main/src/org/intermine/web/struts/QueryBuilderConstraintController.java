@@ -37,6 +37,7 @@ import org.intermine.web.logic.query.DisplayConstraint;
 import org.intermine.web.logic.query.MainHelper;
 import org.intermine.web.logic.query.PathNode;
 import org.intermine.web.logic.query.PathQuery;
+import org.intermine.web.logic.session.SessionMethods;
 
 import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletRequest;
@@ -80,13 +81,13 @@ public class QueryBuilderConstraintController extends TilesAction
         //set up the node on which we are editing constraints
         if (session.getAttribute("editingNode") != null) {
 
-            MainHelper.moveToRequest("editingNode", request);
+            SessionMethods.moveToRequest("editingNode", request);
             PathNode node = (PathNode) request.getAttribute("editingNode");
-            MainHelper.moveToRequest("editingConstraintIndex", request);
-            MainHelper.moveToRequest("editingTemplateConstraint", request);
-            MainHelper.moveToRequest("editingConstraintValue", request);
-            MainHelper.moveToRequest("editingConstraintOperand", request);
-            MainHelper.moveToRequest("editingConstraintExtraValue", request);
+            SessionMethods.moveToRequest("editingConstraintIndex", request);
+            SessionMethods.moveToRequest("editingTemplateConstraint", request);
+            SessionMethods.moveToRequest("editingConstraintValue", request);
+            SessionMethods.moveToRequest("editingConstraintOperand", request);
+            SessionMethods.moveToRequest("editingConstraintExtraValue", request);
 
             request.setAttribute("displayConstraint", new DisplayConstraint(node, model, oss,
                         null, classKeys));

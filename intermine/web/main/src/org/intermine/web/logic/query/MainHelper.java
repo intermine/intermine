@@ -29,9 +29,8 @@ import java.util.TreeSet;
 import java.util.Map.Entry;
 
 import javax.servlet.ServletContext;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpSession;
 
+import org.apache.log4j.Logger;
 import org.intermine.InterMineException;
 import org.intermine.metadata.AttributeDescriptor;
 import org.intermine.metadata.ClassDescriptor;
@@ -70,8 +69,6 @@ import org.intermine.web.logic.bag.InterMineBag;
 import org.intermine.web.logic.results.Column;
 import org.intermine.web.logic.results.PagedTable;
 
-import org.apache.log4j.Logger;
-
 /**
  * Helper methods for main controller and main action
  * @author Mark Woodbridge
@@ -81,17 +78,6 @@ import org.apache.log4j.Logger;
 public class MainHelper
 {
     private static final Logger LOG = Logger.getLogger(MainHelper.class);
-
-    /**
-     * Move an attribute from the session to the request, removing it from the session.
-     * @param attributeName the attribute name
-     * @param request the current request
-     */
-    public static void moveToRequest(String attributeName, HttpServletRequest request) {
-        HttpSession session = request.getSession();
-        request.setAttribute(attributeName, session.getAttribute(attributeName));
-        session.removeAttribute(attributeName);
-    }
 
     /**
      * Given a path, render a set of metadata Nodes to the relevant depth

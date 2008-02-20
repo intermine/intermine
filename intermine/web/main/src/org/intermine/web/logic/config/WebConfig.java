@@ -25,7 +25,6 @@ import java.io.IOException;
 import java.io.InputStream;
 
 import org.apache.commons.digester.Digester;
-import org.apache.log4j.Logger;
 import org.xml.sax.SAXException;
 
 /**
@@ -37,7 +36,7 @@ public class WebConfig
 {
     private Map types = new HashMap();
     private Map tableExportConfigs = new HashMap();
-    private static final Logger LOG = Logger.getLogger(WebConfig.class);
+    
     /**
      * Parse a WebConfig XML file
      *

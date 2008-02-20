@@ -23,6 +23,7 @@ import java.util.Map;
 import java.util.Set;
 
 import javax.servlet.ServletContext;
+import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
@@ -702,7 +703,6 @@ public class SessionMethods
                                               final MessageResources messages,
                                               final Collection collection) {
         synchronized (session) {
-            final ServletContext servletContext = session.getServletContext();
             Map queries = (Map) session.getAttribute("RUNNING_QUERIES");
             if (queries == null) {
                 queries = new HashMap();
@@ -839,5 +839,16 @@ public class SessionMethods
     public static boolean isSuperUser(HttpSession session) {
         Boolean superUserAttribute = (Boolean) session.getAttribute(Constants.IS_SUPERUSER);
         return superUserAttribute != null && superUserAttribute.equals(Boolean.TRUE);
+    }
+
+    /**
+     * Move an attribute from the session to the request, removing it from the session.
+     * @param attributeName the attribute name
+     * @param request the current request
+     */
+    public static void moveToRequest(String attributeName, HttpServletRequest request) {
+        HttpSession session = request.getSession();
+        request.setAttribute(attributeName, session.getAttribute(attributeName));
+        session.removeAttribute(attributeName);
     }
 }
