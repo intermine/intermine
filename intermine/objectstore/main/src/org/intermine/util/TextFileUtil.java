@@ -236,9 +236,27 @@ public abstract class TextFileUtil
      * Lines beginning with # are ignored.
      * @param reader the Reader to read from
      * @return an Iterator over the lines of the Reader
-     * @throws IOException if there is an error whiel reading from the Reader
+     * @throws IOException if there is an error while reading from the Reader
      */
     public static Iterator parseTabDelimitedReader(final Reader reader) throws IOException {
+        return parseDelimitedReader(reader, false, "\t");
+    }
+    
+    /**
+     * Return an Iterator over a comma delimited file.  Iterator.next() splits the current line at 
+     * the commas and returns a String[] of the bits, stripped of all quotes.
+     * Lines beginning with # are ignored.
+     * @param reader the Reader to read from
+     * @return an Iterator over the lines of the Reader
+     * @throws IOException if there is an error while reading from the Reader
+     */
+    public static Iterator parseCsvDelimitedReader(final Reader reader) throws IOException {
+        return parseDelimitedReader(reader, true, ",");
+    }
+    
+    private static Iterator parseDelimitedReader(final Reader reader, final boolean stripQuotes, 
+                                                 final String delim) 
+    throws IOException {
         final BufferedReader bufferedReader = new BufferedReader(reader);
 
         return new Iterator() {
@@ -257,13 +275,15 @@ public abstract class TextFileUtil
                     throw new NoSuchElementException();
                 } else {
                     String lastLine = currentLine;
+                    if (stripQuotes) {
+                        lastLine = lastLine.replaceAll("\"", "");
+                    }
                     try {
                         currentLine = getNextNonCommentLine();
                     } catch (IOException e) {
                         throw new RuntimeException("error while reading from " + reader, e);
                     }
-
-                    return StringUtil.split(lastLine, "\t");
+                    return StringUtil.split(lastLine, delim);
                 }
             }
 
