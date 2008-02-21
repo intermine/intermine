@@ -248,7 +248,8 @@ pipe_to_log("cd $BUILD_PROJ; date; $ANT_COMMAND test-report");
 
 # bio tests
 
-pipe_to_log(["cd $TRUNK_DIR/bio/test-all/dbmodel; $ANT_COMMAND -v build-db",
+pipe_to_log(["cd $TRUNK_DIR/bio/test-all/dbmodel; $ANT_COMMAND -v clean-all",
+             "cd $TRUNK_DIR/bio/test-all/dbmodel; $ANT_COMMAND -v build-db",
              "cd $TRUNK_DIR/bio/test-all; $ANT_COMMAND clean",
              "cd $TRUNK_DIR/bio/test-all; date; $ANT_COMMAND fulltest",
              "cd $TRUNK_DIR/bio/test-all; date; $ANT_COMMAND test-report"]);
