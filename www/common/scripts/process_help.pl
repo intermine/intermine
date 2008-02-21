@@ -17,7 +17,7 @@ my $help_file_name = shift;
 my $help_title = shift;
 my $dest_dir = shift;
 
-open my $help_file, '<', $help_file_name or die;
+open my $help_file, '<', $help_file_name or die "could not read: $help_file_name";
 
 my $title;
 my $id;
