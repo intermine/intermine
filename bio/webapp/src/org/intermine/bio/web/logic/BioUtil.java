@@ -22,7 +22,6 @@ import org.intermine.objectstore.query.ContainsConstraint;
 import org.intermine.objectstore.query.Query;
 import org.intermine.objectstore.query.QueryClass;
 import org.intermine.objectstore.query.QueryField;
-import org.intermine.objectstore.query.QueryFunction;
 import org.intermine.objectstore.query.QueryObjectReference;
 import org.intermine.objectstore.query.QueryValue;
 import org.intermine.objectstore.query.Results;
@@ -34,11 +33,7 @@ import org.intermine.objectstore.ObjectStore;
 import org.intermine.web.logic.bag.InterMineBag;
 
 import org.flymine.model.genomic.Chromosome;
-import org.flymine.model.genomic.Gene;
 import org.flymine.model.genomic.Organism;
-import org.flymine.model.genomic.Protein;
-
-
 
 /**
  * Utility methods for the flymine package.
@@ -159,6 +154,8 @@ public abstract class BioUtil
 
 
     /**
+     * OBSOLETE?
+     * enrichment widgets now calculate the totals differently
      * calculates the total number of proteins or genes in the database for the specified
      * organisms
      * @param os object store
@@ -166,49 +163,50 @@ public abstract class BioUtil
      * @param c which class to test for - Gene or Protein
      * @return total number of objects in the database for selected organisms
      */
-    public static int getTotal(ObjectStore os, Collection<String> organisms, String c) {
-
-           Query q = new Query();
-           q.setDistinct(false);
-           QueryClass qcObject = null;
-
-           //TODO fix this to work with any class
-           if (c.toLowerCase().equals("protein")) {
-               qcObject = new QueryClass(Protein.class);
-           } else {
-               qcObject = new QueryClass(Gene.class);
-           }
-           QueryClass qcOrganism = new QueryClass(Organism.class);
-
-           QueryField qfOrganism = new QueryField(qcOrganism, "name");
-           QueryFunction geneCount = new QueryFunction();
-
-           q.addFrom(qcObject);
-
-           q.addFrom(qcOrganism);
-
-           q.addToSelect(geneCount);
-
-           ConstraintSet cs;
-           cs = new ConstraintSet(ConstraintOp.AND);
-
-           /* organism is in bag */
-           BagConstraint bc2 = new BagConstraint(qfOrganism, ConstraintOp.IN, organisms);
-           cs.addConstraint(bc2);
-
-           /* gene is from organism */
-           QueryObjectReference qr2 = new QueryObjectReference(qcObject, "organism");
-           ContainsConstraint cc2 = new ContainsConstraint(qr2, ConstraintOp.CONTAINS, qcOrganism);
-           cs.addConstraint(cc2);
-
-           q.setConstraint(cs);
-
-           Results r = os.execute(q);
-           Iterator it = r.iterator();
-           ResultsRow rr =  (ResultsRow) it.next();
-           Long l = (java.lang.Long) rr.get(0);
-           int n = l.intValue();
-           return n;
-       }
+//    public static int getTotal(ObjectStore os, Collection<String> organisms, String c) {
+//
+//           Query q = new Query();
+//           q.setDistinct(false);
+//           QueryClass qcObject = null;
+//
+//           //TODO fix this to work with any class
+//           if (c.toLowerCase().equals("protein")) {
+//               qcObject = new QueryClass(Protein.class);
+//           } else {
+//               qcObject = new QueryClass(Gene.class);
+//           }
+//           QueryClass qcOrganism = new QueryClass(Organism.class);
+//
+//           QueryField qfOrganism = new QueryField(qcOrganism, "name");
+//           QueryFunction geneCount = new QueryFunction();
+//
+//           q.addFrom(qcObject);
+//
+//           q.addFrom(qcOrganism);
+//
+//           q.addToSelect(geneCount);
+//
+//           ConstraintSet cs;
+//           cs = new ConstraintSet(ConstraintOp.AND);
+//
+//           /* organism is in bag */
+//           BagConstraint bc2 = new BagConstraint(qfOrganism, ConstraintOp.IN, organisms);
+//           cs.addConstraint(bc2);
+//
+//           /* gene is from organism */
+//           QueryObjectReference qr2 = new QueryObjectReference(qcObject, "organism");
+//           ContainsConstraint cc2 = new ContainsConstraint(qr2, 
+//    ConstraintOp.CONTAINS, qcOrganism);
+//           cs.addConstraint(cc2);
+//
+//           q.setConstraint(cs);
+//
+//           Results r = os.execute(q);
+//           Iterator it = r.iterator();
+//           ResultsRow rr =  (ResultsRow) it.next();
+//           Long l = (java.lang.Long) rr.get(0);
+//           int n = l.intValue();
+//           return n;
+//       }
 
 }

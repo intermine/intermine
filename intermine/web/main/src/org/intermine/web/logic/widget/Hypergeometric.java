@@ -10,8 +10,6 @@ package org.intermine.web.logic.widget;
  *
  */
 
-
-
 /**
  * Calculates p-values for go terms using the hypergeometric distribution.
  * See online documentation for detailed information about what this class is and what it does.
@@ -69,13 +67,13 @@ public class Hypergeometric
      * P =   -----------------------------
      *               N choose n
      *
-     * @param n total number of genes in our list
-     * @param k number of genes in our list annotated with this term
-     * @param bigN Total number of genes in the database
-     * @param bigM Total number of genes in the database annotated with this term
-     * @return p-value for this go term
+     * @param k number of objects in our list annotated with this term
+     * @param n number of objects in our list annotated with any term
+     * @param bigM Total number of objects in the database annotated with this term
+     * @param bigN Total number of objects in the database annotated with any term
+     * @return p-value for this term
      **/
-    public static double calculateP(int n, int k, int bigM, int bigN) {
+    public static double calculateP(int k, int n, int bigM, int bigN) {
         double p = 0;
         // TODO maybe we don't have to call this each time?
         getFactorials(bigN);

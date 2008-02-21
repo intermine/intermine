@@ -27,7 +27,6 @@ import org.intermine.objectstore.query.QueryValue;
 import org.intermine.objectstore.query.SimpleConstraint;
 
 import org.intermine.bio.web.logic.BioUtil;
-import org.intermine.objectstore.ObjectStore;
 import org.intermine.objectstore.intermine.ObjectStoreInterMineImpl;
 import org.intermine.web.logic.Constants;
 import org.intermine.web.logic.WebUtil;
@@ -50,63 +49,38 @@ import javax.servlet.http.HttpSession;
  */
 public class TiffinLdr implements EnrichmentWidgetLdr
 {
-    Query sampleQuery;
-    Query populationQuery;
-    Collection<String> organisms;
-    int total;
-    String externalLink;
-    String append;
-
+    private Query annotatedSampleQuery;
+    private Query annotatedPopulationQuery;
+    private Collection<String> organisms;
+    private String externalLink, append;
+    private ObjectStoreInterMineImpl os;
+    private InterMineBag bag;
+    
     /**
      * @param request The HTTP request we are processing
      */
      public TiffinLdr(HttpServletRequest request) {
 
-             HttpSession session = request.getSession();
-             Profile profile = (Profile) session.getAttribute(Constants.PROFILE);
-             ServletContext servletContext = session.getServletContext();
-             ObjectStoreInterMineImpl os =
-                 (ObjectStoreInterMineImpl) servletContext.getAttribute(Constants.OBJECTSTORE);
+         HttpSession session = request.getSession();
+         Profile profile = (Profile) session.getAttribute(Constants.PROFILE);
+         ServletContext servletContext = session.getServletContext();
+         os = (ObjectStoreInterMineImpl) servletContext.getAttribute(Constants.OBJECTSTORE);
 
-             String bagName = request.getParameter("bagName");
-             Map<String, InterMineBag> allBags =
-                 WebUtil.getAllBags(profile.getSavedBags(), servletContext);
-             InterMineBag bag = allBags.get(bagName);
+         String bagName = request.getParameter("bagName");
+         Map<String, InterMineBag> allBags =
+             WebUtil.getAllBags(profile.getSavedBags(), servletContext);
+         bag = allBags.get(bagName);
+         organisms = BioUtil.getOrganisms(os, bag);
 
-             sampleQuery = getQuery(os, bag, true);
-             populationQuery = getQuery(os, bag, false);
-     }
+         annotatedSampleQuery = getQuery(false, true);
+         annotatedPopulationQuery = getQuery(false, false);
 
-
-     /**
-     * {@inheritDoc}
-      */
-     public Query getSample() {
-         return sampleQuery;
-     }
-
-     /**
-     * {@inheritDoc}
-      */
-     public Query getPopulation() {
-         return populationQuery;
-     }
-
-     /**
-     * {@inheritDoc}
-      */
-     public Collection<String> getReferencePopulation() {
-         return organisms;
      }
 
      /**
       * {@inheritDoc}
       */
-     public int getTotal(ObjectStore os) {
-         return BioUtil.getTotal(os, organisms, "Gene");
-     }
-
-     private Query getQuery(ObjectStore os, InterMineBag bag, boolean useBag) {
+     public Query getQuery(boolean calcTotal, boolean useBag) {
 
          Query q = new Query();
          q.setDistinct(false);
@@ -144,7 +118,7 @@ public class TiffinLdr implements EnrichmentWidgetLdr
              cs.addConstraint(bc1);
          }
          // get organisms
-         organisms = BioUtil.getOrganisms(os, bag);
+         
 
          // limit to organisms in the bag
          BagConstraint bc2 = new BagConstraint(qfOrganismName, ConstraintOp.IN, organisms);
@@ -185,23 +159,30 @@ public class TiffinLdr implements EnrichmentWidgetLdr
 
          q.addToGroupBy(qfId);
 
-//         SELECT DISTINCT a1_, a2_, a5_
-//         FROM org.flymine.model.genomic.Gene AS a1_,
-//         org.flymine.model.genomic.IntergenicRegion AS a2_,
-//         org.flymine.model.genomic.TFBindingSite AS a3_,
-//         org.flymine.model.genomic.DataSet AS a4_,
-//         org.flymine.model.genomic.Motif AS a5_
-//         WHERE (a1_.upstreamIntergenicRegion CONTAINS a2_
-//               AND a2_.overlappingFeatures CONTAINS a3_
-//               AND a3_.evidence CONTAINS a4_
-//               AND LOWER(a4_.title) = 'tiffin'
-//               AND a3_.motif CONTAINS a5_
-
-
-
          return q;
      }
+     
+     /**
+      * {@inheritDoc}
+       */
+      public Query getAnnotatedSample() {
+          return annotatedSampleQuery;
+      }
 
+      /**
+      * {@inheritDoc}
+       */
+      public Query getAnnotatedPopulation() {
+          return annotatedPopulationQuery;
+      }
+
+      /**
+      * {@inheritDoc}
+       */
+      public Collection<String> getPopulationDescr() {
+          return organisms;
+      }
+     
      /**
       * {@inheritDoc}
       */

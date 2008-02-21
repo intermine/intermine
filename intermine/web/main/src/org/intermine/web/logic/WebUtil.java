@@ -29,7 +29,6 @@ import org.intermine.objectstore.query.ResultsRow;
 
 import org.intermine.metadata.ClassDescriptor;
 import org.intermine.metadata.Model;
-import org.intermine.objectstore.ObjectStoreException;
 import org.intermine.objectstore.intermine.ObjectStoreInterMineImpl;
 import org.intermine.web.logic.bag.InterMineBag;
 import org.intermine.web.logic.search.SearchRepository;
@@ -442,34 +441,30 @@ public abstract class WebUtil
     /**
      * Takes two queries.  Runs both and compares the results.
      * @param os the object store
-     * @param queryPopulation The query to get the entire population, ie all genes in the database
-     * @param querySample The query to get the sample, ie all genes in the bag
+     * @param annotatedPopulationQuery The query to get the entire population, 
+     * ie all genes in the database annotated with this term
+     * @param annotatedSampleQuery The query to get the sample, ie all genes in the bag
      * @param bag the bag we are analysing
-     * @param total total number of the entire population
-     * @param maxValue maximum value to return
+     * @param populationTotal total number in the reference population
+     * @param sampleTotal total number of objects in the sample population (the bag)
+     * @param maxValue maximum value to return - for display purposes only
      * @param errorCorrection which error correction algorithm to use, Bonferroni
-     * or Benjamini Hochberg
+     * or Benjamini Hochberg or none
      * @return array of three results maps
-     * @throws ObjectStoreException bag has been lost
      */
     public static ArrayList<Map> statsCalc(ObjectStoreInterMineImpl os,
-                                      Query queryPopulation,
-                                      Query querySample,
+                                      Query annotatedPopulationQuery,
+                                      Query annotatedSampleQuery,
+                                      int populationTotal,
+                                      int sampleTotal,                                      
                                       InterMineBag bag,
-                                      int total,
                                       Double maxValue,
-                                      String errorCorrection)
-                                      throws ObjectStoreException {
+                                      String errorCorrection) {
 
             ArrayList<Map> maps = new ArrayList<Map>();
-            int numberOfObjectsInBag;
-            try {
-                numberOfObjectsInBag = bag.size();
-            } catch (ObjectStoreException e) {
-                throw new ObjectStoreException("couldn't calculate bag size", e);
-            }
-            // run bag query
-            Results r = os.execute(querySample);
+
+            // sample query
+            Results r = os.execute(annotatedSampleQuery);
             r.setBatchSize(10000);
             Iterator iter = r.iterator();
             HashMap<String, Long> countMap = new HashMap<String, Long>();
@@ -495,16 +490,15 @@ public abstract class WebUtil
             }
 
             // run population query
-            List rAll = statsCalcCache.get(queryPopulation.toString());
+            List rAll = statsCalcCache.get(annotatedPopulationQuery.toString());
             if (rAll == null) {
-                rAll = os.execute(queryPopulation);
+                rAll = os.execute(annotatedPopulationQuery);
                 ((Results) rAll).setBatchSize(10000);
                 rAll = new ArrayList(rAll);
-                statsCalcCache.put(queryPopulation.toString(), rAll);
+                statsCalcCache.put(annotatedPopulationQuery.toString(), rAll);
             }
 
             Iterator itAll = rAll.iterator();
-
 
             HashMap<String, BigDecimal> resultsMap = new HashMap<String, BigDecimal>();
 
@@ -519,15 +513,15 @@ public abstract class WebUtil
                     Long countBag = countMap.get(id);
                     Long countAll = (java.lang.Long) rrAll.get(1);
 
-                    double p = Hypergeometric.calculateP(numberOfObjectsInBag, countBag.intValue(),
-                                            countAll.intValue(), total);
+                    double p = Hypergeometric.calculateP(countBag.intValue(), sampleTotal,
+                                            countAll.intValue(), populationTotal);
                     try {
                         resultsMap.put(id, new BigDecimal(p));
                     } catch (Exception e) {
                         String msg = p + " isn't a double.  calculated using sample size: "
                         + countBag + ", population size: " + countAll + ", bag size: "
-                        + numberOfObjectsInBag + ", total: " + total
-                        + ".  population query used: " + queryPopulation.toString();
+                        + sampleTotal + ", total: " + populationTotal
+                        + ".  population query used: " + annotatedPopulationQuery.toString();
                         throw new RuntimeException(msg, e);
                     }
                 }
@@ -558,8 +552,7 @@ public abstract class WebUtil
      * methods available - which one we use is determined by the user.
      * @param errorCorrection which multiple hypothesis test correction to use - Bonferroni or
      * BenjaminiHochberg
-     * @param maxValue maximum value we're interested in
-     * as these cannot possibly be over-represented
+     * @param maxValue maximum value we're interested in - used for display purposes only
      * @param resultsMap map containing unadjusted p-values
      * @return map of all the adjusted p-values
      */

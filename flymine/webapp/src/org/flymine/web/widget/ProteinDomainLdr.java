@@ -27,7 +27,6 @@ import org.intermine.objectstore.query.QueryValue;
 import org.intermine.objectstore.query.SimpleConstraint;
 
 import org.intermine.bio.web.logic.BioUtil;
-import org.intermine.objectstore.ObjectStore;
 import org.intermine.objectstore.intermine.ObjectStoreInterMineImpl;
 import org.intermine.web.logic.Constants;
 import org.intermine.web.logic.WebUtil;
@@ -51,12 +50,13 @@ import javax.servlet.http.HttpSession;
 public class ProteinDomainLdr implements EnrichmentWidgetLdr
 {
 
-    Query sampleQuery;
-    Query populationQuery;
-    String externalLink, append;
-    InterMineBag bag;
-    Collection<String> organisms;
-
+    private Query annotatedSampleQuery;
+    private Query annotatedPopulationQuery;
+    private String externalLink, append;
+    private Collection<String> organisms;
+    private ObjectStoreInterMineImpl os;
+    private InterMineBag bag;
+ 
     /**
      * @param request The HTTP request we are processing
      */
@@ -65,20 +65,23 @@ public class ProteinDomainLdr implements EnrichmentWidgetLdr
         HttpSession session = request.getSession();
         Profile profile = (Profile) session.getAttribute(Constants.PROFILE);
         ServletContext servletContext = session.getServletContext();
-        ObjectStoreInterMineImpl os =
-            (ObjectStoreInterMineImpl) servletContext.getAttribute(Constants.OBJECTSTORE);
+        os = (ObjectStoreInterMineImpl) servletContext.getAttribute(Constants.OBJECTSTORE);
 
         String bagName = request.getParameter("bagName");
         Map<String, InterMineBag> allBags =
             WebUtil.getAllBags(profile.getSavedBags(), servletContext);
         bag = allBags.get(bagName);
-        sampleQuery = getQuery(os, true);
-        populationQuery = getQuery(os, false);
-    }
-
-    private Query getQuery(ObjectStore os, boolean useBag) {
-
+        
         organisms = BioUtil.getOrganisms(os, bag);
+        
+        annotatedSampleQuery = getQuery(false, true);
+        annotatedPopulationQuery = getQuery(false, false);
+    }
+    
+    /**
+     * {@inheritDoc}
+     */
+    public Query getQuery(boolean calcTotal, boolean useBag) {
 
         QueryClass qcGene = new QueryClass(Gene.class);
         QueryClass qcProtein = new QueryClass(Protein.class);
@@ -118,6 +121,7 @@ public class ProteinDomainLdr implements EnrichmentWidgetLdr
             QueryCollectionReference qr2 = new QueryCollectionReference(qcGene, "proteins");
             cs.addConstraint(new ContainsConstraint(qr2, ConstraintOp.CONTAINS, qcProtein));
         }
+
         Query q = new Query();
         q.setDistinct(false);
         if (bag.getType().equalsIgnoreCase("gene")) {
@@ -127,15 +131,19 @@ public class ProteinDomainLdr implements EnrichmentWidgetLdr
         q.addFrom(qcOrganism);
         q.addFrom(qcProteinFeature);
 
-        q.addToSelect(qfId);
+        if (!calcTotal) {
+            q.addToSelect(qfId);
+        }
         q.addToSelect(objectCount);
 
         q.setConstraint(cs);
-
-        q.addToGroupBy(qfId);
-        if (useBag) {
-            q.addToSelect(qfName);
-            q.addToGroupBy(qfName);
+        
+        if (!calcTotal) {            
+            if (useBag) {
+                q.addToSelect(qfName);
+                q.addToGroupBy(qfName);
+            }
+            q.addToGroupBy(qfId);
         }
 
         return q;
@@ -144,31 +152,23 @@ public class ProteinDomainLdr implements EnrichmentWidgetLdr
     /**
      * {@inheritDoc}
      */
-    public Query getSample() {
-        return sampleQuery;
+    public Query getAnnotatedSample() {
+        return annotatedSampleQuery;
     }
 
     /**
      * {@inheritDoc}
      */
-    public Query getPopulation() {
-        return populationQuery;
+    public Query getAnnotatedPopulation() {
+        return annotatedPopulationQuery;
     }
 
     /**
      * {@inheritDoc}
      */
-    public Collection<String> getReferencePopulation() {
+    public Collection<String> getPopulationDescr() {
         return organisms;
     }
-
-    /**
-     * {@inheritDoc}
-     */
-    public int getTotal(ObjectStore os) {
-        return BioUtil.getTotal(os, organisms, bag.getType());
-    }
-
     /**
      * {@inheritDoc}
      */

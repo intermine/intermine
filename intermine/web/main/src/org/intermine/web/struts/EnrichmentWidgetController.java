@@ -11,7 +11,12 @@ package org.intermine.web.struts;
  */
 
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.Map;
+
+import org.intermine.objectstore.query.Query;
+import org.intermine.objectstore.query.Results;
+import org.intermine.objectstore.query.ResultsRow;
 
 import org.intermine.objectstore.intermine.ObjectStoreInterMineImpl;
 import org.intermine.util.TypeUtil;
@@ -63,6 +68,7 @@ public class EnrichmentWidgetController extends TilesAction
          String descr = request.getParameter("descr");
          String filterLabel = request.getParameter("filterLabel");
          String label = request.getParameter("label");
+         String refBagName = null;
          // TODO these defaults are already in the form
          String max = "0.10";
          String errorCorrection = "BenjaminiHochberg";
@@ -73,7 +79,10 @@ public class EnrichmentWidgetController extends TilesAction
          if (request.getParameter("errorCorrection") != null) {
              errorCorrection = request.getParameter("errorCorrection");
          }
-
+         if (request.getParameter("refBagName") != null) {
+             refBagName = request.getParameter("refBagName");
+         }
+         
          ewf.setBagName(bagName);
          ewf.setLdr(dataLoader);
          ewf.setDescr(descr);
@@ -84,14 +93,15 @@ public class EnrichmentWidgetController extends TilesAction
          ewf.setFilterLabel(filterLabel);
          ewf.setMax(max);
          ewf.setErrorCorrection(errorCorrection);
-
+         ewf.setRefBagName(refBagName);
+         
          HttpSession session = request.getSession();
          Profile profile = (Profile) session.getAttribute(Constants.PROFILE);
          ServletContext servletContext = session.getServletContext();
          ObjectStoreInterMineImpl os =
              (ObjectStoreInterMineImpl) servletContext.getAttribute(Constants.OBJECTSTORE);
 
-
+         // set bag
          Map<String, InterMineBag> allBags =
              WebUtil.getAllBags(profile.getSavedBags(), servletContext);
          InterMineBag bag = allBags.get(bagName);
@@ -101,6 +111,12 @@ public class EnrichmentWidgetController extends TilesAction
          ewf.setBag(bag);
          ewf.setBagType(bag.getType());
 
+         // set reference bag (may not have one)
+         // TODO do we need to set the bag?
+         if (refBagName != null) {
+             ewf.setRefBag(allBags.get(refBagName));
+         }
+         
          Class<?> clazz = TypeUtil.instantiate(dataLoader);
          Constructor<?> constr = clazz.getConstructor(new Class[]
                                                              {
@@ -111,23 +127,45 @@ public class EnrichmentWidgetController extends TilesAction
                                                                                        {
              request
                                                                                        });
+         
+         // have to calculate sample total for each enrichment widget because namespace may have
+         // changed
+         ArrayList<Map> results = WebUtil.statsCalc(os, ldr.getAnnotatedPopulation(),
+                                                    ldr.getAnnotatedSample(), 
+                                                    getTotal(os, ldr, false),
+                                                    getTotal(os, ldr, true),
+                                                    bag,
+                                                    new Double(0 + ewf.getMax()),
+                                                    ewf.getErrorCorrection());
 
-         ArrayList<Map> results = WebUtil.statsCalc(os, ldr.getPopulation(), ldr.getSample(),
-                                               bag, ldr.getTotal(os),
-                                               new Double(0 + ewf.getMax()),
-                                               ewf.getErrorCorrection());
-
-         if (results.isEmpty()) {
-             return null;
+         if (!results.isEmpty()) {
+             request.setAttribute("ewf", ewf);
+             request.setAttribute("pvalues", results.get(0));
+             request.setAttribute("totals", results.get(1));
+             request.setAttribute("labelToId", results.get(2));
+             request.setAttribute("referencePopulation", "All " + bag.getType() + "s from  "
+                                  + ldr.getPopulationDescr().toString());
          }
-         request.setAttribute("ewf", ewf);
-         request.setAttribute("pvalues", results.get(0));
-         request.setAttribute("totals", results.get(1));
-         request.setAttribute("labelToId", results.get(2));
-         request.setAttribute("referencePopulation", "All " + bag.getType() + "s from  "
-                              + ldr.getReferencePopulation().toString());
-
          return null;
      }
+     
+     private int getTotal(ObjectStoreInterMineImpl os, EnrichmentWidgetLdr ldr, boolean useBag) {
+
+         int n = 0;
+
+         Query q = ldr.getQuery(true, useBag);
+
+         Results r = os.execute(q);
+         if (!r.isEmpty()) {
+             Iterator<ResultsRow> it = r.iterator();
+             ResultsRow rr =  it.next();
+             Long l = (java.lang.Long) rr.get(0);
+             n = l.intValue();
+         }
+
+         return n;
+     }
+     
+     
 }
 
