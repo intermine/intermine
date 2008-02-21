@@ -343,5 +343,11 @@ public class ObjectStoreFastCollectionsImpl extends ObjectStorePassthruImpl
             }
         }
     }
-}
 
+    /**
+     * {@inheritDoc}
+     */
+    public String toString() {
+        return "FastCollections(" + os + ")";
+    }
+}
