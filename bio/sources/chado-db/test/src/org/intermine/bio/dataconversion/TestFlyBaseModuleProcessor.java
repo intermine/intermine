@@ -12,16 +12,19 @@ package org.intermine.bio.dataconversion;
 
 import java.sql.Connection;
 import java.sql.ResultSet;
-import java.sql.SQLException;
 
 import com.mockobjects.sql.MockMultiRowResultSet;
 
 /**
- *
+ * An implementation of FlyBaseModuleProcessor for testing.
  * @author Kim Rutherford
  */
 public class TestFlyBaseModuleProcessor extends FlyBaseModuleProcessor
 {
+    /**
+     * Create a new TestFlyBaseModuleProcessor object.
+     * @param chadoDBConverter the ChadoDBConverter
+     */
     public TestFlyBaseModuleProcessor(ChadoDBConverter chadoDBConverter) {
         super(chadoDBConverter);
     }
@@ -30,7 +33,7 @@ public class TestFlyBaseModuleProcessor extends FlyBaseModuleProcessor
      * {@inheritDoc}
      */
     @Override
-    protected void createFeatureTempTable(Connection connection) throws SQLException {
+    protected void createFeatureTempTable(@SuppressWarnings("unused") Connection connection) {
         // empty
     }
 
@@ -208,7 +211,8 @@ public class TestFlyBaseModuleProcessor extends FlyBaseModuleProcessor
     /**
      * {@inheritDoc}
      */
-    protected ResultSet getFeatureLocResultSet(Connection connection) throws SQLException {
+    @Override
+    protected ResultSet getFeatureLocResultSet(@SuppressWarnings("unused") Connection connection) {
         String[] columnNames = new String[] {
             "featureloc_id", "feature_id", "srcfeature_id", "fmin", "is_fmin_partial",
             "fmax", "is_fmax_partial", "strand"
@@ -239,7 +243,8 @@ public class TestFlyBaseModuleProcessor extends FlyBaseModuleProcessor
     /**
      * {@inheritDoc}
      */
-    protected ResultSet getSynonymResultSet(Connection connection) throws SQLException {
+    @Override
+    protected ResultSet getSynonymResultSet(@SuppressWarnings("unused") Connection connection) {
         String[] columnNames = new String[] {
             "feature_id", "synonym_name", "type_name", "is_current"
         };
@@ -267,7 +272,7 @@ public class TestFlyBaseModuleProcessor extends FlyBaseModuleProcessor
      * {@inheritDoc}
      */
     @Override
-    protected ResultSet getPubResultSet(Connection connection) throws SQLException {
+    protected ResultSet getPubResultSet(@SuppressWarnings("unused") Connection connection) {
         String[] columnNames = new String[] {
             "feature_id", "pub_db_identifier"
         };
@@ -301,7 +306,8 @@ public class TestFlyBaseModuleProcessor extends FlyBaseModuleProcessor
      * {@inheritDoc}
      */
     @Override
-    protected ResultSet getLocatedGenesResultSet(Connection connection) throws SQLException {
+    protected ResultSet getLocatedGenesResultSet(@SuppressWarnings("unused")
+                                                     Connection connection) {
         String[] columnNames = new String[] {
             "feature_id"
         };

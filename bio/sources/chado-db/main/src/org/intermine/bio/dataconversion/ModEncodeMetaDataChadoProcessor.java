@@ -49,7 +49,7 @@ public class ModEncodeMetaDataChadoProcessor extends ChadoProcessor
     }
 
     private void processProtocolTable(Connection connection)
-        throws SQLException, ObjectStoreException{
+        throws SQLException, ObjectStoreException {
         ResultSet res = getProtocolResultSet(connection);
         int count = 0;
         while (res.next()) {

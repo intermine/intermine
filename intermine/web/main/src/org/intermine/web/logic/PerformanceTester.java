@@ -55,13 +55,10 @@ public class PerformanceTester
         Properties classKeyProps = new Properties();
         classKeyProps.load(PerformanceTester.class.getClassLoader()
                 .getResourceAsStream("class_keys.properties"));
-        //System.out.println("Class key properties: " + classKeyProps);
         BagQueryConfig bagQueryConfig = BagQueryHelper.readBagQueryConfig(productionOs.getModel(),
                 PerformanceTester.class.getClassLoader()
                 .getResourceAsStream("webapp/WEB-INF/bag-queries.xml"));
         Map classKeys = ClassKeyHelper.readKeys(productionOs.getModel(), classKeyProps);
-        //System.out.println("Class keys: " + classKeys);
-        //System.exit(0);
         ProfileManager pm = new ProfileManager(productionOs, userProfileOs, null);
         Profile p = pm.getProfile(SUPERUSER);
         Map<String, TemplateQuery> templates = p.getSavedTemplates();

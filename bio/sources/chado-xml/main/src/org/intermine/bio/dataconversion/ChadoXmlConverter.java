@@ -49,9 +49,8 @@ public class ChadoXmlConverter extends FileConverter
      * Constructor
      * @param writer the ItemWriter used to handle the resultant items
      * @param model the Model
-     * @throws ObjectStoreException if an error occurs in storing
      */
-    public ChadoXmlConverter(ItemWriter writer, Model model) throws ObjectStoreException {
+    public ChadoXmlConverter(ItemWriter writer, Model model) {
         super(writer, model);
     }
 
@@ -59,6 +58,7 @@ public class ChadoXmlConverter extends FileConverter
     /**
      * {@inheritDoc}
      */
+    @Override
     public void process(Reader reader) throws Exception {
         ChadoXmlHandler handler = new ChadoXmlHandler(getItemWriter());
 
@@ -105,6 +105,7 @@ public class ChadoXmlConverter extends FileConverter
         /**
          * {@inheritDoc}
          */
+        @Override
         public void startElement(String uri, String localName, String qName, Attributes attrs)
             throws SAXException {
             attName = null;
@@ -130,8 +131,8 @@ public class ChadoXmlConverter extends FileConverter
         /**
          * {@inheritDoc}
          */
-        public void characters(char[] ch, int start, int length) throws SAXException
-        {
+        @Override
+        public void characters(char[] ch, int start, int length) {
 
             if (attName != null) {
 
@@ -168,6 +169,7 @@ public class ChadoXmlConverter extends FileConverter
         /**
          * {@inheritDoc}
          */
+        @Override
         public void endElement(String uri, String localName, String qName)
             throws SAXException {
             super.endElement(uri, localName, qName);
@@ -225,34 +227,35 @@ public class ChadoXmlConverter extends FileConverter
                     // this is the SO term identifier
                 } else if (stack.matches("db>db_id>dbxref>dbxref_id>cvterm_dbxref>"
                                          + "cvterm>type_id>feature")) {
-
+                    // empty
                 } else if (stack.matches("cv>cv_id>cvterm>type_id>featureprop>feature")) {
                     // type of featureprop
                 } else if (stack.matches("cvterm")) {
-
+                    // empty
                 } else if (stack.matches("cv>cv_id>cvterm>cvterm_id>feature_cvterm>feature")) {
-
+                    // empty
                 } else if (stack.matches("cv>cv_id>cvterm>type_id>cvtermprop>cvterm>"
                                          + "cvterm_id>feature_cvterm>feature")) {
-
+                    // empty
                 } else if (stack.matches("cv>cv_id>cvterm>type_id>feature_cvtermprop>"
                                          + "feature_cvterm>feature")) {
-
+                    // empty
                 } else if (stack.matches("cvterm>type_id>cvtermprop>cvterm>cvterm_id>"
                                          + "feature_cvterm>feature")) {
-
+                    // empty
                 } else if (stack.matches("cvterm>cvterm_id>feature_cvterm>feature")) {
-
+                    // empty
                 } else if (stack.matches("cvterm>type_id>pub>pub_id>feature_cvterm>feature")) {
-
+                    // empty
                 } else if (stack.matches("db>db_id>dbxref>dbxref_id>cvterm>cvterm_id>"
                                          + "feature_cvterm>feature")) {
-
+                    // empty
                 } else if (stack.matches("synonym>synonym_id>feature_synonym>feature")) {
-
+                    // empty
                 } else if (stack.matches("db>db_id")) {
+                    // empty
                 } else if (stack.matches("cv>cv_id")) {
-
+                    // empty
                 } else {
                     throw new SAXException("LOST: " + stack);
                 }
@@ -396,8 +399,8 @@ public class ChadoXmlConverter extends FileConverter
 
         private abstract class ObjectHolder
         {
-            
-        };
+            // empty
+        }
 
         private class FeatureHolder extends ObjectHolder
         {
