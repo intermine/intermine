@@ -119,6 +119,7 @@ public class ObjectStoreInterMineImpl extends ObjectStoreAbstractImpl implements
     protected Map goFasterMap = Collections.synchronizedMap(new IdentityHashMap());
     protected Map goFasterCacheMap = Collections.synchronizedMap(new IdentityHashMap());
     protected ReferenceQueue bagTablesToRemove = new ReferenceQueue();
+    private String description;
 
     protected InterMineLogger logger = null;
 
@@ -160,6 +161,7 @@ public class ObjectStoreInterMineImpl extends ObjectStoreAbstractImpl implements
         ShutdownHook.registerObject(new WeakReference(this));
         limitedContext = new QueryOptimiserContext();
         limitedContext.setTimeLimit(getMaxTime() / 10);
+        description = "ObjectStoreInterMineImpl(" + db + ")";
     }
 
     /**
@@ -177,6 +179,7 @@ public class ObjectStoreInterMineImpl extends ObjectStoreAbstractImpl implements
         ShutdownHook.registerObject(new WeakReference(this));
         limitedContext = new QueryOptimiserContext();
         limitedContext.setTimeLimit(getMaxTime() / 10);
+        description = "ObjectStoreInterMineImpl(" + db + ")";
     }
 
     /**
@@ -310,6 +313,7 @@ public class ObjectStoreInterMineImpl extends ObjectStoreAbstractImpl implements
                 DatabaseSchema databaseSchema = new DatabaseSchema(osModel, truncatedClasses,
                         noNotXml, missingTables);
                 os = new ObjectStoreInterMineImpl(database, databaseSchema);
+                os.description = osAlias;
 
                 if (loggerAlias != null) {
                     try {
@@ -1681,5 +1685,12 @@ public class ObjectStoreInterMineImpl extends ObjectStoreAbstractImpl implements
         } catch (ObjectStoreException e) {
             throw new RuntimeException(e);
         }
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public String toString() {
+        return description;
     }
 }

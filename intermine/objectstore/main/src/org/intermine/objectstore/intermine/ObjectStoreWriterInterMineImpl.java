@@ -1424,4 +1424,11 @@ public class ObjectStoreWriterInterMineImpl extends ObjectStoreInterMineImpl
         FieldDescriptor fields[];
         int referencesFrom;
     }
+
+    /**
+     * {@inheritDoc}
+     */
+    public String toString() {
+        return "Writer(" + os + ")";
+    }
 }

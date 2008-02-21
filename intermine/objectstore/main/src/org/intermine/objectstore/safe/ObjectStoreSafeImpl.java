@@ -74,4 +74,11 @@ public class ObjectStoreSafeImpl extends ObjectStorePassthruImpl
     public int count(Query q, Map<Object, Integer> sequence) throws ObjectStoreException {
         return os.count(QueryCloner.cloneQuery(q), sequence);
     }
+
+    /**
+     * {@inheritDoc}
+     */
+    public String toString() {
+        return "Safe(" + os + ")";
+    }
 }

@@ -52,6 +52,7 @@ public class ObjectStoreClient extends ObjectStoreAbstractImpl
     protected Call call;
 
     protected Map queryIds = new IdentityHashMap();
+    private String description;
 
     /**
      * Construct an ObjectStoreClient pointing at an ObjectStore service on a remote URL
@@ -65,6 +66,7 @@ public class ObjectStoreClient extends ObjectStoreAbstractImpl
         if (url == null) {
             throw new NullPointerException("url must not be null");
         }
+        description = url.toString();
         // Set up the service and call objects so that the session can be maintained
         try {
             call = (Call) new Service().createCall();
@@ -237,5 +239,12 @@ public class ObjectStoreClient extends ObjectStoreAbstractImpl
      */
     public Integer getSerial() throws ObjectStoreException {
         throw new ObjectStoreException("Cannot getSerial() on an ObjectStoreClient");
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public String toString() {
+        return description;
     }
 }
