@@ -73,7 +73,7 @@ public class FlyFishDataSetLdr implements DataSetLdr
     }
 
     /**
-     * @see org.intermine.web.logic.widget.DataSetLdr#getDataSet()
+     * {@inheritDoc}
      */
     public Map getDataSets() {
         return dataSets;

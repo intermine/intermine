@@ -10,6 +10,7 @@ package org.intermine.bio.web.widget;
  *
  */
 
+
 import java.util.Collection;
 import java.util.Map;
 
@@ -27,7 +28,6 @@ import org.intermine.objectstore.query.QueryValue;
 import org.intermine.objectstore.query.SimpleConstraint;
 
 import org.intermine.bio.web.logic.BioUtil;
-import org.intermine.objectstore.ObjectStore;
 import org.intermine.objectstore.intermine.ObjectStoreInterMineImpl;
 import org.intermine.web.logic.Constants;
 import org.intermine.web.logic.WebUtil;
@@ -35,14 +35,14 @@ import org.intermine.web.logic.bag.InterMineBag;
 import org.intermine.web.logic.profile.Profile;
 import org.intermine.web.logic.widget.EnrichmentWidgetLdr;
 
+import javax.servlet.ServletContext;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpSession;
+
 import org.flymine.model.genomic.Ontology;
 import org.flymine.model.genomic.OntologyTerm;
 import org.flymine.model.genomic.Organism;
 import org.flymine.model.genomic.Protein;
-
-import javax.servlet.ServletContext;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpSession;
 
 /**
  * {@inheritDoc}
@@ -51,11 +51,12 @@ import javax.servlet.http.HttpSession;
 public class UniProtKeywordsLdr implements EnrichmentWidgetLdr
 {
 
-    Query sampleQuery;
-    Query populationQuery;
-    Collection<String> organisms;
-    int total;
-    String externalLink, append;
+    private Query annotatedSampleQuery;
+    private Query annotatedPopulationQuery;
+    private Collection<String> organisms;
+    private String externalLink, append;
+    private ObjectStoreInterMineImpl os;
+    private InterMineBag bag;
 
     /**
      * @param request The HTTP request we are processing
@@ -65,16 +66,22 @@ public class UniProtKeywordsLdr implements EnrichmentWidgetLdr
         HttpSession session = request.getSession();
         Profile profile = (Profile) session.getAttribute(Constants.PROFILE);
         ServletContext servletContext = session.getServletContext();
-        ObjectStoreInterMineImpl os =
-            (ObjectStoreInterMineImpl) servletContext.getAttribute(Constants.OBJECTSTORE);
-
+        os = (ObjectStoreInterMineImpl) servletContext.getAttribute(Constants.OBJECTSTORE);
         String bagName = request.getParameter("bagName");
         Map<String, InterMineBag> allBags =
             WebUtil.getAllBags(profile.getSavedBags(), servletContext);
-        InterMineBag bag = allBags.get(bagName);
-
-        Query q = new Query();
-        q.setDistinct(false);
+        bag = allBags.get(bagName);
+        organisms = BioUtil.getOrganisms(os, bag);
+        
+        annotatedSampleQuery = getQuery(false, true);
+        annotatedPopulationQuery = getQuery(false, false);
+       
+    }
+    
+    /**
+     * {@inheritDoc}
+     */    
+    public Query getQuery(boolean calcTotal, boolean useBag) {
         QueryClass qcProtein = new QueryClass(Protein.class);
         QueryClass qcOrganism = new QueryClass(Organism.class);
         QueryClass qcOntology = new QueryClass(Ontology.class);
@@ -87,51 +94,27 @@ public class UniProtKeywordsLdr implements EnrichmentWidgetLdr
 
         QueryFunction protCount = new QueryFunction();
 
-        q.addFrom(qcProtein);
-        q.addFrom(qcOrganism);
-        q.addFrom(qcOntology);
-        q.addFrom(qcOntoTerm);
+        ConstraintSet cs = new ConstraintSet(ConstraintOp.AND);
 
-        q.addToSelect(qfName);
-        q.addToSelect(protCount);
-        q.addToSelect(qfName);
+        if (useBag) {
+            cs.addConstraint(new BagConstraint(qfProtId, ConstraintOp.IN, bag.getOsb()));
+        }
 
-        ConstraintSet cs1 = new ConstraintSet(ConstraintOp.AND);
+        cs.addConstraint(new BagConstraint(qfOrganismName, ConstraintOp.IN, organisms));
 
-        BagConstraint bc1 = new BagConstraint(qfProtId, ConstraintOp.IN, bag.getOsb());
-        cs1.addConstraint(bc1);
+        QueryObjectReference qor1 = new QueryObjectReference(qcProtein, "organism");
+        cs.addConstraint(new ContainsConstraint(qor1, ConstraintOp.CONTAINS, qcOrganism));
 
-        organisms = BioUtil.getOrganisms(os, bag);
+        QueryCollectionReference qcr = new QueryCollectionReference(qcProtein, "keywords");
+        cs.addConstraint(new ContainsConstraint(qcr, ConstraintOp.CONTAINS, qcOntoTerm));
 
-        BagConstraint bc2 = new BagConstraint(qfOrganismName, ConstraintOp.IN, organisms);
-        cs1.addConstraint(bc2);
+        QueryObjectReference qor2 = new QueryObjectReference(qcOntoTerm, "ontology");
+        cs.addConstraint(new ContainsConstraint(qor2, ConstraintOp.CONTAINS, qcOntology));
 
-        QueryObjectReference qr1 = new QueryObjectReference(qcProtein, "organism");
-        ContainsConstraint cc1
-        = new ContainsConstraint(qr1, ConstraintOp.CONTAINS, qcOrganism);
-        cs1.addConstraint(cc1);
+        cs.addConstraint(new SimpleConstraint(qfOnto, ConstraintOp.MATCHES, 
+                                               new QueryValue("UniProtKeyword")));
 
-        QueryCollectionReference qr2 = new QueryCollectionReference(qcProtein, "keywords");
-        ContainsConstraint cc2 =
-            new ContainsConstraint(qr2, ConstraintOp.CONTAINS, qcOntoTerm);
-        cs1.addConstraint(cc2);
-
-        QueryObjectReference qr3 = new QueryObjectReference(qcOntoTerm, "ontology");
-        ContainsConstraint cc3 =
-            new ContainsConstraint(qr3, ConstraintOp.CONTAINS, qcOntology);
-        cs1.addConstraint(cc3);
-
-        SimpleConstraint sc = new
-        SimpleConstraint(qfOnto, ConstraintOp.MATCHES, new QueryValue("UniProtKeyword"));
-        cs1.addConstraint(sc);
-
-        q.setConstraint(cs1);
-        q.addToGroupBy(qfName);
-
-        sampleQuery = q;
-
-        // construct population query
-        q = new Query();
+        Query q = new Query();
         q.setDistinct(false);
 
         q.addFrom(qcProtein);
@@ -139,48 +122,41 @@ public class UniProtKeywordsLdr implements EnrichmentWidgetLdr
         q.addFrom(qcOntology);
         q.addFrom(qcOntoTerm);
 
-        q.addToSelect(qfName);
-        q.addToSelect(protCount);
-
-        ConstraintSet cs2 = new ConstraintSet(ConstraintOp.AND);
-        cs2.addConstraint(cc1);
-        cs2.addConstraint(cc2);
-        cs2.addConstraint(cc3);
-        cs2.addConstraint(bc2);
-        cs2.addConstraint(sc);
-        q.setConstraint(cs2);
-        q.addToGroupBy(qfName);
-        populationQuery = q;
+        if (!calcTotal) {
+            q.addToSelect(qfName);
+        }
+        q.addToSelect(protCount);        
+        q.setConstraint(cs);
+        if (!calcTotal) {            
+            if (useBag) {
+                q.addToSelect(qfName);
+            } 
+            q.addToGroupBy(qfName);
+        }
+        return q;
     }
 
     /**
      * {@inheritDoc}
      */
-    public Query getSample() {
-        return sampleQuery;
+    public Query getAnnotatedSample() {
+        return annotatedSampleQuery;
     }
 
     /**
      * {@inheritDoc}
      */
-    public Query getPopulation() {
-        return populationQuery;
+    public Query getAnnotatedPopulation() {
+        return annotatedPopulationQuery;
     }
 
     /**
      * {@inheritDoc}
      */
-    public Collection<String> getReferencePopulation() {
+    public Collection<String> getPopulationDescr() {
         return organisms;
     }
-
-    /**
-     * {@inheritDoc}
-     */
-    public int getTotal(ObjectStore os) {
-        return BioUtil.getTotal(os, organisms, "Protein");
-    }
-
+    
     /**
      * {@inheritDoc}
      */

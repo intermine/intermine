@@ -19,10 +19,8 @@ import java.util.Map;
 import org.intermine.objectstore.query.BagConstraint;
 import org.intermine.objectstore.query.ConstraintOp;
 import org.intermine.objectstore.query.ConstraintSet;
-import org.intermine.objectstore.query.ContainsConstraint;
 import org.intermine.objectstore.query.Query;
 import org.intermine.objectstore.query.QueryClass;
-import org.intermine.objectstore.query.QueryCollectionReference;
 import org.intermine.objectstore.query.QueryField;
 import org.intermine.objectstore.query.Results;
 import org.intermine.objectstore.query.ResultsRow;
@@ -32,7 +30,6 @@ import org.intermine.web.logic.bag.InterMineBag;
 import org.intermine.web.logic.widget.DataSetLdr;
 import org.intermine.web.logic.widget.GraphDataSet;
 
-import org.flymine.model.genomic.FlyAtlasResult;
 import org.flymine.model.genomic.Gene;
 import org.flymine.model.genomic.MicroArrayAssay;
 
@@ -58,18 +55,15 @@ public class FlyAtlasDataSetLdr implements DataSetLdr
         super();
         DefaultCategoryDataset dataSet = new DefaultCategoryDataset();
 
-        Query q = new Query();
-        QueryClass far = new QueryClass(FlyAtlasResult.class);
+        Query q = new Query();     
         QueryClass maa = new QueryClass(MicroArrayAssay.class);
         QueryClass gene = new QueryClass(Gene.class);
-        q.addFrom(far);
         q.addFrom(maa);
         q.addFrom(gene);
 
         QueryField tissueName = new QueryField(maa, "name");
 
-        // q.addToSelect(new QueryField(far,"enrichment"));
-        q.addToSelect(new QueryField(far, "affyCall"));
+
         q.addToSelect(tissueName);
         q.addToSelect(new QueryField(gene, "primaryAccession"));
 
@@ -79,13 +73,7 @@ public class FlyAtlasDataSetLdr implements DataSetLdr
         BagConstraint bagC = new BagConstraint(qf, ConstraintOp.IN, bag.getOsb());
         cs.addConstraint(bagC);
 
-        QueryCollectionReference r = new QueryCollectionReference(far, "genes");
-        ContainsConstraint cc = new ContainsConstraint(r, ConstraintOp.CONTAINS, gene);
-        QueryCollectionReference r2 = new QueryCollectionReference(far, "assays");
-        ContainsConstraint cc2 = new ContainsConstraint(r2, ConstraintOp.CONTAINS, maa);
 
-        cs.addConstraint(cc);
-        cs.addConstraint(cc2);
         q.setConstraint(cs);
         q.addToOrderBy(tissueName);
 

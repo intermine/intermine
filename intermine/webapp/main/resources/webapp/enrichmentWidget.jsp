@@ -27,6 +27,14 @@ Reference population: <c:out value='${referencePopulation}'/>.
 
 	<html:form action="/enrichmentWidget">
 	<table>
+	 <tr>
+        <td>Reference Population:</td>
+        <td><html:select property="refBagName">
+                <html:option value="default">default</html:option>                
+            </html:select>
+        </td>
+    </tr>
+	
 	<tr>
 		<td>Multiple Hypothesis Test Correction</td>
 		<td><html:select property="errorCorrection">
@@ -122,9 +130,7 @@ Reference population: <c:out value='${referencePopulation}'/>.
                           <html:multibox property="selected"
                                          styleId="selected_${results.key}">
                             <c:out value="${results.key}"/>
-                          </html:multibox> 					
-    					
-    					
+                          </html:multibox> 		
     				</td>
   					<td align="left">
   							<c:choose>
