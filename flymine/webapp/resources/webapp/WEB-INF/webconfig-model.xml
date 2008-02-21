@@ -229,7 +229,9 @@
                                  descr="Publications enriched for genes in this list."
                                  filters=""
                                  filterLabel=""
-                                 max="0.10"  />
+                                 max="0.10"
+                                 externalLink="http://www.ncbi.nlm.nih.gov/entrez/query.fcgi?cmd=Retrieve&amp;db=PubMed&amp;dopt=Abstract&amp;list_uids="
+                                 append="" />
 
 <!-- remove until we can fix the query
            <enrichmentwidgetdisplayer title="Tiffin Motif Enrichment"
