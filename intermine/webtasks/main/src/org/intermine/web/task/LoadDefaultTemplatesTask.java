@@ -183,6 +183,8 @@ public class LoadDefaultTemplatesTask extends Task
                     osw.close();
                 }
             } catch (ObjectStoreException e) {
+                // not much we can do here
+                LOG.error("exception while closing object store writer", e);
             }
         }
     }

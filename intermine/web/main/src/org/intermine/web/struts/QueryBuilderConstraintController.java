@@ -59,6 +59,7 @@ public class QueryBuilderConstraintController extends TilesAction
     /**
      * {@inheritDoc}
      */
+    @Override
     public ActionForward execute(@SuppressWarnings("unused") ComponentContext context,
                                  @SuppressWarnings("unused") ActionMapping mapping,
                                  @SuppressWarnings("unused") ActionForm form,
@@ -91,8 +92,7 @@ public class QueryBuilderConstraintController extends TilesAction
 
             request.setAttribute("displayConstraint", new DisplayConstraint(node, model, oss,
                         null, classKeys));
-            if (node.getPathString().indexOf(".") != -1 && node.isAttribute()) {
-            } else {
+            if (!(node.getPathString().indexOf(".") != -1 && node.isAttribute())) {
                 // loop query arguments
                 ArrayList paths = new ArrayList();
                 Iterator iter = query.getNodes().values().iterator();
