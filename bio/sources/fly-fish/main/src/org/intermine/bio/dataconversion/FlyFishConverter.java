@@ -40,7 +40,7 @@ public class FlyFishConverter extends FileConverter
     private Map<String, Item> termItems = new HashMap<String, Item>();
 
     Item orgDrosophila;
-    //private Item dataSet;
+    private Item dataSet;
     private Item pub;
 
     /**
@@ -57,10 +57,11 @@ public class FlyFishConverter extends FileConverter
         orgDrosophila.addAttribute(new Attribute("taxonId", "7227"));
         store(orgDrosophila);
 
-        // TODO these need to be re-added
-//        dataSet = createItem("DataSet");
-//        dataSet.addAttribute(new Attribute("title", "Fly-FISH"));
-//        store(dataSet);
+        // TODO assign dataset to MRNAExpressionResult
+        dataSet = createItem("DataSet");
+        String datasetTitle = "FlyFish database of Drosophila embryo mRNA localization patterns";
+        dataSet.addAttribute(new Attribute("title", datasetTitle));
+        store(dataSet);
 
         pub = createItem("Publication");
         pub.addAttribute(new Attribute("pubMedId", "17923096"));
