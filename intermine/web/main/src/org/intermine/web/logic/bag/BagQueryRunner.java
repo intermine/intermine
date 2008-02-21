@@ -21,22 +21,28 @@ import java.util.Set;
 import java.util.Map.Entry;
 import java.util.regex.Pattern;
 
-import org.apache.log4j.Logger;
-import org.intermine.objectstore.intermine.ObjectStoreInterMineImpl;
-import org.intermine.objectstore.query.Query;
-import org.intermine.objectstore.query.Results;
-import org.intermine.objectstore.query.ResultsRow;
+import javax.servlet.ServletContext;
 
 import org.intermine.InterMineException;
 import org.intermine.metadata.Model;
 import org.intermine.model.InterMineObject;
+import org.intermine.model.userprofile.Tag;
 import org.intermine.objectstore.ObjectStore;
 import org.intermine.objectstore.ObjectStoreException;
+import org.intermine.objectstore.intermine.ObjectStoreInterMineImpl;
+import org.intermine.objectstore.query.Query;
+import org.intermine.objectstore.query.Results;
+import org.intermine.objectstore.query.ResultsRow;
 import org.intermine.util.CollectionUtil;
 import org.intermine.util.DynamicUtil;
 import org.intermine.util.TypeUtil;
-
-import javax.servlet.ServletContext;
+import org.intermine.web.logic.Constants;
+import org.intermine.web.logic.profile.Profile;
+import org.intermine.web.logic.profile.ProfileManager;
+import org.intermine.web.logic.session.SessionMethods;
+import org.intermine.web.logic.tagging.TagNames;
+import org.intermine.web.logic.tagging.TagTypes;
+import org.intermine.web.logic.template.TemplateQuery;
 
 /**
  * For a given list of input strings search for objects using default and configured queries for a
@@ -46,7 +52,7 @@ import javax.servlet.ServletContext;
  */
 public class BagQueryRunner
 {
-    private static final Logger LOG = Logger.getLogger(BagQueryRunner.class);
+    //private static final Logger LOG = Logger.getLogger(BagQueryRunner.class);
     private ObjectStoreInterMineImpl os;
 
     private Model model;
@@ -365,7 +371,9 @@ public class BagQueryRunner
                 }
 
                 // try to convert objects to target type
-                Map convertedObjsMap = TypeConverter.getConvertMap(context, fromClass, type, objs);
+                Map convertedObjsMap = TypeConverter.getConvertedObjectMap(context,
+                                           getConversionTemplates(context),
+                                           fromClass, type, objs);
                 if (convertedObjsMap == null) {
                     // no conversion found
                     continue;
@@ -424,5 +432,30 @@ public class BagQueryRunner
             queries.addAll(bqs);
         }
         return queries;
+    }
+    
+    /**
+     * Find template queries that are tagged for use as converters.
+     * @param servletContext use to fetch ProfileManager and superuser account
+     * @return a list of conversion templates
+     */
+    public static List<TemplateQuery> getConversionTemplates(ServletContext servletContext) {
+        String sup = (String) servletContext.getAttribute(Constants.SUPERUSER_ACCOUNT);
+        ProfileManager pm = SessionMethods.getProfileManager(servletContext);
+        Profile p = pm.getProfile(sup);
+
+        List<TemplateQuery> conversionTemplates = new ArrayList();
+        List tags = pm.getTags(TagNames.IM_CONVERTER, null, TagTypes.TEMPLATE, sup);
+
+        Iterator iter = tags.iterator();
+        while (iter.hasNext()) {
+            Tag tag = (Tag) iter.next();
+            String oid = tag.getObjectIdentifier();
+            TemplateQuery tq = p.getSavedTemplates().get(oid);
+            if (tq != null) {
+                conversionTemplates.add(tq);
+            }
+        }
+        return conversionTemplates;
     }
 }
