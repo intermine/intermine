@@ -75,8 +75,8 @@ public class ProteinDomainURLQuery implements WidgetURLQuery
         if (bagType.equalsIgnoreCase("gene")) {
             
             secondaryIdentifier = MainHelper.makePath(model, q, "Gene.secondaryIdentifier");
-            domainIdentifier =  MainHelper.makePath(model, q, 
-                                                    "Gene.proteins.proteinDomains.identifier");
+            domainIdentifier 
+            =  MainHelper.makePath(model, q, "Gene.proteins.proteinDomains.primaryIdentifier");
             domainName =  MainHelper.makePath(model, q, "Gene.proteins.proteinDomains.name");
             
             constraintOp = ConstraintOp.LOOKUP;
@@ -89,7 +89,8 @@ public class ProteinDomainURLQuery implements WidgetURLQuery
         } else if (bagType.equalsIgnoreCase("protein")) {
 
             secondaryIdentifier = MainHelper.makePath(model, q, "Protein.primaryAccession");
-            domainIdentifier =  MainHelper.makePath(model, q, "Protein.proteinDomains.identifier");
+            domainIdentifier 
+            =  MainHelper.makePath(model, q, "Protein.proteinDomains.primaryIdentifier");
             domainName =  MainHelper.makePath(model, q, "Protein.proteinDomains.name");
             
             constraintOp = ConstraintOp.LOOKUP;
