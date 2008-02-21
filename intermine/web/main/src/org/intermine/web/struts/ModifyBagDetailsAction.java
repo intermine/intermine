@@ -39,6 +39,7 @@ import org.intermine.web.logic.Constants;
 import org.intermine.web.logic.bag.BagConverter;
 import org.intermine.web.logic.bag.BagHelper;
 import org.intermine.web.logic.bag.BagQueryConfig;
+import org.intermine.web.logic.bag.BagQueryRunner;
 import org.intermine.web.logic.bag.InterMineBag;
 import org.intermine.web.logic.bag.TypeConverter;
 import org.intermine.web.logic.config.WebConfig;
@@ -162,6 +163,7 @@ public class ModifyBagDetailsAction extends InterMineAction
                 request.getParameter("bagName"));
             Model model = os.getModel();
             SingletonResults res = TypeConverter.getConvertedObjects(servletContext,
+                BagQueryRunner.getConversionTemplates(servletContext),
                 TypeUtil.instantiate(model.getPackageName() + "." + imBag.getType()),
                 TypeUtil.instantiate(model.getPackageName() + "." + type2),
                 imBag);

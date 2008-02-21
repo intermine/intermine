@@ -21,7 +21,6 @@ import javax.servlet.ServletContext;
 
 import org.intermine.InterMineException;
 import org.intermine.model.InterMineObject;
-import org.intermine.model.userprofile.Tag;
 import org.intermine.objectstore.ObjectStore;
 import org.intermine.objectstore.ObjectStoreException;
 import org.intermine.objectstore.query.ConstraintOp;
@@ -30,15 +29,10 @@ import org.intermine.objectstore.query.Results;
 import org.intermine.objectstore.query.SingletonResults;
 import org.intermine.path.Path;
 import org.intermine.web.logic.Constants;
-import org.intermine.web.logic.profile.Profile;
-import org.intermine.web.logic.profile.ProfileManager;
 import org.intermine.web.logic.query.Constraint;
 import org.intermine.web.logic.query.MainHelper;
 import org.intermine.web.logic.query.PathNode;
 import org.intermine.web.logic.query.PathQuery;
-import org.intermine.web.logic.session.SessionMethods;
-import org.intermine.web.logic.tagging.TagNames;
-import org.intermine.web.logic.tagging.TagTypes;
 import org.intermine.web.logic.template.TemplateQuery;
 
 /**
@@ -53,6 +47,7 @@ public class TypeConverter
      * returns a map from an original object to the converted object(s).
      *
      * @param servletContext the ServletContext
+     * @param conversionTemplates a list of templates to be used for conversion
      * @param typeA the type to convert from
      * @param typeB the type to convert to
      * @param bag an InterMineBag or Collection of objects of type typeA
@@ -61,9 +56,10 @@ public class TypeConverter
      * @throws InterMineException if an error occurs
      */
     public static Map<InterMineObject, List<InterMineObject>>
-    getConvertMap(ServletContext servletContext, Class typeA, Class typeB, Object bag)
+    getConvertedObjectMap(ServletContext servletContext, List<TemplateQuery> conversionTemplates,
+                          Class typeA, Class typeB, Object bag)
     throws InterMineException {
-        PathQuery pq = getConversionMapQuery(servletContext, typeA, typeB, bag);
+        PathQuery pq = getConversionMapQuery(conversionTemplates, typeA, typeB, bag);
         if (pq == null) {
             return null;
         }
@@ -98,34 +94,19 @@ public class TypeConverter
     }
 
     /**
-     * Return a TemplateQuery that will convert objects from one type to another. The TemplateQuery
-     * must be tagged with "converter", and must have an editable constraint that will take an
-     * object of type A, and have two columns as the output, of type A and type B. The template
-     * converts from type A to type B.
-     *
-     * @param servletContext the ServletContext
-     * @param typeA the type to convert from
-     * @param typeB the type to convert to
-     * @return a TemplateQuery, or null if one cannot be found
-     */
-    public static TemplateQuery getConversionTemplate(ServletContext servletContext, Class typeA,
-                                                      Class typeB) {
-        return getConversionTemplates(servletContext, typeA).get(typeB);
-    }
-
-    /**
      * Get conversion query for the types provided, edited so that the first
      * type is constrainted to be in the bag.
      *
-     * @param servletContext the ServletContext
+     * @param conversionTemplates a list of templates to be used for conversion
      * @param typeA the type to convert from
      * @param typeB the type to convert to
      * @param bag an InterMineBag or Collection of objects of type typeA
      * @return a PathQuery that finds a conversion mapping for the given bag
      */
-    public static PathQuery getConversionMapQuery(ServletContext servletContext,
+    public static PathQuery getConversionMapQuery(List<TemplateQuery> conversionTemplates,
                                                 Class typeA, Class typeB, Object bag) {
-        TemplateQuery tq = getConversionTemplate(servletContext, typeA, typeB);
+        
+        TemplateQuery tq = getConversionTemplates(conversionTemplates, typeA).get(typeB);
         if (tq == null) {
             return null;
         }
@@ -148,6 +129,7 @@ public class TypeConverter
      * returns the converted objects.
      *
      * @param servletContext the ServletContext
+     * @param conversionTemplates a list of templates to be used for conversion
      * @param typeA the type to convert from
      * @param typeB the type to convert to
      * @param bag an InterMineBag or Collection of objects of type typeA
@@ -155,9 +137,10 @@ public class TypeConverter
      * @throws InterMineException if an error occurs
      */
     public static SingletonResults getConvertedObjects(ServletContext servletContext,
+                                              List<TemplateQuery> conversionTemplates,
                                               Class typeA, Class typeB, Object bag)
     throws InterMineException {
-        PathQuery pq = getConvertedObjectsQuery(servletContext, typeA, typeB, bag);
+        PathQuery pq = getConversionQuery(conversionTemplates, typeA, typeB, bag);
         if (pq == null) {
             return null;
         }
@@ -181,19 +164,19 @@ public class TypeConverter
 
 
     /**
-     * Get conversion query from the types provided, edited so that the first
-     * type is constrainted to be in the bag and the first type is removed form the
+     * Get conversion query for the types provided, edited so that the first
+     * type is constrainted to be in the bag and the first type is removed from the
      * view list so that the query only returns the converted type.
      *
-     * @param servletContext the ServletContext
+     * @param conversionTemplates a list of templates to be used for conversion
      * @param typeA the type to convert from
      * @param typeB the type to convert to
      * @param bag an InterMineBag or Collection of objects of type typeA
      * @return a PathQuery that finds converted objects for the given bag
      */
-    public static PathQuery getConvertedObjectsQuery (ServletContext servletContext,
+    public static PathQuery getConversionQuery(List<TemplateQuery> conversionTemplates,
                                                 Class typeA, Class typeB, Object bag) {
-        PathQuery pq = getConversionMapQuery(servletContext, typeA, typeB, bag);
+        PathQuery pq = getConversionMapQuery(conversionTemplates, typeA, typeB, bag);
         if (pq == null) {
             return null;
         }
@@ -210,47 +193,36 @@ public class TypeConverter
     /**
      * Return a Map from typeB to a TemplateQuery that will convert from typeA to typeB.
      *
-     * @param servletContext the ServletContext
+     * @param conversionTemplates a list of templates to be used for conversion
      * @param typeA the type to convert from
      * @return a Map from Class to TemplateQuery
      */
-    public static Map<Class, TemplateQuery> getConversionTemplates(ServletContext servletContext,
-                                                                  Class typeA) {
-        String sup = (String) servletContext.getAttribute(Constants.SUPERUSER_ACCOUNT);
-        ProfileManager pm = SessionMethods.getProfileManager(servletContext);
-        Profile p = pm.getProfile(sup);
-
-        List tags = pm.getTags(TagNames.IM_CONVERTER, null, TagTypes.TEMPLATE, sup);
-        Map<Class, TemplateQuery> retval = new HashMap<Class, TemplateQuery>();
-        Iterator iter = tags.iterator();
-        while (iter.hasNext()) {
-            Tag tag = (Tag) iter.next();
-            String oid = tag.getObjectIdentifier();
-            TemplateQuery tq = p.getSavedTemplates().get(oid);
-            if (tq != null) {
-                // Find conversion types
-                List<Path> view = tq.getView();
-                if (view.size() == 2) {
-                    // Correct number of SELECT list items
-                    Path select1 = view.get(0);
-                    Class tqTypeA = select1.getLastClassDescriptor().getType();
-                    if (tqTypeA.isAssignableFrom(typeA)) {
-                        // Correct typeA in SELECT list. Now check for editable constraint.
-                        if ((tq.getEditableConstraints(select1.toStringNoConstraints()).size() == 1)
-                                && (tq.getAllEditableConstraints().size() == 1)) {
-                            // Editable constraint is okay.
-                            Class typeB = view.get(1).getLastClassDescriptor().getType();
-                            TemplateQuery prevTq = retval.get(typeB);
-                            if (prevTq != null) {
-                                Class prevTypeA = prevTq.getView().get(0)
-                                    .getLastClassDescriptor().getType();
-                                if (prevTypeA.isAssignableFrom(tqTypeA)) {
-                                    // This tq is more specific
-                                    retval.put(typeB, tq);
-                                }
-                            } else {
+    public static Map<Class, TemplateQuery> getConversionTemplates(
+        List<TemplateQuery> conversionTemplates, Class typeA) {
+        Map<Class, TemplateQuery> retval = new HashMap();
+        for (TemplateQuery tq : conversionTemplates) {
+            // Find conversion types
+            List<Path> view = tq.getView();
+            if (view.size() == 2) {
+                // Correct number of SELECT list items
+                Path select1 = view.get(0);
+                Class tqTypeA = select1.getLastClassDescriptor().getType();
+                if (tqTypeA.isAssignableFrom(typeA)) {
+                    // Correct typeA in SELECT list. Now check for editable constraint.
+                    if ((tq.getEditableConstraints(select1.toStringNoConstraints()).size() == 1)
+                                    && (tq.getAllEditableConstraints().size() == 1)) {
+                        // Editable constraint is okay.
+                        Class typeB = view.get(1).getLastClassDescriptor().getType();
+                        TemplateQuery prevTq = retval.get(typeB);
+                        if (prevTq != null) {
+                            Class prevTypeA = prevTq.getView().get(0)
+                            .getLastClassDescriptor().getType();
+                            if (prevTypeA.isAssignableFrom(tqTypeA)) {
+                                // This tq is more specific
                                 retval.put(typeB, tq);
                             }
+                        } else {
+                            retval.put(typeB, tq);
                         }
                     }
                 }

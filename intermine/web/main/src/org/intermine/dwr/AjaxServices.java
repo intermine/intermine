@@ -48,6 +48,7 @@ import org.intermine.web.logic.Constants;
 import org.intermine.web.logic.WebUtil;
 import org.intermine.web.logic.bag.BagHelper;
 import org.intermine.web.logic.bag.BagQueryConfig;
+import org.intermine.web.logic.bag.BagQueryRunner;
 import org.intermine.web.logic.bag.InterMineBag;
 import org.intermine.web.logic.bag.TypeConverter;
 import org.intermine.web.logic.profile.Profile;
@@ -539,7 +540,8 @@ public class AjaxServices
             Map<String, InterMineBag> bagMap = new HashMap<String, InterMineBag>();
             bagMap.put(imBag.getName(), imBag);
 
-            PathQuery pathQuery = TypeConverter.getConvertedObjectsQuery(servletContext,
+            PathQuery pathQuery = TypeConverter.getConversionQuery(BagQueryRunner.
+                getConversionTemplates(servletContext),
                 TypeUtil.instantiate(pckName + "." + imBag.getType()),
                 TypeUtil.instantiate(pckName + "." + type), imBag);
             Query query = MainHelper.makeQuery(pathQuery, bagMap, pathToQueryNode,
