@@ -15,6 +15,7 @@ import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import org.intermine.dataconversion.DataConverter;
 import org.intermine.dataconversion.FileConverter;
 import org.intermine.dataconversion.ItemWriter;
 import org.intermine.metadata.Model;
@@ -73,34 +74,35 @@ public class TiffinExpressionConverter extends FileConverter
         BufferedReader br = new BufferedReader(reader);
         Item currentMotif = null;
         String line = null;
-
+        Map<String, Item> motifs = new HashMap<String, Item>();
+        
         while ((line = br.readLine()) != null) {
             Matcher motifNameMatcher = MOTIF_NAME_PATTERN.matcher(line);
             if (motifNameMatcher.matches()) {
                 String currentMotifIdentifier = motifNameMatcher.group(1);
                 currentMotif = createItem("Motif");
                 currentMotif.setAttribute("primaryIdentifier", currentMotifIdentifier);
-                store(currentMotif);
+                //store(currentMotif);
+                motifs.put(currentMotifIdentifier, currentMotif);
             } else {
                 Matcher expressionMatcher = EXPRESSION_PATTERN.matcher(line);
                 if (expressionMatcher.matches()) {
                     String expressionDescription = expressionMatcher.group(1);
                     Item expressionItem = getExpressionTerm(expressionDescription);
-                    expressionItem.addToCollection("motifs", currentMotif);
+                    currentMotif.addToCollection("expressionTerms", expressionItem);
+                    //expressionItem.addToCollection("motifs", currentMotif);
                 } else {
                     if (line.trim().length() > 0) {
                         throw new RuntimeException("failed to parse this line: " + line);
                     }
                 }
             }
-        }
-
-        for (Item term: termItems.values()) {
-            store(term);
-        }
+        }        
+        storeAll(termItems);
+        storeAll(motifs);
     }
 
-    private Item getExpressionTerm(String expressionDescription) throws ObjectStoreException {
+    private Item getExpressionTerm(String expressionDescription) {
         if (termItems.containsKey(expressionDescription)) {
             return termItems.get(expressionDescription);
         } else {
@@ -110,5 +112,12 @@ public class TiffinExpressionConverter extends FileConverter
             return expressionTermItem;
         }
     }
+    
+    private void storeAll(Map<String, Item> map) throws Exception {
+        for (Item item: map.values()) {
+            store(item);
+        }
+    }
+    
 }
 
