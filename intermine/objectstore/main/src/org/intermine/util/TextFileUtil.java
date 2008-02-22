@@ -250,7 +250,8 @@ public abstract class TextFileUtil
      * @return an Iterator over the lines of the Reader
      * @throws IOException if there is an error while reading from the Reader
      */
-    public static Iterator parseCsvDelimitedReader(final Reader reader) throws IOException {
+    public static Iterator<String[]> parseCsvDelimitedReader(final Reader reader) 
+    throws IOException {
         return parseDelimitedReader(reader, true, ",");
     }
     
