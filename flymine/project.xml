@@ -1,4 +1,4 @@
-<project type="bio">
+ <project type="bio">
   <property name="target.model" value="genomic"/>
   <property name="common.os.prefix" value="common"/>
   <property name="intermine.properties.file" value="flymine.properties"/>
@@ -51,7 +51,7 @@
     <source name="bdgp-clone" type="bdgp-clone">
       <property name="src.data.dir" location="/shared/data/bdgp_clones"/>
       <property name="src.data.dir.includes" value="dgc2flybase.txt"/>
-    </source>
+    </source>  
     <source name="long_oligo" type="long_oligo">
       <property name="gff3.taxonId" value="7227"/>
       <property name="gff3.seqClsName" value="MRNA"/>
@@ -94,11 +94,9 @@
     <source name="kegg-pathway" type="kegg-pathway">
       <property name="src.data.dir" location="/shared/data/kegg/current"/>
     </source>
-<!--
     <source name="flyatlas" type="flyatlas">
       <property name="src.data.dir" location="/shared/data/flyatlas/current"/>
     </source>
--->
     <source name="affy-probes" type="affy-probes">
       <property name="src.data.dir" location="/shared/data/affy-probes/current"/>
     </source>
@@ -136,13 +134,13 @@
     <source name="go" type="go" dump="true">
       <property name="src.data.file" location="/shared/data/go-annotation/gene_ontology.obo"/>
     </source>
-<!--
+
     <source name="go-annotation" type="go-annotation">
       <property name="ontologyfile" location="/shared/data/go-annotation/gene_ontology.obo"/>
       <property name="src.data.dir" location="/shared/data/go-annotation/current"/>
       <property name="src.data.dir.includes" value="*/gene_association*"/>
     </source>
--->
+
     <source name="geneid-translationid" type="intermine-items-large-xml-file">
       <property name="src.data.file" location="/shared/data/orthologues/inparanoid/geneid2peptideid/current/geneId2peptideId_with_primaryIdentifier.xml"/>
     </source>
@@ -214,6 +212,10 @@
       <property name="gff3.seqClsName" value="Chromosome"/>
       <property name="gff3.seqDataSourceName" value="FlyBase"/>
       <property name="src.data.dir" location="/shared/data/REDfly/current/crm/"/>
+    </source>
+    <source name="bdgp-insitu" type="bdgp-insitu">
+      <property name="src.data.dir" location="/shared/data/bdgp_insitu/current"/>
+      <property name="src.data.dir.includes" value="*annot.csv"/>
     </source>
     <source name="fly-anatomy-ontology" type="fly-anatomy-ontology">
       <property name="src.data.file" location="/shared/data/ontologies/fly_anatomy/current/fly_anatomy.obo"/>
