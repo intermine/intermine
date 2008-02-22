@@ -336,10 +336,11 @@ public class TransferSequences
                 sequence.setResidues(featureSeq);
                 sequence.setLength(featureSeq.length());
                 osw.store(sequence);
-                feature.proxySequence(new ProxyReference(osw.getObjectStore(),
-                                                         sequence.getId(), Sequence.class));
-                feature.setLength(new Integer(featureSeq.length()));
-                osw.store(feature);
+                LocatedSequenceFeature cloneLsf =
+                    (LocatedSequenceFeature) PostProcessUtil.cloneInterMineObject(feature);
+                cloneLsf.setSequence(sequence);
+                cloneLsf.setLength(new Integer(featureSeq.length()));
+                osw.store(cloneLsf);
                 i++;
                 if (i % 1000 == 0) {
                     long now = System.currentTimeMillis();
