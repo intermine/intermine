@@ -127,7 +127,19 @@ public class DynamicBean implements MethodInterceptor
         if (method.getName().startsWith("get") && (args.length == 0)) {
             Object retval = map.get(method.getName().substring(3));
             if (retval instanceof ProxyReference) {
-                retval = ((ProxyReference) retval).getObject();
+                try {
+                    retval = ((ProxyReference) retval).getObject();
+                } catch (NullPointerException e) {
+                    NullPointerException e2 = new NullPointerException("Exception while calling "
+                            + method.getName() + " on object with ID " + map.get("Id"));
+                    e2.initCause(e);
+                    throw e2;
+                } catch (Exception e) {
+                    RuntimeException e2 = new RuntimeException("Exception while calling "
+                            + method.getName() + " on object with ID " + map.get("Id"));
+                    e2.initCause(e);
+                    throw e2;
+                }
             }
             if ((retval == null) && Collection.class.isAssignableFrom(method.getReturnType())) {
                 retval = new HashSet();

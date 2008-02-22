@@ -260,7 +260,7 @@ public class TransferSequences
         indexesToCreate.add(qcLoc);
         indexesToCreate.add(qcSub);
         ((ObjectStoreInterMineImpl) os).precompute(q, indexesToCreate,
-                                                   PostProcessOperationsTask.PRECOMPUTE_CATEGORY);
+            PostProcessOperationsTask.PRECOMPUTE_CATEGORY);
         Results results = os.execute(q);
 
         results.setBatchSize(1000);
@@ -276,73 +276,81 @@ public class TransferSequences
             LocatedSequenceFeature feature = (LocatedSequenceFeature) rr.get(1);
             Location locationOnChr = (Location) rr.get(2);
 
-            if (feature instanceof Assembly) {
-                LOG.warn("in transferToLocatedSequenceFeatures() ignoring: "
-                          + feature);
-                continue;
-            }
-
-            if (feature instanceof ChromosomeBand) {
-                LOG.warn("in transferToLocatedSequenceFeatures() ignoring: "
-                          + feature);
-                continue;
-            }
-
-            if (feature instanceof Transcript) {
-                LOG.warn("in transferToLocatedSequenceFeatures() ignoring: "
-                          + feature);
-                continue;
-            }
-
-            if (feature instanceof CDS) {
-                LOG.warn("in transferToLocatedSequenceFeatures() ignoring: "
-                          + feature);
-                continue;
-            }
-
-            if (feature.getSequence() != null) {
-                LOG.warn("in transferToLocatedSequenceFeatures() ignooring: "
-                         + feature + " - already has a sequence");
-            }
-
-            if (feature instanceof Gene) {
-                Gene gene = (Gene) feature;
-                if (gene.getLength() != null && gene.getLength().intValue() > 2000000) {
-                    LOG.error("gene too long in transferToLocatedSequenceFeatures() ignoring: "
-                              + gene);
+            try {
+                if (feature instanceof Assembly) {
+                    LOG.warn("in transferToLocatedSequenceFeatures() ignoring: "
+                              + feature);
                     continue;
                 }
-            }
 
-            Chromosome chr = (Chromosome) os.getObjectById(chrId);
-            Sequence chromosomeSequence = chr.getSequence();
+                if (feature instanceof ChromosomeBand) {
+                    LOG.warn("in transferToLocatedSequenceFeatures() ignoring: "
+                              + feature);
+                    continue;
+                }
 
-            if (chromosomeSequence == null) {
-                LOG.warn("no sequence found for: " + chr.getSecondaryIdentifier() + "  id: " + chr.getId());
-                continue;
-            }
+                if (feature instanceof Transcript) {
+                    LOG.warn("in transferToLocatedSequenceFeatures() ignoring: "
+                              + feature);
+                    continue;
+                }
 
-            String featureSeq = getSubSequence(chromosomeSequence, locationOnChr);
+                if (feature instanceof CDS) {
+                    LOG.warn("in transferToLocatedSequenceFeatures() ignoring: "
+                              + feature);
+                    continue;
+                }
 
-            if (featureSeq == null) {
-                // probably the locationOnChr is out of range
-                continue;
-            }
+                if (feature.getSequence() != null) {
+                    LOG.warn("in transferToLocatedSequenceFeatures() ignoring: "
+                             + feature + " - already has a sequence");
+                }
 
-            Sequence sequence =
-                (Sequence) DynamicUtil.createObject(Collections.singleton(Sequence.class));
-            sequence.setResidues(featureSeq);
-            sequence.setLength(featureSeq.length());
-            osw.store(sequence);
-            feature.proxySequence(new ProxyReference(osw.getObjectStore(),
-                                                     sequence.getId(), Sequence.class));
-            feature.setLength(new Integer(featureSeq.length()));
-            osw.store(feature);
-            i++;
-            if (i % 1000 == 0) {
-                long now = System.currentTimeMillis();
-                LOG.info("Set sequences for " + i + " features"
-                         + " (avg = " + ((60000L * i) / (now - start)) + " per minute)");
+                if (feature instanceof Gene) {
+                    Gene gene = (Gene) feature;
+                    if (gene.getLength() != null && gene.getLength().intValue() > 2000000) {
+                        LOG.error("gene too long in transferToLocatedSequenceFeatures() ignoring: "
+                                  + gene);
+                        continue;
+                    }
+                }
+
+                Chromosome chr = (Chromosome) os.getObjectById(chrId);
+                Sequence chromosomeSequence = chr.getSequence();
+
+                if (chromosomeSequence == null) {
+                    LOG.warn("no sequence found for: " + chr.getSecondaryIdentifier() + "  id: "
+                            + chr.getId());
+                    continue;
+                }
+
+                String featureSeq = getSubSequence(chromosomeSequence, locationOnChr);
+
+                if (featureSeq == null) {
+                    // probably the locationOnChr is out of range
+                    continue;
+                }
+
+                Sequence sequence =
+                    (Sequence) DynamicUtil.createObject(Collections.singleton(Sequence.class));
+                sequence.setResidues(featureSeq);
+                sequence.setLength(featureSeq.length());
+                osw.store(sequence);
+                feature.proxySequence(new ProxyReference(osw.getObjectStore(),
+                                                         sequence.getId(), Sequence.class));
+                feature.setLength(new Integer(featureSeq.length()));
+                osw.store(feature);
+                i++;
+                if (i % 1000 == 0) {
+                    long now = System.currentTimeMillis();
+                    LOG.info("Set sequences for " + i + " features"
+                             + " (avg = " + ((60000L * i) / (now - start)) + " per minute)");
+                }
+            } catch (Exception e) {
+                Exception e2 = new Exception("Exception while processing LocatedSequenceFeature "
+                        + feature);
+                e2.initCause(e);
+                throw e2;
             }
         }
 
