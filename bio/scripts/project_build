@@ -19,12 +19,16 @@ my @ant_command = ("ant");
 my $dump_file_prefix;
 my $dump_host;
 my $project_file = 'project.xml';
+my $pgpass_file = "$ENV{HOME}/.pgpass";
+my $default_port = '5432';
+my $final_dump_name = 'final-dump';
+my $final_marker = 'final';
 
 sub usage
 {
   die <<"EOF";
 usage:
-  $0 [-v] [-l | -r] [-V <version>] [-a <actions>] dump_host dump_file_prefix
+  $0 [-v] [-l | -r] [-t] [-V <version>] [-a <actions>] dump_host dump_prefix
 
 flags:
  -v is passed to ant
@@ -32,19 +36,29 @@ flags:
  -r attempt to restart just after the last dump point _without_ loading a dump
  -n parse files and report actions, but don't execute anything
  -V set the release number to pass to ant (as -Drelease=release_number)
+ -t instead of dumping and reloading, make backup copies of the database in the
+    server using the "CREATE DATABASE foo WITH TEMPLATE bar" command
  -a set the list of actions to perform - the list must be a subset of the
     sources/postprocesses in the project.xml file.
      - The -l and -r operate as usual.
      - To run all steps starting at <some_action> use a dash after the action
        name: -a <some_action>-
-     - To perform only the final dump use: -a final-dump
+     - To perform only the final dump use: -a $final_dump_name
      - To refer to dump step and skip its corresponding action use the action
        name with "-dump" appended
           eg -a fly-fish-dump-
-             -a fly-fish-dump,flymine-static,create-utr-references,final-dump
+             -a fly-fish-dump,flymine-static,create-references,$final_dump_name
+
+dump_host is the host to run pg_dump and pg_restore on
+
+With the -t flag, one dump is made the end of the build with the name
+dump_prefix.final
+
+Without the -t flag, a dump is made after integrating each source in the
+project.xml that has dump="true" set.  A final dump is also made.
 
 example:
-  $0 gollum /tmp/production_dump
+  $0 prod1 /tmp/production_dump
 EOF
 }
 
@@ -56,17 +70,24 @@ if (!-f $project_file) {
 my $verbose = 0;
 my $load_last = 0;
 my $restart = 0;
+
+# if true, don't execute anything just print what will happen
 my $dry_run = 0;
+
+# if true don't dump and reload, instead do backup copies in the server using
+# the "CREATE DATABASE foo WITH TEMPLATE bar" command
+my $server_backup = 0;
 my $release;
 my @required_actions_list = ();
 my $start_action = undef;
 
 my %opts = ();
 
-getopts('vrlna:V:', \%opts);
+getopts('vrltna:V:', \%opts);
 
 if ($opts{v}) {
   $verbose = 1;
+  push @ant_command, '-v';
 }
 
 if ($opts{l}) {
@@ -79,6 +100,10 @@ if ($opts{r}) {
 
 if ($opts{n}) {
   $dry_run = 1;
+}
+
+if ($opts{t}) {
+  $server_backup = 1;
 }
 
 if (exists $opts{a}) {
@@ -120,6 +145,7 @@ if (defined $release) {
   $properties_file .= ".$release";
 }
 
+my @psql_command = 'psql';
 my @dump_command = qw[pg_dump -F c -i];
 my @load_command = qw[pg_restore -1 -i];
 my @dropdb_command = qw[dropdb];
@@ -210,7 +236,7 @@ sub spawn
   my $pass = shift;
   my @spawn_args = @_;
 
-  if ($dump_host eq 'localhost') {
+  if (!defined $dump_host || $dump_host eq 'localhost') {
     $ENV{PAGER} = "/bin/cat";
     @spawn_args = "sh -c '@spawn_args'";
   } else {
@@ -226,13 +252,90 @@ sub spawn
     $exp->spawn("@spawn_args; echo __FINISHED__")
       or die "Cannot spawn @spawn_args: $!\n";
 
-    $exp->expect(10, 'Password: ');
-    $exp->send("$pass\n");
     $exp->expect(9999999,
                  [qr/error/i, sub {die "Error returned by @spawn_args\n"}],
                  "__FINISHED__\n");
     $exp->soft_close();
   }
+}
+
+sub create_prod_db
+{
+  my ($db, $user, $pass, $host, $port, $suffix) = @_;
+
+  my @params = ('-U', $user, '-h', $host, $db);
+
+  log_and_print `date`, "\n";
+  log_and_print "\ncreating database: @createdb_command @params\n";
+
+  eval {
+    # ignore error - it's good if the database doesn't exist
+    spawn($pass, @createdb_command, @params);
+  };
+
+  log_and_print `date`, "\n";
+  log_and_print "\nbuilding db: @ant_command build-db\n";
+
+  my $saved_dir = getcwd;
+    chdir "$saved_dir/dbmodel" or die "can't change directory into: $saved_dir/dbmodel\n";
+
+  run_and_check_status @ant_command, "build-db";
+
+  chdir $saved_dir
+    or die "can't return to previous directory ($saved_dir) after $saved_dir/dbmodel\n";
+}
+
+sub make_server_backup
+{
+  my ($db, $user, $pass, $host, $port, $suffix) = @_;
+
+  my @params = ('-U', $user, '-h', $host, '-T', $db, "$db:$suffix");
+
+  log_and_print `date`, "\n\n";
+  log_and_print "\nmaking backup db: @createdb_command @params\n";
+
+  spawn($pass, @createdb_command, @params);
+
+  log_and_print `date`, "\n\n";
+  log_and_print "finished backup\n\n";
+}
+
+sub server_restore
+{
+  my ($db, $user, $pass, $host, $port, $suffix) = @_;
+
+  my @params = ('-U', $user, '-h', $host);
+
+  if (defined $port) {
+    unshift @params, "-p", $port;
+  }
+
+  log_and_print `date`, "\n\n";
+  log_and_print "\nrunning: @dropdb_command @params $db\n";
+
+  eval {
+    # ignore failures
+    spawn($pass, @dropdb_command, @params, $db);
+  };
+
+  log_and_print `date`, "\n\n";
+  log_and_print "\nrunning: @createdb_command @params -T $db-$suffix $db\n";
+
+  spawn($pass, @createdb_command, @params, '-T', "$db:$suffix", $db);
+
+  log_and_print `date`, "\n\n";
+  log_and_print "finished restore - now analysing\n\n";
+
+  my $saved_dir = getcwd;
+  chdir "$saved_dir/dbmodel" or die "can't change directory into: $saved_dir/dbmodel\n";
+
+  run_and_check_status @ant_command, "analyse-db-production";
+
+  chdir $saved_dir
+    or die "can't return to previous directory ($saved_dir) after $saved_dir/dbmodel\n";
+
+  log_and_print `date`, "\n\n";
+  log_and_print "finished analysing\n\n";
 }
 
 sub dump_db
@@ -244,7 +347,7 @@ sub dump_db
   my $port = shift;
   my $out_file = shift;
 
-  my @params = ('-U', $user, '-h', $host, '-W', '-f', $out_file, $db);
+  my @params = ('-U', $user, '-h', $host, '-f', $out_file, $db);
 
   if (defined $port) {
     unshift @params, "-p", $port;
@@ -278,7 +381,6 @@ sub load_db
 
   log_and_print `date`, "\n\n";
   log_and_print "\nrunning: @dropdb_command @params $db\n";
-  warn "(ignore password prompt)\n";
 
   eval {
     # ignore failures
@@ -287,7 +389,6 @@ sub load_db
 
   log_and_print `date`, "\n\n";
   log_and_print "\nrunning: @createdb_command @params $db\n";
-  warn "(ignore password prompt)\n";
 
   spawn($pass, @createdb_command, @params, $db);
 
@@ -295,7 +396,6 @@ sub load_db
 
   log_and_print `date`, "\n\n";
   log_and_print "\nrunning: @load_command @params\n";
-  warn "(ignore password prompt)\n";
 
   spawn($pass, @load_command, @params);
 
@@ -390,6 +490,50 @@ sub AUTOLOAD {
 
 package main;
 
+sub fix_pgpass
+{
+  my ($db, $user, $pass, $host, $port) = @_;
+
+  if (-f $pgpass_file) {
+    open PGPASS, '<', $pgpass_file or die "can't open $pgpass_file: $!\n";
+
+    while (my $line = <PGPASS>) {
+      chomp $line;
+
+      my ($line_host, $line_port, $line_db, $line_user, $line_pass) = split (/:/, $line);
+
+      if ($line_host eq $host &&
+          ($line_port eq $default_port && !defined $port ||
+           defined $port && $line_port eq $port) &&
+          ($line_db eq '*' || $line_db eq $db) &&
+          $line_user eq $user &&
+          $line_pass eq $pass) {
+        # match
+        return;
+      }
+    }
+
+    close PGPASS;
+  }
+
+  chmod 0600, $pgpass_file;
+
+  open PGPASS, '>>', $pgpass_file
+    or die "can't open $pgpass_file for appending: $!\n";
+
+  my $out_port;
+
+  if (defined $port) {
+    $out_port = $port;
+  } else {
+    $out_port = $default_port;
+  }
+
+  print PGPASS "$host:$out_port:*:$user:$pass\n";
+
+  close PGPASS or die "can't close $pgpass_file\n";
+}
+
 sub get_actions
 {
   my $handler = ProjectXML::Hander->new();
@@ -402,8 +546,8 @@ sub get_actions
   if (@actions && $actions[-1]{type} ne 'dump') {
     push @actions, {
                     type => 'dump',
-                    args => ["final"],
-                    name => 'final-dump'
+                    args => [$final_marker],
+                    name => $final_dump_name,
                    };
   }
 
@@ -452,8 +596,9 @@ sub get_actions
   return @return_actions;
 }
 
-# find the last existing dump file
-sub get_restart_dump_suffix
+
+# find the last existing backup file
+sub get_restart_suffix_file
 {
   my ($dump_file_prefix, @actions) = @_;
 
@@ -494,6 +639,71 @@ sub get_restart_dump_suffix
   return $restart_dump_suffix;
 }
 
+sub get_database_names
+{
+  my ($db, $user, $pass, $host, $port, @actions) = @_;
+
+  my @database_names = ();
+
+  my @params = ('-U', $user, '-h', $host, '-d', 'postgres', '-l');
+
+  if (defined $port) {
+    push @params, "-p", $port;
+  }
+
+  my $command = "@psql_command @params";
+
+  log_and_print `date`, "\n\n";
+  log_and_print "\nrunning: $command\n";
+
+  open PSQL, "$command|"
+  or die "can't open pipe to $command: $!\n";
+
+  while (my $line = <PSQL>) {
+    chomp $line;
+    if ($line =~ /^\s*(\S+)/) {
+      push @database_names, $1;
+    }
+  }
+
+  close LS_OUTPUT;
+
+  return @database_names;
+}
+
+# find the last existing backup suffix by asking the postgres server
+sub get_restart_suffix_server
+{
+  my ($db, $database_names_ref, $actions_ref) = @_;
+
+  my @actions = @{$actions_ref};
+
+  my %remote_suffixes = ();
+
+  for my $database_name (@{$database_names_ref}) {
+    if ($database_name =~ /$db:(\S+)/) {
+      $remote_suffixes{$1} = 1;
+    }
+  }
+
+  my $restart_suffix = undef;
+
+  for my $action (@actions) {
+    my $action_type = $action->{type};
+    my @action_args = @{$action->{args}};
+
+    if ($action_type eq 'dump') {
+      if (exists $remote_suffixes{$action_args[0]}) {
+        $restart_suffix = $action_args[0];
+      }
+    }
+  }
+
+  close LS_OUTPUT;
+
+  return $restart_suffix;
+}
+
 log_and_print "reading properties from: $properties_file\n";
 
 my $prod_host = get_prop_val "db.production.datasource.serverName", $properties_file;
@@ -515,24 +725,64 @@ log_message "  prod_user: $prod_user";
 log_message "  prod_pass: $prod_pass";
 log_message;
 
+fix_pgpass($prod_db, $prod_user, $prod_pass, $prod_host, $prod_port);
+
 my @actions = get_actions();
 
 my $restart_dump_suffix = undef;
 
+my @database_names = get_database_names($prod_db, $prod_user, $prod_pass,
+                                        $prod_host, $prod_port);
+
+if (grep {$_ eq $prod_db } @database_names) {
+  if ($verbose) {
+    log_and_print ("not creating or building $prod_db as it already exists\n");
+  }
+} else {
+  create_prod_db($prod_db, $prod_user, $prod_pass, $prod_host, $prod_port);
+}
+
 if ($load_last || $restart) {
-  $restart_dump_suffix = get_restart_dump_suffix($dump_file_prefix, @actions);
+  my $restart_file_suffix = get_restart_suffix_file($dump_file_prefix, @actions);
 
-  if (defined $restart_dump_suffix) {
-    my $dump_file_name = "$dump_file_prefix.$restart_dump_suffix";
 
-    if ($load_last) {
-      log_and_print "\nrestarting from $dump_file_name\n";
-      load_db $prod_db, $prod_user, $prod_pass, $prod_host, $prod_port, $dump_file_name;
+  if ($server_backup) {
+    if ($restart_file_suffix eq $final_marker) {
+      log_and_print ("backup with .$final_marker suffix exists - " .
+                     "build finished - exiting\n");
+      exit(0);
     } else {
-      log_and_print "\nrestarting build at stage: $restart_dump_suffix - NOT loading dump\n";
+      $restart_dump_suffix =
+        get_restart_suffix_server($prod_db, \@database_names, \@actions);
     }
   } else {
-    warn "no dump file found with prefix $dump_file_prefix\n";
+    $restart_dump_suffix = $restart_file_suffix;
+  }
+
+  if (defined $restart_dump_suffix) {
+    if ($restart_dump_suffix eq $final_marker) {
+      log_and_print ("backup with .$final_marker suffix exists - " .
+                     "build finished - exiting\n");
+      exit(0);
+    } else {
+      if ($load_last) {
+        if ($server_backup) {
+          log_and_print "\nrestarting using database: $prod_db:$restart_dump_suffix\n";
+          server_restore ($prod_db, $prod_user, $prod_pass, $prod_host, $prod_port,
+                          $restart_dump_suffix);
+        } else {
+          my $dump_file_name = "$dump_file_prefix.$restart_dump_suffix";
+          log_and_print "\nrestarting from $dump_file_name\n";
+          load_db ($prod_db, $prod_user, $prod_pass, $prod_host, $prod_port,
+                   $dump_file_name);
+        }
+      } else {
+        log_and_print ("\nrestarting build at stage: $restart_dump_suffix - " .
+                       "NOT restoring from backup\n");
+      }
+    }
+  } else {
+    warn "no backup found - starting new build\n";
   }
 }
 
@@ -546,6 +796,7 @@ if ((!$load_last && !$restart) || !defined $restart_dump_suffix) {
 my @action_times = ();
 
 for my $action (@actions) {
+  my $action_name = $action->{name};
   my $action_type = $action->{type};
   my @action_args = @{$action->{args}};
 
@@ -556,11 +807,7 @@ for my $action (@actions) {
       my $saved_dir = getcwd;
       chdir $action_type
         or die "can't change directory into: $saved_dir/$action_type\n";
-      if ($verbose) {
-        run_and_check_status @ant_command, "-v", @action_args;
-      } else {
-        run_and_check_status @ant_command, @action_args;
-      }
+      run_and_check_status @ant_command, @action_args;
       chdir $saved_dir
         or die "can't return to previous directory ($saved_dir) after $action_type\n";
     } else {
@@ -568,8 +815,13 @@ for my $action (@actions) {
         if (@action_args != 1) {
           die "dump: needs one parameter at: $action: @action_args\n";
         }
-        dump_db $prod_db, $prod_user, $prod_pass, $prod_host, $prod_port,
-                "$dump_file_prefix.$action_args[0]";
+        if ($server_backup && $action_name ne $final_dump_name) {
+          make_server_backup ($prod_db, $prod_user, $prod_pass, $prod_host, $prod_port,
+                              $action_args[0]);
+        } else {
+          dump_db ($prod_db, $prod_user, $prod_pass, $prod_host, $prod_port,
+                   "$dump_file_prefix.$action_args[0]");
+        }
       } else {
         die qq{unknown action: "$action_type"\n};
       }
@@ -577,8 +829,6 @@ for my $action (@actions) {
 
     my $end_time = time();
     my $action_time = $end_time - $start_time;
-
-    my $action_name = $action->{name};
 
     if ($verbose) {
       log_and_print qq(action $action_name took $action_time seconds\n);
