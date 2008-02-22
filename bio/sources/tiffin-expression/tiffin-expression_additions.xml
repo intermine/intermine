@@ -7,5 +7,6 @@
   </class>
   <class name="org.flymine.model.genomic.MRNAExpressionTerm" is-interface="true">
     <attribute name="name" type="java.lang.String"/>
+    <attribute name="type" type="java.lang.String"/>
   </class>
 </classes>
