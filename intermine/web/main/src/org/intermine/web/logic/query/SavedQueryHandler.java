@@ -12,10 +12,10 @@ package org.intermine.web.logic.query;
 
 import java.util.Date;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
-import javax.servlet.ServletContext;
-
+import org.intermine.metadata.FieldDescriptor;
 import org.xml.sax.Attributes;
 import org.xml.sax.SAXException;
 
@@ -33,11 +33,11 @@ public class SavedQueryHandler extends PathQueryHandler
      * Constructor
      * @param queries Map from saved query name to SavedQuery
      * @param savedBags Map from bag name to bag
-     * @param servletContext global ServletContext object
+     * @param classKeys class keys
      */
     public SavedQueryHandler(Map<String, SavedQuery> queries, Map savedBags,
-                             ServletContext servletContext) {
-        super(new HashMap<String, PathQuery> (), savedBags, servletContext);
+            Map<String, List<FieldDescriptor>> classKeys) {
+        super(new HashMap<String, PathQuery> (), savedBags, classKeys);
         this.queries = queries;
     }
 

@@ -10,6 +10,10 @@ package org.intermine.web.logic.template;
  *
  */
 
+import java.io.Reader;
+import java.io.Serializable;
+import java.io.StringReader;
+import java.io.StringWriter;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
@@ -17,11 +21,14 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
-import org.intermine.objectstore.query.ConstraintOp;
-import org.intermine.objectstore.query.Query;
-import org.intermine.objectstore.query.QueryNode;
-import org.intermine.objectstore.query.Results;
+import javax.servlet.ServletContext;
+import javax.servlet.http.HttpSession;
+import javax.xml.stream.XMLOutputFactory;
+import javax.xml.stream.XMLStreamException;
+import javax.xml.stream.XMLStreamWriter;
 
+import org.apache.log4j.Logger;
+import org.apache.struts.action.ActionErrors;
 import org.intermine.cache.InterMineCache;
 import org.intermine.cache.ObjectCreator;
 import org.intermine.metadata.ClassDescriptor;
@@ -30,6 +37,10 @@ import org.intermine.model.InterMineObject;
 import org.intermine.objectstore.ObjectStore;
 import org.intermine.objectstore.ObjectStoreException;
 import org.intermine.objectstore.ObjectStoreQueryDurationException;
+import org.intermine.objectstore.query.ConstraintOp;
+import org.intermine.objectstore.query.Query;
+import org.intermine.objectstore.query.QueryNode;
+import org.intermine.objectstore.query.Results;
 import org.intermine.util.TypeUtil;
 import org.intermine.web.logic.Constants;
 import org.intermine.web.logic.ServletMethods;
@@ -47,20 +58,6 @@ import org.intermine.web.logic.results.PagedTable;
 import org.intermine.web.logic.results.WebResults;
 import org.intermine.web.logic.session.SessionMethods;
 import org.intermine.web.struts.TemplateForm;
-
-import java.io.Reader;
-import java.io.Serializable;
-import java.io.StringReader;
-import java.io.StringWriter;
-
-import javax.servlet.ServletContext;
-import javax.servlet.http.HttpSession;
-import javax.xml.stream.XMLOutputFactory;
-import javax.xml.stream.XMLStreamException;
-import javax.xml.stream.XMLStreamWriter;
-
-import org.apache.log4j.Logger;
-import org.apache.struts.action.ActionErrors;
 
 /**
  * Static helper routines related to templates.
@@ -241,6 +238,7 @@ public class TemplateHelper
      * @param constraintOpsMap a mapping between Paths and ConstraintOps
      * @param template  the template query involved
      * @param savedBags the saved bags
+     * @param extraValuesMap extra values map
      * @return          a new TemplateQuery matching template with user supplied constraints
      */
     public static TemplateQuery editTemplate(Map <String, Object> valuesMap,
@@ -396,6 +394,12 @@ public class TemplateHelper
     /**
      * Try to fill the TemplateForm argument using the attribute values in the InterMineObject
      * arg and return true if successful (ie. all constraints are filled in)
+     * @param template template
+     * @param object object
+     * @param bag bag
+     * @param templateForm template form
+     * @param model model 
+     * @return true if successfull 
      */
     public static boolean fillTemplateForm(TemplateQuery template, InterMineObject object,
                                             InterMineBag bag, TemplateForm templateForm,
@@ -488,6 +492,11 @@ public class TemplateHelper
     /**
      * Make and return an InlineTemplateTable for the given template and interMineObjectId or
      * InterMineIdBag
+     * @param servletContext servlet context
+     * @param template template
+     * @param object object
+     * @param bag bag
+     * @return created template
      */
     public static InlineTemplateTable makeInlineTemplateTable(ServletContext servletContext,
                                                                TemplateQuery template,

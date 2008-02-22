@@ -10,22 +10,21 @@ package org.intermine.web.logic.query;
  *
  */
 
+import java.io.Reader;
+import java.io.StringWriter;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.Map;
-
-import org.intermine.path.Path;
-import org.intermine.util.SAXParser;
-import org.intermine.util.StringUtil;
-
-import java.io.Reader;
-import java.io.StringWriter;
 
 import javax.servlet.ServletContext;
 import javax.xml.stream.XMLOutputFactory;
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamWriter;
 
+import org.intermine.path.Path;
+import org.intermine.util.SAXParser;
+import org.intermine.util.StringUtil;
+import org.intermine.web.logic.session.SessionMethods;
 import org.xml.sax.InputSource;
 
 /**
@@ -153,8 +152,8 @@ public class PathQueryBinding
                                                    ServletContext servletContext) {
         Map<String, PathQuery> queries = new LinkedHashMap<String, PathQuery>();
         try {
-            SAXParser.parse(new InputSource(reader),
-                            new PathQueryHandler(queries, savedBags, servletContext));
+            SAXParser.parse(new InputSource(reader), new PathQueryHandler(queries, 
+                    savedBags, SessionMethods.getClassKeys(servletContext)));
         } catch (Exception e) {
             throw new RuntimeException(e);
         }

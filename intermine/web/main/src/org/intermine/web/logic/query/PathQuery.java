@@ -10,6 +10,7 @@ package org.intermine.web.logic.query;
  *
  */
 
+import java.io.StringReader;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -20,24 +21,16 @@ import java.util.Map;
 import java.util.Set;
 import java.util.Map.Entry;
 
-import org.intermine.objectstore.ObjectStore;
-import org.intermine.objectstore.query.BagConstraint;
-import org.intermine.objectstore.query.ResultsInfo;
-
-import org.intermine.metadata.Model;
-import org.intermine.path.Path;
-import org.intermine.path.PathError;
-import org.intermine.util.CollectionUtil;
-import org.intermine.web.logic.bag.BagQueryConfig;
-import org.intermine.web.logic.Constants;
-import org.intermine.web.logic.WebUtil;
-
-import java.io.StringReader;
-
 import javax.servlet.ServletContext;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
+import org.intermine.metadata.Model;
+import org.intermine.objectstore.query.BagConstraint;
+import org.intermine.objectstore.query.ResultsInfo;
+import org.intermine.path.Path;
+import org.intermine.path.PathError;
+import org.intermine.util.CollectionUtil;
 
 
 /**
@@ -573,26 +566,10 @@ public class PathQuery
     }
 
     /**
-     * Check validity of receiver by trying to create an objectstore Query. If
-     * conversion fails, the exception is recorded and isValid will return false.
-     * @param savedBags Map from bag name to bag
-     * @param servletContext global ServletContext object
+     * Adds problem to path query.
+     * @param err problem
      */
-    protected void checkValidity(Map savedBags, ServletContext servletContext) {
-        try {
-//            MainHelper.makeQuery(this, WebUtil.getAllBags(savedBags, servletContext),
-//                                 servletContext, null);
-            MainHelper.makeQuery(this, WebUtil.getAllBags(savedBags, servletContext),
-                    null, servletContext, null, true,
-                    (ObjectStore) servletContext.getAttribute(Constants.OBJECTSTORE),
-                    (Map) servletContext.getAttribute(Constants.CLASS_KEYS),
-                    (BagQueryConfig) servletContext.getAttribute(Constants.BAG_QUERY_CONFIG));
-        } catch (Exception err) {
-            addProblem(err);
-        }
-    }
-
-    private void addProblem(Throwable err) {
+    public void addProblem(Throwable err) {
         problems.add(err);
     }
 

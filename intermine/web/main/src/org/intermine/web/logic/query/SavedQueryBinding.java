@@ -21,6 +21,7 @@ import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamWriter;
 
 import org.intermine.util.SAXParser;
+import org.intermine.web.logic.session.SessionMethods;
 import org.xml.sax.InputSource;
 
 /**
@@ -86,7 +87,7 @@ public class SavedQueryBinding
         Map<String, SavedQuery> queries = new LinkedHashMap<String, SavedQuery>();
         try {
             SAXParser.parse(new InputSource(reader), new SavedQueryHandler(queries, savedBags,
-                                                                           servletContext));
+                        SessionMethods.getClassKeys(servletContext)));
         } catch (Exception e) {
             e.printStackTrace();
             throw new RuntimeException(e);
