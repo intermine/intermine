@@ -278,6 +278,12 @@
     </fields>
   </class>
   
+  <class className="org.flymine.model.genomic.Image">
+    <fields>
+      <fieldconfig fieldExpr="url" displayer="/model/imageDisplayer.jsp" />      
+    </fields>
+  </class>
+  
   <class className="org.flymine.model.genomic.InfoSource">
     <fields>
       <fieldconfig fieldExpr="title"/>
@@ -364,10 +370,17 @@
     </longdisplayers>
   </class>
 
+  <class className="org.flymine.model.genomic.MRNAExpressionResult">
+    <fields>
+      <fieldconfig fieldExpr="stageRange"/>
+      <fieldconfig fieldExpr="expressed"/>
+    </fields>
+  </class>
 
   <class className="org.flymine.model.genomic.MRNAExpressionTerm">
     <fields>
       <fieldconfig fieldExpr="name"/>
+      <fieldconfig fieldExpr="type"/>
     </fields>
   </class>
   
@@ -685,6 +698,12 @@
       <fieldconfig fieldExpr="length"/>
     </fields>
     <tabledisplayer src="/model/sequenceShortDisplayer.jsp"/>
+  </class>
+  
+   <class className="org.flymine.model.genomic.Stage">
+    <fields>
+      <fieldconfig fieldExpr="name"/>
+    </fields>
   </class>
 
   <class className="org.flymine.model.genomic.Synonym">
