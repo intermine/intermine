@@ -16,17 +16,14 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
+import org.intermine.metadata.FieldDescriptor;
+import org.intermine.metadata.Model;
 import org.intermine.objectstore.query.BagConstraint;
 import org.intermine.objectstore.query.ConstraintOp;
-
-import org.intermine.metadata.Model;
 import org.intermine.util.StringUtil;
 import org.intermine.util.TypeUtil;
 import org.intermine.web.logic.ClassKeyHelper;
-import org.intermine.web.logic.Constants;
-
-import javax.servlet.ServletContext;
-
+import org.intermine.web.logic.bag.InterMineBag;
 import org.xml.sax.Attributes;
 import org.xml.sax.SAXException;
 import org.xml.sax.helpers.DefaultHandler;
@@ -39,31 +36,30 @@ import org.xml.sax.helpers.DefaultHandler;
  */
 public class PathQueryHandler extends DefaultHandler
 {
+    Map<String, List<FieldDescriptor>> classKeys;
     private Map<String, PathQuery> queries;
     private String queryName;
     private char gencode;
     private PathNode node;
     protected PathQuery query;
     private Model model = null;
-    private Map savedBags;
+    private Map<String, InterMineBag> savedBags;
     private List<String> viewStrings = new ArrayList<String>();
     private String sortOrderString = "";
     private String directionString = ""; // will be asc or desc
     private Map<String, String> pathStringDescriptions = new HashMap<String, String>();
-    private final ServletContext servletContext;
 
     /**
      * Constructor
      * @param queries Map from query name to PathQuery
-     * @param savedBags Map from bag name to bag
-     * @param servletContext global ServletContext object
+     * @param classKeys class keys
+     * @param savedBags saved bags 
      */
-
-    public PathQueryHandler(Map<String, PathQuery> queries, Map savedBags,
-                            ServletContext servletContext) {
+    public PathQueryHandler(Map<String, PathQuery> queries, Map<String, InterMineBag> savedBags,
+            Map<String, List<FieldDescriptor>> classKeys) {
+        this.classKeys = classKeys;
         this.queries = queries;
         this.savedBags = savedBags;
-        this.servletContext = servletContext;
     }
 
     /**
@@ -120,7 +116,6 @@ public class PathQueryHandler extends DefaultHandler
                 // a) if a key field move it to parent
                 // b) otherwise throw an exception to disable query
                 if (node.isAttribute()) {
-                    Map classKeys = (Map) servletContext.getAttribute(Constants.CLASS_KEYS);
                     if (ClassKeyHelper.isKeyField(classKeys, node.getParentType(),
                                                   node.getFieldName())) {
                         constrainParent = true;
@@ -183,7 +178,7 @@ public class PathQueryHandler extends DefaultHandler
     public void endElement(String uri, String localName, String qName) {
         if (qName.equals("query")) {
             query.syncLogicExpression("and"); // always and for old queries
-            query.checkValidity(savedBags, servletContext);
+            MainHelper.checkPathQuery(query, savedBags);
             for (String viewElement: viewStrings) {
                 query.addPathStringToView(viewElement);
             }

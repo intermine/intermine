@@ -30,6 +30,7 @@ import javax.servlet.http.HttpSession;
 import org.apache.commons.collections.map.LRUMap;
 import org.apache.log4j.Logger;
 import org.apache.struts.util.MessageResources;
+import org.intermine.metadata.FieldDescriptor;
 import org.intermine.metadata.Model;
 import org.intermine.objectstore.ObjectStore;
 import org.intermine.objectstore.ObjectStoreException;
@@ -850,5 +851,15 @@ public class SessionMethods
         HttpSession session = request.getSession();
         request.setAttribute(attributeName, session.getAttribute(attributeName));
         session.removeAttribute(attributeName);
+    }
+    
+    /**
+     * Returns class keys from context.
+     * @param servletContext servlet context
+     * @return class keys
+     */
+    public static Map<String, List<FieldDescriptor>> getClassKeys(ServletContext servletContext) {
+        return (Map<String, List<FieldDescriptor>>) servletContext.
+            getAttribute(Constants.CLASS_KEYS);   
     }
 }

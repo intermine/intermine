@@ -22,8 +22,7 @@ import javax.xml.stream.XMLStreamWriter;
 
 import org.intermine.util.SAXParser;
 import org.intermine.web.logic.query.PathQueryBinding;
-
-
+import org.intermine.web.logic.session.SessionMethods;
 import org.xml.sax.InputSource;
 
 /**
@@ -94,8 +93,8 @@ public class TemplateQueryBinding
     public Map unmarshal(Reader reader, Map savedBags, ServletContext servletContext) {
         Map templates = new LinkedHashMap();
         try {
-            SAXParser.parse(new InputSource(reader),
-                            new TemplateQueryHandler(templates, savedBags, servletContext));
+            SAXParser.parse(new InputSource(reader), new TemplateQueryHandler(templates, 
+                    savedBags, SessionMethods.getClassKeys(servletContext)));
         } catch (Exception e) {
             e.printStackTrace();
             throw new RuntimeException(e);

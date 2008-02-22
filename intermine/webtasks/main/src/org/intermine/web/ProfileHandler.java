@@ -26,6 +26,7 @@ import org.intermine.web.logic.bag.InterMineBagHandler;
 import org.intermine.web.logic.profile.Profile;
 import org.intermine.web.logic.profile.ProfileManager;
 import org.intermine.web.logic.query.SavedQueryHandler;
+import org.intermine.web.logic.session.SessionMethods;
 import org.intermine.web.logic.tagging.TagHandler;
 import org.intermine.web.logic.template.TemplateQueryHandler;
 import org.intermine.xml.full.FullHandler;
@@ -176,11 +177,13 @@ class ProfileHandler extends DefaultHandler
         }
         if (qName.equals("template-queries")) {
             savedTemplates = new LinkedHashMap();
-            subHandler = new TemplateQueryHandler(savedTemplates, savedBags, servletContext);
+            subHandler = new TemplateQueryHandler(savedTemplates, savedBags, 
+                    SessionMethods.getClassKeys(servletContext));
         }
         if (qName.equals("queries")) {
             savedQueries = new LinkedHashMap();
-            subHandler = new SavedQueryHandler(savedQueries, savedBags, servletContext);
+            subHandler = new SavedQueryHandler(savedQueries, savedBags, 
+                    SessionMethods.getClassKeys(servletContext));
         }
         if (qName.equals("tags")) {
             subHandler = new TagHandler(username, tags);

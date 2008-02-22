@@ -188,6 +188,7 @@ public class MainHelper
      * @param servletContext the current servlet context
      * @param returnBagQueryResults optional parameter in which any BagQueryResult objects can be
      * returned
+     * @param pathToQueryNode optional parameter in which path to QueryNode map can be returned
      * @return an InterMine Query
      * @throws ObjectStoreException if something goes wrong
      */
@@ -204,6 +205,16 @@ public class MainHelper
                     : servletContext.getAttribute(Constants.BAG_QUERY_CONFIG)));
     }
 
+    /**
+     * Make an InterMine query from a path query
+     * @param query the PathQuery
+     * @param savedBags the current saved bags map
+     * @param servletContext the current servlet context
+     * @param returnBagQueryResults optional parameter in which any BagQueryResult objects can be
+     * returned
+     * @return an InterMine Query
+     * @throws ObjectStoreException if something goes wrong
+     */
     public static Query makeQuery(PathQuery query, Map savedBags, ServletContext servletContext,
             Map returnBagQueryResults) throws ObjectStoreException {
         return makeQuery(query, savedBags, null, servletContext, returnBagQueryResults, false,
@@ -214,7 +225,7 @@ public class MainHelper
                 (BagQueryConfig) (servletContext == null ? null
                     : servletContext.getAttribute(Constants.BAG_QUERY_CONFIG)));
     }
-
+    
     /**
      * Make an InterMine query from a path query
      * @param pathQueryOrig the PathQuery
@@ -233,6 +244,40 @@ public class MainHelper
             Map<String, QueryNode> pathToQueryNode, ServletContext servletContext,
             Map returnBagQueryResults, boolean checkOnly, ObjectStore os,
             Map classKeys, BagQueryConfig bagQueryConfig) throws ObjectStoreException {
+        BagQueryRunner bagQueryRunner = new BagQueryRunner(os, classKeys,
+                bagQueryConfig, servletContext);
+        return makeQuery(pathQueryOrig, savedBags, pathToQueryNode, bagQueryRunner, 
+                returnBagQueryResults, checkOnly);
+    }
+    
+    /**
+     * Validates path query. Any error message is set to path query.
+     * @param pathQuery path query
+     * @param savedBags saved bags 
+     */
+    public static void checkPathQuery(PathQuery pathQuery, Map<String, InterMineBag> savedBags) {
+        try {
+            makeQuery(pathQuery, savedBags, null, null, null, true);
+        } catch (ObjectStoreException e) {
+            pathQuery.addProblem(e);
+        }
+    }
+
+    /**
+     * Other version of makeQuery.
+     * @param pathQueryOrig the PathQuery
+     * @param savedBags the current saved bags map
+     * @param pathToQueryNode optional parameter in which path to QueryNode map can be returned
+     * @param returnBagQueryResults optional parameter in which any BagQueryResult objects can be
+     * @param checkOnly we're only checking the validity of the query, optimised to take less time
+     * returned
+     * @param bagQueryRunner bag query runner
+     * @return an InterMine Query
+     * @throws ObjectStoreException if something goes wrong
+     */
+    public static Query makeQuery(PathQuery pathQueryOrig, Map savedBags,
+            Map<String, QueryNode> pathToQueryNode, BagQueryRunner bagQueryRunner,
+            Map returnBagQueryResults, boolean checkOnly) throws ObjectStoreException {
         PathQuery pathQuery = pathQueryOrig.clone();
         Map qNodes = pathQuery.getNodes();
         List<Path> view = pathQuery.getView();
@@ -409,8 +454,6 @@ public class MainHelper
                         continue;
                     }
                     String identifiers = (String) c.getValue();
-                    BagQueryRunner bagQueryRunner = new BagQueryRunner(os, classKeys,
-                            bagQueryConfig, servletContext);
                     BagQueryResult bagQueryResult;
                     List identifierList = new ArrayList();
                     StringTokenizer st = new StringTokenizer(identifiers, "\n\t,");
