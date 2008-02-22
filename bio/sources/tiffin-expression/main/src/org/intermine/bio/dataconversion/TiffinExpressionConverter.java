@@ -108,6 +108,7 @@ public class TiffinExpressionConverter extends FileConverter
         } else {
             Item expressionTermItem = createItem("MRNAExpressionTerm");
             expressionTermItem.setAttribute("name", expressionDescription);
+            expressionTermItem.setAttribute("type", "ImaGO");
             termItems.put(expressionDescription, expressionTermItem);
             return expressionTermItem;
         }
