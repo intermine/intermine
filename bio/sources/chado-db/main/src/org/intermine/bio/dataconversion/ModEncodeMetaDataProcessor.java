@@ -27,16 +27,16 @@ import org.apache.log4j.Logger;
  * Create items from the modENCODE metadata extensions to the chado schema.
  * @author Kim Rutherford
  */
-public class ModEncodeMetaDataChadoProcessor extends ChadoProcessor
+public class ModEncodeMetaDataProcessor extends ChadoProcessor
 {
-    protected static final Logger LOG = Logger.getLogger(ModEncodeMetaDataChadoProcessor.class);
+    protected static final Logger LOG = Logger.getLogger(ModEncodeMetaDataProcessor.class);
     private Map<Integer, Integer> protocolIdMap = new HashMap<Integer, Integer>();
 
     /**
      * Create a new ChadoModuleProcessor object.
      * @param chadoDBConverter the converter that created this Processor
      */
-    public ModEncodeMetaDataChadoProcessor(ChadoDBConverter chadoDBConverter) {
+    public ModEncodeMetaDataProcessor(ChadoDBConverter chadoDBConverter) {
         super(chadoDBConverter);
     }
 
