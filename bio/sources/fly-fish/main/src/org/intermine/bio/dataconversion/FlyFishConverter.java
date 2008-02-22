@@ -58,10 +58,10 @@ public class FlyFishConverter extends FileConverter
         store(orgDrosophila);
 
         // TODO assign dataset to MRNAExpressionResult
-        dataSet = createItem("DataSet");
-        String datasetTitle = "FlyFish database of Drosophila embryo mRNA localization patterns";
-        dataSet.addAttribute(new Attribute("title", datasetTitle));
-        store(dataSet);
+//        dataSet = createItem("DataSet");
+//        String datasetTitle = "fly-Fish database of Drosophila embryo mRNA localization patterns";
+//        dataSet.addAttribute(new Attribute("title", datasetTitle));
+//        store(dataSet);
 
         pub = createItem("Publication");
         pub.addAttribute(new Attribute("pubMedId", "17923096"));
