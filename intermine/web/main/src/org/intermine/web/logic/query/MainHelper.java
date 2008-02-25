@@ -244,8 +244,11 @@ public class MainHelper
             Map<String, QueryNode> pathToQueryNode, ServletContext servletContext,
             Map returnBagQueryResults, boolean checkOnly, ObjectStore os,
             Map classKeys, BagQueryConfig bagQueryConfig) throws ObjectStoreException {
-        BagQueryRunner bagQueryRunner = new BagQueryRunner(os, classKeys,
-                bagQueryConfig, servletContext);
+        BagQueryRunner bagQueryRunner = null;
+        if (os != null) {
+            bagQueryRunner = new BagQueryRunner(os, classKeys,
+                    bagQueryConfig, servletContext);            
+        }
         return makeQuery(pathQueryOrig, savedBags, pathToQueryNode, bagQueryRunner, 
                 returnBagQueryResults, checkOnly);
     }
