@@ -769,7 +769,7 @@ public class TemplateHelper
         Query query = null;
         try {
             query = MainHelper.makeQuery(templateClone, new HashMap(), pathToQueryNode, null,
-                                         null, false, null, null, null);
+                                         null, false);
         } catch (ObjectStoreException e) {
             // Not possible if last argument is null
         }

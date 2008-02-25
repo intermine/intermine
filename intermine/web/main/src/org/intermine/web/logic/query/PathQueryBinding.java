@@ -24,6 +24,7 @@ import javax.xml.stream.XMLStreamWriter;
 import org.intermine.path.Path;
 import org.intermine.util.SAXParser;
 import org.intermine.util.StringUtil;
+import org.intermine.web.logic.bag.InterMineBag;
 import org.intermine.web.logic.session.SessionMethods;
 import org.xml.sax.InputSource;
 
@@ -148,7 +149,7 @@ public class PathQueryBinding
      * @param servletContext global ServletContext object
      * @return a Map from query name to PathQuery
      */
-    public static Map<String, PathQuery> unmarshal(Reader reader, Map savedBags,
+    public static Map<String, PathQuery> unmarshal(Reader reader, Map<String, InterMineBag> savedBags,
                                                    ServletContext servletContext) {
         Map<String, PathQuery> queries = new LinkedHashMap<String, PathQuery>();
         try {

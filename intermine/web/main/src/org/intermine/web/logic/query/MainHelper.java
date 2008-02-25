@@ -258,9 +258,9 @@ public class MainHelper
     public static void checkPathQuery(PathQuery pathQuery, Map<String, InterMineBag> savedBags) {
         try {
             makeQuery(pathQuery, savedBags, null, null, null, true);
-        } catch (ObjectStoreException e) {
+        } catch (Exception e) {
             pathQuery.addProblem(e);
-        }
+        } 
     }
 
     /**
