@@ -24,6 +24,7 @@ import org.intermine.objectstore.query.Query;
 import org.intermine.objectstore.query.QueryClass;
 import org.intermine.objectstore.query.QueryCollectionReference;
 import org.intermine.objectstore.query.QueryField;
+import org.intermine.objectstore.query.QueryObjectReference;
 import org.intermine.objectstore.query.QueryValue;
 import org.intermine.objectstore.query.Results;
 import org.intermine.objectstore.query.ResultsRow;
@@ -34,6 +35,7 @@ import org.intermine.web.logic.bag.InterMineBag;
 import org.intermine.web.logic.widget.DataSetLdr;
 import org.intermine.web.logic.widget.GraphDataSet;
 
+import org.flymine.model.genomic.DataSet;
 import org.flymine.model.genomic.Gene;
 import org.flymine.model.genomic.MRNAExpressionResult;
 
@@ -83,8 +85,10 @@ public class FlyFishDataSetLdr implements DataSetLdr
         DefaultCategoryDataset dataSet = new DefaultCategoryDataset();
 
         Query q = new Query();
+        
         QueryClass mrnaResult = new QueryClass(MRNAExpressionResult.class);
         QueryClass gene = new QueryClass(Gene.class);
+        QueryClass dataset = new QueryClass(DataSet.class);
 
         q.addFrom(mrnaResult);
         q.addFrom(gene);
@@ -109,6 +113,13 @@ public class FlyFishDataSetLdr implements DataSetLdr
         QueryCollectionReference r = new QueryCollectionReference(gene, "mRNAExpressionResults");
         cs.addConstraint(new ContainsConstraint(r, ConstraintOp.CONTAINS, mrnaResult));
 
+        QueryObjectReference qcr = new QueryObjectReference(mrnaResult, "source");
+        cs.addConstraint(new ContainsConstraint(qcr, ConstraintOp.CONTAINS, dataset));
+        
+        
+        cs.addConstraint(new SimpleConstraint(new QueryField(dataset, "title"), ConstraintOp.EQUALS,
+        new QueryValue("fly-Fish data set of Drosophila embryo mRNA localization patterns")));
+        
         q.setConstraint(cs);
         q.addToOrderBy(stageName);
 

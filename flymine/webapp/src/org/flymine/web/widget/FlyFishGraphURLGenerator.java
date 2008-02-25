@@ -92,11 +92,11 @@ public class FlyFishGraphURLGenerator implements GraphCategoryURLGenerator
         PathQuery q = new PathQuery(model);
 
         List<Path> view = new ArrayList<Path>();
-        view.add(MainHelper.makePath(model, q, "Gene.identifier"));
         view.add(MainHelper.makePath(model, q, "Gene.primaryIdentifier"));
+        view.add(MainHelper.makePath(model, q, "Gene.secondaryIdentifier"));        
         view.add(MainHelper.makePath(model, q, "Gene.name"));
         view.add(MainHelper.makePath(model, q, "Gene.organism.name"));
-        view.add(MainHelper.makePath(model, q, "Gene.mRNAExpressionResults.stage"));
+        view.add(MainHelper.makePath(model, q, "Gene.mRNAExpressionResults.stageRange"));
         view.add(MainHelper.makePath(model, q, "Gene.mRNAExpressionResults.expressed"));
 
         q.setView(view);
@@ -109,10 +109,19 @@ public class FlyFishGraphURLGenerator implements GraphCategoryURLGenerator
         Constraint c = new Constraint(constraintOp, constraintValue, false, label, code, id, null);
         q.addNode(bagType).getConstraints().add(c);
 
+        // filter out BDGP
+        constraintOp = ConstraintOp.EQUALS;
+        code = q.getUnusedConstraintCode();
+        PathNode datasetNode = q.addNode("Gene.mRNAExpressionResults.source.title");
+        String dataset = "fly-Fish data set of Drosophila embryo mRNA localization patterns";
+        Constraint datasetConstraint
+                        = new Constraint(constraintOp, dataset, false, label, code, id, null);
+        datasetNode.getConstraints().add(datasetConstraint);
+                
         // stage (series)
         constraintOp = ConstraintOp.EQUALS;
         code = q.getUnusedConstraintCode();
-        PathNode stageNode = q.addNode("Gene.mRNAExpressionResults.stage");
+        PathNode stageNode = q.addNode("Gene.mRNAExpressionResults.stageRange");
         Constraint stageConstraint
                         = new Constraint(constraintOp, series, false, label, code, id, null);
         stageNode.getConstraints().add(stageConstraint);
@@ -129,7 +138,7 @@ public class FlyFishGraphURLGenerator implements GraphCategoryURLGenerator
                         = new Constraint(constraintOp, expressed, false, label, code, id, null);
         expressedNode.getConstraints().add(expressedConstraint);
 
-        q.setConstraintLogic("A and B and C");
+        q.setConstraintLogic("A and B and C and D");
         q.syncLogicExpression("and");
 
         return q;
