@@ -64,6 +64,7 @@ public class FlyFishConverter extends FileConverter
         dataSource.setAttribute("url", "http://fly-fish.ccbr.utoronto.ca");
         store(dataSource);
 
+        // the widget depends on this name.  if you change the name, change the widget too pls.
         dataSet = createItem("DataSet");
         String datasetTitle = "fly-Fish data set of Drosophila embryo mRNA localization patterns";
         dataSet.setAttribute("title", datasetTitle);

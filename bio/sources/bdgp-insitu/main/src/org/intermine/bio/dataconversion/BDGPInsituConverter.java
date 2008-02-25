@@ -68,9 +68,10 @@ public class BDGPInsituConverter extends FileConverter
         
         Item dataSource = createItem("DataSource");
         dataSource.setAttribute("name", "BDGP");
-        dataSource.setAttribute("url", "http://www.fruitfly.org");
+        dataSource.setAttribute("url", "http://www.fruitfly.org/");
         store(dataSource);
 
+        // the widget depends on this name
         dataSet = createItem("DataSet");
         dataSet.setAttribute("title", "BDGP in situ data set");
         dataSet.setReference("dataSource", dataSource.getIdentifier());
