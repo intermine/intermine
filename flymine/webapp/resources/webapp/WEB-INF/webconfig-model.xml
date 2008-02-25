@@ -200,6 +200,12 @@
                       toolTipGen="org.intermine.web.logic.widget.ToolTipGenerator" urlGen="org.flymine.web.widget.FlyFishGraphURLGenerator"
                       description="Expression patterns of Drosophila mRNAs at the subcellular level during early embryogenesis - data from  &lt;a href=&quot;http://www.utoronto.ca/krause/&quot; target=&quot;_new&quot;&gt;fly-FISH&lt;/a&gt;.  Note that not all genes have yet been assayed by &lt;a href=&quot;http://www.utoronto.ca/krause/&quot; target=&quot;_new&quot;&gt;fly-FISH&lt;/a&gt;"
                       graphType="BarChart" />
+                      
+      <graphdisplayer title="in situ (BDGP)" domainLabel="Stage" rangeLabel="Gene count" dataSetLoader="org.flymine.web.widget.BDGPinsituDataSetLdr"
+                      toolTipGen="org.intermine.web.logic.widget.ToolTipGenerator" urlGen="org.flymine.web.widget.BDGPinsituGraphURLGenerator"
+                      description=" [description needed!] &lt;a href=&quot;http://www.fruitfly.org/cgi-bin/ex/insitu.pl&quot; target=&quot;_new&quot;&gt;BGDP&lt;/a&gt;"
+                      graphType="BarChart" />
+                      
 
       <bagtabledisplayer title="Pathway Information (KEGG)" type="Pathway" collectionName="pathways" urlGen="org.intermine.bio.web.widget.PathwayURLQuery"
                          description="Most common &lt;a href=&quot;http://www.genome.jp/kegg/&quot; target=&quot;_new&quot;&gt;KEGG pathways&lt;/a&gt; for this list." />
