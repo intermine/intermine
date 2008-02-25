@@ -35,7 +35,7 @@ import org.intermine.web.logic.widget.DataSetLdr;
 import org.intermine.web.logic.widget.GraphDataSet;
 
 import org.flymine.model.genomic.Gene;
-import org.flymine.model.genomic.MRNALocalisationResult;
+import org.flymine.model.genomic.MRNAExpressionResult;
 
 import org.jfree.data.category.DefaultCategoryDataset;
 
@@ -83,13 +83,13 @@ public class FlyFishDataSetLdr implements DataSetLdr
         DefaultCategoryDataset dataSet = new DefaultCategoryDataset();
 
         Query q = new Query();
-        QueryClass mrnaResult = new QueryClass(MRNALocalisationResult.class);
+        QueryClass mrnaResult = new QueryClass(MRNAExpressionResult.class);
         QueryClass gene = new QueryClass(Gene.class);
 
         q.addFrom(mrnaResult);
         q.addFrom(gene);
 
-        QueryField stageName = new QueryField(mrnaResult, "stage");
+        QueryField stageName = new QueryField(mrnaResult, "stageRange");
 
         q.addToSelect(new QueryField(mrnaResult, "expressed"));
         q.addToSelect(stageName);
@@ -106,7 +106,7 @@ public class FlyFishDataSetLdr implements DataSetLdr
                                                   new QueryValue(geneIdentifier)));
         }
 
-        QueryCollectionReference r = new QueryCollectionReference(gene, "mRNALocalisationResults");
+        QueryCollectionReference r = new QueryCollectionReference(gene, "mRNAExpressionResults");
         cs.addConstraint(new ContainsConstraint(r, ConstraintOp.CONTAINS, mrnaResult));
 
         q.setConstraint(cs);

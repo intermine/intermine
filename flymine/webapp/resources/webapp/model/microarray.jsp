@@ -135,16 +135,16 @@ Koutsos et al used an EST microarray platform encompassing 19,680 ESTs to determ
 
            <li>
             <im:querylink text="All FlyFish results for <i>D. melanogaster</i> genes " skipBuilder="true">
-             <query name="" model="genomic" view="Gene.primaryIdentifier Gene.identifier Gene.mRNALocalisationResults.stage Gene.mRNALocalisationResults.expressed Gene.mRNALocalisationResults.mRNALocalisationTerms.localisation" sortOrder="Gene.primaryIdentifier asc">
+             <query name="" model="genomic" view="Gene.primaryIdentifier Gene.identifier Gene.mRNAExpressionResults.stage Gene.mRNAExpressionResults.expressed Gene.mRNAExpressionResults.mRNAExpressionTerms.name" sortOrder="Gene.primaryIdentifier asc">
              <pathDescription pathString="Gene.probeSets" description="Probe">
               </pathDescription>
              <pathDescription pathString="Gene.microArrayResults" description="Microarray result">
               </pathDescription>
-             <pathDescription pathString="Gene.mRNALocalisationResults" description="mRNA localisation">
+             <pathDescription pathString="Gene.mRNAExpressionResults" description="mRNA expression">
               </pathDescription>
              <pathDescription pathString="Gene.microArrayResults.assays" description="Microarray assay">
               </pathDescription>
-             <pathDescription pathString="Gene.mRNALocalisationResults.mRNALocalisationTerms" description="mRNA localisation term">
+             <pathDescription pathString="Gene.mRNAExpressionResults.mRNAExpressionTerms" description="mRNA expression term">
               </pathDescription>
              <pathDescription pathString="Gene.microArrayResults.source" description="Dataset">
               </pathDescription>

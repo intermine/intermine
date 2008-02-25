@@ -10,6 +10,7 @@ package org.intermine.bio.dataconversion;
  *
  */
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -42,9 +43,10 @@ public class FlyFishConverter extends FileConverter
     Item orgDrosophila;
     private Item dataSet;
     private Item pub;
-
+    private String[] stages;
+    
     /**
-     * Construct a new instance of HomophilaCnoverter.
+     * Construct a new instance of flyfishconverter.
      *
      * @param model the Model
      * @param writer the ItemWriter used to handle the resultant items
@@ -56,22 +58,29 @@ public class FlyFishConverter extends FileConverter
         orgDrosophila = createItem("Organism");
         orgDrosophila.addAttribute(new Attribute("taxonId", "7227"));
         store(orgDrosophila);
+        
+        Item dataSource = createItem("DataSource");
+        dataSource.setAttribute("name", "fly-FISH");
+        dataSource.setAttribute("url", "http://fly-fish.ccbr.utoronto.ca");
+        store(dataSource);
 
-        // TODO assign dataset to MRNAExpressionResult
-//        dataSet = createItem("DataSet");
-//        String datasetTitle = "fly-Fish database of Drosophila embryo mRNA localization patterns";
-//        dataSet.addAttribute(new Attribute("title", datasetTitle));
-//        store(dataSet);
+        dataSet = createItem("DataSet");
+        String datasetTitle = "fly-Fish data set of Drosophila embryo mRNA localization patterns";
+        dataSet.setAttribute("title", datasetTitle);
+        dataSet.setReference("dataSource", dataSource);
+        store(dataSet);
 
         pub = createItem("Publication");
-        pub.addAttribute(new Attribute("pubMedId", "17923096"));
+        pub.setAttribute("pubMedId", "17923096");
         store(pub);
+        
+        stages = getStages();
     }
 
     private class HeaderConfig
     {
         int stage;
-        String localisation;
+        String expression;
     }
 
     /**
@@ -101,34 +110,50 @@ public class FlyFishConverter extends FileConverter
             if (thisHeader.charAt(1) != ' ') {
                 throw new RuntimeException("parse error in header of " + getCurrentFile());
             }
-            String localisation = thisHeader.substring(2);
+            String expression = thisHeader.substring(2);
             config[i] = new HeaderConfig();
             config[i].stage = Integer.parseInt(String.valueOf(stageTag));
-            config[i].localisation = localisation;
+            config[i].expression = expression;
         }
         while ((line = br.readLine()) != null) {
             String lineBits[] = StringUtils.split(line, ';');
             String geneCG = lineBits[0];
             Item gene = getGene(geneCG);
-            Item mRNALocalisationResults[] = new Item[4];
+            Item mRNAExpressionResults[] = new Item[4];
             for (int stageNum = 1; stageNum <= 4; stageNum++) {
-                Item result = createItem("MRNALocalisationResult");
+                
+                Item result = createItem("MRNAExpressionResult");
                 result.setReference("gene", gene);
                 result.setReference("publication", pub);
-                mRNALocalisationResults[stageNum - 1] = result;
+                result.setReference("source", dataSet);
+                ReferenceList mRNAExpressionTerms = new ReferenceList("mRNAExpressionTerms", 
+                                                                      new ArrayList<String>());
+                result.addCollection(mRNAExpressionTerms);
+                ReferenceList stagesColl = new ReferenceList("stages", new ArrayList<String>());
+                mRNAExpressionResults[stageNum - 1] = result;
                 if (stageNum == 1) {
-                    result.setAttribute("stage", "stage 1-3");
+                    result.setAttribute("stageRange", "stage 1-3 (fly-FISH)");
+                    stagesColl.addRefId(stages[1]);
+                    stagesColl.addRefId(stages[2]);
+                    stagesColl.addRefId(stages[3]);
                 } else {
                     if (stageNum == 2) {
-                        result.setAttribute("stage", "stage 4-5");
+                        result.setAttribute("stageRange", "stage 4-5 (fly-FISH)");
+                        stagesColl.addRefId(stages[4]);
+                        stagesColl.addRefId(stages[5]);
                     } else {
                         if (stageNum == 3) {
-                            result.setAttribute("stage", "stage 6-7");
+                            result.setAttribute("stageRange", "stage 6-7 (fly-FISH)");
+                            stagesColl.addRefId(stages[6]);
+                            stagesColl.addRefId(stages[7]);
                         } else {
-                            result.setAttribute("stage", "stage 8-9");
+                            result.setAttribute("stageRange", "stage 8-9 (fly-FISH)");
+                            stagesColl.addRefId(stages[8]);
+                            stagesColl.addRefId(stages[9]);
                         }
                     }
-                }
+                }              
+                result.addCollection(stagesColl);                
             }
 
             for (int column = 1; column < lineBits.length; column++) {
@@ -143,19 +168,19 @@ public class FlyFishConverter extends FileConverter
                         // we ignore stage10- results
                         continue;
                     }
-                    String localisation = hc.localisation;
-                    Item localisationTerm = getMRNALocalisationTerm(localisation);
-                    Item result = mRNALocalisationResults[hc.stage - 1];
-                    result.addToCollection("mRNALocalisationTerms", localisationTerm);
+                    Item term = getMRNAExpressionTerm(hc.expression);
+                    term.setAttribute("type", "fly-FISH");                    
+                    Item result = mRNAExpressionResults[hc.stage - 1];                    
+                    result.addToCollection("mRNAExpressionTerms", term);
                 }
             }
 
-            for (Item result: mRNALocalisationResults) {
-                ReferenceList resultTerms = result.getCollection("mRNALocalisationTerms");
+            for (Item result: mRNAExpressionResults) {
+                ReferenceList resultTerms = result.getCollection("mRNAExpressionTerms");
                 if (resultTerms == null || resultTerms.getRefIds().size() == 0) {
                     result.setAttribute("expressed", "false");
-                    Item nonExpressedTerm = getMRNALocalisationTerm("Non-expressed");
-                    result.addToCollection("mRNALocalisationTerms", nonExpressedTerm);
+                    Item nonExpressedTerm = getMRNAExpressionTerm("Non-expressed");
+                    result.addToCollection("mRNAExpressionTerms", nonExpressedTerm);
                 } else {
                     result.setAttribute("expressed", "true");
                 }
@@ -165,19 +190,20 @@ public class FlyFishConverter extends FileConverter
     }
 
     /**
-     * @param localisation
-     * @return
+     * @param expression
+     * @return expression term
      * @throws ObjectStoreException
      */
-    private Item getMRNALocalisationTerm(String localisation) throws ObjectStoreException {
-        if (termItems.containsKey(localisation)) {
-            return termItems.get(localisation);
+    private Item getMRNAExpressionTerm(String expression) throws ObjectStoreException {
+        if (termItems.containsKey(expression)) {
+            return termItems.get(expression);
         } else {
-            Item localisationTermItem = createItem("MRNALocalisationTerm");
-            localisationTermItem.setAttribute("localisation", localisation);
-            store(localisationTermItem);
-            termItems.put(localisation, localisationTermItem);
-            return localisationTermItem;
+            Item term = createItem("MRNAExpressionTerm");
+            term.setAttribute("name", expression);
+            term.setAttribute("type", "fly-FISH");
+            store(term);
+            termItems.put(expression, term);
+            return term;
         }
     }
 
@@ -192,6 +218,17 @@ public class FlyFishConverter extends FileConverter
             store(gene);
             return gene;
         }
+    }
+    
+    private String[] getStages() throws ObjectStoreException {
+        String[] stageItems = new String[17];
+        for (int i = 1; i <= 16; i++) {
+            Item stage = createItem("Stage");
+            stage.setAttribute("name", "Stage " + i);
+            stageItems[i] = stage.getIdentifier();
+            store(stage);
+        }
+        return stageItems;
     }
 }
 

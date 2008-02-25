@@ -384,19 +384,6 @@
     </fields>
   </class>
   
-  <class className="org.flymine.model.genomic.MRNALocalisationResult">
-    <fields>
-      <fieldconfig fieldExpr="stage"/>
-      <fieldconfig fieldExpr="expressed"/>
-    </fields>
-  </class>
-
-  <class className="org.flymine.model.genomic.MRNALocalisationTerm">
-    <fields>
-      <fieldconfig fieldExpr="localisation"/>
-    </fields>
-  </class>
-
   <class className="org.flymine.model.genomic.OntologyRelation">
     <fields>
       <fieldconfig fieldExpr="type"/>
