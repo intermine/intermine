@@ -208,6 +208,7 @@ public class BagQueryRunnerTest extends MockStrutsTestCase {
         BagQueryResult res = runner.searchForBag("Manager", input, null, true);
         assertEquals(0, res.getMatches().values().size());
         Map issues = res.getIssues();
+        
         Map translated = (Map) issues.get(BagQueryResult.TYPE_CONVERTED);
         assertEquals(1, translated.values().size());
         Map resUnresolved = res.getUnresolved();
@@ -223,6 +224,7 @@ public class BagQueryRunnerTest extends MockStrutsTestCase {
         assertEquals(1, res.getMatches().values().size());
         assertEquals(empName1, ((List) res.getMatches().values().iterator().next()).get(0));
         Map issues = res.getIssues();
+        
         Map converted = (Map) issues.get(BagQueryResult.TYPE_CONVERTED);
         assertEquals(1, converted.values().size());
         Map convertedInputToObjs = (Map) converted.values().iterator().next();
