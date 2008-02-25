@@ -13,15 +13,15 @@ package org.intermine.web.logic.query;
 import java.io.Reader;
 import java.io.StringWriter;
 import java.util.LinkedHashMap;
+import java.util.List;
 import java.util.Map;
 
-import javax.servlet.ServletContext;
 import javax.xml.stream.XMLOutputFactory;
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamWriter;
 
+import org.intermine.metadata.FieldDescriptor;
 import org.intermine.util.SAXParser;
-import org.intermine.web.logic.session.SessionMethods;
 import org.xml.sax.InputSource;
 
 /**
@@ -80,14 +80,14 @@ public class SavedQueryBinding
      * @param reader the saved templates
      * @return a Map from template name to TemplateQuery
      * @param savedBags Map from bag name to bag
-     * @param servletContext global ServletContext object
+     * @param classKeys class keys
      */
     public static Map<String, SavedQuery> unmarshal(Reader reader, Map savedBags,
-                                                    ServletContext servletContext) {
+            Map<String, List<FieldDescriptor>> classKeys) {
         Map<String, SavedQuery> queries = new LinkedHashMap<String, SavedQuery>();
         try {
             SAXParser.parse(new InputSource(reader), new SavedQueryHandler(queries, savedBags,
-                        SessionMethods.getClassKeys(servletContext)));
+                        classKeys));
         } catch (Exception e) {
             e.printStackTrace();
             throw new RuntimeException(e);
