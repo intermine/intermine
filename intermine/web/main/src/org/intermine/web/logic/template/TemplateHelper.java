@@ -370,7 +370,7 @@ public class TemplateHelper
     throws Exception {
         Reader templateQueriesReader = new StringReader(xml);
         return new TemplateQueryBinding().unmarshal(templateQueriesReader, savedBags,
-                                                    servletContext);
+                                                    SessionMethods.getClassKeys(servletContext));
     }
 
     /**
