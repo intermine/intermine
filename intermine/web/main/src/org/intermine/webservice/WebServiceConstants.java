@@ -25,5 +25,5 @@ public class WebServiceConstants
      * Name of request attribute in which html table is saved for displaying.
      */
     public static final String HTML_TABLE_ATTRIBUTE = "htmlTable";
-    
+
 }
