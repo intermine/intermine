@@ -31,6 +31,7 @@ import org.intermine.objectstore.query.ResultsInfo;
 import org.intermine.path.Path;
 import org.intermine.path.PathError;
 import org.intermine.util.CollectionUtil;
+import org.intermine.web.logic.session.SessionMethods;
 
 
 /**
@@ -667,7 +668,8 @@ public class PathQuery
      * @param servletContext global ServletContext object
      */
     public static PathQuery fromXml(String xml, Map savedBags, ServletContext servletContext) {
-        Map queries = PathQueryBinding.unmarshal(new StringReader(xml), savedBags, servletContext);
+        Map queries = PathQueryBinding.unmarshal(new StringReader(xml), savedBags, 
+                SessionMethods.getClassKeys(servletContext));
         return (PathQuery) queries.values().iterator().next();
     }
 
