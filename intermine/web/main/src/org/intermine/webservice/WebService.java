@@ -21,6 +21,7 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.apache.log4j.Logger;
 import org.intermine.web.logic.Constants;
+import org.intermine.webservice.output.HTMLOutput;
 import org.intermine.webservice.output.MemoryOutput;
 import org.intermine.webservice.output.Output;
 import org.intermine.webservice.output.StreamedOutput;
@@ -129,7 +130,7 @@ public abstract class WebService
                 output = new StreamedOutput(out, new TabFormatter());
                 break;
             case HTML_FORMAT:
-                output = new MemoryOutput();
+                output = new HTMLOutput(out);
                 break;
             default:
                 throw new WebServiceException("Invalid format.");
