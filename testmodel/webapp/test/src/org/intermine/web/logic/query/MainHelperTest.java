@@ -13,14 +13,10 @@ package org.intermine.web.logic.query;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.StringReader;
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.Map;
 import java.util.Properties;
-
-import junit.framework.TestCase;
 
 import org.intermine.metadata.Model;
 import org.intermine.model.testmodel.Company;
@@ -31,15 +27,13 @@ import org.intermine.objectstore.query.ConstraintSet;
 import org.intermine.objectstore.query.ContainsConstraint;
 import org.intermine.objectstore.query.Query;
 import org.intermine.objectstore.query.QueryClass;
-import org.intermine.objectstore.query.QueryCollectionReference;
 import org.intermine.objectstore.query.QueryExpression;
 import org.intermine.objectstore.query.QueryField;
-import org.intermine.objectstore.query.QueryFunction;
 import org.intermine.objectstore.query.QueryObjectReference;
 import org.intermine.objectstore.query.QueryValue;
 import org.intermine.objectstore.query.SimpleConstraint;
 import org.intermine.web.logic.ClassKeyHelper;
-import org.intermine.web.struts.WebTestBase;
+import org.intermine.web.logic.session.SessionMethods;
 
 import servletunit.struts.MockStrutsTestCase;
 
@@ -321,7 +315,7 @@ public class MainHelperTest extends MockStrutsTestCase {
     private Map readQueries() throws Exception {
         InputStream is = getClass().getClassLoader().getResourceAsStream("MainHelperTest.xml");
         return PathQueryBinding.unmarshal(new InputStreamReader(is), new HashMap(),
-                                          getActionServlet().getServletContext());
+                SessionMethods.getClassKeys(getActionServlet().getServletContext()));
     }
     public void test1() throws Exception {
         doQuery("<query name=\"test\" model=\"testmodel\" view=\"Employee\"></query>",
@@ -390,7 +384,7 @@ public class MainHelperTest extends MockStrutsTestCase {
 
     public void doQuery(String web, String iql) throws Exception {
         Map parsed = PathQueryBinding.unmarshal(new StringReader(web), new HashMap(),
-                                                getActionServlet().getServletContext());
+                SessionMethods.getClassKeys(getActionServlet().getServletContext()));
         PathQuery pq = (PathQuery) parsed.get("test");
         Query q = MainHelper.makeQuery(pq, Collections.EMPTY_MAP, null, null);
         String got = q.toString();

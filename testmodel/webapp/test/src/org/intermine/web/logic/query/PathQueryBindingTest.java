@@ -22,6 +22,7 @@ import org.intermine.objectstore.query.ConstraintOp;
 import org.intermine.metadata.Model;
 import org.intermine.path.Path;
 import org.intermine.web.logic.ClassKeyHelper;
+import org.intermine.web.logic.session.SessionMethods;
 
 import java.io.ByteArrayInputStream;
 import java.io.InputStream;
@@ -49,7 +50,7 @@ public class PathQueryBindingTest extends MockStrutsTestCase
                                .getResourceAsStream("class_keys.properties"));
         classKeys = ClassKeyHelper.readKeys(model, classKeyProps);
         savedQueries = PathQueryBinding.unmarshal(new InputStreamReader(is), new HashMap(),
-                                                  getActionServlet().getServletContext());
+                SessionMethods.getClassKeys(getActionServlet().getServletContext()));
         expected = getExpectedQueries();
     }
 
@@ -161,7 +162,7 @@ public class PathQueryBindingTest extends MockStrutsTestCase
                                               "employeesWithOldManagers", "testmodel");
         Map readFromXml = new LinkedHashMap();
         readFromXml = PathQueryBinding.unmarshal(new InputStreamReader(new ByteArrayInputStream(xml.getBytes())),
-                                                 new HashMap(), getActionServlet().getServletContext());
+                        new HashMap(), SessionMethods.getClassKeys(getActionServlet().getServletContext()));
         Map expectedQuery = new LinkedHashMap();
         expectedQuery.put("employeesWithOldManagers", expected.get("employeesWithOldManagers"));
 
@@ -171,7 +172,7 @@ public class PathQueryBindingTest extends MockStrutsTestCase
                                        "queryWithConstraint", "testmodel");
         readFromXml = new LinkedHashMap();
         readFromXml = PathQueryBinding.unmarshal(new InputStreamReader(new ByteArrayInputStream(xml.getBytes())),
-                                                 new HashMap(), getActionServlet().getServletContext());
+                        new HashMap(), SessionMethods.getClassKeys(getActionServlet().getServletContext()));
         expectedQuery = new LinkedHashMap();
         expectedQuery.put("queryWithConstraint", expected.get("queryWithConstraint"));
 
