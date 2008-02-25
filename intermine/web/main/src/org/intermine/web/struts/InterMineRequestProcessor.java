@@ -17,6 +17,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import org.intermine.objectstore.query.PathQueryUtil;
 import org.intermine.web.logic.Constants;
 import org.intermine.web.logic.WebUtil;
 import org.intermine.web.logic.bag.InterMineBag;
@@ -117,10 +118,10 @@ public class InterMineRequestProcessor extends TilesRequestProcessor
                 if (queryXml != null) {
                     Map<String, InterMineBag> allBags =
                         WebUtil.getAllBags(profile.getSavedBags(), sc);
-                    PathQuery pq = PathQuery.fromXml(queryXml, allBags, sc);
+                    PathQuery pq = PathQueryUtil.fromXml(queryXml, allBags, sc);
                     if (pq.isValid()) {
                         session.setAttribute(Constants.QUERY,
-                                             PathQuery.fromXml(queryXml, profile.getSavedBags(),
+                                             PathQueryUtil.fromXml(queryXml, profile.getSavedBags(),
                                                                sc));
                     } else {
                         LOG.warn("PathQuery XML in saved session invalid! " + queryXml);
