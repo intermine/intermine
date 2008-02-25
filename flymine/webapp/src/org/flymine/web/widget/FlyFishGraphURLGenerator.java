@@ -96,8 +96,8 @@ public class FlyFishGraphURLGenerator implements GraphCategoryURLGenerator
         view.add(MainHelper.makePath(model, q, "Gene.primaryIdentifier"));
         view.add(MainHelper.makePath(model, q, "Gene.name"));
         view.add(MainHelper.makePath(model, q, "Gene.organism.name"));
-        view.add(MainHelper.makePath(model, q, "Gene.mRNALocalisationResults.stage"));
-        view.add(MainHelper.makePath(model, q, "Gene.mRNALocalisationResults.expressed"));
+        view.add(MainHelper.makePath(model, q, "Gene.mRNAExpressionResults.stage"));
+        view.add(MainHelper.makePath(model, q, "Gene.mRNAExpressionResults.expressed"));
 
         q.setView(view);
 
@@ -112,7 +112,7 @@ public class FlyFishGraphURLGenerator implements GraphCategoryURLGenerator
         // stage (series)
         constraintOp = ConstraintOp.EQUALS;
         code = q.getUnusedConstraintCode();
-        PathNode stageNode = q.addNode("Gene.mRNALocalisationResults.stage");
+        PathNode stageNode = q.addNode("Gene.mRNAExpressionResults.stage");
         Constraint stageConstraint
                         = new Constraint(constraintOp, series, false, label, code, id, null);
         stageNode.getConstraints().add(stageConstraint);
@@ -124,7 +124,7 @@ public class FlyFishGraphURLGenerator implements GraphCategoryURLGenerator
             expressed = Boolean.TRUE;
         }
         code = q.getUnusedConstraintCode();
-        PathNode expressedNode = q.addNode("Gene.mRNALocalisationResults.expressed");
+        PathNode expressedNode = q.addNode("Gene.mRNAExpressionResults.expressed");
         Constraint expressedConstraint
                         = new Constraint(constraintOp, expressed, false, label, code, id, null);
         expressedNode.getConstraints().add(expressedConstraint);

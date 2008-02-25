@@ -48,9 +48,9 @@ public class BDGPInsituConverter extends FileConverter
     Item orgDrosophila;
     private Item dataSet;
     private Item pub;
-    String[] stages;
-    String[] stageDescriptions;
-    Set<String> badTerms;
+    private String[] stages;
+    private String[] stageDescriptions;
+    private Set<String> badTerms;
     
     /**
      * Construct a new instance of BDGPInsituConverter.
