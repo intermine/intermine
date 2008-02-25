@@ -70,7 +70,7 @@ public class LoadQueryAction extends DispatchAction
         //    WebUtil.getAllBags(profile.getSavedBags(), servletContext);
         Map queries = PathQueryBinding.unmarshal(new StringReader(queryXml),
                                                  profile.getSavedBags(),
-                                                 servletContext);
+                                                 SessionMethods.getClassKeys(servletContext));
         PathQuery query = (PathQuery) queries.values().iterator().next();
         SessionMethods.loadQuery(query, session, response);
 
