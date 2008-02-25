@@ -10,7 +10,6 @@ package org.intermine.web.logic.query;
  *
  */
 
-import java.io.StringReader;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -21,7 +20,6 @@ import java.util.Map;
 import java.util.Set;
 import java.util.Map.Entry;
 
-import javax.servlet.ServletContext;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
@@ -31,7 +29,6 @@ import org.intermine.objectstore.query.ResultsInfo;
 import org.intermine.path.Path;
 import org.intermine.path.PathError;
 import org.intermine.util.CollectionUtil;
-import org.intermine.web.logic.session.SessionMethods;
 
 
 /**
@@ -658,19 +655,6 @@ public class PathQuery
      */
     public String toXml() {
         return PathQueryBinding.marshal(this, "", model.getName());
-    }
-
-    /**
-     * Rematerialise single query from XML.
-     * @param xml PathQuery XML
-     * @return a PathQuery object
-     * @param savedBags Map from bag name to bag
-     * @param servletContext global ServletContext object
-     */
-    public static PathQuery fromXml(String xml, Map savedBags, ServletContext servletContext) {
-        Map queries = PathQueryBinding.unmarshal(new StringReader(xml), savedBags, 
-                SessionMethods.getClassKeys(servletContext));
-        return (PathQuery) queries.values().iterator().next();
     }
 
     /**
