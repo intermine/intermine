@@ -16,7 +16,6 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
-import javax.servlet.ServletContext;
 import javax.xml.stream.XMLOutputFactory;
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamWriter;
@@ -24,7 +23,6 @@ import javax.xml.stream.XMLStreamWriter;
 import org.intermine.metadata.FieldDescriptor;
 import org.intermine.util.SAXParser;
 import org.intermine.web.logic.query.PathQueryBinding;
-import org.intermine.web.logic.session.SessionMethods;
 import org.xml.sax.InputSource;
 
 /**

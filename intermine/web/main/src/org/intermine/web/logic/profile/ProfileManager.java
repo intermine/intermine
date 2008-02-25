@@ -229,7 +229,7 @@ public class ProfileManager
             try {
                 Map queries =
                     SavedQueryBinding.unmarshal(new StringReader(query.getQuery()), savedBags,
-                                                servletContext);
+                                                SessionMethods.getClassKeys(servletContext));
                 if (queries.size() == 0) {
                     queries =
                         PathQueryBinding.unmarshal(new StringReader(query.getQuery()), savedBags,
