@@ -22,6 +22,7 @@ import java.util.Properties;
 
 import junit.framework.TestCase;
 
+import org.intermine.TestUtil;
 import org.intermine.metadata.Model;
 import org.intermine.objectstore.query.ConstraintOp;
 import org.intermine.path.Path;
@@ -39,11 +40,7 @@ public class PathQueryBindingTest extends TestCase
     public void setUp() throws Exception {
         super.setUp();
         InputStream is = getClass().getClassLoader().getResourceAsStream("PathQueryBindingTest.xml");
-        Model model = Model.getInstanceByName("testmodel");
-        Properties classKeyProps = new Properties();
-            classKeyProps.load(getClass().getClassLoader()
-                               .getResourceAsStream("class_keys.properties"));
-        classKeys = ClassKeyHelper.readKeys(model, classKeyProps);
+        classKeys = TestUtil.getClassKeys(TestUtil.getModel());
         savedQueries = PathQueryBinding.unmarshal(new InputStreamReader(is), new HashMap(),
                 classKeys);
         expected = getExpectedQueries();
