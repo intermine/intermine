@@ -26,10 +26,10 @@ import org.intermine.metadata.Model;
 import org.intermine.objectstore.query.ConstraintOp;
 import org.intermine.objectstore.query.Query;
 import org.intermine.web.logic.ClassKeyHelper;
+import org.intermine.web.logic.ServletMethods;
 import org.intermine.web.logic.query.Constraint;
 import org.intermine.web.logic.query.MainHelper;
 import org.intermine.web.logic.query.PathNode;
-import org.intermine.web.logic.query.PathQuery;
 import org.intermine.web.logic.session.SessionMethods;
 import org.intermine.web.struts.TemplateForm;
 
@@ -58,7 +58,7 @@ public class TemplateHelperTest extends MockStrutsTestCase
             "SELECT DISTINCT a1_, a1_.name AS a2_ FROM org.intermine.model.testmodel.Employee AS a1_ ORDER BY a1_.name, a1_.age";
         String queryXml = "<query name=\"\" model=\"testmodel\" view=\"Employee Employee.name\"><node path=\"Employee\" type=\"Employee\"></node></query>";
         Map pathToQueryNode = new HashMap();
-        MainHelper.makeQuery(PathQuery.fromXml(queryXml, new HashMap(), getActionServlet().getServletContext()),
+        MainHelper.makeQuery(ServletMethods.fromXml(queryXml, new HashMap(), getActionServlet().getServletContext()),
                 new HashMap(), pathToQueryNode, null, null, false, null, null, null);
         List indexes = new ArrayList();
         String precomputeQuery = TemplateHelper.getPrecomputeQuery(t, indexes).toString();
