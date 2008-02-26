@@ -9,9 +9,15 @@ package org.intermine.web.logic;
  * information or http://www.gnu.org/copyleft/lesser.html.
  *
  */
-import org.intermine.cache.InterMineCache;
+import java.io.StringReader;
+import java.util.Map;
 
 import javax.servlet.ServletContext;
+
+import org.intermine.cache.InterMineCache;
+import org.intermine.web.logic.query.PathQuery;
+import org.intermine.web.logic.query.PathQueryBinding;
+import org.intermine.web.logic.session.SessionMethods;
 
 /**
  * Helper methods for ServletContext.
@@ -26,5 +32,18 @@ public class ServletMethods
      */
     public static InterMineCache getGlobalCache(ServletContext context) {
         return (InterMineCache) context.getAttribute(Constants.GLOBAL_CACHE);
+    }
+    
+    /**
+     * Rematerialise single query from XML.
+     * @param xml PathQuery XML
+     * @return a PathQuery object
+     * @param savedBags Map from bag name to bag
+     * @param servletContext global ServletContext object
+     */
+    public static PathQuery fromXml(String xml, Map savedBags, ServletContext servletContext) {
+        Map queries = PathQueryBinding.unmarshal(new StringReader(xml), savedBags, 
+                SessionMethods.getClassKeys(servletContext));
+        return (PathQuery) queries.values().iterator().next();
     }
 }

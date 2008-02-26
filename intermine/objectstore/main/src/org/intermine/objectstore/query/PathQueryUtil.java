@@ -10,22 +10,15 @@ package org.intermine.objectstore.query;
  *
  */
 
-import java.io.StringReader;
 import java.util.Iterator;
 import java.util.LinkedHashSet;
-import java.util.Map;
 import java.util.Set;
-
-import javax.servlet.ServletContext;
 
 import org.apache.tools.ant.BuildException;
 import org.intermine.metadata.ClassDescriptor;
 import org.intermine.metadata.FieldDescriptor;
 import org.intermine.metadata.Model;
 import org.intermine.util.TypeUtil;
-import org.intermine.web.logic.query.PathQuery;
-import org.intermine.web.logic.query.PathQueryBinding;
-import org.intermine.web.logic.session.SessionMethods;
 
 /**
  * Utility methods for paths.
@@ -231,17 +224,4 @@ public class PathQueryUtil
 		}
 		return sb.toString();
 	}
-
-    /**
-     * Rematerialise single query from XML.
-     * @param xml PathQuery XML
-     * @return a PathQuery object
-     * @param savedBags Map from bag name to bag
-     * @param servletContext global ServletContext object
-     */
-    public static PathQuery fromXml(String xml, Map savedBags, ServletContext servletContext) {
-        Map queries = PathQueryBinding.unmarshal(new StringReader(xml), savedBags, 
-                SessionMethods.getClassKeys(servletContext));
-        return (PathQuery) queries.values().iterator().next();
-    }
 }

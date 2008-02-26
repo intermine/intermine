@@ -16,7 +16,7 @@ import java.util.Map;
 
 import javax.servlet.ServletContext;
 
-import org.intermine.objectstore.query.PathQueryUtil;
+import org.intermine.web.logic.ServletMethods;
 import org.intermine.web.logic.bag.InterMineBag;
 import org.intermine.web.logic.query.PathQuery;
 
@@ -49,7 +49,7 @@ public class PathQueryBuilder
         validator.validate(xml, schemaUrl);
         if (validator.getErrorsAndWarnings().size() == 0) {
             try {
-                pathQuery = PathQueryUtil.fromXml(xml, savedBags,
+                pathQuery = ServletMethods.fromXml(xml, savedBags,
                         servletContext);                
             } catch (Exception ex) {
                 errors.add("XML is well formatted but contains invalid model data. "
