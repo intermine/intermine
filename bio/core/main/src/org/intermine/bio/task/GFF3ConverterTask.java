@@ -199,7 +199,7 @@ public class GFF3ConverterTask extends Task
                     (GFF3RecordHandler) handlerClass.getConstructor(types).newInstance(args);
             }
             GFF3SeqHandler sequenceHandler;
-            if (seqHandlerClassName == null) {
+            if (seqHandlerClassName == null || seqHandlerClassName.equals("")) {
                 sequenceHandler = new GFF3SeqHandler();
             } else {
                 Class handlerClass;

@@ -279,12 +279,19 @@
     </convert-fullxml-file>
   </target>
 
+  <!-- seqHandler is optional -->
+  <target name="-set-gff-seq-handler" unless="gff3.seqHandlerClassName">
+    <!-- no value by default --> 
+    <property name="gff3.seqHandlerClassName" value=""/>
+  </target>
+
+
   <!--
     Convert a gff3 file(s). Note that you must have sources/genomic-core/main
     as a project dependency to use this target (to have access to the
     GFF3ConverterTask et al)
   -->
-  <target name="-retrieve-from-gff3" if="have.file.gff3">
+  <target name="-retrieve-from-gff3" if="have.file.gff3" depends="-set-gff-seq-handler">
     <taskdef name="convert-gff3-file" classname="org.intermine.bio.task.GFF3ConverterTask">
       <classpath refid="task.class.path"/>
     </taskdef>
