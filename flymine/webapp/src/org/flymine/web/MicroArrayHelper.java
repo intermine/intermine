@@ -120,7 +120,7 @@ public class MicroArrayHelper
         q.addFrom(qcExpt);
         q.addToSelect(qcExpt);
 
-        QueryField qfGeneIdentifier = new QueryField(qcGene, "identifier");
+        QueryField qfGeneIdentifier = new QueryField(qcGene, "primaryIdentifier");
         SimpleConstraint sc = new SimpleConstraint(qfGeneIdentifier, ConstraintOp.EQUALS,
                                                    new QueryValue(gene));
         cs.addConstraint(sc);
