@@ -17,15 +17,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import org.intermine.objectstore.query.PathQueryUtil;
-import org.intermine.web.logic.Constants;
-import org.intermine.web.logic.WebUtil;
-import org.intermine.web.logic.bag.InterMineBag;
-import org.intermine.web.logic.profile.Profile;
-import org.intermine.web.logic.profile.ProfileManager;
-import org.intermine.web.logic.query.PathQuery;
-import org.intermine.web.logic.session.SessionMethods;
-
 import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -39,6 +30,14 @@ import org.apache.struts.action.ActionMessages;
 import org.apache.struts.config.ForwardConfig;
 import org.apache.struts.tiles.TilesRequestProcessor;
 import org.apache.struts.util.MessageResources;
+import org.intermine.web.logic.Constants;
+import org.intermine.web.logic.ServletMethods;
+import org.intermine.web.logic.WebUtil;
+import org.intermine.web.logic.bag.InterMineBag;
+import org.intermine.web.logic.profile.Profile;
+import org.intermine.web.logic.profile.ProfileManager;
+import org.intermine.web.logic.query.PathQuery;
+import org.intermine.web.logic.session.SessionMethods;
 
 /**
  * A RequestProcessor that sends you back to the start if your session isn't valid
@@ -118,10 +117,10 @@ public class InterMineRequestProcessor extends TilesRequestProcessor
                 if (queryXml != null) {
                     Map<String, InterMineBag> allBags =
                         WebUtil.getAllBags(profile.getSavedBags(), sc);
-                    PathQuery pq = PathQueryUtil.fromXml(queryXml, allBags, sc);
+                    PathQuery pq = ServletMethods.fromXml(queryXml, allBags, sc);
                     if (pq.isValid()) {
                         session.setAttribute(Constants.QUERY,
-                                             PathQueryUtil.fromXml(queryXml, profile.getSavedBags(),
+                                             ServletMethods.fromXml(queryXml, profile.getSavedBags(),
                                                                sc));
                     } else {
                         LOG.warn("PathQuery XML in saved session invalid! " + queryXml);
