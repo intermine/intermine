@@ -40,6 +40,7 @@ import org.intermine.web.logic.Constants;
 import org.intermine.web.logic.profile.ProfileManager;
 import org.intermine.web.logic.query.Constraint;
 import org.intermine.web.logic.query.PathQuery;
+import org.intermine.web.logic.results.WebResults;
 import org.intermine.web.logic.session.SessionMethods;
 import org.intermine.web.logic.template.TemplateQuery;
 import org.intermine.web.logic.template.TemplateQueryBinding;
@@ -117,7 +118,7 @@ public class TypeConverterTest extends MockStrutsTestCase
         expected.add(((List) r.get(1)).get(1));
 
         List<TemplateQuery> convTemplates = BagQueryRunner.getConversionTemplates(context);
-        List got = TypeConverter.getConvertedObjects(context, convTemplates, Employee.class, Address.class, imb).asList();
+        WebResults got = TypeConverter.getConvertedObjects(context, convTemplates, Employee.class, Address.class, imb);
 
         assertEquals(expected, got);
     }
