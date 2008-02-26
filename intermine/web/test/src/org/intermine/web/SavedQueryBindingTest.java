@@ -21,6 +21,7 @@ import org.intermine.web.logic.Constants;
 import org.intermine.web.logic.query.PathQuery;
 import org.intermine.web.logic.query.SavedQuery;
 import org.intermine.web.logic.query.SavedQueryBinding;
+import org.intermine.web.logic.session.SessionMethods;
 
 import java.io.StringReader;
 
@@ -53,7 +54,7 @@ public class SavedQueryBindingTest extends TestCase
         servletContext.setAttribute(Constants.CLASS_KEYS, classKeys);
         SavedQuery sq2 = (SavedQuery) SavedQueryBinding.unmarshal(new StringReader(xml),
                                                                   new HashMap(),
-                                                                  servletContext).values().iterator().next();
+                                                                  SessionMethods.getClassKeys(servletContext)).values().iterator().next();
 
         assertEquals(sq, sq2);
     }
