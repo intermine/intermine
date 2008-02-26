@@ -32,7 +32,12 @@ public class GFF3SeqHandler
         return seq;
     }
 
-    private Item createItem(GFF3Converter converter) {
+    /**
+     * Create the sequence item from the converter.
+     * @param converter that we are handling the sequence for
+     * @return the new sequence item
+     */
+    protected Item createItem(GFF3Converter converter) {
         return converter.createItem(converter.getSeqClsName());
     }
 }
