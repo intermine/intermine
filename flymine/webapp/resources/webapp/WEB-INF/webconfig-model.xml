@@ -507,7 +507,7 @@
 
   <class className="org.flymine.model.genomic.ProteinDomain">
     <fields>
-      <fieldconfig fieldExpr="identifier"/>
+      <fieldconfig fieldExpr="primaryIdentifier"/>
       <fieldconfig fieldExpr="name"/>
       <fieldconfig fieldExpr="shortName"/>
       <fieldconfig fieldExpr="type"/>
