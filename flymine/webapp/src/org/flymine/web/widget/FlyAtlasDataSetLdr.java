@@ -71,7 +71,7 @@ public class FlyAtlasDataSetLdr implements DataSetLdr
         // q.addToSelect(new QueryField(far,"enrichment"));
         q.addToSelect(new QueryField(far, "affyCall"));
         q.addToSelect(tissueName);
-        q.addToSelect(new QueryField(gene, "primaryAccession"));
+        q.addToSelect(new QueryField(gene, "primaryIdentifier"));
 
         ConstraintSet cs = new ConstraintSet(ConstraintOp.AND);
 
