@@ -82,22 +82,22 @@ public class BDGPinsituDataSetLdr implements DataSetLdr
     }
 
     private void buildDataSets(InterMineBag bag, String geneIdentifier, ObjectStore os) {
-        DefaultCategoryDataset dataSet = new DefaultCategoryDataset();
-
+        
         Query q = new Query();
         
         QueryClass mrnaResult = new QueryClass(MRNAExpressionResult.class);
         QueryClass gene = new QueryClass(Gene.class);
-        QueryClass dataset = new QueryClass(DataSet.class);
+        QueryClass ds = new QueryClass(DataSet.class);
 
         q.addFrom(mrnaResult);
         q.addFrom(gene);
-
+        q.addFrom(ds);
+        
         QueryField stageName = new QueryField(mrnaResult, "stageRange");
 
         q.addToSelect(new QueryField(mrnaResult, "expressed"));
         q.addToSelect(stageName);
-        q.addToSelect(new QueryField(gene, "primaryAccession"));
+        q.addToSelect(new QueryField(gene, "primaryIdentifier"));
         ConstraintSet cs = new ConstraintSet(ConstraintOp.AND);
 
         if (bag != null) {
@@ -114,10 +114,10 @@ public class BDGPinsituDataSetLdr implements DataSetLdr
         cs.addConstraint(new ContainsConstraint(r, ConstraintOp.CONTAINS, mrnaResult));
 
         QueryObjectReference qcr = new QueryObjectReference(mrnaResult, "source");
-        cs.addConstraint(new ContainsConstraint(qcr, ConstraintOp.CONTAINS, dataset));
+        cs.addConstraint(new ContainsConstraint(qcr, ConstraintOp.CONTAINS, ds));
         
         
-        cs.addConstraint(new SimpleConstraint(new QueryField(dataset, "title"), ConstraintOp.EQUALS,
+        cs.addConstraint(new SimpleConstraint(new QueryField(ds, "title"), ConstraintOp.EQUALS,
         new QueryValue("BDGP in situ data set")));
         
         q.setConstraint(cs);
@@ -161,7 +161,7 @@ public class BDGPinsituDataSetLdr implements DataSetLdr
                 }
 
         }
-
+        DefaultCategoryDataset dataSet = new DefaultCategoryDataset();
         // Build a map from tissue/UpDown to gene list
         geneCategoryArray = new Object[callTable.size()];
         int i = 0;
