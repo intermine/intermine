@@ -28,7 +28,7 @@ public class BagQueryHelperTest extends TestCase {
         super.setUp();
         model = Model.getInstanceByName("testmodel");
         Properties props = new Properties();
-        props.load(getClass().getClassLoader().getResourceAsStream("WEB-INF/class_keys.properties"));
+        props.load(getClass().getClassLoader().getResourceAsStream("class_keys.properties"));
         classKeys = ClassKeyHelper.readKeys(model, props);
         bagQueryConfigWithExtraConstraint.setConnectField("department");
         bagQueryConfigWithExtraConstraint.setExtraConstraintClassName(Department.class.getName());
