@@ -55,7 +55,7 @@
     <source name="long_oligo" type="long_oligo">
       <property name="gff3.taxonId" value="7227"/>
       <property name="gff3.seqClsName" value="MRNA"/>
-      <property name="gff3.seqDataSourceName" value="FlyBase"/>
+      <property name="gff3.seqDataSourceName" value="Micklem lab"/>
       <property name="src.data.dir" location="/shared/data/long_oligo"/>
     </source>
     <source name="drosdel-gff" type="drosdel-gff">
