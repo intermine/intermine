@@ -204,7 +204,6 @@
           <%-- The headers --%>
           <tr>
             <c:forEach var="column" items="${resultsTable.columns}" varStatus="status">
-
               <c:set var="displayPath" value="${fn:replace(column.name, '.', '&nbsp;> ')}"/>
               <im:unqualify className="${column.name}" var="pathEnd"/>
               <im:prefixSubstring str="${column.name}" outVar="columnPathPrefix" delimiter="."/>
@@ -231,7 +230,6 @@
                   </c:if>
 
                   <th align="center" valign="top" >
-
                     <%-- put in left, right, hide and show buttons --%>
                     <div align="right" style="margin-right:0px;margin-top:0px;white-space:nowrap;">
                     

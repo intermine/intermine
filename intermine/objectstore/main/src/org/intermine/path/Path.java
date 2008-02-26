@@ -44,6 +44,7 @@ public class Path
     private Model model;
     private String path;
     private boolean containsCollections = false;
+    private boolean containsReferences = false;
     private Map<String, String> subClassConstraintPaths;
     private List<ClassDescriptor> elementClassDescriptors;
 
@@ -146,6 +147,9 @@ public class Path
             if (fld.isCollection()) {
                 this.containsCollections = true;
             }
+            if (fld.isReference()) {
+                this.containsReferences = true;
+            }
 
             if (i < parts.length - 1) {
 
@@ -188,6 +192,22 @@ public class Path
      */
     public boolean containsCollections() {
         return containsCollections;
+    }
+
+    /**
+     * Return true if and only if any part of the path is a reference.
+     * @return the references flag
+     */
+    public boolean containsReferences() {
+        return containsReferences;
+    }
+    
+    /**
+     * Return true if the Path does not contain references or collections
+     * @return a boolean
+     */
+    public boolean isOnlyAttribute() {
+        return (!containsReferences && !containsCollections);
     }
 
     /**
