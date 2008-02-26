@@ -19,36 +19,32 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
-import java.util.Properties;
+
+import junit.framework.TestCase;
 
 import org.apache.struts.action.ActionErrors;
-import org.intermine.metadata.Model;
+import org.intermine.TestUtil;
 import org.intermine.objectstore.query.ConstraintOp;
 import org.intermine.objectstore.query.Query;
-import org.intermine.web.logic.ClassKeyHelper;
 import org.intermine.web.logic.ServletMethods;
+import org.intermine.web.logic.bag.InterMineBag;
 import org.intermine.web.logic.query.Constraint;
 import org.intermine.web.logic.query.MainHelper;
 import org.intermine.web.logic.query.PathNode;
-import org.intermine.web.logic.session.SessionMethods;
+import org.intermine.web.logic.query.PathQuery;
+import org.intermine.web.logic.query.PathQueryBinding;
 import org.intermine.web.struts.TemplateForm;
 
-import servletunit.struts.MockStrutsTestCase;
-
-public class TemplateHelperTest extends MockStrutsTestCase
+public class TemplateHelperTest extends TestCase
 {
     private Map templates, classKeys;
 
     public void setUp() throws Exception {
         super.setUp();
-        Model model = Model.getInstanceByName("testmodel");
-        Properties classKeyProps = new Properties();
-        classKeyProps.load(getClass().getClassLoader()
-                           .getResourceAsStream("class_keys.properties"));
-        classKeys = ClassKeyHelper.readKeys(model, classKeyProps);
+        classKeys = TestUtil.getClassKeys(TestUtil.getModel());
         TemplateQueryBinding binding = new TemplateQueryBinding();
-        Reader reader = new InputStreamReader(TemplateHelper.class.getClassLoader().getResourceAsStream("WEB-INF/classes/default-template-queries.xml"));
-        templates = binding.unmarshal(reader, new HashMap(), SessionMethods.getClassKeys(getActionServlet().getServletContext()));
+        Reader reader = new InputStreamReader(TemplateHelper.class.getClassLoader().getResourceAsStream("default-template-queries.xml"));
+        templates = binding.unmarshal(reader, new HashMap(), classKeys);
     }
 
     public void testPrecomputeQuery() throws Exception {
@@ -58,7 +54,9 @@ public class TemplateHelperTest extends MockStrutsTestCase
             "SELECT DISTINCT a1_, a1_.name AS a2_ FROM org.intermine.model.testmodel.Employee AS a1_ ORDER BY a1_.name, a1_.age";
         String queryXml = "<query name=\"\" model=\"testmodel\" view=\"Employee Employee.name\"><node path=\"Employee\" type=\"Employee\"></node></query>";
         Map pathToQueryNode = new HashMap();
-        MainHelper.makeQuery(ServletMethods.fromXml(queryXml, new HashMap(), getActionServlet().getServletContext()),
+        PathQuery pathQuery = PathQueryBinding.unmarshal(new StringReader(queryXml), new HashMap<String, InterMineBag>(), 
+                classKeys).values().iterator().next();
+        MainHelper.makeQuery(pathQuery,
                 new HashMap(), pathToQueryNode, null, null, false, null, null, null);
         List indexes = new ArrayList();
         String precomputeQuery = TemplateHelper.getPrecomputeQuery(t, indexes).toString();
@@ -152,7 +150,7 @@ public class TemplateHelperTest extends MockStrutsTestCase
                 + "    <constraint op=\"!=\" value=\"40\" description=\"d\" identifier=\"\" code=\"D\" editable=\"true\"></constraint>"
                 + "</node></query></template>");
         TemplateQuery t =
-            (TemplateQuery) binding.unmarshal(reader, new HashMap(), SessionMethods.getClassKeys(getActionServlet().getServletContext())).values().iterator().next();
+            (TemplateQuery) binding.unmarshal(reader, new HashMap(), classKeys).values().iterator().next();
         TemplateQuery tc = t.cloneWithoutEditableConstraints();
         System.out.println(t.getConstraintLogic() + " -> " + tc.getConstraintLogic());
         assertEquals("SELECT DISTINCT a1_, a1_.age AS a2_ FROM org.intermine.model.testmodel.Employee AS a1_ WHERE (a1_.age != 10 AND a1_.age != 30) ORDER BY a1_.name, a1_.age", TemplateHelper.getPrecomputeQuery(t, new ArrayList()).toString());
@@ -170,7 +168,7 @@ public class TemplateHelperTest extends MockStrutsTestCase
         "</template>");
         List indexes = new ArrayList();
         TemplateQuery t =
-            (TemplateQuery) binding.unmarshal(reader, new HashMap(), SessionMethods.getClassKeys(getActionServlet().getServletContext())).values().iterator().next();
+            (TemplateQuery) binding.unmarshal(reader, new HashMap(), classKeys).values().iterator().next();
         Query precomputeQuery = TemplateHelper.getPrecomputeQuery(t, new ArrayList());
         assertEquals("SELECT DISTINCT a1_ FROM org.intermine.model.testmodel.Manager AS a1_ ORDER BY a1_.name, a1_.title",
                      precomputeQuery.toString());
