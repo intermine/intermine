@@ -49,7 +49,7 @@ public class LongOligoGFF3RecordHandler extends GFF3RecordHandler
         oligo.setAttribute("tm", oaTm);
 
         oligo.setReference("transcript", getSequence().getIdentifier());
-
+        
         String residues = (String) ((List) record.getAttributes().get("sequence")).get(0);
         if (residues != null) {
             Item seqItem = getItemFactory().makeItem(null, tgtNs + "Sequence", "");

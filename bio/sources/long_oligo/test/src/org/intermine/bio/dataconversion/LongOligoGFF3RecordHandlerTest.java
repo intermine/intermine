@@ -39,8 +39,9 @@ public class LongOligoGFF3RecordHandlerTest extends ItemsTestCase
     public void setUp() throws Exception {
         Model tgtModel = Model.getInstanceByName("genomic");
         handler = new LongOligoGFF3RecordHandler(tgtModel);
+        LongOligoGFF3SeqHandler seqHandler = new LongOligoGFF3SeqHandler();
         converter = new GFF3Converter(writer, seqClsName, taxonId, dataSourceName, dataSetTitle,
-                                      dataSourceName, tgtModel, handler, null);
+                                      dataSourceName, tgtModel, handler, seqHandler);
     }
 
     public void tearDown() throws Exception {

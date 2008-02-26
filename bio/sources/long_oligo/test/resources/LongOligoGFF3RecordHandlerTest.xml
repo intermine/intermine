@@ -11,7 +11,7 @@
     <attribute name="algorithm" value="INDAC_1.0"/>
   </item>
   <item id="0_3" class="http://www.flymine.org/model/genomic#MRNA">
-    <attribute name="primaryIdentifier" value="CG4314-RA"/>
+    <attribute name="secondaryIdentifier" value="CG4314-RA"/>
     <reference name="organism" ref_id="0_0"/>
   </item>
   <item id="0_1" class="http://www.flymine.org/model/genomic#DataSet">
