@@ -10,6 +10,9 @@ package org.intermine.web.logic.query;
  *
  */
 
+import java.io.ByteArrayInputStream;
+import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
@@ -17,27 +20,19 @@ import java.util.List;
 import java.util.Map;
 import java.util.Properties;
 
-import org.intermine.objectstore.query.ConstraintOp;
+import junit.framework.TestCase;
 
 import org.intermine.metadata.Model;
+import org.intermine.objectstore.query.ConstraintOp;
 import org.intermine.path.Path;
 import org.intermine.web.logic.ClassKeyHelper;
-import org.intermine.web.logic.session.SessionMethods;
-
-import java.io.ByteArrayInputStream;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-
-import servletunit.struts.MockStrutsTestCase;
-
-import junit.framework.TestCase;
 
 /**
  * Tests for the PathQueryBinding class
  *
  * @author Kim Rutherford
  */
-public class PathQueryBindingTest extends MockStrutsTestCase
+public class PathQueryBindingTest extends TestCase
 {
     Map savedQueries, expected, classKeys;
 
@@ -50,7 +45,7 @@ public class PathQueryBindingTest extends MockStrutsTestCase
                                .getResourceAsStream("class_keys.properties"));
         classKeys = ClassKeyHelper.readKeys(model, classKeyProps);
         savedQueries = PathQueryBinding.unmarshal(new InputStreamReader(is), new HashMap(),
-                SessionMethods.getClassKeys(getActionServlet().getServletContext()));
+                classKeys);
         expected = getExpectedQueries();
     }
 
@@ -162,7 +157,7 @@ public class PathQueryBindingTest extends MockStrutsTestCase
                                               "employeesWithOldManagers", "testmodel");
         Map readFromXml = new LinkedHashMap();
         readFromXml = PathQueryBinding.unmarshal(new InputStreamReader(new ByteArrayInputStream(xml.getBytes())),
-                        new HashMap(), SessionMethods.getClassKeys(getActionServlet().getServletContext()));
+                        new HashMap(), classKeys);
         Map expectedQuery = new LinkedHashMap();
         expectedQuery.put("employeesWithOldManagers", expected.get("employeesWithOldManagers"));
 
@@ -172,7 +167,7 @@ public class PathQueryBindingTest extends MockStrutsTestCase
                                        "queryWithConstraint", "testmodel");
         readFromXml = new LinkedHashMap();
         readFromXml = PathQueryBinding.unmarshal(new InputStreamReader(new ByteArrayInputStream(xml.getBytes())),
-                        new HashMap(), SessionMethods.getClassKeys(getActionServlet().getServletContext()));
+                        new HashMap(), classKeys);
         expectedQuery = new LinkedHashMap();
         expectedQuery.put("queryWithConstraint", expected.get("queryWithConstraint"));
 
