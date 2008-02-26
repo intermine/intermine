@@ -16,8 +16,10 @@ import java.io.StringReader;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Properties;
 
+import junit.framework.TestCase;
+
+import org.intermine.TestUtil;
 import org.intermine.metadata.Model;
 import org.intermine.model.testmodel.Company;
 import org.intermine.model.testmodel.Department;
@@ -32,10 +34,6 @@ import org.intermine.objectstore.query.QueryField;
 import org.intermine.objectstore.query.QueryObjectReference;
 import org.intermine.objectstore.query.QueryValue;
 import org.intermine.objectstore.query.SimpleConstraint;
-import org.intermine.web.logic.ClassKeyHelper;
-import org.intermine.web.logic.session.SessionMethods;
-
-import servletunit.struts.MockStrutsTestCase;
 
 /**
  * Tests for the MainHelper class
@@ -43,7 +41,7 @@ import servletunit.struts.MockStrutsTestCase;
  * @author Kim Rutherford
  */
 
-public class MainHelperTest extends MockStrutsTestCase {
+public class MainHelperTest extends TestCase {
     private Map classKeys;
 
     public MainHelperTest(String arg) {
@@ -52,11 +50,7 @@ public class MainHelperTest extends MockStrutsTestCase {
 
     public void setUp() throws Exception {
         super.setUp();
-        Properties classKeyProps = new Properties();
-        classKeyProps.load(getClass().getClassLoader()
-                           .getResourceAsStream("class_keys.properties"));
-        Model model = Model.getInstanceByName("testmodel");
-        classKeys = ClassKeyHelper.readKeys(model, classKeyProps);
+        classKeys = TestUtil.getClassKeys(TestUtil.getModel());
     }
 
     public void testGetQualifiedTypeName() throws Exception {
@@ -314,8 +308,7 @@ public class MainHelperTest extends MockStrutsTestCase {
 
     private Map readQueries() throws Exception {
         InputStream is = getClass().getClassLoader().getResourceAsStream("MainHelperTest.xml");
-        return PathQueryBinding.unmarshal(new InputStreamReader(is), new HashMap(),
-                SessionMethods.getClassKeys(getActionServlet().getServletContext()));
+        return PathQueryBinding.unmarshal(new InputStreamReader(is), new HashMap(), classKeys);
     }
     public void test1() throws Exception {
         doQuery("<query name=\"test\" model=\"testmodel\" view=\"Employee\"></query>",
@@ -383,8 +376,7 @@ public class MainHelperTest extends MockStrutsTestCase {
     }
 
     public void doQuery(String web, String iql) throws Exception {
-        Map parsed = PathQueryBinding.unmarshal(new StringReader(web), new HashMap(),
-                SessionMethods.getClassKeys(getActionServlet().getServletContext()));
+        Map parsed = PathQueryBinding.unmarshal(new StringReader(web), new HashMap(), classKeys);
         PathQuery pq = (PathQuery) parsed.get("test");
         Query q = MainHelper.makeQuery(pq, Collections.EMPTY_MAP, null, null);
         String got = q.toString();
