@@ -23,16 +23,11 @@ import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
 import org.intermine.metadata.Model;
-import org.intermine.model.InterMineObject;
 import org.intermine.objectstore.ObjectStore;
 import org.intermine.objectstore.ObjectStoreWriter;
 import org.intermine.objectstore.intermine.ObjectStoreWriterInterMineImpl;
-import org.intermine.objectstore.query.BagConstraint;
-import org.intermine.objectstore.query.ConstraintOp;
-import org.intermine.objectstore.query.Query;
-import org.intermine.objectstore.query.QueryClass;
+import org.intermine.objectstore.query.Results;
 import org.intermine.objectstore.query.ResultsRow;
-import org.intermine.objectstore.query.SingletonResults;
 import org.intermine.path.Path;
 import org.intermine.util.TypeUtil;
 import org.intermine.web.logic.Constants;
@@ -45,9 +40,9 @@ import org.intermine.web.logic.bag.TypeConverter;
 import org.intermine.web.logic.config.WebConfig;
 import org.intermine.web.logic.profile.Profile;
 import org.intermine.web.logic.profile.ProfileManager;
-import org.intermine.web.logic.query.MainHelper;
 import org.intermine.web.logic.query.PathQuery;
 import org.intermine.web.logic.results.PagedTable;
+import org.intermine.web.logic.results.WebResults;
 import org.intermine.web.logic.search.SearchRepository;
 import org.intermine.web.logic.session.SessionMethods;
 
@@ -130,25 +125,11 @@ public class ModifyBagDetailsAction extends InterMineAction
                 if (imBag == null) {
                     return mapping.findForward("errors");
                 }
-                Query q = new Query();
-                QueryClass qc = new QueryClass(InterMineObject.class);
-                q.addFrom(qc);
-                q.addToSelect(qc);
-                q.setConstraint(new BagConstraint(qc, ConstraintOp.IN, imBag.getOsb()));
-                q.setDistinct(false);
-                SingletonResults res = os.executeSingleton(q);
 
-                Model model = os.getModel();
-                Map classKeys = (Map) servletContext.getAttribute(Constants.CLASS_KEYS);
-                WebConfig webConfig = (WebConfig) servletContext.getAttribute(Constants.WEBCONFIG);
+                String identifier = "bag." + imBag.getName();
+                PagedTable pc = SessionMethods.getResultsTable(session, identifier);
+                PathQuery pathQuery = pc.getWebTable().getPathQuery();
 
-                WebPathCollection webPathCollection =
-                    new WebPathCollection(os, new Path(model, imBag.getType()), res, model,
-                                          webConfig, classKeys);
-
-                PagedTable pagedColl = new PagedTable(webPathCollection);
-
-                PathQuery pathQuery = MainHelper.webTableToPathQuery(pagedColl, model, imBag);
                 session.setAttribute(Constants.QUERY, pathQuery);
                 session.setAttribute("path", imBag.getType());
                 session.setAttribute("prefix", imBag.getType());
@@ -162,15 +143,16 @@ public class ModifyBagDetailsAction extends InterMineAction
             InterMineBag imBag = BagHelper.getBag(profile, globalRepository,
                 request.getParameter("bagName"));
             Model model = os.getModel();
-            SingletonResults res = TypeConverter.getConvertedObjects(servletContext,
+            WebResults webResults = TypeConverter.getConvertedObjects(servletContext,
                 BagQueryRunner.getConversionTemplates(servletContext),
                 TypeUtil.instantiate(model.getPackageName() + "." + imBag.getType()),
                 TypeUtil.instantiate(model.getPackageName() + "." + type2),
                 imBag);
-            WebPathCollection webPathCollection = new WebPathCollection(os, new Path(model,
-                type2), res, model, webConfig, classKeys);
-            String identifier = "convert." + type2 + imBag.getName();
-            PagedTable pc = new PagedTable(webPathCollection);
+            
+            
+            PagedTable pc = new PagedTable(webResults);
+            String identifier = "bagconvert." + imBag.getName() + "." + type2;
+
             SessionMethods.setResultsTable(session, identifier, pc);
             String trail = "|bag." + imBag.getName();
             return new ForwardParameters(mapping.findForward("results"))

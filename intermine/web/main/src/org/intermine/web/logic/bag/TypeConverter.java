@@ -25,14 +25,15 @@ import org.intermine.objectstore.ObjectStore;
 import org.intermine.objectstore.ObjectStoreException;
 import org.intermine.objectstore.query.ConstraintOp;
 import org.intermine.objectstore.query.Query;
+import org.intermine.objectstore.query.QueryNode;
 import org.intermine.objectstore.query.Results;
-import org.intermine.objectstore.query.SingletonResults;
 import org.intermine.path.Path;
 import org.intermine.web.logic.Constants;
 import org.intermine.web.logic.query.Constraint;
 import org.intermine.web.logic.query.MainHelper;
 import org.intermine.web.logic.query.PathNode;
 import org.intermine.web.logic.query.PathQuery;
+import org.intermine.web.logic.results.WebResults;
 import org.intermine.web.logic.template.TemplateQuery;
 
 /**
@@ -132,22 +133,22 @@ public class TypeConverter
      * @param conversionTemplates a list of templates to be used for conversion
      * @param typeA the type to convert from
      * @param typeB the type to convert to
-     * @param bag an InterMineBag or Collection of objects of type typeA
-     * @return a SingletonResults containting the converted objects
+     * @param imBag an InterMineBag or Collection of objects of type typeA
+     * @return a WebResults object containing the converted objects
      * @throws InterMineException if an error occurs
      */
-    public static SingletonResults getConvertedObjects(ServletContext servletContext,
+    public static WebResults getConvertedObjects(ServletContext servletContext,
                                               List<TemplateQuery> conversionTemplates,
-                                              Class typeA, Class typeB, Object bag)
+                                              Class typeA, Class typeB, InterMineBag imBag)
     throws InterMineException {
-        PathQuery pq = getConversionQuery(conversionTemplates, typeA, typeB, bag);
+        PathQuery pq = getConversionQuery(conversionTemplates, typeA, typeB, imBag);
         if (pq == null) {
             return null;
         }
-        if (pq.getView().size() > 1) {
-            throw new InterMineException("ConvertedObjects query has more than one element on"
-                    + " the view list: " + pq);
-        }
+        String label = null, id = null, code = pq.getUnusedConstraintCode();
+        Constraint c = new Constraint(ConstraintOp.IN, imBag.getName(), false,
+            label, code, id, null);
+        pq.addNode(imBag.getType()).getConstraints().add(c);
         Query q;
         try {
             q = MainHelper.makeQuery(pq, Collections.EMPTY_MAP, null, servletContext, null, false,
@@ -159,7 +160,9 @@ public class TypeConverter
         }
 
         ObjectStore os = (ObjectStore) servletContext.getAttribute(Constants.OBJECTSTORE);
-        return os.executeSingleton(q);
+        Results res = os.execute(q);
+        return (new WebResults(pq, res, os.getModel(), new HashMap<String, QueryNode>(),
+                                 (Map) servletContext.getAttribute(Constants.CLASS_KEYS), null));
     }
 
 

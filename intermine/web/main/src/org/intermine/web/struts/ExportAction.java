@@ -98,33 +98,14 @@ public class ExportAction extends InterMineAction
                 Profile profile = (Profile) session.getAttribute(Constants.PROFILE);
                 ObjectStore os = (ObjectStore) servletContext.getAttribute(Constants.OBJECTSTORE);
                 String bagName = request.getParameter("table");
-                Map<String, InterMineBag> allBags =
-                    WebUtil.getAllBags(profile.getSavedBags(), servletContext);
-                InterMineBag imBag = allBags.get(bagName);
-
-                Map classKeys = (Map) servletContext.getAttribute(Constants.CLASS_KEYS);
-                WebConfig webConfig = (WebConfig) servletContext.getAttribute(Constants.WEBCONFIG);
-                Model model = os.getModel();
-
-                Query q = new Query();
-                QueryClass qc = new QueryClass(InterMineObject.class);
-                q.addFrom(qc);
-                q.addToSelect(qc);
-                q.setConstraint(new BagConstraint(qc, ConstraintOp.IN, imBag.getOsb()));
-                q.setDistinct(false);
-                SingletonResults res = os.executeSingleton(q);
-
-                WebPathCollection webPathCollection =
-                    new WebPathCollection(os, new Path(model, imBag.getType()), res, model,
-                                          webConfig, classKeys);
-                pt = new PagedTable(webPathCollection);
-
+                pt = SessionMethods.getResultsTable(session, "bag."
+                                                                + request.getParameter("table"));
             } else {
                 pt = SessionMethods.getResultsTable(session, request.getParameter("table"));
-                rowList = pt.getAllRows();
-                if (rowList instanceof WebResults) {
-                    ((WebResults) rowList).goFaster();
-                }
+            }
+            rowList = pt.getAllRows();
+            if (rowList instanceof WebResults) {
+                ((WebResults) rowList).goFaster();
             }
 
             if (type.equals("excel")) {

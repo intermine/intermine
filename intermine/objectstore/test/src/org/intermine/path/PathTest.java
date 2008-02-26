@@ -277,4 +277,35 @@ public class PathTest extends TestCase
         }
 
     }
+    
+    public void testContainsCollections() {
+        String stringPath = "Department.company";
+        Path path = new Path(model, stringPath);
+        assertFalse(path.containsCollections());
+        stringPath = "Department.employees.name";
+        path = new Path(model, stringPath);
+        assertTrue(path.containsCollections());
+    }
+    
+    public void testContainsReferences() {
+        String stringPath = "Department.company";
+        Path path = new Path(model, stringPath);
+        assertTrue(path.containsReferences());
+        stringPath = "Department.employees.name";
+        path = new Path(model, stringPath);
+        assertFalse(path.containsReferences());
+    }
+    
+    public void testIsOnlyAttribute() {
+        String stringPath = "Department.company";
+        Path path = new Path(model, stringPath);
+        assertFalse(path.isOnlyAttribute());
+        stringPath = "Department.employees.name";
+        path = new Path(model, stringPath);
+        assertFalse(path.isOnlyAttribute());
+        stringPath = "Department.name";
+        path = new Path(model, stringPath);
+        assertTrue(path.isOnlyAttribute());
+    }
+    
 }

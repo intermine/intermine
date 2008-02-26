@@ -46,6 +46,8 @@ import org.intermine.web.logic.WebUtil;
 import org.intermine.web.logic.bag.BagQueryConfig;
 import org.intermine.web.logic.bag.BagQueryResult;
 import org.intermine.web.logic.bag.InterMineBag;
+import org.intermine.web.logic.config.WebConfig;
+import org.intermine.web.logic.pathqueryresult.PathQueryResultHelper;
 import org.intermine.web.logic.profile.Profile;
 import org.intermine.web.logic.profile.ProfileManager;
 import org.intermine.web.logic.query.MainHelper;
@@ -77,7 +79,8 @@ public class SessionMethods
 {
     protected static final Logger LOG = Logger.getLogger(SessionMethods.class);
     private static int topQueryId = 0;
-
+    private static int index = 0;
+    
     /**
      * Base class for query thread runnable.
      */
@@ -786,6 +789,7 @@ public class SessionMethods
             session.setAttribute(Constants.TABLE_MAP, tables);
         }
         tables.put(identifier, table);
+        table.setTableid(identifier);
     }
 
     /**
@@ -851,6 +855,71 @@ public class SessionMethods
         HttpSession session = request.getSession();
         request.setAttribute(attributeName, session.getAttribute(attributeName));
         session.removeAttribute(attributeName);
+    }
+    
+    /**
+     * Execute a query and return a PagedTable to display contents of an InterMineBag
+     * 
+     * @param request the request
+     * @param servletContext the ServletContext
+     * @param imBag the InterMineBag
+     * @return a PagedTable
+     * @throws ObjectStoreException thrown exception
+     */
+    public static PagedTable doQueryGetPagedTable(HttpServletRequest request,
+                                                 ServletContext servletContext, InterMineBag imBag)
+                    throws ObjectStoreException {
+        HttpSession session = request.getSession();
+        Map classKeys = (Map) servletContext.getAttribute(Constants.CLASS_KEYS);
+        BagQueryConfig bagQueryConfig = (BagQueryConfig) servletContext
+                        .getAttribute(Constants.BAG_QUERY_CONFIG);
+        ObjectStore os = (ObjectStore) servletContext.getAttribute(Constants.OBJECTSTORE);
+        Profile profile = (Profile) session.getAttribute(Constants.PROFILE);
+        WebConfig webConfig = (WebConfig) servletContext.getAttribute(Constants.WEBCONFIG);
+
+        PathQuery pathQuery = PathQueryResultHelper.makePathQueryForBag(imBag, webConfig, os
+                        .getModel());
+        WebResults webResults = PathQueryResultHelper.runPathQueryGetResults(pathQuery, profile,
+                        os, classKeys, bagQueryConfig, servletContext);
+        String identifier = "bag." + imBag.getName();
+        PagedTable pagedResults = new PagedTable(webResults);
+        setResultsTable(session, identifier, pagedResults);
+        return pagedResults;
+    }
+    
+    /**
+     * Execute a query and return a PagedTable to display contents of a Collection, field of 
+     * a given InterMineObject
+     * 
+     * @param request the ServletRequest
+     * @param servletContext the ServletContext
+     * @param id the InteRMineObject identifier
+     * @param field the name of the collection field in the InterMineObject
+     * @param referencedClassName the type of the collection
+     * @param objectClassName the type of the InterMineObject
+     * @return a PagedTable
+     * @throws ObjectStoreException exception thrown
+     */
+    public static PagedTable doQueryGetPagedTable(HttpServletRequest request,
+                                                  ServletContext servletContext, Integer id,
+                                                  String field, String referencedClassName,
+                                                  String objectClassName)
+                    throws ObjectStoreException {
+        HttpSession session = request.getSession();
+        Map classKeys = (Map) servletContext.getAttribute(Constants.CLASS_KEYS);
+        BagQueryConfig bagQueryConfig = (BagQueryConfig) servletContext
+                        .getAttribute(Constants.BAG_QUERY_CONFIG);
+        ObjectStore os = (ObjectStore) servletContext.getAttribute(Constants.OBJECTSTORE);
+        Profile profile = (Profile) session.getAttribute(Constants.PROFILE);
+        WebConfig webConfig = (WebConfig) servletContext.getAttribute(Constants.WEBCONFIG);
+        PathQuery pathQuery = PathQueryResultHelper.makePathQueryForCollection(webConfig, os
+                        .getModel(), id, referencedClassName, objectClassName, field);
+        WebResults webResults = PathQueryResultHelper.runPathQueryGetResults(pathQuery, profile,
+                        os, classKeys, bagQueryConfig, servletContext);
+        String identifier = "coll" + index++;
+        PagedTable pagedResults = new PagedTable(webResults);
+        setResultsTable(session, identifier, pagedResults);
+        return pagedResults;
     }
     
     /**

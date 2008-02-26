@@ -100,6 +100,17 @@
 <div>
 
 <%-- Table displaying bag elements --%>
+<tiles:insert name="resultsTable.tile">
+     <tiles:put name="pagedResults" beanName="pagedResults" />
+</tiles:insert>
+<c:if test="${!empty bag.dateCreated}">
+    <i><b>Created:</b> <im:dateDisplay date="${bag.dateCreated}" /></i>
+</c:if>
+<html:submit property="showInResultsTable">
+    View all ${bag.size} records >>
+</html:submit>
+
+<%--
 <table class="results" id="bagdetailsresults" cellspacing="0" align="left" >
 <tfoot>
     <tr>
@@ -114,7 +125,7 @@
     </tr>
 </tfoot>
 <tr>
-  <c:forEach var="column" items="${pagedColl.columns}" varStatus="status">
+  <c:forEach var="column" items="${pagedResults.columns}" varStatus="status">
     <th align="center" valign="top">
       <div>
         <c:out value="${fn:replace(column.name, '.', '&nbsp;> ')}" escapeXml="false"/>
@@ -122,7 +133,7 @@
     </th>
   </c:forEach>
 </tr>
-<c:forEach items="${pagedColl.resultElementRows}" var="row" varStatus="status">
+<c:forEach items="${pagedResults.resultElementRows}" var="row" varStatus="status">
   <c:set var="object" value="${row[0]}" scope="request"/>
   <c:set var="rowClass">
     <c:choose>
@@ -131,7 +142,7 @@
     </c:choose>
   </c:set>
   <tr class="${rowClass}">
-    <c:forEach var="column" items="${pagedColl.columns}" varStatus="status2">
+    <c:forEach var="column" items="${pagedResults.columns}" varStatus="status2">
       <td>
         <c:set var="resultElement" value="${row[column.index]}" scope="request"/>
         <c:choose>
@@ -149,14 +160,15 @@
   </tr>
 </c:forEach>
 <!-- show dotted lines if there are more than 5 items in bag -->            
-<c:if test="${pagedColl.pageSize < pagedColl.size}">
+<c:if test="${pagedResults.pageSize < pagedResults.size}">
   <tr>
-    <c:forEach var="column" items="${pagedColl.columns}" varStatus="status2">
+    <c:forEach var="column" items="${pagedResults.columns}" varStatus="status2">
       <td style="border-right: dotted 1px #666; border-bottom: dotted 1px #666;">&nbsp;</td>
       </c:forEach>
    </tr>
 </c:if>
 </table>
+--%>
 </div>
 
 <div id="clearLine">&nbsp;</div>

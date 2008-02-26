@@ -32,6 +32,7 @@ public class PagedTable
 
     private int pageSize = Constants.DEFAULT_TABLE_SIZE;
     private List<Column> columns;
+    private String tableid;
 
     private List<List<Object>> rows = null;
 
@@ -367,5 +368,19 @@ public class PagedTable
      */
     public WebTable getWebTable() {
         return webTable;
+    }
+
+    /**
+     * @return the tableid
+     */
+    public String getTableid() {
+        return tableid;
+    }
+
+    /**
+     * @param tableid the tableid to set
+     */
+    public void setTableid(String tableid) {
+        this.tableid = tableid;
     }
 }

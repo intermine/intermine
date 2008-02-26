@@ -10,45 +10,12 @@ package org.intermine.web.struts;
  *
  */
 
+import java.awt.Font;
+import java.lang.reflect.Constructor;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.Set;
-
-import org.intermine.objectstore.query.BagConstraint;
-import org.intermine.objectstore.query.ConstraintOp;
-import org.intermine.objectstore.query.Query;
-import org.intermine.objectstore.query.QueryClass;
-import org.intermine.objectstore.query.SingletonResults;
-
-import org.intermine.metadata.Model;
-import org.intermine.model.InterMineObject;
-import org.intermine.objectstore.ObjectStore;
-import org.intermine.path.Path;
-import org.intermine.util.TypeUtil;
-import org.intermine.web.logic.Constants;
-import org.intermine.web.logic.WebUtil;
-import org.intermine.web.logic.bag.BagQueryConfig;
-import org.intermine.web.logic.bag.InterMineBag;
-import org.intermine.web.logic.config.BagTableDisplayer;
-import org.intermine.web.logic.config.EnrichmentWidgetDisplayer;
-import org.intermine.web.logic.config.GraphDisplayer;
-import org.intermine.web.logic.config.Type;
-import org.intermine.web.logic.config.WebConfig;
-import org.intermine.web.logic.profile.Profile;
-import org.intermine.web.logic.results.PagedTable;
-import org.intermine.web.logic.search.SearchRepository;
-import org.intermine.web.logic.search.WebSearchable;
-import org.intermine.web.logic.tagging.TagTypes;
-import org.intermine.web.logic.template.TemplateHelper;
-import org.intermine.web.logic.widget.BagGraphWidget;
-import org.intermine.web.logic.widget.BagTableWidgetLoader;
-import org.intermine.web.logic.widget.DataSetLdr;
-import org.intermine.web.logic.widget.GraphDataSet;
-
-import java.awt.Font;
-
-import java.lang.reflect.Constructor;
 
 import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletRequest;
@@ -60,6 +27,29 @@ import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
 import org.apache.struts.tiles.ComponentContext;
 import org.apache.struts.tiles.actions.TilesAction;
+import org.intermine.metadata.Model;
+import org.intermine.objectstore.ObjectStore;
+import org.intermine.util.TypeUtil;
+import org.intermine.web.logic.Constants;
+import org.intermine.web.logic.bag.BagQueryConfig;
+import org.intermine.web.logic.bag.InterMineBag;
+import org.intermine.web.logic.config.BagTableDisplayer;
+import org.intermine.web.logic.config.EnrichmentWidgetDisplayer;
+import org.intermine.web.logic.config.GraphDisplayer;
+import org.intermine.web.logic.config.Type;
+import org.intermine.web.logic.config.WebConfig;
+import org.intermine.web.logic.pathqueryresult.PathQueryResultHelper;
+import org.intermine.web.logic.profile.Profile;
+import org.intermine.web.logic.results.PagedTable;
+import org.intermine.web.logic.search.SearchRepository;
+import org.intermine.web.logic.search.WebSearchable;
+import org.intermine.web.logic.session.SessionMethods;
+import org.intermine.web.logic.tagging.TagTypes;
+import org.intermine.web.logic.template.TemplateHelper;
+import org.intermine.web.logic.widget.BagGraphWidget;
+import org.intermine.web.logic.widget.BagTableWidgetLoader;
+import org.intermine.web.logic.widget.DataSetLdr;
+import org.intermine.web.logic.widget.GraphDataSet;
 import org.jfree.chart.ChartFactory;
 import org.jfree.chart.JFreeChart;
 import org.jfree.chart.axis.NumberAxis;
@@ -211,22 +201,9 @@ public class BagDetailsController extends TilesAction
                 enrichmentWidgetDisplayerArray.add(d);
             }
 
-            Query q = new Query();
-            QueryClass qc = new QueryClass(InterMineObject.class);
-            q.addFrom(qc);
-            q.addToSelect(qc);
-            q.setConstraint(new BagConstraint(qc, ConstraintOp.IN, imBag.getOsb()));
-            q.setDistinct(false);
-            SingletonResults res = os.executeSingleton(q);
-
-            WebPathCollection webPathCollection = new WebPathCollection(os, new Path(model,
-                                                                                 imBag.getType()),
-                                                                    res, model, webConfig,
-                                                                    classKeys);
-
-            int pageSize = WebUtil.getIntSessionProperty(session, "bag.results.table.size", 10);
-
-            PagedTable pagedColl = new PagedTable(webPathCollection, pageSize);
+            
+            PagedTable pagedResults = SessionMethods.doQueryGetPagedTable(request, 
+                                                    servletContext, imBag);
 
             // TODO this needs to be removed when InterMineBag can store the initial ids of when the
             // bag was made.
@@ -254,7 +231,7 @@ public class BagDetailsController extends TilesAction
             request.setAttribute("myBag", myBag);
             request.setAttribute("bag", imBag);
             request.setAttribute("bagSize", new Integer(imBag.size()));
-            request.setAttribute("pagedColl", pagedColl);
+            request.setAttribute("pagedResults", pagedResults);
             request.setAttribute("graphDisplayerArray", graphDisplayerArray);
             request.setAttribute("tableDisplayerArray", tableDisplayerArray);
             request.setAttribute("enrichmentWidgetDisplayerArray", enrichmentWidgetDisplayerArray);

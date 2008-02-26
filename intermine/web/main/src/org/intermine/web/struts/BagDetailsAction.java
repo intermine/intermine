@@ -84,24 +84,6 @@ public class BagDetailsAction extends Action
 
         String identifier = "bag." + bagName;
         PagedTable pc = SessionMethods.getResultsTable(session, identifier);
-        Map classKeys = (Map) servletContext.getAttribute(Constants.CLASS_KEYS);
-        WebConfig webConfig = (WebConfig) servletContext.getAttribute(Constants.WEBCONFIG);
-        Query q = new Query();
-        QueryClass qc = new QueryClass(InterMineObject.class);
-        q.addFrom(qc);
-        q.addToSelect(qc);
-        q.setConstraint(new BagConstraint(qc, ConstraintOp.IN, bag.getOsb()));
-        q.setDistinct(false);
-        SingletonResults res = os.executeSingleton(q);
-
-        WebPathCollection webPathCollection =
-            new WebPathCollection(os, new Path(model, bag.getType()), res, model, webConfig,
-                                  classKeys);
-
-        if (pc == null) {
-            pc = new PagedTable(webPathCollection);
-            SessionMethods.setResultsTable(session, identifier, pc);
-        }
 
         return new ForwardParameters(mapping.findForward("results"))
                         .addParameter("bagName", bagName)

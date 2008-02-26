@@ -309,7 +309,7 @@ public class PortalQueryAction extends InterMineAction
     }
     
     private ActionForward goToNoResults(ActionMapping mapping, HttpSession session) {
-        WebCollection webCollection = new WebCollection("",new ArrayList());
+        WebCollection webCollection = new WebCollection("", new ArrayList());
         PagedTable pc = new PagedTable(webCollection);
         String identifier = "col" + index++;
         SessionMethods.setResultsTable(session, identifier, pc);
