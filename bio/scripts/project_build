@@ -34,6 +34,8 @@ flags:
  -v is passed to ant
  -l attempt to restart by reading the last dump file
  -r attempt to restart just after the last dump point _without_ loading a dump
+ -b run build-db before starting build and drop any existing backup databases
+    (creating when using the -t flag)
  -n parse files and report actions, but don't execute anything
  -V set the release number to pass to ant (as -Drelease=release_number)
  -t instead of dumping and reloading, make backup copies of the database in the
@@ -77,13 +79,17 @@ my $dry_run = 0;
 # if true don't dump and reload, instead do backup copies in the server using
 # the "CREATE DATABASE foo WITH TEMPLATE bar" command
 my $server_backup = 0;
+
+# if true, run build-db before starting the integration
+my $run_build_db = 0;
+
 my $release;
 my @required_actions_list = ();
 my $start_action = undef;
 
 my %opts = ();
 
-getopts('vrltna:V:', \%opts);
+getopts('vrlbtna:V:', \%opts);
 
 if ($opts{v}) {
   $verbose = 1;
@@ -104,6 +110,10 @@ if ($opts{n}) {
 
 if ($opts{t}) {
   $server_backup = 1;
+}
+
+if ($opts{b}) {
+  $run_build_db = 1;
 }
 
 if (exists $opts{a}) {
@@ -207,7 +217,7 @@ sub run_and_check_status
 }
 
 # gets a value from a properties file
-# usages: get_prop_val prop_name file_name
+# usage: $val = get_prop_val($prop_name, $prop_file_name)
 sub get_prop_val
 {
   my $key = shift;
@@ -259,6 +269,48 @@ sub spawn
   }
 }
 
+sub run_build_db
+{
+  log_and_print `date`, "\n";
+  log_and_print "\nbuilding db: @ant_command build-db\n";
+
+  my $saved_dir = getcwd;
+  chdir "$saved_dir/dbmodel" or die "can't change directory into: $saved_dir/dbmodel\n";
+
+  run_and_check_status @ant_command, "clean";
+  run_and_check_status @ant_command, "build-db";
+
+  chdir $saved_dir
+    or die "can't return to previous directory ($saved_dir) after $saved_dir/dbmodel\n";
+}
+
+sub dropdb_backups
+{
+  my ($db, $user, $pass, $host, $port, $database_names_ref, $actions_ref) = @_;
+
+  my @database_names = @$database_names_ref;
+
+  my @actions = @$actions_ref;
+
+  for my $action (@actions) {
+    my $action_type = $action->{type};
+    my @action_args = @{$action->{args}};
+
+    if ($action_type eq 'dump') {
+      my $action_name = $action_args[0];
+      my $backup_name = "$db:$action_name";
+      if (grep {$_ eq $backup_name} @database_names) {
+        my @params = ('-U', $user, '-h', $host, $backup_name);
+
+        log_and_print `date`, "\n";
+        log_and_print "\ndropping old backup database: @dropdb_command @params\n";
+
+        spawn($pass, @dropdb_command, @params);
+      }
+    }
+  }
+}
+
 sub create_prod_db
 {
   my ($db, $user, $pass, $host, $port, $suffix) = @_;
@@ -269,20 +321,11 @@ sub create_prod_db
   log_and_print "\ncreating database: @createdb_command @params\n";
 
   eval {
-    # ignore error - it's good if the database doesn't exist
+    # ignore error - it's OK if the database doesn't exist
     spawn($pass, @createdb_command, @params);
   };
 
-  log_and_print `date`, "\n";
-  log_and_print "\nbuilding db: @ant_command build-db\n";
-
-  my $saved_dir = getcwd;
-    chdir "$saved_dir/dbmodel" or die "can't change directory into: $saved_dir/dbmodel\n";
-
-  run_and_check_status @ant_command, "build-db";
-
-  chdir $saved_dir
-    or die "can't return to previous directory ($saved_dir) after $saved_dir/dbmodel\n";
+  run_build_db();
 }
 
 sub make_server_backup
@@ -294,7 +337,22 @@ sub make_server_backup
   log_and_print `date`, "\n\n";
   log_and_print "\nmaking backup db: @createdb_command @params\n";
 
-  spawn($pass, @createdb_command, @params);
+  # retry a few times because sometimes the createdb fails with a "no
+  # such file or directory" error because some table/index files
+  # (temporary tables maybe) disappear while being copied
+  for (my $i = 0; $i < 10; $i++) {
+    eval {
+      spawn($pass, @createdb_command, @params);
+      sleep(10 + $i * 10);
+    };
+    if ($@) {
+      warn "failure ($@) trying again ...\n";
+    } else {
+      last;
+    }
+  }
+
+  die "$@\n" if $@;
 
   log_and_print `date`, "\n\n";
   log_and_print "finished backup\n\n";
@@ -319,7 +377,7 @@ sub server_restore
   };
 
   log_and_print `date`, "\n\n";
-  log_and_print "\nrunning: @createdb_command @params -T $db-$suffix $db\n";
+  log_and_print "\nrunning: @createdb_command @params -T $db:$suffix $db\n";
 
   spawn($pass, @createdb_command, @params, '-T', "$db:$suffix", $db);
 
@@ -500,7 +558,8 @@ sub fix_pgpass
     while (my $line = <PGPASS>) {
       chomp $line;
 
-      my ($line_host, $line_port, $line_db, $line_user, $line_pass) = split (/:/, $line);
+      my ($line_host, $line_port, $line_db, $line_user, $line_pass) =
+        split (/:/, $line);
 
       if ($line_host eq $host &&
           ($line_port eq $default_port && !defined $port ||
@@ -509,14 +568,13 @@ sub fix_pgpass
           $line_user eq $user &&
           $line_pass eq $pass) {
         # match
+        chmod 0600, $pgpass_file or die "can't change mode of $pgpass_file: $!\n";
         return;
       }
     }
 
     close PGPASS;
   }
-
-  chmod 0600, $pgpass_file;
 
   open PGPASS, '>>', $pgpass_file
     or die "can't open $pgpass_file for appending: $!\n";
@@ -531,7 +589,9 @@ sub fix_pgpass
 
   print PGPASS "$host:$out_port:*:$user:$pass\n";
 
-  close PGPASS or die "can't close $pgpass_file\n";
+  close PGPASS or die "can't close $pgpass_file: $!\n";
+
+  chmod 0600, $pgpass_file or die "can't change mode of $pgpass_file: $!\n";
 }
 
 sub get_actions
@@ -736,18 +796,29 @@ my @database_names = get_database_names($prod_db, $prod_user, $prod_pass,
 
 if (grep {$_ eq $prod_db } @database_names) {
   if ($verbose) {
-    log_and_print ("not creating or building $prod_db as it already exists\n");
+    log_and_print ("not creating $prod_db as it already exists\n");
+  }
+
+  if ($run_build_db) {
+    run_build_db();
+    dropdb_backups($prod_db, $prod_user, $prod_pass, $prod_host, $prod_port,
+                   [@database_names], [@actions]);
+    # if we're starting from scratch, don't try to load old databases
+    @database_names = ();
   }
 } else {
   create_prod_db($prod_db, $prod_user, $prod_pass, $prod_host, $prod_port);
+  dropdb_backups($prod_db, $prod_user, $prod_pass, $prod_host, $prod_port,
+                 [@database_names], [@actions]);
+  # if we're starting from scratch, don't try to load old databases
+  @database_names = ();
 }
 
 if ($load_last || $restart) {
   my $restart_file_suffix = get_restart_suffix_file($dump_file_prefix, @actions);
 
-
   if ($server_backup) {
-    if ($restart_file_suffix eq $final_marker) {
+    if (defined $restart_file_suffix && $restart_file_suffix eq $final_marker) {
       log_and_print ("backup with .$final_marker suffix exists - " .
                      "build finished - exiting\n");
       exit(0);
