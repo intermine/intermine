@@ -4819,8 +4819,6 @@
   </tag>
   <tag name="aspect:Gene Expression" objectIdentifier="mRNAlocalisationTerm_Genes" type="template">
   </tag>
-  <tag name="aspect:Gene Expression" objectIdentifier="Gene.mRNALocalisationResults" type="collection">
-  </tag>
   <tag name="aspect:Gene Expression" objectIdentifier="Gene.probeSets" type="collection">
   </tag>
   <tag name="aspect:Gene Expression" objectIdentifier="Stage_FlyFish" type="template">
