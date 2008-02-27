@@ -189,7 +189,7 @@ public abstract class TextFileUtil
     /**
      * Write an Object as a String to an OutputStream with quoting.  Any double-quote characters
      * are quoted doubling them.  The output will be surrounded by double quotes.
-     * ie.  fred"eric -> "fred""eric"
+     * ie.  fred"eric -&gt; "fred""eric"
      * @param printStream the PrintStream to write to
      * @param o the Object to write
      */
