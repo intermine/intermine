@@ -252,6 +252,20 @@
     </bagdisplayers>
   </class>
 
+  <class className="org.flymine.model.genomic.GeneInteraction">
+    <fields>
+      <fieldconfig fieldExpr="shortName"/>
+      <fieldconfig fieldExpr="type"/>      
+    </fields>
+  </class>
+
+  <class className="org.flymine.model.genomic.GeneInteractionExperiment">
+    <fields>
+      <fieldconfig fieldExpr="name"/>
+      <fieldconfig fieldExpr="description"/>
+    </fields>
+  </class>
+
   <class className="org.flymine.model.genomic.GOAnnotation">
     <fields>
       <fieldconfig fieldExpr="subject.primaryIdentifier" showInInlineCollection="false"/>

@@ -220,6 +220,10 @@
     <source name="fly-anatomy-ontology" type="fly-anatomy-ontology">
       <property name="src.data.file" location="/shared/data/ontologies/fly_anatomy/current/fly_anatomy.obo"/>
     </source>
+    <source name="biogrid" type="biogrid">
+      <property name="src.data.dir" location="/shared/data/biogrid/current"/>
+      <property name="src.data.dir.includes" value="*psi25.xml"/>
+    </source>
     <source name="entrez-organism" type="entrez-organism">
       <!-- this source finds the taxon ids in the objectstore, retrieves
            species name and genus from Entrez into an InterMine format XML
