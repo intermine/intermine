@@ -40,6 +40,8 @@ flags:
  -V set the release number to pass to ant (as -Drelease=release_number)
  -t instead of dumping and reloading, make backup copies of the database in the
     server using the "CREATE DATABASE foo WITH TEMPLATE bar" command
+ -D set the destination database for the completed build; the database will be
+    copied to this name in the same postgres server that the build used
  -a set the list of actions to perform - the list must be a subset of the
     sources/postprocesses in the project.xml file.
      - The -l and -r operate as usual.
@@ -82,6 +84,7 @@ my $server_backup = 0;
 
 # if true, run build-db before starting the integration
 my $run_build_db = 0;
+my $dest_db;
 
 my $release;
 my @required_actions_list = ();
@@ -89,7 +92,7 @@ my $start_action = undef;
 
 my %opts = ();
 
-getopts('vrlbtna:V:', \%opts);
+getopts('vrlbtnD:a:V:', \%opts);
 
 if ($opts{v}) {
   $verbose = 1;
@@ -116,6 +119,10 @@ if ($opts{b}) {
   $run_build_db = 1;
 }
 
+if ($opts{D}) {
+  $dest_db = $opts{D};
+}
+
 if (exists $opts{a}) {
   my $arg = $opts{a};
   if ($arg =~ /^.*,.*-$/) {
@@ -130,7 +137,7 @@ if (exists $opts{a}) {
 }
 
 if ($opts{V}) {
-  $release=$opts{V};
+  $release = $opts{V};
   push @ant_command, "-Drelease=$release"
 }
 
@@ -328,14 +335,14 @@ sub create_prod_db
   run_build_db();
 }
 
-sub make_server_backup
+sub copy_db
 {
-  my ($db, $user, $pass, $host, $port, $suffix) = @_;
+  my ($db, $user, $pass, $host, $port, $to_db) = @_;
 
-  my @params = ('-U', $user, '-h', $host, '-T', $db, "$db:$suffix");
+  my @params = ('-U', $user, '-h', $host, '-T', $db, $to_db);
 
   log_and_print `date`, "\n\n";
-  log_and_print "\nmaking backup db: @createdb_command @params\n";
+  log_and_print "\nmaking db copy: @createdb_command @params\n";
 
   # retry a few times because sometimes the createdb fails with a "no
   # such file or directory" error because some table/index files
@@ -343,16 +350,24 @@ sub make_server_backup
   for (my $i = 0; $i < 10; $i++) {
     eval {
       spawn($pass, @createdb_command, @params);
-      sleep(10 + $i * 10);
     };
     if ($@) {
-      warn "failure ($@) trying again ...\n";
+      my $pause = 10 + $i * 10;
+      warn "failure ($@) - will try again in $pause seconds ...\n";
+      sleep($pause);
     } else {
       last;
     }
   }
 
   die "$@\n" if $@;
+}
+
+sub make_server_backup
+{
+  my ($db, $user, $pass, $host, $port, $suffix) = @_;
+
+  copy_db($db, $user, $pass, $host, $port, "$db:$suffix");
 
   log_and_print `date`, "\n\n";
   log_and_print "finished backup\n\n";
@@ -611,12 +626,20 @@ sub get_actions
                    };
   }
 
+  if (defined $dest_db) {
+    push @actions, {
+                    type => 'copy',
+                    args => [$dest_db],
+                    name => "copy_to_$dest_db"
+                   };
+  }
+
   my @return_actions = ();
 
   if (defined $start_action) {
     my $seen_start = 0;
 
-    # remove all before start_action
+    # we're restarting so remove all actions before start_action
     for my $action (@actions) {
       if ($seen_start || $action->{name} eq $start_action) {
         push @return_actions, $action;
@@ -894,7 +917,11 @@ for my $action (@actions) {
                    "$dump_file_prefix.$action_args[0]");
         }
       } else {
-        die qq{unknown action: "$action_type"\n};
+        if ($action_type eq 'copy') {
+          copy_db($prod_db, $prod_user, $prod_pass, $prod_host, $prod_port, $action_args[0]);
+        } else {
+          die qq{unknown action: "$action_type"\n};
+        }
       }
     }
 
