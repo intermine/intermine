@@ -1,0 +1,173 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<entrySet level="2" version="5" xmlns="net:sf:psidev:mi" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="net:sf:psidev:mi http://psidev.sourceforge.net/mi/rel25/src/MIF25.xsd">
+        <entry>
+                <source release="2.0.37" releaseDate="2008-01-25">
+                        <names>
+                                <shortLabel>Interactions for BIOGRID-ORGANISM-7227</shortLabel>
+                                <fullName>The BioGRID: A General Repository for Interaction Datasets, The Samuel Lunenfeld Research Institute, Toronto, Ontario, Canada, http://www.thebiogrid.org</fullName>
+                        </names>
+                        <bibref>
+                                <xref>
+                                        <primaryRef db="pubmed" id="16381927" secondary="The BioGRID: A General Repository for Interaction Datasets, The Samuel Lunenfeld Research Institute, Toronto, Ontario, Canada, http://www.thebiogrid.org" dbAc="MI:0446" refType="primary-reference" refTypeAc="MI:0358" />
+                                </xref>
+                        </bibref>
+                        <xref>
+                                <primaryRef db="psi-mi" dbAc="MI:0488" id="MI:0463" refType="primary-reference" refTypeAc="MI:0358" />
+                        </xref>
+                        <attributeList>
+                                <attribute name="url">http://www.thebiogrid.org</attribute>
+                                <attribute name="postalAddress">Samuel Lunenfeld Research Institute, 600 University Avenue, Toronto, Ontario, M5G 1X5</attribute>
+                                <attribute name="contactEmail">gridadmin@mshri.on.ca</attribute>
+                        </attributeList>
+                </source>
+                <availabilityList>
+                        <availability id="BIOGRID">This data is freely available to both commercial and academic users for research purposes only. In any articles making use of this data, please refer to Stark C, Breitkreutz BJ, Reguly T, Boucher L, Breitkreutz A, Tyers M. BioGRID: A General Repository for Interaction Datasets. Nucleic Acids Res. Jan1;34:D535-9. This data is distributed for research purposes only, and is provided WITHOUT ANY WARRANTY.</availability>
+                </availabilityList>
+                <experimentList>
+                        <experimentDescription id="12345">
+                                <names>
+                                        <shortLabel>Giot L (2003)</shortLabel>
+                                        <fullName>A protein interaction map of Drosophila melanogaster.</fullName>
+                                </names>
+                                <bibref>
+                                        <xref>
+                                                <primaryRef db="pubmed" dbAc="MI:0446" id="14605208" refType="primary-reference" refTypeAc="MI:0358" />
+                                        </xref>
+                                </bibref>
+                                <xref>
+                                        <primaryRef db="grid" id="13022" dbAc="MI:0463" />
+                                </xref>
+                                <interactionDetectionMethod>
+                                        <names>
+                                                <shortLabel>Two-hybrid</shortLabel>
+                                                <fullName>Two-hybrid</fullName>
+                                        </names>
+                                        <xref>
+                                                <primaryRef db="grid" id="3" dbAc="MI:0463" />
+                                        </xref>
+                                </interactionDetectionMethod>
+                        </experimentDescription>
+                </experimentList>  
+                <interactorList>
+                        <interactor id="11111">
+                                <names>
+                                        <shortLabel>CG10002</shortLabel>
+                                </names>
+                                <xref>
+                                        <primaryRef db="FLYBASE" id="FBgn0000001" />
+                                        <secondaryRef db="PROTEIN GI" id="120228" />
+                                        <secondaryRef db="PROTEIN Accession" id="AAA28535" />
+                                        <secondaryRef db="PROTEIN GI" id="157434" />
+                                        <secondaryRef db="PROTEIN Accession" id="AAF56798" />
+                                        <secondaryRef db="PROTEIN GI" id="7301684" />
+                                        <secondaryRef db="CDNA Accession" id="NM 079818" />
+                                        <secondaryRef db="CDNA GI" id="24650827" />
+                                        <secondaryRef db="PROTEIN Accession" id="NP 524542" />
+                                        <secondaryRef db="PROTEIN GI" id="17738265" />
+                                        <secondaryRef db="GRID_LEGACY" id="3010992" />
+                                        <secondaryRef db="SWISSPROT" id="P14734" />
+                                </xref>
+                                <interactorType>
+                                        <names>
+                                                <shortLabel>protein</shortLabel>
+                                                <fullName>protein</fullName>
+                                        </names>
+                                        <xref>
+                                                <primaryRef db="psi-mi" dbAc="MI:0488" id="MI:0326" refType="identity" refTypeAc="MI:0356"/>
+                                        </xref>
+                                </interactorType>
+                                <organism ncbiTaxId="7227">
+                                        <names>
+                                                <shortLabel>Fruit Fly</shortLabel>
+                                                <fullName>Drosophila melanogaster</fullName>
+                                        </names>
+                                </organism>
+                        </interactor>
+                        <interactor id="22222">
+                                <names>
+                                        <shortLabel>CG10002</shortLabel>
+                                </names>
+                                <xref>
+                                        <primaryRef db="FLYBASE" id="FBgn0000002" />
+                                        <secondaryRef db="PROTEIN GI" id="120228" />
+                                        <secondaryRef db="PROTEIN Accession" id="AAA28535" />
+                                        <secondaryRef db="PROTEIN GI" id="157434" />
+                                        <secondaryRef db="PROTEIN Accession" id="AAF56798" />
+                                        <secondaryRef db="PROTEIN GI" id="7301684" />
+                                        <secondaryRef db="CDNA Accession" id="NM 079818" />
+                                        <secondaryRef db="CDNA GI" id="24650827" />
+                                        <secondaryRef db="PROTEIN Accession" id="NP 524542" />
+                                        <secondaryRef db="PROTEIN GI" id="17738265" />
+                                        <secondaryRef db="GRID_LEGACY" id="3010992" />
+                                        <secondaryRef db="SWISSPROT" id="P14734" />
+                                </xref>
+                                <interactorType>
+                                        <names>
+                                                <shortLabel>protein</shortLabel>
+                                                <fullName>protein</fullName>
+                                        </names>
+                                        <xref>
+                                                <primaryRef db="psi-mi" dbAc="MI:0488" id="MI:0326" refType="identity" refTypeAc="MI:0356"/>
+                                        </xref>
+                                </interactorType>
+                                <organism ncbiTaxId="7227">
+                                        <names>
+                                                <shortLabel>Fruit Fly</shortLabel>
+                                                <fullName>Drosophila melanogaster</fullName>
+                                        </names>
+                                </organism>
+                        </interactor>
+                </interactorList>
+                <interactionList>                
+                 <interaction id="30772">
+                                <names>
+                                        <shortLabel>interaction Short Label</shortLabel>
+                                </names>
+                                <xref>
+                                        <primaryRef db="grid" dbAc="MI:0463" id="30772" secondary="68259-62692" />
+                                </xref>
+                                <experimentList>
+                                        <experimentRef>12345</experimentRef>
+                                </experimentList>
+                                <participantList>
+                                        <participant id="11111">
+                                                <interactorRef>11111</interactorRef>
+                                                <experimentalRoleList>
+                                                        <experimentalRole>
+                                                                <names>
+                                                                        <shortLabel>bait</shortLabel>
+                                                                        <fullName>bait</fullName>
+                                                                </names>
+                                                                <xref>
+                                                                        <primaryRef db="psi-mi" dbAc="MI:0488" id="MI:0496" refType="identity" refTypeAc="MI:0356"/>
+                                                                </xref>
+                                                        </experimentalRole>
+                                                </experimentalRoleList>
+                                        </participant>
+                                        <participant id="22222">
+                                                <interactorRef>22222</interactorRef>
+                                                <experimentalRoleList>
+                                                        <experimentalRole>
+                                                                <names>
+                                                                        <shortLabel>prey</shortLabel>
+                                                                        <fullName>prey</fullName>
+                                                                </names>
+                                                                <xref>
+                                                                        <primaryRef db="psi-mi" dbAc="MI:0488" id="MI:0498" refType="identity" refTypeAc="MI:0356"/>
+                                                                </xref>
+                                                        </experimentalRole>
+                                                </experimentalRoleList>
+                                        </participant>
+                                </participantList>
+                                <interactionType>
+                                        <names>
+                                                <shortLabel>Phenotypic Suppression</shortLabel>
+                                        </names>
+                                        <xref>
+                                                <primaryRef db="grid" id="3" dbAc="MI:0463" />
+                                        </xref>
+                                </interactionType>
+                        </interaction>
+                 </interactionList>                
+</entry>
+</entrySet>                 
