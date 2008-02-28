@@ -90,11 +90,11 @@ public class PathQueryResultsHelperTest extends MockStrutsTestCase
         Model model = Model.getInstanceByName("testmodel");
         getSession().getServletContext().setAttribute(Constants.WEBCONFIG, webConfig);
         PathQuery pathQuery = new PathQuery(model);
-        List<Path> view = PathQueryResultHelper.getDefaultView("Employee", pathQuery, model, webConfig, null, false);
+        List<Path> view = PathQueryResultHelper.getDefaultView("Employee", model, webConfig, null, false);
         assertTrue(view.size() == 5);
 
         PathQuery pathQuery2 = new PathQuery(model);
-        List<Path> view2 = PathQueryResultHelper.getDefaultView("Employee", pathQuery2, model, webConfig, null, true);
+        List<Path> view2 = PathQueryResultHelper.getDefaultView("Employee", model, webConfig, null, true);
         assertTrue(view2.size() == 3);
     }
 
@@ -113,7 +113,7 @@ public class PathQueryResultsHelperTest extends MockStrutsTestCase
         PathQuery pathQuery = new PathQuery(model);
         pathQuery.getView().add(MainHelper.makePath(model, pathQuery, "Employee.age"));
         pathQuery.getView().add(MainHelper.makePath(model, pathQuery, "Employee.name"));
-        WebResults webResults = PathQueryResultHelper.runPathQueryGetResults(pathQuery, profile, os, classKeys, bagQueryConfig, servletContext);
+        WebResults webResults = PathQueryResultHelper.createPathQueryGetResults(pathQuery, profile, os, classKeys, bagQueryConfig, servletContext);
         assertEquals(webResults.size(), 1);
     }
     
