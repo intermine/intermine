@@ -102,10 +102,9 @@ public class BDGPInsituConverter extends FileConverter
             String lineBits[] = it.next();
             String geneCG = lineBits[0];
             
-            if (!geneCG.startsWith("CG") 
-                            && !geneCG.startsWith("FBgn")
-                            && !geneCG.startsWith("Dl")
-                            && !geneCG.startsWith("dac")) {
+            
+            
+            if (!geneCG.startsWith("CG")) {
                 // ignore clones for now
                 continue;
             }
@@ -113,22 +112,26 @@ public class BDGPInsituConverter extends FileConverter
             Item gene = getGene(geneCG);
             
             String stage = lineBits[1];
-            String image = lineBits[2];
-            String term = lineBits[3];
-            
+                        
             String resultKey = geneCG + stage;
             Item result = getResult(resultKey, gene.getIdentifier(), pub.getIdentifier(), 
                                     dataSet.getIdentifier(), stage);
 
-            Item img = getImage(URL + image);
-            result.addToCollection("images", img);
-            
-            Item termItem = getTerm(term);
-            if (termItem != null) {
-                result.addToCollection("mRNAExpressionTerms", termItem);
+            if (lineBits.length > 2) {
+                String image = lineBits[2];
+                Item img = getImage(URL + image);
+                result.addToCollection("images", img);
+                LOG.error("Could not process line:  " + lineBits[0] + "," + lineBits[1]);
             }
-            if (term.equalsIgnoreCase("no staining")) {
-                result.setAttribute("expressed", "false");
+            if (lineBits.length > 3) {
+                String term = lineBits[3];
+                Item termItem = getTerm(term);
+                if (termItem != null) {
+                    result.addToCollection("mRNAExpressionTerms", termItem);
+                }
+                if (term.equalsIgnoreCase("no staining")) {
+                    result.setAttribute("expressed", "false");
+                }
             }
         }
         
