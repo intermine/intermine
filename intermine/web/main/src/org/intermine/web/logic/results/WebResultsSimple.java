@@ -27,7 +27,7 @@ import org.intermine.web.logic.query.PathQuery;
  * A simple WebTable that wraps an arbitrary Results object.
  * @author Xavier Watkins
  */
-public class WebResultsSimple extends AbstractList implements WebTable
+public class WebResultsSimple extends AbstractList<List<Object>> implements WebTable
 {
     private Results results;
     private List<String> columnNames;
@@ -55,15 +55,14 @@ public class WebResultsSimple extends AbstractList implements WebTable
      * {@inheritDoc}
      */
     @Override
-    public Object get(int index) {
-        return results.get(index);
+    public List<Object> get(int index) {
+        return (List<Object>) results.get(index);
     }
 
     /**
      * {@inheritDoc}
      */
-    @Override
-    public int size() {
+    public int getEstimatedSize() {
         try {
             return results.getInfo().getRows();
         } catch (ObjectStoreException e) {
@@ -128,12 +127,21 @@ public class WebResultsSimple extends AbstractList implements WebTable
     /**
      * {@inheritDoc}
      */
-    public int getExactSize() {
+    public int size() {
         return results.size();
     }
 
+    /**
+     * {@inheritDoc}
+     */
     public PathQuery getPathQuery() {
-        // TODO Auto-generated method stub
+        return null;
+    }
+    
+    /**
+     * {@inheritDoc}
+     */
+    public ResultsInfo getInfo() throws ObjectStoreException {
         return null;
     }
 

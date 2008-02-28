@@ -171,7 +171,7 @@ public class ExportAction extends InterMineAction
         int maxExcelSize =
             WebUtil.getIntSessionProperty(session, "max.excel.export.size", defaultMax);
 
-        if (pt.getSize() > maxExcelSize) {
+        if (pt.getEstimatedSize() > maxExcelSize) {
             ActionMessage actionMessage =
                 new ActionMessage("export.excelExportTooBig", new Integer(maxExcelSize));
             recordError(actionMessage, request);

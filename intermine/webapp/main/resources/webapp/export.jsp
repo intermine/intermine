@@ -13,7 +13,7 @@
       <html:link action="/exportAction?table=${tableName}&amp;type=tab&amp;tableType=${tableType}">
         <fmt:message key="export.tabdelimited"/>
       </html:link><br>
-    <c:if test="${pagedTable.size <= WEB_PROPERTIES['max.excel.export.size']}">
+    <c:if test="${pagedTable.estimatedSize <= WEB_PROPERTIES['max.excel.export.size']}">
         <html:link action="/exportAction?table=${tableName}&amp;type=excel&amp;tableType=${tableType}">
           <fmt:message key="export.excel">
             <fmt:param value="${WEB_PROPERTIES['max.excel.export.size']}"/>

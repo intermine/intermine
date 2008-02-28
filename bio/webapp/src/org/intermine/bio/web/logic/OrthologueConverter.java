@@ -38,11 +38,13 @@ import org.intermine.web.logic.bag.BagConverter;
 import org.intermine.web.logic.bag.BagQueryConfig;
 import org.intermine.web.logic.bag.BagQueryResult;
 import org.intermine.web.logic.bag.InterMineBag;
+import org.intermine.web.logic.pathqueryresult.PathQueryResultHelper;
 import org.intermine.web.logic.profile.Profile;
 import org.intermine.web.logic.query.Constraint;
 import org.intermine.web.logic.query.MainHelper;
 import org.intermine.web.logic.query.PathQuery;
 import org.intermine.web.logic.results.TableHelper;
+import org.intermine.web.logic.results.WebResults;
 
 /**
  * @author "Xavier Watkins"
@@ -61,7 +63,7 @@ public class OrthologueConverter implements BagConverter
     /**
      * {@inheritDoc}
      */
-    public List<ResultsRow> getConvertedObjects (HttpSession session, String organism,
+    public WebResults getConvertedObjects (HttpSession session, String organism,
                                       List<Integer> fromList, String type)
                                       throws ClassNotFoundException,
                                       ObjectStoreException {
@@ -105,14 +107,10 @@ public class OrthologueConverter implements BagConverter
         pathQuery.setConstraintLogic("A and B and C");
         pathQuery.syncLogicExpression("and");
 
-        Query q = MainHelper.makeQuery(pathQuery, allBags, pathToQueryNode,
-            servletContext, pathToBagQueryResult, false,
-            (ObjectStore) servletContext.getAttribute(Constants.OBJECTSTORE),
-            (Map) servletContext.getAttribute(Constants.CLASS_KEYS),
-            (BagQueryConfig) servletContext.getAttribute(Constants
-                .BAG_QUERY_CONFIG));
-        Results results = TableHelper.makeResults(os, q);
-        return results;
+        return PathQueryResultHelper.createPathQueryGetResults(pathQuery, profile, os,
+                        (Map) servletContext.getAttribute(Constants.CLASS_KEYS),
+                        (BagQueryConfig) servletContext.getAttribute(Constants.BAG_QUERY_CONFIG),
+                        servletContext);
     }
 
     /**

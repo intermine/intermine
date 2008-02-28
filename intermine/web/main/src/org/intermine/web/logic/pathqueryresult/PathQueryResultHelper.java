@@ -39,6 +39,7 @@ import org.intermine.web.logic.query.Constraint;
 import org.intermine.web.logic.query.MainHelper;
 import org.intermine.web.logic.query.PathQuery;
 import org.intermine.web.logic.results.PagedTable;
+import org.intermine.web.logic.results.TableHelper;
 import org.intermine.web.logic.results.WebResults;
 
 /**
@@ -53,15 +54,13 @@ public class PathQueryResultHelper
      * as a List of Path objects
      *  
      * @param type the type for which to get the view
-     * @param pathQuery a PathQuery object (needed to find the class constraints that 
-     * affect the Path)
      * @param model the Model
      * @param webConfig the WebConfig
      * @param prefix non-mandatory. Useful when getting a view for a reference or collection
      * @return a List of Paths representing the view
      */
-    public static List<Path> getDefaultView(String type, PathQuery pathQuery, Model model, 
-                          WebConfig webConfig, String prefix, boolean excludeNonAttributes) {
+    public static List<Path> getDefaultView(String type, Model model, WebConfig webConfig, 
+                          String prefix, boolean excludeNonAttributes) {
         List<Path> view = new ArrayList<Path>();
         Set<ClassDescriptor> classDescriptors = model.getClassDescriptorsForClass(
             TypeUtil.instantiate(model.getPackageName() + "." + type));
@@ -75,7 +74,8 @@ public class PathQueryResultHelper
                         prefix = type;
                     }
                     String pathString = prefix + "." + expr;
-                    Path path = MainHelper.makePath(model, pathQuery, pathString);
+                    Path path = new Path(model, pathString);
+                    // Path path = MainHelper.makePath(model, pathQuery, pathString);
                     // TODO remove isOnlyAttribute when outer joins
                     if (!view.contains(path)
                                     && ((excludeNonAttributes && path.isOnlyAttribute())
@@ -100,8 +100,8 @@ public class PathQueryResultHelper
                                                 Model model) {
         PathQuery pathQuery = new PathQuery(model);
 
-        List<Path> view = PathQueryResultHelper.getDefaultView(imBag.getType(), pathQuery, model,
-            webConfig, null, true);
+        List<Path> view = PathQueryResultHelper.getDefaultView(imBag.getType(), model, webConfig,
+            null, true);
 
         pathQuery.setView(view);
         String label = null, id = null, code = pathQuery.getUnusedConstraintCode();
@@ -129,8 +129,8 @@ public class PathQueryResultHelper
                                                         String objectClassName, String field) {
         PathQuery pathQuery = new PathQuery(model);
 
-        List<Path> view = PathQueryResultHelper.getDefaultView(referencedClassName, pathQuery,
-                        model, webConfig, objectClassName + "." + field, false);
+        List<Path> view = PathQueryResultHelper.getDefaultView(referencedClassName, model,
+                        webConfig, objectClassName + "." + field, false);
 
         pathQuery.setView(view);
         String label = null, id2 = null, code = pathQuery.getUnusedConstraintCode();
@@ -149,13 +149,15 @@ public class PathQueryResultHelper
      * @param os the ObjectStore
      * @param classKeys the ClassKeys
      * @param bagQueryConfig the BagQueryConfig
+     * @param returnBagQueryResults populated by MainHelper.makeQuery
      * @param servletContext the ServletContext
      * @return a WebResult object
      * @throws ObjectStoreException exception thrown
      */
-    public static WebResults runPathQueryGetResults(PathQuery pathQuery, Profile profile,
+    public static WebResults createPathQueryGetResults(PathQuery pathQuery, Profile profile,
                                                     ObjectStore os, Map classKeys,
                                                     BagQueryConfig bagQueryConfig,
+                                                    Map returnBagQueryResults,
                                                     ServletContext servletContext)
                     throws ObjectStoreException {
         Model model = os.getModel();
@@ -163,11 +165,32 @@ public class PathQueryResultHelper
         Map<String, InterMineBag> allBags = WebUtil.getAllBags(profile.getSavedBags(),
                         servletContext);
         Query query = MainHelper.makeQuery(pathQuery, allBags, pathToQueryNode, servletContext,
-                        null, false, os, classKeys, bagQueryConfig);
-        Results results = os.execute(query);
+                        returnBagQueryResults, false, os, classKeys, bagQueryConfig);
+        Results results = TableHelper.makeResults(os, query);
         WebResults webResults = new WebResults(pathQuery, results, model, pathToQueryNode,
                         classKeys, null);
         return webResults;
+    }
+    
+    /**
+     * Runs a PathQuery and return a WebResults object
+     * 
+     * @param pathQuery the PathQuery to run
+     * @param profile the user Profile
+     * @param os the ObjectStore
+     * @param classKeys the ClassKeys
+     * @param bagQueryConfig the BagQueryConfig
+     * @param servletContext the ServletContext
+     * @return a WebResult object
+     * @throws ObjectStoreException exception thrown
+     */
+    public static WebResults createPathQueryGetResults (PathQuery pathQuery, Profile profile,
+                                                    ObjectStore os, Map classKeys,
+                                                    BagQueryConfig bagQueryConfig,
+                                                    ServletContext servletContext)
+                    throws ObjectStoreException {
+        return createPathQueryGetResults(pathQuery, profile, os, classKeys, bagQueryConfig, null,
+                        servletContext);
     }
     
 }

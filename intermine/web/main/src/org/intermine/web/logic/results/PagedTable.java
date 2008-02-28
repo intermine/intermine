@@ -211,7 +211,7 @@ public class PagedTable
      * @return true if we are on the last page
      */
     public boolean isLastPage() {
-        return (!isSizeEstimate() && getEndRow() == getSize() - 1);
+        return (!isSizeEstimate() && getEndRow() == getEstimatedSize() - 1);
     }
 
     /**
@@ -275,8 +275,8 @@ public class PagedTable
      * Get the (possibly estimated) number of resultElementRows of this table
      * @return the number of resultElementRows
      */
-    public int getSize() {
-        return webTable.size();
+    public int getEstimatedSize() {
+        return webTable.getEstimatedSize();
     }
 
     /**
@@ -292,7 +292,7 @@ public class PagedTable
      * @return the number of resultElementRows
      */
     public int getExactSize() {
-        return webTable.getExactSize();
+        return webTable.size();
     }
 
     /**

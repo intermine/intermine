@@ -81,7 +81,7 @@
     </c:if>
 
 <c:choose>
-  <c:when test="${resultsTable.size == 0}">
+  <c:when test="${resultsTable.estimatedSize == 0}">
     <div class="altmessage">
       <fmt:message key="results.pageinfo.empty"/><br/>
     </div>
@@ -223,7 +223,7 @@
                     <th align="center" class="checkbox">
                       <html:multibox property="selectedObjects" styleId="selectedObjects_${status.index}"
                                      onclick="selectColumnCheckbox(columnsToDisable, columnsToHighlight, ${status.index})"
-                                     disabled="${resultsTable.maxRetrievableIndex > resultsTable.size ? 'false' : 'true'}">
+                                     disabled="${resultsTable.maxRetrievableIndex > resultsTable.estimatedSize ? 'false' : 'true'}">
                         <c:out value="${status.index},${column.columnId}"/>
                       </html:multibox>
                     </th>
@@ -313,7 +313,7 @@
           <%-- The data --%>
 
           <%-- Row --%>
-          <c:if test="${resultsTable.size > 0}">
+          <c:if test="${resultsTable.estimatedSize > 0}">
             <c:forEach var="row" items="${resultsTable.resultElementRows}" varStatus="status">
 
               <c:set var="rowClass">
@@ -367,7 +367,7 @@
             <div id="summary_loading">Loading...</div>
             <div id="summary_loaded" style="display:none;"></div>
         </div>  
-        <c:if test="${resultsTable.size > 1}">
+        <c:if test="${resultsTable.estimatedSize > 1}">
           <br/>
           <table cellpadding="0" cellspacing="0" >
             <tr>
@@ -386,16 +386,16 @@
                     </tiles:insert>
                     <script language="JavaScript">
                       <!--
-                          document.resultsCountText = "<img src='images/spinner.gif'/> ${estimateMessage} ${resultsTable.size}";
+                          document.resultsCountText = "<img src='images/spinner.gif'/> ${estimateMessage} ${resultsTable.estimatedSize}";
                         -->
                     </script>
                   </c:when>
                   <c:otherwise>
                     <c:choose>
                       <c:when test="${resultsTable.startRow == 0 &&
-                                    resultsTable.endRow == resultsTable.size - 1}">
+                                    resultsTable.endRow == resultsTable.estimatedSize - 1}">
                         <fmt:message key="results.pageinfo.allrows">
-                          <fmt:param value="${resultsTable.size}"/>
+                          <fmt:param value="${resultsTable.estimatedSize}"/>
                         </fmt:message>
                       </c:when>
                       <c:otherwise>
@@ -405,12 +405,12 @@
                         </fmt:message>
                         <span class="resBar">&nbsp;|&nbsp;</span>
                         ${exactMessage}
-                        ${resultsTable.size}
+                        ${resultsTable.estimatedSize}
                       </c:otherwise>
                     </c:choose>
                     <script language="JavaScript">
                       <!--
-                          document.resultsCountText = "${exactMessage} ${resultsTable.size}";
+                          document.resultsCountText = "${exactMessage} ${resultsTable.estimatedSize}";
                         -->
                     </script>
                   </c:otherwise>

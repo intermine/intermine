@@ -43,7 +43,7 @@
     </c:choose>
     <c:if test="${short != 'true'}">
     <c:choose>
-      <c:when test="${!resultsTable.lastPage && resultsTable.maxRetrievableIndex > resultsTable.size}">
+      <c:when test="${!resultsTable.lastPage && resultsTable.maxRetrievableIndex > resultsTable.estimatedSize}">
         <html:link action="/changeTable?table=${param.table}&amp;method=last&amp;trail=${param.trail}">
           <fmt:message key="results.last"/>&nbsp;&gt;&gt;
         </html:link>
