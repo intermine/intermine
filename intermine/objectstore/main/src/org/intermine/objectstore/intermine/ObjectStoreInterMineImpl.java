@@ -769,11 +769,10 @@ public class ObjectStoreInterMineImpl extends ObjectStoreAbstractImpl implements
                 if (pt != null) {
                     OptimiserCache oCache = (OptimiserCache) goFasterCacheMap.get(q);
                     bestQuery = QueryOptimiser.optimiseWith(sql, null, db, c,
-                            (explain ? limitedContext : QueryOptimiserContext.DEFAULT),
-                            Collections.singleton(pt), oCache);
+                            QueryOptimiserContext.DEFAULT, Collections.singleton(pt), oCache);
                     if (sql.equals(bestQuery.getBestQueryString())) {
                         LOG.warn("Query with goFaster failed to optimise: original = "
-                                + sql);
+                                + sql + ", pt = " + pt.getSQLString());
                     }
                 } else {
                     bestQuery = QueryOptimiser.optimise(sql, null, db, c,
@@ -1551,7 +1550,7 @@ public class ObjectStoreInterMineImpl extends ObjectStoreAbstractImpl implements
                 flushOldTempBagTables(c);
             }
             String sql = SqlGenerator.generate(q, schema, db, null,
-                    SqlGenerator.QUERY_FOR_PRECOMP, Collections.EMPTY_MAP);
+                    SqlGenerator.QUERY_NORMAL, Collections.EMPTY_MAP);
             PrecomputedTable pt = new PrecomputedTable(new org.intermine.sql.query.Query(sql), sql,
                     "temporary_precomp_" + getUniqueInteger(c), "goFaster", c);
             PrecomputedTableManager ptm = PrecomputedTableManager.getInstance(db);
