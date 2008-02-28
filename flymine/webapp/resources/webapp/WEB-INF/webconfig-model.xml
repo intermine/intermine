@@ -462,7 +462,7 @@
 
   <class className="org.flymine.model.genomic.ProbeSet">
     <fields>
-      <fieldconfig fieldExpr="identifier"/>
+      <fieldconfig fieldExpr="primaryIdentifier"/>
     </fields>
   </class>
 
