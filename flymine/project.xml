@@ -99,6 +99,7 @@
     </source>
     <source name="affy-probes" type="affy-probes">
       <property name="src.data.dir" location="/shared/data/affy-probes/current"/>
+      <property name="src.data.dir.includes" value="*.csv"/>
     </source>
     <source name="anoph-expr" type="anoph-expr">
       <property name="src.data.dir" location="/shared/data/anoph_expr"/>
