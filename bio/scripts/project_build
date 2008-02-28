@@ -1,7 +1,8 @@
 #!/usr/bin/perl
 
-# Run the FlyMine production build and dump the database occasionally
-# Targets are listed at the end of the script
+# Run the FlyMine production build and dump the database occasionally.
+# The project.xml in the current directory controls which actions to
+# run/merge/postprocess.
 # The database to dump will be found by reading the properties from $HOME/<mine_name>.properties
 # where <mine_name> is the name of the directory where the script is run
 
@@ -28,7 +29,7 @@ sub usage
 {
   die <<"EOF";
 usage:
-  $0 [-v] [-l | -r] [-t] [-V <version>] [-a <actions>] dump_host dump_prefix
+  $0 [-v] [-b] [-l | -r] [-t] [-V <version>] [-D dest_database_name] [-a <actions>] dump_host dump_prefix
 
 flags:
  -v is passed to ant
@@ -92,7 +93,9 @@ my $start_action = undef;
 
 my %opts = ();
 
-getopts('vrlbtnD:a:V:', \%opts);
+if (!getopts('vrlbtnD:a:V:', \%opts)) {
+  usage();
+}
 
 if ($opts{v}) {
   $verbose = 1;
