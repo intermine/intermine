@@ -35,6 +35,7 @@ import org.intermine.web.logic.query.OrderBy;
 import org.intermine.web.logic.query.PathQuery;
 import org.intermine.web.logic.results.Column;
 import org.intermine.web.logic.results.PagedTable;
+import org.intermine.web.logic.results.WebCollection;
 import org.intermine.web.logic.session.SessionMethods;
 import org.intermine.web.logic.template.TemplateQuery;
 import org.stringtree.json.JSONWriter;
@@ -93,7 +94,8 @@ public class TableController extends TilesAction
             return null;
         }
         request.setAttribute("resultsTable", pt);
-        if (request.getAttribute("lookupResults") != null) {
+        if ((request.getAttribute("lookupResults") != null)
+            || (pt.getWebTable() instanceof WebCollection)) {
           //Do nothing
         } else if (pt.getAllRows().getPathToBagQueryResult() != null) {
             Map<String, BagQueryResult> pathToBagQueryResult = pt.getAllRows()
@@ -214,7 +216,9 @@ public class TableController extends TilesAction
         Map<Path, String> pathNames = new HashMap<Path, String> ();
         for (Column column : columns) {
             Path path = column.getPath();
-            pathNames.put(path, path.toStringNoConstraints());
+            if(path != null) {
+                pathNames.put(path, path.toStringNoConstraints());
+            }
         }
         request.setAttribute("pathNames", pathNames);
 

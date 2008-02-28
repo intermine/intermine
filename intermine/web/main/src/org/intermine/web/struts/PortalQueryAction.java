@@ -12,7 +12,6 @@ package org.intermine.web.struts;
 
 import java.lang.reflect.Constructor;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -24,6 +23,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
+import org.apache.commons.lang.StringUtils;
 import org.apache.struts.Globals;
 import org.apache.struts.action.ActionErrors;
 import org.apache.struts.action.ActionForm;
@@ -47,14 +47,16 @@ import org.intermine.web.logic.Constants;
 import org.intermine.web.logic.bag.BagConverter;
 import org.intermine.web.logic.bag.BagQueryConfig;
 import org.intermine.web.logic.bag.BagQueryResult;
-import org.intermine.web.logic.bag.BagQueryRunner;
 import org.intermine.web.logic.bag.InterMineBag;
 import org.intermine.web.logic.config.WebConfig;
+import org.intermine.web.logic.pathqueryresult.PathQueryResultHelper;
 import org.intermine.web.logic.profile.Profile;
+import org.intermine.web.logic.query.Constraint;
 import org.intermine.web.logic.query.PathQuery;
 import org.intermine.web.logic.query.QueryMonitorTimeout;
 import org.intermine.web.logic.results.PagedTable;
 import org.intermine.web.logic.results.WebCollection;
+import org.intermine.web.logic.results.WebResults;
 import org.intermine.web.logic.session.SessionMethods;
 import org.intermine.web.logic.template.TemplateHelper;
 import org.intermine.web.logic.template.TemplateQuery;
@@ -141,8 +143,9 @@ public class PortalQueryAction extends InterMineAction
         Model model = os.getModel();
         BagQueryConfig bagQueryConfig =
                 (BagQueryConfig) servletContext.getAttribute(Constants.BAG_QUERY_CONFIG);
-        BagQueryRunner bagRunner =
-                new BagQueryRunner(os, classKeys, bagQueryConfig, servletContext);
+        
+//        BagQueryRunner bagRunner =
+//                new BagQueryRunner(os, classKeys, bagQueryConfig, servletContext);
 
         // If the class is not in the model, we can't continue
         try {
@@ -171,16 +174,40 @@ public class PortalQueryAction extends InterMineAction
             }
             number++;
         }
-        InterMineBag imBag = new InterMineBag(bagName,
-                                              className , null , new Date() ,
-                                              os , profile.getUserId() , uosw);
+        // NEW STUFF
+        PathQuery pathQuery = new PathQuery(model);
 
-        BagQueryResult bagQueryResult =
-            bagRunner.searchForBag(className, Arrays.asList(idList), organism, false);
+        List<Path> view = PathQueryResultHelper.getDefaultView(className, model, webConfig,
+            null, true);
+
+        pathQuery.setView(view);
+        String label = null, id = null, code = pathQuery.getUnusedConstraintCode();
+        Constraint c = new Constraint(ConstraintOp.LOOKUP, StringUtils.replace(extId, ",", "\t"),
+                        false, label, code, id, null);
+        pathQuery.addNode(className).getConstraints().add(c);
+        pathQuery.setConstraintLogic("A and B and C");
+        pathQuery.syncLogicExpression("and");
+
+        Map returnBagQueryResults = new HashMap();
+        WebResults webResults = PathQueryResultHelper.createPathQueryGetResults(pathQuery, profile,
+                        os, classKeys,
+                        bagQueryConfig, returnBagQueryResults, servletContext);
+        // END
+        
+        
+//        BagQueryResult bagQueryResult =
+//            bagRunner.searchForBag(className, Arrays.asList(idList), organism, false);
+
+        InterMineBag imBag = new InterMineBag(bagName,
+                        className , null , new Date() ,
+                        os , profile.getUserId() , uosw);
 
         List <Integer> bagList = new ArrayList <Integer> ();
+        
+        // There's only one node, get the first value
+        BagQueryResult bagQueryResult = (BagQueryResult) returnBagQueryResults.values().iterator()
+                        .next();
         bagList.addAll(bagQueryResult.getMatchAndIssueIds());
-        int matches = bagQueryResult.getMatchAndIssueIds().size();
 
         DisplayLookupMessageHandler.handleMessages(bagQueryResult, session,
                                                    properties, className, null);
@@ -208,12 +235,12 @@ public class PortalQueryAction extends InterMineAction
                     ObjectStoreSummary oss = (ObjectStoreSummary) servletContext
                                               .getAttribute(Constants.OBJECT_STORE_SUMMARY);
 
-                    List<ResultsRow> result = bagConverter.getConvertedObjects(session,
+                    WebResults convertedWebResult = bagConverter.getConvertedObjects(session,
                         addparameter, bagList, className);
                     imBag = new InterMineBag(bagName, className, null, new Date(), os,
                                              profile.getUserId(), uosw);
                     List<Integer> converted = new ArrayList<Integer>();
-                    for (ResultsRow resRow : result) {
+                    for (List<Object> resRow : convertedWebResult) {
                         converted.add(((InterMineObject) resRow.get(0)).getId());
                     }
                     // No matches
@@ -262,7 +289,7 @@ public class PortalQueryAction extends InterMineAction
         // Go to results page
         if ((bagList.size() > 1) && (idList.length == 1)) {
             return goToResults(mapping, os, model, className, webConfig, classKeys,
-                session, bagList);
+                session, webResults);
         // Go to the object details page
         } else if ((bagList.size() == 1) && (idList.length == 1)) {
             return goToObjectDetails(mapping, bagList.get(0).toString());
@@ -288,14 +315,9 @@ public class PortalQueryAction extends InterMineAction
 
     private ActionForward goToResults(ActionMapping mapping, ObjectStore os, Model model,
                                       String className, WebConfig webConfig, Map classKeys,
-                                      HttpSession session, List<Integer> bagList)
+                                      HttpSession session, WebResults webResults)
                                       throws ObjectStoreException {
-        List<InterMineObject> intermineObjectList = os.getObjectsByIds(bagList);
-        WebPathCollection webPathCollection =
-            new WebPathCollection(os, new Path(model, className), intermineObjectList
-                                  , model, webConfig,
-                                  classKeys);
-        PagedTable pc = new PagedTable(webPathCollection);
+        PagedTable pc = new PagedTable(webResults);
         String identifier = "col" + index++;
         SessionMethods.setResultsTable(session, identifier, pc);
         return new ForwardParameters(mapping.findForward("results"))

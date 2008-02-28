@@ -13,6 +13,8 @@ package org.intermine.web.logic.results;
 import java.util.List;
 import java.util.Map;
 
+import org.intermine.objectstore.ObjectStoreException;
+import org.intermine.objectstore.query.ResultsInfo;
 import org.intermine.web.logic.bag.BagQueryResult;
 import org.intermine.web.logic.query.PathQuery;
 
@@ -20,7 +22,7 @@ import org.intermine.web.logic.query.PathQuery;
  * A List that can understand ResultElement objects.
  * @author Kim Rutherford
  */
-public interface WebTable extends List
+public interface WebTable extends List<List<Object>>
 {
     /**
      * Return a List containing a ResultElement object for each element given in the given row.
@@ -36,16 +38,16 @@ public interface WebTable extends List
     public List<Column> getColumns();
 
     /**
-     * Check whether the result of size() is an estimate
+     * Check whether the result of getEstimatedSize() is an estimate
      * @return true if the size is an estimate
      */
     public boolean isSizeEstimate();
 
     /**
-     * Get the exact number of rows of this table
+     * Get the estimated number of rows of this table
      * @return the number of rows
      */
-    public int getExactSize();
+    public int getEstimatedSize();
 
     /**
      * Return the maximum retrievable index for this PagedTable.  This will only ever return less
@@ -67,5 +69,12 @@ public interface WebTable extends List
      * @return the PathQuery
      */
     public PathQuery getPathQuery();
+
+    /**
+     * Gets the underlying results object info
+     * @return the ResultsInfo
+     * @throws ObjectStoreException exception
+     */
+    public ResultsInfo getInfo() throws ObjectStoreException;
 
 }

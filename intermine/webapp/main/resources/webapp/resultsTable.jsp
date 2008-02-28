@@ -58,7 +58,7 @@
             <th align="center" class="checkbox">
               <html:multibox property="selectedObjects" styleId="selectedObjects_${status.index}"
                              onclick="selectColumnCheckbox(columnsToDisable, columnsToHighlight, ${status.index})"
-                             disabled="${pagedResults.maxRetrievableIndex > pagedResults.size ? 'false' : 'true'}">
+                             disabled="${pagedResults.maxRetrievableIndex > pagedResults.estimatedSize ? 'false' : 'true'}">
                 <c:out value="${status.index},${column.columnId}"/>
               </html:multibox>
             </th>
@@ -148,7 +148,7 @@
   <%-- The data --%>
 
   <%-- Row --%>
-  <c:if test="${pagedResults.size > 0}">
+  <c:if test="${pagedResults.estimatedSize > 0}">
     <c:forEach var="row" items="${pagedResults.resultElementRows}" varStatus="status">
 
       <c:set var="rowClass">

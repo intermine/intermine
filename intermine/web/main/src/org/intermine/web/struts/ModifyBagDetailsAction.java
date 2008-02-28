@@ -97,20 +97,12 @@ public class ModifyBagDetailsAction extends InterMineAction
                     Class clazz = Class.forName(converterClassName);
                     Constructor constructor = clazz.getConstructor();
                     BagConverter bagConverter = (BagConverter) constructor.newInstance();
-                    List<ResultsRow> result =
+                    WebResults result =
                         bagConverter.getConvertedObjects(session, mbdf.getExtraFieldValue(),
                                                          imBag.getContentsAsIds(),
                                                          imBag.getType());
-                    Model model = os.getModel();
-                    WebConfig webConfig =
-                        (WebConfig) servletContext.getAttribute(Constants.WEBCONFIG);
-                    Map classKeys = (Map) servletContext.getAttribute(Constants.CLASS_KEYS);
-
-                    WebPathCollection webPathCollection =
-                        new WebPathCollection(os, new Path(model, imBag.getType()), result
-                                              , model, webConfig,
-                                              classKeys);
-                    PagedTable pc = new PagedTable(webPathCollection);
+                    
+                    PagedTable pc = new PagedTable(result);
                     String identifier = "col" + index++;
                     SessionMethods.setResultsTable(session, identifier, pc);
                     String trail = "|bag." + imBag.getName();

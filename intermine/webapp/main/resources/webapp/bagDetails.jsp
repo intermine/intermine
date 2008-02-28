@@ -160,7 +160,7 @@
   </tr>
 </c:forEach>
 <!-- show dotted lines if there are more than 5 items in bag -->            
-<c:if test="${pagedResults.pageSize < pagedResults.size}">
+<c:if test="${pagedResults.pageSize < pagedResults.estimatedSize}">
   <tr>
     <c:forEach var="column" items="${pagedResults.columns}" varStatus="status2">
       <td style="border-right: dotted 1px #666; border-bottom: dotted 1px #666;">&nbsp;</td>

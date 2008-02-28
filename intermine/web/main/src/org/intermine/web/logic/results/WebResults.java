@@ -45,7 +45,7 @@ import org.intermine.web.logic.query.PathQuery;
  *
  * @author Kim Rutherford
  */
-public class WebResults extends AbstractList implements WebTable
+public class WebResults extends AbstractList<List<Object>> implements WebTable
 {
     protected static final Logger LOG = Logger.getLogger(WebResults.class);
     private List<Path> columnPaths;
@@ -158,14 +158,14 @@ public class WebResults extends AbstractList implements WebTable
     /**
      * {@inheritDoc}
      */
-    public Object get(int index) {
+    public List<Object> get(int index) {
         return getElementsInternal(index, false);
     }
 
     /**
      * {@inheritDoc}
      */
-    public int size() {
+    public int getEstimatedSize() {
        try {
            return getInfo().getRows();
        } catch (ObjectStoreException e) {
@@ -187,7 +187,7 @@ public class WebResults extends AbstractList implements WebTable
     /**
      * {@inheritDoc}
      */
-    public int getExactSize() {
+    @Override public int size() {
         return getInterMineResults().size();
     }
 
@@ -281,12 +281,16 @@ public class WebResults extends AbstractList implements WebTable
 
     private List getElementsInternal(int index, boolean makeResultElements) {
         ResultsRow resultsRow = (ResultsRow) osResults.get(index);
+        return translateRow(resultsRow, makeResultElements);
+     }
+    
+    private List translateRow(List initialList, boolean makeResultElements) {
         ArrayList rowCells = new ArrayList();
         for (Iterator iter = columnPaths.iterator(); iter.hasNext();) {
             Path columnPath = (Path) iter.next();
             String columnName = columnPath.toStringNoConstraints();
             int columnIndex = ((Integer) pathToIndex.get(columnName)).intValue();
-            Object o = resultsRow.get(columnIndex);
+            Object o = initialList.get(columnIndex);
             String type = TypeUtil.unqualifiedName(columnPath.getLastClassDescriptor().getName());
             String fieldName = columnName.substring(columnName.lastIndexOf(".") + 1);
             Path path = new Path(model, type + '.' + fieldName);
@@ -309,7 +313,11 @@ public class WebResults extends AbstractList implements WebTable
             }
         }
         return rowCells;
-     }
+    }
+    
+    public Iterator iterator() {
+        return new Iter();
+    }
 
 
     /**
@@ -324,4 +332,34 @@ public class WebResults extends AbstractList implements WebTable
     public PathQuery getPathQuery() {
         return pathQuery;
     }
+    
+    private class Iter implements Iterator 
+    {
+        private Iterator subIter;
+        
+        public Iter() {
+            subIter = osResults.iterator();
+        }
+
+        /* (non-Javadoc)
+         * @see java.util.Iterator#hasNext()
+         */
+        public boolean hasNext() {
+            return subIter.hasNext();
+        }
+
+        /* (non-Javadoc)
+         * @see java.util.Iterator#next()
+         */
+        public Object next() {
+            List row = (List) subIter.next();
+            return translateRow(row, true);
+        }
+
+        public void remove() {
+            throw (new UnsupportedOperationException());
+        }
+        
+    }
+    
 }

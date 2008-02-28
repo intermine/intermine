@@ -19,6 +19,7 @@ import org.apache.struts.action.ActionMessage;
 import org.intermine.metadata.Model;
 import org.intermine.objectstore.ObjectStoreException;
 import org.intermine.objectstore.query.ResultsRow;
+import org.intermine.web.logic.results.WebResults;
 
 /**
  * @author "Xavier Watkins"
@@ -37,7 +38,7 @@ public interface BagConverter
      * @throws ClassNotFoundException  class not found
      * @throws ObjectStoreException objectstore
      */
-    public List<ResultsRow> getConvertedObjects(HttpSession session, String parameters,
+    public WebResults getConvertedObjects(HttpSession session, String parameters,
                                     List<Integer> fromList, String type)
                                     throws ClassNotFoundException, ObjectStoreException;
 

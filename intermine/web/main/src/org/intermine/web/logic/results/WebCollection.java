@@ -29,7 +29,7 @@ import org.apache.log4j.Logger;
  * A wrapper for a collection that makes for easier rendering in the webapp.
  * @author kmr
  */
-public class WebCollection extends AbstractList implements WebTable
+public class WebCollection extends AbstractList<List<Object>> implements WebTable
 {
     private static final Logger LOG = Logger.getLogger(WebCollection.class);
 
@@ -71,7 +71,7 @@ public class WebCollection extends AbstractList implements WebTable
      * Return the given row as a List of primatives (rather than a List of ResultElement objects)
      * {@inheritDoc}
      */
-    public Object get(int index) {
+    public List<Object> get(int index) {
         return getElementsInternal(index, false);
     }
 
@@ -102,7 +102,7 @@ public class WebCollection extends AbstractList implements WebTable
     /**
      * {@inheritDoc}
      */
-    public int size() {
+    public int getEstimatedSize() {
         return getList().size();
     }
 
@@ -118,8 +118,12 @@ public class WebCollection extends AbstractList implements WebTable
     /**
      * {@inheritDoc}
      */
-    public int getExactSize() {
-        return size();
+    public int size() {
+        if (list != null) {
+            return list.size();
+        } else {
+            return 0;
+        }
     }
 
     /**
@@ -146,11 +150,18 @@ public class WebCollection extends AbstractList implements WebTable
         return Integer.MAX_VALUE;
     }
 
-    /* (non-Javadoc)
-     * @see org.intermine.web.logic.results.WebTable#getPathQuery()
+    /**
+     * {@inheritDoc}
      */
     public PathQuery getPathQuery() {
         // TODO Auto-generated method stub
+        return null;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public ResultsInfo getInfo() throws ObjectStoreException {
         return null;
     }
 }

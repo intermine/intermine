@@ -508,26 +508,14 @@ public class SessionMethods
                                 = new HashMap<String, BagQueryResult>();
                         Map<String, InterMineBag> allBags =
                             WebUtil.getAllBags(profile.getSavedBags(), servletContext);
-                        Query q = MainHelper.makeQuery(pathQuery, allBags, pathToQueryNode,
-                            servletContext, pathToBagQueryResult, false,
-                            (ObjectStore) servletContext.getAttribute(Constants.OBJECTSTORE),
-                            (Map) servletContext.getAttribute(Constants.CLASS_KEYS),
-                            (BagQueryConfig) servletContext.getAttribute(Constants
-                                .BAG_QUERY_CONFIG));
-                        Results results = TableHelper.makeResults(os, q);
-                        results.setNoPrefetch();
-
-                        WebResults webResults = new WebResults(pathQuery, results, model,
-                            pathToQueryNode,
-                            (Map) servletContext.getAttribute(Constants.CLASS_KEYS),
-                            pathToBagQueryResult);
-                        PagedTable pr = new PagedTable(webResults);
+                        PagedTable pr = doPathQueryGetPagedTable(pathQuery, servletContext,
+                                        os, model, pathToQueryNode, pathToBagQueryResult, allBags);
                         SessionMethods.runQuery(session, messages, qid, pr);
 
                         if (saveQuery) {
                             String queryName =
                                 SaveQueryHelper.findNewQueryName(profile.getHistory());
-                            pathQuery.setInfo(webResults.getInfo());
+                            pathQuery.setInfo(pr.getWebTable().getInfo());
                             saveQueryToHistory(session, queryName, pathQuery);
                             recordMessage(messages.getMessage("saveQuery.message", queryName),
                                           session);
@@ -646,7 +634,7 @@ public class SessionMethods
                 private Object getCount() {
                     if (count == -1) {
                         if (collection instanceof WebTable) {
-                            count = ((WebTable) collection).getExactSize();
+                            count = ((WebTable) collection).size();
                         } else {
                             count = collection.size();
                         }
@@ -879,7 +867,7 @@ public class SessionMethods
 
         PathQuery pathQuery = PathQueryResultHelper.makePathQueryForBag(imBag, webConfig, os
                         .getModel());
-        WebResults webResults = PathQueryResultHelper.runPathQueryGetResults(pathQuery, profile,
+        WebResults webResults = PathQueryResultHelper.createPathQueryGetResults(pathQuery, profile,
                         os, classKeys, bagQueryConfig, servletContext);
         String identifier = "bag." + imBag.getName();
         PagedTable pagedResults = new PagedTable(webResults);
@@ -893,7 +881,7 @@ public class SessionMethods
      * 
      * @param request the ServletRequest
      * @param servletContext the ServletContext
-     * @param id the InteRMineObject identifier
+     * @param id the InterMineObject identifier
      * @param field the name of the collection field in the InterMineObject
      * @param referencedClassName the type of the collection
      * @param objectClassName the type of the InterMineObject
@@ -914,7 +902,7 @@ public class SessionMethods
         WebConfig webConfig = (WebConfig) servletContext.getAttribute(Constants.WEBCONFIG);
         PathQuery pathQuery = PathQueryResultHelper.makePathQueryForCollection(webConfig, os
                         .getModel(), id, referencedClassName, objectClassName, field);
-        WebResults webResults = PathQueryResultHelper.runPathQueryGetResults(pathQuery, profile,
+        WebResults webResults = PathQueryResultHelper.createPathQueryGetResults(pathQuery, profile,
                         os, classKeys, bagQueryConfig, servletContext);
         String identifier = "coll" + index++;
         PagedTable pagedResults = new PagedTable(webResults);
@@ -930,5 +918,29 @@ public class SessionMethods
     public static Map<String, List<FieldDescriptor>> getClassKeys(ServletContext servletContext) {
         return (Map<String, List<FieldDescriptor>>) servletContext.
             getAttribute(Constants.CLASS_KEYS);   
+    }
+
+    private static PagedTable doPathQueryGetPagedTable(final PathQuery pathQuery,
+                                             final ServletContext servletContext,
+                                             final ObjectStore os, final Model model,
+                                             Map<String, QueryNode> pathToQueryNode,
+                                             Map<String, BagQueryResult> pathToBagQueryResult,
+                                             Map<String, InterMineBag> allBags)
+                    throws ObjectStoreException {
+        Query q = MainHelper.makeQuery(pathQuery, allBags, pathToQueryNode,
+            servletContext, pathToBagQueryResult, false,
+            (ObjectStore) servletContext.getAttribute(Constants.OBJECTSTORE),
+            (Map) servletContext.getAttribute(Constants.CLASS_KEYS),
+            (BagQueryConfig) servletContext.getAttribute(Constants
+                .BAG_QUERY_CONFIG));
+        Results results = TableHelper.makeResults(os, q);
+        results.setNoPrefetch();
+
+        WebResults webResults = new WebResults(pathQuery, results, model,
+            pathToQueryNode,
+            (Map) servletContext.getAttribute(Constants.CLASS_KEYS),
+            pathToBagQueryResult);
+        PagedTable pr = new PagedTable(webResults);
+        return pr;
     }
 }
