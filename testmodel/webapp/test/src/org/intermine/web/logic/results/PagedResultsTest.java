@@ -121,13 +121,13 @@ public class PagedResultsTest extends TestCase
     public void testSizeExact() throws Exception {
         PagedTable dr = getExactResults();
         dr.setPageSize(10);
-        assertEquals(15, dr.getSize());
+        assertEquals(15, dr.getEstimatedSize());
     }
 
     public void testSizeHigh() throws Exception {
         PagedTable dr = getEstimateTooHighResults();
         dr.setPageSize(10);
-        assertEquals(25, dr.getSize());
+        assertEquals(25, dr.getEstimatedSize());
     }
 
     public void testGetIndexForColumn() throws Exception {
@@ -254,7 +254,7 @@ public class PagedResultsTest extends TestCase
      public void testSizeEmpty() throws Exception {
          PagedTable dr = getEmptyResults();
          dr.setPageSize(10);
-         assertEquals(0, dr.getSize());
+         assertEquals(0, dr.getEstimatedSize());
      }
 
 //     public void testEndExact() throws Exception {
