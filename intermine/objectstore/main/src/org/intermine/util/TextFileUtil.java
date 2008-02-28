@@ -10,18 +10,21 @@ package org.intermine.util;
  *
  */
 
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
+import java.util.NoSuchElementException;
+import java.util.StringTokenizer;
+
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.io.PrintStream;
 import java.io.Reader;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Iterator;
-import java.util.NoSuchElementException;
-import java.util.StringTokenizer;
-
+import org.apache.commons.lang.text.StrMatcher;
+import org.apache.commons.lang.text.StrTokenizer;
+import org.apache.log4j.Logger;
 /**
  * Utility methods for dealing with text files.
  *
@@ -30,6 +33,7 @@ import java.util.StringTokenizer;
 
 public abstract class TextFileUtil
 {
+    protected static final Logger LOG = Logger.getLogger(TextFileUtil.class);
     /**
      * The format() method is called by writeDelimitedTable() to format objects in a more useful
      * way than the default toString().
@@ -276,14 +280,25 @@ public abstract class TextFileUtil
                     throw new NoSuchElementException();
                 } else {
                     String lastLine = currentLine;
-                    if (stripQuotes) {
-                        lastLine = lastLine.replaceAll("\"", "");
-                    }
+
                     try {
                         currentLine = getNextNonCommentLine();
                     } catch (IOException e) {
                         throw new RuntimeException("error while reading from " + reader, e);
                     }
+                    
+                    if (stripQuotes) {
+                        StrMatcher delimMatcher = null;
+                        
+                        if (delim.equals(",")) {
+                            delimMatcher = StrMatcher.commaMatcher();
+                        } else {
+                            delimMatcher = StrMatcher.tabMatcher();
+                        }
+                        StrTokenizer tokeniser
+                        = new StrTokenizer(lastLine, delimMatcher, StrMatcher.doubleQuoteMatcher());
+                        return tokeniser.getTokenArray();
+                    }                    
                     return StringUtil.split(lastLine, delim);
                 }
             }
