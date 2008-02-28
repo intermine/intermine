@@ -32,6 +32,8 @@ import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
 import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang.text.StrMatcher;
+import org.apache.commons.lang.text.StrTokenizer;
 import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
@@ -119,8 +121,9 @@ public class BuildBagAction extends InterMineAction
         List<String> list = new ArrayList<String>();
         int elementCount = 0;
         while ((thisLine = reader.readLine()) != null) {
-            QuotedStringTokeniser st = new QuotedStringTokeniser(thisLine, "\n\t, ");
-            while (st.hasMoreTokens()) {
+            StrMatcher matcher = StrMatcher.charSetMatcher("\n\t, ");
+            StrTokenizer st = new StrTokenizer(thisLine, matcher, StrMatcher.doubleQuoteMatcher());
+            while (st.hasNext()) {
                 String token = st.nextToken();
                 list.add(token);
                 elementCount++;
