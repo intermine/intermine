@@ -102,8 +102,6 @@ public class BDGPInsituConverter extends FileConverter
             String lineBits[] = it.next();
             String geneCG = lineBits[0];
             
-            
-            
             if (!geneCG.startsWith("CG")) {
                 // ignore clones for now
                 continue;
@@ -121,7 +119,9 @@ public class BDGPInsituConverter extends FileConverter
                 String image = lineBits[2];
                 Item img = getImage(URL + image);
                 result.addToCollection("images", img);
-                LOG.error("Could not process line:  " + lineBits[0] + "," + lineBits[1]);
+            } else {
+                LOG.error("Could not process images for line:  " + lineBits[0] + "," + lineBits[1] 
+                + " because the line only has " + lineBits.length + " tokens");
             }
             if (lineBits.length > 3) {
                 String term = lineBits[3];
