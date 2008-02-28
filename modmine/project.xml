@@ -4,6 +4,13 @@
   <property name="intermine.properties.file" value="modmine.properties"/>
   <property name="default.intermine.properties.file" location="../default.intermine.integrate.properties"/>
   <sources>
+    <source name="modencode-metadata" type="chado-db">
+      <property name="source.db.name" value="modencode-metadata"/>
+      <property name="dataSourceName" value="FlyBase"/>
+      <property name="dataSetTitle" value="FlyBase Drosophila melanogaster data set"/>
+      <property name="processors"
+                value="org.intermine.bio.dataconversion.ModEncodeMetaDataProcessor"/>
+    </source>
     <source name="chado-db-flybase-dmel" type="chado-db">
       <property name="source.db.name" value="flybase"/>
       <property name="genus" value="Drosophila"/>
@@ -14,7 +21,7 @@
       <property name="processors"
                 value="org.intermine.bio.dataconversion.FlyBaseModuleProcessor"/>
     </source>
-    <source name="chado-db-wormbase-c_elegans" type="chado-db">
+    <source name="chado-db-wormbase-c_elegans" type="chado-db" dump="true">
       <property name="source.db.name" value="wormbase"/>
       <property name="genus" value="Caenorhabditis"/>
       <property name="species" value="elegans"/>
@@ -34,7 +41,7 @@
       <property name="src.data.dir" location="/shared/data/uniprot/current"/>
       <property name="src.data.dir.includes" value="keydef.xml"/>
     </source>
-    <source name="interpro" type="interpro">
+    <source name="interpro" type="interpro" dump="true">
       <property name="src.data.dir" location="/shared/data/interpro/current"/>
     </source>
     <source name="inparanoid-orthologue" type="orthologue">
@@ -43,7 +50,7 @@
     <source name="go" type="go">
       <property name="src.data.file" location="/shared/data/go-annotation/gene_ontology.obo"/>
     </source>
-    <source name="go-annotation" type="go-annotation">
+    <source name="go-annotation" type="go-annotation" dump="true">
       <property name="ontologyfile" location="/shared/data/go-annotation/gene_ontology.obo"/>
       <property name="src.data.dir" location="/shared/data/modmine/go-annotation/"/>
       <property name="src.data.dir.includes" value="*/gene_association*"/>
@@ -92,7 +99,7 @@
            objectstore -->
       <property name="src.data.file" location="build/organisms.xml"/>
     </source>
-    <source name="modmine-static" type="intermine-items-xml-file">
+    <source name="modmine-static" type="intermine-items-xml-file" dump="true">
       <property name="src.data.file" location="datasets.xml"/>
     </source>
     <source name="update-publications" type="update-publications">
