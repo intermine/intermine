@@ -197,7 +197,7 @@
 
       <graphdisplayer title="mRNA subcellular localisation (fly-FISH)" domainLabel="Stage" rangeLabel="Gene count" dataSetLoader="org.flymine.web.widget.FlyFishDataSetLdr"
                       toolTipGen="org.intermine.web.logic.widget.ToolTipGenerator" urlGen="org.flymine.web.widget.FlyFishGraphURLGenerator"
-                      description="Expression patterns of Drosophila mRNAs at the subcellular level during early embryogenesis - data from  &lt;a href=&quot;http://fly-fish.ccbr.utoronto.ca/&quot; target=&quot;_new&quot;&gt;Fly-FISH&lt;/a&gt;.  Note that not all genes have been assayed by &lt;a href=&quot;http://fly-fish.ccbr.utoronto.ca/&quot; target=&quot;_new&quot;&gt;Fly-FISH&lt;/a&gt;".
+                      description="Expression patterns of Drosophila mRNAs at the subcellular level during early embryogenesis - data from  &lt;a href=&quot;http://fly-fish.ccbr.utoronto.ca/&quot; target=&quot;_new&quot;&gt;Fly-FISH&lt;/a&gt;.  Note that not all genes have been assayed by &lt;a href=&quot;http://fly-fish.ccbr.utoronto.ca/&quot; target=&quot;_new&quot;&gt;Fly-FISH&lt;/a&gt;"
                       graphType="BarChart" />
                       
       <graphdisplayer title="mRNA expression patterns (BDGP in situ project)" domainLabel="Stage" rangeLabel="Gene count" dataSetLoader="org.flymine.web.widget.BDGPinsituDataSetLdr"
