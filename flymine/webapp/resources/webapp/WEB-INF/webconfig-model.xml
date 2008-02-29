@@ -201,7 +201,7 @@
 
                       graphType="BarChart" />
                       
-      <graphdisplayer title="mRNA expression patterns (BDGP in situ project)" domainLabel="Stage" rangeLabel="Gene count" dataSetLoader="org.flymine.web.widget.BDGPinsituDataSetLdr"
+      <graphdisplayer title="BDGP expression patterns" domainLabel="Stage" rangeLabel="Gene count" dataSetLoader="org.flymine.web.widget.BDGPinsituDataSetLdr"
                       toolTipGen="org.intermine.web.logic.widget.ToolTipGenerator" urlGen="org.flymine.web.widget.BDGPinsituGraphURLGenerator"
                       description="Expression patterns of Drosophila mRNAs during embryogenesis - data from  &lt;a href=&quot;http://www.fruitfly.org/cgi-bin/ex/insitu.pl&quot; target=&quot;_new&quot;&gt;BGDP&lt;/a&gt;.  Note that not all genes have been assayed by &lt;a href=&quot;http://www.fruitfly.org/cgi-bin/ex/insitu.pl&quot; target=&quot;_new&quot;&gt;BGDP&lt;/a&gt;. "
                       graphType="BarChart" />

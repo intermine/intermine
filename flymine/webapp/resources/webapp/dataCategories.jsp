@@ -188,10 +188,10 @@
   </tr>
 
 
-  <tr><td rowspan="3"  class="leftcol">
-        <html:link action="/aspect?name=Protein%20Interactions">
-         <p> <img src="model/images/proteinInteraction.gif" /></p>
-        <p> Protein Interactions</p></html:link></td>
+  <tr><td rowspan="4"  class="leftcol">
+        <html:link action="/aspect?name=Interactions">
+         <p> <img src="model/images/interaction.gif" /></p>
+        <p> Interactions</p></html:link></td>
     <td> <i>D. melanogaster</i> </td>
     <td> High-throughput yeast 2-hybrid protein interaction datasets </td>
     <td> <a href="http://www.ebi.ac.uk/intact" target="_new">IntAct</a> - 7th January 2008</td>
@@ -214,7 +214,13 @@
     <td> Kerrien et al - <a href="http://www.ncbi.nlm.nih.gov/entrez/query.fcgi?cmd=Retrieve&db=PubMed&dopt=Abstract&list_uids=17145710" target="_new">PubMed:17145710</a></td>
     <td> &nbsp;</td>
   </tr>
-
+ <tr>
+    <td> <i>D. melanogaster</i></td>
+    <td> Genetic interactions from the BioGRID</td>
+    <td> <a href="http://www.thebiogrid.org/" target="_new">BioGRID</a> - Version 2.0.38 </td>
+    <td> Stark et al - <a href="http://www.ncbi.nlm.nih.gov/entrez/query.fcgi?cmd=Retrieve&db=PubMed&dopt=Abstract&list_uids=16381927" target="_new">PubMed:16381927</a></td>
+    <td> &nbsp;</td>
+  </tr>
 
   <tr><td rowspan="7"  class="leftcol">
 
@@ -277,13 +283,13 @@
   </tr>
 
 
-  <tr><td rowspan="4" class="leftcol">
+  <tr><td rowspan="5" class="leftcol">
         <html:link action="/aspect?name=Gene%20Expression">
         <p> <img src="model/images/marray.gif" /></p>
         <p> Gene Expression</p>
          </html:link></td>
     <td> <i>D. melanogaster</i> </td>
-    <td> Microarray-based gene expression data for the life cycle of <i>D. melanogaster</i></td>
+    <td> Microarray-based gene expression data for the life cycle of D. melanogaster</td>
     <td> <a href="http://www.ebi.ac.uk/arrayexpress/" target="_new"> ArrayExpress </a> - Experiment E-FLYC-6</td>
     <td> Arbeitman et al - <a href="http://www.ncbi.nlm.nih.gov/entrez/query.fcgi?cmd=Retrieve&db=PubMed&dopt=Abstract&list_uids= 12351791" target="_new">PubMed: 12351791</a></td>
     <td> &nbsp;</td>
@@ -299,15 +305,29 @@
 
   <tr>
     <td> <i>D. melanogaster</i> </td>
-    <td> Expression patterns of Drosophila mRNAs at the subcellular level during early embryogenesis</td>
+    <td> Expression patterns of mRNAs at the subcellular level during early embryogenesis</td>
     <td> <a href="http://fly-fish.ccbr.utoronto.ca/" target="_new">Fly-FISH</a> - 16th October 2007 </td>
     <td> Lecuyer et al - <a href="http://www.ncbi.nlm.nih.gov/entrez/query.fcgi?cmd=Retrieve&db=PubMed&dopt=Abstract&list_uids=17923096" target="_new">PubMed: 17923096</a></td>
     <td> &nbsp;</td>
   </tr>
 
   <tr>
+    <td> <i>D. melanogaster</i> </td>
+    <td> Expression patterns of mRNAs during embryogenesis</td>
+    <td> <a href="http://www.fruitfly.org/cgi-bin/ex/insitu.pl/" target="_new">BDGP</a> - 13th February 2008 </td>
+    <td> Tomancak et al - <a href="http://www.ncbi.nlm.nih.gov/entrez/query.fcgi?cmd=Retrieve&db=PubMed&dopt=Abstract&list_uids=17645804" target="_new">PubMed:17645804</a></td>
+    <td> &nbsp;</td>
+  </tr>
+
+
+
+
+
+
+
+  <tr>
     <td> <i>A. gambiae</i> </td>
-    <td> Microarray-based gene expression data for the life cycle of <i>A. gambiae</i></td>
+    <td> Microarray-based gene expression data for the life cycle of A. gambiae</td>
     <td> <a href="http://www.ebi.ac.uk/arrayexpress/" target="_new"> ArrayExpress </a> - Experiment E-TABM-186</td>
     <td> Koutsos et al - <a href="http://www.ncbi.nlm.nih.gov/entrez/query.fcgi?cmd=Retrieve&db=PubMed&dopt=Abstract&list_uids= 17563388" target="_new">PubMed: 17563388</a></td>
     <td> &nbsp;</td>
