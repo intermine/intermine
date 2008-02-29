@@ -10,6 +10,7 @@ package org.intermine.bio.dataconversion;
  *
  */
 
+import java.io.Reader;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -17,17 +18,15 @@ import java.util.Iterator;
 import java.util.Map;
 import java.util.Set;
 
+import org.apache.log4j.Logger;
+import org.intermine.dataconversion.DataConverter;
 import org.intermine.dataconversion.FileConverter;
 import org.intermine.dataconversion.ItemWriter;
 import org.intermine.metadata.Model;
 import org.intermine.objectstore.ObjectStoreException;
-import org.intermine.util.TextFileUtil;
+import org.intermine.util.FormattedTextParser;
 import org.intermine.xml.full.Item;
 import org.intermine.xml.full.ReferenceList;
-
-import java.io.Reader;
-
-import org.apache.log4j.Logger;
 
 /**
  * DataConverter to parse BDGP insitu data file into Items.
@@ -95,7 +94,7 @@ public class BDGPInsituConverter extends FileConverter
     @Override
     public void process(Reader reader) throws Exception {
 
-        Iterator<String[]> it = TextFileUtil.parseCsvDelimitedReader(reader);
+        Iterator<String[]> it = FormattedTextParser.parseCsvDelimitedReader(reader);
 
         while (it.hasNext()) {
 
