@@ -24,7 +24,7 @@ import org.intermine.dataconversion.ItemWriter;
 import org.intermine.metadata.MetaDataException;
 import org.intermine.metadata.Model;
 import org.intermine.objectstore.ObjectStoreException;
-import org.intermine.util.TextFileUtil;
+import org.intermine.util.FormattedTextParser;
 import org.intermine.xml.full.Item;
 
 
@@ -72,7 +72,7 @@ public class AnophelesIdentifiersConverter extends FileConverter
      * {@inheritDoc}
      */
     public void process(Reader reader) throws Exception {
-        Iterator lineIter = TextFileUtil.parseTabDelimitedReader(reader);
+        Iterator lineIter = FormattedTextParser.parseTabDelimitedReader(reader);
 
         // data is in format:
         // primaryIdentifier | identifier | symbol

@@ -17,7 +17,7 @@ import org.intermine.metadata.AttributeDescriptor;
 import org.intermine.metadata.Model;
 import org.intermine.model.InterMineObject;
 import org.intermine.objectstore.ObjectStoreException;
-import org.intermine.util.TextFileUtil;
+import org.intermine.util.FormattedTextParser;
 import org.intermine.util.TypeUtil;
 
 import java.io.File;
@@ -88,7 +88,7 @@ public class TSVFileReaderTask extends FileDirectDataLoaderTask
 
         Iterator tsvIter;
         try {
-            tsvIter = TextFileUtil.parseTabDelimitedReader(new FileReader(file));
+            tsvIter = FormattedTextParser.parseTabDelimitedReader(new FileReader(file));
         } catch (Exception e) {
             throw new BuildException("cannot parse file: " + file, e);
         }
