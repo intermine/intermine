@@ -10,6 +10,7 @@ package org.intermine.util;
  *
  */
 
+
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.Reader;
@@ -27,28 +28,53 @@ import org.apache.commons.lang.text.StrTokenizer;
 public class FormattedTextParser
 {
 
+    /**
+     * Return an Iterator over a tab delimited file.  Iterator.next() splits the current line at the
+     * tabs and returns a String[] of the bits.  No attempt is made to deal with quoted tabs.
+     * Lines beginning with # are ignored.
+     * @param reader the Reader to read from
+     * @return an Iterator over the lines of the Reader
+     * @throws IOException if there is an error while reading from the Reader
+     */
+    public static Iterator parseTabDelimitedReader(final Reader reader) throws IOException {
+        return parseDelimitedReader(reader, false, "\t");
+    }
+    
+    /**
+     * Return an Iterator over a comma delimited file.  Iterator.next() splits the current line at 
+     * the commas and returns a String[] of the bits, stripped of all quotes.
+     * Lines beginning with # are ignored.
+     * @param reader the Reader to read from
+     * @return an Iterator over the lines of the Reader
+     * @throws IOException if there is an error while reading from the Reader
+     */
+    public static Iterator<String[]> parseCsvDelimitedReader(final Reader reader) 
+    throws IOException {
+        return parseDelimitedReader(reader, true, ",");
+    }
+    
     private static Iterator parseDelimitedReader(final Reader reader, final boolean stripQuotes, 
                                                  final String delim) 
     throws IOException {
         final BufferedReader bufferedReader = new BufferedReader(reader);
-    
+
         return new Iterator() {
             String currentLine = null;
-    
+
             {
                 currentLine = getNextNonCommentLine();
             }
-    
+
             public boolean hasNext() {
                 return currentLine != null;
             }
-    
+
             public Object next() {
                 if (currentLine == null) {
                     throw new NoSuchElementException();
                 } else {
                     String lastLine = currentLine;
-    
+
                     try {
                         currentLine = getNextNonCommentLine();
                     } catch (IOException e) {
@@ -65,19 +91,21 @@ public class FormattedTextParser
                         }
                         StrTokenizer tokeniser
                         = new StrTokenizer(lastLine, delimMatcher, StrMatcher.doubleQuoteMatcher());
+                        tokeniser.setEmptyTokenAsNull(false);
+                        tokeniser.setIgnoreEmptyTokens(false);
                         return tokeniser.getTokenArray();
                     }                    
                     return StringUtil.split(lastLine, delim);
                 }
             }
-    
+
             public void remove() {
                 throw new UnsupportedOperationException();
             }
-    
+
             private String getNextNonCommentLine() throws IOException {
                 String line = null;
-    
+
                 while (true) {
                     line = bufferedReader.readLine();
                     if (line == null) {
@@ -88,35 +116,8 @@ public class FormattedTextParser
                         }
                     }
                 }
-    
+
                 return line;
             }
         };
-    }
-
-    /**
-     * Return an Iterator over a comma delimited file.  Iterator.next() splits the current line at 
-     * the commas and returns a String[] of the bits, stripped of all quotes.
-     * Lines beginning with # are ignored.
-     * @param reader the Reader to read from
-     * @return an Iterator over the lines of the Reader
-     * @throws IOException if there is an error while reading from the Reader
-     */
-    public static Iterator<String[]> parseCsvDelimitedReader(final Reader reader) 
-    throws IOException {
-        return parseDelimitedReader(reader, true, ",");
-    }
-
-    /**
-     * Return an Iterator over a tab delimited file.  Iterator.next() splits the current line at the
-     * tabs and returns a String[] of the bits.  No attempt is made to deal with quoted tabs.
-     * Lines beginning with # are ignored.
-     * @param reader the Reader to read from
-     * @return an Iterator over the lines of the Reader
-     * @throws IOException if there is an error while reading from the Reader
-     */
-    public static Iterator parseTabDelimitedReader(final Reader reader) throws IOException {
-        return parseDelimitedReader(reader, false, "\t");
-    }
-
-}
+    }}
