@@ -11,20 +11,18 @@ package org.intermine.bio.dataconversion;
  */
 import java.io.File;
 import java.io.Reader;
-
-import org.apache.commons.lang.StringUtils;
-
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
 
+import org.apache.commons.lang.StringUtils;
 import org.intermine.dataconversion.FileConverter;
 import org.intermine.dataconversion.ItemWriter;
 import org.intermine.metadata.Model;
 import org.intermine.objectstore.ObjectStoreException;
-import org.intermine.util.TextFileUtil;
+import org.intermine.util.FormattedTextParser;
 import org.intermine.xml.full.Item;
 
 
@@ -70,7 +68,7 @@ public class RNAiConverter extends FileConverter
      * {@inheritDoc}
      */
     public void process(Reader reader) throws Exception {
-        Iterator lineIter = TextFileUtil.parseTabDelimitedReader(reader);
+        Iterator lineIter = FormattedTextParser.parseTabDelimitedReader(reader);
         boolean readingData = false;
         File currentFile = getCurrentFile();
         if (currentFile.getName().contains("-final")) {
