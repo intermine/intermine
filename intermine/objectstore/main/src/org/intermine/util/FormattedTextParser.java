@@ -1,14 +1,5 @@
 package org.intermine.util;
 
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.Reader;
-import java.util.Iterator;
-import java.util.NoSuchElementException;
-
-import org.apache.commons.lang.text.StrMatcher;
-import org.apache.commons.lang.text.StrTokenizer;
-
 /*
  * Copyright (C) 2002-2007 FlyMine
  *
@@ -18,6 +9,15 @@ import org.apache.commons.lang.text.StrTokenizer;
  * information or http://www.gnu.org/copyleft/lesser.html.
  *
  */
+
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.Reader;
+import java.util.Iterator;
+import java.util.NoSuchElementException;
+
+import org.apache.commons.lang.text.StrMatcher;
+import org.apache.commons.lang.text.StrTokenizer;
 
 /**
  * Class for methods and util methods for parsing csv files and others.
