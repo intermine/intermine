@@ -68,7 +68,7 @@ public class EnrichmentWidgetController extends TilesAction
          String descr = request.getParameter("descr");
          String filterLabel = request.getParameter("filterLabel");
          String label = request.getParameter("label");
-         String refBagName = null;
+         String externalLink = request.getParameter("externalLink");
          // TODO these defaults are already in the form
          String max = "0.10";
          String errorCorrection = "BenjaminiHochberg";
@@ -78,9 +78,6 @@ public class EnrichmentWidgetController extends TilesAction
          }
          if (request.getParameter("errorCorrection") != null) {
              errorCorrection = request.getParameter("errorCorrection");
-         }
-         if (request.getParameter("refBagName") != null) {
-             refBagName = request.getParameter("refBagName");
          }
          
          ewf.setBagName(bagName);
@@ -93,7 +90,7 @@ public class EnrichmentWidgetController extends TilesAction
          ewf.setFilterLabel(filterLabel);
          ewf.setMax(max);
          ewf.setErrorCorrection(errorCorrection);
-         ewf.setRefBagName(refBagName);
+         ewf.setExternalLink(externalLink);
          
          HttpSession session = request.getSession();
          Profile profile = (Profile) session.getAttribute(Constants.PROFILE);
@@ -110,12 +107,6 @@ public class EnrichmentWidgetController extends TilesAction
          }
          ewf.setBag(bag);
          ewf.setBagType(bag.getType());
-
-         // set reference bag (may not have one)
-         // TODO do we need to set the bag?
-         if (refBagName != null) {
-             ewf.setRefBag(allBags.get(refBagName));
-         }
          
          Class<?> clazz = TypeUtil.instantiate(dataLoader);
          Constructor<?> constr = clazz.getConstructor(new Class[]
