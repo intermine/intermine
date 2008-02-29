@@ -32,41 +32,20 @@ public class EnrichmentWidgetForm extends ActionForm
     private String bagName;
     private String bagType;
     private String max;
-    private String refBagName;
-    private InterMineBag refBag = null;
-
+    private String externalLink;
+    
     /**
-     * name of reference bag
-     * @return the refBagName
+     * @return the externalLink
      */
-    public String getRefBagName() {
-        return refBagName;
+    public String getExternalLink() {
+        return externalLink;
     }
 
     /**
-     * @param refBagName name of reference bag
+     * @param externalLink the externalLink to set
      */
-    public void setRefBagName(String refBagName) {
-        this.refBagName = refBagName;
-    }
-
-    /**
-     * the objects in the database are used to represent the reference population by default.  
-     * however the user can select a bag on the widget to represent the population instead.
-     * 
-     * the enrichment widget calculations will then compare the bag with this reference bag instead
-     * of the database.
-     * @return the referenceBag
-     */
-    public InterMineBag getRefBag() {
-        return refBag;
-    }
-
-    /**
-     * @param referenceBag the referenceBag to set
-     */
-    public void setRefBag(InterMineBag referenceBag) {
-        this.refBag = referenceBag;
+    public void setExternalLink(String externalLink) {
+        this.externalLink = externalLink;
     }
 
     /**
@@ -93,6 +72,7 @@ public class EnrichmentWidgetForm extends ActionForm
         bagName = "";
         max = "0.10";
         bagType = "";
+        externalLink = "";
     }
 
 

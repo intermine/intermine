@@ -5,6 +5,7 @@
 <%@ taglib uri="http://java.sun.com/jsp/jstl/functions" prefix="fn" %>
 <%@ taglib tagdir="/WEB-INF/tags" prefix="im" %>
 <%@ taglib uri="http://flymine.org/imutil" prefix="imutil" %>
+<%@ taglib uri="http://jakarta.apache.org/taglibs/string-1.1" prefix="str" %>
 
 <!-- bagDetails.jsp -->
 <html:xhtml/>
@@ -310,7 +311,8 @@
             </fmt:param>
           </fmt:message> 
           <br/><br/>
-          <c:set var="enrichmentWidgetParams" value="bagName=${bag.name}&ldr=${enrichmentWidgetResults.ldr}&title=${enrichmentWidgetResults.title}&descr=${enrichmentWidgetResults.descr}&max=${enrichmentWidgetResults.max}&link=${enrichmentWidgetResults.link}&filters=${enrichmentWidgetResults.filters}&filterLabel=${enrichmentWidgetResults.filterLabel}&label=${enrichmentWidgetResults.label}"/>
+          <str:encodeUrl var="externalLink">${enrichmentWidgetResults.externalLink}</str:encodeUrl>
+          <c:set var="enrichmentWidgetParams" value="bagName=${bag.name}&ldr=${enrichmentWidgetResults.ldr}&title=${enrichmentWidgetResults.title}&descr=${enrichmentWidgetResults.descr}&max=${enrichmentWidgetResults.max}&link=${enrichmentWidgetResults.link}&filters=${enrichmentWidgetResults.filters}&filterLabel=${enrichmentWidgetResults.filterLabel}&label=${enrichmentWidgetResults.label}&externalLink=${externalLink}"/>
           <iframe src="enrichmentWidget.do?${enrichmentWidgetParams}" id="window" frameborder="0" width="475" height="500" scrollbars="auto"></iframe>
         <br/><a href="enrichmentWidget.do?${enrichmentWidgetParams}" target="_new" class="extlink">open widget in new window</a>
        <c:set var="widgetCount" value="${widgetCount+1}" />

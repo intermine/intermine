@@ -16,7 +16,7 @@ package org.intermine.web.logic.config;
 public class EnrichmentWidgetDisplayer
 {
     private String title, link, ldr, descr, max, filters, filterLabel;
-    private String label;
+    private String label, externalLink;
 
     /**
      * @return the label
@@ -143,4 +143,19 @@ public class EnrichmentWidgetDisplayer
     public void setDescr(String descr) {
         this.descr = descr;
     }
+
+    /**
+     * @return the externalLink
+     */
+    public String getExternalLink() {
+        return externalLink;
+    }
+
+    /**
+     * @param externalLink the externalLink to set
+     */
+    public void setExternalLink(String externalLink) {
+        this.externalLink = externalLink;
+    }
+
 }
