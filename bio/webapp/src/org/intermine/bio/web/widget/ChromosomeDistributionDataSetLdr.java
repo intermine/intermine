@@ -45,7 +45,7 @@ import org.flymine.model.genomic.Organism;
 import org.jfree.data.category.DefaultCategoryDataset;
 
 /**
- *
+ * 
  *
  * @author Julie Sullivan
  */
@@ -66,7 +66,6 @@ public class ChromosomeDistributionDataSetLdr implements DataSetLdr
      * @param os the ObjectStore
      * @throws Exception if getting the list of organims fails
      */
-
     public ChromosomeDistributionDataSetLdr(InterMineBag bag, ObjectStore os)
         throws Exception {
         super();
@@ -80,12 +79,13 @@ public class ChromosomeDistributionDataSetLdr implements DataSetLdr
             throw new Exception("Can't get organisms list");
         }
 
+        // make a graph for each organism
         for (Iterator it = organisms.iterator(); it.hasNext();) {
 
             String organismName = (String) it.next();
             DefaultCategoryDataset dataSet = new DefaultCategoryDataset();
 
-            // chromosome, count of genes
+            // chromosome --> count of genes
             LinkedHashMap<String, int[]> resultsTable = new LinkedHashMap<String, int[]> ();
             // chromosome --> list of genes
             HashMap<String, ArrayList<String>> geneMap = new HashMap<String, ArrayList<String>>();
@@ -95,6 +95,7 @@ public class ChromosomeDistributionDataSetLdr implements DataSetLdr
                 = (ArrayList<String>) BioUtil.getChromosomes(os, organismName);
             Iterator iter = chromosomes.iterator();
 
+            // load maps
             while (iter.hasNext()) {
                 int[] count = new int[2];
                 count[0] = 0;
@@ -104,7 +105,7 @@ public class ChromosomeDistributionDataSetLdr implements DataSetLdr
                 geneMap.put(chromosome, genesArray);
             }
 
-            // run query
+            // run query to get gene count per chromsome
             Query q = createQuery(organismName, "actual", bag);
             Results results = os.execute(q);
             results.setBatchSize(50000);
@@ -215,7 +216,7 @@ public class ChromosomeDistributionDataSetLdr implements DataSetLdr
         Query q = new Query();
 
         QueryClass chromosomeQC = new QueryClass(Chromosome.class);
-        Class bagCls = Class.forName(model.getPackageName() + "." + bagType);
+        Class<?> bagCls = Class.forName(model.getPackageName() + "." + bagType);
         QueryClass featureQC;
         // query LocatedSequenceFeature if possible for better chance of using precompute
         if (LocatedSequenceFeature.class.isAssignableFrom(bagCls)) {
