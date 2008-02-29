@@ -87,7 +87,7 @@ public class BDGPInsituConverter extends FileConverter
     }
 
     /**
-     * Process the results matrix from Fly-FISH.
+     * Process the csv file
      * @param reader the Reader
      * @see DataConverter#process
      * @throws Exception if something goes wrong
@@ -117,11 +117,9 @@ public class BDGPInsituConverter extends FileConverter
 
             if (lineBits.length > 2) {
                 String image = lineBits[2];
-                Item img = getImage(URL + image);
-                result.addToCollection("images", img);
-            } else {
-                LOG.error("Could not process images for line:  " + lineBits[0] + "," + lineBits[1] 
-                + " because the line only has " + lineBits.length + " tokens");
+                if (image != null && !image.equals("")) {
+                    setImage(result, URL + image);                    
+                }
             }
             if (lineBits.length > 3) {
                 String term = lineBits[3];
@@ -221,7 +219,7 @@ public class BDGPInsituConverter extends FileConverter
     }
     
     private Item getTerm(String name) throws ObjectStoreException {
-        if (badTerms.contains(name)) {
+        if (name == null || name.equals("") || badTerms.contains(name)) {
             return null;
         } else if (terms.containsKey(name)) {
             return terms.get(name);
@@ -257,15 +255,12 @@ public class BDGPInsituConverter extends FileConverter
         }
     }
     
-    private Item getImage(String img) {
-        if (imgs.containsKey(img)) {
-            return imgs.get(img);
-        } else {
+    private void setImage(Item result, String img) {
+        if (!imgs.containsKey(img)) {
             Item item = createItem("Image");
             item.setAttribute("url", img);
             imgs.put(img, item);            
-                    
-            return item;
+            result.addToCollection("images", item.getIdentifier());
         }
     }
     
