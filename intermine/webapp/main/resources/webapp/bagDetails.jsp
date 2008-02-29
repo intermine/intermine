@@ -36,21 +36,19 @@
 </div>
 
 <div class="body">
-<html:form action="/modifyBagDetailsAction" styleId="bagDetailsForm">
 
 
 <TABLE cellspacing=20>
 <TR>
 
 
-
-<html:hidden property="bagName" value="${bag.name}"/> 
-
 <TD colspan=2 align="left">
 
 
 <link rel="stylesheet" href="css/toolbar.css" type="text/css" media="screen" title="Toolbar Style" charset="utf-8">
 <script type="text/javascript" src="js/toolbar.js"></script>
+<html:form action="/modifyBagDetailsAction" styleId="bagDetailsForm">
+<html:hidden property="bagName" value="${bag.name}"/> 
 
 <div id="tool_bar_div">
     <ul id="button_bar" onclick="toggleToolBarMenu(event);">
@@ -89,8 +87,7 @@
   <hr>
     <a href="javascript:hideMenu('tool_bar_item_use')" >Cancel</a>
 </div>
-
-<div id="clearLine">&nbsp;</div>
+</html:form>
 
 </TD>
 </TR>
@@ -109,66 +106,6 @@
 <html:submit property="showInResultsTable">
     View all ${bag.size} records >>
 </html:submit>
-
-<%--
-<table class="results" id="bagdetailsresults" cellspacing="0" align="left" >
-<tfoot>
-    <tr>
-        <td colspan="10" align="right">
-            <c:if test="${!empty bag.dateCreated}">
-                <i><b>Created:</b> <im:dateDisplay date="${bag.dateCreated}" /></i>
-            </c:if>
-            <html:submit property="showInResultsTable">
-                View all ${bag.size} records >>
-            </html:submit>
-        </td>
-    </tr>
-</tfoot>
-<tr>
-  <c:forEach var="column" items="${pagedResults.columns}" varStatus="status">
-    <th align="center" valign="top">
-      <div>
-        <c:out value="${fn:replace(column.name, '.', '&nbsp;> ')}" escapeXml="false"/>
-      </div>
-    </th>
-  </c:forEach>
-</tr>
-<c:forEach items="${pagedResults.resultElementRows}" var="row" varStatus="status">
-  <c:set var="object" value="${row[0]}" scope="request"/>
-  <c:set var="rowClass">
-    <c:choose>
-      <c:when test="${status.count % 2 == 1}">odd</c:when>
-      <c:otherwise>even</c:otherwise>
-    </c:choose>
-  </c:set>
-  <tr class="${rowClass}">
-    <c:forEach var="column" items="${pagedResults.columns}" varStatus="status2">
-      <td>
-        <c:set var="resultElement" value="${row[column.index]}" scope="request"/>
-        <c:choose>
-          <c:when test="${resultElement.keyField}">
-            <html:link action="/objectDetails?id=${resultElement.id}&amp;trail=|bag.${bag.name}|${resultElement.id}">
-              <c:out value="${resultElement.field}" />
-            </html:link>
-          </c:when>
-          <c:otherwise>
-            <c:out value="${resultElement.field}" />
-          </c:otherwise>
-        </c:choose>
-      </td>
-    </c:forEach>
-  </tr>
-</c:forEach>
-<!-- show dotted lines if there are more than 5 items in bag -->            
-<c:if test="${pagedResults.pageSize < pagedResults.estimatedSize}">
-  <tr>
-    <c:forEach var="column" items="${pagedResults.columns}" varStatus="status2">
-      <td style="border-right: dotted 1px #666; border-bottom: dotted 1px #666;">&nbsp;</td>
-      </c:forEach>
-   </tr>
-</c:if>
-</table>
---%>
 </div>
 
 <div id="clearLine">&nbsp;</div>
@@ -210,14 +147,16 @@
 
 <TD align="left" valign="top">
 
-
 <div id="convertList" class="pageDesc" align="left">
 <h3>Convert</h3>
+<html:form action="/modifyBagDetailsAction" styleId="bagDetailsForm">
+<html:hidden property="bagName" value="${bag.name}"/> 
 <tiles:insert name="convertBag.tile">
      <tiles:put name="bag" beanName="bag" />
      <tiles:put name="idname" value="cp" />
      <tiles:put name="orientation" value="h" />
 </tiles:insert>
+</html:form>
 </div>
 <script type="text/javascript">
         Nifty("div#convertList","transparent");
@@ -229,7 +168,6 @@
 
 </TD></TR>
 </TABLE>
-</html:form>
 
 <div id="clearLine">&nbsp;</div>
 

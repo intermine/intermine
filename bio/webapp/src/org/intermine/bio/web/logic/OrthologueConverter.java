@@ -26,9 +26,7 @@ import org.intermine.model.InterMineObject;
 import org.intermine.objectstore.ObjectStore;
 import org.intermine.objectstore.ObjectStoreException;
 import org.intermine.objectstore.query.ConstraintOp;
-import org.intermine.objectstore.query.Query;
 import org.intermine.objectstore.query.QueryNode;
-import org.intermine.objectstore.query.Results;
 import org.intermine.objectstore.query.ResultsRow;
 import org.intermine.path.Path;
 import org.intermine.util.TypeUtil;
@@ -38,12 +36,12 @@ import org.intermine.web.logic.bag.BagConverter;
 import org.intermine.web.logic.bag.BagQueryConfig;
 import org.intermine.web.logic.bag.BagQueryResult;
 import org.intermine.web.logic.bag.InterMineBag;
+import org.intermine.web.logic.config.WebConfig;
 import org.intermine.web.logic.pathqueryresult.PathQueryResultHelper;
 import org.intermine.web.logic.profile.Profile;
 import org.intermine.web.logic.query.Constraint;
 import org.intermine.web.logic.query.MainHelper;
 import org.intermine.web.logic.query.PathQuery;
-import org.intermine.web.logic.results.TableHelper;
 import org.intermine.web.logic.results.WebResults;
 
 /**
@@ -80,8 +78,10 @@ public class OrthologueConverter implements BagConverter
 
         PathQuery pathQuery = new PathQuery(model);
 
-        List<Path> view = new ArrayList<Path>();
-        view.add(MainHelper.makePath(model, pathQuery, "Gene.homologues.homologue.id"));
+//        view.add(MainHelper.makePath(model, pathQuery, "Gene.homologues.homologue.pid"));
+        WebConfig webConfig = (WebConfig) servletContext.getAttribute(Constants.WEBCONFIG);
+        List<Path> view = PathQueryResultHelper.getDefaultView(type, model, webConfig,
+                        "Gene.homologues.homologue", false);
         pathQuery.setView(view);
         String label = null, id = null, code = pathQuery.getUnusedConstraintCode();
         List objectList = os.getObjectsByIds(fromList);
