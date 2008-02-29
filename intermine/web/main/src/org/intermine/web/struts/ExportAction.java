@@ -13,37 +13,7 @@ package org.intermine.web.struts;
 import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
-import java.util.Map;
 import java.util.Set;
-
-import org.intermine.objectstore.query.BagConstraint;
-import org.intermine.objectstore.query.ConstraintOp;
-import org.intermine.objectstore.query.Query;
-import org.intermine.objectstore.query.QueryClass;
-import org.intermine.objectstore.query.SingletonResults;
-
-import org.intermine.metadata.ClassDescriptor;
-import org.intermine.metadata.Model;
-import org.intermine.model.InterMineObject;
-import org.intermine.objectstore.ObjectStore;
-import org.intermine.objectstore.ObjectStoreException;
-import org.intermine.path.Path;
-import org.intermine.util.TextFileUtil;
-import org.intermine.util.TypeUtil;
-import org.intermine.web.logic.Constants;
-import org.intermine.web.logic.WebUtil;
-import org.intermine.web.logic.bag.InterMineBag;
-import org.intermine.web.logic.config.FieldConfig;
-import org.intermine.web.logic.config.FieldConfigHelper;
-import org.intermine.web.logic.config.TableExportConfig;
-import org.intermine.web.logic.config.WebConfig;
-import org.intermine.web.logic.export.TableExporter;
-import org.intermine.web.logic.profile.Profile;
-import org.intermine.web.logic.results.Column;
-import org.intermine.web.logic.results.DisplayObject;
-import org.intermine.web.logic.results.PagedTable;
-import org.intermine.web.logic.results.WebResults;
-import org.intermine.web.logic.session.SessionMethods;
 
 import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletRequest;
@@ -58,6 +28,26 @@ import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
 import org.apache.struts.action.ActionMessage;
+import org.intermine.metadata.ClassDescriptor;
+import org.intermine.metadata.Model;
+import org.intermine.model.InterMineObject;
+import org.intermine.objectstore.ObjectStore;
+import org.intermine.objectstore.ObjectStoreException;
+import org.intermine.util.FormattedTextWriter;
+import org.intermine.util.TypeUtil;
+import org.intermine.web.logic.Constants;
+import org.intermine.web.logic.WebUtil;
+import org.intermine.web.logic.config.FieldConfig;
+import org.intermine.web.logic.config.FieldConfigHelper;
+import org.intermine.web.logic.config.TableExportConfig;
+import org.intermine.web.logic.config.WebConfig;
+import org.intermine.web.logic.export.TableExporter;
+import org.intermine.web.logic.profile.Profile;
+import org.intermine.web.logic.results.Column;
+import org.intermine.web.logic.results.DisplayObject;
+import org.intermine.web.logic.results.PagedTable;
+import org.intermine.web.logic.results.WebResults;
+import org.intermine.web.logic.session.SessionMethods;
 
 /**
  * Implementation of <strong>Action</strong> that allows the user to export a PagedTable to a file
@@ -164,7 +154,7 @@ public class ExportAction extends InterMineAction
             return mapping.getInputForward();
         }
 
-        TextFileUtil.ObjectFormatter objectFormatter = getObjectFormatter(model, webConfig);
+        FormattedTextWriter.ObjectFormatter objectFormatter = getObjectFormatter(model, webConfig);
 
         int defaultMax = 10000;
 
@@ -284,10 +274,10 @@ public class ExportAction extends InterMineAction
         response.setHeader("Pragma", "no-cache");
         response.setHeader("Content-Disposition", "inline; filename=\"results-table.csv\"");
 
-        TextFileUtil.writeCSVTable(response.getOutputStream(), pt.getAllRows(),
+        new FormattedTextWriter(response.getOutputStream(), 
                 getOrder(pt), getVisible(pt), pt.getMaxRetrievableIndex() + 1,
-                getObjectFormatter(model, webConfig));
-
+                getObjectFormatter(model, webConfig)        
+        ).writeCSVTable(pt.getAllRows());
         return null;
     }
 
@@ -316,11 +306,10 @@ public class ExportAction extends InterMineAction
 
         List allRows = pt.getAllRows();
 
-        TextFileUtil.writeTabDelimitedTable(response.getOutputStream(), allRows,
-                                            getOrder(pt), getVisible(pt),
-                                            pt.getMaxRetrievableIndex() + 1,
-                                            getObjectFormatter(model, webConfig));
-
+        new FormattedTextWriter(response.getOutputStream(), 
+                getOrder(pt), getVisible(pt),
+                pt.getMaxRetrievableIndex() + 1,
+                getObjectFormatter(model, webConfig)).writeTabDelimitedTable(allRows);
         return null;
     }
 
@@ -361,9 +350,9 @@ public class ExportAction extends InterMineAction
      * An ObjectFormatter that uses the WebConfig to work out which fields to output for the
      * object.
      */
-    private TextFileUtil.ObjectFormatter getObjectFormatter(final Model model,
+    private FormattedTextWriter.ObjectFormatter getObjectFormatter(final Model model,
                                                             final WebConfig webConfig) {
-        TextFileUtil.ObjectFormatter objectFormatter = new TextFileUtil.ObjectFormatter() {
+        FormattedTextWriter.ObjectFormatter objectFormatter = new FormattedTextWriter.ObjectFormatter() {
             public String format(Object o) {
                 if (o instanceof InterMineObject) {
                     InterMineObject imo = (InterMineObject) o;

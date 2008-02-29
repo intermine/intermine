@@ -24,7 +24,7 @@ import org.intermine.dataconversion.FileConverter;
 import org.intermine.dataconversion.ItemWriter;
 import org.intermine.metadata.Model;
 import org.intermine.objectstore.ObjectStoreException;
-import org.intermine.util.TextFileUtil;
+import org.intermine.util.FormattedTextParser;
 import org.intermine.xml.full.Item;
 
 /**
@@ -128,7 +128,7 @@ public class FlyRNAiScreenConverter extends FileConverter
 
         Iterator tsvIter;
         try {
-            tsvIter = TextFileUtil.parseTabDelimitedReader(reader);
+            tsvIter = FormattedTextParser.parseTabDelimitedReader(reader);
         } catch (Exception e) {
             throw new BuildException("cannot parse file: " + getCurrentFile(), e);
         }
@@ -221,7 +221,7 @@ public class FlyRNAiScreenConverter extends FileConverter
     private void processScreenDetails(Reader reader) throws ObjectStoreException {
         Iterator tsvIter;
         try {
-            tsvIter = TextFileUtil.parseTabDelimitedReader(reader);
+            tsvIter = FormattedTextParser.parseTabDelimitedReader(reader);
         } catch (Exception e) {
             throw new BuildException("cannot parse file: " + getCurrentFile(), e);
         }

@@ -10,22 +10,12 @@ package org.intermine.bio.util;
  *
  */
 
-import org.intermine.bio.io.gff3.GFF3Record;
-import org.intermine.util.DynamicUtil;
-import org.intermine.util.TypeUtil;
-
-import org.flymine.model.genomic.Chromosome;
-import org.flymine.model.genomic.LocatedSequenceFeature;
-import org.flymine.model.genomic.Location;
-
-import java.util.ArrayList;
-import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Iterator;
-import java.util.Set;
 
 import org.apache.log4j.Logger;
+import org.flymine.model.genomic.LocatedSequenceFeature;
+import org.intermine.bio.io.gff3.GFF3Record;
 
 /**
  * Utility methods for GFF3.
@@ -44,70 +34,70 @@ public abstract class GFF3Util
      */
     public static GFF3Record makeGFF3Record(LocatedSequenceFeature lsf, Map soClassNameMap,
                                             Map<String, List<String>> extraAttributes) {
-        Set classes = DynamicUtil.decomposeClass(lsf.getClass());
-
-        String type = null;
-        String sequenceID = null;
-        int start = -1;
-        int end = -1;
-        String strand = null;
-
-        if (lsf instanceof Chromosome) {
-            sequenceID = lsf.getPrimaryIdentifier();
-            type = "chromosome";
-            start = 1;
-            end = lsf.getLength().intValue();
-        } else {
-            Chromosome chr = lsf.getChromosome();
-            if (chr == null) {
-                return null;
-            }
-
-            Location chrLocation = lsf.getChromosomeLocation();
-
-            if (chrLocation == null) {
-                return null;
-            }
-
-            sequenceID = chr.getPrimaryIdentifier();
-
-            Iterator iter = classes.iterator();
-            while (iter.hasNext()) {
-                Class c = (Class) iter.next();
-                if (LocatedSequenceFeature.class.isAssignableFrom(c)) {
-                    String className = TypeUtil.unqualifiedName(c.getName());
-                    if (soClassNameMap.containsKey(className)) {
-                        type = (String) soClassNameMap.get(className);
-                    } else {
-                        type = className;
-                        LOG.warn("in GFF3Util.makeGFF3Record() - cannot find SO term name for: "
-                                 + className);
-                    }
-                    break;
-                }
-            }
-
-            if (type == null) {
-                throw new IllegalArgumentException("argument to makeGFF3Record isn't a "
-                                                   + "LocatedSequenceFeature");
-            }
-
-            start = chrLocation.getStart().intValue();
-            end = chrLocation.getEnd().intValue();
-            strand = chrLocation.getStrand().equals("1") ? "+" : "-";
-        }
-
-        Map<String, List<String>> recordAttribute =
-            new LinkedHashMap<String, List<String>>(extraAttributes);
-
-        if (lsf.getPrimaryIdentifier() != null) {
-            List<String> idList = new ArrayList<String>();
-            idList.add(lsf.getPrimaryIdentifier());
-            recordAttribute.put("ID", idList);
-        }
-
-        return new GFF3Record(sequenceID, "FlyMine", type, start, end, null, strand, null,
-                              recordAttribute);
-
+//        Set classes = DynamicUtil.decomposeClass(lsf.getClass());
+//
+//        String type = null;
+//        String sequenceID = null;
+//        int start = -1;
+//        int end = -1;
+//        String strand = null;
+//
+//        if (lsf instanceof Chromosome) {
+//            sequenceID = lsf.getPrimaryIdentifier();
+//            type = "chromosome";
+//            start = 1;
+//            end = lsf.getLength().intValue();
+//        } else {
+//            Chromosome chr = lsf.getChromosome();
+//            if (chr == null) {
+//                return null;
+//            }
+//
+//            Location chrLocation = lsf.getChromosomeLocation();
+//
+//            if (chrLocation == null) {
+//                return null;
+//            }
+//
+//            sequenceID = chr.getPrimaryIdentifier();
+//
+//            Iterator iter = classes.iterator();
+//            while (iter.hasNext()) {
+//                Class c = (Class) iter.next();
+//                if (LocatedSequenceFeature.class.isAssignableFrom(c)) {
+//                    String className = TypeUtil.unqualifiedName(c.getName());
+//                    if (soClassNameMap.containsKey(className)) {
+//                        type = (String) soClassNameMap.get(className);
+//                    } else {
+//                        type = className;
+//                        LOG.warn("in GFF3Util.makeGFF3Record() - cannot find SO term name for: "
+//                                 + className);
+//                    }
+//                    break;
+//                }
+//            }
+//
+//            if (type == null) {
+//                throw new IllegalArgumentException("argument to makeGFF3Record isn't a "
+//                                                   + "LocatedSequenceFeature");
+//            }
+//
+//            start = chrLocation.getStart().intValue();
+//            end = chrLocation.getEnd().intValue();
+//            strand = chrLocation.getStrand().equals("1") ? "+" : "-";
+//        }
+//
+//        Map<String, List<String>> recordAttribute =
+//            new LinkedHashMap<String, List<String>>(extraAttributes);
+//
+//        if (lsf.getPrimaryIdentifier() != null) {
+//            List<String> idList = new ArrayList<String>();
+//            idList.add(lsf.getPrimaryIdentifier());
+//            recordAttribute.put("ID", idList);
+//        }
+//
+//        return new GFF3Record(sequenceID, "FlyMine", type, start, end, null, strand, null,
+//                              recordAttribute);
+        return null;
     }
 }

@@ -24,7 +24,7 @@ import org.intermine.dataconversion.ItemWriter;
 import org.intermine.metadata.MetaDataException;
 import org.intermine.metadata.Model;
 import org.intermine.objectstore.ObjectStoreException;
-import org.intermine.util.TextFileUtil;
+import org.intermine.util.FormattedTextParser;
 import org.intermine.xml.full.Item;
 
 /**
@@ -69,7 +69,7 @@ public class Drosophila2ProbeConverter extends FileConverter
     public void process(Reader reader) throws Exception {
         
         String arrayName = "";
-        Iterator lineIter = TextFileUtil.parseCsvDelimitedReader(reader);
+        Iterator lineIter = FormattedTextParser.parseCsvDelimitedReader(reader);
         boolean readingData = false;
 
         while (lineIter.hasNext() ) {

@@ -10,12 +10,20 @@ package org.intermine.util;
  *
  */
 
-import java.io.*;
-import java.util.*;
+import java.io.ByteArrayOutputStream;
+import java.io.PrintStream;
+import java.io.StringReader;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
+import java.util.NoSuchElementException;
 
-import org.intermine.util.TextFileUtil.ObjectFormatter;
+import junit.framework.TestCase;
 
-import junit.framework.*;
+import org.intermine.util.FormattedTextWriter.ObjectFormatter;
 
 /**
  * Tests for the TextFileUtil class.
@@ -23,11 +31,11 @@ import junit.framework.*;
  * @author Kim Rutherford
  */
 
-public class TextFileUtilTest extends TestCase
+public class FormattedTextWriterTest extends TestCase
 {
     private ObjectFormatter objectFormatter;
 
-    public TextFileUtilTest (String arg) {
+    public FormattedTextWriterTest (String arg) {
         super(arg);
 
         // example formatter
@@ -65,10 +73,10 @@ public class TextFileUtilTest extends TestCase
 
         // test writing all columns in their natural order
         baos = new ByteArrayOutputStream();
-        TextFileUtil.writeTabDelimitedTable(baos, getTestRows(),
-                                            new int[] {0, 1, 2, 3},
-                                            new boolean[] {true, true, true, true},
-                                            100, objectFormatter);
+        new FormattedTextWriter(baos,
+                new int[] {0, 1, 2, 3},
+                new boolean[] {true, true, true, true},
+                100, objectFormatter).writeTabDelimitedTable(getTestRows());
         expected = "101\t\"\t,\"\tstring 103\tstring 104, with comma\n"
             + "201\t\"\t,\"\tstring 203\t\"string 204\t with tab\"\n";
         results = baos.toString();
@@ -76,10 +84,7 @@ public class TextFileUtilTest extends TestCase
 
         // same as above - the nulls mean show all columns in their natural order
         baos = new ByteArrayOutputStream();
-        TextFileUtil.writeTabDelimitedTable(baos, getTestRows(),
-                                            null,
-                                            null,
-                                            100, objectFormatter);
+        new FormattedTextWriter(baos, objectFormatter).writeTabDelimitedTable(getTestRows());
         expected = "101\t\"\t,\"\tstring 103\tstring 104, with comma\n"
             + "201\t\"\t,\"\tstring 203\t\"string 204\t with tab\"\n";
         results = baos.toString();
@@ -87,10 +92,9 @@ public class TextFileUtilTest extends TestCase
 
 
         baos = new ByteArrayOutputStream();
-        TextFileUtil.writeTabDelimitedTable(baos, getTestRows(),
-                                            new int[] {0, 1, 2, 3},
-                                            new boolean[] {false, true, true, true},
-                                            100, objectFormatter);
+        new FormattedTextWriter(baos, 
+                new int[] {0, 1, 2, 3},
+                new boolean[] {false, true, true, true}, 100, objectFormatter).writeTabDelimitedTable(getTestRows());
         expected = "\"\t,\"\tstring 103\tstring 104, with comma\n"
             + "\"\t,\"\tstring 203\t\"string 204\t with tab\"\n";
         results = baos.toString();
@@ -98,10 +102,9 @@ public class TextFileUtilTest extends TestCase
 
 
         baos = new ByteArrayOutputStream();
-        TextFileUtil.writeTabDelimitedTable(baos, getTestRows(),
-                                            new int[] {3, 1, 2, 0},
-                                            new boolean[] {true, true, true, true},
-                                            100, objectFormatter);
+        new FormattedTextWriter(baos, 
+                new int[] {3, 1, 2, 0},
+                new boolean[] {true, true, true, true}, 100, objectFormatter).writeTabDelimitedTable(getTestRows());
         expected = "string 104, with comma\t\"\t,\"\tstring 103\t101\n"
             + "\"string 204\t with tab\"\t\"\t,\"\tstring 203\t201\n";
         results = baos.toString();
@@ -109,40 +112,38 @@ public class TextFileUtilTest extends TestCase
 
 
         baos = new ByteArrayOutputStream();
-        TextFileUtil.writeTabDelimitedTable(baos, getTestRows(),
-                                            new int[] {3, 2, 1, 0},
-                                            new boolean[] {false, true, true, false},
-                                            100, objectFormatter);
+        new FormattedTextWriter(baos,
+                new int[] {3, 2, 1, 0},
+                new boolean[] {false, true, true, false},
+                100, objectFormatter).writeTabDelimitedTable(getTestRows());
         expected = "string 103\t\"\t,\"\nstring 203\t\"\t,\"\n";
         results = baos.toString();
         assertEquals(expected, results);
 
 
         baos = new ByteArrayOutputStream();
-        TextFileUtil.writeTabDelimitedTable(baos, getTestRows(),
-                                            new int[] {3, 2, 1, 0},
-                                            new boolean[] {false, false, true, false},
-                                            100, objectFormatter);
+        new FormattedTextWriter(baos, 
+                new int[] {3, 2, 1, 0},
+                new boolean[] {false, false, true, false}, 100, objectFormatter).writeTabDelimitedTable(getTestRows());
         expected = "\"\t,\"\n\"\t,\"\n";
         results = baos.toString();
         assertEquals(expected, results);
 
         // test writing a limited number of rows
         baos = new ByteArrayOutputStream();
-        TextFileUtil.writeTabDelimitedTable(baos, getTestRows(),
-                                            new int[] {0, 1, 2, 3},
-                                            new boolean[] {true, true, true, true},
-                                            1, objectFormatter);
+        new FormattedTextWriter(baos, 
+                new int[] {0, 1, 2, 3},
+                new boolean[] {true, true, true, true}, 1, objectFormatter).writeTabDelimitedTable(getTestRows());
         expected = "101\t\"\t,\"\tstring 103\tstring 104, with comma\n";
         results = baos.toString();
         assertEquals(expected, results);
 
         // test writing all rows (-1 as maxRows)
         baos = new ByteArrayOutputStream();
-        TextFileUtil.writeTabDelimitedTable(baos, getTestRows(),
-                                            new int[] {0, 1, 2, 3},
-                                            new boolean[] {true, true, true, true},
-                                            -1, objectFormatter);
+        new FormattedTextWriter(baos, 
+                new int[] {0, 1, 2, 3},
+                new boolean[] {true, true, true, true},
+                -1, objectFormatter).writeTabDelimitedTable(getTestRows());
         expected = "101\t\"\t,\"\tstring 103\tstring 104, with comma\n"
             + "201\t\"\t,\"\tstring 203\t\"string 204\t with tab\"\n";;
         results = baos.toString();
@@ -155,10 +156,10 @@ public class TextFileUtilTest extends TestCase
         String results;
 
         baos = new ByteArrayOutputStream();
-        TextFileUtil.writeCSVTable(baos, getTestRows(),
-                                   new int[] {0, 1, 2, 3},
-                                   new boolean[] {true, true, true, true},
-                                   100, objectFormatter);
+        new FormattedTextWriter(baos, 
+                new int[] {0, 1, 2, 3},
+                new boolean[] {true, true, true, true},
+                100, objectFormatter).writeCSVTable(getTestRows());
         expected = "101,\"\t,\",\"string 103\",\"string 104, with comma\"\n"
             + "201,\"\t,\",\"string 203\",\"string 204\t with tab\"\n";
         results = baos.toString();
@@ -166,10 +167,10 @@ public class TextFileUtilTest extends TestCase
 
 
         baos = new ByteArrayOutputStream();
-        TextFileUtil.writeCSVTable(baos, getTestRows(),
-                                   new int[] {0, 1, 2, 3},
-                                   new boolean[] {false, true, true, true},
-                                   100, objectFormatter);
+        new FormattedTextWriter(baos,
+                new int[] {0, 1, 2, 3},
+                new boolean[] {false, true, true, true},
+                100, objectFormatter).writeCSVTable(getTestRows());
         expected = "\"\t,\",\"string 103\",\"string 104, with comma\"\n"
             + "\"\t,\",\"string 203\",\"string 204\t with tab\"\n";
         results = baos.toString();
@@ -177,10 +178,10 @@ public class TextFileUtilTest extends TestCase
 
 
         baos = new ByteArrayOutputStream();
-        TextFileUtil.writeCSVTable(baos, getTestRows(),
-                                   new int[] {3, 1, 2, 0},
-                                   new boolean[] {true, true, true, true},
-                                   100, objectFormatter);
+        new FormattedTextWriter(baos,
+                new int[] {3, 1, 2, 0},
+                new boolean[] {true, true, true, true},
+                100, objectFormatter).writeCSVTable(getTestRows());
         expected = "\"string 104, with comma\",\"\t,\",\"string 103\",101\n"
             + "\"string 204\t with tab\",\"\t,\",\"string 203\",201\n";
         results = baos.toString();
@@ -188,20 +189,19 @@ public class TextFileUtilTest extends TestCase
 
 
         baos = new ByteArrayOutputStream();
-        TextFileUtil.writeCSVTable(baos, getTestRows(),
-                                   new int[] {3, 2, 1, 0},
-                                   new boolean[] {false, true, true, false},
-                                   100, objectFormatter);
+        new FormattedTextWriter(baos,
+                new int[] {3, 2, 1, 0},
+                new boolean[] {false, true, true, false},
+                100, objectFormatter).writeCSVTable(getTestRows());
         expected = "\"string 103\",\"\t,\"\n\"string 203\",\"\t,\"\n";
         results = baos.toString();
         assertEquals(expected, results);
 
 
         baos = new ByteArrayOutputStream();
-        TextFileUtil.writeCSVTable(baos, getTestRows(),
-                                   new int[] {3, 2, 1, 0},
-                                   new boolean[] {false, false, true, false},
-                                   100, objectFormatter);
+        new FormattedTextWriter(baos, new int[] {3, 2, 1, 0}, 
+                new boolean[] {false, false, true, false}, 
+                100, objectFormatter).writeCSVTable(getTestRows());
         expected = "\"\t,\"\n\"\t,\"\n";
         results = baos.toString();
         assertEquals(expected, results);
@@ -214,7 +214,7 @@ public class TextFileUtilTest extends TestCase
         ByteArrayOutputStream baos = new ByteArrayOutputStream();
         PrintStream ps = new PrintStream(baos);
 
-        TextFileUtil.writeQuoted(ps, "quoted 'String' with a quote: \"");
+        new FormattedTextWriter(baos).writeQuoted("quoted 'String' with a quote: \"");
 
         ps.close();
         baos.close();
@@ -229,7 +229,7 @@ public class TextFileUtilTest extends TestCase
         ByteArrayOutputStream baos = new ByteArrayOutputStream();
         PrintStream ps = new PrintStream(baos);
 
-        TextFileUtil.writeQuoted(ps, null);
+        new FormattedTextWriter(baos).writeQuoted(null);
 
         ps.close();
         baos.close();
@@ -247,7 +247,7 @@ public class TextFileUtilTest extends TestCase
 
         StringReader sr = new StringReader(inputString);
 
-        Iterator iterator = TextFileUtil.parseTabDelimitedReader(sr);
+        Iterator iterator = FormattedTextParser.parseTabDelimitedReader(sr);
 
         assertTrue(iterator.hasNext());
         String[] line0 = {
