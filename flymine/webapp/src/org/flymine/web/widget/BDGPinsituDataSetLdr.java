@@ -127,42 +127,29 @@ public class BDGPinsituDataSetLdr implements DataSetLdr
         results = os.execute(q);
         results.setBatchSize(100000);
         Iterator iter = results.iterator();
-        LinkedHashMap<String, int[]> callTable = new LinkedHashMap<String, int[]>();
+        
         LinkedHashMap<String, ArrayList<String>> geneMap
                                                 = new LinkedHashMap<String, ArrayList<String>>();
+        
+        LinkedHashMap<String, int[]> callTable = initCallTable(geneMap);
+        
         while (iter.hasNext()) {
             ResultsRow resRow = (ResultsRow) iter.next();
             Boolean expressed = (Boolean) resRow.get(0);
             String stage = (String) resRow.get(1);
             String identifier = (String) resRow.get(2);
 
-                if (callTable.get(stage) != null) {
-                    if (expressed.booleanValue()) {
-                        (callTable.get(stage))[0]++;
-                        (geneMap.get(stage + "_Expressed")).add(identifier);
-                    } else {
-                        (callTable.get(stage))[1]++;
-                        (geneMap.get(stage + "_NotExpressed")).add(identifier);
-                    }
-                } else {
-                    int[] count = new int[2];
-                    ArrayList<String> genesArray = new ArrayList<String>();
-                    genesArray.add(identifier);
-                    if (expressed.booleanValue()) {
-                        count[0]++;
-                        geneMap.put(stage + "_Expressed", genesArray);
-                        geneMap.put(stage + "_NotExpressed", new ArrayList<String>());
-                    } else {
-                        count[1]++;
-                        geneMap.put(stage + "_Expressed", new ArrayList<String>());
-                        geneMap.put(stage + "_NotExpressed", genesArray);
-                    }
-                    callTable.put(stage, count);
-                }
+            if (expressed.booleanValue()) {
+                (callTable.get(stage))[0]++;
+                (geneMap.get(stage + "_Expressed")).add(identifier);
+            } else {
+                (callTable.get(stage))[1]++;
+                (geneMap.get(stage + "_NotExpressed")).add(identifier);
+            }
+
 
         }
         DefaultCategoryDataset dataSet = new DefaultCategoryDataset();
-        // Build a map from tissue/UpDown to gene list
         geneCategoryArray = new Object[callTable.size()];
         int i = 0;
         for (Iterator iterator = callTable.keySet().iterator(); iterator.hasNext();) {
@@ -182,5 +169,29 @@ public class BDGPinsituDataSetLdr implements DataSetLdr
             dataSets.put("any", graphDataSet);
         }
     }
+
+    private LinkedHashMap<String, int[]> 
+                            initCallTable(LinkedHashMap<String, ArrayList<String>> geneMap) {
+        LinkedHashMap<String, int[]> callTable = new LinkedHashMap<String, int[]>();
+        String append = " (BDGP in situ)";
+        String[] stageLabels = new String[7]; 
+
+        stageLabels[0] = "";
+        stageLabels[1] = "stage 1-3" + append;
+        stageLabels[2] = "stage 4-6" + append;
+        stageLabels[3] = "stage 7-8" + append;
+        stageLabels[4] = "stage 9-10" + append;
+        stageLabels[5] = "stage 11-12" + append;
+        stageLabels[6] = "stage 13-16" + append;
+        
+        for (String stage : stageLabels) {            
+            int[] count = new int[2];
+            geneMap.put(stage + "_NotExpressed", new ArrayList<String>());
+            geneMap.put(stage + "_Expressed", new ArrayList<String>());
+            callTable.put(stage, count);
+        }
+        return callTable;
+    }
+                            
 
 }
