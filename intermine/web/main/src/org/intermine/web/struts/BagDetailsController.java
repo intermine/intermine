@@ -38,7 +38,6 @@ import org.intermine.web.logic.config.EnrichmentWidgetDisplayer;
 import org.intermine.web.logic.config.GraphDisplayer;
 import org.intermine.web.logic.config.Type;
 import org.intermine.web.logic.config.WebConfig;
-import org.intermine.web.logic.pathqueryresult.PathQueryResultHelper;
 import org.intermine.web.logic.profile.Profile;
 import org.intermine.web.logic.results.PagedTable;
 import org.intermine.web.logic.search.SearchRepository;
