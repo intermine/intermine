@@ -48,7 +48,7 @@ tissue, the following data are given:
 <h4>
   <a href="javascript:toggleDiv('hiddenDiv2');">
     <img id='hiddenDiv2Toggle' src="images/disclosed.gif"/>
-     <i>D. melanogaster</i>  - In situ hybridisation data from FlyFish ...
+     <i>D. melanogaster</i>  - In situ hybridisation data from Fly-FISH ...
    </a>
 </h4>
 
@@ -56,7 +56,7 @@ tissue, the following data are given:
 <dl>
 <dt>
 
-The <a href="http://fly-fish.ccbr.utoronto.ca/" target="_new">FlyFish</a> data documents the expression patterns of <i>Drosophila</i> mRNAs at the subcellular level during early embryogenesis. The overall findings and implications of the work performed thus far is summarized in Lecuyer et al (2007) Cell 131:174-187 (<a href="http://www.ncbi.nlm.nih.gov/entrez/query.fcgi?cmd=Retrieve&db=PubMed&dopt=Abstract&list_uids=17923096" target="_new">PubMed: 17923096</a>) - Global analysis of mRNA localization reveals a prominent role in organizing cellular architecture and function.
+The <a href="http://fly-fish.ccbr.utoronto.ca/" target="_new">Fly-FISH</a> data documents the expression patterns of <i>Drosophila</i> mRNAs at the subcellular level during early embryogenesis. The overall findings and implications of the work performed thus far is summarized in Lecuyer et al (2007) Cell 131:174-187 (<a href="http://www.ncbi.nlm.nih.gov/entrez/query.fcgi?cmd=Retrieve&db=PubMed&dopt=Abstract&list_uids=17923096" target="_new">PubMed: 17923096</a>) - Global analysis of mRNA localization reveals a prominent role in organizing cellular architecture and function.
 </dt>
 </div>
 
@@ -134,7 +134,7 @@ Koutsos et al used an EST microarray platform encompassing 19,680 ESTs to determ
 
 
            <li>
-            <im:querylink text="All FlyFish results for <i>D. melanogaster</i> genes " skipBuilder="true">
+            <im:querylink text="All Fly-FISH results for <i>D. melanogaster</i> genes " skipBuilder="true">
              <query name="" model="genomic" view="Gene.primaryIdentifier Gene.identifier Gene.mRNAExpressionResults.stage Gene.mRNAExpressionResults.expressed Gene.mRNAExpressionResults.mRNAExpressionTerms.name" sortOrder="Gene.primaryIdentifier asc">
              <pathDescription pathString="Gene.probeSets" description="Probe">
               </pathDescription>

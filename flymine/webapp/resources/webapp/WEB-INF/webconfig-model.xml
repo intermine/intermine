@@ -197,12 +197,12 @@
 
       <graphdisplayer title="mRNA subcellular localisation (fly-FISH)" domainLabel="Stage" rangeLabel="Gene count" dataSetLoader="org.flymine.web.widget.FlyFishDataSetLdr"
                       toolTipGen="org.intermine.web.logic.widget.ToolTipGenerator" urlGen="org.flymine.web.widget.FlyFishGraphURLGenerator"
-                      description="Expression patterns of Drosophila mRNAs at the subcellular level during early embryogenesis - data from  &lt;a href=&quot;http://www.utoronto.ca/krause/&quot; target=&quot;_new&quot;&gt;fly-FISH&lt;/a&gt;.  Note that not all genes have yet been assayed by &lt;a href=&quot;http://www.utoronto.ca/krause/&quot; target=&quot;_new&quot;&gt;fly-FISH&lt;/a&gt;"
+                      description="Expression patterns of Drosophila mRNAs at the subcellular level during early embryogenesis - data from  &lt;a href=&quot;http://fly-fish.ccbr.utoronto.ca/&quot; target=&quot;_new&quot;&gt;Fly-FISH&lt;/a&gt;.  Note that not all genes have been assayed by &lt;a href=&quot;http://fly-fish.ccbr.utoronto.ca/&quot; target=&quot;_new&quot;&gt;Fly-FISH&lt;/a&gt;".
                       graphType="BarChart" />
                       
-      <graphdisplayer title="in situ (BDGP)" domainLabel="Stage" rangeLabel="Gene count" dataSetLoader="org.flymine.web.widget.BDGPinsituDataSetLdr"
+      <graphdisplayer title="mRNA expression patterns (BDGP in situ project)" domainLabel="Stage" rangeLabel="Gene count" dataSetLoader="org.flymine.web.widget.BDGPinsituDataSetLdr"
                       toolTipGen="org.intermine.web.logic.widget.ToolTipGenerator" urlGen="org.flymine.web.widget.BDGPinsituGraphURLGenerator"
-                      description=" [description needed!] &lt;a href=&quot;http://www.fruitfly.org/cgi-bin/ex/insitu.pl&quot; target=&quot;_new&quot;&gt;BGDP&lt;/a&gt;"
+                      description="Expression patterns of Drosophila mRNAs during embryogenesis - data from  &lt;a href=&quot;http://www.fruitfly.org/cgi-bin/ex/insitu.pl&quot; target=&quot;_new&quot;&gt;BGDP&lt;/a&gt;.  Note that not all genes have been assayed by &lt;a href=&quot;http://www.fruitfly.org/cgi-bin/ex/insitu.pl&quot; target=&quot;_new&quot;&gt;BGDP&lt;/a&gt;. "
                       graphType="BarChart" />
                       
 
