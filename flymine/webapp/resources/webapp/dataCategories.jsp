@@ -285,7 +285,7 @@
 
   <tr><td rowspan="5" class="leftcol">
         <html:link action="/aspect?name=Gene%20Expression">
-        <p> <img src="model/images/marray.gif" /></p>
+        <p> <img src="model/images/embryos.jpg" /></p>
         <p> Gene Expression</p>
          </html:link></td>
     <td> <i>D. melanogaster</i> </td>
