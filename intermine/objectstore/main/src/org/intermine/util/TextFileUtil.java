@@ -297,6 +297,8 @@ public abstract class TextFileUtil
                         }
                         StrTokenizer tokeniser
                         = new StrTokenizer(lastLine, delimMatcher, StrMatcher.doubleQuoteMatcher());
+                        tokeniser.setEmptyTokenAsNull(false);
+                        tokeniser.setIgnoreEmptyTokens(false);
                         return tokeniser.getTokenArray();
                     }                    
                     return StringUtil.split(lastLine, delim);
