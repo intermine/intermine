@@ -300,7 +300,7 @@
   <tr>
     <td> <i>D. melanogaster</i> </td>
     <td> Expression patterns of Drosophila mRNAs at the subcellular level during early embryogenesis</td>
-    <td> <a href="http://www.utoronto.ca/krause/" target="_new">FlyFISH</a> - 16th October 2007 </td>
+    <td> <a href="http://fly-fish.ccbr.utoronto.ca/" target="_new">Fly-FISH</a> - 16th October 2007 </td>
     <td> Lecuyer et al - <a href="http://www.ncbi.nlm.nih.gov/entrez/query.fcgi?cmd=Retrieve&db=PubMed&dopt=Abstract&list_uids=17923096" target="_new">PubMed: 17923096</a></td>
     <td> &nbsp;</td>
   </tr>
