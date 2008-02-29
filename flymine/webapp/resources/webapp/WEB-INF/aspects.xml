@@ -51,18 +51,18 @@
      <aspect-source name="RCSB Protein Data Bank" url="http://www.rcsb.org/pdb/home/home.do"/>
   </aspect>
 
-  <aspect name="Protein Interactions">
+  <aspect name="Interactions">
     <subtitle>IntAct</subtitle>
-    <icon-image>model/images/proteinInteraction.gif</icon-image>
-    <large-image>model/images/proteinInteraction.gif</large-image>
+    <icon-image>model/images/interaction.gif</icon-image>
+    <large-image>model/images/interaction.gif</large-image>
     <tile-name></tile-name>
     <intro-text>
-      High-throughput 2-hybrid protein interaction datasets for &lt;i&gt;D. melanogaster&lt;/i&gt;, 
-      &lt;i&gt;C. elegans&lt;/i&gt; and  &lt;i&gt;S. cerevisiae&lt;/i&gt;. The datasets were 
-      downloaded in Proteomics Standards Initiative molecular interaction PSI-MI format from the IntAct database.
+      Protein-protein interactions for &lt;i&gt;D. melanogaster&lt;/i&gt;, &lt;i&gt;C. elegans&lt;/i&gt; and  &lt;i&gt;S. cerevisiae&lt;/i&gt; from IntAct (PSI-MI format).&lt;br/&gt; 
+      Genetic interaction data for &lt;i&gt;D. melanogaster&lt;/i&gt; from the BioGRID.&lt;br/&gt; 
     </intro-text>
     <tile-name>model/proteinInteraction.jsp</tile-name>
     <aspect-source name="IntAct" url="http://www.ebi.ac.uk/intact/"/>
+    <aspect-source name="BioGRID" url="http://http://www.thebiogrid.org/"/>
   </aspect>
 
 
@@ -93,6 +93,7 @@
     <aspect-source name="ArrayExpress" url="http://www.ebi.ac.uk/arrayexpress/"/>
     <aspect-source name="FlyAtlas" url="http://www.flyatlas.org/"/>
     <aspect-source name="FlyFish" url="http://fly-fish.ccbr.utoronto.ca/"/>
+    <aspect-source name="BDGP in situ" url="http://www.fruitfly.org/cgi-bin/ex/insitu.pl/"/>          
   </aspect>
 
   <aspect name="Transcriptional Regulation">
