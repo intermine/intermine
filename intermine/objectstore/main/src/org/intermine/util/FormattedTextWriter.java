@@ -1,7 +1,7 @@
 package org.intermine.util;
 
 /*
- * Copyright (C) 2002-2008 FlyMine
+ * Copyright (C) 2002-2007 FlyMine
  *
  * This code may be freely distributed and modified under the
  * terms of the GNU Lesser General Public Licence.  This should
@@ -19,9 +19,10 @@ import java.io.PrintStream;
 
 import org.apache.log4j.Logger;
 /**
- * Utility methods for dealing with text files.
+ * Formats and writes formatted text data.
  *
  * @author Kim Rutherford
+ * @author Jakub Kulaviak
  */
 
 public class FormattedTextWriter
@@ -32,27 +33,9 @@ public class FormattedTextWriter
 
     private int maxRows = Integer.MAX_VALUE;
 
-    private ObjectFormatter objectFormatter;
-
     private int[] columnOrder;
     
     protected static final Logger LOG = Logger.getLogger(FormattedTextWriter.class);
-    /**
-     * The format() method is called by writeDelimitedTable() to format objeFcts in a more useful
-     * way than the default toString().
-     * @author Kim Rutherford
-     */
-    public interface ObjectFormatter
-    {
-        /**
-         * This method returns a String representation of the argument, formatted in a way that
-         * is useful in a text table.
-         * @param o an Object
-         * @return a String representing the object or null if this formatter can't do anything
-         * with the object (doesn't know how to format it)
-         */
-        String format(Object o);
-    }
 
     /**
      * Constructor.
@@ -63,27 +46,14 @@ public class FormattedTextWriter
      * means all columns are visible
      * @param maxRows the maximum number of rows to output - read only range 0..maxRows-1 from
      * listOfLists.  -1 means output all
-     * @param objectFormatter the ObjectFormatter used to attempt to format Objects or null if
      * toString() should be called instead
      */
     public FormattedTextWriter(OutputStream os, int[] columnOrder, boolean[] columnVisible, 
-            int maxRows, ObjectFormatter objectFormatter) {
+            int maxRows) {
         printStream = new PrintStream(os);
         this.columnOrder = columnOrder;
         this.columnVisible = columnVisible;
         this.maxRows = maxRows;
-        this.objectFormatter = objectFormatter;
-    }
-
-    /**
-     * Constructor.
-     * @param os the OutputStream to write to
-     * @param objectFormatter the ObjectFormatter used to attempt to format Objects or null if
-     * toString() should be called instead
-     */
-    public FormattedTextWriter(OutputStream os,  ObjectFormatter objectFormatter) {
-        printStream = new PrintStream(os);
-        this.objectFormatter = objectFormatter;
     }
 
     /**
@@ -125,27 +95,18 @@ public class FormattedTextWriter
                 break;
             }
             List<Object> row = reorderRow(columnOrder, columnVisible, origRow);
-            writeRow(delimiter, quote, objectFormatter, row);
+            writeRow(delimiter, quote, row);
         }
         printStream.flush();
     }
 
-    private void writeRow(char delimiter, boolean quote, ObjectFormatter objectFormatter, 
-            List<Object> row) {
+    private void writeRow(char delimiter, boolean quote, List<Object> row) {
         for (int columnIndex = 0; columnIndex < row.size(); columnIndex++) {
             Object o = row.get(columnIndex);
 
             if (o == null) {
                 writeUnQuoted("");
             } else {
-                if (objectFormatter != null) {
-                    String formattedObject = objectFormatter.format(o);
-
-                    if (formattedObject != null) {
-                        o = formattedObject;
-                    }
-                }
-
                 if (o instanceof Number
                     || (!quote && o.toString().indexOf(delimiter) < 0
                         && !o.toString().equals(""))) {
@@ -257,20 +218,6 @@ public class FormattedTextWriter
      */
     public void setMaxRows(int maxRows) {
         this.maxRows = maxRows;
-    }
-
-    /**
-     * @return object formatter
-     */
-    public ObjectFormatter getObjectFormatter() {
-        return objectFormatter;
-    }
-
-    /**
-     * @param objectFormatter object formatter
-     */
-    public void setObjectFormatter(ObjectFormatter objectFormatter) {
-        this.objectFormatter = objectFormatter;
     }
 
     /**
