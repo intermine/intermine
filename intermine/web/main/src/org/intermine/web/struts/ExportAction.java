@@ -77,22 +77,11 @@ public class ExportAction extends InterMineAction
         String type = request.getParameter("type");
         String tableType = request.getParameter("tableType");
 
-        List rowList = null;
+        List<List<Object>> rowList = null;
 
         try {
             HttpSession session = request.getSession();
-            ServletContext servletContext = session.getServletContext();
-            PagedTable pt;
-
-            if (tableType.equals("bag")) {
-                Profile profile = (Profile) session.getAttribute(Constants.PROFILE);
-                ObjectStore os = (ObjectStore) servletContext.getAttribute(Constants.OBJECTSTORE);
-                String bagName = request.getParameter("table");
-                pt = SessionMethods.getResultsTable(session, "bag."
-                                                                + request.getParameter("table"));
-            } else {
-                pt = SessionMethods.getResultsTable(session, request.getParameter("table"));
-            }
+            PagedTable pt = getPagedTable(request, tableType, session);
             rowList = pt.getAllRows();
             if (rowList instanceof WebResults) {
                 ((WebResults) rowList).goFaster();
@@ -104,26 +93,40 @@ public class ExportAction extends InterMineAction
                 return csv(request, response, pt);
             } else if (type.equals("tab")) {
                 return tab(request, response, pt);
-            }
-
-            WebConfig wc = (WebConfig) servletContext.getAttribute(Constants.WEBCONFIG);
-
-            TableExportConfig tableExportConfig =
-                (TableExportConfig) wc.getTableExportConfigs().get(type);
-
-            if (tableExportConfig == null) {
-                return mapping.findForward("error");
             } else {
-                TableExporter tableExporter =
-                    (TableExporter) Class.forName(tableExportConfig.getClassName()).newInstance();
+                WebConfig wc = (WebConfig) session.getServletContext().
+                    getAttribute(Constants.WEBCONFIG);
 
-                return tableExporter.export(mapping, form, request, response);
+                TableExportConfig tableExportConfig =
+                    (TableExportConfig) wc.getTableExportConfigs().get(type);
+
+                if (tableExportConfig == null) {
+                    return mapping.findForward("error");
+                } else {
+                    TableExporter tableExporter =
+                        (TableExporter) Class.forName(tableExportConfig.getClassName()).newInstance();
+
+                    return tableExporter.export(mapping, form, request, response);
+                }
             }
         } finally {
             if (rowList instanceof WebResults) {
                 ((WebResults) rowList).releaseGoFaster();
             }
         }
+    }
+
+    private PagedTable getPagedTable(HttpServletRequest request,
+            String tableType, HttpSession session) {
+        PagedTable pt;
+
+        if (tableType.equals("bag")) {
+            pt = SessionMethods.getResultsTable(session, "bag." 
+                    + request.getParameter("table"));
+        } else {
+            pt = SessionMethods.getResultsTable(session, request.getParameter("table"));
+        }
+        return pt;
     }
 
     /**
@@ -146,15 +149,11 @@ public class ExportAction extends InterMineAction
         Model model = os.getModel();
         WebConfig webConfig = (WebConfig) servletContext.getAttribute(Constants.WEBCONFIG);
 
-        response.setContentType("Application/vnd.ms-excel");
-        response.setHeader("Pragma", "no-cache");
-        response.setHeader("Content-Disposition", "attachment; filename=\"results-table.xls\"");
+        writeExcelHeader(response);
 
         if (pt == null) {
             return mapping.getInputForward();
         }
-
-        FormattedTextWriter.ObjectFormatter objectFormatter = getObjectFormatter(model, webConfig);
 
         int defaultMax = 10000;
 
@@ -231,15 +230,7 @@ public class ExportAction extends InterMineAction
                         continue;
                     }
 
-                    String stringifiedObject = objectFormatter.format(thisObject);
-
-                    if (stringifiedObject == null) {
-                        // default
-                        excelRow.createCell(outputColumnIndex).setCellValue("" + thisObject);
-                    } else {
-                        excelRow.createCell(outputColumnIndex).setCellValue(stringifiedObject);
-                    }
-
+                    excelRow.createCell(outputColumnIndex).setCellValue("" + thisObject);
                 }
             }
 
@@ -249,6 +240,12 @@ public class ExportAction extends InterMineAction
         }
 
         return null;
+    }
+
+    private void writeExcelHeader(HttpServletResponse response) {
+        response.setContentType("Application/vnd.ms-excel");
+        response.setHeader("Pragma", "no-cache");
+        response.setHeader("Content-Disposition", "attachment; filename=\"results-table.xls\"");
     }
 
     /**
@@ -275,9 +272,7 @@ public class ExportAction extends InterMineAction
         response.setHeader("Content-Disposition", "inline; filename=\"results-table.csv\"");
 
         new FormattedTextWriter(response.getOutputStream(), 
-                getOrder(pt), getVisible(pt), pt.getMaxRetrievableIndex() + 1,
-                getObjectFormatter(model, webConfig)        
-        ).writeCSVTable(pt.getAllRows());
+                getOrder(pt), getVisible(pt), pt.getMaxRetrievableIndex() + 1).writeCSVTable(pt.getAllRows());
         return null;
     }
 
@@ -308,8 +303,7 @@ public class ExportAction extends InterMineAction
 
         new FormattedTextWriter(response.getOutputStream(), 
                 getOrder(pt), getVisible(pt),
-                pt.getMaxRetrievableIndex() + 1,
-                getObjectFormatter(model, webConfig)).writeTabDelimitedTable(allRows);
+                pt.getMaxRetrievableIndex() + 1).writeTabDelimitedTable(allRows);
         return null;
     }
 
@@ -344,51 +338,5 @@ public class ExportAction extends InterMineAction
         }
 
         return returnValue;
-    }
-
-    /**
-     * An ObjectFormatter that uses the WebConfig to work out which fields to output for the
-     * object.
-     */
-    private FormattedTextWriter.ObjectFormatter getObjectFormatter(final Model model,
-                                                            final WebConfig webConfig) {
-        FormattedTextWriter.ObjectFormatter objectFormatter = new FormattedTextWriter.ObjectFormatter() {
-            public String format(Object o) {
-                if (o instanceof InterMineObject) {
-                    InterMineObject imo = (InterMineObject) o;
-                    Set cds = DisplayObject.getLeafClds(imo.getClass(), model);
-                    StringBuffer sb = new StringBuffer();
-                    Iterator cdIter = cds.iterator();
-                    while (cdIter.hasNext()) {
-                        ClassDescriptor cd = (ClassDescriptor) cdIter.next();
-                        List fieldConfigs = FieldConfigHelper.getClassFieldConfigs(webConfig, cd);
-                        Iterator fcIter = fieldConfigs.iterator();
-                        sb.append(cd.getUnqualifiedName()).append(" ");
-                        while (fcIter.hasNext()) {
-                            FieldConfig fc = (FieldConfig) fcIter.next();
-                            if (fc.getShowInResults()) {
-                                String fieldExpr = fc.getFieldExpr();
-                                if (fieldExpr.indexOf('.') == -1) {
-                                    try {
-                                        Object value = TypeUtil.getFieldValue(imo, fieldExpr);
-                                        if (value != null) {
-                                            sb.append(fieldExpr).append(": ");
-                                            sb.append(value.toString()).append(" ");
-                                        }
-                                    } catch (IllegalAccessException e) {
-                                        // ignore - there isn't much we can do here
-                                    }
-                                }
-                            }
-                        }
-                    }
-                    return sb.toString().trim();
-                } else {
-                    return null;
-                }
-            }
-        };
-
-        return objectFormatter;
     }
 }

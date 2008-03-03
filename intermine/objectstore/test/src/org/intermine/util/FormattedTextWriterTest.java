@@ -1,7 +1,7 @@
 package org.intermine.util;
 
 /*
- * Copyright (C) 2002-2008 FlyMine
+ * Copyright (C) 2002-2007 FlyMine
  *
  * This code may be freely distributed and modified under the
  * terms of the GNU Lesser General Public Licence.  This should
@@ -23,8 +23,6 @@ import java.util.NoSuchElementException;
 
 import junit.framework.TestCase;
 
-import org.intermine.util.FormattedTextWriter.ObjectFormatter;
-
 /**
  * Tests for the TextFileUtil class.
  *
@@ -33,21 +31,9 @@ import org.intermine.util.FormattedTextWriter.ObjectFormatter;
 
 public class FormattedTextWriterTest extends TestCase
 {
-    private ObjectFormatter objectFormatter;
 
     public FormattedTextWriterTest (String arg) {
         super(arg);
-
-        // example formatter
-        objectFormatter = new ObjectFormatter() {
-            public String format(Object o) {
-                if (o instanceof Map) {
-                    return "\t,";
-                } else {
-                    return null;
-                }
-            }
-        };
     }
 
     private List getTestRows() {
@@ -56,11 +42,11 @@ public class FormattedTextWriterTest extends TestCase
         map.put("key1", "value1");
         map.put("key2",  new Integer(2));
         rows.add(Arrays.asList(new Object [] {
-                                   new Integer(101), map,
+                                   new Integer(101), "aaa",
                                    "string 103", "string 104, with comma"
                                }));
         rows.add(Arrays.asList(new Object [] {
-                                   new Integer(201), map,
+                                   new Integer(201), "aaa",
                                    "string 203", "string 204\t with tab",
                                }));
         return rows;
@@ -76,17 +62,17 @@ public class FormattedTextWriterTest extends TestCase
         new FormattedTextWriter(baos,
                 new int[] {0, 1, 2, 3},
                 new boolean[] {true, true, true, true},
-                100, objectFormatter).writeTabDelimitedTable(getTestRows());
-        expected = "101\t\"\t,\"\tstring 103\tstring 104, with comma\n"
-            + "201\t\"\t,\"\tstring 203\t\"string 204\t with tab\"\n";
+                100).writeTabDelimitedTable(getTestRows());
+        expected = "101\taaa\tstring 103\tstring 104, with comma\n"
+            + "201\taaa\tstring 203\t\"string 204\t with tab\"\n";
         results = baos.toString();
         assertEquals(expected, results);
 
         // same as above - the nulls mean show all columns in their natural order
         baos = new ByteArrayOutputStream();
-        new FormattedTextWriter(baos, objectFormatter).writeTabDelimitedTable(getTestRows());
-        expected = "101\t\"\t,\"\tstring 103\tstring 104, with comma\n"
-            + "201\t\"\t,\"\tstring 203\t\"string 204\t with tab\"\n";
+        new FormattedTextWriter(baos).writeTabDelimitedTable(getTestRows());
+        expected = "101\taaa\tstring 103\tstring 104, with comma\n"
+            + "201\taaa\tstring 203\t\"string 204\t with tab\"\n";
         results = baos.toString();
         assertEquals(expected, results);
 
@@ -94,9 +80,9 @@ public class FormattedTextWriterTest extends TestCase
         baos = new ByteArrayOutputStream();
         new FormattedTextWriter(baos, 
                 new int[] {0, 1, 2, 3},
-                new boolean[] {false, true, true, true}, 100, objectFormatter).writeTabDelimitedTable(getTestRows());
-        expected = "\"\t,\"\tstring 103\tstring 104, with comma\n"
-            + "\"\t,\"\tstring 203\t\"string 204\t with tab\"\n";
+                new boolean[] {false, true, true, true}, 100).writeTabDelimitedTable(getTestRows());
+        expected = "aaa\tstring 103\tstring 104, with comma\n"
+            + "aaa\tstring 203\t\"string 204\t with tab\"\n";
         results = baos.toString();
         assertEquals(expected, results);
 
@@ -104,9 +90,9 @@ public class FormattedTextWriterTest extends TestCase
         baos = new ByteArrayOutputStream();
         new FormattedTextWriter(baos, 
                 new int[] {3, 1, 2, 0},
-                new boolean[] {true, true, true, true}, 100, objectFormatter).writeTabDelimitedTable(getTestRows());
-        expected = "string 104, with comma\t\"\t,\"\tstring 103\t101\n"
-            + "\"string 204\t with tab\"\t\"\t,\"\tstring 203\t201\n";
+                new boolean[] {true, true, true, true}, 100).writeTabDelimitedTable(getTestRows());
+        expected = "string 104, with comma\taaa\tstring 103\t101\n"
+            + "\"string 204\t with tab\"\taaa\tstring 203\t201\n";
         results = baos.toString();
         assertEquals(expected, results);
 
@@ -115,8 +101,8 @@ public class FormattedTextWriterTest extends TestCase
         new FormattedTextWriter(baos,
                 new int[] {3, 2, 1, 0},
                 new boolean[] {false, true, true, false},
-                100, objectFormatter).writeTabDelimitedTable(getTestRows());
-        expected = "string 103\t\"\t,\"\nstring 203\t\"\t,\"\n";
+                100).writeTabDelimitedTable(getTestRows());
+        expected = "string 103\taaa\nstring 203\taaa\n";
         results = baos.toString();
         assertEquals(expected, results);
 
@@ -124,8 +110,8 @@ public class FormattedTextWriterTest extends TestCase
         baos = new ByteArrayOutputStream();
         new FormattedTextWriter(baos, 
                 new int[] {3, 2, 1, 0},
-                new boolean[] {false, false, true, false}, 100, objectFormatter).writeTabDelimitedTable(getTestRows());
-        expected = "\"\t,\"\n\"\t,\"\n";
+                new boolean[] {false, false, true, false}, 100).writeTabDelimitedTable(getTestRows());
+        expected = "aaa\naaa\n";
         results = baos.toString();
         assertEquals(expected, results);
 
@@ -133,8 +119,8 @@ public class FormattedTextWriterTest extends TestCase
         baos = new ByteArrayOutputStream();
         new FormattedTextWriter(baos, 
                 new int[] {0, 1, 2, 3},
-                new boolean[] {true, true, true, true}, 1, objectFormatter).writeTabDelimitedTable(getTestRows());
-        expected = "101\t\"\t,\"\tstring 103\tstring 104, with comma\n";
+                new boolean[] {true, true, true, true}, 1).writeTabDelimitedTable(getTestRows());
+        expected = "101\taaa\tstring 103\tstring 104, with comma\n";
         results = baos.toString();
         assertEquals(expected, results);
 
@@ -143,9 +129,9 @@ public class FormattedTextWriterTest extends TestCase
         new FormattedTextWriter(baos, 
                 new int[] {0, 1, 2, 3},
                 new boolean[] {true, true, true, true},
-                -1, objectFormatter).writeTabDelimitedTable(getTestRows());
-        expected = "101\t\"\t,\"\tstring 103\tstring 104, with comma\n"
-            + "201\t\"\t,\"\tstring 203\t\"string 204\t with tab\"\n";;
+                -1).writeTabDelimitedTable(getTestRows());
+        expected = "101\taaa\tstring 103\tstring 104, with comma\n"
+            + "201\taaa\tstring 203\t\"string 204\t with tab\"\n";;
         results = baos.toString();
         assertEquals(expected, results);
     }
@@ -159,9 +145,9 @@ public class FormattedTextWriterTest extends TestCase
         new FormattedTextWriter(baos, 
                 new int[] {0, 1, 2, 3},
                 new boolean[] {true, true, true, true},
-                100, objectFormatter).writeCSVTable(getTestRows());
-        expected = "101,\"\t,\",\"string 103\",\"string 104, with comma\"\n"
-            + "201,\"\t,\",\"string 203\",\"string 204\t with tab\"\n";
+                100).writeCSVTable(getTestRows());
+        expected = "101,\"aaa\",\"string 103\",\"string 104, with comma\"\n"
+            + "201,\"aaa\",\"string 203\",\"string 204\t with tab\"\n";
         results = baos.toString();
         assertEquals(expected, results);
 
@@ -170,9 +156,9 @@ public class FormattedTextWriterTest extends TestCase
         new FormattedTextWriter(baos,
                 new int[] {0, 1, 2, 3},
                 new boolean[] {false, true, true, true},
-                100, objectFormatter).writeCSVTable(getTestRows());
-        expected = "\"\t,\",\"string 103\",\"string 104, with comma\"\n"
-            + "\"\t,\",\"string 203\",\"string 204\t with tab\"\n";
+                100).writeCSVTable(getTestRows());
+        expected = "\"aaa\",\"string 103\",\"string 104, with comma\"\n"
+            + "\"aaa\",\"string 203\",\"string 204\t with tab\"\n";
         results = baos.toString();
         assertEquals(expected, results);
 
@@ -181,9 +167,9 @@ public class FormattedTextWriterTest extends TestCase
         new FormattedTextWriter(baos,
                 new int[] {3, 1, 2, 0},
                 new boolean[] {true, true, true, true},
-                100, objectFormatter).writeCSVTable(getTestRows());
-        expected = "\"string 104, with comma\",\"\t,\",\"string 103\",101\n"
-            + "\"string 204\t with tab\",\"\t,\",\"string 203\",201\n";
+                100).writeCSVTable(getTestRows());
+        expected = "\"string 104, with comma\",\"aaa\",\"string 103\",101\n"
+            + "\"string 204\t with tab\",\"aaa\",\"string 203\",201\n";
         results = baos.toString();
         assertEquals(expected, results);
 
@@ -192,8 +178,8 @@ public class FormattedTextWriterTest extends TestCase
         new FormattedTextWriter(baos,
                 new int[] {3, 2, 1, 0},
                 new boolean[] {false, true, true, false},
-                100, objectFormatter).writeCSVTable(getTestRows());
-        expected = "\"string 103\",\"\t,\"\n\"string 203\",\"\t,\"\n";
+                100).writeCSVTable(getTestRows());
+        expected = "\"string 103\",\"aaa\"\n\"string 203\",\"aaa\"\n";
         results = baos.toString();
         assertEquals(expected, results);
 
@@ -201,8 +187,8 @@ public class FormattedTextWriterTest extends TestCase
         baos = new ByteArrayOutputStream();
         new FormattedTextWriter(baos, new int[] {3, 2, 1, 0}, 
                 new boolean[] {false, false, true, false}, 
-                100, objectFormatter).writeCSVTable(getTestRows());
-        expected = "\"\t,\"\n\"\t,\"\n";
+                100).writeCSVTable(getTestRows());
+        expected = "\"aaa\"\n\"aaa\"\n";
         results = baos.toString();
         assertEquals(expected, results);
     }
