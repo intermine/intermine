@@ -388,7 +388,11 @@ public class PrecomputedTableManager
      */
     protected void addIndex(String table, String field, Connection con,
             boolean nulls) throws SQLException {
-        String sql = "CREATE INDEX index" + table + "_field_" + field.replace(',', '_')
+        String simpleField = field;
+        if (simpleField.charAt(0) == '"') {
+            simpleField = simpleField.substring(1, simpleField.length() - 1);
+        }
+        String sql = "CREATE INDEX index" + table + "_field_" + simpleField.replace(',', '_')
             .replace(' ', '_').replace('(', '_').replace(')', '_') + " ON "
             + table + " (" + field + ")";
         try {
@@ -403,7 +407,7 @@ public class PrecomputedTableManager
             throw f;
         }
         if (nulls) {
-            sql = "CREATE INDEX index" + table + "_field_" + field.replace(',', '_')
+            sql = "CREATE INDEX index" + table + "_field_" + simpleField.replace(',', '_')
                 .replace(' ', '_').replace('(', '_').replace(')', '_') + "_nulls"
                 + " ON " + table + " ((" + field + " IS NULL))";
             try {
