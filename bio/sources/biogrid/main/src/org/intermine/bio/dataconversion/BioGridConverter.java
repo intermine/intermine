@@ -182,12 +182,13 @@ public class BioGridConverter extends FileConverter
                 geneIdsToIdentifiers.put(geneId, identifier);
                 genes.put(geneId, getGene(geneId));
                 
-            //<interactionList><interaction id="1"><names><shortLabel>
-            } else if (qName.equals("shortLabel")
-                       && stack.peek().equals("names")
-                       && stack.search("interaction") == 2) {
-
-                attName = "interactionName";
+            //<interactionList><interaction id="1"><names><shortLabel>107057-36612 
+                // this name isn't informative, so we use the identifiers instead
+//            } else if (qName.equals("shortLabel")
+//                       && stack.peek().equals("names")
+//                       && stack.search("interaction") == 2) {
+//
+//                attName = "interactionName";
 
             //<interactionList><interaction>
             //<participantList><participant id="5"><interactorRef>
@@ -200,6 +201,7 @@ public class BioGridConverter extends FileConverter
                        && stack.peek().equals("experimentList")) {
                 
                 attName = "experimentRef";
+                holder = new InteractionHolder();
                 
             //<interactionList><interaction><interactionType><names><shortLabel
             } else if (qName.equals("shortLabel")
@@ -296,7 +298,7 @@ public class BioGridConverter extends FileConverter
                     if (gene != null) {
                         interactorHolder = new InteractorHolder(gene);
                         holder.addInteractor(interactorHolder);
-                        holder.addGene(gene.getIdentifier());
+                        holder.addGene(gene.getIdentifier(), id);
                     } else {
                         holder.isValid = false; // a gene/protein is missing for soem reason
                     }
@@ -307,7 +309,7 @@ public class BioGridConverter extends FileConverter
                                 && attName.equals("interactionName")) {
 
                     String shortLabel = attValue.toString();
-                    holder = new InteractionHolder(shortLabel);
+                    holder = new InteractionHolder();
                    
                 //<interactionList><interaction><experimentList><experimentRef>
                 } else if (qName.equals("experimentRef")
@@ -346,8 +348,16 @@ public class BioGridConverter extends FileConverter
 
             Set interactors = interactionHolder.interactors;
             
-            
             try {
+                
+                String interactionName = "";
+                for (String identifier : interactionHolder.geneIdentifiers) {
+                    if (!interactionName.equals("")) {
+                        interactionName += "_";
+                    }
+                    interactionName += identifier;
+                }
+                
                 // loop through genes/interactors in this interaction
                 for (Iterator iter = interactors.iterator(); iter.hasNext();) {
 
@@ -357,7 +367,7 @@ public class BioGridConverter extends FileConverter
                     Item interaction = createItem("GeneticInteraction");
                     Item gene = interactorHolder.gene;
                     String geneRefId = gene.getIdentifier();
-                    interaction.setAttribute("shortName", interactionHolder.shortName);
+                    interaction.setAttribute("shortName", interactionName);
                     interaction.setAttribute("type", interactionHolder.type);
                     
                     interaction.setReference("gene", geneRefId);
@@ -540,18 +550,19 @@ public class BioGridConverter extends FileConverter
          */
         public static class InteractionHolder
         {
-            protected String shortName, type;
+            protected String type;
             protected ExperimentHolder experimentHolder;
             protected Set<InteractorHolder> interactors = new LinkedHashSet<InteractorHolder>();
             protected Set<String> geneIds = new HashSet<String>();
+            protected Set<String> geneIdentifiers = new HashSet<String>();
             protected boolean isValid = false;
             
             /**
              * Constructor
              * @param shortName name of this interaction
              */
-            public InteractionHolder(String shortName) {
-                this.shortName = shortName;
+            public InteractionHolder() {
+                
             }
 
             /**
@@ -571,11 +582,12 @@ public class BioGridConverter extends FileConverter
             }
 
             /**
-             *
+             * @param identifier FBgn for a gene - used to create the shortName of the interaction
              * @param geneId gene involved in interaction
              */
-            protected void addGene(String geneId) {
+            protected void addGene(String geneId, String identifier) {
                 geneIds.add(geneId);
+                geneIdentifiers.add(identifier);
             }
         }
 
