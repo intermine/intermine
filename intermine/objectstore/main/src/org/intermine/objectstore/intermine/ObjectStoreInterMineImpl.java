@@ -868,13 +868,14 @@ public class ObjectStoreInterMineImpl extends ObjectStoreAbstractImpl implements
             statsConTime += conTime;
             if (verboseQueryLog) {
                 LOG.info("(VERBOSE) iql: " + q + "\n"
-                         + "generated sql: " + generatedSql + "\n"
-                         + "optimised sql: " + sql + "\n"
-                         + "bag tables: " + bagTableTime + " ms, generate: " + genTime
-                         + " ms, optimise: " + optTime + " ms, " + "replace nulls: " + nulTime
-                         + " ms,  estimate: " + estTime + " ms, " + "execute: " + exeTime
-                         + " ms, convert results: " + conTime + " ms, total: "
-                         + (postConvert - preBagTableTime) + " ms");
+                        + "generated sql: " + generatedSql + "\n"
+                        + "optimised sql: " + sql + "\n"
+                        + "bag tables: " + bagTableTime + " ms, generate: " + genTime
+                        + " ms, optimise: " + optTime + " ms, " + "replace nulls: " + nulTime
+                        + " ms,  estimate: " + estTime + " ms, " + "execute: " + exeTime
+                        + " ms, convert results: " + conTime + " ms, total: "
+                        + (postConvert - preBagTableTime) + " ms" + ", rows: "
+                        + objResults.size());
             }
             Object firstOrderByObject = q.getEffectiveOrderBy().iterator().next();
             if ((firstOrderByObject instanceof QueryOrderable)
