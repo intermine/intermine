@@ -5,10 +5,13 @@
 <item id="5_1" class="http://www.flymine.org/model/genomic#Gene">
 <attribute name="primaryIdentifier" value="FBgn0000001"/>
 </item>
-<item id="3_1" class="http://www.flymine.org/model/genomic#GeneInteractionExperiment">
-<attribute name="description" value="A protein interaction map of Drosophila melanogaster."/>
-<attribute name="name" value="Giot L (2003)"/>
-<reference name="publication" ref_id="4_1"/>
+<item id="7_2" class="http://www.flymine.org/model/genomic#GeneticInteraction">
+<attribute name="shortName" value="22222_11111"/>
+<attribute name="type" value="Phenotypic Suppression"/>
+<reference name="experiment" ref_id="3_1"/>
+<reference name="gene" ref_id="5_2"/>
+<collection name="evidence"><reference ref_id="2_1"/></collection>
+<collection name="interactingGenes"><reference ref_id="5_1"/></collection>
 </item>
 <item id="2_1" class="http://www.flymine.org/model/genomic#DataSet">
 <attribute name="title" value="BioGRID data set"/>
@@ -20,23 +23,20 @@
 <item id="1_1" class="http://www.flymine.org/model/genomic#DataSource">
 <attribute name="name" value="BioGRID"/>
 </item>
-<item id="7_2" class="http://www.flymine.org/model/genomic#GeneInteraction">
-<attribute name="shortName" value="interaction Short Label"/>
-<attribute name="type" value="Phenotypic Suppression"/>
-<reference name="experiment" ref_id="3_1"/>
-<reference name="gene" ref_id="5_2"/>
-<collection name="evidence"><reference ref_id="2_1"/></collection>
-<collection name="interactingGenes"><reference ref_id="5_1"/></collection>
-</item>
-<item id="5_2" class="http://www.flymine.org/model/genomic#Gene">
-<attribute name="primaryIdentifier" value="FBgn0000002"/>
-</item>
-<item id="7_1" class="http://www.flymine.org/model/genomic#GeneInteraction">
-<attribute name="shortName" value="interaction Short Label"/>
+<item id="7_1" class="http://www.flymine.org/model/genomic#GeneticInteraction">
+<attribute name="shortName" value="22222_11111"/>
 <attribute name="type" value="Phenotypic Suppression"/>
 <reference name="experiment" ref_id="3_1"/>
 <reference name="gene" ref_id="5_1"/>
 <collection name="evidence"><reference ref_id="2_1"/></collection>
 <collection name="interactingGenes"><reference ref_id="5_2"/></collection>
+</item>
+<item id="5_2" class="http://www.flymine.org/model/genomic#Gene">
+<attribute name="primaryIdentifier" value="FBgn0000002"/>
+</item>
+<item id="3_1" class="http://www.flymine.org/model/genomic#GeneticInteractionExperiment">
+<attribute name="description" value="A protein interaction map of Drosophila melanogaster."/>
+<attribute name="name" value="Giot L (2003)"/>
+<reference name="publication" ref_id="4_1"/>
 </item>
 </items>
