@@ -69,6 +69,10 @@
     </action>
     <action path="/results" forward="results.page">
     </action>
+    <!-- used if there were no results because we weren't able to run a query
+         (as opposed to we ran it but there were no results)  -->
+    <action path="/noResults" forward="noResults.page">
+    </action>
     <action path="/aspect" forward="aspect.page">
     </action>
     <action path="/importQueries" forward="importQueries.page">
@@ -335,6 +339,7 @@
       <forward name="bagDetails" path="/bagDetails.do"/>
       <forward name="waiting" redirect="true" path="/pollBrowseQuery.do"/>
       <forward name="results" path="/results.do"/>
+      <forward name="noResults" path="/noResults.do"/>
     </action>
     <action path="/ping" type="org.intermine.web.struts.HeartbeatAction">
     </action>
