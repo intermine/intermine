@@ -840,7 +840,7 @@ if (grep {$_ eq $prod_db } @database_names) {
   @database_names = ();
 }
 
-if ($load_last || $restart) {
+if (($load_last || $restart) && !$run_build_db) {
   my $restart_file_suffix = get_restart_suffix_file($dump_file_prefix, @actions);
 
   if ($server_backup) {
