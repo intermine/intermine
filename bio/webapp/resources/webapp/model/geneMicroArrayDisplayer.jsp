@@ -8,7 +8,7 @@
 <c:forEach items="${experiments}" var="item">
   <c:if test="${item.identifier == 'E-FLYC-6'}">
   <p>
-    <html:link  action="/chartRenderer?method=microarray&amp;gene=${object.identifier}&amp;experiment=${item.identifier}&amp;width=800&amp;height=160" target="_new">
+    <html:link  action="/chartRenderer?method=microarray&amp;gene=${object.primaryIdentifier}&amp;experiment=${item.identifier}&amp;width=800&amp;height=160" target="_new">
       <im:abbreviate value="${item.name}" length="65"/>
     </html:link>
     <c:if test="${item.publication.pubMedId != null}">
@@ -17,7 +17,7 @@
         ${item.publication.pubMedId}
       </html:link><br/>
     </c:if>
-    <img src="<html:rewrite action="/chartRenderer?method=microarray&amp;gene=${object.identifier}&amp;experiment=${item.identifier}&amp;width=600&amp;height=140"/>" width="600" height="140" title="${object.identifier}" />
+    <img src="<html:rewrite action="/chartRenderer?method=microarray&amp;gene=${object.primaryIdentifier}&amp;experiment=${item.identifier}&amp;width=600&amp;height=140"/>" width="600" height="140" title="${object.primaryIdentifier}" />
   </p>
   </c:if>
 </c:forEach>
