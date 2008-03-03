@@ -10,6 +10,7 @@ package org.intermine.web.logic.results;
  *
  */
 
+import java.util.AbstractList;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Iterator;
@@ -382,5 +383,81 @@ public class PagedTable
      */
     public void setTableid(String tableid) {
         this.tableid = tableid;
+    }
+
+    private List rearrangedResults = null;
+
+    /**
+     * Returns a List containing the results, with the columns rearranged.
+     *
+     * @return a List of rows, each of which is a List
+     */
+    public List getRearrangedResults() {
+        if (rearrangedResults == null) {
+            rearrangedResults = new RearrangedList();
+        }
+        return rearrangedResults;
+    }
+
+    private class RearrangedList extends AbstractList
+    {
+        int columnOrder[];
+
+        public RearrangedList() {
+            List columns = getColumns();
+            List<Integer> columnOrderList = new ArrayList();
+            for (int i = 0; i < columns.size(); i++) {
+                Column column = (Column) columns.get(i);
+                if (column.isVisible()) {
+                    columnOrderList.add(new Integer(column.getIndex()));
+                }
+            }
+            columnOrder = new int[columnOrderList.size()];
+            for (int i = 0; i < columnOrderList.size(); i++) {
+                columnOrder[i] = columnOrderList.get(i).intValue();
+            }
+        }
+
+        public List get(int index) {
+            List row = (List) webTable.get(index);
+            return translateRow(row);
+        }
+
+        private List translateRow(List row) {
+            List realRow = new ArrayList();
+            for (int columnIndex = 0; columnIndex < row.size(); columnIndex++) {
+                int realColumnIndex = columnOrder[columnIndex];
+
+                Object o = row.get(realColumnIndex);
+                realRow.add(o);
+            }
+            return realRow;
+        }
+
+        public int size() {
+            return webTable.size();
+        }
+
+        public Iterator iterator() {
+            return new Iter();
+        }
+
+        private class Iter implements Iterator
+        {
+            private Iterator subIter = webTable.iterator();
+
+            public boolean hasNext() {
+                return subIter.hasNext();
+            }
+
+            public Object next() {
+                List originalRow = (List) subIter.next();
+                return translateRow(originalRow);
+            }
+
+            public void remove() {
+                throw (new UnsupportedOperationException());
+            }
+        }
     }
 }
