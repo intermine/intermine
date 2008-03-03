@@ -55,6 +55,9 @@ public class IqlShell
         } else {
             try {
                 ObjectStore os = ObjectStoreFactory.getObjectStore(args[0]);
+                if (os instanceof ObjectStoreInterMineImpl) {
+                    out.println("Using database " + ((ObjectStoreInterMineImpl) os).getDatabase());
+                }
                 doShell(os);
             } catch (Exception e) {
                 out.println("Exception caught: " + e);
@@ -179,7 +182,6 @@ public class IqlShell
      */
     private static void runQuery(String iql, ObjectStore os)
             throws Exception {
-        java.util.Date startTime = new java.util.Date();
         PrintStream out = System.out;
         PrintStream err = System.err;
 
@@ -188,10 +190,16 @@ public class IqlShell
                                                     .getClassDescriptors().iterator().next())
                                                    .getName());
 
-        boolean doDots = false;
+        int output = 0;
+        // 0 = normal, 1 = dots, 2 = no output
         boolean noExplain = false;
+        boolean doGoFaster = false;
         String optimiseMode = QueryOptimiserContext.MODE_NORMAL;
 
+        if (iql.toUpperCase().startsWith("GOFASTER ")) {
+            iql = iql.substring(9);
+            doGoFaster = true;
+        }
         if (iql.toUpperCase().startsWith("VERBOSE_OPTIMISE ")) {
             iql = iql.substring(17);
             optimiseMode = QueryOptimiserContext.MODE_VERBOSE;
@@ -214,55 +222,77 @@ public class IqlShell
 
         if (iql.toUpperCase().startsWith("DOT ")) {
             iql = iql.substring(4);
-            doDots = true;
+            output = 1;
+        }
+        if (iql.toUpperCase().startsWith("NOOUTPUT ")) {
+            iql = iql.substring(9);
+            output = 2;
         }
         IqlQuery iq = new IqlQuery(iql, modelPackage);
         Query q = iq.toQuery();
 
         out.println("Query to run: " + q.toString());
-        if (os instanceof ObjectStoreInterMineImpl) {
-            String sqlString =
-                SqlGenerator.generate(q, 0, Integer.MAX_VALUE,
-                                      ((ObjectStoreInterMineImpl) os).getSchema(),
-                                      ((ObjectStoreInterMineImpl) os).getDatabase(), (Map) null);
-            out.println("SQL: " + sqlString);
-            QueryOptimiserContext context = new QueryOptimiserContext();
-            context.setMode(optimiseMode);
-            if (!noExplain) {
-                context.setTimeLimit(os.getMaxTime() / 10);
-            }
-            sqlString = QueryOptimiser.optimise(sqlString + " LIMIT 5000",
-                    ((ObjectStoreInterMineImpl) os).getDatabase(), context);
-        }
-
-        if ((optimiseMode == QueryOptimiserContext.MODE_NORMAL)
-                || (optimiseMode == QueryOptimiserContext.MODE_VERBOSE)) {
-            Results res = os.execute(q);
-            res.setBatchSize(5000);
-            if (noExplain) {
-                res.setNoExplain();
-            }
-            out.print("Column headings: ");
-            outputList(QueryHelper.getColumnAliases(q));
-            out.print("Column types: ");
-            outputList(QueryHelper.getColumnTypes(q));
-            int rowNo = 0;
-            Iterator rowIter = res.iterator();
-            while (rowIter.hasNext()) {
-                List row = (List) rowIter.next();
-                if (doDots) {
-                    if (rowNo % 100 == 0) {
-                        err.print(rowNo + " ");
-                    }
-                    err.print(".");
-                    if (rowNo % 100 == 99) {
-                        err.print("\n");
-                    }
-                    err.flush();
-                } else {
-                    outputList(row);
+        try {
+            if (os instanceof ObjectStoreInterMineImpl) {
+                ObjectStoreInterMineImpl osii = (ObjectStoreInterMineImpl) os;
+                if (doGoFaster) {
+                    long startTime = System.currentTimeMillis();
+                    osii.goFaster(q);
+                    out.println("Called goFaster in " + (System.currentTimeMillis() - startTime)
+                            + " ms");
                 }
-                rowNo++;
+                String sqlString = SqlGenerator.generate(q, 0, Integer.MAX_VALUE, osii.getSchema(),
+                        osii.getDatabase(), (Map) null);
+                out.println("SQL: " + sqlString);
+                QueryOptimiserContext context = new QueryOptimiserContext();
+                context.setMode(optimiseMode);
+                if (!noExplain) {
+                    context.setTimeLimit(os.getMaxTime() / 10);
+                }
+                sqlString = QueryOptimiser.optimise(sqlString + " LIMIT 5000",
+                        ((ObjectStoreInterMineImpl) os).getDatabase(), context);
+            }
+
+            if ((optimiseMode == QueryOptimiserContext.MODE_NORMAL)
+                    || (optimiseMode == QueryOptimiserContext.MODE_VERBOSE)) {
+                Results res = os.execute(q);
+                res.setBatchSize(5000);
+                if (noExplain) {
+                    res.setNoExplain();
+                }
+                out.print("Column headings: ");
+                outputList(QueryHelper.getColumnAliases(q));
+                out.print("Column types: ");
+                outputList(QueryHelper.getColumnTypes(q));
+                int rowNo = 0;
+                long startTime = System.currentTimeMillis();
+                Iterator rowIter = res.iterator();
+                while (rowIter.hasNext()) {
+                    List row = (List) rowIter.next();
+                    if (output == 1) {
+                        if (rowNo % 100 == 0) {
+                            err.print(rowNo + " ");
+                        }
+                        err.print(".");
+                        if (rowNo % 100 == 99) {
+                            err.print("\n");
+                        }
+                        err.flush();
+                    } else if (output == 0) {
+                        outputList(row);
+                    }
+                    rowNo++;
+                }
+                if (output == 1) {
+                    err.print("\n");
+                }
+                out.println("Fetched " + rowNo + " rows in " + (System.currentTimeMillis() - startTime) + " ms");
+            }
+        } finally {
+            if (doGoFaster) {
+                if (os instanceof ObjectStoreInterMineImpl) {
+                    ((ObjectStoreInterMineImpl) os).releaseGoFaster(q);
+                }
             }
         }
     }
