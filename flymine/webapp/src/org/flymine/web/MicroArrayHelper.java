@@ -68,7 +68,7 @@ public class MicroArrayHelper
         cs.addConstraint(marGC);
 
         // MicroArrayResult.genes.identifier
-        QueryField qf = new QueryField(g, "identifier");
+        QueryField qf = new QueryField(g, "primaryIdentifier");
         SimpleConstraint gid = new SimpleConstraint(qf, ConstraintOp.EQUALS, new QueryValue(gene));
         cs.addConstraint(gid);
 
