@@ -18,7 +18,6 @@ a.extlink , a.extlink:link, a.extlink:visited, a.extlink:active, a.extlink:hover
   background: url('../images/extlink.gif') right center no-repeat;
   padding-right: 15px;
   margin-right: 15px;
-  white-space: nowrap;
 }
 
 
