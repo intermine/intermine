@@ -354,7 +354,7 @@ public class BioGridConverter extends FileConverter
                     interactorHolder =  (InteractorHolder) iter.next();
 
                     // build & store interactions - one for each gene
-                    Item interaction = createItem("GeneInteraction");
+                    Item interaction = createItem("GeneticInteraction");
                     Item gene = interactorHolder.gene;
                     String geneRefId = gene.getIdentifier();
                     interaction.setAttribute("shortName", interactionHolder.shortName);
@@ -451,7 +451,7 @@ public class BioGridConverter extends FileConverter
 
             ExperimentHolder eh = experimentNames.get(name);
             if (eh == null) {
-                Item exp = createItem("GeneInteractionExperiment");
+                Item exp = createItem("GeneticInteractionExperiment");
                 eh = new ExperimentHolder(exp);
                 experimentNames.put(name, eh);
             }
