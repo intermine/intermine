@@ -74,6 +74,10 @@
     <put name="pageName" value="results"/>
     <put name="title" value="/resultsTitle.jsp"/>
   </definition>
+  <definition name="noResults.page" extends="layout.template">
+    <put name="body" value="noResults.tile"/>
+    <put name="pageName" value="noResults"/>
+  </definition>
   <definition name="objectDetails.page" extends="layout.template">
     <put name="body" value="objectDetailsPage.tile"/>
     <put name="pageName" value="objectDetails"/>
@@ -194,6 +198,7 @@
   <definition name="bag.tile" path="/bag.jsp"/>
   <definition name="bagBuild.tile" path="/bagBuild.jsp" controllerUrl="/initBagBuild.do"/>
   <definition name="table.tile" path="/table.jsp" controllerUrl="/initTable.do"/>
+  <definition name="noResults.tile" path="/noResults.jsp"/>
   <definition name="singleResult.tile" path="/singleResult.jsp" 
               controllerUrl="/initSingleResult.do"/>
   <definition name="tableCountEstimate.tile" path="/tableCountEstimate.jsp" 
