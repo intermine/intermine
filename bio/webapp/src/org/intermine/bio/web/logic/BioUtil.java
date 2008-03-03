@@ -98,6 +98,22 @@ public abstract class BioUtil
      */
     public static Collection<String> getChromosomes(ObjectStore os, String organism) {
 
+        /* TODO put this in a config file */
+        // TODO this may well go away once chromosomes sorted out in #1186
+        if (organism.equals("Drosophila melanogaster")) {
+
+            ArrayList<String> chromosomes = new ArrayList<String>();
+            chromosomes.add("2L");
+            chromosomes.add("2R");
+            chromosomes.add("3L");
+            chromosomes.add("3R");
+            chromosomes.add("4");
+            chromosomes.add("U");
+            chromosomes.add("X");
+
+            return chromosomes;
+        }
+
         Query q = new Query();
 
         QueryClass qcChromosome = new QueryClass(Chromosome.class);
