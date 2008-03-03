@@ -12,7 +12,9 @@ package org.intermine.bio.dataconversion;
 
 import org.intermine.dataconversion.ItemWriter;
 import org.intermine.metadata.Model;
+import org.intermine.objectstore.ObjectStoreException;
 import org.intermine.sql.Database;
+import org.intermine.xml.full.Attribute;
 
 import java.sql.Connection;
 
@@ -71,4 +73,19 @@ public abstract class ChadoProcessor
      * @throws Exception if the is a problem while processing
      */
     public abstract void process(Connection connection) throws Exception;
+
+    /**
+     * Set an attribute in an Item by creating an Attribute object and storing it.
+     * @param intermineObjectId the intermine object ID of the item to create this attribute for.
+     * @param attributeName the attribute name
+     * @param value the value to set
+     * @throws ObjectStoreException if there is a problem while storing
+     */
+    protected void setAttribute(Integer intermineObjectId, String attributeName, String value)
+        throws ObjectStoreException {
+        Attribute att = new Attribute();
+        att.setName(attributeName);
+        att.setValue(value);
+        getChadoDBConverter().store(att, intermineObjectId);
+    }
 }

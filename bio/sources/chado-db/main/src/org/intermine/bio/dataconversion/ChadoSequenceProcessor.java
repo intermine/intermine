@@ -956,21 +956,6 @@ public class ChadoSequenceProcessor extends ChadoProcessor
         return identifier;
     }
 
-    /**
-     * Set an attribute in an Item by creating an Attribute object and storing it.
-     * @param intermineObjectId the intermine object ID of the item to create this attribute for.
-     * @param attributeName the attribute name
-     * @param value the value to set
-     * @throws ObjectStoreException if there is a problem while storing
-     */
-    protected void setAttribute(Integer intermineObjectId, String attributeName, String value)
-        throws ObjectStoreException {
-        Attribute att = new Attribute();
-        att.setName(attributeName);
-        att.setValue(value);
-        getChadoDBConverter().store(att, intermineObjectId);
-    }
-
     private void processPubTable(Connection connection)
         throws SQLException, ObjectStoreException {
         ResultSet res = getPubResultSet(connection);
