@@ -47,7 +47,7 @@ public class WebUtilTest extends TestCase
         expectedResults[2] = new BigDecimal(0.00705009276437833);
 
         for (int i = 0; i < 3; i++) {
-            double p = Hypergeometric.calculateP(bagsize, taggedSample[i], taggedPopulation[i], total);
+            double p = Hypergeometric.calculateP(taggedSample[i], bagsize, taggedPopulation[i], total);
             resultsMap.put(id[i], new BigDecimal(p));
             bonferroniMap.put(id[i], new BigDecimal(p * bagsize));
             benjaminiMap.put(id[i], new BigDecimal(p));
