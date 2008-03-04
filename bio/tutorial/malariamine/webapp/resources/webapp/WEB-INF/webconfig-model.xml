@@ -12,8 +12,8 @@
   
   <class className="org.flymine.model.genomic.BlastMatch">
     <fields>
-      <fieldconfig fieldExpr="object.identifier"/>
-      <fieldconfig fieldExpr="subject.identifier"/>
+      <fieldconfig fieldExpr="object.primaryIdentifier"/>
+      <fieldconfig fieldExpr="subject.primaryIdentifier"/>
       <fieldconfig fieldExpr="EValue"/>
     </fields>
   </class>
@@ -68,10 +68,10 @@
 
   <class className="org.flymine.model.genomic.LocatedSequenceFeature">
     <fields>
-      <fieldconfig fieldExpr="identifier"/>
+      <fieldconfig fieldExpr="primaryIdentifier"/>
       <fieldconfig fieldExpr="chromosomeLocation.start" showInResults="false"/>
       <fieldconfig fieldExpr="chromosomeLocation.end" showInResults="false"/>
-      <fieldconfig fieldExpr="chromosome.identifier" showInResults="false"/>
+      <fieldconfig fieldExpr="chromosome.primaryIdentifier" showInResults="false"/>
     </fields>
     <longdisplayers>
       <displayer src="/model/locatedSequenceFeatureImage.jsp"/>
@@ -80,24 +80,24 @@
 
   <class className="org.flymine.model.genomic.Exon">
     <fields>
-      <fieldconfig fieldExpr="identifier"/>
+      <fieldconfig fieldExpr="primaryIdentifier"/>
       <fieldconfig fieldExpr="chromosomeLocation.start" showInResults="false"/>
       <fieldconfig fieldExpr="chromosomeLocation.end" showInResults="false"/>
-      <fieldconfig fieldExpr="chromosome.identifier" showInResults="false"/>
-      <fieldconfig fieldExpr="gene.identifier" showInInlineCollection="false"/>
+      <fieldconfig fieldExpr="chromosome.primaryIdentifier" showInResults="false"/>
+      <fieldconfig fieldExpr="gene.primaryIdentifier" showInInlineCollection="false"/>
     </fields>
   </class>
 
   <class className="org.flymine.model.genomic.Gene">
     <fields>
-      <fieldconfig fieldExpr="identifier"/>
+      <fieldconfig fieldExpr="secondaryIdentifier"/>
       <fieldconfig fieldExpr="primaryIdentifier"/>
       <fieldconfig fieldExpr="symbol"/>
       <fieldconfig fieldExpr="wildTypeFunction" showInSummary="true"
                    showInResults="false" showInInlineCollection="false" doNotTruncate="true" />
       <fieldconfig fieldExpr="chromosomeLocation.start" showInResults="false"/>
       <fieldconfig fieldExpr="chromosomeLocation.end" showInResults="false"/>
-      <fieldconfig fieldExpr="chromosome.identifier" showInResults="false"/>
+      <fieldconfig fieldExpr="chromosome.primaryIdentifier" showInResults="false"/>
     </fields>
     <longdisplayers>
       <displayer src="/model/synonymDisplayer.jsp"/>
@@ -106,10 +106,10 @@
     </longdisplayers>
   </class>
 
-  <class className="org.flymine.model.genomic.ProteinFeature">
+  <class className="org.flymine.model.genomic.ProteinDomain">
     <fields>
       <fieldconfig fieldExpr="interproId"/>
-      <fieldconfig fieldExpr="identifier"/>
+      <fieldconfig fieldExpr="primaryIdentifier"/>
       <fieldconfig fieldExpr="name"/>
       <fieldconfig fieldExpr="shortName"/>
     </fields>
@@ -120,7 +120,7 @@
 
   <class className="org.flymine.model.genomic.DefinedRegion">
     <fields>
-      <fieldconfig fieldExpr="identifier"/>
+      <fieldconfig fieldExpr="primaryIdentifier"/>
       <fieldconfig fieldExpr="type"/>
     </fields>
     <longdisplayers>
@@ -131,7 +131,7 @@
 
   <class className="org.flymine.model.genomic.Chromosome">
     <fields>
-      <fieldconfig fieldExpr="identifier"/>
+      <fieldconfig fieldExpr="primaryIdentifier"/>
       <fieldconfig fieldExpr="organism.shortName"/>
       <fieldconfig fieldExpr="length"/>
     </fields>
@@ -142,14 +142,15 @@
 
   <class className="org.flymine.model.genomic.BioEntity">
     <fields>
-      <fieldconfig fieldExpr="identifier"/>
+      <fieldconfig fieldExpr="primaryIdentifier"/>
+      <fieldconfig fieldExpr="secondaryIdentifier"/>
     </fields>
   </class>
 
   <class className="org.flymine.model.genomic.Protein">
     <fields>
       <fieldconfig fieldExpr="primaryAccession"/>
-      <fieldconfig fieldExpr="identifier"/>
+      <fieldconfig fieldExpr="primaryIdentifier"/>
       <fieldconfig fieldExpr="organism.shortName"/>
     </fields>
     <longdisplayers>
@@ -170,26 +171,26 @@
 
   <class className="org.flymine.model.genomic.Transcript">
     <fields>
-      <fieldconfig fieldExpr="identifier"/>
+      <fieldconfig fieldExpr="primaryIdentifier"/>
       <fieldconfig fieldExpr="organism.shortName"/>
       <fieldconfig fieldExpr="exonCount"/>
       <fieldconfig fieldExpr="chromosomeLocation.start" showInResults="false"/>
       <fieldconfig fieldExpr="chromosomeLocation.end" showInResults="false"/>
-      <fieldconfig fieldExpr="chromosome.identifier" showInResults="false"/>
+      <fieldconfig fieldExpr="chromosome.primaryIdentifier" showInResults="false"/>
     </fields>
   </class>
 
   <class className="org.flymine.model.genomic.Translation">
     <fields>
-      <fieldconfig fieldExpr="identifier"/>
       <fieldconfig fieldExpr="primaryIdentifier"/>
+      <fieldconfig fieldExpr="secondaryIdentifier"/>
       <fieldconfig fieldExpr="symbol"/>
     </fields>
   </class>
 
   <class className="org.flymine.model.genomic.MicroarrayOligo">
     <fields>
-      <fieldconfig fieldExpr="identifier"/>
+      <fieldconfig fieldExpr="primaryIdentifier"/>
       <fieldconfig fieldExpr="length"/>
       <fieldconfig fieldExpr="distance3Prime"/>
       <fieldconfig fieldExpr="tm"/>
@@ -202,16 +203,16 @@
 
   <class className="org.flymine.model.genomic.Relation">
     <fields>
-      <fieldconfig fieldExpr="object.identifier"/>
-      <fieldconfig fieldExpr="subject.identifier"/>
+      <fieldconfig fieldExpr="object.primaryIdentifier"/>
+      <fieldconfig fieldExpr="subject.primaryIdentifier"/>
     </fields>
   </class>
 
   <class className="org.flymine.model.genomic.Orthologue">
     <fields>
-      <fieldconfig fieldExpr="object.identifier"/>
+      <fieldconfig fieldExpr="object.primaryIdentifier"/>
       <fieldconfig fieldExpr="object.organism.shortName"/>
-      <fieldconfig fieldExpr="subject.identifier"/>
+      <fieldconfig fieldExpr="subject.primaryIdentifier"/>
       <fieldconfig fieldExpr="subject.organism.shortName"/>
     </fields>
   </class>
@@ -224,8 +225,8 @@
 
   <class className="org.flymine.model.genomic.Location">
     <fields>
-      <fieldconfig fieldExpr="object.identifier"/>
-      <fieldconfig fieldExpr="subject.identifier"/>
+      <fieldconfig fieldExpr="object.primaryIdentifier"/>
+      <fieldconfig fieldExpr="subject.primaryIdentifier"/>
       <fieldconfig fieldExpr="start"/>
       <fieldconfig fieldExpr="end"/>
     </fields>
@@ -291,7 +292,7 @@
 
   <class className="org.flymine.model.genomic.Annotation">
     <fields>
-      <fieldconfig fieldExpr="subject.identifier"/>
+      <fieldconfig fieldExpr="subject.primaryIdentifier"/>
     </fields>
   </class>
 
@@ -324,7 +325,7 @@
 
   <class className="org.flymine.model.genomic.Reporter">
     <fields>
-      <fieldconfig fieldExpr="material.identifier" showInResults="false"/>
+      <fieldconfig fieldExpr="material.primaryIdentifier" showInResults="false"/>
       <fieldconfig fieldExpr="failType"/>
       <fieldconfig fieldExpr="isControl"/>
       <fieldconfig fieldExpr="controlType"/>
@@ -385,7 +386,7 @@
 
   <class className="org.flymine.model.genomic.GOAnnotation">
     <fields>
-      <fieldconfig fieldExpr="subject.identifier" showInInlineCollection="false"/>
+      <fieldconfig fieldExpr="subject.primaryIdentifier" showInInlineCollection="false"/>
       <fieldconfig fieldExpr="identifier"/>
       <fieldconfig fieldExpr="name"/>
       <fieldconfig fieldExpr="evidenceCode"/>
@@ -407,12 +408,4 @@
       <fieldconfig fieldExpr="interaction.shortName"/>
     </fields>
   </class>
-
-  <class className="org.flymine.model.genomic.ProteinRegion">
-    <fields>
-      <fieldconfig fieldExpr="identifier"/>
-      <fieldconfig fieldExpr="protein.identifier"/>
-     </fields>
-  </class>
-
 </webconfig>
