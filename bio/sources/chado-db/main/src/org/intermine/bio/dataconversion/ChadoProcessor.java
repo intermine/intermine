@@ -10,16 +10,16 @@ package org.intermine.bio.dataconversion;
  *
  */
 
+import java.sql.Connection;
+
 import org.intermine.dataconversion.ItemWriter;
 import org.intermine.metadata.Model;
 import org.intermine.objectstore.ObjectStoreException;
 import org.intermine.sql.Database;
 import org.intermine.xml.full.Attribute;
 
-import java.sql.Connection;
-
 /**
- * A proccesor for a chado module.  See http://www.gmod.org/wiki/index.php/Chado#Modules for
+ * A processor for a chado module.  See http://www.gmod.org/wiki/index.php/Chado#Modules for
  * documentation about the possible modules.
  * @author Kim Rutherford
  */
