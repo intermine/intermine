@@ -177,18 +177,9 @@ public class BioGridConverter extends FileConverter
                        && stack.peek().equals("xref")
                        && stack.search("interactor") == 2) {
 
-                // TODO can we have a gene with a different participant # but the same identifier?
                 String identifier = attrs.getValue("id");
                 geneIdsToIdentifiers.put(geneId, identifier);
-                genes.put(geneId, getGene(geneId));
-                
-            //<interactionList><interaction id="1"><names><shortLabel>107057-36612 
-                // this name isn't informative, so we use the identifiers instead
-//            } else if (qName.equals("shortLabel")
-//                       && stack.peek().equals("names")
-//                       && stack.search("interaction") == 2) {
-//
-//                attName = "interactionName";
+                getGene(identifier);
 
             //<interactionList><interaction>
             //<participantList><participant id="5"><interactorRef>
@@ -294,22 +285,19 @@ public class BioGridConverter extends FileConverter
                                 && stack.peek().equals("participant")) {
 
                     String id = attValue.toString();
-                    Item gene = getGene(id);
+                    String identifier = geneIdsToIdentifiers.get(id);
+                    Item gene = null;
+                    if (identifier != null) {
+                        gene = getGene(identifier);
+                    }
                     if (gene != null) {
                         interactorHolder = new InteractorHolder(gene);
                         holder.addInteractor(interactorHolder);
-                        holder.addGene(gene.getIdentifier(), id);
+                        holder.addGene(gene.getIdentifier(), identifier);
                     } else {
                         holder.isValid = false; // a gene/protein is missing for soem reason
+                        LOG.error("Gene/protein not found - " + identifier + " ( " + id + ")");
                     }
-
-                // <interactionList><interaction><names><shortLabel>
-                } else if (qName.equals("shortLabel")
-                                && attName != null
-                                && attName.equals("interactionName")) {
-
-                    String shortLabel = attValue.toString();
-                    holder = new InteractionHolder();
                    
                 //<interactionList><interaction><experimentList><experimentRef>
                 } else if (qName.equals("experimentRef")
@@ -391,16 +379,14 @@ public class BioGridConverter extends FileConverter
                     evidenceColl.addRefId(masterList.get("dataset"));
 
                     /* store all interaction-related items */
-                    if (!storedItems.contains(gene.getIdentifier())) {
+                    if (!storedItems.contains(gene.getAttribute("primaryIdentifier").getValue())) {
                         writer.store(ItemHelper.convert(gene));
-                        storedItems.add(gene.getIdentifier());
+                        storedItems.add(gene.getAttribute("primaryIdentifier").getValue());
                     }
                     
                     writer.store(ItemHelper.convert(interaction));
                 }
 
-                /* store experiment
-                 * TODO we need to not store until all interactions are processed */
                 ExperimentHolder eh = interactionHolder.experimentHolder;
                 if (!eh.isStored) {
                     eh.isStored = true;
@@ -430,17 +416,12 @@ public class BioGridConverter extends FileConverter
             return itemId;
         }
         
-        private Item getGene(String participantId) {
-            Item item = genes.get(participantId);
+        private Item getGene(String identifier) {
+            Item item = genes.get(identifier);
             if (item == null) {
-                String primaryIdentifier = geneIdsToIdentifiers.get(participantId);
-                if (primaryIdentifier != null) {
-                    item = createItem("Gene");
-                    item.setAttribute("primaryIdentifier", primaryIdentifier);
-                    genes.put(participantId, item);
-                } else {
-                    LOG.error("Gene/Protein wasn't in interactor list: #" + participantId);
-                }
+                item = createItem("Gene");
+                item.setAttribute("primaryIdentifier", identifier);
+                genes.put(identifier, item);
             }
             return item;
         }
@@ -559,7 +540,6 @@ public class BioGridConverter extends FileConverter
             
             /**
              * Constructor
-             * @param shortName name of this interaction
              */
             public InteractionHolder() {
                 
@@ -583,7 +563,7 @@ public class BioGridConverter extends FileConverter
 
             /**
              * @param identifier FBgn for a gene - used to create the shortName of the interaction
-             * @param geneId gene involved in interaction
+             * @param geneId reference to gene item involved in interaction
              */
             protected void addGene(String geneId, String identifier) {
                 geneIds.add(geneId);
