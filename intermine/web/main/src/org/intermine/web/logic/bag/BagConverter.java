@@ -47,8 +47,8 @@ public interface BagConverter
      * @param model the model
      * @param externalids the initial ids as a comma separated list
      * @param organism the organism to convert to
-     * @param bag the resulting bag
-     * @param initialParametersSize the number of parameters
+     * @param convertedSize the converted size
+     * @param type the type
      * @return an ActionMessage
      * @throws ObjectStoreException exception
      * @throws UnsupportedEncodingException exception
