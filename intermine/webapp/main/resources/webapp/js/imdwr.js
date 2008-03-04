@@ -114,11 +114,10 @@ function updateCountInColumnSummary() {
 }
 
 function updateUniqueCountInColumnSummary(uniqueCountQid) {
-    getResults(uniqueCountQid, 1000, resultsCountCallback, null);
+    getResultsSize(uniqueCountQid, 1000, resultsCountCallback, null, true);
 }
 
-function resultsCountCallback(results) {
-    var size = results[0][0];
+function resultsCountCallback(size) {
     if (size > 1) {
         var summaryUniqueCountElement = document.getElementById('summary_unique_count');
         summaryUniqueCountElement.style.display='inline';
@@ -190,40 +189,50 @@ function getColumnSummary(tableName, columnName, columnDisplayName) {
         setTimeout("updateCountInColumnSummary()", 200);
         setTimeout("updateUniqueCountInColumnSummary(" + uniqueCountQid + ")", 300);
     });
+
 }
 
-function getResultsPoller(qid, timeout, userCallback, userData) {
+var qid, timeout, userCallback;
+
+function getResultsPoller(qid, timeout, userCallback) {
     var callback = function(results) {
         if (results == null) {
             // try again
-            getResults(qid, timeout, userCallback, userData);
+            getResultsSize(qid, timeout, userCallback);
         } else {
-            if (!userCallback(results, userData)) {
-                getResults(qid, timeout, userCallback, userData);
+            if (!userCallback(results)) {
+                getResultsSize(qid, timeout, userCallback);
             }
         }
     }
 
-    AjaxServices.getResults(qid, callback);
+    AjaxServices.getResultsSize(qid, callback);
 }
 
-var qid, timeout,userCallback,userdata;
-function getResults(qid1, timeout1, usercallback1, userdata1) {
-	qid = qid1;
-	timeout = timeout1;
-	userCallback = usercallback1;
-	userdata = userdata1;
-	//Passing variables directly doesn't work in Safari
-    setTimeout("getResultsPoller(qid, timeout, userCallback, userData)", timeout);
-}
-
-function getResults(qid1,timeout1,usercallback1) {
+function getResultsSize(qid1, timeout1, usercallback1) {
 	qid = qid1;
 	timeout = timeout1;
 	userCallback = usercallback1;
 	//Passing variables directly doesn't work in Safari
-    setTimeout("getResultsPoller(qid, timeout, userCallback, null)", timeout);
+    setTimeout("getResultsPoller(qid, timeout, userCallback, true)", timeout);
 }
+
+// not needed for now:
+// function getResults(qid1, timeout1, usercallback1) {
+// 	qid = qid1;
+// 	timeout = timeout1;
+// 	userCallback = usercallback1;
+// 	//Passing variables directly doesn't work in Safari
+//     setTimeout("getResultsPoller(qid, timeout, userCallback, false)", timeout);
+// }
+
+// function getResults(qid1,timeout1,usercallback1) {
+// 	qid = qid1;
+// 	timeout = timeout1;
+// 	userCallback = usercallback1;
+// 	//Passing variables directly doesn't work in Safari
+//     setTimeout("getResultsPoller(qid, timeout, userCallback, false)", timeout);
+// }
 
 // delete all the child nodes of the node given by parentElement and create a child
 // element of type childTag, setting the text in the new child element to be

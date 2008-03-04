@@ -17,6 +17,16 @@ import java.util.List;
 import java.util.Map;
 import java.util.Properties;
 
+import org.intermine.path.Path;
+import org.intermine.web.logic.Constants;
+import org.intermine.web.logic.bag.BagQueryResult;
+import org.intermine.web.logic.query.OrderBy;
+import org.intermine.web.logic.query.PathQuery;
+import org.intermine.web.logic.results.Column;
+import org.intermine.web.logic.results.PagedTable;
+import org.intermine.web.logic.session.SessionMethods;
+import org.intermine.web.logic.template.TemplateQuery;
+
 import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -28,16 +38,6 @@ import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
 import org.apache.struts.tiles.ComponentContext;
 import org.apache.struts.tiles.actions.TilesAction;
-import org.intermine.path.Path;
-import org.intermine.web.logic.Constants;
-import org.intermine.web.logic.bag.BagQueryResult;
-import org.intermine.web.logic.query.OrderBy;
-import org.intermine.web.logic.query.PathQuery;
-import org.intermine.web.logic.results.Column;
-import org.intermine.web.logic.results.PagedTable;
-import org.intermine.web.logic.results.WebCollection;
-import org.intermine.web.logic.session.SessionMethods;
-import org.intermine.web.logic.template.TemplateQuery;
 import org.stringtree.json.JSONWriter;
 
 /**
@@ -94,8 +94,7 @@ public class TableController extends TilesAction
             return null;
         }
         request.setAttribute("resultsTable", pt);
-        if ((request.getAttribute("lookupResults") != null)
-            || (pt.getWebTable() instanceof WebCollection)) {
+        if ((request.getAttribute("lookupResults") != null)) {
           //Do nothing
         } else if (pt.getAllRows().getPathToBagQueryResult() != null) {
             Map<String, BagQueryResult> pathToBagQueryResult = pt.getAllRows()

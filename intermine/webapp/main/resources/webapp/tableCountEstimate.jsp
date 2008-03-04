@@ -30,10 +30,9 @@
 
 <script language="JavaScript">
   <!--
-function callback(results) {
+function callback(size) {
     document.getElementById('resultsCountEstimate').style.display='none';
     document.getElementById('resultsCountExact').style.display='inline';
-    var size = results[0][0];
     document.getElementById('resultsCountExactSize').innerHTML=size;
     document.resultsCountText = "${exactMessage} " + size;
     return true;
@@ -42,7 +41,7 @@ function callback(results) {
 window.onload = function() {
     var parsed = parseInt(${POLL_REFRESH_SECONDS});
     var refresh = parsed*1000;
-    getResults(${qid}, refresh, callback);
+    getResultsSize(${qid}, refresh, callback);
 }
 
 window.status = '';

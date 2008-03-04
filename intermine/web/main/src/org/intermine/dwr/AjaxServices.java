@@ -54,6 +54,7 @@ import org.intermine.web.logic.bag.TypeConverter;
 import org.intermine.web.logic.profile.Profile;
 import org.intermine.web.logic.profile.ProfileManager;
 import org.intermine.web.logic.query.MainHelper;
+import org.intermine.web.logic.query.PageTableQueryMonitor;
 import org.intermine.web.logic.query.PathQuery;
 import org.intermine.web.logic.query.QueryMonitorTimeout;
 import org.intermine.web.logic.query.SavedQuery;
@@ -63,6 +64,7 @@ import org.intermine.web.logic.results.WebResultsSimple;
 import org.intermine.web.logic.results.WebTable;
 import org.intermine.web.logic.search.SearchRepository;
 import org.intermine.web.logic.search.WebSearchable;
+import org.intermine.web.logic.session.QueryCountQueryMonitor;
 import org.intermine.web.logic.session.SessionMethods;
 import org.intermine.web.logic.tagging.TagTypes;
 import org.intermine.web.logic.template.TemplateHelper;
@@ -338,15 +340,15 @@ public class AjaxServices
         PagedTable pagedTable = new PagedTable(webResults);
 
         // Start the count of results
-        QueryMonitorTimeout clientState
-        = new QueryMonitorTimeout(Constants.QUERY_TIMEOUT_SECONDS * 1000);
-        MessageResources messages = (MessageResources) ctx.getHttpServletRequest()
-                                                          .getAttribute(Globals.MESSAGES_KEY);
         Query countQuery =
             MainHelper.makeSummaryQuery(pathQuery, allBags,
                                         new HashMap<String, QueryNode>(), summaryPath
                                         , servletContext);
-        String qid = SessionMethods.startQueryCount(clientState, session, messages, countQuery);
+        QueryCountQueryMonitor clientState
+            = new QueryCountQueryMonitor(Constants.QUERY_TIMEOUT_SECONDS * 1000, countQuery);
+        MessageResources messages = (MessageResources) ctx.getHttpServletRequest()
+                                                          .getAttribute(Globals.MESSAGES_KEY);
+        String qid = SessionMethods.startQueryCount(clientState, session, messages);
         return Arrays.asList(new Object[] {
                     pagedTable.getRows(), qid, new Integer(pagedTable.getExactSize())
                 });
@@ -359,7 +361,7 @@ public class AjaxServices
      * @param qid the id
      * @return the current rows from the table
      */
-    public static List getResults(String qid) {
+   /* public static List getResults(String qid) {
         // results to return if there is an internal error
         List<List<String>> unavailableListList = new ArrayList<List<String>>();
         ArrayList<String> unavailableList = new ArrayList<String>();
@@ -389,6 +391,51 @@ public class AjaxServices
             // Look at results, if only one result, go straight to object details page
             PagedTable pr = SessionMethods.getResultsTable(session, "results." + qid);
             return pr.getRows();
+        } else {
+            // query still running
+            LOG.debug("query qid " + qid + " still running, making client wait");
+            return null;
+        }
+    }
+*/
+
+    /**
+     * Return the number of rows of results from the query with the given query id.  If the size
+     * isn't yet available, return null.  The query must be started with
+     * SessionMethods.startPagedTableCount().
+     * @param qid the id
+     * @return the row count or null if not yet available
+     */
+    public static Integer getResultsSize(String qid) {
+        WebContext ctx = WebContextFactory.get();
+        HttpSession session = ctx.getSession();
+        QueryMonitorTimeout controller = (QueryMonitorTimeout)
+            SessionMethods.getRunningQueryController(qid, session);
+
+        // First tickle the controller to avoid timeout
+        controller.tickle();
+
+        if (controller.isCancelledWithError()) {
+            LOG.debug("query qid " + qid + " error");
+
+            return null;
+        } else if (controller.isCancelled()) {
+            LOG.debug("query qid " + qid + " cancelled");
+            return null;
+        } else if (controller.isCompleted()) {
+            LOG.debug("query qid " + qid + " complete");
+
+            if (controller instanceof PageTableQueryMonitor) {
+                PagedTable pt = ((PageTableQueryMonitor) controller).getPagedTable();
+                return pt.getExactSize();
+            } else {
+                if (controller instanceof QueryCountQueryMonitor) {
+                    return ((QueryCountQueryMonitor) controller).getCount();
+                } else {
+                    LOG.debug("query qid " + qid + " - unknown controller type");
+                    return null;
+                }
+            }
         } else {
             // query still running
             LOG.debug("query qid " + qid + " still running, making client wait");

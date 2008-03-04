@@ -10,13 +10,42 @@ package org.intermine.web.struts;
  *
  */
 
-import java.lang.reflect.Constructor;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Properties;
+
+import org.intermine.objectstore.query.ConstraintOp;
+
+import org.intermine.metadata.Model;
+import org.intermine.model.InterMineObject;
+import org.intermine.objectstore.ObjectStore;
+import org.intermine.objectstore.ObjectStoreException;
+import org.intermine.objectstore.ObjectStoreSummary;
+import org.intermine.objectstore.ObjectStoreWriter;
+import org.intermine.objectstore.intermine.ObjectStoreWriterInterMineImpl;
+import org.intermine.path.Path;
+import org.intermine.util.StringUtil;
+import org.intermine.web.logic.Constants;
+import org.intermine.web.logic.bag.BagConverter;
+import org.intermine.web.logic.bag.BagQueryConfig;
+import org.intermine.web.logic.bag.BagQueryResult;
+import org.intermine.web.logic.bag.InterMineBag;
+import org.intermine.web.logic.config.WebConfig;
+import org.intermine.web.logic.pathqueryresult.PathQueryResultHelper;
+import org.intermine.web.logic.profile.Profile;
+import org.intermine.web.logic.query.Constraint;
+import org.intermine.web.logic.query.PathQuery;
+import org.intermine.web.logic.query.QueryMonitorTimeout;
+import org.intermine.web.logic.results.PagedTable;
+import org.intermine.web.logic.results.WebResults;
+import org.intermine.web.logic.session.SessionMethods;
+import org.intermine.web.logic.template.TemplateHelper;
+import org.intermine.web.logic.template.TemplateQuery;
+
+import java.lang.reflect.Constructor;
 
 import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletRequest;
@@ -32,34 +61,6 @@ import org.apache.struts.action.ActionMapping;
 import org.apache.struts.action.ActionMessage;
 import org.apache.struts.action.ActionMessages;
 import org.apache.struts.util.MessageResources;
-import org.intermine.metadata.Model;
-import org.intermine.model.InterMineObject;
-import org.intermine.objectstore.ObjectStore;
-import org.intermine.objectstore.ObjectStoreException;
-import org.intermine.objectstore.ObjectStoreSummary;
-import org.intermine.objectstore.ObjectStoreWriter;
-import org.intermine.objectstore.intermine.ObjectStoreWriterInterMineImpl;
-import org.intermine.objectstore.query.ConstraintOp;
-import org.intermine.objectstore.query.ResultsRow;
-import org.intermine.path.Path;
-import org.intermine.util.StringUtil;
-import org.intermine.web.logic.Constants;
-import org.intermine.web.logic.bag.BagConverter;
-import org.intermine.web.logic.bag.BagQueryConfig;
-import org.intermine.web.logic.bag.BagQueryResult;
-import org.intermine.web.logic.bag.InterMineBag;
-import org.intermine.web.logic.config.WebConfig;
-import org.intermine.web.logic.pathqueryresult.PathQueryResultHelper;
-import org.intermine.web.logic.profile.Profile;
-import org.intermine.web.logic.query.Constraint;
-import org.intermine.web.logic.query.PathQuery;
-import org.intermine.web.logic.query.QueryMonitorTimeout;
-import org.intermine.web.logic.results.PagedTable;
-import org.intermine.web.logic.results.WebCollection;
-import org.intermine.web.logic.results.WebResults;
-import org.intermine.web.logic.session.SessionMethods;
-import org.intermine.web.logic.template.TemplateHelper;
-import org.intermine.web.logic.template.TemplateQuery;
 
 /**
  * The portal query action handles links into flymine from external sites.
@@ -143,7 +144,7 @@ public class PortalQueryAction extends InterMineAction
         Model model = os.getModel();
         BagQueryConfig bagQueryConfig =
                 (BagQueryConfig) servletContext.getAttribute(Constants.BAG_QUERY_CONFIG);
-        
+
 //        BagQueryRunner bagRunner =
 //                new BagQueryRunner(os, classKeys, bagQueryConfig, servletContext);
 
@@ -193,8 +194,8 @@ public class PortalQueryAction extends InterMineAction
                         os, classKeys,
                         bagQueryConfig, returnBagQueryResults, servletContext);
         // END
-        
-        
+
+
 //        BagQueryResult bagQueryResult =
 //            bagRunner.searchForBag(className, Arrays.asList(idList), organism, false);
 
@@ -203,7 +204,7 @@ public class PortalQueryAction extends InterMineAction
                         os , profile.getUserId() , uosw);
 
         List <Integer> bagList = new ArrayList <Integer> ();
-        
+
         // There's only one node, get the first value
         BagQueryResult bagQueryResult = (BagQueryResult) returnBagQueryResults.values().iterator()
                         .next();
@@ -248,7 +249,8 @@ public class PortalQueryAction extends InterMineAction
                         actionMessages.add(Constants.PORTAL_MSG,
                             new ActionMessage("portal.nomatches.orthologues", addparameter, extId));
                         session.setAttribute(Constants.PORTAL_MSG, actionMessages);
-                        return goToNoResults(mapping, session);
+                        return goToResults(mapping, os, model, className, webConfig, classKeys,
+                                           session, webResults);
                     }
                     actionMessages.add(Constants.PORTAL_MSG, bagConverter.getActionMessage(model,
                         extId, converted.size(), className, addparameter));
@@ -298,7 +300,8 @@ public class PortalQueryAction extends InterMineAction
             return goToBagDetails(mapping, os, imBag, bagList, profile);
         // No matches
         } else {
-            return goToNoResults(mapping, session);
+            return goToResults(mapping, os, model, className, webConfig, classKeys,
+                               session, webResults);
         }
     }
 
@@ -329,16 +332,10 @@ public class PortalQueryAction extends InterMineAction
         return new ForwardParameters(mapping.findForward("objectDetails"))
         .addParameter("id", id).forward();
     }
-    
+
     private ActionForward goToNoResults(ActionMapping mapping, HttpSession session) {
-        WebCollection webCollection = new WebCollection("", new ArrayList());
-        PagedTable pc = new PagedTable(webCollection);
-        String identifier = "col" + index++;
-        SessionMethods.setResultsTable(session, identifier, pc);
-        return new ForwardParameters(mapping.findForward("results"))
-        .addParameter("noSelect", "true")
-        .addParameter("table", identifier)
-        .addParameter("trail", "").forward();
+        ActionForward forward = mapping.findForward("noResults");
+        return new ForwardParameters(forward).addParameter("trail", "").forward();
     }
 
     /**
