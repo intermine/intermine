@@ -46,8 +46,8 @@ public class MalariaGFF3RecordHandler extends GFF3RecordHandler
             if (feature.getAttribute("symbol") != null) {
                 identifier = feature.getAttribute("symbol").getValue();
             }
-            if (feature.getAttribute("identifier") != null) {
-                symbol = feature.getAttribute("identifier").getValue();
+            if (feature.getAttribute("secondaryIdentifier") != null) {
+                symbol = feature.getAttribute("secondaryIdentifier").getValue();
             }
             if (identifier != null) {
                 feature.setAttribute("primaryIdentifier", identifier);
