@@ -549,7 +549,7 @@ public class GoConverter extends FileConverter
                     String prefix = entry.substring(0, entry.indexOf(':'));
                     String value = entry.substring(entry.indexOf(':') + 1);
 
-                    if (withTypes.containsKey(prefix)) {
+                    if (withTypes.containsKey(prefix) && (value != null) && (!value.equals(""))) {
                         WithType wt = withTypes.get(prefix);
                         ItemWrapper productWrapper = null;
 
