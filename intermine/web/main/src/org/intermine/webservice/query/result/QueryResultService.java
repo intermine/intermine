@@ -24,6 +24,8 @@ import org.intermine.objectstore.ObjectStore;
 import org.intermine.objectstore.query.Results;
 import org.intermine.web.logic.Constants;
 import org.intermine.web.logic.bag.InterMineBag;
+import org.intermine.web.logic.export.Exporter;
+import org.intermine.web.logic.export.ExporterFactory;
 import org.intermine.web.logic.query.PathQuery;
 import org.intermine.web.logic.results.WebResults;
 import org.intermine.web.logic.session.SessionMethods;
@@ -31,7 +33,8 @@ import org.intermine.webservice.WebService;
 import org.intermine.webservice.WebServiceConstants;
 import org.intermine.webservice.WebServiceException;
 import org.intermine.webservice.core.PathQueryExecutor;
-import org.intermine.webservice.core.ResultProcessor;
+import org.intermine.webservice.core.ResultRowParser;
+import org.intermine.webservice.core.ResultRowParserImpl;
 import org.intermine.webservice.output.HTMLTable;
 import org.intermine.webservice.output.MemoryOutput;
 
@@ -116,11 +119,11 @@ public class QueryResultService extends WebService
         PathQueryExecutor executor = new PathQueryExecutor(request, pathQuery);
         Results results = executor.getResults();
         results.setBatchSize(BATCH_SIZE);
-        ResultRowParser rowParser = new ResultRowParser(pathQuery, getObjectStore().getModel(), 
+        ResultRowParser rowParser = new ResultRowParserImpl(pathQuery, getObjectStore().getModel(), 
                 WebResults.getPathToIndex(executor.getQuery(), executor.getPathToQueryNode()));
-        ResultProcessor processor = new ResultProcessor(results, rowParser, 
-                firstResult, maxResults);
-        processor.write(output);        
+        Exporter exporter = new ExporterFactory(results, rowParser, firstResult, 
+                maxResults, output).createExporter();
+        exporter.export();
         forward(pathQuery, title, description);
     }
 
