@@ -11,6 +11,7 @@ package org.intermine.web.struts;
  */
 
 import org.intermine.web.logic.Constants;
+import org.intermine.web.logic.query.PageTableQueryMonitor;
 import org.intermine.web.logic.query.QueryMonitorTimeout;
 import org.intermine.web.logic.results.PagedTable;
 import org.intermine.web.logic.session.SessionMethods;
@@ -28,7 +29,8 @@ import org.apache.struts.tiles.actions.TilesAction;
 import org.apache.struts.util.MessageResources;
 
 /**
- *
+ * Start a count in a separate thread of the number of rows in the PagedTable given by the
+ * "resultsTable" request attribute.
  * @author Kim Rutherford
  */
 public class CountTableController extends TilesAction
@@ -36,6 +38,7 @@ public class CountTableController extends TilesAction
     /**
      * {@inheritDoc}
      */
+    @Override
     public ActionForward execute(@SuppressWarnings("unused") ComponentContext context,
                                  @SuppressWarnings("unused") ActionMapping mapping,
                                  @SuppressWarnings("unused") ActionForm form,
@@ -44,12 +47,12 @@ public class CountTableController extends TilesAction
     throws Exception {
         HttpSession session = request.getSession();
 
-        QueryMonitorTimeout clientState
-                = new QueryMonitorTimeout(Constants.QUERY_TIMEOUT_SECONDS * 1000);
         MessageResources messages = (MessageResources) request.getAttribute(Globals.MESSAGES_KEY);
         PagedTable pt = (PagedTable) request.getAttribute("resultsTable");
-        String qid = SessionMethods.startCollectionCount(clientState, session, messages,
-                                                         pt.getAllRows());
+
+        PageTableQueryMonitor clientState
+                = new PageTableQueryMonitor(Constants.QUERY_TIMEOUT_SECONDS * 1000, pt);
+        String qid = SessionMethods.startPagedTableCount(clientState, session, messages);
         request.setAttribute("qid", qid);
         request.setAttribute("POLL_REFRESH_SECONDS", new Integer(Constants.POLL_REFRESH_SECONDS));
         return null;
