@@ -11,11 +11,8 @@ package org.intermine.web.struts;
  */
 
 import java.util.Date;
-import java.util.Iterator;
 import java.util.List;
-import java.util.Set;
 
-import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
@@ -28,26 +25,20 @@ import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
 import org.apache.struts.action.ActionMessage;
-import org.intermine.metadata.ClassDescriptor;
-import org.intermine.metadata.Model;
-import org.intermine.model.InterMineObject;
-import org.intermine.objectstore.ObjectStore;
 import org.intermine.objectstore.ObjectStoreException;
 import org.intermine.util.FormattedTextWriter;
-import org.intermine.util.TypeUtil;
 import org.intermine.web.logic.Constants;
 import org.intermine.web.logic.WebUtil;
-import org.intermine.web.logic.config.FieldConfig;
-import org.intermine.web.logic.config.FieldConfigHelper;
 import org.intermine.web.logic.config.TableExportConfig;
 import org.intermine.web.logic.config.WebConfig;
+import org.intermine.web.logic.export.Exporter;
 import org.intermine.web.logic.export.TableExporter;
-import org.intermine.web.logic.profile.Profile;
+import org.intermine.web.logic.export.TableExporterFactory;
 import org.intermine.web.logic.results.Column;
-import org.intermine.web.logic.results.DisplayObject;
 import org.intermine.web.logic.results.PagedTable;
 import org.intermine.web.logic.results.WebResults;
 import org.intermine.web.logic.session.SessionMethods;
+import org.intermine.webservice.core.ResultRowParser;
 
 /**
  * Implementation of <strong>Action</strong> that allows the user to export a PagedTable to a file
@@ -86,13 +77,23 @@ public class ExportAction extends InterMineAction
             if (rowList instanceof WebResults) {
                 ((WebResults) rowList).goFaster();
             }
-
+            
             if (type.equals("excel")) {
                 return excel(mapping, request, response, pt);
             } else if (type.equals("csv")) {
-                return csv(request, response, pt);
+                writeCSVHeader(response);
+                Exporter exporter = new TableExporterFactory(pt.getAllRows(), 
+                        response.getOutputStream(), getOrder(pt), getVisible(pt), 
+                        pt.getMaxRetrievableIndex() + 1, TableExporterFactory.CSV).createExporter();
+                exporter.export();
+                return null;
             } else if (type.equals("tab")) {
-                return tab(request, response, pt);
+                writeTSVHeader(response);
+                Exporter exporter = new TableExporterFactory(pt.getAllRows(), 
+                        response.getOutputStream(), getOrder(pt), getVisible(pt), 
+                        pt.getMaxRetrievableIndex() + 1, TableExporterFactory.TAB).createExporter();
+                exporter.export();
+                return null;
             } else {
                 WebConfig wc = (WebConfig) session.getServletContext().
                     getAttribute(Constants.WEBCONFIG);
@@ -104,8 +105,8 @@ public class ExportAction extends InterMineAction
                     return mapping.findForward("error");
                 } else {
                     TableExporter tableExporter =
-                        (TableExporter) Class.forName(tableExportConfig.getClassName()).newInstance();
-
+                        (TableExporter) Class.forName(tableExportConfig.getClassName()).
+                            newInstance();
                     return tableExporter.export(mapping, form, request, response);
                 }
             }
@@ -144,10 +145,6 @@ public class ExportAction extends InterMineAction
                                HttpServletResponse response, PagedTable pt)
         throws Exception {
         HttpSession session = request.getSession();
-        ServletContext servletContext = session.getServletContext();
-        ObjectStore os = (ObjectStore) servletContext.getAttribute(Constants.OBJECTSTORE);
-        Model model = os.getModel();
-        WebConfig webConfig = (WebConfig) servletContext.getAttribute(Constants.WEBCONFIG);
 
         writeExcelHeader(response);
 
@@ -248,63 +245,16 @@ public class ExportAction extends InterMineAction
         response.setHeader("Content-Disposition", "attachment; filename=\"results-table.xls\"");
     }
 
-    /**
-     * Export the RESULTS_TABLE to Excel format by writing it to the OutputStream of the Response.
-     *
-     * @param request The HTTP request we are processing
-     * @param response The HTTP response we are creating
-     * @param pt the PagedTable to export
-     * @return an ActionForward object defining where control goes next
-     * @exception Exception if the application business logic throws
-     *  an exception
-     */
-    public ActionForward csv(HttpServletRequest request,
-                             HttpServletResponse response, PagedTable pt)
-        throws Exception {
-        HttpSession session = request.getSession();
-        ServletContext servletContext = session.getServletContext();
-        ObjectStore os = (ObjectStore) servletContext.getAttribute(Constants.OBJECTSTORE);
-        Model model = os.getModel();
-        WebConfig webConfig = (WebConfig) servletContext.getAttribute(Constants.WEBCONFIG);
-
+    private void writeCSVHeader(HttpServletResponse response) {
         response.setContentType("text/comma-separated-values");
         response.setHeader("Pragma", "no-cache");
         response.setHeader("Content-Disposition", "inline; filename=\"results-table.csv\"");
-
-        new FormattedTextWriter(response.getOutputStream(), 
-                getOrder(pt), getVisible(pt), pt.getMaxRetrievableIndex() + 1).writeCSVTable(pt.getAllRows());
-        return null;
     }
 
-    /**
-     * Export the RESULTS_TABLE to Excel format by writing it to the OutputStream of the Response.
-     *
-     * @param request The HTTP request we are processing
-     * @param response The HTTP response we are creating
-     * @param pt the PagedTable to export
-     * @return an ActionForward object defining where control goes next
-     * @exception Exception if the application business logic throws
-     *  an exception
-     */
-    public ActionForward tab(HttpServletRequest request,
-                             HttpServletResponse response, PagedTable pt)
-        throws Exception {
-        HttpSession session = request.getSession();
-        ServletContext servletContext = session.getServletContext();
-        ObjectStore os = (ObjectStore) servletContext.getAttribute(Constants.OBJECTSTORE);
-        Model model = os.getModel();
-        WebConfig webConfig = (WebConfig) servletContext.getAttribute(Constants.WEBCONFIG);
-
+    private void writeTSVHeader(HttpServletResponse response) {
         response.setContentType("text/tab-separated-values");
         response.setHeader("Pragma", "no-cache");
         response.setHeader("Content-Disposition", "inline; filename=\"results-table.tsv\"");
-
-        List allRows = pt.getAllRows();
-
-        new FormattedTextWriter(response.getOutputStream(), 
-                getOrder(pt), getVisible(pt),
-                pt.getMaxRetrievableIndex() + 1).writeTabDelimitedTable(allRows);
-        return null;
     }
 
     /**

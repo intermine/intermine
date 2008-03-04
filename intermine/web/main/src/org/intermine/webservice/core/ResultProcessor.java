@@ -16,7 +16,6 @@ import java.util.List;
 import org.intermine.objectstore.query.Results;
 import org.intermine.objectstore.query.ResultsRow;
 import org.intermine.webservice.output.Output;
-import org.intermine.webservice.query.result.ResultRowParser;
 
 /**
  * Processor of Results object for easy accessing and parsing of results to list of strings.

@@ -1,4 +1,4 @@
-package org.intermine.webservice.query.result;
+package org.intermine.webservice.core;
 
 /*
  * Copyright (C) 2002-2008 FlyMine
@@ -26,7 +26,7 @@ import org.intermine.web.logic.query.PathQuery;
  * Parser that parses ResultsRow to list of strings. 
  * @author Jakub Kulaviak
  **/
-public class ResultRowParser
+public class ResultRowParserImpl implements ResultRowParser
 {
 
     private PathQuery pathQuery;
@@ -41,17 +41,19 @@ public class ResultRowParser
      * @param model model
      * @param pathToIndex mapping between path and index of object in ResultsRow
      */
-    public ResultRowParser(PathQuery pathQuery, Model model, HashMap<String, Integer> pathToIndex) {
+    public ResultRowParserImpl(PathQuery pathQuery, Model model, 
+            HashMap<String, Integer> pathToIndex) {
         this.pathQuery = pathQuery;
         this.model = model;
         this.pathToIndex = pathToIndex;
     }
     
-    /**
-     * Parses ResultsRow to get list of strings according to the view part
-     * of path query.  
-     * @param resultsRow parsed row
-     * @return parsed results
+    /** 
+     * Parses result row according to the view of PathQuery that created this result.
+     * @param resultsRow result row
+     * @see org.intermine.webservice.query.result.
+     *  ResultRowParser#parse(org.intermine.objectstore.query.ResultsRow)
+     *  @return result row as a list of strings
      */
     public List<String> parse(ResultsRow resultsRow) {
         ArrayList<String> ret = new ArrayList<String>();
