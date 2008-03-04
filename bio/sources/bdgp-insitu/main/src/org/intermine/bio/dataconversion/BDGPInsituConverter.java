@@ -19,7 +19,6 @@ import java.util.Map;
 import java.util.Set;
 
 import org.apache.log4j.Logger;
-import org.intermine.dataconversion.DataConverter;
 import org.intermine.dataconversion.FileConverter;
 import org.intermine.dataconversion.ItemWriter;
 import org.intermine.metadata.Model;
@@ -131,6 +130,12 @@ public class BDGPInsituConverter extends FileConverter
                 }
             }
         }
+        
+       for (Item result: results.values()) {
+           if (result.getCollection("mRNAExpressionTerms").getRefIds().isEmpty()) {
+               result.setAttribute("expressed", "false");
+           }
+       }
         
         storeAll(imgs);
         storeAll(results);
