@@ -14,13 +14,14 @@
 <c:forEach items="${bag.classDescriptors}" var="cld">
   <c:if test="${fn:length(WEBCONFIG.types[cld.name].bagDisplayers) > 0}">
 
-<div id="linkOuts" class="pageDesc" align="left">
+<div id="linkOuts" class="listtoolbox" align="left">
 <h3>Link outs</h3>
-  
+<p>  
     <c:forEach items="${WEBCONFIG.types[cld.name].bagDisplayers}" var="displayer">
       <c:set var="bag" value="${bag}" scope="request"/>
       <tiles:insert beanName="displayer" beanProperty="src"/><br/>
     </c:forEach>
+</p>
 </div>
 <script type="text/javascript">
         Nifty("div#linkOuts","transparent");

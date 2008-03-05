@@ -10,9 +10,6 @@ package org.intermine.web.struts;
  *
  */
 
-import org.intermine.web.logic.results.PagedTable;
-import org.intermine.web.logic.session.SessionMethods;
-
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
@@ -20,6 +17,8 @@ import javax.servlet.http.HttpSession;
 import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
+import org.intermine.web.logic.results.PagedTable;
+import org.intermine.web.logic.session.SessionMethods;
 
 /**
  * Implementation of <strong>DispatchAction</strong>. Changes the
@@ -42,13 +41,12 @@ public class ChangeTableAction extends InterMineDispatchAction
                               @SuppressWarnings("unused") ActionForm form,
                               HttpServletRequest request,
                               @SuppressWarnings("unused") HttpServletResponse response) {
-        HttpSession session = request.getSession();
-        PagedTable pt = SessionMethods.getResultsTable(session, request.getParameter("table"));
+        PagedTable pt = getPagedTable(request);
 
         int page = ((pt.getExactSize() - 1) / pt.getPageSize());
         pt.setPageAndPageSize(page, pt.getPageSize());
 
-        return makeResultsForward(mapping.findForward("results"), request, pt);
+        return makeForward(mapping, request, pt);
     }
 
     /**
@@ -63,13 +61,12 @@ public class ChangeTableAction extends InterMineDispatchAction
                                     @SuppressWarnings("unused") ActionForm form,
                                     HttpServletRequest request,
                                     @SuppressWarnings("unused") HttpServletResponse response) {
-        HttpSession session = request.getSession();
-        PagedTable pt = SessionMethods.getResultsTable(session, request.getParameter("table"));
+        PagedTable pt = getPagedTable(request);
 
         int index = Integer.parseInt(request.getParameter("index"));
         pt.getColumns().get(index).setVisible(false);
 
-        return makeResultsForward(mapping.findForward("results"), request, pt);
+        return makeForward(mapping, request, pt);
     }
 
     /**
@@ -84,13 +81,12 @@ public class ChangeTableAction extends InterMineDispatchAction
                                     @SuppressWarnings("unused") ActionForm form,
                                     HttpServletRequest request,
                                     @SuppressWarnings("unused") HttpServletResponse response) {
-        HttpSession session = request.getSession();
-        PagedTable pt = SessionMethods.getResultsTable(session, request.getParameter("table"));
+        PagedTable pt = getPagedTable(request);
 
         int index = Integer.parseInt(request.getParameter("index"));
         pt.getColumns().get(index).setVisible(true);
 
-        return makeResultsForward(mapping.findForward("results"), request, pt);
+        return makeForward(mapping, request, pt);
     }
 
     /**
@@ -105,13 +101,12 @@ public class ChangeTableAction extends InterMineDispatchAction
                                         @SuppressWarnings("unused") ActionForm form,
                                         HttpServletRequest request,
                                         @SuppressWarnings("unused") HttpServletResponse response) {
-        HttpSession session = request.getSession();
-        PagedTable pt = SessionMethods.getResultsTable(session, request.getParameter("table"));
+        PagedTable pt = getPagedTable(request);
 
         int index = Integer.parseInt(request.getParameter("index"));
         pt.moveColumnLeft(index);
 
-        return makeResultsForward(mapping.findForward("results"), request, pt);
+        return makeForward(mapping, request, pt);
     }
 
     /**
@@ -127,30 +122,54 @@ public class ChangeTableAction extends InterMineDispatchAction
                                          HttpServletRequest request,
                                          @SuppressWarnings("unused") HttpServletResponse response) {
         HttpSession session = request.getSession();
-        PagedTable pt = SessionMethods.getResultsTable(session, request.getParameter("table"));
+        PagedTable pt = getPagedTable(request);
+        String forwardName = (String) request.getAttribute("currentPage");
 
         int index = Integer.parseInt(request.getParameter("index"));
         pt.moveColumnRight(index);
 
-        return makeResultsForward(mapping.findForward("results"), request, pt);
+        return makeForward(mapping, request, pt);
+    }
+
+    private PagedTable getPagedTable(HttpServletRequest request) {
+        String forwardName = request.getParameter("currentPage");
+        PagedTable pt = null;
+        if (forwardName.equals("results")) {
+            pt = SessionMethods.getResultsTable(request.getSession(), request
+                            .getParameter("table"));
+        } else if (forwardName.equals("bagDetails")) {
+            pt = SessionMethods.getResultsTable(request.getSession(),
+                                "bag." + request.getParameter("bagName"));
+        }
+        return pt;
     }
 
     /**
      * Create a forward with parameters setting start item and page size.
-     *
-     * @param results ActionForward to results action
+     * @param mapping TODO
      * @param request the current HttpServletRequest
      * @param pt PagedTable
+     *
      * @return an ActionForward with parameters
      */
-    protected ActionForward makeResultsForward(ActionForward results, HttpServletRequest request,
-                                                             PagedTable pt) {
-        ForwardParameters forward = new ForwardParameters(results)
-                .addParameter("table", request.getParameter("table"))
-                .addParameter("page", "" + pt.getPage());
-        if (request.getParameter("trail") != null) {
-            forward.addParameter("trail", request.getParameter("trail"));
+    protected ActionForward makeForward(ActionMapping mapping, HttpServletRequest request,
+                                        PagedTable pt) {
+        String forwardName = request.getParameter("currentPage");
+        if (forwardName.equals("results")) {
+            ForwardParameters forward = new ForwardParameters(mapping.findForward(forwardName))
+                            .addParameter("table", request.getParameter("table")).addParameter(
+                                            "page", "" + pt.getPage());
+            if (request.getParameter("trail") != null) {
+                forward.addParameter("trail", request.getParameter("trail"));
+            }
+            return forward.forward();
+        } else
+            if (forwardName.equals("bagDetails")) {
+                ForwardParameters forward = new ForwardParameters(mapping.findForward(forwardName))
+                                .addParameter("bagName", request.getParameter("bagName"))
+                                .addParameter("page", "" + pt.getPage());
+                return forward.forward();
         }
-        return forward.forward();
+        return null;
     }
 }

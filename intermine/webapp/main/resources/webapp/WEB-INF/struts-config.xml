@@ -162,6 +162,7 @@
     </action>
     <action path="/changeTable" type="org.intermine.web.struts.ChangeTableAction" parameter="method">
       <forward name="results" redirect="true" path="/results.do"/>
+      <forward name="bagDetails" redirect="true" path="/bagDetails.do"/>
     </action>
     <action path="/changeTree" type="org.intermine.web.struts.TreeAction" parameter="method">
       <forward name="renderTree" path="tree.page"/>
@@ -283,7 +284,7 @@
     </action>
     <action path="/saveBag" name="saveBagForm" type="org.intermine.web.struts.SaveBagAction" input="results" validate="false">
       <forward name="results" redirect="true" path="/results.do"/>
-      <forward name="bag" redirect="true" path="/bagDetails.do"/>
+      <forward name="bag" path="/bagDetails.do"/>
     </action>
     <action path="/saveQuery" name="saveQueryForm" type="org.intermine.web.struts.SaveQueryAction" input="query">
       <forward name="query" path="query.page"/>
@@ -418,6 +419,8 @@
     <action path="/initTableCountEstimate" type="org.intermine.web.struts.CountTableController"/>
     <action path="/initConvertBag" type="org.intermine.web.struts.ConvertBagController"/>
     <action path="/initErrorMessages" type="org.intermine.web.struts.ErrorMessagesController"/>
+    <action path="/initResultsTable" type="org.intermine.web.struts.TableController"/>
+
     <!-- don't (re)move this - it's used for importing any model-specific actions -->
     <!--@MODEL_INCLUDE@-->
   </action-mappings>

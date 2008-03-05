@@ -447,4 +447,12 @@ public class Path
         }
         return getStartClassDescriptor().getUnqualifiedName() + sb.toString();
     }
+    
+    /**
+     * Required for jsp
+     * @return a String version of the Path
+     */
+    public String getNoConstraintsString() {
+        return toStringNoConstraints();
+    }
 }

@@ -18,11 +18,11 @@
       <c:choose>
       <c:when test="${!resultsTable.firstPage}">
         <c:if test="${short != 'true'}">
-          <html:link action="/results?table=${param.table}&amp;page=0&amp;size=${resultsTable.pageSize}&amp;trail=${param.trail}">
+          <html:link action="/${currentPage}?table=${param.table}&amp;bagName=${bagName}&amp;page=0&amp;size=${resultsTable.pageSize}&amp;trail=${param.trail}">
             &lt;&lt;&nbsp;<fmt:message key="results.first"/>
           </html:link>
         </c:if>
-        <html:link action="/results?table=${param.table}&amp;page=${resultsTable.page-1}&amp;size=${resultsTable.pageSize}&amp;trail=${param.trail}">
+        <html:link action="/${currentPage}?table=${param.table}&amp;bagName=${bagName}&amp;page=${resultsTable.page-1}&amp;size=${resultsTable.pageSize}&amp;trail=${param.trail}">
           &lt;&nbsp;<fmt:message key="results.previous"/>&nbsp;|&nbsp;
         </html:link>
       </c:when>
@@ -33,7 +33,7 @@
     </c:choose>
     <c:choose>
       <c:when test="${!resultsTable.lastPage && (resultsTable.page+2)*resultsTable.pageSize < resultsTable.maxRetrievableIndex}">
-        <html:link action="/results?table=${param.table}&amp;page=${resultsTable.page+1}&amp;size=${resultsTable.pageSize}&amp;trail=${param.trail}">
+        <html:link action="/${currentPage}?table=${param.table}&amp;bagName=${bagName}&amp;page=${resultsTable.page+1}&amp;size=${resultsTable.pageSize}&amp;trail=${param.trail}">
           <fmt:message key="results.next"/>&nbsp;&gt;
         </html:link>
       </c:when>

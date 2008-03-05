@@ -234,7 +234,8 @@
   <definition name="convertBag.tile" path="convertBag.jsp" controllerUrl="/initConvertBag.do" />  
   <definition name="errorMessages.tile" path="errorMessages.jsp" controllerUrl="/initErrorMessages.do" />  
   <definition name="errorMessagesContainers.tile" path="errorMessagesContainers.jsp" />  
-  <definition name="resultsTable.tile" path="resultsTable.jsp" />  
+  <definition name="resultsTable.tile" path="resultsTable.jsp"/>
+  <definition name="paging.tile" path="paging.jsp" />  
 
   <!-- don't (re)move this - it's used for importing any model-specific actions -->
   <!--@MODEL_INCLUDE@-->

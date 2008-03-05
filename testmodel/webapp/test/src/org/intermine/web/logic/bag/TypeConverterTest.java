@@ -118,7 +118,7 @@ public class TypeConverterTest extends MockStrutsTestCase
         expected.add(((List) r.get(1)).get(1));
 
         List<TemplateQuery> convTemplates = BagQueryRunner.getConversionTemplates(context);
-        WebResults got = TypeConverter.getConvertedObjects(context, convTemplates, Employee.class, Address.class, imb);
+        WebResults got = TypeConverter.getConvertedObjects(getSession(), context, convTemplates, Employee.class, Address.class, imb);
 
         assertEquals(expected, got);
     }
