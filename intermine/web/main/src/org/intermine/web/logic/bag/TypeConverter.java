@@ -18,17 +18,22 @@ import java.util.List;
 import java.util.Map;
 
 import javax.servlet.ServletContext;
+import javax.servlet.http.HttpSession;
 
 import org.intermine.InterMineException;
+import org.intermine.metadata.Model;
 import org.intermine.model.InterMineObject;
 import org.intermine.objectstore.ObjectStore;
 import org.intermine.objectstore.ObjectStoreException;
 import org.intermine.objectstore.query.ConstraintOp;
 import org.intermine.objectstore.query.Query;
-import org.intermine.objectstore.query.QueryNode;
 import org.intermine.objectstore.query.Results;
 import org.intermine.path.Path;
+import org.intermine.util.TypeUtil;
 import org.intermine.web.logic.Constants;
+import org.intermine.web.logic.config.WebConfig;
+import org.intermine.web.logic.pathqueryresult.PathQueryResultHelper;
+import org.intermine.web.logic.profile.Profile;
 import org.intermine.web.logic.query.Constraint;
 import org.intermine.web.logic.query.MainHelper;
 import org.intermine.web.logic.query.PathNode;
@@ -137,32 +142,34 @@ public class TypeConverter
      * @return a WebResults object containing the converted objects
      * @throws InterMineException if an error occurs
      */
-    public static WebResults getConvertedObjects(ServletContext servletContext,
-                                              List<TemplateQuery> conversionTemplates,
-                                              Class typeA, Class typeB, InterMineBag imBag)
-    throws InterMineException {
+    public static WebResults getConvertedObjects(HttpSession session,
+                                                 ServletContext servletContext,
+                                                 List<TemplateQuery> conversionTemplates,
+                                                 Class typeA, Class typeB, InterMineBag imBag)
+    throws InterMineException, ObjectStoreException {
         PathQuery pq = getConversionQuery(conversionTemplates, typeA, typeB, imBag);
         if (pq == null) {
             return null;
         }
+        Path configuredPath = pq.getView().get(0);
+        WebConfig webConfig = (WebConfig) servletContext.getAttribute(Constants.WEBCONFIG);
+        Model model = ((ObjectStore) servletContext.getAttribute(Constants.OBJECTSTORE)).getModel();
+        pq.setView(PathQueryResultHelper
+                        .getDefaultView(TypeUtil.unqualifiedName(typeB.getName()), model,
+                                        webConfig, configuredPath.getPrefix()
+                                                        .toStringNoConstraints(), false));
         String label = null, id = null, code = pq.getUnusedConstraintCode();
         Constraint c = new Constraint(ConstraintOp.IN, imBag.getName(), false,
             label, code, id, null);
         pq.addNode(imBag.getType()).getConstraints().add(c);
-        Query q;
-        try {
-            q = MainHelper.makeQuery(pq, Collections.EMPTY_MAP, null, servletContext, null, false,
-                    (ObjectStore) servletContext.getAttribute(Constants.OBJECTSTORE),
-                    (Map) servletContext.getAttribute(Constants.CLASS_KEYS),
-                    (BagQueryConfig) servletContext.getAttribute(Constants.BAG_QUERY_CONFIG));
-        } catch (ObjectStoreException e) {
-            throw new InterMineException(e);
-        }
 
-        ObjectStore os = (ObjectStore) servletContext.getAttribute(Constants.OBJECTSTORE);
-        Results res = os.execute(q);
-        return (new WebResults(pq, res, os.getModel(), new HashMap<String, QueryNode>(),
-                                 (Map) servletContext.getAttribute(Constants.CLASS_KEYS), null));
+        Profile profile = (Profile) session.getAttribute(Constants.PROFILE);
+        WebResults webResults = PathQueryResultHelper.createPathQueryGetResults(pq, profile,
+                        (ObjectStore) servletContext.getAttribute(Constants.OBJECTSTORE),
+                        (Map) servletContext.getAttribute(Constants.CLASS_KEYS),
+                        (BagQueryConfig) servletContext.getAttribute(Constants.BAG_QUERY_CONFIG),
+                        servletContext);
+        return webResults;
     }
 
 
