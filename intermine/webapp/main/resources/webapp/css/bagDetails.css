@@ -9,14 +9,22 @@
   width:100%;text-align: center;}
 
 #bagDescriptionDiv{
-  padding:10px;
+  padding:0 10px 10px 10px;
   overflow: auto;
-  height:50px;
+  height:110px;
   width:100%;
   text-align:left;}
 
+#textarea {
+	padding:5px; margin:0;
+	width:100%;height:100px;}
+
 #emptyDesc{
   text-align:center;font-style: italic;}
+
+table tr td.tableleftcol {
+    padding:0 15px 0 0;
+}
 
 li {
   margin-left: 10px;
@@ -28,3 +36,24 @@ li {
 #linkOuts{
   padding:0 10px 10px 10px;}
   
+.listtoolbox { 
+  padding: 0 10px 10px 10px; margin: 0 15px 15px 15px;
+  background-color: #F5F0FF; vertical-align: middle; text-align: left;}
+  
+.listtoolbox h3, #bagDescriptionDiv h3 {
+  color:#333; font-size:1.2em;}
+
+.listtoolbox p, #bagDescriptionDiv p {
+  margin:10px 0px 0px 20px;}
+
+table.listinfotable {
+}
+table.listinfotable tr td {
+    font-style: italic;
+}
+table.listinfotable tr td.infotitle {
+    font-style: normal;
+    text-align:right;
+    color:#5C0075;
+    padding-right:10px;
+}

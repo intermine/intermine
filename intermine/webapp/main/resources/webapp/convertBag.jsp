@@ -20,12 +20,14 @@
     <c:if test="${orientation=='h'}">
      <c:forEach items="${customConverters}" var="converterInfo">
     <h3><%--<c:out value="${converterInfo.key}" />--%>Orthologues</h3>
+    <p>
     <html:select property="extraFieldValue" styleId="extraConstraintSelect" >
         <c:forEach items="${converterInfo.value}" var="value">
          <html:option value="${value}">${value}</html:option>
        </c:forEach>
     </html:select>
     <html:submit property="convertToThing">Convert</html:submit>
+    </p>
     </c:forEach> 
     </c:if>
 

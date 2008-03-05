@@ -78,7 +78,6 @@ public class OrthologueConverter implements BagConverter
 
         PathQuery pathQuery = new PathQuery(model);
 
-//        view.add(MainHelper.makePath(model, pathQuery, "Gene.homologues.homologue.pid"));
         WebConfig webConfig = (WebConfig) servletContext.getAttribute(Constants.WEBCONFIG);
         List<Path> view = PathQueryResultHelper.getDefaultView(type, model, webConfig,
                         "Gene.homologues.homologue", false);

@@ -125,6 +125,7 @@
 <li class="tool_bar_link">
     <tiles:insert page="/tablePageLinks.jsp">
       <tiles:put name="short" value="true" />
+      <tiles:put name="currentPage" value="results" />
     </tiles:insert>
 </li>
 </ul>
@@ -255,9 +256,9 @@
                       </c:if>
 
                       <%-- summary --%>
-                      <c:if test="${isWebResults && !empty pathNames[column.path]}">
+                      <c:if test="${isWebResults && !empty column.path.noConstraintsString}">
             <fmt:message key="columnsummary.getsummary" var="summaryTitle" />
-                        <a href="javascript:getColumnSummary('${table}','${pathNames[column.path]}', &quot;${columnDisplayName}&quot;)" 
+                        <a href="javascript:getColumnSummary('${table}','${column.path.noConstraintsString}', &quot;${columnDisplayName}&quot;)" 
                            title="${summaryTitle}"><img src="images/summary_maths.png" title="${summaryTitle}"/></a>
                       </c:if>
 
@@ -368,57 +369,10 @@
             <div id="summary_loaded" style="display:none;"></div>
         </div>  
         <c:if test="${resultsTable.estimatedSize > 1}">
-          <br/>
-          <table cellpadding="0" cellspacing="0" >
-            <tr>
-              <td><img src="theme/res_bar_left.gif"></td>
-              <%-- Paging controls --%>
-              <td class="resBar"><tiles:insert page="/tablePageLinks.jsp"/></td>
-              <td class="resBar">&nbsp;|&nbsp;</td>
-              <td class="resBar">
-                <fmt:message key="results.pageinfo.estimate" var="estimateMessage"/>
-                <fmt:message key="results.pageinfo.exact" var="exactMessage"/>
-                <%-- "Displaying xxx to xxx of xxx rows" messages --%>
-                <c:choose>
-                  <c:when test="${resultsTable.sizeEstimate}">
-                    <tiles:insert name="tableCountEstimate.tile">
-                      <tiles:put name="pagedTable" beanName="resultsTable"/>
-                    </tiles:insert>
-                    <script language="JavaScript">
-                      <!--
-                          document.resultsCountText = "<img src='images/spinner.gif'/> ${estimateMessage} ${resultsTable.estimatedSize}";
-                        -->
-                    </script>
-                  </c:when>
-                  <c:otherwise>
-                    <c:choose>
-                      <c:when test="${resultsTable.startRow == 0 &&
-                                    resultsTable.endRow == resultsTable.estimatedSize - 1}">
-                        <fmt:message key="results.pageinfo.allrows">
-                          <fmt:param value="${resultsTable.estimatedSize}"/>
-                        </fmt:message>
-                      </c:when>
-                      <c:otherwise>
-                        <fmt:message key="results.pageinfo.rowrange">
-                          <fmt:param value="${resultsTable.startRow+1}"/>
-                          <fmt:param value="${resultsTable.endRow+1}"/>
-                        </fmt:message>
-                        <span class="resBar">&nbsp;|&nbsp;</span>
-                        ${exactMessage}
-                        ${resultsTable.estimatedSize}
-                      </c:otherwise>
-                    </c:choose>
-                    <script language="JavaScript">
-                      <!--
-                          document.resultsCountText = "${exactMessage} ${resultsTable.estimatedSize}";
-                        -->
-                    </script>
-                  </c:otherwise>
-                </c:choose>
-              </td>
-              <td><img src="theme/res_bar_right.gif"/></td>
-            </tr>
-          </table>
+           <tiles:insert name="paging.tile">
+             <tiles:put name="resultsTable" beanName="resultsTable" />
+             <tiles:put name="currentPage" value="results" />
+           </tiles:insert>
         </c:if>
 </div>
         <%-- Return to main results link

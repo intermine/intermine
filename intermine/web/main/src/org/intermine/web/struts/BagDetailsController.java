@@ -200,9 +200,11 @@ public class BagDetailsController extends TilesAction
                 enrichmentWidgetDisplayerArray.add(d);
             }
 
-            
-            PagedTable pagedResults = SessionMethods.doQueryGetPagedTable(request, 
-                                                    servletContext, imBag);
+            PagedTable pagedResults = SessionMethods.getResultsTable(session, "bag." 
+                                                                    + imBag.getName());
+            if (pagedResults == null) {
+                pagedResults = SessionMethods.doQueryGetPagedTable(request, servletContext, imBag);
+            }
 
             // TODO this needs to be removed when InterMineBag can store the initial ids of when the
             // bag was made.
@@ -226,6 +228,15 @@ public class BagDetailsController extends TilesAction
                 }
             }
 
+            // Set the size
+            String pageStr = request.getParameter("page");
+            int page = (pageStr == null ? 0 : Integer.parseInt(pageStr));
+
+            pagedResults.setPageAndPageSize(page, 5);
+            if ((imBag.getSize() / 4) < page) {
+                page = 0;
+            }
+            
             request.setAttribute("addparameter", request.getParameter("addparameter"));
             request.setAttribute("myBag", myBag);
             request.setAttribute("bag", imBag);

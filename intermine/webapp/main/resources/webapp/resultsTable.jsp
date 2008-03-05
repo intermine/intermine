@@ -8,6 +8,8 @@
 <html:xhtml/>
 
 <tiles:importAttribute name="pagedResults" ignore="false"/>
+<tiles:importAttribute name="currentPage" ignore="false"/>
+<tiles:importAttribute name="bagName" ignore="true"/>
 
 <script type="text/javascript" src="js/table.js" ></script>
 <link rel="stylesheet" href="css/resultstables.css" type="text/css" />
@@ -24,9 +26,9 @@
     document.location.href=url;
   }
 
-  var columnsToDisable = ${columnsToDisable};
+  /*var columnsToDisable = ${columnsToDisable};
   var columnsToHighlight = ${columnsToHighlight};
-  var bagType = null;  
+  var bagType = null;*/  
 
 //]]>-->
 </script>
@@ -81,7 +83,7 @@
                   <fmt:param value="${column.name}"/>
                 </fmt:message>
                 <fmt:message key="results.moveLeftSymbol" var="moveLeftString"/>
-                <html:link action="/changeTable?table=${param.table}&amp;method=moveColumnLeft&amp;index=${status.index}&amp;trail=${param.trail}"
+                <html:link action="/changeTable?currentPage=${currentPage}&amp;bagName=${bagName}&amp;table=${param.table}&amp;method=moveColumnLeft&amp;index=${status.index}&amp;trail=${param.trail}"
                            title="${moveLeftTitle}">
                   <img style="vertical-align:top;" border="0"
                        width="13" height="13" src="images/left_arrow.png"
@@ -90,11 +92,12 @@
               </c:if>
 
               <%-- summary --%>
-              <c:if test="${isWebResults && !empty pathNames[column.path]}">
-    <fmt:message key="columnsummary.getsummary" var="summaryTitle" />
-                <a href="javascript:getColumnSummary('${table}','${pathNames[column.path]}', &quot;${columnDisplayName}&quot;)" 
+              <c:if test="${!empty column.path.noConstraintsString}">
+              <fmt:message key="columnsummary.getsummary" var="summaryTitle" />
+                <a href="javascript:getColumnSummary('${pagedResults.tableid}','${column.path.noConstraintsString}', &quot;${columnDisplayName}&quot;)" 
                    title="${summaryTitle}"><img src="images/summary_maths.png" title="${summaryTitle}"/></a>
               </c:if>
+
 
               <%-- right --%>
               <c:if test="${not status.last}">
@@ -102,7 +105,7 @@
                   <fmt:param value="${column.name}"/>
                 </fmt:message>
                 <fmt:message key="results.moveRightSymbol" var="moveRightString"/>
-                <html:link action="/changeTable?table=${param.table}&amp;method=moveColumnRight&amp;index=${status.index}&amp;trail=${param.trail}"
+                <html:link action="/changeTable?currentPage=${currentPage}&amp;bagName=${bagName}&amp;table=${param.table}&amp;method=moveColumnRight&amp;index=${status.index}&amp;trail=${param.trail}"
                            title="${moveRightTitle}">
                   <img style="vertical-align:top;" border="0"
                        width="13" height="13"
@@ -116,7 +119,7 @@
                   <fmt:message key="results.hideColumnHelp" var="hideColumnTitle">
                     <fmt:param value="${column.name}"/>
                   </fmt:message>
-                  <html:link action="/changeTable?table=${param.table}&amp;method=hideColumn&amp;index=${status.index}&amp;trail=${param.trail}"
+                  <html:link action="/changeTable?currentPage=${currentPage}&amp;bagName=${bagName}&amp;table=${param.table}&amp;method=hideColumn&amp;index=${status.index}&amp;trail=${param.trail}"
                              title="${hideColumnTitle}">
                     <img style="vertical-align:top;" border="0"
                          src="images/close.png" title="${hideColumnTitle}" />
@@ -135,7 +138,7 @@
             <%-- <fmt:message key="results.showColumnHelp" var="showColumnTitle">
                  <fmt:param value="${column.name}"/>
                  </fmt:message> --%>
-            <html:link action="/changeTable?table=${param.table}&amp;method=showColumn&amp;index=${status.index}&amp;trail=${param.trail}"
+            <html:link action="/changeTable?currentPage=${currentPage}&amp;bagName=${bagName}&amp;table=${param.table}&amp;method=showColumn&amp;index=${status.index}&amp;trail=${param.trail}"
                        title="${showColumnTitle}">
               <img src="images/show-column.gif" title="${fn:replace(column.name, '.', '&nbsp;> ')}"/>
             </html:link>
@@ -189,4 +192,17 @@
     </c:forEach>
   </c:if>
 </table>
+<%--  The Summary table --%>
+<div id="summary" style="display:none;" >
+    <div align="right" >
+      <img style="padding-bottom: 4px"
+           onclick="javascript:Effect.Fade('summary', { duration: 0.30 });"
+           src="images/close.png" title="Close" 
+           onmouseout="this.style.cursor='normal';" 
+           onmouseover="this.style.cursor='pointer';"/>
+    </div>
+    <div id="summary_loading">Loading...</div>
+    <div id="summary_loaded" style="display:none;"></div>
+</div>  
+
 </html:form>

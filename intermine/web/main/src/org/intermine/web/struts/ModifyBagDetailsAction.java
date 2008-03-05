@@ -133,7 +133,7 @@ public class ModifyBagDetailsAction extends InterMineAction
             InterMineBag imBag = BagHelper.getBag(profile, globalRepository,
                 request.getParameter("bagName"));
             Model model = os.getModel();
-            WebResults webResults = TypeConverter.getConvertedObjects(servletContext,
+            WebResults webResults = TypeConverter.getConvertedObjects(session, servletContext,
                 BagQueryRunner.getConversionTemplates(servletContext),
                 TypeUtil.instantiate(model.getPackageName() + "." + imBag.getType()),
                 TypeUtil.instantiate(model.getPackageName() + "." + type2),

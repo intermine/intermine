@@ -33,19 +33,15 @@
 
 
 <div class="heading">
-     <b>${bag.name}</b> (${bag.size} ${bag.type}s)
+     <fmt:message key="bagDetails.title"/> <span style="font-size:0.9em;font-weight:normal">for ${bag.name}</b> (${bag.size} ${bag.type}s)</span>
 </div>
 
 <div class="body">
 
 
-<TABLE cellspacing=20>
-<TR>
-
-
-<TD colspan=2 align="left">
-
-
+<table cellspacing="0" width="100%">
+<tr>
+  <TD colspan=2 align="left" style="padding-bottom:10px">
 <link rel="stylesheet" href="css/toolbar.css" type="text/css" media="screen" title="Toolbar Style" charset="utf-8">
 <script type="text/javascript" src="js/toolbar.js"></script>
 <html:form action="/modifyBagDetailsAction" styleId="bagDetailsForm">
@@ -89,25 +85,28 @@
     <a href="javascript:hideMenu('tool_bar_item_use')" >Cancel</a>
 </div>
 </html:form>
-
 </TD>
 </TR>
 <TR>
 
-<TD valign="top">
+<TD valign="top" class="tableleftcol">
 <div>
 
 <%-- Table displaying bag elements --%>
 <tiles:insert name="resultsTable.tile">
      <tiles:put name="pagedResults" beanName="pagedResults" />
+     <tiles:put name="currentPage" value="bagDetails" />
+     <tiles:put name="bagName" value="${bag.name}" />
 </tiles:insert>
-<c:if test="${!empty bag.dateCreated}">
-    <i><b>Created:</b> <im:dateDisplay date="${bag.dateCreated}" /></i>
-</c:if>
-<html:submit property="showInResultsTable">
-    View all ${bag.size} records >>
-</html:submit>
 </div>
+
+<c:if test="${pagedResults.estimatedSize > 1}">
+     <tiles:insert name="paging.tile">
+       <tiles:put name="resultsTable" beanName="pagedResults" />
+       <tiles:put name="currentPage" value="bagDetails" />
+       <tiles:put name="bag" beanName="bag" />
+     </tiles:insert>
+</c:if>
 
 <div id="clearLine">&nbsp;</div>
 
@@ -117,9 +116,10 @@
 <c:choose>
     <c:when test="${myBag == 'true'}">
       <div id="bagDescriptionDiv" onclick="Element.toggle('bagDescriptionDiv');Element.toggle('bagDescriptionTextarea');$('textarea').focus()">
+        <h3><img src="images/icons/description.png" alt="info">&nbsp;Description</h3>
         <c:choose>
           <c:when test="${! empty bag.description}">
-            <c:out value="${bag.description}" escapeXml="false" />
+            <p><c:out value="${bag.description}" escapeXml="false" /></p>
           </c:when>
           <c:otherwise>
             <div id="emptyDesc">Click here to enter a description for your list.</div>
@@ -128,7 +128,7 @@
       </div>
       <div id="bagDescriptionTextarea" style="display:none">
         <textarea id="textarea"><c:if test="${! empty bag.description}"><c:out value="${fn:replace(bag.description,'<br/>','')}" /></c:if></textarea>
-        <div>
+        <div align="right">
           <button onclick="Element.toggle('bagDescriptionTextarea');
               Element.toggle('bagDescriptionDiv'); return false;">Cancel</button>
           <button onclick="saveBagDescription('${bag.name}'); return false;">Save</button>
@@ -146,10 +146,32 @@
 
 </TD>
 
-<TD align="left" valign="top">
+<TD align="left" valign="top" width="40%">
 
-<div id="convertList" class="pageDesc" align="left">
-<h3>Convert</h3>
+<div id="listinfo" class="listtoolbox" align="left">
+<h3><img src="images/icons/info.png" alt="info">&nbsp;List Info</h3>
+<p>
+<table cellpadding="0" cellspacing="0" border="0" class="listinfotable">
+<tr>
+  <td class="infotitle">Name:</td><td>${bag.name}</td>
+</tr><tr>
+  <td class="infotitle">Date Created:</td><td><im:dateDisplay date="${bag.dateCreated}" /></td>
+</tr><tr>
+  <td class="infotitle">Type:</td><td>${bag.type}</td>
+</tr><tr>
+  <td class="infotitle">Size:</td><td>${bag.size} records</td>
+</tr>
+</table>
+</p>
+</div>
+<script type="text/javascript">
+  Nifty("div#listinfo","transparent");
+</script>
+
+
+<div id="convertList" class="listtoolbox" align="left">
+<h3><img src="images/icons/convert.png" alt="info">&nbsp;Convert</h3>
+<p>
 <html:form action="/modifyBagDetailsAction" styleId="bagDetailsForm">
 <html:hidden property="bagName" value="${bag.name}"/> 
 <tiles:insert name="convertBag.tile">
@@ -158,14 +180,15 @@
      <tiles:put name="orientation" value="h" />
 </tiles:insert>
 </html:form>
+</p>
 </div>
 <script type="text/javascript">
         Nifty("div#convertList","transparent");
 </script>
 
-    <tiles:insert page="/bagDisplayers.jsp">
-      <tiles:put name="bag" beanName="bag"/>
-    </tiles:insert>
+<tiles:insert page="/bagDisplayers.jsp">
+   <tiles:put name="bag" beanName="bag"/>
+</tiles:insert>
 
 </TD></TR>
 </TABLE>
