@@ -4,7 +4,7 @@
     <attribute name="taxonId" value="4932"/>
   </item>
   <item id="3_1" class="http://www.flymine.org/model/genomic#Gene">
-    <attribute name="primaryIdentifier" value="YEAST_2"/>
+    <attribute name="secondaryIdentifier" value="YEAST_2"/>
     <reference name="organism" ref_id="2_1"/>
   </item>
   <item id="7_16" class="http://www.flymine.org/model/genomic#Homologue">
@@ -207,7 +207,7 @@
     <reference name="subject" ref_id="6_1"/>
   </item>
   <item id="3_2" class="http://www.flymine.org/model/genomic#Gene">
-    <attribute name="primaryIdentifier" value="YEAST_1"/>
+    <attribute name="secondaryIdentifier" value="YEAST_1"/>
     <reference name="organism" ref_id="2_1"/>
   </item>
   <item id="7_7" class="http://www.flymine.org/model/genomic#Homologue">
