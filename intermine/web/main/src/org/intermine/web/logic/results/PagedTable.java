@@ -12,6 +12,7 @@ package org.intermine.web.logic.results;
 
 import java.util.AbstractList;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
@@ -388,6 +389,23 @@ public class PagedTable
     private List rearrangedResults = null;
 
     /**
+     * Returns indexes of columns, that should be displayed. 
+     * @return indexes
+     */
+    public List<Integer> getDisplayedIndexes() {
+        List<Integer> ret = new ArrayList<Integer>();
+        List<Column> columns = getColumns();
+
+        for (int i = 0; i < columns.size(); i++) {
+            if (columns.get(i) != null && columns.get(i).visible) {
+                ret.add(columns.get(i).getIndex());
+            }
+        }
+        
+        return ret;
+    }
+    
+    /**
      * Returns a List containing the results, with the columns rearranged.
      *
      * @return a List of rows, each of which is a List
@@ -401,37 +419,23 @@ public class PagedTable
 
     private class RearrangedList extends AbstractList
     {
-        int columnOrder[];
+        private List<Integer> visibleIndexes;
 
         public RearrangedList() {
-            List columns = getColumns();
-            List<Integer> columnOrderList = new ArrayList();
-            for (int i = 0; i < columns.size(); i++) {
-                Column column = (Column) columns.get(i);
-                if (column.isVisible()) {
-                    columnOrderList.add(new Integer(column.getIndex()));
-                }
-            }
-            columnOrder = new int[columnOrderList.size()];
-            for (int i = 0; i < columnOrderList.size(); i++) {
-                columnOrder[i] = columnOrderList.get(i).intValue();
-            }
+            visibleIndexes = getDisplayedIndexes();
         }
 
-        public List get(int index) {
-            List row = (List) webTable.get(index);
+        public List<Object> get(int index) {
+            List<Object> row = (List<Object>) webTable.get(index);
             return translateRow(row);
         }
 
-        private List translateRow(List row) {
-            List realRow = new ArrayList();
-            for (int columnIndex = 0; columnIndex < row.size(); columnIndex++) {
-                int realColumnIndex = columnOrder[columnIndex];
-
-                Object o = row.get(realColumnIndex);
-                realRow.add(o);
+        private List<Object> translateRow(List<Object> row) {
+            List<Object> ret = new ArrayList<Object>();
+            for (int i = 0; i < visibleIndexes.size(); i++) {
+                ret.add(row.get(visibleIndexes.get(i)));
             }
-            return realRow;
+            return ret;
         }
 
         public int size() {
