@@ -220,7 +220,7 @@ public interface Constants
      * Default size of table implemented by PagedTable.
      */
     public static final int DEFAULT_TABLE_SIZE = 10;
-
+    
     /**
      * Session attribute used to store the size of table with results.
      */

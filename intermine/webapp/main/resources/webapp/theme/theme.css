@@ -116,17 +116,13 @@ div.filterBar {
 	height:50px;
 	width:70%;
 	text-align:left;
-	padding:10px;
 }
 #bagDescriptionDiv:hover{
 	background-color: #D4D4D4;
 }
 
 #textarea {
-	width:70%;
-	height:50px;
 	background-color: #D4D4D4;
-    padding:10px;
 }
 
 .blueBg {
