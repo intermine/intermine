@@ -69,7 +69,7 @@ public class ChadoDBConverterTest extends ItemsTestCase
         MockItemWriter itemWriter = new MockItemWriter(new HashMap());
         ChadoDBConverter converter =
             new ChadoDBConverter(null, Model.getInstanceByName("genomic"), itemWriter);
-        FlyBaseModuleProcessor processor = new FlyBaseModuleProcessor(converter);
+        FlyBaseModuleProcessor processor = new TestFlyBaseModuleProcessor(converter);
         List<String> actualSet = processor.getFeatures();
         assertTrue(actualSet.containsAll(minimalSet));
     }
