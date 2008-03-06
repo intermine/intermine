@@ -120,16 +120,16 @@ public class BestQueryExplainer extends BestQuery
 
         long elapsed = System.currentTimeMillis() - start.getTime();
         if ((timeLimit >= 0) && (elapsed > timeLimit)) {
-            throw new BestQueryException("Optimiser reached time limit (limit = " + timeLimit
+            throwBestQueryException("Optimiser reached time limit (limit = " + timeLimit
                     + "ms, elapsed = " + elapsed + "ms)");
         }
         if (bestCandidate != null) {
             // throw BestQueryException if the bestQuery will take less time to run than the
             // amount of time we have spent optimising so far
             if (bestCandidate.getExplain().getTime() < (elapsed + OVERHEAD)) {
-                throw (new BestQueryException("Explain time: "
+                throwBestQueryException("Explain time: "
                             + bestCandidate.getExplain().getTime() + ", elapsed time: "
-                            + elapsed));
+                            + elapsed);
             }
         }
     }
@@ -239,6 +239,16 @@ public class BestQueryExplainer extends BestQuery
             }
         }
         return bestCandidate;
+    }
+
+    /**
+     * Throws an exception. This gives the subclasses a chance to intercept it.
+     *
+     * @param message a message
+     * @throws BestQueryException with the message
+     */
+    public void throwBestQueryException(String message) throws BestQueryException {
+        throw new BestQueryException(message);
     }
 
     /**

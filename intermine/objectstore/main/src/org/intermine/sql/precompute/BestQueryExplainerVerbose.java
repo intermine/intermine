@@ -80,4 +80,12 @@ public class BestQueryExplainerVerbose extends BestQueryExplainer
         //}
         unexplained++;
     }
+
+    /**
+     * {@inheritDoc}
+     */
+    public void throwBestQueryException(String message) throws BestQueryException {
+        System.out .println(message);
+        super.throwBestQueryException(message);
+    }
 }

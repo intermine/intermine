@@ -20,6 +20,7 @@ import org.intermine.sql.query.Query;
 public class BestQueryLogger extends BestQuery
 {
     protected boolean full;
+    protected String bestQueryString = null;
 
     /**
      * Constructs a BestQueryLogger
@@ -56,6 +57,9 @@ public class BestQueryLogger extends BestQuery
         if (q == null) {
             throw new NullPointerException("Cannot add null queries to a BestQueryStorer");
         }
+        if (bestQueryString == null) {
+            bestQueryString = q;
+        }
         System.out .println("Optimiser: " + q);
     }
 
@@ -74,6 +78,6 @@ public class BestQueryLogger extends BestQuery
      * @return the best Query, or null if no Queries added to this object
      */
     public String getBestQueryString() {
-        throw new RuntimeException("Unsupported Operation");
+        return bestQueryString;
     }
 }
