@@ -25,7 +25,7 @@ import org.intermine.objectstore.query.Results;
 import org.intermine.web.logic.Constants;
 import org.intermine.web.logic.bag.InterMineBag;
 import org.intermine.web.logic.export.Exporter;
-import org.intermine.web.logic.export.ExporterFactory;
+import org.intermine.web.logic.export.WebServiceExporterFactory;
 import org.intermine.web.logic.query.PathQuery;
 import org.intermine.web.logic.results.WebResults;
 import org.intermine.web.logic.session.SessionMethods;
@@ -121,9 +121,9 @@ public class QueryResultService extends WebService
         results.setBatchSize(BATCH_SIZE);
         ResultRowParser rowParser = new ResultRowParserImpl(pathQuery, getObjectStore().getModel(), 
                 WebResults.getPathToIndex(executor.getQuery(), executor.getPathToQueryNode()));
-        Exporter exporter = new ExporterFactory(results, rowParser, firstResult, 
-                maxResults, output).createExporter();
-        exporter.export();
+//        Exporter exporter = new WebServiceExporterFactory(results, rowParser, firstResult, 
+//                maxResults, output).createExporter();
+//        exporter.export();
         forward(pathQuery, title, description);
     }
 

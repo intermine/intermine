@@ -12,7 +12,6 @@ package org.intermine.web.logic.results;
 
 import java.util.AbstractList;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
@@ -397,7 +396,7 @@ public class PagedTable
         List<Column> columns = getColumns();
 
         for (int i = 0; i < columns.size(); i++) {
-            if (columns.get(i) != null && columns.get(i).visible) {
+            if (columns.get(i) != null && columns.get(i).isVisible()) {
                 ret.add(columns.get(i).getIndex());
             }
         }
@@ -410,11 +409,8 @@ public class PagedTable
      *
      * @return a List of rows, each of which is a List
      */
-    public List getRearrangedResults() {
-        if (rearrangedResults == null) {
-            rearrangedResults = new RearrangedList();
-        }
-        return rearrangedResults;
+    public List<List<ResultElement>> getRearrangedResults() {
+        return new RearrangedList();
     }
 
     private class RearrangedList extends AbstractList
@@ -425,15 +421,14 @@ public class PagedTable
             visibleIndexes = getDisplayedIndexes();
         }
 
-        public List<Object> get(int index) {
-            List<Object> row = (List<Object>) webTable.get(index);
-            return translateRow(row);
+        public List<ResultElement> get(int index) {
+            return translateRow(webTable.getResultElements(index));
         }
 
-        private List<Object> translateRow(List<Object> row) {
-            List<Object> ret = new ArrayList<Object>();
-            for (int i = 0; i < visibleIndexes.size(); i++) {
-                ret.add(row.get(visibleIndexes.get(i)));
+        private List<ResultElement> translateRow(List<ResultElement> row) {
+            List<ResultElement> ret = new ArrayList<ResultElement>();
+            for (Integer index : visibleIndexes) {
+                ret.add(row.get(visibleIndexes.get(index)));
             }
             return ret;
         }
@@ -463,5 +458,64 @@ public class PagedTable
                 throw (new UnsupportedOperationException());
             }
         }
+        
+        private List<Object> reorderRow(int[] columnOrder, boolean[] columnVisible,
+                List<Object> row) {
+            List<Object> realRow = new ArrayList<Object>();
+
+            for (int columnIndex = 0; columnIndex < row.size(); columnIndex++) {
+                int realColumnIndex;
+
+                if (columnOrder == null) {
+                    realColumnIndex = columnIndex;
+                } else {
+                    realColumnIndex = columnOrder[columnIndex];
+                }
+
+                Object o = row.get(realColumnIndex);
+
+                if (columnVisible != null && !columnVisible[columnIndex]) {
+                    continue;
+                }
+
+                realRow.add(o);
+            }
+            return realRow;
+        }
+        
+        /**
+         * Return an int array containing the real column indexes to use while writing the given
+         * PagedTable.
+         * @param pt the PagedTable to export
+         */
+        private int [] getOrder() {
+            List columns = getColumns();
+
+            int [] returnValue = new int [columns.size()];
+
+            for (int i = 0; i < columns.size(); i++) {
+                returnValue[i] = ((Column) columns.get(i)).getIndex();
+            }
+
+            return returnValue;
+        }
+
+        /**
+         * Return an array containing the visibility of each column in the output
+         * @param pt the PagedTable to export
+         */
+        private boolean [] getVisible() {
+            List columns = getColumns();
+
+            boolean [] returnValue = new boolean [columns.size()];
+
+            for (int i = 0; i < columns.size(); i++) {
+                returnValue[i] = ((Column) columns.get(i)).isVisible();
+            }
+
+            return returnValue;
+        }
+
+
     }
 }

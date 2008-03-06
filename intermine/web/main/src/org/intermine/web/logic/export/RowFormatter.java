@@ -9,23 +9,23 @@ package org.intermine.web.logic.export;
  * information or http://www.gnu.org/copyleft/lesser.html.
  *
  */
-import java.util.List;
 
-import org.intermine.web.logic.results.ResultElement;
+import java.util.List;
 
 
 /**
- * Simple exporter interface. Objects implementing this interface are 
- * able to make export.
+ * Interface denoting that object is able format list of objects
+ * to string. Implementations format string as comma separated
+ * values string and so.
  * @author Jakub Kulaviak
  **/
-public interface Exporter
+public interface RowFormatter
 {
 
     /**
-     * Do export.
-     * @param results to be exported
+     * Format row to string.
+     * @param row formatted objects
+     * @return returned formatted string
      */
-    public void export(List<List<ResultElement>> results);
-    
+    public String format(List<Object> row);
 }

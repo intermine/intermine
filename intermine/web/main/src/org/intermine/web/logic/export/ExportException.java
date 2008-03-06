@@ -15,7 +15,7 @@ package org.intermine.web.logic.export;
  *
  * @author Kim Rutherford
  */
-public class ExportException extends Exception
+public class ExportException extends RuntimeException
 {
     /**
      * Create a new ExportException.
