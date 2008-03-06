@@ -39,18 +39,38 @@ public class RowFormatterImplTest extends TestCase
     }
 
     /**
-     * Tests correct behavior for empty strings, strings containing used delimiter.
+     * Tests correct behavior for strings containing used delimiter.
      */
-    public void testFormatSpecialCondition() {
+    public void testStringWithDelimiter() {
         RowFormatterImpl formatter = new RowFormatterImpl(",", false);
         Object o1 = "first";
-        Object o2 = "";
         Object o3 = "thi,rd";
         List<Object> objs = new ArrayList<Object>();
         objs.add(o1);
-        objs.add(o2);
         objs.add(o3);
         String result = formatter.format(objs);
-        assertEquals("first,\"\",\"thi,rd\"", result);        
+        assertEquals("first,\"thi,rd\"", result);        
     }
+    
+    public void testDoubleQuotating() {
+        RowFormatterImpl formatter = new RowFormatterImpl(",", true);
+        Object o1 = "first second third\"";
+        List<Object> objs = new ArrayList<Object>();
+        objs.add(o1);
+        String result = formatter.format(objs);
+        assertEquals("\"first second third\"\"\"", result);
+    }
+    
+    /**
+     * Test quoting a string that's null.
+     */
+    public void testEmptyString() throws Exception {
+        RowFormatterImpl formatter = new RowFormatterImpl(",", true);
+        Object o1 = "";
+        List<Object> objs = new ArrayList<Object>();
+        objs.add(o1);
+        String result = formatter.format(objs);
+        assertEquals("\"\"", result);
+    }
+
 }
