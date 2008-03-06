@@ -47,9 +47,7 @@ public class RowFormatterImpl implements RowFormatter
         StringBuilder sb = new StringBuilder();
         for (int i = 0; i < row.size(); i++) {
             Object o = row.get(i);
-            if (o == null) {
-                continue;
-            } else {
+            if (o != null) {
                 if (o instanceof Number
                     || (!quoted && o.toString().indexOf(delimiter) < 0
                         && !o.toString().equals(""))) {
@@ -58,7 +56,6 @@ public class RowFormatterImpl implements RowFormatter
                     sb.append(getQuoted(o));
                 }
             }
-
             if (i < row.size() - 1) {
                 sb.append(delimiter);
             }            
