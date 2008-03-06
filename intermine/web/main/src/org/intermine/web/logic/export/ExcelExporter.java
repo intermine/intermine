@@ -1,0 +1,88 @@
+package org.intermine.web.logic.export;
+
+/*
+ * Copyright (C) 2002-2008 FlyMine
+ *
+ * This code may be freely distributed and modified under the
+ * terms of the GNU Lesser General Public Licence.  This should
+ * be distributed with the code.  See the LICENSE file for more
+ * information or http://www.gnu.org/copyleft/lesser.html.
+ *
+ */
+import java.io.IOException;
+import java.io.OutputStream;
+import java.util.Date;
+import java.util.List;
+
+import org.apache.poi.hssf.usermodel.HSSFRow;
+import org.apache.poi.hssf.usermodel.HSSFSheet;
+import org.apache.poi.hssf.usermodel.HSSFWorkbook;
+import org.intermine.web.logic.results.ResultElement;
+
+
+/**
+ * Exporter to excel format.
+ * @author Jakub Kulaviak
+ **/
+public class ExcelExporter implements Exporter
+{
+    
+    private OutputStream out;
+
+    /**
+     * Constructor.
+     * @param out stream where the output will be written
+     */
+    public ExcelExporter(OutputStream out) {
+        this.out = out;
+    }
+
+    /**
+     * Exports results.
+     * @param results results to be exported
+     */
+    public void export(List<List<ResultElement>> results) {
+
+        HSSFWorkbook wb = new HSSFWorkbook();
+        HSSFSheet sheet = wb.createSheet("results");
+        ResultElementConverter converter = new ResultElementConverter();
+        
+        for (int rowIndex = 0; rowIndex < results.size(); rowIndex++) {
+            
+            HSSFRow excelRow = sheet.createRow((short) rowIndex);
+            List<Object> row = converter.convert(results.get(rowIndex));
+            
+            for (short colIndex = 0; colIndex < row.size(); colIndex++) {
+                Object obj = row.get(colIndex);
+                if (obj == null) {
+                    excelRow.createCell(colIndex).setCellValue("");
+                    continue;
+                }
+
+                if (obj instanceof Number) {
+                    float objectAsFloat = ((Number) obj).floatValue();
+                    excelRow.createCell(colIndex).setCellValue(objectAsFloat);
+                    continue;
+                }
+
+                if (obj instanceof Date) {
+                    Date objectAsDate = (Date) obj;
+                    excelRow.createCell(colIndex).setCellValue(objectAsDate);
+                    continue;
+                }
+
+                excelRow.createCell(colIndex).setCellValue("" + obj);
+
+            }
+        }
+        try {
+            wb.write(out);
+        } catch (IOException e) {
+            throw new ExportException("IOException occured.", e);
+        }
+    }
+    
+
+}
+
+

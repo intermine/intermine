@@ -26,19 +26,18 @@ import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
 import org.apache.struts.action.ActionMessage;
 import org.intermine.objectstore.ObjectStoreException;
-import org.intermine.util.FormattedTextWriter;
 import org.intermine.web.logic.Constants;
 import org.intermine.web.logic.WebUtil;
 import org.intermine.web.logic.config.TableExportConfig;
 import org.intermine.web.logic.config.WebConfig;
 import org.intermine.web.logic.export.Exporter;
+import org.intermine.web.logic.export.ExporterImpl;
 import org.intermine.web.logic.export.TableExporter;
-import org.intermine.web.logic.export.TableExporterFactory;
+import org.intermine.web.logic.export.ExporterFactory;
 import org.intermine.web.logic.results.Column;
 import org.intermine.web.logic.results.PagedTable;
 import org.intermine.web.logic.results.WebResults;
 import org.intermine.web.logic.session.SessionMethods;
-import org.intermine.webservice.core.ResultRowParser;
 
 /**
  * Implementation of <strong>Action</strong> that allows the user to export a PagedTable to a file
@@ -66,13 +65,11 @@ public class ExportAction extends InterMineAction
                                  HttpServletResponse response)
         throws Exception {
         String type = request.getParameter("type");
-        String tableType = request.getParameter("tableType");
-
         List<List<Object>> rowList = null;
 
         try {
             HttpSession session = request.getSession();
-            PagedTable pt = getPagedTable(request, tableType, session);
+            PagedTable pt = getPagedTable(request, session);
             rowList = pt.getAllRows();
             if (rowList instanceof WebResults) {
                 ((WebResults) rowList).goFaster();
@@ -82,18 +79,14 @@ public class ExportAction extends InterMineAction
                 return excel(mapping, request, response, pt);
             } else if (type.equals("csv")) {
                 writeCSVHeader(response);
-                Exporter exporter = new TableExporterFactory(pt.getAllRows(), 
-                        response.getOutputStream(), getOrder(pt), getVisible(pt), 
-                        pt.getMaxRetrievableIndex() + 1, TableExporterFactory.CSV).createExporter();
-                exporter.export();
-                return null;
+                Exporter exporter = ExporterFactory.createExporter(response.getOutputStream(), 
+                        ExporterFactory.CSV);
+                exporter.export(pt.getRearrangedResults());
             } else if (type.equals("tab")) {
                 writeTSVHeader(response);
-                Exporter exporter = new TableExporterFactory(pt.getAllRows(), 
-                        response.getOutputStream(), getOrder(pt), getVisible(pt), 
-                        pt.getMaxRetrievableIndex() + 1, TableExporterFactory.TAB).createExporter();
-                exporter.export();
-                return null;
+                Exporter exporter = ExporterFactory.createExporter(response.getOutputStream(), 
+                        ExporterFactory.TAB);
+                exporter.export(pt.getRearrangedResults());
             } else {
                 WebConfig wc = (WebConfig) session.getServletContext().
                     getAttribute(Constants.WEBCONFIG);
@@ -110,17 +103,21 @@ public class ExportAction extends InterMineAction
                     return tableExporter.export(mapping, form, request, response);
                 }
             }
+            return null;
+        } catch (Exception ex) {
+            ex.printStackTrace();
+            //LOG.error("Export failed. Please contact support.", ex);
+            return null;
         } finally {
-            if (rowList instanceof WebResults) {
+            if (rowList != null && rowList instanceof WebResults) {
                 ((WebResults) rowList).releaseGoFaster();
             }
         }
     }
 
-    private PagedTable getPagedTable(HttpServletRequest request,
-            String tableType, HttpSession session) {
+    private PagedTable getPagedTable(HttpServletRequest request, HttpSession session) {
         PagedTable pt;
-
+        String tableType = request.getParameter("tableType");
         if (tableType.equals("bag")) {
             pt = SessionMethods.getResultsTable(session, "bag." 
                     + request.getParameter("table"));
@@ -165,77 +162,10 @@ public class ExportAction extends InterMineAction
             return mapping.getInputForward();
         }
 
-        HSSFWorkbook wb = new HSSFWorkbook();
-        HSSFSheet sheet = wb.createSheet("results");
-
-        try {
-            List columns = pt.getColumns();
-            List rowList = pt.getAllRows();
-
-            for (int rowIndex = 0;
-                 rowIndex < rowList.size() && rowIndex <= pt.getMaxRetrievableIndex();
-                 rowIndex++) {
-                List row;
-                try {
-                    row = (List) rowList.get(rowIndex);
-                } catch (RuntimeException e) {
-                    // re-throw as a more specific exception
-                    if (e.getCause() instanceof ObjectStoreException) {
-                        throw (ObjectStoreException) e.getCause();
-                    } else {
-                        throw e;
-                    }
-                }
-
-                HSSFRow excelRow = sheet.createRow((short) rowIndex);
-
-                // a count of the columns that we have seen so far are invisble - used to get
-                // the correct columnIndex for the call to createCell()
-                int invisibleColumns = 0;
-
-                for (int columnIndex = 0; columnIndex < row.size(); columnIndex++) {
-                    Column thisColumn = (Column) columns.get(columnIndex);
-
-                    // the column order from PagedTable.getList() isn't necessarily the order
-                    // that the user has chosen for the columns
-                    int realColumnIndex = thisColumn.getIndex();
-
-                    if (!thisColumn.isVisible()) {
-                        invisibleColumns++;
-                        continue;
-                    }
-
-                    Object thisObject = row.get(realColumnIndex);
-
-                    // see comment on invisibleColumns
-                    short outputColumnIndex = (short) (columnIndex - invisibleColumns);
-
-                    if (thisObject == null) {
-                        excelRow.createCell(outputColumnIndex).setCellValue("");
-                        continue;
-                    }
-
-                    if (thisObject instanceof Number) {
-                        float objectAsFloat = ((Number) thisObject).floatValue();
-                        excelRow.createCell(outputColumnIndex).setCellValue(objectAsFloat);
-                        continue;
-                    }
-
-                    if (thisObject instanceof Date) {
-                        Date objectAsDate = (Date) thisObject;
-                        excelRow.createCell(outputColumnIndex).setCellValue(objectAsDate);
-                        continue;
-                    }
-
-                    excelRow.createCell(outputColumnIndex).setCellValue("" + thisObject);
-                }
-            }
-
-            wb.write(response.getOutputStream());
-        } catch (ObjectStoreException e) {
-            recordError(new ActionMessage("errors.query.objectstoreerror"), request, e, LOG);
-        }
-
+        Exporter exporter = ExporterFactory.createExporter(response.getOutputStream(), 
+                ExporterFactory.EXCEL);
+        exporter.export(pt.getRearrangedResults());
+        
         return null;
     }
 

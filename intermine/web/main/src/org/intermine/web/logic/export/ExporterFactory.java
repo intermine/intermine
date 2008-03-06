@@ -10,58 +10,45 @@ package org.intermine.web.logic.export;
  *
  */
 
-import org.intermine.objectstore.query.Results;
-import org.intermine.webservice.core.ResultProcessor;
-import org.intermine.webservice.core.ResultRowParser;
-import org.intermine.webservice.output.Output;
+import java.io.OutputStream;
+import java.util.List;
+
+import javax.servlet.ServletOutputStream;
+
+import org.intermine.util.FormattedTextWriter;
 
 
 /**
- * Exporter factory.
  * @author Jakub Kulaviak
  **/
 public class ExporterFactory
-{    
-    private Results results;
-
-    private ResultRowParser rowParser;
-
-    private int firstResult;
-
-    private int maxResults;
-
-    private Output output;
-
-    /**
-     * Constructor.
-     * @param results results 
-     * @param rowParser object parsing row
-     * @param firstResult index of first result that should be exported
-     * @param maxResults maximum count of exported results
-     * @param output output
-     */
-    public ExporterFactory(Results results, ResultRowParser rowParser,
-            int firstResult, int maxResults, Output output) {
-        this.results = results;
-        this.rowParser = rowParser;
-        this.firstResult = firstResult;
-        this.maxResults = maxResults;
-        this.output = output;
-    }
-
+{
+    /** flag denoting that comma separated values export format is required **/
+    public static final int CSV = 0;
+    /** flag denoting that tab separated values export format is required **/
+    public static final int TAB = 1;
+    /** flag denoting that excel export format is required **/
+    public static final int EXCEL = 2;
+    
     /**
      * Creates exporter.
-     * @return created exporter
+     * @param out output stream
+     * @param format required format
+     * @return exporter that makes the export
      */
-    public Exporter createExporter() {
-        return new Exporter() {
-
-            public void export() {
-              ResultProcessor processor = new ResultProcessor(results, rowParser, 
-                      firstResult, maxResults);
-              processor.write(output);              
-            }
-            
-        };
+    public static Exporter createExporter(OutputStream out, int format) {
+        switch (format) {
+        case TAB:
+            RowFormatter rowFormatter = new RowFormatterImpl("\t", false);
+            return new ExporterImpl(out, rowFormatter);
+        case CSV:
+            rowFormatter = new RowFormatterImpl(",", true);
+            return new ExporterImpl(out, rowFormatter);
+        case EXCEL:
+            return new ExcelExporter(out);
+        default:
+            throw new IllegalArgumentException("Unknown format.");
+        }
     }
 }
+    
