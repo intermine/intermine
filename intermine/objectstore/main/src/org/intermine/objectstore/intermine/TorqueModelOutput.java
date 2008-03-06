@@ -202,15 +202,16 @@ public class TorqueModelOutput
             }
             if (cld.getFieldDescriptorByName("id") != null) {
                 if (schema.isTruncated(cld)) {
-                    if (schema.isFlatMode(cld.getType())) {
-                        sb.append(generateColumn("objectClass", "java.lang.String"));
-                    }
                     sb.append(generateColumn("class", "java.lang.String"));
+                    sb.append(generateColumn("tableclass", "java.lang.String"));
                     sb.append(INDENT + INDENT + "<unique name=\"" + className + "_pkey\">" + ENDL
                             + INDENT + INDENT + INDENT + "<unique-column name=\"id\"/>" + ENDL
-                            + INDENT + INDENT + INDENT + "<unique-column name=\"class\"/>" + ENDL
-                            + INDENT + INDENT + "</unique>" + ENDL);
+                            + INDENT + INDENT + INDENT + "<unique-column name=\"tableclass\"/>"
+                            + ENDL + INDENT + INDENT + "</unique>" + ENDL);
                 } else {
+                    if (!schema.isFlatMode(cld.getType())) {
+                        sb.append(generateColumn("class", "java.lang.String"));
+                    }
                     sb.append(INDENT + INDENT + "<unique name=\"" + className + "_pkey\">" + ENDL
                             + INDENT + INDENT + INDENT + "<unique-column name=\"id\"/>" + ENDL
                             + INDENT + INDENT + "</unique>" + ENDL);

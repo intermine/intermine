@@ -14,8 +14,10 @@ import junit.framework.Test;
 
 import java.util.List;
 
+import org.intermine.model.testmodel.CEO;
 import org.intermine.model.testmodel.Company;
 import org.intermine.model.testmodel.Employee;
+import org.intermine.model.testmodel.Manager;
 import org.intermine.objectstore.ObjectStoreFactory;
 import org.intermine.objectstore.ObjectStoreWriterFactory;
 import org.intermine.objectstore.query.Query;
@@ -46,6 +48,12 @@ public class FlatModeObjectStoreInterMineImplTest extends ObjectStoreInterMineIm
         results.put("DynamicClassConstraint", NO_RESULT);
         results.put("DynamicBagConstraint2", NO_RESULT);
         results.put("OrSubquery", NO_RESULT);
+        results.put("SelectClassFromInterMineObject", NO_RESULT);
+        Object[][] r = new Object[][] { { CEO.class, new Long(1) },
+                                        { Employee.class, new Long(3) },
+                                        { Manager.class, new Long(2) } };
+        results.put("SelectClassFromEmployee", toList(r));
+        results.put("SelectClassFromBrokeEmployable", NO_RESULT);
     }
 
     public static void oneTimeTearDown() throws Exception {

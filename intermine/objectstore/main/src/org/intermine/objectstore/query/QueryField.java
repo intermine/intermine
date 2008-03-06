@@ -43,22 +43,30 @@ public class QueryField implements QueryEvaluable
         if (fieldName == null) {
             throw new NullPointerException("Field name parameter is null");
         }
-        Method field = TypeUtil.getGetter(qc.getType(), fieldName);
-        if (field == null) {
-            throw new IllegalArgumentException("Field " + fieldName + " not found in "
-                    + qc.getType());
+        if ("class".equals(fieldName)) {
+            this.qc = qc;
+            this.fieldName = fieldName;
+            secondFieldName = null;
+            type = Class.class;
+        } else {
+            Method field = TypeUtil.getGetter(qc.getType(), fieldName);
+            if (field == null) {
+                throw new IllegalArgumentException("Field " + fieldName + " not found in "
+                        + qc.getType());
+            }
+            if (Collection.class.isAssignableFrom(field.getReturnType())) {
+                throw new IllegalArgumentException("Field " + fieldName + " is a collection type");
+            }
+            if (InterMineObject.class.isAssignableFrom(field.getReturnType())) {
+                throw new IllegalArgumentException("Field " + fieldName
+                        + " is an object reference");
+            }
+            this.qc = qc;
+            this.fieldName = fieldName;
+            secondFieldName = null;
+            Class fieldType = field.getReturnType();
+            type = fieldType.isPrimitive() ? TypeUtil.instantiate(fieldType.toString()) : fieldType;
         }
-        if (Collection.class.isAssignableFrom(field.getReturnType())) {
-            throw new IllegalArgumentException("Field " + fieldName + " is a collection type");
-        }
-        if (InterMineObject.class.isAssignableFrom(field.getReturnType())) {
-            throw new IllegalArgumentException("Field " + fieldName + " is an object reference");
-        }
-        this.qc = qc;
-        this.fieldName = fieldName;
-        secondFieldName = null;
-        Class fieldType = field.getReturnType();
-        type = fieldType.isPrimitive() ? TypeUtil.instantiate(fieldType.toString()) : fieldType;
     }
 
     /**

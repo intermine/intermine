@@ -21,6 +21,7 @@ import java.util.List;
 import java.util.Set;
 
 import org.intermine.model.testmodel.Address;
+import org.intermine.model.testmodel.Broke;
 import org.intermine.model.testmodel.CEO;
 import org.intermine.model.testmodel.Company;
 import org.intermine.model.testmodel.Contractor;
@@ -578,6 +579,25 @@ public abstract class ObjectStoreTestCase extends StoreDataTestCase
         minId = Math.min(minId, ((Employee) data.get("EmployeeB3")).getId().intValue());
         r = new Object[][] { { new Integer(minId) } };
         results.put("SelectFunctionNoGroup", toList(r));
+        r = new Object[][] { { Address.class, new Long(8) },
+                             { DynamicUtil.composeClass(Broke.class, CEO.class), new Long(1) },
+                             { DynamicUtil.composeClass(Broke.class, Company.class), new Long(1) },
+                             { DynamicUtil.composeClass(Broke.class, Contractor.class), new Long(1) },
+                             { Company.class, new Long(1) },
+                             { Contractor.class, new Long(1) },
+                             { Department.class, new Long(3) },
+                             { Employee.class, new Long(3) },
+                             { Manager.class, new Long(2) },
+                             { Secretary.class, new Long(3) },
+                             { Types.class, new Long(1) } };
+        results.put("SelectClassFromInterMineObject", toList(r));
+        r = new Object[][] { { DynamicUtil.composeClass(Broke.class, CEO.class), new Long(1) },
+                             { Employee.class, new Long(3) },
+                             { Manager.class, new Long(2) } };
+        results.put("SelectClassFromEmployee", toList(r));
+        r = new Object[][] { { DynamicUtil.composeClass(Broke.class, CEO.class), new Long(1) },
+                             { DynamicUtil.composeClass(Broke.class, Contractor.class), new Long(1) } };
+        results.put("SelectClassFromBrokeEmployable", toList(r));
     }
 
     /**

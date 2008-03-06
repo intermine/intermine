@@ -10,6 +10,8 @@ package org.intermine.objectstore.query;
  *
  */
 
+import java.util.Arrays;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Set;
 
@@ -49,6 +51,15 @@ public class QueryClass implements QueryNode, FromElement
         } else {
             this.type = DynamicUtil.composeClass(types);
         }
+    }
+
+    /**
+     * Constructs a QueryClass representing the specified array of classes
+     *
+     * @param types the array of classes
+     */
+    public QueryClass(Class... types) {
+        this(new HashSet(Arrays.asList(types)));
     }
 
     /**

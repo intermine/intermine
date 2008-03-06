@@ -18,10 +18,12 @@ import java.util.HashSet;
 
 import org.intermine.model.InterMineObject;
 import org.intermine.model.testmodel.BigDepartment;
+import org.intermine.model.testmodel.CEO;
 import org.intermine.model.testmodel.Cleaner;
 import org.intermine.model.testmodel.Company;
 import org.intermine.model.testmodel.Employee;
 import org.intermine.model.testmodel.ImportantPerson;
+import org.intermine.model.testmodel.Manager;
 import org.intermine.objectstore.ObjectStoreException;
 import org.intermine.objectstore.ObjectStoreWriterTestCase;
 import org.intermine.objectstore.ObjectStoreWriterFactory;
@@ -48,6 +50,12 @@ public class FlatModeObjectStoreWriterInterMineImplTest extends ObjectStoreWrite
         results.put("DynamicClassConstraint", NO_RESULT);
         results.put("DynamicBagConstraint2", NO_RESULT);
         results.put("OrSubquery", NO_RESULT);
+        results.put("SelectClassFromInterMineObject", NO_RESULT);
+        Object[][] r = new Object[][] { { CEO.class, new Long(1) },
+                                        { Employee.class, new Long(3) },
+                                        { Manager.class, new Long(2) } };
+        results.put("SelectClassFromEmployee", toList(r));
+        results.put("SelectClassFromBrokeEmployable", NO_RESULT);
     }
 
     public static void oneTimeTearDown() throws Exception {
@@ -69,7 +77,7 @@ public class FlatModeObjectStoreWriterInterMineImplTest extends ObjectStoreWrite
             writer.store(o);
             fail("Expected: error");
         } catch (ObjectStoreException e) {
-            assertEquals("Non-flat model heirarchy used in flat mode. Cannot store object with classes = [class org.intermine.model.testmodel.Employee, interface org.intermine.model.testmodel.Company]", e.getMessage());
+            assertEquals("Non-flat model heirarchy used in flat mode. Cannot store object with classes = [interface org.intermine.model.testmodel.Company, class org.intermine.model.testmodel.Employee]", e.getMessage());
         } finally {
             writer.delete(o);
         }

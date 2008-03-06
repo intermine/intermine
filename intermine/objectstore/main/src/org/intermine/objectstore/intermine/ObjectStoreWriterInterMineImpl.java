@@ -455,9 +455,9 @@ public class ObjectStoreWriterInterMineImpl extends ObjectStoreInterMineImpl
                     Set fieldNamesWritten = new HashSet();
                     for (int colNo = 0; colNo < tableInfo.colNames.length; colNo++) {
                         Object value = null;
-                        if ("class".equals(tableInfo.colNames[colNo])) {
+                        if ("tableclass".equals(tableInfo.colNames[colNo])) {
                             value = cld.getName();
-                        } else if ("objectClass".equals(tableInfo.colNames[colNo])) {
+                        } else if ("class".equals(tableInfo.colNames[colNo])) {
                             if (objectClass == null) {
                                 Iterator objectClassIter = DynamicUtil.decomposeClass(o.getClass())
                                     .iterator();
@@ -701,10 +701,11 @@ public class ObjectStoreWriterInterMineImpl extends ObjectStoreInterMineImpl
             boolean hasObject = "InterMineObject".equals(tableName) || (!(schema.isMissingNotXml()
                         || schema.isFlatMode(tableMaster.getType())));
             if (isTruncated) {
-                if (schema.isFlatMode(tableMaster.getType())) {
+                colCount += 2;
+            } else {
+                if (!schema.isFlatMode(tableMaster.getType())) {
                     colCount++;
                 }
-                colCount++;
             }
             if (hasObject) {
                 colCount++;
@@ -718,12 +719,15 @@ public class ObjectStoreWriterInterMineImpl extends ObjectStoreInterMineImpl
                 colNo++;
             }
             if (isTruncated) {
-                if (schema.isFlatMode(tableMaster.getType())) {
-                    retval.colNames[colNo] = "objectClass";
+                    retval.colNames[colNo] = "class";
+                    colNo++;
+                retval.colNames[colNo] = "tableclass";
+                colNo++;
+            } else {
+                if (!schema.isFlatMode(tableMaster.getType())) {
+                    retval.colNames[colNo] = "class";
                     colNo++;
                 }
-                retval.colNames[colNo] = "class";
-                colNo++;
             }
             Iterator fieldIter = allColumns.getAttributes().iterator();
             while (fieldIter.hasNext()) {

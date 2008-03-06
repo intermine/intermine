@@ -146,7 +146,7 @@ public class SqlGenerator
         if (schema.isTruncated(tableMaster)) {
             return "SELECT a1_.OBJECT AS a1_ FROM "
                 + DatabaseUtil.getTableName(tableMaster) + " AS a1_ WHERE a1_.id = " + id.toString()
-                + " AND a1_.class = '" + clazz.getName() + "' LIMIT 2";
+                + " AND a1_.tableclass = '" + clazz.getName() + "' LIMIT 2";
         } else {
             return "SELECT a1_.OBJECT AS a1_ FROM "
                 + DatabaseUtil.getTableName(tableMaster) + " AS a1_ WHERE a1_.id = " + id.toString()
@@ -287,6 +287,8 @@ public class SqlGenerator
             FromElement qc = ((QueryField) firstOrderBy).getFromElement();
             if (qc instanceof QueryClass) {
                 if ("id".equals(((QueryField) firstOrderBy).getFieldName())) {
+                    hasNulls = false;
+                } else if ("class".equals(((QueryField) firstOrderBy).getFieldName())) {
                     hasNulls = false;
                 } else {
                     AttributeDescriptor desc = (AttributeDescriptor) schema
@@ -804,7 +806,7 @@ public class SqlGenerator
                             if (state.getWhereBuffer().length() > 0) {
                                 state.addToWhere(" AND ");
                             }
-                            state.addToWhere(baseAlias + ".class = '" + cls.getName() + "'");
+                            state.addToWhere(baseAlias + ".tableclass = '" + cls.getName() + "'");
                         }
                     } else {
                         aliases.put(cld, baseAlias + "_" + sequence);
@@ -817,8 +819,8 @@ public class SqlGenerator
                                 + "_" + sequence + ".id");
                         lastAlias = "_" + sequence;
                         if (schema.isTruncated(tableMaster)) {
-                            state.addToWhere(" AND " + baseAlias + "_" + sequence + ".class = '"
-                                    + cls.getName() + "'");
+                            state.addToWhere(" AND " + baseAlias + "_" + sequence
+                                    + ".tableclass = '" + cls.getName() + "'");
                         }
                     }
                     sequence++;
@@ -866,13 +868,10 @@ public class SqlGenerator
                             break;
                         }
                     }
-                } else if (schema.isFlatMode(qc.getType())) {
-                    // We never want an OBJECT column in this case. However, we may want an
-                    // objectclass column.
-                    fieldToAlias.put("objectclass", baseAlias + ".objectclass");
-                } else {
+                } else if (!schema.isFlatMode(qc.getType())) {
                     fieldToAlias.put("OBJECT", baseAlias + ".OBJECT");
                 }
+                fieldToAlias.put("class", baseAlias + ".class");
             } else if (fromElement instanceof Query) {
                 state.addToFrom("(" + generate((Query) fromElement, schema,
                                                state.getDb(), null, QUERY_SUBQUERY_FROM,
@@ -1491,7 +1490,7 @@ public class SqlGenerator
                             + indirectTableAlias);
                     buffer.append(loseBrackets ? "" : "(");
                     if (schema.isTruncated(tableMaster)) {
-                        buffer.append(indirectTableAlias + ".class = '"
+                        buffer.append(indirectTableAlias + ".tableclass = '"
                                 + reverse.getClassDescriptor().getType().getName() + "' AND ");
                     }
                     if (arg1Qc != null) {
@@ -1876,7 +1875,7 @@ public class SqlGenerator
                 if (schema.isFlatMode(qc.getType())
                         && schema.isTruncated(schema.getTableMaster(cld))) {
                     buffer.append(", ")
-                        .append((String) fieldToAlias.get("objectclass"))
+                        .append((String) fieldToAlias.get("class"))
                         .append(" AS ")
                         .append(alias.equals(alias.toLowerCase())
                                 ? DatabaseUtil.generateSqlCompatibleName(alias) + "objectclass"

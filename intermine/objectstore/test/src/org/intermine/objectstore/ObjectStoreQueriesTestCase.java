@@ -264,6 +264,9 @@ public abstract class ObjectStoreQueriesTestCase extends QueryTestCase
         queries.put("MergeTrue", mergeTrue());
         queries.put("EmptyBagConstraint", emptyBagConstraint());
         queries.put("SelectFunctionNoGroup", selectFunctionNoGroup());
+        queries.put("SelectClassFromInterMineObject", selectClassFromInterMineObject());
+        queries.put("SelectClassFromEmployee", selectClassFromEmployee());
+        queries.put("SelectClassFromBrokeEmployable", selectClassFromBrokeEmployable());
     }
 
     /*
@@ -2032,6 +2035,51 @@ public abstract class ObjectStoreQueriesTestCase extends QueryTestCase
         QueryClass qc = new QueryClass(Employee.class);
         q.addFrom(qc);
         q.addToSelect(new QueryFunction(new QueryField(qc, "id"), QueryFunction.MIN));
+        q.setDistinct(false);
+        return q;
+    }
+
+    /*
+     * SELECT a1_.class, count(*) from InterMineObject AS a1_ GROUP BY a1_.class
+     */
+    public static Query selectClassFromInterMineObject() throws Exception {
+        Query q = new Query();
+        QueryClass qc = new QueryClass(InterMineObject.class);
+        q.addFrom(qc);
+        QueryField qf = new QueryField(qc, "class");
+        q.addToSelect(qf);
+        q.addToSelect(new QueryFunction());
+        q.addToGroupBy(qf);
+        q.setDistinct(false);
+        return q;
+    }
+
+    /*
+     * SELECT a1_.class, count(*) from Employable AS a1_ GROUP BY a1_.class
+     */
+    public static Query selectClassFromEmployee() throws Exception {
+        Query q = new Query();
+        QueryClass qc = new QueryClass(Employee.class);
+        q.addFrom(qc);
+        QueryField qf = new QueryField(qc, "class");
+        q.addToSelect(qf);
+        q.addToSelect(new QueryFunction());
+        q.addToGroupBy(qf);
+        q.setDistinct(false);
+        return q;
+    }
+
+    /*
+     * SELECT a1_.class, count(*) from BrokeEmployable AS a1_ GROUP BY a1_.class
+     */
+    public static Query selectClassFromBrokeEmployable() throws Exception {
+        Query q = new Query();
+        QueryClass qc = new QueryClass(Broke.class, Employable.class);
+        q.addFrom(qc);
+        QueryField qf = new QueryField(qc, "class");
+        q.addToSelect(qf);
+        q.addToSelect(new QueryFunction());
+        q.addToGroupBy(qf);
         q.setDistinct(false);
         return q;
     }

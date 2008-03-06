@@ -199,7 +199,7 @@ public abstract class IqlQueryTestCase extends SetupDataTestCase
         fq = new IqlQuery("SELECT a1_.id AS a3_, a2_ FROM ?::org.intermine.model.testmodel.HasSecretarys AS a1_, org.intermine.model.testmodel.Secretary AS a2_ WHERE a1_.secretarys DOES NOT CONTAIN a2_", null);
         fq.setParameters(Collections.singletonList(Arrays.asList(new Object[] {data.get("CompanyA"), data.get("CompanyB"), data.get("EmployeeB1")})));
         results.put("QueryClassBagNotMM", fq);
-        fq = new IqlQuery("SELECT a1_.id AS a3_, a2_ FROM ?::(org.intermine.model.testmodel.CEO, org.intermine.model.testmodel.Broke) AS a1_, org.intermine.model.testmodel.Secretary AS a2_ WHERE a1_.secretarys CONTAINS a2_", null);
+        fq = new IqlQuery("SELECT a1_.id AS a3_, a2_ FROM ?::(org.intermine.model.testmodel.Broke, org.intermine.model.testmodel.CEO) AS a1_, org.intermine.model.testmodel.Secretary AS a2_ WHERE a1_.secretarys CONTAINS a2_", null);
         fq.setParameters(Collections.singletonList(Collections.singletonList(data.get("EmployeeB1"))));
         results.put("QueryClassBagDynamic", fq);
         res = new HashSet();
@@ -289,5 +289,8 @@ public abstract class IqlQueryTestCase extends SetupDataTestCase
         fq.setParameters(Collections.singletonList(Collections.EMPTY_SET));
         results.put("EmptyBagConstraint", fq);
         results.put("SelectFunctionNoGroup", new IqlQuery("SELECT MIN(a1_.id) AS a2_ FROM org.intermine.model.testmodel.Employee AS a1_", null));
+        results.put("SelectClassFromInterMineObject", new IqlQuery("SELECT a1_.class AS a2_, COUNT(*) AS a3_ FROM org.intermine.model.InterMineObject AS a1_ GROUP BY a1_.class", null));
+        results.put("SelectClassFromEmployee", new IqlQuery("SELECT a1_.class AS a2_, COUNT(*) AS a3_ FROM org.intermine.model.testmodel.Employee AS a1_ GROUP BY a1_.class", null));
+        results.put("SelectClassFromBrokeEmployable", new IqlQuery("SELECT a1_.class AS a2_, COUNT(*) AS a3_ FROM (org.intermine.model.testmodel.Broke, org.intermine.model.testmodel.Employable) AS a1_ GROUP BY a1_.class", null));
     }
 }
