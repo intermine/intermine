@@ -380,6 +380,7 @@ public class BioGridConverter extends FileConverter
 
                     /* store all interaction-related items */
                     if (!storedItems.contains(gene.getAttribute("primaryIdentifier").getValue())) {
+                        gene.setReference("organism", organism.getIdentifier());
                         writer.store(ItemHelper.convert(gene));
                         storedItems.add(gene.getAttribute("primaryIdentifier").getValue());
                     }
