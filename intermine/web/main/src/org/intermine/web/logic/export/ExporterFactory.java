@@ -11,11 +11,6 @@ package org.intermine.web.logic.export;
  */
 
 import java.io.OutputStream;
-import java.util.List;
-
-import javax.servlet.ServletOutputStream;
-
-import org.intermine.util.FormattedTextWriter;
 
 
 /**
