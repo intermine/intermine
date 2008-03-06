@@ -161,6 +161,23 @@ public class ResultsConverter
                         currentColumn = sqlResults.getObject(alias);
                         if (Date.class.equals(node.getType())) {
                             currentColumn = new Date(((Long) currentColumn).longValue());
+                        } else if (Class.class.equals(node.getType())) {
+                            Set classes = new HashSet();
+                            try {
+                                String b[] = ((String) currentColumn).split(" ");
+                                for (int i = 0; i < b.length; i++) {
+                                    classes.add(Class.forName(b[i]));
+                                }
+                            } catch (ClassNotFoundException e) {
+                                SQLException e2 = new SQLException("Invalid entry in class column");
+                                e2.initCause(e);
+                                throw e2;
+                            }
+                            if (classes.size() == 1) {
+                                currentColumn = classes.iterator().next();
+                            } else {
+                                currentColumn = DynamicUtil.composeClass(classes);
+                            }
                         }
                         row.add(currentColumn);
                     }

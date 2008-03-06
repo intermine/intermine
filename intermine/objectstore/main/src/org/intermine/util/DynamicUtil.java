@@ -12,12 +12,13 @@ package org.intermine.util;
 
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
-import java.util.LinkedHashSet;
 import java.util.Map;
 import java.util.Set;
+import java.util.TreeSet;
 
 import net.sf.cglib.proxy.*;
 
@@ -120,6 +121,18 @@ public class DynamicUtil
     }
 
     /**
+     * Return the Class for the array of Class objects.
+     *
+     * @param classes the classes and interfaces to extend/implement
+     * @return the Class
+     * @throws IllegalArgumentException is there is more than one Class, or if the fields are not
+     * compatible.
+     */
+    public static Class composeClass(Class... classes) throws IllegalArgumentException {
+        return composeClass(new HashSet(Arrays.asList(classes)));
+    }
+
+    /**
      * Return the Class for a set of Class objects. NOTE: Creating an instance of this class is not
      * trivial: after calling Class.newInstance(), cast the Object to net.sf.cglib.proxy.Factory,
      * and call interceptor(new org.intermine.util.DynamicBean()) on it.
@@ -166,7 +179,7 @@ public class DynamicUtil
         if (retval == null) {
             if (net.sf.cglib.proxy.Factory.class.isAssignableFrom(clazz)) {
                 // Decompose
-                retval = new LinkedHashSet<Class>();
+                retval = new TreeSet<Class>(new ClassNameComparator());
                 retval.add(clazz.getSuperclass());
                 Class interfs[] = clazz.getInterfaces();
                 for (int i = 0; i < interfs.length; i++) {
@@ -264,6 +277,13 @@ public class DynamicUtil
             return getFriendlyName(o.getClass()) + ":" + ((InterMineObject) o).getId();
         } else {
             return o.toString();
+        }
+    }
+
+    private static class ClassNameComparator implements Comparator<Class>
+    {
+        public int compare(Class a, Class b) {
+            return a.getName().compareTo(b.getName());
         }
     }
 }
