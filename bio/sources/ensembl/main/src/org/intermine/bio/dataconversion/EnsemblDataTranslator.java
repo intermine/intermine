@@ -242,7 +242,7 @@ public class EnsemblDataTranslator extends DataTranslator
                     tgtItem.addReference(config.getOrganismRef());
 
                     //is there an identifier set?
-                    if (!srcItem.hasAttribute("primaryIdentifier")) {
+                    if (!srcItem.hasAttribute("identifier")) {
 
                         //ok try and look up any related marker_synonym items...
 
