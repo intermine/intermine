@@ -186,15 +186,15 @@ public class QueryOptimiser
         LimitOffsetQuery limitOffsetQuery = new LimitOffsetQuery(query);
         LOG.debug("Original Query: " + limitOffsetQuery.getQuery() + ", "
                 + limitOffsetQuery.getLimit() + ", " + limitOffsetQuery.getOffset());
-        String cachedQuery = cache.lookup(limitOffsetQuery.getQuery(), limitOffsetQuery.getLimit(),
-                limitOffsetQuery.getOffset());
+        String cachedQuery = null;
+        if (!context.isVerbose()) {
+            cachedQuery = cache.lookup(limitOffsetQuery.getQuery(), limitOffsetQuery.getLimit(),
+                    limitOffsetQuery.getOffset());
+        }
         // TODO: fix so that the OptimiserCache is updated when precomputed tables are deleted
         if (cachedQuery != null) {
             LOG.debug("Optimising query took " + ((new Date()).getTime() - start)
                     + " ms - cache hit: " + query);
-            if (context.isVerbose()) {
-                System.out .println("QueryOptimiser: cache hit");
-            }
             return new BestQueryFallback(null, limitOffsetQuery.reconstruct(cachedQuery));
         }
         try {
@@ -262,6 +262,9 @@ public class QueryOptimiser
                         + (parseTime - start) + " ms for parse ") + "- cache miss: " + query);
             return bestQuery;
         } catch (RuntimeException e) {
+            if (context.isVerbose()) {
+                e.printStackTrace(System.out);
+            }
             LOG.warn("Exception - query cannot be optimised: " + query, e);
         }
         LOG.debug("Optimising query took " + ((new Date()).getTime() - start)
