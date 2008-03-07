@@ -49,6 +49,7 @@ import com.sun.org.apache.bcel.internal.generic.GETSTATIC;
  * Tests for the WebResults class
  *
  * @author Kim Rutherford
+ * @author Xavier Watkins
  */
 
 public class WebResultsTest extends TestCase
@@ -208,10 +209,27 @@ public class WebResultsTest extends TestCase
         assertEquals(expectedColumns.get(3), webResults.getColumns().get(3));
     }
     
-    // TODO add test
-    // public void testTranslateRow() throws Exception {
     // Test with a PathQuery and some dummy results, call method with a made up row,
     // create expected ResultElements.  Doesn't need too much testing as Path.resolve() is tested.
+     public void testTranslateRow() throws Exception {
+         PathQuery pq = new PathQuery(model);
+         List view = new ArrayList() {{ // see: http://www.c2.com/cgi/wiki?DoubleBraceInitialization
+             add(new Path(model, "Department.name"));
+             add(new Path(model, "Department.company.name"));
+         }};
+         pq.setView(view);
+         Map<String, QueryNode> pathToQueryNode = new HashMap<String, QueryNode>();
+         Query query = MainHelper.makeQuery(pq , new HashMap(), pathToQueryNode, null, null, true);
+         Results results = os.execute(query);
+         WebResults webResults = new WebResults(pq, results, model, pathToQueryNode, classKeys, null);
+         List row1 = webResults.getResultElements(0);
+         ResultElement res1 = new ResultElement(os, "Department1", new Integer(4), Department.class, new Path(model, "Department.name"), false);
+         ResultElement res2 = new ResultElement(os, "Company1", new Integer(1), Company.class, new Path(model, "Department.company.name"), false);
+         List expected = new ArrayList();
+         expected.add(res1);
+         expected.add(res2);
+         assertEquals(expected, row1);
+     }
     
     public void test() {
         IqlQuery fq =
