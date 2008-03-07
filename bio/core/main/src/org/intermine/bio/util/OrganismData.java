@@ -20,7 +20,7 @@ public class OrganismData
     private String species;
     private String genus;
     private String abbreviation;
-    private Integer taxonId;
+    private int taxonId;
 
     /**
      * Create a new OrganismData object.  Not public because these are created only by
@@ -58,7 +58,7 @@ public class OrganismData
      * Get the taxonId of this organism.
      * @return the taxonId
      */
-    public Integer getTaxonId() {
+    public int getTaxonId() {
         return taxonId;
     }
 
@@ -90,7 +90,7 @@ public class OrganismData
      * Set the taxonId of this organism.
      * @param taxonId the taxonId to set
      */
-    void setTaxonId(Integer taxonId) {
+    void setTaxonId(int taxonId) {
         this.taxonId = taxonId;
     }
 }
