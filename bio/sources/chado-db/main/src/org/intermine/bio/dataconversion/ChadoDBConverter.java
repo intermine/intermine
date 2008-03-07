@@ -10,10 +10,19 @@ package org.intermine.bio.dataconversion;
  *
  */
 
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+
+import org.intermine.bio.util.OrganismData;
+import org.intermine.bio.util.OrganismRepository;
 import org.intermine.dataconversion.ItemWriter;
 import org.intermine.metadata.Model;
 import org.intermine.sql.Database;
-import org.intermine.sql.DatabaseUtil;
+import org.intermine.util.StringUtil;
 import org.intermine.xml.full.Item;
 
 import java.lang.reflect.Constructor;
@@ -35,11 +44,16 @@ public class ChadoDBConverter extends BioDBConverter
 
     private String dataSourceName;
     private String dataSetTitle;
-    private int taxonId = -1;
-    private String genus;
-    private String species;
-    private int chadoOrganismId;
+
+    // a Map from taxonId to chado organism_id
+ //   private Map<Integer, Integer> taxonToChado = new HashMap<Integer, Integer>();
+    // a Map from chado organism_id to taxonId
+    private Map<Integer, OrganismData> chadoToOrgData = new HashMap<Integer, OrganismData>();
     private String processors = "";
+
+    private Set<OrganismData> organismsToProcess = new HashSet<OrganismData>();
+
+    private OrganismRepository organismRepository;
 
     /**
      * Create a new ChadoDBConverter object.
@@ -49,6 +63,7 @@ public class ChadoDBConverter extends BioDBConverter
      */
     public ChadoDBConverter(Database database, Model tgtModel, ItemWriter writer) {
         super(database, tgtModel, writer);
+        organismRepository = OrganismRepository.getOrganismRepository();
     }
 
     /**
@@ -76,11 +91,28 @@ public class ChadoDBConverter extends BioDBConverter
     }
 
     /**
-     * Set the taxonId to use when creating the Organism Item for the new features.
-     * @param taxonId the taxon id
+     * Set the taxon ids to use when creating the Organism Item for the new features.  Only features
+     * from chado with these organisms will be processed.
+     * @param organisms a space separated list of the organism abbreviations or taxon ids to look
+     * up in the organism table eg. "Dmel Dpse"
      */
-    public void setTaxonId(String taxonId) {
-        this.taxonId = Integer.valueOf(taxonId).intValue();
+    public void setOrganisms(String organisms) {
+        String[] bits = StringUtil.split(organisms, " ");
+        //for (int i = 0; i < bits.length; i++) {
+        for (String organismIdString: bits) {
+            OrganismData od = null;
+            try {
+                Integer taxonId = Integer.valueOf(organismIdString);
+                od = organismRepository.getOrganismDataByTaxon(taxonId);
+            } catch (NumberFormatException e) {
+                od = organismRepository.getOrganismDataByAbbreviation(organismIdString);
+            }
+            if (od == null) {
+                throw new RuntimeException("can't find organism for: " + organismIdString);
+            } else {
+                organismsToProcess.add(od);
+            }
+        }
     }
 
     /**
@@ -93,27 +125,12 @@ public class ChadoDBConverter extends BioDBConverter
     }
 
     /**
-     * Get the taxonId to use when creating the Organism Item for the
-     * @return the taxon id
+     * Return a map from chado organism_id to OrganismData object for all the organisms that we
+     * are processing
+     * @return the Map
      */
-    public int getTaxonIdInt() {
-        return taxonId;
-    }
-
-    /**
-     * The genus to use when querying for features.
-     * @param genus the genus
-     */
-    public void setGenus(String genus) {
-        this.genus = genus;
-    }
-
-    /**
-     * The species to use when querying for features.
-     * @param species the species
-     */
-    public void setSpecies(String species) {
-        this.species = species;
+    public Map<Integer, OrganismData> getChadoIdToOrgDataMap() {
+        return chadoToOrgData;
     }
 
     /**
@@ -136,23 +153,28 @@ public class ChadoDBConverter extends BioDBConverter
         if (dataSourceName == null) {
             throw new IllegalArgumentException("dataSourceName not set in ChadoDBConverter");
         }
-        /*
-        if (getTaxonIdInt() == -1) {
-            throw new IllegalArgumentException("taxonId not set in ChadoDBConverter");
-        }
-        if (species == null) {
-            throw new IllegalArgumentException("species not set in ChadoDBConverter");
-        }
-        if (genus == null) {
-            throw new IllegalArgumentException("genus not set in ChadoDBConverter");
-        }
         if (StringUtils.isEmpty(processors)) {
             throw new IllegalArgumentException("processors not set in ChadoDBConverter");
         }
-        */
-        if (getTaxonIdInt() != -1 && species != null && genus != null) {
-            // the organism isn't used by all processors
-            chadoOrganismId = getChadoOrganismId(connection);
+
+        List<String> orgAbbrevationsToProcess = new ArrayList<String>();
+        for (OrganismData od: organismsToProcess) {
+            orgAbbrevationsToProcess.add(od.getAbbreviation());
+        }
+
+        if (orgAbbrevationsToProcess.size() > 0) {
+            Map<String, Integer> abbrevChadoIdMap =
+                getChadoOrganismIds(connection, orgAbbrevationsToProcess);
+
+            for (Map.Entry<String, Integer> entry: abbrevChadoIdMap.entrySet()) {
+                String abbreviation = entry.getKey();
+                Integer chadoOrganismId = entry.getValue();
+
+                OrganismData orgData =
+                    organismRepository.getOrganismDataByAbbreviation(abbreviation);
+                chadoToOrgData.put(chadoOrganismId, orgData);
+                //           taxonToChado.put(orgData.getTaxonId(), chadoOrganismId);
+            }
         }
 
         String[] bits = processors.trim().split("[ \\t]+");
@@ -169,34 +191,39 @@ public class ChadoDBConverter extends BioDBConverter
     }
 
     /**
-     * Return the chado db id (organism_id) for the organism given by the genus and species.
-     * @return the organism_id
-     */
-    public int getChadoOrganismId() {
-        return chadoOrganismId;
-    }
-
-    /**
-     * Return the chado organism id for the given genus/species.  This is a protected method so
-     * that it can be overriden for testing
+     * Return the chado organism id for the given organism abbreviations.  This is a protected
+     * method so that it can be overriden for testing
      * @param connection the db connection
-     * @return the internal id (organism_id from the organism table)
+     * @param abbreviations a space separated list of the organism abbreviations to look up in the
+     * organism table eg. "Dmel Dpse"
+     * @return a Map from abbreviation to chado organism_id
      * @throws SQLException if the is a database problem
      */
-    protected int getChadoOrganismId(Connection connection)
+    protected Map<String, Integer> getChadoOrganismIds(Connection connection,
+                                                       List<String> abbreviations)
         throws SQLException {
-        String query = "select organism_id from organism where genus = "
-            + DatabaseUtil.objectToString(genus) + " and species = "
-            + DatabaseUtil.objectToString(species);
+        StringBuffer abbrevBuffer = new StringBuffer();
+        for (int i = 0; i < abbreviations.size(); i++) {
+            if (i != 0) {
+                abbrevBuffer.append(", ");
+            }
+            abbrevBuffer.append("'").append(abbreviations.get(i)).append("'");
+        }
+        String query = "select organism_id, abbreviation from organism where abbreviation IN ("
+            + abbrevBuffer.toString() + ")";
         LOG.info("executing: " + query);
         Statement stmt = connection.createStatement();
         ResultSet res = stmt.executeQuery(query);
-        if (res.next()) {
-            return res.getInt(1);
-        } else {
-            throw new RuntimeException("no rows returned when querying organism table for genus \""
-                                       + genus + "\" and species \"" + species + "\"");
+
+        Map<String, Integer> retMap = new HashMap<String, Integer>();
+
+        while (res.next()) {
+            int organismId = res.getInt("organism_id");
+            String abbreviation = res.getString("abbreviation");
+            retMap.put(abbreviation, new Integer(organismId));
         }
+
+        return retMap;
     }
 
     /**
