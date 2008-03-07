@@ -1303,7 +1303,7 @@ public class ObjectStoreWriterInterMineImpl extends ObjectStoreInterMineImpl
      */
     public void batchCommitTransactionWithConnection(Connection c) throws ObjectStoreException {
         try {
-            batch.batchCommit();
+            batch.batchCommit(c);
             os.databaseAltered(tablesAltered);
             tablesAltered.clear();
         } catch (SQLException e) {
