@@ -10,9 +10,6 @@ package org.intermine.bio.dataconversion;
  *
  */
 
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.Reader;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Enumeration;
@@ -24,7 +21,6 @@ import java.util.Map;
 import java.util.Properties;
 import java.util.Set;
 
-import org.apache.log4j.Logger;
 import org.intermine.dataconversion.FileConverter;
 import org.intermine.dataconversion.ItemWriter;
 import org.intermine.metadata.Model;
@@ -32,6 +28,10 @@ import org.intermine.objectstore.ObjectStoreException;
 import org.intermine.util.PropertiesUtil;
 import org.intermine.xml.full.Item;
 import org.intermine.xml.full.ReferenceList;
+
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.Reader;
 
 /**
  * DataConverter to parse an INPARANOID Orthologue/Paralogue "sqltable" data file into Items
@@ -50,8 +50,6 @@ public class InparanoidConverter extends FileConverter
     protected Map attributes = new HashMap();
     protected Map createObjects = new HashMap(); // which objects to create from which source
 
-    private static final Logger LOG = Logger.getLogger(InparanoidConverter.class);
-    
     /**
      * Constructor
      * @param writer the ItemWriter used to handle the resultant items
@@ -230,7 +228,6 @@ public class InparanoidConverter extends FileConverter
     throws ObjectStoreException {
         // generate a name for the cluster based on organisms (in order) and index
         String cluster = orgA.get(0).getOrganism() + "-" + orgB.get(0).getOrganism() + ":" + index;
-        LOG.error(cluster + " orgA: " + orgA + " orgB: " + orgB);
 
         Set alreadyDone = new HashSet();
         for (BioAndScores thisBio : orgA) {
@@ -242,10 +239,10 @@ public class InparanoidConverter extends FileConverter
                 // only create paralogues between 'ortholgoues' in the cluster and other bios
                 if ((Double.parseDouble(thisBio.score) == 1)
                                 || (Double.parseDouble(otherBio.score) == 1)) {
-                    // reverse the cluster name if already created this pair in opposite direction 
+                    // reverse the cluster name if already created this pair in opposite direction
                     String nameToUse;
                     if (alreadyDone.contains("" + otherBio.bioIdentifier + thisBio.bioIdentifier)) {
-                        nameToUse = orgB.get(0).getOrganism() + "-" + orgA.get(0).getOrganism() 
+                        nameToUse = orgB.get(0).getOrganism() + "-" + orgA.get(0).getOrganism()
                         + ":" + index;
                     } else {
                         nameToUse = cluster;
@@ -425,7 +422,7 @@ public class InparanoidConverter extends FileConverter
         public String getOrganism() {
             return organism;
         }
-        
+
         public String toString() {
             return bioIdentifier + " " + organism + " " + score;
         }
