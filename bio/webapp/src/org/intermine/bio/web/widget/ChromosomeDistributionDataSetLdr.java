@@ -23,6 +23,7 @@ import org.intermine.objectstore.query.ConstraintSet;
 import org.intermine.objectstore.query.ContainsConstraint;
 import org.intermine.objectstore.query.Query;
 import org.intermine.objectstore.query.QueryClass;
+import org.intermine.objectstore.query.QueryExpression;
 import org.intermine.objectstore.query.QueryField;
 import org.intermine.objectstore.query.QueryFunction;
 import org.intermine.objectstore.query.QueryObjectReference;
@@ -92,7 +93,7 @@ public class ChromosomeDistributionDataSetLdr implements DataSetLdr
 
             // get all chromosomes for this organism
             ArrayList<String> chromosomes
-                = (ArrayList<String>) BioUtil.getChromosomes(os, organismName);
+                = (ArrayList<String>) BioUtil.getChromosomes(os, organismName, false);
             Iterator iter = chromosomes.iterator();
 
             // load maps
@@ -203,8 +204,7 @@ public class ChromosomeDistributionDataSetLdr implements DataSetLdr
             }
             expectedValue = bagSize * proportion;
             if (resultsTable.get(chromosome) != null) {
-                ((int[]) resultsTable.get(chromosome))[1] =
-                    (int) Math.round(expectedValue);
+                ((int[]) resultsTable.get(chromosome))[1] = (int) Math.round(expectedValue);
             }
             i++;
         }
@@ -248,25 +248,22 @@ public class ChromosomeDistributionDataSetLdr implements DataSetLdr
         ConstraintSet cs = new ConstraintSet(ConstraintOp.AND);
 
         QueryObjectReference r = new QueryObjectReference(featureQC, "chromosome");
-        ContainsConstraint cc = new ContainsConstraint(r, ConstraintOp.CONTAINS, chromosomeQC);
-        cs.addConstraint(cc);
+        cs.addConstraint(new ContainsConstraint(r, ConstraintOp.CONTAINS, chromosomeQC));
 
-        // constrain to be in chosen list of chomosomes, this may not be all chromosomes
-        Collection chrs = BioUtil.getChromosomes(os, organismName);
+        Collection<String> chrs = BioUtil.getChromosomes(os, organismName, true);
         if (chrs != null && !chrs.isEmpty()) {
             QueryField qfChrId = new QueryField(chromosomeQC, "primaryIdentifier");
-            BagConstraint bagChr = new BagConstraint(qfChrId, ConstraintOp.IN,
-                                                     BioUtil.getChromosomes(os, organismName));
+            QueryExpression qf = new QueryExpression(QueryExpression.LOWER, qfChrId);
+            BagConstraint bagChr = new BagConstraint(qf, ConstraintOp.IN, chrs);
             cs.addConstraint(bagChr);
         }
 
-        QueryObjectReference r2 = new QueryObjectReference(featureQC, "organism");
-        ContainsConstraint cc2 = new ContainsConstraint(r2, ConstraintOp.CONTAINS, organismQC);
-        cs.addConstraint(cc2);
+        QueryObjectReference r2 = new QueryObjectReference(featureQC, "organism");        
+        cs.addConstraint(new ContainsConstraint(r2, ConstraintOp.CONTAINS, organismQC));
 
-        SimpleConstraint sc = new SimpleConstraint(organismNameQF,
-                                                   ConstraintOp.EQUALS,
-                                                   new QueryValue(organismName));
+        QueryExpression qf2 = new QueryExpression(QueryExpression.LOWER, organismNameQF);
+        SimpleConstraint sc = new SimpleConstraint(qf2, ConstraintOp.EQUALS,
+                                                   new QueryValue(organismName.toLowerCase()));
         cs.addConstraint(sc);
 
         if (resultsType.equals("actual")) {
