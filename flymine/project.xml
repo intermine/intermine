@@ -201,7 +201,7 @@
       <property name="src.data.dir" location="/shared/data/flybase/dmel/release_5_5/fasta"/>
     </source>
     <source name="ncbigene2pubmed" type="intermine-items-xml-file">
-      <property name="src.data.file" location="/shared/data/pubmed/current/ncbiID_pubmedID_primaryIdentifier.xml"/>
+      <property name="src.data.file" location="/shared/data/pubmed/current/ncbiID_pubmedID.xml"/>
       <property name="ignore.duplicates" value="true"/>
     </source>
     <source name="redfly" type="redfly">
