@@ -169,7 +169,7 @@ if(-e $outfile){
 					$genes{$ncbigeneID}{$identifier}=$identifier;
 					my $gene_item = $genes{$ncbigeneID}->{'object'};
 					my $org_item = $organism{$current_ID}->{'object'};
-					$gene_item->set('identifier', $identifier);
+					$gene_item->set('primaryIdentifier', $identifier);
 					$gene_item->set('organism', $org_item);
 				#some identifiers in gene_info are not in gene2pubmed and shouldn't be
 				#processed if found again
