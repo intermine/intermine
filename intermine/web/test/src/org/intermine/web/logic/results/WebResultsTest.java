@@ -162,12 +162,27 @@ public class WebResultsTest extends TestCase
 
         Map classKeys = new HashMap();
         FieldDescriptor fd = model.getClassDescriptorByName("org.intermine.model.testmodel.Company").getFieldDescriptorByName("name");
-        HashSet keys = new HashSet();
-        keys.add(new HashSet(Arrays.asList(new Object[]{fd})));
+        ArrayList<FieldDescriptor> keys = new ArrayList();
+        keys.add(fd);
         classKeys.put("Company", keys);
         webResults = new WebResults(pathQuery, results, model, pathToQueryNode, classKeys, null);
     }
 
+    // TODO add test
+    // public void testGetPathToIndex() throws Exception {
+    // create a query with MainHelper.makeQuery() that contains both QueryClasses and QueryFields
+    
+    // TODO add test
+    // public void testSetColumns() throws Exception {
+    // create a PathQuery, create expected column objects and compare.  Include:
+    //   - some paths with descriptions
+    //   - select fields that are/aren't class keys
+    
+    // TODO add test
+    // public void testTranslateRow() throws Exception {
+    // Test with a PathQuery and some dummy results, call method with a made up row,
+    // create expected ResultElements.  Doesn't need too much testing as Path.resolve() is tested.
+    
     public void test() {
         assertEquals("Department1", ((List) webResults.get(0)).get(0));
         assertEquals("Company1", ((List) webResults.get(0)).get(1));
