@@ -24,13 +24,13 @@ public class OrganismRepositoryTest extends TestCase
     public void testGetOrganismRepository() {
         OrganismRepository organismRepository = OrganismRepository.getOrganismRepository();
         OrganismData drosOrganismData = organismRepository.getOrganismDataByTaxon(7227);
-        assertEquals(new Integer(7227), drosOrganismData.getTaxonId());
+        assertEquals(7227, drosOrganismData.getTaxonId());
         assertEquals("melanogaster", drosOrganismData.getSpecies());
         assertEquals("Drosophila", drosOrganismData.getGenus());
         assertEquals("Dmel", drosOrganismData.getAbbreviation());
 
         OrganismData celegansData = organismRepository.getOrganismDataByAbbreviation("C.elegans");
-        assertEquals(new Integer(6239), celegansData.getTaxonId());
+        assertEquals(6239, celegansData.getTaxonId());
         assertEquals("elegans", celegansData.getSpecies());
         assertEquals("Caenorhabditis", celegansData.getGenus());
         assertEquals("C.elegans", celegansData.getAbbreviation());
