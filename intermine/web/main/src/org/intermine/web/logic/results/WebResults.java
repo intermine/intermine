@@ -114,6 +114,7 @@ public class WebResults extends AbstractList<List<Object>> implements WebTable
         return columnNames;
     }
 
+    // TODO javadoc to describe what this does
     private void setColumns(List<Path> columnPaths) {
         List<String> types = new ArrayList<String>();
         int i = 0;
@@ -284,6 +285,7 @@ public class WebResults extends AbstractList<List<Object>> implements WebTable
         return translateRow(resultsRow, makeResultElements);
      }
     
+    // TODO javadoc to describe what this does
     private List translateRow(List initialList, boolean makeResultElements) {
         ArrayList rowCells = new ArrayList();
         for (Iterator iter = columnPaths.iterator(); iter.hasNext();) {
