@@ -3,11 +3,15 @@
 
   <class name="org.flymine.model.genomic.Project" is-interface="true">
     <attribute name="name" type="java.lang.String"/>
+    <attribute name="title" type="java.lang.String"/>
     <attribute name="surnamePI" type="java.lang.String"/>
     <attribute name="namePI" type="java.lang.String"/>
-    <attribute name="title" type="java.lang.String"/>
     <attribute name="url" type="java.lang.String"/>
+
     <collection name="provider" referenced-type="org.flymine.model.genomic.Provider" reverse-reference="project"/>
+<!-- 
+    <collection name="organism" referenced-type="org.flymine.model.genomic.Organism" reverse-reference="project"/>
+    -->
   </class>
 
   <class name="org.flymine.model.genomic.Provider" is-interface="true">

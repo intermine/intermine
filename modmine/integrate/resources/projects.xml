@@ -1,0 +1,87 @@
+<?xml version="1.0"?>
+<items>
+    <item id="10" class="" implements="http://www.flymine.org/model/genomic#Project">
+        <attribute name="name" value="The Transcriptome"/>
+        <attribute name="title" value="Global Identification of Transcribed Regions of the C. elegans Genome"/>
+        <attribute name="surnamePI" value="Waterstone"/>
+        <attribute name="namePI" value="Robert"/>
+        <attribute name="url" value="http://www.modencode.org/Waterston.shtml"/>
+    </item>
+
+    <item id="11" class="" implements="http://www.flymine.org/model/genomic#Project">
+        <attribute name="name" value="Chromatin Function"/>
+        <attribute name="title" value="Identification of DNA Elements Governing Chromatin Function in C. elegans"/>
+        <attribute name="surnamePI" value="Lieb"/>
+        <attribute name="namePI" value="Jason"/>
+        <attribute name="url" value="http://www.modencode.org/Lieb.shtml"/>
+    </item>
+    
+    <item id="12" class="" implements="http://www.flymine.org/model/genomic#Project">
+        <attribute name="name" value="Histone Variants"/>
+        <attribute name="title" value="Genome-wide profiling of histone variants in Drosophila and Caenorhabditis"/>
+        <attribute name="surnamePI" value="Henikoff"/>
+        <attribute name="namePI" value="Steven"/>
+        <attribute name="url" value="http://www.modencode.org/Henikoff.shtml"/>
+    </item>
+    <item id="13" class="" implements="http://www.flymine.org/model/genomic#Project">
+        <attribute name="name" value="Regulatory Elements"/>
+        <attribute name="title" value="Identification of Transcription Factor Binding Regions"/>
+        <attribute name="surnamePI" value="Snyder"/>
+        <attribute name="namePI" value="Michael"/>
+        <attribute name="url" value="http://www.modencode.org/Snyder.shtml"/>
+    </item>
+    <item id="14" class="" implements="http://www.flymine.org/model/genomic#Project">
+        <attribute name="name" value="The 3' UTRome"/>
+        <attribute name="title" value="Encyclopedia of C. elegans 3\u2019UTRs and their regulatory elements"/>
+        <attribute name="surnamePI" value="Piano"/>
+        <attribute name="namePI" value="Fabio"/>
+        <attribute name="url" value="http://www.modencode.org/Piano.shtml"/>
+    </item>
+    
+    <item id="20" class="" implements="http://www.flymine.org/model/genomic#Project">
+        <attribute name="name" value="The Trascriptome"/>
+        <attribute name="title" value="Comprehensive characterization of the Drosophila transcriptome"/>
+        <attribute name="surnamePI" value="Celniker"/>
+        <attribute name="namePI" value="Sue"/>
+        <attribute name="url" value="http://www.modencode.org/Celniker.shtml"/>
+    </item>
+    <item id="21" class="" implements="http://www.flymine.org/model/genomic#Project">
+        <attribute name="name" value="Regulatory Elements"/>
+        <attribute name="title" value="Identification of Transcription Factor binding sites by high-throughput ChIP-chip experiments in Drosophila"/>
+        <attribute name="surnamePI" value="White"/>
+        <attribute name="namePI" value="Kevin"/>
+        <attribute name="url" value="http://www.modencode.org/White.shtml"/>
+    </item>
+    <item id="22" class="" implements="http://www.flymine.org/model/genomic#Project">
+        <attribute name="name" value="Chromosomal Proteins"/>
+        <attribute name="title" value="Genome-Wide Mapping of Chromosomal Proteins in Drosophila"/>
+        <attribute name="surnamePI" value="Karpen"/>
+        <attribute name="namePI" value="Kevin"/>
+        <attribute name="url" value="http://www.modencode.org/Karpen.shtml"/>
+    </item>
+    <item id="23" class="" implements="http://www.flymine.org/model/genomic#Project">
+        <attribute name="name" value="Small and microRNAs"/>
+        <attribute name="title" value="Annotation of the small RNA/microRNA component of the Drosophila genome"/>
+        <attribute name="surnamePI" value="Lai"/>
+        <attribute name="namePI" value="Eric"/>
+        <attribute name="url" value="http://www.modencode.org/Lai.shtml"/>
+    </item>
+    <item id="24" class="" implements="http://www.flymine.org/model/genomic#Project">
+        <attribute name="name" value="Origins of Replication"/>
+        <attribute name="title" value="The Systematic Identification and Analysis of Replication Origins in Drosophila"/>
+        <attribute name="surnamePI" value="MacAlpine"/>
+        <attribute name="namePI" value="David"/>
+        <attribute name="url" value="http://www.modencode.org/MacAlpine.shtml"/>
+    </item>
+    
+<!--    
+    <item id="11" class="" implements="http://www.flymine.org/model/genomic#DataSet">
+        <attribute name="title" value="Swiss-Prot data set"/>
+        <attribute name="description" value="The Swiss-Prot protein knowledge base"/>
+        <attribute name="version" value="UniProt 9.6"/>
+        <attribute name="url" value="http://ca.expasy.org/sprot"/>
+        <reference name="Project" ref_id="10"/>
+    </item>
+    -->
+    
+</items>
