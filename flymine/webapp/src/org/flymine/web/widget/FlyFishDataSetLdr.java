@@ -23,6 +23,7 @@ import org.intermine.objectstore.query.ContainsConstraint;
 import org.intermine.objectstore.query.Query;
 import org.intermine.objectstore.query.QueryClass;
 import org.intermine.objectstore.query.QueryCollectionReference;
+import org.intermine.objectstore.query.QueryExpression;
 import org.intermine.objectstore.query.QueryField;
 import org.intermine.objectstore.query.QueryObjectReference;
 import org.intermine.objectstore.query.QueryValue;
@@ -106,9 +107,11 @@ public class FlyFishDataSetLdr implements DataSetLdr
             cs.addConstraint(new BagConstraint(qf, ConstraintOp.IN, bag.getOsb()));
         }
         if (geneIdentifier != null) {
-            cs.addConstraint(new SimpleConstraint(new QueryField(gene, "primaryIdentifier"),
+            QueryExpression qf1 = new QueryExpression(QueryExpression.LOWER, 
+                                                     new QueryField(gene, "primaryIdentifier"));
+            cs.addConstraint(new SimpleConstraint(qf1,
                                                   ConstraintOp.EQUALS,
-                                                  new QueryValue(geneIdentifier)));
+                                                  new QueryValue(geneIdentifier.toLowerCase())));
         }
 
         QueryCollectionReference r = new QueryCollectionReference(gene, "mRNAExpressionResults");
@@ -117,13 +120,14 @@ public class FlyFishDataSetLdr implements DataSetLdr
         QueryObjectReference qcr = new QueryObjectReference(mrnaResult, "source");
         cs.addConstraint(new ContainsConstraint(qcr, ConstraintOp.CONTAINS, ds));
         
-        
-        cs.addConstraint(new SimpleConstraint(new QueryField(ds, "title"), ConstraintOp.EQUALS,
-        new QueryValue("fly-Fish data set of Drosophila embryo mRNA localization patterns")));
+        QueryExpression qf2 = new QueryExpression(QueryExpression.LOWER, 
+                                                  new QueryField(ds, "title"));
+        String dataset = "fly-Fish data set of Drosophila embryo mRNA localization patterns";
+        cs.addConstraint(new SimpleConstraint(qf2, ConstraintOp.EQUALS, 
+                                              new QueryValue(dataset.toLowerCase())));
         
         q.setConstraint(cs);
         q.addToOrderBy(stageName);
-
 
         results = os.execute(q);
         results.setBatchSize(100000);

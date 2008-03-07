@@ -19,6 +19,7 @@ import org.intermine.objectstore.query.Results;
 import org.intermine.objectstore.query.ResultsRow;
 
 import org.intermine.objectstore.intermine.ObjectStoreInterMineImpl;
+import org.intermine.util.StringUtil;
 import org.intermine.util.TypeUtil;
 import org.intermine.web.logic.Constants;
 import org.intermine.web.logic.WebUtil;
@@ -135,7 +136,7 @@ public class EnrichmentWidgetController extends TilesAction
              request.setAttribute("totals", results.get(1));
              request.setAttribute("labelToId", results.get(2));
              request.setAttribute("referencePopulation", "All " + bag.getType() + "s from  "
-                                  + ldr.getPopulationDescr().toString());
+                                  + StringUtil.prettyList(ldr.getPopulationDescr(), true));
          }
          return null;
      }

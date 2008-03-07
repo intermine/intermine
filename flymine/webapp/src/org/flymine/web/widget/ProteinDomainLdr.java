@@ -20,6 +20,7 @@ import org.intermine.objectstore.query.ContainsConstraint;
 import org.intermine.objectstore.query.Query;
 import org.intermine.objectstore.query.QueryClass;
 import org.intermine.objectstore.query.QueryCollectionReference;
+import org.intermine.objectstore.query.QueryExpression;
 import org.intermine.objectstore.query.QueryField;
 import org.intermine.objectstore.query.QueryFunction;
 import org.intermine.objectstore.query.QueryObjectReference;
@@ -101,7 +102,8 @@ public class ProteinDomainLdr implements EnrichmentWidgetLdr
         cs.addConstraint(new BagConstraint(qfOrganismName, ConstraintOp.IN, organisms));
         QueryCollectionReference qr = new QueryCollectionReference(qcProtein, "proteinDomains");
         cs.addConstraint(new ContainsConstraint(qr, ConstraintOp.CONTAINS, qcProteinFeature));
-        cs.addConstraint(new SimpleConstraint(qfId, ConstraintOp.MATCHES, new QueryValue("IPR%")));
+        QueryExpression qf = new QueryExpression(QueryExpression.LOWER, qfId);
+        cs.addConstraint(new SimpleConstraint(qf, ConstraintOp.MATCHES, new QueryValue("ipr%")));
 
         if (useBag) {
             if (bag.getType().equalsIgnoreCase("protein")) {

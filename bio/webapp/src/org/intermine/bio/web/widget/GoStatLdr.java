@@ -21,6 +21,7 @@ import org.intermine.objectstore.query.ContainsConstraint;
 import org.intermine.objectstore.query.Query;
 import org.intermine.objectstore.query.QueryClass;
 import org.intermine.objectstore.query.QueryCollectionReference;
+import org.intermine.objectstore.query.QueryExpression;
 import org.intermine.objectstore.query.QueryField;
 import org.intermine.objectstore.query.QueryFunction;
 import org.intermine.objectstore.query.QueryObjectReference;
@@ -35,15 +36,15 @@ import org.intermine.web.logic.bag.InterMineBag;
 import org.intermine.web.logic.profile.Profile;
 import org.intermine.web.logic.widget.EnrichmentWidgetLdr;
 
-import javax.servlet.ServletContext;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpSession;
-
+import org.flymine.model.genomic.GOAnnotation;
+import org.flymine.model.genomic.GOTerm;
 import org.flymine.model.genomic.Gene;
 import org.flymine.model.genomic.Organism;
 import org.flymine.model.genomic.Protein;
-import org.flymine.model.genomic.GOAnnotation;
-import org.flymine.model.genomic.GOTerm;
+
+import javax.servlet.ServletContext;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpSession;
 
 /**
  * {@inheritDoc}
@@ -88,9 +89,9 @@ public class GoStatLdr implements EnrichmentWidgetLdr
 
         Collection<String> ids = new ArrayList<String>();
 
-        ids.add("GO:0008150");  // biological_process
-        ids.add("GO:0003674");  // molecular_function
-        ids.add("GO:0005575");  // cellular_component
+        ids.add("go:0008150");  // biological_process
+        ids.add("go:0003674");  // molecular_function
+        ids.add("go:0005575");  // cellular_component
 
         return ids;
 
@@ -119,15 +120,20 @@ public class GoStatLdr implements EnrichmentWidgetLdr
         
         ConstraintSet cs = new ConstraintSet(ConstraintOp.AND);
 
-        cs.addConstraint(new BagConstraint(qfOrganismName, ConstraintOp.IN, organisms));
+        Collection<String> organismsLower = new ArrayList<String>();
+        for (String s : organisms) {
+            organismsLower.add(s.toLowerCase());
+        }
+        QueryExpression qf1 = new QueryExpression(QueryExpression.LOWER, qfOrganismName);
+        cs.addConstraint(new BagConstraint(qf1, ConstraintOp.IN, organismsLower));
         
         // gene.goAnnotation CONTAINS GOAnnotation
         QueryCollectionReference qcr1 = new QueryCollectionReference(qcGene, "allGoAnnotation");
         cs.addConstraint(new ContainsConstraint(qcr1, ConstraintOp.CONTAINS, qcGoAnnotation));
         
         if (!calcTotal) {
-
-            cs.addConstraint(new BagConstraint(qfGoTermId, ConstraintOp.NOT_IN, badOntologies));
+            QueryExpression qf2 = new QueryExpression(QueryExpression.LOWER, qfGoTermId);
+            cs.addConstraint(new BagConstraint(qf2, ConstraintOp.NOT_IN, badOntologies));
 
             // gene is from organism
             QueryObjectReference qor1 = new QueryObjectReference(qcGene, "organism");
@@ -141,8 +147,9 @@ public class GoStatLdr implements EnrichmentWidgetLdr
             cs.addConstraint(new SimpleConstraint(qfQualifier, ConstraintOp.IS_NULL));
 
             // go term is of the specified namespace
-            cs.addConstraint(new SimpleConstraint(qfNamespace, 
-                                                  ConstraintOp.EQUALS, new QueryValue(namespace)));
+            QueryExpression qf3 = new QueryExpression(QueryExpression.LOWER, qfNamespace);
+            cs.addConstraint(new SimpleConstraint(qf3, ConstraintOp.EQUALS, 
+                                                  new QueryValue(namespace.toLowerCase())));
 
         }
         if (useBag) {

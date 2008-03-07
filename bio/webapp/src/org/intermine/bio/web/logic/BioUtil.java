@@ -21,6 +21,7 @@ import org.intermine.objectstore.query.ConstraintSet;
 import org.intermine.objectstore.query.ContainsConstraint;
 import org.intermine.objectstore.query.Query;
 import org.intermine.objectstore.query.QueryClass;
+import org.intermine.objectstore.query.QueryExpression;
 import org.intermine.objectstore.query.QueryField;
 import org.intermine.objectstore.query.QueryObjectReference;
 import org.intermine.objectstore.query.QueryValue;
@@ -94,23 +95,35 @@ public abstract class BioUtil
      * Return a list of chromosomes for specified organism
      * @param os ObjectStore
      * @param organism Organism name
+     * @param lowercase if true returns lowercase chromosome names.  the precomputed tables indexes 
+     * are all lowercase, so the chromosome names need to be lowercase when used in queries 
      * @return collection of chromosome names
      */
-    public static Collection<String> getChromosomes(ObjectStore os, String organism) {
+    public static Collection<String> getChromosomes(ObjectStore os, String organism, 
+                                                    boolean lowercase) {
 
         /* TODO put this in a config file */
         // TODO this may well go away once chromosomes sorted out in #1186
         if (organism.equals("Drosophila melanogaster")) {
 
             ArrayList<String> chromosomes = new ArrayList<String>();
-            chromosomes.add("2L");
-            chromosomes.add("2R");
-            chromosomes.add("3L");
-            chromosomes.add("3R");
-            chromosomes.add("4");
-            chromosomes.add("U");
-            chromosomes.add("X");
-
+            if (lowercase) {
+                chromosomes.add("2l");
+                chromosomes.add("2r");
+                chromosomes.add("3l");
+                chromosomes.add("3r");
+                chromosomes.add("4");
+                chromosomes.add("u");
+                chromosomes.add("x");
+            } else {
+                chromosomes.add("2L");
+                chromosomes.add("2R");
+                chromosomes.add("3L");
+                chromosomes.add("3R");
+                chromosomes.add("4");
+                chromosomes.add("U");
+                chromosomes.add("X");
+            }
             return chromosomes;
         }
 
@@ -119,7 +132,7 @@ public abstract class BioUtil
         QueryClass qcChromosome = new QueryClass(Chromosome.class);
         QueryClass qcOrganism = new QueryClass(Organism.class);
         QueryField qfChromosome = new QueryField(qcChromosome, "primaryIdentifier");
-        QueryField organismNameQF = new QueryField(qcOrganism, "name");
+        QueryField qfOrganismName = new QueryField(qcOrganism, "name");
         q.addFrom(qcChromosome);
         q.addFrom(qcOrganism);
 
@@ -130,10 +143,10 @@ public abstract class BioUtil
         QueryObjectReference qr = new QueryObjectReference(qcChromosome, "organism");
         ContainsConstraint cc = new ContainsConstraint(qr, ConstraintOp.CONTAINS, qcOrganism);
         cs.addConstraint(cc);
-
-        SimpleConstraint sc = new SimpleConstraint(organismNameQF,
-                                                   ConstraintOp.EQUALS,
-                                                   new QueryValue(organism));
+        
+        QueryExpression qf = new QueryExpression(QueryExpression.LOWER, qfOrganismName);
+        SimpleConstraint sc = new SimpleConstraint(qf, ConstraintOp.EQUALS, 
+                                                   new QueryValue(organism.toLowerCase()));
         cs.addConstraint(sc);
 
         q.setConstraint(cs);
@@ -146,7 +159,11 @@ public abstract class BioUtil
 
         while (it.hasNext()) {
             ResultsRow rr =  (ResultsRow) it.next();
-            chromosomes.add((String) rr.get(0));
+            String chromosome = (String) rr.get(0);
+            if (lowercase) {
+                chromosome.toLowerCase();
+            }
+            chromosomes.add(chromosome);
         }
         return chromosomes;
     }

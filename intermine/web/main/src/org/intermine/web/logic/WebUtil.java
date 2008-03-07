@@ -515,6 +515,10 @@ public abstract class WebUtil
 
                     double p = Hypergeometric.calculateP(countBag.intValue(), sampleTotal,
                                             countAll.intValue(), populationTotal);
+                    String xxx = p + " sample size: "
+                    + countBag + ", population size: " + countAll + ", bag size: "
+                    + sampleTotal + ", total: " + populationTotal;
+                    //LOG.error(xxx);
                     try {
                         resultsMap.put(id, new BigDecimal(p));
                     } catch (Exception e) {
