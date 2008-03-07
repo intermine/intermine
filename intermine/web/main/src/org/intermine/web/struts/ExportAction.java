@@ -10,7 +10,6 @@ package org.intermine.web.struts;
  *
  */
 
-import java.util.Date;
 import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
@@ -18,26 +17,33 @@ import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
 import org.apache.log4j.Logger;
-import org.apache.poi.hssf.usermodel.HSSFRow;
-import org.apache.poi.hssf.usermodel.HSSFSheet;
-import org.apache.poi.hssf.usermodel.HSSFWorkbook;
+import org.apache.struts.Globals;
 import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
 import org.apache.struts.action.ActionMessage;
-import org.intermine.objectstore.ObjectStoreException;
+import org.apache.struts.action.ActionMessages;
 import org.intermine.web.logic.Constants;
 import org.intermine.web.logic.WebUtil;
 import org.intermine.web.logic.config.TableExportConfig;
 import org.intermine.web.logic.config.WebConfig;
 import org.intermine.web.logic.export.Exporter;
-import org.intermine.web.logic.export.ExporterImpl;
-import org.intermine.web.logic.export.TableExporter;
 import org.intermine.web.logic.export.ExporterFactory;
+import org.intermine.web.logic.export.TableExporter;
 import org.intermine.web.logic.results.Column;
 import org.intermine.web.logic.results.PagedTable;
 import org.intermine.web.logic.results.WebResults;
 import org.intermine.web.logic.session.SessionMethods;
+
+/*
+ * TODO
+ * - finish gff3
+ * - rewrite exporters
+ * - enables set position from which to which should be export 
+ * 
+ * - rewrite  web service for new exporters
+ * - solve error handling in export action
+ */
 
 /**
  * Implementation of <strong>Action</strong> that allows the user to export a PagedTable to a file
@@ -48,6 +54,8 @@ public class ExportAction extends InterMineAction
 {
     protected static final Logger LOG = Logger.getLogger(ExportAction.class);
 
+    //private static final ActionForward forward = null; 
+    
     /**
      * Method called to export a PagedTable object.  Uses the type request parameter to choose the
      * export method.
@@ -104,17 +112,20 @@ public class ExportAction extends InterMineAction
                 }
             }
             return null;
-        } catch (Exception ex) {
-            ex.printStackTrace();
-            //LOG.error("Export failed. Please contact support.", ex);
-            return null;
+        } catch (RuntimeException ex) {
+            ActionMessages messages = new ActionMessages();
+            ActionMessage error = new ActionMessage("errors.export.exportfailed");
+            messages.add(ActionMessages.GLOBAL_MESSAGE, error);
+            request.setAttribute(Globals.ERROR_KEY, messages);
+            LOG.error(ex);
+            return mapping.findForward("error");
         } finally {
             if (rowList != null && rowList instanceof WebResults) {
                 ((WebResults) rowList).releaseGoFaster();
             }
         }
     }
-
+    
     private PagedTable getPagedTable(HttpServletRequest request, HttpSession session) {
         PagedTable pt;
         String tableType = request.getParameter("tableType");

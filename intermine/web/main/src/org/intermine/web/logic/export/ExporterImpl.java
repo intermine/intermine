@@ -28,6 +28,7 @@ public class ExporterImpl implements Exporter
 
     private PrintWriter out;
     private RowFormatter rowFormatter;
+    private int writtenResultsCount = 0;
 
     /**
      * Constructor.
@@ -44,10 +45,33 @@ public class ExporterImpl implements Exporter
      * @param results results to be exported
      */
     public void export(List<List<ResultElement>> results) {
-        ResultElementConverter converter = new  ResultElementConverter();
-        for (List<ResultElement> result : results) {
-            out.println(rowFormatter.format(converter.convert(result)));
+        try {
+            ResultElementConverter converter = new  ResultElementConverter();
+            for (List<ResultElement> result : results) {
+                out.println(rowFormatter.format(converter.convert(result)));
+                writtenResultsCount++;
+            }
+            out.flush();
+        } catch (RuntimeException e) {
+            throw new ExportException("Export failed.", e);
         }
-        out.flush();
     }
+
+    /**
+     * {@inheritDoc}
+     */
+    public int getWrittenResultsCount() {
+        return writtenResultsCount;
+    }
+    
+    /**
+     * {@inheritDoc}
+     * Universal exporter. 
+     * @return always true
+     */
+    public boolean canExport(List<Class> clazzes) {
+        return true;
+    }
+    
+    
 }

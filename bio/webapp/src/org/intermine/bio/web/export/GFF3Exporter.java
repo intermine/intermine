@@ -10,32 +10,9 @@ package org.intermine.bio.web.export;
  *
  */
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.List;
+import java.io.InputStream;
 import java.util.Map;
 import java.util.Properties;
-
-import org.intermine.bio.io.gff3.GFF3Record;
-import org.intermine.bio.util.GFF3Util;
-import org.intermine.objectstore.ObjectStoreException;
-import org.intermine.util.StringUtil;
-import org.intermine.util.TypeUtil;
-import org.intermine.util.TypeUtil.FieldInfo;
-import org.intermine.web.logic.export.ExportHelper;
-import org.intermine.web.logic.export.TableExporter;
-import org.intermine.web.logic.results.PagedTable;
-import org.intermine.web.logic.results.ResultElement;
-import org.intermine.web.logic.results.WebTable;
-import org.intermine.web.logic.session.SessionMethods;
-
-import org.flymine.model.genomic.LocatedSequenceFeature;
-
-import java.io.InputStream;
-import java.io.OutputStream;
-import java.io.OutputStreamWriter;
-import java.io.PrintWriter;
 
 import javax.servlet.ServletContext;
 import javax.servlet.ServletException;
@@ -50,6 +27,13 @@ import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
 import org.apache.struts.action.ActionMessage;
 import org.apache.struts.action.ActionMessages;
+import org.flymine.model.genomic.LocatedSequenceFeature;
+import org.intermine.util.StringUtil;
+import org.intermine.web.logic.export.ExportHelper;
+import org.intermine.web.logic.export.Exporter;
+import org.intermine.web.logic.export.TableExporter;
+import org.intermine.web.logic.results.PagedTable;
+import org.intermine.web.logic.session.SessionMethods;
 
 /**
  * An implementation of TableExporter that exports LocatedSequenceFeature objects in GFF3 format.
@@ -86,110 +70,32 @@ public class GFF3Exporter implements TableExporter
         HttpSession session = request.getSession();
         ServletContext servletContext = session.getServletContext();
 
-        response.setContentType("text/plain");
-        response.setHeader("Content-Disposition ",
-                           "inline; filename=table" + StringUtil.uniqueString() + ".gff3");
-
-        OutputStream outputStream = null;
-        PrintWriter printWriter = null;
+        setGFF3Header(response);
 
         PagedTable pt = SessionMethods.getResultsTable(session, request.getParameter("table"));
 
-        int realFeatureIndex = ExportHelper
-        .getFirstColumnForClass(pt, LocatedSequenceFeature.class);
-        int writtenFeaturesCount = 0;
+        int realFeatureIndex = ExportHelper.getFirstColumnForClass(
+                ExportHelper.getColumnClasses(pt), LocatedSequenceFeature.class);
 
-        try {
-            WebTable rowList = pt.getAllRows();
-
-            //  TODO if a query, increase the batch size - already goFaster()?
-
-            for (int rowIndex = 0;
-                 rowIndex < rowList.size() && rowIndex <= pt.getMaxRetrievableIndex();
-                 rowIndex++) {
-                List<ResultElement> row;
-                try {
-                    row = rowList.getResultElements(rowIndex);
-                } catch (RuntimeException e) {
-                    // re-throw as a more specific exception
-                    if (e.getCause() instanceof ObjectStoreException) {
-                        throw (ObjectStoreException) e.getCause();
-                    } else {
-                        throw e;
-                    }
-                }
-
-                LocatedSequenceFeature lsf = (LocatedSequenceFeature) row.get(realFeatureIndex)
-                    .getInterMineObject();
-
-                Map<String, List<String>> extraAttributes = new HashMap<String, List<String>>();
-
-
-                // add some fields as extra attributes if the object has them
-
-                List<String> extraFields =
-                    Arrays.asList(new String[] {
-                                      "symbol", "primaryIdentifier", "name"
-                                  });
-                for (String fieldName : extraFields) {
-                    FieldInfo field = TypeUtil.getFieldInfo(lsf.getClass(), fieldName);
-                    if (field != null && (TypeUtil.getFieldValue(lsf, fieldName) != null)) {
-                        List<String> values = new ArrayList<String>();
-                        values.add((String) TypeUtil.getFieldValue(lsf, fieldName));
-                        extraAttributes.put(fieldName, values);
-                    }
-                }
-
-                GFF3Record gff3Record =
-                    GFF3Util.makeGFF3Record(lsf, getSoClassNames(servletContext), extraAttributes);
-
-                if (gff3Record == null) {
-                    // no chromsome ref or no chromosomeLocation ref
-                    continue;
-                }
-
-                if (outputStream == null) {
-                    // try to avoid opening the OutputStream until we know that the query is
-                    // going to work - this avoids some problems that occur when
-                    // getOutputStream() is called twice (once by this method and again to
-                    // write the error)
-                    outputStream = response.getOutputStream();
-                    printWriter = new PrintWriter(new OutputStreamWriter(outputStream));
-
-                    printWriter.println("##gff-version 3");
-                }
-
-                writtenFeaturesCount++;
-
-                printWriter.println(gff3Record.toGFF3());
-            }
-
-            if (printWriter != null) {
-                printWriter.close();
-            }
-
-            if (outputStream != null) {
-                outputStream.close();
-            }
-
-            if (writtenFeaturesCount == 0) {
-                ActionMessages messages = new ActionMessages();
-                ActionMessage error = new ActionMessage("errors.export.nothingtoexport");
-                messages.add(ActionMessages.GLOBAL_MESSAGE, error);
-                request.setAttribute(Globals.ERROR_KEY, messages);
-
-                return mapping.findForward("results");
-            }
-
-        } catch (ObjectStoreException e) {
+        Exporter exporter = new GFF3ExporterImpl(response.getWriter(), 
+                realFeatureIndex, getSoClassNames(servletContext));
+        
+        exporter.export(pt.getRearrangedResults());
+        
+        if (exporter.getWrittenResultsCount() == 0) {
             ActionMessages messages = new ActionMessages();
-            ActionMessage error = new ActionMessage("errors.query.objectstoreerror");
+            ActionMessage error = new ActionMessage("errors.export.nothingtoexport");
             messages.add(ActionMessages.GLOBAL_MESSAGE, error);
             request.setAttribute(Globals.ERROR_KEY, messages);
-            LOG.error(e);
             return mapping.findForward("results");
         }
         return null;
+    }
+
+    private void setGFF3Header(HttpServletResponse response) {
+        response.setContentType("text/plain");
+        response.setHeader("Content-Disposition ",
+                           "inline; filename=table" + StringUtil.uniqueString() + ".gff3");
     }
 
     /**
@@ -222,7 +128,6 @@ public class GFF3Exporter implements TableExporter
      * {@inheritDoc}
      */
     public boolean canExport(PagedTable pt) {
-        return ExportHelper.canExport(pt, LocatedSequenceFeature.class);
+        return GFF3ExporterImpl.canExport2(ExportHelper.getColumnClasses(pt));
     }
-
 }
