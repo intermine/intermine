@@ -108,8 +108,7 @@ public class BDGPinsituDataSetLdr implements DataSetLdr
         if (geneIdentifier != null) {
             QueryExpression qf1 = new QueryExpression(QueryExpression.LOWER, 
                                                       new QueryField(gene, "primaryIdentifier"));
-            cs.addConstraint(new SimpleConstraint(qf1,
-                                                  ConstraintOp.EQUALS,
+            cs.addConstraint(new SimpleConstraint(qf1, ConstraintOp.EQUALS,
                                                   new QueryValue(geneIdentifier.toLowerCase())));
         }
 
@@ -120,8 +119,10 @@ public class BDGPinsituDataSetLdr implements DataSetLdr
         cs.addConstraint(new ContainsConstraint(qcr, ConstraintOp.CONTAINS, ds));
         
         String dataset = "BDGP in situ data set";
-        cs.addConstraint(new SimpleConstraint(new QueryField(ds, "title"), ConstraintOp.EQUALS,
-        new QueryValue("BDGP in situ data set")));
+        QueryExpression qf2 = new QueryExpression(QueryExpression.LOWER,
+                                                  new QueryField(ds, "title"));
+        cs.addConstraint(new SimpleConstraint(qf2, ConstraintOp.EQUALS, 
+                                              new QueryValue(dataset.toLowerCase())));
         
         q.setConstraint(cs);
         q.addToOrderBy(stageName);
@@ -177,15 +178,14 @@ public class BDGPinsituDataSetLdr implements DataSetLdr
                             initCallTable(LinkedHashMap<String, ArrayList<String>> geneMap) {
         LinkedHashMap<String, int[]> callTable = new LinkedHashMap<String, int[]>();
         String append = " (BDGP in situ)";
-        String[] stageLabels = new String[7]; 
-
-        stageLabels[0] = "";
-        stageLabels[1] = "stage 1-3" + append;
-        stageLabels[2] = "stage 4-6" + append;
-        stageLabels[3] = "stage 7-8" + append;
-        stageLabels[4] = "stage 9-10" + append;
-        stageLabels[5] = "stage 11-12" + append;
-        stageLabels[6] = "stage 13-16" + append;
+        String[] stageLabels = new String[6]; 
+        
+        stageLabels[0] = "stage 1-3" + append;
+        stageLabels[1] = "stage 4-6" + append;
+        stageLabels[2] = "stage 7-8" + append;
+        stageLabels[3] = "stage 9-10" + append;
+        stageLabels[4] = "stage 11-12" + append;
+        stageLabels[5] = "stage 13-16" + append;
         
         for (String stage : stageLabels) {            
             int[] count = new int[2];
