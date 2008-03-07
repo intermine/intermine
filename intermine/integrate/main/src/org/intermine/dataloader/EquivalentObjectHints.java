@@ -19,6 +19,7 @@ import java.util.Set;
 import org.intermine.model.InterMineObject;
 import org.intermine.objectstore.ObjectStore;
 import org.intermine.objectstore.ObjectStoreException;
+import org.intermine.objectstore.query.ConstraintOp;
 import org.intermine.objectstore.query.Query;
 import org.intermine.objectstore.query.QueryClass;
 import org.intermine.objectstore.query.QueryCloner;
@@ -26,6 +27,8 @@ import org.intermine.objectstore.query.QueryEvaluable;
 import org.intermine.objectstore.query.QueryField;
 import org.intermine.objectstore.query.QueryForeignKey;
 import org.intermine.objectstore.query.QueryFunction;
+import org.intermine.objectstore.query.QueryValue;
+import org.intermine.objectstore.query.SubqueryExistsConstraint;
 import org.intermine.util.AlwaysSet;
 import org.intermine.util.DynamicUtil;
 import org.intermine.util.PseudoSet;
@@ -74,9 +77,12 @@ public class EquivalentObjectHints
         // Okay, we haven't run the query yet.
         try {
             Query q = new Query();
+            Query subQ = new Query();
             QueryClass qc = new QueryClass(InterMineObject.class);
-            q.addFrom(qc);
-            q.addToSelect(qc);
+            subQ.addFrom(qc);
+            subQ.addToSelect(new QueryField(qc, "id"));
+            q.addToSelect(new QueryValue(new Integer(1)));
+            q.setConstraint(new SubqueryExistsConstraint(ConstraintOp.EXISTS, subQ));
             List results = os.execute(q, 0, 1, false, false, ObjectStore.SEQUENCE_IGNORE);
             if (results.isEmpty()) {
                 databaseEmpty = true;
@@ -105,9 +111,12 @@ public class EquivalentObjectHints
         if (status == null) {
             try {
                 Query q = new Query();
+                Query subQ = new Query();
                 QueryClass qc = new QueryClass(clazz);
-                q.addFrom(qc);
-                q.addToSelect(qc);
+                subQ.addFrom(qc);
+                subQ.addToSelect(new QueryField(qc, "id"));
+                q.addToSelect(new QueryValue(new Integer(1)));
+                q.setConstraint(new SubqueryExistsConstraint(ConstraintOp.EXISTS, subQ));
                 List results = os.execute(q, 0, 1, false, false, ObjectStore.SEQUENCE_IGNORE);
                 if (results.isEmpty()) {
                     status = Boolean.TRUE;
