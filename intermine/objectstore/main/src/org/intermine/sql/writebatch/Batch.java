@@ -43,7 +43,6 @@ public class Batch
     private BatchWriter batchWriter;
     private int batchSize = 0;
     private int lastCheckBatchSize = 0;
-    private boolean needBatchCommit = false;
 
     private List flushJobs = Collections.EMPTY_LIST;
     private SQLException problem = null;
@@ -218,15 +217,18 @@ public class Batch
     }
 
     /**
-     * Marks the next batch flush as having a BatchCommitFlushJob at the end of it. This means that
-     * the connection will have its transaction committed and re-opened, without ever waiting for a
-     * batch flush. Note that stuff added to this batch AFTER this method is called may make it into
-     * the commit!
+     * Flushes the batch out to the database server, then commits and re-opens the transaction,
+     * but does not guarantee that the operation is finished when this method returns. Do not use
+     * the Connection until you have called flush() or clear(). This method also guarantees that
+     * any operations being completed by this flush will be thrown out of this method. The entire
+     * Batch will be flushed - that is necessary to avoid leaving the database in an inconsistent
+     * state.
      *
-     * @throws SQLException never
+     * @param con a Connection for writing to the database
+     * @throws SQLException if an error occurs while flushing
      */
-    public void batchCommit() throws SQLException {
-        needBatchCommit = true;
+    public void batchCommit(Connection con) throws SQLException {
+        backgroundFlush(con, null, true);
     }
 
     /**
@@ -240,6 +242,22 @@ public class Batch
      * @throws SQLException if an error occurs while flushing
      */
     public void backgroundFlush(Connection con, Set filter) throws SQLException {
+        backgroundFlush(con, filter, false);
+    }
+
+     /**
+     * Flushes the batch out to the database server, but does not guarantee that the operation
+     * is finished when this method returns. Do not use the Connection until you have called flush()
+     * or clear(). This method also guarantees that any exception thrown by any operations being
+     * completed by this flush will be thrown out of this method.
+     *
+     * @param con a Connection for writing to the database
+     * @param filter a Set of the table names to write, or null to write all of them
+     * @param needBatchCommit true to add a FlushJobBatchCommit at the end
+     * @throws SQLException if an error occurs while flushing
+     */
+    public void backgroundFlush(Connection con, Set filter, boolean needBatchCommit)
+    throws SQLException {
         if (closed) {
             throw new SQLException("Batch is closed");
         }
