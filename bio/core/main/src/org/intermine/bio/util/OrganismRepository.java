@@ -75,7 +75,7 @@ public class OrganismRepository
                     Matcher matcher = pattern.matcher(name);
                     if (matcher.matches()) {
                         String taxonIdString = matcher.group(1);
-                        Integer taxonId = Integer.valueOf(taxonIdString);
+                        int taxonId = Integer.valueOf(taxonIdString).intValue();
                         String fieldName = matcher.group(2);
 
                         OrganismData od = or.getOrganismDataByTaxonInternal(taxonId);
@@ -115,7 +115,7 @@ public class OrganismRepository
      * @param taxonId the taxon id
      * @return the OrganismData
      */
-    public OrganismData getOrganismDataByTaxonInternal(Integer taxonId) {
+    public OrganismData getOrganismDataByTaxonInternal(int taxonId) {
         OrganismData od = taxonMap.get(taxonId);
         if (od == null) {
             od = new OrganismData();
