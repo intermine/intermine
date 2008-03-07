@@ -28,6 +28,7 @@ public class ExcelExporter implements Exporter
 {
     
     private OutputStream out;
+    private int writtenResultsCount;
 
     /**
      * Constructor.
@@ -42,47 +43,63 @@ public class ExcelExporter implements Exporter
      * @param results results to be exported
      */
     public void export(List<List<ResultElement>> results) {
-
-        HSSFWorkbook wb = new HSSFWorkbook();
-        HSSFSheet sheet = wb.createSheet("results");
-        ResultElementConverter converter = new ResultElementConverter();
-        
-        for (int rowIndex = 0; rowIndex < results.size(); rowIndex++) {
-            
-            HSSFRow excelRow = sheet.createRow((short) rowIndex);
-            List<Object> row = converter.convert(results.get(rowIndex));
-            
-            for (short colIndex = 0; colIndex < row.size(); colIndex++) {
-                Object obj = row.get(colIndex);
-                if (obj == null) {
-                    excelRow.createCell(colIndex).setCellValue("");
-                    continue;
-                }
-
-                if (obj instanceof Number) {
-                    float objectAsFloat = ((Number) obj).floatValue();
-                    excelRow.createCell(colIndex).setCellValue(objectAsFloat);
-                    continue;
-                }
-
-                if (obj instanceof Date) {
-                    Date objectAsDate = (Date) obj;
-                    excelRow.createCell(colIndex).setCellValue(objectAsDate);
-                    continue;
-                }
-
-                excelRow.createCell(colIndex).setCellValue("" + obj);
-
-            }
-        }
         try {
+            HSSFWorkbook wb = new HSSFWorkbook();
+            HSSFSheet sheet = wb.createSheet("results");
+            ResultElementConverter converter = new ResultElementConverter();
+            
+            for (int rowIndex = 0; rowIndex < results.size(); rowIndex++) {
+                
+                HSSFRow excelRow = sheet.createRow((short) rowIndex);
+                List<Object> row = converter.convert(results.get(rowIndex));
+                
+                for (short colIndex = 0; colIndex < row.size(); colIndex++) {
+                    Object obj = row.get(colIndex);
+                    if (obj == null) {
+                        excelRow.createCell(colIndex).setCellValue("");
+                        continue;
+                    }
+
+                    if (obj instanceof Number) {
+                        float objectAsFloat = ((Number) obj).floatValue();
+                        excelRow.createCell(colIndex).setCellValue(objectAsFloat);
+                        continue;
+                    }
+
+                    if (obj instanceof Date) {
+                        Date objectAsDate = (Date) obj;
+                        excelRow.createCell(colIndex).setCellValue(objectAsDate);
+                        continue;
+                    }
+
+                    excelRow.createCell(colIndex).setCellValue("" + obj);
+
+                }
+                writtenResultsCount++;
+            }
             wb.write(out);
         } catch (IOException e) {
-            throw new ExportException("IOException occured.", e);
+            throw new ExportException("Export failed.", e);
+        } catch (RuntimeException e) {
+            throw new ExportException("Export failed.", e);
         }
     }
-    
 
+    /**
+     * This exporter is universal and that's why method returns always true.
+     * {@inheritDoc}}
+     * @return always true
+     */
+    public boolean canExport(List<Class> clazzes) {
+        return true;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public int getWrittenResultsCount() {
+        return writtenResultsCount;
+    }
 }
 
 

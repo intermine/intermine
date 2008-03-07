@@ -27,5 +27,17 @@ public interface Exporter
      * @param results to be exported
      */
     public void export(List<List<ResultElement>> results);
+ 
+    /**
+     * This method finds out if result row composed from instances of these 
+     * classes can be exported with actual implementation of exporter.  
+     * @param clazzes classes in row
+     * @return true if result row can be exported or false
+     */
+    public boolean canExport(List<Class> clazzes);
     
+    /**
+     * @return count of written results
+     */
+    public int getWrittenResultsCount();
 }
