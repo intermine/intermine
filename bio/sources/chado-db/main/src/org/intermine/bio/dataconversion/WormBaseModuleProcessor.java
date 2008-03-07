@@ -38,7 +38,7 @@ public class WormBaseModuleProcessor extends ChadoSequenceProcessor
      */
     @Override
     @SuppressWarnings("unchecked")
-    protected Map<MultiKey, List<ConfigAction>> getConfig() {
+    protected Map<MultiKey, List<ConfigAction>> getConfig(int taxonId) {
        if (config == null) {
            config = new MultiKeyMap();
            config.put(new MultiKey("feature", "Gene", "WormBase", "uniquename"),

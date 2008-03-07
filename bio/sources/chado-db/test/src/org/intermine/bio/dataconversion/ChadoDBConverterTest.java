@@ -13,6 +13,7 @@
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.intermine.dataconversion.ItemWriter;
 import org.intermine.dataconversion.ItemsTestCase;
@@ -21,6 +22,7 @@ import org.intermine.metadata.Model;
 import org.intermine.sql.Database;
 
 import java.io.FileWriter;
+import java.io.IOException;
 import java.io.PrintWriter;
 import java.sql.Connection;
 
@@ -38,15 +40,28 @@ public class ChadoDBConverterTest extends ItemsTestCase
         super.setUp();
     }
 
-    public void testProcess() throws Exception {
+    public void testProcessTaxon() throws Exception {
+        String orgId = "7227";
+        doTestProcess(orgId);
+    }
+
+    public void testProcessAbbreviation() throws Exception {
+        String orgId = "Dmel";
+        doTestProcess(orgId);
+    }
+
+    /**
+     * @param orgId
+     * @throws Exception
+     * @throws IOException
+     */
+    private void doTestProcess(String orgId) throws Exception, IOException {
         MockItemWriter itemWriter = new MockItemWriter(new HashMap());
         ChadoDBConverter converter =
             new TestChadoDBConverter(null, Model.getInstanceByName("genomic"), itemWriter);
         converter.setDataSetTitle("test title");
         converter.setDataSourceName("FlyBase");
-        converter.setGenus("Drosophila");
-        converter.setSpecies("melanogaster");
-        converter.setTaxonId("7227");
+        converter.setOrganisms(orgId);
         converter.setProcessors("org.intermine.bio.dataconversion.TestFlyBaseModuleProcessor");
         converter.process();
         itemWriter.close();
@@ -78,10 +93,14 @@ public class ChadoDBConverterTest extends ItemsTestCase
         public TestChadoDBConverter(Database database, Model tgtModel, ItemWriter writer) {
             super(database, tgtModel, writer);
         }
-        @Override
-        protected int getChadoOrganismId(@SuppressWarnings("unused") Connection connection) {
-            return 1;
 
+        protected Map<String, Integer> getChadoOrganismIds(@SuppressWarnings("unused")
+                                                           Connection connection,
+                                                           @SuppressWarnings("unused")
+                                                           List<String> abbreviations) {
+            Map<String, Integer> retMap = new HashMap<String, Integer>();
+            retMap.put("Dmel", 7227);
+            return retMap;
         }
     }
 }
