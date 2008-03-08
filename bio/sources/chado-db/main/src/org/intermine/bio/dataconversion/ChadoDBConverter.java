@@ -45,8 +45,6 @@ public class ChadoDBConverter extends BioDBConverter
     private String dataSourceName;
     private String dataSetTitle;
 
-    // a Map from taxonId to chado organism_id
- //   private Map<Integer, Integer> taxonToChado = new HashMap<Integer, Integer>();
     // a Map from chado organism_id to taxonId
     private Map<Integer, OrganismData> chadoToOrgData = new HashMap<Integer, OrganismData>();
     private String processors = "";
@@ -173,7 +171,6 @@ public class ChadoDBConverter extends BioDBConverter
                 OrganismData orgData =
                     organismRepository.getOrganismDataByAbbreviation(abbreviation);
                 chadoToOrgData.put(chadoOrganismId, orgData);
-                //           taxonToChado.put(orgData.getTaxonId(), chadoOrganismId);
             }
         }
 
