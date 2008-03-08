@@ -44,11 +44,12 @@ import org.xml.sax.helpers.DefaultHandler;
  * @author Julie Sullivan
  */
 public class BioGridConverter extends FileConverter
-{   
+{
+    private Map<String, String> pubs = new HashMap<String, String>();
     private static final Logger LOG = Logger.getLogger(BioGridConverter.class);
     protected static final String GENOMIC_NS = "http://www.flymine.org/model/genomic#";
     private static Map<String, String> masterList = new HashMap<String, String>();
-    
+
     /**
      * Constructor
      * @param writer the ItemWriter used to handle the resultant items
@@ -58,14 +59,14 @@ public class BioGridConverter extends FileConverter
         super(writer, model);
     }
 
-    // 
+    //
 
     /**
      * {@inheritDoc}
      */
     public void process(Reader reader) throws Exception {
 
-        PsiHandler handler = new PsiHandler(getItemWriter(), masterList);
+        BioGridHandler handler = new BioGridHandler(getItemWriter(), masterList);
 
         try {
             SAXParser.parse(new InputSource(reader), handler);
@@ -78,17 +79,16 @@ public class BioGridConverter extends FileConverter
     /**
      * Handles xml file
      */
-    static class PsiHandler extends DefaultHandler
+    class BioGridHandler extends DefaultHandler
     {
         private ItemFactory itemFactory;
         private Map<String, Integer> ids = new HashMap<String, Integer>();
         private Map<String, String> aliases = new HashMap<String, String>();
-        private Map<String, String> pubs = new HashMap<String, String>();
         private Map<String, Item> genes = new HashMap<String, Item>();
         private Map<String, String> geneIdsToIdentifiers = new HashMap<String, String>();
         // [experiment name] [experiment holder]
-        private Map<String, ExperimentHolder> experimentNames 
-        = new HashMap<String, ExperimentHolder>();  
+        private Map<String, ExperimentHolder> experimentNames
+        = new HashMap<String, ExperimentHolder>();
         // [id][experimentholder]
         private Map<String, ExperimentHolder> experimentIds
         = new HashMap<String, ExperimentHolder>();
@@ -103,13 +103,13 @@ public class BioGridConverter extends FileConverter
         private String experimentId;
         private Item organism = null;
         Set<String> storedItems = new HashSet<String>();
-        
+
         /**
          * Constructor
          * @param writer the ItemWriter used to handle the resultant items
          * @param masterList a map holding objects that span the XML files (dataset and classId)
          */
-        public PsiHandler(ItemWriter writer, Map masterList) {
+        public BioGridHandler(ItemWriter writer, Map masterList) {
 
             itemFactory = new ItemFactory(Model.getInstanceByName("genomic"));
             this.writer = writer;
@@ -124,7 +124,7 @@ public class BioGridConverter extends FileConverter
 
             // <experimentList><experimentDescription>
             if (qName.equals("experimentDescription")) {
-                
+
                 experimentId = attrs.getValue("id");
 
             //  <experimentList><experimentDescription id="2"><names><shortLabel>
@@ -133,8 +133,8 @@ public class BioGridConverter extends FileConverter
                        && stack.search("experimentDescription") == 2) {
 
                 attName = "experimentName";
-                
-                
+
+
             //  <experimentList><experimentDescription id="2"><names><fullName>
             } else if (qName.equals("fullName")
                        && stack.peek().equals("names")
@@ -152,26 +152,26 @@ public class BioGridConverter extends FileConverter
                     String pub = getPub(pubMedId);
                     experimentHolder.setPublication(pub);
                 }
-                
+
             // <interactorList><interactor id="4"><organism ncbiTaxId="7227">
             } else if (qName.equals("organism") && stack.peek().equals("interactor")) {
-                
+
                 String taxId = attrs.getValue("ncbiTaxId");
                 if (organism == null) {
                     organism = getOrganism(taxId);
                 } else {
                     String currentTaxId = organism.getAttribute("taxonId").getValue();
                     if (!taxId.equals(currentTaxId)) {
-                        LOG.error("Interaction with different organisms found:  " + taxId 
+                        LOG.error("Interaction with different organisms found:  " + taxId
                                   + " and " + currentTaxId);
                     }
                 }
-                
+
             // <interactorList><interactor id="4">
             } else if (qName.equals("interactor") && stack.peek().equals("interactorList")) {
-                
-                geneId = attrs.getValue("id");     
-                
+
+                geneId = attrs.getValue("id");
+
             // <interactorList><interactor id="4"><xref><primaryRef db="FLYBASE" id="FBgn0000659"
             } else if (qName.equals("primaryRef")
                        && stack.peek().equals("xref")
@@ -190,22 +190,22 @@ public class BioGridConverter extends FileConverter
             //<interactionList><interaction><experimentList><experimentRef>
             } else if (qName.equals("experimentRef")
                        && stack.peek().equals("experimentList")) {
-                
+
                 attName = "experimentRef";
                 holder = new InteractionHolder();
-                
+
             //<interactionList><interaction><interactionType><names><shortLabel
             } else if (qName.equals("shortLabel")
                             && stack.peek().equals("names")
                             && stack.search("interactionType") == 2) {
-                
+
                 attName = "interactionType";
-                
+
             // <entry>
             } else if (qName.equals("entry")) {
 
                 initDatasources();
-                
+
             }
 
             super.startElement(uri, localName, qName, attrs);
@@ -267,18 +267,18 @@ public class BioGridConverter extends FileConverter
                                 && qName.equals("shortLabel")) {
 
                     String shortLabel = attValue.toString();
-                 
+
                     experimentHolder = checkExperiment(shortLabel);
                     experimentIds.put(experimentId, experimentHolder);
                     experimentHolder.setName(shortLabel);
-                                     
-                //  <experimentList><experimentDescription id="13022"><names><fullName> 
+
+                //  <experimentList><experimentDescription id="13022"><names><fullName>
                 } else if (attName != null
                                     && attName.equals("experimentDescr")
                                     && qName.equals("fullName")) {
 
                     experimentHolder.setDescription(attValue.toString());
-                    
+
                 //<interactionList><interaction>
                 //<participantList><participant id="5"><interactorRef>
                 } else if (qName.equals("interactorRef")
@@ -298,14 +298,14 @@ public class BioGridConverter extends FileConverter
                         holder.isValid = false; // a gene/protein is missing for soem reason
                         LOG.error("Gene/protein not found - " + identifier + " ( " + id + ")");
                     }
-                   
+
                 //<interactionList><interaction><experimentList><experimentRef>
                 } else if (qName.equals("experimentRef")
                                 && stack.peek().equals("experimentList")) {
 
                     String experimentRef = attValue.toString();
                     holder.setExperiment(experimentIds.get(experimentRef));
-                    
+
                 //<interactionType><names><shortLabel>
                 } else if (qName.equals("shortLabel")
                                 && attName != null
@@ -313,11 +313,11 @@ public class BioGridConverter extends FileConverter
 
                     String type = attValue.toString();
                     holder.type = type;
-                    if (type.equalsIgnoreCase("Phenotypic Suppression") 
+                    if (type.equalsIgnoreCase("Phenotypic Suppression")
                                     || type.equalsIgnoreCase("Phenotypic Enhancement")) {
                         holder.isValid = true;
                     }
-                    
+
                 //<interactionList><interaction>
                 } else if (qName.equals("interaction")
                                 && holder != null
@@ -335,9 +335,9 @@ public class BioGridConverter extends FileConverter
         private void storeAll(InteractionHolder interactionHolder) throws SAXException  {
 
             Set interactors = interactionHolder.interactors;
-            
+
             try {
-                
+
                 String interactionName = "";
                 for (String identifier : interactionHolder.geneIdentifiers) {
                     if (!interactionName.equals("")) {
@@ -345,7 +345,7 @@ public class BioGridConverter extends FileConverter
                     }
                     interactionName += identifier;
                 }
-                
+
                 // loop through genes/interactors in this interaction
                 for (Iterator iter = interactors.iterator(); iter.hasNext();) {
 
@@ -357,7 +357,7 @@ public class BioGridConverter extends FileConverter
                     String geneRefId = gene.getIdentifier();
                     interaction.setAttribute("shortName", interactionName);
                     interaction.setAttribute("type", interactionHolder.type);
-                    
+
                     interaction.setReference("gene", geneRefId);
                     interaction.setReference("experiment",
                            interactionHolder.experimentHolder.experiment.getIdentifier());
@@ -384,7 +384,7 @@ public class BioGridConverter extends FileConverter
                         writer.store(ItemHelper.convert(gene));
                         storedItems.add(gene.getAttribute("primaryIdentifier").getValue());
                     }
-                    
+
                     writer.store(ItemHelper.convert(interaction));
                 }
 
@@ -393,7 +393,7 @@ public class BioGridConverter extends FileConverter
                     eh.isStored = true;
                     writer.store(ItemHelper.convert(eh.experiment));
                 }
-                
+
             } catch (ObjectStoreException e) {
                 throw new SAXException(e);
             }
@@ -416,7 +416,7 @@ public class BioGridConverter extends FileConverter
             }
             return itemId;
         }
-        
+
         private Item getGene(String identifier) {
             Item item = genes.get(identifier);
             if (item == null) {
@@ -530,7 +530,7 @@ public class BioGridConverter extends FileConverter
          * ready to store
          * @author Julie Sullivan
          */
-        public static class InteractionHolder
+        public class InteractionHolder
         {
             protected String type;
             protected ExperimentHolder experimentHolder;
@@ -538,12 +538,12 @@ public class BioGridConverter extends FileConverter
             protected Set<String> geneIds = new HashSet<String>();
             protected Set<String> geneIdentifiers = new HashSet<String>();
             protected boolean isValid = false;
-            
+
             /**
              * Constructor
              */
             public InteractionHolder() {
-                
+
             }
 
             /**
@@ -578,8 +578,8 @@ public class BioGridConverter extends FileConverter
          * is verified as a gene interaction and not a protein interaction
          * @author Julie Sullivan
          */
-        protected static class InteractorHolder
-        {            
+        protected class InteractorHolder
+        {
             protected String identifier;    // FBgn
             protected Item gene;
 
@@ -597,7 +597,7 @@ public class BioGridConverter extends FileConverter
          * an interaction is verified to have only valid organisms
          * @author Julie Sullivan
          */
-        protected static class ExperimentHolder
+        protected class ExperimentHolder
         {
             protected Item experiment;
             protected boolean isStored = false;
@@ -617,7 +617,7 @@ public class BioGridConverter extends FileConverter
             protected void setName(String name) {
                 experiment.setAttribute("name", name);
             }
-            
+
             /**
             *
             * @param description the full name of the experiments
