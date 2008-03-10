@@ -110,9 +110,13 @@ public class GFF3ExporterLogic implements Exporter
      * {@inheritDoc}
      */
     public boolean canExport(List<Class> clazzes) {
-        return ExportHelper.getFirstColumnForClass(clazzes, LocatedSequenceFeature.class) >= 0;
+        return canExport2(clazzes);
     }
     
+    /**
+     * @param clazzes classes of result
+     * @return true if this exporter can export result composed of specified classes 
+     */    
     public static boolean canExport2(List<Class> clazzes) {
         return ExportHelper.getFirstColumnForClass(clazzes, LocatedSequenceFeature.class) >= 0;
     }
