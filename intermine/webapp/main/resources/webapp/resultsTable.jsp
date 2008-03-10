@@ -201,8 +201,20 @@
            onmouseout="this.style.cursor='normal';" 
            onmouseover="this.style.cursor='pointer';"/>
     </div>
-    <div id="summary_loading">Loading...</div>
+    <div id="summary_loading"><img src="images/wait18.gif" title="loading icon">&nbsp;Loading...</div>
     <div id="summary_loaded" style="display:none;"></div>
 </div>  
+<script language="javascript">
+  <!--//<![CDATA[
+   new Draggable('summary',null);
+  //]]>-->
+</script>
 
+
+<c:if test="${empty bagName && resultsTable.estimatedSize > 1}">
+   <tiles:insert name="paging.tile">
+     <tiles:put name="resultsTable" beanName="resultsTable" />
+     <tiles:put name="currentPage" value="results" />
+   </tiles:insert>
+</c:if>
 </html:form>
