@@ -77,7 +77,7 @@ public class GFF3Exporter implements TableExporter
         int realFeatureIndex = ExportHelper.getFirstColumnForClass(
                 ExportHelper.getColumnClasses(pt), LocatedSequenceFeature.class);
 
-        Exporter exporter = new GFF3ExporterImpl(response.getWriter(), 
+        Exporter exporter = new GFF3ExporterLogic(response.getWriter(), 
                 realFeatureIndex, getSoClassNames(servletContext));
         
         exporter.export(pt.getRearrangedResults());
@@ -128,6 +128,6 @@ public class GFF3Exporter implements TableExporter
      * {@inheritDoc}
      */
     public boolean canExport(PagedTable pt) {
-        return GFF3ExporterImpl.canExport2(ExportHelper.getColumnClasses(pt));
+        return GFF3ExporterLogic.canExport2(ExportHelper.getColumnClasses(pt));
     }
 }
