@@ -24,10 +24,8 @@ import org.intermine.objectstore.query.QueryClass;
 import org.intermine.objectstore.query.QueryExpression;
 import org.intermine.objectstore.query.QueryField;
 import org.intermine.objectstore.query.QueryObjectReference;
-import org.intermine.objectstore.query.QueryValue;
 import org.intermine.objectstore.query.Results;
 import org.intermine.objectstore.query.ResultsRow;
-import org.intermine.objectstore.query.SimpleConstraint;
 
 import org.intermine.metadata.Model;
 import org.intermine.objectstore.ObjectStore;
@@ -45,10 +43,12 @@ public abstract class BioUtil
     /**
      * For a bag of objects, returns a list of organisms
      * @param os ObjectStore
+     * @param lowercase if true, the organism names will be returned in lowercase
      * @param bag InterMineBag
      * @return collection of organism names
      */
-    public static Collection<String> getOrganisms(ObjectStore os, InterMineBag bag) {
+    public static Collection<String> getOrganisms(ObjectStore os, InterMineBag bag, 
+                                                  boolean lowercase) {
 
         Query q = new Query();
         Model model = os.getModel();
@@ -86,27 +86,36 @@ public abstract class BioUtil
 
         while (it.hasNext()) {
             ResultsRow rr = it.next();
-            organismNames.add((String) rr.get(0));
+            String organismsName =  (String) rr.get(0);
+            if (lowercase) {
+                organismNames.add(organismsName.toLowerCase());
+            } else {
+                organismNames.add(organismsName);
+            }
         }
         return organismNames;
     }
 
+    
     /**
      * Return a list of chromosomes for specified organism
      * @param os ObjectStore
-     * @param organism Organism name
+     * @param organisms Organism names.  Assumes they are lowercase.
      * @param lowercase if true returns lowercase chromosome names.  the precomputed tables indexes 
      * are all lowercase, so the chromosome names need to be lowercase when used in queries 
      * @return collection of chromosome names
      */
-    public static Collection<String> getChromosomes(ObjectStore os, String organism, 
+    public static Collection<String> getChromosomes(ObjectStore os, 
+                                                    Collection<String> organisms, 
                                                     boolean lowercase) {
 
-        /* TODO put this in a config file */
+        
+        final String dmel = "drosophila melanogaster";        
+        ArrayList<String> chromosomes = new ArrayList<String>();
+        
         // TODO this may well go away once chromosomes sorted out in #1186
-        if (organism.equals("Drosophila melanogaster")) {
-
-            ArrayList<String> chromosomes = new ArrayList<String>();
+        if (organisms.contains(dmel)) {
+            
             if (lowercase) {
                 chromosomes.add("2l");
                 chromosomes.add("2r");
@@ -124,7 +133,11 @@ public abstract class BioUtil
                 chromosomes.add("U");
                 chromosomes.add("X");
             }
-            return chromosomes;
+            if (organisms.size() == 1) {
+                return chromosomes;
+            } else {
+                organisms.remove(dmel);
+            }
         }
 
         Query q = new Query();
@@ -144,18 +157,16 @@ public abstract class BioUtil
         ContainsConstraint cc = new ContainsConstraint(qr, ConstraintOp.CONTAINS, qcOrganism);
         cs.addConstraint(cc);
         
-        QueryExpression qf = new QueryExpression(QueryExpression.LOWER, qfOrganismName);
-        SimpleConstraint sc = new SimpleConstraint(qf, ConstraintOp.EQUALS, 
-                                                   new QueryValue(organism.toLowerCase()));
-        cs.addConstraint(sc);
-
+        QueryExpression qf = new QueryExpression(QueryExpression.LOWER, qfOrganismName);        
+        BagConstraint bc = new BagConstraint(qf, ConstraintOp.IN, organisms);
+        cs.addConstraint(bc);
+        
         q.setConstraint(cs);
 
         q.addToOrderBy(qfChromosome);
 
         Results r = os.execute(q);
         Iterator it = r.iterator();
-        Collection<String> chromosomes = new ArrayList<String>();
 
         while (it.hasNext()) {
             ResultsRow rr =  (ResultsRow) it.next();

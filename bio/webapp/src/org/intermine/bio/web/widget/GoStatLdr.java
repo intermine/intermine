@@ -78,7 +78,7 @@ public class GoStatLdr implements EnrichmentWidgetLdr
         namespace = (request.getParameter("filter") != null
                         ? request.getParameter("filter") : "biological_process");
         badOntologies = getOntologies();        
-        organisms = BioUtil.getOrganisms(os, bag);
+        organisms = BioUtil.getOrganisms(os, bag, false);
         
         annotatedSampleQuery = getQuery(false, true);
         annotatedPopulationQuery = getQuery(false, false);

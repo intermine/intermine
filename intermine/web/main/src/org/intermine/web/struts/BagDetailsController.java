@@ -10,23 +10,11 @@ package org.intermine.web.struts;
  *
  */
 
-import java.awt.Font;
-import java.lang.reflect.Constructor;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.Set;
 
-import javax.servlet.ServletContext;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-import javax.servlet.http.HttpSession;
-
-import org.apache.struts.action.ActionForm;
-import org.apache.struts.action.ActionForward;
-import org.apache.struts.action.ActionMapping;
-import org.apache.struts.tiles.ComponentContext;
-import org.apache.struts.tiles.actions.TilesAction;
 import org.intermine.metadata.Model;
 import org.intermine.objectstore.ObjectStore;
 import org.intermine.util.TypeUtil;
@@ -48,7 +36,21 @@ import org.intermine.web.logic.template.TemplateHelper;
 import org.intermine.web.logic.widget.BagGraphWidget;
 import org.intermine.web.logic.widget.BagTableWidgetLoader;
 import org.intermine.web.logic.widget.DataSetLdr;
-import org.intermine.web.logic.widget.GraphDataSet;
+
+import java.awt.Font;
+
+import java.lang.reflect.Constructor;
+
+import javax.servlet.ServletContext;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
+
+import org.apache.struts.action.ActionForm;
+import org.apache.struts.action.ActionForward;
+import org.apache.struts.action.ActionMapping;
+import org.apache.struts.tiles.ComponentContext;
+import org.apache.struts.tiles.actions.TilesAction;
 import org.jfree.chart.ChartFactory;
 import org.jfree.chart.JFreeChart;
 import org.jfree.chart.axis.NumberAxis;
@@ -58,6 +60,7 @@ import org.jfree.chart.renderer.category.BarRenderer;
 import org.jfree.chart.renderer.category.StackedBarRenderer;
 import org.jfree.chart.title.TextTitle;
 import org.jfree.chart.urls.CategoryURLGenerator;
+import org.jfree.data.category.CategoryDataset;
 
 /**
  * @author Xavier Watkins
@@ -147,8 +150,8 @@ public class BagDetailsController extends TilesAction
                         for (Iterator it
                                   = dataSetLdr.getDataSets().keySet().iterator(); it.hasNext();) {
                             String key = (String) it.next();
-                            GraphDataSet graphDataSet
-                                                = (GraphDataSet) dataSetLdr.getDataSets().get(key);
+                            CategoryDataset graphDataSet = (CategoryDataset) 
+                            dataSetLdr.getDataSets().get(key);
                             /* stacked bar chart */
                             if (graphDisplayer.getGraphType().equals("StackedBarChart")) {
                                 setStackedBarGraph(session, graphDisplayer, graphDataSet,
@@ -253,7 +256,7 @@ public class BagDetailsController extends TilesAction
     private void setBarGraph(@SuppressWarnings("unused") ObjectStore os,
                              HttpSession session,
                              GraphDisplayer graphDisplayer,
-                             GraphDataSet graphDataSet,
+                             CategoryDataset graphDataSet,
                              ArrayList<String[]> graphDisplayerArray,
                              InterMineBag bag,
                              String subtitle) {
@@ -265,7 +268,7 @@ public class BagDetailsController extends TilesAction
                 graphDisplayer.getTitle(),          // chart title
                 graphDisplayer.getDomainLabel(),    // domain axis label
                 graphDisplayer.getRangeLabel(),     // range axis label
-                graphDataSet.getDataSet(),            // data
+                graphDataSet,            // data
                 PlotOrientation.VERTICAL,
                 true,
                 true,                               // tooltips?
@@ -311,8 +314,7 @@ public class BagDetailsController extends TilesAction
         NumberAxis rangeAxis = (NumberAxis) plot.getRangeAxis();
         rangeAxis.setStandardTickUnits(NumberAxis.createIntegerTickUnits());
 
-        bagGraphWidget = new BagGraphWidget(session,
-                         graphDataSet.getCategoryArray(),
+        bagGraphWidget = new BagGraphWidget(session,                         
                          bag.getName(),
                          graphDisplayer.getToolTipGen(),
                          null,
@@ -327,7 +329,7 @@ public class BagDetailsController extends TilesAction
 
     private void setStackedBarGraph(HttpSession session,
                                     GraphDisplayer graphDisplayer,
-                                    GraphDataSet graphDataSet,
+                                    CategoryDataset graphDataSet,
                                     ArrayList<String[]> graphDisplayerArray,
                                     InterMineBag bag) {
 
@@ -339,7 +341,7 @@ public class BagDetailsController extends TilesAction
                 graphDisplayer.getTitle(),       // chart title
                 graphDisplayer.getDomainLabel(), // domain axis label
                 graphDisplayer.getRangeLabel(),  // range axis label
-                graphDataSet.getDataSet(),         // data
+                graphDataSet,         // data
                 PlotOrientation.VERTICAL,
                 true,
                 true,                            // tooltips?
@@ -353,7 +355,6 @@ public class BagDetailsController extends TilesAction
         rangeAxis.setStandardTickUnits(NumberAxis.createIntegerTickUnits());
 
         bagGraphWidget = new BagGraphWidget(session,
-                         graphDataSet.getCategoryArray(),
                          bag.getName(),
                          graphDisplayer.getToolTipGen(),
                          graphDisplayer.getUrlGen(),
