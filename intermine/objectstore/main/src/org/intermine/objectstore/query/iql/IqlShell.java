@@ -286,7 +286,8 @@ public class IqlShell
                 if (output == 1) {
                     err.print("\n");
                 }
-                out.println("Fetched " + rowNo + " rows in " + (System.currentTimeMillis() - startTime) + " ms");
+                out.println("Fetched " + rowNo + " rows in "
+                            + (System.currentTimeMillis() - startTime) + " ms");
             }
         } finally {
             if (doGoFaster) {

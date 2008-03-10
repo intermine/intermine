@@ -215,7 +215,7 @@ public class TableController extends TilesAction
         Map<Path, String> pathNames = new HashMap<Path, String> ();
         for (Column column : columns) {
             Path path = column.getPath();
-            if(path != null) {
+            if (path != null) {
                 pathNames.put(path, path.toStringNoConstraints());
             }
         }

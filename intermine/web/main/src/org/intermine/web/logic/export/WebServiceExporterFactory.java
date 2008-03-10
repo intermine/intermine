@@ -11,7 +11,6 @@ package org.intermine.web.logic.export;
  */
 
 import org.intermine.objectstore.query.Results;
-import org.intermine.webservice.core.ResultProcessor;
 import org.intermine.webservice.core.ResultRowParser;
 import org.intermine.webservice.output.Output;
 

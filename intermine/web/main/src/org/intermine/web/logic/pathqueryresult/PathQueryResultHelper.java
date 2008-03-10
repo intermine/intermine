@@ -38,7 +38,6 @@ import org.intermine.web.logic.profile.Profile;
 import org.intermine.web.logic.query.Constraint;
 import org.intermine.web.logic.query.MainHelper;
 import org.intermine.web.logic.query.PathQuery;
-import org.intermine.web.logic.results.PagedTable;
 import org.intermine.web.logic.results.TableHelper;
 import org.intermine.web.logic.results.WebResults;
 

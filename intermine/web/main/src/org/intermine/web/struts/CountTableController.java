@@ -12,7 +12,6 @@ package org.intermine.web.struts;
 
 import org.intermine.web.logic.Constants;
 import org.intermine.web.logic.query.PageTableQueryMonitor;
-import org.intermine.web.logic.query.QueryMonitorTimeout;
 import org.intermine.web.logic.results.PagedTable;
 import org.intermine.web.logic.session.SessionMethods;
 

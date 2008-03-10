@@ -12,8 +12,6 @@ package org.intermine.web.logic.session;
 
 import java.io.PrintWriter;
 import java.io.StringWriter;
-import java.util.AbstractList;
-import java.util.Collection;
 import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
@@ -29,7 +27,6 @@ import javax.servlet.http.HttpSession;
 
 import org.apache.commons.collections.map.LRUMap;
 import org.apache.log4j.Logger;
-import org.apache.struts.action.Action;
 import org.apache.struts.util.MessageResources;
 import org.intermine.metadata.FieldDescriptor;
 import org.intermine.metadata.Model;
@@ -62,7 +59,6 @@ import org.intermine.web.logic.results.DisplayObjectFactory;
 import org.intermine.web.logic.results.PagedTable;
 import org.intermine.web.logic.results.TableHelper;
 import org.intermine.web.logic.results.WebResults;
-import org.intermine.web.logic.results.WebTable;
 import org.intermine.web.logic.template.TemplateBuildState;
 import org.intermine.web.logic.template.TemplateQuery;
 import org.intermine.web.struts.LoadQueryAction;

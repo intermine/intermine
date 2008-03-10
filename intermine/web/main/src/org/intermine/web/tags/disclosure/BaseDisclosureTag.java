@@ -19,7 +19,8 @@ import javax.servlet.jsp.tagext.SimpleTagSupport;
  * Base tag handler from which are all disclosure tag handlers derived.
  * @author Jakub Kulaviak
  */
-public class BaseDisclosureTag extends SimpleTagSupport {
+public class BaseDisclosureTag extends SimpleTagSupport
+{
 
     private String style;
     private String styleClass;

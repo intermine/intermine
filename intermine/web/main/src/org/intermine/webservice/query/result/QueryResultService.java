@@ -24,8 +24,6 @@ import org.intermine.objectstore.ObjectStore;
 import org.intermine.objectstore.query.Results;
 import org.intermine.web.logic.Constants;
 import org.intermine.web.logic.bag.InterMineBag;
-import org.intermine.web.logic.export.Exporter;
-import org.intermine.web.logic.export.WebServiceExporterFactory;
 import org.intermine.web.logic.query.PathQuery;
 import org.intermine.web.logic.results.WebResults;
 import org.intermine.web.logic.session.SessionMethods;

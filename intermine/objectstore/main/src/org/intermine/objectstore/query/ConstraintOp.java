@@ -164,7 +164,9 @@ public class ConstraintOp
      * @return ConstraintOp if operation code is valid else null
      */
     public static ConstraintOp getConstraintOp(String operationCode) {
-        if (operationCode == null) return null;
+        if (operationCode == null) {
+            return null;
+        }
         String opCode = operationCode.trim().toUpperCase();
         for (ConstraintOp op : values) {
             if (op.getName().equalsIgnoreCase(opCode)) {
