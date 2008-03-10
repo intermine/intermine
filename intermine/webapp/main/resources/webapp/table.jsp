@@ -365,9 +365,12 @@
                    onmouseout="this.style.cursor='normal';" 
                    onmouseover="this.style.cursor='pointer';"/>
             </div>
-            <div id="summary_loading">Loading...</div>
+            <div id="summary_loading"><img src="images/wait18.gif" title="loading icon">&nbsp;Loading...</div>
             <div id="summary_loaded" style="display:none;"></div>
-        </div>  
+        </div>
+        <script language="javascript">
+          new Draggable('summary',null);
+        </script>
         <c:if test="${resultsTable.estimatedSize > 1}">
            <tiles:insert name="paging.tile">
              <tiles:put name="resultsTable" beanName="resultsTable" />
