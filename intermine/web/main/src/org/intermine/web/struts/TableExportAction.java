@@ -36,23 +36,24 @@ import org.intermine.web.logic.results.WebResults;
 import org.intermine.web.logic.session.SessionMethods;
 
 /*
- * TODO
+ * TODO   
  * - finish gff3
  * - rewrite exporters
- * - enables set position from which to which should be export 
- * 
+ * - enables set position from which export should start 
  * - rewrite  web service for new exporters
  * - solve error handling in export action
  */
 
 /**
- * Implementation of <strong>Action</strong> that allows the user to export a PagedTable to a file
+ * Implementation of <strong>Action</strong> that allows the user to export a 
+ * PagedTable to a file.
  *
  * @author Kim Rutherford
+ * @author Jakub Kulaviak 
  */
-public class ExportAction extends InterMineAction
+public class TableExportAction extends InterMineAction
 {
-    protected static final Logger LOG = Logger.getLogger(ExportAction.class);
+    protected static final Logger LOG = Logger.getLogger(TableExportAction.class);
 
     //private static final ActionForward forward = null; 
     
