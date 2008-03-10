@@ -82,7 +82,7 @@ public class OrganismRepository
                         final String abbreviation = props.getProperty(name);
                         if (fieldName.equals(ABBREVIATION)) {
                             od.setAbbreviation(abbreviation);
-                            or.abbreviationMap.put(abbreviation, od);
+                            or.abbreviationMap.put(abbreviation.toLowerCase(), od);
                         } else {
                             if (fieldName.equals(SPECIES)) {
                                 od.setSpecies(abbreviation);
@@ -135,11 +135,15 @@ public class OrganismRepository
     }
 
     /**
-     * Look up OrganismData objects by abbreviation.  Return null if there is no such organism.
+     * Look up OrganismData objects by abbreviation, abbreviations are not cases sensitive.
+     * Return null if there is no such organism.
      * @param abbreviation the abbreviation
      * @return the OrganismData
      */
     public OrganismData getOrganismDataByAbbreviation(String abbreviation) {
-        return abbreviationMap.get(abbreviation);
+        if (abbreviation == null) {
+            return null;
+        }
+        return abbreviationMap.get(abbreviation.toLowerCase());
     }
 }
