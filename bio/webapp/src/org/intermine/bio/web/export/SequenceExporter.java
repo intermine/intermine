@@ -68,112 +68,14 @@ import org.intermine.web.struts.InterMineAction;
  *
  * @author Kim Rutherford
  */
-public class SequenceExporter extends InterMineAction implements TableExporter
+public class SequenceExporter implements TableExporter
 {
+
     /**
-     * This action is invoked directly to export LocatedSequenceFeatures.
-     * @param mapping The ActionMapping used to select this instance
-     * @param form The optional ActionForm bean for this request (if any)
-     * @param request The HTTP request we are processing
-     * @param response The HTTP response we are creating
-     * @return an ActionForward object defining where control goes next
-     * @exception Exception if the application business logic throws
-     *  an exception
+     * Set response proper header.
+     * @param response response
      */
-    public ActionForward execute(ActionMapping mapping,
-                                 ActionForm form,
-                                 HttpServletRequest request,
-                                 HttpServletResponse response)
-        throws Exception {
-        HttpSession session = request.getSession();
-        ObjectStore os =
-            (ObjectStore) session.getServletContext().getAttribute(Constants.OBJECTSTORE);
-        BioSequence bioSequence = null;
-
-        setSequenceExportHeader(response);
-
-        Properties webProps = (Properties) session.getServletContext().
-            getAttribute(Constants.WEB_PROPERTIES);
-        Integer objectId = new Integer(request.getParameter("object"));
-        InterMineObject obj = getObject(os, webProps, objectId);
-        
-        if (obj instanceof LocatedSequenceFeature || obj instanceof Protein
-                        || obj instanceof Translation) {
-            bioSequence = createBioSequence(obj);
-            if (bioSequence != null) {
-                OutputStream out = response.getOutputStream();
-                SeqIOTools.writeFasta(out, bioSequence);                
-            }
-        }
-
-        return null;
-    }
-
-    private BioSequence createBioSequence(InterMineObject obj)
-            throws IllegalSymbolException, IllegalAccessException,
-            ChangeVetoException {
-        BioSequence bioSequence;
-        BioEntity bioEntity = (BioEntity) obj;
-        bioSequence = BioSequenceFactory.make(bioEntity, SequenceType.DNA);
-        if (bioSequence == null) {
-            return null;
-        }
-        Annotation annotation = bioSequence.getAnnotation();
-        String identifier = bioEntity.getPrimaryIdentifier();
-        if (identifier == null) {
-            identifier = bioEntity.getName();
-            if (identifier == null) {
-                if (bioEntity instanceof Gene) {
-                    Gene gene = ((Gene) bioEntity);
-                    identifier = gene.getPrimaryIdentifier();
-                    if (identifier == null) {
-                        try {
-                            identifier = (String) TypeUtil.getFieldValue(gene, "accession");
-                        } catch (RuntimeException e) {
-                            // ignore
-                        }
-                        if (identifier == null) {
-                            identifier = "[no_identifier]";
-                        }
-                    }
-                }
-            }
-        }
-        annotation.setProperty(FastaFormat.PROPERTY_DESCRIPTIONLINE, identifier);
-        return bioSequence;
-    }
-
-    private InterMineObject getObject(ObjectStore os, Properties webProps,
-            Integer objectId) throws ObjectStoreException {
-        String classNames = webProps.getProperty("fasta.export.classes");
-        List <Class> classList = new ArrayList<Class>();
-        if (classNames != null && classNames.length() != 0) {
-            String [] classArray = classNames.split(",");
-            for (int i = 0; i < classArray.length; i++) {
-                classList.add(TypeUtil.instantiate(os.getModel().getPackageName() + "."
-                                                   + classArray[i]));
-            }
-        } else {
-            classList.addAll(Arrays.asList(new Class[] {Protein.class,
-                LocatedSequenceFeature.class,
-                Translation.class}));
-        }
-        
-        InterMineObject obj = os.getObjectById(objectId);
-        if (obj instanceof Sequence) {
-            Sequence sequence = (Sequence) obj;
-            for (Class clazz : classList) {
-                obj = ResidueFieldExporter.getIMObjectForSequence(os, clazz,
-                                                                  sequence);
-                if (obj != null) {
-                    break;
-                }
-            }
-        }
-        return obj;
-    }
-
-    private static void setSequenceExportHeader(HttpServletResponse response) {
+    public static void setSequenceExportHeader(HttpServletResponse response) {
         response.setContentType("text/plain");
         response.setHeader("Content-Disposition ",
                            "inline; filename=sequence" + StringUtil.uniqueString() + ".txt");
