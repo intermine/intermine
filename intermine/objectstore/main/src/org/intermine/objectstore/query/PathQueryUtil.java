@@ -217,11 +217,11 @@ public class PathQueryUtil
         return qcEnd;
     }
 
-	public static String getProblemsSummary(Throwable[] problems) {
-		StringBuilder sb = new StringBuilder();
-		for (int i=0; i<problems.length; i++) {
-			sb.append(problems[i]);
-		}
-		return sb.toString();
-	}
+    public static String getProblemsSummary(Throwable[] problems) {
+        StringBuilder sb = new StringBuilder();
+        for (int i=0; i<problems.length; i++) {
+            sb.append(problems[i]);
+        }
+        return sb.toString();
+    }
 }

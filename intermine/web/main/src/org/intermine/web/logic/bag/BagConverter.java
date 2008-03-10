@@ -18,7 +18,6 @@ import javax.servlet.http.HttpSession;
 import org.apache.struts.action.ActionMessage;
 import org.intermine.metadata.Model;
 import org.intermine.objectstore.ObjectStoreException;
-import org.intermine.objectstore.query.ResultsRow;
 import org.intermine.web.logic.results.WebResults;
 
 /**

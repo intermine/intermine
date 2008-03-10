@@ -120,4 +120,5 @@ public class FormattedTextParser
                 return line;
             }
         };
-    }}
+    }
+}

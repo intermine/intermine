@@ -55,7 +55,7 @@ public class ObjectStoreSummary
     private static final Logger LOG = Logger.getLogger(ObjectStoreSummary.class);
 
     private final Map classCountsMap = new HashMap();
-    private final Map fieldValuesMap = new HashMap();
+    private final Map<String, List<Object>> fieldValuesMap = new HashMap<String, Object>();
     protected final Map emptyFieldsMap = new HashMap();
     private final Map nonEmptyFieldsMap = new HashMap();
 
@@ -114,7 +114,6 @@ public class ObjectStoreSummary
         LOG.info("Looking for empty collections and references...");
         Model model = os.getModel();
         for (Iterator iter = model.getClassDescriptors().iterator(); iter.hasNext();) {
-            long startTime = System.currentTimeMillis();
             ClassDescriptor cld = (ClassDescriptor) iter.next();
             lookForEmptyThings(cld, os);
         }
@@ -170,8 +169,8 @@ public class ObjectStoreSummary
      * @return a list of the possible values for the class and field, or null if the summary isn't
      * available (because, for example, there are too many possible values)
      */
-    public List getFieldValues(String className, String fieldName) {
-        return (List) fieldValuesMap.get(className + "." + fieldName);
+    public List<Object> getFieldValues(String className, String fieldName) {
+        return (List<Object>) fieldValuesMap.get(className + "." + fieldName);
     }
 
     /**
@@ -233,11 +232,10 @@ public class ObjectStoreSummary
      * @param os the object store to retrieve data from
      * @param maxValues only store information for fields with fewer than maxValues values
      * @throws ClassNotFoundException if the class cannot be found
-     * @throws ObjectStoreException if an error occurs retrieving data
      */
     protected void summariseField(ClassDescriptor cld, List fieldNames, ObjectStore os,
                                  int maxValues)
-        throws ClassNotFoundException, ObjectStoreException {
+        throws ClassNotFoundException {
         for (Iterator i = fieldNames.iterator(); i.hasNext();) {
             String fieldName = (String) i.next();
             Query q = new Query();
@@ -288,12 +286,10 @@ public class ObjectStoreSummary
      * @param nullFieldNames output set of null/empty references/collections
      * @param nonNullFieldNames set of non-null/empty references/collections
      * @param os the objectstore
-     * @throws ObjectStoreException if an error occurs retrieving data
      * @throws ClassNotFoundException if the class cannot be found
      */
     protected void lookForEmptyThings(ClassDescriptor cld, Set nullFieldNames,
-            Set nonNullFieldNames, ObjectStore os) throws ObjectStoreException,
-              ClassNotFoundException {
+            Set nonNullFieldNames, ObjectStore os) throws ClassNotFoundException {
         long startTime = System.currentTimeMillis();
         int skipped = 0;
         Iterator iter = IteratorUtils.chainedIterator(cld.getAllCollectionDescriptors().iterator(),

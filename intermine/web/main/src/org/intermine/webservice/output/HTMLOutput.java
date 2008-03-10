@@ -1,8 +1,5 @@
 package org.intermine.webservice.output;
 
-import java.io.PrintWriter;
-import java.util.List;
-
 /*
  * Copyright (C) 2002-2008 FlyMine
  *
@@ -12,6 +9,9 @@ import java.util.List;
  * information or http://www.gnu.org/copyleft/lesser.html.
  *
  */
+
+import java.io.PrintWriter;
+import java.util.List;
 
 /**
  * HTMLOutput extends is similar to MemoryOutput, only difference is, that it prints out errors

@@ -22,7 +22,6 @@ import javax.servlet.http.HttpServletResponse;
 import org.apache.log4j.Logger;
 import org.intermine.web.logic.Constants;
 import org.intermine.webservice.output.HTMLOutput;
-import org.intermine.webservice.output.MemoryOutput;
 import org.intermine.webservice.output.Output;
 import org.intermine.webservice.output.StreamedOutput;
 import org.intermine.webservice.output.TabFormatter;

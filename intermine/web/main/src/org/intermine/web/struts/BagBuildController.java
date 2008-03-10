@@ -34,7 +34,6 @@ import org.intermine.util.TypeUtil;
 import org.intermine.web.logic.ClassKeyHelper;
 import org.intermine.web.logic.Constants;
 import org.intermine.web.logic.bag.BagQueryConfig;
-import org.intermine.web.logic.profile.Profile;
 import org.intermine.web.logic.profile.ProfileManager;
 import org.intermine.web.logic.session.SessionMethods;
 
@@ -68,6 +67,7 @@ public class BagBuildController extends TilesAction
      *
      * @exception Exception if an error occurs
      */
+    @Override
     public ActionForward execute(@SuppressWarnings("unused") ActionMapping mapping,
                                  @SuppressWarnings("unused") ActionForm form,
                                  HttpServletRequest request,
@@ -77,7 +77,6 @@ public class BagBuildController extends TilesAction
         ServletContext servletContext = session.getServletContext();
         Model model = ((ObjectStore) servletContext.getAttribute(Constants.OBJECTSTORE)).getModel();
         ProfileManager pm = SessionMethods.getProfileManager(servletContext);
-
 
         ObjectStore os = (ObjectStore) servletContext.getAttribute(Constants.OBJECTSTORE);
         ObjectStoreSummary oss =
@@ -136,12 +135,19 @@ public class BagBuildController extends TilesAction
             request.setAttribute("typesWithConnectingField", typesWithConnectingField);
         }
 
-        Profile profile = (Profile) session.getAttribute(Constants.PROFILE);
         return null;
     }
 
-    public static List getFieldValues(ObjectStore os, ObjectStoreSummary oss, String extraClassName,
-                                String constrainField) {
+    /**
+     * Return a list of the possible field values for the given class/field name combination.
+     * @param os the ObjectStore to query if the field values aren't available from the summary
+     * @param oss the summary of the object store
+     * @param extraClassName the class name
+     * @param constrainField the field name
+     * @return a List of the feild values
+     */
+    public static List<Object> getFieldValues(ObjectStore os, ObjectStoreSummary oss,
+                                              String extraClassName, String constrainField) {
         List fieldValues = oss.getFieldValues(extraClassName, constrainField);
         if (fieldValues == null) {
             Query q = new Query();
@@ -164,6 +170,4 @@ public class BagBuildController extends TilesAction
 
         return fieldValues;
     }
-
-
 }

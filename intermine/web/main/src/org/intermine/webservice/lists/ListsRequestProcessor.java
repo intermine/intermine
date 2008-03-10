@@ -13,15 +13,18 @@ package org.intermine.webservice.lists;
 import javax.servlet.http.HttpServletRequest;
 
 /**
- * Request processor for ListsService that process request, validates it and returns 
+ * Request processor for ListsService that process request, validates it and returns
  * parsed input as a parameter object.
  * @author Jakub Kulaviak
  **/
 public class ListsRequestProcessor
 {
     private HttpServletRequest request;
-    /** Name of parameter with id of object. **/
-    static final public String OBJECT_ID_PARAMETER = "objectId";
+
+    /**
+     * Name of parameter with id of object.
+     */
+    public static final String OBJECT_ID_PARAMETER = "objectId";
 
     /**
      * ListsRequestProcessor constructor.
@@ -32,7 +35,7 @@ public class ListsRequestProcessor
     }
 
     /**
-     * Returns parameters of web service as a parameter object. 
+     * Returns parameters of web service as a parameter object.
      * @return ListsService input
      */
     public ListsServiceInput getInput() {

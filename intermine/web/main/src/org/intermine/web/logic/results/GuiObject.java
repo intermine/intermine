@@ -18,7 +18,8 @@ import java.util.Map;
  * staff that must be hold in session and is related to web application GUI.
  * @author Jakub Kulaviak
  */
-public class GuiObject {
+public class GuiObject 
+{
 
     private Map<String, Boolean> toggledElements = new HashMap<String, Boolean>();
 
@@ -32,7 +33,6 @@ public class GuiObject {
     }
     /**
      * Sets map of ids and its state. @see getToggleElements()
-     * @return map of element ids
      */
     public void setToggledElements(Map<String, Boolean> toggledElements) {
         this.toggledElements = toggledElements;
