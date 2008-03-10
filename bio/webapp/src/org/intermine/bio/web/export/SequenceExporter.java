@@ -33,6 +33,8 @@ import org.apache.struts.action.ActionMessages;
 import org.biojava.bio.Annotation;
 import org.biojava.bio.seq.io.FastaFormat;
 import org.biojava.bio.seq.io.SeqIOTools;
+import org.biojava.bio.symbol.IllegalSymbolException;
+import org.biojava.utils.ChangeVetoException;
 import org.flymine.model.genomic.BioEntity;
 import org.flymine.model.genomic.Gene;
 import org.flymine.model.genomic.LocatedSequenceFeature;
@@ -88,12 +90,61 @@ public class SequenceExporter extends InterMineAction implements TableExporter
             (ObjectStore) session.getServletContext().getAttribute(Constants.OBJECTSTORE);
         BioSequence bioSequence = null;
 
-        response.setContentType("text/plain");
-        response.setHeader("Content-Disposition ",
-                           "inline; filename=sequence" + StringUtil.uniqueString() + ".txt");
+        setSequenceExportHeader(response);
 
-        ServletContext servletContext = session.getServletContext();
-        Properties webProps = (Properties) servletContext.getAttribute(Constants.WEB_PROPERTIES);
+        Properties webProps = (Properties) session.getServletContext().
+            getAttribute(Constants.WEB_PROPERTIES);
+        Integer objectId = new Integer(request.getParameter("object"));
+        InterMineObject obj = getObject(os, webProps, objectId);
+        
+        if (obj instanceof LocatedSequenceFeature || obj instanceof Protein
+                        || obj instanceof Translation) {
+            bioSequence = createBioSequence(obj);
+            if (bioSequence != null) {
+                OutputStream out = response.getOutputStream();
+                SeqIOTools.writeFasta(out, bioSequence);                
+            }
+        }
+
+        return null;
+    }
+
+    private BioSequence createBioSequence(InterMineObject obj)
+            throws IllegalSymbolException, IllegalAccessException,
+            ChangeVetoException {
+        BioSequence bioSequence;
+        BioEntity bioEntity = (BioEntity) obj;
+        bioSequence = BioSequenceFactory.make(bioEntity, SequenceType.DNA);
+        if (bioSequence == null) {
+            return null;
+        }
+        Annotation annotation = bioSequence.getAnnotation();
+        String identifier = bioEntity.getPrimaryIdentifier();
+        if (identifier == null) {
+            identifier = bioEntity.getName();
+            if (identifier == null) {
+                if (bioEntity instanceof Gene) {
+                    Gene gene = ((Gene) bioEntity);
+                    identifier = gene.getPrimaryIdentifier();
+                    if (identifier == null) {
+                        try {
+                            identifier = (String) TypeUtil.getFieldValue(gene, "accession");
+                        } catch (RuntimeException e) {
+                            // ignore
+                        }
+                        if (identifier == null) {
+                            identifier = "[no_identifier]";
+                        }
+                    }
+                }
+            }
+        }
+        annotation.setProperty(FastaFormat.PROPERTY_DESCRIPTIONLINE, identifier);
+        return bioSequence;
+    }
+
+    private InterMineObject getObject(ObjectStore os, Properties webProps,
+            Integer objectId) throws ObjectStoreException {
         String classNames = webProps.getProperty("fasta.export.classes");
         List <Class> classList = new ArrayList<Class>();
         if (classNames != null && classNames.length() != 0) {
@@ -107,7 +158,8 @@ public class SequenceExporter extends InterMineAction implements TableExporter
                 LocatedSequenceFeature.class,
                 Translation.class}));
         }
-        InterMineObject obj = os.getObjectById(new Integer(request.getParameter("object")));
+        
+        InterMineObject obj = os.getObjectById(objectId);
         if (obj instanceof Sequence) {
             Sequence sequence = (Sequence) obj;
             for (Class clazz : classList) {
@@ -118,40 +170,13 @@ public class SequenceExporter extends InterMineAction implements TableExporter
                 }
             }
         }
-        if (obj instanceof LocatedSequenceFeature || obj instanceof Protein
-                        || obj instanceof Translation) {
-            BioEntity bioEntity = (BioEntity) obj;
-            bioSequence = BioSequenceFactory.make(bioEntity, SequenceType.DNA);
-            if (bioSequence == null) {
-                return null;
-            }
-            Annotation annotation = bioSequence.getAnnotation();
-            String identifier = bioEntity.getPrimaryIdentifier();
-            if (identifier == null) {
-                identifier = bioEntity.getName();
-                if (identifier == null) {
-                    if (bioEntity instanceof Gene) {
-                        Gene gene = ((Gene) bioEntity);
-                        identifier = gene.getPrimaryIdentifier();
-                        if (identifier == null) {
-                            try {
-                                identifier = (String) TypeUtil.getFieldValue(gene, "accession");
-                            } catch (RuntimeException e) {
-                                // ignore
-                            }
-                            if (identifier == null) {
-                                identifier = "[no_identifier]";
-                            }
-                        }
-                    }
-                }
-            }
-            annotation.setProperty(FastaFormat.PROPERTY_DESCRIPTIONLINE, identifier);
-            OutputStream out = response.getOutputStream();
-            SeqIOTools.writeFasta(out, bioSequence);
-        }
+        return obj;
+    }
 
-        return null;
+    private static void setSequenceExportHeader(HttpServletResponse response) {
+        response.setContentType("text/plain");
+        response.setHeader("Content-Disposition ",
+                           "inline; filename=sequence" + StringUtil.uniqueString() + ".txt");
     }
 
     /**
@@ -172,9 +197,7 @@ public class SequenceExporter extends InterMineAction implements TableExporter
         HttpSession session = request.getSession();
         ObjectStore os =
             (ObjectStore) session.getServletContext().getAttribute(Constants.OBJECTSTORE);
-        response.setContentType("text/plain");
-        response.setHeader("Content-Disposition ",
-                           "inline; filename=sequence" + StringUtil.uniqueString() + ".txt");
+        setSequenceExportHeader(response);
 
         OutputStream outputStream = null;
 
@@ -235,87 +258,12 @@ public class SequenceExporter extends InterMineAction implements TableExporter
                 }
 
                 if (object instanceof LocatedSequenceFeature) {
-                    LocatedSequenceFeature feature = (LocatedSequenceFeature) object;
-                    bioSequence = BioSequenceFactory.make(feature);
-                    if (feature.getPrimaryIdentifier() == null) {
-                        if (feature instanceof Gene) {
-                            header.append(((Gene) feature).getPrimaryIdentifier());
-                        } else {
-                            header.append("[unknown_identifier]");
-                        }
-                    } else {
-                        header.append(feature.getPrimaryIdentifier());
-                    }
-                    header.append(' ');
-                    if (feature.getName() == null) {
-                        header.append("[unknown_name]");
-                    } else {
-                        header.append(feature.getName());
-                    }
-                    if (feature.getChromosomeLocation() != null) {
-                        header.append(' ').append(feature.getChromosome().getPrimaryIdentifier());
-                        header.append(':').append(feature.getChromosomeLocation().getStart());
-                        header.append('-').append(feature.getChromosomeLocation().getEnd());
-                        header.append(' ').append(feature.getLength());
-                    }
-                    try {
-                        Gene gene = (Gene) TypeUtil.getFieldValue(feature, "gene");
-                        if (gene != null) {
-                            String geneIdentifier = gene.getPrimaryIdentifier();
-                            if (geneIdentifier != null) {
-                                header.append(' ').append("gene:").append(geneIdentifier);
-                            }
-                        }
-                    } catch (IllegalAccessException e) {
-                        // ignore
-                    }
+                    bioSequence = createLocatedSequenceFeature(header, object);
                 } else if (object instanceof Protein) {
-                    Protein protein = (Protein) object;
-                    bioSequence = BioSequenceFactory.make(protein);
-                    header.append(protein.getPrimaryIdentifier());
-                    header.append(' ');
-                    if (protein.getName() == null) {
-                        header.append("[unknown_name]");
-                    } else {
-                        header.append(protein.getName());
-                    }
-                    Iterator iter = protein.getGenes().iterator();
-                    while (iter.hasNext()) {
-                        Gene gene = (Gene) iter.next();
-                        String geneIdentifier = gene.getPrimaryIdentifier();
-                        if (geneIdentifier != null) {
-                            header.append(' ');
-                            header.append("gene:");
-                            header.append(geneIdentifier);
-                        }
-
-                    }
+                    bioSequence = createProtein(header, object);
                 } else if (object instanceof Translation) {
                     Model model = os.getModel();
-                    ClassDescriptor cld = model.getClassDescriptorByName(model.getPackageName()
-                                                                         + "." + "Translation");
-                    if (cld.getReferenceDescriptorByName("sequence", true) != null) {
-                        Translation translation = (Translation) object;
-                        bioSequence = BioSequenceFactory.make(translation);
-                        header.append(translation.getPrimaryIdentifier());
-                        header.append(' ');
-                        if (translation.getName() == null) {
-                            header.append("[unknown_name]");
-                        } else {
-                            header.append(translation.getName());
-                        }
-                        if (translation.getGene() != null) {
-                            Gene gene = translation.getGene();
-                            String geneIdentifier = gene.getPrimaryIdentifier();
-                            if (geneIdentifier != null) {
-                                header.append(' ');
-                                header.append("gene:");
-                                header.append(geneIdentifier);
-                            }
-                        }
-                    } else {
-                        bioSequence = null;
-                    }
+                    bioSequence = createTranslation(header, object, model);
                 } else {
                     // ignore other objects
                     continue;
@@ -373,6 +321,102 @@ public class SequenceExporter extends InterMineAction implements TableExporter
         }
 
         return null;
+    }
+
+    private BioSequence createTranslation(StringBuffer header, Object object,
+            Model model) throws IllegalSymbolException {
+        BioSequence bioSequence;
+        ClassDescriptor cld = model.getClassDescriptorByName(model.getPackageName()
+                                                             + "." + "Translation");
+        if (cld.getReferenceDescriptorByName("sequence", true) != null) {
+            Translation translation = (Translation) object;
+            bioSequence = BioSequenceFactory.make(translation);
+            header.append(translation.getPrimaryIdentifier());
+            header.append(' ');
+            if (translation.getName() == null) {
+                header.append("[unknown_name]");
+            } else {
+                header.append(translation.getName());
+            }
+            if (translation.getGene() != null) {
+                Gene gene = translation.getGene();
+                String geneIdentifier = gene.getPrimaryIdentifier();
+                if (geneIdentifier != null) {
+                    header.append(' ');
+                    header.append("gene:");
+                    header.append(geneIdentifier);
+                }
+            }
+        } else {
+            bioSequence = null;
+        }
+        return bioSequence;
+    }
+
+    private BioSequence createProtein(StringBuffer header, Object object)
+            throws IllegalSymbolException {
+        BioSequence bioSequence;
+        Protein protein = (Protein) object;
+        bioSequence = BioSequenceFactory.make(protein);
+        header.append(protein.getPrimaryIdentifier());
+        header.append(' ');
+        if (protein.getName() == null) {
+            header.append("[unknown_name]");
+        } else {
+            header.append(protein.getName());
+        }
+        Iterator iter = protein.getGenes().iterator();
+        while (iter.hasNext()) {
+            Gene gene = (Gene) iter.next();
+            String geneIdentifier = gene.getPrimaryIdentifier();
+            if (geneIdentifier != null) {
+                header.append(' ');
+                header.append("gene:");
+                header.append(geneIdentifier);
+            }
+
+        }
+        return bioSequence;
+    }
+
+    private BioSequence createLocatedSequenceFeature(StringBuffer header,
+            Object object) throws IllegalSymbolException {
+        BioSequence bioSequence;
+        LocatedSequenceFeature feature = (LocatedSequenceFeature) object;
+        bioSequence = BioSequenceFactory.make(feature);
+        if (feature.getPrimaryIdentifier() == null) {
+            if (feature instanceof Gene) {
+                header.append(((Gene) feature).getPrimaryIdentifier());
+            } else {
+                header.append("[unknown_identifier]");
+            }
+        } else {
+            header.append(feature.getPrimaryIdentifier());
+        }
+        header.append(' ');
+        if (feature.getName() == null) {
+            header.append("[unknown_name]");
+        } else {
+            header.append(feature.getName());
+        }
+        if (feature.getChromosomeLocation() != null) {
+            header.append(' ').append(feature.getChromosome().getPrimaryIdentifier());
+            header.append(':').append(feature.getChromosomeLocation().getStart());
+            header.append('-').append(feature.getChromosomeLocation().getEnd());
+            header.append(' ').append(feature.getLength());
+        }
+        try {
+            Gene gene = (Gene) TypeUtil.getFieldValue(feature, "gene");
+            if (gene != null) {
+                String geneIdentifier = gene.getPrimaryIdentifier();
+                if (geneIdentifier != null) {
+                    header.append(' ').append("gene:").append(geneIdentifier);
+                }
+            }
+        } catch (IllegalAccessException e) {
+            // ignore
+        }
+        return bioSequence;
     }
 
     /**
