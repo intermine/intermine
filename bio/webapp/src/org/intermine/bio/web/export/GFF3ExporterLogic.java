@@ -31,7 +31,7 @@ import org.intermine.web.logic.results.ResultElement;
 /**
  * @author Jakub Kulaviak
  */
-public class GFF3ExporterImpl implements Exporter
+public class GFF3ExporterLogic implements Exporter
 {
 
     PrintWriter out;
@@ -46,7 +46,7 @@ public class GFF3ExporterImpl implements Exporter
      * @param featureIndex index of column with exported sequence
      * @param soClassNames mapping
      */
-    public GFF3ExporterImpl(PrintWriter out, int featureIndex, Map soClassNames) {
+    public GFF3ExporterLogic(PrintWriter out, int featureIndex, Map soClassNames) {
         this.out = out;
         this.featureIndex = featureIndex;
         this.soClassNames = soClassNames;
