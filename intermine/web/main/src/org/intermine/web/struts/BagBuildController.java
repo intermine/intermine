@@ -81,18 +81,20 @@ public class BagBuildController extends TilesAction
         ObjectStore os = (ObjectStore) servletContext.getAttribute(Constants.OBJECTSTORE);
         ObjectStoreSummary oss =
             (ObjectStoreSummary) servletContext.getAttribute(Constants.OBJECT_STORE_SUMMARY);
-        Collection qualifiedTypes = os.getModel().getClassNames();
+        Collection<String> qualifiedTypes = os.getModel().getClassNames();
 
-        ArrayList typeList = new ArrayList();
-        ArrayList preferedTypeList = new ArrayList();
+        ArrayList<String> typeList = new ArrayList<String>();
+        ArrayList<String> preferedTypeList = new ArrayList<String>();
         String superUserName = (String) servletContext.getAttribute(Constants.SUPERUSER_ACCOUNT);
 
-        List preferredBagTypeTags = pm.getTags("im:preferredBagType", null, "class", superUserName);
-        for (Iterator iter = preferredBagTypeTags.iterator(); iter.hasNext();) {
-            Tag tag = (Tag) iter.next();
+        List<Tag> preferredBagTypeTags =
+            pm.getTags("im:preferredBagType", null, "class", superUserName);
+        for (Iterator<Tag> iter = preferredBagTypeTags.iterator(); iter.hasNext();) {
+            Tag tag = iter.next();
             preferedTypeList.add(TypeUtil.unqualifiedName(tag.getObjectIdentifier()));
         }
-        Map classKeys = (Map) servletContext.getAttribute(Constants.CLASS_KEYS);
+        Map<String, List<FieldDescriptor>> classKeys =
+            (Map<String, List<FieldDescriptor>>) servletContext.getAttribute(Constants.CLASS_KEYS);
         for (Iterator iter = qualifiedTypes.iterator(); iter.hasNext();) {
             String className = (String) iter.next();
             String unqualifiedName = TypeUtil.unqualifiedName(className);
@@ -119,7 +121,7 @@ public class BagBuildController extends TilesAction
 
             // find the types in typeList that contain a field with the name given by
             // bagQueryConfig.getConnectField()
-            List typesWithConnectingField = new ArrayList();
+            List<String> typesWithConnectingField = new ArrayList<String>();
             Iterator allTypesIterator =
                 new IteratorChain(typeList.iterator(), preferedTypeList.iterator());
             while (allTypesIterator.hasNext()) {
@@ -148,7 +150,7 @@ public class BagBuildController extends TilesAction
      */
     public static List<Object> getFieldValues(ObjectStore os, ObjectStoreSummary oss,
                                               String extraClassName, String constrainField) {
-        List fieldValues = oss.getFieldValues(extraClassName, constrainField);
+        List<Object> fieldValues = oss.getFieldValues(extraClassName, constrainField);
         if (fieldValues == null) {
             Query q = new Query();
             q.setDistinct(true);
@@ -161,7 +163,7 @@ public class BagBuildController extends TilesAction
             q.addToSelect(new QueryField(qc, constrainField));
             q.addFrom(qc);
             Results results = os.execute(q);
-            fieldValues = new ArrayList();
+            fieldValues = new ArrayList<Object>();
             for (Iterator j = results.iterator(); j.hasNext();) {
                 Object fieldValue = ((ResultsRow) j.next()).get(0);
                 fieldValues.add(fieldValue == null ? null : fieldValue.toString());
