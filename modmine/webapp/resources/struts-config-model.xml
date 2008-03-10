@@ -2,7 +2,7 @@
   	
                
     <action path="/sequenceExporter"
-            type="org.intermine.bio.web.struts.SequenceExporterAction"/>
+            type="org.intermine.bio.web.struts.SequenceExportAction"/>
     
     <action path="/chartRenderer"
             type="org.flymine.web.ChartRenderer"
