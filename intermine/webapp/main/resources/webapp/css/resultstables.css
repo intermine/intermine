@@ -5,10 +5,16 @@ td.resBar {
 /* =DIV £OBJECTDETAILSTEMPLATETABLE
 -------------------------------------- */
 #summary {
-  top:360px; left:40%; position:absolute;
+  position:absolute;
   min-width:100px; padding:5px;
-  background-color:#fff; border: solid black 1px;}
+  background-color:#fff; border: solid #CCC 1px;}
 
+#summary_loading {
+  width:200px;
+  height:50px;
+  padding-top:15px;
+  text-align: center;
+}
 /* template results - used by object & bag details pages */
 /* =TABLE */
 table.refSummary {

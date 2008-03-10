@@ -129,6 +129,7 @@ function resultsCountCallback(size) {
 function getColumnSummary(tableName, columnName, columnDisplayName) {
     document.getElementById('summary_loaded').style.display = "none";
     document.getElementById('summary_loading').style.display = "block";
+    Position.Center($('summary'));
     Effect.Appear('summary', { duration: 0.30 });
     AjaxServices.getColumnSummary(tableName, columnName, function(str){
         var rows = str[0];
@@ -188,7 +189,8 @@ function getColumnSummary(tableName, columnName, columnDisplayName) {
         summaryLoadedElement.innerHTML = html;
         setTimeout("updateCountInColumnSummary()", 200);
         setTimeout("updateUniqueCountInColumnSummary(" + uniqueCountQid + ")", 300);
-    });
+        Position.Center($('summary'));
+   });
 
 }
 
