@@ -17,7 +17,7 @@
 <span id="resultsCountEstimate" style="display: inline">
   <img src="images/spinner.gif" title="Waiting..." />
   <fmt:message key="results.pageinfo.estimate"/>
-  ${resultsTable.size}
+  ${resultsTable.estimatedSize}
   <im:helplink key="results.help.estimate"/>
 </span>
 
