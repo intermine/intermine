@@ -181,7 +181,7 @@ function getColumnSummary(tableName, columnName, columnDisplayName) {
         if (summaryRowsCount > 10) {
             html += '<div><p>(Note: showing only the first 10 rows of summary)</p></div></div>';
         } else {
-        	html += '</div>';
+            html += '</div>';
         }
 
         var summaryLoadedElement = document.getElementById('summary_loaded');
@@ -210,27 +210,27 @@ function getResultsPoller(qid, timeout, userCallback) {
 }
 
 function getResultsSize(qid1, timeout1, usercallback1) {
-	qid = qid1;
-	timeout = timeout1;
-	userCallback = usercallback1;
-	//Passing variables directly doesn't work in Safari
+    qid = qid1;
+    timeout = timeout1;
+    userCallback = usercallback1;
+    //Passing variables directly doesn't work in Safari
     setTimeout("getResultsPoller(qid, timeout, userCallback, true)", timeout);
 }
 
 // not needed for now:
 // function getResults(qid1, timeout1, usercallback1) {
-// 	qid = qid1;
-// 	timeout = timeout1;
-// 	userCallback = usercallback1;
-// 	//Passing variables directly doesn't work in Safari
+//  qid = qid1;
+//  timeout = timeout1;
+//  userCallback = usercallback1;
+//  //Passing variables directly doesn't work in Safari
 //     setTimeout("getResultsPoller(qid, timeout, userCallback, false)", timeout);
 // }
 
 // function getResults(qid1,timeout1,usercallback1) {
-// 	qid = qid1;
-// 	timeout = timeout1;
-// 	userCallback = usercallback1;
-// 	//Passing variables directly doesn't work in Safari
+//  qid = qid1;
+//  timeout = timeout1;
+//  userCallback = usercallback1;
+//  //Passing variables directly doesn't work in Safari
 //     setTimeout("getResultsPoller(qid, timeout, userCallback, false)", timeout);
 // }
 
@@ -258,25 +258,25 @@ var currentFilterCallbacks = new Array();
 var futureFilterCalls = new Array();
 
 function filterWebSearchablesHandler(event, object, type, wsListId) {
-	var scope = document.getElementById('filterScope_'+wsListId+'_'+type).value;
+    var scope = document.getElementById('filterScope_'+wsListId+'_'+type).value;
     if (window.event) {
         event = window.event;
     }
     if (event) {
         if (event.keyCode == 27) {
             object.value = '';
-			clearFilter(type, wsListId);
+            clearFilter(type, wsListId);
             return;
         }
         if (event.keyCode == 13
-			|| event.keyCode == 33
-			|| event.keyCode == 34
-			|| event.keyCode == 35
-			|| event.keyCode == 36
-			|| event.keyCode == 37
-			|| event.keyCode == 38
-			|| event.keyCode == 39
-			||event.keyCode ==  40) {
+            || event.keyCode == 33
+            || event.keyCode == 34
+            || event.keyCode == 35
+            || event.keyCode == 36
+            || event.keyCode == 37
+            || event.keyCode == 38
+            || event.keyCode == 39
+            ||event.keyCode ==  40) {
             return;
         }
     }
@@ -359,7 +359,7 @@ function do_filtering(filteredList, type, wsListId) {
         }
 
         showWSList(wsListId, type);
-        
+
         function sortWsFilter(el1, el2) {
             var el1score = scoreHash[el1.id];
             var el2score = scoreHash[el2.id]
@@ -389,7 +389,7 @@ function do_filtering(filteredList, type, wsListId) {
         for (var i = 0; i < divs.length; i++) {
             parent.appendChild(divs[i]);
         }
-        
+
         $(wsListId + '_' + type + '_spinner').style.display = 'none';
         $(wsListId + '_' + type + '_container').style.display = 'block';
     }
@@ -569,7 +569,6 @@ function setWsNamesMap(wsNames, wsListId, type) {
    }
 
    1;
-
 }
 
 function getConvertCountForBag(bagName, type, idname) {
@@ -580,89 +579,85 @@ function getConvertCountForBag(bagName, type, idname) {
 
 function saveToggleState(elementId) {
     var display = document.getElementById(elementId).style.display;
-	var opened;
+    var opened;
      if(display=='none') {
-		opened = false;
+        opened = false;
      } else {
-     	opened = true;
+        opened = true;
      }
-	AjaxServices.saveToggleState(elementId, opened);
-} 
+    AjaxServices.saveToggleState(elementId, opened);
+}
 
 // historyBagView.jsp, wsFilterList.jsp
 function validateBagOperations(formName, operation) {
-		
-            
-       if (Event && (Event.keyCode == 13
-            || Event.keyCode == 33
-            || Event.keyCode == 34
-            || Event.keyCode == 35
-            || Event.keyCode == 36
-            || Event.keyCode == 37
-            || Event.keyCode == 38
-            || Event.keyCode == 39
-            || Event.keyCode ==  40)) {
-            return;
+    if (Event && (Event.keyCode == 13
+                  || Event.keyCode == 33
+                  || Event.keyCode == 34
+                  || Event.keyCode == 35
+                  || Event.keyCode == 36
+                  || Event.keyCode == 37
+                  || Event.keyCode == 38
+                  || Event.keyCode == 39
+                  || Event.keyCode ==  40)) {
+        return;
+    }
+
+    var bagName = '';
+    var frm = document.forms[formName];
+
+    if (frm.newBagName) {
+        bagName = frm.newBagName.value;
+    }
+
+    var selectedBags = [];
+    var i = 0;
+    var j = 0;
+
+    for (i = 0; i < frm.selectedBags.length; i++){
+        if (frm.selectedBags[i].checked) {
+            selectedBags[j] = frm.selectedBags[i].value;
+            j++;
         }
-		
-		var bagName = ''; 
-		var frm = document.forms[formName];
-		
-		if (frm.newBagName) {
-			bagName = frm.newBagName.value;		
-		}
-		
-		var selectedBags = [];
-		var i = 0;
-		var j = 0;
-		
-		for (i = 0; i < frm.selectedBags.length; i++){
-			if (frm.selectedBags[i].checked) {
-				selectedBags[j] = frm.selectedBags[i].value;
-				j++;
-			}
-		}
-		AjaxServices.validateBagOperations(
-		bagName, selectedBags, operation, function(errMsg) {
-			if (errMsg != '') {
-			    new Insertion.Bottom('error_msg',errMsg + '<br/>');
-			    Effect.Appear('error_msg');
-        	} else {
-        		frm.listsButton.value = operation;
-        		frm.submit();
-        	}
-    	});
+    }
+    AjaxServices.validateBagOperations(
+      bagName, selectedBags, operation, function(errMsg) {
+          if (errMsg != '') {
+              new Insertion.Bottom('error_msg',errMsg + '<br/>');
+              Effect.Appear('error_msg');
+          } else {
+              frm.listsButton.value = operation;
+              frm.submit();
+          }
+    });
 }
 
 // table.jsp, bagUploadConfirm.jsp
-  function validateBagName(formName) {  
-  
-        if (Event && (Event.keyCode == 13
-            || Event.keyCode == 33
-            || Event.keyCode == 34
-            || Event.keyCode == 35
-            || Event.keyCode == 36
-            || Event.keyCode == 37
-            || Event.keyCode == 38
-            || Event.keyCode == 39
-            || Event.keyCode ==  40)) {
-            return;
+function validateBagName(formName) {
+
+    if (Event && (Event.keyCode == 13
+                  || Event.keyCode == 33
+                  || Event.keyCode == 34
+                  || Event.keyCode == 35
+                  || Event.keyCode == 36
+                  || Event.keyCode == 37
+                  || Event.keyCode == 38
+                  || Event.keyCode == 39
+                  || Event.keyCode ==  40)) {
+        return;
+    }
+
+    var frm = document.forms[formName];
+
+    var bagName = frm.newBagName.value;
+    AjaxServices.validateBagName(bagName, function(errMsg) {
+        if (errMsg != '') {
+            new Insertion.Bottom('error_msg',errMsg + '<br/>');
+            Effect.Appear('error_msg');
+        } else {
+            if (frm.operationButton) {
+                frm.operationButton.value="saveNewBag";
+            }
+            frm.submit();
         }
-  
-  	  var frm = document.forms[formName];
-  	  
-		var bagName = frm.newBagName.value;
-		AjaxServices.validateBagName(bagName, function(errMsg) {
-			if (errMsg != '') {
-			    new Insertion.Bottom('error_msg',errMsg + '<br/>');
-			    Effect.Appear('error_msg');
-        	} else {
-        		if (frm.operationButton) {
-        			frm.operationButton.value="saveNewBag";
-				}
-	       		frm.submit();
-    	    }
-    	});
-   	
-  } 
-  
+   });
+}
