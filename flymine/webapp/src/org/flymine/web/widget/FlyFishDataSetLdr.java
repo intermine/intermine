@@ -25,6 +25,7 @@ import org.intermine.objectstore.query.QueryClass;
 import org.intermine.objectstore.query.QueryCollectionReference;
 import org.intermine.objectstore.query.QueryExpression;
 import org.intermine.objectstore.query.QueryField;
+import org.intermine.objectstore.query.QueryFunction;
 import org.intermine.objectstore.query.QueryObjectReference;
 import org.intermine.objectstore.query.QueryValue;
 import org.intermine.objectstore.query.Results;
@@ -34,57 +35,41 @@ import org.intermine.objectstore.query.SimpleConstraint;
 import org.intermine.objectstore.ObjectStore;
 import org.intermine.web.logic.bag.InterMineBag;
 import org.intermine.web.logic.widget.DataSetLdr;
-import org.intermine.web.logic.widget.GraphDataSet;
 
 import org.flymine.model.genomic.DataSet;
 import org.flymine.model.genomic.Gene;
 import org.flymine.model.genomic.MRNAExpressionResult;
 
+import org.jfree.data.category.CategoryDataset;
 import org.jfree.data.category.DefaultCategoryDataset;
 
 /**
  * @author Julie Sullivan
- *
  */
 public class FlyFishDataSetLdr implements DataSetLdr
 {
-
-    private Results results;
-    private Object[] geneCategoryArray;
-    private HashMap<String, GraphDataSet> dataSets = new HashMap<String, GraphDataSet>();
+    private HashMap<String, CategoryDataset> dataSets = new HashMap<String, CategoryDataset>();
 
     /**
-     * Creates a FlyAtlasDataSetLdr used to retrieve, organise
-     * and structure the FlyAtlas data to create a graph
-     * @param identifier the gene to use in teh query
-     * @param os the ObjectStore
-     */
-    public FlyFishDataSetLdr(String identifier, ObjectStore os) {
-        super();
-        buildDataSets(null, identifier, os);
-    }
-
-    /**
-     * Creates a FlyAtlasDataSetLdr used to retrieve, organise
-     * and structure the FlyAtlas data to create a graph
+     * Creates a DataSetLdr used to retrieve, organise
+     * and structure the Fly-FISH data to create a graph
      * @param bag the bag
      * @param os the ObjectStore
      */
     public FlyFishDataSetLdr(InterMineBag bag, ObjectStore os) {
         super();
-        buildDataSets(bag, null, os);
+        buildDataSets(bag, os);
     }
 
     /**
      * {@inheritDoc}
      */
-    public Map getDataSets() {
+    public Map<String, CategoryDataset> getDataSets() {
         return dataSets;
     }
 
-    private void buildDataSets(InterMineBag bag, String geneIdentifier, ObjectStore os) {
+    private void buildDataSets(InterMineBag bag, ObjectStore os) {
         
-
         Query q = new Query();
         
         QueryClass mrnaResult = new QueryClass(MRNAExpressionResult.class);
@@ -95,24 +80,18 @@ public class FlyFishDataSetLdr implements DataSetLdr
         q.addFrom(gene);
         q.addFrom(ds);
         
-        QueryField stageName = new QueryField(mrnaResult, "stageRange");
-
-        q.addToSelect(new QueryField(mrnaResult, "expressed"));
-        q.addToSelect(stageName);
-        q.addToSelect(new QueryField(gene, "primaryIdentifier"));
+        QueryField qfStage = new QueryField(mrnaResult, "stageRange");
+        QueryField qfExpressed = new QueryField(mrnaResult, "expressed");
+        QueryFunction qfCount = new QueryFunction();
+        
+        q.addToSelect(qfStage);
+        q.addToSelect(qfExpressed);        
+        q.addToSelect(qfCount);
+                
         ConstraintSet cs = new ConstraintSet(ConstraintOp.AND);
 
-        if (bag != null) {
-            QueryField qf = new QueryField(gene, "id");
-            cs.addConstraint(new BagConstraint(qf, ConstraintOp.IN, bag.getOsb()));
-        }
-        if (geneIdentifier != null) {
-            QueryExpression qf1 = new QueryExpression(QueryExpression.LOWER, 
-                                                     new QueryField(gene, "primaryIdentifier"));
-            cs.addConstraint(new SimpleConstraint(qf1,
-                                                  ConstraintOp.EQUALS,
-                                                  new QueryValue(geneIdentifier.toLowerCase())));
-        }
+        QueryField qf = new QueryField(gene, "id");
+        cs.addConstraint(new BagConstraint(qf, ConstraintOp.IN, bag.getOsb()));
 
         QueryCollectionReference r = new QueryCollectionReference(gene, "mRNAExpressionResults");
         cs.addConstraint(new ContainsConstraint(r, ConstraintOp.CONTAINS, mrnaResult));
@@ -127,65 +106,59 @@ public class FlyFishDataSetLdr implements DataSetLdr
                                               new QueryValue(dataset.toLowerCase())));
         
         q.setConstraint(cs);
-        q.addToOrderBy(stageName);
+        
+        q.addToGroupBy(qfStage);
+        q.addToGroupBy(qfExpressed);
+        q.addToOrderBy(qfStage);
 
-        results = os.execute(q);
-        results.setBatchSize(100000);
-        Iterator iter = results.iterator();
-        LinkedHashMap<String, int[]> callTable = new LinkedHashMap<String, int[]>();
-        LinkedHashMap<String, ArrayList<String>> geneMap
-                                                = new LinkedHashMap<String, ArrayList<String>>();
+        Results results = os.execute(q);
+        results.setBatchSize(100);
+        Iterator<ResultsRow> iter = results.iterator();
+        LinkedHashMap<String, int[]> callTable = initCallTable();
+        
         while (iter.hasNext()) {
-            ResultsRow resRow = (ResultsRow) iter.next();
-            Boolean expressed = (Boolean) resRow.get(0);
-            String stage = (String) resRow.get(1);
-            String identifier = (String) resRow.get(2);
+            ResultsRow resRow = iter.next();
+            
+            String stage = (String) resRow.get(0);
+            Boolean expressed = (Boolean) resRow.get(1);            
+            Long geneCount = (Long) resRow.get(2);
 
-                if (callTable.get(stage) != null) {
-                    if (expressed.booleanValue()) {
-                        (callTable.get(stage))[0]++;
-                        (geneMap.get(stage + "_Expressed")).add(identifier);
-                    } else {
-                        (callTable.get(stage))[1]++;
-                        (geneMap.get(stage + "_NotExpressed")).add(identifier);
-                    }
-                } else {
-                    int[] count = new int[2];
-                    ArrayList<String> genesArray = new ArrayList<String>();
-                    genesArray.add(identifier);
-                    if (expressed.booleanValue()) {
-                        count[0]++;
-                        geneMap.put(stage + "_Expressed", genesArray);
-                        geneMap.put(stage + "_NotExpressed", new ArrayList<String>());
-                    } else {
-                        count[1]++;
-                        geneMap.put(stage + "_Expressed", new ArrayList<String>());
-                        geneMap.put(stage + "_NotExpressed", genesArray);
-                    }
-                    callTable.put(stage, count);
-                }
-
+            if (expressed.booleanValue()) {                
+                (callTable.get(stage))[0] = geneCount.intValue();
+            } else {                
+                (callTable.get(stage))[1] = geneCount.intValue();
+            }
         }
+    
         DefaultCategoryDataset dataSet = new DefaultCategoryDataset();
-        // Build a map from tissue/UpDown to gene list
-        geneCategoryArray = new Object[callTable.size()];
-        int i = 0;
-        for (Iterator iterator = callTable.keySet().iterator(); iterator.hasNext();) {
-            String stage = (String) iterator.next();
+        for (Iterator<String> iterator = callTable.keySet().iterator(); iterator.hasNext();) {
+            String stage = iterator.next();
 
             dataSet.addValue((callTable.get(stage))[0], "Expressed", stage);
             dataSet.addValue((callTable.get(stage))[1], "NotExpressed", stage);
-
-            Object[] geneSeriesArray = new Object[2];
-            geneSeriesArray[0] = geneMap.get(stage + "_Expressed");
-            geneSeriesArray[1] = geneMap.get(stage + "_NotExpressed");
-            geneCategoryArray[i] = geneSeriesArray;
-            i++;
         }
-        GraphDataSet graphDataSet = new GraphDataSet(dataSet, geneCategoryArray);
+
         if (results.size() > 0) {
-            dataSets.put("any", graphDataSet);
+            dataSets.put("any", dataSet);
         }
     }
+    
+    private LinkedHashMap<String, int[]> initCallTable() {
+        LinkedHashMap<String, int[]> callTable = new LinkedHashMap<String, int[]>();
+        String append = " (fly-FISH)";
+        String[] stageLabels = new String[4]; 
 
+        stageLabels[0] = "stage 1-3" + append;
+        stageLabels[1] = "stage 4-5" + append;
+        stageLabels[2] = "stage 6-7" + append;
+        stageLabels[3] = "stage 8-9" + append;
+
+        for (String stage : stageLabels) {            
+            int[] count = new int[2];
+            count[0] = 0; 
+            count[1] = 0;
+            callTable.put(stage, count);
+        }
+        return callTable;
+    }
 }

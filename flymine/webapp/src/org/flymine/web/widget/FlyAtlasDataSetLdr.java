@@ -30,12 +30,12 @@ import org.intermine.objectstore.query.ResultsRow;
 import org.intermine.objectstore.ObjectStore;
 import org.intermine.web.logic.bag.InterMineBag;
 import org.intermine.web.logic.widget.DataSetLdr;
-import org.intermine.web.logic.widget.GraphDataSet;
 
 import org.flymine.model.genomic.FlyAtlasResult;
 import org.flymine.model.genomic.Gene;
 import org.flymine.model.genomic.MicroArrayAssay;
 
+import org.jfree.data.category.CategoryDataset;
 import org.jfree.data.category.DefaultCategoryDataset;
 
 /**
@@ -47,7 +47,7 @@ public class FlyAtlasDataSetLdr implements DataSetLdr
 
     private Results results;
     private Object[] geneCategoryArray;
-    private HashMap<String, GraphDataSet> dataSets = new HashMap<String, GraphDataSet>();
+    private HashMap<String, CategoryDataset> dataSets = new HashMap<String, CategoryDataset>();
     /**
      * Creates a FlyAtlasDataSetLdr used to retrieve, organise
      * and structure the FlyAtlas data to create a graph
@@ -155,9 +155,9 @@ public class FlyAtlasDataSetLdr implements DataSetLdr
             geneCategoryArray[i] = geneSeriesArray;
             i++;
         }
-        GraphDataSet graphDataSet = new GraphDataSet(dataSet, geneCategoryArray);
+        
         if (results.size() > 0) {
-            dataSets.put("flyAtlas", graphDataSet);
+            dataSets.put("flyAtlas", dataSet);
         }
     }
 

@@ -91,6 +91,28 @@ public class StringUtil
     }
 
     /**
+     * Returns a list of tokens delimited by comma.  Useful for queries.
+     *
+     * @param strings the String to tokenize
+     * @param lowercase if true, set all strings to be lowercase
+     * @return the String tokens
+     */
+    public static Collection<String> tokenize(String strings, boolean lowercase) {
+        if (strings == null) {
+            return null;
+        }
+        Collection<String> coll = new ArrayList<String>();
+        for (String s : strings.split(",")) {
+            if (lowercase) {
+                coll.add(s.toLowerCase());  
+            } else {
+                coll.add(s);
+            }
+        }
+        return coll;
+    }
+    
+    /**
      * Convert a byte buffer to a hexadecimal string.
      * @param buffer byte buffer
      * @return hexadecimal string

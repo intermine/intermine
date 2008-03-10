@@ -66,7 +66,7 @@ public class PublicationLdr implements EnrichmentWidgetLdr
         Map<String, InterMineBag> allBags =
             WebUtil.getAllBags(profile.getSavedBags(), servletContext);
         bag = allBags.get(bagName);
-        organisms = BioUtil.getOrganisms(os, bag);
+        organisms = BioUtil.getOrganisms(os, bag, false);
         
         annotatedSampleQuery = getQuery(false, true);
         annotatedPopulationQuery = getQuery(false, false);

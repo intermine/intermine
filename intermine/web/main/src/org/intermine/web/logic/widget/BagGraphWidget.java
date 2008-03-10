@@ -54,7 +54,6 @@ public class BagGraphWidget
      * the creation of thhe JFreeChart for the given
      * webconfig
      * @param session the HttpSession
-     * @param geneCategoryArray the geneCategoryArray as created by the DataSetLdr
      * @param bagName the bag name
      * @param toolTipGen the ToolTipGenerator to use
      * @param urlGen the UrlGenerator to use
@@ -62,9 +61,8 @@ public class BagGraphWidget
      * @param plot the plot
      * @param renderer the renderer
      */
-    public BagGraphWidget(HttpSession session, Object[] geneCategoryArray, String bagName,
-                          String toolTipGen, String urlGen, JFreeChart chart, CategoryPlot plot,
-                          BarRenderer renderer) {
+    public BagGraphWidget(HttpSession session, String bagName, String toolTipGen, String urlGen, 
+                          JFreeChart chart, CategoryPlot plot, BarRenderer renderer) {
         super();
         try {
 
@@ -91,23 +89,16 @@ public class BagGraphWidget
             //renderer.setDrawBarOutline(false);
             renderer.setSeriesOutlineStroke(1, new BasicStroke(0.0F));
 
-            // gene names as toolips
-            Class clazz1 = TypeUtil.instantiate(toolTipGen);
-            Constructor toolTipConstructor = clazz1.getConstructor(new Class[]
-                {
-                    Object[].class
-                });
-            CategoryToolTipGenerator categoryToolTipGen = (CategoryToolTipGenerator)
-                toolTipConstructor.newInstance(new Object[]
-                    {
-                        geneCategoryArray
-                    });
+            Class<?>  clazz1 = TypeUtil.instantiate(toolTipGen);
+            Constructor toolTipConstructor = clazz1.getConstructor(new Class[]{});
+            CategoryToolTipGenerator categoryToolTipGen = 
+                (CategoryToolTipGenerator) toolTipConstructor.newInstance(new Object[]{});
             plot.getRenderer().setBaseToolTipGenerator(categoryToolTipGen);
 
             // url to display genes
             // this may be already set individually for the different series
             if (urlGen != null) {
-                Class clazz2 = TypeUtil.instantiate(urlGen);
+                Class<?> clazz2 = TypeUtil.instantiate(urlGen);
                 Constructor urlGenConstructor = clazz2.getConstructor(new Class[]
                                                                                 {
                     String.class
