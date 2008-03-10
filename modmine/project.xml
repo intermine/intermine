@@ -4,10 +4,9 @@
   <property name="intermine.properties.file" value="modmine.properties"/>
   <property name="default.intermine.properties.file" location="../default.intermine.integrate.properties"/>
   <sources>
-		<source name="modmine-static" type="intermine-items-xml-file" dump="true">
-			<!--      <property name="src.data.file" location="datasets.xml"/> -->
-			<property name="src.data.file" location="resources/projects.xml"/>
-		</source>
+    <source name="modmine-static" type="intermine-items-xml-file" dump="true">
+      <property name="src.data.file" location="resources/projects.xml"/>
+    </source>
     <source name="modencode-metadata" type="chado-db">
       <property name="source.db.name" value="modencode-metadata"/>
       <property name="dataSourceName" value="FlyBase"/>
@@ -32,7 +31,7 @@
                 value="org.intermine.bio.dataconversion.WormBaseModuleProcessor"/>
     </source>
     <source name="uniprot" type="uniprot">
-      <property name="uniprot.organisms" value="7227 6239"/> 
+      <property name="uniprot.organisms" value="7227 6239"/>
       <property name="src.data.dir" location="/shared/data/uniprot/current"/>
       <property name="createinterpro" value="true"/>
       <property name="use.split.files" value="true"/>
@@ -62,7 +61,7 @@
       <property name="src.data.dir" location="/shared/data/flybase/dmel/release_5_4/fasta"/>
     </source>
     <source name="flybase-dmel-cds-fasta" type="fasta">
-      <property name="fasta.loaderClassName" 
+      <property name="fasta.loaderClassName"
                 value="org.intermine.bio.dataconversion.FlyBaseCDSFastaLoaderTask"/>
       <property name="fasta.taxonId" value="7227"/>
       <property name="fasta.className" value="org.flymine.model.genomic.CDS"/>
@@ -106,7 +105,7 @@
            items DB, then into the final objectstore -->
       <property name="src.data.file" location="build/publications.xml"/>
     </source>
- 
+
   </sources>
   <post-processing>
     <post-process name="create-utr-references"/>
@@ -123,4 +122,3 @@
     <post-process name="summarise-objectstore"/>
   </post-processing>
 </project>
-
