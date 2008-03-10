@@ -35,6 +35,11 @@
         <html:link action="/bagResultsTable.do?bagName=${bag.name}&amp;trail=|bag.${bag.name}">
           View all ${bag.size} records as results
         </html:link>
+        <script language="JavaScript">
+          <!--
+              document.resultsCountText = "${exactMessage} ${bag.size}";
+            -->
+        </script>
       </c:when>
       <c:when test="${resultsTable.sizeEstimate}">
         <tiles:insert name="tableCountEstimate.tile">
