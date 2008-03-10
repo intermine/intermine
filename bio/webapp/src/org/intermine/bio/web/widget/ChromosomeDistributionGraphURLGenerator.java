@@ -81,7 +81,7 @@ public class ChromosomeDistributionGraphURLGenerator implements GraphCategoryURL
         PathQuery q = new PathQuery(model);
         String bagType = bag.getType();
 
-        Path identifier = MainHelper.makePath(model, q, bagType + ".identifier");
+        Path identifier = MainHelper.makePath(model, q, bagType + ".secondaryIdentifier");
         Path primaryIdentifier = MainHelper.makePath(model, q, bagType + ".primaryIdentifier");
         Path name = MainHelper.makePath(model, q, bagType + ".organism.name");
         Path chromoIdentifier = MainHelper.makePath(model, q, bagType
