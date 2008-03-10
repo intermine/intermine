@@ -23,8 +23,8 @@
           </html:link>
         </c:if>
         <html:link action="/${currentPage}?table=${param.table}&amp;bagName=${bagName}&amp;page=${resultsTable.page-1}&amp;size=${resultsTable.pageSize}&amp;trail=${param.trail}">
-          &lt;&nbsp;<fmt:message key="results.previous"/>&nbsp;|&nbsp;
-        </html:link>
+          &lt;&nbsp;<fmt:message key="results.previous"/>
+        </html:link>&nbsp;|&nbsp;
       </c:when>
       <c:otherwise>
         <c:if test="${short != 'true'}">&lt;&lt;&nbsp;<fmt:message key="results.first"/></c:if>
