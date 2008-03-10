@@ -71,7 +71,8 @@ public class FlyAtlasGraphURLGenerator implements GraphCategoryURLGenerator
         Model model = os.getModel();
         PathQuery q = new PathQuery(model);
 
-        Path identifier = MainHelper.makePath(model, q, "FlyAtlasResult.genes.identifier");
+        Path secondaryIdentifier = MainHelper.makePath(model, q, 
+                                                       "FlyAtlasResult.genes.secondaryIdentifier");
         Path primaryIdentifier = MainHelper.makePath(model, q, 
                                                      "FlyAtlasResult.genes.primaryIdentifier");
         Path name = MainHelper.makePath(model, q, "FlyAtlasResult.genes.name");
@@ -85,7 +86,7 @@ public class FlyAtlasGraphURLGenerator implements GraphCategoryURLGenerator
 
         List<Path> view = new ArrayList<Path>();
 
-        view.add(identifier);
+        view.add(secondaryIdentifier);
         view.add(primaryIdentifier);
         view.add(name);
         view.add(org);
@@ -130,7 +131,7 @@ public class FlyAtlasGraphURLGenerator implements GraphCategoryURLGenerator
         List<OrderBy>  sortOrder = new ArrayList<OrderBy>();
 
         sortOrder.add(new OrderBy(enrichment, direction));
-        sortOrder.add(new OrderBy(identifier, "asc"));
+        sortOrder.add(new OrderBy(secondaryIdentifier, "asc"));
         sortOrder.add(new OrderBy(primaryIdentifier, "asc"));
         sortOrder.add(new OrderBy(name, "asc"));
         sortOrder.add(new OrderBy(assays, "asc"));
