@@ -304,7 +304,7 @@ public class PagedTable
         rows = new ArrayList<List<Object>>();
         for (int i = getStartRow(); i < getStartRow() + getPageSize(); i++) {
             try {
-                List<Object> newRow = (List<Object>) getAllRows().get(i);
+                List<Object> newRow = getAllRows().get(i);
                 rows.add(newRow);
             } catch (IndexOutOfBoundsException e) {
                 // we're probably at the end of the results object, so stop looping
@@ -385,25 +385,21 @@ public class PagedTable
         this.tableid = tableid;
     }
 
-    private List rearrangedResults = null;
-
     /**
-     * Returns indexes of columns, that should be displayed. 
+     * Returns indexes of columns, that should be displayed.
      * @return indexes
      */
     public List<Integer> getDisplayedIndexes() {
         List<Integer> ret = new ArrayList<Integer>();
-        List<Column> columns = getColumns();
-
-        for (int i = 0; i < columns.size(); i++) {
-            if (columns.get(i) != null && columns.get(i).isVisible()) {
-                ret.add(columns.get(i).getIndex());
+        for (int i = 0; i < getColumns().size(); i++) {
+            if (getColumns().get(i) != null && getColumns().get(i).isVisible()) {
+                ret.add(getColumns().get(i).getIndex());
             }
         }
-        
+
         return ret;
     }
-    
+
     /**
      * Returns a List containing the results, with the columns rearranged.
      *
@@ -421,6 +417,7 @@ public class PagedTable
             visibleIndexes = getDisplayedIndexes();
         }
 
+        @Override
         public List<ResultElement> get(int index) {
             return translateRow(webTable.getResultElements(index));
         }
@@ -433,10 +430,12 @@ public class PagedTable
             return ret;
         }
 
+        @Override
         public int size() {
             return webTable.size();
         }
 
+        @Override
         public Iterator iterator() {
             return new Iter();
         }
@@ -458,64 +457,5 @@ public class PagedTable
                 throw (new UnsupportedOperationException());
             }
         }
-        
-        private List<Object> reorderRow(int[] columnOrder, boolean[] columnVisible,
-                List<Object> row) {
-            List<Object> realRow = new ArrayList<Object>();
-
-            for (int columnIndex = 0; columnIndex < row.size(); columnIndex++) {
-                int realColumnIndex;
-
-                if (columnOrder == null) {
-                    realColumnIndex = columnIndex;
-                } else {
-                    realColumnIndex = columnOrder[columnIndex];
-                }
-
-                Object o = row.get(realColumnIndex);
-
-                if (columnVisible != null && !columnVisible[columnIndex]) {
-                    continue;
-                }
-
-                realRow.add(o);
-            }
-            return realRow;
-        }
-        
-        /**
-         * Return an int array containing the real column indexes to use while writing the given
-         * PagedTable.
-         * @param pt the PagedTable to export
-         */
-        private int [] getOrder() {
-            List columns = getColumns();
-
-            int [] returnValue = new int [columns.size()];
-
-            for (int i = 0; i < columns.size(); i++) {
-                returnValue[i] = ((Column) columns.get(i)).getIndex();
-            }
-
-            return returnValue;
-        }
-
-        /**
-         * Return an array containing the visibility of each column in the output
-         * @param pt the PagedTable to export
-         */
-        private boolean [] getVisible() {
-            List columns = getColumns();
-
-            boolean [] returnValue = new boolean [columns.size()];
-
-            for (int i = 0; i < columns.size(); i++) {
-                returnValue[i] = ((Column) columns.get(i)).isVisible();
-            }
-
-            return returnValue;
-        }
-
-
     }
 }
