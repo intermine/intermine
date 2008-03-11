@@ -22,10 +22,6 @@ import java.util.Set;
 import java.util.Stack;
 import java.util.TreeSet;
 
-import org.intermine.metadata.ClassDescriptor;
-import org.intermine.metadata.CollectionDescriptor;
-import org.intermine.metadata.Model;
-import org.intermine.metadata.ReferenceDescriptor;
 import org.intermine.objectstore.query.ConstraintOp;
 import org.intermine.objectstore.query.ConstraintSet;
 import org.intermine.objectstore.query.ContainsConstraint;
@@ -39,6 +35,11 @@ import org.intermine.objectstore.query.QueryValue;
 import org.intermine.objectstore.query.Results;
 import org.intermine.objectstore.query.ResultsRow;
 import org.intermine.objectstore.query.SubqueryExistsConstraint;
+
+import org.intermine.metadata.ClassDescriptor;
+import org.intermine.metadata.CollectionDescriptor;
+import org.intermine.metadata.Model;
+import org.intermine.metadata.ReferenceDescriptor;
 import org.intermine.util.StringUtil;
 
 import org.apache.commons.collections.IteratorUtils;
@@ -57,8 +58,7 @@ public class ObjectStoreSummary
     private final Map<String, Integer> classCountsMap = new HashMap<String, Integer>();
     private final Map<String, List<Object>> fieldValuesMap = new HashMap<String, List<Object>>();
     protected final Map<String, Set<String>> emptyFieldsMap = new HashMap<String, Set<String>>();
-    private final Map<String, HashSet<String>> nonEmptyFieldsMap =
-        new HashMap<String, HashSet<String>>();
+    private final Map<String, Set<String>> nonEmptyFieldsMap = new HashMap<String, Set<String>>();
 
     static final String NULL_FIELDS_SUFFIX = ".nullFields";
     static final String CLASS_COUNTS_SUFFIX = ".classCount";
@@ -93,8 +93,7 @@ public class ObjectStoreSummary
         String maxValuesString = (String) configuration.get("max.field.values");
         int maxValues =
             (maxValuesString == null ? Integer.MAX_VALUE : Integer.parseInt(maxValuesString));
-        for (Iterator i = configuration.entrySet().iterator(); i.hasNext();) {
-            Map.Entry entry = (Map.Entry) i.next();
+        for (Map.Entry<Object, Object> entry: configuration.entrySet()) {
             String key = (String) entry.getKey();
             String value = (String) entry.getValue();
             if (!key.endsWith(".fields")) {
@@ -108,15 +107,14 @@ public class ObjectStoreSummary
             }
             List<String> fieldNames = Arrays.asList(value.split(" "));
             summariseField(cld, fieldNames, os, maxValues);
-            for (Iterator j = os.getModel().getAllSubs(cld).iterator(); j.hasNext();) {
-                summariseField((ClassDescriptor) j.next(), fieldNames, os, maxValues);
+            for (ClassDescriptor cd: os.getModel().getAllSubs(cld)) {
+                summariseField(cd, fieldNames, os, maxValues);
             }
         }
         // always empty references and collections
         LOG.info("Looking for empty collections and references...");
         Model model = os.getModel();
-        for (Iterator iter = model.getClassDescriptors().iterator(); iter.hasNext();) {
-            ClassDescriptor cld = (ClassDescriptor) iter.next();
+        for (ClassDescriptor cld: model.getClassDescriptors()) {
             lookForEmptyThings(cld, os);
         }
     }
@@ -126,8 +124,7 @@ public class ObjectStoreSummary
      * @param properties the properties
      */
     public ObjectStoreSummary(Properties properties) {
-        for (Iterator i = properties.entrySet().iterator(); i.hasNext();) {
-            Map.Entry entry = (Map.Entry) i.next();
+        for (Map.Entry<Object, Object> entry: properties.entrySet()) {
             String key = (String) entry.getKey();
             String value = (String) entry.getValue();
             if (key.endsWith(CLASS_COUNTS_SUFFIX)) {
@@ -135,7 +132,8 @@ public class ObjectStoreSummary
                 classCountsMap.put(className, Integer.valueOf(value));
             } else if (key.endsWith(FIELDS_SUFFIX)) {
                 String classAndFieldName = key.substring(0, key.lastIndexOf("."));
-                List fieldValues = Arrays.asList(StringUtil.split(value, FIELD_DELIM));
+                List<Object> fieldValues =
+                    new ArrayList<Object>(Arrays.asList(StringUtil.split(value, FIELD_DELIM)));
                 for (int j = 0; j < fieldValues.size(); j++) {
                     if (fieldValues.get(j).equals(NULL_MARKER)) {
                         fieldValues.set(j, null);
@@ -181,7 +179,7 @@ public class ObjectStoreSummary
      * @param className the class name to look up
      * @return Set of null reference and empty collection names
      */
-    public Set getNullReferencesAndCollections(String className) {
+    public Set<String> getNullReferencesAndCollections(String className) {
         return emptyFieldsMap.get(className);
     }
 
@@ -191,18 +189,16 @@ public class ObjectStoreSummary
      */
     public Properties toProperties() {
         Properties properties = new Properties();
-        for (Iterator i = classCountsMap.entrySet().iterator(); i.hasNext();) {
-            Map.Entry entry = (Map.Entry) i.next();
-            String key = (String) entry.getKey();
-            Integer value = (Integer) entry.getValue();
+        for (Map.Entry<String, Integer> entry: classCountsMap.entrySet()) {
+            String key = entry.getKey();
+            Integer value = entry.getValue();
             properties.put(key + CLASS_COUNTS_SUFFIX, value.toString());
         }
-        for (Iterator i = fieldValuesMap.entrySet().iterator(); i.hasNext();) {
-            Map.Entry entry = (Map.Entry) i.next();
-            String key = (String) entry.getKey();
-            List value = (List) entry.getValue();
+        for (Map.Entry<String, List<Object>> entry: fieldValuesMap.entrySet()) {
+            String key = entry.getKey();
+            List<Object> value = entry.getValue();
             StringBuffer sb = new StringBuffer();
-            for (Iterator j = value.iterator(); j.hasNext();) {
+            for (Iterator<Object> j = value.iterator(); j.hasNext();) {
                 String s = (String) j.next();
                 if (s == null) {
                     sb.append(NULL_MARKER);
@@ -215,10 +211,9 @@ public class ObjectStoreSummary
             }
             properties.put(key + FIELDS_SUFFIX, sb.toString());
         }
-        for (Iterator i = emptyFieldsMap.entrySet().iterator(); i.hasNext();) {
-            Map.Entry entry = (Map.Entry) i.next();
-            String key = (String) entry.getKey();
-            Set value = (Set) entry.getValue();
+        for (Map.Entry<String, Set<String>> entry: emptyFieldsMap.entrySet()) {
+            String key = entry.getKey();
+            Set<String> value = entry.getValue();
             if (value.size() > 0) {
                 String fields = StringUtil.join(value, FIELD_DELIM);
                 properties.put(key + NULL_FIELDS_SUFFIX, fields);
@@ -249,9 +244,9 @@ public class ObjectStoreSummary
             if (results.size() > maxValues) {
                 continue;
             }
-            List fieldValues = new ArrayList();
-            for (Iterator j = results.iterator(); j.hasNext();) {
-                Object fieldValue = ((ResultsRow) j.next()).get(0);
+            List<Object> fieldValues = new ArrayList<Object>();
+            for (Object resRow: results) {
+                Object fieldValue = ((ResultsRow) resRow).get(0);
                 fieldValues.add(fieldValue == null ? null : fieldValue.toString());
             }
             fieldValuesMap.put(cld.getName() + "." + fieldName, fieldValues);
@@ -271,9 +266,7 @@ public class ObjectStoreSummary
         throws ObjectStoreException, ClassNotFoundException {
         Set<String> emptyFields = emptyFieldsMap.get(cld.getName());
         if (emptyFields == null) {
-            Iterator subIter = cld.getSubDescriptors().iterator();
-            while (subIter.hasNext()) {
-                ClassDescriptor sub = (ClassDescriptor) subIter.next();
+            for (ClassDescriptor sub: cld.getSubDescriptors()) {
                 lookForEmptyThings(sub, os);
             }
             emptyFields = new TreeSet<String>();
@@ -291,7 +284,7 @@ public class ObjectStoreSummary
      * @throws ClassNotFoundException if the class cannot be found
      */
     protected void lookForEmptyThings(ClassDescriptor cld, Set<String> nullFieldNames,
-            Set nonNullFieldNames, ObjectStore os) throws ClassNotFoundException {
+            Set<String> nonNullFieldNames, ObjectStore os) throws ClassNotFoundException {
         long startTime = System.currentTimeMillis();
         int skipped = 0;
         Iterator iter = IteratorUtils.chainedIterator(cld.getAllCollectionDescriptors().iterator(),
