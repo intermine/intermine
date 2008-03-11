@@ -32,11 +32,25 @@ public class SAXParser
      * @throws IOException if an error occurs reading from the InputSource
      * @throws ParserConfigurationException if there is an error in the config
      */
-    public static void parse(InputSource is, DefaultHandler handler) throws SAXException,
-           IOException, ParserConfigurationException {
+    public static void parse(InputSource is, DefaultHandler handler)
+        throws SAXException, IOException, ParserConfigurationException {
+        parse(is, handler, true);
+    }
+
+    /**
+     * Parse the an xml file
+     * @param is the inputsource to parse
+     * @param handler the SAX event handler to use
+     * @param validate if true, validate before parsing
+     * @throws SAXException if an error occurs during parsing
+     * @throws IOException if an error occurs reading from the InputSource
+     * @throws ParserConfigurationException if there is an error in the config
+     */
+    public static void parse(InputSource is, DefaultHandler handler, boolean validate)
+        throws SAXException, IOException, ParserConfigurationException {
         try {
             SAXParserFactory factory = SAXParserFactory.newInstance();
-            factory.setValidating(true);
+            factory.setValidating(validate);
             factory.newSAXParser().parse(is, handler);
         } catch (ParserConfigurationException e) {
             ParserConfigurationException e2 = new ParserConfigurationException("The underlying "

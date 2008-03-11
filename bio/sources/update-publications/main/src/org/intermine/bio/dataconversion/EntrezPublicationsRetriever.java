@@ -206,7 +206,7 @@ public class EntrezPublicationsRetriever
                             Throwable throwable = null;
                             try {
                                 SAXParser.parse(new InputSource(new StringReader(buf.toString())),
-                                                new Handler(fromServerMap));
+                                                new Handler(fromServerMap), false);
                             } catch (Throwable e) {
                                 // try again or re-throw the Throwable
                                 throwable = e;
