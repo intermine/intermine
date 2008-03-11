@@ -85,7 +85,7 @@
       <property name="fasta.includes" value="dmel-all-three_prime_UTR-*.fasta"/>
       <property name="src.data.dir" location="/shared/data/flybase/dmel/release_5_4/fasta"/>
     </source>
-    <source name="wormbase-c_elegans-chromosome-fasta" type="fasta">
+    <source name="wormbase-c_elegans-chromosome-fasta" type="fasta" dump="true">
       <property name="fasta.taxonId" value="6239"/>
       <property name="fasta.className" value="org.flymine.model.genomic.Chromosome"/>
       <property name="fasta.includes" value="*chromosome*.fasta"/>
