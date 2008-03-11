@@ -24,28 +24,34 @@ import org.intermine.metadata.Model;
  */
 public class MockProteinStructureDataConverter extends ProteinStructureDataConverter
 {
+    /**
+     * The Constructor
+     * @param writer an ItemWriter
+     */
     public MockProteinStructureDataConverter(ItemWriter writer) {
         super(writer, Model.getInstanceByName("genomic"));
     }
 
+    /**
+     * {@inheritDoc}
+     */
     protected String getFileContent(String fileName, String extention) throws InterMineException {
         String str;
         StringBuffer atm = new StringBuffer();
         try {
-            BufferedReader in = new BufferedReader(new InputStreamReader(getClass().getClassLoader()
-                                                                                        .getResourceAsStream(fileName)));
+            BufferedReader in = new BufferedReader(new InputStreamReader(getClass()
+                            .getClassLoader().getResourceAsStream(fileName)));
 
             boolean firstLine = true;
             while ((str = in.readLine()) != null) {
-                if (!firstLine ) {
+                if (!firstLine) {
                     atm.append(ENDL);
                 }
                 atm.append(str);
                 firstLine = false;
             }
             in.close();
-         }
-         catch (IOException e) {
+        } catch (IOException e) {
             throw new InterMineException(e);
         }
         return atm.toString();
