@@ -996,6 +996,19 @@ public abstract class ObjectStoreTestCase extends StoreDataTestCase
         assertNull(e.getAddress());
     }
 
+    public void testEmptySelect() throws Exception {
+        try {
+            Query q = new Query();
+            QueryClass qc = new QueryClass(Employee.class);
+            q.addFrom(qc);
+            q.setDistinct(false);
+            os.execute(q, 0, 100, false, false, ObjectStore.SEQUENCE_IGNORE);
+            fail("Expected exception");
+        } catch (ObjectStoreException e) {
+            assertEquals("SELECT list is empty in Query", e.getMessage());
+        }
+    }
+
     // helper method
 
     protected static List toList(Object[][] o) {
