@@ -74,7 +74,7 @@ public class TiffinExpressionConverter extends FileConverter
         Item currentMotif = null;
         String line = null;
         Map<String, Item> motifs = new HashMap<String, Item>();
-        
+
         while ((line = br.readLine()) != null) {
             Matcher motifNameMatcher = MOTIF_NAME_PATTERN.matcher(line);
             if (motifNameMatcher.matches()) {
@@ -88,7 +88,12 @@ public class TiffinExpressionConverter extends FileConverter
                 if (expressionMatcher.matches()) {
                     String expressionDescription = expressionMatcher.group(1);
                     Item expressionItem = getExpressionTerm(expressionDescription);
-                    currentMotif.addToCollection("expressionTerms", expressionItem);
+                    if (currentMotif == null) {
+                        throw new RuntimeException("internal error \"currentMotif\" shouldn't "
+                                                   + "be null at this point");
+                    } else {
+                        currentMotif.addToCollection("expressionTerms", expressionItem);
+                    }
                     //expressionItem.addToCollection("motifs", currentMotif);
                 } else {
                     if (line.trim().length() > 0) {
@@ -96,7 +101,7 @@ public class TiffinExpressionConverter extends FileConverter
                     }
                 }
             }
-        }        
+        }
         storeAll(termItems);
         storeAll(motifs);
     }
@@ -112,12 +117,12 @@ public class TiffinExpressionConverter extends FileConverter
             return expressionTermItem;
         }
     }
-    
+
     private void storeAll(Map<String, Item> map) throws Exception {
         for (Item item: map.values()) {
             store(item);
         }
     }
-    
+
 }
 

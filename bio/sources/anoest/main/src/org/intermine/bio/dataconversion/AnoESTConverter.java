@@ -43,10 +43,8 @@ public class AnoESTConverter extends BioDBConverter
      * @param database the database to read from
      * @param tgtModel the Model used by the object store we will write to with the ItemWriter
      * @param writer an ItemWriter used to handle the resultant Items
-     * @throws ObjectStoreException thrown if ItemWriter.store() fails
      */
-    public AnoESTConverter(Database database, Model tgtModel, ItemWriter writer)
-        throws ObjectStoreException {
+    public AnoESTConverter(Database database, Model tgtModel, ItemWriter writer) {
         super(database, tgtModel, writer);
     }
 
