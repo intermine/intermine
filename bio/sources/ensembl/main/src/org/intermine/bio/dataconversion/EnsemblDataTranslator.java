@@ -406,7 +406,8 @@ public class EnsemblDataTranslator extends DataTranslator
         tgtItem.setAttribute("primaryIdentifier", newIdBuff.toString());
 
         Item rfSyn = createSynonym(tgtItem.getIdentifier(), "identifier",
-                tgtItem.getAttribute("primaryIdentifier").getValue(), config.getEnsemblDataSrcRef());
+                                   tgtItem.getAttribute("primaryIdentifier").getValue(),
+                                   config.getEnsemblDataSrcRef());
 
         result.add(rfSyn);
     }
@@ -883,7 +884,8 @@ public class EnsemblDataTranslator extends DataTranslator
                 newIdBuff.append(srcItem.getAttribute("seq_region_end").getValue());
 
                 simpleFeature.addReference(config.getOrganismRef());
-                simpleFeature.addAttribute(new Attribute("primaryIdentifier", newIdBuff.toString()));
+                simpleFeature.addAttribute(new Attribute("primaryIdentifier",
+                                                         newIdBuff.toString()));
                 addReferencedItem(simpleFeature,
                         config.getEnsemblDataSet(), "evidence", true, "", false);
 
@@ -1347,7 +1349,7 @@ public class EnsemblDataTranslator extends DataTranslator
 
             //This boolean indicates that we want to use configurable identifier fields...
             useXrefDbsForGenePrimaryIdentifier = Boolean.valueOf(
-                    organismProps.getProperty("flag.useXrefDbsForGenePrimaryIdentifier")).booleanValue();
+               organismProps.getProperty("flag.useXrefDbsForGenePrimaryIdentifier")).booleanValue();
             useXrefDbsForGeneSymbol = Boolean.valueOf(
                     organismProps.getProperty("flag.useXrefDbsForGeneSymbol")).booleanValue();
             createAnalysisResult = Boolean.valueOf(

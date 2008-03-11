@@ -113,7 +113,7 @@ public class MageConverter extends FileConverter
         // sometimes don't have a file set from tests
         if (getCurrentFile() != null) {
             String fileName = getCurrentFile().getPath();
-            System.err. println("fileName: " + fileName);
+            System.err .println("fileName: " + fileName);
             if (!fileName.endsWith(".xml")) {
                 return;
             }
@@ -122,8 +122,8 @@ public class MageConverter extends FileConverter
         createItem(MageConverter.readMage(reader), true);
         LOG.info("refMap.size: " + refMap.size());
         LOG.info("seenMap.size: " + seenMap.size());
-        System.out. println("refMap.size: " + refMap.size());
-        System.out. println("seenMap.size: " + seenMap.size());
+        System.out .println("refMap.size: " + refMap.size());
+        System.out .println("seenMap.size: " + seenMap.size());
 
     }
 

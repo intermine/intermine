@@ -51,7 +51,7 @@ public class PdbConverter extends FileConverter
     }
 
     /**
-     * @see FileConverter#process(Reader)
+     * {@inheritDoc}
      */
     @Override
     public void process(Reader reader) throws Exception {
@@ -110,7 +110,8 @@ public class PdbConverter extends FileConverter
      * @author Xavier Watkins
      *
      */
-    public class PdbBufferedReader extends BufferedReader {
+    public class PdbBufferedReader extends BufferedReader
+    {
 
         private List<String> dbrefs = new ArrayList<String>();
 
@@ -118,8 +119,8 @@ public class PdbConverter extends FileConverter
             super(reader);
         }
 
-        /* (non-Javadoc)
-         * @see java.io.BufferedReader#readLine()
+        /**
+         * {@inheritDoc}
          */
         @Override
         public String readLine() throws IOException {

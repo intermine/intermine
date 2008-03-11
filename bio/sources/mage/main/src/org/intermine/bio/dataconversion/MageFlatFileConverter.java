@@ -125,7 +125,7 @@ public class MageFlatFileConverter extends FileConverter
     /**
      * Read each line from flat file.
      *
-     * @{inheritDoc}
+     * {@inheritDoc}
      */
     public void process(Reader reader) throws Exception {
 

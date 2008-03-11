@@ -355,8 +355,9 @@ public class HomophilaConverter extends FileConverter
     }
 
     /**
-     * @see FileConverter#close()
+     * {@inheritDoc}
      */
+    @Override
     public void close() throws Exception {
         LOG.info("translations.size() == " + translations.size());
         LOG.info("genes.size() == " + genes.size());

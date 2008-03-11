@@ -140,7 +140,8 @@ public class TransferSequences
         } else {
             currentChrBases.close();
             storeTempSequences(chromosomeTempFiles);
-            LOG.info("finished writing temp file for Chromosome: " + currentChr.getSecondaryIdentifier());
+            LOG.info("finished writing temp file for Chromosome: "
+                     + currentChr.getSecondaryIdentifier());
         }
 
         LOG.info("Finished transferring sequences to chromosomes - took "
@@ -148,7 +149,8 @@ public class TransferSequences
     }
 
     private File getTempFile(Chromosome chr) throws IOException {
-        String prefix = "transfer_sequences_temp_" + chr.getId() + "_" + chr.getSecondaryIdentifier();
+        String prefix = "transfer_sequences_temp_" + chr.getId() + "_"
+            + chr.getSecondaryIdentifier();
         return File.createTempFile(prefix, null, new File ("/tmp/"));
     }
 

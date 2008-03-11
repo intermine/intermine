@@ -53,7 +53,7 @@ public class UniprotKeywordConverter extends FileConverter
 
 
     /**
-     * @see FileConverter#process(Reader)
+     * {@inheritDoc}
      */
     public void process(Reader reader) throws Exception {
         mapMaps();
@@ -109,7 +109,7 @@ public class UniprotKeywordConverter extends FileConverter
 
 
         /**
-         * @see DefaultHandler#startElement
+         * {@inheritDoc}
          */
         public void startElement(String uri, String localName, String qName, Attributes attrs)
             throws SAXException {
@@ -137,7 +137,7 @@ public class UniprotKeywordConverter extends FileConverter
         }
 
         /**
-         * @see DefaultHandler#endElement
+         * {@inheritDoc}
          */
         public void characters(char[] ch, int start, int length) {
 

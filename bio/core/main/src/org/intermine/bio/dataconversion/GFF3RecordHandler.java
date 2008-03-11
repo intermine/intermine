@@ -388,7 +388,7 @@ public class GFF3RecordHandler
                 feature.setReference(refName, relation.getReference("object").getRefId());
                 if (parentIter.hasNext()) {
                     String primaryIdentifier = feature.getAttribute("primaryIdentifier").getValue();
-					throw new RuntimeException("Feature has multiple relations for reference: "
+                    throw new RuntimeException("Feature has multiple relations for reference: "
                                                + refName + " for feature: " + feature.getClassName()
                                                + ", " + feature.getIdentifier() + ", "
                                                + primaryIdentifier);
