@@ -406,7 +406,6 @@ public class TemplateHelper
                                             Model model) {
         String equalsString = ConstraintOp.EQUALS.getIndex().toString();
         String inString = ConstraintOp.IN.getIndex().toString();
-        String lookupOpString = ConstraintOp.LOOKUP.getIndex().toString();
 
         int editableConstraintCount = template.getAllEditableConstraints().size();
         if (editableConstraintCount > 1) {

@@ -21,7 +21,6 @@ import java.util.Map;
 import java.util.Set;
 
 import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
 import org.intermine.metadata.ClassDescriptor;
 import org.intermine.metadata.FieldDescriptor;
 import org.intermine.metadata.Model;
@@ -50,7 +49,6 @@ import org.intermine.objectstore.query.iql.IqlQuery;
  */
 public class BagQuery
 {
-    private static final Logger LOG = Logger.getLogger(BagQuery.class);
     private Query query;
     private String message, queryString, packageName;
     private boolean matchesAreIssues;

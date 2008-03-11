@@ -95,7 +95,7 @@ public class InterMineBagBinding
         final Map bags = new LinkedHashMap();
         try {
             SAXParser.parse(new InputSource(reader), new InterMineBagHandler(uosw, osw, bags,
-                        userId, new HashMap(), idUpgrader.ERROR_UPGRADER));
+                        userId, new HashMap(), IdUpgrader.ERROR_UPGRADER));
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
