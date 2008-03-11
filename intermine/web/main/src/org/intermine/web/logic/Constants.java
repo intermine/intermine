@@ -131,8 +131,14 @@ public interface Constants
      */
     public static final String ERRORS = "ERRORS";
 
+    /**
+     * Session attribute that temporarily holds messages from the Portal
+     */
     public static final String PORTAL_MSG = "PORTAL_MSG";
 
+    /**
+     * Session attribute that holds message when a lookup constraint has been used
+     */
     public static final String LOOKUP_MSG = "LOOKUP_MSG";
 
     /**
