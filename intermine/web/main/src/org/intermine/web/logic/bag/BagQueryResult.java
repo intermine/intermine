@@ -103,7 +103,9 @@ public class BagQueryResult
         return matches;
     }
 
-
+    /**
+     * @return the map of all ids that were matches or issues 
+     */
     public Set<Integer> getMatchAndIssueIds() {
         Set<Integer> ids = new HashSet<Integer>();
         ids.addAll(matches.keySet());
