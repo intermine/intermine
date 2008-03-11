@@ -19,7 +19,6 @@ import java.util.Map;
 
 import javax.servlet.ServletContext;
 import javax.servlet.http.HttpSession;
-import javax.servlet.jsp.JspException;
 
 import org.intermine.InterMineException;
 import org.intermine.metadata.Model;
@@ -143,7 +142,7 @@ public class TypeConverter
      * @param imBag an InterMineBag or Collection of objects of type typeA
      * @return a WebResults object containing the converted objects
      * @throws InterMineException if an error occurs
-     * @throws InterMineException, ObjectStoreException exceptions
+     * @throws ObjectStoreException if an error occurs
      */
     public static WebResults getConvertedObjects(HttpSession session,
                                                  ServletContext servletContext,
