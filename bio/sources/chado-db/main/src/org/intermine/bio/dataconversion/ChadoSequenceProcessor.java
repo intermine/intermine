@@ -212,10 +212,12 @@ public class ChadoSequenceProcessor extends ChadoProcessor
                     if (action instanceof SetFieldConfigAction) {
                         SetFieldConfigAction attrAction =
                             (SetFieldConfigAction) action;
-                        feature.setAttribute(attrAction.getFieldName(), name);
-                        fieldValuesSet.add(name);
-                        if (attrAction.getFieldName().equals("primaryIdentifier")) {
-                            fdat.flags |= FeatureData.IDENTIFIER_SET;
+                        if (attrAction.isValidValue(name)) {
+                            feature.setAttribute(attrAction.getFieldName(), name);
+                            fieldValuesSet.add(name);
+                            if (attrAction.getFieldName().equals("primaryIdentifier")) {
+                                fdat.flags |= FeatureData.IDENTIFIER_SET;
+                            }
                         }
                     }
                 }
@@ -234,10 +236,12 @@ public class ChadoSequenceProcessor extends ChadoProcessor
             for (ConfigAction action: uniqueNameActionList) {
                 if (action instanceof SetFieldConfigAction) {
                     SetFieldConfigAction attrAction = (SetFieldConfigAction) action;
-                    feature.setAttribute(attrAction.getFieldName(), uniqueName);
-                    fieldValuesSet.add(uniqueName);
-                    if (attrAction.getFieldName().equals("primaryIdentifier")) {
-                        fdat.flags |= FeatureData.IDENTIFIER_SET;
+                    if (attrAction.isValidValue(uniqueName)) {
+                        feature.setAttribute(attrAction.getFieldName(), uniqueName);
+                        fieldValuesSet.add(uniqueName);
+                        if (attrAction.getFieldName().equals("primaryIdentifier")) {
+                            fdat.flags |= FeatureData.IDENTIFIER_SET;
+                        }
                     }
                 }
             }
@@ -783,12 +787,14 @@ public class ChadoSequenceProcessor extends ChadoProcessor
                     if (action instanceof SetFieldConfigAction) {
                         SetFieldConfigAction setAction = (SetFieldConfigAction) action;
                         if (!existingAttributes.contains(setAction.getFieldName())) {
-                            setAttribute(fdat.intermineObjectId, setAction.getFieldName(),
-                                         accession);
-                            existingAttributes.add(setAction.getFieldName());
-                            fieldsSet.add(accession);
-                            if (setAction.getFieldName().equals("primaryIdentifier")) {
-                                fdat.flags |= FeatureData.IDENTIFIER_SET;
+                            if (setAction.isValidValue(accession)) {
+                                setAttribute(fdat.intermineObjectId, setAction.getFieldName(),
+                                             accession);
+                                existingAttributes.add(setAction.getFieldName());
+                                fieldsSet.add(accession);
+                                if (setAction.getFieldName().equals("primaryIdentifier")) {
+                                    fdat.flags |= FeatureData.IDENTIFIER_SET;
+                                }
                             }
                         }
                     }
@@ -850,10 +856,13 @@ public class ChadoSequenceProcessor extends ChadoProcessor
                 for (ConfigAction action: actionList) {
                     if (action instanceof SetFieldConfigAction) {
                         SetFieldConfigAction setAction = (SetFieldConfigAction) action;
-                        setAttribute(fdat.intermineObjectId, setAction.getFieldName(), identifier);
-                        fieldsSet.add(identifier);
-                        if (setAction.getFieldName().equals("primaryIdentifier")) {
-                            fdat.flags |= FeatureData.IDENTIFIER_SET;
+                        if (setAction.isValidValue(identifier)) {
+                            setAttribute(fdat.intermineObjectId, setAction.getFieldName(), 
+                                         identifier);
+                            fieldsSet.add(identifier);
+                            if (setAction.getFieldName().equals("primaryIdentifier")) {
+                                fdat.flags |= FeatureData.IDENTIFIER_SET;
+                            }
                         }
                     }
                 }
@@ -931,7 +940,8 @@ public class ChadoSequenceProcessor extends ChadoProcessor
                 for (ConfigAction action: actionList) {
                     if (action instanceof SetFieldConfigAction) {
                         SetFieldConfigAction setAction = (SetFieldConfigAction) action;
-                        if (!existingAttributes.contains(setAction.getFieldName())) {
+                        if (!existingAttributes.contains(setAction.getFieldName())
+                                        && setAction.isValidValue(identifier)) {
                             setAttribute(fdat.intermineObjectId, setAction.getFieldName(),
                                          identifier);
                             existingAttributes.add(setAction.getFieldName());
@@ -1403,14 +1413,14 @@ public class ChadoSequenceProcessor extends ChadoProcessor
      */
     protected static class SetFieldConfigAction extends ConfigAction
     {
-        private String thefieldName;
+        protected String theFieldName;
 
         /**
          * Create a new SetFieldConfigAction that sets the given field.
          * @param fieldName the name of the InterMine object field to set
          */
         SetFieldConfigAction(String fieldName) {
-            this.thefieldName = fieldName;
+            this.theFieldName = fieldName;
         }
 
         /**
@@ -1418,7 +1428,46 @@ public class ChadoSequenceProcessor extends ChadoProcessor
          * @return the field name
          */
         public String getFieldName() {
-            return thefieldName;
+            return theFieldName;
+        }
+        
+        /**
+         * Check whether value provided is valid for this field, default implementation
+         * just checks if value is null.
+         * @param value the field value to check
+         * @return true if field name is valid
+         */
+        public boolean isValidValue(String value) {
+            return !(value == null);
+        }
+    }
+    
+    /**
+     * An action that sets an attribute in a new Item and can validate a value
+     * for that field against a specified pattern
+     * @author Richard Smith
+     */
+    protected static class SetMatchingFieldConfigAction extends SetFieldConfigAction 
+    {
+        private String pattern;
+        
+        /**
+         * Construct with a field name and a pattern that values must match
+         * @param fieldName name of the field
+         * @param pattern a regular expression pattern
+         */
+        SetMatchingFieldConfigAction(String fieldName, String pattern) {
+            super(fieldName);
+            this.pattern = pattern;
+        }
+        
+        /**
+         * Validate a value for this field by matching with specied patter
+         * @param value the value to check
+         * @return true if value matches the pattern
+         */
+        public boolean isValidValue(String value) {
+            return (super.isValidValue(value) && value.matches(pattern));
         }
     }
 

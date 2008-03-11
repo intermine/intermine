@@ -260,6 +260,9 @@ public class TestFlyBaseModuleProcessor extends FlyBaseModuleProcessor
                 23269151, "FBgn0000001_symbol_SYNONYM", "symbol", false
             },
             {
+                23269151, "dmel_GLEANR_1_synonym", "symbol", false
+            },
+            {
                 3117509, "FBgn0036461_symbol_3", "other", false
             },
         };

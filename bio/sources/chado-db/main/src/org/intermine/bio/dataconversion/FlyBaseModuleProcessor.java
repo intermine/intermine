@@ -112,6 +112,9 @@ public class FlyBaseModuleProcessor extends ChadoSequenceProcessor
                                   CREATE_SYNONYM_ACTION));
             map.put(new MultiKey("synonym", "Gene", "symbol", Boolean.FALSE),
                     Arrays.asList(CREATE_SYNONYM_ACTION));
+            map.put(new MultiKey("synonym", "Gene", "symbol", Boolean.FALSE),
+                    Arrays.asList(new SetMatchingFieldConfigAction("GLEANRsymbol", ".*GLEANR.*"),
+                                  CREATE_SYNONYM_ACTION));
 
 
             // dbxref table configuration example: for features of class "Gene", where the
@@ -273,7 +276,7 @@ public class FlyBaseModuleProcessor extends ChadoSequenceProcessor
             return null;
         } else {
             if (chadoFeatureType.equals("chromosome_arm")
-                || chadoFeatureType.equals("golden_path_region")
+                //|| chadoFeatureType.equals("golden_path_region")
                 || chadoFeatureType.equals("ultra_scaffold")) {
                 if (uniqueName.equals("dmel_mitochondrion_genome")) {
                     // ignore - all features are on the Chromosome object with uniqueName
@@ -283,6 +286,9 @@ public class FlyBaseModuleProcessor extends ChadoSequenceProcessor
                     realInterMineType = "Chromosome";
                 }
             }
+        }
+        if (chadoFeatureType.equals("golden_path_region")) {
+            realInterMineType = "GoldenPathFragment";
         }
         if (chadoFeatureType.equals("chromosome_structure_variation")) {
             if (uniqueName.startsWith("FBab")) {
