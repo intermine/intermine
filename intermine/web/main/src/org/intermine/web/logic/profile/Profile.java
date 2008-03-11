@@ -361,6 +361,7 @@ public class Profile
 
     /**
      * Return the userOption
+     * @param name the name
      * @return the value
      */
     public String getUserOption(String name) {

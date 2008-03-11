@@ -99,6 +99,14 @@ public class ProteinStructureDataConverter extends FileConverter
         }
     }
 
+    /**
+     * Get the content of the file as a String
+     * 
+     * @param fileName the name of the file
+     * @param extention the file extension
+     * @return a String
+     * @throws InterMineException an exception
+     */
     protected String getFileContent(String fileName, String extention) throws InterMineException {
         String str;
         StringBuffer fileBuffer = new StringBuffer();
@@ -129,6 +137,10 @@ public class ProteinStructureDataConverter extends FileConverter
         return fileBuffer.toString();
     }
 
+    /**
+     * @author Xavier Watkins
+     *
+     */
     class ProteinStructureHandler extends DefaultHandler
     {
 
@@ -146,7 +158,11 @@ public class ProteinStructureDataConverter extends FileConverter
 
         /**
          * Constructor
+         *
          * @param writer the ItemWriter used to handle the resultant items
+         * @param proteinMap the Map of proteins
+         * @param featureMap the Map of features
+         * @throws ObjectStoreException an exception
          */
         public ProteinStructureHandler (ItemWriter writer, Map proteinMap, Map featureMap)
             throws ObjectStoreException {

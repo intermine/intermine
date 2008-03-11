@@ -19,6 +19,7 @@ import java.util.Map;
 
 import javax.servlet.ServletContext;
 import javax.servlet.http.HttpSession;
+import javax.servlet.jsp.JspException;
 
 import org.intermine.InterMineException;
 import org.intermine.metadata.Model;
@@ -134,6 +135,7 @@ public class TypeConverter
      * Converts a List of objects from one type to another type using a TemplateQuery,
      * returns the converted objects.
      *
+     * @param session the session
      * @param servletContext the ServletContext
      * @param conversionTemplates a list of templates to be used for conversion
      * @param typeA the type to convert from
@@ -141,6 +143,7 @@ public class TypeConverter
      * @param imBag an InterMineBag or Collection of objects of type typeA
      * @return a WebResults object containing the converted objects
      * @throws InterMineException if an error occurs
+     * @throws InterMineException, ObjectStoreException exceptions
      */
     public static WebResults getConvertedObjects(HttpSession session,
                                                  ServletContext servletContext,

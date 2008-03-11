@@ -59,7 +59,8 @@ public class BaseDisclosureTag extends SimpleTagSupport
 
     /**
      * Prints 'style' and 'class' attributes of element.
-     * @param out
+     * @param out the JspWriter
+     * @exception IOException an exception
      */
     protected void printStyleAndClass(JspWriter out) throws IOException {
         if (getStyleClass() != null || getDefaultStyleClass() != null) {

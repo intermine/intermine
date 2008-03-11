@@ -34,11 +34,13 @@ public class DisclosureDetailsTag extends BaseDisclosureTag
 
     /**
      * Renders tag.
+     * @throws JspException, IOException exceptions
      */
    public void doTag() throws JspException, IOException {
        DisclosureHeadTag parent =  (DisclosureHeadTag) getParent();
        if (parent == null) {
-           throw new JspException("<disclosureDetails> element can be only inside <disclosureHead> element");
+           throw new JspException(
+           "<disclosureDetails> element can be only inside <disclosureHead> element");
        }
        JspWriter out = getJspContext().getOut();
        out.write("<span");
