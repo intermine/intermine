@@ -43,13 +43,13 @@ public class HomophilaConverter extends FileConverter
     private static final int PROTEIN_ID = 2;
     private static final int E_VALUE = 3;
 
-    protected Map diseaseDescriptions = new HashMap();
-    protected Map proteinToGene = new HashMap();
+    protected Map<String, String> diseaseDescriptions = new HashMap<String, String>();
+    protected Map<String, String> proteinToGene = new HashMap<String, String>();
 
-    protected Map translations = new HashMap();
-    protected Map proteins = new HashMap();
-    protected Map diseases = new HashMap();
-    protected Map genes = new HashMap();
+    protected Map<String, Item> translations = new HashMap<String, Item>();
+    protected Map<String, Item> proteins = new HashMap<String, Item>();
+    protected Map<String, Item> diseases = new HashMap<String, Item>();
+    protected Map<String, Item> genes = new HashMap<String, Item>();
 
     protected int matchCount = 0;
     protected int annotationCount = 0;
@@ -185,6 +185,7 @@ public class HomophilaConverter extends FileConverter
      * @see DataConverter#process
      * @throws Exception if something goes wrong
      */
+    @Override
     public void process(Reader reader) throws Exception {
         if (diseaseFile == null) {
             throw new NullPointerException("diseaseFile property not set");
@@ -246,7 +247,7 @@ public class HomophilaConverter extends FileConverter
      * @throws ObjectStoreException if something goes wrong
      */
     protected Item findTranslation(String array[]) throws ObjectStoreException {
-        Item translation = (Item) translations.get(array[TRANSLATION_ID]);
+        Item translation = translations.get(array[TRANSLATION_ID]);
         if (translation == null) {
             translation = createItem("Translation");
             translation.addAttribute(new Attribute("primaryIdentifier", array[TRANSLATION_ID]));
@@ -266,7 +267,7 @@ public class HomophilaConverter extends FileConverter
      * @throws ObjectStoreException if something goes wrong
      */
     protected Item findProtein(String array[]) throws ObjectStoreException {
-        Item protein = (Item) proteins.get(array[PROTEIN_ID]);
+        Item protein = proteins.get(array[PROTEIN_ID]);
         if (protein == null) {
             protein = createItem("Protein");
             protein.addAttribute(new Attribute("primaryIdentifier", array[PROTEIN_ID]));
@@ -289,12 +290,12 @@ public class HomophilaConverter extends FileConverter
      * @throws ObjectStoreException if something goes wrong
      */
     protected Item findGene(String array[]) throws ObjectStoreException {
-        String geneId = (String) proteinToGene.get(array[PROTEIN_ID]);
+        String geneId = proteinToGene.get(array[PROTEIN_ID]);
         if (geneId == null) {
             LOG.warn("protein id " + array[PROTEIN_ID] + " doesn't map to a gene id");
             return null;
         }
-        Item gene = (Item) genes.get(geneId);
+        Item gene = genes.get(geneId);
         if (gene == null) {
             gene = createItem("Gene");
             genes.put(geneId, gene);
@@ -337,13 +338,13 @@ public class HomophilaConverter extends FileConverter
      * @throws ObjectStoreException if something goes wrong
      */
     protected Item findDisease(String array[]) throws ObjectStoreException {
-        Item disease = (Item) diseases.get(array[OMIM_ID]);
+        Item disease = diseases.get(array[OMIM_ID]);
         if (disease == null) {
             disease = createItem("Disease");
             diseases.put(array[OMIM_ID], disease);
             disease.addAttribute(new Attribute("omimId", array[OMIM_ID]));
             disease.addToCollection("evidence", homophilaDb);
-            String desc = (String) diseaseDescriptions.get(array[OMIM_ID]);
+            String desc = diseaseDescriptions.get(array[OMIM_ID]);
             if (desc == null) {
                 LOG.error("no disease description for OMIM " + array[OMIM_ID]);
                 desc = "";

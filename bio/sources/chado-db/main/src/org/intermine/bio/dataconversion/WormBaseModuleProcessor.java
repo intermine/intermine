@@ -23,7 +23,7 @@ import org.apache.commons.collections.map.MultiKeyMap;
  */
 public class WormBaseModuleProcessor extends ChadoSequenceProcessor
 {
-    private MultiKeyMap config;
+    private Map<MultiKey, List<ConfigAction>> config;
 
     /**
      * Create a new WormBaseChadoDBConverter.
@@ -36,9 +36,9 @@ public class WormBaseModuleProcessor extends ChadoSequenceProcessor
     /**
      * {@inheritDoc}
      */
-    @Override
     @SuppressWarnings("unchecked")
-    protected Map<MultiKey, List<ConfigAction>> getConfig(int taxonId) {
+    @Override
+    protected Map<MultiKey, List<ConfigAction>> getConfig(@SuppressWarnings("unused") int taxonId) {
        if (config == null) {
            config = new MultiKeyMap();
            config.put(new MultiKey("feature", "Gene", "WormBase", "uniquename"),

@@ -1423,7 +1423,7 @@ public class ChadoSequenceProcessor extends ChadoProcessor
     }
 
     /**
-     *  An action that sets a Synonym.
+     * An action that sets a Synonym.
      */
     protected static class CreateSynonymAction extends ConfigAction
     {
@@ -1446,7 +1446,10 @@ public class ChadoSequenceProcessor extends ChadoProcessor
         }
     }
 
-    private static class DoNothingAction extends ConfigAction
+    /**
+     * An action that does nothing.
+     */
+    protected static class DoNothingAction extends ConfigAction
     {
         // do nothing for this data
     }

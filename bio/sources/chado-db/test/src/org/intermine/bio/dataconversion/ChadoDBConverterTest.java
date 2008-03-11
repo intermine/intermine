@@ -19,6 +19,7 @@ import org.intermine.dataconversion.ItemWriter;
 import org.intermine.dataconversion.ItemsTestCase;
 import org.intermine.dataconversion.MockItemWriter;
 import org.intermine.metadata.Model;
+import org.intermine.model.fulldata.Item;
 import org.intermine.sql.Database;
 
 import java.io.FileWriter;
@@ -56,7 +57,7 @@ public class ChadoDBConverterTest extends ItemsTestCase
      * @throws IOException
      */
     private void doTestProcess(String orgId) throws Exception, IOException {
-        MockItemWriter itemWriter = new MockItemWriter(new HashMap());
+        MockItemWriter itemWriter = new MockItemWriter(new HashMap<String, Item>());
         ChadoDBConverter converter =
             new TestChadoDBConverter(null, Model.getInstanceByName("genomic"), itemWriter);
         converter.setDataSetTitle("test title");
@@ -81,7 +82,7 @@ public class ChadoDBConverterTest extends ItemsTestCase
 
         final List<String> minimalSet = Arrays.asList("gene", "exon");
 
-        MockItemWriter itemWriter = new MockItemWriter(new HashMap());
+        MockItemWriter itemWriter = new MockItemWriter(new HashMap<String, Item>());
         ChadoDBConverter converter =
             new ChadoDBConverter(null, Model.getInstanceByName("genomic"), itemWriter);
         FlyBaseModuleProcessor processor = new TestFlyBaseModuleProcessor(converter);

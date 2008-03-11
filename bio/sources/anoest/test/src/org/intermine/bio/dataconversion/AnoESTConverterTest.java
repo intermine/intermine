@@ -18,6 +18,7 @@ import org.intermine.dataconversion.ItemWriter;
 import org.intermine.dataconversion.ItemsTestCase;
 import org.intermine.dataconversion.MockItemWriter;
 import org.intermine.metadata.Model;
+import org.intermine.model.fulldata.Item;
 import org.intermine.objectstore.ObjectStoreException;
 import org.intermine.sql.Database;
 
@@ -29,12 +30,13 @@ public class AnoESTConverterTest extends ItemsTestCase
         super(arg);
     }
 
+    @Override
     public void setUp() throws Exception {
         super.setUp();
     }
 
     public void testProcess() throws Exception {
-        MockItemWriter itemWriter = new MockItemWriter(new LinkedHashMap());
+        MockItemWriter itemWriter = new MockItemWriter(new LinkedHashMap<String, Item>());
         AnoESTConverter converter =
             new TestAnoESTConverter(null, Model.getInstanceByName("genomic"), itemWriter);
         converter.process();
@@ -49,6 +51,7 @@ public class AnoESTConverterTest extends ItemsTestCase
         throws ObjectStoreException {
             super(database, tgtModel, writer);
         }
+        @Override
         protected ResultSet getClusterResultSet(@SuppressWarnings("unused") Connection connection) {
             Object[][] resObjects = new Object[][] {
                 {
@@ -69,7 +72,8 @@ public class AnoESTConverterTest extends ItemsTestCase
             return res;
         }
 
-        protected ResultSet getEstResultSet(Connection connection) {
+        @Override
+        protected ResultSet getEstResultSet(@SuppressWarnings("unused") Connection connection) {
             Object[][] resObjects = new Object[][] {
                 {"BM654701.1","NCLAG150001", "1234567"},
                 {"BM654701.1","NCLAG150002", "1234567"},
