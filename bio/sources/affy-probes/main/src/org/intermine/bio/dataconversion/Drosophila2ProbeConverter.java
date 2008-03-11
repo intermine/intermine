@@ -90,38 +90,38 @@ public class Drosophila2ProbeConverter extends FileConverter
                     // TODO add a description and flag
                     // probeSet.setAttribute("description", line[4]);
                     probeSet.setAttribute("isControl", "true");
-                } else {
-
-                    // create chromosome location for probe set
-                    // "arm_2L:5943681-5948313 (+)" 
-                    String alignment = line[12];
-                    if (alignment != null && !alignment.equals("---")) {
-                        
-                        if (alignment.contains(":") && alignment.contains(" ") 
-                                        && alignment.contains("-")) {
-                        
-                            String[] s = alignment.split(":");
-                            Item chr = createChromosome(s[0]);
-                            s = s[1].split(" ");
-                            String strand = s[1];
-                            s = s[0].split("-");
-                            String start = s[0];
-                            String end = s[1];
-
-                            Item loc = createItem("Location");
-                            loc.setReference("object", chr.getIdentifier());
-                            loc.setReference("subject", probeSet.getIdentifier());
-                            loc.setAttribute("strand", strand.contains("+") ? "1" : "-1");
-                            loc.setAttribute("start", start);
-                            loc.setAttribute("end", end);
-                            loc.setCollection("evidence",
-                            new ArrayList(Collections.singleton(dataSet.getIdentifier())));
-
-                            delayedItems.add(loc);
-                        } else {
-                            LOG.error("Can't parse chromosome: " + alignment);
-                        }
-                    }
+//                } else {
+//
+//                    // create chromosome location for probe set
+//                    // "arm_2L:5943681-5948313 (+)" 
+//                    String alignment = line[12];
+//                    if (alignment != null && !alignment.equals("---")) {
+//                        
+//                        if (alignment.contains(":") && alignment.contains(" ") 
+//                                        && alignment.contains("-")) {
+//                        
+//                            String[] s = alignment.split(":");
+//                            Item chr = createChromosome(s[0]);
+//                            s = s[1].split(" ");
+//                            String strand = s[1];
+//                            s = s[0].split("-");
+//                            String start = s[0];
+//                            String end = s[1];
+//
+//                            Item loc = createItem("Location");
+//                            loc.setReference("object", chr.getIdentifier());
+//                            loc.setReference("subject", probeSet.getIdentifier());
+//                            loc.setAttribute("strand", strand.contains("+") ? "1" : "-1");
+//                            loc.setAttribute("start", start);
+//                            loc.setAttribute("end", end);
+//                            loc.setCollection("evidence",
+//                            new ArrayList(Collections.singleton(dataSet.getIdentifier())));
+//
+//                            delayedItems.add(loc);
+//                        } else {
+//                            LOG.error("Can't parse chromosome: " + alignment);
+//                        }
+//                    }
                 }
                 String fbgns = line[24];
                 if (!fbgns.equals("---")) {
@@ -194,6 +194,7 @@ public class Drosophila2ProbeConverter extends FileConverter
         return probeSet;
     }
 
+    // not used
     private Item createChromosome(String chrId) throws ObjectStoreException {
         Item chr = (Item) chrMap.get(chrId);
         if (chr == null) {
@@ -214,47 +215,3 @@ public class Drosophila2ProbeConverter extends FileConverter
         return chr;
     }
 }
-
-/**
-        0 "Probe Set ID"
-        1 "GeneChip Array"
-        2 "Species Scientific Name"
-        3 "Annotation Date"
-        4 "Sequence Type"
-        5 "Sequence Source"
-        6 "Transcript ID(Array Design)"
-        7 "Target Description"
-        8 "Representative Public ID"
-        9 "Archival UniGene Cluster"
-        10 "UniGene ID"
-        11 "Genome Version"
-        12 "Alignment
-        13 "Gene Title"
-        14 "Gene Symbol"
-        15 "Chromosomal Location"
-        16 "Unigene Cluster Type"
-        17 "Ensembl"
-        18 "Entrez Gene"
-        19 "SwissProt"
-        20 "EC"
-        21 "OMIM"
-        22 "RefSeq Protein ID"
-        23 "RefSeq Transcript ID"
-        24 "FlyBase"
-        25 "AGI"
-        26 "WormBase",
-        27 "MGI Name"
-        28 "RGD Name"
-        29 "SGD accession number"
-        30 "Gene Ontology Bilogical Process"
-        31 "Gene Ontology Cellular Component"
-        32 "Gene Ontology Molecular Function"
-        33 "Pathway"
-        34 "InterPro",
-        35 "Trans Membrane"
-        36 "QTL"
-        37 "Annotation Description"
-        38 "Annotation Transcript Cluster"
-        39 "Transcript Assignments"
-        40 "Annotation Notes" 
-*/
