@@ -46,7 +46,6 @@ public class FlyAtlasDataSetLdr implements DataSetLdr
 {
 
     private Results results;
-    private Object[] geneCategoryArray;
     private HashMap<String, CategoryDataset> dataSets = new HashMap<String, CategoryDataset>();
     /**
      * Creates a FlyAtlasDataSetLdr used to retrieve, organise
@@ -134,11 +133,8 @@ public class FlyAtlasDataSetLdr implements DataSetLdr
             }
         }
 
-        // Build a map from tissue/UpDown to gene list
-        geneCategoryArray = new Object[callTable.size()];
-        int i = 0;
-        for (Iterator iterator = callTable.keySet().iterator(); iterator.hasNext();) {
-            String tissue = (String) iterator.next();
+        for (Iterator<String> iterator = callTable.keySet().iterator(); iterator.hasNext();) {
+            String tissue = iterator.next();
             if ((callTable.get(tissue))[0] > 0) {
               dataSet.addValue((callTable.get(tissue))[0], "Up", tissue);
             } else {
@@ -149,11 +145,6 @@ public class FlyAtlasDataSetLdr implements DataSetLdr
             } else {
               dataSet.addValue(-0.0001, "Down", tissue);
             }
-            Object[] geneSeriesArray = new Object[2];
-            geneSeriesArray[0] = geneMap.get(tissue + "_Up");
-            geneSeriesArray[1] = geneMap.get(tissue + "_Down");
-            geneCategoryArray[i] = geneSeriesArray;
-            i++;
         }
         
         if (results.size() > 0) {
@@ -162,9 +153,9 @@ public class FlyAtlasDataSetLdr implements DataSetLdr
     }
 
     /**
-     * @see org.intermine.web.logic.widget.DataSetLdr#getDataSet()
+     * {@inheritDoc}
      */
-    public Map getDataSets() {
+    public Map<String, CategoryDataset> getDataSets() {
         return dataSets;
     }
 
