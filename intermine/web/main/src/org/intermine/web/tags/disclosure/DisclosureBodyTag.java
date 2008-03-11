@@ -35,6 +35,8 @@ public class DisclosureBodyTag extends BaseDisclosureTag
 
     /**
      * Renders tag.
+     * @throws JspException an Exception
+     * @throws IOException an Exception
      */
     public void doTag() throws JspException, IOException {
         JspWriter out = getJspContext().getOut();

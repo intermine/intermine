@@ -146,6 +146,7 @@ public class FullParser
      * @param useIdentifier if true, set the id of the new object using the identifier of the Item
      * @param abortOnError if true, throw an exception if there is a problem.  If false, log the
      * problem and continue if possible
+     * @param obj the object
      * @return a populated object
      */
     protected static Object populateObject(Item item, Map objMap, boolean useIdentifier,

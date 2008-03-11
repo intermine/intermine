@@ -31,8 +31,10 @@ public class GuiObject
     public Map<String, Boolean> getToggledElements() {
         return toggledElements;
     }
+
     /**
      * Sets map of ids and its state. @see getToggleElements()
+     * @param toggledElements a map of Strings to Booleans
      */
     public void setToggledElements(Map<String, Boolean> toggledElements) {
         this.toggledElements = toggledElements;

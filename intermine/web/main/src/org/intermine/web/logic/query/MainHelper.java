@@ -237,6 +237,7 @@ public class MainHelper
      * returned
      * @param os the ObjectStore that this will be run on
      * @param classKeys the class keys
+     * @param bagQueryConfig the BagQueryConfig
      * @return an InterMine Query
      * @throws ObjectStoreException if something goes wrong
      */

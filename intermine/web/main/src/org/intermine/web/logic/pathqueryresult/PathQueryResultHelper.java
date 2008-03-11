@@ -56,6 +56,7 @@ public class PathQueryResultHelper
      * @param model the Model
      * @param webConfig the WebConfig
      * @param prefix non-mandatory. Useful when getting a view for a reference or collection
+     * @param excludeNonAttributes a boolean
      * @return a List of Paths representing the view
      */
     public static List<Path> getDefaultView(String type, Model model, WebConfig webConfig, 

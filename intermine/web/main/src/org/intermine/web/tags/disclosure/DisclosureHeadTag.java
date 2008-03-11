@@ -34,6 +34,7 @@ public class DisclosureHeadTag extends BaseDisclosureTag
 
     /**
      * Renders tag.
+     * @throws JspException, IOException exceptions
      */
     public void doTag() throws JspException, IOException {
         parent = (DisclosureTag) getParent();
