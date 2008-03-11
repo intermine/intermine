@@ -1,16 +1,4 @@
 <items>
-<item id="5_2" class="http://www.flymine.org/model/genomic#Gene">
-<attribute name="primaryIdentifier" value="AGAP011423"/>
-<reference name="organism" ref_id="0_1"/>
-<collection name="microArrayResults"><reference ref_id="7_10"/><reference ref_id="7_11"/><reference ref_id="7_12"/><reference ref_id="7_13"/><reference ref_id="7_14"/><reference ref_id="7_15"/><reference ref_id="7_16"/><reference ref_id="7_17"/><reference ref_id="7_18"/></collection>
-</item>
-<item id="6_3" class="http://www.flymine.org/model/genomic#ProbeSet">
-<attribute name="primaryIdentifier" value="NAH-P01-D-07"/>
-<attribute name="name" value="NAH-P01-D-07"/>
-<reference name="gene" ref_id="5_3"/>
-<reference name="organism" ref_id="0_1"/>
-<collection name="evidence"><reference ref_id="1_1"/></collection>
-</item>
 <item id="7_2" class="http://www.flymine.org/model/genomic#AGambiaeLifeCycle">
 <attribute name="isControl" value="false"/>
 <attribute name="standardError" value="0.09102194"/>
@@ -33,10 +21,12 @@
 <attribute name="sample2" value="stage: 240_h_pupa_mixed sex"/>
 <reference name="experiment" ref_id="3_1"/>
 </item>
-<item id="5_6" class="http://www.flymine.org/model/genomic#Gene">
-<attribute name="primaryIdentifier" value="AGAP008449"/>
+<item id="6_6" class="http://www.flymine.org/model/genomic#ProbeSet">
+<attribute name="name" value="NAH-P01-F-08"/>
+<attribute name="primaryIdentifier" value="NAH-P01-F-08"/>
 <reference name="organism" ref_id="0_1"/>
-<collection name="microArrayResults"><reference ref_id="7_46"/><reference ref_id="7_47"/><reference ref_id="7_48"/><reference ref_id="7_49"/><reference ref_id="7_50"/><reference ref_id="7_51"/><reference ref_id="7_52"/><reference ref_id="7_53"/><reference ref_id="7_54"/></collection>
+<collection name="evidence"><reference ref_id="1_1"/></collection>
+<collection name="genes"><reference ref_id="5_6"/></collection>
 </item>
 <item id="4_1" class="http://www.flymine.org/model/genomic#MicroArrayAssay">
 <attribute name="name" value="stage: 240_h_larva_mixed sex"/>
@@ -70,6 +60,11 @@
 <attribute name="value" value="1.884184"/>
 <reference name="material" ref_id="6_5"/>
 <collection name="assays"><reference ref_id="4_8"/></collection>
+</item>
+<item id="5_4" class="http://www.flymine.org/model/genomic#Gene">
+<attribute name="primaryIdentifier" value="AGAP000734"/>
+<reference name="organism" ref_id="0_1"/>
+<collection name="microArrayResults"><reference ref_id="7_28"/><reference ref_id="7_29"/><reference ref_id="7_30"/><reference ref_id="7_31"/><reference ref_id="7_32"/><reference ref_id="7_33"/><reference ref_id="7_34"/><reference ref_id="7_35"/><reference ref_id="7_36"/></collection>
 </item>
 <item id="7_10" class="http://www.flymine.org/model/genomic#AGambiaeLifeCycle">
 <attribute name="isControl" value="false"/>
@@ -127,11 +122,6 @@
 <reference name="material" ref_id="6_6"/>
 <collection name="assays"><reference ref_id="4_2"/></collection>
 </item>
-<item id="5_5" class="http://www.flymine.org/model/genomic#Gene">
-<attribute name="primaryIdentifier" value="AGAP006939"/>
-<reference name="organism" ref_id="0_1"/>
-<collection name="microArrayResults"><reference ref_id="7_37"/><reference ref_id="7_38"/><reference ref_id="7_39"/><reference ref_id="7_40"/><reference ref_id="7_41"/><reference ref_id="7_42"/><reference ref_id="7_43"/><reference ref_id="7_44"/><reference ref_id="7_45"/></collection>
-</item>
 <item id="7_38" class="http://www.flymine.org/model/genomic#AGambiaeLifeCycle">
 <attribute name="isControl" value="false"/>
 <attribute name="standardError" value="0.35712263"/>
@@ -172,6 +162,11 @@
 <reference name="material" ref_id="6_2"/>
 <collection name="assays"><reference ref_id="4_4"/></collection>
 </item>
+<item id="5_1" class="http://www.flymine.org/model/genomic#Gene">
+<attribute name="primaryIdentifier" value="AGAP005350"/>
+<reference name="organism" ref_id="0_1"/>
+<collection name="microArrayResults"><reference ref_id="7_1"/><reference ref_id="7_2"/><reference ref_id="7_3"/><reference ref_id="7_4"/><reference ref_id="7_5"/><reference ref_id="7_6"/><reference ref_id="7_7"/><reference ref_id="7_8"/><reference ref_id="7_9"/></collection>
+</item>
 <item id="7_43" class="http://www.flymine.org/model/genomic#AGambiaeLifeCycle">
 <attribute name="isControl" value="false"/>
 <attribute name="standardError" value="0.09429426"/>
@@ -180,19 +175,10 @@
 <reference name="material" ref_id="6_5"/>
 <collection name="assays"><reference ref_id="4_7"/></collection>
 </item>
-<item id="6_4" class="http://www.flymine.org/model/genomic#ProbeSet">
-<attribute name="primaryIdentifier" value="NAH-P01-E-01"/>
-<attribute name="name" value="NAH-P01-E-01"/>
-<reference name="gene" ref_id="5_4"/>
+<item id="5_2" class="http://www.flymine.org/model/genomic#Gene">
+<attribute name="primaryIdentifier" value="AGAP011423"/>
 <reference name="organism" ref_id="0_1"/>
-<collection name="evidence"><reference ref_id="1_1"/></collection>
-</item>
-<item id="6_1" class="http://www.flymine.org/model/genomic#ProbeSet">
-<attribute name="primaryIdentifier" value="NAH-P01-C-07"/>
-<attribute name="name" value="NAH-P01-C-07"/>
-<reference name="gene" ref_id="5_1"/>
-<reference name="organism" ref_id="0_1"/>
-<collection name="evidence"><reference ref_id="1_1"/></collection>
+<collection name="microArrayResults"><reference ref_id="7_10"/><reference ref_id="7_11"/><reference ref_id="7_12"/><reference ref_id="7_13"/><reference ref_id="7_14"/><reference ref_id="7_15"/><reference ref_id="7_16"/><reference ref_id="7_17"/><reference ref_id="7_18"/></collection>
 </item>
 <item id="1_1" class="http://www.flymine.org/model/genomic#DataSet">
 <attribute name="title" value="Anoph-Expr data set"/>
@@ -205,6 +191,13 @@
 <reference name="material" ref_id="6_6"/>
 <collection name="assays"><reference ref_id="4_8"/></collection>
 </item>
+<item id="6_1" class="http://www.flymine.org/model/genomic#ProbeSet">
+<attribute name="name" value="NAH-P01-C-07"/>
+<attribute name="primaryIdentifier" value="NAH-P01-C-07"/>
+<reference name="organism" ref_id="0_1"/>
+<collection name="evidence"><reference ref_id="1_1"/></collection>
+<collection name="genes"><reference ref_id="5_1"/></collection>
+</item>
 <item id="7_42" class="http://www.flymine.org/model/genomic#AGambiaeLifeCycle">
 <attribute name="isControl" value="false"/>
 <attribute name="standardError" value="0.05258652"/>
@@ -212,6 +205,13 @@
 <attribute name="value" value="1.0768135"/>
 <reference name="material" ref_id="6_5"/>
 <collection name="assays"><reference ref_id="4_6"/></collection>
+</item>
+<item id="6_3" class="http://www.flymine.org/model/genomic#ProbeSet">
+<attribute name="name" value="NAH-P01-D-07"/>
+<attribute name="primaryIdentifier" value="NAH-P01-D-07"/>
+<reference name="organism" ref_id="0_1"/>
+<collection name="evidence"><reference ref_id="1_1"/></collection>
+<collection name="genes"><reference ref_id="5_3"/></collection>
 </item>
 <item id="5_3" class="http://www.flymine.org/model/genomic#Gene">
 <attribute name="primaryIdentifier" value="AGAP009112"/>
@@ -241,6 +241,11 @@
 <attribute name="value" value="0.56639165"/>
 <reference name="material" ref_id="6_4"/>
 <collection name="assays"><reference ref_id="4_8"/></collection>
+</item>
+<item id="5_5" class="http://www.flymine.org/model/genomic#Gene">
+<attribute name="primaryIdentifier" value="AGAP006939"/>
+<reference name="organism" ref_id="0_1"/>
+<collection name="microArrayResults"><reference ref_id="7_37"/><reference ref_id="7_38"/><reference ref_id="7_39"/><reference ref_id="7_40"/><reference ref_id="7_41"/><reference ref_id="7_42"/><reference ref_id="7_43"/><reference ref_id="7_44"/><reference ref_id="7_45"/></collection>
 </item>
 <item id="7_46" class="http://www.flymine.org/model/genomic#AGambiaeLifeCycle">
 <attribute name="isControl" value="false"/>
@@ -281,6 +286,13 @@
 <attribute name="value" value="0.660481"/>
 <reference name="material" ref_id="6_2"/>
 <collection name="assays"><reference ref_id="4_9"/></collection>
+</item>
+<item id="6_4" class="http://www.flymine.org/model/genomic#ProbeSet">
+<attribute name="name" value="NAH-P01-E-01"/>
+<attribute name="primaryIdentifier" value="NAH-P01-E-01"/>
+<reference name="organism" ref_id="0_1"/>
+<collection name="evidence"><reference ref_id="1_1"/></collection>
+<collection name="genes"><reference ref_id="5_4"/></collection>
 </item>
 <item id="7_39" class="http://www.flymine.org/model/genomic#AGambiaeLifeCycle">
 <attribute name="isControl" value="false"/>
@@ -342,13 +354,6 @@
 <reference name="material" ref_id="6_4"/>
 <collection name="assays"><reference ref_id="4_3"/></collection>
 </item>
-<item id="6_2" class="http://www.flymine.org/model/genomic#ProbeSet">
-<attribute name="primaryIdentifier" value="NAH-P01-C-08"/>
-<attribute name="name" value="NAH-P01-C-08"/>
-<reference name="gene" ref_id="5_2"/>
-<reference name="organism" ref_id="0_1"/>
-<collection name="evidence"><reference ref_id="1_1"/></collection>
-</item>
 <item id="7_22" class="http://www.flymine.org/model/genomic#AGambiaeLifeCycle">
 <attribute name="isControl" value="false"/>
 <attribute name="standardError" value="0.06154469"/>
@@ -369,12 +374,12 @@
 <attribute name="sample2" value="stage: 48_h_larva_mixed sex"/>
 <reference name="experiment" ref_id="3_1"/>
 </item>
-<item id="6_6" class="http://www.flymine.org/model/genomic#ProbeSet">
-<attribute name="primaryIdentifier" value="NAH-P01-F-08"/>
-<attribute name="name" value="NAH-P01-F-08"/>
-<reference name="gene" ref_id="5_6"/>
+<item id="6_5" class="http://www.flymine.org/model/genomic#ProbeSet">
+<attribute name="name" value="NAH-P01-E-04"/>
+<attribute name="primaryIdentifier" value="NAH-P01-E-04"/>
 <reference name="organism" ref_id="0_1"/>
 <collection name="evidence"><reference ref_id="1_1"/></collection>
+<collection name="genes"><reference ref_id="5_5"/></collection>
 </item>
 <item id="4_4" class="http://www.flymine.org/model/genomic#MicroArrayAssay">
 <attribute name="name" value="stage: 96_h_larva_mixed sex"/>
@@ -390,10 +395,10 @@
 <reference name="material" ref_id="6_2"/>
 <collection name="assays"><reference ref_id="4_2"/></collection>
 </item>
-<item id="5_4" class="http://www.flymine.org/model/genomic#Gene">
-<attribute name="primaryIdentifier" value="AGAP000734"/>
+<item id="5_6" class="http://www.flymine.org/model/genomic#Gene">
+<attribute name="primaryIdentifier" value="AGAP008449"/>
 <reference name="organism" ref_id="0_1"/>
-<collection name="microArrayResults"><reference ref_id="7_28"/><reference ref_id="7_29"/><reference ref_id="7_30"/><reference ref_id="7_31"/><reference ref_id="7_32"/><reference ref_id="7_33"/><reference ref_id="7_34"/><reference ref_id="7_35"/><reference ref_id="7_36"/></collection>
+<collection name="microArrayResults"><reference ref_id="7_46"/><reference ref_id="7_47"/><reference ref_id="7_48"/><reference ref_id="7_49"/><reference ref_id="7_50"/><reference ref_id="7_51"/><reference ref_id="7_52"/><reference ref_id="7_53"/><reference ref_id="7_54"/></collection>
 </item>
 <item id="0_1" class="http://www.flymine.org/model/genomic#Organism">
 <attribute name="taxonId" value="180454"/>
@@ -425,11 +430,6 @@
 <attribute name="value" value="0.82236415"/>
 <reference name="material" ref_id="6_1"/>
 <collection name="assays"><reference ref_id="4_8"/></collection>
-</item>
-<item id="5_1" class="http://www.flymine.org/model/genomic#Gene">
-<attribute name="primaryIdentifier" value="AGAP005350"/>
-<reference name="organism" ref_id="0_1"/>
-<collection name="microArrayResults"><reference ref_id="7_1"/><reference ref_id="7_2"/><reference ref_id="7_3"/><reference ref_id="7_4"/><reference ref_id="7_5"/><reference ref_id="7_6"/><reference ref_id="7_7"/><reference ref_id="7_8"/><reference ref_id="7_9"/></collection>
 </item>
 <item id="7_52" class="http://www.flymine.org/model/genomic#AGambiaeLifeCycle">
 <attribute name="isControl" value="false"/>
@@ -463,6 +463,13 @@
 <reference name="material" ref_id="6_1"/>
 <collection name="assays"><reference ref_id="4_3"/></collection>
 </item>
+<item id="6_2" class="http://www.flymine.org/model/genomic#ProbeSet">
+<attribute name="name" value="NAH-P01-C-08"/>
+<attribute name="primaryIdentifier" value="NAH-P01-C-08"/>
+<reference name="organism" ref_id="0_1"/>
+<collection name="evidence"><reference ref_id="1_1"/></collection>
+<collection name="genes"><reference ref_id="5_2"/></collection>
+</item>
 <item id="4_2" class="http://www.flymine.org/model/genomic#MicroArrayAssay">
 <attribute name="name" value="stage: 12-14_h_embryo_mixed sex"/>
 <attribute name="sample1" value="Sample: Reference"/>
@@ -492,13 +499,6 @@
 <attribute name="value" value="0.72079796"/>
 <reference name="material" ref_id="6_3"/>
 <collection name="assays"><reference ref_id="4_7"/></collection>
-</item>
-<item id="6_5" class="http://www.flymine.org/model/genomic#ProbeSet">
-<attribute name="primaryIdentifier" value="NAH-P01-E-04"/>
-<attribute name="name" value="NAH-P01-E-04"/>
-<reference name="gene" ref_id="5_5"/>
-<reference name="organism" ref_id="0_1"/>
-<collection name="evidence"><reference ref_id="1_1"/></collection>
 </item>
 <item id="7_26" class="http://www.flymine.org/model/genomic#AGambiaeLifeCycle">
 <attribute name="isControl" value="false"/>
@@ -571,3 +571,4 @@
 <collection name="assays"><reference ref_id="4_5"/></collection>
 </item>
 </items>
+

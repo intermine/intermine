@@ -67,7 +67,6 @@ public class FlyAtlasDataSetLdr implements DataSetLdr
 
         QueryField tissueName = new QueryField(maa, "name");
 
-        // q.addToSelect(new QueryField(far,"enrichment"));
         q.addToSelect(new QueryField(far, "affyCall"));
         q.addToSelect(tissueName);
         q.addToSelect(new QueryField(gene, "primaryIdentifier"));
@@ -92,8 +91,7 @@ public class FlyAtlasDataSetLdr implements DataSetLdr
         results.setBatchSize(100000);
         Iterator iter = results.iterator();
         LinkedHashMap<String, int[]> callTable = new LinkedHashMap<String, int[]>();
-        LinkedHashMap<String, ArrayList<String>> geneMap
-                                                = new LinkedHashMap<String, ArrayList<String>>();
+
         while (iter.hasNext()) {
             ResultsRow resRow = (ResultsRow) iter.next();
             // Double enrichment = (Double)resRow.get(0);
@@ -104,30 +102,18 @@ public class FlyAtlasDataSetLdr implements DataSetLdr
                 if (callTable.get(tissue) != null) {
                     if (affyCall.equals("Up")) {
                         (callTable.get(tissue))[0]++;
-                        (geneMap.get(tissue + "_Up")).add(identifier);
-                    } else
-                        if (affyCall.equals("Down")) {
-                            (callTable.get(tissue))[1]--;
-                            (geneMap.get(tissue + "_Down")).add(identifier);
-                        }
+                    } else if (affyCall.equals("Down")) {
+                        (callTable.get(tissue))[1]--;
+                    }
                 } else {
                     int[] count = new int[2];
                     ArrayList<String> genesArray = new ArrayList<String>();
                     genesArray.add(identifier);
                     if (affyCall.equals("Up")) {
                         count[0]++;
-                        geneMap.put(tissue + "_Up", genesArray);
-                        geneMap.put(tissue + "_Down", new ArrayList<String>());
-                    } else
-                        if (affyCall.equals("Down")) {
+                    } else if (affyCall.equals("Down")) {
                             count[1]--;
-                            geneMap.put(tissue + "_Up", new ArrayList<String>());
-                            geneMap.put(tissue + "_Down", genesArray);
-                        } else
-                            if (affyCall.equals("None")) {
-                                geneMap.put(tissue + "_Up", new ArrayList<String>());
-                                geneMap.put(tissue + "_Down", new ArrayList<String>());
-                            }
+                    } 
                     callTable.put(tissue, count);
                 }
             }

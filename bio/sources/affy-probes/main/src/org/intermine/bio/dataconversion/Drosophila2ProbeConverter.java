@@ -10,7 +10,6 @@ package org.intermine.bio.dataconversion;
  *
  */
 
-import java.io.Reader;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
@@ -18,7 +17,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
-import org.apache.log4j.Logger;
+import org.intermine.dataconversion.DataConverter;
 import org.intermine.dataconversion.FileConverter;
 import org.intermine.dataconversion.ItemWriter;
 import org.intermine.metadata.MetaDataException;
@@ -26,6 +25,12 @@ import org.intermine.metadata.Model;
 import org.intermine.objectstore.ObjectStoreException;
 import org.intermine.util.FormattedTextParser;
 import org.intermine.xml.full.Item;
+import org.intermine.xml.full.ItemHelper;
+import org.intermine.xml.full.Reference;
+import org.intermine.xml.full.ReferenceList;
+import java.io.Reader;
+
+import org.apache.log4j.Logger;
 
 /**
  * 
@@ -68,12 +73,11 @@ public class Drosophila2ProbeConverter extends FileConverter
      */
     public void process(Reader reader) throws Exception {
         
-        String arrayName = "";
-        Iterator lineIter = FormattedTextParser.parseCsvDelimitedReader(reader);
+        Iterator<String[]> lineIter = FormattedTextParser.parseCsvDelimitedReader(reader);
         boolean readingData = false;
 
         while (lineIter.hasNext() ) {
-            String[] line = (String[]) lineIter.next();
+            String[] line = lineIter.next();
             
             if (readingData) {
 
@@ -119,14 +123,20 @@ public class Drosophila2ProbeConverter extends FileConverter
                         }
                     }
                 }
-                String fbgn = line[24];
-                if (!fbgn.equals("---")) {
+                String fbgns = line[24];
+                if (!fbgns.equals("---")) {
                     // set reference to transcript
                     Item transcript = createBioEntity("Transcript", line[6]);
                     probeSet.setReference("transcript", transcript.getIdentifier());
                     
-                    Item gene = createBioEntity("Gene", fbgn);
-                    probeSet.setReference("gene", gene.getIdentifier());
+                    // FBgn0029676 /// FBgn0052789 /// FBgn0066138 /// FBgn0066170
+                    String[] genes = fbgns.split(" /// ");
+                    ReferenceList geneColl = new ReferenceList("genes", new ArrayList());
+                    for (String identifier : genes) {
+                        Item gene = createBioEntity("Gene", identifier);
+                        geneColl.addRefId(gene.getIdentifier());
+                    }
+                    probeSet.addCollection(geneColl);
                     
                 }
                 store(probeSet);
@@ -204,3 +214,47 @@ public class Drosophila2ProbeConverter extends FileConverter
         return chr;
     }
 }
+
+/**
+        0 "Probe Set ID"
+        1 "GeneChip Array"
+        2 "Species Scientific Name"
+        3 "Annotation Date"
+        4 "Sequence Type"
+        5 "Sequence Source"
+        6 "Transcript ID(Array Design)"
+        7 "Target Description"
+        8 "Representative Public ID"
+        9 "Archival UniGene Cluster"
+        10 "UniGene ID"
+        11 "Genome Version"
+        12 "Alignment
+        13 "Gene Title"
+        14 "Gene Symbol"
+        15 "Chromosomal Location"
+        16 "Unigene Cluster Type"
+        17 "Ensembl"
+        18 "Entrez Gene"
+        19 "SwissProt"
+        20 "EC"
+        21 "OMIM"
+        22 "RefSeq Protein ID"
+        23 "RefSeq Transcript ID"
+        24 "FlyBase"
+        25 "AGI"
+        26 "WormBase",
+        27 "MGI Name"
+        28 "RGD Name"
+        29 "SGD accession number"
+        30 "Gene Ontology Bilogical Process"
+        31 "Gene Ontology Cellular Component"
+        32 "Gene Ontology Molecular Function"
+        33 "Pathway"
+        34 "InterPro",
+        35 "Trans Membrane"
+        36 "QTL"
+        37 "Annotation Description"
+        38 "Annotation Transcript Cluster"
+        39 "Transcript Assignments"
+        40 "Annotation Notes" 
+*/
