@@ -17,7 +17,6 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
-import org.intermine.dataconversion.DataConverter;
 import org.intermine.dataconversion.FileConverter;
 import org.intermine.dataconversion.ItemWriter;
 import org.intermine.metadata.MetaDataException;
@@ -25,9 +24,8 @@ import org.intermine.metadata.Model;
 import org.intermine.objectstore.ObjectStoreException;
 import org.intermine.util.FormattedTextParser;
 import org.intermine.xml.full.Item;
-import org.intermine.xml.full.ItemHelper;
-import org.intermine.xml.full.Reference;
 import org.intermine.xml.full.ReferenceList;
+
 import java.io.Reader;
 
 import org.apache.log4j.Logger;
@@ -41,16 +39,17 @@ public class Drosophila2ProbeConverter extends FileConverter
     protected static final Logger LOG = Logger.getLogger(Drosophila2ProbeConverter.class);
 
     protected Item dataSource, dataSet, org;
-    protected Map bioMap = new HashMap(), chrMap = new HashMap();
+    protected Map<String, Item> bioMap = new HashMap<String, Item>();
 
     /**
      * Constructor
      * @param writer the ItemWriter used to handle the resultant items
+     * @param model the data model
      * @throws ObjectStoreException if an error occurs in storing
      * @throws MetaDataException if cannot generate model
      */
     public Drosophila2ProbeConverter(ItemWriter writer, Model model)
-        throws ObjectStoreException, MetaDataException {
+        throws ObjectStoreException {
         super(writer, model);
 
         dataSource = createItem("DataSource");
@@ -131,7 +130,7 @@ public class Drosophila2ProbeConverter extends FileConverter
                     
                     // FBgn0029676 /// FBgn0052789 /// FBgn0066138 /// FBgn0066170
                     String[] genes = fbgns.split(" /// ");
-                    ReferenceList geneColl = new ReferenceList("genes", new ArrayList());
+                    ReferenceList geneColl = new ReferenceList("genes", new ArrayList<String>());
                     for (String identifier : genes) {
                         Item gene = createBioEntity("Gene", identifier);
                         geneColl.addRefId(gene.getIdentifier());
@@ -154,7 +153,7 @@ public class Drosophila2ProbeConverter extends FileConverter
 
     private Item createBioEntity(String clsName, String identifier)
         throws ObjectStoreException {
-        Item bio = (Item) bioMap.get(identifier);
+        Item bio = bioMap.get(identifier);
         if (bio == null) {
             bio = createItem(clsName);
             bio.setReference("organism", org.getIdentifier());
@@ -175,14 +174,13 @@ public class Drosophila2ProbeConverter extends FileConverter
      * @return item
      * @throws exception if anything goes wrong when writing items to objectstore
      */
-    private Item createProbeSet(String probeSetId, List<Item> delayedItems)
-        throws ObjectStoreException {
+    private Item createProbeSet(String probeSetId, List<Item> delayedItems) {
         Item probeSet = createItem("ProbeSet");
         probeSet.setAttribute("primaryIdentifier", probeSetId);
         probeSet.setAttribute("name", probeSetId);
         probeSet.setReference("organism", org.getIdentifier());
         probeSet.setCollection("evidence",
-            new ArrayList(Collections.singleton(dataSet.getIdentifier())));
+            new ArrayList<String>(Collections.singleton(dataSet.getIdentifier())));
 
         Item synonym = createItem("Synonym");
         synonym.setAttribute("type", "identifier");
@@ -195,23 +193,23 @@ public class Drosophila2ProbeConverter extends FileConverter
     }
 
     // not used
-    private Item createChromosome(String chrId) throws ObjectStoreException {
-        Item chr = (Item) chrMap.get(chrId);
-        if (chr == null) {
-            chr = createItem("Chromosome");
-            String primaryIdentifier = null;
-            // convert 'arm_2L' -> '2L'
-            if (chrId.contains("_")) {
-                String[] s = chrId.split("_");
-                primaryIdentifier = s[1];
-            } else {
-                primaryIdentifier = chrId;
-            }
-            chr.setAttribute("primaryIdentifier", primaryIdentifier);
-            chr.setReference("organism", org.getIdentifier());
-            chrMap.put(chrId, chr);
-            store(chr);
-        }
-        return chr;
-    }
+//    private Item createChromosome(String chrId) throws ObjectStoreException {
+//        Item chr = (Item) chrMap.get(chrId);
+//        if (chr == null) {
+//            chr = createItem("Chromosome");
+//            String primaryIdentifier = null;
+//            // convert 'arm_2L' -> '2L'
+//            if (chrId.contains("_")) {
+//                String[] s = chrId.split("_");
+//                primaryIdentifier = s[1];
+//            } else {
+//                primaryIdentifier = chrId;
+//            }
+//            chr.setAttribute("primaryIdentifier", primaryIdentifier);
+//            chr.setReference("organism", org.getIdentifier());
+//            chrMap.put(chrId, chr);
+//            store(chr);
+//        }
+//        return chr;
+//    }
 }

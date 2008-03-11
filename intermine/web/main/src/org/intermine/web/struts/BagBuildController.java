@@ -95,8 +95,8 @@ public class BagBuildController extends TilesAction
         }
         Map<String, List<FieldDescriptor>> classKeys =
             (Map<String, List<FieldDescriptor>>) servletContext.getAttribute(Constants.CLASS_KEYS);
-        for (Iterator iter = qualifiedTypes.iterator(); iter.hasNext();) {
-            String className = (String) iter.next();
+        for (Iterator<String> iter = qualifiedTypes.iterator(); iter.hasNext();) {
+            String className = iter.next();
             String unqualifiedName = TypeUtil.unqualifiedName(className);
             if (ClassKeyHelper.hasKeyFields(classKeys, unqualifiedName)
                 && oss.getClassCount(className) > 0
@@ -122,11 +122,11 @@ public class BagBuildController extends TilesAction
             // find the types in typeList that contain a field with the name given by
             // bagQueryConfig.getConnectField()
             List<String> typesWithConnectingField = new ArrayList<String>();
-            Iterator allTypesIterator =
+            Iterator<String> allTypesIterator =
                 new IteratorChain(typeList.iterator(), preferedTypeList.iterator());
             while (allTypesIterator.hasNext()) {
                 String connectFieldName = bagQueryConfig.getConnectField();
-                String typeName = (String) allTypesIterator.next();
+                String typeName = allTypesIterator.next();
                 String qualifiedTypeName = model.getPackageName() + "." + typeName;
                 ClassDescriptor cd = model.getClassDescriptorByName(qualifiedTypeName);
                 FieldDescriptor fd = cd.getFieldDescriptorByName(connectFieldName);
