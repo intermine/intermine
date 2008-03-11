@@ -25,7 +25,7 @@
     <attribute name="length" value="5023"/>
     <attribute name="residues" value="gtcatgcactactatccagttcaccaggctaaagtcggctcctat"/>
   </item>
-  <item id="5_19" class="http://www.flymine.org/model/genomic#Synonym">
+  <item id="5_20" class="http://www.flymine.org/model/genomic#Synonym">
     <attribute name="isPrimary" value="false"/>
     <attribute name="type" value="symbol"/>
     <attribute name="value" value="CG10006_symbol"/>
@@ -217,6 +217,16 @@
       <reference ref_id="1_1"/>
     </collection>
   </item>
+  <item id="5_19" class="http://www.flymine.org/model/genomic#Synonym">
+    <attribute name="isPrimary" value="true"/>
+    <attribute name="type" value="symbol"/>
+    <attribute name="value" value="dmel_GLEANR_1_synonym"/>
+    <reference name="source" ref_id="2_1"/>
+    <reference name="subject" ref_id="0_1"/>
+    <collection name="evidence">
+      <reference ref_id="1_1"/>
+    </collection>
+  </item>
   <item id="4_3" class="http://www.flymine.org/model/genomic#Sequence">
     <attribute name="length" value="2528"/>
     <attribute name="residues" value="tctgcctcccaactacaatcagatgaactccaaccccaccac"/>
@@ -387,6 +397,7 @@
     <attribute name="name" value="FBgn0000001_fullname_synonym"/>
     <attribute name="primaryIdentifier" value="FBgn0000001"/>
     <attribute name="symbol" value="FBgn0000001_symbol_synonym"/>
+    <attribute name="GLEANRsymbol" value="dmel_GLEANR_1_synonym"/>
     <reference name="chromosome" ref_id="7_1"/>
     <reference name="chromosomeLocation" ref_id="11_2"/>
     <reference name="organism" ref_id="3_1"/>
