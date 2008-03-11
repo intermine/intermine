@@ -266,7 +266,6 @@ public class PortalQueryAction extends InterMineAction
                 }
             }
         }
-
         // Attach messages
         if (bagList.size() == 0 && bagQueryResult.getMatches().size() == 1) {
             ActionMessage msg = new ActionMessage("results.lookup.noresults.one",
@@ -286,8 +285,7 @@ public class PortalQueryAction extends InterMineAction
             actionMessages.add(Constants.PORTAL_MSG, msg);
         }
         session.setAttribute(Constants.PORTAL_MSG, actionMessages);
-
-
+        
         // Go to results page
         if ((bagList.size() > 1) && (idList.length == 1)) {
             return goToResults(mapping, os, model, className, webConfig, classKeys,
