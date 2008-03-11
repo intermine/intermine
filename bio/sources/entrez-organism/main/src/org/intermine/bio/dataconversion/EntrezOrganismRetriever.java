@@ -118,7 +118,7 @@ public class EntrezOrganismRetriever extends Task
                 taxonIds.add(taxonId);
                 if (taxonIds.size() == BATCH_SIZE || !i.hasNext()) {
                     SAXParser.parse(new InputSource(getReader(taxonIds)),
-                                    new Handler(toStore, itemFactory));
+                                    new Handler(toStore, itemFactory), false);
                     for (Iterator j = toStore.iterator(); j.hasNext();) {
                         Item item = (Item) j.next();
                         writer.write(FullRenderer.render(item));
