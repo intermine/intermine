@@ -54,8 +54,9 @@ public class PsiConverter extends FileConverter
     private Map<String, String> aliases = new HashMap<String, String>();
     private Map<String, Map> mapMaster = new HashMap<String, Map>();  // map of maps
     private Map<String, String> organisms = new HashMap<String, String>();
-    private Map<String, String> pubs = new HashMap<String, String>();
-    private LinkedHashMap<String, String> proteinAccessions = new LinkedHashMap<String, String>();
+    private Map<String, String> pubs = new HashMap<String, String>();  
+    private Map<String, String> accessionsToRefIds = new HashMap<String, String>();
+    private Map<String, String> refIdsToAccessions = new HashMap<String, String>();    
     private Map<String, Object> experimentNames = new HashMap<String, Object>();
     private Map<String, String> terms = new HashMap<String, String>();
     private Map<String, String> masterList = new HashMap<String, String>();
@@ -93,7 +94,8 @@ public class PsiConverter extends FileConverter
         mapMaster.put("organisms", organisms);
         mapMaster.put("publications", pubs);
         mapMaster.put("experimentNames", experimentNames);
-        mapMaster.put("proteinAccessions", proteinAccessions);
+        mapMaster.put("refIdsToAccessions", refIdsToAccessions);
+        mapMaster.put("accessionsToRefIds", accessionsToRefIds);
         mapMaster.put("terms", terms);
         mapMaster.put("masterList", masterList);
     }
@@ -126,7 +128,8 @@ public class PsiConverter extends FileConverter
         private Map<String, String> aliases;
         private Map<String, String> pubs;
         private Map<String, String> validProteins = new HashMap<String, String>();
-        private Map<String, String> proteinAccessions = new HashMap<String, String>();
+        private Map<String, String> accessionsToRefIds = new HashMap<String, String>();
+        private Map<String, String> refIdsToAccessions = new HashMap<String, String>();
         private Map<String, String> organisms = new HashMap<String, String>();
         private Map<String, String> terms = new HashMap<String, String>();
         private Map<String, String> masterList = new HashMap<String, String>();
@@ -148,12 +151,9 @@ public class PsiConverter extends FileConverter
         private ReferenceList commentCollection;
         private String proteinId; // id used in xml to refer to protein
         private Set<Item> synonyms;
-        private String psiDagTermItemId;
-        private String experimentId;
-        private String evidenceDSItemId;
-        private String datasourceItemId;
-
-
+        private String psiDagTermItemId, experimentId, datasourceItemId;
+        private String regionName = "";
+        
         /**
          * Constructor
          * @param writer the ItemWriter used to handle the resultant items
@@ -167,13 +167,13 @@ public class PsiConverter extends FileConverter
             this.aliases = (Map) mapMaster.get("aliases");
             this.organisms = (Map) mapMaster.get("organisms");
             this.pubs = (Map) mapMaster.get("publications");
-            this.proteinAccessions = (Map) mapMaster.get("proteinAccessions");
+            this.accessionsToRefIds = (Map) mapMaster.get("accessionsToRefIds");
+            this.refIdsToAccessions = (Map) mapMaster.get("refIdsToAccessions");
             this.experimentNames = (Map) mapMaster.get("experimentNames");
             this.terms = (Map) mapMaster.get("terms");
             this.masterList = (Map) mapMaster.get("masterList");
             if (masterList.size() > 1) {
                 this.psiDagTermItemId = masterList.get("psiDagTerm");
-                this.evidenceDSItemId = masterList.get("evidenceDatasource");  // for evidence
                 this.datasourceItemId = masterList.get("datasource");  // for proteins
             }
             //nextClsId = mastproteinAccessionserList.get("nextClsId");
@@ -295,16 +295,16 @@ public class PsiConverter extends FileConverter
                     } else {
                         primaryAccession = id;
                     }
-
+                    
                     protein = createItem("Protein");
                     protein.setAttribute("primaryAccession", primaryAccession);
-                    String proteinIdentifier = proteinAccessions.get(primaryAccession);
-                    if (proteinIdentifier == null) {
+                    String proteinRefId = accessionsToRefIds.get(primaryAccession);
+                    if (proteinRefId == null) {
                         // we have seen this before so set the correct identifier, this won't
                         // be stored this time.
-                        proteinIdentifier = protein.getIdentifier();
+                        proteinRefId = protein.getIdentifier();
                     } else {
-                        protein.setIdentifier(proteinIdentifier);
+                        protein.setIdentifier(proteinRefId);
                     }
 
                     // TODO this should maybe create a data source for each db
@@ -313,7 +313,7 @@ public class PsiConverter extends FileConverter
                     synonym.setAttribute("type", db.startsWith("uniprot")
                                          ? "accession" : "identifier");
                     synonym.setReference("source", datasourceItemId);
-                    synonym.setReference("subject", proteinIdentifier);
+                    synonym.setReference("subject", proteinRefId);
                     synonyms.add(synonym);
 
                     // create an extra synonym for proteins that have an IntAct identifier
@@ -322,7 +322,7 @@ public class PsiConverter extends FileConverter
                         syn1.setAttribute("value", id);
                         syn1.setAttribute("type", "identifier");
                         syn1.setReference("source", datasourceItemId);
-                        syn1.setReference("subject", proteinIdentifier);
+                        syn1.setReference("subject", proteinRefId);
                         synonyms.add(synonym);
                     }
 
@@ -331,7 +331,7 @@ public class PsiConverter extends FileConverter
                     syn2.setAttribute("value", id);
                     syn2.setAttribute("type", "accession");
                     syn2.setReference("source", datasourceItemId);
-                    syn2.setReference("subject", proteinIdentifier);
+                    syn2.setReference("subject", proteinRefId);
                     synonyms.add(synonym);
                 }
 
@@ -393,8 +393,15 @@ public class PsiConverter extends FileConverter
 
                 attName = "endStatus";
 
-                // <participantList><participant id="6919"><featureList><feature id="6920">
-                // <featureType><xref><primaryRef db="psi-mi" dbAc="MI:0488" id="MI:0117"
+                
+           //     <featureList><feature id="24"><names><shortLabel>
+            } else if (qName.equals("shortLabel")
+                       && stack.search("feature") == 2) {
+
+                attName = "regionName";
+                
+            // <participantList><participant id="6919"><featureList><feature id="6920">
+            // <featureType><xref><primaryRef db="psi-mi" dbAc="MI:0488" id="MI:0117"
             } else if (qName.equals("primaryRef")
                        && stack.search("featureType") == 2
                        && attrs.getValue("id").equals("MI:0117")
@@ -404,9 +411,11 @@ public class PsiConverter extends FileConverter
 
                 // create interacting region
                 Item interactionRegion = createItem("ProteinInteractionRegion");
+                interactionRegion.setAttribute("name", regionName);                
                 interactionRegion.setReference("protein", interactorHolder.proteinId);
                 interactionRegion.setReference("ontologyTerm", psiDagTermItemId);
-
+                
+                                
                 // create new location object (start and end are coming later)
                 Item location = createItem("Location");
                 location.setReference("object", interactorHolder.proteinId);
@@ -426,16 +435,20 @@ public class PsiConverter extends FileConverter
                        && stack.peek().equals("featureRange")
                        && interactorHolder != null
                        && interactorHolder.isRegionFeature) {
-
-                interactorHolder.location.setAttribute("start", attrs.getValue("position"));
-
+                
+                String start = attrs.getValue("position");                
+                interactorHolder.setStart(start);                
+                
                 // <participantList><participant id="6919"><featureList><feature id="6920">
                 //    <featureRangeList><featureRange><end position="470"/>
             } else if (qName.equals("end")
                        && stack.peek().equals("featureRange")
                        && interactorHolder != null
                        && interactorHolder.isRegionFeature) {
-                interactorHolder.location.setAttribute("end", attrs.getValue("position"));
+                
+                String end = attrs.getValue("position");                
+                interactorHolder.setEnd(end);
+                
                 // <entry>
             } else if (qName.equals("entry")) {
                 /* stuff done only once */
@@ -558,10 +571,15 @@ public class PsiConverter extends FileConverter
                 } else if (protein != null && qName.equals("interactor")) {
 
                     String accession = protein.getAttribute("primaryAccession").getValue();
-                    if (!proteinAccessions.containsKey(accession)) {
+                    if (!accessionsToRefIds.containsKey(accession)) {
                         writer.store(ItemHelper.convert(protein));
-                        proteinAccessions.put(protein.getAttribute("primaryAccession").getValue(),
-                                              protein.getIdentifier());
+                        
+                        String primaryAccession 
+                        = protein.getAttribute("primaryAccession").getValue();
+                        String refId = protein.getIdentifier();
+                        accessionsToRefIds.put(primaryAccession, refId);
+                        refIdsToAccessions.put(refId, primaryAccession);
+                        
                         for (Item item : synonyms) {
                             writer.store(ItemHelper.convert(item));
                         }
@@ -654,6 +672,15 @@ public class PsiConverter extends FileConverter
 
                     interactorHolder.endStatus = attValue.toString();
 
+                //     <featureList><feature id="24"><names><shortLabel>
+                } else if (qName.equals("shortLabel")
+                           && stack.search("feature") == 2                                
+                           && attName != null
+                           && attName.equals("regionName")) {
+
+                    regionName  = attValue.toString();
+                    
+                    
                 //<interactionList><interaction>
                 } else if (qName.equals("interaction")
                                 && holder != null) {
@@ -733,7 +760,6 @@ public class PsiConverter extends FileConverter
                     /* store all protein interaction-related items */
                     writer.store(ItemHelper.convert(interaction));
                     if (interactorHolder.interactionRegion != null) {
-
                         Item region = interactorHolder.interactionRegion;
                         if (interactorHolder.startStatus != null) {
                             region.setAttribute("startStatus",
@@ -744,6 +770,15 @@ public class PsiConverter extends FileConverter
                                                  interactorHolder.endStatus);
                         }
                         region.setReference("interaction", interaction);
+                        
+                        String regionIdentifier = interactionHolder.shortName + "_" 
+                            + refIdsToAccessions.get(interactorHolder.proteinId);
+                        if (interactorHolder.start != null && !interactorHolder.start.equals("0")) {
+                            regionIdentifier += ":" + interactorHolder.start; 
+                            regionIdentifier += "-" + interactorHolder.end;
+                        }
+                        region.setAttribute("primaryIdentifier", regionIdentifier);
+                        
                         writer.store(ItemHelper.convert(region));
                         writer.store(ItemHelper.convert(interactorHolder.location));
                     }
@@ -873,7 +908,7 @@ public class PsiConverter extends FileConverter
             try {
                 Item evidenceDatasource = createItem("DataSource");
                 evidenceDatasource.setAttribute("name", "IntAct");
-                evidenceDSItemId = evidenceDatasource.getIdentifier();
+                
                 Item dataSet = createItem("DataSet");
                 dataSet.setAttribute("title", "IntAct data set");
                 dataSet.setReference("dataSource", evidenceDatasource.getIdentifier());
@@ -1024,8 +1059,8 @@ public class PsiConverter extends FileConverter
             private String proteinRole;
             private Item interactionRegion; // for storage later
             private Item location;          // for storage later
-            private String startStatus;
-            private String endStatus;
+            private String startStatus, start;
+            private String endStatus, end;
 
             /* we only want to process the binding site feature.  this flag is FALSE until
              *
@@ -1046,6 +1081,22 @@ public class PsiConverter extends FileConverter
                 this.proteinId = proteinId;
             }
 
+            /**
+             * @param start start position of region
+             */
+            protected void setStart(String start) {
+                location.setAttribute("start", start);
+                this.start = start;
+            }
+            
+            /**
+             * @param end the end position of the region
+             */
+            protected void setEnd(String end) {
+                location.setAttribute("end", end);
+                this.end = end;
+            }
+            
         }
 
         /**
