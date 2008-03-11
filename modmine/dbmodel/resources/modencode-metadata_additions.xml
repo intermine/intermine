@@ -37,6 +37,11 @@
     <attribute name="fileFormat" type="java.lang.String"/>
 -->
     <reference name="provider" referenced-type="org.flymine.model.genomic.Provider" reverse-reference="experimentSubmission"/>
+    <reference name="AppliedProtocol"
+      referenced-type="org.flymine.model.genomic.AppliedProtocol"
+      reverse-reference="experimentSubmission" />
+
+
     <collection name="submissionData" referenced-type="org.flymine.model.genomic.SubmissionData" reverse-reference="experimentSubmission"/>
     <collection name="protocol" referenced-type="org.flymine.model.genomic.Protocol" reverse-reference="experimentSubmission"/>
   </class>
@@ -50,34 +55,67 @@
     <attribute name="references" type="java.lang.String"/>
 -->
     <collection name="experimentSubmission" referenced-type="org.flymine.model.genomic.ExperimentSubmission" reverse-reference="protocol"/>
+    <reference name="AppliedProtocol"
+      referenced-type="org.flymine.model.genomic.AppliedProtocol"
+      reverse-reference="Protocol" />
+
+  </class>
+
+
+  <class name="org.flymine.model.genomic.AppliedProtocol"
+  	is-interface="true">
+  	<attribute name="name" type="java.lang.String" />
+  	<attribute name="direction" type="java.lang.String" />
+
+  	<!-- parameter values -->
+  	<attribute name="bandwidth" type="java.lang.Integer" />
+  	<attribute name="chromosome" type="java.lang.String" />
+  	<attribute name="cutoff" type="java.lang.String" />
+  	<attribute name="genomeVersion" type="java.lang.String" />
+  	<attribute name="innerPrimer" type="java.lang.String" />
+  	<attribute name="label" type="java.lang.String" />
+  	<attribute name="maxgap" type="java.lang.Integer" />
+  	<attribute name="medianValue" type="java.lang.Integer" />
+  	<attribute name="minrun" type="java.lang.Integer" />
+  	<attribute name="transcriptId" type="java.lang.String" />
+
+  	<!-- source attributes -->
+  	<attribute name="source" type="java.lang.String" />
+  	<attribute name="RNAId" type="java.lang.String" />
+  	<attribute name="cellType" type="java.lang.String" />
+  	<attribute name="biosampleNr" type="java.lang.String" />
+  	<attribute name="characteristics" type="java.lang.String" />
+
+  	<!-- parameter value attributes -->
+  	<attribute name="unit" type="java.lang.String" />
+
+ 
+  	<collection name="nextAppliedProtocol"
+  		referenced-type="org.flymine.model.genomic.AppliedProtocol"
+  		reverse-reference="previousAppliedProtocol" />
+    <collection name="previousAppliedProtocol"
+      referenced-type="org.flymine.model.genomic.AppliedProtocol"
+      reverse-reference="nextAppliedProtocol" />
+
+<!-- 
+    <collection name="nextAppliedProtocol"
+      referenced-type="org.flymine.model.genomic.AppliedProtocol" />
+    <collection name="previousAppliedProtocol"
+      referenced-type="org.flymine.model.genomic.AppliedProtocol" />
+-->
+
+  	<reference name="Protocol"
+  		referenced-type="org.flymine.model.genomic.Protocol"
+  		reverse-reference="AppliedProtocol" />
+  	<reference name="experimentSubmission"
+  		referenced-type="org.flymine.model.genomic.ExperimentSubmission"
+  		reverse-reference="AppliedProtocol" />
   </class>
 
 
   <class name="org.flymine.model.genomic.SubmissionData" is-interface="true">
 
-<!-- parameter values -->
-    <attribute name="bandwidth" type="java.lang.Integer" />
-    <attribute name="chromosome" type="java.lang.String" />
-    <attribute name="cutoff" type="java.lang.String" />
-    <attribute name="genomeVersion" type="java.lang.String" />
-    <attribute name="innerPrimer" type="java.lang.String" />
-    <attribute name="label" type="java.lang.String" />
-    <attribute name="maxgap" type="java.lang.Integer" />
-    <attribute name="medianValue" type="java.lang.Integer" />
-    <attribute name="minrun" type="java.lang.Integer" />
-    <attribute name="transcriptId" type="java.lang.String" />
-
-<!-- source attributes -->
-    <attribute name="source" type="java.lang.String" />
-    <attribute name="RNAId" type="java.lang.String" />
-    <attribute name="cellType" type="java.lang.String" />
-    <attribute name="biosampleNr" type="java.lang.String" />
-    <attribute name="characteristics" type="java.lang.String" />
-
-<!-- parameter value attributes -->
-    <attribute name="unit" type="java.lang.String" />
-
-<!-- result values -->
+    <!-- result values -->
     <attribute name="traceArchiveId" type="java.lang.String" />
     <attribute name="genBankId" type="java.lang.String" />
 
