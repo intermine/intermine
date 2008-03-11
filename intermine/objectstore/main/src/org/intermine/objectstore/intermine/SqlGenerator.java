@@ -2058,6 +2058,9 @@ public class SqlGenerator
         boolean needComma = false;
         StringBuffer retval = new StringBuffer();
         Iterator iter = q.getSelect().iterator();
+        if (!iter.hasNext()) {
+            throw new ObjectStoreException("SELECT list is empty in Query");
+        }
         while (iter.hasNext()) {
             QuerySelectable node = (QuerySelectable) iter.next();
             String alias = (String) q.getAliases().get(node);
