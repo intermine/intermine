@@ -54,10 +54,11 @@ public class ObjectStoreSummary
 {
     private static final Logger LOG = Logger.getLogger(ObjectStoreSummary.class);
 
-    private final Map classCountsMap = new HashMap();
-    private final Map<String, List<Object>> fieldValuesMap = new HashMap<String, Object>();
-    protected final Map emptyFieldsMap = new HashMap();
-    private final Map nonEmptyFieldsMap = new HashMap();
+    private final Map<String, Integer> classCountsMap = new HashMap<String, Integer>();
+    private final Map<String, List<Object>> fieldValuesMap = new HashMap<String, List<Object>>();
+    protected final Map<String, Set<String>> emptyFieldsMap = new HashMap<String, Set<String>>();
+    private final Map<String, HashSet<String>> nonEmptyFieldsMap =
+        new HashMap<String, HashSet<String>>();
 
     static final String NULL_FIELDS_SUFFIX = ".nullFields";
     static final String CLASS_COUNTS_SUFFIX = ".classCount";
@@ -76,9 +77,10 @@ public class ObjectStoreSummary
         throws ClassNotFoundException, ObjectStoreException {
         //classCounts
         LOG.info("Collecting class counts...");
-        for (Iterator i = os.getModel().getClassDescriptors().iterator(); i.hasNext();) {
-            ClassDescriptor cld = (ClassDescriptor) i.next();
-            nonEmptyFieldsMap.put(cld.getName(), new HashSet());
+        for (Iterator<ClassDescriptor> i =
+                os.getModel().getClassDescriptors().iterator(); i.hasNext();) {
+            ClassDescriptor cld = i.next();
+            nonEmptyFieldsMap.put(cld.getName(), new HashSet<String>());
             Query q = new Query();
             QueryClass qc = new QueryClass(Class.forName(cld.getName()));
             q.addToSelect(qc);
@@ -104,7 +106,7 @@ public class ObjectStoreSummary
                 throw new RuntimeException("a class mentioned in ObjectStore summary properties "
                                            + "file (" + className + ") is not in the model");
             }
-            List fieldNames = Arrays.asList(value.split(" "));
+            List<String> fieldNames = Arrays.asList(value.split(" "));
             summariseField(cld, fieldNames, os, maxValues);
             for (Iterator j = os.getModel().getAllSubs(cld).iterator(); j.hasNext();) {
                 summariseField((ClassDescriptor) j.next(), fieldNames, os, maxValues);
@@ -142,8 +144,8 @@ public class ObjectStoreSummary
                 fieldValuesMap.put(classAndFieldName, fieldValues);
             } else if (key.endsWith(NULL_FIELDS_SUFFIX)) {
                 String className = key.substring(0, key.lastIndexOf("."));
-                List fieldNames = Arrays.asList(StringUtil.split(value, FIELD_DELIM));
-                emptyFieldsMap.put(className, new TreeSet(fieldNames));
+                List<String> fieldNames = Arrays.asList(StringUtil.split(value, FIELD_DELIM));
+                emptyFieldsMap.put(className, new TreeSet<String>(fieldNames));
             }
         }
     }
@@ -154,7 +156,7 @@ public class ObjectStoreSummary
      * @return the count of the instances of the class
      */
     public int getClassCount(String className) {
-        Integer countInteger = (Integer) classCountsMap.get(className);
+        Integer countInteger = classCountsMap.get(className);
         if (countInteger == null) {
             throw new RuntimeException("cannot find class count for: " + className);
         } else {
@@ -170,7 +172,7 @@ public class ObjectStoreSummary
      * available (because, for example, there are too many possible values)
      */
     public List<Object> getFieldValues(String className, String fieldName) {
-        return (List<Object>) fieldValuesMap.get(className + "." + fieldName);
+        return fieldValuesMap.get(className + "." + fieldName);
     }
 
     /**
@@ -180,7 +182,7 @@ public class ObjectStoreSummary
      * @return Set of null reference and empty collection names
      */
     public Set getNullReferencesAndCollections(String className) {
-        return (Set) emptyFieldsMap.get(className);
+        return emptyFieldsMap.get(className);
     }
 
     /**
@@ -233,11 +235,11 @@ public class ObjectStoreSummary
      * @param maxValues only store information for fields with fewer than maxValues values
      * @throws ClassNotFoundException if the class cannot be found
      */
-    protected void summariseField(ClassDescriptor cld, List fieldNames, ObjectStore os,
+    protected void summariseField(ClassDescriptor cld, List<String> fieldNames, ObjectStore os,
                                  int maxValues)
         throws ClassNotFoundException {
-        for (Iterator i = fieldNames.iterator(); i.hasNext();) {
-            String fieldName = (String) i.next();
+        for (Iterator<String> i = fieldNames.iterator(); i.hasNext();) {
+            String fieldName = i.next();
             Query q = new Query();
             q.setDistinct(true);
             QueryClass qc = new QueryClass(Class.forName(cld.getName()));
@@ -267,16 +269,16 @@ public class ObjectStoreSummary
      */
     protected void lookForEmptyThings(ClassDescriptor cld, ObjectStore os)
         throws ObjectStoreException, ClassNotFoundException {
-        Set emptyFields = (Set) emptyFieldsMap.get(cld.getName());
+        Set<String> emptyFields = emptyFieldsMap.get(cld.getName());
         if (emptyFields == null) {
             Iterator subIter = cld.getSubDescriptors().iterator();
             while (subIter.hasNext()) {
                 ClassDescriptor sub = (ClassDescriptor) subIter.next();
                 lookForEmptyThings(sub, os);
             }
-            emptyFields = new TreeSet();
+            emptyFields = new TreeSet<String>();
             emptyFieldsMap.put(cld.getName(), emptyFields);
-            lookForEmptyThings(cld, emptyFields, (Set) nonEmptyFieldsMap.get(cld.getName()), os);
+            lookForEmptyThings(cld, emptyFields, nonEmptyFieldsMap.get(cld.getName()), os);
         }
     }
 
@@ -288,7 +290,7 @@ public class ObjectStoreSummary
      * @param os the objectstore
      * @throws ClassNotFoundException if the class cannot be found
      */
-    protected void lookForEmptyThings(ClassDescriptor cld, Set nullFieldNames,
+    protected void lookForEmptyThings(ClassDescriptor cld, Set<String> nullFieldNames,
             Set nonNullFieldNames, ObjectStore os) throws ClassNotFoundException {
         long startTime = System.currentTimeMillis();
         int skipped = 0;
@@ -336,13 +338,13 @@ public class ObjectStoreSummary
                 results.setNoOptimise();
                 if (results.iterator().hasNext()) {
                     LOG.debug("\t\t" + cld.getName() + "." + desc.getName() + "");
-                    Stack s = new Stack();
+                    Stack<ClassDescriptor> s = new Stack<ClassDescriptor>();
                     s.push(cld);
                     while (!s.empty()) {
-                        ClassDescriptor c = (ClassDescriptor) s.pop();
-                        Set nonNull = (Set) nonEmptyFieldsMap.get(c.getName());
+                        ClassDescriptor c = s.pop();
+                        Set<String> nonNull = nonEmptyFieldsMap.get(c.getName());
                         nonNull.add(desc.getName());
-                        Iterator superIter = c.getSuperDescriptors().iterator();
+                        Iterator<ClassDescriptor> superIter = c.getSuperDescriptors().iterator();
                         while (superIter.hasNext()) {
                             s.push(superIter.next());
                         }
