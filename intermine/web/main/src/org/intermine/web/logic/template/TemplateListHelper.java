@@ -253,7 +253,6 @@ public class TemplateListHelper
         }
         String sup = (String) context.getAttribute(Constants.SUPERUSER_ACCOUNT);
         ProfileManager pm = SessionMethods.getProfileManager(context);
-        Profile p = pm.getProfile(sup);
         Class bagClass;
         try {
             bagClass = Class.forName(bag.getQualifiedType());

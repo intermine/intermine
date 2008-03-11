@@ -104,7 +104,9 @@ public class BagQueryResult
     }
 
     /**
-     * @return the map of all ids that were matches or issues 
+     * Get ids of all InterMineObjects returned that were matches or issues for this
+     * bag query lookup.
+     * @return the set of all ids that were matches or issues 
      */
     public Set<Integer> getMatchAndIssueIds() {
         Set<Integer> ids = new HashSet<Integer>();

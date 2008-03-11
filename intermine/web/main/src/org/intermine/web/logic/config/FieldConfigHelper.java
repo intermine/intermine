@@ -12,12 +12,9 @@ package org.intermine.web.logic.config;
 
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.Iterator;
 import java.util.List;
 
 import org.intermine.metadata.ClassDescriptor;
-import org.intermine.metadata.FieldDescriptor;
-import org.intermine.metadata.PrimaryKeyUtil;
 
 /**
  * Helper methods for the FieldConfig class.
@@ -44,36 +41,6 @@ public class FieldConfigHelper
             }
         }
 
-        // there are no configured fields for this Class so use the fields from the primary keys
-/*        List returnRow = new ArrayList();
-
-        Iterator keyAttributesIter = keyAttributes(cd).iterator();
-        while (keyAttributesIter.hasNext()) {
-            FieldConfig fc = new FieldConfig();
-            fc.setFieldExpr(((FieldDescriptor) keyAttributesIter.next()).getName());
-            returnRow.add(fc);
-        }
-
-        return returnRow;*/
         return Collections.EMPTY_LIST;
-    }
-
-    /**
-     * Return the list of fields that are both attributes and primary keys
-     * @param cld the metadata for the class
-     * @return the list of fields
-     */
-    private static List keyAttributes(ClassDescriptor cld) {
-        List keyAttributes = new ArrayList();
-        Iterator i =
-            PrimaryKeyUtil.getPrimaryKeyFields(cld.getModel(), cld.getType()).iterator();
-        while (i.hasNext()) {
-            FieldDescriptor fd = (FieldDescriptor) i.next();
-            if (fd.isAttribute() && !fd.getName().equals("id")) {
-                keyAttributes.add(fd);
-            }
-
-        }
-        return keyAttributes;
     }
 }

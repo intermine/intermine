@@ -138,8 +138,8 @@ public class PathQueryHandler extends DefaultHandler
                 if (c == null) {
                     c = MainHelper.getClass(node.getType());
                 }
-                if (constraintOp != constraintOp.IS_NULL
-                        && constraintOp != constraintOp.IS_NOT_NULL) {
+                if (constraintOp != ConstraintOp.IS_NULL
+                        && constraintOp != ConstraintOp.IS_NOT_NULL) {
                     constraintValue = TypeUtil.stringToObject(c, attrs.getValue("value"));
                 }
             }
