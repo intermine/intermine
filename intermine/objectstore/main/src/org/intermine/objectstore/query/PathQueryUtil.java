@@ -217,9 +217,14 @@ public class PathQueryUtil
         return qcEnd;
     }
 
+    /**
+     * Get a summary of the Problems
+     * @param problems an Array of throwable
+     * @return a String
+     */
     public static String getProblemsSummary(Throwable[] problems) {
         StringBuilder sb = new StringBuilder();
-        for (int i=0; i<problems.length; i++) {
+        for (int i = 0; i < problems.length; i++) {
             sb.append(problems[i]);
         }
         return sb.toString();
