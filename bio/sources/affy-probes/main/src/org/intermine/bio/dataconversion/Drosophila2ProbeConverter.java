@@ -69,14 +69,14 @@ public class Drosophila2ProbeConverter extends FileConverter
     /**
      * Read each line from flat file.
      *
-     * @see DataConverter#process
+     * {@inheritDoc}
      */
     public void process(Reader reader) throws Exception {
         
         Iterator<String[]> lineIter = FormattedTextParser.parseCsvDelimitedReader(reader);
         boolean readingData = false;
 
-        while (lineIter.hasNext() ) {
+        while (lineIter.hasNext()) {
             String[] line = lineIter.next();
             
             if (readingData) {

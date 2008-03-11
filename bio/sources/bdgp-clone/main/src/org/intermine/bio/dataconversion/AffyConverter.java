@@ -70,7 +70,7 @@ public class AffyConverter extends CDNACloneConverter
     /**
      * Read each line from flat file.
      *
-     * @see DataConverter#process
+     * {@inheritDoc}
      */
     public void process(Reader reader) throws Exception {
 

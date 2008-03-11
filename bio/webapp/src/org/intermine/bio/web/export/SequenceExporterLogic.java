@@ -55,7 +55,7 @@ public class SequenceExporterLogic implements Exporter
      * Constructor.
      * @param os object store used for fetching sequence for  exported object
      * @param outputStream output stream
-     * @param featureIndex index of cell in row that contains object to be exported 
+     * @param featureIndex index of cell in row that contains object to be exported
      */
     public SequenceExporterLogic(ObjectStore os, OutputStream outputStream,
             int featureIndex) {
@@ -63,7 +63,7 @@ public class SequenceExporterLogic implements Exporter
         this.out = outputStream;
         this.featureIndex = featureIndex;
     }
-    
+
     /**
      * {@inheritDoc}}
      */
@@ -71,14 +71,14 @@ public class SequenceExporterLogic implements Exporter
         // TODO Auto-generated method stub
         return 0;
     }
-    
+
     /**
      * {@inheritDoc}
      */
     public void export(List<List<ResultElement>> results) {
         // IDs of the features we have successfully output - used to avoid duplicates
         Set<Integer> exportedIDs = new HashSet<Integer>();
-        
+
         try {
             for (int rowIndex = 0; rowIndex < results.size(); rowIndex++) {
                 List<ResultElement> row = results.get(rowIndex);
@@ -249,14 +249,13 @@ public class SequenceExporterLogic implements Exporter
 
     /**
      * @param clazzes classes of result
-     * @return true if this exporter can export result composed of specified classes 
+     * @return true if this exporter can export result composed of specified classes
      */
-    public static boolean canExport2(List<Class> clazzes) {        
+    public static boolean canExport2(List<Class> clazzes) {
         return (
                 ExportHelper.getFirstColumnForClass(clazzes, LocatedSequenceFeature.class) >= 0
                 || ExportHelper.getFirstColumnForClass(clazzes, Protein.class) >= 0
-                || ExportHelper.getFirstColumnForClass(clazzes, Translation.class) >= 0 
-                || ExportHelper
-                        .getFirstColumnForClass(clazzes, Sequence.class) >= 0);
+                || ExportHelper.getFirstColumnForClass(clazzes, Translation.class) >= 0
+                || ExportHelper.getFirstColumnForClass(clazzes, Sequence.class) >= 0);
     }
 }

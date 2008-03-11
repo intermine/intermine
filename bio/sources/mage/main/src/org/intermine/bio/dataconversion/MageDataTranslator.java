@@ -124,7 +124,7 @@ public class MageDataTranslator extends DataTranslator
 
 
     /**
-     * @see DataTranslator#DataTranslator
+     * {@inheritDoc}
      */
     public MageDataTranslator(ItemReader srcItemReader, Properties mapping, Model srcModel,
                               Model tgtModel) throws Exception {
@@ -133,8 +133,8 @@ public class MageDataTranslator extends DataTranslator
     }
 
     /**
-     * @see DataTranslator#DataTranslator
      * Constructor used by tests to override properties
+     * {@inheritDoc}
      */
     protected MageDataTranslator(ItemReader srcItemReader, Properties mapping, Model srcModel,
                               Model tgtModel, String propertiesFileName) throws Exception {
@@ -244,7 +244,7 @@ public class MageDataTranslator extends DataTranslator
 //     }
 
     /**
-     * @see DataTranslator#translate
+     * {@inheritDoc}
      */
     public void translate(ItemWriter tgtItemWriter)
         throws ObjectStoreException, InterMineException {
@@ -317,7 +317,7 @@ public class MageDataTranslator extends DataTranslator
 
 
     /**
-     * @see DataTranslator#translateItem
+     * {@inheritDoc}
      */
     protected Collection translateItem(Item srcItem)
         throws ObjectStoreException, InterMineException {

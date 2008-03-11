@@ -10,64 +10,51 @@ package org.intermine.bio.web.struts;
  *
  */
 
-import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.HashSet;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Properties;
-import java.util.Set;
 
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-import javax.servlet.http.HttpSession;
+import org.intermine.bio.web.biojava.BioSequence;
+import org.intermine.bio.web.biojava.BioSequenceFactory;
+import org.intermine.bio.web.biojava.BioSequenceFactory.SequenceType;
+import org.intermine.bio.web.export.ResidueFieldExporter;
+import org.intermine.bio.web.export.SequenceExporter;
+import org.intermine.model.InterMineObject;
+import org.intermine.objectstore.ObjectStore;
+import org.intermine.objectstore.ObjectStoreException;
+import org.intermine.util.TypeUtil;
+import org.intermine.web.logic.Constants;
+import org.intermine.web.struts.InterMineAction;
 
-import org.apache.struts.Globals;
-import org.apache.struts.action.ActionForm;
-import org.apache.struts.action.ActionForward;
-import org.apache.struts.action.ActionMapping;
-import org.apache.struts.action.ActionMessage;
-import org.apache.struts.action.ActionMessages;
-import org.biojava.bio.Annotation;
-import org.biojava.bio.seq.io.FastaFormat;
-import org.biojava.bio.seq.io.SeqIOTools;
-import org.biojava.bio.symbol.IllegalSymbolException;
-import org.biojava.utils.ChangeVetoException;
 import org.flymine.model.genomic.BioEntity;
 import org.flymine.model.genomic.Gene;
 import org.flymine.model.genomic.LocatedSequenceFeature;
 import org.flymine.model.genomic.Protein;
 import org.flymine.model.genomic.Sequence;
 import org.flymine.model.genomic.Translation;
-import org.intermine.bio.web.biojava.BioSequence;
-import org.intermine.bio.web.biojava.BioSequenceFactory;
-import org.intermine.bio.web.biojava.BioSequenceFactory.SequenceType;
-import org.intermine.bio.web.export.ResidueFieldExporter;
-import org.intermine.bio.web.export.SequenceExporter;
-import org.intermine.metadata.ClassDescriptor;
-import org.intermine.metadata.Model;
-import org.intermine.model.InterMineObject;
-import org.intermine.objectstore.ObjectStore;
-import org.intermine.objectstore.ObjectStoreException;
-import org.intermine.path.Path;
-import org.intermine.util.DynamicUtil;
-import org.intermine.util.StringUtil;
-import org.intermine.util.TypeUtil;
-import org.intermine.web.logic.Constants;
-import org.intermine.web.logic.results.Column;
-import org.intermine.web.logic.results.PagedTable;
-import org.intermine.web.logic.results.ResultElement;
-import org.intermine.web.logic.results.WebResults;
-import org.intermine.web.logic.session.SessionMethods;
-import org.intermine.web.struts.InterMineAction;
+
+import java.io.OutputStream;
+
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
+
+import org.apache.struts.action.ActionForm;
+import org.apache.struts.action.ActionForward;
+import org.apache.struts.action.ActionMapping;
+import org.biojava.bio.Annotation;
+import org.biojava.bio.seq.io.FastaFormat;
+import org.biojava.bio.seq.io.SeqIOTools;
+import org.biojava.bio.symbol.IllegalSymbolException;
+import org.biojava.utils.ChangeVetoException;
 
 /**
  * Exports sequence.
  *
  * @author Kim Rutherford
  */
-public class SequenceExportAction extends InterMineAction 
+public class SequenceExportAction extends InterMineAction
 {
     /**
      * This action is invoked directly to export LocatedSequenceFeatures.
@@ -79,6 +66,7 @@ public class SequenceExportAction extends InterMineAction
      * @exception Exception if the application business logic throws
      *  an exception
      */
+    @Override
     public ActionForward execute(ActionMapping mapping,
                                  ActionForm form,
                                  HttpServletRequest request,
@@ -95,13 +83,13 @@ public class SequenceExportAction extends InterMineAction
             getAttribute(Constants.WEB_PROPERTIES);
         Integer objectId = new Integer(request.getParameter("object"));
         InterMineObject obj = getObject(os, webProps, objectId);
-        
+
         if (obj instanceof LocatedSequenceFeature || obj instanceof Protein
                         || obj instanceof Translation) {
             bioSequence = createBioSequence(obj);
             if (bioSequence != null) {
                 OutputStream out = response.getOutputStream();
-                SeqIOTools.writeFasta(out, bioSequence);                
+                SeqIOTools.writeFasta(out, bioSequence);
             }
         }
 
@@ -157,7 +145,7 @@ public class SequenceExportAction extends InterMineAction
                 LocatedSequenceFeature.class,
                 Translation.class}));
         }
-        
+
         InterMineObject obj = os.getObjectById(objectId);
         if (obj instanceof Sequence) {
             Sequence sequence = (Sequence) obj;
