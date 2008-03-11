@@ -11,6 +11,7 @@ package org.intermine.bio.dataconversion;
  */
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -207,8 +208,10 @@ public class AnophExprConverter extends FileConverter
                 Item material = createItem("ProbeSet");
                 material.setAttribute("name", probe);
                 material.setAttribute("primaryIdentifier", probe);
-                material.setReference("organism", org.getIdentifier());
-                material.setReference("gene", gene.getIdentifier());
+                material.setReference("organism", org.getIdentifier());                
+                material.setCollection("genes",
+                                       new ArrayList(Collections.singleton(gene.getIdentifier())));
+                
                 ReferenceList evidence = new ReferenceList("evidence",
                                                              new ArrayList<String>());
                 evidence.addRefId(dataSet.getIdentifier());
