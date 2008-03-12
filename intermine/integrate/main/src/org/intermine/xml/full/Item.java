@@ -158,6 +158,15 @@ public class Item implements Comparable
             throw new RuntimeException("class \"" + classDescriptor.getName() + "\" has no \""
                                        + name + "\" attribute");
         }
+        if (attribute.getValue() == null) {
+            throw new RuntimeException("value cannot be null for attribute "
+                                       + classDescriptor.getName() + "."  + name);
+        } else {
+            if (attribute.getValue().equals("")) {
+                throw new RuntimeException("value cannot be an empty string for attribute "
+                                           + classDescriptor.getName() + "."  + name);
+            }
+        }
         attributes.put(name, attribute);
     }
 
@@ -312,10 +321,12 @@ public class Item implements Comparable
      */
     public void setAttribute(String name, String value) {
         if (value == null) {
-            throw new RuntimeException("value cannot be null for attribute " + name);
+            throw new RuntimeException("value cannot be null for attribute "
+                                       + classDescriptor.getName() + "."  + name);
         } else {
             if (value.equals("")) {
-                throw new RuntimeException("value cannot be an empty string for attribute " + name);
+                throw new RuntimeException("value cannot be an empty string for attribute "
+                                           + classDescriptor.getName() + "."  + name);
             }
         }
         addAttribute(new Attribute(name, value));
@@ -326,7 +337,7 @@ public class Item implements Comparable
      * @param name the name of the attribute
      */
     public void setAttributeToEmptyString(String name) {
-        addAttribute(new Attribute(name, ""));
+        attributes.put(name, new Attribute(name, ""));
     }
 
     /**
