@@ -19,7 +19,6 @@ import java.util.Map;
 
 import org.intermine.dataconversion.FileConverter;
 import org.intermine.dataconversion.ItemWriter;
-import org.intermine.metadata.MetaDataException;
 import org.intermine.metadata.Model;
 import org.intermine.objectstore.ObjectStoreException;
 import org.intermine.util.FormattedTextParser;
@@ -46,7 +45,6 @@ public class Drosophila2ProbeConverter extends FileConverter
      * @param writer the ItemWriter used to handle the resultant items
      * @param model the data model
      * @throws ObjectStoreException if an error occurs in storing
-     * @throws MetaDataException if cannot generate model
      */
     public Drosophila2ProbeConverter(ItemWriter writer, Model model)
         throws ObjectStoreException {
