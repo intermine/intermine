@@ -10,6 +10,7 @@ package org.intermine.bio.web.widget;
  *
  */
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Map;
 
@@ -20,6 +21,7 @@ import org.intermine.objectstore.query.ContainsConstraint;
 import org.intermine.objectstore.query.Query;
 import org.intermine.objectstore.query.QueryClass;
 import org.intermine.objectstore.query.QueryCollectionReference;
+import org.intermine.objectstore.query.QueryExpression;
 import org.intermine.objectstore.query.QueryField;
 import org.intermine.objectstore.query.QueryFunction;
 import org.intermine.objectstore.query.QueryObjectReference;
@@ -32,13 +34,13 @@ import org.intermine.web.logic.bag.InterMineBag;
 import org.intermine.web.logic.profile.Profile;
 import org.intermine.web.logic.widget.EnrichmentWidgetLdr;
 
-import javax.servlet.ServletContext;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpSession;
-
 import org.flymine.model.genomic.Gene;
 import org.flymine.model.genomic.Organism;
 import org.flymine.model.genomic.Publication;
+
+import javax.servlet.ServletContext;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpSession;
 
 /**
  * {@inheritDoc}
@@ -52,7 +54,7 @@ public class PublicationLdr implements EnrichmentWidgetLdr
     private String externalLink, append;
     private ObjectStoreInterMineImpl os;
     private InterMineBag bag;
-    
+    private Collection<String> organismsLower = new ArrayList<String>();
     /**
      * @param request The HTTP request we are processing
      */
@@ -67,7 +69,9 @@ public class PublicationLdr implements EnrichmentWidgetLdr
             WebUtil.getAllBags(profile.getSavedBags(), servletContext);
         bag = allBags.get(bagName);
         organisms = BioUtil.getOrganisms(os, bag, false);
-        
+        for (String s : organisms) {
+            organismsLower.add(s.toLowerCase());
+        }
         annotatedSampleQuery = getQuery(false, true);
         annotatedPopulationQuery = getQuery(false, false);
     }
@@ -94,8 +98,8 @@ public class PublicationLdr implements EnrichmentWidgetLdr
         if (useBag) {
             cs.addConstraint(new BagConstraint(qfGeneId, ConstraintOp.IN, bag.getOsb()));
         }
-        
-        cs.addConstraint(new BagConstraint(qfOrganismName, ConstraintOp.IN, organisms));
+        QueryExpression qf = new QueryExpression(QueryExpression.LOWER, qfOrganismName);
+        cs.addConstraint(new BagConstraint(qf, ConstraintOp.IN, organismsLower));
         
         QueryObjectReference qor = new QueryObjectReference(qcGene, "organism");
         cs.addConstraint(new ContainsConstraint(qor, ConstraintOp.CONTAINS, qcOrganism));
