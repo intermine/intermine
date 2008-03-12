@@ -194,6 +194,7 @@ public class IqlShell
         // 0 = normal, 1 = dots, 2 = no output
         boolean noExplain = false;
         boolean doGoFaster = false;
+        boolean doPrecompute = false;
         String optimiseMode = QueryOptimiserContext.MODE_NORMAL;
 
         if (iql.toUpperCase().startsWith("GOFASTER ")) {
@@ -228,9 +229,24 @@ public class IqlShell
             iql = iql.substring(9);
             output = 2;
         }
+        if (iql.toUpperCase().startsWith("PRECOMPUTE ")) {
+            iql = iql.substring(11);
+            doPrecompute = true;
+        }
         IqlQuery iq = new IqlQuery(iql, modelPackage);
         Query q = iq.toQuery();
 
+        if (doPrecompute) {
+            if (os instanceof ObjectStoreInterMineImpl) {
+                ObjectStoreInterMineImpl osii = (ObjectStoreInterMineImpl) os;
+                out.println("Query to precompute: " + q.toString());
+                long startTime = System.currentTimeMillis();
+                String precompName = osii.precompute(q, "IqlShell");
+                out.println("Precomputed query as table " + precompName + " in "
+                        + (System.currentTimeMillis() - startTime) + " ms");
+            }
+            return;
+        }
         out.println("Query to run: " + q.toString());
         try {
             if (os instanceof ObjectStoreInterMineImpl) {
