@@ -10,17 +10,8 @@ package org.intermine.model.testmodel.web;
  *
  */
 
-import java.util.List;
-
-import org.intermine.metadata.ClassDescriptor;
-import org.intermine.model.testmodel.Employee;
-import org.intermine.objectstore.ObjectStoreException;
-import org.intermine.web.logic.export.TableExporter;
-import org.intermine.web.logic.results.Column;
-import org.intermine.web.logic.results.PagedTable;
-import org.intermine.web.logic.session.SessionMethods;
-
 import java.io.PrintStream;
+import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -32,6 +23,13 @@ import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
 import org.apache.struts.action.ActionMessage;
 import org.apache.struts.action.ActionMessages;
+import org.intermine.metadata.ClassDescriptor;
+import org.intermine.model.testmodel.Employee;
+import org.intermine.objectstore.ObjectStoreException;
+import org.intermine.web.logic.export.http.TableHttpExporter;
+import org.intermine.web.logic.results.Column;
+import org.intermine.web.logic.results.PagedTable;
+import org.intermine.web.logic.session.SessionMethods;
 
 /**
  * An implementation of TableExporter that exports Employee objects.
@@ -39,7 +37,7 @@ import org.apache.struts.action.ActionMessages;
  * @author Kim Rutherford
  */
 
-public class EmployeeExporter implements TableExporter
+public class EmployeeExporter implements TableHttpExporter
 {
     /**
      * Method called to export a RESULTS_TABLE containing an Employee by writing it to the
@@ -117,7 +115,7 @@ public class EmployeeExporter implements TableExporter
 
 
     /**
-     * @see TableExporter#canExport
+     * @see TableHttpExporter#canExport
      */
     public boolean canExport(PagedTable pt) {
         List columns = pt.getColumns();

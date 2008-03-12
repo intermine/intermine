@@ -21,7 +21,7 @@ import org.intermine.web.logic.results.ResultElement;
 
 
 /**
- * Exporter to excel format.
+ * Export results in excel format.
  * @author Jakub Kulaviak
  **/
 public class ExcelExporter implements Exporter
@@ -37,7 +37,7 @@ public class ExcelExporter implements Exporter
     public ExcelExporter(OutputStream out) {
         this.out = out;
     }
-
+    
     /**
      * Exports results.
      * @param results results to be exported

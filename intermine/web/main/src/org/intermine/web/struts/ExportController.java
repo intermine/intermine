@@ -10,29 +10,27 @@ package org.intermine.web.struts;
  *
  */
 
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.Map;
+
+import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
-import javax.servlet.ServletContext;
 
-import java.util.Iterator;
-import java.util.Map;
-import java.util.HashMap;
-
-import org.apache.struts.tiles.ComponentContext;
-import org.apache.struts.tiles.actions.TilesAction;
+import org.apache.log4j.Logger;
 import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
-
+import org.apache.struts.tiles.ComponentContext;
+import org.apache.struts.tiles.actions.TilesAction;
 import org.intermine.web.logic.Constants;
 import org.intermine.web.logic.config.TableExportConfig;
 import org.intermine.web.logic.config.WebConfig;
-import org.intermine.web.logic.export.TableExporter;
+import org.intermine.web.logic.export.http.TableHttpExporter;
 import org.intermine.web.logic.results.PagedTable;
 import org.intermine.web.logic.session.SessionMethods;
-
-import org.apache.log4j.Logger;
 
 /**
  * Controller to initialise for the export.tile
@@ -68,12 +66,13 @@ public class ExportController extends TilesAction
         Map allExporters = wc.getTableExportConfigs();
         Map usableExporters = new HashMap();
 
-        for (Iterator i = allExporters.keySet().iterator(); i.hasNext(); ) {
+        for (Iterator i = allExporters.keySet().
+                iterator(); i.hasNext(); ) {
             String exporterId = (String) i.next();
             TableExportConfig tableExportConfig = (TableExportConfig) allExporters.get(exporterId);
 
-            TableExporter tableExporter =
-                (TableExporter) Class.forName(tableExportConfig.getClassName()).newInstance();
+            TableHttpExporter tableExporter =
+                (TableHttpExporter) Class.forName(tableExportConfig.getClassName()).newInstance();
 
             boolean canExport = false;
             try {

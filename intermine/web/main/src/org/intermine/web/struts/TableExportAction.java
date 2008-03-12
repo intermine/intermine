@@ -10,11 +10,8 @@ package org.intermine.web.struts;
  *
  */
 
-import java.util.List;
-
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import javax.servlet.http.HttpSession;
 
 import org.apache.log4j.Logger;
 import org.apache.struts.Globals;
@@ -23,25 +20,19 @@ import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
 import org.apache.struts.action.ActionMessage;
 import org.apache.struts.action.ActionMessages;
-import org.intermine.web.logic.Constants;
-import org.intermine.web.logic.WebUtil;
-import org.intermine.web.logic.config.TableExportConfig;
-import org.intermine.web.logic.config.WebConfig;
-import org.intermine.web.logic.export.Exporter;
-import org.intermine.web.logic.export.ExporterFactory;
-import org.intermine.web.logic.export.TableExporter;
-import org.intermine.web.logic.results.Column;
-import org.intermine.web.logic.results.PagedTable;
-import org.intermine.web.logic.results.WebResults;
-import org.intermine.web.logic.session.SessionMethods;
+import org.intermine.web.logic.export.http.TableExporterFactory;
+import org.intermine.web.logic.export.http.TableHttpExporter;
 
 /*
  * TODO   
- * - finish gff3
- * - rewrite exporters
+ * - clean exporthelper
+ * - commit to svn
  * - enables set position from which export should start 
- * - rewrite  web service for new exporters
  * - solve error handling in export action
+ * - solve excel too many results
+ * - rewrite  web service for new exporters
+ * - what to do if more columns with LocatedSequenceFeature ?
+ * - do goFaster?
  */
 
 /**
@@ -74,161 +65,18 @@ public class TableExportAction extends InterMineAction
                                  HttpServletResponse response)
         throws Exception {
         String type = request.getParameter("type");
-        List<List<Object>> rowList = null;
-
         try {
-            HttpSession session = request.getSession();
-            PagedTable pt = getPagedTable(request, session);
-            rowList = pt.getAllRows();
-            if (rowList instanceof WebResults) {
-                ((WebResults) rowList).goFaster();
-            }
-            
-            if (type.equals("excel")) {
-                return excel(mapping, request, response, pt);
-            } else if (type.equals("csv")) {
-                writeCSVHeader(response);
-                Exporter exporter = ExporterFactory.createExporter(response.getOutputStream(), 
-                        ExporterFactory.CSV);
-                exporter.export(pt.getRearrangedResults());
-            } else if (type.equals("tab")) {
-                writeTSVHeader(response);
-                Exporter exporter = ExporterFactory.createExporter(response.getOutputStream(), 
-                        ExporterFactory.TAB);
-                exporter.export(pt.getRearrangedResults());
-            } else {
-                WebConfig wc = (WebConfig) session.getServletContext().
-                    getAttribute(Constants.WEBCONFIG);
-
-                TableExportConfig tableExportConfig =
-                    (TableExportConfig) wc.getTableExportConfigs().get(type);
-
-                if (tableExportConfig == null) {
-                    return mapping.findForward("error");
-                } else {
-                    TableExporter tableExporter =
-                        (TableExporter) Class.forName(tableExportConfig.getClassName()).
-                            newInstance();
-                    return tableExporter.export(mapping, form, request, response);
-                }
-            }
+            TableExporterFactory factory = new TableExporterFactory(request);
+            TableHttpExporter exporter = factory.getExporter(type);
+            exporter.export(mapping, form, request, response);
             return null;
         } catch (RuntimeException ex) {
             ActionMessages messages = new ActionMessages();
             ActionMessage error = new ActionMessage("errors.export.exportfailed");
             messages.add(ActionMessages.GLOBAL_MESSAGE, error);
             request.setAttribute(Globals.ERROR_KEY, messages);
-            LOG.error(ex);
+            LOG.error("Export failed.", ex);
             return mapping.findForward("error");
-        } finally {
-            if (rowList != null && rowList instanceof WebResults) {
-                ((WebResults) rowList).releaseGoFaster();
-            }
-        }
-    }
-    
-    private PagedTable getPagedTable(HttpServletRequest request, HttpSession session) {
-        PagedTable pt;
-        String tableType = request.getParameter("tableType");
-        if (tableType.equals("bag")) {
-            pt = SessionMethods.getResultsTable(session, "bag." 
-                    + request.getParameter("table"));
-        } else {
-            pt = SessionMethods.getResultsTable(session, request.getParameter("table"));
-        }
-        return pt;
-    }
-
-    /**
-     * Export the RESULTS_TABLE to Excel format by writing it to the OutputStream of the Response.
-     * @param mapping The ActionMapping used to select this instance
-     * @param request The HTTP request we are processing
-     * @param response The HTTP response we are creating
-     * @param pt the PagedTable to export
-     * @return an ActionForward object defining where control goes next
-     * @exception Exception if the application business logic throws
-     *  an exception
-     */
-    public ActionForward excel(ActionMapping mapping,
-                               HttpServletRequest request,
-                               HttpServletResponse response, PagedTable pt)
-        throws Exception {
-        HttpSession session = request.getSession();
-
-        writeExcelHeader(response);
-
-        if (pt == null) {
-            return mapping.getInputForward();
-        }
-
-        int defaultMax = 10000;
-
-        int maxExcelSize =
-            WebUtil.getIntSessionProperty(session, "max.excel.export.size", defaultMax);
-
-        if (pt.getEstimatedSize() > maxExcelSize) {
-            ActionMessage actionMessage =
-                new ActionMessage("export.excelExportTooBig", new Integer(maxExcelSize));
-            recordError(actionMessage, request);
-
-            return mapping.getInputForward();
-        }
-
-        Exporter exporter = ExporterFactory.createExporter(response.getOutputStream(), 
-                ExporterFactory.EXCEL);
-        exporter.export(pt.getRearrangedResults());
-        
-        return null;
-    }
-
-    private void writeExcelHeader(HttpServletResponse response) {
-        response.setContentType("Application/vnd.ms-excel");
-        response.setHeader("Pragma", "no-cache");
-        response.setHeader("Content-Disposition", "attachment; filename=\"results-table.xls\"");
-    }
-
-    private void writeCSVHeader(HttpServletResponse response) {
-        response.setContentType("text/comma-separated-values");
-        response.setHeader("Pragma", "no-cache");
-        response.setHeader("Content-Disposition", "inline; filename=\"results-table.csv\"");
-    }
-
-    private void writeTSVHeader(HttpServletResponse response) {
-        response.setContentType("text/tab-separated-values");
-        response.setHeader("Pragma", "no-cache");
-        response.setHeader("Content-Disposition", "inline; filename=\"results-table.tsv\"");
-    }
-
-    /**
-     * Return an int array containing the real column indexes to use while writing the given
-     * PagedTable.
-     * @param pt the PagedTable to export
-     */
-    private static int [] getOrder(PagedTable pt) {
-        List columns = pt.getColumns();
-
-        int [] returnValue = new int [columns.size()];
-
-        for (int i = 0; i < columns.size(); i++) {
-            returnValue[i] = ((Column) columns.get(i)).getIndex();
-        }
-
-        return returnValue;
-    }
-
-    /**
-     * Return an array containing the visibility of each column in the output
-     * @param pt the PagedTable to export
-     */
-    private static boolean [] getVisible(PagedTable pt) {
-        List columns = pt.getColumns();
-
-        boolean [] returnValue = new boolean [columns.size()];
-
-        for (int i = 0; i < columns.size(); i++) {
-            returnValue[i] = ((Column) columns.get(i)).isVisible();
-        }
-
-        return returnValue;
+        } 
     }
 }

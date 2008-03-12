@@ -1,4 +1,4 @@
-package org.intermine.web.logic.export;
+package org.intermine.web.logic.export.http;
 
 /*
  * Copyright (C) 2002-2008 FlyMine
@@ -20,12 +20,12 @@ import org.apache.struts.action.ActionMapping;
 import org.intermine.web.logic.results.PagedTable;
 
 /**
- * Implemented by objects that can export PagedTables.
+ * Implemented by objects that can export PagedTable. 
  *
  * @author Kim Rutherford
  */
 
-public interface TableExporter
+public interface TableHttpExporter
 {
     /**
      * Method called to export a PagedTable object
