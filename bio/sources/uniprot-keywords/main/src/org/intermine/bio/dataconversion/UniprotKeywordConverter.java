@@ -45,12 +45,11 @@ public class UniprotKeywordConverter extends FileConverter
     /**
      * Constructor
      * @param writer the ItemWriter used to handle the resultant items
+     * @param model the Model
      */
     public UniprotKeywordConverter(ItemWriter writer, Model model) {
         super(writer, model);
-
     }
-
 
     /**
      * {@inheritDoc}
@@ -76,6 +75,9 @@ public class UniprotKeywordConverter extends FileConverter
 
     }
 
+    /**
+     * An implementation of DefaultHandler for parsing UniProt XML.
+     */
     static class UniprotHandler extends DefaultHandler
     {
         private int nextClsId = 0;
@@ -174,7 +176,7 @@ public class UniprotKeywordConverter extends FileConverter
 
 
         /**
-         * @see DefaultHandler#endElement
+         * {@inheritDoc}
          */
         public void endElement(String uri, String localName, String qName)
             throws SAXException {

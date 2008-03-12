@@ -126,8 +126,8 @@ public class DrosophilaHomologyConverter extends FileConverter
                                                            + " for cluster: " + clusterNum);
                     }
                     // each element can have multiple comma separated gene identfiers
-                    List<String> genes = Arrays.asList(line[i+2].split(",")); 
-                    List<String> homGenes = Arrays.asList(line[j+2].split(",")); 
+                    List<String> genes = Arrays.asList(line[i + 2].split(",")); 
+                    List<String> homGenes = Arrays.asList(line[j + 2].split(",")); 
                     for (String gene : genes) {                        
                         for (String homGene : homGenes) {
                             createHomologue(getGene(gene, species[i]),
@@ -180,7 +180,8 @@ public class DrosophilaHomologyConverter extends FileConverter
             Item organism = createItem("Organism");
             OrganismData oData = or.getOrganismDataByAbbreviation(abbrev);
             if (oData == null) {
-                throw new IllegalArgumentException("No organism data found for abbreviation: " + abbrev);
+                throw new IllegalArgumentException("No organism data found for abbreviation: "
+                                                   + abbrev);
             }
             String taxonId = "" + oData.getTaxonId();
             organism.setAttribute("taxonId", taxonId);

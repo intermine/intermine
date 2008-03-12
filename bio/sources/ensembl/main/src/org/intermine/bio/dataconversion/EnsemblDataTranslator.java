@@ -1496,11 +1496,16 @@ public class EnsemblDataTranslator extends DataTranslator
 
         /**
          * Return true if we should put external ids into the symbol field (eg. for Anopheles)
+         * @return true if we should put external ids into the symbol field
          */
         public boolean useXrefDbsForGeneSymbol() {
             return useXrefDbsForGeneSymbol;
         }
 
+        /**
+         * Return true if the createAnalysisResult flag is set in the configuration.
+         * @return true if the createAnalysisResult flag is set
+         */
         boolean createAnalysisResult() {
             return createAnalysisResult;
         }

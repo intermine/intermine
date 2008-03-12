@@ -38,7 +38,10 @@ public class PdbConverter extends FileConverter
     private Item dataSource, dataSet;
 
     /**
-     * @param writer
+     * Create a new PdbConverter object.
+     * @param writer the ItemWriter to store the objects in
+     * @param model the Model
+     * @throws ObjectStoreException if there is a problem while storing
      */
     public PdbConverter(ItemWriter writer, Model model) throws ObjectStoreException {
         super(writer, model);
@@ -104,8 +107,7 @@ public class PdbConverter extends FileConverter
 
 
     /**
-     * BioJava doesn't support getting DBREF so
-     * we get it as the file is read.
+     * BioJava doesn't support getting DBREF so we get it as the file is read.
      *
      * @author Xavier Watkins
      *
@@ -115,6 +117,10 @@ public class PdbConverter extends FileConverter
 
         private List<String> dbrefs = new ArrayList<String>();
 
+        /**
+         * Create a new PdbBufferedReader object.
+         * @param reader the underlying Reader object
+         */
         public PdbBufferedReader(Reader reader) {
             super(reader);
         }
@@ -134,11 +140,13 @@ public class PdbConverter extends FileConverter
             return line;
         }
 
+        /**
+         * Return the db refs read from the Reader.
+         * @return the List of db refs
+         */
         public List getDbrefs() {
             return dbrefs;
         }
-
-
     }
 
 
