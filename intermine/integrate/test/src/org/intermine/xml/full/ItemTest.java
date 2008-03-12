@@ -157,7 +157,28 @@ public class ItemTest extends TestCase
         } catch (RuntimeException _) {
             // expected
         }
+        
+        try {
+            item1.addAttribute(new Attribute("name", null));
+            fail("expected RuntimeException");
+        } catch (RuntimeException _) {
+            // expected
+        }
 
+        try {
+            item1.addAttribute(new Attribute("name", ""));
+            fail("expected RuntimeException");
+        } catch (RuntimeException _) {
+            // expected
+        }
+    }
+    
+    public void testSetAttribute() throws Exception {
+        ItemFactory itemFactory = new ItemFactory(model);
+
+        Item item1 = itemFactory.makeItem();
+        item1.setClassName(model.getNameSpace() + "Company");
+        
         try {
             item1.setAttribute("name", null);
             fail("expected RuntimeException");
