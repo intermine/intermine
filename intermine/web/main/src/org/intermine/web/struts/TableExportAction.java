@@ -10,6 +10,10 @@ package org.intermine.web.struts;
  *
  */
 
+import java.io.IOException;
+import java.io.OutputStream;
+import java.io.PrintWriter;
+
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
@@ -20,16 +24,14 @@ import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
 import org.apache.struts.action.ActionMessage;
 import org.apache.struts.action.ActionMessages;
+import org.intermine.web.logic.export.ExportException;
 import org.intermine.web.logic.export.http.TableExporterFactory;
 import org.intermine.web.logic.export.http.TableHttpExporter;
 
 /*
  * TODO   
- * - clean exporthelper
- * - commit to svn
+ * - commit
  * - enables set position from which export should start 
- * - solve error handling in export action
- * - solve excel too many results
  * - rewrite  web service for new exporters
  * - what to do if more columns with LocatedSequenceFeature ?
  * - do goFaster?
@@ -46,7 +48,10 @@ public class TableExportAction extends InterMineAction
 {
     protected static final Logger LOG = Logger.getLogger(TableExportAction.class);
 
-    //private static final ActionForward forward = null; 
+    private static final String ERROR_MSG = "Export failed. Please contact support.";
+    
+    // timeout for export is 1 day
+    private static final int TIMEOUT = 24 * 60 * 60; 
     
     /**
      * Method called to export a PagedTable object.  Uses the type request parameter to choose the
@@ -64,19 +69,68 @@ public class TableExportAction extends InterMineAction
                                  HttpServletRequest request,
                                  HttpServletResponse response)
         throws Exception {
+        request.getSession().setMaxInactiveInterval(TIMEOUT);
         String type = request.getParameter("type");
         try {
             TableExporterFactory factory = new TableExporterFactory(request);
             TableHttpExporter exporter = factory.getExporter(type);
-            exporter.export(mapping, form, request, response);
-            return null;
-        } catch (RuntimeException ex) {
-            ActionMessages messages = new ActionMessages();
-            ActionMessage error = new ActionMessage("errors.export.exportfailed");
-            messages.add(ActionMessages.GLOBAL_MESSAGE, error);
-            request.setAttribute(Globals.ERROR_KEY, messages);
-            LOG.error("Export failed.", ex);
-            return mapping.findForward("error");
-        } 
+            return exporter.export(mapping, form, request, response);
+        } catch (RuntimeException e) {
+            return processException(mapping, request, response, e);            
+        }     
+    }
+
+    private ActionForward processException(ActionMapping mapping,
+            HttpServletRequest request, HttpServletResponse response,
+            RuntimeException e) throws IOException {
+        LOG.error("Export failed.", e);
+        String msg = null;
+        if (e instanceof ExportException) {
+            msg = e.getMessage();
+            if (msg == null || msg.length() == 0) {
+                msg = ERROR_MSG;
+            }            
+        } else {
+            msg = ERROR_MSG;
+        }        
+        // If response wasn't commited then we can display error, else 
+        // there is only possibility to append error message to the end.
+        if (!response.isCommitted()) {
+            PrintWriter writer = null;
+            response.reset();
+            try {
+                writer = response.getWriter();
+                ActionMessages messages = new ActionMessages();
+                messages.add(ActionMessages.GLOBAL_MESSAGE, 
+                        new ActionMessage("errors.export.displayonlyparameters", msg));
+                request.setAttribute(Globals.ERROR_KEY, messages);
+                return mapping.findForward("error");                
+            } catch (IllegalStateException ex) {
+                OutputStream out = response.getOutputStream();
+                writer = new PrintWriter(out);
+                writer.println(msg);
+                writer.flush();
+                return null;
+            }
+        } else {
+            try {
+                PrintWriter writer = response.getWriter();
+                writer.println(msg);
+                writer.flush();
+            } catch (IllegalStateException ex) {
+                // Attempt to writer error to output stream where data was already sent
+                // If there are textual data user will see the error else it will
+                // makes binary file  probably unreadable and so the use know
+                // that something is wrong
+                // At this moment only excel format exports binary output and 
+                // it is flushed at the end - it is error can only happen before 
+                // response is  commited.
+                OutputStream out = response.getOutputStream();
+                PrintWriter writer = new PrintWriter(out);
+                writer.println(msg);
+                writer.flush();
+            }
+        }
+        return null;
     }
 }

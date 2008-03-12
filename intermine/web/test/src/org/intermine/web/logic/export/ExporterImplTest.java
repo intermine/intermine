@@ -1,6 +1,7 @@
 package org.intermine.web.logic.export;
 
 import java.io.ByteArrayOutputStream;
+import java.io.PrintWriter;
 import java.util.ArrayList;
 import java.util.List;
 

@@ -65,11 +65,12 @@ public abstract class HttpExporterBase implements TableHttpExporter
             throws Exception {
         HttpSession session = request.getSession();
         PagedTable pt = getPagedTable(request, session);
-        List<List<ResultElement>> results = pt.getRearrangedResults();
+
         if (pt == null) {
-            // TODO display error?
-            //return mapping.getInputForward();
+            return mapping.getInputForward();
         }        
+
+        List<List<ResultElement>> results = pt.getRearrangedResults();
         
         OutputStream out = null;
         try {
@@ -78,7 +79,11 @@ public abstract class HttpExporterBase implements TableHttpExporter
             throw new ExportException("Export failed.", e);
         }
         setResponseHeader(response);
-        getExporter(out).export(results);
+        Exporter exporter = getExporter(out);
+        exporter.export(results);
+        if (exporter.getWrittenResultsCount() == 0) {
+            throw new ExportException("Nothing was found for export.");
+        }
         return null;
     }
 
@@ -94,7 +99,12 @@ public abstract class HttpExporterBase implements TableHttpExporter
      */
     protected abstract void setResponseHeader(HttpServletResponse response);
     
-    private PagedTable getPagedTable(HttpServletRequest request, HttpSession session) {
+    /**
+     * @return PagedTable from session
+     * @param request request
+     * @param session session
+     */
+    protected PagedTable getPagedTable(HttpServletRequest request, HttpSession session) {
         PagedTable pt;
         String tableType = request.getParameter("tableType");
         if (tableType.equals("bag")) {

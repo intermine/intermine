@@ -70,6 +70,10 @@ public class GFF3HttpExporter implements TableHttpExporter
 
         PagedTable pt = SessionMethods.getResultsTable(session, request.getParameter("table"));
 
+        if (pt == null) {
+            return mapping.getInputForward();
+        }        
+        
         int realFeatureIndex = ExportHelper.getFirstColumnForClass(
                 ExportHelper.getColumnClasses(pt), LocatedSequenceFeature.class);
 
@@ -81,7 +85,9 @@ public class GFF3HttpExporter implements TableHttpExporter
             throw new ExportException("Export failed.", e);
         } 
         exporter.export(pt.getRearrangedResults());
-
+        if (exporter.getWrittenResultsCount() == 0) {
+            throw new ExportException("Nothing was found for export.");
+        }
         return null;
     }
 

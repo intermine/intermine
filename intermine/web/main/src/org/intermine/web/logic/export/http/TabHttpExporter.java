@@ -14,10 +14,10 @@ import java.io.OutputStream;
 
 import javax.servlet.http.HttpServletResponse;
 
+import org.intermine.web.logic.export.Exporter;
 import org.intermine.web.logic.export.ExporterImpl;
 import org.intermine.web.logic.export.RowFormatter;
 import org.intermine.web.logic.export.RowFormatterImpl;
-import org.intermine.web.logic.export.Exporter;
 
 /**
  * Exporter that exports table with results in excel format.
