@@ -66,8 +66,9 @@
   <class name="org.flymine.model.genomic.AppliedProtocol"
   	is-interface="true">
   	<attribute name="name" type="java.lang.String" />
+<!-- 
   	<attribute name="direction" type="java.lang.String" />
-
+-->
   	<!-- parameter values -->
   	<attribute name="bandwidth" type="java.lang.Integer" />
   	<attribute name="chromosome" type="java.lang.String" />

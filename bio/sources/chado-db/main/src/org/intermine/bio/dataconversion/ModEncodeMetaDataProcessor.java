@@ -35,6 +35,7 @@ public class ModEncodeMetaDataProcessor extends ChadoProcessor
     private Map<Integer, Integer> providerIdMap = new HashMap<Integer, Integer>();
     private Map<Integer, Integer> dataIdMap = new HashMap<Integer, Integer>();
     private Map<Integer, Integer> appliedProtocolIdMap = new HashMap<Integer, Integer>();
+    private Map<Integer, Integer> appliedProtocolExperimentIdMap = new HashMap<Integer, Integer>();
     private Map<Integer, Integer> appliedProtocolDataIdMap = new HashMap<Integer, Integer>();
     private Map<Integer, Integer> appliedProtocolProtocolIdMap = new HashMap<Integer, Integer>();
 
@@ -404,15 +405,20 @@ public class ModEncodeMetaDataProcessor extends ChadoProcessor
     int count = 0;
     while (res.next()) {
         Integer appliedProtocolId = new Integer(res.getInt("applied_protocol_id"));
-        Integer protocolId = new Integer(res.getInt("protocol_id"));
-        Integer dataId = new Integer(res.getInt("data_id"));
-        String direction = res.getString("direction");
+        //Integer protocolId = new Integer(res.getInt("protocol_id"));
+        //Integer dataId = new Integer(res.getInt("data_id"));
+        //Integer experimentId = new Integer(res.getInt("experiment_id"));
+        //String direction = res.getString("direction");
         Item appliedProtocol = getChadoDBConverter().createItem("AppliedProtocol");
-        appliedProtocol.setAttribute("direction", direction);
+        //appliedProtocol.setAttribute("direction", direction);
         Integer intermineObjectId = getChadoDBConverter().store(appliedProtocol);
         appliedProtocolIdMap .put(appliedProtocolId, intermineObjectId);
-        appliedProtocolProtocolIdMap .put(protocolId, intermineObjectId);
-        appliedProtocolDataIdMap .put(dataId, intermineObjectId);
+        //appliedProtocolProtocolIdMap .put(protocolId, intermineObjectId);
+        //appliedProtocolDataIdMap .put(dataId, intermineObjectId);
+        /*if (experimentId != null) {
+        appliedProtocolExperimentIdMap .put(experimentId, intermineObjectId);
+        }
+        */
         count++;
     }
     LOG.info("created " + count + " appliedProtocol");
@@ -430,10 +436,13 @@ public class ModEncodeMetaDataProcessor extends ChadoProcessor
     protected ResultSet getAppliedProtocolResultSet(Connection connection) 
     throws SQLException {
         String query =
-            "SELECT ap.applied_protocol_id, ap.protocol_id, apd.data_id, apd.direction"
-            + " FROM applied_protocol ap, applied_protocol_data apd"
-            + " WHERE apd.applied_protocol_id = ap.applied_protocol_id";
-   /*     
+            "SELECT ap.applied_protocol_id, ap.protocol_id"
+            + " FROM applied_protocol ap";
+
+        /*        "SELECT ap.applied_protocol_id, ap.protocol_id, apd.data_id, apd.direction"
+        + " FROM applied_protocol ap, applied_protocol_data apd"
+        + " WHERE apd.applied_protocol_id = ap.applied_protocol_id";
+      
         "SELECT eap.experiment_id"
         + " ,ap.applied_protocol_id, ap.protocol_id, apd.data_id, apd.direction"
         + " FROM applied_protocol_data apd"
@@ -454,7 +463,7 @@ public class ModEncodeMetaDataProcessor extends ChadoProcessor
         ResultSet res = getAppliedProtocolDataResultSet(connection);
         int count = 0;
         while (res.next()) {
-            Integer dataId = new Integer(res.getInt("data_id"));
+            Integer appliedProtocolId = new Integer(res.getInt("applied_protocol_id"));
             String name = res.getString("name");
             String value = res.getString("value");
             /*
@@ -475,10 +484,10 @@ public class ModEncodeMetaDataProcessor extends ChadoProcessor
                 if (fieldName == null) { 
                     LOG.error("NOT FOUND in FIELD_NAME_MAP: " + name);
                 } else {
-                    setAttribute(appliedProtocolDataIdMap.get(dataId), fieldName, value);
+                    setAttribute(appliedProtocolIdMap.get(appliedProtocolId), fieldName, value);
                 }
             }    else {
-                setAttribute(appliedProtocolDataIdMap.get(dataId), name, value);            
+                setAttribute(appliedProtocolIdMap.get(appliedProtocolId), name, value);            
             }
 
             count++;  
@@ -493,6 +502,8 @@ public class ModEncodeMetaDataProcessor extends ChadoProcessor
      * Here we consider data that appear to be parameter of the protocol,
      * i.e. with heading 'Source Name' or 'Parameter Value' in the data table
      * in Chado.
+     * UNION is used instead of IN clause just to have both 'name' and 'heading'
+     * as 'name' in the result set.
      * This is a protected method so that it can be overridden for testing
      * @param connection the db connection
      * @return the SQL result set
@@ -500,16 +511,16 @@ public class ModEncodeMetaDataProcessor extends ChadoProcessor
      */
     protected ResultSet getAppliedProtocolDataResultSet(Connection connection) 
     throws SQLException {
-
         String query =
-        "SELECT data_id, name, value"
-        + " FROM data"
-        + " WHERE heading = 'Parameter Value'"
-        + " UNION"
-        + " SELECT data_id, heading, value"
-        + " FROM data"
-        + " WHERE heading = 'Source Name'";
-
+            "SELECT apd.applied_protocol_id, apd.data_id, d.name, d.value"
+            + " FROM applied_protocol_data apd, data d"
+            + " WHERE apd.data_id = d.data_id" 
+            + " AND heading = 'Parameter Value'"
+            + " UNION"
+            + " SELECT apd.applied_protocol_id, apd.data_id, d.name, d.value"
+            + " FROM applied_protocol_data apd, data d"
+            + " WHERE apd.data_id = d.data_id" 
+            + " AND heading = 'Source Name'";
         
         LOG.info("executing: " + query);
         Statement stmt = connection.createStatement();
@@ -523,7 +534,7 @@ public class ModEncodeMetaDataProcessor extends ChadoProcessor
     ResultSet res = getAppliedProtocolDataAttributesResultSet(connection);
     int count = 0;
     while (res.next()) {
-        Integer dataId = new Integer(res.getInt("data_id"));
+        Integer appliedProtocolId = new Integer(res.getInt("applied_protocol_id"));
 
         String heading = res.getString("heading");
         String value = res.getString("value");
@@ -533,7 +544,7 @@ public class ModEncodeMetaDataProcessor extends ChadoProcessor
         continue;
         }
         
-        setAttribute(appliedProtocolDataIdMap.get(dataId), fieldName, value);
+        setAttribute(appliedProtocolIdMap.get(appliedProtocolId), fieldName, value);
         
         count++;
     }
@@ -542,7 +553,8 @@ public class ModEncodeMetaDataProcessor extends ChadoProcessor
 }
 
     /**
-     * Return the rows needed for data from the data_prop table.
+     * Query to get the attributes for data linked to applied protocols 
+     * (see previous get method).
      * This is a protected method so that it can be overridden for testing
      * @param connection the db connection
      * @return the SQL result set
@@ -551,11 +563,12 @@ public class ModEncodeMetaDataProcessor extends ChadoProcessor
     protected ResultSet getAppliedProtocolDataAttributesResultSet(Connection connection) 
     throws SQLException {
         String query =
-            "select da.data_id, a.heading, a.value"
-            + " from data_attribute da, attribute a"
+            "select apd.applied_protocol_id, da.data_id, a.heading, a.value"
+            + " from applied_protocol_data apd, data_attribute da, attribute a"
             + " where"
-            + " da.attribute_id = a.attribute_id"
-            + " order by da.data_id";
+            + " apd.data_id = da.data_id"
+            + " and da.attribute_id = a.attribute_id";
+
         LOG.info("executing: " + query);
         Statement stmt = connection.createStatement();
         ResultSet res = stmt.executeQuery(query);
