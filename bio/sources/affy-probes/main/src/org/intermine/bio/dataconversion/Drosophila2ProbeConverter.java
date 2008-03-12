@@ -73,82 +73,49 @@ public class Drosophila2ProbeConverter extends FileConverter
     public void process(Reader reader) throws Exception {
         
         Iterator<String[]> lineIter = FormattedTextParser.parseCsvDelimitedReader(reader);
-        boolean readingData = false;
+        lineIter.next();    // skip header
+        boolean hasDataset = false;
 
         while (lineIter.hasNext()) {
             String[] line = lineIter.next();
+
+            List<Item> delayedItems = new ArrayList<Item>();
+            Item probeSet = createProbeSet(line[0], delayedItems);
+
+            String seqType = line[4];
+
+            if (seqType.equalsIgnoreCase("control sequence")) {
+                // TODO add a description and flag
+                // probeSet.setAttribute("description", line[4]);
+                probeSet.setAttribute("isControl", "true");
+            }
             
-            if (readingData) {
+            String cgs = line[17];
+            if (!cgs.equals("---")) {
+                // set reference to transcript
+                Item transcript = createBioEntity("Transcript", line[6], true);
+                probeSet.setReference("transcript", transcript.getIdentifier());
 
-                List<Item> delayedItems = new ArrayList<Item>();
-                Item probeSet = createProbeSet(line[0], delayedItems);
-
-                String seqType = line[4];
-                
-                if (seqType.equalsIgnoreCase("control sequence")) {
-                    // TODO add a description and flag
-                    // probeSet.setAttribute("description", line[4]);
-                    probeSet.setAttribute("isControl", "true");
-//                } else {
-//
-//                    // create chromosome location for probe set
-//                    // "arm_2L:5943681-5948313 (+)" 
-//                    String alignment = line[12];
-//                    if (alignment != null && !alignment.equals("---")) {
-//                        
-//                        if (alignment.contains(":") && alignment.contains(" ") 
-//                                        && alignment.contains("-")) {
-//                        
-//                            String[] s = alignment.split(":");
-//                            Item chr = createChromosome(s[0]);
-//                            s = s[1].split(" ");
-//                            String strand = s[1];
-//                            s = s[0].split("-");
-//                            String start = s[0];
-//                            String end = s[1];
-//
-//                            Item loc = createItem("Location");
-//                            loc.setReference("object", chr.getIdentifier());
-//                            loc.setReference("subject", probeSet.getIdentifier());
-//                            loc.setAttribute("strand", strand.contains("+") ? "1" : "-1");
-//                            loc.setAttribute("start", start);
-//                            loc.setAttribute("end", end);
-//                            loc.setCollection("evidence",
-//                            new ArrayList(Collections.singleton(dataSet.getIdentifier())));
-//
-//                            delayedItems.add(loc);
-//                        } else {
-//                            LOG.error("Can't parse chromosome: " + alignment);
-//                        }
-//                    }
-                }
-                String cgs = line[17];
-                if (!cgs.equals("---")) {
-                    // set reference to transcript
-                    Item transcript = createBioEntity("Transcript", line[6], true);
-                    probeSet.setReference("transcript", transcript.getIdentifier());
-                    
-                    // FBgn0029676 /// FBgn0052789 /// FBgn0066138 /// FBgn0066170
-                    String[] genes = cgs.split(" /// ");
-                    ReferenceList geneColl = new ReferenceList("genes", new ArrayList<String>());
-                    for (String identifier : genes) {
-                        if (identifier.startsWith("CG")) {
-                            Item gene = createBioEntity("Gene", genes[0], false);
-                            geneColl.addRefId(gene.getIdentifier());
-                        }
+                // FBgn0029676 /// FBgn0052789 /// FBgn0066138 /// FBgn0066170
+                String[] genes = cgs.split(" /// ");
+                ReferenceList geneColl = new ReferenceList("genes", new ArrayList<String>());
+                for (String identifier : genes) {
+                    if (identifier.trim().startsWith("CG")) {
+                        Item gene = createBioEntity("Gene", identifier, false);
+                        geneColl.addRefId(gene.getIdentifier());
                     }
-                    probeSet.addCollection(geneColl);
-                    
                 }
-                store(probeSet);
-                for (Item item : delayedItems) {
-                    store(item);
-                }
-            } else {
-                // still in the header
+                probeSet.addCollection(geneColl);
+
+            }
+            store(probeSet);
+            for (Item item : delayedItems) {
+                store(item);
+            }
+            if (!hasDataset)  {
                 dataSet.setAttribute("title", "Affymetrix array: " + line[1]);
                 store(dataSet);
-                readingData = true;
+                hasDataset = true;
             }
         }
     }
