@@ -122,25 +122,31 @@ public class Drosophila2ProbeConverter extends FileConverter
 //                        }
 //                    }
                 }
-                String fbgns = line[24];
-                if (!fbgns.equals("---")) {
-                    // set reference to transcript
-                    Item transcript = createBioEntity("Transcript", line[6]);
+                    
+                String transcriptId = line[6];
+                
+                if (transcriptId.startsWith("CG")) {
+
+                    Item transcript = createBioEntity("Transcript", transcriptId);
                     probeSet.setReference("transcript", transcript.getIdentifier());
                     
-                    // FBgn0029676 /// FBgn0052789 /// FBgn0066138 /// FBgn0066170
-                    String[] genes = fbgns.split(" /// ");
-                    ReferenceList geneColl = new ReferenceList("genes", new ArrayList<String>());
-                    for (String identifier : genes) {
-                        Item gene = createBioEntity("Gene", identifier);
-                        geneColl.addRefId(gene.getIdentifier());
-                    }
-                    probeSet.addCollection(geneColl);
+                    String[] row = line[7].split("/"); 
                     
-                }
-                store(probeSet);
-                for (Item item : delayedItems) {
-                    store(item);
+                    if (row.length > 3) {
+                        //CG9042-RB /FEA=BDGP /GEN=Gpdh /DB_XREF=CG9042 FBgn0001128 /
+
+                        String[] dbxref = row[3].split(" ");
+
+                        Item gene = createBioEntity("Gene", dbxref[1]);
+
+                        probeSet.setCollection("genes", 
+                        new ArrayList<String>(Collections.singleton(gene.getIdentifier())));
+
+                        store(probeSet);
+                        for (Item item : delayedItems) {
+                            store(item);
+                        }
+                    }
                 }
             } else {
                 // still in the header
