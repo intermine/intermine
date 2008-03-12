@@ -122,19 +122,21 @@ public class Drosophila2ProbeConverter extends FileConverter
 //                        }
 //                    }
                 }
-                String fbgns = line[24];
-                if (!fbgns.equals("---")) {
+                String cgs = line[17];
+                if (!cgs.equals("---")) {
                     // set reference to transcript
-                    Item transcript = createBioEntity("Transcript", line[6]);
+                    Item transcript = createBioEntity("Transcript", line[6], true);
                     probeSet.setReference("transcript", transcript.getIdentifier());
                     
                     // FBgn0029676 /// FBgn0052789 /// FBgn0066138 /// FBgn0066170
-                    String[] genes = fbgns.split(" /// ");
+                    String[] genes = cgs.split(" /// ");
                     ReferenceList geneColl = new ReferenceList("genes", new ArrayList<String>());
-                    //for (String identifier : genes) {
-                        Item gene = createBioEntity("Gene", genes[0]);
-                        geneColl.addRefId(gene.getIdentifier());
-                    //}
+                    for (String identifier : genes) {
+                        if (identifier.startsWith("CG")) {
+                            Item gene = createBioEntity("Gene", genes[0], false);
+                            geneColl.addRefId(gene.getIdentifier());
+                        }
+                    }
                     probeSet.addCollection(geneColl);
                     
                 }
@@ -151,13 +153,17 @@ public class Drosophila2ProbeConverter extends FileConverter
         }
     }
 
-    private Item createBioEntity(String clsName, String identifier)
+    private Item createBioEntity(String clsName, String identifier, boolean usePrimary)
         throws ObjectStoreException {
         Item bio = bioMap.get(identifier);
         if (bio == null) {
             bio = createItem(clsName);
             bio.setReference("organism", org.getIdentifier());
-            bio.setAttribute("primaryIdentifier", identifier);
+            if (usePrimary) {
+                bio.setAttribute("primaryIdentifier", identifier);
+            } else {
+                bio.setAttribute("secondaryIdentifier", identifier);
+            }
             bioMap.put(identifier, bio);
             store(bio);
         }
