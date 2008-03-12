@@ -77,7 +77,7 @@ public class TableExporterFactory
      */
     public void register(String  id, TableHttpExporter exporter) {
         TableHttpExporter exp = getExporter(id);
-        if (exp != null) {
+        if (exp == null) {
             exporters.put(id, exporter);
         } 
     }

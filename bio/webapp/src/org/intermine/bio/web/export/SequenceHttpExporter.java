@@ -82,13 +82,20 @@ public class SequenceHttpExporter implements TableHttpExporter
 
         PagedTable pt = SessionMethods.getResultsTable(session, request.getParameter("table"));
 
+        if (pt == null) {
+            return mapping.getInputForward();
+        }        
+        
         // the first column that contains exportable features
         int realFeatureIndex = getFeatureColumnIndex(pt);
 
         SequenceExporter exporter = new SequenceExporter(os, outputStream, 
                 realFeatureIndex);
         
-        exporter.export(pt.getRearrangedResults());        
+        exporter.export(pt.getRearrangedResults());
+        if (exporter.getWrittenResultsCount() == 0) {
+            throw new ExportException("Nothing was found for export.");
+        }
         return null;
     }
 
