@@ -10,6 +10,8 @@ package org.intermine.util;
  *
  */
 
+import net.sf.cglib.proxy.Factory;
+
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
@@ -152,5 +154,87 @@ public class CollectionUtil
                 fanOutCombinations(values, retval, solution, index + 1);
             }
         }
+    }
+
+    /**
+     * Finds common superclasses and superinterfaces for all the classes specified in the arguments.
+     *
+     * @param classes a Collection of Classes
+     * @return a Collection of Classes that are superclasses of all the argument classes, without
+     * any that are superclasses of classes in this return Collection
+     */
+    public static Set<Class> findCommonSuperclasses(Collection<Class> classes) {
+        Set<Class> all = new HashSet();
+        for (Class c : classes) {
+            Stack<Class> stack = new Stack();
+            stack.push(c);
+            while (!stack.empty()) {
+                Class d = stack.pop();
+                if ((!Factory.class.equals(d)) && (!all.contains(d))) {
+                    all.add(d);
+                    Class superClass = d.getSuperclass();
+                    if (superClass != null) {
+                        stack.push(superClass);
+                    }
+                    for (Class e : d.getInterfaces()) {
+                        stack.push(e);
+                    }
+                }
+            }
+        }
+        // Now "all" contains all the classes and all superclasses and interfaces. So filter them.
+        // Unfortunately this is an O(n^2) operation.
+        Iterator<Class> iter = all.iterator();
+        while (iter.hasNext()) {
+            Class c = iter.next();
+            for (Class d : classes) {
+                if (!c.isAssignableFrom(d)) {
+                    iter.remove();
+                    break;
+                }
+            }
+        }
+        // Now "all" contains all the classes that are superclasses or interfaces of ALL classes
+        // in the argument. Remove redundant elements.
+        Set<Class> retval = new HashSet();
+        for (Class c : all) {
+            boolean needed = true;
+            for (Class d : all) {
+                if (c.isAssignableFrom(d) && (!c.equals(d))) {
+                    needed = false;
+                    break;
+                }
+            }
+            if (needed) {
+                retval.add(c);
+            }
+        }
+        return retval;
+    }
+
+    /*
+    Set<Class> retval = new HashSet();
+    Iterator<Class> iter = classes.iterator();
+    retval.add(iter.next());
+    while (iter.hasNext()) {
+        Class newClass = iter.next();
+        Set<Class> newRetval = new HashSet();
+        for (Class oldClass : retval) {
+            if (oldClass.isAssignableFrom(newClass)) {
+                newRetval.add(oldClass);
+            } else if (newClass.isAssignableFrom(oldClass)) {
+                newRetval.add(newClass);
+            }
+        }
+    }*/
+
+    /**
+     * Finds a common superclass or superinterface for all the classes specified in the arguments.
+     *
+     * @param classes a Collection of Classes
+     * @return a Class that is a common superclass or superinterface
+     */
+    public static Class findCommonSuperclass(Collection<Class> classes) {
+        return findCommonSuperclasses(classes).iterator().next();
     }
 }
