@@ -122,31 +122,25 @@ public class Drosophila2ProbeConverter extends FileConverter
 //                        }
 //                    }
                 }
-                    
-                String transcriptId = line[6];
-                
-                if (transcriptId.startsWith("CG")) {
-
-                    Item transcript = createBioEntity("Transcript", transcriptId);
+                String fbgns = line[24];
+                if (!fbgns.equals("---")) {
+                    // set reference to transcript
+                    Item transcript = createBioEntity("Transcript", line[6]);
                     probeSet.setReference("transcript", transcript.getIdentifier());
                     
-                    String[] row = line[7].split("/"); 
+                    // FBgn0029676 /// FBgn0052789 /// FBgn0066138 /// FBgn0066170
+                    String[] genes = fbgns.split(" /// ");
+                    ReferenceList geneColl = new ReferenceList("genes", new ArrayList<String>());
+                    //for (String identifier : genes) {
+                        Item gene = createBioEntity("Gene", genes[0]);
+                        geneColl.addRefId(gene.getIdentifier());
+                    //}
+                    probeSet.addCollection(geneColl);
                     
-                    if (row.length > 3) {
-                        //CG9042-RB /FEA=BDGP /GEN=Gpdh /DB_XREF=CG9042 FBgn0001128 /
-
-                        String[] dbxref = row[3].split(" ");
-
-                        Item gene = createBioEntity("Gene", dbxref[1]);
-
-                        probeSet.setCollection("genes", 
-                        new ArrayList<String>(Collections.singleton(gene.getIdentifier())));
-
-                        store(probeSet);
-                        for (Item item : delayedItems) {
-                            store(item);
-                        }
-                    }
+                }
+                store(probeSet);
+                for (Item item : delayedItems) {
+                    store(item);
                 }
             } else {
                 // still in the header
@@ -186,7 +180,7 @@ public class Drosophila2ProbeConverter extends FileConverter
         probeSet.setAttribute("name", probeSetId);
         probeSet.setReference("organism", org.getIdentifier());
         probeSet.setCollection("evidence",
-            new ArrayList<String>(Collections.singleton(dataSet.getIdentifier())));
+            new ArrayList(Collections.singleton(dataSet.getIdentifier())));
 
         Item synonym = createItem("Synonym");
         synonym.setAttribute("type", "identifier");
