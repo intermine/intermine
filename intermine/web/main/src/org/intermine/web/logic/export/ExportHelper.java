@@ -31,10 +31,15 @@ public class ExportHelper
      * @return true if the class is found
      */
     public static boolean canExport(PagedTable pt, Class cls) {
-        return  (getFirstColumnForClass(getColumnClasses(pt), cls) >= 0);
+        return  (getClassIndex(getColumnClasses(pt), cls) >= 0);
     }
-
-    public static int getFirstColumnForClass(List<Class> clazzes, Class cls) {        
+    
+    /**
+     * @param clazzes classes
+     * @param cls class
+     * @return index of class that is assignable to given class 
+     */
+    public static int getClassIndex(List<Class> clazzes, Class cls) {        
         for (int i = 0; i < clazzes.size(); i++) {
             if (cls.isAssignableFrom(clazzes.get(i))) {
                 return i;
@@ -43,6 +48,10 @@ public class ExportHelper
         return -1;
     }
     
+    /**
+     * @param pt PagedTable
+     * @return classes of columns
+     */
     public static List<Class> getColumnClasses(PagedTable pt) {
         List columns = pt.getColumns();
         List<Class> ret = new ArrayList<Class>();
@@ -65,6 +74,6 @@ public class ExportHelper
      * @return the first column index for the class
      */
     public static int getFirstColumnForClass(PagedTable pt, Class cls) {
-        return getFirstColumnForClass(getColumnClasses(pt), cls);
+        return getClassIndex(getColumnClasses(pt), cls);
     }
 }
