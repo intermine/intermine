@@ -60,7 +60,7 @@ public class GoStatLdr implements EnrichmentWidgetLdr
     private InterMineBag bag;
     private String namespace;
     private Collection<String> badOntologies;
-    
+    private Collection<String> organismsLower = new ArrayList<String>();
     /**
      * @param request The HTTP request we are processing
      */
@@ -80,8 +80,12 @@ public class GoStatLdr implements EnrichmentWidgetLdr
         badOntologies = getOntologies();        
         organisms = BioUtil.getOrganisms(os, bag, false);
         
+        for (String s : organisms) {
+            organismsLower.add(s.toLowerCase());
+        }
         annotatedSampleQuery = getQuery(false, true);
         annotatedPopulationQuery = getQuery(false, false);
+                
     }
 
     // adds 3 main ontologies to array.  these 3 will be excluded from the query
@@ -120,10 +124,8 @@ public class GoStatLdr implements EnrichmentWidgetLdr
         
         ConstraintSet cs = new ConstraintSet(ConstraintOp.AND);
 
-        Collection<String> organismsLower = new ArrayList<String>();
-        for (String s : organisms) {
-            organismsLower.add(s.toLowerCase());
-        }
+        
+
         QueryExpression qf1 = new QueryExpression(QueryExpression.LOWER, qfOrganismName);
         cs.addConstraint(new BagConstraint(qf1, ConstraintOp.IN, organismsLower));
         
