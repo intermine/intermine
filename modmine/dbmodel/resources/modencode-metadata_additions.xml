@@ -51,6 +51,7 @@
     <attribute name="name" type="java.lang.String"/>
     <attribute name="description" type="java.lang.String"/>
     <attribute name="type" type="java.lang.String"/>
+    <attribute name="url" type="java.lang.String"/>    
 <!-- 
     <attribute name="references" type="java.lang.String"/>
 -->

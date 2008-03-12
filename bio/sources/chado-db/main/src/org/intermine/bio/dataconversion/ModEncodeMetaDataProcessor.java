@@ -43,10 +43,10 @@ public class ModEncodeMetaDataProcessor extends ChadoProcessor
 
     private static final Map<String, String> PROVIDER_FIELD_NAME_MAP =
         new HashMap<String, String>();
+
+    private static final String NOT_TO_BE_LOADED = "not_needed";
     
     static {
-        //protocol
-        FIELD_NAME_MAP.put("Protocol Type", "type");
         //experiment
         FIELD_NAME_MAP.put("Investigation Title", "title");
         FIELD_NAME_MAP.put("Experiment Description", "description");
@@ -90,6 +90,12 @@ public class ModEncodeMetaDataProcessor extends ChadoProcessor
         //FIELD_NAME_MAP.put("", "sample");
         //FIELD_NAME_MAP.put("", "extract");
         //FIELD_NAME_MAP.put("", "labelExtract");
+
+        //protocol
+        FIELD_NAME_MAP.put("Protocol Type", "type");
+        FIELD_NAME_MAP.put("url protocol", "url");
+        FIELD_NAME_MAP.put("species", NOT_TO_BE_LOADED);
+        FIELD_NAME_MAP.put("references", NOT_TO_BE_LOADED);
     }
 
     static {        
@@ -101,16 +107,13 @@ public class ModEncodeMetaDataProcessor extends ChadoProcessor
     /**
      * Create a new class for ****.
      */
-/*
     class AppliedProtocolStuff 
     {
         List<Integer> inputSubmissionData;
         List<Integer> outputSubmissionData;
         int intermineObjectId;
     }
-  */  
- 
-    
+  
     /**
      * Create a new ChadoModuleProcessor object.
      * @param chadoDBConverter the converter that created this Processor
@@ -139,175 +142,10 @@ public class ModEncodeMetaDataProcessor extends ChadoProcessor
         processAppliedProtocolDataAttributes(connection);
                 
         processDataTable(connection);
-        //processDataAttributes(connection);
-        //processDataTableAgain(connection);
-    }
-
-    /* PROTOCOL -------------------------------------------------------------------------*/
-    
-    private void processProtocolTable(Connection connection)
-        throws SQLException, ObjectStoreException {
-        ResultSet res = getProtocolResultSet(connection);
-        int count = 0;
-        while (res.next()) {
-            Integer protocolId = new Integer(res.getInt("protocol_id"));
-            String name = res.getString("name");
-            String description = res.getString("description");
-            Item protocol = getChadoDBConverter().createItem("Protocol");
-            protocol.setAttribute("name", name);
-            protocol.setAttribute("description", description);
-            Integer intermineObjectId = getChadoDBConverter().store(protocol);
-            protocolIdMap .put(protocolId, intermineObjectId);
-            count++;
-        }
-        LOG.info("created " + count + " protocols");
-        res.close();
-    }
-
-    /**
-     * Return the rows needed from the protocol table.
-     * This is a protected method so that it can be overridden for testing
-     * @param connection the db connection
-     * @return the SQL result set
-     * @throws SQLException if a database problem occurs
-     */
-    protected ResultSet getProtocolResultSet(Connection connection) throws SQLException {
-        String query =
-            "SELECT protocol_id, name, description"
-            + "  FROM protocol";
-        LOG.info("executing: " + query);
-        Statement stmt = connection.createStatement();
-        ResultSet res = stmt.executeQuery(query);
-        return res;
-    }
-
-
-    private void processProtocolAttributes(Connection connection)
-    throws SQLException, ObjectStoreException {
-    ResultSet res = getProtocolAttributesResultSet(connection);
-    int count = 0;
-    while (res.next()) {
-        Integer protocolId = new Integer(res.getInt("protocol_id"));
-        String heading = res.getString("heading");
-        String value = res.getString("value");
-        String fieldName = FIELD_NAME_MAP.get(heading);
-        if (fieldName == null) { 
-        LOG.error("NOT FOUND: " + heading + " has no mapping in FIELD_NAME_MAP");
-        continue;
-        }
-        
-        setAttribute(protocolIdMap.get(protocolId), fieldName, value);
-        
-        count++;
-    }
-    LOG.info("created " + count + " protocol attributes");
-    res.close();
-}
-
-    /**
-     * Return the rows needed for protocols from the attribute table.
-     * This is a protected method so that it can be overridden for testing
-     * @param connection the db connection
-     * @return the SQL result set
-     * @throws SQLException if a database problem occurs
-     */
-    protected ResultSet getProtocolAttributesResultSet(Connection connection) throws SQLException {
-        String query =
-            "SELECT p.protocol_id, a.heading, a.value "
-            + "from protocol p, attribute a, protocol_attribute pa "
-            + "where pa.attribute_id = a.attribute_id "
-            + "and pa.protocol_id = p.protocol_id ";
-        LOG.info("executing: " + query);
-        Statement stmt = connection.createStatement();
-        ResultSet res = stmt.executeQuery(query);
-        return res;
     }
     
-    
-    /* EXPERIMENT -----------------------------------------------------------------------*/
-    
-    private void processExperimentTable(Connection connection)
-    throws SQLException, ObjectStoreException {
-    ResultSet res = getExperimentResultSet(connection);
-    int count = 0;
-    while (res.next()) {
-        Integer experimentId = new Integer(res.getInt("experiment_id"));
-        //String name = res.getString("name");
-        Item experiment = getChadoDBConverter().createItem("ExperimentSubmission");
-        //experiment.setAttribute("name", name);
-        Integer intermineObjectId = getChadoDBConverter().store(experiment);
-        experimentIdMap .put(experimentId, intermineObjectId);
-        count++;
-    }
-    LOG.info("created " + count + " experiments");
-    res.close();
-}
-    
-    
-    /**
-     * Return the rows needed from the experiment table.
-     * NB: for the moment not using the uniquename, but the name from the 
-     * experiment_prop table
-     * This is a protected method so that it can be overridden for testing
-     * @param connection the db connection
-     * @return the SQL result set
-     * @throws SQLException if a database problem occurs
-     */
-    protected ResultSet getExperimentResultSet(Connection connection) 
-    throws SQLException {
-        String query =
-            "SELECT experiment_id, uniquename"
-            + "  FROM experiment";
-        LOG.info("executing: " + query);
-        Statement stmt = connection.createStatement();
-        ResultSet res = stmt.executeQuery(query);
-        return res;
-    }
-
-    private void processExperimentAttributes(Connection connection)
-    throws SQLException, ObjectStoreException {
-    ResultSet res = getExperimentAttributesResultSet(connection);
-    int count = 0;
-    while (res.next()) {
-        Integer experimentId = new Integer(res.getInt("experiment_id"));
-
-        String heading = res.getString("name");
-        String value = res.getString("value");
-        String fieldName = FIELD_NAME_MAP.get(heading);
-        if (fieldName == null) { 
-        LOG.error("NOT FOUND: " + heading + " has no mapping in FIELD_NAME_MAP");
-        continue;
-        }
-        
-        setAttribute(experimentIdMap.get(experimentId), fieldName, value);
-        
-        count++;
-    }
-    LOG.info("created " + count + " experiment properties");
-    res.close();
-}
-
-    /**
-     * Return the rows needed for experiment from the experiment_prop table.
-     * This is a protected method so that it can be overridden for testing
-     * @param connection the db connection
-     * @return the SQL result set
-     * @throws SQLException if a database problem occurs
-     */
-    protected ResultSet getExperimentAttributesResultSet(Connection connection) 
-    throws SQLException {
-        String query =
-            "SELECT ep.experiment_id, ep.name, ep.value "
-            + "from experiment_prop ep ";
-        LOG.info("executing: " + query);
-        Statement stmt = connection.createStatement();
-        ResultSet res = stmt.executeQuery(query);
-        return res;
-    }
-    
-
     /* PROVIDER -------------------------------------------------------------------------*/
- 
+    
     private void processProviderTable(Connection connection)
     throws SQLException, ObjectStoreException {
         ResultSet res = getProviderResultSet(connection);
@@ -392,7 +230,172 @@ public class ModEncodeMetaDataProcessor extends ChadoProcessor
         return res;
     }
     
+        
+    /* EXPERIMENT -----------------------------------------------------------------------*/
     
+    private void processExperimentTable(Connection connection)
+    throws SQLException, ObjectStoreException {
+    ResultSet res = getExperimentResultSet(connection);
+    int count = 0;
+    while (res.next()) {
+        Integer experimentId = new Integer(res.getInt("experiment_id"));
+        //String name = res.getString("name");
+        Item experiment = getChadoDBConverter().createItem("ExperimentSubmission");
+        //experiment.setAttribute("name", name);
+        Integer intermineObjectId = getChadoDBConverter().store(experiment);
+        experimentIdMap .put(experimentId, intermineObjectId);
+        count++;
+    }
+    LOG.info("created " + count + " experiments");
+    res.close();
+}
+    
+    
+    /**
+     * Return the rows needed from the experiment table.
+     * NB: for the moment not using the uniquename, but the name from the 
+     * experiment_prop table
+     * This is a protected method so that it can be overridden for testing
+     * @param connection the db connection
+     * @return the SQL result set
+     * @throws SQLException if a database problem occurs
+     */
+    protected ResultSet getExperimentResultSet(Connection connection) 
+    throws SQLException {
+        String query =
+            "SELECT experiment_id, uniquename"
+            + "  FROM experiment";
+        LOG.info("executing: " + query);
+        Statement stmt = connection.createStatement();
+        ResultSet res = stmt.executeQuery(query);
+        return res;
+    }
+
+    private void processExperimentAttributes(Connection connection)
+    throws SQLException, ObjectStoreException {
+    ResultSet res = getExperimentAttributesResultSet(connection);
+    int count = 0;
+    while (res.next()) {
+        Integer experimentId = new Integer(res.getInt("experiment_id"));
+
+        String heading = res.getString("name");
+        String value = res.getString("value");
+        String fieldName = FIELD_NAME_MAP.get(heading);
+        if (fieldName == null) { 
+        LOG.error("NOT FOUND: " + heading + " has no mapping in FIELD_NAME_MAP");
+        continue;
+        }
+        
+        setAttribute(experimentIdMap.get(experimentId), fieldName, value);
+        
+        count++;
+    }
+    LOG.info("created " + count + " experiment properties");
+    res.close();
+}
+
+    /**
+     * Return the rows needed for experiment from the experiment_prop table.
+     * This is a protected method so that it can be overridden for testing
+     * @param connection the db connection
+     * @return the SQL result set
+     * @throws SQLException if a database problem occurs
+     */
+    protected ResultSet getExperimentAttributesResultSet(Connection connection) 
+    throws SQLException {
+        String query =
+            "SELECT ep.experiment_id, ep.name, ep.value "
+            + "from experiment_prop ep ";
+        LOG.info("executing: " + query);
+        Statement stmt = connection.createStatement();
+        ResultSet res = stmt.executeQuery(query);
+        return res;
+    }
+    
+
+    
+    /* PROTOCOL -------------------------------------------------------------------------*/
+    
+    private void processProtocolTable(Connection connection)
+        throws SQLException, ObjectStoreException {
+        ResultSet res = getProtocolResultSet(connection);
+        int count = 0;
+        while (res.next()) {
+            Integer protocolId = new Integer(res.getInt("protocol_id"));
+            String name = res.getString("name");
+            String description = res.getString("description");
+            Item protocol = getChadoDBConverter().createItem("Protocol");
+            protocol.setAttribute("name", name);
+            protocol.setAttribute("description", description);
+            Integer intermineObjectId = getChadoDBConverter().store(protocol);
+            protocolIdMap .put(protocolId, intermineObjectId);
+            count++;
+        }
+        LOG.info("created " + count + " protocols");
+        res.close();
+    }
+
+    /**
+     * Return the rows needed from the protocol table.
+     * This is a protected method so that it can be overridden for testing
+     * @param connection the db connection
+     * @return the SQL result set
+     * @throws SQLException if a database problem occurs
+     */
+    protected ResultSet getProtocolResultSet(Connection connection) throws SQLException {
+        String query =
+            "SELECT protocol_id, name, description"
+            + "  FROM protocol";
+        LOG.info("executing: " + query);
+        Statement stmt = connection.createStatement();
+        ResultSet res = stmt.executeQuery(query);
+        return res;
+    }
+
+
+    private void processProtocolAttributes(Connection connection)
+    throws SQLException, ObjectStoreException {
+    ResultSet res = getProtocolAttributesResultSet(connection);
+    int count = 0;
+    while (res.next()) {
+        Integer protocolId = new Integer(res.getInt("protocol_id"));
+        String heading = res.getString("heading");
+        String value = res.getString("value");
+        String fieldName = FIELD_NAME_MAP.get(heading);
+        if (fieldName == null) { 
+        LOG.error("NOT FOUND: " + heading + " has no mapping in FIELD_NAME_MAP");
+        continue;
+        } else if (fieldName == NOT_TO_BE_LOADED){
+            continue;
+        }
+        
+        setAttribute(protocolIdMap.get(protocolId), fieldName, value);
+        
+        count++;
+    }
+    LOG.info("created " + count + " protocol attributes");
+    res.close();
+}
+
+    /**
+     * Return the rows needed for protocols from the attribute table.
+     * This is a protected method so that it can be overridden for testing
+     * @param connection the db connection
+     * @return the SQL result set
+     * @throws SQLException if a database problem occurs
+     */
+    protected ResultSet getProtocolAttributesResultSet(Connection connection) throws SQLException {
+        String query =
+            "SELECT p.protocol_id, a.heading, a.value "
+            + "from protocol p, attribute a, protocol_attribute pa "
+            + "where pa.attribute_id = a.attribute_id "
+            + "and pa.protocol_id = p.protocol_id ";
+        LOG.info("executing: " + query);
+        Statement stmt = connection.createStatement();
+        ResultSet res = stmt.executeQuery(query);
+        return res;
+    }
+
     /* APPLIED PROTOCOLS-----------------------------------------------------------------*/
     
     private void processAppliedProtocolTable(Connection connection)
