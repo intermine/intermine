@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <classpath>
 	<classpathentry kind="src" path="main/src"/>
+	<classpathentry kind="src" path="webapp/src"/>
 	<classpathentry kind="src" path="test/src"/>
 	<classpathentry kind="lib" path="main/dist/bio-tools.jar"/>
 	<classpathentry kind="lib" path="main/lib/colt.jar"/>
@@ -46,5 +47,6 @@
 	<classpathentry combineaccessrules="false" kind="src" path="/intermine-integrate-test"/>
 	<classpathentry combineaccessrules="false" kind="src" path="/intermine-objectstore-main"/>
 	<classpathentry combineaccessrules="false" kind="src" path="/intermine-objectstore-test"/>
+	<classpathentry combineaccessrules="false" kind="src" path="/intermine-web"/>
 	<classpathentry kind="output" path="test/build/classes"/>
 </classpath>
