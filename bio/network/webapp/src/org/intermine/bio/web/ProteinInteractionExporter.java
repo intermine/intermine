@@ -18,28 +18,13 @@ package org.intermine.bio.web;
  * @author Florian Reisinger
  * @author Richard Smith
  */
+import java.io.OutputStream;
+import java.io.PrintWriter;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
-
-import org.intermine.bio.networkview.FlyNetworkCreator;
-import org.intermine.bio.networkview.network.FlyNetwork;
-import org.intermine.model.InterMineObject;
-import org.intermine.objectstore.ObjectStoreException;
-import org.intermine.util.StringUtil;
-import org.intermine.web.logic.export.ExportHelper;
-import org.intermine.web.logic.export.TableExporter;
-import org.intermine.web.logic.results.PagedTable;
-import org.intermine.web.logic.results.ResultElement;
-import org.intermine.web.logic.results.WebTable;
-import org.intermine.web.logic.session.SessionMethods;
-
-import org.flymine.model.genomic.ProteinInteraction;
-
-import java.io.OutputStream;
-import java.io.PrintWriter;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -51,14 +36,26 @@ import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
 import org.apache.struts.action.ActionMessage;
 import org.apache.struts.action.ActionMessages;
+import org.flymine.model.genomic.ProteinInteraction;
+import org.intermine.bio.networkview.FlyNetworkCreator;
+import org.intermine.bio.networkview.network.FlyNetwork;
+import org.intermine.model.InterMineObject;
+import org.intermine.objectstore.ObjectStoreException;
+import org.intermine.util.StringUtil;
+import org.intermine.web.logic.export.ExportHelper;
+import org.intermine.web.logic.export.http.TableHttpExporter;
+import org.intermine.web.logic.results.PagedTable;
+import org.intermine.web.logic.results.ResultElement;
+import org.intermine.web.logic.results.WebTable;
+import org.intermine.web.logic.session.SessionMethods;
 
 /**
- * An implementation of TableExporter that exports protein interactions
+ * An implementation of TableHttpExporter that exports protein interactions
  * in cytoscape SIF format
  *
  * @author Florian Reisinger
  */
-public class ProteinInteractionExporter implements TableExporter
+public class ProteinInteractionExporter implements TableHttpExporter
 {
     static final boolean DEBUG = false;
 
@@ -171,7 +168,7 @@ public class ProteinInteractionExporter implements TableExporter
      * {@inheritDoc}
      * @param pt the PagedTable containing the results
      * @return true if exportable results were found
-     * @see org.intermine.web.logic.export.TableExporter#canExport
+     * @see org.intermine.web.logic.export.TableHttpExporter#canExport
      * @see org.intermine.bio.web.PIUtil#canExport
      */
     public boolean canExport(PagedTable pt) {
@@ -187,78 +184,4 @@ public class ProteinInteractionExporter implements TableExporter
         FlyNetwork fn = FlyNetworkCreator.createFlyNetwork(interactions);
         return fn.toSIF();
     }
-
-        /**
-     * create lines in sif format
-     * @param interactors list of interactors
-     * @return String respresenting the network in sif format
-     */
-//    public static String getSifLinesOld(Collection interactors) {
-//        StringBuffer sif = new StringBuffer();
-//        if (DEBUG) {
-//            if (interactors.size() > 0) {
-//                sif.append("found interactors - ");
-//            }
-//        } // flo debug
-//        // lists of proteins
-//        ArrayList baits = new ArrayList();
-//        ArrayList preys = new ArrayList();
-//        ArrayList others = new ArrayList();
-//        ProteinInteractor pInt = null;
-//        for (Iterator i = interactors.iterator(); i.hasNext();) {
-//            pInt = (ProteinInteractor) i.next();
-//            if (DEBUG) {
-//                if (pInt != null) {
-//                    sif.append("found protIntractr - ");
-//                }
-//            } // flo debug
-//            if (pInt.getRole().equalsIgnoreCase("bait")) {
-//                if (DEBUG) {
-//                    sif.append("found bait - ");
-//                } // flo debug
-//                baits.add(pInt.getProtein());
-//            } else if (pInt.getRole().equalsIgnoreCase("prey")) {
-//                if (DEBUG) {
-//                    sif.append("found prey - ");
-//                } // flo debug
-//                preys.add(pInt.getProtein());
-//            } else {
-//                if (DEBUG) {
-//                    sif.append("found other - ");
-//                }
-//                others.add(pInt.getProtein());
-//            }
-//        }
-//
-//        Protein protein = null;
-//        if (baits.size() == 1 && preys.size() > 0 && others.size() == 0) {
-//            if (DEBUG) {
-//                sif.append("adding protein name");
-//            } // flo debug
-//            protein = (Protein) baits.get(0);
-//            // adding bait and Interaction type
-//            sif.append(protein.getPrimaryAccession() + "\t" + "pp");
-//            for (Iterator i = preys.iterator(); i.hasNext();) {
-//                protein = (Protein) i.next();
-//                // adding prey(s)
-//                sif.append("\t" + protein.getPrimaryAccession());
-//            }
-//            sif.append("\n");
-//        } else {
-//            // link all proteins to each other
-//            // TODO: test this
-//            others.addAll(preys);
-//            others.addAll(baits);
-//            Protein[] p = new Protein[1];
-//            p = (Protein[]) others.toArray(p);
-//            for (int i = 0; i < others.size(); i++) {
-//                for (int j = i + 1; j < others.size(); j++) {
-//                    sif.append(p[i].getPrimaryAccession() + "\tcp\t"
-//                            + p[j].getPrimaryAccession() + "\n");
-//                }
-//            }
-//        }
-//        return sif.toString();
-//    }
-
 }

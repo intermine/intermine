@@ -34,8 +34,8 @@ public class DisclosureHeadTag extends BaseDisclosureTag
 
     /**
      * Renders tag.
-     * @throws JspException if an error occurs
-     * @throws IOException if an error occurs
+     * @throws JspException if element is not inside &lt;disclosure&gt; element
+     * @throws IOException if error occurs during writing to stream output
      */
     public void doTag() throws JspException, IOException {
         parent = (DisclosureTag) getParent();
@@ -66,6 +66,7 @@ public class DisclosureHeadTag extends BaseDisclosureTag
 
     /**
      * @see DisclosureTag.getLink()
+     * @return link 
      */
     public String getLink() {
         return parent.getLink();

@@ -57,16 +57,14 @@ public class DisclosureTag extends BaseDisclosureTag
     }
 
     /**
-     * Returns additional javascript code, that should be executed on element change.
-     * @return the value of onClick
+     * @return additional javascript code, that should be executed on element change.
      */
     public String getOnClick() {
         return onClick;
     }
 
     /**
-     * Sets additional javascript code, that should be executed on element change.
-     * @param onChange a String
+     * @param onChange additional javascript code, that should be executed on element change.
      */
     public void setOnClick(String onChange) {
         this.onClick = onChange;
@@ -108,8 +106,8 @@ public class DisclosureTag extends BaseDisclosureTag
     }
 
     /**
-     * Returns true if disclosure is consistent type.
-     * @return a boolean
+     * @return true if disclosure is consistent type, i.e. saves its state (opened or closed) 
+     * during user session
      */
     public boolean isConsistentType() {
         return getType().equals(CONSISTENT);
@@ -125,8 +123,8 @@ public class DisclosureTag extends BaseDisclosureTag
 
     /**
      * Renders tag.
-     * @throws JspException if an error occurs
-     * @throws IOException if an error occurs
+     * @throws IOException if error occurs during writing to stream output
+     * @throws JspException if JspException error occurs during rendering nested tags  
      */
     public void doTag() throws JspException, IOException {
         JspWriter out = getJspContext().getOut();

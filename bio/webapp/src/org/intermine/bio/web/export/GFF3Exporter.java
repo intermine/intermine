@@ -10,124 +10,123 @@ package org.intermine.bio.web.export;
  *
  */
 
-import java.io.InputStream;
+import java.io.PrintWriter;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
-import java.util.Properties;
 
-import javax.servlet.ServletContext;
-import javax.servlet.ServletException;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-import javax.servlet.http.HttpSession;
-
-import org.apache.log4j.Logger;
-import org.apache.struts.Globals;
-import org.apache.struts.action.ActionForm;
-import org.apache.struts.action.ActionForward;
-import org.apache.struts.action.ActionMapping;
-import org.apache.struts.action.ActionMessage;
-import org.apache.struts.action.ActionMessages;
 import org.flymine.model.genomic.LocatedSequenceFeature;
-import org.intermine.util.StringUtil;
+import org.intermine.bio.io.gff3.GFF3Record;
+import org.intermine.bio.util.GFF3Util;
+import org.intermine.objectstore.ObjectStoreException;
+import org.intermine.util.TypeUtil;
+import org.intermine.util.TypeUtil.FieldInfo;
+import org.intermine.web.logic.export.ExportException;
 import org.intermine.web.logic.export.ExportHelper;
 import org.intermine.web.logic.export.Exporter;
-import org.intermine.web.logic.export.TableExporter;
-import org.intermine.web.logic.results.PagedTable;
-import org.intermine.web.logic.session.SessionMethods;
+import org.intermine.web.logic.results.ResultElement;
 
 /**
- * An implementation of TableExporter that exports LocatedSequenceFeature objects in GFF3 format.
- *
+ * Exports LocatedSequenceFeature objects in GFF3 format. 
  * @author Kim Rutherford
+ * @author Jakub Kulaviak
  */
-
-public class GFF3Exporter implements TableExporter
+public class GFF3Exporter implements Exporter
 {
-    /**
-     * The batch size to use when we need to iterate through the whole result set.
-     */
-    public static final int BIG_BATCH_SIZE = 10000;
 
-    private static final Logger LOG = Logger.getLogger(GFF3Exporter.class);
-
-    /**
-     * Method called to export a PagedTable object as GFF3.  The PagedTable can only be exported if
-     * there is exactly one LocatedSequenceFeature column and the other columns (if any), are simple
-     * attributes (rather than objects).
-     * @param mapping The ActionMapping used to select this instance
-     * @param form The optional ActionForm bean for this request (if any)
-     * @param request The HTTP request we are processing
-     * @param response The HTTP response we are creating
-     * @return an ActionForward object defining where control goes next
-     * @exception Exception if the application business logic throws
-     *  an exception
-     */
-    public ActionForward export(ActionMapping mapping,
-                                ActionForm form,
-                                HttpServletRequest request,
-                                HttpServletResponse response)
-        throws Exception {
-        HttpSession session = request.getSession();
-        ServletContext servletContext = session.getServletContext();
-
-        setGFF3Header(response);
-
-        PagedTable pt = SessionMethods.getResultsTable(session, request.getParameter("table"));
-
-        int realFeatureIndex = ExportHelper.getFirstColumnForClass(
-                ExportHelper.getColumnClasses(pt), LocatedSequenceFeature.class);
-
-        Exporter exporter = new GFF3ExporterLogic(response.getWriter(), 
-                realFeatureIndex, getSoClassNames(servletContext));
-        
-        exporter.export(pt.getRearrangedResults());
-        
-        if (exporter.getWrittenResultsCount() == 0) {
-            ActionMessages messages = new ActionMessages();
-            ActionMessage error = new ActionMessage("errors.export.nothingtoexport");
-            messages.add(ActionMessages.GLOBAL_MESSAGE, error);
-            request.setAttribute(Globals.ERROR_KEY, messages);
-            return mapping.findForward("results");
-        }
-        return null;
-    }
-
-    private void setGFF3Header(HttpServletResponse response) {
-        response.setContentType("text/plain");
-        response.setHeader("Content-Disposition ",
-                           "inline; filename=table" + StringUtil.uniqueString() + ".gff3");
-    }
+    PrintWriter out;
+    private int featureIndex;
+    private Map soClassNames;
+    private int writtenResultsCount = 0;
+    private boolean headerPrinted = false;
 
     /**
-     * Read the SO term name to class name mapping file and return it as a Map from class name to
-     * SO term name.  The Map is cached as the SO_CLASS_NAMES attribute in the servlet context.
-     * @throws ServletException if the SO class names properties file cannot be found
+     * Constructor.
+     * @param out output stream
+     * @param featureIndex index of column with exported sequence
+     * @param soClassNames mapping
      */
-    private Map getSoClassNames(ServletContext servletContext) throws ServletException {
-        final String soClassNames = "SO_CLASS_NAMES";
-        Properties soNameProperties;
-        if (servletContext.getAttribute(soClassNames) == null) {
-            soNameProperties = new Properties();
-            try {
-                InputStream is =
-                    servletContext.getResourceAsStream("/WEB-INF/soClassName.properties");
-                soNameProperties.load(is);
-            } catch (Exception e) {
-                throw new ServletException("Error loading so class name mapping file", e);
-            }
-
-            servletContext.setAttribute(soClassNames, soNameProperties);
-        } else {
-            soNameProperties = (Properties) servletContext.getAttribute(soClassNames);
-        }
-
-        return soNameProperties;
+    public GFF3Exporter(PrintWriter out, int featureIndex, Map soClassNames) {
+        this.out = out;
+        this.featureIndex = featureIndex;
+        this.soClassNames = soClassNames;
     }
 
     /**
      * {@inheritDoc}
      */
-    public boolean canExport(PagedTable pt) {
-        return GFF3ExporterLogic.canExport2(ExportHelper.getColumnClasses(pt));
+    public void export(List<List<ResultElement>> results) {
+        try {
+            for (int i = 0; i < results.size(); i++) {
+                List<ResultElement> row = results.get(i);
+                exportRow(row);
+            }
+            out.flush();
+        } catch (Exception ex) {
+            throw new ExportException("Export failed.", ex);
+        }
     }
+
+    private void exportRow(List<ResultElement> row) throws ObjectStoreException, 
+        IllegalAccessException {
+        LocatedSequenceFeature lsf = (LocatedSequenceFeature) row.get(
+                featureIndex).getInterMineObject();
+
+        Map<String, List<String>> extraAttributes = new HashMap<String, List<String>>();
+
+        // add some fields as extra attributes if the object has them
+
+        List<String> extraFields = Arrays.asList(new String[] {"symbol",
+                "primaryIdentifier", "name" });
+        for (String fieldName : extraFields) {
+            FieldInfo field = TypeUtil.getFieldInfo(lsf.getClass(), fieldName);
+            if (field != null
+                    && (TypeUtil.getFieldValue(lsf, fieldName) != null)) {
+                List<String> values = new ArrayList<String>();
+                values.add((String) TypeUtil.getFieldValue(lsf, fieldName));
+                extraAttributes.put(fieldName, values);
+            }
+        }
+
+        GFF3Record gff3Record = GFF3Util.makeGFF3Record(lsf, soClassNames,
+                extraAttributes);
+
+        if (gff3Record == null) {
+            // no chromsome ref or no chromosomeLocation ref
+            return;
+        }
+
+        if (!headerPrinted) {
+            out.println("##gff-version 3");
+            headerPrinted = true;
+        }
+        
+        out.println(gff3Record.toGFF3());
+        
+        writtenResultsCount++;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public boolean canExport(List<Class> clazzes) {
+        return canExport2(clazzes);
+    }
+    
+    /**
+     * @param clazzes classes of result
+     * @return true if this exporter can export result composed of specified classes 
+     */    
+    public static boolean canExport2(List<Class> clazzes) {
+        return ExportHelper.getFirstColumnForClass(clazzes, LocatedSequenceFeature.class) >= 0;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public int getWrittenResultsCount() {
+        return writtenResultsCount;
+    }    
 }
