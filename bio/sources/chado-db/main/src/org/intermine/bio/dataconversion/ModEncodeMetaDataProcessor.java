@@ -15,6 +15,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import org.apache.log4j.Logger;
@@ -97,6 +98,18 @@ public class ModEncodeMetaDataProcessor extends ChadoProcessor
     }
 
     
+    /**
+     * Create a new class for ****.
+     */
+/*
+    class AppliedProtocolStuff 
+    {
+        List<Integer> inputSubmissionData;
+        List<Integer> outputSubmissionData;
+        int intermineObjectId;
+    }
+  */  
+ 
     
     /**
      * Create a new ChadoModuleProcessor object.
@@ -140,11 +153,9 @@ public class ModEncodeMetaDataProcessor extends ChadoProcessor
             Integer protocolId = new Integer(res.getInt("protocol_id"));
             String name = res.getString("name");
             String description = res.getString("description");
-//            String type = res.getString("type");
             Item protocol = getChadoDBConverter().createItem("Protocol");
             protocol.setAttribute("name", name);
             protocol.setAttribute("description", description);
-            //protocol.setAttribute("type", type);
             Integer intermineObjectId = getChadoDBConverter().store(protocol);
             protocolIdMap .put(protocolId, intermineObjectId);
             count++;
@@ -299,42 +310,30 @@ public class ModEncodeMetaDataProcessor extends ChadoProcessor
  
     private void processProviderTable(Connection connection)
     throws SQLException, ObjectStoreException {
-    ResultSet res = getProviderResultSet(connection);
-    int count = 0;
-    while (res.next()) {
-        //Integer providerId = new Integer(res.getInt("provider_id"));
-       Integer experimentId = new Integer(res.getInt("experiment_id"));
-       //String heading = res.getString("name");
-        String value = res.getString("value");
-        Item provider = getChadoDBConverter().createItem("Provider");
-
-        /*
-        String fieldName = PROVIDER_FIELD_NAME_MAP.get(heading);
-        if (fieldName == null) { 
-        LOG.error("NOT FOUND in PROVIDER_FIELD_NAME_MAP: " + heading);
-        continue;
+        ResultSet res = getProviderResultSet(connection);
+        int count = 0;
+        while (res.next()) {
+            Integer experimentId = new Integer(res.getInt("experiment_id"));
+            String value = res.getString("value");
+            Item provider = getChadoDBConverter().createItem("Provider");
+            provider.setAttribute("lab", value);
+            Integer intermineObjectId = getChadoDBConverter().store(provider);
+            providerIdMap .put(experimentId, intermineObjectId);
+            count++;
         }
-*/
-        
-        provider.setAttribute("lab", value);
-        Integer intermineObjectId = getChadoDBConverter().store(provider);
-        providerIdMap .put(experimentId, intermineObjectId);
-        count++;
+        LOG.info("created " + count + " providers");
+        res.close();
     }
-    LOG.info("created " + count + " providers");
-    res.close();
-}
 
     /**
      * Return the rows needed from the provider table.
-     * NB: for the moment not using the uniquename, but the name from the 
-     * provider_prop table
+     * We use the surname of the Principal Investigator (person ranked 0)
+     * as the provider name.
      * This is a protected method so that it can be overridden for testing
      * @param connection the db connection
      * @return the SQL result set
      * @throws SQLException if a database problem occurs
      */
-    
     protected ResultSet getProviderResultSet(Connection connection) 
     throws SQLException {
         String query =
@@ -349,14 +348,12 @@ public class ModEncodeMetaDataProcessor extends ChadoProcessor
         return res;
     }
 
+    
     private void processProviderAttributes(Connection connection)
     throws SQLException, ObjectStoreException {
     ResultSet res = getProviderAttributesResultSet(connection);
     int count = 0;
-
-
         while (res.next()) {
-            //Integer providerId = new Integer(res.getInt("provider_id"));
             Integer experimentId = new Integer(res.getInt("experiment_id"));
             String heading = res.getString("name");
             String value = res.getString("value");
@@ -395,179 +392,6 @@ public class ModEncodeMetaDataProcessor extends ChadoProcessor
         return res;
     }
     
-    /* DATA OLD-----------------------------------------------------------------------------*/
-    
-    private void processDataTable2(Connection connection)
-    throws SQLException, ObjectStoreException {
-    ResultSet res = getDataResultSet2(connection);
-    int count = 0;
-    while (res.next()) {
-        Integer dataId = new Integer(res.getInt("data_id"));
-        String name = res.getString("name");
-        String value = res.getString("value");
-        Item data = getChadoDBConverter().createItem("SubmissionData");
-        //experiment.setAttribute("name", name);
-        //Integer intermineObjectId = getChadoDBConverter().store(data);
-        //dataIdMap .put(dataId, intermineObjectId);
-        //count++;
-              
-        
-        ClassDescriptor cd = 
-            getChadoDBConverter().getModel().getClassDescriptorByName("SubmissionData");
-        
-        if (cd.getAttributeDescriptorByName(name) == null) {
-            String fieldName = FIELD_NAME_MAP.get(name);
-            if (fieldName == null) { 
-                LOG.error("NOT FOUND in FIELD_NAME_MAP: " + name);
-                } else {
-            data.setAttribute(fieldName, value);
-        }
-        }    else {
-            data.setAttribute(name, value);            
-        }
-
-        Integer intermineObjectId = getChadoDBConverter().store(data);
-        dataIdMap .put(dataId, intermineObjectId);
-
-        count++;
-    }
-    LOG.info("created " + count + " submissionData");
-    res.close();
-}
-    
-    
-    /**
-     * Return the rows needed from the data table.
-     * NB: for the moment not using the uniquename, but the name from the 
-     * data_prop table
-     * This is a protected method so that it can be overridden for testing
-     * @param connection the db connection
-     * @return the SQL result set
-     * @throws SQLException if a database problem occurs
-     */
-    protected ResultSet getDataResultSet2(Connection connection) 
-    throws SQLException {
-        String query =
-            "SELECT data_id, name, value"
-            + " FROM data"
-            + " WHERE heading = 'Parameter Value'"
-            + " UNION"
-            + " SELECT data_id, heading, value"
-            + " FROM data"
-            + " WHERE heading = 'Source Name'";
-        
-        LOG.info("executing: " + query);
-        Statement stmt = connection.createStatement();
-        ResultSet res = stmt.executeQuery(query);
-        return res;
-    }
-
-    private void processDataAttributes2(Connection connection)
-    throws SQLException, ObjectStoreException {
-    ResultSet res = getDataAttributesResultSet2(connection);
-    int count = 0;
-    while (res.next()) {
-        Integer dataId = new Integer(res.getInt("data_id"));
-
-        String heading = res.getString("heading");
-        String value = res.getString("value");
-        String fieldName = FIELD_NAME_MAP.get(heading);
-        if (fieldName == null) { 
-        LOG.error("NOT FOUND: " + heading + " has no mapping in FIELD_NAME_MAP");
-        continue;
-        }
-        
-        setAttribute(dataIdMap.get(dataId), fieldName, value);
-        
-        count++;
-    }
-    LOG.info("created " + count + " data attributes");
-    res.close();
-}
-
-    /**
-     * Return the rows needed for data from the data_prop table.
-     * This is a protected method so that it can be overridden for testing
-     * @param connection the db connection
-     * @return the SQL result set
-     * @throws SQLException if a database problem occurs
-     */
-    protected ResultSet getDataAttributesResultSet2(Connection connection) 
-    throws SQLException {
-        String query =
-            "select da.data_id, a.heading, a.value"
-            + " from data_attribute da, attribute a"
-            + " where"
-            + " da.attribute_id = a.attribute_id"
-            + " order by da.data_id";
-        LOG.info("executing: " + query);
-        Statement stmt = connection.createStatement();
-        ResultSet res = stmt.executeQuery(query);
-        return res;
-    }
-    
-
-    private void processDataTableAgain2(Connection connection)
-    throws SQLException, ObjectStoreException {
-    ResultSet res = getDataResultSetAgain2(connection);
-    int count = 0;
-    while (res.next()) {
-        Integer dataId = new Integer(res.getInt("data_id"));
-        String name = res.getString("heading");
-        String value = res.getString("value");
-        Item data = getChadoDBConverter().createItem("SubmissionData");
-        //experiment.setAttribute("name", name);
-        //Integer intermineObjectId = getChadoDBConverter().store(data);
-        //dataIdMap .put(dataId, intermineObjectId);
-        //count++;
-              
-        
-        ClassDescriptor cd = 
-            getChadoDBConverter().getModel().getClassDescriptorByName("SubmissionData");
-        
-        if (cd.getAttributeDescriptorByName(name) == null) {
-            String fieldName = FIELD_NAME_MAP.get(name);
-            if (fieldName == null) { 
-                LOG.error("NOT FOUND in FIELD_NAME_MAP: " + name);
-                } else {
-            data.setAttribute(fieldName, value);
-        }
-        }    else {
-            data.setAttribute(name, value);            
-        }
-
-        Integer intermineObjectId = getChadoDBConverter().store(data);
-        //dataIdMap .put(dataId, intermineObjectId);
-
-        count++;
-    }
-    LOG.info("created " + count + " submissionData");
-    res.close();
-}
-    
-    
-    /**
-     * Return the rows needed from the data table.
-     * NB: for the moment not using the uniquename, but the name from the 
-     * data_prop table
-     * This is a protected method so that it can be overridden for testing
-     * @param connection the db connection
-     * @return the SQL result set
-     * @throws SQLException if a database problem occurs
-     */
-    protected ResultSet getDataResultSetAgain2(Connection connection) 
-    throws SQLException {
-        String query =
-            "SELECT data_id, heading, value"
-            + " FROM data"
-            + " WHERE heading != 'Parameter Value'"
-            + " AND heading != 'Source Name'";
-        LOG.info("executing: " + query);
-        Statement stmt = connection.createStatement();
-        ResultSet res = stmt.executeQuery(query);
-        return res;
-    }
-
     
     /* APPLIED PROTOCOLS-----------------------------------------------------------------*/
     
@@ -580,7 +404,6 @@ public class ModEncodeMetaDataProcessor extends ChadoProcessor
         Integer protocolId = new Integer(res.getInt("protocol_id"));
         Integer dataId = new Integer(res.getInt("data_id"));
         String direction = res.getString("direction");
-        //String value = res.getString("value");
         Item appliedProtocol = getChadoDBConverter().createItem("AppliedProtocol");
         appliedProtocol.setAttribute("direction", direction);
         Integer intermineObjectId = getChadoDBConverter().store(appliedProtocol);
@@ -588,8 +411,6 @@ public class ModEncodeMetaDataProcessor extends ChadoProcessor
         appliedProtocolProtocolIdMap .put(protocolId, intermineObjectId);
         appliedProtocolDataIdMap .put(dataId, intermineObjectId);
         count++;
-              
-        
     }
     LOG.info("created " + count + " appliedProtocol");
     res.close();
@@ -597,9 +418,7 @@ public class ModEncodeMetaDataProcessor extends ChadoProcessor
     
     
     /**
-     * Return the rows needed from the data table.
-     * NB: for the moment not using the uniquename, but the name from the 
-     * data_prop table
+     * Return the rows needed from the appliedProtocol table.
      * This is a protected method so that it can be overridden for testing
      * @param connection the db connection
      * @return the SQL result set
@@ -629,51 +448,48 @@ public class ModEncodeMetaDataProcessor extends ChadoProcessor
 
     private void processAppliedProtocolData(Connection connection)
     throws SQLException, ObjectStoreException {
-    ResultSet res = getAppliedProtocolDataResultSet(connection);
-    int count = 0;
-    while (res.next()) {
-        Integer dataId = new Integer(res.getInt("data_id"));
-
-        String name = res.getString("name");
-        String value = res.getString("value");
-        //String fieldName = FIELD_NAME_MAP.get(name);
-
-        /*
+        ResultSet res = getAppliedProtocolDataResultSet(connection);
+        int count = 0;
+        while (res.next()) {
+            Integer dataId = new Integer(res.getInt("data_id"));
+            String name = res.getString("name");
+            String value = res.getString("value");
+            /*
+        String fieldName = FIELD_NAME_MAP.get(name);
         if (fieldName == null) { 
         LOG.error("NOT FOUND: " + heading + " has no mapping in FIELD_NAME_MAP");
         continue;
         }
         setAttribute(dataIdMap.get(dataId), fieldName, value);      
         count++;
-*/
-    
-        
-        ClassDescriptor cd = 
-            getChadoDBConverter().getModel().getClassDescriptorByName("AppliedProtocol");
-        
-        if (cd.getAttributeDescriptorByName(name) == null) {
-            String fieldName = FIELD_NAME_MAP.get(name);
-            if (fieldName == null) { 
-                LOG.error("NOT FOUND in FIELD_NAME_MAP: " + name);
+             */
+
+            ClassDescriptor cd = 
+                getChadoDBConverter().getModel().getClassDescriptorByName("AppliedProtocol");
+
+            if (cd.getAttributeDescriptorByName(name) == null) {
+                String fieldName = FIELD_NAME_MAP.get(name);
+                if (fieldName == null) { 
+                    LOG.error("NOT FOUND in FIELD_NAME_MAP: " + name);
                 } else {
-            setAttribute(appliedProtocolDataIdMap.get(dataId), fieldName, value);
-        }
-        }    else {
-            setAttribute(appliedProtocolDataIdMap.get(dataId), name, value);            
-        }
+                    setAttribute(appliedProtocolDataIdMap.get(dataId), fieldName, value);
+                }
+            }    else {
+                setAttribute(appliedProtocolDataIdMap.get(dataId), name, value);            
+            }
 
-        //Integer intermineObjectId = getChadoDBConverter().store(data);
-        //dataIdMap .put(appliedProtocolId, intermineObjectId);
-
-        count++;  
+            count++;  
+        }
+        LOG.info("created " + count + " appliedProtocol data ");
+        res.close();
     }
-    LOG.info("created " + count + " protocol data ");
-    res.close();
-}
 
         
     /**
-     * Return the rows needed for data from the data_prop table.
+     * Return the rows needed for data from the appliedProtocol table.
+     * Here we consider data that appear to be parameter of the protocol,
+     * i.e. with heading 'Source Name' or 'Parameter Value' in the data table
+     * in Chado.
      * This is a protected method so that it can be overridden for testing
      * @param connection the db connection
      * @return the SQL result set
@@ -744,67 +560,6 @@ public class ModEncodeMetaDataProcessor extends ChadoProcessor
     }
     
 
-    
-    
-/*
-    private void processAppliedProtocolDataTableAgain(Connection connection)
-    throws SQLException, ObjectStoreException {
-    ResultSet res = getDataResultSetAgain(connection);
-    int count = 0;
-    while (res.next()) {
-        Integer dataId = new Integer(res.getInt("data_id"));
-        String name = res.getString("heading");
-        String value = res.getString("value");
-        //Item data = getChadoDBConverter().createItem("SubmissionData");
-        //experiment.setAttribute("name", name);
-        //Integer intermineObjectId = getChadoDBConverter().store(data);
-        //dataIdMap .put(dataId, intermineObjectId);
-        //count++;
-              
-        
-        ClassDescriptor cd = 
-            getChadoDBConverter().getModel().getClassDescriptorByName("AppliedProtocol");
-        
-        if (cd.getAttributeDescriptorByName(name) == null) {
-            String fieldName = FIELD_NAME_MAP.get(name);
-            if (fieldName == null) { 
-                LOG.error("NOT FOUND in FIELD_NAME_MAP: " + name);
-                } else {
-            setAttribute(appliedProtocolDataIdMap.get(dataId), fieldName, value);
-        }
-        }    else {
-            setAttribute(appliedProtocolDataIdMap.get(dataId), name, value);            
-        }
-        count++;
-    }
-    LOG.info("created " + count + " submissionData");
-    res.close();
-}
-  */  
-    
-    /**
-     * Return the rows needed from the data table.
-     * NB: for the moment not using the uniquename, but the name from the 
-     * data_prop table
-     * This is a protected method so that it can be overridden for testing
-     * @param connection the db connection
-     * @return the SQL result set
-     * @throws SQLException if a database problem occurs
-     */
-    protected ResultSet getAppliedProtocolDataResultSetAgain(Connection connection) 
-    throws SQLException {
-        String query =
-            "SELECT data_id, heading, value"
-            + " FROM data"
-            + " WHERE heading != 'Parameter Value'"
-            + " AND heading != 'Source Name'";
-        LOG.info("executing: " + query);
-        Statement stmt = connection.createStatement();
-        ResultSet res = stmt.executeQuery(query);
-        return res;
-    }
-
-
     /* DATA-----------------------------------------------------------------------------*/
     
     private void processDataTable(Connection connection)
@@ -837,7 +592,7 @@ public class ModEncodeMetaDataProcessor extends ChadoProcessor
         } else {
             data.setAttribute(fieldName, value);     
         }
-        }else {
+        } else {
             data.setAttribute(heading, value);     
         }
         /*
@@ -866,8 +621,7 @@ public class ModEncodeMetaDataProcessor extends ChadoProcessor
     
     /**
      * Return the rows needed from the data table.
-     * NB: for the moment not using the uniquename, but the name from the 
-     * data_prop table
+     * Considering 'data' all that is not parameter of protocol (see before). 
      * This is a protected method so that it can be overridden for testing
      * @param connection the db connection
      * @return the SQL result set
@@ -885,97 +639,5 @@ public class ModEncodeMetaDataProcessor extends ChadoProcessor
         ResultSet res = stmt.executeQuery(query);
         return res;
     }
-    
-    
-    private void processDataAttributes(Connection connection)
-    throws SQLException, ObjectStoreException {
-    ResultSet res = getDataAttributesResultSet(connection);
-    int count = 0;
-    while (res.next()) {
-        Integer dataId = new Integer(res.getInt("data_id"));
-
-        String heading = res.getString("heading");
-        String value = res.getString("value");
-        String fieldName = FIELD_NAME_MAP.get(heading);
-        if (fieldName == null) { 
-        LOG.error("NOT FOUND: " + heading + " has no mapping in FIELD_NAME_MAP");
-        continue;
-        }
-        
-        setAttribute(dataIdMap.get(dataId), fieldName, value);
-        
-        count++;
-    }
-    LOG.info("created " + count + " data attributes");
-    res.close();
-}
-
-    /**
-     * Return the rows needed for data from the data_prop table.
-     * This is a protected method so that it can be overridden for testing
-     * @param connection the db connection
-     * @return the SQL result set
-     * @throws SQLException if a database problem occurs
-     */
-    protected ResultSet getDataAttributesResultSet(Connection connection) 
-    throws SQLException {
-        String query =
-            "select da.data_id, a.heading, a.value"
-            + " from data_attribute da, attribute a"
-            + " where"
-            + " da.attribute_id = a.attribute_id"
-            + " order by da.data_id";
-        LOG.info("executing: " + query);
-        Statement stmt = connection.createStatement();
-        ResultSet res = stmt.executeQuery(query);
-        return res;
-    }
-    
-/*
-    private void processDataTableAgain(Connection connection)
-    throws SQLException, ObjectStoreException {
-    ResultSet res = getDataResultSetAgain(connection);
-    int count = 0;
-    while (res.next()) {
-        Integer dataId = new Integer(res.getInt("data_id"));
-        String name = res.getString("heading");
-        String value = res.getString("value");
-        Item data = getChadoDBConverter().createItem("SubmissionData");
-        //experiment.setAttribute("name", name);
-        //Integer intermineObjectId = getChadoDBConverter().store(data);
-        //dataIdMap .put(dataId, intermineObjectId);
-        //count++;
-              
-        
-        ClassDescriptor cd = 
-            getChadoDBConverter().getModel().getClassDescriptorByName("SubmissionData");
-        
-        if (cd.getAttributeDescriptorByName(name) == null) {
-            String fieldName = FIELD_NAME_MAP.get(name);
-            if (fieldName == null) { 
-                LOG.error("NOT FOUND in FIELD_NAME_MAP: " + name);
-                } else {
-            data.setAttribute(fieldName, value);
-        }
-        }    else {
-            data.setAttribute(name, value);            
-        }
-
-        Integer intermineObjectId = getChadoDBConverter().store(data);
-        //dataIdMap .put(dataId, intermineObjectId);
-
-        count++;
-    }
-    LOG.info("created " + count + " submissionData");
-    res.close();
-}
-    
-    
-
-  */  
-    
-    
-    
-    
     
 }
