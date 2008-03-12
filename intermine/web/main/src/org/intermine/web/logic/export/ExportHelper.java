@@ -33,13 +33,13 @@ public class ExportHelper
     public static boolean canExport(PagedTable pt, Class cls) {
         return  (getClassIndex(getColumnClasses(pt), cls) >= 0);
     }
-    
+
     /**
-     * @param clazzes classes
-     * @param cls class
-     * @return index of class that is assignable to given class 
+     * @param clazzes
+     * @param cls
+     * @return index of class that is assignable to given class
      */
-    public static int getClassIndex(List<Class> clazzes, Class cls) {        
+    public static int getClassIndex(List<Class> clazzes, Class cls) {
         for (int i = 0; i < clazzes.size(); i++) {
             if (cls.isAssignableFrom(clazzes.get(i))) {
                 return i;
@@ -47,15 +47,15 @@ public class ExportHelper
         }
         return -1;
     }
-    
+
     /**
-     * @param pt PagedTable
+     * @param pt
      * @return classes of columns
      */
     public static List<Class> getColumnClasses(PagedTable pt) {
         List columns = pt.getColumns();
         List<Class> ret = new ArrayList<Class>();
-        
+
         for (int i = 0; i < columns.size(); i++) {
             Column column = (Column) columns.get(i);
             if (column.isVisible()) {
@@ -65,7 +65,7 @@ public class ExportHelper
         return ret;
     }
 
-    
+
     /**
      * Find the first column index for the specified class or a subclass in the
      * page table (may be a parent class of a field being displayed).
