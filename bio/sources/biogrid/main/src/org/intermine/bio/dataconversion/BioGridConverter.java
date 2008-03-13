@@ -40,7 +40,7 @@ import org.xml.sax.helpers.DefaultHandler;
 
 
 /**
- * DataConverter to parse psi data into items
+ * DataConverter to parse biogrid data into items
  * @author Julie Sullivan
  */
 public class BioGridConverter extends FileConverter
@@ -56,10 +56,8 @@ public class BioGridConverter extends FileConverter
      * @param model the Model
      */
     public BioGridConverter(ItemWriter writer, Model model) {
-        super(writer, model);
+        super(writer, model);        
     }
-
-    //
 
     /**
      * {@inheritDoc}
@@ -103,7 +101,8 @@ public class BioGridConverter extends FileConverter
         private String experimentId;
         private Item organism = null;
         Set<String> storedItems = new HashSet<String>();
-
+        private String organismTaxonId = null;
+        
         /**
          * Constructor
          * @param writer the ItemWriter used to handle the resultant items
@@ -121,19 +120,26 @@ public class BioGridConverter extends FileConverter
         public void startElement(String uri, String localName, String qName, Attributes attrs)
             throws SAXException {
             attName = null;
-
+            
             // <experimentList><experimentDescription>
             if (qName.equals("experimentDescription")) {
 
                 experimentId = attrs.getValue("id");
 
+                // <entry><source release="2.0.37" releaseDate="2008-01-25"><names><shortLabel>
+                // Interactions for BIOGRID-ORGANISM-7227</shortLabel>
+                } else if (qName.equals("shortLabel")
+                                && stack.peek().equals("names")
+                                && stack.search("source") == 2) {
+                    
+                    attName = "organismTaxonId";
+                                    
             //  <experimentList><experimentDescription id="2"><names><shortLabel>
             } else if (qName.equals("shortLabel")
                        && stack.peek().equals("names")
                        && stack.search("experimentDescription") == 2) {
 
                 attName = "experimentName";
-
 
             //  <experimentList><experimentDescription id="2"><names><fullName>
             } else if (qName.equals("fullName")
@@ -173,14 +179,25 @@ public class BioGridConverter extends FileConverter
                 geneId = attrs.getValue("id");
 
             // <interactorList><interactor id="4"><xref><primaryRef db="FLYBASE" id="FBgn0000659"
-            } else if (qName.equals("primaryRef")
-                       && stack.peek().equals("xref")
-                       && stack.search("interactor") == 2) {
+            } else if ((qName.equals("primaryRef") || qName.equals("secondaryRef"))
+                            && stack.peek().equals("xref")
+                            && stack.search("interactor") == 2) {
+                
+                if (attrs.getValue("db") != null) {
 
-                String identifier = attrs.getValue("id");
-                geneIdsToIdentifiers.put(geneId, identifier);
-                getGene(identifier);
+                    String dbRef = attrs.getValue("db");
 
+                    if ((organismTaxonId.equals("7227") 
+                                    && dbRef.equalsIgnoreCase("FLYBASE"))
+                                    || (organismTaxonId.equals("6239") 
+                                                    && dbRef.equalsIgnoreCase("WormBase"))
+                                                    || (organismTaxonId.equals("4932")
+                                                    && qName.equals("primaryRef"))) {
+                        String identifier = attrs.getValue("id");
+                        geneIdsToIdentifiers.put(geneId, identifier);
+                        getGene(identifier);
+                    }
+                }
             //<interactionList><interaction>
             //<participantList><participant id="5"><interactorRef>
             } else if (qName.equals("interactorRef") && stack.peek().equals("participant")) {
@@ -205,6 +222,7 @@ public class BioGridConverter extends FileConverter
             } else if (qName.equals("entry")) {
 
                 initDatasources();
+
 
             }
 
@@ -328,7 +346,11 @@ public class BioGridConverter extends FileConverter
                     holder = null;
                     interactorHolder = null;
                     //experimentHolder = null;
-
+                    
+                } else if (attName != null && attName.equals("organismTaxonId")) {   
+                    String shortLabel = attValue.toString();
+                    String[] tokens = shortLabel.split("-");
+                    organismTaxonId = tokens[2];
                 }
         }
 
