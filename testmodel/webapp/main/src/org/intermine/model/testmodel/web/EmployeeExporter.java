@@ -10,6 +10,7 @@ package org.intermine.model.testmodel.web;
  *
  */
 
+import java.io.IOException;
 import java.io.PrintStream;
 import java.util.List;
 
@@ -26,6 +27,7 @@ import org.apache.struts.action.ActionMessages;
 import org.intermine.metadata.ClassDescriptor;
 import org.intermine.model.testmodel.Employee;
 import org.intermine.objectstore.ObjectStoreException;
+import org.intermine.web.logic.export.ExportException;
 import org.intermine.web.logic.export.http.TableHttpExporter;
 import org.intermine.web.logic.results.Column;
 import org.intermine.web.logic.results.PagedTable;
@@ -42,27 +44,23 @@ public class EmployeeExporter implements TableHttpExporter
     /**
      * Method called to export a RESULTS_TABLE containing an Employee by writing it to the
      * OutputStream of the Response.
-     * @param mapping The ActionMapping used to select this instance
-     * @param form The optional ActionForm bean for this request (if any)
+     * @param pt exported PagedTable
      * @param request The HTTP request we are processing
      * @param response The HTTP response we are creating
-     * @return an ActionForward object defining where control goes next
-     * @exception Exception if the application business logic throws
-     *  an exception
      */
-    public ActionForward export(ActionMapping mapping,
-                                ActionForm form,
-                                HttpServletRequest request,
-                                HttpServletResponse response)
-        throws Exception {
+    public void export(PagedTable pt, HttpServletRequest request,
+                                HttpServletResponse response) {
         HttpSession session = request.getSession();
 
         response.setContentType("text/plain");
         response.setHeader("Content-Disposition ", "inline; filename=exployee.txt");
 
-        PrintStream printStream = new PrintStream(response.getOutputStream());
-
-        PagedTable pt = SessionMethods.getResultsTable(session, request.getParameter("table"));
+        PrintStream printStream;
+        try {
+            printStream = new PrintStream(response.getOutputStream());
+        } catch (IOException e1) {
+            throw new ExportException("Export failed.");
+        }
 
         try {
             List columns = pt.getColumns();
@@ -109,8 +107,6 @@ public class EmployeeExporter implements TableHttpExporter
             request.setAttribute(Globals.ERROR_KEY, messages);
 
         }
-
-        return null;
     }
 
 

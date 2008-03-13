@@ -16,6 +16,7 @@ import java.io.PrintWriter;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
 
 import org.apache.log4j.Logger;
 import org.apache.struts.Globals;
@@ -24,17 +25,20 @@ import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
 import org.apache.struts.action.ActionMessage;
 import org.apache.struts.action.ActionMessages;
+import org.intermine.web.logic.Constants;
+import org.intermine.web.logic.config.WebConfig;
 import org.intermine.web.logic.export.ExportException;
 import org.intermine.web.logic.export.http.TableExporterFactory;
 import org.intermine.web.logic.export.http.TableHttpExporter;
+import org.intermine.web.logic.results.PagedTable;
+import org.intermine.web.logic.results.WebResults;
+import org.intermine.web.logic.session.SessionMethods;
 
 /*
  * TODO   
- * - commit
- * - enables set position from which export should start 
+ * - export helper
  * - rewrite  web service for new exporters
  * - what to do if more columns with LocatedSequenceFeature ?
- * - do goFaster?
  */
 
 /**
@@ -71,13 +75,44 @@ public class TableExportAction extends InterMineAction
         throws Exception {
         request.getSession().setMaxInactiveInterval(TIMEOUT);
         String type = request.getParameter("type");
+        PagedTable pt = null;
         try {
-            TableExporterFactory factory = new TableExporterFactory(request);
+            TableExporterFactory factory = new TableExporterFactory(getWebConfig(request));
             TableHttpExporter exporter = factory.getExporter(type);
-            return exporter.export(mapping, form, request, response);
+            pt = getPagedTable(request, request.getSession());
+            
+            if (pt.getExactSize() > pt.getMaxRetrievableIndex()) {
+                throw new ExportException("Result is too big for export. "
+                        + "Table for export can have maximally "
+                        + pt.getMaxRetrievableIndex() + " rows.");
+            }
+            
+            if (pt == null) {
+                return mapping.getInputForward();
+            }
+            
+            if (pt.getWebTable() instanceof WebResults) {
+                ((WebResults) pt.getWebTable()).goFaster();
+            }
+            
+            exporter.export(pt, request, response);
+            return mapping.getInputForward();
         } catch (RuntimeException e) {
             return processException(mapping, request, response, e);            
-        }     
+        } finally {
+            if (pt != null && pt.getWebTable() instanceof WebResults) {
+                ((WebResults) pt.getWebTable()).releaseGoFaster();
+            }
+        }
+    }
+
+    private WebConfig getWebConfig(HttpServletRequest request) {
+        WebConfig wc = (WebConfig) request.getSession().getServletContext().
+            getAttribute(Constants.WEBCONFIG);
+        if (wc == null) {
+            throw new RuntimeException("WebConfig not present in web session.");
+        }
+        return wc;
     }
 
     private ActionForward processException(ActionMapping mapping,
@@ -104,7 +139,7 @@ public class TableExportAction extends InterMineAction
                 messages.add(ActionMessages.GLOBAL_MESSAGE, 
                         new ActionMessage("errors.export.displayonlyparameters", msg));
                 request.setAttribute(Globals.ERROR_KEY, messages);
-                return mapping.findForward("error");                
+                return mapping.getInputForward();                
             } catch (IllegalStateException ex) {
                 OutputStream out = response.getOutputStream();
                 writer = new PrintWriter(out);
@@ -118,10 +153,10 @@ public class TableExportAction extends InterMineAction
                 writer.println(msg);
                 writer.flush();
             } catch (IllegalStateException ex) {
-                // Attempt to writer error to output stream where data was already sent
+                // Attempt to writer error to output stream where data was already sent.
                 // If there are textual data user will see the error else it will
-                // makes binary file  probably unreadable and so the use know
-                // that something is wrong
+                // makes binary file  probably unreadable and so the user knows
+                // that something is wrong.
                 // At this moment only excel format exports binary output and 
                 // it is flushed at the end - it is error can only happen before 
                 // response is  commited.
@@ -132,5 +167,22 @@ public class TableExportAction extends InterMineAction
             }
         }
         return null;
+    }
+    
+    /**
+     * @param request request
+     * @param session session
+     * @return PagedTable from session
+     */
+    protected PagedTable getPagedTable(HttpServletRequest request, HttpSession session) {
+        PagedTable pt;
+        String tableType = request.getParameter("tableType");
+        if (tableType.equals("bag")) {
+            pt = SessionMethods.getResultsTable(session, "bag." 
+                    + request.getParameter("table"));
+        } else {
+            pt = SessionMethods.getResultsTable(session, request.getParameter("table"));
+        }
+        return pt;
     }
 }

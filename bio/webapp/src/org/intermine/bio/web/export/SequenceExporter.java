@@ -51,6 +51,7 @@ public class SequenceExporter implements Exporter
     private ObjectStore os;
     private OutputStream out;
     private int featureIndex;
+    private int writtenResultsCount = 0;
 
     /**
      * Constructor.
@@ -69,8 +70,7 @@ public class SequenceExporter implements Exporter
      * {@inheritDoc}}
      */
     public int getWrittenResultsCount() {
-        // TODO Auto-generated method stub
-        return 0;
+        return writtenResultsCount;
     }
     
     /**
@@ -134,12 +134,11 @@ public class SequenceExporter implements Exporter
                 }
 
                 SeqIOTools.writeFasta(out, bioSequence);
+                writtenResultsCount++;
                 exportedIDs.add(objectId);
             }
 
-            if (out != null) {
-                out.close();
-            }
+            out.flush();
         } catch (Exception e) {
               throw new ExportException("Export failed.", e);
         }
@@ -245,14 +244,16 @@ public class SequenceExporter implements Exporter
      * {@inheritDoc}
      */
     public boolean canExport(List<Class> clazzes) {
-        return canExport2(clazzes);
+        return canExportStatic(clazzes);
     }
 
+    /* Method must have different name than canExport because canExport() method 
+     * is  inherited from Exporter interface */
     /**
      * @param clazzes classes of result
      * @return true if this exporter can export result composed of specified classes 
      */
-    public static boolean canExport2(List<Class> clazzes) {        
+    public static boolean canExportStatic(List<Class> clazzes) {        
         return (
                 ExportHelper.getClassIndex(clazzes, LocatedSequenceFeature.class) >= 0 
                 || ExportHelper.getClassIndex(clazzes, Protein.class) >= 0
