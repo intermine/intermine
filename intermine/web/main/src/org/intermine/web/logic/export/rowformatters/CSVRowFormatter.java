@@ -24,6 +24,6 @@ public class CSVRowFormatter extends RowFormatterImpl
      * Constructor.
      */
     public CSVRowFormatter() {
-        super("\t", true);
+        super(",", true);
     }
 }
