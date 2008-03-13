@@ -247,7 +247,7 @@ public abstract class ChadoSequenceProcessor extends ChadoProcessor
             }
         }
 
-        if (feature.canReference("sequence") && residues != null && residues.length() > 0) {
+        if (feature.canHaveReference("sequence") && residues != null && residues.length() > 0) {
             Item sequence = getChadoDBConverter().createItem("Sequence");
             sequence.setAttribute("residues", residues);
             sequence.setAttribute("length", String.valueOf(seqlen));

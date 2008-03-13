@@ -157,7 +157,7 @@ public class ItemTest extends TestCase
         } catch (RuntimeException _) {
             // expected
         }
-        
+
         try {
             item1.addAttribute(new Attribute("name", null));
             fail("expected RuntimeException");
@@ -172,13 +172,13 @@ public class ItemTest extends TestCase
             // expected
         }
     }
-    
+
     public void testSetAttribute() throws Exception {
         ItemFactory itemFactory = new ItemFactory(model);
 
         Item item1 = itemFactory.makeItem();
         item1.setClassName(model.getNameSpace() + "Company");
-        
+
         try {
             item1.setAttribute("name", null);
             fail("expected RuntimeException");
@@ -341,5 +341,26 @@ public class ItemTest extends TestCase
         } catch (RuntimeException _) {
             // expected
         }
+    }
+
+    public void testCanHaveReference() throws Exception {
+        ItemFactory itemFactory = new ItemFactory(model);
+
+        Item item1 = itemFactory.makeItem();
+
+        item1.setClassName(model.getNameSpace() + "Company");
+
+        assertTrue(item1.canHaveReference("CEO"));
+    }
+
+
+    public void testCanHaveCollection() throws Exception {
+        ItemFactory itemFactory = new ItemFactory(model);
+
+        Item item1 = itemFactory.makeItem();
+
+        item1.setClassName(model.getNameSpace() + "Company");
+
+        assertTrue(item1.canHaveCollection("departments"));
     }
 }
