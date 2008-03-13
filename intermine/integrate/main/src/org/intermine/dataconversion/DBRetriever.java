@@ -319,7 +319,7 @@ public class DBRetriever extends DataConverter
                 attr.setItem(item);
                 attr.setName(fieldName);
                 Object value = row.get(fieldName);
-                if (value != null) {
+                if (value != null && !value.equals("")) {
                     attr.setValue(TypeUtil.objectToString(value));
                     item.addAttributes(attr);
                 }

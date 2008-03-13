@@ -155,16 +155,16 @@ public class Item implements Comparable
     public void addAttribute(Attribute attribute) {
         String name = attribute.getName();
         if (!checkAttribute(name)) {
-            throw new RuntimeException("class \"" + classDescriptor.getName() + "\" has no \""
+            throw new RuntimeException("class \"" + className + "\" has no \""
                                        + name + "\" attribute");
         }
         if (attribute.getValue() == null) {
             throw new RuntimeException("value cannot be null for attribute "
-                                       + classDescriptor.getName() + "."  + name);
+                                       + className + "."  + name);
         } else {
             if (attribute.getValue().equals("")) {
                 throw new RuntimeException("value cannot be an empty string for attribute "
-                                           + classDescriptor.getName() + "."  + name);
+                                           + className + "."  + name);
             }
         }
         attributes.put(name, attribute);
@@ -176,7 +176,7 @@ public class Item implements Comparable
      */
     public void removeAttribute(String attributeName) {
         if (!checkAttribute(attributeName)) {
-            throw new RuntimeException("class \"" + classDescriptor.getName() + "\" has no \""
+            throw new RuntimeException("class \"" + className + "\" has no \""
                                        + attributeName + "\" attribute");
         }
         attributes.remove(attributeName);
@@ -322,11 +322,11 @@ public class Item implements Comparable
     public void setAttribute(String name, String value) {
         if (value == null) {
             throw new RuntimeException("value cannot be null for attribute "
-                                       + classDescriptor.getName() + "."  + name);
+                                       + className + "."  + name);
         } else {
             if (value.equals("")) {
                 throw new RuntimeException("value cannot be an empty string for attribute "
-                                           + classDescriptor.getName() + "."  + name);
+                                           + className + "."  + name);
             }
         }
         addAttribute(new Attribute(name, value));
