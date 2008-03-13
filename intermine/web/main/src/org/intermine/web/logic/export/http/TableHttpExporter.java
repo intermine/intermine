@@ -13,10 +13,6 @@ package org.intermine.web.logic.export.http;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.apache.struts.action.ActionForm;
-import org.apache.struts.action.ActionForward;
-import org.apache.struts.action.ActionMapping;
-
 import org.intermine.web.logic.results.PagedTable;
 
 /**
@@ -29,19 +25,12 @@ public interface TableHttpExporter
 {
     /**
      * Method called to export a PagedTable object
-     * @param mapping The ActionMapping used to select this instance
-     * @param form The optional ActionForm bean for this request (if any)
+     * @param pt exported PagedTable
      * @param request The HTTP request we are processing
      * @param response The HTTP response we are creating
-     * @return an ActionForward object defining where control goes next
-     * @exception Exception if the application business logic throws
-     *  an exception
      */
-    public ActionForward export(ActionMapping mapping,
-                                ActionForm form,
-                                HttpServletRequest request,
-                                HttpServletResponse response)
-        throws Exception;
+    public void export(PagedTable pt, HttpServletRequest request,
+                                HttpServletResponse response);
 
     /**
      * Check if this TableExporter can export the given PagedTable.

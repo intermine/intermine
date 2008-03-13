@@ -48,9 +48,9 @@ public class ExporterImpl implements Exporter
             ResultElementConverter converter = new  ResultElementConverter();
             for (List<ResultElement> result : results) {
                 out.println(rowFormatter.format(converter.convert(result)));
-                out.flush();
                 writtenResultsCount++;
             }
+            out.flush();
         } catch (RuntimeException e) {
             throw new ExportException("Export failed.", e);
         }
@@ -71,6 +71,4 @@ public class ExporterImpl implements Exporter
     public boolean canExport(List<Class> clazzes) {
         return true;
     }
-    
-    
 }

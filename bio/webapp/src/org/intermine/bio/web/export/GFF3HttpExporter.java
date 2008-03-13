@@ -20,17 +20,14 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
-import org.apache.struts.action.ActionForm;
-import org.apache.struts.action.ActionForward;
-import org.apache.struts.action.ActionMapping;
 import org.flymine.model.genomic.LocatedSequenceFeature;
 import org.intermine.util.StringUtil;
 import org.intermine.web.logic.export.ExportException;
 import org.intermine.web.logic.export.ExportHelper;
 import org.intermine.web.logic.export.Exporter;
+import org.intermine.web.logic.export.ResponseUtil;
 import org.intermine.web.logic.export.http.TableHttpExporter;
 import org.intermine.web.logic.results.PagedTable;
-import org.intermine.web.logic.session.SessionMethods;
 
 /**
  * An implementation of TableHttpExporter that exports LocatedSequenceFeature 
@@ -50,29 +47,16 @@ public class GFF3HttpExporter implements TableHttpExporter
      * Method called to export a PagedTable object as GFF3.  The PagedTable can only be exported if
      * there is exactly one LocatedSequenceFeature column and the other columns (if any), are simple
      * attributes (rather than objects).
-     * @param mapping The ActionMapping used to select this instance
-     * @param form The optional ActionForm bean for this request (if any)
+     * @param pt PagedTable
      * @param request The HTTP request we are processing
      * @param response The HTTP response we are creating
-     * @return an ActionForward object defining where control goes next
-     * @exception Exception if the application business logic throws
-     *  an exception
      */
-    public ActionForward export(ActionMapping mapping,
-                                ActionForm form,
-                                HttpServletRequest request,
-                                HttpServletResponse response)
-        throws Exception {
+    public void export(PagedTable pt, HttpServletRequest request,
+                                HttpServletResponse response) {
         HttpSession session = request.getSession();
         ServletContext servletContext = session.getServletContext();
 
         setGFF3Header(response);
-
-        PagedTable pt = SessionMethods.getResultsTable(session, request.getParameter("table"));
-
-        if (pt == null) {
-            return mapping.getInputForward();
-        }        
         
         int realFeatureIndex = ExportHelper.getClassIndex(
                 ExportHelper.getColumnClasses(pt), LocatedSequenceFeature.class);
@@ -88,13 +72,10 @@ public class GFF3HttpExporter implements TableHttpExporter
         if (exporter.getWrittenResultsCount() == 0) {
             throw new ExportException("Nothing was found for export.");
         }
-        return null;
     }
 
     private void setGFF3Header(HttpServletResponse response) {
-        response.setContentType("text/plain");
-        response.setHeader("Content-Disposition ",
-                           "inline; filename=table" + StringUtil.uniqueString() + ".gff3");
+        ResponseUtil.setPlainTextHeader(response, "table" + StringUtil.uniqueString() + ".gff3");
     }
 
     /**
@@ -127,6 +108,6 @@ public class GFF3HttpExporter implements TableHttpExporter
      * {@inheritDoc}
      */
     public boolean canExport(PagedTable pt) {
-        return GFF3Exporter.canExport2(ExportHelper.getColumnClasses(pt));
+        return GFF3Exporter.canExportStatic(ExportHelper.getColumnClasses(pt));
     }
 }

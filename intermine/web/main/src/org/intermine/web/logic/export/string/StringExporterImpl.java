@@ -15,7 +15,6 @@ import java.util.List;
 
 import org.intermine.web.logic.export.ExportException;
 import org.intermine.web.logic.export.RowFormatter;
-import org.intermine.web.logic.export.RowFormatterImpl;
 
 
 /**
@@ -26,7 +25,7 @@ public class StringExporterImpl
 {
 
     private PrintWriter writer;
-    private RowFormatter rowFormatter = new RowFormatterImpl(",", true);
+    private RowFormatter rowFormatter;
     
     /**
      * Constructor.
@@ -49,8 +48,8 @@ public class StringExporterImpl
             for (List<String> row : rows) {
                 // upcasting because rowFormatter expect List<Object>
                 writer.println(rowFormatter.format((List<Object>) (List) row));
-                writer.flush();
             }
+            writer.flush();
         } catch (RuntimeException e) {
             throw new ExportException("Export failed.", e);
         }

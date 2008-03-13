@@ -16,8 +16,8 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.intermine.web.logic.export.Exporter;
 import org.intermine.web.logic.export.ExporterImpl;
-import org.intermine.web.logic.export.RowFormatter;
-import org.intermine.web.logic.export.RowFormatterImpl;
+import org.intermine.web.logic.export.ResponseUtil;
+import org.intermine.web.logic.export.rowformatters.TabRowFormatter;
 
 /**
  * Exporter that exports table with results in excel format.
@@ -35,9 +35,7 @@ public class TabHttpExporter extends HttpExporterBase
      */
     @Override
     protected void setResponseHeader(HttpServletResponse response) {
-        response.setContentType("text/tab-separated-values");
-        response.setHeader("Pragma", "no-cache");
-        response.setHeader("Content-Disposition", "inline; filename=\"results-table.tsv\"");
+        ResponseUtil.setTabHeader(response, "results-table.tsv");
     }
 
     /**
@@ -45,7 +43,6 @@ public class TabHttpExporter extends HttpExporterBase
      */
     @Override
     protected Exporter getExporter(OutputStream out) {
-        RowFormatter rowFormatter = new RowFormatterImpl("\t", false);
-        return new ExporterImpl(out, rowFormatter);
+        return new ExporterImpl(out, new TabRowFormatter());
     }
 }

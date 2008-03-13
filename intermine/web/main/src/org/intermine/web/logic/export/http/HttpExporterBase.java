@@ -16,16 +16,11 @@ import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import javax.servlet.http.HttpSession;
 
-import org.apache.struts.action.ActionForm;
-import org.apache.struts.action.ActionForward;
-import org.apache.struts.action.ActionMapping;
 import org.intermine.web.logic.export.ExportException;
 import org.intermine.web.logic.export.Exporter;
 import org.intermine.web.logic.results.PagedTable;
 import org.intermine.web.logic.results.ResultElement;
-import org.intermine.web.logic.session.SessionMethods;
 
 
 /**
@@ -53,22 +48,12 @@ public abstract class HttpExporterBase implements TableHttpExporter
 
     /**
      * Perform export.
-     * @param mapping Struts action mapping 
-     * @param form Struts action form
+     * @param pt exported PagedTable
      * @param request request
      * @param response response
-     * @throws Exception if some error happens
-     * @return forward
      */
-    public ActionForward export(ActionMapping mapping, ActionForm form,
-            HttpServletRequest request, HttpServletResponse response)
-            throws Exception {
-        HttpSession session = request.getSession();
-        PagedTable pt = getPagedTable(request, session);
-
-        if (pt == null) {
-            return mapping.getInputForward();
-        }        
+    public void export(PagedTable pt, HttpServletRequest request, 
+            HttpServletResponse response) {
 
         List<List<ResultElement>> results = pt.getRearrangedResults();
         
@@ -84,7 +69,6 @@ public abstract class HttpExporterBase implements TableHttpExporter
         if (exporter.getWrittenResultsCount() == 0) {
             throw new ExportException("Nothing was found for export.");
         }
-        return null;
     }
 
     /**
@@ -99,20 +83,4 @@ public abstract class HttpExporterBase implements TableHttpExporter
      */
     protected abstract void setResponseHeader(HttpServletResponse response);
     
-    /**
-     * @return PagedTable from session
-     * @param request request
-     * @param session session
-     */
-    protected PagedTable getPagedTable(HttpServletRequest request, HttpSession session) {
-        PagedTable pt;
-        String tableType = request.getParameter("tableType");
-        if (tableType.equals("bag")) {
-            pt = SessionMethods.getResultsTable(session, "bag." 
-                    + request.getParameter("table"));
-        } else {
-            pt = SessionMethods.getResultsTable(session, request.getParameter("table"));
-        }
-        return pt;
-    }
 }

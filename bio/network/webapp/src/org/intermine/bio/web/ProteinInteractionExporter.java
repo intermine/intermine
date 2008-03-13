@@ -42,6 +42,7 @@ import org.intermine.bio.networkview.network.FlyNetwork;
 import org.intermine.model.InterMineObject;
 import org.intermine.objectstore.ObjectStoreException;
 import org.intermine.util.StringUtil;
+import org.intermine.web.logic.export.ExportException;
 import org.intermine.web.logic.export.ExportHelper;
 import org.intermine.web.logic.export.http.TableHttpExporter;
 import org.intermine.web.logic.results.PagedTable;
@@ -62,27 +63,17 @@ public class ProteinInteractionExporter implements TableHttpExporter
     /**
      * Method called to export a PagedTable object using the BioJava
      * sequence and feature writers.
-     * @param mapping The ActionMapping used to select this instance
-     * @param form The optional ActionForm bean for this request (if any)
+     * @param pt exported PagedTable
      * @param request The HTTP request we are processing
      * @param response The HTTP response we are creating
-     * @return an ActionForward object defining where control goes next
-     * @exception Exception if the application business logic throws
-     *  an exception
      */
-    public ActionForward export(ActionMapping mapping, ActionForm form,
-            HttpServletRequest request, HttpServletResponse response) throws Exception {
-        HttpSession session = request.getSession();
+    public void export(PagedTable pt, HttpServletRequest request, HttpServletResponse response) {
 
         response.setContentType("text/plain");
         response.setHeader("Content-Disposition ", "attachment; filename=interaction"
                 + StringUtil.uniqueString() + ".sif"); //flo
 
         OutputStream outputStream = null;
-
-        PagedTable pt = SessionMethods.getResultsTable(session, request
-                .getParameter("table"));
-
 
         int realFeatureIndex = ExportHelper.getFirstColumnForClass(pt, ProteinInteraction.class);
 
@@ -145,23 +136,11 @@ public class ProteinInteractionExporter implements TableHttpExporter
             }
 
             if (writtenInteractionsCount == 0) {
-
-                ActionMessages messages = new ActionMessages();
-                ActionMessage error = new ActionMessage("errors.export.nothingtoexport");
-                messages.add(ActionMessages.GLOBAL_MESSAGE, error);
-                request.setAttribute(Globals.ERROR_KEY, messages);
-
-
-                return mapping.findForward("results");
+                throw new ExportException("Nothing was found for export.");
             }
-        //} catch (ObjectStoreException e) {
         } catch (Exception e) {
-            ActionMessages messages = new ActionMessages();
-            ActionMessage error = new ActionMessage("errors.query.objectstoreerror");
-            messages.add(ActionMessages.GLOBAL_MESSAGE, error);
-            request.setAttribute(Globals.ERROR_KEY, messages);
+            throw new ExportException("Export failed", e);
         }
-        return null;
     }
 
     /**

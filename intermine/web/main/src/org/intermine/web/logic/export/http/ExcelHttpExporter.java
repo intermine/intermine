@@ -16,14 +16,12 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.apache.struts.Globals;
-import org.apache.struts.action.ActionForm;
-import org.apache.struts.action.ActionForward;
-import org.apache.struts.action.ActionMapping;
 import org.apache.struts.action.ActionMessage;
 import org.apache.struts.action.ActionMessages;
 import org.intermine.web.logic.WebUtil;
 import org.intermine.web.logic.export.ExcelExporter;
 import org.intermine.web.logic.export.Exporter;
+import org.intermine.web.logic.export.ResponseUtil;
 import org.intermine.web.logic.results.PagedTable;
 
 
@@ -43,10 +41,7 @@ public class ExcelHttpExporter extends HttpExporterBase implements TableHttpExpo
      * {@inheritDoc}
      */
     @Override
-    public ActionForward export(ActionMapping mapping, ActionForm form,
-            HttpServletRequest request, HttpServletResponse response)
-            throws Exception {
-        PagedTable pt = getPagedTable(request, request.getSession());
+    public void export(PagedTable pt, HttpServletRequest request, HttpServletResponse response) {
         int defaultMax = 10000;
 
         int maxExcelSize =
@@ -58,9 +53,8 @@ public class ExcelHttpExporter extends HttpExporterBase implements TableHttpExpo
             messages.add(ActionMessages.GLOBAL_MESSAGE, 
                     new ActionMessage("export.excelExportTooBig", new Integer(maxExcelSize)));
             request.setAttribute(Globals.ERROR_KEY, messages);
-            return mapping.findForward("error");                
         }
-        return super.export(mapping, form, request, response);
+        super.export(pt, request, response);
     }
     
     /**
@@ -76,9 +70,6 @@ public class ExcelHttpExporter extends HttpExporterBase implements TableHttpExpo
      */
     @Override
     protected void setResponseHeader(HttpServletResponse response) {
-        response.setContentType("Application/vnd.ms-excel");
-        response.setHeader("Pragma", "no-cache");
-        response.setHeader("Content-Disposition", 
-                "attachment; filename=\"results-table.xls\"");        
+        ResponseUtil.setExcelHeader(response, "results-table.xls");
     }
 }
