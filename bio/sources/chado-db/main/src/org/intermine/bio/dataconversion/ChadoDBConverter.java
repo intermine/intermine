@@ -23,7 +23,6 @@ import org.intermine.dataconversion.ItemWriter;
 import org.intermine.metadata.Model;
 import org.intermine.sql.Database;
 import org.intermine.util.StringUtil;
-import org.intermine.xml.full.Item;
 
 import java.lang.reflect.Constructor;
 import java.sql.Connection;
@@ -42,9 +41,6 @@ public class ChadoDBConverter extends BioDBConverter
 {
     protected static final Logger LOG = Logger.getLogger(ChadoDBConverter.class);
 
-    private String dataSourceName;
-    private String dataSetTitle;
-
     // a Map from chado organism_id to taxonId
     private Map<Integer, OrganismData> chadoToOrgData = new HashMap<Integer, OrganismData>();
     private String processors = "";
@@ -62,30 +58,6 @@ public class ChadoDBConverter extends BioDBConverter
     public ChadoDBConverter(Database database, Model tgtModel, ItemWriter writer) {
         super(database, tgtModel, writer);
         organismRepository = OrganismRepository.getOrganismRepository();
-    }
-
-    /**
-     * Set the name of the DataSet Item to create for this converter.
-     * @param title the title
-     */
-    public void setDataSetTitle(String title) {
-        this.dataSetTitle = title;
-    }
-
-    /**
-     * Set the name of the DataSource Item to create for this converter.
-     * @param name the name
-     */
-    public void setDataSourceName(String name) {
-        this.dataSourceName = name;
-    }
-
-    /**
-     * Return the data source name set by setDataSourceName().
-     * @return the data source name
-     */
-    public String getDataSourceName() {
-        return dataSourceName;
     }
 
     /**
@@ -145,12 +117,6 @@ public class ChadoDBConverter extends BioDBConverter
             connection = getDatabase().getConnection();
         }
 
-        if (dataSetTitle == null) {
-            throw new IllegalArgumentException("dataSetTitle not set in ChadoDBConverter");
-        }
-        if (dataSourceName == null) {
-            throw new IllegalArgumentException("dataSourceName not set in ChadoDBConverter");
-        }
         if (StringUtils.isEmpty(processors)) {
             throw new IllegalArgumentException("processors not set in ChadoDBConverter");
         }
@@ -224,18 +190,10 @@ public class ChadoDBConverter extends BioDBConverter
     }
 
     /**
-     * Return the DataSet Item created from the dataSetTitle.
-     * @return the DataSet Item
+     * Return the OrganismData objects for the organisms listed in the source configuration.
+     * @return the organismsToProcess
      */
-    public Item getDataSetItem() {
-        return getDataSetItem(dataSetTitle);
-    }
-
-    /**
-     * Return the DataSource Item created from the dataSourceName.
-     * @return the DataSource Item
-     */
-    public Item getDataSourceItem() {
-        return getDataSourceItem(dataSourceName);
+    public Set<OrganismData> getOrganismsToProcess() {
+        return organismsToProcess;
     }
 }

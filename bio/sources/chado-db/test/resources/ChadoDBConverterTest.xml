@@ -369,7 +369,7 @@
     </collection>
   </item>
   <item id="1_1" class="http://www.flymine.org/model/genomic#DataSet">
-    <attribute name="title" value="test title"/>
+    <attribute name="title" value="FlyBase Drosophila melanogaster data set"/>
   </item>
   <item id="11_4" class="http://www.flymine.org/model/genomic#Location">
     <attribute name="end" value="24577107"/>

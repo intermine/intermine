@@ -121,10 +121,28 @@ public abstract class BioDBConverter extends DBConverter
      * @return the DataSet Item
      */
     public Item getDataSetItem(String title) {
+        return getDataSetItem(title, null, null);
+    }
+
+
+    /**
+     * Return a DataSource item with the given details.
+     * @param title the DataSet title
+     * @param url the new url field, or null if the url shouldn't be set
+     * @param description the new description field, or null if the field shouldn't be set
+     * @return the DataSet Item
+     */
+    public Item getDataSetItem(String title, String url, String description) {
         Item dataSet = dataSets.get(title);
         if (dataSet == null) {
             dataSet = createItem("DataSet");
             dataSet.setAttribute("title", title);
+            if (url != null) {
+                dataSet.setAttribute("url", url);
+            }
+            if (description != null) {
+                dataSet.setAttribute("description", description);
+            }
             try {
                 store(dataSet);
             } catch (ObjectStoreException e) {

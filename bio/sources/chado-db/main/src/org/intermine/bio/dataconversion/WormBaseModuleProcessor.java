@@ -14,6 +14,8 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 
+import org.intermine.xml.full.Item;
+
 import org.apache.commons.collections.keyvalue.MultiKey;
 import org.apache.commons.collections.map.MultiKeyMap;
 
@@ -81,4 +83,32 @@ public class WormBaseModuleProcessor extends ChadoSequenceProcessor
         }
     }
 
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    protected String getDataSourceName(@SuppressWarnings("unused") int taxonId) {
+        return "WormBase";
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    protected Item getDataSourceItem(int taxonId) {
+        return getChadoDBConverter().getDataSourceItem(getDataSourceName(taxonId));
+    }
+
+    private String getDataSetName(int taxonId) {
+        return "WormBase C.elegans data set";
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    protected Item getDataSetItem(int taxonId) {
+        return getChadoDBConverter().getDataSetItem(getDataSetName(taxonId));
+    }
 }

@@ -15,6 +15,9 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.intermine.bio.util.OrganismData;
+import org.intermine.bio.util.OrganismRepository;
+import org.intermine.dataconversion.ItemWriter;
 import org.intermine.objectstore.ObjectStoreException;
 import org.intermine.util.IntPresentSet;
 import org.intermine.xml.full.Item;
@@ -289,7 +292,7 @@ public class FlyBaseModuleProcessor extends ChadoSequenceProcessor
         }
         if (chadoFeatureType.equals("golden_path_region")) {
             // For organisms other than D. melanogaster sometimes we can convert a
-            // golden_path_region to an actual chromosome: if name is 2L, 4, etc 
+            // golden_path_region to an actual chromosome: if name is 2L, 4, etc
             if (taxonId == 7227 && !name.contains("_")) {
                 realInterMineType = "Chromosome";
             }
@@ -382,5 +385,37 @@ public class FlyBaseModuleProcessor extends ChadoSequenceProcessor
                              featureData.getChadoFeatureUniqueName());
             }
         }
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    protected String getDataSourceName(@SuppressWarnings("unused") int taxonId) {
+        return "FlyBase";
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    protected Item getDataSourceItem(int taxonId) {
+        return getChadoDBConverter().getDataSourceItem(getDataSourceName(taxonId));
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    protected Item getDataSetItem(int taxonId) {
+        OrganismRepository or = OrganismRepository.getOrganismRepository();
+        OrganismData od = or.getOrganismDataByTaxon(taxonId);
+        String species = od.getSpecies();
+        String genus = od.getGenus();
+        String name = "FlyBase " + genus + " " + species + " data set";
+        String description = "The FlyBase " + genus + " " + species + " genome";
+        Item dataSetItem =
+            getChadoDBConverter().getDataSetItem(name, "http://www.flybase.org", description);
+        return dataSetItem;
     }
 }
