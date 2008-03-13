@@ -68,6 +68,7 @@ public class SequenceHttpExporter implements TableHttpExporter
                                 HttpServletRequest request,
                                 HttpServletResponse response)
         throws Exception {
+        
         HttpSession session = request.getSession();
         ObjectStore os =
             (ObjectStore) session.getServletContext().getAttribute(Constants.OBJECTSTORE);
@@ -96,7 +97,7 @@ public class SequenceHttpExporter implements TableHttpExporter
         if (exporter.getWrittenResultsCount() == 0) {
             throw new ExportException("Nothing was found for export.");
         }
-        return null;
+        return null;            
     }
 
     

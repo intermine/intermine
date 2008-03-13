@@ -120,7 +120,7 @@ public class GFF3Exporter implements Exporter
      * @return true if this exporter can export result composed of specified classes 
      */    
     public static boolean canExport2(List<Class> clazzes) {
-        return ExportHelper.getFirstColumnForClass(clazzes, LocatedSequenceFeature.class) >= 0;
+        return ExportHelper.getClassIndex(clazzes, LocatedSequenceFeature.class) >= 0;
     }
 
     /**
