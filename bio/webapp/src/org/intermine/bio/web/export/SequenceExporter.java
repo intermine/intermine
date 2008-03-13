@@ -254,9 +254,9 @@ public class SequenceExporter implements Exporter
      */
     public static boolean canExport2(List<Class> clazzes) {        
         return (
-                ExportHelper.getFirstColumnForClass(clazzes, LocatedSequenceFeature.class) >= 0 
-                || ExportHelper.getFirstColumnForClass(clazzes, Protein.class) >= 0
-                || ExportHelper.getFirstColumnForClass(clazzes, Translation.class) >= 0
-                || ExportHelper.getFirstColumnForClass(clazzes, Sequence.class) >= 0);
+                ExportHelper.getClassIndex(clazzes, LocatedSequenceFeature.class) >= 0 
+                || ExportHelper.getClassIndex(clazzes, Protein.class) >= 0
+                || ExportHelper.getClassIndex(clazzes, Translation.class) >= 0
+                || ExportHelper.getClassIndex(clazzes, Sequence.class) >= 0);
     }
 }

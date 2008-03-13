@@ -74,7 +74,7 @@ public class GFF3HttpExporter implements TableHttpExporter
             return mapping.getInputForward();
         }        
         
-        int realFeatureIndex = ExportHelper.getFirstColumnForClass(
+        int realFeatureIndex = ExportHelper.getClassIndex(
                 ExportHelper.getColumnClasses(pt), LocatedSequenceFeature.class);
 
         Exporter exporter;
