@@ -427,7 +427,7 @@ public class Item implements Comparable
             return;
         }
 
-        if (!canReference(name)) {
+        if (!canHaveReference(name)) {
             throw new RuntimeException("class \"" + classDescriptor.getName() + "\" has no \""
                                        + name + "\" reference");
         }
@@ -437,10 +437,20 @@ public class Item implements Comparable
      * Return true if and only if the argument names a possible reference for this Item.  ie. the
      * ClassDescriptor for this Item contains a ReferenceDescriptor for this name.
      * @param name the field name
-     * @return Return true if and only if this Item can have a reference of the given name
+     * @return Return true if and only if this Item has a reference of the given name in the model
      */
-    public boolean canReference(String name) {
+    public boolean canHaveReference(String name) {
         return classDescriptor.getReferenceDescriptorByName(name, true) != null;
+    }
+
+    /**
+     * Return true if and only if the argument names a possible collection for this Item.  ie. the
+     * ClassDescriptor for this Item contains a CollectionDescriptor for this name.
+     * @param name the field name
+     * @return Return true if and only if this Item has a collection of the given name in the model
+     */
+    public boolean canHaveCollection(String name) {
+        return classDescriptor.getCollectionDescriptorByName(name, true) != null;
     }
 
     /**
