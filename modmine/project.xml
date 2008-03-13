@@ -9,24 +9,18 @@
     </source>
     <source name="modencode-metadata" type="chado-db">
       <property name="source.db.name" value="modencode-metadata"/>
-      <property name="dataSourceName" value="FlyBase"/>
-      <property name="dataSetTitle" value="FlyBase Drosophila melanogaster data set"/>
       <property name="processors"
                 value="org.intermine.bio.dataconversion.ModEncodeMetaDataProcessor"/>
     </source>
     <source name="chado-db-flybase-dmel" type="chado-db">
       <property name="source.db.name" value="flybase"/>
       <property name="organisms" value="7227"/>
-      <property name="dataSourceName" value="FlyBase"/>
-      <property name="dataSetTitle" value="FlyBase Drosophila melanogaster data set"/>
       <property name="processors"
                 value="org.intermine.bio.dataconversion.FlyBaseModuleProcessor"/>
     </source>
     <source name="chado-db-wormbase-c_elegans" type="chado-db" dump="true">
       <property name="source.db.name" value="wormbase"/>
       <property name="organisms" value="6239"/>
-      <property name="dataSourceName" value="WormBase"/>
-      <property name="dataSetTitle" value="WormBase C.elegans data set"/>
       <property name="processors"
                 value="org.intermine.bio.dataconversion.WormBaseModuleProcessor"/>
     </source>

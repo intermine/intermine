@@ -7,24 +7,18 @@
     <source name="chado-db-flybase-dmel" type="chado-db" dump="true">
       <property name="source.db.name" value="flybase"/>
       <property name="organisms" value="7227"/>
-      <property name="dataSourceName" value="FlyBase"/>
-      <property name="dataSetTitle" value="FlyBase Drosophila melanogaster data set"/>
       <property name="processors"
                 value="org.intermine.bio.dataconversion.FlyBaseModuleProcessor"/>
     </source>
     <source name="chado-db-flybase-dpse" type="chado-db" dump="true">
       <property name="source.db.name" value="flybase"/>
       <property name="organisms" value="7237"/>
-      <property name="dataSourceName" value="FlyBase"/>
-      <property name="dataSetTitle" value="FlyBase Drosophila pseudoobscura data set"/>
       <property name="processors"
                 value="org.intermine.bio.dataconversion.FlyBaseModuleProcessor"/>
     </source>
     <source name="chado-db-flybase-others" type="chado-db" dump="true">
       <property name="source.db.name" value="flybase"/>
       <property name="organisms" value="Dana Dere Dgri Dmoj Dper Dsec Dsim Dvir Dwil Dyak"/>
-      <property name="dataSourceName" value="FlyBase"/>
-      <property name="dataSetTitle" value="FlyBase Drosophila 12 genomes data set"/>
       <property name="processors"
                 value="org.intermine.bio.dataconversion.FlyBaseModuleProcessor"/>
     </source>

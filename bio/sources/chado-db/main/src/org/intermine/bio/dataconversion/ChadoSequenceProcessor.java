@@ -52,7 +52,7 @@ import org.apache.log4j.Logger;
  * A processor for the chado sequence module.
  * @author Kim Rutherford
  */
-public class ChadoSequenceProcessor extends ChadoProcessor
+public abstract class ChadoSequenceProcessor extends ChadoProcessor
 {
     protected static final Logger LOG = Logger.getLogger(ChadoSequenceProcessor.class);
 
@@ -174,11 +174,11 @@ public class ChadoSequenceProcessor extends ChadoProcessor
                                         String name, int seqlen, String residues,
                                         String interMineType, Integer organismId)
     throws ObjectStoreException {
-        Item dataSet = getChadoDBConverter().getDataSetItem();
-        Item dataSource = getChadoDBConverter().getDataSourceItem();
         OrganismData organismData = getChadoDBConverter().getChadoIdToOrgDataMap().get(organismId);
-        Item organismItem =
-            getChadoDBConverter().getOrganismItem(organismData.getTaxonId());
+        int taxonId = organismData.getTaxonId();
+        Item dataSet = getDataSetItem(taxonId);
+        Item dataSource = getDataSourceItem(taxonId);
+        Item organismItem = getChadoDBConverter().getOrganismItem(taxonId);
         FeatureData fdat = new FeatureData();
         fdat.itemIdentifier = feature.getIdentifier();
         fdat.uniqueName = uniqueName;
@@ -190,10 +190,10 @@ public class ChadoSequenceProcessor extends ChadoProcessor
             feature.setAttribute("length", String.valueOf(seqlen));
             fdat.flags |= FeatureData.LENGTH_SET;
         }
-        MultiKey nameKey =
-            new MultiKey("feature", fdat.interMineType,
-                         getChadoDBConverter().getDataSourceName(), "name");
-        List<ConfigAction> nameActionList = getConfig(organismData.getTaxonId()).get(nameKey);
+
+        String dataSourceName = getDataSourceName(taxonId);
+        MultiKey nameKey = new MultiKey("feature", fdat.interMineType, dataSourceName, "name");
+        List<ConfigAction> nameActionList = getConfig(taxonId).get(nameKey);
 
         Set<String> fieldValuesSet = new HashSet<String>();
 
@@ -225,10 +225,10 @@ public class ChadoSequenceProcessor extends ChadoProcessor
         }
 
         MultiKey uniqueNameKey =
-            new MultiKey("feature", fdat.interMineType, getChadoDBConverter().getDataSourceName(),
+            new MultiKey("feature", fdat.interMineType, dataSourceName,
                          "uniquename");
         List<ConfigAction> uniqueNameActionList =
-            getConfig(organismData.getTaxonId()).get(uniqueNameKey);
+            getConfig(taxonId).get(uniqueNameKey);
         if (uniqueNameActionList == null || uniqueNameActionList.size() == 0) {
             feature.setAttribute("primaryIdentifier", uniqueName);
             fieldValuesSet.add(uniqueName);
@@ -282,6 +282,27 @@ public class ChadoSequenceProcessor extends ChadoProcessor
         }
         featureMap.put(featureId, fdat);
     }
+
+    /**
+     * Return the name of the DataSource for this processor.
+     * @param taxonId the taxon id
+     * @return the name
+     */
+    protected abstract String getDataSourceName(int taxonId);
+
+    /**
+     * Return the DataSource Item for the given taxon id.
+     * @param taxonId the taxon id
+     * @return the Item
+     */
+    protected abstract Item getDataSourceItem(int taxonId);
+
+    /**
+     * Return a DataSet Item for the given taxon id.
+     * @param taxonId the taxon id
+     * @return the Item
+     */
+    protected abstract Item getDataSetItem(int taxonId);
 
     /**
      * Make a new feature
@@ -362,8 +383,6 @@ public class ChadoSequenceProcessor extends ChadoProcessor
 
     private void processLocationTable(Connection connection)
         throws SQLException, ObjectStoreException {
-        Item dataSet = getChadoDBConverter().getDataSetItem();
-
         ResultSet res = getFeatureLocResultSet(connection);
         int count = 0;
         int featureWarnings = 0;
@@ -378,12 +397,13 @@ public class ChadoSequenceProcessor extends ChadoProcessor
                 FeatureData srcFeatureData = featureMap.get(srcFeatureId);
                 if (featureMap.containsKey(featureId)) {
                     FeatureData featureData = featureMap.get(featureId);
+                    int taxonId = featureData.organismData.getTaxonId();
+                    Item dataSet = getDataSetItem(taxonId);
                     Item location =
                         getChadoDBConverter().makeLocation(srcFeatureData.itemIdentifier,
                                                            featureData.itemIdentifier,
                                                            start, end, strand,
-                                                           featureData.organismData.getTaxonId(),
-                                                           dataSet);
+                                                           taxonId, dataSet);
 
                     final String featureClassName =
                         getModel().getPackageName() + "." + featureData.interMineType;
@@ -744,8 +764,7 @@ public class ChadoSequenceProcessor extends ChadoProcessor
 
     private void processDbxrefTable(Connection connection)
         throws SQLException, ObjectStoreException {
-        Item dataSource = getChadoDBConverter().getDataSourceItem();
-        Item dataSet = getChadoDBConverter().getDataSetItem();
+
 
         ResultSet res = getDbxrefResultSet(connection);
         Set<String> existingAttributes = new HashSet<String>();
@@ -766,8 +785,9 @@ public class ChadoSequenceProcessor extends ChadoProcessor
                 FeatureData fdat = featureMap.get(featureId);
                 accession  = fixIdentifier(fdat.interMineType, accession);
                 MultiKey key = new MultiKey("dbxref", fdat.interMineType, dbName, isCurrent);
+                int taxonId = fdat.organismData.getTaxonId();
                 Map<MultiKey, List<ConfigAction>> orgConfig =
-                    getConfig(fdat.organismData.getTaxonId());
+                    getConfig(taxonId);
                 List<ConfigAction> actionList = orgConfig.get(key);
 
                 if (actionList == null) {
@@ -809,6 +829,8 @@ public class ChadoSequenceProcessor extends ChadoProcessor
                             if (fieldsSet.contains(accession)) {
                                 isPrimary = true;
                             }
+                            Item dataSource = getDataSourceItem(taxonId);
+                            Item dataSet = getDataSetItem(taxonId);
                             createSynonym(fdat, "identifier", accession, isPrimary, dataSet,
                                           EMPTY_ITEM_LIST, dataSource); // Stores Synonym
                             count++;
@@ -827,9 +849,6 @@ public class ChadoSequenceProcessor extends ChadoProcessor
 
     private void processFeaturePropTable(Connection connection)
         throws SQLException, ObjectStoreException {
-        Item dataSource = getChadoDBConverter().getDataSourceItem();
-        Item dataSet = getChadoDBConverter().getDataSetItem();
-
         ResultSet res = getFeaturePropResultSet(connection);
         int count = 0;
         while (res.next()) {
@@ -845,7 +864,8 @@ public class ChadoSequenceProcessor extends ChadoProcessor
             if (featureMap.containsKey(featureId)) {
                 FeatureData fdat = featureMap.get(featureId);
                 MultiKey key = new MultiKey("prop", fdat.interMineType, propTypeName);
-                List<ConfigAction> actionList = getConfig(fdat.organismData.getTaxonId()).get(key);
+                int taxonId = fdat.organismData.getTaxonId();
+                List<ConfigAction> actionList = getConfig(taxonId).get(key);
                 if (actionList == null) {
                     // no actions configured for this prop
                     continue;
@@ -857,7 +877,7 @@ public class ChadoSequenceProcessor extends ChadoProcessor
                     if (action instanceof SetFieldConfigAction) {
                         SetFieldConfigAction setAction = (SetFieldConfigAction) action;
                         if (setAction.isValidValue(identifier)) {
-                            setAttribute(fdat.intermineObjectId, setAction.getFieldName(), 
+                            setAttribute(fdat.intermineObjectId, setAction.getFieldName(),
                                          identifier);
                             fieldsSet.add(identifier);
                             if (setAction.getFieldName().equals("primaryIdentifier")) {
@@ -882,6 +902,8 @@ public class ChadoSequenceProcessor extends ChadoProcessor
                             if (fieldsSet.contains(identifier)) {
                                 isPrimary = true;
                             }
+                            Item dataSource = getDataSourceItem(taxonId);
+                            Item dataSet = getDataSetItem(taxonId);
                             createSynonym(fdat, synonymType, identifier, isPrimary, dataSet,
                                           EMPTY_ITEM_LIST, dataSource); // Stores Synonym
                             count++;
@@ -897,9 +919,6 @@ public class ChadoSequenceProcessor extends ChadoProcessor
 
     private void processSynonymTable(Connection connection)
         throws SQLException, ObjectStoreException {
-        Item dataSource = getChadoDBConverter().getDataSourceItem();
-        Item dataSet = getChadoDBConverter().getDataSetItem();
-
         ResultSet res = getSynonymResultSet(connection);
         Set<String> existingAttributes = new HashSet<String>();
         Integer currentFeatureId = null;
@@ -920,8 +939,8 @@ public class ChadoSequenceProcessor extends ChadoProcessor
                 FeatureData fdat = featureMap.get(featureId);
                 MultiKey key =
                     new MultiKey("synonym", fdat.interMineType, synonymTypeName, isCurrent);
-                Map<MultiKey, List<ConfigAction>> orgConfig =
-                    getConfig(fdat.organismData.getTaxonId());
+                int taxonId = fdat.organismData.getTaxonId();
+                Map<MultiKey, List<ConfigAction>> orgConfig = getConfig(taxonId);
                 List<ConfigAction> actionList = orgConfig.get(key);
 
                 if (actionList == null) {
@@ -958,6 +977,8 @@ public class ChadoSequenceProcessor extends ChadoProcessor
                         if (fdat.existingSynonyms.contains(identifier)) {
                             continue;
                         } else {
+                            Item dataSource = getDataSourceItem(taxonId);
+                            Item dataSet = getDataSetItem(taxonId);
                             createSynonym(fdat, synonymTypeName, identifier, setField, dataSet,
                                           EMPTY_ITEM_LIST, dataSource); // Stores Synonym
                             count++;
@@ -1012,7 +1033,7 @@ public class ChadoSequenceProcessor extends ChadoProcessor
             String pubMedId = res.getString("pub_db_identifier");
             if (lastPubFeatureId != null && !featureId.equals(lastPubFeatureId)) {
                 makeFeaturePublications(lastPubFeatureId, currentEvidenceIds);
-                makeFeatureEvidence(lastPubFeatureId, currentEvidenceIds); // Stores ReferenceList
+                makeFeatureEvidence(lastPubFeatureId, currentEvidenceIds);
                 currentEvidenceIds = new ArrayList<String>();
             }
             String publicationId;
@@ -1067,8 +1088,9 @@ public class ChadoSequenceProcessor extends ChadoProcessor
         if (fdat == null) {
             throw new RuntimeException("feature " + featureId + " not found in features Map");
         }
+        int taxonId = fdat.organismData.getTaxonId();
         List<String> evidenceIds = new ArrayList<String>(argEvidenceIds);
-        Item dataSet = getChadoDBConverter().getDataSetItem();
+        Item dataSet = getDataSetItem(taxonId);
         evidenceIds.add(0, dataSet.getIdentifier());
 
         ReferenceList referenceList = new ReferenceList();
@@ -1430,7 +1452,7 @@ public class ChadoSequenceProcessor extends ChadoProcessor
         public String getFieldName() {
             return theFieldName;
         }
-        
+
         /**
          * Check whether value provided is valid for this field, default implementation
          * just checks if value is null.
@@ -1441,16 +1463,16 @@ public class ChadoSequenceProcessor extends ChadoProcessor
             return !(value == null);
         }
     }
-    
+
     /**
      * An action that sets an attribute in a new Item and can validate a value
      * for that field against a specified pattern
      * @author Richard Smith
      */
-    protected static class SetMatchingFieldConfigAction extends SetFieldConfigAction 
+    protected static class SetMatchingFieldConfigAction extends SetFieldConfigAction
     {
         private String pattern;
-        
+
         /**
          * Construct with a field name and a pattern that values must match
          * @param fieldName name of the field
@@ -1460,7 +1482,7 @@ public class ChadoSequenceProcessor extends ChadoProcessor
             super(fieldName);
             this.pattern = pattern;
         }
-        
+
         /**
          * Validate a value for this field by matching with specied patter
          * @param value the value to check

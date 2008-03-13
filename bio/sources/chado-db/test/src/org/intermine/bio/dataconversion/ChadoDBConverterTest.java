@@ -51,17 +51,10 @@ public class ChadoDBConverterTest extends ItemsTestCase
         doTestProcess(orgId);
     }
 
-    /**
-     * @param orgId
-     * @throws Exception
-     * @throws IOException
-     */
     private void doTestProcess(String orgId) throws Exception, IOException {
         MockItemWriter itemWriter = new MockItemWriter(new HashMap<String, Item>());
         ChadoDBConverter converter =
             new TestChadoDBConverter(null, Model.getInstanceByName("genomic"), itemWriter);
-        converter.setDataSetTitle("test title");
-        converter.setDataSourceName("FlyBase");
         converter.setOrganisms(orgId);
         converter.setProcessors("org.intermine.bio.dataconversion.TestFlyBaseModuleProcessor");
         converter.process();
