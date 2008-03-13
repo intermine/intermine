@@ -128,7 +128,9 @@ public class RedFlyGFF3RecordHandler extends GFF3RecordHandler
 
         feature.setReference("gene", getGene(geneName));
 
-        addEvidence(getPublication(pubmedId));
+        if (pubmedId != null && !pubmedId.equals("")) {
+            addEvidence(getPublication(pubmedId));
+        }
 
         feature.setAttribute("primaryIdentifier",  redflyID);
         feature.setAttribute("secondaryIdentifier", name);
