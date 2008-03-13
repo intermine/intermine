@@ -347,9 +347,9 @@ public class HomophilaConverter extends FileConverter
             String desc = diseaseDescriptions.get(array[OMIM_ID]);
             if (desc == null) {
                 LOG.error("no disease description for OMIM " + array[OMIM_ID]);
-                desc = "";
+            } else {
+                disease.addAttribute(new Attribute("description", desc));
             }
-            disease.addAttribute(new Attribute("description", desc));
             store(disease);
         }
         return disease;
