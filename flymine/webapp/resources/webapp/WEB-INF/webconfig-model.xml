@@ -575,8 +575,8 @@
       <fieldconfig fieldExpr="technique"/>
       <fieldconfig fieldExpr="classification"/>
       <fieldconfig fieldExpr="resolution" />
-      <fieldconfig fieldExpr="prosa_q_score"/>
-      <fieldconfig fieldExpr="prosa_z_score"/>
+      <fieldconfig fieldExpr="prosaQscore"/>
+      <fieldconfig fieldExpr="prosaZscore"/>
       <fieldconfig fieldExpr="start"/>
       <fieldconfig fieldExpr="end"/>
       <fieldconfig fieldExpr="alignment" showInResults="false" />
