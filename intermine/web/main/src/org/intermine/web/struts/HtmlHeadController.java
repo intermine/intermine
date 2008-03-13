@@ -117,15 +117,23 @@ public class HtmlHeadController extends TilesAction
             if (dobj == null) {
                 dobj = ObjectDetailsController.makeDisplayObject(session, object);
             }
-
+           
             // TODO use the class keys instead
             String idForPageTitle = "";
             if (dobj.getAttributes().get("primaryIdentifier") != null) {
                 idForPageTitle = dobj.getAttributes().get("primaryIdentifier").toString();
             }
-            if (idForPageTitle == null && dobj.getAttributes().get("secondaryIdentifier") != null) {
+            if (idForPageTitle == null 
+                            && !idForPageTitle.equals("") 
+                            && dobj.getAttributes().get("secondaryIdentifier") != null) {
                 idForPageTitle = dobj.getAttributes().get("secondaryIdentifier").toString();
             }
+            if (idForPageTitle == null 
+                            && !idForPageTitle.equals("") 
+                            && dobj.getAttributes().get("identifier") != null) {
+                idForPageTitle = dobj.getAttributes().get("identifier").toString();
+            }
+            
             if (idForPageTitle != null && !idForPageTitle.equals("")) {
                 htmlPageTitle = htmlPageTitle + ":  " + idForPageTitle;
             }
