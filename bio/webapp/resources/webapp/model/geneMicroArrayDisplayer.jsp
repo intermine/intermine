@@ -13,7 +13,7 @@
     </html:link>
     <c:if test="${item.publication.pubMedId != null}">
       <html:img src="model/images/PubMed_logo_mini.png" title="PubMed" />
-      <html:link href="${WEB_PROPERTIES['pubmed.url.prefix']}${item.publication.pubMedId}" target="_new">
+      <html:link href="${WEB_PROPERTIES['attributelink.PubMed.Publication.*.pubMedId.url']}${item.publication.pubMedId}" target="_new">
         ${item.publication.pubMedId}
       </html:link><br/>
     </c:if>
