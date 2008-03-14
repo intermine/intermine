@@ -25,7 +25,14 @@
     </select>
   </c:if>
   </p>
-  <div id="widgetdata${widget.id}" class="widgetdata"></div>
+  <div id="widgetdata${widget.id}" class="widgetdata">
+    <c:if test="${fn:contains(widget.class,'TableWidget')}" >
+      <table id="tablewidget${widget.id}" border="1">
+        <thead id="tablewidget${widget.id}head"></thead>
+        <tbody id="tablewidget${widget.id}body"></tbody>
+      </table>
+    </c:if>
+  </div>
   <div id="widgetdatawait${widget.id}" class="widgetdatawait"><img src="images/wait30.gif" title="Searching..."/></div>
   <script language="javascript">
   <c:choose>
@@ -36,22 +43,11 @@
     </c:when>
     <c:when test="${fn:contains(widget.class,'TableWidget')}" >
     <!--//<![CDATA[
-        function getProcessWidget(widgetId, bagName) {
-          AjaxServices.getProcessTableWidget(widgetId,bagName,handleGetWidget)
-        }
-        
-        getWidget('${widget.id}','${bag.name}'};
-        handleGetWidget('${widget.id}','${bag.name}'};
+           getProcessTableWidget('${widget.id}','${bag.name}');
     //]]>-->
     </c:when>
     <c:when test="${fn:contains(widget.class,'EnrichmentWidget')}" >
     <!--//<![CDATA[
-        function getProcessWidget(widgetId, bagName) {
-          AjaxServices.getProcessEnrichmentWidget(widgetId,bagName,handleGetWidget)
-        }
-        
-        getWidget('${widget.id}','${bag.name}'};
-        handleGetWidget('${widget.id}','${bag.name}'};
     //]]>-->
     </c:when>
   </c:choose>

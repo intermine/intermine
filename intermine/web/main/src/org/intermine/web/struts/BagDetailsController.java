@@ -122,63 +122,6 @@ public class BagDetailsController extends TilesAction
         request.setAttribute("widgets", widgets);
         request.setAttribute("widget2extraAttrs", widget2extraAttrs);
 
-        for (Widget widget : widgets) {
-            if (widget instanceof GraphWidget) {
-//                GraphWidget graphWidget = (GraphWidget) widget;
-//                try {
-//                    if (graphWidget.getExtraAttributeClass() != null) {
-//                        try {
-//                            Class clazz = TypeUtil
-//                                            .instantiate(graphWidget.getExtraAttributeClass());
-//                            Constructor constr = clazz.getConstructor(new Class[]
-//                                {});
-//                            WidgetUtil widgetUtil = (WidgetUtil) constr.newInstance(new Object[]
-//                                {});
-//                            Collection<String> extraAttributes = widgetUtil.getExtraAttributes(os,
-//                                            imBag);
-//
-//                            for (String extra : extraAttributes) {
-//                                graphWidget.process(imBag, os, extra);
-//                                graphDisplayerArray.add(graphWidget);
-//                            }
-//                        } catch (Exception e) {
-//                            throw new Exception("Can't get organisms list");
-//                        }
-//                    } else {
-//                        graphWidget.process(imBag, os);
-//                        graphDisplayerArray.add(graphWidget);
-//                    }
-//                } catch (Exception e) {
-//                    // TODO do something clever
-//                    // return null;
-//                    // throw new Exception(e);
-//                }
-            } else
-                if (widget instanceof TableWidget) {
-                    TableWidget tableWidget = (TableWidget) widget;
-                    try {
-                        String ldrType = tableWidget.getType();
-                        String collectionName = tableWidget.getCollectionName();
-                        String fields = tableWidget.getFields();
-                        String title = tableWidget.getTitle();
-                        String description = tableWidget.getDescription();
-                        String urlGen = tableWidget.getLink();
-                        BagTableWidgetLoader bagWidgLdr = new BagTableWidgetLoader(title,
-                                        description, ldrType, collectionName, imBag, os, webConfig,
-                                        model, classKeys, fields, urlGen);
-                        //                        tableDisplayerArray.add(bagWidgLdr);
-
-                    } catch (Exception e) {
-                        // TODO do something clever
-                        // return null;
-                        // throw new Exception();
-                    }
-                } else
-                    if (widget instanceof EnrichmentWidget) {
-                        //                        enrichmentWidgetDisplayerArray.add(EnrichmentWidget);
-                    }
-        }
-
         PagedTable pagedResults = SessionMethods.getResultsTable(session, "bag." + imBag.getName());
         if (pagedResults == null) {
             pagedResults = SessionMethods.doQueryGetPagedTable(request, servletContext, imBag);
@@ -219,9 +162,6 @@ public class BagDetailsController extends TilesAction
         request.setAttribute("bag", imBag);
         request.setAttribute("bagSize", new Integer(imBag.size()));
         request.setAttribute("pagedResults", pagedResults);
-        // request.setAttribute("graphDisplayerArray", graphDisplayerArray);
-        // request.setAttribute("tableDisplayerArray", tableDisplayerArray);
-        // request.setAttribute("enrichmentWidgetDisplayerArray", enrichmentWidgetDisplayerArray);
 
         return null;
     }
