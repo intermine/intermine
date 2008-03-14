@@ -36,7 +36,6 @@ import org.intermine.web.logic.session.SessionMethods;
 
 /*
  * TODO   
- * - export helper
  * - rewrite  web service for new exporters
  * - what to do if more columns with LocatedSequenceFeature ?
  */
@@ -54,8 +53,12 @@ public class TableExportAction extends InterMineAction
 
     private static final String ERROR_MSG = "Export failed. Please contact support.";
     
+    private static final String ERROR_FORWARD = "error";
+    
     // timeout for export is 1 day
-    private static final int TIMEOUT = 24 * 60 * 60; 
+    private static final int TIMEOUT = 24 * 60 * 60;
+
+    private static final String SUCCESS_FORWARD = "success"; 
     
     /**
      * Method called to export a PagedTable object.  Uses the type request parameter to choose the
@@ -88,7 +91,7 @@ public class TableExportAction extends InterMineAction
             }
             
             if (pt == null) {
-                return mapping.getInputForward();
+                return mapping.findForward(ERROR_FORWARD);
             }
             
             if (pt.getWebTable() instanceof WebResults) {
@@ -96,7 +99,7 @@ public class TableExportAction extends InterMineAction
             }
             
             exporter.export(pt, request, response);
-            return mapping.getInputForward();
+            return mapping.findForward(SUCCESS_FORWARD);
         } catch (RuntimeException e) {
             return processException(mapping, request, response, e);            
         } finally {
@@ -139,7 +142,7 @@ public class TableExportAction extends InterMineAction
                 messages.add(ActionMessages.GLOBAL_MESSAGE, 
                         new ActionMessage("errors.export.displayonlyparameters", msg));
                 request.setAttribute(Globals.ERROR_KEY, messages);
-                return mapping.getInputForward();                
+                return mapping.findForward(ERROR_FORWARD);
             } catch (IllegalStateException ex) {
                 OutputStream out = response.getOutputStream();
                 writer = new PrintWriter(out);
@@ -148,18 +151,19 @@ public class TableExportAction extends InterMineAction
                 return null;
             }
         } else {
+            // Attempt to writer error to output stream where data was already sent.
+            // If there are textual data user will see the error else it will
+            // makes binary file  probably unreadable and so the user knows
+            // that something is wrong.
+            // At this moment only excel format exports binary output and 
+            // it is flushed at the end - that's why an error can only happen before 
+            // response is  commited and user will see the error and won't get the 
+            // excel file.
             try {
                 PrintWriter writer = response.getWriter();
                 writer.println(msg);
                 writer.flush();
             } catch (IllegalStateException ex) {
-                // Attempt to writer error to output stream where data was already sent.
-                // If there are textual data user will see the error else it will
-                // makes binary file  probably unreadable and so the user knows
-                // that something is wrong.
-                // At this moment only excel format exports binary output and 
-                // it is flushed at the end - it is error can only happen before 
-                // response is  commited.
                 OutputStream out = response.getOutputStream();
                 PrintWriter writer = new PrintWriter(out);
                 writer.println(msg);

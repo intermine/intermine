@@ -56,7 +56,7 @@ public abstract class HttpExporterBase implements TableHttpExporter
             HttpServletResponse response) {
 
         List<List<ResultElement>> results = pt.getRearrangedResults();
-        
+
         OutputStream out = null;
         try {
             out = response.getOutputStream();
