@@ -17,7 +17,6 @@ import java.util.Map;
 
 import org.intermine.bio.util.OrganismData;
 import org.intermine.bio.util.OrganismRepository;
-import org.intermine.dataconversion.ItemWriter;
 import org.intermine.objectstore.ObjectStoreException;
 import org.intermine.util.IntPresentSet;
 import org.intermine.xml.full.Item;
@@ -29,6 +28,7 @@ import java.sql.Statement;
 
 import org.apache.commons.collections.keyvalue.MultiKey;
 import org.apache.commons.collections.map.MultiKeyMap;
+import org.apache.log4j.Logger;
 
 /**
  * A converter for chado that handles FlyBase specific configuration.
@@ -36,6 +36,9 @@ import org.apache.commons.collections.map.MultiKeyMap;
  */
 public class FlyBaseModuleProcessor extends ChadoSequenceProcessor
 {
+    private static final Logger LOG = Logger.getLogger(FlyBaseModuleProcessor.class);
+
+
     private Map<Integer, MultiKeyMap> config = new HashMap<Integer, MultiKeyMap>();
     private IntPresentSet locatedGeneIds = new IntPresentSet();
 
