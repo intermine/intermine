@@ -250,7 +250,7 @@ public class HomophilaConverter extends FileConverter
         Item translation = translations.get(array[TRANSLATION_ID]);
         if (translation == null) {
             translation = createItem("Translation");
-            translation.addAttribute(new Attribute("primaryIdentifier", array[TRANSLATION_ID]));
+            translation.addAttribute(new Attribute("secondaryIdentifier", array[TRANSLATION_ID]));
             translation.addReference(new Reference("organism", orgDrosophila.getIdentifier()));
             translation.addToCollection("evidence", homophilaDb);
             translations.put(array[TRANSLATION_ID], translation);
