@@ -73,6 +73,7 @@ import org.intermine.web.logic.tagging.TagTypes;
 import org.intermine.web.logic.template.TemplateHelper;
 import org.intermine.web.logic.template.TemplateQuery;
 import org.intermine.web.logic.widget.GraphWidget;
+import org.intermine.web.logic.widget.TableWidget;
 import org.intermine.web.logic.widget.Widget;
 
 
@@ -752,6 +753,32 @@ public class AjaxServices
             }
         }
         return null;
-
     }
+    
+    public static TableWidget getProcessTableWidget(String widgetId, String bagName) throws InterMineException {
+        ServletContext servletContext = WebContextFactory.get().getServletContext();
+        HttpSession session = WebContextFactory.get().getSession();
+        WebConfig webConfig = (WebConfig) servletContext.getAttribute(Constants.WEBCONFIG);
+        ObjectStore os = (ObjectStore) servletContext.getAttribute(Constants.OBJECTSTORE);
+        Model model =  os.getModel();
+        Profile profile = (Profile) session.getAttribute(Constants.PROFILE);
+        SearchRepository searchRepository =
+            SearchRepository.getGlobalSearchRepository(servletContext);
+        InterMineBag imBag = BagHelper.getBag(profile, searchRepository, bagName);
+        Map classKeys = (Map) servletContext.getAttribute(Constants.CLASS_KEYS);
+
+        Type type = (Type) webConfig.getTypes().get(model.getPackageName()
+                        + "." + imBag.getType());
+        List<Widget> widgets = type.getWidgets();
+        for (Widget widget: widgets) {
+            if (widget.getId() == Integer.parseInt(widgetId)) {
+                TableWidget tableWidget = (TableWidget) widget;
+                tableWidget.setClassKeys(classKeys);
+                tableWidget.setWebConfig(webConfig);
+                tableWidget.process(imBag, os);
+                return tableWidget;
+            }
+        }
+        return null;
+    }    
 }

@@ -1,9 +1,22 @@
 package org.intermine.web.logic.widget;
 
+/*
+ * Copyright (C) 2002-2008 FlyMine
+ *
+ * This code may be freely distributed and modified under the
+ * terms of the GNU Lesser General Public Licence.  This should
+ * be distributed with the code.  See the LICENSE file for more
+ * information or http://www.gnu.org/copyleft/lesser.html.
+ *
+ */
+
 import java.util.Collection;
+import java.util.List;
+import java.util.Map;
 
 import org.intermine.objectstore.ObjectStore;
 import org.intermine.web.logic.bag.InterMineBag;
+import org.intermine.web.logic.config.WebConfig;
 
 /*
  * Copyright (C) 2002-2008 FlyMine
@@ -21,15 +34,25 @@ import org.intermine.web.logic.bag.InterMineBag;
  */
 public class TableWidget extends Widget
 {
-    private String title;
     private String type;
     private String collectionName;
     private String fields;
-    private String description;
-
+    private WebConfig webConfig;
+    private Map classKeys;
+    private BagTableWidgetLoader bagWidgLdr;
     
     public void process(InterMineBag bag, ObjectStore os) {
-        // TODO fill in
+        bagWidgLdr = new BagTableWidgetLoader(getTitle(),
+                        getDescription(), type, collectionName, bag, os, webConfig,
+                        os.getModel(), classKeys, fields, getLink());
+    }
+    
+    public List getFlattenedResults() {
+        return bagWidgLdr.getFlattenedResults();
+    }
+    
+    public List getColumns() {
+        return bagWidgLdr.getColumns();
     }
     
     /**
@@ -85,12 +108,40 @@ public class TableWidget extends Widget
      * @return a String version of this WebConfig object
      */
     public String toString() {
-        return "< title=\"" + title + "\" type=\"" + type + "\" collectionName=\""
+        return "< title=\"" + getTitle() + "\" type=\"" + type + "\" collectionName=\""
                + collectionName + "\"/>";
     }
     
     public Collection getExtraAttributes(InterMineBag imBag, ObjectStore os) {
         return null;
+    }
+
+    /**
+     * @return the webConfig
+     */
+    public WebConfig getWebConfig() {
+        return webConfig;
+    }
+
+    /**
+     * @param webConfig the webConfig to set
+     */
+    public void setWebConfig(WebConfig webConfig) {
+        this.webConfig = webConfig;
+    }
+
+    /**
+     * @return the classKeys
+     */
+    public Map getClassKeys() {
+        return classKeys;
+    }
+
+    /**
+     * @param classKeys the classKeys to set
+     */
+    public void setClassKeys(Map classKeys) {
+        this.classKeys = classKeys;
     }
 
 }
