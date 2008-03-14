@@ -65,7 +65,7 @@ public class MageFlatFileConverter extends FileConverter
      * Constructor
      * @param writer the ItemWriter used to handle the resultant items
      * @param model the Model
-     * @pram propertiesFileName file of mage convertor properties
+     * @param propertiesFileName file of mage convertor properties
      * @throws ObjectStoreException if an error occurs in storing
      * @throws MetaDataException if cannot generate model
      * @throws IOException if fail to read config file
