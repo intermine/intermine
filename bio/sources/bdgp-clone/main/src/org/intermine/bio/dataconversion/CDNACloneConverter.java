@@ -54,10 +54,12 @@ public abstract class CDNACloneConverter extends FileConverter
     public abstract void process(Reader reader) throws Exception;
 
     /**
-     * @param clsName = target class name
-     * @param id = identifier
-     * @param orgId = ref id for organism
-     * @return item
+     * Create and return a new BioEntity.
+     * @param clsName target class name
+     * @param id identifier to set attrName to
+     * @param attrName the attrName to use for the identifier
+     * @param orgId ref id for organism
+     * @return the new Item
      */
     protected Item createBioEntity(String clsName, String id, String attrName, String orgId) {
         Item bioEntity = createItem(clsName);
