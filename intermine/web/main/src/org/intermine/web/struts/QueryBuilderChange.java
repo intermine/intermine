@@ -110,11 +110,11 @@ public class QueryBuilderChange extends DispatchAction
      */
     protected static void removeNode(PathQuery pathQuery, String path) {
         // copy because we will be remove paths from the Map as we go
-        Set keys = new HashSet(pathQuery.getNodes().keySet());
+        Set<String> keys = new HashSet(pathQuery.getNodes().keySet());
 
         // remove the node and it's children
-        for (Iterator i = keys.iterator(); i.hasNext();) {
-            String testPath = (String) i.next();
+        for (Iterator<String> i = keys.iterator(); i.hasNext();) {
+            String testPath = i.next();
 
             if (testPath.startsWith(path)) {
                 removeOneNode(pathQuery, testPath);
