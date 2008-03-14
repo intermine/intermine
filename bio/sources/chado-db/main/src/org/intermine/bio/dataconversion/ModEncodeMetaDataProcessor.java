@@ -35,6 +35,7 @@ public class ModEncodeMetaDataProcessor extends ChadoProcessor
     private Map<Integer, Integer> experimentIdMap = new HashMap<Integer, Integer>();
     private Map<Integer, String> experimentIdRefMap = new HashMap<Integer, String>();
     private Map<Integer, Integer> providerIdMap = new HashMap<Integer, Integer>();
+    private Map<Integer, String> providerIdRefMap = new HashMap<Integer, String>();
     private Map<Integer, Integer> dataIdMap = new HashMap<Integer, Integer>();
     private Map<Integer, Integer> appliedProtocolIdMap = new HashMap<Integer, Integer>();
 
@@ -150,11 +151,11 @@ public class ModEncodeMetaDataProcessor extends ChadoProcessor
     @Override
     public void process(Connection connection) throws Exception {
 
-        processExperimentTable(connection);
-        processExperimentAttributes(connection);
-
         processProviderTable(connection);
         processProviderAttributes(connection);
+
+        processExperimentTable(connection);
+        processExperimentAttributes(connection);
 
         processProtocolTable(connection);
         processProtocolAttributes(connection);        
@@ -177,8 +178,9 @@ public class ModEncodeMetaDataProcessor extends ChadoProcessor
             String value = res.getString("value");
             Item provider = getChadoDBConverter().createItem("Provider");
             provider.setAttribute("lab", value);
-            Integer intermineObjectId = getChadoDBConverter().store(provider);
+            Integer intermineObjectId = getChadoDBConverter().store(provider);            
             providerIdMap .put(experimentId, intermineObjectId);
+            providerIdRefMap .put(experimentId, provider.getIdentifier());
             count++;
         }
         LOG.info("created " + count + " providers");
@@ -265,6 +267,7 @@ public class ModEncodeMetaDataProcessor extends ChadoProcessor
             //String name = res.getString("name");
             Item experiment = getChadoDBConverter().createItem("ExperimentSubmission");
             //experiment.setAttribute("name", name);
+            experiment.setReference("provider", providerIdRefMap.get(experimentId));
             Integer intermineObjectId = getChadoDBConverter().store(experiment);
             experimentIdMap .put(experimentId, intermineObjectId);
             experimentIdRefMap .put(experimentId, experiment.getIdentifier());
@@ -273,7 +276,6 @@ public class ModEncodeMetaDataProcessor extends ChadoProcessor
         LOG.info("created " + count + " experiments");
         res.close();
     }
-
 
     /**
      * Return the rows needed from the experiment table.
@@ -336,8 +338,6 @@ public class ModEncodeMetaDataProcessor extends ChadoProcessor
         ResultSet res = stmt.executeQuery(query);
         return res;
     }
-
-
 
     /* PROTOCOL -------------------------------------------------------------------------*/
 
@@ -434,16 +434,13 @@ public class ModEncodeMetaDataProcessor extends ChadoProcessor
             //String direction = res.getString("direction");
             Item appliedProtocol = getChadoDBConverter().createItem("AppliedProtocol");
             //appliedProtocol.setAttribute("direction", direction);
-            Integer intermineObjectId = getChadoDBConverter().store(appliedProtocol);
-            appliedProtocolIdMap .put(appliedProtocolId, intermineObjectId);
             appliedProtocol.setReference("protocol", protocolIdRefMap.get(protocolId));
-            LOG.info("=> [" + protocolIdRefMap.get(protocolId) + "] appliedProtocol");
-
             if (experimentId > 0) {
-                LOG.info("== [" + experimentId + "] " + experimentIdRefMap.get(experimentId));
                 appliedProtocol.setReference("experimentSubmission", 
                         experimentIdRefMap.get(experimentId));
             }
+            Integer intermineObjectId = getChadoDBConverter().store(appliedProtocol);
+            appliedProtocolIdMap .put(appliedProtocolId, intermineObjectId);            
             count++;
         }
         LOG.info("created " + count + " appliedProtocol");
