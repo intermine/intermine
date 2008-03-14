@@ -132,6 +132,15 @@
     </longdisplayers>
     <tabledisplayer src="/model/dataSourceShort.jsp"/>
   </class>
+  
+   <class className="org.flymine.model.genomic.DomainRelationship">
+    <fields>
+      <fieldconfig fieldExpr="childFeatures.primaryIdentifier"/>
+      <fieldconfig fieldExpr="contains.primaryIdentifier"/>
+      <fieldconfig fieldExpr="foundIn.primaryIdentifier"/>
+      <fieldconfig fieldExpr="parentFeatures.primaryIdentifier"/>
+    </fields>
+  </class>
 
   <class className="org.flymine.model.genomic.Disease">
     <fields>
@@ -299,6 +308,7 @@
   </class>
   
   <class className="org.flymine.model.genomic.Image">
+    <fieldconfig fieldExpr="url"/>
     <fields>
       <fieldconfig fieldExpr="url" displayer="/model/imageDisplayer.jsp" />      
     </fields>
@@ -575,8 +585,8 @@
       <fieldconfig fieldExpr="technique"/>
       <fieldconfig fieldExpr="classification"/>
       <fieldconfig fieldExpr="resolution" />
-      <fieldconfig fieldExpr="prosaQscore"/>
-      <fieldconfig fieldExpr="prosaZscore"/>
+      <fieldconfig fieldExpr="prosaQScore"/>
+      <fieldconfig fieldExpr="prosaZScore"/>
       <fieldconfig fieldExpr="start"/>
       <fieldconfig fieldExpr="end"/>
       <fieldconfig fieldExpr="alignment" showInResults="false" />
