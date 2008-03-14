@@ -21,7 +21,6 @@ import org.flymine.model.genomic.DataSource;
 import org.flymine.model.genomic.Location;
 import org.flymine.model.genomic.MRNA;
 import org.flymine.model.genomic.Organism;
-import org.flymine.model.genomic.Synonym;
 import org.flymine.model.genomic.UTR;
 
 import org.biojava.bio.Annotation;
@@ -63,12 +62,7 @@ public class FlyBaseUTRFastaLoaderTask extends FlyBaseFeatureFastaLoaderTask
         MRNA mrna = getMRNA(mrnaIdentifier, organism);
         utr.setmRNA(mrna);
 
-        Synonym synonym = (Synonym) getDirectDataLoader().createObject(Synonym.class);
-        synonym.setValue(utrIdentifier);
-        synonym.setType("identifier");
-        synonym.setSubject(interMineObject);
-        synonym.setSource(dataSource);
-        getDirectDataLoader().store(synonym);
+        createSynonym(interMineObject, dataSource, utrIdentifier);
 
         String header = (String) annotation.getProperty("description");
 

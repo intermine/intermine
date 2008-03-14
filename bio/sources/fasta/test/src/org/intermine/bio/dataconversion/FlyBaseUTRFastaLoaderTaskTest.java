@@ -26,6 +26,7 @@ import org.intermine.objectstore.ObjectStore;
 import org.intermine.objectstore.ObjectStoreWriter;
 import org.intermine.objectstore.ObjectStoreWriterFactory;
 
+import org.flymine.model.genomic.DataSet;
 import org.flymine.model.genomic.FivePrimeUTR;
 import org.flymine.model.genomic.LocatedSequenceFeature;
 import org.flymine.model.genomic.Location;
@@ -51,6 +52,7 @@ public class FlyBaseUTRFastaLoaderTaskTest extends TestCase {
 
     private ObjectStoreWriter osw;
     private static final Logger LOG = Logger.getLogger(FlyBaseUTRFastaLoaderTaskTest.class);
+    private String dataSetTitle = "utr test title";
 
     public void setUp() throws Exception {
         osw = ObjectStoreWriterFactory.getObjectStoreWriter("osw.bio-test");
@@ -68,6 +70,10 @@ public class FlyBaseUTRFastaLoaderTaskTest extends TestCase {
 
         for (Object rr: r) {
             FivePrimeUTR utr = (FivePrimeUTR) ((ResultsRow) rr).get(0);
+            assertEquals(1, utr.getEvidence().size());
+            DataSet dataSet = ((DataSet) utr.getEvidence().iterator().next());
+            assertEquals(dataSetTitle, dataSet.getTitle());
+
             assertNotNull(utr.getChromosomeLocation());
             if (utr.getPrimaryIdentifier().equals("FBtr0112632-5-prime-utr")) {
                 seenFBtr0112632 = true;
@@ -112,6 +118,10 @@ public class FlyBaseUTRFastaLoaderTaskTest extends TestCase {
 
         for (Object rr: r) {
             ThreePrimeUTR utr = (ThreePrimeUTR) ((ResultsRow) rr).get(0);
+            assertEquals(1, utr.getEvidence().size());
+            DataSet dataSet = ((DataSet) utr.getEvidence().iterator().next());
+            assertEquals(dataSetTitle, dataSet.getTitle());
+
             assertNotNull(utr.getChromosomeLocation());
             if (utr.getPrimaryIdentifier().equals("FBtr0071764-3-prime-utr")) {
                 seenFBtr0071764 = true;
@@ -154,6 +164,7 @@ public class FlyBaseUTRFastaLoaderTaskTest extends TestCase {
         flt.setClassAttribute("primaryIdentifier");
         flt.setIntegrationWriterAlias("integration.bio-test");
         flt.setSourceName("fasta-test");
+        flt.setDataSetTitle(dataSetTitle);
 
         File tmpFile = File.createTempFile("FlyBaseUTRFastaLoaderTaskTest", "tmp");
         FileWriter fw = new FileWriter(tmpFile);
