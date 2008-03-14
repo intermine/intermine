@@ -6,6 +6,9 @@ div.widgetcontainer{
    border:1px solid #D0B5D7;
    text-align:center;
    float:left;
+   background-image: url('../images/widget_bg.png');
+   background-repeat: repeat-x;
+   background-position: bottom;
 }
 
 div.widgetcontainer p{

@@ -41,16 +41,27 @@ public class TableWidget extends Widget
     private Map classKeys;
     private BagTableWidgetLoader bagWidgLdr;
     
+    /**
+     * {@inheritDoc}
+     */
     public void process(InterMineBag bag, ObjectStore os) {
         bagWidgLdr = new BagTableWidgetLoader(getTitle(),
                         getDescription(), type, collectionName, bag, os, webConfig,
                         os.getModel(), classKeys, fields, getLink());
     }
     
+    /**
+     * Get the flattened results
+     * @return the List of flattened results
+     */
     public List getFlattenedResults() {
         return bagWidgLdr.getFlattenedResults();
     }
     
+    /**
+     * Get the columns
+     * @return the columns
+     */
     public List getColumns() {
         return bagWidgLdr.getColumns();
     }

@@ -1,4 +1,8 @@
 function getProcessGraphWidget(widgetId, bagName, selectedExtraAttribute) {
+  var widgetdataname = document.getElementById('widgetdata' + widgetId);
+  var widgetdatawait = document.getElementById('widgetdatawait' + widgetId); 
+  Element.hide($(widgetdataname));
+  Element.show($(widgetdatawait));
   AjaxServices.getProcessGraphWidget(widgetId,bagName,selectedExtraAttribute,handleGraphWidget);
 }
 
@@ -32,7 +36,14 @@ function handleTableWidget(widget) {
     for(var j = 0; j < columns.length ; j++){
      var cell = document.createElement("td");
      if(columns[j]!=null) {
-       cell.innerHTML = columns[j].field;
+       if(columns[j][1] != null) {
+       	var link = document.createElement("a");
+       	link.setAttribute("href",columns[j][1]);
+        link.innerHTML = columns[j][0];
+       	cell.appendChild(link);
+       } else {
+        cell.innerHTML = columns[j][0];
+       }
      }
      row.appendChild(cell);
     }
