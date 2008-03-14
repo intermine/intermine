@@ -15,10 +15,14 @@ import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import org.flymine.model.genomic.BioEntity;
 import org.flymine.model.genomic.Chromosome;
+import org.flymine.model.genomic.DataSource;
 import org.flymine.model.genomic.LocatedSequenceFeature;
 import org.flymine.model.genomic.Location;
 import org.flymine.model.genomic.Organism;
+import org.flymine.model.genomic.Synonym;
+
 import org.intermine.objectstore.ObjectStoreException;
 
 /**
@@ -48,6 +52,23 @@ public class FlyBaseFeatureFastaLoaderTask extends FastaLoaderTask
             chrMap.put(chromosomeId, chr);
             return chr;
         }
+    }
+
+    /**
+     * Create a Synonym.
+     * @param interMineObject the subject InterMineObject of the Synonym
+     * @param dataSource the DataSource for the Synonym
+     * @param identifier the synonym value
+     * @throws ObjectStoreException if there is a problem storing
+     */
+    public void createSynonym(BioEntity interMineObject, DataSource dataSource, String identifier)
+    throws ObjectStoreException {
+        Synonym synonym = (Synonym) getDirectDataLoader().createObject(Synonym.class);
+        synonym.setValue(identifier);
+        synonym.setType("identifier");
+        synonym.setSubject(interMineObject);
+        synonym.setSource(dataSource);
+        getDirectDataLoader().store(synonym);
     }
 
     /**

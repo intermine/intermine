@@ -44,6 +44,7 @@
                 className="${fasta.className}"
                 classAttribute="${fasta.classAttribute}"
                 synonymSource="${fasta.synonymSource}"
+                dataSetTitle="${fasta.dataSetTitle}"
                 sequenceType="${fasta.sequenceType}"
                 fastaTaxonId="${fasta.taxonId}">
       <fileset dir="${src.data.dir}" includes="${fasta.includes}"/>

@@ -10,6 +10,8 @@ package org.intermine.bio.dataconversion;
  *
  */
 
+import java.util.HashMap;
+import java.util.Map;
 import java.util.NoSuchElementException;
 
 import org.intermine.objectstore.ObjectStoreException;
@@ -17,6 +19,7 @@ import org.intermine.task.FileDirectDataLoaderTask;
 import org.intermine.util.TypeUtil;
 
 import org.flymine.model.genomic.BioEntity;
+import org.flymine.model.genomic.DataSet;
 import org.flymine.model.genomic.DataSource;
 import org.flymine.model.genomic.Organism;
 import org.flymine.model.genomic.Synonym;
@@ -27,6 +30,7 @@ import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
 
+import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.apache.tools.ant.BuildException;
 import org.biojava.bio.BioException;
@@ -44,7 +48,7 @@ import org.biojava.bio.seq.io.SeqIOTools;
 
 public class FastaLoaderTask extends FileDirectDataLoaderTask
 {
-    protected static final Logger LOG = Logger.getLogger(FastaLoaderTask.class);
+    private static final Logger LOG = Logger.getLogger(FastaLoaderTask.class);
 
     private Integer fastaTaxonId;
     private String sequenceType = "dna";
@@ -62,6 +66,10 @@ public class FastaLoaderTask extends FileDirectDataLoaderTask
 
     //Set this if we want to do some testing...
     private File[] files = null;
+
+    private String dataSetTitle;
+
+    private Map<String, DataSet> dataSets = new HashMap<String, DataSet>();
 
     /**
      * Set the Taxon Id of the Organism we are loading.
@@ -126,6 +134,14 @@ public class FastaLoaderTask extends FileDirectDataLoaderTask
      */
     public void setSynonymSource(String synonymSource) {
         this.synonymSource = synonymSource;
+    }
+
+    /**
+     * If a value is specified this title will used when a DataSet is created.
+     * @param dataSetTitle the title of the DataSets of any new features
+     */
+    public void setDataSetTitle(String dataSetTitle) {
+        this.dataSetTitle = dataSetTitle;
     }
 
     /**
@@ -284,6 +300,11 @@ public class FastaLoaderTask extends FileDirectDataLoaderTask
             synonym.setSource(getDataSource());
         }
 
+        if (!StringUtils.isEmpty(dataSetTitle)) {
+            DataSet dataSet = getDataSet(dataSetTitle);
+            imo.addEvidence(dataSet);
+        }
+
         try {
             getDirectDataLoader().store(flymineSequence);
             getDirectDataLoader().store(imo);
@@ -294,6 +315,20 @@ public class FastaLoaderTask extends FileDirectDataLoaderTask
             }
         } catch (ObjectStoreException e) {
             throw new BuildException("store failed", e);
+        }
+    }
+
+    private DataSet getDataSet(String dataSetTitle) throws ObjectStoreException {
+        if (dataSets.containsKey(dataSetTitle)) {
+            return dataSets.get(dataSetTitle);
+        } else {
+            DataSet dataSet = (DataSet) getDirectDataLoader().createObject(DataSet.class);
+            dataSet.setTitle(dataSetTitle);
+            getDirectDataLoader().store(dataSet);
+            if (getDataSource() != null) {
+                dataSet.setDataSource(getDataSource());
+            }
+            return dataSet;
         }
     }
 
