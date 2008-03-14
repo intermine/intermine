@@ -158,7 +158,6 @@
       <forward name="query" redirect="true" path="/query.do"/>
     </action>
     <action path="/exportAction" type="org.intermine.web.struts.TableExportAction" parameter="method">
-      <forward name="success" path="results.page"/>
       <forward name="error" path="results.page"/>
     </action>
     <action path="/changeTable" type="org.intermine.web.struts.ChangeTableAction" parameter="method">

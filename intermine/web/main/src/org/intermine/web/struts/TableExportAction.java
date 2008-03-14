@@ -58,8 +58,6 @@ public class TableExportAction extends InterMineAction
     // timeout for export is 1 day
     private static final int TIMEOUT = 24 * 60 * 60;
 
-    private static final String SUCCESS_FORWARD = "success"; 
-    
     /**
      * Method called to export a PagedTable object.  Uses the type request parameter to choose the
      * export method.
@@ -91,7 +89,7 @@ public class TableExportAction extends InterMineAction
             }
             
             if (pt == null) {
-                return mapping.findForward(ERROR_FORWARD);
+                throw new ExportException("Export failed.");
             }
             
             if (pt.getWebTable() instanceof WebResults) {
@@ -99,7 +97,10 @@ public class TableExportAction extends InterMineAction
             }
             
             exporter.export(pt, request, response);
-            return mapping.findForward(SUCCESS_FORWARD);
+            // If null is returned then no forwarding is performed and 
+            // to the output is not flushed any jsp output, so user
+            // will get only required export data
+            return null;
         } catch (RuntimeException e) {
             return processException(mapping, request, response, e);            
         } finally {
