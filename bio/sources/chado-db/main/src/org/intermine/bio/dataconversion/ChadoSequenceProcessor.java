@@ -54,7 +54,7 @@ import org.apache.log4j.Logger;
  */
 public abstract class ChadoSequenceProcessor extends ChadoProcessor
 {
-    protected static final Logger LOG = Logger.getLogger(ChadoSequenceProcessor.class);
+    private static final Logger LOG = Logger.getLogger(ChadoSequenceProcessor.class);
 
     private Map<Integer, FeatureData> featureMap = new HashMap<Integer, FeatureData>();
     private Map<Integer, MultiKeyMap> config = new HashMap<Integer, MultiKeyMap>();
@@ -80,6 +80,10 @@ public abstract class ChadoSequenceProcessor extends ChadoProcessor
      */
     protected static final ConfigAction CREATE_SYNONYM_ACTION = new CreateSynonymAction();
 
+    /**
+     * An action that does nothing - used to ignore a synonym/dbxref/whatever instead of doing the
+     * default.
+     */
     protected static final ConfigAction DO_NOTHING_ACTION = new DoNothingAction();
 
     private static final String TEMP_FEATURE_TABLE_NAME = "intermine_chado_features_temp";
@@ -1435,7 +1439,7 @@ public abstract class ChadoSequenceProcessor extends ChadoProcessor
      */
     protected static class SetFieldConfigAction extends ConfigAction
     {
-        protected String theFieldName;
+        private String theFieldName;
 
         /**
          * Create a new SetFieldConfigAction that sets the given field.
@@ -1488,6 +1492,7 @@ public abstract class ChadoSequenceProcessor extends ChadoProcessor
          * @param value the value to check
          * @return true if value matches the pattern
          */
+        @Override
         public boolean isValidValue(String value) {
             return (super.isValidValue(value) && value.matches(pattern));
         }
