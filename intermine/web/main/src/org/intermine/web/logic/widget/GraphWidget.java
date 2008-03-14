@@ -1,18 +1,19 @@
 package org.intermine.web.logic.widget;
 
-import java.awt.BasicStroke;
-import java.awt.Font;
-import java.lang.reflect.Constructor;
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Iterator;
 
-import javax.servlet.http.HttpSession;
-
-import org.intermine.InterMineException;
 import org.intermine.objectstore.ObjectStore;
 import org.intermine.util.TypeUtil;
 import org.intermine.web.logic.bag.InterMineBag;
+
+import java.awt.BasicStroke;
+import java.awt.Font;
+
+import java.lang.reflect.Constructor;
+
+import javax.servlet.http.HttpSession;
+
 import org.jfree.chart.ChartColor;
 import org.jfree.chart.ChartFactory;
 import org.jfree.chart.ChartRenderingInfo;
@@ -28,7 +29,6 @@ import org.jfree.chart.labels.ItemLabelPosition;
 import org.jfree.chart.labels.StandardCategoryItemLabelGenerator;
 import org.jfree.chart.plot.CategoryPlot;
 import org.jfree.chart.plot.PlotOrientation;
-import org.jfree.chart.renderer.AbstractRenderer;
 import org.jfree.chart.renderer.category.BarRenderer;
 import org.jfree.chart.renderer.category.StackedBarRenderer;
 import org.jfree.chart.servlet.ServletUtilities;
@@ -36,9 +36,6 @@ import org.jfree.chart.title.TextTitle;
 import org.jfree.chart.urls.CategoryURLGenerator;
 import org.jfree.data.category.CategoryDataset;
 import org.jfree.ui.TextAnchor;
-
-import com.sun.jdi.connect.Connector.SelectedArgument;
-import com.sun.org.apache.bcel.internal.generic.GETSTATIC;
 
 /*
  * Copyright (C) 2002-2008 FlyMine
@@ -186,7 +183,8 @@ public class GraphWidget extends Widget
             Class<?> clazz1 = TypeUtil.instantiate(toolTipGen);
             Constructor toolTipConstructor = clazz1.getConstructor(new Class[]
                 {});
-            CategoryToolTipGenerator categoryToolTipGen = (CategoryToolTipGenerator) toolTipConstructor
+            CategoryToolTipGenerator categoryToolTipGen 
+            = (CategoryToolTipGenerator) toolTipConstructor
                             .newInstance(new Object[]
                                 {});
             plot.getRenderer().setBaseToolTipGenerator(categoryToolTipGen);
