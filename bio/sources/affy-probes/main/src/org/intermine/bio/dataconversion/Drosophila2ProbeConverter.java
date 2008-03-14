@@ -91,7 +91,7 @@ public class Drosophila2ProbeConverter extends FileConverter
             String cgs = line[17];
             if (!cgs.equals("---")) {
                 // set reference to transcript
-                Item transcript = createBioEntity("Transcript", line[6], true);
+                Item transcript = createBioEntity("Transcript", line[6]);
                 probeSet.setReference("transcript", transcript.getIdentifier());
 
                 // FBgn0029676 /// FBgn0052789 /// FBgn0066138 /// FBgn0066170
@@ -99,7 +99,7 @@ public class Drosophila2ProbeConverter extends FileConverter
                 ReferenceList geneColl = new ReferenceList("genes", new ArrayList<String>());
                 for (String identifier : genes) {
                     if (identifier.trim().startsWith("CG")) {
-                        Item gene = createBioEntity("Gene", identifier, false);
+                        Item gene = createBioEntity("Gene", identifier);
                         geneColl.addRefId(gene.getIdentifier());
                     }
                 }
@@ -118,17 +118,13 @@ public class Drosophila2ProbeConverter extends FileConverter
         }
     }
 
-    private Item createBioEntity(String clsName, String identifier, boolean usePrimary)
+    private Item createBioEntity(String clsName, String identifier)
         throws ObjectStoreException {
         Item bio = bioMap.get(identifier);
         if (bio == null) {
             bio = createItem(clsName);
             bio.setReference("organism", org.getIdentifier());
-            if (usePrimary) {
-                bio.setAttribute("primaryIdentifier", identifier);
-            } else {
-                bio.setAttribute("secondaryIdentifier", identifier);
-            }
+            bio.setAttribute("secondaryIdentifier", identifier);            
             bioMap.put(identifier, bio);
             store(bio);
         }
