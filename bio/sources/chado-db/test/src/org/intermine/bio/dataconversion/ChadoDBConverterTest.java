@@ -1,4 +1,4 @@
-    package org.intermine.bio.dataconversion;
+package org.intermine.bio.dataconversion;
 
 /*
  * Copyright (C) 2002-2008 FlyMine
@@ -19,8 +19,8 @@ import org.intermine.dataconversion.ItemWriter;
 import org.intermine.dataconversion.ItemsTestCase;
 import org.intermine.dataconversion.MockItemWriter;
 import org.intermine.metadata.Model;
-import org.intermine.model.fulldata.Item;
 import org.intermine.sql.Database;
+import org.intermine.xml.full.Item;
 
 import java.io.FileWriter;
 import java.io.IOException;
@@ -52,7 +52,7 @@ public class ChadoDBConverterTest extends ItemsTestCase
     }
 
     private void doTestProcess(String orgId) throws Exception, IOException {
-        MockItemWriter itemWriter = new MockItemWriter(new HashMap<String, Item>());
+        MockItemWriter itemWriter = new MockItemWriter(new HashMap<String, org.intermine.model.fulldata.Item>());
         ChadoDBConverter converter =
             new TestChadoDBConverter(null, Model.getInstanceByName("genomic"), itemWriter);
         converter.setOrganisms(orgId);
@@ -75,7 +75,7 @@ public class ChadoDBConverterTest extends ItemsTestCase
 
         final List<String> minimalSet = Arrays.asList("gene", "exon");
 
-        MockItemWriter itemWriter = new MockItemWriter(new HashMap<String, Item>());
+        MockItemWriter itemWriter = new MockItemWriter(new HashMap<String, org.intermine.model.fulldata.Item>());
         ChadoDBConverter converter =
             new ChadoDBConverter(null, Model.getInstanceByName("genomic"), itemWriter);
         FlyBaseModuleProcessor processor = new TestFlyBaseModuleProcessor(converter);
@@ -83,6 +83,22 @@ public class ChadoDBConverterTest extends ItemsTestCase
         assertTrue(actualSet.containsAll(minimalSet));
     }
 
+    public void testFlyBaseChromosomes() throws Exception {
+
+        MockItemWriter itemWriter = new MockItemWriter(new HashMap<String, org.intermine.model.fulldata.Item>());
+        ChadoDBConverter converter =
+            new ChadoDBConverter(null, Model.getInstanceByName("genomic"), itemWriter);
+        FlyBaseModuleProcessor processor = new TestFlyBaseModuleProcessor(converter);
+        
+        // if not Dmel genomic_path_regions without '_' should become chromosomes
+        Item item = processor.makeFeature(null, "golden_path_region", "DummyType", "3R", "3R", 0, 7237);
+        assertTrue(item.getClassName().endsWith("Chromosome"));
+        
+        // If an underscore in name should be a GoldenPathFragment
+        item = processor.makeFeature(null, "golden_path_region", "DummyType", "3R_random1", "3R_random1", 0, 7237);
+        assertTrue(item.getClassName().endsWith("GoldenPathFragment"));
+    }
+    
     private class TestChadoDBConverter extends ChadoDBConverter {
         public TestChadoDBConverter(Database database, Model tgtModel, ItemWriter writer) {
             super(database, tgtModel, writer);

@@ -10,25 +10,23 @@ package org.intermine.bio.dataconversion;
  *
  */
 
+import java.sql.Connection;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.sql.Statement;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.commons.collections.keyvalue.MultiKey;
+import org.apache.commons.collections.map.MultiKeyMap;
+import org.apache.log4j.Logger;
 import org.intermine.bio.util.OrganismData;
 import org.intermine.bio.util.OrganismRepository;
 import org.intermine.objectstore.ObjectStoreException;
 import org.intermine.util.IntPresentSet;
 import org.intermine.xml.full.Item;
-
-import java.sql.Connection;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.sql.Statement;
-
-import org.apache.commons.collections.keyvalue.MultiKey;
-import org.apache.commons.collections.map.MultiKeyMap;
-import org.apache.log4j.Logger;
 
 /**
  * A converter for chado that handles FlyBase specific configuration.
@@ -282,7 +280,6 @@ public class FlyBaseModuleProcessor extends ChadoSequenceProcessor
             return null;
         } else {
             if (chadoFeatureType.equals("chromosome_arm")
-                //|| chadoFeatureType.equals("golden_path_region")
                 || chadoFeatureType.equals("ultra_scaffold")) {
                 if (uniqueName.equals("dmel_mitochondrion_genome")) {
                     // ignore - all features are on the Chromosome object with uniqueName
@@ -296,11 +293,12 @@ public class FlyBaseModuleProcessor extends ChadoSequenceProcessor
         if (chadoFeatureType.equals("golden_path_region")) {
             // For organisms other than D. melanogaster sometimes we can convert a
             // golden_path_region to an actual chromosome: if name is 2L, 4, etc
-            if (taxonId == 7227 && !name.contains("_")) {
+            if (taxonId != 7227 && !uniqueName.contains("_")) {
                 realInterMineType = "Chromosome";
+            } else {
+                // golden_path_fragment is the actual SO term
+                realInterMineType = "GoldenPathFragment";
             }
-            // golden_path_fragment is the actual SO term
-            realInterMineType = "GoldenPathFragment";
         }
         if (chadoFeatureType.equals("chromosome_structure_variation")) {
             if (uniqueName.startsWith("FBab")) {
