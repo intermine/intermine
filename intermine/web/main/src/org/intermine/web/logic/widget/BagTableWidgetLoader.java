@@ -150,9 +150,9 @@ public class BagTableWidgetLoader
                 columns.add(newColumnName);
             }
         }
-        flattenedResults = new ArrayList();
+        flattenedResults = new ArrayList<ArrayList>();
         for (Iterator iter = results.iterator(); iter.hasNext();) {
-            ArrayList flattenedRow = new ArrayList();
+            ArrayList<String[]> flattenedRow = new ArrayList<String[]>();
             ResultsRow resRow = (ResultsRow) iter.next();
             //Integer lastObjectId = null;
             String key = "";
@@ -168,16 +168,24 @@ public class BagTableWidgetLoader
                         String fieldName = path.getEndFieldDescriptor().getName();
                         boolean isKeyField = ClassKeyHelper.isKeyField(classKeys,
                                 TypeUtil.unqualifiedName(thisType.getName()), fieldName);
+                        String link = null;
                         if (isKeyField) {
                             key = fieldValue.toString();
+                            link = "objectDetails.do?id=" + o.getId() + "&amp;trail=|bag."
+                                   + bag.getName() + "|" + o.getId();
                         }
-                        flattenedRow.add(new ResultElement(os, fieldValue, o.getId(), thisType,
-                                    path, isKeyField));
+                        flattenedRow.add(new String[]
+                            {
+                                (String) fieldValue, link
+                            });
                     }
-                    //lastObjectId = o.getId();
                 } else if (element instanceof Long) {
-                    flattenedRow.add(new ResultElement(String.valueOf((Long) element), "bagName="
-                                + bag.getName() + "&link=" + urlGen + "&key=" + key));
+                    flattenedRow.add(new String[]
+                            {
+                                String.valueOf((Long) element),
+                                "widgetAction.do?bagName=" + bag.getName() + "&link=" + urlGen
+                                                + "&key=" + key
+                            });
                 }
 
             }
