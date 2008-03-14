@@ -163,14 +163,14 @@
       <property name="fasta.className" value="org.flymine.model.genomic.Gene"/>
       <property name="fasta.classAttribute" value="primaryIdentifier"/>
       <property name="fasta.includes" value="dmel-all-gene-*.fasta"/>
-      <property name="src.data.dir" location="/shared/data/flybase/dmel/release_5_5/fasta"/>
+      <property name="src.data.dir" location="/shared/data/flybase/FB2008_02/fasta"/>
     </source>
     <source name="flybase-dpse-gene-fasta" type="fasta">
       <property name="fasta.taxonId" value="7237"/>
       <property name="fasta.className" value="org.flymine.model.genomic.Gene"/>
       <property name="fasta.classAttribute" value="primaryIdentifier"/>
       <property name="fasta.includes" value="dpse-all-gene-*.fasta"/>
-      <property name="src.data.dir" location="/shared/data/flybase/dpse/dpse_r2.0_FB2007_03/fasta"/>
+      <property name="src.data.dir" location="/shared/data/flybase/FB2008_02/fasta"/>
     </source>
     <source name="flybase-dmel-cds-fasta" type="fasta">
       <property name="fasta.loaderClassName" 
@@ -179,7 +179,7 @@
       <property name="fasta.className" value="org.flymine.model.genomic.CDS"/>
       <property name="fasta.classAttribute" value="primaryIdentifier"/>
       <property name="fasta.includes" value="dmel-all-CDS-*.fasta"/>
-      <property name="src.data.dir" location="/shared/data/flybase/dmel/release_5_5/fasta"/>
+      <property name="src.data.dir" location="/shared/data/flybase/FB2008_02/fasta"/>
     </source>
     <source name="flybase-dpse-cds-fasta" type="fasta">
       <property name="fasta.loaderClassName" 
@@ -188,7 +188,7 @@
       <property name="fasta.className" value="org.flymine.model.genomic.CDS"/>
       <property name="fasta.classAttribute" value="primaryIdentifier"/>
       <property name="fasta.includes" value="dmel-all-CDS-*.fasta"/>
-      <property name="src.data.dir" location="/shared/data/flybase/dpse/dpse_r2.0_FB2007_03/fasta"/>
+      <property name="src.data.dir" location="/shared/data/flybase/FB2008_02/fasta"/>
     </source>
     <source name="flybase-dmel-5prime-utr-fasta" type="fasta">
       <property name="fasta.loaderClassName" value="org.intermine.bio.dataconversion.FlyBaseUTRFastaLoaderTask"/>
@@ -196,7 +196,7 @@
       <property name="fasta.className" value="org.flymine.model.genomic.FivePrimeUTR"/>
       <property name="fasta.classAttribute" value="primaryIdentifier"/>
       <property name="fasta.includes" value="dmel-all-five_prime_UTR-*.fasta"/>
-      <property name="src.data.dir" location="/shared/data/flybase/dmel/release_5_5/fasta"/>
+      <property name="src.data.dir" location="/shared/data/flybase/FB2008_02/fasta"/>
     </source>
     <source name="flybase-dmel-3prime-utr-fasta" type="fasta">
       <property name="fasta.loaderClassName" value="org.intermine.bio.dataconversion.FlyBaseUTRFastaLoaderTask"/>
@@ -204,7 +204,7 @@
       <property name="fasta.className" value="org.flymine.model.genomic.ThreePrimeUTR"/>
       <property name="fasta.classAttribute" value="primaryIdentifier"/>
       <property name="fasta.includes" value="dmel-all-three_prime_UTR-*.fasta"/>
-      <property name="src.data.dir" location="/shared/data/flybase/dmel/release_5_5/fasta"/>
+      <property name="src.data.dir" location="/shared/data/flybase/FB2008_02/fasta"/>
     </source>
     <source name="ncbigene2pubmed" type="intermine-items-xml-file">
       <property name="src.data.file" location="/shared/data/pubmed/current/ncbiID_pubmedID.xml"/>

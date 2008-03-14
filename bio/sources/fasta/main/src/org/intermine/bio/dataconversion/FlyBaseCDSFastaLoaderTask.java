@@ -86,7 +86,8 @@ public class FlyBaseCDSFastaLoaderTask extends FlyBaseFeatureFastaLoaderTask
         if (m.matches()) {
             return m.group(1) + "_CDS";
         } else {
-            throw new RuntimeException("can't find FlyBase Annotation ID in header: " + header);
+            // it doesn't matter too much what the CDS identifier is
+            return getMRNAIdentifier(header) + "_CDS";
         }
     }
 
