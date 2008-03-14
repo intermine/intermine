@@ -67,7 +67,7 @@ public class ModEncodeMetaDataProcessor extends ChadoProcessor
         FIELD_NAME_MAP.put("Person Email", NOT_TO_BE_LOADED);
         FIELD_NAME_MAP.put("Person Roles", NOT_TO_BE_LOADED);
         FIELD_NAME_MAP.put("lab", NOT_TO_BE_LOADED);
-        
+
         //data: parameter values
         FIELD_NAME_MAP.put("genome version", "genomeVersion");
         FIELD_NAME_MAP.put("median value", "medianValue");
@@ -227,7 +227,6 @@ public class ModEncodeMetaDataProcessor extends ChadoProcessor
             }
 
             setAttribute(providerIdMap.get(experimentId), fieldName, value);
-
             count++;
         }
         LOG.info("created " + count + " provider properties");
@@ -307,14 +306,13 @@ public class ModEncodeMetaDataProcessor extends ChadoProcessor
             String value = res.getString("value");
             String fieldName = FIELD_NAME_MAP.get(heading);
             if (fieldName == null) { 
-                LOG.error("NOT FOUND EA: " + heading + " has no mapping in FIELD_NAME_MAP");
+                LOG.error("NOT FOUND in FIELD_NAME_MAP: " + heading + " [experiment]");
                 continue;
             } else if (fieldName == NOT_TO_BE_LOADED){
                 continue;
             }
 
             setAttribute(experimentIdMap.get(experimentId), fieldName, value);
-
             count++;
         }
         LOG.info("created " + count + " experiment properties");
@@ -391,14 +389,13 @@ public class ModEncodeMetaDataProcessor extends ChadoProcessor
             String value = res.getString("value");
             String fieldName = FIELD_NAME_MAP.get(heading);
             if (fieldName == null) { 
-                LOG.error("NOT FOUND PA: " + heading + " has no mapping in FIELD_NAME_MAP");
+                LOG.error("NOT FOUND in FIELD_NAME_MAP: " + heading + " [protocol]");
                 continue;
             } else if (fieldName == NOT_TO_BE_LOADED){
                 continue;
             }
 
             setAttribute(protocolIdMap.get(protocolId), fieldName, value);
-
             count++;
         }
         LOG.info("created " + count + " protocol attributes");
@@ -501,14 +498,14 @@ public class ModEncodeMetaDataProcessor extends ChadoProcessor
             if (cd.getAttributeDescriptorByName(name) == null) {
                 String fieldName = FIELD_NAME_MAP.get(name);
                 if (fieldName == null) { 
-                    LOG.error("NOT FOUND in FIELD_NAME_MAP: " + name);
+                    LOG.error("NOT FOUND in FIELD_NAME_MAP: " + name + " [appliedProtocol]");
                 } else {
                     setAttribute(appliedProtocolIdMap.get(appliedProtocolId), fieldName, value);
                 }
             }    else {
                 setAttribute(appliedProtocolIdMap.get(appliedProtocolId), name, value);            
             }
-            
+
             count++;  
         }
         LOG.info("created " + count + " appliedProtocol data ");
@@ -558,12 +555,11 @@ public class ModEncodeMetaDataProcessor extends ChadoProcessor
             String value = res.getString("value");
             String fieldName = FIELD_NAME_MAP.get(heading);
             if (fieldName == null) { 
-                LOG.error("NOT FOUND APA: " + heading + " has no mapping in FIELD_NAME_MAP");
+                LOG.error("NOT FOUND in FIELD_NAME_MAP: " + heading + " [appliedProtocol]");
                 continue;
             }
 
             setAttribute(appliedProtocolIdMap.get(appliedProtocolId), fieldName, value);
-
             count++;
         }
         LOG.info("created " + count + " data attributes");
@@ -593,8 +589,6 @@ public class ModEncodeMetaDataProcessor extends ChadoProcessor
         return res;
     }
 
-
-
     /* DATA-----------------------------------------------------------------------------*/
 
     private void processDataTable(Connection connection)
@@ -611,54 +605,23 @@ public class ModEncodeMetaDataProcessor extends ChadoProcessor
             ClassDescriptor cd = 
                 getChadoDBConverter().getModel().getClassDescriptorByName("SubmissionData");
 
-
-            String fieldName = FIELD_NAME_MAP.get(heading);
+            //For 'Result Value' heading we consider the name, otherwise the heading itself
+            String test = null;
             if (heading.equalsIgnoreCase("Result Value")) {
-                if (cd.getAttributeDescriptorByName(name) == null) {       
-                    fieldName = FIELD_NAME_MAP.get(name);
-                    if (fieldName == null) {  
-                        LOG.error("NOT FOUND in FIELD_NAME_MAP: [" + name + "]");
-                    } else {
-                        data.setAttribute(fieldName, value);
-                    }
-                } else {
-                    data.setAttribute(name, value);            
-                }                
+                test = name;
             } else {
-                if (cd.getAttributeDescriptorByName(heading) == null) {       
-                    fieldName = FIELD_NAME_MAP.get(heading);
-                    if (fieldName == null) {  
-                        LOG.error("NOT FOUND in FIELD_NAME_MAP: [" + heading + "]");
-                    } else {
-                        data.setAttribute(fieldName, value);
-                    }
-                } else {
-                    data.setAttribute(heading, value);            
-                }
-
+                test = heading;
             }
-            
-/*
-            if (cd.getAttributeDescriptorByName(heading) == null) {
-                String fieldName = FIELD_NAME_MAP.get(heading);
-                if (fieldName == null && name != null) {                 
-                    if (cd.getAttributeDescriptorByName(name) == null) {       
-                        fieldName = FIELD_NAME_MAP.get(name);
-                        if (fieldName == null) {  
-                            LOG.error("NOT FOUND in FIELD_NAME_MAP: [" + name + "]");
-                        } else {
-                            data.setAttribute(fieldName, value);
-                        }
-                    } else {
-                        data.setAttribute(name, value);            
-                    }
+            if (cd.getAttributeDescriptorByName(test) == null) {       
+                String fieldName = FIELD_NAME_MAP.get(test);
+                if (fieldName == null) {  
+                    LOG.error("NOT FOUND in FIELD_NAME_MAP: " + test + " [data]");
                 } else {
-                    data.setAttribute(fieldName, value);     
+                    data.setAttribute(fieldName, value);
                 }
             } else {
-                data.setAttribute(heading, value);     
-            }
-*/
+                data.setAttribute(test, value);            
+            }                
             Integer intermineObjectId = getChadoDBConverter().store(data);
             dataIdMap .put(dataId, intermineObjectId);
 
