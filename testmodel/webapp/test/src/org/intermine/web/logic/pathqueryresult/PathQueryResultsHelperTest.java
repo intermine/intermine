@@ -10,16 +10,22 @@ package org.intermine.web.logic.pathqueryresult;
  *
  */
 
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Properties;
+import java.util.Set;
 
 import javax.servlet.ServletContext;
 
 import org.intermine.metadata.FieldDescriptor;
 import org.intermine.metadata.Model;
+import org.intermine.model.InterMineObject;
+import org.intermine.model.testmodel.Department;
+import org.intermine.model.testmodel.Employee;
 import org.intermine.objectstore.ObjectStore;
 import org.intermine.objectstore.ObjectStoreFactory;
 import org.intermine.objectstore.ObjectStoreWriter;
@@ -82,7 +88,6 @@ public class PathQueryResultsHelperTest extends MockStrutsTestCase
         df5.setFieldExpr("fullTime");
         type.addFieldConfig(df5);
         
-
         webConfig.addType(type);
     }
 
@@ -137,15 +142,22 @@ public class PathQueryResultsHelperTest extends MockStrutsTestCase
         Model model = Model.getInstanceByName("testmodel");
         ServletContext context = getActionServlet().getServletContext();
         ObjectStore os = (ObjectStore) context.getAttribute(Constants.OBJECTSTORE);
-        
-        PathQuery pathQuery = PathQueryResultHelper.makePathQueryForCollection(webConfig, model, 1, "Department", "Employee", "departments");
-        String expectedXml = "<query name=\"\" model=\"testmodel\" view=\"\" sortOrder=\"\">"
-            + "<node path=\"Employee\" type=\"Employee\">"
-            + "</node><node path=\"Employee.id\" type=\"Integer\">"
-            + "<constraint op=\"=\" value=\"1\" description=\"\" identifier=\"\" code=\"A\">"
-            + "</constraint>"
-            + "</node>"
-            + "</query>";
+        Department d1 = new Department();
+        d1.setId(1);
+        Set<Employee> employees = new HashSet<Employee>();
+        Employee e1 = new Employee();
+        e1.setId(2);
+        employees.add(e1);
+        d1.setEmployees(employees);
+        List<Class> sr = new ArrayList<Class>();
+        sr.add(Employee.class);
+        PathQuery pathQuery = PathQueryResultHelper.makePathQueryForCollectionForClass(webConfig, os, (InterMineObject)d1, "employees",sr);
+        String expectedXml = "<query name=\"\" model=\"testmodel\" view=\"Department.employees.name Department.employees.department.name Department.employees.department.company.name Department.employees.age Department.employees.fullTime\" sortOrder=\"Department.employees.name asc\">" +
+        		"<node path=\"Department\" type=\"Department\"></node><node path=\"Department.id\" type=\"Integer\">" +
+        		"<constraint op=\"=\" value=\"1\" description=\"\" identifier=\"\" code=\"A\">" +
+        		"</constraint>" +
+        		"</node>" +
+        		"</query>";
         assertEquals(pathQuery.toXml(), expectedXml);
     }
     

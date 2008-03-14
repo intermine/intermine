@@ -16,6 +16,14 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import javax.servlet.ServletContext;
+
+import org.apache.commons.collections.ListUtils;
+import org.intermine.metadata.ClassDescriptor;
+import org.intermine.metadata.Model;
+import org.intermine.model.InterMineObject;
+import org.intermine.objectstore.ObjectStore;
+import org.intermine.objectstore.ObjectStoreException;
 import org.intermine.objectstore.query.ConstraintOp;
 import org.intermine.objectstore.query.ContainsConstraint;
 import org.intermine.objectstore.query.Query;
@@ -24,13 +32,8 @@ import org.intermine.objectstore.query.QueryCollectionReference;
 import org.intermine.objectstore.query.QueryField;
 import org.intermine.objectstore.query.QueryNode;
 import org.intermine.objectstore.query.Results;
-
-import org.intermine.metadata.ClassDescriptor;
-import org.intermine.metadata.Model;
-import org.intermine.model.InterMineObject;
-import org.intermine.objectstore.ObjectStore;
-import org.intermine.objectstore.ObjectStoreException;
 import org.intermine.path.Path;
+import org.intermine.util.CollectionUtil;
 import org.intermine.util.DynamicUtil;
 import org.intermine.util.TypeUtil;
 import org.intermine.web.logic.WebUtil;
@@ -46,9 +49,7 @@ import org.intermine.web.logic.query.PathQuery;
 import org.intermine.web.logic.results.TableHelper;
 import org.intermine.web.logic.results.WebResults;
 
-import javax.servlet.ServletContext;
-
-
+import com.sun.tools.javac.code.Attribute.Array;
 
 /**
  * Helper for everything related to PathQueryResults
@@ -146,8 +147,23 @@ public class PathQueryResultHelper
         query.setConstraint(new ContainsConstraint(new QueryCollectionReference(object, field),
                         ConstraintOp.CONTAINS, qc));
         List<Class> sr = (List<Class>) os.executeSingleton(query);
-        // FIXME find the top level class and use that instead of first one
-        Class commonClass = sr.get(0);
+        return makePathQueryForCollectionForClass(webConfig, os, object, field, sr);
+    }
+
+    /**
+     * Called by makePathQueryForCollection
+     * 
+     * @param webConfig the webConfig
+     * @param os the objectstore
+     * @param object the InterMineObject
+     * @param field the name of the field for the collection in the InterMineObject
+     * @param sr the list of classes and subclasses
+     * @return a PathQuery
+     */
+     static PathQuery makePathQueryForCollectionForClass(WebConfig webConfig, ObjectStore os,
+                                                        InterMineObject object,
+                                   String field, List<Class> sr) {
+        Class commonClass = CollectionUtil.findCommonSuperclass(sr);
         List<Path> view = PathQueryResultHelper.getDefaultView(TypeUtil.unqualifiedName(DynamicUtil
                             .getSimpleClassName(commonClass)), os.getModel(),
                             webConfig, TypeUtil.unqualifiedName(DynamicUtil
@@ -155,14 +171,6 @@ public class PathQueryResultHelper
                                        + "." + field, false);
 
         PathQuery pathQuery = new PathQuery(os.getModel());
-        
-
-        // List<Path> view = PathQueryResultHelper.getDefaultView(referencedClassName,
-        // os.getModel(),
-        // webConfig, TypeUtil.unqualifiedName(DynamicUtil.getSimpleClassName(object
-        // .getClass()))
-        // + "." + field, false);
-
         pathQuery.setView(view);
         String label = null, id2 = null, code = pathQuery.getUnusedConstraintCode();
         Constraint c = new Constraint(ConstraintOp.EQUALS, object.getId(), false, label, code, id2,
