@@ -46,6 +46,15 @@ public class FlyAtlasGraphURLGenerator implements GraphCategoryURLGenerator
     }
 
     /**
+     * Creates a FlyAtlasGraphURLGenerator for the chart
+     * @param bagName the bag name
+     */
+    public FlyAtlasGraphURLGenerator(String bagName) {
+        super();
+        this.bagName = bagName;
+    }
+    
+    /**
      * {@inheritDoc}
      * @see org.jfree.chart.urls.CategoryURLGenerator#generateURL(
      *      org.jfree.data.category.CategoryDataset,
