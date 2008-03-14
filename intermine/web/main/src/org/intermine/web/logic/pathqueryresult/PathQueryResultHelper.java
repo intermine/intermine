@@ -18,15 +18,22 @@ import java.util.Set;
 
 import javax.servlet.ServletContext;
 
+import org.apache.commons.collections.ListUtils;
 import org.intermine.metadata.ClassDescriptor;
 import org.intermine.metadata.Model;
+import org.intermine.model.InterMineObject;
 import org.intermine.objectstore.ObjectStore;
 import org.intermine.objectstore.ObjectStoreException;
 import org.intermine.objectstore.query.ConstraintOp;
+import org.intermine.objectstore.query.ContainsConstraint;
 import org.intermine.objectstore.query.Query;
+import org.intermine.objectstore.query.QueryClass;
+import org.intermine.objectstore.query.QueryCollectionReference;
+import org.intermine.objectstore.query.QueryField;
 import org.intermine.objectstore.query.QueryNode;
 import org.intermine.objectstore.query.Results;
 import org.intermine.path.Path;
+import org.intermine.util.DynamicUtil;
 import org.intermine.util.TypeUtil;
 import org.intermine.web.logic.WebUtil;
 import org.intermine.web.logic.bag.BagQueryConfig;
@@ -40,6 +47,8 @@ import org.intermine.web.logic.query.MainHelper;
 import org.intermine.web.logic.query.PathQuery;
 import org.intermine.web.logic.results.TableHelper;
 import org.intermine.web.logic.results.WebResults;
+
+import com.sun.tools.javac.code.Attribute.Array;
 
 /**
  * Helper for everything related to PathQueryResults
@@ -74,7 +83,10 @@ public class PathQueryResultHelper
                         prefix = type;
                     }
                     String pathString = prefix + "." + expr;
-                    Path path = new Path(model, pathString);
+                    Map<String, String> classToPath = new HashMap<String, String>();
+                    classToPath.put(prefix, classDescriptor.getUnqualifiedName());
+                    Path path = new Path(model, pathString, classToPath);
+                    // Path path = new Path(model, pathString);
                     // Path path = MainHelper.makePath(model, pathQuery, pathString);
                     // TODO remove isOnlyAttribute when outer joins
                     if (!view.contains(path)
@@ -117,25 +129,47 @@ public class PathQueryResultHelper
      * Create a PathQuery to get results for a collection of items from an InterMineObject
      * 
      * @param webConfig the WebConfig
-     * @param model the Model
-     * @param id the InterMineObject identifier
+     * @param os the ObjectStore
+     * @param object the InterMineObject
      * @param referencedClassName the collection type
-     * @param objectClassName the InterMineObject type
      * @param field the name of the field for the collection in the InterMineObject
      * @return a PathQuery
      */
-    public static PathQuery makePathQueryForCollection(WebConfig webConfig, Model model,
-                                                        Integer id, String referencedClassName,
-                                                        String objectClassName, String field) {
-        PathQuery pathQuery = new PathQuery(model);
+    public static PathQuery makePathQueryForCollection(WebConfig webConfig, ObjectStore os,
+                                                       InterMineObject object,
+                                                       String referencedClassName, String field) {
+        Query query = new Query();
+        QueryClass qc = new QueryClass(TypeUtil.getElementType(object.getClass(), field));
+        query.addFrom(qc);
+        query.addToSelect(new QueryField(qc, "class"));
+        query.setDistinct(true);
+        query.setConstraint(new ContainsConstraint(new QueryCollectionReference(object, field),
+                        ConstraintOp.CONTAINS, qc));
+        List<Class> sr = (List<Class>) os.executeSingleton(query);
+        // FIXME find the top level class and use that instead of first one
+        Class commonClass = sr.get(0);
+        List<Path> view = PathQueryResultHelper.getDefaultView(TypeUtil.unqualifiedName(DynamicUtil
+                            .getSimpleClassName(commonClass)), os.getModel(),
+                            webConfig, TypeUtil.unqualifiedName(DynamicUtil
+                                            .getSimpleClassName(object.getClass()))
+                                       + "." + field, false);
 
-        List<Path> view = PathQueryResultHelper.getDefaultView(referencedClassName, model,
-                        webConfig, objectClassName + "." + field, false);
+        PathQuery pathQuery = new PathQuery(os.getModel());
+        
+
+        // List<Path> view = PathQueryResultHelper.getDefaultView(referencedClassName,
+        // os.getModel(),
+        // webConfig, TypeUtil.unqualifiedName(DynamicUtil.getSimpleClassName(object
+        // .getClass()))
+        // + "." + field, false);
 
         pathQuery.setView(view);
         String label = null, id2 = null, code = pathQuery.getUnusedConstraintCode();
-        Constraint c = new Constraint(ConstraintOp.EQUALS, id, false, label, code, id2, null);
-        pathQuery.addNode(objectClassName + "." + "id").getConstraints().add(c);
+        Constraint c = new Constraint(ConstraintOp.EQUALS, object.getId(), false, label, code, id2,
+                        null);
+        pathQuery.addNode(
+                        TypeUtil.unqualifiedName(DynamicUtil.getSimpleClassName(object.getClass()))
+                                        + "." + "id").getConstraints().add(c);
         pathQuery.setConstraintLogic("A and B and C");
         pathQuery.syncLogicExpression("and");
         return pathQuery;

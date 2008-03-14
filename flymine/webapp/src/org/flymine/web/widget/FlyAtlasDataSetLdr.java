@@ -11,11 +11,13 @@ package org.flymine.web.widget;
  */
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
-import java.util.Map;
 
+import org.flymine.model.genomic.FlyAtlasResult;
+import org.flymine.model.genomic.Gene;
+import org.flymine.model.genomic.MicroArrayAssay;
+import org.intermine.objectstore.ObjectStore;
 import org.intermine.objectstore.query.BagConstraint;
 import org.intermine.objectstore.query.ConstraintOp;
 import org.intermine.objectstore.query.ConstraintSet;
@@ -26,15 +28,8 @@ import org.intermine.objectstore.query.QueryCollectionReference;
 import org.intermine.objectstore.query.QueryField;
 import org.intermine.objectstore.query.Results;
 import org.intermine.objectstore.query.ResultsRow;
-
-import org.intermine.objectstore.ObjectStore;
 import org.intermine.web.logic.bag.InterMineBag;
 import org.intermine.web.logic.widget.DataSetLdr;
-
-import org.flymine.model.genomic.FlyAtlasResult;
-import org.flymine.model.genomic.Gene;
-import org.flymine.model.genomic.MicroArrayAssay;
-
 import org.jfree.data.category.CategoryDataset;
 import org.jfree.data.category.DefaultCategoryDataset;
 
@@ -46,16 +41,17 @@ public class FlyAtlasDataSetLdr implements DataSetLdr
 {
 
     private Results results;
-    private HashMap<String, CategoryDataset> dataSets = new HashMap<String, CategoryDataset>();
+    private DefaultCategoryDataset dataSet;
+    
     /**
      * Creates a FlyAtlasDataSetLdr used to retrieve, organise
      * and structure the FlyAtlas data to create a graph
      * @param bag the bag
      * @param os the ObjectStore
      */
-    public FlyAtlasDataSetLdr(InterMineBag bag, ObjectStore os) {
+    public FlyAtlasDataSetLdr(InterMineBag bag, ObjectStore os, String extra) {
         super();
-        DefaultCategoryDataset dataSet = new DefaultCategoryDataset();
+        dataSet = new DefaultCategoryDataset();
 
         Query q = new Query();
         QueryClass far = new QueryClass(FlyAtlasResult.class);
@@ -133,17 +129,19 @@ public class FlyAtlasDataSetLdr implements DataSetLdr
             }
         }
         
-        if (results.size() > 0) {
-            dataSets.put("flyAtlas", dataSet);
-        }
     }
 
     /**
      * {@inheritDoc}
      */
-    public Map<String, CategoryDataset> getDataSets() {
-        return dataSets;
+    public CategoryDataset getDataSet() {
+        return dataSet;
     }
 
+    /**
+     * {@inheritDoc}
+     */
+    public void setExtraAttributes(String extra) {
+    }
 
 }

@@ -12,5 +12,6 @@
     </create>
     <convert converter="bean" match="org.intermine.dwr.AjaxServices"/>
     <convert converter="bean" match="org.intermine.web.logic.results.*"/>
+    <convert converter="bean" match="org.intermine.web.logic.widget.*"/>
   </allow>
 </dwr>

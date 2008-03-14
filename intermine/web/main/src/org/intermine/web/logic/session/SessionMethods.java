@@ -30,6 +30,7 @@ import org.apache.log4j.Logger;
 import org.apache.struts.util.MessageResources;
 import org.intermine.metadata.FieldDescriptor;
 import org.intermine.metadata.Model;
+import org.intermine.model.InterMineObject;
 import org.intermine.objectstore.ObjectStore;
 import org.intermine.objectstore.ObjectStoreException;
 import org.intermine.objectstore.ObjectStoreQueryDurationException;
@@ -834,17 +835,16 @@ public class SessionMethods
      *
      * @param request the ServletRequest
      * @param servletContext the ServletContext
-     * @param id the InterMineObject identifier
+     * @param obj the InterMineObject
      * @param field the name of the collection field in the InterMineObject
      * @param referencedClassName the type of the collection
-     * @param objectClassName the type of the InterMineObject
      * @return a PagedTable
      * @throws ObjectStoreException exception thrown
      */
     public static PagedTable doQueryGetPagedTable(HttpServletRequest request,
-                                                  ServletContext servletContext, Integer id,
-                                                  String field, String referencedClassName,
-                                                  String objectClassName)
+                                                  ServletContext servletContext,
+                                                  InterMineObject obj, String field,
+                                                  String referencedClassName)
                     throws ObjectStoreException {
         HttpSession session = request.getSession();
         Map classKeys = (Map) servletContext.getAttribute(Constants.CLASS_KEYS);
@@ -853,8 +853,8 @@ public class SessionMethods
         ObjectStore os = (ObjectStore) servletContext.getAttribute(Constants.OBJECTSTORE);
         Profile profile = (Profile) session.getAttribute(Constants.PROFILE);
         WebConfig webConfig = (WebConfig) servletContext.getAttribute(Constants.WEBCONFIG);
-        PathQuery pathQuery = PathQueryResultHelper.makePathQueryForCollection(webConfig, os
-                        .getModel(), id, referencedClassName, objectClassName, field);
+        PathQuery pathQuery = PathQueryResultHelper.makePathQueryForCollection(webConfig, os, obj,
+                        referencedClassName, field);
         WebResults webResults = PathQueryResultHelper.createPathQueryGetResults(pathQuery, profile,
                         os, classKeys, bagQueryConfig, servletContext);
         String identifier = "coll" + index++;

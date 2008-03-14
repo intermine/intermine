@@ -30,6 +30,7 @@
 <script type="text/javascript" src="js/inlinetemplate.js">
   var modifyDetailsURL = '<html:rewrite action="/modifyDetails"/>';
 </script>
+<script type="text/javascript" src="js/widget.js"></script>
 
 
 <div class="heading">
@@ -193,11 +194,21 @@
 </TD></TR>
 </TABLE>
 
-<div id="clearLine">&nbsp;</div>
+<div style="clear:both;">&nbsp;</div>
 
+<link rel="stylesheet" type="text/css" href="<html:rewrite page='/css/widget.css'/>"/>
+<c:forEach items="${widgets}" var="widget">
+  <tiles:insert name="widget.tile">
+    <tiles:put name="widget" beanName="widget"/>
+    <tiles:put name="bag" beanName="bag"/>
+    <tiles:put name="widget2extraAttrs" beanName="widget2extraAttrs" />
+  </tiles:insert>
+</c:forEach> 
+
+<div style="clear:both;">&nbsp;</div>
 
 <!-- widget table -->
-<c:set var="widgetIdPrefix" value="bagDetailsWidget${bag.type}"/>
+<%--<c:set var="widgetIdPrefix" value="bagDetailsWidget${bag.type}"/>
 <c:set var="widgetTotal" value="${fn:length(graphDisplayerArray) 
                 + fn:length(tableDisplayerArray)  
                 + fn:length(enrichmentWidgetDisplayerArray) }"/>
@@ -216,9 +227,9 @@
       </fmt:message>
     
       <c:set var="widgetCount" value="0"/>
-      
+--%>      
       <%-- graphs --%>
-      <c:forEach items="${graphDisplayerArray}" var="htmlContent">      
+<%--      <c:forEach items="${graphDisplayerArray}" var="htmlContent">      
       <imutil:disclosure id="${widgetIdPrefix}${widgetCount}" opened="true" type="consistent">
         <imutil:disclosureHead>
           <imutil:disclosureTitle>
@@ -242,9 +253,9 @@
         </imutil:disclosureBody>
       </imutil:disclosure>
       </c:forEach>
-
+--%>
   <%-- tables --%>
-      <c:forEach items="${tableDisplayerArray}" var="bagTableDisplayerResults">
+<%--      <c:forEach items="${tableDisplayerArray}" var="bagTableDisplayerResults">
         
         <imutil:disclosure id="${widgetIdPrefix}${widgetCount}" opened="true" type="consistent">
       <imutil:disclosureHead>
@@ -315,10 +326,10 @@
       </imutil:disclosureBody>
     </imutil:disclosure>
       </c:forEach>
-
+--%>
     
    <%-- enrichment --%>
-  <c:forEach items="${enrichmentWidgetDisplayerArray}" var="enrichmentWidgetResults">
+<%--   <c:forEach items="${enrichmentWidgetDisplayerArray}" var="enrichmentWidgetResults">
   
     <imutil:disclosure id="${widgetIdPrefix}${widgetCount}" opened="true" type="consistent">
       <imutil:disclosureHead>
@@ -335,7 +346,7 @@
           </fmt:message> 
           <br/><br/>
           <str:encodeUrl var="externalLink">${enrichmentWidgetResults.externalLink}</str:encodeUrl>
-          <c:set var="enrichmentWidgetParams" value="bagName=${bag.name}&ldr=${enrichmentWidgetResults.ldr}&title=${enrichmentWidgetResults.title}&descr=${enrichmentWidgetResults.descr}&max=${enrichmentWidgetResults.max}&link=${enrichmentWidgetResults.link}&filters=${enrichmentWidgetResults.filters}&filterLabel=${enrichmentWidgetResults.filterLabel}&label=${enrichmentWidgetResults.label}&externalLink=${externalLink}"/>
+          <c:set var="enrichmentWidgetParams" value="bagName=${bag.name}&ldr=${enrichmentWidgetResults.dataSetLoader}&title=${enrichmentWidgetResults.title}&descr=${enrichmentWidgetResults.description}&max=${enrichmentWidgetResults.max}&link=${enrichmentWidgetResults.link}&filters=${enrichmentWidgetResults.filters}&filterLabel=${enrichmentWidgetResults.filterLabel}&label=${enrichmentWidgetResults.label}&externalLink=${externalLink}"/>
           <iframe src="enrichmentWidget.do?${enrichmentWidgetParams}" id="window" frameborder="0" width="475" height="500" scrollbars="auto"></iframe>
         <br/><a href="enrichmentWidget.do?${enrichmentWidgetParams}" target="_new" class="extlink">open widget in new window</a>
        <c:set var="widgetCount" value="${widgetCount+1}" />
@@ -344,7 +355,7 @@
   </c:forEach>
   </div>
 </c:if>
-
+--%>
 <!-- /widgets -->
 
 <!-- templates -->

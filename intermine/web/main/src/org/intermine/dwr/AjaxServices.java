@@ -34,6 +34,7 @@ import org.apache.struts.util.MessageResources;
 import org.directwebremoting.WebContext;
 import org.directwebremoting.WebContextFactory;
 import org.intermine.InterMineException;
+import org.intermine.metadata.Model;
 import org.intermine.model.userprofile.Tag;
 import org.intermine.objectstore.ObjectStore;
 import org.intermine.objectstore.ObjectStoreException;
@@ -51,6 +52,8 @@ import org.intermine.web.logic.bag.BagQueryConfig;
 import org.intermine.web.logic.bag.BagQueryRunner;
 import org.intermine.web.logic.bag.InterMineBag;
 import org.intermine.web.logic.bag.TypeConverter;
+import org.intermine.web.logic.config.Type;
+import org.intermine.web.logic.config.WebConfig;
 import org.intermine.web.logic.profile.Profile;
 import org.intermine.web.logic.profile.ProfileManager;
 import org.intermine.web.logic.query.MainHelper;
@@ -69,6 +72,8 @@ import org.intermine.web.logic.session.SessionMethods;
 import org.intermine.web.logic.tagging.TagTypes;
 import org.intermine.web.logic.template.TemplateHelper;
 import org.intermine.web.logic.template.TemplateQuery;
+import org.intermine.web.logic.widget.GraphWidget;
+import org.intermine.web.logic.widget.Widget;
 
 
 /**
@@ -720,5 +725,33 @@ public class AjaxServices
             }
         }
         return queries;
+    }
+    
+    
+    public static GraphWidget getProcessGraphWidget(String widgetId, String bagName, String selectedExtraAttribute) throws InterMineException {
+        ServletContext servletContext = WebContextFactory.get().getServletContext();
+        HttpSession session = WebContextFactory.get().getSession();
+        WebConfig webConfig = (WebConfig) servletContext.getAttribute(Constants.WEBCONFIG);
+        ObjectStore os = (ObjectStore) servletContext.getAttribute(Constants.OBJECTSTORE);
+        Model model =  os.getModel();
+        Profile profile = (Profile) session.getAttribute(Constants.PROFILE);
+        SearchRepository searchRepository =
+            SearchRepository.getGlobalSearchRepository(servletContext);
+        InterMineBag imBag = BagHelper.getBag(profile, searchRepository, bagName);
+
+        Type type = (Type) webConfig.getTypes().get(model.getPackageName()
+                        + "." + imBag.getType());
+        List<Widget> widgets = type.getWidgets();
+        for (Widget widget: widgets) {
+            if (widget.getId() == Integer.parseInt(widgetId)) {
+                GraphWidget graphWidget = (GraphWidget) widget;
+                graphWidget.setSession(session);
+                graphWidget.setSelectedExtraAttribute(selectedExtraAttribute);
+                graphWidget.process(imBag, os);
+                return graphWidget;
+            }
+        }
+        return null;
+
     }
 }

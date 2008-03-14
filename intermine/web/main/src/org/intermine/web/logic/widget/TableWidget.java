@@ -1,4 +1,9 @@
-package org.intermine.web.logic.config;
+package org.intermine.web.logic.widget;
+
+import java.util.Collection;
+
+import org.intermine.objectstore.ObjectStore;
+import org.intermine.web.logic.bag.InterMineBag;
 
 /*
  * Copyright (C) 2002-2008 FlyMine
@@ -14,15 +19,19 @@ package org.intermine.web.logic.config;
  * @author Xavier Watkins
  *
  */
-public class BagTableDisplayer
+public class TableWidget extends Widget
 {
     private String title;
     private String type;
     private String collectionName;
     private String fields;
     private String description;
-    private String urlGen;
 
+    
+    public void process(InterMineBag bag, ObjectStore os) {
+        // TODO fill in
+    }
+    
     /**
      * Get the type
      * @return the type
@@ -39,21 +48,6 @@ public class BagTableDisplayer
         this.type = type;
     }
 
-    /**
-     * Get the title
-     * @return the title
-     */
-    public String getTitle() {
-        return title;
-    }
-
-    /**
-     * Set the title
-     * @param title the title
-     */
-    public void setTitle(String title) {
-        this.title = title;
-    }
 
     /**
      * Get the collection name
@@ -85,35 +79,6 @@ public class BagTableDisplayer
         this.fields = fields;
     }
 
-    /**
-     * @return the description
-     */
-    public String getDescription() {
-        return description;
-    }
-
-    /**
-     * @param description the description
-     */
-    public void setDescription(String description) {
-        this.description = description;
-    }
-
-    /**
-     * Get the urlGen
-     * @return the class that generates the pathquery
-     */
-    public String getUrlGen() {
-        return urlGen;
-    }
-
-    /**
-     * Set the class that generates the pathquery
-     * @param urlGen the class that generates the pathquery used in the links
-     */
-    public void setUrlGen(String urlGen) {
-        this.urlGen = urlGen;
-    }
 
     /**
      * Return an XML String of this Type object
@@ -123,4 +88,9 @@ public class BagTableDisplayer
         return "< title=\"" + title + "\" type=\"" + type + "\" collectionName=\""
                + collectionName + "\"/>";
     }
+    
+    public Collection getExtraAttributes(InterMineBag imBag, ObjectStore os) {
+        return null;
+    }
+
 }

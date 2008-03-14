@@ -11,35 +11,10 @@ package org.intermine.web.struts;
  */
 
 import java.util.ArrayList;
-import java.util.Iterator;
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
-import java.util.Set;
-
-import org.intermine.metadata.Model;
-import org.intermine.objectstore.ObjectStore;
-import org.intermine.util.TypeUtil;
-import org.intermine.web.logic.Constants;
-import org.intermine.web.logic.bag.BagQueryConfig;
-import org.intermine.web.logic.bag.InterMineBag;
-import org.intermine.web.logic.config.BagTableDisplayer;
-import org.intermine.web.logic.config.EnrichmentWidgetDisplayer;
-import org.intermine.web.logic.config.GraphDisplayer;
-import org.intermine.web.logic.config.Type;
-import org.intermine.web.logic.config.WebConfig;
-import org.intermine.web.logic.profile.Profile;
-import org.intermine.web.logic.results.PagedTable;
-import org.intermine.web.logic.search.SearchRepository;
-import org.intermine.web.logic.search.WebSearchable;
-import org.intermine.web.logic.session.SessionMethods;
-import org.intermine.web.logic.tagging.TagTypes;
-import org.intermine.web.logic.template.TemplateHelper;
-import org.intermine.web.logic.widget.BagGraphWidget;
-import org.intermine.web.logic.widget.BagTableWidgetLoader;
-import org.intermine.web.logic.widget.DataSetLdr;
-
-import java.awt.Font;
-
-import java.lang.reflect.Constructor;
 
 import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletRequest;
@@ -51,16 +26,25 @@ import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
 import org.apache.struts.tiles.ComponentContext;
 import org.apache.struts.tiles.actions.TilesAction;
-import org.jfree.chart.ChartFactory;
-import org.jfree.chart.JFreeChart;
-import org.jfree.chart.axis.NumberAxis;
-import org.jfree.chart.plot.CategoryPlot;
-import org.jfree.chart.plot.PlotOrientation;
-import org.jfree.chart.renderer.category.BarRenderer;
-import org.jfree.chart.renderer.category.StackedBarRenderer;
-import org.jfree.chart.title.TextTitle;
-import org.jfree.chart.urls.CategoryURLGenerator;
-import org.jfree.data.category.CategoryDataset;
+import org.intermine.metadata.Model;
+import org.intermine.objectstore.ObjectStore;
+import org.intermine.web.logic.Constants;
+import org.intermine.web.logic.bag.BagQueryConfig;
+import org.intermine.web.logic.bag.InterMineBag;
+import org.intermine.web.logic.config.Type;
+import org.intermine.web.logic.config.WebConfig;
+import org.intermine.web.logic.profile.Profile;
+import org.intermine.web.logic.results.PagedTable;
+import org.intermine.web.logic.search.SearchRepository;
+import org.intermine.web.logic.search.WebSearchable;
+import org.intermine.web.logic.session.SessionMethods;
+import org.intermine.web.logic.tagging.TagTypes;
+import org.intermine.web.logic.template.TemplateHelper;
+import org.intermine.web.logic.widget.BagTableWidgetLoader;
+import org.intermine.web.logic.widget.EnrichmentWidget;
+import org.intermine.web.logic.widget.GraphWidget;
+import org.intermine.web.logic.widget.TableWidget;
+import org.intermine.web.logic.widget.Widget;
 
 /**
  * @author Xavier Watkins
@@ -71,300 +55,175 @@ public class BagDetailsController extends TilesAction
     /**
      * {@inheritDoc}
      */
-    public ActionForward execute(@SuppressWarnings("unused") ComponentContext context,
-                                 @SuppressWarnings("unused") ActionMapping mapping,
-                                 @SuppressWarnings("unused") ActionForm form,
-                                 HttpServletRequest request,
-                                 @SuppressWarnings("unused") HttpServletResponse response)
-                    throws Exception {
+    public ActionForward execute(@SuppressWarnings("unused") ComponentContext context, 
+                                 @SuppressWarnings("unused") ActionMapping mapping, 
+                                 @SuppressWarnings("unused") ActionForm form, 
+                                 HttpServletRequest request, 
+                                 @SuppressWarnings("unused") HttpServletResponse response) 
+                                 throws Exception {
 
-            HttpSession session = request.getSession();
-            ServletContext servletContext = session.getServletContext();
-            ObjectStore os = (ObjectStore) servletContext.getAttribute(Constants.OBJECTSTORE);
+        HttpSession session = request.getSession();
+        ServletContext servletContext = session.getServletContext();
+        ObjectStore os = (ObjectStore) servletContext.getAttribute(Constants.OBJECTSTORE);
 
-            String bagName = request.getParameter("bagName");
-            Boolean myBag = Boolean.FALSE;
-            if (bagName == null) {
-                bagName = request.getParameter("name");
+        String bagName = request.getParameter("bagName");
+        Boolean myBag = Boolean.FALSE;
+        if (bagName == null) {
+            bagName = request.getParameter("name");
+        }
+
+        InterMineBag imBag = null;
+        String scope = request.getParameter("scope");
+        if (scope == null) {
+            scope = TemplateHelper.ALL_TEMPLATE;
+        }
+
+        if (scope.equals(TemplateHelper.USER_TEMPLATE) 
+                        || scope.equals(TemplateHelper.ALL_TEMPLATE)) {
+            Profile profile = (Profile) session.getAttribute(Constants.PROFILE);
+            imBag = profile.getSavedBags().get(bagName);
+            if (imBag != null) {
+                myBag = Boolean.TRUE;
             }
+        }
 
-            InterMineBag imBag = null;
-            String scope = request.getParameter("scope");
-            if (scope == null) {
-                scope = TemplateHelper.ALL_TEMPLATE;
+        if (scope.equals(TemplateHelper.GLOBAL_TEMPLATE)
+            || scope.equals(TemplateHelper.ALL_TEMPLATE)) {
+            // scope == all or global
+            SearchRepository searchRepository = SearchRepository
+                            .getGlobalSearchRepository(servletContext);
+            Map<String, ? extends WebSearchable> publicBagMap = searchRepository
+                            .getWebSearchableMap(TagTypes.BAG);
+            if (publicBagMap.get(bagName) != null) {
+                imBag = (InterMineBag) publicBagMap.get(bagName);
             }
+        }
 
-            if (scope.equals(TemplateHelper.USER_TEMPLATE)
-                || scope.equals(TemplateHelper.ALL_TEMPLATE)) {
-                Profile profile = (Profile) session.getAttribute(Constants.PROFILE);
-                imBag = profile.getSavedBags().get(bagName);
-                if (imBag != null) {
-                    myBag = Boolean.TRUE;
-                }
-            }
-
-            if (scope.equals(TemplateHelper.GLOBAL_TEMPLATE)
-                || scope.equals(TemplateHelper.ALL_TEMPLATE)) {
-                // scope == all or global
-                SearchRepository searchRepository =
-                    SearchRepository.getGlobalSearchRepository(servletContext);
-                Map<String, ? extends WebSearchable> publicBagMap =
-                    searchRepository.getWebSearchableMap(TagTypes.BAG);
-                if (publicBagMap.get(bagName) != null) {
-                    imBag = (InterMineBag) publicBagMap.get(bagName);
-                }
-            }
-
-            /* forward to bag page if this is an invalid bag */
-            if (imBag == null) {
-                return null;
-            }
-
-            Map classKeys = (Map) servletContext.getAttribute(Constants.CLASS_KEYS);
-            WebConfig webConfig = (WebConfig) servletContext.getAttribute(Constants.WEBCONFIG);
-            Model model = os.getModel();
-            Type type = (Type) webConfig.getTypes().get(model.getPackageName()
-                                                        + "." + imBag.getType());
-
-            Set graphDisplayers = type.getGraphDisplayers();
-            ArrayList<String[]> graphDisplayerArray = new ArrayList<String[]>();
-            for (Iterator iter = graphDisplayers.iterator(); iter.hasNext();) {
-
-                try {
-
-                    GraphDisplayer graphDisplayer = (GraphDisplayer) iter.next();
-                    String dataSetLoader = graphDisplayer.getDataSetLoader();
-                    Class clazz = TypeUtil.instantiate(dataSetLoader);
-                    Constructor constr = clazz.getConstructor(new Class[]
-                                                                        {
-                        InterMineBag.class, ObjectStore.class
-                                                                        });
-
-                    DataSetLdr dataSetLdr = (DataSetLdr) constr.newInstance(new Object[]
-                                                                                       {
-                        imBag, os
-                                                                                       });
-
-                    //TODO use caching here
-                    if (!dataSetLdr.getDataSets().isEmpty()) {
-                        for (Iterator it
-                                  = dataSetLdr.getDataSets().keySet().iterator(); it.hasNext();) {
-                            String key = (String) it.next();
-                            CategoryDataset graphDataSet = (CategoryDataset) 
-                            dataSetLdr.getDataSets().get(key);
-                            /* stacked bar chart */
-                            if (graphDisplayer.getGraphType().equals("StackedBarChart")) {
-                                setStackedBarGraph(session, graphDisplayer, graphDataSet,
-                                                   graphDisplayerArray, imBag);
-                            /* regular bar chart */
-                            } else {
-                                setBarGraph(os, session, graphDisplayer, graphDataSet,
-                                            graphDisplayerArray, imBag, key);
-                            }
-                        }
-                    }
-                } catch  (Exception e) {
-                    // TODO do something clever
-                    //return null;
-                    //throw new Exception(e);
-                }
-            }
-
-            ArrayList<BagTableWidgetLoader> tableDisplayerArray
-                                                           = new ArrayList<BagTableWidgetLoader>();
-            Set bagTabledisplayers = type.getBagTableDisplayers();
-            for (Iterator iter = bagTabledisplayers.iterator(); iter.hasNext();) {
-                try {
-                    BagTableDisplayer bagTableDisplayer = (BagTableDisplayer) iter.next();
-                    String ldrType = bagTableDisplayer.getType();
-                    String collectionName = bagTableDisplayer.getCollectionName();
-                    String fields = bagTableDisplayer.getFields();
-                    String title = bagTableDisplayer.getTitle();
-                    String description = bagTableDisplayer.getDescription();
-                    String urlGen = bagTableDisplayer.getUrlGen();
-                    BagTableWidgetLoader bagWidgLdr =
-                        new BagTableWidgetLoader(title, description, ldrType, collectionName,
-                                                 imBag, os, webConfig, model,
-                                                 classKeys, fields, urlGen);
-                    tableDisplayerArray.add(bagWidgLdr);
-
-                } catch  (Exception e) {
-                    // TODO do something clever
-                    //return null;
-                    //throw new Exception();
-                }
-            }
-
-            ArrayList<EnrichmentWidgetDisplayer> enrichmentWidgetDisplayerArray
-            = new ArrayList<EnrichmentWidgetDisplayer>();
-            Set enrichmentWidgetDisplayers = type.getEnrichmentWidgetDisplayers();
-            for (Iterator iter = enrichmentWidgetDisplayers.iterator(); iter.hasNext();) {
-                EnrichmentWidgetDisplayer d = (EnrichmentWidgetDisplayer) iter.next();
-                enrichmentWidgetDisplayerArray.add(d);
-            }
-
-            PagedTable pagedResults = SessionMethods.getResultsTable(session, "bag." 
-                                                                    + imBag.getName());
-            if (pagedResults == null) {
-                pagedResults = SessionMethods.doQueryGetPagedTable(request, servletContext, imBag);
-            }
-
-            // TODO this needs to be removed when InterMineBag can store the initial ids of when the
-            // bag was made.
-            BagQueryConfig bagQueryConfig =
-                (BagQueryConfig) servletContext.getAttribute(Constants.BAG_QUERY_CONFIG);
-            Map<String, String []> additionalConverters =
-                bagQueryConfig.getAdditionalConverters(imBag.getType());
-            if (additionalConverters != null) {
-                for (String converterClassName : additionalConverters.keySet()) {
-                    String [] paramArray = additionalConverters.get(converterClassName);
-                    String [] urlFields = paramArray[0].split(",");
-                    for (int i = 0; i < urlFields.length; i++) {
-                        if (request.getParameter(urlFields[i]) != null) {
-                            request.setAttribute("extrafield", urlFields[i]);
-                            request.setAttribute(urlFields[i], request.getParameter(urlFields[i]));
-                            request.setAttribute("externalids",
-                                                 request.getParameter("externalids"));
-                            break;
-                        }
-                    }
-                }
-            }
-
-            // Set the size
-            String pageStr = request.getParameter("page");
-            int page = (pageStr == null ? 0 : Integer.parseInt(pageStr));
-
-            pagedResults.setPageAndPageSize(page, 5);
-            if ((imBag.getSize() / 4) < page) {
-                page = 0;
-            }
-            
-            request.setAttribute("addparameter", request.getParameter("addparameter"));
-            request.setAttribute("myBag", myBag);
-            request.setAttribute("bag", imBag);
-            request.setAttribute("bagSize", new Integer(imBag.size()));
-            request.setAttribute("pagedResults", pagedResults);
-            request.setAttribute("graphDisplayerArray", graphDisplayerArray);
-            request.setAttribute("tableDisplayerArray", tableDisplayerArray);
-            request.setAttribute("enrichmentWidgetDisplayerArray", enrichmentWidgetDisplayerArray);
-
+        /* forward to bag page if this is an invalid bag */
+        if (imBag == null) {
             return null;
-    }
-
-
-    private void setBarGraph(@SuppressWarnings("unused") ObjectStore os,
-                             HttpSession session,
-                             GraphDisplayer graphDisplayer,
-                             CategoryDataset graphDataSet,
-                             ArrayList<String[]> graphDisplayerArray,
-                             InterMineBag bag,
-                             String subtitle) {
-        JFreeChart chart = null;
-        CategoryPlot plot = null;
-        BagGraphWidget bagGraphWidget = null;
-
-        chart = ChartFactory.createBarChart(
-                graphDisplayer.getTitle(),          // chart title
-                graphDisplayer.getDomainLabel(),    // domain axis label
-                graphDisplayer.getRangeLabel(),     // range axis label
-                graphDataSet,            // data
-                PlotOrientation.VERTICAL,
-                true,
-                true,                               // tooltips?
-                false                               // URLs?
-        );
-
-
-        if (!subtitle.startsWith("any")) {
-            TextTitle subtitleText = new TextTitle(subtitle);
-            subtitleText.setFont(new Font("SansSerif", Font.ITALIC, 10));
-            chart.addSubtitle(subtitleText);
-        }
-        plot = chart.getCategoryPlot();
-
-        BarRenderer renderer = new BarRenderer();
-
-        renderer.setItemMargin(0);
-        plot.setRenderer(renderer);
-        CategoryURLGenerator categoryUrlGen = null;
-        // set series 0 to have URLgenerator specified in config file
-        // set series 1 to have no URL generator.
-        try {
-            Class clazz2 = TypeUtil.instantiate(graphDisplayer.getUrlGen());
-            Constructor urlGenConstructor = clazz2.getConstructor(new Class[]
-                                                                            {
-                String.class, String.class
-                                                                            });
-            categoryUrlGen = (CategoryURLGenerator) urlGenConstructor
-            .newInstance(new Object[]
-                                    {
-                bag.getName(), subtitle
-                                    });
-
-        } catch (Exception err) {
-            err.printStackTrace();
         }
 
-        //renderer.setItemURLGenerator(null);
-        renderer.setSeriesItemURLGenerator(0, categoryUrlGen);
-        renderer.setSeriesItemURLGenerator(1, categoryUrlGen);
+        Map classKeys = (Map) servletContext.getAttribute(Constants.CLASS_KEYS);
+        WebConfig webConfig = (WebConfig) servletContext.getAttribute(Constants.WEBCONFIG);
+        Model model = os.getModel();
+        Type type = (Type) webConfig.getTypes().get(model.getPackageName() + "." + imBag.getType());
 
-        // integers only
-        NumberAxis rangeAxis = (NumberAxis) plot.getRangeAxis();
-        rangeAxis.setStandardTickUnits(NumberAxis.createIntegerTickUnits());
+        List graphDisplayerArray = new ArrayList();
+        List tableDisplayerArray = new ArrayList();
+        List enrichmentWidgetDisplayerArray = new ArrayList();
 
-        bagGraphWidget = new BagGraphWidget(session,                         
-                         bag.getName(),
-                         graphDisplayer.getToolTipGen(),
-                         null,
-                         chart,
-                         plot,
-                         renderer);
+        List<Widget> widgets = type.getWidgets();
+        Map<Integer, Collection> widget2extraAttrs = new HashMap<Integer, Collection>();
+        for (Widget widget2 : widgets) {
+            widget2extraAttrs.put(widget2.getId(), widget2.getExtraAttributes(
+                            imBag, os));
+        }
+        request.setAttribute("widgets", widgets);
+        request.setAttribute("widget2extraAttrs", widget2extraAttrs);
 
-        graphDisplayerArray.add(new String[] {
-            bagGraphWidget.getHTML(), graphDisplayer.getTitle(), graphDisplayer.getDescription()
-        });
-    }
+        for (Widget widget : widgets) {
+            if (widget instanceof GraphWidget) {
+//                GraphWidget graphWidget = (GraphWidget) widget;
+//                try {
+//                    if (graphWidget.getExtraAttributeClass() != null) {
+//                        try {
+//                            Class clazz = TypeUtil
+//                                            .instantiate(graphWidget.getExtraAttributeClass());
+//                            Constructor constr = clazz.getConstructor(new Class[]
+//                                {});
+//                            WidgetUtil widgetUtil = (WidgetUtil) constr.newInstance(new Object[]
+//                                {});
+//                            Collection<String> extraAttributes = widgetUtil.getExtraAttributes(os,
+//                                            imBag);
+//
+//                            for (String extra : extraAttributes) {
+//                                graphWidget.process(imBag, os, extra);
+//                                graphDisplayerArray.add(graphWidget);
+//                            }
+//                        } catch (Exception e) {
+//                            throw new Exception("Can't get organisms list");
+//                        }
+//                    } else {
+//                        graphWidget.process(imBag, os);
+//                        graphDisplayerArray.add(graphWidget);
+//                    }
+//                } catch (Exception e) {
+//                    // TODO do something clever
+//                    // return null;
+//                    // throw new Exception(e);
+//                }
+            } else
+                if (widget instanceof TableWidget) {
+                    TableWidget tableWidget = (TableWidget) widget;
+                    try {
+                        String ldrType = tableWidget.getType();
+                        String collectionName = tableWidget.getCollectionName();
+                        String fields = tableWidget.getFields();
+                        String title = tableWidget.getTitle();
+                        String description = tableWidget.getDescription();
+                        String urlGen = tableWidget.getLink();
+                        BagTableWidgetLoader bagWidgLdr = new BagTableWidgetLoader(title,
+                                        description, ldrType, collectionName, imBag, os, webConfig,
+                                        model, classKeys, fields, urlGen);
+                        //                        tableDisplayerArray.add(bagWidgLdr);
 
-    private void setStackedBarGraph(HttpSession session,
-                                    GraphDisplayer graphDisplayer,
-                                    CategoryDataset graphDataSet,
-                                    ArrayList<String[]> graphDisplayerArray,
-                                    InterMineBag bag) {
+                    } catch (Exception e) {
+                        // TODO do something clever
+                        // return null;
+                        // throw new Exception();
+                    }
+                } else
+                    if (widget instanceof EnrichmentWidget) {
+                        //                        enrichmentWidgetDisplayerArray.add(EnrichmentWidget);
+                    }
+        }
 
-        JFreeChart chart = null;
-        CategoryPlot plot = null;
-        BagGraphWidget bagGraphWidget = null;
+        PagedTable pagedResults = SessionMethods.getResultsTable(session, "bag." + imBag.getName());
+        if (pagedResults == null) {
+            pagedResults = SessionMethods.doQueryGetPagedTable(request, servletContext, imBag);
+        }
 
-        chart = ChartFactory.createStackedBarChart(
-                graphDisplayer.getTitle(),       // chart title
-                graphDisplayer.getDomainLabel(), // domain axis label
-                graphDisplayer.getRangeLabel(),  // range axis label
-                graphDataSet,         // data
-                PlotOrientation.VERTICAL,
-                true,
-                true,                            // tooltips?
-                false                            // URLs?
-        );
-        plot = chart.getCategoryPlot();
-        StackedBarRenderer renderer = (StackedBarRenderer) plot.getRenderer();
+        // TODO this needs to be removed when InterMineBag can store the initial ids of when the
+        // bag was made.
+        BagQueryConfig bagQueryConfig = (BagQueryConfig) servletContext
+                        .getAttribute(Constants.BAG_QUERY_CONFIG);
+        Map<String, String[]> additionalConverters = bagQueryConfig.getAdditionalConverters(imBag
+                        .getType());
+        if (additionalConverters != null) {
+            for (String converterClassName : additionalConverters.keySet()) {
+                String[] paramArray = additionalConverters.get(converterClassName);
+                String[] urlFields = paramArray[0].split(",");
+                for (int i = 0; i < urlFields.length; i++) {
+                    if (request.getParameter(urlFields[i]) != null) {
+                        request.setAttribute("extrafield", urlFields[i]);
+                        request.setAttribute(urlFields[i], request.getParameter(urlFields[i]));
+                        request.setAttribute("externalids", request.getParameter("externalids"));
+                        break;
+                    }
+                }
+            }
+        }
 
-        // integers only
-        NumberAxis rangeAxis = (NumberAxis) plot.getRangeAxis();
-        rangeAxis.setStandardTickUnits(NumberAxis.createIntegerTickUnits());
+        // Set the size
+        String pageStr = request.getParameter("page");
+        int page = (pageStr == null ? 0 : Integer.parseInt(pageStr));
 
-        bagGraphWidget = new BagGraphWidget(session,
-                         bag.getName(),
-                         graphDisplayer.getToolTipGen(),
-                         graphDisplayer.getUrlGen(),
-                         chart,
-                         plot,
-                         renderer);
+        pagedResults.setPageAndPageSize(page, 5);
+        if ((imBag.getSize() / 4) < page) {
+            page = 0;
+        }
 
-        graphDisplayerArray.add(new String[] {
-            bagGraphWidget.getHTML(), graphDisplayer.getTitle(), graphDisplayer.getDescription()
-        });
+        request.setAttribute("addparameter", request.getParameter("addparameter"));
+        request.setAttribute("myBag", myBag);
+        request.setAttribute("bag", imBag);
+        request.setAttribute("bagSize", new Integer(imBag.size()));
+        request.setAttribute("pagedResults", pagedResults);
+        // request.setAttribute("graphDisplayerArray", graphDisplayerArray);
+        // request.setAttribute("tableDisplayerArray", tableDisplayerArray);
+        // request.setAttribute("enrichmentWidgetDisplayerArray", enrichmentWidgetDisplayerArray);
+
+        return null;
     }
 }
 

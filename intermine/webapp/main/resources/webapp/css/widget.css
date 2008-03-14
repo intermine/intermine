@@ -1,0 +1,23 @@
+div.widgetcontainer{
+   width:450px;
+   height:500px;
+   padding:10px;
+   margin:10px;
+   border:1px solid #D0B5D7;
+   text-align:center;
+   float:left;
+}
+
+div.widgetcontainer p{
+   font-size:1em;
+   margin:10px 0 10px 0;
+   text-align:justify;
+}
+
+div.widgetcontainer h3{
+    text-align:left;
+}
+
+div.widgetdatawait{
+    padding-top:150px;
+}

@@ -25,6 +25,7 @@ import org.apache.struts.action.ActionMapping;
 import org.intermine.metadata.ClassDescriptor;
 import org.intermine.metadata.Model;
 import org.intermine.metadata.ReferenceDescriptor;
+import org.intermine.model.InterMineObject;
 import org.intermine.objectstore.ObjectStore;
 import org.intermine.util.TypeUtil;
 import org.intermine.web.logic.Constants;
@@ -63,33 +64,32 @@ public class CollectionDetailsAction extends Action
         HttpSession session = request.getSession();
         ServletContext servletContext = session.getServletContext();
         ObjectStore os = (ObjectStore) servletContext.getAttribute(Constants.OBJECTSTORE);
-        Model model = os.getModel();
+        // Model model = os.getModel();
         Integer id = new Integer(request.getParameter("id"));
         String field = request.getParameter("field");
         String pageSize = request.getParameter("pageSize");
         String trail = request.getParameter("trail");
 
-        Object o = os.getObjectById(id);
+        InterMineObject o = os.getObjectById(id);
 
-        Set cds = model.getClassDescriptorsForClass(o.getClass());
+        Set cds = os.getModel().getClassDescriptorsForClass(o.getClass());
 
         ReferenceDescriptor refDesc = null;
 
         Iterator iter = cds.iterator();
-        String objectClassName = null;
         while (iter.hasNext()) {
-            ClassDescriptor cd = (ClassDescriptor) iter.next();
+           ClassDescriptor cd = (ClassDescriptor) iter.next();
 
-            refDesc = (ReferenceDescriptor) cd.getFieldDescriptorByName(field);
-            objectClassName = cd.getUnqualifiedName();
-            if (refDesc != null) {
-                break;
-            }
+           refDesc = (ReferenceDescriptor) cd.getFieldDescriptorByName(field);
+           // objectClassName = cd.getUnqualifiedName();
+           if (refDesc != null) {
+               break;
+           }
         }
         String referencedClassName = TypeUtil.unqualifiedName(refDesc.getReferencedClassName());
 
-        PagedTable pagedTable = SessionMethods.doQueryGetPagedTable(request, servletContext, id,
-                        field, referencedClassName, objectClassName);
+        PagedTable pagedTable = SessionMethods.doQueryGetPagedTable(request, servletContext, o,
+                        field, referencedClassName);
 
         // add results table to trail
         if (trail != null) {
