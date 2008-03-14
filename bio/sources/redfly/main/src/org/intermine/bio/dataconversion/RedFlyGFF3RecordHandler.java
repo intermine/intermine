@@ -135,9 +135,6 @@ public class RedFlyGFF3RecordHandler extends GFF3RecordHandler
 
         feature.setAttribute("primaryIdentifier", name);
         feature.setAttribute("secondaryIdentifier", redflyID);
-
-        //feature.setAttribute("primaryIdentifier",  redflyID);
-        //feature.setAttribute("secondaryIdentifier", name);
     }
 
     private Item getGene(String genePrimaryIdentifier) {
