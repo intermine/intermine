@@ -16,14 +16,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import javax.servlet.ServletContext;
-
-import org.apache.commons.collections.ListUtils;
-import org.intermine.metadata.ClassDescriptor;
-import org.intermine.metadata.Model;
-import org.intermine.model.InterMineObject;
-import org.intermine.objectstore.ObjectStore;
-import org.intermine.objectstore.ObjectStoreException;
 import org.intermine.objectstore.query.ConstraintOp;
 import org.intermine.objectstore.query.ContainsConstraint;
 import org.intermine.objectstore.query.Query;
@@ -32,6 +24,12 @@ import org.intermine.objectstore.query.QueryCollectionReference;
 import org.intermine.objectstore.query.QueryField;
 import org.intermine.objectstore.query.QueryNode;
 import org.intermine.objectstore.query.Results;
+
+import org.intermine.metadata.ClassDescriptor;
+import org.intermine.metadata.Model;
+import org.intermine.model.InterMineObject;
+import org.intermine.objectstore.ObjectStore;
+import org.intermine.objectstore.ObjectStoreException;
 import org.intermine.path.Path;
 import org.intermine.util.CollectionUtil;
 import org.intermine.util.DynamicUtil;
@@ -49,11 +47,11 @@ import org.intermine.web.logic.query.PathQuery;
 import org.intermine.web.logic.results.TableHelper;
 import org.intermine.web.logic.results.WebResults;
 
-import com.sun.tools.javac.code.Attribute.Array;
+import javax.servlet.ServletContext;
 
 /**
  * Helper for everything related to PathQueryResults
- * 
+ *
  * @author "Xavier Watkins"
  */
 public class PathQueryResultHelper
@@ -61,7 +59,7 @@ public class PathQueryResultHelper
     /**
      * For a given type, return the default view as configured in webconfig-model.xml
      * as a List of Path objects
-     *  
+     *
      * @param type the type for which to get the view
      * @param model the Model
      * @param webConfig the WebConfig
@@ -69,7 +67,7 @@ public class PathQueryResultHelper
      * @param excludeNonAttributes a boolean
      * @return a List of Paths representing the view
      */
-    public static List<Path> getDefaultView(String type, Model model, WebConfig webConfig, 
+    public static List<Path> getDefaultView(String type, Model model, WebConfig webConfig,
                           String prefix, boolean excludeNonAttributes) {
         List<Path> view = new ArrayList<Path>();
         Set<ClassDescriptor> classDescriptors = model.getClassDescriptorsForClass(
@@ -92,7 +90,7 @@ public class PathQueryResultHelper
                     // TODO remove isOnlyAttribute when outer joins
                     if (!view.contains(path)
                                     && ((excludeNonAttributes && path.isOnlyAttribute())
-                                    || (!excludeNonAttributes))) { 
+                                    || (!excludeNonAttributes))) {
                         view.add(path);
                     }
                 }
@@ -100,16 +98,16 @@ public class PathQueryResultHelper
         }
         return view;
     }
-    
+
     /**
      * Create a PathQuery to get the contents of an InterMineBag
-     * 
+     *
      * @param imBag the bag
      * @param webConfig the WebConfig
      * @param model the Model
      * @return a PathQuery
      */
-    public static PathQuery makePathQueryForBag(InterMineBag imBag, WebConfig webConfig, 
+    public static PathQuery makePathQueryForBag(InterMineBag imBag, WebConfig webConfig,
                                                 Model model) {
         PathQuery pathQuery = new PathQuery(model);
 
@@ -125,10 +123,10 @@ public class PathQueryResultHelper
         pathQuery.syncLogicExpression("and");
         return pathQuery;
     }
-    
+
     /**
      * Create a PathQuery to get results for a collection of items from an InterMineObject
-     * 
+     *
      * @param webConfig the WebConfig
      * @param os the ObjectStore
      * @param object the InterMineObject
@@ -152,7 +150,7 @@ public class PathQueryResultHelper
 
     /**
      * Called by makePathQueryForCollection
-     * 
+     *
      * @param webConfig the webConfig
      * @param os the objectstore
      * @param object the InterMineObject
@@ -182,10 +180,10 @@ public class PathQueryResultHelper
         pathQuery.syncLogicExpression("and");
         return pathQuery;
     }
-    
+
     /**
      * Runs a PathQuery and return a WebResults object
-     * 
+     *
      * @param pathQuery the PathQuery to run
      * @param profile the user Profile
      * @param os the ObjectStore
@@ -213,10 +211,10 @@ public class PathQueryResultHelper
                         classKeys, null);
         return webResults;
     }
-    
+
     /**
      * Runs a PathQuery and return a WebResults object
-     * 
+     *
      * @param pathQuery the PathQuery to run
      * @param profile the user Profile
      * @param os the ObjectStore
@@ -234,5 +232,5 @@ public class PathQueryResultHelper
         return createPathQueryGetResults(pathQuery, profile, os, classKeys, bagQueryConfig, null,
                         servletContext);
     }
-    
+
 }
