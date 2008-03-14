@@ -78,6 +78,7 @@ public class ExcelExporter implements Exporter
                 writtenResultsCount++;
             }
             wb.write(out);
+            out.flush();
         } catch (IOException e) {
             throw new ExportException("Export failed.", e);
         } catch (RuntimeException e) {
