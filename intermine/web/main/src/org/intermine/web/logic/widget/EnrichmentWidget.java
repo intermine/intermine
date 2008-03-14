@@ -1,4 +1,9 @@
-package org.intermine.web.logic.config;
+package org.intermine.web.logic.widget;
+
+import java.util.Collection;
+
+import org.intermine.objectstore.ObjectStore;
+import org.intermine.web.logic.bag.InterMineBag;
 
 /*
  * Copyright (C) 2002-2008 FlyMine
@@ -13,11 +18,16 @@ package org.intermine.web.logic.config;
 /**
  * @author Julie Sullivan
  */
-public class EnrichmentWidgetDisplayer
+public class EnrichmentWidget extends Widget
 {
-    private String title, link, ldr, descr, max, filters, filterLabel;
+    private String max, filters, filterLabel;
     private String label, externalLink;
 
+    
+    public void process(InterMineBag bag, ObjectStore os) {
+        // TODO fill in
+    }
+    
     /**
      * @return the label
      */
@@ -30,38 +40,6 @@ public class EnrichmentWidgetDisplayer
      */
     public void setLabel(String label) {
         this.label = label;
-    }
-
-    /**
-     * Get the link
-     * @return the link
-     */
-    public String getLink() {
-        return link;
-    }
-
-    /**
-     * Set the link
-     * @param link the link
-     */
-    public void setLink(String link) {
-        this.link = link;
-    }
-
-    /**
-     * Get the title
-     * @return the title
-     */
-    public String getTitle() {
-        return title;
-    }
-
-    /**
-     * Set the title
-     * @param title the title
-     */
-    public void setTitle(String title) {
-        this.title = title;
     }
 
     /**
@@ -112,37 +90,10 @@ public class EnrichmentWidgetDisplayer
      * @return a String version of this WebConfig object
      */
     public String toString() {
-        return "< title=\"" + title + "\" link=\"" + link + "\" ldr=\""
-               + ldr + "\"/>";
+        return "< title=\"" + getTitle() + "\" link=\"" + getLink() + "\" ldr=\""
+               + getDataSetLoader() + "\"/>";
     }
 
-    /**
-     * @return the ldr
-     */
-    public String getLdr() {
-        return ldr;
-    }
-
-    /**
-     * @param ldr the ldr to set
-     */
-    public void setLdr(String ldr) {
-        this.ldr = ldr;
-    }
-
-    /**
-     * @return the descr
-     */
-    public String getDescr() {
-        return descr;
-    }
-
-    /**
-     * @param descr the descr to set
-     */
-    public void setDescr(String descr) {
-        this.descr = descr;
-    }
 
     /**
      * @return the externalLink
@@ -157,5 +108,9 @@ public class EnrichmentWidgetDisplayer
     public void setExternalLink(String externalLink) {
         this.externalLink = externalLink;
     }
-
+    
+    public Collection getExtraAttributes(InterMineBag imBag, ObjectStore os) {
+        return null;
+    }
+    
 }

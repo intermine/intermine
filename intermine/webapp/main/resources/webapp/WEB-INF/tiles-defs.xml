@@ -236,6 +236,7 @@
   <definition name="errorMessagesContainers.tile" path="errorMessagesContainers.jsp" />  
   <definition name="resultsTable.tile" path="resultsTable.jsp"/>
   <definition name="paging.tile" path="paging.jsp" />  
+  <definition name="widget.tile" path="widget.jsp" />  
 
   <!-- don't (re)move this - it's used for importing any model-specific actions -->
   <!--@MODEL_INCLUDE@-->

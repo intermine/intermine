@@ -30,6 +30,7 @@ import org.intermine.objectstore.query.ResultsRow;
 import org.intermine.metadata.Model;
 import org.intermine.objectstore.ObjectStore;
 import org.intermine.web.logic.bag.InterMineBag;
+import org.intermine.web.logic.widget.WidgetUtil;
 
 import org.flymine.model.genomic.Chromosome;
 import org.flymine.model.genomic.Organism;
@@ -38,8 +39,15 @@ import org.flymine.model.genomic.Organism;
  * Utility methods for the flymine package.
  * @author Julie Sullivan
  */
-public abstract class BioUtil
+public class BioUtil implements WidgetUtil
 {
+    /**
+     * Constructor (required for widgets)
+     */
+    public BioUtil() {
+        super();
+    }
+    
     /**
      * For a bag of objects, returns a list of organisms
      * @param os ObjectStore
@@ -177,5 +185,12 @@ public abstract class BioUtil
             chromosomes.add(chromosome);
         }
         return chromosomes;
+    }
+    
+    /**
+     * {@inheritDoc}
+     */
+    public Collection<String> getExtraAttributes(ObjectStore os, InterMineBag bag) {
+        return getOrganisms(os, bag, true);
     }
 }

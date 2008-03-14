@@ -34,6 +34,7 @@ public class DynamicUtil
     private static Map<Set<Class>, Class> classMap = new HashMap<Set<Class>, Class>();
     private static HashMap<Class, Set<Class>> decomposeMap = new HashMap<Class, Set<Class>>();
     private static Map<Class, String> friendlyNameMap = new HashMap<Class, String>();
+    private static Map<Class, String> simpleNameMap = new HashMap<Class, String>();
 
     /**
      * Cannot construct
@@ -265,7 +266,7 @@ public class DynamicUtil
         }
         return retval;
     }
-
+    
     /**
      * Creates a friendly description of an object - that is, the class and the ID (if it has one).
      *
@@ -280,6 +281,28 @@ public class DynamicUtil
         }
     }
 
+    /**
+     * Returns the simple class name for the given class or throws an exception if
+     * there are more than one
+     * @param clazz the class
+     * @return the simple class name
+     */
+    public static synchronized String getSimpleClassName(Class clazz) {
+        String retval = simpleNameMap.get(clazz);
+        if (retval == null) {
+            Set<Class> decomposedClass = decomposeClass(clazz);
+            if (decomposedClass.size() > 1) {
+                throw new IllegalArgumentException("No simple name for class: "
+                                                   + getFriendlyName(clazz));
+            } else {
+                retval = decomposedClass.iterator().next().getName();
+                simpleNameMap.put(clazz, retval);
+            }
+
+        }
+        return retval;
+    }
+    
     private static class ClassNameComparator implements Comparator<Class>
     {
         public int compare(Class a, Class b) {

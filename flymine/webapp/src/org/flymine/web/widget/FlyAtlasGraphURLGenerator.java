@@ -40,7 +40,7 @@ public class FlyAtlasGraphURLGenerator implements GraphCategoryURLGenerator
      * Creates a FlyAtlasGraphURLGenerator for the chart
      * @param bagName the bag name
      */
-    public FlyAtlasGraphURLGenerator(String bagName) {
+    public FlyAtlasGraphURLGenerator(String bagName, String extra) {
         super();
         this.bagName = bagName;
     }

@@ -10,11 +10,13 @@ package org.flymine.web.widget;
  *
  */
 
-import java.util.HashMap;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
-import java.util.Map;
 
+import org.flymine.model.genomic.DataSet;
+import org.flymine.model.genomic.Gene;
+import org.flymine.model.genomic.MRNAExpressionResult;
+import org.intermine.objectstore.ObjectStore;
 import org.intermine.objectstore.query.BagConstraint;
 import org.intermine.objectstore.query.ConstraintOp;
 import org.intermine.objectstore.query.ConstraintSet;
@@ -30,15 +32,8 @@ import org.intermine.objectstore.query.QueryValue;
 import org.intermine.objectstore.query.Results;
 import org.intermine.objectstore.query.ResultsRow;
 import org.intermine.objectstore.query.SimpleConstraint;
-
-import org.intermine.objectstore.ObjectStore;
 import org.intermine.web.logic.bag.InterMineBag;
 import org.intermine.web.logic.widget.DataSetLdr;
-
-import org.flymine.model.genomic.DataSet;
-import org.flymine.model.genomic.Gene;
-import org.flymine.model.genomic.MRNAExpressionResult;
-
 import org.jfree.data.category.CategoryDataset;
 import org.jfree.data.category.DefaultCategoryDataset;
 
@@ -47,7 +42,7 @@ import org.jfree.data.category.DefaultCategoryDataset;
  */
 public class BDGPinsituDataSetLdr implements DataSetLdr
 {    
-    private HashMap<String, CategoryDataset> dataSets = new HashMap<String, CategoryDataset>();
+    private DefaultCategoryDataset dataSet;
 
     /**
      * Creates a DataSetLdr used to retrieve, organise
@@ -55,7 +50,7 @@ public class BDGPinsituDataSetLdr implements DataSetLdr
      * @param bag the bag
      * @param os the ObjectStore
      */
-    public BDGPinsituDataSetLdr(InterMineBag bag, ObjectStore os) {
+    public BDGPinsituDataSetLdr(InterMineBag bag, ObjectStore os, String extra) {
         super();
         buildDataSets(bag, os);
     }
@@ -63,8 +58,8 @@ public class BDGPinsituDataSetLdr implements DataSetLdr
     /**
      * {@inheritDoc}
      */
-    public Map<String, CategoryDataset> getDataSets() {
-        return dataSets;
+    public CategoryDataset getDataSet() {
+            return dataSet;
     }
 
     private void buildDataSets(InterMineBag bag, ObjectStore os) {
@@ -130,7 +125,7 @@ public class BDGPinsituDataSetLdr implements DataSetLdr
             }
         }
         
-        DefaultCategoryDataset dataSet = new DefaultCategoryDataset();
+        dataSet = new DefaultCategoryDataset();
 
         for (Iterator<String> iterator = callTable.keySet().iterator(); iterator.hasNext();) {
             String stage = iterator.next();
@@ -138,11 +133,7 @@ public class BDGPinsituDataSetLdr implements DataSetLdr
             dataSet.addValue((callTable.get(stage))[0], "Expressed", stage);
             dataSet.addValue((callTable.get(stage))[1], "NotExpressed", stage);
         }
-        
-        if (results.size() > 0) {
-            dataSets.put("any", dataSet);
-        }
-    }
+}
 
     private LinkedHashMap<String, int[]> 
                             initCallTable() {
@@ -165,4 +156,11 @@ public class BDGPinsituDataSetLdr implements DataSetLdr
         }
         return callTable;
     }
+                            
+    /**
+     * {@inheritDoc}
+     */
+    public void setExtraAttributes(String extra) {
+    }                            
+
 }

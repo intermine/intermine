@@ -23,6 +23,7 @@ import java.util.Set;
 import org.apache.commons.collections.set.ListOrderedSet;
 import org.apache.commons.lang.ObjectUtils;
 import org.apache.commons.lang.StringUtils;
+import org.intermine.web.logic.widget.Widget;
 
 /**
  * Configuration object for displaying a class
@@ -38,11 +39,10 @@ public class Type
     private LinkedHashMap fieldConfigMap = new LinkedHashMap();
     private ListOrderedSet longDisplayers = new ListOrderedSet();
     private ListOrderedSet bagDisplayers = new ListOrderedSet();
-    private ListOrderedSet graphDisplayers = new ListOrderedSet();
-    private ListOrderedSet bagTableDisplayers = new ListOrderedSet();
-    private ListOrderedSet enrichmentWidgetDisplayers = new ListOrderedSet();
+    private List widgets = new ArrayList<Widget>();
     private Displayer tableDisplayer;
     private Map aspectDisplayers = new HashMap();
+    private static int widgetIdCount = 0;
 
 
     /**
@@ -117,56 +117,28 @@ public class Type
      }
 
     /**
-     * Get the GraphDisplayers for this type
-     * @return the List of GraphDisplayers
+     * @return the widgets
      */
-    public ListOrderedSet getGraphDisplayers() {
-        return graphDisplayers;
+    public List getWidgets() {
+        return widgets;
     }
 
     /**
-     * Get the BagTableDisplayers for this type
-     * @return the List of BagTableDisplayers
+     * @param widgets the widgets to set
      */
-    public ListOrderedSet getBagTableDisplayers() {
-        return bagTableDisplayers;
+    public void setWidgets(List widgets) {
+        this.widgets = widgets;
     }
-
+    
     /**
-     * Get the getEnrichmentDisplayers for this type
-     * @return the List of BagTableDisplayers
+     * Add a widget to the Type
+     * @param widget a widget
      */
-    public ListOrderedSet getEnrichmentWidgetDisplayers() {
-        return enrichmentWidgetDisplayers;
+    public synchronized void addWidget(Widget widget) {
+        widget.setId(widgetIdCount);
+        widgets.add(widget);
+        widgetIdCount++;
     }
-
-    /**
-     * Add a GraphDisplayer to the List of GraphDisplayers
-     * for that type
-     * @param gdisp a GraphDisplayer
-     */
-    public void addGraphDisplayer(GraphDisplayer gdisp) {
-        graphDisplayers.add(gdisp);
-    }
-
-    /**
-     * Add a BagTableDisplayer to the List of BagTableDisplayers
-     * for that type
-     * @param btDisp a BagTableDisplayer
-     */
-    public void addBagTableDisplayer(BagTableDisplayer btDisp) {
-        bagTableDisplayers.add(btDisp);
-    }
-
-    /**
-     * Add a enrichmentDisplayers to the List of enrichmentDisplayers
-     * for that type
-     * @param ewDisp a BagTableDisplayer
-     */
-    public void addEnrichmentWidgetDisplayer(EnrichmentWidgetDisplayer ewDisp) {
-        enrichmentWidgetDisplayers.add(ewDisp);
-    }
-
 
     /**
      * Set the table displayer for this Type

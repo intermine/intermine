@@ -10,7 +10,7 @@ package org.intermine.web.logic.widget;
  *
  */
 
-import java.util.Map;
+import org.jfree.data.category.CategoryDataset;
 
 
 /**
@@ -23,7 +23,8 @@ import java.util.Map;
 public interface DataSetLdr
 {
     /**
-     * @return the map [String, GraphDataSet]
+     * @return the dataset
      */
-    public Map getDataSets();
+    public CategoryDataset getDataSet();
+    
 }

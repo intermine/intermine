@@ -10,6 +10,8 @@ package org.intermine.web.logic.config;
  *
  */
 
+import java.io.IOException;
+import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -18,13 +20,13 @@ import java.util.Map;
 import java.util.Set;
 import java.util.TreeSet;
 
+import org.apache.commons.digester.Digester;
 import org.intermine.metadata.ClassDescriptor;
 import org.intermine.metadata.Model;
-
-import java.io.IOException;
-import java.io.InputStream;
-
-import org.apache.commons.digester.Digester;
+import org.intermine.web.logic.widget.EnrichmentWidget;
+import org.intermine.web.logic.widget.GraphWidget;
+import org.intermine.web.logic.widget.TableWidget;
+import org.intermine.web.logic.widget.Widget;
 import org.xml.sax.SAXException;
 
 /**
@@ -95,21 +97,21 @@ public class WebConfig
         digester.addCallParam("webconfig/class/bagdisplayers/displayer/param", 1, "value");
 
         digester.addObjectCreate("webconfig/class/bagdisplayers/graphdisplayer",
-                                 GraphDisplayer.class);
+                                 GraphWidget.class);
         digester.addSetProperties("webconfig/class/bagdisplayers/graphdisplayer");
-        digester.addSetNext("webconfig/class/bagdisplayers/graphdisplayer", "addGraphDisplayer");
+        digester.addSetNext("webconfig/class/bagdisplayers/graphdisplayer", "addWidget");
 
         digester.addObjectCreate("webconfig/class/bagdisplayers/bagtabledisplayer",
-                                 BagTableDisplayer.class);
+                                 TableWidget.class);
         digester.addSetProperties("webconfig/class/bagdisplayers/bagtabledisplayer");
         digester.addSetNext("webconfig/class/bagdisplayers/bagtabledisplayer",
-                            "addBagTableDisplayer");
+                            "addWidget");
 
         digester.addObjectCreate("webconfig/class/bagdisplayers/enrichmentwidgetdisplayer",
-                                 EnrichmentWidgetDisplayer.class);
+                                 EnrichmentWidget.class);
         digester.addSetProperties("webconfig/class/bagdisplayers/enrichmentwidgetdisplayer");
         digester.addSetNext("webconfig/class/bagdisplayers/enrichmentwidgetdisplayer",
-                            "addEnrichmentWidgetDisplayer");
+                            "addWidget");
 
         digester.addSetNext("webconfig/class", "addType");
 
@@ -246,39 +248,15 @@ public class WebConfig
                         thisClassType.setTableDisplayer(superClassType.getTableDisplayer());
                     }
 
-                    if (thisClassType.getBagTableDisplayers().size() == 0
-                                    && superClassType.getBagTableDisplayers() != null
-                                    && superClassType.getBagTableDisplayers().size() > 0) {
-                        Iterator bagDisplayerIter
-                        = superClassType.getBagTableDisplayers().iterator();
+                    if (thisClassType.getWidgets().size() == 0
+                                    && superClassType.getWidgets() != null
+                                    && superClassType.getWidgets().size() > 0) {
+                        Iterator widgetIter
+                        = superClassType.getWidgets().iterator();
 
-                        while (bagDisplayerIter.hasNext()) {
-                            BagTableDisplayer d = (BagTableDisplayer) bagDisplayerIter.next();
-                            thisClassType.addBagTableDisplayer(d);
-                        }
-                    }
-                    if (thisClassType.getGraphDisplayers().size() == 0
-                                    && superClassType.getGraphDisplayers() != null
-                                    && superClassType.getGraphDisplayers().size() > 0) {
-                        Iterator graphDisplayerIter
-                        = superClassType.getGraphDisplayers().iterator();
-
-                        while (graphDisplayerIter.hasNext()) {
-                            GraphDisplayer d = (GraphDisplayer) graphDisplayerIter.next();
-                            thisClassType.addGraphDisplayer(d);
-                        }
-                    }
-
-                    if (thisClassType.getEnrichmentWidgetDisplayers().size() == 0
-                                    && superClassType.getEnrichmentWidgetDisplayers() != null
-                                    && superClassType.getEnrichmentWidgetDisplayers().size() > 0) {
-                        Iterator enrichmentWidgetDisplayerIter
-                        = superClassType.getEnrichmentWidgetDisplayers().iterator();
-
-                        while (enrichmentWidgetDisplayerIter.hasNext()) {
-                            EnrichmentWidgetDisplayer d
-                            = (EnrichmentWidgetDisplayer) enrichmentWidgetDisplayerIter.next();
-                            thisClassType.addEnrichmentWidgetDisplayer(d);
+                        while (widgetIter.hasNext()) {
+                            Widget wi = (Widget) widgetIter.next();
+                            thisClassType.addWidget(wi);
                         }
                     }
                 }
