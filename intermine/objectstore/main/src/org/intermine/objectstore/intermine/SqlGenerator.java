@@ -916,6 +916,7 @@ public class SqlGenerator
             LinkedList<Constraint> constraints = new LinkedList<Constraint>();
             boolean needWhereComma = state.getWhereBuffer().length() > 0;
             boolean needHavingComma = state.getHavingBuffer().length() > 0;
+            boolean usingHaving = !q.getGroupBy().isEmpty();
             constraints.add(c);
             while (!constraints.isEmpty()) {
                 Constraint con = constraints.removeFirst();
@@ -924,19 +925,19 @@ public class SqlGenerator
                     constraints.addAll(0, ((ConstraintSet) con).getConstraints());
                 } else {
                     boolean whs[] = whereHavingSafe(con, q);
-                    if (whs[0]) {
-                        StringBuffer buffer = state.getWhereBuffer();
-                        if (needWhereComma) {
-                            buffer.append(" AND ");
-                        }
-                        needWhereComma = true;
-                        constraintToString(state, buffer, con, q, schema, SAFENESS_SAFE, true);
-                    } else if (whs[1]) {
+                    if (whs[1] && usingHaving) {
                         StringBuffer buffer = state.getHavingBuffer();
                         if (needHavingComma) {
                             buffer.append(" AND ");
                         }
                         needHavingComma = true;
+                        constraintToString(state, buffer, con, q, schema, SAFENESS_SAFE, true);
+                    } else if (whs[0]) {
+                        StringBuffer buffer = state.getWhereBuffer();
+                        if (needWhereComma) {
+                            buffer.append(" AND ");
+                        }
+                        needWhereComma = true;
                         constraintToString(state, buffer, con, q, schema, SAFENESS_SAFE, true);
                     } else {
                         throw new ObjectStoreException("Constraint " + con + " mixes WHERE"

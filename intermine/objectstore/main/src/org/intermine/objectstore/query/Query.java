@@ -14,6 +14,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.IdentityHashMap;
 import java.util.Iterator;
 import java.util.LinkedHashSet;
 import java.util.List;
@@ -38,7 +39,7 @@ public class Query implements FromElement
     private List<QuerySelectable> select = new ArrayList();
     private List orderBy = new ArrayList(); // @element-type QueryNode
     private Set groupBy = new LinkedHashSet(); // @element-type QueryNode
-    private Map<Object, String> aliases = new HashMap();
+    private Map<Object, String> aliases = new IdentityHashMap();
     private Map<String, Object> reverseAliases = new HashMap();
     private int limit = Integer.MAX_VALUE;
 
