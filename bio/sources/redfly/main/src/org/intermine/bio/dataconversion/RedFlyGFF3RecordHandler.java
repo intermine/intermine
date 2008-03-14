@@ -32,9 +32,9 @@ public class RedFlyGFF3RecordHandler extends GFF3RecordHandler
 {
     private String tgtNs;
     private static final String REDFLY_PREFIX = "REDfly:";
-    private Map anatomyMap = new LinkedHashMap();
-    private Map geneMap = new HashMap();
-    private Map publications = new HashMap();
+    private Map<String, Item> anatomyMap = new LinkedHashMap<String, Item>();
+    private Map<String, Item> geneMap = new HashMap<String, Item>();
+    private Map<String, Item> publications = new HashMap<String, Item>();
 
     /**
      * Create a new RedFlyGFF3RecordHandler for the given target model.
@@ -48,6 +48,7 @@ public class RedFlyGFF3RecordHandler extends GFF3RecordHandler
     /**
      * {@inheritDoc}
      */
+    @Override
     public void process(GFF3Record record) {
         Item feature = getFeature();
 
@@ -57,8 +58,8 @@ public class RedFlyGFF3RecordHandler extends GFF3RecordHandler
 
         feature.addAttribute(new Attribute("curated", "true"));
         if (record.getAttributes().containsKey("Evidence")) {
-            List evidenceList = record.getAttributes().get("Evidence");
-            String elementEvidence = (String) evidenceList.get(0);
+            List<String> evidenceList = record.getAttributes().get("Evidence");
+            String elementEvidence = evidenceList.get(0);
             feature.addAttribute(new Attribute("elementEvidence", elementEvidence));
         }
 
@@ -80,12 +81,12 @@ public class RedFlyGFF3RecordHandler extends GFF3RecordHandler
         String pubmedId = null;
         String redflyID = null;
 
-        List dbxrefs = record.getDbxrefs();
+        List<String> dbxrefs = record.getDbxrefs();
 
         if (dbxrefs != null) {
-            Iterator dbxrefsIter = dbxrefs.iterator();
+            Iterator<String> dbxrefsIter = dbxrefs.iterator();
             while (dbxrefsIter.hasNext()) {
-                String dbxref = (String) dbxrefsIter.next();
+                String dbxref = dbxrefsIter.next();
 
                 int colonIndex = dbxref.indexOf(":");
                 if (colonIndex == -1) {
@@ -128,17 +129,20 @@ public class RedFlyGFF3RecordHandler extends GFF3RecordHandler
 
         feature.setReference("gene", getGene(geneName));
 
-        if (pubmedId != null && !pubmedId.equals("")) {
+        if (!pubmedId.equals("")) {
             addEvidence(getPublication(pubmedId));
         }
 
-        feature.setAttribute("primaryIdentifier",  redflyID);
-        feature.setAttribute("secondaryIdentifier", name);
+        feature.setAttribute("primaryIdentifier", name);
+        feature.setAttribute("secondaryIdentifier", redflyID);
+
+        //feature.setAttribute("primaryIdentifier",  redflyID);
+        //feature.setAttribute("secondaryIdentifier", name);
     }
 
     private Item getGene(String genePrimaryIdentifier) {
         if (geneMap.containsKey(genePrimaryIdentifier)) {
-            return (Item) geneMap.get(genePrimaryIdentifier);
+            return geneMap.get(genePrimaryIdentifier);
         }
 
         Item geneItem = getItemFactory().makeItem(null, tgtNs + "Gene", "");
@@ -151,7 +155,7 @@ public class RedFlyGFF3RecordHandler extends GFF3RecordHandler
 
     private Item getAnatomy(String ontologyTermId) {
         if (anatomyMap.containsKey(ontologyTermId)) {
-            return (Item) anatomyMap.get(ontologyTermId);
+            return anatomyMap.get(ontologyTermId);
         }
 
         Item anatomyItem = getItemFactory().makeItem(null, tgtNs + "AnatomyTerm", "");
@@ -169,7 +173,7 @@ public class RedFlyGFF3RecordHandler extends GFF3RecordHandler
      */
     protected Item getPublication(String pubmedId) {
         if (publications.containsKey(pubmedId)) {
-            return (Item) publications.get(pubmedId);
+            return publications.get(pubmedId);
         }
 
         Item publicationItem = getItemFactory().makeItem(null, tgtNs + "Publication", "");
