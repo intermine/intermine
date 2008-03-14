@@ -15,6 +15,7 @@ import java.util.Collection;
 
 import org.intermine.model.InterMineObject;
 import org.intermine.util.TypeUtil;
+import org.intermine.util.Util;
 
 /**
  * Represents a QueryClass field that is neither a collection or reference to
@@ -191,7 +192,8 @@ public class QueryField implements QueryEvaluable
      * @return a String representation
      */
     public String toString() {
-        return "QueryField(" + qc + ", " + fieldName + ")";
+        return "QueryField(" + qc + ", " + fieldName + (secondFieldName == null ? "" : ", "
+                    + secondFieldName) + ")";
     }
 
     /**
@@ -206,5 +208,30 @@ public class QueryField implements QueryEvaluable
      */
     public int getApproximateType() {
         throw new ClassCastException("getApproximateType called on a QueryField");
+    }
+
+    /**
+     * Returns true if this is equal to the given object.
+     *
+     * @param o the object
+     * @return a boolean
+     */
+    public boolean equals(Object o) {
+        if (o instanceof QueryField) {
+            QueryField qf = (QueryField) o;
+            return qc.equals(qf.qc) && fieldName.equals(qf.fieldName)
+                && Util.equals(secondFieldName, qf.secondFieldName);
+        }
+        return false;
+    }
+
+    /**
+     * Returns a hash code for this object.
+     *
+     * @return an int
+     */
+    public int hashCode() {
+        return 3 * qc.hashCode() + 5 * fieldName.hashCode() + (secondFieldName == null ? 0
+                : 7 * secondFieldName.hashCode());
     }
 }
