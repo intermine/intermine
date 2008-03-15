@@ -328,6 +328,7 @@ public class FastaLoaderTask extends FileDirectDataLoaderTask
             if (getDataSource() != null) {
                 dataSet.setDataSource(getDataSource());
             }
+            dataSets.put(dataSetTitle, dataSet);
             return dataSet;
         }
     }
