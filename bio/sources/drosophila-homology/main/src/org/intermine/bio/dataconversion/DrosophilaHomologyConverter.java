@@ -36,7 +36,7 @@ import org.intermine.xml.full.Item;
  */
 public class DrosophilaHomologyConverter extends FileConverter
 {
-    private Item dataSource, dataSet;
+    private Item dataSource, dataSet, pub;
     private Map<String, String> genes = new HashMap();
     private Map<String, String> organisms = new HashMap();
     private OrganismRepository or = null;
@@ -56,14 +56,15 @@ public class DrosophilaHomologyConverter extends FileConverter
         dataSource.setAttribute("name", "FlyBase");
         store(dataSource);
 
-        // TODO find correct DataSet name
         dataSet = createItem("DataSet");
-        dataSet.setAttribute("title", "Drosophila homology");
+        dataSet.setAttribute("title", "Drosophila 12 Genomes Consortium homology");
         dataSet.setReference("dataSource", dataSource);
         store(dataSet);
 
-        // TODO create a publication
-
+        pub = createItem("Publication");
+        pub.setAttribute("pubMedId", "17994087");
+        store(pub);
+        
         or = OrganismRepository.getOrganismRepository();
     }
 
@@ -150,6 +151,7 @@ public class DrosophilaHomologyConverter extends FileConverter
         homologue.setReference("gene", gene);
         homologue.setReference("homologue", homGene);
         homologue.addToCollection("evidence", dataSet);
+        homologue.addToCollection("evidence", pub);
         store(homologue);
     }
 
