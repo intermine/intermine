@@ -65,7 +65,7 @@ public class FlyRegGFF3RecordHandler extends GFF3RecordHandler
                                        + " - pattern doesn't match");
         }
 
-        bindingSite.setAttribute("secondaryIdentifier", primaryIdentifier);
+        bindingSite.setAttribute("primaryIdentifier", primaryIdentifier);
         addSynonym(bindingSite, "identifier", primaryIdentifier);
 
         bindingSite.setAttribute("name", name);
@@ -96,7 +96,7 @@ public class FlyRegGFF3RecordHandler extends GFF3RecordHandler
             throw new RuntimeException("no REDfly: id for: " + bindingSite);
         }
 
-        bindingSite.setAttribute("primaryIdentifier", redflyID);
+        bindingSite.setAttribute("secondaryIdentifier", redflyID);
         addSynonym(bindingSite, "internal_id", "REDfly:" + redflyID);
 
         Item pubmedItem;

@@ -1,8 +1,8 @@
 <items>
   <item id="1_1" class="http://www.flymine.org/model/genomic#TFBindingSite">
-    <attribute name="secondaryIdentifier" value="TF000068"/>
+    <attribute name="primaryIdentifier" value="TF000068"/>
     <attribute name="name" value="Unspecified_dpp:REDFLY:TF000068"/>
-    <attribute name="primaryIdentifier" value="644"/>
+    <attribute name="secondaryIdentifier" value="644"/>
     <reference name="gene" ref_id="1_5"/>
     <collection name="evidence"><reference ref_id="1_4"/></collection>
   </item>
@@ -26,9 +26,9 @@
     <reference name="organism" ref_id="0_0"/>
   </item>
   <item id="1_6" class="http://www.flymine.org/model/genomic#TFBindingSite">
-    <attribute name="secondaryIdentifier" value="TF000069"/>
+    <attribute name="primaryIdentifier" value="TF000069"/>
     <attribute name="name" value="dl_dpp:REDFLY:TF000069"/>
-    <attribute name="primaryIdentifier" value="645"/>
+    <attribute name="secondaryIdentifier" value="645"/>
     <reference name="factor" ref_id="1_10"/>
     <reference name="gene" ref_id="1_5"/>
     <collection name="evidence"><reference ref_id="1_9"/></collection>
@@ -53,9 +53,9 @@
     <reference name="organism" ref_id="0_0"/>
   </item>
   <item id="1_11" class="http://www.flymine.org/model/genomic#TFBindingSite">
-    <attribute name="secondaryIdentifier" value="TF000067"/>
+    <attribute name="primaryIdentifier" value="TF000067"/>
     <attribute name="name" value="Unspecified_dpp:REDFLY:TF000067"/>
-    <attribute name="primaryIdentifier" value="643"/>
+    <attribute name="secondaryIdentifier" value="643"/>
     <reference name="gene" ref_id="1_5"/>
     <collection name="evidence"><reference ref_id="1_4"/></collection>
   </item>
