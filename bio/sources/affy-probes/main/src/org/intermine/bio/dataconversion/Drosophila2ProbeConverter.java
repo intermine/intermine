@@ -30,7 +30,7 @@ import java.io.Reader;
 import org.apache.log4j.Logger;
 
 /**
- * 
+ *
  * @author Julie Sullivan
  */
 public class Drosophila2ProbeConverter extends FileConverter
@@ -56,7 +56,7 @@ public class Drosophila2ProbeConverter extends FileConverter
 
         dataSet = createItem("DataSet");
         dataSet.setReference("dataSource", dataSource.getIdentifier());
-        
+
         org = createItem("Organism");
         org.setAttribute("taxonId", "7227");
         store(org);
@@ -69,7 +69,7 @@ public class Drosophila2ProbeConverter extends FileConverter
      * {@inheritDoc}
      */
     public void process(Reader reader) throws Exception {
-        
+
         Iterator<String[]> lineIter = FormattedTextParser.parseCsvDelimitedReader(reader);
         lineIter.next();    // skip header
         boolean hasDataset = false;
@@ -87,24 +87,26 @@ public class Drosophila2ProbeConverter extends FileConverter
                 // probeSet.setAttribute("description", line[4]);
                 probeSet.setAttribute("isControl", "true");
             }
-            
+
             String cgs = line[17];
             if (!cgs.equals("---")) {
-                // set reference to transcript
-                Item transcript = createBioEntity("Transcript", line[6]);
-                probeSet.setReference("transcript", transcript.getIdentifier());
 
-                // FBgn0029676 /// FBgn0052789 /// FBgn0066138 /// FBgn0066170
-                String[] genes = cgs.split(" /// ");
-                ReferenceList geneColl = new ReferenceList("genes", new ArrayList<String>());
-                for (String identifier : genes) {
-                    if (identifier.trim().startsWith("CG")) {
-                        Item gene = createBioEntity("Gene", identifier);
-                        geneColl.addRefId(gene.getIdentifier());
-                    }
+                String transcriptIdentifier = line[6];
+                if (transcriptIdentifier.trim().startsWith("CG")) {
+                        Item transcript = createBioEntity("Transcript", transcriptIdentifier);
+                        probeSet.setReference("transcript", transcript.getIdentifier());
+
+                        // FBgn0029676 /// FBgn0052789 /// FBgn0066138 /// FBgn0066170
+                        String[] genes = cgs.split(" /// ");
+                        ReferenceList geneColl = new ReferenceList("genes", new ArrayList<String>());
+                        for (String identifier : genes) {
+                            if (identifier.trim().startsWith("CG")) {
+                                Item gene = createBioEntity("Gene", identifier);
+                                geneColl.addRefId(gene.getIdentifier());
+                            }
+                        }
+                        probeSet.addCollection(geneColl);
                 }
-                probeSet.addCollection(geneColl);
-
             }
             store(probeSet);
             for (Item item : delayedItems) {
@@ -124,7 +126,7 @@ public class Drosophila2ProbeConverter extends FileConverter
         if (bio == null) {
             bio = createItem(clsName);
             bio.setReference("organism", org.getIdentifier());
-            bio.setAttribute("secondaryIdentifier", identifier);            
+            bio.setAttribute("secondaryIdentifier", identifier);
             bioMap.put(identifier, bio);
             store(bio);
         }
