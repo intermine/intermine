@@ -85,7 +85,7 @@
     <reference name="subject" ref_id="3_2"/>
   </item>
   <item id="6_3" class="http://www.flymine.org/model/genomic#Translation">
-    <attribute name="primaryIdentifier" value="MOSQUITO_3"/>
+    <attribute name="secondaryIdentifier" value="MOSQUITO_3"/>
     <reference name="organism" ref_id="2_2"/>
   </item>
   <item id="7_18" class="http://www.flymine.org/model/genomic#Homologue">
@@ -153,7 +153,7 @@
     </collection>
   </item>
   <item id="6_1" class="http://www.flymine.org/model/genomic#Translation">
-    <attribute name="primaryIdentifier" value="MOSQUITO_1"/>
+    <attribute name="secondaryIdentifier" value="MOSQUITO_1"/>
     <reference name="organism" ref_id="2_2"/>
   </item>
   <item id="7_14" class="http://www.flymine.org/model/genomic#Homologue">
@@ -258,7 +258,7 @@
     </collection>
   </item>
   <item id="6_2" class="http://www.flymine.org/model/genomic#Translation">
-    <attribute name="primaryIdentifier" value="MOSQUITO_2"/>
+    <attribute name="secondaryIdentifier" value="MOSQUITO_2"/>
     <reference name="organism" ref_id="2_2"/>
   </item>
   <item id="7_6" class="http://www.flymine.org/model/genomic#Homologue">
