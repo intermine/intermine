@@ -100,15 +100,10 @@ public class BagDetailsController extends TilesAction
         if (imBag == null) {
             return null;
         }
-
-        Map classKeys = (Map) servletContext.getAttribute(Constants.CLASS_KEYS);
+        
         WebConfig webConfig = (WebConfig) servletContext.getAttribute(Constants.WEBCONFIG);
         Model model = os.getModel();
         Type type = (Type) webConfig.getTypes().get(model.getPackageName() + "." + imBag.getType());
-
-        List graphDisplayerArray = new ArrayList();
-        List tableDisplayerArray = new ArrayList();
-        List enrichmentWidgetDisplayerArray = new ArrayList();
 
         List<Widget> widgets = type.getWidgets();
         Map<Integer, Collection> widget2extraAttrs = new HashMap<Integer, Collection>();
