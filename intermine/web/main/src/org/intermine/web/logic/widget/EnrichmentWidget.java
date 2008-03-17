@@ -1,26 +1,26 @@
 package org.intermine.web.logic.widget;
 
-import java.lang.reflect.Constructor;
-import java.lang.reflect.InvocationTargetException;
-import java.math.BigDecimal;
+
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
-import java.util.HashMap;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
-import org.intermine.objectstore.ObjectStore;
 import org.intermine.objectstore.query.Query;
 import org.intermine.objectstore.query.Results;
 import org.intermine.objectstore.query.ResultsRow;
+
+import org.intermine.objectstore.ObjectStore;
 import org.intermine.util.TypeUtil;
 import org.intermine.web.logic.WebUtil;
 import org.intermine.web.logic.bag.InterMineBag;
 
-import sun.security.action.GetBooleanAction;
+import java.lang.reflect.Constructor;
+import java.lang.reflect.InvocationTargetException;
+import java.math.BigDecimal;
 
 /*
  * Copyright (C) 2002-2008 FlyMine
@@ -39,7 +39,6 @@ public class EnrichmentWidget extends Widget
 {
     private String max, filters, filterLabel, errorCorrection;
     private String label, externalLink;
-    private Map<String, String> selectedExtraAttributesMap = new HashMap<String, String>();
     private ArrayList<Map> results;
     private InterMineBag bag;
 
@@ -191,14 +190,23 @@ public class EnrichmentWidget extends Widget
         this.externalLink = externalLink;
     }
     
-    public Collection getExtraAttributes(InterMineBag imBag, ObjectStore os) {
+    /**
+     * @param imBag bag used for this widget
+     * @param os object store
+     * @return extra attributes - will be null
+     */
+    public Collection<String> getExtraAttributes(InterMineBag imBag, ObjectStore os) {
         return null;
     }
     
+    /**
+     * 
+     * @return List of column labels
+     */
     public List getColumns() {
         return Arrays.asList(new String[]
             {
-                "", "Go Term", "p-Value", ""
+                "", label, "p-Value", ""
             });
     }
     
