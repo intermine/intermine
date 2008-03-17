@@ -10,6 +10,16 @@ package org.intermine.web.logic;
  *
  */
 
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileReader;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.io.Reader;
+import java.math.BigDecimal;
+import java.net.URL;
+import java.net.URLConnection;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
@@ -23,32 +33,6 @@ import java.util.TreeMap;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import org.intermine.objectstore.query.Query;
-import org.intermine.objectstore.query.Results;
-import org.intermine.objectstore.query.ResultsRow;
-
-import org.intermine.metadata.ClassDescriptor;
-import org.intermine.metadata.Model;
-import org.intermine.objectstore.intermine.ObjectStoreInterMineImpl;
-import org.intermine.web.logic.bag.InterMineBag;
-import org.intermine.web.logic.search.SearchRepository;
-import org.intermine.web.logic.tagging.TagTypes;
-import org.intermine.web.logic.widget.BenjaminiHochberg;
-import org.intermine.web.logic.widget.Bonferroni;
-import org.intermine.web.logic.widget.ErrorCorrection;
-import org.intermine.web.logic.widget.Hypergeometric;
-
-import java.io.BufferedReader;
-import java.io.File;
-import java.io.FileReader;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.io.Reader;
-import java.math.BigDecimal;
-import java.net.URL;
-import java.net.URLConnection;
-
 import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
@@ -56,6 +40,19 @@ import javax.servlet.http.HttpSession;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
+import org.intermine.metadata.ClassDescriptor;
+import org.intermine.metadata.Model;
+import org.intermine.objectstore.ObjectStore;
+import org.intermine.objectstore.query.Query;
+import org.intermine.objectstore.query.Results;
+import org.intermine.objectstore.query.ResultsRow;
+import org.intermine.web.logic.bag.InterMineBag;
+import org.intermine.web.logic.search.SearchRepository;
+import org.intermine.web.logic.tagging.TagTypes;
+import org.intermine.web.logic.widget.BenjaminiHochberg;
+import org.intermine.web.logic.widget.Bonferroni;
+import org.intermine.web.logic.widget.ErrorCorrection;
+import org.intermine.web.logic.widget.Hypergeometric;
 /**
  * Utility methods for the web package.
  *
@@ -452,7 +449,7 @@ public abstract class WebUtil
      * or Benjamini Hochberg or none
      * @return array of three results maps
      */
-    public static ArrayList<Map> statsCalc(ObjectStoreInterMineImpl os,
+    public static ArrayList<Map> statsCalc(ObjectStore os,
                                       Query annotatedPopulationQuery,
                                       Query annotatedSampleQuery,
                                       int populationTotal,

@@ -14,6 +14,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Map;
 
+import org.intermine.objectstore.ObjectStore;
 import org.intermine.objectstore.query.BagConstraint;
 import org.intermine.objectstore.query.ConstraintOp;
 import org.intermine.objectstore.query.ConstraintSet;
@@ -56,7 +57,7 @@ public class GoStatLdr implements EnrichmentWidgetLdr
     private Query annotatedPopulationQuery;
     private Collection<String> organisms;
     private String externalLink, append;
-    private ObjectStoreInterMineImpl os;
+    private ObjectStore os;
     private InterMineBag bag;
     private String namespace;
     private Collection<String> badOntologies;
@@ -64,19 +65,11 @@ public class GoStatLdr implements EnrichmentWidgetLdr
     /**
      * @param request The HTTP request we are processing
      */
-    public GoStatLdr (HttpServletRequest request) {
-
-        HttpSession session = request.getSession();
-        Profile profile = (Profile) session.getAttribute(Constants.PROFILE);
-        ServletContext servletContext = session.getServletContext();
-        os = (ObjectStoreInterMineImpl) servletContext.getAttribute(Constants.OBJECTSTORE);
-
-        String bagName = request.getParameter("bagName");
-        Map<String, InterMineBag> allBags =
-            WebUtil.getAllBags(profile.getSavedBags(), servletContext);
-        bag = allBags.get(bagName);
-        namespace = (request.getParameter("filter") != null
-                        ? request.getParameter("filter") : "biological_process");
+    public GoStatLdr (InterMineBag bag, ObjectStore os) {
+        this.bag = bag;
+        this.os = os;
+//        namespace = (request.getParameter("filter") != null
+//                        ? request.getParameter("filter") : "biological_process");
         badOntologies = getOntologies();        
         organisms = BioUtil.getOrganisms(os, bag, false);
         

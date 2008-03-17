@@ -1,9 +1,26 @@
 package org.intermine.web.logic.widget;
 
+import java.lang.reflect.Constructor;
+import java.lang.reflect.InvocationTargetException;
+import java.math.BigDecimal;
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Map;
 
 import org.intermine.objectstore.ObjectStore;
+import org.intermine.objectstore.query.Query;
+import org.intermine.objectstore.query.Results;
+import org.intermine.objectstore.query.ResultsRow;
+import org.intermine.util.TypeUtil;
+import org.intermine.web.logic.WebUtil;
 import org.intermine.web.logic.bag.InterMineBag;
+
+import sun.security.action.GetBooleanAction;
 
 /*
  * Copyright (C) 2002-2008 FlyMine
@@ -20,12 +37,77 @@ import org.intermine.web.logic.bag.InterMineBag;
  */
 public class EnrichmentWidget extends Widget
 {
-    private String max, filters, filterLabel;
+    private String max, filters, filterLabel, errorCorrection;
     private String label, externalLink;
+    private Map<String, String> selectedExtraAttributesMap = new HashMap<String, String>();
+    private ArrayList<Map> results;
+    private InterMineBag bag;
 
     
     public void process(InterMineBag bag, ObjectStore os) {
-        // TODO fill in
+        try {
+            // set bag
+            this.bag = bag;
+            Class<?> clazz = TypeUtil.instantiate(getDataSetLoader());
+            Constructor<?> constr = clazz.getConstructor(new Class[]
+                                                                {
+                InterMineBag.class, ObjectStore.class
+                                                                });
+
+            EnrichmentWidgetLdr ldr = (EnrichmentWidgetLdr) constr.newInstance(new Object[]
+                                                                                          {
+                bag, os
+                                                                                          });
+            
+            // have to calculate sample total for each enrichment widget because namespace may have
+            // changed
+            results = WebUtil.statsCalc(os, ldr.getAnnotatedPopulation(),
+                                                       ldr.getAnnotatedSample(), 
+                                                       getTotal(os, ldr, false),
+                                                       getTotal(os, ldr, true),
+                                                       bag,
+                                                       new Double(0 
+                                                       + max),
+                                                       errorCorrection);
+        } catch (NumberFormatException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        } catch (SecurityException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        } catch (IllegalArgumentException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        } catch (NoSuchMethodException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        } catch (InstantiationException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        } catch (IllegalAccessException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        } catch (InvocationTargetException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        }
+    }
+    
+    private int getTotal(ObjectStore os, EnrichmentWidgetLdr ldr, boolean useBag) {
+
+        int n = 0;
+
+        Query q = ldr.getQuery(true, useBag);
+
+        Results r = os.execute(q);
+        if (!r.isEmpty()) {
+            Iterator<ResultsRow> it = r.iterator();
+            ResultsRow rr =  it.next();
+            Long l = (java.lang.Long) rr.get(0);
+            n = l.intValue();
+        }
+
+        return n;
     }
     
     /**
@@ -111,6 +193,62 @@ public class EnrichmentWidget extends Widget
     
     public Collection getExtraAttributes(InterMineBag imBag, ObjectStore os) {
         return null;
+    }
+    
+    public List getColumns() {
+        return Arrays.asList(new String[]
+            {
+                "", "Go Term", "p-Value", ""
+            });
+    }
+    
+    public List getFlattenedResults() {
+        if (!results.isEmpty()) {
+            Map<String, BigDecimal> pvalues = results.get(0);
+            Map<String, Long> totals = results.get(1);
+            Map<String, String> labelToId = results.get(2);
+            List<List> flattenedResults = new LinkedList<List>();
+            for (String id : pvalues.keySet()) {
+                List<String[]> row = new LinkedList();
+                BigDecimal bd = pvalues.get(id);
+                row.add(new String[]
+                    {
+                        "<input name=\"selected\" value=\"" + id + "\" id=\"selected_" + id
+                                        + "\" type=\"checkbox\">"
+                    });
+                row.add(new String[] {labelToId.get(id)});
+                row.add(new String[] {bd.setScale(7, BigDecimal.ROUND_HALF_EVEN).toString()});
+                row.add(new String[]
+                    {
+                        totals.get(id).toString(),
+                        "widgetAction.do?key=" + id + "&bagName=" + bag.getName() + "&link="
+                                        + getLink()
+                    });
+                flattenedResults.add(row);
+            }
+            return flattenedResults;            
+//            ("ewf", ewf);
+//            ("pvalues", results.get(0));
+//            ("totals", results.get(1));
+//            ("labelToId", results.get(2));
+//            ("referencePopulation", "All " + bag.getType() + "s from  "
+//                                 + StringUtil.prettyList(ldr.getPopulationDescr(), true));
+        }
+        return null;
+    }
+
+    /**
+     * @return the errorCorrection
+     */
+    public String getErrorCorrection() {
+        return errorCorrection;
+    }
+
+    /**
+     * @param errorCorrection the errorCorrection to set
+     */
+    public void setErrorCorrection(String errorCorrection) {
+        this.errorCorrection = errorCorrection;
     }
     
 }
