@@ -13,6 +13,7 @@ package org.intermine.web.logic.config;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
@@ -23,6 +24,8 @@ import java.util.TreeSet;
 import org.apache.commons.digester.Digester;
 import org.intermine.metadata.ClassDescriptor;
 import org.intermine.metadata.Model;
+import org.intermine.path.Path;
+import org.intermine.path.PathError;
 import org.intermine.web.logic.widget.EnrichmentWidget;
 import org.intermine.web.logic.widget.GraphWidget;
 import org.intermine.web.logic.widget.TableWidget;
@@ -36,7 +39,7 @@ import org.xml.sax.SAXException;
  */
 public class WebConfig
 {
-    private Map types = new HashMap();
+    private Map<String, Type> types = new HashMap();
     private Map tableExportConfigs = new HashMap();
     
     /**
@@ -124,9 +127,46 @@ public class WebConfig
 
         WebConfig webConfig = (WebConfig) digester.parse(is);
 
+        webConfig.validate(model);
+        
         webConfig.setSubClassConfig(model);
-
+        
         return webConfig;
+    }
+
+    /**
+     * Validate web config according to the model. Test that configured classes exist in 
+     * model and configured fields in web config exist in model.
+     * @param model model used for validation
+     */
+    private void validate(Model model) {
+        for (String typeName : types.keySet()) {
+            if (!model.getClassNames().contains(typeName)) {
+                throw new RuntimeException("Invalid web config. Class specified in web config "
+                + "doesn't exist in model. Web config class: " + typeName + ".");
+            }
+            Type type = types.get(typeName);
+            Collection<FieldConfig> fieldConfigs = type.getFieldConfigs();
+            for (FieldConfig fieldConfig : fieldConfigs) {
+                String pathString;
+                try {
+                    pathString = Class.forName(typeName).getSimpleName() 
+                        + "." + fieldConfig.getFieldExpr();
+                } catch (ClassNotFoundException e) {
+                    throw new RuntimeException("Invalid web config. Implementation for "
+                            + "specified class in "
+                            + "web config doesn't exist.", e);
+                }
+                try {
+                    Path path = new Path(model, pathString);
+                } catch (PathError e) {
+                    throw new RuntimeException("Invalid web config. Field expression '" 
+                            + fieldConfig.getFieldExpr() + "' for class " 
+                            + typeName + " is not valid according to the model. "
+                            + "Corresponding path " + pathString + " doesn't exist.");
+                }
+            }
+        }         
     }
 
     /**
