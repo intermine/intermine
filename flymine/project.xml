@@ -60,12 +60,6 @@
       <property name="gff3.seqDataSourceName" value="Micklem lab"/>
       <property name="src.data.dir" location="/shared/data/long_oligo"/>
     </source>
-    <source name="drosdel-gff" type="drosdel-gff">
-      <property name="gff3.taxonId" value="7227"/>
-      <property name="gff3.seqClsName" value="Chromosome"/>
-      <property name="gff3.seqDataSourceName" value="FlyBase"/>
-      <property name="src.data.dir" location="/shared/data/liftover/drosdel/combined"/>
-    </source>
     <source name="ensembl-anopheles" type="ensembl" dump="true">
       <property name="organism" value="AGP"/>
     </source>
@@ -98,10 +92,6 @@
     </source>
     <source name="flyatlas" type="flyatlas">
       <property name="src.data.dir" location="/shared/data/flyatlas/current"/>
-    </source>
-    <source name="affy-probes" type="affy-probes">
-      <property name="src.data.dir" location="/shared/data/affy-probes/current"/>
-      <property name="src.data.dir.includes" value="*.csv"/>
     </source>
     <source name="anoph-expr" type="anoph-expr">
       <property name="src.data.dir" location="/shared/data/anoph_expr"/>
@@ -396,6 +386,16 @@
     </source>
     <source name="fly-anatomy-ontology" type="fly-anatomy-ontology">
       <property name="src.data.file" location="/shared/data/ontologies/fly_anatomy/current/fly_anatomy.obo"/>
+    </source>
+    <source name="drosdel-gff" type="drosdel-gff">
+      <property name="gff3.taxonId" value="7227"/>
+      <property name="gff3.seqClsName" value="Chromosome"/>
+      <property name="gff3.seqDataSourceName" value="FlyBase"/>
+      <property name="src.data.dir" location="/shared/data/liftover/drosdel/combined"/>
+    </source>
+    <source name="affy-probes" type="affy-probes">
+      <property name="src.data.dir" location="/shared/data/affy-probes/current"/>
+      <property name="src.data.dir.includes" value="*.csv"/>
     </source>
     <source name="biogrid" type="biogrid">
       <property name="src.data.dir" location="/shared/data/biogrid/current"/>
