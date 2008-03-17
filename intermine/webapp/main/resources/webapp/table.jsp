@@ -48,7 +48,7 @@
       <%-- show the description only if we ve run a query (rather than viewing
            a bag) - see #1031 --%>
       <c:if test="${isWebResults
-                  && (pathQuery.name != WEB_PROPERTIES['begin.browse.template'])}">
+                  && (templateQuery.name != WEB_PROPERTIES['begin.browse.template'])}">
         <div class="body">
           <div class="resultsTableTemplateHeader">
             <div>
