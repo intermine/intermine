@@ -1041,7 +1041,8 @@ public class MainHelper
         Map<String, QuerySelectable> newSelect = new HashMap();
         for (QuerySelectable qs : subQ.getSelect()) {
             if (qs instanceof QueryClass) {
-                newSelect.put(subQ.getAliases().get(qs) + "_id", new QueryField((QueryClass) qs, "id"));
+                newSelect.put(subQ.getAliases().get(qs) + "_id", new QueryField((QueryClass) qs,
+                            "id"));
             } else {
                 newSelect.put(subQ.getAliases().get(qs), qs);
             }
