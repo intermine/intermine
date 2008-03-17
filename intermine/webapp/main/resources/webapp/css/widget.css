@@ -12,7 +12,7 @@ div.widgetcontainer{
 }
 
 div.widgetcontainer p{
-   font-size:1em;
+   font-size:0.9em;
    margin:10px 0 10px 0;
    text-align:justify;
 }
@@ -23,4 +23,25 @@ div.widgetcontainer h3{
 
 div.widgetdatawait{
     padding-top:150px;
+}
+
+div.widgetdata{
+    height:370px;
+    width:450px;
+    overflow: auto;
+    overflow-y:auto;
+}
+
+div.widgetdata table {
+    border-collapse:collapse;
+}
+div.widgetdata tbody td {
+    text-align:left;
+    padding:5px;
+    border-bottom:1px solid #CCC;
+}
+
+div.widgetdata thead th{
+    background-color:#CCC;
+    padding:5px;
 }

@@ -14,6 +14,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Map;
 
+import org.intermine.objectstore.ObjectStore;
 import org.intermine.objectstore.query.BagConstraint;
 import org.intermine.objectstore.query.ConstraintOp;
 import org.intermine.objectstore.query.ConstraintSet;
@@ -52,22 +53,19 @@ public class PublicationLdr implements EnrichmentWidgetLdr
     private Query annotatedPopulationQuery;
     private Collection<String> organisms;
     private String externalLink, append;
-    private ObjectStoreInterMineImpl os;
+    private ObjectStore os;
     private InterMineBag bag;
     private Collection<String> organismsLower = new ArrayList<String>();
-    /**
-     * @param request The HTTP request we are processing
-     */
-    public PublicationLdr(HttpServletRequest request) {
+ 
 
-        HttpSession session = request.getSession();
-        Profile profile = (Profile) session.getAttribute(Constants.PROFILE);
-        ServletContext servletContext = session.getServletContext();
-        os = (ObjectStoreInterMineImpl) servletContext.getAttribute(Constants.OBJECTSTORE);
-        String bagName = request.getParameter("bagName");
-        Map<String, InterMineBag> allBags =
-            WebUtil.getAllBags(profile.getSavedBags(), servletContext);
-        bag = allBags.get(bagName);
+    /**
+     * Constructor
+     * @param bag the bag
+     * @param os the ObjectStore
+     */
+    public PublicationLdr(InterMineBag bag, ObjectStore os) {
+        this.bag = bag;
+        this.os = os;
         organisms = BioUtil.getOrganisms(os, bag, false);
         for (String s : organisms) {
             organismsLower.add(s.toLowerCase());

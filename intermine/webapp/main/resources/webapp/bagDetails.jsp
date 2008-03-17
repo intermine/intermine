@@ -190,7 +190,7 @@
 </TABLE>
 
 <div style="clear:both;">&nbsp;</div>
-
+<form name="widgetForm">
 <link rel="stylesheet" type="text/css" href="<html:rewrite page='/css/widget.css'/>"/>
 <c:forEach items="${widgets}" var="widget">
   <tiles:insert name="widget.tile">
@@ -199,7 +199,7 @@
     <tiles:put name="widget2extraAttrs" beanName="widget2extraAttrs" />
   </tiles:insert>
 </c:forEach> 
-
+</form>
 <div style="clear:both;">&nbsp;</div>
 
 <!-- templates -->
