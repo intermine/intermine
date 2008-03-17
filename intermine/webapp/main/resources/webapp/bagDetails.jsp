@@ -16,13 +16,11 @@
       var detailsType = 'bag';
 
   function go(where) {
-    switch (where){
-      case "query":
+    if (where == "query"):
         document.modifyBagDetailsForm.useBagInQuery.value = 'true';
-        break;
     }    
-      document.modifyBagDetailsForm.submit();
-     }
+    document.modifyBagDetailsForm.submit();
+  }
 
 
       //]]>-->
@@ -34,7 +32,7 @@
 
 
 <div class="heading">
-     <fmt:message key="bagDetails.title"/> <span style="font-size:0.9em;font-weight:normal">for ${bag.name}</b> (${bag.size} ${bag.type}s)</span>
+     <fmt:message key="bagDetails.title"/> <span style="font-size:0.9em;font-weight:normal">for <b>${bag.name}</b> (${bag.size} ${bag.type}s)</span>
 </div>
 
 <div class="body">
@@ -43,7 +41,7 @@
 <table cellspacing="0" width="100%">
 <tr>
   <TD colspan=2 align="left" style="padding-bottom:10px">
-<link rel="stylesheet" href="css/toolbar.css" type="text/css" media="screen" title="Toolbar Style" charset="utf-8">
+<link rel="stylesheet" href="css/toolbar.css" type="text/css" media="screen" title="Toolbar Style" charset="utf-8"/>
 <script type="text/javascript" src="js/toolbar.js"></script>
 <html:form action="/modifyBagDetailsAction" styleId="bagDetailsForm">
 <html:hidden property="bagName" value="${bag.name}"/> 
@@ -51,9 +49,9 @@
 <div id="tool_bar_div">
     <ul id="button_bar" onclick="toggleToolBarMenu(event);">
         <%-- <li id="tool_bar_li_convert"><img style="cursor: pointer;" src="images/icons/null.gif" width="94" height="25" alt="Convert" border="0" id="tool_bar_button_convert" class="tool_bar_button"></li> --%>
-        <li id="tool_bar_li_display"><img style="cursor: pointer;" src="images/icons/null.gif" width="62" height="25" alt="Display" border="0" id="tool_bar_button_display" class="tool_bar_button"></li>
-        <li id="tool_bar_li_export"><img style="cursor: pointer;" src="images/icons/null.gif" width="64" height="25" alt="Export" border="0" id="tool_bar_button_export" class="tool_bar_button"></li>
-        <li id="tool_bar_li_use"><img style="cursor: pointer;" src="images/icons/null.gif" width="43" height="25" alt="Use" border="0" id="tool_bar_button_use" class="tool_bar_button"></li>
+        <li id="tool_bar_li_display"><img style="cursor: pointer;" src="images/icons/null.gif" width="62" height="25" title="Display this list in a results table" border="0" id="tool_bar_button_display" class="tool_bar_button"/></li>
+        <li id="tool_bar_li_export"><img style="cursor: pointer;" src="images/icons/null.gif" width="64" height="25" title="Export this list to your own program" border="0" id="tool_bar_button_export" class="tool_bar_button"/></li>
+        <li id="tool_bar_li_use"><img style="cursor: pointer;" src="images/icons/null.gif" width="43" height="25" title="Use this list in a template or a query" border="0" id="tool_bar_button_use" class="tool_bar_button"/></li>
     </ul>
 </div>
 
@@ -68,21 +66,21 @@
 <div id="tool_bar_item_display" style="visibility:hidden" class="tool_bar_item">
     <html:link anchor="relatedTemplates" action="bagDetails?bagName=${bag.name}">related templates</html:link><br/>
     <html:link anchor="widgets" action="bagDetails?bagName=${bag.name}">related widgets</html:link>
-    <hr>
+    <hr/>
   <a href="javascript:hideMenu('tool_bar_item_display')">Cancel</a>
 </div>
 <div id="tool_bar_item_export" style="visibility:hidden" class="tool_bar_item">
       <a href="exportAction.do?table=${bag.name}&type=tab&tableType=bag">tab-separated</a><br/>
     <a href="exportAction.do?table=${bag.name}&type=csv&tableType=bag">comma-separated</a><br/>
     <a href="exportAction.do?table=${bag.name}&type=excel&tableType=bag">excel</a>
-  <hr>
+  <hr/>
   <a href="javascript:hideMenu('tool_bar_item_export')" >Cancel</a>
 </div>
 <div id="tool_bar_item_use" style="visibility:hidden" class="tool_bar_item">
     <a href="javascript:go('query');">in a query</a><br/>
-  <input type="hidden" name="useBagInQuery" />
+    <input type="hidden" name="useBagInQuery" />
   <html:link action="/templates">in a template</html:link>
-  <hr>
+  <hr/>
     <a href="javascript:hideMenu('tool_bar_item_use')" >Cancel</a>
 </div>
 </html:form>
@@ -117,7 +115,7 @@
 <c:choose>
     <c:when test="${myBag == 'true'}">
       <div id="bagDescriptionDiv" onclick="Element.toggle('bagDescriptionDiv');Element.toggle('bagDescriptionTextarea');$('textarea').focus()">
-        <h3><img src="images/icons/description.png" alt="info">&nbsp;Description</h3>
+        <h3><img src="images/icons/description.png" title="Description of your list"/>&nbsp;Description</h3>
         <c:choose>
           <c:when test="${! empty bag.description}">
             <p><c:out value="${bag.description}" escapeXml="false" /></p>
@@ -150,7 +148,7 @@
 <TD align="left" valign="top" width="40%">
 
 <div id="listinfo" class="listtoolbox" align="left">
-<h3><img src="images/icons/info.png" alt="info">&nbsp;List Info</h3>
+<h3><img src="images/icons/info.png" title="Information about this list"/>&nbsp;List Info</h3>
 <p>
 <table cellpadding="0" cellspacing="0" border="0" class="listinfotable">
 <tr>
@@ -171,7 +169,7 @@
 
 
 <div id="convertList" class="listtoolbox" align="left">
-<h3><img src="images/icons/convert.png" alt="info">&nbsp;Convert</h3>
+<h3><img src="images/icons/convert.png" alt="Convert objects in this bag to different type"/>&nbsp;Convert</h3>
 <p>
 <html:form action="/modifyBagDetailsAction" styleId="bagDetailsForm">
 <html:hidden property="bagName" value="${bag.name}"/> 
@@ -206,157 +204,6 @@
 </c:forEach> 
 
 <div style="clear:both;">&nbsp;</div>
-
-<!-- widget table -->
-<%--<c:set var="widgetIdPrefix" value="bagDetailsWidget${bag.type}"/>
-<c:set var="widgetTotal" value="${fn:length(graphDisplayerArray) 
-                + fn:length(tableDisplayerArray)  
-                + fn:length(enrichmentWidgetDisplayerArray) }"/>
-
-  <c:if test="${widgetTotal > 0}">
-    <div class="heading">
-      <a id="widgets">Widgets displaying properties of '${bag.name}'</a>&nbsp;&nbsp;<span style="font-size:0.8em;">
-    (<a href="javascript:toggleAll(${widgetTotal}, '${widgetIdPrefix}', 'expand', null, true);">expand all <img src="images/disclosed.gif"/></a> / <a href="javascript:toggleAll(${widgetTotal}, '${widgetIdPrefix}', 'collapse', null, true);">collapse all <img src="images/undisclosed.gif"/></a>)</span>
-    </div>
-    <div class="body">
-  
-      <fmt:message key="bagDetails.widgetsHelp">
-        <fmt:param>
-              <img src="images/disclosed.gif"/> / <img src="images/undisclosed.gif"/>  
-        </fmt:param>
-      </fmt:message>
-    
-      <c:set var="widgetCount" value="0"/>
---%>      
-      <%-- graphs --%>
-<%--      <c:forEach items="${graphDisplayerArray}" var="htmlContent">      
-      <imutil:disclosure id="${widgetIdPrefix}${widgetCount}" opened="true" type="consistent">
-        <imutil:disclosureHead>
-          <imutil:disclosureTitle>
-            ${htmlContent[1]}
-          </imutil:disclosureTitle>
-        </imutil:disclosureHead>
-        <imutil:disclosureBody>
-            <br/>    
-          <fmt:message key="bagDetails.widgetHelp">
-              <fmt:param>
-                    <fmt:message key="bagDetails.widgetHelpGraph"/>
-              </fmt:param>
-            </fmt:message>
-              <br/><br/>  
-        
-              <div class="widget">
-                <c:out value="${htmlContent[0]}" escapeXml="false"/>
-                <p><c:out value="${htmlContent[2]}" escapeXml="false"/></p>
-              </div>
-              <c:set var="widgetCount" value="${widgetCount+1}" />        
-        </imutil:disclosureBody>
-      </imutil:disclosure>
-      </c:forEach>
---%>
-  <%-- tables --%>
-<%--      <c:forEach items="${tableDisplayerArray}" var="bagTableDisplayerResults">
-        
-        <imutil:disclosure id="${widgetIdPrefix}${widgetCount}" opened="true" type="consistent">
-      <imutil:disclosureHead>
-        <imutil:disclosureTitle>
-          <c:out value="${bagTableDisplayerResults.title}"/>
-        </imutil:disclosureTitle>
-      </imutil:disclosureHead>
-      <imutil:disclosureBody>
-              <br/>
-          <fmt:message key="bagDetails.widgetHelp">
-            <fmt:param>
-                  <fmt:message key="bagDetails.widgetHelpTable"/>
-            </fmt:param>
-          </fmt:message>
-            <br/><br/>
-            
-              <div><strong><font size="+1"><c:out value="${bagTableDisplayerResults.title}"/></font></strong></div>
-              <c:choose>
-                <c:when test="${!empty bagTableDisplayerResults.flattenedResults}">
-                    <div class="widget_slide">
-                    <table class="results" cellspacing="0">
-                      <tr>
-                        <c:forEach var="column" items="${bagTableDisplayerResults.columns}" varStatus="status">
-                          <th align="center" valign="top">
-                            <div>
-                              <c:out value="${fn:replace(column, '.', '&nbsp;> ')}" escapeXml="false"/>
-                            </div>
-                          </th>
-                        </c:forEach>
-                      </tr>
-    
-                      <c:forEach items="${bagTableDisplayerResults.flattenedResults}" var="row" varStatus="status">
-                        <c:set var="rowClass">
-                          <c:choose>
-                            <c:when test="${status.count % 2 == 1}">odd</c:when>
-                            <c:otherwise>even</c:otherwise>
-                          </c:choose>
-                        </c:set>
-                        <tr class="${rowClass}">
-                          <c:forEach var="cell" items="${row}" varStatus="status2">
-                            <td>
-                              <c:choose>
-                                <c:when test="${cell.keyField}">
-                                  <html:link action="/objectDetails?id=${cell.id}&amp;trail=|bag.${bag.name}|${cell.id}">
-                                    <c:out value="${cell.field}" />
-                                  </html:link>
-                                </c:when>
-                                <c:when test="${! empty cell.otherLink}">
-                                  <html:link action="/widgetAction?${cell.otherLink}">
-                                    <c:out value="${cell.field}" />
-                                  </html:link>
-                                </c:when>
-                                <c:otherwise>
-                                  <c:out value="${cell.field}" />
-                                </c:otherwise>
-                              </c:choose>
-                            </td>
-                          </c:forEach>
-                        </tr>
-                      </c:forEach>
-                    </table>
-                    <p><c:out value="${bagTableDisplayerResults.description}" escapeXml="false"/></p>
-                  </div>
-                </c:when>
-                <c:otherwise><i>No results for ${bagTableDisplayerResults.title}</i></c:otherwise>
-              </c:choose>
-            <c:set var="widgetCount" value="${widgetCount+1}" />
-      </imutil:disclosureBody>
-    </imutil:disclosure>
-      </c:forEach>
---%>
-    
-   <%-- enrichment --%>
-<%--   <c:forEach items="${enrichmentWidgetDisplayerArray}" var="enrichmentWidgetResults">
-  
-    <imutil:disclosure id="${widgetIdPrefix}${widgetCount}" opened="true" type="consistent">
-      <imutil:disclosureHead>
-        <imutil:disclosureTitle>
-          <c:out value="${enrichmentWidgetResults.title}"/>
-        </imutil:disclosureTitle>
-      </imutil:disclosureHead>
-    <imutil:disclosureBody>
-       <br/>
-       <fmt:message key="bagDetails.widgetHelp">
-            <fmt:param>
-                  <fmt:message key="bagDetails.widgetHelpTable"/>
-            </fmt:param>
-          </fmt:message> 
-          <br/><br/>
-          <str:encodeUrl var="externalLink">${enrichmentWidgetResults.externalLink}</str:encodeUrl>
-          <c:set var="enrichmentWidgetParams" value="bagName=${bag.name}&ldr=${enrichmentWidgetResults.dataSetLoader}&title=${enrichmentWidgetResults.title}&descr=${enrichmentWidgetResults.description}&max=${enrichmentWidgetResults.max}&link=${enrichmentWidgetResults.link}&filters=${enrichmentWidgetResults.filters}&filterLabel=${enrichmentWidgetResults.filterLabel}&label=${enrichmentWidgetResults.label}&externalLink=${externalLink}"/>
-          <iframe src="enrichmentWidget.do?${enrichmentWidgetParams}" id="window" frameborder="0" width="475" height="500" scrollbars="auto"></iframe>
-        <br/><a href="enrichmentWidget.do?${enrichmentWidgetParams}" target="_new" class="extlink">open widget in new window</a>
-       <c:set var="widgetCount" value="${widgetCount+1}" />
-    </imutil:disclosureBody>
-    </imutil:disclosure>
-  </c:forEach>
-  </div>
-</c:if>
---%>
-<!-- /widgets -->
 
 <!-- templates -->
 
