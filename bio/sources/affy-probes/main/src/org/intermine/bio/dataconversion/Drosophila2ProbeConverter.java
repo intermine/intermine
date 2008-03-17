@@ -54,9 +54,6 @@ public class Drosophila2ProbeConverter extends FileConverter
         dataSource.setAttribute("name", "Affymetrix");
         store(dataSource);
 
-        dataSet = createItem("DataSet");
-        dataSet.setReference("dataSource", dataSource.getIdentifier());
-
         org = createItem("Organism");
         org.setAttribute("taxonId", "7227");
         store(org);
@@ -75,7 +72,16 @@ public class Drosophila2ProbeConverter extends FileConverter
         boolean hasDataset = false;
 
         while (lineIter.hasNext()) {
+            
             String[] line = lineIter.next();
+            
+            if (!hasDataset)  {                
+                dataSet = createItem("DataSet");
+                dataSet.setReference("dataSource", dataSource.getIdentifier());
+                dataSet.setAttribute("title", "Affymetrix array: " + line[1]);
+                store(dataSet);
+                hasDataset = true;
+            }
 
             List<Item> delayedItems = new ArrayList<Item>();
             Item probeSet = createProbeSet(line[0], delayedItems);
@@ -112,11 +118,7 @@ public class Drosophila2ProbeConverter extends FileConverter
             for (Item item : delayedItems) {
                 store(item);
             }
-            if (!hasDataset)  {
-                dataSet.setAttribute("title", "Affymetrix array: " + line[1]);
-                store(dataSet);
-                hasDataset = true;
-            }
+
         }
     }
 
