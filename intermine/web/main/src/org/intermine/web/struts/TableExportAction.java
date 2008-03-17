@@ -135,15 +135,18 @@ public class TableExportAction extends InterMineAction
           PrintWriter writer = null;
           response.reset();
           try {
+              // Tricky. This is called to verify, that if the error will be forwarded to jsp 
+              // page that it will be displayed. If getWriter() method throws exception there it 
+              // means that getOutputStream() method already was called and displaying error message
+              // in proper jsp error page would fail.
+              response.getWriter();
               recordError(new ActionMessage("errors.export.displayonlyparameters", msg), request);
               return mapping.findForward("error");
-              //return getErrorForward(request, mapping);
           } catch (IllegalStateException ex) {
               OutputStream out = response.getOutputStream();
               writer = new PrintWriter(out);
               writer.println(msg);
               writer.flush();
-              return null;
           }
         } else {
             // Attempt to writer error to output stream where data was already sent.
@@ -183,17 +186,5 @@ public class TableExportAction extends InterMineAction
             pt = SessionMethods.getResultsTable(session, request.getParameter("table"));
         }
         return pt;
-    }
-    
-    /* According to way in which the  paged table was retrieved I can find out the original page 
-     * where the export request came from.
-     */
-//    private ActionForward getErrorForward(HttpServletRequest request, ActionMapping mapping) {
-//        String tableType = request.getParameter("tableType");
-//        if (tableType.equals("bag")) {
-//            return mapping.findForward("bagDetails");
-//        } else {
-//            return mapping.findForward("results");
-//        }
-//    }
+    }    
 }
