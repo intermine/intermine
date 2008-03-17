@@ -10,10 +10,10 @@
 
 <c:set var="isBindingSite" value="false"/>
 
-<c:if test="${fn:startsWith(object.identifier, 'TIFDMEM') && !empty object.motif}">
+<c:if test="${fn:startsWith(object.primaryIdentifier, 'TIFDMEM') && !empty object.motif}">
   <div>
-    <html:link href="${sitePrefix}${object.motif.identifier}.2"
-               title="Sanger Tiffin pages: ${object.motif.identifier}"
+    <html:link href="${sitePrefix}${object.motif.primaryIdentifier}.2"
+               title="Sanger Tiffin pages: ${object.motif.primaryIdentifier}"
                target="view_window">
       <fmt:message key="tiffin.bindingSite.description"/>:
       <html:img src="model/images/Sanger_logo_small.png"/>
