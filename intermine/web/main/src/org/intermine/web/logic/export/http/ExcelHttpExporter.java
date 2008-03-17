@@ -15,11 +15,9 @@ import java.io.OutputStream;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.apache.struts.Globals;
-import org.apache.struts.action.ActionMessage;
-import org.apache.struts.action.ActionMessages;
 import org.intermine.web.logic.WebUtil;
 import org.intermine.web.logic.export.ExcelExporter;
+import org.intermine.web.logic.export.ExportException;
 import org.intermine.web.logic.export.Exporter;
 import org.intermine.web.logic.export.ResponseUtil;
 import org.intermine.web.logic.results.PagedTable;
@@ -47,12 +45,14 @@ public class ExcelHttpExporter extends HttpExporterBase implements TableHttpExpo
         int maxExcelSize =
             WebUtil.getIntSessionProperty(request.getSession(), 
                     "max.excel.export.size", defaultMax);
-
+        
+        // Excel 2000 limitations are 65,536 rows but because data are flushed at the end
+        // and must be saved in memory limits there can be lower
         if (pt.getExactSize() > maxExcelSize) {
-            ActionMessages messages = new ActionMessages();
-            messages.add(ActionMessages.GLOBAL_MESSAGE, 
-                    new ActionMessage("export.excelExportTooBig", new Integer(maxExcelSize)));
-            request.setAttribute(Globals.ERROR_KEY, messages);
+            
+            throw new ExportException("Result is too big for export in excel format. "
+                    + "Table for export can have at the most "
+                    + maxExcelSize + " rows.");
         }
         super.export(pt, request, response);
     }

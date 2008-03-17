@@ -19,12 +19,10 @@ import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
 import org.apache.log4j.Logger;
-import org.apache.struts.Globals;
 import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
 import org.apache.struts.action.ActionMessage;
-import org.apache.struts.action.ActionMessages;
 import org.intermine.web.logic.Constants;
 import org.intermine.web.logic.config.WebConfig;
 import org.intermine.web.logic.export.ExportException;
@@ -53,8 +51,6 @@ public class TableExportAction extends InterMineAction
 
     private static final String ERROR_MSG = "Export failed. Please contact support.";
     
-    private static final String ERROR_FORWARD = "error";
-    
     // timeout for export is 1 day
     private static final int TIMEOUT = 24 * 60 * 60;
 
@@ -81,16 +77,17 @@ public class TableExportAction extends InterMineAction
             TableExporterFactory factory = new TableExporterFactory(getWebConfig(request));
             TableHttpExporter exporter = factory.getExporter(type);
             pt = getPagedTable(request, request.getSession());
-            
-            if (pt.getExactSize() > pt.getMaxRetrievableIndex()) {
-                throw new ExportException("Result is too big for export. "
-                        + "Table for export can have maximally "
-                        + pt.getMaxRetrievableIndex() + " rows.");
-            }
-            
+
             if (pt == null) {
                 throw new ExportException("Export failed.");
             }
+            
+            if (pt.getExactSize() > pt.getMaxRetrievableIndex()) {
+                throw new ExportException("Result is too big for export. "
+                        + "Table for export can have at the most "
+                        + pt.getMaxRetrievableIndex() + " rows.");
+            }
+            
             
             if (pt.getWebTable() instanceof WebResults) {
                 ((WebResults) pt.getWebTable()).goFaster();
@@ -135,22 +132,19 @@ public class TableExportAction extends InterMineAction
         // If response wasn't commited then we can display error, else 
         // there is only possibility to append error message to the end.
         if (!response.isCommitted()) {
-            PrintWriter writer = null;
-            response.reset();
-            try {
-                writer = response.getWriter();
-                ActionMessages messages = new ActionMessages();
-                messages.add(ActionMessages.GLOBAL_MESSAGE, 
-                        new ActionMessage("errors.export.displayonlyparameters", msg));
-                request.setAttribute(Globals.ERROR_KEY, messages);
-                return mapping.findForward(ERROR_FORWARD);
-            } catch (IllegalStateException ex) {
-                OutputStream out = response.getOutputStream();
-                writer = new PrintWriter(out);
-                writer.println(msg);
-                writer.flush();
-                return null;
-            }
+          PrintWriter writer = null;
+          response.reset();
+          try {
+              recordError(new ActionMessage("errors.export.displayonlyparameters", msg), request);
+              return mapping.findForward("error");
+              //return getErrorForward(request, mapping);
+          } catch (IllegalStateException ex) {
+              OutputStream out = response.getOutputStream();
+              writer = new PrintWriter(out);
+              writer.println(msg);
+              writer.flush();
+              return null;
+          }
         } else {
             // Attempt to writer error to output stream where data was already sent.
             // If there are textual data user will see the error else it will
@@ -190,4 +184,16 @@ public class TableExportAction extends InterMineAction
         }
         return pt;
     }
+    
+    /* According to way in which the  paged table was retrieved I can find out the original page 
+     * where the export request came from.
+     */
+//    private ActionForward getErrorForward(HttpServletRequest request, ActionMapping mapping) {
+//        String tableType = request.getParameter("tableType");
+//        if (tableType.equals("bag")) {
+//            return mapping.findForward("bagDetails");
+//        } else {
+//            return mapping.findForward("results");
+//        }
+//    }
 }
