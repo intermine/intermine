@@ -75,7 +75,8 @@ public class ChromosomeDistributionDataSetLdr implements DataSetLdr
 
         /* get all chromosomes for this organism */
         // Collection<String> chromosomeList = organismToChromosomes.get(organismName);
-        chromosomeList = BioUtil.getChromosomes(os, Arrays.asList(organismName), false);
+        chromosomeList = BioUtil.getChromosomes(os, Arrays.asList(organismName.toLowerCase()), 
+                                                false);
 
         /* initialise results list - so all chromosomes are displayed */
         for (Iterator<String> chrIter = chromosomeList.iterator(); chrIter.hasNext();) {
@@ -222,7 +223,7 @@ public class ChromosomeDistributionDataSetLdr implements DataSetLdr
 
         QueryExpression qf = new QueryExpression(QueryExpression.LOWER, organismNameQF);        
         SimpleConstraint sc = new SimpleConstraint(qf, ConstraintOp.EQUALS, 
-                                                   new QueryValue(organism));
+                                                   new QueryValue(organism.toLowerCase()));
         cs.addConstraint(sc);
 
         if (resultsType.equals("actual")) {
