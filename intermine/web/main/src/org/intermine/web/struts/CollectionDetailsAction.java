@@ -23,7 +23,6 @@ import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
 import org.intermine.metadata.ClassDescriptor;
-import org.intermine.metadata.Model;
 import org.intermine.metadata.ReferenceDescriptor;
 import org.intermine.model.InterMineObject;
 import org.intermine.objectstore.ObjectStore;
