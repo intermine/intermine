@@ -206,6 +206,12 @@ public class GoConverter extends FileConverter
 
             String productId = array[1];
 
+            // Wormbase has some proteins with UniProt accessions and some with WB:WP ids,
+            // hack here to get just the UniPort ones.
+            if ("protein".equalsIgnoreCase(array[11]) && !array[0].startsWith("UniProt")) {
+                continue;
+            }
+            
             // if we move onto a new product id store the last one, we require that files
             // are ordered by product id
             if (lastProductId != null && !lastProductId.equals(productId)) {
