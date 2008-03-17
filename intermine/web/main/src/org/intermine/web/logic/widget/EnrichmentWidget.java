@@ -21,6 +21,7 @@ import org.intermine.web.logic.bag.InterMineBag;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
 import java.math.BigDecimal;
+import java.text.DecimalFormat;
 
 /*
  * Copyright (C) 2002-2008 FlyMine
@@ -225,7 +226,8 @@ public class EnrichmentWidget extends Widget
                                         + "\" type=\"checkbox\">"
                     });
                 row.add(new String[] {labelToId.get(id)});
-                row.add(new String[] {bd.setScale(7, BigDecimal.ROUND_HALF_EVEN).toString()});
+                
+                row.add(new String[] {bd.setScale(7, BigDecimal.ROUND_HALF_EVEN).toPlainString()});
                 row.add(new String[]
                     {
                         totals.get(id).toString(),
