@@ -162,37 +162,6 @@ public class ChromosomeDistributionDataSetLdr implements DataSetLdr
         
         return grandTotal;
     }
-
-    private void calcExpected(HashMap<String, int[]> resultsTable, 
-                             int bagSize, String organismName, Long total)
-        throws ClassNotFoundException {
-
-        // get expected results
-        Query q = createQuery(organismName, "expected", null);
-        Results results = os.execute(q);
-        Iterator iter = results.iterator();
-        int i = 0;
-
-        // loop through, calc, and put in map
-        while (iter.hasNext()) {
-            ResultsRow resRow = (ResultsRow) iter.next();
-
-            String chromosome = (String) resRow.get(0);         // chromosome
-            Long geneCount = (java.lang.Long) resRow.get(1);    // genecount
-
-            double expectedValue = 0;
-            double proportion = 0.0000000000;
-            double count = geneCount.intValue();
-            if (total.doubleValue() > 0) {
-                proportion = count / total.doubleValue();
-            }
-            expectedValue = bagSize * proportion;
-            if (resultsTable.get(chromosome) != null) {
-                (resultsTable.get(chromosome))[1] = (int) Math.round(expectedValue);
-            }
-            i++;
-        }
-    }
     
     private Query createQuery(String organism, String resultsType, InterMineBag bag)
         throws ClassNotFoundException {

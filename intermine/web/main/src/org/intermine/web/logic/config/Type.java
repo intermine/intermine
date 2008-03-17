@@ -39,7 +39,7 @@ public class Type
     private LinkedHashMap fieldConfigMap = new LinkedHashMap();
     private ListOrderedSet longDisplayers = new ListOrderedSet();
     private ListOrderedSet bagDisplayers = new ListOrderedSet();
-    private List widgets = new ArrayList<Widget>();
+    private List<Widget> widgets = new ArrayList<Widget>();
     private Displayer tableDisplayer;
     private Map aspectDisplayers = new HashMap();
     private static int widgetIdCount = 0;
@@ -119,7 +119,7 @@ public class Type
     /**
      * @return the widgets
      */
-    public List getWidgets() {
+    public List<Widget> getWidgets() {
         return widgets;
     }
 

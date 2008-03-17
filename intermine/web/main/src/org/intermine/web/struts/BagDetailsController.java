@@ -10,7 +10,6 @@ package org.intermine.web.struts;
  *
  */
 
-import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
@@ -106,9 +105,10 @@ public class BagDetailsController extends TilesAction
         Type type = (Type) webConfig.getTypes().get(model.getPackageName() + "." + imBag.getType());
 
         List<Widget> widgets = type.getWidgets();
-        Map<Integer, Collection> widget2extraAttrs = new HashMap<Integer, Collection>();
+        Map<Integer, Collection<String>> widget2extraAttrs 
+        = new HashMap<Integer, Collection<String>>();
         for (Widget widget2 : widgets) {
-            widget2extraAttrs.put(widget2.getId(), widget2.getExtraAttributes(
+            widget2extraAttrs.put(new Integer(widget2.getId()), widget2.getExtraAttributes(
                             imBag, os));
         }
         request.setAttribute("widgets", widgets);
