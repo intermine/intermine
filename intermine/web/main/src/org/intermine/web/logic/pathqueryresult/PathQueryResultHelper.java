@@ -138,14 +138,22 @@ public class PathQueryResultHelper
     public static PathQuery makePathQueryForCollection(WebConfig webConfig, ObjectStore os,
                                                        InterMineObject object,
                                                        String referencedClassName, String field) {
-        Query query = new Query();
-        QueryClass qc = new QueryClass(TypeUtil.getElementType(object.getClass(), field));
-        query.addFrom(qc);
-        query.addToSelect(new QueryField(qc, "class"));
-        query.setDistinct(true);
-        query.setConstraint(new ContainsConstraint(new QueryCollectionReference(object, field),
-                        ConstraintOp.CONTAINS, qc));
-        List<Class> sr = (List<Class>) os.executeSingleton(query);
+        String className = TypeUtil.unqualifiedName(DynamicUtil.getSimpleClassName(object
+                        .getClass()));
+        Path path = new Path(os.getModel(), className + "." + field);
+        List<Class> sr = new ArrayList<Class>();
+        if (path.endIsCollection()) {
+            Query query = new Query();
+            QueryClass qc = new QueryClass(TypeUtil.getElementType(object.getClass(), field));
+            query.addFrom(qc);
+            query.addToSelect(new QueryField(qc, "class"));
+            query.setDistinct(true);
+            query.setConstraint(new ContainsConstraint(new QueryCollectionReference(object, field),
+                            ConstraintOp.CONTAINS, qc));
+            sr.addAll(os.executeSingleton(query));
+        } else if (path.endIsReference()) {
+            sr.add(path.getLastClassDescriptor().getType());
+        }
         return makePathQueryForCollectionForClass(webConfig, os, object, field, sr);
     }
 
