@@ -43,6 +43,7 @@ import org.intermine.web.logic.config.WebConfig;
 import org.intermine.web.logic.profile.Profile;
 import org.intermine.web.logic.query.Constraint;
 import org.intermine.web.logic.query.MainHelper;
+import org.intermine.web.logic.query.Node;
 import org.intermine.web.logic.query.PathQuery;
 import org.intermine.web.logic.results.TableHelper;
 import org.intermine.web.logic.results.WebResults;
@@ -173,9 +174,15 @@ public class PathQueryResultHelper
         String label = null, id2 = null, code = pathQuery.getUnusedConstraintCode();
         Constraint c = new Constraint(ConstraintOp.EQUALS, object.getId(), false, label, code, id2,
                         null);
-        pathQuery.addNode(
-                        TypeUtil.unqualifiedName(DynamicUtil.getSimpleClassName(object.getClass()))
-                                        + "." + "id").getConstraints().add(c);
+        String className = TypeUtil.unqualifiedName(DynamicUtil.getSimpleClassName(object
+                        .getClass()));
+        String idPath = className + "." + "id";
+        pathQuery.addNode(idPath).getConstraints().add(c);
+
+        String collectionPath = className + "." + field;
+        Node pathNode = pathQuery.addNode(collectionPath);
+        pathNode.setType(TypeUtil.unqualifiedName(DynamicUtil.getSimpleClassName(commonClass)));
+
         pathQuery.setConstraintLogic("A and B and C");
         pathQuery.syncLogicExpression("and");
         return pathQuery;
