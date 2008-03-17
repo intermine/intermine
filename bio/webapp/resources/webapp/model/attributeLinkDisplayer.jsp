@@ -16,12 +16,12 @@
     <tr>
         <td align="right">
         <c:if test="${!empty imageName}">
-          <a href="${href}"><html:img src="model/images/${imageName}"/></a>
+          <a href="${href}" class="ext_link" target="_new"><html:img src="model/images/${imageName}" title="${text}"/></a>
         </c:if>
         </td>
         <td>
         <c:if test="${!empty text}">
-          <a href="${href}">${text}&nbsp;<img src="images/ext_link.png" alt="Link out" title="Link out"></a>
+          <a href="${href}" class="ext_link" target="_new">${text}&nbsp;<img src="images/ext_link.png" title="${text}"/></a>
         </c:if>
         </td>
     </tr>
