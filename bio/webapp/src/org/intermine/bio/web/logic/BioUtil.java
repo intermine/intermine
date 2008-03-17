@@ -191,6 +191,6 @@ public class BioUtil implements WidgetUtil
      * {@inheritDoc}
      */
     public Collection<String> getExtraAttributes(ObjectStore os, InterMineBag bag) {
-        return getOrganisms(os, bag, true);
+        return getOrganisms(os, bag, false);
     }
 }
