@@ -1,7 +1,7 @@
 <?xml version="1.0"?>
 <classes>
 
-	<class name="org.flymine.model.genomic.Project"
+	<class name="org.flymine.model.genomic.ModEncodeProject"
 		is-interface="true">
 		<attribute name="name" type="java.lang.String" />
 		<attribute name="title" type="java.lang.String" />
@@ -9,7 +9,7 @@
 		<attribute name="namePI" type="java.lang.String" />
 		<attribute name="url" type="java.lang.String" />
 		<collection name="providers"
-			referenced-type="org.flymine.model.genomic.Provider"
+			referenced-type="org.flymine.model.genomic.ModEncodeProvider"
 			reverse-reference="project" />
 		<!-- 
 			<collection name="organisms" referenced-type="org.flymine.model.genomic.Organism" 
@@ -17,12 +17,12 @@
 		-->
 	</class>
 
-	<class name="org.flymine.model.genomic.Provider"
-		is-interface="true">
-		<attribute name="lab" type="java.lang.String" />
+	<class name="org.flymine.model.genomic.ModEncodeProvider"
+    extends="org.flymine.model.genomic.DataSource" is-interface="true">
+		<attribute name="name" type="java.lang.String" />
 		<attribute name="affiliation" type="java.lang.String" />
 		<reference name="project"
-			referenced-type="org.flymine.model.genomic.Project"
+			referenced-type="org.flymine.model.genomic.ModEncodeProject"
 			reverse-reference="providers" />
 		<collection name="experimentSubmissions"
 			referenced-type="org.flymine.model.genomic.ExperimentSubmission"
@@ -47,7 +47,7 @@
 			<attribute name="fileFormat" type="java.lang.String"/>
 		-->
 		<reference name="provider"
-			referenced-type="org.flymine.model.genomic.Provider"
+			referenced-type="org.flymine.model.genomic.ModEncodeProvider"
 			reverse-reference="experimentSubmissions" />
 		<collection name="appliedProtocols"
 			referenced-type="org.flymine.model.genomic.AppliedProtocol"

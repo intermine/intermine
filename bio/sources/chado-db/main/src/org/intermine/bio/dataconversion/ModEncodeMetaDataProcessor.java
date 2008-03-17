@@ -107,7 +107,7 @@ public class ModEncodeMetaDataProcessor extends ChadoProcessor
     }
 
     static {        
-        PROVIDER_FIELD_NAME_MAP.put("Person Last Name", "lab");
+        PROVIDER_FIELD_NAME_MAP.put("Person Last Name", "name");
         PROVIDER_FIELD_NAME_MAP.put("Person Affiliation", "affiliation");       
         PROVIDER_FIELD_NAME_MAP.put("Experiment Description", NOT_TO_BE_LOADED);
         PROVIDER_FIELD_NAME_MAP.put("Investigation Title", NOT_TO_BE_LOADED);
@@ -125,6 +125,81 @@ public class ModEncodeMetaDataProcessor extends ChadoProcessor
         PROVIDER_FIELD_NAME_MAP.put("Date of Experiment", NOT_TO_BE_LOADED);
         PROVIDER_FIELD_NAME_MAP.put("Public Release Date", NOT_TO_BE_LOADED);
     }
+
+    private Map<Integer, DAGData> DAGIdMap = new HashMap<Integer, DAGData>();
+ 
+    /**
+     * Data to reconstruct the flow of submission data
+     *
+     */
+    protected static class DAGData
+    {
+        private Integer experimentId;
+        private Integer protocolId;
+        private Integer appliedProtocolId;
+        //private Integer dataId;
+        private Integer depth;
+        private String  direction;
+
+        private String  itemIdentifier;
+        private String  interMineType;
+        private Integer intermineObjectId;
+/*
+        short flags = 0;
+        static final short EVIDENCE_CREATED_BIT = 0;
+        static final short EVIDENCE_CREATED = 1 << EVIDENCE_CREATED_BIT;
+        static final short IDENTIFIER_SET_BIT = 1;
+        static final short IDENTIFIER_SET = 1 << IDENTIFIER_SET_BIT;
+        static final short LENGTH_SET_BIT = 2;
+        static final short LENGTH_SET =   2947 | output1 << LENGTH_SET_BIT;
+*/
+
+        /**
+         * Return the id of the Item representing this feature.
+         * @return the ID
+         */
+        public Integer getItsExperiment(Integer childDataId) {
+            
+            return experimentId;
+        }
+        /**
+         * Return the id of the Item representing this feature.
+         * @return the ID
+         */
+        public Integer getItsDepth(Integer childDataId) {
+            
+            return depth;
+        }
+
+        /**
+         * Return the id of the Item representing this feature.
+         * @return the ID
+         */
+        public Integer getItsPath(Integer dataId) {
+                        
+            return experimentId;
+        }
+        
+        /**
+         * Return the id of the Item representing this feature.
+         * @return the ID
+         */
+        public Integer getIntermineObjectId() {
+            return intermineObjectId;
+        }
+
+        /**
+         * Get the String read from the name column of the feature table.
+         * @return the name
+         */
+        public String getDirection() {
+            return direction;
+        }
+    }
+
+    
+    
+    
 
 
     /**
@@ -167,6 +242,90 @@ public class ModEncodeMetaDataProcessor extends ChadoProcessor
         processDataTable(connection);
     }
 
+
+        
+    private void processDAG(Connection connection)
+    throws SQLException, ObjectStoreException {
+    ResultSet res = getDAGResultSet(connection);
+    int count = 0;
+    while (res.next()) {
+        Integer experimentId = new Integer(res.getInt("experiment_id"));
+        Integer protocolId = new Integer(res.getInt("protocol_id"));
+        Integer appliedProtocolId = new Integer(res.getInt("applied_protocol_id"));
+        Integer dataId = new Integer(res.getInt("data_id"));
+        String direction = res.getString("direction");
+        
+        DAGData dag = new DAGData();
+        
+        dag.protocolId = protocolId;
+        dag.appliedProtocolId = appliedProtocolId;
+        //dag.dataId = dataId;
+        dag.direction = direction;
+
+        
+        //use continue here.
+        // the dag methods should return (experimentId, depth)
+        if (experimentId != null) {
+            dag.experimentId = experimentId;
+            dag.depth = 0;
+        } else if (direction.equalsIgnoreCase("input")) {
+            dag.experimentId = dag.getItsExperiment(dataId);
+            dag.depth = dag.getItsDepth(dataId);            
+        } else if (direction.equalsIgnoreCase("output")) {
+            dag.getItsPath(dataId);
+        } else {
+            LOG.error("DAG: no experimentID found for data: " + dataId + " | " + direction);
+        }
+        count ++;
+
+        DAGIdMap.put(dataId, dag);
+        
+/*
+        List<String> primaryIds = new ArrayList<String>();
+        primaryIds.add(uniqueName);
+        String interMineType = TypeUtil.javaiseClassName(fixFeatureType(type));
+        uniqueName = fixIdentifier(interMineType, uniqueName);
+        OrganismData organismData =
+            getChadoDBConverter().getChadoIdToOrgDataMap().get(organismId);
+        Item feature = makeFeature(featureId, type, interMineType, name, uniqueName, seqlen,
+                                   organismData.getTaxonId());
+        if (feature != null) {
+            processAndStoreFeature(feature, featureId, uniqueName, name, seqlen, residues,
+                                   interMineType, organismId);
+                                   
+                                  
+            count++;
+        }
+        */
+    }
+    LOG.info("created " + count + " DAG items in map");
+    res.close();
+}
+
+    /**
+     * Return the rows needed to construct the DAG of the data/protocols.
+     * This is a protected method so that it can be overridden for testing
+     * @param connection the db connection
+     * @return the SQL result set
+     * @throws SQLException if a database problem occurs
+     */
+    protected ResultSet getDAGResultSet(Connection connection) 
+    throws SQLException {
+        String query =
+            "SELECT eap.experiment_id, ap.protocol_id, apd.applied_protocol_id"
+            + " , apd.data_id, apd.direction"
+            + " FROM applied_protocol ap LEFT JOIN experiment_applied_protocol eap"
+            + " ON (eap.first_applied_protocol_id = ap.applied_protocol_id )"
+            + " , applied_protocol_data apd"
+            + " WHERE apd.applied_protocol_id = ap.applied_protocol_id";
+
+        LOG.info("executing: " + query);
+        Statement stmt = connection.createStatement();
+        ResultSet res = stmt.executeQuery(query);
+        return res;
+    }
+   
+    
     /* PROVIDER -------------------------------------------------------------------------*/
 
     private void processProviderTable(Connection connection)
@@ -176,8 +335,8 @@ public class ModEncodeMetaDataProcessor extends ChadoProcessor
         while (res.next()) {
             Integer experimentId = new Integer(res.getInt("experiment_id"));
             String value = res.getString("value");
-            Item provider = getChadoDBConverter().createItem("Provider");
-            provider.setAttribute("lab", value);
+            Item provider = getChadoDBConverter().createItem("ModEncodeProvider");
+            provider.setAttribute("name", value);
             Integer intermineObjectId = getChadoDBConverter().store(provider);            
             providerIdMap .put(experimentId, intermineObjectId);
             providerIdRefMap .put(experimentId, provider.getIdentifier());
