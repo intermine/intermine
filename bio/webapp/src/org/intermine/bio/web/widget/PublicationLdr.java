@@ -12,9 +12,7 @@ package org.intermine.bio.web.widget;
 
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Map;
 
-import org.intermine.objectstore.ObjectStore;
 import org.intermine.objectstore.query.BagConstraint;
 import org.intermine.objectstore.query.ConstraintOp;
 import org.intermine.objectstore.query.ConstraintSet;
@@ -28,20 +26,13 @@ import org.intermine.objectstore.query.QueryFunction;
 import org.intermine.objectstore.query.QueryObjectReference;
 
 import org.intermine.bio.web.logic.BioUtil;
-import org.intermine.objectstore.intermine.ObjectStoreInterMineImpl;
-import org.intermine.web.logic.Constants;
-import org.intermine.web.logic.WebUtil;
+import org.intermine.objectstore.ObjectStore;
 import org.intermine.web.logic.bag.InterMineBag;
-import org.intermine.web.logic.profile.Profile;
 import org.intermine.web.logic.widget.EnrichmentWidgetLdr;
 
 import org.flymine.model.genomic.Gene;
 import org.flymine.model.genomic.Organism;
 import org.flymine.model.genomic.Publication;
-
-import javax.servlet.ServletContext;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpSession;
 
 /**
  * {@inheritDoc}
@@ -53,7 +44,6 @@ public class PublicationLdr implements EnrichmentWidgetLdr
     private Query annotatedPopulationQuery;
     private Collection<String> organisms;
     private String externalLink, append;
-    private ObjectStore os;
     private InterMineBag bag;
     private Collection<String> organismsLower = new ArrayList<String>();
  
@@ -64,8 +54,7 @@ public class PublicationLdr implements EnrichmentWidgetLdr
      * @param os the ObjectStore
      */
     public PublicationLdr(InterMineBag bag, ObjectStore os) {
-        this.bag = bag;
-        this.os = os;
+        this.bag = bag;        
         organisms = BioUtil.getOrganisms(os, bag, false);
         for (String s : organisms) {
             organismsLower.add(s.toLowerCase());

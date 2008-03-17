@@ -1,10 +1,5 @@
 package org.intermine.web.logic.widget;
 
-import java.util.Collection;
-
-import org.intermine.objectstore.ObjectStore;
-import org.intermine.web.logic.bag.InterMineBag;
-
 /*
  * Copyright (C) 2002-2008 FlyMine
  *
@@ -14,6 +9,13 @@ import org.intermine.web.logic.bag.InterMineBag;
  * information or http://www.gnu.org/copyleft/lesser.html.
  *
  */
+
+
+import java.util.Collection;
+
+import org.intermine.objectstore.ObjectStore;
+import org.intermine.web.logic.bag.InterMineBag;
+
 
 /**
  * Class representing a Widget in the WebApp
@@ -119,9 +121,14 @@ public abstract class Widget
     public abstract void process(InterMineBag imBag, ObjectStore os);
 
     /**
+     * @param imBag the InterMineBag
+     * @param os the ObjectStore
      * @return the getExtraAttributes
+     * @exception Exception if something goes wrong      
      */
-    public abstract Collection getExtraAttributes(InterMineBag imBag, ObjectStore os) throws Exception;
+    public abstract Collection<String> getExtraAttributes(InterMineBag imBag, 
+                                                  ObjectStore os) 
+    throws Exception;
 
     /**
      * @return the selectedExtraAttribute
