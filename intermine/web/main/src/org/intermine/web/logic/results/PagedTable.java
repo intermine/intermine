@@ -397,7 +397,7 @@ public class PagedTable
      * Returns indexes of columns, that should be displayed.
      * @return indexes
      */
-    public List<Integer> getDisplayedIndexes() {
+    public List<Integer> getVisibleIndexes() {
         List<Integer> ret = new ArrayList<Integer>();
         for (int i = 0; i < getColumns().size(); i++) {
             if (getColumns().get(i) != null && getColumns().get(i).isVisible()) {
@@ -422,7 +422,7 @@ public class PagedTable
         private List<Integer> visibleIndexes;
 
         public RearrangedList() {
-            visibleIndexes = getDisplayedIndexes();
+            visibleIndexes = getVisibleIndexes();
         }
 
         @Override
@@ -432,8 +432,8 @@ public class PagedTable
 
         private List<ResultElement> translateRow(List<ResultElement> row) {
             List<ResultElement> ret = new ArrayList<ResultElement>();
-            for (Integer index : visibleIndexes) {
-                ret.add(row.get(visibleIndexes.get(index)));
+            for (int i = 0; i < visibleIndexes.size(); i++) {
+                ret.add(row.get(visibleIndexes.get(i)));
             }
             return ret;
         }
