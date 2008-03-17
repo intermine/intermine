@@ -56,6 +56,7 @@ import org.intermine.objectstore.query.QueryFunction;
 import org.intermine.objectstore.query.QueryNode;
 import org.intermine.objectstore.query.QueryObjectReference;
 import org.intermine.objectstore.query.QueryReference;
+import org.intermine.objectstore.query.QuerySelectable;
 import org.intermine.objectstore.query.QueryValue;
 import org.intermine.objectstore.query.SimpleConstraint;
 import org.intermine.path.Path;
@@ -1037,6 +1038,18 @@ public class MainHelper
             // Not possible if second-last argument is null
         }
         subQ.clearOrderBy();
+        Map<String, QuerySelectable> newSelect = new HashMap();
+        for (QuerySelectable qs : subQ.getSelect()) {
+            if (qs instanceof QueryClass) {
+                newSelect.put(subQ.getAliases().get(qs) + "_id", new QueryField((QueryClass) qs, "id"));
+            } else {
+                newSelect.put(subQ.getAliases().get(qs), qs);
+            }
+        }
+        subQ.clearSelect();
+        for (Map.Entry<String, QuerySelectable> selectEntry : newSelect.entrySet()) {
+            subQ.addToSelect(selectEntry.getValue(), selectEntry.getKey());
+        }
         QueryField qf = (QueryField) origPathToQueryNode.get(summaryPath);
         if (qf == null) {
             throw new NullPointerException("Error - path " + summaryPath + " is not in map "

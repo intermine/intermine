@@ -109,6 +109,10 @@ public class Query implements FromElement
      */
     public Query deleteFrom(FromElement cls) {
         queryClasses.remove(cls);
+        String alias = (String) aliases.remove(cls);
+        if (alias != null) {
+            reverseAliases.remove(alias);
+        }
         return this;
     }
 
@@ -307,12 +311,12 @@ public class Query implements FromElement
     public Query deleteFromSelect(QuerySelectable node) {
         select.remove(node);
 
-        // Don't think the following is sufficient - what if the node is also in the FROM list?
-        // Matthew: don't need to do this at all. Extra entries in the alias map will be ignored.
-        //String alias = (String) aliases.remove(node);
-        //if (alias != null) {
-        //    reverseAliases.remove(alias);
-        //}
+        if (!(node instanceof FromElement)) {
+            String alias = aliases.remove(node);
+            if (alias != null) {
+                reverseAliases.remove(alias);
+            }
+        }
         return this;
     }
 
@@ -330,6 +334,14 @@ public class Query implements FromElement
      *
      */
     public void clearSelect() {
+        for (QuerySelectable qs : select) {
+            if (!(qs instanceof FromElement)) {
+                String alias = aliases.remove(qs);
+                if (alias != null) {
+                    reverseAliases.remove(alias);
+                }
+            }
+        }
         select.clear();
     }
 
