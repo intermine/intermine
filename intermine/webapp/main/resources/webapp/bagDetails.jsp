@@ -15,8 +15,8 @@
       var modifyDetailsURL = '<html:rewrite action="/modifyDetails"/>';
       var detailsType = 'bag';
 
-  function go(where) {
-    if (where == "query"):
+  function useBag(where) {
+    if (where == "query") {
         document.modifyBagDetailsForm.useBagInQuery.value = 'true';
     }    
     document.modifyBagDetailsForm.submit();
@@ -43,9 +43,6 @@
   <TD colspan=2 align="left" style="padding-bottom:10px">
 <link rel="stylesheet" href="css/toolbar.css" type="text/css" media="screen" title="Toolbar Style" charset="utf-8"/>
 <script type="text/javascript" src="js/toolbar.js"></script>
-<html:form action="/modifyBagDetailsAction" styleId="bagDetailsForm">
-<html:hidden property="bagName" value="${bag.name}"/> 
-
 <div id="tool_bar_div">
     <ul id="button_bar" onclick="toggleToolBarMenu(event);">
         <%-- <li id="tool_bar_li_convert"><img style="cursor: pointer;" src="images/icons/null.gif" width="94" height="25" alt="Convert" border="0" id="tool_bar_button_convert" class="tool_bar_button"></li> --%>
@@ -77,13 +74,12 @@
   <a href="javascript:hideMenu('tool_bar_item_export')" >Cancel</a>
 </div>
 <div id="tool_bar_item_use" style="visibility:hidden" class="tool_bar_item">
-    <a href="javascript:go('query');">in a query</a><br/>
-    <input type="hidden" name="useBagInQuery" />
+    <a href="javascript:useBag('query');">in a query</a><br/>
+    
   <html:link action="/templates">in a template</html:link>
   <hr/>
     <a href="javascript:hideMenu('tool_bar_item_use')" >Cancel</a>
 </div>
-</html:form>
 </TD>
 </TR>
 <TR>
@@ -169,7 +165,7 @@
 
 
 <div id="convertList" class="listtoolbox" align="left">
-<h3><img src="images/icons/convert.png" alt="Convert objects in this bag to different type"/>&nbsp;Convert</h3>
+<h3><img src="images/icons/convert.png" title="Convert objects in this bag to different type"/>&nbsp;Convert</h3>
 <p>
 <html:form action="/modifyBagDetailsAction" styleId="bagDetailsForm">
 <html:hidden property="bagName" value="${bag.name}"/> 
@@ -178,6 +174,7 @@
      <tiles:put name="idname" value="cp" />
      <tiles:put name="orientation" value="h" />
 </tiles:insert>
+<input type="hidden" name="useBagInQuery" />
 </html:form>
 </p>
 </div>
