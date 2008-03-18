@@ -137,6 +137,8 @@ public class FlyBaseModuleProcessor extends ChadoSequenceProcessor
             map.put(new MultiKey("dbxref", "MRNA", "FlyBase Annotation IDs", Boolean.TRUE),
                     Arrays.asList(new SetFieldConfigAction("secondaryIdentifier"),
                                   CREATE_SYNONYM_ACTION));
+            map.put(new MultiKey("dbxref", "TransposableElementInsertionSite", "drosdel", null),
+                    Arrays.asList(new SetFieldConfigAction("secondaryIdentifier")));
 
             map.put(new MultiKey("synonym", "ChromosomalDeletion", "fullname", Boolean.TRUE),
                     Arrays.asList(new SetFieldConfigAction("name"),
@@ -181,11 +183,8 @@ public class FlyBaseModuleProcessor extends ChadoSequenceProcessor
             map.put(new MultiKey("feature", "TransposableElementInsertionSite", "FlyBase",
                                  "name"),
                     Arrays.asList(new SetFieldConfigAction("symbol"),
-                                  new SetFieldConfigAction("secondaryIdentifier"),
+                                  new SetFieldConfigAction("name"),
                                   CREATE_SYNONYM_ACTION));
-            map.put(new MultiKey("feature", "TransposableElementInsertionSite", "FlyBase",
-                                 "uniquename"),
-            Arrays.asList(new SetFieldConfigAction("primaryIdentifier")));
 
             map.put(new MultiKey("feature", "Gene", "FlyBase", "uniquename"),
                     Arrays.asList(new SetFieldConfigAction("primaryIdentifier")));
@@ -349,6 +348,7 @@ public class FlyBaseModuleProcessor extends ChadoSequenceProcessor
             // ignore for now:        "EST", "cDNA_clone",
             "miRNA", "snRNA", "ncRNA", "rRNA", "ncRNA", "snoRNA", "tRNA",
             "chromosome_band", "transposable_element_insertion_site",
+            "chromosome_structure_variation",
             "protein", "point_mutation"
     );
 
