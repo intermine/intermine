@@ -12,13 +12,6 @@ package org.flymine.web.widget;
 
 import java.util.Collection;
 
-import org.flymine.model.genomic.Gene;
-import org.flymine.model.genomic.Organism;
-import org.flymine.model.genomic.Protein;
-import org.flymine.model.genomic.ProteinDomain;
-import org.intermine.bio.web.logic.BioUtil;
-import org.intermine.objectstore.ObjectStore;
-import org.intermine.objectstore.intermine.ObjectStoreInterMineImpl;
 import org.intermine.objectstore.query.BagConstraint;
 import org.intermine.objectstore.query.ConstraintOp;
 import org.intermine.objectstore.query.ConstraintSet;
@@ -32,8 +25,16 @@ import org.intermine.objectstore.query.QueryFunction;
 import org.intermine.objectstore.query.QueryObjectReference;
 import org.intermine.objectstore.query.QueryValue;
 import org.intermine.objectstore.query.SimpleConstraint;
+
+import org.intermine.bio.web.logic.BioUtil;
+import org.intermine.objectstore.ObjectStore;
 import org.intermine.web.logic.bag.InterMineBag;
 import org.intermine.web.logic.widget.EnrichmentWidgetLdr;
+
+import org.flymine.model.genomic.Gene;
+import org.flymine.model.genomic.Organism;
+import org.flymine.model.genomic.Protein;
+import org.flymine.model.genomic.ProteinDomain;
 
 /**
  * {@inheritDoc}
@@ -46,16 +47,22 @@ public class ProteinDomainLdr implements EnrichmentWidgetLdr
     private Query annotatedPopulationQuery;
     private String externalLink, append;
     private Collection<String> organisms;
+    private Collection<String> organismsLower;
     private ObjectStore os;
     private InterMineBag bag;
  
     /**
-     * @param request The HTTP request we are processing
+     * @param bag list of objects for this widget
+     * @param os object store
      */
     public ProteinDomainLdr(InterMineBag bag, ObjectStore os) {
         this.bag = bag;
         this.os = os;
         organisms = BioUtil.getOrganisms(os, bag, false);
+        
+        for (String s : organisms) {
+            organismsLower.add(s.toLowerCase());
+        }
         
         annotatedSampleQuery = getQuery(false, true);
         annotatedPopulationQuery = getQuery(false, false);
@@ -81,11 +88,12 @@ public class ProteinDomainLdr implements EnrichmentWidgetLdr
 
         ConstraintSet cs = new ConstraintSet(ConstraintOp.AND);
 
-        cs.addConstraint(new BagConstraint(qfOrganismName, ConstraintOp.IN, organisms));
+        QueryExpression qf1 = new QueryExpression(QueryExpression.LOWER, qfOrganismName);
+        cs.addConstraint(new BagConstraint(qf1, ConstraintOp.IN, organismsLower));
         QueryCollectionReference qr = new QueryCollectionReference(qcProtein, "proteinDomains");
         cs.addConstraint(new ContainsConstraint(qr, ConstraintOp.CONTAINS, qcProteinFeature));
-        QueryExpression qf = new QueryExpression(QueryExpression.LOWER, qfId);
-        cs.addConstraint(new SimpleConstraint(qf, ConstraintOp.MATCHES, new QueryValue("ipr%")));
+        QueryExpression qf2 = new QueryExpression(QueryExpression.LOWER, qfId);
+        cs.addConstraint(new SimpleConstraint(qf2, ConstraintOp.MATCHES, new QueryValue("ipr%")));
 
         if (useBag) {
             if (bag.getType().equalsIgnoreCase("protein")) {
