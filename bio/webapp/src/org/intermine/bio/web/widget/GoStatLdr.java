@@ -50,8 +50,7 @@ public class GoStatLdr implements EnrichmentWidgetLdr
     private String externalLink, append;
     private ObjectStore os;
     private InterMineBag bag;
-    private String namespace;
-    private Collection<String> badOntologies;
+    private String namespace;    
     private Collection<String> organismsLower = new ArrayList<String>();
     /**
      * @param bag list of objects for this widget
@@ -62,7 +61,7 @@ public class GoStatLdr implements EnrichmentWidgetLdr
         this.os = os;
 //        namespace = (request.getParameter("filter") != null
 //                        ? request.getParameter("filter") : "biological_process");
-        badOntologies = getOntologies();        
+                
         organisms = BioUtil.getOrganisms(os, bag, false);
         
         for (String s : organisms) {
@@ -74,13 +73,13 @@ public class GoStatLdr implements EnrichmentWidgetLdr
     }
 
     // adds 3 main ontologies to array.  these 3 will be excluded from the query
-    private Collection<String> getOntologies() {
+    private String[] getOntologies() {
 
-        Collection<String> ids = new ArrayList<String>();
+        String[] ids = new String[3];
 
-        ids.add("go:0008150");  // biological_process
-        ids.add("go:0003674");  // molecular_function
-        ids.add("go:0005575");  // cellular_component
+        ids[0] = "go:0008150";  // biological_process
+        ids[1] = "go:0003674";  // molecular_function
+        ids[2] = "go:0005575";  // cellular_component
 
         return ids;
 
@@ -108,9 +107,7 @@ public class GoStatLdr implements EnrichmentWidgetLdr
         QueryFunction objectCount = new QueryFunction();
         
         ConstraintSet cs = new ConstraintSet(ConstraintOp.AND);
-
-        
-
+      
         QueryExpression qf1 = new QueryExpression(QueryExpression.LOWER, qfOrganismName);
         cs.addConstraint(new BagConstraint(qf1, ConstraintOp.IN, organismsLower));
         
@@ -119,9 +116,12 @@ public class GoStatLdr implements EnrichmentWidgetLdr
         cs.addConstraint(new ContainsConstraint(qcr1, ConstraintOp.CONTAINS, qcGoAnnotation));
         
         if (!calcTotal) {
+            String[] ids = getOntologies();
             QueryExpression qf2 = new QueryExpression(QueryExpression.LOWER, qfGoTermId);
-            cs.addConstraint(new BagConstraint(qf2, ConstraintOp.NOT_IN, badOntologies));
-
+            for (int i = 0; i < ids.length; i++) {                
+                cs.addConstraint(new SimpleConstraint(qf2, ConstraintOp.NOT_EQUALS, 
+                                                   new QueryValue(ids[i])));
+            }
             // gene is from organism
             QueryObjectReference qor1 = new QueryObjectReference(qcGene, "organism");
             cs.addConstraint(new ContainsConstraint(qor1, ConstraintOp.CONTAINS, qcOrganism));
