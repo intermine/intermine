@@ -164,13 +164,13 @@ public class SessionMethods
                         }
                     }
                 } catch (ObjectStoreException e) {
+                    // put stack trace in the log
+                    LOG.error("Exception", e);
+
                     String key = (e instanceof ObjectStoreQueryDurationException)
                         ? "errors.query.estimatetimetoolong"
                         : "errors.query.objectstoreerror";
                     recordError(resources.getMessage(key), session);
-
-                    // put stack trace in the log
-                    LOG.error("Exception", e);
 
                     error = true;
                 } catch (Throwable err) {
