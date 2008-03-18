@@ -43,7 +43,7 @@ public class AspectBinding
      * @throws SAXException if there is a problem parsing XML
      * @throws IOException if there is a IO problem
      */
-    public static Map unmarshal(Reader reader) throws IOException, SAXException {
+    public static Map<String, Aspect> unmarshal(Reader reader) throws IOException, SAXException {
         Digester digester = new Digester();
         digester.addObjectCreate("aspects", "java.util.ArrayList");
         digester.addObjectCreate("aspects/aspect", "org.intermine.web.logic.aspects.Aspect");
@@ -66,7 +66,7 @@ public class AspectBinding
             LOG.error("Failed to unmashal aspects (digester returned null)");
             return Collections.EMPTY_MAP;
         }
-        Map map = new LinkedHashMap();
+        Map<String, Aspect> map = new LinkedHashMap<String, Aspect>();
         Iterator iter = list.iterator();
         while (iter.hasNext()) {
             Aspect set = (Aspect) iter.next();
@@ -85,7 +85,7 @@ public class AspectBinding
      * @throws IOException if there is a IO problem
      * @see #unmarshal(Reader)
      */
-    public static Map unmarhsal(InputStream is) throws IOException, SAXException {
+    public static Map<String, Aspect> unmarhsal(InputStream is) throws IOException, SAXException {
         return unmarshal(new InputStreamReader(is));
     }
 }

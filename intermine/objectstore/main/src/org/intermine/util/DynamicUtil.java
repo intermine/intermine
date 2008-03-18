@@ -266,7 +266,7 @@ public class DynamicUtil
         }
         return retval;
     }
-    
+
     /**
      * Creates a friendly description of an object - that is, the class and the ID (if it has one).
      *
@@ -302,7 +302,7 @@ public class DynamicUtil
         }
         return retval;
     }
-    
+
     private static class ClassNameComparator implements Comparator<Class>
     {
         public int compare(Class a, Class b) {
