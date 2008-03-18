@@ -10,8 +10,6 @@ package org.intermine.web.logic.session;
  *
  */
 
-import java.io.PrintWriter;
-import java.io.StringWriter;
 import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
@@ -20,14 +18,10 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import javax.servlet.ServletContext;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-import javax.servlet.http.HttpSession;
+import org.intermine.objectstore.query.Query;
+import org.intermine.objectstore.query.QueryNode;
+import org.intermine.objectstore.query.Results;
 
-import org.apache.commons.collections.map.LRUMap;
-import org.apache.log4j.Logger;
-import org.apache.struts.util.MessageResources;
 import org.intermine.metadata.FieldDescriptor;
 import org.intermine.metadata.Model;
 import org.intermine.model.InterMineObject;
@@ -35,9 +29,6 @@ import org.intermine.objectstore.ObjectStore;
 import org.intermine.objectstore.ObjectStoreException;
 import org.intermine.objectstore.ObjectStoreQueryDurationException;
 import org.intermine.objectstore.intermine.ObjectStoreInterMineImpl;
-import org.intermine.objectstore.query.Query;
-import org.intermine.objectstore.query.QueryNode;
-import org.intermine.objectstore.query.Results;
 import org.intermine.path.Path;
 import org.intermine.util.CacheMap;
 import org.intermine.web.logic.Constants;
@@ -56,6 +47,7 @@ import org.intermine.web.logic.query.PathQuery;
 import org.intermine.web.logic.query.QueryMonitor;
 import org.intermine.web.logic.query.SaveQueryHelper;
 import org.intermine.web.logic.query.SavedQuery;
+import org.intermine.web.logic.results.DisplayObject;
 import org.intermine.web.logic.results.DisplayObjectFactory;
 import org.intermine.web.logic.results.PagedTable;
 import org.intermine.web.logic.results.TableHelper;
@@ -64,6 +56,18 @@ import org.intermine.web.logic.template.TemplateBuildState;
 import org.intermine.web.logic.template.TemplateQuery;
 import org.intermine.web.struts.LoadQueryAction;
 import org.intermine.web.struts.TemplateAction;
+
+import java.io.PrintWriter;
+import java.io.StringWriter;
+
+import javax.servlet.ServletContext;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
+
+import org.apache.commons.collections.map.LRUMap;
+import org.apache.log4j.Logger;
+import org.apache.struts.util.MessageResources;
 
 /**
  * Business logic that interacts with session data. These methods are generally
@@ -452,8 +456,9 @@ public class SessionMethods
      * @param session the HttpSession to get the displayObjects Map from
      * @return the (possibly new) displayObjects Map
      */
-    public static Map getDisplayObjects(HttpSession session) {
-        Map displayObjects = (Map) session.getAttribute("displayObjects");
+    public static Map<Integer, DisplayObject> getDisplayObjects(HttpSession session) {
+        Map<Integer, DisplayObject> displayObjects =
+            (Map<Integer, DisplayObject>) session.getAttribute("displayObjects");
 
         // Build map from object id to DisplayObject
         if (displayObjects == null) {
