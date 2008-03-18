@@ -57,10 +57,10 @@ public class BagDetailsAction extends Action
                                  @SuppressWarnings("unused") HttpServletResponse response)
         throws Exception {
         HttpSession session = request.getSession();
-        Profile profile = (Profile) session.getAttribute(Constants.PROFILE);
+
         ServletContext servletContext = session.getServletContext();
-        ObjectStore os = (ObjectStore) servletContext.getAttribute(Constants.OBJECTSTORE);
-        Model model = os.getModel();
+
+
         String bagName = request.getParameter("bagName");
         if (bagName == null) {
             bagName = request.getParameter("name");
@@ -69,12 +69,8 @@ public class BagDetailsAction extends Action
         if (request.getParameter("trail") != null) {
             trail = request.getParameter("trail");
         }
-        Map<String, InterMineBag> allBags =
-            WebUtil.getAllBags(profile.getSavedBags(), servletContext);
-        InterMineBag bag = allBags.get(bagName);
 
         String identifier = "bag." + bagName;
-        PagedTable pc = SessionMethods.getResultsTable(session, identifier);
 
         return new ForwardParameters(mapping.findForward("results"))
                         .addParameter("bagName", bagName)
