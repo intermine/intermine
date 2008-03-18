@@ -12,15 +12,6 @@
 <link rel="stylesheet" href="css/resultstables.css" type="text/css" />
 <tiles:get name="objectTrail.tile"/> <%--<im:vspacer height="1"/>--%>
 
-<%-- PagedTable.getWebTableClass() is a bit hacky - replace with a boolean
-     method or make it unnecessary --%>
-<c:set var="isWebResults"
-       value="${resultsTable.webTableClass.name == 'org.intermine.web.logic.results.WebResults'}"/>
-<c:set var="isWebCollection"
-       value="${resultsTable.webTableClass.name == 'org.intermine.web.struts.WebPathCollection'}"/>
-<c:set var="noBagSave"
-       value="${!empty param.noSelect}"/>
-
 <script type="text/javascript">
 <!--//<![CDATA[
   function changePageSize() {
@@ -42,19 +33,18 @@
 </script>
 <script type="text/javascript" src="js/table.js" ></script>
 
-
     <c:if test="${!empty templateQuery || !empty param.templateQueryTitle}">
 
       <%-- show the description only if we ve run a query (rather than viewing
            a bag) - see #1031 --%>
-      <c:if test="${isWebResults
+      <c:if test="${param.bagName == null
                   && (templateQuery.name != WEB_PROPERTIES['begin.browse.template'])}">
         <div class="body">
           <div class="resultsTableTemplateHeader">
             <div>
               <fmt:message key="results.templateTitle"/>:
-              <span class="templateTitleBold"> <c:choose>
-              
+              <span class="templateTitleBold"> 
+              <c:choose>              
                 <c:when test="${!empty param.templateQueryTitle}">
                  ${param.templateQueryTitle}
                  </c:when>
