@@ -48,7 +48,6 @@ public class GoStatLdr implements EnrichmentWidgetLdr
     private Query annotatedPopulationQuery;
     private Collection<String> organisms;
     private String externalLink, append;
-    private ObjectStore os;
     private InterMineBag bag;
     private String namespace;    
     private Collection<String> organismsLower = new ArrayList<String>();
@@ -58,7 +57,6 @@ public class GoStatLdr implements EnrichmentWidgetLdr
      */
     public GoStatLdr (InterMineBag bag, ObjectStore os) {
         this.bag = bag;
-        this.os = os;
 //        namespace = (request.getParameter("filter") != null
 //                        ? request.getParameter("filter") : "biological_process");
                 

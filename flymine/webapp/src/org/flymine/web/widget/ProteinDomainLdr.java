@@ -47,9 +47,8 @@ public class ProteinDomainLdr implements EnrichmentWidgetLdr
     private Query annotatedSampleQuery;
     private Query annotatedPopulationQuery;
     private String externalLink, append;
-    private Collection<String> organisms;
-    private Collection<String> organismsLower = new ArrayList<String>();
-    private ObjectStore os;
+    private Collection<String> organisms = new ArrayList<String>();
+    private Collection<String> organismsLower = new ArrayList<String>();    
     private InterMineBag bag;
  
     /**
@@ -58,7 +57,7 @@ public class ProteinDomainLdr implements EnrichmentWidgetLdr
      */
     public ProteinDomainLdr(InterMineBag bag, ObjectStore os) {
         this.bag = bag;
-        this.os = os;
+        
         organisms = BioUtil.getOrganisms(os, bag, false);
         
         for (String s : organisms) {
