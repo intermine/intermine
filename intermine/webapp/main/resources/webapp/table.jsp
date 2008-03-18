@@ -176,7 +176,6 @@
 <%-- Export --%>
 <div id="tool_bar_item_export" style="visibility:hidden" class="tool_bar_item">
     <c:set var="tableName" value="${param.table}" scope="request"/>
-    <c:set var="tableType" value="results" scope="request"/>
     <c:set var="pagedTable" value="${resultsTable}" scope="request"/>
     <tiles:get name="export.tile"/>
     <hr>

@@ -66,13 +66,15 @@
     <hr/>
   <a href="javascript:hideMenu('tool_bar_item_display')">Cancel</a>
 </div>
+
 <div id="tool_bar_item_export" style="visibility:hidden" class="tool_bar_item">
-      <a href="exportAction.do?table=${bag.name}&type=tab&tableType=bag">tab-separated</a><br/>
-    <a href="exportAction.do?table=${bag.name}&type=csv&tableType=bag">comma-separated</a><br/>
-    <a href="exportAction.do?table=${bag.name}&type=excel&tableType=bag">excel</a>
-  <hr/>
+    <c:set var="tableName" value="bag.${bag.name}" scope="request"/>
+    <c:set var="pagedTable" value="${pagedResults}" scope="request"/>
+    <tiles:get name="export.tile"/>
+    <hr>
   <a href="javascript:hideMenu('tool_bar_item_export')" >Cancel</a>
 </div>
+
 <div id="tool_bar_item_use" style="visibility:hidden" class="tool_bar_item">
     <a href="javascript:useBag('query');">in a query</a><br/>
     
