@@ -144,4 +144,8 @@ public abstract class Widget
         this.selectedExtraAttribute = selectedExtraAttribute;
     }
 
+    /**
+     * @return the hasResults
+     */
+    public abstract boolean getHasResults();
 }

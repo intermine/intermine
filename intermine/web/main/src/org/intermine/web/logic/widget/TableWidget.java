@@ -154,5 +154,12 @@ public class TableWidget extends Widget
     public void setClassKeys(Map classKeys) {
         this.classKeys = classKeys;
     }
+    
+    /**
+     * {@inheritDoc}
+     */
+    public boolean getHasResults() {
+        return (bagWidgLdr.getFlattenedResults().size() > 0);
+    }
 
 }

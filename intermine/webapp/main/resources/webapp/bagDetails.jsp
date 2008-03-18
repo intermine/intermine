@@ -184,7 +184,29 @@
 </TD></TR>
 </TABLE>
 
+<div class="heading" style="clear:both;margin-top:15px">
+     Widgets displaying properties of '${bag.name}'
+</div>
+<script language="javascript">
+  function toggleWidget(widgetid,linkid) {
+    Element.toggle($(widgetid));
+    var d = $(linkid);
+    if(Element.hasClassName($(linkid), 'active')) {
+      $(linkid).removeClassName('active');
+    } else {
+      $(linkid).addClassName('active');
+    }
+  }
+</script>
+
+<ol class="widgetList">
+<li>Click to select widgets you would like to display:</li>
+<c:forEach items="${widgets}" var="widget">
+  <li><a href="javascript:toggleWidget('widgetcontainer${widget.id}','togglelink${widget.id}')" id="togglelink${widget.id}" class="active">${widget.title}</a>&nbsp;|&nbsp;</li>
+</c:forEach>
+</ol>
 <div style="clear:both;">&nbsp;</div>
+
 <form name="widgetForm">
 <link rel="stylesheet" type="text/css" href="<html:rewrite page='/css/widget.css'/>"/>
 <c:forEach items="${widgets}" var="widget">
