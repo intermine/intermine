@@ -10,6 +10,7 @@ package org.flymine.web.widget;
  *
  */
 
+import java.util.ArrayList;
 import java.util.Collection;
 
 import org.intermine.objectstore.query.BagConstraint;
@@ -47,7 +48,7 @@ public class ProteinDomainLdr implements EnrichmentWidgetLdr
     private Query annotatedPopulationQuery;
     private String externalLink, append;
     private Collection<String> organisms;
-    private Collection<String> organismsLower;
+    private Collection<String> organismsLower = new ArrayList<String>();
     private ObjectStore os;
     private InterMineBag bag;
  
