@@ -163,7 +163,7 @@ public class PortalQueryAction extends InterMineAction
         boolean bagExists = true;
         int number = 0;
         while (bagExists) {
-            bagName = ".link";
+            bagName = "link";
             if (origin != null) {
                 bagName += origin;
             }
