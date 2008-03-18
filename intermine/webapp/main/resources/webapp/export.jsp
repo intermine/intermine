@@ -6,15 +6,15 @@
 <!-- export.jsp -->
 <html:xhtml/>
 
-      <html:link action="/exportAction?table=${tableName}&amp;type=csv&amp;tableType=${tableType}">
+      <html:link action="/exportAction?table=${tableName}&amp;type=csv">
         <fmt:message key="export.csv"/>
       </html:link><br>
 
-      <html:link action="/exportAction?table=${tableName}&amp;type=tab&amp;tableType=${tableType}">
+      <html:link action="/exportAction?table=${tableName}&amp;type=tab">
         <fmt:message key="export.tabdelimited"/>
       </html:link><br>
     <c:if test="${pagedTable.estimatedSize <= WEB_PROPERTIES['max.excel.export.size']}">
-        <html:link action="/exportAction?table=${tableName}&amp;type=excel&amp;tableType=${tableType}">
+        <html:link action="/exportAction?table=${tableName}&amp;type=excel">
           <fmt:message key="export.excel">
             <fmt:param value="${WEB_PROPERTIES['max.excel.export.size']}"/>
           </fmt:message>
@@ -29,7 +29,7 @@
             <span class="nullStrike"><fmt:message key="exporter.${entry.key}.description"/></span><br>
           </c:when>
           <c:otherwise>
-        <html:link action="${entry.value.actionPath}&amp;table=${tableName}&amp;tableType=${tableType}">
+        <html:link action="${entry.value.actionPath}&amp;table=${tableName}">
           <fmt:message key="exporter.${entry.key}.description"/>
         </html:link><br>
           </c:otherwise>

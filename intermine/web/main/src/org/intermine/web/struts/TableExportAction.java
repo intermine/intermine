@@ -149,7 +149,7 @@ public class TableExportAction extends InterMineAction
               writer.flush();
           }
         } else {
-            // Attempt to writer error to output stream where data was already sent.
+            // Attempt to write error to output stream where data was already sent.
             // If there are textual data user will see the error else it will
             // makes binary file  probably unreadable and so the user knows
             // that something is wrong.
@@ -177,14 +177,6 @@ public class TableExportAction extends InterMineAction
      * @return PagedTable from session
      */
     protected PagedTable getPagedTable(HttpServletRequest request, HttpSession session) {
-        PagedTable pt;
-        String tableType = request.getParameter("tableType");
-        if (tableType.equals("bag")) {
-            pt = SessionMethods.getResultsTable(session, "bag." 
-                    + request.getParameter("table"));
-        } else {
-            pt = SessionMethods.getResultsTable(session, request.getParameter("table"));
-        }
-        return pt;
+        return SessionMethods.getResultsTable(session, request.getParameter("table"));
     }    
 }

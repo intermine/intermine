@@ -56,7 +56,8 @@ public class ExportController extends TilesAction
 
         WebConfig wc = (WebConfig) servletContext.getAttribute(Constants.WEBCONFIG);
 
-        PagedTable pt = SessionMethods.getResultsTable(session, request.getParameter("table"));
+        String  tableName = (String) request.getAttribute("tableName");
+        PagedTable pt = SessionMethods.getResultsTable(session, tableName);
 
         if (pt == null) {
             LOG.error("PagedTable " + request.getParameter("table") + " is null");
