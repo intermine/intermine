@@ -71,16 +71,17 @@ public class ObjectDetailsController extends InterMineAction
     /**
      * {@inheritDoc}
      */
-    public ActionForward execute(@SuppressWarnings("unused")
-    ActionMapping mapping, @SuppressWarnings("unused")
-    ActionForm form, HttpServletRequest request, @SuppressWarnings("unused")
+    @Override
+    public ActionForward execute(@SuppressWarnings("unused") ActionMapping mapping,
+                                 @SuppressWarnings("unused")
+                                 ActionForm form, HttpServletRequest request,
+                                 @SuppressWarnings("unused")
     HttpServletResponse response) throws Exception {
         HttpSession session = request.getSession();
         ServletContext servletContext = session.getServletContext();
         ObjectStore os = (ObjectStore) servletContext
                 .getAttribute(Constants.OBJECTSTORE);
-        Map<Integer, DisplayObject> displayObjects = SessionMethods
-                .getDisplayObjects(session);
+        Map<Integer, DisplayObject> displayObjects = SessionMethods.getDisplayObjects(session);
 
         String idString = request.getParameter("id");
 
@@ -127,9 +128,8 @@ public class ObjectDetailsController extends InterMineAction
             List<Tag> placementTags = new ArrayList<Tag>(pm.getTags("placement:summary",
                                                                     cd.getUnqualifiedName() + ".%",
                                                                     "reference", superuser));
-            placementTags.addAll(pm.getTags("placement:summary", cd
-                    .getUnqualifiedName()
-                    + ".%", "collection", superuser));
+            placementTags.addAll(pm.getTags("placement:summary", cd.getUnqualifiedName() + ".%",
+                                            "collection", superuser));
 
             Iterator<Tag> placementTagIter = placementTags.iterator();
 
@@ -147,8 +147,8 @@ public class ObjectDetailsController extends InterMineAction
 
         for (Iterator i = aspects.iterator(); i.hasNext();) {
             String aspect = (String) i.next();
-            placementRefsAndCollections.put(AspectController.ASPECT_PREFIX
-                    + aspect, new TreeMap(String.CASE_INSENSITIVE_ORDER));
+            placementRefsAndCollections.put(AspectController.ASPECT_PREFIX + aspect,
+                                            new TreeMap(String.CASE_INSENSITIVE_ORDER));
         }
 
         Map miscRefs = new TreeMap(dobj.getRefsAndCollections());
@@ -160,14 +160,14 @@ public class ObjectDetailsController extends InterMineAction
             DisplayField df = (DisplayField) entry.getValue();
             if (df instanceof DisplayReference) {
                 categoriseBasedOnTags(((DisplayReference) df).getDescriptor(),
-                        "reference", df, miscRefs, pm, superuser,
-                        placementRefsAndCollections, SessionMethods
-                                .isSuperUser(session));
+                                      "reference", df, miscRefs, pm, superuser,
+                                      placementRefsAndCollections, SessionMethods
+                                      .isSuperUser(session));
             } else if (df instanceof DisplayCollection) {
                 categoriseBasedOnTags(((DisplayCollection) df).getDescriptor(),
-                        "collection", df, miscRefs, pm, superuser,
-                        placementRefsAndCollections, SessionMethods
-                                .isSuperUser(session));
+                                      "collection", df, miscRefs, pm, superuser,
+                                      placementRefsAndCollections, SessionMethods
+                                      .isSuperUser(session));
             }
         }
 
