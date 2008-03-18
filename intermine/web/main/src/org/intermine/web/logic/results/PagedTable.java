@@ -324,7 +324,11 @@ public class PagedTable
         }
 
         try {
-            getAllRows().getResultElements(getStartRow());
+            if (getStartRow() == 0) {
+                // no problem - 0 is always valid
+            } else {
+                getAllRows().getResultElements(getStartRow());
+            }
         } catch (IndexOutOfBoundsException e) {
             throw new PageOutOfRangeException(invalidStartMessage);
         }
