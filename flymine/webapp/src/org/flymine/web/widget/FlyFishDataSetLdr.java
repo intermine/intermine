@@ -48,6 +48,7 @@ public class FlyFishDataSetLdr implements DataSetLdr
      * Creates a DataSetLdr used to retrieve, organise
      * and structure the Fly-FISH data to create a graph
      * @param bag the bag
+     * @param extra extra constraint - will be null
      * @param os the ObjectStore
      */
     public FlyFishDataSetLdr(InterMineBag bag, ObjectStore os, String extra) {
