@@ -43,6 +43,7 @@ import org.intermine.sql.query.InListConstraint;
 import org.intermine.sql.query.NotConstraint;
 import org.intermine.sql.query.OrderDescending;
 import org.intermine.sql.query.SelectValue;
+import org.intermine.sql.query.SubQuery;
 import org.intermine.sql.query.SubQueryConstraint;
 import org.intermine.sql.query.Table;
 import org.intermine.util.ConsistentSet;
@@ -225,8 +226,7 @@ public class QueryOptimiser
                     originalQuery = new Query(query);
                 }
                 parseTime = new Date().getTime();
-                remapAliasesToAvoidPrecomputePrefix(originalQuery);
-                recursiveOptimise(precomputedTables, originalQuery, bestQuery, originalQuery);
+                recursiveOptimiseCheckSubquery(precomputedTables, originalQuery, bestQuery);
             } catch (BestQueryException e) {
                 // Ignore - bestQuery decided to cut short the search
                 //if (bestQuery instanceof BestQueryExplainer) {
@@ -289,6 +289,37 @@ public class QueryOptimiser
                 table.setAlias(ALIAS_PREFIX + StringUtil.uniqueString());
             }
         }
+    }
+
+    /**
+     * Recursively optimises the query, given the set of precomputed tables, and updates the
+     * BestQuery object with each Query found. This method looks for simple subqueries to
+     * optimise, and calls recursiveOptimise.
+     *
+     * @param precomputedTables a Set of PrecomputedTable objects to use
+     * @param query a query to optimise
+     * @param bestQuery a BestQuery object to update with each optimised Query object
+     * @throws BestQueryException if the BestQuery decides to cut short the search
+     * @throws SQLException if a database error occurs
+     */
+    public static void recursiveOptimiseCheckSubquery(Set precomputedTables, Query query,
+            BestQuery bestQuery) throws BestQueryException, SQLException {
+        if (query.getFrom().size() == 1) {
+            AbstractTable at = (AbstractTable) query.getFrom().iterator().next();
+            if (at instanceof SubQuery) {
+                Query subQuery = ((SubQuery) at).getQuery();
+                String originalQuery = query.getSQLString();
+                String subQueryString = subQuery.getSQLString();
+                int position = originalQuery.indexOf(subQueryString);
+                bestQuery = new EncloseSubqueryBestQuery(bestQuery,
+                        originalQuery.substring(0, position),
+                        originalQuery.substring(position + subQueryString.length()));
+                recursiveOptimiseCheckSubquery(precomputedTables, subQuery, bestQuery);
+                return;
+            }
+        }
+        remapAliasesToAvoidPrecomputePrefix(query);
+        recursiveOptimise(precomputedTables, query, bestQuery, query);
     }
 
     /**
