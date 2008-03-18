@@ -39,8 +39,7 @@
   <%-- The headers --%>
   <tr>
     <c:forEach var="column" items="${pagedResults.columns}" varStatus="status">
-
-      <c:set var="displayPath" value="${fn:replace(column.name, '.', '&nbsp;> ')}"/>
+      <im:formatColumnName outVar="displayPath" str="${column.name}" /> 
       <im:unqualify className="${column.name}" var="pathEnd"/>
       <im:prefixSubstring str="${column.name}" outVar="columnPathPrefix" delimiter="."/>
       <c:choose>
