@@ -25,6 +25,7 @@ import org.intermine.objectstore.query.QueryField;
 import org.intermine.objectstore.query.QueryNode;
 import org.intermine.objectstore.query.Results;
 
+import org.intermine.metadata.AttributeDescriptor;
 import org.intermine.metadata.ClassDescriptor;
 import org.intermine.metadata.Model;
 import org.intermine.model.InterMineObject;
@@ -92,6 +93,18 @@ public class PathQueryResultHelper
                     if (!view.contains(path)
                                     && ((excludeNonAttributes && path.isOnlyAttribute())
                                     || (!excludeNonAttributes))) {
+                        view.add(path);
+                    }
+                }
+            }
+            if (view.size() == 0) {
+                Set<AttributeDescriptor> attrDesc = classDescriptor.getAttributeDescriptors();
+                for (AttributeDescriptor attributeDescriptor : attrDesc) {
+                    Map<String, String> classToPath = new HashMap<String, String>();
+                    classToPath.put(prefix, classDescriptor.getUnqualifiedName());
+                    Path path = new Path(model, prefix + "." + attributeDescriptor.getName(),
+                                    classToPath);
+                    if (!view.contains(path)) {
                         view.add(path);
                     }
                 }
