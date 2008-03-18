@@ -51,7 +51,8 @@ public class UniProtKeywordsLdr implements EnrichmentWidgetLdr
     private InterMineBag bag;
     private Collection<String> organismsLower = new ArrayList<String>();
     /**
-     * @param request The HTTP request we are processing
+     * @param bag list of objects for this widget
+     * @param os object store
      */
     public UniProtKeywordsLdr(InterMineBag bag, ObjectStore os) {
         this.bag = bag;
@@ -99,7 +100,7 @@ public class UniProtKeywordsLdr implements EnrichmentWidgetLdr
         QueryObjectReference qor2 = new QueryObjectReference(qcOntoTerm, "ontology");
         cs.addConstraint(new ContainsConstraint(qor2, ConstraintOp.CONTAINS, qcOntology));
 
-        cs.addConstraint(new SimpleConstraint(qfOnto, ConstraintOp.MATCHES, 
+        cs.addConstraint(new SimpleConstraint(qfOnto, ConstraintOp.EQUALS, 
                                                new QueryValue("UniProtKeyword")));
 
         Query q = new Query();
