@@ -728,7 +728,7 @@ public class QueryOptimiserTest extends TestCase
 
         StringUtil.setNextUniqueNumber(42);
         BestQueryStorer bestQuery = new BestQueryStorer();
-        QueryOptimiser.recursiveOptimise(precomps, q1, bestQuery, q1);
+        QueryOptimiser.recursiveOptimiseCheckSubquery(precomps, q1, bestQuery);
 
         assertEquals(eSet, bestQuery.getQueries());
     }
@@ -750,7 +750,7 @@ public class QueryOptimiserTest extends TestCase
 
         StringUtil.setNextUniqueNumber(42);
         BestQueryStorer bestQuery = new BestQueryStorer();
-        QueryOptimiser.recursiveOptimise(precomps, q1, bestQuery, q1);
+        QueryOptimiser.recursiveOptimiseCheckSubquery(precomps, q1, bestQuery);
 
         assertEquals(eSet, bestQuery.getQueries());
     }
@@ -778,7 +778,7 @@ public class QueryOptimiserTest extends TestCase
 
         StringUtil.setNextUniqueNumber(42);
         BestQueryStorer bestQuery = new BestQueryStorer();
-        QueryOptimiser.recursiveOptimise(precomps, q1, bestQuery, q1);
+        QueryOptimiser.recursiveOptimiseCheckSubquery(precomps, q1, bestQuery);
 
         assertEquals(eSet, bestQuery.getQueries());
     }
@@ -809,7 +809,7 @@ public class QueryOptimiserTest extends TestCase
         eSet.add(eq);
         StringUtil.setNextUniqueNumber(42);
         bestQuery = new BestQueryStorer();
-        QueryOptimiser.recursiveOptimise(precomps, q, bestQuery, q);
+        QueryOptimiser.recursiveOptimiseCheckSubquery(precomps, q, bestQuery);
         assertEquals(eSet, bestQuery.getQueries());
 
         q = new Query("SELECT ta.id AS a, tb.id AS b, tc.id AS c FROM Company AS ta, Department AS tb, Employee AS tc WHERE ta.id > 25 OR ta.id IS NULL ORDER BY ta.id, tb.id, tc.name");
@@ -818,7 +818,7 @@ public class QueryOptimiserTest extends TestCase
         eSet.add(eq);
         StringUtil.setNextUniqueNumber(42);
         bestQuery = new BestQueryStorer();
-        QueryOptimiser.recursiveOptimise(precomps, q, bestQuery, q);
+        QueryOptimiser.recursiveOptimiseCheckSubquery(precomps, q, bestQuery);
         assertEquals(eSet, bestQuery.getQueries());
 
         q = new Query("SELECT ta.id AS a, tb.id AS b, tc.id AS c FROM Company AS ta, Department AS tb, Employee AS tc WHERE ta.id > 25 OR ta.id IS NULL ORDER BY tc.id, ta.id, tb.id");
@@ -827,7 +827,7 @@ public class QueryOptimiserTest extends TestCase
         eSet.add(eq);
         StringUtil.setNextUniqueNumber(42);
         bestQuery = new BestQueryStorer();
-        QueryOptimiser.recursiveOptimise(precomps, q, bestQuery, q);
+        QueryOptimiser.recursiveOptimiseCheckSubquery(precomps, q, bestQuery);
         assertEquals(eSet, bestQuery.getQueries());
 
         q = new Query("SELECT ta.id AS a, tb.id AS b, tc.id AS c FROM Company AS ta, Department AS tb, Employee AS tc WHERE tc.id > 25 OR tc.id IS NULL ORDER BY tc.id, ta.id, tb.id");
@@ -836,7 +836,7 @@ public class QueryOptimiserTest extends TestCase
         eSet.add(eq);
         StringUtil.setNextUniqueNumber(42);
         bestQuery = new BestQueryStorer();
-        QueryOptimiser.recursiveOptimise(precomps, q, bestQuery, q);
+        QueryOptimiser.recursiveOptimiseCheckSubquery(precomps, q, bestQuery);
         assertEquals(eSet, bestQuery.getQueries());
 
         q = new Query("SELECT DISTINCT ta.id AS a, tb.id AS b, tc.id AS c FROM Company AS ta, Department AS tb, Employee AS tc ORDER BY ta.id, tb.id, tc.id");
@@ -845,7 +845,7 @@ public class QueryOptimiserTest extends TestCase
         eSet.add(eq);
         StringUtil.setNextUniqueNumber(42);
         bestQuery = new BestQueryStorer();
-        QueryOptimiser.recursiveOptimise(precomps, q, bestQuery, q);
+        QueryOptimiser.recursiveOptimiseCheckSubquery(precomps, q, bestQuery);
         assertEquals(eSet, bestQuery.getQueries());
 
         q = new Query("SELECT ta.id AS a, tb.id AS b, tc.age AS c FROM Company AS ta, Department AS tb, Employee AS tc WHERE ta.id > 25 ORDER BY ta.id, tc.id, tb.id");
@@ -855,7 +855,7 @@ public class QueryOptimiserTest extends TestCase
         precomps.add(pt1);
 
         bestQuery = new BestQueryStorer();
-        QueryOptimiser.recursiveOptimise(precomps, q, bestQuery, q);
+        QueryOptimiser.recursiveOptimiseCheckSubquery(precomps, q, bestQuery);
         assertEquals(Collections.EMPTY_SET, bestQuery.getQueries());
     }
 
@@ -875,7 +875,7 @@ public class QueryOptimiserTest extends TestCase
         eSet.add(eq1);
         StringUtil.setNextUniqueNumber(42);
         BestQueryStorer bestQuery = new BestQueryStorer();
-        QueryOptimiser.recursiveOptimise(precomps, q1, bestQuery, q1);
+        QueryOptimiser.recursiveOptimiseCheckSubquery(precomps, q1, bestQuery);
         assertEquals(eSet, bestQuery.getQueries());
 
         Query eq2 = new Query("SELECT P42.a2_, P42.a3_, P42.a3_id, P42.a4_, P42.a4_id FROM precomp1 AS P42 WHERE P42.a2_ > 5325019 ORDER BY P42.a2_, P42.a3_id, P42.a4_id");
@@ -883,7 +883,7 @@ public class QueryOptimiserTest extends TestCase
         eSet.add(eq2);
         StringUtil.setNextUniqueNumber(42);
         bestQuery = new BestQueryStorer();
-        QueryOptimiser.recursiveOptimise(precomps, q2, bestQuery, q2);
+        QueryOptimiser.recursiveOptimiseCheckSubquery(precomps, q2, bestQuery);
         assertEquals(eSet, bestQuery.getQueries());
     }
 
@@ -921,7 +921,7 @@ public class QueryOptimiserTest extends TestCase
         eSet.add(eq1);
         StringUtil.setNextUniqueNumber(42);
         BestQueryStorer bestQuery = new BestQueryStorer();
-        QueryOptimiser.recursiveOptimise(precomps, q1, bestQuery, q1);
+        QueryOptimiser.recursiveOptimiseCheckSubquery(precomps, q1, bestQuery);
         assertEquals(eSet, bestQuery.getQueries());
 
         Query eq2 = new Query("SELECT P42.a2_ FROM precomp1 AS P42 WHERE P42.a2_ > 5325019 ORDER BY P42.a2_");
@@ -929,7 +929,7 @@ public class QueryOptimiserTest extends TestCase
         eSet.add(eq2);
         StringUtil.setNextUniqueNumber(42);
         bestQuery = new BestQueryStorer();
-        QueryOptimiser.recursiveOptimise(precomps, q2, bestQuery, q2);
+        QueryOptimiser.recursiveOptimiseCheckSubquery(precomps, q2, bestQuery);
         assertEquals(eSet, bestQuery.getQueries());
     }
 
@@ -947,7 +947,7 @@ public class QueryOptimiserTest extends TestCase
 
             StringUtil.setNextUniqueNumber(42);
             BestQueryStorer bestQuery = new BestQueryStorer();
-            QueryOptimiser.recursiveOptimise(precomps, q1, bestQuery, q1);
+            QueryOptimiser.recursiveOptimiseCheckSubquery(precomps, q1, bestQuery);
             Set eSet = new ConsistentSet();
             eSet.add(new Query("SELECT P46.a1_id, P46.a2_id, P46.a3_id FROM precomp1 AS P46 WHERE 24081631 < P46.a1_id ORDER BY P46.orderby_field"));
             eSet.add(new Query("SELECT P49.a3_id AS a1_id, P49.a2_id, P49.a1_id AS a3_id FROM precomp1 AS P49 WHERE 24081631 < P49.a3_id ORDER BY P49.a3_id, P49.a2_id, P49.a1_id"));
@@ -978,7 +978,7 @@ public class QueryOptimiserTest extends TestCase
 
             StringUtil.setNextUniqueNumber(42);
             BestQueryStorer bestQuery = new BestQueryStorer();
-            QueryOptimiser.recursiveOptimise(precomps, q1, bestQuery, q1);
+            QueryOptimiser.recursiveOptimiseCheckSubquery(precomps, q1, bestQuery);
             Set eSet = new ConsistentSet();
             eSet.add(new Query("SELECT P46.a1_id, P46.a2_id, P46.a3_id FROM precomp1 AS P46 WHERE 240816315000000000000000000050000000000000000000 < P46.orderby_field ORDER BY P46.orderby_field"));
             eSet.add(new Query("SELECT P49.a3_id AS a1_id, P49.a2_id, P49.a1_id AS a3_id FROM precomp1 AS P49 WHERE 24081631 < P49.a3_id ORDER BY P49.a3_id, P49.a2_id, P49.a1_id"));
@@ -1004,7 +1004,7 @@ public class QueryOptimiserTest extends TestCase
 
         StringUtil.setNextUniqueNumber(42);
         BestQueryStorer bestQuery = new BestQueryStorer();
-        QueryOptimiser.recursiveOptimise(precomps, q1, bestQuery, q1);
+        QueryOptimiser.recursiveOptimiseCheckSubquery(precomps, q1, bestQuery);
         Set eSet = new HashSet();
         eSet.add(new Query("SELECT DISTINCT P42.a23_ AS a17_, P42.a18_, P42.a19_, P42.a20_, P42.a21_, P42.a22_ FROM precomp1 AS P42 WHERE LOWER(P42.a23_) = 'cg3481' ORDER BY P42.a23_, P42.a18_, P42.a19_, P42.a20_, P42.a21_, P42.a22_"));
         assertEquals(eSet, bestQuery.getQueries());
@@ -1077,7 +1077,7 @@ public class QueryOptimiserTest extends TestCase
         try {
             BestQueryStorer bestQuery = new BestQueryStorer();
             StringUtil.setNextUniqueNumber(42);
-            QueryOptimiser.recursiveOptimise(Collections.singleton(pt), q, bestQuery, q);
+            QueryOptimiser.recursiveOptimiseCheckSubquery(Collections.singleton(pt), q, bestQuery);
             if (expected == null) {
                 addIfNE(map, description, Collections.EMPTY_SET, bestQuery.getQueries());
             } else {
@@ -1098,7 +1098,7 @@ public class QueryOptimiserTest extends TestCase
         }
     }
 
-    public void testDistinctAggregate() {
+    public void testDistinctAggregate() throws Exception {
         Query q1 = new Query("SELECT DISTINCT COUNT(*) AS c FROM Department AS a, Employee AS b WHERE b.departmentid = a.id AND a.id = 5 ORDER BY COUNT(*)");
         Query pq1 = new Query("SELECT DISTINCT a.id AS aa, COUNT(*) AS c FROM Department AS a, Employee AS b WHERE b.departmentid = a.id GROUP BY a.id ORDER BY a.id, COUNT(*)");
         Query pq2 = new Query("SELECT DISTINCT a.id AS aa FROM Department AS a, Employee AS b WHERE b.departmentid = a.id ORDER BY a.id");
@@ -1117,6 +1117,19 @@ public class QueryOptimiserTest extends TestCase
         //doTestAddToMap(map, "pt1", pt1, q1, "SELECT DISTINCT P42.c FROM precomp1 AS P42 WHERE P42.aa = 5 ORDER BY P42.orderby_field");
         doTestAddToMap(map, "pt2", pt2, q1, null);
         doTestAddToMap(map, "pt3", pt3, q1, "SELECT DISTINCT COUNT(*) AS c FROM precomp3 AS P42 WHERE P42.aa = 5 ORDER BY COUNT(*)");
+
+        assertTrue("" + map, map.isEmpty());
+    }
+
+    public void testSimpleSubquery() throws Exception {
+        Query q1 = new Query("SELECT COUNT(*) AS c FROM (SELECT a.id AS aid, b.id AS bid FROM Department AS a, Employee AS b WHERE b.departmentid = a.id) AS fake");
+        Query pq1 = new Query("SELECT a.id AS aid, b.id AS bid FROM Department AS a, Employee AS b WHERE b.departmentid = a.id");
+
+        Map map = new HashMap();
+
+        PrecomputedTable pt1 = new PrecomputedTable(pq1, pq1.getSQLString(), "precomp1", null, con);
+
+        doTestAddToMap(map, "pt1", pt1, q1, "SELECT COUNT(*) AS c FROM (SELECT P42.aid AS aid, P42.bid AS bid FROM precomp1 AS P42) AS fake");
 
         assertTrue("" + map, map.isEmpty());
     }
