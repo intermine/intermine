@@ -23,10 +23,6 @@
     </c:forEach>
 </p>
 </div>
-<script type="text/javascript">
-        Nifty("div#linkOuts","transparent");
-</script>
-
 
   </c:if>
 </c:forEach>
