@@ -121,9 +121,10 @@ public class OrthologueConverter implements BagConverter
         PathQuery pathQuery = new PathQuery(model);
 
         List<Path> view = new ArrayList<Path>();
-        view.add(MainHelper.makePath(model, pathQuery, "Gene.identifier"));
+        view.add(MainHelper.makePath(model, pathQuery, "Gene.primaryIdentifier"));
         view.add(MainHelper.makePath(model, pathQuery, "Gene.organism.shortName"));
-        view.add(MainHelper.makePath(model, pathQuery, "Gene.homologues.homologue.identifier"));
+        view.add(MainHelper.makePath(model, pathQuery,
+                        "Gene.homologues.homologue.primaryIdentifier"));
         view.add(MainHelper.makePath(model, pathQuery,
                                                 "Gene.homologues.homologue.organism.shortName"));
         view.add(MainHelper.makePath(model, pathQuery, "Gene.homologues.type"));

@@ -40,6 +40,7 @@ import org.intermine.web.logic.query.Constraint;
 import org.intermine.web.logic.query.PathQuery;
 import org.intermine.web.logic.query.QueryMonitorTimeout;
 import org.intermine.web.logic.results.PagedTable;
+import org.intermine.web.logic.results.ResultElement;
 import org.intermine.web.logic.results.WebResults;
 import org.intermine.web.logic.session.SessionMethods;
 import org.intermine.web.logic.template.TemplateHelper;
@@ -241,8 +242,9 @@ public class PortalQueryAction extends InterMineAction
                     imBag = new InterMineBag(bagName, className, null, new Date(), os,
                                              profile.getUserId(), uosw);
                     List<Integer> converted = new ArrayList<Integer>();
-                    for (List<Object> resRow : convertedWebResult) {
-                        converted.add(((InterMineObject) resRow.get(0)).getId());
+                    for (List resRow : convertedWebResult) {
+                        ResultElement resElement = (ResultElement) resRow.get(0);
+                        converted.add((resElement.getInterMineObject().getId()));
                     }
                     // No matches
                     if (converted.size() <= 0) {
