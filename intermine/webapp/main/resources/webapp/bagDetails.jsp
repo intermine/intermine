@@ -161,10 +161,6 @@
 </table>
 </p>
 </div>
-<script type="text/javascript">
-  Nifty("div#listinfo","transparent");
-</script>
-
 
 <div id="convertList" class="listtoolbox" align="left">
 <h3><img src="images/icons/convert.png" title="Convert objects in this bag to different type"/>&nbsp;Convert</h3>
@@ -180,9 +176,6 @@
 </html:form>
 </p>
 </div>
-<script type="text/javascript">
-        Nifty("div#convertList","transparent");
-</script>
 
 <tiles:insert page="/bagDisplayers.jsp">
    <tiles:put name="bag" beanName="bag"/>
