@@ -261,4 +261,11 @@ public class EnrichmentWidget extends Widget
         this.errorCorrection = errorCorrection;
     }
     
+    /**
+     * {@inheritDoc}
+     */
+    public boolean getHasResults() {
+        return (results != null && results.size() > 0);
+    }
+    
 }
