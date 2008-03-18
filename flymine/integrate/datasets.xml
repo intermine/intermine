@@ -102,19 +102,6 @@
         <attribute name="url" value="http://www.ebi.ac.uk/intact"/>
     </item>
 
-    <item id="90" class="" implements="http://www.flymine.org/model/genomic#DataSource">
-        <attribute name="name" value="FlyReg"/>
-        <attribute name="description" value="Drosophila DNase I Footprint Database"/>
-        <attribute name="url" value="http://www.flyreg.org"/>
-    </item>
-    <item id="91" class="" implements="http://www.flymine.org/model/genomic#DataSet">
-        <attribute name="title" value="FlyReg data set"/>
-        <attribute name="description" value="Drosophila DNase I Footprint data set"/>
-        <attribute name="version" value="2"/>
-        <attribute name="url" value="http://www.flyreg.org"/>
-        <reference name="dataSource" ref_id="90"/>
-    </item>
-
     <item id="100" class="" implements="http://www.flymine.org/model/genomic#DataSource">
         <attribute name="name" value="INDAC"/>
         <attribute name="description" value="International Drosophila Array Consortium"/>
