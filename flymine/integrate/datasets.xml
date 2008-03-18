@@ -346,6 +346,16 @@
         <reference name="dataSource" ref_id="450"/>
     </item>
 
+    <item id="452" class="" implements="http://www.flymine.org/model/genomic#DataSet">
+        <attribute name="title" value="REDfly Drosophila transcription factor binding sites"/>
+        <attribute name="description"
+                   value="Regulatory element database for Drosophila"/>
+        <attribute name="version" value="2.0"/>
+        <attribute name="url" 
+                   value="http://redfly.ccr.buffalo.edu/?content=/search.php"/>
+        <reference name="dataSource" ref_id="450"/>
+    </item>
+
     <item id="460" class="" implements="http://www.flymine.org/model/genomic#DataSource">
       <attribute name="name" value="krause"/>
       <attribute name="description" value="The Krause Lab"/>
