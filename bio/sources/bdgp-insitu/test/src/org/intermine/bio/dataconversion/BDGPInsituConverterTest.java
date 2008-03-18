@@ -23,8 +23,8 @@ import java.io.StringReader;
 import org.apache.commons.io.IOUtils;
 
 /**
- * Fly-FISH converter functional test.
- * @author Kim Rutherford
+ * BDGP converter functional test.
+ * @author Julie Sullivan
  */
 public class BDGPInsituConverterTest extends ItemsTestCase
 {

@@ -12,9 +12,7 @@ package org.intermine.bio.web.widget;
 
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Map;
 
-import org.intermine.objectstore.ObjectStore;
 import org.intermine.objectstore.query.BagConstraint;
 import org.intermine.objectstore.query.ConstraintOp;
 import org.intermine.objectstore.query.ConstraintSet;
@@ -30,11 +28,8 @@ import org.intermine.objectstore.query.QueryValue;
 import org.intermine.objectstore.query.SimpleConstraint;
 
 import org.intermine.bio.web.logic.BioUtil;
-import org.intermine.objectstore.intermine.ObjectStoreInterMineImpl;
-import org.intermine.web.logic.Constants;
-import org.intermine.web.logic.WebUtil;
+import org.intermine.objectstore.ObjectStore;
 import org.intermine.web.logic.bag.InterMineBag;
-import org.intermine.web.logic.profile.Profile;
 import org.intermine.web.logic.widget.EnrichmentWidgetLdr;
 
 import org.flymine.model.genomic.GOAnnotation;
@@ -42,10 +37,6 @@ import org.flymine.model.genomic.GOTerm;
 import org.flymine.model.genomic.Gene;
 import org.flymine.model.genomic.Organism;
 import org.flymine.model.genomic.Protein;
-
-import javax.servlet.ServletContext;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpSession;
 
 /**
  * {@inheritDoc}
@@ -63,7 +54,8 @@ public class GoStatLdr implements EnrichmentWidgetLdr
     private Collection<String> badOntologies;
     private Collection<String> organismsLower = new ArrayList<String>();
     /**
-     * @param request The HTTP request we are processing
+     * @param bag list of objects for this widget
+     * @param os object store
      */
     public GoStatLdr (InterMineBag bag, ObjectStore os) {
         this.bag = bag;
