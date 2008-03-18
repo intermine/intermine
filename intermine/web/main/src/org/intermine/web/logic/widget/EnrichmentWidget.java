@@ -211,7 +211,7 @@ public class EnrichmentWidget extends Widget
     }
     
     public List getFlattenedResults() {
-        if (!results.isEmpty()) {
+        if (results != null && !results.isEmpty()) {
             Map<String, BigDecimal> pvalues = results.get(0);
             Map<String, Long> totals = results.get(1);
             Map<String, String> labelToId = results.get(2);

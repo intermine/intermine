@@ -115,7 +115,8 @@ public class BagDetailsController extends TilesAction
         request.setAttribute("widget2extraAttrs", widget2extraAttrs);
 
         PagedTable pagedResults = SessionMethods.getResultsTable(session, "bag." + imBag.getName());
-        if (pagedResults == null) {
+        
+        if (pagedResults == null || pagedResults.getExactSize() != imBag.getSize()) {
             pagedResults = SessionMethods.doQueryGetPagedTable(request, servletContext, imBag);
         }
 
