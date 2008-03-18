@@ -292,8 +292,8 @@ public class FlyBaseModuleProcessor extends ChadoSequenceProcessor
         if (chadoFeatureType.equals("golden_path_region")) {
             // For organisms other than D. melanogaster sometimes we can convert a
             // golden_path_region to an actual chromosome: if name is 2L, 4, etc
-            if (taxonId == 7237 && !uniqueName.startsWith("Unknown")) {
-                // chromosomes are stored as golden_path_region, but so are golden path regions
+            if (taxonId == 7237) {
+                // chromosomes are stored as golden_path_region
                 realInterMineType = "Chromosome";
             } else {
                 if (taxonId != 7227 && !uniqueName.contains("_")) {
