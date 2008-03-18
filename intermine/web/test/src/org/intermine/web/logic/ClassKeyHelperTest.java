@@ -96,11 +96,11 @@ public class ClassKeyHelperTest extends TestCase {
         Properties props = new Properties();
         props.load(getClass().getClassLoader().getResourceAsStream("class_keys.properties"));
         Map classKeys = ClassKeyHelper.readKeys(model, props);
-        assertEquals(Employee.class, ClassKeyHelper.getKeyFieldClass(classKeys, o, "name"));
+        assertEquals(Company.class, ClassKeyHelper.getKeyFieldClass(classKeys, o, "vatNumber"));
         assertNull(ClassKeyHelper.getKeyFieldClass(classKeys, o, "age"));
 
     }
-    
+
     public void testHasKeyFields() throws Exception {
         Properties props = new Properties();
         props.load(getClass().getClassLoader().getResourceAsStream("class_keys.properties"));
