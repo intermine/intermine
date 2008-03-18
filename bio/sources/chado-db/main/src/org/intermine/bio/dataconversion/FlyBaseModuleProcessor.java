@@ -163,7 +163,7 @@ public class FlyBaseModuleProcessor extends ChadoSequenceProcessor
             map.put(new MultiKey("prop", "Gene", "symbol"),
                     Arrays.asList(CREATE_SYNONYM_ACTION));
             map.put(new MultiKey("prop", "TransposableElementInsertionSite",
-            "curated_cytological_location"),
+                                 "curated_cytological_location"),
             Arrays.asList(new SetFieldConfigAction("cytoLocation")));
 
             // feature configuration example: for features of class "Exon", from "FlyBase",
@@ -179,12 +179,12 @@ public class FlyBaseModuleProcessor extends ChadoSequenceProcessor
                     Arrays.asList(DO_NOTHING_ACTION));
 
             map.put(new MultiKey("feature", "TransposableElementInsertionSite", "FlyBase",
-            "name"),
-            Arrays.asList(new SetFieldConfigAction("symbol"),
-                          new SetFieldConfigAction("secondaryIdentifier"),
-                          CREATE_SYNONYM_ACTION));
+                                 "name"),
+                    Arrays.asList(new SetFieldConfigAction("symbol"),
+                                  new SetFieldConfigAction("secondaryIdentifier"),
+                                  CREATE_SYNONYM_ACTION));
             map.put(new MultiKey("feature", "TransposableElementInsertionSite", "FlyBase",
-            "uniquename"),
+                                 "uniquename"),
             Arrays.asList(new SetFieldConfigAction("primaryIdentifier")));
 
             map.put(new MultiKey("feature", "Gene", "FlyBase", "uniquename"),
