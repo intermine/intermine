@@ -50,18 +50,18 @@ public class DisplayObject
     private Map webProperties;
     private Model model;
 
-    private Set clds;
-    private Map<String, Object> fieldValues = new HashMap();
-    private Map attributes = null;
-    private Map attributeDescriptors = null;
-    private Map references = null;
-    private Map collections = null;
-    private Map refsAndCollections = null;
-    private Map fieldConfigMap = null;
-    private List fieldExprs = null;
+    private Set<ClassDescriptor> clds;
+    private Map<String, Object> fieldValues = new HashMap<String, Object>();
+    private Map<String, Object> attributes = null;
+    private Map<String, FieldDescriptor> attributeDescriptors = null;
+    private Map<String, DisplayReference> references = null;
+    private Map<String, DisplayCollection> collections = null;
+    private Map<String, DisplayField> refsAndCollections = null;
+    private Map<String, FieldConfig> fieldConfigMap = null;
+    private List<String> fieldExprs = null;
     //private Map classTemplateExprs = null;
     //private HttpSession session;
-    private Map verbosity = new HashMap();
+    private Map<String, String> verbosity = new HashMap<String, String>();
     private final Map classKeys;
 
     /**
@@ -96,8 +96,8 @@ public class DisplayObject
      * @param model model
      * @return Set of ClassDescriptor objects
      */
-    public static Set getLeafClds(Class clazz, Model model) {
-        Set leafClds = new LinkedHashSet();
+    public static Set<ClassDescriptor> getLeafClds(Class clazz, Model model) {
+        Set<ClassDescriptor> leafClds = new LinkedHashSet<ClassDescriptor>();
         for (Iterator j = DynamicUtil.decomposeClass(clazz).iterator();
             j.hasNext();) {
             Class c = (Class) j.next();
@@ -129,7 +129,7 @@ public class DisplayObject
      * Get the class descriptors for this object
      * @return the class descriptors
      */
-    public Set getClds() {
+    public Set<ClassDescriptor> getClds() {
         return clds;
     }
 
@@ -137,7 +137,7 @@ public class DisplayObject
      * Get attribute descriptors.
      * @return map of attribute descriptors
      */
-    public Map getAttributeDescriptors() {
+    public Map<String, FieldDescriptor> getAttributeDescriptors() {
         if (attributeDescriptors == null) {
             initialise();
         }
@@ -148,7 +148,7 @@ public class DisplayObject
      * Get the attribute fields and values for this object
      * @return the attributes
      */
-    public Map getAttributes() {
+    public Map<String, Object> getAttributes() {
         if (attributes == null) {
             initialise();
         }
@@ -159,7 +159,7 @@ public class DisplayObject
      * Get the reference fields and values for this object
      * @return the references
      */
-    public Map getReferences() {
+    public Map<String, DisplayReference> getReferences() {
         if (references == null) {
             initialise();
         }
@@ -170,7 +170,7 @@ public class DisplayObject
      * Get the collection fields and values for this object
      * @return the collections
      */
-    public Map getCollections() {
+    public Map<String, DisplayCollection> getCollections() {
         if (collections == null) {
             initialise();
         }
@@ -181,7 +181,7 @@ public class DisplayObject
      * Get all the reference and collection fields and values for this object
      * @return the collections
      */
-    public Map getRefsAndCollections() {
+    public Map<String, DisplayField> getRefsAndCollections() {
         if (refsAndCollections == null) {
             initialise();
         }
@@ -194,11 +194,11 @@ public class DisplayObject
      * DisplayObject.
      * @return the expressions
      */
-    public List getFieldExprs() {
+    public List<String> getFieldExprs() {
         if (fieldExprs == null) {
-            fieldExprs = new ArrayList();
-            for (Iterator i = getFieldConfigMap().keySet().iterator(); i.hasNext();) {
-                String fieldExpr = (String) i.next();
+            fieldExprs = new ArrayList<String>();
+            for (Iterator<String> i = getFieldConfigMap().keySet().iterator(); i.hasNext();) {
+                String fieldExpr = i.next();
                 fieldExprs.add(fieldExpr);
             }
         }
@@ -209,12 +209,12 @@ public class DisplayObject
      * Get map from field expr to FieldConfig.
      * @return map from field expr to FieldConfig
      */
-    public Map getFieldConfigMap() {
+    public Map<String, FieldConfig> getFieldConfigMap() {
         if (fieldConfigMap == null) {
-            fieldConfigMap = new LinkedHashMap();
+            fieldConfigMap = new LinkedHashMap<String, FieldConfig>();
 
-            for (Iterator i = clds.iterator(); i.hasNext();) {
-                ClassDescriptor cld = (ClassDescriptor) i.next();
+            for (Iterator<ClassDescriptor> i = clds.iterator(); i.hasNext();) {
+                ClassDescriptor cld = i.next();
                 List cldFieldConfigs = FieldConfigHelper.getClassFieldConfigs(webConfig, cld);
                 Iterator cldFieldConfigIter = cldFieldConfigs.iterator();
 
@@ -232,7 +232,7 @@ public class DisplayObject
      * Get the map indication whether individuals fields are to be display verbosely
      * @return the map
      */
-    public Map getVerbosity() {
+    public Map<String, String> getVerbosity() {
         return Collections.unmodifiableMap(verbosity);
     }
 
@@ -259,15 +259,15 @@ public class DisplayObject
      * Create the Maps and Lists returned by the getters in this class.
      */
     private void initialise() {
-        attributes = new TreeMap(String.CASE_INSENSITIVE_ORDER);
-        references = new TreeMap(String.CASE_INSENSITIVE_ORDER);
-        collections = new TreeMap(String.CASE_INSENSITIVE_ORDER);
-        refsAndCollections = new TreeMap(String.CASE_INSENSITIVE_ORDER);
-        attributeDescriptors = new HashMap();
+        attributes = new TreeMap<String, Object>(String.CASE_INSENSITIVE_ORDER);
+        references = new TreeMap<String, DisplayReference>(String.CASE_INSENSITIVE_ORDER);
+        collections = new TreeMap<String, DisplayCollection>(String.CASE_INSENSITIVE_ORDER);
+        refsAndCollections = new TreeMap<String, DisplayField>(String.CASE_INSENSITIVE_ORDER);
+        attributeDescriptors = new HashMap<String, FieldDescriptor>();
 
         try {
-            for (Iterator i = clds.iterator(); i.hasNext();) {
-                ClassDescriptor cld = (ClassDescriptor) i.next();
+            for (Iterator<ClassDescriptor> i = clds.iterator(); i.hasNext();) {
+                ClassDescriptor cld = i.next();
 
                 for (Iterator j = cld.getAllFieldDescriptors().iterator(); j.hasNext();) {
                     FieldDescriptor fd = (FieldDescriptor) j.next();
@@ -315,11 +315,11 @@ public class DisplayObject
  * gets the fields to display on the object details page for this display object
  * @return map of fieldnames to display for this object
  */
-    public Map getFieldValues() {
+    public Map<String, Object> getFieldValues() {
         if (fieldValues == null || fieldValues.isEmpty()) {
-            fieldValues = new HashMap();
-            for (Iterator i = fieldExprs.iterator(); i.hasNext();) {
-                String expr = (String) i.next();
+            fieldValues = new HashMap<String, Object>();
+            for (Iterator<String> i = fieldExprs.iterator(); i.hasNext();) {
+                String expr = i.next();
                 Set<Class> classes = DynamicUtil.decomposeClass(object.getClass());
                 String className = "";
                 for (Class c : classes) {

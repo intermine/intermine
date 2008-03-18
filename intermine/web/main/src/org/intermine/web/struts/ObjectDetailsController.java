@@ -57,7 +57,7 @@ import org.intermine.web.logic.tagging.TagTypes;
 /**
  * Implementation of <strong>Action</strong> that assembles data for viewing an
  * object.
- * 
+ *
  * @author Mark Woodbridge
  * @author Thomas Riley
  */
@@ -108,10 +108,10 @@ public class ObjectDetailsController extends InterMineAction
         }
 
         Map<String, Map> placementRefsAndCollections = new TreeMap<String, Map>();
-        Set aspects = new HashSet((Set) servletContext
-                .getAttribute(Constants.CATEGORIES));
+        Set aspects = new HashSet((Set<String>) servletContext.getAttribute(Constants.CATEGORIES));
 
-        Map placementMap = new TreeMap(String.CASE_INSENSITIVE_ORDER);
+        Map<String, DisplayField> placementMap =
+            new TreeMap<String, DisplayField>(String.CASE_INSENSITIVE_ORDER);
         placementRefsAndCollections.put("placement:summary", placementMap);
 
         Set cds = os.getModel().getClassDescriptorsForClass(
@@ -124,23 +124,23 @@ public class ObjectDetailsController extends InterMineAction
 
             // get all placement:summary tags for all refs and collections of
             // this class
-            List placementTags = new ArrayList(pm.getTags("placement:summary",
-                    cd.getUnqualifiedName() + ".%", "reference", superuser));
+            List<Tag> placementTags = new ArrayList<Tag>(pm.getTags("placement:summary",
+                                                                    cd.getUnqualifiedName() + ".%",
+                                                                    "reference", superuser));
             placementTags.addAll(pm.getTags("placement:summary", cd
                     .getUnqualifiedName()
                     + ".%", "collection", superuser));
 
-            Iterator placementTagIter = placementTags.iterator();
+            Iterator<Tag> placementTagIter = placementTags.iterator();
 
             while (placementTagIter.hasNext()) {
-                Tag tag = (Tag) placementTagIter.next();
+                Tag tag = placementTagIter.next();
 
                 String objectIdentifier = tag.getObjectIdentifier();
                 int dotIndex = objectIdentifier.indexOf(".");
                 String fieldName = objectIdentifier.substring(dotIndex + 1);
 
-                placementMap.put(fieldName, dobj.getRefsAndCollections().get(
-                        fieldName));
+                placementMap.put(fieldName, dobj.getRefsAndCollections().get(fieldName));
             }
 
         }
@@ -176,19 +176,18 @@ public class ObjectDetailsController extends InterMineAction
         String myBagsWithThisObject = getBags(os, session, servletContext, id,
                 false);
 
-        request
-                .setAttribute(
-                        "bagsWithThisObject",
-                        publicBagsWithThisObject
-                                + ((publicBagsWithThisObject.length() != 0 && myBagsWithThisObject
-                                        .length() != 0) ? "," : "")
+        request.setAttribute("bagsWithThisObject",
+                             publicBagsWithThisObject
+                                + ((publicBagsWithThisObject.length() != 0
+                                    && myBagsWithThisObject.length() != 0)
+                                   ? ","
+                                   : "")
                                 + myBagsWithThisObject);
-        request.setAttribute("placementRefsAndCollections",
-                placementRefsAndCollections);
+        request.setAttribute("placementRefsAndCollections", placementRefsAndCollections);
 
         Set<Class> cls = DynamicUtil.decomposeClass(object.getClass());
         String type = null;
-        for (Class class1 : cls) {
+        for (Class<?> class1 : cls) {
             type = class1.getCanonicalName();
         }
         request.setAttribute("objectType", type);
@@ -200,7 +199,7 @@ public class ObjectDetailsController extends InterMineAction
      * For a given FieldDescriptor, look up its 'aspect:' tags and place it in
      * the correct map within placementRefsAndCollections. If categorised,
      * remove it from the supplied miscRefs map.
-     * 
+     *
      * @param fd the FieldDecriptor (a references or collection)
      * @param taggedType 'reference' or 'collection'
      * @param dispRef the corresponding DisplayReference or DisplayCollection
@@ -228,7 +227,7 @@ public class ObjectDetailsController extends InterMineAction
                 return;
             } else {
                 if (tagName.startsWith(AspectController.ASPECT_PREFIX)) {
-                    Map<String, DisplayField> refs = placementRefsAndCollections.get(tagName); 
+                    Map<String, DisplayField> refs = placementRefsAndCollections.get(tagName);
                     if (refs != null) {
                         refs.put(fd.getName(), dispRef);
                         miscRefs.remove(fd.getName());
@@ -240,7 +239,7 @@ public class ObjectDetailsController extends InterMineAction
 
     /**
      * Removes field from placements.
-     * 
+     *
      * @param name
      * @param placementRefsAndCollections
      */
@@ -294,7 +293,7 @@ public class ObjectDetailsController extends InterMineAction
 
     /**
      * Make a new DisplayObject from the given object.
-     * 
+     *
      * @param session
      *            used to get WEB_PROPERTIES and DISPLAYERS Maps
      * @param object
@@ -331,7 +330,7 @@ public class ObjectDetailsController extends InterMineAction
         }
         return sb.toString();
     }
-    
+
     private static List<String> getGlobalBagsIds(HttpSession session, Integer id) {
         ObjectStore os = (ObjectStore) session.getServletContext().
             getAttribute(Constants.OBJECTSTORE);
@@ -343,7 +342,7 @@ public class ObjectDetailsController extends InterMineAction
         }
         return ret;
     }
-    
+
     /**
      * Returns global bags containing object with specified id.
      * @param session session
@@ -352,13 +351,13 @@ public class ObjectDetailsController extends InterMineAction
      */
     public static List<InterMineBag> getGlobalBags(HttpSession session, Integer objectId) {
         List<InterMineBag> ret = new ArrayList<InterMineBag>();
-        
+
         List<String> list = getGlobalBagsIds(session, objectId);
         SearchRepository searchRepository = (SearchRepository) session.getServletContext().
             getAttribute(Constants.GLOBAL_SEARCH_REPOSITORY);
-        Map<String, ? extends WebSearchable> webSearchables = 
+        Map<String, ? extends WebSearchable> webSearchables =
             searchRepository.getWebSearchableMap(TagTypes.BAG);
-        
+
         for (WebSearchable webSearchable : webSearchables.values()) {
             InterMineBag bag = (InterMineBag) webSearchable;
             ObjectStoreBag osb = bag.getOsb();
@@ -368,9 +367,9 @@ public class ObjectDetailsController extends InterMineAction
               ret.add(bag);
            }
         }
-        return ret;        
+        return ret;
     }
-    
+
     private static Results getBagsAsResults(ObjectStore os, HttpSession session,
             ServletContext servletContext, Integer id, boolean isGlobal) {
         Map webSearchables = null;
@@ -403,5 +402,5 @@ public class ObjectDetailsController extends InterMineAction
 
         // this should return all bags with that object
         return os.execute(q);
-    }    
+    }
 }

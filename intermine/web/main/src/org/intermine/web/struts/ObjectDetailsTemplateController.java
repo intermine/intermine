@@ -37,6 +37,7 @@ public class ObjectDetailsTemplateController extends TilesAction
     /**
      * {@inheritDoc}
      */
+    @Override
     public ActionForward execute(ComponentContext context,
                                  @SuppressWarnings("unused") ActionMapping mapping,
                                  @SuppressWarnings("unused") ActionForm form,
