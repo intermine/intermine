@@ -21,6 +21,7 @@ import org.flymine.model.genomic.LocatedSequenceFeature;
 import org.intermine.bio.io.gff3.GFF3Record;
 import org.intermine.bio.util.GFF3Util;
 import org.intermine.objectstore.ObjectStoreException;
+import org.intermine.util.IntPresentSet;
 import org.intermine.util.TypeUtil;
 import org.intermine.util.TypeUtil.FieldInfo;
 import org.intermine.web.logic.export.ExportException;
@@ -41,6 +42,7 @@ public class GFF3Exporter implements Exporter
     private Map soClassNames;
     private int writtenResultsCount = 0;
     private boolean headerPrinted = false;
+    private IntPresentSet exportedIds = new IntPresentSet();
 
     /**
      * Constructor.
@@ -73,7 +75,11 @@ public class GFF3Exporter implements Exporter
         IllegalAccessException {
         LocatedSequenceFeature lsf = (LocatedSequenceFeature) row.get(
                 featureIndex).getInterMineObject();
-
+        
+        if (exportedIds.contains(lsf.getId())) {
+            return;
+        } 
+        
         Map<String, List<String>> extraAttributes = new HashMap<String, List<String>>();
 
         // add some fields as extra attributes if the object has them
@@ -104,7 +110,7 @@ public class GFF3Exporter implements Exporter
         }
         
         out.println(gff3Record.toGFF3());
-        
+        exportedIds.add(lsf.getId());
         writtenResultsCount++;
     }
 

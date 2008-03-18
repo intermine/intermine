@@ -11,10 +11,8 @@ package org.intermine.bio.web.export;
  */
 
 import java.io.OutputStream;
-import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
-import java.util.Set;
 
 import org.biojava.bio.Annotation;
 import org.biojava.bio.seq.io.FastaFormat;
@@ -32,6 +30,7 @@ import org.intermine.metadata.ClassDescriptor;
 import org.intermine.metadata.Model;
 import org.intermine.model.InterMineObject;
 import org.intermine.objectstore.ObjectStore;
+import org.intermine.util.IntPresentSet;
 import org.intermine.util.TypeUtil;
 import org.intermine.web.logic.export.ExportException;
 import org.intermine.web.logic.export.ExportHelper;
@@ -78,7 +77,7 @@ public class SequenceExporter implements Exporter
      */
     public void export(List<List<ResultElement>> results) {
         // IDs of the features we have successfully output - used to avoid duplicates
-        Set<Integer> exportedIDs = new HashSet<Integer>();
+        IntPresentSet exportedIDs = new IntPresentSet();
         
         try {
             for (int rowIndex = 0; rowIndex < results.size(); rowIndex++) {
