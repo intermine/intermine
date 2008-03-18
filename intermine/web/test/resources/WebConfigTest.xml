@@ -1,10 +1,10 @@
 <webconfig>
-  <class className="org.intermine.model.testmodel.Employable">
+  <class className="org.intermine.model.testmodel.Employee">
     <fields>
-      <fieldconfig fieldExpr="class1field1"
+      <fieldconfig fieldExpr="name"
                    showInSummary="true" showInInlineCollection="true" showInResults="true"/>
-      <fieldconfig fieldExpr="class1field2.field"
-                   showInSummary="true" showInInlineCollection="true" showInResults="true"/> 
+      <fieldconfig fieldExpr="department.name"
+                   showInSummary="true" showInInlineCollection="true" showInResults="true"/>
     </fields>
     <longdisplayers>
       <displayer src="/model/employee.jsp"/>
@@ -19,13 +19,13 @@
   <class className="org.intermine.model.testmodel.Manager">
     <fields>
       <fieldconfig fieldExpr="name" showInSummary="true"
-                   showInInlineCollection="true" showInResults="true"/> 
+                   showInInlineCollection="true" showInResults="true"/>
       <fieldconfig fieldExpr="seniority"
-                   showInSummary="true" showInInlineCollection="true" showInResults="true"/> 
+                   showInSummary="true" showInInlineCollection="true" showInResults="true"/>
 
       <!-- doNotTruncate means don't add a [View all...] link for long fields,
-           display the whole field inline --> 
-      <fieldconfig fieldExpr="title" doNotTruncate="true"/> 
+           display the whole field inline -->
+      <fieldconfig fieldExpr="title" doNotTruncate="true"/>
     </fields>
     <longdisplayers>
       <displayer src="/model/manager.jsp" aspects="Aspect1, Aspect2"/>

@@ -37,21 +37,21 @@ public class WebConfigTest extends TestCase
         Displayer employeeDisplayer = new Displayer();
         employeeDisplayer.setSrc("/model/employee.jsp");
 
-        Type employableType = new Type();
-        employableType.setClassName("org.intermine.model.testmodel.Employable");
-        employableType.addLongDisplayer(employeeDisplayer);
+        Type employeeType = new Type();
+        employeeType.setClassName("org.intermine.model.testmodel.Employee");
+        employeeType.addLongDisplayer(employeeDisplayer);
         FieldConfig df1 = new FieldConfig();
-        df1.setFieldExpr("class1field1");
+        df1.setFieldExpr("name");
         df1.setShowInInlineCollection(true);
         df1.setShowInResults(true);
         df1.setShowInSummary(true);
-        employableType.addFieldConfig(df1);
+        employeeType.addFieldConfig(df1);
         FieldConfig df2 = new FieldConfig();
-        df2.setFieldExpr("class1field2.field");
+        df2.setFieldExpr("department.name");
         df2.setShowInInlineCollection(true);
         df2.setShowInResults(true);
         df2.setShowInSummary(true);
-        employableType.addFieldConfig(df2);
+        employeeType.addFieldConfig(df2);
 
         Displayer managerDisplayer = new Displayer();
         managerDisplayer.setSrc("/model/manager.jsp");
@@ -97,7 +97,7 @@ public class WebConfigTest extends TestCase
         tableExportConfig.setClassName("java.lang.String");
 
         WebConfig wc2 = new WebConfig();
-        wc2.addType(employableType);
+        wc2.addType(employeeType);
         wc2.addType(managerType);
         wc2.addType(thingType);
         wc2.addTableExportConfig(tableExportConfig);
