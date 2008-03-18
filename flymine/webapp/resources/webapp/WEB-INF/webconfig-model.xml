@@ -352,6 +352,27 @@
     </bagdisplayers>
   </class>
 
+  <class className="org.flymine.model.genomic.TransposableElementInsertionSite">
+    <fields>
+      <fieldconfig fieldExpr="primaryIdentifier"/>
+      <fieldconfig fieldExpr="secondaryIdentifier"/>
+      <fieldconfig fieldExpr="name"/>
+      <fieldconfig fieldExpr="cytoLocation"/>
+      <fieldconfig fieldExpr="chromosomeLocation" displayer="/model/chromosomeLocDisplayer.jsp" showInResults="false" />
+      <fieldconfig fieldExpr="length" displayer="/model/sequenceShortDisplayerWithField.jsp" />
+    </fields>
+    <longdisplayers>
+      <displayer src="/model/locatedSequenceFeatureImage.jsp"/>
+      <displayer src="attributeLinkDisplayer.tile"/>
+    </longdisplayers>
+    <bagdisplayers>
+      <graphdisplayer title="Chromosome Distribution" domainLabel="Chromosome" rangeLabel="Count" dataSetLoader="org.intermine.bio.web.widget.ChromosomeDistributionDataSetLdr"
+                      toolTipGen="org.intermine.web.logic.widget.ToolTipGenerator" link="org.intermine.bio.web.widget.ChromosomeDistributionGraphURLGenerator"
+                      description="Actual: number of features in this list found on each chromosome.  Expected: given the total number of featres on the chromosome and the number in this list, the number of features expected to be found on each chromosome."
+                      graphType="BarChart" extraAttributeClass="org.intermine.bio.web.logic.BioUtil"/>
+    </bagdisplayers>
+  </class>
+
   <class className="org.flymine.model.genomic.MicroArrayExperiment">
     <fields>
       <fieldconfig fieldExpr="name"/>
