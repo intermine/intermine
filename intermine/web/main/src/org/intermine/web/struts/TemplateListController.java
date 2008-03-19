@@ -11,11 +11,20 @@ package org.intermine.web.struts;
  */
 
 import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
+import org.intermine.model.userprofile.Tag;
+import org.intermine.web.logic.Constants;
 import org.intermine.web.logic.bag.InterMineBag;
+import org.intermine.web.logic.profile.ProfileManager;
 import org.intermine.web.logic.results.DisplayObject;
+import org.intermine.web.logic.session.SessionMethods;
+import org.intermine.web.logic.tagging.TagNames;
+import org.intermine.web.logic.tagging.TagTypes;
 import org.intermine.web.logic.template.TemplateListHelper;
 import org.intermine.web.logic.template.TemplateQuery;
 
@@ -57,7 +66,7 @@ public class TemplateListController extends TilesAction
 
         InterMineBag interMineIdBag = (InterMineBag) context.getAttribute("interMineIdBag");
         DisplayObject object = (DisplayObject) context.getAttribute("displayObject");
-        List templates = null;
+        List<TemplateQuery> templates = null;
 
         if (StringUtils.equals("global", scope)) {
             if (interMineIdBag != null) {
@@ -66,12 +75,34 @@ public class TemplateListController extends TilesAction
             } else if (object == null) {
                 templates = TemplateListHelper.getAspectTemplates(aspect, servletContext);
             } else {
-                Map fieldExprs = new HashMap();
+                Map<TemplateQuery, List<String>> fieldExprs =
+                    new HashMap<TemplateQuery, List<String>>();
                 templates = TemplateListHelper
                     .getAspectTemplateForClass(aspect, servletContext, object.getObject(),
                             fieldExprs);
                 request.setAttribute("fieldExprMap", fieldExprs);
             }
+
+            String sup = (String) context.getAttribute(Constants.SUPERUSER_ACCOUNT);
+            ProfileManager pm = SessionMethods.getProfileManager(servletContext);
+            List<Tag> noReportTags =
+                pm.getTags(TagNames.IM_NO_REPORT, null, TagTypes.TEMPLATE, sup);
+
+            Set<String> noReportNames = new HashSet<String>();
+
+            for (Tag tag: noReportTags) {
+                noReportNames.add(tag.getObjectIdentifier());
+            }
+
+            Iterator<TemplateQuery> templateIter = templates.iterator();
+
+            while (templateIter.hasNext()) {
+                TemplateQuery tq = templateIter.next();
+                if (noReportNames.contains(tq.getName())) {
+                    templateIter.remove();
+                }
+            }
+
         } else if (StringUtils.equals("user", scope)) {
             //templates = profile.get
         }

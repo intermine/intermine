@@ -26,4 +26,9 @@ public interface TagNames
      */
     public static final String IM_CONVERTER = "im:converter";
 
+    /**
+     * String used to tag templates that should not appear on report pages.
+     */
+    public static final String IM_NO_REPORT = "im:noreport";
+
 }
