@@ -123,7 +123,7 @@ public class TableWidget extends Widget
                + collectionName + "\"/>";
     }
     
-    public Collection getExtraAttributes(InterMineBag imBag, ObjectStore os) {
+    public Map<String, Collection> getExtraAttributes(InterMineBag imBag, ObjectStore os) {
         return null;
     }
 

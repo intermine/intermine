@@ -55,11 +55,9 @@ public class GoStatLdr implements EnrichmentWidgetLdr
      * @param bag list of objects for this widget
      * @param os object store
      */
-    public GoStatLdr (InterMineBag bag, ObjectStore os) {
+    public GoStatLdr (InterMineBag bag, ObjectStore os, String extraAttribute) {
         this.bag = bag;
-//        namespace = (request.getParameter("filter") != null
-//                        ? request.getParameter("filter") : "biological_process");
-                
+        namespace = extraAttribute;
         organisms = BioUtil.getOrganisms(os, bag, false);
         
         for (String s : organisms) {
@@ -221,6 +219,20 @@ public class GoStatLdr implements EnrichmentWidgetLdr
      */
     public String getAppendage() {
         return append;
+    }
+
+    /**
+     * @return the namespace
+     */
+    public String getNamespace() {
+        return namespace;
+    }
+
+    /**
+     * @param namespace the namespace to set
+     */
+    public void setNamespace(String namespace) {
+        this.namespace = namespace;
     }
 }
 

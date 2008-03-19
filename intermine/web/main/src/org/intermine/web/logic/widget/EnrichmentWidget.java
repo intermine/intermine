@@ -1,26 +1,25 @@
 package org.intermine.web.logic.widget;
 
 
+import java.lang.reflect.Constructor;
+import java.lang.reflect.InvocationTargetException;
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
+import org.intermine.objectstore.ObjectStore;
 import org.intermine.objectstore.query.Query;
 import org.intermine.objectstore.query.Results;
 import org.intermine.objectstore.query.ResultsRow;
-
-import org.intermine.objectstore.ObjectStore;
 import org.intermine.util.TypeUtil;
 import org.intermine.web.logic.WebUtil;
 import org.intermine.web.logic.bag.InterMineBag;
-
-import java.lang.reflect.Constructor;
-import java.lang.reflect.InvocationTargetException;
-import java.math.BigDecimal;
 
 /*
  * Copyright (C) 2002-2008 FlyMine
@@ -50,14 +49,13 @@ public class EnrichmentWidget extends Widget
             Class<?> clazz = TypeUtil.instantiate(getDataSetLoader());
             Constructor<?> constr = clazz.getConstructor(new Class[]
                                                                 {
-                InterMineBag.class, ObjectStore.class
+                InterMineBag.class, ObjectStore.class, String.class
                                                                 });
 
             EnrichmentWidgetLdr ldr = (EnrichmentWidgetLdr) constr.newInstance(new Object[]
                                                                                           {
-                bag, os
+                bag, os, getSelectedExtraAttribute()
                                                                                           });
-            
             // have to calculate sample total for each enrichment widget because namespace may have
             // changed
             results = WebUtil.statsCalc(os, ldr.getAnnotatedPopulation(),
@@ -191,12 +189,12 @@ public class EnrichmentWidget extends Widget
     }
     
     /**
-     * @param imBag bag used for this widget
-     * @param os object store
-     * @return extra attributes - will be null
+     * {@inheritDoc}
      */
-    public Collection<String> getExtraAttributes(InterMineBag imBag, ObjectStore os) {
-        return null;
+    public Map<String, Collection> getExtraAttributes(InterMineBag imBag, ObjectStore os) {
+        Map<String, Collection> returnMap = new HashMap<String, Collection>();
+        returnMap.put(getFilterLabel(), Arrays.asList(getFilters().split(",")));
+        return returnMap;
     }
     
     /**

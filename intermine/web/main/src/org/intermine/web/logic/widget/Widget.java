@@ -12,6 +12,7 @@ package org.intermine.web.logic.widget;
 
 
 import java.util.Collection;
+import java.util.Map;
 
 import org.intermine.objectstore.ObjectStore;
 import org.intermine.web.logic.bag.InterMineBag;
@@ -126,7 +127,7 @@ public abstract class Widget
      * @return the getExtraAttributes
      * @exception Exception if something goes wrong      
      */
-    public abstract Collection<String> getExtraAttributes(InterMineBag imBag, 
+    public abstract Map<String, Collection> getExtraAttributes(InterMineBag imBag, 
                                                   ObjectStore os) 
     throws Exception;
 

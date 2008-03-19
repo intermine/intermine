@@ -13,30 +13,20 @@
 <tiles:importAttribute name="bag" ignore="false" />
 <tiles:importAttribute name="widget2extraAttrs" ignore="false" />
 
+<c:set var="split" value="${fn:split(widget.class,'.')}"/>
+<c:set var="type" value="${split[fn:length(split)-1]}"/>
+
 <html:xhtml/>
 <div id="widgetcontainer${widget.id}" class="widgetcontainer">
   <span id="closewidget${widget.id}" class="widgetcloser"><a href="javascript:toggleWidget('widgetcontainer${widget.id}','togglelink${widget.id}');">close x</a></span>
   <h3>${widget.title}</h3>
-  <p>${widget.description}<br/>
-  <c:if test="${fn:length(widget2extraAttrs[widget.id])>0}">
-    <select name="widgetselect${widget.id}" id="widgetselect${widget.id}" onchange="getProcessGraphWidget('${widget.id}','${bag.name}');">
-    <c:forEach items="${widget2extraAttrs[widget.id]}" var="extraParams">
-      <c:choose>
-        <c:when test="${widget.selectedExtraAttribute == extraParams}">
-          <option value="${extraParams}" selected>${extraParams}</option>
-        </c:when>
-        <c:otherwise>
-          <option value="${extraParams}">${extraParams}</option>
-        </c:otherwise>
-      </c:choose>
-    </c:forEach>
-    </select>
-  </c:if>
-  </p>
- <c:if test="${fn:contains(widget.class,'EnrichmentWidget')}" >
+  <p>${widget.description}</p>
+ <c:set var="extraAttrMap" value="${widget2extraAttrs[widget.id]}" />
+ <c:if test="${type == 'EnrichmentWidget' || fn:length(extraAttrMap)>0}" >
   <fieldset>
   <legend>Options</legend>
   <ol>
+   <c:if test="${type == 'EnrichmentWidget'}" >
     <li>
     <label>Multiple Hypothesis Test Correction</label>
     <select name="errorCorrection${widget.id}" id="errorCorrection${widget.id}" onchange="getProcessEnrichmentWidget('${widget.id}','${bag.name}');">
@@ -55,8 +45,30 @@
       <option value="1.00">1.00</option>
     </select>
     </li>
+   </c:if>
+    <c:forEach items="${extraAttrMap}" var="entry">
+	  <c:if test="${! empty entry.key}">
+	    <li>
+	      <label>${entry.key}:</label>
+	      <select name="widgetselect${widget.id}" id="widgetselect${widget.id}" onchange="getProcess${type}('${widget.id}','${bag.name}');">
+	      <c:forEach items="${entry.value}" var="extraParams">
+	        <c:choose>
+	          <c:when test="${widget.selectedExtraAttribute == extraParams}">
+	            <option value="${extraParams}" selected>${extraParams}</option>
+	          </c:when>
+	          <c:otherwise>
+	            <option value="${extraParams}">${extraParams}</option>
+	          </c:otherwise>
+	        </c:choose>
+	      </c:forEach>
+	      </select>
+	    </li>
+	  </c:if>
+	</c:forEach>
   </ol>
   </fieldset>
+ </c:if>
+ <c:if test="${fn:contains(widget.class,'EnrichmentWidget')}">
   <div id="widget_tool_bar_div_${widget.id}" class="widget_tool_bar_div" >
     <ul id="widget_button_bar_${widget.id}" onclick="toggleToolBarMenu(event);" class="widget_button_bar" >
         <li id="tool_bar_li_display_${widget.id}"><span id="tool_bar_button_display_${widget.id}" class="widget_tool_bar_button">Display</span></li>
@@ -73,9 +85,8 @@
     <!-- EXPORT CODE GOES HERE -->
     <hr>
   <a href="javascript:hideMenu('tool_bar_item_export_${widget.id}')" >Cancel</a>
-</div>
- </c:if>
-  
+  </div>
+ </c:if>  
   <div id="widgetdata${widget.id}" class="widgetdata">
     <c:if test="${fn:contains(widget.class,'TableWidget') || fn:contains(widget.class,'EnrichmentWidget')}" >
       <table id="tablewidget${widget.id}" border="0" >
