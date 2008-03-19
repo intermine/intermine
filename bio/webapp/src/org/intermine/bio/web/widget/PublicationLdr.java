@@ -53,7 +53,7 @@ public class PublicationLdr implements EnrichmentWidgetLdr
      * @param bag the bag
      * @param os the ObjectStore
      */
-    public PublicationLdr(InterMineBag bag, ObjectStore os) {
+    public PublicationLdr(InterMineBag bag, ObjectStore os, String extraAttribute) {
         this.bag = bag;        
         organisms = BioUtil.getOrganisms(os, bag, false);
         for (String s : organisms) {

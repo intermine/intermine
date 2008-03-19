@@ -1,19 +1,18 @@
 package org.intermine.web.logic.widget;
 
+import java.awt.BasicStroke;
+import java.awt.Font;
+import java.lang.reflect.Constructor;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.HashMap;
+import java.util.Map;
+
+import javax.servlet.http.HttpSession;
 
 import org.intermine.objectstore.ObjectStore;
 import org.intermine.util.TypeUtil;
 import org.intermine.web.logic.bag.InterMineBag;
-
-import java.awt.BasicStroke;
-import java.awt.Font;
-
-import java.lang.reflect.Constructor;
-
-import javax.servlet.http.HttpSession;
-
 import org.jfree.chart.ChartColor;
 import org.jfree.chart.ChartFactory;
 import org.jfree.chart.ChartRenderingInfo;
@@ -348,8 +347,9 @@ public class GraphWidget extends Widget
         this.extraAttributeClass = extraAttributeClass;
     }
     
-    public Collection getExtraAttributes(InterMineBag imBag, ObjectStore os) throws Exception{
+    public Map<String, Collection> getExtraAttributes(InterMineBag imBag, ObjectStore os) throws Exception{
         Collection<String> extraAttributes = new ArrayList<String>();
+        Map<String, Collection> returnMap = new HashMap<String, Collection>();
         if (extraAttributeClass != null && extraAttributeClass.length() > 0) {
             try {
                 Class clazz = TypeUtil.instantiate(extraAttributeClass);
@@ -364,7 +364,10 @@ public class GraphWidget extends Widget
                 throw new Exception(e.getMessage());
             }
         }
-        return extraAttributes;
+        if (extraAttributes.size() > 0) {
+            returnMap.put("Organism", extraAttributes);
+        }
+        return returnMap;
     }
     
     /**

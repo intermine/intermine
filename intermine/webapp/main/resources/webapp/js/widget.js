@@ -82,7 +82,11 @@ function getProcessEnrichmentWidget(widgetId, bagName) {
   if($("max" + widgetId)!=null) {
     max = $("max" + widgetId).value;
   }
-  AjaxServices.getProcessEnrichmentWidget(widgetId,bagName,errorCorrection,max,handleTableWidget);
+  var extraAttr;
+  if($("widgetselect" + widgetId)!=null) {
+    extraAttr = $("widgetselect" + widgetId).value;
+  }
+  AjaxServices.getProcessEnrichmentWidget(widgetId,bagName,errorCorrection,max,extraAttr,handleTableWidget);
 }
 
 function removeChildren(node) {

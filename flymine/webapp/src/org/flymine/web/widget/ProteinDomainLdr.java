@@ -55,7 +55,7 @@ public class ProteinDomainLdr implements EnrichmentWidgetLdr
      * @param bag list of objects for this widget
      * @param os object store
      */
-    public ProteinDomainLdr(InterMineBag bag, ObjectStore os) {
+    public ProteinDomainLdr(InterMineBag bag, ObjectStore os, String extraAttribute) {
         this.bag = bag;
         
         organisms = BioUtil.getOrganisms(os, bag, false);

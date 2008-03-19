@@ -13,7 +13,7 @@ div.widgetcontainer{
 
 div.widgetcontainer p{
    font-size:0.9em;
-   margin:10px 0 10px 0;
+   margin:10px 0 5px 0;
    text-align:justify;
 }
 
@@ -28,7 +28,7 @@ div.widgetdatawait{
 div.widgetdata{
     clear:left;
     padding:0px;
-    height:370px;
+    height:360px;
     width:450px;
     overflow: auto;
     overflow-y:auto;
@@ -52,7 +52,15 @@ div.widgetdata thead th{
 
 div.widgetcontainer fieldset {
     text-align:right;
+    margin:0 0 5px 0;
+    padding:0 0.5em 0 0;
+    border:1px solid #BFBAB0;
 }
+div.widgetcontainer fieldset legend {
+    font-size:0.9em;
+    margin-left:1em;
+}
+
 div.widgetcontainer select {
     font-size:0.9em;
 }

@@ -50,7 +50,7 @@ public class UniProtFeaturesLdr implements EnrichmentWidgetLdr
     /**
      * @param request The HTTP request we are processing
      */
-    public UniProtFeaturesLdr(InterMineBag bag, ObjectStore os) {
+    public UniProtFeaturesLdr(InterMineBag bag, ObjectStore os, String extraAttribute) {
         this.bag = bag;
         this.os = os;
         organisms = BioUtil.getOrganisms(os, bag, false);

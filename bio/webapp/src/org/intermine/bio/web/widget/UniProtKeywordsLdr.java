@@ -54,7 +54,7 @@ public class UniProtKeywordsLdr implements EnrichmentWidgetLdr
      * @param bag list of objects for this widget
      * @param os object store
      */
-    public UniProtKeywordsLdr(InterMineBag bag, ObjectStore os) {
+    public UniProtKeywordsLdr(InterMineBag bag, ObjectStore os, String extraAttribute) {
         this.bag = bag;
         this.os = os;
         organisms = BioUtil.getOrganisms(os, bag, false);

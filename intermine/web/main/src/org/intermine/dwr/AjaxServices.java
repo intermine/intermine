@@ -784,7 +784,7 @@ public class AjaxServices
     }    
     
     public static EnrichmentWidget getProcessEnrichmentWidget(String widgetId, String bagName,
-                                                              String errorCorrection, String max)
+                                                              String errorCorrection, String max, String selectedExtraAttribute)
                     throws InterMineException {
         ServletContext servletContext = WebContextFactory.get().getServletContext();
         HttpSession session = WebContextFactory.get().getSession();
@@ -804,6 +804,7 @@ public class AjaxServices
                 EnrichmentWidget enrichmentWidget = (EnrichmentWidget) widget;
                 enrichmentWidget.setMax(max);
                 enrichmentWidget.setErrorCorrection(errorCorrection);
+                enrichmentWidget.setSelectedExtraAttribute(selectedExtraAttribute);
                 enrichmentWidget.process(imBag, os);
                 return enrichmentWidget;
             }
