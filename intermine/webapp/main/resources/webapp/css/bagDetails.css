@@ -63,7 +63,17 @@ table.listinfotable tr td.infotitle {
 }
 ol.widgetList li {
     float:left;
+    margin-bottom:5px;
 }
 .active, a:link.active, a:visited.active {
-    font-weight: bold;
+    background-color:#9F67AD;
+    color:white;
+    padding:0 3px 0 3px;
+    /*font-weight: bold;*/
+}
+span.widgetcloser{
+    float:right;
+    padding:0;
+    margin:-5px 0;
+    font-size:0.9em;
 }

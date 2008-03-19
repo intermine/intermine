@@ -15,6 +15,7 @@
 
 <html:xhtml/>
 <div id="widgetcontainer${widget.id}" class="widgetcontainer">
+  <span id="closewidget${widget.id}" class="widgetcloser"><a href="javascript:toggleWidget('widgetcontainer${widget.id}','togglelink${widget.id}');">close x</a></span>
   <h3>${widget.title}</h3>
   <p>${widget.description}<br/>
   <c:if test="${fn:length(widget2extraAttrs[widget.id])>0}">
