@@ -27,6 +27,7 @@ import org.apache.struts.action.ActionMessage;
 import org.intermine.cache.InterMineCache;
 import org.intermine.objectstore.ObjectStore;
 import org.intermine.objectstore.ObjectStoreException;
+import org.intermine.objectstore.query.ConstraintOp;
 import org.intermine.web.logic.Constants;
 import org.intermine.web.logic.ServletMethods;
 import org.intermine.web.logic.WebUtil;
@@ -86,6 +87,7 @@ public class CreateTemplateAction extends InterMineAction
         }
         Iterator iter = query.getNodes().values().iterator();
         boolean foundEditableConstraint = false;
+        boolean foundNonEditableLookup = false;
         while (iter.hasNext()) {
             PathNode node = (PathNode) iter.next();
             Iterator citer = node.getConstraints().iterator();
@@ -94,14 +96,26 @@ public class CreateTemplateAction extends InterMineAction
                 if (c.isEditable()) {
                     foundEditableConstraint = true;
                     break;
+                } else {
+                    if (c.getOp().equals(ConstraintOp.LOOKUP)) {
+                        foundNonEditableLookup = true;
+                    }
                 }
             }
         }
+        
+        // template must have at least one editable constrain
         if (!foundEditableConstraint) {
             recordError(new ActionMessage("errors.createtemplate.noconstraints"), request);
             seenProblem = true;
         }
-
+        
+        // template cannot have non-editable LOOKUP constraints
+        if (foundNonEditableLookup) {
+            recordError(new ActionMessage("errors.createtemplate.noneditablelookup"), request);
+            seenProblem = true;
+        }
+        
         // Check for a name clash with system templates
         Profile superUser = SessionMethods.getSuperUserProfile(servletContext);
         if (!superUser.equals(profile)) {

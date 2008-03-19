@@ -736,7 +736,6 @@ public class TemplateHelper
         TemplateQuery templateClone = template.cloneWithoutEditableConstraints();
 
 
-        // dummy call to makeQuery() to fill in pathToQueryNode map
         List<String> indexPaths = new ArrayList<String>();
         // find nodes with editable constraints to index and possibly add to select list
         Iterator niter = template.getEditableNodes().iterator();
