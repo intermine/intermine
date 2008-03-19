@@ -193,8 +193,10 @@
     var d = $(linkid);
     if(Element.hasClassName($(linkid), 'active')) {
       $(linkid).removeClassName('active');
+      AjaxServices.saveToggleState(widgetid, false);
     } else {
       $(linkid).addClassName('active');
+      AjaxServices.saveToggleState(widgetid, true);
     }
   }
 </script>
