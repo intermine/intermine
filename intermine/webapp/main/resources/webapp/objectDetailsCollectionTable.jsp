@@ -103,7 +103,7 @@
 </table>
 
 <div class="refSummary">
-  [<html:link action="/collectionDetails?id=${object.id}&amp;field=${fieldName}&amp;pageSize=25&amp;trail=${param.trail}">
+  [<html:link action="/collectionDetails?id=${object.id}&amp;field=${fieldName}&amp;trail=${param.trail}">
     <c:choose>
       <c:when test="${collection.size > WEB_PROPERTIES['inline.table.size']}">
         <fmt:message key="results.showallintable"/>
