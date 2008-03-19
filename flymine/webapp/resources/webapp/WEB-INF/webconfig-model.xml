@@ -215,7 +215,11 @@
 
       <bagtabledisplayer title="Pathway Information (KEGG)" type="Pathway" collectionName="pathways" link="org.intermine.bio.web.widget.PathwayURLQuery"
                          description="Most common &lt;a href=&quot;http://www.genome.jp/kegg/&quot; target=&quot;_new&quot;&gt;KEGG pathways&lt;/a&gt; for this list." />
-
+                         
+      <bagtabledisplayer title="Homologues" type="Homologue" collectionName="homologues" link="org.intermine.bio.web.widget.PathwayURLQuery"
+                         description="Most common homologues for this list." />
+                         
+<!-- waiting for xav to fix query
       <enrichmentwidgetdisplayer title="Gene Ontology Enrichment"
                                  link="org.intermine.bio.web.widget.GoStatURLQuery"
                                  dataSetLoader="org.intermine.bio.web.widget.GoStatLdr"
@@ -224,7 +228,7 @@
                                  filters="biological_process,cellular_component,molecular_function"
                                  filterLabel="Ontology"
                                  max="0.10" />
-
+-->
       <enrichmentwidgetdisplayer title="Protein Domain Enrichment"
                                  link="org.flymine.web.widget.ProteinDomainURLQuery"
                                  dataSetLoader="org.flymine.web.widget.ProteinDomainLdr"
@@ -244,6 +248,15 @@
                                  max="0.10"
                                  externalLink="http://www.ncbi.nlm.nih.gov/entrez/query.fcgi?cmd=Retrieve&amp;db=PubMed&amp;dopt=Abstract&amp;list_uids="
                                  append="" />
+
+      <enrichmentwidgetdisplayer title="BDGP Enrichment"
+                                 link="org.flymine.web.widget.BDGPURLQuery"
+                                 dataSetLoader="org.flymine.web.widget.BDGPLdr"
+                                 label="Terms"
+                                 description="mRNA expression terms enriched for genes in this list."
+                                 filters=""
+                                 filterLabel=""
+                                 max="0.10"  />
 
 <!-- remove until we can fix the query
            <enrichmentwidgetdisplayer title="Tiffin Motif Enrichment"
