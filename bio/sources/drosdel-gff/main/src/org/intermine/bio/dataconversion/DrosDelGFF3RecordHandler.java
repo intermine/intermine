@@ -27,7 +27,7 @@ import org.intermine.xml.full.Item;
 
 public class DrosDelGFF3RecordHandler extends GFF3RecordHandler
 {
-    private Map elementsMap = new HashMap();
+    private Map<String, Item> elementsMap = new HashMap<String, Item>();
 
     /**
      * Create a new DrosDelGFF3RecordHandler for the given target model.
@@ -40,16 +40,17 @@ public class DrosDelGFF3RecordHandler extends GFF3RecordHandler
     /**
      * {@inheritDoc}
      */
+    @Override
     public void process(GFF3Record record) {
         Item feature = getFeature();
 
-        List availableList = (List) record.getAttributes().get("available");
+        List<String> availableList = record.getAttributes().get("available");
         if (record.getType().equals("ArtificialDeletion")) {
-            feature.setAttribute("available", (String) availableList.get(0));
-            List element1List = (List) record.getAttributes().get("Element1");
+            feature.setAttribute("available", availableList.get(0));
+            List<String> element1List = record.getAttributes().get("Element1");
             if (element1List != null) {
-                String elem1Identifier = (String) element1List.get(0);
-                Item elem1 = (Item) elementsMap.get(elem1Identifier);
+                String elem1Identifier = element1List.get(0);
+                Item elem1 = elementsMap.get(elem1Identifier);
                 if (elem1 == null) {
                     throw new RuntimeException("TransposableElementInsertionSite features must "
                                                + "be first in the GFF file - can't find: "
@@ -57,10 +58,10 @@ public class DrosDelGFF3RecordHandler extends GFF3RecordHandler
                 }
                 feature.setReference("element1", elem1);
             }
-            List element2List = (List) record.getAttributes().get("Element2");
+            List<String> element2List = record.getAttributes().get("Element2");
             if (element2List != null) {
-                String elem2Identifier = (String) element2List.get(0);
-                Item elem2 = (Item) elementsMap.get(elem2Identifier);
+                String elem2Identifier = element2List.get(0);
+                Item elem2 = elementsMap.get(elem2Identifier);
                 if (elem2 == null) {
                     throw new RuntimeException("TransposableElementInsertionSite features must "
                                                + "be first in the GFF file - can't find: "
@@ -70,11 +71,11 @@ public class DrosDelGFF3RecordHandler extends GFF3RecordHandler
             }
         } else {
             if (record.getAttributes().get("type") != null) {
-                String type = (String) ((List) record.getAttributes().get("type")).get(0);
+                String type = record.getAttributes().get("type").get(0);
                 feature.setAttribute("type", type);
             }
             if (record.getAttributes().get("subtype") != null) {
-                String type = (String) ((List) record.getAttributes().get("subtype")).get(0);
+                String type = record.getAttributes().get("subtype").get(0);
                 feature.setAttribute("subType", type);
             }
             // save and don't store so we can fix up element references
@@ -92,7 +93,8 @@ public class DrosDelGFF3RecordHandler extends GFF3RecordHandler
      * have been read.  For this class TransposableElementInsertionSite items
      * @return the final Items
      */
-    public Collection getFinalItems() {
+    @Override
+    public Collection<Item> getFinalItems() {
         return elementsMap.values();
     }
 }
