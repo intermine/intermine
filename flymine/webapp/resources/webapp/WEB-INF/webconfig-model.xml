@@ -216,8 +216,12 @@
       <bagtabledisplayer title="Pathway Information (KEGG)" type="Pathway" collectionName="pathways" link="org.intermine.bio.web.widget.PathwayURLQuery"
                          description="Most common &lt;a href=&quot;http://www.genome.jp/kegg/&quot; target=&quot;_new&quot;&gt;KEGG pathways&lt;/a&gt; for this list." />
                          
-      <bagtabledisplayer title="Homologues" type="Homologue" collectionName="homologues" link="org.intermine.bio.web.widget.PathwayURLQuery"
+      <bagtabledisplayer title="Homologues" type="Homologue" collectionName="homologues" link="org.intermine.bio.web.widget.HomologueURLQuery"
                          description="Most common homologues for this list." />
+                         
+      <bagtabledisplayer title="Genetic Interactions" type="GeneticInteraction" collectionName="geneticInteractions" link="org.intermine.bio.web.widget.HomologueURLQuery"
+                         description="Most common interactions for this list." />
+           
                          
 <!-- waiting for xav to fix query
       <enrichmentwidgetdisplayer title="Gene Ontology Enrichment"
