@@ -57,6 +57,23 @@
     </li>
   </ol>
   </fieldset>
+  <div id="widget_tool_bar_div_${widget.id}" class="widget_tool_bar_div" >
+    <ul id="widget_button_bar_${widget.id}" onclick="toggleToolBarMenu(event);" class="widget_button_bar" >
+        <li id="tool_bar_li_display_${widget.id}"><span id="tool_bar_button_display_${widget.id}" class="widget_tool_bar_button">Display</span></li>
+        <li id="tool_bar_li_export_${widget.id}"><span id="tool_bar_button_export_${widget.id}" class="widget_tool_bar_button">Export</span></li>
+    </ul>
+  </div>
+  <div id="tool_bar_item_display_${widget.id}" style="visibility:hidden" class="tool_bar_item">
+    <a href="javascript:document.widgetForm.submit();">Display checked items in results table</a>
+    <hr>
+    <a href="javascript:hideMenu('tool_bar_item_display_${widget.id}')" >Cancel</a>
+  </div>
+  
+  <div id="tool_bar_item_export_${widget.id}" style="visibility:hidden" class="tool_bar_item">
+    <!-- EXPORT CODE GOES HERE -->
+    <hr>
+  <a href="javascript:hideMenu('tool_bar_item_export_${widget.id}')" >Cancel</a>
+</div>
  </c:if>
   
   <div id="widgetdata${widget.id}" class="widgetdata">
@@ -68,7 +85,7 @@
     </c:if>
   </div>
   <div id="widgetdatawait${widget.id}" class="widgetdatawait"><img src="images/wait30.gif" title="Searching..."/></div>
-  <div id="widgetdatanoresults${widget.id}" class="widgetdatawait">No Results found</div>
+  <div id="widgetdatanoresults${widget.id}" class="widgetdatawait"><i>No Results found</i></div>
   <script language="javascript">
   <c:choose>
     <c:when test="${fn:contains(widget.class,'GraphWidget')}" >

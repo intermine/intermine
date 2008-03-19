@@ -35,6 +35,7 @@ import org.jfree.chart.servlet.ServletUtilities;
 import org.jfree.chart.title.TextTitle;
 import org.jfree.chart.urls.CategoryURLGenerator;
 import org.jfree.data.category.CategoryDataset;
+import org.jfree.ui.RectangleInsets;
 import org.jfree.ui.TextAnchor;
 
 /*
@@ -101,8 +102,9 @@ public class GraphWidget extends Widget
                                 false // URLs?
                                 );
                 plot = chart.getCategoryPlot();
-                renderer = (StackedBarRenderer) plot.getRenderer();
+                chart.setPadding(new RectangleInsets(5.0, 5.0, 5.0, 5.0));
 
+                renderer = (StackedBarRenderer) plot.getRenderer();
                 // integers only
                 NumberAxis rangeAxis = (NumberAxis) plot.getRangeAxis();
                 rangeAxis.setStandardTickUnits(NumberAxis.createIntegerTickUnits());
@@ -116,6 +118,7 @@ public class GraphWidget extends Widget
                                     PlotOrientation.VERTICAL, true, true, // tooltips?
                                     false // URLs?
                                     );
+                    chart.setPadding(new RectangleInsets(5.0, 5.0, 5.0, 5.0));
 
                     if (getSelectedExtraAttribute() != null
                     && !getSelectedExtraAttribute().startsWith("any")) {
@@ -157,6 +160,8 @@ public class GraphWidget extends Widget
                     rangeAxis.setStandardTickUnits(NumberAxis.createIntegerTickUnits());
 
                 }
+
+            chart.getTitle().setFont(new Font("SansSerif", Font.BOLD, 12));
 
             // display values for each column
             CategoryItemLabelGenerator generator = new StandardCategoryItemLabelGenerator();

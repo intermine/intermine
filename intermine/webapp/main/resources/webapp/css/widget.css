@@ -26,6 +26,8 @@ div.widgetdatawait{
 }
 
 div.widgetdata{
+    clear:left;
+    padding:0px;
     height:370px;
     width:450px;
     overflow: auto;
@@ -34,6 +36,8 @@ div.widgetdata{
 
 div.widgetdata table {
     border-collapse:collapse;
+    margin:0px;
+    padding:0px;
 }
 div.widgetdata tbody td {
     text-align:left;
@@ -44,4 +48,32 @@ div.widgetdata tbody td {
 div.widgetdata thead th{
     background-color:#CCC;
     padding:5px;
+}
+
+div.widgetcontainer fieldset {
+    text-align:right;
+}
+div.widgetcontainer select {
+    font-size:0.9em;
+}
+
+div.widget_tool_bar_div {
+}
+
+ul.widget_button_bar {
+    float:left;
+    border-bottom:1px solid #CCC;
+    margin-bottom:5px;
+}
+ul.widget_button_bar li {
+    float:left;
+}
+span.widget_tool_bar_button, span.widget_tool_bar_button:visited {
+    cursor: pointer;
+    color: #004499;
+}
+span.widget_tool_bar_button:hover {
+    cursor: pointer;
+    color: white;
+    background-color: #004499;
 }
