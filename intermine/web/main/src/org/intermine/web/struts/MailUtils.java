@@ -45,12 +45,16 @@ public abstract class MailUtils
         String text = (String) webProperties.get("mail.text");
         String authFlag = (String) webProperties.get("mail.smtp.auth");
         String starttlsFlag = (String) webProperties.get("mail.smtp.starttls.enable");
-
+        
         text = MessageFormat.format(text, new Object[] {imPassword});
         Properties properties = System.getProperties();
 
         properties.put("mail.smtp.host", webProperties.get("mail.host"));
         properties.put("mail.smtp.user", user);
+        // Fix to "javax.mail.MessagingException: 501 Syntactically 
+        // invalid HELO argument(s)" problem
+        // See http://forum.java.sun.com/thread.jspa?threadID=487000&messageID=2280968
+        properties.put("mail.smtp.localhost", "localhost");
         if (smtpPort != null) {
             properties.put("mail.smtp.port", smtpPort);
         }
