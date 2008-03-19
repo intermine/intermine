@@ -66,7 +66,6 @@ public class CollectionDetailsAction extends Action
         // Model model = os.getModel();
         Integer id = new Integer(request.getParameter("id"));
         String field = request.getParameter("field");
-        String pageSize = request.getParameter("pageSize");
         String trail = request.getParameter("trail");
 
         InterMineObject o = os.getObjectById(id);
@@ -99,6 +98,6 @@ public class CollectionDetailsAction extends Action
 
         return new ForwardParameters(mapping.findForward("results")).addParameter("noSelect",
                         "true").addParameter("table", pagedTable.getTableid())
-                        .addParameter("size", pageSize).addParameter("trail", trail).forward();
+                        .addParameter("trail", trail).forward();
     }
 }
