@@ -728,9 +728,10 @@ public class AjaxServices
         }
         return queries;
     }
-    
-    
-    public static GraphWidget getProcessGraphWidget(String widgetId, String bagName, String selectedExtraAttribute) throws InterMineException {
+
+    public static GraphWidget getProcessGraphWidget(String widgetId, String bagName, 
+                                                    String selectedExtraAttribute) 
+    throws InterMineException {
         ServletContext servletContext = WebContextFactory.get().getServletContext();
         HttpSession session = WebContextFactory.get().getSession();
         WebConfig webConfig = (WebConfig) servletContext.getAttribute(Constants.WEBCONFIG);
@@ -756,7 +757,8 @@ public class AjaxServices
         return null;
     }
     
-    public static TableWidget getProcessTableWidget(String widgetId, String bagName) throws InterMineException {
+    public static TableWidget getProcessTableWidget(String widgetId, String bagName) 
+    throws InterMineException, ClassNotFoundException {
         ServletContext servletContext = WebContextFactory.get().getServletContext();
         HttpSession session = WebContextFactory.get().getSession();
         WebConfig webConfig = (WebConfig) servletContext.getAttribute(Constants.WEBCONFIG);
@@ -776,7 +778,12 @@ public class AjaxServices
                 TableWidget tableWidget = (TableWidget) widget;
                 tableWidget.setClassKeys(classKeys);
                 tableWidget.setWebConfig(webConfig);
-                tableWidget.process(imBag, os);
+                try {
+                    tableWidget.process(imBag, os);
+                } catch (Exception e) {
+                    return null;
+                }
+                
                 return tableWidget;
             }
         }
@@ -784,7 +791,8 @@ public class AjaxServices
     }    
     
     public static EnrichmentWidget getProcessEnrichmentWidget(String widgetId, String bagName,
-                                                              String errorCorrection, String max, String selectedExtraAttribute)
+                                                              String errorCorrection, String max, 
+                                                              String selectedExtraAttribute)
                     throws InterMineException {
         ServletContext servletContext = WebContextFactory.get().getServletContext();
         HttpSession session = WebContextFactory.get().getSession();

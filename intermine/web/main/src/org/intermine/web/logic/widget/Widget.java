@@ -118,8 +118,10 @@ public abstract class Widget
      * 
      * @param imBag the InterMineBag
      * @param os the ObjectStore
+     * @throws Exception if one of the classes in the widget isn't found
      */
-    public abstract void process(InterMineBag imBag, ObjectStore os);
+    public abstract void process(InterMineBag imBag, ObjectStore os)
+    throws Exception;
 
     /**
      * @param imBag the InterMineBag

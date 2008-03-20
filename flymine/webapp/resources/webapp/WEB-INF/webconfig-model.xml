@@ -214,17 +214,15 @@
                       rangeLabel="Gene count" 
                       graphType="BarChart" />
                       
-
-      <bagtabledisplayer title="Pathway Information (KEGG)" type="Pathway" collectionName="pathways" link="org.intermine.bio.web.widget.PathwayURLQuery"
+      <bagtabledisplayer title="Pathway Information (KEGG)" pathStrings="Gene.pathways.Pathway" link="org.intermine.bio.web.widget.PathwayURLQuery"
                          description="Most common &lt;a href=&quot;http://www.genome.jp/kegg/&quot; target=&quot;_new&quot;&gt;KEGG pathways&lt;/a&gt; for this list." />
-                         
-      <bagtabledisplayer title="Homologues" type="Homologue" collectionName="homologues" link="org.intermine.bio.web.widget.HomologueURLQuery"
+              
+      <bagtabledisplayer title="Homologues" pathStrings="Gene.homologues.Organism" link="org.intermine.bio.web.widget.HomologueURLQuery"
                          description="Most common homologues for this list." />
                          
-      <bagtabledisplayer title="Genetic Interactions" type="GeneticInteraction" collectionName="geneticInteractions" link="org.intermine.bio.web.widget.HomologueURLQuery"
+      <bagtabledisplayer title="Genetic Interactions" pathStrings="Gene.interactions.GeneticInteraction" link="org.intermine.bio.web.widget.GeneticInteractionURLQuery"
                          description="Most common interactions for this list." />
-           
-                         
+
       <enrichmentwidgetdisplayer title="Gene Ontology Enrichment"
                                  link="org.intermine.bio.web.widget.GoStatURLQuery"
                                  dataSetLoader="org.intermine.bio.web.widget.GoStatLdr"
@@ -233,6 +231,7 @@
                                  filters="biological_process,cellular_component,molecular_function"
                                  filterLabel="Ontology"
                                  max="0.10" />
+
       <enrichmentwidgetdisplayer title="Protein Domain Enrichment"
                                  link="org.flymine.web.widget.ProteinDomainURLQuery"
                                  dataSetLoader="org.flymine.web.widget.ProteinDomainLdr"
