@@ -140,7 +140,7 @@ public class FlyBaseModuleProcessor extends ChadoSequenceProcessor
             map.put(new MultiKey("dbxref", "TransposableElementInsertionSite", "drosdel", null),
                     Arrays.asList(new SetFieldConfigAction("secondaryIdentifier")));
 
-            map.put(new MultiKey("synonym", "ChromosomalDeletion", "fullname", Boolean.TRUE),
+            map.put(new MultiKey("synonym", "ArtificialDeletion", "fullname", Boolean.TRUE),
                     Arrays.asList(new SetFieldConfigAction("name"),
                                   CREATE_SYNONYM_ACTION));
 
@@ -191,9 +191,8 @@ public class FlyBaseModuleProcessor extends ChadoSequenceProcessor
             map.put(new MultiKey("feature", "Gene", "FlyBase", "name"),
                     Arrays.asList(DO_NOTHING_ACTION));
 
-            map.put(new MultiKey("feature", "ChromosomalDeletion", "FlyBase", "name"),
-                    Arrays.asList(new SetFieldConfigAction("name"),
-                                  new SetFieldConfigAction("symbol"),
+            map.put(new MultiKey("feature", "ArtificialDeletion", "FlyBase", "name"),
+                    Arrays.asList(new SetFieldConfigAction("secondaryIdentifier"),
                                   CREATE_SYNONYM_ACTION));
 
             map.put(new MultiKey("feature", "MRNA", "FlyBase", "uniquename"),
@@ -305,8 +304,8 @@ public class FlyBaseModuleProcessor extends ChadoSequenceProcessor
             }
         }
         if (chadoFeatureType.equals("chromosome_structure_variation")) {
-            if (uniqueName.startsWith("FBab")) {
-                realInterMineType = "ChromosomalDeletion";
+            if (uniqueName.startsWith("FBab") && name.matches("Df\\(.*\\)ED\\d+")) {
+                realInterMineType = "ArtificialDeletion";
             } else {
                 return null;
             }

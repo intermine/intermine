@@ -51,6 +51,8 @@ public class GFF3ConverterTask extends Task
 
     private String seqHandlerClassName;
 
+    private boolean dontCreateLocations = false;
+
      /**
      * Set the data fileset
      * @param fs the fileset
@@ -143,6 +145,15 @@ public class GFF3ConverterTask extends Task
     }
 
     /**
+     * Set the dontCreateLocations flag, the default is false - create locations.
+     * @param dontCreateLocations if false, create Locations of features on chromosomes
+     * while processing
+     */
+    public void setDontCreateLocations(boolean dontCreateLocations) {
+        this.dontCreateLocations = dontCreateLocations;
+    }
+
+    /**
      * @see Task#execute()
      * {@inheritDoc}
      */
@@ -218,6 +229,9 @@ public class GFF3ConverterTask extends Task
                 new GFF3Converter(writer, seqClsName, orgTaxonId, dataSourceName,
                                   dataSetTitle, seqDataSourceName,
                                   tgtModel, recordHandler, sequenceHandler);
+            if (dontCreateLocations) {
+                gff3converter.setDontCreateLocations(dontCreateLocations);
+            }
 
             DirectoryScanner ds = fileSet.getDirectoryScanner(getProject());
             String[] files = ds.getIncludedFiles();

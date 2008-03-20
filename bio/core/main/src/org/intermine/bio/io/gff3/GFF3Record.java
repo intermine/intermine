@@ -75,7 +75,8 @@ public class GFF3Record
                 start = Integer.parseInt(startString);
             }
         } catch (NumberFormatException nfe) {
-            throw new IOException("can not parse integer for start position: " + startString);
+            throw new IOException("can not parse integer for start position: " + startString
+                                  + " from line: " + line);
         }
 
         String endString = st.nextToken().trim();
@@ -86,7 +87,8 @@ public class GFF3Record
                 end = Integer.parseInt(endString);
             }
         } catch (NumberFormatException nfe) {
-            throw new IOException("can not parse integer for end position: " + endString);
+            throw new IOException("can not parse integer for end position: " + endString
+                                  + " from line: " + line);
         }
 
         String scoreString = st.nextToken().trim();
@@ -97,7 +99,8 @@ public class GFF3Record
             try {
                 score = new Double(scoreString);
             } catch (NumberFormatException nfe) {
-                throw new IOException("can not parse score: " + scoreString);
+                throw new IOException("can not parse score: " + scoreString + " from line: "
+                                      + line);
             }
         }
 

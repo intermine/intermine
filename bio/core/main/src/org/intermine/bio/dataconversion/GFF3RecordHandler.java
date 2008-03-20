@@ -289,6 +289,15 @@ public class GFF3RecordHandler
     }
 
     /**
+     * Return true if Location objects should be made for all features (which is the default).
+     * @param record the current feature
+     * @return true if Location objects should be made
+     */
+    protected boolean createLocations(GFF3Record record) {
+        return true;
+    }
+
+    /**
      * Set the ItemFactory to use in this handler.
      * @param itemFactory the ItemFactory
      */

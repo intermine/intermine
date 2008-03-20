@@ -44,9 +44,13 @@ public class DrosDelGFF3RecordHandler extends GFF3RecordHandler
     public void process(GFF3Record record) {
         Item feature = getFeature();
 
-        List<String> availableList = record.getAttributes().get("available");
+        String note = record.getNote();
         if (record.getType().equals("ArtificialDeletion")) {
-            feature.setAttribute("available", availableList.get(0));
+            if (note.equals("made")) {
+                feature.setAttribute("available", "true");
+            } else {
+                feature.setAttribute("available", "false");
+            }
             List<String> element1List = record.getAttributes().get("Element1");
             if (element1List != null) {
                 String elem1Identifier = element1List.get(0);
@@ -69,6 +73,10 @@ public class DrosDelGFF3RecordHandler extends GFF3RecordHandler
                 }
                 feature.setReference("element2", elem2);
             }
+            String identifier = feature.getAttribute("primaryIdentifier").getValue();
+            // don't need a primaryIdentifier
+            feature.removeAttribute("primaryIdentifier");
+            feature.setAttribute("secondaryIdentifier", identifier);
         } else {
             if (record.getAttributes().get("type") != null) {
                 String type = record.getAttributes().get("type").get(0);
@@ -78,7 +86,6 @@ public class DrosDelGFF3RecordHandler extends GFF3RecordHandler
                 String type = record.getAttributes().get("subtype").get(0);
                 feature.setAttribute("subType", type);
             }
-            // save and don't store so we can fix up element references
             String identifier = feature.getAttribute("primaryIdentifier").getValue();
             // don't need a primaryIdentifier
             feature.removeAttribute("primaryIdentifier");
@@ -87,6 +94,20 @@ public class DrosDelGFF3RecordHandler extends GFF3RecordHandler
             removeFeature();
         }
     }
+
+    /**
+     * Return true for deletions, false for insertions - get insertion locations from FlyBase.
+     * {@inheritDoc}
+     */
+    @Override
+    protected boolean createLocations(GFF3Record record) {
+        if (record.getType().equals("ArtificialDeletion")) {
+            return true;
+        } else {
+            return false;
+        }
+    }
+
 
     /**
      * Return items that need extra processing that can only be done after all other GFF features
