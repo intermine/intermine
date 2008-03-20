@@ -16,13 +16,12 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import org.flymine.model.genomic.BioEntity;
-import org.flymine.model.genomic.Chromosome;
 import org.flymine.model.genomic.DataSource;
 import org.flymine.model.genomic.LocatedSequenceFeature;
 import org.flymine.model.genomic.Location;
 import org.flymine.model.genomic.Organism;
+import org.flymine.model.genomic.Region;
 import org.flymine.model.genomic.Synonym;
-
 import org.intermine.objectstore.ObjectStoreException;
 
 /**
@@ -31,7 +30,7 @@ import org.intermine.objectstore.ObjectStoreException;
  */
 public class FlyBaseFeatureFastaLoaderTask extends FastaLoaderTask
 {
-    private Map<String, Chromosome> chrMap = new HashMap<String, Chromosome>();
+    private Map<String, Region> chrMap = new HashMap<String, Region>();
 
     /**
      * Return a Chromosome object for the given item.
@@ -40,12 +39,12 @@ public class FlyBaseFeatureFastaLoaderTask extends FastaLoaderTask
      * @return the Chromosome
      * @throws ObjectStoreException if problem fetching Chromosome
      */
-    protected Chromosome getChromosome(String chromosomeId, Organism organism)
+    protected Region getChromosome(String chromosomeId, Organism organism)
     throws ObjectStoreException {
         if (chrMap.containsKey(chromosomeId)) {
             return chrMap.get(chromosomeId);
         } else {
-            Chromosome chr = (Chromosome) getDirectDataLoader().createObject(Chromosome.class);
+            Region chr = (Region) getDirectDataLoader().createObject(Region.class);
             chr.setPrimaryIdentifier(chromosomeId);
             chr.setOrganism(organism);
             getDirectDataLoader().store(chr);
