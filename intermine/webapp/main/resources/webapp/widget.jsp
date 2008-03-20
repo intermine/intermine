@@ -96,7 +96,7 @@
     </c:if>
   </div>
   <div id="widgetdatawait${widget.id}" class="widgetdatawait"><img src="images/wait30.gif" title="Searching..."/></div>
-  <div id="widgetdatanoresults${widget.id}" class="widgetdatawait"><i>No Results found</i></div>
+  <div id="widgetdatanoresults${widget.id}" class="widgetdatawait" style="display:none;"><i>No Results found</i></div>
   <script language="javascript">
   <c:choose>
     <c:when test="${fn:contains(widget.class,'GraphWidget')}" >
