@@ -53,7 +53,7 @@ public class PathQueryHandler extends DefaultHandler
      * Constructor
      * @param queries Map from query name to PathQuery
      * @param classKeys class keys
-     * @param savedBags saved bags 
+     * @param savedBags saved bags
      */
     public PathQueryHandler(Map<String, PathQuery> queries, Map<String, InterMineBag> savedBags,
             Map<String, List<FieldDescriptor>> classKeys) {
@@ -181,6 +181,10 @@ public class PathQueryHandler extends DefaultHandler
             MainHelper.checkPathQuery(query, savedBags);
             for (String viewElement: viewStrings) {
                 query.addPathStringToView(viewElement);
+            }
+            if (query.getView().size() == 0) {
+                // query has no valid view paths, which we can't handle at the moment
+                return;
             }
             if (sortOrderString.length() > 0 && directionString.length() > 0) {
                 query.addPathStringToSortOrder(sortOrderString, directionString);
