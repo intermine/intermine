@@ -237,6 +237,7 @@ public class ModEncodeMetaDataProcessor extends ChadoProcessor
     protected static class AppliedProtocol
     {
         private Integer experimentId;
+        private Integer levelDag;
         private Integer protocolId;
         //List<Integer> inputData = new ArrayList<Integer>();
         List<Integer> outputData = new ArrayList<Integer>();
@@ -256,6 +257,13 @@ public class ModEncodeMetaDataProcessor extends ChadoProcessor
          */
         public Integer getProtocolId(Integer dataId) {
             return protocolId;
+        }
+        /**
+         * Return the id of the Item representing this feature.
+         * @return the ID
+         */
+        public Integer getLevelDag(Integer dataId) {
+            return levelDag;
         }
 
         
@@ -343,7 +351,6 @@ public class ModEncodeMetaDataProcessor extends ChadoProcessor
 
         processDataTable(connection);
 
-        processDAG(connection);
         processDag(connection);
     }
    
@@ -361,6 +368,8 @@ public class ModEncodeMetaDataProcessor extends ChadoProcessor
             Integer dataId = new Integer(res.getInt("data_id"));
             String direction = res.getString("direction");
 
+            Integer level = 0;
+            
             //build a data node for each iteration
             if (appliedDataMap.containsKey(dataId)) {
                 branch = appliedDataMap.get(dataId);
@@ -387,17 +396,23 @@ public class ModEncodeMetaDataProcessor extends ChadoProcessor
                 AppliedProtocol newNode = new AppliedProtocol();
 
                 newNode.protocolId = protocolId;
-                newNode.experimentId = experimentId; //=0 if null
+                newNode.experimentId = experimentId;
+                newNode.levelDag = level;
                 // the experimentId != null for the first applied protocol
                 if (experimentId > 0) {
                     firstAppliedProtocols.add(appliedProtocolId);
+                    newNode.levelDag = 1 ;
+                    
                 }
                 
                 if (direction.startsWith("in")) {
                     branch.nextAppliedProtocols.add(appliedProtocolId);
-                    if (!appliedDataMap.containsKey(dataId)) {
-                        appliedDataMap.put(dataId, branch);
-                    }
+
+                    if (appliedDataMap.containsKey(dataId)) {
+                        appliedDataMap.remove(dataId);
+                    }   
+                    appliedDataMap.put(dataId, branch);
+                    LOG.info("APD2a " + dataId );                                            
                 } else if (direction.equalsIgnoreCase("output")) {
                     newNode.outputData.add(dataId);    
                 } else {
@@ -411,9 +426,14 @@ public class ModEncodeMetaDataProcessor extends ChadoProcessor
                 //keep feeding IN et OUT
                 if (direction.startsWith("in")) { //should not happens
                     branch.nextAppliedProtocols.add(appliedProtocolId);
+                    //to sub as above
                     if (!appliedDataMap.containsKey(dataId)) {
                         appliedDataMap.put(dataId, branch);
-                        LOG.info("APD " + dataId );                        
+                        LOG.info("APD1 " + dataId );                        
+                    } else {
+                        appliedDataMap.remove(dataId);
+                        appliedDataMap.put(dataId, branch);
+                        LOG.info("APD2 " + dataId );                        
                     }
                 } else if (direction.equalsIgnoreCase("output")) {
                     node.outputData.add(dataId);    
@@ -425,116 +445,67 @@ public class ModEncodeMetaDataProcessor extends ChadoProcessor
         LOG.info("created " + appliedProtocolMap.size() + " DAG nodes in map");
         LOG.info("APD 1AppliedProtocol " + firstAppliedProtocols.toString());
         res.close();
+
+        traverseDag();
+        
     }
 
-    
-    
-
-    private void processDAG(Connection connection)
+    private void traverseDag()
     throws SQLException, ObjectStoreException {
-        ResultSet res = getDAGResultSet(connection);
-        //int count = 0;
-        DAGData node = new DAGData();
-        Integer previousAppliedProtocolId = 0;
-        while (res.next()) {
-            Integer experimentId = new Integer(res.getInt("experiment_id"));
-            Integer protocolId = new Integer(res.getInt("protocol_id"));
-            Integer appliedProtocolId = new Integer(res.getInt("applied_protocol_id"));
-            Integer dataId = new Integer(res.getInt("data_id"));
-            String direction = res.getString("direction");
 
-            //could use > (order by apid)
-            //NB: using isLast() is expensive
-            if (!appliedProtocolId.equals(previousAppliedProtocolId) || res.isLast()) {
-                //last one: fill the list (should be an output)
-                if (res.isLast()) {
-                    if (direction.equalsIgnoreCase("output")) {
-                        node.outputData.add(dataId);    
-                    } else {
-                        LOG.error("DAGIdMap: problem with data " + dataId + "|" + direction + "|");
-                    }                                   
-                }
-                //if it is not the first iteration, let's store it
-                if (previousAppliedProtocolId > 0) { 
-                    DAGIdMap.put(previousAppliedProtocolId, node);
-                    //count ++;
-                    LOG.info("DAGI " + node.experimentId + "|" + previousAppliedProtocolId + " || " 
-                            + node.inputData.toString() + "||" + node.outputData.toString());
-                    LOG.info("DAGIdMap " + DAGIdMap.get(previousAppliedProtocolId).outputData.toString());
-                }
+        List<Integer> currentIterationAP = firstAppliedProtocols;
+        List<Integer> nextIterationAP = new ArrayList<Integer>();
 
-                //new node
-                DAGData newNode = new DAGData();
-
-                newNode.protocolId = protocolId;
-                newNode.experimentId = experimentId; //=0 if null
-                // the experimentId != null for the first applied protocol
-                if (experimentId > 0) {
-                    firstAppliedProtocols.add(appliedProtocolId);
-                }
-                
-                if (direction.startsWith("in")) {
-                    newNode.inputData.add(dataId);
-                } else if (direction.equalsIgnoreCase("output")) {
-                    newNode.outputData.add(dataId);    
-                } else {
-                    LOG.error("DAGIdMap: problem with data " + dataId + "|" + direction + "|");
-                }
-                //for the new round..
-                node=newNode;
-                previousAppliedProtocolId = appliedProtocolId;
-
-            } else {
-                //keep feeding IN et OUT
-                if (direction.startsWith("in")) {
-                    node.inputData.add(dataId);
-                } else if (direction.equalsIgnoreCase("output")) {
-                    node.outputData.add(dataId);    
-                } else {
-                    LOG.error("DAGIdMap: problem with data " + dataId + "|" + direction + "|");
-                }               
-            }
-        }
-        LOG.info("created " + DAGIdMap.size() + " DAG items in map");
-        //LOG.info("DAGIdMap " + DAGIdMap.size());
-        LOG.info("DAGI 1AppliedProtocol " + firstAppliedProtocols.toString());
-        res.close();
-
-        //fillExperimentDAG (DAGIdMap, firstAppliedProtocols);
-
+        while (currentIterationAP.size() > 0) {
+            nextIterationAP = buildADagLevel (currentIterationAP);
+            currentIterationAP = nextIterationAP;
+            LOG.info("ITER: " + currentIterationAP.toString());
+        }        
     }
-
-    private void fillExperimentDAG(Map<Integer, DAGData> DAGIdMap, List<Integer> firstAppliedProtocols)
+    
+    
+    private List<Integer> buildADagLevel(List<Integer> previousAppliedProtocols)
     throws SQLException, ObjectStoreException {
-
-        Iterator<Integer> fip = firstAppliedProtocols.iterator();
+        List<Integer> nextIterationProtocols = new ArrayList<Integer>();
+        
+        Iterator<Integer> fip = previousAppliedProtocols.iterator();
         while (fip.hasNext()){
             List<Integer> outputs = new ArrayList<Integer>();
-            outputs.addAll(DAGIdMap.get(fip.next()).outputData);
-            //for (Iterator<Integer> od = linksIO.iterator(); od.hasNext()) {
-            Iterator od = outputs.iterator();
-            while (od.hasNext()) {
-                List<Integer> inputs = new ArrayList<Integer>();
-                inputs.addAll(DAGIdMap.get(od.next()).inputData);
-                //no good!! od.next is an output id not apid..(key)
-                
-                
-                //DAGIdMap.
-            }
+            Integer currentId = fip.next();
+            outputs.addAll(appliedProtocolMap.get(currentId).outputData);
+            Integer experimentId = appliedProtocolMap.get(currentId).experimentId;
+            Integer startingLevel = appliedProtocolMap.get(currentId).levelDag;
             
+            LOG.info("APDEXP: " + experimentId + " " + outputs.toString());
+            Iterator<Integer> od = outputs.iterator();
+            while (od.hasNext()) {
+                Integer currentOD = od.next();                
+                List<Integer> nextProtocols = new ArrayList<Integer>();
+                if (appliedDataMap.containsKey(currentOD)) {
+                    LOG.info("APDEXP: " + appliedDataMap.get(currentOD).toString() );                    
+                    nextProtocols.addAll(appliedDataMap.get(currentOD).nextAppliedProtocols);
+                } else {
+                    //this is a leaf!!
+                    LOG.info("APDEXP: no " + currentOD +  "!!" );
+                    continue;
+                }
+                
+                //nextProtocols.addAll(appliedDataMap.get(od.next()).nextAppliedProtocols);
+                Iterator<Integer> nap = nextProtocols.iterator();
+                while (nap.hasNext()) {
+                    Integer currentAPId = nap.next();
+                    //AppliedProtocol ap = appliedProtocolMap.get(nap);
+                    appliedProtocolMap.get(currentAPId).experimentId = experimentId;
+                    appliedProtocolMap.get(currentAPId).levelDag = (startingLevel++);  
 
+                    LOG.info("APD XX " + appliedProtocolMap.get(currentAPId).levelDag.toString() );                    
+                    LOG.info("APD XX " + appliedProtocolMap.get(currentAPId).experimentId.toString() );                                        
+
+                    nextIterationProtocols.add(currentAPId);
+                }                
+            }
         }
-        
-        
-        /*
-        for (Iterator it = firstAppliedProtocols.iterator (); it.hasNext ()) {
-            String s = it.next ();
-            //Sytem.out.println (s);
-        }
-*/
-
-        DAGIdMap.values();
-
+        return nextIterationProtocols;
     }
 
 
