@@ -55,8 +55,9 @@ public class BDGPLdr implements EnrichmentWidgetLdr
     /**
      * @param bag list of objects for this widget
      * @param os object store
+     * @param extraAttribute an extra attribute
      */
-    public BDGPLdr(InterMineBag bag, ObjectStore os) {
+    public BDGPLdr(InterMineBag bag, ObjectStore os, String extraAttribute) {
         this.bag = bag;
         
         organisms = BioUtil.getOrganisms(os, bag, false);
