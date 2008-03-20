@@ -60,7 +60,7 @@ public class BioGridConverter extends FileConverter
     }
 
     /**
-     * {@inheritDoc}
+     * {@inheritDoc}final
      */
     public void process(Reader reader) throws Exception {
 
@@ -199,12 +199,20 @@ public class BioGridConverter extends FileConverter
                         getGene(identifier);
                     }
                 }
-            //<interactionList><interaction>
-            //<participantList><participant id="5"><interactorRef>
+                            
+//                <participant id="62692">
+//                <interactorRef>62692</interactorRef>
+//                <experimentalRoleList><experimentalRole><names><shortLabel>
+            } else if (qName.equals("shortLabel") && stack.search("experimentalRole") == 2) {
+
+                attName = "role";
+
+                //<interactionList><interaction>
+                //<participantList><participant id="5">
             } else if (qName.equals("interactorRef") && stack.peek().equals("participant")) {
 
                 attName = "participantId";
-
+                    
             //<interactionList><interaction><experimentList><experimentRef>
             } else if (qName.equals("experimentRef")
                        && stack.peek().equals("experimentList")) {
@@ -315,13 +323,19 @@ public class BioGridConverter extends FileConverter
                             gene = getGene(identifier);
                         }
                         if (gene != null) {
-                            interactorHolder = new InteractorHolder(gene);
+                            interactorHolder = new InteractorHolder(gene, identifier);
                             holder.addInteractor(interactorHolder);
                             holder.addGene(gene.getIdentifier(), identifier);
                         } else {
                             holder.validActors = false;
                             LOG.error("Gene/protein not found - " + identifier + " ( " + id + ")");
                         }
+                    }
+//          <participant><interactorRef><experimentalRoleList><experimentalRole><names><shortLabel>
+                } else if (attName != null && attName.equals("role") 
+                                && qName.equals("shortLabel")) { 
+                    if (interactorHolder != null) {
+                                interactorHolder.role = attValue.toString();
                     }
                 //<interactionList><interaction><experimentList><experimentRef>
                 } else if (qName.equals("experimentRef")
@@ -367,23 +381,27 @@ public class BioGridConverter extends FileConverter
             
             try {
 
-                String interactionName = "";
-                for (String identifier : interactionHolder.geneIdentifiers) {
-                    if (!interactionName.equals("")) {
-                        interactionName += "_";
-                    }
-                    interactionName += identifier;
-                }
-
                 // loop through genes/interactors in this interaction
                 for (Iterator<InteractorHolder> iter = interactors.iterator(); iter.hasNext();) {
 
                     interactorHolder =  iter.next();
-
-                    // build & store interactions - one for each gene
-                    Item interaction = createItem("GeneticInteraction");
                     Item gene = interactorHolder.gene;
                     String geneRefId = gene.getIdentifier();
+
+                    String interactionName = "";
+                    for (String identifier : interactionHolder.geneIdentifiers) {
+                        
+                        if (!identifier.equals(interactorHolder.identifier)) {
+                            interactionName += "_" + identifier;
+                        } else {
+                            interactionName = identifier + interactionName;    
+                        }
+                    }
+                    
+                    // build & store interactions - one for each gene
+                    Item interaction = createItem("GeneticInteraction");
+                    
+                    
                     interaction.setAttribute("shortName", interactionName);
                     interaction.setAttribute("type", interactionHolder.type);
 
@@ -415,6 +433,7 @@ public class BioGridConverter extends FileConverter
                         storedItems.add(gene.getAttribute("primaryIdentifier").getValue());
                     }
 
+                    interaction.setAttribute("geneRole", interactorHolder.role);
                     writer.store(ItemHelper.convert(interaction));
                 }
 
@@ -595,13 +614,16 @@ public class BioGridConverter extends FileConverter
         {
             protected String identifier;    // FBgn
             protected Item gene;
+            protected String role;
 
             /**
              * Constructor
              * @param gene Gene that's part of the interaction
+             * @param identifier of the gene
              */
-            public InteractorHolder(Item gene) {
+            public InteractorHolder(Item gene, String identifier) {
                 this.gene = gene;
+                this.identifier = identifier;
             }
         }
 

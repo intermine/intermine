@@ -9,6 +9,7 @@
     <class name="org.flymine.model.genomic.GeneticInteraction" is-interface="true">
         <attribute name="type" type="java.lang.String"/>
         <attribute name="shortName" type="java.lang.String"/>                
+        <attribute name="geneRole" type="java.lang.String"/>                
         <reference name="gene" referenced-type="org.flymine.model.genomic.Gene" reverse-reference="geneticInteractions" />
         <reference name="experiment" referenced-type="org.flymine.model.genomic.GeneticInteractionExperiment" reverse-reference="interactions"/>
         <collection name="interactingGenes" referenced-type="org.flymine.model.genomic.Gene" ordered="true" reverse-reference="geneticInteractions"/>
