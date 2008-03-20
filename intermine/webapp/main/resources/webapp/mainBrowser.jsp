@@ -29,7 +29,6 @@
         {parameters:'method=ajaxCollapse&path='+path, asynchronous:true});
       $(id).innerHTML='';
     }
-    return false;
   }
   
   function addConstraint(path) {
