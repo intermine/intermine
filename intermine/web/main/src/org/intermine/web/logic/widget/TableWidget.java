@@ -34,19 +34,18 @@ import org.intermine.web.logic.config.WebConfig;
  */
 public class TableWidget extends Widget
 {
-    private String type;
-    private String collectionName;
+
     private String fields;
     private WebConfig webConfig;
     private Map classKeys;
     private BagTableWidgetLoader bagWidgLdr;
+    private String pathStrings;
     
     /**
      * {@inheritDoc}
      */
-    public void process(InterMineBag bag, ObjectStore os) {
-        bagWidgLdr = new BagTableWidgetLoader(getTitle(),
-                        getDescription(), type, collectionName, bag, os, webConfig,
+    public void process(InterMineBag bag, ObjectStore os) throws Exception {
+        bagWidgLdr = new BagTableWidgetLoader(pathStrings, bag, os, webConfig,
                         os.getModel(), classKeys, fields, getLink());
     }
     
@@ -64,40 +63,7 @@ public class TableWidget extends Widget
      */
     public List getColumns() {
         return bagWidgLdr.getColumns();
-    }
-    
-    /**
-     * Get the type
-     * @return the type
-     */
-    public String getType() {
-        return type;
-    }
-
-    /**
-     * Set the type
-     * @param type the type
-     */
-    public void setType(String type) {
-        this.type = type;
-    }
-
-
-    /**
-     * Get the collection name
-     * @return the collection name
-     */
-    public String getCollectionName() {
-        return collectionName;
-    }
-
-    /**
-     * Set the collectionName
-     * @param collectionName the collectionName
-     */
-    public void setCollectionName(String collectionName) {
-        this.collectionName = collectionName;
-    }
+    }    
 
     /**
      * @return the fields
@@ -113,16 +79,6 @@ public class TableWidget extends Widget
         this.fields = fields;
     }
 
-
-    /**
-     * Return an XML String of this Type object
-     * @return a String version of this WebConfig object
-     */
-    public String toString() {
-        return "< title=\"" + getTitle() + "\" type=\"" + type + "\" collectionName=\""
-               + collectionName + "\"/>";
-    }
-    
     public Map<String, Collection> getExtraAttributes(InterMineBag imBag, ObjectStore os) {
         return null;
     }
@@ -160,6 +116,22 @@ public class TableWidget extends Widget
      */
     public boolean getHasResults() {
         return (bagWidgLdr.getFlattenedResults().size() > 0);
+    }
+
+    /**
+     * Comma separated list of path strings to appear in the widget, ie Employee.firstName, 
+     * Employee.lastName
+     * @return the pathStrings
+     */
+    public String getPathStrings() {
+        return pathStrings;
+    }
+
+    /**
+     * @param pathStrings the pathString to set
+     */
+    public void setPathStrings(String pathStrings) {
+        this.pathStrings = pathStrings;
     }
 
 }

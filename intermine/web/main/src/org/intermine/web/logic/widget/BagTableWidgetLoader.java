@@ -1,4 +1,4 @@
-package org.intermine.web.logic.widget;
+  package org.intermine.web.logic.widget;
 
 /*
  * Copyright (C) 2002-2008 FlyMine
@@ -17,19 +17,19 @@ import java.util.Map;
 
 import org.intermine.objectstore.query.BagConstraint;
 import org.intermine.objectstore.query.ConstraintOp;
-import org.intermine.objectstore.query.ConstraintSet;
 import org.intermine.objectstore.query.ContainsConstraint;
-import org.intermine.objectstore.query.OrderDescending;
 import org.intermine.objectstore.query.Query;
 import org.intermine.objectstore.query.QueryClass;
 import org.intermine.objectstore.query.QueryCollectionReference;
 import org.intermine.objectstore.query.QueryField;
 import org.intermine.objectstore.query.QueryFunction;
+import org.intermine.objectstore.query.QueryHelper;
 import org.intermine.objectstore.query.QueryObjectReference;
 import org.intermine.objectstore.query.QueryReference;
 import org.intermine.objectstore.query.ResultsRow;
 
 import org.intermine.metadata.ClassDescriptor;
+import org.intermine.metadata.FieldDescriptor;
 import org.intermine.metadata.Model;
 import org.intermine.model.InterMineObject;
 import org.intermine.objectstore.ObjectStore;
@@ -49,7 +49,7 @@ import org.intermine.web.logic.query.MainHelper;
  */
 public class BagTableWidgetLoader
 {
-    private List columns;
+    private List<String> columns;
     private List flattenedResults;
     private String title, description;
 
@@ -57,11 +57,8 @@ public class BagTableWidgetLoader
      * This class loads and formats the data for the count
      * table widgets in the bag details page
      *
-     * @param title title of widget
-     * @param description description of widget
-     * @param type The type to do the count on
-     * @param collectionName the name of the collection corresponding to the
-     * bag type
+     * @param pathStrings the path to group the objects by, ie Employee.city will return the list of
+     * employees by city
      * @param bag the bag
      * @param os the objectstore
      * @param webConfig the webConfig
@@ -69,53 +66,14 @@ public class BagTableWidgetLoader
      * @param classKeys the classKeys
      * @param fields fields involved in widget
      * @param urlGen the class that generates the pathquery used in the links from the widget
+     * @throws ClassNotFoundException if some class in the widget paths is not found
      */
-    public BagTableWidgetLoader(String title, String description, String type, String
-            collectionName, InterMineBag bag, ObjectStore os, WebConfig webConfig, Model model,
-            Map classKeys, String fields, String urlGen) {
-        this.title = title;
-        this.description = description;
-        Query q = new Query();
-
-        Class clazzA = null;
-        Class clazzB = null;
-        try {
-            clazzA = Class.forName(model.getPackageName() + "." + type);
-            clazzB = Class.forName(model.getPackageName() + "." + bag.getType());
-        } catch (ClassNotFoundException e) {
-            throw new RuntimeException(e);
-        }
-
-        QueryClass qClassA = new QueryClass(clazzA);
-        QueryClass qClassB = new QueryClass(clazzB);
-
-        q.addFrom(qClassA);
-        q.addFrom(qClassB);
-
-        QueryFunction count = new QueryFunction();
-
-        q.addToSelect(qClassA);
-        q.addToSelect(count);
-
-
-        ConstraintSet cstSet = new ConstraintSet(ConstraintOp.AND);
-        QueryReference qr;
-        try {
-            qr = new QueryCollectionReference(qClassB, collectionName);
-        } catch (Exception e) {
-            qr = new QueryObjectReference(qClassB, collectionName);
-        }
-        ContainsConstraint cstr = new ContainsConstraint(qr, ConstraintOp.CONTAINS, qClassA);
-        cstSet.addConstraint(cstr);
-
-        QueryField qf = new QueryField(qClassB, "id");
-        BagConstraint bagCstr = new BagConstraint(qf, ConstraintOp.IN, bag.getOsb());
-        cstSet.addConstraint(bagCstr);
-
-        q.setConstraint(cstSet);
-
-        q.addToGroupBy(qClassA);
-        q.addToOrderBy(new OrderDescending(count));
+    public BagTableWidgetLoader(String pathStrings, InterMineBag bag, ObjectStore os, 
+                                WebConfig webConfig, Model model, Map classKeys, 
+                                String fields, String urlGen) 
+    throws ClassNotFoundException {
+        
+        Query q = constructQuery(model, bag, pathStrings);
 
         List results;
         try {
@@ -124,13 +82,14 @@ public class BagTableWidgetLoader
             throw new RuntimeException(e);
         }
         ClassDescriptor cld;
+        String[] s = pathStrings.split("\\.");
+        String type = s[s.length - 1];
         try {
             cld = MainHelper.getClassDescriptor(type, model);
         } catch (ClassNotFoundException e) {
             throw new RuntimeException("unexpected exception", e);
         }
-        columns = new ArrayList();
-
+        columns = new ArrayList<String>();
         if ((fields != null) && (fields.length() != 0)) {
             String[] fieldArray = fields.split(",");
             for (int i = 0; i < fieldArray.length; i++) {
@@ -150,6 +109,8 @@ public class BagTableWidgetLoader
                 columns.add(newColumnName);
             }
         }
+        
+        
         flattenedResults = new ArrayList<ArrayList>();
         for (Iterator iter = results.iterator(); iter.hasNext();) {
             ArrayList<String[]> flattenedRow = new ArrayList<String[]>();
@@ -227,4 +188,93 @@ public class BagTableWidgetLoader
         return description;
     }
 
+    /**
+     * Construct an objectstore query represented by the given path.
+     * @param model the Model use to find meta data
+     * @param paths path to construct query for
+     * @param bag the bag for this widget
+     * @return the constructed query
+     * @throws ClassNotFoundException if problem processing path
+     * @throws IllegalArgumentException if problem processing path
+     */
+    private Query constructQuery(Model model, InterMineBag bag, String pathStrings)
+        throws ClassNotFoundException, IllegalArgumentException {
+        
+        String[] paths = pathStrings.split(","); 
+        
+        Query q = new Query();
+        boolean first = true;
+        QueryClass qcStart = null;
+        for (String path : paths) {
+        
+            String[] queryBits = path.split("\\.");
+
+            // validate path against model
+            //PathQueryUtil.validatePath(path, model);
+            
+            QueryClass qcLast = null;
+            
+            for (int i = 0; i + 2 < queryBits.length; i += 2) {
+                qcStart = new QueryClass(Class.forName(model.getPackageName()
+                                                                  + "." + queryBits[i]));
+                String refName = queryBits[i + 1];
+                QueryClass qcEnd = new QueryClass(Class.forName(model.getPackageName()
+                                                                + "." + queryBits[i + 2]));
+                if (qcLast != null) {
+                    qcStart = qcLast;
+                }
+                qcLast = addReferenceConstraint(model, q, qcStart, refName, qcEnd, first);
+                first = false;
+            }
+        }
+        
+        BagConstraint bc = new BagConstraint(new 
+                           QueryField(qcStart, "id"), ConstraintOp.IN, bag.getOsb());
+        QueryHelper.addConstraint(q, bc); 
+        return q;
+    }
+
+    /**
+     * Add a contains constraint to Query (q) from qcStart from qcEnd via reference refName.
+     * Return qcEnd as it may need to be passed into mehod again as qcStart.
+     * @param model the Model use to find meta data
+     * @param q the query
+     * @param qcStart the QueryClass that contains the reference
+     * @param refName name of reference to qcEnd
+     * @param qcEnd the target QueryClass of refName
+     * @param first true if this is the first constraint added - qcStart needs to be added
+     * to the query
+     * @return QueryClass return qcEnd
+     */
+    private QueryClass addReferenceConstraint(Model model, Query q, QueryClass qcStart, 
+                                              String refName, QueryClass qcEnd, boolean first) {
+
+        q.addToSelect(qcEnd);
+        q.addFrom(qcEnd);
+        q.addToGroupBy(qcEnd);
+        
+        if (first) {            
+            QueryFunction qf = new QueryFunction();
+            q.addToSelect(qf);
+            q.addFrom(qcStart);
+            q.addToOrderBy(qf, "desc");
+        }
+        
+        // already validated against model
+        ClassDescriptor startCld = model.getClassDescriptorByName(qcStart.getType().getName());
+        FieldDescriptor fd = startCld.getFieldDescriptorByName(refName);
+
+        QueryReference qRef;
+        if (fd.isReference()) {
+            qRef = new QueryObjectReference(qcStart, refName);
+        } else {
+            qRef = new QueryCollectionReference(qcStart, refName);
+        }
+        ContainsConstraint cc = new ContainsConstraint(qRef, ConstraintOp.CONTAINS, qcEnd);
+        QueryHelper.addConstraint(q, cc);
+
+        return qcEnd;
+    }
+    
 }
+  

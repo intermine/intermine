@@ -68,7 +68,7 @@ public class PathQueryUtil
      * @param model the Model use to find meta data
      * @throws IllegalArgumentException if path not valid
      */
-    protected static void validatePath(String path, Model model) {
+    public static void validatePath(String path, Model model) {
         // must be more than one element and odd number
         String[] queryBits = path.split("[ \t]");
         if (!(queryBits.length > 1) || (queryBits.length % 2 == 0)) {
