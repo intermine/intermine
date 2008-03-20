@@ -391,7 +391,7 @@
       <property name="gff3.taxonId" value="7227"/>
       <property name="gff3.seqClsName" value="Chromosome"/>
       <property name="gff3.seqDataSourceName" value="FlyBase"/>
-      <property name="src.data.dir" location="/shared/data/liftover/drosdel/combined"/>
+      <property name="src.data.dir" location="/shared/data/drosdel/2008-03-19/combined/"/>
     </source>
     <source name="affy-probes" type="affy-probes">
       <property name="src.data.dir" location="/shared/data/affy-probes/current"/>

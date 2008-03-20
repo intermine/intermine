@@ -61,6 +61,7 @@ public class GFF3Converter
     private GFF3RecordHandler handler;
     private ItemFactory itemFactory;
     private GFF3SeqHandler sequenceHandler;
+    private boolean dontCreateLocations;
 
     /**
      * Constructor
@@ -177,7 +178,8 @@ public class GFF3Converter
 
         if (cd == null) {
             throw new IllegalArgumentException("no class found in model for: " + className
-                                               + " (original GFF record type: " + term + ")");
+                                               + " (original GFF record type: " + term + ") for "
+                                               + "record: " + record);
         }
 
         Set<Item> synonymsToAdd = new HashSet();
@@ -244,7 +246,8 @@ public class GFF3Converter
         Item relation;
 
         if (!record.getType().equals("chromosome")) {
-            if (record.getStart() < 1 || record.getEnd() < 1) {
+            if (record.getStart() < 1 || record.getEnd() < 1 || dontCreateLocations
+                || !handler.createLocations(record)) {
                 relation = createItem("SimpleRelation");
             } else {
                 relation = createItem("Location");
@@ -512,6 +515,15 @@ public class GFF3Converter
 
     private String createIdentifier() {
         return "0_" + itemid++;
+    }
+
+    /**
+     * Set the dontCreateLocations flag
+     * @param dontCreateLocations if false, create Locations of features on chromosomes while
+     * processing
+     */
+    public void setDontCreateLocations(boolean dontCreateLocations) {
+        this.dontCreateLocations = dontCreateLocations;
     }
 
 }

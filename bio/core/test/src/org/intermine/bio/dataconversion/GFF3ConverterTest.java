@@ -24,7 +24,10 @@ import org.intermine.xml.full.Item;
 
 import java.io.BufferedReader;
 import java.io.File;
+import java.io.FileWriter;
+import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.io.PrintWriter;
 
 import junit.framework.TestCase;
 
@@ -61,7 +64,10 @@ public class GFF3ConverterTest extends TestCase {
         }
     }
 
-    public void testParse() throws Exception {
+    /**
+     * Test creating items with dontCreateLocations flag false.
+     */
+    public void testParseLocated() throws Exception {
         BufferedReader srcReader = new BufferedReader(new
                    InputStreamReader(getClass().getClassLoader().getResourceAsStream("test.gff")));
         converter.parse(srcReader);
@@ -71,10 +77,12 @@ public class GFF3ConverterTest extends TestCase {
         //writerSrc.write(FullRenderer.render(writer.getItems()));
         //writerSrc.close();
 
-        Set expected = new HashSet(getExpectedItems());
+        Set expected = new HashSet(getExpectedLocatedItems());
 
-        String expectedNotActual = "in expected, not actual: " + compareItemSets(expected, writer.getItems());
-        String actualNotExpected = "in actual, not expected: " + compareItemSets(writer.getItems(), expected);
+        String expectedNotActual =
+            "in expected, not actual: " + compareItemSets(expected, writer.getItems());
+        String actualNotExpected =
+            "in actual, not expected: " + compareItemSets(writer.getItems(), expected);
         if (expectedNotActual.length() > 25) {
             System.out.println(expectedNotActual);
             System.out.println(actualNotExpected);
@@ -83,12 +91,56 @@ public class GFF3ConverterTest extends TestCase {
         assertEquals(expected, writer.getItems());
     }
 
-
-    protected Collection getExpectedItems() throws Exception {
-        return FullParser.parse(getClass().getClassLoader().getResourceAsStream("GFF3ConverterTest.xml"));
+    protected Collection getExpectedLocatedItems() throws Exception {
+        InputStream resource =
+            getClass().getClassLoader().getResourceAsStream("GFF3ConverterTest.xml");
+        return FullParser.parse(resource);
     }
 
-/**
+    /**
+     * Test creating items with dontCreateLocations flag true.
+     */
+    public void testParseUnLocated() throws Exception {
+        BufferedReader srcReader = new BufferedReader(new
+                   InputStreamReader(getClass().getClassLoader().getResourceAsStream("test.gff")));
+        converter.setDontCreateLocations(true);
+        converter.parse(srcReader);
+        converter.store();
+
+        //FileWriter writerSrc = new FileWriter(new File("gff_items.xml"));
+        //writerSrc.write(FullRenderer.render(writer.getItems()));
+        //writerSrc.close();
+
+        Set expected = new HashSet(getExpectedUnLocatedItems());
+
+        String expectedNotActual =
+            "in expected, not actual: " + compareItemSets(expected, writer.getItems());
+        String actualNotExpected =
+            "in actual, not expected: " + compareItemSets(writer.getItems(), expected);
+        if (expectedNotActual.length() > 25) {
+            System.out.println(expectedNotActual);
+            System.out.println(actualNotExpected);
+        }
+        FileWriter fw = new FileWriter("/tmp/GFF3ConverterTestUnLocated.xml");
+        PrintWriter pw = new PrintWriter(fw);
+        pw.println("<items>");
+        for (Object item: writer.getItems()) {
+            pw.println(item);
+        }
+        pw.println("</items>");
+        pw.close();
+        fw.close();
+        assertEquals(expected, writer.getItems());
+    }
+
+
+    protected Collection getExpectedUnLocatedItems() throws Exception {
+        InputStream resource =
+            getClass().getClassLoader().getResourceAsStream("GFF3ConverterTestUnLocated.xml");
+        return FullParser.parse(resource);
+    }
+
+    /**
      * Given two sets of Items (a and b) return a set of Items that are present in a
      * but not b.
      * @param a a set of Items

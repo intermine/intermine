@@ -285,7 +285,6 @@
     <property name="gff3.seqHandlerClassName" value=""/>
   </target>
 
-
   <!--
     Convert a gff3 file(s). Note that you must have sources/genomic-core/main
     as a project dependency to use this target (to have access to the
@@ -303,6 +302,7 @@
                   dataSourceName="${gff3.dataSourceName}"
                   seqDataSourceName="${gff3.seqDataSourceName}"
                   dataSetTitle="${gff3.dataSetTitle}"
+                  dontCreateLocations="${gff3.dontCreateLocations}"
                   model="${target.model}"
                   handlerClassName="${gff3.handlerClassName}"
                   seqHandlerClassName="${gff3.seqHandlerClassName}">
