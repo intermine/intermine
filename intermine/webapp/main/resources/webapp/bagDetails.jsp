@@ -97,13 +97,11 @@
 </tiles:insert>
 </div>
 
-<c:if test="${pagedResults.estimatedSize > 1}">
-     <tiles:insert name="paging.tile">
-       <tiles:put name="resultsTable" beanName="pagedResults" />
-       <tiles:put name="currentPage" value="bagDetails" />
-       <tiles:put name="bag" beanName="bag" />
-     </tiles:insert>
-</c:if>
+<tiles:insert name="paging.tile">
+  <tiles:put name="resultsTable" beanName="pagedResults" />
+  <tiles:put name="currentPage" value="bagDetails" />
+  <tiles:put name="bag" beanName="bag" />
+</tiles:insert>
 
 <div id="clearLine">&nbsp;</div>
 

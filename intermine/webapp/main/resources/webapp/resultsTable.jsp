@@ -209,8 +209,7 @@
   //]]>-->
 </script>
 
-
-<c:if test="${empty bagName && resultsTable.estimatedSize > 1}">
+<c:if test="${empty bagName}">
    <tiles:insert name="paging.tile">
      <tiles:put name="resultsTable" beanName="resultsTable" />
      <tiles:put name="currentPage" value="results" />
