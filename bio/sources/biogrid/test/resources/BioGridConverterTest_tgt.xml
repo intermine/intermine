@@ -9,6 +9,7 @@
 <item id="7_1" class="http://www.flymine.org/model/genomic#GeneticInteraction">
 <attribute name="shortName" value="FBgn0000001_FBgn0000002"/>
 <attribute name="type" value="Phenotypic Suppression"/>
+<attribute name="geneRole" value="bait"/>
 <reference name="experiment" ref_id="3_1"/>
 <reference name="gene" ref_id="5_1"/>
 <collection name="evidence"><reference ref_id="2_1"/></collection>
@@ -21,8 +22,9 @@
 <attribute name="name" value="BioGRID"/>
 </item>
 <item id="7_2" class="http://www.flymine.org/model/genomic#GeneticInteraction">
-<attribute name="shortName" value="FBgn0000001_FBgn0000002"/>
+<attribute name="shortName" value="FBgn0000002_FBgn0000001"/>
 <attribute name="type" value="Phenotypic Suppression"/>
+<attribute name="geneRole" value="prey"/>
 <reference name="experiment" ref_id="3_1"/>
 <reference name="gene" ref_id="5_2"/>
 <collection name="evidence"><reference ref_id="2_1"/></collection>
