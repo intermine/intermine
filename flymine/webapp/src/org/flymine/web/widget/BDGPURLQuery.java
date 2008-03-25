@@ -59,6 +59,7 @@ public class BDGPURLQuery implements WidgetURLQuery
         
         Path primaryIdentifier = MainHelper.makePath(model, q, "Gene.primaryIdentifier");
         Path stage  =  MainHelper.makePath(model, q, "Gene.mRNAExpressionResults.stageRange");
+        Path dataset = MainHelper.makePath(model, q, "Gene.mRNAExpressionResults.source.title");
         Path term =  MainHelper.makePath(model, q, 
                                          "Gene.mRNAExpressionResults.mRNAExpressionTerms.name");
         
@@ -71,12 +72,26 @@ public class BDGPURLQuery implements WidgetURLQuery
         
         constraintOp = ConstraintOp.EQUALS;
         code = q.getUnusedConstraintCode();
-        PathNode node = q.addNode("Gene.mRNAExpressionResults.mRNAExpressionTerms.name");
-        node.getConstraints().add(new Constraint(constraintOp, key, false, label, code, id, null));
+        PathNode nameNode = q.addNode("Gene.mRNAExpressionResults.mRNAExpressionTerms.name");
+        nameNode.getConstraints().add(new Constraint(constraintOp, key, false, label, 
+                                                     code, id, null));
 
+        constraintOp = ConstraintOp.EQUALS;
+        code = q.getUnusedConstraintCode();
+        PathNode expressedNode = q.addNode("Gene.mRNAExpressionResults.expressed");
+        expressedNode.getConstraints().add(new Constraint(constraintOp, Boolean.TRUE, false, label, 
+                                                          code, id, null));
+        
+        constraintOp = ConstraintOp.EQUALS;
+        code = q.getUnusedConstraintCode();
+        PathNode datasetNode = q.addNode("Gene.mRNAExpressionResults.source.title");
+        datasetNode.getConstraints().add(new Constraint(constraintOp, "BDGP in situ data set",
+                                                          false, label, code, id, null));
+        
         view.add(primaryIdentifier);
         view.add(stage);
         view.add(term);
+        view.add(dataset);
 
         q.setView(view);
         
@@ -84,9 +99,9 @@ public class BDGPURLQuery implements WidgetURLQuery
         q.syncLogicExpression("and");
         
         List<OrderBy>  sortOrder = new ArrayList<OrderBy>();   
-        sortOrder.add(new OrderBy(stage, "asc"));
         sortOrder.add(new OrderBy(term, "asc"));
         sortOrder.add(new OrderBy(primaryIdentifier, "asc"));
+        sortOrder.add(new OrderBy(stage, "asc"));
         q.setSortOrder(sortOrder);
         
         return q;
