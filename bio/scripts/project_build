@@ -50,9 +50,10 @@ flags:
      - To run all steps starting at <some_action> use a dash after the action
        name: -a <some_action>-
      - To perform only the final dump use: -a $final_dump_name
+     - The action names can be patterns: -a 'flymine-static,*dmel*'
      - To refer to dump step and skip its corresponding action use the action
        name with "-dump" appended
-          eg -a fly-fish-dump-
+          eg -a fly-fish-dump-  (starts with the fly-fish dump then continues)
              -a fly-fish-dump,flymine-static,create-references,$final_dump_name
 
 dump_host is the host to run pg_dump and pg_restore on
@@ -664,9 +665,10 @@ sub get_actions
       # remove all not in required list
       for my $req_action_pattern (@required_actions_list) {
         my $req_action_re = glob_to_regex($req_action_pattern);
-        for my $action_name (keys %action_map) {
+        for my $action (@actions) {
+          my $action_name = $action->{name};
           if ($action_name =~ /$req_action_re/) {
-            push @return_actions, $action_map{$action_name};
+            push @return_actions, $action;
           }
         }
       }
