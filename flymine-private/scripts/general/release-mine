@@ -61,7 +61,7 @@ sub die_with_log
 
 # start processing
 
-if (!-f intermine) {
+if (!-d "intermine") {
   die "$0: no intermine directory - this script must be run in a checkout\n";
 }
 
