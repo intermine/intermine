@@ -61,7 +61,7 @@
       <property name="fasta.className" value="org.flymine.model.genomic.CDS"/>
       <property name="fasta.classAttribute" value="secondaryIdentifier"/>
       <property name="fasta.includes" value="dmel-all-CDS-*.fasta"/>
-      <property name="fasta.dataSetTitle" value="FlyBase Drosophila pseudoobscura data set"/>
+      <property name="fasta.dataSetTitle" value="FlyBase Drosophila pseudoobscura pseudoobscura data set"/>
       <property name="src.data.dir" location="/shared/data/flybase/dmel/release_5_5/fasta"/>
     </source>
     <source name="flybase-dmel-5prime-utr-fasta" type="fasta">
