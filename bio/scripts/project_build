@@ -14,6 +14,7 @@ use Getopt::Std;
 use Cwd;
 
 use XML::Parser::PerlSAX;
+use Text::Glob qw(glob_to_regex);
 
 my @ant_command = ("ant");
 
@@ -661,17 +662,23 @@ sub get_actions
       my %action_map = map {($_->{name}, $_)} @actions;
 
       # remove all not in required list
-      for my $req_action_name (@required_actions_list) {
-        if (exists $action_map{$req_action_name}) {
-          push @return_actions, $action_map{$req_action_name};
-        } else {
-          die qq(no such action "$req_action_name" - from -a option);
+      for my $req_action_pattern (@required_actions_list) {
+        my $req_action_re = glob_to_regex($req_action_pattern);
+        for my $action_name (keys %action_map) {
+          if ($action_name =~ /$req_action_re/) {
+            push @return_actions, $action_map{$action_name};
+          }
         }
       }
 
       if (!@return_actions) {
         warn "error:  not found in $project_file\n";
         usage;
+      }
+
+      if ($verbose) {
+        my $action_names = join ',', map { $_->{name} } @return_actions;
+        warn "running actions: $action_names\n";
       }
     } else {
       # default - use all actions from project.xml
@@ -947,12 +954,12 @@ my ($key, $value);
 
 format STDOUT_TOP =
 
-action name                             time in seconds
--------------------------------------------------------
+action name                                   time in seconds
+-------------------------------------------------------------
 .
 
 format STDOUT =
-@<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<< @>>>>>>>>>>>>>
+@<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<< @>>>>>>>>>>>>>
 $key, $value
 .
 
