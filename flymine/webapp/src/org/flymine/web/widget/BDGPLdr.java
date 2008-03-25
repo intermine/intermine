@@ -84,7 +84,6 @@ public class BDGPLdr implements EnrichmentWidgetLdr
                 
         QueryField qfGene = new QueryField(qcGene, "id");
         QueryField qfTerm = new QueryField(qcTerm, "name");        
-        QueryFunction qfCount = new QueryFunction();
         
         ConstraintSet cs = new ConstraintSet(ConstraintOp.AND);
 
@@ -98,6 +97,12 @@ public class BDGPLdr implements EnrichmentWidgetLdr
         QueryCollectionReference r1 = new QueryCollectionReference(qcGene, "mRNAExpressionResults");
         cs.addConstraint(new ContainsConstraint(r1, ConstraintOp.CONTAINS, qcMrnaResult));
 
+        // we only want results that showed expression
+        QueryField qfExpressed = new QueryField(qcMrnaResult, "expressed");
+        SimpleConstraint scExpressed = new SimpleConstraint(qfExpressed, ConstraintOp.EQUALS,
+                                                            new QueryValue(Boolean.TRUE));
+        cs.addConstraint(scExpressed);
+        
         QueryCollectionReference r2 = new QueryCollectionReference(qcMrnaResult, 
                                                                    "mRNAExpressionTerms");
         cs.addConstraint(new ContainsConstraint(r2, ConstraintOp.CONTAINS, qcTerm));
@@ -111,29 +116,40 @@ public class BDGPLdr implements EnrichmentWidgetLdr
         cs.addConstraint(new SimpleConstraint(qf2, ConstraintOp.EQUALS, 
                                               new QueryValue(dataset.toLowerCase())));
 
+        Query subQ = new Query();
+        subQ.setDistinct(true);
+
+        subQ.addFrom(qcTerm);
+        subQ.addFrom(qcMrnaResult);
+        subQ.addFrom(qcGene);
+        subQ.addFrom(qcDataset);
+        subQ.addFrom(qcOrganism);
+        
+        subQ.addToSelect(new QueryField(qcTerm, "id"));
+        subQ.addToSelect(new QueryField(qcGene, "id"));
+
+        subQ.setConstraint(cs);
 
         Query q = new Query();
         q.setDistinct(false);
-
-        q.addFrom(qcTerm);
-        q.addFrom(qcMrnaResult);
-        q.addFrom(qcGene);
-        q.addFrom(qcDataset);
-        q.addFrom(qcOrganism);
+        QueryFunction qfCount = new QueryFunction();
         
-        if (!calcTotal) { 
-            q.addToSelect(qfTerm);
-        }
-        q.addToSelect(qfCount);
-        
-        q.setConstraint(cs);
+        q.addFrom(subQ);
         
         if (!calcTotal) {            
-            if (useBag) {
-                q.addToSelect(qfTerm);                
-            }
-            q.addToGroupBy(qfTerm);
+            subQ.addToSelect(qfTerm);
+            QueryField outerQfTerm = new QueryField(subQ, qfTerm);
+            q.addToSelect(outerQfTerm);
+            q.addToGroupBy(outerQfTerm);
         }
+        
+        q.addToSelect(qfCount);
+        
+        if (!calcTotal) { 
+            QueryField outerQfTerm = new QueryField(subQ, qfTerm);
+            q.addToSelect(outerQfTerm);
+        }
+        
         return q;
     }
 
