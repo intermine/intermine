@@ -249,7 +249,7 @@
       <property name="fasta.className" value="org.flymine.model.genomic.CDS"/>
       <property name="fasta.classAttribute" value="primaryIdentifier"/>
       <property name="fasta.includes" value="dpse-all-CDS-*.fasta"/>
-      <property name="fasta.dataSetTitle" value="FlyBase Drosophila pseudoobscura data set"/>
+      <property name="fasta.dataSetTitle" value="FlyBase Drosophila pseudoobscura pseudoobscura data set"/>
       <property name="src.data.dir" location="/shared/data/flybase/FB2008_02/fasta"/>
     </source>
     <source name="flybase-dana-cds-fasta" type="fasta">
