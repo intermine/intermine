@@ -64,27 +64,23 @@
 
           <li>
             <im:querylink text="REDfly <i>cis</i>-regulatory modules " skipBuilder="true">
-              <query name="" model="genomic" view="CRM.identifier CRM.length CRM.elementEvidence CRM.gene.primaryIdentifier CRM.gene.identifier" sortOrder="CRM.identifier asc" constraintLogic="A and B">
+<query name="" model="genomic" view="CRM.primaryIdentifier CRM.length CRM.elementEvidence CRM.gene.primaryIdentifier CRM.gene.symbol CRM.organism.shortName" sortOrder="CRM.primaryIdentifier CRM.length CRM.elementEvidence CRM.gene.primaryIdentifier CRM.gene.symbol CRM.organism.shortName">
   <node path="CRM" type="CRM">
-  </node>
-  <node path="CRM.organism" type="Organism">
-    <constraint op="LOOKUP" value="Drosophila melanogaster" description="" identifier="" code="A" extraValue="">
-    </constraint>
   </node>
   <node path="CRM.evidence" type="DataSet">
   </node>
   <node path="CRM.evidence.title" type="String">
     <constraint op="=" value="REDfly Drosophila transcriptional cis-regulatory modules" description="" identifier="" code="B" extraValue="">
-            </constraint>
-            </node>
-            </query>
+    </constraint>
+  </node>
+</query>
             </im:querylink>
           </li>
 
 
           <li>
             <im:querylink text="REDfly transcription factor binding sites " skipBuilder="true">
-<query name="" model="genomic" view="TFBindingSite.identifier TFBindingSite.length TFBindingSite.chromosome.identifier TFBindingSite.chromosomeLocation.start TFBindingSite.chromosomeLocation.end TFBindingSite.gene.identifier TFBindingSite.factor.identifier" sortOrder="TFBindingSite.identifier TFBindingSite.length TFBindingSite.chromosome.identifier TFBindingSite.chromosomeLocation.start TFBindingSite.chromosomeLocation.end TFBindingSite.gene.identifier TFBindingSite.factor.identifier" constraintLogic="A and B">
+<query name="" model="genomic" view="TFBindingSite.primaryIdentifier TFBindingSite.length TFBindingSite.chromosomeLocation.start TFBindingSite.chromosomeLocation.end TFBindingSite.gene.primaryIdentifier TFBindingSite.gene.symbol TFBindingSite.organism.shortName" sortOrder="TFBindingSite.primaryIdentifier asc" constraintLogic="A and B">
   <node path="TFBindingSite" type="TFBindingSite">
   </node>
   <node path="TFBindingSite.organism" type="Organism">
@@ -103,12 +99,8 @@
 
           <li>
             <im:querylink text="FlyBase enhancers " skipBuilder="true">
-              <query name="" model="genomic" view="Enhancer.identifier Enhancer.length Enhancer.chromosome.identifier Enhancer.chromosomeLocation.start Enhancer.chromosomeLocation.end Enhancer.gene.identifier Enhancer.gene.symbol" sortOrder="Enhancer.identifier asc" constraintLogic="A and B">
+<query name="" model="genomic" view="Enhancer.primaryIdentifier Enhancer.length Enhancer.chromosomeLocation.start Enhancer.chromosomeLocation.end Enhancer.gene.symbol Enhancer.gene.primaryIdentifier Enhancer.organism.shortName" sortOrder="Enhancer.primaryIdentifier asc">
   <node path="Enhancer" type="Enhancer">
-  </node>
-  <node path="Enhancer.organism" type="Organism">
-    <constraint op="LOOKUP" value="Drosophila melanogaster" description="" identifier="" code="A" extraValue="">
-    </constraint>
   </node>
   <node path="Enhancer.evidence" type="DataSet">
   </node>
@@ -125,32 +117,36 @@
           <li>
             <im:querylink text="Transcription factor binding sites predicted by Tiffin"
                           skipBuilder="true">
-              <query name="" model="genomic" view="TFBindingSite.identifier TFBindingSite.length TFBindingSite.chromosome.identifier TFBindingSite.chromosomeLocation.start TFBindingSite.chromosomeLocation.end TFBindingSite.motif.identifier">
-                <pathDescription pathString="TFBindingSite.motif" description="Motif"/>
-                <pathDescription pathString="TFBindingSite.chromosomeLocation" description="Chromosome location"/>
-                <pathDescription pathString="TFBindingSite.chromosome" description="Chromosome"/>
-                <pathDescription pathString="TFBindingSite" description="Binding site"/>
-                <node path="TFBindingSite" type="TFBindingSite">
-                </node>
-                <node path="TFBindingSite.evidence" type="DataSet">
-                </node>
-                <node path="TFBindingSite.evidence.title" type="String">
-                  <constraint op="=" value="Tiffin" description="" identifier="" code="A">
-                  </constraint>
-                </node>
-                <node path="TFBindingSite.organism" type="Organism">
-                </node>
-                <node path="TFBindingSite.organism.name" type="String">
-                </node>
-              </query>
+<query name="" model="genomic" view="TFBindingSite.motif.primaryIdentifier TFBindingSite.primaryIdentifier TFBindingSite.chromosome.primaryIdentifier TFBindingSite.chromosomeLocation.start TFBindingSite.chromosomeLocation.end" sortOrder="TFBindingSite.motif.primaryIdentifier asc">
+  <pathDescription pathString="TFBindingSite.chromosome" description="Chromosome">
+  </pathDescription>
+  <pathDescription pathString="TFBindingSite" description="Binding site">
+  </pathDescription>
+  <pathDescription pathString="TFBindingSite.chromosomeLocation" description="Chromosome location">
+  </pathDescription>
+  <pathDescription pathString="TFBindingSite.motif" description="Motif">
+  </pathDescription>
+  <node path="TFBindingSite" type="TFBindingSite">
+  </node>
+  <node path="TFBindingSite.evidence" type="DataSet">
+  </node>
+  <node path="TFBindingSite.evidence.title" type="String">
+    <constraint op="=" value="Tiffin" description="" identifier="" code="A">
+    </constraint>
+  </node>
+  <node path="TFBindingSite.organism" type="Organism">
+  </node>
+  <node path="TFBindingSite.organism.name" type="String">
+  </node>
+</query>
             </im:querylink>
           </li>
 
          <li>
             <im:querylink text="Tiffin motifs associated with expression terms"
                           skipBuilder="true">
-          <query name="" model="genomic" view="Motif.identifier Motif.expressionTerms.name" sortOrder="Motif.identifier asc">
-         </query>
+<query name="" model="genomic" view="Motif.primaryIdentifier Motif.expressionTerms.name" sortOrder="Motif.primaryIdentifier asc">
+</query>
            </im:querylink>
           </li>
         </ul>

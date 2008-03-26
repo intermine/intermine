@@ -24,7 +24,7 @@
 <dt>
 The <a href="http://www.fruitfly.org/cgi-bin/ex/insitu.pl/" target="_new">BDGP in situ project</a> determines patterns of gene expression during embryogenesis for <i>Drosophila</i> genes represented in non-redundant sets of <i>Drosophila</i> ESTs DGC1 and DGC2. Gene expression patterns are annotated with controlled vocabulary for developmental anatomy of <i>Drosophila</i> embryogenesis (ImaGO). 
 
-The overall findings of the work are summarized in Tomancak et al (2007) Genome Biology 8:R145. (<a href="http://www.ncbi.nlm.nih.gov/entrez/query.fcgi?cmd=Retrieve&db=PubMed&dopt=Abstract&list_uids=17923096" target="_new">PubMed: 17645804</a>) - Global analysis of patterns of gene expression during Drosophila embryogenesis. 
+The overall findings of the work are summarized in Tomancak et al (2007) Genome Biology 8:R145. (<a href="http://www.ncbi.nlm.nih.gov/entrez/query.fcgi?cmd=Retrieve&db=PubMed&dopt=Abstract&list_uids=17645804" target="_new">PubMed: 17645804</a>) - Global analysis of patterns of gene expression during Drosophila embryogenesis. 
 </dt>
 </div>
 
@@ -136,46 +136,97 @@ Koutsos et al used an EST microarray platform encompassing 19,680 ESTs to determ
         Bulk download
       </div>
       <div class="body">
-          
+               <ul>
+            <li>
+             <im:querylink text="All BDGP in situ results for <i>D. melanogaster</i> genes " skipBuilder="true">
+<query name="" model="genomic" view="Gene.primaryIdentifier Gene.symbol Gene.mRNAExpressionResults.stageRange Gene.mRNAExpressionResults.expressed Gene.mRNAExpressionResults.mRNAExpressionTerms.name Gene.mRNAExpressionResults.source.title" sortOrder="Gene.primaryIdentifier asc" constraintLogic="A and B">
+  <node path="Gene" type="Gene">
+  </node>
+  <node path="Gene.organism" type="Organism">
+  </node>
+  <node path="Gene.organism.name" type="String">
+    <constraint op="=" value="Drosophila melanogaster" description="" identifier="" code="A">
+    </constraint>
+  </node>
+  <node path="Gene.mRNAExpressionResults" type="MRNAExpressionResult">
+  </node>
+  <node path="Gene.mRNAExpressionResults.source" type="DataSet">
+  </node>
+  <node path="Gene.mRNAExpressionResults.source.title" type="String">
+    <constraint op="=" value="BDGP in situ data set" description="" identifier="" code="B">
+    </constraint>
+  </node>
+</query>
+          </im:querylink>
+            </li>
+     
           <ul>
             <li>
              <im:querylink text="All FlyAtlas results for <i>D. melanogaster</i> genes " skipBuilder="true">
-             <query name="" model="genomic" view="FlyAtlasResult.genes.identifier FlyAtlasResult.material.identifier FlyAtlasResult.mRNASignal FlyAtlasResult.mRNASignalSEM FlyAtlasResult.enrichment FlyAtlasResult.presentCall FlyAtlasResult.affyCall FlyAtlasResult.assays.name">
-             </query>
+          <query name="" model="genomic" view="Gene.primaryIdentifier Gene.symbol Gene.microArrayResults.assays.name Gene.microArrayResults.mRNASignal Gene.microArrayResults.mRNASignalSEM Gene.microArrayResults.presentCall Gene.microArrayResults.enrichment Gene.microArrayResults.affyCall Gene.probeSets.primaryIdentifier Gene.microArrayResults.source.title" sortOrder="Gene.primaryIdentifier asc">
+  <pathDescription pathString="Gene.probeSets" description="Probe">
+  </pathDescription>
+  <pathDescription pathString="Gene.microArrayResults.source" description="Dataset">
+  </pathDescription>
+  <pathDescription pathString="Gene.microArrayResults" description="Microarray result">
+  </pathDescription>
+  <pathDescription pathString="Gene.microArrayResults.assays" description="Microarray assay">
+  </pathDescription>
+  <node path="Gene" type="Gene">
+  </node>
+  <node path="Gene.organism" type="Organism">
+  </node>
+  <node path="Gene.organism.name" type="String">
+    <constraint op="=" value="Drosophila melanogaster" description="" identifier="" code="B">
+    </constraint>
+  </node>
+  <node path="Gene.microArrayResults" type="FlyAtlasResult">
+  </node>
+  <node path="Gene.microArrayResults.source" type="DataSet">
+  </node>
+</query>
              </im:querylink>
             </li>
 
 
            <li>
             <im:querylink text="All Fly-FISH results for <i>D. melanogaster</i> genes " skipBuilder="true">
-             <query name="" model="genomic" view="Gene.primaryIdentifier Gene.identifier Gene.mRNAExpressionResults.stage Gene.mRNAExpressionResults.expressed Gene.mRNAExpressionResults.mRNAExpressionTerms.name" sortOrder="Gene.primaryIdentifier asc">
-             <pathDescription pathString="Gene.probeSets" description="Probe">
-              </pathDescription>
-             <pathDescription pathString="Gene.microArrayResults" description="Microarray result">
-              </pathDescription>
-             <pathDescription pathString="Gene.mRNAExpressionResults" description="mRNA expression">
-              </pathDescription>
-             <pathDescription pathString="Gene.microArrayResults.assays" description="Microarray assay">
-              </pathDescription>
-             <pathDescription pathString="Gene.mRNAExpressionResults.mRNAExpressionTerms" description="mRNA expression term">
-              </pathDescription>
-             <pathDescription pathString="Gene.microArrayResults.source" description="Dataset">
-              </pathDescription>
-             <node path="Gene" type="Gene">
-              </node>
-             <node path="Gene.organism" type="Organism">
-              </node>
-             <node path="Gene.organism.name" type="String">
-             <constraint op="=" value="Drosophila melanogaster" description="" identifier="" code="B">
-              </constraint>
-              </node>
-             </query>
+          <query name="" model="genomic" view="Gene.primaryIdentifier Gene.symbol Gene.mRNAExpressionResults.stageRange Gene.mRNAExpressionResults.expressed Gene.mRNAExpressionResults.mRNAExpressionTerms.name Gene.mRNAExpressionResults.source.title" sortOrder="Gene.primaryIdentifier asc" constraintLogic="A and B">
+  <pathDescription pathString="Gene.mRNAExpressionResults.mRNAExpressionTerms" description="mRNA expression term">
+  </pathDescription>
+  <pathDescription pathString="Gene.microArrayResults.assays" description="Microarray assay">
+  </pathDescription>
+  <pathDescription pathString="Gene.microArrayResults" description="Microarray result">
+  </pathDescription>
+  <pathDescription pathString="Gene.microArrayResults.source" description="Dataset">
+  </pathDescription>
+  <pathDescription pathString="Gene.mRNAExpressionResults" description="mRNA expression">
+  </pathDescription>
+  <pathDescription pathString="Gene.probeSets" description="Probe">
+  </pathDescription>
+  <node path="Gene" type="Gene">
+  </node>
+  <node path="Gene.organism" type="Organism">
+  </node>
+  <node path="Gene.organism.name" type="String">
+    <constraint op="=" value="Drosophila melanogaster" description="" identifier="" code="B">
+    </constraint>
+  </node>
+  <node path="Gene.mRNAExpressionResults" type="MRNAExpressionResult">
+  </node>
+  <node path="Gene.mRNAExpressionResults.source" type="DataSet">
+  </node>
+  <node path="Gene.mRNAExpressionResults.source.title" type="String">
+    <constraint op="=" value="fly-Fish data set of Drosophila embryo mRNA localization patterns" description="" identifier="" code="A">
+    </constraint>
+  </node>
+</query>
            </im:querylink>
             </li> 
 
             <li>
              <im:querylink text="All results from Koutsos et al for <i>A. gambiae</i> genes " skipBuilder="true">
-            <query name="" model="genomic" view="Gene.identifier Gene.microArrayResults.material.identifier Gene.microArrayResults.value Gene.microArrayResults.standardError Gene.microArrayResults.type Gene.microArrayResults.assays.name" sortOrder="Gene.identifier asc">
+<query name="" model="genomic" view="Gene.primaryIdentifier Gene.microArrayResults.value Gene.microArrayResults.standardError Gene.microArrayResults.type Gene.microArrayResults.assays.name" sortOrder="Gene.primaryIdentifier Gene.microArrayResults.value Gene.microArrayResults.standardError Gene.microArrayResults.type Gene.microArrayResults.assays.name">
   <node path="Gene" type="Gene">
   </node>
   <node path="Gene.organism" type="Organism">
@@ -195,3 +246,13 @@ Koutsos et al used an EST microarray platform encompassing 19,680 ESTs to determ
       </td>
     </tr>
 </table>
+
+
+
+
+
+
+
+
+
+
