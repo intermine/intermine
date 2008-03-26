@@ -14,12 +14,19 @@ package org.intermine.web.struts;
 import java.util.Arrays;
 import java.util.Collection;
 
-import org.intermine.util.StringUtil;
-
+import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpSession;
 
+import org.apache.commons.lang.StringUtils;
+import org.apache.struts.action.ActionErrors;
 import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionMapping;
+import org.apache.struts.action.ActionMessage;
+import org.apache.struts.action.ActionMessages;
+import org.intermine.util.StringUtil;
+import org.intermine.web.logic.Constants;
+import org.intermine.web.logic.profile.ProfileManager;
 
 /**
  *
@@ -32,6 +39,9 @@ public class WidgetForm extends ActionForm
     private String bagName;
     private String[] selected;
     private String bagType;
+    private String action;
+    private String widgetid;
+    private String exporttype;
 
     /**
      * returns the value of the checkboxes checked by the user on the form.
@@ -122,6 +132,48 @@ public class WidgetForm extends ActionForm
 
     }
 
+
+    /**
+     * @return the action
+     */
+    public String getAction() {
+        return action;
+    }
+
+    /**
+     * @param action the action to set
+     */
+    public void setAction(String action) {
+        this.action = action;
+    }
+
+    /**
+     * @return the widgetid
+     */
+    public String getWidgetid() {
+        return widgetid;
+    }
+
+    /**
+     * @param widgetid the widgetid to set
+     */
+    public void setWidgetid(String widgetid) {
+        this.widgetid = widgetid;
+    }
+
+    /**
+     * @return the exporttype
+     */
+    public String getExporttype() {
+        return exporttype;
+    }
+
+    /**
+     * @param exporttype the exporttype to set
+     */
+    public void setExporttype(String exporttype) {
+        this.exporttype = exporttype;
+    }
 
     /**
      * {@inheritDoc}

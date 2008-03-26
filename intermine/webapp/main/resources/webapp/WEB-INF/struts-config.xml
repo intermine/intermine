@@ -266,7 +266,7 @@
     <action path="/contactAction" name="contactForm" type="org.intermine.web.struts.ContactAction" scope="request" input="contact">
       <forward name="contact" path="contact.page"/>
     </action>
-    <action path="/widgetAction" name="widgetForm" type="org.intermine.web.struts.WidgetAction" input="widget">
+    <action path="/widgetAction" name="widgetForm" type="org.intermine.web.struts.WidgetAction">
       <forward name="waiting" redirect="true" path="/pollQuery.do"/>      
     </action>
     <action path="/modifyQuery" name="modifyQueryForm" type="org.intermine.web.struts.ModifyQueryAction" scope="request" input="history" parameter="action">
