@@ -472,28 +472,21 @@
     <td> &nbsp;</td>
   </tr>
 
-  <tr><td rowspan="5" class="leftcol">
+  <tr><td rowspan="4" class="leftcol">
        <html:link action="/aspect?name=Literature">
         <p> <img src="model/images/book.png" /></p>
         <p> Literature</p></html:link></td>
+    <td> <i>Drosophila</i> </td>
+    <td> Gene versus publications</td>
+    <td><a href="http://www.flybase.org" target="_new">Flybase</a> - Version FB2008_02</td>
+    <td> Crosby et al - <a href="http://www.ncbi.nlm.nih.gov/entrez/query.fcgi?cmd=Retrieve&db=PubMed&dopt=Abstract&list_uids=17099233" target="_new">PubMed: 17099233</a></td>
+    <td> &nbsp;</td>
+  </tr>
+
     <td> <i>D. melanogaster</i> </td>
     <td> Gene versus publications</td>
     <td> <a href="http://www.ncbi.nlm.nih.gov" target="_new">NCBI</a> - 7th March 2008</td>
     <td> &nbsp;</td>
-    <td> &nbsp;</td>
-  </tr>
-
-    <td> <i>D. melanogaster</i> </td>
-    <td> Gene versus publications</td>
-    <td><a href="http://www.flybase.org" target="_new">Flybase</a> - Version FB2008_02</td>
-    <td> Crosby et al - <a href="http://www.ncbi.nlm.nih.gov/entrez/query.fcgi?cmd=Retrieve&db=PubMed&dopt=Abstract&list_uids=17099233" target="_new">PubMed: 17099233</a></td>
-    <td> &nbsp;</td>
-  </tr>
-
-    <td> <i>D. pseudoobscura</i> </td>
-    <td> Gene versus publications</td>
-    <td><a href="http://www.flybase.org" target="_new">Flybase</a> - Version FB2008_02</td>
-    <td> Crosby et al - <a href="http://www.ncbi.nlm.nih.gov/entrez/query.fcgi?cmd=Retrieve&db=PubMed&dopt=Abstract&list_uids=17099233" target="_new">PubMed: 17099233</a></td>
     <td> &nbsp;</td>
   </tr>
 
