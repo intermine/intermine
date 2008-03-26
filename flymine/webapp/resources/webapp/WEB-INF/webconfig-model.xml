@@ -47,7 +47,6 @@
   <class className="org.flymine.model.genomic.BioEntity">
     <fields>
       <fieldconfig fieldExpr="primaryIdentifier"/>
-      <fieldconfig fieldExpr="organism.name"/>
     </fields>
     <longdisplayers>
       <displayer src="attributeLinkDisplayer.tile"/>
@@ -355,6 +354,7 @@
       <fieldconfig fieldExpr="primaryIdentifier"/>
       <fieldconfig fieldExpr="chromosomeLocation" displayer="/model/chromosomeLocDisplayer.jsp" showInResults="false" />
       <fieldconfig fieldExpr="length" displayer="/model/sequenceShortDisplayerWithField.jsp" />
+      <fieldconfig fieldExpr="organism.name"/>
     </fields>
     <longdisplayers>
       <displayer src="attributeLinkDisplayer.tile"/>
@@ -509,10 +509,18 @@
     </fields>
   </class>
 
+  <class className="org.flymine.model.genomic.Polypeptide">
+    <fields>
+      <fieldconfig fieldExpr="primaryIdentifier"/>
+      <fieldconfig fieldExpr="organism.name"/>
+    </fields>
+  </class>
+
   <class className="org.flymine.model.genomic.Protein">
     <fields>
       <fieldconfig fieldExpr="primaryIdentifier"/>
       <fieldconfig fieldExpr="primaryAccession"/>
+      <fieldconfig fieldExpr="organism.name"/>
       <fieldconfig fieldExpr="length" displayer="/model/sequenceShortDisplayerWithField.jsp" />
     </fields>
     <longdisplayers>
