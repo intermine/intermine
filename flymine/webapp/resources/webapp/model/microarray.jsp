@@ -12,15 +12,48 @@
 
       <div class="body">
 
-
 <h4>
   <a href="javascript:toggleDiv('hiddenDiv1');">
     <img id='hiddenDiv1Toggle' src="images/disclosed.gif"/>
+     <i>D. melanogaster</i>  - In situ hybridisation data from BDGP  ...
+   </a>
+</h4>
+
+<div id="hiddenDiv1" class="dataSetDescription"> 
+<dl>
+<dt>
+The <a href="http://http://www.fruitfly.org/cgi-bin/ex/insitu.pl/" target="_new">BDGP in situ project</a> determines patterns of gene expression during embryogenesis for <i>Drosophila</i> genes represented in non-redundant sets of <i>Drosophila</i> ESTs DGC1 and DGC2. Gene expression patterns are annotated with controlled vocabulary for developmental anatomy of <i>Drosophila</i> embryogenesis (ImaGO). 
+
+The overall findings of the work are summarized in Tomancak et al (2007) Genome Biology 8:R145. (<a href="http://www.ncbi.nlm.nih.gov/entrez/query.fcgi?cmd=Retrieve&db=PubMed&dopt=Abstract&list_uids=17923096" target="_new">PubMed: 17645804</a>) - Global analysis of patterns of gene expression during Drosophila embryogenesis. 
+</dt>
+</div>
+
+<h4>
+  <a href="javascript:toggleDiv('hiddenDiv2');">
+    <img id='hiddenDiv2Toggle' src="images/disclosed.gif"/>
+     <i>D. melanogaster</i>  - In situ hybridisation data from Fly-FISH ...
+   </a>
+</h4>
+
+<div id="hiddenDiv2" class="dataSetDescription"> 
+<dl>
+<dt>
+
+The <a href="http://fly-fish.ccbr.utoronto.ca/" target="_new">Fly-FISH</a> data documents the expression patterns of <i>Drosophila</i> mRNAs at the subcellular level during early embryogenesis. The overall findings and implications of the work performed thus far is summarized in Lecuyer et al (2007) Cell 131:174-187 (<a href="http://www.ncbi.nlm.nih.gov/entrez/query.fcgi?cmd=Retrieve&db=PubMed&dopt=Abstract&list_uids=17923096" target="_new">PubMed: 17923096</a>) - Global analysis of mRNA localization reveals a prominent role in organizing cellular architecture and function.
+</dt>
+</div>
+
+
+
+
+<h4>
+  <a href="javascript:toggleDiv('hiddenDiv3');">
+    <img id='hiddenDiv3Toggle' src="images/disclosed.gif"/>
      <i>D. melanogaster</i>  - Microarray-based gene expression data from FlyAtlas ...
   </a>
 </h4>
 
-<div id="hiddenDiv1" class="dataSetDescription">
+<div id="hiddenDiv3" class="dataSetDescription">
 <dl>
 <dt>An affymetrix microarray-based atlas of gene expression in the adult <i>Drosophila</i> fly from <a href="http://www.flyatlas.org/" target="_new">FlyAtlas</a>.</dt>
 
@@ -44,32 +77,14 @@ tissue, the following data are given:
 
 </div>
 
-
 <h4>
-  <a href="javascript:toggleDiv('hiddenDiv2');">
-    <img id='hiddenDiv2Toggle' src="images/disclosed.gif"/>
-     <i>D. melanogaster</i>  - In situ hybridisation data from Fly-FISH ...
+  <a href="javascript:toggleDiv('hiddenDiv4');">
+    <img id='hiddenDiv4Toggle' src="images/disclosed.gif"/>
+     <i>D. melanogaster</i>  - Microarray-based gene expression data from ArrayExpress ...
    </a>
 </h4>
 
-<div id="hiddenDiv2" class="dataSetDescription"> 
-<dl>
-<dt>
-
-The <a href="http://fly-fish.ccbr.utoronto.ca/" target="_new">Fly-FISH</a> data documents the expression patterns of <i>Drosophila</i> mRNAs at the subcellular level during early embryogenesis. The overall findings and implications of the work performed thus far is summarized in Lecuyer et al (2007) Cell 131:174-187 (<a href="http://www.ncbi.nlm.nih.gov/entrez/query.fcgi?cmd=Retrieve&db=PubMed&dopt=Abstract&list_uids=17923096" target="_new">PubMed: 17923096</a>) - Global analysis of mRNA localization reveals a prominent role in organizing cellular architecture and function.
-</dt>
-</div>
-
-<h4>
-  <a href="javascript:toggleDiv('hiddenDiv3');">
-    <img id='hiddenDiv3Toggle' src="images/disclosed.gif"/>
-     <i>D. melanogaster</i>  - Gene expression data from ArrayExpress ...
-   </a>
-</h4>
-
-
-
-<div id="hiddenDiv3" class="dataSetDescription"> 
+<div id="hiddenDiv4" class="dataSetDescription"> 
 <dl>
 <dt>
 Arbeitman et al (2002) Science 297:2270-2275 (<a href="http://www.ncbi.nlm.nih.gov/entrez/query.fcgi?cmd=Retrieve&db=PubMed&dopt=Abstract&list_uids=12351791" target="_new">PubMed: 12351791</a>) - Gene Expression During the Life Cycle of Drosophila melanogaster - ArrayExpress: <a href="http://www.ebi.ac.uk/microarray-as/aer/result?queryFor=Experiment&eAccession=E-FLYC-6/" target="_new">E-FLYC-6</a>
@@ -87,17 +102,15 @@ Arbeitman et al reported gene expression patterns for nearly one third of all <i
 </div>
 
 
-
 <h4>
-  <a href="javascript:toggleDiv('hiddenDiv4');">
-    <img id='hiddenDiv4Toggle' src="images/disclosed.gif"/>
+  <a href="javascript:toggleDiv('hiddenDiv5');">
+    <img id='hiddenDiv5Toggle' src="images/disclosed.gif"/>
      <i>A. gambiae</i>  - Gene expression data from ArrayExpress ...
    </a>
 </h4>
 
 
-
-<div id="hiddenDiv4" class="dataSetDescription"> 
+<div id="hiddenDiv5" class="dataSetDescription"> 
 <dl>
 <dt>
 Koutsos et al (2007) PNAS 104:11304-11309 (<a href="http://www.ncbi.nlm.nih.gov/entrez/query.fcgi?cmd=Retrieve&db=PubMed&dopt=Abstract&list_uids=17563388" target="_new">PubMed: 17563388</a>) - Life cycle transcriptome of the malaria mosquito <i>A. gambiae</i> and comparison with the fruitfly <i>Drosophila melanogaster</i> - ArrayExpress: <a href="http://www.ebi.ac.uk/microarray-as/aer/result?queryFor=Experiment&eAccession=E-TABM-186/" target="_new">E-TABM-186</a>
