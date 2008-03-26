@@ -87,6 +87,7 @@ import org.intermine.web.logic.widget.Widget;
 public class AjaxServices
 {
     protected static final Logger LOG = Logger.getLogger(AjaxServices.class);
+    private static final Object ERROR_MSG = "Error happened during DWR ajax service.";
 
     /**
      * Creates a favourite Tag for the given templateName
@@ -96,41 +97,55 @@ public class AjaxServices
      * @param isFavourite whether or not this item is currently a favourite
      */
     public void setFavourite(String name, String type, boolean isFavourite) {
-        WebContext ctx = WebContextFactory.get();
-        HttpSession session = ctx.getSession();
-        Profile profile = (Profile) session.getAttribute(Constants.PROFILE);
-        HttpServletRequest request = ctx.getHttpServletRequest();
-        String nameCopy = name.replaceAll("#039;", "'");
-        ProfileManager pm = (ProfileManager) request.getSession().getServletContext().getAttribute(
-                Constants.PROFILE_MANAGER);
+        try {
+            WebContext ctx = WebContextFactory.get();
+            HttpSession session = ctx.getSession();
+            Profile profile = (Profile) session.getAttribute(Constants.PROFILE);
+            HttpServletRequest request = ctx.getHttpServletRequest();
+            String nameCopy = name.replaceAll("#039;", "'");
+            ProfileManager pm = (ProfileManager) request.getSession().
+                getServletContext().getAttribute(Constants.PROFILE_MANAGER);
 
-        // already a favourite.  turning off.
-        if (isFavourite) {
+            // already a favourite.  turning off.
+            if (isFavourite) {
 
-            List<Tag> tags;
-            Tag tag;
-            if (type.equals(TagTypes.TEMPLATE)) {
-                tags = pm.getTags("favourite", nameCopy, TagTypes.TEMPLATE, profile.getUsername());
-            } else if (type.equals(TagTypes.BAG)) {
-                tags = pm.getTags("favourite", nameCopy, TagTypes.BAG, profile.getUsername());
+                List<Tag> tags;
+                Tag tag;
+                if (type.equals(TagTypes.TEMPLATE)) {
+                    tags = pm.getTags("favourite", nameCopy, TagTypes.TEMPLATE, 
+                            profile.getUsername());
+                } else if (type.equals(TagTypes.BAG)) {
+                    tags = pm.getTags("favourite", nameCopy, TagTypes.BAG, profile.getUsername());
+                } else {
+                    throw new RuntimeException("Unknown tag type.");
+                }
+                if (tags.isEmpty()) {
+                    throw new RuntimeException("User tried to mark a non-existent template "
+                                               + "as favourite");
+                }
+                tag = tags.get(0);
+                pm.deleteTag(tag);
+            // not a favourite.  turning on.
             } else {
-                throw new RuntimeException("Unknown tag type.");
+                if (type.equals(TagTypes.TEMPLATE)) {
+                    pm.addTag("favourite", nameCopy, TagTypes.TEMPLATE, profile.getUsername());
+                } else if (type.equals(TagTypes.BAG)) {
+                    pm.addTag("favourite", nameCopy, TagTypes.BAG, profile.getUsername());
+                } else {
+                    throw new RuntimeException("Unknown tag type.");
+                }
             }
-            if (tags.isEmpty()) {
-                throw new RuntimeException("User tried to mark a non-existent template "
-                                           + "as favourite");
-            }
-            tag = tags.get(0);
-            pm.deleteTag(tag);
-        // not a favourite.  turning on.
+        } catch (RuntimeException e) {
+            processException(e);
+        }
+    }
+
+    private static void processException(Exception e) {
+        LOG.error(ERROR_MSG, e);
+        if (e instanceof RuntimeException) {
+            throw (RuntimeException) e;
         } else {
-            if (type.equals(TagTypes.TEMPLATE)) {
-                pm.addTag("favourite", nameCopy, TagTypes.TEMPLATE, profile.getUsername());
-            } else if (type.equals(TagTypes.BAG)) {
-                pm.addTag("favourite", nameCopy, TagTypes.BAG, profile.getUsername());
-            } else {
-                throw new RuntimeException("Unknown tag type.");
-            }
+            throw new RuntimeException(e);
         }
     }
 
@@ -140,26 +155,30 @@ public class AjaxServices
      * @return a String to guarantee the service ran properly
      */
     public String preCompute(String templateName) {
-        WebContext ctx = WebContextFactory.get();
-        HttpSession session = ctx.getSession();
-        ServletContext servletContext = ctx.getServletContext();
-        Profile profile = (Profile) session.getAttribute(Constants.PROFILE);
-        Map templates = profile.getSavedTemplates();
-        TemplateQuery template = (TemplateQuery) templates.get(templateName);
-        ObjectStoreInterMineImpl os = (ObjectStoreInterMineImpl) servletContext
-                .getAttribute(Constants.OBJECTSTORE);
-        List indexes = new ArrayList();
-        Query query = TemplateHelper.getPrecomputeQuery(template, indexes, null);
-
         try {
-            if (!os.isPrecomputed(query, "template")) {
-                session.setAttribute("precomputing_" + templateName, "true");
-                os.precompute(query, indexes, "template");
+            WebContext ctx = WebContextFactory.get();
+            HttpSession session = ctx.getSession();
+            ServletContext servletContext = ctx.getServletContext();
+            Profile profile = (Profile) session.getAttribute(Constants.PROFILE);
+            Map templates = profile.getSavedTemplates();
+            TemplateQuery template = (TemplateQuery) templates.get(templateName);
+            ObjectStoreInterMineImpl os = (ObjectStoreInterMineImpl) servletContext
+                    .getAttribute(Constants.OBJECTSTORE);
+            List indexes = new ArrayList();
+            Query query = TemplateHelper.getPrecomputeQuery(template, indexes, null);
+
+            try {
+                if (!os.isPrecomputed(query, "template")) {
+                    session.setAttribute("precomputing_" + templateName, "true");
+                    os.precompute(query, indexes, "template");
+                }
+            } catch (ObjectStoreException e) {
+                LOG.error(e);
+            } finally {
+                session.removeAttribute("precomputing_" + templateName);
             }
-        } catch (ObjectStoreException e) {
-            LOG.error(e);
-        } finally {
-            session.removeAttribute("precomputing_" + templateName);
+        } catch (RuntimeException e) {
+            processException(e);
         }
         return "precomputed";
     }
@@ -171,27 +190,32 @@ public class AjaxServices
      * @return a String to guarantee the service ran properly
      */
     public String summarise(String templateName) {
-        WebContext ctx = WebContextFactory.get();
-        HttpSession session = ctx.getSession();
-        ServletContext servletContext = ctx.getServletContext();
-        Profile profile = (Profile) session.getAttribute(Constants.PROFILE);
-        Map templates = profile.getSavedTemplates();
-        TemplateQuery template = (TemplateQuery) templates.get(templateName);
-        ObjectStoreInterMineImpl os = (ObjectStoreInterMineImpl) servletContext
-                .getAttribute(Constants.OBJECTSTORE);
-        ObjectStoreWriter osw = ((ProfileManager) servletContext.getAttribute(
-                    Constants.PROFILE_MANAGER)).getUserProfileObjectStore();
         try {
-            session.setAttribute("summarising_" + templateName, "true");
-            template.summarise(os, osw);
-        } catch (ObjectStoreException e) {
-            LOG.error("Failed to summarise " + templateName, e);
-        } catch (NullPointerException e) {
-            NullPointerException e2 = new NullPointerException("No such template " + templateName);
-            e2.initCause(e);
-            throw e2;
-        } finally {
-            session.removeAttribute("summarising_" + templateName);
+            WebContext ctx = WebContextFactory.get();
+            HttpSession session = ctx.getSession();
+            ServletContext servletContext = ctx.getServletContext();
+            Profile profile = (Profile) session.getAttribute(Constants.PROFILE);
+            Map templates = profile.getSavedTemplates();
+            TemplateQuery template = (TemplateQuery) templates.get(templateName);
+            ObjectStoreInterMineImpl os = (ObjectStoreInterMineImpl) servletContext
+                    .getAttribute(Constants.OBJECTSTORE);
+            ObjectStoreWriter osw = ((ProfileManager) servletContext.getAttribute(
+                        Constants.PROFILE_MANAGER)).getUserProfileObjectStore();
+            try {
+                session.setAttribute("summarising_" + templateName, "true");
+                template.summarise(os, osw);
+            } catch (ObjectStoreException e) {
+                LOG.error("Failed to summarise " + templateName, e);
+            } catch (NullPointerException e) {
+                NullPointerException e2 = new NullPointerException("No such template " 
+                        + templateName);
+                e2.initCause(e);
+                throw e2;
+            } finally {
+                session.removeAttribute("summarising_" + templateName);
+            }
+        } catch (RuntimeException e) {
+            processException(e);
         }
         return "summarised";
     }
@@ -207,57 +231,63 @@ public class AjaxServices
      */
     public String rename(String name, String type, String reName)
         throws Exception {
-        String newName = reName.trim();
-        WebContext ctx = WebContextFactory.get();
-        HttpSession session = ctx.getSession();
-        Profile profile = (Profile) session.getAttribute(Constants.PROFILE);
-        ServletContext servletContext = ctx.getServletContext();
-        ObjectStoreWriter uosw = ((ProfileManager) servletContext.getAttribute(
-                    Constants.PROFILE_MANAGER)).getUserProfileObjectStore();
-        SavedQuery sq;
-        if (name.equals(newName) || StringUtils.isEmpty(newName)) {
-            return name;
+        String newName;
+        try {
+            newName = reName.trim();
+            WebContext ctx = WebContextFactory.get();
+            HttpSession session = ctx.getSession();
+            Profile profile = (Profile) session.getAttribute(Constants.PROFILE);
+            ServletContext servletContext = ctx.getServletContext();
+            ObjectStoreWriter uosw = ((ProfileManager) servletContext.getAttribute(
+                        Constants.PROFILE_MANAGER)).getUserProfileObjectStore();
+            SavedQuery sq;
+            if (name.equals(newName) || StringUtils.isEmpty(newName)) {
+                return name;
+            }
+            // TODO get error text from properties file
+            if (!WebUtil.isValidName(newName)) {
+                String errorMsg = "<i>Invalid name.  Names may only contain letters, "
+                                  + "numbers, spaces, and underscores.</i>";
+                return errorMsg;
+            }
+            if (type.equals("history")) {
+                if (profile.getHistory().get(name) == null) {
+                    return "<i>" + name + " does not exist</i>";
+                }
+                if (profile.getHistory().get(newName) != null) {
+                    return "<i>" + newName + " already exists</i>";
+                }
+                profile.renameHistory(name, newName);
+            } else if (type.equals("saved")) {
+                if (profile.getSavedQueries().get(name) == null) {
+                    return "<i>" + name + " does not exist</i>";
+                }
+                if (profile.getSavedQueries().get(newName) != null) {
+                    return "<i>" + newName + " already exists</i>";
+                }
+                sq = profile.getSavedQueries().get(name);
+                profile.deleteQuery(sq.getName());
+                sq = new SavedQuery(newName, sq.getDateCreated(), sq.getPathQuery());
+                profile.saveQuery(sq.getName(), sq);
+            } else if (type.equals("bag")) {
+                if (profile.getSavedBags().get(name) == null) {
+                    return "<i>" + name + " does not exist</i>";
+                }
+                if (profile.getSavedBags().get(newName) != null) {
+                    return "<i>" + newName + " already exists</i>";
+                }
+                InterMineBag bag = profile.getSavedBags().get(name);
+                bag.setName(newName, uosw);
+                profile.deleteBag(name);
+                profile.saveBag(newName, bag);
+            } else {
+                return "Type unknown";
+            }
+            return newName;
+        } catch (RuntimeException e) {
+            processException(e);
+            return null;
         }
-        // TODO get error text from properties file
-        if (!WebUtil.isValidName(newName)) {
-            String errorMsg = "<i>Invalid name.  Names may only contain letters, "
-                              + "numbers, spaces, and underscores.</i>";
-            return errorMsg;
-        }
-        if (type.equals("history")) {
-            if (profile.getHistory().get(name) == null) {
-                return "<i>" + name + " does not exist</i>";
-            }
-            if (profile.getHistory().get(newName) != null) {
-                return "<i>" + newName + " already exists</i>";
-            }
-            profile.renameHistory(name, newName);
-        } else if (type.equals("saved")) {
-            if (profile.getSavedQueries().get(name) == null) {
-                return "<i>" + name + " does not exist</i>";
-            }
-            if (profile.getSavedQueries().get(newName) != null) {
-                return "<i>" + newName + " already exists</i>";
-            }
-            sq = profile.getSavedQueries().get(name);
-            profile.deleteQuery(sq.getName());
-            sq = new SavedQuery(newName, sq.getDateCreated(), sq.getPathQuery());
-            profile.saveQuery(sq.getName(), sq);
-        } else if (type.equals("bag")) {
-            if (profile.getSavedBags().get(name) == null) {
-                return "<i>" + name + " does not exist</i>";
-            }
-            if (profile.getSavedBags().get(newName) != null) {
-                return "<i>" + newName + " already exists</i>";
-            }
-            InterMineBag bag = profile.getSavedBags().get(name);
-            bag.setName(newName, uosw);
-            profile.deleteBag(name);
-            profile.saveBag(newName, bag);
-        } else {
-            return "Type unknown";
-        }
-        return newName;
     }
 
     /**
@@ -268,19 +298,24 @@ public class AjaxServices
      * @throws Exception an exception
      */
     public String saveBagDescription(String bagName, String description) throws Exception {
-        WebContext ctx = WebContextFactory.get();
-        HttpSession session = ctx.getSession();
-        Profile profile = (Profile) session.getAttribute(Constants.PROFILE);
-        ServletContext servletContext = ctx.getServletContext();
-        ObjectStoreWriter uosw = ((ProfileManager) servletContext.getAttribute(
-                    Constants.PROFILE_MANAGER)).getUserProfileObjectStore();
-        InterMineBag bag = profile.getSavedBags().get(bagName);
-        if (bag == null) {
-            throw new InterMineException("List \"" + bagName + "\" not found.");
+        try {
+            WebContext ctx = WebContextFactory.get();
+            HttpSession session = ctx.getSession();
+            Profile profile = (Profile) session.getAttribute(Constants.PROFILE);
+            ServletContext servletContext = ctx.getServletContext();
+            ObjectStoreWriter uosw = ((ProfileManager) servletContext.getAttribute(
+                        Constants.PROFILE_MANAGER)).getUserProfileObjectStore();
+            InterMineBag bag = profile.getSavedBags().get(bagName);
+            if (bag == null) {
+                throw new InterMineException("List \"" + bagName + "\" not found.");
+            }
+            bag.setDescription(description, uosw);
+            profile.getSearchRepository().descriptionChanged(bag);
+            return description;
+        } catch (RuntimeException e) {
+            processException(e);
+            return null;
         }
-        bag.setDescription(description, uosw);
-        profile.getSearchRepository().descriptionChanged(bag);
-        return description;
     }
 
     /**
@@ -290,21 +325,26 @@ public class AjaxServices
      * @return the description, or null if the description was empty
      */
     public String changeViewPathDescription(String pathString, String description) {
-        String descr = description;
-        if (description.trim().length() == 0) {
-            descr = null;
+        try {
+            String descr = description;
+            if (description.trim().length() == 0) {
+                descr = null;
+            }
+            WebContext ctx = WebContextFactory.get();
+            HttpSession session = ctx.getSession();
+            PathQuery query = (PathQuery) session.getAttribute(Constants.QUERY);
+            Path path = MainHelper.makePath(query.getModel(), query, pathString);
+            Path prefixPath = path.getPrefix();
+            if (descr == null) {
+                query.getPathDescriptions().remove(prefixPath);
+            } else {
+                query.getPathDescriptions().put(prefixPath, descr);
+            }
+            return descr;
+        } catch (RuntimeException e) {
+            processException(e);
+            return null;
         }
-        WebContext ctx = WebContextFactory.get();
-        HttpSession session = ctx.getSession();
-        PathQuery query = (PathQuery) session.getAttribute(Constants.QUERY);
-        Path path = MainHelper.makePath(query.getModel(), query, pathString);
-        Path prefixPath = path.getPrefix();
-        if (descr == null) {
-            query.getPathDescriptions().remove(prefixPath);
-        } else {
-            query.getPathDescriptions().put(prefixPath, descr);
-        }
-        return descr;
     }
 
     /**
@@ -315,50 +355,55 @@ public class AjaxServices
      * @throws Exception an exception
      */
     public static List getColumnSummary(String tableName, String summaryPath) throws Exception {
-        WebContext ctx = WebContextFactory.get();
-        HttpSession session = ctx.getSession();
-        ServletContext servletContext = session.getServletContext();
-        ObjectStore os = (ObjectStore) servletContext.getAttribute(Constants.OBJECTSTORE);
+        try {
+            WebContext ctx = WebContextFactory.get();
+            HttpSession session = ctx.getSession();
+            ServletContext servletContext = session.getServletContext();
+            ObjectStore os = (ObjectStore) servletContext.getAttribute(Constants.OBJECTSTORE);
 
-        WebTable webTable = (SessionMethods.getResultsTable(session, tableName))
-                               .getWebTable();
-        PathQuery pathQuery = webTable.getPathQuery();
+            WebTable webTable = (SessionMethods.getResultsTable(session, tableName))
+                                   .getWebTable();
+            PathQuery pathQuery = webTable.getPathQuery();
 
-        SearchRepository globalRepository =
-            (SearchRepository) servletContext.getAttribute(Constants.
-                                                           GLOBAL_SEARCH_REPOSITORY);
-        Profile currentProfile = (Profile) session.getAttribute(Constants.PROFILE);
-        SearchRepository userSearchRepository = currentProfile.getSearchRepository();
-        Map<String, InterMineBag> userWsMap =
-            (Map<String, InterMineBag>) userSearchRepository.getWebSearchableMap(TagTypes.BAG);
-        Map<String, InterMineBag> globalWsMap =
-            (Map<String, InterMineBag>) globalRepository.getWebSearchableMap(TagTypes.BAG);
-        Map<String, InterMineBag> allBags = new HashMap<String, InterMineBag>(userWsMap);
-        allBags.putAll(globalWsMap);
+            SearchRepository globalRepository =
+                (SearchRepository) servletContext.getAttribute(Constants.
+                                                               GLOBAL_SEARCH_REPOSITORY);
+            Profile currentProfile = (Profile) session.getAttribute(Constants.PROFILE);
+            SearchRepository userSearchRepository = currentProfile.getSearchRepository();
+            Map<String, InterMineBag> userWsMap =
+                (Map<String, InterMineBag>) userSearchRepository.getWebSearchableMap(TagTypes.BAG);
+            Map<String, InterMineBag> globalWsMap =
+                (Map<String, InterMineBag>) globalRepository.getWebSearchableMap(TagTypes.BAG);
+            Map<String, InterMineBag> allBags = new HashMap<String, InterMineBag>(userWsMap);
+            allBags.putAll(globalWsMap);
 
-        Query distinctQuery =
-            MainHelper.makeSummaryQuery(pathQuery, allBags,
-                                        new HashMap<String, QueryNode>(), summaryPath,
-                                        servletContext);
+            Query distinctQuery =
+                MainHelper.makeSummaryQuery(pathQuery, allBags,
+                                            new HashMap<String, QueryNode>(), summaryPath,
+                                            servletContext);
 
-        Results results = os.execute(distinctQuery);
-        WebResultsSimple webResults = new WebResultsSimple(results,
-                                                    Arrays.asList(new String[] {"col1", "col2"}));
-        PagedTable pagedTable = new PagedTable(webResults);
+            Results results = os.execute(distinctQuery);
+            WebResultsSimple webResults = new WebResultsSimple(results,
+                        Arrays.asList(new String[] {"col1", "col2"}));
+            PagedTable pagedTable = new PagedTable(webResults);
 
-        // Start the count of results
-        Query countQuery =
-            MainHelper.makeSummaryQuery(pathQuery, allBags,
-                                        new HashMap<String, QueryNode>(), summaryPath
-                                        , servletContext);
-        QueryCountQueryMonitor clientState
-            = new QueryCountQueryMonitor(Constants.QUERY_TIMEOUT_SECONDS * 1000, countQuery);
-        MessageResources messages = (MessageResources) ctx.getHttpServletRequest()
-                                                          .getAttribute(Globals.MESSAGES_KEY);
-        String qid = SessionMethods.startQueryCount(clientState, session, messages);
-        return Arrays.asList(new Object[] {
-                    pagedTable.getRows(), qid, new Integer(pagedTable.getExactSize())
-                });
+            // Start the count of results
+            Query countQuery =
+                MainHelper.makeSummaryQuery(pathQuery, allBags,
+                                            new HashMap<String, QueryNode>(), summaryPath
+                                            , servletContext);
+            QueryCountQueryMonitor clientState
+                = new QueryCountQueryMonitor(Constants.QUERY_TIMEOUT_SECONDS * 1000, countQuery);
+            MessageResources messages = (MessageResources) ctx.getHttpServletRequest()
+                                                              .getAttribute(Globals.MESSAGES_KEY);
+            String qid = SessionMethods.startQueryCount(clientState, session, messages);
+            return Arrays.asList(new Object[] {
+                        pagedTable.getRows(), qid, new Integer(pagedTable.getExactSize())
+                    });
+        } catch (RuntimeException e) {
+            processException(e);
+            return null;
+        }
     }
 
     /**
@@ -414,38 +459,43 @@ public class AjaxServices
      * @return the row count or null if not yet available
      */
     public static Integer getResultsSize(String qid) {
-        WebContext ctx = WebContextFactory.get();
-        HttpSession session = ctx.getSession();
-        QueryMonitorTimeout controller = (QueryMonitorTimeout)
-            SessionMethods.getRunningQueryController(qid, session);
+        try {
+            WebContext ctx = WebContextFactory.get();
+            HttpSession session = ctx.getSession();
+            QueryMonitorTimeout controller = (QueryMonitorTimeout)
+                SessionMethods.getRunningQueryController(qid, session);
 
-        // First tickle the controller to avoid timeout
-        controller.tickle();
+            // First tickle the controller to avoid timeout
+            controller.tickle();
 
-        if (controller.isCancelledWithError()) {
-            LOG.debug("query qid " + qid + " error");
+            if (controller.isCancelledWithError()) {
+                LOG.debug("query qid " + qid + " error");
 
-            return null;
-        } else if (controller.isCancelled()) {
-            LOG.debug("query qid " + qid + " cancelled");
-            return null;
-        } else if (controller.isCompleted()) {
-            LOG.debug("query qid " + qid + " complete");
+                return null;
+            } else if (controller.isCancelled()) {
+                LOG.debug("query qid " + qid + " cancelled");
+                return null;
+            } else if (controller.isCompleted()) {
+                LOG.debug("query qid " + qid + " complete");
 
-            if (controller instanceof PageTableQueryMonitor) {
-                PagedTable pt = ((PageTableQueryMonitor) controller).getPagedTable();
-                return pt.getExactSize();
-            } else {
-                if (controller instanceof QueryCountQueryMonitor) {
-                    return ((QueryCountQueryMonitor) controller).getCount();
+                if (controller instanceof PageTableQueryMonitor) {
+                    PagedTable pt = ((PageTableQueryMonitor) controller).getPagedTable();
+                    return pt.getExactSize();
                 } else {
-                    LOG.debug("query qid " + qid + " - unknown controller type");
-                    return null;
+                    if (controller instanceof QueryCountQueryMonitor) {
+                        return ((QueryCountQueryMonitor) controller).getCount();
+                    } else {
+                        LOG.debug("query qid " + qid + " - unknown controller type");
+                        return null;
+                    }
                 }
+            } else {
+                // query still running
+                LOG.debug("query qid " + qid + " still running, making client wait");
+                return null;
             }
-        } else {
-            // query still running
-            LOG.debug("query qid " + qid + " still running, making client wait");
+        } catch (RuntimeException e) {
+            processException(e);
             return null;
         }
     }
@@ -467,106 +517,112 @@ public class AjaxServices
     public static List<String> filterWebSearchables(String scope, String type,
                                                     List<String> tags, String filterText,
                                                     String filterAction, String callId) {
-        ServletContext servletContext = WebContextFactory.get().getServletContext();
-        ProfileManager pm = SessionMethods.getProfileManager(servletContext);
-        HttpSession session = WebContextFactory.get().getSession();
-        Profile profile = (Profile) session.getAttribute(Constants.PROFILE);
-        Map<String, WebSearchable> wsMap;
-        Map<WebSearchable, Float> hitMap = new LinkedHashMap<WebSearchable, Float>();
-        Map<WebSearchable, String> highlightedDescMap = new HashMap<WebSearchable, String>();
+        try {
+            ServletContext servletContext = WebContextFactory.get().getServletContext();
+            ProfileManager pm = SessionMethods.getProfileManager(servletContext);
+            HttpSession session = WebContextFactory.get().getSession();
+            Profile profile = (Profile) session.getAttribute(Constants.PROFILE);
+            Map<String, WebSearchable> wsMap;
+            Map<WebSearchable, Float> hitMap = new LinkedHashMap<WebSearchable, Float>();
+            Map<WebSearchable, String> highlightedDescMap = new HashMap<WebSearchable, String>();
 
-        if (filterText != null && filterText.length() > 1) {
-            wsMap = new LinkedHashMap<String, WebSearchable>();
-            Map<WebSearchable, String> scopeMap = new LinkedHashMap<WebSearchable, String>();
-            try {
-                long time =
-                    SearchRepository.runLeuceneSearch(filterText, scope, type, profile,
-                                                    servletContext,
-                                                    hitMap, scopeMap, null, highlightedDescMap);
-                LOG.info("Lucene search took " + time + " milliseconds");
-            } catch (ParseException e) {
-                LOG.error("couldn't run lucene filter", e);
-                ArrayList<String> emptyList = new ArrayList<String>();
-                emptyList.add(callId);
-                return emptyList;
-            } catch (IOException e) {
-                LOG.error("couldn't run lucene filter", e);
-                ArrayList<String> emptyList = new ArrayList<String>();
-                emptyList.add(callId);
-                return emptyList;
-            }
+            if (filterText != null && filterText.length() > 1) {
+                wsMap = new LinkedHashMap<String, WebSearchable>();
+                Map<WebSearchable, String> scopeMap = new LinkedHashMap<WebSearchable, String>();
+                try {
+                    long time =
+                        SearchRepository.runLeuceneSearch(filterText, scope, type, profile,
+                                                        servletContext,
+                                                        hitMap, scopeMap, null, highlightedDescMap);
+                    LOG.info("Lucene search took " + time + " milliseconds");
+                } catch (ParseException e) {
+                    LOG.error("couldn't run lucene filter", e);
+                    ArrayList<String> emptyList = new ArrayList<String>();
+                    emptyList.add(callId);
+                    return emptyList;
+                } catch (IOException e) {
+                    LOG.error("couldn't run lucene filter", e);
+                    ArrayList<String> emptyList = new ArrayList<String>();
+                    emptyList.add(callId);
+                    return emptyList;
+                }
 
-            //long time = System.currentTimeMillis();
+                //long time = System.currentTimeMillis();
 
-            for (WebSearchable ws: hitMap.keySet()) {
-                wsMap.put(ws.getName(), ws);
-            }
-        } else {
-
-            if (scope.equals("user")) {
-                SearchRepository searchRepository = profile.getSearchRepository();
-                wsMap = (Map<String, WebSearchable>) searchRepository.getWebSearchableMap(type);
+                for (WebSearchable ws: hitMap.keySet()) {
+                    wsMap.put(ws.getName(), ws);
+                }
             } else {
-                SearchRepository globalRepository =
-                    (SearchRepository) servletContext.getAttribute(Constants.
-                                                                   GLOBAL_SEARCH_REPOSITORY);
-                if (scope.equals("global")) {
-                    wsMap = (Map<String, WebSearchable>) globalRepository.getWebSearchableMap(type);
+
+                if (scope.equals("user")) {
+                    SearchRepository searchRepository = profile.getSearchRepository();
+                    wsMap = (Map<String, WebSearchable>) searchRepository.getWebSearchableMap(type);
                 } else {
-                    // must be "all"
-                    SearchRepository userSearchRepository = profile.getSearchRepository();
-                    Map<String, ? extends WebSearchable> userWsMap =
-                        userSearchRepository.getWebSearchableMap(type);
-                    Map<String, ? extends WebSearchable> globalWsMap =
-                        globalRepository.getWebSearchableMap(type);
-                    wsMap = new HashMap<String, WebSearchable>(userWsMap);
-                    wsMap.putAll(globalWsMap);
+                    SearchRepository globalRepository =
+                        (SearchRepository) servletContext.getAttribute(Constants.
+                                                                       GLOBAL_SEARCH_REPOSITORY);
+                    if (scope.equals("global")) {
+                        wsMap = (Map<String, WebSearchable>) globalRepository.
+                            getWebSearchableMap(type);
+                    } else {
+                        // must be "all"
+                        SearchRepository userSearchRepository = profile.getSearchRepository();
+                        Map<String, ? extends WebSearchable> userWsMap =
+                            userSearchRepository.getWebSearchableMap(type);
+                        Map<String, ? extends WebSearchable> globalWsMap =
+                            globalRepository.getWebSearchableMap(type);
+                        wsMap = new HashMap<String, WebSearchable>(userWsMap);
+                        wsMap.putAll(globalWsMap);
+                    }
                 }
             }
-        }
 
 
-        Map<String, ? extends WebSearchable> filteredWsMap
-                                = new LinkedHashMap<String, WebSearchable>();
-        //Filter by aspects (defined in superuser account)
-        List<String> aspectTags = new ArrayList<String>();
-        List<String> userTags = new ArrayList<String>();
-        for (String tag :tags) {
-            if (tag.startsWith("aspect:")) {
-                aspectTags.add(tag);
-            } else {
-                userTags.add(tag);
+            Map<String, ? extends WebSearchable> filteredWsMap
+                                    = new LinkedHashMap<String, WebSearchable>();
+            //Filter by aspects (defined in superuser account)
+            List<String> aspectTags = new ArrayList<String>();
+            List<String> userTags = new ArrayList<String>();
+            for (String tag :tags) {
+                if (tag.startsWith("aspect:")) {
+                    aspectTags.add(tag);
+                } else {
+                    userTags.add(tag);
+                }
             }
-        }
-        if (aspectTags.size() > 0) {
-            wsMap = pm.filterByTags(wsMap, aspectTags, type,
-                    (String) servletContext.getAttribute(Constants.SUPERUSER_ACCOUNT));
-        }
-
-        if (profile.getUsername() != null && userTags != null && userTags.size() > 0) {
-            filteredWsMap = pm.filterByTags(wsMap, userTags, type, profile.getUsername());
-        } else {
-            filteredWsMap = wsMap;
-        }
-
-        List returnList = new ArrayList<String>();
-
-        returnList.add(callId);
-
-        SearchRepository.filterOutInvalidTemplates(filteredWsMap);
-        for (WebSearchable ws: filteredWsMap.values()) {
-            List row = new ArrayList();
-            row.add(ws.getName());
-            if (filterText != null && filterText.length() > 1) {
-                row.add(highlightedDescMap.get(ws));
-                row.add(hitMap.get(ws));
-            } else {
-                row.add(ws.getDescription());
+            if (aspectTags.size() > 0) {
+                wsMap = pm.filterByTags(wsMap, aspectTags, type,
+                        (String) servletContext.getAttribute(Constants.SUPERUSER_ACCOUNT));
             }
-            returnList.add(row);
-        }
 
-        return returnList;
+            if (profile.getUsername() != null && userTags != null && userTags.size() > 0) {
+                filteredWsMap = pm.filterByTags(wsMap, userTags, type, profile.getUsername());
+            } else {
+                filteredWsMap = wsMap;
+            }
+
+            List returnList = new ArrayList<String>();
+
+            returnList.add(callId);
+
+            SearchRepository.filterOutInvalidTemplates(filteredWsMap);
+            for (WebSearchable ws: filteredWsMap.values()) {
+                List row = new ArrayList();
+                row.add(ws.getName());
+                if (filterText != null && filterText.length() > 1) {
+                    row.add(highlightedDescMap.get(ws));
+                    row.add(hitMap.get(ws));
+                } else {
+                    row.add(ws.getDescription());
+                }
+                returnList.add(row);
+            }
+
+            return returnList;
+        } catch (RuntimeException e) {
+            processException(e);
+            return null;
+        }
     }
 
     /**
@@ -578,36 +634,41 @@ public class AjaxServices
      * @return the number of converted objects
      */
     public static int getConvertCountForBag(String bagName, String type) {
-        ServletContext servletContext = WebContextFactory.get().getServletContext();
-        ProfileManager pm = SessionMethods.getProfileManager(servletContext);
-        HttpSession session = WebContextFactory.get().getSession();
-        ObjectStore os = (ObjectStore) servletContext.getAttribute(Constants.OBJECTSTORE);
-        String pckName =  os.getModel().getPackageName();
-        Profile profile = (Profile) session.getAttribute(Constants.PROFILE);
-        SearchRepository searchRepository =
-            SearchRepository.getGlobalSearchRepository(servletContext);
-        InterMineBag imBag = null;
-        int count = 0;
         try {
-            imBag = BagHelper.getBag(profile, searchRepository, bagName);
-            Map<String, QueryNode> pathToQueryNode = new HashMap<String, QueryNode>();
-            Map<String, InterMineBag> bagMap = new HashMap<String, InterMineBag>();
-            bagMap.put(imBag.getName(), imBag);
+            ServletContext servletContext = WebContextFactory.get().getServletContext();
+            ProfileManager pm = SessionMethods.getProfileManager(servletContext);
+            HttpSession session = WebContextFactory.get().getSession();
+            ObjectStore os = (ObjectStore) servletContext.getAttribute(Constants.OBJECTSTORE);
+            String pckName =  os.getModel().getPackageName();
+            Profile profile = (Profile) session.getAttribute(Constants.PROFILE);
+            SearchRepository searchRepository =
+                SearchRepository.getGlobalSearchRepository(servletContext);
+            InterMineBag imBag = null;
+            int count = 0;
+            try {
+                imBag = BagHelper.getBag(profile, searchRepository, bagName);
+                Map<String, QueryNode> pathToQueryNode = new HashMap<String, QueryNode>();
+                Map<String, InterMineBag> bagMap = new HashMap<String, InterMineBag>();
+                bagMap.put(imBag.getName(), imBag);
 
-            PathQuery pathQuery = TypeConverter.getConversionQuery(BagQueryRunner.
-                getConversionTemplates(servletContext),
-                TypeUtil.instantiate(pckName + "." + imBag.getType()),
-                TypeUtil.instantiate(pckName + "." + type), imBag);
-            Query query = MainHelper.makeQuery(pathQuery, bagMap, pathToQueryNode,
-                servletContext, null, false,
-                (ObjectStore) servletContext.getAttribute(Constants.OBJECTSTORE),
-                (Map) servletContext.getAttribute(Constants.CLASS_KEYS),
-                (BagQueryConfig) servletContext.getAttribute(Constants.BAG_QUERY_CONFIG));
-            count = os.count(query, ObjectStore.SEQUENCE_IGNORE);
-        } catch (Exception e) {
-            throw new RuntimeException(e);
+                PathQuery pathQuery = TypeConverter.getConversionQuery(BagQueryRunner.
+                    getConversionTemplates(servletContext),
+                    TypeUtil.instantiate(pckName + "." + imBag.getType()),
+                    TypeUtil.instantiate(pckName + "." + type), imBag);
+                Query query = MainHelper.makeQuery(pathQuery, bagMap, pathToQueryNode,
+                    servletContext, null, false,
+                    (ObjectStore) servletContext.getAttribute(Constants.OBJECTSTORE),
+                    (Map) servletContext.getAttribute(Constants.CLASS_KEYS),
+                    (BagQueryConfig) servletContext.getAttribute(Constants.BAG_QUERY_CONFIG));
+                count = os.count(query, ObjectStore.SEQUENCE_IGNORE);
+            } catch (Exception e) {
+                throw new RuntimeException(e);
+            }
+            return count;
+        } catch (RuntimeException e) {
+            processException(e);
+            return 0;
         }
-        return count;
     }
 
     /**
@@ -617,13 +678,17 @@ public class AjaxServices
      * @param opened new aspect state
      */
     public static void saveToggleState(String elementId, boolean opened) {
-        HttpSession session = WebContextFactory.get().getSession();
-        GuiObject guiObject = (GuiObject) session.getAttribute(Constants.GUI_OBJECT);
-        if (guiObject == null) {
-            guiObject = new GuiObject();
-            session.setAttribute(Constants.GUI_OBJECT, guiObject);
+        try {
+            HttpSession session = WebContextFactory.get().getSession();
+            GuiObject guiObject = (GuiObject) session.getAttribute(Constants.GUI_OBJECT);
+            if (guiObject == null) {
+                guiObject = new GuiObject();
+                session.setAttribute(Constants.GUI_OBJECT, guiObject);
+            }
+            guiObject.getToggledElements().put(elementId, opened);
+        } catch (RuntimeException e) {
+            processException(e);
         }
-        guiObject.getToggledElements().put(elementId, opened);
     }
 
     /**
@@ -633,35 +698,40 @@ public class AjaxServices
      */
     public static String validateBagName(String bagName) {
 
-        ServletContext servletContext = WebContextFactory.get().getServletContext();
-        ProfileManager pm = SessionMethods.getProfileManager(servletContext);
-        HttpSession session = WebContextFactory.get().getSession();
-        Profile profile = (Profile) session.getAttribute(Constants.PROFILE);
+        try {
+            ServletContext servletContext = WebContextFactory.get().getServletContext();
+            ProfileManager pm = SessionMethods.getProfileManager(servletContext);
+            HttpSession session = WebContextFactory.get().getSession();
+            Profile profile = (Profile) session.getAttribute(Constants.PROFILE);
 
-        // TODO get message text from the properties file
-        if (bagName.equals("")) {
-            return "You cannot save a list with a blank name";
+            // TODO get message text from the properties file
+            if (bagName.equals("")) {
+                return "You cannot save a list with a blank name";
+            }
+
+            if (!WebUtil.isValidName(bagName)) {
+                return "Invalid name. Names can only contain letters, numbers, spaces, "
+                + "and underscores.";
+            }
+
+            if (profile.getSavedBags().get(bagName) != null) {
+                return "The list name you have chosen is already in use";
+            }
+
+            SearchRepository searchRepository =
+                SearchRepository.getGlobalSearchRepository(servletContext);
+            Map<String, ? extends WebSearchable> publicBagMap =
+                searchRepository.getWebSearchableMap(TagTypes.BAG);
+            if (publicBagMap.get(bagName) != null) {
+                return "The list name you have chosen is already in use -"
+                + " there is a public bag called " + bagName;
+            }
+
+            return "";
+        } catch (RuntimeException e) {
+            processException(e);
+            return null;
         }
-
-        if (!WebUtil.isValidName(bagName)) {
-            return "Invalid name. Names can only contain letters, numbers, spaces, "
-            + "and underscores.";
-        }
-
-        if (profile.getSavedBags().get(bagName) != null) {
-            return "The list name you have chosen is already in use";
-        }
-
-        SearchRepository searchRepository =
-            SearchRepository.getGlobalSearchRepository(servletContext);
-        Map<String, ? extends WebSearchable> publicBagMap =
-            searchRepository.getWebSearchableMap(TagTypes.BAG);
-        if (publicBagMap.get(bagName) != null) {
-            return "The list name you have chosen is already in use -"
-            + " there is a public bag called " + bagName;
-        }
-
-        return "";
     }
 
     /**
@@ -674,41 +744,46 @@ public class AjaxServices
     public static String validateBagOperations(String bagName, String[] selectedBags,
                                                String operation) {
 
-        ServletContext servletContext = WebContextFactory.get().getServletContext();
-        ProfileManager pm = SessionMethods.getProfileManager(servletContext);
-        HttpSession session = WebContextFactory.get().getSession();
-        Profile profile = (Profile) session.getAttribute(Constants.PROFILE);
+        try {
+            ServletContext servletContext = WebContextFactory.get().getServletContext();
+            ProfileManager pm = SessionMethods.getProfileManager(servletContext);
+            HttpSession session = WebContextFactory.get().getSession();
+            Profile profile = (Profile) session.getAttribute(Constants.PROFILE);
 
-        // TODO get error text from the properties file
-        if (selectedBags.length == 0) {
-            return "No lists are selected";
-        }
-        if (operation.equals("delete")) {
-            for (int i = 0; i < selectedBags.length; i++) {
-                Set<String> queries = new HashSet<String>();
-                queries.addAll(queriesThatMentionBag(profile.getSavedQueries(),
-                                                     selectedBags[i]));
-                queries.addAll(queriesThatMentionBag(profile.getHistory(),
-                                                     selectedBags[i]));
-                if (queries.size() > 0) {
-                    return "List " + selectedBags[i] + " cannot be deleted as it is referenced "
-                    + "by other queries " + queries;
+            // TODO get error text from the properties file
+            if (selectedBags.length == 0) {
+                return "No lists are selected";
+            }
+            if (operation.equals("delete")) {
+                for (int i = 0; i < selectedBags.length; i++) {
+                    Set<String> queries = new HashSet<String>();
+                    queries.addAll(queriesThatMentionBag(profile.getSavedQueries(),
+                                                         selectedBags[i]));
+                    queries.addAll(queriesThatMentionBag(profile.getHistory(),
+                                                         selectedBags[i]));
+                    if (queries.size() > 0) {
+                        return "List " + selectedBags[i] + " cannot be deleted as it is referenced "
+                        + "by other queries " + queries;
+                    }
+                }
+
+            } else {
+                Properties properties = (Properties)
+                servletContext.getAttribute(Constants.WEB_PROPERTIES);
+                String defaultName = properties.getProperty("lists.input.example");
+
+                if (bagName.equals("") || (bagName.trim().equalsIgnoreCase(defaultName))) {
+                    return "New list name is required";
+                } else if (!WebUtil.isValidName(bagName)) {
+                    return "Invalid name. Names can only contain letters, numbers, spaces, "
+                    + "and underscores.";
                 }
             }
-
-        } else {
-            Properties properties = (Properties)
-            servletContext.getAttribute(Constants.WEB_PROPERTIES);
-            String defaultName = properties.getProperty("lists.input.example");
-
-            if (bagName.equals("") || (bagName.trim().equalsIgnoreCase(defaultName))) {
-                return "New list name is required";
-            } else if (!WebUtil.isValidName(bagName)) {
-                return "Invalid name. Names can only contain letters, numbers, spaces, "
-                + "and underscores.";
-            }
+            return "";
+        } catch (RuntimeException e) {
+            processException(e);
+            return null;
         }
-        return "";
     }
 
     /**
@@ -718,104 +793,125 @@ public class AjaxServices
      * @return the list of queries
      */
     public static List<String> queriesThatMentionBag(Map savedQueries, String bagName) {
-        List<String> queries = new ArrayList<String>();
-        for (Iterator i = savedQueries.keySet().iterator(); i.hasNext();) {
-            String queryName = (String) i.next();
-            SavedQuery query = (SavedQuery) savedQueries.get(queryName);
-            if (query.getPathQuery().getBagNames().contains(bagName)) {
-                queries.add(queryName);
+        try {
+            List<String> queries = new ArrayList<String>();
+            for (Iterator i = savedQueries.keySet().iterator(); i.hasNext();) {
+                String queryName = (String) i.next();
+                SavedQuery query = (SavedQuery) savedQueries.get(queryName);
+                if (query.getPathQuery().getBagNames().contains(bagName)) {
+                    queries.add(queryName);
+                }
             }
+            return queries;
+        } catch (RuntimeException e) {
+            processException(e);
+            return null;
         }
-        return queries;
     }
 
     public static GraphWidget getProcessGraphWidget(String widgetId, String bagName, 
-                                                    String selectedExtraAttribute) 
-    throws InterMineException {
-        ServletContext servletContext = WebContextFactory.get().getServletContext();
-        HttpSession session = WebContextFactory.get().getSession();
-        WebConfig webConfig = (WebConfig) servletContext.getAttribute(Constants.WEBCONFIG);
-        ObjectStore os = (ObjectStore) servletContext.getAttribute(Constants.OBJECTSTORE);
-        Model model =  os.getModel();
-        Profile profile = (Profile) session.getAttribute(Constants.PROFILE);
-        SearchRepository searchRepository =
-            SearchRepository.getGlobalSearchRepository(servletContext);
-        InterMineBag imBag = BagHelper.getBag(profile, searchRepository, bagName);
+                                                    String selectedExtraAttribute) {
+        try {
+            ServletContext servletContext = WebContextFactory.get().getServletContext();
+            HttpSession session = WebContextFactory.get().getSession();
+            WebConfig webConfig = (WebConfig) servletContext.getAttribute(Constants.WEBCONFIG);
+            ObjectStore os = (ObjectStore) servletContext.getAttribute(Constants.OBJECTSTORE);
+            Model model =  os.getModel();
+            Profile profile = (Profile) session.getAttribute(Constants.PROFILE);
+            SearchRepository searchRepository =
+                SearchRepository.getGlobalSearchRepository(servletContext);
+            InterMineBag imBag = BagHelper.getBag(profile, searchRepository, bagName);
 
-        Type type = (Type) webConfig.getTypes().get(model.getPackageName()
-                        + "." + imBag.getType());
-        List<Widget> widgets = type.getWidgets();
-        for (Widget widget: widgets) {
-            if (widget.getId() == Integer.parseInt(widgetId)) {
-                GraphWidget graphWidget = (GraphWidget) widget;
-                graphWidget.setSession(session);
-                graphWidget.setSelectedExtraAttribute(selectedExtraAttribute);
-                graphWidget.process(imBag, os);
-                return graphWidget;
+            Type type = (Type) webConfig.getTypes().get(model.getPackageName()
+                            + "." + imBag.getType());
+            List<Widget> widgets = type.getWidgets();
+            for (Widget widget: widgets) {
+                if (widget.getId() == Integer.parseInt(widgetId)) {
+                    GraphWidget graphWidget = (GraphWidget) widget;
+                    graphWidget.setSession(session);
+                    graphWidget.setSelectedExtraAttribute(selectedExtraAttribute);
+                    graphWidget.process(imBag, os);
+                    return graphWidget;
+                }
             }
+        } catch (RuntimeException e) {
+            processException(e);
+        } catch (InterMineException e) {
+            processException(e);
         }
         return null;
     }
     
-    public static TableWidget getProcessTableWidget(String widgetId, String bagName) 
-    throws InterMineException, ClassNotFoundException {
-        ServletContext servletContext = WebContextFactory.get().getServletContext();
-        HttpSession session = WebContextFactory.get().getSession();
-        WebConfig webConfig = (WebConfig) servletContext.getAttribute(Constants.WEBCONFIG);
-        ObjectStore os = (ObjectStore) servletContext.getAttribute(Constants.OBJECTSTORE);
-        Model model =  os.getModel();
-        Profile profile = (Profile) session.getAttribute(Constants.PROFILE);
-        SearchRepository searchRepository =
-            SearchRepository.getGlobalSearchRepository(servletContext);
-        InterMineBag imBag = BagHelper.getBag(profile, searchRepository, bagName);
-        Map classKeys = (Map) servletContext.getAttribute(Constants.CLASS_KEYS);
+    public static TableWidget getProcessTableWidget(String widgetId, String bagName) {
+        try {
+            ServletContext servletContext = WebContextFactory.get().getServletContext();
+            HttpSession session = WebContextFactory.get().getSession();
+            WebConfig webConfig = (WebConfig) servletContext.getAttribute(Constants.WEBCONFIG);
+            ObjectStore os = (ObjectStore) servletContext.getAttribute(Constants.OBJECTSTORE);
+            Model model =  os.getModel();
+            Profile profile = (Profile) session.getAttribute(Constants.PROFILE);
+            SearchRepository searchRepository =
+                SearchRepository.getGlobalSearchRepository(servletContext);
+            InterMineBag imBag = BagHelper.getBag(profile, searchRepository, bagName);
+            Map classKeys = (Map) servletContext.getAttribute(Constants.CLASS_KEYS);
 
-        Type type = (Type) webConfig.getTypes().get(model.getPackageName()
-                        + "." + imBag.getType());
-        List<Widget> widgets = type.getWidgets();
-        for (Widget widget: widgets) {
-            if (widget.getId() == Integer.parseInt(widgetId)) {
-                TableWidget tableWidget = (TableWidget) widget;
-                tableWidget.setClassKeys(classKeys);
-                tableWidget.setWebConfig(webConfig);
-                try {
-                    tableWidget.process(imBag, os);
-                } catch (Exception e) {
-                    return null;
+            Type type = (Type) webConfig.getTypes().get(model.getPackageName()
+                            + "." + imBag.getType());
+            List<Widget> widgets = type.getWidgets();
+            for (Widget widget: widgets) {
+                if (widget.getId() == Integer.parseInt(widgetId)) {
+                    TableWidget tableWidget = (TableWidget) widget;
+                    tableWidget.setClassKeys(classKeys);
+                    tableWidget.setWebConfig(webConfig);
+                    try {
+                        tableWidget.process(imBag, os);
+                    } catch (Exception e) {
+                        return null;
+                    }
+                    
+                    return tableWidget;
                 }
-                
-                return tableWidget;
             }
+        } catch (RuntimeException e) {
+            processException(e);
+        } catch (InterMineException e) {
+            processException(e);
         }
         return null;
     }    
     
     public static EnrichmentWidget getProcessEnrichmentWidget(String widgetId, String bagName,
                                                               String errorCorrection, String max, 
-                                                              String selectedExtraAttribute)
-                    throws InterMineException {
-        ServletContext servletContext = WebContextFactory.get().getServletContext();
-        HttpSession session = WebContextFactory.get().getSession();
-        WebConfig webConfig = (WebConfig) servletContext.getAttribute(Constants.WEBCONFIG);
-        ObjectStore os = (ObjectStore) servletContext.getAttribute(Constants.OBJECTSTORE);
-        Model model = os.getModel();
-        Profile profile = (Profile) session.getAttribute(Constants.PROFILE);
-        SearchRepository searchRepository = SearchRepository
-                        .getGlobalSearchRepository(servletContext);
-        InterMineBag imBag = BagHelper.getBag(profile, searchRepository, bagName);
-        Map classKeys = (Map) servletContext.getAttribute(Constants.CLASS_KEYS);
+                                                              String selectedExtraAttribute) {
+        try {
+            ServletContext servletContext = WebContextFactory.get().getServletContext();
+            HttpSession session = WebContextFactory.get().getSession();
+            WebConfig webConfig = (WebConfig) servletContext.getAttribute(Constants.WEBCONFIG);
+            ObjectStore os = (ObjectStore) servletContext.getAttribute(Constants.OBJECTSTORE);
+            Model model = os.getModel();
+            Profile profile = (Profile) session.getAttribute(Constants.PROFILE);
+            SearchRepository searchRepository = SearchRepository
+                            .getGlobalSearchRepository(servletContext);
+            InterMineBag imBag = BagHelper.getBag(profile, searchRepository, bagName);
+            Map classKeys = (Map) servletContext.getAttribute(Constants.CLASS_KEYS);
 
-        Type type = (Type) webConfig.getTypes().get(model.getPackageName() + "." + imBag.getType());
-        List<Widget> widgets = type.getWidgets();
-        for (Widget widget : widgets) {
-            if (widget.getId() == Integer.parseInt(widgetId)) {
-                EnrichmentWidget enrichmentWidget = (EnrichmentWidget) widget;
-                enrichmentWidget.setMax(max);
-                enrichmentWidget.setErrorCorrection(errorCorrection);
-                enrichmentWidget.setSelectedExtraAttribute(selectedExtraAttribute);
-                enrichmentWidget.process(imBag, os);
-                return enrichmentWidget;
+            Type type = (Type) webConfig.getTypes().get(model.getPackageName() 
+                    + "." + imBag.getType());
+            List<Widget> widgets = type.getWidgets();
+            for (Widget widget : widgets) {
+                if (widget.getId() == Integer.parseInt(widgetId)) {
+                    EnrichmentWidget enrichmentWidget = (EnrichmentWidget) widget;
+                    enrichmentWidget.setMax(max);
+                    enrichmentWidget.setErrorCorrection(errorCorrection);
+                    enrichmentWidget.setSelectedExtraAttribute(selectedExtraAttribute);
+                    enrichmentWidget.process(imBag, os);
+                    return enrichmentWidget;
+                }
             }
+        } catch (RuntimeException e) {
+            processException(e);
+        } catch (InterMineException e) {
+            processException(e);
         }
         return null;
     }
