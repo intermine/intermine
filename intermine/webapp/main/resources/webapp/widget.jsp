@@ -17,6 +17,13 @@
 <c:set var="type" value="${split[fn:length(split)-1]}"/>
 
 <html:xhtml/>
+<html:form action="/widgetAction" styleId="widgetaction${widget.id}">
+<html:hidden property="link" value="${widget.link}"/>
+<html:hidden property="bagType" value="${bag.type}"/>
+<html:hidden property="bagName" value="${bag.name}" />
+<html:hidden property="widgetid" value="${widget.id}" />
+<html:hidden property="action" value="" styleId="action${widget.id}"/>
+<html:hidden property="exporttype" value="" styleId="export${widget.id}"/>
 <div id="widgetcontainer${widget.id}" class="widgetcontainer">
   <span id="closewidget${widget.id}" class="widgetcloser"><a href="javascript:toggleWidget('widgetcontainer${widget.id}','togglelink${widget.id}');">close x</a></span>
   <h3>${widget.title}</h3>
@@ -76,13 +83,14 @@
     </ul>
   </div>
   <div id="tool_bar_item_display_${widget.id}" style="visibility:hidden" class="tool_bar_item">
-    <a href="javascript:document.widgetForm.submit();">Display checked items in results table</a>
+    <a href="javascript:submitWidgetForm(${widget.id},'display',null)">Display checked items in results table</a>
     <hr>
     <a href="javascript:hideMenu('tool_bar_item_display_${widget.id}')" >Cancel</a>
   </div>
   
   <div id="tool_bar_item_export_${widget.id}" style="visibility:hidden" class="tool_bar_item">
-    <!-- EXPORT CODE GOES HERE -->
+    <a href="javascript:submitWidgetForm(${widget.id},'export','csv')">Export selected as CSV</a><br/>
+    <a href="javascript:submitWidgetForm(${widget.id},'export','tab')">Export selected as Tab Delinited</a>
     <hr>
   <a href="javascript:hideMenu('tool_bar_item_export_${widget.id}')" >Cancel</a>
   </div>
@@ -117,5 +125,5 @@
   </c:choose>
   </script>
 </div>
-
+</html:form>
 <!-- /widget.jsp -->

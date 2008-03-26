@@ -208,12 +208,12 @@ public class EnrichmentWidget extends Widget
             });
     }
     
-    public List getFlattenedResults() {
+    public List<List<String[]>> getFlattenedResults() {
         if (results != null && !results.isEmpty()) {
             Map<String, BigDecimal> pvalues = results.get(0);
             Map<String, Long> totals = results.get(1);
             Map<String, String> labelToId = results.get(2);
-            List<List> flattenedResults = new LinkedList<List>();
+            List<List<String[]>> flattenedResults = new LinkedList<List<String[]>>();
             for (String id : pvalues.keySet()) {
                 List<String[]> row = new LinkedList();
                 BigDecimal bd = pvalues.get(id);
@@ -243,6 +243,30 @@ public class EnrichmentWidget extends Widget
 //                                 + StringUtil.prettyList(ldr.getPopulationDescr(), true));
         }
         return null;
+    }
+    
+    /**
+     * Get the results in an exportable format for the specified ids
+     * @param selected the selected ids to export
+     * @return a list of list of Strings
+     */
+    public List<List<String>> getExportResults(String[]selected) {
+        Map<String, BigDecimal> pvalues = results.get(0);
+        Map<String, Long> totals = results.get(1);
+        Map<String, String> labelToId = results.get(2);
+        List<List<String>> exportResults = new ArrayList<List<String>>();
+        List<String> selectedIds = Arrays.asList(selected);
+        for (String id : pvalues.keySet()) {
+            if (selectedIds.contains(id)) {
+                List<String> row = new LinkedList();
+                row.add(labelToId.get(id));
+                BigDecimal bd = pvalues.get(id);
+                row.add(bd.setScale(7, BigDecimal.ROUND_HALF_EVEN).toEngineeringString());
+                row.add(totals.get(id).toString());
+                exportResults.add(row);
+            }
+        }
+        return exportResults;
     }
 
     /**

@@ -94,3 +94,22 @@ function removeChildren(node) {
 		node.removeChild(node.childNodes[0]);
 	}
 }
+
+function checkSelected(formName) {
+  var elts = Form.getElements(formName);
+  for(var i=0;i<elts.length;i++) {
+    if( $(elts[i]).name=='selected' && $(elts[i]).checked ) {
+     return true;
+    }
+  }
+  alert("Please select some items")
+  return false;
+}
+
+function submitWidgetForm(widgetId,type,extra) {
+  if(checkSelected('widgetaction'+widgetId)){
+  	$('action'+widgetId).value=type;
+  	$('export' + widgetId).value=extra;
+  	$('widgetaction' + widgetId).submit();	
+  }
+}
