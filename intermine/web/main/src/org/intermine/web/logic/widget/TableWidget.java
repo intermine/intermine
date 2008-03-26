@@ -40,13 +40,14 @@ public class TableWidget extends Widget
     private Map classKeys;
     private BagTableWidgetLoader bagWidgLdr;
     private String pathStrings;
+    private String columnTitle = null;
     
     /**
      * {@inheritDoc}
      */
     public void process(InterMineBag bag, ObjectStore os) throws Exception {
         bagWidgLdr = new BagTableWidgetLoader(pathStrings, bag, os, webConfig,
-                        os.getModel(), classKeys, fields, getLink());
+                        os.getModel(), classKeys, fields, getLink(), getColumnTitle());
     }
     
     /**
@@ -78,8 +79,29 @@ public class TableWidget extends Widget
     public void setFields(String fields) {
         this.fields = fields;
     }
+    
+    /**
+     * @return the totle for the count column
+     */
+    public String getColumnTitle() {
+        return columnTitle;
+    }
 
-    public Map<String, Collection> getExtraAttributes(InterMineBag imBag, ObjectStore os) {
+    /**
+     * @param columnTitle set title for count column
+     */
+    public void setColumnTitle(String columnTitle) {
+        this.columnTitle = columnTitle;
+    }
+    
+    /**
+     * Do-nothing implementation of superclass method
+     * @param imBag a bag
+     * @param os the objectstore
+     * @return null
+     */
+    public Map<String, Collection> getExtraAttributes(InterMineBag imBag,
+                                                      ObjectStore os) {
         return null;
     }
 
