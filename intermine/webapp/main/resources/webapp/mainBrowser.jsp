@@ -13,7 +13,7 @@
 
 <script type="text/javascript">
   <!--
-  function toggle(id, path) {
+  function toggleNode(id, path) {
     if (isExplorer()) {
       return true;
     }
@@ -29,6 +29,7 @@
         {parameters:'method=ajaxCollapse&path='+path, asynchronous:true});
       $(id).innerHTML='';
     }
+    return false;
   }
   
   function addConstraint(path) {

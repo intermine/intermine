@@ -36,14 +36,16 @@
           <img border="0" src="images/plus-disabled.gif" width="11" height="11" title="+"/>
         </c:when>
         <c:when test="${node.button == '+'}">
-          <a href="javascript:toggle('${node.pathString}', '${node.pathString}')">
+          <html:link action="/mainChange?method=changePath&amp;path=${node.pathString}"
+            onclick="return toggleNode('${node.pathString}', '${node.pathString}')">
             <img id="img_${node.pathString}" border="0" src="images/plus.gif" width="11" height="11" title="+"/>
-          </a>
+          </html:link>
         </c:when>
         <c:when test="${node.button == '-'}">
-          <a href="javascript:toggle('${node.pathString}', '${node.pathString}')">
+          <html:link action="/mainChange?method=changePath&amp;path=${node.prefix}"
+            onclick="return toggleNode('${node.pathString}', '${node.pathString}');">
             <img id="img_${node.pathString}" border="0" src="images/minus.gif" width="11" height="11" title="-"/>
-          </a>
+          </html:link>
         </c:when>
         <c:otherwise>
           <img src="images/blank.gif" width="11" height="11" title=" "/>
