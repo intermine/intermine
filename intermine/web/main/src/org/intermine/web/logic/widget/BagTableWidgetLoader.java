@@ -69,11 +69,12 @@ public class BagTableWidgetLoader
      * @param classKeys the classKeys
      * @param fields fields involved in widget
      * @param urlGen the class that generates the pathquery used in the links from the widget
+     * @param columnTitle title for count column
      * @throws ClassNotFoundException if some class in the widget paths is not found
      */
     public BagTableWidgetLoader(String pathString, InterMineBag bag, ObjectStore os, 
                                 WebConfig webConfig, Model model, Map classKeys, 
-                                String fields, String urlGen) 
+                                String fields, String urlGen, String columnTitle) 
     throws ClassNotFoundException {
         Path pathTmp = new Path(model, pathWithNoConstraints(pathString));
         ClassDescriptor cld = pathTmp.getEndClassDescriptor();
@@ -153,7 +154,11 @@ public class BagTableWidgetLoader
             flattenedResults.add(flattenedRow);
         }
         // Add the count column
-        columns.add(bag.getType() + "s");
+        if (columnTitle != null) {
+            columns.add(columnTitle);
+        } else {
+            columns.add(bag.getType() + "s");
+        }
     }
 
     /**

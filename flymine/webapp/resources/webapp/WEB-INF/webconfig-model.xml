@@ -188,7 +188,7 @@
       <displayer src="geneMicroArrayDisplayer.tile"/>
     </longdisplayers>
     <bagdisplayers>
-      <displayer src="attributeLinkDisplayer.tile
+      <displayer src="attributeLinkDisplayer.tile"/>
       <graphdisplayer title="Chromosome Distribution" domainLabel="Chromosome" rangeLabel="Gene Count" dataSetLoader="org.intermine.bio.web.widget.ChromosomeDistributionDataSetLdr"
                       toolTipGen="org.intermine.web.logic.widget.ToolTipGenerator" link="org.intermine.bio.web.widget.ChromosomeDistributionGraphURLGenerator"
                       description="Actual: number of genes in this list found on each chromosome.  Expected: given the total number of genes on the chromosome and the number of genes in this list, the number of genes expected to be found on each chromosome."
@@ -217,10 +217,11 @@
                          description="Most common &lt;a href=&quot;http://www.genome.jp/kegg/&quot; target=&quot;_new&quot;&gt;KEGG pathways&lt;/a&gt; for this list." />
               
       <bagtabledisplayer title="Orthologues" pathStrings="Gene.homologues[type=orthologue].homologue.organism" link="org.intermine.bio.web.widget.HomologueURLQuery"
-                         description="Most common orthologues for this list." fields="name" />
+                         description="Counts of orthologues in other organisms for the genes in this list." fields="name" columnTitle="Orthologues"/>
                          
       <bagtabledisplayer title="Genetic Interactions" pathStrings="Gene.geneticInteractions.interactingGenes" link="org.intermine.bio.web.widget.GeneticInteractionURLQuery"
-                         description="Most genes that have a genetic interaction with a gene in this list." fields="primaryIdentifier"/>
+                         description="Genes with which genes from this list have genetic interactions, the gene shown may be in the list or not.  Counts the number of genes from this list that interaction with gene shown."
+                         fields="primaryIdentifier" columnTitle="Interactions"/>
 
       <enrichmentwidgetdisplayer title="Gene Ontology Enrichment"
                                  link="org.intermine.bio.web.widget.GoStatURLQuery"
