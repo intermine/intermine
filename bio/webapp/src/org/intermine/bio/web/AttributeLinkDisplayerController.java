@@ -121,7 +121,7 @@ public class AttributeLinkDisplayerController extends TilesAction
                 geneOrgKey += "(\\.(" + organismReference.getTaxonId() + "|\\*))?";
             }
         } else { // bag
-            geneOrgKey += "(\\.(\\*|[\\d]+))?";    
+            geneOrgKey += "(\\.(\\*|[\\d]+))?";
         }
 
         // map from eg. 'Gene.Drosophila.melanogaster' to map from configName (eg. "flybase")
@@ -167,7 +167,7 @@ public class AttributeLinkDisplayerController extends TilesAction
 
                 Object attrValue = null;
                 Set taxIds = null;
-                
+
                 if (config.containsKey("attributeValue")) {
                     attrValue = config.get("attributeValue");
                 } else {
@@ -177,17 +177,17 @@ public class AttributeLinkDisplayerController extends TilesAction
                         } else { //it's a bag!
                             attrValue = getIdList(bag, os, dbName, attrName);
                             if (!taxId.equalsIgnoreCase("*")) {
-                            taxIds = getTaxIds (bag, os);
+                                taxIds = getTaxIds (bag, os);
 
-                            //don't display link if 
-                            // a) not a bioentity (no reference to organism)
-                            if (taxIds == null) {
-                                continue;
-                            }
-                            // b) organism not present
-                            Integer taxIdInt = Integer.valueOf(taxId);
-                            if (!taxIds.contains(taxIdInt)) {
-                                continue; 
+                                //don't display link if
+                                // a) not a bioentity (no reference to organism)
+                                if (taxIds == null) {
+                                    continue;
+                                }
+                                // b) organism not present
+                                Integer taxIdInt = Integer.valueOf(taxId);
+                                if (!taxIds.contains(taxIdInt)) {
+                                    continue;
                                 }
                             }
                         }
@@ -271,7 +271,7 @@ public class AttributeLinkDisplayerController extends TilesAction
         results.setBatchSize(10000);
 
         if (dbName.equalsIgnoreCase("flybase")) {
-            return StringUtil.join(results, "|");            
+            return StringUtil.join(results, "|");
         } else {
             return StringUtil.join(results, ",");
         }
@@ -282,7 +282,7 @@ public class AttributeLinkDisplayerController extends TilesAction
      * @param bag the bag
      * @param os  the object store
      * @return a set of tax ids
-     * 
+     *
      * Note: works with gene and protein QueryClass.
      **/
 
@@ -292,7 +292,7 @@ public class AttributeLinkDisplayerController extends TilesAction
         Query q = new Query();
         QueryClass queryClass;
         try {
-            queryClass = new QueryClass(Class.forName(bag.getQualifiedType()));              
+            queryClass = new QueryClass(Class.forName(bag.getQualifiedType()));
 
             //check if you can query for organism
             final Class qc = Class.forName(bag.getQualifiedType());
@@ -301,16 +301,16 @@ public class AttributeLinkDisplayerController extends TilesAction
 
             if (cd.getFieldDescriptorByName("organism") == null) {
                 return null;
-            }        
+            }
         } catch (ClassNotFoundException e) {
             throw new RuntimeException("no type in the bag??! -> ", e);
         }
-                
+
         QueryClass organism = new QueryClass(Organism.class);
 
         q.addFrom(queryClass);
         q.addFrom(organism);
-        
+
         QueryField qf = new QueryField(organism, "taxonId");
         q.addToSelect(qf);
 
@@ -322,7 +322,7 @@ public class AttributeLinkDisplayerController extends TilesAction
         SimpleConstraint sc = new SimpleConstraint(qf, ConstraintOp.IS_NOT_NULL);
 
         BagConstraint bagC = new BagConstraint(id, ConstraintOp.IN, bag.getOsb());
-      
+
         QueryObjectReference r = new QueryObjectReference(queryClass, "organism");
         ContainsConstraint cc = new ContainsConstraint(r, ConstraintOp.CONTAINS, organism);
 
@@ -338,5 +338,5 @@ public class AttributeLinkDisplayerController extends TilesAction
         return new HashSet(results);
 }
 
-    
+
 }
