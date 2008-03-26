@@ -61,12 +61,6 @@
     </fields>
   </class>
 
-  <class className="org.flymine.model.genomic.ProbeSet">
-    <fields>
-      <fieldconfig fieldExpr="identifier"/>
-    </fields>
-  </class>
-
   <class className="org.flymine.model.genomic.DataSource">
     <fields>
       <fieldconfig fieldExpr="name"/>
