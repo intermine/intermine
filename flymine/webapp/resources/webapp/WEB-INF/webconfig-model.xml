@@ -188,6 +188,7 @@
       <displayer src="geneMicroArrayDisplayer.tile"/>
     </longdisplayers>
     <bagdisplayers>
+      <displayer src="attributeLinkDisplayer.tile"/>
 
       <graphdisplayer title="Chromosome Distribution" domainLabel="Chromosome" rangeLabel="Gene Count" dataSetLoader="org.intermine.bio.web.widget.ChromosomeDistributionDataSetLdr"
                       toolTipGen="org.intermine.web.logic.widget.ToolTipGenerator" link="org.intermine.bio.web.widget.ChromosomeDistributionGraphURLGenerator"
