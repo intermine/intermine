@@ -15,6 +15,14 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
+import org.intermine.metadata.AttributeDescriptor;
+import org.intermine.metadata.ClassDescriptor;
+import org.intermine.metadata.FieldDescriptor;
+import org.intermine.metadata.Model;
+import org.intermine.metadata.ReferenceDescriptor;
+import org.intermine.model.InterMineObject;
+import org.intermine.objectstore.ObjectStore;
+import org.intermine.objectstore.ObjectStoreException;
 import org.intermine.objectstore.query.BagConstraint;
 import org.intermine.objectstore.query.ConstraintOp;
 import org.intermine.objectstore.query.ContainsConstraint;
@@ -26,14 +34,9 @@ import org.intermine.objectstore.query.QueryFunction;
 import org.intermine.objectstore.query.QueryHelper;
 import org.intermine.objectstore.query.QueryObjectReference;
 import org.intermine.objectstore.query.QueryReference;
+import org.intermine.objectstore.query.QueryValue;
 import org.intermine.objectstore.query.ResultsRow;
-
-import org.intermine.metadata.ClassDescriptor;
-import org.intermine.metadata.FieldDescriptor;
-import org.intermine.metadata.Model;
-import org.intermine.model.InterMineObject;
-import org.intermine.objectstore.ObjectStore;
-import org.intermine.objectstore.ObjectStoreException;
+import org.intermine.objectstore.query.SimpleConstraint;
 import org.intermine.path.Path;
 import org.intermine.util.TypeUtil;
 import org.intermine.web.logic.ClassKeyHelper;
@@ -41,7 +44,6 @@ import org.intermine.web.logic.bag.InterMineBag;
 import org.intermine.web.logic.config.FieldConfig;
 import org.intermine.web.logic.config.FieldConfigHelper;
 import org.intermine.web.logic.config.WebConfig;
-import org.intermine.web.logic.query.MainHelper;
 
 /**
  * @author Xavier Watkins
@@ -52,12 +54,13 @@ public class BagTableWidgetLoader
     private List<String> columns;
     private List flattenedResults;
     private String title, description;
-
+    protected Query q;
+    
     /**
      * This class loads and formats the data for the count
      * table widgets in the bag details page
      *
-     * @param pathStrings the path to group the objects by, ie Employee.city will return the list of
+     * @param pathString the path to group the objects by, ie Employee.city will return the list of
      * employees by city
      * @param bag the bag
      * @param os the objectstore
@@ -68,27 +71,25 @@ public class BagTableWidgetLoader
      * @param urlGen the class that generates the pathquery used in the links from the widget
      * @throws ClassNotFoundException if some class in the widget paths is not found
      */
-    public BagTableWidgetLoader(String pathStrings, InterMineBag bag, ObjectStore os, 
+    public BagTableWidgetLoader(String pathString, InterMineBag bag, ObjectStore os, 
                                 WebConfig webConfig, Model model, Map classKeys, 
                                 String fields, String urlGen) 
     throws ClassNotFoundException {
+        Path pathTmp = new Path(model, pathWithNoConstraints(pathString));
+        ClassDescriptor cld = pathTmp.getEndClassDescriptor();
+        String type = cld.getUnqualifiedName();
         
-        Query q = constructQuery(model, bag, pathStrings);
-
+        // TODO validate start type vs. bag type
+        ClassDescriptor cldStart = pathTmp.getStartClassDescriptor();
+        q = constructQuery(model, bag, cldStart, pathString);
+        
         List results;
         try {
-            results = os.execute(q, 0, 10, true, true, ObjectStore.SEQUENCE_IGNORE);
+            results = os.execute(q, 0, 50, true, true, ObjectStore.SEQUENCE_IGNORE);
         } catch (ObjectStoreException e) {
             throw new RuntimeException(e);
         }
-        ClassDescriptor cld;
-        String[] s = pathStrings.split("\\.");
-        String type = s[s.length - 1];
-        try {
-            cld = MainHelper.getClassDescriptor(type, model);
-        } catch (ClassNotFoundException e) {
-            throw new RuntimeException("unexpected exception", e);
-        }
+        
         columns = new ArrayList<String>();
         if ((fields != null) && (fields.length() != 0)) {
             String[] fieldArray = fields.split(",");
@@ -109,7 +110,6 @@ public class BagTableWidgetLoader
                 columns.add(newColumnName);
             }
         }
-        
         
         flattenedResults = new ArrayList<ArrayList>();
         for (Iterator iter = results.iterator(); iter.hasNext();) {
@@ -137,7 +137,7 @@ public class BagTableWidgetLoader
                         }
                         flattenedRow.add(new String[]
                             {
-                                (String) fieldValue, link
+                                fieldValue.toString(), link
                             });
                     }
                 } else if (element instanceof Long) {
@@ -197,40 +197,88 @@ public class BagTableWidgetLoader
      * @throws ClassNotFoundException if problem processing path
      * @throws IllegalArgumentException if problem processing path
      */
-    private Query constructQuery(Model model, InterMineBag bag, String pathStrings)
+    private Query constructQuery(Model model, InterMineBag bag, ClassDescriptor cldStart,
+                                 String pathString)
         throws ClassNotFoundException, IllegalArgumentException {
-        
-        String[] paths = pathStrings.split(","); 
-        
+                
         Query q = new Query();
         boolean first = true;
+        String[] queryBits = pathString.split("\\.");
         QueryClass qcStart = null;
-        for (String path : paths) {
-        
-            String[] queryBits = path.split("\\.");
-
-            // validate path against model
-            //PathQueryUtil.validatePath(path, model);
-            
-            QueryClass qcLast = null;
-            
-            for (int i = 0; i + 2 < queryBits.length; i += 2) {
-                qcStart = new QueryClass(Class.forName(model.getPackageName()
-                                                                  + "." + queryBits[i]));
-                String refName = queryBits[i + 1];
-                QueryClass qcEnd = new QueryClass(Class.forName(model.getPackageName()
-                                                                + "." + queryBits[i + 2]));
-                if (qcLast != null) {
-                    qcStart = qcLast;
-                }
-                qcLast = addReferenceConstraint(model, q, qcStart, refName, qcEnd, first);
-                first = false;
+        for (int i = 1; i < queryBits.length; i++) {
+            if (qcStart == null) {
+                qcStart = new QueryClass(cldStart.getType());
             }
+            
+            if (first) {
+                q.addFrom(qcStart);
+                // this is the start of the path sp constraint to be in bag
+                BagConstraint bc =
+                    new BagConstraint(new QueryField(qcStart, "id"),
+                                      ConstraintOp.IN, bag.getOsb());
+                QueryHelper.addConstraint(q, bc); 
+            }
+            
+
+            String refName;
+            String constraintName = null, constraintValue = null;
+            // extra constraints have syntax Company.departments[name=DepartmentA].employees
+            if (queryBits[i].indexOf('[') > 0) {
+                String s = queryBits[i];
+                refName = s.substring(0, s.indexOf('['));
+                constraintName = s.substring(s.indexOf('[') + 1, s.indexOf('='));
+                constraintValue = s.substring(s.indexOf('=') + 1, s.indexOf(']'));
+            } else {
+                refName = queryBits[i];
+            }
+            
+            FieldDescriptor fld = cldStart.getFieldDescriptorByName(refName);
+            if (fld == null) {
+                throw new IllegalArgumentException("Class '" + cldStart.getType() + "' has no '"
+                                                   + refName + "' field");
+            }
+            if (fld.isAttribute()) {
+                throw new IllegalArgumentException("path element not a reference/collection: "
+                                                   + fld.getName());
+            }
+            ClassDescriptor cldEnd = ((ReferenceDescriptor) fld).getReferencedClassDescriptor();
+            QueryClass qcEnd = new QueryClass(cldEnd.getType());
+
+            addReferenceConstraint(model, q, qcStart, refName, qcEnd);
+            
+            if (constraintName != null && constraintValue != null) {
+                AttributeDescriptor attFld = cldEnd.getAttributeDescriptorByName(constraintName);
+                if (attFld == null) {
+                    throw new IllegalArgumentException("Class '" + cldEnd.getType() + "' has no '"
+                                                       + constraintName + "' field");
+                }
+                if (!attFld.getType().equals("java.lang.String")) {
+                    throw new IllegalArgumentException("Constraints can only be on String fields '"
+                                                       + constraintName 
+                                                       + "' is a " + attFld.getType());
+                }
+                SimpleConstraint sc = new SimpleConstraint(new QueryField(qcEnd, constraintName),
+                                                           ConstraintOp.EQUALS,
+                                                           new QueryValue(constraintValue));
+                QueryHelper.addConstraint(q, sc);
+                constraintName = null;
+                constraintValue = null;
+            }
+            
+            // if we are at the end of the path, add to select and group by
+            if (queryBits.length == (i + 1)) {
+                q.addToSelect(qcEnd);
+                q.addToGroupBy(qcEnd);
+                QueryFunction qf = new QueryFunction();
+                q.addToSelect(qf);
+                q.addToOrderBy(qf, "desc");
+
+            }
+            cldStart = cldEnd;
+            qcStart = qcEnd;
+            first = false;
         }
-        
-        BagConstraint bc = new BagConstraint(new 
-                           QueryField(qcStart, "id"), ConstraintOp.IN, bag.getOsb());
-        QueryHelper.addConstraint(q, bc); 
+
         return q;
     }
 
@@ -242,23 +290,12 @@ public class BagTableWidgetLoader
      * @param qcStart the QueryClass that contains the reference
      * @param refName name of reference to qcEnd
      * @param qcEnd the target QueryClass of refName
-     * @param first true if this is the first constraint added - qcStart needs to be added
      * to the query
      * @return QueryClass return qcEnd
      */
     private QueryClass addReferenceConstraint(Model model, Query q, QueryClass qcStart, 
-                                              String refName, QueryClass qcEnd, boolean first) {
-
-        q.addToSelect(qcEnd);
+                                              String refName, QueryClass qcEnd) {
         q.addFrom(qcEnd);
-        q.addToGroupBy(qcEnd);
-        
-        if (first) {            
-            QueryFunction qf = new QueryFunction();
-            q.addToSelect(qf);
-            q.addFrom(qcStart);
-            q.addToOrderBy(qf, "desc");
-        }
         
         // already validated against model
         ClassDescriptor startCld = model.getClassDescriptorByName(qcStart.getType().getName());
@@ -272,9 +309,25 @@ public class BagTableWidgetLoader
         }
         ContainsConstraint cc = new ContainsConstraint(qRef, ConstraintOp.CONTAINS, qcEnd);
         QueryHelper.addConstraint(q, cc);
-
+        
         return qcEnd;
     }
     
+    // return a path with out any [] constraints
+    private String pathWithNoConstraints(String path) {
+        StringBuffer sb = new StringBuffer(path.length());
+        String[] queryBits = path.split("\\.");
+        for (int i = 0; i < queryBits.length; i++) {
+            String refName = queryBits[i];
+            if (refName.indexOf('[') > 0) {
+                refName = refName.substring(0, refName.indexOf('['));
+            }
+            if (sb.length() > 0) {
+                sb.append(".");
+            }
+            sb.append(refName);
+        }
+        return sb.toString();
+    }
 }
   
