@@ -89,6 +89,9 @@
          is-interface="true">
     <attribute name="symbol" type="java.lang.String"/>
   </class>
+  <class name="org.flymine.model.genomic.ArtificialDeletion" 
+         extends="org.flymine.model.genomic.Region" is-interface="true">
+  </class>
   <class name="org.flymine.model.genomic.LocatedSequenceFeature" 
          is-interface="true">
     <attribute name="cytoLocation" type="java.lang.String"/>
