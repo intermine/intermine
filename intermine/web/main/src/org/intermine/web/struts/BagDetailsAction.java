@@ -68,9 +68,18 @@ public class BagDetailsAction extends Action
         String trail = null;
         if (request.getParameter("trail") != null) {
             trail = request.getParameter("trail");
-        }
+        }        
 
         String identifier = "bag." + bagName;
+        
+        PagedTable pt = SessionMethods.getResultsTable(session, identifier);
+        if (pt != null) {
+            if (trail != null) {
+                trail += "|results." + pt.getTableid();
+            } else {
+                trail = "|results." + pt.getTableid();
+            }            
+        }
 
         return new ForwardParameters(mapping.findForward("results"))
                         .addParameter("bagName", bagName)
