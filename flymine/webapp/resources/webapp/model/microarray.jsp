@@ -22,7 +22,7 @@
 <div id="hiddenDiv1" class="dataSetDescription"> 
 <dl>
 <dt>
-The <a href="http://http://www.fruitfly.org/cgi-bin/ex/insitu.pl/" target="_new">BDGP in situ project</a> determines patterns of gene expression during embryogenesis for <i>Drosophila</i> genes represented in non-redundant sets of <i>Drosophila</i> ESTs DGC1 and DGC2. Gene expression patterns are annotated with controlled vocabulary for developmental anatomy of <i>Drosophila</i> embryogenesis (ImaGO). 
+The <a href="http://www.fruitfly.org/cgi-bin/ex/insitu.pl/" target="_new">BDGP in situ project</a> determines patterns of gene expression during embryogenesis for <i>Drosophila</i> genes represented in non-redundant sets of <i>Drosophila</i> ESTs DGC1 and DGC2. Gene expression patterns are annotated with controlled vocabulary for developmental anatomy of <i>Drosophila</i> embryogenesis (ImaGO). 
 
 The overall findings of the work are summarized in Tomancak et al (2007) Genome Biology 8:R145. (<a href="http://www.ncbi.nlm.nih.gov/entrez/query.fcgi?cmd=Retrieve&db=PubMed&dopt=Abstract&list_uids=17923096" target="_new">PubMed: 17645804</a>) - Global analysis of patterns of gene expression during Drosophila embryogenesis. 
 </dt>
