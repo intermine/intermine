@@ -50,6 +50,8 @@ import org.apache.struts.upload.FormFile;
 public class BuildBagAction extends InterMineAction
 {
 
+    private static final int READ_AHEAD_CHARS = 10000;
+
     /**
      * Action for creating a bag of InterMineObjects or Strings from identifiers in text field.
      *
@@ -108,7 +110,10 @@ public class BuildBagAction extends InterMineAction
 
         } else if (buildBagForm.getText() != null && buildBagForm.getText().length() != 0) {
             String trimmedText = buildBagForm.getText().trim();
-            if (trimmedText.length() != 0) {
+            if (trimmedText.length() == 0) {
+                recordError(new ActionMessage("bagBuild.noBagPaste"), request);
+                return mapping.findForward("bags");
+            } else {
                 reader = new BufferedReader(new StringReader(trimmedText));
             }
         } else {
@@ -116,6 +121,20 @@ public class BuildBagAction extends InterMineAction
             return mapping.findForward("bags");
         }
 
+        reader.mark(READ_AHEAD_CHARS);
+
+        char buf[] = new char[READ_AHEAD_CHARS];
+
+        int read = reader.read(buf, 0, READ_AHEAD_CHARS);
+
+        for (int i = 0; i < read; i++) {
+            if (buf[i] == 0) {
+                recordError(new ActionMessage("bagBuild.notText", "binary"), request);
+                return mapping.findForward("bags");
+            }
+        }
+
+        reader.reset();
 
         String thisLine;
         List<String> list = new ArrayList<String>();
