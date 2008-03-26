@@ -18,22 +18,20 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
+import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang.builder.ToStringBuilder;
+import org.apache.log4j.Logger;
+import org.apache.struts.action.ActionForm;
+import org.apache.struts.action.ActionForward;
+import org.apache.struts.action.ActionMapping;
+import org.apache.struts.tiles.ComponentContext;
+import org.apache.struts.tiles.actions.TilesAction;
 import org.intermine.metadata.ClassDescriptor;
 import org.intermine.metadata.Model;
 import org.intermine.model.InterMineObject;
 import org.intermine.objectstore.ObjectStore;
 import org.intermine.web.logic.Constants;
 import org.intermine.web.logic.results.DisplayObject;
-
-import org.apache.commons.lang.StringUtils;
-import org.apache.commons.lang.builder.ToStringBuilder;
-import org.apache.log4j.Logger;
-
-import org.apache.struts.action.ActionForm;
-import org.apache.struts.action.ActionForward;
-import org.apache.struts.action.ActionMapping;
-import org.apache.struts.tiles.ComponentContext;
-import org.apache.struts.tiles.actions.TilesAction;
 
 /**
  * Controller for the object trail tile.
@@ -114,8 +112,16 @@ public class ObjectTrailController extends TilesAction
                     } catch (Exception e)  {
                         // nothing to do
                     }
+                    // for tables with id like 'bag.list50' 
+                    String tableId = "";
+                    for (int j = 1; j < breadcrumbs.length; j++) {
+                        tableId += breadcrumbs[j];
+                        if (j < breadcrumbs.length - 1) {
+                            tableId += ".";
+                        }
+                    }
                     TrailElement e
-                        = new TrailElement(prepend + resultsTableId, elementTrail, "results");
+                        = new TrailElement(prepend + tableId, elementTrail, "results");
                     elements.add(e);
                 }
 
