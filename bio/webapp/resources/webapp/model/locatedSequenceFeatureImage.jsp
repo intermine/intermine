@@ -57,7 +57,7 @@
   </c:if>
 
   <c:if test="${cld.unqualifiedName == 'Chromosome'}">
-    <c:set var="name" value="${object.organism.genus}_${object.organism.species}_chr_${object.identifier}"/>
+    <c:set var="name" value="${object.organism.genus}_${object.organism.species}_chr_${object.primaryIdentifier}"/>
   </c:if>
 
   <c:if test="${cld.unqualifiedName == 'CDS'}">
