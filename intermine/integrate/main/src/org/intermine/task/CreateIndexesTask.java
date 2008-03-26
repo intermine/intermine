@@ -531,9 +531,14 @@ public class CreateIndexesTask extends Task
                 if (att.getType().equals("java.lang.String")) {
                     // we add 'text_pattern_ops' so that LIKE queries will use the index.  see:
                     // http://www.postgresql.org/docs/8.2/static/indexes-opclass.html
-                    addStatement(statements, indexName, tableName,
+                    addStatement(statements, indexName + "_like", tableName,
                                  "lower(" + fieldName + ") text_pattern_ops",
                                  cld, null);
+                    // this index is used by = and IN constraints
+                    addStatement(statements, indexName + "_equals", tableName,
+                                 "lower(" + fieldName + ")",
+                                 cld, null);
+
                 } else {
                     addStatement(statements, indexName, tableName, fieldName, cld, null);
                 }
