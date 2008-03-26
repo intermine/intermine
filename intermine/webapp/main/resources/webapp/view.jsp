@@ -88,10 +88,10 @@
                reorderOnServer();
              }
            });
+           recordCurrentOrder();
        }
   
-     updateSortImgs("${sortByIndex}");
-       recordCurrentOrder();
+       updateSortImgs("${sortByIndex}");
 
        function recordCurrentOrder() {
          previousOrder = Sortable.serialize('viewDivs');
