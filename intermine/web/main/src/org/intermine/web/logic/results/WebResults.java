@@ -284,7 +284,7 @@ public class WebResults extends AbstractList<List<Object>> implements WebTable
         ResultsRow resultsRow = (ResultsRow) osResults.get(index);
         return translateRow(resultsRow, makeResultElements);
      }
-    
+
     // TODO javadoc to describe what this does
     private List translateRow(List initialList, boolean makeResultElements) {
         ArrayList rowCells = new ArrayList();
@@ -298,7 +298,7 @@ public class WebResults extends AbstractList<List<Object>> implements WebTable
             Path path = new Path(model, type + '.' + fieldName);
             Object fieldValue = path.resolve(o);
             if (makeResultElements) {
-                String fieldCDName = path.getEndFieldDescriptor().getClassDescriptor().getName();
+                String fieldCDName = path.getLastClassDescriptor().getName();
                 String unqualifiedFeldCD = TypeUtil.unqualifiedName(fieldCDName);
                 boolean isKeyField = ClassKeyHelper.isKeyField(classKeys, unqualifiedFeldCD,
                                                                fieldName);
@@ -316,7 +316,7 @@ public class WebResults extends AbstractList<List<Object>> implements WebTable
         }
         return rowCells;
     }
-    
+
     public Iterator iterator() {
         return new Iter();
     }
@@ -334,11 +334,11 @@ public class WebResults extends AbstractList<List<Object>> implements WebTable
     public PathQuery getPathQuery() {
         return pathQuery;
     }
-    
-    private class Iter implements Iterator 
+
+    private class Iter implements Iterator
     {
         private Iterator subIter;
-        
+
         public Iter() {
             subIter = osResults.iterator();
         }
@@ -361,7 +361,7 @@ public class WebResults extends AbstractList<List<Object>> implements WebTable
         public void remove() {
             throw (new UnsupportedOperationException());
         }
-        
+
     }
-    
+
 }
