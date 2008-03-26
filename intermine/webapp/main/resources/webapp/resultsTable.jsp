@@ -55,7 +55,7 @@
       
       <c:choose>
         <c:when test="${column.visible}">
-            <c:if test="${column.selectable && ((!isWebCollection) || (! noBagSave && status.count<=1))}">
+            <c:if test="${(column.selectable && ((!isWebCollection) || (! noBagSave && status.count<=1))) && empty bag}">
             <th align="center" class="checkbox">
               <html:multibox property="selectedObjects" styleId="selectedObjects_${status.index}"
                              onclick="selectColumnCheckbox(columnsToDisable, columnsToHighlight, ${status.index})"
@@ -166,7 +166,7 @@
           <c:choose>
             <c:when test="${column.visible}">
               <%-- the checkbox to select this object --%>
-               <c:if test="${column.selectable && ((!isWebCollection) || (! noBagSave && status2.count<=1))}">
+               <c:if test="${(column.selectable && ((!isWebCollection) || (! noBagSave && status2.count<=1))) && empty bag}">
                 <td align="center" class="checkbox" id="cell_checkbox,${status2.index},${status.index},${row[column.index].htmlId}">
                   <html:multibox property="selectedObjects"
                                  styleId="selectedObjects_${status2.index}_${status.index}_${row[column.index].htmlId}"
