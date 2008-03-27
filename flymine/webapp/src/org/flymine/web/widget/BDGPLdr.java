@@ -127,18 +127,18 @@ public class BDGPLdr implements EnrichmentWidgetLdr
         
         subQ.addToSelect(new QueryField(qcTerm, "id"));
         subQ.addToSelect(new QueryField(qcGene, "id"));
+        subQ.addToSelect(qfTerm);
 
         subQ.setConstraint(cs);
 
         Query q = new Query();
         q.setDistinct(false);
         QueryFunction qfCount = new QueryFunction();
+        QueryField outerQfTerm = new QueryField(subQ, qfTerm);
         
         q.addFrom(subQ);
         
         if (!calcTotal) {            
-            subQ.addToSelect(qfTerm);
-            QueryField outerQfTerm = new QueryField(subQ, qfTerm);
             q.addToSelect(outerQfTerm);
             q.addToGroupBy(outerQfTerm);
         }
@@ -146,8 +146,9 @@ public class BDGPLdr implements EnrichmentWidgetLdr
         q.addToSelect(qfCount);
         
         if (!calcTotal) { 
-            QueryField outerQfTerm = new QueryField(subQ, qfTerm);
-            q.addToSelect(outerQfTerm);
+            if (useBag) {
+                q.addToSelect(outerQfTerm);
+            }
         }
         
         return q;
