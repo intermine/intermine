@@ -26,10 +26,10 @@ public class ResponseUtil
      * @param fileName file name of downloaded file
      */
     public static void setExcelHeader(HttpServletResponse response, String fileName) {
+        setNoCache(response);
         response.setContentType("Application/vnd.ms-excel");
-        response.setHeader("Pragma", "no-cache");
         response.setHeader("Content-Disposition", 
-                "attachment; filename=\"" + fileName + "\"");        
+                "attachment; filename=\"" + fileName + "\"");
     }
 
     /**
@@ -39,8 +39,8 @@ public class ResponseUtil
      * @param fileName file name of downloaded file
      */
     public static void setTabHeader(HttpServletResponse response, String fileName) {
+        setNoCache(response);
         response.setContentType("text/tab-separated-values");
-        response.setHeader("Pragma", "no-cache");
         response.setHeader("Content-Disposition", "inline; filename=\"" + fileName + "\"");
     }
     
@@ -51,8 +51,8 @@ public class ResponseUtil
      * @param fileName file name of downloaded file
      */
     public static void setCSVHeader(HttpServletResponse response, String fileName) {
+        setNoCache(response);
         response.setContentType("text/comma-separated-values");
-        response.setHeader("Pragma", "no-cache");
         response.setHeader("Content-Disposition", "inline; filename=\"" + fileName + "\"");
     }
 
@@ -62,9 +62,22 @@ public class ResponseUtil
      * @param fileName file name of downloaded file
      */
     public static void setPlainTextHeader(HttpServletResponse response, String fileName) {
+        setNoCache(response);
         response.setContentType("text/plain");
-        response.setHeader("Pragma", "no-cache");
         response.setHeader("Content-Disposition ",
                            "inline; filename=\"" + fileName + "\"");        
+    }
+    
+    /**
+     * Sets that the result must not be cached. Old implementation was set
+     * Cache-Control to no-cache,no-store,max-age=0. But this caused problems 
+     * in IE. File couldn't be opened directly.   
+     * @param response response
+     */
+    public static void setNoCache(HttpServletResponse response) {
+        // http://www.phord.com/experiment/cache/
+        // http://support.microsoft.com/kb/243717
+        response.setHeader("Pragma", "no-cache");
+        response.setHeader("Cache-Control", "must-revalidate, max-age=0");
     }
 }
