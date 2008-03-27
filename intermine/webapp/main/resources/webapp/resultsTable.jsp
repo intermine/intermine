@@ -80,7 +80,7 @@
             <td style="white-space:nowrap;background:none;border:none;padding:0;margin:0">
            <%-- sort img --%>
              <c:if test="${not empty sortOrderMap[column.name] && empty bag}">
-                  <img style="vertical-align:top;" border="0"
+                  <img border="0"
                        width="17" height="16" src="images/${sortOrderMap[column.name]}_gray.gif"
                           title="Results are sorted by ${column.name}"/>
               </c:if>      
@@ -93,7 +93,7 @@
                 <fmt:message key="results.moveLeftSymbol" var="moveLeftString"/>
                 <html:link action="/changeTable?currentPage=${currentPage}&amp;bagName=${bagName}&amp;table=${param.table}&amp;method=moveColumnLeft&amp;index=${status.index}&amp;trail=${param.trail}"
                            title="${moveLeftTitle}">
-                  <img style="vertical-align:top;" border="0"
+                  <img border="0"
                        width="13" height="13" src="images/left_arrow.png"
                        title="${moveLeftString}"/>
                 </html:link>
@@ -107,7 +107,7 @@
                 <fmt:message key="results.moveRightSymbol" var="moveRightString"/>
                 <html:link action="/changeTable?currentPage=${currentPage}&amp;bagName=${bagName}&amp;table=${param.table}&amp;method=moveColumnRight&amp;index=${status.index}&amp;trail=${param.trail}"
                            title="${moveRightTitle}">
-                  <img style="vertical-align:top;" border="0"
+                  <img border="0"
                        width="13" height="13"
                        src="images/right_arrow.png" title="${moveRightString}"/>
                 </html:link>
@@ -121,7 +121,7 @@
                   </fmt:message>
                   <html:link action="/changeTable?currentPage=${currentPage}&amp;bagName=${bagName}&amp;table=${param.table}&amp;method=hideColumn&amp;index=${status.index}&amp;trail=${param.trail}"
                              title="${hideColumnTitle}">
-                    <img style="vertical-align:top;" border="0"
+                    <img border="0"
                          src="images/close.png" title="${hideColumnTitle}" />
                   </html:link>
                 </c:if>

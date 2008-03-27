@@ -19,11 +19,13 @@
   <td><img src="theme/res_bar_left.gif"></td>
   <%-- Paging controls --%>
   <td class="resBar">
+    <span>
     <tiles:insert page="/tablePageLinks.jsp">
       <tiles:put name="resultsTable" beanName="resultsTable" />
       <tiles:put name="currentPage" value="${currentPage}" />
       <tiles:put name="bagName" value="${bag.name}" />
     </tiles:insert>
+    </span>
   </td>
   <td class="resBar">&nbsp;|&nbsp;</td>
   <td class="resBar">

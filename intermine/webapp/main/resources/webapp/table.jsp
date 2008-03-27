@@ -113,10 +113,12 @@
 </html:form>
 </li>
 <li class="tool_bar_link">
+    <span class="tablePageLinks">
     <tiles:insert page="/tablePageLinks.jsp">
-      <tiles:put name="short" value="true" />
+      <tiles:put name="short" value="false" />
       <tiles:put name="currentPage" value="results" />
     </tiles:insert>
+    </span>
 </li>
 </ul>
 </div>
