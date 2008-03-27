@@ -59,22 +59,29 @@ public class GeneticInteractionURLQuery implements WidgetURLQuery
 
         List<Path> view = new ArrayList<Path>();
         
-        Path geneSecondaryIdentifier = MainHelper.makePath(model, q, "Gene.secondaryIdentifier");
         Path genePrimaryIdentifier = MainHelper.makePath(model, q, "Gene.primaryIdentifier");
-        Path geneName = MainHelper.makePath(model, q, "Gene.name");
-        Path organismName = MainHelper.makePath(model, q, "Gene.organism.name");
+        Path geneSymbol = MainHelper.makePath(model, q, "Gene.symbol");
+        Path organismName = MainHelper.makePath(model, q, "Gene.organism.shortName");
         
         Path interactionName = MainHelper.makePath(model, 
-                                   q, "Gene.geneticInteractions.geneticInteraction.shortName");
+                                                   q, "Gene.geneticInteractions.shortName");
+        Path interactionType = MainHelper.makePath(model, 
+                                                   q, "Gene.geneticInteractions.type");
+        Path interactionRole = MainHelper.makePath(model, 
+                                                   q, "Gene.geneticInteractions.geneRole");
         Path interactor = MainHelper.makePath(model, q,
-        "Gene.geneticInteractions.geneticInteraction.interactionGenes.primaryIdentifier");
+        "Gene.geneticInteractions.interactingGenes.primaryIdentifier");
+        Path experimentName = MainHelper.makePath(model, q,
+        "Gene.geneticInteractions.experiment.name");
         
         view.add(genePrimaryIdentifier);
-        view.add(geneSecondaryIdentifier);
-        view.add(geneName);
+        view.add(geneSymbol);
         view.add(organismName);
         view.add(interactionName);
+        view.add(interactionType);
+        view.add(interactionRole);
         view.add(interactor);
+        view.add(experimentName);
         
         q.setView(view);
 
@@ -88,11 +95,11 @@ public class GeneticInteractionURLQuery implements WidgetURLQuery
 
         constraintOp = ConstraintOp.EQUALS;
         code = q.getUnusedConstraintCode();
-        PathNode expressedNode = 
-        q.addNode("Gene.geneticInteractions.geneticInteraction.interactionGenes.primaryIdentifier");
-        Constraint expressedConstraint
+        PathNode geneNode = 
+        q.addNode("Gene.geneticInteractions.interactingGenes.primaryIdentifier");
+        Constraint geneConstraint
                         = new Constraint(constraintOp, key, false, label, code, id, null);
-        expressedNode.getConstraints().add(expressedConstraint);
+        geneNode.getConstraints().add(geneConstraint);
 
         q.setConstraintLogic("A and B");
         q.syncLogicExpression("and");
