@@ -1,5 +1,14 @@
 package org.intermine.web.logic.widget;
 
+/*
+ * Copyright (C) 2002-2008 FlyMine
+ *
+ * This code may be freely distributed and modified under the
+ * terms of the GNU Lesser General Public Licence.  This should
+ * be distributed with the code.  See the LICENSE file for more
+ * information or http://www.gnu.org/copyleft/lesser.html.
+ *
+ */
 
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
@@ -20,16 +29,6 @@ import org.intermine.objectstore.query.ResultsRow;
 import org.intermine.util.TypeUtil;
 import org.intermine.web.logic.WebUtil;
 import org.intermine.web.logic.bag.InterMineBag;
-
-/*
- * Copyright (C) 2002-2008 FlyMine
- *
- * This code may be freely distributed and modified under the
- * terms of the GNU Lesser General Public Licence.  This should
- * be distributed with the code.  See the LICENSE file for more
- * information or http://www.gnu.org/copyleft/lesser.html.
- *
- */
 
 /**
  * @author Julie Sullivan

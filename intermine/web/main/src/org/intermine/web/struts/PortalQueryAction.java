@@ -20,7 +20,6 @@ import java.util.Properties;
 import org.intermine.objectstore.query.ConstraintOp;
 
 import org.intermine.metadata.Model;
-import org.intermine.model.InterMineObject;
 import org.intermine.objectstore.ObjectStore;
 import org.intermine.objectstore.ObjectStoreException;
 import org.intermine.objectstore.ObjectStoreSummary;

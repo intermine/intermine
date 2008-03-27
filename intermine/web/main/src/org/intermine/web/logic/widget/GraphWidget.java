@@ -1,5 +1,15 @@
 package org.intermine.web.logic.widget;
 
+/*
+ * Copyright (C) 2002-2008 FlyMine
+ *
+ * This code may be freely distributed and modified under the
+ * terms of the GNU Lesser General Public Licence.  This should
+ * be distributed with the code.  See the LICENSE file for more
+ * information or http://www.gnu.org/copyleft/lesser.html.
+ *
+ */
+
 import java.awt.BasicStroke;
 import java.awt.Font;
 import java.lang.reflect.Constructor;
@@ -36,17 +46,6 @@ import org.jfree.chart.urls.CategoryURLGenerator;
 import org.jfree.data.category.CategoryDataset;
 import org.jfree.ui.RectangleInsets;
 import org.jfree.ui.TextAnchor;
-
-/*
- * Copyright (C) 2002-2008 FlyMine
- *
- * This code may be freely distributed and modified under the
- * terms of the GNU Lesser General Public Licence.  This should
- * be distributed with the code.  See the LICENSE file for more
- * information or http://www.gnu.org/copyleft/lesser.html.
- *
- */
-
 
 /**
  * Configuration object describing details of a graph displayer
@@ -347,7 +346,8 @@ public class GraphWidget extends Widget
         this.extraAttributeClass = extraAttributeClass;
     }
     
-    public Map<String, Collection> getExtraAttributes(InterMineBag imBag, ObjectStore os) throws Exception{
+    public Map<String, Collection> getExtraAttributes(InterMineBag imBag, ObjectStore os)
+        throws Exception {
         Collection<String> extraAttributes = new ArrayList<String>();
         Map<String, Collection> returnMap = new HashMap<String, Collection>();
         if (extraAttributeClass != null && extraAttributeClass.length() > 0) {

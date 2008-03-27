@@ -14,19 +14,11 @@ package org.intermine.web.struts;
 import java.util.Arrays;
 import java.util.Collection;
 
-import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpSession;
 
-import org.apache.commons.lang.StringUtils;
-import org.apache.struts.action.ActionErrors;
 import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionMapping;
-import org.apache.struts.action.ActionMessage;
-import org.apache.struts.action.ActionMessages;
 import org.intermine.util.StringUtil;
-import org.intermine.web.logic.Constants;
-import org.intermine.web.logic.profile.ProfileManager;
 
 /**
  *
