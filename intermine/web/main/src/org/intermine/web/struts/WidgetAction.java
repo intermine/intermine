@@ -66,7 +66,8 @@ public class WidgetAction extends InterMineAction
                                  @SuppressWarnings("unused") HttpServletResponse response)
     throws Exception {
         WidgetForm widgetForm = (WidgetForm) form;
-        if (widgetForm.getAction().equals("display")) {
+        String key = request.getParameter("key");
+        if ((key != null && key.length() != 0) || (widgetForm.getAction().equals("display"))) {
             return display(mapping, form, request, response);
         } else {
             return export(mapping, form, request, response);
