@@ -7,14 +7,6 @@
 <tiles:importAttribute/>
 
 <!-- tablePageLinks -->
-<c:choose>
-  <c:when test="${short != 'true'}">
-    <span>
-  </c:when>
-  <c:otherwise>
-    <span class="tablePageLinks">
-  </c:otherwise>
-</c:choose>
       <c:choose>
       <c:when test="${!resultsTable.firstPage}">
         <c:if test="${short != 'true'}">
@@ -53,5 +45,4 @@
       </c:otherwise>
     </c:choose>
     </c:if>
-  </span>
 <!-- /tablePageLinks.jsp -->
