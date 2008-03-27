@@ -121,7 +121,7 @@ public class ModifyBagAction extends InterMineAction
             SessionMethods.recordError("You can only perform operations on lists of the same type."
                     + " Lists "
                     + StringUtil.prettyList(Arrays.asList(selectedBags))
-                    + " don't match.", session);
+                    + " do not match.", session);
             return getReturn(mbf.getPageName(), mapping);
         }
 
@@ -158,7 +158,7 @@ public class ModifyBagAction extends InterMineAction
 
         if (combined.size() > 0) {
             profile.saveBag(name, combined);
-            SessionMethods.recordMessage("Created list '" + combined.getName() + "' as " + opText
+            SessionMethods.recordMessage("Created list \"" + combined.getName() + "\" as " + opText
                                          + " of  "
                                        + StringUtil.prettyList(Arrays.asList(selectedBags))
                                        + ".", session);
