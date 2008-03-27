@@ -287,7 +287,7 @@ public class EnrichmentWidget extends Widget
      * {@inheritDoc}
      */
     public boolean getHasResults() {
-        return (results != null && results.size() > 0);
+        return (results.get(0) != null && results.get(0).size() > 0);
     }
     
 }

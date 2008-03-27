@@ -67,10 +67,19 @@
 
           <th align="center" valign="top" >
             <%-- put in left, right, hide and show buttons --%>
-            <div align="right" style="margin-right:0px;margin-top:0px;white-space:nowrap;">
-            
+            <table cellspacing="0" cellpadding="0" border="0">
+            <tr>
+            <td align="left" width="100%" style="background:none;border:none;padding:0;margin:0">
+              <%-- summary --%>
+              <c:if test="${!empty column.path.noConstraintsString}">
+              <fmt:message key="columnsummary.getsummary" var="summaryTitle" />
+                <a href="javascript:getColumnSummary('${pagedResults.tableid}','${column.path.noConstraintsString}', &quot;${columnDisplayName}&quot;)" 
+                   title="${summaryTitle}"><img src="images/summary_maths.png" title="${summaryTitle}"/></a>
+              </c:if>            
+            </td>
+            <td style="white-space:nowrap;background:none;border:none;padding:0;margin:0">
            <%-- sort img --%>
-             <c:if test="${not empty sortOrderMap[column.name]}">
+             <c:if test="${not empty sortOrderMap[column.name] && empty bag}">
                   <img style="vertical-align:top;" border="0"
                        width="17" height="16" src="images/${sortOrderMap[column.name]}_gray.gif"
                           title="Results are sorted by ${column.name}"/>
@@ -89,14 +98,6 @@
                        title="${moveLeftString}"/>
                 </html:link>
               </c:if>
-
-              <%-- summary --%>
-              <c:if test="${!empty column.path.noConstraintsString}">
-              <fmt:message key="columnsummary.getsummary" var="summaryTitle" />
-                <a href="javascript:getColumnSummary('${pagedResults.tableid}','${column.path.noConstraintsString}', &quot;${columnDisplayName}&quot;)" 
-                   title="${summaryTitle}"><img src="images/summary_maths.png" title="${summaryTitle}"/></a>
-              </c:if>
-
 
               <%-- right --%>
               <c:if test="${not status.last}">
@@ -126,7 +127,9 @@
                 </c:if>
               </c:if>
 
-            </div>
+            </td>
+            </tr>
+            </table>
             <div>
               <c:out value="${columnDisplayName}" escapeXml="false"/>
             </div>
