@@ -143,5 +143,12 @@ public class FlyAtlasDataSetLdr implements DataSetLdr
      */
     public void setExtraAttributes(String extra) {
     }
+    
+    /**
+     * {@inheritDoc}
+     */
+    public Results getResults() {
+        return results;
+    }
 
 }
