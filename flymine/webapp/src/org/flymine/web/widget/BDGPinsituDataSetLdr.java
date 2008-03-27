@@ -43,6 +43,7 @@ import org.jfree.data.category.DefaultCategoryDataset;
 public class BDGPinsituDataSetLdr implements DataSetLdr
 {    
     private DefaultCategoryDataset dataSet;
+    private Results results;
 
     /**
      * Creates a DataSetLdr used to retrieve, organise
@@ -106,7 +107,7 @@ public class BDGPinsituDataSetLdr implements DataSetLdr
         
         q.addToOrderBy(qfStage);
         
-        Results results = os.execute(q);
+        results = os.execute(q);
         results.setBatchSize(100);
         Iterator iter = results.iterator();
         LinkedHashMap<String, int[]> callTable = initCallTable();
@@ -161,6 +162,13 @@ public class BDGPinsituDataSetLdr implements DataSetLdr
      * {@inheritDoc}
      */
     public void setExtraAttributes(String extra) {
-    }                            
+    }
+    
+    /**
+     * {@inheritDoc}
+     */
+    public Results getResults() {
+        return results;
+    }
 
 }

@@ -54,6 +54,7 @@ public class ChromosomeDistributionDataSetLdr implements DataSetLdr
     private Model model;
     private String bagType;
     private Collection<String> chromosomeList;
+    private Results results;
         
     /**
      * Creates a ChromosomeDistributionDataSetLdr used to retrieve, organise
@@ -90,7 +91,7 @@ public class ChromosomeDistributionDataSetLdr implements DataSetLdr
 
         /* run query to get gene count per chromsome */
         Query q = createQuery(organismName, "actual", bag);
-        Results results = os.execute(q);
+        results = os.execute(q);
         results.setBatchSize(50000);
 
         // find out how many genes in the bag have a chromosome location, use this
@@ -242,4 +243,12 @@ public class ChromosomeDistributionDataSetLdr implements DataSetLdr
         }
         return q;
     }
+    
+    /**
+     * {@inheritDoc}
+     */
+    public Results getResults() {
+        return results;
+    }
+
 }
