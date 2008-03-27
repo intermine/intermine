@@ -116,8 +116,10 @@ public class BagQueryRunner
             String inputString = (String) inputIter.next();
             if (!(inputString == null) && !(inputString.equals(""))) {
                 if (inputString.indexOf('*') == -1 || (!doWildcards)) {
-                    cleanInput.add(inputString);
-                    lowerCaseInput.put(inputString.toLowerCase(), inputString);
+                    if (!lowerCaseInput.containsKey(inputString.toLowerCase())) {
+                        cleanInput.add(inputString);
+                        lowerCaseInput.put(inputString.toLowerCase(), inputString);
+                    }
                 } else {
                     wildcardInput.add(inputString);
                     patterns.put(inputString, Pattern.compile(inputString.toLowerCase()
