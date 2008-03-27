@@ -89,8 +89,8 @@
   </div>
   
   <div id="tool_bar_item_export_${widget.id}" style="visibility:hidden" class="tool_bar_item">
-    <a href="javascript:submitWidgetForm(${widget.id},'export','csv')">Export selected as CSV</a><br/>
-    <a href="javascript:submitWidgetForm(${widget.id},'export','tab')">Export selected as Tab Delinited</a>
+    <a href="javascript:submitWidgetForm(${widget.id},'export','csv')">Export selected as comma separated values</a><br/>
+    <a href="javascript:submitWidgetForm(${widget.id},'export','tab')">Export selected as tab separated values</a>
     <hr>
   <a href="javascript:hideMenu('tool_bar_item_export_${widget.id}')" >Cancel</a>
   </div>
