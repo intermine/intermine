@@ -11,12 +11,19 @@ function getProcessGraphWidget(widgetId, bagName) {
 }
 
 function handleGraphWidget(widget) {
-  var widgetdataname = document.getElementById('widgetdata' + widget.id);
-  var widgetdatawait = document.getElementById('widgetdatawait' + widget.id); 
-  Element.update($(widgetdataname),widget.html);
-  Element.hide($(widgetdatawait));
   Element.hide($('widgetdatanoresults' + widget.id));
-  Element.show($(widgetdataname));
+  if(widget.hasResults) {
+    var widgetdataname = document.getElementById('widgetdata' + widget.id);
+    var widgetdatawait = document.getElementById('widgetdatawait' + widget.id); 
+    Element.update($(widgetdataname),widget.html);
+    Element.hide($(widgetdatawait));
+    Element.show($(widgetdataname));
+  } else {
+  	Element.hide($('widgetdatawait' + widget.id));
+    Element.hide($('widgetdata' + widget.id));
+    Element.show($('widgetdatanoresults' + widget.id));
+    toggleWidget('widgetcontainer' + widget.id, 'togglelink' + widget.id);
+  }
 }
 
 
@@ -61,7 +68,6 @@ function handleTableWidget(widget) {
 	  Element.hide($(widgetdatawait));
       Element.show($(widgetdataname));
   } else {
-  	// TODO add a no results message
     Element.hide($('widgetdatawait' + widget.id));
     Element.hide($('widgetdata' + widget.id));
     Element.show($('widgetdatanoresults' + widget.id));

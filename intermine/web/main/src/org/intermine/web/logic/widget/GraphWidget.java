@@ -66,7 +66,7 @@ public class GraphWidget extends Widget
     private static final int HEIGHT = 350;
     private String extraAttributeClass;
     private HttpSession session;
-    private CategoryDataset graphDataSet;
+    private DataSetLdr dataSetLdr;
 
 
     /**
@@ -80,7 +80,7 @@ public class GraphWidget extends Widget
                 {
                     InterMineBag.class, ObjectStore.class, String.class
                 });
-            DataSetLdr dataSetLdr = (DataSetLdr) constr.newInstance(new Object[]
+            dataSetLdr = (DataSetLdr) constr.newInstance(new Object[]
                 {
                     imBag, os, getSelectedExtraAttribute()
                 });
@@ -89,7 +89,7 @@ public class GraphWidget extends Widget
             JFreeChart chart = null;
             CategoryPlot plot = null;
             BarRenderer renderer = null;
-            graphDataSet = (CategoryDataset) dataSetLdr.getDataSet();
+            CategoryDataset graphDataSet = (CategoryDataset) dataSetLdr.getDataSet();
 
             /* stacked bar chart */
             if (graphType.equals("StackedBarChart")) {
@@ -374,6 +374,6 @@ public class GraphWidget extends Widget
      * {@inheritDoc}
      */
     public boolean getHasResults() {
-        return (graphDataSet.getRowCount() > 0);
+        return (dataSetLdr.getResults().size() > 0);
     }
 }

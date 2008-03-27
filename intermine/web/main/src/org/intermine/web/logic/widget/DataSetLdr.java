@@ -10,6 +10,7 @@ package org.intermine.web.logic.widget;
  *
  */
 
+import org.intermine.objectstore.query.Results;
 import org.jfree.data.category.CategoryDataset;
 
 
@@ -23,8 +24,15 @@ import org.jfree.data.category.CategoryDataset;
 public interface DataSetLdr
 {
     /**
+     * Get the generated DataSet
      * @return the dataset
      */
     public CategoryDataset getDataSet();
+    
+    /**
+     * Get the Results object
+     * @return the rsults Object
+     */
+    public Results getResults();
     
 }
