@@ -27,6 +27,7 @@ import org.intermine.objectstore.query.ContainsConstraint;
 import org.intermine.objectstore.query.Query;
 import org.intermine.objectstore.query.QueryClass;
 import org.intermine.objectstore.query.QueryCollectionReference;
+import org.intermine.objectstore.query.QueryExpression;
 import org.intermine.objectstore.query.QueryField;
 import org.intermine.objectstore.query.QueryFunction;
 import org.intermine.objectstore.query.QueryObjectReference;
@@ -63,9 +64,35 @@ public class TiffinLdr implements EnrichmentWidgetLdr
       * {@inheritDoc}
       */
      public Query getQuery(boolean calcTotal, boolean useBag) {
+         // SELECT a5_.id AS a7_, COUNT(*) AS a8_
+         //    FROM Gene AS a1_, IntergenicRegion AS a2_, TFBindingSite AS a3_, DataSet AS a4_,
+         //         Motif AS a5_, Organism AS a6_
+         //    WHERE a1_.id IN BAG
+         //      AND a6_.name IN BAG
+         //      AND a1_.organism CONTAINS a6_
+         //      AND a1_.upstreamIntergenicRegion CONTAINS a2_
+         //      AND a2_.overlappingFeatures CONTAINS a3_
+         //      AND a3_.evidence CONTAINS a4_
+         //      AND a3_.motif CONTAINS a5_
+         //      AND a4_.title = 'Tiffin'
+         //    GROUP BY a5_.id
 
-         Query q = new Query();
-         q.setDistinct(false);
+         // SELECT a9_.a7_ AS a10_, COUNT(*) AS a11_
+         //    FROM (SELECT a5_.id AS a7_, a1_.id AS a8_
+         //        FROM Gene AS a1_, IntergenicRegion AS a2_, TFBindingSite AS a3_, DataSet AS a4_,
+         //             Motif AS a5_, Organism AS a6_
+         //        WHERE a1_.id IN BAG
+         //          AND LOWER(a6_.name) IN BAG
+         //          AND a1_.organism CONTAINS a6_
+         //          AND a1_.upstreamIntergenicRegion CONTAINS a2_
+         //          AND a2_.overlappingFeatures CONTAINS a3_
+         //          AND a3_.evidence CONTAINS a4_
+         //          AND a3_.motif CONTAINS a5_
+         //          AND a4_.title = 'Tiffin') AS a9_
+         //    GROUP BY a9_.a7_
+
+         Query subQ = new Query();
+         subQ.setDistinct(false);
          QueryClass qcGene = new QueryClass(Gene.class);
          QueryClass qcIntergenicRegion = new QueryClass(IntergenicRegion.class);
          QueryClass qcTFBindingSite = new QueryClass(TFBindingSite.class);
@@ -74,24 +101,21 @@ public class TiffinLdr implements EnrichmentWidgetLdr
          QueryClass qcOrganism = new QueryClass(Organism.class);
 
          QueryField qfGeneId = new QueryField(qcGene, "id");
-         QueryField qfOrganismName = new QueryField(qcOrganism, "name");
+         QueryField qfOrganismNameMixedCase = new QueryField(qcOrganism, "name");
+         QueryExpression qfOrganismName = new QueryExpression(QueryExpression.LOWER,
+                 qfOrganismNameMixedCase);
          QueryField qfId = new QueryField(qcMotif, "primaryIdentifier");
          QueryField qfDataSet = new QueryField(qcDataSet, "title");
 
-         QueryFunction geneCount = new QueryFunction();
+         subQ.addFrom(qcGene);
+         subQ.addFrom(qcIntergenicRegion);
+         subQ.addFrom(qcTFBindingSite);
+         subQ.addFrom(qcDataSet);
+         subQ.addFrom(qcMotif);
+         subQ.addFrom(qcOrganism);
 
-         q.addFrom(qcGene);
-         q.addFrom(qcIntergenicRegion);
-         q.addFrom(qcTFBindingSite);
-         q.addFrom(qcDataSet);
-         q.addFrom(qcMotif);
-         q.addFrom(qcOrganism);
-
-         q.addToSelect(qfId);
-         q.addToSelect(geneCount);
-         if (useBag) {
-             q.addToSelect(qfId);
-         }
+         subQ.addToSelect(qfId);
+         subQ.addToSelect(qfGeneId);
 
          ConstraintSet cs = new ConstraintSet(ConstraintOp.AND);
          if (useBag) {
@@ -137,9 +161,27 @@ public class TiffinLdr implements EnrichmentWidgetLdr
              new SimpleConstraint(qfDataSet, ConstraintOp.EQUALS, new QueryValue("Tiffin"));
          cs.addConstraint(sc);
 
-         q.setConstraint(cs);
+         subQ.setConstraint(cs);
 
-         q.addToGroupBy(qfId);
+         QueryField outerQfId = new QueryField(subQ, qfId);
+         QueryFunction geneCount = new QueryFunction();
+
+         Query q = new Query();
+         q.setDistinct(false);
+
+         q.addFrom(subQ);
+
+         if (!calcTotal) {
+             q.addToSelect(outerQfId);
+         }
+
+         q.addToSelect(geneCount);
+         if (!calcTotal) {
+             if (useBag) {
+                 q.addToSelect(outerQfId);
+             }
+             q.addToGroupBy(outerQfId);
+         }
 
          return q;
      }
