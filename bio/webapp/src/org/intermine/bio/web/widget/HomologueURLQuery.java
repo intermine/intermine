@@ -59,21 +59,25 @@ public class HomologueURLQuery implements WidgetURLQuery
 
         List<Path> view = new ArrayList<Path>();
         
-        Path geneSecondaryIdentifier = MainHelper.makePath(model, q, "Gene.secondaryIdentifier");
         Path genePrimaryIdentifier = MainHelper.makePath(model, q, "Gene.primaryIdentifier");
-        Path geneName = MainHelper.makePath(model, q, "Gene.name");
+        Path geneSymbol = MainHelper.makePath(model, q, "Gene.symbol");
         Path organismName = MainHelper.makePath(model, q, "Gene.organism.name");
         
         Path homologueIdentifier 
         = MainHelper.makePath(model, q, "Gene.homologues.homologue.primaryIdentifier");
+        Path homologueSymbol 
+        = MainHelper.makePath(model, q, "Gene.homologues.homologue.symbol");
         Path homologueOrganism 
         = MainHelper.makePath(model, q, "Gene.homologues.homologue.organism.name");
+        Path homologueType 
+        = MainHelper.makePath(model, q, "Gene.homologues.type");
         
         view.add(genePrimaryIdentifier);
-        view.add(geneSecondaryIdentifier);
-        view.add(geneName);
+        view.add(geneSymbol);
         view.add(organismName);
+        view.add(homologueType);
         view.add(homologueIdentifier);
+        view.add(homologueSymbol);
         view.add(homologueOrganism);
         
         q.setView(view);
@@ -85,14 +89,22 @@ public class HomologueURLQuery implements WidgetURLQuery
         Constraint c = new Constraint(constraintOp, constraintValue, false, label, code, id, null);
         q.addNode(bagType).getConstraints().add(c);
 
-        // pubmedid
+        // constraint the organism name
         constraintOp = ConstraintOp.EQUALS;
         code = q.getUnusedConstraintCode();
-        PathNode expressedNode = q.addNode("Gene.primaryIdentifier");
-        Constraint expressedConstraint
+        PathNode organismNode = q.addNode("Gene.homologues.homologue.organism.name");
+        Constraint organismConstraint
                         = new Constraint(constraintOp, key, false, label, code, id, null);
-        expressedNode.getConstraints().add(expressedConstraint);
+        organismNode.getConstraints().add(organismConstraint);
 
+        // constrain homologue.type to be 'orthologue;
+        constraintOp = ConstraintOp.EQUALS;
+        code = q.getUnusedConstraintCode();
+        PathNode typeNode = q.addNode("Gene.homologues.type");
+        Constraint typeConstraint
+                        = new Constraint(constraintOp, "orthologue", false, label, code, id, null);
+        typeNode.getConstraints().add(typeConstraint);
+        
         q.setConstraintLogic("A and B");
         q.syncLogicExpression("and");
 
