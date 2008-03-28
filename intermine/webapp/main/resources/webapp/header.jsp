@@ -6,6 +6,8 @@
 
 <!-- header.jsp -->
 <c:set value="${WEB_PROPERTIES['header.links']}" var="headerLinks"/>
+
+<div id="topnavcontainer">
 <c:if test="${fn:length(headerLinks) > 0}">
   <div id="topnav">
     <c:forEach var="entry" items="${headerLinks}" varStatus="status">
@@ -21,7 +23,11 @@
       </c:choose>
     </c:forEach> 
 </div>
+<div id="taketour">
+   <im:popupHelp pageName="tour/start">Take a tour</im:popupHelp>
+</div>
 </c:if>
+</div>
 
 <div id="loginbar">
     <c:if test="${!empty PROFILE.username}">

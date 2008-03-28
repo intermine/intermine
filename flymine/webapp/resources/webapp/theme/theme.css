@@ -8,7 +8,7 @@ html, body {
 --------------------------*/
 
 #header{
-	background: url('top_gradient.png') repeat-x #D0B5D7;}
+	background: url('top_gradient.png') repeat-x #DFD9EA;}
 
 .plainbox {
 	padding:10px; border:1px solid #9E68AE;
@@ -65,7 +65,7 @@ div.filterBar {
     font-size:0.8em; background:#9F67AD; color:white;}
 
 #loginbar  a:link, #loginbar a:visited, #loginbar{
-	color:#FFF;}
+	color:#5C0075;}
 
 
 /* =/CUSTOMISABLE LOOK

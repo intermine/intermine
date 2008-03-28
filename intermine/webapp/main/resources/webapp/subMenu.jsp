@@ -50,14 +50,11 @@
   <c:set var="count" value="${count+1}"/>
   </c:if>
 </c:forTokens>
-
-    <c:set var="linky" value="${WEB_PROPERTIES['submenu.extraLink']}"/>
-    <c:if test="${! empty linky}">
-      <c:if test="${count>0}">
-        <li>&nbsp;|&nbsp;</li>
-      </c:if>
-    <li>${linky}</li>
-    </c:if>
+<c:if test="${pageName == 'begin'}">
+  <li>
+    <a href="${WEB_PROPERTIES['project.sitePrefix']}/what.shtml">What is ${WEB_PROPERTIES['project.title']}?</a>
+  </li>
+</c:if>
 </ul>
 </div>
 <!-- /subMenu.jsp -->
