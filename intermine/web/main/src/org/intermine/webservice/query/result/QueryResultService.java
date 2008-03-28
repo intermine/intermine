@@ -31,6 +31,7 @@ import org.intermine.webservice.WebService;
 import org.intermine.webservice.WebServiceConstants;
 import org.intermine.webservice.WebServiceException;
 import org.intermine.webservice.core.PathQueryExecutor;
+import org.intermine.webservice.core.ResultProcessor;
 import org.intermine.webservice.core.ResultRowParser;
 import org.intermine.webservice.core.ResultRowParserImpl;
 import org.intermine.webservice.output.HTMLTable;
@@ -119,10 +120,11 @@ public class QueryResultService extends WebService
         results.setBatchSize(BATCH_SIZE);
         ResultRowParser rowParser = new ResultRowParserImpl(pathQuery, getObjectStore().getModel(), 
                 WebResults.getPathToIndex(executor.getQuery(), executor.getPathToQueryNode()));
-//        Exporter exporter = new WebServiceExporterFactory(results, rowParser, firstResult, 
-//                maxResults, output).createExporter();
-//        exporter.export();
-        forward(pathQuery, title, description);
+        
+      ResultProcessor processor = new ResultProcessor(results, rowParser, 
+      firstResult, maxResults);
+      processor.write(output);              
+      forward(pathQuery, title, description);
     }
 
     private String getXMLSchemaUrl() {
