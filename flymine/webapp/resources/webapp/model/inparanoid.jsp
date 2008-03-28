@@ -21,7 +21,7 @@
         </ul><br/>
 
         <p>
-          In addition, orthologues/paralogues from these five species to several others:
+          In addition, orthologues/inparalogues from these five species to several others:
         </p>
         <p>
           <i>C. familiaris , D. discoideum, D. rerio, G. gallus, H. sapiens, M. musculus, P. troglodytes, R. norvegicus, S. cerevisiae, S. pombe</i>
@@ -32,7 +32,25 @@
           </im:querylink></p>
 
 <br/>
-  
+
+
+	<p>The inparanoid program calculates orthologue and
+inparalogue clusters, pairwise between two organisms, by first finding
+the best recipricol blast match for each gene. This becomes the
+seed-orthologue to which inparalogues are clustered (outparalogues are
+excluded - see definitions below).  Each member in the cluster
+receives an inparalog score which reflects the distance to the
+seed-orthologue.  A score of 1.0 means there is identical distance to
+the seed orthologue (and so all orthologues in the cluster will have
+an inparanoid score of 1.0).  Each inparalogue in the cluster will
+have a score less than one which reflects how similar it is to the
+seed orthologue.  In addition to the inparanoid score, each orthologue
+within the cluster has a bootstrap score, which is the confidence that
+this seed-ortholog pair are true orthologues. (This is estimated by
+sampling how often the pair is found as recipricolly best matches by a
+bootstrapping procedure applied to the original Blast alignment). </p>
+
+
 
   <h4>
    <a href="javascript:toggleDiv('hiddenDiv1');">

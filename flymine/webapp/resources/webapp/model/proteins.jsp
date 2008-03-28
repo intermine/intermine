@@ -86,7 +86,7 @@
         <ul>
           <li>            
               <im:querylink text="<i>D. melanogaster</i> proteins and corresponding genes " skipBuilder="true">
-<query name="" model="genomic" view="Protein.identifier Protein.name Protein.primaryAccession Protein.genes.identifier Protein.genes.primaryIdentifier" sortOrder="Protein.identifier Protein.name Protein.primaryAccession Protein.genes.identifier Protein.genes.primaryIdentifier">
+<query name="" model="genomic" view="Protein.name Protein.primaryAccession Protein.primaryIdentifier Protein.genes.primaryIdentifier Protein.genes.secondaryIdentifier Protein.genes.symbol" sortOrder="Protein.name Protein.primaryAccession Protein.primaryIdentifier Protein.genes.primaryIdentifier Protein.genes.secondaryIdentifier Protein.genes.symbol">
   <node path="Protein" type="Protein">
   </node>
   <node path="Protein.organism" type="Organism">
@@ -101,7 +101,7 @@
 
           <li>
              <im:querylink text="<i>D. melanogaster</i> protein domains " skipBuilder="true">
-<query name="" model="genomic" view="ProteinDomain.identifier ProteinDomain.name ProteinDomain.shortName ProteinDomain.type" sortOrder="ProteinDomain.identifier ProteinDomain.name ProteinDomain.shortName ProteinDomain.type">
+<query name="" model="genomic" view="ProteinDomain.primaryIdentifier ProteinDomain.name ProteinDomain.shortName ProteinDomain.type" sortOrder="ProteinDomain.primaryIdentifier ProteinDomain.name ProteinDomain.shortName ProteinDomain.type">
   <node path="ProteinDomain" type="ProteinDomain">
   </node>
   <node path="ProteinDomain.proteins" type="Protein">
@@ -119,7 +119,7 @@
 
           <li>              
               <im:querylink text="<i>D. melanogaster</i> proteins with corresponding protein domains " skipBuilder="true">
-<query name="" model="genomic" view="ProteinDomain.proteins.name ProteinDomain.proteins.identifier ProteinDomain.identifier ProteinDomain.name ProteinDomain.shortName ProteinDomain.type" sortOrder="ProteinDomain.proteins.name ProteinDomain.proteins.identifier ProteinDomain.identifier ProteinDomain.name ProteinDomain.shortName ProteinDomain.type">
+<query name="" model="genomic" view="ProteinDomain.proteins.primaryAccession ProteinDomain.proteins.primaryIdentifier ProteinDomain.proteins.name ProteinDomain.primaryIdentifier ProteinDomain.name ProteinDomain.shortName ProteinDomain.type" sortOrder="ProteinDomain.proteins.name asc">
   <node path="ProteinDomain" type="ProteinDomain">
   </node>
   <node path="ProteinDomain.proteins" type="Protein">
@@ -147,13 +147,22 @@
         <ul>
           <li>
               <im:querylink text="<i>A. gambiae</i> proteins and corresponding genes " skipBuilder="true">
-<query name="" model="genomic" view="Protein.identifier Protein.name Protein.primaryAccession Protein.genes.identifier"> <node path="Protein" type="Protein"> </node> <node path="Protein.organism" type="Organism"> </node> <node path="Protein.organism.name" type="String">   <constraint op="=" value="Anopheles gambiae str. PEST" description="" identifier="" code="A">   </constraint> </node></query> 
+<query name="" model="genomic" view="Protein.primaryAccession Protein.primaryIdentifier Protein.genes.primaryIdentifier" sortOrder="Protein.primaryAccession asc">
+  <node path="Protein" type="Protein">
+  </node>
+  <node path="Protein.organism" type="Organism">
+  </node>
+  <node path="Protein.organism.name" type="String">
+    <constraint op="=" value="Anopheles gambiae str. PEST" description="" identifier="" code="A">
+    </constraint>
+  </node>
+</query>
               </im:querylink>
           </li>
 
           <li>
               <im:querylink text="<i>A. gambiae</i> protein domains " skipBuilder="true">
-<query name="" model="genomic" view="ProteinDomain.identifier ProteinDomain.name ProteinDomain.shortName ProteinDomain.type" sortOrder="ProteinDomain.identifier ProteinDomain.name ProteinDomain.shortName ProteinDomain.type">
+<query name="" model="genomic" view="ProteinDomain.primaryIdentifier ProteinDomain.name ProteinDomain.shortName ProteinDomain.type" sortOrder="ProteinDomain.primaryIdentifier ProteinDomain.name ProteinDomain.shortName ProteinDomain.type">
   <node path="ProteinDomain" type="ProteinDomain">
   </node>
   <node path="ProteinDomain.proteins" type="Protein">
@@ -170,7 +179,7 @@
 
           <li>
               <im:querylink text="<i>A. gambiae</i> proteins with corresponding protein domains " skipBuilder="true">
-<query name="" model="genomic" view="ProteinDomain.proteins.name ProteinDomain.proteins.identifier ProteinDomain.identifier ProteinDomain.name ProteinDomain.shortName ProteinDomain.type" sortOrder="ProteinDomain.proteins.name ProteinDomain.proteins.identifier ProteinDomain.identifier ProteinDomain.name ProteinDomain.shortName ProteinDomain.type">
+<query name="" model="genomic" view="ProteinDomain.proteins.primaryAccession ProteinDomain.proteins.primaryIdentifier ProteinDomain.proteins.name ProteinDomain.primaryIdentifier ProteinDomain.name ProteinDomain.shortName ProteinDomain.type" sortOrder="ProteinDomain.proteins.primaryAccession asc">
   <node path="ProteinDomain" type="ProteinDomain">
   </node>
   <node path="ProteinDomain.proteins" type="Protein">
