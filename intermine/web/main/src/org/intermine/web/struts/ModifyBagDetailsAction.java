@@ -118,7 +118,7 @@ public class ModifyBagDetailsAction extends InterMineAction
 
                 String identifier = "bag." + imBag.getName();
                 PagedTable pc = SessionMethods.getResultsTable(session, identifier);
-                PathQuery pathQuery = pc.getWebTable().getPathQuery();
+                PathQuery pathQuery = pc.getWebTable().getPathQuery().clone();
 
                 session.setAttribute(Constants.QUERY, pathQuery);
                 session.setAttribute("path", imBag.getType());
