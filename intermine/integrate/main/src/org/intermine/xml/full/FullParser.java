@@ -184,6 +184,17 @@ public class FullParser
             while (refIter.hasNext()) {
                 Reference ref = (Reference) refIter.next();
                 Object refObj = objMap.get(ref.getRefId());
+                TypeUtil.FieldInfo info = TypeUtil.getFieldInfo(obj.getClass(), ref.getName());
+                if (info == null) {
+                    String message = "Field " + ref.getName()
+                    + " not found in " + DynamicUtil.decomposeClass(obj.getClass());
+                    if (abortOnError) {
+                        throw new IllegalArgumentException(message);
+                    } else {
+                        LOG.warn(message);
+                        continue;
+                    }
+                }
                 if (refObj == null) {
                     LOG.warn("no field " + ref.getName() + " in object: " + obj);
                 } else {

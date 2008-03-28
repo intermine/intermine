@@ -11,6 +11,7 @@ package org.intermine.web.logic.bag;
  */
 
 import java.util.Date;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.Set;
@@ -47,6 +48,7 @@ public class InterMineBagHandler extends DefaultHandler
     private Map idToObjectMap;
     private IdUpgrader idUpgrader;
     private int elementsInOldBag;
+    private Set<Integer> bagContents;
 
     /**
      * Create a new InterMineBagHandler object.
@@ -79,6 +81,7 @@ public class InterMineBagHandler extends DefaultHandler
             Attributes attrs) throws SAXException {
         try {
             if (qName.equals("bag")) {
+                bagContents = new HashSet();
                 bagName = attrs.getValue("name");
                 bagType = attrs.getValue("type");
                 bagDescription = attrs.getValue("description");
@@ -103,7 +106,6 @@ public class InterMineBagHandler extends DefaultHandler
                 elementsInOldBag++;
                 Integer id = new Integer(attrs.getValue("id"));
 
-                // TODO: This looks slow.
                 if (osw.getObjectById(id) == null && idToObjectMap.containsKey(id)) {
                     // the id isn't in the database and we have an Item representing the object from
                     // a previous database
@@ -112,10 +114,10 @@ public class InterMineBagHandler extends DefaultHandler
                     Set newIds = idUpgrader.getNewIds(oldObject, osw);
                     Iterator newIdIter = newIds.iterator();
                     while (newIdIter.hasNext()) {
-                        osw.addToBag(bag.getOsb(), (Integer) newIdIter.next());
+                        bagContents.add((Integer) newIdIter.next());
                     }
                 } else {
-                    osw.addToBag(bag.getOsb(), id);
+                    bagContents.add(id);
                 }
             }
         } catch (ObjectStoreException e) {
@@ -131,11 +133,10 @@ public class InterMineBagHandler extends DefaultHandler
                            String qName) throws SAXException {
         try {
             if (qName.equals("bag")) {
-                //if (bag.size() > 0) {
-                if (bag != null) {
+                if (bag != null && !bagContents.isEmpty()) {
+                    osw.addAllToBag(bag.getOsb(), bagContents);
                     bags.put(bagName, bag);
                 }
-                //}
                 LOG.debug("XML bag \"" + bagName + "\" contained " + elementsInOldBag
                           + " elements, created bag with " + (bag == null ? "null"
                               : "" + bag.size()) + " elements");
