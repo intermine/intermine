@@ -168,8 +168,8 @@ function getColumnSummary(tableName, columnName, columnDisplayName) {
         }
 
         var html = '<div class="box">                                         \
-                      <div class="title">                                     \
-                        Column Summary for ' + columnDisplayName + '          \
+                      <div class="summaryhead">                                     \
+                        <h3>Column Summary for ' + columnDisplayName + '</h3>          \
                       </div>                                                  \
                       <div id="summary_row_count"></div>                      \
                       <div id="summary_unique_count"></div>                   \

@@ -39,7 +39,7 @@
 <div id="rightColumn">
     <div>
     <tiles:insert name="tipWrapper.tile"/>
-    <div style="margin:5px;width:400px">
+    <div style="margin:5px;width:400px;">
       <h2>News</h2>
       <ol id="news">
       <li><a href="${WEB_PROPERTIES['project.sitePrefix']}/release-notes.shtml"><img src="images/new_ico.png" style="float:left;"></a>&nbsp;${WEB_PROPERTIES['begin.intro']}</li>
@@ -50,8 +50,6 @@
       </ol>
     </div>
     </div>
-    <div style="clear:right;height:1em"></div>
-
       <im:boxarea title="Templates" titleLink="/${WEB_PROPERTIES['webapp.path']}/templates.do" stylename="gradientbox">
         <em><p><fmt:message key="begin.templates"/></p></em>
         <br/>

@@ -127,7 +127,7 @@
 <html:form action="/saveBag" >
 <input type="hidden" name="operationButton"/>
 
-<div id="tool_bar_item_createlist" style="visibility:hidden" class="tool_bar_item">
+<div id="tool_bar_item_createlist" style="visibility:hidden;width:350px" class="tool_bar_item" >
       <em>(with selected items)</em>
       <fmt:message key="bag.new"/><br/>
       <input type="text" name="newBagName" id="newBagName" onkeypress="javascript:onSaveBagEnter('saveBagForm')"/>
@@ -142,7 +142,7 @@
   <a href="javascript:hideMenu('tool_bar_item_createlist')" >Cancel</a>
 </div>
 <%-- Add to existing list --%>
-<div id="tool_bar_item_addtolist" style="visibility:hidden" class="tool_bar_item">
+<div id="tool_bar_item_addtolist" style="visibility:hidden;width:300px" class="tool_bar_item" >
    <c:choose>
    <c:when test="${!empty PROFILE.savedBags}">
           <fmt:message key="bag.existing"/>
@@ -166,7 +166,7 @@
   <a href="javascript:hideMenu('tool_bar_item_addtolist')" >Cancel</a>
 </div>
 <%-- Export --%>
-<div id="tool_bar_item_export" style="visibility:hidden" class="tool_bar_item">
+<div id="tool_bar_item_export" style="visibility:hidden;width:370px" class="tool_bar_item">
     <c:set var="tableName" value="${param.table}" scope="request"/>
     <c:set var="pagedTable" value="${resultsTable}" scope="request"/>
     <tiles:get name="export.tile"/>

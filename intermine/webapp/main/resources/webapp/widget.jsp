@@ -82,13 +82,13 @@
         <li id="tool_bar_li_export_${widget.id}"><span id="tool_bar_button_export_${widget.id}" class="widget_tool_bar_button">Export</span></li>
     </ul>
   </div>
-  <div id="tool_bar_item_display_${widget.id}" style="visibility:hidden" class="tool_bar_item">
+  <div id="tool_bar_item_display_${widget.id}" style="visibility:hidden;width:200px" class="tool_bar_item">
     <a href="javascript:submitWidgetForm(${widget.id},'display',null)">Display checked items in results table</a>
     <hr>
     <a href="javascript:hideMenu('tool_bar_item_display_${widget.id}','widget')" >Cancel</a>
   </div>
   
-  <div id="tool_bar_item_export_${widget.id}" style="visibility:hidden" class="tool_bar_item">
+  <div id="tool_bar_item_export_${widget.id}" style="visibility:hidden;width:230px" class="tool_bar_item">
     <a href="javascript:submitWidgetForm(${widget.id},'export','csv')">Export selected as comma separated values</a><br/>
     <a href="javascript:submitWidgetForm(${widget.id},'export','tab')">Export selected as tab separated values</a>
     <hr>

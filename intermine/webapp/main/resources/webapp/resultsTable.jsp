@@ -196,19 +196,19 @@
 </table>
 <%--  The Summary table --%>
 <div id="summary" style="display:none;" >
-    <div align="right" >
-      <img style="padding-bottom: 4px"
+    <div align="right" id="handle">
+      <img style="float:right";
+           src="images/close.png" title="Close"
            onclick="javascript:Effect.Fade('summary', { duration: 0.30 });"
-           src="images/close.png" title="Close" 
            onmouseout="this.style.cursor='normal';" 
            onmouseover="this.style.cursor='pointer';"/>
     </div>
     <div id="summary_loading"><img src="images/wait18.gif" title="loading icon">&nbsp;Loading...</div>
     <div id="summary_loaded" style="display:none;"></div>
-</div>  
+</div>
 <script language="javascript">
   <!--//<![CDATA[
-   new Draggable('summary',null);
+   new Draggable('summary',{handle:'handle'});
   //]]>-->
 </script>
 

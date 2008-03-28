@@ -6,7 +6,8 @@ td.resBar {
 -------------------------------------- */
 #summary {
   position:absolute;
-  min-width:100px; padding:5px;
+  min-width:300px; padding:0;
+  width:300px !important;
   background-color:#fff; border: solid #CCC 1px;}
 
 #summary_loading {
@@ -15,6 +16,24 @@ td.resBar {
   padding-top:15px;
   text-align: center;
 }
+#summary_loaded {
+  padding:5px;
+}
+
+#handle {
+    height:25px;
+    background-image: url('../theme/heading-bg.gif');
+    background-repeat: repeat-x;
+}
+.summaryhead {
+    font-weight: bold;
+    padding:5px;
+}
+.summaryhead h3 {
+    font-size:1em;
+    margin:0;padding:0;
+}
+
 /* template results - used by object & bag details pages */
 /* =TABLE */
 table.refSummary {
@@ -74,5 +93,4 @@ table.results th.checkbox,table.results td.checkbox{
   
 table.results tr td.highlightCell { 
 	background-color: #FFCBFF; 
-} 
-  
+}
