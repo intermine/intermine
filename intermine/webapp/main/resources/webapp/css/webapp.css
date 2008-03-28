@@ -72,11 +72,25 @@ li {
 	clear:both;}
 
 #loginbar {
-    position:absolute; right:0px; top:75px;
+    position:absolute; right:0px; top:85px;
     padding:5px;}	
 
-#topnav {
+#topnavcontainer {
     position:absolute; right:0px; top:0px;
+}
+#taketour {
+    float:right;
+    padding:5px 10px 0px 0px;
+    color:white;
+    font-style:italic;
+    font-weight:bold;
+    font-size:1.2em;
+}
+#taketour a:link,#taketour a:hover, #taketour a:visited {
+    color:white;
+}
+#topnav {
+    float:right;
     background-color: #5C0075; color: #FFF; font: 0.95em Arial,sans-serif;
     padding:5px;}
 
@@ -290,8 +304,12 @@ div#quicksearch {
 #topnav  a:link, #topnav a:visited, #topnav{
     color:#FFF;}
 
-#loginbar  a:link, #loginbar a:visited, #loginbar{
-	font-weight: bold; color:#FFF; font-size: 1.1em;}
+#loginbar  a, #loginbar  a:link, #loginbar a:visited, #loginbar{
+    font-family:"lucida grande", tahoma, verdana, arial, sans-serif;
+	font-size: 1.1em;}
+	
+#loginbar  a, #loginbar  a:link, #loginbar a:visited{
+    font-weight: bold; text-decoration:underline;}
 
 .imbox a{
 	color:white;}
