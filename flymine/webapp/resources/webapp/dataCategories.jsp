@@ -185,7 +185,7 @@
         <p> Interactions</p></html:link></td>
     <td> <i>D. melanogaster</i> </td>
     <td> High-throughput yeast 2-hybrid protein interaction datasets </td>
-    <td> <a href="http://www.ebi.ac.uk/intact" target="_new">IntAct</a> - 7th January 2008</td>
+    <td> <a href="http://www.ebi.ac.uk/intact" target="_new">IntAct</a> - 4th March 2008</td>
     <td> Kerrien et al - <a href="http://www.ncbi.nlm.nih.gov/entrez/query.fcgi?cmd=Retrieve&db=PubMed&dopt=Abstract&list_uids=17145710" target="_new">PubMed:17145710</a></td>
     <td> &nbsp;</td>
   </tr>
@@ -193,7 +193,7 @@
   <tr>
     <td> <i>C. elegans</i></td>
     <td> High-throughput yeast 2-hybrid protein interaction datasets </td>
-    <td> <a href="http://www.ebi.ac.uk/intact" target="_new">IntAct</a> - 7th January 2008</td>
+    <td> <a href="http://www.ebi.ac.uk/intact" target="_new">IntAct</a> - 4th March 2008</td>
     <td> Kerrien et al - <a href="http://www.ncbi.nlm.nih.gov/entrez/query.fcgi?cmd=Retrieve&db=PubMed&dopt=Abstract&list_uids=17145710" target="_new">PubMed:17145710</a></td>
     <td> &nbsp;</td>
   </tr>
@@ -201,7 +201,7 @@
   <tr>
     <td> <i>S. cerevisiae</i></td>
     <td> High-throughput yeast 2-hybrid protein interaction datasets </td>
-    <td> <a href="http://www.ebi.ac.uk/intact" target="_new">IntAct</a> - 7th January 2008</td>
+    <td> <a href="http://www.ebi.ac.uk/intact" target="_new">IntAct</a> - 4th March 2008</td>
     <td> Kerrien et al - <a href="http://www.ncbi.nlm.nih.gov/entrez/query.fcgi?cmd=Retrieve&db=PubMed&dopt=Abstract&list_uids=17145710" target="_new">PubMed:17145710</a></td>
     <td> &nbsp;</td>
   </tr>
@@ -239,7 +239,8 @@
         <p> Gene Ontology </p></html:link></td>
     <td> <i>D. melanogaster</i> </td>
     <td> GO annotations </td>
-    <td> <a href="http://www.geneontology.org" target="_new">Gene Ontology Site</a> - 11th February 2008</td>
+    <td> <a href="http://www.geneontology.org" target="_new">Gene Ontology
+    Site</a> - 2nd March 2008</td>
     <td> Gene Ontology Consortium - <a href="http://www.ncbi.nlm.nih.gov/entrez/query.fcgi?cmd=Retrieve&db=PubMed&dopt=Abstract&list_uids= 10802651" target="_new">PubMed:10802651</a></td>
     <td> &nbsp;</td>
   </tr>
@@ -247,7 +248,7 @@
   <tr>
     <td> <i>C. elegans</i></td>
     <td> GO annotations </td>
-    <td> <a href="http://www.geneontology.org" target="_new">Gene Ontology Site</a> - 21st December 2007</td>
+    <td> <a href="http://www.geneontology.org" target="_new">Gene Ontology Site</a> - 2nd March 2008</td>
     <td> Gene Ontology Consortium - <a href="http://www.ncbi.nlm.nih.gov/entrez/query.fcgi?cmd=Retrieve&db=PubMed&dopt=Abstract&list_uids= 10802651" target="_new">PubMed:10802651</a></td>
     <td> &nbsp;</td>
   </tr>
@@ -255,7 +256,7 @@
   <tr>
     <td> <i>M. musculus</i></td>
     <td> GO annotations </td>
-    <td> <a href="http://www.geneontology.org" target="_new">Gene Ontology Site</a> - 18th January 2008</td>
+    <td> <a href="http://www.geneontology.org" target="_new">Gene Ontology Site</a> - 1st March 2008</td>
     <td> Gene Ontology Consortium - <a href="http://www.ncbi.nlm.nih.gov/entrez/query.fcgi?cmd=Retrieve&db=PubMed&dopt=Abstract&list_uids= 10802651" target="_new">PubMed:10802651</a></td>
     <td> &nbsp;</td>
   </tr>
@@ -263,7 +264,7 @@
   <tr>
     <td> <i>S. cerevisiae</i></td>
     <td> GO annotations </td>
-    <td> <a href="http://www.geneontology.org" target="_new">Gene Ontology Site</a> - 19th January 2008</td>
+    <td> <a href="http://www.geneontology.org" target="_new">Gene Ontology Site</a> - 2nd March 2008</td>
     <td> Gene Ontology Consortium - <a href="http://www.ncbi.nlm.nih.gov/entrez/query.fcgi?cmd=Retrieve&db=PubMed&dopt=Abstract&list_uids= 10802651" target="_new">PubMed:10802651</a></td>
     <td> &nbsp;</td>
   </tr>
@@ -271,7 +272,7 @@
   <tr>
     <td> <i>S. pombe</i></td>
     <td> GO annotations </td>
-    <td> <a href="http://www.geneontology.org" target="_new">Gene Ontology Site</a> - 17th December 2007</td>
+    <td> <a href="http://www.geneontology.org" target="_new">Gene Ontology Site</a> - 24th February 2008</td>
     <td> Gene Ontology Consortium - <a href="http://www.ncbi.nlm.nih.gov/entrez/query.fcgi?cmd=Retrieve&db=PubMed&dopt=Abstract&list_uids= 10802651" target="_new">PubMed:10802651</a></td>
     <td> &nbsp;</td>
   </tr>
@@ -279,7 +280,7 @@
   <tr>
     <td> <i>A. gambiae</i> </td>
     <td> GO annotations </td>
-    <td> <a href="http://www.ebi.ac.uk/GOA/uniprot_release.html" target="_new">Uniprot GOA</a> - 21st January 2008</td>
+    <td> <a href="http://www.ebi.ac.uk/GOA/uniprot_release.html" target="_new">Uniprot GOA</a> - 15th February 2008</td>
     <td> Camon et al - <a href="http://www.ncbi.nlm.nih.gov/entrez/query.fcgi?cmd=Retrieve&db=PubMed&dopt=Abstract&list_uids=14681408" target="_new">PubMed: 14681408</a></td>
     <td> &nbsp;</td>
   </tr>
@@ -287,7 +288,7 @@
   <tr>
     <td> <i>A. mellifera</i> </td>
     <td> GO annotations </td>
-    <td> <a href="http://www.ebi.ac.uk/GOA/uniprot_release.html" target="_new">Uniprot GOA</a> - 21st January 2008</td>
+    <td> <a href="http://www.ebi.ac.uk/GOA/uniprot_release.html" target="_new">Uniprot GOA</a> - 15th February 2008</td>
     <td> Camon et al - <a href="http://www.ncbi.nlm.nih.gov/entrez/query.fcgi?cmd=Retrieve&db=PubMed&dopt=Abstract&list_uids=14681408" target="_new">PubMed: 14681408</a></td>
     <td> &nbsp;</td>
   </tr>
