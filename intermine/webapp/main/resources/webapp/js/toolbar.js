@@ -1,6 +1,10 @@
 var lastOpen;
 
 function toggleToolBarMenu(e) {
+    toggleToolBarMenu(e,null);
+}
+
+function toggleToolBarMenu(e,pos) {
 	e = e || window.event;
 	var tgt = e.target || e.srcElement;
 	var id = tgt.id;
@@ -8,15 +12,17 @@ function toggleToolBarMenu(e) {
 	    return;
 	}
 	if (lastOpen) {
-	    hideMenu(lastOpen);
+	    hideMenu(lastOpen,pos);
 	}
 	var button = document.getElementById(id);
 	var item = document.getElementById(id.replace(/button/,'item'));
 	if (item.style.visibility == 'visible') {
-		hideMenu(item.id);
+		hideMenu(item.id,pos);
 		return;
 	}
-	button.className=button.id;
+	if(pos!='widget') {
+    	button.className=button.id;
+	}
 	var posArray = findPosition(button);
 	item.style.left = posArray[0] +"px";
 	item.style.top = posArray[1] + 25 +"px";
@@ -24,8 +30,13 @@ function toggleToolBarMenu(e) {
 	lastOpen = item.id;
 }
 function hideMenu(id) {
+    hideMenu(id,null);
+}
+function hideMenu(id,pos) {
 	document.getElementById(id).style.visibility = 'hidden';
-	document.getElementById(id.replace(/item/,'button')).className = null;
+	if(pos!='widget') {
+	    document.getElementById(id.replace(/item/,'button')).className = null;
+    }
 }
 function findPosition(obj) {
 	var curleft = curtop = 0;

@@ -77,7 +77,7 @@
  </c:if>
  <c:if test="${fn:contains(widget.class,'EnrichmentWidget')}">
   <div id="widget_tool_bar_div_${widget.id}" class="widget_tool_bar_div" >
-    <ul id="widget_button_bar_${widget.id}" onclick="toggleToolBarMenu(event);" class="widget_button_bar" >
+    <ul id="widget_button_bar_${widget.id}" onclick="toggleToolBarMenu(event,'widget');" class="widget_button_bar" >
         <li id="tool_bar_li_display_${widget.id}"><span id="tool_bar_button_display_${widget.id}" class="widget_tool_bar_button">Display</span></li>
         <li id="tool_bar_li_export_${widget.id}"><span id="tool_bar_button_export_${widget.id}" class="widget_tool_bar_button">Export</span></li>
     </ul>
@@ -85,14 +85,14 @@
   <div id="tool_bar_item_display_${widget.id}" style="visibility:hidden" class="tool_bar_item">
     <a href="javascript:submitWidgetForm(${widget.id},'display',null)">Display checked items in results table</a>
     <hr>
-    <a href="javascript:hideMenu('tool_bar_item_display_${widget.id}')" >Cancel</a>
+    <a href="javascript:hideMenu('tool_bar_item_display_${widget.id}','widget')" >Cancel</a>
   </div>
   
   <div id="tool_bar_item_export_${widget.id}" style="visibility:hidden" class="tool_bar_item">
     <a href="javascript:submitWidgetForm(${widget.id},'export','csv')">Export selected as comma separated values</a><br/>
     <a href="javascript:submitWidgetForm(${widget.id},'export','tab')">Export selected as tab separated values</a>
     <hr>
-  <a href="javascript:hideMenu('tool_bar_item_export_${widget.id}')" >Cancel</a>
+  <a href="javascript:hideMenu('tool_bar_item_export_${widget.id}','widget')" >Cancel</a>
   </div>
  </c:if>  
   <div id="widgetdata${widget.id}" class="widgetdata">
