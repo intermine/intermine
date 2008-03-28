@@ -293,7 +293,10 @@ public class PrecomputedTableManager
                 // special case for string lower() indexes - add an index that can be used by
                 // LIKE constraints
                 if (indexName.startsWith("lower(")) {
-                    addIndex(pt.getName(), indexName + " text_pattern_ops", con, false);
+                    String newIndexName = indexName.replaceFirst("^lower\\(([^,]+)\\)(.*)",
+                                                                 "lower($1) text_pattern_ops$2");
+
+                    addIndex(pt.getName(), newIndexName, con, false);
                 }
             }
 
