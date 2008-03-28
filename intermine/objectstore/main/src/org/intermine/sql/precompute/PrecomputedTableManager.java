@@ -290,6 +290,11 @@ public class PrecomputedTableManager
                 String indexName = (String) indexIter.next();
                 addIndex(pt.getName(), indexName, con, (!indexName.equals(orderByField))
                         && (indexName.indexOf(",") == -1));
+                // special case for string lower() indexes - add an index that can be used by
+                // LIKE constraints
+                if (indexName.startsWith("lower(")) {
+                    addIndex(pt.getName(), indexName + " text_pattern_ops", con, false);
+                }
             }
 
             LOG.info("ANALYSEing precomputed table " + pt.getName());
