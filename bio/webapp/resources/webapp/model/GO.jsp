@@ -69,7 +69,7 @@
 </query>
             </im:querylink>
             <im:querylink text="(export)" skipBuilder="true">
-<query name="" model="genomic" view="Gene.identifier Gene.primaryIdentifier Gene.symbol Gene.goAnnotation.identifier Gene.goAnnotation.name Gene.goAnnotation.qualifier">
+<query name="" model="genomic" view="Gene.secondaryIdentifier Gene.primaryIdentifier Gene.symbol Gene.goAnnotation.identifier Gene.goAnnotation.name Gene.goAnnotation.qualifier">
   <node path="Gene" type="Gene">
   </node>
   <node path="Gene.organism" type="Organism">
@@ -102,7 +102,7 @@
 </query>
             </im:querylink>
             <im:querylink text="(export)" skipBuilder="true">
-<query name="" model="genomic" view="Gene.identifier Gene.primaryIdentifier Gene.symbol Gene.annotations.identifier Gene.annotations.name Gene.annotations.qualifier">
+<query name="" model="genomic" view="Gene.secondaryIdentifier Gene.primaryIdentifier Gene.symbol Gene.annotations.identifier Gene.annotations.name Gene.annotations.qualifier">
   <node path="Gene" type="Gene">
   </node>
   <node path="Gene.organism" type="Organism">

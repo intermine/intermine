@@ -73,7 +73,7 @@
 
           <li>
             <im:querylink text="REDfly regulatory regions " skipBuilder="true">
-              <query name="" model="genomic" view="TFmodule.identifier TFmodule.length TFmodule.chromosome.identifier TFmodule.chromosomeLocation.start TFmodule.chromosomeLocation.end TFmodule.gene.identifier TFmodule.elementEvidence">
+              <query name="" model="genomic" view="TFmodule.identifier TFmodule.length TFmodule.chromosome.primaryIdentifier TFmodule.chromosomeLocation.start TFmodule.chromosomeLocation.end TFmodule.gene.identifier TFmodule.elementEvidence">
                 <node path="TFmodule" type="TFmodule">
                 </node>
                 <node path="TFmodule.evidence" type="DataSet">
@@ -88,7 +88,7 @@
 
           <li>
             <im:querylink text="FlyBase regulatory regions " skipBuilder="true">
-              <query name="" model="genomic" view="RegulatoryRegion.identifier RegulatoryRegion.length RegulatoryRegion.chromosome.identifier RegulatoryRegion.chromosomeLocation.start RegulatoryRegion.chromosomeLocation.end">
+              <query name="" model="genomic" view="RegulatoryRegion.identifier RegulatoryRegion.length RegulatoryRegion.chromosome.primaryIdentifier RegulatoryRegion.chromosomeLocation.start RegulatoryRegion.chromosomeLocation.end">
                 <node path="RegulatoryRegion" type="RegulatoryRegion">
                 </node>
                 <node path="RegulatoryRegion.evidence" type="DataSet">
@@ -103,7 +103,7 @@
 
           <li>
             <im:querylink text="FlyReg transcription factor binding sites " skipBuilder="true">
-              <query name="" model="genomic" view="TFBindingSite.identifier TFBindingSite.length TFBindingSite.gene.identifier TFBindingSite.factor.identifier TFBindingSite.chromosome.identifier TFBindingSite.chromosomeLocation.start TFBindingSite.chromosomeLocation.end">
+              <query name="" model="genomic" view="TFBindingSite.identifier TFBindingSite.length TFBindingSite.gene.identifier TFBindingSite.factor.identifier TFBindingSite.chromosome.primaryIdentifier TFBindingSite.chromosomeLocation.start TFBindingSite.chromosomeLocation.end">
                 <node path="TFBindingSite" type="TFBindingSite">
                 </node>
                 <node path="TFBindingSite.evidence" type="DataSet">
@@ -119,7 +119,7 @@
           <li>
             <im:querylink text="Transcription factor binding sites predicted by Tiffin"
                           skipBuilder="true">
-              <query name="" model="genomic" view="TFBindingSite.identifier TFBindingSite.length TFBindingSite.chromosome.identifier TFBindingSite.chromosomeLocation.start TFBindingSite.chromosomeLocation.end TFBindingSite.motif.identifier">
+              <query name="" model="genomic" view="TFBindingSite.identifier TFBindingSite.length TFBindingSite.chromosome.primaryIdentifier TFBindingSite.chromosomeLocation.start TFBindingSite.chromosomeLocation.end TFBindingSite.motif.identifier">
                 <pathDescription pathString="TFBindingSite.motif" description="Motif"/>
                 <pathDescription pathString="TFBindingSite.chromosomeLocation" description="Chromosome location"/>
                 <pathDescription pathString="TFBindingSite.chromosome" description="Chromosome"/>

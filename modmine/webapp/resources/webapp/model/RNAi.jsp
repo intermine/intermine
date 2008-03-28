@@ -213,7 +213,7 @@
 
             <li>
               <im:querylink text="All <i>C. elegans</i> RNAi data " skipBuilder="true">
-                <query name="" model="genomic" view="Gene.identifier Gene.primaryIdentifier Gene.symbol Gene.rnaiResults.name Gene.rnaiResults.code">
+                <query name="" model="genomic" view="Gene.secondaryIdentifier Gene.primaryIdentifier Gene.symbol Gene.rnaiResults.name Gene.rnaiResults.code">
                  <node path="Gene" type="Gene">
                    </node>
                  <node path="Gene.organism" type="Organism">
