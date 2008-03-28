@@ -860,6 +860,7 @@ public class SessionMethods
         WebConfig webConfig = (WebConfig) servletContext.getAttribute(Constants.WEBCONFIG);
         PathQuery pathQuery = PathQueryResultHelper.makePathQueryForCollection(webConfig, os, obj,
                         referencedClassName, field);
+        session.setAttribute(Constants.QUERY, pathQuery);
         WebResults webResults = PathQueryResultHelper.createPathQueryGetResults(pathQuery, profile,
                         os, classKeys, bagQueryConfig, servletContext);
         String identifier = "coll" + index++;
