@@ -183,7 +183,7 @@
 </TABLE>
 
 <div class="heading" style="clear:both;margin-top:15px">
-     Widgets displaying properties of '${bag.name}'
+     <a id="widgets">Widgets displaying properties of '${bag.name}'</a> &nbsp;
 </div>
 <script language="javascript">
   function toggleWidget(widgetid,linkid) {
