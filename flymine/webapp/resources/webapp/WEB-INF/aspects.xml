@@ -132,7 +132,7 @@
       KEGG pathway data for &lt;i&gt;Drosophila melanogaster&lt;/i&gt;.
     </intro-text>
     <tile-name>model/pathways.jsp</tile-name>
-    <aspect-source name="Kegg pathway database" url="http://www.genome.jp/kegg/pathway.html/"/>
+    <aspect-source name="Kegg pathway database" url="http://www.genome.jp/kegg/pathway.html"/>
   </aspect>
 
   <aspect name="Disease">

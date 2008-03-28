@@ -82,7 +82,7 @@
               </im:querylink>
               or
               <im:querylink text="[export/download]" skipBuilder="true">
-                <query name="" model="genomic" view="Protein.identifier Protein.name Protein.primaryAccession Protein.genes.identifier Protein.genes.chromosomeLocation.start Protein.genes.chromosomeLocation.end">
+                <query name="" model="genomic" view="Protein.primaryIdentifier Protein.name Protein.primaryAccession Protein.genes.primaryIdentifier Protein.genes.chromosomeLocation.start Protein.genes.chromosomeLocation.end">
                   <node path="Protein" type="Protein">
                   </node>
                   <node path="Protein.organism" type="Organism">
@@ -117,7 +117,7 @@
             or
             <im:querylink text="[export/download]"
                           skipBuilder="true">
-              <query name="" model="genomic" view="ProteinDomain.identifier ProteinDomain.interproId ProteinDomain.name ProteinDomain.shortName">
+              <query name="" model="genomic" view="ProteinDomain.primaryIdentifier ProteinDomain.interproId ProteinDomain.name ProteinDomain.shortName">
                 <node path="ProteinDomain" type="ProteinDomain">
                 </node>
                 <node path="ProteinDomain.proteins" type="Protein">
@@ -157,7 +157,7 @@
               </im:querylink>
               or
               <im:querylink text="[export/download]" skipBuilder="true">
-                <query name="" model="genomic" view="ProteinDomain.proteins.name ProteinDomain.proteins.identifier ProteinDomain ProteinDomain.identifier ProteinDomain.interproId ProteinDomain.name ProteinDomain.shortName" constraintLogic="A and B">
+                <query name="" model="genomic" view="ProteinDomain.proteins.name ProteinDomain.proteins.primaryIdentifier ProteinDomain ProteinDomain.primaryIdentifier ProteinDomain.interproId ProteinDomain.name ProteinDomain.shortName" constraintLogic="A and B">
                   <node path="ProteinDomain" type="ProteinDomain">
                   </node>
                   <node path="ProteinDomain.proteins" type="Protein">
@@ -278,7 +278,7 @@
               </im:querylink>
               or
               <im:querylink text="[export/download]" skipBuilder="true">
-                <query name="" model="genomic" view="Protein.identifier Protein.name Protein.primaryAccession Protein.genes.identifier Protein.genes.chromosomeLocation.start Protein.genes.chromosomeLocation.end">
+                <query name="" model="genomic" view="Protein.primaryIdentifier Protein.name Protein.primaryAccession Protein.genes.primaryIdentifier Protein.genes.chromosomeLocation.start Protein.genes.chromosomeLocation.end">
                   <node path="Protein" type="Protein">
                   </node>
                   <node path="Protein.organism" type="Organism">
@@ -314,7 +314,7 @@
               </im:querylink>
               or
               <im:querylink text="[export/download]" skipBuilder="true">
-                <query name="" model="genomic" view="ProteinDomain.identifier ProteinDomain.interproId ProteinDomain.name ProteinDomain.shortName">
+                <query name="" model="genomic" view="ProteinDomain.primaryIdentifier ProteinDomain.interproId ProteinDomain.name ProteinDomain.shortName">
                   <node path="ProteinDomain" type="ProteinDomain">
                   </node>
                   <node path="ProteinDomain.proteins" type="Protein">
@@ -352,7 +352,7 @@
               </im:querylink>
               or
               <im:querylink text="[export/download]" skipBuilder="true">
-                <query name="" model="genomic" view="ProteinDomain.proteins.name ProteinDomain.proteins.identifier ProteinDomain ProteinDomain.identifier ProteinDomain.interproId ProteinDomain.name ProteinDomain.shortName" constraintLogic="A and B">
+                <query name="" model="genomic" view="ProteinDomain.proteins.name ProteinDomain.proteins.primaryIdentifier ProteinDomain ProteinDomain.primaryIdentifier ProteinDomain.interproId ProteinDomain.name ProteinDomain.shortName" constraintLogic="A and B">
                   <node path="ProteinDomain" type="ProteinDomain">
                   </node>
                   <node path="ProteinDomain.proteins" type="Protein">

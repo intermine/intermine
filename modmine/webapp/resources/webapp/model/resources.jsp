@@ -163,7 +163,7 @@
 
           <li>
             <im:querylink text="All DrosDel deletions " skipBuilder="true">
-              <query name="" model="genomic" view="ArtificialDeletion.identifier ArtificialDeletion.available ArtificialDeletion.chromosome.identifier ArtificialDeletion.chromosomeLocation.start ArtificialDeletion.chromosomeLocation.end">
+              <query name="" model="genomic" view="ArtificialDeletion.identifier ArtificialDeletion.available ArtificialDeletion.chromosome.primaryIdentifier ArtificialDeletion.chromosomeLocation.start ArtificialDeletion.chromosomeLocation.end">
                 <node path="ArtificialDeletion" type="ArtificialDeletion">
                 </node>
                 <node path="ArtificialDeletion.organism" type="Organism">
@@ -178,7 +178,7 @@
 
           <li>
             <im:querylink text="All available DrosDel deletions " skipBuilder="true">
-              <query name="" model="genomic" view="ArtificialDeletion.identifier ArtificialDeletion.chromosome.identifier ArtificialDeletion.chromosomeLocation.start ArtificialDeletion.chromosomeLocation.end">
+              <query name="" model="genomic" view="ArtificialDeletion.identifier ArtificialDeletion.chromosome.primaryIdentifier ArtificialDeletion.chromosomeLocation.start ArtificialDeletion.chromosomeLocation.end">
                 <node path="ArtificialDeletion" type="ArtificialDeletion">
                 </node>
                 <node path="ArtificialDeletion.organism" type="Organism">
@@ -197,7 +197,7 @@
 
           <li>
             <im:querylink text="All DrosDel insertions " skipBuilder="true">
-            <query name="" model="genomic" view="TransposableElementInsertionSite.identifier TransposableElementInsertionSite.type TransposableElementInsertionSite.subType TransposableElementInsertionSite.chromosome.identifier TransposableElementInsertionSite.chromosomeLocation.start TransposableElementInsertionSite.chromosomeLocation.end" constraintLogic="A and B">
+            <query name="" model="genomic" view="TransposableElementInsertionSite.identifier TransposableElementInsertionSite.type TransposableElementInsertionSite.subType TransposableElementInsertionSite.chromosome.primaryIdentifier TransposableElementInsertionSite.chromosomeLocation.start TransposableElementInsertionSite.chromosomeLocation.end" constraintLogic="A and B">
              <node path="TransposableElementInsertionSite" type="TransposableElementInsertionSite">
               </node>
              <node path="TransposableElementInsertionSite.organism" type="Organism">
@@ -218,7 +218,7 @@
 
         <li>
             <im:querylink text="All P-element insertions (including Exelixis and DrosDel)" skipBuilder="true">
-              <query name="" model="genomic" view="TransposableElementInsertionSite.identifier TransposableElementInsertionSite.type TransposableElementInsertionSite.subType TransposableElementInsertionSite.chromosome.identifier TransposableElementInsertionSite.chromosomeLocation.start TransposableElementInsertionSite.chromosomeLocation.end">
+              <query name="" model="genomic" view="TransposableElementInsertionSite.identifier TransposableElementInsertionSite.type TransposableElementInsertionSite.subType TransposableElementInsertionSite.chromosome.primaryIdentifier TransposableElementInsertionSite.chromosomeLocation.start TransposableElementInsertionSite.chromosomeLocation.end">
                 <node path="TransposableElementInsertionSite" type="TransposableElementInsertionSite">
                 </node>
                 <node path="TransposableElementInsertionSite.organism" type="Organism">
@@ -250,31 +250,31 @@
 
           <li>
             <im:querylink text="All tiling path PCR product identifiers and chromosomal locations " skipBuilder="true">
-              <query name="" model="genomic" view="PCRProduct.identifier PCRProduct.promoter PCRProduct.chromosomeLocation.start PCRProduct.chromosomeLocation.end PCRProduct.chromosome.identifier"/>
+              <query name="" model="genomic" view="PCRProduct.identifier PCRProduct.promoter PCRProduct.chromosomeLocation.start PCRProduct.chromosomeLocation.end PCRProduct.chromosome.primaryIdentifier"/>
             </im:querylink>
           </li>
 
           <li>
             <im:querylink text="All tiling path primer identifiers and chromosomal locations " skipBuilder="true">
-              <query name="" model="genomic" view="Primer.identifier Primer.chromosomeLocation.start Primer.chromosomeLocation.end Primer.chromosome.identifier"/>
+              <query name="" model="genomic" view="Primer.identifier Primer.chromosomeLocation.start Primer.chromosomeLocation.end Primer.chromosome.primaryIdentifier"/>
             </im:querylink>
           </li>
 
           <li>
             <im:querylink text="All tiling path forward primer identifiers and chromosomal locations " skipBuilder="true">
-              <query name="" model="genomic" view="ForwardPrimer.identifier ForwardPrimer.chromosomeLocation.start ForwardPrimer.chromosomeLocation.end ForwardPrimer.chromosome.identifier"/>
+              <query name="" model="genomic" view="ForwardPrimer.identifier ForwardPrimer.chromosomeLocation.start ForwardPrimer.chromosomeLocation.end ForwardPrimer.chromosome.primaryIdentifier"/>
             </im:querylink>
           </li>
 
           <li>
             <im:querylink text="All tiling path reverse primer identifiers and chromosomal locations " skipBuilder="true">
-              <query name="" model="genomic" view="ReversePrimer.identifier ReversePrimer.chromosomeLocation.start ReversePrimer.chromosomeLocation.end ReversePrimer.chromosome.identifier"/>
+              <query name="" model="genomic" view="ReversePrimer.identifier ReversePrimer.chromosomeLocation.start ReversePrimer.chromosomeLocation.end ReversePrimer.chromosome.primaryIdentifier"/>
             </im:querylink>
           </li>
 
           <li>
             <im:querylink text="All tiling path span identifiers and chromosomal locations " skipBuilder="true">
-              <query name="" model="genomic" view="TilingPathSpan.identifier TilingPathSpan.chromosomeLocation.start TilingPathSpan.chromosomeLocation.end TilingPathSpan.chromosome.identifier"/>
+              <query name="" model="genomic" view="TilingPathSpan.identifier TilingPathSpan.chromosomeLocation.start TilingPathSpan.chromosomeLocation.end TilingPathSpan.chromosome.primaryIdentifier"/>
             </im:querylink>
           </li>
 

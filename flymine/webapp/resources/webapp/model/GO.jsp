@@ -102,7 +102,7 @@
 
           <li>
             <im:querylink text="All gene/GO annotation pairs from <i>D. melanogaster</i> " skipBuilder="true">
-             <query name="" model="genomic" view="Gene.identifier Gene.primaryIdentifier Gene.symbol Gene.goAnnotation.identifier Gene.goAnnotation.name">
+             <query name="" model="genomic" view="Gene.secondaryIdentifier Gene.primaryIdentifier Gene.symbol Gene.goAnnotation.identifier Gene.goAnnotation.name">
               <node path="Gene" type="Gene">
                </node>
               <node path="Gene.organism" type="Organism">
@@ -117,7 +117,7 @@
 
          <li>
            <im:querylink text="All gene/GO annotation pairs from <i>A. gambiae</i> " skipBuilder="true">
-            <query name="" model="genomic" view="Gene.identifier Gene.primaryIdentifier Gene.symbol Gene.annotations.identifier Gene.annotations.name">
+            <query name="" model="genomic" view="Gene.secondaryIdentifier Gene.primaryIdentifier Gene.symbol Gene.annotations.identifier Gene.annotations.name">
              <node path="Gene" type="Gene">
               </node>
              <node path="Gene.organism" type="Organism">

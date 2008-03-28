@@ -68,7 +68,7 @@
 
           <li>
             <im:querylink text="All 3-D protein structure data for <i>A. gambiae</i> (Kenji Mizuguchi data) " skipBuilder="true">
-<query name="kenji_anopheles" model="genomic" view="Protein.identifier Protein.primaryAccession Protein.structures.identifier Protein.structures.start Protein.structures.end Protein.structures.prosa_q_score Protein.structures.prosa_z_score Protein.structures.evidence.title" sortOrder="Protein.identifier asc" constraintLogic="A and B">
+<query name="kenji_anopheles" model="genomic" view="Protein.primaryIdentifier Protein.primaryAccession Protein.structures.identifier Protein.structures.start Protein.structures.end Protein.structures.prosa_q_score Protein.structures.prosa_z_score Protein.structures.evidence.title" sortOrder="Protein.primaryIdentifier asc" constraintLogic="A and B">
   <node path="Protein" type="Protein">
   </node>
   <node path="Protein.structures" type="ProteinStructure">
@@ -89,7 +89,7 @@
 
           <li>
             <im:querylink text="All 3-D protein structure data for <i>D. melanogaster</i> (Kenji Mizuguchi data) " skipBuilder="true">
-<query name="" model="genomic" view="Protein.identifier Protein.primaryAccession Protein.structures.identifier Protein.structures.start Protein.structures.end Protein.structures.prosa_q_score Protein.structures.prosa_z_score Protein.structures.evidence.title" sortOrder="Protein.identifier asc" constraintLogic="A and B">
+<query name="" model="genomic" view="Protein.primaryIdentifier Protein.primaryAccession Protein.structures.identifier Protein.structures.start Protein.structures.end Protein.structures.prosa_q_score Protein.structures.prosa_z_score Protein.structures.evidence.title" sortOrder="Protein.primaryIdentifier asc" constraintLogic="A and B">
   <node path="Protein" type="Protein">
   </node>
   <node path="Protein.structures" type="ProteinStructure">
@@ -110,7 +110,7 @@
 
           <li>
             <im:querylink text="All 3-D protein structure data for <i>D. melanogaster</i> (PDB data) " skipBuilder="true">
-<query name="PDB_bulkdownload" model="genomic" view="Protein.identifier Protein.name Protein.structures.title Protein.structures.technique Protein.structures.resolution" sortOrder="Protein.identifier asc">
+<query name="PDB_bulkdownload" model="genomic" view="Protein.primaryIdentifier Protein.name Protein.structures.title Protein.structures.technique Protein.structures.resolution" sortOrder="Protein.primaryIdentifier asc">
   <node path="Protein" type="Protein">
   </node>
   <node path="Protein.structures" type="ProteinStructure">
