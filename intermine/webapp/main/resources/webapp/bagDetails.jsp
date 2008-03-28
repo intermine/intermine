@@ -60,14 +60,14 @@
     <hr>
   <a href="javascript:hideMenu('tool_bar_item_convert')" >Cancel</a>
 </div> --%>
-<div id="tool_bar_item_display" style="visibility:hidden" class="tool_bar_item">
+<div id="tool_bar_item_display" style="visibility:hidden;width:100px" class="tool_bar_item">
     <html:link anchor="relatedTemplates" action="bagDetails?bagName=${bag.name}">related templates</html:link><br/>
     <html:link anchor="widgets" action="bagDetails?bagName=${bag.name}">related widgets</html:link>
     <hr/>
   <a href="javascript:hideMenu('tool_bar_item_display')">Cancel</a>
 </div>
 
-<div id="tool_bar_item_export" style="visibility:hidden" class="tool_bar_item">
+<div id="tool_bar_item_export" style="visibility:hidden;width:300px" class="tool_bar_item">
     <c:set var="tableName" value="bag.${bag.name}" scope="request"/>
     <c:set var="pagedTable" value="${pagedResults}" scope="request"/>
     <tiles:get name="export.tile"/>
@@ -75,7 +75,7 @@
   <a href="javascript:hideMenu('tool_bar_item_export')" >Cancel</a>
 </div>
 
-<div id="tool_bar_item_use" style="visibility:hidden" class="tool_bar_item">
+<div id="tool_bar_item_use" style="visibility:hidden;width:100px" class="tool_bar_item">
     <a href="javascript:useBag('query');">in a query</a><br/>
     
   <html:link action="/templates">in a template</html:link>
