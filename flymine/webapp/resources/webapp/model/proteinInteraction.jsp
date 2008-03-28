@@ -13,7 +13,7 @@
        <h4>  
         <a href="javascript:toggleDiv('hiddenDiv1');">
           <img id='hiddenDiv1Toggle' src="images/disclosed.gif"/>
-            <i>D. melanogaster</i> - High-throughput 2-hybrid protein interaction datasets ...
+            <i>D. melanogaster</i> - Protein interaction datasets ...
         </a>
        </h4>
 
@@ -65,7 +65,7 @@
       <h4>
         <a href="javascript:toggleDiv('hiddenDiv2');">
           <img id='hiddenDiv2Toggle' src="images/disclosed.gif"/>
-         <i>C. elegans</i> - High-throughput 2-hybrid protein interaction datasets ...
+         <i>C. elegans</i> - Protein interaction datasets ...
       </a>
      </h4>
 
@@ -99,7 +99,7 @@
       <h4>
         <a href="javascript:toggleDiv('hiddenDiv3');">
           <img id='hiddenDiv3Toggle' src="images/disclosed.gif"/>
-           <i>S. cerevisiae</i> - High-throughput 2-hybrid protein interaction datasets ...
+           <i>S. cerevisiae</i> - Protein interaction datasets ...
       </a>
      </h4>
 
@@ -175,6 +175,26 @@ cerevisiae</i>.<br/>
      </div>
     </div>
    </td>
+ <i>S. cerevisiae</i>
+
+      <h4>
+        <a href="javascript:toggleDiv('hiddenDiv2');">
+          <img id='hiddenDiv2Toggle' src="images/disclosed.gif"/>
+          Genetic interaction datasets ...
+      </a>
+     </h4>
+
+
+<div id="hiddenDiv1" class="dataSetDescription">
+ <dl>
+         <dt>
+           Genetic Interaction data for  <i>D. melanogaster</i>,  <i>C. elegans</i> and  <i>S. cerevisiae</i> have been loaded from the BioGrid.  These data include both high-throughput studies and conventional focussed studies and have been curated from the literature.  See the 'Bulk downloads' for a full set of genetic interactions from each organism.
+         </dt>
+     </dl>
+
+</div>
+
+
 
     <td width="40%" valign="top">
       <div class="heading2">
@@ -184,7 +204,13 @@ cerevisiae</i>.<br/>
           <ul>
           <li>
             <im:querylink text="All <i>D. melanogaster</i> protein interactions " skipBuilder="true">
- <query name="" model="genomic" view="Protein.proteinInteractions.experiment.publication.pubMedId Protein.proteinInteractions.shortName Protein.proteinInteractions.protein.identifier Protein.proteinInteractions.interactingProteins.identifier">
+<query name="" model="genomic" view="Protein.proteinInteractions.experiment.publication.pubMedId Protein.proteinInteractions.shortName Protein.primaryAccession Protein.proteinInteractions.interactingProteins.primaryAccession" sortOrder="Protein.proteinInteractions.experiment.publication.pubMedId asc">
+  <pathDescription pathString="Protein.proteinInteractions.interactingProteins" description="Interacting protein">
+  </pathDescription>
+  <pathDescription pathString="Protein.proteinInteractions" description="Protein interaction">
+  </pathDescription>
+  <pathDescription pathString="Protein.proteinInteractions.experiment.publication" description="Protein interaction experiment">
+  </pathDescription>
   <node path="Protein" type="Protein">
   </node>
   <node path="Protein.organism" type="Organism">
@@ -199,13 +225,19 @@ cerevisiae</i>.<br/>
 
           <li>
             <im:querylink text="All <i>C. elegans</i> protein interactions " skipBuilder="true">
-<query name="" model="genomic" view="Protein.proteinInteractions.experiment.publication.pubMedId Protein.proteinInteractions.shortName Protein.proteinInteractions.protein.identifier Protein.proteinInteractions.interactingProteins.identifier">
+<query name="" model="genomic" view="Protein.proteinInteractions.experiment.publication.pubMedId Protein.proteinInteractions.shortName Protein.primaryAccession Protein.proteinInteractions.interactingProteins.primaryAccession" sortOrder="Protein.proteinInteractions.experiment.publication.pubMedId asc">
+  <pathDescription pathString="Protein.proteinInteractions.interactingProteins" description="Interacting protein">
+  </pathDescription>
+  <pathDescription pathString="Protein.proteinInteractions" description="Protein interaction">
+  </pathDescription>
+  <pathDescription pathString="Protein.proteinInteractions.experiment.publication" description="Protein interaction experiment">
+  </pathDescription>
   <node path="Protein" type="Protein">
   </node>
   <node path="Protein.organism" type="Organism">
   </node>
   <node path="Protein.organism.name" type="String">
-    <constraint op="=" value="Caenorhabditis elegans" description="" identifier="" code="A">
+    <constraint op="=" value="Caenorhabditis elegans" description="" identifier="" code="A" extraValue="">
     </constraint>
   </node>
 </query>
@@ -215,19 +247,77 @@ cerevisiae</i>.<br/>
 
           <li>
             <im:querylink text="All <i>S. cerevisiae</i> protein interactions " skipBuilder="true">
-<query name="" model="genomic" view="Protein.proteinInteractions.experiment.publication.pubMedId Protein.proteinInteractions.shortName Protein.proteinInteractions.protein.identifier Protein.proteinInteractions.interactingProteins.identifier">
+<query name="" model="genomic" view="Protein.proteinInteractions.experiment.publication.pubMedId Protein.proteinInteractions.shortName Protein.primaryAccession Protein.proteinInteractions.interactingProteins.primaryAccession" sortOrder="Protein.proteinInteractions.experiment.publication.pubMedId asc">
+  <pathDescription pathString="Protein.proteinInteractions.interactingProteins" description="Interacting protein">
+  </pathDescription>
+  <pathDescription pathString="Protein.proteinInteractions" description="Protein interaction">
+  </pathDescription>
+  <pathDescription pathString="Protein.proteinInteractions.experiment.publication" description="Protein interaction experiment">
+  </pathDescription>
   <node path="Protein" type="Protein">
   </node>
   <node path="Protein.organism" type="Organism">
   </node>
   <node path="Protein.organism.name" type="String">
-    <constraint op="=" value="Saccharomyces cerevisiae" description="" identifier="" code="A">
+    <constraint op="=" value="Saccharomyces cerevisiae" description="" identifier="" code="A" extraValue="">
     </constraint>
   </node>
 </query>
             </im:querylink>
 
           </li>
+
+          <li>
+            <im:querylink text="All <i>D. melanogaster</i> genetic interactions " skipBuilder="true">
+<query name="" model="genomic" view="Gene.geneticInteractions.experiment.publication.pubMedId Gene.geneticInteractions.shortName Gene.primaryIdentifier Gene.secondaryIdentifier Gene.symbol Gene.geneticInteractions.interactingGenes.primaryIdentifier Gene.geneticInteractions.interactingGenes.secondaryIdentifier Gene.geneticInteractions.interactingGenes.symbol Gene.geneticInteractions.type Gene.geneticInteractions.geneRole" sortOrder="Gene.geneticInteractions.experiment.publication.pubMedId asc">
+  <node path="Gene" type="Gene">
+  </node>
+  <node path="Gene.organism" type="Organism">
+  </node>
+  <node path="Gene.organism.name" type="String">
+    <constraint op="=" value="Drosophila melanogaster" description="" identifier="" code="A" extraValue="">
+    </constraint>
+  </node>
+</query>
+            </im:querylink>
+          </li>
+
+          <li>
+            <im:querylink text="All <i>C. elegans</i> genetic interactions " skipBuilder="true">
+<query name="" model="genomic" view="Gene.geneticInteractions.experiment.publication.pubMedId Gene.geneticInteractions.shortName Gene.primaryIdentifier Gene.secondaryIdentifier Gene.symbol Gene.geneticInteractions.interactingGenes.primaryIdentifier Gene.geneticInteractions.interactingGenes.secondaryIdentifier Gene.geneticInteractions.interactingGenes.symbol Gene.geneticInteractions.type Gene.geneticInteractions.geneRole" sortOrder="Gene.geneticInteractions.experiment.publication.pubMedId asc">
+  <node path="Gene" type="Gene">
+  </node>
+  <node path="Gene.organism" type="Organism">
+  </node>
+  <node path="Gene.organism.name" type="String">
+    <constraint op="=" value="Caenorhabditis elegans" description="" identifier="" code="A" extraValue="">
+    </constraint>
+  </node>
+</query>
+            </im:querylink>
+          </li>
+
+          <li>
+            <im:querylink text="All <i>S. cerevisiae</i> genetic interactions " skipBuilder="true">
+<query name="" model="genomic" view="Gene.geneticInteractions.experiment.publication.pubMedId Gene.geneticInteractions.shortName Gene.primaryIdentifier Gene.secondaryIdentifier Gene.symbol Gene.geneticInteractions.interactingGenes.primaryIdentifier Gene.geneticInteractions.interactingGenes.secondaryIdentifier Gene.geneticInteractions.interactingGenes.symbol Gene.geneticInteractions.type Gene.geneticInteractions.geneRole" sortOrder="Gene.geneticInteractions.experiment.publication.pubMedId asc">
+  <node path="Gene" type="Gene">
+  </node>
+  <node path="Gene.organism" type="Organism">
+  </node>
+  <node path="Gene.organism.name" type="String">
+    <constraint op="=" value="Saccharomyces cerevisiae" description="" identifier="" code="A" extraValue="">
+    </constraint>
+  </node>
+</query>
+            </im:querylink>
+          </li>
+
+
+
+
+
+
+
          </ul>
 
       </div>
