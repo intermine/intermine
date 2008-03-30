@@ -3,6 +3,52 @@
 
   <div style="clear:" class="box">
 
+
+<div class="heading2">FlyMine version 12.0 - release notes (30th March 2008)</div>
+<div class="body">
+<p style="font-size: +1.1em;">
+Release 12.0 of FlyMine adds genome annotation for the ten additional <i>Drosophila</i> species included in FlyBase release FB2008_02.  Homology data between the 12 <i>Drosophila</i> species from the 12 Genomes Consortium (2007) paper.  Data from BDGP <i>in situ</i> and genetic interactions from BioGRID are also added.  We have also added more widgets for analysing lists of genes and improved the style and layout of the list analysis page.</p>
+
+<h3>Data</h3>
+<p>Many existing data sources have been updated to the latest versions, new data sources are detailed below.  For a complete list of all data included in FlyMine see the 'Data' tab above.</p>
+<ul>
+  <li>NEW - <i>Drosophila</i> 12 genomes.  We have added genome annotation for the additional ten sequenced <i>Drosophila</i> genomes from FlyBase release FB2008_02.</li>
+  <li>NEW - <i>Drosophila</i> 12 genomes homology - homology between 12 <i>Drosophila</i> genomes, data from the 12 Genomes Consortium (2007).  PubMed 17994087</li>
+  <li>NEW - BDGP in situ expression patterns.</li>
+  <li>NEW - Genetic Interaction data for <i>D. melanogaster, C. elegans</i> and <i>S. cerevisiae</i> from BioGRID.</li>
+  <li>NEW - Probe sets from the Affymetrix GeneChip Drosophila Genome 1.0 Array.</li>
+  <li>FIX - Some InParanoid cluster names have been fixed.</li>
+  <li>FIX - ProteinDomain name and shortName were both showing the short name, now fixed.</li>
+  <li>FIX - <i>Drosophila</i> UTRs and CDSs now have FlyBase as evidence.</li>
+  <li>FIX - Evidence for REDfly TFBindingSites now fixed.</li>
+</ul>
+
+<h3>List Analysis</h3>
+<p>The layout of list analysis pages has been improved.  New 'List Info' and 'Link Outs' sections are added to the top ot the page.  Widgets have had a style update, more can be displayed on the screen at once and a menu allows you to open/close them.  Loading times of the list analysis page has been greatly improved.  Details of new widgets are given below.</p>
+<ul>
+  <li>NEW - Orthologues widget - for a list of genes shows counts of orthologues in other organisms using data from InParanoid and homology between the 12 <i>Drosophila</i> genomes.</li>
+  <li>NEW - BDGP in situ expression patterns widget. For a list of genes display the counts expressed or not expressed at the stage ranges tested.</li>
+  <li>NEW - BDGP in situ term enrichment.  For a list of genes see if any ImaGO terms assigned by BDGP are statistically enriched.</li>
+  <li>NEW - Genetic Interactions widget.  For a list of genes show genes that genetically interact and the count of genes from the list that they interact with.  Data from BioGRID.</li>
+  <li>NEW - For a list of <i>Drosophila</i> genes export all directly to FlyBase's HitList page.</li>
+  <li>NEW - Data from enrichment widgets can now be exported as tab or comma separated files.</li>
+  <li>FIX - no longer get an exception after adding elements to an existing list then clicking 'view all results' on list analysis page.</li>
+</ul>
+
+<h3>Other fixes</h3>
+<ul>
+  <li>FIX - Column summary buttons and option to save a list now appear on all results tables.</li>
+  <li>FIX - Exporting results has been made much faster.</li>
+  <li>FIX - GFF3 export now only exports unique rows.</li>
+  <li>FIX - Bug with exporting results in IE6 fixed.</li>
+  <li>FIX - List upload now ignores duplicate identifiers even if the case doesn't match.</li>
+  <li>FIX - Links to KEGG pathways on the KEGG web site have been corrected.</li>
+  <li>FIX - Improved error messages when importing invalid query XML.</li>
+  <li>FIX - Constraining a field in the QueryBuilder to 'has no value' sometimes didn't work, now fixed.</li>
+</ul>
+</div>
+
+
 <div class="heading2">FlyMine version 11.0 - release notes (7th February 2008)</div>
 <div class="body">
 <p style="font-size: +1.1em;">
