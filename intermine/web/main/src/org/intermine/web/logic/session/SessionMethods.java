@@ -481,6 +481,7 @@ public class SessionMethods
                     new HashMap(), new HashMap(), new HashMap()));
         session.setAttribute(Constants.COLLAPSED, new HashMap());
         session.setAttribute(Constants.DISPLAY_OBJECT_CACHE, new DisplayObjectFactory(session));
+        session.setAttribute(Constants.RESULTS_TABLE_SIZE, Constants.DEFAULT_TABLE_SIZE);
     }
 
     /**
