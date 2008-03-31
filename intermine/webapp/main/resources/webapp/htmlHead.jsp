@@ -92,31 +92,47 @@ if(new java.io.File(application.getRealPath("css")+"/"+pageName+".css").exists()
     new Ajax.Updater('currentTags-'+uid, '<html:rewrite action="/inlineTagEditorChange"/>',
         {parameters:'method=currentTags&uid='+uid+'&type='+type, asynchronous:true});
   }
-  
-  Position.GetWindowSize = function(w) {
-        w = w ? w : window;
-        var width = w.innerWidth || (w.document.documentElement.clientWidth || w.document.body.clientWidth);
-        var height = w.innerHeight || (w.document.documentElement.clientHeight || w.document.body.clientHeight);
-        return [width, height]
+
+
+  Position.getWindowSize = function(w) {
+      var width, height;
+      w = w ? w : window;
+        width = w.innerWidth || (w.document.documentElement.clientWidth || w.document.body.clientWidth);
+      height = w.innerHeight || (w.document.documentElement.clientHeight || w.document.body.clientHeight);
+      return { width: width, height: height };
   }
-  
-  Position.Center = function(element, parent) {
-        var w, h, pw, ph;
-        var d = Element.getDimensions(element);
-        w = d.width;
-        h = d.height;
-        Position.prepare();
-        if (!parent) {
-                var ws = Position.GetWindowSize();
-                pw = ws[0];
-                ph = ws[1];
-        } else {
-                pw = parent.offsetWidth;
-                ph = parent.offsetHeight;
-        }
-        element.style.top = (ph/2) - (h/2) -  Position.deltaY + "px";
-        element.style.left = (pw/2) - (w/2) -  Position.deltaX + "px";
+
+  Position.center = function(element){
+      var options = Object.extend({
+            zIndex: 999,
+            update: false
+         }, arguments[1] || {});
+
+      element = $(element)
+
+      if(!element._centered){
+          Element.setStyle(element, {position: 'absolute', zIndex: options.zIndex });
+          element._centered = true;
+      }
+
+      var dims = Element.getDimensions(element);
+
+      Position.prepare();
+      var winSize = Position.getWindowSize();
+      var winWidth = winSize.width;
+      var winHeight = winSize.height;
+
+      var offLeft = (Position.deltaX + Math.floor((winWidth-dims.width)/2));
+      var offTop = (Position.deltaY + Math.floor((winHeight-dims.height)/2));
+      element.style.top = ((offTop != null && offTop > 0) ? offTop : '0')+ 'px';
+      element.style.left = ((offLeft != null && offLeft > 0) ? offLeft :'0') + 'px';
+
+      if (options.update) {
+          Event.observe(window, 'resize', function(evt) { Position.center(element); }, false);
+          Event.observe(window, 'scroll', function(evt) { Position.center(element); }, false);
+      }
   }
+
 //-->
 </script>
 <!-- /htmlHead.jsp -->
