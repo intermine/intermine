@@ -11,6 +11,16 @@
       </div>
       <div class="body">
 
+ <h4>  
+  <a href="javascript:toggleDiv('hiddenDiv1');">
+    <img id='hiddenDiv1Toggle' src="images/disclosed.gif"/>
+      Homology data from inparanoid ...
+  </a>
+ </h4>
+
+<div id="hiddenDiv1" class="dataSetDescription">
+
+
         <p>Orthologue and inparalogue relationships calculated by <A href="http://inparanoid.sbc.su.se/" target="_new">InParanoid</A> between the following organisms:</p>
         <ul>
           <li><I>D. melanogaster</I></li>
@@ -71,6 +81,24 @@ bootstrapping procedure applied to the original Blast alignment). </p>
      </div>
     </div>
     </td>
+
+</div>
+
+   <h4>  
+    <a href="javascript:toggleDiv('hiddenDiv2');">
+     <img id='hiddenDiv2Toggle' src="images/disclosed.gif"/>
+      Homology data from the <i>Drosophila</i> 12 genomes consortium ...
+    </a>
+   </h4>
+
+<div id="hiddenDiv2" class="dataSetDescription">
+
+          <p>
+            Orthologue and paralogue predictions between the 12 <i>Drosophila</i> genomes from the <i>Drosophila</i> 12 genomes consortium </a> (<a href="http://www.ncbi.nlm.nih.gov/entrez/query.fcgi?cmd=Retrieve&db=PubMed&dopt=Abstract&list_uids=17994087" target="_new">PubMed: 17994087</a>)</p>
+          </ul> 
+</div>
+
+
 
     <td width="40%" valign="top">
       <div class="heading2">
