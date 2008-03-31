@@ -8,9 +8,9 @@
 
 <!-- dataCategories -->
 
-<c:set var="note1" value=" Genome annotation for D. melanogaster (R5.5), D. ananassae (R1.0), D. erecta (R1.0), D. grimshawi (R1.0), D. mojavensis (R1.0), D. persimilis (R1.0), D. pseudoobscura pseudoobscura (R2.1), D. sechellia (R1.0), D. simulans (R1.0), D. virilis (R1.0), D. willistoni (R1.0) and D. yakuba (R1.0)."/>
-<c:set var="note2" value="Also orthologues from these 5 organisms to <i>C. familiaris</i>, <i>D. discoideum</i>, <i>D. rerio</i>, <i>G. gallus</i>, <i>H. sapiens</i>, <i>M. musculus</i>, <i>P. troglodytes</i>, <i>R. norvegicus</i>, <i>S. cerevisiae</i>, <i>S. pombe</i>." />
-<c:set var="note3" value="These data have been re-mapped to genome sequence release 5.0 as of FlyMine release 7.0."/>
+
+<c:set var="note1" value="Also orthologues from these 5 organisms to <i>C. familiaris</i>, <i>D. discoideum</i>, <i>D. rerio</i>, <i>G. gallus</i>, <i>H. sapiens</i>, <i>M. musculus</i>, <i>P. troglodytes</i>, <i>R. norvegicus</i>, <i>S. cerevisiae</i>, <i>S. pombe</i>." />
+<c:set var="note2" value="These data have been re-mapped to genome sequence release 5.0 as of FlyMine release 7.0."/>
 
 
 <html:xhtml/>
@@ -34,10 +34,10 @@
         <html:link action="/aspect?name=Genomics"> <p><img src="model/images/genomics.gif" /></p>
         <p> Genomics </p></html:link></td>
     <td> <i>Drosophila</i> </td>
-    <td> Genome annotation</td>
+    <td> Genome annotation for D. melanogaster (R5.5), D. ananassae (R1.0), D. erecta (R1.0), D. grimshawi (R1.0), D. mojavensis (R1.0), D. persimilis (R1.0), D. pseudoobscura pseudoobscura (R2.1), D. sechellia (R1.0), D. simulans (R1.0), D. virilis (R1.0), D. willistoni (R1.0) and D. yakuba (R1.0</td>
     <td><a href="http://www.flybase.org" target="_new">Flybase</a> - Version FB2008_02</td>
     <td> Crosby et al - <a href="http://www.ncbi.nlm.nih.gov/entrez/query.fcgi?cmd=Retrieve&db=PubMed&dopt=Abstract&list_uids=17099233" target="_new">PubMed: 17099233</a></td>
-    <td><html:link action="/dataCategories" anchor="note1" title="${note1}">#1</html:link></td>
+    <td> &nbsp;</td>
   </tr>
 
   <tr>
@@ -64,7 +64,7 @@
     <td> &nbsp; </td>
   </tr>
 
-  <tr><td rowspan="1"  class="leftcol">
+  <tr><td rowspan="2"  class="leftcol">
         <html:link action="/aspect?name=Comparative%20Genomics">
           <p>  <img src="model/images/comparativeGenomics.png" /></p>
           <p> Comparative Genomics </p></html:link></td>
@@ -78,8 +78,17 @@
     <td> Orthologue and paralogue relationships between these 5 organisms</td>
     <td> <a href="http://inparanoid.sbc.su.se/" target="_new">InParanoid</a> - Version 6.0</td>
     <td> O'Brien et al - <a href="http://www.ncbi.nlm.nih.gov/entrez/query.fcgi?cmd=Retrieve&db=PubMed&dopt=Abstract&list_uids=15608241" target="_new">PubMed: 15608241</a></td>
-    <td><html:link action="/dataCategories" anchor="note2" title="${note2}">#2</html:link></td>    
+    <td><html:link action="/dataCategories" anchor="note1" title="${note1}">#1</html:link></td>    
   </tr>
+
+  <tr>
+    <td><i>Drosophila</i></td>
+    <td>Orthologues and paralogues between the 12 <i>Drosophila<i> genomes.</td>
+    <td><a href="http://www.flybase.org" target="_new">Flybase</a></td>
+    <td>The 12 genomes consortium - <a href="http://www.ncbi.nlm.nih.gov/entrez/query.fcgi?cmd=Retrieve&db=PubMed&dopt=Abstract&list_uids=17994087 " target="_new">PubMed: 17994087</a></td>
+    <td> &nbsp; </td>
+  </tr>
+
 
 
   <tr><td rowspan="8"  class="leftcol">
@@ -346,7 +355,7 @@
     <td> Transcriptional cis-regulatory modules (CRMs)</td>
     <td> <a href="http://redfly.ccr.buffalo.edu/" target="_new">REDfly</a> - Version 2.1</td>
     <td> Gallo et al - <a href="http://www.ncbi.nlm.nih.gov/entrez/query.fcgi?cmd=Retrieve&db=PubMed&dopt=Abstract&list_uids=16303794" target="_new">PubMed: 16303794</a></td>
-    <td><html:link action="/dataCategories" anchor="note3" title="${note3}">#3</html:link></td> 
+    <td><html:link action="/dataCategories" anchor="note2" title="${note2}">#2</html:link></td> 
   </tr>
 
   <tr>
@@ -354,7 +363,7 @@
     <td> Transcription factor binding sites</td>
     <td> <a href="http://www.flyreg.org/" target="_new">REDfly</a> - Version 2.1</td>
     <td> Bergman et al - <a href="http://www.ncbi.nlm.nih.gov/entrez/query.fcgi?cmd=Retrieve&db=PubMed&dopt=Abstract&list_uids=15572468" target="_new">PubMed: 15572468</a></td>
-	<td><html:link action="/dataCategories" anchor="note3" title="${note3}">#3</html:link></td> 
+	<td><html:link action="/dataCategories" anchor="note2" title="${note2}">#2</html:link></td> 
   </tr>
 
   <tr>
@@ -370,7 +379,7 @@
     <td> Binding site predictions</td>
     <td> <a href="http://servlet.sanger.ac.uk/tiffin/" target="_new">Tiffin</a> - 1.2</td>
     <td> Down et al - <a href="http://www.ncbi.nlm.nih.gov/entrez/query.fcgi?cmd=Retrieve&db=PubMed&dopt=Abstract&list_uids=17238282" target="_new">PubMed: 17238282</a></td>
-    <td><html:link action="/dataCategories" anchor="note3" title="${note3}">#3</html:link></td> 
+    <td><html:link action="/dataCategories" anchor="note2" title="${note2}">#2</html:link></td> 
   </tr>
 
   <tr><td rowspan="2" class="leftcol">
@@ -422,7 +431,7 @@
     <td> Insertions and deletions from <a href="http://www.drosdel.org.uk" target="_new">DrosDel</a></td>
     <td> <a href="http://www.flybase.org" target="_new">FlyBase </a> - Version FB2008_02</td>
     <td> Ryder et al - <a href="http://www.ncbi.nlm.nih.gov/entrez/query.fcgi?cmd=Retrieve&db=PubMed&dopt=Abstract&list_uids=15238529" target="_new">PubMed: 15238529</a></td>
-    <td><html:link action="/dataCategories" anchor="note3" title="${note3}">#3</html:link></td> 
+    <td><html:link action="/dataCategories" anchor="note2" title="${note2}">#2</html:link></td> 
   </tr>
 
   <tr>
@@ -513,7 +522,6 @@
 <ol>
 	<li><a name="note1">${note1}</a></li>
 	<li><a name="note2">${note2}</a></li>
-	<li><a name="note3">${note3}</a></li>
 </ol>
 </div>
 
