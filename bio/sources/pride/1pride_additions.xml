@@ -1,0 +1,103 @@
+<?xml version="1.0"?>
+<classes>
+
+	<class name="org.flymine.model.genomic.Publication" is-interface="true">
+		<attribute name="refLine" type="java.lang.String"/>
+		<reference name="prideExperiment" refernced-type="org.flymine.model.genomic.PrideExperiment"/>
+	</class>
+
+	<class name="org.flymine.model.genomic.MedSubject" is-interface="true">
+		<attribute name="name" type="java.lang.String"/>
+		<attribute name="accessionId" type="java.lang.String"/>
+	</class>
+
+	<class name="org.flymine.model.genomic.Disease" is-interface="true">
+		<attribute name="name" type="java.lang.String"/>
+		<attribute name="accessionId" type="java.lang.String"/>
+	</class>
+
+	<class name="org.flymine.model.genomic.Tissue" is-interface="true">
+		<attribute name="name" type="java.lang.String"/>
+		<attribute name="accessionId" type="java.lang.String"/>
+	</class>
+
+	<class name="org.flymine.model.genomic.PSIMod" is-interface="true">
+		<attribute name="name" type="java.lang.String"/>
+		<attribute name="accessionId" type="java.lang.String"/>
+	</class>
+
+	<class name="org.flymine.model.genomic.CellType" is-interface="true">
+		<attribute name="name" type="java.lang.String"/>
+		<attribute name="accessionId" type="java.lang.String"/>
+	</class>
+
+	<class name="org.flymine.model.genomic.ProteinIdentification" is-interface="true">
+		<attribute name="score" type="java.lang.Float"/>
+		<attribute name="threshold" type="java.lang.Float"/>
+		<attribute name="searchEngine" type="java.lang.String"/>
+		<attribute name="spliceIsoform" type="java.lang.String"/>
+		<attribute name="spectrumReference" type="java.lang.String"/>
+		<attribute name="sequenceCoverage" type="java.lang.Float"/>
+		<attribute name="moleculareWeight" type="java.lang.Float"/>
+		<attribute name="pI" type="java.lang.Float"/>
+		<attribute name="gelLink" type="java.lang.String"/>
+		<attribute name="gelXLocation" type="java.lang.Float"/>
+		<attribute name="gelYLocation" type="java.lang.Float"/>
+		<collection name="peptides" referenced-type="org.flymine.model.genomic.Peptide" reverse-reference="proteinIdentification"/>
+		<reference name="protein" referenced-type="org.flymine.model.genomic.Protein" reverse-reference="proteinIdentifications"/>
+		<reference name="prideExperiment" referenced-type="org.flymine.model.genomic.PrideExperiment" reverse-reference="proteinIdentifications"/>
+	</class>
+
+
+	<class name="org.flymine.model.genomic.Protein" is-interface="true">
+		<attribute name="accessionVersion" type="java.lang.Integer"/>
+		<attribute name="database" type="java.lang.String"/>
+		<attribuet name="dbVersion" type="java.lang.Float"/>
+		<collection name="proteinIdentifications" referenced-type="org.flymine.model.genomic.ProteinIdentification" reverse-reference="protein"/>
+	</class>
+
+	<class name="org.flymine.model.genomic.Peptide" is-interface="true">
+		<attribute name="sequence" type="java.lang.String"/>
+		<attribute name="start" type="java.lang.Integer"/>
+		<attribute name="end" type="java.lang.Integer"/>
+		<attribute name="spectrumReference" type="java.lang.Float"/>
+		<reference name="proteinIdentification" reference-type="org.flymine.model.genomic.ProteinIdentification" reverse-reference="peptides"/>
+		<collection name="peptideModifications" reference-type="org.flymine.model.genomic.PeptideModification"/>
+	</class>
+
+	<class name="org.flymine.model.genomic.PeptideModification" is-interface="true">
+		<attribute name="location" type="java.lang.String"/>
+		<attribute name="accessionId" type="java.lang.String"/>
+		<attribute name="modDB" type="java.lang.String"/>
+		<attribute name="modDBVersion" type="java.lang.String"/>
+		<attribute name="modMonoData" type="java.lang.String"/>
+		<attribute name="modAvgData" type="java.lang.String"/>
+		<reference name="peptide" reference-type="org.flymine.model.genomic.Peptide"/>
+	</class>
+
+
+  	<class name="org.flymine.model.genomic.PrideProject" is-interface="true">
+		<attribute name="title" type="java.lang.String"/>
+		<attribute name="accessionId" type="java.lang.Integer"/>
+		<collection name="prideExperiments" referenced-type="org.flymine.model.genomic.PrideExperiment" reverse-reference="prideProjects"/>	
+	</class>	
+
+	<class name="org.flymine.model.genomic.PrideExperiment" is-interface="true">
+		<attribute name="title" type="java.lang.String"/>
+		<attribute name="shortLabel" type="java.lang.String"/>
+		<attribute name="accesionId" type="java.lang.String"/>
+		<attribute name="protocolName" type="java.lang.String"/>
+		<collection name="prideProjects" referenced-type="org.flymine.model.genomic.PrideProject" reverse-reference="prideExperiments"/>
+		<reference name="organism" referenced-type="org.flymine.model.genomic.Organism"/>
+		<collection name="publications" referenced-type="org.flymine.model.genomic.Publication"/>
+		<reference name="goTerm" referenced-type="org.flymine.model.genomic.GOTerm"/>
+		<reference name="psiMod" referenced-type="org.flymine.model.genomic.PSIMod"/>
+		<reference name="medSubject" referenced-type="org.flymine.model.genomic.MedSubject"/>
+		<reference name="cellType" referenced-type="org.flymine.model.genomic.CellType"/>
+		<reference name="tissue" referenced-type="org.flymine.model.genomic.Tissue"/>
+		<reference name="disease" referenced-type="org.flymine.model.genomic.Disease"/>
+		<collection name="proteinIdentifications" referenced-type="org.flymine.model.genomic.ProteinIdentification" reverse-reference="prideExperiment"/>
+	</class>
+
+
+</classes>

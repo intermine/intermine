@@ -1,0 +1,219 @@
+<?xml version="1.0" encoding="ISO-8859-1" standalone="yes"?>
+<ExperimentCollection version="2.1">
+	<Experiment>
+		<ExperimentAccession>1008</ExperimentAccession>
+		<Title>Protein complexes in Saccharomyces cerevisiae (GPM06600002303)</Title>
+		<ShortLabel>GPM06600002303</ShortLabel>
+		<Protocol>
+			<ProtocolName>None</ProtocolName>
+		</Protocol>
+		<mzData version="1.05" accessionNumber="1008">
+			<cvLookup cvLabel="GO" fullName="Gene Ontology" version="0.0" address="http://www.geneontology.org/" />
+			<cvLookup cvLabel="GPMDB" fullName="GPM Proteomics Repository" version="0.0" address="http://gpmdb.thegpm.org" />
+			<cvLookup cvLabel="ISBN" fullName="International Standard Book Numbering" version="0.0" address="http://www.isbn-international.org/" />
+			<cvLookup cvLabel="MeSH" fullName="Medical Subject Headings" version="0.0" address="http://www.nlm.nih.gov/mesh/MBrowser.html" />
+			<cvLookup cvLabel="NEWT" fullName="NEWT UniProt Taxonomy Database" version="0.0" address="http://www.ebi.ac.uk/newt" />
+			<cvLookup cvLabel="PRIDE" fullName="PRIDE Controlled Vocabulary" version="0.0" address="http://www.ebi.ac.uk/pride/help_resources/pride_obo_CV" />
+			<cvLookup cvLabel="PSI" fullName="PSI Mass Spectrometry Ontology" version="0.0" address="http://psidev.sourceforge.net/ontology/index.html" />
+			<cvLookup cvLabel="PubMed" fullName="National Library of Medicine, PubMed Database" version="0.0" address="http://www.ncbi.nlm.nih.gov/entrez/query.fcgi" />
+			<cvLookup cvLabel="RESID" fullName="RESID Database of Protein Modifications" version="0.0" address="http://www.ebi.ac.uk/RESID/" />
+			<cvLookup cvLabel="UNIMOD" fullName="UNIMOD Protein Modifications for Mass Spectrometry" version="0.0" address="http://www.unimod.org/" />
+			<description>
+				<admin>
+					<sampleName>GPM06600002303</sampleName>
+					<sampleDescription comment="Ho, Y., et al., Systematic identification of protein complexes in Saccharomyces cerevisiae by mass spectrometry. Nature. 2002 Jan 10;415(6868):180-3.">
+						<cvParam cvLabel="NEWT" accession="4932" name="Saccharomyces cerevisiae (Baker's yeast)" value="Saccharomyces cerevisiae" />
+					</sampleDescription>
+					<contact>
+						<name>Chris Hogue</name>
+						<institution>SLRI, Mount Sinai Hospital, Toronto, Canada</institution>
+						<contactInfo>chogue@blueprint.org</contactInfo>
+					</contact>
+				</admin>
+				<instrument>
+					<instrumentName>Not specified</instrumentName>
+					<source />
+					<analyzerList count="1">
+						<analyzer>
+							<userParam name="No Analyzer Components Listed" />
+						</analyzer>
+					</analyzerList>
+					<detector />
+				</instrument>
+				<dataProcessing>
+					<software>
+						<name>Unknown</name>
+						<version>Unknown</version>
+					</software>
+				</dataProcessing>
+			</description>
+			<spectrumList count="0" />
+		</mzData>
+		<GelFreeIdentification>
+			<Accession>gi|136429|</Accession>
+			<Database>NCBI NR</Database>
+			<PeptideItem>
+				<Sequence>LGEHNIDVLEGNEQFINAAK</Sequence>
+				<Start>58</Start>
+				<End>77</End>
+			</PeptideItem>
+			<PeptideItem>
+				<Sequence>LGEHNIDVLEGNEQFINAAKIITHPNFNGN</Sequence>
+				<Start>58</Start>
+				<End>87</End>
+			</PeptideItem>
+			<PeptideItem>
+				<Sequence>LGEHNIDVLEGNEQFINAAK</Sequence>
+				<Start>58</Start>
+				<End>77</End>
+			</PeptideItem>
+			<PeptideItem>
+				<Sequence>NIDVLEGNEQFINAAK</Sequence>
+				<Start>62</Start>
+				<End>77</End>
+			</PeptideItem>
+			<PeptideItem>
+				<Sequence>SSYPGQITGN</Sequence>
+				<Start>158</Start>
+				<End>167</End>
+			</PeptideItem>
+			<PeptideItem>
+				<Sequence>YVNWIQQTIAAN</Sequence>
+				<Start>220</Start>
+				<End>231</End>
+			</PeptideItem>
+			<additional>
+				<cvParam cvLabel="PRIDE" accession="PRIDE:0000165" name="Automatic allocation" value="PRF:732135C" />
+				<cvParam cvLabel="PRIDE" accession="PRIDE:0000165" name="Automatic allocation" value="SWISSPROT:P00761.1, SWISSPROT:TRYP_PIG" />
+				<userParam name="Submitted Database" value="NCBI NR" />
+				<userParam name="Submitted ID" value="gi|136429|" />
+				<userParam name="Submitted Confidence" value="-45.5" />
+				<userParam name="Coverage" value="0.210" />
+			</additional>
+			<SearchEngine>X! Tandem</SearchEngine>
+		</GelFreeIdentification>
+		<GelFreeIdentification>
+			<Accession>YFR053C</Accession>
+			<Database>SGD</Database>
+			<PeptideItem>
+				<Sequence>ESGNYLAIDLGGTNLR</Sequence>
+				<Start>78</Start>
+				<End>93</End>
+			</PeptideItem>
+			<PeptideItem>
+				<Sequence>LSGNHTFDTTQSK</Sequence>
+				<Start>99</Start>
+				<End>111</End>
+			</PeptideItem>
+			<PeptideItem>
+				<Sequence>DFMVEQELLNTK</Sequence>
+				<Start>137</Start>
+				<End>148</End>
+			</PeptideItem>
+			<PeptideItem>
+				<Sequence>IEDDPFENLEDTDDIFQK</Sequence>
+				<Start>350</Start>
+				<End>367</End>
+			</PeptideItem>
+			<PeptideItem>
+				<Sequence>DPITIVPAEDGSGAGAAVIAALSEK</Sequence>
+				<Start>448</Start>
+				<End>472</End>
+			</PeptideItem>
+			<additional>
+				<cvParam cvLabel="PRIDE" accession="PRIDE:0000165" name="Automatic allocation" value="EMBL:AAA34698.1, EMBL:BAA09292.1, EMBL:CAA27202.1" />
+				<cvParam cvLabel="PRIDE" accession="PRIDE:0000165" name="Automatic allocation" value="PRF:2214543P" />
+				<cvParam cvLabel="PRIDE" accession="PRIDE:0000165" name="Automatic allocation" value="REFSEQ:NP_116711.1" />
+				<cvParam cvLabel="PRIDE" accession="PRIDE:0000165" name="Automatic allocation" value="SGD:HXK1, SGD:S000001949, SGD:YFR053C" />
+				<cvParam cvLabel="PRIDE" accession="PRIDE:0000165" name="Automatic allocation" value="SWISSPROT:HXKA_YEAST, SWISSPROT:P04806.2" />
+				<userParam name="Submitted Database" value="SGD" />
+				<userParam name="Submitted ID" value="YFR053C" />
+				<userParam name="Submitted Confidence" value="-41.5" />
+				<userParam name="Coverage" value="0.160" />
+			</additional>
+			<SearchEngine>X! Tandem</SearchEngine>
+		</GelFreeIdentification>
+		<GelFreeIdentification>
+			<Accession>gi|999627|</Accession>
+			<Database>NCBI NR</Database>
+			<PeptideItem>
+				<Sequence>NIDVLEGNEQF</Sequence>
+				<Start>11</Start>
+				<End>21</End>
+			</PeptideItem>
+			<additional>
+				<userParam name="Submitted Database" value="NCBI NR" />
+				<userParam name="Submitted ID" value="gi|999627|" />
+				<userParam name="Submitted Confidence" value="-40.1" />
+				<userParam name="Coverage" value="0.120" />
+			</additional>
+			<SearchEngine>X! Tandem</SearchEngine>
+		</GelFreeIdentification>
+		<GelFreeIdentification>
+			<Accession>YCL040W</Accession>
+			<Database>SGD</Database>
+			<PeptideItem>
+				<Sequence>IPDDLLDDENVTSDDLFGFLAR</Sequence>
+				<Start>113</Start>
+				<End>134</End>
+			</PeptideItem>
+			<additional>
+				<cvParam cvLabel="PRIDE" accession="PRIDE:0000165" name="Automatic allocation" value="EMBL:AAA53536.1, EMBL:CAA42376.1" />
+				<cvParam cvLabel="PRIDE" accession="PRIDE:0000165" name="Automatic allocation" value="PRF:1503165A, PRF:1906418D" />
+				<cvParam cvLabel="PRIDE" accession="PRIDE:0000165" name="Automatic allocation" value="REFSEQ:NP_009890.1" />
+				<cvParam cvLabel="PRIDE" accession="PRIDE:0000165" name="Automatic allocation" value="SGD:GLK1, SGD:S000000545, SGD:YCL040W" />
+				<cvParam cvLabel="PRIDE" accession="PRIDE:0000165" name="Automatic allocation" value="SWISSPROT:HXKG_YEAST, SWISSPROT:P17709.1" />
+				<userParam name="Submitted Database" value="SGD" />
+				<userParam name="Submitted ID" value="YCL040W" />
+				<userParam name="Submitted Confidence" value="-11.1" />
+				<userParam name="Coverage" value="0.042" />
+			</additional>
+			<SearchEngine>X! Tandem</SearchEngine>
+		</GelFreeIdentification>
+		<GelFreeIdentification>
+			<Accession>YAL005C</Accession>
+			<Database>SGD</Database>
+			<PeptideItem>
+				<Sequence>SQVDEIVLVGGSTR</Sequence>
+				<Start>326</Start>
+				<End>339</End>
+			</PeptideItem>
+			<additional>
+				<cvParam cvLabel="PRIDE" accession="PRIDE:0000165" name="Automatic allocation" value="EMBL:AAA35095.1, EMBL:AAC04952.1, EMBL:CAA31393.1" />
+				<cvParam cvLabel="PRIDE" accession="PRIDE:0000165" name="Automatic allocation" value="PRF:2115443J" />
+				<cvParam cvLabel="PRIDE" accession="PRIDE:0000165" name="Automatic allocation" value="REFSEQ:NP_009396.2" />
+				<cvParam cvLabel="PRIDE" accession="PRIDE:0000165" name="Automatic allocation" value="SGD:S000000004, SGD:SSA1, SGD:YAL005C" />
+				<cvParam cvLabel="PRIDE" accession="PRIDE:0000165" name="Automatic allocation" value="SWISSPROT:HSP71_YEAST, SWISSPROT:P10591.4" />
+				<cvParam cvLabel="PRIDE" accession="PRIDE:0000165" name="Automatic allocation" value="TREMBL:Q05829.1, TREMBL:Q05829_YEAST" />
+				<userParam name="Submitted Database" value="SGD" />
+				<userParam name="Submitted ID" value="YAL005C" />
+				<userParam name="Submitted Confidence" value="-3.9" />
+				<userParam name="Coverage" value="0.020" />
+			</additional>
+			<SearchEngine>X! Tandem</SearchEngine>
+		</GelFreeIdentification>
+		<GelFreeIdentification>
+			<Accession>YAR010C</Accession>
+			<Database>SGD</Database>
+			<PeptideItem>
+				<Sequence>EVHTNQDPLDVSASK</Sequence>
+				<Start>25</Start>
+				<End>39</End>
+			</PeptideItem>
+			<additional>
+				<cvParam cvLabel="PRIDE" accession="PRIDE:0000165" name="Automatic allocation" value="EMBL:AAC04966.1" />
+				<cvParam cvLabel="PRIDE" accession="PRIDE:0000165" name="Automatic allocation" value="REFSEQ:NP_009407.1, REFSEQ:NP_058192.1" />
+				<cvParam cvLabel="PRIDE" accession="PRIDE:0000165" name="Automatic allocation" value="SGD:S000000068, SGD:S000007359, SGD:YAR010C, SGD:YPR137C-A" />
+				<cvParam cvLabel="PRIDE" accession="PRIDE:0000165" name="Automatic allocation" value="SWISSPROT:O13528.1, SWISSPROT:YA11A_YEAST" />
+				<userParam name="Submitted Database" value="SGD" />
+				<userParam name="Submitted ID" value="YAR010C" />
+				<userParam name="Submitted Confidence" value="-3.0" />
+				<userParam name="Coverage" value="0.032" />
+			</additional>
+			<SearchEngine>X! Tandem</SearchEngine>
+		</GelFreeIdentification>
+		<additional>
+			<cvParam cvLabel="PRIDE" accession="PRIDE:0000097" name="Project" value="GPMDB Submission: Protein complexes in Saccharomyces cerevisiae" />
+		</additional>
+	</Experiment>
+</ExperimentCollection>
