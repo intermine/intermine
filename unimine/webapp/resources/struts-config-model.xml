@@ -1,0 +1,15 @@
+<!-- this comment is here to prevent ant from setting model.struts.config to null -->
+
+    <action path="/sequenceExporter"
+            type="org.intermine.bio.web.export.SequenceExporter"/>
+    
+    <action path="/chartRenderer"
+            type="org.flymine.web.ChartRenderer"
+            parameter="method"/>
+    
+    <action path="/quickStart" forward="flymineQuickStart.page"/>
+    
+    <action path="/proteinInteractionRenderer"
+            type="org.intermine.bio.web.widget.ProteinInteractionImgRenderer"/>
+    
+            
