@@ -177,7 +177,7 @@
         <h4>
           <a href="javascript:toggleDiv('hiddenDiv4');">
             <img id='hiddenDiv4Toggle' src="images/disclosed.gif"/>
-            <i>S. cerevisiae</i> - Genetic interaction datasets ...
+            Genetic interaction datasets ...
           </a>
         </h4>
 
