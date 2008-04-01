@@ -276,7 +276,7 @@ public class WebResults extends AbstractList<List<Object>> implements WebTable
      * @param index the row of the results to fetch
      * @return the results row as ResultElement objects
      */
-    public List getResultElements(int index) {
+    public List<ResultElement> getResultElements(int index) {
         return getElementsInternal(index, true);
     }
 
