@@ -1,0 +1,70 @@
+<aspects>
+
+  <aspect name="Proteins">
+    <subtitle>Protein and proteomics&lt;br/&gt;data</subtitle>
+    <icon-image>model/images/proteins.png</icon-image>
+    <large-image>model/images/proteins.png</large-image>
+    <intro-text>
+      Protein annotation (including family and domain annotation) from UniProt
+      .
+    </intro-text>
+    <tile-name>model/proteins.jsp</tile-name>
+    <starting-points>Protein ProteinFeature ProteinDomain ProteinFamily</starting-points>
+    <aspect-source name="InterPro" url="http://www.ebi.ac.uk/interpro"/>
+    <aspect-source name="UniProt" url="http://www.uniprot.org"/>
+  </aspect>
+
+  <aspect name="Protein Interactions">
+    <subtitle>IntAct</subtitle>
+    <icon-image>model/images/proteinInteraction.gif</icon-image>
+    <large-image>model/images/proteinInteraction.gif</large-image>
+    <tile-name></tile-name>
+    <intro-text>
+      Proteins formatted in the Proteomics Standards Initiative (PSI)
+      molecular interaction (PSI MI) format can be mapped to the MalariaMine
+      data model.
+    </intro-text>
+    <starting-points>
+      Protein ProteinInteraction ProteinInteractionExperiment ProteinInteractionTerm
+    </starting-points>
+    <tile-name>model/proteinInteraction.jsp</tile-name>
+    <aspect-source name="IntAct" url="http://www.ebi.ac.uk/intact/"/>
+  </aspect>
+
+  <aspect name="Gene Ontology">
+    <subtitle></subtitle>
+    <icon-image>model/images/geneOntology.png</icon-image>
+    <large-image>model/images/geneOntology.png</large-image>
+    <intro-text>
+      The Gene Ontology (GO) project is a collaborative effort to
+      address the need for consistent descriptions of gene products in
+      different databases.
+&lt;p&gt;
+      The GO collaborators are developing three structured, controlled
+      vocabularies (ontologies) that describe gene products in terms of
+      their associated biological processes, cellular components and
+      molecular functions in a species-independent manner.
+&lt;p&gt;
+      GO annotations for &lt;i&gt;Plasmodium falciparum 3D7&lt;/i&gt; have
+      been loaded into MalariaMine.  The GO annotations are 'attached' to
+      Genes and so each gene has a reference (link) to a list of its GO
+      annotations (if available).
+    </intro-text>
+    <starting-points>Gene GOTerm GOAnnotation</starting-points>
+    <tile-name>model/GO.jsp</tile-name>
+    <aspect-source name="Gene Ontology Consortium" url="http://www.geneontology.org/"/>
+  </aspect>
+
+  <aspect name="Pride">
+    <subtitle>Experiments and Publication</subtitle>
+    <icon-image>model/images/pride.jpg</icon-image>
+    <large-image>model/images/pride.jpg</large-image>
+    <intro-text>
+       PRIDE  PRoteomics IDEntifications database
+    </intro-text>
+    <tile-name>model/pride.jsp</tile-name>
+    <starting-points>Blub</starting-points>
+    <aspect-source name="Pride" url="http://www.ebi.ac.uk/pride/"/>
+  </aspect>
+
+</aspects>
