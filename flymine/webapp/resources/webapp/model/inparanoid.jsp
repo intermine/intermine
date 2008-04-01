@@ -60,17 +60,11 @@ this seed-ortholog pair are true orthologues. (This is estimated by
 sampling how often the pair is found as recipricolly best matches by a
 bootstrapping procedure applied to the original Blast alignment). </p>
 
-
-
-  <h4>
-   <a href="javascript:toggleDiv('hiddenDiv1');">
-    <img id='hiddenDiv1Toggle' src="images/disclosed.gif"/>
-
       Glossary according to Sonnhammer and Koonin </a> (<a href="http://www.ncbi.nlm.nih.gov/entrez/query.fcgi?cmd=Retrieve&db=PubMed&dopt=Abstract&list_uids=12446146" target="_new">PubMed: 12446146</a>) ...
  
-  </h4>
 
-<div id="hiddenDiv1" class="dataSetDescription">
+
+
       <ul>
        <li>Homologous genes: genes with common ancestry.</li>
        <li>Orthologous genes: genes in two species that have directly evolved from a single gene in the last common ancestor and are likely to be functionally related.</li>
@@ -78,8 +72,8 @@ bootstrapping procedure applied to the original Blast alignment). </p>
        <li>Inparalogous genes: genes that derive from a duplication event after a speciation of interest. Inparalogs are together orthologs to the corresponding orthologous gene/genes in the other species.</li>
        <li>Outparalogous genes: genes that derive from a duplication event before a speciation event of interest, thus not orthologs according to definition.</li> 
       </ul>
-     </div>
-    </div>
+   
+  
     </td>
 
 </div>
