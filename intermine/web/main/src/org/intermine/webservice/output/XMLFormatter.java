@@ -16,7 +16,7 @@ import java.util.Map;
 
 
 /**
- * ormats data to xml format.
+ * Formats data to xml format.
  * @author Jakub Kulaviak
  **/
 public class XMLFormatter extends Formatter

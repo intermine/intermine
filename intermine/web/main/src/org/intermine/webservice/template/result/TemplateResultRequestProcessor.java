@@ -16,6 +16,7 @@ import java.util.List;
 import javax.servlet.http.HttpServletRequest;
 
 import org.intermine.objectstore.query.ConstraintOp;
+import org.intermine.webservice.query.result.QueryResultRequestProcessor;
 import org.intermine.webservice.query.result.WebServiceRequestProcessor;
 
 /**
@@ -50,9 +51,20 @@ public class TemplateResultRequestProcessor extends WebServiceRequestProcessor
 
     private void parseRequest(TemplateResultInput input) {
         super.parseRequest(request, input);
+        input.setComputeTotalCount(parseComputeTotalCountParameter(request));
         input.setName(getRequiredStringParameter(NAME_PARAMETER));
         input.setConstraints(parseConstraints(request));
         input.setErrors(getErrors());
+    }
+
+    private boolean parseComputeTotalCountParameter(HttpServletRequest request) {
+        String totalCount = request.getParameter(QueryResultRequestProcessor.
+                COMPUTE_TOTAL_COUNT_PARAMETER);
+        if (totalCount != null) {
+            return true;
+        } else {
+            return false;
+        }
     }
 
     private List<ConstraintLoad> parseConstraints(HttpServletRequest request) {
@@ -93,7 +105,7 @@ public class TemplateResultRequestProcessor extends WebServiceRequestProcessor
             
             if (op != null && value != null && value.length() != 0) {
                 ret.add(new ConstraintLoad(op, value, extraValue));
-            }
+            }            
         }
         return ret;
     }

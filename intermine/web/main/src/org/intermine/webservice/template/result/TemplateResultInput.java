@@ -22,6 +22,7 @@ public class TemplateResultInput extends PagedServiceInput
 {
     private String name;
     private List<ConstraintLoad> constraints;
+    private boolean computeTotalCount = false;
 
     /**
      * Returns template name.
@@ -53,5 +54,21 @@ public class TemplateResultInput extends PagedServiceInput
      */
     public List<ConstraintLoad> getConstraints() {
         return constraints;
+    }
+
+    /**
+     * 
+     * @return true if total count  should be displayed else false
+     */
+    public boolean isComputeTotalCount() {
+        return computeTotalCount;
+    }
+
+    /**
+     * 
+     * @param computeTotalCount set true if total count should be displayed else false
+     */
+    public void setComputeTotalCount(boolean computeTotalCount) {
+        this.computeTotalCount = computeTotalCount;
     }
 }

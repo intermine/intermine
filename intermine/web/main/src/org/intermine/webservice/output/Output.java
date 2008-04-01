@@ -12,17 +12,21 @@ package org.intermine.webservice.output;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 /**
  * Abstract class representing output of web service or something else.
  * Data written to output can be streamed to user via http or saved in memory or something else.
  * It depends at implementation.
  * If the data are saved in memory they can be retrieved later. 
- * @author jakub
+ * @author Jakub Kulaviak
  * 
  */
 public abstract class Output  
 {
+   
+    private Map<String, String> headerAttributes;
+    
     /**
      * Adds data to output.
      * @param item data
@@ -50,4 +54,19 @@ public abstract class Output
      */
     public abstract void flush();
     
+    /**
+     * Sets header atributes that are displayed for example in xml header.
+     * @param attributes header attributes
+     */
+    public void setHeaderAttributes(Map<String, String> attributes) {
+        this.headerAttributes = attributes;
+    }
+    
+    /**
+     * @see #setHeaderAttributes(Map) 
+     * @return header attributes
+     */
+    public Map<String, String>  getHeaderAttributes() {
+        return headerAttributes;
+    }
 }

@@ -13,8 +13,8 @@ package org.intermine.webservice.core;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.intermine.objectstore.query.Results;
-import org.intermine.objectstore.query.ResultsRow;
+import org.intermine.web.logic.results.ResultElement;
+import org.intermine.web.logic.results.WebResults;
 import org.intermine.webservice.output.Output;
 
 /**
@@ -24,7 +24,7 @@ import org.intermine.webservice.output.Output;
  * Code example:
  * <pre>
  *   MemoryOutput output = new MemoryOutput();
- *   ResultProcessor processor = new ResultProcessor(results, rowParser, firstResult, maxResults);
+ *   ResultProcessor processor = new ResultProcessor(results, firstResult, maxResults);
  *   processor.write(output);        
  * </pre>
  *   
@@ -33,25 +33,21 @@ import org.intermine.webservice.output.Output;
 public class ResultProcessor
 {
     
-    private Results results;
+    private WebResults results;
     
     private int firstResult;
     
     private int maxResults; 
     
-    private ResultRowParser rowParser;
-
     /**
      * ResultProcessor constructor.
      * @param results Results object
-     * @param rowParser parser that do parsing from ResultsRow to list of strings 
      * @param firstResult index of first result inclusive
      * @param maxResults maximum number of results
      */
-    public ResultProcessor(Results results, ResultRowParser rowParser, int firstResult, 
+    public ResultProcessor(WebResults results, int firstResult, 
             int maxResults) {
         this.results = results;
-        this.rowParser = rowParser;
         this.firstResult = firstResult;
         this.maxResults = maxResults;
     }
@@ -60,7 +56,7 @@ public class ResultProcessor
      * Returns Results object.
      * @return Results object
      */
-    public Results getResults() {
+    public WebResults getResults() {
         return results;
     }
 
@@ -68,7 +64,7 @@ public class ResultProcessor
      * Sets Results object.
      * @param results Results object
      */
-    public void setResults(Results results) {
+    public void setResults(WebResults results) {
         this.results = results;
     }
 
@@ -98,13 +94,23 @@ public class ResultProcessor
         int end = maxResults + firstResult;
         for (int i = firstResult; i < end; i++) {
             try {
-                ResultsRow resultsRow = (ResultsRow) results.get(i);
-                List<String> stringRow = rowParser.parse(resultsRow);
-                output.addResultItem(stringRow);
+                List<ResultElement> row = results.getResultElements(i);
+                output.addResultItem(convertResultElementsToStrings(row));
             } catch (IndexOutOfBoundsException e) {
+                // At the end of results
                 break;
             }
         }
+    }
+
+    private List<String> convertResultElementsToStrings(List<ResultElement> row) {
+        List<String> ret = new ArrayList<String>();
+        for (ResultElement el : row) {
+            if (el != null && el.getField() != null) {
+                ret.add(el.getField().toString());    
+            }
+        }
+        return ret;
     }
 
     /**
@@ -119,9 +125,10 @@ public class ResultProcessor
         int end = maxResults + firstResult;
         for (int i = firstResult; i < end; i++) {
             try {
-                ResultsRow resultsRow = (ResultsRow) results.get(i);
-                ret.add(rowParser.parse(resultsRow));
+                List<ResultElement> row = results.getResultElements(i);
+                ret.add(convertResultElementsToStrings(row));
             } catch (IndexOutOfBoundsException e) {
+                // At the end of results
                 break;
             }
         }        

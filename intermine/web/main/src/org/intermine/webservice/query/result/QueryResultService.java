@@ -32,8 +32,6 @@ import org.intermine.webservice.WebServiceConstants;
 import org.intermine.webservice.WebServiceException;
 import org.intermine.webservice.core.PathQueryExecutor;
 import org.intermine.webservice.core.ResultProcessor;
-import org.intermine.webservice.core.ResultRowParser;
-import org.intermine.webservice.core.ResultRowParserImpl;
 import org.intermine.webservice.output.HTMLTable;
 import org.intermine.webservice.output.MemoryOutput;
 
@@ -76,7 +74,8 @@ public class QueryResultService extends WebService
                 request.getSession().getServletContext(), savedBags);
         if (builder.isQueryValid()) {
             try {
-                runPathQuery(builder.getQuery(), input.getStart() - 1 , input.getMaxCount(),
+                PathQuery query = builder.getQuery();
+                runPathQuery(query, input.getStart() - 1 , input.getMaxCount(), true,
                         null, null);
             } catch (Throwable t) {
                 LOG.error("Execution of web service request failed.", t);
@@ -110,21 +109,29 @@ public class QueryResultService extends WebService
      * @param pathQuery path query
      * @param firstResult index of first result, that should be returned
      * @param maxResults maximum number of results
+     * @param displayTotalCount if total result count should be displayed
      * @param title title displayed in html output
      * @param description description displayed in html output
      */
-    public void runPathQuery(PathQuery pathQuery, int firstResult, int maxResults, 
-            String title, String description) {
+    public void runPathQuery(PathQuery pathQuery, int firstResult, int maxResults,  
+            boolean displayTotalCount, String title, String description) {
         PathQueryExecutor executor = new PathQueryExecutor(request, pathQuery);
         Results results = executor.getResults();
-        results.setBatchSize(BATCH_SIZE);
-        ResultRowParser rowParser = new ResultRowParserImpl(pathQuery, getObjectStore().getModel(), 
-                WebResults.getPathToIndex(executor.getQuery(), executor.getPathToQueryNode()));
         
-      ResultProcessor processor = new ResultProcessor(results, rowParser, 
-      firstResult, maxResults);
-      processor.write(output);              
-      forward(pathQuery, title, description);
+        results.setBatchSize(BATCH_SIZE);
+        
+        if (displayTotalCount) {
+            Map<String, String> attributes = new HashMap<String, String>();
+            attributes.put("totalResultsCount", "" + results.size());
+            output.setHeaderAttributes(attributes);
+        }
+        
+        WebResults webResults = new WebResults(pathQuery, results, pathQuery.getModel(), 
+                executor.getPathToQueryNode(), 
+                SessionMethods.getClassKeys(request.getSession().getServletContext()), null);
+        ResultProcessor processor = new ResultProcessor(webResults, firstResult, maxResults);
+        processor.write(output);              
+        forward(pathQuery, title, description);
     }
 
     private String getXMLSchemaUrl() {

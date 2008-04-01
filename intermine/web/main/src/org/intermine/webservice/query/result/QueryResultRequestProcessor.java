@@ -20,7 +20,8 @@ import javax.servlet.http.HttpServletRequest;
 public class QueryResultRequestProcessor extends WebServiceRequestProcessor  
 {
     private static final String QUERY_PARAMETER = "query";
-    private static final String COMPUTE_TOTAL_COUNT_PARAMETER = "totalCount";
+    /** Compute total count parameter name. **/
+    public static final String COMPUTE_TOTAL_COUNT_PARAMETER = "totalCount";
     private HttpServletRequest request;
     
     /**
@@ -59,14 +60,8 @@ public class QueryResultRequestProcessor extends WebServiceRequestProcessor
         }
 
         String totalCount = request.getParameter(COMPUTE_TOTAL_COUNT_PARAMETER);
-        if (totalCount != null && !totalCount.equals("")) {
-            if ("yes".equalsIgnoreCase(totalCount)) {
-                input.setComputeTotalCount(true);
-            } else {
-                if (!"no".equalsIgnoreCase(totalCount)) {
-                    input.addError(invalidParameterMsg(COMPUTE_TOTAL_COUNT_PARAMETER, totalCount));
-                }
-            }
+        if (totalCount != null) {
+            input.setComputeTotalCount(true);
         }         
     }
 }
