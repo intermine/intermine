@@ -7,6 +7,9 @@
 <!-- tipDisplayer.jsp -->
 <div class="body">
     <jsp:include page="tips/tip${id}_long.jsp"/>
-    <a href="/${WEB_PROPERTIES['webapp.path']}/tips?n=${tipcount}">Show all tips &gt;&gt;</a>
+<%
+  -- removed for now as it doesn't work:
+  <a href="/${WEB_PROPERTIES['webapp.path']}/tips?n=${tipcount}">Show all tips &gt;&gt;</a>
+%>
 </div>
 <!-- /tipDisplayer.jsp -->
