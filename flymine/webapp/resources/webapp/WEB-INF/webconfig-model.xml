@@ -127,7 +127,11 @@
     <tabledisplayer src="/model/dataSourceShort.jsp"/>
   </class>
   
-   <class className="org.flymine.model.genomic.DomainRelationship">
+<!--
+  -- FIXME the Path.resolve() method can't cope with collection so these
+  -- fieldconfigs fail:
+
+  <class className="org.flymine.model.genomic.DomainRelationship">
     <fields>
       <fieldconfig fieldExpr="childFeatures.primaryIdentifier"/>
       <fieldconfig fieldExpr="contains.primaryIdentifier"/>
@@ -135,6 +139,7 @@
       <fieldconfig fieldExpr="parentFeatures.primaryIdentifier"/>
     </fields>
   </class>
+-->
 
   <class className="org.flymine.model.genomic.Disease">
     <fields>
