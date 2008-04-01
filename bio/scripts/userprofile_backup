@@ -4,6 +4,7 @@ use strict;
 use warnings;
 
 use Getopt::Std;
+use Sys::Hostname;
 
 sub usage
 {
@@ -29,7 +30,10 @@ if (@ARGV != 1 && @ARGV != 2) {
 my $dump_file_prefix = shift;
 my $mirror_server = shift;
 
-my @dump_command = qw[pg_dump -c -U userprofile];
+my $HOST_NAME = hostname();
+
+
+my @dump_command = ("pg_dump", "-h", $HOST_NAME, "-c", "-U", "userprofile");
 my @psql_command = qw[psql -q -U userprofile];
 my @createdb_command = qw[createdb -U userprofile];
 my $db_prefix = "userprofile-release-";
