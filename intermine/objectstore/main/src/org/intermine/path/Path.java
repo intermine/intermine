@@ -11,6 +11,7 @@ package org.intermine.path;
  */
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
@@ -356,6 +357,11 @@ public class Path
                     return null;
                 }
                 current = TypeUtil.getFieldValue(current, fieldName);
+                if (current instanceof Collection) {
+                    throw new RuntimeException("Attempt to to get value of "
+                       + "field \"" + fieldName + "\" for collection: " + o 
+                       + "It must be simple object. This operation is not allowed for collection.");
+                }
             } catch (IllegalAccessException e) {
                 throw new RuntimeException("IllegalAccessException while trying to get value of "
                                            + "field \"" + fieldName + "\" in object: " + o, e);
