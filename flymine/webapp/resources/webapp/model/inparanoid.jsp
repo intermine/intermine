@@ -3,6 +3,7 @@
 <%@ taglib uri="/WEB-INF/struts-html.tld" prefix="html" %>
 <%@ taglib tagdir="/WEB-INF/tags" prefix="im" %>
 
+
 <TABLE width="100%">
   <tr>
     <td valign="top">
@@ -90,9 +91,6 @@ bootstrapping procedure applied to the original Blast alignment). </p>
           </ul> 
       </div>
     </td>
-  </tr>
-</table>
-
 
 
     <td width="40%" valign="top">
