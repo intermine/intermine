@@ -41,8 +41,6 @@
             <query name="" model="genomic" view="Orthologue.gene.organism.shortName Orthologue.orthologue.organism.shortName"><node path="Orthologue" type="Orthologue"></node></query>
           </im:querylink></p>
 
-<br/>
-
 
 	<p>The inparanoid program calculates orthologue and
 inparalogue clusters, pairwise between two organisms, by first finding
@@ -60,7 +58,7 @@ this seed-ortholog pair are true orthologues. (This is estimated by
 sampling how often the pair is found as recipricolly best matches by a
 bootstrapping procedure applied to the original Blast alignment). </p>
 
-      Glossary according to Sonnhammer and Koonin </a> (<a href="http://www.ncbi.nlm.nih.gov/entrez/query.fcgi?cmd=Retrieve&db=PubMed&dopt=Abstract&list_uids=12446146" target="_new">PubMed: 12446146</a>) ...
+   <p>   Glossary according to Sonnhammer and Koonin </a> (<a href="http://www.ncbi.nlm.nih.gov/entrez/query.fcgi?cmd=Retrieve&db=PubMed&dopt=Abstract&list_uids=12446146" target="_new">PubMed: 12446146</a>) ...</p>
  
 
 
@@ -74,7 +72,7 @@ bootstrapping procedure applied to the original Blast alignment). </p>
       </ul>
    
   
-    </td>
+  
 
 </div>
 
@@ -90,7 +88,10 @@ bootstrapping procedure applied to the original Blast alignment). </p>
           <p>
             Orthologue and paralogue predictions between the 12 <i>Drosophila</i> genomes from the <i>Drosophila</i> 12 genomes consortium </a> (<a href="http://www.ncbi.nlm.nih.gov/entrez/query.fcgi?cmd=Retrieve&db=PubMed&dopt=Abstract&list_uids=17994087" target="_new">PubMed: 17994087</a>)</p>
           </ul> 
-</div>
+      </div>
+    </td>
+  </tr>
+</table>
 
 
 
