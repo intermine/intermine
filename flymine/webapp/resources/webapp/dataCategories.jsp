@@ -34,7 +34,7 @@
         <html:link action="/aspect?name=Genomics"> <p><img src="model/images/genomics.gif" /></p>
         <p> Genomics </p></html:link></td>
     <td> <i>Drosophila</i> </td>
-    <td> Genome annotation for D. melanogaster (R5.5), D. ananassae (R1.0), D. erecta (R1.0), D. grimshawi (R1.0), D. mojavensis (R1.0), D. persimilis (R1.0), D. pseudoobscura pseudoobscura (R2.1), D. sechellia (R1.0), D. simulans (R1.0), D. virilis (R1.0), D. willistoni (R1.0) and D. yakuba (R1.0</td>
+    <td> Genome annotation for D. melanogaster (R5.5), D. ananassae (R1.0), D. erecta (R1.0), D. grimshawi (R1.0), D. mojavensis (R1.0), D. persimilis (R1.0), D. pseudoobscura pseudoobscura (R2.1), D. sechellia (R1.0), D. simulans (R1.0), D. virilis (R1.0), D. willistoni (R1.0) and D. yakuba (R1.0).</td>
     <td><a href="http://www.flybase.org" target="_new">Flybase</a> - Version FB2008_02</td>
     <td> Crosby et al - <a href="http://www.ncbi.nlm.nih.gov/entrez/query.fcgi?cmd=Retrieve&db=PubMed&dopt=Abstract&list_uids=17099233" target="_new">PubMed: 17099233</a></td>
     <td> &nbsp;</td>
@@ -83,7 +83,7 @@
 
   <tr>
     <td><i>Drosophila</i></td>
-    <td>Orthologues and paralogues between the 12 <i>Drosophila<i> genomes.</td>
+    <td>Orthologues and paralogues between the 12 <i>Drosophila</i> genomes.</td>
     <td><a href="http://www.flybase.org" target="_new">Flybase</a></td>
     <td>The 12 genomes consortium - <a href="http://www.ncbi.nlm.nih.gov/entrez/query.fcgi?cmd=Retrieve&db=PubMed&dopt=Abstract&list_uids=17994087 " target="_new">PubMed: 17994087</a></td>
     <td> &nbsp; </td>
