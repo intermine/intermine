@@ -14,6 +14,9 @@ import java.io.PrintWriter;
 import java.util.List;
 import java.util.Map;
 
+import org.intermine.webservice.WebServiceException;
+
+
 
 
 /**
@@ -55,18 +58,14 @@ public class StreamedOutput extends Output
         writer.write("</error>");        
     }
     
-    private void printHeader(Map<String, String> attributes) {
-        String header = formatter.formatHeader(attributes);
+    private void printHeader() {
+        String header = formatter.formatHeader(getHeaderAttributes());
         if (header != null && header.length() > 0) {
             writer.println(header);    
         }
         headerPrinted = true;
     }
     
-    private void printHeader() {
-        printHeader(null);
-    }
-
     /** Forwards data to associated writer 
      * @param item data
      * **/
@@ -99,5 +98,18 @@ public class StreamedOutput extends Output
         if (headerPrinted) {
             writer.print(formatter.formatFooter());    
         }
+    }
+    
+    
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public void setHeaderAttributes(Map<String, String> attributes) {
+        if (headerPrinted) {
+            throw new WebServiceException("Attempt to set header attributes "
+                + "althought header was printed already.");
+        }
+        super.setHeaderAttributes(attributes);
     }
 }
