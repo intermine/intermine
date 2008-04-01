@@ -20,6 +20,7 @@
 	<class name="org.flymine.model.genomic.ModEncodeProvider"
     extends="org.flymine.model.genomic.DataSource" is-interface="true">
 		<attribute name="name" type="java.lang.String" />
+    <attribute name="surname" type="java.lang.String" />
 		<attribute name="affiliation" type="java.lang.String" />
 		<reference name="project"
 			referenced-type="org.flymine.model.genomic.ModEncodeProject"

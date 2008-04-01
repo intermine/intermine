@@ -109,8 +109,8 @@ public class ModEncodeMetaDataProcessor extends ChadoProcessor
     }
 
     static {
-        PROVIDER_FIELD_NAME_MAP.put("Person Last Name", "name");
         PROVIDER_FIELD_NAME_MAP.put("Person Affiliation", "affiliation");
+        PROVIDER_FIELD_NAME_MAP.put("Person Last Name", NOT_TO_BE_LOADED);
         PROVIDER_FIELD_NAME_MAP.put("Experiment Description", NOT_TO_BE_LOADED);
         PROVIDER_FIELD_NAME_MAP.put("Investigation Title", NOT_TO_BE_LOADED);
         PROVIDER_FIELD_NAME_MAP.put("Experimental Design", NOT_TO_BE_LOADED);
@@ -211,6 +211,14 @@ public class ModEncodeMetaDataProcessor extends ChadoProcessor
          */
         public Integer getIntermineObjectId() {
             return intermineObjectId;
+        }
+
+        /**
+         * Return the id of the Item representing this feature.
+         * @return the ID
+         */
+        public Integer geDataId() {
+            return dataId;
         }
 
         /**
@@ -461,7 +469,7 @@ public class ModEncodeMetaDataProcessor extends ChadoProcessor
         int count = 0;
         while (res.next()) {
             Integer experimentId = new Integer(res.getInt("experiment_id"));
-            String value = res.getString("value");
+            String value = res.getString("value");            
             Item provider = getChadoDBConverter().createItem("ModEncodeProvider");
             provider.setAttribute("name", value);
             Integer intermineObjectId = getChadoDBConverter().store(provider);
@@ -485,10 +493,13 @@ public class ModEncodeMetaDataProcessor extends ChadoProcessor
     protected ResultSet getProviderResultSet(Connection connection)
     throws SQLException {
         String query =
-            "SELECT experiment_id, value"
-            + " FROM experiment_prop"
-            + " where name='Person Last Name'"
-            + " and rank=0 ";
+            "SELECT a.experiment_id, a.value||' '||b.value as value"
+            + " FROM experiment_prop a, experiment_prop b"
+            + " where a.experiment_id = b.experiment_id"
+            + " and b.name = 'Person Last Name'"
+            + " and a.name = 'Person First Name'"
+            + " and a.rank = 0"
+            + " and b.rank = 0";
 
         LOG.info("executing: " + query);
         Statement stmt = connection.createStatement();

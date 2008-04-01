@@ -1,4 +1,7 @@
 <?xml version="1.0"?>
+<!-- TODO: collection from providers to project
+-->
+
 <items>
   <item id="0" class="" implements="http://www.flymine.org/model/genomic#DataSource">
     <attribute name="name" value="FlyMine"/>
@@ -186,12 +189,23 @@
     <attribute name="url" value="http://www.geneontology.org/"/>
   </item>
 
+
+<!-- PROJECTS -->	
   <item id="1010" class="" implements="http://www.flymine.org/model/genomic#ModEncodeProject">
     <attribute name="name" value="The Transcriptome"/>
     <attribute name="title" value="Global Identification of Transcribed Regions of the C. elegans Genome"/>
     <attribute name="surnamePI" value="Waterstone"/>
     <attribute name="namePI" value="Robert"/>
     <attribute name="url" value="http://www.modencode.org/Waterston.shtml"/>
+<collection name="providers">
+	<reference ref_id="1097"/>
+	<reference ref_id="1062"/>
+	<reference ref_id="1065"/>
+	<reference ref_id="1081"/>
+	<reference ref_id="1082"/>
+	<reference ref_id="1090"/>
+	<reference ref_id="1094"/>
+</collection>
   </item>
 
   <item id="1011" class="" implements="http://www.flymine.org/model/genomic#ModEncodeProject">
@@ -200,6 +214,16 @@
     <attribute name="surnamePI" value="Lieb"/>
     <attribute name="namePI" value="Jason"/>
     <attribute name="url" value="http://www.modencode.org/Lieb.shtml"/>
+    <collection name="providers">
+			<reference ref_id="1078"/>
+			<reference ref_id="1052"/>
+			<reference ref_id="1059"/>
+			<reference ref_id="1060"/>
+			<reference ref_id="1066"/>
+			<reference ref_id="1079"/>
+			<reference ref_id="1093"/>
+			<reference ref_id="1096"/>
+		</collection>
   </item>
 
   <item id="1012" class="" implements="http://www.flymine.org/model/genomic#ModEncodeProject">
@@ -208,6 +232,10 @@
     <attribute name="surnamePI" value="Henikoff"/>
     <attribute name="namePI" value="Steven"/>
     <attribute name="url" value="http://www.modencode.org/Henikoff.shtml"/>
+		<collection name="providers">
+			<reference ref_id="1069"/>
+			<reference ref_id="1051"/>
+		</collection>
   </item>
   <item id="1013" class="" implements="http://www.flymine.org/model/genomic#ModEncodeProject">
     <attribute name="name" value="Regulatory Elements"/>
@@ -215,6 +243,14 @@
     <attribute name="surnamePI" value="Snyder"/>
     <attribute name="namePI" value="Michael"/>
     <attribute name="url" value="http://www.modencode.org/Snyder.shtml"/>
+		<collection name="providers">
+			<reference ref_id="1095"/>
+			<reference ref_id="1062"/>
+			<reference ref_id="1071"/>
+			<reference ref_id="1075"/>
+			<reference ref_id="1090"/>
+			<reference ref_id="1097"/>
+		</collection>
   </item>
   <item id="1014" class="" implements="http://www.flymine.org/model/genomic#ModEncodeProject">
     <attribute name="name" value="The 3' UTRome"/>
@@ -222,6 +258,12 @@
     <attribute name="surnamePI" value="Piano"/>
     <attribute name="namePI" value="Fabio"/>
     <attribute name="url" value="http://www.modencode.org/Piano.shtml"/>
+		<collection name="providers">
+			<reference ref_id="1086"/>
+			<reference ref_id="1067"/>
+			<reference ref_id="1074"/>
+			<reference ref_id="1089"/>
+		</collection>
   </item>
   <item id="1020" class="" implements="http://www.flymine.org/model/genomic#ModEncodeProject">
     <attribute name="name" value="The Trascriptome"/>
@@ -229,6 +271,16 @@
     <attribute name="surnamePI" value="Celniker"/>
     <attribute name="namePI" value="Sue"/>
     <attribute name="url" value="http://www.modencode.org/Celniker.shtml"/>
+		<collection name="providers">
+			<reference ref_id="1056"/>
+			<reference ref_id="1055"/>
+			<reference ref_id="1054"/>
+			<reference ref_id="1057"/>
+			<reference ref_id="1063"/>
+			<reference ref_id="1064"/>
+			<reference ref_id="1085"/>
+			<reference ref_id="1070"/>
+		</collection>
   </item>
   <item id="1021" class="" implements="http://www.flymine.org/model/genomic#ModEncodeProject">
     <attribute name="name" value="Regulatory Elements"/>
@@ -236,6 +288,17 @@
     <attribute name="surnamePI" value="White"/>
     <attribute name="namePI" value="Kevin"/>
     <attribute name="url" value="http://www.modencode.org/White.shtml"/>
+		<collection name="providers">
+			<reference ref_id="1098"/>
+			<reference ref_id="1053"/>
+			<reference ref_id="1058"/>
+			<reference ref_id="1070"/>
+			<reference ref_id="1073"/>
+			<reference ref_id="1088"/>
+			<reference ref_id="1091"/>
+			<reference ref_id="1092"/>
+			<reference ref_id="1099"/>
+		</collection>
   </item>
   <item id="1022" class="" implements="http://www.flymine.org/model/genomic#ModEncodeProject">
     <attribute name="name" value="Chromosomal Proteins"/>
@@ -243,6 +306,12 @@
     <attribute name="surnamePI" value="Karpen"/>
     <attribute name="namePI" value="Kevin"/>
     <attribute name="url" value="http://www.modencode.org/Karpen.shtml"/>
+		<collection name="providers">
+			<reference ref_id="1072"/>
+			<reference ref_id="1061"/>
+			<reference ref_id="1076"/>
+			<reference ref_id="1084"/>
+		</collection>
   </item>
   <item id="1023" class="" implements="http://www.flymine.org/model/genomic#ModEncodeProject">
     <attribute name="name" value="Small and microRNAs"/>
@@ -250,6 +319,10 @@
     <attribute name="surnamePI" value="Lai"/>
     <attribute name="namePI" value="Eric"/>
     <attribute name="url" value="http://www.modencode.org/Lai.shtml"/>
+		<collection name="providers">
+			<reference ref_id="1077"/>
+			<reference ref_id="1068"/>
+		</collection>
   </item>
   <item id="1024" class="" implements="http://www.flymine.org/model/genomic#ModEncodeProject">
     <attribute name="name" value="Origins of Replication"/>
@@ -257,5 +330,258 @@
     <attribute name="surnamePI" value="MacAlpine"/>
     <attribute name="namePI" value="David"/>
     <attribute name="url" value="http://www.modencode.org/MacAlpine.shtml"/>
+		<collection name="providers">
+			<reference ref_id="1080"/>
+			<reference ref_id="1083"/>
+		</collection>
   </item>
+
+<!-- PROVIDERS -->
+	<item id="1051" class="" implements="http://www.flymine.org/model/genomic#ModEncodeProvider">
+		<attribute name="surname" value="Ahmad"/>
+		<attribute name="name" value="Kamran Ahmad"/>
+		<reference name="project" ref_id="1012"/>
+	</item>
+	<item id="1052" class="" implements="http://www.flymine.org/model/genomic#ModEncodeProvider">
+		<attribute name="surname" value="Ahringer"/>
+		<attribute name="name" value=" Julie Ahringer "/>
+		<reference name="project" ref_id="1011"/>
+	</item>
+	<item id="1053" class="" implements="http://www.flymine.org/model/genomic#ModEncodeProvider">
+		<attribute name="surname" value="Bellen"/>
+		<attribute name="name" value="Hugo Bellen"/>
+		<reference name="project" ref_id="1021"/>
+	</item>
+	<item id="1054" class="" implements="http://www.flymine.org/model/genomic#ModEncodeProvider">
+		<attribute name="surname" value="Brenner"/>
+		<attribute name="name" value="Steven Brenner"/>
+		<reference name="project" ref_id="1020"/>
+	</item>
+	<item id="1055" class="" implements="http://www.flymine.org/model/genomic#ModEncodeProvider">
+		<attribute name="surname" value="Brent"/>
+		<attribute name="name" value="Michael Brent"/>
+		<reference name="project" ref_id="1020"/>
+	</item>
+	<item id="1056" class="" implements="http://www.flymine.org/model/genomic#ModEncodeProvider">
+		<attribute name="surname" value="Celniker"/>
+		<attribute name="name" value="Susan Celniker"/>
+		<reference name="project" ref_id="1020"/>
+	</item>
+	<item id="1057" class="" implements="http://www.flymine.org/model/genomic#ModEncodeProvider">
+		<attribute name="surname" value="Cherbas"/>
+		<attribute name="name" value="Peter Cherbas"/>
+		<reference name="project" ref_id="1020"/>
+	</item>
+	<item id="1058" class="" implements="http://www.flymine.org/model/genomic#ModEncodeProvider">
+		<attribute name="surname" value="Collart"/>
+		<attribute name="name" value="Frank Collart"/>
+		<reference name="project" ref_id="1020"/>
+	</item>
+	<item id="1059" class="" implements="http://www.flymine.org/model/genomic#ModEncodeProvider">
+		<attribute name="surname" value="Dernburg"/>
+		<attribute name="name" value="Abby Dernburg"/>
+		<reference name="project" ref_id="1011"/>
+	</item>
+	<item id="1060" class="" implements="http://www.flymine.org/model/genomic#ModEncodeProvider">
+		<attribute name="surname" value="Desai"/>
+		<attribute name="name" value="Arshad Desai"/>
+		<reference name="project" ref_id="1011"/>
+	</item>
+	<item id="1061" class="" implements="http://www.flymine.org/model/genomic#ModEncodeProvider">
+		<attribute name="surname" value="Elgin"/>
+		<attribute name="name" value="Sarah Elgin"/>
+		<reference name="project" ref_id="1022"/>
+	</item>
+	<item id="1062" class="" implements="http://www.flymine.org/model/genomic#ModEncodeProvider">
+		<attribute name="surname" value="Gerstein"/>
+		<attribute name="name" value="Mark Gerstein"/>
+		<reference name="project" ref_id="1010"/>
+	</item>
+	<item id="1063" class="" implements="http://www.flymine.org/model/genomic#ModEncodeProvider">
+		<attribute name="surname" value="Gingeras"/>
+		<attribute name="name" value="Thomas Gingeras"/>
+		<reference name="project" ref_id="1020"/>
+	</item>
+	<item id="1064" class="" implements="http://www.flymine.org/model/genomic#ModEncodeProvider">
+		<attribute name="surname" value="Gravely"/>
+		<attribute name="name" value="Brenton Gravely"/>
+		<reference name="project" ref_id="1020"/>
+	</item>
+	<item id="1065" class="" implements="http://www.flymine.org/model/genomic#ModEncodeProvider">
+		<attribute name="surname" value="Green"/>
+		<attribute name="name" value="Philip Green"/>
+		<reference name="project" ref_id="1010"/>
+	</item>
+	<item id="1066" class="" implements="http://www.flymine.org/model/genomic#ModEncodeProvider">
+		<attribute name="surname" value="Green"/>
+		<attribute name="name" value="Roland Green"/>
+		<reference name="project" ref_id="1011"/>
+	</item>
+	<item id="1067" class="" implements="http://www.flymine.org/model/genomic#ModEncodeProvider">
+		<attribute name="surname" value="Gunsalus"/>
+		<attribute name="name" value="Kristin Gunsalus"/>
+		<reference name="project" ref_id="1014"/>
+	</item>
+	<item id="1068" class="" implements="http://www.flymine.org/model/genomic#ModEncodeProvider">
+		<attribute name="surname" value="Hannon"/>
+		<attribute name="name" value="Gregory Hannon"/>
+		<reference name="project" ref_id="1023"/>
+	</item>
+	<item id="1069" class="" implements="http://www.flymine.org/model/genomic#ModEncodeProvider">
+		<attribute name="surname" value="Henikoff"/>
+		<attribute name="name" value="Steven Henikoff"/>
+		<reference name="project" ref_id="1012"/>
+	</item>
+	<item id="1070" class="" implements="http://www.flymine.org/model/genomic#ModEncodeProvider">
+		<attribute name="surname" value="Hoskins"/>
+		<attribute name="name" value="Roger Hoskins"/>
+		<reference name="project" ref_id="1021"/>
+	</item>
+	<item id="1071" class="" implements="http://www.flymine.org/model/genomic#ModEncodeProvider">
+		<attribute name="surname" value="Hyman"/>
+		<attribute name="name" value="Anthony Hyman"/>
+		<reference name="project" ref_id="1013"/>
+	</item>
+	<item id="1072" class="" implements="http://www.flymine.org/model/genomic#ModEncodeProvider">
+		<attribute name="surname" value="Karpen"/>
+		<attribute name="name" value="Gary Karpen"/>
+		<reference name="project" ref_id="1022"/>
+	</item>
+	<item id="1073" class="" implements="http://www.flymine.org/model/genomic#ModEncodeProvider">
+		<attribute name="surname" value="Kellis"/>
+		<attribute name="name" value="Manolis Kellis"/>
+		<reference name="project" ref_id="1021"/>
+	</item>
+	<item id="1074" class="" implements="http://www.flymine.org/model/genomic#ModEncodeProvider">
+		<attribute name="surname" value="Kim"/>
+		<attribute name="name" value="John Kim"/>
+		<reference name="project" ref_id="1014"/>
+	</item>
+	<item id="1075" class="" implements="http://www.flymine.org/model/genomic#ModEncodeProvider">
+		<attribute name="surname" value="Kim"/>
+		<attribute name="name" value="Stuart Kim"/>
+		<reference name="project" ref_id="1013"/>
+	</item>
+	<item id="1076" class="" implements="http://www.flymine.org/model/genomic#ModEncodeProvider">
+		<attribute name="surname" value="Kuroda"/>
+		<attribute name="name" value="Mitzi Kuroda"/>
+		<reference name="project" ref_id="1022"/>
+	</item>
+	<item id="1077" class="" implements="http://www.flymine.org/model/genomic#ModEncodeProvider">
+		<attribute name="surname" value="Lai"/>
+		<attribute name="name" value="Eric Lai"/>
+		<reference name="project" ref_id="1023"/>
+	</item>
+	<item id="1078" class="" implements="http://www.flymine.org/model/genomic#ModEncodeProvider">
+		<attribute name="surname" value="Lieb"/>
+		<attribute name="name" value="Jason Lieb"/>
+		<reference name="project" ref_id="1011"/>
+	</item>
+	<item id="1079" class="" implements="http://www.flymine.org/model/genomic#ModEncodeProvider">
+		<attribute name="surname" value="Liu"/>
+		<attribute name="name" value="Xiole Liu"/>
+		<reference name="project" ref_id="1011"/>
+	</item>
+	<item id="1080" class="" implements="http://www.flymine.org/model/genomic#ModEncodeProvider">
+		<attribute name="surname" value="MacAlpine"/>
+		<attribute name="name" value="David MacAlpine"/>
+		<reference name="project" ref_id="1024"/>
+	</item>
+	<item id="1081" class="" implements="http://www.flymine.org/model/genomic#ModEncodeProvider">
+		<attribute name="surname" value="MacCoss"/>
+		<attribute name="name" value="Michael MacCoss"/>
+		<reference name="project" ref_id="1010"/>
+	</item>
+	<item id="1082" class="" implements="http://www.flymine.org/model/genomic#ModEncodeProvider">
+		<attribute name="surname" value="Miller"/>
+		<attribute name="name" value="David Miller"/>
+		<reference name="project" ref_id="1010"/>
+	</item>
+	<item id="1083" class="" implements="http://www.flymine.org/model/genomic#ModEncodeProvider">
+		<attribute name="surname" value="Orr-Weaver"/>
+		<attribute name="name" value="Terry Orr-Weaver"/>
+		<reference name="project" ref_id="1024"/>
+	</item>
+	<item id="1084" class="" implements="http://www.flymine.org/model/genomic#ModEncodeProvider">
+		<attribute name="surname" value="Park"/>
+		<attribute name="name" value="Peter Park"/>
+		<reference name="project" ref_id="1022"/>
+	</item>
+	<item id="1085" class="" implements="http://www.flymine.org/model/genomic#ModEncodeProvider">
+		<attribute name="surname" value="Perrimon"/>
+		<attribute name="name" value="Norbert Perrimon"/>
+		<reference name="project" ref_id="1020"/>
+	</item>
+	<item id="1086" class="" implements="http://www.flymine.org/model/genomic#ModEncodeProvider">
+		<attribute name="surname" value="Piano"/>
+		<attribute name="name" value="Fabio Piano"/>
+		<reference name="project" ref_id="1014"/>
+	</item>
+	<item id="1087" class="" implements="http://www.flymine.org/model/genomic#ModEncodeProvider">
+		<attribute name="surname" value="Pirrotta"/>
+		<attribute name="name" value="Vincent Pirrotta"/>
+		<reference name="project" ref_id="1022"/>
+	</item>
+	<item id="1088" class="" implements="http://www.flymine.org/model/genomic#ModEncodeProvider">
+		<attribute name="surname" value="Posakony"/>
+		<attribute name="name" value="James Posakony"/>
+		<reference name="project" ref_id="1021"/>
+	</item>
+	<item id="1089" class="" implements="http://www.flymine.org/model/genomic#ModEncodeProvider">
+		<attribute name="surname" value="Rajewsky"/>
+		<attribute name="name" value="Nikolaus Rajewsky"/>
+		<reference name="project" ref_id="1014"/>
+	</item>
+	<item id="1090" class="" implements="http://www.flymine.org/model/genomic#ModEncodeProvider">
+		<attribute name="surname" value="Reinke"/>
+		<attribute name="name" value="Valerie Reinke"/>
+		<reference name="project" ref_id="1013"/>
+	</item>
+	<item id="1091" class="" implements="http://www.flymine.org/model/genomic#ModEncodeProvider">
+		<attribute name="surname" value="Ren"/>
+		<attribute name="name" value="Bing Ren"/>
+		<reference name="project" ref_id="1021"/>
+	</item>
+	<item id="1092" class="" implements="http://www.flymine.org/model/genomic#ModEncodeProvider">
+		<attribute name="surname" value="Russell"/>
+		<attribute name="name" value="Steven Russell"/>
+		<reference name="project" ref_id="1021"/>
+	</item>
+	<item id="1093" class="" implements="http://www.flymine.org/model/genomic#ModEncodeProvider">
+		<attribute name="surname" value="Segal"/>
+		<attribute name="name" value="Eran Segal"/>
+		<reference name="project" ref_id="1011"/>
+	</item>
+	<item id="1094" class="" implements="http://www.flymine.org/model/genomic#ModEncodeProvider">
+		<attribute name="surname" value="Slack"/>
+		<attribute name="name" value="Frank Slack"/>
+		<reference name="project" ref_id="1010"/>
+	</item>
+	<item id="1095" class="" implements="http://www.flymine.org/model/genomic#ModEncodeProvider">
+		<attribute name="surname" value="Snyder"/>
+		<attribute name="name" value="Michael Snyder"/>
+		<reference name="project" ref_id="1013"/>
+	</item>
+	<item id="1096" class="" implements="http://www.flymine.org/model/genomic#ModEncodeProvider">
+		<attribute name="surname" value="Strome"/>
+		<attribute name="name" value="Susan Strome"/>
+		<reference name="project" ref_id="1011"/>
+	</item>
+	<item id="1097" class="" implements="http://www.flymine.org/model/genomic#ModEncodeProvider">
+		<attribute name="surname" value="Waterston"/>
+		<attribute name="name" value="Robert Waterston"/>
+		<reference name="project" ref_id="1010"/>
+	</item>
+	<item id="1098" class="" implements="http://www.flymine.org/model/genomic#ModEncodeProvider">
+		<attribute name="surname" value="White"/>
+		<attribute name="name" value="Kevin White"/>
+		<reference name="project" ref_id="1021"/>
+	</item>
+	<item id="1099" class="" implements="http://www.flymine.org/model/genomic#ModEncodeProvider">
+		<attribute name="surname" value="White"/>
+		<attribute name="name" value="Robert White"/>
+		<reference name="project" ref_id="1021"/>
+	</item>
+
+	
 </items>
