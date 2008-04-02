@@ -36,9 +36,8 @@ public class FlyBaseModuleProcessor extends ChadoSequenceProcessor
 {
     private static final Logger LOG = Logger.getLogger(FlyBaseModuleProcessor.class);
 
-
-    private Map<Integer, MultiKeyMap> config = new HashMap<Integer, MultiKeyMap>();
-    private IntPresentSet locatedGeneIds = new IntPresentSet();
+    private final Map<Integer, MultiKeyMap> config = new HashMap<Integer, MultiKeyMap>();
+    private final IntPresentSet locatedGeneIds = new IntPresentSet();
 
     /**
      * Create a new FlyBaseChadoDBConverter.
@@ -73,6 +72,43 @@ public class FlyBaseModuleProcessor extends ChadoSequenceProcessor
         } catch (SQLException e) {
             throw new RuntimeException("problem while reading located genes", e);
         }
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    protected Integer store(Item feature, int taxonId) throws ObjectStoreException {
+        processItem(feature, taxonId);
+        Integer itemId = super.store(feature, taxonId);
+        return itemId;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    protected Item makeLocation(int start, int end, int strand, FeatureData srcFeatureData,
+                              FeatureData featureData, int taxonId) throws ObjectStoreException {
+        Item location =
+            super.makeLocation(start, end, strand, srcFeatureData, featureData, taxonId);
+        processItem(location, taxonId);
+        getChadoDBConverter().store(location);
+        return location;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    protected Item createSynonym(FeatureData fdat, String type, String identifier,
+                                 boolean isPrimary, List<Item> otherEvidence)
+        throws ObjectStoreException {
+        Item synonym = super.createSynonym(fdat, type, identifier, isPrimary, otherEvidence);
+        OrganismData od = fdat.getOrganismData();
+        processItem(synonym, od.getTaxonId());
+        getChadoDBConverter().store(synonym);
+        return synonym;
     }
 
     /**
@@ -381,31 +417,52 @@ public class FlyBaseModuleProcessor extends ChadoSequenceProcessor
      * {@inheritDoc}
      */
     @Override
-    protected String getDataSourceName(@SuppressWarnings("unused") int taxonId) {
+    protected String getDataSourceName() {
         return "FlyBase";
     }
 
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    protected Item getDataSourceItem(int taxonId) {
-        return getChadoDBConverter().getDataSourceItem(getDataSourceName(taxonId));
+    private Item getDataSourceItem(String dataSourceName) {
+        return getChadoDBConverter().getDataSourceItem(dataSourceName);
     }
 
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    protected Item getDataSetItem(int taxonId) {
+    private Item getDataSetItem(String dataSourceName, int taxonId) {
         OrganismRepository or = OrganismRepository.getOrganismRepository();
         OrganismData od = or.getOrganismDataByTaxon(taxonId);
         String species = od.getSpecies();
         String genus = od.getGenus();
         String name = "FlyBase " + genus + " " + species + " data set";
         String description = "The FlyBase " + genus + " " + species + " genome";
-        Item dataSetItem =
-            getChadoDBConverter().getDataSetItem(name, "http://www.flybase.org", description);
-        return dataSetItem;
+        return getChadoDBConverter().getDataSetItem(name, "http://www.flybase.org", description,
+                                                    getDataSourceItem(dataSourceName));
+    }
+
+    /**
+     * Method to add dataSets and DataSources to items before storing
+     */
+    private void processItem(Item item, Integer taxonId) {
+        if (item.getClassName().equals("http://www.flymine.org/model/genomic#DataSource")
+            || item.getClassName().equals("http://www.flymine.org/model/genomic#DataSet")
+            || item.getClassName().equals("http://www.flymine.org/model/genomic#Organism")
+            || item.getClassName().equals("http://www.flymine.org/model/genomic#Sequence")) {
+            return;
+        }
+
+        if (taxonId == null) {
+            ClassLoader currentClassLoader = Thread.currentThread().getContextClassLoader();
+            ClassLoader classLoader = getClass().getClassLoader();
+            Thread.currentThread().setContextClassLoader(classLoader);
+            try {
+                throw new RuntimeException("getCurrentTaxonId() returned null while processing "
+                                           + item);
+            } finally {
+                Thread.currentThread().setContextClassLoader(currentClassLoader);
+            }
+        } else {
+            String dataSourceName = getDataSourceName();
+
+            DataSetStoreHook.setDataSets(item,
+                                         getDataSetItem(dataSourceName, taxonId).getIdentifier(),
+                                         getDataSourceItem(dataSourceName).getIdentifier());
+        }
     }
 }

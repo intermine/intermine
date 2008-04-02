@@ -1,5 +1,7 @@
 package org.intermine.dataloader;
 
+import org.intermine.dataconversion.DataConverterStoreHook;
+
 /*
  * Copyright (C) 2002-2008 FlyMine
  *
@@ -18,15 +20,26 @@ package org.intermine.dataloader;
  * @author Matthew Wakeling
  * @author Richard Smith
  */
-public class DataLoader
+public abstract class DataLoader
 {
     private IntegrationWriter iw;
+    private DataConverterStoreHook storeHook;
 
     /**
      * No-arg constructor for testing purposes
      */
     private DataLoader() {
         // empty
+    }
+
+    /**
+     * Set a hook for this converter that will be called just before each Item is stored.
+     * The processItem() method in DataConverterStoreHook will be passed the Item, which
+     * it can modify.
+     * @param dataConverterStoreHook the hook
+     */
+    public void setStoreHook(DataConverterStoreHook dataConverterStoreHook) {
+        this.storeHook = dataConverterStoreHook;
     }
 
     /**

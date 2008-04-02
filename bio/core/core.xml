@@ -4,12 +4,15 @@
     <attribute name="name" type="java.lang.String"/>
     <attribute name="url" type="java.lang.String"/>
     <attribute name="description" type="java.lang.String"/>
+    <collection name="dataSets"
+                referenced-type="org.flymine.model.genomic.DataSet" reverse-reference="dataSource"/>
   </class>
   <class name="org.flymine.model.genomic.DataSet" extends="org.flymine.model.genomic.InfoSource" is-interface="true">
     <attribute name="url" type="java.lang.String"/>
     <attribute name="description" type="java.lang.String"/>
     <attribute name="version" type="java.lang.String"/>
-    <reference name="dataSource" referenced-type="org.flymine.model.genomic.DataSource"/>
+    <reference name="dataSource"
+               referenced-type="org.flymine.model.genomic.DataSource" reverse-reference="dataSets"/>
   </class>
   <class name="org.flymine.model.genomic.Ontology" extends="org.flymine.model.genomic.InfoSource" is-interface="true">
     <attribute name="url" type="java.lang.String"/>
@@ -26,6 +29,7 @@
     <collection name="annotations" referenced-type="org.flymine.model.genomic.Annotation" ordered="true" reverse-reference="subject"/>
     <collection name="synonyms" referenced-type="org.flymine.model.genomic.Synonym" ordered="true" reverse-reference="subject"/>
     <collection name="evidence" referenced-type="org.flymine.model.genomic.Evidence" ordered="true"/>
+    <collection name="dataSets" referenced-type="org.flymine.model.genomic.DataSet" ordered="true"/>
   </class>
   <class name="org.flymine.model.genomic.ComputationalAnalysis" extends="org.flymine.model.genomic.Analysis" is-interface="true">
     <attribute name="algorithm" type="java.lang.String"/>
@@ -113,6 +117,7 @@
     <attribute name="isPrimary" type="java.lang.Boolean"/>
     <reference name="subject" referenced-type="org.flymine.model.genomic.BioEntity" reverse-reference="synonyms"/>
     <reference name="source" referenced-type="org.flymine.model.genomic.DataSource"/>
+    <collection name="dataSets" referenced-type="org.flymine.model.genomic.DataSet"/>
     <collection name="evidence" referenced-type="org.flymine.model.genomic.InfoSource"/>
   </class>
   <class name="org.flymine.model.genomic.Author" is-interface="true">

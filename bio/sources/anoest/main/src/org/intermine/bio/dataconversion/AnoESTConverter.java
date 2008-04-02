@@ -34,9 +34,9 @@ public class AnoESTConverter extends BioDBConverter
     private static final int ANOPHELES_TAXON_ID = 180454;
     private static final String DATASET_TITLE = "AnoEST clusters";
     private static final String DATA_SOURCE_NAME = "VectorBase";
-    private Map<String, Item> clusters = new LinkedHashMap<String, Item>();
-    private Map<String, Item> ests = new LinkedHashMap<String, Item>();
-    private Map<String, String> cloneIds = new LinkedHashMap<String, String>();
+    private final Map<String, Item> clusters = new LinkedHashMap<String, Item>();
+    private final Map<String, Item> ests = new LinkedHashMap<String, Item>();
+    private final Map<String, String> cloneIds = new LinkedHashMap<String, String>();
 
     /**
      * Create a new AnoESTConverter object.
@@ -45,7 +45,7 @@ public class AnoESTConverter extends BioDBConverter
      * @param writer an ItemWriter used to handle the resultant Items
      */
     public AnoESTConverter(Database database, Model tgtModel, ItemWriter writer) {
-        super(database, tgtModel, writer);
+        super(database, tgtModel, writer, DATA_SOURCE_NAME, DATASET_TITLE);
     }
 
     /**
@@ -77,21 +77,23 @@ public class AnoESTConverter extends BioDBConverter
 
             Item cluster = createItem("ESTCluster");
             cluster.setAttribute("primaryIdentifier", identifier);
-            Item dataSet = getDataSetItem(DATASET_TITLE);
+            Item dataSet = getDataSetItem(DATASET_TITLE, getDataSourceItem(DATA_SOURCE_NAME));
             cluster.setAttribute("curated", "false");
             cluster.setReference("organism", getOrganismItem(ANOPHELES_TAXON_ID));
             cluster.addToCollection("evidence", dataSet);
             getItemWriter().store(ItemHelper.convert(cluster));
 
-            createSynonym(cluster.getIdentifier(), "identifier", identifier, true,
-                          Arrays.asList(dataSet), getDataSourceItem(DATA_SOURCE_NAME));
+            Item synonym =
+                createSynonym(cluster.getIdentifier(), "identifier", identifier, true, null);
+            store(synonym);
 
             // some clusters have no location
             if (chromosomeIdentifier != null && start > 0 && end > 0) {
                 Item chromosomeItem = getChromosome(chromosomeIdentifier, ANOPHELES_TAXON_ID);
                 String chromosomeItemId = chromosomeItem.getIdentifier();
-                makeLocation(chromosomeItemId, cluster.getIdentifier(), start, end, strand,
-                             ANOPHELES_TAXON_ID, dataSet);
+                Item location = makeLocation(chromosomeItemId, cluster.getIdentifier(), start, end,
+                                             strand, ANOPHELES_TAXON_ID);
+                store(location);
             }
 
             clusters.put(identifier, cluster);
@@ -118,7 +120,7 @@ public class AnoESTConverter extends BioDBConverter
     private void makeEstItems(Connection connection) throws SQLException, ObjectStoreException {
         ResultSet res = getEstResultSet(connection);
 
-        Item dataSet = getDataSetItem(DATASET_TITLE);
+        Item dataSet = getDataSetItem(DATASET_TITLE, getDataSourceItem(DATA_SOURCE_NAME));
         while (res.next()) {
             String accession = res.getString(1);
             String clusterId = res.getString(2);
@@ -147,10 +149,11 @@ public class AnoESTConverter extends BioDBConverter
             String accession = entry.getKey();
             Item est = entry.getValue();
             store(est);
-            createSynonym(est.getIdentifier(), "identifier", accession, true,
-                          Arrays.asList(dataSet), getDataSourceItem(DATA_SOURCE_NAME));
+            Item synonym = createSynonym(est.getIdentifier(), "identifier", accession, true,
+                                         Arrays.asList(dataSet));
+            store(synonym);
             createSynonym(est.getIdentifier(), "identifier", cloneIds.get(accession), false,
-                          Arrays.asList(dataSet), getDataSourceItem(DATA_SOURCE_NAME));
+                          Arrays.asList(dataSet));
         }
     }
 
