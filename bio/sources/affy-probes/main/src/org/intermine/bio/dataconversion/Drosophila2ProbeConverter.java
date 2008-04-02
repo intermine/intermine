@@ -104,7 +104,8 @@ public class Drosophila2ProbeConverter extends FileConverter
 
                         // FBgn0029676 /// FBgn0052789 /// FBgn0066138 /// FBgn0066170
                         String[] genes = cgs.split(" /// ");
-                        ReferenceList geneColl = new ReferenceList("genes", new ArrayList<String>());
+                        ReferenceList geneColl =
+                            new ReferenceList("genes", new ArrayList<String>());
                         for (String identifier : genes) {
                             if (identifier.trim().startsWith("CG")) {
                                 Item gene = createBioEntity("Gene", identifier);
