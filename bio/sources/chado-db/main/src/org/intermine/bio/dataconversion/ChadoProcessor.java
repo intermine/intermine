@@ -39,7 +39,7 @@ public abstract class ChadoProcessor
      * Return the ChadoDBConverter that was passed to the constructor.
      * @return the chadoDBConverter
      */
-    public final ChadoDBConverter getChadoDBConverter() {
+    public ChadoDBConverter getChadoDBConverter() {
         return chadoDBConverter;
     }
 

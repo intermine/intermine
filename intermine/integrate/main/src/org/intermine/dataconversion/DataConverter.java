@@ -39,6 +39,8 @@ public abstract class DataConverter
     private Model model;
     private ItemFactory itemFactory;
 
+    private DataConverterStoreHook storeHook = null;
+
     /**
     * Constructor that should be called by children
     * @param writer an ItemWriter used to handle the resultant Items
@@ -92,6 +94,7 @@ public abstract class DataConverter
      * @throws ObjectStoreException if something goes wrong
      * @deprecated should use Item.addToCollection() instead
      */
+    @Deprecated
     protected void addToCollection(Item item, String collection, Item addition)
         throws ObjectStoreException {
         ReferenceList coll = item.getCollection(collection);
@@ -100,6 +103,16 @@ public abstract class DataConverter
             item.addCollection(coll);
         }
         coll.addRefId(addition.getIdentifier());
+    }
+
+    /**
+     * Set a hook for this converter that will be called just before each Item is stored.
+     * The processItem() method in DataConverterStoreHook will be passed the Item, which
+     * it can modify.
+     * @param dataConverterStoreHook the hook
+     */
+    public void setStoreHook(DataConverterStoreHook dataConverterStoreHook) {
+        this.storeHook = dataConverterStoreHook;
     }
 
     /**
@@ -133,10 +146,13 @@ public abstract class DataConverter
     /**
      * Store a single XML Item
      * @param item the Item to store
-     * @return the database id of the new Item.
+     * @return the database id of the new Item
      * @throws ObjectStoreException if an error occurs in storing
      */
     public Integer store(Item item) throws ObjectStoreException {
+        if (storeHook != null) {
+            storeHook.processItem(this, item);
+        }
         return getItemWriter().store(ItemHelper.convert(item));
     }
 

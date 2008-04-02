@@ -27,13 +27,32 @@ import org.intermine.xml.full.Item;
  */
 public abstract class BioDBConverter extends DBConverter
 {
-    private Map<String, Item> chromosomes = new HashMap<String, Item>();
-    private Map<String, Item> organisms = new HashMap<String, Item>();
-    private Map<String, Item> dataSets = new HashMap<String, Item>();
-    private Map<String, Item> dataSources = new HashMap<String, Item>();
+    private final Map<String, Item> chromosomes = new HashMap<String, Item>();
+    private final Map<String, Item> organisms = new HashMap<String, Item>();
+    private final Map<String, Item> dataSets = new HashMap<String, Item>();
+    private final Map<String, Item> dataSources = new HashMap<String, Item>();
 
     /**
-     * Create a new BioDBConverter object.
+     * Create a new BioDBConverter object.  The constructor will automatically create a
+     * DataConverterStoreHook for this converter that sets DataSet references and collections.
+     * @param database the database to read from
+     * @param tgtModel the Model used by the object store we will write to with the ItemWriter
+     * @param writer an ItemWriter used to handle the resultant Items
+     * @param dataSourceName the DataSource name
+     * @param dataSetTitle the DataSet title
+     */
+    public BioDBConverter(Database database, Model tgtModel, ItemWriter writer,
+                          String dataSourceName, String dataSetTitle) {
+        super(database, tgtModel, writer);
+        Item dataSource = getDataSourceItem(dataSourceName);
+        Item dataSet = getDataSetItem(dataSetTitle, dataSource);
+        DataSetStoreHook hook = new DataSetStoreHook(dataSet, dataSource);
+        setStoreHook(hook);
+    }
+
+    /**
+     * Create a new BioDBConverter object.  The caller should call setStoreHook() before
+     * processing starts.
      * @param database the database to read from
      * @param tgtModel the Model used by the object store we will write to with the ItemWriter
      * @param writer an ItemWriter used to handle the resultant Items
@@ -45,17 +64,16 @@ public abstract class BioDBConverter extends DBConverter
     /**
      * Make a Location Relation between a LocatedSequenceFeature and a Chromosome.
      * @param chromosomeId Chromosome Item identifier
-     * @param locatedSequenceFeatureId the Item idenitifier of the feature
+     * @param locatedSequenceFeatureId the Item identifier of the feature
      * @param start the start position
      * @param end the end position
      * @param strand the strand
      * @param taxonId the taxon id to use when finding the Chromosome for the Location
-     * @param dataSet the DataSet to put in the evidence collection of the new Location
      * @return the new Location object
      * @throws ObjectStoreException if an Item can't be stored
      */
     protected Item makeLocation(String chromosomeId, String locatedSequenceFeatureId,
-                                int start, int end, int strand, int taxonId, Item dataSet)
+                                int start, int end, int strand, int taxonId)
         throws ObjectStoreException {
         Item location = createItem("Location");
 
@@ -69,8 +87,6 @@ public abstract class BioDBConverter extends DBConverter
         location.setAttribute("strand", String.valueOf(strand));
         location.setReference("object", chromosomeId);
         location.setReference("subject", locatedSequenceFeatureId);
-        location.addToCollection("evidence", dataSet);
-        store(location);
         return location;
     }
 
@@ -118,10 +134,11 @@ public abstract class BioDBConverter extends DBConverter
     /**
      * Return a DataSource item for the given name
      * @param title the DataSet title
+     * @param dataSourceItem the DataSource referenced by the the DataSet
      * @return the DataSet Item
      */
-    public Item getDataSetItem(String title) {
-        return getDataSetItem(title, null, null);
+    public Item getDataSetItem(String title, Item dataSourceItem) {
+        return getDataSetItem(title, null, null, dataSourceItem);
     }
 
 
@@ -130,13 +147,15 @@ public abstract class BioDBConverter extends DBConverter
      * @param title the DataSet title
      * @param url the new url field, or null if the url shouldn't be set
      * @param description the new description field, or null if the field shouldn't be set
+     * @param dataSourceItem the DataSource referenced by the the DataSet
      * @return the DataSet Item
      */
-    public Item getDataSetItem(String title, String url, String description) {
+    public Item getDataSetItem(String title, String url, String description, Item dataSourceItem) {
         Item dataSet = dataSets.get(title);
         if (dataSet == null) {
             dataSet = createItem("DataSet");
             dataSet.setAttribute("title", title);
+            dataSet.setReference("dataSource", dataSourceItem);
             if (url != null) {
                 dataSet.setAttribute("url", url);
             }
@@ -180,22 +199,21 @@ public abstract class BioDBConverter extends DBConverter
      * @param value the Synonym value
      * @param isPrimary true if this is a primary identifier
      * @param evidence the Synonym evidence (eg. a DataSet)
-     * @param dataSource the source of this synonym
      * @return the new Synonym
      * @throws ObjectStoreException if there is a problem while storing
      */
     public Item createSynonym(String subjectId, String type, String value, boolean isPrimary,
-                              List<Item> evidence, Item dataSource) throws ObjectStoreException {
+                              List<Item> evidence) throws ObjectStoreException {
         Item synonym = createItem("Synonym");
         synonym.setAttribute("type", type);
         synonym.setAttribute("value", value);
         synonym.setAttribute("isPrimary", String.valueOf(isPrimary));
         synonym.setReference("subject", subjectId);
-        synonym.setReference("source", dataSource);
-        for (Item evidenceItem: evidence) {
-            synonym.addToCollection("evidence", evidenceItem);
+        if (evidence != null) {
+            for (Item evidenceItem: evidence) {
+                synonym.addToCollection("evidence", evidenceItem);
+            }
         }
-        store(synonym);
         return synonym;
     }
 }

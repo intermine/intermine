@@ -10,6 +10,10 @@ package org.intermine.bio.dataconversion;
  *
  */
 
+import java.sql.Connection;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -23,6 +27,11 @@ import java.util.Set;
 import java.util.TreeSet;
 import java.util.Map.Entry;
 
+import org.apache.commons.collections.keyvalue.MultiKey;
+import org.apache.commons.collections.map.MultiKeyMap;
+import org.apache.log4j.Logger;
+import org.flymine.model.genomic.LocatedSequenceFeature;
+import org.flymine.model.genomic.Transcript;
 import org.intermine.bio.util.OrganismData;
 import org.intermine.metadata.ClassDescriptor;
 import org.intermine.metadata.FieldDescriptor;
@@ -36,23 +45,11 @@ import org.intermine.xml.full.Item;
 import org.intermine.xml.full.Reference;
 import org.intermine.xml.full.ReferenceList;
 
-import org.flymine.model.genomic.LocatedSequenceFeature;
-import org.flymine.model.genomic.Transcript;
-
-import java.sql.Connection;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.sql.Statement;
-
-import org.apache.commons.collections.keyvalue.MultiKey;
-import org.apache.commons.collections.map.MultiKeyMap;
-import org.apache.log4j.Logger;
-
 /**
  * A processor for the chado sequence module.
  * @author Kim Rutherford
  */
-public abstract class ChadoSequenceProcessor extends ChadoProcessor
+public class ChadoSequenceProcessor extends ChadoProcessor
 {
     private static final Logger LOG = Logger.getLogger(ChadoSequenceProcessor.class);
 
@@ -180,8 +177,6 @@ public abstract class ChadoSequenceProcessor extends ChadoProcessor
     throws ObjectStoreException {
         OrganismData organismData = getChadoDBConverter().getChadoIdToOrgDataMap().get(organismId);
         int taxonId = organismData.getTaxonId();
-        Item dataSet = getDataSetItem(taxonId);
-        Item dataSource = getDataSourceItem(taxonId);
         Item organismItem = getChadoDBConverter().getOrganismItem(taxonId);
         FeatureData fdat = new FeatureData();
         fdat.itemIdentifier = feature.getIdentifier();
@@ -195,7 +190,7 @@ public abstract class ChadoSequenceProcessor extends ChadoProcessor
             fdat.flags |= FeatureData.LENGTH_SET;
         }
 
-        String dataSourceName = getDataSourceName(taxonId);
+        String dataSourceName = getDataSourceName();
         MultiKey nameKey = new MultiKey("feature", fdat.interMineType, dataSourceName, "name");
         List<ConfigAction> nameActionList = getConfig(taxonId).get(nameKey);
 
@@ -260,15 +255,14 @@ public abstract class ChadoSequenceProcessor extends ChadoProcessor
         }
 
         // don't set the evidence collection - that's done by processPubTable()
-        fdat.intermineObjectId = getChadoDBConverter().store(feature); // Stores Feature
+        fdat.intermineObjectId = store(feature, taxonId); // Stores Feature
 
         // always create a synonym for the uniquename
         boolean uniqueNameSet = false;
         if (fieldValuesSet.contains(uniqueName)) {
             uniqueNameSet = true;
         }
-        createSynonym(fdat, "identifier", uniqueName, uniqueNameSet, dataSet, EMPTY_ITEM_LIST,
-                      dataSource); // Stores Synonym
+        createSynonym(fdat, "identifier", uniqueName, uniqueNameSet, EMPTY_ITEM_LIST);
 
         if (name != null) {
             if (nameActionList == null || nameActionList.size() == 0
@@ -279,8 +273,7 @@ public abstract class ChadoSequenceProcessor extends ChadoProcessor
                     if (fieldValuesSet.contains(fixedName)) {
                         nameSet = true;
                     }
-                    createSynonym(fdat, "name", fixedName, nameSet, dataSet, EMPTY_ITEM_LIST,
-                                  dataSource); // Stores Synonym
+                    createSynonym(fdat, "name", fixedName, nameSet, EMPTY_ITEM_LIST);
                 }
             }
         }
@@ -288,25 +281,31 @@ public abstract class ChadoSequenceProcessor extends ChadoProcessor
     }
 
     /**
-     * Return the name of the DataSource for this processor.
-     * @param taxonId the taxon id
+     * Store the feature Item.
+     * @param feature the Item
+     * @param taxonId the taxon id of this feature
+     * @return the database id of the new Item
+     * @throws ObjectStoreException if an error occurs while storing
+     */
+    protected Integer store(Item feature, int taxonId) throws ObjectStoreException {
+        return getChadoDBConverter().store(feature);
+    }
+
+    /**
+     * Return the name of the DataSource for this processor.  The default implementation gets
+     * the name from the ChadoDBConverter if it is a DataSetChadoDBConverter.
      * @return the name
      */
-    protected abstract String getDataSourceName(int taxonId);
-
-    /**
-     * Return the DataSource Item for the given taxon id.
-     * @param taxonId the taxon id
-     * @return the Item
-     */
-    protected abstract Item getDataSourceItem(int taxonId);
-
-    /**
-     * Return a DataSet Item for the given taxon id.
-     * @param taxonId the taxon id
-     * @return the Item
-     */
-    protected abstract Item getDataSetItem(int taxonId);
+    protected String getDataSourceName() {
+        ChadoDBConverter chadoDBConverter = getChadoDBConverter();
+        if (chadoDBConverter instanceof DataSetChadoDBConverter) {
+            DataSetChadoDBConverter converter = (DataSetChadoDBConverter) chadoDBConverter;
+            return converter.getDataSourceName();
+        } else {
+            throw new RuntimeException("unimplemented method "
+                                       + "ChadoSequenceProcessor.getDataSourceName()");
+        }
+    }
 
     /**
      * Make a new feature
@@ -402,12 +401,8 @@ public abstract class ChadoSequenceProcessor extends ChadoProcessor
                 if (featureMap.containsKey(featureId)) {
                     FeatureData featureData = featureMap.get(featureId);
                     int taxonId = featureData.organismData.getTaxonId();
-                    Item dataSet = getDataSetItem(taxonId);
                     Item location =
-                        getChadoDBConverter().makeLocation(srcFeatureData.itemIdentifier,
-                                                           featureData.itemIdentifier,
-                                                           start, end, strand,
-                                                           taxonId, dataSet);
+                        makeLocation(start, end, strand, srcFeatureData, featureData, taxonId);
 
                     final String featureClassName =
                         getModel().getPackageName() + "." + featureData.interMineType;
@@ -423,7 +418,7 @@ public abstract class ChadoSequenceProcessor extends ChadoProcessor
                         Reference chrReference = new Reference();
                         chrReference.setName("chromosome");
                         chrReference.setRefId(srcFeatureData.itemIdentifier);
-                        final Integer featureIntermineObjectId = featureData.getIntermineObjectId();
+                        Integer featureIntermineObjectId = featureData.getIntermineObjectId();
                         getChadoDBConverter().store(chrReference, featureIntermineObjectId);
                         Reference locReference = new Reference();
                         locReference.setName("chromosomeLocation");
@@ -454,6 +449,26 @@ public abstract class ChadoSequenceProcessor extends ChadoProcessor
         }
         LOG.info("created " + count + " locations");
         res.close();
+    }
+
+    /**
+     * Make a Location Relation between a LocatedSequenceFeature and a Chromosome.
+     * @param start the start position
+     * @param end the end position
+     * @param strand the strand
+     * @param srcFeatureData the FeatureData for the src feature (the Chromosome)
+     * @param featureData the FeatureData for the LocatedSequenceFeature
+     * @param taxonId the taxon id to use when finding the Chromosome for the Location
+     * @return the new Location object
+     * @throws ObjectStoreException if an Item can't be stored
+     */
+    protected Item makeLocation(int start, int end, int strand, FeatureData srcFeatureData,
+                              FeatureData featureData, int taxonId) throws ObjectStoreException {
+        Item location = getChadoDBConverter().makeLocation(srcFeatureData.itemIdentifier,
+                                                           featureData.itemIdentifier,
+                                                           start, end, strand, taxonId);
+        getChadoDBConverter().store(location);
+        return location;
     }
 
     private void processRelationTable(Connection connection)
@@ -685,10 +700,9 @@ public abstract class ChadoSequenceProcessor extends ChadoProcessor
                                     Reference revReference = new Reference();
                                     revReference.setName(reverseRD.getName());
                                     revReference.setRefId(subjectData.itemIdentifier);
-                                    final Integer refIntermineObjectId =
-                                        referencedFeatureData.intermineObjectId;
+                                    Integer refObjectId = referencedFeatureData.intermineObjectId;
                                     getChadoDBConverter().store(revReference,
-                                                                refIntermineObjectId);
+                                                                refObjectId);
                                 }
                             }
                         }
@@ -833,10 +847,8 @@ public abstract class ChadoSequenceProcessor extends ChadoProcessor
                             if (fieldsSet.contains(accession)) {
                                 isPrimary = true;
                             }
-                            Item dataSource = getDataSourceItem(taxonId);
-                            Item dataSet = getDataSetItem(taxonId);
-                            createSynonym(fdat, "identifier", accession, isPrimary, dataSet,
-                                          EMPTY_ITEM_LIST, dataSource); // Stores Synonym
+                            createSynonym(fdat, "identifier", accession, isPrimary,
+                                          EMPTY_ITEM_LIST);
                             count++;
                         }
 
@@ -906,10 +918,8 @@ public abstract class ChadoSequenceProcessor extends ChadoProcessor
                             if (fieldsSet.contains(identifier)) {
                                 isPrimary = true;
                             }
-                            Item dataSource = getDataSourceItem(taxonId);
-                            Item dataSet = getDataSetItem(taxonId);
-                            createSynonym(fdat, synonymType, identifier, isPrimary, dataSet,
-                                          EMPTY_ITEM_LIST, dataSource); // Stores Synonym
+                            createSynonym(fdat, synonymType, identifier, isPrimary,
+                                          EMPTY_ITEM_LIST);
                             count++;
                         }
 
@@ -981,10 +991,8 @@ public abstract class ChadoSequenceProcessor extends ChadoProcessor
                         if (fdat.existingSynonyms.contains(identifier)) {
                             continue;
                         } else {
-                            Item dataSource = getDataSourceItem(taxonId);
-                            Item dataSet = getDataSetItem(taxonId);
-                            createSynonym(fdat, synonymTypeName, identifier, setField, dataSet,
-                                          EMPTY_ITEM_LIST, dataSource); // Stores Synonym
+                            createSynonym(fdat, synonymTypeName, identifier, setField,
+                                          EMPTY_ITEM_LIST);
                             count++;
                         }
                     }
@@ -1046,7 +1054,8 @@ public abstract class ChadoSequenceProcessor extends ChadoProcessor
             } else {
                 Item publication = getChadoDBConverter().createItem("Publication");
                 publication.setAttribute("pubMedId", pubMedId);
-                getChadoDBConverter().store(publication); // Stores Publication
+                FeatureData fdat = featureMap.get(featureId);
+                store(publication, fdat.organismData.getTaxonId()); // Stores Publication
                 publicationId = publication.getIdentifier();
                 pubs.put(pubMedId, publicationId);
             }
@@ -1092,11 +1101,7 @@ public abstract class ChadoSequenceProcessor extends ChadoProcessor
         if (fdat == null) {
             throw new RuntimeException("feature " + featureId + " not found in features Map");
         }
-        int taxonId = fdat.organismData.getTaxonId();
         List<String> evidenceIds = new ArrayList<String>(argEvidenceIds);
-        Item dataSet = getDataSetItem(taxonId);
-        evidenceIds.add(0, dataSet.getIdentifier());
-
         ReferenceList referenceList = new ReferenceList();
         referenceList.setName("evidence");
 
@@ -1354,11 +1359,18 @@ public abstract class ChadoSequenceProcessor extends ChadoProcessor
     }
 
     /**
-     * Call super.createSynonym(), store the Item then record in fdat that we've created it.
+     * Call DataConverter.createSynonym(), store the Item then record in FeatureData that we've
+     * created it.
+     * @param fdat the FeatureData
+     * @param type the synonym type
+     * @param identifier the identifier to store in the Synonym
+     * @param isPrimary true if the synonym is a primary identifier
+     * @param otherEvidence the evidence collection to store in the Synonym
+     * @return the new Synonym
+     * @throws ObjectStoreException if there is a problem while storing
      */
-    private Item createSynonym(FeatureData fdat, String type, String identifier,
-                               boolean isPrimary, Item dataSet, List<Item> otherEvidence,
-                               Item dataSource)
+    protected Item createSynonym(FeatureData fdat, String type, String identifier,
+                                 boolean isPrimary, List<Item> otherEvidence)
         throws ObjectStoreException {
         if (fdat.existingSynonyms.contains(identifier)) {
             throw new IllegalArgumentException("feature identifier " + identifier
@@ -1366,10 +1378,10 @@ public abstract class ChadoSequenceProcessor extends ChadoProcessor
                                                + fdat.existingSynonyms);
         }
         List<Item> allEvidence = new ArrayList<Item>();
-        allEvidence.add(dataSet);
         allEvidence.addAll(otherEvidence);
-        Item returnItem = getChadoDBConverter().createSynonym(fdat.itemIdentifier, type, identifier,
-                                                              isPrimary, allEvidence, dataSource);
+        Item returnItem = getChadoDBConverter().createSynonym(fdat.itemIdentifier, type,
+                                                              identifier, isPrimary,
+                                                              allEvidence);
         fdat.existingSynonyms.add(identifier);
         return returnItem;
     }
@@ -1386,7 +1398,8 @@ public abstract class ChadoSequenceProcessor extends ChadoProcessor
         private String uniqueName;
         private String chadoFeatureName;
         // the synonyms that have already been created
-        private Set<String> existingSynonyms = new TreeSet<String>(String.CASE_INSENSITIVE_ORDER);
+        private final Set<String> existingSynonyms
+            = new TreeSet<String>(String.CASE_INSENSITIVE_ORDER);
         private String itemIdentifier;
         private String interMineType;
         private Integer intermineObjectId;
@@ -1422,6 +1435,22 @@ public abstract class ChadoSequenceProcessor extends ChadoProcessor
         public String getChadoFeatureUniqueName() {
             return uniqueName;
         }
+
+        /**
+         * Return the InterMine Item identifier for this feature.
+         * @return the InterMine Item identifier
+         */
+        public String getItemIdentifier() {
+            return itemIdentifier;
+        }
+
+        /**
+         * Return the OrganismData object for the organism this feature comes from.
+         * @return the OrganismData object
+         */
+        public OrganismData getOrganismData() {
+            return organismData;
+        }
     }
 
 
@@ -1439,7 +1468,7 @@ public abstract class ChadoSequenceProcessor extends ChadoProcessor
      */
     protected static class SetFieldConfigAction extends ConfigAction
     {
-        private String theFieldName;
+        private final String theFieldName;
 
         /**
          * Create a new SetFieldConfigAction that sets the given field.
@@ -1475,7 +1504,7 @@ public abstract class ChadoSequenceProcessor extends ChadoProcessor
      */
     protected static class SetMatchingFieldConfigAction extends SetFieldConfigAction
     {
-        private String pattern;
+        private final String pattern;
 
         /**
          * Construct with a field name and a pattern that values must match
@@ -1503,7 +1532,7 @@ public abstract class ChadoSequenceProcessor extends ChadoProcessor
      */
     protected static class CreateSynonymAction extends ConfigAction
     {
-        private String synonymType;
+        private final String synonymType;
 
         /**
          * Make a synonym and use the type from chado ("symbol", "identifier" etc.) as the Synonym

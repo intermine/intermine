@@ -136,10 +136,14 @@ public class ModEncodeMetaDataProcessor extends ChadoProcessor
 
     private Map<Integer, List<Integer>> experimentResultMap = new HashMap<Integer, List<Integer>>();
 
-    private static class ExperimentSubmissionDetails {
-        String itemId;
-        Integer interMineObjectId;
-        String title;
+    private static class ExperimentSubmissionDetails
+    {
+        // the identifier assigned to Item eg. "0_23"
+        private String itemIdentifier;
+        // the object id of the stored Item
+        private Integer interMineObjectId;
+        // the identifier assigned to Provider Item for this object
+        private String providerItemIdentifier;
     }
 
     /**
@@ -261,6 +265,26 @@ public class ModEncodeMetaDataProcessor extends ChadoProcessor
         processDataTable(connection);
 
         processDag(connection);
+
+        processFeatures(connection, experimentMap);
+    }
+
+    /**
+     * Query for features that referenced by the experiments in the experimentMap.
+     * @param experimentIdRefMap map from experiment_id from chado to InterMineObject id
+     */
+    private void processFeatures(Connection connection,
+                                 Map<Integer, ExperimentSubmissionDetails> experimentMap)
+    throws Exception {
+        for (Map.Entry<Integer, ExperimentSubmissionDetails> entry: experimentMap.entrySet()) {
+            Integer chadoExperimentId = entry.getKey();
+            String experimentItemIdentifier = entry.getValue().itemIdentifier;
+            String providerItemIdentifier = entry.getValue().providerItemIdentifier;
+            ModEncodeFeatureProcessor processor =
+                new ModEncodeFeatureProcessor(getChadoDBConverter(), experimentItemIdentifier,
+                                              providerItemIdentifier);
+            processor.process(connection);
+        }
     }
 
     private void processDag(Connection connection)
@@ -564,11 +588,13 @@ public class ModEncodeMetaDataProcessor extends ChadoProcessor
             // String name = res.getString("name");
             Item experiment = getChadoDBConverter().createItem("ExperimentSubmission");
             // experiment.setAttribute("name", name);
-            experiment.setReference("provider", providerIdRefMap.get(experimentId));
+            String providerItemIdentifier = providerIdRefMap.get(experimentId);
+            experiment.setReference("provider", providerItemIdentifier);
             Integer intermineObjectId = getChadoDBConverter().store(experiment);
             ExperimentSubmissionDetails details = new ExperimentSubmissionDetails();
             details.interMineObjectId = intermineObjectId;
-            details.itemId = experiment.getIdentifier();
+            details.itemIdentifier = experiment.getIdentifier();
+            details.providerItemIdentifier = providerItemIdentifier;
             experimentMap.put(experimentId, details);
             count++;
         }
@@ -736,7 +762,7 @@ public class ModEncodeMetaDataProcessor extends ChadoProcessor
             appliedProtocol.setReference("protocol", protocolIdRefMap.get(protocolId));
             if (experimentId > 0) {
                 appliedProtocol.setReference("experimentSubmission",
-                                             experimentMap.get(experimentId).itemId);
+                                             experimentMap.get(experimentId).itemIdentifier);
             }
             Integer intermineObjectId = getChadoDBConverter().store(appliedProtocol);
             appliedProtocolIdMap .put(appliedProtocolId, intermineObjectId);
