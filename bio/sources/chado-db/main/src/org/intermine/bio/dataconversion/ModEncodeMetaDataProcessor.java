@@ -278,11 +278,12 @@ public class ModEncodeMetaDataProcessor extends ChadoProcessor
     throws Exception {
         for (Map.Entry<Integer, ExperimentSubmissionDetails> entry: experimentMap.entrySet()) {
             Integer chadoExperimentId = entry.getKey();
-            String experimentItemIdentifier = entry.getValue().itemIdentifier;
-            String providerItemIdentifier = entry.getValue().providerItemIdentifier;
+            ExperimentSubmissionDetails experimentSubmissionDetails = entry.getValue();
+            String experimentItemIdentifier = experimentSubmissionDetails.itemIdentifier;
+            String providerItemIdentifier = experimentSubmissionDetails.providerItemIdentifier;
             ModEncodeFeatureProcessor processor =
                 new ModEncodeFeatureProcessor(getChadoDBConverter(), experimentItemIdentifier,
-                                              providerItemIdentifier);
+                                              providerItemIdentifier, chadoExperimentId);
             processor.process(connection);
         }
     }
@@ -493,7 +494,7 @@ public class ModEncodeMetaDataProcessor extends ChadoProcessor
         int count = 0;
         while (res.next()) {
             Integer experimentId = new Integer(res.getInt("experiment_id"));
-            String value = res.getString("value");            
+            String value = res.getString("value");
             Item provider = getChadoDBConverter().createItem("ModEncodeProvider");
             provider.setAttribute("name", value);
             Integer intermineObjectId = getChadoDBConverter().store(provider);
