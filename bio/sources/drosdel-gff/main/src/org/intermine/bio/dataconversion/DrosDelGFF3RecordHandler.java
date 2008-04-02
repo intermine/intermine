@@ -101,13 +101,8 @@ public class DrosDelGFF3RecordHandler extends GFF3RecordHandler
      */
     @Override
     protected boolean createLocations(GFF3Record record) {
-        if (record.getType().equals("ArtificialDeletion")) {
-            return true;
-        } else {
-            return false;
-        }
+        return record.getType().equals("ArtificialDeletion");
     }
-
 
     /**
      * Return items that need extra processing that can only be done after all other GFF features
