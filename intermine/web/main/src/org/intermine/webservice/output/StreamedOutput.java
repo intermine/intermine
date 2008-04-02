@@ -49,11 +49,11 @@ public class StreamedOutput extends Output
      * **/
     @Override
     public void addErrors(List<String> errors) {
-        writer.write("<error>");
+        writer.write("<error>\n");
         for (String error : errors) {
             writer.write("    <message>");
             writer.write(error);
-            writer.write("    </message>\n");
+            writer.write("</message>\n");
         }
         writer.write("</error>");        
     }
