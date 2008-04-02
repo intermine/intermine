@@ -144,10 +144,13 @@ public class ItemToObjectTranslator extends Translator
         if (identifier == null) {
             return null;
         }
-        String namespace = identifier.substring(0, identifier.indexOf("_"));
+        int index = identifier.indexOf("_");
+        if (index == -1) {
+            throw new RuntimeException("illegal identifier (\"" + identifier + "\") for item");
+        }
+        String namespace = identifier.substring(0, index);
         int base = ((Integer) namespaceToId.get(namespace)).intValue();
-        Integer retval = new Integer(base + Integer.parseInt(identifier.substring(identifier
-                        .indexOf("_") + 1)));
+        Integer retval = new Integer(base + Integer.parseInt(identifier.substring(index + 1)));
         return retval;
     }
 
