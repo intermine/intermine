@@ -19,21 +19,53 @@ import org.intermine.webservice.WebServiceInput;
 public class ListsServiceInput extends WebServiceInput
 {
 
-    private Integer objectId;
+    private String publicId;
+    private Integer mineId;
+    private String type;
     
-    /** Returns id of object for which the public lists that contain this object 
-     * are found. 
+    /**
+     * @return object type
+     */
+    public String getType() {
+        return type;
+    }
+
+    /**
+     * Sets object type.
+     * @param type object type
+     */
+    public void setType(String type) {
+        this.type = type;
+    }
+
+    /** Returns id of object. It can be for example primaryIdentifier, 
+     * secondaryIdentifier or some other identifier.  
      * @return id of object
      * **/
-    public Integer getObjectId() {
-        return objectId;
+    public String getPublicId() {
+        return publicId;
     }
 
     /** Sets id of object.
-     * @param objectId object id
-     * @see #getObjectId()
-     * **/
-    public void setObjectId(Integer objectId) {
-        this.objectId = objectId;
+     * @param publicId object public id
+     * @see #getPublicId()
+     * **/ 
+    public void setPublicId(String publicId) {
+        this.publicId = publicId;
+    }
+
+    /**
+     * @return Intermine unique object id
+     */
+    public Integer getMineId() {
+        return mineId;
+    }
+
+    /**
+     * Sets Intermine unique object id
+     * @param mineId object id
+     */
+    public void setMineId(Integer mineId) {
+        this.mineId = mineId;
     }
 }

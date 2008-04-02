@@ -80,7 +80,7 @@
 
   <servlet-mapping>
 	<servlet-name>ws-lists</servlet-name>
-	<url-pattern>/data/lists</url-pattern>
+	<url-pattern>/data/listswithobject</url-pattern>
   </servlet-mapping>
   
     <servlet>
