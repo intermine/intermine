@@ -128,8 +128,8 @@
   </class>
   
 <!--
-  -- FIXME the Path.resolve() method can't cope with collection so these
-  -- fieldconfigs fail:
+  - FIXME the Path.resolve() method can't cope with collection so these
+  - fieldconfigs fail:
 
   <class className="org.flymine.model.genomic.DomainRelationship">
     <fields>
