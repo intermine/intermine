@@ -152,8 +152,9 @@ public class AnoESTConverter extends BioDBConverter
             Item synonym = createSynonym(est.getIdentifier(), "identifier", accession, true,
                                          Arrays.asList(dataSet));
             store(synonym);
-            createSynonym(est.getIdentifier(), "identifier", cloneIds.get(accession), false,
-                          Arrays.asList(dataSet));
+            Item synonym2 = createSynonym(est.getIdentifier(), "identifier",
+                                         cloneIds.get(accession), false, Arrays.asList(dataSet));
+            store(synonym2);
         }
     }
 
