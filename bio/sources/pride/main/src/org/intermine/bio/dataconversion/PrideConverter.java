@@ -56,7 +56,7 @@ public class PrideConverter extends FileConverter
     private Map<String, String> mapTissue = new HashMap<String, String>();
     private Map<String, String> mapProject = new HashMap<String, String>();
     private Map<String, String> mapPeptide = new HashMap<String, String>();
-    private TmpProteinStore proteinDB;
+    final private PrideIndexFasta proteinIndex = new PrideIndexFasta("/shared/data/pride/fasta/");
 
     /**
      * Constructor
@@ -92,18 +92,12 @@ public class PrideConverter extends FileConverter
         mapMaps();
         PrideHandler handler = new PrideHandler(getItemWriter(), mapMaster);
         
-        //create db connection
-        proteinDB = new TmpProteinStore();
-        proteinDB.connectDb();
-        
         try {
             SAXParser.parse(new InputSource(reader), handler);
         } catch (Exception e) {
             e.printStackTrace();
             throw new RuntimeException(e);
         }
-        
-        proteinDB.closeDb();
         
     }
     
@@ -910,7 +904,7 @@ public class PrideConverter extends FileConverter
         }
         
         private void storeProtein(int i) throws ObjectStoreException {
-            if (proteinDB.getProtein(proteinAccessionId[i]) != null) {
+            if (proteinIndex.getProtein(proteinAccessionId[i]) != null) {
                 //calculate new start and end positions
                 PrideCalculatePos calcPos = initPeptide(i);
                 if (listPeptides.getRefIds().isEmpty()) {
@@ -953,7 +947,7 @@ public class PrideConverter extends FileConverter
         }
 
         private PrideCalculatePos initPeptide(int i) {
-            PrideCalculatePos calcPos = new PrideCalculatePos(proteinDB.getProtein(
+            PrideCalculatePos calcPos = new PrideCalculatePos(proteinIndex.getProtein(
                                                                proteinAccessionId[i]), peptideData);
             listPeptides = new ReferenceList("peptides", new ArrayList<String>());
             return calcPos;

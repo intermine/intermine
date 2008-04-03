@@ -32,7 +32,7 @@ public class PrideConverterTest extends ItemsTestCase
     public void testProcess() throws Exception {
 
         Reader reader = 
-            new InputStreamReader(getClass().getClassLoader().getResourceAsStream("mmh.xml"));
+            new InputStreamReader(getClass().getClassLoader().getResourceAsStream("pride_test.xml"));
 
         MockItemWriter itemWriter = new MockItemWriter(new HashMap<String, Item>());
         PrideConverter converter = new PrideConverter(itemWriter,
