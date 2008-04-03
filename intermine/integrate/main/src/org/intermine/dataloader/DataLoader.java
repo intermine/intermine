@@ -1,7 +1,5 @@
 package org.intermine.dataloader;
 
-import org.intermine.dataconversion.DataConverterStoreHook;
-
 /*
  * Copyright (C) 2002-2008 FlyMine
  *
@@ -11,6 +9,8 @@ import org.intermine.dataconversion.DataConverterStoreHook;
  * information or http://www.gnu.org/copyleft/lesser.html.
  *
  */
+
+import org.intermine.dataconversion.DataConverterStoreHook;
 
 /**
  * Loads information from a data source into the InterMine database.
