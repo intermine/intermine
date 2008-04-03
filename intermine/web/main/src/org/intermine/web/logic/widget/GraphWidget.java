@@ -229,7 +229,7 @@ public class GraphWidget extends Widget
             fileName = ServletUtilities.saveChartAsPNG(chart, WIDTH, HEIGHT, info, session);
             imageMap = ImageMapUtilities.getImageMap("chart" + fileName, info);
         } catch (Exception e) {
-            System.out.println(e.getMessage());
+            throw new RuntimeException("unexpected exception", e);
         }
     }
     
