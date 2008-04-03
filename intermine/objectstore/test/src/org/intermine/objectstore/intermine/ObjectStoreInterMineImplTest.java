@@ -302,8 +302,10 @@ public class ObjectStoreInterMineImplTest extends ObjectStoreAbstractImplTestCas
         expectedIndexMap.put("index" + tableName + "_field_a1_id__lower_a3____lower_a4__", "CREATE INDEX index" + tableName + "_field_a1_id__lower_a3____lower_a4__ ON " + tableName + " USING btree (a1_id, lower(a3_), lower(a4_))");
         expectedIndexMap.put("index" + tableName + "_field_lower_a3__", "CREATE INDEX index" + tableName + "_field_lower_a3__ ON " + tableName + " USING btree (lower(a3_))");
         expectedIndexMap.put("index" + tableName + "_field_lower_a3___nulls", "CREATE INDEX index" + tableName + "_field_lower_a3___nulls ON " + tableName + " USING btree (((lower(a3_) IS NULL)))");
+        expectedIndexMap.put("index" + tableName + "_field_lower_a3___text_pattern_ops", "CREATE INDEX index" + tableName + "_field_lower_a3___text_pattern_ops ON " + tableName + " USING btree (lower(a3_) text_pattern_ops)");
         expectedIndexMap.put("index" + tableName + "_field_lower_a4__", "CREATE INDEX index" + tableName + "_field_lower_a4__ ON " + tableName + " USING btree (lower(a4_))");
         expectedIndexMap.put("index" + tableName + "_field_lower_a4___nulls", "CREATE INDEX index" + tableName + "_field_lower_a4___nulls ON " + tableName + " USING btree (((lower(a4_) IS NULL)))");
+        expectedIndexMap.put("index" + tableName + "_field_lower_a4___text_pattern_ops", "CREATE INDEX index" + tableName + "_field_lower_a4___text_pattern_ops ON " + tableName + " USING btree (lower(a4_) text_pattern_ops)");
         assertEquals(expectedIndexMap, indexMap);
     }
 
