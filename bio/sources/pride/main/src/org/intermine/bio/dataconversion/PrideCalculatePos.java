@@ -16,67 +16,78 @@ import java.util.Stack;
 
 /**
  * DataConverter to parse pride data into items
- * @author Dominik Grimm
+ * @author Dominik Grimm and Michael Menden
  */
 
-public class PrideCalculatePos implements Iterator<PridePeptideData>{
-	
-	//private fields
-	private String 						sProteinSeq;
-	private String						sPeptideSeq;
-	private Stack<PridePeptideData> 	stackData;
-	private int							nIndex;
-	private PridePeptideData			dataOld;
-	private PridePeptideData 			data;
-	
-	//public methods
-	public PrideCalculatePos(String sProteinSeq, PridePeptideData dataOld) {
-		this.sProteinSeq = sProteinSeq.toUpperCase();
-		this.sPeptideSeq = dataOld.getSequence().toUpperCase();
-		this.dataOld = dataOld;
-		stackData = new Stack<PridePeptideData>();
-		nIndex = 0;
-		calculate();
-	}
+public class PrideCalculatePos implements Iterator<PridePeptideData>
+{
+       
+       //private fields
+       private String   sProteinSeq;
+       private String   sPeptideSeq;
+       private Stack<PridePeptideData> stackData;
+       private int nIndex;
+       private PridePeptideData dataOld;
+       private PridePeptideData data;
+       
+       /**
+        * Constructor
+        * @param sProteinSeq protein sequence
+        * @param dataOld current Pridedata 
+        */
+       public PrideCalculatePos(String sProteinSeq, PridePeptideData dataOld) {
+              this.sProteinSeq = sProteinSeq.toUpperCase();
+              this.sPeptideSeq = dataOld.getSequence().toUpperCase();
+              this.dataOld = dataOld;
+              stackData = new Stack<PridePeptideData>();
+              nIndex = 0;
+              calculate();
+       }
 
-	//Iterator
-	public boolean hasNext() {
-		return nIndex != 0;
-	}
-
-	public PridePeptideData next() {
-		return stackData.peek();
-	}
-
-	public void remove() {
-		stackData.pop();
-		nIndex--;
-	}
-	
-	//private method: calculates the correct start and end positions
-	private void calculate() {
-		if(sProteinSeq.substring(dataOld.getStartPos(), dataOld.getEndPos()).equals(sPeptideSeq)) {
-			nIndex++;
-			stackData.push(dataOld);
-		}
-		else {
-			int start = 0,end = 0;
-			for(int i=0; i < sProteinSeq.length(); i++) {
-				data = new PridePeptideData();
-				data.setSequence(sPeptideSeq);
-				data.setSpecRef(dataOld.getSpecRef());
-				data.setStartPos(sProteinSeq.indexOf(sPeptideSeq,i)+1);
-				if((start=data.getStartPos())-1 == -1)
-					break;
-				data.setEndPos(start + sPeptideSeq.length()-1);
-				stackData.push(data);
-				nIndex++;
-				if((end = data.getEndPos()) == start)
-					i = end-1;
-				else
-					i = start;
-			}
-		}
-	}
-	
+       /**
+        * hasNext
+        * @return true if stack has top element
+        */
+       public boolean hasNext() {
+              return nIndex != 0;
+       }
+       /**
+        * next
+        * @return top element of the stack
+        */
+       public PridePeptideData next() {
+              return stackData.peek();
+       }
+       /**
+        * remove the top element of the stack
+        */
+       public void remove() {
+              stackData.pop();
+              nIndex--;
+       }
+       
+       //private method: calculates the correct start and end positions
+       private void calculate() {
+                     int start = 0, end = 0;
+                     for (int i = 0; i < sProteinSeq.length(); i++) {
+                            data = new PridePeptideData();
+                            data.setSequence(sPeptideSeq);
+                            data.setSpecRef(dataOld.getSpecRef());
+                            data.setStartPos(sProteinSeq.indexOf(sPeptideSeq, i) + 1);
+                            start = data.getStartPos();
+                            if (start - 1 == -1) {
+                                   break;
+                            }
+                            data.setEndPos(start + sPeptideSeq.length() - 1);
+                            stackData.push(data);
+                            nIndex++;
+                            end = data.getEndPos();
+                            if (end == start) {
+                                   i = end - 1;
+                            } else {
+                                   i = start;
+                            }
+                     }
+       }
+       
 }

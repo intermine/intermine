@@ -19,31 +19,20 @@ public class TmpProteinStore {
 	private String url;	
 	private Connection db;
 
-	public static void main(String args[])
-	// ============================================================================================
-	// Just for testing
-	// ============================================================================================
-	{
-		TmpProteinStore tps = new TmpProteinStore();
-		tps.connectDb();
-		System.out.println("The result for the accession 'Q4U9M9' is:");
-		System.out.println(tps.getProtein("Q4U9M9"));
-		tps.closeDb();		
-	}
 
-        public TmpProteinStore()
-        // ============================================================================================
-        // This constructor should use the information from the unimine.properties file
-        // to create the databaseconnection
-        // ============================================================================================
-        {
-                PropertiesReader pr = new PropertiesReader("/home/mm719/unimine.properties.test");
-                serverName   =  pr.getRhs("db.common-tmp.datasource.serverName");
-                databaseName =  pr.getRhs("db.common-tmp.datasource.databaseName");
-                user         =  pr.getRhs("db.common-tmp.datasource.user");
-                password     =  pr.getRhs("db.common-tmp.datasource.password");
-                url          =  getUrl(serverName, databaseName);
-        }
+    public TmpProteinStore()
+    // ============================================================================================
+    // This constructor should use the information from the unimine.properties file
+    // to create the databaseconnection
+    // ============================================================================================
+    {
+             PropertiesReader pr = new PropertiesReader("/home/dg353/unimine.properties.test");
+             serverName   =  pr.getRhs("db.common-tmp.datasource.serverName");
+             databaseName =  pr.getRhs("db.common-tmp.datasource.databaseName");
+             user         =  pr.getRhs("db.common-tmp.datasource.user");
+             password     =  pr.getRhs("db.common-tmp.datasource.password");
+             url          =  getUrl(serverName, databaseName);
+    }
 
 	public void connectDb()
         // ============================================================================================

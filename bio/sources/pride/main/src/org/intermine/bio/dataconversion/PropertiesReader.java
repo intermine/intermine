@@ -14,18 +14,6 @@ public class PropertiesReader {
 		this.file = file;
 	}
 
-	//just for testing!!!
-	public static void main (String args[])
-	{	
-		PropertiesReader test = new PropertiesReader("/home/mm719/unimine.properties.test");
-		System.out.println("serverName: " + test.getRhs("db.common-tmp.datasource.serverName"));
-                System.out.println("databaseName: " + test.getRhs("db.common-tmp.datasource.databaseName"));
-                System.out.println("user: " + test.getRhs("db.common-tmp.datasource.user"));
-                System.out.println("password: " + test.getRhs("db.common-tmp.datasource.password"));
-	}	
-
-
-
 	public String getRhs(String lhs){
 	// ==============================================================================================
 	// Search in a file for the first eqation with an equal lhs (left hsnd side)
