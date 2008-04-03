@@ -1,4 +1,3 @@
-
 package org.intermine.bio.dataconversion;
 
 /*
@@ -14,11 +13,11 @@ package org.intermine.bio.dataconversion;
 import java.io.InputStreamReader;
 import java.io.Reader;
 import java.util.HashMap;
-import java.util.Set;
 
 import org.intermine.dataconversion.ItemsTestCase;
 import org.intermine.dataconversion.MockItemWriter;
 import org.intermine.metadata.Model;
+import org.intermine.model.fulldata.Item;
 
 public class PrideConverterTest extends ItemsTestCase
 {
@@ -32,15 +31,13 @@ public class PrideConverterTest extends ItemsTestCase
 
     public void testProcess() throws Exception {
 
-        Reader reader = new InputStreamReader(getClass().getClassLoader().getResourceAsStream("PRIDE.xml"));
+        Reader reader = 
+            new InputStreamReader(getClass().getClassLoader().getResourceAsStream("mmh.xml"));
 
-        MockItemWriter itemWriter = new MockItemWriter(new HashMap());
+        MockItemWriter itemWriter = new MockItemWriter(new HashMap<String, Item>());
         PrideConverter converter = new PrideConverter(itemWriter,
                                                           Model.getInstanceByName("genomic"));
-        Model model = Model.getInstanceByName("genomic");
-        for (String name : model.getClassNames()) {
-        	System.out.println(name);
-        }
+
         converter.process(reader);
         converter.close();
 
