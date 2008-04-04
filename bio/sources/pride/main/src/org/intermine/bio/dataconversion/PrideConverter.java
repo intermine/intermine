@@ -861,10 +861,7 @@ public class PrideConverter extends FileConverter
                        if (mapProtein.get(proteinAccessionId[i]) == null) {
                            itemProtein = createItem("Protein");
                            itemProtein.setAttribute("primaryAccession", proteinAccessionId[i]);
-                           if (i < proteinIdentifierId.length) {
-                               itemProtein.setAttribute("primaryIdentifier",
-                                                        proteinIdentifierId[i]);
-                           }
+                          
                            //get number of peptides
                            int stackSize = stackPeptides.size();
                            //store all peptides if no peptide with the same key exists
