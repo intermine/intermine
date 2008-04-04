@@ -10,6 +10,9 @@ package org.intermine.bio.dataconversion;
  *
  */
 
+import java.util.HashSet;
+import java.util.Set;
+
 import org.intermine.dataconversion.DataConverter;
 import org.intermine.dataconversion.DataConverterStoreHook;
 import org.intermine.metadata.ClassDescriptor;
@@ -71,7 +74,23 @@ public class DataSetStoreHook implements DataConverterStoreHook
         if (item.canHaveReference("dataSource") && !item.hasReference("dataSource")) {
             item.setReference("dataSource", dataSourceId);
         }
+        /*
+         -- don't do this for now as the evidence collection gets overwritten by the chado-db
+         -- converter when it adds publications
         if (item.canHaveCollection("evidence")) {
+            item.addToCollection("evidence", dataSetId);
+        }
+        */
+        Set<String> classNames = new HashSet<String>();
+        for (ClassDescriptor superCD: cd.getSuperDescriptors()) {
+            classNames.add(superCD.getUnqualifiedName());
+        }
+        classNames.add(className);
+
+        // TODO avoid Gene and Exon because the evidence collection gets overwritten by the chado-db
+        // converter when it adds publications
+        if (!(classNames.contains("Gene") || classNames.contains("Exon"))
+            && item.canHaveCollection("evidence")) {
             item.addToCollection("evidence", dataSetId);
         }
         if (item.canHaveCollection("dataSets")) {
