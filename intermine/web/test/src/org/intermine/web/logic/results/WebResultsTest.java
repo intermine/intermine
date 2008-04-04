@@ -43,8 +43,6 @@ import org.intermine.web.logic.query.MainHelper;
 import org.intermine.web.logic.query.PathQuery;
 import org.intermine.web.logic.query.PathQueryHandler;
 
-import com.sun.org.apache.bcel.internal.generic.GETSTATIC;
-
 /**
  * Tests for the WebResults class
  *

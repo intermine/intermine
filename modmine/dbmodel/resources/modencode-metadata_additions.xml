@@ -117,14 +117,14 @@
 		<reference name="experimentSubmission"
 			referenced-type="org.flymine.model.genomic.ExperimentSubmission"
 			reverse-reference="appliedProtocols" />
-
+<!-- 
 		<collection name="nextAppliedProtocols"
 			referenced-type="org.flymine.model.genomic.AppliedProtocol"
 			reverse-reference="previousAppliedProtocols" />
 		<collection name="previousAppliedProtocols"
 			referenced-type="org.flymine.model.genomic.AppliedProtocol"
 			reverse-reference="nextAppliedProtocols" />
-
+-->
 	</class>
 
 	<class name="org.flymine.model.genomic.SubmissionData"

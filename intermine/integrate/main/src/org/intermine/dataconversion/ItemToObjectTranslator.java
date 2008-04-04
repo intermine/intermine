@@ -321,6 +321,12 @@ public class ItemToObjectTranslator extends Translator
                 Reference ref = (Reference) i.next();
                 Integer identifier = identifierToId(ref.getRefId());
                 String refName = ref.getName();
+                if (refName == null) {
+                    throw new RuntimeException("reference name is null while translating: " + o);
+                }
+                if (refName.equals("")) {
+                    throw new RuntimeException("reference name is empty while translating: " + o);
+                }
                 if (Character.isLowerCase(refName.charAt(1))) {
                     refName = StringUtil.decapitalise(refName);
                 }
