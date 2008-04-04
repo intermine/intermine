@@ -131,7 +131,7 @@ public class ModEncodeFeatureProcessor extends ChadoSequenceProcessor
                 Thread.currentThread().setContextClassLoader(currentClassLoader);
             }
         } else {
-            DataSetStoreHook.setDataSets(item, dataSetIdentifier, dataSourceIdentifier);
+            DataSetStoreHook.setDataSets(getModel(), item, dataSetIdentifier, dataSourceIdentifier);
         }
     }
 }

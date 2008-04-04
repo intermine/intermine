@@ -46,7 +46,7 @@ public abstract class BioDBConverter extends DBConverter
         super(database, tgtModel, writer);
         Item dataSource = getDataSourceItem(dataSourceName);
         Item dataSet = getDataSetItem(dataSetTitle, dataSource);
-        DataSetStoreHook hook = new DataSetStoreHook(dataSet, dataSource);
+        DataSetStoreHook hook = new DataSetStoreHook(tgtModel, dataSet, dataSource);
         setStoreHook(hook);
     }
 

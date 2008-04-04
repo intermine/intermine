@@ -460,7 +460,7 @@ public class FlyBaseModuleProcessor extends ChadoSequenceProcessor
         } else {
             String dataSourceName = getDataSourceName();
 
-            DataSetStoreHook.setDataSets(item,
+            DataSetStoreHook.setDataSets(getModel(), item,
                                          getDataSetItem(dataSourceName, taxonId).getIdentifier(),
                                          getDataSourceItem(dataSourceName).getIdentifier());
         }
