@@ -1085,6 +1085,9 @@ public class ChadoSequenceProcessor extends ChadoProcessor
             // only Gene has a publications collection - FIXME XXX
             return;
         }
+        if (argPublicationIds.size() == 0) {
+            return;
+        }
         List<String> publicationIds = new ArrayList<String>(argPublicationIds);
         ReferenceList referenceList = new ReferenceList();
         referenceList.setName("publications");
@@ -1100,6 +1103,9 @@ public class ChadoSequenceProcessor extends ChadoProcessor
         FeatureData fdat = featureMap.get(featureId);
         if (fdat == null) {
             throw new RuntimeException("feature " + featureId + " not found in features Map");
+        }
+        if (argEvidenceIds.size() == 0) {
+            return;
         }
         List<String> evidenceIds = new ArrayList<String>(argEvidenceIds);
         ReferenceList referenceList = new ReferenceList();
