@@ -46,7 +46,7 @@ public class DataSetChadoDBConverter extends ChadoDBConverter
             throw new RuntimeException("dataSetTitle not set in DataSetChadoDBConverter");
         }
 
-        setStoreHook(new DataSetStoreHook(getDataSetItem(), getDataSourceItem()));
+        setStoreHook(new DataSetStoreHook(getModel(), getDataSetItem(), getDataSourceItem()));
         super.process();
     }
 
