@@ -73,28 +73,26 @@
       <displayer src="/model/locatedSequenceFeatureImage.jsp"/>
     </longdisplayers>
     <bagdisplayers>
-   	<displayer src="attributeLinkDisplayer.tile"/>
-  	
-	<enrichmentwidgetdisplayer title="Protein Domain Enrichment"
-                                 link="org.flymine.web.widget.ProteinDomainURLQuery"
-                                 dataSetLoader="org.flymine.web.widget.ProteinDomainLdr"
-                                 label="Protein Domain"
-                                 description="Protein Domains enriched for proteins in this list."
-                                 filters=""
-                                 filterLabel=""
-                                 max="0.10"  />
-    
-      	<enrichmentwidgetdisplayer title="Gene Ontology Enrichment"
+      <displayer src="attributeLinkDisplayer.tile"/>
+      <enrichmentwidgetdisplayer title="Gene Ontology Enrichment"
                                  link="org.intermine.bio.web.widget.GoStatURLQuery"
                                  dataSetLoader="org.intermine.bio.web.widget.GoStatLdr"
                                  description="GO terms enriched for genes in this list."
                                  label="GO Term"
                                  filters="biological_process,cellular_component,molecular_function"
                                  filterLabel="Ontology"
-                                 max="0.10" /> 
+                                 max="0.10" />
 
-                                 
-      	<enrichmentwidgetdisplayer title="Publication Enrichment"
+<!-- <enrichmentwidgetdisplayer title="Protein Domain Enrichment"
+                                 link="org.flymine.web.widget.ProteinDomainURLQuery"
+                                 dataSetLoader="org.flymine.web.widget.ProteinDomainLdr"
+                                 label="Protein Domain"
+                                 description="Protein Domains enriched for genes in this list."
+                                 filters=""
+                                 filterLabel=""
+                                 max="0.10"  /> -->
+
+      <enrichmentwidgetdisplayer title="Publication Enrichment"
                                  link="org.intermine.bio.web.widget.PublicationURLQuery"
                                  dataSetLoader="org.intermine.bio.web.widget.PublicationLdr"
                                  label="Publication"
@@ -103,8 +101,7 @@
                                  filterLabel=""
                                  max="0.10"
                                  externalLink="http://www.ncbi.nlm.nih.gov/entrez/query.fcgi?cmd=Retrieve&amp;db=PubMed&amp;dopt=Abstract&amp;list_uids="
-                                 append="" /> 
-
+                                 append="" />
     </bagdisplayers>
   </class>
 
@@ -116,17 +113,6 @@
     </fields>
     <longdisplayers>
       <displayer src="/model/synonymDisplayer.jsp"/>
-    </longdisplayers>
-  </class>
-
-  <class className="org.flymine.model.genomic.Chromosome">
-    <fields>
-      <fieldconfig fieldExpr="primaryIdentifier"/>
-      <fieldconfig fieldExpr="organism.shortName"/>
-      <fieldconfig fieldExpr="length"/>
-    </fields>
-    <longdisplayers>
-      <displayer src="/model/locatedSequenceFeatureImage.jsp"/>
     </longdisplayers>
   </class>
 
@@ -142,14 +128,16 @@
       <fieldconfig fieldExpr="primaryAccession"/>
       <fieldconfig fieldExpr="primaryIdentifier"/>
       <fieldconfig fieldExpr="organism.shortName"/>
+      <fieldconfig fieldExpr="length" displayer="/model/sequenceShortDisplayerWithField.jsp" />
     </fields>
     <longdisplayers>
+      <displayer src="attributeLinkDisplayer.tile"/> 
       <displayer src="/model/proteinInteractionGraph.jsp"/>
     </longdisplayers>
-   
+
     <bagdisplayers>
 
-	<enrichmentwidgetdisplayer title="Gene Ontology Enrichment"
+        <enrichmentwidgetdisplayer title="Gene Ontology Enrichment"
                                  link="org.intermine.bio.web.widget.GoStatURLQuery"
                                  dataSetLoader="org.intermine.bio.web.widget.GoStatLdr"
                                  description="Go terms enriched for proteins in this list."
@@ -158,16 +146,16 @@
                                  filterLabel="ontology"
                                  max="0.10" />
 
-	<enrichmentwidgetdisplayer title="Protein Domain Enrichment"
+  <!--      <enrichmentwidgetdisplayer title="Protein Domain Enrichment"
                                  link="org.flymine.web.widget.ProteinDomainURLQuery"
                                  dataSetLoader="org.flymine.web.widget.ProteinDomainLdr"
                                  label="Protein Domain"
                                  description="Protein Domains enriched for proteins in this list."
                                  filters=""
                                  filterLabel=""
-                                 max="0.10"  />
+                                 max="0.10"  /> -->
 
-	<enrichmentwidgetdisplayer title="UniProt Features"
+        <enrichmentwidgetdisplayer title="UniProt Features"
                                  link="org.intermine.bio.web.widget.UniProtFeaturesURLQuery"
                                  dataSetLoader="org.intermine.bio.web.widget.UniProtFeaturesLdr"
                                  label="Feature"
@@ -176,7 +164,7 @@
                                  filterLabel=""
                                  max="0.10"  />
 
-     	<enrichmentwidgetdisplayer title="UniProt Keywords"
+        <enrichmentwidgetdisplayer title="UniProt Keywords"
                                  link="org.intermine.bio.web.widget.UniProtKeywordsURLQuery"
                                  dataSetLoader="org.intermine.bio.web.widget.UniProtKeywordsLdr"
                                  label="Keyword"
@@ -184,8 +172,6 @@
                                  filters=""
                                  filterLabel=""
                                  max="0.10"  />
-
-
 
     </bagdisplayers>
   </class>
@@ -274,12 +260,6 @@
     </fields>
   </class>
   
-  <class className="org.flymine.model.genomic.Annotation">
-    <fields>
-      <fieldconfig fieldExpr="subject.primaryIdentifier"/>
-    </fields>
-  </class>
-
   <class className="org.flymine.model.genomic.Synonym">
     <fields>
       <fieldconfig fieldExpr="value"/>
@@ -313,5 +293,6 @@
       <fieldconfig fieldExpr="protein.organism.shortName"/>
     </fields>
   </class>
+
 
 </webconfig>
