@@ -1,6 +1,6 @@
 .blueBg {
 	padding: 20px;margin:20px;width:350px;
-	background-color:#F5F0FF;text-align:center;}
+	background-color:#D0FFE7;text-align:center;}
 
 #uploadConfirmMessage {
   text-align:center; font-size: 140%;}
@@ -19,7 +19,7 @@ table.collection t td {
   border: none;}
 
 table.collection tr.even TD{
-  background-color: #F5F0FF;}
+  background-color: #D0FFE7;}
 
 table caption {
   text-align:left;

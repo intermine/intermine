@@ -9,7 +9,7 @@ div.wsListSpinner{
 
 .wsListElement {
    margin-bottom:5px; padding-top:5px; padding-bottom:5px;
-   border-bottom: #F5F0FF solid 1px;}
+   border-bottom: #F5FFF3 solid 1px;}
 
 .wsListDescription {
 	margin-left:15px;
@@ -24,19 +24,19 @@ div.wsListSpinner{
 
 .wsLine {
 	padding:10px;
-	border-bottom: #F5F0FF solid 1px;}
+	border-bottom: #F5FFF3 solid 1px;}
 
 .wsLine_act {
 	padding:10px;
-	border-bottom: #F5F0FF solid 1px; background:#CEE7FF;}
+	border-bottom: #F5FFF3 solid 1px; background:#CEE7FF;}
 
 .wsLine_my {
 	padding:10px;
-	border-bottom: #F5F0FF solid 1px; background: #D9D2E0 url('../images/my_tr.png') no-repeat bottom left;}
+	border-bottom: #F5FFF3 solid 1px; background: #CEE0D8 url('../images/my_tr.png') no-repeat bottom left;}
 
 .wsLine_my_act {
 	padding:10px;
-	border-bottom: #F5F0FF solid 1px;background: #CCC url('../images/my_tr.png') no-repeat bottom left;}
+	border-bottom: #F5FFF3 solid 1px;background: #CEE7FF url('../images/my_tr.png') no-repeat bottom left;}
 
 div.wsLine p.description, div.wsLine div.description
 ,.wsLine_act p.description,.wsLine_act div.description
