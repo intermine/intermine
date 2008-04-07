@@ -137,6 +137,8 @@
 		<attribute name="arrayDesignRef" type="java.lang.String" />
 		<attribute name="derivedArrayDataFile" type="java.lang.String" />
 		<attribute name="resultFile" type="java.lang.String" />
+    <attribute name="linkData" type="java.lang.String" />
+		
 		<!-- from previous sample data, leaving it out for now -->
 		<!--    
     <attribute name="hybridizationName" type="java.lang.String" />

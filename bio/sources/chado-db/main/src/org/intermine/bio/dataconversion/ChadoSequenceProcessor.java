@@ -29,6 +29,7 @@ import java.util.Map.Entry;
 
 import org.apache.commons.collections.keyvalue.MultiKey;
 import org.apache.commons.collections.map.MultiKeyMap;
+import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.flymine.model.genomic.LocatedSequenceFeature;
 import org.flymine.model.genomic.Transcript;
@@ -1187,17 +1188,21 @@ public class ChadoSequenceProcessor extends ChadoProcessor
     protected void createFeatureTempTable(Connection connection) throws SQLException {
         String featureTypesString = getFeaturesString();
         String organismAbbrevsString = getOrganismIdsString();
+        String orgConstraint = "";
+        if (!StringUtils.isEmpty(organismAbbrevsString)) {
+        orgConstraint = "        AND organism_id IN (" + organismAbbrevsString + ")";
+        }
         String query =
             "CREATE TEMPORARY TABLE " + TEMP_FEATURE_TABLE_NAME + " AS"
             + " SELECT feature_id, feature.name, uniquename, cvterm.name as type, seqlen,"
             + "        is_analysis, residues, organism_id"
             + "    FROM feature, cvterm"
             + "    WHERE cvterm.name IN (" + featureTypesString  + ")"
-            + "        AND organism_id IN (" + organismAbbrevsString + ")"
+            + orgConstraint
             + "        AND NOT feature.is_obsolete"
             + "        AND feature.type_id = cvterm.cvterm_id "
             + (getExtraFeatureConstraint() != null
-                            ? "AND (" + getExtraFeatureConstraint() + ")"
+                            ? " AND (" + getExtraFeatureConstraint() + ")"
                             : "");
         Statement stmt = connection.createStatement();
         LOG.info("executing: " + query);
