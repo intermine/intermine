@@ -23,7 +23,8 @@ div.frontBoxList {
 #qbImport {
 	margin-top:10px;}
 
-ol#news li {
-    line-height: 20px;
-    list-style: disc;
-}
+#what {
+	font-size:+2em;}
+
+#intro {
+	font-size: +1.2em;}

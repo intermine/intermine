@@ -38,11 +38,7 @@ li {
   
 .listtoolbox { 
   padding: 0 10px 10px 10px; margin: 0 15px 15px 15px;
-  background-image: url('../images/widget_bg.png');
-  background-repeat: repeat-x;
-  background-position: bottom;
-  border:1px solid #D0B5D7;
-  vertical-align: middle; text-align: left;}
+  background-color: #D0FFE7; vertical-align: middle; text-align: left;}
   
 .listtoolbox h3, #bagDescriptionDiv h3 {
   color:#333; font-size:1.2em;}
@@ -58,22 +54,6 @@ table.listinfotable tr td {
 table.listinfotable tr td.infotitle {
     font-style: normal;
     text-align:right;
-    color:#5C0075;
+    color:#015E3A;
     padding-right:10px;
-}
-ol.widgetList li {
-    float:left;
-    margin-bottom:5px;
-}
-.active, a:link.active, a:visited.active {
-    background-color:#9F67AD;
-    color:white;
-    padding:0 3px 0 3px;
-    /*font-weight: bold;*/
-}
-span.widgetcloser{
-    float:right;
-    padding:0;
-    margin:-5px 0;
-    font-size:0.9em;
 }

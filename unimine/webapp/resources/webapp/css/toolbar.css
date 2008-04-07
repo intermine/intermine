@@ -92,7 +92,7 @@ ul#button_bar {
 .tool_bar_button {
 }
 .tool_bar_link {
-    background-color: #D0B5D7;
+    background-color: #BAECBE;
     color:#FFF;
     margin:50px;
     font-variant: small-caps;
@@ -104,11 +104,11 @@ ul#button_bar {
     text-decoration:underline;
 }
 .tool_bar_link a:hover {
-    color:#5C0075;
+    color:#157502;
 }
 .tool_bar_separator {
     float: left;
-    background-color: #D0B5D7;
+    background-color: #BAECBE;
 }
 .tool_bar_separator span{
     float: left;
@@ -129,7 +129,6 @@ ul#button_bar {
     margin:-3px 0 0;
     font-size:0.9em;
     background-color:#FFF;/*#CAACD2;*/
-    text-align:left
     /*color:#FFF;*/
 }
 .tool_bar_item hr {

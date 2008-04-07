@@ -34,7 +34,7 @@ ul#submenulist li a {
 
 /* =H */
 h1, h2, h3, h1 a, h1 a:visited, label {
-   color:#5C0075; }
+   color:#015E3A; }
 
 /* =IMG */
 img {
@@ -72,26 +72,12 @@ li {
 	clear:both;}
 
 #loginbar {
-    position:absolute; right:0px; top:85px;
+    position:absolute; right:0px; top:75px;
     padding:5px;}	
 
-#topnavcontainer {
-    position:absolute; right:0px; top:0px;
-}
-#taketour {
-    float:right;
-    padding:5px 10px 0px 0px;
-    color:white;
-    font-style:italic;
-    font-weight:bold;
-    font-size:1.2em;
-}
-#taketour a:link,#taketour a:hover, #taketour a:visited {
-    color:white;
-}
 #topnav {
-    float:right;
-    background-color: #5C0075; color: #FFF; font: 0.95em Arial,sans-serif;
+    position:absolute; right:0px; top:0px;
+    background-color: #015E3A; color: #FFF; font: 0.95em Arial,sans-serif;
     padding:5px;}
 
 #pagecontent {
@@ -116,7 +102,7 @@ li {
 */
 .pageDesc { 
     padding: 10px; margin: 0 15px 15px 15px;
-	background-color: #F5F0FF; vertical-align: middle; text-align: left;}
+	background-color: #F5FFF3; vertical-align: middle; text-align: left;}
 
 .contactButton {
   clear:both;
@@ -272,7 +258,7 @@ div#quicksearch {
 
 .roundcorners h1, .gradientbox h1, .plainbox h1{
     margin:0; padding:0px;
-    color:#5C0075; font-size:1.5em;}
+    color:#015E3A; font-size:1.5em;}
 
 .imbox h3{float:left;font-size:1.4em;color:white;}
 
@@ -304,12 +290,8 @@ div#quicksearch {
 #topnav  a:link, #topnav a:visited, #topnav{
     color:#FFF;}
 
-#loginbar  a, #loginbar  a:link, #loginbar a:visited, #loginbar{
-    font-family:"lucida grande", tahoma, verdana, arial, sans-serif;
-	font-size: 1.1em;}
-	
-#loginbar  a, #loginbar  a:link, #loginbar a:visited{
-    font-weight: bold; text-decoration:underline;}
+#loginbar  a:link, #loginbar a:visited, #loginbar{
+	font-weight: bold; color:#FFF; font-size: 1.1em;}
 
 .imbox a{
 	color:white;}

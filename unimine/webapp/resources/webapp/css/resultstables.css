@@ -5,34 +5,9 @@ td.resBar {
 /* =DIV £OBJECTDETAILSTEMPLATETABLE
 -------------------------------------- */
 #summary {
-  position:absolute;
-  min-width:300px; padding:0;
-  width:300px !important;
-  background-color:#fff; border: solid #CCC 1px;}
-
-#summary_loading {
-  width:200px;
-  height:50px;
-  padding-top:15px;
-  text-align: center;
-}
-#summary_loaded {
-  padding:5px;
-}
-
-#handle {
-    height:25px;
-    background-image: url('../theme/heading-bg.gif');
-    background-repeat: repeat-x;
-}
-.summaryhead {
-    font-weight: bold;
-    padding:5px;
-}
-.summaryhead h3 {
-    font-size:1em;
-    margin:0;padding:0;
-}
+  top:360px; left:40%; position:absolute;
+  min-width:100px; padding:5px;
+  background-color:#fff; border: solid black 1px;}
 
 /* template results - used by object & bag details pages */
 /* =TABLE */
@@ -51,7 +26,7 @@ table.refSummary thead tr td.object {
 /* =TD */
 table.refSummary tbody tr td {
   padding: 3px;
-  background-color: #FAF8FF; border-bottom: 1px solid #888; border-right: 1px solid #888;}
+  background-color: #F5FFF3; border-bottom: 1px solid #888; border-right: 1px solid #888;}
 
 /* =SPAN */
 span.templateResCount {
@@ -85,12 +60,13 @@ table.results td td {
 
 /* =TD £TABLE,£BAGDETAILS*/
 table.results tr.even TD{
-  background-color: #F5F0FF;}
+  background-color: #F5FFF3;}
 
 /* =TD, TH £TABLE,£BAGDETAILS*/
 table.results th.checkbox,table.results td.checkbox{
   border-right-style: dotted;}
   
 table.results tr td.highlightCell { 
-	background-color: #FFCBFF; 
-}
+	background-color: #BAECBE; 
+} 
+  
