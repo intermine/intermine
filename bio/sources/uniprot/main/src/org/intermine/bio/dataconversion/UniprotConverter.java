@@ -18,6 +18,7 @@ import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
+import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Properties;
 import java.util.Set;
@@ -836,7 +837,7 @@ public class UniprotConverter extends FileConverter
             geneCollection = null;
 
             genes = new HashMap<String, Item>();
-            synonyms = new HashMap<String, Item>();
+            synonyms = new LinkedHashMap<String, Item>();
             descr = new StringBuffer();
             taxonId = null;
             dbName = null;
