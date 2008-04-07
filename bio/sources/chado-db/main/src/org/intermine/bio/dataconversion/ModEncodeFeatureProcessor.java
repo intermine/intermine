@@ -50,10 +50,14 @@ public class ModEncodeFeatureProcessor extends ChadoSequenceProcessor
      */
     @Override
     protected String getExtraFeatureConstraint() {
-        return "AND feature_id IN "
+        
+        /* TODO: needs information from EO
+        return "feature_id IN "
             + "(SELECT feature_id "
             + "   FROM some_indirection_table "
             + "   WHERE experiment_id = " + chadoExperimentId + ")";
+            */
+        return null;
     }
 
     /**
