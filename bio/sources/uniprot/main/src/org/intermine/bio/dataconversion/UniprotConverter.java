@@ -1013,7 +1013,7 @@ public class UniprotConverter extends FileConverter
                                                    geneSecondaryIdentifier);
 
                     /* set vars if they come from another variable */
-                    Map<String, String> variableLookup = new HashMap<String, String>();
+                    Map<String, String> variableLookup = new LinkedHashMap<String, String>();
                     variableLookup.put("geneIdentifier", geneSecondaryIdentifier);
                     variableLookup.put("genePrimaryIdentifier", genePrimaryIdentifier);
                     variableLookup.put("primaryGeneName", primaryGeneName);
@@ -1040,7 +1040,7 @@ public class UniprotConverter extends FileConverter
                         }
                     }
 
-                    variableLookup = new HashMap<String, String>();
+                    variableLookup = new LinkedHashMap<String, String>();
                     variableLookup.put("geneIdentifier", geneSecondaryIdentifier);
                     variableLookup.put("genePrimaryIdentifier", genePrimaryIdentifier);
                     variableLookup.put("primaryGeneName", primaryGeneName);
