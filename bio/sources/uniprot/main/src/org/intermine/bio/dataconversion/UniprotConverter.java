@@ -56,14 +56,15 @@ public class UniprotConverter extends FileConverter
     private Map<String, Item> dbMaster = new HashMap<String, Item>();
     private Map<String, Item> dsMaster = new HashMap<String, Item>();
     private Map<String, Item> ontoMaster = new HashMap<String, Item>();
-    private Set<String> featureTypes = new HashSet<String>();
     private Map<String, String> geneMaster = new HashMap<String, String>();
     private Map<String, String> interproMaster = new HashMap<String, String>();
     private Set<String> geneIdentifiers = new HashSet<String>();
-    private Map<String, UniProtGeneDataMap> geneDataMaps
-                                                        = new HashMap<String, UniProtGeneDataMap>();
-                                                // map of taxonId to object which determine
-                                                // which data to use for which organism
+
+    // map of taxonId to object which determine which data to use for which organism
+    private Map<String, UniProtGeneDataMap> geneDataMaps =
+        new HashMap<String, UniProtGeneDataMap>();
+
+    // datasources that designate gene names  e.g. WormBase, Ensembl
     private Set<String> geneSources = new HashSet<String>();
     private Map<String, Item> keyMaster = new HashMap<String, Item>();
 
@@ -71,6 +72,30 @@ public class UniprotConverter extends FileConverter
     private Set<String> taxonIds = null;
     private Set<String> doneTaxonIds = new HashSet<String>();
     private boolean useSplitFiles = false;
+
+    private static final Set<String> FEATURE_TYPES = new HashSet<String>();
+
+    static {
+        FEATURE_TYPES.add("initiator methionine");    // VDAC_DROME
+        FEATURE_TYPES.add("signal peptide");            // AMYA_DROME
+        FEATURE_TYPES.add("propeptide");                // ACES_DROME
+        FEATURE_TYPES.add("short sequence motif");       // A4_DROME
+        FEATURE_TYPES.add("transit peptide");          // MMSA_DROME
+        FEATURE_TYPES.add("chain");                      // ADCY2_DROME
+        FEATURE_TYPES.add("peptide");                  // CCAP_DROME
+        FEATURE_TYPES.add("topological domain");      // 5HT2A_DROME
+        FEATURE_TYPES.add("transmembrane region");    // 5HT2A_DROME
+        FEATURE_TYPES.add("active site");             // AMYA_DROME
+        FEATURE_TYPES.add("metal ion-binding site");     // ADCY2_DROME
+        FEATURE_TYPES.add("binding site");             // MMSA_DROME
+        FEATURE_TYPES.add("site");                        // VDAC_DROME
+        FEATURE_TYPES.add("modified residue");         // AMYA_DROME
+        FEATURE_TYPES.add("lipid moiety-binding region"); // ACES_DROME
+        FEATURE_TYPES.add("glycosylation site");      // 5HT2A_DROME
+        FEATURE_TYPES.add("splice variant");           // zen
+        FEATURE_TYPES.add("sequence variant");         // AMYA_DROME
+        FEATURE_TYPES.add("unsure residue");            // none
+    }
 
     /**
      * Constructor
@@ -103,7 +128,6 @@ public class UniprotConverter extends FileConverter
 
         if (doProcess) {
             readConfig();
-            mapFeatures();
             UniprotHandler handler = new UniprotHandler(getItemWriter());
 
             try {
@@ -126,30 +150,6 @@ public class UniprotConverter extends FileConverter
                         + ", done = " + doneTaxonIds);
             }
         }
-    }
-
-    private void mapFeatures() {
-
-        featureTypes.add("initiator methionine");    // VDAC_DROME
-        featureTypes.add("signal peptide");            // AMYA_DROME
-        featureTypes.add("propeptide");                // ACES_DROME
-        featureTypes.add("short sequence motif");       // A4_DROME
-        featureTypes.add("transit peptide");          // MMSA_DROME
-        featureTypes.add("chain");                      // ADCY2_DROME
-        featureTypes.add("peptide");                  // CCAP_DROME
-        featureTypes.add("topological domain");      // 5HT2A_DROME
-        featureTypes.add("transmembrane region");    // 5HT2A_DROME
-        featureTypes.add("active site");             // AMYA_DROME
-        featureTypes.add("metal ion-binding site");     // ADCY2_DROME
-        featureTypes.add("binding site");             // MMSA_DROME
-        featureTypes.add("site");                        // VDAC_DROME
-        featureTypes.add("modified residue");         // AMYA_DROME
-        featureTypes.add("lipid moiety-binding region"); // ACES_DROME
-        featureTypes.add("glycosylation site");      // 5HT2A_DROME
-        featureTypes.add("splice variant");           // zen
-        featureTypes.add("sequence variant");         // AMYA_DROME
-        featureTypes.add("unsure residue");            // none
-
     }
 
     private void readConfig() {
@@ -383,7 +383,7 @@ public class UniprotConverter extends FileConverter
                 // <entry><feature>
                 } else if (qName.equals("feature")
                                 && attrs.getValue("type") != null
-                                && featureTypes.contains(attrs.getValue("type"))) {
+                                && FEATURE_TYPES.contains(attrs.getValue("type"))) {
                     String strType = attrs.getValue("type");
                     String strName = attrs.getValue("description");
                     String strStatus = null;
