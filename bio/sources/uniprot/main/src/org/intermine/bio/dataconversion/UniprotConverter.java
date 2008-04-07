@@ -48,29 +48,25 @@ import org.xml.sax.helpers.DefaultHandler;
  */
 public class UniprotConverter extends FileConverter
 {
-    private Map<String, Object> mapMaster = new HashMap<String, Object>();  // map of maps
     //TODO: This should come from props files!!!!
     protected static final String PROP_FILE = "uniprot_config.properties";
     private static final Logger LOG = Logger.getLogger(UniprotConverter.class);
-    private Map<String, Item> pubMaster = new HashMap<String, Item>();
+    private Map<String, String> pubMaster = new HashMap<String, String>();
     private Map<String, Item> orgMaster = new HashMap<String, Item>();
     private Map<String, Item> dbMaster = new HashMap<String, Item>();
     private Map<String, Item> dsMaster = new HashMap<String, Item>();
     private Map<String, Item> ontoMaster = new HashMap<String, Item>();
-    private Map<String, String> featureTypes = new HashMap<String, String>();
-    private Map<String, Item> geneMaster = new HashMap<String, Item>();
-    private Map<String, Item> interproMaster = new HashMap<String, Item>();
+    private Set<String> featureTypes = new HashSet<String>();
+    private Map<String, String> geneMaster = new HashMap<String, String>();
+    private Map<String, String> interproMaster = new HashMap<String, String>();
     private Set<String> geneIdentifiers = new HashSet<String>();
     private Map<String, UniProtGeneDataMap> geneDataMaps
                                                         = new HashMap<String, UniProtGeneDataMap>();
                                                 // map of taxonId to object which determine
                                                 // which data to use for which organism
     private Set<String> geneSources = new HashSet<String>();
-                                                // datasources that designate gene names
-                                                // e.g. WormBase, Ensembl
-    private Map ids = new HashMap();
-    private Map aliases = new HashMap();
-    private Map keyMaster = new HashMap();
+    private Map<String, Item> keyMaster = new HashMap<String, Item>();
+
     private boolean createInterpro = false;
     private Set<String> taxonIds = null;
     private Set<String> doneTaxonIds = new HashSet<String>();
@@ -88,6 +84,7 @@ public class UniprotConverter extends FileConverter
     /**
      * {@inheritDoc}
      */
+    @Override
     public void process(Reader reader) throws Exception {
         boolean doProcess = true;
         if (useSplitFiles) {
@@ -105,10 +102,9 @@ public class UniprotConverter extends FileConverter
         }
 
         if (doProcess) {
-            mapMaps();
             readConfig();
             mapFeatures();
-            UniprotHandler handler = new UniprotHandler(getItemWriter(), mapMaster, createInterpro);
+            UniprotHandler handler = new UniprotHandler(getItemWriter());
 
             try {
                 SAXParser.parse(new InputSource(reader), handler);
@@ -122,6 +118,7 @@ public class UniprotConverter extends FileConverter
     /**
      * {@inheritDoc}
      */
+    @Override
     public void close() throws Exception {
         if (useSplitFiles) {
             if (!doneTaxonIds.containsAll(taxonIds)) {
@@ -131,46 +128,27 @@ public class UniprotConverter extends FileConverter
         }
     }
 
-    private void mapMaps() {
-
-        mapMaster.put("pubMaster", pubMaster);
-        mapMaster.put("orgMaster", orgMaster);
-        mapMaster.put("dbMaster", dbMaster);
-        mapMaster.put("featureTypes", featureTypes);
-        mapMaster.put("dsMaster", dsMaster);
-        mapMaster.put("ontoMaster", ontoMaster);
-        mapMaster.put("geneMaster", geneMaster);
-        mapMaster.put("interproMaster", interproMaster);
-        mapMaster.put("geneDataMaps", geneDataMaps);
-        mapMaster.put("geneIdentifiers", geneIdentifiers);
-        mapMaster.put("geneSources", geneSources);
-        mapMaster.put("ids", ids);
-        mapMaster.put("aliases", aliases);
-        mapMaster.put("keyMaster", keyMaster);
-
-    }
-
     private void mapFeatures() {
 
-        featureTypes.put("INIT_MET", "initiator methionine");    // VDAC_DROME
-        featureTypes.put("SIGNAL", "signal peptide");            // AMYA_DROME
-        featureTypes.put("PROPEP", "propeptide");                // ACES_DROME
-        featureTypes.put("MOTIF", "short sequence motif");       // A4_DROME
-        featureTypes.put("TRANSIT", "transit peptide");          // MMSA_DROME
-        featureTypes.put("CHAIN", "chain");                      // ADCY2_DROME
-        featureTypes.put("PEPTIDE", "peptide");                  // CCAP_DROME
-        featureTypes.put("TOPO_DOM", "topological domain");      // 5HT2A_DROME
-        featureTypes.put("TRANSMEM", "transmembrane region");    // 5HT2A_DROME
-        featureTypes.put("ACT_SITE", "active site");             // AMYA_DROME
-        featureTypes.put("METAL", "metal ion-binding site");     // ADCY2_DROME
-        featureTypes.put("BINDING", "binding site");             // MMSA_DROME
-        featureTypes.put("SITE", "site");                        // VDAC_DROME
-        featureTypes.put("MOD_RES", "modified residue");         // AMYA_DROME
-        featureTypes.put("LIPID", "lipid moiety-binding region"); // ACES_DROME
-        featureTypes.put("CARBOHYD", "glycosylation site");      // 5HT2A_DROME
-        featureTypes.put("VAR_SEQ", "splice variant");           // zen
-        featureTypes.put("VARIANT", "sequence variant");         // AMYA_DROME
-        featureTypes.put("UNSURE", "unsure residue");            // none
+        featureTypes.add("initiator methionine");    // VDAC_DROME
+        featureTypes.add("signal peptide");            // AMYA_DROME
+        featureTypes.add("propeptide");                // ACES_DROME
+        featureTypes.add("short sequence motif");       // A4_DROME
+        featureTypes.add("transit peptide");          // MMSA_DROME
+        featureTypes.add("chain");                      // ADCY2_DROME
+        featureTypes.add("peptide");                  // CCAP_DROME
+        featureTypes.add("topological domain");      // 5HT2A_DROME
+        featureTypes.add("transmembrane region");    // 5HT2A_DROME
+        featureTypes.add("active site");             // AMYA_DROME
+        featureTypes.add("metal ion-binding site");     // ADCY2_DROME
+        featureTypes.add("binding site");             // MMSA_DROME
+        featureTypes.add("site");                        // VDAC_DROME
+        featureTypes.add("modified residue");         // AMYA_DROME
+        featureTypes.add("lipid moiety-binding region"); // ACES_DROME
+        featureTypes.add("glycosylation site");      // 5HT2A_DROME
+        featureTypes.add("splice variant");           // zen
+        featureTypes.add("sequence variant");         // AMYA_DROME
+        featureTypes.add("unsure residue");            // none
 
     }
 
@@ -181,7 +159,7 @@ public class UniprotConverter extends FileConverter
         } catch (IOException e) {
             throw new RuntimeException("Problem loading properties '" + PROP_FILE + "'", e);
         }
-        Enumeration propNames = props.propertyNames();
+        Enumeration<?> propNames = props.propertyNames();
 
         while (propNames.hasMoreElements()) {
             String code = (String) propNames.nextElement();
@@ -295,8 +273,8 @@ public class UniprotConverter extends FileConverter
         private Item comment;
         private Item feature;
         private Item interpro;  // protein feature
-        private Map synonyms;
-        private Map genes;
+        private Map<String, Item> synonyms;
+        private Map<String, Item> genes;
         private StringBuffer descr;
         private String taxonId;
         private String dbName;
@@ -311,8 +289,8 @@ public class UniprotConverter extends FileConverter
         private ReferenceList interproCollection;
 
         // maps genes for this protein to that gene's lists of names, identifiers, etc
-        private Map<String, Map> geneTOgeneNameTypeToName;
-        private Map<String, Map> geneTOgeneDesignations;
+        private Map<String, Map<String, String>> geneTOgeneNameTypeToName;
+        private Map<String, Map<String, String>> geneTOgeneDesignations;
 
         // reset for each gene
         private Map<String, String> geneNameTypeToName; // ORF, primary, etc value for gene name
@@ -323,58 +301,31 @@ public class UniprotConverter extends FileConverter
                                              // until "gene designation" is verified on next line
 
         // master lists - only one is created
-        private Map<String, String> pubMaster;
-        private Map<String, Item> orgMaster;
-        private Map<String, Item> dbMaster;
-        private Map<String, Item> dsMaster;
-        private Map<String, Item> ontoMaster;
-        private Map<String, String> interproMaster;
-        private Map featureTypes;
         private Item datasource;
         private Item dataset;
-        private Map<String, String> geneMaster;       // itemID to gene
-        private Set<String> geneIdentifiers;  // all gene identifiers
-        private Map<String, Map> geneDataMaps;
-        private Set<String> geneSources;
-        private Map<String, Item> keyMaster;
+
 
         private ItemWriter writer;
 
-        private Stack stack = new Stack();
+        private Stack<String> stack = new Stack<String>();
         private String attName = null;
         private StringBuffer attValue = null;
-        private boolean createInterpro = false;
-        private ArrayList<Item> delayedItems = new ArrayList();
+        private ArrayList<Item> delayedItems = new ArrayList<Item>();
         private boolean isProtein = false;
 
         /**
          * Constructor
          * @param writer the ItemWriter used to handle the resultant items
-         * @param mapMaster the Map of maps
-         * @param createInterpro whether or not to create interpro items
          */
-        public UniprotHandler(ItemWriter writer, Map mapMaster, boolean createInterpro) {
+        public UniprotHandler(ItemWriter writer) {
             this.writer = writer;
-
-            this.pubMaster = (Map) mapMaster.get("pubMaster");
-            this.orgMaster = (Map) mapMaster.get("orgMaster");
-            this.dbMaster = (Map) mapMaster.get("dbMaster");
-            this.dsMaster = (Map) mapMaster.get("dsMaster");
-            this.ontoMaster = (Map) mapMaster.get("ontoMaster");
-            this.interproMaster = (Map) mapMaster.get("interproMaster");
-            this.featureTypes = (Map) mapMaster.get("featureTypes");
-            this.geneMaster = (Map) mapMaster.get("geneMaster");
-            this.geneIdentifiers = (Set) mapMaster.get("geneIdentifiers");
-            this.geneDataMaps = (Map) mapMaster.get("geneDataMaps");
-            this.geneSources = (Set) mapMaster.get("geneSources");
-            this.keyMaster = (Map) mapMaster.get("keyMaster");
-            this.createInterpro = createInterpro;
         }
 
 
         /**
          * {@inheritDoc}
          */
+        @Override
         public void startElement(String uri, String localName, String qName, Attributes attrs)
             throws SAXException {
             attName = null;
@@ -432,7 +383,7 @@ public class UniprotConverter extends FileConverter
                 // <entry><feature>
                 } else if (qName.equals("feature")
                                 && attrs.getValue("type") != null
-                                && featureTypes.containsValue(attrs.getValue("type"))) {
+                                && featureTypes.contains(attrs.getValue("type"))) {
                     String strType = attrs.getValue("type");
                     String strName = attrs.getValue("description");
                     String strStatus = null;
@@ -481,7 +432,7 @@ public class UniprotConverter extends FileConverter
                             interproItemId = interpro.getIdentifier();
                             interproMaster.put(interproId, interproItemId);
                         } else {
-                            interproItemId = (String) interproMaster.get(interproId);
+                            interproItemId = interproMaster.get(interproId);
                         }
                         if (interproCollection.getRefIds().isEmpty()) {
                             protein.addCollection(interproCollection);
@@ -507,12 +458,12 @@ public class UniprotConverter extends FileConverter
                         organism.setAttribute("taxonId", taxonId);
                         writer.store(ItemHelper.convert(organism));
                     } else {
-                        organism = (Item) orgMaster.get(taxonId);
+                        organism = orgMaster.get(taxonId);
                     }
                     protein.setReference("organism", organism.getIdentifier());
                     // get relevant database for this organism
                     // dbName = (String) taxIdToDb.get(taxonId);
-                    UniProtGeneDataMap geneDataMap = (UniProtGeneDataMap) geneDataMaps.get(taxonId);
+                    UniProtGeneDataMap geneDataMap = geneDataMaps.get(taxonId);
                     boolean noDatabase = false;
                     if (geneDataMap != null) {
                         dbName = geneDataMap.getSource();
@@ -543,7 +494,7 @@ public class UniprotConverter extends FileConverter
                         pubId = pub.getIdentifier();
                         writer.store(ItemHelper.convert(pub));
                     } else {
-                        pubId = (String) pubMaster.get(attrs.getValue("id"));
+                        pubId = pubMaster.get(attrs.getValue("id"));
                     }
                     // if this is the first publication for this protein, add collection
                     if (pubCollection.getRefIds().isEmpty()) {
@@ -635,6 +586,7 @@ public class UniprotConverter extends FileConverter
         /**
          * {@inheritDoc}
          */
+        @Override
         public void characters(char[] ch, int start, int length) {
             if (attName != null) {
 
@@ -671,6 +623,7 @@ public class UniprotConverter extends FileConverter
         /**
          * {@inheritDoc}
          */
+        @Override
         public void endElement(String uri, String localName, String qName)
             throws SAXException {
             super.endElement(uri, localName, qName);
@@ -684,15 +637,16 @@ public class UniprotConverter extends FileConverter
                     // only store the protein if it has a primary accession value
                     if (hasPrimary) {
                         protein.setAttribute("description", descr.toString());
-                        ReferenceList evidenceColl = new ReferenceList("evidence", new ArrayList());
+                        ReferenceList evidenceColl =
+                            new ReferenceList("evidence", new ArrayList<String>());
                         protein.addCollection(evidenceColl);
                         evidenceColl.addRefId(dataset.getIdentifier());
 
                         // now that we know the taxonID, we can store the genes
                         if (hasPrimary && !genes.isEmpty()) {
-                            Iterator i = genes.values().iterator();
+                            Iterator<Item> i = genes.values().iterator();
                             while (i.hasNext()) {
-                                Item gene = (Item) i.next();
+                                Item gene = i.next();
                                 finaliseGene(gene, protein.getReference("organism").getRefId());
                             }
                         }
@@ -874,15 +828,15 @@ public class UniprotConverter extends FileConverter
         private void initProtein() {
 
             protein = createItem("Protein");
-            featureCollection = new ReferenceList("features", new ArrayList());
-            keywordCollection = new ReferenceList("keywords", new ArrayList());
-            commentCollection = new ReferenceList("comments", new ArrayList());
-            pubCollection = new ReferenceList("publications", new ArrayList());
-            interproCollection = new ReferenceList("proteinDomains", new ArrayList());
+            featureCollection = new ReferenceList("features", new ArrayList<String>());
+            keywordCollection = new ReferenceList("keywords", new ArrayList<String>());
+            commentCollection = new ReferenceList("comments", new ArrayList<String>());
+            pubCollection = new ReferenceList("publications", new ArrayList<String>());
+            interproCollection = new ReferenceList("proteinDomains", new ArrayList<String>());
             geneCollection = null;
 
-            genes = new HashMap();
-            synonyms = new HashMap();
+            genes = new HashMap<String, Item>();
+            synonyms = new HashMap<String, Item>();
             descr = new StringBuffer();
             taxonId = null;
             dbName = null;
@@ -892,25 +846,25 @@ public class UniprotConverter extends FileConverter
             hasPrimary = false;
 
             // maps gene to that gene's lists
-            geneTOgeneNameTypeToName = new HashMap();
-            geneTOgeneDesignations = new HashMap();
+            geneTOgeneNameTypeToName = new HashMap<String, Map<String, String>>();
+            geneTOgeneDesignations = new HashMap<String, Map<String, String>>();
         }
 
 
         private void initGene() {
 
             // list of possible names for this gene
-            geneNames = new HashSet();
+            geneNames = new HashSet<String>();
             // ORF, primary, etc name value for gene
-            geneNameTypeToName = new HashMap();
+            geneNameTypeToName = new HashMap<String, String>();
             // gene names from each database
-            geneDesignations = new HashMap();
+            geneDesignations = new HashMap<String, String>();
 
         }
 
         private Item getDataSource(String title)
             throws SAXException {
-            Item database = (Item) dbMaster.get(title);
+            Item database = dbMaster.get(title);
             try {
 
                 if (database == null) {
@@ -928,13 +882,13 @@ public class UniprotConverter extends FileConverter
 
         private Item getKeyword(String title)
         throws SAXException {
-            Item keyword = (Item) keyMaster.get(title);
+            Item keyword = keyMaster.get(title);
             try {
 
                 if (keyword == null) {
                     keyword = createItem("OntologyTerm");
                     keyword.setAttribute("name", title);
-                    Item ontology = (Item) ontoMaster.get("UniProtKeyword");
+                    Item ontology = ontoMaster.get("UniProtKeyword");
                     keyword.addReference(new Reference("ontology", ontology.getIdentifier()));
                     keyMaster.put(title, keyword);
                     writer.store(ItemHelper.convert(keyword));
@@ -948,7 +902,7 @@ public class UniprotConverter extends FileConverter
 
         private Item getDataSet(String title)
             throws SAXException {
-            Item ds = (Item) dsMaster.get(title);
+            Item ds = dsMaster.get(title);
             try {
 
                 if (ds == null) {
@@ -957,7 +911,8 @@ public class UniprotConverter extends FileConverter
                     ds.setReference("dataSource", datasource);
                     dsMaster.put(title, ds);
 
-                    ReferenceList evidenceColl = new ReferenceList("evidence", new ArrayList());
+                    ReferenceList evidenceColl =
+                        new ReferenceList("evidence", new ArrayList<String>());
                     protein.addCollection(evidenceColl);
                     evidenceColl.addRefId(ds.getIdentifier());
                     writer.store(ItemHelper.convert(ds));
@@ -972,7 +927,7 @@ public class UniprotConverter extends FileConverter
         private Item setOnto(String title)
         throws SAXException {
 
-            Item ontology = (Item) ontoMaster.get(title);
+            Item ontology = ontoMaster.get(title);
             try {
                 if (ontology == null) {
                     ontology = createItem("Ontology");
@@ -997,18 +952,18 @@ public class UniprotConverter extends FileConverter
                 String primaryGeneName = null;
 
                 // get list for this gene
-                HashMap nameTypeToName = (HashMap)
+                Map<String, String> nameTypeToName =
                     geneTOgeneNameTypeToName.get(gene.getIdentifier());
-                HashMap designations = (HashMap)
+                Map<String, String> designations =
                     geneTOgeneDesignations.get(gene.getIdentifier());
 
                 // loop through each name for this gene
                 String notCG = null;
-                Iterator i = nameTypeToName.keySet().iterator();
+                Iterator<String> i = nameTypeToName.keySet().iterator();
                 while (i.hasNext()) {
 
-                    String type = (String) i.next();
-                    String name = (String) nameTypeToName.get(type);
+                    String type = i.next();
+                    String name = nameTypeToName.get(type);
 
                     if (type.equals("primary")) {
                         primaryGeneName = name;
@@ -1041,7 +996,7 @@ public class UniprotConverter extends FileConverter
                 String genePrimaryIdentifier = null;
 
                 // use map to find out where to get ids
-                UniProtGeneDataMap geneDataMap = (UniProtGeneDataMap) geneDataMaps.get(taxonId);
+                UniProtGeneDataMap geneDataMap = geneDataMaps.get(taxonId);
 
                 if (geneDataMap != null) {
 
@@ -1057,7 +1012,7 @@ public class UniprotConverter extends FileConverter
                                                    geneSecondaryIdentifier);
 
                     /* set vars if they come from another variable */
-                    Map variableLookup = new HashMap();
+                    Map<String, String> variableLookup = new HashMap<String, String>();
                     variableLookup.put("geneIdentifier", geneSecondaryIdentifier);
                     variableLookup.put("genePrimaryIdentifier", genePrimaryIdentifier);
                     variableLookup.put("primaryGeneName", primaryGeneName);
@@ -1084,20 +1039,20 @@ public class UniprotConverter extends FileConverter
                         }
                     }
 
-                    variableLookup = new HashMap();
+                    variableLookup = new HashMap<String, String>();
                     variableLookup.put("geneIdentifier", geneSecondaryIdentifier);
                     variableLookup.put("genePrimaryIdentifier", genePrimaryIdentifier);
                     variableLookup.put("primaryGeneName", primaryGeneName);
 
                     /* set unique identifier */
-                    uniqueGeneIdentifier = (String) variableLookup.get(geneDataMap.getAttribute());
+                    uniqueGeneIdentifier = variableLookup.get(geneDataMap.getAttribute());
                     variableLookup = null;
                 }
 
                 // uniprot data source has primary key of Gene.primaryIdentifier
                 // only create gene if a value was found
                 if (uniqueGeneIdentifier != null) {
-                    String geneItemId = (String) geneMaster.get(uniqueGeneIdentifier);
+                    String geneItemId = geneMaster.get(uniqueGeneIdentifier);
 
                     // UniProt sometimes has same identifier paired with two primaryIdentifiers
                     // causes problems merging other data sources.  Simple check to prevent
@@ -1148,7 +1103,7 @@ public class UniprotConverter extends FileConverter
                             gene.setAttribute("symbol", primaryGeneName);
                         }
                         if (geneCollection == null) {
-                            geneCollection = new ReferenceList("genes", new ArrayList());
+                            geneCollection = new ReferenceList("genes", new ArrayList<String>());
                             protein.addCollection(geneCollection);
                         }
                         geneMaster.put(uniqueGeneIdentifier, gene.getIdentifier());
@@ -1159,8 +1114,8 @@ public class UniprotConverter extends FileConverter
                         while (i.hasNext()) {
 
                             String synonymDescr = "";
-                            String type = (String) i.next();
-                            String name = (String) nameTypeToName.get(type);
+                            String type = i.next();
+                            String name = nameTypeToName.get(type);
 
                             if (type.equals("ordered locus")) {
                                 synonymDescr = "ordered locus";
@@ -1186,20 +1141,22 @@ public class UniprotConverter extends FileConverter
             }
         }
 
-        private String setGeneVars(Map designations, Map nameTypeToName, Map variableLookup,
+        private String setGeneVars(Map<String, String> designations,
+                                   Map<String, String> nameTypeToName,
+                                   Map<String, String> variableLookup,
                                    String srcType, String src, String var) {
             if (srcType == null) {
                 return var;
             }
             if (srcType.equals("datasource") && designations != null) {
-                return (String) designations.get(src);
+                return designations.get(src);
             } else if (srcType.equals("name") && nameTypeToName != null) {
-                return (String) nameTypeToName.get(src);
+                return nameTypeToName.get(src);
             } else if (srcType.equals("variable") && variableLookup != null) {
                 if (src.equals("NULL")) {
                     return null;
                 }
-                return (String) variableLookup.get(src);
+                return variableLookup.get(src);
             }
             return var;
         }
@@ -1213,8 +1170,8 @@ public class UniprotConverter extends FileConverter
             return UniprotConverter.this.createItem(className);
         }
     }
-    
-    
+
+
         /**
          * Which datasource to use with which organism
          * @author Julie Sullivan
@@ -1314,6 +1271,7 @@ public class UniprotConverter extends FileConverter
             /**
              * {@inheritDoc}
              */
+            @Override
             public String toString() {
                 return "attribute: " + attribute
                 + ", source: " + source
