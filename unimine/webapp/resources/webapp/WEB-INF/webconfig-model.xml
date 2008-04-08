@@ -135,7 +135,9 @@
       <displayer src="/model/proteinInteractionGraph.jsp"/>
     </longdisplayers>
 
+
     <bagdisplayers>
+       <displayer src="attributeLinkDisplayer.tile"/>
 
         <enrichmentwidgetdisplayer title="Gene Ontology Enrichment"
                                  link="org.intermine.bio.web.widget.GoStatURLQuery"
@@ -172,6 +174,15 @@
                                  filters=""
                                  filterLabel=""
                                  max="0.10"  />
+
+
+
+       <bagtabledisplayer title="Protein Interactions"
+                                 pathStrings="Protein.proteinInteractions.interactingProteins"
+                                 link="org.intermine.bio.web.widget.ProteinInteractionURLQuery"
+                                 description="Proteins that genetically interact with Proteins in this list - data from &lt;a href=&quot;http://www.thebiogrid.org/&quot; target=&quot;_new&quot;&gt;BioGRID&lt;/a&gt;.  Counts may include the same interaction more than once if observed in multiple experiments."
+                                 fields="primaryAccession"
+                                 columnTitle="Interactions"/>
 
     </bagdisplayers>
   </class>
