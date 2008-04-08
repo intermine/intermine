@@ -50,7 +50,7 @@
 <attribute name="name" value="Pair-rule protein"/>
 <reference name="ontology" ref_id="1_1"/>
 </item>
-<item id="4_13" class="http://www.flymine.org/model/genomic#Synonym">
+<item id="4_14" class="http://www.flymine.org/model/genomic#Synonym">
 <attribute name="type" value="symbol"/>
 <attribute name="value" value="GTP-bp"/>
 <reference name="source" ref_id="0_2"/>
@@ -164,7 +164,7 @@
 <reference name="source" ref_id="0_1"/>
 <reference name="subject" ref_id="2_1"/>
 </item>
-<item id="4_14" class="http://www.flymine.org/model/genomic#Synonym">
+<item id="4_13" class="http://www.flymine.org/model/genomic#Synonym">
 <attribute name="type" value="symbol"/>
 <attribute name="value" value="128up"/>
 <reference name="source" ref_id="0_2"/>
