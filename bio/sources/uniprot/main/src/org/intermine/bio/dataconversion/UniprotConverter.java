@@ -58,9 +58,9 @@ public class UniprotConverter extends FileConverter
     private Map<String, Item> dbMaster = new HashMap<String, Item>();
     private Map<String, Item> dsMaster = new HashMap<String, Item>();
     private Map<String, Item> ontoMaster = new HashMap<String, Item>();
-    private Map<String, String> geneMaster = new HashMap<String, String>();
+    private Map<String, String> geneMaster = new LinkedHashMap<String, String>();
     private Map<String, String> interproMaster = new HashMap<String, String>();
-    private Set<String> geneIdentifiers = new HashSet<String>();
+    private Set<String> geneIdentifiers = new LinkedHashSet<String>();
 
     // map of taxonId to object which determine which data to use for which organism
     private Map<String, UniProtGeneDataMap> geneDataMaps =
