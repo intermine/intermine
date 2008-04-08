@@ -836,7 +836,7 @@ public class UniprotConverter extends FileConverter
             interproCollection = new ReferenceList("proteinDomains", new ArrayList<String>());
             geneCollection = null;
 
-            genes = new HashMap<String, Item>();
+            genes = new LinkedHashMap<String, Item>();
             synonyms = new LinkedHashMap<String, Item>();
             descr = new StringBuffer();
             taxonId = null;
