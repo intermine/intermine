@@ -19,6 +19,7 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
+import java.util.LinkedHashSet;
 import java.util.Map;
 import java.util.Properties;
 import java.util.Set;
@@ -855,11 +856,11 @@ public class UniprotConverter extends FileConverter
         private void initGene() {
 
             // list of possible names for this gene
-            geneNames = new HashSet<String>();
+            geneNames = new LinkedHashSet<String>();
             // ORF, primary, etc name value for gene
-            geneNameTypeToName = new HashMap<String, String>();
+            geneNameTypeToName = new LinkedHashMap<String, String>();
             // gene names from each database
-            geneDesignations = new HashMap<String, String>();
+            geneDesignations = new LinkedHashMap<String, String>();
 
         }
 
