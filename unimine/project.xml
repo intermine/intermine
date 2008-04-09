@@ -28,7 +28,7 @@
 
     <source name="psi-intact" type="psi">
       <property name="src.data.dir" location="/shared/data/psi/intact/current"/>
-      <property name="organisms" value="7227"/>
+      <property name="organisms" value="7227 6239 4932"/>
     </source>
 
     <source name="go" type="go" dump="true">
@@ -37,12 +37,20 @@
 
     <source name="go-annotation" type="go-annotation">
       <property name="ontologyfile" location="/shared/data/go-annotation/gene_ontology.obo"/>
-      <property name="src.data.dir" location="/shared/data/go-annotation/flybase/current"/>
-      <property name="src.data.dir.includes" value="*gene_association*"/>
+      <property name="src.data.dir" location="/shared/data/go-annotation/current"/>
+      <property name="src.data.dir.includes" value="*/gene_association*"/>
     </source>
 
     <source name="pride" type="pride" dump="true">
       <property name="src.data.dir" location="/shared/data/pride/xml/"/>
+    </source>
+
+    <source name="kegg-pathway" type="kegg-pathway">
+      <property name="src.data.dir" location="/shared/data/kegg/current"/>
+    </source>
+
+    <source name="pdb" type="pdb">
+      <property name="src.data.dir" location="/shared/data/pdb/current"/>
     </source>
 
     <source name="update-publications" type="update-publications">

@@ -10,7 +10,8 @@
     </longdisplayers>
   </class>
 
-  <class className="org.flymine.model.genomic.Author">
+
+<class className="org.flymine.model.genomic.Author">
     <fields>
       <fieldconfig fieldExpr="name"/>
     </fields>
@@ -83,6 +84,10 @@
                                  filterLabel="Ontology"
                                  max="0.10" />
 
+      <bagtabledisplayer title="Pathway Information (KEGG)" pathStrings="Gene.pathways" link="org.intermine.bio.web.widget.PathwayURLQuery"
+                         description="Most common &lt;a href=&quot;http://www.genome.jp/kegg/&quot; target=&quot;_new&quot;&gt;KEGG pathways&lt;/a&gt; for this list." />
+
+
 <!-- <enrichmentwidgetdisplayer title="Protein Domain Enrichment"
                                  link="org.flymine.web.widget.ProteinDomainURLQuery"
                                  dataSetLoader="org.flymine.web.widget.ProteinDomainLdr"
@@ -139,6 +144,14 @@
     <bagdisplayers>
        <displayer src="attributeLinkDisplayer.tile"/>
 
+       <bagtabledisplayer
+         title="Experiment information"
+         pathStrings="Protein.proteinIdentifications.prideExperiment"
+         link="org.intermine.bio.web.widget.PrideExperimentURLQuery"    
+         description="Counts of proteins per PRIDE experiment" />
+ 
+
+
         <enrichmentwidgetdisplayer title="Gene Ontology Enrichment"
                                  link="org.intermine.bio.web.widget.GoStatURLQuery"
                                  dataSetLoader="org.intermine.bio.web.widget.GoStatLdr"
@@ -185,6 +198,18 @@
                                  columnTitle="Interactions"/>
 
     </bagdisplayers>
+  </class>
+
+  <class className="org.flymine.model.genomic.PrideExperiment">
+	<fields>
+	   <fieldconfig fieldExpr="title"/>
+	</fields>
+  </class>
+
+  <class className="org.flymine.model.genomic.ProteinIdentification">
+	<fields>
+	   <fieldconfig fieldExpr="protein.primaryAccession"/>
+	</fields>
   </class>
 
   <class className="org.flymine.model.genomic.Transcript">
