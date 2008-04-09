@@ -97,22 +97,6 @@ public class ModEncodeFeatureProcessor extends ChadoSequenceProcessor
         return synonym;
     }
 
-
-    private Item getDataSourceItem(String dataSourceName) {
-        return getChadoDBConverter().getDataSourceItem(dataSourceName);
-    }
-
-    private Item getDataSetItem(String dataSourceName, int taxonId) {
-        OrganismRepository or = OrganismRepository.getOrganismRepository();
-        OrganismData od = or.getOrganismDataByTaxon(taxonId);
-        String species = od.getSpecies();
-        String genus = od.getGenus();
-        String name = "FlyBase " + genus + " " + species + " data set";
-        String description = "The FlyBase " + genus + " " + species + " genome";
-        return getChadoDBConverter().getDataSetItem(name, "http://www.flybase.org", description,
-                                                    getDataSourceItem(dataSourceName));
-    }
-
     /**
      * Method to add dataSets and DataSources to items before storing
      */
