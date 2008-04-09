@@ -65,7 +65,8 @@ public class CreateSiteMapLinkIns
         closeFile(writer);
 
         String[] bioentity = {"gene", "protein"};
-        String[] ids = {"180454", "7227", "7237"};
+        // TODO put this in the properties file
+        String[] ids = {"180454", "6239", "7227", "7237", "7217", "7220", "7222", "7230", "7234", "7238", "7240", "7244", "7260", "7245"};
 
         // Only create new files if they don't already exist, we have no input file
         // to compare dates to so must rely on output directory being cleaned to
@@ -79,7 +80,7 @@ public class CreateSiteMapLinkIns
                     while (i.hasNext()) {
                         ResultsRow r =  (ResultsRow) i.next();
                         String identifier = (String) r.get(0);
-                        writer.write(getURL(LOC + identifier 
+                        writer.write(getURL(LOC + identifier
                                             + "&amp;class=" + o, OBJECTDETAILSWEIGHT));
                     }
                     closeFile(writer);
