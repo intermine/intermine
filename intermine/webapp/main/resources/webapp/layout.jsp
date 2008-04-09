@@ -87,12 +87,14 @@
     
     <c:set var="googleAnalyticsId" value="${WEB_PROPERTIES['google.analytics.id']}"/>
     <c:if test="${!empty googleAnalyticsId}">
-      <script defer="true" src="http://www.google-analytics.com/urchin.js" type="text/javascript">
-      </script>
-      <script defer="true" type="text/javascript">
-        _uacct = "${googleAnalyticsId}";
-        try {urchinTracker();} catch (e) {<%-- ignore - google is down --%>  }
-      </script>
+        <script defer="true" type="text/javascript">
+            document.write(unescape("%3Cscript src='http://www.google-analytics.com/ga.js' type='text/javascript'%3E%3C/script%3E"));
+        </script>
+        <script defer="true" type="text/javascript">
+            var pageTracker = _gat._getTracker(${googleAnalyticsId});
+            pageTracker._initData();
+            pageTracker._trackPageview();
+        </script>
     </c:if>
 
   </body>
