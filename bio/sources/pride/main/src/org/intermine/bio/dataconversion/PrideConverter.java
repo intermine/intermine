@@ -41,8 +41,6 @@ import org.xml.sax.helpers.DefaultHandler;
 public class PrideConverter extends FileConverter
 {
     protected static final String GENOMIC_NS = "http://www.flymine.org/model/genomic#";
-    //private static final Logger LOG = Logger.getLogger(PrideConverter.class);
-    private Map<String, Map<String, String>> mapMaster = new HashMap<String, Map<String, String>>();
     
     //the following maps should avoid that not unnecessary objects will be created
     private Map<String, String> mapOrganism = new HashMap<String, String>();
@@ -56,7 +54,7 @@ public class PrideConverter extends FileConverter
     private Map<String, String> mapTissue = new HashMap<String, String>();
     private Map<String, String> mapProject = new HashMap<String, String>();
     private Map<String, String> mapPeptide = new HashMap<String, String>();
-    final private PrideIndexFasta proteinIndex = new PrideIndexFasta("/shared/data/pride/fasta/");
+    private PrideIndexFasta proteinIndex = new PrideIndexFasta("/shared/data/pride/fasta/");
 
     /**
      * Constructor
@@ -68,29 +66,12 @@ public class PrideConverter extends FileConverter
     }
 
 
-    // master map of all maps used across XML files
-    private void mapMaps() {
-        mapMaster.put("mapOrganism", mapOrganism);
-        mapMaster.put("mapPublication", mapPublication);
-        mapMaster.put("mapGOTerm", mapGOTerm);
-        mapMaster.put("mapProtein", mapProtein);
-        mapMaster.put("mapPSIMod", mapPSIMod);
-        mapMaster.put("mapCellType", mapCellType);
-        mapMaster.put("mapMedSubject", mapMedSubject);
-        mapMaster.put("mapDisease", mapDisease);
-        mapMaster.put("mapTissue", mapTissue);
-        mapMaster.put("mapProject", mapProject);
-        mapMaster.put("mapPeptide", mapPeptide);
-    }
-
-
     /**
      * {@inheritDoc}
      */
     public void process(Reader reader) throws Exception {
 
-        mapMaps();
-        PrideHandler handler = new PrideHandler(getItemWriter(), mapMaster);
+        PrideHandler handler = new PrideHandler(getItemWriter());
         
         try {
             SAXParser.parse(new InputSource(reader), handler);
@@ -112,18 +93,6 @@ public class PrideConverter extends FileConverter
         private String attName = null;
         private StringBuffer attValue = null;
      
-      //private maps
-        private Map<String, String> mapOrganism;
-        private Map<String, String> mapPublication;
-        private Map<String, String> mapGOTerm;
-        private Map<String, String> mapProtein;
-        private Map<String, String> mapPSIMod;
-        private Map<String, String> mapCellType;
-        //private Map<String, String> mapMedSubject;
-        private Map<String, String> mapDisease;
-        private Map<String, String> mapTissue;
-        private Map<String, String> mapProject;
-        private Map<String, String> mapPeptide;
         
         //private Items
         private Item itemOrganism = null;
@@ -154,31 +123,17 @@ public class PrideConverter extends FileConverter
         
         //private ReferenceList
         private ReferenceList listPeptides = null;
-        
+
         /**
          * Constructor
          * @param writer the ItemWriter used to handle the resultant items
-         * @param mapMaster master map of all maps used across XML files
          */
-        public PrideHandler(ItemWriter writer, Map<String, Map<String, String>> mapMaster) {
-            this.writer         = writer;
-            this.mapOrganism    = (Map<String, String>) mapMaster.get("mapOrganism");
-            this.mapGOTerm      = (Map<String, String>) mapMaster.get("mapGOTerm");
-            this.mapPublication = (Map<String, String>) mapMaster.get("mapPublication");
-            this.mapProtein     = (Map<String, String>) mapMaster.get("mapProtein");
-            this.mapPSIMod      = (Map<String, String>) mapMaster.get("mapPSIMod");
-            this.mapCellType    = (Map<String, String>) mapMaster.get("mapCellType");
-            //this.mapMedSubject  = (Map<String, String>) mapMaster.get("mapMedSubject");
-            this.mapDisease     = (Map<String, String>) mapMaster.get("mapDisease");
-            this.mapTissue      = (Map<String, String>) mapMaster.get("mapTissue");
-            this.mapProject     = (Map<String, String>) mapMaster.get("mapProject");
-            this.mapPeptide     = (Map<String, String>) mapMaster.get("mapPeptide");
+        public PrideHandler(ItemWriter writer) {
+            this.writer = writer;
         }
 
-
-        /**
-         * {@inheritDoc}
-         */
+        
+        
         /**
          * if only attName is set, the the attValue is between the tags and must
          *  store in endElement().
