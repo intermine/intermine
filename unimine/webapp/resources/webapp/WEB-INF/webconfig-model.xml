@@ -1,12 +1,19 @@
 <webconfig>
   
+
   <class className="org.flymine.model.genomic.Publication">
     <fields>
       <fieldconfig fieldExpr="firstAuthor"/>
       <fieldconfig fieldExpr="title"/>
+      <fieldconfig fieldExpr="year"/>
+      <fieldconfig fieldExpr="journal"/>
+      <fieldconfig fieldExpr="volume"/>
+      <fieldconfig fieldExpr="pages"/>
+      <fieldconfig fieldExpr="pubMedId"/>
     </fields>
+
     <longdisplayers>
-      <displayer src="/model/publication.jsp"/>
+      <displayer src="attributeLinkDisplayer.tile"/>
     </longdisplayers>
   </class>
 
@@ -27,17 +34,18 @@
     <tabledisplayer src="/model/dataSourceShort.jsp"/>
   </class>
 
+
+
   <class className="org.flymine.model.genomic.Organism">
     <fields>
       <fieldconfig fieldExpr="name"/>
-      <fieldconfig fieldExpr="taxonId"/>
-      <fieldconfig fieldExpr="abbreviation"/>
+      <fieldconfig fieldExpr="taxonId" />
     </fields>
     <longdisplayers>
-      <displayer src="/model/organismLong.jsp"/>
+      <displayer src="attributeLinkDisplayer.tile"/>
     </longdisplayers>
   </class>
-
+  
   <class className="org.flymine.model.genomic.LocatedSequenceFeature">
     <fields>
       <fieldconfig fieldExpr="primaryIdentifier"/>
@@ -108,6 +116,16 @@
                                  externalLink="http://www.ncbi.nlm.nih.gov/entrez/query.fcgi?cmd=Retrieve&amp;db=PubMed&amp;dopt=Abstract&amp;list_uids="
                                  append="" />
     </bagdisplayers>
+  </class>
+
+  <class className="org.flymine.model.genomic.Pathway">
+    <fields>
+      <fieldconfig fieldExpr="identifier" />
+      <fieldconfig fieldExpr="name" />
+    </fields>
+    <longdisplayers>
+      <displayer src="attributeLinkDisplayer.tile"/>
+    </longdisplayers>
   </class>
 
   <class className="org.flymine.model.genomic.ProteinDomain">
@@ -198,6 +216,33 @@
                                  columnTitle="Interactions"/>
 
     </bagdisplayers>
+  </class>
+
+    <class className="org.flymine.model.genomic.ProteinStructure">
+    <fields>
+      <fieldconfig fieldExpr="identifier"/>
+      <fieldconfig fieldExpr="title"/>
+      <fieldconfig fieldExpr="technique"/>
+      <fieldconfig fieldExpr="classification"/>
+      <fieldconfig fieldExpr="resolution" />
+      <fieldconfig fieldExpr="prosaQScore"/>
+      <fieldconfig fieldExpr="prosaZScore"/>
+      <fieldconfig fieldExpr="start"/>
+      <fieldconfig fieldExpr="end"/>
+      <fieldconfig fieldExpr="alignment" showInResults="false" />
+    </fields>
+    <longdisplayers>
+      <displayer src="attributeLinkDisplayer.tile"/>
+      <displayer src="/model/modelledStructure.jsp"/>
+    </longdisplayers>
+  </class>
+
+  <class className="org.flymine.model.genomic.ProteinInteractionRegion">
+    <fields>
+      <fieldconfig fieldExpr="name"/>
+      <fieldconfig fieldExpr="protein.primaryAccession"/>
+      <fieldconfig fieldExpr="protein.organism.name"/>
+    </fields>
   </class>
 
   <class className="org.flymine.model.genomic.PrideExperiment">
