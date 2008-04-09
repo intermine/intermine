@@ -14,6 +14,20 @@
     <aspect-source name="UniProt" url="http://www.uniprot.org"/>
   </aspect>
 
+  <aspect name="Protein Structure">
+    <subtitle>3-D protein structures for &lt;i&gt;D. melanogaster&lt;/i&gt; and &lt;i&gt;A. gambiae&lt;/i&gt;.</subtitle>
+    <icon-image>model/images/pstructure.gif</icon-image>
+    <large-image>model/images/pstructure.gif</large-image>
+    <intro-text>
+      3-D protein structures for &lt;i&gt;D. melanogaster&lt;/i&gt;, &lt;i&gt;Homo sapiens&lt;/i&gt;, &lt;i&gt;Mus musculus&lt;/i&gt;
+      and &lt;i&gt;Saccharomyces cerevisiae&lt;/i&gt;.
+    </intro-text>
+    <tile-name>model/proteinStructure.jsp</tile-name>
+    <aspect-source name="Kenji Mizuguchi lab"
+                   url="http://www-cryst.bioc.cam.ac.uk/~kenji/NEW/index.htm"/>
+     <aspect-source name="RCSB Protein Data Bank" url="http://www.rcsb.org/pdb/home/home.do"/>
+  </aspect>
+
   <aspect name="Protein Interactions">
     <subtitle>IntAct</subtitle>
     <icon-image>model/images/proteinInteraction.gif</icon-image>
@@ -21,7 +35,7 @@
     <tile-name></tile-name>
     <intro-text>
       Proteins formatted in the Proteomics Standards Initiative (PSI)
-      molecular interaction (PSI MI) format can be mapped to the MalariaMine
+      molecular interaction (PSI MI) format can be mapped to the UniMine
       data model.
     </intro-text>
     <starting-points>
@@ -30,6 +44,7 @@
     <tile-name>model/proteinInteraction.jsp</tile-name>
     <aspect-source name="IntAct" url="http://www.ebi.ac.uk/intact/"/>
   </aspect>
+
 
   <aspect name="Gene Ontology">
     <subtitle></subtitle>
@@ -45,15 +60,23 @@
       their associated biological processes, cellular components and
       molecular functions in a species-independent manner.
 &lt;p&gt;
-      GO annotations for &lt;i&gt;Plasmodium falciparum 3D7&lt;/i&gt; have
-      been loaded into MalariaMine.  The GO annotations are 'attached' to
-      Genes and so each gene has a reference (link) to a list of its GO
-      annotations (if available).
     </intro-text>
     <starting-points>Gene GOTerm GOAnnotation</starting-points>
     <tile-name>model/GO.jsp</tile-name>
     <aspect-source name="Gene Ontology Consortium" url="http://www.geneontology.org/"/>
   </aspect>
+
+  <aspect name="Pathways">
+    <subtitle></subtitle>
+    <icon-image>model/images/pathways.png</icon-image>
+    <large-image>model/images/pathways.png</large-image>
+    <intro-text>
+       KEGG pathway data for &lt;i&gt;Drosophila melanogaster&lt;/i&gt;.
+    </intro-text>
+    <tile-name>model/pathways.jsp</tile-name>
+    <aspect-source name="Kegg pathway database" url="http://www.genome.jp/kegg/pathway.html"/>
+  </aspect>
+
 
   <aspect name="Pride">
     <subtitle>Experiments and Publication</subtitle>

@@ -97,6 +97,51 @@
   </tr>
 
 
+  <tr><td rowspan="5"  class="leftcol">
+        <html:link action="/aspect?name=Protein%20Structure">
+        <p> <img src="model/images/pstructure.gif" /></p>
+        <p> Protein Structure</p></html:link></td>
+    <td> <i>D. melanogaster</i> </td>
+    <td> 3-D structure predictions for protein domains</td>
+    <td> <a href="http://www-cryst.bioc.cam.ac.uk/~kenji/NEW/index.htm" target="_new">Kenji Mizuguchi</a> - 9th April 2006</td>
+    <td> &nbsp;</td>
+    <td> &nbsp;</td>
+  </tr>
+
+  <tr>
+    <td> <i>H. sapiens</i> </td>
+    <td> &nbsp;</td>
+    <td> &nbsp;</td>
+    <td> &nbsp;</td>
+    <td> &nbsp;</td>
+  </tr>
+
+  <tr>
+    <td> <i>D. melanogaster</i> </td>
+    <td> Experimentally determined 3-D structures</td>
+    <td> <a href="http://www.rcsb.org/pdb/home/home.do" target="_new">PDB [Protein Data Bank]</a> - 9th August 2007</td>
+    <td> &nbsp;</td>
+    <td> &nbsp;</td>
+  </tr>
+
+  <tr>
+    <td> <i>M. musculus</i> </td>
+    <td> &nbsp;</td>
+    <td> &nbsp;</td>
+    <td> &nbsp;</td>
+    <td> &nbsp;</td>
+  </tr>
+
+  <tr>
+    <td> <i>S. cerevisiae</i> </td>
+    <td> &nbsp;</td>
+    <td> &nbsp;</td>
+    <td> &nbsp;</td>
+    <td> &nbsp;</td>
+  </tr>
+
+
+
 
   <tr><td rowspan="4"  class="leftcol">
         <html:link action="/aspect?name=Interactions">
@@ -192,10 +237,21 @@
   </tr>
 
   <tr><td rowspan="1" class="leftcol">
+       <html:link action="/aspect?name=Pathways">
+        <p> <img src="model/images/pathways.png" /></p>
+        <p> Pathways</p></html:link></td>
+    <td> <i>D. melanogaster</i></td>
+    <td> Pathway information and the genes involved in them</td>
+    <td> <a href="http://www.genome.jp/kegg/" target="_new">KEGG</a> - Release 45</td>
+    <td> Kanehisa et al - <a href="http://www.ncbi.nlm.nih.gov/entrez/query.fcgi?cmd=Retrieve&db=PubMed&dopt=Abstract&list_uids=16381885" target="_new">PubMed: 16381885</a></td>
+    <td> &nbsp;</td>
+  </tr>
+
+  <tr><td rowspan="1" class="leftcol">
        <html:link action="/aspect?name=Pride">
         <p> <img src="model/images/pride.jpg" /></p>
         <p> PRIDE</p></html:link></td>
-    <td> <i>a lot of organisms</i> </td>
+    <td> &nbsp;</td>
     <td> PRoteomics IDEntifications database</td>
     <td> <a href="http://www.ebi.ac.uk/pride/" target="_new">PRIDE</a> </td>
     <td> OBBeC Life - Quick Guide to PRIDE <br><br>
