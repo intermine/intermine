@@ -176,10 +176,11 @@ public class ModEncodeMetaDataProcessor extends ChadoProcessor
      */
     private static class AppliedProtocol
     {
-        private Integer experimentId; // chado
+        private Integer experimentId;      // chado
         private Integer protocolId;
-        private Integer intermineObjectId;
-        private Integer levelDag; // not used
+        private String itemIdentifier;     // e.g. "0_12"
+        private Integer intermineObjectId; 
+        private Integer levelDag;          // not used
         // the output data associated to this applied protocol
         private List<Integer> outputData = new ArrayList<Integer>();
     }
@@ -193,6 +194,7 @@ public class ModEncodeMetaDataProcessor extends ChadoProcessor
         private Integer dataId;
         // the list of applied protocols for which this data item is an input
         private List<Integer> nextAppliedProtocols = new ArrayList<Integer>();
+        private String itemIdentifier;
         private Integer intermineObjectId;
 
     }
@@ -354,6 +356,12 @@ public class ModEncodeMetaDataProcessor extends ChadoProcessor
         }
         LOG.info("created " + appliedProtocolMap.size() + " DAG nodes in map");
         res.close();
+        
+        // DB
+        printMapAP (appliedProtocolMap);
+        printMapDATA (appliedDataMap);
+        
+        
         // now traverse the DAG, and associate experiment with all the applied protocols
         traverseDag();
     }
@@ -373,6 +381,7 @@ public class ModEncodeMetaDataProcessor extends ChadoProcessor
         while (currentIterationAP.size() > 0) {
             nextIterationAP = buildADagLevel (currentIterationAP);
             currentIterationAP = nextIterationAP;
+            LOG.info("DB REFDAT ---------: " + currentIterationAP.toString());
             LOG.info("DB ITER: " + currentIterationAP.toString());
         }
     }
@@ -405,12 +414,16 @@ public class ModEncodeMetaDataProcessor extends ChadoProcessor
                 Integer currentOD = od.next();
                 List<Integer> nextProtocols = new ArrayList<Integer>();                
                 // setting references from data to submission (experiment)
+                // TODO: there are instances of the same reference set multiple
+                // times (?). CHECK
                 Reference referenceData = new Reference();
                 referenceData.setName("experimentSubmission");
                 referenceData.setRefId(experimentMap.get(experimentId).itemIdentifier);
                 getChadoDBConverter().store(referenceData, dataIdMap.get(currentOD));       
 
-                LOG.info("DB REFDAT: " + experimentId + "|" + currentOD + "|" + dataIdMap.get(currentOD));
+                //LOG.info("DB REFDAT: " + experimentId + "|" + currentOD + "|" + dataIdMap.get(currentOD));
+                LOG.info("DB REFDAT: " + experimentMap.get(experimentId).itemIdentifier
+                        + "|" + currentOD + "|" + dataIdMap.get(currentOD));
 
                 if (appliedDataMap.containsKey(currentOD)) {
                     // fill the list of next (children) protocols
@@ -440,12 +453,14 @@ public class ModEncodeMetaDataProcessor extends ChadoProcessor
                     nextIterationProtocols.add(currentAPId);
 
                     // and set the reference from applied protocol to the submission
+                    // TODO: there are instances of the same reference set multiple
+                    // times (?). CHECK
                     Reference reference = new Reference();
                     reference.setName("experimentSubmission");
                     reference.setRefId(experimentMap.get(experimentId).itemIdentifier);
                     getChadoDBConverter().store(reference, appliedProtocolIdMap.get(currentAPId));       
 
-                    LOG.info("DB REFEX: " + experimentId + "|" + currentAPId + "|" +  appliedProtocolIdMap.get(currentId));
+                    LOG.info("DB REFEX: " + experimentId + "|" + currentAPId + "|" +  appliedProtocolIdMap.get(currentAPId));
                 }
             }
         }
@@ -1194,7 +1209,37 @@ public class ModEncodeMetaDataProcessor extends ChadoProcessor
         }
     }
 
+    private void printMapAP (Map<Integer, AppliedProtocol> m){
+        Iterator<Integer> i = m.keySet().iterator();
+        while (i.hasNext()) {
+            
+            Integer a = i.next();
+            //LOG.info("DB APMAP ***" + a +  ": " + i2.next() );
+            
+            AppliedProtocol ap = m.get(a);
 
+            List<Integer> ids = ap.outputData;
+            Iterator<Integer> i2 = ids.iterator();
+            while (i2.hasNext()) {
+                LOG.info("DB APMAP " + a +  ": " + i2.next() );
+            }
+        }
+    }
 
+    private void printMapDATA (Map<Integer, AppliedData> m){
+        Iterator<Integer> i = m.keySet().iterator();
+        while (i.hasNext()) {
+            Integer a = i.next();
+            AppliedData ap = m.get(a);
+
+            List<Integer> ids = ap.nextAppliedProtocols;
+            Iterator i2 = ids.iterator();
+            while (i2.hasNext()) {
+                LOG.info("DB DATAMAP " + a + ": " + i2.next() );
+            }
+        }
+    }
+
+    
 
 }
