@@ -10,15 +10,9 @@ package org.intermine.web;
  *
  */
 
-import java.io.Reader;
 import java.util.Iterator;
 import java.util.List;
 
-import javax.servlet.ServletContext;
-import javax.xml.stream.XMLStreamException;
-import javax.xml.stream.XMLStreamWriter;
-
-import org.apache.log4j.Logger;
 import org.intermine.model.userprofile.Tag;
 import org.intermine.objectstore.ObjectStoreWriter;
 import org.intermine.util.SAXParser;
@@ -26,6 +20,14 @@ import org.intermine.web.bag.PkQueryIdUpgrader;
 import org.intermine.web.logic.bag.IdUpgrader;
 import org.intermine.web.logic.profile.Profile;
 import org.intermine.web.logic.profile.ProfileManager;
+
+import java.io.Reader;
+
+import javax.servlet.ServletContext;
+import javax.xml.stream.XMLStreamException;
+import javax.xml.stream.XMLStreamWriter;
+
+import org.apache.log4j.Logger;
 import org.xml.sax.Attributes;
 import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
