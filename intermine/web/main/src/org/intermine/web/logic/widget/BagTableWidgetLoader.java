@@ -10,6 +10,8 @@
  *
  */
 
+import java.io.UnsupportedEncodingException;
+import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
@@ -71,11 +73,12 @@ public class BagTableWidgetLoader
      * @param urlGen the class that generates the pathquery used in the links from the widget
      * @param columnTitle title for count column
      * @throws ClassNotFoundException if some class in the widget paths is not found
+     * @throws UnsupportedEncodingException 
      */
     public BagTableWidgetLoader(String pathString, InterMineBag bag, ObjectStore os, 
                                 WebConfig webConfig, Model model, Map classKeys, 
                                 String fields, String urlGen, String columnTitle) 
-    throws ClassNotFoundException {
+    throws ClassNotFoundException, UnsupportedEncodingException {
         Path pathTmp = new Path(model, pathWithNoConstraints(pathString));
         ClassDescriptor cld = pathTmp.getEndClassDescriptor();
         String type = cld.getUnqualifiedName();
@@ -146,7 +149,7 @@ public class BagTableWidgetLoader
                             {
                                 String.valueOf((Long) element),
                                 "widgetAction.do?bagName=" + bag.getName() + "&link=" + urlGen
-                                                + "&key=" + key
+                                                + "&key=" + URLEncoder.encode(key, "UTF-8")
                             });
                 }
 

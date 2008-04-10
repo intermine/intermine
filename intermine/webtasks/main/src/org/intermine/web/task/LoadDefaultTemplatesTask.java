@@ -179,7 +179,9 @@ public class LoadDefaultTemplatesTask extends Task
         } catch (Exception e) {
             throw new BuildException(e);
         } finally {
-            profileDest.enableSaving();
+            if (profileDest != null) {
+            	profileDest.enableSaving();
+            }
             Thread.currentThread().setContextClassLoader(cl);
             try {
                 if (osw != null) {
