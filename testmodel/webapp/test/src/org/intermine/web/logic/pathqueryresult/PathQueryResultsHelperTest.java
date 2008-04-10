@@ -109,7 +109,7 @@ public class PathQueryResultsHelperTest extends MockStrutsTestCase
         BagQueryConfig bagQueryConfig = null;
         ServletContext servletContext = new ServletContextSimulator();
         ObjectStoreWriter userProfileOSW =  ObjectStoreWriterFactory.getObjectStoreWriter("osw.userprofile-test");
-        ProfileManager profileManager = new ProfileManager(os, userProfileOSW, servletContext);
+        ProfileManager profileManager = new ProfileManager(os, userProfileOSW, classKeys);
         int userId = 0;
         Profile profile = new Profile(profileManager, "modifyBagActionTest", userId, "pass",
                                       new HashMap(), new HashMap(), new HashMap());

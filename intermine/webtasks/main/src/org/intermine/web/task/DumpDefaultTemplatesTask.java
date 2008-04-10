@@ -10,18 +10,11 @@ package org.intermine.web.task;
  *
  */
 
-import java.io.FileWriter;
-import java.io.IOException;
-import java.io.StringWriter;
+import java.util.List;
 import java.util.Map;
 import java.util.Properties;
 
-import javax.servlet.ServletContext;
-import javax.xml.stream.XMLOutputFactory;
-import javax.xml.stream.XMLStreamWriter;
-
-import org.apache.tools.ant.BuildException;
-import org.apache.tools.ant.Task;
+import org.intermine.metadata.FieldDescriptor;
 import org.intermine.objectstore.ObjectStore;
 import org.intermine.objectstore.ObjectStoreFactory;
 import org.intermine.objectstore.ObjectStoreWriter;
@@ -32,6 +25,18 @@ import org.intermine.web.logic.ClassKeyHelper;
 import org.intermine.web.logic.Constants;
 import org.intermine.web.logic.profile.Profile;
 import org.intermine.web.logic.profile.ProfileManager;
+
+import java.io.FileWriter;
+import java.io.IOException;
+import java.io.StringWriter;
+
+import javax.servlet.ServletContext;
+import javax.xml.stream.XMLOutputFactory;
+import javax.xml.stream.XMLStreamWriter;
+
+import org.apache.tools.ant.BuildException;
+import org.apache.tools.ant.Task;
+
 import servletunit.ServletContextSimulator;
 
 /**
@@ -108,10 +113,11 @@ public class DumpDefaultTemplatesTask extends Task
             Properties classKeyProps = new Properties();
             classKeyProps.load(getClass().getClassLoader()
                                .getResourceAsStream("class_keys.properties"));
-            Map classKeys = ClassKeyHelper.readKeys(os.getModel(), classKeyProps);
+            Map<String, List<FieldDescriptor>> classKeys 
+            = ClassKeyHelper.readKeys(os.getModel(), classKeyProps);
             ServletContext servletContext = new ServletContextSimulator();
             servletContext.setAttribute(Constants.CLASS_KEYS, classKeys);
-            ProfileManager pm = new ProfileManager(os, userProfileOS, servletContext);
+            ProfileManager pm = new ProfileManager(os, userProfileOS, classKeys);
 
             if (!pm.hasProfile(username)) {
                 throw new BuildException("no such user " + username);

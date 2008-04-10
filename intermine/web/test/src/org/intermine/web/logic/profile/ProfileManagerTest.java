@@ -40,8 +40,7 @@ import org.intermine.objectstore.ObjectStoreException;
 import org.intermine.objectstore.ObjectStoreWriter;
 import org.intermine.objectstore.ObjectStoreWriterFactory;
 import org.intermine.util.DynamicUtil;
-import org.intermine.web.ProfileBinding;
-import org.intermine.web.ProfileManagerBinding;
+
 import org.intermine.web.bag.PkQueryIdUpgrader;
 import org.intermine.web.logic.ClassKeyHelper;
 import org.intermine.web.logic.Constants;
@@ -49,6 +48,8 @@ import org.intermine.web.logic.bag.InterMineBag;
 import org.intermine.web.logic.query.PathQuery;
 import org.intermine.web.logic.query.SavedQuery;
 import org.intermine.web.logic.template.TemplateQuery;
+import org.intermine.web.ProfileBinding;
+import org.intermine.web.ProfileManagerBinding;
 
 import java.io.BufferedReader;
 import java.io.InputStream;
@@ -100,7 +101,7 @@ public class ProfileManagerTest extends XMLTestCase
         classKeys = ClassKeyHelper.readKeys(os.getModel(), classKeyProps);
         servletContext = new ServletContextSimulator();
         servletContext.setAttribute(Constants.CLASS_KEYS, classKeys);
-        pm = new ProfileManager(os, uosw, servletContext);
+        pm = new ProfileManager(os, uosw, classKeys);
     }
 
     private void setUpUserProfiles() throws Exception {

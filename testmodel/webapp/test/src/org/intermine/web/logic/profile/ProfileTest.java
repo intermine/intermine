@@ -13,6 +13,7 @@ package org.intermine.web.logic.profile;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Properties;
 
 import org.intermine.metadata.Model;
 import org.intermine.objectstore.ObjectStore;
@@ -20,6 +21,7 @@ import org.intermine.objectstore.ObjectStoreException;
 import org.intermine.objectstore.ObjectStoreFactory;
 import org.intermine.objectstore.ObjectStoreWriter;
 import org.intermine.objectstore.ObjectStoreWriterFactory;
+import org.intermine.web.logic.ClassKeyHelper;
 import org.intermine.web.logic.bag.InterMineBag;
 import org.intermine.web.logic.query.PathQuery;
 import org.intermine.web.logic.query.SavedQuery;
@@ -28,8 +30,6 @@ import org.intermine.web.logic.template.TemplateQuery;
 import javax.servlet.ServletContext;
 
 import servletunit.struts.MockStrutsTestCase;
-
-import junit.framework.TestCase;
 
 public class ProfileTest extends MockStrutsTestCase
 {
@@ -42,7 +42,8 @@ public class ProfileTest extends MockStrutsTestCase
     private ObjectStoreWriter userprofileOS;
     private ObjectStore objectstoreOS;
     ProfileManager profileManager;
-
+    Map classKeys;
+    
     public ProfileTest(String arg) {
         super(arg);
     }
@@ -62,6 +63,12 @@ public class ProfileTest extends MockStrutsTestCase
                                      "");
         profileManager = new DummyProfileManager(userprofileOS,
                                                  getActionServlet().getServletContext());
+        
+        Properties classKeyProps = new Properties();
+        classKeyProps.load(getClass().getClassLoader()
+                           .getResourceAsStream("class_keys.properties"));
+        classKeys = ClassKeyHelper.readKeys(objectstoreOS.getModel(), classKeyProps);
+        
     }
 
     public void tearDown() throws Exception {
@@ -172,8 +179,11 @@ public class ProfileTest extends MockStrutsTestCase
     {
         public DummyProfileManager(ObjectStore os, ServletContext servletContext)
             throws ObjectStoreException {
+            
+
+
             super(os, ObjectStoreWriterFactory.getObjectStoreWriter("osw.userprofile-test"),
-                  servletContext);
+                  classKeys);
         }
 
         public void saveProfile(Profile profile) {

@@ -65,7 +65,7 @@ public class ModifyBagActionTest extends MockStrutsTestCase
         ObjectStore os = ObjectStoreFactory.getObjectStore("os.unittest");
         ServletContext servletContext = new ServletContextSimulator();
         servletContext.setAttribute(Constants.CLASS_KEYS, Collections.emptyMap());
-        profileManager = new ProfileManager(os, userProfileOSW, servletContext);
+        profileManager = new ProfileManager(os, userProfileOSW, Collections.emptyMap());
 
         Profile profile = new Profile(profileManager, "modifyBagActionTest", userId, "pass",
                                       new HashMap(), new HashMap(), new HashMap());

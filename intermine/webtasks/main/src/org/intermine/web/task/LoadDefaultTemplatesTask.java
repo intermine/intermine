@@ -13,10 +13,12 @@ package org.intermine.web.task;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Map;
 import java.util.Properties;
 import java.util.Set;
 
+import org.intermine.metadata.FieldDescriptor;
 import org.intermine.model.userprofile.Tag;
 import org.intermine.objectstore.ObjectStore;
 import org.intermine.objectstore.ObjectStoreException;
@@ -113,10 +115,11 @@ public class LoadDefaultTemplatesTask extends Task
             Properties classKeyProps = new Properties();
             classKeyProps.load(getClass().getClassLoader()
                                .getResourceAsStream("class_keys.properties"));
-            Map classKeys = ClassKeyHelper.readKeys(os.getModel(), classKeyProps);
+            Map<String, List<FieldDescriptor>> classKeys 
+            = ClassKeyHelper.readKeys(os.getModel(), classKeyProps);
             ServletContext servletContext = new ServletContextSimulator();
             servletContext.setAttribute(Constants.CLASS_KEYS, classKeys);
-            ProfileManager pm = new ProfileManager(os, userProfileOS, servletContext);
+            ProfileManager pm = new ProfileManager(os, userProfileOS, classKeys);
             Reader reader = new FileReader(xmlFile);
 
             // Copy into existing or new superuser profile

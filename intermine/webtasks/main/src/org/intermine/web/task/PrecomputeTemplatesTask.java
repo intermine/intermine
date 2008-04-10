@@ -273,7 +273,7 @@ public class PrecomputeTemplatesTask extends Task
                                .getResourceAsStream("class_keys.properties"));
             Map classKeys = ClassKeyHelper.readKeys(os.getModel(), classKeyProps);
             servletContext.setAttribute(Constants.CLASS_KEYS, classKeys);
-            pm = new ProfileManager(os, userProfileOS, servletContext);
+            pm = new ProfileManager(os, userProfileOS, classKeys);
         } catch (Exception err) {
             throw new BuildException("Exception creating objectstore/profile manager", err);
         }
