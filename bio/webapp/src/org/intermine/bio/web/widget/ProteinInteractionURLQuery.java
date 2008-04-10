@@ -66,6 +66,10 @@ public class ProteinInteractionURLQuery implements WidgetURLQuery
                 "Protein.proteinInteractions.interactingProteins.primaryAccession");
         Path interactingProteinName = MainHelper.makePath(model, q, 
                 "Protein.proteinInteractions.interactingProteins.name");
+        Path interactingShortname = MainHelper.makePath(model, q, 
+        "Protein.proteinInteractions.shortName");
+        Path interactingPathRole = MainHelper.makePath(model, q, 
+        "Protein.proteinInteractions.proteinRole");
         Path interactingProteinPubMedId = MainHelper.makePath(model, q, 
                 "Protein.proteinInteractions.experiment.publication.pubMedId");
         
@@ -75,7 +79,9 @@ public class ProteinInteractionURLQuery implements WidgetURLQuery
         view.add(interactingProteinPrimaryAccession);
         view.add(interactingProteinName);
         view.add(interactingProteinPubMedId);
-
+        view.add(interactingShortname);
+        view.add(interactingPathRole);
+        
         q.setView(view);
 
         String bagType = bag.getType();
@@ -91,7 +97,7 @@ public class ProteinInteractionURLQuery implements WidgetURLQuery
         constraintOp = ConstraintOp.EQUALS;
         code = q.getUnusedConstraintCode();
         PathNode geneNode = 
-        q.addNode("Protein.proteinInteractions.interactingProteins.primaryAccession");
+        q.addNode("Protein.proteinInteractions.interactingProteins.primaryIdentifier");
         Constraint geneConstraint = new Constraint(constraintOp, key, false, label, code, id, null);
         geneNode.getConstraints().add(geneConstraint);
 
