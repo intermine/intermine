@@ -21,16 +21,20 @@ import org.intermine.objectstore.ObjectStoreWriter;
 import org.intermine.objectstore.ObjectStoreWriterFactory;
 import org.intermine.web.ProfileManagerBinding;
 import org.intermine.web.logic.ClassKeyHelper;
+import org.intermine.web.logic.Constants;
 import org.intermine.web.logic.profile.ProfileManager;
 
 import java.io.FileWriter;
 import java.io.IOException;
 
+import javax.servlet.ServletContext;
 import javax.xml.stream.XMLOutputFactory;
 import javax.xml.stream.XMLStreamWriter;
 
 import org.apache.tools.ant.BuildException;
 import org.apache.tools.ant.Task;
+
+import servletunit.ServletContextSimulator;
 
 /**
  * Task to write an XML file of a webapp userprofile object store.
@@ -99,7 +103,11 @@ public class ProfileWriteTask extends Task
             classKeyProps.load(getClass().getClassLoader()
                                .getResourceAsStream("class_keys.properties"));
             Map<String, List<FieldDescriptor>> classKeys 
-            = ClassKeyHelper.readKeys(os.getModel(), classKeyProps);            
+            = ClassKeyHelper.readKeys(os.getModel(), classKeyProps);    
+            
+            ServletContext servletContext = new ServletContextSimulator(); 
+            servletContext.setAttribute(Constants.CLASS_KEYS, classKeys);             
+            
             ProfileManager pm = new ProfileManager(os, userProfileOS, classKeys);
 
             XMLOutputFactory factory = XMLOutputFactory.newInstance();

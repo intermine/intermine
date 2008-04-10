@@ -92,9 +92,6 @@ public class ProfileManagerTest extends XMLTestCase
         osw = ObjectStoreWriterFactory.getObjectStoreWriter("osw.unittest");
         os = osw.getObjectStore();
 
-        uosw =  ObjectStoreWriterFactory.getObjectStoreWriter("osw.userprofile-test");
-        uos = uosw.getObjectStore();
-
         Properties classKeyProps = new Properties();
         classKeyProps.load(getClass().getClassLoader()
                            .getResourceAsStream("class_keys.properties"));
