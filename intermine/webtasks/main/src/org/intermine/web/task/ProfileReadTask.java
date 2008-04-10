@@ -10,9 +10,11 @@ package org.intermine.web.task;
  *
  */
 
+import java.util.List;
 import java.util.Map;
 import java.util.Properties;
 
+import org.intermine.metadata.FieldDescriptor;
 import org.intermine.objectstore.ObjectStore;
 import org.intermine.objectstore.ObjectStoreException;
 import org.intermine.objectstore.ObjectStoreFactory;
@@ -115,10 +117,11 @@ public class ProfileReadTask extends Task
             Properties classKeyProps = new Properties();
             classKeyProps.load(getClass().getClassLoader()
                                .getResourceAsStream("class_keys.properties"));
-            Map classKeys = ClassKeyHelper.readKeys(os.getModel(), classKeyProps);
+            Map<String, List<FieldDescriptor>> classKeys 
+            = ClassKeyHelper.readKeys(os.getModel(), classKeyProps);
             ServletContext servletContext = new ServletContextSimulator();
             servletContext.setAttribute(Constants.CLASS_KEYS, classKeys);
-            ProfileManager pm = new ProfileManager(os, userProfileOS, servletContext);
+            ProfileManager pm = new ProfileManager(os, userProfileOS, classKeys);
             osw = new ObjectStoreWriterInterMineImpl(os);
 
             PkQueryIdUpgrader upgrader;

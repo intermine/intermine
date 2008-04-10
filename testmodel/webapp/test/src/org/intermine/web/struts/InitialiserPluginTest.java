@@ -81,7 +81,7 @@ public class InitialiserPluginTest extends TestCase
     private class NonCheckingProfileManager extends ProfileManager {
         public NonCheckingProfileManager(ObjectStore os, ObjectStoreWriter userProfileOSW,
                                          ServletContext servletContext) {
-            super(os, userProfileOSW, servletContext);
+            super(os, userProfileOSW, classKeys);
         }
 
         // override to prevent the checker from objecting to

@@ -10,7 +10,6 @@ package org.intermine.web.logic.profile;
  *
  */
 
-import java.io.StringReader;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
@@ -21,13 +20,20 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import javax.servlet.ServletContext;
-
 import net.sourceforge.iharder.Base64;
 
-import org.apache.commons.collections.keyvalue.MultiKey;
-import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
+import org.intermine.objectstore.query.ConstraintOp;
+import org.intermine.objectstore.query.ConstraintSet;
+import org.intermine.objectstore.query.ContainsConstraint;
+import org.intermine.objectstore.query.Query;
+import org.intermine.objectstore.query.QueryClass;
+import org.intermine.objectstore.query.QueryField;
+import org.intermine.objectstore.query.QueryObjectReference;
+import org.intermine.objectstore.query.QueryValue;
+import org.intermine.objectstore.query.Results;
+import org.intermine.objectstore.query.SimpleConstraint;
+import org.intermine.objectstore.query.SingletonResults;
+
 import org.intermine.metadata.ClassDescriptor;
 import org.intermine.metadata.FieldDescriptor;
 import org.intermine.metadata.Model;
@@ -42,17 +48,6 @@ import org.intermine.objectstore.ObjectStore;
 import org.intermine.objectstore.ObjectStoreException;
 import org.intermine.objectstore.ObjectStoreWriter;
 import org.intermine.objectstore.proxy.ProxyReference;
-import org.intermine.objectstore.query.ConstraintOp;
-import org.intermine.objectstore.query.ConstraintSet;
-import org.intermine.objectstore.query.ContainsConstraint;
-import org.intermine.objectstore.query.Query;
-import org.intermine.objectstore.query.QueryClass;
-import org.intermine.objectstore.query.QueryField;
-import org.intermine.objectstore.query.QueryObjectReference;
-import org.intermine.objectstore.query.QueryValue;
-import org.intermine.objectstore.query.Results;
-import org.intermine.objectstore.query.SimpleConstraint;
-import org.intermine.objectstore.query.SingletonResults;
 import org.intermine.util.CacheMap;
 import org.intermine.util.DynamicUtil;
 import org.intermine.web.logic.bag.InterMineBag;
@@ -60,11 +55,16 @@ import org.intermine.web.logic.query.PathQuery;
 import org.intermine.web.logic.query.PathQueryBinding;
 import org.intermine.web.logic.query.SavedQueryBinding;
 import org.intermine.web.logic.search.WebSearchable;
-import org.intermine.web.logic.session.SessionMethods;
 import org.intermine.web.logic.tagging.TagTypes;
 import org.intermine.web.logic.template.TemplateQuery;
 import org.intermine.web.logic.template.TemplateQueryBinding;
 import org.intermine.web.struts.AspectController;
+
+import java.io.StringReader;
+
+import org.apache.commons.collections.keyvalue.MultiKey;
+import org.apache.commons.lang.StringUtils;
+import org.apache.log4j.Logger;
 
 /**
  * Class to manage and persist user profile data such as saved bags
@@ -80,18 +80,18 @@ public class ProfileManager
     protected CacheMap profileCache = new CacheMap();
     private Map<String, TagChecker> tagCheckers = null;
     private HashMap<MultiKey, List<Tag>> tagCache = null;
-    private final ServletContext servletContext;
-
+    private Map<String, List<FieldDescriptor>> classKeys = null;
+    
     /**
      * Construct a ProfileManager for the webapp
      * @param os the ObjectStore to which the webapp is providing an interface
      * @param userProfileOS the object store that hold user profile information
-     * @param servletContext global ServletContext object
+     * @param classKeys classKeys
      */
     public ProfileManager(ObjectStore os, ObjectStoreWriter userProfileOS,
-                          ServletContext servletContext) {
+                          Map classKeys) {
         this.os = os;
-        this.servletContext = servletContext;
+        
         tagCheckers = makeTagCheckers(os.getModel());
         this.osw = userProfileOS;
     }
@@ -229,11 +229,11 @@ public class ProfileManager
             try {
                 Map queries =
                     SavedQueryBinding.unmarshal(new StringReader(query.getQuery()), savedBags,
-                                                SessionMethods.getClassKeys(servletContext));
+                                                classKeys);
                 if (queries.size() == 0) {
                     queries =
                         PathQueryBinding.unmarshal(new StringReader(query.getQuery()), savedBags,
-                                                   SessionMethods.getClassKeys(servletContext));
+                                                   classKeys);
                     if (queries.size() == 1) {
                         Map.Entry entry = (Map.Entry) queries.entrySet().iterator().next();
                         String name = (String) entry.getKey();
@@ -255,8 +255,7 @@ public class ProfileManager
             SavedTemplateQuery template = (SavedTemplateQuery) i.next();
             try {
                 StringReader sr = new StringReader(template.getTemplateQuery());
-                Map templateMap = templateBinding.unmarshal(sr, savedBags, 
-                        SessionMethods.getClassKeys(servletContext));
+                Map templateMap = templateBinding.unmarshal(sr, savedBags, classKeys);
                 String templateName = (String) templateMap.keySet().iterator().next();
                 TemplateQuery templateQuery = (TemplateQuery) templateMap.get(templateName);
                 templateQuery.setSavedTemplateQuery(template);
