@@ -39,20 +39,17 @@ public class TemplateConfigurator
      */
     public TemplateQuery getConfiguredTemplate(TemplateQuery origTemplate,
             List<ConstraintLoad> newConstraints) {
-        /* Made according to org.intermine.web.logic.template.
-         *  TemplateHelper.templateFormToTemplateQuery() */    
         TemplateQuery template = (TemplateQuery) origTemplate.clone();
         newConstraintIt = newConstraints.iterator();
-        for (PathNode node : template.getEditableNodes()) {
-            for (Constraint c : template.getEditableConstraints(node)) {
-                ConstraintLoad load = nextNewConstraint();
-                int constraintIndex = node.getConstraints().indexOf(c);
-                Object extraValue = 
-                    (load.getExtraValue() != null) ? load.getExtraValue(): c.getExtraValue();
-                Constraint newConstraint = new Constraint(load.getConstraintOp(), load.getValue(), 
-                        true, c.getDescription(), c.getCode(), c.getIdentifier(), extraValue); 
-                node.getConstraints().set(constraintIndex, newConstraint);
-            }
+        List<Constraint> contraints = template.getAllEditableConstraints(); 
+        for (int i = 0; i < contraints.size(); i++) {
+            Constraint c = contraints.get(i);
+            ConstraintLoad load = nextNewConstraint();
+            Object extraValue = 
+                (load.getExtraValue() != null) ? load.getExtraValue(): c.getExtraValue();
+            Constraint newConstraint = new Constraint(load.getConstraintOp(), load.getValue(), 
+                    true, c.getDescription(), c.getCode(), c.getIdentifier(), extraValue); 
+            contraints.set(i, newConstraint);
         }
         return template;
     }
