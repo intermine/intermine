@@ -15,6 +15,7 @@ import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
 
+import org.apache.log4j.Logger;
 import org.intermine.objectstore.query.ConstraintOp;
 import org.intermine.webservice.query.result.QueryResultRequestProcessor;
 import org.intermine.webservice.query.result.WebServiceRequestProcessor;
@@ -27,8 +28,12 @@ import org.intermine.webservice.query.result.WebServiceRequestProcessor;
 public class TemplateResultRequestProcessor extends WebServiceRequestProcessor  
 {
     private static final String NAME_PARAMETER = "name";
+    
     private List<String> errors = new ArrayList<String>();
+    
     private HttpServletRequest request;
+    
+    private static Logger logger = Logger.getLogger(TemplateResultRequestProcessor.class);
     
     /**
      * TemplateResultRequestProcessor constructor.
@@ -69,6 +74,7 @@ public class TemplateResultRequestProcessor extends WebServiceRequestProcessor
 
     private List<ConstraintLoad> parseConstraints(HttpServletRequest request) {
         // Maximum of constraints is 50, it should be enough  
+        logger.debug("request: " + request.getQueryString());
         List<ConstraintLoad> ret = new ArrayList<ConstraintLoad>();
         for (int i = 0; i < 50; i++) {
             
