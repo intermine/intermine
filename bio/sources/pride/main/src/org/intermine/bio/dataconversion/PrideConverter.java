@@ -33,7 +33,6 @@ import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
 import org.xml.sax.helpers.DefaultHandler;
 
-
 /**
  * DataConverter to parse pride data into items
  * @author Dominik Grimm and Michael Menden
@@ -166,8 +165,8 @@ public class PrideConverter extends FileConverter
             }
             /**PrideProject*/
             //<ExperimentCollection><Experiment><additional><cvParam>
-            else if (qName.equals("cvParam")  && stack.peek().equals("additional")  
-                    && attrs.getValue("name").equals("Project")) {
+            else if (qName.equals("cvParam")  && stack.peek().equals("additional")  && attrs.getValue("name").equals("Project")
+                    && attrs.getValue("accession").equals("PRIDE:0000097") && stack.size() == 3) {
                 storeProject(attrs);
             }
             /**ProteinIdentification*/
@@ -232,7 +231,7 @@ public class PrideConverter extends FileConverter
             /** protein class*/
            // <GelFreeIdentification || TwoDimensionalIdentification><additional><cvParam>
            else if (qName.equals("cvParam") && stack.peek().equals("additional")
-                    && attrs.getValue("name").toString().equals("Automatic allocation")) {
+                    && attrs.getValue("accession").toString().equals("PRIDE:0000165")) {
                       //start swissprotFlag identification
                initProtein(attrs);      
            }
@@ -560,8 +559,8 @@ public class PrideConverter extends FileConverter
                         refId = mapProject.get(attrs.getValue("value").toString());
                     }
                     itemPrideExperiment.addReference(new Reference("prideProject", refId));
-                }
-            }
+              }
+           }
         }
 
 
