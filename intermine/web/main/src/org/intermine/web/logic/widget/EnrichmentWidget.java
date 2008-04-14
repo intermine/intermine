@@ -10,25 +10,22 @@ package org.intermine.web.logic.widget;
  *
  */
 
-import java.lang.reflect.Constructor;
-import java.lang.reflect.InvocationTargetException;
-import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
 import org.intermine.objectstore.ObjectStore;
-import org.intermine.objectstore.query.Query;
-import org.intermine.objectstore.query.Results;
-import org.intermine.objectstore.query.ResultsRow;
 import org.intermine.util.TypeUtil;
 import org.intermine.web.logic.WebUtil;
 import org.intermine.web.logic.bag.InterMineBag;
+
+import java.lang.reflect.Constructor;
+import java.lang.reflect.InvocationTargetException;
+import java.math.BigDecimal;
 
 /**
  * @author Julie Sullivan
@@ -59,8 +56,6 @@ public class EnrichmentWidget extends Widget
             // changed
             results = WebUtil.statsCalc(os, ldr.getAnnotatedPopulation(),
                                                        ldr.getAnnotatedSample(), 
-                                                       getTotal(os, ldr, false),
-                                                       getTotal(os, ldr, true),
                                                        bag,
                                                        new Double(0 
                                                        + max),
@@ -89,22 +84,22 @@ public class EnrichmentWidget extends Widget
         }
     }
     
-    private int getTotal(ObjectStore os, EnrichmentWidgetLdr ldr, boolean useBag) {
-
-        int n = 0;
-
-        Query q = ldr.getQuery(true, useBag);
-
-        Results r = os.execute(q);
-        if (!r.isEmpty()) {
-            Iterator<ResultsRow> it = r.iterator();
-            ResultsRow rr =  it.next();
-            Long l = (java.lang.Long) rr.get(0);
-            n = l.intValue();
-        }
-
-        return n;
-    }
+//    private int getTotal(ObjectStore os, EnrichmentWidgetLdr ldr, boolean useBag) {
+//
+//        int n = 0;
+//
+//        Query q = ldr.getQuery(true, useBag);
+//
+//        Results r = os.execute(q);
+//        if (!r.isEmpty()) {
+//            Iterator<ResultsRow> it = r.iterator();
+//            ResultsRow rr =  it.next();
+//            Long l = (java.lang.Long) rr.get(0);
+//            n = l.intValue();
+//        }
+//
+//        return n;
+//    }
     
     /**
      * @return the label
@@ -200,7 +195,7 @@ public class EnrichmentWidget extends Widget
      * 
      * @return List of column labels
      */
-    public List getColumns() {
+    public List<String> getColumns() {
         return Arrays.asList(new String[]
             {
                 "", label, "p-Value", ""
