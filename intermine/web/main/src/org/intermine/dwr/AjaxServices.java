@@ -809,6 +809,13 @@ public class AjaxServices
         }
     }
 
+    /**
+     * 
+     * @param widgetId unique id for this widget
+     * @param bagName name of list
+     * @param selectedExtraAttribute extra attribute (like organism)
+     * @return graph widget
+     */
     public static GraphWidget getProcessGraphWidget(String widgetId, String bagName, 
                                                     String selectedExtraAttribute) {
         try {
@@ -842,6 +849,12 @@ public class AjaxServices
         return null;
     }
     
+    /**
+     * 
+     * @param widgetId unique ID for this widget
+     * @param bagName name of list
+     * @return table widget
+     */
     public static TableWidget getProcessTableWidget(String widgetId, String bagName) {
         try {
             ServletContext servletContext = WebContextFactory.get().getServletContext();
@@ -880,6 +893,15 @@ public class AjaxServices
         return null;
     }    
     
+    /**
+     * #
+     * @param widgetId unique ID for each widget
+     * @param bagName name of list 
+     * @param errorCorrection error correction method to use
+     * @param max maximum value to display
+     * @param selectedExtraAttribute extra attribute to filter by
+     * @return enrichment widget
+     */
     public static EnrichmentWidget getProcessEnrichmentWidget(String widgetId, String bagName,
                                                               String errorCorrection, String max, 
                                                               String selectedExtraAttribute) {
