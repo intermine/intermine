@@ -1,679 +1,442 @@
-2008-04-11 11:16:29,225 - SimpleLog4JLogSystem initialized using logfile 'velocity.log'
-2008-04-11 11:16:29,225 - ************************************************************** 
-2008-04-11 11:16:29,225 - Starting Jakarta Velocity v1.3
-2008-04-11 11:16:29,225 - RuntimeInstance initializing.
-2008-04-11 11:16:29,225 - Default Properties File: org/apache/velocity/runtime/defaults/velocity.properties
-2008-04-11 11:16:29,225 - Trying to use logger class org.apache.velocity.runtime.log.AvalonLogSystem
-2008-04-11 11:16:29,225 - Couldn't find class org.apache.velocity.runtime.log.AvalonLogSystem or necessary supporting classes in classpath. Exception : java.lang.NoClassDefFoundError: org/apache/log/format/Formatter
-2008-04-11 11:16:29,225 - Trying to use logger class org.apache.velocity.runtime.log.SimpleLog4JLogSystem
-2008-04-11 11:16:29,225 - Using logger class org.apache.velocity.runtime.log.SimpleLog4JLogSystem
-2008-04-11 11:16:29,229 - Default ResourceManager initializing. (class org.apache.velocity.runtime.resource.ResourceManagerImpl)
-2008-04-11 11:16:29,235 - Resource Loader Instantiated: org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader
-2008-04-11 11:16:29,235 - ClasspathResourceLoader : initialization starting.
-2008-04-11 11:16:29,235 - ClasspathResourceLoader : initialization complete.
-2008-04-11 11:16:29,238 - ResourceCache : initialized. (class org.apache.velocity.runtime.resource.ResourceCacheImpl)
-2008-04-11 11:16:29,238 - Default ResourceManager initialization complete.
-2008-04-11 11:16:29,241 - Loaded System Directive: org.apache.velocity.runtime.directive.Literal
-2008-04-11 11:16:29,243 - Loaded System Directive: org.apache.velocity.runtime.directive.Macro
-2008-04-11 11:16:29,245 - Loaded System Directive: org.apache.velocity.runtime.directive.Parse
-2008-04-11 11:16:29,249 - Loaded System Directive: org.apache.velocity.runtime.directive.Include
-2008-04-11 11:16:29,251 - Loaded System Directive: org.apache.velocity.runtime.directive.Foreach
-2008-04-11 11:16:29,301 - Created: 20 parsers.
-2008-04-11 11:16:29,301 - Velocimacro : initialization starting.
-2008-04-11 11:16:29,301 - Velocimacro : adding VMs from VM library template : VM_global_library.vm
-2008-04-11 11:16:29,327 - ResourceManager : unable to find resource 'VM_global_library.vm' in any resource loader.
-2008-04-11 11:16:29,327 - Velocimacro : error using  VM library template VM_global_library.vm : org.apache.velocity.exception.ResourceNotFoundException: Unable to find resource 'VM_global_library.vm'
-2008-04-11 11:16:29,327 - Velocimacro :  VM library template macro registration complete.
-2008-04-11 11:16:29,327 - Velocimacro : allowInline = true : VMs can be defined inline in templates
-2008-04-11 11:16:29,327 - Velocimacro : allowInlineToOverride = false : VMs defined inline may NOT replace previous VM definitions
-2008-04-11 11:16:29,327 - Velocimacro : allowInlineLocal = false : VMs defined inline will be  global in scope if allowed.
-2008-04-11 11:16:29,327 - Velocimacro : messages on  : VM system will output logging messages
-2008-04-11 11:16:29,327 - Velocimacro : autoload off  : VM system will not automatically reload global library macros
-2008-04-11 11:16:29,327 - Velocimacro : initialization complete.
-2008-04-11 11:16:29,328 - Velocity successfully started.
-2008-04-11 11:16:29,453 - ResourceManager : found sql/base/Control.vm with loader org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader
-2008-04-11 11:16:29,480 - ResourceManager : found sql/base/postgresql/table.vm with loader org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader
-2008-04-11 11:16:29,485 - ResourceManager : found sql/base/postgresql/drop.vm with loader org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader
-2008-04-11 11:16:29,486 - ResourceManager : found sql/base/postgresql/sequence.vm with loader org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader
-2008-04-11 11:16:29,489 - ResourceManager : found sql/base/postgresql/columns.vm with loader org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader
-2008-04-11 11:16:29,493 - ResourceManager : found sql/base/postgresql/primarykey.vm with loader org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader
-2008-04-11 11:16:29,495 - ResourceManager : found sql/base/postgresql/unique.vm with loader org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader
-2008-04-11 11:16:29,497 - ResourceManager : found sql/base/postgresql/index.vm with loader org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader
-2008-04-11 11:16:29,506 - ResourceManager : found sql/base/postgresql/table.vm with loader org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader
-2008-04-11 11:16:29,508 - ResourceManager : found sql/base/postgresql/drop.vm with loader org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader
-2008-04-11 11:16:29,509 - ResourceManager : found sql/base/postgresql/sequence.vm with loader org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader
-2008-04-11 11:16:29,511 - ResourceManager : found sql/base/postgresql/columns.vm with loader org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader
-2008-04-11 11:16:29,513 - ResourceManager : found sql/base/postgresql/primarykey.vm with loader org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader
-2008-04-11 11:16:29,515 - ResourceManager : found sql/base/postgresql/unique.vm with loader org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader
-2008-04-11 11:16:29,517 - ResourceManager : found sql/base/postgresql/index.vm with loader org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader
-2008-04-11 11:16:29,525 - ResourceManager : found sql/base/postgresql/table.vm with loader org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader
-2008-04-11 11:16:29,527 - ResourceManager : found sql/base/postgresql/drop.vm with loader org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader
-2008-04-11 11:16:29,529 - ResourceManager : found sql/base/postgresql/sequence.vm with loader org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader
-2008-04-11 11:16:29,531 - ResourceManager : found sql/base/postgresql/columns.vm with loader org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader
-2008-04-11 11:16:29,533 - ResourceManager : found sql/base/postgresql/primarykey.vm with loader org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader
-2008-04-11 11:16:29,534 - ResourceManager : found sql/base/postgresql/unique.vm with loader org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader
-2008-04-11 11:16:29,536 - ResourceManager : found sql/base/postgresql/index.vm with loader org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader
-2008-04-11 11:16:29,544 - ResourceManager : found sql/base/postgresql/table.vm with loader org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader
-2008-04-11 11:16:29,546 - ResourceManager : found sql/base/postgresql/drop.vm with loader org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader
-2008-04-11 11:16:29,548 - ResourceManager : found sql/base/postgresql/sequence.vm with loader org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader
-2008-04-11 11:16:29,550 - ResourceManager : found sql/base/postgresql/columns.vm with loader org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader
-2008-04-11 11:16:29,553 - ResourceManager : found sql/base/postgresql/primarykey.vm with loader org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader
-2008-04-11 11:16:29,555 - ResourceManager : found sql/base/postgresql/unique.vm with loader org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader
-2008-04-11 11:16:29,558 - ResourceManager : found sql/base/postgresql/index.vm with loader org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader
-2008-04-11 11:16:29,566 - ResourceManager : found sql/base/postgresql/table.vm with loader org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader
-2008-04-11 11:16:29,567 - ResourceManager : found sql/base/postgresql/drop.vm with loader org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader
-2008-04-11 11:16:29,569 - ResourceManager : found sql/base/postgresql/sequence.vm with loader org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader
-2008-04-11 11:16:29,571 - ResourceManager : found sql/base/postgresql/columns.vm with loader org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader
-2008-04-11 11:16:29,573 - ResourceManager : found sql/base/postgresql/primarykey.vm with loader org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader
-2008-04-11 11:16:29,575 - ResourceManager : found sql/base/postgresql/unique.vm with loader org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader
-2008-04-11 11:16:29,577 - ResourceManager : found sql/base/postgresql/index.vm with loader org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader
-2008-04-11 11:16:29,585 - ResourceManager : found sql/base/postgresql/table.vm with loader org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader
-2008-04-11 11:16:29,588 - ResourceManager : found sql/base/postgresql/drop.vm with loader org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader
-2008-04-11 11:16:29,589 - ResourceManager : found sql/base/postgresql/sequence.vm with loader org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader
-2008-04-11 11:16:29,592 - ResourceManager : found sql/base/postgresql/columns.vm with loader org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader
-2008-04-11 11:16:29,594 - ResourceManager : found sql/base/postgresql/primarykey.vm with loader org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader
-2008-04-11 11:16:29,595 - ResourceManager : found sql/base/postgresql/unique.vm with loader org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader
-2008-04-11 11:16:29,598 - ResourceManager : found sql/base/postgresql/index.vm with loader org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader
-2008-04-11 11:16:29,606 - ResourceManager : found sql/base/postgresql/table.vm with loader org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader
-2008-04-11 11:16:29,608 - ResourceManager : found sql/base/postgresql/drop.vm with loader org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader
-2008-04-11 11:16:29,610 - ResourceManager : found sql/base/postgresql/sequence.vm with loader org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader
-2008-04-11 11:16:29,613 - ResourceManager : found sql/base/postgresql/columns.vm with loader org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader
-2008-04-11 11:16:29,614 - ResourceManager : found sql/base/postgresql/primarykey.vm with loader org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader
-2008-04-11 11:16:29,616 - ResourceManager : found sql/base/postgresql/unique.vm with loader org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader
-2008-04-11 11:16:29,618 - ResourceManager : found sql/base/postgresql/index.vm with loader org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader
-2008-04-11 11:16:29,621 - ResourceManager : found sql/base/postgresql/tablefk.vm with loader org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader
-2008-04-11 11:16:29,624 - ResourceManager : found sql/base/postgresql/foreignkey.vm with loader org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader
-2008-04-11 11:16:29,627 - ResourceManager : found sql/base/postgresql/tablefk.vm with loader org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader
-2008-04-11 11:16:29,630 - ResourceManager : found sql/base/postgresql/foreignkey.vm with loader org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader
-2008-04-11 11:16:29,633 - ResourceManager : found sql/base/postgresql/tablefk.vm with loader org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader
-2008-04-11 11:16:29,636 - ResourceManager : found sql/base/postgresql/foreignkey.vm with loader org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader
-2008-04-11 11:16:29,639 - ResourceManager : found sql/base/postgresql/tablefk.vm with loader org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader
-2008-04-11 11:16:29,642 - ResourceManager : found sql/base/postgresql/foreignkey.vm with loader org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader
-2008-04-11 11:16:29,644 - ResourceManager : found sql/base/postgresql/tablefk.vm with loader org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader
-2008-04-11 11:16:29,647 - ResourceManager : found sql/base/postgresql/foreignkey.vm with loader org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader
-2008-04-11 11:16:29,650 - ResourceManager : found sql/base/postgresql/tablefk.vm with loader org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader
-2008-04-11 11:16:29,653 - ResourceManager : found sql/base/postgresql/foreignkey.vm with loader org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader
-2008-04-11 11:16:29,656 - ResourceManager : found sql/base/postgresql/tablefk.vm with loader org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader
-2008-04-11 11:16:29,659 - ResourceManager : found sql/base/postgresql/foreignkey.vm with loader org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader
-2008-04-11 14:45:44,218 - SimpleLog4JLogSystem initialized using logfile 'velocity.log'
-2008-04-11 14:45:44,309 - ************************************************************** 
-2008-04-11 14:45:44,309 - Starting Jakarta Velocity v1.3
-2008-04-11 14:45:44,309 - RuntimeInstance initializing.
-2008-04-11 14:45:44,309 - Default Properties File: org/apache/velocity/runtime/defaults/velocity.properties
-2008-04-11 14:45:44,309 - Trying to use logger class org.apache.velocity.runtime.log.AvalonLogSystem
-2008-04-11 14:45:44,309 - Couldn't find class org.apache.velocity.runtime.log.AvalonLogSystem or necessary supporting classes in classpath. Exception : java.lang.NoClassDefFoundError: org/apache/log/format/Formatter
-2008-04-11 14:45:44,309 - Trying to use logger class org.apache.velocity.runtime.log.SimpleLog4JLogSystem
-2008-04-11 14:45:44,309 - Using logger class org.apache.velocity.runtime.log.SimpleLog4JLogSystem
-2008-04-11 14:45:44,316 - Default ResourceManager initializing. (class org.apache.velocity.runtime.resource.ResourceManagerImpl)
-2008-04-11 14:45:44,325 - Resource Loader Instantiated: org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader
-2008-04-11 14:45:44,325 - ClasspathResourceLoader : initialization starting.
-2008-04-11 14:45:44,325 - ClasspathResourceLoader : initialization complete.
-2008-04-11 14:45:44,330 - ResourceCache : initialized. (class org.apache.velocity.runtime.resource.ResourceCacheImpl)
-2008-04-11 14:45:44,330 - Default ResourceManager initialization complete.
-2008-04-11 14:45:44,335 - Loaded System Directive: org.apache.velocity.runtime.directive.Literal
-2008-04-11 14:45:44,348 - Loaded System Directive: org.apache.velocity.runtime.directive.Macro
-2008-04-11 14:45:44,352 - Loaded System Directive: org.apache.velocity.runtime.directive.Parse
-2008-04-11 14:45:44,357 - Loaded System Directive: org.apache.velocity.runtime.directive.Include
-2008-04-11 14:45:44,361 - Loaded System Directive: org.apache.velocity.runtime.directive.Foreach
-2008-04-11 14:45:44,472 - Created: 20 parsers.
-2008-04-11 14:45:44,472 - Velocimacro : initialization starting.
-2008-04-11 14:45:44,473 - Velocimacro : adding VMs from VM library template : VM_global_library.vm
-2008-04-11 14:45:44,478 - ResourceManager : unable to find resource 'VM_global_library.vm' in any resource loader.
-2008-04-11 14:45:44,478 - Velocimacro : error using  VM library template VM_global_library.vm : org.apache.velocity.exception.ResourceNotFoundException: Unable to find resource 'VM_global_library.vm'
-2008-04-11 14:45:44,478 - Velocimacro :  VM library template macro registration complete.
-2008-04-11 14:45:44,479 - Velocimacro : allowInline = true : VMs can be defined inline in templates
-2008-04-11 14:45:44,479 - Velocimacro : allowInlineToOverride = false : VMs defined inline may NOT replace previous VM definitions
-2008-04-11 14:45:44,479 - Velocimacro : allowInlineLocal = false : VMs defined inline will be  global in scope if allowed.
-2008-04-11 14:45:44,479 - Velocimacro : messages on  : VM system will output logging messages
-2008-04-11 14:45:44,479 - Velocimacro : autoload off  : VM system will not automatically reload global library macros
-2008-04-11 14:45:44,479 - Velocimacro : initialization complete.
-2008-04-11 14:45:44,479 - Velocity successfully started.
-2008-04-11 14:45:44,736 - ResourceManager : found sql/base/Control.vm with loader org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader
-2008-04-11 14:45:44,785 - ResourceManager : found sql/base/postgresql/table.vm with loader org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader
-2008-04-11 14:45:44,791 - ResourceManager : found sql/base/postgresql/drop.vm with loader org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader
-2008-04-11 14:45:44,793 - ResourceManager : found sql/base/postgresql/sequence.vm with loader org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader
-2008-04-11 14:45:44,809 - ResourceManager : found sql/base/postgresql/columns.vm with loader org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader
-2008-04-11 14:45:44,816 - ResourceManager : found sql/base/postgresql/primarykey.vm with loader org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader
-2008-04-11 14:45:44,818 - ResourceManager : found sql/base/postgresql/unique.vm with loader org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader
-2008-04-11 14:45:44,823 - ResourceManager : found sql/base/postgresql/index.vm with loader org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader
-2008-04-11 14:45:44,838 - ResourceManager : found sql/base/postgresql/table.vm with loader org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader
-2008-04-11 14:45:44,841 - ResourceManager : found sql/base/postgresql/drop.vm with loader org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader
-2008-04-11 14:45:44,843 - ResourceManager : found sql/base/postgresql/sequence.vm with loader org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader
-2008-04-11 14:45:44,861 - ResourceManager : found sql/base/postgresql/columns.vm with loader org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader
-2008-04-11 14:45:44,864 - ResourceManager : found sql/base/postgresql/primarykey.vm with loader org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader
-2008-04-11 14:45:44,886 - ResourceManager : found sql/base/postgresql/unique.vm with loader org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader
-2008-04-11 14:45:44,889 - ResourceManager : found sql/base/postgresql/index.vm with loader org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader
-2008-04-11 14:45:44,928 - ResourceManager : found sql/base/postgresql/table.vm with loader org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader
-2008-04-11 14:45:44,931 - ResourceManager : found sql/base/postgresql/drop.vm with loader org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader
-2008-04-11 14:45:44,933 - ResourceManager : found sql/base/postgresql/sequence.vm with loader org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader
-2008-04-11 14:45:44,956 - ResourceManager : found sql/base/postgresql/columns.vm with loader org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader
-2008-04-11 14:45:44,959 - ResourceManager : found sql/base/postgresql/primarykey.vm with loader org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader
-2008-04-11 14:45:44,961 - ResourceManager : found sql/base/postgresql/unique.vm with loader org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader
-2008-04-11 14:45:44,963 - ResourceManager : found sql/base/postgresql/index.vm with loader org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader
-2008-04-11 14:45:44,970 - ResourceManager : found sql/base/postgresql/table.vm with loader org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader
-2008-04-11 14:45:44,972 - ResourceManager : found sql/base/postgresql/drop.vm with loader org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader
-2008-04-11 14:45:44,976 - ResourceManager : found sql/base/postgresql/sequence.vm with loader org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader
-2008-04-11 14:45:44,978 - ResourceManager : found sql/base/postgresql/columns.vm with loader org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader
-2008-04-11 14:45:44,983 - ResourceManager : found sql/base/postgresql/primarykey.vm with loader org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader
-2008-04-11 14:45:44,986 - ResourceManager : found sql/base/postgresql/unique.vm with loader org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader
-2008-04-11 14:45:44,990 - ResourceManager : found sql/base/postgresql/index.vm with loader org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader
-2008-04-11 14:45:45,007 - ResourceManager : found sql/base/postgresql/table.vm with loader org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader
-2008-04-11 14:45:45,017 - ResourceManager : found sql/base/postgresql/drop.vm with loader org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader
-2008-04-11 14:45:45,022 - ResourceManager : found sql/base/postgresql/sequence.vm with loader org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader
-2008-04-11 14:45:45,024 - ResourceManager : found sql/base/postgresql/columns.vm with loader org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader
-2008-04-11 14:45:45,027 - ResourceManager : found sql/base/postgresql/primarykey.vm with loader org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader
-2008-04-11 14:45:45,029 - ResourceManager : found sql/base/postgresql/unique.vm with loader org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader
-2008-04-11 14:45:45,035 - ResourceManager : found sql/base/postgresql/index.vm with loader org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader
-2008-04-11 14:45:45,044 - ResourceManager : found sql/base/postgresql/table.vm with loader org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader
-2008-04-11 14:45:45,048 - ResourceManager : found sql/base/postgresql/drop.vm with loader org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader
-2008-04-11 14:45:45,051 - ResourceManager : found sql/base/postgresql/sequence.vm with loader org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader
-2008-04-11 14:45:45,054 - ResourceManager : found sql/base/postgresql/columns.vm with loader org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader
-2008-04-11 14:45:45,056 - ResourceManager : found sql/base/postgresql/primarykey.vm with loader org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader
-2008-04-11 14:45:45,068 - ResourceManager : found sql/base/postgresql/unique.vm with loader org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader
-2008-04-11 14:45:45,071 - ResourceManager : found sql/base/postgresql/index.vm with loader org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader
-2008-04-11 14:45:45,078 - ResourceManager : found sql/base/postgresql/table.vm with loader org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader
-2008-04-11 14:45:45,082 - ResourceManager : found sql/base/postgresql/drop.vm with loader org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader
-2008-04-11 14:45:45,084 - ResourceManager : found sql/base/postgresql/sequence.vm with loader org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader
-2008-04-11 14:45:45,087 - ResourceManager : found sql/base/postgresql/columns.vm with loader org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader
-2008-04-11 14:45:45,090 - ResourceManager : found sql/base/postgresql/primarykey.vm with loader org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader
-2008-04-11 14:45:45,092 - ResourceManager : found sql/base/postgresql/unique.vm with loader org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader
-2008-04-11 14:45:45,094 - ResourceManager : found sql/base/postgresql/index.vm with loader org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader
-2008-04-11 14:45:45,097 - ResourceManager : found sql/base/postgresql/tablefk.vm with loader org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader
-2008-04-11 14:45:45,100 - ResourceManager : found sql/base/postgresql/foreignkey.vm with loader org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader
-2008-04-11 14:45:45,103 - ResourceManager : found sql/base/postgresql/tablefk.vm with loader org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader
-2008-04-11 14:45:45,106 - ResourceManager : found sql/base/postgresql/foreignkey.vm with loader org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader
-2008-04-11 14:45:45,119 - ResourceManager : found sql/base/postgresql/tablefk.vm with loader org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader
-2008-04-11 14:45:45,121 - ResourceManager : found sql/base/postgresql/foreignkey.vm with loader org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader
-2008-04-11 14:45:45,126 - ResourceManager : found sql/base/postgresql/tablefk.vm with loader org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader
-2008-04-11 14:45:45,135 - ResourceManager : found sql/base/postgresql/foreignkey.vm with loader org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader
-2008-04-11 14:45:45,138 - ResourceManager : found sql/base/postgresql/tablefk.vm with loader org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader
-2008-04-11 14:45:45,141 - ResourceManager : found sql/base/postgresql/foreignkey.vm with loader org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader
-2008-04-11 14:45:45,144 - ResourceManager : found sql/base/postgresql/tablefk.vm with loader org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader
-2008-04-11 14:45:45,147 - ResourceManager : found sql/base/postgresql/foreignkey.vm with loader org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader
-2008-04-11 14:45:45,149 - ResourceManager : found sql/base/postgresql/tablefk.vm with loader org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader
-2008-04-11 14:45:45,152 - ResourceManager : found sql/base/postgresql/foreignkey.vm with loader org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader
-2008-04-11 15:00:00,321 - SimpleLog4JLogSystem initialized using logfile 'velocity.log'
-2008-04-11 15:00:00,321 - ************************************************************** 
-2008-04-11 15:00:00,321 - Starting Jakarta Velocity v1.3
-2008-04-11 15:00:00,321 - RuntimeInstance initializing.
-2008-04-11 15:00:00,321 - Default Properties File: org/apache/velocity/runtime/defaults/velocity.properties
-2008-04-11 15:00:00,321 - Trying to use logger class org.apache.velocity.runtime.log.AvalonLogSystem
-2008-04-11 15:00:00,321 - Couldn't find class org.apache.velocity.runtime.log.AvalonLogSystem or necessary supporting classes in classpath. Exception : java.lang.NoClassDefFoundError: org/apache/log/format/Formatter
-2008-04-11 15:00:00,322 - Trying to use logger class org.apache.velocity.runtime.log.SimpleLog4JLogSystem
-2008-04-11 15:00:00,322 - Using logger class org.apache.velocity.runtime.log.SimpleLog4JLogSystem
-2008-04-11 15:00:00,329 - Default ResourceManager initializing. (class org.apache.velocity.runtime.resource.ResourceManagerImpl)
-2008-04-11 15:00:00,337 - Resource Loader Instantiated: org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader
-2008-04-11 15:00:00,337 - ClasspathResourceLoader : initialization starting.
-2008-04-11 15:00:00,337 - ClasspathResourceLoader : initialization complete.
-2008-04-11 15:00:00,342 - ResourceCache : initialized. (class org.apache.velocity.runtime.resource.ResourceCacheImpl)
-2008-04-11 15:00:00,342 - Default ResourceManager initialization complete.
-2008-04-11 15:00:00,346 - Loaded System Directive: org.apache.velocity.runtime.directive.Literal
-2008-04-11 15:00:00,349 - Loaded System Directive: org.apache.velocity.runtime.directive.Macro
-2008-04-11 15:00:00,354 - Loaded System Directive: org.apache.velocity.runtime.directive.Parse
-2008-04-11 15:00:00,360 - Loaded System Directive: org.apache.velocity.runtime.directive.Include
-2008-04-11 15:00:00,364 - Loaded System Directive: org.apache.velocity.runtime.directive.Foreach
-2008-04-11 15:00:00,754 - Created: 20 parsers.
-2008-04-11 15:00:00,755 - Velocimacro : initialization starting.
-2008-04-11 15:00:00,755 - Velocimacro : adding VMs from VM library template : VM_global_library.vm
-2008-04-11 15:00:00,761 - ResourceManager : unable to find resource 'VM_global_library.vm' in any resource loader.
-2008-04-11 15:00:00,761 - Velocimacro : error using  VM library template VM_global_library.vm : org.apache.velocity.exception.ResourceNotFoundException: Unable to find resource 'VM_global_library.vm'
-2008-04-11 15:00:00,761 - Velocimacro :  VM library template macro registration complete.
-2008-04-11 15:00:00,761 - Velocimacro : allowInline = true : VMs can be defined inline in templates
-2008-04-11 15:00:00,761 - Velocimacro : allowInlineToOverride = false : VMs defined inline may NOT replace previous VM definitions
-2008-04-11 15:00:00,761 - Velocimacro : allowInlineLocal = false : VMs defined inline will be  global in scope if allowed.
-2008-04-11 15:00:00,762 - Velocimacro : messages on  : VM system will output logging messages
-2008-04-11 15:00:00,762 - Velocimacro : autoload off  : VM system will not automatically reload global library macros
-2008-04-11 15:00:00,762 - Velocimacro : initialization complete.
-2008-04-11 15:00:00,762 - Velocity successfully started.
-2008-04-11 15:00:01,273 - ResourceManager : found sql/base/Control.vm with loader org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader
-2008-04-11 15:00:01,330 - ResourceManager : found sql/base/postgresql/table.vm with loader org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader
-2008-04-11 15:00:01,336 - ResourceManager : found sql/base/postgresql/drop.vm with loader org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader
-2008-04-11 15:00:01,339 - ResourceManager : found sql/base/postgresql/sequence.vm with loader org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader
-2008-04-11 15:00:01,342 - ResourceManager : found sql/base/postgresql/columns.vm with loader org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader
-2008-04-11 15:00:01,349 - ResourceManager : found sql/base/postgresql/primarykey.vm with loader org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader
-2008-04-11 15:00:01,352 - ResourceManager : found sql/base/postgresql/unique.vm with loader org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader
-2008-04-11 15:00:01,357 - ResourceManager : found sql/base/postgresql/index.vm with loader org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader
-2008-04-11 15:00:01,381 - ResourceManager : found sql/base/postgresql/table.vm with loader org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader
-2008-04-11 15:00:01,385 - ResourceManager : found sql/base/postgresql/drop.vm with loader org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader
-2008-04-11 15:00:01,387 - ResourceManager : found sql/base/postgresql/sequence.vm with loader org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader
-2008-04-11 15:00:01,405 - ResourceManager : found sql/base/postgresql/columns.vm with loader org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader
-2008-04-11 15:00:01,408 - ResourceManager : found sql/base/postgresql/primarykey.vm with loader org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader
-2008-04-11 15:00:01,430 - ResourceManager : found sql/base/postgresql/unique.vm with loader org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader
-2008-04-11 15:00:01,433 - ResourceManager : found sql/base/postgresql/index.vm with loader org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader
-2008-04-11 15:00:01,463 - ResourceManager : found sql/base/postgresql/table.vm with loader org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader
-2008-04-11 15:00:01,466 - ResourceManager : found sql/base/postgresql/drop.vm with loader org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader
-2008-04-11 15:00:01,468 - ResourceManager : found sql/base/postgresql/sequence.vm with loader org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader
-2008-04-11 15:00:01,489 - ResourceManager : found sql/base/postgresql/columns.vm with loader org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader
-2008-04-11 15:00:01,492 - ResourceManager : found sql/base/postgresql/primarykey.vm with loader org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader
-2008-04-11 15:00:01,494 - ResourceManager : found sql/base/postgresql/unique.vm with loader org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader
-2008-04-11 15:00:01,497 - ResourceManager : found sql/base/postgresql/index.vm with loader org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader
-2008-04-11 15:00:01,511 - ResourceManager : found sql/base/postgresql/table.vm with loader org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader
-2008-04-11 15:00:01,514 - ResourceManager : found sql/base/postgresql/drop.vm with loader org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader
-2008-04-11 15:00:01,518 - ResourceManager : found sql/base/postgresql/sequence.vm with loader org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader
-2008-04-11 15:00:01,521 - ResourceManager : found sql/base/postgresql/columns.vm with loader org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader
-2008-04-11 15:00:01,525 - ResourceManager : found sql/base/postgresql/primarykey.vm with loader org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader
-2008-04-11 15:00:01,529 - ResourceManager : found sql/base/postgresql/unique.vm with loader org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader
-2008-04-11 15:00:01,532 - ResourceManager : found sql/base/postgresql/index.vm with loader org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader
-2008-04-11 15:00:01,542 - ResourceManager : found sql/base/postgresql/table.vm with loader org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader
-2008-04-11 15:00:01,549 - ResourceManager : found sql/base/postgresql/drop.vm with loader org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader
-2008-04-11 15:00:01,554 - ResourceManager : found sql/base/postgresql/sequence.vm with loader org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader
-2008-04-11 15:00:01,556 - ResourceManager : found sql/base/postgresql/columns.vm with loader org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader
-2008-04-11 15:00:01,559 - ResourceManager : found sql/base/postgresql/primarykey.vm with loader org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader
-2008-04-11 15:00:01,561 - ResourceManager : found sql/base/postgresql/unique.vm with loader org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader
-2008-04-11 15:00:01,567 - ResourceManager : found sql/base/postgresql/index.vm with loader org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader
-2008-04-11 15:00:01,586 - ResourceManager : found sql/base/postgresql/table.vm with loader org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader
-2008-04-11 15:00:01,589 - ResourceManager : found sql/base/postgresql/drop.vm with loader org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader
-2008-04-11 15:00:01,591 - ResourceManager : found sql/base/postgresql/sequence.vm with loader org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader
-2008-04-11 15:00:01,597 - ResourceManager : found sql/base/postgresql/columns.vm with loader org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader
-2008-04-11 15:00:01,600 - ResourceManager : found sql/base/postgresql/primarykey.vm with loader org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader
-2008-04-11 15:00:01,602 - ResourceManager : found sql/base/postgresql/unique.vm with loader org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader
-2008-04-11 15:00:01,604 - ResourceManager : found sql/base/postgresql/index.vm with loader org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader
-2008-04-11 15:00:01,611 - ResourceManager : found sql/base/postgresql/table.vm with loader org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader
-2008-04-11 15:00:01,614 - ResourceManager : found sql/base/postgresql/drop.vm with loader org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader
-2008-04-11 15:00:01,616 - ResourceManager : found sql/base/postgresql/sequence.vm with loader org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader
-2008-04-11 15:00:01,619 - ResourceManager : found sql/base/postgresql/columns.vm with loader org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader
-2008-04-11 15:00:01,621 - ResourceManager : found sql/base/postgresql/primarykey.vm with loader org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader
-2008-04-11 15:00:01,623 - ResourceManager : found sql/base/postgresql/unique.vm with loader org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader
-2008-04-11 15:00:01,626 - ResourceManager : found sql/base/postgresql/index.vm with loader org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader
-2008-04-11 15:00:01,638 - ResourceManager : found sql/base/postgresql/tablefk.vm with loader org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader
-2008-04-11 15:00:01,641 - ResourceManager : found sql/base/postgresql/foreignkey.vm with loader org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader
-2008-04-11 15:00:01,644 - ResourceManager : found sql/base/postgresql/tablefk.vm with loader org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader
-2008-04-11 15:00:01,647 - ResourceManager : found sql/base/postgresql/foreignkey.vm with loader org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader
-2008-04-11 15:00:01,649 - ResourceManager : found sql/base/postgresql/tablefk.vm with loader org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader
-2008-04-11 15:00:01,652 - ResourceManager : found sql/base/postgresql/foreignkey.vm with loader org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader
-2008-04-11 15:00:01,657 - ResourceManager : found sql/base/postgresql/tablefk.vm with loader org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader
-2008-04-11 15:00:01,666 - ResourceManager : found sql/base/postgresql/foreignkey.vm with loader org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader
-2008-04-11 15:00:01,669 - ResourceManager : found sql/base/postgresql/tablefk.vm with loader org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader
-2008-04-11 15:00:01,672 - ResourceManager : found sql/base/postgresql/foreignkey.vm with loader org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader
-2008-04-11 15:00:01,675 - ResourceManager : found sql/base/postgresql/tablefk.vm with loader org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader
-2008-04-11 15:00:01,678 - ResourceManager : found sql/base/postgresql/foreignkey.vm with loader org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader
-2008-04-11 15:00:01,680 - ResourceManager : found sql/base/postgresql/tablefk.vm with loader org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader
-2008-04-11 15:00:01,704 - ResourceManager : found sql/base/postgresql/foreignkey.vm with loader org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader
-2008-04-11 16:13:20,288 - SimpleLog4JLogSystem initialized using logfile 'velocity.log'
-2008-04-11 16:13:20,289 - ************************************************************** 
-2008-04-11 16:13:20,289 - Starting Jakarta Velocity v1.3
-2008-04-11 16:13:20,289 - RuntimeInstance initializing.
-2008-04-11 16:13:20,289 - Default Properties File: org/apache/velocity/runtime/defaults/velocity.properties
-2008-04-11 16:13:20,289 - Trying to use logger class org.apache.velocity.runtime.log.AvalonLogSystem
-2008-04-11 16:13:20,289 - Couldn't find class org.apache.velocity.runtime.log.AvalonLogSystem or necessary supporting classes in classpath. Exception : java.lang.NoClassDefFoundError: org/apache/log/format/Formatter
-2008-04-11 16:13:20,289 - Trying to use logger class org.apache.velocity.runtime.log.SimpleLog4JLogSystem
-2008-04-11 16:13:20,289 - Using logger class org.apache.velocity.runtime.log.SimpleLog4JLogSystem
-2008-04-11 16:13:20,294 - Default ResourceManager initializing. (class org.apache.velocity.runtime.resource.ResourceManagerImpl)
-2008-04-11 16:13:20,299 - Resource Loader Instantiated: org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader
-2008-04-11 16:13:20,300 - ClasspathResourceLoader : initialization starting.
-2008-04-11 16:13:20,300 - ClasspathResourceLoader : initialization complete.
-2008-04-11 16:13:20,323 - ResourceCache : initialized. (class org.apache.velocity.runtime.resource.ResourceCacheImpl)
-2008-04-11 16:13:20,323 - Default ResourceManager initialization complete.
-2008-04-11 16:13:20,327 - Loaded System Directive: org.apache.velocity.runtime.directive.Literal
-2008-04-11 16:13:20,329 - Loaded System Directive: org.apache.velocity.runtime.directive.Macro
-2008-04-11 16:13:20,332 - Loaded System Directive: org.apache.velocity.runtime.directive.Parse
-2008-04-11 16:13:20,335 - Loaded System Directive: org.apache.velocity.runtime.directive.Include
-2008-04-11 16:13:20,338 - Loaded System Directive: org.apache.velocity.runtime.directive.Foreach
-2008-04-11 16:13:20,453 - Created: 20 parsers.
-2008-04-11 16:13:20,453 - Velocimacro : initialization starting.
-2008-04-11 16:13:20,453 - Velocimacro : adding VMs from VM library template : VM_global_library.vm
-2008-04-11 16:13:20,458 - ResourceManager : unable to find resource 'VM_global_library.vm' in any resource loader.
-2008-04-11 16:13:20,458 - Velocimacro : error using  VM library template VM_global_library.vm : org.apache.velocity.exception.ResourceNotFoundException: Unable to find resource 'VM_global_library.vm'
-2008-04-11 16:13:20,458 - Velocimacro :  VM library template macro registration complete.
-2008-04-11 16:13:20,458 - Velocimacro : allowInline = true : VMs can be defined inline in templates
-2008-04-11 16:13:20,458 - Velocimacro : allowInlineToOverride = false : VMs defined inline may NOT replace previous VM definitions
-2008-04-11 16:13:20,458 - Velocimacro : allowInlineLocal = false : VMs defined inline will be  global in scope if allowed.
-2008-04-11 16:13:20,458 - Velocimacro : messages on  : VM system will output logging messages
-2008-04-11 16:13:20,458 - Velocimacro : autoload off  : VM system will not automatically reload global library macros
-2008-04-11 16:13:20,458 - Velocimacro : initialization complete.
-2008-04-11 16:13:20,458 - Velocity successfully started.
-2008-04-11 16:13:20,735 - ResourceManager : found sql/base/Control.vm with loader org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader
-2008-04-11 16:13:20,802 - ResourceManager : found sql/base/postgresql/table.vm with loader org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader
-2008-04-11 16:13:20,827 - ResourceManager : found sql/base/postgresql/drop.vm with loader org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader
-2008-04-11 16:13:20,830 - ResourceManager : found sql/base/postgresql/sequence.vm with loader org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader
-2008-04-11 16:13:20,832 - ResourceManager : found sql/base/postgresql/columns.vm with loader org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader
-2008-04-11 16:13:20,838 - ResourceManager : found sql/base/postgresql/primarykey.vm with loader org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader
-2008-04-11 16:13:20,840 - ResourceManager : found sql/base/postgresql/unique.vm with loader org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader
-2008-04-11 16:13:20,861 - ResourceManager : found sql/base/postgresql/index.vm with loader org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader
-2008-04-11 16:13:20,870 - ResourceManager : found sql/base/postgresql/table.vm with loader org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader
-2008-04-11 16:13:20,872 - ResourceManager : found sql/base/postgresql/drop.vm with loader org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader
-2008-04-11 16:13:20,874 - ResourceManager : found sql/base/postgresql/sequence.vm with loader org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader
-2008-04-11 16:13:20,877 - ResourceManager : found sql/base/postgresql/columns.vm with loader org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader
-2008-04-11 16:13:20,879 - ResourceManager : found sql/base/postgresql/primarykey.vm with loader org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader
-2008-04-11 16:13:20,881 - ResourceManager : found sql/base/postgresql/unique.vm with loader org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader
-2008-04-11 16:13:20,905 - ResourceManager : found sql/base/postgresql/index.vm with loader org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader
-2008-04-11 16:13:20,913 - ResourceManager : found sql/base/postgresql/table.vm with loader org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader
-2008-04-11 16:13:20,916 - ResourceManager : found sql/base/postgresql/drop.vm with loader org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader
-2008-04-11 16:13:20,918 - ResourceManager : found sql/base/postgresql/sequence.vm with loader org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader
-2008-04-11 16:13:20,921 - ResourceManager : found sql/base/postgresql/columns.vm with loader org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader
-2008-04-11 16:13:20,923 - ResourceManager : found sql/base/postgresql/primarykey.vm with loader org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader
-2008-04-11 16:13:20,947 - ResourceManager : found sql/base/postgresql/unique.vm with loader org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader
-2008-04-11 16:13:20,949 - ResourceManager : found sql/base/postgresql/index.vm with loader org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader
-2008-04-11 16:13:20,958 - ResourceManager : found sql/base/postgresql/table.vm with loader org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader
-2008-04-11 16:13:20,960 - ResourceManager : found sql/base/postgresql/drop.vm with loader org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader
-2008-04-11 16:13:20,962 - ResourceManager : found sql/base/postgresql/sequence.vm with loader org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader
-2008-04-11 16:13:20,964 - ResourceManager : found sql/base/postgresql/columns.vm with loader org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader
-2008-04-11 16:13:20,990 - ResourceManager : found sql/base/postgresql/primarykey.vm with loader org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader
-2008-04-11 16:13:20,992 - ResourceManager : found sql/base/postgresql/unique.vm with loader org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader
-2008-04-11 16:13:20,995 - ResourceManager : found sql/base/postgresql/index.vm with loader org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader
-2008-04-11 16:13:21,003 - ResourceManager : found sql/base/postgresql/table.vm with loader org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader
-2008-04-11 16:13:21,006 - ResourceManager : found sql/base/postgresql/drop.vm with loader org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader
-2008-04-11 16:13:21,029 - ResourceManager : found sql/base/postgresql/sequence.vm with loader org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader
-2008-04-11 16:13:21,032 - ResourceManager : found sql/base/postgresql/columns.vm with loader org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader
-2008-04-11 16:13:21,035 - ResourceManager : found sql/base/postgresql/primarykey.vm with loader org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader
-2008-04-11 16:13:21,037 - ResourceManager : found sql/base/postgresql/unique.vm with loader org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader
-2008-04-11 16:13:21,039 - ResourceManager : found sql/base/postgresql/index.vm with loader org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader
-2008-04-11 16:13:21,048 - ResourceManager : found sql/base/postgresql/table.vm with loader org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader
-2008-04-11 16:13:21,073 - ResourceManager : found sql/base/postgresql/drop.vm with loader org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader
-2008-04-11 16:13:21,075 - ResourceManager : found sql/base/postgresql/sequence.vm with loader org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader
-2008-04-11 16:13:21,078 - ResourceManager : found sql/base/postgresql/columns.vm with loader org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader
-2008-04-11 16:13:21,081 - ResourceManager : found sql/base/postgresql/primarykey.vm with loader org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader
-2008-04-11 16:13:21,083 - ResourceManager : found sql/base/postgresql/unique.vm with loader org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader
-2008-04-11 16:13:21,085 - ResourceManager : found sql/base/postgresql/index.vm with loader org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader
-2008-04-11 16:13:21,116 - ResourceManager : found sql/base/postgresql/table.vm with loader org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader
-2008-04-11 16:13:21,118 - ResourceManager : found sql/base/postgresql/drop.vm with loader org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader
-2008-04-11 16:13:21,121 - ResourceManager : found sql/base/postgresql/sequence.vm with loader org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader
-2008-04-11 16:13:21,123 - ResourceManager : found sql/base/postgresql/columns.vm with loader org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader
-2008-04-11 16:13:21,125 - ResourceManager : found sql/base/postgresql/primarykey.vm with loader org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader
-2008-04-11 16:13:21,127 - ResourceManager : found sql/base/postgresql/unique.vm with loader org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader
-2008-04-11 16:13:21,130 - ResourceManager : found sql/base/postgresql/index.vm with loader org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader
-2008-04-11 16:13:21,133 - ResourceManager : found sql/base/postgresql/tablefk.vm with loader org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader
-2008-04-11 16:13:21,137 - ResourceManager : found sql/base/postgresql/foreignkey.vm with loader org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader
-2008-04-11 16:13:21,140 - ResourceManager : found sql/base/postgresql/tablefk.vm with loader org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader
-2008-04-11 16:13:21,144 - ResourceManager : found sql/base/postgresql/foreignkey.vm with loader org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader
-2008-04-11 16:13:21,147 - ResourceManager : found sql/base/postgresql/tablefk.vm with loader org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader
-2008-04-11 16:13:21,151 - ResourceManager : found sql/base/postgresql/foreignkey.vm with loader org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader
-2008-04-11 16:13:21,154 - ResourceManager : found sql/base/postgresql/tablefk.vm with loader org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader
-2008-04-11 16:13:21,158 - ResourceManager : found sql/base/postgresql/foreignkey.vm with loader org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader
-2008-04-11 16:13:21,161 - ResourceManager : found sql/base/postgresql/tablefk.vm with loader org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader
-2008-04-11 16:13:21,164 - ResourceManager : found sql/base/postgresql/foreignkey.vm with loader org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader
-2008-04-11 16:13:21,167 - ResourceManager : found sql/base/postgresql/tablefk.vm with loader org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader
-2008-04-11 16:13:21,171 - ResourceManager : found sql/base/postgresql/foreignkey.vm with loader org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader
-2008-04-11 16:13:21,174 - ResourceManager : found sql/base/postgresql/tablefk.vm with loader org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader
-2008-04-11 16:13:21,178 - ResourceManager : found sql/base/postgresql/foreignkey.vm with loader org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader
-2008-04-11 16:33:54,285 - SimpleLog4JLogSystem initialized using logfile 'velocity.log'
-2008-04-11 16:33:54,285 - ************************************************************** 
-2008-04-11 16:33:54,285 - Starting Jakarta Velocity v1.3
-2008-04-11 16:33:54,285 - RuntimeInstance initializing.
-2008-04-11 16:33:54,285 - Default Properties File: org/apache/velocity/runtime/defaults/velocity.properties
-2008-04-11 16:33:54,285 - Trying to use logger class org.apache.velocity.runtime.log.AvalonLogSystem
-2008-04-11 16:33:54,285 - Couldn't find class org.apache.velocity.runtime.log.AvalonLogSystem or necessary supporting classes in classpath. Exception : java.lang.NoClassDefFoundError: org/apache/log/format/Formatter
-2008-04-11 16:33:54,285 - Trying to use logger class org.apache.velocity.runtime.log.SimpleLog4JLogSystem
-2008-04-11 16:33:54,285 - Using logger class org.apache.velocity.runtime.log.SimpleLog4JLogSystem
-2008-04-11 16:33:54,289 - Default ResourceManager initializing. (class org.apache.velocity.runtime.resource.ResourceManagerImpl)
-2008-04-11 16:33:54,295 - Resource Loader Instantiated: org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader
-2008-04-11 16:33:54,295 - ClasspathResourceLoader : initialization starting.
-2008-04-11 16:33:54,295 - ClasspathResourceLoader : initialization complete.
-2008-04-11 16:33:54,298 - ResourceCache : initialized. (class org.apache.velocity.runtime.resource.ResourceCacheImpl)
-2008-04-11 16:33:54,298 - Default ResourceManager initialization complete.
-2008-04-11 16:33:54,301 - Loaded System Directive: org.apache.velocity.runtime.directive.Literal
-2008-04-11 16:33:54,303 - Loaded System Directive: org.apache.velocity.runtime.directive.Macro
-2008-04-11 16:33:54,325 - Loaded System Directive: org.apache.velocity.runtime.directive.Parse
-2008-04-11 16:33:54,329 - Loaded System Directive: org.apache.velocity.runtime.directive.Include
-2008-04-11 16:33:54,331 - Loaded System Directive: org.apache.velocity.runtime.directive.Foreach
-2008-04-11 16:33:54,461 - Created: 20 parsers.
-2008-04-11 16:33:54,462 - Velocimacro : initialization starting.
-2008-04-11 16:33:54,462 - Velocimacro : adding VMs from VM library template : VM_global_library.vm
-2008-04-11 16:33:54,484 - ResourceManager : unable to find resource 'VM_global_library.vm' in any resource loader.
-2008-04-11 16:33:54,484 - Velocimacro : error using  VM library template VM_global_library.vm : org.apache.velocity.exception.ResourceNotFoundException: Unable to find resource 'VM_global_library.vm'
-2008-04-11 16:33:54,484 - Velocimacro :  VM library template macro registration complete.
-2008-04-11 16:33:54,484 - Velocimacro : allowInline = true : VMs can be defined inline in templates
-2008-04-11 16:33:54,484 - Velocimacro : allowInlineToOverride = false : VMs defined inline may NOT replace previous VM definitions
-2008-04-11 16:33:54,484 - Velocimacro : allowInlineLocal = false : VMs defined inline will be  global in scope if allowed.
-2008-04-11 16:33:54,484 - Velocimacro : messages on  : VM system will output logging messages
-2008-04-11 16:33:54,484 - Velocimacro : autoload off  : VM system will not automatically reload global library macros
-2008-04-11 16:33:54,484 - Velocimacro : initialization complete.
-2008-04-11 16:33:54,484 - Velocity successfully started.
-2008-04-11 16:33:54,754 - ResourceManager : found sql/base/Control.vm with loader org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader
-2008-04-11 16:33:54,828 - ResourceManager : found sql/base/postgresql/table.vm with loader org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader
-2008-04-11 16:33:54,846 - ResourceManager : found sql/base/postgresql/drop.vm with loader org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader
-2008-04-11 16:33:54,848 - ResourceManager : found sql/base/postgresql/sequence.vm with loader org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader
-2008-04-11 16:33:54,850 - ResourceManager : found sql/base/postgresql/columns.vm with loader org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader
-2008-04-11 16:33:54,856 - ResourceManager : found sql/base/postgresql/primarykey.vm with loader org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader
-2008-04-11 16:33:54,858 - ResourceManager : found sql/base/postgresql/unique.vm with loader org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader
-2008-04-11 16:33:54,880 - ResourceManager : found sql/base/postgresql/index.vm with loader org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader
-2008-04-11 16:33:54,889 - ResourceManager : found sql/base/postgresql/table.vm with loader org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader
-2008-04-11 16:33:54,891 - ResourceManager : found sql/base/postgresql/drop.vm with loader org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader
-2008-04-11 16:33:54,893 - ResourceManager : found sql/base/postgresql/sequence.vm with loader org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader
-2008-04-11 16:33:54,896 - ResourceManager : found sql/base/postgresql/columns.vm with loader org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader
-2008-04-11 16:33:54,898 - ResourceManager : found sql/base/postgresql/primarykey.vm with loader org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader
-2008-04-11 16:33:54,900 - ResourceManager : found sql/base/postgresql/unique.vm with loader org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader
-2008-04-11 16:33:54,902 - ResourceManager : found sql/base/postgresql/index.vm with loader org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader
-2008-04-11 16:33:54,911 - ResourceManager : found sql/base/postgresql/table.vm with loader org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader
-2008-04-11 16:33:54,914 - ResourceManager : found sql/base/postgresql/drop.vm with loader org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader
-2008-04-11 16:33:54,916 - ResourceManager : found sql/base/postgresql/sequence.vm with loader org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader
-2008-04-11 16:33:54,919 - ResourceManager : found sql/base/postgresql/columns.vm with loader org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader
-2008-04-11 16:33:54,921 - ResourceManager : found sql/base/postgresql/primarykey.vm with loader org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader
-2008-04-11 16:33:54,923 - ResourceManager : found sql/base/postgresql/unique.vm with loader org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader
-2008-04-11 16:33:54,925 - ResourceManager : found sql/base/postgresql/index.vm with loader org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader
-2008-04-11 16:33:54,933 - ResourceManager : found sql/base/postgresql/table.vm with loader org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader
-2008-04-11 16:33:54,936 - ResourceManager : found sql/base/postgresql/drop.vm with loader org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader
-2008-04-11 16:33:54,938 - ResourceManager : found sql/base/postgresql/sequence.vm with loader org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader
-2008-04-11 16:33:54,940 - ResourceManager : found sql/base/postgresql/columns.vm with loader org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader
-2008-04-11 16:33:54,944 - ResourceManager : found sql/base/postgresql/primarykey.vm with loader org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader
-2008-04-11 16:33:54,946 - ResourceManager : found sql/base/postgresql/unique.vm with loader org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader
-2008-04-11 16:33:54,951 - ResourceManager : found sql/base/postgresql/index.vm with loader org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader
-2008-04-11 16:33:54,960 - ResourceManager : found sql/base/postgresql/table.vm with loader org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader
-2008-04-11 16:33:54,962 - ResourceManager : found sql/base/postgresql/drop.vm with loader org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader
-2008-04-11 16:33:54,964 - ResourceManager : found sql/base/postgresql/sequence.vm with loader org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader
-2008-04-11 16:33:54,967 - ResourceManager : found sql/base/postgresql/columns.vm with loader org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader
-2008-04-11 16:33:54,969 - ResourceManager : found sql/base/postgresql/primarykey.vm with loader org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader
-2008-04-11 16:33:54,971 - ResourceManager : found sql/base/postgresql/unique.vm with loader org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader
-2008-04-11 16:33:54,973 - ResourceManager : found sql/base/postgresql/index.vm with loader org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader
-2008-04-11 16:33:54,982 - ResourceManager : found sql/base/postgresql/table.vm with loader org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader
-2008-04-11 16:33:54,985 - ResourceManager : found sql/base/postgresql/drop.vm with loader org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader
-2008-04-11 16:33:54,987 - ResourceManager : found sql/base/postgresql/sequence.vm with loader org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader
-2008-04-11 16:33:54,991 - ResourceManager : found sql/base/postgresql/columns.vm with loader org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader
-2008-04-11 16:33:54,993 - ResourceManager : found sql/base/postgresql/primarykey.vm with loader org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader
-2008-04-11 16:33:54,995 - ResourceManager : found sql/base/postgresql/unique.vm with loader org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader
-2008-04-11 16:33:54,997 - ResourceManager : found sql/base/postgresql/index.vm with loader org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader
-2008-04-11 16:33:55,007 - ResourceManager : found sql/base/postgresql/table.vm with loader org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader
-2008-04-11 16:33:55,009 - ResourceManager : found sql/base/postgresql/drop.vm with loader org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader
-2008-04-11 16:33:55,011 - ResourceManager : found sql/base/postgresql/sequence.vm with loader org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader
-2008-04-11 16:33:55,014 - ResourceManager : found sql/base/postgresql/columns.vm with loader org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader
-2008-04-11 16:33:55,016 - ResourceManager : found sql/base/postgresql/primarykey.vm with loader org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader
-2008-04-11 16:33:55,018 - ResourceManager : found sql/base/postgresql/unique.vm with loader org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader
-2008-04-11 16:33:55,021 - ResourceManager : found sql/base/postgresql/index.vm with loader org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader
-2008-04-11 16:33:55,024 - ResourceManager : found sql/base/postgresql/tablefk.vm with loader org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader
-2008-04-11 16:33:55,028 - ResourceManager : found sql/base/postgresql/foreignkey.vm with loader org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader
-2008-04-11 16:33:55,031 - ResourceManager : found sql/base/postgresql/tablefk.vm with loader org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader
-2008-04-11 16:33:55,035 - ResourceManager : found sql/base/postgresql/foreignkey.vm with loader org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader
-2008-04-11 16:33:55,038 - ResourceManager : found sql/base/postgresql/tablefk.vm with loader org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader
-2008-04-11 16:33:55,042 - ResourceManager : found sql/base/postgresql/foreignkey.vm with loader org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader
-2008-04-11 16:33:55,045 - ResourceManager : found sql/base/postgresql/tablefk.vm with loader org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader
-2008-04-11 16:33:55,049 - ResourceManager : found sql/base/postgresql/foreignkey.vm with loader org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader
-2008-04-11 16:33:55,052 - ResourceManager : found sql/base/postgresql/tablefk.vm with loader org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader
-2008-04-11 16:33:55,056 - ResourceManager : found sql/base/postgresql/foreignkey.vm with loader org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader
-2008-04-11 16:33:55,059 - ResourceManager : found sql/base/postgresql/tablefk.vm with loader org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader
-2008-04-11 16:33:55,063 - ResourceManager : found sql/base/postgresql/foreignkey.vm with loader org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader
-2008-04-11 16:33:55,066 - ResourceManager : found sql/base/postgresql/tablefk.vm with loader org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader
-2008-04-11 16:33:55,070 - ResourceManager : found sql/base/postgresql/foreignkey.vm with loader org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader
-2008-04-14 09:27:00,783 - SimpleLog4JLogSystem initialized using logfile 'velocity.log'
-2008-04-14 09:27:00,783 - ************************************************************** 
-2008-04-14 09:27:00,783 - Starting Jakarta Velocity v1.3
-2008-04-14 09:27:00,783 - RuntimeInstance initializing.
-2008-04-14 09:27:00,783 - Default Properties File: org/apache/velocity/runtime/defaults/velocity.properties
-2008-04-14 09:27:00,783 - Trying to use logger class org.apache.velocity.runtime.log.AvalonLogSystem
-2008-04-14 09:27:00,783 - Couldn't find class org.apache.velocity.runtime.log.AvalonLogSystem or necessary supporting classes in classpath. Exception : java.lang.NoClassDefFoundError: org/apache/log/format/Formatter
-2008-04-14 09:27:00,783 - Trying to use logger class org.apache.velocity.runtime.log.SimpleLog4JLogSystem
-2008-04-14 09:27:00,783 - Using logger class org.apache.velocity.runtime.log.SimpleLog4JLogSystem
-2008-04-14 09:27:00,788 - Default ResourceManager initializing. (class org.apache.velocity.runtime.resource.ResourceManagerImpl)
-2008-04-14 09:27:00,794 - Resource Loader Instantiated: org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader
-2008-04-14 09:27:00,794 - ClasspathResourceLoader : initialization starting.
-2008-04-14 09:27:00,794 - ClasspathResourceLoader : initialization complete.
-2008-04-14 09:27:00,797 - ResourceCache : initialized. (class org.apache.velocity.runtime.resource.ResourceCacheImpl)
-2008-04-14 09:27:00,797 - Default ResourceManager initialization complete.
-2008-04-14 09:27:00,800 - Loaded System Directive: org.apache.velocity.runtime.directive.Literal
-2008-04-14 09:27:00,802 - Loaded System Directive: org.apache.velocity.runtime.directive.Macro
-2008-04-14 09:27:00,809 - Loaded System Directive: org.apache.velocity.runtime.directive.Parse
-2008-04-14 09:27:00,813 - Loaded System Directive: org.apache.velocity.runtime.directive.Include
-2008-04-14 09:27:00,815 - Loaded System Directive: org.apache.velocity.runtime.directive.Foreach
-2008-04-14 09:27:00,904 - Created: 20 parsers.
-2008-04-14 09:27:00,904 - Velocimacro : initialization starting.
-2008-04-14 09:27:00,904 - Velocimacro : adding VMs from VM library template : VM_global_library.vm
-2008-04-14 09:27:00,927 - ResourceManager : unable to find resource 'VM_global_library.vm' in any resource loader.
-2008-04-14 09:27:00,927 - Velocimacro : error using  VM library template VM_global_library.vm : org.apache.velocity.exception.ResourceNotFoundException: Unable to find resource 'VM_global_library.vm'
-2008-04-14 09:27:00,927 - Velocimacro :  VM library template macro registration complete.
-2008-04-14 09:27:00,927 - Velocimacro : allowInline = true : VMs can be defined inline in templates
-2008-04-14 09:27:00,927 - Velocimacro : allowInlineToOverride = false : VMs defined inline may NOT replace previous VM definitions
-2008-04-14 09:27:00,927 - Velocimacro : allowInlineLocal = false : VMs defined inline will be  global in scope if allowed.
-2008-04-14 09:27:00,927 - Velocimacro : messages on  : VM system will output logging messages
-2008-04-14 09:27:00,927 - Velocimacro : autoload off  : VM system will not automatically reload global library macros
-2008-04-14 09:27:00,927 - Velocimacro : initialization complete.
-2008-04-14 09:27:00,927 - Velocity successfully started.
-2008-04-14 09:27:01,163 - ResourceManager : found sql/base/Control.vm with loader org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader
-2008-04-14 09:27:01,233 - ResourceManager : found sql/base/postgresql/table.vm with loader org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader
-2008-04-14 09:27:01,256 - ResourceManager : found sql/base/postgresql/drop.vm with loader org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader
-2008-04-14 09:27:01,258 - ResourceManager : found sql/base/postgresql/sequence.vm with loader org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader
-2008-04-14 09:27:01,260 - ResourceManager : found sql/base/postgresql/columns.vm with loader org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader
-2008-04-14 09:27:01,266 - ResourceManager : found sql/base/postgresql/primarykey.vm with loader org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader
-2008-04-14 09:27:01,268 - ResourceManager : found sql/base/postgresql/unique.vm with loader org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader
-2008-04-14 09:27:01,271 - ResourceManager : found sql/base/postgresql/index.vm with loader org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader
-2008-04-14 09:27:01,279 - ResourceManager : found sql/base/postgresql/table.vm with loader org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader
-2008-04-14 09:27:01,282 - ResourceManager : found sql/base/postgresql/drop.vm with loader org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader
-2008-04-14 09:27:01,284 - ResourceManager : found sql/base/postgresql/sequence.vm with loader org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader
-2008-04-14 09:27:01,286 - ResourceManager : found sql/base/postgresql/columns.vm with loader org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader
-2008-04-14 09:27:01,288 - ResourceManager : found sql/base/postgresql/primarykey.vm with loader org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader
-2008-04-14 09:27:01,290 - ResourceManager : found sql/base/postgresql/unique.vm with loader org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader
-2008-04-14 09:27:01,293 - ResourceManager : found sql/base/postgresql/index.vm with loader org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader
-2008-04-14 09:27:01,301 - ResourceManager : found sql/base/postgresql/table.vm with loader org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader
-2008-04-14 09:27:01,304 - ResourceManager : found sql/base/postgresql/drop.vm with loader org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader
-2008-04-14 09:27:01,306 - ResourceManager : found sql/base/postgresql/sequence.vm with loader org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader
-2008-04-14 09:27:01,309 - ResourceManager : found sql/base/postgresql/columns.vm with loader org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader
-2008-04-14 09:27:01,311 - ResourceManager : found sql/base/postgresql/primarykey.vm with loader org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader
-2008-04-14 09:27:01,313 - ResourceManager : found sql/base/postgresql/unique.vm with loader org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader
-2008-04-14 09:27:01,315 - ResourceManager : found sql/base/postgresql/index.vm with loader org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader
-2008-04-14 09:27:01,323 - ResourceManager : found sql/base/postgresql/table.vm with loader org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader
-2008-04-14 09:27:01,337 - ResourceManager : found sql/base/postgresql/drop.vm with loader org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader
-2008-04-14 09:27:01,339 - ResourceManager : found sql/base/postgresql/sequence.vm with loader org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader
-2008-04-14 09:27:01,341 - ResourceManager : found sql/base/postgresql/columns.vm with loader org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader
-2008-04-14 09:27:01,345 - ResourceManager : found sql/base/postgresql/primarykey.vm with loader org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader
-2008-04-14 09:27:01,347 - ResourceManager : found sql/base/postgresql/unique.vm with loader org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader
-2008-04-14 09:27:01,350 - ResourceManager : found sql/base/postgresql/index.vm with loader org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader
-2008-04-14 09:27:01,380 - ResourceManager : found sql/base/postgresql/table.vm with loader org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader
-2008-04-14 09:27:01,382 - ResourceManager : found sql/base/postgresql/drop.vm with loader org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader
-2008-04-14 09:27:01,384 - ResourceManager : found sql/base/postgresql/sequence.vm with loader org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader
-2008-04-14 09:27:01,387 - ResourceManager : found sql/base/postgresql/columns.vm with loader org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader
-2008-04-14 09:27:01,389 - ResourceManager : found sql/base/postgresql/primarykey.vm with loader org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader
-2008-04-14 09:27:01,391 - ResourceManager : found sql/base/postgresql/unique.vm with loader org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader
-2008-04-14 09:27:01,409 - ResourceManager : found sql/base/postgresql/index.vm with loader org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader
-2008-04-14 09:27:01,418 - ResourceManager : found sql/base/postgresql/table.vm with loader org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader
-2008-04-14 09:27:01,421 - ResourceManager : found sql/base/postgresql/drop.vm with loader org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader
-2008-04-14 09:27:01,423 - ResourceManager : found sql/base/postgresql/sequence.vm with loader org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader
-2008-04-14 09:27:01,426 - ResourceManager : found sql/base/postgresql/columns.vm with loader org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader
-2008-04-14 09:27:01,445 - ResourceManager : found sql/base/postgresql/primarykey.vm with loader org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader
-2008-04-14 09:27:01,447 - ResourceManager : found sql/base/postgresql/unique.vm with loader org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader
-2008-04-14 09:27:01,449 - ResourceManager : found sql/base/postgresql/index.vm with loader org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader
-2008-04-14 09:27:01,458 - ResourceManager : found sql/base/postgresql/table.vm with loader org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader
-2008-04-14 09:27:01,481 - ResourceManager : found sql/base/postgresql/drop.vm with loader org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader
-2008-04-14 09:27:01,484 - ResourceManager : found sql/base/postgresql/sequence.vm with loader org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader
-2008-04-14 09:27:01,486 - ResourceManager : found sql/base/postgresql/columns.vm with loader org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader
-2008-04-14 09:27:01,488 - ResourceManager : found sql/base/postgresql/primarykey.vm with loader org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader
-2008-04-14 09:27:01,489 - ResourceManager : found sql/base/postgresql/unique.vm with loader org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader
-2008-04-14 09:27:01,492 - ResourceManager : found sql/base/postgresql/index.vm with loader org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader
-2008-04-14 09:27:01,495 - ResourceManager : found sql/base/postgresql/tablefk.vm with loader org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader
-2008-04-14 09:27:01,513 - ResourceManager : found sql/base/postgresql/foreignkey.vm with loader org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader
-2008-04-14 09:27:01,516 - ResourceManager : found sql/base/postgresql/tablefk.vm with loader org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader
-2008-04-14 09:27:01,520 - ResourceManager : found sql/base/postgresql/foreignkey.vm with loader org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader
-2008-04-14 09:27:01,522 - ResourceManager : found sql/base/postgresql/tablefk.vm with loader org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader
-2008-04-14 09:27:01,526 - ResourceManager : found sql/base/postgresql/foreignkey.vm with loader org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader
-2008-04-14 09:27:01,528 - ResourceManager : found sql/base/postgresql/tablefk.vm with loader org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader
-2008-04-14 09:27:01,531 - ResourceManager : found sql/base/postgresql/foreignkey.vm with loader org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader
-2008-04-14 09:27:01,534 - ResourceManager : found sql/base/postgresql/tablefk.vm with loader org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader
-2008-04-14 09:27:01,537 - ResourceManager : found sql/base/postgresql/foreignkey.vm with loader org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader
-2008-04-14 09:27:01,540 - ResourceManager : found sql/base/postgresql/tablefk.vm with loader org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader
-2008-04-14 09:27:01,543 - ResourceManager : found sql/base/postgresql/foreignkey.vm with loader org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader
-2008-04-14 09:27:01,545 - ResourceManager : found sql/base/postgresql/tablefk.vm with loader org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader
-2008-04-14 09:27:01,549 - ResourceManager : found sql/base/postgresql/foreignkey.vm with loader org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader
-2008-04-14 11:10:41,408 - SimpleLog4JLogSystem initialized using logfile 'velocity.log'
-2008-04-14 11:10:41,408 - ************************************************************** 
-2008-04-14 11:10:41,408 - Starting Jakarta Velocity v1.3
-2008-04-14 11:10:41,408 - RuntimeInstance initializing.
-2008-04-14 11:10:41,408 - Default Properties File: org/apache/velocity/runtime/defaults/velocity.properties
-2008-04-14 11:10:41,408 - Trying to use logger class org.apache.velocity.runtime.log.AvalonLogSystem
-2008-04-14 11:10:41,408 - Couldn't find class org.apache.velocity.runtime.log.AvalonLogSystem or necessary supporting classes in classpath. Exception : java.lang.NoClassDefFoundError: org/apache/log/format/Formatter
-2008-04-14 11:10:41,408 - Trying to use logger class org.apache.velocity.runtime.log.SimpleLog4JLogSystem
-2008-04-14 11:10:41,408 - Using logger class org.apache.velocity.runtime.log.SimpleLog4JLogSystem
-2008-04-14 11:10:41,412 - Default ResourceManager initializing. (class org.apache.velocity.runtime.resource.ResourceManagerImpl)
-2008-04-14 11:10:41,417 - Resource Loader Instantiated: org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader
-2008-04-14 11:10:41,417 - ClasspathResourceLoader : initialization starting.
-2008-04-14 11:10:41,417 - ClasspathResourceLoader : initialization complete.
-2008-04-14 11:10:41,420 - ResourceCache : initialized. (class org.apache.velocity.runtime.resource.ResourceCacheImpl)
-2008-04-14 11:10:41,420 - Default ResourceManager initialization complete.
-2008-04-14 11:10:41,443 - Loaded System Directive: org.apache.velocity.runtime.directive.Literal
-2008-04-14 11:10:41,479 - Loaded System Directive: org.apache.velocity.runtime.directive.Macro
-2008-04-14 11:10:41,481 - Loaded System Directive: org.apache.velocity.runtime.directive.Parse
-2008-04-14 11:10:41,484 - Loaded System Directive: org.apache.velocity.runtime.directive.Include
-2008-04-14 11:10:41,486 - Loaded System Directive: org.apache.velocity.runtime.directive.Foreach
-2008-04-14 11:10:41,547 - Created: 20 parsers.
-2008-04-14 11:10:41,547 - Velocimacro : initialization starting.
-2008-04-14 11:10:41,547 - Velocimacro : adding VMs from VM library template : VM_global_library.vm
-2008-04-14 11:10:41,571 - ResourceManager : unable to find resource 'VM_global_library.vm' in any resource loader.
-2008-04-14 11:10:41,571 - Velocimacro : error using  VM library template VM_global_library.vm : org.apache.velocity.exception.ResourceNotFoundException: Unable to find resource 'VM_global_library.vm'
-2008-04-14 11:10:41,571 - Velocimacro :  VM library template macro registration complete.
-2008-04-14 11:10:41,571 - Velocimacro : allowInline = true : VMs can be defined inline in templates
-2008-04-14 11:10:41,571 - Velocimacro : allowInlineToOverride = false : VMs defined inline may NOT replace previous VM definitions
-2008-04-14 11:10:41,571 - Velocimacro : allowInlineLocal = false : VMs defined inline will be  global in scope if allowed.
-2008-04-14 11:10:41,571 - Velocimacro : messages on  : VM system will output logging messages
-2008-04-14 11:10:41,571 - Velocimacro : autoload off  : VM system will not automatically reload global library macros
-2008-04-14 11:10:41,571 - Velocimacro : initialization complete.
-2008-04-14 11:10:41,571 - Velocity successfully started.
-2008-04-14 11:10:41,764 - ResourceManager : found sql/base/Control.vm with loader org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader
-2008-04-14 11:10:41,795 - ResourceManager : found sql/base/postgresql/table.vm with loader org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader
-2008-04-14 11:10:41,801 - ResourceManager : found sql/base/postgresql/drop.vm with loader org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader
-2008-04-14 11:10:41,803 - ResourceManager : found sql/base/postgresql/sequence.vm with loader org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader
-2008-04-14 11:10:41,806 - ResourceManager : found sql/base/postgresql/columns.vm with loader org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader
-2008-04-14 11:10:41,811 - ResourceManager : found sql/base/postgresql/primarykey.vm with loader org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader
-2008-04-14 11:10:41,813 - ResourceManager : found sql/base/postgresql/unique.vm with loader org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader
-2008-04-14 11:10:41,815 - ResourceManager : found sql/base/postgresql/index.vm with loader org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader
-2008-04-14 11:10:41,824 - ResourceManager : found sql/base/postgresql/table.vm with loader org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader
-2008-04-14 11:10:41,826 - ResourceManager : found sql/base/postgresql/drop.vm with loader org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader
-2008-04-14 11:10:41,827 - ResourceManager : found sql/base/postgresql/sequence.vm with loader org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader
-2008-04-14 11:10:41,830 - ResourceManager : found sql/base/postgresql/columns.vm with loader org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader
-2008-04-14 11:10:41,832 - ResourceManager : found sql/base/postgresql/primarykey.vm with loader org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader
-2008-04-14 11:10:41,834 - ResourceManager : found sql/base/postgresql/unique.vm with loader org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader
-2008-04-14 11:10:41,836 - ResourceManager : found sql/base/postgresql/index.vm with loader org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader
-2008-04-14 11:10:41,844 - ResourceManager : found sql/base/postgresql/table.vm with loader org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader
-2008-04-14 11:10:41,847 - ResourceManager : found sql/base/postgresql/drop.vm with loader org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader
-2008-04-14 11:10:41,849 - ResourceManager : found sql/base/postgresql/sequence.vm with loader org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader
-2008-04-14 11:10:41,851 - ResourceManager : found sql/base/postgresql/columns.vm with loader org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader
-2008-04-14 11:10:41,853 - ResourceManager : found sql/base/postgresql/primarykey.vm with loader org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader
-2008-04-14 11:10:41,855 - ResourceManager : found sql/base/postgresql/unique.vm with loader org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader
-2008-04-14 11:10:41,857 - ResourceManager : found sql/base/postgresql/index.vm with loader org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader
-2008-04-14 11:10:41,865 - ResourceManager : found sql/base/postgresql/table.vm with loader org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader
-2008-04-14 11:10:41,868 - ResourceManager : found sql/base/postgresql/drop.vm with loader org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader
-2008-04-14 11:10:41,869 - ResourceManager : found sql/base/postgresql/sequence.vm with loader org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader
-2008-04-14 11:10:41,872 - ResourceManager : found sql/base/postgresql/columns.vm with loader org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader
-2008-04-14 11:10:41,875 - ResourceManager : found sql/base/postgresql/primarykey.vm with loader org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader
-2008-04-14 11:10:41,877 - ResourceManager : found sql/base/postgresql/unique.vm with loader org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader
-2008-04-14 11:10:41,880 - ResourceManager : found sql/base/postgresql/index.vm with loader org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader
-2008-04-14 11:10:41,888 - ResourceManager : found sql/base/postgresql/table.vm with loader org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader
-2008-04-14 11:10:41,890 - ResourceManager : found sql/base/postgresql/drop.vm with loader org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader
-2008-04-14 11:10:41,892 - ResourceManager : found sql/base/postgresql/sequence.vm with loader org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader
-2008-04-14 11:10:41,895 - ResourceManager : found sql/base/postgresql/columns.vm with loader org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader
-2008-04-14 11:10:41,897 - ResourceManager : found sql/base/postgresql/primarykey.vm with loader org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader
-2008-04-14 11:10:41,899 - ResourceManager : found sql/base/postgresql/unique.vm with loader org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader
-2008-04-14 11:10:41,901 - ResourceManager : found sql/base/postgresql/index.vm with loader org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader
-2008-04-14 11:10:41,910 - ResourceManager : found sql/base/postgresql/table.vm with loader org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader
-2008-04-14 11:10:41,913 - ResourceManager : found sql/base/postgresql/drop.vm with loader org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader
-2008-04-14 11:10:41,915 - ResourceManager : found sql/base/postgresql/sequence.vm with loader org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader
-2008-04-14 11:10:41,918 - ResourceManager : found sql/base/postgresql/columns.vm with loader org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader
-2008-04-14 11:10:41,920 - ResourceManager : found sql/base/postgresql/primarykey.vm with loader org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader
-2008-04-14 11:10:41,922 - ResourceManager : found sql/base/postgresql/unique.vm with loader org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader
-2008-04-14 11:10:41,924 - ResourceManager : found sql/base/postgresql/index.vm with loader org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader
-2008-04-14 11:10:41,933 - ResourceManager : found sql/base/postgresql/table.vm with loader org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader
-2008-04-14 11:10:41,935 - ResourceManager : found sql/base/postgresql/drop.vm with loader org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader
-2008-04-14 11:10:41,937 - ResourceManager : found sql/base/postgresql/sequence.vm with loader org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader
-2008-04-14 11:10:41,940 - ResourceManager : found sql/base/postgresql/columns.vm with loader org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader
-2008-04-14 11:10:41,942 - ResourceManager : found sql/base/postgresql/primarykey.vm with loader org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader
-2008-04-14 11:10:41,944 - ResourceManager : found sql/base/postgresql/unique.vm with loader org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader
-2008-04-14 11:10:41,946 - ResourceManager : found sql/base/postgresql/index.vm with loader org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader
-2008-04-14 11:10:41,949 - ResourceManager : found sql/base/postgresql/tablefk.vm with loader org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader
-2008-04-14 11:10:41,953 - ResourceManager : found sql/base/postgresql/foreignkey.vm with loader org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader
-2008-04-14 11:10:41,956 - ResourceManager : found sql/base/postgresql/tablefk.vm with loader org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader
-2008-04-14 11:10:41,960 - ResourceManager : found sql/base/postgresql/foreignkey.vm with loader org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader
-2008-04-14 11:10:41,963 - ResourceManager : found sql/base/postgresql/tablefk.vm with loader org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader
-2008-04-14 11:10:41,966 - ResourceManager : found sql/base/postgresql/foreignkey.vm with loader org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader
-2008-04-14 11:10:41,969 - ResourceManager : found sql/base/postgresql/tablefk.vm with loader org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader
-2008-04-14 11:10:41,973 - ResourceManager : found sql/base/postgresql/foreignkey.vm with loader org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader
-2008-04-14 11:10:41,976 - ResourceManager : found sql/base/postgresql/tablefk.vm with loader org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader
-2008-04-14 11:10:41,980 - ResourceManager : found sql/base/postgresql/foreignkey.vm with loader org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader
-2008-04-14 11:10:41,982 - ResourceManager : found sql/base/postgresql/tablefk.vm with loader org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader
-2008-04-14 11:10:41,986 - ResourceManager : found sql/base/postgresql/foreignkey.vm with loader org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader
-2008-04-14 11:10:41,989 - ResourceManager : found sql/base/postgresql/tablefk.vm with loader org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader
-2008-04-14 11:10:41,993 - ResourceManager : found sql/base/postgresql/foreignkey.vm with loader org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader
+2008-04-14 13:12:02,511 - ResourceManager : found sql/base/postgresql/sequence.vm with loader org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader
+2008-04-14 13:12:02,513 - ResourceManager : found sql/base/postgresql/columns.vm with loader org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader
+2008-04-14 13:12:02,515 - ResourceManager : found sql/base/postgresql/primarykey.vm with loader org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader
+2008-04-14 13:12:02,517 - ResourceManager : found sql/base/postgresql/unique.vm with loader org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader
+2008-04-14 13:12:02,519 - ResourceManager : found sql/base/postgresql/index.vm with loader org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader
+2008-04-14 13:12:02,527 - ResourceManager : found sql/base/postgresql/table.vm with loader org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader
+2008-04-14 13:12:02,530 - ResourceManager : found sql/base/postgresql/drop.vm with loader org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader
+2008-04-14 13:12:02,531 - ResourceManager : found sql/base/postgresql/sequence.vm with loader org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader
+2008-04-14 13:12:02,534 - ResourceManager : found sql/base/postgresql/columns.vm with loader org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader
+2008-04-14 13:12:02,535 - ResourceManager : found sql/base/postgresql/primarykey.vm with loader org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader
+2008-04-14 13:12:02,537 - ResourceManager : found sql/base/postgresql/unique.vm with loader org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader
+2008-04-14 13:12:02,539 - ResourceManager : found sql/base/postgresql/index.vm with loader org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader
+2008-04-14 13:12:02,547 - ResourceManager : found sql/base/postgresql/table.vm with loader org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader
+2008-04-14 13:12:02,549 - ResourceManager : found sql/base/postgresql/drop.vm with loader org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader
+2008-04-14 13:12:02,550 - ResourceManager : found sql/base/postgresql/sequence.vm with loader org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader
+2008-04-14 13:12:02,552 - ResourceManager : found sql/base/postgresql/columns.vm with loader org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader
+2008-04-14 13:12:02,556 - ResourceManager : found sql/base/postgresql/primarykey.vm with loader org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader
+2008-04-14 13:12:02,557 - ResourceManager : found sql/base/postgresql/unique.vm with loader org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader
+2008-04-14 13:12:02,560 - ResourceManager : found sql/base/postgresql/index.vm with loader org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader
+2008-04-14 13:12:02,568 - ResourceManager : found sql/base/postgresql/table.vm with loader org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader
+2008-04-14 13:12:02,570 - ResourceManager : found sql/base/postgresql/drop.vm with loader org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader
+2008-04-14 13:12:02,571 - ResourceManager : found sql/base/postgresql/sequence.vm with loader org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader
+2008-04-14 13:12:02,574 - ResourceManager : found sql/base/postgresql/columns.vm with loader org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader
+2008-04-14 13:12:02,576 - ResourceManager : found sql/base/postgresql/primarykey.vm with loader org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader
+2008-04-14 13:12:02,577 - ResourceManager : found sql/base/postgresql/unique.vm with loader org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader
+2008-04-14 13:12:02,579 - ResourceManager : found sql/base/postgresql/index.vm with loader org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader
+2008-04-14 13:12:02,587 - ResourceManager : found sql/base/postgresql/table.vm with loader org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader
+2008-04-14 13:12:02,590 - ResourceManager : found sql/base/postgresql/drop.vm with loader org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader
+2008-04-14 13:12:02,591 - ResourceManager : found sql/base/postgresql/sequence.vm with loader org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader
+2008-04-14 13:12:02,594 - ResourceManager : found sql/base/postgresql/columns.vm with loader org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader
+2008-04-14 13:12:02,596 - ResourceManager : found sql/base/postgresql/primarykey.vm with loader org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader
+2008-04-14 13:12:02,598 - ResourceManager : found sql/base/postgresql/unique.vm with loader org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader
+2008-04-14 13:12:02,600 - ResourceManager : found sql/base/postgresql/index.vm with loader org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader
+2008-04-14 13:12:02,608 - ResourceManager : found sql/base/postgresql/table.vm with loader org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader
+2008-04-14 13:12:02,610 - ResourceManager : found sql/base/postgresql/drop.vm with loader org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader
+2008-04-14 13:12:02,612 - ResourceManager : found sql/base/postgresql/sequence.vm with loader org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader
+2008-04-14 13:12:02,614 - ResourceManager : found sql/base/postgresql/columns.vm with loader org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader
+2008-04-14 13:12:02,616 - ResourceManager : found sql/base/postgresql/primarykey.vm with loader org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader
+2008-04-14 13:12:02,617 - ResourceManager : found sql/base/postgresql/unique.vm with loader org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader
+2008-04-14 13:12:02,620 - ResourceManager : found sql/base/postgresql/index.vm with loader org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader
+2008-04-14 13:12:02,622 - ResourceManager : found sql/base/postgresql/tablefk.vm with loader org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader
+2008-04-14 13:12:02,626 - ResourceManager : found sql/base/postgresql/foreignkey.vm with loader org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader
+2008-04-14 13:12:02,628 - ResourceManager : found sql/base/postgresql/tablefk.vm with loader org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader
+2008-04-14 13:12:02,631 - ResourceManager : found sql/base/postgresql/foreignkey.vm with loader org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader
+2008-04-14 13:12:02,634 - ResourceManager : found sql/base/postgresql/tablefk.vm with loader org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader
+2008-04-14 13:12:02,637 - ResourceManager : found sql/base/postgresql/foreignkey.vm with loader org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader
+2008-04-14 13:12:02,640 - ResourceManager : found sql/base/postgresql/tablefk.vm with loader org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader
+2008-04-14 13:12:02,643 - ResourceManager : found sql/base/postgresql/foreignkey.vm with loader org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader
+2008-04-14 13:12:02,646 - ResourceManager : found sql/base/postgresql/tablefk.vm with loader org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader
+2008-04-14 13:12:02,649 - ResourceManager : found sql/base/postgresql/foreignkey.vm with loader org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader
+2008-04-14 13:12:02,651 - ResourceManager : found sql/base/postgresql/tablefk.vm with loader org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader
+2008-04-14 13:12:02,655 - ResourceManager : found sql/base/postgresql/foreignkey.vm with loader org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader
+2008-04-14 13:12:02,657 - ResourceManager : found sql/base/postgresql/tablefk.vm with loader org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader
+2008-04-14 13:12:02,660 - ResourceManager : found sql/base/postgresql/foreignkey.vm with loader org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader
+2008-04-14 13:12:54,665 - SimpleLog4JLogSystem initialized using logfile 'velocity.log'
+2008-04-14 13:12:54,665 - ************************************************************** 
+2008-04-14 13:12:54,665 - Starting Jakarta Velocity v1.3
+2008-04-14 13:12:54,665 - RuntimeInstance initializing.
+2008-04-14 13:12:54,665 - Default Properties File: org/apache/velocity/runtime/defaults/velocity.properties
+2008-04-14 13:12:54,665 - Trying to use logger class org.apache.velocity.runtime.log.AvalonLogSystem
+2008-04-14 13:12:54,665 - Couldn't find class org.apache.velocity.runtime.log.AvalonLogSystem or necessary supporting classes in classpath. Exception : java.lang.NoClassDefFoundError: org/apache/log/format/Formatter
+2008-04-14 13:12:54,665 - Trying to use logger class org.apache.velocity.runtime.log.SimpleLog4JLogSystem
+2008-04-14 13:12:54,665 - Using logger class org.apache.velocity.runtime.log.SimpleLog4JLogSystem
+2008-04-14 13:12:54,669 - Default ResourceManager initializing. (class org.apache.velocity.runtime.resource.ResourceManagerImpl)
+2008-04-14 13:12:54,675 - Resource Loader Instantiated: org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader
+2008-04-14 13:12:54,675 - ClasspathResourceLoader : initialization starting.
+2008-04-14 13:12:54,675 - ClasspathResourceLoader : initialization complete.
+2008-04-14 13:12:54,678 - ResourceCache : initialized. (class org.apache.velocity.runtime.resource.ResourceCacheImpl)
+2008-04-14 13:12:54,678 - Default ResourceManager initialization complete.
+2008-04-14 13:12:54,681 - Loaded System Directive: org.apache.velocity.runtime.directive.Literal
+2008-04-14 13:12:54,683 - Loaded System Directive: org.apache.velocity.runtime.directive.Macro
+2008-04-14 13:12:54,705 - Loaded System Directive: org.apache.velocity.runtime.directive.Parse
+2008-04-14 13:12:54,709 - Loaded System Directive: org.apache.velocity.runtime.directive.Include
+2008-04-14 13:12:54,711 - Loaded System Directive: org.apache.velocity.runtime.directive.Foreach
+2008-04-14 13:12:54,803 - Created: 20 parsers.
+2008-04-14 13:12:54,803 - Velocimacro : initialization starting.
+2008-04-14 13:12:54,803 - Velocimacro : adding VMs from VM library template : VM_global_library.vm
+2008-04-14 13:12:54,825 - ResourceManager : unable to find resource 'VM_global_library.vm' in any resource loader.
+2008-04-14 13:12:54,825 - Velocimacro : error using  VM library template VM_global_library.vm : org.apache.velocity.exception.ResourceNotFoundException: Unable to find resource 'VM_global_library.vm'
+2008-04-14 13:12:54,825 - Velocimacro :  VM library template macro registration complete.
+2008-04-14 13:12:54,825 - Velocimacro : allowInline = true : VMs can be defined inline in templates
+2008-04-14 13:12:54,825 - Velocimacro : allowInlineToOverride = false : VMs defined inline may NOT replace previous VM definitions
+2008-04-14 13:12:54,825 - Velocimacro : allowInlineLocal = false : VMs defined inline will be  global in scope if allowed.
+2008-04-14 13:12:54,825 - Velocimacro : messages on  : VM system will output logging messages
+2008-04-14 13:12:54,825 - Velocimacro : autoload off  : VM system will not automatically reload global library macros
+2008-04-14 13:12:54,825 - Velocimacro : initialization complete.
+2008-04-14 13:12:54,825 - Velocity successfully started.
+2008-04-14 13:12:55,079 - ResourceManager : found sql/base/Control.vm with loader org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader
+2008-04-14 13:12:55,152 - ResourceManager : found sql/base/postgresql/table.vm with loader org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader
+2008-04-14 13:12:55,159 - ResourceManager : found sql/base/postgresql/drop.vm with loader org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader
+2008-04-14 13:12:55,161 - ResourceManager : found sql/base/postgresql/sequence.vm with loader org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader
+2008-04-14 13:12:55,163 - ResourceManager : found sql/base/postgresql/columns.vm with loader org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader
+2008-04-14 13:12:55,168 - ResourceManager : found sql/base/postgresql/primarykey.vm with loader org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader
+2008-04-14 13:12:55,170 - ResourceManager : found sql/base/postgresql/unique.vm with loader org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader
+2008-04-14 13:12:55,173 - ResourceManager : found sql/base/postgresql/index.vm with loader org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader
+2008-04-14 13:12:55,202 - ResourceManager : found sql/base/postgresql/table.vm with loader org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader
+2008-04-14 13:12:55,204 - ResourceManager : found sql/base/postgresql/drop.vm with loader org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader
+2008-04-14 13:12:55,206 - ResourceManager : found sql/base/postgresql/sequence.vm with loader org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader
+2008-04-14 13:12:55,215 - ResourceManager : found sql/base/postgresql/columns.vm with loader org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader
+2008-04-14 13:12:55,217 - ResourceManager : found sql/base/postgresql/primarykey.vm with loader org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader
+2008-04-14 13:12:55,219 - ResourceManager : found sql/base/postgresql/unique.vm with loader org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader
+2008-04-14 13:12:55,221 - ResourceManager : found sql/base/postgresql/index.vm with loader org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader
+2008-04-14 13:12:55,239 - ResourceManager : found sql/base/postgresql/table.vm with loader org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader
+2008-04-14 13:12:55,242 - ResourceManager : found sql/base/postgresql/drop.vm with loader org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader
+2008-04-14 13:12:55,244 - ResourceManager : found sql/base/postgresql/sequence.vm with loader org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader
+2008-04-14 13:12:55,246 - ResourceManager : found sql/base/postgresql/columns.vm with loader org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader
+2008-04-14 13:12:55,248 - ResourceManager : found sql/base/postgresql/primarykey.vm with loader org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader
+2008-04-14 13:12:55,250 - ResourceManager : found sql/base/postgresql/unique.vm with loader org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader
+2008-04-14 13:12:55,252 - ResourceManager : found sql/base/postgresql/index.vm with loader org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader
+2008-04-14 13:12:55,261 - ResourceManager : found sql/base/postgresql/table.vm with loader org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader
+2008-04-14 13:12:55,263 - ResourceManager : found sql/base/postgresql/drop.vm with loader org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader
+2008-04-14 13:12:55,265 - ResourceManager : found sql/base/postgresql/sequence.vm with loader org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader
+2008-04-14 13:12:55,267 - ResourceManager : found sql/base/postgresql/columns.vm with loader org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader
+2008-04-14 13:12:55,271 - ResourceManager : found sql/base/postgresql/primarykey.vm with loader org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader
+2008-04-14 13:12:55,273 - ResourceManager : found sql/base/postgresql/unique.vm with loader org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader
+2008-04-14 13:12:55,276 - ResourceManager : found sql/base/postgresql/index.vm with loader org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader
+2008-04-14 13:12:55,284 - ResourceManager : found sql/base/postgresql/table.vm with loader org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader
+2008-04-14 13:12:55,287 - ResourceManager : found sql/base/postgresql/drop.vm with loader org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader
+2008-04-14 13:12:55,288 - ResourceManager : found sql/base/postgresql/sequence.vm with loader org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader
+2008-04-14 13:12:55,291 - ResourceManager : found sql/base/postgresql/columns.vm with loader org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader
+2008-04-14 13:12:55,294 - ResourceManager : found sql/base/postgresql/primarykey.vm with loader org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader
+2008-04-14 13:12:55,295 - ResourceManager : found sql/base/postgresql/unique.vm with loader org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader
+2008-04-14 13:12:55,298 - ResourceManager : found sql/base/postgresql/index.vm with loader org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader
+2008-04-14 13:12:55,306 - ResourceManager : found sql/base/postgresql/table.vm with loader org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader
+2008-04-14 13:12:55,309 - ResourceManager : found sql/base/postgresql/drop.vm with loader org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader
+2008-04-14 13:12:55,311 - ResourceManager : found sql/base/postgresql/sequence.vm with loader org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader
+2008-04-14 13:12:55,315 - ResourceManager : found sql/base/postgresql/columns.vm with loader org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader
+2008-04-14 13:12:55,317 - ResourceManager : found sql/base/postgresql/primarykey.vm with loader org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader
+2008-04-14 13:12:55,319 - ResourceManager : found sql/base/postgresql/unique.vm with loader org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader
+2008-04-14 13:12:55,321 - ResourceManager : found sql/base/postgresql/index.vm with loader org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader
+2008-04-14 13:12:55,331 - ResourceManager : found sql/base/postgresql/table.vm with loader org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader
+2008-04-14 13:12:55,333 - ResourceManager : found sql/base/postgresql/drop.vm with loader org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader
+2008-04-14 13:12:55,335 - ResourceManager : found sql/base/postgresql/sequence.vm with loader org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader
+2008-04-14 13:12:55,338 - ResourceManager : found sql/base/postgresql/columns.vm with loader org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader
+2008-04-14 13:12:55,340 - ResourceManager : found sql/base/postgresql/primarykey.vm with loader org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader
+2008-04-14 13:12:55,342 - ResourceManager : found sql/base/postgresql/unique.vm with loader org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader
+2008-04-14 13:12:55,344 - ResourceManager : found sql/base/postgresql/index.vm with loader org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader
+2008-04-14 13:12:55,348 - ResourceManager : found sql/base/postgresql/tablefk.vm with loader org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader
+2008-04-14 13:12:55,351 - ResourceManager : found sql/base/postgresql/foreignkey.vm with loader org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader
+2008-04-14 13:12:55,354 - ResourceManager : found sql/base/postgresql/tablefk.vm with loader org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader
+2008-04-14 13:12:55,358 - ResourceManager : found sql/base/postgresql/foreignkey.vm with loader org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader
+2008-04-14 13:12:55,361 - ResourceManager : found sql/base/postgresql/tablefk.vm with loader org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader
+2008-04-14 13:12:55,365 - ResourceManager : found sql/base/postgresql/foreignkey.vm with loader org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader
+2008-04-14 13:12:55,368 - ResourceManager : found sql/base/postgresql/tablefk.vm with loader org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader
+2008-04-14 13:12:55,372 - ResourceManager : found sql/base/postgresql/foreignkey.vm with loader org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader
+2008-04-14 13:12:55,375 - ResourceManager : found sql/base/postgresql/tablefk.vm with loader org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader
+2008-04-14 13:12:55,379 - ResourceManager : found sql/base/postgresql/foreignkey.vm with loader org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader
+2008-04-14 13:12:55,382 - ResourceManager : found sql/base/postgresql/tablefk.vm with loader org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader
+2008-04-14 13:12:55,385 - ResourceManager : found sql/base/postgresql/foreignkey.vm with loader org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader
+2008-04-14 13:12:55,388 - ResourceManager : found sql/base/postgresql/tablefk.vm with loader org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader
+2008-04-14 13:12:55,392 - ResourceManager : found sql/base/postgresql/foreignkey.vm with loader org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader
+2008-04-14 13:16:41,863 - SimpleLog4JLogSystem initialized using logfile 'velocity.log'
+2008-04-14 13:16:41,864 - ************************************************************** 
+2008-04-14 13:16:41,864 - Starting Jakarta Velocity v1.3
+2008-04-14 13:16:41,864 - RuntimeInstance initializing.
+2008-04-14 13:16:41,864 - Default Properties File: org/apache/velocity/runtime/defaults/velocity.properties
+2008-04-14 13:16:41,864 - Trying to use logger class org.apache.velocity.runtime.log.AvalonLogSystem
+2008-04-14 13:16:41,864 - Couldn't find class org.apache.velocity.runtime.log.AvalonLogSystem or necessary supporting classes in classpath. Exception : java.lang.NoClassDefFoundError: org/apache/log/format/Formatter
+2008-04-14 13:16:41,864 - Trying to use logger class org.apache.velocity.runtime.log.SimpleLog4JLogSystem
+2008-04-14 13:16:41,864 - Using logger class org.apache.velocity.runtime.log.SimpleLog4JLogSystem
+2008-04-14 13:16:41,868 - Default ResourceManager initializing. (class org.apache.velocity.runtime.resource.ResourceManagerImpl)
+2008-04-14 13:16:41,873 - Resource Loader Instantiated: org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader
+2008-04-14 13:16:41,874 - ClasspathResourceLoader : initialization starting.
+2008-04-14 13:16:41,874 - ClasspathResourceLoader : initialization complete.
+2008-04-14 13:16:41,877 - ResourceCache : initialized. (class org.apache.velocity.runtime.resource.ResourceCacheImpl)
+2008-04-14 13:16:41,877 - Default ResourceManager initialization complete.
+2008-04-14 13:16:41,880 - Loaded System Directive: org.apache.velocity.runtime.directive.Literal
+2008-04-14 13:16:41,882 - Loaded System Directive: org.apache.velocity.runtime.directive.Macro
+2008-04-14 13:16:41,884 - Loaded System Directive: org.apache.velocity.runtime.directive.Parse
+2008-04-14 13:16:41,887 - Loaded System Directive: org.apache.velocity.runtime.directive.Include
+2008-04-14 13:16:41,889 - Loaded System Directive: org.apache.velocity.runtime.directive.Foreach
+2008-04-14 13:16:41,938 - Created: 20 parsers.
+2008-04-14 13:16:41,939 - Velocimacro : initialization starting.
+2008-04-14 13:16:41,939 - Velocimacro : adding VMs from VM library template : VM_global_library.vm
+2008-04-14 13:16:41,943 - ResourceManager : unable to find resource 'VM_global_library.vm' in any resource loader.
+2008-04-14 13:16:41,943 - Velocimacro : error using  VM library template VM_global_library.vm : org.apache.velocity.exception.ResourceNotFoundException: Unable to find resource 'VM_global_library.vm'
+2008-04-14 13:16:41,943 - Velocimacro :  VM library template macro registration complete.
+2008-04-14 13:16:41,943 - Velocimacro : allowInline = true : VMs can be defined inline in templates
+2008-04-14 13:16:41,943 - Velocimacro : allowInlineToOverride = false : VMs defined inline may NOT replace previous VM definitions
+2008-04-14 13:16:41,943 - Velocimacro : allowInlineLocal = false : VMs defined inline will be  global in scope if allowed.
+2008-04-14 13:16:41,944 - Velocimacro : messages on  : VM system will output logging messages
+2008-04-14 13:16:41,944 - Velocimacro : autoload off  : VM system will not automatically reload global library macros
+2008-04-14 13:16:41,944 - Velocimacro : initialization complete.
+2008-04-14 13:16:41,944 - Velocity successfully started.
+2008-04-14 13:16:42,244 - ResourceManager : found sql/base/Control.vm with loader org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader
+2008-04-14 13:16:42,275 - ResourceManager : found sql/base/postgresql/table.vm with loader org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader
+2008-04-14 13:16:42,281 - ResourceManager : found sql/base/postgresql/drop.vm with loader org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader
+2008-04-14 13:16:42,283 - ResourceManager : found sql/base/postgresql/sequence.vm with loader org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader
+2008-04-14 13:16:42,286 - ResourceManager : found sql/base/postgresql/columns.vm with loader org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader
+2008-04-14 13:16:42,291 - ResourceManager : found sql/base/postgresql/primarykey.vm with loader org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader
+2008-04-14 13:16:42,293 - ResourceManager : found sql/base/postgresql/unique.vm with loader org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader
+2008-04-14 13:16:42,296 - ResourceManager : found sql/base/postgresql/index.vm with loader org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader
+2008-04-14 13:16:42,305 - ResourceManager : found sql/base/postgresql/table.vm with loader org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader
+2008-04-14 13:16:42,307 - ResourceManager : found sql/base/postgresql/drop.vm with loader org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader
+2008-04-14 13:16:42,309 - ResourceManager : found sql/base/postgresql/sequence.vm with loader org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader
+2008-04-14 13:16:42,311 - ResourceManager : found sql/base/postgresql/columns.vm with loader org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader
+2008-04-14 13:16:42,313 - ResourceManager : found sql/base/postgresql/primarykey.vm with loader org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader
+2008-04-14 13:16:42,315 - ResourceManager : found sql/base/postgresql/unique.vm with loader org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader
+2008-04-14 13:16:42,317 - ResourceManager : found sql/base/postgresql/index.vm with loader org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader
+2008-04-14 13:16:42,325 - ResourceManager : found sql/base/postgresql/table.vm with loader org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader
+2008-04-14 13:16:42,329 - ResourceManager : found sql/base/postgresql/drop.vm with loader org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader
+2008-04-14 13:16:42,330 - ResourceManager : found sql/base/postgresql/sequence.vm with loader org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader
+2008-04-14 13:16:42,333 - ResourceManager : found sql/base/postgresql/columns.vm with loader org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader
+2008-04-14 13:16:42,335 - ResourceManager : found sql/base/postgresql/primarykey.vm with loader org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader
+2008-04-14 13:16:42,359 - ResourceManager : found sql/base/postgresql/unique.vm with loader org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader
+2008-04-14 13:16:42,361 - ResourceManager : found sql/base/postgresql/index.vm with loader org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader
+2008-04-14 13:16:42,369 - ResourceManager : found sql/base/postgresql/table.vm with loader org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader
+2008-04-14 13:16:42,386 - ResourceManager : found sql/base/postgresql/drop.vm with loader org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader
+2008-04-14 13:16:42,388 - ResourceManager : found sql/base/postgresql/sequence.vm with loader org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader
+2008-04-14 13:16:42,390 - ResourceManager : found sql/base/postgresql/columns.vm with loader org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader
+2008-04-14 13:16:42,394 - ResourceManager : found sql/base/postgresql/primarykey.vm with loader org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader
+2008-04-14 13:16:42,396 - ResourceManager : found sql/base/postgresql/unique.vm with loader org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader
+2008-04-14 13:16:42,399 - ResourceManager : found sql/base/postgresql/index.vm with loader org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader
+2008-04-14 13:16:42,425 - ResourceManager : found sql/base/postgresql/table.vm with loader org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader
+2008-04-14 13:16:42,427 - ResourceManager : found sql/base/postgresql/drop.vm with loader org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader
+2008-04-14 13:16:42,429 - ResourceManager : found sql/base/postgresql/sequence.vm with loader org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader
+2008-04-14 13:16:42,431 - ResourceManager : found sql/base/postgresql/columns.vm with loader org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader
+2008-04-14 13:16:42,434 - ResourceManager : found sql/base/postgresql/primarykey.vm with loader org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader
+2008-04-14 13:16:42,436 - ResourceManager : found sql/base/postgresql/unique.vm with loader org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader
+2008-04-14 13:16:42,438 - ResourceManager : found sql/base/postgresql/index.vm with loader org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader
+2008-04-14 13:16:42,468 - ResourceManager : found sql/base/postgresql/table.vm with loader org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader
+2008-04-14 13:16:42,471 - ResourceManager : found sql/base/postgresql/drop.vm with loader org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader
+2008-04-14 13:16:42,473 - ResourceManager : found sql/base/postgresql/sequence.vm with loader org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader
+2008-04-14 13:16:42,491 - ResourceManager : found sql/base/postgresql/columns.vm with loader org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader
+2008-04-14 13:16:42,493 - ResourceManager : found sql/base/postgresql/primarykey.vm with loader org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader
+2008-04-14 13:16:42,495 - ResourceManager : found sql/base/postgresql/unique.vm with loader org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader
+2008-04-14 13:16:42,498 - ResourceManager : found sql/base/postgresql/index.vm with loader org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader
+2008-04-14 13:16:42,507 - ResourceManager : found sql/base/postgresql/table.vm with loader org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader
+2008-04-14 13:16:42,509 - ResourceManager : found sql/base/postgresql/drop.vm with loader org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader
+2008-04-14 13:16:42,511 - ResourceManager : found sql/base/postgresql/sequence.vm with loader org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader
+2008-04-14 13:16:42,514 - ResourceManager : found sql/base/postgresql/columns.vm with loader org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader
+2008-04-14 13:16:42,516 - ResourceManager : found sql/base/postgresql/primarykey.vm with loader org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader
+2008-04-14 13:16:42,518 - ResourceManager : found sql/base/postgresql/unique.vm with loader org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader
+2008-04-14 13:16:42,521 - ResourceManager : found sql/base/postgresql/index.vm with loader org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader
+2008-04-14 13:16:42,524 - ResourceManager : found sql/base/postgresql/tablefk.vm with loader org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader
+2008-04-14 13:16:42,528 - ResourceManager : found sql/base/postgresql/foreignkey.vm with loader org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader
+2008-04-14 13:16:42,531 - ResourceManager : found sql/base/postgresql/tablefk.vm with loader org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader
+2008-04-14 13:16:42,534 - ResourceManager : found sql/base/postgresql/foreignkey.vm with loader org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader
+2008-04-14 13:16:42,537 - ResourceManager : found sql/base/postgresql/tablefk.vm with loader org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader
+2008-04-14 13:16:42,541 - ResourceManager : found sql/base/postgresql/foreignkey.vm with loader org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader
+2008-04-14 13:16:42,544 - ResourceManager : found sql/base/postgresql/tablefk.vm with loader org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader
+2008-04-14 13:16:42,548 - ResourceManager : found sql/base/postgresql/foreignkey.vm with loader org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader
+2008-04-14 13:16:42,551 - ResourceManager : found sql/base/postgresql/tablefk.vm with loader org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader
+2008-04-14 13:16:42,554 - ResourceManager : found sql/base/postgresql/foreignkey.vm with loader org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader
+2008-04-14 13:16:42,557 - ResourceManager : found sql/base/postgresql/tablefk.vm with loader org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader
+2008-04-14 13:16:42,561 - ResourceManager : found sql/base/postgresql/foreignkey.vm with loader org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader
+2008-04-14 13:16:42,564 - ResourceManager : found sql/base/postgresql/tablefk.vm with loader org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader
+2008-04-14 13:16:42,568 - ResourceManager : found sql/base/postgresql/foreignkey.vm with loader org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader
+2008-04-14 13:31:41,759 - SimpleLog4JLogSystem initialized using logfile 'velocity.log'
+2008-04-14 13:31:41,759 - ************************************************************** 
+2008-04-14 13:31:41,759 - Starting Jakarta Velocity v1.3
+2008-04-14 13:31:41,759 - RuntimeInstance initializing.
+2008-04-14 13:31:41,759 - Default Properties File: org/apache/velocity/runtime/defaults/velocity.properties
+2008-04-14 13:31:41,759 - Trying to use logger class org.apache.velocity.runtime.log.AvalonLogSystem
+2008-04-14 13:31:41,759 - Couldn't find class org.apache.velocity.runtime.log.AvalonLogSystem or necessary supporting classes in classpath. Exception : java.lang.NoClassDefFoundError: org/apache/log/format/Formatter
+2008-04-14 13:31:41,759 - Trying to use logger class org.apache.velocity.runtime.log.SimpleLog4JLogSystem
+2008-04-14 13:31:41,759 - Using logger class org.apache.velocity.runtime.log.SimpleLog4JLogSystem
+2008-04-14 13:31:41,764 - Default ResourceManager initializing. (class org.apache.velocity.runtime.resource.ResourceManagerImpl)
+2008-04-14 13:31:41,770 - Resource Loader Instantiated: org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader
+2008-04-14 13:31:41,770 - ClasspathResourceLoader : initialization starting.
+2008-04-14 13:31:41,770 - ClasspathResourceLoader : initialization complete.
+2008-04-14 13:31:41,774 - ResourceCache : initialized. (class org.apache.velocity.runtime.resource.ResourceCacheImpl)
+2008-04-14 13:31:41,774 - Default ResourceManager initialization complete.
+2008-04-14 13:31:41,796 - Loaded System Directive: org.apache.velocity.runtime.directive.Literal
+2008-04-14 13:31:41,799 - Loaded System Directive: org.apache.velocity.runtime.directive.Macro
+2008-04-14 13:31:41,801 - Loaded System Directive: org.apache.velocity.runtime.directive.Parse
+2008-04-14 13:31:41,805 - Loaded System Directive: org.apache.velocity.runtime.directive.Include
+2008-04-14 13:31:41,807 - Loaded System Directive: org.apache.velocity.runtime.directive.Foreach
+2008-04-14 13:31:41,917 - Created: 20 parsers.
+2008-04-14 13:31:41,918 - Velocimacro : initialization starting.
+2008-04-14 13:31:41,918 - Velocimacro : adding VMs from VM library template : VM_global_library.vm
+2008-04-14 13:31:41,935 - ResourceManager : unable to find resource 'VM_global_library.vm' in any resource loader.
+2008-04-14 13:31:41,935 - Velocimacro : error using  VM library template VM_global_library.vm : org.apache.velocity.exception.ResourceNotFoundException: Unable to find resource 'VM_global_library.vm'
+2008-04-14 13:31:41,935 - Velocimacro :  VM library template macro registration complete.
+2008-04-14 13:31:41,935 - Velocimacro : allowInline = true : VMs can be defined inline in templates
+2008-04-14 13:31:41,935 - Velocimacro : allowInlineToOverride = false : VMs defined inline may NOT replace previous VM definitions
+2008-04-14 13:31:41,935 - Velocimacro : allowInlineLocal = false : VMs defined inline will be  global in scope if allowed.
+2008-04-14 13:31:41,935 - Velocimacro : messages on  : VM system will output logging messages
+2008-04-14 13:31:41,935 - Velocimacro : autoload off  : VM system will not automatically reload global library macros
+2008-04-14 13:31:41,935 - Velocimacro : initialization complete.
+2008-04-14 13:31:41,935 - Velocity successfully started.
+2008-04-14 13:31:42,224 - ResourceManager : found sql/base/Control.vm with loader org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader
+2008-04-14 13:31:42,315 - ResourceManager : found sql/base/postgresql/table.vm with loader org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader
+2008-04-14 13:31:42,322 - ResourceManager : found sql/base/postgresql/drop.vm with loader org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader
+2008-04-14 13:31:42,324 - ResourceManager : found sql/base/postgresql/sequence.vm with loader org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader
+2008-04-14 13:31:42,326 - ResourceManager : found sql/base/postgresql/columns.vm with loader org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader
+2008-04-14 13:31:42,353 - ResourceManager : found sql/base/postgresql/primarykey.vm with loader org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader
+2008-04-14 13:31:42,355 - ResourceManager : found sql/base/postgresql/unique.vm with loader org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader
+2008-04-14 13:31:42,358 - ResourceManager : found sql/base/postgresql/index.vm with loader org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader
+2008-04-14 13:31:42,367 - ResourceManager : found sql/base/postgresql/table.vm with loader org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader
+2008-04-14 13:31:42,369 - ResourceManager : found sql/base/postgresql/drop.vm with loader org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader
+2008-04-14 13:31:42,371 - ResourceManager : found sql/base/postgresql/sequence.vm with loader org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader
+2008-04-14 13:31:42,395 - ResourceManager : found sql/base/postgresql/columns.vm with loader org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader
+2008-04-14 13:31:42,397 - ResourceManager : found sql/base/postgresql/primarykey.vm with loader org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader
+2008-04-14 13:31:42,399 - ResourceManager : found sql/base/postgresql/unique.vm with loader org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader
+2008-04-14 13:31:42,402 - ResourceManager : found sql/base/postgresql/index.vm with loader org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader
+2008-04-14 13:31:42,410 - ResourceManager : found sql/base/postgresql/table.vm with loader org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader
+2008-04-14 13:31:42,413 - ResourceManager : found sql/base/postgresql/drop.vm with loader org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader
+2008-04-14 13:31:42,435 - ResourceManager : found sql/base/postgresql/sequence.vm with loader org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader
+2008-04-14 13:31:42,438 - ResourceManager : found sql/base/postgresql/columns.vm with loader org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader
+2008-04-14 13:31:42,440 - ResourceManager : found sql/base/postgresql/primarykey.vm with loader org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader
+2008-04-14 13:31:42,442 - ResourceManager : found sql/base/postgresql/unique.vm with loader org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader
+2008-04-14 13:31:42,445 - ResourceManager : found sql/base/postgresql/index.vm with loader org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader
+2008-04-14 13:31:42,453 - ResourceManager : found sql/base/postgresql/table.vm with loader org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader
+2008-04-14 13:31:42,466 - ResourceManager : found sql/base/postgresql/drop.vm with loader org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader
+2008-04-14 13:31:42,469 - ResourceManager : found sql/base/postgresql/sequence.vm with loader org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader
+2008-04-14 13:31:42,471 - ResourceManager : found sql/base/postgresql/columns.vm with loader org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader
+2008-04-14 13:31:42,475 - ResourceManager : found sql/base/postgresql/primarykey.vm with loader org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader
+2008-04-14 13:31:42,498 - ResourceManager : found sql/base/postgresql/unique.vm with loader org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader
+2008-04-14 13:31:42,502 - ResourceManager : found sql/base/postgresql/index.vm with loader org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader
+2008-04-14 13:31:42,510 - ResourceManager : found sql/base/postgresql/table.vm with loader org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader
+2008-04-14 13:31:42,513 - ResourceManager : found sql/base/postgresql/drop.vm with loader org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader
+2008-04-14 13:31:42,514 - ResourceManager : found sql/base/postgresql/sequence.vm with loader org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader
+2008-04-14 13:31:42,517 - ResourceManager : found sql/base/postgresql/columns.vm with loader org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader
+2008-04-14 13:31:42,540 - ResourceManager : found sql/base/postgresql/primarykey.vm with loader org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader
+2008-04-14 13:31:42,542 - ResourceManager : found sql/base/postgresql/unique.vm with loader org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader
+2008-04-14 13:31:42,544 - ResourceManager : found sql/base/postgresql/index.vm with loader org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader
+2008-04-14 13:31:42,553 - ResourceManager : found sql/base/postgresql/table.vm with loader org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader
+2008-04-14 13:31:42,556 - ResourceManager : found sql/base/postgresql/drop.vm with loader org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader
+2008-04-14 13:31:42,558 - ResourceManager : found sql/base/postgresql/sequence.vm with loader org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader
+2008-04-14 13:31:42,573 - ResourceManager : found sql/base/postgresql/columns.vm with loader org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader
+2008-04-14 13:31:42,575 - ResourceManager : found sql/base/postgresql/primarykey.vm with loader org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader
+2008-04-14 13:31:42,577 - ResourceManager : found sql/base/postgresql/unique.vm with loader org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader
+2008-04-14 13:31:42,580 - ResourceManager : found sql/base/postgresql/index.vm with loader org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader
+2008-04-14 13:31:42,611 - ResourceManager : found sql/base/postgresql/table.vm with loader org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader
+2008-04-14 13:31:42,613 - ResourceManager : found sql/base/postgresql/drop.vm with loader org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader
+2008-04-14 13:31:42,615 - ResourceManager : found sql/base/postgresql/sequence.vm with loader org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader
+2008-04-14 13:31:42,618 - ResourceManager : found sql/base/postgresql/columns.vm with loader org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader
+2008-04-14 13:31:42,620 - ResourceManager : found sql/base/postgresql/primarykey.vm with loader org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader
+2008-04-14 13:31:42,642 - ResourceManager : found sql/base/postgresql/unique.vm with loader org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader
+2008-04-14 13:31:42,645 - ResourceManager : found sql/base/postgresql/index.vm with loader org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader
+2008-04-14 13:31:42,648 - ResourceManager : found sql/base/postgresql/tablefk.vm with loader org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader
+2008-04-14 13:31:42,652 - ResourceManager : found sql/base/postgresql/foreignkey.vm with loader org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader
+2008-04-14 13:31:42,655 - ResourceManager : found sql/base/postgresql/tablefk.vm with loader org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader
+2008-04-14 13:31:42,659 - ResourceManager : found sql/base/postgresql/foreignkey.vm with loader org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader
+2008-04-14 13:31:42,662 - ResourceManager : found sql/base/postgresql/tablefk.vm with loader org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader
+2008-04-14 13:31:42,677 - ResourceManager : found sql/base/postgresql/foreignkey.vm with loader org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader
+2008-04-14 13:31:42,680 - ResourceManager : found sql/base/postgresql/tablefk.vm with loader org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader
+2008-04-14 13:31:42,684 - ResourceManager : found sql/base/postgresql/foreignkey.vm with loader org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader
+2008-04-14 13:31:42,709 - ResourceManager : found sql/base/postgresql/tablefk.vm with loader org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader
+2008-04-14 13:31:42,713 - ResourceManager : found sql/base/postgresql/foreignkey.vm with loader org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader
+2008-04-14 13:31:42,716 - ResourceManager : found sql/base/postgresql/tablefk.vm with loader org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader
+2008-04-14 13:31:42,728 - ResourceManager : found sql/base/postgresql/foreignkey.vm with loader org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader
+2008-04-14 13:31:42,731 - ResourceManager : found sql/base/postgresql/tablefk.vm with loader org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader
+2008-04-14 13:31:42,735 - ResourceManager : found sql/base/postgresql/foreignkey.vm with loader org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader
+2008-04-14 13:35:43,280 - SimpleLog4JLogSystem initialized using logfile 'velocity.log'
+2008-04-14 13:35:43,280 - ************************************************************** 
+2008-04-14 13:35:43,280 - Starting Jakarta Velocity v1.3
+2008-04-14 13:35:43,280 - RuntimeInstance initializing.
+2008-04-14 13:35:43,280 - Default Properties File: org/apache/velocity/runtime/defaults/velocity.properties
+2008-04-14 13:35:43,280 - Trying to use logger class org.apache.velocity.runtime.log.AvalonLogSystem
+2008-04-14 13:35:43,280 - Couldn't find class org.apache.velocity.runtime.log.AvalonLogSystem or necessary supporting classes in classpath. Exception : java.lang.NoClassDefFoundError: org/apache/log/format/Formatter
+2008-04-14 13:35:43,280 - Trying to use logger class org.apache.velocity.runtime.log.SimpleLog4JLogSystem
+2008-04-14 13:35:43,280 - Using logger class org.apache.velocity.runtime.log.SimpleLog4JLogSystem
+2008-04-14 13:35:43,285 - Default ResourceManager initializing. (class org.apache.velocity.runtime.resource.ResourceManagerImpl)
+2008-04-14 13:35:43,291 - Resource Loader Instantiated: org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader
+2008-04-14 13:35:43,291 - ClasspathResourceLoader : initialization starting.
+2008-04-14 13:35:43,291 - ClasspathResourceLoader : initialization complete.
+2008-04-14 13:35:43,294 - ResourceCache : initialized. (class org.apache.velocity.runtime.resource.ResourceCacheImpl)
+2008-04-14 13:35:43,294 - Default ResourceManager initialization complete.
+2008-04-14 13:35:43,298 - Loaded System Directive: org.apache.velocity.runtime.directive.Literal
+2008-04-14 13:35:43,300 - Loaded System Directive: org.apache.velocity.runtime.directive.Macro
+2008-04-14 13:35:43,302 - Loaded System Directive: org.apache.velocity.runtime.directive.Parse
+2008-04-14 13:35:43,306 - Loaded System Directive: org.apache.velocity.runtime.directive.Include
+2008-04-14 13:35:43,308 - Loaded System Directive: org.apache.velocity.runtime.directive.Foreach
+2008-04-14 13:35:43,359 - Created: 20 parsers.
+2008-04-14 13:35:43,360 - Velocimacro : initialization starting.
+2008-04-14 13:35:43,360 - Velocimacro : adding VMs from VM library template : VM_global_library.vm
+2008-04-14 13:35:43,365 - ResourceManager : unable to find resource 'VM_global_library.vm' in any resource loader.
+2008-04-14 13:35:43,365 - Velocimacro : error using  VM library template VM_global_library.vm : org.apache.velocity.exception.ResourceNotFoundException: Unable to find resource 'VM_global_library.vm'
+2008-04-14 13:35:43,365 - Velocimacro :  VM library template macro registration complete.
+2008-04-14 13:35:43,365 - Velocimacro : allowInline = true : VMs can be defined inline in templates
+2008-04-14 13:35:43,365 - Velocimacro : allowInlineToOverride = false : VMs defined inline may NOT replace previous VM definitions
+2008-04-14 13:35:43,365 - Velocimacro : allowInlineLocal = false : VMs defined inline will be  global in scope if allowed.
+2008-04-14 13:35:43,365 - Velocimacro : messages on  : VM system will output logging messages
+2008-04-14 13:35:43,365 - Velocimacro : autoload off  : VM system will not automatically reload global library macros
+2008-04-14 13:35:43,365 - Velocimacro : initialization complete.
+2008-04-14 13:35:43,365 - Velocity successfully started.
+2008-04-14 13:35:43,506 - ResourceManager : found sql/base/Control.vm with loader org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader
+2008-04-14 13:35:43,538 - ResourceManager : found sql/base/postgresql/table.vm with loader org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader
+2008-04-14 13:35:43,544 - ResourceManager : found sql/base/postgresql/drop.vm with loader org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader
+2008-04-14 13:35:43,547 - ResourceManager : found sql/base/postgresql/sequence.vm with loader org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader
+2008-04-14 13:35:43,549 - ResourceManager : found sql/base/postgresql/columns.vm with loader org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader
+2008-04-14 13:35:43,555 - ResourceManager : found sql/base/postgresql/primarykey.vm with loader org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader
+2008-04-14 13:35:43,557 - ResourceManager : found sql/base/postgresql/unique.vm with loader org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader
+2008-04-14 13:35:43,560 - ResourceManager : found sql/base/postgresql/index.vm with loader org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader
+2008-04-14 13:35:43,569 - ResourceManager : found sql/base/postgresql/table.vm with loader org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader
+2008-04-14 13:35:43,571 - ResourceManager : found sql/base/postgresql/drop.vm with loader org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader
+2008-04-14 13:35:43,573 - ResourceManager : found sql/base/postgresql/sequence.vm with loader org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader
+2008-04-14 13:35:43,576 - ResourceManager : found sql/base/postgresql/columns.vm with loader org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader
+2008-04-14 13:35:43,578 - ResourceManager : found sql/base/postgresql/primarykey.vm with loader org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader
+2008-04-14 13:35:43,580 - ResourceManager : found sql/base/postgresql/unique.vm with loader org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader
+2008-04-14 13:35:43,583 - ResourceManager : found sql/base/postgresql/index.vm with loader org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader
+2008-04-14 13:35:43,591 - ResourceManager : found sql/base/postgresql/table.vm with loader org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader
+2008-04-14 13:35:43,594 - ResourceManager : found sql/base/postgresql/drop.vm with loader org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader
+2008-04-14 13:35:43,596 - ResourceManager : found sql/base/postgresql/sequence.vm with loader org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader
+2008-04-14 13:35:43,599 - ResourceManager : found sql/base/postgresql/columns.vm with loader org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader
+2008-04-14 13:35:43,601 - ResourceManager : found sql/base/postgresql/primarykey.vm with loader org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader
+2008-04-14 13:35:43,603 - ResourceManager : found sql/base/postgresql/unique.vm with loader org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader
+2008-04-14 13:35:43,606 - ResourceManager : found sql/base/postgresql/index.vm with loader org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader
+2008-04-14 13:35:43,614 - ResourceManager : found sql/base/postgresql/table.vm with loader org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader
+2008-04-14 13:35:43,617 - ResourceManager : found sql/base/postgresql/drop.vm with loader org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader
+2008-04-14 13:35:43,619 - ResourceManager : found sql/base/postgresql/sequence.vm with loader org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader
+2008-04-14 13:35:43,621 - ResourceManager : found sql/base/postgresql/columns.vm with loader org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader
+2008-04-14 13:35:43,625 - ResourceManager : found sql/base/postgresql/primarykey.vm with loader org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader
+2008-04-14 13:35:43,627 - ResourceManager : found sql/base/postgresql/unique.vm with loader org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader
+2008-04-14 13:35:43,630 - ResourceManager : found sql/base/postgresql/index.vm with loader org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader
+2008-04-14 13:35:43,639 - ResourceManager : found sql/base/postgresql/table.vm with loader org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader
+2008-04-14 13:35:43,641 - ResourceManager : found sql/base/postgresql/drop.vm with loader org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader
+2008-04-14 13:35:43,643 - ResourceManager : found sql/base/postgresql/sequence.vm with loader org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader
+2008-04-14 13:35:43,646 - ResourceManager : found sql/base/postgresql/columns.vm with loader org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader
+2008-04-14 13:35:43,649 - ResourceManager : found sql/base/postgresql/primarykey.vm with loader org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader
+2008-04-14 13:35:43,651 - ResourceManager : found sql/base/postgresql/unique.vm with loader org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader
+2008-04-14 13:35:43,653 - ResourceManager : found sql/base/postgresql/index.vm with loader org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader
+2008-04-14 13:35:43,662 - ResourceManager : found sql/base/postgresql/table.vm with loader org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader
+2008-04-14 13:35:43,665 - ResourceManager : found sql/base/postgresql/drop.vm with loader org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader
+2008-04-14 13:35:43,667 - ResourceManager : found sql/base/postgresql/sequence.vm with loader org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader
+2008-04-14 13:35:43,671 - ResourceManager : found sql/base/postgresql/columns.vm with loader org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader
+2008-04-14 13:35:43,673 - ResourceManager : found sql/base/postgresql/primarykey.vm with loader org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader
+2008-04-14 13:35:43,675 - ResourceManager : found sql/base/postgresql/unique.vm with loader org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader
+2008-04-14 13:35:43,678 - ResourceManager : found sql/base/postgresql/index.vm with loader org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader
+2008-04-14 13:35:43,688 - ResourceManager : found sql/base/postgresql/table.vm with loader org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader
+2008-04-14 13:35:43,690 - ResourceManager : found sql/base/postgresql/drop.vm with loader org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader
+2008-04-14 13:35:43,692 - ResourceManager : found sql/base/postgresql/sequence.vm with loader org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader
+2008-04-14 13:35:43,695 - ResourceManager : found sql/base/postgresql/columns.vm with loader org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader
+2008-04-14 13:35:43,697 - ResourceManager : found sql/base/postgresql/primarykey.vm with loader org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader
+2008-04-14 13:35:43,699 - ResourceManager : found sql/base/postgresql/unique.vm with loader org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader
+2008-04-14 13:35:43,702 - ResourceManager : found sql/base/postgresql/index.vm with loader org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader
+2008-04-14 13:35:43,705 - ResourceManager : found sql/base/postgresql/tablefk.vm with loader org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader
+2008-04-14 13:35:43,709 - ResourceManager : found sql/base/postgresql/foreignkey.vm with loader org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader
+2008-04-14 13:35:43,712 - ResourceManager : found sql/base/postgresql/tablefk.vm with loader org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader
+2008-04-14 13:35:43,716 - ResourceManager : found sql/base/postgresql/foreignkey.vm with loader org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader
+2008-04-14 13:35:43,719 - ResourceManager : found sql/base/postgresql/tablefk.vm with loader org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader
+2008-04-14 13:35:43,723 - ResourceManager : found sql/base/postgresql/foreignkey.vm with loader org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader
+2008-04-14 13:35:43,727 - ResourceManager : found sql/base/postgresql/tablefk.vm with loader org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader
+2008-04-14 13:35:43,731 - ResourceManager : found sql/base/postgresql/foreignkey.vm with loader org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader
+2008-04-14 13:35:43,734 - ResourceManager : found sql/base/postgresql/tablefk.vm with loader org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader
+2008-04-14 13:35:43,738 - ResourceManager : found sql/base/postgresql/foreignkey.vm with loader org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader
+2008-04-14 13:35:43,741 - ResourceManager : found sql/base/postgresql/tablefk.vm with loader org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader
+2008-04-14 13:35:43,745 - ResourceManager : found sql/base/postgresql/foreignkey.vm with loader org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader
+2008-04-14 13:35:43,748 - ResourceManager : found sql/base/postgresql/tablefk.vm with loader org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader
+2008-04-14 13:35:43,752 - ResourceManager : found sql/base/postgresql/foreignkey.vm with loader org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader
