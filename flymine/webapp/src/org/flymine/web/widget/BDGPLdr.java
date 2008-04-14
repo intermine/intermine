@@ -80,7 +80,6 @@ public class BDGPLdr implements EnrichmentWidgetLdr
         QueryClass qcGene = new QueryClass(Gene.class);
         QueryClass qcDataset = new QueryClass(DataSet.class);
         QueryClass qcTerm = new QueryClass(MRNAExpressionTerm.class);
-        QueryClass qcOrganism = new QueryClass(Organism.class);
                 
         QueryField qfGene = new QueryField(qcGene, "id");
         QueryField qfTerm = new QueryField(qcTerm, "name");        
@@ -90,9 +89,6 @@ public class BDGPLdr implements EnrichmentWidgetLdr
         if (useBag) {
             cs.addConstraint(new BagConstraint(qfGene, ConstraintOp.IN, bag.getOsb()));
         }
-
-        QueryObjectReference qr1 = new QueryObjectReference(qcGene, "organism");
-        cs.addConstraint(new ContainsConstraint(qr1, ConstraintOp.CONTAINS, qcOrganism));
 
         QueryCollectionReference r1 = new QueryCollectionReference(qcGene, "mRNAExpressionResults");
         cs.addConstraint(new ContainsConstraint(r1, ConstraintOp.CONTAINS, qcMrnaResult));
@@ -123,7 +119,6 @@ public class BDGPLdr implements EnrichmentWidgetLdr
         subQ.addFrom(qcMrnaResult);
         subQ.addFrom(qcGene);
         subQ.addFrom(qcDataset);
-        subQ.addFrom(qcOrganism);
         
         subQ.addToSelect(new QueryField(qcTerm, "id"));
         subQ.addToSelect(new QueryField(qcGene, "id"));
