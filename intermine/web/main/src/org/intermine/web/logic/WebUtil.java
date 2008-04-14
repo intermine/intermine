@@ -436,14 +436,12 @@ public abstract class WebUtil
     private static Map<String, List> statsCalcCache = new HashMap<String, List>();
 
     /**
-     * Takes two queries.  Runs both and compares the results.
+     * Runs both queries and compares the results.
      * @param os the object store
      * @param annotatedPopulationQuery The query to get the entire population, 
      * ie all genes in the database annotated with this term
      * @param annotatedSampleQuery The query to get the sample, ie all genes in the bag
      * @param bag the bag we are analysing
-     * @param populationTotal total number in the reference population
-     * @param sampleTotal total number of objects in the sample population (the bag)
      * @param maxValue maximum value to return - for display purposes only
      * @param errorCorrection which error correction algorithm to use, Bonferroni
      * or Benjamini Hochberg or none
@@ -451,15 +449,16 @@ public abstract class WebUtil
      */
     public static ArrayList<Map> statsCalc(ObjectStore os,
                                       Query annotatedPopulationQuery,
-                                      Query annotatedSampleQuery,
-                                      int populationTotal,
-                                      int sampleTotal,                                      
+                                      Query annotatedSampleQuery,                              
                                       InterMineBag bag,
                                       Double maxValue,
                                       String errorCorrection) {
 
             ArrayList<Map> maps = new ArrayList<Map>();
 
+            int populationTotal = 0;
+            int sampleTotal = 0;
+            
             // sample query
             Results r = os.execute(annotatedSampleQuery);
             r.setBatchSize(10000);
@@ -477,7 +476,8 @@ public abstract class WebUtil
 
                 // count of item
                 Long count = (Long) rr.get(1);
-
+                sampleTotal += count.intValue();
+                
                 // id & count
                 countMap.put(id, count);
 
@@ -497,8 +497,24 @@ public abstract class WebUtil
 
             Iterator itAll = rAll.iterator();
 
-            HashMap<String, BigDecimal> resultsMap = new HashMap<String, BigDecimal>();
+            // need to calculate the totals
+            while (itAll.hasNext()) {
 
+                ResultsRow rrAll =  (ResultsRow) itAll.next();
+
+                String id = (String) rrAll.get(0);
+
+                if (countMap.containsKey(id)) {
+
+                    populationTotal += (java.lang.Long) rrAll.get(1);
+                    
+                }
+            }
+            
+            HashMap<String, BigDecimal> resultsMap = new HashMap<String, BigDecimal>();
+            itAll = rAll.iterator();
+            
+            // loop through results again to calculate p-values
             while (itAll.hasNext()) {
 
                 ResultsRow rrAll =  (ResultsRow) itAll.next();
@@ -511,11 +527,8 @@ public abstract class WebUtil
                     Long countAll = (java.lang.Long) rrAll.get(1);
 
                     double p = Hypergeometric.calculateP(countBag.intValue(), sampleTotal,
-                                            countAll.intValue(), populationTotal);
-                    String xxx = p + " sample size: "
-                    + countBag + ", population size: " + countAll + ", bag size: "
-                    + sampleTotal + ", total: " + populationTotal;
-                    //LOG.error(xxx);
+                                                         countAll.intValue(), populationTotal);
+
                     try {
                         resultsMap.put(id, new BigDecimal(p));
                     } catch (Exception e) {
@@ -528,7 +541,10 @@ public abstract class WebUtil
                 }
             }
 
-           Map<String, BigDecimal> adjustedResultsMap = resultsMap;
+
+
+
+            Map<String, BigDecimal> adjustedResultsMap = resultsMap;
 
             if (!errorCorrection.equals("None")) {
                 adjustedResultsMap = calcErrorCorrection(errorCorrection, maxValue, resultsMap);
@@ -541,7 +557,7 @@ public abstract class WebUtil
             maps.add(1, countMap);
             maps.add(2, idMap);
             return maps;
-        }
+    }
 
     /**
      * See online help docs for detailed description of what error correction is and why we need it.
