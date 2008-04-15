@@ -915,8 +915,6 @@ public class AjaxServices
             SearchRepository searchRepository = SearchRepository
                             .getGlobalSearchRepository(servletContext);
             InterMineBag imBag = BagHelper.getBag(profile, searchRepository, bagName);
-            Map classKeys = (Map) servletContext.getAttribute(Constants.CLASS_KEYS);
-
             Type type = (Type) webConfig.getTypes().get(model.getPackageName() 
                     + "." + imBag.getType());
             List<Widget> widgets = type.getWidgets();

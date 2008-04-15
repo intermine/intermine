@@ -73,7 +73,7 @@ public class BagTableWidgetLoader
      * @param urlGen the class that generates the pathquery used in the links from the widget
      * @param columnTitle title for count column
      * @throws ClassNotFoundException if some class in the widget paths is not found
-     * @throws UnsupportedEncodingException 
+     * @throws UnsupportedEncodingException if something goes wrong encoding the URL
      */
     public BagTableWidgetLoader(String pathString, InterMineBag bag, ObjectStore os, 
                                 WebConfig webConfig, Model model, Map classKeys, 
@@ -104,8 +104,8 @@ public class BagTableWidgetLoader
             }
         } else {
             List cldFieldConfigs = FieldConfigHelper.getClassFieldConfigs(webConfig, cld);
-            for (Iterator iter = cldFieldConfigs.iterator(); iter.hasNext();) {
-                FieldConfig fc = (FieldConfig) iter.next();
+            for (Iterator<FieldConfig> iter = cldFieldConfigs.iterator(); iter.hasNext();) {
+                FieldConfig fc = iter.next();
                 if (!fc.getShowInResults()) {
                     continue;
                 }
