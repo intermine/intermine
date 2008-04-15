@@ -685,12 +685,12 @@ public class AjaxServices
                 guiObject = new GuiObject();
                 session.setAttribute(Constants.GUI_OBJECT, guiObject);
             }
-            guiObject.getToggledElements().put(elementId, opened);
+            guiObject.getToggledElements().put(elementId, Boolean.valueOf(opened));
         } catch (RuntimeException e) {
             processException(e);
         }
     }
-
+    
     /**
      * validate bag upload
      * @param bagName name of new bag to be validated

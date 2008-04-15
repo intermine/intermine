@@ -37,11 +37,13 @@ public class EnrichmentWidget extends Widget
     private ArrayList<Map> results;
     private InterMineBag bag;
 
-    
-    public void process(InterMineBag bag, ObjectStore os) {
+    /**
+     * {@inheritDoc}
+     */
+    public void process(InterMineBag imbag, ObjectStore os) {
         try {
             // set bag
-            this.bag = bag;
+            this.bag = imbag;
             Class<?> clazz = TypeUtil.instantiate(getDataSetLoader());
             Constructor<?> constr = clazz.getConstructor(new Class[]
                                                                 {
@@ -54,12 +56,8 @@ public class EnrichmentWidget extends Widget
                                                                                           });
             // have to calculate sample total for each enrichment widget because namespace may have
             // changed
-            results = WebUtil.statsCalc(os, ldr.getAnnotatedPopulation(),
-                                                       ldr.getAnnotatedSample(), 
-                                                       bag,
-                                                       new Double(0 
-                                                       + max),
-                                                       errorCorrection);
+            results = WebUtil.statsCalc(os, ldr.getAnnotatedPopulation(), ldr.getAnnotatedSample(), 
+                                        bag, new Double(0 + max), errorCorrection);
         } catch (NumberFormatException e) {
             // TODO Auto-generated catch block
             e.printStackTrace();
@@ -212,12 +210,6 @@ public class EnrichmentWidget extends Widget
                 flattenedResults.add(row);
             }
             return flattenedResults;            
-//            ("ewf", ewf);
-//            ("pvalues", results.get(0));
-//            ("totals", results.get(1));
-//            ("labelToId", results.get(2));
-//            ("referencePopulation", "All " + bag.getType() + "s from  "
-//                                 + StringUtil.prettyList(ldr.getPopulationDescr(), true));
         }
         return null;
     }
