@@ -70,7 +70,6 @@
       <ul>
         <li>Separate identifiers by a <strong>comma</strong>, <strong>space</strong>, <strong>tab</strong> or <strong>new line</strong>.</li>
         <li>Qualify any identifiers that contain whitespace with double quotes like so:  "even skipped".</li>
-        <li><p><fmt:message key="bagBuild.caseNote"/></li>
       </ul>
       <br/>
 <ol id="buildbaglist">
@@ -111,7 +110,7 @@
          <div style="text-align:right;width:87%;">
            <html:link href=""
                       onclick="javascript:loadExample('${bagExampleIdentifiers}');return false;">
-             (click to see an example)<img src="images/disclosed.gif" title="Click to Show example">
+             (click to see an example)<img src="images/disclosed.gif" title="Click to Show example"/>
            </html:link>
          </div>
      </c:if>
