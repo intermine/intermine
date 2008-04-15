@@ -84,23 +84,6 @@ public class EnrichmentWidget extends Widget
         }
     }
     
-//    private int getTotal(ObjectStore os, EnrichmentWidgetLdr ldr, boolean useBag) {
-//
-//        int n = 0;
-//
-//        Query q = ldr.getQuery(true, useBag);
-//
-//        Results r = os.execute(q);
-//        if (!r.isEmpty()) {
-//            Iterator<ResultsRow> it = r.iterator();
-//            ResultsRow rr =  it.next();
-//            Long l = (java.lang.Long) rr.get(0);
-//            n = l.intValue();
-//        }
-//
-//        return n;
-//    }
-    
     /**
      * @return the label
      */
