@@ -735,6 +735,10 @@ public class TemplateHelper
         // generate query with editable constraints removed
         TemplateQuery templateClone = template.cloneWithoutEditableConstraints();
 
+        if (template.getBagNames().size() != 0) {
+            throw new RuntimeException("Precomputed query can't be created "
+                + "for template with list. This functionality is not allowed.");
+        }
 
         List<String> indexPaths = new ArrayList<String>();
         // find nodes with editable constraints to index and possibly add to select list
