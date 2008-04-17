@@ -84,14 +84,14 @@
   </div>
   <div id="tool_bar_item_display_${widget.id}" style="visibility:hidden;width:200px" class="tool_bar_item">
     <a href="javascript:submitWidgetForm(${widget.id},'display',null)">Display checked items in results table</a>
-    <hr>
+    <hr/>
     <a href="javascript:hideMenu('tool_bar_item_display_${widget.id}','widget')" >Cancel</a>
   </div>
   
   <div id="tool_bar_item_export_${widget.id}" style="visibility:hidden;width:230px" class="tool_bar_item">
     <a href="javascript:submitWidgetForm(${widget.id},'export','csv')">Export selected as comma separated values</a><br/>
     <a href="javascript:submitWidgetForm(${widget.id},'export','tab')">Export selected as tab separated values</a>
-    <hr>
+    <hr/>
   <a href="javascript:hideMenu('tool_bar_item_export_${widget.id}','widget')" >Cancel</a>
   </div>
  </c:if>  
@@ -104,7 +104,7 @@
     </c:if>
   </div>
   <div id="widgetdatawait${widget.id}" class="widgetdatawait"><img src="images/wait30.gif" title="Searching..."/></div>
-  <div id="widgetdatanoresults${widget.id}" class="widgetdatawait" style="display:none;"><i>No Results found</i></div>
+  <div id="widgetdatanoresults${widget.id}" class="widgetdatawait" style="display:none;"><i>no results found</i></div>
   <script language="javascript">
   <c:choose>
     <c:when test="${fn:contains(widget.class,'GraphWidget')}" >
