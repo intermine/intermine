@@ -85,6 +85,10 @@ public class CreateTemplateAction extends InterMineAction
             recordError(new ActionMessage("errors.createtemplate.nooutputs"), request);
             seenProblem = true;
         }
+        if (query.getBagNames().size() != 0) {
+            recordError(new ActionMessage("errors.createtemplate.templatewithlist"), request);
+            seenProblem = true;
+        }        
         Iterator iter = query.getNodes().values().iterator();
         boolean foundEditableConstraint = false;
         boolean foundNonEditableLookup = false;
