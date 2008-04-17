@@ -36,7 +36,8 @@ public class EnrichmentWidget extends Widget
     private String label, externalLink;
     private ArrayList<Map> results;
     private InterMineBag bag;
-
+    private boolean toggleOn = false;
+    
     /**
      * {@inheritDoc}
      */
@@ -58,6 +59,10 @@ public class EnrichmentWidget extends Widget
             // changed
             results = WebUtil.statsCalc(os, ldr.getAnnotatedPopulation(), ldr.getAnnotatedSample(), 
                                         bag, new Double(0 + max), errorCorrection);
+            
+            if (getHasResults()) {
+                toggleOn = true;
+            }
         } catch (NumberFormatException e) {
             // TODO Auto-generated catch block
             e.printStackTrace();
@@ -259,4 +264,10 @@ public class EnrichmentWidget extends Widget
         return (results.get(0) != null && results.get(0).size() > 0);
     }
     
+    /**
+     * {@inheritDoc}
+     */
+    public boolean getToggleOn() {
+        return toggleOn;
+    }
 }

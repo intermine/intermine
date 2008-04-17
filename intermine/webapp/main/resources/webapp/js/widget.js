@@ -71,7 +71,9 @@ function handleTableWidget(widget) {
     Element.hide($('widgetdatawait' + widget.id));
     Element.hide($('widgetdata' + widget.id));
     Element.show($('widgetdatanoresults' + widget.id));
-  	toggleWidget('widgetcontainer' + widget.id, 'togglelink' + widget.id);
+    if (!widget.toggleOn) {
+        toggleWidget('widgetcontainer' + widget.id, 'togglelink' + widget.id);
+    }
   }
 }
 

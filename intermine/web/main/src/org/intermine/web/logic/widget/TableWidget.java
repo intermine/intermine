@@ -155,5 +155,11 @@ public class TableWidget extends Widget
     public void setPathStrings(String pathStrings) {
         this.pathStrings = pathStrings;
     }
-
+    
+    /**
+     * {@inheritDoc}
+     */
+    public boolean getToggleOn() {
+        return false;
+    }
 }
