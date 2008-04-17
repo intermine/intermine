@@ -36,7 +36,6 @@ import org.flymine.model.genomic.DataSet;
 import org.flymine.model.genomic.Gene;
 import org.flymine.model.genomic.MRNAExpressionResult;
 import org.flymine.model.genomic.MRNAExpressionTerm;
-import org.flymine.model.genomic.Organism;
 
 /**
  * {@inheritDoc}
@@ -66,14 +65,14 @@ public class BDGPLdr implements EnrichmentWidgetLdr
             organismsLower.add(s.toLowerCase());
         }
         
-        annotatedSampleQuery = getQuery(false, true);
-        annotatedPopulationQuery = getQuery(false, false);
+        annotatedSampleQuery = getQuery(true);
+        annotatedPopulationQuery = getQuery(false);
     }
     
     /**
      * {@inheritDoc}
      */
-    public Query getQuery(boolean calcTotal, boolean useBag) {
+    public Query getQuery(boolean useBag) {
 
         
         QueryClass qcMrnaResult = new QueryClass(MRNAExpressionResult.class);
@@ -132,20 +131,12 @@ public class BDGPLdr implements EnrichmentWidgetLdr
         QueryField outerQfTerm = new QueryField(subQ, qfTerm);
         
         q.addFrom(subQ);
-        
-        if (!calcTotal) {            
-            q.addToSelect(outerQfTerm);
-            q.addToGroupBy(outerQfTerm);
-        }
-        
+        q.addToSelect(outerQfTerm);
+        q.addToGroupBy(outerQfTerm);
         q.addToSelect(qfCount);
-        
-        if (!calcTotal) { 
-            if (useBag) {
-                q.addToSelect(outerQfTerm);
-            }
+        if (useBag) {
+            q.addToSelect(outerQfTerm);
         }
-        
         return q;
     }
 

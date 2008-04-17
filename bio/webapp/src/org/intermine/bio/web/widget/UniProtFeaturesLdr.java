@@ -43,44 +43,30 @@ public class UniProtFeaturesLdr implements EnrichmentWidgetLdr
     private Query annotatedPopulationQuery;
     private Collection<String> organisms;
     private String externalLink, append;
-    private ObjectStore os;
     private InterMineBag bag;
     private Collection<String> organismsLower = new ArrayList<String>();
     
     /**
-     * @param request The HTTP request we are processing
+     * @param bag list of objects for this widget
+     * @param os object store
+     * @param extraAttribute an extra attribute, probably organism
      */
     public UniProtFeaturesLdr(InterMineBag bag, ObjectStore os, String extraAttribute) {
         this.bag = bag;
-        this.os = os;
         organisms = BioUtil.getOrganisms(os, bag, false);
         for (String s : organisms) {
             organismsLower.add(s.toLowerCase());
         }
-        annotatedSampleQuery = getQuery(false, true);
-        annotatedPopulationQuery = getQuery(false, false);
+        annotatedSampleQuery = getQuery(true);
+        annotatedPopulationQuery = getQuery(false);
         
     }
 
     /**
      * {@inheritDoc}
      */
-    public Query getQuery(boolean calcTotal, boolean useBag) {
-        // SELECT a3_.type, COUNT(*)
-        //    FROM Protein AS a1_, Organism AS a2_, UniProtFeature AS a3_
-        //    WHERE a1_.id IN BAG
-        //      AND LOWER(a2_.name) IN BAG
-        //      AND a1_.organism CONTAINS a2_
-        //      AND a1_.features CONTAINS a3_
-        
-        // SELECT a6_.a5_ AS a7_, COUNT(*) AS a8_
-        //    FROM (SELECT DISTINCT a1_.id AS a4_, a3_.type AS a5_
-        //        FROM Protein AS a1_, Organism AS a2_, UniProtFeature AS a3_
-        //        WHERE a1_.id IN BAG
-        //          AND LOWER(a2_.name) IN BAG
-        //          AND a1_.organism CONTAINS a2_
-        //          AND a1_.features CONTAINS a3_) AS a6_
-        //    GROUP BY a6_.a5_
+    public Query getQuery(boolean useBag) {
+
         QueryClass qcProtein = new QueryClass(Protein.class);
         QueryClass qcOrganism = new QueryClass(Organism.class);
         QueryClass qcUniProtFeature = new QueryClass(UniProtFeature.class);
@@ -121,18 +107,13 @@ public class UniProtFeaturesLdr implements EnrichmentWidgetLdr
         Query q = new Query();
         q.setDistinct(false);
         q.addFrom(subQ);
-
-        if (!calcTotal) {
-            q.addToSelect(qfType);
-        }
+        q.addToSelect(qfType);
         q.addToSelect(protCount);
+        if (useBag) {
+            q.addToSelect(qfType);    
+        } 
+        q.addToGroupBy(qfType);
 
-        if (!calcTotal) {
-            if (useBag) {
-                q.addToSelect(qfType);    
-            } 
-            q.addToGroupBy(qfType);
-        }
         return q;
     }
 

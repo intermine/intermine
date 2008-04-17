@@ -52,6 +52,7 @@ public class PublicationLdr implements EnrichmentWidgetLdr
      * Constructor
      * @param bag the bag
      * @param os the ObjectStore
+     * @param extraAttribute an extra attribute, probably organism
      */
     public PublicationLdr(InterMineBag bag, ObjectStore os, String extraAttribute) {
         this.bag = bag;        
@@ -59,15 +60,15 @@ public class PublicationLdr implements EnrichmentWidgetLdr
         for (String s : organisms) {
             organismsLower.add(s.toLowerCase());
         }
-        annotatedSampleQuery = getQuery(false, true);
-        annotatedPopulationQuery = getQuery(false, false);
+        annotatedSampleQuery = getQuery(true);
+        annotatedPopulationQuery = getQuery(false);
     }
     
     
     /**
      * {@inheritDoc}
      */
-    public Query getQuery(boolean calcTotal, boolean useBag) {
+    public Query getQuery(boolean useBag) {
 
         QueryClass qcGene = new QueryClass(Gene.class);
         QueryClass qcPub = new QueryClass(Publication.class);
@@ -100,21 +101,14 @@ public class PublicationLdr implements EnrichmentWidgetLdr
         q.addFrom(qcGene);
         q.addFrom(qcPub);
         q.addFrom(qcOrganism);
-
-        if (!calcTotal) {
-            q.addToSelect(qfId);
-        }
+        q.addToSelect(qfId);
         q.addToSelect(geneCount);
-
         q.setConstraint(cs);
-        if (!calcTotal) {
-            if (useBag) {
-                q.addToSelect(qfPubTitle);
-                q.addToGroupBy(qfPubTitle);
-            }
-            q.addToGroupBy(qfId);
+        if (useBag) {
+            q.addToSelect(qfPubTitle);
+            q.addToGroupBy(qfPubTitle);
         }
-
+        q.addToGroupBy(qfId);
         return q;
     }
 

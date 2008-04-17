@@ -724,7 +724,7 @@ public class AjaxServices
                 searchRepository.getWebSearchableMap(TagTypes.BAG);
             if (publicBagMap.get(bagName) != null) {
                 return "The list name you have chosen is already in use -"
-                + " there is a public bag called " + bagName;
+                + " there is a public list called " + bagName;
             }
 
             return "";

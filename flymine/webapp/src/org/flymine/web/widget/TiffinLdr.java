@@ -44,52 +44,26 @@ public class TiffinLdr implements EnrichmentWidgetLdr
     private Query annotatedPopulationQuery;
     private Collection<String> organisms;
     private String externalLink, append;
-    private ObjectStore os;
     private InterMineBag bag;
     
     /**
-     * @param request The HTTP request we are processing
+     * @param bag list of objects for this widget
+     * @param os object store
+     * @param extraAttribute an extra attribute, probably organism
      */
      public TiffinLdr(InterMineBag bag, ObjectStore os, String extraAttribute) {
          this.bag = bag;
-         this.os = os;
          organisms = BioUtil.getOrganisms(os, bag, false);
 
-         annotatedSampleQuery = getQuery(false, true);
-         annotatedPopulationQuery = getQuery(false, false);
+         annotatedSampleQuery = getQuery(true);
+         annotatedPopulationQuery = getQuery(false);
 
      }
 
      /**
       * {@inheritDoc}
       */
-     public Query getQuery(boolean calcTotal, boolean useBag) {
-         // SELECT a5_.id AS a7_, COUNT(*) AS a8_
-         //    FROM Gene AS a1_, IntergenicRegion AS a2_, TFBindingSite AS a3_, DataSet AS a4_,
-         //         Motif AS a5_, Organism AS a6_
-         //    WHERE a1_.id IN BAG
-         //      AND a6_.name IN BAG
-         //      AND a1_.organism CONTAINS a6_
-         //      AND a1_.upstreamIntergenicRegion CONTAINS a2_
-         //      AND a2_.overlappingFeatures CONTAINS a3_
-         //      AND a3_.evidence CONTAINS a4_
-         //      AND a3_.motif CONTAINS a5_
-         //      AND a4_.title = 'Tiffin'
-         //    GROUP BY a5_.id
-
-         // SELECT a9_.a7_ AS a10_, COUNT(*) AS a11_
-         //    FROM (SELECT a5_.id AS a7_, a1_.id AS a8_
-         //        FROM Gene AS a1_, IntergenicRegion AS a2_, TFBindingSite AS a3_, DataSet AS a4_,
-         //             Motif AS a5_, Organism AS a6_
-         //        WHERE a1_.id IN BAG
-         //          AND LOWER(a6_.name) IN BAG
-         //          AND a1_.organism CONTAINS a6_
-         //          AND a1_.upstreamIntergenicRegion CONTAINS a2_
-         //          AND a2_.overlappingFeatures CONTAINS a3_
-         //          AND a3_.evidence CONTAINS a4_
-         //          AND a3_.motif CONTAINS a5_
-         //          AND a4_.title = 'Tiffin') AS a9_
-         //    GROUP BY a9_.a7_
+     public Query getQuery(boolean useBag) {
 
          Query subQ = new Query();
          subQ.setDistinct(false);
@@ -170,19 +144,12 @@ public class TiffinLdr implements EnrichmentWidgetLdr
          q.setDistinct(false);
 
          q.addFrom(subQ);
-
-         if (!calcTotal) {
+         q.addToSelect(outerQfId);
+         q.addToSelect(geneCount);
+         if (useBag) {
              q.addToSelect(outerQfId);
          }
-
-         q.addToSelect(geneCount);
-         if (!calcTotal) {
-             if (useBag) {
-                 q.addToSelect(outerQfId);
-             }
-             q.addToGroupBy(outerQfId);
-         }
-
+         q.addToGroupBy(outerQfId);
          return q;
      }
      

@@ -54,6 +54,7 @@ public class ProteinDomainLdr implements EnrichmentWidgetLdr
     /**
      * @param bag list of objects for this widget
      * @param os object store
+     * @param extraAttribute an extra attribute, probably organism
      */
     public ProteinDomainLdr(InterMineBag bag, ObjectStore os, String extraAttribute) {
         this.bag = bag;
@@ -64,14 +65,14 @@ public class ProteinDomainLdr implements EnrichmentWidgetLdr
             organismsLower.add(s.toLowerCase());
         }
         
-        annotatedSampleQuery = getQuery(false, true);
-        annotatedPopulationQuery = getQuery(false, false);
+        annotatedSampleQuery = getQuery(true);
+        annotatedPopulationQuery = getQuery(false);
     }
     
     /**
      * {@inheritDoc}
      */
-    public Query getQuery(boolean calcTotal, boolean useBag) {
+    public Query getQuery(boolean useBag) {
 
         QueryClass qcGene = new QueryClass(Gene.class);
         QueryClass qcProtein = new QueryClass(Protein.class);
@@ -122,22 +123,14 @@ public class ProteinDomainLdr implements EnrichmentWidgetLdr
         q.addFrom(qcProtein);
         q.addFrom(qcOrganism);
         q.addFrom(qcProteinFeature);
-
-        if (!calcTotal) {
-            q.addToSelect(qfId);
-        }
+        q.addToSelect(qfId);
         q.addToSelect(objectCount);
-
         q.setConstraint(cs);
-        
-        if (!calcTotal) {            
-            if (useBag) {
-                q.addToSelect(qfName);
-                q.addToGroupBy(qfName);
-            }
-            q.addToGroupBy(qfId);
+        if (useBag) {
+            q.addToSelect(qfName);
+            q.addToGroupBy(qfName);
         }
-
+        q.addToGroupBy(qfId);
         return q;
     }
 
