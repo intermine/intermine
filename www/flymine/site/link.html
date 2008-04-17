@@ -3,6 +3,37 @@
   <div style="clear:" class="box">
 <div class="heading2">Linking to FlyMine</div>
 <div class="body">
+<p>You can link to FlyMine in multiple ways:</p>
+<ul>
+    <li>Via <strong>URL</strong> of the form http://www.flymine.org/query/portal.do?<em>PARAMETERS</em></li>
+    <li>
+        With a <strong>POST</strong> request, which should be used instead of long URLs:<br/>
+        <pre width="90">
+&lt;form action=&quot;http://www.flymine.org/query/portal.do&quot; name=&quot;list&quot; method=&quot;post&quot;&gt;<br/>
+    &lt;input type=&quot;hidden&quot; name=&quot;externalids&quot; value=&quot;zen,eve&quot;/&gt;<br/>
+    &lt;input type=&quot;hidden&quot; name=&quot;class&quot; value=&quot;Gene&quot;/&gt;<br/>
+    &lt;input type=&quot;submit&quot; value=&quot;Submit&quot;/&gt;<br/>
+&lt;/form&gt;<br/>
+        </pre>
+        To submit the form you can either use a submit button or javascript <em>document.myform.submit()</em> on any link.
+    </li>
+</ul>
+<p>NOTE: In all the examples below the URL can be replaced by a POST.</p>
+<p>List of parameters:
+<ul>
+    <li><strong>externalid</strong>* (or <strong>externalids</strong>): the identifier or list of identifiers separated by ",". identifiers can be CG numbers, FBGNs or symbols.</li>
+    <li><strong>class</strong>*: class of the data to load, i.e. Gene, Protein and it is important to respect the font case. For a list of data types please refer to the list of data types on the QueryBuilder page</li>
+    <li><strong>origin</strong>: allow us to show a specific welcome/help
+    message to incoming users from your site.  It also helps us keep track of incoming links.
+    Let us know what you want to use.</li>
+    <li><strong>organism</strong>: this is useful when linking with symbols that are used across organisms. The organism name must be the <strong>shortName</strong> as defined in FlyMine, for instance <em>D. melanogaster</em></li>
+    <li><strong>orthologue</strong>: <strong>shortName</strong> of the organism to get the orthologues from</li>
+</ul>
+(*mandatory field)
+</p><br/><br/>
+
+<h2>Examples</h2>
+
 <h3>Links to report pages</h3>
 <p style="">
 Links can be set up directly to the report pages of many types of entry in FlyMine.
@@ -11,11 +42,10 @@ searches all identifiers, symbols and synonyms in FlyMine and will bring
 up either a report page or a list of possibilities.  This is 
 exactly the same as running a Quick Search from the FlyMine home page.
 </p>
-<p style="">
-The URL to use takes the form:
+<p style="">The URL to use takes the form:</p>
 
-<strong>www.flymine.org/query/portal.do?externalid=identifier&amp;class=identifierClass&amp;origin=MySite</strong>
-</p>
+<pre width="90">www.flymine.org/query/portal.do?externalid=identifier&amp;class=identifierClass&amp;origin=MySite</pre>
+
 <p style="">
 Note that using www.flymine.org/<strong>query</strong> will always redirect
 to the latest FlyMine release, please don't create links to the URL of a particular 
@@ -27,7 +57,7 @@ message to incoming users from your site.  It also helps us keep track of incomi
 Let us know what you want to use.
 </p>
 <p style="">
-As an option, you can specify an organism name by using <strong>organism</strong> in the URL, this is useful when linking with symbols that are used acros organisms. The organism name must be the <strong>shortName</strong> as defined in FlyMine, for instance <em>D.%20melanogaster</em>.
+As an option, you can specify an organism name by using <strong>organism</strong> in the URL, this is useful when linking with symbols that are used across organisms. The organism name must be the <strong>shortName</strong> as defined in FlyMine, for instance <em>D.%20melanogaster</em>.
 </p>
 <p style="">
 A typical URL to link to a gene report page:
@@ -55,11 +85,10 @@ you would like to see there please <a href="contact">let us know</a>, this is ea
 
 <h3>Links to List Analysis pages</h3>
 <p>It is possible to link directly to a list analysis page by providing a list of identifiers in the URL. FlyMine will then search for the corresponding entries and create a FlyMine List with them. It is mandatory to specify the class of the data to load, i.e. Gene, Protein and it is important to respect the font case. For a list of data types please refer to the list of data types on the QueryBuilder page: <a href="http://www.flymine.org/quer/customQuery.do">http://www.flymine.org/query/customQuery.do</a></p>
-<p style="">
-The URL to use takes the form:
+<p style="">The URL to use takes the form:</p>
 
-<strong>www.flymine.org/query/portal.do?externalids=identifier1,identifier2,identifier3&amp;class=ClassName&amp;origin=MySite</strong>
-</p>
+<pre width="120">www.flymine.org/query/portal.do?externalids=identifier1,identifier2,identifier3&amp;class=ClassName&amp;origin=MySite</pre>
+
 <p style="">
 The <strong>origin</strong> in the URL is optional but will allow us to show a specific welcome/help
 message to incoming users from your site.  It also helps us keep track of incoming links.
@@ -76,11 +105,8 @@ A typical URL to link to a gene report page:
 
 <h3>Converting data types</h3>
 <p>When linking to a report page or a list analysis page you can convert the data type, for instance if you provide a Protein identifier and want to link to the corresponding Gene, you need to specify the class as Gene.</p>
-<p style="">
-The URL to use takes the form:
-
-<strong>www.flymine.org/query/portal.do?externalid=proteinId&amp;class=Gene</strong>
-</p>
+<p style="">The URL to use takes the form:</p>
+<pre width="90">www.flymine.org/query/portal.do?externalid=proteinId&amp;class=Gene</pre>
 <p>
 Examples:
 <ul>
@@ -90,12 +116,8 @@ Examples:
 </p>
 
 <h3>Links to data categories</h3>
-<p style="">
-Links directly to data category pages in the latest release take the form:
-</p>
-<p style="">
-<strong>www.flymine.org/query/aspect.do?name=aspect+name</strong>
-</p>
+<p style="">Links directly to data category pages in the latest release take the form:</p>
+<pre width="90">www.flymine.org/query/aspect.do?name=aspect+name</pre>
 <p style="">
 Where aspect+name is the name of the aspect as shown on the FlyMine home page - match case and replace any spaces with '+'.</p>
 <p style="">
@@ -113,8 +135,7 @@ For example:
 <br />
 
 <h3>Linking to Orthologues</h3>
-<p>Linking with a gene identifier from an organism and getting the corresponding orthologue from another organism can be done as follow:</p>
-<p><strong>http://www.flymine.org/query/portal.do?externalids=organism1_geneid1,organism1_geneid2,organism1_geneid3&amp;class=Gene&amp;orthologue=organism2_shortName</strong></p>
+<p>Linking with a gene identifier from an organism and getting the corresponding orthologue from another organism can be done as follow:</p><pre width="150">http://www.flymine.org/query/portal.do?externalids=organism1_geneid1,organism1_geneid2,organism1_geneid3&amp;class=Gene&amp;orthologue=organism2_shortName</pre>
 <p style="">
 For example:
 </p>
