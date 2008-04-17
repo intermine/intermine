@@ -25,6 +25,8 @@ import org.intermine.web.logic.template.TemplateQuery;
 public class TemplateResultLinkGenerator
 {
 
+    private String error;
+    
     /**
      * Generates TemplateResultService web service link.
      * @param baseUrl base url that doesn't terminate with '/' , 
@@ -34,8 +36,9 @@ public class TemplateResultLinkGenerator
      */
     public String generateServiceLink(String baseUrl, TemplateQuery template) {
         if (template.getBagNames().size() > 0) {
-            return "This template contains list(s). The service for this "
-                + "special template is not implemented yet.";
+            error = "This template contains list(s) constraint. The service for this "
+                + "special template is not implemented yet. Solution: Don't use list contraint.";
+            return null;
         }
         String ret = baseUrl;
         ret += "/data/template/results?name=" + template.getName() + "&";
@@ -45,8 +48,8 @@ public class TemplateResultLinkGenerator
             int code = i + 1;
             ret += "op" + code + "=" + TemplateResultLinkGenerator.encode(cs.getOp()) + "&";
             ret += "value" + code + "=" + TemplateResultLinkGenerator.encode(cs.getValue()) + "&";
-            ret += "extraValue" + code + "=" 
-                + TemplateResultLinkGenerator.encode(cs.getExtraValue());
+            ret += "extraValue" + code + "="  
+                + TemplateResultLinkGenerator.encode(cs.getExtraValue()) + "&";
         }
         return ret;
     }
@@ -68,4 +71,8 @@ public class TemplateResultLinkGenerator
         }
     }
 
+    public String getError() {
+        return error;
+    }
+    
 }

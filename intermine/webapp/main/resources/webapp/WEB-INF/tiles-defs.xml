@@ -151,7 +151,10 @@
     <put name="body" value="showStatic.jsp"/>
     <put name="pageName" value="showStatic"/>
   </definition>
-
+  <definition name="serviceLink.page" extends="layout.template">
+    <put name="body" value="serviceLink.jsp"/>
+    <put name="pageName" value="serviceLink"/>
+  </definition>
   
   <definition name="htmlHead.page" path="/htmlHead.jsp"/>
   <definition name="headMenu.page" path="/headMenu.jsp"/>  
@@ -237,7 +240,7 @@
   <definition name="resultsTable.tile" path="resultsTable.jsp"/>
   <definition name="paging.tile" path="paging.jsp" />  
   <definition name="widget.tile" path="widget.jsp" />  
-
+  <definition name="linkPopUp.tile" path="linkPopUp.jsp" />
   <!-- don't (re)move this - it's used for importing any model-specific actions -->
   <!--@MODEL_INCLUDE@-->
   

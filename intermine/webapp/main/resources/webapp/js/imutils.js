@@ -100,3 +100,40 @@ function swapStyles(elementId,style1,style2,checkbox){
 	  }
     }
 }
+
+/* Show or hide element with specified id */
+function display(id, beDisplayed) {
+    if (beDisplayed == true) {
+        document.getElementById(id).style.display = 'block';
+    } else {
+        document.getElementById(id).style.display = 'none'; 
+    }
+}
+
+/* Center element with specified id to the center of window */
+function center(id) {
+    var el = document.getElementById(id);
+    var elWidth = el.offsetWidth;
+    var elHeight = el.offsetHeight;
+    var x,y;
+    if (navigator.appName.indexOf('Microsoft')!=-1) {
+        x = (document.body.clientWidth - elWidth) / 2 ;
+        y = (document.body.clientHeight - elHeight) / 2;
+    }else{
+        x = (window.innerWidth - elWidth) / 2;
+        y = (window.innerHeight - elHeight) / 2;
+    }
+    /* I prefer center a bit above real center */
+    y = y - 50;
+    el.style.position = 'absolute';
+    el.style.left = x + 'px';  
+    el.style.top = y + 'px';
+}
+
+/* Open pop up window with specified url, width and height. */
+function openPopWindow(url, width, height) {
+    var newWin = "";
+    var popFeatures = "width=" + width + ",height=" + height + ",toolbar=0,location=0,directories=0,status=0,menuBar=0,scrollBars=1,resizable=1";
+    newWin = window.open(url,'newWin',popFeatures);
+    newWin.focus();
+}
