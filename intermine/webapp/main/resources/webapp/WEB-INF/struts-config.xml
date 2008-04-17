@@ -113,6 +113,8 @@
     </action>
     <action path="/enrichmentWidget" name="enrichmentWidgetForm" forward="enrichmentWidget.tile"  scope="request">
     </action>
+    <action path="/serviceLink" forward="serviceLink.page" >
+    </action>    
 		
     <action path="/modifyQueryChange" type="org.intermine.web.struts.ModifyQueryChangeAction" parameter="method">
       <forward name="query" redirect="true" path="/query.do"/>
@@ -247,6 +249,7 @@
       <forward name="waiting" redirect="true" path="/pollTemplateQuery.do"/>
       <forward name="query" path="query.page"/>
       <forward name="template" path="template.page"/>
+      <forward name="serviceLink" path="/serviceLink.do" redirect="false"/>
     </action>
     <action path="/importTemplates" name="importTemplatesForm" type="org.intermine.web.struts.TemplatesImportAction" scope="request" input="import">
       <forward name="import" path="importTemplates.page"/>

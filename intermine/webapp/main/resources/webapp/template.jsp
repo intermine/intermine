@@ -122,7 +122,11 @@
       return n == null || isNaN(n) ? 0 : n;
   }
 
-
+   function forwardToLinks() 
+   {
+       document.getElementById('actionType').value = 'links';
+       document.getElementById('showResultsButton').click();
+   }
 
   //-->
 </script>
@@ -327,7 +331,8 @@
       
       <html:hidden property="templateName"/>
       <html:hidden property="templateType"/>
-      <html:submit property="skipBuilder"><fmt:message key="template.submitToResults"/></html:submit>
+      <html:hidden property="actionType" value="" styleId="actionType"/>
+      <html:submit property="skipBuilder" styleId="showResultsButton"><fmt:message key="template.submitToResults"/></html:submit>
       <html:submit><fmt:message key="template.submitToQuery"/></html:submit>
       <c:if test="${IS_SUPERUSER}">
         <html:submit property="editTemplate"><fmt:message key="template.submitToQueryEdit"/></html:submit>
@@ -344,6 +349,12 @@
       
     </c:if>
   </html:form>
+  
+  <div style="font-style: italic;">
+    Do you want to include results of this template at your web site or use in script? 
+    <a href="javascript:forwardToLinks()">Get the link</a>
+  </div>
+  
   <c:if test="${empty PROFILE_MANAGER || empty PROFILE.username}">
     <p>
       <i>

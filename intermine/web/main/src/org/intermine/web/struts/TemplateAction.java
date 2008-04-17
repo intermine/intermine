@@ -10,6 +10,7 @@ package org.intermine.web.struts;
  *
  */
 
+import java.net.MalformedURLException;
 import java.util.Map;
 
 import javax.servlet.ServletContext;
@@ -18,6 +19,7 @@ import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
 import org.apache.struts.Globals;
+import org.apache.struts.action.ActionErrors;
 import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
@@ -30,6 +32,7 @@ import org.intermine.web.logic.query.QueryMonitorTimeout;
 import org.intermine.web.logic.session.SessionMethods;
 import org.intermine.web.logic.template.TemplateHelper;
 import org.intermine.web.logic.template.TemplateQuery;
+import org.intermine.webservice.template.result.TemplateResultLinkGenerator;
 
 /**
  * Action to handle submit from the template page. <code>setSavingQueries</code>
@@ -85,7 +88,24 @@ public class TemplateAction extends InterMineAction
         TemplateQuery template = TemplateHelper.findTemplate(servletContext, session, userName,
                                                              templateName, templateType);
         Map savedBags = WebUtil.getAllBags(profile.getSavedBags(), servletContext);
-        // We're editing the query: load as a PathQuery
+        
+        if (forwardToLinksPage(request)) {
+            TemplateQuery configuredTmpl = TemplateHelper.templateFormToTemplateQuery(tf, template,
+                    savedBags);
+            TemplateResultLinkGenerator gen = new TemplateResultLinkGenerator();
+            String link = gen.generateServiceLink(
+                    getBaseUrl(request), configuredTmpl);
+            if (gen.getError() != null) {
+                recordError(new ActionMessage("errors.linkGenerationFailed", 
+                        gen.getError()), request);
+                return mapping.findForward("template");
+            } else {
+                request.setAttribute("link", link);
+                return mapping.findForward("serviceLink");
+            }
+        }
+
+        // We're editing the query: load as a PathQuery        
         if (!skipBuilder && !editTemplate) {
             TemplateQuery queryCopy = TemplateHelper.templateFormToTemplateQuery(tf, template,
                                                                                  savedBags);
@@ -139,4 +159,23 @@ public class TemplateAction extends InterMineAction
                 .addParameter("trail", trail)
                 .forward();
     }
+    
+    /**
+     * Methods looks at request parameters if should forward to web service links page. 
+     * @param request request
+     * @return true if should be forwarded
+     */
+    private boolean forwardToLinksPage(HttpServletRequest request) {
+        return "links".equalsIgnoreCase(request.getParameter("actionType"));
+    }
+
+    private String getBaseUrl(HttpServletRequest request) {
+        try {
+            return new java.net.URL(request.getScheme(), request.getServerName(), 
+                    request.getServerPort(),request.getContextPath()).toString();
+        } catch (MalformedURLException e) {
+            throw  new RuntimeException("Creating base url failed.", e);
+        }
+    }
+
 }

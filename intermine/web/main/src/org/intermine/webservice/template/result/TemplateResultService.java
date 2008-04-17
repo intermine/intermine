@@ -38,7 +38,7 @@ public class TemplateResultService extends QueryResultService
         
         TemplateQuery template = new TemplateManager(request).getQuery(input.getName());
         if (template == null) {
-            output.addError("global template with name '" + input.getName() + "' doesn't exist.");
+            output.addError("public template with name '" + input.getName() + "' doesn't exist.");
             return;
         }
         template = new TemplateConfigurator().getConfiguredTemplate(template, 
