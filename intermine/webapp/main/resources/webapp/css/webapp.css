@@ -28,6 +28,14 @@ a:link:active { color:#58e; text-decoration:none }
 a.extlink , a.extlink:link, a.extlink:visited, a.extlink:active, a.extlink:hover {
   padding-right: 15px; margin-right: 15px;
   white-space: nowrap; background: url('../images/extlink.gif') right center no-repeat; }
+  
+pre {
+  background-color:#00FFFF;
+  margin:10px;
+  padding:10px;
+  line-height:0.6em;
+  border:1px solid #66CC99;
+}
 
 ul#submenulist li a {
 	float:left;}
