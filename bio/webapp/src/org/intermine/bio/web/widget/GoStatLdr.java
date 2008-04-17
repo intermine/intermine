@@ -63,8 +63,8 @@ public class GoStatLdr implements EnrichmentWidgetLdr
         for (String s : organisms) {
             organismsLower.add(s.toLowerCase());
         }
-        annotatedSampleQuery = getQuery(false, true);
-        annotatedPopulationQuery = getQuery(false, false);
+        annotatedSampleQuery = getQuery(true);
+        annotatedPopulationQuery = getQuery(false);
                 
     }
 
@@ -84,7 +84,7 @@ public class GoStatLdr implements EnrichmentWidgetLdr
     /**
      * {@inheritDoc}
      */
-    public Query getQuery(boolean calcTotal, boolean useBag) {
+    public Query getQuery(boolean useBag) {
 
         QueryClass qcGene = new QueryClass(Gene.class);
         QueryClass qcGoAnnotation = new QueryClass(GOAnnotation.class);
@@ -110,31 +110,30 @@ public class GoStatLdr implements EnrichmentWidgetLdr
         // gene.goAnnotation CONTAINS GOAnnotation
         QueryCollectionReference qcr1 = new QueryCollectionReference(qcGene, "allGoAnnotation");
         cs.addConstraint(new ContainsConstraint(qcr1, ConstraintOp.CONTAINS, qcGoAnnotation));
-        
-        if (!calcTotal) {
-            String[] ids = getOntologies();
-            QueryExpression qf2 = new QueryExpression(QueryExpression.LOWER, qfGoTermId);
-            for (int i = 0; i < ids.length; i++) {                
-                cs.addConstraint(new SimpleConstraint(qf2, ConstraintOp.NOT_EQUALS, 
-                                                   new QueryValue(ids[i])));
-            }
-            // gene is from organism
-            QueryObjectReference qor1 = new QueryObjectReference(qcGene, "organism");
-            cs.addConstraint(new ContainsConstraint(qor1, ConstraintOp.CONTAINS, qcOrganism));
 
-            // goannotation contains go term
-            QueryObjectReference qor2 = new QueryObjectReference(qcGoAnnotation, "property");
-            cs.addConstraint(new ContainsConstraint(qor2, ConstraintOp.CONTAINS, qcGo));
 
-            // can't be a NOT relationship!
-            cs.addConstraint(new SimpleConstraint(qfQualifier, ConstraintOp.IS_NULL));
-
-            // go term is of the specified namespace
-            QueryExpression qf3 = new QueryExpression(QueryExpression.LOWER, qfNamespace);
-            cs.addConstraint(new SimpleConstraint(qf3, ConstraintOp.EQUALS, 
-                                                  new QueryValue(namespace.toLowerCase())));
-
+        String[] ids = getOntologies();
+        QueryExpression qf2 = new QueryExpression(QueryExpression.LOWER, qfGoTermId);
+        for (int i = 0; i < ids.length; i++) {                
+            cs.addConstraint(new SimpleConstraint(qf2, ConstraintOp.NOT_EQUALS, 
+                                                  new QueryValue(ids[i])));
         }
+        // gene is from organism
+        QueryObjectReference qor1 = new QueryObjectReference(qcGene, "organism");
+        cs.addConstraint(new ContainsConstraint(qor1, ConstraintOp.CONTAINS, qcOrganism));
+
+        // goannotation contains go term
+        QueryObjectReference qor2 = new QueryObjectReference(qcGoAnnotation, "property");
+        cs.addConstraint(new ContainsConstraint(qor2, ConstraintOp.CONTAINS, qcGo));
+
+        // can't be a NOT relationship!
+        cs.addConstraint(new SimpleConstraint(qfQualifier, ConstraintOp.IS_NULL));
+
+        // go term is of the specified namespace
+        QueryExpression qf3 = new QueryExpression(QueryExpression.LOWER, qfNamespace);
+        cs.addConstraint(new SimpleConstraint(qf3, ConstraintOp.EQUALS, 
+                                              new QueryValue(namespace.toLowerCase())));
+
         if (useBag) {
             if (bag.getType().equalsIgnoreCase("protein")) {
                 cs.addConstraint(new BagConstraint(qfProteinId, ConstraintOp.IN, bag.getOsb()));
@@ -156,32 +155,28 @@ public class GoStatLdr implements EnrichmentWidgetLdr
 
         Query q = new Query();
         q.setDistinct(false);
-        
+
         q.addFrom(qcGene);
         q.addFrom(qcGoAnnotation);
         q.addFrom(qcOrganism);
-        if (!calcTotal) {
-            q.addFrom(qcGo);
-        }
+
+        q.addFrom(qcGo);
+
         if (bag.getType().equalsIgnoreCase("protein")) {
             q.addFrom(qcProtein);
         }
 
-        if (!calcTotal) {
-            q.addToSelect(qfGoTermId);
-        }        
+        q.addToSelect(qfGoTermId);
         q.addToSelect(objectCount);
-               
-        q.setConstraint(cs);
 
-        if (!calcTotal) {
-            q.addToGroupBy(qfGoTermId);
-            
-            if (useBag) {
-                q.addToSelect(qfGoTerm);
-                q.addToGroupBy(qfGoTerm);            
-            }
-        }        
+        q.setConstraint(cs);
+        q.addToGroupBy(qfGoTermId);
+
+        if (useBag) {
+            q.addToSelect(qfGoTerm);
+            q.addToGroupBy(qfGoTerm);            
+        }
+
         return q;
     }
    

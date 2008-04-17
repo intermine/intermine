@@ -47,20 +47,20 @@ public class UniProtKeywordsLdr implements EnrichmentWidgetLdr
     private Query annotatedPopulationQuery;
     private Collection<String> organisms;
     private String externalLink, append;
-    private ObjectStore os;
     private InterMineBag bag;
     private Collection<String> organismsLower = new ArrayList<String>();
+    
     /**
      * @param bag list of objects for this widget
      * @param os object store
+     * @param extraAttribute an extra attribute, probably organism
      */
     public UniProtKeywordsLdr(InterMineBag bag, ObjectStore os, String extraAttribute) {
-        this.bag = bag;
-        this.os = os;
+        this.bag = bag;    
         organisms = BioUtil.getOrganisms(os, bag, false);
         
-        annotatedSampleQuery = getQuery(false, true);
-        annotatedPopulationQuery = getQuery(false, false);
+        annotatedSampleQuery = getQuery(true);
+        annotatedPopulationQuery = getQuery(false);
         for (String s : organisms) {
             organismsLower.add(s.toLowerCase());
         }
@@ -70,7 +70,7 @@ public class UniProtKeywordsLdr implements EnrichmentWidgetLdr
     /**
      * {@inheritDoc}
      */    
-    public Query getQuery(boolean calcTotal, boolean useBag) {
+    public Query getQuery(boolean useBag) {
         QueryClass qcProtein = new QueryClass(Protein.class);
         QueryClass qcOrganism = new QueryClass(Organism.class);
         QueryClass qcOntology = new QueryClass(Ontology.class);
@@ -90,7 +90,7 @@ public class UniProtKeywordsLdr implements EnrichmentWidgetLdr
         }
         QueryExpression qf = new QueryExpression(QueryExpression.LOWER, qfOrganismName);
         cs.addConstraint(new BagConstraint(qf, ConstraintOp.IN, organismsLower));
-        
+
         QueryObjectReference qor1 = new QueryObjectReference(qcProtein, "organism");
         cs.addConstraint(new ContainsConstraint(qor1, ConstraintOp.CONTAINS, qcOrganism));
 
@@ -101,7 +101,7 @@ public class UniProtKeywordsLdr implements EnrichmentWidgetLdr
         cs.addConstraint(new ContainsConstraint(qor2, ConstraintOp.CONTAINS, qcOntology));
 
         cs.addConstraint(new SimpleConstraint(qfOnto, ConstraintOp.EQUALS, 
-                                               new QueryValue("UniProtKeyword")));
+                                              new QueryValue("UniProtKeyword")));
 
         Query q = new Query();
         q.setDistinct(false);
@@ -111,17 +111,17 @@ public class UniProtKeywordsLdr implements EnrichmentWidgetLdr
         q.addFrom(qcOntology);
         q.addFrom(qcOntoTerm);
 
-        if (!calcTotal) {
-            q.addToSelect(qfName);
-        }
+
+        q.addToSelect(qfName);
+
         q.addToSelect(protCount);        
         q.setConstraint(cs);
-        if (!calcTotal) {            
-            if (useBag) {
-                q.addToSelect(qfName);
-            } 
-            q.addToGroupBy(qfName);
-        }
+
+        if (useBag) {
+            q.addToSelect(qfName);
+        } 
+        q.addToGroupBy(qfName);
+
         return q;
     }
 

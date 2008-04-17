@@ -54,11 +54,9 @@ public interface EnrichmentWidgetLdr
      * n = total annotated with any term in bag (used to be bag.count)
      * M = total annotated with this term in reference population
      * N = total annotated with any term in reference population
-     * 
-     * @param calcTotal whether or not to calculate the total number in the reference population
      * @param useBag whether or not to use the bag in the query
      * @return query to return the correct result set for this widget
      */
-    public Query getQuery(boolean calcTotal, boolean useBag);
+    public Query getQuery(boolean useBag);
     
 }
