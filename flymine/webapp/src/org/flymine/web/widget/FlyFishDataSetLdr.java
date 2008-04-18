@@ -115,7 +115,9 @@ public class FlyFishDataSetLdr implements DataSetLdr
         while (iter.hasNext()) {
             ResultsRow resRow = iter.next();
             
-            String stage = (String) resRow.get(0);
+            String stage = (String) resRow.get(0); 
+            stage = (stage.split(" \\("))[0];
+            
             Boolean expressed = (Boolean) resRow.get(1);            
             Long geneCount = (Long) resRow.get(2);
 
@@ -137,13 +139,12 @@ public class FlyFishDataSetLdr implements DataSetLdr
     
     private LinkedHashMap<String, int[]> initCallTable() {
         LinkedHashMap<String, int[]> callTable = new LinkedHashMap<String, int[]>();
-        String append = " (fly-FISH)";
         String[] stageLabels = new String[4]; 
 
-        stageLabels[0] = "stage 1-3" + append;
-        stageLabels[1] = "stage 4-5" + append;
-        stageLabels[2] = "stage 6-7" + append;
-        stageLabels[3] = "stage 8-9" + append;
+        stageLabels[0] = "stage 1-3";
+        stageLabels[1] = "stage 4-5";
+        stageLabels[2] = "stage 6-7";
+        stageLabels[3] = "stage 8-9";
 
         for (String stage : stageLabels) {            
             int[] count = new int[2];
