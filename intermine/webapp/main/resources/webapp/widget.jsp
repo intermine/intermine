@@ -24,6 +24,7 @@
 <html:hidden property="widgetid" value="${widget.id}" />
 <html:hidden property="action" value="" styleId="action${widget.id}"/>
 <html:hidden property="exporttype" value="" styleId="export${widget.id}"/>
+
 <div id="widgetcontainer${widget.id}" class="widgetcontainer">
   <span id="closewidget${widget.id}" class="widgetcloser"><a href="javascript:toggleWidget('widgetcontainer${widget.id}','togglelink${widget.id}');">close x</a></span>
   <h3>${widget.title}</h3>
@@ -34,6 +35,9 @@
   <legend>Options</legend>
   <ol>
    <c:if test="${type == 'EnrichmentWidget'}" >
+   
+   <html:hidden property="externalLink${widget.id}" styleId="externalLink${widget.id}" value="${widget.externalLink}"/>
+   <html:hidden property="externalLinkLabel${widget.id}" styleId="externalLinkLabel${widget.id}" value="${widget.externalLinkLabel}"/>
     <li>
     <label>Multiple Hypothesis Test Correction</label>
     <select name="errorCorrection${widget.id}" id="errorCorrection${widget.id}" onchange="getProcessEnrichmentWidget('${widget.id}','${bag.name}');">

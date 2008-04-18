@@ -900,11 +900,15 @@ public class AjaxServices
      * @param errorCorrection error correction method to use
      * @param max maximum value to display
      * @param selectedExtraAttribute extra attribute to filter by
+     * @param externalLink link to external datasource
+     * @param externalLinkLabel name of external datasource. 
      * @return enrichment widget
      */
     public static EnrichmentWidget getProcessEnrichmentWidget(String widgetId, String bagName,
                                                               String errorCorrection, String max, 
-                                                              String selectedExtraAttribute) {
+                                                              String selectedExtraAttribute, 
+                                                              String externalLink, 
+                                                              String externalLinkLabel) {
         try {
             ServletContext servletContext = WebContextFactory.get().getServletContext();
             HttpSession session = WebContextFactory.get().getSession();
@@ -924,7 +928,9 @@ public class AjaxServices
                     enrichmentWidget.setMax(max);
                     enrichmentWidget.setErrorCorrection(errorCorrection);
                     enrichmentWidget.setSelectedExtraAttribute(selectedExtraAttribute);
-                    enrichmentWidget.process(imBag, os);
+                    enrichmentWidget.setExternalLink(externalLink);
+                    enrichmentWidget.setExternalLinkLabel(externalLinkLabel);
+                    enrichmentWidget.process(imBag, os);                    
                     return enrichmentWidget;
                 }
             }

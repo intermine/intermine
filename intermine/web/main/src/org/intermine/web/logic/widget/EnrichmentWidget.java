@@ -33,7 +33,9 @@ import java.math.BigDecimal;
 public class EnrichmentWidget extends Widget
 {
     private String max, filters, filterLabel, errorCorrection;
-    private String label, externalLink;
+    private String label;
+    private String externalLink, externalLinkLabel;
+    private String append;
     private ArrayList<Map> results;
     private InterMineBag bag;
     private boolean toggleOn = false;
@@ -155,14 +157,14 @@ public class EnrichmentWidget extends Widget
 
 
     /**
-     * @return the externalLink
+     * {@inheritDoc}
      */
     public String getExternalLink() {
         return externalLink;
     }
 
     /**
-     * @param externalLink the externalLink to set
+     * {@inheritDoc}
      */
     public void setExternalLink(String externalLink) {
         this.externalLink = externalLink;
@@ -188,6 +190,9 @@ public class EnrichmentWidget extends Widget
             });
     }
     
+    /**
+     * @return results of enrichment widget
+     */
     public List<List<String[]>> getFlattenedResults() {
         if (results != null && !results.isEmpty()) {
             Map<String, BigDecimal> pvalues = results.get(0);
@@ -202,7 +207,17 @@ public class EnrichmentWidget extends Widget
                         "<input name=\"selected\" value=\"" + id + "\" id=\"selected_" + id
                                         + "\" type=\"checkbox\">"
                     });
-                row.add(new String[] {labelToId.get(id)});
+                
+                String label = labelToId.get(id);
+                if (externalLink != null && !externalLink.equals("")) {
+                    label += " <a href=\"" + externalLink + id 
+                             + "\" target=\"_new\" class=\"extlink\">"; 
+                     if (externalLinkLabel != null && !externalLinkLabel.equals("")) {
+                         label += externalLinkLabel;
+                     }
+                     label += id + "</a>";
+                }
+                row.add(new String[] {label});
                 
                 row.add(new String[] {bd.setScale(7, 
                 BigDecimal.ROUND_HALF_EVEN).toEngineeringString()});
@@ -269,5 +284,34 @@ public class EnrichmentWidget extends Widget
      */
     public boolean getToggleOn() {
         return toggleOn;
+    }
+
+    /**
+     * just used for tiffin for now
+     * @return the text to append to the end of the external link
+     */
+    public String getAppend() {
+        return append;
+    }
+
+    /**
+     * @param append the text to append
+     */
+    public void setAppend(String append) {
+        this.append = append;
+    }
+
+    /**
+     * @return the externalLinkLabel
+     */
+    public String getExternalLinkLabel() {
+        return externalLinkLabel;
+    }
+
+    /**
+     * @param externalLinkLabel the externalLinkLabel to set
+     */
+    public void setExternalLinkLabel(String externalLinkLabel) {
+        this.externalLinkLabel = externalLinkLabel;
     }
 }
