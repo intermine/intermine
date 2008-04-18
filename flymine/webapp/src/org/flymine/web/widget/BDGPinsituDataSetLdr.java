@@ -50,6 +50,8 @@ public class BDGPinsituDataSetLdr implements DataSetLdr
      * and structure the BDGP data to create a graph
      * @param bag the bag
      * @param os the ObjectStore
+     * @param extra extra attribute probably organism - currently only used for the chromosome
+     * widget
      */
     public BDGPinsituDataSetLdr(InterMineBag bag, ObjectStore os, String extra) {
         super();
@@ -116,6 +118,8 @@ public class BDGPinsituDataSetLdr implements DataSetLdr
             ResultsRow resRow = (ResultsRow) iter.next();
             
             String stage = (String) resRow.get(0);
+            stage = (stage.split(" \\("))[0];
+            
             Boolean expressed = (Boolean) resRow.get(1);            
             Long geneCount = (Long) resRow.get(2);
 
@@ -139,15 +143,14 @@ public class BDGPinsituDataSetLdr implements DataSetLdr
     private LinkedHashMap<String, int[]> 
                             initCallTable() {
         LinkedHashMap<String, int[]> callTable = new LinkedHashMap<String, int[]>();
-        String append = " (BDGP in situ)";
         String[] stageLabels = new String[6]; 
         
-        stageLabels[0] = "stage 1-3" + append;
-        stageLabels[1] = "stage 4-6" + append;
-        stageLabels[2] = "stage 7-8" + append;
-        stageLabels[3] = "stage 9-10" + append;
-        stageLabels[4] = "stage 11-12" + append;
-        stageLabels[5] = "stage 13-16" + append;
+        stageLabels[0] = "stage 1-3";
+        stageLabels[1] = "stage 4-6";
+        stageLabels[2] = "stage 7-8";
+        stageLabels[3] = "stage 9-10";
+        stageLabels[4] = "stage 11-12";
+        stageLabels[5] = "stage 13-16";
         
         for (String stage : stageLabels) {            
             int[] count = new int[2];
@@ -158,12 +161,7 @@ public class BDGPinsituDataSetLdr implements DataSetLdr
         return callTable;
     }
                             
-    /**
-     * {@inheritDoc}
-     */
-    public void setExtraAttributes(String extra) {
-    }
-    
+
     /**
      * {@inheritDoc}
      */

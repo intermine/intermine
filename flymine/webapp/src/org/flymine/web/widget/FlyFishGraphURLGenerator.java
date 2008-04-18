@@ -122,8 +122,9 @@ public class FlyFishGraphURLGenerator implements GraphCategoryURLGenerator
         constraintOp = ConstraintOp.EQUALS;
         code = q.getUnusedConstraintCode();
         PathNode stageNode = q.addNode("Gene.mRNAExpressionResults.stageRange");
+        String stageRange = series + " (fly-FISH)";
         Constraint stageConstraint
-                        = new Constraint(constraintOp, series, false, label, code, id, null);
+                        = new Constraint(constraintOp, stageRange, false, label, code, id, null);
         stageNode.getConstraints().add(stageConstraint);
 
         // expressed (category)
