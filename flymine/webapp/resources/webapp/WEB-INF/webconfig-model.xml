@@ -219,7 +219,8 @@
                       graphType="BarChart" />
 
       <bagtabledisplayer title="Pathway Information (KEGG)" pathStrings="Gene.pathways" link="org.intermine.bio.web.widget.PathwayURLQuery"
-                         description="Most common &lt;a href=&quot;http://www.genome.jp/kegg/&quot; target=&quot;_new&quot;&gt;KEGG pathways&lt;/a&gt; for this list." />
+                         description="Most common &lt;a href=&quot;http://www.genome.jp/kegg/&quot; target=&quot;_new&quot;&gt;KEGG pathways&lt;/a&gt; for this list."
+                         externalLink="http://www.genome.jp/dbget-bin/www_bget?pathway+dme" />
               
       <bagtabledisplayer title="Orthologues" pathStrings="Gene.homologues[type=orthologue].homologue.organism" link="org.intermine.bio.web.widget.HomologueURLQuery"
                          description="Counts of orthologues in other organisms for the genes in this list." fields="name" columnTitle="Orthologues"/>
