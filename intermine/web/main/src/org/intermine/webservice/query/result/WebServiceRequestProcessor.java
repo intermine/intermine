@@ -23,18 +23,17 @@ import org.intermine.webservice.WebServiceInput;
 public class WebServiceRequestProcessor
 {
 
-    private static final String START_PARAMETER = "firstResult";
-    private static final String LIMIT_PARAMETER = "limit";
-    protected static final String OUTPUT_PARAMETER = "output";
+    private static final String START_PARAMETER = "start";
+    private static final String LIMIT_PARAMETER = "size";
     private static final int DEFAULT_START = 1;
-    private static final int DEFAULT_MAX_COUNT = 1000;
+    private static final int DEFAULT_MAX_COUNT = 10;
     private static final int MAX_COUNT_LIMIT = 1000000;
     /** Value of parameter when user wants xml output to be returned. **/
-    public static final String OUTPUT_PARAMETER_XML = "xml";
+    public static final String FORMAT_PARAMETER_XML = "xml";
     /** Value of parameter when user wants tab separated output to be returned. **/
-    public static final String OUTPUT_PARAMETER_TAB = "tab";
+    public static final String FORMAT_PARAMETER_TAB = "tab";
     /** Value of parameter when user wants html output to be returned. **/
-    public static final String OUTPUT_PARAMETER_HTML = "html";
+    public static final String FORMAT_PARAMETER_HTML = "html";
 
     /**
      * Parses common parameters for all web services. Must be called from parseRequest
