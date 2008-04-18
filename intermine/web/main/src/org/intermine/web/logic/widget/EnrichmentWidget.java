@@ -19,6 +19,7 @@ import java.util.List;
 import java.util.Map;
 
 import org.intermine.objectstore.ObjectStore;
+import org.intermine.objectstore.ObjectStoreException;
 import org.intermine.util.TypeUtil;
 import org.intermine.web.logic.WebUtil;
 import org.intermine.web.logic.bag.InterMineBag;
@@ -39,6 +40,7 @@ public class EnrichmentWidget extends Widget
     private ArrayList<Map> results;
     private InterMineBag bag;
     private boolean toggleOn = false;
+    private int notAnalysed = 0;
     
     /**
      * {@inheritDoc}
@@ -65,6 +67,7 @@ public class EnrichmentWidget extends Widget
             if (getHasResults()) {
                 toggleOn = true;
             }
+
         } catch (NumberFormatException e) {
             // TODO Auto-generated catch block
             e.printStackTrace();
@@ -313,5 +316,19 @@ public class EnrichmentWidget extends Widget
      */
     public void setExternalLinkLabel(String externalLinkLabel) {
         this.externalLinkLabel = externalLinkLabel;
+    }
+    
+    /**
+     * {@inheritDoc}
+     */
+    public int getNotAnalysed() {
+        return notAnalysed;
+    }
+
+    /**
+    * {@inheritDoc}
+     */
+    public void setNotAnalysed(int notAnalysed) {
+        this.notAnalysed = notAnalysed;
     }
 }

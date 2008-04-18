@@ -66,6 +66,7 @@ public class GraphWidget extends Widget
     private String extraAttributeClass, externalLink, externalLinkLabel;
     private HttpSession session;
     private DataSetLdr dataSetLdr;
+    private int notAnalysed = 0;
     
     /**
      * {@inheritDoc}
@@ -413,4 +414,19 @@ public class GraphWidget extends Widget
     public void setExternalLinkLabel(String externalLinkLabel) {
         this.externalLinkLabel = externalLinkLabel;
     }
+    
+    /**
+     * {@inheritDoc}
+     */
+    public int getNotAnalysed() {
+        return notAnalysed;
+    }
+
+    /**
+    * {@inheritDoc}
+     */
+    public void setNotAnalysed(int notAnalysed) {
+        this.notAnalysed = notAnalysed;
+    }
+    
 }

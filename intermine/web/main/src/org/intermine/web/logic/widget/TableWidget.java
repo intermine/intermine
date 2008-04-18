@@ -17,7 +17,6 @@ import java.util.Map;
 import org.intermine.metadata.FieldDescriptor;
 import org.intermine.objectstore.ObjectStore;
 import org.intermine.web.logic.bag.InterMineBag;
-import org.intermine.web.logic.config.FieldConfig;
 import org.intermine.web.logic.config.WebConfig;
 
 /*
@@ -43,6 +42,7 @@ public class TableWidget extends Widget
     private BagTableWidgetLoader bagWidgLdr;
     private String pathStrings, externalLink, externalLinkLabel;
     private String columnTitle = null;
+    private int notAnalysed = 0;
     
     /**
      * {@inheritDoc}
@@ -192,6 +192,20 @@ public class TableWidget extends Widget
      */
     public void setExternalLinkLabel(String externalLinkLabel) {
         this.externalLinkLabel = externalLinkLabel;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public int getNotAnalysed() {
+        return notAnalysed;
+    }
+
+    /**
+    * {@inheritDoc}
+     */
+    public void setNotAnalysed(int notAnalysed) {
+        this.notAnalysed = notAnalysed;
     }
     
 }

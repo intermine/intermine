@@ -180,4 +180,14 @@ public abstract class Widget
      * @param externalLinkLabel the externalLinkLabel to set
      */
     public abstract void setExternalLinkLabel(String externalLinkLabel);
+    
+    /**
+     * @return the number of objects not analysed in this widget
+     */
+    public abstract int getNotAnalysed();
+
+    /**
+     * @param notAnalysed the number of objects not analysed in this widget
+     */
+    public abstract void setNotAnalysed(int notAnalysed);
 }
