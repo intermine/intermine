@@ -63,19 +63,18 @@ public class GraphWidget extends Widget
     private String imageMap = null;
     private static final int WIDTH = 430;
     private static final int HEIGHT = 350;
-    private String extraAttributeClass;
+    private String extraAttributeClass, externalLink, externalLinkLabel;
     private HttpSession session;
     private DataSetLdr dataSetLdr;
-
-
+    
     /**
      * {@inheritDoc}
      */
     public void process(InterMineBag imBag, ObjectStore os) {
         try {
             String dataSetLoader = getDataSetLoader();
-            Class clazz = TypeUtil.instantiate(dataSetLoader);
-            Constructor constr = clazz.getConstructor(new Class[]
+            Class<?> clazz = TypeUtil.instantiate(dataSetLoader);
+            Constructor<?> constr = clazz.getConstructor(new Class[]
                 {
                     InterMineBag.class, ObjectStore.class, String.class
                 });
@@ -88,7 +87,7 @@ public class GraphWidget extends Widget
             JFreeChart chart = null;
             CategoryPlot plot = null;
             BarRenderer renderer = null;
-            CategoryDataset graphDataSet = (CategoryDataset) dataSetLdr.getDataSet();
+            CategoryDataset graphDataSet = dataSetLdr.getDataSet();
 
             /* stacked bar chart */
             if (graphType.equals("StackedBarChart")) {
@@ -134,8 +133,8 @@ public class GraphWidget extends Widget
                     // set series 0 to have URLgenerator specified in config file
                     // set series 1 to have no URL generator.
                     try {
-                        Class clazz2 = TypeUtil.instantiate(getLink());
-                        Constructor urlGenConstructor = clazz2.getConstructor(new Class[]
+                        Class<?> clazz2 = TypeUtil.instantiate(getLink());
+                        Constructor<?> urlGenConstructor = clazz2.getConstructor(new Class[]
                             {
                                 String.class, String.class
                             });
@@ -185,7 +184,7 @@ public class GraphWidget extends Widget
             renderer.setSeriesOutlineStroke(1, new BasicStroke(0.0F));
 
             Class<?> clazz1 = TypeUtil.instantiate(toolTipGen);
-            Constructor toolTipConstructor = clazz1.getConstructor(new Class[]
+            Constructor<?> toolTipConstructor = clazz1.getConstructor(new Class[]
                 {});
             CategoryToolTipGenerator categoryToolTipGen 
             = (CategoryToolTipGenerator) toolTipConstructor
@@ -197,7 +196,7 @@ public class GraphWidget extends Widget
             // this may be already set individually for the different series
             if (getLink() != null) {
                 Class<?> clazz2 = TypeUtil.instantiate(getLink());
-                Constructor urlGenConstructor = clazz2.getConstructor(new Class[]
+                Constructor<?> urlGenConstructor = clazz2.getConstructor(new Class[]
                     {
                         String.class, String.class
                     });
@@ -352,8 +351,8 @@ public class GraphWidget extends Widget
         Map<String, Collection> returnMap = new HashMap<String, Collection>();
         if (extraAttributeClass != null && extraAttributeClass.length() > 0) {
             try {
-                Class clazz = TypeUtil.instantiate(extraAttributeClass);
-                Constructor constr = clazz.getConstructor(new Class[]{});
+                Class<?> clazz = TypeUtil.instantiate(extraAttributeClass);
+                Constructor<?> constr = clazz.getConstructor(new Class[]{});
                 WidgetUtil widgetUtil = (WidgetUtil) constr.newInstance(new Object[] {});
                 extraAttributes = widgetUtil.getExtraAttributes(os, imBag);
                 if (getSelectedExtraAttribute() == null
@@ -381,5 +380,33 @@ public class GraphWidget extends Widget
      */
     public boolean getToggleOn() {
         return false;
+    }
+    
+    /**
+     * {@inheritDoc}
+     */
+    public String getExternalLink() {
+        return externalLink;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public void setExternalLink(String externalLink) {
+        this.externalLink = externalLink;
+    }
+
+    /**
+     * @return the externalLinkLabel
+     */
+    public String getExternalLinkLabel() {
+        return externalLinkLabel;
+    }
+
+    /**
+     * @param externalLinkLabel the externalLinkLabel to set
+     */
+    public void setExternalLinkLabel(String externalLinkLabel) {
+        this.externalLinkLabel = externalLinkLabel;
     }
 }

@@ -30,6 +30,7 @@ public abstract class Widget
     private String dataSetLoader;
     private String link;
     private String selectedExtraAttribute;
+
     
     /**
      * The Constructor
@@ -158,4 +159,25 @@ public abstract class Widget
     * @return whether or not the widget has been toggled on
     */
    public abstract boolean getToggleOn();
+
+    /**
+     * @return the externalLink
+     */
+    public abstract String getExternalLink();
+
+    /**
+     * @param externalLink the externalLink to set
+     */
+    public abstract void setExternalLink(String externalLink);
+    
+    
+    /**
+     * @return the externalLinkLabel
+     */
+    public abstract String getExternalLinkLabel();
+
+    /**
+     * @param externalLinkLabel the externalLinkLabel to set
+     */
+    public abstract void setExternalLinkLabel(String externalLinkLabel);
 }

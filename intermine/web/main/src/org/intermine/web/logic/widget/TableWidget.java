@@ -16,6 +16,7 @@ import java.util.Map;
 
 import org.intermine.objectstore.ObjectStore;
 import org.intermine.web.logic.bag.InterMineBag;
+import org.intermine.web.logic.config.FieldConfig;
 import org.intermine.web.logic.config.WebConfig;
 
 /*
@@ -37,9 +38,9 @@ public class TableWidget extends Widget
 
     private String fields;
     private WebConfig webConfig;
-    private Map classKeys;
+    private Map<String, FieldConfig> classKeys;
     private BagTableWidgetLoader bagWidgLdr;
-    private String pathStrings;
+    private String pathStrings, externalLink, externalLinkLabel;
     private String columnTitle = null;
     
     /**
@@ -122,14 +123,14 @@ public class TableWidget extends Widget
     /**
      * @return the classKeys
      */
-    public Map getClassKeys() {
+    public Map<String, FieldConfig> getClassKeys() {
         return classKeys;
     }
 
     /**
      * @param classKeys the classKeys to set
      */
-    public void setClassKeys(Map classKeys) {
+    public void setClassKeys(Map<String, FieldConfig> classKeys) {
         this.classKeys = classKeys;
     }
     
@@ -162,4 +163,33 @@ public class TableWidget extends Widget
     public boolean getToggleOn() {
         return false;
     }
+    
+    /**
+     * {@inheritDoc}
+     */
+    public String getExternalLink() {
+        return externalLink;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public void setExternalLink(String externalLink) {
+        this.externalLink = externalLink;
+    }
+
+    /**
+     * @return the externalLinkLabel
+     */
+    public String getExternalLinkLabel() {
+        return externalLinkLabel;
+    }
+
+    /**
+     * @param externalLinkLabel the externalLinkLabel to set
+     */
+    public void setExternalLinkLabel(String externalLinkLabel) {
+        this.externalLinkLabel = externalLinkLabel;
+    }
+    
 }

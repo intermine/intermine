@@ -94,7 +94,17 @@ function getProcessEnrichmentWidget(widgetId, bagName) {
   if($("widgetselect" + widgetId)!=null) {
     extraAttr = $("widgetselect" + widgetId).value;
   }
-  AjaxServices.getProcessEnrichmentWidget(widgetId,bagName,errorCorrection,max,extraAttr,handleTableWidget);
+  var externalLink;
+  if($("externalLink" + widgetId)!=null) {
+    externalLink = $("externalLink" + widgetId).value;
+  }
+  
+  var externalLinkLabel;
+  if($("externalLinkLabel" + widgetId)!=null) {
+    externalLinkLabel = $("externalLinkLabel" + widgetId).value;
+  }
+  
+  AjaxServices.getProcessEnrichmentWidget(widgetId,bagName,errorCorrection,max,extraAttr,externalLink,externalLinkLabel,handleTableWidget);
 }
 
 function removeChildren(node) {
