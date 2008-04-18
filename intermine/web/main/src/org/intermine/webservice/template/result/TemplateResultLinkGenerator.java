@@ -14,6 +14,7 @@ import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
 import java.util.List;
 
+import org.intermine.objectstore.query.ConstraintOp;
 import org.intermine.web.logic.query.Constraint;
 import org.intermine.web.logic.template.TemplateQuery;
 
@@ -46,10 +47,18 @@ public class TemplateResultLinkGenerator
         for (int i = 0; i < constraints.size(); i++) {
             Constraint cs = constraints.get(i);
             int code = i + 1;
-            ret += "op" + code + "=" + TemplateResultLinkGenerator.encode(cs.getOp()) + "&";
-            ret += "value" + code + "=" + TemplateResultLinkGenerator.encode(cs.getValue()) + "&";
-            ret += "extraValue" + code + "="  
-                + TemplateResultLinkGenerator.encode(cs.getExtraValue()) + "&";
+            String opString;
+            if (i != 0) {
+                opString = "&op";
+            } else {
+                opString = "op";
+            }
+            ret += opString + code + "=" + TemplateResultLinkGenerator.encode(cs.getOp());
+            ret += "&value" + code + "=" + TemplateResultLinkGenerator.encode(cs.getValue());
+            if (cs.getOp().equals(ConstraintOp.LOOKUP)) {
+                ret += "&extraValue" + code + "="  
+                + TemplateResultLinkGenerator.encode(cs.getExtraValue());                
+            }
         }
         return ret;
     }
@@ -71,6 +80,10 @@ public class TemplateResultLinkGenerator
         }
     }
 
+    /**
+     * 
+     * @return error if some happened
+     */
     public String getError() {
         return error;
     }
