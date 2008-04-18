@@ -50,7 +50,7 @@ public class TableWidget extends Widget
     public void process(InterMineBag bag, ObjectStore os) throws Exception {
         bagWidgLdr = new BagTableWidgetLoader(pathStrings, bag, os, webConfig,
                         os.getModel(), classKeys, fields, getLink(), getColumnTitle(),
-                        getExternalLink());
+                        getExternalLink(), getExternalLinkLabel());
     }
     
     /**
