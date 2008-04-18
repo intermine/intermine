@@ -29,6 +29,7 @@
   <span id="closewidget${widget.id}" class="widgetcloser"><a href="javascript:toggleWidget('widgetcontainer${widget.id}','togglelink${widget.id}');">close x</a></span>
   <h3>${widget.title}</h3>
   <p>${widget.description}</p>
+  <p>Number of genes not analysed in this widget:  42.</p>
  <c:set var="extraAttrMap" value="${widget2extraAttrs[widget.id]}" />
  <c:if test="${type == 'EnrichmentWidget' || fn:length(extraAttrMap)>0}" >
   <fieldset>
@@ -106,6 +107,7 @@
         <tbody id="tablewidget${widget.id}body"></tbody>
       </table>
     </c:if>
+    
   </div>
   <div id="widgetdatawait${widget.id}" class="widgetdatawait"><img src="images/wait30.gif" title="Searching..."/></div>
   <div id="widgetdatanoresults${widget.id}" class="widgetdatawait" style="display:none;"><i>no results found</i></div>

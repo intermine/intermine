@@ -57,7 +57,7 @@ public class GraphWidget extends Widget
     private String domainLabel;
     private String rangeLabel;
     private String toolTipGen;
-    private String description;
+    
     private String graphType;
     private String fileName = null;
     private String imageMap = null;
@@ -316,7 +316,7 @@ public class GraphWidget extends Widget
     public String toString() {
         return "< title=\"" + getTitle() + " domainLabel=\"" + domainLabel + " rangeLabel=\""
                + rangeLabel + " dataSetLoader=\"" + getDataSetLoader() + " toolTipGen=\""
-               + toolTipGen + " urlGen=\"" + getLink() + "\" description=\"" + description + "\"/>";
+               + toolTipGen + " urlGen=\"" + getLink() + "\" />";
     }
 
     /**
@@ -345,6 +345,10 @@ public class GraphWidget extends Widget
         this.extraAttributeClass = extraAttributeClass;
     }
     
+    
+    /**
+     * {@inheritDoc}
+     */
     public Map<String, Collection> getExtraAttributes(InterMineBag imBag, ObjectStore os)
         throws Exception {
         Collection<String> extraAttributes = new ArrayList<String>();
@@ -397,14 +401,14 @@ public class GraphWidget extends Widget
     }
 
     /**
-     * @return the externalLinkLabel
+     * {@inheritDoc}
      */
     public String getExternalLinkLabel() {
         return externalLinkLabel;
     }
 
     /**
-     * @param externalLinkLabel the externalLinkLabel to set
+     * {@inheritDoc}
      */
     public void setExternalLinkLabel(String externalLinkLabel) {
         this.externalLinkLabel = externalLinkLabel;

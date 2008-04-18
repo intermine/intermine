@@ -241,7 +241,7 @@
                                  filters="biological_process,cellular_component,molecular_function"
                                  filterLabel="Ontology"
                                  max="0.10" 
-                                 externalLink="" />
+                                 externalLink="http://amigo.geneontology.org/cgi-bin/amigo/term-details.cgi?term=" />
 
       <enrichmentwidgetdisplayer title="Protein Domain Enrichment"
                                  link="org.flymine.web.widget.ProteinDomainURLQuery"
@@ -251,7 +251,7 @@
                                  filters=""
                                  filterLabel=""
                                  max="0.10" 
-                                 externalLink="" />
+                                 externalLink="http://www.ebi.ac.uk/interpro/IEntry?ac=" />
                                  
       <enrichmentwidgetdisplayer title="Publication Enrichment"
                                  link="org.intermine.bio.web.widget.PublicationURLQuery"
