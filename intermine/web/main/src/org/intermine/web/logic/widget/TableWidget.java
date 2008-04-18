@@ -14,6 +14,7 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 
+import org.intermine.metadata.FieldDescriptor;
 import org.intermine.objectstore.ObjectStore;
 import org.intermine.web.logic.bag.InterMineBag;
 import org.intermine.web.logic.config.FieldConfig;
@@ -38,7 +39,7 @@ public class TableWidget extends Widget
 
     private String fields;
     private WebConfig webConfig;
-    private Map<String, FieldConfig> classKeys;
+    private Map<String, List<FieldDescriptor>> classKeys;
     private BagTableWidgetLoader bagWidgLdr;
     private String pathStrings, externalLink, externalLinkLabel;
     private String columnTitle = null;
@@ -48,7 +49,8 @@ public class TableWidget extends Widget
      */
     public void process(InterMineBag bag, ObjectStore os) throws Exception {
         bagWidgLdr = new BagTableWidgetLoader(pathStrings, bag, os, webConfig,
-                        os.getModel(), classKeys, fields, getLink(), getColumnTitle());
+                        os.getModel(), classKeys, fields, getLink(), getColumnTitle(),
+                        getExternalLink());
     }
     
     /**
@@ -123,14 +125,14 @@ public class TableWidget extends Widget
     /**
      * @return the classKeys
      */
-    public Map<String, FieldConfig> getClassKeys() {
+    public Map<String, List<FieldDescriptor>> getClassKeys() {
         return classKeys;
     }
 
     /**
      * @param classKeys the classKeys to set
      */
-    public void setClassKeys(Map<String, FieldConfig> classKeys) {
+    public void setClassKeys(Map<String, List<FieldDescriptor>> classKeys) {
         this.classKeys = classKeys;
     }
     
@@ -179,14 +181,14 @@ public class TableWidget extends Widget
     }
 
     /**
-     * @return the externalLinkLabel
+     * {@inheritDoc}
      */
     public String getExternalLinkLabel() {
         return externalLinkLabel;
     }
 
     /**
-     * @param externalLinkLabel the externalLinkLabel to set
+    * {@inheritDoc}
      */
     public void setExternalLinkLabel(String externalLinkLabel) {
         this.externalLinkLabel = externalLinkLabel;
