@@ -73,6 +73,7 @@ public class BagTableWidgetLoader
      * @param urlGen the class that generates the pathquery used in the links from the widget
      * @param columnTitle title for count column
      * @param externalLink link to external source
+     * @param externalLinkLabel name of external data source
      * @throws ClassNotFoundException if some class in the widget paths is not found
      * @throws UnsupportedEncodingException if something goes wrong encoding the URL
      */
@@ -80,7 +81,7 @@ public class BagTableWidgetLoader
                                 WebConfig webConfig, Model model, 
                                 Map<String, List<FieldDescriptor>> classKeys, 
                                 String fields, String urlGen, String columnTitle,
-                                String externalLink) 
+                                String externalLink, String externalLinkLabel) 
     throws ClassNotFoundException, UnsupportedEncodingException {
         Path pathTmp = new Path(model, pathWithNoConstraints(pathString));
         ClassDescriptor cld = pathTmp.getEndClassDescriptor();
@@ -137,17 +138,20 @@ public class BagTableWidgetLoader
                         boolean isKeyField = ClassKeyHelper.isKeyField(classKeys,
                                 TypeUtil.unqualifiedName(thisType.getName()), fieldName);
                         String link = null;
+                        String val = fieldValue.toString();
                         if (isKeyField) {
                             key = fieldValue.toString();
                             link = "objectDetails.do?id=" + o.getId() + "&amp;trail=|bag."
                                    + bag.getName() + "|" + o.getId();
                         } else if (externalLink != null && !externalLink.equals("")) {
-                            link = externalLink + key;
+                            val = val + " <a href=\"" + externalLink + key 
+                            + "\" target=\"_new\" class=\"extlink\">" 
+                            + externalLinkLabel + "</a>";
                         }
                         
                         flattenedRow.add(new String[]
                             {
-                            fieldValue.toString(), link
+                            val, link
                             });
                     }
                 } else if (element instanceof Long) {
