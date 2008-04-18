@@ -544,10 +544,19 @@ public abstract class WebUtil
 
 
 
-            Map<String, BigDecimal> adjustedResultsMap = resultsMap;
+            Map<String, BigDecimal> adjustedResultsMap = new HashMap<String, BigDecimal>();
 
-            if (!errorCorrection.equals("None")) {
+            if (!errorCorrection.equals("None")) { 
+                adjustedResultsMap = resultsMap;                
                 adjustedResultsMap = calcErrorCorrection(errorCorrection, maxValue, resultsMap);
+            } else {
+                BigDecimal max = new BigDecimal(maxValue.doubleValue());
+                for (String id : resultsMap.keySet()) {
+                    BigDecimal pvalue = resultsMap.get(id);
+                    if (pvalue.compareTo(max) <= 0) {
+                        adjustedResultsMap.put(id, pvalue);
+                    }
+                }
             }
 
             SortableMap sortedMap = new SortableMap(adjustedResultsMap);
