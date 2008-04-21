@@ -145,9 +145,9 @@ public abstract class WebService
         if (format == null || format.equals("")) {
             return TSV_FORMAT;
         } else {
-            if (WebServiceRequestProcessor.OUTPUT_PARAMETER_XML.equalsIgnoreCase(format)) {
+            if (WebServiceRequestProcessor.FORMAT_PARAMETER_XML.equalsIgnoreCase(format)) {
                 return XML_FORMAT;
-            } if (WebServiceRequestProcessor.OUTPUT_PARAMETER_HTML.equalsIgnoreCase(format)) {
+            } if (WebServiceRequestProcessor.FORMAT_PARAMETER_HTML.equalsIgnoreCase(format)) {
                 return HTML_FORMAT;
             } else {
                 return TSV_FORMAT;
