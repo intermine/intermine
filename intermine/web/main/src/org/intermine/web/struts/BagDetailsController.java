@@ -12,19 +12,16 @@ package org.intermine.web.struts;
 
 import java.util.Collection;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
-import javax.servlet.ServletContext;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-import javax.servlet.http.HttpSession;
+import org.intermine.objectstore.query.Query;
+import org.intermine.objectstore.query.QueryClass;
+import org.intermine.objectstore.query.QueryFunction;
+import org.intermine.objectstore.query.Results;
+import org.intermine.objectstore.query.ResultsRow;
 
-import org.apache.struts.action.ActionForm;
-import org.apache.struts.action.ActionForward;
-import org.apache.struts.action.ActionMapping;
-import org.apache.struts.tiles.ComponentContext;
-import org.apache.struts.tiles.actions.TilesAction;
 import org.intermine.metadata.Model;
 import org.intermine.objectstore.ObjectStore;
 import org.intermine.web.logic.Constants;
@@ -40,6 +37,17 @@ import org.intermine.web.logic.session.SessionMethods;
 import org.intermine.web.logic.tagging.TagTypes;
 import org.intermine.web.logic.template.TemplateHelper;
 import org.intermine.web.logic.widget.Widget;
+
+import javax.servlet.ServletContext;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
+
+import org.apache.struts.action.ActionForm;
+import org.apache.struts.action.ActionForward;
+import org.apache.struts.action.ActionMapping;
+import org.apache.struts.tiles.ComponentContext;
+import org.apache.struts.tiles.actions.TilesAction;
 
 /**
  * @author Xavier Watkins
@@ -63,6 +71,7 @@ public class BagDetailsController extends TilesAction
 
         String bagName = request.getParameter("bagName");
         Boolean myBag = Boolean.FALSE;
+        
         if (bagName == null) {
             bagName = request.getParameter("name");
         }
@@ -94,7 +103,6 @@ public class BagDetailsController extends TilesAction
             }
         }
 
-        /* forward to bag page if this is an invalid bag */
         if (imBag == null) {
             return null;
         }
@@ -102,7 +110,7 @@ public class BagDetailsController extends TilesAction
         WebConfig webConfig = (WebConfig) servletContext.getAttribute(Constants.WEBCONFIG);
         Model model = os.getModel();
         Type type = (Type) webConfig.getTypes().get(model.getPackageName() + "." + imBag.getType());
-
+        
         List<Widget> widgets = type.getWidgets();
         Map<Integer, Map<String, Collection>> widget2extraAttrs 
         = new HashMap<Integer, Map<String, Collection>>();
@@ -145,9 +153,9 @@ public class BagDetailsController extends TilesAction
         int page = (pageStr == null ? 0 : Integer.parseInt(pageStr));
 
         pagedResults.setPageAndPageSize(page, 5);
-        if ((imBag.getSize() / 4) < page) {
-            page = 0;
-        }
+//        if ((imBag.getSize() / 4) < page) {
+//            page = 0;
+//        }
 
         request.setAttribute("addparameter", request.getParameter("addparameter"));
         request.setAttribute("myBag", myBag);
@@ -156,6 +164,23 @@ public class BagDetailsController extends TilesAction
         request.setAttribute("pagedResults", pagedResults);
 
         return null;
+    }
+    
+    private int calcTotal(ObjectStore os, Model model, InterMineBag bag) 
+    throws ClassNotFoundException {
+        QueryClass bagType = new QueryClass(Class.forName(model.getPackageName() 
+                                                          + "." + bag.getType()));
+        Query q = new Query();
+        q.addToSelect(new QueryFunction());
+        q.addFrom(bagType);
+        Results results = os.execute(q);
+        Iterator iter = results.iterator();
+        int i = 0;
+        while (iter.hasNext()) {
+           ResultsRow resRow = (ResultsRow) iter.next();
+           i = ((java.lang.Long) resRow.get(0)).intValue();           
+        }
+        return i;
     }
 }
 

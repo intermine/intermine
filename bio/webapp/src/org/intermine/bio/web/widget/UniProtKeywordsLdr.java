@@ -43,35 +43,30 @@ import org.intermine.web.logic.widget.EnrichmentWidgetLdr;
 public class UniProtKeywordsLdr implements EnrichmentWidgetLdr
 {
 
-    private Query annotatedSampleQuery;
-    private Query annotatedPopulationQuery;
     private Collection<String> organisms;
     private String externalLink, append;
     private InterMineBag bag;
     private Collection<String> organismsLower = new ArrayList<String>();
-
+    
     /**
-     * Create a new UniProtKeywordsLdr.
      * @param bag list of objects for this widget
      * @param os object store
-     * @param extraAttribute an extra attribute for this widget (if needed)
+     * @param extraAttribute an extra attribute, probably organism
      */
     public UniProtKeywordsLdr(InterMineBag bag, ObjectStore os, String extraAttribute) {
-        this.bag = bag;
+        this.bag = bag;    
         organisms = BioUtil.getOrganisms(os, bag, false);
-
-        annotatedSampleQuery = getQuery(true);
-        annotatedPopulationQuery = getQuery(false);
+        
         for (String s : organisms) {
             organismsLower.add(s.toLowerCase());
         }
-        organismsLower = new ArrayList<String>();
     }
-
+    
     /**
      * {@inheritDoc}
-     */
-    public Query getQuery(boolean useBag) {
+     */    
+    public Query getQuery(boolean calcTotal, boolean useBag) {
+        
         QueryClass qcProtein = new QueryClass(Protein.class);
         QueryClass qcOrganism = new QueryClass(Organism.class);
         QueryClass qcOntology = new QueryClass(Ontology.class);
@@ -101,7 +96,7 @@ public class UniProtKeywordsLdr implements EnrichmentWidgetLdr
         QueryObjectReference qor2 = new QueryObjectReference(qcOntoTerm, "ontology");
         cs.addConstraint(new ContainsConstraint(qor2, ConstraintOp.CONTAINS, qcOntology));
 
-        cs.addConstraint(new SimpleConstraint(qfOnto, ConstraintOp.EQUALS,
+        cs.addConstraint(new SimpleConstraint(qfOnto, ConstraintOp.EQUALS, 
                                               new QueryValue("UniProtKeyword")));
 
         Query q = new Query();
@@ -112,16 +107,19 @@ public class UniProtKeywordsLdr implements EnrichmentWidgetLdr
         q.addFrom(qcOntology);
         q.addFrom(qcOntoTerm);
 
-
-        q.addToSelect(qfName);
-
+        if (!calcTotal) {
+            q.addToSelect(qfName);
+        }
         q.addToSelect(protCount);
+        
         q.setConstraint(cs);
 
         if (useBag) {
             q.addToSelect(qfName);
         }
-        q.addToGroupBy(qfName);
+        if (!calcTotal) {
+            q.addToGroupBy(qfName);
+        }
 
         return q;
     }
@@ -129,15 +127,15 @@ public class UniProtKeywordsLdr implements EnrichmentWidgetLdr
     /**
      * {@inheritDoc}
      */
-    public Query getAnnotatedSample() {
-        return annotatedSampleQuery;
+    public Query getAnnotatedSampleQuery(boolean calcTotal) {
+        return getQuery(calcTotal, true);
     }
 
     /**
      * {@inheritDoc}
      */
-    public Query getAnnotatedPopulation() {
-        return annotatedPopulationQuery;
+    public Query getAnnotatedPopulationQuery() {
+        return getQuery(false, false);
     }
 
     /**
@@ -146,7 +144,7 @@ public class UniProtKeywordsLdr implements EnrichmentWidgetLdr
     public Collection<String> getPopulationDescr() {
         return organisms;
     }
-
+    
     /**
      * {@inheritDoc}
      */

@@ -51,6 +51,9 @@ public class TableWidget extends Widget
         bagWidgLdr = new BagTableWidgetLoader(pathStrings, bag, os, webConfig,
                         os.getModel(), classKeys, fields, getLink(), getColumnTitle(),
                         getExternalLink(), getExternalLinkLabel());
+
+        notAnalysed = bag.getSize() - bagWidgLdr.getWidgetTotal();
+        
     }
     
     /**

@@ -43,9 +43,6 @@ import org.flymine.model.genomic.ProteinDomain;
  */
 public class ProteinDomainLdr implements EnrichmentWidgetLdr
 {
-
-    private Query annotatedSampleQuery;
-    private Query annotatedPopulationQuery;
     private String externalLink, append;
     private Collection<String> organisms = new ArrayList<String>();
     private Collection<String> organismsLower = new ArrayList<String>();
@@ -66,15 +63,12 @@ public class ProteinDomainLdr implements EnrichmentWidgetLdr
         for (String s : organisms) {
             organismsLower.add(s.toLowerCase());
         }
-
-        annotatedSampleQuery = getQuery(true);
-        annotatedPopulationQuery = getQuery(false);
     }
 
     /**
      * {@inheritDoc}
      */
-    public Query getQuery(boolean useBag) {
+    public Query getQuery(boolean calcTotal, boolean useBag) {
 
         QueryClass qcGene = new QueryClass(Gene.class);
         QueryClass qcProtein = new QueryClass(Protein.class);
@@ -95,9 +89,10 @@ public class ProteinDomainLdr implements EnrichmentWidgetLdr
         cs.addConstraint(new BagConstraint(qf1, ConstraintOp.IN, organismsLower));
         QueryCollectionReference qr = new QueryCollectionReference(qcProtein, "proteinDomains");
         cs.addConstraint(new ContainsConstraint(qr, ConstraintOp.CONTAINS, qcProteinFeature));
-        QueryExpression qf2 = new QueryExpression(QueryExpression.LOWER, qfId);
-        cs.addConstraint(new SimpleConstraint(qf2, ConstraintOp.MATCHES, new QueryValue("ipr%")));
 
+        QueryExpression qf2 = new QueryExpression(QueryExpression.LOWER, qfId);
+        cs.addConstraint(new SimpleConstraint(qf2, ConstraintOp.MATCHES, 
+                                                  new QueryValue("ipr%")));
         if (useBag) {
             if (bag.getType().equalsIgnoreCase("protein")) {
                 cs.addConstraint(new BagConstraint(qfProteinId, ConstraintOp.IN, bag.getOsb()));
@@ -125,29 +120,33 @@ public class ProteinDomainLdr implements EnrichmentWidgetLdr
         q.addFrom(qcProtein);
         q.addFrom(qcOrganism);
         q.addFrom(qcProteinFeature);
-        q.addToSelect(qfId);
-        q.addToSelect(objectCount);
-        q.setConstraint(cs);
-        if (useBag) {
+        
+        if (!calcTotal) {
+            q.addToSelect(qfId);
+            q.addToGroupBy(qfId);
+        }
+        q.addToSelect(objectCount);        
+        if (useBag && !calcTotal) {
             q.addToSelect(qfName);
             q.addToGroupBy(qfName);
         }
-        q.addToGroupBy(qfId);
+        
+        q.setConstraint(cs);
         return q;
     }
 
     /**
      * {@inheritDoc}
      */
-    public Query getAnnotatedSample() {
-        return annotatedSampleQuery;
+    public Query getAnnotatedSampleQuery(boolean calcTotal) {
+        return getQuery(calcTotal, true);
     }
 
     /**
      * {@inheritDoc}
      */
-    public Query getAnnotatedPopulation() {
-        return annotatedPopulationQuery;
+    public Query getAnnotatedPopulationQuery() {
+        return getQuery(false, false);
     }
 
     /**

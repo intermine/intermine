@@ -84,6 +84,8 @@ public class GraphWidget extends Widget
                     imBag, os, getSelectedExtraAttribute()
                 });
 
+            notAnalysed = imBag.getSize() - dataSetLdr.getWidgetTotal();
+            
             // TODO use caching here
             JFreeChart chart = null;
             CategoryPlot plot = null;

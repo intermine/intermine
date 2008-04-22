@@ -44,7 +44,9 @@ public class BDGPinsituDataSetLdr implements DataSetLdr
 {    
     private DefaultCategoryDataset dataSet;
     private Results results;
-
+    private int widgetTotal = 0;
+    private final String dataset = "BDGP in situ data set";
+    
     /**
      * Creates a DataSetLdr used to retrieve, organise
      * and structure the BDGP data to create a graph
@@ -66,60 +68,20 @@ public class BDGPinsituDataSetLdr implements DataSetLdr
     }
 
     private void buildDataSets(InterMineBag bag, ObjectStore os) {
-        
-        Query q = new Query();
-        
-        QueryClass mrnaResult = new QueryClass(MRNAExpressionResult.class);
-        QueryClass gene = new QueryClass(Gene.class);
-        QueryClass ds = new QueryClass(DataSet.class);
 
-        q.addFrom(mrnaResult);
-        q.addFrom(gene);
-        q.addFrom(ds);
-        
-        QueryField qfStage = new QueryField(mrnaResult, "stageRange");
-        QueryField qfExpressed = new QueryField(mrnaResult, "expressed");
-        QueryFunction qfCount = new QueryFunction();
-        
-        q.addToSelect(qfStage);
-        q.addToSelect(qfExpressed);        
-        q.addToSelect(qfCount);
-        
-        ConstraintSet cs = new ConstraintSet(ConstraintOp.AND);
-      
-        QueryField qf = new QueryField(gene, "id");
-        cs.addConstraint(new BagConstraint(qf, ConstraintOp.IN, bag.getOsb()));
+        Query q = createQuery(bag, false);
 
-        QueryCollectionReference r = new QueryCollectionReference(gene, "mRNAExpressionResults");
-        cs.addConstraint(new ContainsConstraint(r, ConstraintOp.CONTAINS, mrnaResult));
-
-        QueryObjectReference qcr = new QueryObjectReference(mrnaResult, "source");
-        cs.addConstraint(new ContainsConstraint(qcr, ConstraintOp.CONTAINS, ds));
-        
-        String dataset = "BDGP in situ data set";
-        QueryExpression qf2 = new QueryExpression(QueryExpression.LOWER,
-                                                  new QueryField(ds, "title"));
-        cs.addConstraint(new SimpleConstraint(qf2, ConstraintOp.EQUALS, 
-                                              new QueryValue(dataset.toLowerCase())));
-        
-        q.setConstraint(cs);
-        
-        q.addToGroupBy(qfStage);
-        q.addToGroupBy(qfExpressed);
-        
-        q.addToOrderBy(qfStage);
-        
         results = os.execute(q);
         results.setBatchSize(100);
         Iterator iter = results.iterator();
         LinkedHashMap<String, int[]> callTable = initCallTable();
-        
+
         while (iter.hasNext()) {
             ResultsRow resRow = (ResultsRow) iter.next();
-            
+
             String stage = (String) resRow.get(0);
             stage = (stage.split(" \\("))[0];
-            
+
             Boolean expressed = (Boolean) resRow.get(1);            
             Long geneCount = (Long) resRow.get(2);
 
@@ -129,16 +91,69 @@ public class BDGPinsituDataSetLdr implements DataSetLdr
                 (callTable.get(stage))[1] = geneCount.intValue();
             }
         }
-        
+
         dataSet = new DefaultCategoryDataset();
 
         for (Iterator<String> iterator = callTable.keySet().iterator(); iterator.hasNext();) {
             String stage = iterator.next();
-
             dataSet.addValue((callTable.get(stage))[0], "Expressed", stage);
             dataSet.addValue((callTable.get(stage))[1], "NotExpressed", stage);
         }
-}
+        calcTotal(bag, os);       
+    }
+    
+    private Query createQuery(InterMineBag bag, boolean calcTotal) {
+
+        Query q = new Query();
+
+        QueryClass mrnaResult = new QueryClass(MRNAExpressionResult.class);
+        QueryClass gene = new QueryClass(Gene.class);
+        QueryClass ds = new QueryClass(DataSet.class);
+
+        QueryField qfStage = new QueryField(mrnaResult, "stageRange");
+        QueryField qfExpressed = new QueryField(mrnaResult, "expressed");
+        QueryFunction qfCount = new QueryFunction();
+
+        ConstraintSet cs = new ConstraintSet(ConstraintOp.AND);
+
+        QueryField qf = new QueryField(gene, "id");
+        cs.addConstraint(new BagConstraint(qf, ConstraintOp.IN, bag.getOsb()));
+
+        QueryCollectionReference r = new QueryCollectionReference(gene, "mRNAExpressionResults");
+        cs.addConstraint(new ContainsConstraint(r, ConstraintOp.CONTAINS, mrnaResult));
+
+        QueryObjectReference qcr = new QueryObjectReference(mrnaResult, "source");
+        cs.addConstraint(new ContainsConstraint(qcr, ConstraintOp.CONTAINS, ds));
+
+
+        QueryExpression qf2 = new QueryExpression(QueryExpression.LOWER,
+                                                  new QueryField(ds, "title"));
+        cs.addConstraint(new SimpleConstraint(qf2, ConstraintOp.EQUALS, 
+                                              new QueryValue(dataset.toLowerCase())));
+
+        if (!calcTotal) {
+            q.addToSelect(qfStage);
+            q.addToSelect(qfExpressed);
+        }
+        
+        q.addToSelect(qfCount);
+        
+        q.addFrom(mrnaResult);
+        q.addFrom(gene);
+        q.addFrom(ds);
+
+        if (!calcTotal) {
+            q.addToGroupBy(qfStage);
+            q.addToGroupBy(qfExpressed);
+
+            q.addToOrderBy(qfStage);
+        }
+
+        q.setConstraint(cs);
+        
+        return q;
+    }
+    
 
     private LinkedHashMap<String, int[]> 
                             initCallTable() {
@@ -161,7 +176,15 @@ public class BDGPinsituDataSetLdr implements DataSetLdr
         return callTable;
     }
                             
-
+    private void calcTotal(InterMineBag bag, ObjectStore os) {
+        Results res = os.execute(createQuery(bag, true));        
+        Iterator iter = res.iterator();
+        while (iter.hasNext()) {
+            ResultsRow resRow = (ResultsRow) iter.next();
+            widgetTotal = ((java.lang.Long) resRow.get(0)).intValue();
+        }
+    }                            
+                            
     /**
      * {@inheritDoc}
      */
@@ -169,4 +192,10 @@ public class BDGPinsituDataSetLdr implements DataSetLdr
         return results;
     }
 
+    /**
+     * {@inheritDoc}
+     */
+    public int getWidgetTotal() {
+        return widgetTotal;
+    }
 }

@@ -31,8 +31,13 @@ public interface DataSetLdr
     
     /**
      * Get the Results object
-     * @return the rsults Object
+     * @return the results Object
      */
     public Results getResults();
     
+    /**
+     * This method is used to calculate the 'not analysed' total displayed on each widget
+     * @return the total number of objects analysed in this widget
+     */
+    public int getWidgetTotal();
 }

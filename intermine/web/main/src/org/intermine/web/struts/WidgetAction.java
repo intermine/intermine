@@ -112,8 +112,7 @@ public class WidgetAction extends InterMineAction
             ObjectStore.class, InterMineBag.class, String.class
                                                                });
 
-        WidgetURLQuery urlQuery
-        = (WidgetURLQuery) constr.newInstance(new Object[]
+        WidgetURLQuery urlQuery = (WidgetURLQuery) constr.newInstance(new Object[]
                                                          {
             os, bag, key
                                                          });

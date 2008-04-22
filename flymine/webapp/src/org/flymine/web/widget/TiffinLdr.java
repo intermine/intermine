@@ -40,33 +40,26 @@ import org.intermine.web.logic.widget.EnrichmentWidgetLdr;
  */
 public class TiffinLdr implements EnrichmentWidgetLdr
 {
-    private Query annotatedSampleQuery;
-    private Query annotatedPopulationQuery;
+    
     private Collection<String> organisms;
     private String externalLink, append;
     private InterMineBag bag;
-
+    
     /**
-     * Create a new TiffinLdr
-     * @param bag the bag to process
-     * @param os the ObjectStore
-     * @param extraAttribute an extra attribute for this widget (if needed)
+     * @param bag list of objects for this widget
+     * @param os object store
+     * @param extraAttribute an extra attribute, probably organism
      */
      public TiffinLdr(InterMineBag bag, ObjectStore os, String extraAttribute) {
          this.bag = bag;
          organisms = BioUtil.getOrganisms(os, bag, false);
-
-         annotatedSampleQuery = getQuery(true);
-         annotatedPopulationQuery = getQuery(false);
      }
 
      /**
       * {@inheritDoc}
       */
-     public Query getQuery(boolean useBag) {
+     public Query getQuery(boolean calcTotal, boolean useBag) {
 
-         Query subQ = new Query();
-         subQ.setDistinct(false);
          QueryClass qcGene = new QueryClass(Gene.class);
          QueryClass qcIntergenicRegion = new QueryClass(IntergenicRegion.class);
          QueryClass qcTFBindingSite = new QueryClass(TFBindingSite.class);
@@ -81,6 +74,36 @@ public class TiffinLdr implements EnrichmentWidgetLdr
          QueryField qfId = new QueryField(qcMotif, "primaryIdentifier");
          QueryField qfDataSet = new QueryField(qcDataSet, "title");
 
+         ConstraintSet cs = new ConstraintSet(ConstraintOp.AND);
+         if (useBag) {
+             cs.addConstraint(new BagConstraint(qfGeneId, ConstraintOp.IN, bag.getOsb()));
+         }
+
+         cs.addConstraint(new BagConstraint(qfOrganismName, ConstraintOp.IN, organisms));
+
+         QueryObjectReference qr1 = new QueryObjectReference(qcGene, "organism");
+         cs.addConstraint(new ContainsConstraint(qr1, ConstraintOp.CONTAINS, qcOrganism));
+
+         QueryObjectReference qr2 =
+             new QueryObjectReference(qcGene, "upstreamIntergenicRegion");
+         cs.addConstraint(new ContainsConstraint(qr2, ConstraintOp.CONTAINS, qcIntergenicRegion));
+
+         QueryCollectionReference qr3 =
+             new QueryCollectionReference(qcIntergenicRegion, "overlappingFeatures");
+         cs.addConstraint(new ContainsConstraint(qr3, ConstraintOp.CONTAINS, qcTFBindingSite));
+
+         QueryCollectionReference qr4 =
+             new QueryCollectionReference(qcTFBindingSite, "evidence");
+         cs.addConstraint(new ContainsConstraint(qr4, ConstraintOp.CONTAINS, qcDataSet));
+
+         QueryObjectReference  qr5 = new QueryObjectReference(qcTFBindingSite, "motif");
+         cs.addConstraint(new ContainsConstraint(qr5, ConstraintOp.CONTAINS, qcMotif));
+
+         cs.addConstraint(new SimpleConstraint(qfDataSet,                            
+                                               ConstraintOp.EQUALS, new QueryValue("Tiffin")));
+         Query subQ = new Query();
+         subQ.setDistinct(false);
+         
          subQ.addFrom(qcGene);
          subQ.addFrom(qcIntergenicRegion);
          subQ.addFrom(qcTFBindingSite);
@@ -90,51 +113,7 @@ public class TiffinLdr implements EnrichmentWidgetLdr
 
          subQ.addToSelect(qfId);
          subQ.addToSelect(qfGeneId);
-
-         ConstraintSet cs = new ConstraintSet(ConstraintOp.AND);
-         if (useBag) {
-             // genes must be in bag
-             BagConstraint bc1 = new BagConstraint(qfGeneId, ConstraintOp.IN, bag.getOsb());
-             cs.addConstraint(bc1);
-         }
-         // get organisms
-
-
-         // limit to organisms in the bag
-         BagConstraint bc2 = new BagConstraint(qfOrganismName, ConstraintOp.IN, organisms);
-         cs.addConstraint(bc2);
-
-         // gene is from organism
-         QueryObjectReference qr1 = new QueryObjectReference(qcGene, "organism");
-         ContainsConstraint cc1 =
-             new ContainsConstraint(qr1, ConstraintOp.CONTAINS, qcOrganism);
-         cs.addConstraint(cc1);
-
-         QueryObjectReference qr2 =
-             new QueryObjectReference(qcGene, "upstreamIntergenicRegion");
-         ContainsConstraint cc2 =
-             new ContainsConstraint(qr2, ConstraintOp.CONTAINS, qcIntergenicRegion);
-         cs.addConstraint(cc2);
-
-         QueryCollectionReference qr3 =
-             new QueryCollectionReference(qcIntergenicRegion, "overlappingFeatures");
-         ContainsConstraint cc3 =
-             new ContainsConstraint(qr3, ConstraintOp.CONTAINS, qcTFBindingSite);
-         cs.addConstraint(cc3);
-
-         QueryCollectionReference qr4 =
-             new QueryCollectionReference(qcTFBindingSite, "evidence");
-         ContainsConstraint cc4 = new ContainsConstraint(qr4, ConstraintOp.CONTAINS, qcDataSet);
-         cs.addConstraint(cc4);
-
-         QueryObjectReference  qr5 = new QueryObjectReference(qcTFBindingSite, "motif");
-         ContainsConstraint cc5 = new ContainsConstraint(qr5, ConstraintOp.CONTAINS, qcMotif);
-         cs.addConstraint(cc5);
-
-         SimpleConstraint sc =
-             new SimpleConstraint(qfDataSet, ConstraintOp.EQUALS, new QueryValue("Tiffin"));
-         cs.addConstraint(sc);
-
+         
          subQ.setConstraint(cs);
 
          QueryField outerQfId = new QueryField(subQ, qfId);
@@ -144,36 +123,41 @@ public class TiffinLdr implements EnrichmentWidgetLdr
          q.setDistinct(false);
 
          q.addFrom(subQ);
-         q.addToSelect(outerQfId);
+         if (!calcTotal) {
+             q.addToSelect(outerQfId);
+             
+         }
          q.addToSelect(geneCount);
-         if (useBag) {
+         if (useBag && !calcTotal) {
              q.addToSelect(outerQfId);
          }
-         q.addToGroupBy(outerQfId);
+         if (!calcTotal) {
+             q.addToGroupBy(outerQfId);
+         }
          return q;
+     }
+     
+     /**
+      * {@inheritDoc}
+      */
+     public Query getAnnotatedSampleQuery(boolean calcTotal) {
+         return getQuery(calcTotal, true);
      }
 
      /**
       * {@inheritDoc}
-       */
-      public Query getAnnotatedSample() {
-          return annotatedSampleQuery;
-      }
-
-      /**
-      * {@inheritDoc}
-       */
-      public Query getAnnotatedPopulation() {
-          return annotatedPopulationQuery;
-      }
-
+      */
+     public Query getAnnotatedPopulationQuery() {
+         return getQuery(false, false);
+     }
+     
       /**
       * {@inheritDoc}
        */
       public Collection<String> getPopulationDescr() {
           return organisms;
       }
-
+     
      /**
       * {@inheritDoc}
       */

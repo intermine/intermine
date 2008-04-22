@@ -43,13 +43,12 @@ import org.flymine.model.genomic.MRNAExpressionTerm;
  */
 public class BDGPLdr implements EnrichmentWidgetLdr
 {
-
-    private Query annotatedSampleQuery;
-    private Query annotatedPopulationQuery;
     private String externalLink, append;
     private Collection<String> organisms = new ArrayList<String>();
     private Collection<String> organismsLower = new ArrayList<String>();
     private InterMineBag bag;
+    private final String dataset = "BDGP in situ data set";
+ 
 
     /**
      * Create a new BDGPLdr.
@@ -65,15 +64,12 @@ public class BDGPLdr implements EnrichmentWidgetLdr
         for (String s : organisms) {
             organismsLower.add(s.toLowerCase());
         }
-
-        annotatedSampleQuery = getQuery(true);
-        annotatedPopulationQuery = getQuery(false);
     }
 
     /**
      * {@inheritDoc}
      */
-    public Query getQuery(boolean useBag) {
+    public Query getQuery(boolean calcTotal, boolean useBag) {
 
 
         QueryClass qcMrnaResult = new QueryClass(MRNAExpressionResult.class);
@@ -105,8 +101,7 @@ public class BDGPLdr implements EnrichmentWidgetLdr
 
         QueryObjectReference qcr = new QueryObjectReference(qcMrnaResult, "source");
         cs.addConstraint(new ContainsConstraint(qcr, ConstraintOp.CONTAINS, qcDataset));
-
-        String dataset = "BDGP in situ data set";
+        
         QueryExpression qf2 = new QueryExpression(QueryExpression.LOWER,
                                                   new QueryField(qcDataset, "title"));
         cs.addConstraint(new SimpleConstraint(qf2, ConstraintOp.EQUALS,
@@ -132,10 +127,12 @@ public class BDGPLdr implements EnrichmentWidgetLdr
         QueryField outerQfTerm = new QueryField(subQ, qfTerm);
 
         q.addFrom(subQ);
-        q.addToSelect(outerQfTerm);
-        q.addToGroupBy(outerQfTerm);
+        if (!calcTotal) {
+            q.addToSelect(outerQfTerm);
+            q.addToGroupBy(outerQfTerm);
+        }
         q.addToSelect(qfCount);
-        if (useBag) {
+        if (useBag && !calcTotal) {
             q.addToSelect(outerQfTerm);
         }
         return q;
@@ -144,15 +141,15 @@ public class BDGPLdr implements EnrichmentWidgetLdr
     /**
      * {@inheritDoc}
      */
-    public Query getAnnotatedSample() {
-        return annotatedSampleQuery;
+    public Query getAnnotatedSampleQuery(boolean calcTotal) {
+        return getQuery(calcTotal, true);
     }
 
     /**
      * {@inheritDoc}
      */
-    public Query getAnnotatedPopulation() {
-        return annotatedPopulationQuery;
+    public Query getAnnotatedPopulationQuery() {
+        return getQuery(false, false);
     }
 
     /**

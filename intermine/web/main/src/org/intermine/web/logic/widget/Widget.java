@@ -169,8 +169,7 @@ public abstract class Widget
      * @param externalLink the externalLink to set
      */
     public abstract void setExternalLink(String externalLink);
-    
-    
+        
     /**
      * @return the externalLinkLabel
      */

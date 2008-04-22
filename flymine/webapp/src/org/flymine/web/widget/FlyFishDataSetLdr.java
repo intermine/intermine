@@ -13,10 +13,6 @@ package org.flymine.web.widget;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
 
-import org.flymine.model.genomic.DataSet;
-import org.flymine.model.genomic.Gene;
-import org.flymine.model.genomic.MRNAExpressionResult;
-import org.intermine.objectstore.ObjectStore;
 import org.intermine.objectstore.query.BagConstraint;
 import org.intermine.objectstore.query.ConstraintOp;
 import org.intermine.objectstore.query.ConstraintSet;
@@ -32,8 +28,15 @@ import org.intermine.objectstore.query.QueryValue;
 import org.intermine.objectstore.query.Results;
 import org.intermine.objectstore.query.ResultsRow;
 import org.intermine.objectstore.query.SimpleConstraint;
+
+import org.intermine.objectstore.ObjectStore;
 import org.intermine.web.logic.bag.InterMineBag;
 import org.intermine.web.logic.widget.DataSetLdr;
+
+import org.flymine.model.genomic.DataSet;
+import org.flymine.model.genomic.Gene;
+import org.flymine.model.genomic.MRNAExpressionResult;
+
 import org.jfree.data.category.CategoryDataset;
 import org.jfree.data.category.DefaultCategoryDataset;
 
@@ -44,7 +47,8 @@ public class FlyFishDataSetLdr implements DataSetLdr
 {
     private DefaultCategoryDataset dataSet;
     private Results results;
-
+    private int widgetTotal = 0;
+    
     /**
      * Creates a DataSetLdr used to retrieve, organise
      * and structure the Fly-FISH data to create a graph
@@ -55,6 +59,7 @@ public class FlyFishDataSetLdr implements DataSetLdr
     public FlyFishDataSetLdr(InterMineBag bag, ObjectStore os, String extra) {
         super();
         buildDataSets(bag, os);
+        calcTotal(bag, os);
     }
 
     /**
@@ -66,46 +71,7 @@ public class FlyFishDataSetLdr implements DataSetLdr
 
     private void buildDataSets(InterMineBag bag, ObjectStore os) {
         
-        Query q = new Query();
-        
-        QueryClass mrnaResult = new QueryClass(MRNAExpressionResult.class);
-        QueryClass gene = new QueryClass(Gene.class);
-        QueryClass ds = new QueryClass(DataSet.class);
-
-        q.addFrom(mrnaResult);
-        q.addFrom(gene);
-        q.addFrom(ds);
-        
-        QueryField qfStage = new QueryField(mrnaResult, "stageRange");
-        QueryField qfExpressed = new QueryField(mrnaResult, "expressed");
-        QueryFunction qfCount = new QueryFunction();
-        
-        q.addToSelect(qfStage);
-        q.addToSelect(qfExpressed);        
-        q.addToSelect(qfCount);
-                
-        ConstraintSet cs = new ConstraintSet(ConstraintOp.AND);
-
-        QueryField qf = new QueryField(gene, "id");
-        cs.addConstraint(new BagConstraint(qf, ConstraintOp.IN, bag.getOsb()));
-
-        QueryCollectionReference r = new QueryCollectionReference(gene, "mRNAExpressionResults");
-        cs.addConstraint(new ContainsConstraint(r, ConstraintOp.CONTAINS, mrnaResult));
-
-        QueryObjectReference qcr = new QueryObjectReference(mrnaResult, "source");
-        cs.addConstraint(new ContainsConstraint(qcr, ConstraintOp.CONTAINS, ds));
-        
-        QueryExpression qf2 = new QueryExpression(QueryExpression.LOWER, 
-                                                  new QueryField(ds, "title"));
-        String dataset = "fly-Fish data set of Drosophila embryo mRNA localization patterns";
-        cs.addConstraint(new SimpleConstraint(qf2, ConstraintOp.EQUALS, 
-                                              new QueryValue(dataset.toLowerCase())));
-        
-        q.setConstraint(cs);
-        
-        q.addToGroupBy(qfStage);
-        q.addToGroupBy(qfExpressed);
-        q.addToOrderBy(qfStage);
+        Query q = createQuery(bag, false);
 
         results = os.execute(q);
         results.setBatchSize(100);
@@ -137,6 +103,58 @@ public class FlyFishDataSetLdr implements DataSetLdr
         }
     }
     
+    private Query createQuery(InterMineBag bag, boolean calcTotal) {
+        
+        QueryClass mrnaResult = new QueryClass(MRNAExpressionResult.class);
+        QueryClass gene = new QueryClass(Gene.class);
+        QueryClass ds = new QueryClass(DataSet.class);
+
+        QueryField qfStage = new QueryField(mrnaResult, "stageRange");
+        QueryField qfExpressed = new QueryField(mrnaResult, "expressed");
+        QueryFunction qfCount = new QueryFunction();
+
+        ConstraintSet cs = new ConstraintSet(ConstraintOp.AND);
+
+        QueryField qf = new QueryField(gene, "id");
+        cs.addConstraint(new BagConstraint(qf, ConstraintOp.IN, bag.getOsb()));
+
+        QueryCollectionReference r = new QueryCollectionReference(gene, "mRNAExpressionResults");
+        cs.addConstraint(new ContainsConstraint(r, ConstraintOp.CONTAINS, mrnaResult));
+
+        QueryObjectReference qcr = new QueryObjectReference(mrnaResult, "source");
+        cs.addConstraint(new ContainsConstraint(qcr, ConstraintOp.CONTAINS, ds));
+
+        QueryExpression qf2 = new QueryExpression(QueryExpression.LOWER, 
+                                                  new QueryField(ds, "title"));
+        String dataset = "fly-Fish data set of Drosophila embryo mRNA localization patterns";
+        cs.addConstraint(new SimpleConstraint(qf2, ConstraintOp.EQUALS, 
+                                              new QueryValue(dataset.toLowerCase())));
+
+        Query q = new Query();
+        
+        if (!calcTotal) { 
+            q.addToSelect(qfStage);
+            q.addToSelect(qfExpressed);   
+        }
+        
+        q.addToSelect(qfCount);
+                
+        q.addFrom(mrnaResult);
+        q.addFrom(gene);
+        q.addFrom(ds);
+               
+        if (!calcTotal) { 
+            q.addToGroupBy(qfStage);
+            q.addToGroupBy(qfExpressed);
+            
+            q.addToOrderBy(qfStage);
+        }
+        
+        q.setConstraint(cs);
+        
+        return q;
+    }
+    
     private LinkedHashMap<String, int[]> initCallTable() {
         LinkedHashMap<String, int[]> callTable = new LinkedHashMap<String, int[]>();
         String[] stageLabels = new String[4]; 
@@ -155,10 +173,13 @@ public class FlyFishDataSetLdr implements DataSetLdr
         return callTable;
     }
     
-    /**
-     * {@inheritDoc}
-     */
-    public void setExtraAttributes(String extra) {
+    private void calcTotal(InterMineBag bag, ObjectStore os) {
+        Results res = os.execute(createQuery(bag, true));        
+        Iterator iter = res.iterator();
+        while (iter.hasNext()) {
+            ResultsRow resRow = (ResultsRow) iter.next();
+            widgetTotal = ((java.lang.Long) resRow.get(0)).intValue();
+        }
     }
     
     /**
@@ -167,4 +188,11 @@ public class FlyFishDataSetLdr implements DataSetLdr
     public Results getResults() {
         return results;
     }
+    /**
+     * {@inheritDoc}
+     */
+    public int getWidgetTotal() {
+        return widgetTotal;
+    }
+    
 }

@@ -55,7 +55,8 @@ public class ChromosomeDistributionDataSetLdr implements DataSetLdr
     private String bagType;
     private Collection<String> chromosomeList;
     private Results results;
-        
+    private int widgetTotal = 0;
+    
     /**
      * Creates a ChromosomeDistributionDataSetLdr used to retrieve, organise
      * and structure the data to create a graph
@@ -70,12 +71,9 @@ public class ChromosomeDistributionDataSetLdr implements DataSetLdr
         this.os = os;
         model = os.getModel();
         bagType = bag.getType();
-        
-        /* chromosome --> count of genes */
+
         LinkedHashMap<String, int[]> resultsTable = new LinkedHashMap<String, int[]>();
 
-        /* get all chromosomes for this organism */
-        // Collection<String> chromosomeList = organismToChromosomes.get(organismName);
         chromosomeList = BioUtil.getChromosomes(os, Arrays.asList(organismName.toLowerCase()), 
                                                 false);
 
@@ -89,7 +87,6 @@ public class ChromosomeDistributionDataSetLdr implements DataSetLdr
             resultsTable.put(chromosomeName, count);
         }
 
-        /* run query to get gene count per chromsome */
         Query q = createQuery(organismName, "actual", bag);
         results = os.execute(q);
         results.setBatchSize(50000);
@@ -100,7 +97,6 @@ public class ChromosomeDistributionDataSetLdr implements DataSetLdr
         // be easier of they were located on an 'unknown' chromosome.
         int totalInBagWithLocation = 0;
 
-        // put results in maps
         Iterator iter = results.iterator();
         while (iter.hasNext()) {
             ResultsRow resRow = (ResultsRow) iter.next();
@@ -126,14 +122,15 @@ public class ChromosomeDistributionDataSetLdr implements DataSetLdr
                 (resultsTable.get(chromosome))[1] = (int) Math.round(expectedValue);
             }
         }
-        
-        /* add data to dataset for display on graph */
+
         dataSet = new DefaultCategoryDataset();
         for (Iterator<String> iterator = resultsTable.keySet().iterator(); iterator.hasNext();) {
             String chromosome = iterator.next();
             dataSet.addValue((resultsTable.get(chromosome))[0], "Actual", chromosome);
             dataSet.addValue((resultsTable.get(chromosome))[1], "Expected", chromosome);
         }
+
+        calcTotal(organismName, grandTotal);
     }
 
     /**
@@ -167,9 +164,8 @@ public class ChromosomeDistributionDataSetLdr implements DataSetLdr
     
     private Query createQuery(String organism, String resultsType, InterMineBag bag)
         throws ClassNotFoundException {
-
-        Query q = new Query();
-
+        
+        QueryClass organismQC = new QueryClass(Organism.class);        
         QueryClass chromosomeQC = new QueryClass(Chromosome.class);
         Class<?> bagCls = Class.forName(model.getPackageName() + "." + bagType);
         QueryClass featureQC;
@@ -179,25 +175,12 @@ public class ChromosomeDistributionDataSetLdr implements DataSetLdr
             featureQC = new QueryClass(LocatedSequenceFeature.class);
         } else {
             featureQC = new QueryClass(bagCls);
-        }
-        QueryClass organismQC = new QueryClass(Organism.class);
+        }        
 
         QueryField chromoQF = new QueryField(chromosomeQC, "primaryIdentifier");
         QueryFunction countQF = new QueryFunction();
         QueryField organismNameQF = new QueryField(organismQC, "name");
         
-        if (!resultsType.equals("total")) {            
-            q.addToSelect(chromoQF);
-            q.addToSelect(countQF);
-        } else {
-            q.addToSelect(organismNameQF);
-            q.addToSelect(countQF);
-        }
-
-        q.addFrom(chromosomeQC);
-        q.addFrom(featureQC);
-        q.addFrom(organismQC);
-
         ConstraintSet cs = new ConstraintSet(ConstraintOp.AND);
 
         QueryObjectReference r = new QueryObjectReference(featureQC, "chromosome");
@@ -205,8 +188,7 @@ public class ChromosomeDistributionDataSetLdr implements DataSetLdr
 
         Collection<String> chrs = new ArrayList<String>();
         // make chromos lowercase for query
-        for (Iterator<String> iter = chromosomeList.iterator(); 
-        iter.hasNext();) {
+        for (Iterator<String> iter = chromosomeList.iterator(); iter.hasNext();) {
             String chromosomeName = (iter.next()).toLowerCase();
             chrs.add(chromosomeName);
         }
@@ -215,8 +197,7 @@ public class ChromosomeDistributionDataSetLdr implements DataSetLdr
         if (chrs != null && !chrs.isEmpty()) {
             QueryField qfChrId = new QueryField(chromosomeQC, "primaryIdentifier");
             QueryExpression qf = new QueryExpression(QueryExpression.LOWER, qfChrId);
-            BagConstraint bagChr = new BagConstraint(qf, ConstraintOp.IN, chrs);
-            cs.addConstraint(bagChr);
+            cs.addConstraint(new BagConstraint(qf, ConstraintOp.IN, chrs));
         }
                
         QueryObjectReference r2 = new QueryObjectReference(featureQC, "organism");        
@@ -229,20 +210,43 @@ public class ChromosomeDistributionDataSetLdr implements DataSetLdr
 
         if (resultsType.equals("actual")) {
             QueryField qf2 = new QueryField(featureQC, "id");
-            BagConstraint bagC = new BagConstraint(qf2, ConstraintOp.IN, bag.getOsb());
-            cs.addConstraint(bagC);
+            cs.addConstraint(new BagConstraint(qf2, ConstraintOp.IN, bag.getOsb()));
         }
 
+        Query q = new Query();
+        
+        if (!resultsType.equals("total")) {            
+            q.addToSelect(chromoQF);
+            q.addToSelect(countQF);
+        } else {
+            q.addToSelect(countQF);
+        }
+
+        q.addFrom(chromosomeQC);
+        q.addFrom(featureQC);
+        q.addFrom(organismQC);
+                
         q.setConstraint(cs);
 
         if (!resultsType.equals("total")) {
             q.addToGroupBy(chromoQF);
             q.addToOrderBy(chromoQF);
-        } else {
-            q.addToGroupBy(organismNameQF);
         }
         return q;
     }
+    
+    private void calcTotal(String organismName, int grandTotal) throws ClassNotFoundException {
+        Results res = os.execute(createQuery(organismName, "total", null));        
+        Iterator iter = res.iterator();
+        while (iter.hasNext()) {
+            ResultsRow resRow = (ResultsRow) iter.next();
+            Long organismTotal = (java.lang.Long) resRow.get(0);
+            if (organismTotal.intValue() > 0) {
+                widgetTotal = organismTotal.intValue() - grandTotal;
+            }
+        }
+    }
+    
     
     /**
      * {@inheritDoc}
@@ -251,4 +255,10 @@ public class ChromosomeDistributionDataSetLdr implements DataSetLdr
         return results;
     }
 
+    /**
+     * {@inheritDoc}
+     */
+    public int getWidgetTotal() {
+        return widgetTotal;
+    }
 }
