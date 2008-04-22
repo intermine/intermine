@@ -810,7 +810,6 @@ public class AjaxServices
     }
 
     /**
-     * 
      * @param widgetId unique id for this widget
      * @param bagName name of list
      * @param selectedExtraAttribute extra attribute (like organism)

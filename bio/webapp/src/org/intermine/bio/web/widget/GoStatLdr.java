@@ -44,31 +44,26 @@ import org.flymine.model.genomic.Protein;
  */
 public class GoStatLdr implements EnrichmentWidgetLdr
 {
-    private Query annotatedSampleQuery;
-    private Query annotatedPopulationQuery;
+
     private Collection<String> organisms;
     private String externalLink, append;
     private InterMineBag bag;
-    private String namespace;
+    private String namespace;    
     private Collection<String> organismsLower = new ArrayList<String>();
-
     /**
-     * Create a new GoStatLdr
+     * @param extraAttribute the main ontology to filter by (biological_process, molecular_function,
+     * or cellular_component)
      * @param bag list of objects for this widget
      * @param os object store
-     * @param extraAttribute an extra attribute for this widget (if needed)
      */
     public GoStatLdr (InterMineBag bag, ObjectStore os, String extraAttribute) {
         this.bag = bag;
         namespace = extraAttribute;
         organisms = BioUtil.getOrganisms(os, bag, false);
-
+        
         for (String s : organisms) {
             organismsLower.add(s.toLowerCase());
-        }
-        annotatedSampleQuery = getQuery(true);
-        annotatedPopulationQuery = getQuery(false);
-
+        }               
     }
 
     // adds 3 main ontologies to array.  these 3 will be excluded from the query
@@ -87,7 +82,7 @@ public class GoStatLdr implements EnrichmentWidgetLdr
     /**
      * {@inheritDoc}
      */
-    public Query getQuery(boolean useBag) {
+    public Query getQuery(boolean calcTotal, boolean useBag) {
 
         QueryClass qcGene = new QueryClass(Gene.class);
         QueryClass qcGoAnnotation = new QueryClass(GOAnnotation.class);
@@ -98,27 +93,27 @@ public class GoStatLdr implements EnrichmentWidgetLdr
         QueryField qfQualifier = new QueryField(qcGoAnnotation, "qualifier");
         QueryField qfGoTerm = new QueryField(qcGoAnnotation, "name");
         QueryField qfGeneId = new QueryField(qcGene, "id");
+        QueryField qfGeneIdentifier = new QueryField(qcGene, "primaryIdentifier");
         QueryField qfNamespace = new QueryField(qcGo, "namespace");
         QueryField qfGoTermId = new QueryField(qcGo, "identifier");
         QueryField qfOrganismName = new QueryField(qcOrganism, "name");
         QueryField qfProteinId = new QueryField(qcProtein, "id");
 
         QueryFunction objectCount = new QueryFunction();
-
+        
         ConstraintSet cs = new ConstraintSet(ConstraintOp.AND);
-
+      
         QueryExpression qf1 = new QueryExpression(QueryExpression.LOWER, qfOrganismName);
         cs.addConstraint(new BagConstraint(qf1, ConstraintOp.IN, organismsLower));
-
+        
         // gene.goAnnotation CONTAINS GOAnnotation
         QueryCollectionReference qcr1 = new QueryCollectionReference(qcGene, "allGoAnnotation");
         cs.addConstraint(new ContainsConstraint(qcr1, ConstraintOp.CONTAINS, qcGoAnnotation));
 
-
         String[] ids = getOntologies();
         QueryExpression qf2 = new QueryExpression(QueryExpression.LOWER, qfGoTermId);
-        for (int i = 0; i < ids.length; i++) {
-            cs.addConstraint(new SimpleConstraint(qf2, ConstraintOp.NOT_EQUALS,
+        for (int i = 0; i < ids.length; i++) {                
+            cs.addConstraint(new SimpleConstraint(qf2, ConstraintOp.NOT_EQUALS, 
                                                   new QueryValue(ids[i])));
         }
         // gene is from organism
@@ -134,7 +129,7 @@ public class GoStatLdr implements EnrichmentWidgetLdr
 
         // go term is of the specified namespace
         QueryExpression qf3 = new QueryExpression(QueryExpression.LOWER, qfNamespace);
-        cs.addConstraint(new SimpleConstraint(qf3, ConstraintOp.EQUALS,
+        cs.addConstraint(new SimpleConstraint(qf3, ConstraintOp.EQUALS, 
                                               new QueryValue(namespace.toLowerCase())));
 
         if (useBag) {
@@ -158,44 +153,52 @@ public class GoStatLdr implements EnrichmentWidgetLdr
 
         Query q = new Query();
         q.setDistinct(false);
-
+        
         q.addFrom(qcGene);
         q.addFrom(qcGoAnnotation);
         q.addFrom(qcOrganism);
-
         q.addFrom(qcGo);
-
         if (bag.getType().equalsIgnoreCase("protein")) {
             q.addFrom(qcProtein);
         }
 
-        q.addToSelect(qfGoTermId);
-        q.addToSelect(objectCount);
-
-        q.setConstraint(cs);
-        q.addToGroupBy(qfGoTermId);
-
-        if (useBag) {
-            q.addToSelect(qfGoTerm);
-            q.addToGroupBy(qfGoTerm);
+        if (!calcTotal) {
+            q.addToSelect(qfGoTermId);
+            q.addToGroupBy(qfGoTermId);
+        } else {
+            q.addToSelect(qfGeneIdentifier);
+            q.addToGroupBy(qfGeneIdentifier);
         }
-
+        q.addToSelect(objectCount);
+        if (useBag && !calcTotal) {
+            q.addToSelect(qfGoTerm);
+            q.addToGroupBy(qfGoTerm);            
+        }
+        q.setConstraint(cs);
+        
+        if (calcTotal) {
+            Query subQ = q;
+            //QueryField qfGene = new QueryField(subQ, qfGeneIdentifier);
+            q = new Query();
+            q.setDistinct(false);
+            q.addFrom(subQ);
+            q.addToSelect(objectCount);
+        }
         return q;
     }
-
-
+   
     /**
      * {@inheritDoc}
      */
-    public Query getAnnotatedSample() {
-        return annotatedSampleQuery;
+    public Query getAnnotatedSampleQuery(boolean calcTotal) {
+        return getQuery(calcTotal, true);
     }
 
     /**
      * {@inheritDoc}
      */
-    public Query getAnnotatedPopulation() {
-        return annotatedPopulationQuery;
+    public Query getAnnotatedPopulationQuery() {
+        return getQuery(false, false);
     }
 
     /**
@@ -204,7 +207,7 @@ public class GoStatLdr implements EnrichmentWidgetLdr
     public Collection<String> getPopulationDescr() {
         return organisms;
     }
-
+    
     /**
      * {@inheritDoc}
      */

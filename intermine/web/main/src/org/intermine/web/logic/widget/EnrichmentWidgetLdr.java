@@ -21,14 +21,15 @@ import org.intermine.objectstore.query.Query;
 public interface EnrichmentWidgetLdr
 {
     /**
+     * @param calcTotal whether 
      * @return the query representing the sample population (the list)
      */
-    public Query getAnnotatedSample();
-
+    public Query getAnnotatedSampleQuery(boolean calcTotal);
+    
     /**
      * @return the query representing the entire population (all the items in the database)
      */
-    public Query getAnnotatedPopulation();
+    public Query getAnnotatedPopulationQuery();
 
     /**
      * @return description of reference population, ie "Accounting dept"
@@ -55,8 +56,9 @@ public interface EnrichmentWidgetLdr
      * M = total annotated with this term in reference population
      * N = total annotated with any term in reference population
      * @param useBag whether or not to use the bag in the query
+     * @param calcTotal whether or not to return the results or return the count
      * @return query to return the correct result set for this widget
      */
-    public Query getQuery(boolean useBag);
+    public Query getQuery(boolean calcTotal, boolean useBag);
     
 }

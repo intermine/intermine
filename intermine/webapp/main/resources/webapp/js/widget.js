@@ -1,20 +1,23 @@
 function getProcessGraphWidget(widgetId, bagName) {
   var widgetdataname = document.getElementById('widgetdata' + widgetId);
   var widgetdatawait = document.getElementById('widgetdatawait' + widgetId);
+  
   Element.hide($(widgetdataname));
   Element.show($(widgetdatawait));
   var extraAttr;
   if($("widgetselect" + widgetId)!=null) {
   	extraAttr = $("widgetselect" + widgetId).value;
   }
-  AjaxServices.getProcessGraphWidget(widgetId,bagName,extraAttr,handleGraphWidget);
+  AjaxServices.getProcessGraphWidget(widgetId,bagName,extraAttr,handleGraphWidget);  
 }
 
 function handleGraphWidget(widget) {
   Element.hide($('widgetdatanoresults' + widget.id));
+  calcNotAnalysed(widget);
   if(widget.hasResults) {
     var widgetdataname = document.getElementById('widgetdata' + widget.id);
     var widgetdatawait = document.getElementById('widgetdatawait' + widget.id); 
+
     Element.update($(widgetdataname),widget.html);
     Element.hide($(widgetdatawait));
     Element.show($(widgetdataname));
@@ -33,11 +36,13 @@ function getProcessTableWidget(widgetId, bagName) {
 
 function handleTableWidget(widget) {
   Element.hide($('widgetdatanoresults' + widget.id));
+  calcNotAnalysed(widget);  
   if(widget.hasResults) {
 	  removeChildren($("tablewidget"+widget.id+"head"));
 	  removeChildren($("tablewidget"+widget.id+"body"));
 	  var widgetdataname = document.getElementById('widgetdata' + widget.id);
 	  var widgetdatawait = document.getElementById('widgetdatawait' + widget.id);
+	  	  
 	  var row = null;
 	  row = document.createElement("tr");
 	  for(var i = 0; i < widget.columns.length ; i++){
@@ -80,6 +85,7 @@ function handleTableWidget(widget) {
 function getProcessEnrichmentWidget(widgetId, bagName) {
   var widgetdataname = document.getElementById('widgetdata' + widgetId);
   var widgetdatawait = document.getElementById('widgetdatawait' + widgetId); 
+  
   Element.hide($(widgetdataname));
   Element.show($(widgetdatawait));
   var errorCorrection;
@@ -130,4 +136,9 @@ function submitWidgetForm(widgetId,type,extra) {
   	$('export' + widgetId).value=extra;
   	$('widgetaction' + widgetId).submit();	
   }
+}
+
+function calcNotAnalysed(widget) {
+    var widgetnotanalysed = document.getElementById('widgetnotanalysed' + widget.id);
+    widgetnotanalysed = widget.notAnalysed;
 }

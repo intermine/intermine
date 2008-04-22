@@ -57,6 +57,7 @@ public class BagTableWidgetLoader
     private List flattenedResults;
     private String title, description;
     protected Query q;
+    private int widgetTotal = 0;
     
     /**
      * This class loads and formats the data for the count
@@ -145,8 +146,8 @@ public class BagTableWidgetLoader
                                    + bag.getName() + "|" + o.getId();
                         } else if (externalLink != null && !externalLink.equals("")) {
                             val = val + " <a href=\"" + externalLink + key 
-                            + "\" target=\"_new\" class=\"extlink\">" 
-                            + externalLinkLabel + "</a>";
+                            + "\" target=\"_new\" class=\"extlink\">[" 
+                            + externalLinkLabel + "]</a>";
                         }
                         
                         flattenedRow.add(new String[]
@@ -347,5 +348,14 @@ public class BagTableWidgetLoader
         }
         return sb.toString();
     }
+
+    /**
+     * @return the total number of objects analysed in this widget
+     */
+    public int getWidgetTotal() {
+        return widgetTotal;
+    }
+
+
 }
   

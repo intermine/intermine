@@ -39,8 +39,6 @@ import org.intermine.web.logic.widget.EnrichmentWidgetLdr;
 public class UniProtFeaturesLdr implements EnrichmentWidgetLdr
 {
 
-    private Query annotatedSampleQuery;
-    private Query annotatedPopulationQuery;
     private Collection<String> organisms;
     private String externalLink, append;
     private InterMineBag bag;
@@ -58,15 +56,12 @@ public class UniProtFeaturesLdr implements EnrichmentWidgetLdr
         for (String s : organisms) {
             organismsLower.add(s.toLowerCase());
         }
-        annotatedSampleQuery = getQuery(true);
-        annotatedPopulationQuery = getQuery(false);
-
     }
 
     /**
      * {@inheritDoc}
      */
-    public Query getQuery(boolean useBag) {
+    public Query getQuery(boolean calcTotal, boolean useBag) {
 
         QueryClass qcProtein = new QueryClass(Protein.class);
         QueryClass qcOrganism = new QueryClass(Organism.class);
@@ -108,12 +103,16 @@ public class UniProtFeaturesLdr implements EnrichmentWidgetLdr
         Query q = new Query();
         q.setDistinct(false);
         q.addFrom(subQ);
-        q.addToSelect(qfType);
-        q.addToSelect(protCount);
-        if (useBag) {
+        if (!calcTotal) {
             q.addToSelect(qfType);
         }
-        q.addToGroupBy(qfType);
+        q.addToSelect(protCount);
+        if (useBag && !calcTotal) {
+            q.addToSelect(qfType);
+        }
+        if (!calcTotal) {
+            q.addToGroupBy(qfType);
+        }
 
         return q;
     }
@@ -121,17 +120,17 @@ public class UniProtFeaturesLdr implements EnrichmentWidgetLdr
     /**
      * {@inheritDoc}
      */
-    public Query getAnnotatedSample() {
-        return annotatedSampleQuery;
+    public Query getAnnotatedSampleQuery(boolean calcTotal) {
+        return getQuery(calcTotal, true);
     }
 
     /**
      * {@inheritDoc}
      */
-    public Query getAnnotatedPopulation() {
-        return annotatedPopulationQuery;
+    public Query getAnnotatedPopulationQuery() {
+        return getQuery(false, false);
     }
-
+    
     /**
      * {@inheritDoc}
      */

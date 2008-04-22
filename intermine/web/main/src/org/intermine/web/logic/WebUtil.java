@@ -10,16 +10,6 @@ package org.intermine.web.logic;
  *
  */
 
-import java.io.BufferedReader;
-import java.io.File;
-import java.io.FileReader;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.io.Reader;
-import java.math.BigDecimal;
-import java.net.URL;
-import java.net.URLConnection;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
@@ -33,6 +23,32 @@ import java.util.TreeMap;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import org.intermine.objectstore.query.Results;
+import org.intermine.objectstore.query.ResultsRow;
+
+import org.intermine.metadata.ClassDescriptor;
+import org.intermine.metadata.Model;
+import org.intermine.objectstore.ObjectStore;
+import org.intermine.web.logic.bag.InterMineBag;
+import org.intermine.web.logic.search.SearchRepository;
+import org.intermine.web.logic.tagging.TagTypes;
+import org.intermine.web.logic.widget.BenjaminiHochberg;
+import org.intermine.web.logic.widget.Bonferroni;
+import org.intermine.web.logic.widget.EnrichmentWidgetLdr;
+import org.intermine.web.logic.widget.ErrorCorrection;
+import org.intermine.web.logic.widget.Hypergeometric;
+
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileReader;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.io.Reader;
+import java.math.BigDecimal;
+import java.net.URL;
+import java.net.URLConnection;
+
 import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
@@ -40,19 +56,6 @@ import javax.servlet.http.HttpSession;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
-import org.intermine.metadata.ClassDescriptor;
-import org.intermine.metadata.Model;
-import org.intermine.objectstore.ObjectStore;
-import org.intermine.objectstore.query.Query;
-import org.intermine.objectstore.query.Results;
-import org.intermine.objectstore.query.ResultsRow;
-import org.intermine.web.logic.bag.InterMineBag;
-import org.intermine.web.logic.search.SearchRepository;
-import org.intermine.web.logic.tagging.TagTypes;
-import org.intermine.web.logic.widget.BenjaminiHochberg;
-import org.intermine.web.logic.widget.Bonferroni;
-import org.intermine.web.logic.widget.ErrorCorrection;
-import org.intermine.web.logic.widget.Hypergeometric;
 /**
  * Utility methods for the web package.
  *
@@ -438,29 +441,26 @@ public abstract class WebUtil
     /**
      * Runs both queries and compares the results.
      * @param os the object store
-     * @param annotatedPopulationQuery The query to get the entire population, 
-     * ie all genes in the database annotated with this term
-     * @param annotatedSampleQuery The query to get the sample, ie all genes in the bag
+     * @param ldr the loader 
      * @param bag the bag we are analysing
      * @param maxValue maximum value to return - for display purposes only
      * @param errorCorrection which error correction algorithm to use, Bonferroni
      * or Benjamini Hochberg or none
      * @return array of three results maps
      */
-    public static ArrayList<Map> statsCalc(ObjectStore os,
-                                      Query annotatedPopulationQuery,
-                                      Query annotatedSampleQuery,                              
+    public static ArrayList statsCalc(ObjectStore os,
+                                      EnrichmentWidgetLdr ldr,                              
                                       InterMineBag bag,
                                       Double maxValue,
                                       String errorCorrection) {
 
             ArrayList<Map> maps = new ArrayList<Map>();
 
-            int populationTotal = 0;
-            int sampleTotal = 0;
+            int populationTotal = 0;    // objects annotated in database
+            int sampleTotal = 0;        // objects annotated in bag
             
             // sample query
-            Results r = os.execute(annotatedSampleQuery);
+            Results r = os.execute(ldr.getAnnotatedSampleQuery(false));
             r.setBatchSize(10000);
             Iterator iter = r.iterator();
             HashMap<String, Long> countMap = new HashMap<String, Long>();
@@ -487,17 +487,16 @@ public abstract class WebUtil
             }
 
             // run population query
-            List rAll = statsCalcCache.get(annotatedPopulationQuery.toString());
+            List rAll = statsCalcCache.get(ldr.getAnnotatedPopulationQuery().toString());
             if (rAll == null) {
-                rAll = os.execute(annotatedPopulationQuery);
+                rAll = os.execute(ldr.getAnnotatedPopulationQuery());
                 ((Results) rAll).setBatchSize(10000);
                 rAll = new ArrayList(rAll);
-                statsCalcCache.put(annotatedPopulationQuery.toString(), rAll);
+                statsCalcCache.put(ldr.getAnnotatedPopulationQuery().toString(), rAll);
             }
 
             Iterator itAll = rAll.iterator();
 
-            // need to calculate the totals
             while (itAll.hasNext()) {
 
                 ResultsRow rrAll =  (ResultsRow) itAll.next();
@@ -505,14 +504,14 @@ public abstract class WebUtil
                 String id = (String) rrAll.get(0);
 
                 if (countMap.containsKey(id)) {
-
                     populationTotal += (java.lang.Long) rrAll.get(1);
-                    
                 }
             }
             
             HashMap<String, BigDecimal> resultsMap = new HashMap<String, BigDecimal>();
             itAll = rAll.iterator();
+            
+
             
             // loop through results again to calculate p-values
             while (itAll.hasNext()) {
@@ -535,21 +534,19 @@ public abstract class WebUtil
                         String msg = p + " isn't a double.  calculated using sample size: "
                         + countBag + ", population size: " + countAll + ", bag size: "
                         + sampleTotal + ", total: " + populationTotal
-                        + ".  population query used: " + annotatedPopulationQuery.toString();
+                        + ".  population query used: " 
+                        + ldr.getAnnotatedPopulationQuery().toString();
                         throw new RuntimeException(msg, e);
                     }
                 }
             }
 
-
-
-
             Map<String, BigDecimal> adjustedResultsMap = new HashMap<String, BigDecimal>();
 
             if (!errorCorrection.equals("None")) { 
-                adjustedResultsMap = resultsMap;                
                 adjustedResultsMap = calcErrorCorrection(errorCorrection, maxValue, resultsMap);
             } else {
+                // TODO move this to the ErrorCorrection class
                 BigDecimal max = new BigDecimal(maxValue.doubleValue());
                 for (String id : resultsMap.keySet()) {
                     BigDecimal pvalue = resultsMap.get(id);
@@ -561,10 +558,17 @@ public abstract class WebUtil
 
             SortableMap sortedMap = new SortableMap(adjustedResultsMap);
             sortedMap.sortValues();
-
+            
+            // number of annotated objects in the bag 
+            sampleTotal = calcSampleTotal(os, ldr);
+            
+            Map dummy = new HashMap();
+            dummy.put("widgetTotal", new Integer(sampleTotal));
+            
             maps.add(0, sortedMap);
             maps.add(1, countMap);
             maps.add(2, idMap);
+            maps.add(3, dummy);
             return maps;
     }
 
@@ -596,4 +600,16 @@ public abstract class WebUtil
         e.calculate(maxValue);
         return e.getAdjustedMap();
     }
+    
+    private static int calcSampleTotal(ObjectStore os, EnrichmentWidgetLdr ldr) {
+        Results res = os.execute(ldr.getAnnotatedSampleQuery(true));        
+        Iterator iter = res.iterator();
+        int n = 0;
+        while (iter.hasNext()) {
+            ResultsRow resRow = (ResultsRow) iter.next();
+            n = ((java.lang.Long) resRow.get(0)).intValue();
+        }
+        return n;
+    }
+    
 }
