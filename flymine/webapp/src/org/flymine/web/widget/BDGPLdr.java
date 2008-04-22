@@ -48,41 +48,42 @@ public class BDGPLdr implements EnrichmentWidgetLdr
     private Query annotatedPopulationQuery;
     private String externalLink, append;
     private Collection<String> organisms = new ArrayList<String>();
-    private Collection<String> organismsLower = new ArrayList<String>();    
+    private Collection<String> organismsLower = new ArrayList<String>();
     private InterMineBag bag;
- 
+
     /**
+     * Create a new BDGPLdr.
      * @param bag list of objects for this widget
      * @param os object store
-     * @param extraAttribute an extra attribute
+     * @param extraAttribute an extra attribute for this widget (if needed)
      */
     public BDGPLdr(InterMineBag bag, ObjectStore os, String extraAttribute) {
         this.bag = bag;
-        
+
         organisms = BioUtil.getOrganisms(os, bag, false);
-        
+
         for (String s : organisms) {
             organismsLower.add(s.toLowerCase());
         }
-        
+
         annotatedSampleQuery = getQuery(true);
         annotatedPopulationQuery = getQuery(false);
     }
-    
+
     /**
      * {@inheritDoc}
      */
     public Query getQuery(boolean useBag) {
 
-        
+
         QueryClass qcMrnaResult = new QueryClass(MRNAExpressionResult.class);
         QueryClass qcGene = new QueryClass(Gene.class);
         QueryClass qcDataset = new QueryClass(DataSet.class);
         QueryClass qcTerm = new QueryClass(MRNAExpressionTerm.class);
-                
+
         QueryField qfGene = new QueryField(qcGene, "id");
-        QueryField qfTerm = new QueryField(qcTerm, "name");        
-        
+        QueryField qfTerm = new QueryField(qcTerm, "name");
+
         ConstraintSet cs = new ConstraintSet(ConstraintOp.AND);
 
         if (useBag) {
@@ -97,18 +98,18 @@ public class BDGPLdr implements EnrichmentWidgetLdr
         SimpleConstraint scExpressed = new SimpleConstraint(qfExpressed, ConstraintOp.EQUALS,
                                                             new QueryValue(Boolean.TRUE));
         cs.addConstraint(scExpressed);
-        
-        QueryCollectionReference r2 = new QueryCollectionReference(qcMrnaResult, 
+
+        QueryCollectionReference r2 = new QueryCollectionReference(qcMrnaResult,
                                                                    "mRNAExpressionTerms");
         cs.addConstraint(new ContainsConstraint(r2, ConstraintOp.CONTAINS, qcTerm));
-        
+
         QueryObjectReference qcr = new QueryObjectReference(qcMrnaResult, "source");
         cs.addConstraint(new ContainsConstraint(qcr, ConstraintOp.CONTAINS, qcDataset));
 
         String dataset = "BDGP in situ data set";
         QueryExpression qf2 = new QueryExpression(QueryExpression.LOWER,
                                                   new QueryField(qcDataset, "title"));
-        cs.addConstraint(new SimpleConstraint(qf2, ConstraintOp.EQUALS, 
+        cs.addConstraint(new SimpleConstraint(qf2, ConstraintOp.EQUALS,
                                               new QueryValue(dataset.toLowerCase())));
 
         Query subQ = new Query();
@@ -118,7 +119,7 @@ public class BDGPLdr implements EnrichmentWidgetLdr
         subQ.addFrom(qcMrnaResult);
         subQ.addFrom(qcGene);
         subQ.addFrom(qcDataset);
-        
+
         subQ.addToSelect(new QueryField(qcTerm, "id"));
         subQ.addToSelect(new QueryField(qcGene, "id"));
         subQ.addToSelect(qfTerm);
@@ -129,7 +130,7 @@ public class BDGPLdr implements EnrichmentWidgetLdr
         q.setDistinct(false);
         QueryFunction qfCount = new QueryFunction();
         QueryField outerQfTerm = new QueryField(subQ, qfTerm);
-        
+
         q.addFrom(subQ);
         q.addToSelect(outerQfTerm);
         q.addToGroupBy(outerQfTerm);

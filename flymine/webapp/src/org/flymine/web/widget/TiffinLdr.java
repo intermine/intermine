@@ -45,11 +45,12 @@ public class TiffinLdr implements EnrichmentWidgetLdr
     private Collection<String> organisms;
     private String externalLink, append;
     private InterMineBag bag;
-    
+
     /**
-     * @param bag list of objects for this widget
-     * @param os object store
-     * @param extraAttribute an extra attribute, probably organism
+     * Create a new TiffinLdr
+     * @param bag the bag to process
+     * @param os the ObjectStore
+     * @param extraAttribute an extra attribute for this widget (if needed)
      */
      public TiffinLdr(InterMineBag bag, ObjectStore os, String extraAttribute) {
          this.bag = bag;
@@ -57,7 +58,6 @@ public class TiffinLdr implements EnrichmentWidgetLdr
 
          annotatedSampleQuery = getQuery(true);
          annotatedPopulationQuery = getQuery(false);
-
      }
 
      /**
@@ -98,7 +98,7 @@ public class TiffinLdr implements EnrichmentWidgetLdr
              cs.addConstraint(bc1);
          }
          // get organisms
-         
+
 
          // limit to organisms in the bag
          BagConstraint bc2 = new BagConstraint(qfOrganismName, ConstraintOp.IN, organisms);
@@ -152,7 +152,7 @@ public class TiffinLdr implements EnrichmentWidgetLdr
          q.addToGroupBy(outerQfId);
          return q;
      }
-     
+
      /**
       * {@inheritDoc}
        */
@@ -173,7 +173,7 @@ public class TiffinLdr implements EnrichmentWidgetLdr
       public Collection<String> getPopulationDescr() {
           return organisms;
       }
-     
+
      /**
       * {@inheritDoc}
       */

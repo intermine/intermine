@@ -46,16 +46,15 @@ public class PublicationLdr implements EnrichmentWidgetLdr
     private String externalLink, append;
     private InterMineBag bag;
     private Collection<String> organismsLower = new ArrayList<String>();
- 
 
     /**
-     * Constructor
-     * @param bag the bag
+     * Create a new PublicationLdr
+     * @param bag the bag to process
      * @param os the ObjectStore
-     * @param extraAttribute an extra attribute, probably organism
+     * @param extraAttribute an extra attribute for this widget (if needed)
      */
     public PublicationLdr(InterMineBag bag, ObjectStore os, String extraAttribute) {
-        this.bag = bag;        
+        this.bag = bag;
         organisms = BioUtil.getOrganisms(os, bag, false);
         for (String s : organisms) {
             organismsLower.add(s.toLowerCase());
@@ -63,8 +62,8 @@ public class PublicationLdr implements EnrichmentWidgetLdr
         annotatedSampleQuery = getQuery(true);
         annotatedPopulationQuery = getQuery(false);
     }
-    
-    
+
+
     /**
      * {@inheritDoc}
      */
@@ -88,7 +87,7 @@ public class PublicationLdr implements EnrichmentWidgetLdr
         }
         QueryExpression qf = new QueryExpression(QueryExpression.LOWER, qfOrganismName);
         cs.addConstraint(new BagConstraint(qf, ConstraintOp.IN, organismsLower));
-        
+
         QueryObjectReference qor = new QueryObjectReference(qcGene, "organism");
         cs.addConstraint(new ContainsConstraint(qor, ConstraintOp.CONTAINS, qcOrganism));
 
@@ -97,7 +96,7 @@ public class PublicationLdr implements EnrichmentWidgetLdr
 
         Query q = new Query();
         q.setDistinct(false);
-        
+
         q.addFrom(qcGene);
         q.addFrom(qcPub);
         q.addFrom(qcOrganism);
@@ -132,7 +131,7 @@ public class PublicationLdr implements EnrichmentWidgetLdr
     public Collection<String> getPopulationDescr() {
         return organisms;
     }
-    
+
     /**
      * {@inheritDoc}
      */
@@ -147,6 +146,3 @@ public class PublicationLdr implements EnrichmentWidgetLdr
         return append;
     }
 }
-
-
-

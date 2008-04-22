@@ -45,11 +45,12 @@ public class UniProtFeaturesLdr implements EnrichmentWidgetLdr
     private String externalLink, append;
     private InterMineBag bag;
     private Collection<String> organismsLower = new ArrayList<String>();
-    
+
     /**
-     * @param bag list of objects for this widget
-     * @param os object store
-     * @param extraAttribute an extra attribute, probably organism
+     * Create a new UniProtFeaturesLdr.
+     * @param bag the bag to process
+     * @param os the ObjectStore
+     * @param extraAttribute an extra attribute for this widget (if needed)
      */
     public UniProtFeaturesLdr(InterMineBag bag, ObjectStore os, String extraAttribute) {
         this.bag = bag;
@@ -59,7 +60,7 @@ public class UniProtFeaturesLdr implements EnrichmentWidgetLdr
         }
         annotatedSampleQuery = getQuery(true);
         annotatedPopulationQuery = getQuery(false);
-        
+
     }
 
     /**
@@ -92,7 +93,7 @@ public class UniProtFeaturesLdr implements EnrichmentWidgetLdr
 
         Query subQ = new Query();
         subQ.setDistinct(true);
-        
+
         subQ.addFrom(qcProtein);
         subQ.addFrom(qcOrganism);
         subQ.addFrom(qcUniProtFeature);
@@ -110,8 +111,8 @@ public class UniProtFeaturesLdr implements EnrichmentWidgetLdr
         q.addToSelect(qfType);
         q.addToSelect(protCount);
         if (useBag) {
-            q.addToSelect(qfType);    
-        } 
+            q.addToSelect(qfType);
+        }
         q.addToGroupBy(qfType);
 
         return q;

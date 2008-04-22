@@ -48,27 +48,29 @@ public class ProteinDomainLdr implements EnrichmentWidgetLdr
     private Query annotatedPopulationQuery;
     private String externalLink, append;
     private Collection<String> organisms = new ArrayList<String>();
-    private Collection<String> organismsLower = new ArrayList<String>();    
+    private Collection<String> organismsLower = new ArrayList<String>();
     private InterMineBag bag;
- 
+
     /**
-     * @param bag list of objects for this widget
-     * @param os object store
+     * Create a new PublicationLdr
+     * @param bag the bag to process
+     * @param os the ObjectStore
+     * @param extraAttribute an extra attribute for this widget (if needed)
      * @param extraAttribute an extra attribute, probably organism
      */
     public ProteinDomainLdr(InterMineBag bag, ObjectStore os, String extraAttribute) {
         this.bag = bag;
-        
+
         organisms = BioUtil.getOrganisms(os, bag, false);
-        
+
         for (String s : organisms) {
             organismsLower.add(s.toLowerCase());
         }
-        
+
         annotatedSampleQuery = getQuery(true);
         annotatedPopulationQuery = getQuery(false);
     }
-    
+
     /**
      * {@inheritDoc}
      */
