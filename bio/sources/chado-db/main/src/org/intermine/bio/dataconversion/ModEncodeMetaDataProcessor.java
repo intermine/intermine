@@ -106,10 +106,13 @@ public class ModEncodeMetaDataProcessor extends ChadoProcessor
         // data: parameter values
         FIELD_NAME_MAP.put("genome version", "genomeVersion");
         FIELD_NAME_MAP.put("median value", "medianValue");
+        // data: result values
         FIELD_NAME_MAP.put("transcript ID", "transcriptId");
         FIELD_NAME_MAP.put("inner primer", "innerPrimer");
+        FIELD_NAME_MAP.put("outer primer", "outerPrimer");
         FIELD_NAME_MAP.put("TraceArchive ID", "traceArchiveId");
         FIELD_NAME_MAP.put("genbank ID", "genBankId");
+        FIELD_NAME_MAP.put("EST acc", "estAcc");
         // data: source attributes
         FIELD_NAME_MAP.put("Source Name", "source");
         FIELD_NAME_MAP.put("RNA ID", "RNAId");
@@ -358,10 +361,9 @@ public class ModEncodeMetaDataProcessor extends ChadoProcessor
         res.close();
         
         // DB
-        printMapAP (appliedProtocolMap);
-        printMapDATA (appliedDataMap);
-        
-        
+        // printMapAP (appliedProtocolMap);
+        // printMapDATA (appliedDataMap);
+                
         // now traverse the DAG, and associate experiment with all the applied protocols
         traverseDag();
     }
@@ -1051,15 +1053,19 @@ public class ModEncodeMetaDataProcessor extends ChadoProcessor
                 } else {
                     data.setAttribute(fieldName, value);
                 }
-                /*            
+                /*           
                 if (fieldName == null) {
                     LOG.error("NOT FOUND in FIELD_NAME_MAP: " + test + " [data]");
                     continue;
                 } else {
+                    LOG.error("NOT FOUND in FIELD_NAME_MAP4!!: " + test + " [data]");
+
                     data.setAttribute(fieldName, value);
                 }
-                 */
+                */
             } else {
+                LOG.error("NOT FOUND in FIELD_NAME_MAP5: " + test + " [data]");
+
                 data.setAttribute(test, value);
             }
             Integer intermineObjectId = getChadoDBConverter().store(data);

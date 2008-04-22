@@ -130,8 +130,11 @@
 	<class name="org.flymine.model.genomic.SubmissionData"
 		is-interface="true">
 		<!-- result values -->
-		<attribute name="traceArchiveId" type="java.lang.String" />
+    <attribute name="innerPrimer" type="java.lang.String" />
+    <attribute name="outerPrimer" type="java.lang.String" />
+    <attribute name="traceArchiveId" type="java.lang.String" />
 		<attribute name="genBankId" type="java.lang.String" />
+    <attribute name="estAcc" type="java.lang.String" />
 		<!-- data  -->
 		<attribute name="arrayDataFile" type="java.lang.String" />
 		<attribute name="arrayDesignRef" type="java.lang.String" />
