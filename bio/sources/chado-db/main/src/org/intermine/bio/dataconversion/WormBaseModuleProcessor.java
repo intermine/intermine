@@ -51,7 +51,7 @@ public class WormBaseModuleProcessor extends ChadoSequenceProcessor
     }
 
     private static final List<String> FEATURES = Arrays.asList(
-       "gene", "mRNA", "transcript", "CDS", "intron", "exon", "five_prime_untranslated_region",
+       "gene", "mRNA", "transcript", "intron", "exon", "five_prime_untranslated_region",
        "five_prime_UTR", "three_prime_untranslated_region", "three_prime_UTR"
     );
 
