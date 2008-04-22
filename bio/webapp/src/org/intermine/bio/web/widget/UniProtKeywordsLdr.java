@@ -49,16 +49,17 @@ public class UniProtKeywordsLdr implements EnrichmentWidgetLdr
     private String externalLink, append;
     private InterMineBag bag;
     private Collection<String> organismsLower = new ArrayList<String>();
-    
+
     /**
+     * Create a new UniProtKeywordsLdr.
      * @param bag list of objects for this widget
      * @param os object store
-     * @param extraAttribute an extra attribute, probably organism
+     * @param extraAttribute an extra attribute for this widget (if needed)
      */
     public UniProtKeywordsLdr(InterMineBag bag, ObjectStore os, String extraAttribute) {
-        this.bag = bag;    
+        this.bag = bag;
         organisms = BioUtil.getOrganisms(os, bag, false);
-        
+
         annotatedSampleQuery = getQuery(true);
         annotatedPopulationQuery = getQuery(false);
         for (String s : organisms) {
@@ -66,10 +67,10 @@ public class UniProtKeywordsLdr implements EnrichmentWidgetLdr
         }
         organismsLower = new ArrayList<String>();
     }
-    
+
     /**
      * {@inheritDoc}
-     */    
+     */
     public Query getQuery(boolean useBag) {
         QueryClass qcProtein = new QueryClass(Protein.class);
         QueryClass qcOrganism = new QueryClass(Organism.class);
@@ -100,7 +101,7 @@ public class UniProtKeywordsLdr implements EnrichmentWidgetLdr
         QueryObjectReference qor2 = new QueryObjectReference(qcOntoTerm, "ontology");
         cs.addConstraint(new ContainsConstraint(qor2, ConstraintOp.CONTAINS, qcOntology));
 
-        cs.addConstraint(new SimpleConstraint(qfOnto, ConstraintOp.EQUALS, 
+        cs.addConstraint(new SimpleConstraint(qfOnto, ConstraintOp.EQUALS,
                                               new QueryValue("UniProtKeyword")));
 
         Query q = new Query();
@@ -114,12 +115,12 @@ public class UniProtKeywordsLdr implements EnrichmentWidgetLdr
 
         q.addToSelect(qfName);
 
-        q.addToSelect(protCount);        
+        q.addToSelect(protCount);
         q.setConstraint(cs);
 
         if (useBag) {
             q.addToSelect(qfName);
-        } 
+        }
         q.addToGroupBy(qfName);
 
         return q;
@@ -145,7 +146,7 @@ public class UniProtKeywordsLdr implements EnrichmentWidgetLdr
     public Collection<String> getPopulationDescr() {
         return organisms;
     }
-    
+
     /**
      * {@inheritDoc}
      */

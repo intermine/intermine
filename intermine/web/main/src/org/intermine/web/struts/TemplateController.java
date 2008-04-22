@@ -68,7 +68,6 @@ import org.apache.struts.tiles.actions.TilesAction;
  */
 public class TemplateController extends TilesAction
 {
-    private static final Logger LOG = Logger.getLogger(TemplateController.class);
     /**
      * Finds the correct template to display in the following ways:
      * <ol>
@@ -82,6 +81,7 @@ public class TemplateController extends TilesAction
      *
      * {@inheritDoc}
      */
+    @Override
     public ActionForward execute(ComponentContext context,
                                  @SuppressWarnings("unused") ActionMapping mapping,
                                  ActionForm form,

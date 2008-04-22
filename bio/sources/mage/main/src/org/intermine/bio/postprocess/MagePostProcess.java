@@ -72,8 +72,8 @@ public class MagePostProcess extends PostProcessor
      * Creates a collection of MicroArrayResult objects on Genes.
      * Creates a collection of MicroArrayResult objects on CDNAClone.
      * Creates a collection of MicroArrayResult objects on CompositeSequence.
-     * @throws Exception
      */
+    @Override
     public void postProcess() {
         try {
             // CDNAClone.results (MicroArrayResult)
@@ -137,7 +137,7 @@ public class MagePostProcess extends PostProcessor
 
         int count = 0;
         Gene lastGene = null;
-        Set newCollection = new HashSet();
+        Set<MicroArrayResult> newCollection = new HashSet<MicroArrayResult>();
 
         osw.beginTransaction();
 
@@ -228,7 +228,7 @@ public class MagePostProcess extends PostProcessor
 
         int count = 0;
         CDNAClone lastClone = null;
-        Set newCollection = new HashSet();
+        Set<MicroArrayResult> newCollection = new HashSet<MicroArrayResult>();
 
         osw.beginTransaction();
 
@@ -247,7 +247,7 @@ public class MagePostProcess extends PostProcessor
                     osw.store(tempClone);
                     count++;
                 }
-                newCollection = new HashSet();
+                newCollection = new HashSet<MicroArrayResult>();
             }
 
             newCollection.add(maResult);
@@ -320,7 +320,7 @@ public class MagePostProcess extends PostProcessor
 
         int count = 0;
         ProbeSet lastComSeq = null;
-        Set newCollection = new HashSet();
+        Set<MicroArrayResult> newCollection = new HashSet<MicroArrayResult>();
 
         osw.beginTransaction();
 
@@ -339,7 +339,7 @@ public class MagePostProcess extends PostProcessor
                     osw.store(tempProbeSet);
                     count++;
                 }
-                newCollection = new HashSet();
+                newCollection = new HashSet<MicroArrayResult>();
             }
 
             newCollection.add(maResult);

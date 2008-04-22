@@ -41,10 +41,11 @@ public class EnrichmentWidget extends Widget
     private InterMineBag bag;
     private boolean toggleOn = false;
     private int notAnalysed = 0;
-    
+
     /**
      * {@inheritDoc}
      */
+    @Override
     public void process(InterMineBag imbag, ObjectStore os) {
         try {
             // set bag
@@ -61,9 +62,9 @@ public class EnrichmentWidget extends Widget
                                                                                           });
             // have to calculate sample total for each enrichment widget because namespace may have
             // changed
-            results = WebUtil.statsCalc(os, ldr.getAnnotatedPopulation(), ldr.getAnnotatedSample(), 
+            results = WebUtil.statsCalc(os, ldr.getAnnotatedPopulation(), ldr.getAnnotatedSample(),
                                         bag, new Double(0 + max), errorCorrection);
-            
+
             if (getHasResults()) {
                 toggleOn = true;
             }
@@ -91,7 +92,7 @@ public class EnrichmentWidget extends Widget
             e.printStackTrace();
         }
     }
-    
+
     /**
      * @return the label
      */
@@ -172,7 +173,7 @@ public class EnrichmentWidget extends Widget
     public void setExternalLink(String externalLink) {
         this.externalLink = externalLink;
     }
-    
+
     /**
      * {@inheritDoc}
      */
@@ -181,9 +182,9 @@ public class EnrichmentWidget extends Widget
         returnMap.put(getFilterLabel(), Arrays.asList(getFilters().split(",")));
         return returnMap;
     }
-    
+
     /**
-     * 
+     *
      * @return List of column labels
      */
     public List<String> getColumns() {
@@ -192,7 +193,7 @@ public class EnrichmentWidget extends Widget
                 "", label, "p-Value", ""
             });
     }
-    
+
     /**
      * @return results of enrichment widget
      */
@@ -210,19 +211,19 @@ public class EnrichmentWidget extends Widget
                         "<input name=\"selected\" value=\"" + id + "\" id=\"selected_" + id
                                         + "\" type=\"checkbox\">"
                     });
-                
+
                 String label = labelToId.get(id);
                 if (externalLink != null && !externalLink.equals("")) {
-                    label += " <a href=\"" + externalLink + id 
-                             + "\" target=\"_new\" class=\"extlink\">"; 
+                    label += " <a href=\"" + externalLink + id
+                             + "\" target=\"_new\" class=\"extlink\">";
                      if (externalLinkLabel != null && !externalLinkLabel.equals("")) {
                          label += externalLinkLabel;
                      }
                      label += id + "</a>";
                 }
                 row.add(new String[] {label});
-                
-                row.add(new String[] {bd.setScale(7, 
+
+                row.add(new String[] {bd.setScale(7,
                 BigDecimal.ROUND_HALF_EVEN).toEngineeringString()});
                 row.add(new String[]
                     {
@@ -232,11 +233,11 @@ public class EnrichmentWidget extends Widget
                     });
                 flattenedResults.add(row);
             }
-            return flattenedResults;            
+            return flattenedResults;
         }
         return null;
     }
-    
+
     /**
      * Get the results in an exportable format for the specified ids
      * @param selected the selected ids to export
@@ -274,14 +275,14 @@ public class EnrichmentWidget extends Widget
     public void setErrorCorrection(String errorCorrection) {
         this.errorCorrection = errorCorrection;
     }
-    
+
     /**
      * {@inheritDoc}
      */
     public boolean getHasResults() {
         return (results.get(0) != null && results.get(0).size() > 0);
     }
-    
+
     /**
      * {@inheritDoc}
      */
@@ -317,7 +318,7 @@ public class EnrichmentWidget extends Widget
     public void setExternalLinkLabel(String externalLinkLabel) {
         this.externalLinkLabel = externalLinkLabel;
     }
-    
+
     /**
      * {@inheritDoc}
      */

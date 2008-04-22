@@ -34,13 +34,13 @@ import org.xml.sax.SAXException;
 import org.xml.sax.helpers.DefaultHandler;
 
 /**
- * DataConverter to parse pride data into items
+ * DataConverter to parse pride data into items.
  * @author Dominik Grimm and Michael Menden
  */
 public class PrideConverter extends FileConverter
 {
     protected static final String GENOMIC_NS = "http://www.flymine.org/model/genomic#";
-    
+
     //the following maps should avoid that not unnecessary objects will be created
     private Map<String, String> mapOrganism = new HashMap<String, String>();
     private Map<String, String> mapPublication = new HashMap<String, String>();
@@ -48,12 +48,12 @@ public class PrideConverter extends FileConverter
     private Map<String, String> mapProtein = new HashMap<String, String>();
     private Map<String, String> mapPSIMod = new HashMap<String, String>();
     private Map<String, String> mapCellType = new HashMap<String, String>();
-    private Map<String, String> mapMedSubject = new HashMap<String, String>();
     private Map<String, String> mapDisease = new HashMap<String, String>();
     private Map<String, String> mapTissue = new HashMap<String, String>();
     private Map<String, String> mapProject = new HashMap<String, String>();
     private Map<String, String> mapPeptide = new HashMap<String, String>();
-    private PrideIndexFasta proteinIndex = new PrideIndexFasta("/shared/data/pride/fasta/");
+
+    private final PrideIndexFasta proteinIndex = new PrideIndexFasta("/shared/data/pride/fasta/");
 
     /**
      * Constructor
@@ -68,19 +68,20 @@ public class PrideConverter extends FileConverter
     /**
      * {@inheritDoc}
      */
+    @Override
     public void process(Reader reader) throws Exception {
 
         PrideHandler handler = new PrideHandler(getItemWriter());
-        
+
         try {
             SAXParser.parse(new InputSource(reader), handler);
         } catch (Exception e) {
             e.printStackTrace();
             throw new RuntimeException(e);
         }
-        
+
     }
-    
+
     /**
      * Handles xml file
      */
@@ -91,8 +92,8 @@ public class PrideConverter extends FileConverter
         private Stack<String> stack = new Stack<String>();
         private String attName = null;
         private StringBuffer attValue = null;
-     
-        
+
+
         //private Items
         private Item itemOrganism = null;
         private Item itemPublication = null;
@@ -108,18 +109,18 @@ public class PrideConverter extends FileConverter
         private Item itemPrideExperiment = null;
         private Item itemPeptide = null;
         private Item itemPeptideModification = null;
-        
+
         //private reference strings
         private String[]     proteinAccessionId     = null;
         private String[]    proteinIdentifierId = null;
-        
+
         //private bool
         private boolean swissprotFlag = false;
-        
+
         private PridePeptideData peptideData = new PridePeptideData();
-        
+
         private Stack<PridePeptideData> stackPeptides = new Stack<PridePeptideData>();
-        
+
         //private ReferenceList
         private ReferenceList listPeptides = null;
 
@@ -131,25 +132,26 @@ public class PrideConverter extends FileConverter
             this.writer = writer;
         }
 
-        
-        
+
+
         /**
          * if only attName is set, the the attValue is between the tags and must
          *  store in endElement().
          * if the value is included in the tag, you have to set the attribut now.
          * Objects (=items) have to be builded here.
-         * 
+         *
          */
+        @Override
         public void startElement(String uri, String localName, String qName, Attributes attrs)
             throws SAXException {
-            attName = null; 
+            attName = null;
             // <ExperimentCollection><Experiment>
             if (qName.equals("Experiment")) {
                 itemPrideExperiment = createItem("PrideExperiment");
-            } 
+            }
             // <ExperimentCollection><Experiment><ExperimentAccession>
             else if (qName.equals("ExperimentAccession")) {
-                attName = "accessionId";   
+                attName = "accessionId";
             }
             // <ExperimentCollection><Experiment><Title>
             else if (qName.equals("Title")) {
@@ -165,50 +167,51 @@ public class PrideConverter extends FileConverter
             }
             /**PrideProject*/
             //<ExperimentCollection><Experiment><additional><cvParam>
-            else if (qName.equals("cvParam")  && stack.peek().equals("additional")  && attrs.getValue("name").equals("Project")
-                    && attrs.getValue("accession").equals("PRIDE:0000097") && stack.size() == 3) {
+            else if (qName.equals("cvParam")  && stack.peek().equals("additional")
+                     && attrs.getValue("name").equals("Project")
+                     && attrs.getValue("accession").equals("PRIDE:0000097") && stack.size() == 3) {
                 storeProject(attrs);
             }
             /**ProteinIdentification*/
             // <GelFreeIdentification || TwoDimensionalIdentification>
-            else if (qName.equals("GelFreeIdentification") 
+            else if (qName.equals("GelFreeIdentification")
                     || qName.equals("TwoDimensionalIdentification")) {
                 itemProteinIdentification = createItem("ProteinIdentification");
             }
             // <GelFreeIdentification || TwoDimensionalIdentification><Score>
-            else if (qName.equals("Score") && (stack.peek().equals("GelFreeIdentification") 
+            else if (qName.equals("Score") && (stack.peek().equals("GelFreeIdentification")
                         || stack.peek().equals("TwoDimensionalIdentification"))) {
                 attName = "score";
             }
             // <GelFreeIdentification || TwoDimensionalIdentification><Threshold>
-            else if (qName.equals("Threshold")  && (stack.peek().equals("GelFreeIdentification") 
+            else if (qName.equals("Threshold")  && (stack.peek().equals("GelFreeIdentification")
                         || stack.peek().equals("TwoDimensionalIdentification"))) {
                 attName = "threshold";
             }
             // <GelFreeIdentification || TwoDimensionalIdentification><SearchEngine>
-            else if (qName.equals("SearchEngine")  && (stack.peek().equals("GelFreeIdentification") 
+            else if (qName.equals("SearchEngine")  && (stack.peek().equals("GelFreeIdentification")
                         || stack.peek().equals("TwoDimensionalIdentification"))) {
                 attName = "searchEngine";
             }
             // <GelFreeIdentification || TwoDimensionalIdentification><SpliceIsoform>
-            else if (qName.equals("SpliceIsoform") && (stack.peek().equals("GelFreeIdentification") 
+            else if (qName.equals("SpliceIsoform") && (stack.peek().equals("GelFreeIdentification")
                         || stack.peek().equals("TwoDimensionalIdentification"))) {
                 attName = "spliceIsoform";
             }
             //<GelFreeIdentification || TwoDimensionalIdentification><SpectrumReference>
-            else if (qName.equals("SpectrumReference") 
-                    && (stack.peek().equals("GelFreeIdentification") 
+            else if (qName.equals("SpectrumReference")
+                    && (stack.peek().equals("GelFreeIdentification")
                         || stack.peek().equals("TwoDimensionalIdentification"))) {
                 attName = "spectrumReference";
             }
             // <GelFreeIdentification || TwoDimensionalIdentification><SequenceCoverage>
-            else if (qName.equals("SequenceCoverage") 
-                    && (stack.peek().equals("GelFreeIdentification") 
+            else if (qName.equals("SequenceCoverage")
+                    && (stack.peek().equals("GelFreeIdentification")
                         || stack.peek().equals("TwoDimensionalIdentification"))) {
                 attName = "sequenceCoverage";
             }
             // <TwoDimensionalIdentification><MolecularWeight>
-            else if (qName.equals("MolecularWeight") 
+            else if (qName.equals("MolecularWeight")
                     && (stack.peek().equals("TwoDimensionalIdentification"))) {
                 attName = "molecularWeight";
             }
@@ -233,7 +236,7 @@ public class PrideConverter extends FileConverter
            else if (qName.equals("cvParam") && stack.peek().equals("additional")
                     && attrs.getValue("accession").toString().equals("PRIDE:0000165")) {
                       //start swissprotFlag identification
-               initProtein(attrs);      
+               initProtein(attrs);
            }
             /**peptide class*/
             //<GelFreeIdentification || TwoDimensionalIdentification><PeptideItem><Sequence>
@@ -267,28 +270,28 @@ public class PrideConverter extends FileConverter
             //<ModificationItem><ModAccession>
             else if (qName.equals("ModAccession") && stack.peek().equals("ModificationItem")) {
                    attName = "accessionId";
-            }            
+            }
             //<GelFreeIdentification || TwoDimensionalIdentification><PeptideItem>
             //<ModificationItem><ModDatabase>
             else if (qName.equals("ModDatabase") && stack.peek().equals("ModificationItem")) {
                    attName = "modDB";
-            }            
+            }
             //<GelFreeIdentification || TwoDimensionalIdentification><PeptideItem>
             //<ModificationItem><ModDatabaseVersion>
-            else if (qName.equals("ModDatabaseVersion") 
+            else if (qName.equals("ModDatabaseVersion")
                     && stack.peek().equals("ModificationItem")) {
                    attName = "modDBVersion";
-            }            
+            }
             //<GelFreeIdentification || TwoDimensionalIdentification><PeptideItem>
             //<ModificationItem><ModMonoDelta>
             else if (qName.equals("ModMonoDelta") && stack.peek().equals("ModificationItem")) {
                    attName = "modMonoDelta";
-            }            
+            }
             //<GelFreeIdentification || TwoDimensionalIdentification><PeptideItem>
             //<ModificationItem><ModAvgDelta>
             else if (qName.equals("ModAvgDelta") && stack.peek().equals("ModificationItem")) {
                    attName = "modAvgDelta";
-            }    
+            }
             /**Organism class*/
             //<mzData><description><admin><sampleDescription><cvParam>
             else if (qName.equals("cvParam") && stack.peek().equals("sampleDescription")
@@ -372,7 +375,7 @@ public class PrideConverter extends FileConverter
                 refId = itemDisease.getIdentifier();
                 // put onto hashMap taxonId (=key) and identifier (=value)
                 mapDisease.put(attrs.getValue("name"), refId);
-                
+
                 try {
                     //store as object in file
                     writer.store(ItemHelper.convert(itemDisease));
@@ -475,7 +478,7 @@ public class PrideConverter extends FileConverter
                 // put onto hashMap taxonId (=key) and identifier (=value)
                 itemPublication = createItem("Publication");
                 // store in itemOrganism the taxonId
-                itemPublication.setAttribute("pubMedId", 
+                itemPublication.setAttribute("pubMedId",
                                              attrs.getValue("accession").toString());
                 refId = itemPublication.getIdentifier();
                 mapPublication.put(attrs.getValue("accession"), refId);
@@ -525,17 +528,17 @@ public class PrideConverter extends FileConverter
 
         private void initProtein(Attributes attrs) {
             PrideExpression exp = new PrideExpression(attrs.getValue("value").toString());
-               
+
                proteinAccessionId = new String[exp.getAccessionCounter()];
                proteinIdentifierId = new String[exp.getIdentifierCounter()];
                   //store accessionIds
                   if (exp.findSwissport()) {
                       swissprotFlag = true;
-                      proteinAccessionId = exp.getAccession();      
+                      proteinAccessionId = exp.getAccession();
                       proteinIdentifierId = exp.getIdentifier();
                   }
         }
-        
+
 
         private void storeProject(Attributes attrs) throws SAXException {
             String refId;
@@ -543,7 +546,7 @@ public class PrideConverter extends FileConverter
                 if (!attrs.getValue("value").toString().equals("")) {
                     if (mapProject.get(attrs.getValue("value").toString()) == null) {
                         itemPrideProject = createItem("PrideProject");
-                          itemPrideProject.setAttribute("title", 
+                          itemPrideProject.setAttribute("title",
                                            attrs.getValue("value").toString());
                         refId = itemPrideProject.getIdentifier();
                         mapProject.put(attrs.getValue("value").toString(), refId);
@@ -553,7 +556,7 @@ public class PrideConverter extends FileConverter
                             itemPrideProject = null;
                         } catch (ObjectStoreException e) {
                             throw new SAXException(e);
-                        } 
+                        }
                     }
                     else {
                         refId = mapProject.get(attrs.getValue("value").toString());
@@ -567,6 +570,7 @@ public class PrideConverter extends FileConverter
         /**
          * {@inheritDoc}
          */
+        @Override
         public void characters(char[] ch, int start, int length) {
 
             if (attName != null) {
@@ -604,9 +608,10 @@ public class PrideConverter extends FileConverter
         /**
          * {@inheritDoc}
          */
+        @Override
         public void endElement(String uri, String localName, String qName)
             throws SAXException {
-            
+
             super.endElement(uri, localName, qName);
 
             try {
@@ -617,7 +622,7 @@ public class PrideConverter extends FileConverter
                 //<ExperimentCollection><Experiment><ExperimentAccession>
                 if (qName.equals("ExperimentAccession")) {
                     itemPrideExperiment.setAttribute(attName, attValue.toString());
-                } 
+                }
                 // <ExperimentCollection><Experiment><Title>
                 else if (qName.equals("Title")) {
                     itemPrideExperiment.setAttribute(attName, attValue.toString());
@@ -625,7 +630,7 @@ public class PrideConverter extends FileConverter
                 // <ExperimentCollection><Experiment><ShortLabel>
                 else if (qName.equals("ShortLabel")) {
                     itemPrideExperiment.setAttribute(attName, attValue.toString());
-                } 
+                }
                 //<ExperimentCollection><Experiment>
                 else if (qName.equals("Experiment")) {
                     writer.store(ItemHelper.convert(itemPrideExperiment));
@@ -637,98 +642,98 @@ public class PrideConverter extends FileConverter
                 // <ExperimentCollection><Experiment>
                 //<GelFreeIdentification || TwoDimensionalIdentification><Score>
                 else if (qName.equals("Score")
-                        && (stack.peek().equals("GelFreeIdentification") 
+                        && (stack.peek().equals("GelFreeIdentification")
                                 || stack.peek().equals("TwoDimensionalIdentification"))) {
                     itemProteinIdentification.setAttribute(attName, attValue.toString());
-                } 
+                }
                 //<ExperimentCollection><Experiment>
                 //<GelFreeIdentification || TwoDimensionalIdentification><Threshold>
                 else if (qName.equals("Threshold")
-                        && (stack.peek().equals("GelFreeIdentification") 
+                        && (stack.peek().equals("GelFreeIdentification")
                                 || stack.peek().equals("TwoDimensionalIdentification"))) {
                     itemProteinIdentification.setAttribute(attName, attValue.toString());
-                }                 
+                }
                 //<ExperimentCollection><Experiment>
                 //<GelFreeIdentification || TwoDimensionalIdentification><SearchEngine>
                 else if (qName.equals("SearchEngine")
-                        && (stack.peek().equals("GelFreeIdentification") 
+                        && (stack.peek().equals("GelFreeIdentification")
                                 || stack.peek().equals("TwoDimensionalIdentification"))) {
                     itemProteinIdentification.setAttribute(attName, attValue.toString());
                 }
                 // <ExperimentCollection><Experiment>
                 //<GelFreeIdentification || TwoDimensionalIdentification><SpliceIsoform>
                 else if (qName.equals("SpliceIsoform")
-                        && (stack.peek().equals("GelFreeIdentification") 
+                        && (stack.peek().equals("GelFreeIdentification")
                                 || stack.peek().equals("TwoDimensionalIdentification"))) {
                     itemProteinIdentification.setAttribute(attName, attValue.toString());
-                } 
+                }
                 //<ExperimentCollection><Experiment>
                 //<GelFreeIdentification || TwoDimensionalIdentification><SpectrumReference>
                 else if (qName.equals("SpectrumReference")
-                        && (stack.peek().equals("GelFreeIdentification") 
+                        && (stack.peek().equals("GelFreeIdentification")
                                 || stack.peek().equals("TwoDimensionalIdentification"))) {
                     itemProteinIdentification.setAttribute(attName, attValue.toString());
-                } 
+                }
                 //<ExperimentCollection><Experiment>
                 //<GelFreeIdentification || TwoDimensionalIdentification><SequenceCoverage>
                 else if (qName.equals("SequenceCoverage")
-                        && (stack.peek().equals("GelFreeIdentification") 
+                        && (stack.peek().equals("GelFreeIdentification")
                                 || stack.peek().equals("TwoDimensionalIdentification"))) {
                     itemProteinIdentification.setAttribute(attName, attValue.toString());
-                } 
+                }
                 // <ExperimentCollection><Experiment><TwoDimensionalIdentification><MolecularWeight>
                 else if (qName.equals("MolecularWeight")
                         && stack.peek().equals("TwoDimensionalIdentification")) {
                     itemProteinIdentification.setAttribute(attName, attValue.toString());
-                } 
+                }
                 // <ExperimentCollection><Experiment><TwoDimensionalIdentification><pI>
                 else if (qName.equals("pI")
                         && stack.peek().equals("TwoDimensionalIdentification")) {
                     itemProteinIdentification.setAttribute(attName, attValue.toString());
-                } 
+                }
                 // <ExperimentCollection><Experiment><TwoDimensionalIdentification><Gel><GelLink>
                 else if (qName.equals("GelLink")
                         && stack.peek().equals("Gel")) {
                     itemProteinIdentification.setAttribute(attName, attValue.toString());
-                } 
+                }
                 //<ExperimentCollection><Experiment>
                 //<TwoDimensionalIdentification><GelLocation><XCoordinate>
                 else if (qName.equals("XCoordinate")
                         && stack.peek().equals("GelLocation")) {
                     itemProteinIdentification.setAttribute(attName, attValue.toString());
-                } 
+                }
                 //<ExperimentCollection><Experiment>
                 //<TwoDimensionalIdentification><GelLocation><YCoordinate>
                 else if (qName.equals("YCoordinate")
                         && stack.peek().equals("GelLocation")) {
                     itemProteinIdentification.setAttribute(attName, attValue.toString());
-                } 
+                }
                /**
                 * Peptide class
                 */
                 //<ExperimentCollection><Experiment>
                 //GelFreeIdentification || TwoDimensionalIdentification><PeptideItem><Sequence>
-                else if (qName.equals("Sequence") 
+                else if (qName.equals("Sequence")
                             && stack.peek().equals("PeptideItem")) {
                     peptideData = new PridePeptideData();
-                    peptideData.setSequence(attValue.toString()); 
+                    peptideData.setSequence(attValue.toString());
                 }
                 //<ExperimentCollection><Experiment>
                 //GelFreeIdentification || TwoDimensionalIdentification><PeptideItem><Start>
-                else if (qName.equals("Start") 
+                else if (qName.equals("Start")
                             && stack.peek().equals("PeptideItem")) {
                     peptideData.setStartPos(Integer.parseInt(attValue.toString()));
                 }
                 //<ExperimentCollection><Experiment>
                 //GelFreeIdentification || TwoDimensionalIdentification><PeptideItem><End>
-                else if (qName.equals("End") 
+                else if (qName.equals("End")
                             && stack.peek().equals("PeptideItem")) {
                     peptideData.setEndPos(Integer.parseInt(attValue.toString()));
                 }
                 //<ExperimentCollection><Experiment>
                 //GelFreeIdentification || TwoDimensionalIdentification>
                 //<PeptideItem><SpectrumReference>
-                else if (qName.equals("SpectrumReference") 
+                else if (qName.equals("SpectrumReference")
                             && stack.peek().equals("PeptideItem")) {
                     peptideData.setSpecRef(Float.parseFloat(attValue.toString()));
                 }
@@ -740,42 +745,42 @@ public class PrideConverter extends FileConverter
                  */
                 //<ExperimentCollection><Experiment>
                 //<GelFreeIdentification || TwoDimensionalIdentification><PeptideItem><Sequence>
-                else if (qName.equals("ModLocation") 
+                else if (qName.equals("ModLocation")
                              && stack.peek().equals("ModificationItem")) {
                      // store in itemOrganism the taxonId
                      itemPeptideModification.setAttribute(attName, attValue.toString());
                  }
                 //<ExperimentCollection><Experiment>
                 //<GelFreeIdentification || TwoDimensionalIdentification><PeptideItem><Sequence>
-                else if (qName.equals("ModAccession") 
+                else if (qName.equals("ModAccession")
                              && stack.peek().equals("ModificationItem")) {
                      // store in itemOrganism the taxonId
                      itemPeptideModification.setAttribute(attName, attValue.toString());
                  }
                 //<ExperimentCollection><Experiment>
                 //<GelFreeIdentification || TwoDimensionalIdentification><PeptideItem><Sequence>
-                else if (qName.equals("ModDatabase") 
+                else if (qName.equals("ModDatabase")
                              && stack.peek().equals("ModificationItem")) {
                      // store in itemOrganism the taxonId
                      itemPeptideModification.setAttribute(attName, attValue.toString());
                  }
                 //<ExperimentCollection><Experiment>
                 //<GelFreeIdentification || TwoDimensionalIdentification><PeptideItem><Sequence>
-                else if (qName.equals("ModDatabaseVersion") 
+                else if (qName.equals("ModDatabaseVersion")
                              && stack.peek().equals("ModificationItem")) {
                      // store in itemOrganism the taxonId
                      itemPeptideModification.setAttribute(attName, attValue.toString());
                  }
                 //<ExperimentCollection><Experiment>
                 //<GelFreeIdentification || TwoDimensionalIdentification><PeptideItem><Sequence>
-                else if (qName.equals("ModMonoDelta") 
+                else if (qName.equals("ModMonoDelta")
                              && stack.peek().equals("ModificationItem")) {
                      // store in itemOrganism the taxonId
                      itemPeptideModification.setAttribute(attName, attValue.toString());
                  }
                 //<ExperimentCollection><Experiment>
                 //<GelFreeIdentification || TwoDimensionalIdentification><PeptideItem><Sequence>
-                 else if (qName.equals("ModAvgDelta") 
+                 else if (qName.equals("ModAvgDelta")
                              && stack.peek().equals("ModificationItem")) {
                      // store in itemOrganism the taxonId
                      itemPeptideModification.setAttribute(attName, attValue.toString());
@@ -798,11 +803,11 @@ public class PrideConverter extends FileConverter
                    //store ProteinIdentification
                    storeProteinIdentification();
                 }
-            
+
             } catch (ObjectStoreException e) {
                 throw new SAXException(e);
             }
-           
+
         }
 
 
@@ -815,7 +820,7 @@ public class PrideConverter extends FileConverter
                        if (mapProtein.get(proteinAccessionId[i]) == null) {
                            itemProtein = createItem("Protein");
                            itemProtein.setAttribute("primaryAccession", proteinAccessionId[i]);
-                          
+
                            //get number of peptides
                            int stackSize = stackPeptides.size();
                            //store all peptides if no peptide with the same key exists
@@ -824,7 +829,7 @@ public class PrideConverter extends FileConverter
                                    //get top peptide
                                    peptideData = stackPeptides.peek();
                                    //store protein
-                                   storeProtein(i); 
+                                   storeProtein(i);
                                    //remove top element at stack
                                    stackPeptides.pop();
                                }
@@ -835,7 +840,7 @@ public class PrideConverter extends FileConverter
                                itemProtein = null;
                             listPeptides = null;
                             itemPeptide = null;
-                         
+
                        } else {
                            refId = mapProtein.get(proteinAccessionId[i]);
                        }
@@ -853,7 +858,7 @@ public class PrideConverter extends FileConverter
                writer.store(ItemHelper.convert(itemProteinIdentification));
                itemProteinIdentification = null;
         }
-        
+
         private void storeProtein(int i) throws ObjectStoreException {
             if (proteinIndex.getProtein(proteinAccessionId[i]) != null) {
                 //calculate new start and end positions
@@ -861,7 +866,7 @@ public class PrideConverter extends FileConverter
                 if (listPeptides.getRefIds().isEmpty()) {
                     itemProtein.addCollection(listPeptides);
                     }
-                //if there are new start and end positions then do...   
+                //if there are new start and end positions then do...
                 while (calcPos.hasNext()) {
                     if (mapPeptide.get(peptideData.getKey()) == null) {
                         //createItem and store the correct data
@@ -874,7 +879,7 @@ public class PrideConverter extends FileConverter
                  }
              }
         }
-        
+
         private void createPeptide(PrideCalculatePos calcPos)
                 throws ObjectStoreException {
             String refId;

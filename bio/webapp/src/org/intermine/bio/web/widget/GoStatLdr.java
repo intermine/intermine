@@ -49,23 +49,26 @@ public class GoStatLdr implements EnrichmentWidgetLdr
     private Collection<String> organisms;
     private String externalLink, append;
     private InterMineBag bag;
-    private String namespace;    
+    private String namespace;
     private Collection<String> organismsLower = new ArrayList<String>();
+
     /**
+     * Create a new GoStatLdr
      * @param bag list of objects for this widget
      * @param os object store
+     * @param extraAttribute an extra attribute for this widget (if needed)
      */
     public GoStatLdr (InterMineBag bag, ObjectStore os, String extraAttribute) {
         this.bag = bag;
         namespace = extraAttribute;
         organisms = BioUtil.getOrganisms(os, bag, false);
-        
+
         for (String s : organisms) {
             organismsLower.add(s.toLowerCase());
         }
         annotatedSampleQuery = getQuery(true);
         annotatedPopulationQuery = getQuery(false);
-                
+
     }
 
     // adds 3 main ontologies to array.  these 3 will be excluded from the query
@@ -101,12 +104,12 @@ public class GoStatLdr implements EnrichmentWidgetLdr
         QueryField qfProteinId = new QueryField(qcProtein, "id");
 
         QueryFunction objectCount = new QueryFunction();
-        
+
         ConstraintSet cs = new ConstraintSet(ConstraintOp.AND);
-      
+
         QueryExpression qf1 = new QueryExpression(QueryExpression.LOWER, qfOrganismName);
         cs.addConstraint(new BagConstraint(qf1, ConstraintOp.IN, organismsLower));
-        
+
         // gene.goAnnotation CONTAINS GOAnnotation
         QueryCollectionReference qcr1 = new QueryCollectionReference(qcGene, "allGoAnnotation");
         cs.addConstraint(new ContainsConstraint(qcr1, ConstraintOp.CONTAINS, qcGoAnnotation));
@@ -114,8 +117,8 @@ public class GoStatLdr implements EnrichmentWidgetLdr
 
         String[] ids = getOntologies();
         QueryExpression qf2 = new QueryExpression(QueryExpression.LOWER, qfGoTermId);
-        for (int i = 0; i < ids.length; i++) {                
-            cs.addConstraint(new SimpleConstraint(qf2, ConstraintOp.NOT_EQUALS, 
+        for (int i = 0; i < ids.length; i++) {
+            cs.addConstraint(new SimpleConstraint(qf2, ConstraintOp.NOT_EQUALS,
                                                   new QueryValue(ids[i])));
         }
         // gene is from organism
@@ -131,7 +134,7 @@ public class GoStatLdr implements EnrichmentWidgetLdr
 
         // go term is of the specified namespace
         QueryExpression qf3 = new QueryExpression(QueryExpression.LOWER, qfNamespace);
-        cs.addConstraint(new SimpleConstraint(qf3, ConstraintOp.EQUALS, 
+        cs.addConstraint(new SimpleConstraint(qf3, ConstraintOp.EQUALS,
                                               new QueryValue(namespace.toLowerCase())));
 
         if (useBag) {
@@ -174,13 +177,13 @@ public class GoStatLdr implements EnrichmentWidgetLdr
 
         if (useBag) {
             q.addToSelect(qfGoTerm);
-            q.addToGroupBy(qfGoTerm);            
+            q.addToGroupBy(qfGoTerm);
         }
 
         return q;
     }
-   
-    
+
+
     /**
      * {@inheritDoc}
      */
@@ -201,7 +204,7 @@ public class GoStatLdr implements EnrichmentWidgetLdr
     public Collection<String> getPopulationDescr() {
         return organisms;
     }
-    
+
     /**
      * {@inheritDoc}
      */
