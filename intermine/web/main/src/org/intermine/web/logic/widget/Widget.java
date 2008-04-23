@@ -30,7 +30,6 @@ public abstract class Widget
     private String dataSetLoader;
     private String link;
     private String selectedExtraAttribute;
-
     
     /**
      * The Constructor

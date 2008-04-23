@@ -21,15 +21,18 @@ import org.intermine.objectstore.query.Query;
 public interface EnrichmentWidgetLdr
 {
     /**
-     * @param calcTotal whether 
+     * @param calcTotal whether or not to calculate the total number of annotated objects in the
+     * sample 
      * @return the query representing the sample population (the list)
      */
     public Query getAnnotatedSampleQuery(boolean calcTotal);
     
     /**
+     * @param calcTotal whether or not to calculate the total number of annotated objects in the
+     * database 
      * @return the query representing the entire population (all the items in the database)
      */
-    public Query getAnnotatedPopulationQuery();
+    public Query getAnnotatedPopulationQuery(boolean calcTotal);
 
     /**
      * @return description of reference population, ie "Accounting dept"

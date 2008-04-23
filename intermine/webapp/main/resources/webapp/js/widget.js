@@ -12,8 +12,10 @@ function getProcessGraphWidget(widgetId, bagName) {
 }
 
 function handleGraphWidget(widget) {
-  Element.hide($('widgetdatanoresults' + widget.id));
+  
   calcNotAnalysed(widget);
+    
+  Element.hide($('widgetdatanoresults' + widget.id));
   if(widget.hasResults) {
     var widgetdataname = document.getElementById('widgetdata' + widget.id);
     var widgetdatawait = document.getElementById('widgetdatawait' + widget.id); 
@@ -26,17 +28,19 @@ function handleGraphWidget(widget) {
     Element.hide($('widgetdata' + widget.id));
     Element.show($('widgetdatanoresults' + widget.id));
     toggleWidget('widgetcontainer' + widget.id, 'togglelink' + widget.id);
-  }
+  }  
 }
-
 
 function getProcessTableWidget(widgetId, bagName) {
   AjaxServices.getProcessTableWidget(widgetId,bagName,handleTableWidget);
 }
 
 function handleTableWidget(widget) {
+
+  calcNotAnalysed(widget);
+
   Element.hide($('widgetdatanoresults' + widget.id));
-  calcNotAnalysed(widget);  
+    
   if(widget.hasResults) {
 	  removeChildren($("tablewidget"+widget.id+"head"));
 	  removeChildren($("tablewidget"+widget.id+"body"));
@@ -140,5 +144,5 @@ function submitWidgetForm(widgetId,type,extra) {
 
 function calcNotAnalysed(widget) {
     var widgetnotanalysed = document.getElementById('widgetnotanalysed' + widget.id);
-    widgetnotanalysed = widget.notAnalysed;
+    widgetnotanalysed.innerHtml = widget.notAnalysed;
 }

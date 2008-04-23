@@ -23,6 +23,7 @@ import java.util.TreeMap;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import org.intermine.objectstore.query.Query;
 import org.intermine.objectstore.query.Results;
 import org.intermine.objectstore.query.ResultsRow;
 
@@ -456,8 +457,8 @@ public abstract class WebUtil
 
             ArrayList<Map> maps = new ArrayList<Map>();
 
-            int populationTotal = 0;    // objects annotated in database
-            int sampleTotal = 0;        // objects annotated in bag
+            int populationTotal = calcTotal(os, ldr, true);    // objects annotated in database
+            int sampleTotal = calcTotal(os, ldr, false);    // objects annotated in bag
             
             // sample query
             Results r = os.execute(ldr.getAnnotatedSampleQuery(false));
@@ -476,8 +477,7 @@ public abstract class WebUtil
 
                 // count of item
                 Long count = (Long) rr.get(1);
-                sampleTotal += count.intValue();
-                
+                           
                 // id & count
                 countMap.put(id, count);
 
@@ -487,32 +487,17 @@ public abstract class WebUtil
             }
 
             // run population query
-            List rAll = statsCalcCache.get(ldr.getAnnotatedPopulationQuery().toString());
+            List rAll = statsCalcCache.get(ldr.getAnnotatedPopulationQuery(false).toString());
             if (rAll == null) {
-                rAll = os.execute(ldr.getAnnotatedPopulationQuery());
+                rAll = os.execute(ldr.getAnnotatedPopulationQuery(false));
                 ((Results) rAll).setBatchSize(10000);
                 rAll = new ArrayList(rAll);
-                statsCalcCache.put(ldr.getAnnotatedPopulationQuery().toString(), rAll);
-            }
-
-            Iterator itAll = rAll.iterator();
-
-            while (itAll.hasNext()) {
-
-                ResultsRow rrAll =  (ResultsRow) itAll.next();
-
-                String id = (String) rrAll.get(0);
-
-                if (countMap.containsKey(id)) {
-                    populationTotal += (java.lang.Long) rrAll.get(1);
-                }
+                statsCalcCache.put(ldr.getAnnotatedPopulationQuery(false).toString(), rAll);
             }
             
             HashMap<String, BigDecimal> resultsMap = new HashMap<String, BigDecimal>();
-            itAll = rAll.iterator();
-            
+            Iterator itAll = rAll.iterator();
 
-            
             // loop through results again to calculate p-values
             while (itAll.hasNext()) {
 
@@ -535,7 +520,7 @@ public abstract class WebUtil
                         + countBag + ", population size: " + countAll + ", bag size: "
                         + sampleTotal + ", total: " + populationTotal
                         + ".  population query used: " 
-                        + ldr.getAnnotatedPopulationQuery().toString();
+                        + ldr.getAnnotatedPopulationQuery(false).toString();
                         throw new RuntimeException(msg, e);
                     }
                 }
@@ -558,9 +543,6 @@ public abstract class WebUtil
 
             SortableMap sortedMap = new SortableMap(adjustedResultsMap);
             sortedMap.sortValues();
-            
-            // number of annotated objects in the bag 
-            sampleTotal = calcSampleTotal(os, ldr);
             
             Map dummy = new HashMap();
             dummy.put("widgetTotal", new Integer(sampleTotal));
@@ -601,8 +583,16 @@ public abstract class WebUtil
         return e.getAdjustedMap();
     }
     
-    private static int calcSampleTotal(ObjectStore os, EnrichmentWidgetLdr ldr) {
-        Results res = os.execute(ldr.getAnnotatedSampleQuery(true));        
+    private static int calcTotal(ObjectStore os, EnrichmentWidgetLdr ldr, boolean calcPopulation) {
+        
+        Query q = new Query();
+        if (calcPopulation) {
+            q = ldr.getAnnotatedPopulationQuery(true);
+        } else {
+            q = ldr.getAnnotatedSampleQuery(true);
+        }
+        
+        Results res = os.execute(q);        
         Iterator iter = res.iterator();
         int n = 0;
         while (iter.hasNext()) {

@@ -47,6 +47,7 @@ public class BDGPLdr implements EnrichmentWidgetLdr
     private Collection<String> organisms = new ArrayList<String>();
     private Collection<String> organismsLower = new ArrayList<String>();
     private InterMineBag bag;
+
     private final String dataset = "BDGP in situ data set";
  
 
@@ -115,9 +116,13 @@ public class BDGPLdr implements EnrichmentWidgetLdr
         subQ.addFrom(qcGene);
         subQ.addFrom(qcDataset);
 
-        subQ.addToSelect(new QueryField(qcTerm, "id"));
-        subQ.addToSelect(new QueryField(qcGene, "id"));
-        subQ.addToSelect(qfTerm);
+        if (!calcTotal) {
+            subQ.addToSelect(new QueryField(qcTerm, "id"));
+            subQ.addToSelect(new QueryField(qcGene, "id"));
+            subQ.addToSelect(qfTerm);
+        } else {
+            subQ.addToSelect(new QueryField(qcGene, "id"));
+        }
 
         subQ.setConstraint(cs);
 
@@ -127,14 +132,17 @@ public class BDGPLdr implements EnrichmentWidgetLdr
         QueryField outerQfTerm = new QueryField(subQ, qfTerm);
 
         q.addFrom(subQ);
-        if (!calcTotal) {
+        
+        if (!calcTotal) {            
             q.addToSelect(outerQfTerm);
             q.addToGroupBy(outerQfTerm);
-        }
-        q.addToSelect(qfCount);
-        if (useBag && !calcTotal) {
-            q.addToSelect(outerQfTerm);
-        }
+            q.addToSelect(qfCount);
+            if (useBag) {
+                q.addToSelect(outerQfTerm);
+            }            
+        } else {
+            q.addToSelect(qfCount);
+        }       
         return q;
     }
 
@@ -148,8 +156,8 @@ public class BDGPLdr implements EnrichmentWidgetLdr
     /**
      * {@inheritDoc}
      */
-    public Query getAnnotatedPopulationQuery() {
-        return getQuery(false, false);
+    public Query getAnnotatedPopulationQuery(boolean calcTotal) {
+        return getQuery(calcTotal, false);
     }
 
     /**

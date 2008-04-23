@@ -72,8 +72,7 @@ public class PublicationLdr implements EnrichmentWidgetLdr
         QueryField qfOrganismName = new QueryField(qcOrganism, "name");
         QueryField qfId = new QueryField(qcPub, "pubMedId");
         QueryField qfPubTitle = new QueryField(qcPub, "title");
-        QueryField qfGeneIdentifier = new QueryField(qcGene, "primaryIdentifier");
-        
+
         QueryFunction geneCount = new QueryFunction();
 
         ConstraintSet cs = new ConstraintSet(ConstraintOp.AND);
@@ -91,9 +90,9 @@ public class PublicationLdr implements EnrichmentWidgetLdr
         cs.addConstraint(new ContainsConstraint(qcr, ConstraintOp.CONTAINS, qcPub));
 
         Query q = new Query();
+        q.setDistinct(false);
         
-        if (!calcTotal) {            
-            q.setDistinct(false);
+        if (!calcTotal) {           
             q.addFrom(qcGene);
             q.addFrom(qcPub);
             q.addFrom(qcOrganism);        
@@ -114,10 +113,8 @@ public class PublicationLdr implements EnrichmentWidgetLdr
             subQ.addFrom(qcOrganism);
                 
             subQ.addToSelect(qfGeneId);
-            //subQ.addToGroupBy(qfGeneId);
             subQ.setConstraint(cs);
-                      
-            q.setDistinct(false);
+ 
             q.addFrom(subQ);
             q.addToSelect(geneCount);
         }
@@ -135,8 +132,8 @@ public class PublicationLdr implements EnrichmentWidgetLdr
     /**
      * {@inheritDoc}
      */
-    public Query getAnnotatedPopulationQuery() {
-        return getQuery(false, false);
+    public Query getAnnotatedPopulationQuery(boolean calcTotal) {
+        return getQuery(calcTotal, false);
     }
     
     /**
