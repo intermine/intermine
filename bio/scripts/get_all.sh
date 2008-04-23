@@ -40,11 +40,6 @@ echo "Getting wormbase identifiers"
 echo "==========================================================="
 echo
 echo "==========================================================="
-echo "Getting wormbase rnai"
-./get_wormbase_rnai $logdir $tempname $shared_data
-echo "==========================================================="
-echo
-echo "==========================================================="
 echo "Getting pubmed data"
 ./get_ncbi_pubmed $logdir $tempname $shared_data $config_file
 echo "==========================================================="
