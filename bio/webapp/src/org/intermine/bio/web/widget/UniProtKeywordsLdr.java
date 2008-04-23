@@ -134,8 +134,8 @@ public class UniProtKeywordsLdr implements EnrichmentWidgetLdr
     /**
      * {@inheritDoc}
      */
-    public Query getAnnotatedPopulationQuery() {
-        return getQuery(false, false);
+    public Query getAnnotatedPopulationQuery(boolean calcTotal) {
+        return getQuery(calcTotal, false);
     }
 
     /**

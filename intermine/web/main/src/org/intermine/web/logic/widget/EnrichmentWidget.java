@@ -37,10 +37,10 @@ public class EnrichmentWidget extends Widget
     private String label;
     private String externalLink, externalLinkLabel;
     private String append;
-    private ArrayList<Map> results;
+    private ArrayList<Map> resultMaps = new ArrayList<Map>();
     private InterMineBag bag;
     private boolean toggleOn = false;
-    private int notAnalysed = 0;
+    private int notAnalysed;
     
     /**
      * {@inheritDoc}
@@ -59,13 +59,12 @@ public class EnrichmentWidget extends Widget
                                                                                           {
                 bag, os, getSelectedExtraAttribute()
                                                                                           });
-            // have to calculate sample total for each enrichment widget because parameters may have
-            // been changed by the user
-            results = WebUtil.statsCalc(os, ldr, bag, new Double(0 + max), errorCorrection);
+
+            resultMaps = WebUtil.statsCalc(os, ldr, bag, new Double(0 + max), errorCorrection);
             
-            int widgetTotal = ((Integer) (results.get(3)).get("widgetTotal")).intValue();
+            int analysedTotal = ((Integer) (resultMaps.get(3)).get("widgetTotal")).intValue();
             
-            notAnalysed = bag.getSize() - widgetTotal;
+            setNotAnalysed(bag.getSize() - analysedTotal);
             
             if (getHasResults()) {
                 toggleOn = true;
@@ -202,10 +201,10 @@ public class EnrichmentWidget extends Widget
      * @return results of enrichment widget
      */
     public List<List<String[]>> getFlattenedResults() {
-        if (results != null && !results.isEmpty()) {
-            Map<String, BigDecimal> pvalues = results.get(0);
-            Map<String, Long> totals = results.get(1);
-            Map<String, String> labelToId = results.get(2);
+        if (resultMaps != null && !resultMaps.isEmpty()) {
+            Map<String, BigDecimal> pvalues = resultMaps.get(0);
+            Map<String, Long> totals = resultMaps.get(1);
+            Map<String, String> labelToId = resultMaps.get(2);
             List<List<String[]>> flattenedResults = new LinkedList<List<String[]>>();
             for (String id : pvalues.keySet()) {
                 List<String[]> row = new LinkedList();
@@ -219,11 +218,11 @@ public class EnrichmentWidget extends Widget
                 String label = labelToId.get(id);
                 if (externalLink != null && !externalLink.equals("")) {
                     label += " <a href=\"" + externalLink + id 
-                             + "\" target=\"_new\" class=\"extlink\">"; 
+                             + "\" target=\"_new\" class=\"extlink\">["; 
                      if (externalLinkLabel != null && !externalLinkLabel.equals("")) {
                          label += externalLinkLabel;
                      }
-                     label += id + "</a>";
+                     label += id + "]</a>";
                 }
                 row.add(new String[] {label});
                 
@@ -248,9 +247,9 @@ public class EnrichmentWidget extends Widget
      * @return a list of list of Strings
      */
     public List<List<String>> getExportResults(String[]selected) {
-        Map<String, BigDecimal> pvalues = results.get(0);
-        Map<String, Long> totals = results.get(1);
-        Map<String, String> labelToId = results.get(2);
+        Map<String, BigDecimal> pvalues = resultMaps.get(0);
+        Map<String, Long> totals = resultMaps.get(1);
+        Map<String, String> labelToId = resultMaps.get(2);
         List<List<String>> exportResults = new ArrayList<List<String>>();
         List<String> selectedIds = Arrays.asList(selected);
         for (String id : pvalues.keySet()) {
@@ -284,7 +283,7 @@ public class EnrichmentWidget extends Widget
      * {@inheritDoc}
      */
     public boolean getHasResults() {
-        return (results.get(0) != null && results.get(0).size() > 0);
+        return (resultMaps.get(0) != null && resultMaps.get(0).size() > 0);
     }
     
     /**

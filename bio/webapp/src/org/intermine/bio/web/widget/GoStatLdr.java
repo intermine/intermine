@@ -44,7 +44,6 @@ import org.flymine.model.genomic.Protein;
  */
 public class GoStatLdr implements EnrichmentWidgetLdr
 {
-
     private Collection<String> organisms;
     private String externalLink, append;
     private InterMineBag bag;
@@ -93,7 +92,6 @@ public class GoStatLdr implements EnrichmentWidgetLdr
         QueryField qfQualifier = new QueryField(qcGoAnnotation, "qualifier");
         QueryField qfGoTerm = new QueryField(qcGoAnnotation, "name");
         QueryField qfGeneId = new QueryField(qcGene, "id");
-        QueryField qfGeneIdentifier = new QueryField(qcGene, "primaryIdentifier");
         QueryField qfNamespace = new QueryField(qcGo, "namespace");
         QueryField qfGoTermId = new QueryField(qcGo, "identifier");
         QueryField qfOrganismName = new QueryField(qcOrganism, "name");
@@ -154,33 +152,45 @@ public class GoStatLdr implements EnrichmentWidgetLdr
         Query q = new Query();
         q.setDistinct(false);
         
-        q.addFrom(qcGene);
-        q.addFrom(qcGoAnnotation);
-        q.addFrom(qcOrganism);
-        q.addFrom(qcGo);
-        if (bag.getType().equalsIgnoreCase("protein")) {
-            q.addFrom(qcProtein);
-        }
-
         if (!calcTotal) {
+
+            q.addFrom(qcGene);
+            q.addFrom(qcGoAnnotation);
+            q.addFrom(qcOrganism);
+            q.addFrom(qcGo);
+            
+            if (bag.getType().equalsIgnoreCase("protein")) {
+                q.addFrom(qcProtein);
+            }
+            
             q.addToSelect(qfGoTermId);
             q.addToGroupBy(qfGoTermId);
+            q.addToSelect(objectCount);
+            
+            if (useBag) {
+                q.addToSelect(qfGoTerm);
+                q.addToGroupBy(qfGoTerm);            
+            }
+            q.setConstraint(cs);
+            
         } else {
-            q.addToSelect(qfGeneIdentifier);
-            q.addToGroupBy(qfGeneIdentifier);
-        }
-        q.addToSelect(objectCount);
-        if (useBag && !calcTotal) {
-            q.addToSelect(qfGoTerm);
-            q.addToGroupBy(qfGoTerm);            
-        }
-        q.setConstraint(cs);
-        
-        if (calcTotal) {
-            Query subQ = q;
-            //QueryField qfGene = new QueryField(subQ, qfGeneIdentifier);
-            q = new Query();
-            q.setDistinct(false);
+            
+            Query subQ = new Query();
+            subQ.setDistinct(true);
+            
+            subQ.addToSelect(qfGeneId);
+            
+            subQ.addFrom(qcGene);
+            subQ.addFrom(qcGoAnnotation);
+            subQ.addFrom(qcOrganism);
+            subQ.addFrom(qcGo);
+            
+            if (bag.getType().equalsIgnoreCase("protein")) {
+                subQ.addFrom(qcProtein);
+            }
+            
+            subQ.setConstraint(cs);
+
             q.addFrom(subQ);
             q.addToSelect(objectCount);
         }
@@ -197,8 +207,8 @@ public class GoStatLdr implements EnrichmentWidgetLdr
     /**
      * {@inheritDoc}
      */
-    public Query getAnnotatedPopulationQuery() {
-        return getQuery(false, false);
+    public Query getAnnotatedPopulationQuery(boolean calcTotal) {
+        return getQuery(calcTotal, false);
     }
 
     /**

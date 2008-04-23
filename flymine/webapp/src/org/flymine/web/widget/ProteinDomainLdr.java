@@ -52,8 +52,7 @@ public class ProteinDomainLdr implements EnrichmentWidgetLdr
      * Create a new PublicationLdr
      * @param bag the bag to process
      * @param os the ObjectStore
-     * @param extraAttribute an extra attribute for this widget (if needed)
-     * @param extraAttribute an extra attribute, probably organism
+     * @param extraAttribute (not used)
      */
     public ProteinDomainLdr(InterMineBag bag, ObjectStore os, String extraAttribute) {
         this.bag = bag;
@@ -91,8 +90,8 @@ public class ProteinDomainLdr implements EnrichmentWidgetLdr
         cs.addConstraint(new ContainsConstraint(qr, ConstraintOp.CONTAINS, qcProteinFeature));
 
         QueryExpression qf2 = new QueryExpression(QueryExpression.LOWER, qfId);
-        cs.addConstraint(new SimpleConstraint(qf2, ConstraintOp.MATCHES, 
-                                                  new QueryValue("ipr%")));
+        cs.addConstraint(new SimpleConstraint(qf2, ConstraintOp.MATCHES, new QueryValue("ipr%")));
+        
         if (useBag) {
             if (bag.getType().equalsIgnoreCase("protein")) {
                 cs.addConstraint(new BagConstraint(qfProteinId, ConstraintOp.IN, bag.getOsb()));
@@ -114,24 +113,46 @@ public class ProteinDomainLdr implements EnrichmentWidgetLdr
 
         Query q = new Query();
         q.setDistinct(false);
-        if (bag.getType().equalsIgnoreCase("gene")) {
-            q.addFrom(qcGene);
-        }
-        q.addFrom(qcProtein);
-        q.addFrom(qcOrganism);
-        q.addFrom(qcProteinFeature);
         
         if (!calcTotal) {
+            
+            q.addFrom(qcProtein);
+            q.addFrom(qcOrganism);
+            q.addFrom(qcProteinFeature);
+            
+            if (bag.getType().equalsIgnoreCase("gene")) {
+                q.addFrom(qcGene);
+            }
+            
             q.addToSelect(qfId);
             q.addToGroupBy(qfId);
-        }
-        q.addToSelect(objectCount);        
-        if (useBag && !calcTotal) {
-            q.addToSelect(qfName);
-            q.addToGroupBy(qfName);
-        }
+            
+            q.addToSelect(objectCount); 
+            
+            if (useBag) {
+                q.addToSelect(qfName);
+                q.addToGroupBy(qfName);
+            }
+            q.setConstraint(cs);
+        } else {
+            Query subQ = new Query();
+            subQ.setDistinct(true);        
+            
+            subQ.addToSelect(qfGeneId);    
+            
+            subQ.addFrom(qcProtein);
+            subQ.addFrom(qcOrganism);
+            subQ.addFrom(qcProteinFeature);
+
+            if (bag.getType().equalsIgnoreCase("gene")) {
+                subQ.addFrom(qcGene);
+            }
+            subQ.setConstraint(cs);
+            
+            q.addFrom(subQ);
+            q.addToSelect(objectCount);
+        }        
         
-        q.setConstraint(cs);
         return q;
     }
 
@@ -145,8 +166,8 @@ public class ProteinDomainLdr implements EnrichmentWidgetLdr
     /**
      * {@inheritDoc}
      */
-    public Query getAnnotatedPopulationQuery() {
-        return getQuery(false, false);
+    public Query getAnnotatedPopulationQuery(boolean calcTotal) {
+        return getQuery(calcTotal, false);
     }
 
     /**
