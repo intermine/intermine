@@ -1,9 +1,9 @@
 /* 
 CSS MUST FOLLOW THE PATTERN:
  style {
-	list of positioning attributes;
-	list of size/padding/margin;
-	list of anything affecting the content;}
+    list of positioning attributes;
+    list of size/padding/margin;
+    list of anything affecting the content;}
  
  */
 
@@ -11,8 +11,8 @@ CSS MUST FOLLOW THE PATTERN:
 --------------------------*/
 
 *{
-	padding:0px;
-	margin:0px;}
+    padding:0px;
+    margin:0px;}
 
 html, body {
   margin: 0px; padding: 0px;
@@ -38,7 +38,7 @@ pre {
 }
 
 ul#submenulist li a {
-	float:left;}
+    float:left;}
 
 /* =H */
 h1, h2, h3, h1 a, h1 a:visited, label {
@@ -57,13 +57,13 @@ table td {
   font-size: 12px;}
 
 li {
-	margin-left: 30px;}
+    margin-left: 30px;}
 
 /* =DIV
 --------------------------*/
 #header {
-	padding: 90px 0 0 0;height:24px;margin:0;
-	font-size: 12px;}
+    padding: 90px 0 0 0;height:24px;margin:0;
+    font-size: 12px;}
 
 #title {
    position:absolute; top:15px;
@@ -71,17 +71,17 @@ li {
 
 
 #leftCol{
-	width:380px;float:left;}
+    width:380px;float:left;}
 
 #rightCol{
-	margin-left:390px;}
+    margin-left:390px;}
 
 #clearLine{
-	clear:both;}
+    clear:both;}
 
 #loginbar {
     position:absolute; right:0px; top:85px;
-    padding:5px;}	
+    padding:5px;}   
 
 #topnavcontainer {
     position:absolute; right:0px; top:0px;
@@ -113,18 +113,18 @@ li {
   content: "."; visibility: hidden;}
 
 .notLogged {
-	text-align: center;}
+    text-align: center;}
 
 .roundcorners, .gradientbox, .plainbox {
-   margin:0px 5px 10px 5px; padding:0;	height: 1%;/**kill peek-a-boo bug**/
-   font-size: 1em;	text-align: left;}
+   margin:0px 5px 10px 5px; padding:0;  height: 1%;/**kill peek-a-boo bug**/
+   font-size: 1em;  text-align: left;}
 
 /*.roundcorners {
-	background: url('../images/roundcorner_b_l.png') no-repeat bottom left #F5F0FF;}
+    background: url('../images/roundcorner_b_l.png') no-repeat bottom left #F5F0FF;}
 */
 .pageDesc { 
     padding: 10px; margin: 0 15px 15px 15px;
-	background-color: #F5F0FF; vertical-align: middle; text-align: left;}
+    background-color: #F5F0FF; vertical-align: middle; text-align: left;}
 
 .contactButton {
   clear:both;
@@ -177,18 +177,18 @@ div.templateDetails {
   text-align: center;}
 
 div#navtrail{
-	padding-right:15px;margin:0;
-	font-size:0.7em; text-align:right}
+    padding-right:15px;margin:0;
+    font-size:0.7em; text-align:right}
 
 div#quicksearch {
-	float:right;
-	padding-right:15px;	margin-top:0.6em;
-	font-weight:bold; color:white;white-space: nowrap;}
+    float:right;
+    padding-right:15px; margin-top:0.6em;
+    font-weight:bold; color:white;white-space: nowrap;}
 
 #submenu {
-	clear:both;	display:block;
-	padding:0px; margin:0 0 5px 0; padding-left:15px;height:3em;
-	color:#CCC;	font-size: 12px;}
+    clear:both; display:block;
+    padding:0px; margin:0 0 5px 0; padding-left:15px;height:3em;
+    color:#CCC; font-size: 12px;}
 
 /* Default style of <disclosureBody> element*/
 .disclosureBody {
@@ -266,8 +266,8 @@ div#quicksearch {
 
   /* Genomics (12 results) */
 .templateResultsToggle {
-	font-size:0.8em;
-	text-align:right;
+    font-size:0.8em;
+    text-align:right;
  }
 
 /* =H 
@@ -299,10 +299,10 @@ div#quicksearch {
    background:none;}
 
 .roundcorners p, .gradientbox p, .plainbox p {
-	background:none;}
+    background:none;}
 
 .pageDesc p {
-	background:none;}
+    background:none;}
 
 .box p {
   padding-top: 5px;}
@@ -314,16 +314,16 @@ div#quicksearch {
 
 #loginbar  a, #loginbar  a:link, #loginbar a:visited, #loginbar{
     font-family:"lucida grande", tahoma, verdana, arial, sans-serif;
-	font-size: 1.1em;}
-	
+    font-size: 1.1em;}
+    
 #loginbar  a, #loginbar  a:link, #loginbar a:visited{
     font-weight: bold; text-decoration:underline;}
 
 .imbox a{
-	color:white;}
+    color:white;}
 
 .imbox a:hover{
-	color:white;text-decoration: underline;}
+    color:white;text-decoration: underline;}
 
 a.constraintDesc {
   font-size: 11px; font-style: italic; color: #333;}
@@ -336,13 +336,13 @@ a.brokenTmplLink {
   color: #d00;}
 
 ul#nav a{
-	float:left;
-	padding:0px 15px;line-height:2;}
+    float:left;
+    padding:0px 15px;line-height:2;}
 
 /* =IMG
 -------------------------*/
 .roundcorners img, .gradientbox img, .plainbox img{
-	padding:0px; margin:0px;}
+    padding:0px; margin:0px;}
 
 .arrow {
     vertical-align: middle;}
@@ -351,10 +351,10 @@ ul#nav a{
 img.fasta {
   margin-top: 3px; vertical-align: text-bottom;}
 
-/* =TABLE	
+/* =TABLE   
 -------------------------*/
 table#headertable{
-	width:100%; margin:0px;padding:0px;}
+    width:100%; margin:0px;padding:0px;}
 
 /* =SUB
 -------------------------*/
@@ -370,35 +370,35 @@ hr.seperator {
 /* =LISTS
 -------------------------*/
 ul#submenulist, ul#submenulist li {
-	padding: 0px; margin:0px; line-height:3;
-	list-style: none;}
+    padding: 0px; margin:0px; line-height:3;
+    list-style: none;}
 
 ul#submenulist li {
-	float:left;}
+    float:left;}
 
 #sidebar li {
-	margin-left: 20px;}
+    margin-left: 20px;}
 
 /*.roundcorners dl {
-	margin:0; padding:0 0 0 5px;
-	background: url('../images/roundcorner_t_l.png') no-repeat top left; }
+    margin:0; padding:0 0 0 5px;
+    background: url('../images/roundcorner_t_l.png') no-repeat top left; }
 
 .roundcorners dt {
-	padding:0 0 5px 10px; margin:0;
-	background: url('../images/roundcorner_t_r.png') no-repeat top right; }
+    padding:0 0 5px 10px; margin:0;
+    background: url('../images/roundcorner_t_r.png') no-repeat top right; }
 
 .roundcorners dd {
-	padding:10px; margin:0;
-	background: url('../images/roundcorner_b_r.png') no-repeat bottom right;}
+    padding:10px; margin:0;
+    background: url('../images/roundcorner_b_r.png') no-repeat bottom right;}
 */
 ul#nav,ul#nav li{
-	margin:0px;padding:0px;
-	list-style-type:none;}
+    margin:0px;padding:0px;
+    list-style-type:none;}
 
 ul#nav{
-	clear:both;
-	width:100%;margin-left:10px;}
+    clear:both;
+    width:100%;margin-left:10px;}
 
 ul#nav li{
-	float:left;
-	margin:0px 1px 0px 0px;}
+    float:left;
+    margin:0px 1px 0px 0px;}
