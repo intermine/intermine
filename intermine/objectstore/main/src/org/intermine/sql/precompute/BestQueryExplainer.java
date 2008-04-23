@@ -269,7 +269,7 @@ public class BestQueryExplainer extends BestQuery
         public Candidate(String queryString) {
             this.queryString = queryString;
             this.query = null;
-            String afterFrom = queryString.substring(queryString.indexOf(" FROM ") + 6);
+            String afterFrom = queryString.substring(queryString.lastIndexOf(" FROM ") + 6);
             int wherePos = afterFrom.indexOf(" WHERE ");
             if (wherePos == -1) {
                 wherePos = afterFrom.indexOf(" GROUP BY ");
@@ -280,7 +280,9 @@ public class BestQueryExplainer extends BestQuery
             if (wherePos == -1) {
                 wherePos = afterFrom.indexOf(" ORDER BY ");
             }
-            afterFrom = afterFrom.substring(0, wherePos);
+            if (wherePos != -1) {
+                afterFrom = afterFrom.substring(0, wherePos);
+            }
             tableCount = 1;
             int commaPos = afterFrom.indexOf(", ");
             while (commaPos != -1) {

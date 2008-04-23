@@ -9,6 +9,7 @@ cd $INTERMINE
 CP=$CLASSPATH
 
 CP=$CP:$FLYMINE/build/model/genomic/:$FLYMINE/build/resources:~
+CP=$CP:$FLYMINE/dbmodel/build/classes
 
 for i in $INTERMINE/objectstore/main/lib/*.jar ; do
     CP=$CP:$i
