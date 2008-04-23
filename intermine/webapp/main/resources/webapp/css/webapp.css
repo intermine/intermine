@@ -67,7 +67,9 @@ li {
 
 #title {
    position:absolute; top:15px;
-   padding:0px;margin:0px;}
+   padding:0px;margin:0px;
+   width: 70%;
+}
 
 
 #leftCol{
