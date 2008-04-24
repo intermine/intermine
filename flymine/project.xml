@@ -47,7 +47,7 @@
     </source>
     <source name="uniprot-keywords" type="uniprot-keywords">
       <property name="src.data.dir" location="/shared/data/uniprot/current"/>
-      <property name="src.data.dir.includes" value="keydef.xml"/>
+      <property name="src.data.dir.includes" value="keywlist.xml"/>
     </source>
     <source name="rnai" type="rnai">
       <property name="src.data.dir" location="/shared/data/wormRNAi/wormbase_rnai/current"/>
