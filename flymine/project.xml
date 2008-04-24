@@ -29,7 +29,7 @@
                 value="org.intermine.bio.dataconversion.ChadoDBConverter"/>
     </source>
     <source name="drosophila-homology" type="drosophila-homology">
-      <property name="src.data.dir" location="/shared/data/flybase/FB2008_03/"/>
+      <property name="src.data.dir" location="/shared/data/flybase/homology"/>
       <property name="src.data.dir.includes" value="frb.GLEANR.TEremoved.clusters.tsv"/>
     </source>
     <source name="wormbase-identifiers" type="wormbase-identifiers">
