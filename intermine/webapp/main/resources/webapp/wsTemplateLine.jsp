@@ -59,12 +59,6 @@
     </c:otherwise>
   </c:choose>
 </c:if>
-  <%-- 
-<html:link action="/template?name=${webSearchable.name}&amp;scope=${scope}"
-           titleKey="history.action.execute.hover">
-  <img src="images/template_t.gif" width="13" height="13" alt="Run Template">
-</html:link> --%>
-
 <c:if test="${showTitles}">
     <html:link action="/template?name=${webSearchable.name}&amp;scope=${scope}"
                  titleKey="history.action.execute.hover">${webSearchable.title}</html:link>
@@ -77,31 +71,9 @@
 
 <c:if test="${showDescriptions}">
    <div id="${wsListId}_${type}_item_description_${webSearchable.name}">
-     <c:choose>
-       <c:when test="${fn:length(webSearchable.description) > 100}">
-         <div id="${wsListId}_${type}_temp_desc_${webSearchable.name}_s" class="description">
-           ${fn:substring(webSearchable.description, 0, 100)}...&nbsp;&nbsp;<a href="javascript:toggleDivs('${wsListId}_${type}_temp_desc_${webSearchable.name}_s','${wsListId}_${type}_temp_desc_${webSearchable.name}_l')">more</a>
-         </div>
-         <div id="${wsListId}_${type}_temp_desc_${webSearchable.name}_l" style="display:none" class="description">
-           ${webSearchable.description}&nbsp;&nbsp;<a href="javascript:toggleDivs('${wsListId}_${type}_temp_desc_${webSearchable.name}_l','${wsListId}_${type}_temp_desc_${webSearchable.name}_s')">less</a>
-         </div>
-       </c:when>
-       <c:otherwise>
-         <p class="description">${webSearchable.description}</p>
-       </c:otherwise>
-     </c:choose>
+    <p class="description">${webSearchable.description}</p>
    </div>
    <div id="${wsListId}_${type}_item_description_${webSearchable.name}_highlight" style="display:none" class="description"></div>
-    <%--<c:choose>
-      <c:when test="${fn:length(webSearchable.comment) > 60}">
-        ${fn:substring(webSearchable.comment, 0, 60)}...
-      </c:when>
-      <c:otherwise>
-        ${webSearchable.comment}
-      </c:otherwise>
-    </c:choose>
-    &nbsp;--%>
-
 </c:if>
 
   <c:if test="${IS_SUPERUSER && webSearchable.valid}">

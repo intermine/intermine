@@ -86,7 +86,7 @@ public class UniProtKeywordsLdr implements EnrichmentWidgetLdr
         }
         QueryExpression qf = new QueryExpression(QueryExpression.LOWER, qfOrganismName);
         cs.addConstraint(new BagConstraint(qf, ConstraintOp.IN, organismsLower));
-
+        
         QueryObjectReference qor1 = new QueryObjectReference(qcProtein, "organism");
         cs.addConstraint(new ContainsConstraint(qor1, ConstraintOp.CONTAINS, qcOrganism));
 
@@ -98,28 +98,41 @@ public class UniProtKeywordsLdr implements EnrichmentWidgetLdr
 
         cs.addConstraint(new SimpleConstraint(qfOnto, ConstraintOp.EQUALS, 
                                               new QueryValue("UniProtKeyword")));
-
+        
         Query q = new Query();
         q.setDistinct(false);
 
-        q.addFrom(qcProtein);
-        q.addFrom(qcOrganism);
-        q.addFrom(qcOntology);
-        q.addFrom(qcOntoTerm);
-
-        if (!calcTotal) {
+        if (!calcTotal) {            
+            q.addFrom(qcProtein);
+            q.addFrom(qcOrganism);
+            q.addFrom(qcOntology);
+            q.addFrom(qcOntoTerm);
+            
             q.addToSelect(qfName);
-        }
-        q.addToSelect(protCount);
-        
-        q.setConstraint(cs);
-
-        if (useBag) {
-            q.addToSelect(qfName);
-        }
-        if (!calcTotal) {
+            q.addToSelect(protCount);            
+            if (useBag) {
+                q.addToSelect(qfName);
+            }
             q.addToGroupBy(qfName);
-        }
+            
+            q.setConstraint(cs);
+        } else {
+
+            Query subQ = new Query();
+            subQ.setDistinct(true);
+            
+            subQ.addFrom(qcProtein);
+            subQ.addFrom(qcOrganism);
+            subQ.addFrom(qcOntology);
+            subQ.addFrom(qcOntoTerm);
+            
+            subQ.addToSelect(qfProtId);
+            
+            subQ.setConstraint(cs);
+
+            q.addFrom(subQ);
+            q.addToSelect(protCount);            
+        }        
 
         return q;
     }
@@ -135,7 +148,7 @@ public class UniProtKeywordsLdr implements EnrichmentWidgetLdr
      * {@inheritDoc}
      */
     public Query getAnnotatedPopulationQuery(boolean calcTotal) {
-        return getQuery(calcTotal, false);
+         return getQuery(calcTotal, false);
     }
 
     /**
