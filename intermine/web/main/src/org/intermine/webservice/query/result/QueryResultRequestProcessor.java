@@ -21,7 +21,7 @@ public class QueryResultRequestProcessor extends WebServiceRequestProcessor
 {
     private static final String QUERY_PARAMETER = "query";
     /** Compute total count parameter name. **/
-    public static final String COMPUTE_TOTAL_COUNT_PARAMETER = "totalCount";
+    public static final String COMPUTE_TOTAL_COUNT_PARAMETER = "totalcount";
     private HttpServletRequest request;
     
     /**

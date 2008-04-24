@@ -17,6 +17,7 @@ import java.util.List;
 import org.intermine.objectstore.query.ConstraintOp;
 import org.intermine.web.logic.query.Constraint;
 import org.intermine.web.logic.template.TemplateQuery;
+import org.intermine.webservice.CodeTranslator;
 
 
 /**
@@ -26,8 +27,15 @@ import org.intermine.web.logic.template.TemplateQuery;
 public class TemplateResultLinkGenerator
 {
 
-    private String error;
+    private static final int LINE_LENGTH = 70;
+
+    /**
+     * Default value of size parameter 
+     */
+    public static final int DEFAULT_RESULT_SIZE = 10;
     
+    private String error;
+
     /**
      * Generates TemplateResultService web service link.
      * @param baseUrl base url that doesn't terminate with '/' , 
@@ -35,7 +43,23 @@ public class TemplateResultLinkGenerator
      * @param template template for which the link generate
      * @return generated link
      */
-    public String generateServiceLink(String baseUrl, TemplateQuery template) {
+    public String getLink(String baseUrl, TemplateQuery template) {
+        return getLink(baseUrl, template, false);
+    }
+    
+    /**
+     * Returns html formatted link in which are highlighted parameters that 
+     * are to be replaced. * @see #getLink(String, TemplateQuery) 
+     * @param baseUrl base url 
+     * @param template template
+     * @return highlighted link
+     */
+    public String getHighlightedLink(String baseUrl, TemplateQuery template) {
+        return getLink(baseUrl, template, true);
+    }
+    
+    private String getLink(String baseUrl, TemplateQuery template, 
+            boolean highlighted) {
         if (template.getBagNames().size() > 0) {
             error = "This template contains list(s) constraint. The service for this "
                 + "special template is not implemented yet. Solution: Don't use list contraint.";
@@ -43,6 +67,11 @@ public class TemplateResultLinkGenerator
         }
         String ret = baseUrl;
         ret += "/data/template/results?name=" + template.getName() + "&";
+        // Splits the long result url to 2 parts -> so it is less probable, 
+        // that the url will overflow the div
+        if (highlighted) {
+            ret += "<br />";
+        }
         List<Constraint> constraints = template.getAllEditableConstraints();
         for (int i = 0; i < constraints.size(); i++) {
             Constraint cs = constraints.get(i);
@@ -53,16 +82,30 @@ public class TemplateResultLinkGenerator
             } else {
                 opString = "op";
             }
-            ret += opString + code + "=" + TemplateResultLinkGenerator.encode(cs.getOp());
-            ret += "&value" + code + "=" + TemplateResultLinkGenerator.encode(cs.getValue());
+            ret += opString + code + "=";
+            ret += format(TemplateResultLinkGenerator.encode(
+                    CodeTranslator.getAbbreviation(cs.getOp().toString())), highlighted);
+            ret += "&value" + code + "=";
+            ret += format(TemplateResultLinkGenerator.encode(cs.getValue()), highlighted);
             if (cs.getOp().equals(ConstraintOp.LOOKUP)) {
                 ret += "&extraValue" + code + "="  
                 + TemplateResultLinkGenerator.encode(cs.getExtraValue());                
             }
         }
+        ret += "&size=";
+        ret += format("" + DEFAULT_RESULT_SIZE, highlighted);
         return ret;
     }
 
+    
+    private String format(String text, boolean highlight) {
+        if (highlight) {
+            return "<span class=\"highlighted\">" + text + "</span>"; 
+        } else {
+            return text;
+        }
+    }
+    
     /**
      *  Encodes object string value to be able to be part of url.
      * @param o encoded object

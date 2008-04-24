@@ -17,6 +17,7 @@ import javax.servlet.http.HttpServletRequest;
 
 import org.apache.log4j.Logger;
 import org.intermine.objectstore.query.ConstraintOp;
+import org.intermine.webservice.CodeTranslator;
 import org.intermine.webservice.query.result.QueryResultRequestProcessor;
 import org.intermine.webservice.query.result.WebServiceRequestProcessor;
 
@@ -65,11 +66,7 @@ public class TemplateResultRequestProcessor extends WebServiceRequestProcessor
     private boolean parseComputeTotalCountParameter(HttpServletRequest request) {
         String totalCount = request.getParameter(QueryResultRequestProcessor.
                 COMPUTE_TOTAL_COUNT_PARAMETER);
-        if (totalCount != null) {
-            return true;
-        } else {
-            return false;
-        }
+        return totalCount != null;
     }
 
     private List<ConstraintLoad> parseConstraints(HttpServletRequest request) {
@@ -80,7 +77,7 @@ public class TemplateResultRequestProcessor extends WebServiceRequestProcessor
             
             String opParameter = "op" + i;
             String opString = request.getParameter(opParameter);
-            ConstraintOp op = ConstraintOp.getConstraintOp(opString);
+            ConstraintOp op = ConstraintOp.getConstraintOp(CodeTranslator.getCode(opString));
             
             String valueParameter = "value" + i;
             String value = request.getParameter(valueParameter);            
@@ -126,7 +123,7 @@ public class TemplateResultRequestProcessor extends WebServiceRequestProcessor
     
     private String getRequiredStringParameter(String name) {
         String param = request.getParameter(name);
-        if (param == null != param.equals("")) {
+        if (param == null || param.equals("")) {
             addError("invalid required parameter: " + name);
             return null;
         } else {

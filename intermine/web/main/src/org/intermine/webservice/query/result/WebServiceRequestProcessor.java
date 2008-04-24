@@ -22,16 +22,28 @@ import org.intermine.webservice.WebServiceInput;
  **/
 public class WebServiceRequestProcessor
 {
-
-    private static final String START_PARAMETER = "start";
-    private static final String LIMIT_PARAMETER = "size";
+    /**
+     * Name of start parameter that determinates index of first returned result.  
+     */
+    public static final String START_PARAMETER = "start";
+    
+    /**
+     * Name of size parameter that determinates number of returned results. 
+     */
+    public static final String LIMIT_PARAMETER = "size";
+    
     private static final int DEFAULT_START = 1;
+    
     private static final int DEFAULT_MAX_COUNT = 10;
+    
     private static final int MAX_COUNT_LIMIT = 1000000;
+    
     /** Value of parameter when user wants xml output to be returned. **/
     public static final String FORMAT_PARAMETER_XML = "xml";
+    
     /** Value of parameter when user wants tab separated output to be returned. **/
     public static final String FORMAT_PARAMETER_TAB = "tab";
+    
     /** Value of parameter when user wants html output to be returned. **/
     public static final String FORMAT_PARAMETER_HTML = "html";
 
@@ -49,7 +61,7 @@ public class WebServiceRequestProcessor
                 Integer.MAX_VALUE, input);
         if (start != null) {
             input.setStart(start);
-        }
+        } 
     
         Integer maxCount = parseInteger(request.getParameter(LIMIT_PARAMETER), 
                 LIMIT_PARAMETER, 1, MAX_COUNT_LIMIT, input);

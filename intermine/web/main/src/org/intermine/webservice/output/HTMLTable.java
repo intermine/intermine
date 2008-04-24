@@ -11,30 +11,49 @@ package org.intermine.webservice.output;
  */
 import java.util.List;
 
-
 /**
- * Formats data as HTML table. Code example: 
+ * Formats data as HTML table. Code example:
+ * 
  * <pre>
- *   HTMLTable table = new HTMLTable();
- *   table.setColumnNames(columnNames);
- *   table.setRows(rows);
- *   String html = table.getHTML();
+ * HTMLTable table = new HTMLTable();
+ * table.setColumnNames(columnNames);
+ * table.setRows(rows);
+ * String html = table.getHTML();
  * </pre>
+ * 
  * @author Jakub Kulaviak
- **/
+ */
 public class HTMLTable
 {
-    
+
     private List<String> columnNames;
-    
+
     private List<List<String>> rows;
-    
+
     private String title;
-    
+
     private String description;
-    
+
+    private String barHtml = "";
+
     /**
-     * Returns description of data, that will be displayed above table. 
+     * Returns  html of included bar - bar typically contains link navigator ...
+     * @return html of included bar
+     */
+    public String getBarHtml() {
+        return barHtml;
+    }
+
+    /**Sets html of included bar
+     * @param barHtml html
+     */
+    public void setBarHtml(String barHtml) {
+        this.barHtml = barHtml;
+    }
+
+    /**
+     * Returns description of data, that will be displayed above table.
+     * 
      * @return description
      */
     public String getDescription() {
@@ -43,7 +62,9 @@ public class HTMLTable
 
     /**
      * Sets description.
-     * @param description description
+     * 
+     * @param description
+     *            description
      * @see #getDescription()
      */
     public void setDescription(String description) {
@@ -52,6 +73,7 @@ public class HTMLTable
 
     /**
      * Returns column names.
+     * 
      * @return column names
      */
     public List<String> getColumnNames() {
@@ -60,14 +82,17 @@ public class HTMLTable
 
     /**
      * Sets column names
-     * @param columnNames column names
+     * 
+     * @param columnNames
+     *            column names
      */
     public void setColumnNames(List<String> columnNames) {
         this.columnNames = columnNames;
     }
-    
+
     /**
      * Returns table title, that will be displayed above table.
+     * 
      * @return title
      */
     public String getTitle() {
@@ -76,7 +101,9 @@ public class HTMLTable
 
     /**
      * Sets table title.
-     * @param title title
+     * 
+     * @param title
+     *            title
      * @see #getTitle()
      */
     public void setTitle(String title) {
@@ -86,35 +113,63 @@ public class HTMLTable
     /**
      * Constructor.
      */
-    public HTMLTable() { }
-    
+    public HTMLTable() {
+    }
+
     /**
      * Return html string of table.
+     * 
      * @return html
      */
     public String getHTML() {
         StringBuilder sb = new StringBuilder();
-        sb.append(getTitleHtml());
-        sb.append(getDescriptionHtml());
-        sb.append("<table border=\"1px\" style=\"border-collapse:collapse;\">");
+        sb.append(getMainHeaderHtml());
+        sb.append("<table border=\"1px\" style=\"border-collapse:collapse;\" "
+            + "class=\"results\" cellspacing=\"0\">");
         sb.append(getHeaderHtml());
         sb.append(getBodyHtml());
         sb.append("</table>");
         return sb.toString();
     }
 
+    private String getMainHeaderHtml() {
+        String ret = "";
+        ret += getTitleHtml();
+        ret += getDescriptionHtml();
+        ret += "<div style=\"font-size:14px;\">";
+        ret += "<span style=\"white-space:nowrap;\">";
+        ret += "&nbsp;<a href=\"\" onclick=\"javascript:window.open(window.location.href, "
+            + "'', 'fullscreen=yes, scrollbars=auto');return false;\">Open in new window</a>";
+        ret += "</span>";
+        ret += "&nbsp;&nbsp;&nbsp;";
+        ret += "Source:<a href=\"\" onclick=\"javascript:window.open('http://www.flymine.org');"
+            + "return false;\" style=\"margin-left:10px;\">Flymine</a>";
+        ret += "&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;";
+        ret += barHtml;
+        ret += "</div>";
+        return ret;
+    }
+
     private String getDescriptionHtml() {
-        if (description == null) { return ""; }
-        StringBuilder sb = new  StringBuilder();
-        sb.append("<div class=\"description\">");
+        if (description == null) {
+            return "";
+        }
+        StringBuilder sb = new StringBuilder();
+        sb.append("<span class=\"description\">");
         sb.append(description);
-        sb.append("</div>\n");
+        sb.append("</span>\n");
         return sb.toString();
     }
 
     private String getBodyHtml() {
-        if (rows == null) { return ""; }
+        if (rows == null) {
+            return "";
+        }
         StringBuilder sb = new StringBuilder();
+        if (rows.size() == 0) {
+            return "<tr><td>There are no data. If you browsed "
+                    + "through results go to the previous page.</td></tr>";
+        }
         for (List<String> row : rows) {
             sb.append("<tr>\n");
             for (String cell : row) {
@@ -122,7 +177,7 @@ public class HTMLTable
                 if (cell == null || cell.length() == 0) {
                     sb.append("&nbsp;");
                 } else {
-                    sb.append(cell);    
+                    sb.append(cell);
                 }
                 sb.append("</td>\n");
             }
@@ -132,20 +187,32 @@ public class HTMLTable
     }
 
     private String getHeaderHtml() {
-        if (columnNames == null) { return ""; }
+        if (columnNames == null) {
+            return "";
+        }
         StringBuilder sb = new StringBuilder();
         sb.append("<tr>\n");
         for (String name : columnNames) {
-            sb.append("<th>");
-            sb.append(name);
+            sb.append("<th align=\"center\">");
+            sb.append(formatColumnTitle(name));
             sb.append("</th>\n");
         }
         sb.append("</tr>\n");
         return sb.toString();
     }
 
+    private String formatColumnTitle(String str) {
+        String repl = "XXXXXXXXXXXXXXXXXXXXXXXX";
+        String ret = str.replaceAll("[.][ ]", repl);
+        ret = ret.replaceAll("[.]", "&nbsp;> ");
+        ret = ret.replaceAll(repl, ". ");
+        return ret;
+    }
+
     private String getTitleHtml() {
-        if (title == null) { return ""; }
+        if (title == null) {
+            return "";
+        }
         StringBuilder sb = new StringBuilder();
         sb.append("<div class=\"title\">");
         sb.append(title);
@@ -153,7 +220,9 @@ public class HTMLTable
         return sb.toString();
     }
 
-    /** Returns rows of table. 
+    /**
+     * Returns rows of table.
+     * 
      * @return rows
      */
     public List<List<String>> getRows() {
@@ -162,9 +231,12 @@ public class HTMLTable
 
     /**
      * Sets rows of table.
-     * @param rows rows
+     * 
+     * @param rows
+     *            rows
      */
     public void setRows(List<List<String>> rows) {
         this.rows = rows;
     }
+
 }

@@ -10,8 +10,10 @@ package org.intermine.webservice.query.result;
  *
  */
 
+import java.io.UnsupportedEncodingException;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.net.URLEncoder;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -19,6 +21,7 @@ import java.util.Map;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.apache.commons.collections.EnumerationUtils;
 import org.apache.log4j.Logger;
 import org.intermine.objectstore.ObjectStore;
 import org.intermine.objectstore.query.Results;
@@ -27,6 +30,7 @@ import org.intermine.web.logic.bag.InterMineBag;
 import org.intermine.web.logic.query.PathQuery;
 import org.intermine.web.logic.results.WebResults;
 import org.intermine.web.logic.session.SessionMethods;
+import org.intermine.webservice.PagedServiceInput;
 import org.intermine.webservice.WebService;
 import org.intermine.webservice.WebServiceConstants;
 import org.intermine.webservice.WebServiceException;
@@ -34,6 +38,7 @@ import org.intermine.webservice.core.PathQueryExecutor;
 import org.intermine.webservice.core.ResultProcessor;
 import org.intermine.webservice.output.HTMLTable;
 import org.intermine.webservice.output.MemoryOutput;
+import org.intermine.webservice.output.NavigationBar;
 
 /**
  * Executes query and returns results. Other parameters in request can specify 
@@ -76,7 +81,7 @@ public class QueryResultService extends WebService
             try {
                 PathQuery query = builder.getQuery();
                 runPathQuery(query, input.getStart() - 1 , input.getMaxCount(), true,
-                        null, null);
+                        null, null, input);
             } catch (Throwable t) {
                 LOG.error("Execution of web service request failed.", t);
                 output.addError("Execution of web service failed. Please contact support.");
@@ -86,7 +91,8 @@ public class QueryResultService extends WebService
         }
     }
 
-    private void forward(PathQuery pathQuery, String title, String description) {
+    private void forward(PathQuery pathQuery, String title, String description, 
+            PagedServiceInput input) {
         List<String> columnNames = pathQuery.getViewStrings();
         if (getFormat() == WebService.HTML_FORMAT) {
             MemoryOutput mout = (MemoryOutput) output;
@@ -95,8 +101,9 @@ public class QueryResultService extends WebService
             table.setRows(mout.getResults());
             table.setTitle(title);
             table.setDescription(description);
+            table.setBarHtml(createNavigationBar(input).toString());
             request.setAttribute(WebServiceConstants.HTML_TABLE_ATTRIBUTE, table);
-            try {
+            try {   
                 getHtmlForward().forward(request, response);
             } catch (Exception e) {
                 throw new WebServiceException(WebServiceConstants.SERVICE_FAILED_MSG, e);
@@ -104,6 +111,49 @@ public class QueryResultService extends WebService
         }        
     }
     
+    private NavigationBar createNavigationBar(PagedServiceInput input) {
+        int currentPage = (input.getStart() - 1) / input.getMaxCount();
+        return new NavigationBar(createBaseLink(), input.getMaxCount(), currentPage);
+    }
+
+    private String createBaseLink() {
+        String baseLink = request.getRequestURL().toString() + "?";
+        List<String> names =  EnumerationUtils.toList(request.getParameterNames());
+        while (names.contains(WebServiceRequestProcessor.START_PARAMETER)) {
+            names.remove(WebServiceRequestProcessor.START_PARAMETER);    
+        }
+        while (names.contains(WebServiceRequestProcessor.LIMIT_PARAMETER)) {
+            names.remove(WebServiceRequestProcessor.LIMIT_PARAMETER);    
+        }
+        boolean firstParameter = true;
+        for (String name : names) {
+            String[] values = request.getParameterValues(name);
+            for (String value : values) {
+                if (firstParameter) {
+                    // don't place ampersand
+                    firstParameter = false;
+                } else {
+                    baseLink += "&";
+                }
+                baseLink += name + "=" + encode(value);
+            }
+        }
+        return baseLink;
+    }
+    
+    private static String encode(Object o) {
+        if (o == null) {
+            return "";
+        } else {
+            try {
+                return URLEncoder.encode(o.toString(), "UTF-8");
+            } catch (UnsupportedEncodingException e) {
+                throw new RuntimeException("Encoding string failed", e);
+            }            
+        }
+    }
+
+
     /**
      * Runs path query and returns to output obtained results.
      * @param pathQuery path query
@@ -112,9 +162,10 @@ public class QueryResultService extends WebService
      * @param displayTotalCount if total result count should be displayed
      * @param title title displayed in html output
      * @param description description displayed in html output
+     * @param input input of web service
      */
     public void runPathQuery(PathQuery pathQuery, int firstResult, int maxResults,  
-            boolean displayTotalCount, String title, String description) {
+            boolean displayTotalCount, String title, String description, PagedServiceInput input) {
         PathQueryExecutor executor = new PathQueryExecutor(request, pathQuery);
         Results results = executor.getResults();
         
@@ -131,7 +182,7 @@ public class QueryResultService extends WebService
                 SessionMethods.getClassKeys(request.getSession().getServletContext()), null);
         ResultProcessor processor = new ResultProcessor(webResults, firstResult, maxResults);
         processor.write(output);              
-        forward(pathQuery, title, description);
+        forward(pathQuery, title, description, input);
     }
 
     private String getXMLSchemaUrl() {

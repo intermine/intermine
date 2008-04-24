@@ -112,6 +112,8 @@
     </action>
     <action path="/serviceLink" forward="serviceLink.page" >
     </action>    
+    <action path="/linkPreview" forward="/linkPreview.jsp">
+    </action>    		
 		
     <action path="/modifyQueryChange" type="org.intermine.web.struts.ModifyQueryChangeAction" parameter="method">
       <forward name="query" redirect="true" path="/query.do"/>

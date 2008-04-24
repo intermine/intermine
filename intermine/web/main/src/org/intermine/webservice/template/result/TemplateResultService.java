@@ -45,7 +45,7 @@ public class TemplateResultService extends QueryResultService
                 input.getConstraints());
         runPathQuery(template, input.getStart() - 1, input.getMaxCount(), 
                 input.isComputeTotalCount(), template.getTitle(), 
-                template.getDescription());
+                template.getDescription(), input);
     }
 
     private TemplateResultInput getInput() {

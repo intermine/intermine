@@ -19,7 +19,6 @@ import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
 import org.apache.struts.Globals;
-import org.apache.struts.action.ActionErrors;
 import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
@@ -93,14 +92,20 @@ public class TemplateAction extends InterMineAction
             TemplateQuery configuredTmpl = TemplateHelper.templateFormToTemplateQuery(tf, template,
                     savedBags);
             TemplateResultLinkGenerator gen = new TemplateResultLinkGenerator();
-            String link = gen.generateServiceLink(
-                    getBaseUrl(request), configuredTmpl);
+            String link = gen.getLink(getBaseUrl(request), configuredTmpl);
             if (gen.getError() != null) {
                 recordError(new ActionMessage("errors.linkGenerationFailed", 
                         gen.getError()), request);
                 return mapping.findForward("template");
             } else {
                 request.setAttribute("link", link);
+                request.setAttribute("highlightedLink", 
+                        gen.getHighlightedLink(getBaseUrl(request), configuredTmpl));
+                String title = configuredTmpl.getTitle();
+                title = title.replace("-->", "&nbsp;<img src=\"images/tmpl_arrow.png\" "
+                        + "style=\"vertical-align:middle\">&nbsp;");
+                request.setAttribute("pageTitle", title);
+                request.setAttribute("pageDescription", configuredTmpl.getDescription());
                 return mapping.findForward("serviceLink");
             }
         }
@@ -172,7 +177,7 @@ public class TemplateAction extends InterMineAction
     private String getBaseUrl(HttpServletRequest request) {
         try {
             return new java.net.URL(request.getScheme(), request.getServerName(), 
-                    request.getServerPort(),request.getContextPath()).toString();
+                    request.getServerPort(), request.getContextPath()).toString();
         } catch (MalformedURLException e) {
             throw  new RuntimeException("Creating base url failed.", e);
         }
