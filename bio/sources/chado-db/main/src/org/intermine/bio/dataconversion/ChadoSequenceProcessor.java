@@ -263,7 +263,9 @@ public class ChadoSequenceProcessor extends ChadoProcessor
         if (fieldValuesSet.contains(uniqueName)) {
             uniqueNameSet = true;
         }
-        createSynonym(fdat, "identifier", uniqueName, uniqueNameSet, EMPTY_ITEM_LIST);
+        Item uniqueNameSynonym =
+            createSynonym(fdat, "identifier", uniqueName, uniqueNameSet, EMPTY_ITEM_LIST);
+        getChadoDBConverter().store(uniqueNameSynonym);
 
         if (name != null) {
             if (nameActionList == null || nameActionList.size() == 0
@@ -274,7 +276,9 @@ public class ChadoSequenceProcessor extends ChadoProcessor
                     if (fieldValuesSet.contains(fixedName)) {
                         nameSet = true;
                     }
-                    createSynonym(fdat, "name", fixedName, nameSet, EMPTY_ITEM_LIST);
+                    Item nameSynonym =
+                        createSynonym(fdat, "name", fixedName, nameSet, EMPTY_ITEM_LIST);
+                    getChadoDBConverter().store(nameSynonym);
                 }
             }
         }
@@ -404,6 +408,7 @@ public class ChadoSequenceProcessor extends ChadoProcessor
                     int taxonId = featureData.organismData.getTaxonId();
                     Item location =
                         makeLocation(start, end, strand, srcFeatureData, featureData, taxonId);
+                    getChadoDBConverter().store(location);
 
                     final String featureClassName =
                         getModel().getPackageName() + "." + featureData.interMineType;
@@ -468,7 +473,6 @@ public class ChadoSequenceProcessor extends ChadoProcessor
         Item location = getChadoDBConverter().makeLocation(srcFeatureData.itemIdentifier,
                                                            featureData.itemIdentifier,
                                                            start, end, strand, taxonId);
-        getChadoDBConverter().store(location);
         return location;
     }
 
@@ -848,11 +852,11 @@ public class ChadoSequenceProcessor extends ChadoProcessor
                             if (fieldsSet.contains(accession)) {
                                 isPrimary = true;
                             }
-                            createSynonym(fdat, "identifier", accession, isPrimary,
-                                          EMPTY_ITEM_LIST);
+                            Item synonym = createSynonym(fdat, "identifier", accession, isPrimary,
+                                                         EMPTY_ITEM_LIST);
+                            getChadoDBConverter().store(synonym);
                             count++;
                         }
-
                     }
                 }
             }
@@ -919,8 +923,9 @@ public class ChadoSequenceProcessor extends ChadoProcessor
                             if (fieldsSet.contains(identifier)) {
                                 isPrimary = true;
                             }
-                            createSynonym(fdat, synonymType, identifier, isPrimary,
-                                          EMPTY_ITEM_LIST);
+                            Item synonym = createSynonym(fdat, synonymType, identifier, isPrimary,
+                                                         EMPTY_ITEM_LIST);
+                            getChadoDBConverter().store(synonym);
                             count++;
                         }
 
@@ -992,8 +997,10 @@ public class ChadoSequenceProcessor extends ChadoProcessor
                         if (fdat.existingSynonyms.contains(identifier)) {
                             continue;
                         } else {
-                            createSynonym(fdat, synonymTypeName, identifier, setField,
-                                          EMPTY_ITEM_LIST);
+                            Item synonym =
+                                createSynonym(fdat, synonymTypeName, identifier, setField,
+                                              EMPTY_ITEM_LIST);
+                            getChadoDBConverter().store(synonym);
                             count++;
                         }
                     }

@@ -93,7 +93,6 @@ public class FlyBaseModuleProcessor extends ChadoSequenceProcessor
         Item location =
             super.makeLocation(start, end, strand, srcFeatureData, featureData, taxonId);
         processItem(location, taxonId);
-        getChadoDBConverter().store(location);
         return location;
     }
 
@@ -107,7 +106,6 @@ public class FlyBaseModuleProcessor extends ChadoSequenceProcessor
         Item synonym = super.createSynonym(fdat, type, identifier, isPrimary, otherEvidence);
         OrganismData od = fdat.getOrganismData();
         processItem(synonym, od.getTaxonId());
-        getChadoDBConverter().store(synonym);
         return synonym;
     }
 
