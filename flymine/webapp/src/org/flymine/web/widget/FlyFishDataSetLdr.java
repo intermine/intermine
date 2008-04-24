@@ -45,6 +45,8 @@ import org.jfree.data.category.DefaultCategoryDataset;
  */
 public class FlyFishDataSetLdr implements DataSetLdr
 {
+    private final String dataset = "fly-Fish data set of Drosophila " 
+        + "embryo mRNA localization patterns";
     private DefaultCategoryDataset dataSet;
     private Results results;
     private int widgetTotal = 0;
@@ -126,31 +128,42 @@ public class FlyFishDataSetLdr implements DataSetLdr
 
         QueryExpression qf2 = new QueryExpression(QueryExpression.LOWER, 
                                                   new QueryField(ds, "title"));
-        String dataset = "fly-Fish data set of Drosophila embryo mRNA localization patterns";
         cs.addConstraint(new SimpleConstraint(qf2, ConstraintOp.EQUALS, 
                                               new QueryValue(dataset.toLowerCase())));
-
+        
         Query q = new Query();
+        q.setDistinct(false);
         
-        if (!calcTotal) { 
+        if (!calcTotal) {
             q.addToSelect(qfStage);
-            q.addToSelect(qfExpressed);   
-        }
-        
-        q.addToSelect(qfCount);
-                
-        q.addFrom(mrnaResult);
-        q.addFrom(gene);
-        q.addFrom(ds);
-               
-        if (!calcTotal) { 
+            q.addToSelect(qfExpressed);
+            q.addToSelect(qfCount);
+
+            q.addFrom(mrnaResult);
+            q.addFrom(gene);
+            q.addFrom(ds);
+
             q.addToGroupBy(qfStage);
             q.addToGroupBy(qfExpressed);
-            
+
             q.addToOrderBy(qfStage);
+            q.setConstraint(cs);
+        } else {
+            Query subQ = new Query();
+            subQ.setDistinct(true);
+            
+            subQ.addToSelect(qf);
+            
+            subQ.addFrom(mrnaResult);
+            subQ.addFrom(gene);
+            subQ.addFrom(ds);
+            
+            subQ.setConstraint(cs);
+
+            q.addFrom(subQ);
+            q.addToSelect(qfCount);
         }
         
-        q.setConstraint(cs);
         
         return q;
     }

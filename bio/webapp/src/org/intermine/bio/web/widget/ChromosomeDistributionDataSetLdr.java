@@ -130,7 +130,8 @@ public class ChromosomeDistributionDataSetLdr implements DataSetLdr
             dataSet.addValue((resultsTable.get(chromosome))[1], "Expected", chromosome);
         }
 
-        calcTotal(organismName, grandTotal);
+        // TODO this should be run once for the entire widget, not for each organism
+        // calcTotal(organismName, grandTotal);
     }
 
     /**
@@ -145,8 +146,8 @@ public class ChromosomeDistributionDataSetLdr implements DataSetLdr
 
         // get counts of gene in database for gene
         Query q = createQuery(organismName, "expected", null);
-        Results results = os.execute(q);
-        Iterator iter = results.iterator();
+        Results res = os.execute(q);
+        Iterator iter = res.iterator();
         int grandTotal = 0;
         
         while (iter.hasNext()) {
