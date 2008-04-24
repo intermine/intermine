@@ -138,8 +138,11 @@ public class ProteinDomainLdr implements EnrichmentWidgetLdr
             Query subQ = new Query();
             subQ.setDistinct(true);        
             
-            subQ.addToSelect(qfGeneId);    
-            
+            if (bag.getType().equalsIgnoreCase("protein")) {
+                subQ.addToSelect(qfProteinId);  
+            } else {
+                subQ.addToSelect(qfGeneId);  
+            }                        
             subQ.addFrom(qcProtein);
             subQ.addFrom(qcOrganism);
             subQ.addFrom(qcProteinFeature);

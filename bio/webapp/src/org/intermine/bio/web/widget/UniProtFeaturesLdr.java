@@ -85,35 +85,41 @@ public class UniProtFeaturesLdr implements EnrichmentWidgetLdr
 
         QueryCollectionReference qcr = new QueryCollectionReference(qcProtein, "features");
         cs.addConstraint(new ContainsConstraint(qcr, ConstraintOp.CONTAINS, qcUniProtFeature));
-
+          
+        Query q = new Query();
+        q.setDistinct(false);        
+        
         Query subQ = new Query();
         subQ.setDistinct(true);
-
+        
         subQ.addFrom(qcProtein);
         subQ.addFrom(qcOrganism);
         subQ.addFrom(qcUniProtFeature);
+        
         subQ.addToSelect(qfProtId);
-        subQ.addToSelect(qfName);
-
+        
         subQ.setConstraint(cs);
-
+        
         QueryFunction protCount = new QueryFunction();
-        QueryField qfType = new QueryField(subQ, qfName);
+        
+        if (!calcTotal) {       
+            
+            subQ.addToSelect(qfName);
+            
+            QueryField qfType = new QueryField(subQ, qfName);
 
-        Query q = new Query();
-        q.setDistinct(false);
-        q.addFrom(subQ);
-        if (!calcTotal) {
+            q.addFrom(subQ);
             q.addToSelect(qfType);
-        }
-        q.addToSelect(protCount);
-        if (useBag && !calcTotal) {
-            q.addToSelect(qfType);
-        }
-        if (!calcTotal) {
+            q.addToSelect(protCount);
+            
+            if (useBag) {
+                q.addToSelect(qfType);
+            }
             q.addToGroupBy(qfType);
+        } else {
+            q.addFrom(subQ);
+            q.addToSelect(protCount);
         }
-
         return q;
     }
 
