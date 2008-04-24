@@ -1,14 +1,5 @@
 package org.intermine;
 
-import java.io.IOException;
-import java.util.List;
-import java.util.Map;
-import java.util.Properties;
-
-import org.intermine.metadata.FieldDescriptor;
-import org.intermine.metadata.Model;
-import org.intermine.web.logic.ClassKeyHelper;
-
 /*
  * Copyright (C) 2002-2008 FlyMine
  *
@@ -18,6 +9,17 @@ import org.intermine.web.logic.ClassKeyHelper;
  * information or http://www.gnu.org/copyleft/lesser.html.
  *
  */
+
+import java.io.IOException;
+import java.util.List;
+import java.util.Map;
+import java.util.Properties;
+
+import org.intermine.metadata.FieldDescriptor;
+import org.intermine.metadata.Model;
+import org.intermine.objectstore.ObjectStore;
+import org.intermine.objectstore.ObjectStoreFactory;
+import org.intermine.web.logic.ClassKeyHelper;
 
 /**
  * @author Jakub Kulaviak
@@ -39,4 +41,6 @@ public class TestUtil
         }
         return ClassKeyHelper.readKeys(model, classKeyProps);
     }
+
+    
 }

@@ -26,4 +26,6 @@ public class WebServiceConstants
      */
     public static final String HTML_TABLE_ATTRIBUTE = "htmlTable";
 
+    //public static final String NAVIGATION_BAR_ATTRIBUTE = "navigationBar";
+
 }

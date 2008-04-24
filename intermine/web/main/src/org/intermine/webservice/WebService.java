@@ -63,7 +63,7 @@ public abstract class WebService
     public static final int HTML_FORMAT = 2;
     private static final int FORBIDDEN_HTTP_CODE = 403;
     private static final String WEB_SERVICE_DISABLED_PROPERTY = "webservice.disabled";
-    private static final String OUTPUT_PARAMETER = "output";
+    private static final String OUTPUT_PARAMETER = "format";
     private static Logger logger = Logger.getLogger(WebService.class);
     private static final String FORWARD_PATH = "/webservice/table.jsp";
     
@@ -98,7 +98,7 @@ public abstract class WebService
             initOutput(response.getWriter());
             
             Properties webProperties = (Properties) request.getSession()
-            .getServletContext().getAttribute(Constants.WEB_PROPERTIES);
+                .getServletContext().getAttribute(Constants.WEB_PROPERTIES);
             if ("true".equalsIgnoreCase(webProperties.getProperty(WEB_SERVICE_DISABLED_PROPERTY))) {
                 response.setStatus(FORBIDDEN_HTTP_CODE);
                 output.addError("Web service is disabled.");
