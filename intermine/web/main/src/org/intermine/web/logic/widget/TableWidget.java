@@ -165,13 +165,6 @@ public class TableWidget extends Widget
     /**
      * {@inheritDoc}
      */
-    public boolean getToggleOn() {
-        return false;
-    }
-    
-    /**
-     * {@inheritDoc}
-     */
     public String getExternalLink() {
         return externalLink;
     }
