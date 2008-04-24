@@ -151,13 +151,6 @@ public abstract class Widget
      * @return the hasResults
      */
     public abstract boolean getHasResults();
-    
-    /**
-     * toggleOn = true when the widget has results.  this flag keeps the widget displaying when
-     * the user changes the parameters and the widget doesn't have results anymore
-    * @return whether or not the widget has been toggled on
-    */
-   public abstract boolean getToggleOn();
 
     /**
      * @return the externalLink

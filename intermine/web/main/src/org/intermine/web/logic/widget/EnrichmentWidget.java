@@ -39,7 +39,6 @@ public class EnrichmentWidget extends Widget
     private String append;
     private ArrayList<Map> resultMaps = new ArrayList<Map>();
     private InterMineBag bag;
-    private boolean toggleOn = false;
     private int notAnalysed;
     
     /**
@@ -65,10 +64,7 @@ public class EnrichmentWidget extends Widget
             int analysedTotal = ((Integer) (resultMaps.get(3)).get("widgetTotal")).intValue();
             
             setNotAnalysed(bag.getSize() - analysedTotal);
-            
-            if (getHasResults()) {
-                toggleOn = true;
-            }
+
         } catch (ObjectStoreException e) {
             // TODO Auto-generated catch block
             e.printStackTrace();
@@ -284,13 +280,6 @@ public class EnrichmentWidget extends Widget
      */
     public boolean getHasResults() {
         return (resultMaps.get(0) != null && resultMaps.get(0).size() > 0);
-    }
-    
-    /**
-     * {@inheritDoc}
-     */
-    public boolean getToggleOn() {
-        return toggleOn;
     }
 
     /**

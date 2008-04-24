@@ -16,19 +16,19 @@ function handleGraphWidget(widget) {
   calcNotAnalysed(widget);
     
   Element.hide($('widgetdatanoresults' + widget.id));
-  if(widget.hasResults) {
+ // if(widget.hasResults) {
     var widgetdataname = document.getElementById('widgetdata' + widget.id);
     var widgetdatawait = document.getElementById('widgetdatawait' + widget.id); 
 
     Element.update($(widgetdataname),widget.html);
     Element.hide($(widgetdatawait));
     Element.show($(widgetdataname));
-  } else {
-  	Element.hide($('widgetdatawait' + widget.id));
-    Element.hide($('widgetdata' + widget.id));
-    Element.show($('widgetdatanoresults' + widget.id));
-    toggleWidget('widgetcontainer' + widget.id, 'togglelink' + widget.id);
-  }  
+  //} else {
+  //	Element.hide($('widgetdatawait' + widget.id));
+  //  Element.hide($('widgetdata' + widget.id));
+  //  Element.show($('widgetdatanoresults' + widget.id));
+  //  toggleWidget('widgetcontainer' + widget.id, 'togglelink' + widget.id);
+  //}  
 }
 
 function getProcessTableWidget(widgetId, bagName) {
@@ -41,7 +41,7 @@ function handleTableWidget(widget) {
 
   Element.hide($('widgetdatanoresults' + widget.id));
     
-  if(widget.hasResults) {
+  //if(widget.hasResults) {
 	  removeChildren($("tablewidget"+widget.id+"head"));
 	  removeChildren($("tablewidget"+widget.id+"body"));
 	  var widgetdataname = document.getElementById('widgetdata' + widget.id);
@@ -76,14 +76,12 @@ function handleTableWidget(widget) {
 	  }
 	  Element.hide($(widgetdatawait));
       Element.show($(widgetdataname));
-  } else {
-    Element.hide($('widgetdatawait' + widget.id));
-    Element.hide($('widgetdata' + widget.id));
-    Element.show($('widgetdatanoresults' + widget.id));
-    if (!widget.toggleOn) {
-        toggleWidget('widgetcontainer' + widget.id, 'togglelink' + widget.id);
-    }
-  }
+  //} else {
+  //  Element.hide($('widgetdatawait' + widget.id));
+  //  Element.hide($('widgetdata' + widget.id));
+  //  Element.show($('widgetdatanoresults' + widget.id));
+  //    toggleWidget('widgetcontainer' + widget.id, 'togglelink' + widget.id);
+  //}
 }
 
 function getProcessEnrichmentWidget(widgetId, bagName) {

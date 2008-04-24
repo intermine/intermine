@@ -382,12 +382,6 @@ public class GraphWidget extends Widget
     public boolean getHasResults() {
         return (dataSetLdr.getResults().size() > 0);
     }
-    /**
-     * {@inheritDoc}
-     */
-    public boolean getToggleOn() {
-        return false;
-    }
     
     /**
      * {@inheritDoc}
