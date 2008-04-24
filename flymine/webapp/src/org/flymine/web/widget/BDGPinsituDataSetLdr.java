@@ -104,7 +104,7 @@ public class BDGPinsituDataSetLdr implements DataSetLdr
     
     private Query createQuery(InterMineBag bag, boolean calcTotal) {
 
-        Query q = new Query();
+        
 
         QueryClass mrnaResult = new QueryClass(MRNAExpressionResult.class);
         QueryClass gene = new QueryClass(Gene.class);
@@ -131,26 +131,39 @@ public class BDGPinsituDataSetLdr implements DataSetLdr
         cs.addConstraint(new SimpleConstraint(qf2, ConstraintOp.EQUALS, 
                                               new QueryValue(dataset.toLowerCase())));
 
+        Query q = new Query();
+        q.setDistinct(false);
+        
         if (!calcTotal) {
             q.addToSelect(qfStage);
             q.addToSelect(qfExpressed);
-        }
-        
-        q.addToSelect(qfCount);
-        
-        q.addFrom(mrnaResult);
-        q.addFrom(gene);
-        q.addFrom(ds);
+            q.addToSelect(qfCount);
 
-        if (!calcTotal) {
+            q.addFrom(mrnaResult);
+            q.addFrom(gene);
+            q.addFrom(ds);
+
             q.addToGroupBy(qfStage);
             q.addToGroupBy(qfExpressed);
 
             q.addToOrderBy(qfStage);
+            q.setConstraint(cs);
+        } else {
+            Query subQ = new Query();
+            subQ.setDistinct(true);
+            
+            subQ.addToSelect(qf);
+            
+            subQ.addFrom(mrnaResult);
+            subQ.addFrom(gene);
+            subQ.addFrom(ds);
+            
+            subQ.setConstraint(cs);
+
+            q.addFrom(subQ);
+            q.addToSelect(qfCount);
         }
 
-        q.setConstraint(cs);
-        
         return q;
     }
     
