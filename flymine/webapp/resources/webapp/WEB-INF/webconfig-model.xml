@@ -274,12 +274,14 @@
                                  max="0.10" 
                                  externalLink="" />
 <!--
-           <enrichmentwidgetdisplayer title="Tiffin Motif Enrichment"
+     <enrichmentwidgetdisplayer title="Tiffin Motif Enrichment"
                                       link="org.flymine.web.widget.TiffinURLQuery"
                                       dataSetLoader="org.flymine.web.widget.TiffinLdr"
                                       description="Tiffin Motifs enriched for genes in this list."
                                       max="0.10"
                                       label="Motif"
+                                      filters=""
+                                      filterLabel=""
                                       externalLink="http://servlet.sanger.ac.uk/tiffin/motif.jsp?acc="
                                       append=".2" />
 -->
