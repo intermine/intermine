@@ -42,7 +42,7 @@ public class DagValidatorTest extends TestCase
             + "id: id2" + ENDL
             + "name: term2" + ENDL
             + "is_a: id1" + ENDL
-            + "relationship: part_of id1" + ENDL;
+            + "relationship: regulates id1" + ENDL;
 
         parser.readTerms(new BufferedReader(new StringReader(test)));
         Collection root1 = parser.rootTerms.values();
@@ -57,7 +57,7 @@ public class DagValidatorTest extends TestCase
             + "[Term]" + ENDL
             + "id: id2" + ENDL
             + "name: term2" + ENDL
-            + "relationship: part_of id1";
+            + "relationship: negatively_regulates id1";
 
         parser.readTerms(new BufferedReader(new StringReader(test)));
         Collection root1 = parser.rootTerms.values();
