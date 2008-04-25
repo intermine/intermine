@@ -10,16 +10,9 @@ package org.flymine.web.widget;
  *
  */
 
+import java.util.ArrayList;
 import java.util.Collection;
 
-import org.flymine.model.genomic.DataSet;
-import org.flymine.model.genomic.Gene;
-import org.flymine.model.genomic.IntergenicRegion;
-import org.flymine.model.genomic.Motif;
-import org.flymine.model.genomic.Organism;
-import org.flymine.model.genomic.TFBindingSite;
-import org.intermine.bio.web.logic.BioUtil;
-import org.intermine.objectstore.ObjectStore;
 import org.intermine.objectstore.query.BagConstraint;
 import org.intermine.objectstore.query.ConstraintOp;
 import org.intermine.objectstore.query.ConstraintSet;
@@ -33,16 +26,27 @@ import org.intermine.objectstore.query.QueryFunction;
 import org.intermine.objectstore.query.QueryObjectReference;
 import org.intermine.objectstore.query.QueryValue;
 import org.intermine.objectstore.query.SimpleConstraint;
+
+import org.intermine.bio.web.logic.BioUtil;
+import org.intermine.objectstore.ObjectStore;
 import org.intermine.web.logic.bag.InterMineBag;
 import org.intermine.web.logic.widget.EnrichmentWidgetLdr;
+
+import org.flymine.model.genomic.DataSet;
+import org.flymine.model.genomic.Gene;
+import org.flymine.model.genomic.IntergenicRegion;
+import org.flymine.model.genomic.Motif;
+import org.flymine.model.genomic.Organism;
+import org.flymine.model.genomic.TFBindingSite;
 /**
  * @author Julie Sullivan
  */
 public class TiffinLdr implements EnrichmentWidgetLdr
 {
-    
-    private Collection<String> organisms;
+
     private String externalLink, append;
+    private Collection<String> organisms = new ArrayList<String>();
+    private Collection<String> organismsLower = new ArrayList<String>();
     private InterMineBag bag;
     
     /**
@@ -53,6 +57,9 @@ public class TiffinLdr implements EnrichmentWidgetLdr
      public TiffinLdr(InterMineBag bag, ObjectStore os, String extraAttribute) {
          this.bag = bag;
          organisms = BioUtil.getOrganisms(os, bag, false);
+         for (String s : organisms) {
+             organismsLower.add(s.toLowerCase());
+         }
      }
 
      /**
@@ -79,7 +86,7 @@ public class TiffinLdr implements EnrichmentWidgetLdr
              cs.addConstraint(new BagConstraint(qfGeneId, ConstraintOp.IN, bag.getOsb()));
          }
 
-         cs.addConstraint(new BagConstraint(qfOrganismName, ConstraintOp.IN, organisms));
+         cs.addConstraint(new BagConstraint(qfOrganismName, ConstraintOp.IN, organismsLower));
 
          QueryObjectReference qr1 = new QueryObjectReference(qcGene, "organism");
          cs.addConstraint(new ContainsConstraint(qr1, ConstraintOp.CONTAINS, qcOrganism));
@@ -102,7 +109,7 @@ public class TiffinLdr implements EnrichmentWidgetLdr
          cs.addConstraint(new SimpleConstraint(qfDataSet,                            
                                                ConstraintOp.EQUALS, new QueryValue("Tiffin")));
          Query subQ = new Query();
-         subQ.setDistinct(false);
+         subQ.setDistinct(true);
          
          subQ.addFrom(qcGene);
          subQ.addFrom(qcIntergenicRegion);
@@ -111,7 +118,7 @@ public class TiffinLdr implements EnrichmentWidgetLdr
          subQ.addFrom(qcMotif);
          subQ.addFrom(qcOrganism);
 
-         subQ.addToSelect(qfId);
+         //subQ.addToSelect(qfId);
          subQ.addToSelect(qfGeneId);
          
          subQ.setConstraint(cs);
@@ -125,14 +132,13 @@ public class TiffinLdr implements EnrichmentWidgetLdr
          q.addFrom(subQ);
          if (!calcTotal) {
              q.addToSelect(outerQfId);
-             
-         }
-         q.addToSelect(geneCount);
-         if (useBag && !calcTotal) {
-             q.addToSelect(outerQfId);
-         }
-         if (!calcTotal) {
-             q.addToGroupBy(outerQfId);
+             q.addToSelect(geneCount);
+             if (useBag) {
+                 q.addToSelect(outerQfId);
+             }
+             q.addToGroupBy(outerQfId);             
+         } else {
+             q.addToSelect(geneCount);         
          }
          return q;
      }
