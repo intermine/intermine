@@ -106,7 +106,7 @@ public class GoConverter extends FileConverter
      */
     @Override
     public void close() throws Exception {
-        LOG.info("productWrapperMap.size() = " + productWrapperMap.size());
+        //LOG.info("productWrapperMap.size() = " + productWrapperMap.size());
         // store all gene/protein data at the end of conversion because of  allGoAnnotation
         for (ItemWrapper nextWrapper : productWrapperMap.values()) {
             Item nextGeneProduct = nextWrapper.getItem();

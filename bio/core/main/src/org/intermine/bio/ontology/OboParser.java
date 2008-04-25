@@ -259,9 +259,12 @@ public class OboParser
                 for (Iterator iter = relationships.iterator(); iter.hasNext();) {
                     String relationship = (String) iter.next();
                     String bits[] = StringUtils.split(relationship);
-                    if (bits[0].equals("part_of")) {
+                    String relationshipType = bits[0]; 
+                    if (relationshipType.equals("regulates") 
+                                    || relationshipType.equals("negatively_regulates")
+                                    || relationshipType.equals("positively_regulates")) {
                         OboTerm pt = terms.get(bits[1]);
-                        LOG.debug(term + " part_of " + pt);
+                        LOG.debug(term + relationshipType + pt);
                         if (pt == null) {
                             LOG.warn("child term (" + term
                                      + ") in OBO file refers to a non-existant "
