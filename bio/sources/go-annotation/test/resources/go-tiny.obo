@@ -99,4 +99,4 @@ is_a: GO:0000014 ! child of term k
 id: GO:0000017
 name: child term n
 namespace: child_term
-regulates: GO:0000014 ! child of term k
+relationship: regulates GO:0000014 ! child of term k
