@@ -137,7 +137,7 @@ public class InterMineBag implements WebSearchable
      *
      * @return a List of Integers
      */
-    public List getContentsAsIds() {
+    public List<Integer> getContentsAsIds() {
         Query q = new Query();
         q.addToSelect(osb);
         q.setDistinct(false);
@@ -151,7 +151,7 @@ public class InterMineBag implements WebSearchable
      *
      * @return a List of InterMineObjects
      */
-    public List getContentsAsObjects() {
+    public List<Object> getContentsAsObjects() {
         Query q = new Query();
         QueryClass qc = new QueryClass(InterMineObject.class);
         q.addFrom(qc);
