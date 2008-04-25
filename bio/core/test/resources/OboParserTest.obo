@@ -33,7 +33,7 @@ name: reproduction
 alt_id: GO:0019952
 subset: goslim_generic
 is_a: GO:0000002 ! biological_process
-relationship: part_of GO:0000001 ! DNA recombination
+relationship: positively_regulates GO:0000001 ! DNA recombination
 synonym: "some_value" [VEH:391840]
 exact_synonym: "exact_value" [VEH:391840]
 broad_synonym: "broad_value" [VEH:391840]
@@ -44,4 +44,4 @@ narrow_synonym: "narrow_value" [VEH:391840]
 id: GO:0000004
 name: partoftest
 is_a: GO:0000001
-relationship: part_of GO:0000003
+relationship: regulates GO:0000003
