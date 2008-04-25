@@ -24,7 +24,7 @@ is_a: GO:0000001 ! child of root 1
 id: GO:0000005
 name: child term b
 namespace: child_term
-is_a: GO:0000001 ! child of root 1
+relationship: regulates GO:0000001
 
 [Term]
 id: GO:0000006
@@ -61,7 +61,7 @@ id: GO:0000011
 name: child term h
 namespace: child_term
 is_a: GO:0000004 ! child of term a
-is_a: GO:0000005 ! child of term b
+relationship: positively_regulates GO:0000005 ! child of term b
 
 [Term]
 id: GO:0000012
@@ -80,7 +80,7 @@ is_a: GO:0000007 ! child of term d
 id: GO:0000014
 name: child term k
 namespace: child_term
-is_a: GO:0000008 ! child of term e
+relationship: negatively_regulates GO:0000008 ! child of term e
 
 [Term]
 id: GO:0000015
@@ -99,4 +99,4 @@ is_a: GO:0000014 ! child of term k
 id: GO:0000017
 name: child term n
 namespace: child_term
-is_a: GO:0000014 ! child of term k
+regulates: GO:0000014 ! child of term k
