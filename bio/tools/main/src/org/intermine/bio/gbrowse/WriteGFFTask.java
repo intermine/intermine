@@ -145,8 +145,8 @@ public class WriteGFFTask extends Task
 
         // Map from Transcript to Location (on Chromosome)
         Map seenTranscripts = new HashMap();
-        // Map from exon to Location (on Chromosome)
-        Map seenTranscriptParts = new HashMap();
+        // Map from exon primary identifier to Location (on Chromosome)
+        Map<String, Location> seenTranscriptParts = new HashMap<String, Location>();
 
         // the last Chromosome seen
         Integer currentChrId = null;
@@ -204,7 +204,6 @@ public class WriteGFFTask extends Task
                     writeTranscriptsAndExons(gffWriter, currentChr, seenTranscripts,
                                              seenTranscriptParts, synonymMap, evidenceMap);
                     seenTranscripts = new HashMap();
-                    seenTranscriptParts = new HashMap();
                 }
 
                 synonymMap = makeSynonymMap(os, resultChrId);
@@ -261,10 +260,11 @@ public class WriteGFFTask extends Task
                 seenTranscripts.put(feature, loc);
             }
 
+            String primaryIdentifier = feature.getPrimaryIdentifier();
             if (feature instanceof Exon
                 // || feature instanceof FivePrimeUTR || feature instanceof ThreePrimeUTR
                 ) {
-                seenTranscriptParts.put(feature, loc);
+                seenTranscriptParts.put(primaryIdentifier, loc);
             }
 
             if (currentChr.getOrganism().getAbbreviation() == null
@@ -275,7 +275,7 @@ public class WriteGFFTask extends Task
                 && !currentChr.getOrganism().getAbbreviation().equals("MD")
                 && !currentChr.getOrganism().getAbbreviation().equals("RN")) {
 
-                String identifier = feature.getPrimaryIdentifier();
+                String identifier = primaryIdentifier;
 
                 String featureType = getFeatureName(feature);
 
@@ -338,7 +338,8 @@ public class WriteGFFTask extends Task
     }
 
     private void writeTranscriptsAndExons(PrintWriter gffWriter, Chromosome chr,
-                                          Map seenTranscripts, Map seenTranscriptParts,
+                                          Map seenTranscripts,
+                                          Map<String, Location> seenTranscriptParts,
                                           Map synonymMap, Map evidenceMap) {
         Iterator transcriptIter = seenTranscripts.keySet().iterator();
         while (transcriptIter.hasNext()) {
@@ -392,7 +393,7 @@ public class WriteGFFTask extends Task
             Iterator exonIter = exons.iterator();
             while (exonIter.hasNext()) {
                 Exon exon = (Exon) exonIter.next();
-                Location exonLocation = (Location) seenTranscriptParts.get(exon);
+                Location exonLocation = seenTranscriptParts.get(exon.getPrimaryIdentifier());
 
                 List exonSynonymValues = (List) synonymMap.get(exon.getId());
                 List exonEvidence = (List) evidenceMap.get(exon.getId());
