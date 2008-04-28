@@ -42,8 +42,8 @@
     <div style="margin:5px;width:400px;">
       <h2>News</h2>
       <ol id="news">
-      <li><a href="${WEB_PROPERTIES['project.sitePrefix']}/release-notes.shtml"><img src="images/new_ico.png" style="float:left; position:absolute"></a><div style="padding-left:38px"> ${WEB_PROPERTIES['begin.intro']}</div></li>
-      <c:set var="linky" value="${WEB_PROPERTIES['survey.link']}"/>
+      <li><a href="${WEB_PROPERTIES['project.sitePrefix']}/release-notes.shtml"><img src="images/new_ico.png" style="float:left; position:absolute"></a><div style="padding-left:38px"> ${WEB_PROPERTIES['begin.news.1']}</div></li>
+      <c:set var="linky" value="${WEB_PROPERTIES['begin.news.2']}"/>
        <c:if test="${! empty linky}">
          <li>${linky}</li>
        </c:if>
