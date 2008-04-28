@@ -260,7 +260,8 @@ public class OboParser
                     String relationship = (String) iter.next();
                     String bits[] = StringUtils.split(relationship);
                     String relationshipType = bits[0]; 
-                    if (relationshipType.equals("regulates") 
+                    if (relationshipType.equals("part_of")
+                                    || relationshipType.equals("regulates") 
                                     || relationshipType.equals("negatively_regulates")
                                     || relationshipType.equals("positively_regulates")) {
                         OboTerm pt = terms.get(bits[1]);
