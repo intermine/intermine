@@ -53,9 +53,9 @@
 		<collection name="appliedProtocols"
 			referenced-type="org.flymine.model.genomic.AppliedProtocol"
 			reverse-reference="experimentSubmission" />
-		<collection name="submissionData"
+		<!-- <collection name="submissionData"
 			referenced-type="org.flymine.model.genomic.SubmissionData"
-			reverse-reference="experimentSubmission" />
+			reverse-reference="experimentSubmission" />-->
 		<collection name="protocols"
 			referenced-type="org.flymine.model.genomic.Protocol"
 			reverse-reference="experimentSubmissions" />
@@ -81,33 +81,22 @@
 	<class name="org.flymine.model.genomic.AppliedProtocol"
 		is-interface="true">
 		<attribute name="name" type="java.lang.String" />
-		<!-- 
-			<attribute name="direction" type="java.lang.String" />
-		-->
+
 		<!-- parameter values -->
-		<attribute name="bandwidth" type="java.lang.Integer" />
-		<attribute name="chromosome" type="java.lang.String" />
-		<attribute name="cutoff" type="java.lang.String" />
-		<attribute name="genomeVersion" type="java.lang.String" />
-		<attribute name="innerPrimer" type="java.lang.String" />
 		<attribute name="label" type="java.lang.String" />
-		<attribute name="maxgap" type="java.lang.Integer" />
-		<attribute name="medianValue" type="java.lang.Integer" />
-		<attribute name="minrun" type="java.lang.Integer" />
-		<attribute name="transcriptId" type="java.lang.String" />
 
 		<!-- source attributes -->
-		<attribute name="source" type="java.lang.String" />
+		<!-- <attribute name="source" type="java.lang.String" />
 		<attribute name="RNAId" type="java.lang.String" />
 		<attribute name="cellType" type="java.lang.String" />
 		<attribute name="biosampleNr" type="java.lang.String" />
 		<attribute name="characteristics" type="java.lang.String" />
-
+		-->
 		<!-- hybridization name -->
-		<attribute name="hybridizationName" type="java.lang.String" />
+		<!-- <attribute name="hybridizationName" type="java.lang.String" /> -->
 
 		<!-- parameter value attributes -->
-		<attribute name="unit" type="java.lang.String" />
+		<!-- <attribute name="unit" type="java.lang.String" />-->
 
 		<reference name="protocol"
 			referenced-type="org.flymine.model.genomic.Protocol"
@@ -115,8 +104,11 @@
 		<reference name="experimentSubmission"
 			referenced-type="org.flymine.model.genomic.ExperimentSubmission"
 			reverse-reference="appliedProtocols" />
-		<collection name="outputData"
+		<collection name="attributes"
+			referenced-type="org.flymine.model.genomic.SubmissionData" reverse-reference="appliedProtocol" />
+		<!--  <collection name="outputs"
 			referenced-type="org.flymine.model.genomic.SubmissionData" />
+		-->
 		<!-- 
 			<collection name="nextAppliedProtocols"
 			referenced-type="org.flymine.model.genomic.AppliedProtocol"
@@ -127,34 +119,14 @@
 		-->
 	</class>
 
-	<class name="org.flymine.model.genomic.SubmissionData"
+    <class name="org.flymine.model.genomic.SubmissionData"
 		is-interface="true">
-		<!-- result values -->
-    <attribute name="innerPrimer" type="java.lang.String" />
-    <attribute name="outerPrimer" type="java.lang.String" />
-    <attribute name="traceArchiveId" type="java.lang.String" />
-		<attribute name="genBankId" type="java.lang.String" />
-    <attribute name="estAcc" type="java.lang.String" />
-		<!-- data  -->
-		<attribute name="arrayDataFile" type="java.lang.String" />
-		<attribute name="arrayDesignRef" type="java.lang.String" />
-		<attribute name="derivedArrayDataFile" type="java.lang.String" />
-		<attribute name="resultFile" type="java.lang.String" />
-		<attribute name="linkData" type="java.lang.String" />
-
-		<!-- from previous sample data, leaving it out for now -->
-		<!--    
-			<attribute name="hybridizationName" type="java.lang.String" />
-			<attribute name="sample" type="java.lang.String" />
-			<attribute name="extract" type="java.lang.String" />
-			<attribute name="labelExtract" type="java.lang.String" />
-			<attribute name="ArrayMatrixDataFile" type="java.lang.String" />
-		-->
-		<reference name="experimentSubmission"
-			referenced-type="org.flymine.model.genomic.ExperimentSubmission"
-			reverse-reference="submissionData" />
-		<collection name="nextAppliedProtocols"
-			referenced-type="org.flymine.model.genomic.AppliedProtocol" />
+		<attribute name="name" type="java.lang.String"/>
+		<attribute name="direction" type="java.lang.String"/>
+		<attribute name="type" type="java.lang.String"/>
+		<attribute name="value" type="java.lang.String"/>
+		<reference name="feature" referenced-type="org.flymine.model.genomic.LocatedSequenceFeature"/>
+		<reference name="appliedProtocol" referenced-type="org.flymine.model.genomic.AppliedProtocol" reverse-reference="attributes"/>
 	</class>
-
+	
 </classes>

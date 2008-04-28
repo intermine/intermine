@@ -64,7 +64,7 @@ public class ChadoSequenceProcessor extends ChadoProcessor
     // feature type to query from the feature table
     private static final List<String> DEFAULT_FEATURES = Arrays.asList(
             "gene", "mRNA", "transcript",
-            "CDS", "intron", "exon",
+            "CDS", "intron", "exon", "EST",
             "five_prime_untranslated_region",
             "five_prime_UTR", "three_prime_untranslated_region",
             "three_prime_UTR"
@@ -1403,7 +1403,15 @@ public class ChadoSequenceProcessor extends ChadoProcessor
         fdat.existingSynonyms.add(identifier);
         return returnItem;
     }
-
+    
+    /**
+     * Fetch the populated map of chado feature id to FeatureData objects.
+     * @return map of feature details
+     */
+    protected Map<Integer, FeatureData> getFeatureMap() {
+        return this.featureMap;
+    }
+    
     /**
      * Data about one feature from the feature table in chado.  This exists to avoid having lots of
      * Item objects in memory.
@@ -1468,6 +1476,14 @@ public class ChadoSequenceProcessor extends ChadoProcessor
          */
         public OrganismData getOrganismData() {
             return organismData;
+        }
+        
+        /**
+         * Return the InterMine type of this object
+         * @return the InterMine type
+         */
+        public String getInterMineType() {
+            return interMineType;
         }
     }
 
