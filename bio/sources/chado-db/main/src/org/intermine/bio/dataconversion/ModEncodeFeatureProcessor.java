@@ -11,9 +11,9 @@ package org.intermine.bio.dataconversion;
  */
 
 import java.util.List;
+import java.util.Map;
 
 import org.intermine.bio.util.OrganismData;
-import org.intermine.bio.util.OrganismRepository;
 import org.intermine.objectstore.ObjectStoreException;
 import org.intermine.xml.full.Item;
 
@@ -50,7 +50,7 @@ public class ModEncodeFeatureProcessor extends ChadoSequenceProcessor
      */
     @Override
     protected String getExtraFeatureConstraint() {
-        
+
         /* TODO: needs information from EO
         return "feature_id IN "
             + "(SELECT feature_id "
@@ -121,5 +121,9 @@ public class ModEncodeFeatureProcessor extends ChadoSequenceProcessor
         } else {
             DataSetStoreHook.setDataSets(getModel(), item, dataSetIdentifier, dataSourceIdentifier);
         }
+    }
+
+    protected String getDataSourceName() {
+        return "modENCODE";
     }
 }
