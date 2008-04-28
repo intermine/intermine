@@ -93,4 +93,11 @@ public class OrganismData
     void setTaxonId(int taxonId) {
         this.taxonId = taxonId;
     }
+
+    /**
+     * {@inheritDoc}
+     */
+    public String toString() {
+        return genus + " " + species + ", " + abbreviation + ", " + taxonId;
+    }
 }
