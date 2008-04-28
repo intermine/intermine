@@ -12,7 +12,7 @@ function getProcessGraphWidget(widgetId, bagName) {
 }
 
 function handleGraphWidget(widget) {
-  
+
   calcNotAnalysed(widget);
     
   Element.hide($('widgetdatanoresults' + widget.id));
@@ -141,6 +141,5 @@ function submitWidgetForm(widgetId,type,extra) {
 }
 
 function calcNotAnalysed(widget) {
-    var widgetnotanalysed = document.getElementById('widgetnotanalysed' + widget.id);
-    widgetnotanalysed.innerHtml = widget.notAnalysed;
+    $('widgetnotanalysed' + widget.id).update(widget.notAnalysed);
 }
