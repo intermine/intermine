@@ -10,21 +10,11 @@
  *
  */
 
-import java.io.UnsupportedEncodingException;
-import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
-import org.intermine.metadata.AttributeDescriptor;
-import org.intermine.metadata.ClassDescriptor;
-import org.intermine.metadata.FieldDescriptor;
-import org.intermine.metadata.Model;
-import org.intermine.metadata.ReferenceDescriptor;
-import org.intermine.model.InterMineObject;
-import org.intermine.objectstore.ObjectStore;
-import org.intermine.objectstore.ObjectStoreException;
 import org.intermine.objectstore.query.BagConstraint;
 import org.intermine.objectstore.query.ConstraintOp;
 import org.intermine.objectstore.query.ContainsConstraint;
@@ -37,8 +27,18 @@ import org.intermine.objectstore.query.QueryHelper;
 import org.intermine.objectstore.query.QueryObjectReference;
 import org.intermine.objectstore.query.QueryReference;
 import org.intermine.objectstore.query.QueryValue;
+import org.intermine.objectstore.query.Results;
 import org.intermine.objectstore.query.ResultsRow;
 import org.intermine.objectstore.query.SimpleConstraint;
+
+import org.intermine.metadata.AttributeDescriptor;
+import org.intermine.metadata.ClassDescriptor;
+import org.intermine.metadata.FieldDescriptor;
+import org.intermine.metadata.Model;
+import org.intermine.metadata.ReferenceDescriptor;
+import org.intermine.model.InterMineObject;
+import org.intermine.objectstore.ObjectStore;
+import org.intermine.objectstore.ObjectStoreException;
 import org.intermine.path.Path;
 import org.intermine.util.TypeUtil;
 import org.intermine.web.logic.ClassKeyHelper;
@@ -46,6 +46,9 @@ import org.intermine.web.logic.bag.InterMineBag;
 import org.intermine.web.logic.config.FieldConfig;
 import org.intermine.web.logic.config.FieldConfigHelper;
 import org.intermine.web.logic.config.WebConfig;
+
+import java.io.UnsupportedEncodingException;
+import java.net.URLEncoder;
 
 /**
  * @author Xavier Watkins
@@ -90,7 +93,7 @@ public class BagTableWidgetLoader
         
         // TODO validate start type vs. bag type
         ClassDescriptor cldStart = pathTmp.getStartClassDescriptor();
-        q = constructQuery(model, bag, cldStart, pathString);
+        q = constructQuery(model, bag, cldStart, pathString, false);
         
         List results;
         try {
@@ -173,6 +176,9 @@ public class BagTableWidgetLoader
         } else {
             columns.add(bag.getType() + "s");
         }
+
+        q = constructQuery(model, bag, cldStart, pathString, true);
+        widgetTotal = calcTotal(os, q);
     }
 
     /**
@@ -217,28 +223,29 @@ public class BagTableWidgetLoader
      * @throws IllegalArgumentException if problem processing path
      */
     private Query constructQuery(Model model, InterMineBag bag, ClassDescriptor cldStart,
-                                 String pathString)
+                                 String pathString, boolean calcTotal)
         throws ClassNotFoundException, IllegalArgumentException {
                 
         Query q = new Query();
         boolean first = true;
         String[] queryBits = pathString.split("\\.");
         QueryClass qcStart = null;
+        QueryField qfStartId = null;
         for (int i = 1; i < queryBits.length; i++) {
             if (qcStart == null) {
                 qcStart = new QueryClass(cldStart.getType());
+                qfStartId = new QueryField(qcStart, "id");
             }
+            
+            QueryField qfId = new QueryField(qcStart, "id");
             
             if (first) {
                 q.addFrom(qcStart);
                 // this is the start of the path sp constraint to be in bag
-                BagConstraint bc =
-                    new BagConstraint(new QueryField(qcStart, "id"),
-                                      ConstraintOp.IN, bag.getOsb());
-                QueryHelper.addConstraint(q, bc); 
+                QueryHelper.addConstraint(q, 
+                                          new BagConstraint(qfId, ConstraintOp.IN, bag.getOsb())); 
             }
             
-
             String refName;
             String constraintName = null, constraintValue = null;
             // extra constraints have syntax Company.departments[name=DepartmentA].employees
@@ -284,14 +291,33 @@ public class BagTableWidgetLoader
                 constraintValue = null;
             }
             
+            QueryFunction qf = new QueryFunction();
+            
             // if we are at the end of the path, add to select and group by
             if (queryBits.length == (i + 1)) {
-                q.addToSelect(qcEnd);
-                q.addToGroupBy(qcEnd);
-                QueryFunction qf = new QueryFunction();
-                q.addToSelect(qf);
-                q.addToOrderBy(qf, "desc");
-
+                
+                if (!calcTotal) {
+                    
+                    q.setDistinct(false);
+                    q.addToSelect(qcEnd);
+                    q.addToGroupBy(qcEnd);
+                    
+                    q.addToSelect(qf);
+                    q.addToOrderBy(qf, "desc");
+                    
+                } else {
+                    
+                    Query subQ = new Query();
+                    subQ = q;
+                    subQ.setDistinct(true);
+                    subQ.clearSelect();
+                    subQ.addToSelect(qfStartId);
+                    
+                    q = new Query();
+                    q.setDistinct(false);
+                    q.addToSelect(qf);
+                    q.addFrom(subQ);
+                }
             }
             cldStart = cldEnd;
             qcStart = qcEnd;
@@ -356,6 +382,16 @@ public class BagTableWidgetLoader
         return widgetTotal;
     }
 
+    private static int calcTotal(ObjectStore os, Query q) {
 
+        Results res = os.execute(q);        
+        Iterator iter = res.iterator();
+        int n = 0;
+        while (iter.hasNext()) {
+            ResultsRow resRow = (ResultsRow) iter.next();
+            n = ((java.lang.Long) resRow.get(0)).intValue();
+        }
+        return n;
+    }
 }
   

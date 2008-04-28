@@ -42,7 +42,7 @@ public class TableWidget extends Widget
     private BagTableWidgetLoader bagWidgLdr;
     private String pathStrings, externalLink, externalLinkLabel;
     private String columnTitle = null;
-    private int notAnalysed = 0;
+    private int notAnalysed = -1;
     
     /**
      * {@inheritDoc}
@@ -52,8 +52,7 @@ public class TableWidget extends Widget
                         os.getModel(), classKeys, fields, getLink(), getColumnTitle(),
                         getExternalLink(), getExternalLinkLabel());
 
-        notAnalysed = bag.getSize() - bagWidgLdr.getWidgetTotal();
-        
+        notAnalysed = bag.getSize() - bagWidgLdr.getWidgetTotal();        
     }
     
     /**
