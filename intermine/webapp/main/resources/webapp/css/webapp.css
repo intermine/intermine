@@ -102,7 +102,9 @@ li {
 #topnav {
     float:right;
     background-color: #5C0075; color: #FFF; font: 0.95em Arial,sans-serif;
-    padding:5px;}
+    padding:5px;
+    white-space:nowrap;
+}
 
 #pagecontent {
   clear:both;
