@@ -94,3 +94,11 @@ table.results th.checkbox,table.results td.checkbox{
 table.results tr td.highlightCell { 
 	background-color: #FFCBFF; 
 }
+
+table.results tr td.noHighlightObject {
+    /* none */
+}
+
+table.results tr td.highlightObject {
+    background-color: yellow;
+}

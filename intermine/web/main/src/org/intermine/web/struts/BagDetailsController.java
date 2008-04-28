@@ -31,6 +31,8 @@ import org.intermine.web.logic.config.Type;
 import org.intermine.web.logic.config.WebConfig;
 import org.intermine.web.logic.profile.Profile;
 import org.intermine.web.logic.results.PagedTable;
+import org.intermine.web.logic.results.ResultElement;
+import org.intermine.web.logic.results.WebTable;
 import org.intermine.web.logic.search.SearchRepository;
 import org.intermine.web.logic.search.WebSearchable;
 import org.intermine.web.logic.session.SessionMethods;
@@ -55,14 +57,17 @@ import org.apache.struts.tiles.actions.TilesAction;
 public class BagDetailsController extends TilesAction
 {
 
+    private static final int PAGE_SIZE = 10;
+
     /**
      * {@inheritDoc}
      */
-    public ActionForward execute(@SuppressWarnings("unused") ComponentContext context, 
-                                 @SuppressWarnings("unused") ActionMapping mapping, 
-                                 @SuppressWarnings("unused") ActionForm form, 
-                                 HttpServletRequest request, 
-                                 @SuppressWarnings("unused") HttpServletResponse response) 
+    @Override
+    public ActionForward execute(@SuppressWarnings("unused") ComponentContext context,
+                                 @SuppressWarnings("unused") ActionMapping mapping,
+                                 @SuppressWarnings("unused") ActionForm form,
+                                 HttpServletRequest request,
+                                 @SuppressWarnings("unused") HttpServletResponse response)
                                  throws Exception {
 
         HttpSession session = request.getSession();
@@ -71,7 +76,7 @@ public class BagDetailsController extends TilesAction
 
         String bagName = request.getParameter("bagName");
         Boolean myBag = Boolean.FALSE;
-        
+
         if (bagName == null) {
             bagName = request.getParameter("name");
         }
@@ -82,7 +87,7 @@ public class BagDetailsController extends TilesAction
             scope = TemplateHelper.ALL_TEMPLATE;
         }
 
-        if (scope.equals(TemplateHelper.USER_TEMPLATE) 
+        if (scope.equals(TemplateHelper.USER_TEMPLATE)
                         || scope.equals(TemplateHelper.ALL_TEMPLATE)) {
             Profile profile = (Profile) session.getAttribute(Constants.PROFILE);
             imBag = profile.getSavedBags().get(bagName);
@@ -106,13 +111,13 @@ public class BagDetailsController extends TilesAction
         if (imBag == null) {
             return null;
         }
-        
+
         WebConfig webConfig = (WebConfig) servletContext.getAttribute(Constants.WEBCONFIG);
         Model model = os.getModel();
         Type type = (Type) webConfig.getTypes().get(model.getPackageName() + "." + imBag.getType());
-        
+
         List<Widget> widgets = type.getWidgets();
-        Map<Integer, Map<String, Collection>> widget2extraAttrs 
+        Map<Integer, Map<String, Collection>> widget2extraAttrs
         = new HashMap<Integer, Map<String, Collection>>();
         for (Widget widget2 : widgets) {
             widget2extraAttrs.put(new Integer(widget2.getId()), widget2.getExtraAttributes(
@@ -122,7 +127,7 @@ public class BagDetailsController extends TilesAction
         request.setAttribute("widget2extraAttrs", widget2extraAttrs);
 
         PagedTable pagedResults = SessionMethods.getResultsTable(session, "bag." + imBag.getName());
-        
+
         if (pagedResults == null || pagedResults.getExactSize() != imBag.getSize()) {
             pagedResults = SessionMethods.doQueryGetPagedTable(request, servletContext, imBag);
         }
@@ -150,37 +155,54 @@ public class BagDetailsController extends TilesAction
 
         // Set the size
         String pageStr = request.getParameter("page");
-        int page = (pageStr == null ? 0 : Integer.parseInt(pageStr));
+        int page = -1;
 
-        pagedResults.setPageAndPageSize(page, 5);
-//        if ((imBag.getSize() / 4) < page) {
-//            page = 0;
-//        }
+        String highlightIdStr = request.getParameter("highlightId");
+        Integer highlightId = null;
+        if (highlightIdStr != null) {
+            highlightId = new Integer(Integer.parseInt(highlightIdStr));
+        }
+
+        boolean gotoHighlighted = false;
+
+        String gotoHighlightedStr = request.getParameter("gotoHighlighted");
+
+        if (gotoHighlightedStr != null
+            && (gotoHighlightedStr.equalsIgnoreCase("t")
+                || gotoHighlightedStr.equalsIgnoreCase("true"))) {
+            gotoHighlighted = true;
+        }
+        if (highlightId != null && gotoHighlighted) {
+            // calculate the page
+            WebTable webTable = pagedResults.getAllRows();
+
+            for (int i = 0; i < webTable.size(); i++) {
+                List<ResultElement> row = webTable.getResultElements(i);
+                for (ResultElement resultElement: row) {
+                    Integer id = resultElement.getId();
+                    if (id.equals(highlightId)) {
+                        page = i / PAGE_SIZE;
+                        break;
+                    }
+                }
+            }
+        }
+
+        if (page == -1) {
+            // use the page from the URL
+            page = (pageStr == null ? 0 : Integer.parseInt(pageStr));
+        }
+
+        pagedResults.setPageAndPageSize(page, PAGE_SIZE);
 
         request.setAttribute("addparameter", request.getParameter("addparameter"));
         request.setAttribute("myBag", myBag);
         request.setAttribute("bag", imBag);
         request.setAttribute("bagSize", new Integer(imBag.size()));
         request.setAttribute("pagedResults", pagedResults);
+        request.setAttribute("highlightId", highlightIdStr);
 
         return null;
-    }
-    
-    private int calcTotal(ObjectStore os, Model model, InterMineBag bag) 
-    throws ClassNotFoundException {
-        QueryClass bagType = new QueryClass(Class.forName(model.getPackageName() 
-                                                          + "." + bag.getType()));
-        Query q = new Query();
-        q.addToSelect(new QueryFunction());
-        q.addFrom(bagType);
-        Results results = os.execute(q);
-        Iterator iter = results.iterator();
-        int i = 0;
-        while (iter.hasNext()) {
-           ResultsRow resRow = (ResultsRow) iter.next();
-           i = ((java.lang.Long) resRow.get(0)).intValue();           
-        }
-        return i;
     }
 }
 

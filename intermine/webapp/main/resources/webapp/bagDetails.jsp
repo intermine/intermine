@@ -94,6 +94,7 @@
      <tiles:put name="pagedResults" beanName="pagedResults" />
      <tiles:put name="currentPage" value="bagDetails" />
      <tiles:put name="bagName" value="${bag.name}" />
+     <tiles:put name="highlightId" value="${highlightId}"/>
 </tiles:insert>
 </div>
 

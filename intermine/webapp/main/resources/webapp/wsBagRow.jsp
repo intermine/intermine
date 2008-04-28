@@ -12,6 +12,7 @@
 <tiles:importAttribute name="statusIndex"/>
 <tiles:importAttribute name="wsCheckBoxId" ignore="true"/>
 <tiles:importAttribute name="makeCheckBoxes" ignore="true"/>
+<tiles:importAttribute name="currentObjectId" ignore="true"/>
 
 <!-- wsBagRow.jsp -->
 
@@ -35,7 +36,12 @@
       <td colspan="2">
         <c:set var="nameForURL"/>
         <str:encodeUrl var="nameForURL">${name}</str:encodeUrl>
-        <html:link action="/bagDetails?bagName=${nameForURL}">
+        <c:set var="extraParams" value=""/>
+        <c:if test="${empty currentObjectId}">
+          <c:set var="extraParams" 
+                 value="&highlightId=${currentObjectId}&amp;gotoHighlighted=true"/>
+        </c:if>
+        <html:link action="/bagDetails?bagName=${nameForURL}${extraParams}">
           <c:out value="${webSearchable.name}"/>
         </html:link>
       </td>

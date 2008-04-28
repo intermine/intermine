@@ -271,6 +271,7 @@
             <tiles:put name="showDescriptions" value="true"/>
             <tiles:put name="showSearchBox" value="false"/>
             <tiles:put name="showCount" value="true"/>
+            <tiles:put name="currentObjectId" value="${object.id}"/>
           </tiles:insert>
     </div>
  
