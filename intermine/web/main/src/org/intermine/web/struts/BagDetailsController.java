@@ -12,15 +12,8 @@ package org.intermine.web.struts;
 
 import java.util.Collection;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
-
-import org.intermine.objectstore.query.Query;
-import org.intermine.objectstore.query.QueryClass;
-import org.intermine.objectstore.query.QueryFunction;
-import org.intermine.objectstore.query.Results;
-import org.intermine.objectstore.query.ResultsRow;
 
 import org.intermine.metadata.Model;
 import org.intermine.objectstore.ObjectStore;
