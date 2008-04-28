@@ -54,6 +54,10 @@ document.write('<link rel="stylesheet" href="css/webSearchableList_js.css" type=
 <%-- if true, keep the spinner visible until showWSList() is called --%>
 <tiles:importAttribute name="delayDisplay" ignore="true"/>
 
+<%-- if set, the id of the currently displayed object - used on the object
+     details page to pass highlightId to gotows.do --%>
+<tiles:importAttribute name="currentObjectId" ignore="true"/>
+
 
 <html:xhtml/>
 
@@ -151,6 +155,7 @@ document.write('<link rel="stylesheet" href="css/webSearchableList_js.css" type=
                     <tiles:put name="showNames" value="${showNames}"/>
                     <tiles:put name="showTitles" value="${showTitles}"/>
                     <tiles:put name="showDescriptions" value="${showDescriptions}"/>
+                    <tiles:put name="currentObjectId" value="${currentObjectId}"/>
                   </tiles:insert>
                 </tr>
               </c:forEach>
@@ -172,17 +177,26 @@ document.write('<link rel="stylesheet" href="css/webSearchableList_js.css" type=
               <tiles:put name="showNames" value="${showNames}"/>
               <tiles:put name="showTitles" value="${showTitles}"/>
               <tiles:put name="showDescriptions" value="${showDescriptions}"/>
+              <tiles:put name="currentObjectId" value="${currentObjectId}"/>
             </tiles:insert>
           </c:forEach>
         </c:when>
         <c:otherwise>
           <%-- make a list --%>
+
+          <c:set var="extraParams" value=""/>
+          <c:if test="${!empty currentObjectId}">
+            <c:set var="extraParams" 
+                   value="&highlightId=${currentObjectId}&amp;gotoHighlighted=true"/>
+          </c:if>
+
           <ul>
             <c:forEach items="${filteredWebSearchables}" var="entry">
               <li id='${wsListId}_${type}_item_${entry.value.name}'>
                 <div class="wsListElement">
-                  <a href="/${WEB_PROPERTIES['webapp.path']}/gotows.do?type=${type}&amp;scope=${scope}&amp;name=${entry.key}">${entry.value.title}</a>
-          
+                  <html:link action="/gotows.do?type=${type}&amp;scope=${scope}&amp;name=${entry.key}${extraParams}">
+                    ${entry.value.title}
+                  </html:link>
           <c:if test="${showCount}">
            <c:catch>
                      (<c:out value="${entry.value.size}"/>

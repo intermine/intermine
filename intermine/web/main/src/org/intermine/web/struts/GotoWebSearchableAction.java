@@ -44,8 +44,12 @@ public class GotoWebSearchableAction extends InterMineAction
         String type = request.getParameter("type");
         String scope = request.getParameter("scope");
         String name = request.getParameter("name");
+        String highlightId = request.getParameter("highlightId");
+        String gotoHighlighted = request.getParameter("gotoHighlighted");
 
         ForwardParameters forwardParameters = new ForwardParameters(mapping.findForward(type));
-        return forwardParameters.addParameter("name", name).addParameter("scope", scope).forward();
+        return forwardParameters.addParameter("name", name).addParameter("scope", scope)
+            .addParameter("highlightId", highlightId)
+            .addParameter("gotoHighlighted", gotoHighlighted).forward();
     }
 }

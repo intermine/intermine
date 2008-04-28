@@ -10,6 +10,7 @@
 <tiles:importAttribute name="pagedResults" ignore="false"/>
 <tiles:importAttribute name="currentPage" ignore="false"/>
 <tiles:importAttribute name="bagName" ignore="true"/>
+<tiles:importAttribute name="highlightId" ignore="true"/>
 
 <script type="text/javascript" src="js/table.js" ></script>
 <link rel="stylesheet" href="css/resultstables.css" type="text/css" />
@@ -28,7 +29,7 @@
 
   /*var columnsToDisable = ${columnsToDisable};
   var columnsToHighlight = ${columnsToHighlight};
-  var bagType = null;*/  
+  var bagType = null;*/
 
 //]]>-->
 </script>
@@ -39,20 +40,20 @@
   <%-- The headers --%>
   <tr>
     <c:forEach var="column" items="${pagedResults.columns}" varStatus="status">
-      <im:formatColumnName outVar="displayPath" str="${column.name}" /> 
+      <im:formatColumnName outVar="displayPath" str="${column.name}" />
       <im:unqualify className="${column.name}" var="pathEnd"/>
       <im:prefixSubstring str="${column.name}" outVar="columnPathPrefix" delimiter="."/>
       <c:choose>
         <c:when test="${!empty QUERY
                       && !empty QUERY.pathStringDescriptions[columnPathPrefix]}">
-          <c:set var="columnDisplayName" 
+          <c:set var="columnDisplayName"
                  value="<span class='viewPathDescription' title='${displayPath}'>${QUERY.pathStringDescriptions[columnPathPrefix]}</span> &gt; ${pathEnd}"/>
         </c:when>
         <c:otherwise>
           <c:set var="columnDisplayName" value="${displayPath}"/>
         </c:otherwise>
       </c:choose>
-      
+
       <c:choose>
         <c:when test="${column.visible}">
             <c:if test="${(column.selectable && ((!isWebCollection) || (! noBagSave && status.count<=1))) && empty bag}">
@@ -73,9 +74,9 @@
               <%-- summary --%>
               <c:if test="${!empty column.path.noConstraintsString}">
               <fmt:message key="columnsummary.getsummary" var="summaryTitle" />
-                <a href="javascript:getColumnSummary('${pagedResults.tableid}','${column.path.noConstraintsString}', &quot;${columnDisplayName}&quot;)" 
+                <a href="javascript:getColumnSummary('${pagedResults.tableid}','${column.path.noConstraintsString}', &quot;${columnDisplayName}&quot;)"
                    title="${summaryTitle}"><img src="images/summary_maths.png" title="${summaryTitle}"/></a>
-              </c:if>            
+              </c:if>
             </td>
             <td style="white-space:nowrap;background:none;border:none;padding:0;margin:0">
            <%-- sort img --%>
@@ -83,8 +84,8 @@
                   <img border="0"
                        width="17" height="16" src="images/${sortOrderMap[column.name]}_gray.gif"
                           title="Results are sorted by ${column.name}"/>
-              </c:if>      
-                       
+              </c:if>
+
               <%-- left --%>
               <c:if test="${not status.first}">
                 <fmt:message key="results.moveLeftHelp" var="moveLeftTitle">
@@ -178,10 +179,19 @@
                   </html:multibox>
                 </td>
               </c:if>
-              <td id="cell,${status2.index},${status.index},${row[column.index].htmlId}">
-                <c:set var="resultElement" value="${row[column.index]}" scope="request"/>
-                <c:set var="columnType" value="${column.type}" scope="request"/>
-                <tiles:insert name="objectView.tile" />
+
+               <c:set var="resultElement" value="${row[column.index]}" scope="request"/>
+               <c:set var="objectViewClass" value="noHighlightObject"/>
+               <c:if test="${!empty highlightId && resultElement.id == highlightId}">
+                 <c:set var="objectViewClass" value="highlightObject"/>
+               </c:if>
+
+               <td id="cell,${status2.index},${status.index},${row[column.index].htmlId}"
+                   class="${objectViewClass}">
+                 <c:set var="columnType" value="${column.type}" scope="request"/>
+                 <div>
+                   <tiles:insert name="objectView.tile"/>
+                 </div>
               </td>
             </c:when>
             <c:otherwise>
@@ -200,7 +210,7 @@
       <img style="float:right";
            src="images/close.png" title="Close"
            onclick="javascript:Effect.Fade('summary', { duration: 0.30 });"
-           onmouseout="this.style.cursor='normal';" 
+           onmouseout="this.style.cursor='normal';"
            onmouseover="this.style.cursor='pointer';"/>
     </div>
     <div id="summary_loading"><img src="images/wait18.gif" title="loading icon">&nbsp;Loading...</div>
