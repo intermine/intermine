@@ -83,12 +83,13 @@ print "creating $home/$flybase_dir\n";
 
 if (!(-d $download_dir)) {
 print "creating $download_dir\n";
-    mkdir "$download_dir";
+    mkdir "$download_dir" or die "failed to create $download_dir";
 }
 
 if (!(-d "$download_dir/$fasta_dir")) {
 print "creating $download_dir/$fasta_dir\n";
-    mkdir "$download_dir/$fasta_dir";
+    mkdir "$download_dir/$fasta_dir"
+        or die "failed to create $download_dir/$fasta_dir";
 }
 
 # now find fasta from genomes/xxxx/current/fasta
