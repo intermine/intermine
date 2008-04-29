@@ -1,10 +1,9 @@
-
 <project name="uniprot" default="default" basedir=".">
   <description>build, test, package uniprot</description>
-  
+
   <import file="../../../imbuild/source.xml"/>
-  
-  <target name="-pre-retrieve" unless="use.split.files">
+
+  <target name="-pre-retrieve" if="use.filter">
     <property name="build.data.dir" location="${build.dir}/data/${uniprot.organisms}"/>
     <mkdir dir="${build.data.dir}"/>
     <taskdef name="filter-uniprot"
@@ -14,36 +13,26 @@
       <fileset dir="${src.data.dir}" includes="*.xml"/>
     </filter-uniprot>
   </target>
-  
-  <target name="-retrieve-tgt-from-custom-file" depends="-retrieve-tgt-from-custom-file-split,-retrieve-tgt-from-custom-file-nosplit"/>
 
-  <target name="-retrieve-tgt-from-custom-file-split-condition">
-    <condition property="have.file.custom.tgt.use.split.files">
-      <and>
-        <isset property="have.file.custom.tgt"/>
-        <isset property="use.split.files"/>
-      </and>
-    </condition>
-  </target>
+  <target name="-retrieve-tgt-from-custom-file" depends="-retrieve-tgt-from-custom-file-filtered,-retrieve-tgt-from-custom-file-whole"/>
 
-  <target name="-retrieve-tgt-from-custom-file-split" depends="-retrieve-tgt-from-custom-file-split-condition" if="have.file.custom.tgt.use.split.files">
-    <convert-file      
+  <target name="-retrieve-tgt-from-custom-file-whole" unless="use.filter">
+    <convert-file
        modelName="${target.model}"
        clsName="${converter.class}"
        osName="osw.${common.os.prefix}-tgt-items">
-      <fileset dir="${src.data.dir}/split" includes="*.xml"/>
+      <fileset dir="${src.data.dir}" includes="*.xml"/>
     </convert-file>
   </target>
-  
-  <target name="-retrieve-tgt-from-custom-file-nosplit" if="have.file.custom.tgt" unless="use.split.files">
-    <convert-file      
+
+  <target name="-retrieve-tgt-from-custom-file-filtered" if="use.filter">
+    <convert-file
        modelName="${target.model}"
        clsName="${converter.class}"
        osName="osw.${common.os.prefix}-tgt-items">
       <fileset dir="${build.data.dir}" includes="*.xml"/>
     </convert-file>
   </target>
-  
 </project>
 
 
