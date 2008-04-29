@@ -27,7 +27,7 @@ function handleGraphWidget(widget) {
   	Element.hide($('widgetdatawait' + widget.id));
     Element.hide($('widgetdata' + widget.id));
     Element.show($('widgetdatanoresults' + widget.id));
-    toggleWidget('widgetcontainer' + widget.id, 'togglelink' + widget.id);
+    //toggleWidget('widgetcontainer' + widget.id, 'togglelink' + widget.id);
   }  
 }
 
@@ -80,7 +80,7 @@ function handleTableWidget(widget) {
     Element.hide($('widgetdatawait' + widget.id));
     Element.hide($('widgetdata' + widget.id));
     Element.show($('widgetdatanoresults' + widget.id));
-      toggleWidget('widgetcontainer' + widget.id, 'togglelink' + widget.id);
+    //toggleWidget('widgetcontainer' + widget.id, 'togglelink' + widget.id);
   }
 }
 

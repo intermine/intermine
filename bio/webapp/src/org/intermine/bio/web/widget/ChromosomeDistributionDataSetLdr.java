@@ -90,6 +90,11 @@ public class ChromosomeDistributionDataSetLdr implements DataSetLdr
         }
 
         Query q = createQuery(organismName, "actual", bag);
+        
+        if (q == null) {
+            return;
+        }
+        
         results = os.execute(q);
         results.setBatchSize(50000);
 
@@ -147,6 +152,9 @@ public class ChromosomeDistributionDataSetLdr implements DataSetLdr
 
         // get counts of gene in database for gene
         Query q = createQuery(organismName, "expected", null);
+        if (q == null) {
+            return 0;
+        }
         Results res = os.execute(q);
         Iterator iter = res.iterator();
         int grandTotal = 0;
@@ -195,11 +203,12 @@ public class ChromosomeDistributionDataSetLdr implements DataSetLdr
             chrs.add(chromosomeName);
         }
         
-        // TODO if there are no chromosomes, we don't want to render this graph
         if (chrs != null && !chrs.isEmpty()) {
             QueryField qfChrId = new QueryField(chromosomeQC, "primaryIdentifier");
             QueryExpression qf = new QueryExpression(QueryExpression.LOWER, qfChrId);
             cs.addConstraint(new BagConstraint(qf, ConstraintOp.IN, chrs));
+        } else {
+            return null;
         }
                
         QueryObjectReference r2 = new QueryObjectReference(featureQC, "organism");        
@@ -253,7 +262,11 @@ public class ChromosomeDistributionDataSetLdr implements DataSetLdr
     }
     
     private void calcTotal(InterMineBag bag, String organismName) throws ClassNotFoundException {
-        Results res = os.execute(createQuery(organismName, "total", bag));        
+        Query q = createQuery(organismName, "total", bag);
+        if (q == null) {
+            return;
+        }
+        Results res = os.execute(q);        
         Iterator iter = res.iterator();
         while (iter.hasNext()) {
             ResultsRow resRow = (ResultsRow) iter.next();
