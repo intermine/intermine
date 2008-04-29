@@ -35,6 +35,9 @@ ul#submenulist li a {
 /* =H */
 h1, h2, h3, h1 a, h1 a:visited, label {
    color:#015E3A; }
+/* =H */
+h1, h2, h3, h1 a, h1 a:link, label {
+   color:#015E3A; }
 
 /* =IMG */
 img {
