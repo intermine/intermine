@@ -70,6 +70,14 @@
       </c:if>
     </c:if>
 
+<c:if test="${!empty param.bagName}">
+    <div class="body">
+        <div class="resultsTableTemplateHeader">
+            <div>Results for list:  ${param.bagName}</div>
+        </div>
+    </div>
+</c:if>
+
 <c:choose>
   <c:when test="${resultsTable.estimatedSize == 0}">
     <div class="altmessage">
