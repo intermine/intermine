@@ -114,7 +114,7 @@
            </html:link>
          </div>
      </c:if>
-   <html:textarea styleId="pasteInput" property="text" rows="10" cols="60" onfocus="switchInputs('paste','file');" />
+   <html:textarea styleId="pasteInput" property="text" rows="10" cols="60" onkeypress="switchInputs('paste','file');" />
    </span>
    <script type="text/javascript" charset="utf-8">
       initPasteInput();
@@ -126,7 +126,7 @@
      <%-- file input --%>
     <li>
       <label><fmt:message key="bagBuild.or"/></label>
-      <html:file styleId="fileInput" property="formFile" onkeypress="switchInputs('file','paste');"  onfocus="switchInputs('file','paste');" onclick="switchInputs('file','paste');"/>
+      <html:file styleId="fileInput" property="formFile" onchange="switchInputs('file','paste');"  onclick="switchInputs('file','paste');"/>
     </li>
     </ol>
     <div align="right">
