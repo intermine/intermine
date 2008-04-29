@@ -12,34 +12,37 @@
 <script language="javascript">
 <!--//<![CDATA[
    function switchInputs(open, close) {
-      document.getElementById(open + 'Input').disabled = false;
-      document.getElementById(close + 'Input').disabled = true;
-      document.getElementById('submitBag').disabled = false;
+      $(open + 'Input').disabled = false;
+      $(close + 'Input').disabled = true;
+      $('submitBag').disabled = false;
+   
+      clearExample();
+    }
 
-      // only clear contents if contents equals our help text      
-      if(open == 'paste' && document.getElementById('pasteInput').value == "e.g.: ${bagExampleIdentifiers}") {
-         document.getElementById('pasteInput').value = "";
-         document.getElementById('pasteInput').style.color = "#000";
-         document.getElementById('pasteInput').style.fontStyle = "normal";
+    function clearExample() {            
+      if($('pasteInput').value == "e.g.: ${bagExampleIdentifiers}") {
+         $('pasteInput').value = "";
+         $('pasteInput').style.color = "#000";
+         $('pasteInput').style.fontStyle = "normal";
       }
     }
 
     function resetInputs() {
-       document.getElementById('fileInput').disabled = false;
-       document.getElementById('pasteInput').disabled = false;
-       document.getElementById('fileInput').value = '';
+       $('fileInput').disabled = false;
+       $('pasteInput').disabled = false;
+       $('fileInput').value = '';
        initPasteInput();
     }
 
     function initPasteInput() {
-       document.getElementById('pasteInput').value = "e.g.: ${bagExampleIdentifiers}";
-       document.getElementById('pasteInput').style.color = "#666";
-       document.getElementById('pasteInput').style.fontStyle = "italic";
+       $('pasteInput').value = "e.g.: ${bagExampleIdentifiers}";
+       $('pasteInput').style.color = "#666";
+       $('pasteInput').style.fontStyle = "italic";
     }
 
     function loadExample(example) {
-      document.getElementById('pasteInput').focus();
-      document.getElementById('pasteInput').value = example;
+      $('pasteInput').focus();
+      $('pasteInput').value = example;
       return false;
     }
 
@@ -114,7 +117,7 @@
            </html:link>
          </div>
      </c:if>
-   <html:textarea styleId="pasteInput" property="text" rows="10" cols="60" onkeypress="switchInputs('paste','file');" />
+   <html:textarea styleId="pasteInput" property="text" rows="10" cols="60" onfocus="clearExample();" onkeypress="switchInputs('paste','file');" />
    </span>
    <script type="text/javascript" charset="utf-8">
       initPasteInput();
@@ -126,7 +129,7 @@
      <%-- file input --%>
     <li>
       <label><fmt:message key="bagBuild.or"/></label>
-      <html:file styleId="fileInput" property="formFile" onchange="switchInputs('file','paste');"  onclick="switchInputs('file','paste');"/>
+      <html:file styleId="fileInput" property="formFile" onchange="switchInputs('file','paste');" />
     </li>
     </ol>
     <div align="right">
