@@ -129,7 +129,7 @@ echo
 #echo
 echo "==========================================================="
 echo "Getting FlyBase FASTA files"
-./get_flybase $logdir $tempname $shared_data || (echo "error getting FlyBase FASTA files" 2>&1; exit 1)
+./get_flybase $logdir $tempname $shared_data $config_file || (echo "error getting FlyBase FASTA files" 2>&1; exit 1)
 
     if [ $? -ne 0 ]
     then
