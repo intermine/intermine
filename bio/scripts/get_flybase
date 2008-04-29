@@ -100,6 +100,8 @@ $flybase_ftp->cwd()
 $flybase_ftp->cwd($genomes_dir)
     or die "failed to change directory to $genomes_dir";
 
+my($filetype) = "binary"; 
+$flybase_ftp->$filetype;
 
 my $species_dir = undef;
 
