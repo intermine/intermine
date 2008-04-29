@@ -5,7 +5,7 @@
 # This script takes and species abbreviation as a argument (e.g. dmel, dpse)
 # and works out the current release version at ftp.flybase.net.
 # If the version  found does not exist in ./flybase/$org_abbrev/$version
-# new files will be downloaded.  The script should be run in /shared/data
+# new files will be downloaded.  
 
 use strict;
 use warnings;
@@ -30,6 +30,7 @@ my $flybase_current_dir = "current";
 my $flybase_dir = "flybase";
 my $genomes_dir = "genomes";
 my $fasta_dir = "fasta";
+
 
 
 #### Access FlyBase ftp server
@@ -71,6 +72,7 @@ if (!defined $version) {
 }
 
 my $download_dir = "$home/$flybase_dir/$version";
+my $log_buffer = "FlyBase\nfasta files updated to $download_dir\n";
 
 if (-d "$download_dir/$fasta_dir") {
   die "$download_dir/$fasta_dir directory already exists - not updating\n";
@@ -107,15 +109,13 @@ my $species_dir = undef;
 
 my $file_types = "all-CDS|all-gene-|all-five_prime_UTR|all-three_prime_UTR";
 
-
-
 for my $species (@species_list) {
     $flybase_ftp->cwd("$species/current/fasta")
         or die "Could not change to directory: $species/current/fasta";
     my @files = $flybase_ftp->ls();
     for my$file (@files) {
         if ($file =~ $file_types) {
-            print "getting: $file to $download_dir/$fasta_dir/\n";
+            $log_buffer .= "downloaded: $file to $download_dir/$fasta_dir/\n";
             $flybase_ftp->get($file, "$download_dir/$fasta_dir/$file")
                 or die "failed to get file: $file";
         }
@@ -130,3 +130,6 @@ if ((system "gzip -dr $download_dir/$fasta_dir") != 0) {
   die qq|system "gzip -dr $download_dir/$fasta_dir" failed: $?\n|;
 }
 
+
+$log_buffer .= "\n";
+&write_log($log_buffer,$logdir,$logname);
