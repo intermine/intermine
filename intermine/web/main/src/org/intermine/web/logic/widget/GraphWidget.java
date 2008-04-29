@@ -380,7 +380,7 @@ public class GraphWidget extends Widget
      * {@inheritDoc}
      */
     public boolean getHasResults() {
-        return (dataSetLdr.getResults().size() > 0);
+        return (dataSetLdr.getResults() != null && dataSetLdr.getResults().size() > 0);
     }
     
     /**
