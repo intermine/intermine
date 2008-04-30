@@ -12,6 +12,7 @@ package org.intermine.bio.web.widget;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.List;
 
 import org.intermine.objectstore.query.BagConstraint;
 import org.intermine.objectstore.query.ConstraintOp;
@@ -24,6 +25,8 @@ import org.intermine.objectstore.query.QueryExpression;
 import org.intermine.objectstore.query.QueryField;
 import org.intermine.objectstore.query.QueryFunction;
 import org.intermine.objectstore.query.QueryObjectReference;
+import org.intermine.objectstore.query.QueryValue;
+import org.intermine.objectstore.query.SimpleConstraint;
 
 import org.intermine.bio.web.logic.BioUtil;
 import org.intermine.objectstore.ObjectStore;
@@ -62,7 +65,7 @@ public class PublicationLdr implements EnrichmentWidgetLdr
     /**
      * {@inheritDoc}
      */
-    public Query getQuery(boolean calcTotal, boolean useBag) {
+    public Query getQuery(boolean calcTotal, boolean useBag, List<String> keys) {
 
         QueryClass qcGene = new QueryClass(Gene.class);
         QueryClass qcPub = new QueryClass(Publication.class);
@@ -72,11 +75,16 @@ public class PublicationLdr implements EnrichmentWidgetLdr
         QueryField qfOrganismName = new QueryField(qcOrganism, "name");
         QueryField qfId = new QueryField(qcPub, "pubMedId");
         QueryField qfPubTitle = new QueryField(qcPub, "title");
-
+        QueryField qfPrimaryIdentifier = new QueryField(qcGene, "primaryIdentifier");
+        
         QueryFunction geneCount = new QueryFunction();
 
         ConstraintSet cs = new ConstraintSet(ConstraintOp.AND);
 
+        if (keys != null) {
+            cs.addConstraint(new BagConstraint(qfId, ConstraintOp.IN, keys));
+        }
+        
         if (useBag) {
             cs.addConstraint(new BagConstraint(qfGeneId, ConstraintOp.IN, bag.getOsb()));
         }
@@ -91,19 +99,26 @@ public class PublicationLdr implements EnrichmentWidgetLdr
 
         Query q = new Query();
         q.setDistinct(false);
-        
         if (!calcTotal) {           
             q.addFrom(qcGene);
             q.addFrom(qcPub);
-            q.addFrom(qcOrganism);        
-            q.addToSelect(qfId);
-            q.addToGroupBy(qfId);
-            q.addToSelect(geneCount);
-            if (useBag) {
-                q.addToSelect(qfPubTitle);
-                q.addToGroupBy(qfPubTitle);
+            q.addFrom(qcOrganism); 
+
+            if (keys != null && !keys.isEmpty()) {
+                q.addToSelect(qfId);
+                q.addToSelect(qfPrimaryIdentifier);
+                q.addToOrderBy(qfId);
+            } else {
+                q.addToSelect(qfId);
+                q.addToGroupBy(qfId);
+                q.addToSelect(geneCount);
+                if (useBag) {
+                    q.addToSelect(qfPubTitle);
+                    q.addToGroupBy(qfPubTitle);
+                }
             }
-            q.setConstraint(cs);            
+            q.setConstraint(cs); 
+
         } else {            
             Query subQ = new Query();
             subQ.setDistinct(true);
@@ -126,14 +141,21 @@ public class PublicationLdr implements EnrichmentWidgetLdr
      * {@inheritDoc}
      */
     public Query getAnnotatedSampleQuery(boolean calcTotal) {
-        return getQuery(calcTotal, true);
+        return getQuery(calcTotal, true, null);
     }
 
     /**
      * {@inheritDoc}
      */
     public Query getAnnotatedPopulationQuery(boolean calcTotal) {
-        return getQuery(calcTotal, false);
+        return getQuery(calcTotal, false, null);
+    }
+    
+    /**
+     * {@inheritDoc}
+     */
+    public Query getExportQuery(List<String> keys) {
+        return getQuery(false, true, keys);
     }
     
     /**

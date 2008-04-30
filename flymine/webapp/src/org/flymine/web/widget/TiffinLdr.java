@@ -12,6 +12,7 @@ package org.flymine.web.widget;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.List;
 
 import org.intermine.objectstore.query.BagConstraint;
 import org.intermine.objectstore.query.ConstraintOp;
@@ -65,7 +66,7 @@ public class TiffinLdr implements EnrichmentWidgetLdr
      /**
       * {@inheritDoc}
       */
-     public Query getQuery(boolean calcTotal, boolean useBag) {
+     public Query getQuery(boolean calcTotal, boolean useBag, List<String> keys) {
 
          QueryClass qcGene = new QueryClass(Gene.class);
          QueryClass qcIntergenicRegion = new QueryClass(IntergenicRegion.class);
@@ -75,6 +76,7 @@ public class TiffinLdr implements EnrichmentWidgetLdr
          QueryClass qcOrganism = new QueryClass(Organism.class);
 
          QueryField qfGeneId = new QueryField(qcGene, "id");
+         QueryField qfPrimaryIdentifier = new QueryField(qcGene, "primaryIdentifier");
          QueryField qfOrganismNameMixedCase = new QueryField(qcOrganism, "name");
          QueryExpression qfOrganismName = new QueryExpression(QueryExpression.LOWER,
                  qfOrganismNameMixedCase);
@@ -82,6 +84,11 @@ public class TiffinLdr implements EnrichmentWidgetLdr
          QueryField qfDataSet = new QueryField(qcDataSet, "title");
 
          ConstraintSet cs = new ConstraintSet(ConstraintOp.AND);
+         
+         if (keys != null) {
+             cs.addConstraint(new BagConstraint(qfId, ConstraintOp.IN, keys));
+         }
+         
          if (useBag) {
              cs.addConstraint(new BagConstraint(qfGeneId, ConstraintOp.IN, bag.getOsb()));
          }
@@ -130,31 +137,45 @@ public class TiffinLdr implements EnrichmentWidgetLdr
          q.setDistinct(false);
 
          q.addFrom(subQ);
-         if (!calcTotal) {
+
+         if (keys != null && !keys.isEmpty()) {
+             q.addToSelect(qfId);
+             q.addToSelect(qfPrimaryIdentifier);
+             q.addToOrderBy(qfId);
+
+         } else if (!calcTotal) {
              q.addToSelect(outerQfId);
              q.addToSelect(geneCount);
              if (useBag) {
                  q.addToSelect(outerQfId);
              }
-             q.addToGroupBy(outerQfId);             
+             q.addToGroupBy(outerQfId);
+
          } else {
              q.addToSelect(geneCount);         
          }
          return q;
      }
-     
+
      /**
       * {@inheritDoc}
       */
      public Query getAnnotatedSampleQuery(boolean calcTotal) {
-         return getQuery(calcTotal, true);
+         return getQuery(calcTotal, true, null);
      }
 
      /**
       * {@inheritDoc}
       */
      public Query getAnnotatedPopulationQuery(boolean calcTotal) {
-         return getQuery(calcTotal, false);
+         return getQuery(calcTotal, false, null);
+     }
+     
+     /**
+      * {@inheritDoc}
+      */
+     public Query getExportQuery(List<String> keys) {
+         return getQuery(false, true, keys);
      }
      
       /**
