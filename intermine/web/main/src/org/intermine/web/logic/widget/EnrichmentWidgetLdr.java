@@ -11,6 +11,7 @@ package org.intermine.web.logic.widget;
  */
 
 import java.util.Collection;
+import java.util.List;
 
 import org.intermine.objectstore.query.Query;
 
@@ -35,6 +36,12 @@ public interface EnrichmentWidgetLdr
     public Query getAnnotatedPopulationQuery(boolean calcTotal);
 
     /**
+     * @param keys the keys to the records to be exported
+     * @return the query representing the records to be exported
+     */
+    public Query getExportQuery(List<String> keys);
+    
+    /**
      * @return description of reference population, ie "Accounting dept"
      */
     public Collection<String> getPopulationDescr();
@@ -49,7 +56,6 @@ public interface EnrichmentWidgetLdr
      * @return the string to append to the end of external link
      */
     public String getAppendage();
-  
     
     /**
      * returns the relevant query.  this method is used for all 4 queries:
@@ -60,8 +66,9 @@ public interface EnrichmentWidgetLdr
      * N = total annotated with any term in reference population
      * @param useBag whether or not to use the bag in the query
      * @param calcTotal whether or not to return the results or return the count
+     * @param keys the keys of the records to be exported
      * @return query to return the correct result set for this widget
      */
-    public Query getQuery(boolean calcTotal, boolean useBag);
+    abstract Query getQuery(boolean calcTotal, boolean useBag, List<String> keys);
     
 }

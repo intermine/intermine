@@ -383,7 +383,6 @@ public class BagTableWidgetLoader
     }
 
     private static int calcTotal(ObjectStore os, Query q) {
-
         Results res = os.execute(q);        
         Iterator iter = res.iterator();
         int n = 0;

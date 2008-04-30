@@ -12,12 +12,8 @@ package org.intermine.bio.web.widget;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.List;
 
-import org.flymine.model.genomic.Organism;
-import org.flymine.model.genomic.Protein;
-import org.flymine.model.genomic.UniProtFeature;
-import org.intermine.bio.web.logic.BioUtil;
-import org.intermine.objectstore.ObjectStore;
 import org.intermine.objectstore.query.BagConstraint;
 import org.intermine.objectstore.query.ConstraintOp;
 import org.intermine.objectstore.query.ConstraintSet;
@@ -29,8 +25,17 @@ import org.intermine.objectstore.query.QueryExpression;
 import org.intermine.objectstore.query.QueryField;
 import org.intermine.objectstore.query.QueryFunction;
 import org.intermine.objectstore.query.QueryObjectReference;
+import org.intermine.objectstore.query.QueryValue;
+import org.intermine.objectstore.query.SimpleConstraint;
+
+import org.intermine.bio.web.logic.BioUtil;
+import org.intermine.objectstore.ObjectStore;
 import org.intermine.web.logic.bag.InterMineBag;
 import org.intermine.web.logic.widget.EnrichmentWidgetLdr;
+
+import org.flymine.model.genomic.Organism;
+import org.flymine.model.genomic.Protein;
+import org.flymine.model.genomic.UniProtFeature;
 
 /**
  * {@inheritDoc}
@@ -61,7 +66,7 @@ public class UniProtFeaturesLdr implements EnrichmentWidgetLdr
     /**
      * {@inheritDoc}
      */
-    public Query getQuery(boolean calcTotal, boolean useBag) {
+    public Query getQuery(boolean calcTotal, boolean useBag, List<String> keys) {
 
         QueryClass qcProtein = new QueryClass(Protein.class);
         QueryClass qcOrganism = new QueryClass(Organism.class);
@@ -69,9 +74,14 @@ public class UniProtFeaturesLdr implements EnrichmentWidgetLdr
 
         QueryField qfProtId = new QueryField(qcProtein, "id");
         QueryField qfName = new QueryField(qcUniProtFeature, "type");
-
+        QueryField qfPrimaryIdentifier = new QueryField(qcProtein, "primaryIdentifier");
+        
         ConstraintSet cs = new ConstraintSet(ConstraintOp.AND);
 
+        if (keys != null) {
+            cs.addConstraint(new BagConstraint(qfName, ConstraintOp.IN, keys));
+        }
+        
         if (useBag) {
             cs.addConstraint(new BagConstraint(qfProtId, ConstraintOp.IN, bag.getOsb()));
         }
@@ -101,11 +111,16 @@ public class UniProtFeaturesLdr implements EnrichmentWidgetLdr
         subQ.setConstraint(cs);
         
         QueryFunction protCount = new QueryFunction();
-        
-        if (!calcTotal) {       
-            
+        if (keys != null && !keys.isEmpty()) {
+            subQ.setDistinct(true);
+            subQ.clearSelect();
+            subQ.addToSelect(qfProtId);
+            subQ.addToSelect(qfPrimaryIdentifier);
+            subQ.addToOrderBy(qfProtId);
+        } else if (!calcTotal) {       
+
             subQ.addToSelect(qfName);
-            
+
             QueryField qfType = new QueryField(subQ, qfName);
 
             q.addFrom(subQ);
@@ -116,6 +131,7 @@ public class UniProtFeaturesLdr implements EnrichmentWidgetLdr
                 q.addToSelect(qfType);
             }
             q.addToGroupBy(qfType);
+
         } else {
             q.addFrom(subQ);
             q.addToSelect(protCount);
@@ -127,14 +143,21 @@ public class UniProtFeaturesLdr implements EnrichmentWidgetLdr
      * {@inheritDoc}
      */
     public Query getAnnotatedSampleQuery(boolean calcTotal) {
-        return getQuery(calcTotal, true);
+        return getQuery(calcTotal, true, null);
     }
 
     /**
      * {@inheritDoc}
      */
     public Query getAnnotatedPopulationQuery(boolean calcTotal) {
-        return getQuery(calcTotal, false);
+        return getQuery(calcTotal, false, null);
+    }
+    
+    /**
+     * {@inheritDoc}
+     */
+    public Query getExportQuery(List<String> keys) {
+        return getQuery(false, true, keys);
     }
     
     /**

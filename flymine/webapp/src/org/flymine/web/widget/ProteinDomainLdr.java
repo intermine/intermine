@@ -12,6 +12,7 @@ package org.flymine.web.widget;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.List;
 
 import org.intermine.objectstore.query.BagConstraint;
 import org.intermine.objectstore.query.ConstraintOp;
@@ -67,7 +68,7 @@ public class ProteinDomainLdr implements EnrichmentWidgetLdr
     /**
      * {@inheritDoc}
      */
-    public Query getQuery(boolean calcTotal, boolean useBag) {
+    public Query getQuery(boolean calcTotal, boolean useBag, List<String> keys) {
 
         QueryClass qcGene = new QueryClass(Gene.class);
         QueryClass qcProtein = new QueryClass(Protein.class);
@@ -79,11 +80,22 @@ public class ProteinDomainLdr implements EnrichmentWidgetLdr
         QueryField qfName = new QueryField(qcProteinFeature, "name");
         QueryField qfId = new QueryField(qcProteinFeature, "primaryIdentifier");
         QueryField qfOrganismName = new QueryField(qcOrganism, "name");
-
+        QueryField qfPrimaryIdentifier = null;
+        if (bag.getType().equalsIgnoreCase("protein")) {
+            qfPrimaryIdentifier = new QueryField(qcProtein, "primaryIdentifier");
+        } else {
+            qfPrimaryIdentifier = new QueryField(qcGene, "primaryIdentifier");
+        }
+        
         QueryFunction objectCount = new QueryFunction();
 
         ConstraintSet cs = new ConstraintSet(ConstraintOp.AND);
-
+        
+        if (keys != null) {
+            cs.addConstraint(new BagConstraint(qfId, ConstraintOp.IN, keys));
+            
+        }
+        
         QueryExpression qf1 = new QueryExpression(QueryExpression.LOWER, qfOrganismName);
         cs.addConstraint(new BagConstraint(qf1, ConstraintOp.IN, organismsLower));
         QueryCollectionReference qr = new QueryCollectionReference(qcProtein, "proteinDomains");
@@ -112,28 +124,36 @@ public class ProteinDomainLdr implements EnrichmentWidgetLdr
         }
 
         Query q = new Query();
-        q.setDistinct(false);
         
+
         if (!calcTotal) {
-            
+
             q.addFrom(qcProtein);
             q.addFrom(qcOrganism);
             q.addFrom(qcProteinFeature);
-            
             if (bag.getType().equalsIgnoreCase("gene")) {
                 q.addFrom(qcGene);
             }
-            
-            q.addToSelect(qfId);
-            q.addToGroupBy(qfId);
-            
-            q.addToSelect(objectCount); 
-            
-            if (useBag) {
-                q.addToSelect(qfName);
-                q.addToGroupBy(qfName);
-            }
             q.setConstraint(cs);
+            if (keys != null && !keys.isEmpty()) {
+                q.setDistinct(true);
+                q.addToSelect(qfId);
+                q.addToSelect(qfPrimaryIdentifier);
+                q.addToOrderBy(qfId);
+            } else {
+                q.setDistinct(false);
+                q.addToSelect(qfId);
+                q.addToGroupBy(qfId);
+
+                q.addToSelect(objectCount); 
+
+                if (useBag) {
+                    q.addToSelect(qfName);
+                    q.addToGroupBy(qfName);
+                }
+            }
+            
+
         } else {
             Query subQ = new Query();
             subQ.setDistinct(true);        
@@ -163,16 +183,23 @@ public class ProteinDomainLdr implements EnrichmentWidgetLdr
      * {@inheritDoc}
      */
     public Query getAnnotatedSampleQuery(boolean calcTotal) {
-        return getQuery(calcTotal, true);
+        return getQuery(calcTotal, true, null);
     }
 
     /**
      * {@inheritDoc}
      */
     public Query getAnnotatedPopulationQuery(boolean calcTotal) {
-        return getQuery(calcTotal, false);
+        return getQuery(calcTotal, false, null);
     }
 
+    /**
+     * {@inheritDoc}
+     */
+    public Query getExportQuery(List<String> keys) {
+        return getQuery(false, true, keys);
+    }
+    
     /**
      * {@inheritDoc}
      */

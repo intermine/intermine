@@ -10,23 +10,29 @@ package org.intermine.web.logic.widget;
  *
  */
 
+import java.lang.reflect.Constructor;
+import java.lang.reflect.InvocationTargetException;
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
+import org.intermine.metadata.Model;
 import org.intermine.objectstore.ObjectStore;
 import org.intermine.objectstore.ObjectStoreException;
+import org.intermine.objectstore.query.Query;
+import org.intermine.objectstore.query.QueryClass;
+import org.intermine.objectstore.query.Results;
+import org.intermine.objectstore.query.ResultsRow;
+import org.intermine.util.StringUtil;
 import org.intermine.util.TypeUtil;
 import org.intermine.web.logic.WebUtil;
 import org.intermine.web.logic.bag.InterMineBag;
-
-import java.lang.reflect.Constructor;
-import java.lang.reflect.InvocationTargetException;
-import java.math.BigDecimal;
 
 /**
  * @author Julie Sullivan
@@ -40,14 +46,15 @@ public class EnrichmentWidget extends Widget
     private ArrayList<Map> resultMaps = new ArrayList<Map>();
     private InterMineBag bag;
     private int notAnalysed;
+    private ObjectStore os;
     
     /**
      * {@inheritDoc}
      */
-    public void process(InterMineBag imbag, ObjectStore os) {
-        try {
-            // set bag
+    public void process(InterMineBag imbag, ObjectStore ost) {
+        try {            
             this.bag = imbag;
+            this.os = ost;
             Class<?> clazz = TypeUtil.instantiate(getDataSetLoader());
             Constructor<?> constr = clazz.getConstructor(new Class[]
                                                                 {
@@ -241,22 +248,60 @@ public class EnrichmentWidget extends Widget
      * Get the results in an exportable format for the specified ids
      * @param selected the selected ids to export
      * @return a list of list of Strings
+     * @throws Exception something has gone wrong. oh no.
      */
-    public List<List<String>> getExportResults(String[]selected) {
+    public List<List<String>> getExportResults(String[]selected) throws Exception {
+                
         Map<String, BigDecimal> pvalues = resultMaps.get(0);
         Map<String, Long> totals = resultMaps.get(1);
         Map<String, String> labelToId = resultMaps.get(2);
         List<List<String>> exportResults = new ArrayList<List<String>>();
         List<String> selectedIds = Arrays.asList(selected);
-        for (String id : pvalues.keySet()) {
-            if (selectedIds.contains(id)) {
+        
+        Class<?> clazz = TypeUtil.instantiate(getDataSetLoader());
+        Constructor<?> constr = clazz.getConstructor(new Class[]
+                                                            {
+            InterMineBag.class, ObjectStore.class, String.class
+                                                            });
+
+        EnrichmentWidgetLdr ldr = (EnrichmentWidgetLdr) constr.newInstance(new Object[]
+                                                                                      {
+            bag, os, getSelectedExtraAttribute()
+                                                                                      });
+        Model model = os.getModel();
+        Class<?> bagCls = Class.forName(model.getPackageName() + "." + bag.getType());
+        QueryClass qc = new QueryClass(bagCls);
+        
+        Query q = ldr.getExportQuery(selectedIds);
+       
+        Results res = os.execute(q);        
+        Iterator iter = res.iterator();
+        HashMap<String, List<String>> termsToIds = new HashMap();
+        while (iter.hasNext()) {
+            ResultsRow resRow = (ResultsRow) iter.next();
+            String term = resRow.get(0).toString();
+            String id = resRow.get(1).toString();
+            if (!termsToIds.containsKey(term)) {
+                termsToIds.put(term, new ArrayList<String>());
+            }
+            termsToIds.get(term).add(id);
+        }
+        
+        for (String id : selectedIds) {
+       
                 List<String> row = new LinkedList();
                 row.add(labelToId.get(id));
                 BigDecimal bd = pvalues.get(id);
-                row.add(bd.setScale(7, BigDecimal.ROUND_HALF_EVEN).toEngineeringString());
-                row.add(totals.get(id).toString());
+                //bd.setScale(7, BigDecimal.ROUND_HALF_UP).doubleValue();
+                row.add(bd.toPlainString());
+                
+                //row.add(totals.get(id).toString());
+                String ids = StringUtil.prettyList(termsToIds.get(id));
+                
+                row.add(ids);
+                
                 exportResults.add(row);
-            }
+
         }
         return exportResults;
     }

@@ -47,15 +47,14 @@ function handleTableWidget(widget) {
 	  var widgetdataname = document.getElementById('widgetdata' + widget.id);
 	  var widgetdatawait = document.getElementById('widgetdatawait' + widget.id);
 	  	  
-	  var row = null;
-	  row = document.createElement("tr");
+	  var row = document.createElement("tr");
 	  for(var i = 0; i < widget.columns.length ; i++){
 	    var cell = document.createElement("th");
 	    if (i == 0) {
 	       var formName = "widgetaction" + widget.id;	       
 	       var checky = "<input type=\"checkbox\" name=\"selected\" id=\"selected_all" + widget.id + "\"";
                     checky += " onclick=\"toggleAllChecks('" + formName + "', " + widget.id + ")\">";
-	        cell.innerHTML = checky;	    
+	       cell.innerHTML = checky;	    
 	    } else {
 	       cell.innerHTML = widget.columns[i];
 	    }

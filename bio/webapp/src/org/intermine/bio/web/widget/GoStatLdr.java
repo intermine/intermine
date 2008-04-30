@@ -12,7 +12,15 @@ package org.intermine.bio.web.widget;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.List;
 
+import org.flymine.model.genomic.GOAnnotation;
+import org.flymine.model.genomic.GOTerm;
+import org.flymine.model.genomic.Gene;
+import org.flymine.model.genomic.Organism;
+import org.flymine.model.genomic.Protein;
+import org.intermine.bio.web.logic.BioUtil;
+import org.intermine.objectstore.ObjectStore;
 import org.intermine.objectstore.query.BagConstraint;
 import org.intermine.objectstore.query.ConstraintOp;
 import org.intermine.objectstore.query.ConstraintSet;
@@ -26,17 +34,8 @@ import org.intermine.objectstore.query.QueryFunction;
 import org.intermine.objectstore.query.QueryObjectReference;
 import org.intermine.objectstore.query.QueryValue;
 import org.intermine.objectstore.query.SimpleConstraint;
-
-import org.intermine.bio.web.logic.BioUtil;
-import org.intermine.objectstore.ObjectStore;
 import org.intermine.web.logic.bag.InterMineBag;
 import org.intermine.web.logic.widget.EnrichmentWidgetLdr;
-
-import org.flymine.model.genomic.GOAnnotation;
-import org.flymine.model.genomic.GOTerm;
-import org.flymine.model.genomic.Gene;
-import org.flymine.model.genomic.Organism;
-import org.flymine.model.genomic.Protein;
 
 /**
  * {@inheritDoc}
@@ -81,7 +80,7 @@ public class GoStatLdr implements EnrichmentWidgetLdr
     /**
      * {@inheritDoc}
      */
-    public Query getQuery(boolean calcTotal, boolean useBag) {
+    public Query getQuery(boolean calcTotal, boolean useBag, List<String> keys) {
 
         QueryClass qcGene = new QueryClass(Gene.class);
         QueryClass qcGoAnnotation = new QueryClass(GOAnnotation.class);
@@ -96,10 +95,22 @@ public class GoStatLdr implements EnrichmentWidgetLdr
         QueryField qfGoTermId = new QueryField(qcGo, "identifier");
         QueryField qfOrganismName = new QueryField(qcOrganism, "name");
         QueryField qfProteinId = new QueryField(qcProtein, "id");
-
+        
+        QueryField qfPrimaryIdentifier = null;
+        if (bag.getType().equalsIgnoreCase("protein")) {
+            qfPrimaryIdentifier = new QueryField(qcProtein, "primaryIdentifier");
+        } else {
+            qfPrimaryIdentifier = new QueryField(qcGene, "primaryIdentifier");
+        }
+        
+        
         QueryFunction objectCount = new QueryFunction();
         
         ConstraintSet cs = new ConstraintSet(ConstraintOp.AND);
+        
+        if (keys != null) {
+            cs.addConstraint(new BagConstraint(qfGoTermId, ConstraintOp.IN, keys));
+        }
       
         QueryExpression qf1 = new QueryExpression(QueryExpression.LOWER, qfOrganismName);
         cs.addConstraint(new BagConstraint(qf1, ConstraintOp.IN, organismsLower));
@@ -162,17 +173,21 @@ public class GoStatLdr implements EnrichmentWidgetLdr
             if (bag.getType().equalsIgnoreCase("protein")) {
                 q.addFrom(qcProtein);
             }
-            
-            q.addToSelect(qfGoTermId);
-            q.addToGroupBy(qfGoTermId);
-            q.addToSelect(objectCount);
-            
-            if (useBag) {
-                q.addToSelect(qfGoTerm);
-                q.addToGroupBy(qfGoTerm);            
+
+            if (keys != null && !keys.isEmpty()) {
+                q.addToSelect(qfGoTermId);
+                q.addToSelect(qfPrimaryIdentifier);
+                q.addToOrderBy(qfGoTermId);
+            } else {
+                q.addToSelect(qfGoTermId);
+                q.addToGroupBy(qfGoTermId);
+                q.addToSelect(objectCount);
+                if (useBag) {
+                    q.addToSelect(qfGoTerm);
+                    q.addToGroupBy(qfGoTerm);            
+                }
             }
-            q.setConstraint(cs);
-            
+            q.setConstraint(cs);      
         } else {
             
             Query subQ = new Query();
@@ -201,16 +216,23 @@ public class GoStatLdr implements EnrichmentWidgetLdr
      * {@inheritDoc}
      */
     public Query getAnnotatedSampleQuery(boolean calcTotal) {
-        return getQuery(calcTotal, true);
+        return getQuery(calcTotal, true, null);
     }
 
     /**
      * {@inheritDoc}
      */
     public Query getAnnotatedPopulationQuery(boolean calcTotal) {
-        return getQuery(calcTotal, false);
+        return getQuery(calcTotal, false, null);
     }
 
+    /**
+     * {@inheritDoc}
+     */
+    public Query getExportQuery(List<String> keys) {
+        return getQuery(false, true, keys);
+    }
+    
     /**
      * {@inheritDoc}
      */
