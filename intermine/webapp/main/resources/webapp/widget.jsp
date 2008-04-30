@@ -106,8 +106,7 @@
         <thead id="tablewidget${widget.id}head"></thead>
         <tbody id="tablewidget${widget.id}body"></tbody>
       </table>
-    </c:if>
-    
+    </c:if>    
   </div>
   <div id="widgetdatawait${widget.id}" class="widgetdatawait"><img src="images/wait30.gif" title="Searching..."/></div>
   <div id="widgetdatanoresults${widget.id}" class="widgetdatawait" style="display:none;"><i>no results found</i></div>
