@@ -15,6 +15,7 @@
     <form-bean name="queryClassSelectForm" type="org.intermine.web.struts.QueryClassSelectForm"/>
     <form-bean name="changeTableSizeForm" type="org.intermine.web.struts.ChangeTableSizeForm"/>
     <form-bean name="saveBagForm" type="org.intermine.web.struts.SaveBagForm"/>
+    <form-bean name="findInListForm" type="org.intermine.web.struts.FindInListForm"/>
     <form-bean name="emptyForm" type="org.apache.struts.action.DynaActionForm"/>
     <form-bean name="saveQueryForm" type="org.intermine.web.struts.SaveQueryForm"/>
     <form-bean name="buildBagForm" type="org.intermine.web.struts.BuildBagForm"/>
@@ -295,6 +296,9 @@
     <action path="/bagUploadConfirm" name="bagUploadConfirmForm" type="org.intermine.web.struts.BagUploadConfirmAction" validate="false" input="error" parameter="action">
       <forward name="back" path="bag.page"/>
       <forward name="error" path="bagUploadConfirm.page"/>
+      <forward name="bagDetails" redirect="true" path="/bagDetails.do"/>
+    </action>
+    <action path="/findInList" name="findInListForm" type="org.intermine.web.struts.FindInListAction" input="bagDetails">
       <forward name="bagDetails" redirect="true" path="/bagDetails.do"/>
     </action>
     <action path="/queryClassSelect" name="queryClassSelectForm" type="org.intermine.web.struts.QueryClassSelectAction" scope="request" input="query">

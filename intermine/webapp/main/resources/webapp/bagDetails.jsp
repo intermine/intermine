@@ -49,6 +49,19 @@
         <li id="tool_bar_li_display"><img style="cursor: pointer;" src="images/icons/null.gif" width="62" height="25" title="Display related templates or widgets" border="0" id="tool_bar_button_display" class="tool_bar_button"/></li>
         <li id="tool_bar_li_export"><img style="cursor: pointer;" src="images/icons/null.gif" width="64" height="25" title="Export this list" border="0" id="tool_bar_button_export" class="tool_bar_button"/></li>
         <li id="tool_bar_li_use"><img style="cursor: pointer;" src="images/icons/null.gif" width="43" height="25" title="Use this list in a template or a query" border="0" id="tool_bar_button_use" class="tool_bar_button"/></li>
+        <li class="tool_bar_separator"><span>&nbsp;//&nbsp;</span></li>
+        <li class="tool_bar_link">
+          <html:form action="/findInList">
+            <span>
+              <fmt:message key="bagDetails.findInList"/>
+            </span>
+            <input type="text" name="textToFind" id="textToFind"/>
+            <input type="hidden" name="bagName" value="${bag.name}"/>
+            <html:submit>
+              <fmt:message key="header.search.button"/>
+            </html:submit>
+          </html:form>
+        </li>
     </ul>
 </div>
 
