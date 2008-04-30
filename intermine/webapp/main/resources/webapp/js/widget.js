@@ -51,7 +51,14 @@ function handleTableWidget(widget) {
 	  row = document.createElement("tr");
 	  for(var i = 0; i < widget.columns.length ; i++){
 	    var cell = document.createElement("th");
-	    cell.innerHTML = widget.columns[i];
+	    if (i == 0) {
+	       var formName = "widgetaction" + widget.id;	       
+	       var checky = "<input type=\"checkbox\" name=\"selected\" id=\"selected_all" + widget.id + "\"";
+                    checky += " onclick=\"toggleAllChecks('" + formName + "', " + widget.id + ")\">";
+	        cell.innerHTML = checky;	    
+	    } else {
+	       cell.innerHTML = widget.columns[i];
+	    }
 	    row.appendChild(cell);
 	  }
 	  $("tablewidget"+widget.id+"head").appendChild(row);
@@ -142,4 +149,14 @@ function submitWidgetForm(widgetId,type,extra) {
 
 function calcNotAnalysed(widget) {
     $('widgetnotanalysed' + widget.id).update(widget.notAnalysed);
+}
+
+function toggleAllChecks(formName, widgetId) {
+  var checked = document.getElementById('selected_all' + widgetId).checked;
+  var elts = Form.getElements(formName);  
+  for(var i=0;i<elts.length;i++) {
+    if( $(elts[i]).name=='selected') {
+        $(elts[i]).checked=checked;
+    }
+  }
 }
