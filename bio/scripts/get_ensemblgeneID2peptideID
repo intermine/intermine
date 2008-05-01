@@ -229,8 +229,9 @@ if($updated == 0){
 	my $current_link = "$main_dir/current";
 	&make_link("xml",$current_link);
 	&write_version($main_dir, $version_buffer);
+        system "chmod -R a+r,g+w $main_dir";
 }
-system "chmod -R a+r,g+w $main_dir";
+
 &write_log($log_buffer,$logdir,$logname);
 
 #kim's subroutine. Organsim object references are automatically created where necessary
