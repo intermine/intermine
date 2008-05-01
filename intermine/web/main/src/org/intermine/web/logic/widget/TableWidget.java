@@ -42,7 +42,7 @@ public class TableWidget extends Widget
     private BagTableWidgetLoader bagWidgLdr;
     private String pathStrings, externalLink, externalLinkLabel;
     private String columnTitle = null;
-    private int notAnalysed = -1;
+    private int notAnalysed = 0;
     
     /**
      * {@inheritDoc}
