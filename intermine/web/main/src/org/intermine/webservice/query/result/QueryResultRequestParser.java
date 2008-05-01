@@ -17,7 +17,7 @@ import javax.servlet.http.HttpServletRequest;
  * its combination is valid. 
  * @author Jakub Kulaviak
  **/
-public class QueryResultRequestProcessor extends WebServiceRequestProcessor  
+public class QueryResultRequestParser extends WebServiceRequestParser  
 {
     private static final String QUERY_PARAMETER = "query";
     /** Compute total count parameter name. **/
@@ -28,7 +28,7 @@ public class QueryResultRequestProcessor extends WebServiceRequestProcessor
      * RequestProcessor constructor.
      * @param request request
      */
-    public QueryResultRequestProcessor(HttpServletRequest request) {
+    public QueryResultRequestParser(HttpServletRequest request) {
         this.request = request;
     }
 

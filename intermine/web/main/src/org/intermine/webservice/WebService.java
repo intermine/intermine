@@ -26,7 +26,7 @@ import org.intermine.webservice.output.Output;
 import org.intermine.webservice.output.StreamedOutput;
 import org.intermine.webservice.output.TabFormatter;
 import org.intermine.webservice.output.XMLFormatter;
-import org.intermine.webservice.query.result.WebServiceRequestProcessor;
+import org.intermine.webservice.query.result.WebServiceRequestParser;
 
 /**
  * 
@@ -145,9 +145,9 @@ public abstract class WebService
         if (format == null || format.equals("")) {
             return TSV_FORMAT;
         } else {
-            if (WebServiceRequestProcessor.FORMAT_PARAMETER_XML.equalsIgnoreCase(format)) {
+            if (WebServiceRequestParser.FORMAT_PARAMETER_XML.equalsIgnoreCase(format)) {
                 return XML_FORMAT;
-            } if (WebServiceRequestProcessor.FORMAT_PARAMETER_HTML.equalsIgnoreCase(format)) {
+            } if (WebServiceRequestParser.FORMAT_PARAMETER_HTML.equalsIgnoreCase(format)) {
                 return HTML_FORMAT;
             } else {
                 return TSV_FORMAT;

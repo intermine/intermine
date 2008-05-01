@@ -32,12 +32,6 @@ import org.intermine.web.logic.results.PagedTable;
 import org.intermine.web.logic.results.WebResults;
 import org.intermine.web.logic.session.SessionMethods;
 
-/*
- * TODO   
- * - rewrite  web service for new exporters
- * - what to do if more columns with LocatedSequenceFeature ?
- */
-
 /**
  * Implementation of <strong>Action</strong> that allows the user to export a 
  * PagedTable to a file.

@@ -119,11 +119,11 @@ public class QueryResultService extends WebService
     private String createBaseLink() {
         String baseLink = request.getRequestURL().toString() + "?";
         List<String> names =  EnumerationUtils.toList(request.getParameterNames());
-        while (names.contains(WebServiceRequestProcessor.START_PARAMETER)) {
-            names.remove(WebServiceRequestProcessor.START_PARAMETER);    
+        while (names.contains(WebServiceRequestParser.START_PARAMETER)) {
+            names.remove(WebServiceRequestParser.START_PARAMETER);    
         }
-        while (names.contains(WebServiceRequestProcessor.LIMIT_PARAMETER)) {
-            names.remove(WebServiceRequestProcessor.LIMIT_PARAMETER);    
+        while (names.contains(WebServiceRequestParser.LIMIT_PARAMETER)) {
+            names.remove(WebServiceRequestParser.LIMIT_PARAMETER);    
         }
         boolean firstParameter = true;
         for (String name : names) {
@@ -198,7 +198,7 @@ public class QueryResultService extends WebService
     }
    
     private QueryResultInput getInput() {
-        return new QueryResultRequestProcessor(request).getInput();
+        return new QueryResultRequestParser(request).getInput();
     }
     
     private ObjectStore getObjectStore() {

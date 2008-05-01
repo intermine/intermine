@@ -18,15 +18,15 @@ import javax.servlet.http.HttpServletRequest;
 import org.apache.log4j.Logger;
 import org.intermine.objectstore.query.ConstraintOp;
 import org.intermine.webservice.CodeTranslator;
-import org.intermine.webservice.query.result.QueryResultRequestProcessor;
-import org.intermine.webservice.query.result.WebServiceRequestProcessor;
+import org.intermine.webservice.query.result.QueryResultRequestParser;
+import org.intermine.webservice.query.result.WebServiceRequestParser;
 
 /**
  * Processes service request. Evaluates parameters and validates them and check if 
  * its combination is valid. 
  * @author Jakub Kulaviak
  **/
-public class TemplateResultRequestProcessor extends WebServiceRequestProcessor  
+public class TemplateResultRequestParser extends WebServiceRequestParser  
 {
     private static final String NAME_PARAMETER = "name";
     
@@ -34,13 +34,13 @@ public class TemplateResultRequestProcessor extends WebServiceRequestProcessor
     
     private HttpServletRequest request;
     
-    private static Logger logger = Logger.getLogger(TemplateResultRequestProcessor.class);
+    private static Logger logger = Logger.getLogger(TemplateResultRequestParser.class);
     
     /**
      * TemplateResultRequestProcessor constructor.
      * @param request request
      */
-    public TemplateResultRequestProcessor(HttpServletRequest request) {
+    public TemplateResultRequestParser(HttpServletRequest request) {
         this.request = request;
     }
     
@@ -64,7 +64,7 @@ public class TemplateResultRequestProcessor extends WebServiceRequestProcessor
     }
 
     private boolean parseComputeTotalCountParameter(HttpServletRequest request) {
-        String totalCount = request.getParameter(QueryResultRequestProcessor.
+        String totalCount = request.getParameter(QueryResultRequestParser.
                 COMPUTE_TOTAL_COUNT_PARAMETER);
         return totalCount != null;
     }

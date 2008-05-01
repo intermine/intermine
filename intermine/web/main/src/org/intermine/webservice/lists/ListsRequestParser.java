@@ -17,7 +17,7 @@ import javax.servlet.http.HttpServletRequest;
  * parsed input as a parameter object.
  * @author Jakub Kulaviak
  **/
-public class ListsRequestProcessor
+public class ListsRequestParser
 {
     private HttpServletRequest request;
 
@@ -40,7 +40,7 @@ public class ListsRequestProcessor
      * ListsRequestProcessor constructor.
      * @param request request
      */
-    public ListsRequestProcessor(HttpServletRequest request) {
+    public ListsRequestParser(HttpServletRequest request) {
         this.request = request;
     }
 

@@ -12,10 +12,12 @@ package org.intermine.webservice.template.result;
 
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
+import java.util.ArrayList;
 import java.util.List;
 
 import org.intermine.objectstore.query.ConstraintOp;
 import org.intermine.web.logic.query.Constraint;
+import org.intermine.web.logic.query.PathNode;
 import org.intermine.web.logic.template.TemplateQuery;
 import org.intermine.webservice.CodeTranslator;
 
@@ -72,7 +74,7 @@ public class TemplateResultLinkGenerator
         if (highlighted) {
             ret += "<br />";
         }
-        List<Constraint> constraints = template.getAllEditableConstraints();
+        List<Constraint> constraints = getConstraints(template);
         for (int i = 0; i < constraints.size(); i++) {
             Constraint cs = constraints.get(i);
             int code = i + 1;
@@ -97,7 +99,20 @@ public class TemplateResultLinkGenerator
         return ret;
     }
 
-    
+    /**
+     * This method is made to be consistent with the way in which TemplateConfigurator
+     * parses constraints. So the order of constraints is correct.
+     * @param template
+     * @return editable constraints 
+     */
+    private List<Constraint> getConstraints(TemplateQuery template) {
+        List<Constraint> ret = new ArrayList<Constraint>();
+        for (PathNode node : template.getEditableNodes()) {
+            ret.addAll(template.getEditableConstraints(node));
+        }
+        return ret;
+    }
+
     private String format(String text, boolean highlight) {
         if (highlight) {
             return "<span class=\"highlighted\">" + text + "</span>"; 
