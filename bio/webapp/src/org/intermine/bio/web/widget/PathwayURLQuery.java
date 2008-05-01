@@ -84,9 +84,9 @@ public class PathwayURLQuery implements WidgetURLQuery
         q.addNode(bagType).getConstraints().add(c);
 
         // pubmedid
-        constraintOp = ConstraintOp.EQUALS;
+        constraintOp = ConstraintOp.LOOKUP;
         code = q.getUnusedConstraintCode();
-        PathNode expressedNode = q.addNode("Gene.pathways.identifier");
+        PathNode expressedNode = q.addNode("Gene.pathways");
         Constraint expressedConstraint
                         = new Constraint(constraintOp, key, false, label, code, id, null);
         expressedNode.getConstraints().add(expressedConstraint);

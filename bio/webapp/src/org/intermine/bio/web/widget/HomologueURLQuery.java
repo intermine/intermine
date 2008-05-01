@@ -90,9 +90,9 @@ public class HomologueURLQuery implements WidgetURLQuery
         q.addNode(bagType).getConstraints().add(c);
 
         // constraint the organism name
-        constraintOp = ConstraintOp.EQUALS;
+        constraintOp = ConstraintOp.LOOKUP;
         code = q.getUnusedConstraintCode();
-        PathNode organismNode = q.addNode("Gene.homologues.homologue.organism.name");
+        PathNode organismNode = q.addNode("Gene.homologues.homologue.organism");
         Constraint organismConstraint
                         = new Constraint(constraintOp, key, false, label, code, id, null);
         organismNode.getConstraints().add(organismConstraint);

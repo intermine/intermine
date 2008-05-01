@@ -53,31 +53,36 @@ function handleTableWidget(widget) {
 	    if (i == 0) {
 	       var formName = "widgetaction" + widget.id;	       
 	       var checky = "<input type=\"checkbox\" name=\"selected\" id=\"selected_all" + widget.id + "\"";
-                    checky += " onclick=\"toggleAllChecks('" + formName + "', " + widget.id + ")\">";
+               checky += " onclick=\"toggleAllChecks('" + formName + "', " + widget.id + ")\">";
 	       cell.innerHTML = checky;	    
 	    } else {
 	       cell.innerHTML = widget.columns[i];
 	    }
 	    row.appendChild(cell);
 	  }
+	  
+	  row.appendChild(document.createElement("th"));
+	  
 	  $("tablewidget"+widget.id+"head").appendChild(row);
-	  for(var i = 0; i < widget.flattenedResults.length ; i++){
-	  	row = document.createElement("tr");
+	  
+	for(var i = 0; i < widget.flattenedResults.length ; i++){
+		row = document.createElement("tr");
 	  	var columns = widget.flattenedResults[i];
 	    for(var j = 0; j < columns.length ; j++){
-	     var cell = document.createElement("td");
-	     if(columns[j]!=null) {
-	       if(columns[j][1] != null) {
-	       	var link = document.createElement("a");
-	       	link.setAttribute("href",columns[j][1]);
-	        link.innerHTML = columns[j][0];
-	       	cell.appendChild(link);
-	       } else {
-	        cell.innerHTML = columns[j][0];
-	       }
-	     }
-	     row.appendChild(cell);
-	    }
+			var cell = document.createElement("td");
+	     	if(columns[j]!=null) {
+	       		if(columns[j][1] != null) {
+	       			var link = document.createElement("a");
+	       			link.setAttribute("href",columns[j][1]);
+	        		link.innerHTML = columns[j][0];
+	       			cell.appendChild(link);
+	       		} else {
+	        		cell.innerHTML = columns[j][0];
+	       		}
+	     	}
+	     	row.appendChild(cell);
+		}
+		
 	    $("tablewidget"+widget.id+"body").appendChild(row);
 	  }
 	  Element.hide($(widgetdatawait));

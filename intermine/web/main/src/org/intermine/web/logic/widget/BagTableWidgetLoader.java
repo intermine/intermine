@@ -124,16 +124,21 @@ public class BagTableWidgetLoader
         }
         
         flattenedResults = new ArrayList<ArrayList>();
+        
         for (Iterator iter = results.iterator(); iter.hasNext();) {
             ArrayList<String[]> flattenedRow = new ArrayList<String[]>();
             ResultsRow resRow = (ResultsRow) iter.next();
             //Integer lastObjectId = null;
             String key = "";
             for (Iterator iterator = resRow.iterator(); iterator.hasNext();) {
+                
                 Object element = iterator.next();
                 if (element instanceof InterMineObject) {
+                                        
                     InterMineObject o = (InterMineObject) element;
+                    boolean isFirst = true;
                     for (Iterator iterator3 = columns.iterator(); iterator3.hasNext();) {
+                        
                         String columnName = (String) iterator3.next();
                         Path path = new Path(model, columnName);
                         Object fieldValue = path.resolve(o);
@@ -152,19 +157,32 @@ public class BagTableWidgetLoader
                             + "\" target=\"_new\" class=\"extlink\">[" 
                             + externalLinkLabel + "]</a>";
                         }
-                        
+
+                        if (isFirst) {
+
+                            String checkbox = "<input name=\"selected\" value=\"" + key 
+                            + "\" id=\"selected_" + key + "\" type=\"checkbox\">";
+
+                            flattenedRow.add(new String[]
+                                                        {
+                                checkbox
+                                                        });
+                            isFirst = false;
+                        }
+
                         flattenedRow.add(new String[]
-                            {
+                                                    {
                             val, link
-                            });
+                                                    });
+                        
                     }
                 } else if (element instanceof Long) {
                     flattenedRow.add(new String[]
-                            {
-                                String.valueOf((Long) element),
-                                "widgetAction.do?bagName=" + bag.getName() + "&link=" + urlGen
-                                                + "&key=" + URLEncoder.encode(key, "UTF-8")
-                            });
+                                                {
+                        String.valueOf((Long) element),
+                        "widgetAction.do?bagName=" + bag.getName() + "&link=" + urlGen
+                        + "&key=" + URLEncoder.encode(key, "UTF-8")
+                                                });
                 }
 
             }
