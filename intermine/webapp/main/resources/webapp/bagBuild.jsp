@@ -117,7 +117,7 @@
            </html:link>
          </div>
      </c:if>
-   <html:textarea styleId="pasteInput" property="text" rows="10" cols="60" onfocus="clearExample();" onkeypress="switchInputs('paste','file');" />
+   <html:textarea styleId="pasteInput" property="text" rows="10" cols="60" onfocus="switchInputs('paste','file');" />
    </span>
    <script type="text/javascript" charset="utf-8">
       initPasteInput();
