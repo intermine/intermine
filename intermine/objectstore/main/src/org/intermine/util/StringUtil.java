@@ -383,7 +383,7 @@ public class StringUtil
      * Take a collection of Strings and return a combined string as a comma separated list
      * with 'and' between the final pair.  For example: [a, b, c] -> "a, b and c".
      * @param elements a collection of strings to put in the list.
-     * @param sort if true then order the strings alpabetically
+     * @param sort if true then order the strings alphabetically
      * @return a string with all the elements suitable for inclusion in a sentence.
      */
     public static String prettyList(Collection<String> elements, boolean sort) {

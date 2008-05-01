@@ -93,10 +93,10 @@ public class GeneticInteractionURLQuery implements WidgetURLQuery
         q.addNode(bagType).getConstraints().add(c);
 
 
-        constraintOp = ConstraintOp.EQUALS;
+        constraintOp = ConstraintOp.LOOKUP;
         code = q.getUnusedConstraintCode();
         PathNode geneNode = 
-        q.addNode("Gene.geneticInteractions.interactingGenes.primaryIdentifier");
+        q.addNode("Gene.geneticInteractions.interactingGenes");
         Constraint geneConstraint
                         = new Constraint(constraintOp, key, false, label, code, id, null);
         geneNode.getConstraints().add(geneConstraint);

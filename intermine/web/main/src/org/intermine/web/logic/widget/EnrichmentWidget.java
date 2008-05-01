@@ -196,7 +196,7 @@ public class EnrichmentWidget extends Widget
     public List<String> getColumns() {
         return Arrays.asList(new String[]
             {
-                "", label, "p-Value", ""
+                "", label, "p-Value"
             });
     }
     
@@ -286,22 +286,30 @@ public class EnrichmentWidget extends Widget
             }
             termsToIds.get(term).add(id);
         }
-        
+
         for (String id : selectedIds) {
-       
-                List<String> row = new LinkedList();
+            if (labelToId.get(id) != null) {
+
+                List row = new LinkedList();
                 row.add(labelToId.get(id));
+
                 BigDecimal bd = pvalues.get(id);
                 //bd.setScale(7, BigDecimal.ROUND_HALF_UP).doubleValue();
-                row.add(bd.toPlainString());
-                
-                //row.add(totals.get(id).toString());
-                String ids = StringUtil.prettyList(termsToIds.get(id));
-                
-                row.add(ids);
-                
-                exportResults.add(row);
+                Double d = bd.doubleValue();
+                row.add(d);
 
+                List<String> ids = termsToIds.get(id);
+                StringBuffer sb = new StringBuffer();
+                for (String term : ids) {
+                    if (sb.length() > 0) {
+                        sb.append(", ");
+                    }
+                    sb.append(term);
+                }
+                row.add(sb.toString());
+
+                exportResults.add(row);
+            }
         }
         return exportResults;
     }

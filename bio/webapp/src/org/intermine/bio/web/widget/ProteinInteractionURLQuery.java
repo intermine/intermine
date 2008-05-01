@@ -94,10 +94,10 @@ public class ProteinInteractionURLQuery implements WidgetURLQuery
         q.addNode(bagType).getConstraints().add(c);
 
 
-        constraintOp = ConstraintOp.EQUALS;
+        constraintOp = ConstraintOp.LOOKUP;
         code = q.getUnusedConstraintCode();
         PathNode geneNode = 
-        q.addNode("Protein.proteinInteractions.interactingProteins.primaryIdentifier");
+        q.addNode("Protein.proteinInteractions.interactingProteins");
         Constraint geneConstraint = new Constraint(constraintOp, key, false, label, code, id, null);
         geneNode.getConstraints().add(geneConstraint);
 
