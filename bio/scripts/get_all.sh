@@ -9,13 +9,15 @@ tempfile=$logdir$tempname
 shared_data="/shared/data"
 config_file="./resources/get_scripts.config"
 rm $tempfile
+$errmsg="";
+
 echo "==========================================================="
 echo "Getting Fly Anatomy Ontology" 
 ./get_fly_anatomy_ontology $logdir $tempname $shared_data
     if [ $? -ne 0 ]
     then
-        echo "error getting Fly Anatomy Ontology" 2>&1
-        exit 1
+        echo "error getting Fly Anatomy Ontology" 2>&1        
+#        exit 1
     fi
 echo "==========================================================="
 echo
@@ -25,7 +27,7 @@ echo "Getting FlyAtlas data"
     if [ $? -ne 0 ]
     then
         echo "error getting FlyAtlas data" 2>&1
-        exit 1
+#        exit 1
     fi
 echo "==========================================================="
 echo
@@ -35,7 +37,7 @@ echo "Getting GO annotation"
     if [ $? -ne 0 ]
     then
         echo "error gettingGO annotation" 2>&1
-        exit 1
+#        exit 1
     fi
 echo "==========================================================="
 echo
@@ -45,7 +47,7 @@ echo "Getting IntAct data"
     if [ $? -ne 0 ]
     then
         echo "error gettingIntAct data" 2>&1
-        exit 1
+#        exit 1
     fi
 
 echo "==========================================================="
@@ -56,7 +58,7 @@ echo "Getting KEGG data"
     if [ $? -ne 0 ]
     then
         echo "error getting KEGG data" 2>&1
-        exit 1
+#        exit 1
     fi
 echo "==========================================================="
 echo
@@ -66,7 +68,7 @@ echo "Getting WormBase identifiers"
     if [ $? -ne 0 ]
     then
         echo "error getting WormBase identifiers" 2>&1
-        exit 1
+#        exit 1
     fi
 echo "==========================================================="
 echo
@@ -77,7 +79,7 @@ echo "Getting PubMed data"
     if [ $? -ne 0 ]
     then
         echo "error getting PubMed data" 2>&1
-        exit 1
+#        exit 1
     fi
 echo "==========================================================="
 echo 
@@ -87,7 +89,7 @@ echo "Getting Homophila data"
     if [ $? -ne 0 ]
     then
         echo "error getting Homophila data" 2>&1
-        exit 1
+#        exit 1
     fi
 
 echo "==========================================================="
@@ -98,7 +100,7 @@ echo "Getting UniProt data"
     if [ $? -ne 0 ]
     then
         echo "error getting UniProt data" 2>&1
-        exit 1
+#        exit 1
     fi
 echo "==========================================================="
 echo
@@ -108,7 +110,7 @@ echo "Getting Ensembl GeneId to PeptideId data"
     if [ $? -ne 0 ]
     then
         echo "error getting Ensembl GeneId to PeptideId data" 2>&1
-        exit 1
+#        exit 1
     fi
 echo "==========================================================="
 echo
@@ -118,7 +120,7 @@ echo "Getting InParanoid data"
     if [ $? -ne 0 ]
     then
         echo "error getting InParanoid data" 2>&1
-        exit 1
+#        exit 1
     fi
 echo "==========================================================="
 echo
@@ -133,7 +135,7 @@ echo "Getting FlyBase FASTA files"
     if [ $? -ne 0 ]
     then
         echo "error getting FlyBase FASTA files" 2>&1
-        exit 1
+#        exit 1
     fi
 echo "==========================================================="
 
