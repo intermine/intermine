@@ -19,6 +19,7 @@ import org.intermine.web.logic.query.PathQuery;
 import org.intermine.web.logic.query.PathQueryBinding;
 import org.intermine.web.logic.template.TemplateQuery;
 import org.intermine.web.logic.template.TemplateQueryBinding;
+import org.intermine.webservice.WebServiceConstants;
 
 import junit.framework.TestCase;
 
@@ -29,10 +30,12 @@ import junit.framework.TestCase;
 public class TemplateResultLinkGeneratorTest extends TestCase
 {
 
+    private String prefix = "http://localhost:8080/query/" + WebServiceConstants.MODULE_NAME;
+    
     public void testExtraValueLink() {
         TemplateQuery tmpl = getTemplate(getExtraValueQuery());
         String link = new TemplateResultLinkGenerator().getLink("http://localhost:8080/query", tmpl);
-        assertEquals("http://localhost:8080/query/data/template/results?" +
+        assertEquals(prefix + "/template/results?" +
         		"name=template1&op1=LOOKUP&value1=zen&" +
         		"extraValue1=Drosophila_melanogaster&size=" + TemplateResultLinkGenerator.DEFAULT_RESULT_SIZE, link);
     }
@@ -49,7 +52,7 @@ public class TemplateResultLinkGeneratorTest extends TestCase
     public void testMultipleConstraintsLink() {
         TemplateQuery tmpl = getTemplate(getMultipleConstraintQuery());
         String link = new TemplateResultLinkGenerator().getLink("http://localhost:8080/query", tmpl);
-        assertEquals("http://localhost:8080/query/data/template/results?" +
+        assertEquals(prefix + "/template/results?" +
                 "name=template1&op1=CONTAINS&value1=zen&op2=lt&value2=100" + 
                 "&size=" + TemplateResultLinkGenerator.DEFAULT_RESULT_SIZE, link);        
     }

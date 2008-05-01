@@ -49,11 +49,11 @@ public class WebServiceTest extends TestCase
         ResourceBundle rb = new PropertyResourceBundle(webProps);
         String context = rb.getString("webapp.path").trim();
         String webAppUrl = rb.getString("webapp.deploy.url").trim();
-        this.serviceUrl = webAppUrl + "/" +  context + "/data/query/results?"; 
+        this.serviceUrl = webAppUrl + "/" +  context + "/" + WebServiceConstants.MODULE_NAME + "/query/results?"; 
     }
     
     /**
-     * Tests tab separated output that is formed information about employees.
+     * Tests tab output.
      * @throws Exception if some error occurs
      */
     public void testEmployeeTabOutput() throws Exception {
@@ -61,14 +61,14 @@ public class WebServiceTest extends TestCase
         List<List<String>> results = parseTabResult(tabResult);
         checkEmployees(results);
     }
-    
+     
 
     /**
      * Tests xml output that is formed information about employees.
      * @throws Exception if some error occurs
      */
     public void testEmployeeXMLOutput() throws Exception {
-        String xmlResult = getResult("output=xml&query=" + getQuery());
+        String xmlResult = getResult("format=xml&query=" + getQuery());
         List<List<String>> results = parseXMLResult(xmlResult);
         checkEmployees(results);
     }
