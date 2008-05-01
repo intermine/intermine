@@ -9,8 +9,14 @@
 
 use strict;
 use warnings;
-
+use IO::All;
 use Net::FTP;
+
+BEGIN {
+  # find the lib directory by looking at the path to this script
+    push (@INC, ($0 =~ m:(.*)/.*:)[0] . '/../../intermine/perl/lib/');
+}
+use InterMine::DataDownloader;
 
 #Define ARGVs
 my ($logdir,$logname,$home,$file);
@@ -72,13 +78,12 @@ if (!defined $version) {
 }
 
 my $download_dir = "$home/$flybase_dir/$version";
-my $log_buffer = "FlyBase\nfasta files updated to $download_dir\n";
+my $log_buffer;
 
-if (-d "$download_dir/$fasta_dir") {
-    $log_buffer = "$download_dir/$fasta_dir directory already exists - not updating\n";
-    &write_log($log_buffer,$logdir,$logname);
-    exit 0;
-}
+if (-d "$download_dir/$fasta_dir") {        
+    $log_buffer = "FlyBase\n$download_dir/$fasta_dir directory already exists - skipping download\n";
+    print "$download_dir/$fasta_dir directory already exists - skipping download\n"
+} else {
 
 if (!(-d "$home/$flybase_dir")) {
 print "creating $home/$flybase_dir\n";
@@ -131,7 +136,9 @@ print"gzip -dr $download_dir/$fasta_dir\n";
 if ((system "gzip -dr $download_dir/$fasta_dir") != 0) {
   die qq|system "gzip -dr $download_dir/$fasta_dir" failed: $?\n|;
 }
+ $log_buffer = "fasta files updated to $download_dir\n";
 
+}
 
 $log_buffer .= "\n";
 &write_log($log_buffer,$logdir,$logname);
