@@ -49,6 +49,6 @@ public class TemplateResultService extends QueryResultService
     }
 
     private TemplateResultInput getInput() {
-        return new TemplateResultRequestProcessor(request).getInput();
+        return new TemplateResultRequestParser(request).getInput();
     }
 }

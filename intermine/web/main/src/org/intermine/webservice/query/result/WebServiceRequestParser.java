@@ -20,7 +20,7 @@ import org.intermine.webservice.WebServiceInput;
  * Base request parser that is used by advanced web service parsers. 
  * @author Jakub Kulaviak
  **/
-public class WebServiceRequestProcessor
+public class WebServiceRequestParser
 {
     /**
      * Name of start parameter that determinates index of first returned result.  
