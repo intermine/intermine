@@ -20,6 +20,7 @@ import org.intermine.web.logic.query.Constraint;
 import org.intermine.web.logic.query.PathNode;
 import org.intermine.web.logic.template.TemplateQuery;
 import org.intermine.webservice.CodeTranslator;
+import org.intermine.webservice.WebServiceConstants;
 
 
 /**
@@ -68,7 +69,7 @@ public class TemplateResultLinkGenerator
             return null;
         }
         String ret = baseUrl;
-        ret += "/data/template/results?name=" + template.getName() + "&";
+        ret += "/" + WebServiceConstants.MODULE_NAME + "/template/results?name=" + template.getName() + "&";
         // Splits the long result url to 2 parts -> so it is less probable, 
         // that the url will overflow the div
         if (highlighted) {

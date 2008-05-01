@@ -26,6 +26,12 @@ public class WebServiceConstants
      */
     public static final String HTML_TABLE_ATTRIBUTE = "htmlTable";
 
-    //public static final String NAVIGATION_BAR_ATTRIBUTE = "navigationBar";
+    /**
+     * Name of module of web services.
+     * All web services relative urls start with following prefix.  
+     */
+    public static final String MODULE_NAME = "service";
+
+//    public static final String URL_PREFIX = "/service";
 
 }
