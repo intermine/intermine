@@ -75,7 +75,9 @@ my $download_dir = "$home/$flybase_dir/$version";
 my $log_buffer = "FlyBase\nfasta files updated to $download_dir\n";
 
 if (-d "$download_dir/$fasta_dir") {
-  die "$download_dir/$fasta_dir directory already exists - not updating\n";
+    $log_buffer = "$download_dir/$fasta_dir directory already exists - not updating\n";
+    &write_log($log_buffer,$logdir,$logname);
+    exit 0;
 }
 
 if (!(-d "$home/$flybase_dir")) {
