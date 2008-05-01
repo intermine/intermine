@@ -111,7 +111,7 @@ public class ListsService extends WebService
 
         // checks  type
         if (model.getClassDescriptorByName(input.getType()) == null) {
-            output.addError("invalid " + ListsRequestProcessor.TYPE_PARAMETER + " parameter." 
+            output.addError("invalid " + ListsRequestParser.TYPE_PARAMETER + " parameter." 
                     + " Specified type of the object doesn't exist: " + input.getType());
             output.flush();
             return null;                
@@ -160,6 +160,6 @@ public class ListsService extends WebService
     }
 
     private ListsServiceInput getInput() {
-        return new ListsRequestProcessor(request).getInput();
+        return new ListsRequestParser(request).getInput();
     }
 }
