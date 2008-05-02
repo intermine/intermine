@@ -110,8 +110,10 @@ public abstract class WebService
         } catch (WebServiceException ex) {
             if (ex.getMessage() != null && ex.getMessage().length() >= 0) {
                 output.addError(ex.getMessage());
+                ex.printStackTrace();
             } else {
                 output.addError(WebServiceConstants.SERVICE_FAILED_MSG);
+                ex.printStackTrace();
             }
             logger.error("Service failed.", ex);
         } catch (Throwable t) {
