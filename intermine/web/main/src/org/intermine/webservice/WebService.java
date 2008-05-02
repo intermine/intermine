@@ -12,6 +12,8 @@ package org.intermine.webservice;
 
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.io.StringWriter;
+import java.io.Writer;
 import java.util.Properties;
 
 import javax.servlet.RequestDispatcher;
@@ -110,17 +112,25 @@ public abstract class WebService
         } catch (WebServiceException ex) {
             if (ex.getMessage() != null && ex.getMessage().length() >= 0) {
                 output.addError(ex.getMessage());
-                ex.printStackTrace();
             } else {
                 output.addError(WebServiceConstants.SERVICE_FAILED_MSG);
-                ex.printStackTrace();
             }
+            ex.printStackTrace();
+            output.addError(getStackTrace(ex));
             logger.error("Service failed.", ex);
         } catch (Throwable t) {
             output.addError(WebServiceConstants.SERVICE_FAILED_MSG);
             logger.error("Service failed.", t);
         }
     }
+    
+    public static String getStackTrace(Throwable aThrowable) {
+        final Writer result = new StringWriter();
+        final PrintWriter printWriter = new PrintWriter(result);
+        aThrowable.printStackTrace(printWriter);
+        return result.toString();
+      }
+
 
     private void initOutput(PrintWriter out) {
          switch (getFormat()) {
