@@ -36,7 +36,7 @@ import org.intermine.web.logic.config.WebConfig;
 public class TableWidget extends Widget
 {
 
-    private String fields;
+    private String displayFields, exportFields;
     private WebConfig webConfig;
     private Map<String, List<FieldDescriptor>> classKeys;
     private BagTableWidgetLoader bagWidgLdr;
@@ -49,7 +49,8 @@ public class TableWidget extends Widget
      */
     public void process(InterMineBag bag, ObjectStore os) throws Exception {
         bagWidgLdr = new BagTableWidgetLoader(pathStrings, bag, os, webConfig,
-                        os.getModel(), classKeys, fields, getLink(), getColumnTitle(),
+                        os.getModel(), classKeys, displayFields, getExportFields(), 
+                        getLink(), getColumnTitle(),
                         getExternalLink(), getExternalLinkLabel());
 
         notAnalysed = bag.getSize() - bagWidgLdr.getWidgetTotal();        
@@ -64,6 +65,13 @@ public class TableWidget extends Widget
     }
     
     /**
+     * {@inheritDoc}
+     */
+    public List<List<String>> getExportResults(String[] selected) throws Exception {
+        return bagWidgLdr.getExportResults(selected);
+    }
+    
+    /**
      * Get the columns
      * @return the columns
      */
@@ -74,19 +82,21 @@ public class TableWidget extends Widget
     /**
      * @return the fields
      */
-    public String getFields() {
-        return fields;
+    public String getDisplayFields() {
+        return displayFields;
     }
 
     /**
      * @param fields the fields to set
      */
-    public void setFields(String fields) {
-        this.fields = fields;
+    public void setDisplayFields(String fields) {
+        this.displayFields = fields;
     }
     
+
+    
     /**
-     * @return the totle for the count column
+     * @return the title for the count column
      */
     public String getColumnTitle() {
         return columnTitle;
@@ -202,5 +212,22 @@ public class TableWidget extends Widget
     public void setNotAnalysed(int notAnalysed) {
         this.notAnalysed = notAnalysed;
     }
+
+    /**
+     * @return the exportFields
+     */
+    public String getExportFields() {
+        return exportFields;
+    }
+
+    /**
+     * @param exportFields the exportFields to set
+     */
+    public void setExportFields(String exportFields) {
+        this.exportFields = exportFields;
+    }
+    
+
+    
     
 }

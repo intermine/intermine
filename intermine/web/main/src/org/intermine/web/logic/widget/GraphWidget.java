@@ -16,6 +16,7 @@ import java.lang.reflect.Constructor;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import javax.servlet.http.HttpSession;
@@ -425,4 +426,19 @@ public class GraphWidget extends Widget
         this.notAnalysed = notAnalysed;
     }
     
+    /**
+     * {@inheritDoc}
+     */
+    public List<List<String>> getExportResults(String[]selected) throws Exception {
+        // TODO this method
+        return null;
+    }    
+    
+    /**
+     * {@inheritDoc}
+     */
+    public List<List<String[]>> getFlattenedResults() {
+        // TODO this method
+        return null;
+    }
 }
