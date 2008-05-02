@@ -21,7 +21,9 @@ import org.intermine.webservice.PagedServiceInput;
 public class TemplateResultInput extends PagedServiceInput 
 {
     private String name;
+    
     private List<ConstraintLoad> constraints;
+    
     private boolean computeTotalCount = false;
 
     /**

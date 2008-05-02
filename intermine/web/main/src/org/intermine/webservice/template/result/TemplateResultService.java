@@ -10,10 +10,14 @@ package org.intermine.webservice.template.result;
  *
  */
 
+import java.util.Locale;
+
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.apache.struts.Globals;
 import org.intermine.web.logic.template.TemplateQuery;
+import org.intermine.webservice.WebServiceException;
 import org.intermine.webservice.core.TemplateManager;
 import org.intermine.webservice.query.result.QueryResultService;
 
@@ -41,13 +45,22 @@ public class TemplateResultService extends QueryResultService
             output.addError("public template with name '" + input.getName() + "' doesn't exist.");
             return;
         }
-        template = new TemplateConfigurator().getConfiguredTemplate(template, 
-                input.getConstraints());
+        try {
+            template = new TemplateConfigurator().getConfiguredTemplate(template, 
+                    input.getConstraints(), getLocale(request));
+        } catch (WebServiceException e) {
+            output.addError(e.getMessage());
+            return;
+        }
         runPathQuery(template, input.getStart() - 1, input.getMaxCount(), 
                 input.isComputeTotalCount(), template.getTitle(), 
                 template.getDescription(), input);
     }
 
+    private Locale getLocale(HttpServletRequest request) {
+        return (Locale) request.getSession().getAttribute(Globals.LOCALE_KEY);
+    }
+    
     private TemplateResultInput getInput() {
         return new TemplateResultRequestParser(request).getInput();
     }
