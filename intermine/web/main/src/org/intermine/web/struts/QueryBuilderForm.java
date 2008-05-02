@@ -10,21 +10,18 @@ package org.intermine.web.struts;
  *
  */
 
-import java.util.Date;
 import java.util.Locale;
 
 import org.intermine.objectstore.query.ConstraintOp;
 
-import org.intermine.util.TypeUtil;
 import org.intermine.web.logic.Constants;
-import org.intermine.web.logic.WebUtil;
 import org.intermine.web.logic.query.MainHelper;
 import org.intermine.web.logic.query.PathNode;
 import org.intermine.web.logic.query.PathQuery;
 import org.intermine.web.logic.session.SessionMethods;
+import org.intermine.web.logic.template.ConstraintValueParser;
+import org.intermine.web.logic.template.ParseValueException;
 
-import java.text.DateFormat;
-import java.text.ParseException;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
@@ -361,57 +358,15 @@ public class QueryBuilderForm extends ActionForm
      */
     public static Object parseValue(String value, Class type, ConstraintOp constraintOp,
                                     Locale locale, ActionMessages errors) {
-        Object parsedValue = null;
-
-        if (value == null || value.length() == 0) {
-            errors.add(ActionMessages.GLOBAL_MESSAGE, new ActionMessage("errors.emptyField"));
+        try {
+            return new ConstraintValueParser().parse(value, type, constraintOp, locale);    
+        } catch (ParseValueException ex) {
+            errors.add(ActionErrors.GLOBAL_MESSAGE, 
+                    new ActionMessage("errors.message", ex.getMessage()));
             return null;
         }
-
-        if (Date.class.equals(type)) {
-            DateFormat df;
-            if (locale == null) {
-                // use deafult locale
-                df =  DateFormat.getDateInstance(DateFormat.SHORT);
-            } else {
-                df =  DateFormat.getDateInstance(DateFormat.SHORT, locale);
-            }
-            try {
-                parsedValue = df.parse(value);
-            } catch (ParseException e) {
-                errors.add(ActionMessages.GLOBAL_MESSAGE,
-                           new ActionMessage("errors.date", value, df.format(new Date())));
-            }
-        } else if (String.class.equals(type)) {
-            if (value.length() == 0) {
-                // Is the expression valid? We need a non-zero length string at least
-                errors.add(ActionMessages.GLOBAL_MESSAGE, new ActionMessage("errors.like"));
-            } else {
-                String trimmedValue = value.trim();
-                if (constraintOp == ConstraintOp.EQUALS
-                    || constraintOp == ConstraintOp.NOT_EQUALS
-                    || constraintOp == ConstraintOp.MATCHES
-                    || constraintOp == ConstraintOp.DOES_NOT_MATCH) {
-                    parsedValue = WebUtil.wildcardUserToSql(trimmedValue);
-                } else {
-                    parsedValue = trimmedValue;
-                }
-            }
-        } else {
-            try {
-                parsedValue = TypeUtil.stringToObject(type, value);
-                if (parsedValue instanceof String) {
-                    parsedValue = ((String) parsedValue).trim();
-                }
-            } catch (NumberFormatException e) {
-                String shortName = TypeUtil.unqualifiedName(type.getName()).toLowerCase();
-                errors.add(ActionMessages.GLOBAL_MESSAGE,
-                           new ActionMessage("errors." + shortName, value));
-            }
-        }
-        return parsedValue;
     }
-
+    
     /**
      * {@inheritDoc}
      */

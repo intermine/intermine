@@ -12,9 +12,13 @@ package org.intermine.webservice.template.result;
 
 import java.util.Iterator;
 import java.util.List;
+import java.util.Locale;
 
 import org.intermine.web.logic.query.Constraint;
+import org.intermine.web.logic.query.MainHelper;
 import org.intermine.web.logic.query.PathNode;
+import org.intermine.web.logic.template.ConstraintValueParser;
+import org.intermine.web.logic.template.ParseValueException;
 import org.intermine.web.logic.template.TemplateQuery;
 import org.intermine.webservice.WebServiceException;
 
@@ -35,10 +39,11 @@ public class TemplateConfigurator
      * very similar TemplateQuery with only different values.
      * @param origTemplate original template
      * @param newConstraints new constraints
+     * @param locale locale
      * @return new template
      */
     public TemplateQuery getConfiguredTemplate(TemplateQuery origTemplate,
-            List<ConstraintLoad> newConstraints) {
+            List<ConstraintLoad> newConstraints, Locale locale) {
         /* Made according to org.intermine.web.logic.template.
          * TemplateHelper.templateFormToTemplateQuery().
          * Be carefull when changing this code. If you replace constraint 
@@ -48,17 +53,59 @@ public class TemplateConfigurator
         newConstraintIt = newConstraints.iterator();
         for (PathNode node : template.getEditableNodes()) {
             for (Constraint c : template.getEditableConstraints(node)) {
-                ConstraintLoad load = nextNewConstraint();
-                int constraintIndex = node.getConstraints().indexOf(c);
-                Object extraValue = 
-                    (load.getExtraValue() != null) ? load.getExtraValue(): c.getExtraValue();
-                Constraint newConstraint = new Constraint(load.getConstraintOp(), load.getValue(), 
-                        true, c.getDescription(), c.getCode(), c.getIdentifier(), extraValue); 
-                node.getConstraints().set(constraintIndex, newConstraint);
+                setConstraint(node, c, locale);
             }
         }
         return template;
     }
+
+    private void setConstraint(PathNode node, Constraint c, Locale locale) {
+        ConstraintLoad load = nextNewConstraint();
+        int constraintIndex = node.getConstraints().indexOf(c);
+        Object extraValue = getExtraValue(c, load, node, locale);
+        Object value = getValue(c, load, node, locale);
+        Constraint newConstraint = new Constraint(load.getConstraintOp(), value, 
+                true, c.getDescription(), c.getCode(), c.getIdentifier(), extraValue); 
+        node.getConstraints().set(constraintIndex, newConstraint);
+    }
+
+    private Object getValue(Constraint c, ConstraintLoad load, PathNode node, Locale locale) {
+        Object ret;
+        try {
+            ret = new ConstraintValueParser().parse(load.getValue(), getType(node), 
+                    load.getConstraintOp(), locale);    
+        } catch (ParseValueException ex) {
+            throw new WebServiceException("invalid value: " + load.getValue() + ". "
+                    + ex.getMessage());                
+        }
+        return ret;
+    }
+
+    private Object getExtraValue(Constraint c, ConstraintLoad load, PathNode node, Locale locale) {
+        Object ret;
+        if (load.getExtraValue() == null) {
+            return c.getExtraValue();
+        }
+        try {
+            ret = new ConstraintValueParser().parse(load.getExtraValue(), getType(node), 
+                    load.getConstraintOp(), locale);    
+        } catch (ParseValueException ex) {
+            throw new WebServiceException("invalid value: " + load.getExtraValue() + ". "
+                    + ex.getMessage());                
+        }
+        return ret;
+    }
+    
+    private Class getType(PathNode node) {
+        Class fieldClass;
+        if (node.isAttribute()) {
+            fieldClass = MainHelper.getClass(node.getType());
+        } else {
+            fieldClass = String.class;
+        }
+        return fieldClass;
+    }
+
 
     private ConstraintLoad nextNewConstraint() {
         if (newConstraintIt.hasNext()) {
@@ -67,5 +114,5 @@ public class TemplateConfigurator
             throw new WebServiceException("There is insufficient number of constraints in your " 
                     + "request. Template has more constrains than you have specified.");
         }
-    }
+    }    
 }

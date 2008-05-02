@@ -51,8 +51,8 @@
 	<servlet-name>dwr-invoker</servlet-name>
 	<url-pattern>/dwr/*</url-pattern>
   </servlet-mapping>
+  
 <!-- ================================================================================= -->
-
 <!-- Intermine Web Service mapping --> 
 <!-- ================================================================================= -->
   <servlet>
@@ -66,7 +66,7 @@
 
   <servlet-mapping>
 	<servlet-name>ws-query-results</servlet-name>
-	<url-pattern>/data/query/results</url-pattern>
+	<url-pattern>/service/query/results</url-pattern>
   </servlet-mapping>
   
   <servlet>
@@ -80,10 +80,10 @@
 
   <servlet-mapping>
 	<servlet-name>ws-lists</servlet-name>
-	<url-pattern>/data/listswithobject</url-pattern>
+	<url-pattern>/service/listswithobject</url-pattern>
   </servlet-mapping>
   
-    <servlet>
+  <servlet>
 	<servlet-name>ws-template-results</servlet-name>
 	<servlet-class>org.intermine.webservice.template.result.TemplateResultServlet</servlet-class>
 	<init-param>
@@ -94,7 +94,7 @@
 
   <servlet-mapping>
 	<servlet-name>ws-template-results</servlet-name>
-	<url-pattern>/data/template/results</url-pattern>
+	<url-pattern>/service/template/results</url-pattern>
   </servlet-mapping>
   
 <!-- ================================================================================= -->  
