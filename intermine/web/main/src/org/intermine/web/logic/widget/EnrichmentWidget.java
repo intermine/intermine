@@ -201,7 +201,7 @@ public class EnrichmentWidget extends Widget
     }
     
     /**
-     * @return results of enrichment widget
+     * {@inheritDoc}
      */
     public List<List<String[]>> getFlattenedResults() {
         if (resultMaps != null && !resultMaps.isEmpty()) {
@@ -245,10 +245,7 @@ public class EnrichmentWidget extends Widget
     }
     
     /**
-     * Get the results in an exportable format for the specified ids
-     * @param selected the selected ids to export
-     * @return a list of list of Strings
-     * @throws Exception something has gone wrong. oh no.
+     * {@inheritDoc}
      */
     public List<List<String>> getExportResults(String[]selected) throws Exception {
                 

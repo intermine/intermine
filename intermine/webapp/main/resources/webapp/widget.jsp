@@ -84,9 +84,7 @@
   <div id="widget_tool_bar_div_${widget.id}" class="widget_tool_bar_div" >
     <ul id="widget_button_bar_${widget.id}" onclick="toggleToolBarMenu(event,'widget');" class="widget_button_bar" >
         <li id="tool_bar_li_display_${widget.id}"><span id="tool_bar_button_display_${widget.id}" class="widget_tool_bar_button">Display</span></li>
-        <c:if test="${fn:contains(widget.class,'EnrichmentWidget')}" >
-           <li id="tool_bar_li_export_${widget.id}"><span id="tool_bar_button_export_${widget.id}" class="widget_tool_bar_button">Export</span></li>
-    	</c:if> 
+        <li id="tool_bar_li_export_${widget.id}"><span id="tool_bar_button_export_${widget.id}" class="widget_tool_bar_button">Export</span></li>
     </ul>
   </div>
   <div id="tool_bar_item_display_${widget.id}" style="visibility:hidden;width:200px" class="tool_bar_item">

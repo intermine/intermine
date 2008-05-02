@@ -10,11 +10,25 @@
  *
  */
 
+import java.io.UnsupportedEncodingException;
+import java.net.URLEncoder;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.HashMap;
 import java.util.Iterator;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
+import org.intermine.metadata.AttributeDescriptor;
+import org.intermine.metadata.ClassDescriptor;
+import org.intermine.metadata.FieldDescriptor;
+import org.intermine.metadata.Model;
+import org.intermine.metadata.ReferenceDescriptor;
+import org.intermine.model.InterMineObject;
+import org.intermine.objectstore.ObjectStore;
+import org.intermine.objectstore.ObjectStoreException;
 import org.intermine.objectstore.query.BagConstraint;
 import org.intermine.objectstore.query.ConstraintOp;
 import org.intermine.objectstore.query.ContainsConstraint;
@@ -30,25 +44,14 @@ import org.intermine.objectstore.query.QueryValue;
 import org.intermine.objectstore.query.Results;
 import org.intermine.objectstore.query.ResultsRow;
 import org.intermine.objectstore.query.SimpleConstraint;
-
-import org.intermine.metadata.AttributeDescriptor;
-import org.intermine.metadata.ClassDescriptor;
-import org.intermine.metadata.FieldDescriptor;
-import org.intermine.metadata.Model;
-import org.intermine.metadata.ReferenceDescriptor;
-import org.intermine.model.InterMineObject;
-import org.intermine.objectstore.ObjectStore;
-import org.intermine.objectstore.ObjectStoreException;
 import org.intermine.path.Path;
 import org.intermine.util.TypeUtil;
 import org.intermine.web.logic.ClassKeyHelper;
+import org.intermine.web.logic.Constants;
 import org.intermine.web.logic.bag.InterMineBag;
 import org.intermine.web.logic.config.FieldConfig;
 import org.intermine.web.logic.config.FieldConfigHelper;
 import org.intermine.web.logic.config.WebConfig;
-
-import java.io.UnsupportedEncodingException;
-import java.net.URLEncoder;
 
 /**
  * @author Xavier Watkins
@@ -61,19 +64,29 @@ public class BagTableWidgetLoader
     private String title, description;
     protected Query q;
     private int widgetTotal = 0;
+    private InterMineBag bag;
+    private String pathString;
+    private Model model;
+    private String displayFields, exportFields;
+    private ObjectStore os;
+    private Path origPath;
+    private Map classKeys;
+    private String type;
     
     /**
      * This class loads and formats the data for the count
      * table widgets in the bag details page
      *
-     * @param pathString the path to group the objects by, ie Employee.city will return the list of
+     * @param pathStr the path to group the objects by, ie Employee.city will return the list of
      * employees by city
-     * @param bag the bag
+     * @param imBag the bag
      * @param os the objectstore
      * @param webConfig the webConfig
      * @param model the model
      * @param classKeys the classKeys
-     * @param fields fields involved in widget
+     * @param displayFields fields displayed in widget
+     * @param exportFields fields, along with the key for the originating class, that will be
+     * printed in the export file
      * @param urlGen the class that generates the pathquery used in the links from the widget
      * @param columnTitle title for count column
      * @param externalLink link to external source
@@ -81,19 +94,28 @@ public class BagTableWidgetLoader
      * @throws ClassNotFoundException if some class in the widget paths is not found
      * @throws UnsupportedEncodingException if something goes wrong encoding the URL
      */
-    public BagTableWidgetLoader(String pathString, InterMineBag bag, ObjectStore os, 
+    public BagTableWidgetLoader(String pathStr, InterMineBag imBag, ObjectStore os, 
                                 WebConfig webConfig, Model model, 
                                 Map<String, List<FieldDescriptor>> classKeys, 
-                                String fields, String urlGen, String columnTitle,
+                                String displayFields, String exportFields, String urlGen, 
+                                String columnTitle,
                                 String externalLink, String externalLinkLabel) 
     throws ClassNotFoundException, UnsupportedEncodingException {
-        Path pathTmp = new Path(model, pathWithNoConstraints(pathString));
-        ClassDescriptor cld = pathTmp.getEndClassDescriptor();
-        String type = cld.getUnqualifiedName();
+        
+        this.pathString = pathStr;
+        this.origPath = new Path(model, pathWithNoConstraints(pathString));
+        ClassDescriptor cld = origPath.getEndClassDescriptor();
+        this.type = cld.getUnqualifiedName();
+        this.classKeys = classKeys;
+        this.bag = imBag;
+        this.model = model;
+        this.displayFields = displayFields;
+        this.exportFields = exportFields;
+        this.os = os;
         
         // TODO validate start type vs. bag type
-        ClassDescriptor cldStart = pathTmp.getStartClassDescriptor();
-        q = constructQuery(model, bag, cldStart, pathString, false);
+        
+        q = constructQuery(false, null);
         
         List results;
         try {
@@ -103,8 +125,8 @@ public class BagTableWidgetLoader
         }
         
         columns = new ArrayList<String>();
-        if ((fields != null) && (fields.length() != 0)) {
-            String[] fieldArray = fields.split(",");
+        if ((displayFields != null) && (displayFields.length() != 0)) {
+            String[] fieldArray = displayFields.split(",");
             for (int i = 0; i < fieldArray.length; i++) {
                 String field = fieldArray[i];
                 String newColumnName = type + "." + field;
@@ -195,7 +217,7 @@ public class BagTableWidgetLoader
             columns.add(bag.getType() + "s");
         }
 
-        q = constructQuery(model, bag, cldStart, pathString, true);
+        q = constructQuery(true, null);
         widgetTotal = calcTotal(os, q);
     }
 
@@ -231,37 +253,25 @@ public class BagTableWidgetLoader
         return description;
     }
 
-    /**
-     * Construct an objectstore query represented by the given path.
-     * @param model the Model use to find meta data
-     * @param paths path to construct query for
-     * @param bag the bag for this widget
-     * @return the constructed query
-     * @throws ClassNotFoundException if problem processing path
-     * @throws IllegalArgumentException if problem processing path
-     */
-    private Query constructQuery(Model model, InterMineBag bag, ClassDescriptor cldStart,
-                                 String pathString, boolean calcTotal)
+    private Query constructQuery(boolean calcTotal, List<String> keys)
         throws ClassNotFoundException, IllegalArgumentException {
                 
         Query q = new Query();
         boolean first = true;
         String[] queryBits = pathString.split("\\.");
         QueryClass qcStart = null;
-        QueryField qfStartId = null;
+        QueryField qfStartId = null;        
+        ClassDescriptor cldStart = origPath.getStartClassDescriptor();
+        QueryClass qcExport = null;
         for (int i = 1; i < queryBits.length; i++) {
+            
             if (qcStart == null) {
-                qcStart = new QueryClass(cldStart.getType());
+                qcStart = new QueryClass(cldStart.getType());                
                 qfStartId = new QueryField(qcStart, "id");
-            }
-            
-            QueryField qfId = new QueryField(qcStart, "id");
-            
-            if (first) {
+                qcExport = qcStart;
                 q.addFrom(qcStart);
-                // this is the start of the path sp constraint to be in bag
                 QueryHelper.addConstraint(q, 
-                                          new BagConstraint(qfId, ConstraintOp.IN, bag.getOsb())); 
+                new BagConstraint(qfStartId, ConstraintOp.IN, bag.getOsb())); 
             }
             
             String refName;
@@ -308,21 +318,33 @@ public class BagTableWidgetLoader
                 constraintName = null;
                 constraintValue = null;
             }
-            
+
             QueryFunction qf = new QueryFunction();
             
             // if we are at the end of the path, add to select and group by
             if (queryBits.length == (i + 1)) {
                 
-                if (!calcTotal) {
+                if (keys != null) { // export
+                    q.setDistinct(true);
                     
+                    QueryField keyField = new QueryField(qcEnd, getKeyField(displayFields));
+                    BagConstraint bc = new BagConstraint(keyField, ConstraintOp.IN, keys);
+                    QueryHelper.addConstraint(q, bc);
+                                        
+                    q.addToSelect(new QueryField(qcEnd, getKeyField(displayFields)));
+                    
+                    String[] fields = exportFields.split(",");
+                    for (String field : fields) {
+                        q.addToSelect(new QueryField(qcExport, field));
+                    }                    
+                } else if (!calcTotal) {                    
                     q.setDistinct(false);
                     q.addToSelect(qcEnd);
                     q.addToGroupBy(qcEnd);
                     
                     q.addToSelect(qf);
                     q.addToOrderBy(qf, "desc");
-                    
+                 
                 } else {
                     
                     Query subQ = new Query();
@@ -409,6 +431,57 @@ public class BagTableWidgetLoader
             n = ((java.lang.Long) resRow.get(0)).intValue();
         }
         return n;
+    }
+    
+    /**
+     * {@inheritDoc}
+     */
+    public List<List<String>> getExportResults(String[] selected) throws Exception {
+
+        List<List<String>> exportResults = new ArrayList<List<String>>();
+        List<String> selectedIds = Arrays.asList(selected);
+        
+        Query q = constructQuery(false, selectedIds);
+       
+        Results res = os.execute(q);        
+        Iterator iter = res.iterator();
+        HashMap<String, List<String>> termsToIds = new HashMap();
+        while (iter.hasNext()) {
+            ResultsRow resRow = (ResultsRow) iter.next();
+            String term = (String) resRow.get(0);   // annotation (like go term)
+            String id = (String) resRow.get(1);     // object identifier (like gene.identifier)
+            if (!termsToIds.containsKey(term)) {
+                termsToIds.put(term, new ArrayList<String>());
+            }
+            termsToIds.get(term).add(id);
+        }
+
+        for (String id : selectedIds) {
+            if (termsToIds.get(id) != null) {
+                List row = new LinkedList();
+                row.add(id);
+                List<String> ids = termsToIds.get(id);
+                StringBuffer sb = new StringBuffer();
+                for (String term : ids) {
+                    if (sb.length() > 0) {
+                        sb.append(", ");
+                    }
+                    sb.append(term);
+                }
+                row.add(sb.toString());
+
+                exportResults.add(row);
+            }
+        }
+        return exportResults;
+    }
+
+    private String getKeyField(String s) {
+       if (s.contains(",")) {
+        String[] strings = s.split(",");
+        return strings[0];
+       }
+       return s;
     }
 }
   

@@ -12,6 +12,7 @@ package org.intermine.web.logic.widget;
 
 
 import java.util.Collection;
+import java.util.List;
 import java.util.Map;
 
 import org.intermine.objectstore.ObjectStore;
@@ -181,4 +182,18 @@ public abstract class Widget
      * @param notAnalysed the number of objects not analysed in this widget
      */
     public abstract void setNotAnalysed(int notAnalysed);
+    
+    /**
+     * 
+     * @param selected the list of checked items from the form
+     * @return the checked items in export format
+     * @throws Exception something has gone wrong. oh no.
+     */
+    public abstract List<List<String>> getExportResults(String[]selected) throws Exception;
+    
+    
+    /**
+     * @return results of widget
+     */
+    public abstract List<List<String[]>> getFlattenedResults();
 }

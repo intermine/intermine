@@ -160,8 +160,8 @@ public class WidgetAction extends InterMineAction
                         model.getPackageName() + "." + widgetForm.getBagType());
         List<Widget> widgets = type.getWidgets();
         for (Widget widget : widgets) {
-            if (widget.getId() == new Integer(widgetId) && widget instanceof EnrichmentWidget) {
-                EnrichmentWidget enrichmentWidget = (EnrichmentWidget) widget;
+            if (widget.getId() == new Integer(widgetId)) {
+                
                 StringExporterImpl stringExporter;
                 if (widgetForm.getExporttype().equals("csv")) {
                     stringExporter = new StringExporterImpl(response
@@ -174,8 +174,8 @@ public class WidgetAction extends InterMineAction
                     ResponseUtil.setTabHeader(response, "widget" + widgetForm.getWidgetid()
                                                         + ".tsv");
                 }
-                stringExporter.export(enrichmentWidget.getExportResults(widgetForm.getSelected()));
-                enrichmentWidget.getFlattenedResults();
+                stringExporter.export(widget.getExportResults(widgetForm.getSelected()));
+                widget.getFlattenedResults();
             }
         }
 
