@@ -167,12 +167,18 @@ public class HTMLTable
         }
         StringBuilder sb = new StringBuilder();
         if (rows.size() == 0) {
-            return "<tr><td>There are no data. If you browsed "
-                    + "through results go to the previous page.</td></tr>";
+            String ret = "<tr><td>There are no data. If you browsed "
+                    + "through results go to the previous page.</td>";
+            ret += getEmptyCellsHtml(getColumnsCount() - 1);
+            ret += "</tr>";
+            return ret;
         }
-        for (List<String> row : rows) {
+        for (int i = 0; i < rows.size(); i++) {
+            List<String> row = rows.get(i);
             sb.append("<tr>\n");
-            for (String cell : row) {
+            int cellIndex;
+            for (cellIndex = 0; cellIndex < row.size(); cellIndex++) {
+                String cell = row.get(cellIndex);
                 sb.append("<td>");
                 if (cell == null || cell.length() == 0) {
                     sb.append("&nbsp;");
@@ -181,11 +187,27 @@ public class HTMLTable
                 }
                 sb.append("</td>\n");
             }
+            sb.append(getEmptyCellsHtml(getColumnsCount() - cellIndex - 1));
             sb.append("</tr>\n");
         }
         return sb.toString();
     }
 
+    private int getColumnsCount() {
+        if (columnNames != null) {
+            return columnNames.size();
+        }
+        return 0;
+    }
+    
+    private String getEmptyCellsHtml(int count) {
+        StringBuilder sb = new StringBuilder();
+        for (int i = 0; i < count; i++) {
+            sb.append("<td>&nbsp;</td>\n");
+        }
+        return sb.toString();
+    }
+    
     private String getHeaderHtml() {
         if (columnNames == null) {
             return "";
