@@ -36,7 +36,7 @@
   <legend>Options</legend>
   <ol>
    <c:if test="${type == 'EnrichmentWidget'}" >
-   
+
    <html:hidden property="externalLink${widget.id}" styleId="externalLink${widget.id}" value="${widget.externalLink}"/>
    <html:hidden property="externalLinkLabel${widget.id}" styleId="externalLinkLabel${widget.id}" value="${widget.externalLinkLabel}"/>
     <li>
@@ -80,7 +80,7 @@
   </ol>
   </fieldset>
  </c:if>
- <c:if test="${fn:contains(widget.class,'EnrichmentWidget') || fn:contains(widget.class,'TableWidget')}">
+ <c:if test="${type == 'EnrichmentWidget' || type == 'TableWidget'}">
   <div id="widget_tool_bar_div_${widget.id}" class="widget_tool_bar_div" >
     <ul id="widget_button_bar_${widget.id}" onclick="toggleToolBarMenu(event,'widget');" class="widget_button_bar" >
         <li id="tool_bar_li_display_${widget.id}"><span id="tool_bar_button_display_${widget.id}" class="widget_tool_bar_button">Display</span></li>
@@ -92,37 +92,37 @@
     <hr/>
     <a href="javascript:hideMenu('tool_bar_item_display_${widget.id}','widget')" >Cancel</a>
   </div>
-  
+
   <div id="tool_bar_item_export_${widget.id}" style="visibility:hidden;width:230px" class="tool_bar_item">
     <a href="javascript:submitWidgetForm(${widget.id},'export','csv')">Export selected as comma separated values</a><br/>
     <a href="javascript:submitWidgetForm(${widget.id},'export','tab')">Export selected as tab separated values</a>
     <hr/>
   <a href="javascript:hideMenu('tool_bar_item_export_${widget.id}','widget')" >Cancel</a>
   </div>
- </c:if>  
+ </c:if>
   <div id="widgetdata${widget.id}" class="widgetdata">
-    <c:if test="${fn:contains(widget.class,'TableWidget') || fn:contains(widget.class,'EnrichmentWidget')}" >
+    <c:if test="${type == 'TableWidget' || type == 'EnrichmentWidget'}" >
       <table id="tablewidget${widget.id}" border="0" >
         <thead id="tablewidget${widget.id}head"></thead>
         <tbody id="tablewidget${widget.id}body"></tbody>
       </table>
-    </c:if>    
+    </c:if>
   </div>
   <div id="widgetdatawait${widget.id}" class="widgetdatawait"><img src="images/wait30.gif" title="Searching..."/></div>
   <div id="widgetdatanoresults${widget.id}" class="widgetdatawait" style="display:none;"><i>no results found</i></div>
   <script language="javascript">
   <c:choose>
-    <c:when test="${fn:contains(widget.class,'GraphWidget')}" >
+    <c:when test="${type == 'GraphWidget'}" >
         <!--//<![CDATA[
            getProcessGraphWidget('${widget.id}','${bag.name}');
         //]]>-->
     </c:when>
-    <c:when test="${fn:contains(widget.class,'TableWidget')}" >
+    <c:when test="${type == 'TableWidget'}" >
     <!--//<![CDATA[
            getProcessTableWidget('${widget.id}','${bag.name}');
     //]]>-->
     </c:when>
-    <c:when test="${fn:contains(widget.class,'EnrichmentWidget')}" >
+    <c:when test="${type == 'EnrichmentWidget'}" >
     <!--//<![CDATA[
            getProcessEnrichmentWidget('${widget.id}','${bag.name}');
     //]]>-->

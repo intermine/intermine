@@ -14,7 +14,6 @@ import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collection;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.LinkedList;
@@ -47,7 +46,6 @@ import org.intermine.objectstore.query.SimpleConstraint;
 import org.intermine.path.Path;
 import org.intermine.util.TypeUtil;
 import org.intermine.web.logic.ClassKeyHelper;
-import org.intermine.web.logic.Constants;
 import org.intermine.web.logic.bag.InterMineBag;
 import org.intermine.web.logic.config.FieldConfig;
 import org.intermine.web.logic.config.FieldConfigHelper;
@@ -72,7 +70,7 @@ public class BagTableWidgetLoader
     private Path origPath;
     private Map classKeys;
     private String type;
-    
+
     /**
      * This class loads and formats the data for the count
      * table widgets in the bag details page
@@ -94,14 +92,14 @@ public class BagTableWidgetLoader
      * @throws ClassNotFoundException if some class in the widget paths is not found
      * @throws UnsupportedEncodingException if something goes wrong encoding the URL
      */
-    public BagTableWidgetLoader(String pathStr, InterMineBag imBag, ObjectStore os, 
-                                WebConfig webConfig, Model model, 
-                                Map<String, List<FieldDescriptor>> classKeys, 
-                                String displayFields, String exportFields, String urlGen, 
+    public BagTableWidgetLoader(String pathStr, InterMineBag imBag, ObjectStore os,
+                                WebConfig webConfig, Model model,
+                                Map<String, List<FieldDescriptor>> classKeys,
+                                String displayFields, String exportFields, String urlGen,
                                 String columnTitle,
-                                String externalLink, String externalLinkLabel) 
+                                String externalLink, String externalLinkLabel)
     throws ClassNotFoundException, UnsupportedEncodingException {
-        
+
         this.pathString = pathStr;
         this.origPath = new Path(model, pathWithNoConstraints(pathString));
         ClassDescriptor cld = origPath.getEndClassDescriptor();
@@ -112,18 +110,18 @@ public class BagTableWidgetLoader
         this.displayFields = displayFields;
         this.exportFields = exportFields;
         this.os = os;
-        
+
         // TODO validate start type vs. bag type
-        
+
         q = constructQuery(false, null);
-        
+
         List results;
         try {
             results = os.execute(q, 0, 50, true, true, ObjectStore.SEQUENCE_IGNORE);
         } catch (ObjectStoreException e) {
             throw new RuntimeException(e);
         }
-        
+
         columns = new ArrayList<String>();
         if ((displayFields != null) && (displayFields.length() != 0)) {
             String[] fieldArray = displayFields.split(",");
@@ -144,23 +142,23 @@ public class BagTableWidgetLoader
                 columns.add(newColumnName);
             }
         }
-        
+
         flattenedResults = new ArrayList<ArrayList>();
-        
+
         for (Iterator iter = results.iterator(); iter.hasNext();) {
             ArrayList<String[]> flattenedRow = new ArrayList<String[]>();
             ResultsRow resRow = (ResultsRow) iter.next();
             //Integer lastObjectId = null;
             String key = "";
             for (Iterator iterator = resRow.iterator(); iterator.hasNext();) {
-                
+
                 Object element = iterator.next();
                 if (element instanceof InterMineObject) {
-                                        
+
                     InterMineObject o = (InterMineObject) element;
                     boolean isFirst = true;
                     for (Iterator iterator3 = columns.iterator(); iterator3.hasNext();) {
-                        
+
                         String columnName = (String) iterator3.next();
                         Path path = new Path(model, columnName);
                         Object fieldValue = path.resolve(o);
@@ -175,14 +173,14 @@ public class BagTableWidgetLoader
                             link = "objectDetails.do?id=" + o.getId() + "&amp;trail=|bag."
                                    + bag.getName() + "|" + o.getId();
                         } else if (externalLink != null && !externalLink.equals("")) {
-                            val = val + " <a href=\"" + externalLink + key 
-                            + "\" target=\"_new\" class=\"extlink\">[" 
+                            val = val + " <a href=\"" + externalLink + key
+                            + "\" target=\"_new\" class=\"extlink\">["
                             + externalLinkLabel + "]</a>";
                         }
 
                         if (isFirst) {
 
-                            String checkbox = "<input name=\"selected\" value=\"" + key 
+                            String checkbox = "<input name=\"selected\" value=\"" + key
                             + "\" id=\"selected_" + key + "\" type=\"checkbox\">";
 
                             flattenedRow.add(new String[]
@@ -196,7 +194,7 @@ public class BagTableWidgetLoader
                                                     {
                             val, link
                                                     });
-                        
+
                     }
                 } else if (element instanceof Long) {
                     flattenedRow.add(new String[]
@@ -255,25 +253,25 @@ public class BagTableWidgetLoader
 
     private Query constructQuery(boolean calcTotal, List<String> keys)
         throws ClassNotFoundException, IllegalArgumentException {
-                
+
         Query q = new Query();
         boolean first = true;
         String[] queryBits = pathString.split("\\.");
         QueryClass qcStart = null;
-        QueryField qfStartId = null;        
+        QueryField qfStartId = null;
         ClassDescriptor cldStart = origPath.getStartClassDescriptor();
         QueryClass qcExport = null;
         for (int i = 1; i < queryBits.length; i++) {
-            
+
             if (qcStart == null) {
-                qcStart = new QueryClass(cldStart.getType());                
+                qcStart = new QueryClass(cldStart.getType());
                 qfStartId = new QueryField(qcStart, "id");
                 qcExport = qcStart;
                 q.addFrom(qcStart);
-                QueryHelper.addConstraint(q, 
-                new BagConstraint(qfStartId, ConstraintOp.IN, bag.getOsb())); 
+                QueryHelper.addConstraint(q,
+                new BagConstraint(qfStartId, ConstraintOp.IN, bag.getOsb()));
             }
-            
+
             String refName;
             String constraintName = null, constraintValue = null;
             // extra constraints have syntax Company.departments[name=DepartmentA].employees
@@ -285,7 +283,7 @@ public class BagTableWidgetLoader
             } else {
                 refName = queryBits[i];
             }
-            
+
             FieldDescriptor fld = cldStart.getFieldDescriptorByName(refName);
             if (fld == null) {
                 throw new IllegalArgumentException("Class '" + cldStart.getType() + "' has no '"
@@ -299,7 +297,7 @@ public class BagTableWidgetLoader
             QueryClass qcEnd = new QueryClass(cldEnd.getType());
 
             addReferenceConstraint(model, q, qcStart, refName, qcEnd);
-            
+
             if (constraintName != null && constraintValue != null) {
                 AttributeDescriptor attFld = cldEnd.getAttributeDescriptorByName(constraintName);
                 if (attFld == null) {
@@ -308,7 +306,7 @@ public class BagTableWidgetLoader
                 }
                 if (!attFld.getType().equals("java.lang.String")) {
                     throw new IllegalArgumentException("Constraints can only be on String fields '"
-                                                       + constraintName 
+                                                       + constraintName
                                                        + "' is a " + attFld.getType());
                 }
                 SimpleConstraint sc = new SimpleConstraint(new QueryField(qcEnd, constraintName),
@@ -320,39 +318,39 @@ public class BagTableWidgetLoader
             }
 
             QueryFunction qf = new QueryFunction();
-            
+
             // if we are at the end of the path, add to select and group by
             if (queryBits.length == (i + 1)) {
-                
+
                 if (keys != null) { // export
                     q.setDistinct(true);
-                    
+
                     QueryField keyField = new QueryField(qcEnd, getKeyField(displayFields));
                     BagConstraint bc = new BagConstraint(keyField, ConstraintOp.IN, keys);
                     QueryHelper.addConstraint(q, bc);
-                                        
+
                     q.addToSelect(new QueryField(qcEnd, getKeyField(displayFields)));
-                    
+
                     String[] fields = exportFields.split(",");
                     for (String field : fields) {
                         q.addToSelect(new QueryField(qcExport, field));
-                    }                    
-                } else if (!calcTotal) {                    
+                    }
+                } else if (!calcTotal) {
                     q.setDistinct(false);
                     q.addToSelect(qcEnd);
                     q.addToGroupBy(qcEnd);
-                    
+
                     q.addToSelect(qf);
                     q.addToOrderBy(qf, "desc");
-                 
+
                 } else {
-                    
+
                     Query subQ = new Query();
                     subQ = q;
                     subQ.setDistinct(true);
                     subQ.clearSelect();
                     subQ.addToSelect(qfStartId);
-                    
+
                     q = new Query();
                     q.setDistinct(false);
                     q.addToSelect(qf);
@@ -378,10 +376,10 @@ public class BagTableWidgetLoader
      * to the query
      * @return QueryClass return qcEnd
      */
-    private QueryClass addReferenceConstraint(Model model, Query q, QueryClass qcStart, 
+    private QueryClass addReferenceConstraint(Model model, Query q, QueryClass qcStart,
                                               String refName, QueryClass qcEnd) {
         q.addFrom(qcEnd);
-        
+
         // already validated against model
         ClassDescriptor startCld = model.getClassDescriptorByName(qcStart.getType().getName());
         FieldDescriptor fd = startCld.getFieldDescriptorByName(refName);
@@ -394,10 +392,10 @@ public class BagTableWidgetLoader
         }
         ContainsConstraint cc = new ContainsConstraint(qRef, ConstraintOp.CONTAINS, qcEnd);
         QueryHelper.addConstraint(q, cc);
-        
+
         return qcEnd;
     }
-    
+
     // return a path with out any [] constraints
     private String pathWithNoConstraints(String path) {
         StringBuffer sb = new StringBuffer(path.length());
@@ -423,7 +421,7 @@ public class BagTableWidgetLoader
     }
 
     private static int calcTotal(ObjectStore os, Query q) {
-        Results res = os.execute(q);        
+        Results res = os.execute(q);
         Iterator iter = res.iterator();
         int n = 0;
         while (iter.hasNext()) {
@@ -432,7 +430,7 @@ public class BagTableWidgetLoader
         }
         return n;
     }
-    
+
     /**
      * {@inheritDoc}
      */
@@ -440,10 +438,10 @@ public class BagTableWidgetLoader
 
         List<List<String>> exportResults = new ArrayList<List<String>>();
         List<String> selectedIds = Arrays.asList(selected);
-        
+
         Query q = constructQuery(false, selectedIds);
-       
-        Results res = os.execute(q);        
+
+        Results res = os.execute(q);
         Iterator iter = res.iterator();
         HashMap<String, List<String>> termsToIds = new HashMap();
         while (iter.hasNext()) {
@@ -484,4 +482,3 @@ public class BagTableWidgetLoader
        return s;
     }
 }
-  
