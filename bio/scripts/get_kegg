@@ -63,7 +63,7 @@ if(&checkdir_exists($download_dir)==1){
 	
 	#get the KEGG release number from the webpage
 	#my $kegg_server = "http://www.genome.jp/kegg/";
-        my $kegg_server = " http://www.genome.jp/kegg/docs/relnote.html";
+        my $kegg_server = "http://www.genome.jp/kegg/docs/relnote.html";
 
 	my $expression = qr/KEGG Release ([\d\.]+),/;
 	my $release = &search_webpage($kegg_server,$expression);

@@ -226,7 +226,7 @@ public class MainHelper
                 (BagQueryConfig) (servletContext == null ? null
                     : servletContext.getAttribute(Constants.BAG_QUERY_CONFIG)));
     }
-    
+
     /**
      * Make an InterMine query from a path query
      * @param pathQueryOrig the PathQuery
@@ -249,23 +249,23 @@ public class MainHelper
         BagQueryRunner bagQueryRunner = null;
         if (os != null) {
             bagQueryRunner = new BagQueryRunner(os, classKeys,
-                    bagQueryConfig, servletContext);            
+                    bagQueryConfig, servletContext);
         }
-        return makeQuery(pathQueryOrig, savedBags, pathToQueryNode, bagQueryRunner, 
+        return makeQuery(pathQueryOrig, savedBags, pathToQueryNode, bagQueryRunner,
                 returnBagQueryResults, checkOnly);
     }
-    
+
     /**
      * Validates path query. Any error message is set to path query.
      * @param pathQuery path query
-     * @param savedBags saved bags 
+     * @param savedBags saved bags
      */
     public static void checkPathQuery(PathQuery pathQuery, Map<String, InterMineBag> savedBags) {
         try {
             makeQuery(pathQuery, savedBags, null, null, null, true);
         } catch (Exception e) {
             pathQuery.addProblem(e);
-        } 
+        }
     }
 
     /**
@@ -467,7 +467,6 @@ public class MainHelper
                         identifierList.add(token.trim());
                     }
                     try {
-                        LOG.info("Running bag query, with extra value " + c.getExtraValue());
                         bagQueryResult = bagQueryRunner.searchForBag(node.getType(),
                             identifierList, (String) c.getExtraValue(), true);
                     } catch (ClassNotFoundException e) {
