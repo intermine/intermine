@@ -350,10 +350,12 @@
     </c:if>
   </html:form>
   
-  <div style="font-style: italic;">
-    Do you want to include results of this template at your web site or use in script? 
-    <a href="javascript:forwardToLinks()">Get the link</a>
-  </div>
+  <c:if test="${empty previewTemplate}">
+	  <div style="font-style: italic;">
+	    Do you want to include results of this template at your web site or use in script? 
+	    <a href="javascript:forwardToLinks()">Get the link</a>
+	  </div>
+  </c:if>
   
   <c:if test="${empty PROFILE_MANAGER || empty PROFILE.username}">
     <p>

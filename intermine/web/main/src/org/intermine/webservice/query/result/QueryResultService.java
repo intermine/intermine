@@ -14,6 +14,7 @@ import java.io.UnsupportedEncodingException;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLEncoder;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -80,7 +81,7 @@ public class QueryResultService extends WebService
         if (builder.isQueryValid()) {
             try {
                 PathQuery query = builder.getQuery();
-                runPathQuery(query, input.getStart() - 1 , input.getMaxCount(), true,
+                runPathQuery(query, input.getStart() - 1 , input.getMaxCount(), input.isComputeTotalCount(),
                         null, null, input);
             } catch (Throwable t) {
                 LOG.error("Execution of web service request failed.", t);
@@ -172,9 +173,17 @@ public class QueryResultService extends WebService
         results.setBatchSize(BATCH_SIZE);
         
         if (displayTotalCount) {
-            Map<String, String> attributes = new HashMap<String, String>();
-            attributes.put("totalResultsCount", "" + results.size());
-            output.setHeaderAttributes(attributes);
+            if (getFormat() == WebService.XML_FORMAT) {
+                Map<String, String> attributes = new HashMap<String, String>();
+                attributes.put("totalResultsCount", "" + results.size());
+                output.setHeaderAttributes(attributes);                
+            }
+            if (getFormat() == WebService.TSV_FORMAT) {
+                List<String> list = new ArrayList<String>();
+                list.add("" + results.size());
+                output.addResultItem(list);
+                return;
+            }
         }
         
         WebResults webResults = new WebResults(pathQuery, results, pathQuery.getModel(), 

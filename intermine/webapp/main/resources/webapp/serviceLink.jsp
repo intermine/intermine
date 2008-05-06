@@ -7,6 +7,7 @@
 .highlighted {
     color: red;
 }
+
 </style>
 
 <!-- serviceLink.jsp -->
@@ -28,17 +29,30 @@
 	
 	    <div  style="margin-top: 10px;">
 	       <c:set var="encodedLink" value="${fn:replace(link, '&', 'XXXXX')}"></c:set>
-	       <span style="float: right;"><a href="javascript:openPopWindow('linkPreview.do?link=${encodedLink}', 800, 800)" style="1em;">preview</a></span>
-	       <span style="float: left;">Add this HTML to embed the results of this template in your web page:</span> 
+	       <table style="width:100%;">
+	           <tr>
+	               <td style="font-size:14px;">
+	                   Add this HTML to embed the results of this template in your web page:
+	               </td>
+	               <td valign="bottom" style="font-size:14px;" align="right">
+	                   <a href="javascript:openPopWindow('linkPreview.do?link=${encodedLink}', 800, 800)" style="1em;">Preview</a>
+	               </td>
+	       </table>
 	    </div>
 	    <%-- Don't split following line --%>
 	    <textarea style="width:100%;height:100px;"><iframe width=&quot;700&quot; height=&quot;500&quot; frameborder=&quot;1&quot; scrolling=&quot;yes&quot; marginheight=&quot;0&quot; marginwidth=&quot;0&quot; src=&quot;${link}&amp;format=html&quot;></iframe></textarea>
 	    
 	    <div style="margin-top: 10px;">
-	       <span style="float:right;"><a href="javascript:openPopWindow('${link}&amp;format=tab;', 800, 1000)">preview</a></span>
-	       <span style="float:left;">Web service link to this template. 
-	       Use this URL to fetch tab delimited results for this template in your own program.
-	       </span> 
+	       <table style="width:100%;">
+	           <tr>
+	               <td style="font-size:14px;">
+	                   Web service link to this template. Use this URL to fetch tab delimited results for this template in your own program.
+	               </td>
+                   <td style="font-size:14px;" valign="bottom" align="right">
+                       <a href="javascript:openPopWindow('${link}&amp;format=tab', 800, 1000)">Preview</a>
+                   </td>
+	           </tr>
+	       </table>
 	    </div>
 	    <%-- Don't split following line --%>
 	    <textarea style="width:100%;height:100px;">${link}&amp;format=tab</textarea>
