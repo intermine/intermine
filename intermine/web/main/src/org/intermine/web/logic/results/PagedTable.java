@@ -13,8 +13,10 @@ package org.intermine.web.logic.results;
 import java.util.AbstractList;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Set;
 
 import org.intermine.web.logic.Constants;
 
@@ -37,6 +39,10 @@ public class PagedTable
 
     private List<List<Object>> rows = null;
 
+    // object ids that have been selected in the table
+    // TODO this may be more memory efficient with an IntPresentSet
+    private Set<Integer> selectedIds = new HashSet<Integer>();
+    
     /**
      * Construct a PagedTable with a list of column names
      * @param webTable the WebTable that this PagedTable will display
@@ -289,6 +295,37 @@ public class PagedTable
     }
 
     /**
+     * Add an object id that has been selected in the table.
+     * @param objectId the id to select
+     */
+    public void selectId(Integer objectId) {
+        this.selectedIds.add(objectId);
+    }
+    
+    /**
+     * Return selected object ids as a String[], needed for jsp multibox.
+     * @return selected ids as Strings.
+     */
+    public String[] getSelectedIdStrings() {
+        String[] s = new String[selectedIds.size()];
+        int i = 0;
+        for (Integer id : selectedIds) {
+            s[i] = id.toString();
+            i++;
+        }
+        return s;
+    }
+    
+    /**
+     * Return a set of object ids that have been selected.
+     * @return selected object ids
+     */
+    public Set<Integer> getSelectedIds() {
+        return selectedIds;
+    }
+    
+    
+    /**
      * Set the rows fields to be a List of Lists of values from ResultElement objects from
      * getResultElementRows().
      */
@@ -328,6 +365,14 @@ public class PagedTable
         for (int i = getStartRow(); i < getStartRow() + getPageSize(); i++) {
             try {
                 List<ResultElement> resultsRow = getAllRows().getResultElements(i);
+                // if some objects already selected, set corresponding  ResultElements here
+                if (!selectedIds.isEmpty()) {
+                    for (ResultElement re : resultsRow) {
+                        if (selectedIds.contains(re.getId())) {
+                            re.setSelected(true);
+                        }
+                    }
+                }
                 newRows.add(resultsRow);
             } catch (IndexOutOfBoundsException e) {
                 // we're probably at the end of the results object, so stop looping
@@ -356,7 +401,7 @@ public class PagedTable
      * @param index of column to find type for
      * @return the class or parent class for the indexed column
      */
-    public Class getTypeForColumn(int index) {
+    public Class<?> getTypeForColumn(int index) {
         return webTable.getColumns().get(index).getType();
     }
 

@@ -169,31 +169,44 @@
 
           <c:choose>
             <c:when test="${column.visible}">
-              <%-- the checkbox to select this object --%>
-               <c:if test="${(column.selectable && ((!isWebCollection) || (! noBagSave && status2.count<=1))) && empty bag}">
-                <td align="center" class="checkbox" id="cell_checkbox,${status2.index},${status.index},${row[column.index].htmlId}">
-                  <html:multibox property="selectedObjects"
-                                 styleId="selectedObjects_${status2.index}_${status.index}_${row[column.index].htmlId}"
-                                 onclick="itemChecked(columnsToDisable, columnsToHighlight, ${status.index},${status2.index}, this)">
-                    <c:out value="${status2.index},${status.index},${row[column.index].htmlId}"/>
-                  </html:multibox>
-                </td>
-              </c:if>
-
                <c:set var="resultElement" value="${row[column.index]}" scope="request"/>
                <c:set var="objectViewClass" value="noHighlightObject"/>
                <c:if test="${!empty highlightId && resultElement.id == highlightId}">
                  <c:set var="objectViewClass" value="highlightObject"/>
                </c:if>
+               
+               <%-- the checkbox to select this object --%>
+               <c:if test="${(column.selectable && ((!isWebCollection) || (! noBagSave && status2.count<=1))) && empty bag}">
+                <c:set var="checkboxClass" value="checkbox ${resultElement.id}"/>
+                <c:if test="${resultElement.selected}">
+                  <c:set var="checkboxClass" value="${checkboxClass} highlightCell"/>
+                </c:if>
+                <td align="center" class="${checkboxClass}" id="cell_checkbox,${status2.index},${status.index},${row[column.index].htmlId}">
+                  
+                  <html:multibox property="selectedIdStrings" name="pagedResults"
+                                 styleId="selectedObjects_${status2.index}_${status.index}_${row[column.index].htmlId}"
+                                 onclick="itemChecked(columnsToDisable, columnsToHighlight, ${status.index},${status2.index}, this)">
+                    <%-- <c:out value="${status2.index},${status.index},${row[column.index].htmlId}"/> --%>
+                    <c:out value="${resultElement.id}"/>
+                  </html:multibox>
+                </td>
+              </c:if>
 
-               <td id="cell,${status2.index},${status.index},${row[column.index].htmlId}"
-                   class="${objectViewClass}">
-                 <c:set var="columnType" value="${column.type}" scope="request"/>
-                 <div>
-                   <tiles:insert name="objectView.tile"/>
-                 </div>
+              <%-- test whether already selected and highlight if needed --%>                
+              <c:set var="cellClass" value="${resultElement.id}"/>
+              <c:if test="${resultElement.selected}">
+                <c:set var="cellClass" value="${cellClass} highlightCell"/>
+              </c:if>
+
+              <td id="cell,${status2.index},${status.index},${row[column.index].htmlId}"
+                  class="${cellClass}">
+                <c:set var="columnType" value="${column.type}" scope="request"/>
+                <div>
+                  <tiles:insert name="objectView.tile"/>
+                </div>
               </td>
             </c:when>
+
             <c:otherwise>
               <%-- add a space so that IE renders the borders --%>
               <td style="background:#eee;">&nbsp;</td>
