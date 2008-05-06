@@ -7,7 +7,6 @@
     <source name="modmine-static" type="intermine-items-xml-file" dump="true">
       <property name="src.data.file" location="resources/projects.xml"/>
     </source>
-
     <source name="modencode-metadata" type="chado-db">
       <property name="organisms" value="7227"/>
       <property name="dataSourceName" value="modENCODE"/>
@@ -18,6 +17,7 @@
       <property name="converter.class" 
                 value="org.intermine.bio.dataconversion.ChadoDBConverter"/>
     </source>
+
     <source name="chado-db-flybase-dmel" type="chado-db" dump="true">
       <property name="source.db.name" value="flybase"/>
       <property name="organisms" value="7227"/>
