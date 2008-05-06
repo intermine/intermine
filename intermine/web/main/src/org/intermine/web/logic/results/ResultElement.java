@@ -35,6 +35,7 @@ public class ResultElement implements Serializable
     private final boolean keyField;
     private final ObjectStore os;
     private final Path path;
+    private boolean isSelected = false;
 
 
     /**
@@ -196,7 +197,23 @@ public class ResultElement implements Serializable
     }
 
     /**
-     * Returns a String reprtesentation of the ResultElement
+     * Set the selected status of results element
+     * @param isSelected whether or not the element is selected
+     */
+    public void setSelected(boolean isSelected) {
+        this.isSelected = isSelected;
+    }
+    
+    /**
+     * Find the selected status of this element.
+     * @return true if this element has been selected
+     */
+    public boolean isSelected() {
+        return isSelected;
+    }
+        
+    /**
+     * Returns a String representation of the ResultElement
      * @return a String
      */
     public String toString() {

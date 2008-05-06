@@ -81,9 +81,9 @@ function itemChecked(columnsToDisable, columnsToHighlight, checkedRow, checkedCo
                  columnArrayIndex++) {
                 if (columnsToHighlightArray[columnArrayIndex] == id.split(',')[1]) {
                     if (checkbox.checked){
-                        elements.item(elementsIndex).className = 'highlightCell';
+                        elements.item(elementsIndex).addClassName('highlightCell');
                     } else {
-                        elements.item(elementsIndex).className = '';
+                        elements.item(elementsIndex).removeClassName('highlightCell');
                     }
                 }
             }
