@@ -31,7 +31,7 @@
       <fieldconfig fieldExpr="name"/>
     </fields>
   </class>
-  
+
   <class className="org.flymine.model.genomic.BindingSite">
     <fields>
       <fieldconfig fieldExpr="primaryIdentifier"/>
@@ -52,7 +52,7 @@
       <displayer src="attributeLinkDisplayer.tile"/>
     </longdisplayers>
   </class>
-  
+
   <class className="org.flymine.model.genomic.BlastMatch">
     <fields>
       <fieldconfig fieldExpr="object.primaryIdentifier"/>
@@ -126,7 +126,7 @@
     </longdisplayers>
     <tabledisplayer src="/model/dataSourceShort.jsp"/>
   </class>
-  
+
 <!--
   - FIXME the Path.resolve() method can't cope with collection so these
   - fieldconfigs fail:
@@ -179,7 +179,7 @@
   </class>
 
   <class className="org.flymine.model.genomic.Gene">
-    <fields>      
+    <fields>
       <fieldconfig fieldExpr="primaryIdentifier"/>
       <fieldconfig fieldExpr="secondaryIdentifier"/>
       <fieldconfig fieldExpr="symbol"/>
@@ -192,7 +192,7 @@
       <displayer src="/model/locatedSequenceFeatureImage.jsp"/>
       <displayer src="geneMicroArrayDisplayer.tile"/>
     </longdisplayers>
-    <bagdisplayers>  
+    <bagdisplayers>
 
       <graphdisplayer title="Chromosome Distribution" domainLabel="Chromosome" rangeLabel="Gene Count" dataSetLoader="org.intermine.bio.web.widget.ChromosomeDistributionDataSetLdr"
                       toolTipGen="org.intermine.web.logic.widget.ToolTipGenerator" link="org.intermine.bio.web.widget.ChromosomeDistributionGraphURLGenerator"
@@ -208,14 +208,14 @@
                       toolTipGen="org.intermine.web.logic.widget.ToolTipGenerator" link="org.flymine.web.widget.FlyFishGraphURLGenerator"
                       description="Expression patterns of Drosophila mRNAs at the subcellular level during early embryogenesis - data from  &lt;a href=&quot;http://fly-fish.ccbr.utoronto.ca/&quot; target=&quot;_new&quot;&gt;Fly-FISH&lt;/a&gt;.  Note that not all genes have been assayed by &lt;a href=&quot;http://fly-fish.ccbr.utoronto.ca/&quot; target=&quot;_new&quot;&gt;Fly-FISH&lt;/a&gt;."
                       graphType="BarChart" />
-                      
-      <graphdisplayer title="BDGP expression patterns" 
+
+      <graphdisplayer title="BDGP expression patterns"
                       link="org.flymine.web.widget.BDGPinsituGraphURLGenerator"
                       dataSetLoader="org.flymine.web.widget.BDGPinsituDataSetLdr"
                       description="Expression patterns of Drosophila mRNAs during embryogenesis - data from  &lt;a href=&quot;http://www.fruitfly.org/cgi-bin/ex/insitu.pl&quot; target=&quot;_new&quot;&gt;BGDP&lt;/a&gt;.  Note that not all genes have been assayed by &lt;a href=&quot;http://www.fruitfly.org/cgi-bin/ex/insitu.pl&quot; target=&quot;_new&quot;&gt;BGDP&lt;/a&gt;. "
-                      toolTipGen="org.intermine.web.logic.widget.ToolTipGenerator" 
-                      domainLabel="Stage" 
-                      rangeLabel="Gene count" 
+                      toolTipGen="org.intermine.web.logic.widget.ToolTipGenerator"
+                      domainLabel="Stage"
+                      rangeLabel="Gene count"
                       graphType="BarChart" />
 
 
@@ -227,11 +227,11 @@
                          externalLinkLabel="KEGG" />
 
       <bagtabledisplayer title="Orthologues" pathStrings="Gene.homologues[type=orthologue].homologue.organism" link="org.intermine.bio.web.widget.HomologueURLQuery"
-                         description="Counts of orthologues in other organisms for the genes in this list." 
-                         displayFields="name" 
+                         description="Counts of orthologues in other organisms for the genes in this list."
+                         displayFields="name"
                          exportFields="primaryIdentifier"
                          columnTitle="Orthologues"/>
-                         
+
       <bagtabledisplayer title="Genetic Interactions"
                          pathStrings="Gene.geneticInteractions.interactingGenes"
                          link="org.intermine.bio.web.widget.GeneticInteractionURLQuery"
@@ -247,7 +247,7 @@
                                  label="GO Term"
                                  filters="biological_process,cellular_component,molecular_function"
                                  filterLabel="Ontology"
-                                 max="0.10" 
+                                 max="0.10"
                                  externalLink="http://amigo.geneontology.org/cgi-bin/amigo/term-details.cgi?term=" />
 
       <enrichmentwidgetdisplayer title="Protein Domain Enrichment"
@@ -257,9 +257,9 @@
                                  description="Protein Domains enriched for genes in this list."
                                  filters=""
                                  filterLabel=""
-                                 max="0.10" 
+                                 max="0.10"
                                  externalLink="http://www.ebi.ac.uk/interpro/IEntry?ac=" />
-                                 
+
       <enrichmentwidgetdisplayer title="Publication Enrichment"
                                  link="org.intermine.bio.web.widget.PublicationURLQuery"
                                  dataSetLoader="org.intermine.bio.web.widget.PublicationLdr"
@@ -278,7 +278,7 @@
                                  description="ImaGO terms enriched for genes in this list - data from &lt;a href=&quot;http://www.fruitfly.org/cgi-bin/ex/insitu.pl&quot; target=&quot;_new&quot;&gt;BGDP&lt;/a&gt;.  Note that not all genes have been assayed by BDGP."
                                  filters=""
                                  filterLabel=""
-                                 max="0.10" 
+                                 max="0.10"
                                  externalLink="" />
 
 <!--
@@ -299,7 +299,7 @@
   <class className="org.flymine.model.genomic.GeneticInteraction">
     <fields>
       <fieldconfig fieldExpr="shortName"/>
-      <fieldconfig fieldExpr="type"/>      
+      <fieldconfig fieldExpr="type"/>
     </fields>
   </class>
 
@@ -329,13 +329,13 @@
       <displayer src="attributeLinkDisplayer.tile"/>
     </longdisplayers>
   </class>
-  
+
    <class className="org.flymine.model.genomic.GOTerm">
     <fields>
       <fieldconfig fieldExpr="identifier"/>
       <fieldconfig fieldExpr="name"/>
     </fields>
-  </class>  
+  </class>
 
   <class className="org.flymine.model.genomic.Homologue">
     <fields>
@@ -347,20 +347,20 @@
       <fieldconfig fieldExpr="homologueTranslation.primaryIdentifier"/>
     </fields>
   </class>
-  
+
   <class className="org.flymine.model.genomic.Image">
     <fieldconfig fieldExpr="url"/>
     <fields>
-      <fieldconfig fieldExpr="url" displayer="/model/imageDisplayer.jsp" />      
+      <fieldconfig fieldExpr="url" displayer="/model/imageDisplayer.jsp" />
     </fields>
   </class>
-  
+
   <class className="org.flymine.model.genomic.InfoSource">
     <fields>
       <fieldconfig fieldExpr="title"/>
     </fields>
   </class>
-  
+
   <class className="org.flymine.model.genomic.Location">
     <fields>
       <fieldconfig fieldExpr="object.primaryIdentifier"/>
@@ -454,7 +454,7 @@
       <fieldconfig fieldExpr="type"/>
     </fields>
   </class>
-  
+
   <class className="org.flymine.model.genomic.OntologyRelation">
     <fields>
       <fieldconfig fieldExpr="type"/>
@@ -465,7 +465,7 @@
       <displayer src="attributeLinkDisplayer.tile"/>
     </longdisplayers>
   </class>
-  
+
   <class className="org.flymine.model.genomic.OntologyTerm">
     <fields>
       <fieldconfig fieldExpr="name"/>
@@ -596,7 +596,7 @@
       <fieldconfig fieldExpr="proteinRole"/>
     </fields>
   </class>
-  
+
   <class className="org.flymine.model.genomic.ProteinInteractionRegion">
     <fields>
       <fieldconfig fieldExpr="name"/>
@@ -604,7 +604,7 @@
       <fieldconfig fieldExpr="protein.organism.name"/>
     </fields>
   </class>
-  
+
   <class className="org.flymine.model.genomic.ProteinStructure">
     <fields>
       <fieldconfig fieldExpr="identifier"/>
@@ -646,7 +646,7 @@
       <displayer src="attributeLinkDisplayer.tile"/>
     </longdisplayers>
   </class>
-  
+
   <class className="org.flymine.model.genomic.RegulatoryRegion">
     <fields>
       <fieldconfig fieldExpr="primaryIdentifier"/>
@@ -719,7 +719,7 @@
       <fieldconfig fieldExpr="value"/>
     </fields>
   </class>
-  
+
   <class className="org.flymine.model.genomic.Sequence">
     <fields>
       <fieldconfig fieldExpr="residues" fieldExporter="org.flymine.web.ResidueFieldExporter"
@@ -729,7 +729,7 @@
     </fields>
     <tabledisplayer src="/model/sequenceShortDisplayer.jsp"/>
   </class>
-  
+
    <class className="org.flymine.model.genomic.Stage">
     <fields>
       <fieldconfig fieldExpr="name"/>
@@ -753,7 +753,7 @@
       <fieldconfig fieldExpr="organism.taxonId"/>
     </fields>
   </class>
-  
+
   <class className="org.flymine.model.genomic.TFBindingSite">
     <fields>
       <fieldconfig fieldExpr="primaryIdentifier"/>
@@ -770,8 +770,6 @@
   <class className="org.flymine.model.genomic.TFmodule">
     <longdisplayers>
       <displayer src="/model/redflyDisplayer.jsp"/>
-    </longdisplayers>
-    <longdisplayers>
       <displayer src="attributeLinkDisplayer.tile"/>
     </longdisplayers>
   </class>
