@@ -73,7 +73,7 @@ public class WidgetAction extends InterMineAction
             return export(mapping, form, request, response);
         }
     }
-    
+
     /**
      * Display selected entries in the results page
      * @param mapping The ActionMapping used to select this instance
@@ -132,7 +132,7 @@ public class WidgetAction extends InterMineAction
         return new ForwardParameters(mapping.findForward("waiting")).addParameter("trail",
                         "|bag." + bagName).addParameter("qid", qid).forward();
     }
-    
+
     /**
      * Export selected entries
      * @param mapping The ActionMapping used to select this instance
@@ -161,7 +161,7 @@ public class WidgetAction extends InterMineAction
         List<Widget> widgets = type.getWidgets();
         for (Widget widget : widgets) {
             if (widget.getId() == new Integer(widgetId)) {
-                
+
                 StringExporterImpl stringExporter;
                 if (widgetForm.getExporttype().equals("csv")) {
                     stringExporter = new StringExporterImpl(response
@@ -170,12 +170,11 @@ public class WidgetAction extends InterMineAction
                                                         + ".csv");
                 } else {
                     stringExporter = new StringExporterImpl(response
-                                    .getWriter(), new TabRowFormatter()); 
+                                    .getWriter(), new TabRowFormatter());
                     ResponseUtil.setTabHeader(response, "widget" + widgetForm.getWidgetid()
                                                         + ".tsv");
                 }
                 stringExporter.export(widget.getExportResults(widgetForm.getSelected()));
-                widget.getFlattenedResults();
             }
         }
 
