@@ -352,7 +352,7 @@
   
   <c:if test="${empty previewTemplate}">
 	  <div style="font-style: italic;">
-	    Do you want to include results of this template at your web site or use in script? 
+	    <b>NEW:</b> Do you want to include results of this template at your web site or use in script? 
 	    <a href="javascript:forwardToLinks()">Get the link</a>
 	  </div>
   </c:if>
