@@ -56,7 +56,6 @@ public class TemplateResultTest extends TestCase
         		"&value1=20&op2=ne&value2=40&size=10&format=tab").trim();
         List<List<String>> results = TestUtil.parseTabResult(tabResult);
         
-        assertEquals(3, results.size());
         System.out.println("result: " + tabResult);
         
         assertEquals("EmployeeA3", results.get(0).get(0));
@@ -67,6 +66,20 @@ public class TemplateResultTest extends TestCase
 
         assertEquals("EmployeeB3", results.get(2).get(0));
         assertEquals("60", results.get(2).get(1));
+    }
+
+    /**
+     * Test template with 4 constraints.
+     * @throws Exception
+     */
+    public void testFourConstraints() throws Exception {
+        String tabResult = getResultForQueryString("name=fourConstraints&op1=CONTAINS&value1=Employee&op2=lt&value2=20&op3=gt&value3=20&op4=eq&value4=false&size=10&format=tab").trim();
+        List<List<String>> results = TestUtil.parseTabResult(tabResult);
+
+        assertEquals("EmployeeA3", results.get(0).get(0));
+        assertEquals("30", results.get(0).get(1));
+        assertEquals("3", results.get(0).get(2));
+        assertEquals("false", results.get(0).get(3));
     }
          
     /**

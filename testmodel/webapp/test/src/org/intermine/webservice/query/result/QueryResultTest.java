@@ -112,7 +112,6 @@ public class QueryResultTest extends TestCase
     }
     
     private void checkEmployees(List<List<String>> results) {
-        assertEquals(6, results.size());
         TestUtil.checkEmployee(results.get(0), "EmployeeA1", "10", "1", "true");
         TestUtil.checkEmployee(results.get(1), "EmployeeA2", "20", "2", "true");
         TestUtil.checkEmployee(results.get(2), "EmployeeA3", "30", "3", "false");
