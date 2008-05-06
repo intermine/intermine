@@ -15,11 +15,9 @@
       $(open + 'Input').disabled = false;
       $(close + 'Input').disabled = true;
       $('submitBag').disabled = false;
-   
-      clearExample();
     }
 
-    function clearExample() {            
+    function clearExample() {
       if($('pasteInput').value == "e.g.: ${bagExampleIdentifiers}") {
          $('pasteInput').value = "";
          $('pasteInput').style.color = "#000";
@@ -31,13 +29,7 @@
        $('fileInput').disabled = false;
        $('pasteInput').disabled = false;
        $('fileInput').value = '';
-       initPasteInput();
-    }
-
-    function initPasteInput() {
-       $('pasteInput').value = "e.g.: ${bagExampleIdentifiers}";
-       $('pasteInput').style.color = "#666";
-       $('pasteInput').style.fontStyle = "italic";
+       $('pasteInput').value = '';
     }
 
     function loadExample(example) {
@@ -119,13 +111,7 @@
      </c:if>
    <html:textarea styleId="pasteInput" property="text" rows="10" cols="60" onfocus="switchInputs('paste','file');" />
    </span>
-   <script type="text/javascript" charset="utf-8">
-      initPasteInput();
-    </script>
    </li>
-   <%-- file header --%>
-     <!-- <h4><img src="images/disclosed.gif"/><fmt:message key="bagBuild.bagFromFile"/></h4> -->
-
      <%-- file input --%>
     <li>
       <label><fmt:message key="bagBuild.or"/></label>
