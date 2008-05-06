@@ -40,7 +40,6 @@ import org.intermine.web.logic.profile.Profile;
 import org.intermine.web.logic.query.PathQuery;
 import org.intermine.web.logic.query.QueryMonitorTimeout;
 import org.intermine.web.logic.session.SessionMethods;
-import org.intermine.web.logic.widget.EnrichmentWidget;
 import org.intermine.web.logic.widget.Widget;
 import org.intermine.web.logic.widget.WidgetURLQuery;
 
@@ -122,13 +121,9 @@ public class WidgetAction extends InterMineAction
         MessageResources messages
         = (MessageResources) request.getAttribute(Globals.MESSAGES_KEY);
         PathQuery pathQuery = urlQuery.generatePathQuery();
-
         SessionMethods.loadQuery(pathQuery, session, response);
-
         String qid = SessionMethods.startQuery(clientState, session, messages, true, pathQuery);
-
         Thread.sleep(200); // slight pause in the hope of avoiding holding page
-
         return new ForwardParameters(mapping.findForward("waiting")).addParameter("trail",
                         "|bag." + bagName).addParameter("qid", qid).forward();
     }
@@ -160,8 +155,7 @@ public class WidgetAction extends InterMineAction
                         model.getPackageName() + "." + widgetForm.getBagType());
         List<Widget> widgets = type.getWidgets();
         for (Widget widget : widgets) {
-            if (widget.getId() == new Integer(widgetId)) {
-
+            if (widget.getId() == (new Integer(widgetId).intValue())) {
                 StringExporterImpl stringExporter;
                 if (widgetForm.getExporttype().equals("csv")) {
                     stringExporter = new StringExporterImpl(response
@@ -177,8 +171,6 @@ public class WidgetAction extends InterMineAction
                 stringExporter.export(widget.getExportResults(widgetForm.getSelected()));
             }
         }
-
         return null;
     }
-
 }
