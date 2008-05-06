@@ -33,6 +33,7 @@
     }
 
     function loadExample(example) {
+    	switchInputs('paste','file');
       $('pasteInput').focus();
       $('pasteInput').value = example;
       return false;
@@ -109,7 +110,7 @@
            </html:link>
          </div>
      </c:if>
-   <html:textarea styleId="pasteInput" property="text" rows="10" cols="60" onfocus="switchInputs('paste','file');" />
+   <html:textarea styleId="pasteInput" property="text" rows="10" cols="60" onfocus="if (this.value != '') switchInputs('paste','file');" onkeypress="switchInputs('paste','file');" />
    </span>
    </li>
      <%-- file input --%>
