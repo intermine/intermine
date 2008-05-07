@@ -57,15 +57,15 @@ public class ModEncodeMetaDataProcessor extends ChadoProcessor
     // list of firstAppliedProtocols, first level of the DAG linking
     // the applied protocols through the data (and giving the flow
     // of data)
+    // to rm
     private List<Integer> firstAppliedProtocols = new ArrayList<Integer>(); // chado ap ids
 
+
+    // maps of the initial input data and final output data for an experiment
     private Map<Integer, List<Integer>> inDataMap = new HashMap<Integer, List<Integer>>();
     private Map<Integer, List<Integer>> outDataMap = new HashMap<Integer, List<Integer>>();
 
-    // map used to store directly the final data (leaves of the DAG) to their experiment
-    // possibly redundant
-    private Map<Integer, List<Integer>> experimentResultMap = new HashMap<Integer, List<Integer>>();
-//++
+    // map used to store all data relative to an experiment
     private Map<Integer, List<Integer>> experimentDataMap = new HashMap<Integer, List<Integer>>();
 
     // just for debugging
@@ -86,87 +86,6 @@ public class ModEncodeMetaDataProcessor extends ChadoProcessor
     private static final Map<String, String> PROVIDER_FIELD_NAME_MAP =
         new HashMap<String, String>();
     private static final String NOT_TO_BE_LOADED = "this is ; illegal - anyway";
-
-    static {
-        // experiment
-        FIELD_NAME_MAP.put("Investigation Title", "title");
-        FIELD_NAME_MAP.put("Experiment Description", "description");
-        FIELD_NAME_MAP.put("Experimental Design", "design");
-        FIELD_NAME_MAP.put("Experimental Factor Type", "factorType");
-        FIELD_NAME_MAP.put("Experimental Factor Name", "factorName");
-        FIELD_NAME_MAP.put("Quality Control Type", "qualityControl");
-        FIELD_NAME_MAP.put("Replicate Type", "replicate");
-        FIELD_NAME_MAP.put("Date of Experiment", "experimentDate");
-        FIELD_NAME_MAP.put("Public Release Date", "publicReleaseDate");
-        // FIELD_NAME_MAP.put("species", "organism");
-        // FIELD_NAME_MAP.put("PubMed ID", "publication");
-        FIELD_NAME_MAP.put("Person Last Name", NOT_TO_BE_LOADED);
-        FIELD_NAME_MAP.put("Person Affiliation", NOT_TO_BE_LOADED);
-        FIELD_NAME_MAP.put("Person First Name", NOT_TO_BE_LOADED);
-        FIELD_NAME_MAP.put("Person Address", NOT_TO_BE_LOADED);
-        FIELD_NAME_MAP.put("Person Phone", NOT_TO_BE_LOADED);
-        FIELD_NAME_MAP.put("Person Email", NOT_TO_BE_LOADED);
-        FIELD_NAME_MAP.put("Person Roles", NOT_TO_BE_LOADED);
-        FIELD_NAME_MAP.put("lab", NOT_TO_BE_LOADED);
-
-        // data: parameter values
-        FIELD_NAME_MAP.put("genome version", "genomeVersion");
-        FIELD_NAME_MAP.put("median value", "medianValue");
-        // data: result values
-        FIELD_NAME_MAP.put("transcript ID", "transcriptId");
-        //FIELD_NAME_MAP.put("inner primer", "innerPrimer");
-        FIELD_NAME_MAP.put("outer primer", "outerPrimer");
-        FIELD_NAME_MAP.put("TraceArchive ID", "traceArchiveId");
-        FIELD_NAME_MAP.put("genbank ID", "genBankId");
-        FIELD_NAME_MAP.put("EST acc", "estAcc");
-        // data: source attributes
-        FIELD_NAME_MAP.put("Source Name", "source");
-        FIELD_NAME_MAP.put("RNA ID", "RNAId");
-        FIELD_NAME_MAP.put("Cell Type", "cellType");
-        FIELD_NAME_MAP.put("Biosample #", "biosampleNr");
-        // data: parameter value attributes
-        FIELD_NAME_MAP.put("Unit", "unit");
-        FIELD_NAME_MAP.put("Characteristics", "characteristics");
-        // data: the real thing?
-        FIELD_NAME_MAP.put("Hybridization Name", "hybridizationName");
-        FIELD_NAME_MAP.put("Array Data File", "arrayDataFile");
-        FIELD_NAME_MAP.put("Array Design REF", "arrayDesignRef");
-        FIELD_NAME_MAP.put("Derived Array Data File", "derivedArrayDataFile");
-        FIELD_NAME_MAP.put("Result File", "resultFile");
-        // data: obsolete?
-        // FIELD_NAME_MAP.put("", "arrayMatrixDateFile");
-        // FIELD_NAME_MAP.put("", "label");
-        // FIELD_NAME_MAP.put("", "source");
-        // FIELD_NAME_MAP.put("", "sample");
-        // FIELD_NAME_MAP.put("", "extract");
-        // FIELD_NAME_MAP.put("", "labelExtract");
-
-        // protocol
-        FIELD_NAME_MAP.put("Protocol Type", "type");
-        FIELD_NAME_MAP.put("url protocol", "url");
-        FIELD_NAME_MAP.put("species", NOT_TO_BE_LOADED);
-        FIELD_NAME_MAP.put("references", NOT_TO_BE_LOADED);
-    }
-
-    static {
-        PROVIDER_FIELD_NAME_MAP.put("Person Affiliation", "affiliation");
-        PROVIDER_FIELD_NAME_MAP.put("Person Last Name", NOT_TO_BE_LOADED);
-        PROVIDER_FIELD_NAME_MAP.put("Experiment Description", NOT_TO_BE_LOADED);
-        PROVIDER_FIELD_NAME_MAP.put("Investigation Title", NOT_TO_BE_LOADED);
-        PROVIDER_FIELD_NAME_MAP.put("Experimental Design", NOT_TO_BE_LOADED);
-        PROVIDER_FIELD_NAME_MAP.put("Experimental Factor Name", NOT_TO_BE_LOADED);
-        PROVIDER_FIELD_NAME_MAP.put("Experimental Factor Type", NOT_TO_BE_LOADED);
-        PROVIDER_FIELD_NAME_MAP.put("Person First Name", NOT_TO_BE_LOADED);
-        PROVIDER_FIELD_NAME_MAP.put("Person Address", NOT_TO_BE_LOADED);
-        PROVIDER_FIELD_NAME_MAP.put("Person Phone", NOT_TO_BE_LOADED);
-        PROVIDER_FIELD_NAME_MAP.put("Person Email", NOT_TO_BE_LOADED);
-        PROVIDER_FIELD_NAME_MAP.put("Person Roles", NOT_TO_BE_LOADED);
-        PROVIDER_FIELD_NAME_MAP.put("Quality Control Type", NOT_TO_BE_LOADED);
-        PROVIDER_FIELD_NAME_MAP.put("Replicate Type", NOT_TO_BE_LOADED);
-        PROVIDER_FIELD_NAME_MAP.put("PubMed ID", NOT_TO_BE_LOADED);
-        PROVIDER_FIELD_NAME_MAP.put("Date of Experiment", NOT_TO_BE_LOADED);
-        PROVIDER_FIELD_NAME_MAP.put("Public Release Date", NOT_TO_BE_LOADED);
-    }
 
 
     private static class ExperimentSubmissionDetails
@@ -250,7 +169,8 @@ public class ModEncodeMetaDataProcessor extends ChadoProcessor
         setExperimentRefs(connection);
         setExperimentInputRefs(connection);
         setExperimentResultsRefs(connection);
-        
+        setExperimentProtocolsRefs(connection);
+               
         LOG.info("REF: SD size: initialData: " + inDataMap.get(32).size());
         LOG.info("REF: SD size: allData:     " + experimentDataMap.get(32).size());
         LOG.info("REF: SD size: outData:     " + outDataMap.get(32).size());
@@ -514,29 +434,8 @@ public class ModEncodeMetaDataProcessor extends ChadoProcessor
                        
                         addToMap(outDataMap, experimentId, currentOD);
                     }
-                    
-                    
-                    
-                    
-                    
-                    
-                } else {
-                    LOG.info("DB REFDAT: XX" + currentOD);
-                    
-                    
-                    // this is a leaf!!
-                    // we store it in a map that links it directly to the experiment
-                    // TODO: check if really necessary
-                    if (experimentResultMap.containsKey(experimentId)) {
-                        results = experimentResultMap.get(experimentId);
-                    }
-                    if (results.contains(currentOD)) {
-                        continue;
-                    }
-                    results.add(currentOD);
-                    experimentResultMap.put(experimentId, results);
-                }
-
+                } 
+                
                 // build the list of children applied protocols chado identifiers
                 // as input for the next iteration
                 Iterator<Integer> nap = nextProtocols.iterator();
@@ -557,6 +456,19 @@ public class ModEncodeMetaDataProcessor extends ChadoProcessor
 
                     LOG.info("DB REFEX: " + experimentId + "|"
                             + currentAPId + "|" +  appliedProtocolIdMap.get(currentAPId));
+                    
+                    //exp -> prot
+                    Reference collection = new Reference();
+                    collection.setName("protocols");
+                    collection.setRefId(
+                            protocolIdRefMap.get(appliedProtocolMap.get(currentAPId).protocolId));
+                    getChadoDBConverter().store(
+                            collection, experimentMap.get(experimentId).interMineObjectId);
+
+                    LOG.info("DB REFEX: " + experimentId + "|"
+                            + currentAPId);
+                    
+                    
                 }
             }
         }
@@ -587,13 +499,6 @@ public class ModEncodeMetaDataProcessor extends ChadoProcessor
                 // TODO rns 
                 // getChadoDBConverter().store(referenceData, submissionDataIdMap.get(currentOD));
 
-                //LOG.info("DB REFDAT: " + experimentId + "|" + currentOD + "|" 
-                //+ dataIdMap.get(currentOD));
-                //LOG.info("DB REFDAT: " + experimentMap.get(experimentId).itemIdentifier
-                //        + "|" + currentOD + "|" + dataIdMap.get(currentOD));
-                
-                
-
                 // build map experiment_id, <data_id>
                 // NB this are all the data for this experiment: do something
                 // cleverer
@@ -607,8 +512,6 @@ public class ModEncodeMetaDataProcessor extends ChadoProcessor
                     experimentDataMap.put(experimentId, dataIds);
                 }
 
-                
-                
                 if (appliedDataMap.containsKey(currentOD)) {
                     // fill the list of next (children) protocols
                     nextProtocols.addAll(appliedDataMap.get(currentOD).nextAppliedProtocols);
@@ -616,14 +519,14 @@ public class ModEncodeMetaDataProcessor extends ChadoProcessor
                     // this is a leaf!!
                     // we store it in a map that links it directly to the experiment
                     // TODO: check if really necessary
-                    if (experimentResultMap.containsKey(experimentId)) {
-                        results = experimentResultMap.get(experimentId);
+                    if (outDataMap.containsKey(experimentId)) {
+                        results = outDataMap.get(experimentId);
                     }
                     if (results.contains(currentOD)) {
                         continue;
                     }
                     results.add(currentOD);
-                    experimentResultMap.put(experimentId, results);
+                    outDataMap.put(experimentId, results);
                 }
 
                 // build the list of children applied protocols chado identifiers
@@ -1374,7 +1277,37 @@ public class ModEncodeMetaDataProcessor extends ChadoProcessor
                     experimentMap.get(thisExperimentId).interMineObjectId);
         }
     }
-    
+
+    //sd -> exp 
+    private void setExperimentProtocolsRefs(Connection connection)
+    throws ObjectStoreException {
+
+        Map<Integer, List<Integer>> expProtocolMap = new HashMap<Integer, List<Integer>>();
+       
+        Iterator<Integer> apId = appliedProtocolMap.keySet().iterator();
+        while (apId.hasNext()) {
+            Integer thisAP = apId.next();
+            AppliedProtocol ap = appliedProtocolMap.get(thisAP);
+            addToMap(expProtocolMap, ap.experimentId, ap.protocolId);
+        }
+        
+        Iterator<Integer> exp = expProtocolMap.keySet().iterator();
+        while (exp.hasNext()) {
+            Integer thisExperimentId = exp.next();
+            List<Integer> protocolIds = expProtocolMap.get(thisExperimentId);
+            Iterator<Integer> dat = protocolIds.iterator();
+            ReferenceList collection = new ReferenceList();
+            collection.setName("protocols");
+            while (dat.hasNext()) {
+                Integer currentId = dat.next();
+                collection.addRefId(protocolIdRefMap.get(currentId));
+            }
+            getChadoDBConverter().store(collection,
+                    experimentMap.get(thisExperimentId).interMineObjectId);
+        }
+    }
+        
+
     
 // 121    
     private void set3ExperimentRefs(Connection connection)
@@ -1453,6 +1386,87 @@ public class ModEncodeMetaDataProcessor extends ChadoProcessor
                 LOG.info("DB DATAMAP " + a + ": " + i2.next());
             }
         }
+    }
+
+    static {
+        // experiment
+        FIELD_NAME_MAP.put("Investigation Title", "title");
+        FIELD_NAME_MAP.put("Experiment Description", "description");
+        FIELD_NAME_MAP.put("Experimental Design", "design");
+        FIELD_NAME_MAP.put("Experimental Factor Type", "factorType");
+        FIELD_NAME_MAP.put("Experimental Factor Name", "factorName");
+        FIELD_NAME_MAP.put("Quality Control Type", "qualityControl");
+        FIELD_NAME_MAP.put("Replicate Type", "replicate");
+        FIELD_NAME_MAP.put("Date of Experiment", "experimentDate");
+        FIELD_NAME_MAP.put("Public Release Date", "publicReleaseDate");
+        // FIELD_NAME_MAP.put("species", "organism");
+        // FIELD_NAME_MAP.put("PubMed ID", "publication");
+        FIELD_NAME_MAP.put("Person Last Name", NOT_TO_BE_LOADED);
+        FIELD_NAME_MAP.put("Person Affiliation", NOT_TO_BE_LOADED);
+        FIELD_NAME_MAP.put("Person First Name", NOT_TO_BE_LOADED);
+        FIELD_NAME_MAP.put("Person Address", NOT_TO_BE_LOADED);
+        FIELD_NAME_MAP.put("Person Phone", NOT_TO_BE_LOADED);
+        FIELD_NAME_MAP.put("Person Email", NOT_TO_BE_LOADED);
+        FIELD_NAME_MAP.put("Person Roles", NOT_TO_BE_LOADED);
+        FIELD_NAME_MAP.put("lab", NOT_TO_BE_LOADED);
+
+        // data: parameter values
+        FIELD_NAME_MAP.put("genome version", "genomeVersion");
+        FIELD_NAME_MAP.put("median value", "medianValue");
+        // data: result values
+        FIELD_NAME_MAP.put("transcript ID", "transcriptId");
+        //FIELD_NAME_MAP.put("inner primer", "innerPrimer");
+        FIELD_NAME_MAP.put("outer primer", "outerPrimer");
+        FIELD_NAME_MAP.put("TraceArchive ID", "traceArchiveId");
+        FIELD_NAME_MAP.put("genbank ID", "genBankId");
+        FIELD_NAME_MAP.put("EST acc", "estAcc");
+        // data: source attributes
+        FIELD_NAME_MAP.put("Source Name", "source");
+        FIELD_NAME_MAP.put("RNA ID", "RNAId");
+        FIELD_NAME_MAP.put("Cell Type", "cellType");
+        FIELD_NAME_MAP.put("Biosample #", "biosampleNr");
+        // data: parameter value attributes
+        FIELD_NAME_MAP.put("Unit", "unit");
+        FIELD_NAME_MAP.put("Characteristics", "characteristics");
+        // data: the real thing?
+        FIELD_NAME_MAP.put("Hybridization Name", "hybridizationName");
+        FIELD_NAME_MAP.put("Array Data File", "arrayDataFile");
+        FIELD_NAME_MAP.put("Array Design REF", "arrayDesignRef");
+        FIELD_NAME_MAP.put("Derived Array Data File", "derivedArrayDataFile");
+        FIELD_NAME_MAP.put("Result File", "resultFile");
+        // data: obsolete?
+        // FIELD_NAME_MAP.put("", "arrayMatrixDateFile");
+        // FIELD_NAME_MAP.put("", "label");
+        // FIELD_NAME_MAP.put("", "source");
+        // FIELD_NAME_MAP.put("", "sample");
+        // FIELD_NAME_MAP.put("", "extract");
+        // FIELD_NAME_MAP.put("", "labelExtract");
+
+        // protocol
+        FIELD_NAME_MAP.put("Protocol Type", "type");
+        FIELD_NAME_MAP.put("url protocol", "url");
+        FIELD_NAME_MAP.put("species", NOT_TO_BE_LOADED);
+        FIELD_NAME_MAP.put("references", NOT_TO_BE_LOADED);
+    }
+
+    static {
+        PROVIDER_FIELD_NAME_MAP.put("Person Affiliation", "affiliation");
+        PROVIDER_FIELD_NAME_MAP.put("Person Last Name", NOT_TO_BE_LOADED);
+        PROVIDER_FIELD_NAME_MAP.put("Experiment Description", NOT_TO_BE_LOADED);
+        PROVIDER_FIELD_NAME_MAP.put("Investigation Title", NOT_TO_BE_LOADED);
+        PROVIDER_FIELD_NAME_MAP.put("Experimental Design", NOT_TO_BE_LOADED);
+        PROVIDER_FIELD_NAME_MAP.put("Experimental Factor Name", NOT_TO_BE_LOADED);
+        PROVIDER_FIELD_NAME_MAP.put("Experimental Factor Type", NOT_TO_BE_LOADED);
+        PROVIDER_FIELD_NAME_MAP.put("Person First Name", NOT_TO_BE_LOADED);
+        PROVIDER_FIELD_NAME_MAP.put("Person Address", NOT_TO_BE_LOADED);
+        PROVIDER_FIELD_NAME_MAP.put("Person Phone", NOT_TO_BE_LOADED);
+        PROVIDER_FIELD_NAME_MAP.put("Person Email", NOT_TO_BE_LOADED);
+        PROVIDER_FIELD_NAME_MAP.put("Person Roles", NOT_TO_BE_LOADED);
+        PROVIDER_FIELD_NAME_MAP.put("Quality Control Type", NOT_TO_BE_LOADED);
+        PROVIDER_FIELD_NAME_MAP.put("Replicate Type", NOT_TO_BE_LOADED);
+        PROVIDER_FIELD_NAME_MAP.put("PubMed ID", NOT_TO_BE_LOADED);
+        PROVIDER_FIELD_NAME_MAP.put("Date of Experiment", NOT_TO_BE_LOADED);
+        PROVIDER_FIELD_NAME_MAP.put("Public Release Date", NOT_TO_BE_LOADED);
     }
 
 
