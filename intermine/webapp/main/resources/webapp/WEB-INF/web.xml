@@ -1,11 +1,11 @@
 <?xml version="1.0" encoding="ISO-8859-1"?>
-<web-app xmlns="http://java.sun.com/xml/ns/j2ee" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://java.sun.com/xml/ns/j2ee http://java.sun.com/xml/ns/j2ee/web-app_2_4.xsd" version="2.4"> 
+<web-app xmlns="http://java.sun.com/xml/ns/j2ee" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://java.sun.com/xml/ns/j2ee http://java.sun.com/xml/ns/j2ee/web-app_2_4.xsd" version="2.4">
 
   <context-param>
     <param-name>javax.servlet.jsp.jstl.fmt.localizationContext</param-name>
     <param-value>InterMineWebApp</param-value>
   </context-param>
-  
+
   <listener>
     <listener-class>org.intermine.web.logic.session.SessionListener</listener-class>
   </listener>
@@ -21,13 +21,13 @@
     </init-param>
     <load-on-startup>1</load-on-startup>
   </servlet>
-  
+
   <servlet-mapping>
     <servlet-name>action</servlet-name>
     <url-pattern>*.do</url-pattern>
   </servlet-mapping>
-<!-- ================================================================================= -->  
-  
+<!-- ================================================================================= -->
+
 <!-- DWR mapping -->
 <!-- ================================================================================= -->
   <servlet>
@@ -40,20 +40,21 @@
     <init-param>
       <param-name>activeReverseAjaxEnabled</param-name>
       <param-value>true</param-value>
-    </init-param>	
+    </init-param>
     <init-param>
       <param-name>allowGetForSafariButMakeForgeryEasier</param-name>
       <param-value>true</param-value>
     </init-param>
+    <load-on-startup>2</load-on-startup>
   </servlet>
 
   <servlet-mapping>
 	<servlet-name>dwr-invoker</servlet-name>
 	<url-pattern>/dwr/*</url-pattern>
   </servlet-mapping>
-  
+
 <!-- ================================================================================= -->
-<!-- Intermine Web Service mapping --> 
+<!-- Intermine Web Service mapping -->
 <!-- ================================================================================= -->
   <servlet>
 	<servlet-name>ws-query-results</servlet-name>
@@ -68,7 +69,7 @@
 	<servlet-name>ws-query-results</servlet-name>
 	<url-pattern>/service/query/results</url-pattern>
   </servlet-mapping>
-  
+
   <servlet>
 	<servlet-name>ws-lists</servlet-name>
 	<servlet-class>org.intermine.webservice.lists.ListsServlet</servlet-class>
@@ -82,7 +83,7 @@
 	<servlet-name>ws-lists</servlet-name>
 	<url-pattern>/service/listswithobject</url-pattern>
   </servlet-mapping>
-  
+
   <servlet>
 	<servlet-name>ws-template-results</servlet-name>
 	<servlet-class>org.intermine.webservice.template.result.TemplateResultServlet</servlet-class>
@@ -96,22 +97,22 @@
 	<servlet-name>ws-template-results</servlet-name>
 	<url-pattern>/service/template/results</url-pattern>
   </servlet-mapping>
-  
-<!-- ================================================================================= -->  
+
+<!-- ================================================================================= -->
 
   <session-config>
     <session-timeout>1440</session-timeout>      <!-- 1440 = 24 * 60 = 1 day -->
   </session-config>
-  
+
   <welcome-file-list>
     <welcome-file>index.jsp</welcome-file>
   </welcome-file-list>
-  
+
   <taglib>
     <taglib-uri>http://jakarta.apache.org/taglibs/string-1.1</taglib-uri>
     <taglib-location>/WEB-INF/string.tld</taglib-location>
   </taglib>
-  
+
   <filter>
     <filter-name>
       CacheControlHeaderFilter
