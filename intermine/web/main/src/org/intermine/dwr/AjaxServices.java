@@ -112,7 +112,7 @@ public class AjaxServices
                 List<Tag> tags;
                 Tag tag;
                 if (type.equals(TagTypes.TEMPLATE)) {
-                    tags = pm.getTags("favourite", nameCopy, TagTypes.TEMPLATE, 
+                    tags = pm.getTags("favourite", nameCopy, TagTypes.TEMPLATE,
                             profile.getUsername());
                 } else if (type.equals(TagTypes.BAG)) {
                     tags = pm.getTags("favourite", nameCopy, TagTypes.BAG, profile.getUsername());
@@ -207,7 +207,7 @@ public class AjaxServices
             } catch (ObjectStoreException e) {
                 LOG.error("Failed to summarise " + templateName, e);
             } catch (NullPointerException e) {
-                NullPointerException e2 = new NullPointerException("No such template " 
+                NullPointerException e2 = new NullPointerException("No such template "
                         + templateName);
                 e2.initCause(e);
                 throw e2;
@@ -690,7 +690,7 @@ public class AjaxServices
             processException(e);
         }
     }
-    
+
     /**
      * validate bag upload
      * @param bagName name of new bag to be validated
@@ -815,7 +815,7 @@ public class AjaxServices
      * @param selectedExtraAttribute extra attribute (like organism)
      * @return graph widget
      */
-    public static GraphWidget getProcessGraphWidget(String widgetId, String bagName, 
+    public static GraphWidget getProcessGraphWidget(String widgetId, String bagName,
                                                     String selectedExtraAttribute) {
         try {
             ServletContext servletContext = WebContextFactory.get().getServletContext();
@@ -847,9 +847,9 @@ public class AjaxServices
         }
         return null;
     }
-    
+
     /**
-     * 
+     *
      * @param widgetId unique ID for this widget
      * @param bagName name of list
      * @return table widget
@@ -880,7 +880,7 @@ public class AjaxServices
                     } catch (Exception e) {
                         return null;
                     }
-                    
+
                     return tableWidget;
                 }
             }
@@ -890,23 +890,23 @@ public class AjaxServices
             processException(e);
         }
         return null;
-    }    
-    
+    }
+
     /**
      * #
      * @param widgetId unique ID for each widget
-     * @param bagName name of list 
+     * @param bagName name of list
      * @param errorCorrection error correction method to use
      * @param max maximum value to display
      * @param selectedExtraAttribute extra attribute to filter by
      * @param externalLink link to external datasource
-     * @param externalLinkLabel name of external datasource. 
+     * @param externalLinkLabel name of external datasource.
      * @return enrichment widget
      */
     public static EnrichmentWidget getProcessEnrichmentWidget(String widgetId, String bagName,
-                                                              String errorCorrection, String max, 
-                                                              String selectedExtraAttribute, 
-                                                              String externalLink, 
+                                                              String errorCorrection, String max,
+                                                              String selectedExtraAttribute,
+                                                              String externalLink,
                                                               String externalLinkLabel) {
         try {
             ServletContext servletContext = WebContextFactory.get().getServletContext();
@@ -918,7 +918,7 @@ public class AjaxServices
             SearchRepository searchRepository = SearchRepository
                             .getGlobalSearchRepository(servletContext);
             InterMineBag imBag = BagHelper.getBag(profile, searchRepository, bagName);
-            Type type = (Type) webConfig.getTypes().get(model.getPackageName() 
+            Type type = (Type) webConfig.getTypes().get(model.getPackageName()
                     + "." + imBag.getType());
             List<Widget> widgets = type.getWidgets();
             for (Widget widget : widgets) {
@@ -929,7 +929,7 @@ public class AjaxServices
                     enrichmentWidget.setSelectedExtraAttribute(selectedExtraAttribute);
                     enrichmentWidget.setExternalLink(externalLink);
                     enrichmentWidget.setExternalLinkLabel(externalLinkLabel);
-                    enrichmentWidget.process(imBag, os);                    
+                    enrichmentWidget.process(imBag, os);
                     return enrichmentWidget;
                 }
             }
