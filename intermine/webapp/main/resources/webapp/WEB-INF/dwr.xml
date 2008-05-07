@@ -1,6 +1,4 @@
-<!DOCTYPE dwr PUBLIC
-	"-//GetAhead Limited//DTD Direct Web Remoting 1.0//EN"
-    "http://www.getahead.ltd.uk/dwr/dwr10.dtd">
+<!DOCTYPE dwr PUBLIC "-//GetAhead Limited//DTD Direct Web Remoting 2.0//EN" "http://getahead.org/dwr//dwr20.dtd">
 
 <dwr>
   <allow>
@@ -10,8 +8,10 @@
     <create creator="new"  javascript="AjaxServices" class="org.intermine.dwr.AjaxServices">
       <!--<include method="getName"/>-->
     </create>
+
     <convert converter="bean" match="org.intermine.dwr.AjaxServices"/>
     <convert converter="bean" match="org.intermine.web.logic.results.*"/>
     <convert converter="bean" match="org.intermine.web.logic.widget.*"/>
+
   </allow>
 </dwr>
