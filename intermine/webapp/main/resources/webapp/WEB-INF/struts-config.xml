@@ -420,6 +420,7 @@
     <action path="/initConvertBag" type="org.intermine.web.struts.ConvertBagController"/>
     <action path="/initErrorMessages" type="org.intermine.web.struts.ErrorMessagesController"/>
     <action path="/initResultsTable" type="org.intermine.web.struts.TableController"/>
+    <action path="/initObjectDetailsInList" type="org.intermine.web.struts.ObjectDetailsInListController"/>
 
     <!-- don't (re)move this - it's used for importing any model-specific actions -->
     <!--@MODEL_INCLUDE@-->

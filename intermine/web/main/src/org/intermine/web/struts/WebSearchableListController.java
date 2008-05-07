@@ -164,7 +164,7 @@ public class WebSearchableListController extends TilesAction
     /**
      * Get all the WebSearchables in the given scope and of the given type.
      */
-    private Map<String, ? extends WebSearchable> getFilterWebSearchables(HttpServletRequest request,
+    public static Map<String, ? extends WebSearchable> getFilterWebSearchables(HttpServletRequest request,
                                                                       String type, String scope,
                                                                       String tags) {
         Map<String, ? extends WebSearchable> filteredWebSearchables;
@@ -208,7 +208,7 @@ public class WebSearchableListController extends TilesAction
 
     // loops through the websearchables
     // removes item if item is not on the list
-    private Map<String, ? extends WebSearchable>
+    public static Map<String, ? extends WebSearchable>
     filterByList(Map<String, ? extends WebSearchable> filteredWebSearchables, String list) {
 
         Map<String, WebSearchable> clone = new HashMap<String, WebSearchable>();

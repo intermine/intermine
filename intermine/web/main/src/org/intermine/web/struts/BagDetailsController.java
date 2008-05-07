@@ -23,6 +23,7 @@ import org.intermine.web.logic.bag.InterMineBag;
 import org.intermine.web.logic.config.Type;
 import org.intermine.web.logic.config.WebConfig;
 import org.intermine.web.logic.profile.Profile;
+import org.intermine.web.logic.results.GuiObject;
 import org.intermine.web.logic.results.PagedTable;
 import org.intermine.web.logic.results.ResultElement;
 import org.intermine.web.logic.results.WebTable;
@@ -146,6 +147,14 @@ public class BagDetailsController extends TilesAction
             }
         }
 
+        // Get the widget toggle state
+        GuiObject guiObj = (GuiObject) session.getAttribute(Constants.GUI_OBJECT);
+        if (guiObj == null) {
+            guiObj = new GuiObject();
+            session.setAttribute(Constants.GUI_OBJECT, guiObj);
+        }
+        request.setAttribute("toggledElements", guiObj.getToggledElements());
+        
         // Set the size
         String pageStr = request.getParameter("page");
         int page = -1;

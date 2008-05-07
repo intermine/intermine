@@ -238,6 +238,7 @@
   <definition name="paging.tile" path="paging.jsp" />  
   <definition name="widget.tile" path="widget.jsp" />  
   <definition name="linkPopUp.tile" path="linkPopUp.jsp" />
+  <definition name="objectDetailsInList.tile" path="objectDetailsInList.jsp" controllerUrl="/initObjectDetailsInList.do"/>
   <!-- don't (re)move this - it's used for importing any model-specific actions -->
   <!--@MODEL_INCLUDE@-->
   

@@ -195,8 +195,13 @@
             </imutil:disclosure>
           </c:if>
         </c:forEach>
-
-      </td>
+        
+   <%-- bags that contain this object --%>
+   <tiles:insert name="objectDetailsInList.tile">
+     <tiles:put name="list" value="${bagsWithThisObject}"/>
+     <tiles:put name="objectid" value="${object.id}"/>
+   </tiles:insert>
+   </td>
 
     </tr>
 
@@ -252,45 +257,6 @@
     </imutil:disclosureBody>
   </imutil:disclosure>
 </div>
-
-       <%-- bags that contain this object --%>
-<div class="heading">
-  Lists
-</div>
-         
-
-       <im:body id="Misc">
-   
-        <div style="width:50%;float:left; border:1px solid #CCC;padding:10px;margin:0px 10px 10px 10px">
-        Lists in which this can be found:
-     <tiles:insert name="webSearchableList.tile">
-            <tiles:put name="wsListId" value="lists_with_object"/>
-            <tiles:put name="list" value="${bagsWithThisObject}"/>
-            <tiles:put name="type" value="bag"/>
-            <tiles:put name="scope" value="all"/>
-            <tiles:put name="showDescriptions" value="true"/>
-            <tiles:put name="showSearchBox" value="false"/>
-            <tiles:put name="showCount" value="true"/>
-            <tiles:put name="currentObjectId" value="${object.id}"/>
-          </tiles:insert>
-    </div>
- 
-     <%-- Add to bag --%>
-             <c:if test="${!empty PROFILE.savedBags}">
-               <form action="<html:rewrite page="/addToBagAction.do"/>" method="POST">
-                 <fmt:message key="objectDetails.addToBag"/>
-                 <input type="hidden" name="__intermine_forward_params__" value="${pageContext.request.queryString}"/>
-                 <select name="bag">
-                   <c:forEach items="${PROFILE.savedBags}" var="entry">
-                     <option name="${entry.key}">${entry.key}</option>
-                   </c:forEach>
-                 </select>
-                 <input type="hidden" name="object" value="${object.id}"/>
-                 <input type="submit" value="<fmt:message key="button.add"/>"/>
-               </form>
-             </c:if>
-        </im:body>
-     </div>     
 </c:if>
 
 <!-- /objectDetails.jsp -->
