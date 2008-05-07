@@ -13,10 +13,10 @@ public class WebUtilTest extends TestCase
 {
     private Double maxValue = 1000.0;
     private HashMap<String, BigDecimal> resultsMap = new HashMap();
-    private String[] id = new String[3];
-    private int[] taggedSample = new int[3];
-    private int[] taggedPopulation = new int[3];
-    private BigDecimal[] expectedResults = new BigDecimal[3];
+    private String[] id = new String[4];
+    private int[] taggedSample = new int[4];
+    private int[] taggedPopulation = new int[4];
+    private BigDecimal[] expectedResults = new BigDecimal[4];
     private int bagsize = 3;
     private int total = 100;
     HashMap<String, BigDecimal> bonferroniMap = new HashMap();
@@ -46,7 +46,13 @@ public class WebUtilTest extends TestCase
         taggedPopulation[2] = 20;
         expectedResults[2] = new BigDecimal(0.00705009276437833);
 
-        for (int i = 0; i < 3; i++) {
+        id[3] = "one";
+        taggedSample[3] = 3;
+        taggedPopulation[3] = 100;
+        expectedResults[3] = new BigDecimal(1);
+
+
+        for (int i = 0; i < 4; i++) {
             double p = Hypergeometric.calculateP(taggedSample[i], bagsize, taggedPopulation[i], total);
             resultsMap.put(id[i], new BigDecimal(p));
             bonferroniMap.put(id[i], new BigDecimal(p * bagsize));
@@ -55,7 +61,7 @@ public class WebUtilTest extends TestCase
     }
 
     public void testHypergeometric() throws Exception {
-        for (int i = 0; i < 3; i++) {
+        for (int i = 0; i < 4; i++) {
             assertEquals(expectedResults[i], resultsMap.get(id[i]));
         }
     }
