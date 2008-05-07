@@ -62,8 +62,8 @@ public class ModEncodeMetaDataProcessor extends ChadoProcessor
     private List<Integer> finalOutputData = new ArrayList<Integer>();
 
     private Map<Integer, List<Integer>> firstAppliedProtocolsMap = new HashMap<Integer, List<Integer>>(); //exp
-    private Map<Integer, List<Integer>> initialInputDataMap = new HashMap<Integer, List<Integer>>();
-    private Map<Integer, List<Integer>> finalOutputDataMap = new HashMap<Integer, List<Integer>>();
+    private Map<Integer, List<Integer>> inDataMap = new HashMap<Integer, List<Integer>>();
+    private Map<Integer, List<Integer>> outDataMap = new HashMap<Integer, List<Integer>>();
 
     // map used to store directly the final data (leaves of the DAG) to their experiment
     // possibly redundant
@@ -251,10 +251,10 @@ public class ModEncodeMetaDataProcessor extends ChadoProcessor
         processDag(connection);
         
         setExperimentRefs(connection);
-        //setExperimentInputRefs(connection);
+        setExperimentInputRefs(connection);
         
-        LOG.info("REF: SD size: initialData" + initialInputDataMap.get(32).size());
-        LOG.info("REF: SD size: allData" + experimentDataMap.get(32).size());
+        LOG.info("REF: SD size: initialData: " + inDataMap.get(32).size());
+        LOG.info("REF: SD size: allData:     " + experimentDataMap.get(32).size());
     }
 
     /**
@@ -339,35 +339,13 @@ public class ModEncodeMetaDataProcessor extends ChadoProcessor
                 if (experimentId > 0) {
                     firstAppliedProtocols.add(appliedProtocolId);
 
+                    addToMap (experimentDataMap, experimentId, appliedDataId);
+
                     if (direction.startsWith("in")) {
-                        initialInputData.add(appliedDataId);                        
-
-                        // add initial input data to experimentDataMap
-                        if (initialInputDataMap.containsKey(experimentId)) {
-                            dataIds = initialInputDataMap.get(experimentId);
-                        }
-                        if (!dataIds.contains(appliedDataId)) {
-                            dataIds.add(appliedDataId);
-                            initialInputDataMap.put(experimentId, dataIds);
-                            experimentDataMap.put(experimentId, dataIds);
-                        }
+                    addToMap (inDataMap, experimentId, appliedDataId);
                     }
-
+                    
                     newNode.levelDag = 1; // not needed
-
-                    LOG.info("ZZ " + experimentId + "[" + appliedDataId + "]");
-
-                    // ++
-                    // add data to experimentDataMap
-                    if (experimentDataMap.containsKey(experimentId)) {
-                        dataIds = experimentDataMap.get(experimentId);
-                        //LOG.info("XX " + experimentId + "[" + dataIds + "]");
-                    }
-                    if (!dataIds.contains(appliedDataId)) {
-                        dataIds.add(appliedDataId);
-                        //LOG.info("YY " + experimentId + "[" + dataIds + "]");
-                        experimentDataMap.put(experimentId, dataIds);
-                    }
                 }
 
                 if (direction.startsWith("in")) {
@@ -394,16 +372,11 @@ public class ModEncodeMetaDataProcessor extends ChadoProcessor
             } else {
                 // keep feeding IN et OUT
                 if (direction.startsWith("in")) {
-                    initialInputData.add(appliedDataId);                                            
-                    // ++
-                    dataIds = initialInputDataMap.get(experimentId);
-                if (!dataIds.contains(appliedDataId)) {
-                    dataIds.add(appliedDataId);
-                    //LOG.info("QQ " + experimentId + "[" + dataIds + "]");
-                    initialInputDataMap.put(experimentId, dataIds);
-                    experimentDataMap.put(experimentId, dataIds);
-                }
 
+                    //++
+                    addToMap (experimentDataMap, experimentId, appliedDataId);
+                    addToMap (inDataMap, experimentId, appliedDataId);
+                    
                     // as above
                     branch.nextAppliedProtocols.add(appliedProtocolId);
                     if (!appliedDataMap.containsKey(appliedDataId)) {
@@ -431,6 +404,19 @@ public class ModEncodeMetaDataProcessor extends ChadoProcessor
         traverseDag();
     }
 
+    
+    private void addToMap(Map<Integer, List<Integer>> m, Integer key, Integer value) {
+        
+        List<Integer> ids = new ArrayList<Integer>();
+
+        if (m.containsKey(key)) {
+            ids = m.get(key);
+        }
+        if (!ids.contains(value)) {
+            ids.add(value);
+            m.put(key, ids);
+        }
+    }
     
     /**
      * Return the rows needed to construct the DAG of the data/protocols.
@@ -521,21 +507,8 @@ public class ModEncodeMetaDataProcessor extends ChadoProcessor
                 //        + "|" + currentOD + "|" + dataIdMap.get(currentOD));
                 
                 
-
                 // build map experiment_id, <data_id>
-                // NB this are all the data for this experiment: do something
-                // cleverer
-                List<Integer> dataIds = new ArrayList<Integer>();
-
-                if (experimentDataMap.containsKey(experimentId)) {
-                    dataIds = experimentDataMap.get(experimentId);
-                }
-                if (!dataIds.contains(currentOD)) {
-                    dataIds.add(currentOD);
-                    experimentDataMap.put(experimentId, dataIds);
-                }
-
-                
+                addToMap (experimentDataMap, experimentId, currentOD);
                 
                 if (appliedDataMap.containsKey(currentOD)) {
                     // fill the list of next (children) protocols
@@ -1345,10 +1318,10 @@ public class ModEncodeMetaDataProcessor extends ChadoProcessor
     private void setExperimentInputRefs(Connection connection)
     throws SQLException, ObjectStoreException {
         LOG.info("REF: IN");
-        Iterator<Integer> exp = initialInputDataMap.keySet().iterator();
+        Iterator<Integer> exp = inDataMap.keySet().iterator();
         while (exp.hasNext()) {
             Integer thisExperimentId = exp.next();
-            List<Integer> dataIds = initialInputDataMap.get(thisExperimentId);
+            List<Integer> dataIds = inDataMap.get(thisExperimentId);
             Iterator<Integer> dat = dataIds.iterator();
             ReferenceList collection = new ReferenceList();
             collection.setName("initialInputData");
