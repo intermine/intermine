@@ -888,7 +888,7 @@ if (($load_last || $restart) && !$run_build_db) {
       }
     }
   } else {
-    warn "no backup found - starting new build\n";
+    warn "no backup file found\n";
   }
 }
 
