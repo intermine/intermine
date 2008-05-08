@@ -544,6 +544,9 @@ public class ChadoSequenceProcessor extends ChadoProcessor
                     }
                     if (Transcript.class.isAssignableFrom(objectClass)) {
                         FeatureData subjectFeatureData = featureMap.get(subjectId);
+
+                        // XXX FIXME TODO Hacky special case: count the exons so we can set
+                        // exonCount later
                         if (subjectFeatureData.interMineType.equals("Exon")) {
                             if (!countMap.containsKey(objectFeatureData.intermineObjectId)) {
                                 countMap.put(objectFeatureData.intermineObjectId, new Integer(1));
@@ -589,7 +592,7 @@ public class ChadoSequenceProcessor extends ChadoProcessor
         LOG.info("total collection elements created: " + collectionTotal);
         res.close();
 
-        // set the exonCount fields
+        // XXX FIXME TODO Hacky special case: set the exonCount fields
         for (Map.Entry<Integer, Integer> entry: countMap.entrySet()) {
             Integer featureId = entry.getKey();
             Integer collectionCount = entry.getValue();
@@ -1403,7 +1406,7 @@ public class ChadoSequenceProcessor extends ChadoProcessor
         fdat.existingSynonyms.add(identifier);
         return returnItem;
     }
-    
+
     /**
      * Fetch the populated map of chado feature id to FeatureData objects.
      * @return map of feature details
@@ -1411,7 +1414,7 @@ public class ChadoSequenceProcessor extends ChadoProcessor
     protected Map<Integer, FeatureData> getFeatureMap() {
         return this.featureMap;
     }
-    
+
     /**
      * Data about one feature from the feature table in chado.  This exists to avoid having lots of
      * Item objects in memory.
@@ -1477,7 +1480,7 @@ public class ChadoSequenceProcessor extends ChadoProcessor
         public OrganismData getOrganismData() {
             return organismData;
         }
-        
+
         /**
          * Return the InterMine type of this object
          * @return the InterMine type
