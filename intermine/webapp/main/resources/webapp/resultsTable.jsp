@@ -170,9 +170,9 @@
           <c:choose>
             <c:when test="${column.visible}">
                <c:set var="resultElement" value="${row[column.index]}" scope="request"/>
-               <c:set var="objectViewClass" value="noHighlightObject"/>
+               <c:set var="highlighObjectClass" value="noHighlightObject"/>
                <c:if test="${!empty highlightId && resultElement.id == highlightId}">
-                 <c:set var="objectViewClass" value="highlightObject"/>
+                 <c:set var="highlighObjectClass" value="highlightObject"/>
                </c:if>
                
                <%-- the checkbox to select this object --%>
@@ -181,7 +181,7 @@
                 <c:if test="${resultElement.selected}">
                   <c:set var="checkboxClass" value="${checkboxClass} highlightCell"/>
                 </c:if>
-                <td align="center" class="${checkboxClass}" id="cell_checkbox,${status2.index},${status.index},${row[column.index].htmlId}">
+                <td align="center" class="${checkboxClass} ${highlighObjectClass}" id="cell_checkbox,${status2.index},${status.index},${row[column.index].htmlId}">
                   
                   <html:multibox property="selectedIdStrings" name="pagedResults"
                                  styleId="selectedObjects_${status2.index}_${status.index}_${row[column.index].htmlId}"
@@ -199,7 +199,7 @@
               </c:if>
 
               <td id="cell,${status2.index},${status.index},${row[column.index].htmlId}"
-                  class="${cellClass}">
+                  class="${cellClass} ${highlighObjectClass}">
                 <c:set var="columnType" value="${column.type}" scope="request"/>
                 <div>
                   <tiles:insert name="objectView.tile"/>
