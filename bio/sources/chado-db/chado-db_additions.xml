@@ -9,6 +9,7 @@
     <attribute name="GLEANRsymbol" type="java.lang.String"/>
     <collection name="UTRs" referenced-type="org.flymine.model.genomic.UTR" reverse-reference="gene" ordered="true"/>
     <collection name="CDSs" referenced-type="org.flymine.model.genomic.CDS" reverse-reference="gene" ordered="true"/>
+    <collection name="alleles" referenced-type="org.flymine.model.genomic.Allele" reverse-reference="gene" ordered="true"/>
   </class>
   <class name="org.flymine.model.genomic.InsertionSite" extends="org.flymine.model.genomic.BioEntity" is-interface="true">
     <collection name="genes" referenced-type="org.flymine.model.genomic.Gene" ordered="true"/>
@@ -96,4 +97,8 @@
          is-interface="true">
     <attribute name="cytoLocation" type="java.lang.String"/>
   </class>
+  <class name="org.flymine.model.genomic.Allele" extends="org.flymine.model.genomic.BioEntity" is-interface="true">
+    <reference name="gene" referenced-type="org.flymine.model.genomic.Gene" reverse-reference="alleles"/>
+  </class>
+
 </classes>

@@ -88,6 +88,11 @@ public class TestFlyBaseModuleProcessor extends FlyBaseModuleProcessor
                 1000000, "CG10000-RA_prot", "FBpp10000", "protein", 2345,
                 "ccaggtg", 7227
             },
+            {
+                // this is actually an allele
+                2340000, "CG10006[GD2461]", "FBal0198867", "gene", null,
+                null, 7227
+            },
         };
         MockMultiRowResultSet res = new MockMultiRowResultSet();
         res.setupRows(resObjects);
@@ -123,6 +128,9 @@ public class TestFlyBaseModuleProcessor extends FlyBaseModuleProcessor
             },
             {
                 700 ,    1000000 ,   411 , "producedby"
+            },
+            {
+                800 ,    2340000 ,   3117509 , "alleleof"
             }
         };
         MockMultiRowResultSet res = new MockMultiRowResultSet();
