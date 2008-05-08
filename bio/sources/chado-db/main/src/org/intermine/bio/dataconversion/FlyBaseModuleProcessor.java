@@ -188,6 +188,8 @@ public class FlyBaseModuleProcessor extends ChadoSequenceProcessor
             map.put(new MultiKey("dbxref", "MRNA", "FlyBase", null),
                     Arrays.asList(CREATE_SYNONYM_ACTION));
 
+            map.put(new MultiKey("relationship", "Allele", "alleleof", "Gene"),
+                    Arrays.asList(new SetFieldConfigAction("gene")));
             map.put(new MultiKey("relationship", "Translation", "producedby", "MRNA"),
                     Arrays.asList(new SetFieldConfigAction("MRNA")));
 
@@ -270,8 +272,7 @@ public class FlyBaseModuleProcessor extends ChadoSequenceProcessor
      */
     @Override
     protected String getExtraFeatureConstraint() {
-        return "NOT (cvterm.name = 'gene' AND uniquename LIKE 'FBal%') "
-            + "AND NOT ((cvterm.name = 'golden_path_region'"
+        return "NOT ((cvterm.name = 'golden_path_region'"
             + "          OR cvterm.name = 'ultra_scaffold')"
             + "         AND (uniquename LIKE 'Unknown_%' OR uniquename LIKE '%_groupMISC'))";
     }
@@ -285,15 +286,18 @@ public class FlyBaseModuleProcessor extends ChadoSequenceProcessor
                                int seqlen, int taxonId) {
         String realInterMineType = interMineType;
 
-        if (chadoFeatureType.equals("gene") && !locatedGeneIds.contains(featureId.intValue())) {
-            // ignore genes with no location
-            return null;
+        if (chadoFeatureType.equals("gene")) {
+            if (uniqueName.startsWith("FBal")) {
+                // fix type of allele "gene" features
+                realInterMineType = "Allele";
+            } else {
+                if (!locatedGeneIds.contains(featureId.intValue())) {
+                    // ignore genes with no location
+                    return null;
+                }
+            }
         }
 
-        // avoid allele features that have type 'gene'
-        if (uniqueName.startsWith("FBal")) {
-            return null;
-        }
 
         // ignore unknown chromosome from dpse
         if (uniqueName.startsWith("Unknown_")) {
