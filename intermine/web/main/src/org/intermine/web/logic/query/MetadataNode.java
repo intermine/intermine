@@ -35,7 +35,7 @@ public class MetadataNode extends Node
      * @param button the button displayed next to this node's name
      */
     public MetadataNode(MetadataNode parent, String fieldName, String button) {
-        super(parent, fieldName);
+        super(parent, fieldName, false);
         this.button = button;
     }
 

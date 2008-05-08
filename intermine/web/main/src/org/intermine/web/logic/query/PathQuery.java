@@ -256,6 +256,7 @@ public class PathQuery
                 }
             }
         } catch (PathError e) {
+            LOG.error("Path error", e);
             addProblem(e);
         }
     }
@@ -425,8 +426,9 @@ public class PathQuery
 
         // the new node will be inserted after this one or at the end if null
         String previousNodePath = null;
+        int lastIndex = Math.max(path.lastIndexOf("."), path.lastIndexOf(":"));
 
-        if (path.indexOf(".") == -1) {
+        if (lastIndex == -1) {
             node = new PathNode(path);
             // Check whether starting point exists
             try {
@@ -435,7 +437,7 @@ public class PathQuery
                 addProblem(err);
             }
         } else {
-            String prefix = path.substring(0, path.lastIndexOf("."));
+            String prefix = path.substring(0, lastIndex);
             if (nodes.containsKey(prefix)) {
                 Iterator<String> pathsIter = nodes.keySet().iterator();
 
@@ -447,8 +449,8 @@ public class PathQuery
                 }
 
                 PathNode parent = nodes.get(prefix);
-                String fieldName = path.substring(path.lastIndexOf(".") + 1);
-                node = new PathNode(parent, fieldName);
+                String fieldName = path.substring(lastIndex + 1);
+                node = new PathNode(parent, fieldName, path.charAt(lastIndex) == ':');
                 try {
                     node.setModel(model);
                 } catch (Exception err) {
@@ -514,7 +516,7 @@ public class PathQuery
         if (parent == null) {
             newNode = new PathNode(node.getType());
         } else {
-            newNode = new PathNode(parent, node.getFieldName());
+            newNode = new PathNode(parent, node.getFieldName(), node.isOuterJoin());
             try {
                 newNode.setModel(model);
             } catch (IllegalArgumentException err) {

@@ -18,6 +18,8 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
 
+import org.intermine.objectstore.flatouterjoins.MultiRow;
+import org.intermine.objectstore.query.ResultsRow;
 import org.intermine.web.logic.Constants;
 
 /**
@@ -30,7 +32,7 @@ public class PagedTable
 {
     private WebTable webTable;
     private List<String> columnNames = null;
-    private List<List<ResultElement>> resultElementRows = null;
+    private List resultElementRows = null;
     private int startRow = 0;
 
     private int pageSize = Constants.DEFAULT_TABLE_SIZE;
@@ -454,7 +456,7 @@ public class PagedTable
      *
      * @return a List of rows, each of which is a List
      */
-    public List<List<ResultElement>> getRearrangedResults() {
+    public List getRearrangedResults() {
         return new RearrangedList();
     }
 
@@ -467,12 +469,19 @@ public class PagedTable
         }
 
         @Override
-        public List<ResultElement> get(int index) {
+        public List get(int index) {
             return translateRow(webTable.getResultElements(index));
         }
 
-        private List<ResultElement> translateRow(List<ResultElement> row) {
-            List<ResultElement> ret = new ArrayList<ResultElement>();
+        private List translateRow(List row) {
+            if (row instanceof MultiRow) {
+                MultiRow ret = new MultiRow();
+                for (List subRow : ((List<List>) row)) {
+                    ret.add(translateRow(subRow));
+                }
+                return ret;
+            }
+            List ret = new ResultsRow();
             for (int i = 0; i < visibleIndexes.size(); i++) {
                 ret.add(row.get(visibleIndexes.get(i)));
             }

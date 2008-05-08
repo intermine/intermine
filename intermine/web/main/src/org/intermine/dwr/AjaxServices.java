@@ -42,6 +42,7 @@ import org.intermine.objectstore.ObjectStoreWriter;
 import org.intermine.objectstore.intermine.ObjectStoreInterMineImpl;
 import org.intermine.objectstore.query.Query;
 import org.intermine.objectstore.query.QueryNode;
+import org.intermine.objectstore.query.QuerySelectable;
 import org.intermine.objectstore.query.Results;
 import org.intermine.path.Path;
 import org.intermine.util.TypeUtil;
@@ -377,10 +378,8 @@ public class AjaxServices
             Map<String, InterMineBag> allBags = new HashMap<String, InterMineBag>(userWsMap);
             allBags.putAll(globalWsMap);
 
-            Query distinctQuery =
-                MainHelper.makeSummaryQuery(pathQuery, allBags,
-                                            new HashMap<String, QueryNode>(), summaryPath,
-                                            servletContext);
+            Query distinctQuery = MainHelper.makeSummaryQuery(pathQuery, allBags,
+                    new HashMap<String, QuerySelectable>(), summaryPath, servletContext);
 
             Results results = os.execute(distinctQuery);
             WebResultsSimple webResults = new WebResultsSimple(results,
@@ -388,10 +387,8 @@ public class AjaxServices
             PagedTable pagedTable = new PagedTable(webResults);
 
             // Start the count of results
-            Query countQuery =
-                MainHelper.makeSummaryQuery(pathQuery, allBags,
-                                            new HashMap<String, QueryNode>(), summaryPath
-                                            , servletContext);
+            Query countQuery = MainHelper.makeSummaryQuery(pathQuery, allBags,
+                    new HashMap<String, QuerySelectable>(), summaryPath, servletContext);
             QueryCountQueryMonitor clientState
                 = new QueryCountQueryMonitor(Constants.QUERY_TIMEOUT_SECONDS * 1000, countQuery);
             MessageResources messages = (MessageResources) ctx.getHttpServletRequest()
@@ -647,7 +644,7 @@ public class AjaxServices
             int count = 0;
             try {
                 imBag = BagHelper.getBag(profile, searchRepository, bagName);
-                Map<String, QueryNode> pathToQueryNode = new HashMap<String, QueryNode>();
+                Map<String, QuerySelectable> pathToQueryNode = new HashMap();
                 Map<String, InterMineBag> bagMap = new HashMap<String, InterMineBag>();
                 bagMap.put(imBag.getName(), imBag);
 

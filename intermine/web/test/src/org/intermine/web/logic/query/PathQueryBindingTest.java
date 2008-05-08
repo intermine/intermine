@@ -62,12 +62,6 @@ public class PathQueryBindingTest extends TestCase
         allCompanies.setView(view);
         expected.put("allCompanies", allCompanies);
 
-        // managers
-        PathQuery managers = new PathQuery(model);
-        PathNode employee = managers.addNode("Employee");
-        employee.setType("Manager");
-        expected.put("managers", managers);
-
         view = new ArrayList();
         // employeesWithOldManagers
         PathQuery employeesWithOldManagers = new PathQuery(model);
@@ -127,9 +121,6 @@ public class PathQueryBindingTest extends TestCase
 
     public void testAllCompanies() throws Exception {
         assertEquals(expected.get("allCompanies"), savedQueries.get("allCompanies"));
-    }
-    public void testManagers() throws Exception {
-        assertEquals(expected.get("managers"), savedQueries.get("managers"));
     }
     public void testEmployeesWithOldManagers() throws Exception {
         assertEquals(expected.get("employeesWithOldManagers"), savedQueries.get("employeesWithOldManagers"));

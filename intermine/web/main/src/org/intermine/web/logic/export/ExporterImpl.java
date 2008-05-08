@@ -12,8 +12,10 @@ package org.intermine.web.logic.export;
 
 import java.io.OutputStream;
 import java.io.PrintWriter;
+import java.util.Iterator;
 import java.util.List;
 
+import org.intermine.objectstore.flatouterjoins.ReallyFlatIterator;
 import org.intermine.web.logic.results.ResultElement;
 
 
@@ -45,8 +47,10 @@ public class ExporterImpl implements Exporter
      */
     public void export(List<List<ResultElement>> results) {
         try {
-            ResultElementConverter converter = new  ResultElementConverter();
-            for (List<ResultElement> result : results) {
+            ResultElementConverter converter = new ResultElementConverter();
+            Iterator<List<ResultElement>> rowIter = new ReallyFlatIterator(results.iterator());
+            while (rowIter.hasNext()) {
+                List<ResultElement> result = rowIter.next();
                 out.println(rowFormatter.format(converter.convert(result)));
                 writtenResultsCount++;
             }

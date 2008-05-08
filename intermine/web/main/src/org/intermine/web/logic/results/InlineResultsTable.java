@@ -212,7 +212,7 @@ public class InlineResultsTable
                 FieldConfig fc = (FieldConfig) objectFieldConfigIter.next();
                 String className = theClass.getUnqualifiedName();
                 String expr = fc.getFieldExpr();
-                String pathString = className + "." + expr;
+                String pathString = "." + expr;
                 Path path = new Path(model, pathString);
 
                 fieldValues.put(expr, path.resolve(o));

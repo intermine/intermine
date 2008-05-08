@@ -92,4 +92,31 @@ public class Util
                     + c.getName() + ": " + message.toString());
         }
     }
+
+    /**
+     * Takes two integers, and returns the greatest common divisor, using euclid's algorithm.
+     *
+     * @param a an integer
+     * @param b an integer
+     * @return the gcd of a and b
+     */
+    public static int gcd(int a, int b) {
+        while (b != 0) {
+            int t = b;
+            b = a % b;
+            a = t;
+        }
+        return a;
+    }
+
+    /**
+     * Takes two integers, and returns the lowest common multiple.
+     *
+     * @param a an integer
+     * @param b an integer
+     * @return the lcm of a and b
+     */
+    public static int lcm(int a, int b) {
+        return (a / gcd(a, b)) * b;
+    }
 }

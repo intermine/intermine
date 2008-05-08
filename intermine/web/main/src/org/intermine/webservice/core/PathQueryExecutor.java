@@ -20,6 +20,7 @@ import org.intermine.objectstore.ObjectStore;
 import org.intermine.objectstore.ObjectStoreException;
 import org.intermine.objectstore.query.Query;
 import org.intermine.objectstore.query.QueryNode;
+import org.intermine.objectstore.query.QuerySelectable;
 import org.intermine.objectstore.query.Results;
 import org.intermine.web.logic.Constants;
 import org.intermine.web.logic.bag.InterMineBag;
@@ -40,7 +41,7 @@ public class PathQueryExecutor
 {
 
     private HttpServletRequest request;
-    private HashMap<String, QueryNode> pathToQueryNode;
+    private HashMap<String, QuerySelectable> pathToQueryNode;
     private Query query;
     private PathQuery pathQuery;
     
@@ -70,7 +71,7 @@ public class PathQueryExecutor
         this.request = request;
         ServletContext servletContext = request.getSession()
         .getServletContext();
-        pathToQueryNode = new HashMap<String, QueryNode>();
+        pathToQueryNode = new HashMap();
         try {
             // makeQuery initializes pathToQueryNode
             query = MainHelper.makeQuery(pathQuery, getSavedBags(), pathToQueryNode,
@@ -86,7 +87,7 @@ public class PathQueryExecutor
      * @return mapping
      * @see org.intermine.web.logic.results.WebResults#getPathToIndex(Query, Map)
      */
-    public HashMap<String, QueryNode> getPathToQueryNode() {
+    public HashMap<String, QuerySelectable> getPathToQueryNode() {
         return pathToQueryNode;
     }
     

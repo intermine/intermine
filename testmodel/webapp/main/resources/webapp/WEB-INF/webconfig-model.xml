@@ -17,6 +17,7 @@
       <fieldconfig fieldExpr="department.company.name" showInSummary="true" showInResults="true" showInInlineCollection="false"/>
       <fieldconfig fieldExpr="age" showInSummary="false" showInResults="false" showInInlineCollection="true"/>
       <fieldconfig fieldExpr="fullTime" showInSummary="true" showInResults="true" showInInlineCollection="true"/>
+      <fieldconfig fieldExpr="address.address" showInSummary="true" showInResults="true" showInInlineCollection="true"/>
     </fields>
     <longdisplayers>
       <displayer src="/model/employeeName.jsp" aspects="People"/>
@@ -38,6 +39,7 @@
       <fieldconfig fieldExpr="department.company.name" showInSummary="true" showInResults="true" showInInlineCollection="false"/>
       <fieldconfig fieldExpr="age" showInSummary="false" showInResults="false" showInInlineCollection="true"/>
       <fieldconfig fieldExpr="fullTime" showInSummary="false" showInResults="true" showInInlineCollection="true"/>
+      <fieldconfig fieldExpr="address.address" showInSummary="true" showInResults="true" showInInlineCollection="true"/>
       <fieldconfig fieldExpr="seniority" showInSummary="true" showInInlineCollection="true" showInResults="true"/>
       <!-- the doNotTruncate flag, when set to true, stops the object details
            page from truncating long fields and putting a [View all...] link -->

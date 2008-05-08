@@ -36,9 +36,10 @@ public class PathNode extends Node
      * Constucting a PathNode is not usually necessary - use PathQuery#addNode
      * @param parent the parent node of this node
      * @param fieldName the name of the field that this node represents
+     * @param outer true if the node is an outer join
      */
-    public PathNode(Node parent, String fieldName) {
-        super(parent, fieldName);
+    public PathNode(Node parent, String fieldName, boolean outer) {
+        super(parent, fieldName, outer);
     }
 
     /**

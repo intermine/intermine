@@ -32,6 +32,7 @@ import org.intermine.objectstore.query.Query;
 import org.intermine.objectstore.query.QueryClass;
 import org.intermine.objectstore.query.QueryField;
 import org.intermine.objectstore.query.QueryNode;
+import org.intermine.objectstore.query.QuerySelectable;
 import org.intermine.objectstore.query.Results;
 import org.intermine.objectstore.query.ResultsRow;
 import org.intermine.objectstore.query.iql.IqlQuery;
@@ -153,7 +154,7 @@ public class WebResultsTest extends TestCase
          QueryField empName = new QueryField(emp1, "name");
          
 
-         Map<String, QueryNode> pathToQueryNode = new HashMap<String, QueryNode>();
+         Map<String, QuerySelectable> pathToQueryNode = new HashMap();
          pathToQueryNode.put("Department", dept1);
          pathToQueryNode.put("Department.name", depName);
          pathToQueryNode.put("Department.manager", man1);
@@ -186,7 +187,7 @@ public class WebResultsTest extends TestCase
         }};
         pq.addPathStringDescription("Company", "description 1");
         pq.setView(view);
-        Map<String, QueryNode> pathToQueryNode = new HashMap<String, QueryNode>();
+        Map<String, QuerySelectable> pathToQueryNode = new HashMap();
         Query query = MainHelper.makeQuery(pq , new HashMap(), pathToQueryNode, null, null, true);
         Results results = os.execute(query);
         WebResults webResults = new WebResults(pq, results, model, pathToQueryNode, classKeys, null);
@@ -216,7 +217,7 @@ public class WebResultsTest extends TestCase
              add(new Path(model, "Department.company.name"));
          }};
          pq.setView(view);
-         Map<String, QueryNode> pathToQueryNode = new HashMap<String, QueryNode>();
+         Map<String, QuerySelectable> pathToQueryNode = new HashMap();
          Query query = MainHelper.makeQuery(pq , new HashMap(), pathToQueryNode, null, null, true);
          Results results = os.execute(query);
          WebResults webResults = new WebResults(pq, results, model, pathToQueryNode, classKeys, null);
