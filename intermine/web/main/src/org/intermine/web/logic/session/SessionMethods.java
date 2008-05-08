@@ -18,17 +18,18 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import org.intermine.objectstore.query.Query;
-import org.intermine.objectstore.query.QueryNode;
-import org.intermine.objectstore.query.Results;
-
 import org.intermine.metadata.FieldDescriptor;
 import org.intermine.metadata.Model;
 import org.intermine.model.InterMineObject;
 import org.intermine.objectstore.ObjectStore;
 import org.intermine.objectstore.ObjectStoreException;
 import org.intermine.objectstore.ObjectStoreQueryDurationException;
+import org.intermine.objectstore.flatouterjoins.ObjectStoreFlatOuterJoinsImpl;
 import org.intermine.objectstore.intermine.ObjectStoreInterMineImpl;
+import org.intermine.objectstore.query.Query;
+import org.intermine.objectstore.query.QueryNode;
+import org.intermine.objectstore.query.QuerySelectable;
+import org.intermine.objectstore.query.Results;
 import org.intermine.path.Path;
 import org.intermine.util.CacheMap;
 import org.intermine.web.logic.Constants;
@@ -503,7 +504,8 @@ public class SessionMethods
                                     final PathQuery pathQuery) {
         synchronized (session) {
             final ServletContext servletContext = session.getServletContext();
-            final ObjectStore os = (ObjectStore) servletContext.getAttribute(Constants.OBJECTSTORE);
+            final ObjectStore os = new ObjectStoreFlatOuterJoinsImpl((ObjectStore)
+                    servletContext.getAttribute(Constants.OBJECTSTORE));
             final Model model = os.getModel();
 
             Map queries = getRunningQueries(session);
@@ -514,9 +516,8 @@ public class SessionMethods
                 public void run () {
                     final Profile profile = (Profile) session.getAttribute(Constants.PROFILE);
                     try {
-                        Map<String, QueryNode> pathToQueryNode = new HashMap<String, QueryNode>();
-                        Map<String, BagQueryResult> pathToBagQueryResult
-                                = new HashMap<String, BagQueryResult>();
+                        Map<String, QuerySelectable> pathToQueryNode = new HashMap();
+                        Map<String, BagQueryResult> pathToBagQueryResult = new HashMap();
                         Map<String, InterMineBag> allBags =
                             WebUtil.getAllBags(profile.getSavedBags(), servletContext);
                         final PagedTable pr =
@@ -883,7 +884,7 @@ public class SessionMethods
     private static PagedTable doPathQueryGetPagedTable(final PathQuery pathQuery,
                                              final ServletContext servletContext,
                                              final ObjectStore os, final Model model,
-                                             Map<String, QueryNode> pathToQueryNode,
+                                             Map<String, QuerySelectable> pathToQueryNode,
                                              Map<String, BagQueryResult> pathToBagQueryResult,
                                              Map<String, InterMineBag> allBags)
                     throws ObjectStoreException {

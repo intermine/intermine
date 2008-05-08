@@ -16,6 +16,12 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import org.intermine.metadata.AttributeDescriptor;
+import org.intermine.metadata.ClassDescriptor;
+import org.intermine.metadata.Model;
+import org.intermine.model.InterMineObject;
+import org.intermine.objectstore.ObjectStore;
+import org.intermine.objectstore.ObjectStoreException;
 import org.intermine.objectstore.query.ConstraintOp;
 import org.intermine.objectstore.query.ContainsConstraint;
 import org.intermine.objectstore.query.Query;
@@ -23,14 +29,8 @@ import org.intermine.objectstore.query.QueryClass;
 import org.intermine.objectstore.query.QueryCollectionReference;
 import org.intermine.objectstore.query.QueryField;
 import org.intermine.objectstore.query.QueryNode;
+import org.intermine.objectstore.query.QuerySelectable;
 import org.intermine.objectstore.query.Results;
-
-import org.intermine.metadata.AttributeDescriptor;
-import org.intermine.metadata.ClassDescriptor;
-import org.intermine.metadata.Model;
-import org.intermine.model.InterMineObject;
-import org.intermine.objectstore.ObjectStore;
-import org.intermine.objectstore.ObjectStoreException;
 import org.intermine.path.Path;
 import org.intermine.util.CollectionUtil;
 import org.intermine.util.DynamicUtil;
@@ -83,7 +83,19 @@ public class PathQueryResultHelper
                     if (prefix == null || prefix.length() <= 0) {
                         prefix = type;
                     }
-                    String pathString = prefix + "." + expr;
+                    String prePath = "." + expr;
+                    StringBuffer pathStringBuffer = new StringBuffer();
+                    int lastIndex = prePath.lastIndexOf(".");
+                    int index = prePath.indexOf(".");
+                    int prevIndex = 0;
+                    while (index < lastIndex) {
+                        pathStringBuffer.append(prePath.substring(prevIndex, index))
+                            .append(":");
+                        prevIndex = index + 1;
+                        index = prePath.indexOf(".", prevIndex);
+                    }
+                    pathStringBuffer.append(prePath.substring(prevIndex));
+                    String pathString = prefix + pathStringBuffer.toString();
                     Map<String, String> classToPath = new HashMap<String, String>();
                     classToPath.put(prefix, classDescriptor.getUnqualifiedName());
                     Path path = new Path(model, pathString, classToPath);
@@ -229,7 +241,7 @@ public class PathQueryResultHelper
                                                     ServletContext servletContext)
                     throws ObjectStoreException {
         Model model = os.getModel();
-        Map<String, QueryNode> pathToQueryNode = new HashMap<String, QueryNode>();
+        Map<String, QuerySelectable> pathToQueryNode = new HashMap();
         Map<String, InterMineBag> allBags = WebUtil.getAllBags(profile.getSavedBags(),
                         servletContext);
         Query query = MainHelper.makeQuery(pathQuery, allBags, pathToQueryNode, servletContext,

@@ -1,10 +1,6 @@
 <query-list>
   <query name="allCompanies" model="testmodel" view="Company">
   </query>
-  <query name="managers" model="testmodel">
-    <node path="Employee" type="Manager">
-    </node>
-  </query>
   <query name="employeesWithOldManagers" model="testmodel" view="Employee.name Employee.age Employee.department.name Employee.department.manager.age">
     <pathDescription pathString="Employee.department" description="Department of the Employee"/>
     <node path="Employee.department.manager.age">

@@ -31,7 +31,11 @@ public class ResultElementConverter
     public List<Object> convert(List<ResultElement> result) {
         List<Object> ret = new ArrayList<Object>();
         for (ResultElement el : result) {
-            ret.add(el.getField());
+            if (el != null) {
+                ret.add(el.getField());
+            } else {
+                ret.add(null);
+            }
         }
         return ret;
     }

@@ -12,6 +12,7 @@ package org.intermine.path;
 
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
@@ -80,9 +81,11 @@ public class PathQueryCreator
         while (pathIter.hasNext()) {
             Path path = (Path) pathIter.next();
 
-            Iterator iter = path.getElements().iterator();
-            while (iter.hasNext()) {
-                FieldDescriptor fld = (FieldDescriptor) iter.next();
+            List<String> elements = path.getElements();
+            List<ClassDescriptor> elementClassDescriptors = path.getElementClassDescriptors();
+            for (int i = 0; i < elements.size(); i++) {
+                FieldDescriptor fld = elementClassDescriptors.get(i).getFieldDescriptorByName(
+                        elements.get(i));
                 if (fldToQueryClass.containsKey(fld)) {
                     // already got to this point, move on to next QueryClass
                     // if fld is an attribute will return current class

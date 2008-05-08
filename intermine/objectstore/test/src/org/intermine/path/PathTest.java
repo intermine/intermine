@@ -102,16 +102,17 @@ public class PathTest extends TestCase
     }
 
     private void checkConstrainedPath(Path path) {
-        ClassDescriptor ceoCld =
-            model.getClassDescriptorByName("org.intermine.model.testmodel.CEO");
-        assertEquals(ceoCld, ((ReferenceDescriptor) path.getElements().get(1)).getClassDescriptor());
-        ClassDescriptor manCld =
-            model.getClassDescriptorByName("org.intermine.model.testmodel.ImportantPerson");
-        assertEquals(manCld, ((FieldDescriptor) path.getElements().get(4)).getClassDescriptor());
-        assertEquals(String.class, path.getEndType());
-        ClassDescriptor deptCld =
-            model.getClassDescriptorByName("org.intermine.model.testmodel.Department");
-        assertEquals(deptCld, path.getStartClassDescriptor());
+        assertEquals(model.getClassDescriptorByName("org.intermine.model.testmodel.Department"), path.getStartClassDescriptor());
+        assertEquals(model.getClassDescriptorByName("org.intermine.model.testmodel.Department"), path.getElementClassDescriptors().get(0));
+        assertEquals("manager", path.getElements().get(0));
+        assertEquals(model.getClassDescriptorByName("org.intermine.model.testmodel.CEO"), path.getElementClassDescriptors().get(1));
+        assertEquals("company", path.getElements().get(1));
+        assertEquals(model.getClassDescriptorByName("org.intermine.model.testmodel.Company"), path.getElementClassDescriptors().get(2));
+        assertEquals("departments", path.getElements().get(2));
+        assertEquals(model.getClassDescriptorByName("org.intermine.model.testmodel.Department"), path.getElementClassDescriptors().get(3));
+        assertEquals("employees", path.getElements().get(3));
+        assertEquals(model.getClassDescriptorByName("org.intermine.model.testmodel.Manager"), path.getElementClassDescriptors().get(4));
+        assertEquals("seniority", path.getElements().get(4));
         assertEquals(String.class, path.getEndType());
     }
 

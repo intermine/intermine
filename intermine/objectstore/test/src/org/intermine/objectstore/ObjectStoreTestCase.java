@@ -32,6 +32,8 @@ import org.intermine.model.testmodel.Manager;
 import org.intermine.model.testmodel.Secretary;
 import org.intermine.model.testmodel.SimpleObject;
 import org.intermine.model.testmodel.Types;
+import org.intermine.objectstore.flatouterjoins.MultiRowFirstValue;
+import org.intermine.objectstore.flatouterjoins.MultiRowLaterValue;
 import org.intermine.objectstore.proxy.Lazy;
 import org.intermine.objectstore.query.Constraint;
 import org.intermine.objectstore.query.ConstraintOp;
@@ -628,13 +630,14 @@ public abstract class ObjectStoreTestCase extends StoreDataTestCase
             if ((expected != null) && (!expected.equals(res))) {
                 Set a = new HashSet(expected);
                 Set b = new HashSet(res);
+                List la = resToNames(expected);
+                List lb = resToNames(res);
                 if (a.equals(b)) {
-                    List la = resToNames(expected);
-                    List lb = resToNames(res);
                     assertEquals(type + " has failed - wrong order", la, lb);
                 }
+                fail(type + " has failed. Expected " + la + " but was " + lb);
             }
-            assertEquals(type + " has failed", results.get(type), res);
+            //assertEquals(type + " has failed", results.get(type), res);
         }
     }
 
@@ -646,8 +649,23 @@ public abstract class ObjectStoreTestCase extends StoreDataTestCase
             List toRow = new ArrayList();
             Iterator rowIter = row.iterator();
             while (rowIter.hasNext()) {
-                Object o = objectToName(rowIter.next());
-                toRow.add(o);
+                Object o = rowIter.next();
+                if (o instanceof List) {
+                    List newO = new ArrayList();
+                    for (Object p : ((List) o)) {
+                        if (p instanceof MultiRowFirstValue) {
+                            MultiRowFirstValue mrfv = (MultiRowFirstValue) p;
+                            newO.add("MRFV(" + objectToName(mrfv.getValue()) + ", " + mrfv.getRowspan() + ")");
+                        } else if (p instanceof MultiRowLaterValue) {
+                            newO.add("MRLV(" + objectToName(((MultiRowLaterValue) p).getValue()));
+                        } else {
+                            newO.add(objectToName(p));
+                        }
+                    }
+                    toRow.add(newO);
+                } else {
+                    toRow.add(objectToName(o));
+                }
             }
             aNames.add(toRow);
         }

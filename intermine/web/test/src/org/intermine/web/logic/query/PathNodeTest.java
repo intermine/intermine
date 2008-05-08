@@ -41,6 +41,6 @@ public class PathNodeTest extends TestCase
 
     public void testConstruct() {
         Node parent = new PathNode("Employee");
-        Node pathNode = new PathNode(parent, "department");
+        Node pathNode = new PathNode(parent, "department", false);
     }
 }

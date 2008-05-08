@@ -40,6 +40,7 @@ import org.intermine.objectstore.ObjectStoreQueryDurationException;
 import org.intermine.objectstore.query.ConstraintOp;
 import org.intermine.objectstore.query.Query;
 import org.intermine.objectstore.query.QueryNode;
+import org.intermine.objectstore.query.QuerySelectable;
 import org.intermine.objectstore.query.Results;
 import org.intermine.util.TypeUtil;
 import org.intermine.web.logic.Constants;
@@ -515,7 +516,7 @@ public class TemplateHelper
             PathQuery pathQuery = TemplateHelper.templateFormToTemplateQuery(templateForm, template,
                     new HashMap());
 
-            Map<String, QueryNode> pathToQueryNode = new HashMap<String, QueryNode>();
+            Map<String, QuerySelectable> pathToQueryNode = new HashMap();
             Query query = MainHelper.makeQuery(pathQuery, Collections.EMPTY_MAP, pathToQueryNode,
                     servletContext, null, false,
                     (ObjectStore) servletContext.getAttribute(Constants.OBJECTSTORE),
@@ -767,7 +768,7 @@ public class TemplateHelper
             }
         }
 
-        HashMap<String, QueryNode> pathToQueryNode = new HashMap<String, QueryNode>();
+        HashMap<String, QuerySelectable> pathToQueryNode = new HashMap();
         Query query = null;
         try {
             query = MainHelper.makeQuery(templateClone, new HashMap(), pathToQueryNode, null,
@@ -778,7 +779,7 @@ public class TemplateHelper
         if (groupByNode != null) {
             query.clearOrderBy();
             query.clearSelect();
-            QueryNode qn = pathToQueryNode.get(groupByNode.getPathString());
+            QueryNode qn = (QueryNode) pathToQueryNode.get(groupByNode.getPathString());
             query.addToSelect(qn);
             query.addToGroupBy(qn);
         } else {

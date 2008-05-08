@@ -10,6 +10,8 @@ package org.intermine.web.logic.query;
  *
  */
 
+import org.apache.log4j.Logger;
+
 import org.intermine.metadata.Model;
 import org.intermine.metadata.ClassDescriptor;
 import org.intermine.metadata.FieldDescriptor;
@@ -23,9 +25,11 @@ import org.intermine.util.TypeUtil;
  */
 public class Node
 {
+    private static final Logger LOG = Logger.getLogger(Node.class);
+
     private Node parent;
     private String fieldName, pathString, prefix, type;
-    private boolean attribute = false, reference = false, collection = false;
+    private boolean attribute = false, reference = false, collection = false, outer = false;
     private int indentation;
 
     /**
@@ -40,17 +44,23 @@ public class Node
     }
 
     /**
-     * Constructor for a non-root node
+     * Constructor for a non-root node.
+     *
      * @param parent the parent node of this node
      * @param fieldName the name of the field that this node represents
+     * @param outer true if this node should be an outer join
      */
-    public Node(Node parent, String fieldName) {
+    public Node(Node parent, String fieldName, boolean outer) {
         this.fieldName = fieldName;
         this.parent = parent;
+        this.outer = outer;
         prefix = parent.getPathString();
-        pathString = prefix + "." + fieldName;
+        pathString = prefix + (outer ? ":" : ".") + fieldName;
+        //Exception e = new Exception();
+        //e.fillInStackTrace();
+        //LOG.error("New Node: " + pathString, e);
 
-        indentation = pathString.split("[.]").length - 1;
+        indentation = pathString.split("[.:]").length - 1;
     }
 
     /**
@@ -181,6 +191,15 @@ public class Node
      */
     public int getIndentation()  {
         return indentation;
+    }
+
+    /**
+     * Returns true if this should be an outer join.
+     *
+     * @return a boolean
+     */
+    public boolean isOuterJoin() {
+        return outer;
     }
 
     /**

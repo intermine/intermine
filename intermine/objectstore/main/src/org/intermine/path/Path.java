@@ -17,8 +17,12 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.StringTokenizer;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+
+import org.apache.log4j.Logger;
+import org.apache.commons.lang.StringUtils;
 
 import org.intermine.metadata.AttributeDescriptor;
 import org.intermine.metadata.ClassDescriptor;
@@ -26,11 +30,9 @@ import org.intermine.metadata.CollectionDescriptor;
 import org.intermine.metadata.FieldDescriptor;
 import org.intermine.metadata.Model;
 import org.intermine.metadata.ReferenceDescriptor;
+import org.intermine.util.DynamicUtil;
 import org.intermine.util.StringUtil;
 import org.intermine.util.TypeUtil;
-
-import org.apache.commons.lang.StringUtils;
-
 
 /**
  * Object to represent a path through an InterMine model.  Construction from
@@ -39,8 +41,9 @@ import org.apache.commons.lang.StringUtils;
  */
 public class Path
 {
+    private static final Logger LOG = Logger.getLogger(Path.class);
     private ClassDescriptor startCld;
-    private List<FieldDescriptor> elements;
+    private List<String> elements;
     private FieldDescriptor endFld;
     private Model model;
     private String path;
@@ -48,6 +51,7 @@ public class Path
     private boolean containsReferences = false;
     private Map<String, String> subClassConstraintPaths;
     private List<ClassDescriptor> elementClassDescriptors;
+    private List<Boolean> outers;
 
     /**
      * Create a new Path object. The Path must start with a class name.
@@ -73,10 +77,19 @@ public class Path
 
         Pattern p = Pattern.compile("([^\\[\\]]+)\\[(.*)\\]");
 
-        List<String> newPathBits = new ArrayList<String>();
-        String[] bits = StringUtil.split(path, ".");
-        for (int i = 0; i < bits.length; i++) {
-            String thisBit = bits[i];
+        List<String> newPathBits = new ArrayList();
+        List<Boolean> newPathOuters = new ArrayList();
+        StringTokenizer bits = new StringTokenizer(". " + path, ".:", true);
+        boolean notFirst = false;
+        while (bits.hasMoreTokens()) {
+            String separator = bits.nextToken();
+            String thisBit = bits.nextToken();
+            if (notFirst) {
+                newPathOuters.add(Boolean.valueOf(":".equals(separator)));
+            } else {
+                thisBit = thisBit.substring(1);
+                notFirst = true;
+            }
             Matcher m = p.matcher(thisBit);
             if (m.matches()) {
                 String pathBit = m.group(1);
@@ -88,6 +101,7 @@ public class Path
             }
         }
         this.path = StringUtil.join(newPathBits, ".");
+        this.outers = newPathOuters;
         initialise();
     }
 
@@ -114,21 +128,41 @@ public class Path
             throw new IllegalArgumentException("path: " + stringPath
                                                + " contains illegal character '['");
         }
+
+        List<String> newPathBits = new ArrayList();
+        List<Boolean> newPathOuters = new ArrayList();
+        StringTokenizer bits = new StringTokenizer(". " + path, ".:", true);
+        boolean notFirst = false;
+        while (bits.hasMoreTokens()) {
+            String separator = bits.nextToken();
+            String thisBit = bits.nextToken();
+            if (notFirst) {
+                newPathOuters.add(Boolean.valueOf(":".equals(separator)));
+            } else {
+                thisBit = thisBit.substring(1);
+                notFirst = true;
+            }
+            newPathBits.add(thisBit);
+        }
+        this.path = StringUtil.join(newPathBits, ".");
+        this.outers = newPathOuters;
         initialise();
     }
 
     private void initialise() throws PathError {
-        elements = new ArrayList<FieldDescriptor>();
+        elements = new ArrayList();
         elementClassDescriptors = new ArrayList<ClassDescriptor>();
-        String[] parts = path.split("[.]");
+        String parts[] = path.split("[.]");
         String clsName = parts[0];
-        ClassDescriptor cld =
-            model.getClassDescriptorByName(model.getPackageName() + "." + clsName);
-        elementClassDescriptors.add(cld);
-        this.startCld = cld;
-        if (cld == null) {
-            throw new PathError("Unable to resolve path '" + path + "': class '" + clsName
-                                + "' not found in model '" + model.getName() + "'", path);
+        ClassDescriptor cld = null;
+        if (!("".equals(clsName))) {
+            cld = model.getClassDescriptorByName(model.getPackageName() + "." + clsName);
+            this.startCld = cld;
+            elementClassDescriptors.add(cld);
+            if (cld == null) {
+                throw new PathError("Unable to resolve path '" + path + "': class '" + clsName
+                                    + "' not found in model '" + model.getName() + "'", path);
+            }
         }
 
         StringBuffer currentPath = new StringBuffer(parts[0]);
@@ -137,52 +171,55 @@ public class Path
             currentPath.append(".");
             String thisPart = parts[i];
             currentPath.append(thisPart);
-            FieldDescriptor fld = cld.getFieldDescriptorByName(thisPart);
-            elements.add(fld);
-            if (fld == null) {
-                throw new PathError("Unable to resolve path '" + path + "': field '"
-                                    + thisPart + "' of class '" + cld.getName()
-                                    + "' not found in model '" + model.getName() + "'", path);
-            }
-            // if this is a collection then mark the whole path as containing collections
-            if (fld.isCollection()) {
-                this.containsCollections = true;
-            }
-            if (fld.isReference()) {
-                this.containsReferences = true;
-            }
-
-            if (i < parts.length - 1) {
-
-                // check if attribute and not at end of path
-                if (fld.isAttribute()) {
+            elements.add(thisPart);
+            if (!("".equals(clsName))) {
+                FieldDescriptor fld = cld.getFieldDescriptorByName(thisPart);
+                if (fld == null) {
                     throw new PathError("Unable to resolve path '" + path + "': field '"
-                                        + thisPart + "' of class '"
-                                        + cld.getName()
-                                        + "' is not a reference/collection field in "
-                                        + "the model '"
-                                        + model.getName() + "'", path);
+                                        + thisPart + "' of class '" + cld.getName()
+                                        + "' not found in model '" + model.getName() + "'", path);
                 }
-            } else {
-                this.endFld = fld;
-            }
-            if (!fld.isAttribute()) {
-                String constrainedClassName =
-                    subClassConstraintPaths.get(currentPath.toString());
-                if (constrainedClassName == null) {
-                    // the class of this reference/collection is not constrained so get the
-                    // class name from the model
-                    cld = ((ReferenceDescriptor) fld).getReferencedClassDescriptor();
-                } else {
-                    String qualifiedClassName = model.getPackageName() + "." + constrainedClassName;
-                    cld = model.getClassDescriptorByName(qualifiedClassName);
-                    if (cld == null) {
-                        throw new PathError("Unable to resolve path '" + path + "': class '"
-                                + qualifiedClassName + "' not found in model '" + model.getName()
-                                + "'", path);
+                // if this is a collection then mark the whole path as containing collections
+                if (fld.isCollection()) {
+                    this.containsCollections = true;
+                }
+                if (fld.isReference()) {
+                    this.containsReferences = true;
+                }
+
+                if (i < parts.length - 1) {
+
+                    // check if attribute and not at end of path
+                    if (fld.isAttribute()) {
+                        throw new PathError("Unable to resolve path '" + path + "': field '"
+                                            + thisPart + "' of class '"
+                                            + cld.getName()
+                                            + "' is not a reference/collection field in "
+                                            + "the model '"
+                                            + model.getName() + "'", path);
                     }
+                } else {
+                    this.endFld = fld;
                 }
-                elementClassDescriptors.add(cld);
+                if (!fld.isAttribute()) {
+                    String constrainedClassName =
+                        subClassConstraintPaths.get(currentPath.toString());
+                    if (constrainedClassName == null) {
+                        // the class of this reference/collection is not constrained so get the
+                        // class name from the model
+                        cld = ((ReferenceDescriptor) fld).getReferencedClassDescriptor();
+                    } else {
+                        String qualifiedClassName = model.getPackageName() + "."
+                            + constrainedClassName;
+                        cld = model.getClassDescriptorByName(qualifiedClassName);
+                        if (cld == null) {
+                            throw new PathError("Unable to resolve path '" + path + "': class '"
+                                    + qualifiedClassName + "' not found in model '"
+                                    + model.getName() + "'", path);
+                        }
+                    }
+                    elementClassDescriptors.add(cld);
+                }
             }
         }
     }
@@ -338,20 +375,22 @@ public class Path
      * @return the attribute, object or collection at the end of the path
      */
     public Object resolve(Object o) {
-        Set clds = model.getClassDescriptorsForClass(o.getClass());
-        if (!clds.contains(getStartClassDescriptor())) {
-            throw new PathError("ClassDescriptor from the start of path: " + path
-                                + " is not a superclass of the class: " + o.getClass()
-                                + " while resolving object: " + o, path);
+        if (startCld != null) {
+            Set clds = model.getClassDescriptorsForClass(o.getClass());
+            if (!clds.contains(getStartClassDescriptor())) {
+                throw new PathError("ClassDescriptor from the start of path: " + path
+                        + " is not a superclass of the class: "
+                        + DynamicUtil.getFriendlyName(o.getClass()) + " while resolving object: "
+                        + o, path);
+            }
         }
 
-        Iterator<FieldDescriptor> iter = elements.iterator();
+        Iterator<String> iter = elements.iterator();
 
         Object current = o;
 
         while (iter.hasNext()) {
-            FieldDescriptor element = iter.next();
-            String fieldName = element.getName();
+            String fieldName = iter.next();
             try {
                 if (current == null) {
                     return null;
@@ -394,21 +433,31 @@ public class Path
         // the path without class constraints
         StringBuffer simplePath = new StringBuffer(cdUnqualifiedName);
         for (int i = 0; i < elements.size(); i++) {
-            returnStringBuffer.append(".");
+            returnStringBuffer.append(outers.get(i).booleanValue() ? ":" : ".");
             simplePath.append(".");
-            FieldDescriptor fieldDescriptor = elements.get(i);
-            returnStringBuffer.append(fieldDescriptor.getName());
-            simplePath.append(fieldDescriptor.getName());
+            String fieldName = elements.get(i);
+            returnStringBuffer.append(fieldName);
+            simplePath.append(fieldName);
             String constraintClassName =
                 subClassConstraintPaths.get(simplePath.toString());
-            if (constraintClassName != null
-                && (fieldDescriptor.isReference() || fieldDescriptor.isCollection())) {
-                String referencedClassName =
-                    ((ReferenceDescriptor) fieldDescriptor).getReferencedClassName();
-                if (!TypeUtil.unqualifiedName(referencedClassName).equals(constraintClassName)) {
-                    returnStringBuffer.append('[');
-                    returnStringBuffer.append(constraintClassName);
-                    returnStringBuffer.append(']');
+            if (constraintClassName != null) {
+                if (startCld != null) {
+                    FieldDescriptor fieldDescriptor = elementClassDescriptors.get(i)
+                        .getFieldDescriptorByName(fieldName);
+                    if (fieldDescriptor.isReference() || fieldDescriptor.isCollection()) {
+                        String referencedClassName =
+                            ((ReferenceDescriptor) fieldDescriptor).getReferencedClassName();
+                        if (!TypeUtil.unqualifiedName(referencedClassName)
+                                .equals(constraintClassName)) {
+                            returnStringBuffer.append('[');
+                            returnStringBuffer.append(constraintClassName);
+                            returnStringBuffer.append(']');
+                        }
+                    }
+                } else {
+                    returnStringBuffer.append('[')
+                        .append(constraintClassName)
+                        .append(']');
                 }
             }
         }
@@ -428,7 +477,7 @@ public class Path
      * class).
      * @return the FieldDescriptor
      */
-    public List<FieldDescriptor> getElements() {
+    public List<String> getElements() {
         return elements;
     }
 
@@ -448,8 +497,8 @@ public class Path
     public String toStringNoConstraints() {
         StringBuffer sb = new StringBuffer();
         for (int i = 0; i < elements.size(); i++) {
-            sb.append(".");
-            sb.append(elements.get(i).getName());
+            sb.append(outers.get(i).booleanValue() ? ":" : ".");
+            sb.append(elements.get(i));
         }
         return getStartClassDescriptor().getUnqualifiedName() + sb.toString();
     }

@@ -12,6 +12,7 @@ package org.intermine.web.logic.results;
 
 import java.util.AbstractList;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -23,11 +24,17 @@ import org.intermine.metadata.Model;
 import org.intermine.model.InterMineObject;
 import org.intermine.objectstore.ObjectStore;
 import org.intermine.objectstore.ObjectStoreException;
+import org.intermine.objectstore.flatouterjoins.MultiRow;
+import org.intermine.objectstore.flatouterjoins.MultiRowFirstValue;
+import org.intermine.objectstore.flatouterjoins.MultiRowValue;
 import org.intermine.objectstore.intermine.ObjectStoreInterMineImpl;
 import org.intermine.objectstore.query.Query;
 import org.intermine.objectstore.query.QueryClass;
+import org.intermine.objectstore.query.QueryCollectionPathExpression;
 import org.intermine.objectstore.query.QueryField;
 import org.intermine.objectstore.query.QueryNode;
+import org.intermine.objectstore.query.QueryObjectPathExpression;
+import org.intermine.objectstore.query.QuerySelectable;
 import org.intermine.objectstore.query.Results;
 import org.intermine.objectstore.query.ResultsInfo;
 import org.intermine.objectstore.query.ResultsRow;
@@ -89,8 +96,10 @@ public class WebResults extends AbstractList<List<Object>> implements WebTable
         LinkedHashMap returnMap =  new LinkedHashMap();
         for (Iterator iter = pathToQueryNode.keySet().iterator(); iter.hasNext();) {
             String path = (String) iter.next();
-            QueryNode queryNode = (QueryNode) pathToQueryNode.get(path);
-            if (queryNode instanceof QueryClass) {
+            QuerySelectable queryNode = (QuerySelectable) pathToQueryNode.get(path);
+            if ((queryNode instanceof QueryClass)
+                    || (queryNode instanceof QueryObjectPathExpression)
+                    || (queryNode instanceof QueryCollectionPathExpression)) {
                 returnMap.put(path, new Integer(query.getSelect()
                                 .indexOf(queryNode)));
             } else if (queryNode instanceof QueryField) {
@@ -128,6 +137,10 @@ public class WebResults extends AbstractList<List<Object>> implements WebTable
 
             String columnString = columnPath.toString();
             int dotIndex = columnString.lastIndexOf('.');
+            if (dotIndex == -1) {
+                throw new StringIndexOutOfBoundsException("Could not find a dot in "
+                        + columnString);
+            }
             String columnPrefix = columnString.substring(0, dotIndex);
             String columnPathEnd = columnString.substring(dotIndex + 1);
 
@@ -287,20 +300,51 @@ public class WebResults extends AbstractList<List<Object>> implements WebTable
 
     // TODO javadoc to describe what this does
     private List translateRow(List initialList, boolean makeResultElements) {
-        ArrayList rowCells = new ArrayList();
+        if (initialList instanceof MultiRow) {
+            MultiRow retval = new MultiRow();
+            for (ResultsRow origRow : ((List<ResultsRow>) initialList)) {
+                retval.add(translateRow(origRow, makeResultElements));
+            }
+            return retval;
+        }
+        ArrayList rowCells = new ResultsRow();
         for (Iterator iter = columnPaths.iterator(); iter.hasNext();) {
             Path columnPath = (Path) iter.next();
             String columnName = columnPath.toStringNoConstraints();
-            int columnIndex = ((Integer) pathToIndex.get(columnName)).intValue();
-            Object o = initialList.get(columnIndex);
+            Integer columnIndexInteger = (Integer) pathToIndex.get(columnName);
+            String parentColumnName = columnPath.getPrefix().toStringNoConstraints();
+            if (columnIndexInteger == null) {
+                columnIndexInteger = (Integer) pathToIndex.get(parentColumnName);
+            }
+            if (columnIndexInteger == null) {
+                throw new NullPointerException("Path: \"" + columnName + "\", pathToIndex: \""
+                        + pathToIndex + "\", prefix: \"" + parentColumnName + "\"");
+            }
+            int columnIndex = columnIndexInteger.intValue();
+            Object origO = initialList.get(columnIndex);
+            Object o = origO;
+            int rowspan = -1;
+            if (o instanceof MultiRowValue) {
+                if (o instanceof MultiRowFirstValue) {
+                    rowspan = ((MultiRowFirstValue) o).getRowspan();
+                }
+                o = ((MultiRowValue) o).getValue();
+            }
             String type = TypeUtil.unqualifiedName(columnPath.getLastClassDescriptor().getName());
             String fieldName = columnName.substring(columnName.lastIndexOf(".") + 1);
             Path path = new Path(model, type + '.' + fieldName);
-            Object fieldValue = path.resolve(o);
-            if (makeResultElements) {
+            if (o instanceof Collection) {
+                if (((Collection) o).isEmpty()) {
+                    o = null;
+                } else {
+                    o = ((Collection) o).iterator().next();
+                }
+            }
+            Object fieldValue = (o == null ? null : path.resolve(o));
+            if (makeResultElements && (fieldValue != null)) {
                 String fieldCDName = path.getLastClassDescriptor().getName();
-                String unqualifiedFeldCD = TypeUtil.unqualifiedName(fieldCDName);
-                boolean isKeyField = ClassKeyHelper.isKeyField(classKeys, unqualifiedFeldCD,
+                String unqualifiedFieldCD = TypeUtil.unqualifiedName(fieldCDName);
+                boolean isKeyField = ClassKeyHelper.isKeyField(classKeys, unqualifiedFieldCD,
                                                                fieldName);
                 Set classes = DynamicUtil.decomposeClass(o.getClass());
                 Class cls = (Class) classes.iterator().next();
@@ -309,9 +353,17 @@ public class WebResults extends AbstractList<List<Object>> implements WebTable
                                       fieldValue, (o instanceof InterMineObject
                                           ? ((InterMineObject) o).getId()
                                           : null), cls, columnPath, isKeyField);
-                rowCells.add(resultElement);
+                if (rowspan >= 0) {
+                    rowCells.add(new MultiRowFirstValue(resultElement, rowspan));
+                } else {
+                    rowCells.add(resultElement);
+                }
             } else {
-                rowCells.add(fieldValue);
+                if (rowspan >= 0) {
+                    rowCells.add(new MultiRowFirstValue(fieldValue, rowspan));
+                } else {
+                    rowCells.add(fieldValue);
+                }
             }
         }
         return rowCells;
