@@ -20,7 +20,9 @@ import org.intermine.objectstore.query.ConstraintOp;
 import org.intermine.objectstore.query.ConstraintSet;
 import org.intermine.objectstore.query.Query;
 import org.intermine.objectstore.query.QueryClass;
+import org.intermine.objectstore.query.QueryExpression;
 import org.intermine.objectstore.query.QueryField;
+import org.intermine.objectstore.query.QueryFunction;
 import org.intermine.objectstore.query.QueryValue;
 import org.intermine.objectstore.query.Results;
 import org.intermine.objectstore.query.ResultsRow;
@@ -122,6 +124,8 @@ public class FindInListAction extends InterMineAction
 
     private Query makeQuery(String searchTerm, InterMineBag bag,
                             Collection<String> identifierFieldNames) {
+        Object lowerSearchTerm = searchTerm.toLowerCase();
+
         Query q = new Query();
         QueryClass qc;
         try {
@@ -141,8 +145,9 @@ public class FindInListAction extends InterMineAction
 
         for (String fieldName: identifierFieldNames) {
             QueryField qf = new QueryField(qc, fieldName);
+            QueryExpression lowerQF = new QueryExpression(QueryExpression.LOWER, qf);
             SimpleConstraint sc =
-                new SimpleConstraint(qf, ConstraintOp.EQUALS, new QueryValue(searchTerm));
+                new SimpleConstraint(lowerQF, ConstraintOp.EQUALS, new QueryValue(lowerSearchTerm));
             fieldCS.addConstraint(sc);
         }
 
