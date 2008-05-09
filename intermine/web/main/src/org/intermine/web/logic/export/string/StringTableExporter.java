@@ -21,7 +21,7 @@ import org.intermine.web.logic.export.RowFormatter;
  * Simple exporter exporting table of strings. Format depends at given rowFormatter.
  * @author Jakub Kulaviak
  **/
-public class StringExporterImpl
+public class StringTableExporter
 {
 
     private PrintWriter writer;
@@ -33,7 +33,7 @@ public class StringExporterImpl
      * @param rowFormatter object formatting row from list of objects (in this case strings)
      * to string flushed  as line
      */
-    public StringExporterImpl(PrintWriter writer, RowFormatter rowFormatter) {
+    public StringTableExporter(PrintWriter writer, RowFormatter rowFormatter) {
         this.writer = writer;
         this.rowFormatter = rowFormatter;
     }
