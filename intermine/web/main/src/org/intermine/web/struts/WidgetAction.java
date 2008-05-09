@@ -10,6 +10,7 @@ package org.intermine.web.struts;
  *
  */
 
+import java.io.PrintWriter;
 import java.lang.reflect.Constructor;
 import java.util.List;
 import java.util.Map;
@@ -33,9 +34,10 @@ import org.intermine.web.logic.bag.InterMineBag;
 import org.intermine.web.logic.config.Type;
 import org.intermine.web.logic.config.WebConfig;
 import org.intermine.web.logic.export.ResponseUtil;
+import org.intermine.web.logic.export.http.HttpExportUtil;
 import org.intermine.web.logic.export.rowformatters.CSVRowFormatter;
 import org.intermine.web.logic.export.rowformatters.TabRowFormatter;
-import org.intermine.web.logic.export.string.StringExporterImpl;
+import org.intermine.web.logic.export.string.StringTableExporter;
 import org.intermine.web.logic.profile.Profile;
 import org.intermine.web.logic.query.PathQuery;
 import org.intermine.web.logic.query.QueryMonitorTimeout;
@@ -156,15 +158,15 @@ public class WidgetAction extends InterMineAction
         List<Widget> widgets = type.getWidgets();
         for (Widget widget : widgets) {
             if (widget.getId() == (new Integer(widgetId).intValue())) {
-                StringExporterImpl stringExporter;
+                StringTableExporter stringExporter;
+                PrintWriter writer = HttpExportUtil.
+                    getPrintWriterForClient(request, response.getOutputStream());
                 if (widgetForm.getExporttype().equals("csv")) {
-                    stringExporter = new StringExporterImpl(response
-                                    .getWriter(), new CSVRowFormatter());
+                    stringExporter = new StringTableExporter(writer, new CSVRowFormatter());
                     ResponseUtil.setCSVHeader(response, "widget" + widgetForm.getWidgetid()
                                                         + ".csv");
                 } else {
-                    stringExporter = new StringExporterImpl(response
-                                    .getWriter(), new TabRowFormatter());
+                    stringExporter = new StringTableExporter(writer, new TabRowFormatter());
                     ResponseUtil.setTabHeader(response, "widget" + widgetForm.getWidgetid()
                                                         + ".tsv");
                 }
