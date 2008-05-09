@@ -61,7 +61,8 @@ public class ExcelHttpExporter extends HttpExporterBase implements TableHttpExpo
      * {@inheritDoc}
      */
     @Override
-    protected Exporter getExporter(OutputStream out) {
+    protected Exporter getExporter(OutputStream out, String lineSeparator) {
+        // excel export is independent at the line separator
         return new ExcelExporter(out);
     }
 

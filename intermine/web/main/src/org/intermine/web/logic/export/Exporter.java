@@ -21,6 +21,11 @@ import org.intermine.web.logic.results.ResultElement;
  **/
 public interface Exporter
 {
+    /** Windows line separator  CR+LF **/
+    public static final String WINDOWS_SEPARATOR = "\r\n"; 
+    
+    /** Windows line separator  only LF **/
+    public static final String UNIX_SEPARATOR = "\n";
 
     /**
      * Do export.

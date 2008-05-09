@@ -11,6 +11,8 @@ package org.intermine.bio.web.export;
  */
 
 import java.io.InputStream;
+import java.io.PrintWriter;
+import java.util.List;
 import java.util.Map;
 import java.util.Properties;
 
@@ -26,6 +28,7 @@ import org.intermine.web.logic.export.ExportException;
 import org.intermine.web.logic.export.ExportHelper;
 import org.intermine.web.logic.export.Exporter;
 import org.intermine.web.logic.export.ResponseUtil;
+import org.intermine.web.logic.export.http.HttpExportUtil;
 import org.intermine.web.logic.export.http.TableHttpExporter;
 import org.intermine.web.logic.results.PagedTable;
 
@@ -58,13 +61,15 @@ public class GFF3HttpExporter implements TableHttpExporter
 
         setGFF3Header(response);
         
-        int realFeatureIndex = ExportHelper.getClassIndex(
-                ExportHelper.getColumnClasses(pt), LocatedSequenceFeature.class);
-
+        List<Integer> indexes = ExportHelper.getClassIndexes(ExportHelper.getColumnClasses(pt), 
+                LocatedSequenceFeature.class);
+        
         Exporter exporter;
         try {
-            exporter = new GFF3Exporter(response.getWriter(), 
-                    realFeatureIndex, getSoClassNames(servletContext));
+            PrintWriter writer = HttpExportUtil.
+                getPrintWriterForClient(request, response.getOutputStream());
+            exporter = new GFF3Exporter(writer, 
+                    indexes, getSoClassNames(servletContext));
         } catch (Exception e) {
             throw new ExportException("Export failed.", e);
         } 

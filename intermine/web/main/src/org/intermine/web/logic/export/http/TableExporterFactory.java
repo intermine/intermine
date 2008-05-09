@@ -51,7 +51,7 @@ public class TableExporterFactory
         Map<String, TableExportConfig> configs = webConfig.getTableExportConfigs();
         for (String key : configs.keySet()) {
             TableExportConfig config = configs.get(key);
-            exporters.put(key, config.getClassName());
+            register(key, config.getClassName());
         }
     }
 
