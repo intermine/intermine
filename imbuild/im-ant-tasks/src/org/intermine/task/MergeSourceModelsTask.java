@@ -170,8 +170,12 @@ public class MergeSourceModelsTask extends Task
         throws BuildException {
         try {
             File canonFile = additionsFile.getCanonicalFile();
-            if (canonFile.exists() && !pathsToMerge.contains(canonFile)) {
-                pathsToMerge.add(canonFile);
+            if (canonFile.exists()) {
+                if (!pathsToMerge.contains(canonFile)) {
+                    pathsToMerge.add(canonFile);
+                }
+            } else {
+                System.err .println("warning: " + canonFile + " not found");
             }
         } catch (IOException e) {
             throw new BuildException("failed to find canonical file for: " + additionsFile, e);
