@@ -41,8 +41,6 @@ public class ModEncodeMetaDataProcessor extends ChadoProcessor
     private Map<Integer, String> protocolIdRefMap = new HashMap<Integer, String>();
     private Map<Integer, Integer> providerIdMap = new HashMap<Integer, Integer>();
     private Map<Integer, String> providerIdRefMap = new HashMap<Integer, String>();
-    private Map<Integer, Integer> submissionDataIdMap = new HashMap<Integer, Integer>();
-    private Map<Integer, String> submissionDataIdRefMap = new HashMap<Integer, String>();
     private Map<Integer, Integer> appliedProtocolIdMap = new HashMap<Integer, Integer>();
     private Map<Integer, String> appliedProtocolIdRefMap = new HashMap<Integer, String>();
 
@@ -103,13 +101,14 @@ public class ModEncodeMetaDataProcessor extends ChadoProcessor
      */
     private static class AppliedData
     {
-        private Integer appliedProtocolDataId;
-        private Integer dataId;
-        // the list of applied protocols for which this data item is an input
-        private List<Integer> nextAppliedProtocols = new ArrayList<Integer>();
-        private List<Integer> previousAppliedProtocols = new ArrayList<Integer>();
         private String itemIdentifier;
         private Integer intermineObjectId;
+        // the list of applied protocols for which this data item is an input
+        private List<Integer> nextAppliedProtocols = new ArrayList<Integer>();
+
+        private List<Integer> previousAppliedProtocols = new ArrayList<Integer>();
+        private Integer appliedProtocolDataId;
+        private Integer dataId;
 
     }
 
@@ -140,21 +139,23 @@ public class ModEncodeMetaDataProcessor extends ChadoProcessor
 
         // process features and keep a map from chado feature_id to info
         Map<Integer, FeatureData> featureMap = processFeatures(connection, experimentMap);
+
         processAppliedProtocolTable(connection);
         processAppliedProtocolData(connection);
         processDataFeatureTable(connection, featureMap);
-        // This may need to be replaced (rns)
-        //processAppliedProtocolDataAttributes(connection);
 
         processDag(connection);
 
+        // set references
         setExperimentRefs(connection);
         setExperimentInputRefs(connection);
         setExperimentResultsRefs(connection);
         setExperimentProtocolsRefs(connection);
         setDAGRefs(connection);
 
-    }
+        LOG.info("REF: SD size: initialData: " + inDataMap.get(32).size());
+        LOG.info("REF: SD size: allData:     " + experimentDataMap.get(32).size());
+        LOG.info("REF: SD size: outData:     " + outDataMap.get(32).size());  }
 
     /**
      * Query for features that referenced by the experiments in the experimentMap.
@@ -240,14 +241,11 @@ public class ModEncodeMetaDataProcessor extends ChadoProcessor
                 // the experimentId != null for the first applied protocol
                 if (experimentId > 0) {
                     firstAppliedProtocols.add(appliedProtocolId);
-
-//                    addToMap (experimentDataMap, experimentId, appliedDataId);
-//
-//                    if (direction.startsWith("in")) {
-//                        addToMap (inDataMap, experimentId, appliedDataId);
-//                    }
-
                     newNode.levelDag = 1; // not needed
+                    if (direction.startsWith("in")) {
+                        // .. the map of initial data for the experiment
+                        addToMap (inDataMap, experimentId, appliedDataId);
+                    }
                 }
 
                 if (direction.startsWith("in")) {
@@ -260,8 +258,6 @@ public class ModEncodeMetaDataProcessor extends ChadoProcessor
                     appliedDataMap.put(appliedDataId, branch);
                     // .. and add the dataId to the list of input Data for this applied protocol
                     newNode.inputData.add(appliedDataId);
-                    // .. the map of initial data for the experiment
-                    addToMap (inDataMap, experimentId, appliedDataId);
                 } else if (direction.startsWith("out")) {
                     // add the dataId to the list of output Data for this applied protocol:
                     // it will be used to link to the next set of applied protocols
@@ -279,7 +275,9 @@ public class ModEncodeMetaDataProcessor extends ChadoProcessor
                 if (direction.startsWith("in")) {
 
                     node.inputData.add(appliedDataId);
-                    //++
+                    // it should be enough to use the input for filling the
+                    // experimentDataMap: apart from the initial ones,
+                    // the inputs are outputs of other levels
                     addToMap (experimentDataMap, experimentId, appliedDataId);
                     addToMap (inDataMap, experimentId, appliedDataId);
 
@@ -310,7 +308,12 @@ public class ModEncodeMetaDataProcessor extends ChadoProcessor
         traverseDag();
     }
 
-
+    /**
+     * method to add an element to a list which is the value of a map 
+     * @param m       the map (<Integer, List<Integer>>)
+     * @param key     the key for the map
+     * @param value   the list
+     */
     private void addToMap(Map<Integer, List<Integer>> m, Integer key, Integer value) {
 
         List<Integer> ids = new ArrayList<Integer>();
@@ -404,8 +407,6 @@ public class ModEncodeMetaDataProcessor extends ChadoProcessor
                 if (appliedDataMap.containsKey(currentOD)) {
                     // fill the list of next (children) protocols
                     nextProtocols.addAll(appliedDataMap.get(currentOD).nextAppliedProtocols);
-
-                    // ++
                     if (appliedDataMap.get(currentOD).nextAppliedProtocols.isEmpty()) {
                         // this is a leaf!!
                         // we store it in a map that links it directly to the experiment
@@ -424,8 +425,6 @@ public class ModEncodeMetaDataProcessor extends ChadoProcessor
                     nextIterationProtocols.add(currentAPId);
 
                     // and set the reference from applied protocol to the submission
-                    // TODO: there are instances of the same reference set multiple
-                    // times (?). CHECK
                     Reference reference = new Reference();
                     reference.setName("experimentSubmission");
                     reference.setRefId(experimentMap.get(experimentId).itemIdentifier);
@@ -810,9 +809,7 @@ public class ModEncodeMetaDataProcessor extends ChadoProcessor
             Integer intermineObjectId = getChadoDBConverter().store(appliedProtocol);
             appliedProtocolIdMap .put(appliedProtocolId, intermineObjectId);
             appliedProtocolIdRefMap .put(appliedProtocolId, appliedProtocol.getIdentifier());
-            
-            
-            debugMap .put(appliedProtocol.getIdentifier(), appliedProtocol.getClassName());
+                        
             count++;
         }
         LOG.info("created " + count + " appliedProtocol");
@@ -877,13 +874,8 @@ public class ModEncodeMetaDataProcessor extends ChadoProcessor
             submissionData.setAttribute("direction", direction);
             submissionData.setAttribute("type", heading);
 
-//          submissionData.setReference("nextAppliedProtocols",
-//          appliedProtocolIdRefMap.get(appliedProtocolId));
-
-            // store it and add to maps
+            // store it and add to object and maps
             Integer intermineObjectId = getChadoDBConverter().store(submissionData);
-            submissionDataIdMap.put(appliedProtocolDataId, intermineObjectId);
-            submissionDataIdRefMap.put(dataId, submissionData.getIdentifier());
 
             AppliedData aData = new AppliedData();
             aData.dataId = dataId; //++check if needed
@@ -934,7 +926,8 @@ public class ModEncodeMetaDataProcessor extends ChadoProcessor
             LOG.error(fd.getInterMineType() + ": " + fd.getChadoFeatureName()
                     + ", " + fd.getChadoFeatureUniqueName());
             Reference featureRef = new Reference("feature", featureItemId);
-            getChadoDBConverter().store(featureRef, submissionDataIdMap.get(appliedProtocolDataId));
+            getChadoDBConverter().store(featureRef, 
+                    appliedDataMap.get(appliedProtocolDataId).intermineObjectId);
         }
     }
 
@@ -1148,7 +1141,6 @@ public class ModEncodeMetaDataProcessor extends ChadoProcessor
                 while (i.hasNext()) {
                     Integer n = i.next();
                     collection.addRefId(appliedDataMap.get(n).itemIdentifier);
-                    LOG.info("REF: LAST: it--" + submissionDataIdRefMap.get(i.next()));
                     LOG.info("REF: LAST: it--" + appliedDataMap.get(n).itemIdentifier);
                 }
                 LOG.info("REF: LAST: ob--" + ap.intermineObjectId);
@@ -1156,7 +1148,7 @@ public class ModEncodeMetaDataProcessor extends ChadoProcessor
 
                 getChadoDBConverter().store(collection, appliedProtocolIdMap.get(thisAP));
             }
-            LOG.info("REF: LAST: ===================");
+            LOG.info("REF: LAST: -----------------------");
 
         
             List<Integer> outIds = ap.outputData;
@@ -1172,6 +1164,10 @@ public class ModEncodeMetaDataProcessor extends ChadoProcessor
                 LOG.info("REF: LAST: ob--" + appliedProtocolIdMap.get(thisAP));
                 getChadoDBConverter().store(collection, appliedProtocolIdMap.get(thisAP));
             }
+
+            LOG.info("REF: LAST: ===================");
+          
+            
         }
     }
 
@@ -1297,25 +1293,6 @@ public class ModEncodeMetaDataProcessor extends ChadoProcessor
         debugMap .put(i.getIdentifier(), i.getClassName());
     }
 
-    /**
-     * to store identifiers in data maps.
-     * @param i
-     * @param chadoId
-     * @param intermineObjectId
-     * @throws ObjectStoreException
-     */
-    private void storeInDataMaps(Item i, Integer chadoId, Integer intermineObjectId)
-    throws ObjectStoreException {
-        if (i.getClassName().equals("http://www.flymine.org/model/genomic#SubmissionData")) {
-            submissionDataIdMap .put(chadoId, intermineObjectId);
-            submissionDataIdRefMap .put(chadoId, i.getIdentifier());
-        } else {
-            throw new IllegalArgumentException("Type mismatch: expecting SubmissionData, getting "
-                    + i.getClassName().substring(37) + " with intermineObjectId = "
-                    + intermineObjectId + ", chadoId = " + chadoId);
-        }
-        debugMap .put(i.getIdentifier(), i.getClassName());
-    }
 
     /**
      * to store identifiers in provider maps.
