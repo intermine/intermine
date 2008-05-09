@@ -42,7 +42,7 @@ public class TabHttpExporter extends HttpExporterBase
      * {@inheritDoc}
      */
     @Override
-    protected Exporter getExporter(OutputStream out) {
-        return new ExporterImpl(out, new TabRowFormatter());
+    protected Exporter getExporter(OutputStream out, String separator) {
+        return new ExporterImpl(out, new TabRowFormatter(), separator);
     }
 }

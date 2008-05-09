@@ -17,6 +17,7 @@ import java.util.List;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.intermine.web.logic.RequestUtil;
 import org.intermine.web.logic.export.ExportException;
 import org.intermine.web.logic.export.Exporter;
 import org.intermine.web.logic.results.PagedTable;
@@ -64,7 +65,13 @@ public abstract class HttpExporterBase implements TableHttpExporter
             throw new ExportException("Export failed.", e);
         }
         setResponseHeader(response);
-        Exporter exporter = getExporter(out);
+        String separator;
+        if (RequestUtil.isWindowsClient(request)) {
+            separator = Exporter.WINDOWS_SEPARATOR;
+        } else {
+            separator = Exporter.UNIX_SEPARATOR;
+        }
+        Exporter exporter = getExporter(out, separator);
         exporter.export(results);
         if (exporter.getWrittenResultsCount() == 0) {
             throw new ExportException("Nothing was found for export.");
@@ -73,9 +80,10 @@ public abstract class HttpExporterBase implements TableHttpExporter
 
     /**
      * @param out output stream
+     * @param separator line separator
      * @return exporter that will perform the business logic of export. 
      */
-    protected abstract Exporter getExporter(OutputStream out);
+    protected abstract Exporter getExporter(OutputStream out, String separator);
     
     /**
      * Sets header and content type of result in response.

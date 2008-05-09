@@ -44,7 +44,7 @@ public class CSVHttpExporter extends HttpExporterBase
      * {@inheritDoc}
      */
     @Override
-    protected Exporter getExporter(OutputStream out) {
-        return new ExporterImpl(out, new CSVRowFormatter());
+    protected Exporter getExporter(OutputStream out, String separator) {
+        return new ExporterImpl(out, new CSVRowFormatter(), separator);
     }
 }

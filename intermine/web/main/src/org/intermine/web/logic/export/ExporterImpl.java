@@ -28,9 +28,11 @@ public class ExporterImpl implements Exporter
 {
 
     private PrintWriter out;
+    
     private RowFormatter rowFormatter;
+    
     private int writtenResultsCount = 0;
-
+    
     /**
      * Constructor.
      * @param out output stream
@@ -38,6 +40,21 @@ public class ExporterImpl implements Exporter
      */
     public ExporterImpl(OutputStream out, RowFormatter rowFormatter) {
         this.out = new PrintWriter(out);
+        this.rowFormatter = rowFormatter;
+    }
+
+    /**
+     * Constructor.
+     * @param out output stream
+     * @param rowFormatter used row formatter.
+     * @param separator line separator
+     */
+    public ExporterImpl(OutputStream out, RowFormatter rowFormatter, String separator) {
+        if (separator.equals(Exporter.WINDOWS_SEPARATOR)) {
+            this.out = new CustomPrintWriter(out, Exporter.WINDOWS_SEPARATOR);
+        } else {
+            this.out = new PrintWriter(out);
+        }
         this.rowFormatter = rowFormatter;
     }
 

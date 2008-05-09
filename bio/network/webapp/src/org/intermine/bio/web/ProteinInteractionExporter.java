@@ -18,12 +18,17 @@ package org.intermine.bio.web;
  * @author Florian Reisinger
  * @author Richard Smith
  */
+import java.io.PrintWriter;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+
+import org.flymine.model.genomic.ProteinInteraction;
 import org.intermine.bio.networkview.FlyNetworkCreator;
 import org.intermine.bio.networkview.network.FlyNetwork;
 import org.intermine.model.InterMineObject;
@@ -31,18 +36,11 @@ import org.intermine.objectstore.ObjectStoreException;
 import org.intermine.util.StringUtil;
 import org.intermine.web.logic.export.ExportException;
 import org.intermine.web.logic.export.ExportHelper;
+import org.intermine.web.logic.export.http.HttpExportUtil;
 import org.intermine.web.logic.export.http.TableHttpExporter;
 import org.intermine.web.logic.results.PagedTable;
 import org.intermine.web.logic.results.ResultElement;
 import org.intermine.web.logic.results.WebTable;
-
-import org.flymine.model.genomic.ProteinInteraction;
-
-import java.io.OutputStream;
-import java.io.PrintWriter;
-
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
 
 /**
  * An implementation of TableHttpExporter that exports protein interactions
@@ -66,8 +64,6 @@ public class ProteinInteractionExporter implements TableHttpExporter
         response.setContentType("text/plain");
         response.setHeader("Content-Disposition ", "attachment; filename=interaction"
                 + StringUtil.uniqueString() + ".sif"); //flo
-
-        OutputStream outputStream = null;
 
         int realFeatureIndex = ExportHelper.getFirstColumnForClass(pt, ProteinInteraction.class);
 
@@ -101,14 +97,11 @@ public class ProteinInteractionExporter implements TableHttpExporter
                     // cast to ProteinInteraction
                     ProteinInteraction feature = (ProteinInteraction) object;
 
-                    if (outputStream == null) {
-                        // try to avoid opening the OutputStream until we know that the query is
-                        // going to work - this avoids some problems that occur when
-                        // getOutputStream() is called twice (once by this method and again to
-                        // write the error)
-                        outputStream = response.getOutputStream();
-                        printWriter = new PrintWriter(outputStream, true);
-                    }
+                    // try to avoid opening the OutputStream until we know that the query is
+                    // going to work - this avoids some problems that occur when
+                    // getOutputStream() is called twice (once by this method and again to
+                    // write the error)
+                    printWriter = HttpExportUtil.getPrintWriterForClient(request, response.getOutputStream());
 
                     Set<ProteinInteraction> interactions =
                         (Set<ProteinInteraction>) Collections.singleton(feature);
@@ -123,10 +116,6 @@ public class ProteinInteractionExporter implements TableHttpExporter
             if (printWriter != null) {
                 printWriter.flush();
                 printWriter.close();
-            }
-
-            if (outputStream != null) {
-                outputStream.close();
             }
 
             if (writtenInteractionsCount == 0) {

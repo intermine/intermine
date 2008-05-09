@@ -38,7 +38,7 @@ public class GFF3Exporter implements Exporter
 {
 
     PrintWriter out;
-    private int featureIndex;
+    private List<Integer> featureIndexes;
     private Map soClassNames;
     private int writtenResultsCount = 0;
     private boolean headerPrinted = false;
@@ -47,12 +47,12 @@ public class GFF3Exporter implements Exporter
     /**
      * Constructor.
      * @param out output stream
-     * @param featureIndex index of column with exported sequence
+     * @param indexes index of column with exported sequence
      * @param soClassNames mapping
      */
-    public GFF3Exporter(PrintWriter out, int featureIndex, Map soClassNames) {
+    public GFF3Exporter(PrintWriter out, List<Integer> indexes, Map soClassNames) {
         this.out = out;
-        this.featureIndex = featureIndex;
+        this.featureIndexes = indexes;
         this.soClassNames = soClassNames;
     }
 
@@ -60,6 +60,9 @@ public class GFF3Exporter implements Exporter
      * {@inheritDoc}
      */
     public void export(List<List<ResultElement>> results) {
+        if (featureIndexes.size() == 0) {
+            throw new ExportException("No columns with sequence.");
+        }
         try {
             for (int i = 0; i < results.size(); i++) {
                 List<ResultElement> row = results.get(i);
@@ -73,8 +76,12 @@ public class GFF3Exporter implements Exporter
 
     private void exportRow(List<ResultElement> row) throws ObjectStoreException, 
         IllegalAccessException {
-        LocatedSequenceFeature lsf = (LocatedSequenceFeature) row.get(
-                featureIndex).getInterMineObject();
+        ResultElement el = getResultElement(row);
+        if (el == null) {
+            return;
+        }
+
+        LocatedSequenceFeature lsf = (LocatedSequenceFeature) el.getInterMineObject();
         
         if (exportedIds.contains(lsf.getId())) {
             return;
@@ -112,6 +119,17 @@ public class GFF3Exporter implements Exporter
         out.println(gff3Record.toGFF3());
         exportedIds.add(lsf.getId());
         writtenResultsCount++;
+    }
+
+    private ResultElement getResultElement(List<ResultElement> row) {
+        ResultElement el = null;
+        for (Integer index : featureIndexes) {
+            el = row.get(index);
+            if (el != null) {
+                break;
+            }
+        }
+        return el;
     }
 
     /**

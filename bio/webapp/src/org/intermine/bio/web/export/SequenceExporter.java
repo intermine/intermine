@@ -66,7 +66,7 @@ public class SequenceExporter implements Exporter
     }
     
     /**
-     * {@inheritDoc}}
+     * {@inheritDoc}
      */
     public int getWrittenResultsCount() {
         return writtenResultsCount;
@@ -74,6 +74,8 @@ public class SequenceExporter implements Exporter
     
     /**
      * {@inheritDoc}
+     * Lines are always separated with \n because third party tool writeFasta 
+     * is used for writing sequence. 
      */
     public void export(List<List<ResultElement>> results) {
         // IDs of the features we have successfully output - used to avoid duplicates

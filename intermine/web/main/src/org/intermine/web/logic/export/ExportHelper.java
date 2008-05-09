@@ -35,8 +35,8 @@ public class ExportHelper
     }
 
     /**
-     * @param clazzes
-     * @param cls
+     * @param clazzes classes
+     * @param cls searched class
      * @return index of class that is assignable to given class
      */
     public static int getClassIndex(List<Class> clazzes, Class cls) {
@@ -47,9 +47,25 @@ public class ExportHelper
         }
         return -1;
     }
+    
+    /**
+     * @param clazzes classes
+     * @param searched searched class
+     * @return index of class that is assignable to given class
+     */
+    public static List<Integer> getClassIndexes(List<Class> clazzes,
+            Class searched) {
+        List<Integer> ret = new ArrayList<Integer>();
+        for (int i = 0; i < clazzes.size(); i++) {
+            if (searched.isAssignableFrom(clazzes.get(i))) {
+                ret.add(i);
+            }
+        }
+        return ret;
+    }
 
     /**
-     * @param pt
+     * @param pt paged table
      * @return classes of columns
      */
     public static List<Class> getColumnClasses(PagedTable pt) {
@@ -76,4 +92,5 @@ public class ExportHelper
     public static int getFirstColumnForClass(PagedTable pt, Class cls) {
         return getClassIndex(getColumnClasses(pt), cls);
     }
+    
 }

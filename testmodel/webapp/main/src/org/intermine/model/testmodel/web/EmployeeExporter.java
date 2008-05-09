@@ -11,7 +11,7 @@ package org.intermine.model.testmodel.web;
  */
 
 import java.io.IOException;
-import java.io.PrintStream;
+import java.io.PrintWriter;
 import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
@@ -19,19 +19,19 @@ import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
 import org.apache.struts.Globals;
-import org.apache.struts.action.ActionForm;
-import org.apache.struts.action.ActionForward;
-import org.apache.struts.action.ActionMapping;
 import org.apache.struts.action.ActionMessage;
 import org.apache.struts.action.ActionMessages;
 import org.intermine.metadata.ClassDescriptor;
 import org.intermine.model.testmodel.Employee;
 import org.intermine.objectstore.ObjectStoreException;
+import org.intermine.web.logic.RequestUtil;
+import org.intermine.web.logic.export.CustomPrintWriter;
 import org.intermine.web.logic.export.ExportException;
+import org.intermine.web.logic.export.Exporter;
+import org.intermine.web.logic.export.http.HttpExportUtil;
 import org.intermine.web.logic.export.http.TableHttpExporter;
 import org.intermine.web.logic.results.Column;
 import org.intermine.web.logic.results.PagedTable;
-import org.intermine.web.logic.session.SessionMethods;
 
 /**
  * An implementation of TableExporter that exports Employee objects.
@@ -55,11 +55,11 @@ public class EmployeeExporter implements TableHttpExporter
         response.setContentType("text/plain");
         response.setHeader("Content-Disposition ", "inline; filename=exployee.txt");
 
-        PrintStream printStream;
+        PrintWriter printWriter;
         try {
-            printStream = new PrintStream(response.getOutputStream());
-        } catch (IOException e1) {
-            throw new ExportException("Export failed.");
+            printWriter = HttpExportUtil.getPrintWriterForClient(request, response.getOutputStream());
+        } catch (IOException e) {
+            throw new ExportException("Export failed.", e);
         }
 
         try {
@@ -92,14 +92,14 @@ public class EmployeeExporter implements TableHttpExporter
 
                     Employee employee = (Employee) row.get(realColumnIndex);
 
-                    printStream.println("Employee:");
-                    printStream.println("  name: " + employee.getName());
-                    printStream.println("  age: " + employee.getAge());
-                    printStream.println("  fullTime: " + employee.getFullTime());
+                    printWriter.println("Employee:");
+                    printWriter.println("  name: " + employee.getName());
+                    printWriter.println("  age: " + employee.getAge());
+                    printWriter.println("  fullTime: " + employee.getFullTime());
                 }
             }
 
-            printStream.close();
+            printWriter.close();
         } catch (ObjectStoreException e) {
             ActionMessages messages = new ActionMessages();
             ActionMessage error = new ActionMessage("errors.query.objectstoreerror");
