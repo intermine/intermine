@@ -682,7 +682,7 @@ public class UniprotConverter extends FileConverter
                         protein.addReference(new Reference("sequence", sequence.getIdentifier()));
                         writer.store(ItemHelper.convert(sequence));
                     } else {
-                        LOG.info("Sequence for " + protein.getAttribute("name")
+                        LOG.info("Sequence for " + protein.getAttribute("name").getValue()
                                 + " does not have a length");
                     }
 
