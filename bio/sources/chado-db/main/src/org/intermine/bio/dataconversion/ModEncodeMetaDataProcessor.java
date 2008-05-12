@@ -58,8 +58,9 @@ public class ModEncodeMetaDataProcessor extends ChadoProcessor
     private List<Integer> firstAppliedProtocols = new ArrayList<Integer>();
 
     // maps of the initial input data and final output data for an experiment
-    private Map<Integer, List<Integer>> inDataMap = new HashMap<Integer, List<Integer>>();
-    private Map<Integer, List<Integer>> outDataMap = new HashMap<Integer, List<Integer>>();
+    private Map<Integer, List<Integer>> experimentInDataMap = new HashMap<Integer, List<Integer>>();
+    private Map<Integer, List<Integer>> experimentOutDataMap = 
+        new HashMap<Integer, List<Integer>>();
 
     // map used to store all data relative to an experiment
     private Map<Integer, List<Integer>> experimentDataMap = new HashMap<Integer, List<Integer>>();
@@ -153,9 +154,9 @@ public class ModEncodeMetaDataProcessor extends ChadoProcessor
         setExperimentProtocolsRefs(connection);
         setDAGRefs(connection);
 
-        LOG.info("REF: SD size: initialData: " + inDataMap.get(32).size());
+        LOG.info("REF: SD size: initialData: " + experimentInDataMap.get(32).size());
         LOG.info("REF: SD size: allData:     " + experimentDataMap.get(32).size());
-        LOG.info("REF: SD size: outData:     " + outDataMap.get(32).size());  }
+        LOG.info("REF: SD size: outData:     " + experimentOutDataMap.get(32).size());  }
 
     /**
      * Query for features that referenced by the experiments in the experimentMap.
@@ -244,7 +245,7 @@ public class ModEncodeMetaDataProcessor extends ChadoProcessor
                     newNode.levelDag = 1; // not needed
                     if (direction.startsWith("in")) {
                         // .. the map of initial data for the experiment
-                        addToMap (inDataMap, experimentId, appliedDataId);
+                        addToMap (experimentInDataMap, experimentId, appliedDataId);
                     }
                 }
 
@@ -279,7 +280,7 @@ public class ModEncodeMetaDataProcessor extends ChadoProcessor
                     // experimentDataMap: apart from the initial ones,
                     // the inputs are outputs of other levels
                     addToMap (experimentDataMap, experimentId, appliedDataId);
-                    addToMap (inDataMap, experimentId, appliedDataId);
+                    addToMap (experimentInDataMap, experimentId, appliedDataId);
 
                     // as above
                     branch.nextAppliedProtocols.add(appliedProtocolId);
@@ -410,7 +411,7 @@ public class ModEncodeMetaDataProcessor extends ChadoProcessor
                     if (appliedDataMap.get(currentOD).nextAppliedProtocols.isEmpty()) {
                         // this is a leaf!!
                         // we store it in a map that links it directly to the experiment
-                        addToMap(outDataMap, experimentId, currentOD);
+                        addToMap(experimentOutDataMap, experimentId, currentOD);
                     }
                 } 
 
@@ -1035,13 +1036,13 @@ public class ModEncodeMetaDataProcessor extends ChadoProcessor
     private void setExperimentInputRefs(Connection connection)
     throws ObjectStoreException {
         LOG.info("REF: IN");
-        Iterator<Integer> exp = inDataMap.keySet().iterator();
+        Iterator<Integer> exp = experimentInDataMap.keySet().iterator();
         while (exp.hasNext()) {
             Integer thisExperimentId = exp.next();
-            List<Integer> dataIds = inDataMap.get(thisExperimentId);
+            List<Integer> dataIds = experimentInDataMap.get(thisExperimentId);
             Iterator<Integer> dat = dataIds.iterator();
             ReferenceList collection = new ReferenceList();
-            collection.setName("inData");
+            collection.setName("experimentInData");
             while (dat.hasNext()) {
                 Integer currentId = dat.next();
                 if (appliedDataMap.get(currentId) == null) {
@@ -1067,13 +1068,13 @@ public class ModEncodeMetaDataProcessor extends ChadoProcessor
      */
     private void setExperimentResultsRefs(Connection connection)
     throws ObjectStoreException {
-        Iterator<Integer> exp = outDataMap.keySet().iterator();
+        Iterator<Integer> exp = experimentOutDataMap.keySet().iterator();
         while (exp.hasNext()) {
             Integer thisExperimentId = exp.next();
-            List<Integer> dataIds = outDataMap.get(thisExperimentId);
+            List<Integer> dataIds = experimentOutDataMap.get(thisExperimentId);
             Iterator<Integer> dat = dataIds.iterator();
             ReferenceList collection = new ReferenceList();
-            collection.setName("outData");
+            collection.setName("experimentOutData");
             while (dat.hasNext()) {
                 Integer currentId = dat.next();
                 if (appliedDataMap.get(currentId) == null) {

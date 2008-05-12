@@ -59,10 +59,9 @@
 		<collection name="submissionData"
 			referenced-type="org.flymine.model.genomic.SubmissionData"
 			reverse-reference="experimentSubmission" />
-		<!-- ?? -->
-		<collection name="outData"
+		<collection name="experimentOutData"
 			referenced-type="org.flymine.model.genomic.SubmissionData" />
-		<collection name="inData"
+		<collection name="experimentInData"
 			referenced-type="org.flymine.model.genomic.SubmissionData" />
 	</class>
 
