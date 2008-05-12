@@ -20,7 +20,7 @@
     <style type="text/css">
         div.${id} {
         background:none;
-        height:${height}; 
+        height:${height};
         width:${width};
         margin-top:${marginTop};
         cursor:pointer;
@@ -42,7 +42,7 @@
 </c:choose>
 
 <a href="${link}" rel="NOFOLLOW">
-  <div class="${id}" style="float:${floatValue}" title="${title}">&nbsp</div>
+  <div class="${id}" style="float:${floatValue}" title="${title}">&nbsp;</div>
 </a>
 <c:if test="${! empty breakFloat && breakFloat == 'true'}">
   <div style="clear:${floatValue};width:${width}"></div>
