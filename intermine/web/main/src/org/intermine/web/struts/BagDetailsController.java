@@ -154,7 +154,7 @@ public class BagDetailsController extends TilesAction
             session.setAttribute(Constants.GUI_OBJECT, guiObj);
         }
         request.setAttribute("toggledElements", guiObj.getToggledElements());
-        
+
         // Set the size
         String pageStr = request.getParameter("page");
         int page = -1;
@@ -181,10 +181,12 @@ public class BagDetailsController extends TilesAction
             for (int i = 0; i < webTable.size(); i++) {
                 List<ResultElement> row = webTable.getResultElements(i);
                 for (ResultElement resultElement: row) {
-                    Integer id = resultElement.getId();
-                    if (id.equals(highlightId)) {
-                        page = i / PAGE_SIZE;
-                        break;
+                    if (resultElement != null) {
+                        Integer id = resultElement.getId();
+                        if (id.equals(highlightId)) {
+                            page = i / PAGE_SIZE;
+                            break;
+                        }
                     }
                 }
             }
