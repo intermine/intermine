@@ -11,6 +11,7 @@ package org.intermine.web.struts;
  */
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
@@ -22,7 +23,6 @@ import org.intermine.objectstore.query.Query;
 import org.intermine.objectstore.query.QueryClass;
 import org.intermine.objectstore.query.QueryExpression;
 import org.intermine.objectstore.query.QueryField;
-import org.intermine.objectstore.query.QueryFunction;
 import org.intermine.objectstore.query.QueryValue;
 import org.intermine.objectstore.query.Results;
 import org.intermine.objectstore.query.ResultsRow;
@@ -33,11 +33,13 @@ import org.intermine.metadata.ClassDescriptor;
 import org.intermine.metadata.FieldDescriptor;
 import org.intermine.metadata.Model;
 import org.intermine.objectstore.ObjectStore;
+import org.intermine.util.StringUtil;
 import org.intermine.web.logic.ClassKeyHelper;
 import org.intermine.web.logic.Constants;
 import org.intermine.web.logic.WebUtil;
 import org.intermine.web.logic.bag.InterMineBag;
 import org.intermine.web.logic.profile.Profile;
+import org.intermine.web.logic.session.SessionMethods;
 
 import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletRequest;
@@ -101,7 +103,11 @@ public class FindInListAction extends InterMineAction
                 Query q = makeQuery(textToFind, bag, allStringFields);
                 foundId = findFirst(os, q);
             }
-            if (foundId != -1) {
+
+            if (foundId == -1) {
+                SessionMethods.recordMessage("Cannot find \"" + textToFind + "\" in " + bagName,
+                                             session);
+            } else {
                 forwardParameters.addParameter("highlightId", foundId + "");
                 forwardParameters.addParameter("gotoHighlighted", "true");
             }
