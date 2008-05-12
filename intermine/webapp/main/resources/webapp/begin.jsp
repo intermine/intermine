@@ -9,7 +9,7 @@
 <html:xhtml/>
 
 <div class="body">
-       
+
 <!-- First column -->
      <im:boxarea title="Data Categories" titleLink="/${WEB_PROPERTIES['webapp.path']}/dataCategories.do" stylename="plainbox" floatValue="left" fixedWidth="300px">
      <em><p><fmt:message key="begin.data"/></p></em>
@@ -33,7 +33,7 @@
              </c:forEach>
           </tr></table>
     </im:boxarea>
-  
+
 
 <!-- Second column - elastic -->
 <div id="rightColumn">
@@ -73,7 +73,7 @@
         </div>
         <im:useTransparentImage src="/theme/search_with_templates.png" id="search_with_templates" title="Click here to Search using Template Queries" link="/${WEB_PROPERTIES['webapp.path']}/templates.do" height="22px" width="153px" floatValue="right" breakFloat="true" />
       </im:boxarea>
-     
+
       <im:boxarea title="Lists" titleLink="/${WEB_PROPERTIES['webapp.path']}/bag.do" stylename="gradientbox">
         <p><em><fmt:message key="begin.bags"/></em></p>
         <br/>
@@ -105,7 +105,7 @@
           <div id="qbStartQuery">
             Start a query from:
             <!-- loop through starting classes -->
-            <c:forEach var="entry" items="${WEB_PROPERTIES['begin.query.classes']}" varStatus="status"><c:if test="${status.count != 1}">,</c:if>&nbsp;<a href="/${WEB_PROPERTIES['webapp.path']}/queryClassSelect.do?action=Select&className=${entry}" rel="NOFOLLOW">${entry}</a></c:forEach>
+            <c:forEach var="entry" items="${WEB_PROPERTIES['begin.query.classes']}" varStatus="status"><c:if test="${status.count != 1}">,</c:if>&nbsp;<a href="/${WEB_PROPERTIES['webapp.path']}/queryClassSelect.do?action=Select&amp;className=${entry}" rel="NOFOLLOW">${entry}</a></c:forEach>
           </div>
         </div>
         <div id="qbImport">
