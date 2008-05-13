@@ -28,7 +28,6 @@ import org.intermine.objectstore.query.Query;
 import org.intermine.objectstore.query.QueryClass;
 import org.intermine.objectstore.query.QueryCollectionReference;
 import org.intermine.objectstore.query.QueryField;
-import org.intermine.objectstore.query.QueryNode;
 import org.intermine.objectstore.query.QuerySelectable;
 import org.intermine.objectstore.query.Results;
 import org.intermine.path.Path;
@@ -95,11 +94,8 @@ public class PathQueryResultHelper
                         index = prePath.indexOf(".", prevIndex);
                     }
                     pathStringBuffer.append(prePath.substring(prevIndex));
-                    String pathString = prefix + pathStringBuffer.toString();
-                    Map<String, String> classToPath = new HashMap<String, String>();
-                    classToPath.put(prefix, classDescriptor.getUnqualifiedName());
-                    Path path = new Path(model, pathString, classToPath);
-                    // Path path = new Path(model, pathString);
+                    String pathString = prefix + "[" + type + "]" + pathStringBuffer.toString();
+                    Path path = new Path(model, pathString);
                     // Path path = MainHelper.makePath(model, pathQuery, pathString);
                     // TODO remove isOnlyAttribute when outer joins
                     if (!view.contains(path)

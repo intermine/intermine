@@ -510,4 +510,14 @@ public class Path
     public String getNoConstraintsString() {
         return toStringNoConstraints();
     }
+
+    /**
+     * Returns a Map from simplified path string (with dots instead of colons, and no constraints)
+     * to constraint class name.
+     *
+     * @return subClassConstraintPaths
+     */
+    public Map<String, String> getSubClassConstraintPaths() {
+        return subClassConstraintPaths;
+    }
 }

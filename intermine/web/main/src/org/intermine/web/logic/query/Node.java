@@ -18,6 +18,7 @@ import org.intermine.metadata.FieldDescriptor;
 import org.intermine.metadata.AttributeDescriptor;
 import org.intermine.metadata.ReferenceDescriptor;
 import org.intermine.util.TypeUtil;
+import org.intermine.util.Util;
 
 /**
  * Superclass of left and right nodes
@@ -215,7 +216,8 @@ public class Node
     public boolean equals(Object o) {
         return (o instanceof Node)
             && pathString.equals(((Node) o).pathString)
-            && type.equals(((Node) o).type);
+            && Util.equals(type, ((Node) o).type)
+            && Util.equals(parent, ((Node) o).parent);
     }
 
     /**
@@ -223,6 +225,7 @@ public class Node
      */
     public int hashCode() {
         return 2 * pathString.hashCode()
-            + 3 * type.hashCode();
+            + (type == null ? 0 : 3 * type.hashCode())
+            + (parent == null ? 0 : 5 * parent.hashCode());
     }
 }

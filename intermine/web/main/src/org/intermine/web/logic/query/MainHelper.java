@@ -323,8 +323,6 @@ public class MainHelper
         Set<PathNode> nonOuterNodes = findNonOuterNodes(pathQuery.getNodes(),
                 makeLoopsMap(pathQuery, codeToCS, andcs, false));
 
-        //System.out.println("Query: " + pathQueryOrig + ", nonOuterNodes: " + nonOuterNodes);
-
         Map<String, String> loops = makeLoopsMap(pathQuery, codeToCS, andcs, true);
 
         Map<String, QuerySelectable> queryBits = new HashMap();
@@ -364,8 +362,9 @@ public class MainHelper
                         String fieldName = node.getFieldName();
                         QueryClass parentQc = (QueryClass) queryBits.get(node.getPrefix());
                         if (parentQc == null) {
-                            // We cannot process this QueryField yet. It depends on a parent QueryClass
-                            // that we have not yet processed. Put it to the back of the queue.
+                            // We cannot process this QueryField yet. It depends on a parent
+                            // QueryClass that we have not yet processed. Put it to the back of the
+                            // queue.
                             deferralReasons.put(node, "Could not process QueryField " + node
                                     + " because its parent has not been processed");
                             queue.addLast(node);
@@ -389,7 +388,8 @@ public class MainHelper
                                 throw new IllegalArgumentException("class not found in the model: "
                                                                    + node.getType(), e);
                             }
-                            andcs.addConstraint(new ContainsConstraint(qr, ConstraintOp.CONTAINS, qc));
+                            andcs.addConstraint(new ContainsConstraint(qr, ConstraintOp.CONTAINS,
+                                        qc));
                             q.addFrom(qc);
                             queryBits.put(path, qc);
                         }
@@ -397,10 +397,11 @@ public class MainHelper
                     finalPath = path;
                 } else {
                     if (queryBits.get(finalPath) == null) {
-                        // We cannot process this node yet. It is looped onto another node that has not
-                        // been processed yet. Put it to the back of the queue.
-                        deferralReasons.put(node, "Could not process node " + node + " because it is"
-                                + " looped onto " + finalPath + " which has not been processed yet");
+                        // We cannot process this node yet. It is looped onto another node that has
+                        // not been processed yet. Put it to the back of the queue.
+                        deferralReasons.put(node, "Could not process node " + node + " because it"
+                                + " is looped onto " + finalPath
+                                + " which has not been processed yet");
                         queue.addLast(node);
                         queueDeferred++;
                         continue;
@@ -415,7 +416,8 @@ public class MainHelper
                                 qr = new QueryCollectionReference(parentQc, fieldName);
                             }
                             QueryClass qc = (QueryClass) queryBits.get(finalPath);
-                            andcs.addConstraint(new ContainsConstraint(qr, ConstraintOp.CONTAINS, qc));
+                            andcs.addConstraint(new ContainsConstraint(qr, ConstraintOp.CONTAINS,
+                                        qc));
                         }
                     }
                     queryBits.put(path, queryBits.get(finalPath));
@@ -454,12 +456,13 @@ public class MainHelper
                                 cs.addConstraint(makeQueryStringConstraint(qn, c));
                             } else {
                                 cs.addConstraint(new SimpleConstraint((QueryField) qn, c.getOp(),
-                                                                      new QueryValue(c.getValue())));
+                                            new QueryValue(c.getValue())));
                             }
                         }
                     } else if (node.isReference() && (c.getOp() == ConstraintOp.IS_NOT_NULL
                                 || c.getOp() == ConstraintOp.IS_NULL)) {
-                        cs.addConstraint(new ContainsConstraint((QueryObjectReference) qr, c.getOp()));
+                        cs.addConstraint(new ContainsConstraint((QueryObjectReference) qr,
+                                    c.getOp()));
                     } else if (c.getOp() == ConstraintOp.LOOKUP) {
                         QueryClass qc = (QueryClass) qn;
                         if (checkOnly) {
@@ -493,7 +496,8 @@ public class MainHelper
                         }
                         if (bagQueryResult == null) {
                             LOG.error("bagQueryResult is null. queryBits = " + queryBits
-                                    + ", finalPath = " + finalPath + ", pathQuery: " + pathQueryOrig);
+                                    + ", finalPath = " + finalPath + ", pathQuery: "
+                                    + pathQueryOrig);
                         }
                         if (cs == null) {
                             LOG.error("cs is null. codeToCS = " + codeToCS + ", code = " + code
@@ -571,7 +575,8 @@ public class MainHelper
                 } else if (pn.isCollection()) {
                     QueryClass qc = (QueryClass) queryBits.get(pn.getParent().getPathString());
                     if (qc == null) {
-                        throw new NullPointerException("Failed to get path " + pn.getParent().getPathString() + " from " + queryBits);
+                        throw new NullPointerException("Failed to get path "
+                                + pn.getParent().getPathString() + " from " + queryBits);
                     }
                     QuerySelectable qn = new QueryCollectionPathExpression(qc, pn.getFieldName());
                     if (!q.getSelect().contains(qc)) {
@@ -1095,7 +1100,7 @@ public class MainHelper
         while (viewPathNameIter.hasNext()) {
             String viewPathName = (String) viewPathNameIter.next();
             PathNode pathNode = query.getNode(viewPathName);
-            subClassConstraintMap.put(viewPathName, pathNode.getType());
+            subClassConstraintMap.put(viewPathName.replace(':', '.'), pathNode.getType());
         }
 
         Path path = new Path(model, fullPathName, subClassConstraintMap);
