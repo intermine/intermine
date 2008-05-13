@@ -127,7 +127,7 @@ public class ModifyBagAction extends InterMineAction
             if (newNameTextBox != null) {
                 newBagName = newNameTextBox;
             } else {
-                newBagName = generateNewName(selectedBagName);
+                newBagName = generateNewName(selectedBagName, allBags);
             }
             if (origBag == null) {
                 recordError(new ActionMessage("errors.bag.notfound"), request);
@@ -144,7 +144,7 @@ public class ModifyBagAction extends InterMineAction
             String msg = "";
             for (int i = 0; i < selectedBagNames.length; i++) {
                 String selectedBagName = selectedBagNames[i];
-                String newBagName = generateNewName(selectedBagName);
+                String newBagName = generateNewName(selectedBagName, allBags);
                 InterMineBag origBag = allBags.get(selectedBagName);
                 if (origBag == null) {
                     recordError(new ActionMessage("errors.bag.notfound"), request);
@@ -182,18 +182,18 @@ public class ModifyBagAction extends InterMineAction
             Profile profile, HttpServletRequest request)
             throws ObjectStoreException {
         // Clone method clones the bag in the database
-        if (allBags.get(newBagName) != null) {
-            recordError(new ActionMessage("errors.bag.alreadyexist", newBagName), request);
-            return false;
-        }
         InterMineBag newBag = (InterMineBag) origBag.clone(userOSW);
         newBag.setName(newBagName, userOSW);
         profile.saveBag(newBagName, newBag);
         return true;
     }
 
-    private String generateNewName(String origName) {
-        return origName + "_copy";
+    private String generateNewName(String origName, Map<String, InterMineBag> allBags) {
+        int i = 1;
+        while (allBags.get(origName + "_copy" + i) != null) {
+            i++;
+        }
+        return origName + "_copy" + i;
     }
 
     /**
