@@ -14,13 +14,7 @@ import java.util.Date;
 import java.util.List;
 import java.util.Set;
 
-import org.intermine.objectstore.query.BagConstraint;
-import org.intermine.objectstore.query.ConstraintOp;
-import org.intermine.objectstore.query.ObjectStoreBag;
-import org.intermine.objectstore.query.Query;
-import org.intermine.objectstore.query.QueryClass;
-import org.intermine.objectstore.query.SingletonResults;
-
+import org.apache.log4j.Logger;
 import org.intermine.metadata.ClassDescriptor;
 import org.intermine.model.InterMineObject;
 import org.intermine.model.userprofile.SavedBag;
@@ -28,10 +22,15 @@ import org.intermine.model.userprofile.UserProfile;
 import org.intermine.objectstore.ObjectStore;
 import org.intermine.objectstore.ObjectStoreException;
 import org.intermine.objectstore.ObjectStoreWriter;
+import org.intermine.objectstore.intermine.ObjectStoreWriterInterMineImpl;
 import org.intermine.objectstore.proxy.ProxyReference;
+import org.intermine.objectstore.query.BagConstraint;
+import org.intermine.objectstore.query.ConstraintOp;
+import org.intermine.objectstore.query.ObjectStoreBag;
+import org.intermine.objectstore.query.Query;
+import org.intermine.objectstore.query.QueryClass;
+import org.intermine.objectstore.query.SingletonResults;
 import org.intermine.web.logic.search.WebSearchable;
-
-import org.apache.log4j.Logger;
 
 
 /**
@@ -41,7 +40,7 @@ import org.apache.log4j.Logger;
  * @author Kim Rutherford
  * @author Matthew Wakeling
  */
-public class InterMineBag implements WebSearchable
+public class InterMineBag implements WebSearchable, Cloneable
 {
     protected static final Logger LOG = Logger.getLogger(InterMineBag.class);
 
@@ -302,5 +301,58 @@ public class InterMineBag implements WebSearchable
      */
     public String getTitle() {
        return getName();
+    }
+    
+    /**
+     * Create copy of bag. Bag is saved to objectstore.
+     * @param userOSW objectstore writer used for saving bag
+     * @return create bag
+     */
+    public Object clone(ObjectStoreWriter userOSW) {
+        InterMineBag ret = cloneShallowIntermineBag(userOSW);
+        cloneInternalObjectStoreBag(ret);
+        return ret;
+    }
+
+    private void cloneInternalObjectStoreBag(InterMineBag bag) {
+        ObjectStoreWriter osw = null;
+        try {
+            osw = new ObjectStoreWriterInterMineImpl(os);
+            ObjectStoreBag newBag = osw.createObjectStoreBag();
+            Query q = new Query();
+            q.addToSelect(this.osb);
+            osw.addToBagFromQuery(newBag, q);
+            bag.osb = newBag;
+        } catch (ObjectStoreException e) {
+            LOG.error("Clone failed.", e);
+            throw  new RuntimeException("Clone failed.", e);
+        } finally {
+            try {
+                if (osw != null) {
+                    osw.close();
+                }
+            } catch (ObjectStoreException e) {
+                LOG.error("Closing object store failed.", e);
+            }
+        }
+    }
+    
+    private InterMineBag cloneShallowIntermineBag(ObjectStoreWriter userOSW) {
+        // doesn't clone class descriptions and object store because they shouldn't change
+        // -> cloned instance shares it with the original instance
+        InterMineBag copy;
+        try {
+            copy = (InterMineBag) super.clone();
+            copy.savedBagId = null;
+            SavedBag savedBag = copy.store(userOSW);
+            copy.savedBagId = savedBag.getId();
+            copy = new InterMineBag(name, type, description, dateCreated, 
+                    os, profileId, userOSW);
+        } catch (ObjectStoreException ex) {
+            throw new RuntimeException("Clone failed.", ex);
+        } catch (CloneNotSupportedException ex) {
+            throw new RuntimeException("Clone failed.", ex);
+        }
+        return copy;
     }
 }

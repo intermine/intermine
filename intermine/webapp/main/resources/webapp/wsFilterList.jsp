@@ -100,7 +100,8 @@
 <html:text property="newBagName" size="12" value="${textForBox}" style="color:#666;font-style:italic;vertical-align:top" onclick="clearBagName(this)"/>
 <img src="theme/union.png" onclick="validateBagOperations('modifyBagForm', 'union')" title="union"/>
 <img src="theme/intersect.png" onclick="validateBagOperations('modifyBagForm', 'intersect')" title="intersect"/>
-<img src="theme/substract.png" onclick="validateBagOperations('modifyBagForm', 'subtract')" title="subtract"/>  
+<img src="theme/substract.png" onclick="validateBagOperations('modifyBagForm', 'subtract')" title="subtract"/>
+<img src="theme/copy.png" onclick="validateBagOperations('modifyBagForm', 'copy')" title="copy"/>  
 <html:hidden property="listsButton" value="" styleId="listsButton"/>
 </c:otherwise>
 </c:choose>

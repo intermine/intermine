@@ -76,7 +76,7 @@
       </c:if>
       
     </div>
-    
+        
     <c:if test="${IS_SUPERUSER}">
       <div class="admin-msg">
         <span class="smallnote">

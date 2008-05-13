@@ -113,7 +113,8 @@
            <input type="button" onclick="validateBagOperations('modifyBagForm', 'subtract')" value="Subtract"/>
         </c:if>
         <input type="button" onclick="validateBagOperations('modifyBagForm', 'delete')" value="Delete"/>
-
+        <input type="button" onclick="validateBagOperations('modifyBagForm', 'copy')" value="Copy"/>
+        
         <html:hidden property="pageName" value="MyMine"/>
         <html:hidden property="listsButton" value="" styleId="listsButton"/>
       </html:form>

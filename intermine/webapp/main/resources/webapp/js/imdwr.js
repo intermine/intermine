@@ -615,10 +615,17 @@ function validateBagOperations(formName, operation) {
     var i = 0;
     var j = 0;
 
-    for (i = 0; i < frm.selectedBags.length; i++){
-        if (frm.selectedBags[i].checked) {
-            selectedBags[j] = frm.selectedBags[i].value;
-            j++;
+    if (frm.selectedBags) {
+        // if there is only one item checked, then javascript doesn't work with it as a with array
+        if (!frm.selectedBags.length) {
+            selectedBags[0] = frm.selectedBags.value;
+        } else {
+		    for (i = 0; i < frm.selectedBags.length; i++){
+		        if (frm.selectedBags[i].checked) {
+		            selectedBags[j] = frm.selectedBags[i].value;
+		            j++;
+		        }
+		    }        
         }
     }
     AjaxServices.validateBagOperations(
