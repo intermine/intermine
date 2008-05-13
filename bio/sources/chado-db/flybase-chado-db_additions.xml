@@ -1,0 +1,20 @@
+<?xml version="1.0"?>
+<classes>
+  <class name="org.flymine.model.genomic.PhenotypeAnnotation" extends="org.flymine.model.genomic.Annotation" is-interface="true">
+    <attribute name="description" type="java.lang.String"/>
+    <attribute name="annotationType" type="java.lang.String"/>
+    <reference name="allele" referenced-type="org.flymine.model.genomic.Allele" 
+               reverse-reference="phenotypeAnnotations"/>
+    <reference name="phenotype" referenced-type="org.flymine.model.genomic.Phenotype"/>
+  </class>
+  <class name="org.flymine.model.genomic.Allele" 
+         extends="org.flymine.model.genomic.BioEntity" is-interface="true">
+    <collection name="phenotypeAnnotations"
+                referenced-type="org.flymine.model.genomic.PhenotypeAnnotation" 
+                reverse-reference="allele"/>
+  </class>
+  <class name="org.flymine.model.genomic.Phenotype" extends="org.flymine.model.genomic.OntologyTerm" is-interface="true">
+    <attribute name="code" type="java.lang.String"/>
+  </class>
+
+</classes>
