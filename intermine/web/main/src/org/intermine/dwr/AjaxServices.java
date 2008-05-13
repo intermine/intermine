@@ -41,7 +41,6 @@ import org.intermine.objectstore.ObjectStoreException;
 import org.intermine.objectstore.ObjectStoreWriter;
 import org.intermine.objectstore.intermine.ObjectStoreInterMineImpl;
 import org.intermine.objectstore.query.Query;
-import org.intermine.objectstore.query.QueryNode;
 import org.intermine.objectstore.query.QuerySelectable;
 import org.intermine.objectstore.query.Results;
 import org.intermine.path.Path;
@@ -742,8 +741,8 @@ public class AjaxServices
                                                String operation) {
 
         try {
+            bagName = bagName.trim();
             ServletContext servletContext = WebContextFactory.get().getServletContext();
-            ProfileManager pm = SessionMethods.getProfileManager(servletContext);
             HttpSession session = WebContextFactory.get().getSession();
             Profile profile = (Profile) session.getAttribute(Constants.PROFILE);
 
@@ -763,13 +762,13 @@ public class AjaxServices
                         + "by other queries " + queries;
                     }
                 }
-
             } else {
                 Properties properties = (Properties)
-                servletContext.getAttribute(Constants.WEB_PROPERTIES);
+                    servletContext.getAttribute(Constants.WEB_PROPERTIES);
                 String defaultName = properties.getProperty("lists.input.example");
 
-                if (bagName.equals("") || (bagName.trim().equalsIgnoreCase(defaultName))) {
+                if (!operation.equals("copy") && (bagName.equals("") 
+                        || (bagName.equalsIgnoreCase(defaultName)))) {
                     return "New list name is required";
                 } else if (!WebUtil.isValidName(bagName)) {
                     return "Invalid name. Names can only contain letters, numbers, spaces, "
