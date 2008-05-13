@@ -10,23 +10,30 @@ package org.intermine.bio.dataconversion;
  *
  */
 
-import java.sql.Connection;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.sql.Statement;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
-import org.apache.commons.collections.keyvalue.MultiKey;
-import org.apache.commons.collections.map.MultiKeyMap;
-import org.apache.log4j.Logger;
 import org.intermine.bio.util.OrganismData;
 import org.intermine.bio.util.OrganismRepository;
 import org.intermine.objectstore.ObjectStoreException;
 import org.intermine.util.IntPresentSet;
 import org.intermine.xml.full.Item;
+
+import java.sql.Connection;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.sql.Statement;
+
+import org.apache.commons.collections.keyvalue.MultiKey;
+import org.apache.commons.collections.map.MultiKeyMap;
+import org.apache.commons.lang.StringUtils;
+import org.apache.log4j.Category;
+import org.apache.log4j.Logger;
 
 /**
  * A converter for chado that handles FlyBase specific configuration.
@@ -272,9 +279,7 @@ public class FlyBaseModuleProcessor extends ChadoSequenceProcessor
      */
     @Override
     protected String getExtraFeatureConstraint() {
-        return "NOT ((cvterm.name = 'golden_path_region'"
-            + "          OR cvterm.name = 'ultra_scaffold')"
-            + "         AND (uniquename LIKE 'Unknown_%' OR uniquename LIKE '%_groupMISC'))";
+        return "uniquename LIKE 'FBal%'";
     }
 
     /**
@@ -379,7 +384,8 @@ public class FlyBaseModuleProcessor extends ChadoSequenceProcessor
     }
 
     private static final List<String> FEATURES = Arrays.asList(
-            "gene", "mRNA", "transcript",
+            "gene"
+            , "mRNA", "transcript",
             "intron", "exon",
             "regulatory_region", "enhancer",
             // ignore for now:        "EST", "cDNA_clone",
@@ -400,19 +406,143 @@ public class FlyBaseModuleProcessor extends ChadoSequenceProcessor
     }
 
     /**
-     * For objects that don't have identifier == null, set the identifier to be the uniquename
-     * column from chado.
+     * For objects that have primaryIdentifier == null, set the primaryIdentifier to be the
+     * uniquename column from chado.
      * {@inheritDoc}
      */
     @Override
-    protected void extraProcessing(Map<Integer, FeatureData> features)
-        throws ObjectStoreException {
+    protected void extraProcessing(Connection connection, Map<Integer, FeatureData> features)
+        throws ObjectStoreException, SQLException {
         for (FeatureData featureData: features.values()) {
             if ((featureData.flags & FeatureData.IDENTIFIER_SET) == 0) {
                 setAttribute(featureData.getIntermineObjectId(), "primaryIdentifier",
                              featureData.getChadoFeatureUniqueName());
             }
         }
+
+        processAlleleProps(connection, features);
+    }
+
+    private final Map<String, Integer> cvtermMap = new HashMap<String, Integer>();
+
+    // map from phenotype identifier (eg. "FBbt0001234") to Item identifier
+    private Map<String, String> phenotypesMap = new HashMap<String, String>();
+
+    private void processAlleleProps(Connection connection,
+                                    Map<Integer, FeatureData> features)
+        throws SQLException, ObjectStoreException {
+        ResultSet res = getAllelePropResultSet(connection);
+        while (res.next()) {
+            Integer featureId = new Integer(res.getInt("feature_id"));
+            String value = res.getString("value");
+            String propType = res.getString("type_name");
+
+            FeatureData alleleFeatureData = features.get(featureId);
+            String alleleItemIdentifier = alleleFeatureData.getItemIdentifier();
+
+            Item phenotypeAnnotation = null;
+            if (propType.equals("derived_pheno_manifest")) {
+                phenotypeAnnotation = makePhenotypeAnnotation(alleleItemIdentifier, value);
+                phenotypeAnnotation.setAttribute("annotationType", "manifest in");
+            } else {
+                if (propType.equals("derived_pheno_class")) {
+                    phenotypeAnnotation = makePhenotypeAnnotation(alleleItemIdentifier, value);
+                    phenotypeAnnotation.setAttribute("annotationType", "phenotype class");
+                }
+            }
+
+            if (phenotypeAnnotation != null) {
+                getChadoDBConverter().store(phenotypeAnnotation);
+            }
+        }
+
+        // storeAlleleRefs(features, previousFeatureId, phenotypeRefs);
+    }
+
+    private Item makePhenotypeAnnotation(String alleleItemIdentifier, String value)
+        throws ObjectStoreException {
+        Item phenotypeAnnotation = getChadoDBConverter().createItem("PhenotypeAnnotation");
+
+        Pattern p = Pattern.compile("@([^@]+)@");
+        Matcher m = p.matcher(value);
+        StringBuffer sb = new StringBuffer();
+
+        List<String> flybasePhenotypeIdentifiers = new ArrayList<String>();
+
+        while (m.find()) {
+            String field = m.group(1);
+            int colonPos = field.indexOf(':');
+            if (colonPos == -1) {
+                m.appendReplacement(sb, field);
+            } else {
+                String identifier = field.substring(0, colonPos);
+                if (identifier.startsWith("FBbt")) {
+                    flybasePhenotypeIdentifiers.add(identifier);
+                }
+                String text = field.substring(colonPos + 1);
+                m.appendReplacement(sb, text);
+            }
+        }
+        m.appendTail(sb);
+
+        phenotypeAnnotation.setAttribute("description", sb.toString());
+        phenotypeAnnotation.setReference("allele", alleleItemIdentifier);
+        phenotypeAnnotation.setReference("subject", alleleItemIdentifier);
+        if (flybasePhenotypeIdentifiers.size() == 1) {
+            String phenotypeIdentifier = flybasePhenotypeIdentifiers.get(0);
+            String phenotype = makePhenotype(phenotypeIdentifier);
+            phenotypeAnnotation.setReference("phenotype", phenotype);
+        } else {
+            if (flybasePhenotypeIdentifiers.size() > 1) {
+                throw new RuntimeException("more than one phenotype: "
+                                           + flybasePhenotypeIdentifiers);
+            }
+        }
+        return phenotypeAnnotation;
+    }
+
+    private String makePhenotype(String phenotypeIdentifier) throws ObjectStoreException {
+        if (phenotypesMap.containsKey(phenotypeIdentifier)) {
+            return phenotypesMap.get(phenotypeIdentifier);
+        } else {
+            Item phenotype = getChadoDBConverter().createItem("Phenotype");
+            phenotype.setAttribute("identifier", phenotypeIdentifier);
+            getChadoDBConverter().store(phenotype);
+            return phenotype.getIdentifier();
+        }
+    }
+
+    /**
+     * Return a result set containing the alleles and their featureprops.  The method is protected
+     * so that is can be overridden for testing.
+     * @param connection the Connection
+     * @throws SQLException if there is a database problem
+     * @return the ResultSet
+     */
+    protected ResultSet getAllelePropResultSet(Connection connection) throws SQLException {
+        String organismConstraint = getOrganismConstraint();
+        String orgConstraintForQuery = "";
+        if (!StringUtils.isEmpty(organismConstraint)) {
+            orgConstraintForQuery = " AND " + organismConstraint;
+        }
+
+        String query =
+            "select feature_id, value, cvterm.name AS type_name"
+            + "   FROM featureprop, cvterm"
+            + "   WHERE featureprop.type_id = cvterm.cvterm_id"
+            + "       AND feature_id IN ("
+            + "           SELECT feature_id "
+            + "               FROM feature, cvterm feature_type "
+            + "               WHERE feature_type.name = 'gene'"
+            + "                      AND type_id = feature_type.cvterm_id"
+            + "                      AND uniquename LIKE 'FBal%'"
+            + "                      AND NOT feature.is_obsolete"
+            + orgConstraintForQuery + ")"
+            + "   ORDER BY feature_id";
+        LOG.info("executing: " + query);
+        Statement stmt = connection.createStatement();
+        ResultSet res = stmt.executeQuery(query);
+        return res;
     }
 
     /**

@@ -124,7 +124,7 @@ public class ChadoSequenceProcessor extends ChadoProcessor
         processSynonymTable(connection);
         processFeaturePropTable(connection);
         addMissingDataEvidence();
-        extraProcessing(featureMap);
+        extraProcessing(connection, featureMap);
     }
 
 
@@ -200,12 +200,16 @@ public class ChadoSequenceProcessor extends ChadoProcessor
         if (name != null) {
             if (nameActionList == null || nameActionList.size() == 0) {
                 if (feature.checkAttribute("symbol")) {
-                    // default action
                     fieldValuesSet.add(name);
                     feature.setAttribute("symbol", name);
                 } else {
-                    // do nothing, if the name needs to go in a different attribute
-                    // it will need to be configured
+                    if (feature.checkAttribute("secondaryIdentifier")) {
+                        fieldValuesSet.add(name);
+                        feature.setAttribute("secondaryIdentifier", name);
+                    } else {
+                        // do nothing, if the name needs to go in a different attribute
+                        // it will need to be configured
+                    }
                 }
             } else {
                 for (ConfigAction action: nameActionList) {
@@ -379,13 +383,15 @@ public class ChadoSequenceProcessor extends ChadoProcessor
 
     /**
      * Do any extra processing for this database, after all other processing is done
+     * @param connection the Connection
      * @param featureDataMap a map from chado feature_id to data for that feature
      * @throws ObjectStoreException if there is a problem while storing
+     * @throws SQLException if there is a problem
      */
     @SuppressWarnings("unused")
-    protected void extraProcessing(@SuppressWarnings("unused")
+    protected void extraProcessing(Connection connection,
                                    Map<Integer, FeatureData> featureDataMap)
-        throws ObjectStoreException {
+        throws ObjectStoreException, SQLException {
         // override in subclasses as necessary
     }
 
@@ -1197,18 +1203,19 @@ public class ChadoSequenceProcessor extends ChadoProcessor
      */
     protected void createFeatureTempTable(Connection connection) throws SQLException {
         String featureTypesString = getFeaturesString();
-        String organismAbbrevsString = getOrganismIdsString();
-        String orgConstraint = "";
-        if (!StringUtils.isEmpty(organismAbbrevsString)) {
-        orgConstraint = "        AND organism_id IN (" + organismAbbrevsString + ")";
+        String organismConstraint = getOrganismConstraint();
+        String orgConstraintForQuery = "";
+        if (!StringUtils.isEmpty(organismConstraint)) {
+            orgConstraintForQuery = " AND " + organismConstraint;
         }
+
         String query =
             "CREATE TEMPORARY TABLE " + TEMP_FEATURE_TABLE_NAME + " AS"
             + " SELECT feature_id, feature.name, uniquename, cvterm.name as type, seqlen,"
             + "        is_analysis, residues, organism_id"
             + "    FROM feature, cvterm"
             + "    WHERE cvterm.name IN (" + featureTypesString  + ")"
-            + orgConstraint
+            + orgConstraintForQuery
             + "        AND NOT feature.is_obsolete"
             + "        AND feature.type_id = cvterm.cvterm_id "
             + (getExtraFeatureConstraint() != null
@@ -1231,6 +1238,20 @@ public class ChadoSequenceProcessor extends ChadoProcessor
     }
 
     /**
+     * Return some SQL that can be included in the WHERE part of query that restricts features
+     * by organism.  "organism_id" mus be selected.
+     * @return the SQL
+     */
+    protected String getOrganismConstraint() {
+        String organismIdsString = getOrganismIdsString();
+        if (StringUtils.isEmpty(organismIdsString)) {
+            return "";
+        } else {
+            return "organism_id IN (" + organismIdsString + ")";
+        }
+    }
+
+    /**
      * Return an extra constraint to be used when querying the feature table.  Any feature table
      * column or cvterm table column can be constrained.  The cvterm will match the type_id field
      * in the feature.
@@ -1243,9 +1264,11 @@ public class ChadoSequenceProcessor extends ChadoProcessor
     }
 
     /**
-     * @return
+     * Return an SQL query that finds the feature_ids of all rows from the feature table that we
+     * need to process.
+     * @return the SQL string
      */
-    private String getFeatureIdQuery() {
+    protected String getFeatureIdQuery() {
         return "SELECT feature_id FROM " + TEMP_FEATURE_TABLE_NAME;
     }
 
