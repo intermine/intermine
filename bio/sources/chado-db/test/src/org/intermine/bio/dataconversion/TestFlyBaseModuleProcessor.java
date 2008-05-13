@@ -12,6 +12,7 @@ package org.intermine.bio.dataconversion;
 
 import java.sql.Connection;
 import java.sql.ResultSet;
+import java.sql.SQLException;
 
 import com.mockobjects.sql.MockMultiRowResultSet;
 
@@ -336,4 +337,43 @@ public class TestFlyBaseModuleProcessor extends FlyBaseModuleProcessor
         res.setupColumnNames(columnNames);
         return res;
     }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    protected ResultSet getAllelePropResultSet(Connection connection) throws SQLException {
+        String[] columnNames = new String[] {
+            "feature_id", "value", "type_name"
+        };
+        Object[][] resObjects = new Object[][] {
+            {
+                3117509,
+                "@FBbt00004729:wing@, with @FBal0060667:Scer\\GAL4<up>sd-SG29.1</up>@",
+                "derived_pheno_manifest"
+            },
+            {
+                3117509,
+                "sensory mother cell & dorsal mesothoracic disc | ectopic, with @FBal0060667:Scer\\GAL4<up>sd-SG29.1</up>@",
+                "derived_pheno_manifest"
+            },
+            {
+                3117509,
+                "@FBbt00004729:wing@ | @FBcv0000031:anterior compartment@, with @FBal0060667:Scer\\GAL4<up>sd-SG29.1</up>@",
+                "derived_pheno_manifest"
+            },
+            {
+                3117509,
+                "@FBcv0000354:visible@, with @FBal0060667:Scer\\GAL4<up>sd-SG29.1</up>@",
+                "derived_pheno_class"
+            }
+
+        };
+
+        MockMultiRowResultSet res = new MockMultiRowResultSet();
+        res.setupRows(resObjects);
+        res.setupColumnNames(columnNames);
+        return res;
+    }
+
 }

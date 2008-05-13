@@ -9,6 +9,13 @@
     <attribute name="length" value="2345"/>
     <attribute name="residues" value="ccaggtg"/>
   </item>
+  <item id="13_3" class="http://www.flymine.org/model/genomic#PhenotypeAnnotation">
+    <attribute name="annotationType" value="manifest in"/>
+    <attribute name="description" value="wing | anterior compartment, with ScerGAL4&lt;up&gt;sd-SG29.1&lt;/up&gt;"/>
+    <reference name="allele" ref_id="0_2"/>
+    <reference name="phenotype" ref_id="14_2"/>
+    <reference name="subject" ref_id="0_2"/>
+  </item>
   <item id="11_3" class="http://www.flymine.org/model/genomic#Publication">
     <attribute name="pubMedId" value="2892759"/>
   </item>
@@ -64,16 +71,6 @@
     <attribute name="length" value="27905053"/>
     <attribute name="residues" value="ggtggaacttgagaacgagttcaagagcaacatgtactgatgaatctgtcgtggggcgagcctgctgccaagtcgagaaagctgag"/>
   </item>
-  <item id="12_4" class="http://www.flymine.org/model/genomic#Location">
-    <attribute name="end" value="24577107"/>
-    <attribute name="start" value="24576947"/>
-    <attribute name="strand" value="-1"/>
-    <reference name="object" ref_id="7_2"/>
-    <reference name="subject" ref_id="8_2"/>
-    <collection name="evidence">
-      <reference ref_id="4_1"/>
-    </collection>
-  </item>
   <item id="5_17" class="http://www.flymine.org/model/genomic#Synonym">
     <attribute name="isPrimary" value="false"/>
     <attribute name="type" value="identifier"/>
@@ -83,6 +80,16 @@
     <collection name="dataSets">
       <reference ref_id="4_1"/>
     </collection>
+    <collection name="evidence">
+      <reference ref_id="4_1"/>
+    </collection>
+  </item>
+  <item id="12_4" class="http://www.flymine.org/model/genomic#Location">
+    <attribute name="end" value="24577107"/>
+    <attribute name="start" value="24576947"/>
+    <attribute name="strand" value="-1"/>
+    <reference name="object" ref_id="7_2"/>
+    <reference name="subject" ref_id="8_2"/>
     <collection name="evidence">
       <reference ref_id="4_1"/>
     </collection>
@@ -119,6 +126,12 @@
     <collection name="evidence">
       <reference ref_id="4_1"/>
     </collection>
+  </item>
+  <item id="13_4" class="http://www.flymine.org/model/genomic#PhenotypeAnnotation">
+    <attribute name="annotationType" value="phenotype class"/>
+    <attribute name="description" value="visible, with ScerGAL4&lt;up&gt;sd-SG29.1&lt;/up&gt;"/>
+    <reference name="allele" ref_id="0_2"/>
+    <reference name="subject" ref_id="0_2"/>
   </item>
   <item id="5_1" class="http://www.flymine.org/model/genomic#Synonym">
     <attribute name="isPrimary" value="true"/>
@@ -227,6 +240,13 @@
       <reference ref_id="4_1"/>
     </collection>
   </item>
+  <item id="13_1" class="http://www.flymine.org/model/genomic#PhenotypeAnnotation">
+    <attribute name="annotationType" value="manifest in"/>
+    <attribute name="description" value="wing, with ScerGAL4&lt;up&gt;sd-SG29.1&lt;/up&gt;"/>
+    <reference name="allele" ref_id="0_2"/>
+    <reference name="phenotype" ref_id="14_1"/>
+    <reference name="subject" ref_id="0_2"/>
+  </item>
   <item id="5_3" class="http://www.flymine.org/model/genomic#Synonym">
     <attribute name="isPrimary" value="true"/>
     <attribute name="type" value="identifier"/>
@@ -246,6 +266,25 @@
     <attribute name="value" value="FBgn0000001_dbxref2"/>
     <reference name="source" ref_id="3_1"/>
     <reference name="subject" ref_id="0_1"/>
+    <collection name="dataSets">
+      <reference ref_id="4_1"/>
+    </collection>
+    <collection name="evidence">
+      <reference ref_id="4_1"/>
+    </collection>
+  </item>
+  <item id="14_1" class="http://www.flymine.org/model/genomic#Phenotype">
+    <attribute name="identifier" value="FBbt00004729"/>
+  </item>
+  <item id="14_2" class="http://www.flymine.org/model/genomic#Phenotype">
+    <attribute name="identifier" value="FBbt00004729"/>
+  </item>
+  <item id="5_14" class="http://www.flymine.org/model/genomic#Synonym">
+    <attribute name="isPrimary" value="true"/>
+    <attribute name="type" value="name"/>
+    <attribute name="value" value="CG10006[GD2461]"/>
+    <reference name="source" ref_id="3_1"/>
+    <reference name="subject" ref_id="10_1"/>
     <collection name="dataSets">
       <reference ref_id="4_1"/>
     </collection>
@@ -299,17 +338,6 @@
   <item id="2_7" class="http://www.flymine.org/model/genomic#Sequence">
     <attribute name="length" value="148"/>
     <attribute name="residues" value="gattgctcagcgcgaacg"/>
-  </item>
-  <item id="10_1" class="http://www.flymine.org/model/genomic#Allele">
-    <attribute name="primaryIdentifier" value="FBal0198867"/>
-    <reference name="gene" ref_id="0_2"/>
-    <reference name="organism" ref_id="1_1"/>
-    <collection name="dataSets">
-      <reference ref_id="4_1"/>
-    </collection>
-    <collection name="evidence">
-      <reference ref_id="4_1"/>
-    </collection>
   </item>
   <item id="4_1" class="http://www.flymine.org/model/genomic#DataSet">
     <attribute name="description" value="The FlyBase Drosophila melanogaster genome"/>
@@ -367,19 +395,6 @@
       <reference ref_id="4_1"/>
     </collection>
   </item>
-  <item id="5_14" class="http://www.flymine.org/model/genomic#Synonym">
-    <attribute name="isPrimary" value="false"/>
-    <attribute name="type" value="name"/>
-    <attribute name="value" value="CG10006[GD2461]"/>
-    <reference name="source" ref_id="3_1"/>
-    <reference name="subject" ref_id="10_1"/>
-    <collection name="dataSets">
-      <reference ref_id="4_1"/>
-    </collection>
-    <collection name="evidence">
-      <reference ref_id="4_1"/>
-    </collection>
-  </item>
   <item id="5_8" class="http://www.flymine.org/model/genomic#Synonym">
     <attribute name="isPrimary" value="true"/>
     <attribute name="type" value="identifier"/>
@@ -422,6 +437,24 @@
   </item>
   <item id="11_1" class="http://www.flymine.org/model/genomic#Publication">
     <attribute name="pubMedId" value="8344257"/>
+  </item>
+  <item id="13_2" class="http://www.flymine.org/model/genomic#PhenotypeAnnotation">
+    <attribute name="annotationType" value="manifest in"/>
+    <attribute name="description" value="sensory mother cell &amp; dorsal mesothoracic disc | ectopic, with ScerGAL4&lt;up&gt;sd-SG29.1&lt;/up&gt;"/>
+    <reference name="allele" ref_id="0_2"/>
+    <reference name="subject" ref_id="0_2"/>
+  </item>
+  <item id="10_1" class="http://www.flymine.org/model/genomic#Allele">
+    <attribute name="primaryIdentifier" value="FBal0198867"/>
+    <attribute name="secondaryIdentifier" value="CG10006[GD2461]"/>
+    <reference name="gene" ref_id="0_2"/>
+    <reference name="organism" ref_id="1_1"/>
+    <collection name="dataSets">
+      <reference ref_id="4_1"/>
+    </collection>
+    <collection name="evidence">
+      <reference ref_id="4_1"/>
+    </collection>
   </item>
   <item id="12_1" class="http://www.flymine.org/model/genomic#Location">
     <attribute name="end" value="14990594"/>
@@ -515,12 +548,12 @@
       <reference ref_id="4_1"/>
     </collection>
   </item>
-  <item id="5_4" class="http://www.flymine.org/model/genomic#Synonym">
+  <item id="5_13" class="http://www.flymine.org/model/genomic#Synonym">
     <attribute name="isPrimary" value="true"/>
-    <attribute name="type" value="name"/>
-    <attribute name="value" value="CG10000-RA"/>
+    <attribute name="type" value="identifier"/>
+    <attribute name="value" value="FBal0198867"/>
     <reference name="source" ref_id="3_1"/>
-    <reference name="subject" ref_id="6_1"/>
+    <reference name="subject" ref_id="10_1"/>
     <collection name="dataSets">
       <reference ref_id="4_1"/>
     </collection>
@@ -528,12 +561,12 @@
       <reference ref_id="4_1"/>
     </collection>
   </item>
-  <item id="5_13" class="http://www.flymine.org/model/genomic#Synonym">
+  <item id="5_4" class="http://www.flymine.org/model/genomic#Synonym">
     <attribute name="isPrimary" value="true"/>
-    <attribute name="type" value="identifier"/>
-    <attribute name="value" value="FBal0198867"/>
+    <attribute name="type" value="name"/>
+    <attribute name="value" value="CG10000-RA"/>
     <reference name="source" ref_id="3_1"/>
-    <reference name="subject" ref_id="10_1"/>
+    <reference name="subject" ref_id="6_1"/>
     <collection name="dataSets">
       <reference ref_id="4_1"/>
     </collection>

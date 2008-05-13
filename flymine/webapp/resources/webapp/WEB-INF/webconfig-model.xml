@@ -839,6 +839,21 @@
     </fields>
   </class>
 
+  <class className="org.flymine.model.genomic.PhenotypeAnnotation">
+    <fields>
+      <fieldconfig fieldExpr="annotationType"/>
+      <fieldconfig fieldExpr="description"/>
+      <fieldconfig fieldExpr="allele.primaryIdentifier"/>
+    </fields>
+  </class>
+
+  <class className="org.flymine.model.genomic.Allele">
+    <fields>
+      <fieldconfig fieldExpr="primaryIdentifier"/>
+      <fieldconfig fieldExpr="secondaryIdentifier"/>
+      <fieldconfig fieldExpr="organism.name"/>
+    </fields>
+  </class>
 
   <tableExportConfig id="sequenceExporter" actionPath="/exportAction?type=sequenceExporter"
                      className="org.intermine.bio.web.export.SequenceHttpExporter"/>
