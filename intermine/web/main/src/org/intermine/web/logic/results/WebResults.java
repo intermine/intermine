@@ -32,7 +32,6 @@ import org.intermine.objectstore.query.Query;
 import org.intermine.objectstore.query.QueryClass;
 import org.intermine.objectstore.query.QueryCollectionPathExpression;
 import org.intermine.objectstore.query.QueryField;
-import org.intermine.objectstore.query.QueryNode;
 import org.intermine.objectstore.query.QueryObjectPathExpression;
 import org.intermine.objectstore.query.QuerySelectable;
 import org.intermine.objectstore.query.Results;
@@ -45,6 +44,7 @@ import org.intermine.web.logic.ClassKeyHelper;
 import org.intermine.web.logic.WebUtil;
 import org.intermine.web.logic.bag.BagQueryResult;
 import org.intermine.web.logic.query.PathQuery;
+import org.intermine.web.logic.query.PathQueryBinding;
 
 /**
  * The web version of a Results object.  This class handles the mapping between the paths that user
@@ -318,7 +318,9 @@ public class WebResults extends AbstractList<List<Object>> implements WebTable
             }
             if (columnIndexInteger == null) {
                 throw new NullPointerException("Path: \"" + columnName + "\", pathToIndex: \""
-                        + pathToIndex + "\", prefix: \"" + parentColumnName + "\"");
+                        + pathToIndex + "\", prefix: \"" + parentColumnName + "\", query: \""
+                        + PathQueryBinding.marshal(pathQuery, "", pathQuery.getModel().getName())
+                        + "\"");
             }
             int columnIndex = columnIndexInteger.intValue();
             Object origO = initialList.get(columnIndex);
