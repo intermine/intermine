@@ -498,7 +498,6 @@ public class UniprotConverter extends FileConverter
                     } else {
                         pubId = pubMaster.get(attrs.getValue("id"));
                     }
-                    // if this is the first publication for this protein, add collection
                     if (pubCollection.getRefIds().isEmpty()) {
                         protein.addCollection(pubCollection);
                     }

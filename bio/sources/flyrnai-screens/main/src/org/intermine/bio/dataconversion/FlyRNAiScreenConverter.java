@@ -11,6 +11,7 @@ package org.intermine.bio.dataconversion;
  */
 
 import java.io.Reader;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -26,6 +27,7 @@ import org.intermine.metadata.Model;
 import org.intermine.objectstore.ObjectStoreException;
 import org.intermine.util.FormattedTextParser;
 import org.intermine.xml.full.Item;
+import org.intermine.xml.full.ReferenceList;
 
 /**
  * DataConverter to create items from DRSC RNAi screen date files.
@@ -94,6 +96,11 @@ public class FlyRNAiScreenConverter extends FileConverter
      * {@inheritDoc}
      */
     public void close() throws Exception {
+
+        for (Item screen : screenMap.values()) {
+            store(screen);
+        }
+
         Set<String> noDetails = new HashSet<String>();
         for (String screenName : hitScreenNames) {
             if (!detailsScreenNames.contains(screenName)) {
@@ -134,10 +141,9 @@ public class FlyRNAiScreenConverter extends FileConverter
         }
 
         while (tsvIter.hasNext()) {
+
             String [] line = (String[]) tsvIter.next();
-
             if (!readingData) {
-
                 if (line.length == 2) {
                     // this is the key to result symbol, put them in a map.  Strip off 'A '.
                     if (!line[0].equals("") && !line[1].equals("")) {
@@ -152,9 +158,9 @@ public class FlyRNAiScreenConverter extends FileConverter
                     headerLength = line.length;
                     screens = new Item[headerLength - 2];
                     for (int i = 2; i < line.length; i++) {
-                        // create an array of screen item identifers (first two slots empty)
+                        // create an array of screen item identifiers (first two slots empty)
                         String screenName = line[i].trim();
-                        screens[i - 2] = getScreen(screenName, "hits");
+                        screens[i - 2] = getScreen(screenName);
                         hitScreenNames.add(screenName);
                     }
                 }
@@ -164,14 +170,15 @@ public class FlyRNAiScreenConverter extends FileConverter
                                                + line + " (should be " + headerLength);
                 }
 
-                Set<Item> genes = new LinkedHashSet<Item>();
+                Set<Item> ampliconGenes = new LinkedHashSet<Item>();
 
                 String ampliconIdentifier = line[0].trim();
                 Item amplicon = createItem("Amplicon");
                 amplicon.setAttribute("primaryIdentifier", ampliconIdentifier);
                 amplicon.setReference("organism", organism);
                 amplicon.addToCollection("evidence", dataSet);
-                store(amplicon);
+                amplicon.addCollection(new ReferenceList("rnaiScreenHits",
+                                                         new ArrayList<String>()));
 
                 newSynonym(ampliconIdentifier, amplicon, dataSource);
 
@@ -179,10 +186,9 @@ public class FlyRNAiScreenConverter extends FileConverter
                 // by more than one amplicon.
                 if (!(line[1] == null || line[1].equals(""))) {
                     String [] geneNames = line[1].split(",");
-
                     for (int i = 0; i < geneNames.length; i++) {
                         String geneSymbol = geneNames[i].trim();
-                        genes.add(newGene(geneSymbol));
+                        ampliconGenes.add(newGene(geneSymbol));
                     }
                 }
 
@@ -193,27 +199,40 @@ public class FlyRNAiScreenConverter extends FileConverter
                         throw new RuntimeException("Unrecogised result symbol '" + line[j + 2]
                             + "' in line: " + Arrays.asList(line));
                     }
+
                     if (genes.isEmpty()) {
                         // create a hit that doesn't reference a gene
                         Item screenHit = createItem("RNAiScreenHit");
-                        screenHit.setReference("analysis", screens[j]);
-
+                        String refId = screenHit.getIdentifier();
+                        screenHit.setReference("rnaiScreen", screens[j]);
                         screenHit.setAttribute("result", resultValue);
                         screenHit.setReference("amplicon", amplicon);
+                        amplicon.getCollection("rnaiScreenHits").addRefId(refId);
+                        screens[j].getCollection("rnaiScreenHits").addRefId(refId);
                         store(screenHit);
                     } else {
                         // create one hit for each gene targeted
-                        for (Item gene : genes) {
+                        for (Item gene : ampliconGenes) {
                             Item screenHit = createItem("RNAiScreenHit");
-                            screenHit.setReference("analysis", screens[j]);
+                            String refId = screenHit.getIdentifier();
+                            screenHit.setReference("rnaiScreen", screens[j]);
                             screenHit.setReference("gene", gene);
                             screenHit.setAttribute("result", resultValue);
                             screenHit.setReference("amplicon", amplicon);
+                            //screens[j].getCollection("genes").addRefId(gene.getIdentifier());
+                            //gene.getCollection("rnaiScreen").addRefId(screens[j].getIdentifier());
+                            amplicon.getCollection("rnaiScreenHits").addRefId(refId);
+                            screens[j].getCollection("rnaiScreenHits").addRefId(refId);
                             store(screenHit);
                         }
                     }
                 }
+                store(amplicon);
             }
+        }
+
+        for (Item gene : genes.values()) {
+            store(gene);
         }
     }
 
@@ -230,21 +249,27 @@ public class FlyRNAiScreenConverter extends FileConverter
             String [] line = (String[]) tsvIter.next();
 
             if (line.length != 5) {
-                throw new IllegalArgumentException("Did not find five elements in line: "
-                                                   + Arrays.asList(line));
+                throw new RuntimeException("Did not find five elements in line, found "
+                          + line.length + ": " + Arrays.asList(line));
             }
             String pubmedId = line[0].trim();
             Item publication = getPublication(pubmedId);
 
             String screenName = line[2].trim();
             detailsScreenNames.add(screenName);
-            Item screen = getScreen(screenName, "screen details");
+            Item screen = getScreen(screenName);
             screen.setAttribute("name", screenName);
             screen.setAttribute("cellLine", line[3].trim());
-            screen.setAttribute("analysisDescription", line[4].trim());
+            String analysisDescr = line[4].trim();
+            if (analysisDescr != null && !analysisDescr.equals("")) {
+                screen.setAttribute("analysisDescription", line[4].trim());
+            }
             screen.setReference("organism", organism);
             screen.setReference("publication", publication);
-            store(screen);
+
+            // the hits file may be processed first
+            screenMap.remove(screenName);
+            screenMap.put(screenName, screen);
         }
     }
 
@@ -262,10 +287,12 @@ public class FlyRNAiScreenConverter extends FileConverter
     }
 
     // Fetch of create an RNAiScreen
-    private Item getScreen(String screenName, String fileName) {
+    private Item getScreen(String screenName) {
         Item screen = screenMap.get(screenName);
         if (screen == null) {
             screen = createItem("RNAiScreen");
+            screen.addCollection((new ReferenceList("rnaiScreenHits", new ArrayList<String>())));
+            //screen.addCollection(new ReferenceList("genes", new ArrayList<String>()));
             screenMap.put(screenName, screen);
         }
         return screen;
@@ -276,9 +303,8 @@ public class FlyRNAiScreenConverter extends FileConverter
      * Convenience method to create a new gene Item
      * @param geneSymbol the gene symbol
      * @return a new gene Item
-     * @throws ObjectStoreException if an error occurs when storing the Item
      */
-    protected Item newGene(String geneSymbol)  throws ObjectStoreException {
+    protected Item newGene(String geneSymbol) {
         if (geneSymbol == null) {
             throw new RuntimeException("geneSymbol can't be null");
         }
@@ -287,8 +313,8 @@ public class FlyRNAiScreenConverter extends FileConverter
             item = createItem("Gene");
             item.setAttribute("symbol", geneSymbol);
             item.setReference("organism", organism);
+            item.addCollection(new ReferenceList("rnaiResults", new ArrayList<String>()));
             genes.put(geneSymbol, item);
-            store(item);
         }
         return item;
     }
