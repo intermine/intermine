@@ -14,6 +14,11 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
+import org.flymine.model.genomic.Gene;
+import org.flymine.model.genomic.Organism;
+import org.flymine.model.genomic.Publication;
+import org.intermine.bio.web.logic.BioUtil;
+import org.intermine.objectstore.ObjectStore;
 import org.intermine.objectstore.query.BagConstraint;
 import org.intermine.objectstore.query.ConstraintOp;
 import org.intermine.objectstore.query.ConstraintSet;
@@ -25,29 +30,19 @@ import org.intermine.objectstore.query.QueryExpression;
 import org.intermine.objectstore.query.QueryField;
 import org.intermine.objectstore.query.QueryFunction;
 import org.intermine.objectstore.query.QueryObjectReference;
-import org.intermine.objectstore.query.QueryValue;
-import org.intermine.objectstore.query.SimpleConstraint;
-
-import org.intermine.bio.web.logic.BioUtil;
-import org.intermine.objectstore.ObjectStore;
 import org.intermine.web.logic.bag.InterMineBag;
 import org.intermine.web.logic.widget.EnrichmentWidgetLdr;
-
-import org.flymine.model.genomic.Gene;
-import org.flymine.model.genomic.Organism;
-import org.flymine.model.genomic.Publication;
 
 /**
  * {@inheritDoc}
  * @author Julie Sullivan
  */
-public class PublicationLdr implements EnrichmentWidgetLdr
+public class PublicationLdr extends EnrichmentWidgetLdr
 {
     private Collection<String> organisms;
-    private String externalLink, append;
     private InterMineBag bag;
     private Collection<String> organismsLower = new ArrayList<String>();
- 
+
     /**
      * Constructor
      * @param bag the bag
@@ -55,17 +50,17 @@ public class PublicationLdr implements EnrichmentWidgetLdr
      * @param extraAttribute an extra attribute, probably organism
      */
     public PublicationLdr(InterMineBag bag, ObjectStore os, String extraAttribute) {
-        this.bag = bag;        
+        this.bag = bag;
         organisms = BioUtil.getOrganisms(os, bag, false);
         for (String s : organisms) {
             organismsLower.add(s.toLowerCase());
         }
-    }    
-    
+    }
+
     /**
      * {@inheritDoc}
      */
-    public Query getQuery(boolean calcTotal, boolean useBag, List<String> keys) {
+    public Query getQuery(String action, List<String> keys) {
 
         QueryClass qcGene = new QueryClass(Gene.class);
         QueryClass qcPub = new QueryClass(Publication.class);
@@ -76,7 +71,7 @@ public class PublicationLdr implements EnrichmentWidgetLdr
         QueryField qfId = new QueryField(qcPub, "pubMedId");
         QueryField qfPubTitle = new QueryField(qcPub, "title");
         QueryField qfPrimaryIdentifier = new QueryField(qcGene, "primaryIdentifier");
-        
+
         QueryFunction geneCount = new QueryFunction();
 
         ConstraintSet cs = new ConstraintSet(ConstraintOp.AND);
@@ -84,13 +79,13 @@ public class PublicationLdr implements EnrichmentWidgetLdr
         if (keys != null) {
             cs.addConstraint(new BagConstraint(qfId, ConstraintOp.IN, keys));
         }
-        
-        if (useBag) {
+
+        if (!action.startsWith("population")) {
             cs.addConstraint(new BagConstraint(qfGeneId, ConstraintOp.IN, bag.getOsb()));
         }
         QueryExpression qe = new QueryExpression(QueryExpression.LOWER, qfOrganismName);
         cs.addConstraint(new BagConstraint(qe, ConstraintOp.IN, organismsLower));
-        
+
         QueryObjectReference qor = new QueryObjectReference(qcGene, "organism");
         cs.addConstraint(new ContainsConstraint(qor, ConstraintOp.CONTAINS, qcOrganism));
 
@@ -99,12 +94,25 @@ public class PublicationLdr implements EnrichmentWidgetLdr
 
         Query q = new Query();
         q.setDistinct(false);
-        if (!calcTotal) {           
+
+        if (action.endsWith("Total") || action.equals("analysed")) {
+            Query subQ = new Query();
+            subQ.setDistinct(true);
+            subQ.addFrom(qcGene);
+            subQ.addFrom(qcPub);
+            subQ.addFrom(qcOrganism);
+            subQ.addToSelect(qfGeneId);
+            subQ.setConstraint(cs);
+            if (action.equals("analysed")) {
+                return subQ;
+            }
+            q.addFrom(subQ);
+            q.addToSelect(geneCount);
+        } else {
             q.addFrom(qcGene);
             q.addFrom(qcPub);
-            q.addFrom(qcOrganism); 
-
-            if (keys != null && !keys.isEmpty()) {
+            q.addFrom(qcOrganism);
+            if (action.equals("export")) {
                 q.addToSelect(qfId);
                 q.addToSelect(qfPrimaryIdentifier);
                 q.addToOrderBy(qfId);
@@ -112,71 +120,14 @@ public class PublicationLdr implements EnrichmentWidgetLdr
                 q.addToSelect(qfId);
                 q.addToGroupBy(qfId);
                 q.addToSelect(geneCount);
-                if (useBag) {
+                if (action.equals("sample")) {
                     q.addToSelect(qfPubTitle);
                     q.addToGroupBy(qfPubTitle);
                 }
             }
-            q.setConstraint(cs); 
-
-        } else {            
-            Query subQ = new Query();
-            subQ.setDistinct(true);
-
-            subQ.addFrom(qcGene);
-            subQ.addFrom(qcPub);
-            subQ.addFrom(qcOrganism);
-                
-            subQ.addToSelect(qfGeneId);
-            subQ.setConstraint(cs);
- 
-            q.addFrom(subQ);
-            q.addToSelect(geneCount);
+            q.setConstraint(cs);
         }
-        
         return q;
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    public Query getAnnotatedSampleQuery(boolean calcTotal) {
-        return getQuery(calcTotal, true, null);
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    public Query getAnnotatedPopulationQuery(boolean calcTotal) {
-        return getQuery(calcTotal, false, null);
-    }
-    
-    /**
-     * {@inheritDoc}
-     */
-    public Query getExportQuery(List<String> keys) {
-        return getQuery(false, true, keys);
-    }
-    
-    /**
-     * {@inheritDoc}
-     */
-    public Collection<String> getPopulationDescr() {
-        return organisms;
-    }
-    
-    /**
-     * {@inheritDoc}
-     */
-    public String getExternalLink() {
-        return externalLink;
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    public String getAppendage() {
-        return append;
     }
 }
 

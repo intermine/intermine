@@ -42,14 +42,13 @@ import org.flymine.model.genomic.TFBindingSite;
 /**
  * @author Julie Sullivan
  */
-public class TiffinLdr implements EnrichmentWidgetLdr
+public class TiffinLdr extends EnrichmentWidgetLdr
 {
 
-    private String externalLink, append;
     private Collection<String> organisms = new ArrayList<String>();
     private Collection<String> organismsLower = new ArrayList<String>();
     private InterMineBag bag;
-    
+
     /**
      * @param bag list of objects for this widget
      * @param os object store
@@ -66,7 +65,7 @@ public class TiffinLdr implements EnrichmentWidgetLdr
      /**
       * {@inheritDoc}
       */
-     public Query getQuery(boolean calcTotal, boolean useBag, List<String> keys) {
+     public Query getQuery(String action, List<String> keys) {
 
          QueryClass qcGene = new QueryClass(Gene.class);
          QueryClass qcIntergenicRegion = new QueryClass(IntergenicRegion.class);
@@ -84,12 +83,12 @@ public class TiffinLdr implements EnrichmentWidgetLdr
          QueryField qfDataSet = new QueryField(qcDataSet, "title");
 
          ConstraintSet cs = new ConstraintSet(ConstraintOp.AND);
-         
+
          if (keys != null) {
              cs.addConstraint(new BagConstraint(qfId, ConstraintOp.IN, keys));
          }
-         
-         if (useBag) {
+
+         if (!action.startsWith("population")) {
              cs.addConstraint(new BagConstraint(qfGeneId, ConstraintOp.IN, bag.getOsb()));
          }
 
@@ -113,11 +112,11 @@ public class TiffinLdr implements EnrichmentWidgetLdr
          QueryObjectReference  qr5 = new QueryObjectReference(qcTFBindingSite, "motif");
          cs.addConstraint(new ContainsConstraint(qr5, ConstraintOp.CONTAINS, qcMotif));
 
-         cs.addConstraint(new SimpleConstraint(qfDataSet,                            
+         cs.addConstraint(new SimpleConstraint(qfDataSet,
                                                ConstraintOp.EQUALS, new QueryValue("Tiffin")));
          Query subQ = new Query();
          subQ.setDistinct(true);
-         
+
          subQ.addFrom(qcGene);
          subQ.addFrom(qcIntergenicRegion);
          subQ.addFrom(qcTFBindingSite);
@@ -125,10 +124,13 @@ public class TiffinLdr implements EnrichmentWidgetLdr
          subQ.addFrom(qcMotif);
          subQ.addFrom(qcOrganism);
 
-         //subQ.addToSelect(qfId);
          subQ.addToSelect(qfGeneId);
-         
+
          subQ.setConstraint(cs);
+
+         if (keys != null) {
+             return subQ;
+         }
 
          QueryField outerQfId = new QueryField(subQ, qfId);
          QueryFunction geneCount = new QueryFunction();
@@ -138,67 +140,26 @@ public class TiffinLdr implements EnrichmentWidgetLdr
 
          q.addFrom(subQ);
 
-         if (keys != null && !keys.isEmpty()) {
-             q.addToSelect(qfId);
-             q.addToSelect(qfPrimaryIdentifier);
-             q.addToOrderBy(qfId);
 
-         } else if (!calcTotal) {
+         if (action.equals("analysed") || action.equals("export")) {
+
+                 q.addToSelect(qfId);
+                 q.addToSelect(qfPrimaryIdentifier);
+                 q.addToOrderBy(qfId);
+
+         } else if (!action.endsWith("Total")) {
              q.addToSelect(outerQfId);
              q.addToSelect(geneCount);
-             if (useBag) {
+             if (!action.startsWith("population")) {
                  q.addToSelect(outerQfId);
              }
              q.addToGroupBy(outerQfId);
 
          } else {
-             q.addToSelect(geneCount);         
+             q.addToSelect(geneCount);
          }
          return q;
      }
-
-     /**
-      * {@inheritDoc}
-      */
-     public Query getAnnotatedSampleQuery(boolean calcTotal) {
-         return getQuery(calcTotal, true, null);
-     }
-
-     /**
-      * {@inheritDoc}
-      */
-     public Query getAnnotatedPopulationQuery(boolean calcTotal) {
-         return getQuery(calcTotal, false, null);
-     }
-     
-     /**
-      * {@inheritDoc}
-      */
-     public Query getExportQuery(List<String> keys) {
-         return getQuery(false, true, keys);
-     }
-     
-      /**
-      * {@inheritDoc}
-       */
-      public Collection<String> getPopulationDescr() {
-          return organisms;
-      }
-     
-     /**
-      * {@inheritDoc}
-      */
-     public String getExternalLink() {
-         return externalLink;
-     }
-
-     /**
-      * {@inheritDoc}
-      */
-     public String getAppendage() {
-         return append;
-     }
-
 }
 
 
