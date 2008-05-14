@@ -71,11 +71,11 @@ public class MirandaConverter extends FileConverter
             // TODO error in file score should be pvalue
             miRNAtarget.setAttribute("pvalue", record.getAttributes().get("score").iterator()
                             .next());
-            miRNAtarget.addToCollection("targets", getTarget(record.getAttributes().get("target")
+            miRNAtarget.setReference("target", getTarget(record.getAttributes().get("target")
                             .iterator().next(), organism));
             String geneName = record.getSequenceID();
             Item gene = getMiRNAGene(geneName);
-            miRNAtarget.addToCollection("genes", gene);
+            miRNAtarget.setReference("mirnagene", gene);
             miRNAtarget.setReference("dataset", dataSet);
             store(miRNAtarget);
         }
@@ -96,7 +96,9 @@ public class MirandaConverter extends FileConverter
     private Item getMiRNAGene(String geneName) throws ObjectStoreException {
         Item gene = miRNAgenes.get(geneName);
         if (gene == null) {
-            String symbol = geneName.substring(geneName.indexOf("-") + 1);
+            String geneNameToUse = (geneName.startsWith("dme")) ? geneName.substring(geneName
+                            .indexOf("-") + 1) : geneName;
+            String symbol = geneNameToUse;
             Item organism = getOrganism(mirandaToTaxonId.get(geneName.substring(0, geneName
                             .indexOf("-"))));
             gene = createItem("Gene");
