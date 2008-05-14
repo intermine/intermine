@@ -32,7 +32,7 @@
   <p>Number of ${bag.type}s not analysed in this widget:
 
 	<c:choose>
-	<c:when test="${type == 'EnrichmentWidget}">
+	<c:when test="${type == 'EnrichmentWidget'}">
     	<a href="javascript:displayNotAnalysed(${widget.id})"><span id="widgetnotanalysed${widget.id}">${widget.notAnalysed}</span></a></p>
 	</c:when>
 	<c:otherwise>
