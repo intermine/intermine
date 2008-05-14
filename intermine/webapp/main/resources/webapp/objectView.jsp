@@ -22,7 +22,7 @@
       <c:set var="maxLength" value="60"/>
       <c:choose>
         <c:when test="${object != null && object.class.name == 'java.lang.String' && fn:length(object) > maxLength}">
-      <im:abbreviate value="${object}" length="${maxLength}"/><html:link action="${detailsLink}">...</html:link>
+      <html:link action="${detailsLink}"><im:abbreviate value="${object}" length="${maxLength}"/>...</html:link>
         </c:when>
         <c:when test="${resultElement.keyField}">
           <html:link action="${detailsLink}">
