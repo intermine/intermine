@@ -179,7 +179,8 @@ public class FlyRNAiScreenConverter extends FileConverter
                 amplicon.addToCollection("evidence", dataSet);
                 amplicon.addCollection(new ReferenceList("rnaiScreenHits",
                                                          new ArrayList<String>()));
-
+                amplicon.addCollection(new ReferenceList("genes",
+                                                         new ArrayList<String>()));
                 newSynonym(ampliconIdentifier, amplicon, dataSource);
 
                 // the amplicon may target zero or more genes, a gene can be targeted
@@ -222,6 +223,7 @@ public class FlyRNAiScreenConverter extends FileConverter
                             //screens[j].getCollection("genes").addRefId(gene.getIdentifier());
                             //gene.getCollection("rnaiScreen").addRefId(screens[j].getIdentifier());
                             amplicon.getCollection("rnaiScreenHits").addRefId(refId);
+                            amplicon.getCollection("genes").addRefId(gene.getIdentifier());
                             screens[j].getCollection("rnaiScreenHits").addRefId(refId);
                             store(screenHit);
                         }

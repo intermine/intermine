@@ -15,6 +15,7 @@
   </class>
   <class name="org.flymine.model.genomic.Amplicon" extends="org.flymine.model.genomic.LocatedSequenceFeature" is-interface="true">
     <collection name="rnaiScreenHits" referenced-type="org.flymine.model.genomic.RNAiScreenHit"/>
+    <collection name="genes" referenced-type="org.flymine.model.genomic.Gene"/>
   </class>
   <class name="org.flymine.model.genomic.Gene" is-interface="true">
   	<collection name="rnaiResults" referenced-type="org.flymine.model.genomic.RNAiResult" reverse-reference="gene"/>
