@@ -29,7 +29,16 @@
   <span id="closewidget${widget.id}" class="widgetcloser"><a href="javascript:toggleWidget('widgetcontainer${widget.id}','togglelink${widget.id}');">close x</a></span>
   <h3>${widget.title}</h3>
   <p>${widget.description}</p>
-  <p>Number of ${bag.type}s not analysed in this widget:  <a href="javascript:displayNotAnalysed(${widget.id})"><span id="widgetnotanalysed${widget.id}">${widget.notAnalysed}</span></a></p>
+  <p>Number of ${bag.type}s not analysed in this widget:
+
+	<c:choose>
+	<c:when test="${type == 'EnrichmentWidget}">
+    	<a href="javascript:displayNotAnalysed(${widget.id})"><span id="widgetnotanalysed${widget.id}">${widget.notAnalysed}</span></a></p>
+	</c:when>
+	<c:otherwise>
+    	<span id="widgetnotanalysed${widget.id}">${widget.notAnalysed}</span></a>
+    </c:otherwise>
+	</c:choose>
  <c:set var="extraAttrMap" value="${widget2extraAttrs[widget.id]}" />
  <c:if test="${type == 'EnrichmentWidget' || fn:length(extraAttrMap)>0}" >
   <fieldset>
