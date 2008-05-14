@@ -10,6 +10,7 @@ package org.intermine.bio.dataconversion;
  *
  */
 
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Set;
 
@@ -29,14 +30,22 @@ import org.apache.commons.io.IOUtils;
 public class FlyFishConverterTest extends ItemsTestCase
 {
     Model model = Model.getInstanceByName("genomic");
-
-    public FlyFishConverterTest(String arg) {
+    FlyFishConverter converter;
+    MockItemWriter itemWriter;
+    
+    public FlyFishConverterTest(String arg) throws Exception {
         super(arg);
+        itemWriter = new MockItemWriter(new HashMap());
+        converter = new FlyFishConverter(itemWriter, model);
+        MockIdResolverFactory resolverFactory = new MockIdResolverFactory("Gene");
+        resolverFactory.addResolverEntry("7227", "FBgn0037874", Collections.singleton("CG4800"));
+        resolverFactory.addResolverEntry("7227", "FBgn0020415", Collections.singleton("CG4475"));
+        resolverFactory.addResolverEntry("7227", "FBgn0039830", Collections.singleton("CG1746"));
+        resolverFactory.addResolverEntry("7227", "FBgn0019830", Collections.singleton("CG3057"));
+        converter.resolverFactory = resolverFactory;
     }
 
     public void testConstruct() throws Exception {
-        MockItemWriter itemWriter = new MockItemWriter(new HashMap());
-        FlyFishConverter converter = new FlyFishConverter(itemWriter, model);
         assertNotNull(converter.orgDrosophila);
     }
 
@@ -45,8 +54,6 @@ public class FlyFishConverterTest extends ItemsTestCase
         ClassLoader loader = getClass().getClassLoader();
         String input = IOUtils.toString(loader.getResourceAsStream("test-matrix"));
 
-        MockItemWriter itemWriter = new MockItemWriter(new HashMap());
-        FlyFishConverter converter = new FlyFishConverter(itemWriter, model);
         converter.setCurrentFile(new File("test-matrix"));
         converter.process(new StringReader(input));
         converter.close();

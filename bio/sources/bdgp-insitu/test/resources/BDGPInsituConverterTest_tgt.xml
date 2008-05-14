@@ -112,7 +112,7 @@
 <attribute name="name" value="Stage 7"/>
 </item>
 <item id="5_1" class="http://www.flymine.org/model/genomic#Gene">
-<attribute name="secondaryIdentifier" value="CG1"/>
+<attribute name="primaryIdentifier" value="FBgn1"/>
 <reference name="organism" ref_id="0_1"/>
 </item>
 <item id="4_15" class="http://www.flymine.org/model/genomic#Stage">
@@ -155,7 +155,7 @@
 <attribute name="url" value="http://www.fruitfly.org/insituimages/insitu_images/thumbnails/image3.jpg"/>
 </item>
 <item id="5_2" class="http://www.flymine.org/model/genomic#Gene">
-<attribute name="secondaryIdentifier" value="CG2"/>
+<attribute name="primaryIdentifier" value="FBgn2"/>
 <reference name="organism" ref_id="0_1"/>
 </item>
 <item id="7_5" class="http://www.flymine.org/model/genomic#Image">

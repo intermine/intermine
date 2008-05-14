@@ -36,20 +36,22 @@ public class BDGPInsituConverter extends FileConverter
 {
     protected static final Logger LOG = Logger.getLogger(BDGPInsituConverter.class);
 
-    private static final String URL 
+    private static final String URL
     = "http://www.fruitfly.org/insituimages/insitu_images/thumbnails/";
     private Map<String, Item> genes = new HashMap<String, Item>();
     private Map<String, Item> terms = new HashMap<String, Item>();
     private Map<String, Item> results = new HashMap<String, Item>();
     private Map<String, Item> imgs = new HashMap<String, Item>();
-    
+
     Item orgDrosophila;
     private Item dataSet;
     private Item pub;
     private String[] stages;
     private String[] stageDescriptions;
     private Set<String> badTerms;
-    
+    protected IdResolverFactory resolverFactory;
+    private static final String TAXON_ID = "7227";
+
     /**
      * Construct a new instance of BDGPInsituConverter.
      *
@@ -61,9 +63,9 @@ public class BDGPInsituConverter extends FileConverter
         super(writer, model);
 
         orgDrosophila = createItem("Organism");
-        orgDrosophila.setAttribute("taxonId", "7227");
+        orgDrosophila.setAttribute("taxonId", TAXON_ID);
         store(orgDrosophila);
-        
+
         Item dataSource = createItem("DataSource");
         dataSource.setAttribute("name", "BDGP");
         dataSource.setAttribute("url", "http://www.fruitfly.org");
@@ -78,10 +80,12 @@ public class BDGPInsituConverter extends FileConverter
         pub = createItem("Publication");
         pub.setAttribute("pubMedId", "17645804");
         store(pub);
-        
+
         stages = getStages();
         stageDescriptions = getStageDescriptions();
         badTerms = getBadTerms();
+
+        resolverFactory = new FlyBaseIdResolverFactory();
     }
 
     /**
@@ -99,24 +103,28 @@ public class BDGPInsituConverter extends FileConverter
 
             String lineBits[] = it.next();
             String geneCG = lineBits[0];
-            
+
             if (!geneCG.startsWith("CG")) {
                 // ignore clones for now
                 continue;
             }
-            
+
+            // Try to create/fetch gene, if null the IdResolver failed so do nothing for this row
             Item gene = getGene(geneCG);
-            
+            if (gene == null) {
+                continue;
+            }
+
             String stage = lineBits[1];
-                        
+
             String resultKey = geneCG + stage;
-            Item result = getResult(resultKey, gene.getIdentifier(), pub.getIdentifier(), 
+            Item result = getResult(resultKey, gene.getIdentifier(), pub.getIdentifier(),
                                     dataSet.getIdentifier(), stage);
 
             if (lineBits.length > 2) {
                 String image = lineBits[2];
                 if (image != null && !image.equals("")) {
-                    setImage(result, URL + image);                    
+                    setImage(result, URL + image);
                 }
             }
             if (lineBits.length > 3) {
@@ -130,16 +138,16 @@ public class BDGPInsituConverter extends FileConverter
                 }
             }
         }
-        
+
        for (Item result: results.values()) {
            if (result.getCollection("mRNAExpressionTerms").getRefIds().isEmpty()) {
                result.setAttribute("expressed", "false");
            }
        }
-        
+
         storeAll(imgs);
         storeAll(results);
-        
+
     }
 
     private void storeAll(Map<String, Item> map) throws ObjectStoreException {
@@ -147,8 +155,8 @@ public class BDGPInsituConverter extends FileConverter
             store(item);
         }
     }
-    
-    private Item getResult(String key, String geneId, String pubId, String dataSetId, String stage) 
+
+    private Item getResult(String key, String geneId, String pubId, String dataSetId, String stage)
     {
         if (results.containsKey(key)) {
             return results.get(key);
@@ -156,26 +164,26 @@ public class BDGPInsituConverter extends FileConverter
             Item result = createItem("MRNAExpressionResult");
 
             result.setAttribute("expressed", "true");
-            
+
             result.setReference("gene", geneId);
             result.setReference("publication", pubId);
             result.setReference("source", dataSetId);
 
             setTheStage(result, stage);
-                        
+
             ReferenceList imgColl = new ReferenceList("images", new ArrayList<String>());
             result.addCollection(imgColl);
-            ReferenceList termColl = new ReferenceList("mRNAExpressionTerms", 
+            ReferenceList termColl = new ReferenceList("mRNAExpressionTerms",
                                                        new ArrayList<String>());
-            result.addCollection(termColl);   
+            result.addCollection(termColl);
             results.put(key, result);
-            
+
             return result;
         }
     }
-    
+
     private void setTheStage(Item result, String stage) {
-        
+
         ReferenceList stagesColl = new ReferenceList("stages", new ArrayList<String>());
 
         Integer stageNumber = null;
@@ -186,7 +194,7 @@ public class BDGPInsituConverter extends FileConverter
             return;
         }
 
-        result.setAttribute("stageRange", stageDescriptions[stageNumber.intValue()] 
+        result.setAttribute("stageRange", stageDescriptions[stageNumber.intValue()]
                                                                   + " (BDGP in situ)");
         switch (stageNumber.intValue()) {
         case 1:
@@ -198,7 +206,7 @@ public class BDGPInsituConverter extends FileConverter
             stagesColl.addRefId(stages[4]);
             stagesColl.addRefId(stages[5]);
             stagesColl.addRefId(stages[6]);
-            break;                
+            break;
         case 3:
             stagesColl.addRefId(stages[7]);
             stagesColl.addRefId(stages[8]);
@@ -216,12 +224,12 @@ public class BDGPInsituConverter extends FileConverter
             stagesColl.addRefId(stages[14]);
             stagesColl.addRefId(stages[15]);
             stagesColl.addRefId(stages[16]);
-            break;               
+            break;
         }
 
         result.addCollection(stagesColl);
     }
-    
+
     private Item getTerm(String name) throws ObjectStoreException {
         if (name == null || name.equals("") || badTerms.contains(name)) {
             return null;
@@ -238,36 +246,37 @@ public class BDGPInsituConverter extends FileConverter
     }
 
     private Item getGene(String geneCG) throws ObjectStoreException {
-        if (genes.containsKey(geneCG)) {
-            return genes.get(geneCG);
+        IdResolver resolver = resolverFactory.getIdResolver();
+        int resCount = resolver.countResolutions(TAXON_ID, geneCG);
+        if (resCount != 1) {
+            LOG.info("RESOLVER: failed to resolve gene to one identifier, ignoring gene: "
+                     + geneCG + " count: " + resCount + " FBgn: "
+                     + resolver.resolveId(TAXON_ID, geneCG));
+            return null;
+        }
+        String primaryIdentifier = resolver.resolveId(TAXON_ID, geneCG).iterator().next();
+
+        if (genes.containsKey(primaryIdentifier)) {
+            return genes.get(primaryIdentifier);
         } else {
             Item gene = createItem("Gene");
-            
-            String identifierType = "secondaryIdentifier";
-            
-            if (geneCG.startsWith("FBgn")) {
-                identifierType = "primaryIdentifier";
-            } else if (geneCG.startsWith("Dl") || geneCG.startsWith("dac")) {
-                identifierType = "symbol";
-            }
-            
-            gene.setAttribute(identifierType, geneCG);
+            gene.setAttribute("primaryIdentifier", primaryIdentifier);
             gene.setReference("organism", orgDrosophila);
-            genes.put(geneCG, gene);
+            genes.put(primaryIdentifier, gene);
             store(gene);
             return gene;
         }
     }
-    
+
     private void setImage(Item result, String img) {
         if (!imgs.containsKey(img)) {
             Item item = createItem("Image");
             item.setAttribute("url", img);
-            imgs.put(img, item);            
+            imgs.put(img, item);
             result.addToCollection("images", item.getIdentifier());
         }
     }
-    
+
     private String[] getStageDescriptions() {
         String[] stageLabels = new String[7];
         stageLabels[0] = "";
@@ -279,7 +288,7 @@ public class BDGPInsituConverter extends FileConverter
         stageLabels[6] = "stage 13-16";
         return stageLabels;
     }
-    
+
     private String[] getStages() throws ObjectStoreException {
         String[] stageItems = new String[17];
         for (int i = 1; i <= 16; i++) {
@@ -290,7 +299,7 @@ public class BDGPInsituConverter extends FileConverter
         }
         return stageItems;
     }
-    
+
     private Set<String> getBadTerms() {
         Set<String> forbiddenTerms = new HashSet<String>();
         forbiddenTerms.add("does_not_fit_array");

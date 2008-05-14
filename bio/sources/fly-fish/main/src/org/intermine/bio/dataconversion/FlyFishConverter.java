@@ -10,10 +10,15 @@ package org.intermine.bio.dataconversion;
  *
  */
 
+import java.io.BufferedReader;
+import java.io.Reader;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.apache.commons.lang.StringUtils;
+import org.apache.log4j.Logger;
+import org.intermine.dataconversion.DataConverter;
 import org.intermine.dataconversion.FileConverter;
 import org.intermine.dataconversion.ItemWriter;
 import org.intermine.metadata.Model;
@@ -21,12 +26,6 @@ import org.intermine.objectstore.ObjectStoreException;
 import org.intermine.xml.full.Attribute;
 import org.intermine.xml.full.Item;
 import org.intermine.xml.full.ReferenceList;
-
-import java.io.BufferedReader;
-import java.io.Reader;
-
-import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
 
 /**
  * DataConverter to parse Fly-FISH data file into Items.
@@ -44,7 +43,9 @@ public class FlyFishConverter extends FileConverter
     private Item dataSet;
     private Item pub;
     private String[] stages;
-    
+    protected IdResolverFactory resolverFactory;
+    private static final String TAXON_ID = "7227";
+
     /**
      * Construct a new instance of flyfishconverter.
      *
@@ -56,9 +57,9 @@ public class FlyFishConverter extends FileConverter
         super(writer, model);
 
         orgDrosophila = createItem("Organism");
-        orgDrosophila.addAttribute(new Attribute("taxonId", "7227"));
+        orgDrosophila.addAttribute(new Attribute("taxonId", TAXON_ID));
         store(orgDrosophila);
-        
+
         Item dataSource = createItem("DataSource");
         dataSource.setAttribute("name", "fly-FISH");
         dataSource.setAttribute("url", "http://fly-fish.ccbr.utoronto.ca");
@@ -74,8 +75,11 @@ public class FlyFishConverter extends FileConverter
         pub = createItem("Publication");
         pub.setAttribute("pubMedId", "17923096");
         store(pub);
-        
+
         stages = getStages();
+
+        // only construct factory here so can be replaced by mock factory in tests
+        resolverFactory = new FlyBaseIdResolverFactory();
     }
 
     private class HeaderConfig
@@ -120,14 +124,21 @@ public class FlyFishConverter extends FileConverter
             String lineBits[] = StringUtils.split(line, ';');
             String geneCG = lineBits[0];
             Item gene = getGene(geneCG);
+
+            // try to create a gene from this CG, if not resolved to a single primaryIdentifier
+            // the ignore this line of input
+            if (gene == null) {
+                continue;
+            }
+
             Item mRNAExpressionResults[] = new Item[4];
             for (int stageNum = 1; stageNum <= 4; stageNum++) {
-                
+
                 Item result = createItem("MRNAExpressionResult");
                 result.setReference("gene", gene);
                 result.setReference("publication", pub);
                 result.setReference("source", dataSet);
-                ReferenceList mRNAExpressionTerms = new ReferenceList("mRNAExpressionTerms", 
+                ReferenceList mRNAExpressionTerms = new ReferenceList("mRNAExpressionTerms",
                                                                       new ArrayList<String>());
                 result.addCollection(mRNAExpressionTerms);
                 ReferenceList stagesColl = new ReferenceList("stages", new ArrayList<String>());
@@ -153,8 +164,8 @@ public class FlyFishConverter extends FileConverter
                             stagesColl.addRefId(stages[9]);
                         }
                     }
-                }              
-                result.addCollection(stagesColl);                
+                }
+                result.addCollection(stagesColl);
             }
 
             for (int column = 1; column < lineBits.length; column++) {
@@ -170,8 +181,8 @@ public class FlyFishConverter extends FileConverter
                         continue;
                     }
                     Item term = getMRNAExpressionTerm(hc.expression);
-                    term.setAttribute("type", "fly-FISH");                    
-                    Item result = mRNAExpressionResults[hc.stage - 1];                    
+                    term.setAttribute("type", "fly-FISH");
+                    Item result = mRNAExpressionResults[hc.stage - 1];
                     result.addToCollection("mRNAExpressionTerms", term);
                 }
             }
@@ -209,18 +220,27 @@ public class FlyFishConverter extends FileConverter
     }
 
     private Item getGene(String geneCG) throws ObjectStoreException {
-        if (geneItems.containsKey(geneCG)) {
-            return geneItems.get(geneCG);
+        IdResolver resolver = resolverFactory.getIdResolver();
+        int resCount = resolver.countResolutions(TAXON_ID, geneCG);
+        if (resCount != 1) {
+            LOG.info("RESOLVER: failed to resolve gene to one identifier, ignoring gene: "
+                     + geneCG + " count: " + resCount + " FBgn: "
+                     + resolver.resolveId(TAXON_ID, geneCG));
+            return null;
+        }
+        String primaryIdentifier = resolver.resolveId(TAXON_ID, geneCG).iterator().next();
+        if (geneItems.containsKey(primaryIdentifier)) {
+            return geneItems.get(primaryIdentifier);
         } else {
             Item gene = createItem("Gene");
-            gene.setAttribute("secondaryIdentifier", geneCG);
+            gene.setAttribute("primaryIdentifier", primaryIdentifier);
             gene.setReference("organism", orgDrosophila);
-            geneItems.put(geneCG, gene);
+            geneItems.put(primaryIdentifier, gene);
             store(gene);
             return gene;
         }
     }
-    
+
     private String[] getStages() throws ObjectStoreException {
         String[] stageItems = new String[17];
         for (int i = 1; i <= 16; i++) {

@@ -70,7 +70,7 @@
 <collection name="stages"><reference ref_id="4_8"/><reference ref_id="4_9"/></collection>
 </item>
 <item id="5_2" class="http://www.flymine.org/model/genomic#Gene">
-<attribute name="secondaryIdentifier" value="CG4800"/>
+<attribute name="primaryIdentifier" value="FBgn0037874"/>
 <reference name="organism" ref_id="0_1"/>
 </item>
 <item id="4_3" class="http://www.flymine.org/model/genomic#Stage">
@@ -118,7 +118,7 @@
 <attribute name="taxonId" value="7227"/>
 </item>
 <item id="5_1" class="http://www.flymine.org/model/genomic#Gene">
-<attribute name="secondaryIdentifier" value="CG4475"/>
+<attribute name="primaryIdentifier" value="FBgn0020415"/>
 <reference name="organism" ref_id="0_1"/>
 </item>
 <item id="4_11" class="http://www.flymine.org/model/genomic#Stage">
@@ -152,7 +152,7 @@
 <collection name="stages"><reference ref_id="4_4"/><reference ref_id="4_5"/></collection>
 </item>
 <item id="5_3" class="http://www.flymine.org/model/genomic#Gene">
-<attribute name="secondaryIdentifier" value="CG1746"/>
+<attribute name="primaryIdentifier" value="FBgn0039830"/>
 <reference name="organism" ref_id="0_1"/>
 </item>
 <item id="6_12" class="http://www.flymine.org/model/genomic#MRNAExpressionResult">
@@ -193,7 +193,7 @@
 <attribute name="name" value="Stage 14"/>
 </item>
 <item id="5_4" class="http://www.flymine.org/model/genomic#Gene">
-<attribute name="secondaryIdentifier" value="CG3057"/>
+<attribute name="primaryIdentifier" value="FBgn0019830"/>
 <reference name="organism" ref_id="0_1"/>
 </item>
 <item id="7_15" class="http://www.flymine.org/model/genomic#MRNAExpressionTerm">
