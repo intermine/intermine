@@ -23,9 +23,11 @@ import org.intermine.web.logic.bag.InterMineBag;
 public class EnrichmentWidgetLdr
 {
     protected String externalLink, append;
+    protected InterMineBag bag;
+
+    // TODO this should be moved to bio
     protected Collection<String> organisms = new ArrayList<String>();
     protected Collection<String> organismsLower = new ArrayList<String>();
-    protected InterMineBag bag;
 
     /**
      * @return if the widget should have an external link, where it should go to
@@ -46,6 +48,7 @@ public class EnrichmentWidgetLdr
      * @return description of reference population, ie "Accounting dept"
      */
     public Collection<String> getPopulationDescr() {
+        // TODO this needs to be moved to bio
         return organisms;
     }
 
@@ -65,7 +68,7 @@ public class EnrichmentWidgetLdr
      *
      * population query:
      *
-     *      M = total annotated with this term in reference population
+     *     M = total annotated with this term in reference population
      *
      * annotated population query:
      *
@@ -73,7 +76,7 @@ public class EnrichmentWidgetLdr
      *
      * sample query:
      *
-     *      k = total annotated with this term in bag
+     *     k = total annotated with this term in bag
      *
      * annotated sample query:
      *

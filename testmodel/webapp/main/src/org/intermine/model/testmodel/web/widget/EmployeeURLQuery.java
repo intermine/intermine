@@ -12,13 +12,13 @@ package org.intermine.model.testmodel.web.widget;
 
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 
-import org.intermine.objectstore.query.ConstraintOp;
-
-
 import org.intermine.metadata.Model;
+import org.intermine.model.InterMineObject;
 import org.intermine.objectstore.ObjectStore;
+import org.intermine.objectstore.query.ConstraintOp;
 import org.intermine.web.logic.bag.InterMineBag;
 import org.intermine.web.logic.query.Constraint;
 import org.intermine.web.logic.query.MainHelper;
@@ -50,7 +50,7 @@ public class EmployeeURLQuery implements WidgetURLQuery
     /**
      * @return Query a query to generate the results needed
      */
-    public PathQuery generatePathQuery() {
+    public PathQuery generatePathQuery(Collection<InterMineObject> keys) {
 
 
         Model model = os.getModel();

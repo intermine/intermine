@@ -167,7 +167,6 @@ public class WidgetAction extends InterMineAction
             os, bag, null
                                                          });
 
-        // run query
         PathQuery pathQuery = widgetURLQuery.generatePathQuery(widgetObjects);
 
         QueryMonitorTimeout clientState
