@@ -433,6 +433,10 @@ public class PathQuery
     public PathNode addNode(String path) {
         PathNode node;
 
+        if (nodes.get(path) != null) {
+            return nodes.get(path);
+        }
+
         // the new node will be inserted after this one or at the end if null
         String previousNodePath = null;
         int lastIndex = Math.max(path.lastIndexOf("."), path.lastIndexOf(":"));
