@@ -10,14 +10,14 @@ package org.intermine.bio.dataconversion;
  *
  */
 
+import java.util.Collections;
 import java.util.HashMap;
-import java.util.Set;
 
 import org.intermine.dataconversion.ItemsTestCase;
 import org.intermine.dataconversion.MockItemWriter;
 import org.intermine.metadata.Model;
+import org.intermine.objectstore.ObjectStoreException;
 
-import java.io.File;
 import java.io.StringReader;
 
 import org.apache.commons.io.IOUtils;
@@ -29,14 +29,20 @@ import org.apache.commons.io.IOUtils;
 public class BDGPInsituConverterTest extends ItemsTestCase
 {
     Model model = Model.getInstanceByName("genomic");
-
-    public BDGPInsituConverterTest(String arg) {
+    BDGPInsituConverter converter;
+    MockItemWriter itemWriter;
+    
+    public BDGPInsituConverterTest(String arg) throws ObjectStoreException {
         super(arg);
+        itemWriter = new MockItemWriter(new HashMap());
+        converter = new BDGPInsituConverter(itemWriter, model);
+        MockIdResolverFactory resolverFactory = new MockIdResolverFactory("Gene");
+        resolverFactory.addResolverEntry("7227", "FBgn1", Collections.singleton("CG1"));
+        resolverFactory.addResolverEntry("7227", "FBgn2", Collections.singleton("CG2"));
+        converter.resolverFactory = resolverFactory;
     }
 
     public void testConstruct() throws Exception {
-        MockItemWriter itemWriter = new MockItemWriter(new HashMap());
-        BDGPInsituConverter converter = new BDGPInsituConverter(itemWriter, model);
         assertNotNull(converter.orgDrosophila);
     }
 
@@ -44,8 +50,6 @@ public class BDGPInsituConverterTest extends ItemsTestCase
 
         String input = IOUtils.toString(getClass().getClassLoader().getResourceAsStream("BDGPInsituConverterTest_src.csv"));
 
-        MockItemWriter itemWriter = new MockItemWriter(new HashMap());
-        BDGPInsituConverter converter = new BDGPInsituConverter(itemWriter, Model.getInstanceByName("genomic"));
         converter.process(new StringReader(input));
         converter.close();
 

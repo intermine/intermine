@@ -27,7 +27,7 @@ import org.intermine.sql.DatabaseFactory;
  * @author rns
  *
  */
-public class FlyBaseIdResolverFactory
+public class FlyBaseIdResolverFactory extends IdResolverFactory
 {
     protected static final Logger LOG = Logger.getLogger(FlyBaseIdResolverFactory.class);
     private Database db;
@@ -131,6 +131,4 @@ public class FlyBaseIdResolverFactory
         }
         return resolver; 
     }
- 
-
 }
