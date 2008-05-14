@@ -8,13 +8,9 @@ function addId2Bag(id,row,parentId,issueType){
         document.getElementById('add_'+issueType+'_'+id).className = '';
         document.getElementById('rem_'+issueType+'_'+id).className = "fakelink";
         var elements = document.getElementsByTagName('td');
-        for (var i = 0; i < elements.length; i++) {
-            var idtd = elements.item(i).id;
-            if(idtd == 'row_'+issueType+'_' + row) {
-                tdColorArray['row_'+issueType+'_'+row] = elements.item(i).style.backgroundColor;
-                elements.item(i).style.backgroundColor = "#CCCCCC";
-            }
-        }
+
+        highlightRow('row_'+issueType+'_' + row);          
+
         var bagList = document.getElementById('matchIDs').value;
         if(bagList.indexOf(id) == -1){
             if (bagList.length != 0 ) {
@@ -36,7 +32,33 @@ function addId2Bag(id,row,parentId,issueType){
         toggleForm(1);
 		setLinkState(issueType+'removeAllLink', 'active');
     }    
+}
 
+function highlightRow(rowId) {
+    colourRow(rowId, true);
+}
+
+function unHighlightRow(rowId) {
+    colourRow(rowId, false);
+} 
+
+function colourRow(rowId, highlighted) {
+    var first = document.getElementById(rowId);
+    var el = first;
+    while (true) {
+        if (el.style) {
+	        if (highlighted) {
+                tdColorArray[rowId] = el.style.backgroundColor;
+                el.style.backgroundColor = "#CCCCCC";	        
+	        } else {
+	           el.style.backgroundColor = tdColorArray[rowId];
+	        }
+        }
+        el = el.nextSibling;
+        if (el == null) {
+            break;
+        }  
+    }
 }
 
 function removeIdFromBag(id,row, parentId, issueType){
@@ -44,13 +66,9 @@ function removeIdFromBag(id,row, parentId, issueType){
     if(document.getElementById('rem_'+issueType+'_'+id).className=='fakelink'){
         document.getElementById('rem_'+issueType+'_'+id).className = '';
         document.getElementById('add_'+issueType+'_'+id).className = "fakelink";
-        var elements = document.getElementsByTagName('td');
-        for (var i = 0; i < elements.length; i++) {
-            var idtd = elements.item(i).id;
-            if(idtd == 'row_'+issueType+'_' + row) {
-                elements.item(i).style.backgroundColor = tdColorArray['row_'+issueType+'_'+row];
-            }
-        }
+        
+        unHighlightRow('row_'+issueType+'_'+row);
+        
         var bagList = document.getElementById('matchIDs').value;
         if(bagList.indexOf(id) != -1){
             bagList = bagList.split(id).join('').split('  ').join(' ');
@@ -82,7 +100,12 @@ function addAll(issue, flatArray){
 	// split string into rows
 	// a,b,c,d|e,f,g,h
 	var a = flatArray.split("|");
-	
+    if (a.length > 1000 || (a.length > 200 && BrowserDetect.browser == 'Explorer')) {
+        var r = window.confirm('There are many items in the table. This operation can take a while. Please be patient and do not stop script or cancel it now.');
+        if (! (r == true)) {
+            return;
+        }
+    }	
 	for (i=0;i<a.length-1;i++) {
 		// split rows into vars
 		var b = a[i].split(",");
@@ -95,7 +118,12 @@ function removeAll(issue, flatArray){
 	// split string into rows
 	// a,b,c,d|e,f,g,h
 	var a = flatArray.split("|");
-	
+    if (a.length > 1000 || (a.length > 500 && BrowserDetect.browser == 'Explorer')) {
+        var r = window.confirm('There are many items in the table. This operation can take a while. Please be patient and do not stop script or cancel it now.');
+        if (! (r == true)) {
+            return;
+        }
+    }   	
 	for (i=0;i<a.length-1;i++) {
 		// split rows into vars
 		var b = a[i].split(",");
