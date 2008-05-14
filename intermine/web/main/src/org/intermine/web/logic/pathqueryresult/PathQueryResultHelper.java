@@ -141,8 +141,6 @@ public class PathQueryResultHelper
         Constraint c = new Constraint(ConstraintOp.IN, imBag.getName(), false, label, code, id,
                                       null);
         pathQuery.addNode(imBag.getType()).getConstraints().add(c);
-        pathQuery.setConstraintLogic("A and B and C");
-        pathQuery.syncLogicExpression("and");
         return pathQuery;
     }
 
