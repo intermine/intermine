@@ -1,7 +1,7 @@
 <?xml version="1.0"?>
 <classes>
 <class name="org.flymine.model.genomic.Gene" is-interface="true" >
-  <collection name="miRNAtargets" referenced-type="org.flymine.model.genomic.MiRNATarget" reverse-reference="genes"/>
+  <collection name="miRNAtargets" referenced-type="org.flymine.model.genomic.MiRNATarget" reverse-reference="mirnagene"/>
 </class>
 <class name="org.flymine.model.genomic.MiRNATarget" is-interface="true" >
   <attribute name="start" type="java.lang.Integer" />
@@ -10,11 +10,11 @@
   <attribute name="pvalue" type="java.lang.Float" />
   <attribute name="method" type="java.lang.String" />
   <reference name="dataset" referenced-type="org.flymine.model.genomic.DataSet"/>
-  <collection name="publications" referenced-type="org.flymine.model.genomic.Publication"/>
-  <collection name="targets" referenced-type="org.flymine.model.genomic.MRNA" reverse-reference="miRNAs"/>
-  <collection name="genes" referenced-type="org.flymine.model.genomic.Gene" reverse-reference="miRNAtargets"/>
+  <reference name="publication" referenced-type="org.flymine.model.genomic.Publication"/>
+  <reference name="target" referenced-type="org.flymine.model.genomic.MRNA" reverse-reference="miRNAs"/>
+  <reference name="mirnagene" referenced-type="org.flymine.model.genomic.Gene" reverse-reference="miRNAtargets"/>
 </class>
 <class name="org.flymine.model.genomic.MRNA" is-interface="true" >
-  <collection name="miRNAs" referenced-type="org.flymine.model.genomic.MiRNATarget" reverse-reference="targets"/>
+  <collection name="miRNAinteractions" referenced-type="org.flymine.model.genomic.MiRNATarget" reverse-reference="target"/>
 </class>
 </classes>
