@@ -32,7 +32,6 @@ import java.sql.Statement;
 import org.apache.commons.collections.keyvalue.MultiKey;
 import org.apache.commons.collections.map.MultiKeyMap;
 import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Category;
 import org.apache.log4j.Logger;
 
 /**
@@ -279,7 +278,9 @@ public class FlyBaseModuleProcessor extends ChadoSequenceProcessor
      */
     @Override
     protected String getExtraFeatureConstraint() {
-        return "uniquename LIKE 'FBal%'";
+        return "NOT ((cvterm.name = 'golden_path_region'"
+             + " OR cvterm.name = 'ultra_scaffold')"
+             + " AND (uniquename LIKE 'Unknown_%' OR uniquename LIKE '%_groupMISC'))";
     }
 
     /**
