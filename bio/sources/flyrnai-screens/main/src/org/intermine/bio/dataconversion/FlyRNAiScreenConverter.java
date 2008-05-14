@@ -189,7 +189,9 @@ public class FlyRNAiScreenConverter extends FileConverter
                     String [] geneNames = line[1].split(",");
                     for (int i = 0; i < geneNames.length; i++) {
                         String geneSymbol = geneNames[i].trim();
-                        ampliconGenes.add(newGene(geneSymbol));
+                        Item gene = newGene(geneSymbol);
+                        ampliconGenes.add(gene);
+                        amplicon.getCollection("genes").addRefId(gene.getIdentifier());
                     }
                 }
 
@@ -223,7 +225,6 @@ public class FlyRNAiScreenConverter extends FileConverter
                             //screens[j].getCollection("genes").addRefId(gene.getIdentifier());
                             //gene.getCollection("rnaiScreen").addRefId(screens[j].getIdentifier());
                             amplicon.getCollection("rnaiScreenHits").addRefId(refId);
-                            amplicon.getCollection("genes").addRefId(gene.getIdentifier());
                             screens[j].getCollection("rnaiScreenHits").addRefId(refId);
                             store(screenHit);
                         }
