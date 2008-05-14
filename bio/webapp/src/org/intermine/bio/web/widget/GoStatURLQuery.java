@@ -11,12 +11,13 @@ package org.intermine.bio.web.widget;
  */
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 
-import org.intermine.objectstore.query.ConstraintOp;
-
 import org.intermine.metadata.Model;
+import org.intermine.model.InterMineObject;
 import org.intermine.objectstore.ObjectStore;
+import org.intermine.objectstore.query.ConstraintOp;
 import org.intermine.path.Path;
 import org.intermine.web.logic.bag.InterMineBag;
 import org.intermine.web.logic.query.Constraint;
@@ -51,7 +52,7 @@ public class GoStatURLQuery implements WidgetURLQuery
      /**
       * {@inheritDoc}
       */
-     public PathQuery generatePathQuery() {
+     public PathQuery generatePathQuery(Collection<InterMineObject> widgetObjects) {
 
          Model model = os.getModel();
          PathQuery q = new PathQuery(model);
@@ -69,9 +70,9 @@ public class GoStatURLQuery implements WidgetURLQuery
 
          if (bag.getType().equalsIgnoreCase("protein")) {
 
-             geneSecondaryIdentifier 
+             geneSecondaryIdentifier
                          = MainHelper.makePath(model, q, "Protein.genes.secondaryIdentifier");
-             genePrimaryIdentifier 
+             genePrimaryIdentifier
                          = MainHelper.makePath(model, q, "Protein.genes.primaryIdentifier");
              geneName = MainHelper.makePath(model, q, "Protein.genes.name");
              organismName = MainHelper.makePath(model, q, "Protein.genes.organism.name");
@@ -98,65 +99,77 @@ public class GoStatURLQuery implements WidgetURLQuery
              actualGoId = MainHelper.makePath(model,
                                               q, "Gene.allGoAnnotation.actualGoTerms.identifier");
          }
-         
+
          view.add(genePrimaryIdentifier);
          view.add(geneSecondaryIdentifier);
          view.add(geneName);
          view.add(organismName);
-         view.add(goId);
-         view.add(goName);
-         view.add(actualGoName);
-         view.add(actualGoId);
+         if (widgetObjects == null) {
+             view.add(goId);
+             view.add(goName);
+             view.add(actualGoName);
+             view.add(actualGoId);
+         }
 
          q.setView(view);
 
          String bagType = bag.getType();
+
          ConstraintOp constraintOp = ConstraintOp.IN;
          String constraintValue = bag.getName();
          String label = null, id = null, code = q.getUnusedConstraintCode();
          Constraint c = new Constraint(constraintOp, constraintValue, false, label, code, id, null);
          q.addNode(bagType).getConstraints().add(c);
 
-         // can't be a NOT relationship!
-         constraintOp = ConstraintOp.IS_NULL;
-         code = q.getUnusedConstraintCode();
-         PathNode qualifierNode = null;
-         if (bag.getType().equalsIgnoreCase("protein")) {
-             qualifierNode = q.addNode("Protein.genes.allGoAnnotation.qualifier");
+         if (widgetObjects != null) {
+             constraintOp = ConstraintOp.NOT_IN;
+             code = q.getUnusedConstraintCode();
+             c = new Constraint(constraintOp, widgetObjects, false, label, code, id, null);
+             q.getNode(bagType).getConstraints().add(c);
+             q.setConstraintLogic("A and B");
          } else {
-             qualifierNode = q.addNode("Gene.allGoAnnotation.qualifier");
+             // can't be a NOT relationship!
+             constraintOp = ConstraintOp.IS_NULL;
+             code = q.getUnusedConstraintCode();
+             PathNode qualifierNode = null;
+             if (bag.getType().equalsIgnoreCase("protein")) {
+                 qualifierNode = q.addNode("Protein.genes.allGoAnnotation.qualifier");
+             } else {
+                 qualifierNode = q.addNode("Gene.allGoAnnotation.qualifier");
+             }
+             c = new Constraint(constraintOp, null, false, label, code, id, null);
+             qualifierNode.getConstraints().add(c);
+
+             // go term
+             constraintOp = ConstraintOp.LOOKUP;
+             code = q.getUnusedConstraintCode();
+             PathNode goTermNode = null;
+             if (bag.getType().equalsIgnoreCase("protein")) {
+                 goTermNode = q.addNode("Protein.genes.allGoAnnotation.property");
+             } else {
+                 goTermNode  = q.addNode("Gene.allGoAnnotation.property");
+             }
+             goTermNode.setType("GOTerm");
+
+             c = new Constraint(constraintOp, key, false, label, code, id, null);
+             goTermNode.getConstraints().add(c);
+
+             q.setConstraintLogic("A and B and C");
+
          }
-         Constraint qualifierConstraint
-         = new Constraint(constraintOp, null, false, label, code, id, null);
-         qualifierNode.getConstraints().add(qualifierConstraint);
-
-         // go term
-         constraintOp = ConstraintOp.LOOKUP;
-         code = q.getUnusedConstraintCode();
-         PathNode goTermNode = null;
-         if (bag.getType().equalsIgnoreCase("protein")) {
-             goTermNode = q.addNode("Protein.genes.allGoAnnotation.property");
-         } else {
-             goTermNode  = q.addNode("Gene.allGoAnnotation.property");
-         }
-         goTermNode.setType("GOTerm");
-
-         Constraint goTermConstraint
-                         = new Constraint(constraintOp, key, false, label, code, id, null);
-         goTermNode.getConstraints().add(goTermConstraint);
-
-         q.setConstraintLogic("A and B and C");
          q.syncLogicExpression("and");
 
          List<OrderBy>  sortOrder = new ArrayList<OrderBy>();
          sortOrder.add(new OrderBy(goId, "asc"));
          sortOrder.add(new OrderBy(goName, "asc"));
-         sortOrder.add(new OrderBy(actualGoName, "asc"));
-         sortOrder.add(new OrderBy(actualGoId, "asc"));
-         sortOrder.add(new OrderBy(organismName, "asc"));
-         sortOrder.add(new OrderBy(genePrimaryIdentifier, "asc"));
+         if (widgetObjects == null) {
+             sortOrder.add(new OrderBy(actualGoName, "asc"));
+             sortOrder.add(new OrderBy(actualGoId, "asc"));
+             sortOrder.add(new OrderBy(organismName, "asc"));
+             sortOrder.add(new OrderBy(genePrimaryIdentifier, "asc"));
+         }
          q.setSortOrder(sortOrder);
-        
+
         return q;
     }
 }

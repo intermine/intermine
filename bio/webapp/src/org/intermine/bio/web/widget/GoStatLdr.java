@@ -41,12 +41,11 @@ import org.intermine.web.logic.widget.EnrichmentWidgetLdr;
  * {@inheritDoc}
  * @author Julie Sullivan
  */
-public class GoStatLdr implements EnrichmentWidgetLdr
+public class GoStatLdr extends EnrichmentWidgetLdr
 {
     private Collection<String> organisms;
-    private String externalLink, append;
     private InterMineBag bag;
-    private String namespace;    
+    private String namespace;
     private Collection<String> organismsLower = new ArrayList<String>();
     /**
      * @param extraAttribute the main ontology to filter by (biological_process, molecular_function,
@@ -58,29 +57,27 @@ public class GoStatLdr implements EnrichmentWidgetLdr
         this.bag = bag;
         namespace = extraAttribute;
         organisms = BioUtil.getOrganisms(os, bag, false);
-        
+
         for (String s : organisms) {
             organismsLower.add(s.toLowerCase());
-        }               
+        }
     }
 
     // adds 3 main ontologies to array.  these 3 will be excluded from the query
     private String[] getOntologies() {
-
         String[] ids = new String[3];
-
         ids[0] = "go:0008150";  // biological_process
         ids[1] = "go:0003674";  // molecular_function
         ids[2] = "go:0005575";  // cellular_component
-
         return ids;
-
     }
 
     /**
      * {@inheritDoc}
      */
-    public Query getQuery(boolean calcTotal, boolean useBag, List<String> keys) {
+    public Query getQuery(String action, List<String> keys) {
+
+        String bagType = bag.getType();
 
         QueryClass qcGene = new QueryClass(Gene.class);
         QueryClass qcGoAnnotation = new QueryClass(GOAnnotation.class);
@@ -95,34 +92,32 @@ public class GoStatLdr implements EnrichmentWidgetLdr
         QueryField qfGoTermId = new QueryField(qcGo, "identifier");
         QueryField qfOrganismName = new QueryField(qcOrganism, "name");
         QueryField qfProteinId = new QueryField(qcProtein, "id");
-        
+
         QueryField qfPrimaryIdentifier = null;
         if (bag.getType().equalsIgnoreCase("protein")) {
             qfPrimaryIdentifier = new QueryField(qcProtein, "primaryIdentifier");
         } else {
             qfPrimaryIdentifier = new QueryField(qcGene, "primaryIdentifier");
         }
-        
-        
         QueryFunction objectCount = new QueryFunction();
-        
+
         ConstraintSet cs = new ConstraintSet(ConstraintOp.AND);
-        
+
         if (keys != null) {
             cs.addConstraint(new BagConstraint(qfGoTermId, ConstraintOp.IN, keys));
         }
-      
+
         QueryExpression qf1 = new QueryExpression(QueryExpression.LOWER, qfOrganismName);
         cs.addConstraint(new BagConstraint(qf1, ConstraintOp.IN, organismsLower));
-        
+
         // gene.goAnnotation CONTAINS GOAnnotation
         QueryCollectionReference qcr1 = new QueryCollectionReference(qcGene, "allGoAnnotation");
         cs.addConstraint(new ContainsConstraint(qcr1, ConstraintOp.CONTAINS, qcGoAnnotation));
 
         String[] ids = getOntologies();
         QueryExpression qf2 = new QueryExpression(QueryExpression.LOWER, qfGoTermId);
-        for (int i = 0; i < ids.length; i++) {                
-            cs.addConstraint(new SimpleConstraint(qf2, ConstraintOp.NOT_EQUALS, 
+        for (int i = 0; i < ids.length; i++) {
+            cs.addConstraint(new SimpleConstraint(qf2, ConstraintOp.NOT_EQUALS,
                                                   new QueryValue(ids[i])));
         }
         // gene is from organism
@@ -138,10 +133,10 @@ public class GoStatLdr implements EnrichmentWidgetLdr
 
         // go term is of the specified namespace
         QueryExpression qf3 = new QueryExpression(QueryExpression.LOWER, qfNamespace);
-        cs.addConstraint(new SimpleConstraint(qf3, ConstraintOp.EQUALS, 
+        cs.addConstraint(new SimpleConstraint(qf3, ConstraintOp.EQUALS,
                                               new QueryValue(namespace.toLowerCase())));
 
-        if (useBag) {
+        if (!action.startsWith("population")) {
             if (bag.getType().equalsIgnoreCase("protein")) {
                 cs.addConstraint(new BagConstraint(qfProteinId, ConstraintOp.IN, bag.getOsb()));
             } else {
@@ -149,7 +144,7 @@ public class GoStatLdr implements EnrichmentWidgetLdr
             }
         }
 
-        if (bag.getType().equalsIgnoreCase("protein")) {
+        if (bagType.equals("Protein")) {
             QueryObjectReference qor3 = new QueryObjectReference(qcProtein, "organism");
             cs.addConstraint(new ContainsConstraint(qor3, ConstraintOp.CONTAINS, qcOrganism));
 
@@ -161,20 +156,28 @@ public class GoStatLdr implements EnrichmentWidgetLdr
         }
 
         Query q = new Query();
-        q.setDistinct(false);
-        
-        if (!calcTotal) {
+        q.addFrom(qcGene);
+        q.addFrom(qcGoAnnotation);
+        q.addFrom(qcOrganism);
+        q.addFrom(qcGo);
+        if (bagType.equals("Protein")) {
+            q.addFrom(qcProtein);
+        }
+        q.setConstraint(cs);
 
-            q.addFrom(qcGene);
-            q.addFrom(qcGoAnnotation);
-            q.addFrom(qcOrganism);
-            q.addFrom(qcGo);
-            
-            if (bag.getType().equalsIgnoreCase("protein")) {
-                q.addFrom(qcProtein);
+        if (action.endsWith("Total") || action.equals("analysed")) {
+            q.setDistinct(true);
+            q.addToSelect(qfGeneId);
+            if (action.endsWith("Total")) {
+                Query superQ = new Query();
+                superQ.addFrom(q);
+                superQ.addToSelect(objectCount);
+                q = superQ;
             }
-
-            if (keys != null && !keys.isEmpty()) {
+        } else {
+            q.setDistinct(false);
+            if (action.equals("export")) {
+                q.setDistinct(true);
                 q.addToSelect(qfGoTermId);
                 q.addToSelect(qfPrimaryIdentifier);
                 q.addToOrderBy(qfGoTermId);
@@ -182,76 +185,13 @@ public class GoStatLdr implements EnrichmentWidgetLdr
                 q.addToSelect(qfGoTermId);
                 q.addToGroupBy(qfGoTermId);
                 q.addToSelect(objectCount);
-                if (useBag) {
+                if (action.equals("sample")) {
                     q.addToSelect(qfGoTerm);
-                    q.addToGroupBy(qfGoTerm);            
+                    q.addToGroupBy(qfGoTerm);
                 }
             }
-            q.setConstraint(cs);      
-        } else {
-            
-            Query subQ = new Query();
-            subQ.setDistinct(true);
-            
-            subQ.addToSelect(qfGeneId);
-            
-            subQ.addFrom(qcGene);
-            subQ.addFrom(qcGoAnnotation);
-            subQ.addFrom(qcOrganism);
-            subQ.addFrom(qcGo);
-            
-            if (bag.getType().equalsIgnoreCase("protein")) {
-                subQ.addFrom(qcProtein);
-            }
-            
-            subQ.setConstraint(cs);
-
-            q.addFrom(subQ);
-            q.addToSelect(objectCount);
         }
         return q;
-    }
-   
-    /**
-     * {@inheritDoc}
-     */
-    public Query getAnnotatedSampleQuery(boolean calcTotal) {
-        return getQuery(calcTotal, true, null);
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    public Query getAnnotatedPopulationQuery(boolean calcTotal) {
-        return getQuery(calcTotal, false, null);
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    public Query getExportQuery(List<String> keys) {
-        return getQuery(false, true, keys);
-    }
-    
-    /**
-     * {@inheritDoc}
-     */
-    public Collection<String> getPopulationDescr() {
-        return organisms;
-    }
-    
-    /**
-     * {@inheritDoc}
-     */
-    public String getExternalLink() {
-        return externalLink;
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    public String getAppendage() {
-        return append;
     }
 
     /**

@@ -43,33 +43,32 @@ import org.flymine.model.genomic.Protein;
  * {@inheritDoc}
  * @author Julie Sullivan
  */
-public class UniProtKeywordsLdr implements EnrichmentWidgetLdr
+public class UniProtKeywordsLdr extends EnrichmentWidgetLdr
 {
 
     private Collection<String> organisms;
-    private String externalLink, append;
     private InterMineBag bag;
     private Collection<String> organismsLower = new ArrayList<String>();
-    
+
     /**
      * @param bag list of objects for this widget
      * @param os object store
      * @param extraAttribute an extra attribute, probably organism
      */
     public UniProtKeywordsLdr(InterMineBag bag, ObjectStore os, String extraAttribute) {
-        this.bag = bag;    
+        this.bag = bag;
         organisms = BioUtil.getOrganisms(os, bag, false);
-        
+
         for (String s : organisms) {
             organismsLower.add(s.toLowerCase());
         }
     }
-    
+
     /**
      * {@inheritDoc}
-     */    
-    public Query getQuery(boolean calcTotal, boolean useBag, List<String> keys) {
-        
+     */
+    public Query getQuery(String action, List<String> keys) {
+
         QueryClass qcProtein = new QueryClass(Protein.class);
         QueryClass qcOrganism = new QueryClass(Organism.class);
         QueryClass qcOntology = new QueryClass(Ontology.class);
@@ -80,7 +79,7 @@ public class UniProtKeywordsLdr implements EnrichmentWidgetLdr
         QueryField qfOrganismName = new QueryField(qcOrganism, "name");
         QueryField qfOnto = new QueryField(qcOntology, "title");
         QueryField qfPrimaryIdentifier = new QueryField(qcProtein, "primaryIdentifier");
-        
+
         QueryFunction protCount = new QueryFunction();
 
         ConstraintSet cs = new ConstraintSet(ConstraintOp.AND);
@@ -88,13 +87,13 @@ public class UniProtKeywordsLdr implements EnrichmentWidgetLdr
         if (keys != null) {
             cs.addConstraint(new BagConstraint(qfName, ConstraintOp.IN, keys));
         }
-        
-        if (useBag) {
+
+        if (!action.startsWith("population")) {
             cs.addConstraint(new BagConstraint(qfProtId, ConstraintOp.IN, bag.getOsb()));
         }
         QueryExpression qf = new QueryExpression(QueryExpression.LOWER, qfOrganismName);
         cs.addConstraint(new BagConstraint(qf, ConstraintOp.IN, organismsLower));
-        
+
         QueryObjectReference qor1 = new QueryObjectReference(qcProtein, "organism");
         cs.addConstraint(new ContainsConstraint(qor1, ConstraintOp.CONTAINS, qcOrganism));
 
@@ -104,93 +103,50 @@ public class UniProtKeywordsLdr implements EnrichmentWidgetLdr
         QueryObjectReference qor2 = new QueryObjectReference(qcOntoTerm, "ontology");
         cs.addConstraint(new ContainsConstraint(qor2, ConstraintOp.CONTAINS, qcOntology));
 
-        cs.addConstraint(new SimpleConstraint(qfOnto, ConstraintOp.EQUALS, 
+        cs.addConstraint(new SimpleConstraint(qfOnto, ConstraintOp.EQUALS,
                                               new QueryValue("UniProtKeyword")));
-        
+
         Query q = new Query();
         q.setDistinct(false);
 
-        if (!calcTotal) {            
+        if (action.endsWith("Total") || action.equals("analysed")) {
+
+            Query subQ = new Query();
+            subQ.setDistinct(true);
+            subQ.addFrom(qcProtein);
+            subQ.addFrom(qcOrganism);
+            subQ.addFrom(qcOntology);
+            subQ.addFrom(qcOntoTerm);
+            subQ.addToSelect(qfProtId);
+            subQ.setConstraint(cs);
+            if (action.equals("analysed")) {
+                return subQ;
+            }
+            q.addFrom(subQ);
+            q.addToSelect(protCount);
+
+        } else {
+
             q.addFrom(qcProtein);
             q.addFrom(qcOrganism);
             q.addFrom(qcOntology);
             q.addFrom(qcOntoTerm);
 
-            if (keys != null && !keys.isEmpty()) {
-                q.addToSelect(qfProtId);
-                q.addToSelect(qfPrimaryIdentifier);
-                q.addToOrderBy(qfProtId);
-            } else {
-
+            if (action.equals("export")) {
                 q.addToSelect(qfName);
-                q.addToSelect(protCount);            
-                if (useBag) {
+                q.addToSelect(qfPrimaryIdentifier);
+                q.addToOrderBy(qfName);
+            } else {
+                q.addToSelect(qfName);
+                q.addToSelect(protCount);
+                if (action.equals("sample")) {
                     q.addToSelect(qfName);
                 }
                 q.addToGroupBy(qfName);
             }
             q.setConstraint(cs);
-        } else {
-
-            Query subQ = new Query();
-            subQ.setDistinct(true);
-            
-            subQ.addFrom(qcProtein);
-            subQ.addFrom(qcOrganism);
-            subQ.addFrom(qcOntology);
-            subQ.addFrom(qcOntoTerm);
-            
-            subQ.addToSelect(qfProtId);
-            
-            subQ.setConstraint(cs);
-
-            q.addFrom(subQ);
-            q.addToSelect(protCount);            
-        }        
-
+        }
         return q;
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    public Query getAnnotatedSampleQuery(boolean calcTotal) {
-        return getQuery(calcTotal, true, null);
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    public Query getAnnotatedPopulationQuery(boolean calcTotal) {
-         return getQuery(calcTotal, false, null);
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    public Query getExportQuery(List<String> keys) {
-        return getQuery(false, true, keys);
-    }
-    
-    /**
-     * {@inheritDoc}
-     */
-    public Collection<String> getPopulationDescr() {
-        return organisms;
-    }
-    
-    /**
-     * {@inheritDoc}
-     */
-    public String getExternalLink() {
-        return externalLink;
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    public String getAppendage() {
-        return append;
     }
 }
 

@@ -10,6 +10,9 @@ package org.intermine.web.logic.widget;
  *
  */
 
+import java.util.Collection;
+
+import org.intermine.model.InterMineObject;
 import org.intermine.web.logic.query.PathQuery;
 
 /**
@@ -20,8 +23,9 @@ import org.intermine.web.logic.query.PathQuery;
 public interface WidgetURLQuery
 {
     /**
+     * @param objects list of objects that were used in the widget
      * @return the query generated based on which records the user clicked on in the widget
      */
-    public PathQuery generatePathQuery();
+    public PathQuery generatePathQuery(Collection<InterMineObject> objects);
 
 }

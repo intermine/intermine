@@ -14,6 +14,12 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
+import org.flymine.model.genomic.DataSet;
+import org.flymine.model.genomic.Gene;
+import org.flymine.model.genomic.MRNAExpressionResult;
+import org.flymine.model.genomic.MRNAExpressionTerm;
+import org.intermine.bio.web.logic.BioUtil;
+import org.intermine.objectstore.ObjectStore;
 import org.intermine.objectstore.query.BagConstraint;
 import org.intermine.objectstore.query.ConstraintOp;
 import org.intermine.objectstore.query.ConstraintSet;
@@ -27,30 +33,19 @@ import org.intermine.objectstore.query.QueryFunction;
 import org.intermine.objectstore.query.QueryObjectReference;
 import org.intermine.objectstore.query.QueryValue;
 import org.intermine.objectstore.query.SimpleConstraint;
-
-import org.intermine.bio.web.logic.BioUtil;
-import org.intermine.objectstore.ObjectStore;
 import org.intermine.web.logic.bag.InterMineBag;
 import org.intermine.web.logic.widget.EnrichmentWidgetLdr;
-
-import org.flymine.model.genomic.DataSet;
-import org.flymine.model.genomic.Gene;
-import org.flymine.model.genomic.MRNAExpressionResult;
-import org.flymine.model.genomic.MRNAExpressionTerm;
 
 /**
  * {@inheritDoc}
  * @author Julie Sullivan
  */
-public class BDGPLdr implements EnrichmentWidgetLdr
+public class BDGPLdr extends EnrichmentWidgetLdr
 {
-    private String externalLink, append;
     private Collection<String> organisms = new ArrayList<String>();
     private Collection<String> organismsLower = new ArrayList<String>();
     private InterMineBag bag;
-
     private final String dataset = "BDGP in situ data set";
- 
 
     /**
      * Create a new BDGPLdr.
@@ -71,7 +66,7 @@ public class BDGPLdr implements EnrichmentWidgetLdr
     /**
      * {@inheritDoc}
      */
-    public Query getQuery(boolean calcTotal, boolean useBag, List<String> keys) {
+    public Query getQuery(String action, List<String> keys) {
 
         QueryClass qcMrnaResult = new QueryClass(MRNAExpressionResult.class);
         QueryClass qcGene = new QueryClass(Gene.class);
@@ -83,21 +78,20 @@ public class BDGPLdr implements EnrichmentWidgetLdr
         QueryField qfTerm = new QueryField(qcTerm, "name");
 
         QueryFunction qfCount = new QueryFunction();
-        
+
         ConstraintSet cs = new ConstraintSet(ConstraintOp.AND);
 
         if (keys != null) {
             cs.addConstraint(new BagConstraint(qfPrimaryIdentifier, ConstraintOp.IN, keys));
         }
-        
-        if (useBag) {
+
+        if (!action.startsWith("population")) {
             cs.addConstraint(new BagConstraint(qfGene, ConstraintOp.IN, bag.getOsb()));
         }
 
         QueryCollectionReference r1 = new QueryCollectionReference(qcGene, "mRNAExpressionResults");
         cs.addConstraint(new ContainsConstraint(r1, ConstraintOp.CONTAINS, qcMrnaResult));
 
-        // we only want results that showed expression
         QueryField qfExpressed = new QueryField(qcMrnaResult, "expressed");
         SimpleConstraint scExpressed = new SimpleConstraint(qfExpressed, ConstraintOp.EQUALS,
                                                             new QueryValue(Boolean.TRUE));
@@ -109,13 +103,14 @@ public class BDGPLdr implements EnrichmentWidgetLdr
 
         QueryObjectReference qcr = new QueryObjectReference(qcMrnaResult, "source");
         cs.addConstraint(new ContainsConstraint(qcr, ConstraintOp.CONTAINS, qcDataset));
-        
+
         QueryExpression qf2 = new QueryExpression(QueryExpression.LOWER,
                                                   new QueryField(qcDataset, "title"));
         cs.addConstraint(new SimpleConstraint(qf2, ConstraintOp.EQUALS,
                                               new QueryValue(dataset.toLowerCase())));
         Query q = new Query();
-        
+        q.setDistinct(false);
+
         Query subQ = new Query();
         subQ.setDistinct(true);
 
@@ -126,80 +121,34 @@ public class BDGPLdr implements EnrichmentWidgetLdr
 
         subQ.setConstraint(cs);
 
-        if (keys != null && !keys.isEmpty()) {
+        if (action.equals("export")) {
             subQ.addToSelect(qfTerm);
             subQ.addToSelect(qfPrimaryIdentifier);
             subQ.addToOrderBy(qfTerm);
-            q = subQ;
+            return subQ;
+        } else if (action.equals("analysed")) {
+            subQ.addToSelect(qfGene);
+            return subQ;
+        } else if (action.endsWith("Total")) {
+            subQ.addToSelect(new QueryField(qcGene, "id"));
+            q.addFrom(subQ);
+            q.addToSelect(qfCount);
         } else {
-
-            if (!calcTotal) {
-                subQ.addToSelect(new QueryField(qcTerm, "id"));
-                subQ.addToSelect(new QueryField(qcGene, "id"));
-                subQ.addToSelect(qfTerm);
-            } else {
-                subQ.addToSelect(new QueryField(qcGene, "id"));
-            }
-
-            q.setDistinct(false);
+            subQ.addToSelect(new QueryField(qcTerm, "id"));
+            subQ.addToSelect(new QueryField(qcGene, "id"));
+            subQ.addToSelect(qfTerm);
 
             QueryField outerQfTerm = new QueryField(subQ, qfTerm);
 
             q.addFrom(subQ);
-
-            if (!calcTotal) {            
+            q.addToSelect(outerQfTerm);
+            q.addToGroupBy(outerQfTerm);
+            q.addToSelect(qfCount);
+            if (action.equals("sample")) {
                 q.addToSelect(outerQfTerm);
-                q.addToGroupBy(outerQfTerm);
-                q.addToSelect(qfCount);
-                if (useBag) {
-                    q.addToSelect(outerQfTerm);
-                }
-            } else {
-                q.addToSelect(qfCount);
             }
-        }
+         }
         return q;
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    public Query getAnnotatedSampleQuery(boolean calcTotal) {
-        return getQuery(calcTotal, true, null);
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    public Query getAnnotatedPopulationQuery(boolean calcTotal) {
-        return getQuery(calcTotal, false, null);
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    public Query getExportQuery(List<String> keys) {
-        return getQuery(false, true, keys);
-    }
-    
-    /**
-     * {@inheritDoc}
-     */
-    public Collection<String> getPopulationDescr() {
-        return organisms;
-    }
-    /**
-     * {@inheritDoc}
-     */
-    public String getExternalLink() {
-        return externalLink;
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    public String getAppendage() {
-        return append;
     }
 }
 

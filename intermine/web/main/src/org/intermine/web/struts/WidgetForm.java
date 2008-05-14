@@ -117,13 +117,12 @@ public class WidgetForm extends ActionForm
     }
 
     /**
-     * @param selected the selected go terms
+     * @param selected the selected  terms
      */
     public void setSelected(String[] selected) {
         this.selected = selected;
 
     }
-
 
     /**
      * @return the action

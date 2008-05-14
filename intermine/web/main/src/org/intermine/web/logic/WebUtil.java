@@ -10,6 +10,16 @@ package org.intermine.web.logic;
  *
  */
 
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileReader;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.io.Reader;
+import java.math.BigDecimal;
+import java.net.URL;
+import java.net.URLConnection;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
@@ -23,13 +33,19 @@ import java.util.TreeMap;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import org.intermine.objectstore.query.Query;
-import org.intermine.objectstore.query.Results;
-import org.intermine.objectstore.query.ResultsRow;
+import javax.servlet.ServletContext;
+import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
 
+import org.apache.commons.io.IOUtils;
+import org.apache.commons.lang.StringUtils;
+import org.apache.log4j.Logger;
 import org.intermine.metadata.ClassDescriptor;
 import org.intermine.metadata.Model;
 import org.intermine.objectstore.ObjectStore;
+import org.intermine.objectstore.query.Query;
+import org.intermine.objectstore.query.Results;
+import org.intermine.objectstore.query.ResultsRow;
 import org.intermine.web.logic.bag.InterMineBag;
 import org.intermine.web.logic.search.SearchRepository;
 import org.intermine.web.logic.tagging.TagTypes;
@@ -38,25 +54,6 @@ import org.intermine.web.logic.widget.Bonferroni;
 import org.intermine.web.logic.widget.EnrichmentWidgetLdr;
 import org.intermine.web.logic.widget.ErrorCorrection;
 import org.intermine.web.logic.widget.Hypergeometric;
-
-import java.io.BufferedReader;
-import java.io.File;
-import java.io.FileReader;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.io.Reader;
-import java.math.BigDecimal;
-import java.net.URL;
-import java.net.URLConnection;
-
-import javax.servlet.ServletContext;
-import javax.servlet.http.HttpServletResponse;
-import javax.servlet.http.HttpSession;
-
-import org.apache.commons.io.IOUtils;
-import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
 /**
  * Utility methods for the web package.
  *
@@ -442,7 +439,7 @@ public abstract class WebUtil
     /**
      * Runs both queries and compares the results.
      * @param os the object store
-     * @param ldr the loader 
+     * @param ldr the loader
      * @param bag the bag we are analysing
      * @param maxValue maximum value to return - for display purposes only
      * @param errorCorrection which error correction algorithm to use, Bonferroni
@@ -450,7 +447,7 @@ public abstract class WebUtil
      * @return array of three results maps
      */
     public static ArrayList statsCalc(ObjectStore os,
-                                      EnrichmentWidgetLdr ldr,                              
+                                      EnrichmentWidgetLdr ldr,
                                       InterMineBag bag,
                                       Double maxValue,
                                       String errorCorrection) {
@@ -459,9 +456,9 @@ public abstract class WebUtil
 
             int populationTotal = calcTotal(os, ldr, true);    // objects annotated in database
             int sampleTotal = calcTotal(os, ldr, false);    // objects annotated in bag
-            
+
             // sample query
-            Results r = os.execute(ldr.getAnnotatedSampleQuery(false));
+            Results r = os.execute(ldr.getSampleQuery(false));
             r.setBatchSize(10000);
             Iterator iter = r.iterator();
             HashMap<String, Long> countMap = new HashMap<String, Long>();
@@ -477,7 +474,7 @@ public abstract class WebUtil
 
                 // count of item
                 Long count = (Long) rr.get(1);
-                           
+
                 // id & count
                 countMap.put(id, count);
 
@@ -487,14 +484,14 @@ public abstract class WebUtil
             }
 
             // run population query
-            List rAll = statsCalcCache.get(ldr.getAnnotatedPopulationQuery(false).toString());
+            List rAll = statsCalcCache.get(ldr.getPopulationQuery(false).toString());
             if (rAll == null) {
-                rAll = os.execute(ldr.getAnnotatedPopulationQuery(false));
+                rAll = os.execute(ldr.getPopulationQuery(false));
                 ((Results) rAll).setBatchSize(10000);
                 rAll = new ArrayList(rAll);
-                statsCalcCache.put(ldr.getAnnotatedPopulationQuery(false).toString(), rAll);
+                statsCalcCache.put(ldr.getPopulationQuery(false).toString(), rAll);
             }
-            
+
             HashMap<String, BigDecimal> resultsMap = new HashMap<String, BigDecimal>();
             Iterator itAll = rAll.iterator();
 
@@ -519,8 +516,8 @@ public abstract class WebUtil
                         String msg = p + " isn't a double.  calculated using sample size: "
                         + countBag + ", population size: " + countAll + ", bag size: "
                         + sampleTotal + ", total: " + populationTotal
-                        + ".  population query used: " 
-                        + ldr.getAnnotatedPopulationQuery(false).toString();
+                        + ".  population query used: "
+                        + ldr.getPopulationQuery(false).toString();
                         throw new RuntimeException(msg, e);
                     }
                 }
@@ -528,7 +525,7 @@ public abstract class WebUtil
 
             Map<String, BigDecimal> adjustedResultsMap = new HashMap<String, BigDecimal>();
 
-            if (!errorCorrection.equals("None")) { 
+            if (!errorCorrection.equals("None")) {
                 adjustedResultsMap = calcErrorCorrection(errorCorrection, maxValue, resultsMap);
             } else {
                 // TODO move this to the ErrorCorrection class
@@ -543,10 +540,10 @@ public abstract class WebUtil
 
             SortableMap sortedMap = new SortableMap(adjustedResultsMap);
             sortedMap.sortValues();
-            
+
             Map dummy = new HashMap();
             dummy.put("widgetTotal", new Integer(sampleTotal));
-            
+
             maps.add(0, sortedMap);
             maps.add(1, countMap);
             maps.add(2, idMap);
@@ -582,24 +579,15 @@ public abstract class WebUtil
         e.calculate(maxValue);
         return e.getAdjustedMap();
     }
-    
+
     private static int calcTotal(ObjectStore os, EnrichmentWidgetLdr ldr, boolean calcPopulation) {
-        
         Query q = new Query();
         if (calcPopulation) {
-            q = ldr.getAnnotatedPopulationQuery(true);
+            q = ldr.getPopulationQuery(true);
         } else {
-            q = ldr.getAnnotatedSampleQuery(true);
+            q = ldr.getSampleQuery(true);
         }
-        
-        Results res = os.execute(q);        
-        Iterator iter = res.iterator();
-        int n = 0;
-        while (iter.hasNext()) {
-            ResultsRow resRow = (ResultsRow) iter.next();
-            n = ((java.lang.Long) resRow.get(0)).intValue();
-        }
-        return n;
+        Object[] o = os.executeSingleton(q).toArray();
+        return  ((java.lang.Long) o[0]).intValue();
     }
-    
 }

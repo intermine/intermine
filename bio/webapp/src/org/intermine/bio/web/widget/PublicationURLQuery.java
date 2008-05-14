@@ -11,12 +11,13 @@ package org.intermine.bio.web.widget;
  */
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 
-import org.intermine.objectstore.query.ConstraintOp;
-
 import org.intermine.metadata.Model;
+import org.intermine.model.InterMineObject;
 import org.intermine.objectstore.ObjectStore;
+import org.intermine.objectstore.query.ConstraintOp;
 import org.intermine.path.Path;
 import org.intermine.web.logic.bag.InterMineBag;
 import org.intermine.web.logic.query.Constraint;
@@ -51,58 +52,67 @@ public class PublicationURLQuery implements WidgetURLQuery
     /**
      * {@inheritDoc}
      */
-    public PathQuery generatePathQuery() {
+    public PathQuery generatePathQuery(Collection<InterMineObject> keys) {
 
         Model model = os.getModel();
         PathQuery q = new PathQuery(model);
 
         List<Path> view = new ArrayList<Path>();
-        
+
         Path geneSecondaryIdentifier = MainHelper.makePath(model, q, "Gene.secondaryIdentifier");
         Path genePrimaryIdentifier = MainHelper.makePath(model, q, "Gene.primaryIdentifier");
         Path geneName = MainHelper.makePath(model, q, "Gene.name");
-        Path organismName = MainHelper.makePath(model, q, "Gene.organism.name");        
+        Path organismName = MainHelper.makePath(model, q, "Gene.organism.name");
         Path title = MainHelper.makePath(model, q, "Gene.publications.title");
         Path author = MainHelper.makePath(model, q, "Gene.publications.firstAuthor");
         Path journal = MainHelper.makePath(model, q, "Gene.publications.journal");
         Path year = MainHelper.makePath(model, q, "Gene.publications.year");
         Path pubmedid = MainHelper.makePath(model, q, "Gene.publications.pubMedId");
-        
+
         view.add(genePrimaryIdentifier);
         view.add(geneSecondaryIdentifier);
         view.add(geneName);
         view.add(organismName);
-        view.add(title);
-        view.add(author);
-        view.add(journal);
-        view.add(year);
-        view.add(pubmedid);
-        
+        if (keys == null) {
+            view.add(title);
+            view.add(author);
+            view.add(journal);
+            view.add(year);
+            view.add(pubmedid);
+        }
         q.setView(view);
 
         String bagType = bag.getType();
+
         ConstraintOp constraintOp = ConstraintOp.IN;
         String constraintValue = bag.getName();
         String label = null, id = null, code = q.getUnusedConstraintCode();
         Constraint c = new Constraint(constraintOp, constraintValue, false, label, code, id, null);
         q.addNode(bagType).getConstraints().add(c);
-        // pubmedid
-        constraintOp = ConstraintOp.LOOKUP;
-        code = q.getUnusedConstraintCode();
-        PathNode expressedNode = q.addNode("Gene.publications");
-        Constraint expressedConstraint
-                        = new Constraint(constraintOp, key, false, label, code, id, null);
-        expressedNode.getConstraints().add(expressedConstraint);
 
+        if (keys != null) {
+            code = q.getUnusedConstraintCode();
+            constraintOp = ConstraintOp.NOT_IN;
+            c = new Constraint(constraintOp, keys, false, label, code, id, null);
+            q.getNode(bagType).getConstraints().add(c);
+        } else {
+            constraintOp = ConstraintOp.LOOKUP;
+            code = q.getUnusedConstraintCode();
+            PathNode node = q.addNode("Gene.publications");
+            c = new Constraint(constraintOp, key, false, label, code, id, null);
+            node.getConstraints().add(c);
+        }
         q.setConstraintLogic("A and B");
         q.syncLogicExpression("and");
 
         List<OrderBy>  sortOrder = new ArrayList<OrderBy>();
-        sortOrder.add(new OrderBy(pubmedid, "asc"));
+        if (keys == null) {
+            sortOrder.add(new OrderBy(pubmedid, "asc"));
+        }
         sortOrder.add(new OrderBy(genePrimaryIdentifier, "asc"));
-        
+
         q.setSortOrder(sortOrder);
-        
+
         return q;
     }
 }
