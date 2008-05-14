@@ -11,7 +11,7 @@
   <attribute name="method" type="java.lang.String" />
   <reference name="dataset" referenced-type="org.flymine.model.genomic.DataSet"/>
   <reference name="publication" referenced-type="org.flymine.model.genomic.Publication"/>
-  <reference name="target" referenced-type="org.flymine.model.genomic.MRNA" reverse-reference="miRNAs"/>
+  <reference name="target" referenced-type="org.flymine.model.genomic.MRNA" reverse-reference="miRNAinteractions"/>
   <reference name="mirnagene" referenced-type="org.flymine.model.genomic.Gene" reverse-reference="miRNAtargets"/>
 </class>
 <class name="org.flymine.model.genomic.MRNA" is-interface="true" >
