@@ -52,7 +52,7 @@ function handleTableWidget(widget) {
 	    var cell = document.createElement("th");
 	    if (i == 0) {
 	       var formName = "widgetaction" + widget.id;
-	       var checky = "<input type=\"checkbox\" name=\"selected\" id=\"selected_all" + widget.id + "\"";
+	       var checky = "<input type=\"checkbox\" name=\"select_all\" id=\"selected_all" + widget.id + "\"";
                checky += " onclick=\"toggleAllChecks('" + formName + "', " + widget.id + ")\">";
 	       cell.innerHTML = checky;
 	    } else {
