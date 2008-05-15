@@ -29,7 +29,7 @@
   <span id="closewidget${widget.id}" class="widgetcloser"><a href="javascript:toggleWidget('widgetcontainer${widget.id}','togglelink${widget.id}');">close x</a></span>
   <h3>${widget.title}</h3>
   <p>${widget.description}</p>
-  <p>Number of ${bag.type}s not analysed in this widget:
+  <p>Number of ${bag.type}s in this list not analysed in this widget:
 
 	<c:choose>
 	<c:when test="${type == 'EnrichmentWidget'}">
