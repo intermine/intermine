@@ -18,6 +18,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.log4j.Logger;
 import org.intermine.bio.util.OrganismData;
 import org.intermine.bio.util.OrganismRepository;
 import org.intermine.dataconversion.FileConverter;
@@ -40,7 +41,11 @@ public class DrosophilaHomologyConverter extends FileConverter
     private Map<String, String> genes = new HashMap();
     private Map<String, String> organisms = new HashMap();
     private OrganismRepository or = null;
-
+    protected IdResolverFactory resolverFactory;
+    private IdResolver resolver = null;
+    
+    protected static final Logger LOG = Logger.getLogger(DrosophilaHomologyConverter.class);
+    
     /**
      * Constructor
      * @param writer the ItemWriter used to handle the resultant items
@@ -66,6 +71,9 @@ public class DrosophilaHomologyConverter extends FileConverter
         store(pub);
         
         or = OrganismRepository.getOrganismRepository();
+        
+        // only construct factory here so can be replaced by mock factory in tests
+        resolverFactory = new FlyBaseIdResolverFactory();
     }
 
 
@@ -145,6 +153,12 @@ public class DrosophilaHomologyConverter extends FileConverter
     // create and store a Homologue with identifiers of Gene items
     private void createHomologue(String gene, String homGene, String type, String cluster)
     throws ObjectStoreException {
+        
+        // if no genes created then ids could not be resolved, don't create a homologue
+        if (gene == null || homGene == null) {
+            return;
+        }
+        
         Item homologue = createItem("Homologue");
         homologue.setAttribute("type", type);
         homologue.setAttribute("clusterName", "Drosophila homology:" + cluster);
@@ -159,13 +173,22 @@ public class DrosophilaHomologyConverter extends FileConverter
     private String getGene(String symbol, String org) throws ObjectStoreException {
         String geneId = genes.get(symbol + org);
         if (geneId == null) {
-            Item gene = createItem("Gene");
-            if (symbol.matches(".*GLEANR.*")) {
-                gene.setAttribute("GLEANRsymbol", symbol);
-                
-            } else {
-                gene.setAttribute("primaryIdentifier", symbol);
+            // attempt to resolve to a current FlyBase gene
+            OrganismData oData = or.getOrganismDataByAbbreviation(org);
+            String taxonId = "" + oData.getTaxonId();
+            if (resolver == null) {
+                resolver = resolverFactory.getIdResolver();
             }
+            int resCount = resolver.countResolutions(taxonId, symbol);
+            if (resCount != 1) {
+                LOG.info("RESOLVER: failed to resolve gene to one identifier, ignoring gene: "
+                         + symbol + " count: " + resCount + " FBgn: "
+                         + resolver.resolveId(taxonId, symbol));
+                return null;
+            }
+            String primaryIdentifier = resolver.resolveId(taxonId, symbol).iterator().next();
+            Item gene = createItem("Gene");
+            gene.setAttribute("primaryIdentifier", primaryIdentifier);
 
             gene.setReference("organism", getOrganism(org));
             store(gene);
@@ -193,5 +216,4 @@ public class DrosophilaHomologyConverter extends FileConverter
         }
         return orgId;
     }
-
 }
