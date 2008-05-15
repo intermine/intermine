@@ -94,6 +94,11 @@ public class TestFlyBaseModuleProcessor extends FlyBaseModuleProcessor
                 2340000, "CG10006[GD2461]", "FBal0198867", "gene", null,
                 null, 7227
             },
+            {
+                // this is actually an allele
+                2345000, "Scer\\GAL4[sd-SG29.1]", "FBal0060667", "gene", null,
+                null, 7227
+            }
         };
         MockMultiRowResultSet res = new MockMultiRowResultSet();
         res.setupRows(resObjects);
@@ -344,30 +349,39 @@ public class TestFlyBaseModuleProcessor extends FlyBaseModuleProcessor
     @Override
     protected ResultSet getAllelePropResultSet(Connection connection) throws SQLException {
         String[] columnNames = new String[] {
-            "feature_id", "value", "type_name"
+            "feature_id", "value", "type_name", "featureprop_id"
         };
         Object[][] resObjects = new Object[][] {
             {
                 3117509,
                 "@FBbt00004729:wing@, with @FBal0060667:Scer\\GAL4<up>sd-SG29.1</up>@",
-                "derived_pheno_manifest"
+                "derived_pheno_manifest",
+                40000001
             },
             {
                 3117509,
                 "sensory mother cell & dorsal mesothoracic disc | ectopic, with @FBal0060667:Scer\\GAL4<up>sd-SG29.1</up>@",
-                "derived_pheno_manifest"
+                "derived_pheno_manifest",
+                40000002
             },
             {
                 3117509,
                 "@FBbt00004729:wing@ | @FBcv0000031:anterior compartment@, with @FBal0060667:Scer\\GAL4<up>sd-SG29.1</up>@",
-                "derived_pheno_manifest"
+                "derived_pheno_manifest",
+                40000003
+            },
+            {
+                3117509,
+                "@FBcv0000351:lethal@ | @FBdv00005289:embryonic stage@ | @FBcv0000323:segment polarity@ | @FBcv0000311:conditional ts@",
+                "derived_pheno_manifest",
+                40000004
             },
             {
                 3117509,
                 "@FBcv0000354:visible@, with @FBal0060667:Scer\\GAL4<up>sd-SG29.1</up>@",
-                "derived_pheno_class"
+                "derived_pheno_class",
+                40000005
             }
-
         };
 
         MockMultiRowResultSet res = new MockMultiRowResultSet();
