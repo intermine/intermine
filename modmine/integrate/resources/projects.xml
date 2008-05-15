@@ -364,7 +364,7 @@
 	</item>
 	<item id="1056" class="" implements="http://www.flymine.org/model/genomic#ModEncodeProvider">
 		<attribute name="surname" value="Celniker"/>
-		<attribute name="name" value="Susan Celniker"/>
+		<attribute name="name" value="Sue Celniker"/>
 		<reference name="project" ref_id="1020"/>
 	</item>
 	<item id="1057" class="" implements="http://www.flymine.org/model/genomic#ModEncodeProvider">
