@@ -50,7 +50,6 @@ public class BDGPInsituConverter extends FileConverter
     private String[] stageDescriptions;
     private Set<String> badTerms;
     protected IdResolverFactory resolverFactory;
-    private IdResolver resolver;
     private static final String TAXON_ID = "7227";
 
     /**
@@ -247,9 +246,7 @@ public class BDGPInsituConverter extends FileConverter
     }
 
     private Item getGene(String geneCG) throws ObjectStoreException {
-        if (resolver == null) {
-            resolver = resolverFactory.getIdResolver();
-        }
+        IdResolver resolver = resolverFactory.getIdResolver();
         int resCount = resolver.countResolutions(TAXON_ID, geneCG);
         if (resCount != 1) {
             LOG.info("RESOLVER: failed to resolve gene to one identifier, ignoring gene: "
