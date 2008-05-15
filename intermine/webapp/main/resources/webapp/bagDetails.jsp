@@ -52,13 +52,10 @@
         <li class="tool_bar_separator"><span>&nbsp;//&nbsp;</span></li>
         <li class="tool_bar_link">
           <html:form action="/findInList">
-            <span>
-              <fmt:message key="bagDetails.findInList"/>
-            </span>
             <input type="text" name="textToFind" id="textToFind"/>
             <input type="hidden" name="bagName" value="${bag.name}"/>
             <html:submit>
-              <fmt:message key="header.search.button"/>
+              <fmt:message key="bagDetails.findInList"/>
             </html:submit>
           </html:form>
         </li>
