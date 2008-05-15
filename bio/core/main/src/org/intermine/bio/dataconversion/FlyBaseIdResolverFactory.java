@@ -36,7 +36,7 @@ public class FlyBaseIdResolverFactory extends IdResolverFactory
      * Build an IdResolver for FlyBase by accessing a FlyBase chado database.
      * @return an IdResolver for FlyBase
      */
-    public IdResolver getIdResolver() {
+    protected IdResolver createIdResolver() {
         IdResolver resolver = new IdResolver("Gene");
         Connection conn = null;
         try {

@@ -10,7 +10,6 @@ package org.intermine.bio.dataconversion;
  *
  */
 
-import java.util.HashSet;
 import java.util.Set;
 
 /**
@@ -20,7 +19,7 @@ import java.util.Set;
 public class MockIdResolverFactory extends IdResolverFactory
 {
     private String clsName;
-    private Set<ResolverEntry> mockEntries = new HashSet();
+    private IdResolver resolver = null;
     
     /**
      * Construct with class name for mock IdResolver
@@ -28,17 +27,14 @@ public class MockIdResolverFactory extends IdResolverFactory
      */
     public MockIdResolverFactory(String clsName) {
         this.clsName = clsName;
+        resolver = new IdResolver(clsName);
     }
     
     /**
      * Create a MockIdResolver
      * @return a MockIdResolver
      */
-    public IdResolver getIdResolver() {
-        IdResolver resolver = new IdResolver(clsName);
-        for (ResolverEntry entry : mockEntries) {
-            resolver.addEntry(entry.taxonId, entry.primaryId, entry.synonyms);
-        }
+    protected IdResolver createIdResolver() {
         return resolver;
     }
 
@@ -47,21 +43,9 @@ public class MockIdResolverFactory extends IdResolverFactory
      * is called.
      * @param taxonId the organism of identifiers
      * @param primaryId main identifier
-     * @param synonyms synonms for the main identifier
+     * @param synonyms synonyms for the main identifier
      */
     public void addResolverEntry(String taxonId, String primaryId, Set<String> synonyms) {
-        mockEntries.add(new ResolverEntry(taxonId, primaryId, synonyms));
-    }
-
-    private class ResolverEntry
-    {
-        String taxonId, primaryId;
-        Set<String> synonyms;
-    
-        public ResolverEntry(String taxonId, String primaryId, Set<String> synonyms) {
-            this.taxonId = taxonId;
-            this.primaryId = primaryId;
-            this.synonyms = synonyms;
-        }
+        resolver.addEntry(taxonId, primaryId, synonyms);
     }
 }
