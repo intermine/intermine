@@ -5,7 +5,10 @@
     <attribute name="annotationType" type="java.lang.String"/>
     <reference name="allele" referenced-type="org.flymine.model.genomic.Allele" 
                reverse-reference="phenotypeAnnotations"/>
-    <reference name="phenotype" referenced-type="org.flymine.model.genomic.Phenotype"/>
+    <reference name="with" referenced-type="org.flymine.model.genomic.Allele"/>
+    <reference name="anatomyTerm" referenced-type="org.flymine.model.genomic.AnatomyTerm"/>
+    <reference name="developmentTerm" referenced-type="org.flymine.model.genomic.DevelopmentTerm"/>
+    <collection name="cvTerms" referenced-type="org.flymine.model.genomic.CVTerm"/>
   </class>
   <class name="org.flymine.model.genomic.Allele" 
          extends="org.flymine.model.genomic.BioEntity" is-interface="true">
@@ -13,8 +16,14 @@
                 referenced-type="org.flymine.model.genomic.PhenotypeAnnotation" 
                 reverse-reference="allele"/>
   </class>
-  <class name="org.flymine.model.genomic.Phenotype" extends="org.flymine.model.genomic.OntologyTerm" is-interface="true">
-    <attribute name="code" type="java.lang.String"/>
+  <class name="org.flymine.model.genomic.AnatomyTerm" extends="org.flymine.model.genomic.OntologyTerm" is-interface="true">
+    
+  </class>
+  <class name="org.flymine.model.genomic.DevelopmentTerm" extends="org.flymine.model.genomic.OntologyTerm" is-interface="true">
+    
+  </class>
+  <class name="org.flymine.model.genomic.CVTerm" extends="org.flymine.model.genomic.OntologyTerm" is-interface="true">
+    
   </class>
 
 </classes>

@@ -45,6 +45,8 @@ public class FlyBaseModuleProcessor extends ChadoSequenceProcessor
     private final Map<Integer, MultiKeyMap> config = new HashMap<Integer, MultiKeyMap>();
     private final IntPresentSet locatedGeneIds = new IntPresentSet();
 
+    private Map<String, Item> alleleIdMap = new HashMap<String, Item>();
+
     /**
      * Create a new FlyBaseChadoDBConverter.
      * @param chadoDBConverter the converter that created this object
@@ -381,6 +383,8 @@ public class FlyBaseModuleProcessor extends ChadoSequenceProcessor
 
         Item feature = getChadoDBConverter().createItem(realInterMineType);
 
+        alleleIdMap.put(uniqueName, feature);
+
         return feature;
     }
 
@@ -424,10 +428,12 @@ public class FlyBaseModuleProcessor extends ChadoSequenceProcessor
         processAlleleProps(connection, features);
     }
 
-    private final Map<String, Integer> cvtermMap = new HashMap<String, Integer>();
-
-    // map from phenotype identifier (eg. "FBbt0001234") to Item identifier
-    private Map<String, String> phenotypesMap = new HashMap<String, String>();
+    // map from anatomy identifier (eg. "FBbt0001234") to Item identifier
+    private Map<String, String> anatomyTermMap = new HashMap<String, String>();
+    // map from development term identifier (eg. "FBdv0001234") to Item identifier
+    private Map<String, String> developmentTermMap = new HashMap<String, String>();
+    // map from FlyBase cv identifier (eg. "FBcv0001234") to Item identifier
+    private Map<String, String> cvTermMap = new HashMap<String, String>();
 
     private void processAlleleProps(Connection connection,
                                     Map<Integer, FeatureData> features)
@@ -437,6 +443,7 @@ public class FlyBaseModuleProcessor extends ChadoSequenceProcessor
             Integer featureId = new Integer(res.getInt("feature_id"));
             String value = res.getString("value");
             String propType = res.getString("type_name");
+            Integer featurePropId = new Integer(res.getInt("featureprop_id"));
 
             FeatureData alleleFeatureData = features.get(featureId);
             String alleleItemIdentifier = alleleFeatureData.getItemIdentifier();
@@ -468,7 +475,9 @@ public class FlyBaseModuleProcessor extends ChadoSequenceProcessor
         Matcher m = p.matcher(value);
         StringBuffer sb = new StringBuffer();
 
-        List<String> flybasePhenotypeIdentifiers = new ArrayList<String>();
+        List<String> dbAnatomyTermIdentifiers = new ArrayList<String>();
+        List<String> dbDevelopmentTermIdentifiers = new ArrayList<String>();
+        List<String> dbCVTermIdentifiers = new ArrayList<String>();
 
         while (m.find()) {
             String field = m.group(1);
@@ -478,7 +487,15 @@ public class FlyBaseModuleProcessor extends ChadoSequenceProcessor
             } else {
                 String identifier = field.substring(0, colonPos);
                 if (identifier.startsWith("FBbt")) {
-                    flybasePhenotypeIdentifiers.add(identifier);
+                    dbAnatomyTermIdentifiers.add(identifier);
+                } else {
+                    if (identifier.startsWith("FBdv")) {
+                        dbDevelopmentTermIdentifiers.add(identifier);
+                    } else {
+                        if (identifier.startsWith("FBcv")) {
+                            dbCVTermIdentifiers.add(identifier);
+                        }
+                    }
                 }
                 String text = field.substring(colonPos + 1);
                 m.appendReplacement(sb, text);
@@ -486,30 +503,118 @@ public class FlyBaseModuleProcessor extends ChadoSequenceProcessor
         }
         m.appendTail(sb);
 
-        phenotypeAnnotation.setAttribute("description", sb.toString());
+        List<String> withAlleleIdentifiers = findWithAllele(value);
+
+        if (withAlleleIdentifiers.size() > 0) {
+            phenotypeAnnotation.setCollection("with", withAlleleIdentifiers);
+        }
+
+        String valueNoRefs = sb.toString();
+        String valueNoUps = valueNoRefs.replaceAll("<up>", "[").replaceAll("</up>", "]");
+        phenotypeAnnotation.setAttribute("description", valueNoUps);
         phenotypeAnnotation.setReference("allele", alleleItemIdentifier);
         phenotypeAnnotation.setReference("subject", alleleItemIdentifier);
-        if (flybasePhenotypeIdentifiers.size() == 1) {
-            String phenotypeIdentifier = flybasePhenotypeIdentifiers.get(0);
-            String phenotype = makePhenotype(phenotypeIdentifier);
-            phenotypeAnnotation.setReference("phenotype", phenotype);
+
+        if (dbAnatomyTermIdentifiers.size() == 1) {
+            String anatomyIdentifier = dbAnatomyTermIdentifiers.get(0);
+            String anatomyTermItemId = makeAnatomyTerm(anatomyIdentifier);
+            phenotypeAnnotation.setReference("anatomyTerm", anatomyTermItemId);
+            phenotypeAnnotation.setReference("property", anatomyTermItemId);
         } else {
-            if (flybasePhenotypeIdentifiers.size() > 1) {
-                throw new RuntimeException("more than one phenotype: "
-                                           + flybasePhenotypeIdentifiers);
+            if (dbAnatomyTermIdentifiers.size() > 1) {
+                throw new RuntimeException("more than one anatomy term: "
+                                           + dbAnatomyTermIdentifiers);
             }
         }
+
+        if (dbDevelopmentTermIdentifiers.size() == 1) {
+            String developmentTermIdentifier = dbDevelopmentTermIdentifiers.get(0);
+            String developmentTermItemId = makeDevelopmentTerm(developmentTermIdentifier);
+            phenotypeAnnotation.setReference("developmentTerm", developmentTermItemId);
+            phenotypeAnnotation.setReference("property", developmentTermItemId);
+        } else {
+            if (dbAnatomyTermIdentifiers.size() > 1) {
+                throw new RuntimeException("more than one anatomy term: "
+                                           + dbAnatomyTermIdentifiers);
+            }
+        }
+
+        if (dbCVTermIdentifiers.size() > 0) {
+            for (String cvTermIdentifier: dbCVTermIdentifiers) {
+                String cvTermItemId = makeCVTerm(cvTermIdentifier);
+                phenotypeAnnotation.addToCollection("cvTerms", cvTermItemId);
+            }
+        }
+
         return phenotypeAnnotation;
     }
 
-    private String makePhenotype(String phenotypeIdentifier) throws ObjectStoreException {
-        if (phenotypesMap.containsKey(phenotypeIdentifier)) {
-            return phenotypesMap.get(phenotypeIdentifier);
+    /**
+     * Return the item identifiers of the alleles metioned in the with clauses of the argument.
+     */
+    private List<String> findWithAllele(String value) {
+        Pattern p = Pattern.compile("with @(FBal\\d+):");
+        Matcher m = p.matcher(value);
+
+        List<String> foundIdentifiers = null;
+
+        while (m.find()) {
+            String identifier = m.group(1);
+            if (identifier.startsWith("FBal")) {
+                foundIdentifiers.add(identifier);
+            } else {
+                throw new RuntimeException("identifier in a with must start: \"FBal\" not: "
+                                           + identifier);
+            }
+        }
+
+        List<String> alleleItemIdentifiers = new ArrayList<String>();
+
+        for (String foundIdentifier: foundIdentifiers) {
+            if (alleleIdMap.containsKey(foundIdentifier)) {
+                alleleItemIdentifiers.add(alleleIdMap.get(foundIdentifier).getIdentifier());
+            } else {
+                throw new RuntimeException("can't find allele \"" + foundIdentifiers
+                                           + "\" - should have been stored earlier");
+            }
+        }
+
+        return alleleItemIdentifiers;
+    }
+
+    private String makeAnatomyTerm(String identifier) throws ObjectStoreException {
+        if (anatomyTermMap.containsKey(identifier)) {
+            return anatomyTermMap.get(identifier);
         } else {
-            Item phenotype = getChadoDBConverter().createItem("Phenotype");
-            phenotype.setAttribute("identifier", phenotypeIdentifier);
-            getChadoDBConverter().store(phenotype);
-            return phenotype.getIdentifier();
+            Item anatomyTerm = getChadoDBConverter().createItem("AnatomyTerm");
+            anatomyTerm.setAttribute("identifier", identifier);
+            getChadoDBConverter().store(anatomyTerm);
+            anatomyTermMap.put(identifier, anatomyTerm.getIdentifier());
+            return anatomyTerm.getIdentifier();
+        }
+    }
+
+    private String makeDevelopmentTerm(String identifier) throws ObjectStoreException {
+        if (developmentTermMap.containsKey(identifier)) {
+            return developmentTermMap.get(identifier);
+        } else {
+            Item developmentTerm = getChadoDBConverter().createItem("DevelopmentTerm");
+            developmentTerm.setAttribute("identifier", identifier);
+            getChadoDBConverter().store(developmentTerm);
+            developmentTermMap.put(identifier, developmentTerm.getIdentifier());
+            return developmentTerm.getIdentifier();
+        }
+    }
+
+    private String makeCVTerm(String identifier) throws ObjectStoreException {
+        if (cvTermMap.containsKey(identifier)) {
+            return cvTermMap.get(identifier);
+        } else {
+            Item cvTerm = getChadoDBConverter().createItem("CVTerm");
+            cvTerm.setAttribute("identifier", identifier);
+            getChadoDBConverter().store(cvTerm);
+            cvTermMap.put(identifier, cvTerm.getIdentifier());
+            return cvTerm.getIdentifier();
         }
     }
 
@@ -528,7 +633,7 @@ public class FlyBaseModuleProcessor extends ChadoSequenceProcessor
         }
 
         String query =
-            "select feature_id, value, cvterm.name AS type_name"
+            "select feature_id, value, cvterm.name AS type_name, featureprop_id"
             + "   FROM featureprop, cvterm"
             + "   WHERE featureprop.type_id = cvterm.cvterm_id"
             + "       AND feature_id IN ("
