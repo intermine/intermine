@@ -53,7 +53,7 @@ public class WebSearchableListController extends TilesAction
 {
 
     private static final Logger LOG = Logger.getLogger(WebSearchableListController.class);
-    
+
     /**
      * Set up the attributes for webSearchableList.tile
      * {@inheritDoc}
@@ -106,11 +106,10 @@ public class WebSearchableListController extends TilesAction
             }
         }
 
-
         if (limitInt > 0) {
             filteredWebSearchables = WebUtil.shuffle(filteredWebSearchables, limitInt);
         } else {
-            filteredWebSearchables = sortMap(filteredWebSearchables);
+            filteredWebSearchables = sortList(filteredWebSearchables);
         }
 
         Map<String, Object> wsMapForJS = new HashMap<String, Object>();
@@ -135,50 +134,32 @@ public class WebSearchableListController extends TilesAction
     /**
      * Return a copy of the given Map sorted by creation date, then by name.
      */
-    private Map<String, WebSearchable> sortMap(final Map<String, WebSearchable> 
+    private Map<String, WebSearchable> sortList(final Map<String, WebSearchable>
         filteredWebSearchables) {
-        
+
         Comparator<String> comparator = new Comparator<String>() {
-            
+
             public int compare(String o1, String o2) {
                 WebSearchable ws1 = (WebSearchable) filteredWebSearchables.get(o1);
                 WebSearchable ws2 = (WebSearchable) filteredWebSearchables.get(o2);
                 if (ws1 instanceof InterMineBag && ws2 instanceof InterMineBag) {
                     InterMineBag bag1 = (InterMineBag) ws1;
                     InterMineBag bag2 = (InterMineBag) ws2;
-                    return compareBags(bag1, bag2);
+                    if (bag1.getDateCreated() != null && bag2.getDateCreated() != null) {
+                        return bag2.getDateCreated().compareTo(bag1.getDateCreated());
+                    } else {
+                        return bag2.getName().compareTo(bag1.getName());
+                    }
                 } else if (ws1.getTitle().equals(ws2.getTitle())) {
-                    return compareByName(ws1, ws2);
+                    return ws1.getName().compareTo(ws2.getName());
                 } else {
                     return ws1.getTitle().compareTo(ws2.getTitle());
                 }
             }
-
-            private int compareBags(InterMineBag bag1, InterMineBag bag2) {
-                if (bag1.getDateCreated() != null && bag2.getDateCreated() != null) {
-                    if (!bag1.getDateCreated().equals(bag2.getDateCreated())) {
-                        return bag1.getDateCreated().compareTo(bag2.getDateCreated());    
-                    } else {
-                        return compareByName(bag1, bag2);
-                    }
-                } else {
-                    return compareByName(bag1, bag2);
-                }
-            }
-
-            private int compareByName(WebSearchable ws1, WebSearchable ws2) {
-                if (!ws1.getName().equals(ws2.getName())) {
-                    return ws1.getName().compareTo(ws2.getName());
-                } else {
-                    // at the sort order doesn't matter, two same items
-                    return 1;
-                }
-            }
-
         };
- 
-        Map<String, WebSearchable> sortedMap = 
-               new TreeMap<String, WebSearchable>(comparator);        
+
+        Map<String, WebSearchable> sortedMap =
+               new TreeMap<String, WebSearchable>(comparator);
         if (filteredWebSearchables.size() != sortedMap.size()) {
             LOG.error("Important error. Sorting of web searchables removed some items.");
         }
@@ -190,7 +171,7 @@ public class WebSearchableListController extends TilesAction
      * Get all the WebSearchables in the given scope and of the given type.
      * @param request request
      * @param type type
-     * @param scope  private or global scope 
+     * @param scope  private or global scope
      * @param tags tags
      * @return websearchables of specified type, scope and with specified tags
      */
@@ -236,7 +217,7 @@ public class WebSearchableListController extends TilesAction
     }
 
     /**
-     * Filters websearchables. Loops through the websearchables, 
+     * Filters websearchables. Loops through the websearchables,
      * removes item if item is not on the list.
      * @param filteredWebSearchables items to be filtered
      * @param list list
