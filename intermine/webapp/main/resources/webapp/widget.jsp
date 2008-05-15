@@ -33,12 +33,13 @@
 
 	<c:choose>
 	<c:when test="${type == 'EnrichmentWidget'}">
-    	<a href="javascript:displayNotAnalysed(${widget.id})"><span id="widgetnotanalysed${widget.id}">${widget.notAnalysed}</span></a></p>
+    	<a href="javascript:displayNotAnalysed(${widget.id})"><span id="widgetnotanalysed${widget.id}">${widget.notAnalysed}</span></a>
 	</c:when>
 	<c:otherwise>
-    	<span id="widgetnotanalysed${widget.id}">${widget.notAnalysed}</span></a>
+    	<span id="widgetnotanalysed${widget.id}">${widget.notAnalysed}</span>
     </c:otherwise>
 	</c:choose>
+ </p>
  <c:set var="extraAttrMap" value="${widget2extraAttrs[widget.id]}" />
  <c:if test="${type == 'EnrichmentWidget' || fn:length(extraAttrMap)>0}" >
   <fieldset>
