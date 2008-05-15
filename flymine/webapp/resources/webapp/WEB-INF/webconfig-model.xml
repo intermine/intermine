@@ -478,6 +478,7 @@
 
   <class className="org.flymine.model.genomic.OntologyTerm">
     <fields>
+      <fieldconfig fieldExpr="identifier"/>
       <fieldconfig fieldExpr="name"/>
       <fieldconfig fieldExpr="description" doNotTruncate="true" />
     </fields>
