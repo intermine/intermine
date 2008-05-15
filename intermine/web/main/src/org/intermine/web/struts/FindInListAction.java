@@ -11,7 +11,6 @@ package org.intermine.web.struts;
  */
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
@@ -21,7 +20,6 @@ import org.intermine.objectstore.query.ConstraintOp;
 import org.intermine.objectstore.query.ConstraintSet;
 import org.intermine.objectstore.query.Query;
 import org.intermine.objectstore.query.QueryClass;
-import org.intermine.objectstore.query.QueryExpression;
 import org.intermine.objectstore.query.QueryField;
 import org.intermine.objectstore.query.QueryValue;
 import org.intermine.objectstore.query.Results;
@@ -33,7 +31,6 @@ import org.intermine.metadata.ClassDescriptor;
 import org.intermine.metadata.FieldDescriptor;
 import org.intermine.metadata.Model;
 import org.intermine.objectstore.ObjectStore;
-import org.intermine.util.StringUtil;
 import org.intermine.web.logic.ClassKeyHelper;
 import org.intermine.web.logic.Constants;
 import org.intermine.web.logic.WebUtil;
@@ -130,7 +127,7 @@ public class FindInListAction extends InterMineAction
 
     private Query makeQuery(String searchTerm, InterMineBag bag,
                             Collection<String> identifierFieldNames) {
-        Object lowerSearchTerm = searchTerm.toLowerCase();
+//        Object lowerSearchTerm = searchTerm.toLowerCase();
 
         Query q = new Query();
         QueryClass qc;
@@ -151,9 +148,12 @@ public class FindInListAction extends InterMineAction
 
         for (String fieldName: identifierFieldNames) {
             QueryField qf = new QueryField(qc, fieldName);
-            QueryExpression lowerQF = new QueryExpression(QueryExpression.LOWER, qf);
+//     For case insensitive
+//            QueryExpression lowerQF = new QueryExpression(QueryExpression.LOWER, qf);
+//            SimpleConstraint sc =
+//              new SimpleConstraint(lowerQF, ConstraintOp.EQUALS, new QueryValue(lowerSearchTerm));
             SimpleConstraint sc =
-                new SimpleConstraint(lowerQF, ConstraintOp.EQUALS, new QueryValue(lowerSearchTerm));
+                new SimpleConstraint(qf, ConstraintOp.EQUALS, new QueryValue(searchTerm));
             fieldCS.addConstraint(sc);
         }
 
