@@ -24,7 +24,7 @@ public abstract class IdResolverFactory
      */
     public IdResolver getIdResolver() {
         if (resolver == null) {
-            return createIdResolver();
+            this.resolver = createIdResolver();
         }
         return resolver;
     }

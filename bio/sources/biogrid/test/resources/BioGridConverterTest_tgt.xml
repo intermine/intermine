@@ -31,7 +31,7 @@
 <collection name="interactingGenes"><reference ref_id="5_1"/></collection>
 </item>
 <item id="5_1" class="http://www.flymine.org/model/genomic#Gene">
-<attribute name="primaryIdentifier" value="FBgn0000001"/>
+<attribute name="primaryIdentifier" value="FBgn001"/>
 <reference name="organism" ref_id="6_1"/>
 </item>
 <item id="3_1" class="http://www.flymine.org/model/genomic#GeneticInteractionExperiment">
@@ -40,7 +40,7 @@
 <reference name="publication" ref_id="4_1"/>
 </item>
 <item id="5_2" class="http://www.flymine.org/model/genomic#Gene">
-<attribute name="primaryIdentifier" value="FBgn0000002"/>
+<attribute name="primaryIdentifier" value="FBgn002"/>
 <reference name="organism" ref_id="6_1"/>
 </item>
 </items>
