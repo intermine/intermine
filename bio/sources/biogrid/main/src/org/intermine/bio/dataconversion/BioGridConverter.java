@@ -49,14 +49,18 @@ public class BioGridConverter extends FileConverter
     private static final Logger LOG = Logger.getLogger(BioGridConverter.class);
     protected static final String GENOMIC_NS = "http://www.flymine.org/model/genomic#";
     private static Map<String, String> masterList = new HashMap<String, String>();
-
+    protected IdResolverFactory resolverFactory;
+    
     /**
      * Constructor
      * @param writer the ItemWriter used to handle the resultant items
      * @param model the Model
      */
     public BioGridConverter(ItemWriter writer, Model model) {
-        super(writer, model);        
+        super(writer, model);    
+        
+        // only construct factory here so can be replaced by mock factory in tests
+        resolverFactory = new FlyBaseIdResolverFactory();
     }
 
     /**
@@ -196,7 +200,7 @@ public class BioGridConverter extends FileConverter
                                                     && dbRef.equalsIgnoreCase("SGD"))) {
                         String identifier = attrs.getValue("id");
                         geneIdsToIdentifiers.put(geneId, identifier);
-                        getGene(identifier);
+                        getGene(organismTaxonId, identifier);
                     }
                 }
                             
@@ -320,7 +324,7 @@ public class BioGridConverter extends FileConverter
                         String identifier = geneIdsToIdentifiers.get(id);
                         Item gene = null;
                         if (identifier != null) {
-                            gene = getGene(identifier);
+                            gene = getGene(organismTaxonId, identifier);
                         }
                         if (gene != null) {
                             interactorHolder = new InteractorHolder(gene, identifier);
@@ -466,7 +470,20 @@ public class BioGridConverter extends FileConverter
             return itemId;
         }
 
-        private Item getGene(String identifier) {
+        private Item getGene(String taxonId, String identifier) {
+            // for Drosophila attempt to update to a current gene identifier
+            if (taxonId.equals("7227")) {
+                IdResolver resolver = resolverFactory.getIdResolver();
+
+                int resCount = resolver.countResolutions(taxonId, identifier);
+                if (resCount != 1) {
+                    LOG.info("RESOLVER: failed to resolve gene to one identifier, ignoring gene: "
+                             + identifier + " count: " + resCount + " FBgn: "
+                             + resolver.resolveId(taxonId, identifier));
+                    return null;
+                }
+                identifier = resolver.resolveId(taxonId, identifier).iterator().next();
+            }
             Item item = genes.get(identifier);
             if (item == null) {
                 item = createItem("Gene");
