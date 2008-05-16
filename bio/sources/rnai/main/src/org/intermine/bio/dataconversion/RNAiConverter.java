@@ -163,7 +163,7 @@ public class RNAiConverter extends FileConverter
             }
             phenotype.setAttribute("name", desc);
             phenotype.setReference("ontology", ontology.getIdentifier());
-            phenotypeMap.put(code, phenotype);
+            phenotypeMap.put(identifier, phenotype);
 
             store(phenotype);
         }
