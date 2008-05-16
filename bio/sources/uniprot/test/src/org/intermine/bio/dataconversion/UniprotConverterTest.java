@@ -12,6 +12,7 @@ package org.intermine.bio.dataconversion;
 
 import java.io.InputStreamReader;
 import java.io.Reader;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Set;
 
@@ -21,8 +22,24 @@ import org.intermine.metadata.Model;
 
 public class UniprotConverterTest extends ItemsTestCase
 {
+
+    private IdResolver resolver;
+    private UniprotConverter converter;
+    private MockItemWriter itemWriter;
+
     public UniprotConverterTest(String arg) {
         super(arg);
+        itemWriter = new MockItemWriter(new HashMap());
+        converter = new UniprotConverter(itemWriter, Model.getInstanceByName("genomic"));
+        MockIdResolverFactory resolverFactory = new MockIdResolverFactory("Gene");
+        resolverFactory = new MockIdResolverFactory("Gene");
+        resolverFactory.addResolverEntry("7227", "FBgn0037874", Collections.singleton("CG4800"));
+        resolverFactory.addResolverEntry("7227", "FBgn0020415", Collections.singleton("CG4475"));
+        resolverFactory.addResolverEntry("7227", "FBgn0039830", Collections.singleton("CG1746"));
+        resolverFactory.addResolverEntry("7227", "FBgn0019830", Collections.singleton("CG3057"));
+        converter.resolverFactory = resolverFactory;
+//        resolverFactory = new FlyBaseIdResolverFactory();
+//        converter.resolverFactory = resolverFactory;
     }
 
     public void setUp() throws Exception {
@@ -33,16 +50,12 @@ public class UniprotConverterTest extends ItemsTestCase
 
         Reader reader = new InputStreamReader(getClass().getClassLoader()
                                               .getResourceAsStream("UniprotConverterTest_src.xml"));
-
-        MockItemWriter itemWriter = new MockItemWriter(new HashMap());
-        UniprotConverter converter = new UniprotConverter(itemWriter,
-                                                          Model.getInstanceByName("genomic"));
         converter.setCreateinterpro("true");
         converter.process(reader);
         converter.close();
 
         // uncomment to write out a new target items file
-        //writeItemsFile(itemWriter.getItems(), "/tmp/uniprot-tgt-items.xml");
+        //writeItemsFile(itemWriter.getItems(), "uniprot-tgt-items.xml");
 
         Set expected = readItemSet("UniprotConverterTest_tgt.xml");
 
