@@ -24,7 +24,7 @@
 <attribute name="name" value="Affymetrix"/>
 </item>
 <item id="6_3" class="http://www.flymine.org/model/genomic#Gene">
-<attribute name="secondaryIdentifier" value="CG7163"/>
+<attribute name="primaryIdentifier" value="FBgn003"/>
 <reference name="organism" ref_id="1_1"/>
 </item>
 <item id="4_2" class="http://www.flymine.org/model/genomic#Synonym">
@@ -34,7 +34,7 @@
 <reference name="subject" ref_id="3_2"/>
 </item>
 <item id="6_1" class="http://www.flymine.org/model/genomic#Gene">
-<attribute name="secondaryIdentifier" value="CG9042"/>
+<attribute name="primaryIdentifier" value="FBgn001"/>
 <reference name="organism" ref_id="1_1"/>
 </item>
 <item id="5_1" class="http://www.flymine.org/model/genomic#Transcript">
@@ -46,7 +46,7 @@
 <reference name="dataSource" ref_id="0_1"/>
 </item>
 <item id="6_2" class="http://www.flymine.org/model/genomic#Gene">
-<attribute name="secondaryIdentifier" value="CG33057"/>
+<attribute name="primaryIdentifier" value="FBgn002"/>
 <reference name="organism" ref_id="1_1"/>
 </item>
 <item id="3_1" class="http://www.flymine.org/model/genomic#ProbeSet">
