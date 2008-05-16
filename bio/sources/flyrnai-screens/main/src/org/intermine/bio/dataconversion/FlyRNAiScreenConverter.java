@@ -20,6 +20,7 @@ import java.util.LinkedHashSet;
 import java.util.Map;
 import java.util.Set;
 
+import org.apache.log4j.Logger;
 import org.apache.tools.ant.BuildException;
 import org.intermine.dataconversion.FileConverter;
 import org.intermine.dataconversion.ItemWriter;
@@ -43,13 +44,15 @@ public class FlyRNAiScreenConverter extends FileConverter
     private Map<String, Item> publications = new HashMap<String, Item>();
     private Map<String, Item> screenMap = new HashMap<String, Item>();
     private Map<String, String> resultValues = new HashMap<String, String>();
-    protected String taxonId = "7227";
+    private static final String TAXON_ID = "7227";
     // access to current file for error messages
     private String fileName;
     private Set<String> hitScreenNames = new HashSet<String>();
     private Set<String> detailsScreenNames = new HashSet<String>();
     private Item dataSet;
-
+    protected IdResolverFactory resolverFactory;
+    
+    protected static final Logger LOG = Logger.getLogger(FlyRNAiScreenConverter.class);
     /**
      * Create a new FlyRNAiScreenConverter object.
      * @param writer the ItemWriter used to handle the resultant items
@@ -57,6 +60,9 @@ public class FlyRNAiScreenConverter extends FileConverter
      */
     public FlyRNAiScreenConverter(ItemWriter writer, Model model) {
         super(writer, model);
+                
+        // only construct factory here so can be replaced by mock factory in tests
+        resolverFactory = new FlyBaseIdResolverFactory();
     }
 
     /**
@@ -66,7 +72,7 @@ public class FlyRNAiScreenConverter extends FileConverter
         // set up common items
         if (organism == null) {
             organism = createItem("Organism");
-            organism.setAttribute("taxonId", taxonId);
+            organism.setAttribute("taxonId", TAXON_ID);
             store(organism);
         }
 
@@ -189,12 +195,10 @@ public class FlyRNAiScreenConverter extends FileConverter
                     for (int i = 0; i < geneNames.length; i++) {
                         String geneSymbol = geneNames[i].trim();
                         Item gene = newGene(geneSymbol);
-                        ampliconGenes.add(gene);
-                        if (!amplicon.hasCollection("genes")) {
-                            amplicon.addCollection(new ReferenceList("genes",
-                                                                 new ArrayList<String>()));
+                        if (gene != null) {
+                            ampliconGenes.add(gene);
+                            amplicon.addToCollection("genes", gene);
                         }
-                        amplicon.getCollection("genes").addRefId(gene.getIdentifier());
                     }
                 }
 
@@ -317,8 +321,17 @@ public class FlyRNAiScreenConverter extends FileConverter
         }
         Item item = genes.get(geneSymbol);
         if (item == null) {
+            IdResolver resolver = resolverFactory.getIdResolver();
+            int resCount = resolver.countResolutions(TAXON_ID, geneSymbol);
+            if (resCount != 1) {
+                LOG.info("RESOLVER: failed to resolve gene to one identifier, ignoring gene: "
+                         + geneSymbol + " count: " + resCount + " FBgn: "
+                         + resolver.resolveId(TAXON_ID, geneSymbol));
+                return null;
+            }
+            String primaryIdentifier = resolver.resolveId(TAXON_ID, geneSymbol).iterator().next();
             item = createItem("Gene");
-            item.setAttribute("symbol", geneSymbol);
+            item.setAttribute("primaryIdentifier", primaryIdentifier);
             item.setReference("organism", organism);
             item.addCollection(new ReferenceList("rnaiResults", new ArrayList<String>()));
             genes.put(geneSymbol, item);
