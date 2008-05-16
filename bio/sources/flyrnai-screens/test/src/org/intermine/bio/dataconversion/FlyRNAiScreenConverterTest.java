@@ -28,6 +28,10 @@ public class FlyRNAiScreenConverterTest extends ItemsTestCase
 
     public FlyRNAiScreenConverterTest(String arg) {
         super(arg);
+    }
+
+    public void setUp() throws Exception {
+        super.setUp();
         itemWriter = new MockItemWriter(new HashMap());
         converter = new FlyRNAiScreenConverter(itemWriter, model);
         MockIdResolverFactory resolverFactory = new MockIdResolverFactory("Gene");
@@ -35,7 +39,7 @@ public class FlyRNAiScreenConverterTest extends ItemsTestCase
         resolverFactory.addResolverEntry("7227", "FBgn002", Collections.singleton("eve"));
         converter.resolverFactory = resolverFactory;
     }
-
+    
     public void testProcess() throws Exception {
         File srcFile = new File(getClass().getClassLoader().getResource("RNAi_screen_details").toURI());
         converter.setCurrentFile(srcFile);
