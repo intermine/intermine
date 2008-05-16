@@ -12,6 +12,7 @@ package org.intermine.bio.dataconversion;
 
 import java.io.File;
 import java.io.FileReader;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Set;
 
@@ -21,16 +22,21 @@ import org.intermine.metadata.Model;
 
 public class FlyRNAiScreenConverterTest extends ItemsTestCase
 {
-
+    Model model = Model.getInstanceByName("genomic");
+    FlyRNAiScreenConverter converter;
+    MockItemWriter itemWriter;
 
     public FlyRNAiScreenConverterTest(String arg) {
         super(arg);
+        itemWriter = new MockItemWriter(new HashMap());
+        converter = new FlyRNAiScreenConverter(itemWriter, model);
+        MockIdResolverFactory resolverFactory = new MockIdResolverFactory("Gene");
+        resolverFactory.addResolverEntry("7227", "FBgn001", Collections.singleton("CG31973"));
+        resolverFactory.addResolverEntry("7227", "FBgn002", Collections.singleton("eve"));
+        converter.resolverFactory = resolverFactory;
     }
 
     public void testProcess() throws Exception {
-        MockItemWriter itemWriter = new MockItemWriter(new HashMap());
-        FlyRNAiScreenConverter converter = new FlyRNAiScreenConverter(itemWriter,
-                                                                      Model.getInstanceByName("genomic"));
         File srcFile = new File(getClass().getClassLoader().getResource("RNAi_screen_details").toURI());
         converter.setCurrentFile(srcFile);
         converter.process(new FileReader(srcFile));
