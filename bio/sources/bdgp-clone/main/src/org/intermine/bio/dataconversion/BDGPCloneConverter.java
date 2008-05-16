@@ -10,19 +10,20 @@ package org.intermine.bio.dataconversion;
  *
  */
 
-import java.io.Reader;
 import java.io.BufferedReader;
+import java.io.Reader;
 import java.util.ArrayList;
 import java.util.Collections;
-
-import org.intermine.objectstore.ObjectStoreException;
-import org.intermine.metadata.MetaDataException;
-import org.intermine.metadata.Model;
-import org.intermine.xml.full.Item;
-import org.intermine.xml.full.ReferenceList;
-import org.intermine.dataconversion.ItemWriter;
+import java.util.HashMap;
+import java.util.Map;
 
 import org.apache.log4j.Logger;
+import org.intermine.dataconversion.ItemWriter;
+import org.intermine.metadata.MetaDataException;
+import org.intermine.metadata.Model;
+import org.intermine.objectstore.ObjectStoreException;
+import org.intermine.xml.full.Item;
+import org.intermine.xml.full.ReferenceList;
 
 /**
  * DataConverter to load flat file linking BDGP clones to Flybase genes.
@@ -31,8 +32,10 @@ import org.apache.log4j.Logger;
 public class BDGPCloneConverter extends CDNACloneConverter
 {
     protected static final Logger LOG = Logger.getLogger(BDGPCloneConverter.class);
-
-
+    private Map<String, Item> genes = new HashMap();
+    protected IdResolverFactory resolverFactory;
+    private static final String TAXON_ID = "7227";
+    
     /**
      * Constructor
      * @param writer the ItemWriter used to handle the resultant items
@@ -54,8 +57,11 @@ public class BDGPCloneConverter extends CDNACloneConverter
         store(dataSet);
 
         organism = createItem("Organism");
-        organism.setAttribute("taxonId", "7227");
+        organism.setAttribute("taxonId", TAXON_ID);
         store(organism);
+        
+        // only construct factory here so can be replaced by mock factory in tests
+        resolverFactory = new FlyBaseIdResolverFactory();
     }
 
 
@@ -77,17 +83,16 @@ public class BDGPCloneConverter extends CDNACloneConverter
                 continue;
             }
 
-            Item gene = createBioEntity("Gene", array[0], "secondaryIdentifier",
-                                        organism.getIdentifier());
-            store(gene);
-
+            Item gene = getGene(array[0]);
+            
             String[] cloneIds = array[3].split(";");
 
             for (int i = 0; i < cloneIds.length; i++) {
                 Item clone = createBioEntity("CDNAClone", cloneIds[i], "primaryIdentifier",
                                              organism.getIdentifier());
-                clone.setReference("gene", gene.getIdentifier());
-
+                if (gene != null) {
+                    clone.setReference("gene", gene.getIdentifier());
+                }
                 Item synonym = createItem("Synonym");
                 synonym.setAttribute("type", "identifier");
                 synonym.setAttribute("value", cloneIds[i]);
@@ -101,5 +106,25 @@ public class BDGPCloneConverter extends CDNACloneConverter
             }
         }
     }
-
+    
+    private Item getGene(String identifier) throws ObjectStoreException {
+        if (genes.containsKey(identifier)) {
+            return genes.get(identifier);
+        }
+        IdResolver resolver = resolverFactory.getIdResolver();
+        int resCount = resolver.countResolutions(TAXON_ID, identifier);
+        if (resCount != 1) {
+            LOG.info("RESOLVER: failed to resolve gene to one identifier, ignoring gene: "
+                     + identifier + " count: " + resCount + " FBgn: "
+                     + resolver.resolveId(TAXON_ID, identifier));
+            return null;
+        }
+        String primaryIdentifier = resolver.resolveId(TAXON_ID, identifier).iterator().next();
+        Item gene = createItem("Gene");
+        gene.setAttribute("primaryIdentifier", primaryIdentifier);
+        gene.setReference("organism", organism);
+        genes.put(identifier, gene);
+        store(gene);
+        return gene;
+    }
 }

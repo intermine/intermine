@@ -38,7 +38,7 @@
     <reference name="subject" ref_id="4_2"/>
   </item>
   <item id="3_1" class="http://www.flymine.org/model/genomic#Gene">
-    <attribute name="secondaryIdentifier" value="CG9480"/>
+    <attribute name="primaryIdentifier" value="FBgn001"/>
     <reference name="organism" ref_id="2_1"/>
   </item>
 </items>

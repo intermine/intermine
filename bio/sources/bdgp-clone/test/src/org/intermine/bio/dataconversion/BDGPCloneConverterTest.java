@@ -11,6 +11,7 @@ package org.intermine.bio.dataconversion;
  */
 
 import java.io.StringReader;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Set;
 
@@ -24,20 +25,27 @@ import org.intermine.metadata.Model;
  */
 public class BDGPCloneConverterTest extends ItemsTestCase
 {
-
+    Model model = Model.getInstanceByName("genomic");
+    BDGPCloneConverter converter;
+    MockItemWriter itemWriter;
 
     public BDGPCloneConverterTest(String arg) {
         super(arg);
     }
 
+    public void setUp() throws Exception {
+        super.setUp();
+        itemWriter = new MockItemWriter(new HashMap());
+        converter = new BDGPCloneConverter(itemWriter, model);
+        MockIdResolverFactory resolverFactory = new MockIdResolverFactory("Gene");
+        resolverFactory.addResolverEntry("7227", "FBgn001", Collections.singleton("CG9480"));
+        converter.resolverFactory = resolverFactory;
+    }
+    
     public void testProcess() throws Exception {
         String ENDL = System.getProperty("line.separator");
         String input = "# comment" + ENDL
             + "CG9480\tGlycogenin\tFBgn0034603\tRE02181;RE21586" + ENDL;
-
-        MockItemWriter itemWriter = new MockItemWriter(new HashMap());
-        BDGPCloneConverter converter = new BDGPCloneConverter(itemWriter,
-                                                              Model.getInstanceByName("genomic"));
 
         converter.process(new StringReader(input));
         converter.close();
