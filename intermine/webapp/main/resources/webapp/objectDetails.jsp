@@ -18,7 +18,7 @@
 //]]>-->
 </script>
 <script type="text/javascript" src="js/inlinetemplate.js">
-  var modifyDetailsURL = '<html:rewrite action="/modifyDetails"/>';  
+  var modifyDetailsURL = '<html:rewrite action="/modifyDetails"/>';
 </script>
 
 <%-- figure out whether we should show templates or not --%>
@@ -145,7 +145,7 @@
           </c:forEach>
 
         </im:body>
-        
+
       </td>
 
       <td valign="top" width="66%">
@@ -164,7 +164,7 @@
         <%-- Fields that are set to 'sectionOnRight' --%>
         <c:forEach items="${object.attributes}" var="entry">
           <c:if test="${object.fieldConfigMap[entry.key].sectionOnRight}">
-            
+
             <imutil:disclosure id="${objectType}objectDetailsRight-${entry.key}" opened="false" type="consistent">
               <imutil:disclosureHead>
                 <imutil:disclosureTitle>
@@ -190,12 +190,12 @@
              <c:otherwise>
                <span class="value">${entry.value}</span>
              </c:otherwise>
-          </c:choose>                
+          </c:choose>
               </imutil:disclosureBody>
             </imutil:disclosure>
           </c:if>
         </c:forEach>
-        
+
    <%-- bags that contain this object --%>
    <tiles:insert name="objectDetailsInList.tile">
      <tiles:put name="list" value="${bagsWithThisObject}"/>
@@ -235,7 +235,7 @@
         <tiles:put name="displayObject" beanName="object"/>
         <tiles:put name="trail" value="${request.trail}"/>
         <tiles:put name="aspectId" value="${templateIdPrefix}${status.index}" />
-        <tiles:put name="opened" value="${status.index == 0}" />        
+        <tiles:put name="opened" value="${status.index == 0}" />
       </tiles:insert>
     </c:forEach>
 
@@ -253,7 +253,7 @@
         <tiles:insert page="/objectDetailsRefsCols.jsp">
             <tiles:put name="object" beanName="object"/>
             <tiles:put name="placement" value="aspect:Miscellaneous"/>
-          </tiles:insert>    
+          </tiles:insert>
     </imutil:disclosureBody>
   </imutil:disclosure>
 </div>
