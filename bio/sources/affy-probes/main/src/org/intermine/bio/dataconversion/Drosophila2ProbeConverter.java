@@ -10,6 +10,7 @@ package org.intermine.bio.dataconversion;
  *
  */
 
+import java.io.Reader;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
@@ -17,6 +18,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.log4j.Logger;
 import org.intermine.dataconversion.FileConverter;
 import org.intermine.dataconversion.ItemWriter;
 import org.intermine.metadata.Model;
@@ -24,10 +26,6 @@ import org.intermine.objectstore.ObjectStoreException;
 import org.intermine.util.FormattedTextParser;
 import org.intermine.xml.full.Item;
 import org.intermine.xml.full.ReferenceList;
-
-import java.io.Reader;
-
-import org.apache.log4j.Logger;
 
 /**
  *
@@ -39,7 +37,9 @@ public class Drosophila2ProbeConverter extends FileConverter
 
     protected Item dataSource, dataSet, org;
     protected Map<String, Item> bioMap = new HashMap<String, Item>();
-
+    protected IdResolverFactory resolverFactory;
+    private static final String TAXON_ID = "7227";
+    
     /**
      * Constructor
      * @param writer the ItemWriter used to handle the resultant items
@@ -55,8 +55,12 @@ public class Drosophila2ProbeConverter extends FileConverter
         store(dataSource);
 
         org = createItem("Organism");
-        org.setAttribute("taxonId", "7227");
+        org.setAttribute("taxonId", TAXON_ID);
         store(org);
+    
+        
+        // only construct factory here so can be replaced by mock factory in tests
+        resolverFactory = new FlyBaseIdResolverFactory();
     }
 
 
@@ -109,7 +113,9 @@ public class Drosophila2ProbeConverter extends FileConverter
                         for (String identifier : genes) {
                             if (identifier.trim().startsWith("CG")) {
                                 Item gene = createBioEntity("Gene", identifier);
-                                geneColl.addRefId(gene.getIdentifier());
+                                if (gene != null) {
+                                    geneColl.addRefId(gene.getIdentifier());
+                                }
                             }
                         }
                         probeSet.addCollection(geneColl);
@@ -129,7 +135,21 @@ public class Drosophila2ProbeConverter extends FileConverter
         if (bio == null) {
             bio = createItem(clsName);
             bio.setReference("organism", org.getIdentifier());
-            bio.setAttribute("secondaryIdentifier", identifier);
+
+            if (clsName.equals("Gene")) {
+                IdResolver resolver = resolverFactory.getIdResolver();
+                int resCount = resolver.countResolutions(TAXON_ID, identifier);
+                if (resCount != 1) {
+                    LOG.info("RESOLVER: failed to resolve gene to one identifier, ignoring gene: "
+                             + identifier + " count: " + resCount + " FBgn: "
+                             + resolver.resolveId(TAXON_ID, identifier));
+                    return null;
+                }
+                String primaryIdentifier = resolver.resolveId(TAXON_ID, identifier).iterator().next();
+                bio.setAttribute("primaryIdentifier", primaryIdentifier);
+            } else {
+                bio.setAttribute("secondaryIdentifier", identifier);
+            }
             bioMap.put(identifier, bio);
             store(bio);
         }
