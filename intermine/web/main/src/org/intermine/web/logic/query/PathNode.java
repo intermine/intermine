@@ -13,7 +13,6 @@ package org.intermine.web.logic.query;
 import java.util.ArrayList;
 import java.util.List;
 
-
 /**
  * Node used in displaying query
  * @author Mark Woodbridge
@@ -99,7 +98,9 @@ public class PathNode extends Node
      * {@inheritDoc}
      */
     public String toString() {
-        return super.toString() + " " + constraints;
+        //return super.toString() + " " + constraints;
+        return "PathNode(pathString = \"" + getPathString() + "\", type = \"" + getType()
+            + "\", constraints = \"" + constraints + "\")";
     }
 
     /**

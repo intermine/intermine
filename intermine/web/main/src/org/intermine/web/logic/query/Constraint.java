@@ -10,8 +10,8 @@ package org.intermine.web.logic.query;
  *
  */
 
-import org.apache.commons.lang.ObjectUtils;
 import org.intermine.objectstore.query.ConstraintOp;
+import org.intermine.util.Util;
 import org.intermine.web.logic.WebUtil;
 
 /**
@@ -176,11 +176,11 @@ public class Constraint
      * {@inheritDoc}
      */
     public String toString() {
-        return "<Constraint: " + op + ", " + value
-            + (identifier == null ? "" : ", " + identifier)
-            + (description == null ? "" : ", " + description)
-            + (extraValue == null ? "" : ", " + extraValue)
-            + ">";
+        return "Constraint(" + op + ", " + value
+            + (identifier == null ? "" : ", \"" + identifier + "\"")
+            + (description == null ? "" : ", \"" + description + "\"")
+            + (extraValue == null ? "" : ", \"" + extraValue + "\"")
+            + ")";
     }
 
     /**
@@ -189,39 +189,12 @@ public class Constraint
     public boolean equals(Object o) {
         if (o instanceof Constraint) {
             Constraint other = (Constraint) o;
-            if (op.equals(other.op)
-                && ObjectUtils.equals(value, other.value)) {
-                if (description == null) {
-                    if (other.description != null) {
-                        return false;
-                    }
-                } else {
-                    if (!description.equals(other.description)) {
-                        return false;
-                    }
-                }
-                if (identifier == null) {
-                    if (other.identifier != null) {
-                        return false;
-                    }
-                } else {
-                    if (!identifier.equals(other.identifier)) {
-                        return false;
-                    }
-                }
-                if (extraValue == null) {
-                    if (other.extraValue != null) {
-                        return false;
-                    }
-                } else {
-                    if (!extraValue.equals(other.extraValue)) {
-                        return false;
-                    }
-                }
-                return true;
-            }
+            return op.equals(other.op)
+                && Util.equals(value, other.value)
+                && Util.equals(description, other.description)
+                && Util.equals(identifier, other.identifier)
+                && Util.equals(extraValue, other.extraValue);
         }
-
         return false;
     }
 
@@ -230,9 +203,9 @@ public class Constraint
      */
     public int hashCode() {
         return 2 * op.hashCode()
-            + 3 * (value != null ? value.hashCode() : 0)
-            + (description == null ? 0 : 5 * description.hashCode())
-            + (identifier == null ? 0 : 7 * identifier.hashCode())
-            + (extraValue == null ? 0 : 11 * extraValue.hashCode());
+            + (value == null ? -3 : 3 * value.hashCode())
+            + (description == null ? -5 : 5 * description.hashCode())
+            + (identifier == null ? -7 : 7 * identifier.hashCode())
+            + (extraValue == null ? -11 : 11 * extraValue.hashCode());
     }
 }
