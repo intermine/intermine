@@ -145,15 +145,32 @@ public class WebSearchableListController extends TilesAction
                 if (ws1 instanceof InterMineBag && ws2 instanceof InterMineBag) {
                     InterMineBag bag1 = (InterMineBag) ws1;
                     InterMineBag bag2 = (InterMineBag) ws2;
-                    if (bag1.getDateCreated() != null && bag2.getDateCreated() != null) {
-                        return bag2.getDateCreated().compareTo(bag1.getDateCreated());
-                    } else {
-                        return bag2.getName().compareTo(bag1.getName());
-                    }
+                    return compareBags(bag1, bag2);
                 } else if (ws1.getTitle().equals(ws2.getTitle())) {
-                    return ws1.getName().compareTo(ws2.getName());
+                    return compareByName(ws1, ws2);
                 } else {
                     return ws1.getTitle().compareTo(ws2.getTitle());
+                }
+            }
+
+            private int compareBags(InterMineBag bag1, InterMineBag bag2) {
+                if (bag1.getDateCreated() != null && bag2.getDateCreated() != null) {
+                    if (!bag1.getDateCreated().equals(bag2.getDateCreated())) {
+                        return bag2.getDateCreated().compareTo(bag1.getDateCreated());    
+                    } else {
+                        return compareByName(bag1, bag2);
+                    }
+                } else {
+                    return compareByName(bag1, bag2);
+                }
+            }
+
+            private int compareByName(WebSearchable ws1, WebSearchable ws2) {
+                if (!ws1.getName().equals(ws2.getName())) {
+                    return ws1.getName().compareTo(ws2.getName());
+                } else {
+                    // at the sort order doesn't matter, two same items
+                    return 1;
                 }
             }
         };
