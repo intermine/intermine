@@ -13,6 +13,7 @@ package org.intermine.web.logic.query;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.IdentityHashMap;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -502,9 +503,11 @@ public class PathQuery
      */
     public PathQuery clone() {
         PathQuery query = new PathQuery(model);
+        IdentityHashMap<PathNode, PathNode> newNodes = new IdentityHashMap();
         for (Iterator<Entry<String, PathNode>> i = nodes.entrySet().iterator(); i.hasNext();) {
             Entry<String, PathNode> entry = i.next();
-            query.getNodes().put(entry.getKey(), clone(query, entry.getValue()));
+            query.getNodes().put(entry.getKey(), cloneNode(query, entry.getValue(), newNodes,
+                        model));
         }
         query.getView().addAll(view);
         query.getSortOrder().addAll(sortOrder);
@@ -518,17 +521,25 @@ public class PathQuery
     }
 
     /**
-     * Clone a PathNode
+     * Clone a PathNode.
+     *
      * @param query PathQuery containing cloned PathNode
      * @param node a PathNode
+     * @param newNodes a Map from old PathNodes to new PathNodes, to link up parents properly
+     * @param model the Model
      * @return a copy of the PathNode
      */
-    protected PathNode clone(PathQuery query, PathNode node) {
+    protected static PathNode cloneNode(PathQuery query, PathNode node,
+            IdentityHashMap<PathNode, PathNode> newNodes, Model model) {
+        if (newNodes.containsKey(node)) {
+            return newNodes.get(node);
+        }
         PathNode newNode;
-        PathNode parent = nodes.get(node.getPrefix());
+        PathNode parent = (PathNode) node.getParent();
         if (parent == null) {
             newNode = new PathNode(node.getType());
         } else {
+            parent = cloneNode(query, parent, newNodes, model);
             newNode = new PathNode(parent, node.getFieldName(), node.isOuterJoin());
             try {
                 newNode.setModel(model);
@@ -545,6 +556,7 @@ public class PathQuery
                     constraint.isEditable(), constraint.getDescription(), constraint.getCode(),
                     constraint.getIdentifier(), constraint.getExtraValue()));
         }
+        newNodes.put(node, newNode);
         return newNode;
     }
 

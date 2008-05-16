@@ -17,7 +17,6 @@ import java.util.Collection;
 import java.util.Comparator;
 import java.util.Date;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
@@ -625,8 +624,8 @@ public class MainHelper
 
     private static Set<PathNode> findNonOuterNodes(Map<String, PathNode> nodes,
             Map<String, String> loops) {
-        Set<PathNode> retval = new HashSet();
-        Set<PathNode> done = new HashSet();
+        Set<PathNode> retval = new LinkedHashSet();
+        Set<PathNode> done = new LinkedHashSet();
         LinkedList<PathNode> queue = new LinkedList();
         for (PathNode node : nodes.values()) {
             queue.addLast(node);
@@ -637,7 +636,7 @@ public class MainHelper
             if (queueDeferred > queue.size() + 10) {
                 throw new IllegalArgumentException("Cannot handle entries in queue: " + queue
                         + ", reasons: " + deferralReasons + ", original node list: "
-                        + nodes.values());
+                        + nodes.values() + ", done = " + done);
             }
             PathNode node = queue.removeFirst();
             PathNode parent = (PathNode) node.getParent();
