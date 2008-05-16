@@ -204,6 +204,8 @@
     </longdisplayers>
     <bagdisplayers>
 
+      <displayer src="attributeLinkDisplayer.tile"/>
+
       <graphdisplayer title="Chromosome Distribution" domainLabel="Chromosome" rangeLabel="Gene Count" dataSetLoader="org.intermine.bio.web.widget.ChromosomeDistributionDataSetLdr"
                       toolTipGen="org.intermine.web.logic.widget.ToolTipGenerator" link="org.intermine.bio.web.widget.ChromosomeDistributionGraphURLGenerator"
                       description="Actual: number of genes in this list found on each chromosome.  Expected: given the total number of genes on the chromosome and the number of genes in this list, the number of genes expected to be found on each chromosome."
@@ -269,6 +271,7 @@
                                  filterLabel=""
                                  max="0.10"
                                  externalLink="http://www.ebi.ac.uk/interpro/IEntry?ac=" />
+
 
       <enrichmentwidgetdisplayer title="Publication Enrichment"
                                  link="org.intermine.bio.web.widget.PublicationURLQuery"

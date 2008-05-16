@@ -10,6 +10,7 @@ package org.intermine.bio.web;
  *
  */
 
+import java.net.MalformedURLException;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
@@ -47,6 +48,7 @@ import org.intermine.util.StringUtil;
 import org.intermine.util.TypeUtil;
 import org.intermine.web.logic.Constants;
 import org.intermine.web.logic.bag.InterMineBag;
+import org.intermine.web.util.POSTLink;
 
 /**
  * Set up maps for the attributeLinkDisplayer.jsp
@@ -73,6 +75,7 @@ public class AttributeLinkDisplayerController extends TilesAction
                                  @SuppressWarnings("unused") ActionForm form,
                                  HttpServletRequest request,
                                  @SuppressWarnings("unused") HttpServletResponse response) {
+        
         ServletContext servletContext = request.getSession().getServletContext();
 
         InterMineBag bag = (InterMineBag) request.getAttribute("bag");
@@ -129,8 +132,8 @@ public class AttributeLinkDisplayerController extends TilesAction
         Map<String, ConfigMap> linkConfigs = new HashMap<String, ConfigMap>();
         Properties webProperties =
             (Properties) servletContext.getAttribute(Constants.WEB_PROPERTIES);
-        final String regexp =
-          "attributelink\\.([^.]+)\\." + geneOrgKey + "\\.([^.]+)(\\.list)?\\.(url|text|imageName)";
+        final String regexp = "attributelink\\.([^.]+)\\." + geneOrgKey 
+            + "\\.([^.]+)(\\.list)?\\.(url|text|imageName|usePost)";
         Pattern p = Pattern.compile(regexp);
         String className = null;
         String taxId = null;
@@ -218,6 +221,9 @@ public class AttributeLinkDisplayerController extends TilesAction
                 else if (propType.equals("imageName")) {
                     config.put("imageName", value);
                 }
+                else if (propType.equals("usePost")) {
+                    config.put("usePost", value);
+                }
                 else if (propType.equals("text")) {
                     String text;
                     text = value.replaceAll(ATTR_MARKER_RE, String.valueOf(attrValue));
@@ -225,9 +231,41 @@ public class AttributeLinkDisplayerController extends TilesAction
                 }
             }
         }
+        processConfigs(linkConfigs);
         request.setAttribute("attributeLinkConfiguration", linkConfigs);
         request.setAttribute("attributeLinkClassName", className);
         return null;
+    }
+
+    /**
+     * Process configs. Configs that have specified that POST method
+     * should be used when request is submitted to third party site are modified with this method.
+     * GET form of url is modified to POST form.
+     * @param linkConfigs
+     */
+    private void processConfigs(Map<String, ConfigMap> linkConfigs) {
+        for (ConfigMap config : linkConfigs.values()) {
+            if (config.get("usePost") != null 
+                    && ((String) config.get("usePost")).equalsIgnoreCase("true")) {
+                modifyConfigToPost(config);
+            }
+        }
+    }
+
+    private void modifyConfigToPost(ConfigMap config) {
+        String urlString = (String) config.get("url");
+        POSTLink link;
+        try {
+            // Verifies, that url is valid
+            link = new POSTLink(urlString);
+        } catch (MalformedURLException e) {
+            LOG.error("Converting url from GET to POST form failed. Url retained in GET form.", e);
+            return;
+        }
+        config.put("url", link.getBaseURL());
+        if (link.getParameters().size() > 0) {
+            config.put("parameters", link.getParameters());    
+        }
     }
 
     /**
