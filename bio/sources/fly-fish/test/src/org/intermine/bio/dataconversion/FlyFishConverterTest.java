@@ -35,6 +35,10 @@ public class FlyFishConverterTest extends ItemsTestCase
     
     public FlyFishConverterTest(String arg) throws Exception {
         super(arg);
+    }
+    
+    public void SetUp() throws Exception {
+        super.setUp();
         itemWriter = new MockItemWriter(new HashMap());
         converter = new FlyFishConverter(itemWriter, model);
         MockIdResolverFactory resolverFactory = new MockIdResolverFactory("Gene");
@@ -44,7 +48,7 @@ public class FlyFishConverterTest extends ItemsTestCase
         resolverFactory.addResolverEntry("7227", "FBgn0019830", Collections.singleton("CG3057"));
         converter.resolverFactory = resolverFactory;
     }
-
+    
     public void testConstruct() throws Exception {
         assertNotNull(converter.orgDrosophila);
     }
