@@ -74,7 +74,8 @@ public class UniprotConverter extends FileConverter
     private Set<String> taxonIds = null;
     private Set<String> doneTaxonIds = new HashSet<String>();
     private boolean useSplitFiles = false;
-
+    protected IdResolverFactory resolverFactory;
+    private IdResolver resolver;
     private static final Set<String> FEATURE_TYPES = new HashSet<String>();
 
     static {
@@ -106,6 +107,9 @@ public class UniprotConverter extends FileConverter
      */
     public UniprotConverter(ItemWriter writer, Model model) {
         super(writer, model);
+
+        // only construct factory here so can be replaced by mock factory in tests
+        resolverFactory = new FlyBaseIdResolverFactory();
     }
 
     /**
@@ -287,7 +291,6 @@ public class UniprotConverter extends FileConverter
         private ReferenceList commentCollection;
         private ReferenceList keywordCollection;
         private ReferenceList featureCollection;
-        private ReferenceList geneCollection;
         private ReferenceList interproCollection;
 
         // maps genes for this protein to that gene's lists of names, identifiers, etc
@@ -298,8 +301,8 @@ public class UniprotConverter extends FileConverter
         private Map<String, String> geneNameTypeToName; // ORF, primary, etc value for gene name
         private Set<String> geneNames;                  // list of names for this gene
         private Map<String, String> geneDesignations;        // gene names from each database
-        private String possibleGeneIdSource; // ie FlyBase, Ensemble, etc.
-        private String possibleGeneId;       // temp holder for gene identifier
+        private String possibleGeneIdSource = null; // ie FlyBase, Ensembl, etc.
+        private String possibleGeneId = null;       // temp holder for gene identifier
                                              // until "gene designation" is verified on next line
 
         // master lists - only one is created
@@ -658,7 +661,11 @@ public class UniprotConverter extends FileConverter
                         Item syn = createSynonym(protein.getIdentifier(), "identifier",
                                                  proteinPrimaryIdentifier,
                                                  datasource.getIdentifier());
-                        writer.store(ItemHelper.convert(protein));
+                        if (protein == null) {
+                            throw new RuntimeException("hey!" + proteinPrimaryIdentifier);
+                        } else {
+                            writer.store(ItemHelper.convert(protein));
+                        }
                         if (syn != null) {
                             writer.store(ItemHelper.convert(syn));
                         }
@@ -834,7 +841,7 @@ public class UniprotConverter extends FileConverter
             commentCollection = new ReferenceList("comments", new ArrayList<String>());
             pubCollection = new ReferenceList("publications", new ArrayList<String>());
             interproCollection = new ReferenceList("proteinDomains", new ArrayList<String>());
-            geneCollection = null;
+
 
             genes = new LinkedHashMap<String, Item>();
             synonyms = new LinkedHashMap<String, Item>();
@@ -845,6 +852,8 @@ public class UniprotConverter extends FileConverter
             feature = null;
             sequence = null;
             hasPrimary = false;
+            possibleGeneIdSource = null;
+            possibleGeneId = null;
 
             // maps gene to that gene's lists
             geneTOgeneNameTypeToName = new HashMap<String, Map<String, String>>();
@@ -946,7 +955,6 @@ public class UniprotConverter extends FileConverter
         private void finaliseGene(Item gene, String orgId)
             throws SAXException {
             try {
-
                 // Gene.identifier = <entry><gene><name type="ORF">
                 String geneSecondaryIdentifier = null;
                 // Gene.name = <entry><gene><name type="primary">
@@ -987,7 +995,6 @@ public class UniprotConverter extends FileConverter
                         LOG.info("Found a Drosophila gene without a CG identifer: " + notCG);
                     }
                 }
-
 
                 // define a gene identifier we always expect to find that is unique to this gene
                 // is different for each organism
@@ -1045,9 +1052,17 @@ public class UniprotConverter extends FileConverter
                     variableLookup.put("genePrimaryIdentifier", genePrimaryIdentifier);
                     variableLookup.put("primaryGeneName", primaryGeneName);
 
-                    /* set unique identifier */
                     uniqueGeneIdentifier = variableLookup.get(geneDataMap.getAttribute());
                     variableLookup = null;
+                }
+
+                // if we don't have an FBgn, get from FlyBase using the CG or name
+                if (uniqueGeneIdentifier == null
+                                && (geneSecondaryIdentifier != null || primaryGeneName != null)
+                                && taxonId.equals("7227")) {
+
+                    uniqueGeneIdentifier = resolveGene(geneSecondaryIdentifier, primaryGeneName);
+                    genePrimaryIdentifier = uniqueGeneIdentifier;
                 }
 
                 // uniprot data source has primary key of Gene.primaryIdentifier
@@ -1059,81 +1074,88 @@ public class UniprotConverter extends FileConverter
                     // causes problems merging other data sources.  Simple check to prevent
                     // creating a gene with a duplicate identifier.
 
-                    // log problem genes
-                    boolean isDuplicateIdentifier = false;
                     if ((geneItemId == null) && geneIdentifiers.contains(geneSecondaryIdentifier)) {
                         LOG.warn("already created a gene for identifier: " + geneSecondaryIdentifier
                                  + " with different primaryIdentifier, discarding this one");
-                        isDuplicateIdentifier = true;
-                    }
-                    if ((geneItemId == null) && !isDuplicateIdentifier) {
-                        if (genePrimaryIdentifier != null) {
-                            if (genePrimaryIdentifier.equals("")) {
-                                LOG.info("genePrimaryIdentifier was empty string");
-                            } else {
-                                gene.setAttribute("primaryIdentifier", genePrimaryIdentifier);
+                    } else {
+                        if (geneItemId == null) {
+                            if (genePrimaryIdentifier != null) {
+                                if (genePrimaryIdentifier.equals("")) {
+                                    LOG.info("genePrimaryIdentifier was empty string");
+                                } else {
+                                    gene.setAttribute("primaryIdentifier", genePrimaryIdentifier);
 
-                                Item syn = createSynonym(gene.getIdentifier(), "identifier",
-                                          genePrimaryIdentifier,
-                                          getDataSource(dbName).getIdentifier());
-                                if (syn != null) {
-                                    delayedItems.add(syn);
+                                    Item syn = createSynonym(gene.getIdentifier(), "identifier",
+                                                             genePrimaryIdentifier,
+                                                             getDataSource(dbName).getIdentifier());
+                                    if (syn != null) {
+                                        delayedItems.add(syn);
+                                    }
                                 }
                             }
-                        }
+                            if (geneSecondaryIdentifier != null) {
+                                gene.setAttribute("secondaryIdentifier", geneSecondaryIdentifier);
+                                // don't create duplicate synonym
+                                if (!geneSecondaryIdentifier.equals(genePrimaryIdentifier)
+                                                && !geneSecondaryIdentifier.equals("")) {
 
-                        if (geneSecondaryIdentifier != null) {
-                            gene.setAttribute("secondaryIdentifier", geneSecondaryIdentifier);
-                            // don't create duplicate synonym
-                            if (!geneSecondaryIdentifier.equals(genePrimaryIdentifier)
-                                && !geneSecondaryIdentifier.equals("")) {
+                                    Item syn = createSynonym(gene.getIdentifier(), "identifier",
+                                                             geneSecondaryIdentifier,
+                                                             getDataSource(dbName).getIdentifier());
+                                    if (syn != null) {
+                                        delayedItems.add(syn);
+                                    }
+                                }
+                                // keep a track of non-null gene identifiers
+                                geneIdentifiers.add(geneSecondaryIdentifier);
+                            }
+                            // Problem with gene names for drosophila - ignore
+                            if (primaryGeneName != null &&  !primaryGeneName.equals("")
+                                            && !taxonId.equals("7227")) {
+                                gene.setAttribute("symbol", primaryGeneName);
+                            }
 
-                                Item syn = createSynonym(gene.getIdentifier(), "identifier",
-                                           geneSecondaryIdentifier,
-                                           getDataSource(dbName).getIdentifier());
-                                if (syn != null) {
-                                    delayedItems.add(syn);
+                            geneMaster.put(uniqueGeneIdentifier, gene.getIdentifier());
+                            if (!protein.hasCollection("genes")) {
+                                protein.addCollection(new ReferenceList("genes",
+                                                                        new ArrayList<String>()));
+                            }
+                            protein.getCollection("genes").addRefId(gene.getIdentifier());
+
+                            gene.setReference("organism", orgId);
+                            writer.store(ItemHelper.convert(gene));
+                            i = nameTypeToName.keySet().iterator();
+                            while (i.hasNext()) {
+
+                                String synonymDescr = "";
+                                String type = i.next();
+                                String name = nameTypeToName.get(type);
+
+                                if (type.equals("ordered locus")) {
+                                    synonymDescr = "ordered locus";
+                                } else {
+                                    synonymDescr =  "symbol";
+                                }
+
+                                // all gene names are synonyms
+                                // ORF is already identifer, so skip
+                                // TODO if name is empty something has gone wrong
+                                if (!type.equals("ORF") && !name.equals("")) {
+                                    Item syn = createSynonym(gene.getIdentifier(), synonymDescr,
+                                                             name,
+                                                             getDataSource(dbName).getIdentifier());
+                                    if (syn != null) {
+                                        writer.store(ItemHelper.convert(syn));
+                                    }
                                 }
                             }
-                            // keep a track of non-null gene identifiers
-                            geneIdentifiers.add(geneSecondaryIdentifier);
-                        }
-                        // Problem with gene names for drosophila - ignore
-                        if (primaryGeneName != null &&  !primaryGeneName.equals("")
-                                        && !taxonId.equals("7227")) {
-                            gene.setAttribute("symbol", primaryGeneName);
-                        }
-                        if (geneCollection == null) {
-                            geneCollection = new ReferenceList("genes", new ArrayList<String>());
-                            protein.addCollection(geneCollection);
-                        }
-                        geneMaster.put(uniqueGeneIdentifier, gene.getIdentifier());
-                        geneCollection.addRefId(gene.getIdentifier());
-                        gene.setReference("organism", orgId);
-                        writer.store(ItemHelper.convert(gene));
-                        i = nameTypeToName.keySet().iterator();
-                        while (i.hasNext()) {
-
-                            String synonymDescr = "";
-                            String type = i.next();
-                            String name = nameTypeToName.get(type);
-
-                            if (type.equals("ordered locus")) {
-                                synonymDescr = "ordered locus";
-                            } else {
-                                synonymDescr =  "symbol";
+                        } else {
+                            // this gene has already been stored and is attached to another protein
+                            if (!protein.hasCollection("genes")) {
+                                protein.addCollection(new ReferenceList("genes",
+                                                                        new ArrayList<String>()));
                             }
-
-                            // all gene names are synonyms
-                            // ORF is already identifer, so skip
-                            // TODO if name is empty something has gone wrong
-                            if (!type.equals("ORF") && !name.equals("")) {
-                                Item syn = createSynonym(gene.getIdentifier(), synonymDescr, name,
-                                              getDataSource(dbName).getIdentifier());
-                                if (syn != null) {
-                                    writer.store(ItemHelper.convert(syn));
-                                }
-                            }
+                            protein.getCollection("genes").addRefId(geneItemId);
                         }
                     }
                 }
@@ -1170,7 +1192,24 @@ public class UniprotConverter extends FileConverter
         protected Item createItem(String className) {
             return UniprotConverter.this.createItem(className);
         }
+
+        private String resolveGene(String geneSecondaryIdentifier, String primaryGeneName) {
+            resolver = resolverFactory.getIdResolver();
+            String flyBaseLookUpId =
+            (geneSecondaryIdentifier == null ? primaryGeneName : geneSecondaryIdentifier);
+            int resCount = resolver.countResolutions(taxonId, flyBaseLookUpId);
+            if (resCount != 1) {
+                LOG.info("RESOLVER: failed to resolve gene to one identifier, ignoring gene"
+                         + ": "
+                         + geneSecondaryIdentifier + " count: " + resCount + " FBgn: "
+                         + resolver.resolveId(taxonId, flyBaseLookUpId));
+                return null;
+            } else {
+                return resolver.resolveId(taxonId, flyBaseLookUpId).iterator().next();
+            }
+        }
     }
+
 
 
         /**
