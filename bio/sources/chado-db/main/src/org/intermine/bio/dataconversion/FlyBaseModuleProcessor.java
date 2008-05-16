@@ -463,8 +463,6 @@ public class FlyBaseModuleProcessor extends ChadoSequenceProcessor
                 getChadoDBConverter().store(phenotypeAnnotation);
             }
         }
-
-        // storeAlleleRefs(features, previousFeatureId, phenotypeRefs);
     }
 
     private Item makePhenotypeAnnotation(String alleleItemIdentifier, String value)
@@ -503,11 +501,14 @@ public class FlyBaseModuleProcessor extends ChadoSequenceProcessor
         }
         m.appendTail(sb);
 
+        /*
+         * ignore with for now because the with text is wrong in chado - see ticket #889
         List<String> withAlleleIdentifiers = findWithAllele(value);
 
         if (withAlleleIdentifiers.size() > 0) {
             phenotypeAnnotation.setCollection("with", withAlleleIdentifiers);
         }
+        */
 
         String valueNoRefs = sb.toString();
         String valueNoUps = valueNoRefs.replaceAll("<up>", "[").replaceAll("</up>", "]");
@@ -552,6 +553,7 @@ public class FlyBaseModuleProcessor extends ChadoSequenceProcessor
     /**
      * Return the item identifiers of the alleles metioned in the with clauses of the argument.
      */
+    @SuppressWarnings("unused")
     private List<String> findWithAllele(String value) {
         Pattern p = Pattern.compile("with @(FBal\\d+):");
         Matcher m = p.matcher(value);
