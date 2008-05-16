@@ -310,7 +310,7 @@ public class Item implements Comparable
      * @param collectionName collection name
      * @param refIds ids to reference
      */
-    public void setCollection(String collectionName, List refIds) {
+    public void setCollection(String collectionName, List<String> refIds) {
         addCollection(new ReferenceList(collectionName, refIds));
     }
 
