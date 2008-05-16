@@ -392,10 +392,9 @@ public class PrecomputedTableManager
      * @param field the name of the field
      * @param con a Connection to use
      * @param nulls whether an index should be created for null values
-     * @throws SQLException if an error occurs in the underlying database
      */
     protected void addIndex(String table, String field, Connection con,
-            boolean nulls) throws SQLException {
+            boolean nulls) {
         String simpleField = field;
         if (simpleField.charAt(0) == '"') {
             simpleField = simpleField.substring(1, simpleField.length() - 1);
@@ -410,9 +409,7 @@ public class PrecomputedTableManager
                 con.commit();
             }
         } catch (SQLException e) {
-            SQLException f = new SQLException(e.getMessage() + " when executing " + sql);
-            f.setNextException(e);
-            throw f;
+            LOG.error("Error while executing " + sql, e);
         }
         if (nulls) {
             sql = "CREATE INDEX index" + table + "_field_" + simpleField.replace(',', '_')
@@ -425,9 +422,7 @@ public class PrecomputedTableManager
                     con.commit();
                 }
             } catch (SQLException e) {
-                SQLException f = new SQLException(e.getMessage() + " when executing " + sql);
-                f.setNextException(e);
-                throw f;
+                LOG.error("Error while executing " + sql, e);
             }
         }
     }
