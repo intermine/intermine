@@ -556,7 +556,7 @@ public class FlyBaseModuleProcessor extends ChadoSequenceProcessor
         Pattern p = Pattern.compile("with @(FBal\\d+):");
         Matcher m = p.matcher(value);
 
-        List<String> foundIdentifiers = null;
+        List<String> foundIdentifiers = new ArrayList<String>();
 
         while (m.find()) {
             String identifier = m.group(1);
@@ -574,8 +574,9 @@ public class FlyBaseModuleProcessor extends ChadoSequenceProcessor
             if (alleleIdMap.containsKey(foundIdentifier)) {
                 alleleItemIdentifiers.add(alleleIdMap.get(foundIdentifier).getIdentifier());
             } else {
-                throw new RuntimeException("can't find allele \"" + foundIdentifiers
-                                           + "\" - should have been stored earlier");
+                // this allele wasn't stored so probably it didn't have the right organism - some
+                // GAL4 alleles have cerevisiae as organism, eg. FBal0060667:Scer\GAL4[sd-SG29.1]
+                // referenced by FBal0038994 Rac1[N17.Scer\UAS]
             }
         }
 
