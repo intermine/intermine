@@ -7,7 +7,6 @@ function addId2Bag(id,row,parentId,issueType){
     if(document.getElementById('add_'+issueType+'_'+id).className=='fakelink'){
         document.getElementById('add_'+issueType+'_'+id).className = '';
         document.getElementById('rem_'+issueType+'_'+id).className = "fakelink";
-        var elements = document.getElementsByTagName('td');
 
         highlightRow('row_'+issueType+'_' + row);          
 
