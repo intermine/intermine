@@ -5,7 +5,10 @@
     <attribute name="annotationType" type="java.lang.String"/>
     <reference name="allele" referenced-type="org.flymine.model.genomic.Allele" 
                reverse-reference="phenotypeAnnotations"/>
+    <!--
+      - removed as the "with" clauses from FlyBase have errors - see ticket #889
     <collection name="with" referenced-type="org.flymine.model.genomic.Allele"/>
+    -->
     <reference name="anatomyTerm" referenced-type="org.flymine.model.genomic.AnatomyTerm"/>
     <reference name="developmentTerm" referenced-type="org.flymine.model.genomic.DevelopmentTerm"/>
     <collection name="cvTerms" referenced-type="org.flymine.model.genomic.CVTerm"/>
