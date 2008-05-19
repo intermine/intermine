@@ -70,15 +70,19 @@
       <reference ref_id="4_1"/>
     </collection>
   </item>
-  <item id="13_3" class="http://www.flymine.org/model/genomic#PhenotypeAnnotation">
+  <item id="13_1" class="http://www.flymine.org/model/genomic#PhenotypeAnnotation">
     <attribute name="annotationType" value="manifest in"/>
-    <attribute name="description" value="wing | anterior compartment, with ScerGAL4[sd-SG29.1]"/>
+    <attribute name="description" value="wing, with ScerGAL4[sd-SG29.1]"/>
     <reference name="allele" ref_id="0_2"/>
     <reference name="anatomyTerm" ref_id="14_1"/>
     <reference name="property" ref_id="14_1"/>
     <reference name="subject" ref_id="0_2"/>
-    <collection name="cvTerms">
-      <reference ref_id="15_1"/>
+    <collection name="dataSets">
+      <reference ref_id="4_1"/>
+    </collection>
+    <collection name="publications">
+      <reference ref_id="11_6"/>
+      <reference ref_id="11_7"/>
     </collection>
   </item>
   <item id="2_1" class="http://www.flymine.org/model/genomic#Sequence">
@@ -125,19 +129,6 @@
       <reference ref_id="4_1"/>
     </collection>
   </item>
-  <item id="13_4" class="http://www.flymine.org/model/genomic#PhenotypeAnnotation">
-    <attribute name="annotationType" value="manifest in"/>
-    <attribute name="description" value="lethal | embryonic stage | segment polarity | conditional ts"/>
-    <reference name="allele" ref_id="0_2"/>
-    <reference name="developmentTerm" ref_id="16_1"/>
-    <reference name="property" ref_id="16_1"/>
-    <reference name="subject" ref_id="0_2"/>
-    <collection name="cvTerms">
-      <reference ref_id="15_2"/>
-      <reference ref_id="15_3"/>
-      <reference ref_id="15_4"/>
-    </collection>
-  </item>
   <item id="5_7" class="http://www.flymine.org/model/genomic#Synonym">
     <attribute name="isPrimary" value="true"/>
     <attribute name="type" value="identifier"/>
@@ -164,6 +155,9 @@
       <reference ref_id="4_1"/>
     </collection>
   </item>
+  <item id="11_6" class="http://www.flymine.org/model/genomic#Publication">
+    <attribute name="pubMedId" value="1902784"/>
+  </item>
   <item id="12_2" class="http://www.flymine.org/model/genomic#Location">
     <attribute name="end" value="102000"/>
     <attribute name="start" value="101001"/>
@@ -176,6 +170,25 @@
   </item>
   <item id="14_1" class="http://www.flymine.org/model/genomic#AnatomyTerm">
     <attribute name="identifier" value="FBbt00004729"/>
+  </item>
+  <item id="11_7" class="http://www.flymine.org/model/genomic#Publication">
+    <attribute name="pubMedId" value="2226204"/>
+  </item>
+  <item id="13_4" class="http://www.flymine.org/model/genomic#PhenotypeAnnotation">
+    <attribute name="annotationType" value="manifest in"/>
+    <attribute name="description" value="lethal | embryonic stage | segment polarity | conditional ts"/>
+    <reference name="allele" ref_id="0_2"/>
+    <reference name="developmentTerm" ref_id="16_1"/>
+    <reference name="property" ref_id="16_1"/>
+    <reference name="subject" ref_id="0_2"/>
+    <collection name="cvTerms">
+      <reference ref_id="15_2"/>
+      <reference ref_id="15_3"/>
+      <reference ref_id="15_4"/>
+    </collection>
+    <collection name="dataSets">
+      <reference ref_id="4_1"/>
+    </collection>
   </item>
   <item id="5_1" class="http://www.flymine.org/model/genomic#Synonym">
     <attribute name="isPrimary" value="true"/>
@@ -429,15 +442,6 @@
       <reference ref_id="4_1"/>
     </collection>
   </item>
-  <item id="13_5" class="http://www.flymine.org/model/genomic#PhenotypeAnnotation">
-    <attribute name="annotationType" value="phenotype class"/>
-    <attribute name="description" value="visible, with ScerGAL4[sd-SG29.1]"/>
-    <reference name="allele" ref_id="0_2"/>
-    <reference name="subject" ref_id="0_2"/>
-    <collection name="cvTerms">
-      <reference ref_id="15_5"/>
-    </collection>
-  </item>
   <item id="11_4" class="http://www.flymine.org/model/genomic#Publication">
     <attribute name="pubMedId" value="2612903"/>
   </item>
@@ -464,6 +468,18 @@
   <item id="2_4" class="http://www.flymine.org/model/genomic#Sequence">
     <attribute name="length" value="3000"/>
     <attribute name="residues" value="cccgcagcatgtgcatcagcagcatgtgtcatcggacgag"/>
+  </item>
+  <item id="13_2" class="http://www.flymine.org/model/genomic#PhenotypeAnnotation">
+    <attribute name="annotationType" value="manifest in"/>
+    <attribute name="description" value="sensory mother cell &amp; dorsal mesothoracic disc | ectopic, with ScerGAL4[sd-SG29.1]"/>
+    <reference name="allele" ref_id="0_2"/>
+    <reference name="subject" ref_id="0_2"/>
+    <collection name="dataSets">
+      <reference ref_id="4_1"/>
+    </collection>
+    <collection name="publications">
+      <reference ref_id="11_6"/>
+    </collection>
   </item>
   <item id="5_22" class="http://www.flymine.org/model/genomic#Synonym">
     <attribute name="isPrimary" value="true"/>
@@ -529,14 +545,6 @@
       <reference ref_id="4_1"/>
     </collection>
   </item>
-  <item id="13_1" class="http://www.flymine.org/model/genomic#PhenotypeAnnotation">
-    <attribute name="annotationType" value="manifest in"/>
-    <attribute name="description" value="wing, with ScerGAL4[sd-SG29.1]"/>
-    <reference name="allele" ref_id="0_2"/>
-    <reference name="anatomyTerm" ref_id="14_1"/>
-    <reference name="property" ref_id="14_1"/>
-    <reference name="subject" ref_id="0_2"/>
-  </item>
   <item id="5_5" class="http://www.flymine.org/model/genomic#Synonym">
     <attribute name="isPrimary" value="true"/>
     <attribute name="type" value="identifier"/>
@@ -576,12 +584,6 @@
   </item>
   <item id="15_1" class="http://www.flymine.org/model/genomic#CVTerm">
     <attribute name="identifier" value="FBcv0000031"/>
-  </item>
-  <item id="13_2" class="http://www.flymine.org/model/genomic#PhenotypeAnnotation">
-    <attribute name="annotationType" value="manifest in"/>
-    <attribute name="description" value="sensory mother cell &amp; dorsal mesothoracic disc | ectopic, with ScerGAL4[sd-SG29.1]"/>
-    <reference name="allele" ref_id="0_2"/>
-    <reference name="subject" ref_id="0_2"/>
   </item>
   <item id="5_2" class="http://www.flymine.org/model/genomic#Synonym">
     <attribute name="isPrimary" value="true"/>
@@ -628,6 +630,32 @@
       <reference ref_id="4_1"/>
     </collection>
     <collection name="evidence">
+      <reference ref_id="4_1"/>
+    </collection>
+  </item>
+  <item id="13_3" class="http://www.flymine.org/model/genomic#PhenotypeAnnotation">
+    <attribute name="annotationType" value="manifest in"/>
+    <attribute name="description" value="wing | anterior compartment, with ScerGAL4[sd-SG29.1]"/>
+    <reference name="allele" ref_id="0_2"/>
+    <reference name="anatomyTerm" ref_id="14_1"/>
+    <reference name="property" ref_id="14_1"/>
+    <reference name="subject" ref_id="0_2"/>
+    <collection name="cvTerms">
+      <reference ref_id="15_1"/>
+    </collection>
+    <collection name="dataSets">
+      <reference ref_id="4_1"/>
+    </collection>
+  </item>
+  <item id="13_5" class="http://www.flymine.org/model/genomic#PhenotypeAnnotation">
+    <attribute name="annotationType" value="phenotype class"/>
+    <attribute name="description" value="visible, with ScerGAL4[sd-SG29.1]"/>
+    <reference name="allele" ref_id="0_2"/>
+    <reference name="subject" ref_id="0_2"/>
+    <collection name="cvTerms">
+      <reference ref_id="15_5"/>
+    </collection>
+    <collection name="dataSets">
       <reference ref_id="4_1"/>
     </collection>
   </item>
