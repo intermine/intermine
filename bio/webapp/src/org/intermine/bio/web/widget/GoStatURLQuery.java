@@ -83,7 +83,7 @@ public class GoStatURLQuery implements WidgetURLQuery
              actualGoId = MainHelper.makePath(
                           model, q, "Protein.genes.allGoAnnotation.actualGoTerms.identifier");
 
-             view.add(MainHelper.makePath(model, q, "Protein.identifier"));
+             view.add(MainHelper.makePath(model, q, "Protein.primaryIdentifier"));
              view.add(MainHelper.makePath(model, q, "Protein.primaryAccession"));
 
          } else {
