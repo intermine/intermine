@@ -9,7 +9,7 @@
 <tiles:importAttribute name="wsName"/>
 <tiles:importAttribute name="scope"/>
 <tiles:importAttribute name="wsListId"/>
-<tiles:useAttribute id="webSearchable" name="webSearchable" 
+<tiles:useAttribute id="webSearchable" name="webSearchable"
                     classname="org.intermine.web.logic.search.WebSearchable"/>
 <tiles:importAttribute name="showDescriptions" ignore="true"/>
 <tiles:importAttribute name="statusIndex"/>
@@ -29,7 +29,7 @@
       <c:out value="${webSearchable.name}" escapeXml="false"/>
     </html:multibox>
 </c:if>
- 
+
   <c:choose>
     <c:when test="${scope == 'user'}">
       <tiles:insert name="renamableElement.jsp">
@@ -73,19 +73,7 @@
 
 <c:if test="${showDescriptions}">
   <div id="${wsListId}_${type}_item_description_${webSearchable.name}">
-  <c:choose>
-   <c:when test="${fn:length(webSearchable.description) > 100}">
-     <div id="bag_desc_${webSearchable.name}_s" class="description">
-     ${fn:substring(webSearchable.description, 0, 100)}...&nbsp;&nbsp;<a href="javascript:toggleDivs('bag_desc_${webSearchable.name}_s','bag_desc_${webSearchable.name}_l')">more</a>
-     </div>
-     <div id="bag_desc_${webSearchable.name}_l" style="display:none" class="description">
-     ${webSearchable.description}&nbsp;&nbsp;<a href="javascript:toggleDivs('bag_desc_${webSearchable.name}_l','bag_desc_${webSearchable.name}_s')">less</a>
-     </div>
-   </c:when>
-   <c:otherwise>
      <p class="description">${webSearchable.description}</p>
-   </c:otherwise>
- </c:choose>
   </div>
    <div id="${wsListId}_${type}_item_description_${webSearchable.name}_highlight" style="display:none" class="description"></div>
 </c:if>
