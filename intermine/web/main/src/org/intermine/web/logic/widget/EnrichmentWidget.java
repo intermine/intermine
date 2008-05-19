@@ -47,12 +47,12 @@ public class EnrichmentWidget extends Widget
     private InterMineBag bag;
     private int notAnalysed;
     private ObjectStore os;
-    
+
     /**
      * {@inheritDoc}
      */
     public void process(InterMineBag imbag, ObjectStore ost) {
-        try {            
+        try {
             this.bag = imbag;
             this.os = ost;
             Class<?> clazz = TypeUtil.instantiate(getDataSetLoader());
@@ -67,9 +67,9 @@ public class EnrichmentWidget extends Widget
                                                                                           });
 
             resultMaps = WebUtil.statsCalc(os, ldr, bag, new Double(0 + max), errorCorrection);
-            
+
             int analysedTotal = ((Integer) (resultMaps.get(3)).get("widgetTotal")).intValue();
-            
+
             setNotAnalysed(bag.getSize() - analysedTotal);
 
         } catch (ObjectStoreException e) {
@@ -98,7 +98,7 @@ public class EnrichmentWidget extends Widget
             e.printStackTrace();
         }
     }
-    
+
     /**
      * @return the label
      */
@@ -179,7 +179,7 @@ public class EnrichmentWidget extends Widget
     public void setExternalLink(String externalLink) {
         this.externalLink = externalLink;
     }
-    
+
     /**
      * {@inheritDoc}
      */
@@ -188,9 +188,9 @@ public class EnrichmentWidget extends Widget
         returnMap.put(getFilterLabel(), Arrays.asList(getFilters().split(",")));
         return returnMap;
     }
-    
+
     /**
-     * 
+     *
      * @return List of column labels
      */
     public List<String> getColumns() {
@@ -199,7 +199,7 @@ public class EnrichmentWidget extends Widget
                 "", label, "p-Value"
             });
     }
-    
+
     /**
      * {@inheritDoc}
      */
@@ -217,19 +217,19 @@ public class EnrichmentWidget extends Widget
                         "<input name=\"selected\" value=\"" + id + "\" id=\"selected_" + id
                                         + "\" type=\"checkbox\">"
                     });
-                
+
                 String label = labelToId.get(id);
                 if (externalLink != null && !externalLink.equals("")) {
-                    label += " <a href=\"" + externalLink + id 
-                             + "\" target=\"_new\" class=\"extlink\">["; 
+                    label += " <a href=\"" + externalLink + id
+                             + "\" target=\"_new\" class=\"extlink\">[";
                      if (externalLinkLabel != null && !externalLinkLabel.equals("")) {
                          label += externalLinkLabel;
                      }
                      label += id + "]</a>";
                 }
                 row.add(new String[] {label});
-                
-                row.add(new String[] {bd.setScale(7, 
+
+                row.add(new String[] {bd.setScale(7,
                 BigDecimal.ROUND_HALF_EVEN).toEngineeringString()});
                 row.add(new String[]
                     {
@@ -239,22 +239,22 @@ public class EnrichmentWidget extends Widget
                     });
                 flattenedResults.add(row);
             }
-            return flattenedResults;            
+            return flattenedResults;
         }
         return null;
     }
-    
+
     /**
      * {@inheritDoc}
      */
     public List<List<String>> getExportResults(String[]selected) throws Exception {
-                
+
         Map<String, BigDecimal> pvalues = resultMaps.get(0);
         Map<String, Long> totals = resultMaps.get(1);
         Map<String, String> labelToId = resultMaps.get(2);
         List<List<String>> exportResults = new ArrayList<List<String>>();
         List<String> selectedIds = Arrays.asList(selected);
-        
+
         Class<?> clazz = TypeUtil.instantiate(getDataSetLoader());
         Constructor<?> constr = clazz.getConstructor(new Class[]
                                                             {
@@ -268,10 +268,10 @@ public class EnrichmentWidget extends Widget
         Model model = os.getModel();
         Class<?> bagCls = Class.forName(model.getPackageName() + "." + bag.getType());
         QueryClass qc = new QueryClass(bagCls);
-        
+
         Query q = ldr.getExportQuery(selectedIds);
-       
-        Results res = os.execute(q);        
+
+        Results res = os.execute(q);
         Iterator iter = res.iterator();
         HashMap<String, List<String>> termsToIds = new HashMap();
         while (iter.hasNext()) {
@@ -286,12 +286,11 @@ public class EnrichmentWidget extends Widget
 
         for (String id : selectedIds) {
             if (labelToId.get(id) != null) {
-
                 List row = new LinkedList();
-                row.add(labelToId.get(id));
+
+                row.add(id);
 
                 BigDecimal bd = pvalues.get(id);
-                //bd.setScale(7, BigDecimal.ROUND_HALF_UP).doubleValue();
                 Double d = bd.doubleValue();
                 row.add(d);
 
@@ -324,7 +323,7 @@ public class EnrichmentWidget extends Widget
     public void setErrorCorrection(String errorCorrection) {
         this.errorCorrection = errorCorrection;
     }
-    
+
     /**
      * {@inheritDoc}
      */
@@ -360,7 +359,7 @@ public class EnrichmentWidget extends Widget
     public void setExternalLinkLabel(String externalLinkLabel) {
         this.externalLinkLabel = externalLinkLabel;
     }
-    
+
     /**
      * {@inheritDoc}
      */
