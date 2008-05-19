@@ -189,7 +189,7 @@
        <bagtabledisplayer title="Protein Interactions"
                                  pathStrings="Protein.proteinInteractions.interactingProteins"
                                  link="org.intermine.bio.web.widget.ProteinInteractionURLQuery"
-                                 description="Proteins that genetically interact with Proteins in this list - data from &lt;a href=&quot;http://www.thebiogrid.org/&quot; target=&quot;_new&quot;&gt;BioGRID&lt;/a&gt;.  Counts may include the same interaction more than once if observed in multiple experiments."
+                                 description="Proteins that interact with other Proteins in this list - data from &lt;a href=&quot;http://www.thebiogrid.org/&quot; target=&quot;_new&quot;&gt;BioGRID&lt;/a&gt;. Counts may include the same interaction more than once if observed in multiple experiments."
                                  fields="primaryIdentifier"
                                  columnTitle="Interactions"/>
 
@@ -357,6 +357,7 @@
     <tabledisplayer src="/model/sequenceShortDisplayer.jsp"/>
   </class>
 
+<!--
   <class className="org.flymine.model.genomic.GOAnnotation">
     <fields>
       <fieldconfig fieldExpr="subject.primaryIdentifier" showInInlineCollection="false"/>
@@ -364,6 +365,8 @@
       <fieldconfig fieldExpr="name"/>
     </fields>
   </class>
+-->
+
 
   <class className="org.flymine.model.genomic.ProteinInteractionRegion">
     <fields>
