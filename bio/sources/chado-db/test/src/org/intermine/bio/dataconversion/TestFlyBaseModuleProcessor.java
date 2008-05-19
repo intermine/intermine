@@ -381,6 +381,39 @@ public class TestFlyBaseModuleProcessor extends FlyBaseModuleProcessor
                 "@FBcv0000354:visible@, with @FBal0060667:Scer\\GAL4<up>sd-SG29.1</up>@",
                 "derived_pheno_class",
                 40000005
+            },
+//            {
+//                3117509,
+//                "@FBcv0000289:hypomorph@",
+//                "promoted_allele_class",
+//                40000006
+//            }
+        };
+
+        MockMultiRowResultSet res = new MockMultiRowResultSet();
+        res.setupRows(resObjects);
+        res.setupColumnNames(columnNames);
+        return res;
+    }
+
+    /* (non-Javadoc)
+     * @see org.intermine.bio.dataconversion.FlyBaseModuleProcessor#getAllelePropPubResultSet(java.sql.Connection)
+     */
+    @Override
+    protected ResultSet getAllelePropPubResultSet(Connection connection) throws SQLException {
+        String[] columnNames = new String[] {
+            "featureprop_id", "pub_db_identifier"
+        };
+        Object[][] resObjects = new Object[][] {
+            {
+                40000001, "1902784"
+
+            },
+            {
+                40000001, "2226204"
+            },
+            {
+                40000002, "1902784"
             }
         };
 

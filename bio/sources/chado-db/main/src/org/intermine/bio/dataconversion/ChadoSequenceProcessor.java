@@ -57,6 +57,9 @@ public class ChadoSequenceProcessor extends ChadoProcessor
     private Map<Integer, FeatureData> featureMap = new HashMap<Integer, FeatureData>();
     private Map<Integer, MultiKeyMap> config = new HashMap<Integer, MultiKeyMap>();
 
+    // a map from chado pubmed id to item identifier for the publication
+    private Map<String, String> publications = new HashMap<String, String>();
+
     private static final List<String> PARTOF_RELATIONS = Arrays.asList("partof", "part_of");
 
     private static final List<Item> EMPTY_ITEM_LIST = Collections.emptyList();
@@ -1043,8 +1046,6 @@ public class ChadoSequenceProcessor extends ChadoProcessor
         int featureWarnings = 0;
         int count = 0;
 
-        Map<String, String> pubs = new HashMap<String, String>();
-
         while (res.next()) {
             Integer featureId = new Integer(res.getInt("feature_id"));
             if (!featureMap.containsKey(featureId)) {
@@ -1065,17 +1066,7 @@ public class ChadoSequenceProcessor extends ChadoProcessor
                 makeFeatureEvidence(lastPubFeatureId, currentEvidenceIds);
                 currentEvidenceIds = new ArrayList<String>();
             }
-            String publicationId;
-            if (pubs.containsKey(pubMedId)) {
-                publicationId = pubs.get(pubMedId);
-            } else {
-                Item publication = getChadoDBConverter().createItem("Publication");
-                publication.setAttribute("pubMedId", pubMedId);
-                FeatureData fdat = featureMap.get(featureId);
-                store(publication, fdat.organismData.getTaxonId()); // Stores Publication
-                publicationId = publication.getIdentifier();
-                pubs.put(pubMedId, publicationId);
-            }
+            String publicationId = makePublication(pubMedId);
             currentEvidenceIds.add(publicationId);
             lastPubFeatureId = featureId;
             count++;
@@ -1087,6 +1078,25 @@ public class ChadoSequenceProcessor extends ChadoProcessor
         }
         LOG.info("Created " + count + " publications");
         res.close();
+    }
+
+    /**
+     * Return the item identifier of the publication Item for the given pubmed id.
+     * @param pubMedId the pubmed id
+     * @return the publication item id
+     * @throws ObjectStoreException if the item can't be stored
+     */
+    protected String makePublication(String pubMedId) throws ObjectStoreException {
+        if (publications.containsKey(pubMedId)) {
+            return publications.get(pubMedId);
+        } else {
+            Item publication = getChadoDBConverter().createItem("Publication");
+            publication.setAttribute("pubMedId", pubMedId);
+            getChadoDBConverter().store(publication); // Stores Publication
+            String publicationId = publication.getIdentifier();
+            publications.put(pubMedId, publicationId);
+            return publicationId;
+        }
     }
 
     /**
@@ -1554,6 +1564,17 @@ public class ChadoSequenceProcessor extends ChadoProcessor
          */
         public boolean isValidValue(String value) {
             return !(value == null);
+        }
+
+        /**
+         * Process the value to set and return a (possibly) altered version.  Default implementation
+         * does no processing.
+         * @param value the attribute value to process
+         * @return the processed value
+         */
+        public String processValue(String value) {
+            // default: no processing
+            return value;
         }
     }
 

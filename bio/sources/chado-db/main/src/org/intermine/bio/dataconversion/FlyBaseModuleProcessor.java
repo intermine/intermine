@@ -18,11 +18,14 @@ import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import org.intermine.bio.dataconversion.ChadoSequenceProcessor.ConfigAction;
+import org.intermine.bio.dataconversion.ChadoSequenceProcessor.SetFieldConfigAction;
 import org.intermine.bio.util.OrganismData;
 import org.intermine.bio.util.OrganismRepository;
 import org.intermine.objectstore.ObjectStoreException;
 import org.intermine.util.IntPresentSet;
 import org.intermine.xml.full.Item;
+import org.intermine.xml.full.ReferenceList;
 
 import java.sql.Connection;
 import java.sql.ResultSet;
@@ -40,6 +43,48 @@ import org.apache.log4j.Logger;
  */
 public class FlyBaseModuleProcessor extends ChadoSequenceProcessor
 {
+    /**
+     * A ConfigAction that changes FlyBase attribute tags (like "@FBcv0000289:hypomorph") to text
+     * like: "hypomorph"
+     * @author Kim Rutherford
+     */
+    private class AlleleClassSetFieldAction extends SetFieldConfigAction
+    {
+        /**
+         * Create a new AlleleClassSetFieldAction
+         * @param fieldName the fieldName to process with this object.
+         */
+        AlleleClassSetFieldAction(String fieldName) {
+            super(fieldName);
+        }
+
+        /**
+         * {@inheritDoc}
+         */
+        @Override
+        public String processValue(String value) {
+            Pattern p = Pattern.compile(FYBASE_PROP_ATTRIBUTE_PATTERN);
+            Matcher m = p.matcher(value);
+            StringBuffer sb = new StringBuffer();
+
+            while (m.find()) {
+                String field = m.group(1);
+                int colonPos = field.indexOf(':');
+                if (colonPos == -1) {
+                    m.appendReplacement(sb, field);
+                } else {
+                    String text = field.substring(colonPos + 1);
+                    m.appendReplacement(sb, text);
+                }
+            }
+            m.appendTail(sb);
+            return sb.toString();
+        }
+
+    }
+
+    private static final String FYBASE_PROP_ATTRIBUTE_PATTERN = "@([^@]+)@";
+
     private static final Logger LOG = Logger.getLogger(FlyBaseModuleProcessor.class);
 
     private final Map<Integer, MultiKeyMap> config = new HashMap<Integer, MultiKeyMap>();
@@ -210,7 +255,10 @@ public class FlyBaseModuleProcessor extends ChadoSequenceProcessor
                     Arrays.asList(CREATE_SYNONYM_ACTION));
             map.put(new MultiKey("prop", "TransposableElementInsertionSite",
                                  "curated_cytological_location"),
-            Arrays.asList(new SetFieldConfigAction("cytoLocation")));
+                                 Arrays.asList(new SetFieldConfigAction("cytoLocation")));
+            ConfigAction alleleClassConfigAction = new AlleleClassSetFieldAction("alleleClass");
+            map.put(new MultiKey("prop", "Allele", "promoted_allele_class"),
+                    Arrays.asList(alleleClassConfigAction));
 
             // feature configuration example: for features of class "Exon", from "FlyBase",
             // set the Gene.symbol to be the "name" field from the chado feature
@@ -438,6 +486,8 @@ public class FlyBaseModuleProcessor extends ChadoSequenceProcessor
     private void processAlleleProps(Connection connection,
                                     Map<Integer, FeatureData> features)
         throws SQLException, ObjectStoreException {
+        Map<Integer, List<String>> annotationPubMap = makeAnnotationPubMap(connection);
+        String dataSourceName = getDataSourceName();
         ResultSet res = getAllelePropResultSet(connection);
         while (res.next()) {
             Integer featureId = new Integer(res.getInt("feature_id"));
@@ -446,15 +496,22 @@ public class FlyBaseModuleProcessor extends ChadoSequenceProcessor
             Integer featurePropId = new Integer(res.getInt("featureprop_id"));
 
             FeatureData alleleFeatureData = features.get(featureId);
+            OrganismData od = alleleFeatureData.getOrganismData();
+            Item dataSetItem = getDataSetItem(dataSourceName, od.getTaxonId());
+
             String alleleItemIdentifier = alleleFeatureData.getItemIdentifier();
 
             Item phenotypeAnnotation = null;
             if (propType.equals("derived_pheno_manifest")) {
-                phenotypeAnnotation = makePhenotypeAnnotation(alleleItemIdentifier, value);
+                phenotypeAnnotation =
+                    makePhenotypeAnnotation(alleleItemIdentifier, value,
+                                            dataSetItem, annotationPubMap.get(featurePropId));
                 phenotypeAnnotation.setAttribute("annotationType", "manifest in");
             } else {
                 if (propType.equals("derived_pheno_class")) {
-                    phenotypeAnnotation = makePhenotypeAnnotation(alleleItemIdentifier, value);
+                    phenotypeAnnotation =
+                        makePhenotypeAnnotation(alleleItemIdentifier, value,
+                                                dataSetItem, annotationPubMap.get(featurePropId));
                     phenotypeAnnotation.setAttribute("annotationType", "phenotype class");
                 }
             }
@@ -465,11 +522,36 @@ public class FlyBaseModuleProcessor extends ChadoSequenceProcessor
         }
     }
 
-    private Item makePhenotypeAnnotation(String alleleItemIdentifier, String value)
+    /**
+     * Return a map from featureprop_id for alleles to publication item identifier
+     */
+    private Map<Integer, List<String>> makeAnnotationPubMap(Connection connection)
+        throws SQLException, ObjectStoreException {
+        Map<Integer, List<String>> retMap = new HashMap<Integer, List<String>>();
+
+        ResultSet res = getAllelePropPubResultSet(connection);
+        while (res.next()) {
+            Integer featurePropId = new Integer(res.getInt("featureprop_id"));
+            String pubDbId = res.getString("pub_db_identifier");
+
+            String pubicationItemIdentifier = makePublication(pubDbId);
+
+            if (!retMap.containsKey(featurePropId)) {
+                retMap.put(featurePropId, new ArrayList<String>());
+            }
+            retMap.get(featurePropId).add(pubicationItemIdentifier);
+        }
+
+        return retMap;
+    }
+
+    private Item makePhenotypeAnnotation(String alleleItemIdentifier, String value,
+                                         Item dataSetItem, List<String> publicationsItemIdList)
         throws ObjectStoreException {
         Item phenotypeAnnotation = getChadoDBConverter().createItem("PhenotypeAnnotation");
+        phenotypeAnnotation.addToCollection("dataSets", dataSetItem);
 
-        Pattern p = Pattern.compile("@([^@]+)@");
+        Pattern p = Pattern.compile(FYBASE_PROP_ATTRIBUTE_PATTERN);
         Matcher m = p.matcher(value);
         StringBuffer sb = new StringBuffer();
 
@@ -515,6 +597,11 @@ public class FlyBaseModuleProcessor extends ChadoSequenceProcessor
         phenotypeAnnotation.setAttribute("description", valueNoUps);
         phenotypeAnnotation.setReference("allele", alleleItemIdentifier);
         phenotypeAnnotation.setReference("subject", alleleItemIdentifier);
+        if (publicationsItemIdList != null && publicationsItemIdList.size() > 0) {
+            ReferenceList pubReferenceList =
+                new ReferenceList("publications", publicationsItemIdList);
+            phenotypeAnnotation.addCollection(pubReferenceList);
+        }
 
         if (dbAnatomyTermIdentifiers.size() == 1) {
             String anatomyIdentifier = dbAnatomyTermIdentifiers.get(0);
@@ -552,6 +639,7 @@ public class FlyBaseModuleProcessor extends ChadoSequenceProcessor
 
     /**
      * Return the item identifiers of the alleles metioned in the with clauses of the argument.
+     * Currently unused because flybase with clauses are wrong - see ticket #889
      */
     @SuppressWarnings("unused")
     private List<String> findWithAllele(String value) {
@@ -648,6 +736,45 @@ public class FlyBaseModuleProcessor extends ChadoSequenceProcessor
             + "                      AND NOT feature.is_obsolete"
             + orgConstraintForQuery + ")"
             + "   ORDER BY feature_id";
+        LOG.info("executing: " + query);
+        Statement stmt = connection.createStatement();
+        ResultSet res = stmt.executeQuery(query);
+        return res;
+    }
+
+    /**
+     * Return a result set containing the featureprop_id and the publication identifier of the
+     * featureprops for al alleles.  The method is protected so that is can be overridden for
+     * testing.
+     * @param connection the Connection
+     * @throws SQLException if there is a database problem
+     * @return the ResultSet
+     */
+    protected ResultSet getAllelePropPubResultSet(Connection connection) throws SQLException {
+        String organismConstraint = getOrganismConstraint();
+        String orgConstraintForQuery = "";
+        if (!StringUtils.isEmpty(organismConstraint)) {
+            orgConstraintForQuery = " AND " + organismConstraint;
+        }
+
+        String query =
+            "SELECT DISTINCT featureprop_pub.featureprop_id, dbxref.accession as pub_db_identifier"
+            + "    FROM featureprop, featureprop_pub, dbxref, db, pub, pub_dbxref"
+            + "    WHERE featureprop_pub.pub_id = pub.pub_id"
+            + "        AND featureprop.featureprop_id = featureprop_pub.featureprop_id"
+            + "        AND pub.pub_id = pub_dbxref.pub_id"
+            + "        AND pub_dbxref.dbxref_id = dbxref.dbxref_id"
+            + "        AND dbxref.db_id = db.db_id"
+            + "        AND db.name = 'pubmed'"
+            + "        AND feature_id IN ("
+            + "                SELECT feature_id"
+            + "                FROM feature, cvterm feature_type "
+            + "                WHERE feature_type.name = 'gene'"
+            + "                AND type_id = feature_type.cvterm_id"
+            + "                AND uniquename LIKE 'FBal%'"
+            + "                AND NOT feature.is_obsolete"
+            + orgConstraintForQuery + ")"
+            + "    ORDER BY featureprop_id";
         LOG.info("executing: " + query);
         Statement stmt = connection.createStatement();
         ResultSet res = stmt.executeQuery(query);

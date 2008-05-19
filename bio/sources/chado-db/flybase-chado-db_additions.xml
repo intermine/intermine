@@ -12,9 +12,13 @@
     <reference name="anatomyTerm" referenced-type="org.flymine.model.genomic.AnatomyTerm"/>
     <reference name="developmentTerm" referenced-type="org.flymine.model.genomic.DevelopmentTerm"/>
     <collection name="cvTerms" referenced-type="org.flymine.model.genomic.CVTerm"/>
+    <collection name="publications" referenced-type="org.flymine.model.genomic.Publication"/>
+    <collection name="dataSets" referenced-type="org.flymine.model.genomic.DataSet"/>
   </class>
   <class name="org.flymine.model.genomic.Allele" 
          extends="org.flymine.model.genomic.BioEntity" is-interface="true">
+    <attribute name="alleleClass" type="java.lang.String"/>
+    <attribute name="mutagen" type="java.lang.String"/>
     <collection name="phenotypeAnnotations"
                 referenced-type="org.flymine.model.genomic.PhenotypeAnnotation" 
                 reverse-reference="allele"/>
