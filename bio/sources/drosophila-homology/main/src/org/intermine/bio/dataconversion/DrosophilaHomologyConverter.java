@@ -31,7 +31,7 @@ import org.intermine.xml.full.Item;
 
 
 /**
- * Parse Drosophila 12 genome homology file and create pairwise Homologue objects. 
+ * Parse Drosophila 12 genome homology file and create pairwise Homologue objects.
  *
  * @author Richard Smith
  */
@@ -39,13 +39,14 @@ public class DrosophilaHomologyConverter extends FileConverter
 {
     private Item dataSource, dataSet, pub;
     private Map<String, String> genes = new HashMap();
+    private Map<String, String> fbgns = new HashMap();
     private Map<String, String> organisms = new HashMap();
     private OrganismRepository or = null;
     protected IdResolverFactory resolverFactory;
     private IdResolver resolver = null;
-    
+
     protected static final Logger LOG = Logger.getLogger(DrosophilaHomologyConverter.class);
-    
+
     /**
      * Constructor
      * @param writer the ItemWriter used to handle the resultant items
@@ -69,9 +70,9 @@ public class DrosophilaHomologyConverter extends FileConverter
         pub = createItem("Publication");
         pub.setAttribute("pubMedId", "17994087");
         store(pub);
-        
+
         or = OrganismRepository.getOrganismRepository();
-        
+
         // only construct factory here so can be replaced by mock factory in tests
         resolverFactory = new FlyBaseIdResolverFactory();
     }
@@ -88,7 +89,7 @@ public class DrosophilaHomologyConverter extends FileConverter
         BufferedReader br = new BufferedReader(reader);
         String[] header = br.readLine().split("\t");
         System.arraycopy(header, 2, species, 0, 12);
-        
+
         Iterator lineIter = FormattedTextParser.parseTabDelimitedReader(br);
 
         while (lineIter.hasNext()) {
@@ -106,14 +107,14 @@ public class DrosophilaHomologyConverter extends FileConverter
             //            create an orthologue
             //        else if (key[i] == n or key[j] == n)
             //            create a paralogue
-            
+
             String[] line = (String[]) lineIter.next();
-            
+
             String clusterNum = line[0];
             String keyStr = line[1];
 
             char[] key = keyStr.toCharArray();
-            
+
             for (int i = 0; i < species.length; i++) {
                 for (int j = 0; j < species.length; j++) {
                     // same species, do nothing
@@ -135,9 +136,9 @@ public class DrosophilaHomologyConverter extends FileConverter
                                                            + " for cluster: " + clusterNum);
                     }
                     // each element can have multiple comma separated gene identfiers
-                    List<String> genes = Arrays.asList(line[i + 2].split(",")); 
-                    List<String> homGenes = Arrays.asList(line[j + 2].split(",")); 
-                    for (String gene : genes) {                        
+                    List<String> genes = Arrays.asList(line[i + 2].split(","));
+                    List<String> homGenes = Arrays.asList(line[j + 2].split(","));
+                    for (String gene : genes) {
                         for (String homGene : homGenes) {
                             createHomologue(getGene(gene, species[i]),
                                             getGene(homGene, species[j]),
@@ -153,12 +154,12 @@ public class DrosophilaHomologyConverter extends FileConverter
     // create and store a Homologue with identifiers of Gene items
     private void createHomologue(String gene, String homGene, String type, String cluster)
     throws ObjectStoreException {
-        
+
         // if no genes created then ids could not be resolved, don't create a homologue
         if (gene == null || homGene == null) {
             return;
         }
-        
+
         Item homologue = createItem("Homologue");
         homologue.setAttribute("type", type);
         homologue.setAttribute("clusterName", "Drosophila homology:" + cluster);
@@ -187,12 +188,15 @@ public class DrosophilaHomologyConverter extends FileConverter
                 return null;
             }
             String primaryIdentifier = resolver.resolveId(taxonId, symbol).iterator().next();
-            Item gene = createItem("Gene");
-            gene.setAttribute("primaryIdentifier", primaryIdentifier);
-
-            gene.setReference("organism", getOrganism(org));
-            store(gene);
-            geneId = gene.getIdentifier();
+            geneId = fbgns.get(primaryIdentifier);
+            if (geneId == null) {
+                Item gene = createItem("Gene");
+                gene.setAttribute("primaryIdentifier", primaryIdentifier);
+                gene.setReference("organism", getOrganism(org));
+                store(gene);
+                geneId = gene.getIdentifier();
+                fbgns.put(primaryIdentifier, geneId);
+            }
             genes.put(symbol + org, geneId);
         }
         return geneId;
