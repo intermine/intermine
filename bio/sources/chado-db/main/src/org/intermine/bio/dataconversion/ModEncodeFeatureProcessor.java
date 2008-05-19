@@ -30,23 +30,15 @@ public class ModEncodeFeatureProcessor extends ChadoSequenceProcessor
     
     private final String dataSetIdentifier;
     private final String dataSourceIdentifier;
-    //private final Integer chadoExperimentId;
     private final List<Integer> dataList;
 
     /**
      * Create a new ModEncodeFeatureProcessor.
-     * @param chadoDBConverter the parent converter
-     * @param dataSetIdentifier the item identifier of the DataSet
+     * @param chadoDBConverter     the parent converter
+     * @param dataSetIdentifier    the item identifier of the DataSet
      * @param dataSourceIdentifier the item identifier of the DataSource
+     * @param dataList             the list of data ids to be used in the subquery
      */
-
-//        public ModEncodeFeatureProcessor(ChadoDBConverter chadoDBConverter,
-//                String dataSetIdentifier, String dataSourceIdentifier) {
-//        super(chadoDBConverter);
-//        this.dataSetIdentifier = dataSetIdentifier;
-//        this.dataSourceIdentifier = dataSourceIdentifier;
-//    }
-
     
     public ModEncodeFeatureProcessor(ChadoDBConverter chadoDBConverter,
             String dataSetIdentifier, String dataSourceIdentifier,
@@ -144,6 +136,12 @@ public class ModEncodeFeatureProcessor extends ChadoSequenceProcessor
     }
     
     
+    
+    /**
+     * method to transform dataList (list of integers) 
+     * in the string for a IN clause in SQL (comma separated)
+     * @return String
+     */
     private String forINclause() {
 
         StringBuffer ql = new StringBuffer();

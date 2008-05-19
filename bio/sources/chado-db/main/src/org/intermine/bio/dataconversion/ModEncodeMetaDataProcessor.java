@@ -63,14 +63,8 @@ public class ModEncodeMetaDataProcessor extends ChadoProcessor
         new HashMap<Integer, List<Integer>>();
 
     // map used to store all data relative to an experiment
+    // experimentId, list of appliedDataIds
     private Map<Integer, List<Integer>> experimentDataMap = new HashMap<Integer, List<Integer>>();
-    // as above, but with chado data_id instead of applied_data_id
-    // TODO: clean up all these maps!
-    private Map<Integer, List<Integer>> experimentDataIdsMap = 
-        new HashMap<Integer, List<Integer>>();
-    // TODO RM 
-    // appliedDataId, dataId
-    private Map<Integer, Integer> dataIdsMap = new HashMap<Integer, Integer>();
 
     // just for debugging
     private Map<String, String> debugMap = new HashMap<String, String>(); // itemIdentifier, type
@@ -113,11 +107,8 @@ public class ModEncodeMetaDataProcessor extends ChadoProcessor
         private Integer intermineObjectId;
         // the list of applied protocols for which this data item is an input
         private List<Integer> nextAppliedProtocols = new ArrayList<Integer>();
-
         private List<Integer> previousAppliedProtocols = new ArrayList<Integer>();
-        private Integer appliedProtocolDataId;
         private Integer dataId;
-
     }
 
 
@@ -137,9 +128,6 @@ public class ModEncodeMetaDataProcessor extends ChadoProcessor
     @Override
     public void process(Connection connection) throws Exception {
 
-        // TEMP
-        buildDataMap(connection);
-        
         processProviderTable(connection);
         processProviderAttributes(connection);
 
@@ -154,11 +142,6 @@ public class ModEncodeMetaDataProcessor extends ChadoProcessor
         
         processDag(connection);
 
-        LOG.info("REF: SD size: initialData: " + experimentInDataMap.get(32).size());
-        LOG.info("REF: SD size: allData:     " + experimentDataMap.get(32).size());
-        LOG.info("REF: SD size: allDataids:  " + experimentDataIdsMap.get(32).size());
-        LOG.info("REF: SD size: outData:     " + experimentOutDataMap.get(32).size());  
-        
         // process features and keep a map from chado feature_id to info
         Map<Integer, FeatureData> featureMap = processFeatures(connection, experimentMap);
         processDataFeatureTable(connection, featureMap);
@@ -172,38 +155,32 @@ public class ModEncodeMetaDataProcessor extends ChadoProcessor
        
     }
 
+    
+/**
+ * method to build the list of dataIds for a given experiment
+ * This is needed when querying for setting the references to the features.
+ * The dataIds are gathered from the appliedData objects.
+ * The list of appliedData object for a given experiment is stored in the 
+ * experimentDataMap
+ * @param experimentId
+ * @return the list of dataIds
+ */
+    private List<Integer> createDataIdsList(Integer experimentId) {
 
-    //
-    // NB: TEMP just to check is working...
-    //
-    private void buildDataMap(Connection connection)
-    throws SQLException, ObjectStoreException {
-        ResultSet res = getDataIds(connection);
-        int count = 0;
-        while (res.next()) {
-            Integer appliedDataId = new Integer(res.getInt("applied_protocol_data_id"));
-            Integer dataId = new Integer(res.getInt("data_id"));
-            dataIdsMap.put(appliedDataId, dataId);
-            count++;
+        List<Integer> appliedDataIds = experimentDataMap.get(experimentId);
+        List<Integer> dataIds = new ArrayList<Integer>();
+
+        Iterator<Integer> i = appliedDataIds.iterator();
+        while (i.hasNext()) {
+            Integer thisDataId = appliedDataMap.get(i.next()).dataId;
+            if (!dataIds.contains(thisDataId)) {
+                dataIds.add(thisDataId);
+            }
         }
-        LOG.info("created " + count + " dataIds");
-        res.close();
-    }
-    
-    
-    protected ResultSet getDataIds(Connection connection)
-    throws SQLException {
-        String query =
-            "SELECT data_id, applied_protocol_data_id "
-            + " FROM applied_protocol_data";
-        LOG.info("executing: " + query);
-        Statement stmt = connection.createStatement();
-        ResultSet res = stmt.executeQuery(query);
-        return res;
+        return dataIds;
     }
 
 
-    
     
     /**
      * Query for features that referenced by the experiments in the experimentMap.
@@ -220,15 +197,13 @@ public class ModEncodeMetaDataProcessor extends ChadoProcessor
             String experimentItemIdentifier = experimentSubmissionDetails.itemIdentifier;
             String providerItemIdentifier = experimentSubmissionDetails.providerItemIdentifier;
             ModEncodeFeatureProcessor processor =
-//                new ModEncodeFeatureProcessor(getChadoDBConverter(), experimentItemIdentifier,
-//                        providerItemIdentifier);
-                new ModEncodeFeatureProcessor(getChadoDBConverter(), experimentItemIdentifier,
-                        providerItemIdentifier, experimentDataIdsMap.get(chadoExperimentId));
-            LOG.info("FEAT:  ids   " + experimentDataIdsMap.get(chadoExperimentId));
-            LOG.info("FEAT:     " + experimentDataIdsMap.get(chadoExperimentId).size());
+            new ModEncodeFeatureProcessor(getChadoDBConverter(), experimentItemIdentifier,
+                    providerItemIdentifier, createDataIdsList(chadoExperimentId));
+            
             processor.process(connection);
-            LOG.info("FEAT:     " + chadoExperimentId);            
             featureMap.putAll(processor.getFeatureMap());
+
+            LOG.info("FEAT:     " + chadoExperimentId);            
             LOG.info("FEAT  featureMap keys:   " + featureMap.keySet().size());
             LOG.info("FEAT  featureMap values: " + featureMap.values().size());
         }
@@ -276,11 +251,6 @@ public class ModEncodeMetaDataProcessor extends ChadoProcessor
     }
 
 
-    
-    
-    
-    
-    
     /**
      * In chado, Applied protocols in a submission are linked to each other via
      * the flow of data (output of a parent AP are input to a child AP).
@@ -338,7 +308,6 @@ public class ModEncodeMetaDataProcessor extends ChadoProcessor
 
                 // map all data to their experiment
                 addToMap (experimentDataMap, experimentId, appliedDataId);
-                addToMap (experimentDataIdsMap, experimentId, dataId);
 
                 // the experimentId != null for the first applied protocol
                 if (experimentId > 0) {
@@ -381,8 +350,6 @@ public class ModEncodeMetaDataProcessor extends ChadoProcessor
                     // experimentDataMap: apart from the initial ones,
                     // the inputs are outputs of other levels
                     addToMap (experimentDataMap, experimentId, appliedDataId);
-                    addToMap (experimentDataIdsMap, experimentId, dataId);
-                    
                     addToMap (experimentInDataMap, experimentId, appliedDataId);
 
                     // as above
@@ -473,8 +440,6 @@ public class ModEncodeMetaDataProcessor extends ChadoProcessor
         while (currentIterationAP.size() > 0) {
             nextIterationAP = buildADagLevel (currentIterationAP);
             currentIterationAP = nextIterationAP;
-            //LOG.info("DB REFDAT ---------: " + currentIterationAP.toString());
-            //LOG.info("DB ITER: " + currentIterationAP.toString());
         }
     }
 
@@ -508,8 +473,6 @@ public class ModEncodeMetaDataProcessor extends ChadoProcessor
                 // build map experiment-data
                 addToMap (experimentDataMap, experimentId, currentOD);
                 
-                addToMap (experimentDataIdsMap, experimentId, dataIdsMap.get(currentOD));
-
                 if (appliedDataMap.containsKey(currentOD)) {
                     // fill the list of next (children) protocols
                     nextProtocols.addAll(appliedDataMap.get(currentOD).nextAppliedProtocols);
@@ -544,8 +507,6 @@ public class ModEncodeMetaDataProcessor extends ChadoProcessor
         return nextIterationProtocols;
     }
 
-
-    
     
     /**
      *
