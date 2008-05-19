@@ -82,7 +82,7 @@ public class BDGPLdr extends EnrichmentWidgetLdr
         ConstraintSet cs = new ConstraintSet(ConstraintOp.AND);
 
         if (keys != null) {
-            cs.addConstraint(new BagConstraint(qfPrimaryIdentifier, ConstraintOp.IN, keys));
+            cs.addConstraint(new BagConstraint(qfTerm, ConstraintOp.IN, keys));
         }
 
         if (!action.startsWith("population")) {
