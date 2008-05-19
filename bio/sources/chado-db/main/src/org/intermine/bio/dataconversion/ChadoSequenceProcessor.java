@@ -220,8 +220,9 @@ public class ChadoSequenceProcessor extends ChadoProcessor
                         SetFieldConfigAction attrAction =
                             (SetFieldConfigAction) action;
                         if (attrAction.isValidValue(name)) {
-                            feature.setAttribute(attrAction.getFieldName(), name);
-                            fieldValuesSet.add(name);
+                            String newFieldValue = attrAction.processValue(name);
+                            feature.setAttribute(attrAction.getFieldName(), newFieldValue);
+                            fieldValuesSet.add(newFieldValue);
                             if (attrAction.getFieldName().equals("primaryIdentifier")) {
                                 fdat.flags |= FeatureData.IDENTIFIER_SET;
                             }
@@ -244,8 +245,9 @@ public class ChadoSequenceProcessor extends ChadoProcessor
                 if (action instanceof SetFieldConfigAction) {
                     SetFieldConfigAction attrAction = (SetFieldConfigAction) action;
                     if (attrAction.isValidValue(uniqueName)) {
-                        feature.setAttribute(attrAction.getFieldName(), uniqueName);
-                        fieldValuesSet.add(uniqueName);
+                        String newFieldValue = attrAction.processValue(uniqueName);
+                        feature.setAttribute(attrAction.getFieldName(), newFieldValue);
+                        fieldValuesSet.add(newFieldValue);
                         if (attrAction.getFieldName().equals("primaryIdentifier")) {
                             fdat.flags |= FeatureData.IDENTIFIER_SET;
                         }
@@ -843,10 +845,11 @@ public class ChadoSequenceProcessor extends ChadoProcessor
                         SetFieldConfigAction setAction = (SetFieldConfigAction) action;
                         if (!existingAttributes.contains(setAction.getFieldName())) {
                             if (setAction.isValidValue(accession)) {
+                                String newFieldValue = setAction.processValue(accession);
                                 setAttribute(fdat.intermineObjectId, setAction.getFieldName(),
-                                             accession);
+                                             newFieldValue);
                                 existingAttributes.add(setAction.getFieldName());
-                                fieldsSet.add(accession);
+                                fieldsSet.add(newFieldValue);
                                 if (setAction.getFieldName().equals("primaryIdentifier")) {
                                     fdat.flags |= FeatureData.IDENTIFIER_SET;
                                 }
@@ -910,9 +913,10 @@ public class ChadoSequenceProcessor extends ChadoProcessor
                     if (action instanceof SetFieldConfigAction) {
                         SetFieldConfigAction setAction = (SetFieldConfigAction) action;
                         if (setAction.isValidValue(identifier)) {
+                            String newFieldValue = setAction.processValue(identifier);
                             setAttribute(fdat.intermineObjectId, setAction.getFieldName(),
-                                         identifier);
-                            fieldsSet.add(identifier);
+                                         newFieldValue);
+                            fieldsSet.add(newFieldValue);
                             if (setAction.getFieldName().equals("primaryIdentifier")) {
                                 fdat.flags |= FeatureData.IDENTIFIER_SET;
                             }
@@ -993,8 +997,9 @@ public class ChadoSequenceProcessor extends ChadoProcessor
                         SetFieldConfigAction setAction = (SetFieldConfigAction) action;
                         if (!existingAttributes.contains(setAction.getFieldName())
                                         && setAction.isValidValue(identifier)) {
+                            String newFieldValue = setAction.processValue(identifier);
                             setAttribute(fdat.intermineObjectId, setAction.getFieldName(),
-                                         identifier);
+                                         newFieldValue);
                             existingAttributes.add(setAction.getFieldName());
                             setField = true;
                             if (setAction.getFieldName().equals("primaryIdentifier")) {

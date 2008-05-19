@@ -214,6 +214,9 @@ public class TestFlyBaseModuleProcessor extends FlyBaseModuleProcessor
             {
                 3117509, "protein_coding_gene", "promoted_gene_type"
             },
+            {
+                2340000, "@FBcv0000289:hypomorph@", "promoted_allele_class"
+            }
         };
 
         MockMultiRowResultSet res = new MockMultiRowResultSet();
@@ -353,41 +356,35 @@ public class TestFlyBaseModuleProcessor extends FlyBaseModuleProcessor
         };
         Object[][] resObjects = new Object[][] {
             {
-                3117509,
+                2340000,
                 "@FBbt00004729:wing@, with @FBal0060667:Scer\\GAL4<up>sd-SG29.1</up>@",
                 "derived_pheno_manifest",
                 40000001
             },
             {
-                3117509,
+                2340000,
                 "sensory mother cell & dorsal mesothoracic disc | ectopic, with @FBal0060667:Scer\\GAL4<up>sd-SG29.1</up>@",
                 "derived_pheno_manifest",
                 40000002
             },
             {
-                3117509,
+                2340000,
                 "@FBbt00004729:wing@ | @FBcv0000031:anterior compartment@, with @FBal0060667:Scer\\GAL4<up>sd-SG29.1</up>@",
                 "derived_pheno_manifest",
                 40000003
             },
             {
-                3117509,
+                2340000,
                 "@FBcv0000351:lethal@ | @FBdv00005289:embryonic stage@ | @FBcv0000323:segment polarity@ | @FBcv0000311:conditional ts@",
                 "derived_pheno_manifest",
                 40000004
             },
             {
-                3117509,
+                2340000,
                 "@FBcv0000354:visible@, with @FBal0060667:Scer\\GAL4<up>sd-SG29.1</up>@",
                 "derived_pheno_class",
                 40000005
-            },
-//            {
-//                3117509,
-//                "@FBcv0000289:hypomorph@",
-//                "promoted_allele_class",
-//                40000006
-//            }
+            }
         };
 
         MockMultiRowResultSet res = new MockMultiRowResultSet();
@@ -407,7 +404,6 @@ public class TestFlyBaseModuleProcessor extends FlyBaseModuleProcessor
         Object[][] resObjects = new Object[][] {
             {
                 40000001, "1902784"
-
             },
             {
                 40000001, "2226204"
