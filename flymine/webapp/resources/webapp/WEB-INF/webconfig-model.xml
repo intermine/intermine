@@ -567,7 +567,9 @@
                                  label="GO Term"
                                  filters="biological_process,cellular_component,molecular_function"
                                  filterLabel="ontology"
-                                 max="0.10" />
+                                 max="0.10"
+                                 externalLink="http://amigo.geneontology.org/cgi-bin/amigo/term-details.cgi?term="
+                                 />
 
       <enrichmentwidgetdisplayer title="Protein Domain Enrichment"
                                  link="org.flymine.web.widget.ProteinDomainURLQuery"
@@ -576,7 +578,9 @@
                                  description="Protein Domains enriched for proteins in this list."
                                  filters=""
                                  filterLabel=""
-                                 max="0.10"  />
+                                 max="0.10"
+                                 externalLink="http://www.ebi.ac.uk/interpro/IEntry?ac=" />
+                                  />
 
       <enrichmentwidgetdisplayer title="UniProt Features"
                                  link="org.intermine.bio.web.widget.UniProtFeaturesURLQuery"
