@@ -10,8 +10,9 @@ package org.intermine.bio.dataconversion;
  *
  */
 
+import java.util.Iterator;
 import java.util.List;
-import java.util.Map;
+import org.apache.log4j.Logger;
 
 import org.intermine.bio.util.OrganismData;
 import org.intermine.objectstore.ObjectStoreException;
@@ -19,30 +20,41 @@ import org.intermine.xml.full.Item;
 
 /**
  * A processor that loads feature referred to by the modENCODE metadata.  This class is designed
- * to be used by ModEncodeFeatureProcessor and will be called once for each submission that has
+ * to be used by ModEncodeMetaDataProcessor and will be called once for each submission that has
  * metadata.
  * @author Kim Rutherford
  */
 public class ModEncodeFeatureProcessor extends ChadoSequenceProcessor
 {
+    private static final Logger LOG = Logger.getLogger(ModEncodeFeatureProcessor.class);
+    
     private final String dataSetIdentifier;
     private final String dataSourceIdentifier;
-    private final Integer chadoExperimentId;
+    //private final Integer chadoExperimentId;
+    private final List<Integer> dataList;
 
     /**
      * Create a new ModEncodeFeatureProcessor.
      * @param chadoDBConverter the parent converter
      * @param dataSetIdentifier the item identifier of the DataSet
      * @param dataSourceIdentifier the item identifier of the DataSource
-     * @param chadoExperimentId the chado internal identifier of the experiment (the submission)
      */
+
+//        public ModEncodeFeatureProcessor(ChadoDBConverter chadoDBConverter,
+//                String dataSetIdentifier, String dataSourceIdentifier) {
+//        super(chadoDBConverter);
+//        this.dataSetIdentifier = dataSetIdentifier;
+//        this.dataSourceIdentifier = dataSourceIdentifier;
+//    }
+
+    
     public ModEncodeFeatureProcessor(ChadoDBConverter chadoDBConverter,
-                                     String dataSetIdentifier, String dataSourceIdentifier,
-                                     Integer chadoExperimentId) {
+            String dataSetIdentifier, String dataSourceIdentifier,
+            List <Integer> dataList) {
         super(chadoDBConverter);
         this.dataSetIdentifier = dataSetIdentifier;
         this.dataSourceIdentifier = dataSourceIdentifier;
-        this.chadoExperimentId = chadoExperimentId;
+        this.dataList = dataList;
     }
 
     /**
@@ -50,14 +62,22 @@ public class ModEncodeFeatureProcessor extends ChadoSequenceProcessor
      */
     @Override
     protected String getExtraFeatureConstraint() {
+        String queryList = forINclause();
 
+        LOG.info("LISTA " + queryList);
+
+        return " feature_id IN "
+            + " (SELECT feature_id "
+            + "   FROM data_feature "
+            + "   WHERE data_id IN (" + queryList + "))";
+            
         /* TODO: needs information from EO
         return "feature_id IN "
             + "(SELECT feature_id "
             + "   FROM some_indirection_table "
             + "   WHERE experiment_id = " + chadoExperimentId + ")";
             */
-        return null;
+        //return null;
     }
 
     /**
@@ -122,7 +142,26 @@ public class ModEncodeFeatureProcessor extends ChadoSequenceProcessor
             DataSetStoreHook.setDataSets(getModel(), item, dataSetIdentifier, dataSourceIdentifier);
         }
     }
+    
+    
+    private String forINclause() {
 
+        StringBuffer ql = new StringBuffer();
+        
+        Iterator<Integer> i = dataList.iterator();
+        Integer index = 0;
+        while (i.hasNext()) {
+          index++;
+          if (index > 1) {
+              ql = ql.append(", ");
+          }
+            ql = ql.append(i.next());
+        }
+        return ql.toString();
+    }
+
+    
+    
     protected String getDataSourceName() {
         return "modENCODE";
     }
