@@ -64,6 +64,13 @@ public class ModEncodeMetaDataProcessor extends ChadoProcessor
 
     // map used to store all data relative to an experiment
     private Map<Integer, List<Integer>> experimentDataMap = new HashMap<Integer, List<Integer>>();
+    // as above, but with chado data_id instead of applied_data_id
+    // TODO: clean up all these maps!
+    private Map<Integer, List<Integer>> experimentDataIdsMap = 
+        new HashMap<Integer, List<Integer>>();
+    // TODO RM 
+    // appliedDataId, dataId
+    private Map<Integer, Integer> dataIdsMap = new HashMap<Integer, Integer>();
 
     // just for debugging
     private Map<String, String> debugMap = new HashMap<String, String>(); // itemIdentifier, type
@@ -125,10 +132,14 @@ public class ModEncodeMetaDataProcessor extends ChadoProcessor
     /**
      * {@inheritDoc}
      * Note:TODO
-     *
+     * Inbox 
      */
     @Override
     public void process(Connection connection) throws Exception {
+
+        // TEMP
+        buildDataMap(connection);
+        
         processProviderTable(connection);
         processProviderAttributes(connection);
 
@@ -138,14 +149,19 @@ public class ModEncodeMetaDataProcessor extends ChadoProcessor
         processProtocolTable(connection);
         processProtocolAttributes(connection);
 
-        // process features and keep a map from chado feature_id to info
-        Map<Integer, FeatureData> featureMap = processFeatures(connection, experimentMap);
-
         processAppliedProtocolTable(connection);
         processAppliedProtocolData(connection);
-        processDataFeatureTable(connection, featureMap);
-
+        
         processDag(connection);
+
+        LOG.info("REF: SD size: initialData: " + experimentInDataMap.get(32).size());
+        LOG.info("REF: SD size: allData:     " + experimentDataMap.get(32).size());
+        LOG.info("REF: SD size: allDataids:  " + experimentDataIdsMap.get(32).size());
+        LOG.info("REF: SD size: outData:     " + experimentOutDataMap.get(32).size());  
+        
+        // process features and keep a map from chado feature_id to info
+        Map<Integer, FeatureData> featureMap = processFeatures(connection, experimentMap);
+        processDataFeatureTable(connection, featureMap);
 
         // set references
         setExperimentRefs(connection);
@@ -153,11 +169,42 @@ public class ModEncodeMetaDataProcessor extends ChadoProcessor
         setExperimentResultsRefs(connection);
         setExperimentProtocolsRefs(connection);
         setDAGRefs(connection);
+       
+    }
 
-        LOG.info("REF: SD size: initialData: " + experimentInDataMap.get(32).size());
-        LOG.info("REF: SD size: allData:     " + experimentDataMap.get(32).size());
-        LOG.info("REF: SD size: outData:     " + experimentOutDataMap.get(32).size());  }
 
+    //
+    // NB: TEMP just to check is working...
+    //
+    private void buildDataMap(Connection connection)
+    throws SQLException, ObjectStoreException {
+        ResultSet res = getDataIds(connection);
+        int count = 0;
+        while (res.next()) {
+            Integer appliedDataId = new Integer(res.getInt("applied_protocol_data_id"));
+            Integer dataId = new Integer(res.getInt("data_id"));
+            dataIdsMap.put(appliedDataId, dataId);
+            count++;
+        }
+        LOG.info("created " + count + " dataIds");
+        res.close();
+    }
+    
+    
+    protected ResultSet getDataIds(Connection connection)
+    throws SQLException {
+        String query =
+            "SELECT data_id, applied_protocol_data_id "
+            + " FROM applied_protocol_data";
+        LOG.info("executing: " + query);
+        Statement stmt = connection.createStatement();
+        ResultSet res = stmt.executeQuery(query);
+        return res;
+    }
+
+
+    
+    
     /**
      * Query for features that referenced by the experiments in the experimentMap.
      *
@@ -173,14 +220,67 @@ public class ModEncodeMetaDataProcessor extends ChadoProcessor
             String experimentItemIdentifier = experimentSubmissionDetails.itemIdentifier;
             String providerItemIdentifier = experimentSubmissionDetails.providerItemIdentifier;
             ModEncodeFeatureProcessor processor =
+//                new ModEncodeFeatureProcessor(getChadoDBConverter(), experimentItemIdentifier,
+//                        providerItemIdentifier);
                 new ModEncodeFeatureProcessor(getChadoDBConverter(), experimentItemIdentifier,
-                        providerItemIdentifier, chadoExperimentId);
+                        providerItemIdentifier, experimentDataIdsMap.get(chadoExperimentId));
+            LOG.info("FEAT:  ids   " + experimentDataIdsMap.get(chadoExperimentId));
+            LOG.info("FEAT:     " + experimentDataIdsMap.get(chadoExperimentId).size());
             processor.process(connection);
+            LOG.info("FEAT:     " + chadoExperimentId);            
             featureMap.putAll(processor.getFeatureMap());
+            LOG.info("FEAT  featureMap keys:   " + featureMap.keySet().size());
+            LOG.info("FEAT  featureMap values: " + featureMap.values().size());
         }
         return featureMap;
     }
 
+
+    private void processDataFeatureTable(Connection connection, Map<Integer,
+            FeatureData> featureMap)
+    throws SQLException, ObjectStoreException {
+        ResultSet res = getDataFeatureResultSet(connection);
+        while (res.next()) {
+            Integer appliedProtocolDataId = new Integer(res.getInt("applied_protocol_data_id"));
+            Integer dataId = new Integer(res.getInt("data_id"));
+            Integer featureId = new Integer(res.getInt("feature_id"));
+            String featureItemId = featureMap.get(featureId).getItemIdentifier();
+            FeatureData fd = featureMap.get(featureId);
+            LOG.error(fd.getInterMineType() + ": " + fd.getChadoFeatureName()
+                    + ", " + fd.getChadoFeatureUniqueName());
+            Reference featureRef = new Reference("feature", featureItemId);
+            getChadoDBConverter().store(featureRef, 
+                    appliedDataMap.get(appliedProtocolDataId).intermineObjectId);
+        }
+    }
+
+    /**
+     * Read from data_feature and related tables
+     * @param connection chado db connection
+     * @return results from querying data_feature table
+     * @throws SQLException
+     */
+    private ResultSet getDataFeatureResultSet(Connection connection)
+    throws SQLException {
+        String query =
+            "SELECT apd.applied_protocol_data_id, apd.data_id, df.feature_id"
+            + " FROM applied_protocol_data apd, data d, data_feature df"
+            + " WHERE apd.data_id = d.data_id"
+            + " AND df.data_id = d.data_id"
+            + " AND d.heading != 'Result File'";
+
+        LOG.info("executing: " + query);
+        Statement stmt = connection.createStatement();
+        ResultSet res = stmt.executeQuery(query);
+        return res;
+    }
+
+
+    
+    
+    
+    
+    
     /**
      * In chado, Applied protocols in a submission are linked to each other via
      * the flow of data (output of a parent AP are input to a child AP).
@@ -238,6 +338,7 @@ public class ModEncodeMetaDataProcessor extends ChadoProcessor
 
                 // map all data to their experiment
                 addToMap (experimentDataMap, experimentId, appliedDataId);
+                addToMap (experimentDataIdsMap, experimentId, dataId);
 
                 // the experimentId != null for the first applied protocol
                 if (experimentId > 0) {
@@ -280,6 +381,8 @@ public class ModEncodeMetaDataProcessor extends ChadoProcessor
                     // experimentDataMap: apart from the initial ones,
                     // the inputs are outputs of other levels
                     addToMap (experimentDataMap, experimentId, appliedDataId);
+                    addToMap (experimentDataIdsMap, experimentId, dataId);
+                    
                     addToMap (experimentInDataMap, experimentId, appliedDataId);
 
                     // as above
@@ -404,6 +507,8 @@ public class ModEncodeMetaDataProcessor extends ChadoProcessor
 
                 // build map experiment-data
                 addToMap (experimentDataMap, experimentId, currentOD);
+                
+                addToMap (experimentDataIdsMap, experimentId, dataIdsMap.get(currentOD));
 
                 if (appliedDataMap.containsKey(currentOD)) {
                     // fill the list of next (children) protocols
@@ -440,6 +545,8 @@ public class ModEncodeMetaDataProcessor extends ChadoProcessor
     }
 
 
+    
+    
     /**
      *
      * ==============
@@ -525,6 +632,8 @@ public class ModEncodeMetaDataProcessor extends ChadoProcessor
         LOG.info("created " + count + " provider properties");
         res.close();
     }
+
+    
 
     /**
      * Return the rows needed for provider from the provider_prop table.
@@ -913,45 +1022,6 @@ public class ModEncodeMetaDataProcessor extends ChadoProcessor
         return res;
     }
 
-
-    private void processDataFeatureTable(Connection connection, Map<Integer,
-            FeatureData> featureMap)
-    throws SQLException, ObjectStoreException {
-        ResultSet res = getDataFeatureResultSet(connection);
-        while (res.next()) {
-            Integer appliedProtocolDataId = new Integer(res.getInt("applied_protocol_data_id"));
-            Integer dataId = new Integer(res.getInt("data_id"));
-            Integer featureId = new Integer(res.getInt("feature_id"));
-            String featureItemId = featureMap.get(featureId).getItemIdentifier();
-            FeatureData fd = featureMap.get(featureId);
-            LOG.error(fd.getInterMineType() + ": " + fd.getChadoFeatureName()
-                    + ", " + fd.getChadoFeatureUniqueName());
-            Reference featureRef = new Reference("feature", featureItemId);
-            getChadoDBConverter().store(featureRef, 
-                    appliedDataMap.get(appliedProtocolDataId).intermineObjectId);
-        }
-    }
-
-    /**
-     * Read from data_feature and related tables
-     * @param connection chado db connection
-     * @return results from querying data_feature table
-     * @throws SQLException
-     */
-    private ResultSet getDataFeatureResultSet(Connection connection)
-    throws SQLException {
-        String query =
-            "SELECT apd.applied_protocol_data_id, apd.data_id, df.feature_id"
-            + " FROM applied_protocol_data apd, data d, data_feature df"
-            + " WHERE apd.data_id = d.data_id"
-            + " AND df.data_id = d.data_id"
-            + " AND d.heading != 'Result File'";
-
-        LOG.info("executing: " + query);
-        Statement stmt = connection.createStatement();
-        ResultSet res = stmt.executeQuery(query);
-        return res;
-    }
 
 
     /**
