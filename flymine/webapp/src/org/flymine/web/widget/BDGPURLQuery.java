@@ -82,9 +82,9 @@ public class BDGPURLQuery implements WidgetURLQuery
             q.getNode(bagType).getConstraints().add(c);
             q.setConstraintLogic("A and B");
         } else {
-            constraintOp = ConstraintOp.EQUALS;
+            constraintOp = ConstraintOp.LOOKUP;
             code = q.getUnusedConstraintCode();
-            PathNode nameNode = q.addNode("Gene.mRNAExpressionResults.mRNAExpressionTerms.name");
+            PathNode nameNode = q.addNode("Gene.mRNAExpressionResults.mRNAExpressionTerms");
             nameNode.getConstraints().add(new Constraint(constraintOp, key, false, label,
                                                          code, id, null));
 
