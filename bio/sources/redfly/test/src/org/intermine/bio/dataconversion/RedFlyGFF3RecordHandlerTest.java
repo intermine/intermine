@@ -18,6 +18,7 @@ import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
+import java.util.Collections;
 
 import org.intermine.bio.io.gff3.GFF3Parser;
 import org.intermine.bio.io.gff3.GFF3Record;
@@ -61,7 +62,10 @@ public class RedFlyGFF3RecordHandlerTest extends ItemsTestCase
                           "FlyBase", dataSetTitle, tgtModel, handler, null);
         tgtNs = tgtModel.getNameSpace().toString();
         itemFactory = handler.getItemFactory();
-
+        MockIdResolverFactory resolverFactory = new MockIdResolverFactory("Gene");
+        resolverFactory.addResolverEntry("7227", "FBgn0001", Collections.singleton("FBgn0003145"));
+        resolverFactory.addResolverEntry("7227", "FBgn0002", Collections.singleton("FBgn0003339"));
+        handler.resolverFactory = resolverFactory;
     }
 
     public void tearDown() throws Exception {
