@@ -61,8 +61,8 @@ public class UniProtFeaturesURLQuery implements WidgetURLQuery
         List<Path> view = new ArrayList<Path>();
 
         Path identifier = MainHelper.makePath(model, q, "Protein.primaryIdentifier");
-        Path sec = MainHelper.makePath(model, q, "Protein.secondaryIdentifier");
-        Path organism = MainHelper.makePath(model, q, "Protein.organism.shortName");
+        Path sec = MainHelper.makePath(model, q, "Protein.primaryAccession");
+        Path organism = MainHelper.makePath(model, q, "Protein.organism.name");
         Path name = MainHelper.makePath(model, q, "Protein.features.feature.name");
         Path descr =  MainHelper.makePath(model, q, "Protein.features.description");
         Path begin = MainHelper.makePath(model, q, "Protein.features.begin");
