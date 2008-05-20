@@ -136,5 +136,17 @@
 			<required>false</required>
 		</attribute>
 	</tag>
+	
+    <tag>
+       <name>treatString</name>
+       <description>
+       Tag escaping apostrophes, quotes and replacing \n with html tag for end of line.
+       </description>
+       <tag-class>
+           org.intermine.web.tags.util.TreatStringTag
+       </tag-class>
+       <body-content>scriptless</body-content>
+    </tag>
+	
 </taglib>
 
