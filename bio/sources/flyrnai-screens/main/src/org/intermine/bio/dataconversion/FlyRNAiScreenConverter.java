@@ -51,7 +51,7 @@ public class FlyRNAiScreenConverter extends FileConverter
     private Set<String> detailsScreenNames = new HashSet<String>();
     private Item dataSet;
     protected IdResolverFactory resolverFactory;
-    
+
     protected static final Logger LOG = Logger.getLogger(FlyRNAiScreenConverter.class);
     /**
      * Create a new FlyRNAiScreenConverter object.
@@ -60,7 +60,7 @@ public class FlyRNAiScreenConverter extends FileConverter
      */
     public FlyRNAiScreenConverter(ItemWriter writer, Model model) {
         super(writer, model);
-                
+
         // only construct factory here so can be replaced by mock factory in tests
         resolverFactory = new FlyBaseIdResolverFactory();
     }
@@ -319,22 +319,22 @@ public class FlyRNAiScreenConverter extends FileConverter
         if (geneSymbol == null) {
             throw new RuntimeException("geneSymbol can't be null");
         }
-        Item item = genes.get(geneSymbol);
+        IdResolver resolver = resolverFactory.getIdResolver();
+        int resCount = resolver.countResolutions(TAXON_ID, geneSymbol);
+        if (resCount != 1) {
+            LOG.info("RESOLVER: failed to resolve gene to one identifier, ignoring gene: "
+                     + geneSymbol + " count: " + resCount + " FBgn: "
+                     + resolver.resolveId(TAXON_ID, geneSymbol));
+            return null;
+        }
+        String primaryIdentifier = resolver.resolveId(TAXON_ID, geneSymbol).iterator().next();
+        Item item = genes.get(primaryIdentifier);
         if (item == null) {
-            IdResolver resolver = resolverFactory.getIdResolver();
-            int resCount = resolver.countResolutions(TAXON_ID, geneSymbol);
-            if (resCount != 1) {
-                LOG.info("RESOLVER: failed to resolve gene to one identifier, ignoring gene: "
-                         + geneSymbol + " count: " + resCount + " FBgn: "
-                         + resolver.resolveId(TAXON_ID, geneSymbol));
-                return null;
-            }
-            String primaryIdentifier = resolver.resolveId(TAXON_ID, geneSymbol).iterator().next();
             item = createItem("Gene");
             item.setAttribute("primaryIdentifier", primaryIdentifier);
             item.setReference("organism", organism);
             item.addCollection(new ReferenceList("rnaiResults", new ArrayList<String>()));
-            genes.put(geneSymbol, item);
+            genes.put(primaryIdentifier, item);
         }
         return item;
     }
