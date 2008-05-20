@@ -35,7 +35,7 @@ public class BDGPCloneConverter extends CDNACloneConverter
     private Map<String, Item> genes = new HashMap();
     protected IdResolverFactory resolverFactory;
     private static final String TAXON_ID = "7227";
-    
+
     /**
      * Constructor
      * @param writer the ItemWriter used to handle the resultant items
@@ -59,7 +59,7 @@ public class BDGPCloneConverter extends CDNACloneConverter
         organism = createItem("Organism");
         organism.setAttribute("taxonId", TAXON_ID);
         store(organism);
-        
+
         // only construct factory here so can be replaced by mock factory in tests
         resolverFactory = new FlyBaseIdResolverFactory();
     }
@@ -84,7 +84,7 @@ public class BDGPCloneConverter extends CDNACloneConverter
             }
 
             Item gene = getGene(array[0]);
-            
+
             String[] cloneIds = array[3].split(";");
 
             for (int i = 0; i < cloneIds.length; i++) {
@@ -106,11 +106,8 @@ public class BDGPCloneConverter extends CDNACloneConverter
             }
         }
     }
-    
+
     private Item getGene(String identifier) throws ObjectStoreException {
-        if (genes.containsKey(identifier)) {
-            return genes.get(identifier);
-        }
         IdResolver resolver = resolverFactory.getIdResolver();
         int resCount = resolver.countResolutions(TAXON_ID, identifier);
         if (resCount != 1) {
@@ -120,10 +117,13 @@ public class BDGPCloneConverter extends CDNACloneConverter
             return null;
         }
         String primaryIdentifier = resolver.resolveId(TAXON_ID, identifier).iterator().next();
+        if (genes.containsKey(primaryIdentifier)) {
+            return genes.get(primaryIdentifier);
+        }
         Item gene = createItem("Gene");
         gene.setAttribute("primaryIdentifier", primaryIdentifier);
         gene.setReference("organism", organism);
-        genes.put(identifier, gene);
+        genes.put(primaryIdentifier, gene);
         store(gene);
         return gene;
     }
