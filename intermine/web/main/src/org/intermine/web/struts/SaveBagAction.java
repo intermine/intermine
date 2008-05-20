@@ -10,10 +10,8 @@ package org.intermine.web.struts;
  *
  */
 
-import java.util.AbstractList;
 import java.util.Date;
 import java.util.HashSet;
-import java.util.List;
 import java.util.Set;
 
 import javax.servlet.ServletContext;
@@ -26,7 +24,6 @@ import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
 import org.apache.struts.action.ActionMessage;
-import org.intermine.model.InterMineObject;
 import org.intermine.objectstore.ObjectStore;
 import org.intermine.objectstore.ObjectStoreException;
 import org.intermine.objectstore.ObjectStoreWriter;
@@ -238,55 +235,6 @@ public class SaveBagAction extends InterMineAction
                 bag.getName()).forward();
         } else {
             return mapping.findForward("results");
-        }
-    }
-
-    /**
-     * A class the wraps a list of lists and acts like a list that just contains the elements
-     * in the first column.
-     * @author Kim Rutherford
-     */
-    @SuppressWarnings("unchecked")
-    private static class SingleColumnResults extends AbstractList
-    {
-        private List list;
-
-        /**
-         * Create a new SingleColumnResults object
-         * @param list the list of lists to act on
-         */
-        public SingleColumnResults(List list) {
-            this.list = list;
-        }
-
-        /* (non-Javadoc)
-         * @see java.util.AbstractList#get(int)
-         */
-        @Override
-        public Object get(int index) {
-            Object row = list.get(index);
-            if (row instanceof List) {
-                Object obj = ((List) row).get(0);
-                if (obj instanceof InterMineObject) {
-                    return ((InterMineObject) obj).getId();
-                } else {
-                    return obj;
-                }
-            } else {
-                if (row instanceof InterMineObject) {
-                    return ((InterMineObject) row).getId();
-                } else {
-                    return row;
-                }
-            }
-        }
-
-        /* (non-Javadoc)
-         * @see java.util.AbstractCollection#size()
-         */
-        @Override
-        public int size() {
-            return list.size();
         }
     }
 }
