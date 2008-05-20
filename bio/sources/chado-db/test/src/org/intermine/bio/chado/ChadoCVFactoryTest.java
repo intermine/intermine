@@ -44,23 +44,49 @@ public class ChadoCVFactoryTest extends TestCase
         expectedRoots.add(expRoot3);
         assertEquals(expectedRoots, rootCVTerms);
 
-        Set<ChadoCVTerm> expectedRoot2Children = new HashSet<ChadoCVTerm>();
         ChadoCVTerm expChild1 = new ChadoCVTerm("child1");
-        expectedRoot2Children.add(expChild1);
+        ChadoCVTerm expChild2 = new ChadoCVTerm("child2");
+        ChadoCVTerm expChild3 = new ChadoCVTerm("child3");
         ChadoCVTerm expChild4 = new ChadoCVTerm("child4");
-        expectedRoot2Children.add(expChild4);
 
+        Set<ChadoCVTerm> expectedRoot2DirectChildren = new HashSet<ChadoCVTerm>();
+
+        expectedRoot2DirectChildren.add(expChild1);
+        expectedRoot2DirectChildren.add(expChild4);
+
+        Set<ChadoCVTerm> expectedRoot2AllChildren = new HashSet<ChadoCVTerm>();
+        expectedRoot2AllChildren.add(expChild1);
+        expectedRoot2AllChildren.add(expChild2);
+        expectedRoot2AllChildren.add(expChild3);
+        expectedRoot2AllChildren.add(expChild4);
+
+        ChadoCVTerm root1 = null;
         ChadoCVTerm root2 = null;
+        ChadoCVTerm root3 = null;
         for (ChadoCVTerm rootTerm: rootCVTerms) {
-            if (rootTerm.getName().equals("root2")) {
-                root2 = rootTerm;
+            if (rootTerm.getName().equals("root1")) {
+                root1 = rootTerm;
+            } else {
+                if (rootTerm.getName().equals("root2")) {
+                    root2 = rootTerm;
+                } else {
+                    if (rootTerm.getName().equals("root3")) {
+                        root3 = rootTerm;
+                    } else {
+                       fail("unknown root: " + rootTerm.getName());
+                    }
+                }
             }
         }
 
-        if (root2 == null) {
-            fail("can't find root2");
-        }
+        assertEquals(expectedRoot2DirectChildren, root2.getDirectChildren());
+        Set<ChadoCVTerm> root2AllChildren = root2.getAllChildren();
+        assertEquals(expectedRoot2AllChildren, root2AllChildren);
 
-        assertEquals(expectedRoot2Children, root2.getDirectChildren());
+        for (ChadoCVTerm root2Child: root2AllChildren) {
+            if (root2Child.getName().equals("child4")) {
+                assertEquals(5, root2Child.getAllParents().size());
+            }
+        }
     }
 }
