@@ -17,6 +17,7 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.log4j.Logger;
 import org.intermine.bio.io.gff3.GFF3Record;
 import org.intermine.metadata.Model;
 import org.intermine.xml.full.Attribute;
@@ -35,6 +36,11 @@ public class RedFlyGFF3RecordHandler extends GFF3RecordHandler
     private Map<String, Item> anatomyMap = new LinkedHashMap<String, Item>();
     private Map<String, Item> geneMap = new HashMap<String, Item>();
     private Map<String, Item> publications = new HashMap<String, Item>();
+    protected IdResolverFactory resolverFactory;
+    private IdResolver resolver = null;
+    private static final String TAXON_ID = "7227";
+
+    protected static final Logger LOG = Logger.getLogger(RedFlyGFF3RecordHandler.class);
 
     /**
      * Create a new RedFlyGFF3RecordHandler for the given target model.
@@ -43,6 +49,8 @@ public class RedFlyGFF3RecordHandler extends GFF3RecordHandler
     public RedFlyGFF3RecordHandler (Model tgtModel) {
         super(tgtModel);
         tgtNs = tgtModel.getNameSpace().toString();
+        // only construct factory here so can be replaced by mock factory in tests
+        resolverFactory = new FlyBaseIdResolverFactory();
     }
 
     /**
@@ -127,7 +135,10 @@ public class RedFlyGFF3RecordHandler extends GFF3RecordHandler
             geneName = name;
         }
 
-        feature.setReference("gene", getGene(geneName));
+        Item gene = getGene(geneName);
+        if (gene != null) {
+            feature.setReference("gene", gene);
+        }
 
         if (!pubmedId.equals("")) {
             addEvidence(getPublication(pubmedId));
@@ -137,16 +148,25 @@ public class RedFlyGFF3RecordHandler extends GFF3RecordHandler
         feature.setAttribute("secondaryIdentifier", redflyID);
     }
 
-    private Item getGene(String genePrimaryIdentifier) {
-        if (geneMap.containsKey(genePrimaryIdentifier)) {
-            return geneMap.get(genePrimaryIdentifier);
+    private Item getGene(String geneId) {
+        // try to resolve this id to a current FlyBase identifier
+        IdResolver resolver = resolverFactory.getIdResolver();
+        int resCount = resolver.countResolutions(TAXON_ID, geneId);
+        if (resCount != 1) {
+            LOG.info("RESOLVER: failed to resolve gene to one identifier, ignoring gene: "
+                     + geneId + " count: " + resCount + " FBgn: "
+                     + resolver.resolveId(TAXON_ID, geneId));
+            return null;
         }
-
-        Item geneItem = getItemFactory().makeItem(null, tgtNs + "Gene", "");
-        geneItem.addAttribute(new Attribute("primaryIdentifier", genePrimaryIdentifier));
-        geneItem.setReference("organism", getOrganism());
-        addItem(geneItem);
-        geneMap.put(genePrimaryIdentifier, geneItem);
+        String primaryIdentifier = resolver.resolveId(TAXON_ID, geneId).iterator().next();
+        Item geneItem = geneMap.get(primaryIdentifier);
+        if (geneItem == null) {
+            geneItem = getItemFactory().makeItem(null, tgtNs + "Gene", "");
+            geneItem.addAttribute(new Attribute("primaryIdentifier", primaryIdentifier));
+            geneItem.setReference("organism", getOrganism());
+            addItem(geneItem);
+            geneMap.put(primaryIdentifier, geneItem);
+        }
         return geneItem;
     }
 

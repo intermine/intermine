@@ -19,7 +19,7 @@
     <attribute name="identifier" value="FBbt:00005414"/>
   </item>
   <item id="1_5" class="http://www.flymine.org/model/genomic#Gene">
-    <attribute name="primaryIdentifier" value="FBgn0003145"/>
+    <attribute name="primaryIdentifier" value="FBgn0001"/>
     <reference name="organism" ref_id="0_0"/>
   </item>
   <item id="1_6" class="http://www.flymine.org/model/genomic#Publication">
@@ -50,7 +50,7 @@
     <attribute name="identifier" value="FBbt:00000090"/>
   </item>
   <item id="1_11" class="http://www.flymine.org/model/genomic#Gene">
-    <attribute name="primaryIdentifier" value="FBgn0003339"/>
+    <attribute name="primaryIdentifier" value="FBgn0002"/>
     <reference name="organism" ref_id="0_0"/>
   </item>
   <item id="1_12" class="http://www.flymine.org/model/genomic#Publication">
