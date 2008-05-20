@@ -18,8 +18,9 @@ package org.intermine.bio.dataconversion;
 public abstract class IdResolverFactory
 {
     private IdResolver resolver = null;
+
     /**
-     * Create an IdResolver.
+     * Return an IdResolver, if not already built then create it.
      * @return a specific IdResolver
      */
     public IdResolver getIdResolver() {
@@ -28,6 +29,10 @@ public abstract class IdResolverFactory
         }
         return resolver;
     }
-    
+
+    /**
+     * Create and IdResolver from source information.
+     * @return the new IdResolver
+     */
     protected abstract IdResolver createIdResolver();
 }
