@@ -111,7 +111,7 @@ public class TypeConverter
      */
     public static PathQuery getConversionMapQuery(List<TemplateQuery> conversionTemplates,
                                                 Class typeA, Class typeB, Object bag) {
-        
+
         TemplateQuery tq = getConversionTemplates(conversionTemplates, typeA).get(typeB);
         if (tq == null) {
             return null;
@@ -164,7 +164,8 @@ public class TypeConverter
         Constraint c = new Constraint(ConstraintOp.IN, imBag.getName(), false,
             label, code, id, null);
         pq.addNode(imBag.getType()).getConstraints().add(c);
-
+        pq.syncLogicExpression("and");
+        pq.setConstraintLogic("A and B");
         Profile profile = (Profile) session.getAttribute(Constants.PROFILE);
         WebResults webResults = PathQueryResultHelper.createPathQueryGetResults(pq, profile,
                         (ObjectStore) servletContext.getAttribute(Constants.OBJECTSTORE),
