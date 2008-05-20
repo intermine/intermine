@@ -41,6 +41,7 @@
     <merge-additions file="bio/sources/bdgp-insitu/bdgp-insitu_additions.xml"/>
     <merge-additions file="bio/sources/biogrid/biogrid_additions.xml"/>
     <merge-additions file="bio/sources/pride/pride_additions.xml"/>
+    <merge-additions file="bio/sources/miranda/miranda_additions.xml"/>
     <merge-additions file="bio/core/shortcuts.xml"/>
 
   </target>
