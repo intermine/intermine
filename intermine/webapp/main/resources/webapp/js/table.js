@@ -1,3 +1,6 @@
+/**
+ * Called when a wholc column is selected/deselected
+ */
 function selectColumnCheckbox(columnsToDisable, columnsToHighlight, columnIndex) {
     selectColumnCheckboxes(columnsToDisable, columnsToHighlight, columnIndex);
     if (isClear()) {
@@ -5,61 +8,59 @@ function selectColumnCheckbox(columnsToDisable, columnsToHighlight, columnIndex)
     }
 }
 
-
+/**
+ * Enables all checkboxes
+ */
 function enableAll() {
-    with(document.saveBagForm) {
-        for(var i=0;i < elements.length;i++) {
-            thiselm = elements[i];
-            if(thiselm.id.indexOf('selectedObjects_') != -1) {
-                thiselm.disabled = false;
-            }
-        }
-    }
+	var array = $$('input.selectable');
+    array.each(function(item) {
+    	item.disabled = false
+    });
 }
 
 
+/**
+ * Checks that nothing is selected
+ */
 function isClear() {
-    with(document.saveBagForm) {
-        for(var i=0;i < elements.length;i++) {
-            thiselm = elements[i];
-            if(thiselm.id.indexOf('selectedObjects_') != -1 && thiselm.checked) {
-                return false;
-            }
+	var isclear = true;
+    var array = $$('.selectable');
+    array.each(function(item) {
+        if(item.checked == true) {
+        	isclear = false;
         }
-    }
-    return true;
+    });
+    return isclear;
 }
 
 
-function selectColumnCheckboxes(columnsToDisable, columnsToHighlight, columnIndex) {
-    var columnCheckBox = 'selectedObjects_' + columnIndex;
-    with(document.saveBagForm) {
-        for(var i=0;i < elements.length;i++) {
-            thiselm = elements[i];
-            var testString = 'selectedObjects_' + columnIndex + '_';
-            if(thiselm.id.indexOf(testString) != -1) {
-                thiselm.checked = document.getElementById(columnCheckBox).checked;
-                var bits = thiselm.value.split(',');
-                var checkedRow = bits[1];
-                itemChecked(columnsToDisable, columnsToHighlight, checkedRow,
-                            columnIndex, thiselm, true);
-            }
-        }
-    }
-    setToolbarAvailability(!document.getElementById(columnCheckBox).checked);
+/**
+ * Called by selectColumnCheckbox
+ */
+function selectColumnCheckboxes(columnsToDisable, columnsToHighlight, columnIndex, tableid) {
+	$$('.selectable').each(function(item) {
+	   if(item.id.split("_")[1] == columnIndex) {
+           item.checked = $('selectedObjects_' + columnIndex).checked;
+           var bits = item.value.split(',');
+           var checkedRow = bits[1];
+           itemChecked(columnsToDisable, columnsToHighlight, checkedRow,
+                            columnIndex, tableid, item, true);
+	   }
+	});
+    setToolbarAvailability(!$('selectedObjects_' + columnIndex).checked);
 }
 
 /**
  * Run when a user selects a keyfield in the results table.  internal is true
  * when called from other methods in this file (ie. not from an onclick in table.jsp)
  **/
-function itemChecked(columnsToDisable, columnsToHighlight, checkedRow, checkedColumn, checkbox, internal) {
+function itemChecked(columnsToDisable, columnsToHighlight, checkedRow, checkedColumn, tableid, checkbox, internal) {
     if (bagType == null) {
         var columnsToDisableArray = columnsToDisable[checkedColumn];
         if (columnsToDisableArray != null) {
-            for (var columnIndex = 0; columnIndex < columnsToDisableArray.length; columnIndex++) {
-                disableColumn(columnsToDisableArray[columnIndex]);
-            }
+        	columnsToDisableArray.each(function(item) {
+        	  disableColumn(item);
+        	});
         }
         bagType = checkedColumn;
     }
@@ -72,58 +73,54 @@ function itemChecked(columnsToDisable, columnsToHighlight, checkedRow, checkedCo
     }
     var elements = document.getElementsByTagName('td');
     var columnsToHighlightArray = columnsToHighlight[checkedColumn]
-    for (var elementsIndex = 0; elementsIndex < elements.length; elementsIndex++) {
-        var id = elements.item(elementsIndex).id;
-        if (id.indexOf('cell') != -1
-            && id.split(',')[2] == checkedRow) {
-            for (var columnArrayIndex = 0; 
-                 columnArrayIndex < columnsToHighlightArray.length; 
-                 columnArrayIndex++) {
-                if (columnsToHighlightArray[columnArrayIndex] == id.split(',')[1]) {
-                    if (checkbox.checked){
-                        elements.item(elementsIndex).addClassName('highlightCell');
-                    } else {
-                        elements.item(elementsIndex).removeClassName('highlightCell');
-                    }
-                }
-            }
-        }
-    }
+    $$('td').each(function(item){
+    	var splitter = item.id.split(',');
+    	if(splitter[2] == checkedRow || (checkedRow == null && splitter[0].startsWith('cell'))) {
+    		columnsToHighlightArray.each(function(item2) {
+    		  if(item2 == splitter[1]) {
+    		  	if(checkbox.checked) {
+    		  		item.addClassName('highlightCell');
+    		  		/*var classes = $w(item.className);
+    		  		for(var i=0; i<classes.length; i++) {
+    		  			var clazz = classes[i];
+    		  			if(!isNaN(parseFloat(clazz))) {
+    		  				AjaxServices.selectId(clazz,tableid);
+    		  			}
+    		  		}*/
+    		  	} else {
+    		  		item.removeClassName('highlightCell');
+    		  	}
+    		  }
+    		})
+    	}
+    });
 }
 
 /**
  * disables all checkboxes in the given column
  **/
 function disableColumn(index){
-    with(document.saveBagForm) {
-        for(var i=0;i < elements.length;i++) {
-            thiselm = elements[i];
-            if(thiselm.id.indexOf('selectedObjects_') != -1 
-               && thiselm.value.split(',')[0] == index) {
-                thiselm.disabled = 'true';
-            }
-        }
-    }
+	$$('.selectable').each(function (item) {
+		if (item.id.split('_')[1] == index) {
+			item.disabled = 'true';
+		}
+	});
 }
 
 /**
  * de-selects a whole column of a given number
  **/
 function unselectColumnCheckbox(column) {
-    document.getElementById('selectedObjects_' + column).checked = false;
-    with(document.saveBagForm) {
-        for(var i=0;i < elements.length;i++) {
-            thiselm = elements[i];
-            var testString = 'selectedObjects_' + column + '_';
-            if(thiselm.id.indexOf(testString) != -1) {
-                if(thiselm.checked) {
-                    setToolbarAvailability(false);
-                    return;
-                }
-            }
+	var enabled = true;
+    $('selectedObjects_' + column).checked = false;
+        $$('.selectable').each(function (item) {
+        if ((item.id.split('_')[1] == column) && (item.checked)) {
+           enabled = false;
+           //setToolbarAvailability(false);
+           return;
         }
-    }
-	setToolbarAvailability(true);
+    });
+	setToolbarAvailability(enabled);
 }
 
 function setToolbarAvailability(status) {
