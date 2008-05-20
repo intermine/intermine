@@ -27,6 +27,7 @@ public class ResponseUtil
      */
     public static void setExcelHeader(HttpServletResponse response, String fileName) {
         setNoCache(response);
+        setExcelContentType(response);
         response.setContentType("Application/vnd.ms-excel");
         response.setHeader("Content-Disposition", 
                 "attachment; filename=\"" + fileName + "\"");
@@ -40,7 +41,7 @@ public class ResponseUtil
      */
     public static void setTabHeader(HttpServletResponse response, String fileName) {
         setNoCache(response);
-        response.setContentType("text/tab-separated-values");
+        setTabContentType(response);
         response.setHeader("Content-Disposition", "inline; filename=\"" + fileName + "\"");
     }
     
@@ -52,7 +53,7 @@ public class ResponseUtil
      */
     public static void setCSVHeader(HttpServletResponse response, String fileName) {
         setNoCache(response);
-        response.setContentType("text/comma-separated-values");
+        setCSVContentType(response);
         response.setHeader("Content-Disposition", "inline; filename=\"" + fileName + "\"");
     }
 
@@ -63,7 +64,7 @@ public class ResponseUtil
      */
     public static void setPlainTextHeader(HttpServletResponse response, String fileName) {
         setNoCache(response);
-        response.setContentType("text/plain");
+        setPlainTextContentType(response);
         response.setHeader("Content-Disposition ",
                            "inline; filename=\"" + fileName + "\"");        
     }
@@ -79,5 +80,53 @@ public class ResponseUtil
         // http://support.microsoft.com/kb/243717
         response.setHeader("Pragma", "no-cache");
         response.setHeader("Cache-Control", "must-revalidate, max-age=0");
+    }
+    
+    /**
+     * Sets tab separated values content type.
+     * @param response response
+     */
+    public static void setTabContentType(HttpServletResponse response) {
+        response.setContentType("text/tab-separated-values");
+    }
+    
+    /**
+     * Sets comma separated values content type.
+     * @param response response
+     */    
+    public static void setCSVContentType(HttpServletResponse response) {
+        response.setContentType("text/comma-separated-values");
+    }
+    
+    /**
+     * Sets plain text content type.
+     * @param response response
+     */
+    public static void setPlainTextContentType(HttpServletResponse response) {
+        response.setContentType("text/plain");
+    }
+    
+    /**
+     * Sets Excel content type.
+     * @param response response
+     */
+    private static void setExcelContentType(HttpServletResponse response) {
+        response.setContentType("Application/vnd.ms-excel");
+    }
+ 
+    /**
+     * Sets XML content type.
+     * @param response response
+     */
+    public static void setXMLContentType(HttpServletResponse  response) {
+        response.setContentType("text/xml");
+    }
+    
+    /**
+     * Sets HTML content type.
+     * @param response response
+     */
+    public static void setHTMLContentType(HttpServletResponse response) {
+        response.setContentType("text/html");
     }
 }
