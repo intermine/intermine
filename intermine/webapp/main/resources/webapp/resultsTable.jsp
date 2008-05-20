@@ -26,11 +26,9 @@
     }
     document.location.href=url;
   }
-
-  /*var columnsToDisable = ${columnsToDisable};
+  var columnsToDisable = ${columnsToDisable};
   var columnsToHighlight = ${columnsToHighlight};
-  var bagType = null;*/
-
+  var bagType = null;
 //]]>-->
 </script>
 
@@ -59,9 +57,10 @@
             <c:if test="${(column.selectable && ((!isWebCollection) || (! noBagSave && status.count<=1))) && empty bag}">
             <th align="center" class="checkbox">
               <html:multibox property="selectedObjects" styleId="selectedObjects_${status.index}"
-                             onclick="selectColumnCheckbox(columnsToDisable, columnsToHighlight, ${status.index})"
+                             styleClass="selectable"
+                             onclick="selectColumnCheckbox(columnsToDisable, columnsToHighlight, ${status.index}, '${pagedResults.tableid}')"
                              disabled="${pagedResults.maxRetrievableIndex > pagedResults.estimatedSize ? 'false' : 'true'}">
-                <c:out value="${status.index},${column.columnId}"/>
+                <c:out value="${column.columnId}"/>
               </html:multibox>
             </th>
           </c:if>
@@ -191,7 +190,8 @@
                           <c:if test="${resultElement.id != null}">
                             <html:multibox property="selectedIdStrings" name="pagedResults"
                                  styleId="selectedObjects_${status2.index}_${(status.index + 1) * 1000 + multiRowStatus.index}_${subRow[column.index].value.htmlId}"
-                                 onclick="itemChecked(columnsToDisable, columnsToHighlight, ${(status.index + 1) * 1000 + multiRowStatus.index}, ${status2.index}, this)">
+                                 styleClass="selectable"
+                                 onclick="itemChecked(columnsToDisable, columnsToHighlight, ${(status.index + 1) * 1000 + multiRowStatus.index}, ${status2.index}, '${pagedResults.tableid}', this)">
                               <c:out value="${resultElement.id}"/>
                             </html:multibox>
                           </c:if>
@@ -244,7 +244,8 @@
                       <c:if test="${resultElement.id != null}">
                         <html:multibox property="selectedIdStrings" name="pagedResults"
                                  styleId="selectedObjects_${status2.index}_${status.index}_${row[column.index].htmlId}"
-                                 onclick="itemChecked(columnsToDisable, columnsToHighlight, ${status.index},${status2.index}, this)">
+                                 styleClass="selectable ${resultElement.id}"
+                                 onclick="itemChecked(columnsToDisable, columnsToHighlight, ${status.index},${status2.index}, '${pagedResults.tableid}', this)" >
                           <c:out value="${resultElement.id}"/>
                         </html:multibox>
                       </c:if>
