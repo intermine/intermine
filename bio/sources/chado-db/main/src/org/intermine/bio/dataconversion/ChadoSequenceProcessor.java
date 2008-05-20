@@ -633,7 +633,7 @@ public class ChadoSequenceProcessor extends ChadoProcessor
 
         String subjectInterMineType = subjectData.interMineType;
         ClassDescriptor cd = getModel().getClassDescriptorByName(subjectInterMineType);
-        Integer intermineItemId = subjectData.intermineObjectId;
+        Integer intermineObjectId = subjectData.intermineObjectId;
         for (Map.Entry<String, Map<String, List<FeatureData>>> entry: relTypeMap.entrySet()) {
             String relationType = entry.getKey();
             Map<String, List<FeatureData>> objectClassFeatureDataMap = entry.getValue();
@@ -709,7 +709,7 @@ public class ChadoSequenceProcessor extends ChadoProcessor
                                 reference.setName(fd.getName());
                                 FeatureData referencedFeatureData = featureDataCollection.get(0);
                                 reference.setRefId(referencedFeatureData.itemIdentifier);
-                                getChadoDBConverter().store(reference, intermineItemId);
+                                getChadoDBConverter().store(reference, intermineObjectId);
 
                                 // special case for 1-1 relations - we need to set the reverse
                                 // reference
@@ -747,7 +747,7 @@ public class ChadoSequenceProcessor extends ChadoProcessor
             referenceList.setName(collectionName);
             List<String> idList = entry.getValue();
             referenceList.setRefIds(idList);
-            getChadoDBConverter().store(referenceList, intermineItemId);
+            getChadoDBConverter().store(referenceList, intermineObjectId);
 
             // if there is a field called <classname>Count that matches the name of the collection
             // we just stored, set it
@@ -759,7 +759,7 @@ public class ChadoSequenceProcessor extends ChadoProcessor
             }
             countName += "Count";
             if (cd.getAttributeDescriptorByName(countName, true) != null) {
-                setAttribute(intermineItemId, countName, String.valueOf(idList.size()));
+                setAttribute(intermineObjectId, countName, String.valueOf(idList.size()));
             }
         }
 
