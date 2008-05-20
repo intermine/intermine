@@ -12,8 +12,6 @@ package org.intermine.webservice;
 
 import java.io.IOException;
 import java.io.PrintWriter;
-import java.io.StringWriter;
-import java.io.Writer;
 import java.util.Properties;
 
 import javax.servlet.RequestDispatcher;
@@ -23,6 +21,7 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.apache.log4j.Logger;
 import org.intermine.web.logic.Constants;
+import org.intermine.web.logic.export.ResponseUtil;
 import org.intermine.webservice.output.HTMLOutput;
 import org.intermine.webservice.output.Output;
 import org.intermine.webservice.output.StreamedOutput;
@@ -59,14 +58,21 @@ public abstract class WebService
 {
     /** XML format constant **/
     public static final int XML_FORMAT = 0;
+
     /** TSV format constant **/
     public static final int TSV_FORMAT = 1;
+    
     /** HTML format constant **/
     public static final int HTML_FORMAT = 2;
+    
     private static final int FORBIDDEN_HTTP_CODE = 403;
+    
     private static final String WEB_SERVICE_DISABLED_PROPERTY = "webservice.disabled";
+    
     private static final String OUTPUT_PARAMETER = "format";
+    
     private static Logger logger = Logger.getLogger(WebService.class);
+    
     private static final String FORWARD_PATH = "/webservice/table.jsp";
     
     protected HttpServletRequest request;
@@ -97,7 +103,7 @@ public abstract class WebService
 
             this.request = request;
             this.response = response;
-            initOutput(response.getWriter());
+            initOutput(response);
             
             Properties webProperties = (Properties) request.getSession()
                 .getServletContext().getAttribute(Constants.WEB_PROPERTIES);
@@ -115,8 +121,6 @@ public abstract class WebService
             } else {
                 output.addError(WebServiceConstants.SERVICE_FAILED_MSG);
             }
-            ex.printStackTrace();
-            output.addError(getStackTrace(ex));
             logger.error("Service failed.", ex);
         } catch (Throwable t) {
             output.addError(WebServiceConstants.SERVICE_FAILED_MSG);
@@ -124,24 +128,26 @@ public abstract class WebService
         }
     }
     
-    public static String getStackTrace(Throwable aThrowable) {
-        final Writer result = new StringWriter();
-        final PrintWriter printWriter = new PrintWriter(result);
-        aThrowable.printStackTrace(printWriter);
-        return result.toString();
-      }
 
-
-    private void initOutput(PrintWriter out) {
-         switch (getFormat()) {
+    private void initOutput(HttpServletResponse response) {
+        PrintWriter out;
+        try {
+            out = response.getWriter();
+        } catch (IOException e) {
+            throw new WebServiceException("Internal error.", e);
+        } 
+        switch (getFormat()) {
             case XML_FORMAT: 
                 output = new StreamedOutput(out, new XMLFormatter());
+                ResponseUtil.setXMLContentType(response);
                 break;
             case TSV_FORMAT:
                 output = new StreamedOutput(out, new TabFormatter());
+                ResponseUtil.setTabContentType(response);
                 break;
             case HTML_FORMAT:
                 output = new HTMLOutput(out);
+                ResponseUtil.setHTMLContentType(response);
                 break;
             default:
                 throw new WebServiceException("Invalid format.");
