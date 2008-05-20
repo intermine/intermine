@@ -39,7 +39,7 @@ public class Drosophila2ProbeConverter extends FileConverter
     protected Map<String, Item> bioMap = new HashMap<String, Item>();
     protected IdResolverFactory resolverFactory;
     private static final String TAXON_ID = "7227";
-    
+
     /**
      * Constructor
      * @param writer the ItemWriter used to handle the resultant items
@@ -57,8 +57,8 @@ public class Drosophila2ProbeConverter extends FileConverter
         org = createItem("Organism");
         org.setAttribute("taxonId", TAXON_ID);
         store(org);
-    
-        
+
+
         // only construct factory here so can be replaced by mock factory in tests
         resolverFactory = new FlyBaseIdResolverFactory();
     }
@@ -76,10 +76,10 @@ public class Drosophila2ProbeConverter extends FileConverter
         boolean hasDataset = false;
 
         while (lineIter.hasNext()) {
-            
+
             String[] line = lineIter.next();
-            
-            if (!hasDataset)  {                
+
+            if (!hasDataset)  {
                 dataSet = createItem("DataSet");
                 dataSet.setReference("dataSource", dataSource.getIdentifier());
                 dataSet.setAttribute("title", "Affymetrix array: " + line[1]);
@@ -131,22 +131,24 @@ public class Drosophila2ProbeConverter extends FileConverter
 
     private Item createBioEntity(String clsName, String identifier)
         throws ObjectStoreException {
+        if (clsName.equals("Gene")) {
+             IdResolver resolver = resolverFactory.getIdResolver();
+             int resCount = resolver.countResolutions(TAXON_ID, identifier);
+             if (resCount != 1) {
+                 LOG.info("RESOLVER: failed to resolve gene to one identifier, ignoring gene: "
+                          + identifier + " count: " + resCount + " FBgn: "
+                          + resolver.resolveId(TAXON_ID, identifier));
+                 return null;
+             }
+             identifier = resolver.resolveId(TAXON_ID, identifier).iterator().next();
+        }
         Item bio = bioMap.get(identifier);
         if (bio == null) {
             bio = createItem(clsName);
             bio.setReference("organism", org.getIdentifier());
 
             if (clsName.equals("Gene")) {
-                IdResolver resolver = resolverFactory.getIdResolver();
-                int resCount = resolver.countResolutions(TAXON_ID, identifier);
-                if (resCount != 1) {
-                    LOG.info("RESOLVER: failed to resolve gene to one identifier, ignoring gene: "
-                             + identifier + " count: " + resCount + " FBgn: "
-                             + resolver.resolveId(TAXON_ID, identifier));
-                    return null;
-                }
-                String primaryIdentifier = resolver.resolveId(TAXON_ID, identifier).iterator().next();
-                bio.setAttribute("primaryIdentifier", primaryIdentifier);
+                bio.setAttribute("primaryIdentifier", identifier);
             } else {
                 bio.setAttribute("secondaryIdentifier", identifier);
             }
