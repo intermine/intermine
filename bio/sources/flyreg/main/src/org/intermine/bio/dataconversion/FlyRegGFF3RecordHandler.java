@@ -16,6 +16,7 @@ import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import org.apache.log4j.Logger;
 import org.intermine.bio.io.gff3.GFF3Record;
 import org.intermine.metadata.Model;
 import org.intermine.xml.full.Item;
@@ -32,6 +33,11 @@ public class FlyRegGFF3RecordHandler extends GFF3RecordHandler
 {
     private final Map<String, Item> pubmedIdMap = new HashMap<String, Item>();
     private final Map<String, Item> geneIdMap = new HashMap<String, Item>();
+    private URI nameSpace;
+    protected IdResolverFactory resolverFactory;
+    private static final String TAXON_ID = "7227";
+
+    protected static final Logger LOG = Logger.getLogger(FlyRegGFF3RecordHandler.class);
 
     /**
      * Create a new FlyRegGFF3RecordHandler for the given target model.
@@ -39,6 +45,8 @@ public class FlyRegGFF3RecordHandler extends GFF3RecordHandler
      */
     public FlyRegGFF3RecordHandler(Model tgtModel) {
         super(tgtModel);
+        // only construct factory here so can be replaced by mock factory in tests
+        resolverFactory = new FlyBaseIdResolverFactory();
     }
 
     /**
@@ -46,7 +54,7 @@ public class FlyRegGFF3RecordHandler extends GFF3RecordHandler
      */
     @Override
     public void process(GFF3Record record) {
-        final URI nameSpace = getTargetModel().getNameSpace();
+        nameSpace = getTargetModel().getNameSpace();
         getFeature().setClassName(nameSpace + "TFBindingSite");
 
         Item bindingSite = getFeature();
@@ -116,38 +124,42 @@ public class FlyRegGFF3RecordHandler extends GFF3RecordHandler
 
         if (!factorGeneName.toLowerCase().equals("unknown")
             && !factorGeneName.toLowerCase().equals("unspecified")) {
-            Item gene;
-
-            if (geneIdMap.containsKey(factorGeneName)) {
-                gene = geneIdMap.get(factorGeneName);
-            } else {
-                gene = getItemFactory().makeItemForClass(geneNs);
-                geneIdMap.put(factorGeneName, gene);
-                gene.setAttribute("symbol", factorGeneName);
-                gene.setReference("organism", getOrganism().getIdentifier());
-                addItem(gene);
+            Item gene = getGene(factorGeneName);
+            if (gene != null) {
+                bindingSite.setReference("factor", gene.getIdentifier());
             }
-
-            bindingSite.setReference("factor", gene.getIdentifier());
         }
 
         String targetGeneName = record.getAttributes().get("Target").get(0);
 
         if (!targetGeneName.toLowerCase().equals("unknown")
             && !targetGeneName.toLowerCase().equals("unspecified")) {
-            Item gene;
-
-            if (geneIdMap.containsKey(targetGeneName)) {
-                gene = geneIdMap.get(targetGeneName);
-            } else {
-                gene = getItemFactory().makeItemForClass(geneNs);
-                geneIdMap.put(targetGeneName, gene);
-                gene.setAttribute("symbol", targetGeneName);
-                gene.setReference("organism", getOrganism().getIdentifier());
-                addItem(gene);
+            Item gene = getGene(targetGeneName);
+            if (gene != null) {
+                bindingSite.setReference("gene", gene.getIdentifier());
             }
-
-            bindingSite.setReference("gene", gene.getIdentifier());
         }
+    }
+
+
+    private Item getGene(String symbol) {
+        IdResolver resolver = resolverFactory.getIdResolver();
+        int resCount = resolver.countResolutions(TAXON_ID, symbol);
+        if (resCount != 1) {
+            LOG.info("RESOLVER: failed to resolve gene to one identifier, ignoring gene: "
+                     + symbol + " count: " + resCount + " FBgn: "
+                     + resolver.resolveId(TAXON_ID, symbol));
+            return null;
+        }
+        String primaryIdentifier = resolver.resolveId(TAXON_ID, symbol).iterator().next();
+        Item gene = geneIdMap.get(primaryIdentifier);
+        if (gene == null) {
+            gene = getItemFactory().makeItemForClass(nameSpace + "Gene");
+            geneIdMap.put(primaryIdentifier, gene);
+            gene.setAttribute("symbol", symbol);
+            gene.setReference("organism", getOrganism().getIdentifier());
+            addItem(gene);
+        }
+        return gene;
     }
 }
