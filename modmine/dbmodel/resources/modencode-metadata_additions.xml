@@ -65,8 +65,8 @@
 			referenced-type="org.flymine.model.genomic.SubmissionData" />
 	</class>
 
-	<class name="org.flymine.model.genomic.Protocol"
-		is-interface="true">
+	<class name="org.flymine.model.genomic.Protocol"	
+	  is-interface="true">
 		<attribute name="name" type="java.lang.String" />
 		<attribute name="description" type="java.lang.String" />
 		<attribute name="type" type="java.lang.String" />
@@ -116,6 +116,10 @@
 		<reference name="experimentSubmission"
 			referenced-type="org.flymine.model.genomic.ExperimentSubmission"
 			reverse-reference="submissionData" />
+    <collection name="relatedInputs"
+      referenced-type="org.flymine.model.genomic.SubmissionData"/>
+    <collection name="relatedOutputs"
+      referenced-type="org.flymine.model.genomic.SubmissionData"/>
 	</class>
 
 </classes>

@@ -82,7 +82,8 @@ public class ModEncodeMetaDataProcessor extends ChadoProcessor
     }
 
     /**
-     * Data to reconstruct the flow of submission data
+     * AppliedProtocol class 
+     * to reconstruct the flow of submission data
      *
      */
     private static class AppliedProtocol
@@ -98,7 +99,8 @@ public class ModEncodeMetaDataProcessor extends ChadoProcessor
     }
 
     /**
-     * Data to reconstruct the flow of submission data
+     * AppliedData class 
+     * to reconstruct the flow of submission data
      *
      */
     private static class AppliedData
@@ -155,62 +157,18 @@ public class ModEncodeMetaDataProcessor extends ChadoProcessor
        
     }
 
-    
-/**
- * method to build the list of dataIds for a given experiment
- * This is needed when querying for setting the references to the features.
- * The dataIds are gathered from the appliedData objects.
- * The list of appliedData object for a given experiment is stored in the 
- * experimentDataMap
- * @param experimentId
- * @return the list of dataIds
- */
-    private List<Integer> createDataIdsList(Integer experimentId) {
 
-        List<Integer> appliedDataIds = experimentDataMap.get(experimentId);
-        List<Integer> dataIds = new ArrayList<Integer>();
-
-        Iterator<Integer> i = appliedDataIds.iterator();
-        while (i.hasNext()) {
-            Integer thisDataId = appliedDataMap.get(i.next()).dataId;
-            if (!dataIds.contains(thisDataId)) {
-                dataIds.add(thisDataId);
-            }
-        }
-        return dataIds;
-    }
-
-
-    
-    /**
-     * Query for features that referenced by the experiments in the experimentMap.
-     *
-     * @param experimentIdRefMap map from experiment_id from chado to InterMineObject id
-     */
-    private Map<Integer, FeatureData> processFeatures(Connection connection,
-            Map<Integer, ExperimentSubmissionDetails> experimentMap)
-            throws Exception {
-        Map<Integer, FeatureData> featureMap = new HashMap<Integer, FeatureData>();
-        for (Map.Entry<Integer, ExperimentSubmissionDetails> entry: experimentMap.entrySet()) {
-            Integer chadoExperimentId = entry.getKey();
-            ExperimentSubmissionDetails experimentSubmissionDetails = entry.getValue();
-            String experimentItemIdentifier = experimentSubmissionDetails.itemIdentifier;
-            String providerItemIdentifier = experimentSubmissionDetails.providerItemIdentifier;
-            ModEncodeFeatureProcessor processor =
-            new ModEncodeFeatureProcessor(getChadoDBConverter(), experimentItemIdentifier,
-                    providerItemIdentifier, createDataIdsList(chadoExperimentId));
-            
-            processor.process(connection);
-            featureMap.putAll(processor.getFeatureMap());
-
-            LOG.info("FEAT:     " + chadoExperimentId);            
-            LOG.info("FEAT  featureMap keys:   " + featureMap.keySet().size());
-            LOG.info("FEAT  featureMap values: " + featureMap.values().size());
-        }
-        return featureMap;
-    }
-
-
+ /**
+  * 
+  * ==============
+  *    FEATURES
+  * ==============
+  *
+  * @param connection
+  * @param featureMap   
+  * @throws SQLException
+  * @throws ObjectStoreException
+  */
     private void processDataFeatureTable(Connection connection, Map<Integer,
             FeatureData> featureMap)
     throws SQLException, ObjectStoreException {
@@ -250,8 +208,65 @@ public class ModEncodeMetaDataProcessor extends ChadoProcessor
         return res;
     }
 
-
     /**
+     * Query for features that are referenced by the experiments in the experimentMap.
+     *
+     * @param experimentIdRefMap map from experiment_id from chado to InterMineObject id
+     */
+    private Map<Integer, FeatureData> processFeatures(Connection connection,
+            Map<Integer, ExperimentSubmissionDetails> experimentMap)
+            throws Exception {
+        Map<Integer, FeatureData> featureMap = new HashMap<Integer, FeatureData>();
+        for (Map.Entry<Integer, ExperimentSubmissionDetails> entry: experimentMap.entrySet()) {
+            Integer chadoExperimentId = entry.getKey();
+            ExperimentSubmissionDetails experimentSubmissionDetails = entry.getValue();
+            String experimentItemIdentifier = experimentSubmissionDetails.itemIdentifier;
+            String providerItemIdentifier = experimentSubmissionDetails.providerItemIdentifier;
+            ModEncodeFeatureProcessor processor =
+            new ModEncodeFeatureProcessor(getChadoDBConverter(), experimentItemIdentifier,
+                    providerItemIdentifier, createDataIdsList(chadoExperimentId));
+            
+            processor.process(connection);
+            featureMap.putAll(processor.getFeatureMap());
+
+            LOG.info("FEAT:     " + chadoExperimentId);            
+            LOG.info("FEAT  featureMap keys:   " + featureMap.keySet().size());
+            LOG.info("FEAT  featureMap values: " + featureMap.values().size());
+        }
+        return featureMap;
+    }
+    
+    /**
+     * method to build the list of dataIds for a given experiment
+     * This is needed when querying for setting the references to the features.
+     * The dataIds are gathered from the appliedData objects.
+     * The list of appliedData object for a given experiment is stored in the 
+     * experimentDataMap
+     * @param experimentId
+     * @return the list of dataIds
+     */
+        private List<Integer> createDataIdsList(Integer experimentId) {
+
+            List<Integer> appliedDataIds = experimentDataMap.get(experimentId);
+            List<Integer> dataIds = new ArrayList<Integer>();
+
+            Iterator<Integer> i = appliedDataIds.iterator();
+            while (i.hasNext()) {
+                Integer thisDataId = appliedDataMap.get(i.next()).dataId;
+                if (!dataIds.contains(thisDataId)) {
+                    dataIds.add(thisDataId);
+                }
+            }
+            return dataIds;
+        }
+
+    
+    /**
+     * 
+     * ====================
+     *         DAG 
+     * ====================
+     *    
      * In chado, Applied protocols in a submission are linked to each other via
      * the flow of data (output of a parent AP are input to a child AP).
      * The method process the data from chado to build the objects
@@ -344,14 +359,14 @@ public class ModEncodeMetaDataProcessor extends ChadoProcessor
             } else {
                 // keep feeding IN et OUT
                 if (direction.startsWith("in")) {
-
                     node.inputData.add(appliedDataId);
-                    // it should be enough to use the input for filling the
-                    // experimentDataMap: apart from the initial ones,
-                    // the inputs are outputs of other levels
-                    addToMap (experimentDataMap, experimentId, appliedDataId);
-                    addToMap (experimentInDataMap, experimentId, appliedDataId);
-
+                    if (experimentId > 0) { 
+                        // initial data
+                        // the rest of the map (for dag with levels > 1) is filled through outputs 
+                        // TODO: test with another submission (with depth > 1 )
+                        addToMap (experimentDataMap, experimentId, appliedDataId);
+                        addToMap (experimentInDataMap, experimentId, appliedDataId);
+                    }   
                     // as above
                     branch.nextAppliedProtocols.add(appliedProtocolId);
                     if (!appliedDataMap.containsKey(appliedDataId)) {
@@ -377,25 +392,6 @@ public class ModEncodeMetaDataProcessor extends ChadoProcessor
 
         // now traverse the DAG, and associate experiment with all the applied protocols
         traverseDag();
-    }
-
-    /**
-     * method to add an element to a list which is the value of a map 
-     * @param m       the map (<Integer, List<Integer>>)
-     * @param key     the key for the map
-     * @param value   the list
-     */
-    private void addToMap(Map<Integer, List<Integer>> m, Integer key, Integer value) {
-
-        List<Integer> ids = new ArrayList<Integer>();
-
-        if (m.containsKey(key)) {
-            ids = m.get(key);
-        }
-        if (!ids.contains(value)) {
-            ids.add(value);
-            m.put(key, ids);
-        }
     }
 
     /**
@@ -1299,7 +1295,26 @@ public class ModEncodeMetaDataProcessor extends ChadoProcessor
         PROVIDER_FIELD_NAME_MAP.put("Public Release Date", NOT_TO_BE_LOADED);
     }
 
+    /**
+     * method to add an element to a list which is the value of a map 
+     * @param m       the map (<Integer, List<Integer>>)
+     * @param key     the key for the map
+     * @param value   the list
+     */
+    private void addToMap(Map<Integer, List<Integer>> m, Integer key, Integer value) {
 
+        List<Integer> ids = new ArrayList<Integer>();
+
+        if (m.containsKey(key)) {
+            ids = m.get(key);
+        }
+        if (!ids.contains(value)) {
+            ids.add(value);
+            m.put(key, ids);
+        }
+    }
+
+    
     /**
      * to store identifiers in protocol maps.
      * simply store the proper values in the maps.
