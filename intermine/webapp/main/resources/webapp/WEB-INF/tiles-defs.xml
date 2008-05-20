@@ -239,6 +239,8 @@
   <definition name="widget.tile" path="widget.jsp" />  
   <definition name="linkPopUp.tile" path="linkPopUp.jsp" />
   <definition name="objectDetailsInList.tile" path="objectDetailsInList.jsp" controllerUrl="/initObjectDetailsInList.do"/>
+  <definition name="news.tile" path="news.jsp" controllerUrl="/initNews.do"/>
+
   <!-- don't (re)move this - it's used for importing any model-specific actions -->
   <!--@MODEL_INCLUDE@-->
   

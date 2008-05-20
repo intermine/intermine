@@ -38,17 +38,10 @@
 <!-- Second column - elastic -->
 <div id="rightColumn">
     <div>
-    <tiles:insert name="tipWrapper.tile"/>
-    <div style="margin:5px;width:400px;">
-      <h2>News</h2>
-      <ol id="news">
-      <li><a href="${WEB_PROPERTIES['project.sitePrefix']}/release-notes.shtml"><img src="images/new_ico.png" style="float:left; position:absolute"></a><div style="padding-left:38px"> ${WEB_PROPERTIES['begin.news.1']}</div></li>
-      <c:set var="linky" value="${WEB_PROPERTIES['begin.news.2']}"/>
-       <c:if test="${! empty linky}">
-         <li>${linky}</li>
-       </c:if>
-      </ol>
-    </div>
+      <tiles:insert name="tipWrapper.tile"/>
+      <tiles:insert name="news.tile">
+        <tiles:put name="rss" value="${WEB_PROPERTIES['project.sitePrefix']}/rss.xml" />
+      </tiles:insert>
     </div>
       <im:boxarea title="Templates" titleLink="/${WEB_PROPERTIES['webapp.path']}/templates.do" stylename="gradientbox">
         <em><p><fmt:message key="begin.templates"/></p></em>

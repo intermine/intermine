@@ -12,6 +12,8 @@
 <link rel="stylesheet" type="text/css" href="<html:rewrite page='/css/webapp.css'/>"/>
 <link rel="stylesheet" type="text/css" href="<html:rewrite page='/css/inlineTagEditor.css'/>"/>
 
+<link href="${WEB_PROPERTIES['project.sitePrefix']}/rss.xml" rel="alternate" type="application/rss+xml" title="FlyMine | News" />
+
 <%
 /* In Safari, loading a css that doesnt exist causes weirdness */
 String pageName = (String) request.getAttribute("pageName");

@@ -421,6 +421,7 @@
     <action path="/initErrorMessages" type="org.intermine.web.struts.ErrorMessagesController"/>
     <action path="/initResultsTable" type="org.intermine.web.struts.TableController"/>
     <action path="/initObjectDetailsInList" type="org.intermine.web.struts.ObjectDetailsInListController"/>
+    <action path="/initNews" type="org.intermine.web.struts.NewsReadController"/>
 
     <!-- don't (re)move this - it's used for importing any model-specific actions -->
     <!--@MODEL_INCLUDE@-->
