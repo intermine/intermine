@@ -100,4 +100,30 @@ public class ChadoCVTerm
         return name.hashCode();
     }
 
+    /**
+     * Return a Set of all the parent ChadoCVTerms of this term.
+     * @return all the parent terms
+     */
+    public Set<ChadoCVTerm> getAllParents() {
+        Set<ChadoCVTerm> retSet = new HashSet<ChadoCVTerm>();
+        for (ChadoCVTerm parent: getDirectParents()) {
+            retSet.addAll(parent.getAllParents());
+        }
+        retSet.addAll(getDirectParents());
+        return retSet;
+    }
+
+    /**
+     * Return a Set of all the child ChadoCVTerms of this term.
+     * @return all the child terms
+     */
+    public Set<ChadoCVTerm> getAllChildren() {
+        Set<ChadoCVTerm> retSet = new HashSet<ChadoCVTerm>();
+        for (ChadoCVTerm child: getDirectChildren()) {
+            retSet.addAll(child.getAllChildren());
+        }
+        retSet.addAll(getDirectChildren());
+        return retSet;
+    }
+
 }

@@ -17,7 +17,7 @@ import java.sql.SQLException;
 import com.mockobjects.sql.MockMultiRowResultSet;
 
 /**
- *
+ * Test data for ChadoCVFactoryTest
  * @author Kim Rutherford
  */
 public class TestChadoCVFactory extends ChadoCVFactory
@@ -28,7 +28,7 @@ public class TestChadoCVFactory extends ChadoCVFactory
 
     @Override
     protected ResultSet getCVTermRelationshipResultSet(Connection connection, String cvName)
-                    throws SQLException {
+        throws SQLException {
         String[] columnNames = new String[] {
             "subject_id", "object_id",  "rel_type.name"
         };
@@ -50,6 +50,9 @@ public class TestChadoCVFactory extends ChadoCVFactory
             },
             {
                 1005, 1000, "isa"
+            },
+            {
+                1005, 1006, "isa"
             }
         };
 
@@ -61,7 +64,7 @@ public class TestChadoCVFactory extends ChadoCVFactory
 
     @Override
     protected ResultSet getCVTermResultSet(Connection connection, String cvName)
-                    throws SQLException {
+        throws SQLException {
         String[] columnNames = new String[] {
             "cvterm_id", "cvterm_name"
         };
