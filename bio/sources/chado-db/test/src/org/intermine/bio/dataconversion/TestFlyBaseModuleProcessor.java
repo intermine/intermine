@@ -10,6 +10,9 @@ package org.intermine.bio.dataconversion;
  *
  */
 
+import org.intermine.bio.chado.ChadoCV;
+import org.intermine.bio.chado.ChadoCVTerm;
+
 import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -393,8 +396,8 @@ public class TestFlyBaseModuleProcessor extends FlyBaseModuleProcessor
         return res;
     }
 
-    /* (non-Javadoc)
-     * @see org.intermine.bio.dataconversion.FlyBaseModuleProcessor#getAllelePropPubResultSet(java.sql.Connection)
+    /**
+     * {@inheritDoc}
      */
     @Override
     protected ResultSet getAllelePropPubResultSet(Connection connection) throws SQLException {
@@ -410,6 +413,41 @@ public class TestFlyBaseModuleProcessor extends FlyBaseModuleProcessor
             },
             {
                 40000002, "1902784"
+            }
+        };
+
+        MockMultiRowResultSet res = new MockMultiRowResultSet();
+        res.setupRows(resObjects);
+        res.setupColumnNames(columnNames);
+        return res;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    protected ChadoCV getFlyBaseMiscCV(Connection connection) throws SQLException {
+        ChadoCV cv = new ChadoCV(FlyBaseModuleProcessor.FLY_BASE_MISCELLANEOUS_CV);
+        ChadoCVTerm root = new ChadoCVTerm("origin of mutation");
+        ChadoCVTerm child = new ChadoCVTerm("SCEI endonuclease");
+        child.getDirectParents().add(root);
+        root.getDirectChildren().add(child);
+        cv.addByChadoId(5000001, root);
+        cv.addByChadoId(5000002, child);
+        return cv;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    protected ResultSet getAlleleCVTermsResultSet(Connection connection) throws SQLException {
+        String[] columnNames = new String[] {
+            "feature_id", "cvterm_id"
+        };
+        Object[][] resObjects = new Object[][] {
+            {
+                2345000, 5000002
             }
         };
 

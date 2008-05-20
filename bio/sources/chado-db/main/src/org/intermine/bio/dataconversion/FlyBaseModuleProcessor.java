@@ -15,11 +15,13 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import org.intermine.bio.dataconversion.ChadoSequenceProcessor.ConfigAction;
-import org.intermine.bio.dataconversion.ChadoSequenceProcessor.SetFieldConfigAction;
+import org.intermine.bio.chado.ChadoCV;
+import org.intermine.bio.chado.ChadoCVFactory;
+import org.intermine.bio.chado.ChadoCVTerm;
 import org.intermine.bio.util.OrganismData;
 import org.intermine.bio.util.OrganismRepository;
 import org.intermine.objectstore.ObjectStoreException;
@@ -43,6 +45,11 @@ import org.apache.log4j.Logger;
  */
 public class FlyBaseModuleProcessor extends ChadoSequenceProcessor
 {
+    /**
+     * The cv.name for the FlyBase miscellaneous CV.
+     */
+    static final String FLY_BASE_MISCELLANEOUS_CV = "FlyBase miscellaneous CV";
+
     /**
      * A ConfigAction that changes FlyBase attribute tags (like "@FBcv0000289:hypomorph") to text
      * like: "hypomorph"
@@ -92,6 +99,9 @@ public class FlyBaseModuleProcessor extends ChadoSequenceProcessor
 
     private Map<String, Item> alleleIdMap = new HashMap<String, Item>();
 
+    // an object representing the FlyBase miscellaneous CV
+    private ChadoCV flyBaseMiscCv = null;
+
     /**
      * Create a new FlyBaseChadoDBConverter.
      * @param chadoDBConverter the converter that created this object
@@ -110,6 +120,12 @@ public class FlyBaseModuleProcessor extends ChadoSequenceProcessor
             }
         }
 
+        try {
+            flyBaseMiscCv = getFlyBaseMiscCV(connection);
+        } catch (SQLException e) {
+            throw new RuntimeException("can't execute query for flybase cv terms", e);
+        }
+
         ResultSet res;
         try {
             res = getLocatedGenesResultSet(connection);
@@ -125,6 +141,18 @@ public class FlyBaseModuleProcessor extends ChadoSequenceProcessor
         } catch (SQLException e) {
             throw new RuntimeException("problem while reading located genes", e);
         }
+    }
+
+    /**
+     * Get ChadoCV object representing the FlyBase misc cv.
+     * This is a protected method so that it can be overriden for testing
+     * @param connection the database Connection
+     * @return the cv
+     * @throws SQLException if there is a database problem
+     */
+    protected ChadoCV getFlyBaseMiscCV(Connection connection) throws SQLException {
+        ChadoCVFactory cvFactory = new ChadoCVFactory(connection);
+        return cvFactory.getChadoCV(FLY_BASE_MISCELLANEOUS_CV);
     }
 
     /**
@@ -437,8 +465,7 @@ public class FlyBaseModuleProcessor extends ChadoSequenceProcessor
     }
 
     private static final List<String> FEATURES = Arrays.asList(
-            "gene"
-            , "mRNA", "transcript",
+            "gene", "mRNA", "transcript",
             "intron", "exon",
             "regulatory_region", "enhancer",
             // ignore for now:        "EST", "cDNA_clone",
@@ -474,6 +501,14 @@ public class FlyBaseModuleProcessor extends ChadoSequenceProcessor
         }
 
         processAlleleProps(connection, features);
+
+        Map<Integer, String> mutagenMap = makeMutagenMap(connection);
+        for (Integer alleleFeatureId: mutagenMap.keySet()) {
+            FeatureData alleleDat = features.get(alleleFeatureId);
+
+            setAttribute(alleleDat.getIntermineObjectId(), "mutagen",
+                         mutagenMap.get(alleleFeatureId));
+        }
     }
 
     // map from anatomy identifier (eg. "FBbt0001234") to Item identifier
@@ -520,6 +555,67 @@ public class FlyBaseModuleProcessor extends ChadoSequenceProcessor
                 getChadoDBConverter().store(phenotypeAnnotation);
             }
         }
+    }
+
+    /**
+     * Return a Map from allele feature_id to mutagen.  The mutagen is found be looking at cvterms
+     * that are associated with each feature and saving those terms that have "origin of mutation"
+     * as a parent term.
+     */
+    private Map<Integer, String> makeMutagenMap(Connection connection)
+        throws SQLException {
+        Map<Integer, String> retMap = new HashMap<Integer, String>();
+
+        ResultSet res = getAlleleCVTermsResultSet(connection);
+      RESULTS:
+        while (res.next()) {
+            Integer featureId = new Integer(res.getInt("feature_id"));
+            Integer cvtermId = new Integer(res.getInt("cvterm_id"));
+
+            ChadoCVTerm cvterm = flyBaseMiscCv.getByChadoId(cvtermId);
+
+            Set<ChadoCVTerm> parents = cvterm.getAllParents();
+
+            for (ChadoCVTerm parent: parents) {
+                if (parent.getName().equals("origin of mutation")) {
+                    retMap.put(featureId, cvterm.getName());
+                    continue RESULTS;
+                }
+            }
+        }
+
+        return retMap;
+    }
+
+    /**
+     * Get result set of feature_id, cvterm_id pairs for the alleles in flybase chado.
+     * @param connection the Connectio
+     * @return the cvterms
+     * @throws SQLException if there is a database problem
+     */
+    protected ResultSet getAlleleCVTermsResultSet(Connection connection) throws SQLException {
+        String organismConstraint = getOrganismConstraint();
+        String orgConstraintForQuery = "";
+        if (!StringUtils.isEmpty(organismConstraint)) {
+            orgConstraintForQuery = " AND " + organismConstraint;
+        }
+
+        String query = "SELECT DISTINCT feature.feature_id, cvterm.cvterm_id"
+            + "           FROM feature, feature_cvterm, cvterm"
+            + "          WHERE feature.feature_id = feature_cvterm.feature_id"
+            + "            AND feature.feature_id IN ("
+            + "           SELECT feature_id "
+            + "               FROM feature, cvterm feature_type "
+            + "               WHERE feature_type.name = 'gene'"
+            + "                      AND type_id = feature_type.cvterm_id"
+            + "                      AND uniquename LIKE 'FBal%'"
+            + "                      AND NOT feature.is_obsolete"
+            + orgConstraintForQuery + ")"
+            + "            AND feature_cvterm.cvterm_id = cvterm.cvterm_id";
+        LOG.info("executing: " + query);
+        Statement stmt = connection.createStatement();
+        ResultSet res = stmt.executeQuery(query);
+        return res;
     }
 
     /**
@@ -724,7 +820,7 @@ public class FlyBaseModuleProcessor extends ChadoSequenceProcessor
         }
 
         String query =
-            "select feature_id, value, cvterm.name AS type_name, featureprop_id"
+            "SELECT feature_id, value, cvterm.name AS type_name, featureprop_id"
             + "   FROM featureprop, cvterm"
             + "   WHERE featureprop.type_id = cvterm.cvterm_id"
             + "       AND feature_id IN ("
