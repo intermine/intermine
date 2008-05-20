@@ -71,7 +71,7 @@ public class GoStatURLQuery implements WidgetURLQuery
          if (bag.getType().equalsIgnoreCase("protein")) {
 
              geneSecondaryIdentifier
-                         = MainHelper.makePath(model, q, "Protein.genes.secondaryIdentifier");
+                         = MainHelper.makePath(model, q, "Protein.genes.primaryAccession");
              genePrimaryIdentifier
                          = MainHelper.makePath(model, q, "Protein.genes.primaryIdentifier");
              geneName = MainHelper.makePath(model, q, "Protein.genes.name");
