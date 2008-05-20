@@ -83,7 +83,7 @@ public class TemplateConfigurator
 
     private Object getExtraValue(Constraint c, ConstraintLoad load, PathNode node, Locale locale) {
         Object ret;
-        if (load.getExtraValue() == null) {
+        if (load.getExtraValue() == null || load.getExtraValue().trim().length() == 0) {
             return c.getExtraValue();
         }
         try {
