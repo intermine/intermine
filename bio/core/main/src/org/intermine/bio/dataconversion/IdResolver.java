@@ -31,6 +31,7 @@ public class IdResolver
     private String clsName;
     private Map<String, Map<String, Set<String>>> orgIdMaps = new HashMap();
     private Map<String, Map<String, Set<String>>> orgSynMaps = new HashMap();
+    private Map<String, Map<String, Set<String>>> orgMainMaps = new HashMap();
 
     /**
      * Construct and empty IdResolver
@@ -64,7 +65,14 @@ public class IdResolver
         if (isPrimaryIdentifier(taxonId, id)) {
             return Collections.singleton(id);
         }
-        return orgSynMaps.get(taxonId).get(id);
+        if (orgMainMaps.containsKey(taxonId)
+            && orgMainMaps.get(taxonId).containsKey(id)) {
+            return orgMainMaps.get(taxonId).get(id);
+        }
+        if (orgSynMaps.containsKey(taxonId)) {
+            return orgSynMaps.get(taxonId).get(id);
+        }
+        return Collections.EMPTY_SET;
     }
 
     /**
@@ -93,34 +101,74 @@ public class IdResolver
         if (orgIdMaps.get(taxonId).containsKey(id)) {
             return 1;
         }
-        if (orgSynMaps.get(taxonId).containsKey(id)) {
+        if (orgMainMaps.containsKey(taxonId)
+            && orgMainMaps.get(taxonId).containsKey(id)) {
+            return orgMainMaps.get(taxonId).get(id).size();
+        }
+        if (orgSynMaps.containsKey(taxonId)
+            && orgSynMaps.get(taxonId).containsKey(id)) {
             return orgSynMaps.get(taxonId).get(id).size();
         }
         return 0;
     }
 
 
+
+    /**
+     * Add alternative main identifiers for a primary identifier to the IdResolver.
+     * @param taxonId the organism of the identifier
+     * @param primaryIdentifier the main identifier
+     * @param ids a set of alternative main identifiers
+     */
+    public void addMainIds(String taxonId, String primaryIdentifier, Set<String> ids) {
+        addEntry(taxonId, primaryIdentifier, ids, true);
+    }
+
+    /**
+     * Add synonyms for a primary identifier to the IdResolver
+     * @param taxonId the organism of the identifier
+     * @param primaryIdentifier the main identifier
+     * @param ids a set synonyms
+     */
+    public void addSynonyms(String taxonId, String primaryIdentifier, Set<String> ids) {
+        addEntry(taxonId, primaryIdentifier, ids, false);
+    }
+
     /**
      * Add an entry to the IdResolver, a primary identifier and any number of synonyms.
      * @param taxonId the organism of the identifier
      * @param primaryIdentifier the main identifier
      * @param synonyms a set of synonyms
-     */
-    public void addEntry(String taxonId, String primaryIdentifier, Set<String> synonyms) {
+     * @param mainId if true these are main ids, otherwise synonms
+    */
+     private void addEntry(String taxonId, String primaryIdentifier, Set<String> ids,
+                           Boolean mainId) {
         Map<String, Set<String>> idMap = orgIdMaps.get(taxonId);
         if (idMap == null) {
             idMap = new HashMap();
             orgIdMaps.put(taxonId, idMap);
         }
 
-        addToMapList(idMap, primaryIdentifier, synonyms);
-        Map<String, Set<String>> synMap = orgSynMaps.get(taxonId);
-        if (synMap == null) {
-            synMap = new HashMap();
-            orgSynMaps.put(taxonId, synMap);
+        addToMapList(idMap, primaryIdentifier, ids);
+
+        Map<String, Set<String>> map = null;
+        if (mainId) {
+            map = orgMainMaps.get(taxonId);
+            if (map == null) {
+                map = new HashMap();
+                orgMainMaps.put(taxonId, map);
+            }
+        } else {
+            // these ids are synonyms
+            map = orgSynMaps.get(taxonId);
+            if (map == null) {
+                map = new HashMap();
+                orgSynMaps.put(taxonId, map);
+            }
         }
-        for (String synonym : synonyms) {
-            addToMapList(synMap, synonym, Collections.singleton(primaryIdentifier));
+
+        for (String id : ids) {
+                addToMapList(map, id, Collections.singleton(primaryIdentifier));
         }
     }
 
@@ -132,7 +180,7 @@ public class IdResolver
     public void writeToFile(File f) throws IOException {
         StringBuffer sb = new StringBuffer();
         for (Map<String, Set<String>> idMap : orgIdMaps.values()) {
-            
+
             for (Map.Entry<String, Set<String>> entry : idMap.entrySet()) {
                 sb.append(entry.getKey() + "\t");
                 for (String s : entry.getValue()) {

@@ -20,7 +20,7 @@ public class MockIdResolverFactory extends IdResolverFactory
 {
     private String clsName;
     private IdResolver resolver = null;
-    
+
     /**
      * Construct with class name for mock IdResolver
      * @param clsName the type to resolve
@@ -29,7 +29,7 @@ public class MockIdResolverFactory extends IdResolverFactory
         this.clsName = clsName;
         resolver = new IdResolver(clsName);
     }
-    
+
     /**
      * Create a MockIdResolver
      * @return a MockIdResolver
@@ -46,6 +46,6 @@ public class MockIdResolverFactory extends IdResolverFactory
      * @param synonyms synonyms for the main identifier
      */
     public void addResolverEntry(String taxonId, String primaryId, Set<String> synonyms) {
-        resolver.addEntry(taxonId, primaryId, synonyms);
+        resolver.addSynonyms(taxonId, primaryId, synonyms);
     }
 }
