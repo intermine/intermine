@@ -6,10 +6,8 @@
 <%
    String str = (String) jspContext.getAttribute("str");
    String outVar = (String) jspContext.getAttribute("outVar");
-   // replaces all dots but not dots with preceding space - they are probably part of name, e.g. 'D. melanogaster' 
-   String repl = "XXXXXXXXXXXXXXXXXXXXXXXX";
-   String newStr = str.replaceAll("[.][ ]", repl);
-   newStr = newStr.replaceAll("[.]", "&nbsp;> ");
-   newStr = newStr.replaceAll(repl, ". ");
+   // replaces all dots and colons but not dots with following space - they are probably
+   // part of name, e.g. 'D. melanogaster' 
+   String newStr = str.replaceAll("[:.](?!\\s)", "&nbsp;> ");
    request.setAttribute(outVar, newStr);
 %>
