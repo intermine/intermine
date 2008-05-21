@@ -1094,7 +1094,11 @@ public class UniprotConverter extends FileConverter
                                 }
                             }
                             if (geneSecondaryIdentifier != null) {
-                                gene.setAttribute("secondaryIdentifier", geneSecondaryIdentifier);
+                                if (!taxonId.equals("7227")) {
+                                    gene.setAttribute("secondaryIdentifier",
+                                                      geneSecondaryIdentifier);
+                                }
+
                                 // don't create duplicate synonym
                                 if (!geneSecondaryIdentifier.equals(genePrimaryIdentifier)
                                                 && !geneSecondaryIdentifier.equals("")) {
