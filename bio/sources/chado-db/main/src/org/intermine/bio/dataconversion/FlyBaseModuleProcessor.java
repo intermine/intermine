@@ -594,23 +594,10 @@ public class FlyBaseModuleProcessor extends ChadoSequenceProcessor
      * @throws SQLException if there is a database problem
      */
     protected ResultSet getAlleleCVTermsResultSet(Connection connection) throws SQLException {
-        String organismConstraint = getOrganismConstraint();
-        String orgConstraintForQuery = "";
-        if (!StringUtils.isEmpty(organismConstraint)) {
-            orgConstraintForQuery = " AND " + organismConstraint;
-        }
-
         String query = "SELECT DISTINCT feature.feature_id, cvterm.cvterm_id"
             + "           FROM feature, feature_cvterm, cvterm"
             + "          WHERE feature.feature_id = feature_cvterm.feature_id"
-            + "            AND feature.feature_id IN ("
-            + "           SELECT feature_id "
-            + "               FROM feature, cvterm feature_type "
-            + "               WHERE feature_type.name = 'gene'"
-            + "                      AND type_id = feature_type.cvterm_id"
-            + "                      AND uniquename LIKE 'FBal%'"
-            + "                      AND NOT feature.is_obsolete"
-            + orgConstraintForQuery + ")"
+            + "            AND feature.feature_id IN (" + getAlleleFeaturesSql() + ")"
             + "            AND feature_cvterm.cvterm_id = cvterm.cvterm_id";
         LOG.info("executing: " + query);
         Statement stmt = connection.createStatement();
@@ -813,24 +800,11 @@ public class FlyBaseModuleProcessor extends ChadoSequenceProcessor
      * @return the ResultSet
      */
     protected ResultSet getAllelePropResultSet(Connection connection) throws SQLException {
-        String organismConstraint = getOrganismConstraint();
-        String orgConstraintForQuery = "";
-        if (!StringUtils.isEmpty(organismConstraint)) {
-            orgConstraintForQuery = " AND " + organismConstraint;
-        }
-
         String query =
             "SELECT feature_id, value, cvterm.name AS type_name, featureprop_id"
             + "   FROM featureprop, cvterm"
             + "   WHERE featureprop.type_id = cvterm.cvterm_id"
-            + "       AND feature_id IN ("
-            + "           SELECT feature_id "
-            + "               FROM feature, cvterm feature_type "
-            + "               WHERE feature_type.name = 'gene'"
-            + "                      AND type_id = feature_type.cvterm_id"
-            + "                      AND uniquename LIKE 'FBal%'"
-            + "                      AND NOT feature.is_obsolete"
-            + orgConstraintForQuery + ")"
+            + "       AND feature_id IN (" + getAlleleFeaturesSql() + ")"
             + "   ORDER BY feature_id";
         LOG.info("executing: " + query);
         Statement stmt = connection.createStatement();
@@ -847,12 +821,6 @@ public class FlyBaseModuleProcessor extends ChadoSequenceProcessor
      * @return the ResultSet
      */
     protected ResultSet getAllelePropPubResultSet(Connection connection) throws SQLException {
-        String organismConstraint = getOrganismConstraint();
-        String orgConstraintForQuery = "";
-        if (!StringUtils.isEmpty(organismConstraint)) {
-            orgConstraintForQuery = " AND " + organismConstraint;
-        }
-
         String query =
             "SELECT DISTINCT featureprop_pub.featureprop_id, dbxref.accession as pub_db_identifier"
             + "    FROM featureprop, featureprop_pub, dbxref, db, pub, pub_dbxref"
@@ -862,19 +830,28 @@ public class FlyBaseModuleProcessor extends ChadoSequenceProcessor
             + "        AND pub_dbxref.dbxref_id = dbxref.dbxref_id"
             + "        AND dbxref.db_id = db.db_id"
             + "        AND db.name = 'pubmed'"
-            + "        AND feature_id IN ("
-            + "                SELECT feature_id"
-            + "                FROM feature, cvterm feature_type "
-            + "                WHERE feature_type.name = 'gene'"
-            + "                AND type_id = feature_type.cvterm_id"
-            + "                AND uniquename LIKE 'FBal%'"
-            + "                AND NOT feature.is_obsolete"
-            + orgConstraintForQuery + ")"
+            + "        AND feature_id IN (" + getAlleleFeaturesSql() + ")"
             + "    ORDER BY featureprop_id";
         LOG.info("executing: " + query);
         Statement stmt = connection.createStatement();
         ResultSet res = stmt.executeQuery(query);
         return res;
+    }
+
+    private String getAlleleFeaturesSql() {
+        String organismConstraint = getOrganismConstraint();
+        String orgConstraintForQuery = "";
+        if (!StringUtils.isEmpty(organismConstraint)) {
+            orgConstraintForQuery = " AND " + organismConstraint;
+        }
+
+        return " SELECT feature_id"
+            + " FROM feature, cvterm feature_type "
+            + " WHERE feature_type.name = 'gene'"
+            + " AND type_id = feature_type.cvterm_id"
+            + " AND uniquename LIKE 'FBal%'"
+            + " AND NOT feature.is_obsolete"
+            + orgConstraintForQuery;
     }
 
     /**
