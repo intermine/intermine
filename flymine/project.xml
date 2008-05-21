@@ -366,7 +366,7 @@
       <property name="fasta.dataSetTitle" value="FlyBase Drosophila melanogaster data set"/>
       <property name="src.data.dir" location="/shared/data/flybase/FB2008_04/fasta"/>
     </source>
-    <source name="flybase-dmel-3prime-utr-fasta" type="fasta">
+    <source name="flybase-dmel-3prime-utr-fasta" type="fasta" dump="true">
       <property name="fasta.loaderClassName" value="org.intermine.bio.dataconversion.FlyBaseUTRFastaLoaderTask"/>
       <property name="fasta.taxonId" value="7227"/>
       <property name="fasta.className" value="org.flymine.model.genomic.ThreePrimeUTR"/>
