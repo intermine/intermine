@@ -389,10 +389,18 @@
     <td><html:link action="/dataCategories" anchor="note2" title="${note2}">#2</html:link></td> 
   </tr>
 
-  <tr><td rowspan="2" class="leftcol">
-       <html:link action="/aspect?name=RNAi">
-        <p> <img src="model/images/rnai.png" /></p>
-        <p> RNAi</p></html:link></td>
+  <tr><td rowspan="3" class="leftcol">
+       <html:link action="/aspect?name=Phenotypes">
+        <p> <img src="model/images/phenotypes.png" /></p>
+        <p> Phenotypes</p></html:link></td>
+   <td> <i>D. melanogaster</i> </td>
+    <td> Alleles and phenotypes</td>
+    <td> <a href="http://www.flybase.org" target="_new">Flybase</a> - Version FB2008_04</td>
+    <td> Crosby et al - <a href="http://www.ncbi.nlm.nih.gov/entrez/query.fcgi?cmd=Retrieve&db=PubMed&dopt=Abstract&list_uids=17099233" target="_new">PubMed: 17099233</a></td>
+    <td> &nbsp;</td>
+  </tr>
+
+  <tr>
     <td> <i>D. melanogaster</i> </td>
     <td> High-throughput cell-based RNAi screens</td>
     <td> <a href="http://flyrnai.org/" target="_new">Drosophila RNAi Screening Center</a> - 2nd May 2008</td>
@@ -462,7 +470,7 @@
     <td> Probe sets from the Affymetrix GeneChip Drosophila Genome 1.0 Array</td>
     <td> <a href="http://www.affymetrix.com/" target="_new">Affymetrix</a></td>
     <td> &nbsp;</td>
-    <td> &nbsp;</td>
+    <td><html:link action="/dataCategories" anchor="note1" title="${note3}">#3</html:link></td>  
   </tr>
 
   <tr>
@@ -478,7 +486,7 @@
     <td> INDAC Microarray oligo set - Version 1.0</td>
     <td> <a href="http://www.indac.net/" target="_new">International Drosophila Array Consortium</a></td>
     <td> &nbsp;</td>
-    <td><html:link action="/dataCategories" anchor="note1" title="${note3}">#3</html:link></td>   
+    <td> &nbsp;</td>   
   </tr>
 
   <tr>
