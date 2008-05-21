@@ -1,28 +1,18 @@
 <uniprot xsi:schemaLocation="http://uniprot.org/uniprot http://www.uniprot.org/support/docs/uniprot.xsd">
 
-	<entry dataset="Swiss-Prot" created="2002-11-15" modified="2008-04-08" version="68">
-<accession>O76906</accession>
-<accession>Q0KHW5</accession>
-<accession>Q8MM10</accession>
-<accession>Q8MM41</accession>
-<accession>Q8MM71</accession>
-<accession>Q8MX89</accession>
-<accession>Q8MX90</accession>
-<accession>Q8MX91</accession>
-<accession>Q8MX92</accession>
-<accession>Q8MX93</accession>
-<accession>Q8MX94</accession>
-<accession>Q8MX95</accession>
-<accession>Q9W4V7</accession>
-<name>CRM_DROME</name>
+	<entry dataset="Swiss-Prot" created="1988-01-01" modified="2008-04-29" version="93">
+<accession>P06602</accession>
+<accession>P07667</accession>
+<accession>Q9V5E6</accession>
+<name>EVE_DROME</name>
 
 	<protein>
-<name>Protein cramped</name>
+<name>Segmentation protein even-skipped</name>
 </protein>
 
 	<gene>
-<name type="primary">crm</name>
-<name type="ORF">CG2714</name>
+<name type="primary">eve</name>
+<name type="ORF">CG2328</name>
 </gene>
 
 	<organism key="1">
@@ -51,88 +41,43 @@
 
 	<reference key="3">
 
-	<citation type="journal article" date="1997" name="Development" volume="124" first="3385" last="3394">
+	<citation type="journal article" date="1986" name="Cell" volume="47" first="721" last="734">
 
 	<title>
-The cramped gene of Drosophila is a member of the Polycomb-group, and interacts with mus209, the gene encoding Proliferating Cell Nuclear Antigen.
+Isolation, structure, and expression of even-skipped: a second pair-rule gene of Drosophila containing a homeo box.
 </title>
 
 	<authorList>
-<person name="Yamamoto Y."/>
-<person name="Girard F."/>
-<person name="Bello B."/>
-<person name="Affolter M."/>
-<person name="Gehring W.J."/>
+<person name="McDonald P.M."/>
+<person name="Ingham P."/>
+<person name="Struhl G."/>
 </authorList>
-<dbReference type="MEDLINE" id="97454258" key="4"/>
-<dbReference type="PubMed" id="9310333" key="5"/>
-</citation>
-<scope>NUCLEOTIDE SEQUENCE [MRNA]</scope>
-<scope>FUNCTION</scope>
-<scope>SUBCELLULAR LOCATION</scope>
-<scope>TISSUE SPECIFICITY</scope>
-<scope>DEVELOPMENTAL STAGE</scope>
-
-	<source>
-<strain>Oregon-R</strain>
-<tissue>Embryo</tissue>
-</source>
-</reference>
-
-	<reference key="6">
-
-	<citation type="journal article" date="2002" name="Proc. Natl. Acad. Sci. U.S.A." volume="99" first="12949" last="12954">
-
-	<title>
-Hitchhiking mapping: a population-based fine-mapping strategy for adaptive mutations in Drosophilamelanogaster.
-</title>
-
-	<authorList>
-<person name="Harr B."/>
-<person name="Kauer M."/>
-<person name="Schloetterer C."/>
-</authorList>
-<dbReference type="DOI" id="10.1073/pnas.202336899" key="7"/>
-<dbReference type="MEDLINE" id="22247773" key="8"/>
-<dbReference type="PubMed" id="12351680" key="9"/>
+<dbReference type="DOI" id="10.1016/0092-8674(86)90515-5" key="4"/>
+<dbReference type="MEDLINE" id="87051744" key="5"/>
+<dbReference type="PubMed" id="2877745" key="6"/>
 </citation>
 <scope>NUCLEOTIDE SEQUENCE [GENOMIC DNA]</scope>
+</reference>
 
-	<source>
-<strain>k1</strain>
-<strain>k11</strain>
-<strain>k2</strain>
-<strain>k3</strain>
-<strain>k5</strain>
-<strain>k8</strain>
-<strain>k9</strain>
-<strain>pe1</strain>
-<strain>pe10</strain>
-<strain>pe12</strain>
-<strain>pe2</strain>
-<strain>pe29</strain>
-<strain>pe33</strain>
-<strain>pe4</strain>
-<strain>pe45</strain>
-<strain>pe46</strain>
-<strain>pe7</strain>
-<strain>pe9</strain>
-<strain>wi1</strain>
-<strain>wi10</strain>
-<strain>wi12</strain>
-<strain>wi13</strain>
-<strain>wi14</strain>
-<strain>wi16</strain>
-<strain>wi18</strain>
-<strain>wi19</strain>
-<strain>wi2</strain>
-<strain>wi27</strain>
-<strain>wi28</strain>
-<strain>wi4</strain>
-<strain>wi5</strain>
-<strain>wi7</strain>
-<strain>wi8</strain>
-</source>
+	<reference key="7">
+
+	<citation type="journal article" date="1987" name="EMBO J." volume="6" first="749" last="759">
+
+	<title>
+Characterization and localization of the even-skipped protein of Drosophila.
+</title>
+
+	<authorList>
+<person name="Frasch M."/>
+<person name="Hoey T."/>
+<person name="Rushlow C."/>
+<person name="Doyle H."/>
+<person name="Levine M."/>
+</authorList>
+<dbReference type="MEDLINE" id="87218536" key="8"/>
+<dbReference type="PubMed" id="2884106" key="9"/>
+</citation>
+<scope>NUCLEOTIDE SEQUENCE [MRNA]</scope>
 </reference>
 
 	<reference key="10">
@@ -396,623 +341,306 @@ Annotation of the Drosophila melanogaster euchromatic genome: a systematic revie
 
 	<reference key="17">
 
-	<citation type="journal article" date="2000" name="Science" volume="287" first="2220" last="2222">
+	<citation type="journal article" date="1995" name="Mol. Biol. Evol." volume="12" first="1002" last="1011">
 
 	<title>
-From sequence to chromosome: the tip of the X chromosome of D. melanogaster.
+Evolutionary dynamics of the enhancer region of even-skipped in Drosophila.
 </title>
 
 	<authorList>
-<person name="Benos P.V."/>
-<person name="Gatt M.K."/>
-<person name="Ashburner M."/>
-<person name="Murphy L."/>
-<person name="Harris D."/>
-<person name="Barrell B.G."/>
-<person name="Ferraz C."/>
-<person name="Vidal S."/>
-<person name="Brun C."/>
-<person name="Demailles J."/>
-<person name="Cadieu E."/>
-<person name="Dreano S."/>
-<person name="Gloux S."/>
-<person name="Lelaure V."/>
-<person name="Mottier S."/>
-<person name="Galibert F."/>
-<person name="Borkova D."/>
-<person name="Minana B."/>
-<person name="Kafatos F.C."/>
-<person name="Louis C."/>
-<person name="Siden-Kiamos I."/>
-<person name="Bolshakov S."/>
-<person name="Papagiannakis G."/>
-<person name="Spanos L."/>
-<person name="Cox S."/>
-<person name="Madueno E."/>
-<person name="de Pablos B."/>
-<person name="Modolell J."/>
-<person name="Peter A."/>
-<person name="Schoettler P."/>
-<person name="Werner M."/>
-<person name="Mourkioti F."/>
-<person name="Beinert N."/>
-<person name="Dowe G."/>
-<person name="Schaefer U."/>
-<person name="Jaeckle H."/>
-<person name="Bucheton A."/>
-<person name="Callister D.M."/>
-<person name="Campbell L.A."/>
-<person name="Darlamitsou A."/>
-<person name="Henderson N.S."/>
-<person name="McMillan P.J."/>
-<person name="Salles C."/>
-<person name="Tait E.A."/>
-<person name="Valenti P."/>
-<person name="Saunders R.D.C."/>
-<person name="Glover D.M."/>
+<person name="Ludwig M.Z."/>
+<person name="Kreitman M."/>
 </authorList>
-<dbReference type="DOI" id="10.1126/science.287.5461.2220" key="18"/>
-<dbReference type="MEDLINE" id="20196011" key="19"/>
-<dbReference type="PubMed" id="10731137" key="20"/>
+<dbReference type="MEDLINE" id="96038621" key="18"/>
+<dbReference type="PubMed" id="8524036" key="19"/>
 </citation>
-<scope>NUCLEOTIDE SEQUENCE [LARGE SCALE GENOMIC DNA]</scope>
+<scope>NUCLEOTIDE SEQUENCE [GENOMIC DNA] OF 1-58</scope>
 
 	<source>
-<strain>Oregon-R</strain>
+<strain>AF-S</strain>
+<strain>FL-S</strain>
+<strain>Oregon-RC</strain>
+<strain>WA-F</strain>
+<strain>ZM56</strain>
 </source>
 </reference>
 
-	<reference key="21">
+	<reference key="20">
 
-	<citation type="journal article" date="2002" name="Genome Biol." volume="3" first="RESEARCH0080.1" last="RESEARCH0080.8">
-<title>A Drosophila full-length cDNA resource.</title>
+	<citation type="journal article" date="1995" name="EMBO J." volume="14" first="6280" last="6291">
+
+	<title>
+Structure of the even-skipped homeodomain complexed to AT-rich DNA: new perspectives on homeodomain specificity.
+</title>
 
 	<authorList>
-<person name="Stapleton M."/>
-<person name="Carlson J.W."/>
-<person name="Brokstein P."/>
-<person name="Yu C."/>
-<person name="Champe M."/>
-<person name="George R.A."/>
-<person name="Guarin H."/>
-<person name="Kronmiller B."/>
-<person name="Pacleb J.M."/>
-<person name="Park S."/>
-<person name="Wan K.H."/>
-<person name="Rubin G.M."/>
-<person name="Celniker S.E."/>
+<person name="Hirsch J.A."/>
+<person name="Aggarwal A.K."/>
 </authorList>
-<dbReference type="MEDLINE" id="22426066" key="22"/>
-<dbReference type="PubMed" id="12537569" key="23"/>
+<dbReference type="MEDLINE" id="96134926" key="21"/>
+<dbReference type="PubMed" id="8557047" key="22"/>
 </citation>
-<scope>NUCLEOTIDE SEQUENCE [LARGE SCALE MRNA]</scope>
-
-	<source>
-<strain>Berkeley</strain>
-<tissue>Embryo</tissue>
-</source>
+<scope>X-RAY CRYSTALLOGRAPHY (2.0 ANGSTROMS) OF 70-189</scope>
 </reference>
 
 	<comment type="function">
 
 	<text>
-Polycomb group (Pc-G) genes are needed to maintain expression patterns of the homeotic selector genes of the Antennapedia (Antp-C) and Bithorax (Bx-C) complexes, and hence for the maintenance of segmental determination. Can act as a modifier of position effect variegation (PEV).
+May play a role in determining neuronal identity. May be directly involved in specifying identity of individual neurons. Pair-rule protein required for segmentation; involved in transforming the broad, spatial, aperiodic expression patterns of the gap genes into a system of precise periodic expression patterns of the pair-rule and segmentary polarity genes.
 </text>
 </comment>
 
 	<comment type="subcellular location">
-
-	<text>
-Nucleus. Note=During S-phase in early embryogenesis.
-</text>
-</comment>
-
-	<comment type="tissue specificity">
-
-	<text>
-Ubiquitously expressed throughout embryonic development. High expression is detected in CNS and gonads. Co-localized with mus209 (PCNA) in polytene nuclei during embryogenesis.
-</text>
-</comment>
-
-	<comment type="developmental stage">
-<text>Expressed both maternally and zygotically.</text>
+<text>Nucleus.</text>
 </comment>
 
 	<comment type="similarity">
-<text>Belongs to the cramped family.</text>
+<text>Belongs to the even-skipped homeobox family.</text>
 </comment>
 
 	<comment type="similarity">
-<text>Contains 1 SANT domain.</text>
+<text>Contains 1 homeobox DNA-binding domain.</text>
 </comment>
 
-	<comment type="sequence caution">
+	<dbReference type="EMBL" id="M14767" key="23">
+<property type="protein sequence ID" value="AAA28522.1"/>
+<property type="molecule type" value="Genomic_DNA"/>
+</dbReference>
 
-	<conflict type="frameshift">
-<sequence resource="EMBL-CDS" id="CAB55550" version="1"/>
-</conflict>
-
-	<location>
-<position position="676"/>
-</location>
-</comment>
-
-	<dbReference type="EMBL" id="Y13674" key="24">
-<property type="protein sequence ID" value="CAB55550.1"/>
-<property type="status" value="ALT_FRAME"/>
+	<dbReference type="EMBL" id="X05138" key="24">
+<property type="protein sequence ID" value="CAA28784.1"/>
 <property type="molecule type" value="mRNA"/>
 </dbReference>
 
-	<dbReference type="EMBL" id="AF365364" key="25">
-<property type="protein sequence ID" value="AAN04260.1"/>
+	<dbReference type="EMBL" id="AE013599" key="25">
+<property type="protein sequence ID" value="AAF58865.1"/>
 <property type="molecule type" value="Genomic_DNA"/>
 </dbReference>
 
-	<dbReference type="EMBL" id="AF365365" key="26">
-<property type="protein sequence ID" value="AAN04261.1"/>
+	<dbReference type="EMBL" id="U32087" key="26">
+<property type="protein sequence ID" value="AAB05358.1"/>
 <property type="molecule type" value="Genomic_DNA"/>
 </dbReference>
 
-	<dbReference type="EMBL" id="AF365366" key="27">
-<property type="protein sequence ID" value="AAN04262.1"/>
+	<dbReference type="EMBL" id="U32088" key="27">
+<property type="protein sequence ID" value="AAB05359.1"/>
 <property type="molecule type" value="Genomic_DNA"/>
 </dbReference>
 
-	<dbReference type="EMBL" id="AF365367" key="28">
-<property type="protein sequence ID" value="AAN04263.1"/>
+	<dbReference type="EMBL" id="U32089" key="28">
+<property type="protein sequence ID" value="AAB05360.1"/>
 <property type="molecule type" value="Genomic_DNA"/>
 </dbReference>
 
-	<dbReference type="EMBL" id="AF365368" key="29">
-<property type="protein sequence ID" value="AAN04264.1"/>
+	<dbReference type="EMBL" id="U32090" key="29">
+<property type="protein sequence ID" value="AAB05361.1"/>
 <property type="molecule type" value="Genomic_DNA"/>
 </dbReference>
 
-	<dbReference type="EMBL" id="AF365369" key="30">
-<property type="protein sequence ID" value="AAN04265.1"/>
+	<dbReference type="EMBL" id="U32091" key="30">
+<property type="protein sequence ID" value="AAB05362.1"/>
 <property type="molecule type" value="Genomic_DNA"/>
 </dbReference>
 
-	<dbReference type="EMBL" id="AF365370" key="31">
-<property type="protein sequence ID" value="AAN04266.1"/>
-<property type="molecule type" value="Genomic_DNA"/>
+	<dbReference type="PIR" id="A26066" key="31">
+<property type="entry name" value="A26066"/>
 </dbReference>
+<dbReference type="RefSeq" id="NP_523670.2" key="32"/>
+<dbReference type="UniGene" id="Dm.18510" key="33"/>
 
-	<dbReference type="EMBL" id="AF365371" key="32">
-<property type="protein sequence ID" value="AAN04267.1"/>
-<property type="molecule type" value="Genomic_DNA"/>
+	<dbReference type="PDB" id="1JGG" key="34">
+<property type="method" value="X-ray"/>
+<property type="resolution" value="2.00"/>
+<property type="chains" value="A/B=70-129"/>
 </dbReference>
+<dbReference type="PDBsum" id="1JGG" key="35"/>
 
-	<dbReference type="EMBL" id="AF365372" key="33">
-<property type="protein sequence ID" value="AAN04268.1"/>
-<property type="molecule type" value="Genomic_DNA"/>
-</dbReference>
-
-	<dbReference type="EMBL" id="AF365373" key="34">
-<property type="protein sequence ID" value="AAN04269.1"/>
-<property type="molecule type" value="Genomic_DNA"/>
-</dbReference>
-
-	<dbReference type="EMBL" id="AF365374" key="35">
-<property type="protein sequence ID" value="AAN04270.1"/>
-<property type="molecule type" value="Genomic_DNA"/>
-</dbReference>
-
-	<dbReference type="EMBL" id="AF365375" key="36">
-<property type="protein sequence ID" value="AAN04271.1"/>
-<property type="molecule type" value="Genomic_DNA"/>
-</dbReference>
-
-	<dbReference type="EMBL" id="AF365376" key="37">
-<property type="protein sequence ID" value="AAN04272.1"/>
-<property type="molecule type" value="Genomic_DNA"/>
-</dbReference>
-
-	<dbReference type="EMBL" id="AF365377" key="38">
-<property type="protein sequence ID" value="AAN04273.1"/>
-<property type="molecule type" value="Genomic_DNA"/>
-</dbReference>
-
-	<dbReference type="EMBL" id="AF365378" key="39">
-<property type="protein sequence ID" value="AAN04274.1"/>
-<property type="molecule type" value="Genomic_DNA"/>
-</dbReference>
-
-	<dbReference type="EMBL" id="AF365379" key="40">
-<property type="protein sequence ID" value="AAN04275.1"/>
-<property type="molecule type" value="Genomic_DNA"/>
-</dbReference>
-
-	<dbReference type="EMBL" id="AF365380" key="41">
-<property type="protein sequence ID" value="AAN04276.1"/>
-<property type="molecule type" value="Genomic_DNA"/>
-</dbReference>
-
-	<dbReference type="EMBL" id="AF365381" key="42">
-<property type="protein sequence ID" value="AAN04277.1"/>
-<property type="molecule type" value="Genomic_DNA"/>
-</dbReference>
-
-	<dbReference type="EMBL" id="AF365382" key="43">
-<property type="protein sequence ID" value="AAN04278.1"/>
-<property type="molecule type" value="Genomic_DNA"/>
-</dbReference>
-
-	<dbReference type="EMBL" id="AF365383" key="44">
-<property type="protein sequence ID" value="AAN04279.1"/>
-<property type="molecule type" value="Genomic_DNA"/>
-</dbReference>
-
-	<dbReference type="EMBL" id="AF365384" key="45">
-<property type="protein sequence ID" value="AAN04280.1"/>
-<property type="molecule type" value="Genomic_DNA"/>
-</dbReference>
-
-	<dbReference type="EMBL" id="AF365385" key="46">
-<property type="protein sequence ID" value="AAN04281.1"/>
-<property type="molecule type" value="Genomic_DNA"/>
-</dbReference>
-
-	<dbReference type="EMBL" id="AF365386" key="47">
-<property type="protein sequence ID" value="AAN04282.1"/>
-<property type="molecule type" value="Genomic_DNA"/>
-</dbReference>
-
-	<dbReference type="EMBL" id="AF365387" key="48">
-<property type="protein sequence ID" value="AAN04283.1"/>
-<property type="molecule type" value="Genomic_DNA"/>
-</dbReference>
-
-	<dbReference type="EMBL" id="AF365388" key="49">
-<property type="protein sequence ID" value="AAN04284.1"/>
-<property type="molecule type" value="Genomic_DNA"/>
-</dbReference>
-
-	<dbReference type="EMBL" id="AF365389" key="50">
-<property type="protein sequence ID" value="AAN04285.1"/>
-<property type="molecule type" value="Genomic_DNA"/>
-</dbReference>
-
-	<dbReference type="EMBL" id="AF365390" key="51">
-<property type="protein sequence ID" value="AAN04286.1"/>
-<property type="molecule type" value="Genomic_DNA"/>
-</dbReference>
-
-	<dbReference type="EMBL" id="AF365391" key="52">
-<property type="protein sequence ID" value="AAN04287.1"/>
-<property type="molecule type" value="Genomic_DNA"/>
-</dbReference>
-
-	<dbReference type="EMBL" id="AF365392" key="53">
-<property type="protein sequence ID" value="AAN04288.1"/>
-<property type="molecule type" value="Genomic_DNA"/>
-</dbReference>
-
-	<dbReference type="EMBL" id="AF365393" key="54">
-<property type="protein sequence ID" value="AAN04289.1"/>
-<property type="molecule type" value="Genomic_DNA"/>
-</dbReference>
-
-	<dbReference type="EMBL" id="AF365394" key="55">
-<property type="protein sequence ID" value="AAN04290.1"/>
-<property type="molecule type" value="Genomic_DNA"/>
-</dbReference>
-
-	<dbReference type="EMBL" id="AF365396" key="56">
-<property type="protein sequence ID" value="AAN04291.1"/>
-<property type="molecule type" value="Genomic_DNA"/>
-</dbReference>
-
-	<dbReference type="EMBL" id="AF365397" key="57">
-<property type="protein sequence ID" value="AAN04292.1"/>
-<property type="molecule type" value="Genomic_DNA"/>
-</dbReference>
-
-	<dbReference type="EMBL" id="AF365398" key="58">
-<property type="protein sequence ID" value="AAN04293.1"/>
-<property type="molecule type" value="Genomic_DNA"/>
-</dbReference>
-
-	<dbReference type="EMBL" id="AE014298" key="59">
-<property type="protein sequence ID" value="AAG22402.1"/>
-<property type="molecule type" value="Genomic_DNA"/>
-</dbReference>
-
-	<dbReference type="EMBL" id="AL021728" key="60">
-<property type="protein sequence ID" value="CAA16818.1"/>
-<property type="molecule type" value="Genomic_DNA"/>
-</dbReference>
-
-	<dbReference type="EMBL" id="AY051767" key="61">
-<property type="protein sequence ID" value="AAK93191.1"/>
-<property type="molecule type" value="mRNA"/>
-</dbReference>
-
-	<dbReference type="PIR" id="T13653" key="62">
-<property type="entry name" value="T13653"/>
-</dbReference>
-<dbReference type="RefSeq" id="NP_477105.2" key="63"/>
-<dbReference type="UniGene" id="Dm.68" key="64"/>
-
-	<dbReference type="Ensembl" id="CG2714" key="65">
+	<dbReference type="Ensembl" id="CG2328" key="36">
 <property type="organism name" value="Drosophila melanogaster"/>
 </dbReference>
-<dbReference type="GeneID" id="31268" key="66"/>
-<dbReference type="KEGG" id="dme:Dmel_CG2714" key="67"/>
+<dbReference type="GeneID" id="36039" key="37"/>
+<dbReference type="KEGG" id="dme:Dmel_CG2328" key="38"/>
+<dbReference type="NMPDR" id="fig|7227.3.peg.4350" key="39"/>
 
-	<dbReference type="FlyBase" id="FBgn0000376" key="68">
-<property type="gene designation" value="crm"/>
+	<dbReference type="FlyBase" id="FBgn0000606" key="40">
+<property type="gene designation" value="eve"/>
 </dbReference>
-<dbReference type="ArrayExpress" id="O76906" key="69"/>
+<dbReference type="BioCyc" id="DMEL-XXX-02:DMEL-XXX-02-003750-MON" key="41"/>
+<dbReference type="ArrayExpress" id="P06602" key="42"/>
 
-	<dbReference type="GermOnline" id="CG2714" key="70">
+	<dbReference type="GermOnline" id="CG2328" key="43">
 <property type="organism name" value="Drosophila melanogaster"/>
 </dbReference>
 
-	<dbReference type="GO" id="GO:0005634" key="71">
-<property type="term" value="C:nucleus"/>
-<property type="evidence" value="IDA:UniProtKB"/>
+	<dbReference type="GO" id="GO:0001709" key="44">
+<property type="term" value="P:cell fate determination"/>
+<property type="evidence" value="NAS:FlyBase"/>
 </dbReference>
 
-	<dbReference type="GO" id="GO:0003677" key="72">
-<property type="term" value="F:DNA binding"/>
-<property type="evidence" value="NAS:UniProtKB"/>
+	<dbReference type="GO" id="GO:0007417" key="45">
+<property type="term" value="P:central nervous system development"/>
+<property type="evidence" value="NAS:FlyBase"/>
 </dbReference>
 
-	<dbReference type="GO" id="GO:0045449" key="73">
-<property type="term" value="P:regulation of transcription"/>
-<property type="evidence" value="NAS:UniProtKB"/>
+	<dbReference type="GO" id="GO:0007376" key="46">
+<property type="term" value="P:cephalic furrow formation"/>
+<property type="evidence" value="IMP:FlyBase"/>
 </dbReference>
 
-	<dbReference type="GO" id="GO:0007379" key="74">
-<property type="term" value="P:segment specification"/>
-<property type="evidence" value="IMP:UniProtKB"/>
+	<dbReference type="GO" id="GO:0008595" key="47">
+<property type="term" value="P:determination of anterior/posterior axis, e..."/>
+<property type="evidence" value="NAS:FlyBase"/>
 </dbReference>
 
-	<dbReference type="InterPro" id="IPR014778" key="75">
-<property type="entry name" value="Myb_DNA-bd"/>
+	<dbReference type="GO" id="GO:0007377" key="48">
+<property type="term" value="P:germ-band extension"/>
+<property type="evidence" value="IMP:FlyBase"/>
 </dbReference>
 
-	<dbReference type="InterPro" id="IPR001005" key="76">
-<property type="entry name" value="SANT_DNA-bd"/>
+	<dbReference type="GO" id="GO:0008045" key="49">
+<property type="term" value="P:motor axon guidance"/>
+<property type="evidence" value="IMP:FlyBase"/>
 </dbReference>
 
-	<dbReference type="Pfam" id="PF00249" key="77">
-<property type="entry name" value="Myb_DNA-binding"/>
+	<dbReference type="GO" id="GO:0007517" key="50">
+<property type="term" value="P:muscle development"/>
+<property type="evidence" value="TAS:FlyBase"/>
+</dbReference>
+
+	<dbReference type="GO" id="GO:0009997" key="51">
+<property type="term" value="P:negative regulation of cardioblast cell fat..."/>
+<property type="evidence" value="IMP:FlyBase"/>
+</dbReference>
+
+	<dbReference type="GO" id="GO:0007366" key="52">
+<property type="term" value="P:periodic partitioning by pair rule gene"/>
+<property type="evidence" value="TAS:FlyBase"/>
+</dbReference>
+
+	<dbReference type="GO" id="GO:0035289" key="53">
+<property type="term" value="P:posterior head segmentation"/>
+<property type="evidence" value="TAS:FlyBase"/>
+</dbReference>
+
+	<dbReference type="GO" id="GO:0050770" key="54">
+<property type="term" value="P:regulation of axonogenesis"/>
+<property type="evidence" value="IMP:FlyBase"/>
+</dbReference>
+
+	<dbReference type="GO" id="GO:0035290" key="55">
+<property type="term" value="P:trunk segmentation"/>
+<property type="evidence" value="TAS:FlyBase"/>
+</dbReference>
+
+	<dbReference type="InterPro" id="IPR001356" key="56">
+<property type="entry name" value="Homeobox"/>
+</dbReference>
+
+	<dbReference type="Pfam" id="PF00046" key="57">
+<property type="entry name" value="Homeobox"/>
 <property type="match status" value="1"/>
 </dbReference>
 
-	<dbReference type="SMART" id="SM00717" key="78">
-<property type="entry name" value="SANT"/>
+	<dbReference type="PRINTS" id="PR00024" key="58">
+<property type="entry name" value="HOMEOBOX"/>
+</dbReference>
+
+	<dbReference type="ProDom" id="PD000010" key="59">
+<property type="entry name" value="Homeobox"/>
 <property type="match status" value="1"/>
 </dbReference>
 
-	<dbReference type="PROSITE" id="PS51293" key="79">
-<property type="entry name" value="SANT"/>
-<property type="match status" value="FALSE_NEG"/>
+	<dbReference type="SMART" id="SM00389" key="60">
+<property type="entry name" value="HOX"/>
+<property type="match status" value="1"/>
 </dbReference>
-<proteinExistence type="Evidence at transcript level"/>
+
+	<dbReference type="PROSITE" id="PS00027" key="61">
+<property type="entry name" value="HOMEOBOX_1"/>
+<property type="match status" value="1"/>
+</dbReference>
+
+	<dbReference type="PROSITE" id="PS50071" key="62">
+<property type="entry name" value="HOMEOBOX_2"/>
+<property type="match status" value="1"/>
+</dbReference>
+<proteinExistence type="Evidence at protein level"/>
+<keyword id="KW-0002">3D-structure</keyword>
 <keyword id="KW-0181">Complete proteome</keyword>
 <keyword id="KW-0238">DNA-binding</keyword>
 <keyword id="KW-0217">Developmental protein</keyword>
+<keyword id="KW-0371">Homeobox</keyword>
 <keyword id="KW-0539">Nucleus</keyword>
-<keyword id="KW-0621">Polymorphism</keyword>
+<keyword id="KW-0562">Pair-rule protein</keyword>
 <keyword id="KW-0804">Transcription</keyword>
 <keyword id="KW-0805">Transcription regulation</keyword>
 
-	<feature type="chain" description="Protein cramped" id="PRO_0000197138">
+	<feature type="chain" description="Segmentation protein even-skipped" id="PRO_0000049060">
 
 	<location>
 <begin position="1"/>
-<end position="982"/>
+<end position="376"/>
 </location>
 </feature>
 
-	<feature type="domain" description="SANT">
+	<feature type="DNA-binding region" description="Homeobox">
 
 	<location>
-<begin position="109"/>
-<end position="173"/>
-</location>
-</feature>
-
-	<feature type="compositionally biased region" description="Glu/Pro/Ser/Thr-rich">
-
-	<location>
-<begin position="412"/>
-<end position="437"/>
+<begin position="70"/>
+<end position="129"/>
 </location>
 </feature>
 
 	<feature type="compositionally biased region" description="Ala-rich">
 
 	<location>
-<begin position="529"/>
-<end position="564"/>
+<begin position="165"/>
+<end position="179"/>
 </location>
 </feature>
 
-	<feature type="sequence variant" description="In strain: k3 and k5.">
-<original>S</original>
-<variation>N</variation>
+	<feature type="sequence conflict" description="In Ref. 1; AAA28522." ref="3">
+<original>L</original>
+<variation>V</variation>
 
 	<location>
-<position position="322"/>
+<position position="300"/>
 </location>
 </feature>
 
-	<feature type="sequence variant" description="In strain: k5.">
-<original>M</original>
-<variation>I</variation>
+	<feature type="helix">
 
 	<location>
-<position position="402"/>
+<begin position="79"/>
+<end position="91"/>
 </location>
 </feature>
 
-	<feature type="sequence variant" description="In strain: Berkeley, k1, k8, Oregon-R, pe7 and pe10.">
-<original>N</original>
-<variation>T</variation>
+	<feature type="helix">
 
 	<location>
-<position position="493"/>
+<begin position="97"/>
+<end position="107"/>
 </location>
 </feature>
 
-	<feature type="sequence variant" description="In strain: k2.">
-<original>S</original>
-<variation>T</variation>
+	<feature type="helix">
 
 	<location>
-<position position="527"/>
+<begin position="111"/>
+<end position="127"/>
 </location>
 </feature>
 
-	<feature type="sequence variant" description="In strain: Berkeley, k1, k2, k3, k5, k8, k9 and k11.">
-<original>G</original>
-<variation>A</variation>
+	<sequence length="376" mass="39970" checksum="59058E0634B1BED0" modified="2000-12-01" version="3">
 
-	<location>
-<position position="639"/>
-</location>
-</feature>
-
-	<feature type="sequence variant" description="In strain: k5.">
-<original>M</original>
-<variation>I</variation>
-
-	<location>
-<position position="747"/>
-</location>
-</feature>
-
-	<feature type="sequence variant" description="In strain: Berkeley, k9, wi10 and wi19.">
-<original>T</original>
-<variation>I</variation>
-
-	<location>
-<position position="823"/>
-</location>
-</feature>
-
-	<feature type="sequence variant" description="In strain: k1.">
-<original>T</original>
-<variation>S</variation>
-
-	<location>
-<position position="830"/>
-</location>
-</feature>
-
-	<feature type="sequence variant" description="In strain: Berkeley, k3, k8, k9, wi10 and wi19.">
-<original>C</original>
-<variation>S</variation>
-
-	<location>
-<position position="837"/>
-</location>
-</feature>
-
-	<feature type="sequence variant" description="In strain: Berkeley, k1, k2, k3, k5, k8, k9, k11, pe1, pe4, pe45, pe5, wi4, wi7, wi10, wi13, wi18 and wi19.">
-<original>M</original>
-<variation>T</variation>
-
-	<location>
-<position position="842"/>
-</location>
-</feature>
-
-	<feature type="sequence variant" description="In strain: k8.">
-<original>S</original>
-<variation>P</variation>
-
-	<location>
-<position position="845"/>
-</location>
-</feature>
-
-	<feature type="sequence conflict" description="In Ref. 1; CAB55550." ref="3">
-<original>A</original>
-<variation>S</variation>
-
-	<location>
-<position position="645"/>
-</location>
-</feature>
-
-	<feature type="sequence conflict" description="In Ref. 2; AAN04260/AAN04261/AAN04262/AAN04263/AAN04264/AAN04265/AAN04266/AAN04267/AAN04268/AAN04269/AAN04270/AAN04271/AAN04272/AAN04273/AAN04274/AAN04275/AAN04276/AAN04277/AAN04278/AAN04279/AAN04280/AAN04281/AAN04282/AAN04283/AAN04284/AAN04285/AAN04286/AAN04287/AAN04288/AAN04289/AAN04290/AAN04291/AAN04292/AAN04293." ref="6">
-<original>A</original>
-<variation>S</variation>
-
-	<location>
-<position position="645"/>
-</location>
-</feature>
-
-	<feature type="sequence conflict" description="In Ref. 5; CAA16818." ref="17">
-<original>A</original>
-<variation>S</variation>
-
-	<location>
-<position position="645"/>
-</location>
-</feature>
-
-	<feature type="sequence conflict" description="In Ref. 1; CAB55550." ref="3">
-<original>G</original>
-<variation>S</variation>
-
-	<location>
-<position position="653"/>
-</location>
-</feature>
-
-	<feature type="sequence conflict" description="In Ref. 2; AAN04260/AAN04261/AAN04262/AAN04263/AAN04264/AAN04265/AAN04266/AAN04267/AAN04268/AAN04269/AAN04270/AAN04271/AAN04272/AAN04273/AAN04274/AAN04275/AAN04276/AAN04277/AAN04278/AAN04279/AAN04280/AAN04281/AAN04282/AAN04283/AAN04284/AAN04285/AAN04286/AAN04287/AAN04288/AAN04289/AAN04290/AAN04291/AAN04292/AAN04293." ref="6">
-<original>G</original>
-<variation>S</variation>
-
-	<location>
-<position position="653"/>
-</location>
-</feature>
-
-	<feature type="sequence conflict" description="In Ref. 5; CAA16818." ref="17">
-<original>G</original>
-<variation>S</variation>
-
-	<location>
-<position position="653"/>
-</location>
-</feature>
-
-	<feature type="sequence conflict" description="In Ref. 1; CAB55550." ref="3">
-<original>F</original>
-<variation>L</variation>
-
-	<location>
-<position position="965"/>
-</location>
-</feature>
-
-	<sequence length="982" mass="107416" checksum="37DC1820DB3ABBA3" modified="2007-01-23" version="2">
-
-MEELSKQPPPPPLTQPPPPSSSVSIEEPLPNGKGGGAVVVNSIAKLPEEELLGSVTMHNC
-PGTRASARVIQKMKQDQTRPMTPPPSEREPNKKEEKAAQKTPSQLKTGSGKTTWTNVERN
-CFFDALNEFGKDFEAVANCINAKLKRRNANSDYSFKTKDQVRQHYYQTHHKICKYVRFSE
-ELKKPAQELYTLINYGEMRRKLQFLTEKHFMKLKQLVYQGQITVRCKGKNIRIKTPSCKA
-LRRLNQLDDSLEDIRLPSKVEVLVTPANMEAFGRVQSLAQNPRGRIIVPLHKKLISFIKT
-FEYKWRSANQRLHEEKSAYFSSSLPSAASNNNNNNNETEPLQPSVASLDPSMCFQPRPGV
-AIHRPLLSITAYLSSISICLTAYEERMGFKVRSETLGNLAGMSVAANKRLRTESGSEKRS
-PETKKPKSSASPPLEKSLDDGPLEGNLMKMENSSGDELGEEIHEFLGDILEAMQHPQAAT
-IPALSATTGDTTNVAVALETSHDPVQQAYPANADLSNAMATSVLQTSCAAAPAPSTPVTG
-SLAAPSVARSKRKEAKEAAAAAQARNFKPLLSDDILKRIRKGWTQANAADITIGDLYVVF
-GQDSKLELEYYWCEVDSSTAMASSILTINTVTPSSSSVGTQTGSAASNANQTGASSNCYV
-SASSNSSTSSTSLPYNPNDCDSVERVRAVTTSSVSNKLKHLLLVANLSERVRKRQCNCGH
-TCDRKRDLMTKAQQLAEATATGGVGGMVEGNFRTPMLPVRRPISNIDPVRQLSALTRQKI
-SRQVLVQRRLLPPTSAGDRPYDLLSVRQLHSGLFEPIDRVDGTSSAGISTSGSKPDCSMN
-AMTASQDQEPGDQGALEFLNDEATQVSARDMPNLDICVATNRTDVSSSLNEAAQDGSTTQ
-SFFQGSMSPMHLLRDSTSNARWLEDNINDFSLTSLLGHLDEIDATRDILDPSSSMSVISE
-SSVDFRHKFQEIAALLQQQEKD
+MHGYRTYNMESHHAHHDASPVDQKPLVVDLLATQYGKPQTPPPSPNECLSSPDNSLNGSR
+GSEIPADPSVRRYRTAFTRDQLGRLEKEFYKENYVSRPRRCELAAQLNLPESTIKVWFQN
+RRMKDKRQRIAVAWPYAAVYSDPAFAASILQAAANSVGMPYPPYAPAAAAAAAAAAAVAT
+NPMMATGMPPMGMPQMPTMQMPGHSGHAGHPSPYGQYRYTPYHIPARPAPPHPAGPHMHH
+PHMMGSSATGSSYSAGAAGLLGALPSATCYTGLGVGVPKTQTPPLDLQSSSSPHSSTLSL
+SPVGSDHAKVFDRSPVAQSAPSVPAPAPLTTTSPLPAPGLLMPSAKRPASDMSPPPTTTV
+IAEPKPKLFKPYKTEA
 </sequence>
 </entry>
 
@@ -1022,4 +650,3 @@ Copyrighted by the UniProt Consortium, see http://www.uniprot.org/terms
 Distributed under the Creative Commons Attribution-NoDerivs License
 </copyright>
 </uniprot>
-

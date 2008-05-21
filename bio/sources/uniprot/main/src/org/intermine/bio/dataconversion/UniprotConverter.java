@@ -1065,6 +1065,11 @@ public class UniprotConverter extends FileConverter
                     genePrimaryIdentifier = uniqueGeneIdentifier;
                 }
 
+                // we don't want to store the CGs for dmel
+                if (taxonId.equals("7227")) {
+                    geneSecondaryIdentifier = null;
+                }
+
                 // uniprot data source has primary key of Gene.primaryIdentifier
                 // only create gene if a value was found
                 if (uniqueGeneIdentifier != null) {
@@ -1084,20 +1089,21 @@ public class UniprotConverter extends FileConverter
                                     LOG.info("genePrimaryIdentifier was empty string");
                                 } else {
                                     gene.setAttribute("primaryIdentifier", genePrimaryIdentifier);
-
-                                    Item syn = createSynonym(gene.getIdentifier(), "identifier",
+                                    Item syn = null;
+                                    if (!taxonId.equals("7227")) {
+                                        syn = createSynonym(gene.getIdentifier(), "identifier",
                                                              genePrimaryIdentifier,
                                                              getDataSource(dbName).getIdentifier());
+                                    }
                                     if (syn != null) {
                                         delayedItems.add(syn);
                                     }
                                 }
                             }
                             if (geneSecondaryIdentifier != null) {
-                                if (!taxonId.equals("7227")) {
-                                    gene.setAttribute("secondaryIdentifier",
+                                gene.setAttribute("secondaryIdentifier",
                                                       geneSecondaryIdentifier);
-                                }
+
 
                                 // don't create duplicate synonym
                                 if (!geneSecondaryIdentifier.equals(genePrimaryIdentifier)
@@ -1129,7 +1135,7 @@ public class UniprotConverter extends FileConverter
                             gene.setReference("organism", orgId);
                             writer.store(ItemHelper.convert(gene));
                             i = nameTypeToName.keySet().iterator();
-                            while (i.hasNext()) {
+                            while (i.hasNext() && !taxonId.equals("7227")) {
 
                                 String synonymDescr = "";
                                 String type = i.next();
