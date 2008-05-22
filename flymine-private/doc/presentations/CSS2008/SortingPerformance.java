@@ -12,8 +12,8 @@ public class SortingPerformance
         100, 200, 400, 700, 1000, 2000, 4000, 7000, 10000, 20000, 40000, 70000, 100000, 200000,
         400000, 700000, 1000000, 2000000, 4000000, 7000000, 10000000, 20000000, 40000000, 70000000,
         100000000};
-    public static final int REPEATS[] = new int[] {8388608, 8388608, 8388608, 4194304, 4194304,
-        4194304, 2097152, 2097152, 2097152, 1048576, 1048576, 524288, 262144, 262144, 131072,
+    public static final int REPEATS[] = new int[] {100000000, 50000000, 20000000, 20000000, 10000000,
+        10000000, 10000000, 10000000, 10000000, 5000000, 3000000, 2000000, 1000000, 262144, 131072,
         65536, 32768, 16384, 8192, 2046, 512, 128, 32, 16, 4, 2, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,
         1, 1, 1, 1};
     public static final int TEST_SIZE = 30000;
@@ -25,7 +25,8 @@ public class SortingPerformance
     public static final int SELECTION_SORT = 5;
     public static final int QUICKSORT = 6;
     public static final int QUICKSORT_HYBRID = 7;
-    public static final int ALGO_COUNT = 8;
+    public static final int BUCKET_SORT = 8;
+    public static final int ALGO_COUNT = 9;
 
     public static void main(String args[]) {
         int testControl[] = new int[TEST_SIZE];
@@ -36,6 +37,7 @@ public class SortingPerformance
         int testSampleSelection[] = new int[TEST_SIZE];
         int testSampleQuickSort[] = new int[TEST_SIZE];
         int testSampleQuickSortHybrid[] = new int[TEST_SIZE];
+        int testSampleBucketSort[] = new int[TEST_SIZE];
         Random random = new Random();
         for (int i = 0; i < TEST_SIZE; i++) {
             testControl[i] = random.nextInt();
@@ -46,15 +48,17 @@ public class SortingPerformance
             testSampleSelection[i] = testControl[i];
             testSampleQuickSort[i] = testControl[i];
             testSampleQuickSortHybrid[i] = testControl[i];
+            testSampleBucketSort[i] = testControl[i];
         }
         Arrays.sort(testControl);
-        bubbleSort(testSampleBubble);
-        bubbleSortImproved(testSampleBubbleImproved);
-        insertionSort(testSampleInsert);
-        shellSort(testSampleShell);
-        selectionSort(testSampleSelection);
+        bubbleSort(testSampleBubble, 0, TEST_SIZE);
+        bubbleSortImproved(testSampleBubbleImproved, 0, TEST_SIZE);
+        insertionSort(testSampleInsert, 0, TEST_SIZE);
+        shellSort(testSampleShell, 0, TEST_SIZE);
+        selectionSort(testSampleSelection, 0, TEST_SIZE);
         quickSort(testSampleQuickSort, 0, TEST_SIZE);
         quickSortHybrid(testSampleQuickSortHybrid, 0, TEST_SIZE);
+        bucketSort(testSampleBucketSort, 0, TEST_SIZE);
         for (int i = 0; i < TEST_SIZE; i++) {
             if (testSampleBubble[i] != testControl[i]) {
                 throw new IllegalArgumentException("Bubble sort is broken: expected " + testControl[i] + " but was " + testSampleBubble[i]);
@@ -75,14 +79,17 @@ public class SortingPerformance
                 throw new IllegalArgumentException("QuickSort is broken: expected " + testControl[i] + " but was " + testSampleQuickSort[i]);
             }
             if (testSampleQuickSortHybrid[i] != testControl[i]) {
-                throw new IllegalArgumentException("QuickSorti Hybrid is broken: expected " + testControl[i] + " but was " + testSampleQuickSortHybrid[i]);
+                throw new IllegalArgumentException("QuickSort Hybrid is broken: expected " + testControl[i] + " but was " + testSampleQuickSortHybrid[i]);
+            }
+            if (testSampleBucketSort[i] != testControl[i]) {
+                throw new IllegalArgumentException("Bucket sort is broken: expected " + testControl[i] + " but was " + testSampleBucketSort[i]);
             }
         }
         boolean alive[] = new boolean[ALGO_COUNT];
         for (int i = 0; i < ALGO_COUNT; i++) {
             alive[i] = true;
         }
-        System.out.println("Data size\tRepeats\tBubble sort\tBubble sort improved\tInsertion sort\tArrays.sort\tShell sort\tSelection sort\tQuickSort\tQuickSort Hybrid");
+        System.out.println("Size\tRepeats\tBubble\tBubbleI\tInsert\tArrays\tShell\tSelect\tQuick\tQuickH\tBucket");
         for(int i = 0; i < DATA_SIZE.length; i++) {
             System.out.print(DATA_SIZE[i] + "\t" + REPEATS[i]);
             for(int sortType = 0; sortType < ALGO_COUNT; sortType++) {
@@ -123,82 +130,78 @@ public class SortingPerformance
     }
 
     public static MeasuredResult testSort(int sortType, int dataSize, int repeatCount) {
-        int data[][] = new int[repeatCount][];
+        int end = repeatCount * dataSize;
+        int data[] = new int[end];
         Random random = new Random();
-        for (int repeat = 0; repeat < repeatCount; repeat++) {
-            data[repeat] = new int[dataSize];
-            for (int i = 0; i < dataSize; i++) {
-                data[repeat][i] = random.nextInt();
-            }
+        for (int i = 0; i < end; i++) {
+            data[i] = random.nextInt();
         }
         System.gc();
         long startTime = System.currentTimeMillis();
         if (sortType == BUBBLE_SORT) {
-            for (int repeat = 0; repeat < repeatCount; repeat++) {
-                int a[] = data[repeat];
-                bubbleSort(a);
+            for (int start = 0; start < end; start += dataSize) {
+                bubbleSort(data, start, start + dataSize);
             }
             return new MeasuredResult("Bubble sort", dataSize, repeatCount,
                     System.currentTimeMillis() - startTime);
         } else if (sortType == BUBBLE_SORT_IMPROVED) {
-            for (int repeat = 0; repeat < repeatCount; repeat++) {
-                int a[] = data[repeat];
-                bubbleSortImproved(a);
+            for (int start = 0; start < end; start += dataSize) {
+                bubbleSortImproved(data, start, start + dataSize);
             }
             return new MeasuredResult("Bubble sort improved", dataSize, repeatCount,
                     System.currentTimeMillis() - startTime);
         } else if (sortType == INSERT_SORT) {
-            for (int repeat = 0; repeat < repeatCount; repeat++) {
-                int a[] = data[repeat];
-                insertionSort(a);
+            for (int start = 0; start < end; start += dataSize) {
+                insertionSort(data, start, start + dataSize);
             }
             return new MeasuredResult("Insertion sort", dataSize, repeatCount,
                     System.currentTimeMillis() - startTime);
         } else if (sortType == ARRAYS_DOT_SORT) {
-            for (int repeat = 0; repeat < repeatCount; repeat++) {
-                int a[] = data[repeat];
-                Arrays.sort(a);
+            for (int start = 0; start < end; start += dataSize) {
+                Arrays.sort(data, start, start + dataSize);
             }
             return new MeasuredResult("Arrays.sort", dataSize, repeatCount,
                     System.currentTimeMillis() - startTime);
         } else if (sortType == SHELL_SORT) {
-            for (int repeat = 0; repeat < repeatCount; repeat++) {
-                int a[] = data[repeat];
-                shellSort(a);
+            for (int start = 0; start < end; start += dataSize) {
+                shellSort(data, start, start + dataSize);
             }
             return new MeasuredResult("Shell sort", dataSize, repeatCount,
                     System.currentTimeMillis() - startTime);
         } else if (sortType == SELECTION_SORT) {
-            for (int repeat = 0; repeat < repeatCount; repeat++) {
-                int a[] = data[repeat];
-                selectionSort(a);
+            for (int start = 0; start < end; start += dataSize) {
+                selectionSort(data, start, start + dataSize);
             }
             return new MeasuredResult("Selection sort", dataSize, repeatCount,
                     System.currentTimeMillis() - startTime);
         } else if (sortType == QUICKSORT) {
-            for (int repeat = 0; repeat < repeatCount; repeat++) {
-                int a[] = data[repeat];
-                quickSort(a, 0, a.length);
+            for (int start = 0; start < end; start += dataSize) {
+                quickSort(data, start, start + dataSize);
             }
             return new MeasuredResult("Quicksort", dataSize, repeatCount,
                     System.currentTimeMillis() - startTime);
         } else if (sortType == QUICKSORT_HYBRID) {
-            for (int repeat = 0; repeat < repeatCount; repeat++) {
-                int a[] = data[repeat];
-                quickSortHybrid(a, 0, a.length);
+            for (int start = 0; start < end; start += dataSize) {
+                quickSortHybrid(data, start, start + dataSize);
             }
             return new MeasuredResult("Quicksort Hybrid", dataSize, repeatCount,
+                    System.currentTimeMillis() - startTime);
+        } else if (sortType == BUCKET_SORT) {
+            for (int start = 0; start < end; start += dataSize) {
+                bucketSort(data, start, start + dataSize);
+            }
+            return new MeasuredResult("Bucket sort", dataSize, repeatCount,
                     System.currentTimeMillis() - startTime);
         } else {
             throw new IllegalArgumentException("No such algorithm " + sortType);
         }
     }
 
-    private static void bubbleSort(int a[]) {
+    private static void bubbleSort(int a[], int start, int end) {
         boolean swapped;
         do {
             swapped = false;
-            for (int i = 0; i < a.length - 1; i++) {
+            for (int i = start; i < end - 1; i++) {
                 if (a[i] > a[i + 1]) {
                     int swap = a[i];
                     a[i] = a[i + 1];
@@ -209,12 +212,12 @@ public class SortingPerformance
         } while (swapped);
     }
 
-    private static void bubbleSortImproved(int a[]) {
+    private static void bubbleSortImproved(int a[], int start, int end) {
         boolean swapped;
-        int last = a.length - 1;
+        int last = end - 1;
         do {
             swapped = false;
-            for (int i = 0; i < last; i++) {
+            for (int i = start; i < last; i++) {
                 if (a[i] > a[i + 1]) {
                     int swap = a[i];
                     a[i] = a[i + 1];
@@ -226,11 +229,11 @@ public class SortingPerformance
         } while (swapped);
     }
 
-    private static void insertionSort(int a[]) {
-        for (int i = 1; i < a.length; i++) {
+    private static void insertionSort(int a[], int start, int end) {
+        for (int i = start + 1; i < end; i++) {
             int swap = a[i];
             int j = i - 1;
-            while (j >= 0 && a[j] > swap) {
+            while (j >= start && a[j] > swap) {
                 a[j + 1] = a[j];
                 j--;
             }
@@ -238,13 +241,13 @@ public class SortingPerformance
         }
     }
 
-    private static void shellSort(int a[]) {
-        for (int increment = a.length / 2; increment > 0;
+    private static void shellSort(int a[], int start, int end) {
+        for (int increment = (end - start) / 2; increment > 0;
                 increment = (increment == 2 ? 1 : (int) Math.round(increment / 2.2))) {
-            for (int i = increment; i < a.length; i++) {
+            for (int i = start + increment; i < end; i++) {
                 int temp = a[i];
                 int j = i;
-                while (j >= increment && a[j - increment] > temp) {
+                while (j >= start + increment && a[j - increment] > temp) {
                     a[j] = a[j - increment];
                     j -= increment;
                 }
@@ -253,10 +256,10 @@ public class SortingPerformance
         }
     }
 
-    private static void selectionSort(int a[]) {
-        for (int i = 0; i < a.length - 1; i++) {
+    private static void selectionSort(int a[], int start, int end) {
+        for (int i = start; i < end - 1; i++) {
             int minPos = i;
-            for (int j = i + 1; j < a.length; j++) {
+            for (int j = i + 1; j < end; j++) {
                 if (a[j] < a[minPos]) { 
                     minPos = j;
                 }
@@ -329,5 +332,28 @@ public class SortingPerformance
                 a[j + 1] = swap;
             }
         }
+    }
+
+    public static final int BUCKET_DIV = 10;
+
+    private static void bucketSort(int a[], int start, int end) {
+        // Assumes the integers are evenly spread from MIN_VAL to MAX_VAL
+        int bucketCount = (end - start) / BUCKET_DIV + 1;
+        ArrayList<Integer> buckets[] = new ArrayList[bucketCount];
+        for (int i = 0; i < bucketCount; i++) {
+            buckets[i] = new ArrayList<Integer>();
+        }
+        for (int i = start; i < end; i++) {
+            int bucketNo = (int) ((((long) bucketCount) * (((long) a[i]) + 2147483648l)) / 4294967296l);
+            buckets[bucketNo].add(new Integer(a[i]));
+        }
+        int c = start;
+        for (int i = 0; i < bucketCount; i++) {
+            for (Integer no : buckets[i]) {
+                a[c] = no.intValue();
+                c++;
+            }
+        }
+        insertionSort(a, start, end);
     }
 }
