@@ -49,7 +49,7 @@ public class InterMineBag implements WebSearchable, Cloneable
     private String name;
     private final String type;
     private String description;
-    private final Date dateCreated;
+    private Date dateCreated;
     private ObjectStoreBag osb;
     private ObjectStore os;
 
@@ -346,13 +346,21 @@ public class InterMineBag implements WebSearchable, Cloneable
             copy.savedBagId = null;
             SavedBag savedBag = copy.store(userOSW);
             copy.savedBagId = savedBag.getId();
-            copy = new InterMineBag(name, type, description, dateCreated, 
-                    os, profileId, userOSW);
+//            copy = new InterMineBag(name, type, description, dateCreated, 
+//                    os, profileId, userOSW);
         } catch (ObjectStoreException ex) {
             throw new RuntimeException("Clone failed.", ex);
         } catch (CloneNotSupportedException ex) {
             throw new RuntimeException("Clone failed.", ex);
         }
         return copy;
+    }
+
+    /**
+     * Sets date when bag was created.
+     * @param date new date
+     */
+    public void setDate(Date date) {
+        this.dateCreated = date;        
     }
 }
