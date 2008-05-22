@@ -29,7 +29,6 @@
     <collection name="annotations" referenced-type="org.flymine.model.genomic.Annotation" ordered="true" reverse-reference="subject"/>
     <collection name="synonyms" referenced-type="org.flymine.model.genomic.Synonym" ordered="true" reverse-reference="subject"/>
     <collection name="evidence" referenced-type="org.flymine.model.genomic.Evidence" ordered="true"/>
-    <collection name="dataSets" referenced-type="org.flymine.model.genomic.DataSet" ordered="true"/>
   </class>
   <class name="org.flymine.model.genomic.ComputationalAnalysis" extends="org.flymine.model.genomic.Analysis" is-interface="true">
     <attribute name="algorithm" type="java.lang.String"/>
