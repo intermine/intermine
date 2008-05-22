@@ -15,7 +15,7 @@
     </collection>
   </item>
   <item id="15_4" class="http://www.flymine.org/model/genomic#CVTerm">
-    <attribute name="identifier" value="FBcv0000311"/>
+    <attribute name="identifier" value="FBcv:0000311"/>
   </item>
   <item id="3_1" class="http://www.flymine.org/model/genomic#DataSource">
     <attribute name="name" value="FlyBase"/>
@@ -89,7 +89,7 @@
     </collection>
   </item>
   <item id="16_1" class="http://www.flymine.org/model/genomic#DevelopmentTerm">
-    <attribute name="identifier" value="FBdv00005289"/>
+    <attribute name="identifier" value="FBdv:00005289"/>
   </item>
   <item id="13_1" class="http://www.flymine.org/model/genomic#PhenotypeAnnotation">
     <attribute name="annotationType" value="manifest in"/>
@@ -170,7 +170,7 @@
     </collection>
   </item>
   <item id="14_1" class="http://www.flymine.org/model/genomic#AnatomyTerm">
-    <attribute name="identifier" value="FBbt00004729"/>
+    <attribute name="identifier" value="FBbt:00004729"/>
   </item>
   <item id="11_7" class="http://www.flymine.org/model/genomic#Publication">
     <attribute name="pubMedId" value="2226204"/>
@@ -256,7 +256,7 @@
     <attribute name="residues" value="gtcatgcactactatccagttcaccaggctaaagtcggctcctat"/>
   </item>
   <item id="15_2" class="http://www.flymine.org/model/genomic#CVTerm">
-    <attribute name="identifier" value="FBcv0000351"/>
+    <attribute name="identifier" value="FBcv:0000351"/>
   </item>
   <item id="9_1" class="http://www.flymine.org/model/genomic#Translation">
     <attribute name="length" value="2345"/>
@@ -553,7 +553,7 @@
     </collection>
   </item>
   <item id="15_3" class="http://www.flymine.org/model/genomic#CVTerm">
-    <attribute name="identifier" value="FBcv0000323"/>
+    <attribute name="identifier" value="FBcv:0000323"/>
   </item>
   <item id="13_3" class="http://www.flymine.org/model/genomic#PhenotypeAnnotation">
     <attribute name="annotationType" value="manifest in"/>
@@ -570,7 +570,7 @@
     </collection>
   </item>
   <item id="15_1" class="http://www.flymine.org/model/genomic#CVTerm">
-    <attribute name="identifier" value="FBcv0000031"/>
+    <attribute name="identifier" value="FBcv:0000031"/>
   </item>
   <item id="5_2" class="http://www.flymine.org/model/genomic#Synonym">
     <attribute name="isPrimary" value="true"/>
@@ -691,6 +691,6 @@
     </collection>
   </item>
   <item id="15_5" class="http://www.flymine.org/model/genomic#CVTerm">
-    <attribute name="identifier" value="FBcv0000354"/>
+    <attribute name="identifier" value="FBcv:0000354"/>
   </item>
 </items>
