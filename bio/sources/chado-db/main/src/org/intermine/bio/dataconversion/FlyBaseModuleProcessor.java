@@ -358,7 +358,13 @@ public class FlyBaseModuleProcessor extends ChadoSequenceProcessor
     protected String getExtraFeatureConstraint() {
         return "NOT ((cvterm.name = 'golden_path_region'"
              + " OR cvterm.name = 'ultra_scaffold')"
-             + " AND (uniquename LIKE 'Unknown_%' OR uniquename LIKE '%_groupMISC'))";
+             + " AND (uniquename LIKE 'Unknown_%' OR uniquename LIKE '%_groupMISC'))"
+             + " AND (NOT (uniquename LIKE 'FBal%') OR feature_id IN"
+             + "   (SELECT object_id"
+             + "      FROM feature_relationship, cvterm"
+             + "     WHERE type_id = cvterm.cvterm_id"
+             + "       AND cvterm.name = 'alleleof'"
+             + "       AND subject_id IN (" + getLocatedGenesSql() + ")))";
     }
 
     /**
