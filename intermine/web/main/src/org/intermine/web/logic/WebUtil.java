@@ -34,6 +34,7 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import javax.servlet.ServletContext;
+import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
@@ -54,6 +55,7 @@ import org.intermine.web.logic.widget.Bonferroni;
 import org.intermine.web.logic.widget.EnrichmentWidgetLdr;
 import org.intermine.web.logic.widget.ErrorCorrection;
 import org.intermine.web.logic.widget.Hypergeometric;
+import org.intermine.web.struts.InterMineAction;
 /**
  * Utility methods for the web package.
  *
@@ -589,5 +591,15 @@ public abstract class WebUtil
         }
         Object[] o = os.executeSingleton(q).toArray();
         return  ((java.lang.Long) o[0]).intValue();
+    }
+    
+    /**
+     * @param request request
+     * @return default context path. This context path can be used for example for 
+     * generating links to web service that are not tighten to particular webapp release. 
+     */
+    public static String getDefaultContextPath(HttpServletRequest request) {
+        Properties props = InterMineAction.getWebProperties(request);
+        return props.getProperty("webapp.defaultContext");
     }
 }
