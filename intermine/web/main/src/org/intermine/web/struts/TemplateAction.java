@@ -10,7 +10,6 @@ package org.intermine.web.struts;
  *
  */
 
-import java.net.MalformedURLException;
 import java.util.Map;
 
 import javax.servlet.ServletContext;
@@ -174,13 +173,29 @@ public class TemplateAction extends InterMineAction
         return "links".equalsIgnoreCase(request.getParameter("actionType"));
     }
 
+    /**
+     * Generates base url. If default context path is defined in web.properties, then this
+     * path is used, else request context path is used. This enables generation of links to 
+     * the application and not to the particular version of application. 
+     * @param request request
+     * @return base url. For example: http://localhost:8080/query 
+     */
     private String getBaseUrl(HttpServletRequest request) {
-        try {
-            return new java.net.URL(request.getScheme(), request.getServerName(), 
-                    request.getServerPort(), request.getContextPath()).toString();
-        } catch (MalformedURLException e) {
-            throw  new RuntimeException("Creating base url failed.", e);
+        String contextPath;
+        if (WebUtil.getDefaultContextPath(request) != null) {
+            contextPath = WebUtil.getDefaultContextPath(request);
+        } else {
+            contextPath = request.getContextPath();
         }
+        String port = "";
+        if (request.getServerPort() != 80) {
+            port = ":" + request.getServerPort();
+        }
+        String ret = "http://" + request.getServerName() + "" + port;
+        if (contextPath.length() > 0) {
+            ret += "/" + contextPath;
+        }
+        return ret;
     }
 
 }

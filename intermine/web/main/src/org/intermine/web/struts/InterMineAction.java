@@ -83,7 +83,7 @@ public class InterMineAction extends Action
      * @param request current request (from which we fetch the servlet context).
      * @return Properties
      */
-    public Properties getWebProperties(HttpServletRequest request) {
+    public static Properties getWebProperties(HttpServletRequest request) {
         return (Properties) request.getSession().getServletContext()
             .getAttribute(Constants.WEB_PROPERTIES);
     }

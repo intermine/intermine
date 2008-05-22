@@ -69,7 +69,8 @@ public class TemplateResultLinkGenerator
             return null;
         }
         String ret = baseUrl;
-        ret += "/" + WebServiceConstants.MODULE_NAME + "/template/results?name=" + template.getName() + "&";
+        ret += "/" + WebServiceConstants.MODULE_NAME + "/template/results?name=" 
+            + template.getName() + "&";
         // Splits the long result url to 2 parts -> so it is less probable, 
         // that the url will overflow the div
         if (highlighted) {
