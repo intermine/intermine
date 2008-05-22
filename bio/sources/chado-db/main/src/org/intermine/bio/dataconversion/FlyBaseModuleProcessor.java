@@ -886,6 +886,7 @@ public class FlyBaseModuleProcessor extends ChadoSequenceProcessor
             + " AND type_id = feature_type.cvterm_id"
             + " AND uniquename LIKE 'FBal%'"
             + " AND NOT feature.is_obsolete"
+            + " AND feature_id IN (" + getLocatedGenesSql() + ")"
             + orgConstraintForQuery;
     }
 
