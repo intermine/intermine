@@ -23,7 +23,6 @@ import org.intermine.bio.chado.ChadoCV;
 import org.intermine.bio.chado.ChadoCVFactory;
 import org.intermine.bio.chado.ChadoCVTerm;
 import org.intermine.bio.util.OrganismData;
-import org.intermine.bio.util.OrganismRepository;
 import org.intermine.objectstore.ObjectStoreException;
 import org.intermine.util.IntPresentSet;
 import org.intermine.xml.full.Item;
@@ -197,14 +196,27 @@ public class FlyBaseModuleProcessor extends ChadoSequenceProcessor
      * @throws SQLException if a database problem occurs
      */
     protected ResultSet getLocatedGenesResultSet(Connection connection) throws SQLException {
-        String query =
-            "SELECT feature.feature_id FROM feature, cvterm, featureloc"
-            + "   WHERE feature.type_id = cvterm.cvterm_id"
-            + "      AND feature.feature_id = featureloc.feature_id AND cvterm.name = 'gene'";
+        String query = getLocatedGenesSql();
         LOG.info("executing: " + query);
         Statement stmt = connection.createStatement();
         ResultSet res = stmt.executeQuery(query);
         return res;
+    }
+
+    /**
+     * Return a query that gets the feature_ids of gene that have locations.
+     */
+    private String getLocatedGenesSql() {
+        String organismConstraint = getOrganismConstraint();
+        String orgConstraintForQuery = "";
+        if (!StringUtils.isEmpty(organismConstraint)) {
+            orgConstraintForQuery = " AND " + organismConstraint;
+        }
+
+        return "SELECT feature.feature_id FROM feature, cvterm, featureloc"
+            + "   WHERE feature.type_id = cvterm.cvterm_id"
+            + "      AND feature.feature_id = featureloc.feature_id AND cvterm.name = 'gene'"
+            + " " + orgConstraintForQuery;
     }
 
     /**
@@ -528,7 +540,6 @@ public class FlyBaseModuleProcessor extends ChadoSequenceProcessor
                                     Map<Integer, FeatureData> features)
         throws SQLException, ObjectStoreException {
         Map<Integer, List<String>> annotationPubMap = makeAnnotationPubMap(connection);
-        String dataSourceName = getDataSourceName();
         ResultSet res = getAllelePropResultSet(connection);
         while (res.next()) {
             Integer featureId = new Integer(res.getInt("feature_id"));
@@ -538,7 +549,7 @@ public class FlyBaseModuleProcessor extends ChadoSequenceProcessor
 
             FeatureData alleleFeatureData = features.get(featureId);
             OrganismData od = alleleFeatureData.getOrganismData();
-            Item dataSetItem = getDataSetItem(dataSourceName, od.getTaxonId());
+            Item dataSetItem = getChadoDBConverter().getDataSetItem(od.getTaxonId());
 
             String alleleItemIdentifier = alleleFeatureData.getItemIdentifier();
 
@@ -879,29 +890,6 @@ public class FlyBaseModuleProcessor extends ChadoSequenceProcessor
     }
 
     /**
-     * {@inheritDoc}
-     */
-    @Override
-    protected String getDataSourceName() {
-        return "FlyBase";
-    }
-
-    private Item getDataSourceItem(String dataSourceName) {
-        return getChadoDBConverter().getDataSourceItem(dataSourceName);
-    }
-
-    private Item getDataSetItem(String dataSourceName, int taxonId) {
-        OrganismRepository or = OrganismRepository.getOrganismRepository();
-        OrganismData od = or.getOrganismDataByTaxon(taxonId);
-        String species = od.getSpecies();
-        String genus = od.getGenus();
-        String name = "FlyBase " + genus + " " + species + " data set";
-        String description = "The FlyBase " + genus + " " + species + " genome";
-        return getChadoDBConverter().getDataSetItem(name, "http://www.flybase.org", description,
-                                                    getDataSourceItem(dataSourceName));
-    }
-
-    /**
      * Method to add dataSets and DataSources to items before storing
      */
     private void processItem(Item item, Integer taxonId) {
@@ -923,11 +911,10 @@ public class FlyBaseModuleProcessor extends ChadoSequenceProcessor
                 Thread.currentThread().setContextClassLoader(currentClassLoader);
             }
         } else {
-            String dataSourceName = getDataSourceName();
-
+            ChadoDBConverter converter = getChadoDBConverter();
             DataSetStoreHook.setDataSets(getModel(), item,
-                                         getDataSetItem(dataSourceName, taxonId).getIdentifier(),
-                                         getDataSourceItem(dataSourceName).getIdentifier());
+                                         converter.getDataSetItem(taxonId).getIdentifier(),
+                                         converter.getDataSourceItem().getIdentifier());
         }
     }
 }

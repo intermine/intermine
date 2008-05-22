@@ -193,8 +193,9 @@ public class ChadoSequenceProcessor extends ChadoProcessor
             feature.setAttribute("length", String.valueOf(seqlen));
             fdat.flags |= FeatureData.LENGTH_SET;
         }
+        ChadoDBConverter chadoDBConverter = getChadoDBConverter();
 
-        String dataSourceName = getDataSourceName();
+        String dataSourceName = chadoDBConverter.getDataSourceName();
         MultiKey nameKey = new MultiKey("feature", fdat.interMineType, dataSourceName, "name");
         List<ConfigAction> nameActionList = getConfig(taxonId).get(nameKey);
 
@@ -303,22 +304,6 @@ public class ChadoSequenceProcessor extends ChadoProcessor
      */
     protected Integer store(Item feature, int taxonId) throws ObjectStoreException {
         return getChadoDBConverter().store(feature);
-    }
-
-    /**
-     * Return the name of the DataSource for this processor.  The default implementation gets
-     * the name from the ChadoDBConverter if it is a DataSetChadoDBConverter.
-     * @return the name
-     */
-    protected String getDataSourceName() {
-        ChadoDBConverter chadoDBConverter = getChadoDBConverter();
-        if (chadoDBConverter instanceof DataSetChadoDBConverter) {
-            DataSetChadoDBConverter converter = (DataSetChadoDBConverter) chadoDBConverter;
-            return converter.getDataSourceName();
-        } else {
-            throw new RuntimeException("unimplemented method "
-                                       + "ChadoSequenceProcessor.getDataSourceName()");
-        }
     }
 
     /**
@@ -1140,6 +1125,9 @@ public class ChadoSequenceProcessor extends ChadoProcessor
             return;
         }
         List<String> evidenceIds = new ArrayList<String>(argEvidenceIds);
+        int taxonId = fdat.getOrganismData().getTaxonId();
+        Item dataSetItem = getChadoDBConverter().getDataSetItem(taxonId);
+        evidenceIds.add(dataSetItem.getIdentifier());
         ReferenceList referenceList = new ReferenceList();
         referenceList.setName("evidence");
 
@@ -1478,6 +1466,8 @@ public class ChadoSequenceProcessor extends ChadoProcessor
         static final short IDENTIFIER_SET = 1 << IDENTIFIER_SET_BIT;
         static final short LENGTH_SET_BIT = 2;
         static final short LENGTH_SET = 1 << LENGTH_SET_BIT;
+        static final short DATASET_SET_BIT = 3;
+        static final short DATASET_SET = 1 << DATASET_SET_BIT;
 
         /**
          * Return the id of the Item representing this feature.

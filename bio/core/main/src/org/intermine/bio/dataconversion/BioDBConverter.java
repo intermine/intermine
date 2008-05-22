@@ -31,6 +31,7 @@ public abstract class BioDBConverter extends DBConverter
     private final Map<String, Item> organisms = new HashMap<String, Item>();
     private final Map<String, Item> dataSets = new HashMap<String, Item>();
     private final Map<String, Item> dataSources = new HashMap<String, Item>();
+    private String dataSourceName = null;
 
     /**
      * Create a new BioDBConverter object.  The constructor will automatically create a
@@ -62,6 +63,38 @@ public abstract class BioDBConverter extends DBConverter
     }
 
     /**
+     * Set the name of the DataSource Item to create for this converter.
+     * @param name the name
+     */
+    public void setDataSourceName(String name) {
+        this.dataSourceName = name;
+    }
+
+    /**
+     * Return the data source name set by setDataSourceName().
+     * @return the data source name
+     */
+    public String getDataSourceName() {
+        return dataSourceName;
+    }
+
+    /**
+     * Return the DataSet Item created from the dataSetTitle.
+     * @return the DataSet Item
+     */
+    public Item getDataSetItem(int taxonId) {
+        return getDataSetItem(getDataSetTitle(taxonId), getDataSourceItem());
+    }
+
+    /**
+     * Return the DataSource Item created from the dataSourceName.
+     * @return the DataSource Item
+     */
+    public Item getDataSourceItem() {
+        return getDataSourceItem(dataSourceName);
+    }
+
+    /**
      * Make a Location Relation between a LocatedSequenceFeature and a Chromosome.
      * @param chromosomeId Chromosome Item identifier
      * @param locatedSequenceFeatureId the Item identifier of the feature
@@ -70,11 +103,9 @@ public abstract class BioDBConverter extends DBConverter
      * @param strand the strand
      * @param taxonId the taxon id to use when finding the Chromosome for the Location
      * @return the new Location object
-     * @throws ObjectStoreException if an Item can't be stored
      */
     protected Item makeLocation(String chromosomeId, String locatedSequenceFeatureId,
-                                int start, int end, int strand, int taxonId)
-        throws ObjectStoreException {
+                                int start, int end, int strand, int taxonId) {
         Item location = createItem("Location");
 
         if (start < end) {
@@ -141,6 +172,7 @@ public abstract class BioDBConverter extends DBConverter
         return getDataSetItem(title, null, null, dataSourceItem);
     }
 
+    public abstract String getDataSetTitle(int taxonId);
 
     /**
      * Return a DataSource item with the given details.
