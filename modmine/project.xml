@@ -57,6 +57,15 @@
       <property name="src.data.dir" location="/shared/data/modmine/go-annotation/"/>
       <property name="src.data.dir.includes" value="*/gene_association*"/>
     </source>
+    <source name="fly-anatomy-ontology" type="fly-anatomy-ontology">
+      <property name="src.data.file" location="/shared/data/ontologies/fly_anatomy/current/fly_anatomy.obo"/>
+    </source>
+    <source name="fly-development-ontology" type="fly-development-ontology">
+      <property name="src.data.file" location="/shared/data/ontologies/fly_development/current/fly_development.obo"/>
+    </source>
+    <source name="fly-misc-cvterms" type="fly-misc-cvterms">
+      <property name="src.data.file" location="/shared/data/ontologies/fly_cv/current/flybase_controlled_vocabulary.obo"/>
+    </source>
     <source name="flybase-dmel-gene-fasta" type="fasta">
       <property name="fasta.taxonId" value="7227"/>
       <property name="fasta.className" value="org.flymine.model.genomic.Gene"/>
