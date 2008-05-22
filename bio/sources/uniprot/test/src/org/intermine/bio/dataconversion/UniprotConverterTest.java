@@ -27,19 +27,13 @@ public class UniprotConverterTest extends ItemsTestCase
 
     public UniprotConverterTest(String arg) {
         super(arg);
-
-//        resolverFactory = new FlyBaseIdResolverFactory();
-//        converter.resolverFactory = resolverFactory;
     }
 
     public void setUp() throws Exception {
         itemWriter = new MockItemWriter(new HashMap());
         converter = new UniprotConverter(itemWriter, Model.getInstanceByName("genomic"));
         MockIdResolverFactory resolverFactory = new MockIdResolverFactory("Gene");
-        resolverFactory.addResolverEntry("7227", "FBgn0037874", Collections.singleton("CG4800"));
-        resolverFactory.addResolverEntry("7227", "FBgn0020415", Collections.singleton("CG4475"));
-        resolverFactory.addResolverEntry("7227", "FBgn0039830", Collections.singleton("CG1746"));
-        resolverFactory.addResolverEntry("7227", "FBgn0019830", Collections.singleton("CG3057"));
+        resolverFactory.addResolverEntry("7227", "FBgn0000606", Collections.singleton("CG2328"));
         converter.resolverFactory = resolverFactory;
         super.setUp();
     }

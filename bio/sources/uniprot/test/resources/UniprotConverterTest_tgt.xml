@@ -31,6 +31,10 @@
 <reference name="source" ref_id="0_1"/>
 <reference name="subject" ref_id="2_1"/>
 </item>
+<item id="5_1" class="http://www.flymine.org/model/genomic#Gene">
+<attribute name="primaryIdentifier" value="FBgn0000606"/>
+<reference name="organism" ref_id="6_1"/>
+</item>
 <item id="4_6" class="http://www.flymine.org/model/genomic#Synonym">
 <attribute name="type" value="identifier"/>
 <attribute name="value" value="EVE_DROME"/>
@@ -51,23 +55,6 @@
 <item id="10_9" class="http://www.flymine.org/model/genomic#OntologyTerm">
 <attribute name="name" value="Transcription regulation"/>
 <reference name="ontology" ref_id="1_1"/>
-</item>
-<item id="2_1" class="http://www.flymine.org/model/genomic#Protein">
-<attribute name="description" value="Segmentation protein even-skipped"/>
-<attribute name="isFragment" value="false"/>
-<attribute name="length" value="376"/>
-<attribute name="molecularWeight" value="39970"/>
-<attribute name="name" value="Segmentation protein even-skipped"/>
-<attribute name="primaryAccession" value="P06602"/>
-<attribute name="primaryIdentifier" value="EVE_DROME"/>
-<reference name="organism" ref_id="6_1"/>
-<reference name="sequence" ref_id="12_1"/>
-<collection name="comments"><reference ref_id="8_1"/><reference ref_id="8_2"/><reference ref_id="8_3"/><reference ref_id="8_4"/></collection>
-<collection name="evidence"><reference ref_id="3_1"/></collection>
-<collection name="features"><reference ref_id="11_1"/></collection>
-<collection name="keywords"><reference ref_id="10_1"/><reference ref_id="10_2"/><reference ref_id="10_3"/><reference ref_id="10_4"/><reference ref_id="10_5"/><reference ref_id="10_6"/><reference ref_id="10_7"/><reference ref_id="10_8"/><reference ref_id="10_9"/></collection>
-<collection name="proteinDomains"><reference ref_id="9_1"/></collection>
-<collection name="publications"><reference ref_id="7_1"/><reference ref_id="7_2"/><reference ref_id="7_3"/><reference ref_id="7_4"/><reference ref_id="7_5"/><reference ref_id="7_6"/></collection>
 </item>
 <item id="7_4" class="http://www.flymine.org/model/genomic#Publication">
 <attribute name="pubMedId" value="12537572"/>
@@ -104,6 +91,24 @@
 <attribute name="value" value="NP_523670.2"/>
 <reference name="source" ref_id="0_1"/>
 <reference name="subject" ref_id="2_1"/>
+</item>
+<item id="2_1" class="http://www.flymine.org/model/genomic#Protein">
+<attribute name="description" value="Segmentation protein even-skipped"/>
+<attribute name="isFragment" value="false"/>
+<attribute name="length" value="376"/>
+<attribute name="molecularWeight" value="39970"/>
+<attribute name="name" value="Segmentation protein even-skipped"/>
+<attribute name="primaryAccession" value="P06602"/>
+<attribute name="primaryIdentifier" value="EVE_DROME"/>
+<reference name="organism" ref_id="6_1"/>
+<reference name="sequence" ref_id="12_1"/>
+<collection name="comments"><reference ref_id="8_1"/><reference ref_id="8_2"/><reference ref_id="8_3"/><reference ref_id="8_4"/></collection>
+<collection name="evidence"><reference ref_id="3_1"/></collection>
+<collection name="features"><reference ref_id="11_1"/></collection>
+<collection name="genes"><reference ref_id="5_1"/></collection>
+<collection name="keywords"><reference ref_id="10_1"/><reference ref_id="10_2"/><reference ref_id="10_3"/><reference ref_id="10_4"/><reference ref_id="10_5"/><reference ref_id="10_6"/><reference ref_id="10_7"/><reference ref_id="10_8"/><reference ref_id="10_9"/></collection>
+<collection name="proteinDomains"><reference ref_id="9_1"/></collection>
+<collection name="publications"><reference ref_id="7_1"/><reference ref_id="7_2"/><reference ref_id="7_3"/><reference ref_id="7_4"/><reference ref_id="7_5"/><reference ref_id="7_6"/></collection>
 </item>
 <item id="10_10" class="http://www.flymine.org/model/genomic#OntologyTerm">
 <attribute name="name" value="chain"/>
