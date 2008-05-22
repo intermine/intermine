@@ -183,6 +183,7 @@ public class ModifyBagAction extends InterMineAction
             throws ObjectStoreException {
         // Clone method clones the bag in the database
         InterMineBag newBag = (InterMineBag) origBag.clone(userOSW);
+        newBag.setDate(new Date());
         newBag.setName(newBagName, userOSW);
         profile.saveBag(newBagName, newBag);
         return true;
