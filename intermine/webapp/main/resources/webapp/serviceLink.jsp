@@ -10,6 +10,22 @@
 
 </style>
 
+<<script type="text/javascript">
+<!--
+    function switchLink(controllerId, linkId) {
+        var link = document.getElementById(linkId);
+        var con = document.getElementById(controllerId);
+        if (link.style.display == 'none') {
+            link.style.display = 'block';
+            con.innerHTML = 'Hide';
+        } else {
+            link.style.display = 'none';
+            con.innerHTML = 'Show';        
+        }
+    }
+//-->
+</script>
+
 <!-- serviceLink.jsp -->
 <div align="center" ><div class="plainbox" style="width:700px; font-size:14px; overflow: auto">
 
@@ -62,9 +78,9 @@
 	<c:if test="${requestScope.highlightedLink != null}">
 		<div>
 		   If you want to get results for different parameters, edit the highlighted constraints 
-		   in the URL to the values you need. <a href="javascript:display('highLinkId', true)">Show</a> link with constraint values highlighted in red.
+		   in the URL to the values you need. <a href="javascript:switchLink('showLinkId', 'highLinkId')" id="showLinkId">Show</a> link with constraint values highlighted in red.
 	    </div>
-	    <div id="highLinkId" style="display: none; text-">
+	    <div id="highLinkId" style="display: none;">
 	       ${requestScope.highlightedLink}
 	    </div>
 	</c:if>
