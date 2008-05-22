@@ -17,7 +17,7 @@
 <table class="collection" cellspacing="0" width="95%">
   <caption>
     <span class="sectionAddRemove">
-      <span id="${issueType}addAllLink" onclick="addAll('${issueType}', '${arrayName}');" class="fakelink">Add all</span> | 
+      <span id="${issueType}addAllLink" onclick="addAll('${issueType}', '${arrayName}');" class="fakelink">Add all</span> |
         <span id="${issueType}removeAllLink" onclick="removeAll('${issueType}', '${arrayName}');">Remove all</span>
     </span>
     <span>
@@ -37,7 +37,7 @@
     <td>
       Identifier
     </td>
-    <td width="10"> 
+    <td width="10">
       <fmt:message key="objectDetails.class"/>
     </td>
     <c:forEach items="${columnNames}" var="name"
@@ -74,7 +74,7 @@
                 valign="top" id="row_${issueType}_${idcounter}">${initialTypeMap[identifier]}</td>
           </c:if>
         </c:if>
-        <c:forEach var="resultElement" items="${resultElementRow}" varStatus="rowStatus">        
+        <c:forEach var="resultElement" items="${resultElementRow}" varStatus="rowStatus">
           <td id="row_${issueType}_${idcounter}">
             <c:choose>
               <c:when test="${rowStatus.index == 0 && issueType != 'converted'}">
@@ -97,7 +97,7 @@
                 <c:otherwise>
                   ${resultElement.field}
               </c:otherwise>
-              </c:choose>                  
+              </c:choose>
               </c:otherwise>
             </c:choose>
             &nbsp;
