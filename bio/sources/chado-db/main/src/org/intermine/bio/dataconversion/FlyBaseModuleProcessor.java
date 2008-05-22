@@ -656,13 +656,13 @@ public class FlyBaseModuleProcessor extends ChadoSequenceProcessor
             } else {
                 String identifier = field.substring(0, colonPos);
                 if (identifier.startsWith("FBbt")) {
-                    dbAnatomyTermIdentifiers.add(identifier);
+                    dbAnatomyTermIdentifiers.add(addCVTermColon(identifier));
                 } else {
                     if (identifier.startsWith("FBdv")) {
-                        dbDevelopmentTermIdentifiers.add(identifier);
+                        dbDevelopmentTermIdentifiers.add(addCVTermColon(identifier));
                     } else {
                         if (identifier.startsWith("FBcv")) {
-                            dbCVTermIdentifiers.add(identifier);
+                            dbCVTermIdentifiers.add(addCVTermColon(identifier));
                         }
                     }
                 }
@@ -724,6 +724,24 @@ public class FlyBaseModuleProcessor extends ChadoSequenceProcessor
         }
 
         return phenotypeAnnotation;
+    }
+
+    private static final Pattern FLYBASE_TERM_IDENTIFIER_PATTERN =
+        Pattern.compile("^FB[^\\d][^\\d]\\d+");
+
+    /**
+     * For a FlyBase cvterm identifier like "FBbt00000001", add a colon in the middle and return:
+     * "FBbt:00000001"
+     * @param identifier the identifier from chado
+     * @return the public identifier
+     */
+    protected static String addCVTermColon(String identifier) {
+        Matcher m = FLYBASE_TERM_IDENTIFIER_PATTERN.matcher(identifier);
+        if (m.matches()) {
+            return identifier.substring(0, 4) + ":" + identifier.substring(4);
+        } else {
+            return identifier;
+        }
     }
 
     /**
