@@ -2,21 +2,6 @@
   <item id="11_2" class="http://www.flymine.org/model/genomic#Publication">
     <attribute name="pubMedId" value="8543160"/>
   </item>
-  <item id="10_2" class="http://www.flymine.org/model/genomic#Allele">
-    <attribute name="primaryIdentifier" value="FBal0060667"/>
-    <attribute name="secondaryIdentifier" value="Scer\GAL4[sd-SG29.1]"/>
-    <attribute name="mutagen" value="SCEI endonuclease"/>
-    <reference name="organism" ref_id="1_1"/>
-    <collection name="dataSets">
-      <reference ref_id="4_1"/>
-    </collection>
-    <collection name="evidence">
-      <reference ref_id="4_1"/>
-    </collection>
-  </item>
-  <item id="15_4" class="http://www.flymine.org/model/genomic#CVTerm">
-    <attribute name="identifier" value="FBcv:0000311"/>
-  </item>
   <item id="3_1" class="http://www.flymine.org/model/genomic#DataSource">
     <attribute name="name" value="FlyBase"/>
   </item>
@@ -71,6 +56,21 @@
       <reference ref_id="4_1"/>
     </collection>
   </item>
+  <item id="10_2" class="http://www.flymine.org/model/genomic#Allele">
+    <attribute name="mutagen" value="SCEI endonuclease"/>
+    <attribute name="primaryIdentifier" value="FBal0060667"/>
+    <attribute name="secondaryIdentifier" value="Scer\GAL4[sd-SG29.1]"/>
+    <reference name="organism" ref_id="1_1"/>
+    <collection name="dataSets">
+      <reference ref_id="4_1"/>
+    </collection>
+    <collection name="evidence">
+      <reference ref_id="4_1"/>
+    </collection>
+  </item>
+  <item id="15_1" class="http://www.flymine.org/model/genomic#CVTerm">
+    <attribute name="identifier" value="FBcv:0000031"/>
+  </item>
   <item id="2_1" class="http://www.flymine.org/model/genomic#Sequence">
     <attribute name="length" value="1001"/>
     <attribute name="residues" value="acgacagatcattccacttttgacagctcactcggcagtaccagaaaatcc"/>
@@ -88,9 +88,6 @@
       <reference ref_id="4_1"/>
     </collection>
   </item>
-  <item id="16_1" class="http://www.flymine.org/model/genomic#DevelopmentTerm">
-    <attribute name="identifier" value="FBdv:00005289"/>
-  </item>
   <item id="13_1" class="http://www.flymine.org/model/genomic#PhenotypeAnnotation">
     <attribute name="annotationType" value="manifest in"/>
     <attribute name="description" value="wing, with ScerGAL4[sd-SG29.1]"/>
@@ -105,6 +102,9 @@
       <reference ref_id="11_6"/>
       <reference ref_id="11_7"/>
     </collection>
+  </item>
+  <item id="15_3" class="http://www.flymine.org/model/genomic#CVTerm">
+    <attribute name="identifier" value="FBcv:0000323"/>
   </item>
   <item id="2_6" class="http://www.flymine.org/model/genomic#Sequence">
     <attribute name="length" value="27905053"/>
@@ -172,8 +172,35 @@
   <item id="14_1" class="http://www.flymine.org/model/genomic#AnatomyTerm">
     <attribute name="identifier" value="FBbt:00004729"/>
   </item>
+  <item id="0_1" class="http://www.flymine.org/model/genomic#Gene">
+    <attribute name="GLEANRsymbol" value="dmel_GLEANR_1_synonym"/>
+    <attribute name="length" value="1001"/>
+    <attribute name="name" value="FBgn0000001_fullname_synonym"/>
+    <attribute name="primaryIdentifier" value="FBgn0000001"/>
+    <attribute name="secondaryIdentifier" value="FBgn0000001_dbxref1"/>
+    <attribute name="symbol" value="FBgn0000001_symbol_synonym"/>
+    <reference name="chromosome" ref_id="7_1"/>
+    <reference name="chromosomeLocation" ref_id="12_2"/>
+    <reference name="organism" ref_id="1_1"/>
+    <reference name="sequence" ref_id="2_1"/>
+    <collection name="dataSets">
+      <reference ref_id="4_1"/>
+    </collection>
+    <collection name="evidence">
+      <reference ref_id="11_1"/>
+      <reference ref_id="11_2"/>
+      <reference ref_id="4_1"/>
+    </collection>
+    <collection name="publications">
+      <reference ref_id="11_1"/>
+      <reference ref_id="11_2"/>
+    </collection>
+  </item>
   <item id="11_7" class="http://www.flymine.org/model/genomic#Publication">
     <attribute name="pubMedId" value="2226204"/>
+  </item>
+  <item id="16_1" class="http://www.flymine.org/model/genomic#DevelopmentTerm">
+    <attribute name="identifier" value="FBdv:00005289"/>
   </item>
   <item id="5_1" class="http://www.flymine.org/model/genomic#Synonym">
     <attribute name="isPrimary" value="true"/>
@@ -233,30 +260,9 @@
       <reference ref_id="4_1"/>
     </collection>
   </item>
-  <item id="0_2" class="http://www.flymine.org/model/genomic#Gene">
-    <attribute name="cytoLocation" value="71B1-71B1"/>
-    <attribute name="length" value="5023"/>
-    <attribute name="primaryIdentifier" value="FBgn0036461"/>
-    <reference name="chromosome" ref_id="7_1"/>
-    <reference name="chromosomeLocation" ref_id="12_1"/>
-    <reference name="organism" ref_id="1_1"/>
-    <reference name="sequence" ref_id="2_2"/>
-    <collection name="dataSets">
-      <reference ref_id="4_1"/>
-    </collection>
-    <collection name="evidence">
-      <reference ref_id="11_3"/>
-    </collection>
-    <collection name="publications">
-      <reference ref_id="11_3"/>
-    </collection>
-  </item>
   <item id="2_2" class="http://www.flymine.org/model/genomic#Sequence">
     <attribute name="length" value="5023"/>
     <attribute name="residues" value="gtcatgcactactatccagttcaccaggctaaagtcggctcctat"/>
-  </item>
-  <item id="15_2" class="http://www.flymine.org/model/genomic#CVTerm">
-    <attribute name="identifier" value="FBcv:0000351"/>
   </item>
   <item id="9_1" class="http://www.flymine.org/model/genomic#Translation">
     <attribute name="length" value="2345"/>
@@ -270,6 +276,25 @@
     </collection>
     <collection name="evidence">
       <reference ref_id="4_1"/>
+    </collection>
+  </item>
+  <item id="0_2" class="http://www.flymine.org/model/genomic#Gene">
+    <attribute name="cytoLocation" value="71B1-71B1"/>
+    <attribute name="length" value="5023"/>
+    <attribute name="primaryIdentifier" value="FBgn0036461"/>
+    <reference name="chromosome" ref_id="7_1"/>
+    <reference name="chromosomeLocation" ref_id="12_1"/>
+    <reference name="organism" ref_id="1_1"/>
+    <reference name="sequence" ref_id="2_2"/>
+    <collection name="dataSets">
+      <reference ref_id="4_1"/>
+    </collection>
+    <collection name="evidence">
+      <reference ref_id="11_3"/>
+      <reference ref_id="4_1"/>
+    </collection>
+    <collection name="publications">
+      <reference ref_id="11_3"/>
     </collection>
   </item>
   <item id="5_18" class="http://www.flymine.org/model/genomic#Synonym">
@@ -297,6 +322,9 @@
     <collection name="evidence">
       <reference ref_id="4_1"/>
     </collection>
+  </item>
+  <item id="15_5" class="http://www.flymine.org/model/genomic#CVTerm">
+    <attribute name="identifier" value="FBcv:0000354"/>
   </item>
   <item id="13_5" class="http://www.flymine.org/model/genomic#PhenotypeAnnotation">
     <attribute name="annotationType" value="phenotype class"/>
@@ -402,29 +430,6 @@
     <attribute name="length" value="148"/>
     <attribute name="residues" value="gattgctcagcgcgaacg"/>
   </item>
-  <item id="0_1" class="http://www.flymine.org/model/genomic#Gene">
-    <attribute name="GLEANRsymbol" value="dmel_GLEANR_1_synonym"/>
-    <attribute name="length" value="1001"/>
-    <attribute name="name" value="FBgn0000001_fullname_synonym"/>
-    <attribute name="primaryIdentifier" value="FBgn0000001"/>
-    <attribute name="secondaryIdentifier" value="FBgn0000001_dbxref1"/>
-    <attribute name="symbol" value="FBgn0000001_symbol_synonym"/>
-    <reference name="chromosome" ref_id="7_1"/>
-    <reference name="chromosomeLocation" ref_id="12_2"/>
-    <reference name="organism" ref_id="1_1"/>
-    <reference name="sequence" ref_id="2_1"/>
-    <collection name="dataSets">
-      <reference ref_id="4_1"/>
-    </collection>
-    <collection name="evidence">
-      <reference ref_id="11_1"/>
-      <reference ref_id="11_2"/>
-    </collection>
-    <collection name="publications">
-      <reference ref_id="11_1"/>
-      <reference ref_id="11_2"/>
-    </collection>
-  </item>
   <item id="6_2" class="http://www.flymine.org/model/genomic#MRNA">
     <attribute name="exonCount" value="2"/>
     <attribute name="length" value="3000"/>
@@ -465,6 +470,9 @@
   <item id="2_4" class="http://www.flymine.org/model/genomic#Sequence">
     <attribute name="length" value="3000"/>
     <attribute name="residues" value="cccgcagcatgtgcatcagcagcatgtgtcatcggacgag"/>
+  </item>
+  <item id="15_2" class="http://www.flymine.org/model/genomic#CVTerm">
+    <attribute name="identifier" value="FBcv:0000351"/>
   </item>
   <item id="5_22" class="http://www.flymine.org/model/genomic#Synonym">
     <attribute name="isPrimary" value="true"/>
@@ -518,6 +526,9 @@
       <reference ref_id="4_1"/>
     </collection>
   </item>
+  <item id="15_4" class="http://www.flymine.org/model/genomic#CVTerm">
+    <attribute name="identifier" value="FBcv:0000311"/>
+  </item>
   <item id="5_5" class="http://www.flymine.org/model/genomic#Synonym">
     <attribute name="isPrimary" value="true"/>
     <attribute name="type" value="identifier"/>
@@ -546,14 +557,12 @@
       <reference ref_id="11_1"/>
       <reference ref_id="11_4"/>
       <reference ref_id="11_5"/>
+      <reference ref_id="4_1"/>
     </collection>
     <collection name="transcripts">
       <reference ref_id="6_1"/>
       <reference ref_id="6_2"/>
     </collection>
-  </item>
-  <item id="15_3" class="http://www.flymine.org/model/genomic#CVTerm">
-    <attribute name="identifier" value="FBcv:0000323"/>
   </item>
   <item id="13_3" class="http://www.flymine.org/model/genomic#PhenotypeAnnotation">
     <attribute name="annotationType" value="manifest in"/>
@@ -568,9 +577,6 @@
     <collection name="dataSets">
       <reference ref_id="4_1"/>
     </collection>
-  </item>
-  <item id="15_1" class="http://www.flymine.org/model/genomic#CVTerm">
-    <attribute name="identifier" value="FBcv:0000031"/>
   </item>
   <item id="5_2" class="http://www.flymine.org/model/genomic#Synonym">
     <attribute name="isPrimary" value="true"/>
@@ -689,8 +695,5 @@
     <collection name="dataSets">
       <reference ref_id="4_1"/>
     </collection>
-  </item>
-  <item id="15_5" class="http://www.flymine.org/model/genomic#CVTerm">
-    <attribute name="identifier" value="FBcv:0000354"/>
   </item>
 </items>

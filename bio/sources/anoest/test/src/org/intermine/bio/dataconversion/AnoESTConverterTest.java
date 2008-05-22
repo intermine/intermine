@@ -39,6 +39,7 @@ public class AnoESTConverterTest extends ItemsTestCase
         MockItemWriter itemWriter = new MockItemWriter(new LinkedHashMap<String, Item>());
         AnoESTConverter converter =
             new TestAnoESTConverter(null, Model.getInstanceByName("genomic"), itemWriter);
+        converter.setDataSourceName("FlyBase");
         converter.process();
         itemWriter.close();
         writeItemsFile(itemWriter.getItems(), "/tmp/AnoESTConverterTest.xml");

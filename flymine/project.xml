@@ -7,6 +7,7 @@
     <source name="chado-db-flybase-dmel" type="chado-db" dump="true">
       <property name="source.db.name" value="flybase"/>
       <property name="organisms" value="7227"/>
+      <property name="dataSourceName" value="FlyBase"/>
       <property name="processors"
                 value="org.intermine.bio.dataconversion.FlyBaseModuleProcessor"/>
       <property name="converter.class" 
@@ -15,6 +16,7 @@
     <source name="chado-db-flybase-dpse" type="chado-db" dump="true">
       <property name="source.db.name" value="flybase"/>
       <property name="organisms" value="7237"/>
+      <property name="dataSourceName" value="FlyBase"/>
       <property name="processors"
                 value="org.intermine.bio.dataconversion.FlyBaseModuleProcessor"/>
       <property name="converter.class" 
@@ -23,6 +25,7 @@
     <source name="chado-db-flybase-others" type="chado-db" dump="true">
       <property name="source.db.name" value="flybase"/>
       <property name="organisms" value="Dana Dere Dgri Dmoj Dper Dsec Dsim Dvir Dwil Dyak"/>
+      <property name="dataSourceName" value="FlyBase"/>
       <property name="processors"
                 value="org.intermine.bio.dataconversion.FlyBaseModuleProcessor"/>
       <property name="converter.class" 
@@ -114,6 +117,8 @@
       <property name="src.data.dir.includes" value="tiffin_ImaGo"/>
     </source>
     <source name="anoest" type="anoest">
+      <property name="dataSourceName" value="VectorBase"/>
+      <property name="dataSetTitle" value="AnoEST clusters"/>
       <property name="source.db.name" value="anoest"/>
     </source>
     <source name="protein_structure" type="protein_structure">

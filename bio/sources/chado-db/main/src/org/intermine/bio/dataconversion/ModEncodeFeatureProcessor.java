@@ -27,7 +27,7 @@ import org.intermine.xml.full.Item;
 public class ModEncodeFeatureProcessor extends ChadoSequenceProcessor
 {
     private static final Logger LOG = Logger.getLogger(ModEncodeFeatureProcessor.class);
-    
+
     private final String dataSetIdentifier;
     private final String dataSourceIdentifier;
     private final List<Integer> dataList;
@@ -39,7 +39,7 @@ public class ModEncodeFeatureProcessor extends ChadoSequenceProcessor
      * @param dataSourceIdentifier the item identifier of the DataSource
      * @param dataList             the list of data ids to be used in the subquery
      */
-    
+
     public ModEncodeFeatureProcessor(ChadoDBConverter chadoDBConverter,
             String dataSetIdentifier, String dataSourceIdentifier,
             List <Integer> dataList) {
@@ -62,7 +62,7 @@ public class ModEncodeFeatureProcessor extends ChadoSequenceProcessor
             + " (SELECT feature_id "
             + "   FROM data_feature "
             + "   WHERE data_id IN (" + queryList + "))";
-            
+
         /* TODO: needs information from EO
         return "feature_id IN "
             + "(SELECT feature_id "
@@ -134,18 +134,18 @@ public class ModEncodeFeatureProcessor extends ChadoSequenceProcessor
             DataSetStoreHook.setDataSets(getModel(), item, dataSetIdentifier, dataSourceIdentifier);
         }
     }
-    
-    
-    
+
+
+
     /**
-     * method to transform dataList (list of integers) 
+     * method to transform dataList (list of integers)
      * in the string for a IN clause in SQL (comma separated)
      * @return String
      */
     private String forINclause() {
 
         StringBuffer ql = new StringBuffer();
-        
+
         Iterator<Integer> i = dataList.iterator();
         Integer index = 0;
         while (i.hasNext()) {
@@ -156,11 +156,5 @@ public class ModEncodeFeatureProcessor extends ChadoSequenceProcessor
             ql = ql.append(i.next());
         }
         return ql.toString();
-    }
-
-    
-    
-    protected String getDataSourceName() {
-        return "modENCODE";
     }
 }

@@ -77,7 +77,7 @@ public class AnoESTConverter extends BioDBConverter
 
             Item cluster = createItem("ESTCluster");
             cluster.setAttribute("primaryIdentifier", identifier);
-            Item dataSet = getDataSetItem(DATASET_TITLE, getDataSourceItem(DATA_SOURCE_NAME));
+            Item dataSet = getDataSetItem(ANOPHELES_TAXON_ID);
             cluster.setAttribute("curated", "false");
             cluster.setReference("organism", getOrganismItem(ANOPHELES_TAXON_ID));
             cluster.addToCollection("evidence", dataSet);
@@ -120,7 +120,7 @@ public class AnoESTConverter extends BioDBConverter
     private void makeEstItems(Connection connection) throws SQLException, ObjectStoreException {
         ResultSet res = getEstResultSet(connection);
 
-        Item dataSet = getDataSetItem(DATASET_TITLE, getDataSourceItem(DATA_SOURCE_NAME));
+        Item dataSet = getDataSetItem(ANOPHELES_TAXON_ID);
         while (res.next()) {
             String accession = res.getString(1);
             String clusterId = res.getString(2);
@@ -170,6 +170,14 @@ public class AnoESTConverter extends BioDBConverter
         String query = "select acc, cl_id, clone from est_view order by acc;";
         ResultSet res = stmt.executeQuery(query);
         return res;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public String getDataSetTitle(@SuppressWarnings("unused") int taxonId) {
+        return DATASET_TITLE;
     }
 
 }
