@@ -402,7 +402,7 @@
       <property name="src.data.dir" location="/shared/data/affy-probes/current"/>
       <property name="src.data.dir.includes" value="*.csv"/>
     </source>
-    <source name="biogrid" type="biogrid">
+    <source name="biogrid" type="biogrid" dump="true">
       <property name="src.data.dir" location="/shared/data/biogrid/current"/>
       <property name="src.data.dir.includes" value="*psi25.xml"/>
     </source>
