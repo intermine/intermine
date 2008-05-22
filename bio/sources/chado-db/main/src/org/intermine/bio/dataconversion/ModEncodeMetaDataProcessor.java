@@ -19,6 +19,7 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import org.apache.log4j.Logger;
 import org.intermine.bio.dataconversion.ChadoSequenceProcessor.FeatureData;
@@ -65,6 +66,11 @@ public class ModEncodeMetaDataProcessor extends ChadoProcessor
     // map used to store all data relative to an experiment
     // experimentId, list of appliedDataIds
     private Map<Integer, List<Integer>> experimentDataMap = new HashMap<Integer, List<Integer>>();
+
+    // maps of each input with its output data and viceversa
+    // input and output of the submission
+    private Map<Integer, List<Integer>> inOutDataMap = new HashMap<Integer, List<Integer>>();
+    private Map<Integer, List<Integer>> outInDataMap = new HashMap<Integer, List<Integer>>();
 
     // just for debugging
     private Map<String, String> debugMap = new HashMap<String, String>(); // itemIdentifier, type
@@ -148,6 +154,8 @@ public class ModEncodeMetaDataProcessor extends ChadoProcessor
         Map<Integer, FeatureData> featureMap = processFeatures(connection, experimentMap);
         processDataFeatureTable(connection, featureMap);
 
+        linksInOut();
+        
         // set references
         setExperimentRefs(connection);
         setExperimentInputRefs(connection);
@@ -503,6 +511,95 @@ public class ModEncodeMetaDataProcessor extends ChadoProcessor
         return nextIterationProtocols;
     }
 
+/**
+ * 
+ * @param experimentId
+ */
+
+
+    private void linksInOut() {
+        Set <Integer> experiments = experimentInDataMap.keySet(); 
+        Iterator <Integer> thisInput = experiments.iterator();
+
+        while (thisInput.hasNext()) {
+            LOG.info("INOUT MAP =========");
+            buildInOutMap (thisInput.next());
+        }
+    }
+    
+    
+    
+    private void buildInOutMap(Integer experimentId) {
+        // 
+        List <Integer> inputData = experimentInDataMap.get(experimentId); 
+        Iterator <Integer> thisInput = inputData.iterator();
+
+        while (thisInput.hasNext()) {
+            Integer currentId = thisInput.next(); 
+
+            List <Integer> currentIteration = new ArrayList<Integer>();
+            List<Integer> nextIteration = new ArrayList<Integer>();
+            currentIteration.add(currentId);
+
+            while (currentIteration.size() > 0) {
+                nextIteration = getOutputs (currentIteration, currentId);
+                currentIteration = nextIteration;
+            }
+            LOG.info("INOUT MAP " + currentId + "|" +  inOutDataMap.get(currentId));
+        }
+    }
+    
+        private List<Integer> getOutputs(List<Integer> ids, Integer submissionInput) {
+            // actually this method also set the map.
+            List <Integer> outs = new ArrayList<Integer>();
+            
+            Iterator <Integer> dataId = ids.iterator();
+            while (dataId.hasNext()) {
+                Integer currentIn = dataId.next();
+                List <Integer> nextAppliedProtocols = 
+                    appliedDataMap.get(currentIn).nextAppliedProtocols;
+
+                if (nextAppliedProtocols.isEmpty()) {
+                    addToMap(inOutDataMap, submissionInput, currentIn);    
+                } else {
+                    Iterator <Integer> nap = nextAppliedProtocols.iterator();        
+                    while (nap.hasNext()) {
+                        addToList(outs, appliedProtocolMap.get(nap.next()).outputData);
+                    }
+                }
+            }
+            return outs;
+        }
+
+
+// 
+//    private Integer[] getOutputs2(Integer adId)
+//    throws SQLException, ObjectStoreException {
+//     // returns list of all output connected with all nextappliedprot
+//
+//        //ArrayList<Integer> outsa = new ArrayList<Integer>();
+//        List <Integer> nextAppliedProtocols = appliedDataMap.get(adId).nextAppliedProtocols;
+//        List <Integer> outs = null;
+//        Set <Integer> ugo = new HashSet<Integer>();
+//     
+//        
+//        Iterator <Integer> nap = nextAppliedProtocols.iterator();        
+//        while (nap.hasNext()) {
+//            Integer currentAP = nap.next();
+//            outs = appliedProtocolMap.get(currentAP).outputData;
+//            ugo.addAll(appliedProtocolMap.get(currentAP).outputData);
+//        }
+//        
+//        Integer[] array = (Integer[]) ugo.toArray(new Integer[ugo.size()]);
+//
+//        //ArrayList<Integer> array =  ArrayList<Integer>[] ugo.toArray();
+//
+//        return array;
+//    }
+    
+    
+    
+    
     
     /**
      *
@@ -1314,6 +1411,29 @@ public class ModEncodeMetaDataProcessor extends ChadoProcessor
         }
     }
 
+    /**
+     * method to add an element to a list which is the value of a map 
+     * @param m       the map (<Integer, List<Integer>>)
+     * @param key     the key for the map
+     * @param value   the list
+     */
+    private void addToList(List<Integer> l, Integer i) {
+        
+        if (!l.contains(i)) {
+            l.add(i);
+        }
+    }
+
+    private void addToList(List<Integer> l, List<Integer> i) {
+        Iterator <Integer> it  = i.iterator();
+        while (it.hasNext()) {
+            Integer thisId = it.next();
+            if (!l.contains(thisId)) {
+                l.add(thisId);
+            }
+        }
+    }
+    
     
     /**
      * to store identifiers in protocol maps.
