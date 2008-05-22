@@ -22,7 +22,7 @@
     <attribute name="pubMedId" value="8543160"/>
   </item>
   <item id="1_5" class="http://www.flymine.org/model/genomic#Gene">
-    <attribute name="symbol" value="dpp"/>
+    <attribute name="primaryIdentifier" value="FBgn001"/>
     <reference name="organism" ref_id="0_0"/>
   </item>
   <item id="1_6" class="http://www.flymine.org/model/genomic#TFBindingSite">
@@ -49,7 +49,7 @@
     <attribute name="pubMedId" value="8458580"/>
   </item>
   <item id="1_10" class="http://www.flymine.org/model/genomic#Gene">
-    <attribute name="symbol" value="dl"/>
+    <attribute name="primaryIdentifier" value="FBgn002"/>
     <reference name="organism" ref_id="0_0"/>
   </item>
   <item id="1_11" class="http://www.flymine.org/model/genomic#TFBindingSite">

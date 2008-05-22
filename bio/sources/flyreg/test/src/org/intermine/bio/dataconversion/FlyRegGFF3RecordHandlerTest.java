@@ -17,6 +17,7 @@ import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
 import java.util.Set;
+import java.util.Collections;
 
 import org.intermine.bio.io.gff3.GFF3Parser;
 import org.intermine.bio.io.gff3.GFF3Record;
@@ -54,6 +55,10 @@ public class FlyRegGFF3RecordHandlerTest extends ItemsTestCase
         tgtModel = Model.getInstanceByName("genomic");
         tgtNs = tgtModel.getNameSpace().toString();
         handler = new FlyRegGFF3RecordHandler(tgtModel);
+        MockIdResolverFactory resolverFactory = new MockIdResolverFactory("Gene");
+        resolverFactory.addResolverEntry("7227", "FBgn001", Collections.singleton("dpp"));
+        resolverFactory.addResolverEntry("7227", "FBgn002", Collections.singleton("dl"));
+        handler.resolverFactory = resolverFactory;
         converter = new GFF3Converter(writer, seqClsName, orgAbbrev, dataSourceName,
                                       "FlyBase", dataSetTitle, tgtModel, handler, null);
         itemFactory = handler.getItemFactory();
@@ -89,7 +94,7 @@ public class FlyRegGFF3RecordHandlerTest extends ItemsTestCase
         }
 
         // uncomment to write a new target items files
-        // writeItemsFile(allItems, "/tmp/flyreg-target-items.xml");
+        writeItemsFile(allItems, "/tmp/flyreg-target-items.xml");
 
         Set expected = readItemSet("FlyRegGFF3RecordHandlerTest.xml");
 

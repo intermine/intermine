@@ -156,7 +156,7 @@ public class FlyRegGFF3RecordHandler extends GFF3RecordHandler
         if (gene == null) {
             gene = getItemFactory().makeItemForClass(nameSpace + "Gene");
             geneIdMap.put(primaryIdentifier, gene);
-            gene.setAttribute("symbol", symbol);
+            gene.setAttribute("primaryIdentifier", primaryIdentifier);
             gene.setReference("organism", getOrganism().getIdentifier());
             addItem(gene);
         }
