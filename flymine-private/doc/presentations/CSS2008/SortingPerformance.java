@@ -95,9 +95,29 @@ public class SortingPerformance
             for(int sortType = 0; sortType < ALGO_COUNT; sortType++) {
                 if (alive[sortType]) {
                     MeasuredResult r = testSort(sortType, DATA_SIZE[i], REPEATS[i]);
-                    System.out.print("\t" + r.getElapsedTime());
-                    if ((r.getElapsedTime() / REPEATS[i]) > 4000) {
-                        alive[sortType] = false;
+                    if (r.getElapsedTime() < 25) {
+                        r = testSort(sortType, DATA_SIZE[i], REPEATS[i] * 64);
+                        System.out.print("\t" + (((double) r.getElapsedTime()) / 64.0));
+                    } else if (r.getElapsedTime() < 50) {
+                        r = testSort(sortType, DATA_SIZE[i], REPEATS[i] * 32);
+                        System.out.print("\t" + (((double) r.getElapsedTime()) / 32.0));
+                    } else if (r.getElapsedTime() < 100) {
+                        r = testSort(sortType, DATA_SIZE[i], REPEATS[i] * 16);
+                        System.out.print("\t" + (((double) r.getElapsedTime()) / 16.0));
+                    } else if (r.getElapsedTime() < 200) {
+                        r = testSort(sortType, DATA_SIZE[i], REPEATS[i] * 8);
+                        System.out.print("\t" + (((double) r.getElapsedTime()) / 8.0));
+                    } else if (r.getElapsedTime() < 400) {
+                        r = testSort(sortType, DATA_SIZE[i], REPEATS[i] * 4);
+                        System.out.print("\t" + (((double) r.getElapsedTime()) / 4.0));
+                    } else if (r.getElapsedTime() < 800) {
+                        r = testSort(sortType, DATA_SIZE[i], REPEATS[i] * 2);
+                        System.out.print("\t" + (((double) r.getElapsedTime()) / 2.0));
+                    } else {
+                        System.out.print("\t" + r.getElapsedTime());
+                        if ((r.getElapsedTime() / REPEATS[i]) > 40000) {
+                            alive[sortType] = false;
+                        }
                     }
                 } else {
                     System.out.print("\t");
@@ -339,19 +359,19 @@ public class SortingPerformance
     private static void bucketSort(int a[], int start, int end) {
         // Assumes the integers are evenly spread from MIN_VAL to MAX_VAL
         int bucketCount = (end - start) / BUCKET_DIV + 1;
-        ArrayList<Integer> buckets[] = new ArrayList[bucketCount];
+        int buckets[] = new int[bucketCount * BUCKET_DIV * 3];
+        int bucketSize[] = new int[bucketCount];
         for (int i = 0; i < bucketCount; i++) {
-            buckets[i] = new ArrayList<Integer>();
+            bucketSize[i] = 0;
         }
         for (int i = start; i < end; i++) {
             int bucketNo = (int) ((((long) bucketCount) * (((long) a[i]) + 2147483648l)) / 4294967296l);
-            buckets[bucketNo].add(new Integer(a[i]));
+            buckets[bucketNo * BUCKET_DIV * 3 + (bucketSize[bucketNo]++)] = a[i];
         }
         int c = start;
         for (int i = 0; i < bucketCount; i++) {
-            for (Integer no : buckets[i]) {
-                a[c] = no.intValue();
-                c++;
+            for (int o = 0; o < bucketSize[i]; o++) {
+                a[c++] = buckets[i * BUCKET_DIV * 3 + o];
             }
         }
         insertionSort(a, start, end);
