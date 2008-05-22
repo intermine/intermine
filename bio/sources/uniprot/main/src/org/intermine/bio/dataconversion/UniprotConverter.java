@@ -1056,12 +1056,9 @@ public class UniprotConverter extends FileConverter
                     variableLookup = null;
                 }
 
-                // if we don't have an FBgn, get from FlyBase using the CG or name
-                if (uniqueGeneIdentifier == null
-                                && (geneSecondaryIdentifier != null || primaryGeneName != null)
-                                && taxonId.equals("7227")) {
-
-                    uniqueGeneIdentifier = resolveGene(geneSecondaryIdentifier, primaryGeneName);
+                if (taxonId.equals("7227")) {
+                    uniqueGeneIdentifier = resolveGene(genePrimaryIdentifier,
+                                                       geneSecondaryIdentifier, primaryGeneName);
                     genePrimaryIdentifier = uniqueGeneIdentifier;
                 }
 
@@ -1203,15 +1200,25 @@ public class UniprotConverter extends FileConverter
             return UniprotConverter.this.createItem(className);
         }
 
-        private String resolveGene(String geneSecondaryIdentifier, String primaryGeneName) {
+        private String resolveGene(String primaryIdentifier, String secondaryIdentifier,
+                                   String name) {
             resolver = resolverFactory.getIdResolver();
-            String flyBaseLookUpId =
-            (geneSecondaryIdentifier == null ? primaryGeneName : geneSecondaryIdentifier);
+            String flyBaseLookUpId = null;
+            if (primaryIdentifier != null) {
+                flyBaseLookUpId = primaryIdentifier;
+            } else if (secondaryIdentifier != null) {
+                flyBaseLookUpId = secondaryIdentifier;
+            } else if (name != null) {
+                flyBaseLookUpId = name;
+            } else {
+                return null;
+            }
+
             int resCount = resolver.countResolutions(taxonId, flyBaseLookUpId);
             if (resCount != 1) {
                 LOG.info("RESOLVER: failed to resolve gene to one identifier, ignoring gene"
                          + ": "
-                         + geneSecondaryIdentifier + " count: " + resCount + " FBgn: "
+                         + flyBaseLookUpId + " count: " + resCount + " FBgn: "
                          + resolver.resolveId(taxonId, flyBaseLookUpId));
                 return null;
             } else {
