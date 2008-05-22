@@ -1,69 +1,44 @@
+<?xml version="1.0"?>
 <items>
-<item id="4_1" class="http://www.flymine.org/model/genomic#MRNA">
-<attribute name="secondaryIdentifier" value="CG11023-RA"/>
-<reference name="organism" ref_id="2_1"/>
-</item>
-<item id="0_1" class="http://www.flymine.org/model/genomic#DataSource">
-<attribute name="name" value="Memorial Sloan-Kettering Cancer Center"/>
-</item>
-<item id="3_1" class="http://www.flymine.org/model/genomic#MiRNATarget">
-<attribute name="end" value="9424"/>
-<attribute name="pvalue" value="3.057390e-02"/>
-<attribute name="score" value="16.9418"/>
-<attribute name="start" value="9403"/>
-<reference name="dataset" ref_id="1_1"/>
-<reference name="mirnagene" ref_id="5_1"/>
-<reference name="target" ref_id="4_1"/>
-</item>
-<item id="2_1" class="http://www.flymine.org/model/genomic#Organism">
-<attribute name="taxonId" value="7227"/>
-</item>
-<item id="5_2" class="http://www.flymine.org/model/genomic#Gene">
-<attribute name="symbol" value="miR-92b"/>
-<reference name="organism" ref_id="2_1"/>
-</item>
-<item id="3_2" class="http://www.flymine.org/model/genomic#MiRNATarget">
-<attribute name="end" value="9424"/>
-<attribute name="pvalue" value="1.179130e-02"/>
-<attribute name="score" value="17.7377"/>
-<attribute name="start" value="9403"/>
-<reference name="dataset" ref_id="1_1"/>
-<reference name="mirnagene" ref_id="5_2"/>
-<reference name="target" ref_id="4_1"/>
-</item>
-<item id="5_1" class="http://www.flymine.org/model/genomic#Gene">
-<attribute name="symbol" value="miR-312"/>
-<reference name="organism" ref_id="2_1"/>
-</item>
-<item id="5_3" class="http://www.flymine.org/model/genomic#Gene">
-<attribute name="symbol" value="miR-313"/>
-<reference name="organism" ref_id="2_1"/>
-</item>
-<item id="3_4" class="http://www.flymine.org/model/genomic#MiRNATarget">
-<attribute name="end" value="9467"/>
-<attribute name="pvalue" value="1.308960e-02"/>
-<attribute name="score" value="18.101"/>
-<attribute name="start" value="9445"/>
-<reference name="dataset" ref_id="1_1"/>
-<reference name="mirnagene" ref_id="5_4"/>
-<reference name="target" ref_id="4_1"/>
-</item>
-<item id="3_3" class="http://www.flymine.org/model/genomic#MiRNATarget">
-<attribute name="end" value="9424"/>
-<attribute name="pvalue" value="1.917020e-02"/>
-<attribute name="score" value="17.3966"/>
-<attribute name="start" value="9404"/>
-<reference name="dataset" ref_id="1_1"/>
-<reference name="mirnagene" ref_id="5_3"/>
-<reference name="target" ref_id="4_1"/>
-</item>
-<item id="1_1" class="http://www.flymine.org/model/genomic#DataSet">
-<attribute name="title" value="Computer prediction by miRanda"/>
-<attribute name="url" value="http://www.microrna.org/microrna/getDownloads.do"/>
-<reference name="dataSource" ref_id="0_1"/>
-</item>
-<item id="5_4" class="http://www.flymine.org/model/genomic#Gene">
-<attribute name="symbol" value="miR-7"/>
-<reference name="organism" ref_id="2_1"/>
-</item>
+  <item id="0_1" class="http://www.flymine.org/model/genomic#DataSource">
+    <attribute name="name" value="Memorial Sloan-Kettering Cancer Center"/>
+  </item>
+  <item id="4_2" class="http://www.flymine.org/model/genomic#MiRNATarget">
+    <attribute name="end" value="9424"/>
+    <attribute name="pvalue" value="1.179130e-02"/>
+    <attribute name="score" value="17.7377"/>
+    <attribute name="start" value="9403"/>
+    <reference name="dataset" ref_id="1_1"/>
+    <reference name="mirnagene" ref_id="3_2"/>
+    <reference name="target" ref_id="5_1"/>
+  </item>
+  <item id="4_1" class="http://www.flymine.org/model/genomic#MiRNATarget">
+    <attribute name="end" value="9424"/>
+    <attribute name="pvalue" value="3.057390e-02"/>
+    <attribute name="score" value="16.9418"/>
+    <attribute name="start" value="9403"/>
+    <reference name="dataset" ref_id="1_1"/>
+    <reference name="mirnagene" ref_id="3_1"/>
+    <reference name="target" ref_id="5_1"/>
+  </item>
+  <item id="2_1" class="http://www.flymine.org/model/genomic#Organism">
+    <attribute name="taxonId" value="7227"/>
+  </item>
+  <item id="3_1" class="http://www.flymine.org/model/genomic#Gene">
+    <attribute name="symbol" value="mir-312"/>
+    <reference name="organism" ref_id="2_1"/>
+  </item>
+  <item id="5_1" class="http://www.flymine.org/model/genomic#MRNA">
+    <attribute name="secondaryIdentifier" value="CG11023-RA"/>
+    <reference name="organism" ref_id="2_1"/>
+  </item>
+  <item id="1_1" class="http://www.flymine.org/model/genomic#DataSet">
+    <attribute name="title" value="Computer prediction by miRanda"/>
+    <attribute name="url" value="http://www.microrna.org/microrna/getDownloads.do"/>
+    <reference name="dataSource" ref_id="0_1"/>
+  </item>
+  <item id="3_2" class="http://www.flymine.org/model/genomic#Gene">
+    <attribute name="symbol" value="mir-92b"/>
+    <reference name="organism" ref_id="2_1"/>
+  </item>
 </items>

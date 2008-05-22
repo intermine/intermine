@@ -112,7 +112,14 @@ public class IdResolver
         return 0;
     }
 
-
+    /**
+     * Return true if the idResolver contains information about this taxon id.
+     * @param taxonId an organism to check for
+     * @return true if data about this taxon id
+     */
+    public boolean hasTaxon(String taxonId) {
+        return orgIdMaps.containsKey(taxonId);
+    }
 
     /**
      * Add alternative main identifiers for a primary identifier to the IdResolver.
