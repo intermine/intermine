@@ -95,7 +95,7 @@ public class DisplayField
 
 
             table = new InlineResultsTable(collection, fd.getClassDescriptor().getModel(),
-                                           webConfig, webProperties, classKeys, tableSize);
+                                           webConfig, webProperties, classKeys, tableSize, false);
         }
         return table;
     }
