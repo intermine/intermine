@@ -54,7 +54,8 @@ public class InlineResultsTable
     private List<ResultElement> resultElementRow;
     private Map<String, Object> fieldValues;
     private Map<Object, Map<String, Object>> rowFieldValues;
-
+    private boolean ignoreDisplayers;
+    
     /**
      * Construct a new InlineResultsTable object
      * @param results the List to display object
@@ -63,11 +64,12 @@ public class InlineResultsTable
      * @param webProperties the web properties from the session
      * @param classKeys Map of class name to set of keys
      * @param size the maximum number of rows to list from the collection, or -1 if we should
+     * @param ignoreDisplayers if true don't include any columns that have jsp displayers defined
      *   display all rows
      */
     public InlineResultsTable(Collection results, Model model,
                               WebConfig webConfig, Map webProperties,
-                              Map classKeys, int size) {
+                              Map classKeys, int size, boolean ignoreDisplayers) {
         this.results = results;
         this.classKeys = classKeys;
         if (results instanceof List) {
@@ -84,7 +86,7 @@ public class InlineResultsTable
 
         this.model = model;
         this.size = size;
-
+        this.ignoreDisplayers = ignoreDisplayers;
     }
 
     /**
@@ -210,6 +212,10 @@ public class InlineResultsTable
             // loop through each column
             while (objectFieldConfigIter.hasNext()) {
                 FieldConfig fc = (FieldConfig) objectFieldConfigIter.next();
+                // if ignoreDisplayers we don't want any columns with a displayer defined
+                if (ignoreDisplayers && fc.getDisplayer() != null) {
+                    continue;
+                }
                 String className = theClass.getUnqualifiedName();
                 String expr = fc.getFieldExpr();
                 String pathString = "." + expr;
@@ -288,6 +294,9 @@ public class InlineResultsTable
      * @return the FieldConfigs
      */
     public List getFieldConfigs() {
+        if (fieldConfigs == null) {
+            initialise();
+        }
         return fieldConfigs;
     }
 

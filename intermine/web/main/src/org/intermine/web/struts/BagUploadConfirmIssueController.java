@@ -105,7 +105,7 @@ public class BagUploadConfirmIssueController extends TilesAction
         Map classKeys = (Map) servletContext.getAttribute(Constants.CLASS_KEYS);
 
         InlineResultsTable table = new InlineResultsTable(objectList, os.getModel(), webConfig,
-                                                          webPropertiesMap, classKeys, -1);
+                                                          webPropertiesMap, classKeys, -1, true);
 
         identifierIter = identifierResultElementMap.keySet().iterator();
         while (identifierIter.hasNext()) {
