@@ -25,5 +25,7 @@
 	<classpathentry kind="lib" path="lib/jsp-api.jar"/>
 	<classpathentry kind="lib" path="lib/rome-0.9.jar"/>
 	<classpathentry kind="lib" path="lib/jdom.jar"/>
+	<classpathentry kind="lib" path="lib/commons-codec-1.3.jar"/>
+	<classpathentry kind="lib" path="lib/commons-httpclient-3.0.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>

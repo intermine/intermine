@@ -10,7 +10,7 @@
 
 </style>
 
-<<script type="text/javascript">
+<script type="text/javascript">
 <!--
     function switchLink(controllerId, linkId) {
         var link = document.getElementById(linkId);
@@ -48,10 +48,8 @@
 	       <table style="width:100%;">
 	           <tr>
 	               <td style="font-size:14px;">
-	                   Add this HTML to embed the results of this template in your web page:
-	               </td>
-	               <td valign="bottom" style="font-size:14px;" align="right">
-	                   <a href="javascript:openPopWindow('linkPreview.do?link=${encodedLink}', 800, 800)" style="1em;">Preview</a>
+	                   Add following HTML to embed the results of this template in your web page. <a href="javascript:openPopWindow('linkPreview.do?link=${encodedLink}', 800, 800)" >Click</a> 
+	                   to see example page with these results included.   
 	               </td>
 	       </table>
 	    </div>
@@ -62,11 +60,9 @@
 	       <table style="width:100%;">
 	           <tr>
 	               <td style="font-size:14px;">
-	                   Web service link to this template. Use this URL to fetch tab delimited results for this template in your own program.
+	                   Web service link to this template. Use following URL to fetch tab delimited results for this template in your own program. <a href="javascript:openPopWindow('tabLinkPreview.do?link=${encodedLink}', 800, 1000)">Click</a>
+	                   to see what you will get with this link.
 	               </td>
-                   <td style="font-size:14px;" valign="bottom" align="right">
-                       <a href="javascript:openPopWindow('${link}&amp;format=tab', 800, 1000)">Preview</a>
-                   </td>
 	           </tr>
 	       </table>
 	    </div>
