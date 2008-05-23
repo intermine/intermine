@@ -101,6 +101,8 @@ public class FlyBaseModuleProcessor extends ChadoSequenceProcessor
     // an object representing the FlyBase miscellaneous CV
     private ChadoCV flyBaseMiscCv = null;
 
+    private static final String ALLELE_TEMP_TABLE_NAME = "intermine_flybase_allele_temp";
+
     /**
      * Create a new FlyBaseChadoDBConverter.
      * @param chadoDBConverter the converter that created this object
@@ -140,6 +142,37 @@ public class FlyBaseModuleProcessor extends ChadoSequenceProcessor
         } catch (SQLException e) {
             throw new RuntimeException("problem while reading located genes", e);
         }
+    }
+
+    private void createAllelesTempTable(Connection connection) throws SQLException {
+        String organismConstraint = getOrganismConstraint();
+        String orgConstraintForQuery = "";
+        if (!StringUtils.isEmpty(organismConstraint)) {
+            orgConstraintForQuery = " AND " + organismConstraint;
+        }
+
+        String query =
+            " CREATE TEMPORARY TABLE " + ALLELE_TEMP_TABLE_NAME
+            + " AS SELECT feature_id"
+            + " FROM feature, cvterm feature_type "
+            + " WHERE feature_type.name = 'gene'"
+            + " AND type_id = feature_type.cvterm_id"
+            + " AND uniquename LIKE 'FBal%'"
+            + " AND NOT feature.is_obsolete"
+            + " AND feature_id IN (SELECT feature_id FROM feature WHERE "
+            + getLocatedGeneAllesSql() + ")"
+            + orgConstraintForQuery;
+
+        Statement stmt = connection.createStatement();
+        LOG.info("executing: " + query);
+        stmt.execute(query);
+        String idIndexQuery = "CREATE INDEX " + ALLELE_TEMP_TABLE_NAME + "_feature_index ON "
+            + ALLELE_TEMP_TABLE_NAME + "(feature_id)";
+        LOG.info("executing: " + idIndexQuery);
+        stmt.execute(idIndexQuery);
+        String analyze = "ANALYZE " + ALLELE_TEMP_TABLE_NAME;
+        LOG.info("executing: " + analyze);
+        stmt.execute(analyze);
     }
 
     /**
@@ -369,14 +402,18 @@ public class FlyBaseModuleProcessor extends ChadoSequenceProcessor
     @Override
     protected String getExtraFeatureConstraint() {
         return "NOT ((cvterm.name = 'golden_path_region'"
-             + " OR cvterm.name = 'ultra_scaffold')"
-             + " AND (uniquename LIKE 'Unknown_%' OR uniquename LIKE '%_groupMISC'))"
-             + " AND (NOT (uniquename LIKE 'FBal%') OR feature_id IN"
-             + "   (SELECT object_id"
-             + "      FROM feature_relationship, cvterm"
-             + "     WHERE type_id = cvterm.cvterm_id"
-             + "       AND cvterm.name = 'alleleof'"
-             + "       AND subject_id IN (" + getLocatedGenesSql() + ")))";
+            + " OR cvterm.name = 'ultra_scaffold')"
+            + " AND (uniquename LIKE 'Unknown_%' OR uniquename LIKE '%_groupMISC'))"
+            + " AND " + getLocatedGeneAllesSql();
+    }
+
+    private String getLocatedGeneAllesSql() {
+        return "(NOT (uniquename LIKE 'FBal%') OR feature_id IN"
+            + "   (SELECT subject_id"
+            + "      FROM feature_relationship, cvterm"
+            + "     WHERE type_id = cvterm.cvterm_id"
+            + "       AND cvterm.name = 'alleleof'"
+            + "       AND object_id IN (" + getLocatedGenesSql() + ")))";
     }
 
     /**
@@ -511,6 +548,9 @@ public class FlyBaseModuleProcessor extends ChadoSequenceProcessor
     @Override
     protected void extraProcessing(Connection connection, Map<Integer, FeatureData> features)
         throws ObjectStoreException, SQLException {
+
+        createAllelesTempTable(connection);
+
         for (FeatureData featureData: features.values()) {
             if ((featureData.flags & FeatureData.IDENTIFIER_SET) == 0) {
                 setAttribute(featureData.getIntermineObjectId(), "primaryIdentifier",
@@ -874,20 +914,7 @@ public class FlyBaseModuleProcessor extends ChadoSequenceProcessor
     }
 
     private String getAlleleFeaturesSql() {
-        String organismConstraint = getOrganismConstraint();
-        String orgConstraintForQuery = "";
-        if (!StringUtils.isEmpty(organismConstraint)) {
-            orgConstraintForQuery = " AND " + organismConstraint;
-        }
-
-        return " SELECT feature_id"
-            + " FROM feature, cvterm feature_type "
-            + " WHERE feature_type.name = 'gene'"
-            + " AND type_id = feature_type.cvterm_id"
-            + " AND uniquename LIKE 'FBal%'"
-            + " AND NOT feature.is_obsolete"
-            + " AND feature_id IN (" + getLocatedGenesSql() + ")"
-            + orgConstraintForQuery;
+        return "SELECT feature_id FROM " + ALLELE_TEMP_TABLE_NAME; 
     }
 
     /**
