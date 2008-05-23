@@ -457,4 +457,11 @@ public class TestFlyBaseModuleProcessor extends FlyBaseModuleProcessor
         return res;
     }
 
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    protected void createAllelesTempTable(Connection connection) throws SQLException {
+        // do nothing
+    }
 }

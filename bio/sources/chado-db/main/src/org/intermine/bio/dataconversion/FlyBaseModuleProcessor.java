@@ -144,7 +144,13 @@ public class FlyBaseModuleProcessor extends ChadoSequenceProcessor
         }
     }
 
-    private void createAllelesTempTable(Connection connection) throws SQLException {
+    /**
+     * Create a temporary table of allele feature_ids.  The table will only have allele of genes
+     * with locations.
+     * @param connection the connection
+     * @throws SQLException if there is a database problem
+     */
+    protected void createAllelesTempTable(Connection connection) throws SQLException {
         String organismConstraint = getOrganismConstraint();
         String orgConstraintForQuery = "";
         if (!StringUtils.isEmpty(organismConstraint)) {
@@ -674,7 +680,7 @@ public class FlyBaseModuleProcessor extends ChadoSequenceProcessor
             Integer featurePropId = new Integer(res.getInt("featureprop_id"));
             String pubDbId = res.getString("pub_db_identifier");
 
-            String pubicationItemIdentifier = makePublication(pubDbId);
+            String pubicationItemIdentifier = makePublication(Integer.parseInt(pubDbId));
 
             if (!retMap.containsKey(featurePropId)) {
                 retMap.put(featurePropId, new ArrayList<String>());
@@ -914,7 +920,7 @@ public class FlyBaseModuleProcessor extends ChadoSequenceProcessor
     }
 
     private String getAlleleFeaturesSql() {
-        return "SELECT feature_id FROM " + ALLELE_TEMP_TABLE_NAME; 
+        return "SELECT feature_id FROM " + ALLELE_TEMP_TABLE_NAME;
     }
 
     /**
