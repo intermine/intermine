@@ -219,7 +219,9 @@ sub run_and_check_status
   log_and_print `date`, "\n\n";
   log_and_print "finished\n\n";
 
-  warn "ERROR: $result\n";
+  if ($result != 0) {
+    warn "ERROR: $result\n";
+  }
 
   if (!$dry_run && $result != 0) {
     log_and_print "failed with exit code $?: @_\n";
