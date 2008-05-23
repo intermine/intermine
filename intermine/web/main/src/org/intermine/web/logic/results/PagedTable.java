@@ -13,10 +13,10 @@ package org.intermine.web.logic.results;
 import java.util.AbstractList;
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.HashSet;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
-import java.util.Set;
+import java.util.Map;
 
 import org.intermine.objectstore.flatouterjoins.MultiRow;
 import org.intermine.objectstore.query.ResultsRow;
@@ -43,7 +43,9 @@ public class PagedTable
 
     // object ids that have been selected in the table
     // TODO this may be more memory efficient with an IntPresentSet
-    private Set<Integer> selectedIds = new HashSet<Integer>();
+    private Map<Integer, String> selectedIds = new HashMap<Integer, String>();
+    private int allSelected = -1;
+    private String selectedClass;
     
     /**
      * Construct a PagedTable with a list of column names
@@ -297,11 +299,13 @@ public class PagedTable
     }
 
     /**
-     * Add an object id that has been selected in the table.
+     * Add an object id and its field value 
+     * that has been selected in the table.
      * @param objectId the id to select
+     * @param field the value of the field selected
      */
-    public void selectId(Integer objectId) {
-        this.selectedIds.add(objectId);
+    public void selectId(Integer objectId, String field) {
+        this.selectedIds.put(objectId, field);
     }
     
     /**
@@ -309,24 +313,63 @@ public class PagedTable
      * @return selected ids as Strings.
      */
     public String[] getSelectedIdStrings() {
-        String[] s = new String[selectedIds.size()];
+        String[] s;
         int i = 0;
-        for (Integer id : selectedIds) {
-            s[i] = id.toString();
-            i++;
+        if (allSelected == -1) {
+            s = new String[selectedIds.size()];
+            for (Integer id : selectedIds.keySet()) {
+                s[i] = id.toString();
+                i++;
+            }
+        } else {
+            s =  new String[this.getResultElementRows().size()];
+            for (List<ResultElement> currentRow : this.getResultElementRows()) {
+                ResultElement resElt = currentRow.get(allSelected);
+                s[i] = resElt.getId().toString();
+                i++;
+            }
         }
         return s;
     }
     
     /**
-     * Return a set of object ids that have been selected.
-     * @return selected object ids
+     * Return a map of object ids that have been selected
+     * to their field values.
+     * @return selected object ids and field values
      */
-    public Set<Integer> getSelectedIds() {
+    public Map<Integer, String> getSelectedIds() {
         return selectedIds;
     }
     
     
+    /**
+     * @return the allSelected
+     */
+    public int isAllSelected() {
+        return allSelected;
+    }
+
+    /**
+     * @param allSelected the allSelected to set
+     */
+    public void setAllSelected(int allSelected) {
+        this.allSelected = allSelected;
+    }
+
+    /**
+     * @return the selectedClass
+     */
+    public String getSelectedClass() {
+        return selectedClass;
+    }
+
+    /**
+     * @param selectedClass the selectedClass to set
+     */
+    public void setSelectedClass(String selectedClass) {
+        this.selectedClass = selectedClass;
+    }
+
     /**
      * Set the rows fields to be a List of Lists of values from ResultElement objects from
      * getResultElementRows().
@@ -370,7 +413,7 @@ public class PagedTable
                 // if some objects already selected, set corresponding  ResultElements here
                 if (!selectedIds.isEmpty()) {
                     for (ResultElement re : resultsRow) {
-                        if (selectedIds.contains(re.getId())) {
+                        if (re != null && selectedIds.keySet().contains(re.getId())) {
                             re.setSelected(true);
                         }
                     }
