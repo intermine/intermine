@@ -57,4 +57,21 @@
 <collection name="evidence"><reference ref_id="2_1"/></collection>
 <collection name="genes"><reference ref_id="6_1"/></collection>
 </item>
+<item id="3_3" class="http://www.flymine.org/model/genomic#ProbeSet">
+  <attribute name="name" value="153347_at"/>
+  <attribute name="primaryIdentifier" value="153347_at"/>
+  <reference name="organism" ref_id="1_1"/>
+  <collection name="evidence">
+    <reference ref_id="2_1"/>
+  </collection>
+  <collection name="genes">
+    <reference ref_id="6_1"/>
+  </collection>
+</item>
+<item id="4_3" class="http://www.flymine.org/model/genomic#Synonym">
+  <attribute name="type" value="identifier"/>
+  <attribute name="value" value="153347_at"/>
+  <reference name="source" ref_id="0_1"/>
+  <reference name="subject" ref_id="3_3"/>
+</item>
 </items>
