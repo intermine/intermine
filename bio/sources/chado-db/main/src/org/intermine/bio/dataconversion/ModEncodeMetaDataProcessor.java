@@ -67,8 +67,7 @@ public class ModEncodeMetaDataProcessor extends ChadoProcessor
     // experimentId, list of appliedDataIds
     private Map<Integer, List<Integer>> experimentDataMap = new HashMap<Integer, List<Integer>>();
 
-    // maps of each input with its output data and viceversa
-    // input and output of the submission
+    // maps of each submission input with its (submission) output data and vice versa
     private Map<Integer, List<Integer>> inOutDataMap = new HashMap<Integer, List<Integer>>();
     private Map<Integer, List<Integer>> outInDataMap = new HashMap<Integer, List<Integer>>();
 
@@ -154,6 +153,8 @@ public class ModEncodeMetaDataProcessor extends ChadoProcessor
         Map<Integer, FeatureData> featureMap = processFeatures(connection, experimentMap);
         processDataFeatureTable(connection, featureMap);
 
+        // links submission inputs with their respective submission outputs
+        // also set the references
         linksInOut(connection);
         
         // set references
@@ -232,7 +233,7 @@ public class ModEncodeMetaDataProcessor extends ChadoProcessor
             String providerItemIdentifier = experimentSubmissionDetails.providerItemIdentifier;
             ModEncodeFeatureProcessor processor =
             new ModEncodeFeatureProcessor(getChadoDBConverter(), experimentItemIdentifier,
-                    providerItemIdentifier, createDataIdsList(chadoExperimentId));
+                    providerItemIdentifier, getDataIdsList(chadoExperimentId));
             
             processor.process(connection);
             featureMap.putAll(processor.getFeatureMap());
@@ -253,7 +254,7 @@ public class ModEncodeMetaDataProcessor extends ChadoProcessor
      * @param experimentId
      * @return the list of dataIds
      */
-        private List<Integer> createDataIdsList(Integer experimentId) {
+        private List<Integer> getDataIdsList(Integer experimentId) {
 
             List<Integer> appliedDataIds = experimentDataMap.get(experimentId);
             List<Integer> dataIds = new ArrayList<Integer>();
@@ -394,10 +395,6 @@ public class ModEncodeMetaDataProcessor extends ChadoProcessor
         LOG.info("created " + appliedProtocolMap.size() + " DAG nodes in map");
         res.close();
 
-        // DB
-        // printMapAP (appliedProtocolMap);
-        // printMapDATA (appliedDataMap);
-
         // now traverse the DAG, and associate experiment with all the applied protocols
         traverseDag();
     }
@@ -468,7 +465,6 @@ public class ModEncodeMetaDataProcessor extends ChadoProcessor
             Integer currentId = pap.next();
             outputs.addAll(appliedProtocolMap.get(currentId).outputData);
             Integer experimentId = appliedProtocolMap.get(currentId).experimentId;
-            //Integer levelDag = appliedProtocolMap.get(currentId).levelDag++;
             Iterator<Integer> od = outputs.iterator();
             while (od.hasNext()) {
                 Integer currentOD = od.next();
@@ -511,42 +507,63 @@ public class ModEncodeMetaDataProcessor extends ChadoProcessor
         return nextIterationProtocols;
     }
 
-/**
- * 
- * @param experimentId
- */
 
-
+    /**
+     * 
+     * =======================
+     *    SUBMISSION IN-OUT
+     * =======================
+     * 
+     *    This part of the code deals with setting references between
+     *    each submission input (experimentInData) with its respective 
+     *    submission output(s) (experimentOutData), black-boxing the DAG.
+     *    This method loop through all the submissions, each time
+     *    creating the maps linking ins and outs and then setting
+     *    the references.
+     * @param connection
+     * @throws SQLException
+     * @throws ObjectStoreException
+     */
     private void linksInOut(Connection connection) 
     throws SQLException, ObjectStoreException {
         Set <Integer> experiments = experimentInDataMap.keySet(); 
         Iterator <Integer> thisInput = experiments.iterator();
 
-        
-        
         while (thisInput.hasNext()) {
             // FOR EACH EXPERIMENT
             // clear the maps
             inOutDataMap.clear();
             outInDataMap.clear();
-            
+
             LOG.info("INOUT MAP =========");
-            buildInOutMaps (thisInput.next());
+            // build In-Out map
+            buildInOutMap (thisInput.next());
+            // the reverse map is built from the previous one
+            buildOutInMap();
+            
             setInOutRefs(connection);
             setOutInRefs(connection);
         }
     }
-    
-    
-    
-    private void buildInOutMaps(Integer experimentId) {
-        // 
+
+
+    /**
+     * Builds the map linking each input to its outputs
+     * 
+     * @param experimentId
+     */
+    private void buildInOutMap(Integer experimentId) {
+        // get all the submission input data 
         List <Integer> inputData = experimentInDataMap.get(experimentId); 
         Iterator <Integer> thisInput = inputData.iterator();
 
         while (thisInput.hasNext()) {
             Integer currentId = thisInput.next(); 
-
+            // for each find the related outputs.
+            // note: the first time only the submission input is sent to the loop,
+            // then it could be list of intermediate outputs (which are
+            // inputs to other applied protocols) that need to be processed
+            // (i.e. used to find the their respective outputs).
             List <Integer> currentIteration = new ArrayList<Integer>();
             List<Integer> nextIteration = new ArrayList<Integer>();
             currentIteration.add(currentId);
@@ -557,76 +574,64 @@ public class ModEncodeMetaDataProcessor extends ChadoProcessor
             }
             LOG.info("INOUT MAP " + currentId + "|" +  inOutDataMap.get(currentId));
         }
-        
-        buildOutInMap();
     }
-    
-    
-    
-        private List<Integer> getOutputs(List<Integer> ids, Integer submissionInput) {
-            // actually this method also set the map.
-            List <Integer> outs = new ArrayList<Integer>();
-            
-            Iterator <Integer> dataId = ids.iterator();
-            while (dataId.hasNext()) {
-                Integer currentIn = dataId.next();
-                List <Integer> nextAppliedProtocols = 
-                    appliedDataMap.get(currentIn).nextAppliedProtocols;
 
-                if (nextAppliedProtocols.isEmpty()) {
-                    addToMap(inOutDataMap, submissionInput, currentIn);    
-                } else {
-                    Iterator <Integer> nap = nextAppliedProtocols.iterator();        
-                    while (nap.hasNext()) {
-                        addToList(outs, appliedProtocolMap.get(nap.next()).outputData);
-                    }
-                }
-            }
-            return outs;
-        }
 
-        
-        private void buildOutInMap() {
-            // 
-            Set <Integer> in = inOutDataMap.keySet();
-            Iterator <Integer> ins = in.iterator();
-            while (ins.hasNext()) {
-                Integer thisIn = ins.next();
-                List <Integer> out = inOutDataMap.get(thisIn);
-                Iterator <Integer> outs = out.iterator();
-                while (outs.hasNext()) {
-                    addToMap (outInDataMap, outs.next(), thisIn);
+    /**
+     * get the outputs related to a list of inputs and builds the inOutData map.
+     * note: for each submission input, when this is first called the list contains 
+     * only the submission input. Then it is filled with the outputs found (that are
+     * potentially inputs to following steps).
+     *  
+     * @param ids list of intermediate inputs (they are outputs of previous steps)
+     * @param submissionInput  the initial input we are considering 
+     * @return the list of outputs related to the list of inputs
+     */
+    private List<Integer> getOutputs(List<Integer> ids, Integer submissionInput) {
+        // actually this method also set the map.
+        List <Integer> outs = new ArrayList<Integer>();
+
+        Iterator <Integer> dataId = ids.iterator();
+        while (dataId.hasNext()) {
+            Integer currentIn = dataId.next();
+            List <Integer> nextAppliedProtocols = 
+                appliedDataMap.get(currentIn).nextAppliedProtocols;
+
+            if (nextAppliedProtocols.isEmpty()) {
+                // this is a submission output: let's connect it to the 
+                // submission input
+                addToMap(inOutDataMap, submissionInput, currentIn);    
+            } else {
+                // keep gathering the outputs..
+                Iterator <Integer> nap = nextAppliedProtocols.iterator();        
+                while (nap.hasNext()) {
+                    // addToList checks if the various ids are already present in 
+                    // the results list before adding them
+                    addToList(outs, appliedProtocolMap.get(nap.next()).outputData);
                 }
             }
         }
+        return outs;
+    }
 
-// 
-//    private Integer[] getOutputs2(Integer adId)
-//    throws SQLException, ObjectStoreException {
-//     // returns list of all output connected with all nextappliedprot
-//
-//        //ArrayList<Integer> outsa = new ArrayList<Integer>();
-//        List <Integer> nextAppliedProtocols = appliedDataMap.get(adId).nextAppliedProtocols;
-//        List <Integer> outs = null;
-//        Set <Integer> ugo = new HashSet<Integer>();
-//     
-//        
-//        Iterator <Integer> nap = nextAppliedProtocols.iterator();        
-//        while (nap.hasNext()) {
-//            Integer currentAP = nap.next();
-//            outs = appliedProtocolMap.get(currentAP).outputData;
-//            ugo.addAll(appliedProtocolMap.get(currentAP).outputData);
-//        }
-//        
-//        Integer[] array = (Integer[]) ugo.toArray(new Integer[ugo.size()]);
-//
-//        //ArrayList<Integer> array =  ArrayList<Integer>[] ugo.toArray();
-//
-//        return array;
-//    }
-    
-    
-    
+    /**
+     * builds the map from each submission output to its related inputs.
+     * it uses the previously built reverse map (each submission input
+     * with its related submission output(s))
+     *  
+     */
+    private void buildOutInMap() {
+        Set <Integer> in = inOutDataMap.keySet();
+        Iterator <Integer> ins = in.iterator();
+        while (ins.hasNext()) {
+            Integer thisIn = ins.next();
+            List <Integer> out = inOutDataMap.get(thisIn);
+            Iterator <Integer> outs = out.iterator();
+            while (outs.hasNext()) {
+                addToMap (outInDataMap, outs.next(), thisIn);
+            }
+        }
+    }
     
     
     /**
@@ -1496,10 +1501,9 @@ public class ModEncodeMetaDataProcessor extends ChadoProcessor
     }
 
     /**
-     * method to add an element to a list which is the value of a map 
-     * @param m       the map (<Integer, List<Integer>>)
-     * @param key     the key for the map
-     * @param value   the list
+     * adds an element (Integer) to a list only if it is not there yet
+     * @param l the list
+     * @param i the element
      */
     private void addToList(List<Integer> l, Integer i) {
         
@@ -1508,6 +1512,12 @@ public class ModEncodeMetaDataProcessor extends ChadoProcessor
         }
     }
 
+    /**
+     * adds the elements of a list i to a list l only if they are not yet
+     * there
+     * @param l the receiving list
+     * @param i the donating list
+     */
     private void addToList(List<Integer> l, List<Integer> i) {
         Iterator <Integer> it  = i.iterator();
         while (it.hasNext()) {
@@ -1565,7 +1575,6 @@ public class ModEncodeMetaDataProcessor extends ChadoProcessor
         }
         debugMap .put(i.getIdentifier(), i.getClassName());
     }
-
     
     
     // utilities for debugging
@@ -1620,5 +1629,4 @@ public class ModEncodeMetaDataProcessor extends ChadoProcessor
             }
         }
     }
-   
 }
