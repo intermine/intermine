@@ -68,8 +68,11 @@ public abstract class WebService
     private static final int FORBIDDEN_HTTP_CODE = 403;
     
     private static final String WEB_SERVICE_DISABLED_PROPERTY = "webservice.disabled";
-    
-    private static final String OUTPUT_PARAMETER = "format";
+
+    /**
+     * Name of format parameter that specifies format of returned results.  
+     */
+    public static final String OUTPUT_PARAMETER = "format";
     
     private static Logger logger = Logger.getLogger(WebService.class);
     

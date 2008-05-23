@@ -1,0 +1,66 @@
+package org.intermine.web.struts;
+
+/*
+ * Copyright (C) 2002-2008 FlyMine
+ *
+ * This code may be freely distributed and modified under the
+ * terms of the GNU Lesser General Public Licence.  This should
+ * be distributed with the code.  See the LICENSE file for more
+ * information or http://www.gnu.org/copyleft/lesser.html.
+ *
+ */
+
+import java.io.PrintWriter;
+
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+
+import org.apache.struts.action.ActionForm;
+import org.apache.struts.action.ActionForward;
+import org.apache.struts.action.ActionMapping;
+import org.intermine.web.util.HttpClient;
+import org.intermine.webservice.WebService;
+import org.intermine.webservice.query.result.WebServiceRequestParser;
+
+
+/**
+ * Class that renders page with web service results and displays
+ * message when there are no results.
+ * @author Jakub Kulaviak
+ **/
+public class TabLinkPreviewAction extends InterMineAction
+{
+    
+    /**
+     * {@inheritDoc}
+     */
+    public ActionForward execute(ActionMapping mapping, ActionForm form,
+            HttpServletRequest request, HttpServletResponse response)
+            throws Exception {
+        String link = request.getParameter("link");
+        String url = link.replaceAll("XXXXX", "&");
+        url = url + "&" + WebService.OUTPUT_PARAMETER + "=" 
+            + WebServiceRequestParser.FORMAT_PARAMETER_TAB;
+        HttpClient client = new HttpClient();
+        byte[] data = client.download(url);
+        PrintWriter writer = response.getWriter();
+        writer.println("<html>");
+        String content;
+        if (data.length == 0) {
+            content = "There are no results for this query."
+                    + "Please notice, that this message is displayed only for preview. "
+                    + "Empty output is returned in case of downloading data with script.";
+        } else {
+            content = new String(data);
+        }
+        printPage(content, writer);
+        return null;
+    }
+
+    private void printPage(String content, PrintWriter writer) {
+        writer.println("<html><head><title>Web service results preview</title></head><body><pre>");
+        writer.println(content);
+        writer.println("</pre></body></html>");
+        writer.flush();
+    }
+}

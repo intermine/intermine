@@ -115,6 +115,8 @@
     </action>    
     <action path="/linkPreview" forward="/linkPreview.jsp">
     </action>    		
+	<action path="/tabLinkPreview" type="org.intermine.web.struts.TabLinkPreviewAction">
+	</action>
 		
     <action path="/modifyQueryChange" type="org.intermine.web.struts.ModifyQueryChangeAction" parameter="method">
       <forward name="query" redirect="true" path="/query.do"/>
