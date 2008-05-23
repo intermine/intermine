@@ -24,24 +24,22 @@ import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
 import org.apache.struts.action.ActionMessage;
+import org.intermine.model.InterMineObject;
 import org.intermine.objectstore.ObjectStore;
 import org.intermine.objectstore.ObjectStoreException;
 import org.intermine.objectstore.ObjectStoreWriter;
 import org.intermine.objectstore.intermine.ObjectStoreWriterInterMineImpl;
+import org.intermine.objectstore.query.BagConstraint;
+import org.intermine.objectstore.query.ConstraintOp;
 import org.intermine.objectstore.query.Query;
 import org.intermine.objectstore.query.QueryClass;
-import org.intermine.objectstore.query.QueryCloner;
 import org.intermine.objectstore.query.QueryField;
-import org.intermine.objectstore.query.QuerySelectable;
-import org.intermine.path.Path;
-import org.intermine.util.TypeUtil;
+import org.intermine.objectstore.query.Results;
 import org.intermine.web.logic.Constants;
 import org.intermine.web.logic.bag.InterMineBag;
 import org.intermine.web.logic.profile.Profile;
 import org.intermine.web.logic.profile.ProfileManager;
 import org.intermine.web.logic.results.PagedTable;
-import org.intermine.web.logic.results.ResultElement;
-import org.intermine.web.logic.results.WebResults;
 import org.intermine.web.logic.results.WebTable;
 import org.intermine.web.logic.session.SessionMethods;
 
@@ -117,7 +115,7 @@ public class SaveBagAction extends InterMineAction
             return null;
         }
 
-        if (sbf.getSelectedObjects().length == 0) {
+        if (pt.getSelectedIds().keySet().size() == 0) {
             ActionMessage actionMessage = new ActionMessage("errors.bag.empty");
             recordError(actionMessage, request);
             return mapping.findForward("results");
@@ -139,78 +137,78 @@ public class SaveBagAction extends InterMineAction
         }
 
         // First pass through, just to check types are compatible.
-        for (int i = 0; i < sbf.getSelectedObjects().length; i++) {
-            String selectedObjectString = sbf.getSelectedObjects()[i];
-            if (!selectedObjectString.matches(".*,.*,.*") && seenAllRows) {
-                // ignore the column type as we're going to iterate over all rows
-                continue;
-            }
-            int indexOfFirstComma = selectedObjectString.indexOf(",");
-            String columnIndexString = selectedObjectString.substring(0, indexOfFirstComma);
-            int columnIndex = Integer.parseInt(columnIndexString);
-            Path columnPath = allRows.getColumns().get(columnIndex).getPath();
-            String columnType = null;
-            String cls = columnPath.getStartClassDescriptor().getUnqualifiedName();
-            if (cls.equals("Synonym")) {
-                int indexOfUnderscore = selectedObjectString.indexOf("_");
-                columnType = selectedObjectString.substring(++indexOfUnderscore);
-            } else {
-                columnType = columnPath.getLastClassDescriptor().getName();
-            }
-            objectTypes.add(TypeUtil.unqualifiedName(columnType));
-        }
-
-        if (objectTypes.size() > 1) {
-            ActionMessage actionMessage = new ActionMessage("bag.moreThanOneType");
-            recordError(actionMessage, request);
-            return mapping.findForward("results");
-        }
+//        for (int i = 0; i < sbf.getSelectedObjects().length; i++) {
+//            String selectedObjectString = sbf.getSelectedObjects()[i];
+//            if (!selectedObjectString.matches(".*,.*,.*") && seenAllRows) {
+//                // ignore the column type as we're going to iterate over all rows
+//                continue;
+//            }
+//            int indexOfFirstComma = selectedObjectString.indexOf(",");
+//            String columnIndexString = selectedObjectString.substring(0, indexOfFirstComma);
+//            int columnIndex = Integer.parseInt(columnIndexString);
+//            Path columnPath = allRows.getColumns().get(columnIndex).getPath();
+//            String columnType = null;
+//            String cls = columnPath.getStartClassDescriptor().getUnqualifiedName();
+//            if (cls.equals("Synonym")) {
+//                int indexOfUnderscore = selectedObjectString.indexOf("_");
+//                columnType = selectedObjectString.substring(++indexOfUnderscore);
+//            } else {
+//                columnType = columnPath.getLastClassDescriptor().getName();
+//            }
+//            objectTypes.add(TypeUtil.unqualifiedName(columnType));
+//        }
+//
+//        if (objectTypes.size() > 1) {
+//            ActionMessage actionMessage = new ActionMessage("bag.moreThanOneType");
+//            recordError(actionMessage, request);
+//            return mapping.findForward("results");
+//        }
 
         ObjectStoreWriter osw = null;
         try {
             if (bag == null) {
-                bag = new InterMineBag(bagName, objectTypes.iterator().next(), null, new Date(), os,
+                bag = new InterMineBag(bagName, pt.getSelectedClass(), null, new Date(), os,
                         profile.getUserId(), uosw);
                 profile.saveBag(bagName, bag);
             }
 
             osw = new ObjectStoreWriterInterMineImpl(os);
             // Second pass through, to actually copy the data.
-            for (int i = 0; i < sbf.getSelectedObjects().length; i++) {
-                String selectedObjectString = sbf.getSelectedObjects()[i];
-
-                int indexOfFirstComma = selectedObjectString.indexOf(',');
-                String columnIndexString = selectedObjectString.substring(0, indexOfFirstComma);
-                int columnIndex = Integer.parseInt(columnIndexString);
-                Path columnPath = allRows.getColumns().get(columnIndex).getPath();
-                int indexOfLastComma = selectedObjectString.lastIndexOf(',');
-                if (indexOfFirstComma == indexOfLastComma) {
-                    // there's just one comma eg. "1,Gene", so save the whole column
-
-                    if (allRows instanceof WebResults) {
-                        Query q = QueryCloner.cloneQuery(((WebResults) allRows)
-                                .getInterMineResults().getQuery());
-                        QuerySelectable qs = (QuerySelectable) ((WebResults) allRows)
-                            .getPathToQueryNode().get(columnPath.toStringNoConstraints());
-                        if (qs instanceof QueryField) {
-                            qs = (QueryClass) ((QueryField) qs).getFromElement();
-                        }
-                        q.clearSelect();
-                        q.addToSelect(qs);
-
-                        osw.addToBagFromQuery(bag.getOsb(), q);
-
-                    } else { // TODO XXX FIXME
-                            throw new ClassCastException("Unhandled table type: "
-                                                         + allRows.getClass());
-                    }
-                } else {
-                    // It's an individual object.
-                    int row = Integer.parseInt(selectedObjectString.substring(indexOfFirstComma + 1,
-                                indexOfLastComma));
-                    ResultElement value = pt.getResultElementRows().get(row).get(columnIndex);
-                    osw.addToBag(bag.getOsb(), value.getId());
-                }
+            for (Integer id : pt.getSelectedIds().keySet()) {
+                osw.addToBag(bag.getOsb(), id);
+//                String selectedObjectString = sbf.getSelectedObjects()[i];
+//                int indexOfFirstComma = selectedObjectString.indexOf(',');
+//                String columnIndexString = selectedObjectString.substring(0, indexOfFirstComma);
+//                int columnIndex = Integer.parseInt(columnIndexString);
+//                Path columnPath = allRows.getColumns().get(columnIndex).getPath();
+//                int indexOfLastComma = selectedObjectString.lastIndexOf(',');
+//                if (indexOfFirstComma == indexOfLastComma) {
+//                    // there's just one comma eg. "1,Gene", so save the whole column
+//
+//                    if (allRows instanceof WebResults) {
+//                        Query q = QueryCloner.cloneQuery(((WebResults) allRows)
+//                                .getInterMineResults().getQuery());
+//                        QuerySelectable qs = (QuerySelectable) ((WebResults) allRows)
+//                            .getPathToQueryNode().get(columnPath.toStringNoConstraints());
+//                        if (qs instanceof QueryField) {
+//                            qs = (QueryClass) ((QueryField) qs).getFromElement();
+//                        }
+//                        q.clearSelect();
+//                        q.addToSelect(qs);
+//
+//                        osw.addToBagFromQuery(bag.getOsb(), q);
+//
+//                    } else { // TODO XXX FIXME
+//                            throw new ClassCastException("Unhandled table type: "
+//                                                         + allRows.getClass());
+//                    }
+//                } else {
+//                    // It's an individual object.
+//                    int row = Integer.parseInt(selectedObjectString.substring(indexOfFirstComma + 1,
+//                                indexOfLastComma));
+//                    ResultElement value = pt.getResultElementRows().get(row).get(columnIndex);
+//                    osw.addToBag(bag.getOsb(), value.getId());
+//                }
             }
 
             recordMessage(new ActionMessage("bag.saved", bagName), request);

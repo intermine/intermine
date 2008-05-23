@@ -55,8 +55,9 @@ public class ResultElement implements Serializable
         this.typeCls = typeCls;
         this.keyField = isKeyField;
         this.path = path;
-        setHtmlId(path.toString().substring(0, path.toString().lastIndexOf(".")) + "_"
-                  + TypeUtil.unqualifiedName(typeCls.getName()));
+        // setHtmlId(path.toString().substring(0, path.toString().lastIndexOf(".")) + "_"
+        // + TypeUtil.unqualifiedName(typeCls.getName()));
+        setHtmlId(path.toString().substring(0, path.toString().lastIndexOf(".")));
     }
 
     /**
@@ -199,16 +200,18 @@ public class ResultElement implements Serializable
     /**
      * Set the selected status of results element
      * @param isSelected whether or not the element is selected
+     * @Deprecated selected elements are stored in the PagedTable
      */
-    public void setSelected(boolean isSelected) {
+    @Deprecated public void setSelected(boolean isSelected) {
         this.isSelected = isSelected;
     }
     
     /**
      * Find the selected status of this element.
      * @return true if this element has been selected
+     * @Deprecated selected elements are stored in the PagedTable
      */
-    public boolean isSelected() {
+    @Deprecated public boolean isSelected() {
         return isSelected;
     }
         

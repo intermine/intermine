@@ -936,4 +936,58 @@ public class AjaxServices
         }
         return null;
     }
+    
+    /**
+     * Add an ID to the PagedTable selection
+     * @param selectedId the id
+     * @param field the field value as displayed
+     * @param tableId the identifier for the PagedTable
+     * @return a String[]
+     */
+    public static String[] selectId(String selectedId, String field, String tableId) {
+        ServletContext servletContext = WebContextFactory.get().getServletContext();
+        HttpSession session = WebContextFactory.get().getSession();
+        PagedTable pt = SessionMethods.getResultsTable(session, tableId);
+        pt.selectId(new Integer(selectedId), field);
+        return pt.getSelectedIdStrings();
+    }
+    
+    /**
+     * De-select an Id from the PagedTable
+     * @param deSelectId the ID to remove from the selection
+     * @param tableId the PagedTable identifier
+     * @return a String[]
+     */
+    public static String[] deSelectId(String deSelectId, String tableId) {
+        ServletContext servletContext = WebContextFactory.get().getServletContext();
+        HttpSession session = WebContextFactory.get().getSession();
+        PagedTable pt = SessionMethods.getResultsTable(session, tableId);
+        pt.getSelectedIds().remove(new Integer(deSelectId));
+        return pt.getSelectedIdStrings();
+    }
+    
+    /**
+     * Set the class of the selected column of ids for the PagedTable
+     * @param className the className
+     * @param tableId the PagedTable identifier
+     */
+    public static void setClassForId(String className, String tableId) {
+        ServletContext servletContext = WebContextFactory.get().getServletContext();
+        HttpSession session = WebContextFactory.get().getSession();
+        PagedTable pt = SessionMethods.getResultsTable(session, tableId);
+        pt.setSelectedClass(className);
+    }
+    
+    /**
+     * Select all the elements in a PagedTable
+     * @param index the index of the selected column
+     * @param tableId the PagedTable identifier
+     */
+    public static void selectAll(int index, String tableId) {
+        ServletContext servletContext = WebContextFactory.get().getServletContext();
+        HttpSession session = WebContextFactory.get().getSession();
+        PagedTable pt = SessionMethods.getResultsTable(session, tableId);
+        pt.setAllSelected(index);
+    }
+    
 }

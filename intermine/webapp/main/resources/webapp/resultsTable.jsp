@@ -33,6 +33,14 @@
 </script>
 
 <html:form action="/saveBag" >
+<html:hidden property="tableid" value="${pagedResults.tableid}" />
+<div style="border:1px solid #CCC; background-color:#f5f0ff;margin:10px;padding:5px">
+Selected:<span id="selectedList">
+<c:forEach items="${pagedResults.selectedIds}" var="selected" varStatus="status">
+  <c:if test="${status.count > 1}">,</c:if>${selected.value}
+</c:forEach>
+</span>
+</div>
 <table class="results" cellspacing="0">
 
   <%-- The headers --%>
@@ -235,17 +243,24 @@
                   </c:if>
 
                   <%-- the checkbox to select this object --%>
+                  <c:set var="ischecked" value=""/>
+                    <c:forEach items="${pagedResults.selectedIdStrings}" var="selectedId">
+                      <c:if test="${(! empty resultElement.htmlId) && (resultElement.id == selectedId)}">
+                        <c:set var="ischecked" value="highlightCell"/>
+                      </c:if>
+                    </c:forEach>
+                  <c:set var="disabled" value="false"/>
+                  <c:if test="${(!empty resultsTable.selectedClass) && (resultsTable.selectedClass != resultElement.htmlId)}">
+                    <c:set var="disabled" value="true"/>
+                  </c:if>
                   <c:if test="${column.selectable && ((!isWebCollection) || (! noBagSave && status2.count<=1)) && empty bag}">
-                    <c:set var="checkboxClass" value="checkbox ${resultElement.id}"/>
-                    <c:if test="${resultElement.selected}">
-                      <c:set var="checkboxClass" value="${checkboxClass} highlightCell"/>
-                    </c:if>
-                    <td align="center" class="${checkboxClass} ${highlightObjectClass}" id="cell_checkbox,${status2.index},${status.index},${row[column.index].htmlId}">
+                    <td align="center" class="checkbox ${highlightObjectClass} id_${resultElement.id} class_${row[column.index].htmlId} ${ischecked}" id="cell_checkbox,${status2.index},${status.index},${row[column.index].htmlId}">
                       <c:if test="${resultElement.id != null}">
                         <html:multibox property="selectedIdStrings" name="pagedResults"
                                  styleId="selectedObjects_${status2.index}_${status.index}_${row[column.index].htmlId}"
-                                 styleClass="selectable ${resultElement.id}"
-                                 onclick="itemChecked(columnsToDisable, columnsToHighlight, ${status.index},${status2.index}, '${pagedResults.tableid}', this)" >
+                                 styleClass="selectable id_${resultElement.id} class_${row[column.index].htmlId} field_${resultElement.field}"
+                                 onclick="itemChecked(columnsToDisable, columnsToHighlight, ${status.index},${status2.index}, '${pagedResults.tableid}', this)" 
+                                 disabled="${disabled}">
                           <c:out value="${resultElement.id}"/>
                         </html:multibox>
                       </c:if>
@@ -253,13 +268,8 @@
                   </c:if>
 
                   <%-- test whether already selected and highlight if needed --%>                
-                  <c:set var="cellClass" value="${resultElement.id}"/>
-                  <c:if test="${resultElement.selected}">
-                    <c:set var="cellClass" value="${cellClass} highlightCell"/>
-                  </c:if>
-
                   <td id="cell,${status2.index},${status.index},${row[column.index].htmlId}"
-                       class="${cellClass} ${highlightObjectClass}">
+                       class="${highlightObjectClass} id_${resultElement.id} class_${row[column.index].htmlId} ${ischecked}">
                     <c:set var="columnType" value="${column.type}" scope="request"/>
                     <div>
                       <tiles:insert name="objectView.tile"/>
