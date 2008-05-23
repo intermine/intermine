@@ -81,8 +81,8 @@ public class QueryResultService extends WebService
         if (builder.isQueryValid()) {
             try {
                 PathQuery query = builder.getQuery();
-                runPathQuery(query, input.getStart() - 1 , input.getMaxCount(), input.isComputeTotalCount(),
-                        null, null, input);
+                runPathQuery(query, input.getStart() - 1 , input.getMaxCount(), 
+                        input.isComputeTotalCount(), null, null, input);
             } catch (Throwable t) {
                 LOG.error("Execution of web service request failed.", t);
                 output.addError("Execution of web service failed. Please contact support.");
@@ -149,7 +149,7 @@ public class QueryResultService extends WebService
             try {
                 return URLEncoder.encode(o.toString(), "UTF-8");
             } catch (UnsupportedEncodingException e) {
-                throw new RuntimeException("Encoding string failed", e);
+                throw new RuntimeException("Encoding string failed: " + o.toString(), e);
             }            
         }
     }
