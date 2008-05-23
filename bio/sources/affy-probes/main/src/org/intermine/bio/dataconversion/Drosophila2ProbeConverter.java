@@ -101,12 +101,14 @@ public class Drosophila2ProbeConverter extends FileConverter
             String cgs = line[17];
             if (!cgs.equals("---")) {
 
-                String transcriptIdentifier = line[6];
-                if (transcriptIdentifier.trim().startsWith("CG")) {
+                String transcriptIdentifier = line[6].trim();
+                if (transcriptIdentifier.startsWith("CG")
+                    || transcriptIdentifier.startsWith("a_merged")) {
+                    if (transcriptIdentifier.startsWith("CG")) {
                         Item transcript = createBioEntity("Transcript", transcriptIdentifier);
                         probeSet.setReference("transcript", transcript.getIdentifier());
-
-                        // FBgn0029676 /// FBgn0052789 /// FBgn0066138 /// FBgn0066170
+                    }
+                        // eg. "CG10332 /// CG33706"
                         String[] genes = cgs.split(" /// ");
                         ReferenceList geneColl =
                             new ReferenceList("genes", new ArrayList<String>());
