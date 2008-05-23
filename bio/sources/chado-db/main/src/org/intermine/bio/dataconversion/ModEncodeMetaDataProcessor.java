@@ -154,7 +154,7 @@ public class ModEncodeMetaDataProcessor extends ChadoProcessor
         Map<Integer, FeatureData> featureMap = processFeatures(connection, experimentMap);
         processDataFeatureTable(connection, featureMap);
 
-        linksInOut();
+        linksInOut(connection);
         
         // set references
         setExperimentRefs(connection);
@@ -517,19 +517,29 @@ public class ModEncodeMetaDataProcessor extends ChadoProcessor
  */
 
 
-    private void linksInOut() {
+    private void linksInOut(Connection connection) 
+    throws SQLException, ObjectStoreException {
         Set <Integer> experiments = experimentInDataMap.keySet(); 
         Iterator <Integer> thisInput = experiments.iterator();
 
+        
+        
         while (thisInput.hasNext()) {
+            // FOR EACH EXPERIMENT
+            // clear the maps
+            inOutDataMap.clear();
+            outInDataMap.clear();
+            
             LOG.info("INOUT MAP =========");
-            buildInOutMap (thisInput.next());
+            buildInOutMaps (thisInput.next());
+            setInOutRefs(connection);
+            setOutInRefs(connection);
         }
     }
     
     
     
-    private void buildInOutMap(Integer experimentId) {
+    private void buildInOutMaps(Integer experimentId) {
         // 
         List <Integer> inputData = experimentInDataMap.get(experimentId); 
         Iterator <Integer> thisInput = inputData.iterator();
@@ -547,7 +557,11 @@ public class ModEncodeMetaDataProcessor extends ChadoProcessor
             }
             LOG.info("INOUT MAP " + currentId + "|" +  inOutDataMap.get(currentId));
         }
+        
+        buildOutInMap();
     }
+    
+    
     
         private List<Integer> getOutputs(List<Integer> ids, Integer submissionInput) {
             // actually this method also set the map.
@@ -571,6 +585,20 @@ public class ModEncodeMetaDataProcessor extends ChadoProcessor
             return outs;
         }
 
+        
+        private void buildOutInMap() {
+            // 
+            Set <Integer> in = inOutDataMap.keySet();
+            Iterator <Integer> ins = in.iterator();
+            while (ins.hasNext()) {
+                Integer thisIn = ins.next();
+                List <Integer> out = inOutDataMap.get(thisIn);
+                Iterator <Integer> outs = out.iterator();
+                while (outs.hasNext()) {
+                    addToMap (outInDataMap, outs.next(), thisIn);
+                }
+            }
+        }
 
 // 
 //    private Integer[] getOutputs2(Integer adId)
@@ -1296,6 +1324,62 @@ public class ModEncodeMetaDataProcessor extends ChadoProcessor
         }
     }
 
+
+    
+    /**
+     * to store references between experiment and its resulting submissionData
+     * (final output of the experiment)
+     * (1 to many) 
+     */
+    private void setInOutRefs(Connection connection)
+    throws ObjectStoreException {
+        Iterator<Integer> exp = inOutDataMap.keySet().iterator();
+        while (exp.hasNext()) {
+            Integer thisId = exp.next();
+            List<Integer> dataIds = inOutDataMap.get(thisId);
+            Iterator<Integer> dat = dataIds.iterator();
+            ReferenceList collection = new ReferenceList();
+            collection.setName("relatedOutputs");
+            while (dat.hasNext()) {
+                Integer currentId = dat.next();
+                if (appliedDataMap.get(currentId) == null) {
+                    continue;
+                }
+                collection.addRefId(appliedDataMap.get(currentId).itemIdentifier);
+            }
+            getChadoDBConverter().store(collection,
+                    appliedDataMap.get(thisId).intermineObjectId);
+        }
+    }
+
+    /**
+     * to store references between experiment and its resulting submissionData
+     * (final output of the experiment)
+     * (1 to many) 
+     */
+    private void setOutInRefs(Connection connection)
+    throws ObjectStoreException {
+        Iterator<Integer> exp = outInDataMap.keySet().iterator();
+        while (exp.hasNext()) {
+            Integer thisId = exp.next();
+            List<Integer> dataIds = outInDataMap.get(thisId);
+            Iterator<Integer> dat = dataIds.iterator();
+            ReferenceList collection = new ReferenceList();
+            collection.setName("relatedInputs");
+            while (dat.hasNext()) {
+                Integer currentId = dat.next();
+                if (appliedDataMap.get(currentId) == null) {
+                    continue;
+                }
+                collection.addRefId(appliedDataMap.get(currentId).itemIdentifier);
+            }
+            getChadoDBConverter().store(collection,
+                    appliedDataMap.get(thisId).intermineObjectId);
+        }
+    }
+    
+    
+    
     /**
      * maps from chado field names to ours.
      * if a field is not needed it is marked with NOT_TO_BE_LOADED
