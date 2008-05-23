@@ -58,7 +58,7 @@ public class ChadoSequenceProcessor extends ChadoProcessor
     private Map<Integer, MultiKeyMap> config = new HashMap<Integer, MultiKeyMap>();
 
     // a map from chado pubmed id to item identifier for the publication
-    private Map<String, String> publications = new HashMap<String, String>();
+    private Map<Integer, String> publications = new HashMap<Integer, String>();
 
     private static final List<String> PARTOF_RELATIONS = Arrays.asList("partof", "part_of");
 
@@ -1050,7 +1050,7 @@ public class ChadoSequenceProcessor extends ChadoProcessor
                 }
                 continue;
             }
-            String pubMedId = res.getString("pub_db_identifier");
+            Integer pubMedId = Integer.parseInt(res.getString("pub_db_identifier"));
             if (lastPubFeatureId != null && !featureId.equals(lastPubFeatureId)) {
                 makeFeaturePublications(lastPubFeatureId, currentEvidenceIds);
                 makeFeatureEvidence(lastPubFeatureId, currentEvidenceIds);
@@ -1076,12 +1076,12 @@ public class ChadoSequenceProcessor extends ChadoProcessor
      * @return the publication item id
      * @throws ObjectStoreException if the item can't be stored
      */
-    protected String makePublication(String pubMedId) throws ObjectStoreException {
+    protected String makePublication(Integer pubMedId) throws ObjectStoreException {
         if (publications.containsKey(pubMedId)) {
             return publications.get(pubMedId);
         } else {
             Item publication = getChadoDBConverter().createItem("Publication");
-            publication.setAttribute("pubMedId", pubMedId);
+            publication.setAttribute("pubMedId", pubMedId.toString());
             getChadoDBConverter().store(publication); // Stores Publication
             String publicationId = publication.getIdentifier();
             publications.put(pubMedId, publicationId);
