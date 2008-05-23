@@ -148,5 +148,53 @@
        <body-content>scriptless</body-content>
     </tag>
 	
+	<tag>
+	   <name>table</name>
+	   <description>Renders nice table.</description>
+	   <tag-class>
+	       org.intermine.web.tags.table.TableTag
+	   </tag-class>
+	   <body-content>empty</body-content>
+	   <attribute>
+            <name>rows</name>
+            <rtexprvalue>true</rtexprvalue>
+            <required>true</required>
+        </attribute>
+        <attribute>
+            <name>columnNames</name>
+            <rtexprvalue>true</rtexprvalue>
+            <required>false</required>
+        </attribute>
+        <attribute>
+            <name>treatColNames</name>
+            <rtexprvalue>true</rtexprvalue>
+            <required>false</required>
+        </attribute>        
+	</tag>
+	
+    <tag>
+       <name>navigationBar</name>
+       <description>Renders navigation bar with current page number, next and previous links.</description>
+       <tag-class>
+           org.intermine.web.tags.table.NavigationBarTag
+       </tag-class>
+       <body-content>empty</body-content>
+       <attribute>
+            <name>baseLink</name>
+            <rtexprvalue>true</rtexprvalue>
+            <required>true</required>
+        </attribute>
+        <attribute>
+            <name>pageSize</name>
+            <rtexprvalue>true</rtexprvalue>
+            <required>true</required>
+        </attribute>
+        <attribute>
+            <name>currentPage</name>
+            <rtexprvalue>true</rtexprvalue>
+            <required>true</required>
+        </attribute>        
+    </tag>
+	
 </taglib>
 
