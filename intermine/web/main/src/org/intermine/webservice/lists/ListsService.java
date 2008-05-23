@@ -32,7 +32,6 @@ import org.intermine.webservice.WebServiceConstants;
 import org.intermine.webservice.WebServiceException;
 import org.intermine.webservice.core.ListManager;
 import org.intermine.webservice.core.PathQueryExecutor;
-import org.intermine.webservice.output.HTMLTable;
 import org.intermine.webservice.output.MemoryOutput;
 import org.intermine.webservice.output.Output;
 
@@ -144,13 +143,11 @@ public class ListsService extends WebService
     private void forward(ListsServiceInput input, Output output) {
         if (getFormat() == HTML_FORMAT) {
             MemoryOutput mout = (MemoryOutput) output;
-            HTMLTable table = new HTMLTable();
-            table.setRows(mout.getResults());
+            request.setAttribute("rows", mout.getResults());
             List<String> columnNames = new ArrayList<String>();
             columnNames.add("List");
-            table.setColumnNames(columnNames);
-            table.setTitle("Lists with " + input.getPublicId());
-            request.setAttribute(WebServiceConstants.HTML_TABLE_ATTRIBUTE, table);
+            request.setAttribute("columnNames", columnNames);
+            request.setAttribute("title", "Lists with " + input.getPublicId());
             try {
                 getHtmlForward().forward(request, response);
             } catch (Exception e) {

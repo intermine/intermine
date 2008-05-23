@@ -2,6 +2,8 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8"
 	pageEncoding="UTF-8"%>
 <%@ taglib uri="/WEB-INF/struts-html.tld" prefix="html" %>
+<%@ taglib uri="http://flymine.org/imutil" prefix="imutil" %>
+
 <!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
 <html>
 <head>
@@ -45,9 +47,18 @@
 <body>
 
 <div>
-	<c:if test="${requestScope.htmlTable != null}">
-		${requestScope.htmlTable.HTML}
-	</c:if>
+    <div class="title">${title}</div>
+    <span class="description">${description}</span>
+    <div style="font-size:14px;">
+	     <span style="white-space:nowrap;">
+	         &nbsp;<a href="\" onclick="javascript:window.open(window.location.href, '', 'fullscreen=yes, scrollbars=auto');return false;">Open in new window</a>"
+	     </span>"
+	     &nbsp;&nbsp;&nbsp;
+	     Source:<a href="\" onclick="javascript:window.open('http://www.flymine.org');return false;" style="margin-left:10px;">Flymine</a>
+	     &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+	     <imutil:navigationBar baseLink="${baseLink}" pageSize="${pageSize}" currentPage="${currentPage}" />
+    </div>
+    <imutil:table rows="${requestScope.rows}" columnNames="${requestScope.columnNames}" treatColNames="true"/>
 </div>
 
 </body>

@@ -22,11 +22,6 @@ public class WebServiceConstants
     public static final String SERVICE_FAILED_MSG = "Service failed. Please contact support.";
     
     /**
-     * Name of request attribute in which html table is saved for displaying.
-     */
-    public static final String HTML_TABLE_ATTRIBUTE = "htmlTable";
-
-    /**
      * Name of module of web services.
      * All web services relative urls start with following prefix.  
      */

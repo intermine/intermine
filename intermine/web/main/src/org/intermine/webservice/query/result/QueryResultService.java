@@ -37,9 +37,7 @@ import org.intermine.webservice.WebServiceConstants;
 import org.intermine.webservice.WebServiceException;
 import org.intermine.webservice.core.PathQueryExecutor;
 import org.intermine.webservice.core.ResultProcessor;
-import org.intermine.webservice.output.HTMLTable;
 import org.intermine.webservice.output.MemoryOutput;
-import org.intermine.webservice.output.NavigationBar;
 
 /**
  * Executes query and returns results. Other parameters in request can specify 
@@ -97,13 +95,13 @@ public class QueryResultService extends WebService
         List<String> columnNames = pathQuery.getViewStrings();
         if (getFormat() == WebService.HTML_FORMAT) {
             MemoryOutput mout = (MemoryOutput) output;
-            HTMLTable table = new HTMLTable();
-            table.setColumnNames(columnNames);
-            table.setRows(mout.getResults());
-            table.setTitle(title);
-            table.setDescription(description);
-            table.setBarHtml(createNavigationBar(input).toString());
-            request.setAttribute(WebServiceConstants.HTML_TABLE_ATTRIBUTE, table);
+            request.setAttribute("columnNames", columnNames);
+            request.setAttribute("rows", mout.getResults());
+            request.setAttribute("title", title);
+            request.setAttribute("description", description);
+            request.setAttribute("currentPage", (input.getStart() - 1) / input.getMaxCount());
+            request.setAttribute("baseLink", createBaseLink());
+            request.setAttribute("pageSize", input.getMaxCount());
             try {   
                 getHtmlForward().forward(request, response);
             } catch (Exception e) {
@@ -112,11 +110,6 @@ public class QueryResultService extends WebService
         }        
     }
     
-    private NavigationBar createNavigationBar(PagedServiceInput input) {
-        int currentPage = (input.getStart() - 1) / input.getMaxCount();
-        return new NavigationBar(createBaseLink(), input.getMaxCount(), currentPage);
-    }
-
     private String createBaseLink() {
         String baseLink = request.getRequestURL().toString() + "?";
         List<String> names =  EnumerationUtils.toList(request.getParameterNames());
