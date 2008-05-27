@@ -77,11 +77,11 @@ public class ProteinInteractionURLQuery implements WidgetURLQuery
         view.add(primaryIdentifier);
         view.add(primaryAccesion);
         view.add(interactPrimaryIdentifier);
+	view.add(interactPathRole);
         view.add(interactPrimaryAccession);
         view.add(interactName);
         view.add(interactPubMedId);
         view.add(interactShortname);
-        view.add(interactPathRole);
 
         q.setView(view);
 
