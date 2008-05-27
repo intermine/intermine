@@ -286,6 +286,12 @@
     </longdisplayers>
   </class>
 
+  <class className="org.flymine.model.genomic.Annotation">
+    <fields>
+      <fieldconfig fieldExpr="subject.primaryIdentifier"/>
+    </fields>
+  </class>
+
   <class className="org.flymine.model.genomic.GOEvidenceCode">
     <fields>
       <fieldconfig fieldExpr="code"/>
@@ -594,12 +600,41 @@
     </fields>
   </class>
 
+  <class className="org.flymine.model.genomic.PhenotypeAnnotation">
+    <fields>
+      <fieldconfig fieldExpr="annotationType"/>
+      <fieldconfig fieldExpr="description"/>
+      <fieldconfig fieldExpr="allele.primaryIdentifier"/>
+    </fields>
+  </class>
+
   <class className="org.flymine.model.genomic.Allele">
     <fields>
       <fieldconfig fieldExpr="primaryIdentifier"/>
       <fieldconfig fieldExpr="secondaryIdentifier"/>
       <fieldconfig fieldExpr="organism.name"/>
     </fields>
+  </class>
+
+  <class className="org.flymine.model.genomic.ArtificialDeletion">
+    <fields>
+      <fieldconfig fieldExpr="primaryIdentifier"/>
+      <fieldconfig fieldExpr="chromosomeLocation" displayer="/model/chromosomeLocDisplayer.jsp" showInResults="false" />
+      <fieldconfig fieldExpr="length" displayer="/model/sequenceShortDisplayerWithField.jsp" />
+    </fields>
+    <longdisplayers>
+      <displayer src="attributeLinkDisplayer.tile"/>
+    </longdisplayers>
+  </class>
+
+  <class className="org.flymine.model.genomic.BindingSite">
+    <fields>
+      <fieldconfig fieldExpr="primaryIdentifier"/>
+      <fieldconfig fieldExpr="chromosomeLocation" displayer="/model/chromosomeLocDisplayer.jsp" showInResults="false" />
+    </fields>
+    <longdisplayers>
+      <displayer src="attributeLinkDisplayer.tile"/>
+    </longdisplayers>
   </class>
 
   <tableExportConfig id="sequenceExporter" actionPath="/exportAction?type=sequenceExporter"
