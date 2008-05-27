@@ -25,7 +25,7 @@
     <attribute name="taxonId" value="7227"/>
   </item>
   <item id="3_1" class="http://www.flymine.org/model/genomic#Gene">
-    <attribute name="symbol" value="mir-312"/>
+    <attribute name="primaryIdentifier" value="FBgn002"/>
     <reference name="organism" ref_id="2_1"/>
   </item>
   <item id="5_1" class="http://www.flymine.org/model/genomic#MRNA">
@@ -38,7 +38,7 @@
     <reference name="dataSource" ref_id="0_1"/>
   </item>
   <item id="3_2" class="http://www.flymine.org/model/genomic#Gene">
-    <attribute name="symbol" value="mir-92b"/>
+    <attribute name="primaryIdentifier" value="FBgn001"/>
     <reference name="organism" ref_id="2_1"/>
   </item>
 </items>

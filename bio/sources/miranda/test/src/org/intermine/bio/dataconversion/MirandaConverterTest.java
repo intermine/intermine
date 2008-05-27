@@ -42,8 +42,6 @@ public class MirandaConverterTest extends ItemsTestCase
         MockIdResolverFactory resolverFactory = new MockIdResolverFactory("Gene");
         resolverFactory.addResolverEntry("7227", "FBgn001", Collections.singleton("mir-92b"));
         resolverFactory.addResolverEntry("7227", "FBgn002", Collections.singleton("mir-312"));
-        resolverFactory.addResolverEntry("7227", "FBgn003", Collections.singleton("mir-313"));
-        resolverFactory.addResolverEntry("7227", "FBgn004", Collections.singleton("mir-7"));
         converter.resolverFactory = resolverFactory;
     }
 
