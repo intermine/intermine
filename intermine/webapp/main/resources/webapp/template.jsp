@@ -352,8 +352,7 @@
   
   <c:if test="${empty previewTemplate}">
 	  <div style="font-style: italic;">
-	    <b>NEW:</b> Do you want to include results of this template at your web site or use in script? 
-	    <a href="javascript:forwardToLinks()">Get the link</a>
+	    <b>NEW:</b> <a href="javascript:forwardToLinks()">Embed</a> this query - <a href="http://intermine.org/wiki/TemplateWebService">help</a>
 	  </div>
   </c:if>
   

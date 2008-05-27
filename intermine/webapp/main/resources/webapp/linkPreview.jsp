@@ -11,28 +11,28 @@ the link generated for user. --%>
 
 <head>
 
+<style type="text/css">
+.content {
+	background-color:#F4F4F4;
+	border: 1px solid #7E7E7E;
+}
+</style>
+
 </head>
 
 <body title="Example of page with results">
 
 <c:set var="link" value="${fn:replace(param.link, 'XXXXX', '&')}"></c:set>
 
-<h1>Drosophila</h1>
+<h2 style="margin-bottom: 0px; font-family:Verdana,arial,Helvetica,sans-serif;">Your web page</h2>
+    <table style="width: 700px; height: 110px; margin-top: 20px; margin-bottom: 20px;" class="content">
+        <tr><td></td></tr>
+        <tr><td align="center">Content of your  web page.</td></tr>
+        <tr><td></td></tr>
+    </table>
 
-<div>
-		    
-	<i>"Drosophila is a genus of small flies, belonging to the family Drosophilidae, whose members are 
-	often called "fruit flies" or more appropriately vinegar flies, wine flies, pomace flies, grape 
-	flies, and picked fruit-flies, a reference to the characteristic of many species to linger around 
-	overripe or rotting fruit. ... Scientists who research Drosophila are often called Drosophilists."</i>
-	
-</div>
-
-<div style="margin-top: 10px; margin-bottom: 10px;">
-    <i style="font-size: smaller;">This is an example of page with your included results. Citation used from <a href="http://en.wikipedia.org/w/index.php?title=Drosophila&oldid=205673247">Wikipedia</a></i>
-</div>
-
-<div style="text-align: center;">
+<div style="text-align: left;">
+    Results from <c:out value="${WEB_PROPERTIES['project.title']}"/> included dynamically in your page:
     <iframe width="700" height="500" frameborder="1" scrolling="yes" marginheight="0" marginwidth="0" src="${link}&format=html"></iframe>
 </div>           
 

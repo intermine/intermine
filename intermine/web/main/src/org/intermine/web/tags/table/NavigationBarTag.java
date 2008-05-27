@@ -28,6 +28,22 @@ public class NavigationBarTag extends SimpleTagSupport
     private Integer pageSize;
     
     private Integer currentPage;
+    
+    private boolean nextEnabled = false;
+
+    /**
+     * @return true if next link should be generated as a active link
+     */
+    public boolean isNextEnabled() {
+        return nextEnabled;
+    }
+
+    /**
+     * @param nextEnabled true if next link should be generated as a active link
+     */
+    public void setNextEnabled(boolean nextEnabled) {
+        this.nextEnabled = nextEnabled;
+    }
 
     /**
      * According pageSize and currentPage parameter navigation bar 
@@ -76,7 +92,11 @@ public class NavigationBarTag extends SimpleTagSupport
      * @return link to page next to the page with provided index
      */
     public String getNextLink(int pageIndex) {
-        return getPageLink(pageIndex + 1);
+        if (nextEnabled) {
+            return getPageLink(pageIndex + 1);    
+        } else {
+            return null;
+        }
     }
 
     /**

@@ -30,6 +30,8 @@ public class TableTag extends SimpleTagSupport
     private List<List<String>> rows; 
 
     private boolean treatColNames = false;
+    
+    private String noResultsMessage; 
 
     /**
      * @return true if column names should be formatted from 
@@ -123,8 +125,7 @@ public class TableTag extends SimpleTagSupport
         }
         StringBuilder sb = new StringBuilder();
         if (rows.size() == 0) {
-            String ret = "<tr><td>There are no data. If you browsed "
-                    + "through results go to the previous page.</td>";
+            String ret = "<tr><td>" + getNoResultsMessage() + "</td>";
             ret += getEmptyCellsHtml(getColumnsCount() - 1);
             ret += "</tr>";
             return ret;
@@ -147,6 +148,25 @@ public class TableTag extends SimpleTagSupport
             sb.append("</tr>\n");
         }
         return sb.toString();
+    }
+    
+    /**
+     * @return error message that is displayed when there are no results
+     */
+    public String getNoResultsMessage() {
+        if (noResultsMessage != null) {
+            return noResultsMessage;
+        } else {
+            return "There are no results. If you browsed "
+            + "through results go to the previous page.";
+        }
+    }
+    
+    /**
+     * @param noResultsMessage error message that is displayed when there are no results
+     */
+    public void setNoResultsMessage(String noResultsMessage) {
+        this.noResultsMessage = noResultsMessage;
     }
     
     private int getColumnsCount() {
