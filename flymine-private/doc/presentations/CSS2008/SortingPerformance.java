@@ -16,7 +16,7 @@ public class SortingPerformance
         10000000, 10000000, 10000000, 10000000, 5000000, 3000000, 2000000, 1000000, 262144, 131072,
         65536, 32768, 16384, 8192, 2046, 512, 128, 32, 16, 4, 2, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,
         1, 1, 1, 1};
-    public static final int TEST_SIZE = 30000;
+    public static final int TEST_SIZE = 40000;
     public static final int BUBBLE_SORT = 0;
     public static final int BUBBLE_SORT_IMPROVED = 1;
     public static final int INSERT_SORT = 2;
@@ -26,7 +26,8 @@ public class SortingPerformance
     public static final int QUICKSORT = 6;
     public static final int QUICKSORT_HYBRID = 7;
     public static final int BUCKET_SORT = 8;
-    public static final int ALGO_COUNT = 9;
+    public static final int BUCKET_SORT_B = 9;
+    public static final int ALGO_COUNT = 10;
 
     public static void main(String args[]) {
         int testControl[] = new int[TEST_SIZE];
@@ -38,6 +39,7 @@ public class SortingPerformance
         int testSampleQuickSort[] = new int[TEST_SIZE];
         int testSampleQuickSortHybrid[] = new int[TEST_SIZE];
         int testSampleBucketSort[] = new int[TEST_SIZE];
+        int testSampleBucketSortB[] = new int[TEST_SIZE];
         Random random = new Random();
         for (int i = 0; i < TEST_SIZE; i++) {
             testControl[i] = random.nextInt();
@@ -49,6 +51,7 @@ public class SortingPerformance
             testSampleQuickSort[i] = testControl[i];
             testSampleQuickSortHybrid[i] = testControl[i];
             testSampleBucketSort[i] = testControl[i];
+            testSampleBucketSortB[i] = testControl[i];
         }
         Arrays.sort(testControl);
         bubbleSort(testSampleBubble, 0, TEST_SIZE);
@@ -59,6 +62,7 @@ public class SortingPerformance
         quickSort(testSampleQuickSort, 0, TEST_SIZE);
         quickSortHybrid(testSampleQuickSortHybrid, 0, TEST_SIZE);
         bucketSort(testSampleBucketSort, 0, TEST_SIZE);
+        bucketSortB(testSampleBucketSortB, 0, TEST_SIZE);
         for (int i = 0; i < TEST_SIZE; i++) {
             if (testSampleBubble[i] != testControl[i]) {
                 throw new IllegalArgumentException("Bubble sort is broken: expected " + testControl[i] + " but was " + testSampleBubble[i]);
@@ -84,12 +88,15 @@ public class SortingPerformance
             if (testSampleBucketSort[i] != testControl[i]) {
                 throw new IllegalArgumentException("Bucket sort is broken: expected " + testControl[i] + " but was " + testSampleBucketSort[i]);
             }
+            if (testSampleBucketSortB[i] != testControl[i]) {
+                throw new IllegalArgumentException("Bucket sort B is broken: expected " + testControl[i] + " but was " + testSampleBucketSortB[i]);
+            }
         }
         boolean alive[] = new boolean[ALGO_COUNT];
         for (int i = 0; i < ALGO_COUNT; i++) {
             alive[i] = true;
         }
-        System.out.println("Size\tRepeats\tBubble\tBubbleI\tInsert\tArrays\tShell\tSelect\tQuick\tQuickH\tBucket");
+        System.out.println("Size\tRepeats\tBubble\tBubbleI\tInsert\tArrays\tShell\tSelect\tQuick\tQuickH\tBucket\tBucketB");
         for(int i = 0; i < DATA_SIZE.length; i++) {
             System.out.print(DATA_SIZE[i] + "\t" + REPEATS[i]);
             for(int sortType = 0; sortType < ALGO_COUNT; sortType++) {
@@ -211,6 +218,12 @@ public class SortingPerformance
                 bucketSort(data, start, start + dataSize);
             }
             return new MeasuredResult("Bucket sort", dataSize, repeatCount,
+                    System.currentTimeMillis() - startTime);
+        } else if (sortType == BUCKET_SORT_B) {
+            for (int start = 0; start < end; start += dataSize) {
+                bucketSortB(data, start, start + dataSize);
+            }
+            return new MeasuredResult("Bucket sort B", dataSize, repeatCount,
                     System.currentTimeMillis() - startTime);
         } else {
             throw new IllegalArgumentException("No such algorithm " + sortType);
@@ -354,24 +367,83 @@ public class SortingPerformance
         }
     }
 
-    public static final int BUCKET_DIV = 10;
+    public static final int A_BUCKET_DIV = 10;
+    public static final int A_BUCKET_SIZE = 20;
+    public static final int A_BUCKET_SPARE = 3;
+    public static final int A_BUCKET_DEGRADE = 90;
 
     private static void bucketSort(int a[], int start, int end) {
+        if (end - start < A_BUCKET_DEGRADE) {
+            insertionSort(a, start, end);
+            return;
+        }
         // Assumes the integers are evenly spread from MIN_VAL to MAX_VAL
-        int bucketCount = (end - start) / BUCKET_DIV + 1;
-        int buckets[] = new int[bucketCount * BUCKET_DIV * 3];
+        int bucketCount = (end - start) / A_BUCKET_DIV + 1;
+        int buckets[] = new int[(bucketCount + A_BUCKET_SPARE) * A_BUCKET_SIZE];
+        int bucketSize[] = new int[bucketCount + A_BUCKET_SPARE];
+        for (int i = 0; i < bucketCount + A_BUCKET_SPARE; i++) {
+            bucketSize[i] = 0;
+        }
+        for (int i = start; i < end; i++) {
+            int bucketNo = (int) ((((long) bucketCount) * (((long) a[i]) + 2147483648l)) / 4294967296l);
+            while (bucketSize[bucketNo] >= A_BUCKET_SIZE) {
+                bucketNo++;
+            }
+            buckets[bucketNo * A_BUCKET_SIZE + (bucketSize[bucketNo]++)] = a[i];
+        }
+        int c = start;
+        for (int i = 0; i < bucketCount + A_BUCKET_SPARE; i++) {
+            for (int o = 0; o < bucketSize[i]; o++) {
+                a[c++] = buckets[i * A_BUCKET_SIZE + o];
+            }
+        }
+        insertionSort(a, start, end);
+    }
+
+    public static final int B_BUCKET_DIV = 10000;
+    public static final int B_BUCKET_SIZE = 12000;
+    public static final int B_BUCKET_DEGRADE = 300000;
+    public static final int C_BUCKET_DIV = 10;
+    public static final int C_BUCKET_SIZE = 30;
+
+    private static void bucketSortB(int a[], int start, int end) {
+        if (end - start < B_BUCKET_DEGRADE) {
+            bucketSort(a, start, end);
+            return;
+        }
+        // Assumes the integers are evenly spread from MIN_VAL to MAX_VAL
+        int bucketCount = (end - start) / B_BUCKET_DIV + 1;
+        int buckets[] = new int[bucketCount * B_BUCKET_SIZE];
         int bucketSize[] = new int[bucketCount];
         for (int i = 0; i < bucketCount; i++) {
             bucketSize[i] = 0;
         }
         for (int i = start; i < end; i++) {
             int bucketNo = (int) ((((long) bucketCount) * (((long) a[i]) + 2147483648l)) / 4294967296l);
-            buckets[bucketNo * BUCKET_DIV * 3 + (bucketSize[bucketNo]++)] = a[i];
+            if (bucketSize[bucketNo] >= B_BUCKET_SIZE) {
+                throw new IllegalArgumentException("Array is not sortable");
+            }
+            buckets[bucketNo * B_BUCKET_SIZE + (bucketSize[bucketNo]++)] = a[i];
         }
+        int subBucketCount = B_BUCKET_DIV / C_BUCKET_DIV + 1;
+        int subBuckets[] = new int[subBucketCount * C_BUCKET_SIZE];
+        int subBucketSize[] = new int[subBucketCount];
         int c = start;
+        long subWidth = 4294967296l / ((long) bucketCount) + 2;
         for (int i = 0; i < bucketCount; i++) {
+            long subBase = (4294967296l * ((long) i)) / ((long) bucketCount) - 2147483648l;
+            for (int o = 0; o < subBucketCount; o++) {
+                subBucketSize[o] = 0;
+            }
             for (int o = 0; o < bucketSize[i]; o++) {
-                a[c++] = buckets[i * BUCKET_DIV * 3 + o];
+                int value = buckets[i * B_BUCKET_SIZE + o];
+                int bucketNo = (int) ((((long) subBucketCount) * (((long) value) - subBase)) / subWidth);
+                subBuckets[bucketNo * C_BUCKET_SIZE + (subBucketSize[bucketNo]++)] = value;
+            }
+            for (int o = 0; o < subBucketCount; o++) {
+                for (int p = 0; p < subBucketSize[o]; p++) {
+                    a[c++] = subBuckets[o * C_BUCKET_SIZE + p];
+                }
             }
         }
         insertionSort(a, start, end);
