@@ -35,7 +35,7 @@ public class MirandaConverter extends FileConverter
 
     private Map<String, Item> organisms = new HashMap<String, Item>();
     private Set<String> problems = new HashSet<String>();
-    private Item dataSource, dataSet;
+    private Item dataSet;
 
     private Map<String, String> mirandaToTaxonId = new HashMap<String, String>();
     protected IdResolverFactory resolverFactory;
@@ -49,13 +49,8 @@ public class MirandaConverter extends FileConverter
         mirandaToTaxonId.put("anopheles_gambiae", "7165");
         mirandaToTaxonId.put("dme", "7227");
         mirandaToTaxonId.put("aga", "7165");
-        dataSource = createItem("DataSource");
-        dataSource.setAttribute("name", "Memorial Sloan-Kettering Cancer Center");
         dataSet = createItem("DataSet");
-        dataSet.setAttribute("title", "Computer prediction by miRanda");
-        dataSet.setAttribute("url", "http://www.microrna.org/microrna/getDownloads.do");
-        store(dataSource);
-        dataSet.setReference("dataSource", dataSource.getIdentifier());
+        dataSet.setAttribute("title", "miRBase Targets");
         store(dataSet);
         // only construct factory here so can be replaced by mock factory in tests
         resolverFactory = new FlyBaseIdResolverFactory();
