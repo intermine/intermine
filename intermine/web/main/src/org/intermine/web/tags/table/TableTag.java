@@ -125,8 +125,9 @@ public class TableTag extends SimpleTagSupport
         }
         StringBuilder sb = new StringBuilder();
         if (rows.size() == 0) {
-            String ret = "<tr><td>" + getNoResultsMessage() + "</td>";
-            ret += getEmptyCellsHtml(getColumnsCount() - 1);
+            String ret = "<tr><td colspan=\"" + getColumnsCount() + "\">" 
+                + getNoResultsMessage() + "</td>";
+            //ret += getEmptyCellsHtml(getColumnsCount() - 1);
             ret += "</tr>";
             return ret;
         }
