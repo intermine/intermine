@@ -280,32 +280,19 @@ public class TransferSequences
 
             try {
                 if (feature instanceof Assembly) {
-                    LOG.warn("in transferToLocatedSequenceFeatures() ignoring: "
-                              + feature);
                     continue;
                 }
 
                 if (feature instanceof ChromosomeBand) {
-                    LOG.warn("in transferToLocatedSequenceFeatures() ignoring: "
-                              + feature);
                     continue;
                 }
 
                 if (feature instanceof Transcript) {
-                    LOG.warn("in transferToLocatedSequenceFeatures() ignoring: "
-                              + feature);
                     continue;
                 }
 
                 if (feature instanceof CDS) {
-                    LOG.warn("in transferToLocatedSequenceFeatures() ignoring: "
-                              + feature);
                     continue;
-                }
-
-                if (feature.getSequence() != null) {
-                    LOG.warn("in transferToLocatedSequenceFeatures() ignoring: "
-                             + feature + " - already has a sequence");
                 }
 
                 if (feature instanceof Gene) {
