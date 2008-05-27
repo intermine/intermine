@@ -35,6 +35,11 @@ import org.apache.tools.ant.util.StringUtils;
  */
 public class Dependencies extends Task
 {
+    /**
+     * The file name of the project specific properties file.
+     */
+    public static final String PROJECT_PROPERTIES = "project.properties";
+
     /** Base directory that all projects are relative to. */
     private String workspaceBaseDir;
     /** Compile classpath (does not include artifacts, includes class files and libs). */
@@ -485,10 +490,10 @@ public class Dependencies extends Task
      * @param projDir project directory
      * @return Properties object containing project properties
      */
-    protected Properties loadProjectProperties(File projDir) {
+    public static Properties loadProjectProperties(File projDir) {
         Properties properties = new Properties();
         try {
-            properties.load(new FileInputStream(new File(projDir, "project.properties")));
+            properties.load(new FileInputStream(new File(projDir, PROJECT_PROPERTIES)));
         } catch (IOException e) {
             throw new BuildException("Failed to load project properties from "
                     + projDir.getAbsolutePath(), e);
