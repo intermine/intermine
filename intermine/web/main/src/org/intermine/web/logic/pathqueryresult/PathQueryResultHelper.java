@@ -71,9 +71,7 @@ public class PathQueryResultHelper
     public static List<Path> getDefaultView(String type, Model model, WebConfig webConfig,
                           String prefix, boolean excludeNonAttributes) {
         List<Path> view = new ArrayList<Path>();
-        Set<ClassDescriptor> classDescriptors = model.getClassDescriptorsForClass(
-            TypeUtil.instantiate(model.getPackageName() + "." + type));
-        for (ClassDescriptor classDescriptor : classDescriptors) {
+        ClassDescriptor classDescriptor = model.getClassDescriptorByName(type);
             List<FieldConfig> fieldConfigs = FieldConfigHelper.getClassFieldConfigs(webConfig,
                 classDescriptor);
             for (FieldConfig fieldConfig : fieldConfigs) {
@@ -104,7 +102,6 @@ public class PathQueryResultHelper
                         view.add(path);
                     }
                 }
-            }
             if (view.size() == 0) {
                 Set<AttributeDescriptor> attrDesc = classDescriptor.getAttributeDescriptors();
                 for (AttributeDescriptor attributeDescriptor : attrDesc) {
