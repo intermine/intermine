@@ -329,6 +329,8 @@
       <fieldconfig fieldExpr="subject.primaryIdentifier" showInInlineCollection="false"/>
       <fieldconfig fieldExpr="identifier"/>
       <fieldconfig fieldExpr="name"/>
+      <fieldconfig fieldExpr="property[GOTerm].namespace"/>
+      <fieldconfig fieldExpr="qualifier"/>
     </fields>
     <longdisplayers>
       <displayer src="attributeLinkDisplayer.tile"/>
@@ -679,7 +681,7 @@
   <class className="org.flymine.model.genomic.RegulatoryRegion">
     <fields>
       <fieldconfig fieldExpr="primaryIdentifier"/>
-      <fieldconfig fieldExpr="chromosomeLocation" displayer="/model/chromosomeLocDisplayer.jsp" showInResults="false" />
+      <fieldconfig fieldExpr="chromosomeLocation" displayer="/model/chromosomeLocDisplayer.jsp"/>
     </fields>
     <longdisplayers>
       <displayer src="attributeLinkDisplayer.tile"/>
