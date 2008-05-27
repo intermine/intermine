@@ -12,6 +12,7 @@ package org.intermine.task;
 
 import java.util.Iterator;
 import java.util.Map;
+import java.util.Properties;
 
 import org.intermine.task.project.PostProcess;
 import org.intermine.task.project.Project;
@@ -42,6 +43,11 @@ import org.apache.tools.ant.util.ClasspathUtils;
  */
 public class PostProcessTask extends Task
 {
+    /**
+     * The property (from "project.properties") that sets the postprocessor class to use.
+     */
+    public static final String POSTPROCESSOR_CLASS = "postprocessor.class";
+
     private Reference classPathRef;
     private File projectXml;
     private Project project;
@@ -171,7 +177,16 @@ public class PostProcessTask extends Task
                                            project.getType() + File.separator + Integrate.SOURCES),
                                            s.getType());
 
-        System.err.print("Performing postprocess on source:" + source + ", in dir: " + sourceDir
+        Properties projProps = Dependencies.loadProjectProperties(sourceDir);
+
+        if (projProps.get(POSTPROCESSOR_CLASS) == null) {
+            // no post-process for this source
+            System.err.print("no postprocess for source: " + source + ", in dir: " + sourceDir
+                             + "\n");
+            return;
+        }
+
+        System.err.print("Performing postprocess on source: " + source + ", in dir: " + sourceDir
                          + "\n");
 
         Ant ant = new Ant();
