@@ -12,13 +12,8 @@ package org.intermine.bio.dataconversion;
 
 import java.io.File;
 import java.io.FileReader;
-import java.io.FilenameFilter;
-import java.io.Reader;
-import java.util.Collection;
 import java.util.Collections;
-import java.util.Comparator;
 import java.util.HashMap;
-import java.util.Vector;
 
 import org.intermine.dataconversion.ItemsTestCase;
 import org.intermine.dataconversion.MockItemWriter;
@@ -26,80 +21,39 @@ import org.intermine.metadata.Model;
 
 public class KeggPathwayConverterTest extends ItemsTestCase
 {
+    Model model = Model.getInstanceByName("genomic");
+    KeggPathwayConverter converter;
+    MockItemWriter itemWriter;
+    
     public KeggPathwayConverterTest(String arg) {
         super(arg);
     }
 
     public void setUp() throws Exception {
         super.setUp();
+        itemWriter = new MockItemWriter(new HashMap());
+        converter = new KeggPathwayConverter(itemWriter, model);
+        MockIdResolverFactory resolverFactory = new MockIdResolverFactory("Gene");
+        resolverFactory.addResolverEntry("7227", "FBgn001", Collections.singleton("CG1004"));
+        resolverFactory.addResolverEntry("7227", "FBgn002", Collections.singleton("CG10045"));
+        resolverFactory.addResolverEntry("7227", "FBgn003", Collections.singleton("CG1007"));
+        converter.resolverFactory = resolverFactory;
     }
 
     public void testProcess() throws Exception {
-        File resources = new File ("test/resources");
-        if (!resources.exists()) {
-            // a hack - look in test-all instead because we're running the bio tests
-            resources = new File("../sources/kegg-pathway/test/resources");
-        } else if (!resources.exists()) {
-            resources = new File ("resources");
-        } else if (!resources.exists()) {
-            fail("can't find the resources directory");
-        }
+        File srcFile = new File(getClass().getClassLoader().getResource("map_title.tab").toURI());
+        converter.setCurrentFile(srcFile);
+        converter.process(new FileReader(srcFile));
 
-        Collection<File> allfiles = listFiles(resources, null, true);
-
-        MockItemWriter itemWriter = new MockItemWriter(new HashMap());
-        KeggPathwayConverter converter = new KeggPathwayConverter(itemWriter,
-                                                        Model.getInstanceByName("genomic"));
-        converter.setSrcDataDir(resources.toString());
-
-        for (File file: allfiles) {
-            if(file.getPath().matches(".*\\.svn.*") || file.getName().matches(".*\\.svn.*")) {
-                continue;
-            }
-            if(file.isDirectory()) {
-                continue;
-            }
-
-            Reader reader = new FileReader(file);
-            converter.setCurrentFile(file);
-            converter.process(reader);
-        }
-
+        srcFile = new File(getClass().getClassLoader().getResource("dme/dme_gene_map.tab").toURI());
+        converter.setCurrentFile(srcFile);
+        converter.process(new FileReader(srcFile));
+        
         converter.close();
 
         // uncomment to write out a new target items file
-        // writeItemsFile(itemWriter.getItems(), "/tmp/kegg-tgt-items.xml");
+        //writeItemsFile(itemWriter.getItems(), "/tmp/kegg-tgt-items.xml");
 
         assertEquals(readItemSet("kegg-tgt-items.xml"), itemWriter.getItems());
-    }
-
-    public static Collection<File> listFiles(File directory, FilenameFilter filter, boolean recurse) {
-        Vector<File> files = new Vector<File>();
-        File[] entries = directory.listFiles();
-        for (File entry : entries) {
-            // If there is no filter or the filter accepts the
-            // file / directory, add it to the list
-            if (filter == null || filter.accept(directory, entry.getName())) {
-                files.add(entry);
-            }
-
-            // If the file is a directory and the recurse flag
-            // is set, recurse into the directory
-            if (recurse && entry.isDirectory()) {
-                files.addAll(listFiles(entry, filter, recurse));
-            }
-        }
-
-        class FileComparator implements Comparator<File> {
-            public int compare(File file1, File file2) {
-                return file1.getName().compareTo(file2.getName());
-            }
-
-        }
-
-        // Return collection of files
-        Collections.sort(files, new FileComparator());
-
-        return files;
     }
 }
