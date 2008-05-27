@@ -1,72 +1,56 @@
+<?xml version="1.0"?>
 <items>
-<item id="2_1" class="http://www.flymine.org/model/genomic#Organism">
-<attribute name="taxonId" value="7227"/>
-</item>
-<item id="4_4" class="http://www.flymine.org/model/genomic#Gene">
-<attribute name="secondaryIdentifier" value="CG1007"/>
-<reference name="organism" ref_id="2_1"/>
-<collection name="pathways"><reference ref_id="3_3"/></collection>
-</item>
-<item id="4_8" class="http://www.flymine.org/model/genomic#Gene">
-<attribute name="secondaryIdentifier" value="CG10078"/>
-<reference name="organism" ref_id="2_1"/>
-<collection name="pathways"><reference ref_id="3_2"/><reference ref_id="3_3"/></collection>
-</item>
-<item id="4_3" class="http://www.flymine.org/model/genomic#Gene">
-<attribute name="secondaryIdentifier" value="CG10067"/>
-<reference name="organism" ref_id="2_1"/>
-<collection name="pathways"><reference ref_id="3_2"/></collection>
-</item>
-<item id="4_2" class="http://www.flymine.org/model/genomic#Gene">
-<attribute name="secondaryIdentifier" value="CG10045"/>
-<reference name="organism" ref_id="2_1"/>
-<collection name="pathways"><reference ref_id="3_1"/><reference ref_id="3_2"/></collection>
-</item>
-<item id="4_1" class="http://www.flymine.org/model/genomic#Gene">
-<attribute name="secondaryIdentifier" value="CG1004"/>
-<reference name="organism" ref_id="2_1"/>
-<collection name="pathways"><reference ref_id="3_1"/></collection>
-</item>
-<item id="3_3" class="http://www.flymine.org/model/genomic#Pathway">
-<attribute name="identifier" value="00030"/>
-<attribute name="name" value="Pentose phosphate pathway"/>
-<collection name="evidence"><reference ref_id="1_1"/></collection>
-</item>
-<item id="1_1" class="http://www.flymine.org/model/genomic#DataSet">
-<attribute name="title" value="KEGG PATHWAY - dme"/>
-<attribute name="url" value="http://www.genome.jp/kegg/pathway.html"/>
-</item>
-<item id="4_5" class="http://www.flymine.org/model/genomic#Gene">
-<attribute name="secondaryIdentifier" value="CG10071"/>
-<reference name="organism" ref_id="2_1"/>
-<collection name="pathways"><reference ref_id="3_1"/></collection>
-</item>
-<item id="4_7" class="http://www.flymine.org/model/genomic#Gene">
-<attribute name="secondaryIdentifier" value="CG10076"/>
-<reference name="organism" ref_id="2_1"/>
-<collection name="pathways"><reference ref_id="3_1"/></collection>
-</item>
-<item id="4_6" class="http://www.flymine.org/model/genomic#Gene">
-<attribute name="secondaryIdentifier" value="CG10072"/>
-<reference name="organism" ref_id="2_1"/>
-<collection name="pathways"><reference ref_id="3_2"/><reference ref_id="3_1"/><reference ref_id="3_3"/></collection>
-</item>
-<item id="3_1" class="http://www.flymine.org/model/genomic#Pathway">
-<attribute name="identifier" value="00010"/>
-<attribute name="name" value="Glycolysis / Gluconeogenesis"/>
-<collection name="evidence"><reference ref_id="1_1"/></collection>
-</item>
-<item id="0_1" class="http://www.flymine.org/model/genomic#DataSource">
-<attribute name="name" value="Kyoto Encyclopedia of Genes and Genomes"/>
-</item>
-<item id="3_2" class="http://www.flymine.org/model/genomic#Pathway">
-<attribute name="identifier" value="00020"/>
-<attribute name="name" value="Citrate cycle (TCA cycle)"/>
-<collection name="evidence"><reference ref_id="1_1"/></collection>
-</item>
-<item id="4_9" class="http://www.flymine.org/model/genomic#Gene">
-<attribute name="secondaryIdentifier" value="CG10079"/>
-<reference name="organism" ref_id="2_1"/>
-<collection name="pathways"><reference ref_id="3_1"/><reference ref_id="3_2"/></collection>
-</item>
+  <item id="4_1" class="http://www.flymine.org/model/genomic#Gene">
+    <attribute name="primaryIdentifier" value="FBgn001"/>
+    <reference name="organism" ref_id="3_1"/>
+    <collection name="pathways">
+      <reference ref_id="2_1"/>
+    </collection>
+  </item>
+  <item id="4_3" class="http://www.flymine.org/model/genomic#Gene">
+    <attribute name="primaryIdentifier" value="FBgn003"/>
+    <reference name="organism" ref_id="3_1"/>
+    <collection name="pathways">
+      <reference ref_id="2_3"/>
+    </collection>
+  </item>
+  <item id="2_2" class="http://www.flymine.org/model/genomic#Pathway">
+    <attribute name="identifier" value="00020"/>
+    <attribute name="name" value="Citrate cycle (TCA cycle)"/>
+    <collection name="evidence">
+      <reference ref_id="1_1"/>
+    </collection>
+  </item>
+  <item id="2_1" class="http://www.flymine.org/model/genomic#Pathway">
+    <attribute name="identifier" value="00010"/>
+    <attribute name="name" value="Glycolysis / Gluconeogenesis"/>
+    <collection name="evidence">
+      <reference ref_id="1_1"/>
+    </collection>
+  </item>
+  <item id="4_2" class="http://www.flymine.org/model/genomic#Gene">
+    <attribute name="primaryIdentifier" value="FBgn002"/>
+    <reference name="organism" ref_id="3_1"/>
+    <collection name="pathways">
+      <reference ref_id="2_1"/>
+      <reference ref_id="2_2"/>
+    </collection>
+  </item>
+  <item id="0_1" class="http://www.flymine.org/model/genomic#DataSource">
+    <attribute name="name" value="Kyoto Encyclopedia of Genes and Genomes"/>
+  </item>
+  <item id="3_1" class="http://www.flymine.org/model/genomic#Organism">
+    <attribute name="taxonId" value="7227"/>
+  </item>
+  <item id="2_3" class="http://www.flymine.org/model/genomic#Pathway">
+    <attribute name="identifier" value="00030"/>
+    <attribute name="name" value="Pentose phosphate pathway"/>
+    <collection name="evidence">
+      <reference ref_id="1_1"/>
+    </collection>
+  </item>
+  <item id="1_1" class="http://www.flymine.org/model/genomic#DataSet">
+    <attribute name="title" value="KEGG PATHWAY - dme"/>
+    <attribute name="url" value="http://www.genome.jp/kegg/pathway.html"/>
+  </item>
 </items>

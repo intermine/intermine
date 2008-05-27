@@ -20,6 +20,7 @@ import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import org.apache.log4j.Logger;
 import org.intermine.dataconversion.FileConverter;
 import org.intermine.dataconversion.ItemWriter;
 import org.intermine.metadata.MetaDataException;
@@ -37,11 +38,15 @@ import org.intermine.xml.full.ReferenceList;
  */
 public class KeggPathwayConverter extends FileConverter
 {
+    protected static final Logger LOG = Logger.getLogger(KeggPathwayConverter.class);
+    
     protected Item dataSource, dataSet;
     protected Map<String, String> keggOrganismToTaxonId = new HashMap<String, String>();
     protected HashMap pathwayMap = new HashMap();
+    private Map<String, Item> geneItems = new HashMap<String, Item>();
     private String dataLocation;
-
+    protected IdResolverFactory resolverFactory;
+    
     /**
      * Constructor
      * @param writer the ItemWriter used to handle the resultant items
@@ -69,6 +74,9 @@ public class KeggPathwayConverter extends FileConverter
         dataSet.setAttribute("url", "http://www.genome.jp/kegg/pathway.html");
         store(dataSource);
         store(dataSet);
+        
+        // only construct factory here so can be replaced by mock factory in tests
+        resolverFactory = new FlyBaseIdResolverFactory();
     }
 
 
@@ -87,7 +95,7 @@ public class KeggPathwayConverter extends FileConverter
         // Map Id | name
 
         File currentFile = getCurrentFile();
-
+        
         while (lineIter.hasNext()) {
             String[] line = (String[]) lineIter.next();
             Pattern filePattern = Pattern.compile("^(\\S+)_gene_map.*");
@@ -105,12 +113,11 @@ public class KeggPathwayConverter extends FileConverter
                                                     .singleton(dataSet.getIdentifier())));
                 store(pathway);
             } else if (matcher.find()) {
+                LOG.error("MATCHED");
                 String keggOrgName = matcher.group(1);
                 String taxonId = keggOrganismToTaxonId.get(keggOrgName);
 
                 if (taxonId != null && taxonId.length() != 0) {
-                    Item organism = getAndStoreItemOnce("Organism", "taxonId", taxonId);
-
                     String geneName = line[0];
 
                     // There are a couple of Transcripts ID's so for the moment we don't want them
@@ -126,17 +133,46 @@ public class KeggPathwayConverter extends FileConverter
                         referenceList.addRefId(getAndStoreItemOnce("Pathway", "identifier",
                                                                    mapArray[i]).getIdentifier());
                     }
-                    Item gene = createItem("Gene");
-                    gene.setAttribute("secondaryIdentifier", geneName);
-                    gene.setReference("organism", organism);
-
-                    gene.addCollection(referenceList);
-                    store(gene);
+                    getGene(geneName, taxonId, referenceList);
                 }
             }
         }
     }
 
+    private Item getGene(String geneCG, String taxonId, ReferenceList referenceList) throws ObjectStoreException {
+        String identifier = null;
+        if (taxonId.equals("7227")) { 
+            IdResolver resolver = resolverFactory.getIdResolver();
+            int resCount = resolver.countResolutions(taxonId, geneCG);
+            if (resCount != 1) {
+                LOG.info("RESOLVER: failed to resolve gene to one identifier, ignoring gene: "
+                         + geneCG + " count: " + resCount + " FBgn: "
+                         + resolver.resolveId(taxonId, geneCG));
+                return null;
+            }
+            identifier = resolver.resolveId(taxonId, geneCG).iterator().next();
+        } else {
+            identifier = geneCG;
+        }
+
+        Item gene = geneItems.get(identifier);
+        if (gene == null) {
+            Item organism = getAndStoreItemOnce("Organism", "taxonId", taxonId);
+
+            gene = createItem("Gene");
+            if (taxonId.equals("7227")) {
+                gene.setAttribute("primaryIdentifier", identifier);
+            } else {
+                gene.setAttribute("symbol", identifier);
+            }
+            gene.setReference("organism", organism);
+            gene.addCollection(referenceList);
+            geneItems.put(identifier, gene);
+            store(gene);
+        }
+        return gene;
+    }
+    
     /**
      * Pick up the data location from the ant, the translator needs to open some more files.
      * @param srcdatadir location of the source data
