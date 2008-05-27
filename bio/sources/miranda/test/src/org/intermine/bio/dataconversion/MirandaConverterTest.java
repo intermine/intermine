@@ -60,7 +60,7 @@ public class MirandaConverterTest extends ItemsTestCase
         converter.close();
         
         // uncomment to write a new tgt items file
-        writeItemsFile(itemWriter.getItems(), "/tmp/miranda-tgt-items.xml");
+        //writeItemsFile(itemWriter.getItems(), "/tmp/miranda-tgt-items.xml");
 
         Set expected = readItemSet("miranda-tgt-items.xml");
 //       System.out.println(ItemsTestCase.compareItemSets(expected, allItems));
