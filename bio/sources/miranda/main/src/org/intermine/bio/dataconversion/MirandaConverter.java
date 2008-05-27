@@ -34,7 +34,7 @@ public class MirandaConverter extends FileConverter
     private Map<String, Item> miRNAgenes = new HashMap<String, Item>();
 
     private Map<String, Item> organisms = new HashMap<String, Item>();
-    private Set<String> problems = new HashSet();
+    private Set<String> problems = new HashSet<String>();
     private Item dataSource, dataSet;
 
     private Map<String, String> mirandaToTaxonId = new HashMap<String, String>();
@@ -125,7 +125,7 @@ public class MirandaConverter extends FileConverter
             Item gene = miRNAgenes.get(primaryIdentifier);
             if (gene == null) {
                 gene = createItem("Gene");
-                gene.setAttribute("symbol", symbol);
+                gene.setAttribute("primaryIdentifier", primaryIdentifier);
                 gene.setReference("organism", organism);
                 miRNAgenes.put(primaryIdentifier, gene);
                 store(gene);
