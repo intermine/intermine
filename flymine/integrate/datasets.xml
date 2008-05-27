@@ -361,5 +361,17 @@
       <attribute name="description" value="The Krause Lab"/>
       <attribute name="url" value="http://www.utoronto.ca/krause/"/>
     </item>
+    
+    <item id="471" class="" implements="http://www.flymine.org/model/genomic#DataSet">
+        <attribute name="title" value="miRBase Targets"/>
+        <attribute name="description"
+                   value="Identification of potential microRNA targets by using the miRanda software (Computational Biology Center of Memorial Sloan-Kettering Cancer Center)"/>
+        <attribute name="version" value="5.0"/>
+        <attribute name="url" 
+                   value="http://microrna.sanger.ac.uk/targets/v5/"/>
+        <reference name="dataSource" ref_id="340"/>
+    </item>
+    
+    
 </items>
 
