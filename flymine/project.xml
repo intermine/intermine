@@ -422,7 +422,7 @@
       <property name="gff3.seqDataSourceName" value="miRanda"/>
       <property name="gff3.dontCreateLocations" value="true"/>
       <property name="src.data.dir" location="/shared/data/miRNA/miRanda/current"/>
-      <property name="src.data.dir.includes" value="v5.gff.*"/>
+      <property name="src.data.dir.includes" value="v5.gff.drosophila_melanogaster"/>
     </source>
     <source name="entrez-organism" type="entrez-organism">
       <!-- this source finds the taxon ids in the objectstore, retrieves
