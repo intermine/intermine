@@ -55,9 +55,6 @@ public class ResultElement implements Serializable
         this.typeCls = typeCls;
         this.keyField = isKeyField;
         this.path = path;
-        // setHtmlId(path.toString().substring(0, path.toString().lastIndexOf(".")) + "_"
-        // + TypeUtil.unqualifiedName(typeCls.getName()));
-        setHtmlId(path.toString().substring(0, path.toString().lastIndexOf(".")));
     }
 
     /**
@@ -173,21 +170,6 @@ public class ResultElement implements Serializable
         return path;
     }
 
-
-    /**
-     * @return the htmlId
-     */
-    public String getHtmlId() {
-        return htmlId;
-    }
-
-    /**
-     * @param htmlId the htmlId to set
-     */
-    public void setHtmlId(String htmlId) {
-        this.htmlId = htmlId;
-    }
-
     /**
      * Return the InterMineObject that contains this result element.
      * @return the InterMineObject
@@ -249,5 +231,12 @@ public class ResultElement implements Serializable
         return (field == null ? 0 : field.hashCode()) + 3 * id.hashCode()
         + 7 * typeCls.hashCode();
     }
-
+    
+    /**
+     * Get the unqualified class name as a string
+     * @return a String
+     */
+    public String getTypeClsString() {
+        return TypeUtil.unqualifiedName(typeCls.getName());
+    }
 }
