@@ -34,7 +34,7 @@
           in combination with another allele of the same gene, or a
           deficiency that affects the same gene, or if the allele is
           part of a system that requires a driver, these will be
-          listed after the CD terms. </dt>
+          listed after the CV terms. </dt>
 
        </dl>
   <br/>
@@ -52,8 +52,14 @@
           <dt>Data from the <i>Drosophila</i> RNAi Screening Center
           (DRSC): Results show RNAi results, from primary screens,
           linked to genes via amplicons, with the corresponding
-          publication. Results can be: Strong hit, medium hit, weak
-          hit, not a hit, not screened. These designations are
+          publication. Results can be:</dt> 
+	  <li><dt>Strong hit,</dt></li>
+	  <li><dt>Medium hit,</dt></li> 
+	  <li><dt>Weak hit,</dt></li>
+	  <li><dt>Not a hit,</li></dt> 
+	  <li><dt>Not screened.</li></dt>
+
+	  <dt> These designations are
           provided by the authors, except for "Not screened" which is
           annotated by the DRSC based on the screening plates that
           were used.

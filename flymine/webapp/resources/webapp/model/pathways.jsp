@@ -12,8 +12,8 @@
       <div class="body">
 
         <dt>The pathway data in the KEGG database have been manually
-        entered from published materials. Current KEGG data in FlyMine are
-        from Release 41 and only include KEGG pathway names with their IDs and
+        entered from published materials. Current KEGG data in FlyMine only 
+        include Drosophila KEGG pathway names with their IDs and
         the genes involved.</dt>
 
        </div>

@@ -98,7 +98,7 @@
     <icon-image>model/images/bindingSites.png</icon-image>
     <large-image>model/images/bindingSites.png</large-image>
     <intro-text>
-      Regulatory regions and transcription factor binding sites in &lt;i&gt;Drosophila melanogaster&lt;/i&gt; from REDfly, Tiffin and FlyBase.
+      Regulatory elements (CRMs, enhancers, transcription factor binding sites) in &lt;i&gt;Drosophila melanogaster&lt;/i&gt; from REDfly, FlyBase and Tiffin.
     </intro-text>
     <tile-name>model/bindingSites.jsp</tile-name>
     <aspect-source name="REDfly" url="http://redfly.ccr.buffalo.edu/"/>
