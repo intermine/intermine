@@ -15,6 +15,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -302,10 +303,17 @@ public class PagedTable
      * Add an object id and its field value 
      * that has been selected in the table.
      * @param objectId the id to select
-     * @param field the value of the field selected
      */
-    public void selectId(Integer objectId, String field) {
-        this.selectedIds.put(objectId, field);
+    public void selectId(Integer objectId) {
+        for (List<ResultElement> resultElements: getResultElementRows()) {
+            for (ResultElement resultElement : resultElements) {
+                if ((resultElement != null) && (resultElement.getId().equals(objectId))
+                    && (resultElement.isKeyField())) {
+                    this.selectedIds.put(objectId, resultElement.getField().toString());
+                    return;
+                }
+            }
+        }
     }
     
     /**
@@ -341,11 +349,18 @@ public class PagedTable
         return selectedIds;
     }
     
+    /**
+     * Clear the table selection
+     */
+    public void clearSelectIds() {
+        selectedIds = new LinkedHashMap<Integer, String>();
+    }
+    
     
     /**
      * @return the allSelected
      */
-    public int isAllSelected() {
+    public int getAllSelected() {
         return allSelected;
     }
 

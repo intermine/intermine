@@ -13,6 +13,7 @@ package org.intermine.dwr;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -940,16 +941,15 @@ public class AjaxServices
     /**
      * Add an ID to the PagedTable selection
      * @param selectedId the id
-     * @param field the field value as displayed
      * @param tableId the identifier for the PagedTable
      * @return a String[]
      */
-    public static String[] selectId(String selectedId, String field, String tableId) {
+    public static List<String> selectId(String selectedId, String tableId) {
         ServletContext servletContext = WebContextFactory.get().getServletContext();
         HttpSession session = WebContextFactory.get().getSession();
         PagedTable pt = SessionMethods.getResultsTable(session, tableId);
-        pt.selectId(new Integer(selectedId), field);
-        return pt.getSelectedIdStrings();
+        pt.selectId(new Integer(selectedId));
+        return new ArrayList<String>(pt.getSelectedIds().values());
     }
     
     /**
@@ -958,12 +958,12 @@ public class AjaxServices
      * @param tableId the PagedTable identifier
      * @return a String[]
      */
-    public static String[] deSelectId(String deSelectId, String tableId) {
+    public static List<String> deSelectId(String deSelectId, String tableId) {
         ServletContext servletContext = WebContextFactory.get().getServletContext();
         HttpSession session = WebContextFactory.get().getSession();
         PagedTable pt = SessionMethods.getResultsTable(session, tableId);
         pt.getSelectedIds().remove(new Integer(deSelectId));
-        return pt.getSelectedIdStrings();
+        return new ArrayList<String>(pt.getSelectedIds().values());
     }
     
     /**
@@ -987,6 +987,7 @@ public class AjaxServices
         ServletContext servletContext = WebContextFactory.get().getServletContext();
         HttpSession session = WebContextFactory.get().getSession();
         PagedTable pt = SessionMethods.getResultsTable(session, tableId);
+        pt.clearSelectIds();
         pt.setAllSelected(index);
     }
     
