@@ -31,13 +31,10 @@
       the <I>D. melanogaster</I> release 3.1 peptides to which an
       <a href="http://www.ebi.ac.uk/interpro" target="_new">interpro</a> domain assignment had been
       made (only <a href="http://www.sanger.ac.uk/Software/Pfam" target="_new">PFam</a> domains
-      were taken).  Stuctural data for each of these fragments is
+      were taken).  Structural data for each of these fragments is
       available in FlyMine. Currently the atomic coordinates for each
       structure together with a sequence-structure compatibility score
-      (z-score) and a q-score are available. The <a href="http://www.jmol.org" target="_new">JMol structural viewer</a> has been
-      integrated into FlyMine and allows viewing and further analysis of each domain
-      structure. In the future the sequence-structure alignments will also be
-      loaded. 
+      (z-score) and a q-score are available.
     </dt>
     </li>
 
@@ -45,6 +42,10 @@
     <dt>Experimentally determined protein structures for <I>D. melanogaster</I> from the <a href="http://www.rcsb.org/pdb/home/home.do" target="_new">RCSB Protein data Bank.</a>
     </dt>
     </li>
+<dt> The <a href="http://www.jmol.org" target="_new">JMol structural viewer</a> has been
+     integrated into FlyMine and allows viewing and further analysis of each protein
+     structure.
+</dt>
    </div> 	
   </td>
 
