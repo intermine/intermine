@@ -1,6 +1,5 @@
 <webconfig>
 
-<!--
   <class className="org.flymine.model.genomic.Allele">
     <fields>
       <fieldconfig fieldExpr="primaryIdentifier"/>
@@ -8,7 +7,6 @@
       <fieldconfig fieldExpr="organism.name"/>
     </fields>
   </class>
--->
 
   <class className="org.flymine.model.genomic.Analysis">
     <fields>
@@ -517,7 +515,6 @@
     </longdisplayers>
   </class>
 
-<!--
   <class className="org.flymine.model.genomic.PhenotypeAnnotation">
     <fields>
       <fieldconfig fieldExpr="annotationType"/>
@@ -525,7 +522,6 @@
       <fieldconfig fieldExpr="allele.primaryIdentifier"/>
     </fields>
   </class>
--->
 
   <class className="org.flymine.model.genomic.Primer">
     <fields>
