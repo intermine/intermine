@@ -429,7 +429,7 @@ public class TestFlyBaseModuleProcessor extends FlyBaseModuleProcessor
     protected ChadoCV getFlyBaseMiscCV(Connection connection) throws SQLException {
         ChadoCV cv = new ChadoCV(FlyBaseModuleProcessor.FLY_BASE_MISCELLANEOUS_CV);
         ChadoCVTerm root = new ChadoCVTerm("origin of mutation");
-        ChadoCVTerm child = new ChadoCVTerm("SCEI endonuclease");
+        ChadoCVTerm child = new ChadoCVTerm("&agr; ray");
         child.getDirectParents().add(root);
         root.getDirectChildren().add(child);
         cv.addByChadoId(5000001, root);
