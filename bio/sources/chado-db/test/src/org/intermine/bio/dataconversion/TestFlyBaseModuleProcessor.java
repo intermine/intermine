@@ -101,6 +101,10 @@ public class TestFlyBaseModuleProcessor extends FlyBaseModuleProcessor
                 // this is actually an allele
                 2345000, "Scer\\GAL4[sd-SG29.1]", "FBal0060667", "gene", null,
                 null, 7227
+            },
+            {
+                7000000, null, "&bgr;Tub85D[10g]", "point_mutation", null,
+                null, 7227
             }
         };
         MockMultiRowResultSet res = new MockMultiRowResultSet();
