@@ -165,6 +165,7 @@ public class AttributeLinkDisplayerController extends TilesAction
                 } else {
                     config = new ConfigMap();
                     config.put("attributeName", attrName);
+                    config.put("linkId", dbName);
                     linkConfigs.put(dbName, config);
                 }
 

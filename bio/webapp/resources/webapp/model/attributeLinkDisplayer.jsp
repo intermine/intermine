@@ -12,6 +12,7 @@
     <c:set var="text" value="${confMapEntry.value.text}"/>
     <c:set var="parameters" value="${confMapEntry.value.parameters}"/>
     <c:set var="usePost" value="${confMapEntry.value.usePost}"/>
+    <c:set var="linkId" value="${confMapEntry.value.linkId}"/>
 
     <c:if test="${!empty confMapEntry.value.valid && !empty confMapEntry.value.attributeValue}">
     <tr>
@@ -35,20 +36,20 @@
 	        <c:otherwise>
                 <td align="right">
 	                <c:if test="${!empty imageName}">
-	                  <a href="javascript:document.getElementById('displayerForm').submit();" class="ext_link" >
+	                  <a href="javascript:document.getElementById('${linkId}Form').submit();" class="ext_link" >
 	                           <html:img src="model/images/${imageName}" title="${text}"/>
 	                  </a>
 	                </c:if>
 	            </td>
                 <td>
 	                <c:if test="${!empty text}">
-	                  <a href="javascript:document.getElementById('displayerForm').submit();" class="ext_link" >
+	                  <a href="javascript:document.getElementById('${linkId}Form').submit();" class="ext_link" >
 	                        ${text}&nbsp;<img src="images/ext_link.png" title="${text}"/>
 	                  </a>
 	                </c:if>
                 </td>
                 
-                <form action="${href}" method="post" id="displayerForm" target="_blank">
+                <form action="${href}" method="post" id="${linkId}Form" target="_blank">
                      <c:forEach var="par" items="${parameters}">
                          <input type="hidden" value="${par.value}" name="${par.key}" />
                      </c:forEach>	                    
