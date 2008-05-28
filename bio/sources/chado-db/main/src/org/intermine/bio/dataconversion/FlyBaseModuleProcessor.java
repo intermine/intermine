@@ -920,6 +920,15 @@ public class FlyBaseModuleProcessor extends ChadoSequenceProcessor
         return res;
     }
 
+    /**
+     * Convert ISO entities from FlyBase to HTML entities.
+     * {@inheritDoc}
+     */
+    @Override
+    protected String fixIdentifier(String type, String identifier) {
+        return XmlUtil.fixEntityNames(identifier);
+    }
+
     private String getAlleleFeaturesSql() {
         return "SELECT feature_id FROM " + ALLELE_TEMP_TABLE_NAME;
     }

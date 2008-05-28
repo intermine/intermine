@@ -10,10 +10,6 @@ package org.intermine.bio.dataconversion;
  *
  */
 
-import java.sql.Connection;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -27,12 +23,6 @@ import java.util.Set;
 import java.util.TreeSet;
 import java.util.Map.Entry;
 
-import org.apache.commons.collections.keyvalue.MultiKey;
-import org.apache.commons.collections.map.MultiKeyMap;
-import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
-import org.flymine.model.genomic.LocatedSequenceFeature;
-import org.flymine.model.genomic.Transcript;
 import org.intermine.bio.util.OrganismData;
 import org.intermine.metadata.ClassDescriptor;
 import org.intermine.metadata.FieldDescriptor;
@@ -45,6 +35,19 @@ import org.intermine.util.XmlUtil;
 import org.intermine.xml.full.Item;
 import org.intermine.xml.full.Reference;
 import org.intermine.xml.full.ReferenceList;
+
+import org.flymine.model.genomic.LocatedSequenceFeature;
+import org.flymine.model.genomic.Transcript;
+
+import java.sql.Connection;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.sql.Statement;
+
+import org.apache.commons.collections.keyvalue.MultiKey;
+import org.apache.commons.collections.map.MultiKeyMap;
+import org.apache.commons.lang.StringUtils;
+import org.apache.log4j.Logger;
 
 /**
  * A processor for the chado sequence module.
@@ -281,6 +284,22 @@ public class ChadoSequenceProcessor extends ChadoProcessor
             if (nameActionList == null || nameActionList.size() == 0
                 || nameActionList.contains(CREATE_SYNONYM_ACTION)) {
                 String fixedName = fixIdentifier(interMineType, name);
+
+                if (nameActionList != null) {
+                    CreateSynonymAction createSynonymAction = null;
+
+                    for (ConfigAction action : nameActionList) {
+                        if (action instanceof CreateSynonymAction) {
+                            createSynonymAction = (CreateSynonymAction) action;
+                            break;
+                        }
+                    }
+
+                    if (createSynonymAction != null) {
+                        fixedName = createSynonymAction.processValue(fixedName);
+                    }
+                }
+
                 if (!fdat.existingSynonyms.contains(fixedName)) {
                     boolean nameSet = false;
                     if (fieldValuesSet.contains(fixedName)) {
@@ -845,15 +864,17 @@ public class ChadoSequenceProcessor extends ChadoProcessor
 
                 for (ConfigAction action: actionList) {
                     if (action instanceof CreateSynonymAction) {
-                        if (fdat.existingSynonyms.contains(accession)) {
+                        CreateSynonymAction createSynonymAction = (CreateSynonymAction) action;
+                        String newFieldValue = createSynonymAction.processValue(accession);
+                        if (fdat.existingSynonyms.contains(newFieldValue)) {
                             continue;
                         } else {
                             boolean isPrimary = false;
-                            if (fieldsSet.contains(accession)) {
+                            if (fieldsSet.contains(newFieldValue)) {
                                 isPrimary = true;
                             }
-                            Item synonym = createSynonym(fdat, "identifier", accession, isPrimary,
-                                                         EMPTY_ITEM_LIST);
+                            Item synonym = createSynonym(fdat, "identifier", newFieldValue,
+                                                         isPrimary, EMPTY_ITEM_LIST);
                             getChadoDBConverter().store(synonym);
                             count++;
                         }
@@ -912,8 +933,9 @@ public class ChadoSequenceProcessor extends ChadoProcessor
                 for (ConfigAction action: actionList) {
                     if (action instanceof CreateSynonymAction) {
                         CreateSynonymAction synonymAction = (CreateSynonymAction) action;
+                        String newFieldValue = synonymAction.processValue(identifier);
                         Set<String> existingSynonyms = fdat.existingSynonyms;
-                        if (existingSynonyms.contains(identifier)) {
+                        if (existingSynonyms.contains(newFieldValue)) {
                             continue;
                         } else {
                             String synonymType = synonymAction.synonymType;
@@ -921,11 +943,11 @@ public class ChadoSequenceProcessor extends ChadoProcessor
                                 synonymType = propTypeName;
                             }
                             boolean isPrimary = false;
-                            if (fieldsSet.contains(identifier)) {
+                            if (fieldsSet.contains(newFieldValue)) {
                                 isPrimary = true;
                             }
-                            Item synonym = createSynonym(fdat, synonymType, identifier, isPrimary,
-                                                         EMPTY_ITEM_LIST);
+                            Item synonym = createSynonym(fdat, synonymType, newFieldValue,
+                                                         isPrimary, EMPTY_ITEM_LIST);
                             getChadoDBConverter().store(synonym);
                             count++;
                         }
@@ -996,11 +1018,13 @@ public class ChadoSequenceProcessor extends ChadoProcessor
 
                 for (ConfigAction action: actionList) {
                     if (action instanceof CreateSynonymAction) {
-                        if (fdat.existingSynonyms.contains(identifier)) {
+                        CreateSynonymAction createSynonymAction = (CreateSynonymAction) action;
+                        String newFieldValue = createSynonymAction.processValue(identifier);
+                        if (fdat.existingSynonyms.contains(newFieldValue)) {
                             continue;
                         } else {
                             Item synonym =
-                                createSynonym(fdat, synonymTypeName, identifier, setField,
+                                createSynonym(fdat, synonymTypeName, newFieldValue, setField,
                                               EMPTY_ITEM_LIST);
                             getChadoDBConverter().store(synonym);
                             count++;
@@ -1624,6 +1648,17 @@ public class ChadoSequenceProcessor extends ChadoProcessor
          */
         CreateSynonymAction(String synonymType) {
             this.synonymType = synonymType;
+        }
+
+        /**
+         * Process the value to set and return a (possibly) altered version.  Default implementation
+         * does no processing.
+         * @param value the attribute value to process
+         * @return the processed value
+         */
+        public String processValue(String value) {
+            // default: no processing
+            return value;
         }
     }
 
