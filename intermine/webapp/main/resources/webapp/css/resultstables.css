@@ -102,3 +102,7 @@ table.results tr td.noHighlightObject {
 table.results tr td.highlightObject {
     background-color: #ee6;
 }
+
+table.results tfoot tr td {
+    background-color: #d0b5d7;;
+}
