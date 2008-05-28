@@ -15,6 +15,8 @@ import java.util.Arrays;
 import java.util.Iterator;
 import java.util.List;
 
+import org.intermine.util.XmlUtil;
+
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
 import java.io.StringReader;
@@ -124,7 +126,7 @@ public class GFF3ParserTest extends TestCase
                 "<br/>&Pi;<br/>&rho;<br/>&Rho;<br/>&sigma;<br/>&Sigma;<br/>&sigmaf;<br/>&tau;<br/>&Tau;" +
                 "<br/>&upsilon;<br/>&Upsilon;<br/>&phi;<br/>&Phi;<br/>&chi;<br/>&Chi;<br/>&psi;" +
                 "<br/>&Psi;<br/>&omega;<br/>&Omega;";
-        String output = GFF3Record.fixEntityNames(input);
+        String output = XmlUtil.fixEntityNames(input);
         assertEquals(expect, output);
     }
 

@@ -10,6 +10,9 @@ package org.intermine.util;
  *
  */
 
+import java.util.HashMap;
+import java.util.Map;
+
 import java.io.ByteArrayOutputStream;
 
 /**
@@ -178,5 +181,82 @@ public class XmlUtil
             os.write(' ');
             os.write(' ');
         }
+    }
+
+    private static Map<String, String> replacements = new HashMap<String, String>();
+
+    static {
+        replacements.put("agr", "alpha");
+        replacements.put("Agr", "Alpha");
+        replacements.put("bgr", "beta");
+        replacements.put("Bgr", "Beta");
+        replacements.put("ggr", "gamma");
+        replacements.put("Ggr", "Gamma");
+        replacements.put("dgr", "delta");
+        replacements.put("Dgr", "Delta");
+        replacements.put("egr", "epsilon");
+        replacements.put("Egr", "Epsilon");
+        replacements.put("zgr", "zeta");
+        replacements.put("Zgr", "Zeta");
+        replacements.put("eegr", "eta");
+        replacements.put("EEgr", "Eta");
+        replacements.put("thgr", "theta");
+        replacements.put("THgr", "Theta");
+        replacements.put("igr", "iota");
+        replacements.put("Igr", "Iota");
+        replacements.put("kgr", "kappa");
+        replacements.put("Kgr", "Kappa");
+        replacements.put("lgr", "lambda");
+        replacements.put("Lgr", "Lambda");
+        replacements.put("mgr", "mu");
+        replacements.put("Mgr", "Mu");
+        replacements.put("ngr", "nu");
+        replacements.put("Ngr", "Nu");
+        replacements.put("xgr", "xi");
+        replacements.put("Xgr", "Xi");
+        replacements.put("ogr", "omicron");
+        replacements.put("Ogr", "Omicron");
+        replacements.put("pgr", "pi");
+        replacements.put("Pgr", "Pi");
+        replacements.put("rgr", "rho");
+        replacements.put("Rgr", "Rho");
+        replacements.put("sgr", "sigma");
+        replacements.put("Sgr", "Sigma");
+        replacements.put("sfgr", "sigmaf");
+        replacements.put("tgr", "tau");
+        replacements.put("Tgr", "Tau");
+        replacements.put("ugr", "upsilon");
+        replacements.put("Ugr", "Upsilon");
+        replacements.put("phgr", "phi");
+        replacements.put("PHgr", "Phi");
+        replacements.put("khgr", "chi");
+        replacements.put("KHgr", "Chi");
+        replacements.put("psgr", "psi");
+        replacements.put("PSgr", "Psi");
+        replacements.put("ohgr", "omega");
+        replacements.put("OHgr", "Omega");
+
+    }
+
+    /**
+     * Replace greek character entity names with entity names that work in HTML.
+     * @param value input string
+     * @return string with replacements
+     */
+    public static String fixEntityNames(String value) {
+        String retVal = value;
+
+        if (retVal.indexOf('&') != -1) {
+            for (Map.Entry<String, String> entry: replacements.entrySet()) {
+                String orig = entry.getKey();
+                String replacement = entry.getValue();
+                retVal = retVal.replaceAll("&" + orig + ";", "&" + replacement + ";");
+                if (retVal.indexOf('&') == -1) {
+                    break;
+                }
+            }
+        }
+
+        return retVal;
     }
 }

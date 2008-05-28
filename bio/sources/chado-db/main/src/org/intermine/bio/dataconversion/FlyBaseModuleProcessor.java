@@ -25,6 +25,7 @@ import org.intermine.bio.chado.ChadoCVTerm;
 import org.intermine.bio.util.OrganismData;
 import org.intermine.objectstore.ObjectStoreException;
 import org.intermine.util.IntPresentSet;
+import org.intermine.util.XmlUtil;
 import org.intermine.xml.full.Item;
 import org.intermine.xml.full.ReferenceList;
 
@@ -641,7 +642,7 @@ public class FlyBaseModuleProcessor extends ChadoSequenceProcessor
 
             for (ChadoCVTerm parent: parents) {
                 if (parent.getName().equals("origin of mutation")) {
-                    retMap.put(featureId, cvterm.getName());
+                    retMap.put(featureId, XmlUtil.fixEntityNames(cvterm.getName()));
                     continue RESULTS;
                 }
             }

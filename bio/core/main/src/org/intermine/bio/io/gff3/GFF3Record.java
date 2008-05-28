@@ -12,13 +12,13 @@ package org.intermine.bio.io.gff3;
 
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.StringTokenizer;
 
 import org.intermine.util.StringUtil;
+import org.intermine.util.XmlUtil;
 
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
@@ -43,7 +43,6 @@ public class GFF3Record
     private String strand;
     private String phase;
     private Map<String, List<String>> attributes = new LinkedHashMap<String, List<String>>();
-    private static Map<String, String> replacements;
 
     /**
      * Create a GFF3Record from a line of a GFF3 file
@@ -57,7 +56,7 @@ public class GFF3Record
             throw new IOException("GFF line too short (" + st.countTokens() + " fields): " + line);
         }
 
-        sequenceID = fixEntityNames(URLDecoder.decode(st.nextToken(), "UTF-8")).trim();
+        sequenceID = XmlUtil.fixEntityNames(URLDecoder.decode(st.nextToken(), "UTF-8")).trim();
 
         source = st.nextToken().trim();
 
@@ -202,7 +201,7 @@ public class GFF3Record
                 if (!attName.equals("Target") && !attName.equals("Gap")) {
                     value = URLDecoder.decode(value, "UTF-8");
                 }
-                value = fixEntityNames(value);
+                value = XmlUtil.fixEntityNames(value);
                 valList.set(i, value);
             }
             attributes.put(attName, valList);
@@ -463,78 +462,5 @@ public class GFF3Record
             sb.append(entry.getKey() + "=" + listValue);
         }
         return sb.toString();
-    }
-
-    /**
-     * Replace greek character entity names with entity names that work in HTML.
-     * @param value input string
-     * @return string with replacements
-     */
-    protected static String fixEntityNames(String value) {
-        String retVal = value;
-        synchronized (GFF3Record.class) {
-            if (replacements == null) {
-                replacements = new HashMap<String, String>();
-                replacements.put("agr", "alpha");
-                replacements.put("Agr", "Alpha");
-                replacements.put("bgr", "beta");
-                replacements.put("Bgr", "Beta");
-                replacements.put("ggr", "gamma");
-                replacements.put("Ggr", "Gamma");
-                replacements.put("dgr", "delta");
-                replacements.put("Dgr", "Delta");
-                replacements.put("egr", "epsilon");
-                replacements.put("Egr", "Epsilon");
-                replacements.put("zgr", "zeta");
-                replacements.put("Zgr", "Zeta");
-                replacements.put("eegr", "eta");
-                replacements.put("EEgr", "Eta");
-                replacements.put("thgr", "theta");
-                replacements.put("THgr", "Theta");
-                replacements.put("igr", "iota");
-                replacements.put("Igr", "Iota");
-                replacements.put("kgr", "kappa");
-                replacements.put("Kgr", "Kappa");
-                replacements.put("lgr", "lambda");
-                replacements.put("Lgr", "Lambda");
-                replacements.put("mgr", "mu");
-                replacements.put("Mgr", "Mu");
-                replacements.put("ngr", "nu");
-                replacements.put("Ngr", "Nu");
-                replacements.put("xgr", "xi");
-                replacements.put("Xgr", "Xi");
-                replacements.put("ogr", "omicron");
-                replacements.put("Ogr", "Omicron");
-                replacements.put("pgr", "pi");
-                replacements.put("Pgr", "Pi");
-                replacements.put("rgr", "rho");
-                replacements.put("Rgr", "Rho");
-                replacements.put("sgr", "sigma");
-                replacements.put("Sgr", "Sigma");
-                replacements.put("sfgr", "sigmaf");
-                replacements.put("tgr", "tau");
-                replacements.put("Tgr", "Tau");
-                replacements.put("ugr", "upsilon");
-                replacements.put("Ugr", "Upsilon");
-                replacements.put("phgr", "phi");
-                replacements.put("PHgr", "Phi");
-                replacements.put("khgr", "chi");
-                replacements.put("KHgr", "Chi");
-                replacements.put("psgr", "psi");
-                replacements.put("PSgr", "Psi");
-                replacements.put("ohgr", "omega");
-                replacements.put("OHgr", "Omega");
-            }
-        }
-
-        for (Map.Entry<String, String> entry: replacements.entrySet()) {
-            if (retVal.indexOf('&') != -1) {
-                final String orig = entry.getKey();
-                final String replacement = entry.getValue();
-                retVal = retVal.replaceAll("&" + orig + ";", "&" + replacement + ";");
-            }
-        }
-
-        return retVal;
     }
 }

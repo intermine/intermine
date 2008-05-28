@@ -108,4 +108,9 @@ public class XmlUtilTest extends TestCase
         System.out.println(output);
         assertEquals(output, expected);
     }
+
+    public void testFixEntityNames() throws Exception {
+        assertEquals("foo &gamma; bar &beta; zz",
+                     XmlUtil.fixEntityNames("foo &ggr; bar &bgr; zz"));
+    }
 }

@@ -57,7 +57,7 @@
     </collection>
   </item>
   <item id="10_2" class="http://www.flymine.org/model/genomic#Allele">
-    <attribute name="mutagen" value="SCEI endonuclease"/>
+    <attribute name="mutagen" value="&amp;alpha; ray"/>
     <attribute name="primaryIdentifier" value="FBal0060667"/>
     <attribute name="secondaryIdentifier" value="Scer\GAL4[sd-SG29.1]"/>
     <reference name="organism" ref_id="1_1"/>
