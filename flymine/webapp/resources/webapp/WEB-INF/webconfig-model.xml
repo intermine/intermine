@@ -72,8 +72,8 @@
   <class className="org.flymine.model.genomic.CDS">
     <fields>
       <fieldconfig fieldExpr="primaryIdentifier"/>
-      <fieldconfig fieldExpr="symbol"/>
-      <fieldconfig fieldExpr="chromosomeLocation" displayer="/model/chromosomeLocDisplayer.jsp" showInResults="false" />
+      <fieldconfig fieldExpr="symbol" showInResults="false" showInInlineCollection="false"/>
+      <fieldconfig fieldExpr="chromosomeLocation" displayer="/model/chromosomeLocDisplayer.jsp" />
       <fieldconfig fieldExpr="length" displayer="/model/sequenceShortDisplayerWithField.jsp" />
       <fieldconfig fieldExpr="gene.primaryIdentifier" showInInlineCollection="false"/>
       <fieldconfig fieldExpr="organism.name"/>
@@ -163,7 +163,7 @@
     <fields>
       <fieldconfig fieldExpr="primaryIdentifier"/>
       <fieldconfig fieldExpr="symbol"/>
-      <fieldconfig fieldExpr="chromosomeLocation"  displayer="/model/chromosomeLocDisplayer.jsp" showInResults="false" />
+      <fieldconfig fieldExpr="chromosomeLocation"  displayer="/model/chromosomeLocDisplayer.jsp"/>
       <fieldconfig fieldExpr="length" displayer="/model/sequenceShortDisplayerWithField.jsp" />
       <fieldconfig fieldExpr="gene.primaryIdentifier" showInInlineCollection="false"/>
     </fields>
@@ -175,6 +175,7 @@
 
   <class className="org.flymine.model.genomic.FlyAtlasResult">
     <fields>
+      <fieldconfig fieldExpr="assays.name"/>
       <fieldconfig fieldExpr="affyCall"/>
       <fieldconfig fieldExpr="enrichment"/>
       <fieldconfig fieldExpr="mRNASignal"/>
@@ -310,6 +311,8 @@
 
   <class className="org.flymine.model.genomic.GeneticInteraction">
     <fields>
+      <fieldconfig fieldExpr="gene.primaryIdentifier"/>
+      <fieldconfig fieldExpr="interactingGenes.primaryIdentifier"/>
       <fieldconfig fieldExpr="shortName"/>
       <fieldconfig fieldExpr="type"/>
     </fields>
@@ -324,7 +327,7 @@
 
   <class className="org.flymine.model.genomic.GOAnnotation">
     <fields>
-      <fieldconfig fieldExpr="subject.primaryIdentifier" showInInlineCollection="false"/>
+      <fieldconfig fieldExpr="subject.primaryIdentifier" showInInlineCollection="false" showInResults="false"/>
       <fieldconfig fieldExpr="identifier"/>
       <fieldconfig fieldExpr="name"/>
       <fieldconfig fieldExpr="property[GOTerm].namespace"/>
@@ -353,8 +356,8 @@
 
   <class className="org.flymine.model.genomic.Homologue">
     <fields>
-      <fieldconfig fieldExpr="gene.primaryIdentifier"/>
       <fieldconfig fieldExpr="type"/>
+      <fieldconfig fieldExpr="gene.primaryIdentifier" showInResults="false" showInInlineCollection="false"
       <fieldconfig fieldExpr="inParanoidScore"/>
       <fieldconfig fieldExpr="homologue.primaryIdentifier"/>
       <fieldconfig fieldExpr="homologue.organism.shortName"/>
@@ -378,7 +381,6 @@
   <class className="org.flymine.model.genomic.Location">
     <fields>
       <fieldconfig fieldExpr="object.primaryIdentifier"/>
-      <fieldconfig fieldExpr="subject.primaryIdentifier"/>
       <fieldconfig fieldExpr="start"/>
       <fieldconfig fieldExpr="end"/>
       <fieldconfig fieldExpr="strand"/>
@@ -724,9 +726,9 @@
 
   <class className="org.flymine.model.genomic.RNAiScreenHit">
     <fields>
-      <fieldconfig fieldExpr="analysis[RNAiScreen].name"/>
-      <fieldconfig fieldExpr="analysis[RNAiScreen].analysisDescription"/>
       <fieldconfig fieldExpr="result"/>
+      <fieldconfig fieldExpr="amplicon.primaryIdentifier"/>
+      <fieldconfig fieldExpr="analysis.name"/>
       <fieldconfig fieldExpr="analysis.publication.pubMedId"/>
     </fields>
   </class>
@@ -805,7 +807,7 @@
     <fields>
       <fieldconfig fieldExpr="primaryIdentifier"/>
       <fieldconfig fieldExpr="exonCount"/>
-      <fieldconfig fieldExpr="chromosomeLocation" displayer="/model/chromosomeLocDisplayer.jsp" showInResults="false" />
+      <fieldconfig fieldExpr="chromosomeLocation" displayer="/model/chromosomeLocDisplayer.jsp" />
       <fieldconfig fieldExpr="length" displayer="/model/sequenceShortDisplayerWithField.jsp" />
     </fields>
     <longdisplayers>
