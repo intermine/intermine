@@ -27,6 +27,4 @@ public class WebServiceConstants
      */
     public static final String MODULE_NAME = "service";
 
-//    public static final String URL_PREFIX = "/service";
-
 }

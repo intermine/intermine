@@ -23,8 +23,8 @@ import org.intermine.web.logic.template.TemplateQuery;
 import org.intermine.web.struts.TemplateAction;
 import org.intermine.web.struts.TemplateForm;
 import org.intermine.web.util.URLGenerator;
-import org.intermine.webservice.WebServiceException;
 import org.intermine.webservice.core.TemplateManager;
+import org.intermine.webservice.output.Output;
 import org.intermine.webservice.query.result.QueryResultService;
 
 /**
@@ -48,16 +48,12 @@ public class TemplateResultService extends QueryResultService
         
         TemplateQuery template = new TemplateManager(request).getQuery(input.getName());
         if (template == null) {
-            output.addError("public template with name '" + input.getName() + "' doesn't exist.");
+            output.addError("public template with name '" + input.getName() 
+                    + "' doesn't exist.", Output.SC_NOT_FOUND);
             return;
         }
-        try {
-            template = new TemplateConfigurator().getConfiguredTemplate(template, 
-                    input.getConstraints(), getLocale(request));
-        } catch (WebServiceException e) {
-            output.addError(e.getMessage());
-            return;
-        }
+        template = new TemplateConfigurator().getConfiguredTemplate(template, 
+                input.getConstraints(), getLocale(request));
         runPathQuery(template, input.getStart() - 1, input.getMaxCount(), 
                 input.isComputeTotalCount(), template.getTitle(), 
                 template.getDescription(), input, getMineLinkURL(request, input));

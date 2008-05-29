@@ -27,6 +27,10 @@ import org.intermine.webservice.WebServiceException;
  **/
 public class StreamedOutput extends Output
 {
+     
+    private int errorsCount = 0;
+    
+    private int resultsCount = 0;
     
     private PrintWriter writer;
     
@@ -46,16 +50,19 @@ public class StreamedOutput extends Output
 
     /** Forwards error messages to associated writer 
      * @param errors error messages
+     * @param statusCode status code
      * **/
     @Override
-    public void addErrors(List<String> errors) {
+    public void addErrors(List<String> errors, int statusCode) {
+        setStatus(statusCode);
         writer.write("<error>\n");
         for (String error : errors) {
             writer.write("    <message>");
             writer.write(error);
             writer.write("</message>\n");
         }
-        writer.write("</error>");        
+        writer.write("</error>");
+        errorsCount++;
     }
     
     private void printHeader() {
@@ -73,6 +80,7 @@ public class StreamedOutput extends Output
     public void addResultItem(List<String> item) {
         if (!headerPrinted) { printHeader(); }
         writer.println(formatter.formatResult(item));
+        resultsCount++;
     }
 
     /** Returns associated writer 
@@ -111,5 +119,19 @@ public class StreamedOutput extends Output
                 + "althought header was printed already.");
         }
         super.setHeaderAttributes(attributes);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public int getErrorsCount() {
+        return errorsCount;
+    }
+    
+    /**
+     * {@inheritDoc}
+     */
+    public int getResultsCount() {
+        return resultsCount;
     }
 }

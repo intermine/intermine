@@ -35,10 +35,11 @@ public class HTMLOutput extends MemoryOutput
     /**
      * Saves and prints errors.
      * @param errors error messages
+     * @param statusCode web service status code that should be returned
      */
     @Override
-    public void addErrors(List<String> errors) {
-        super.addErrors(errors);
+    public void addErrors(List<String> errors, int statusCode) {
+        super.addErrors(errors, statusCode);
         if (!htmlHeaderWritten) {
             writer.println("<html>");
             writer.println("<head>");

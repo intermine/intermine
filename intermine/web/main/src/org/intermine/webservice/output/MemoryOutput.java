@@ -23,6 +23,7 @@ public class MemoryOutput extends Output
 {
 
     private List<String> errors = new ArrayList<String>();
+    
     private List<List<String>> results = new  ArrayList<List<String>>();
 
     /** Constructor **/
@@ -30,10 +31,12 @@ public class MemoryOutput extends Output
 
     /** Add error messages to memory. 
      * @param errors error messages
+     * @param statusCode status code of web service that should be returned
      * */
     @Override
-    public void addErrors(List<String> errors) {
+    public void addErrors(List<String> errors, int statusCode) {
         this.errors.addAll(errors);
+        setStatus(statusCode);
     }
 
     /** Add result  item to memory.
@@ -63,4 +66,18 @@ public class MemoryOutput extends Output
      */
     @Override
     public void flush() { }
+    
+    /**
+     * {@inheritDoc}}
+     */
+    protected int getErrorsCount() {
+        return errors.size();
+    }
+    
+    /**
+     * {@inheritDoc}}
+     */
+    protected int getResultsCount() {
+        return results.size();
+    }
 }
