@@ -357,7 +357,7 @@
   <class className="org.flymine.model.genomic.Homologue">
     <fields>
       <fieldconfig fieldExpr="type"/>
-      <fieldconfig fieldExpr="gene.primaryIdentifier" showInResults="false" showInInlineCollection="false"
+      <fieldconfig fieldExpr="gene.primaryIdentifier" showInResults="false" showInInlineCollection="false" />
       <fieldconfig fieldExpr="inParanoidScore"/>
       <fieldconfig fieldExpr="homologue.primaryIdentifier"/>
       <fieldconfig fieldExpr="homologue.organism.shortName"/>
@@ -728,7 +728,7 @@
     <fields>
       <fieldconfig fieldExpr="result"/>
       <fieldconfig fieldExpr="amplicon.primaryIdentifier"/>
-      <fieldconfig fieldExpr="analysis.name"/>
+<!--      <fieldconfig fieldExpr="analysis.name"/>-->
       <fieldconfig fieldExpr="analysis.publication.pubMedId"/>
     </fields>
   </class>
