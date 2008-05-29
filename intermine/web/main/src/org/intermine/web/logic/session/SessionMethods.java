@@ -904,4 +904,18 @@ public class SessionMethods
         PagedTable pr = new PagedTable(webResults);
         return pr;
     }
+
+    /**
+     * @param request request
+     * @return WebConfig
+     */
+    public static WebConfig getWebConfig(HttpServletRequest request) {
+        WebConfig wc = (WebConfig) request.getSession().getServletContext().
+            getAttribute(Constants.WEBCONFIG);
+        if (wc == null) {
+            throw new RuntimeException("WebConfig not present in web session.");
+        }
+        return wc;
+    }
+    
 }

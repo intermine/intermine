@@ -23,8 +23,6 @@ import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
 import org.apache.struts.action.ActionMessage;
-import org.intermine.web.logic.Constants;
-import org.intermine.web.logic.config.WebConfig;
 import org.intermine.web.logic.export.ExportException;
 import org.intermine.web.logic.export.http.TableExporterFactory;
 import org.intermine.web.logic.export.http.TableHttpExporter;
@@ -68,7 +66,8 @@ public class TableExportAction extends InterMineAction
         String type = request.getParameter("type");
         PagedTable pt = null;
         try {
-            TableExporterFactory factory = new TableExporterFactory(getWebConfig(request));
+            TableExporterFactory factory = new TableExporterFactory(
+                    SessionMethods.getWebConfig(request));
             TableHttpExporter exporter = factory.getExporter(type);
             pt = getPagedTable(request, request.getSession());
 
@@ -99,15 +98,6 @@ public class TableExportAction extends InterMineAction
                 ((WebResults) pt.getWebTable()).releaseGoFaster();
             }
         }
-    }
-
-    private WebConfig getWebConfig(HttpServletRequest request) {
-        WebConfig wc = (WebConfig) request.getSession().getServletContext().
-            getAttribute(Constants.WEBCONFIG);
-        if (wc == null) {
-            throw new RuntimeException("WebConfig not present in web session.");
-        }
-        return wc;
     }
 
     private ActionForward processException(ActionMapping mapping,

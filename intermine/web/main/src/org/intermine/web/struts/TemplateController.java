@@ -78,7 +78,6 @@ public class TemplateController extends TilesAction
      *
      * {@inheritDoc}
      */
-    @Override
     public ActionForward execute(ComponentContext context,
                                  @SuppressWarnings("unused") ActionMapping mapping,
                                  ActionForm form,
@@ -304,8 +303,8 @@ public class TemplateController extends TilesAction
 
         populateTemplateForm(displayTemplate, tf, request, servletContext, imObj);
 
-        tf.setTemplateName(queryName);
-        tf.setTemplateType(scope);
+        tf.setName(queryName);
+        tf.setType(scope);
         // The template query
         request.setAttribute("templateQuery", displayTemplate);
         // A Map from Constraint to a String that should be displayed as the constraint name

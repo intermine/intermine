@@ -31,6 +31,7 @@ import org.intermine.web.logic.bag.InterMineBag;
 import org.intermine.web.logic.query.PathQuery;
 import org.intermine.web.logic.results.WebResults;
 import org.intermine.web.logic.session.SessionMethods;
+import org.intermine.web.struts.InterMineAction;
 import org.intermine.webservice.PagedServiceInput;
 import org.intermine.webservice.WebService;
 import org.intermine.webservice.WebServiceConstants;
@@ -80,7 +81,7 @@ public class QueryResultService extends WebService
             try {
                 PathQuery query = builder.getQuery();
                 runPathQuery(query, input.getStart() - 1 , input.getMaxCount(), 
-                        input.isComputeTotalCount(), null, null, input);
+                        input.isComputeTotalCount(), null, null, input, null);
             } catch (Throwable t) {
                 LOG.error("Execution of web service request failed.", t);
                 output.addError("Execution of web service failed. Please contact support.");
@@ -91,7 +92,7 @@ public class QueryResultService extends WebService
     }
 
     private void forward(PathQuery pathQuery, String title, String description, 
-            PagedServiceInput input) {
+            PagedServiceInput input, String mineLink) {
         List<String> columnNames = pathQuery.getViewStrings();
         if (getFormat() == WebService.HTML_FORMAT) {
             MemoryOutput mout = (MemoryOutput) output;
@@ -102,6 +103,11 @@ public class QueryResultService extends WebService
             request.setAttribute("currentPage", (input.getStart() - 1) / input.getMaxCount());
             request.setAttribute("baseLink", createBaseLink());
             request.setAttribute("pageSize", input.getMaxCount());
+            if (mineLink != null) {
+                request.setAttribute("mineLinkText", "Results in " 
+                        + InterMineAction.getWebProperties(request).getProperty("project.title"));
+                request.setAttribute("mineLinkUrl", mineLink);                
+            }
             try {   
                 getHtmlForward().forward(request, response);
             } catch (Exception e) {
@@ -110,6 +116,7 @@ public class QueryResultService extends WebService
         }        
     }
     
+
     private String createBaseLink() {
         String baseLink = request.getRequestURL().toString() + "?";
         List<String> names =  EnumerationUtils.toList(request.getParameterNames());
@@ -157,9 +164,11 @@ public class QueryResultService extends WebService
      * @param title title displayed in html output
      * @param description description displayed in html output
      * @param input input of web service
+     * @param mineLink link pointing results of this query (template) in InterMine
      */
     public void runPathQuery(PathQuery pathQuery, int firstResult, int maxResults,  
-            boolean displayTotalCount, String title, String description, PagedServiceInput input) {
+            boolean displayTotalCount, String title, String description, 
+            PagedServiceInput input, String mineLink) {
         PathQueryExecutor executor = new PathQueryExecutor(request, pathQuery);
         Results results = executor.getResults();
         
@@ -184,7 +193,7 @@ public class QueryResultService extends WebService
                 SessionMethods.getClassKeys(request.getSession().getServletContext()), null);
         ResultProcessor processor = new ResultProcessor(webResults, firstResult, maxResults);
         processor.write(output);              
-        forward(pathQuery, title, description, input);
+        forward(pathQuery, title, description, input, mineLink);
     }
 
     private String getXMLSchemaUrl() {
