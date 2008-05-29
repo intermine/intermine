@@ -352,7 +352,7 @@
   
   <c:if test="${empty previewTemplate}">
 	  <div style="font-style: italic;">
-	    <b>NEW:</b> <a href="javascript:forwardToLinks()">Embed</a> this query - <a href="http://intermine.org/wiki/TemplateWebService">help</a>
+	    <b>NEW:</b> <a href="javascript:forwardToLinks()">Embed</a> this query. <a href="http://intermine.org/wiki/TemplateWebService">Help</a>
 	  </div>
   </c:if>
   
