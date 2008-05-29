@@ -47,7 +47,14 @@ public class NewsReadController extends TilesAction
         String rssURI = (String) context.getAttribute("rss");
         URL feedUrl = new URL(rssURI);
         SyndFeedInput input = new SyndFeedInput();
-        SyndFeed feed = input.build(new XmlReader(feedUrl));
+        XmlReader reader;
+        try {
+            reader = new XmlReader(feedUrl);
+        } catch (Throwable e) {
+            // xml document at this url doesn't exist or is invalid, so the news cannot be read
+            return null;
+        }
+        SyndFeed feed = input.build(reader);
         List<SyndEntry> entries = feed.getEntries();
         
         request.setAttribute("rssMap", entries);
