@@ -41,11 +41,24 @@ public class TemplateForm extends ActionForm
 {
 
     /** Maps containing form state for each constraint. */
-    protected Map attributeOps, attributeValues, parsedAttributeValues, useBagConstraint;
-    protected Map extraValues, selectedBags, bagOps;
-    protected String templateType, templateName;
-    protected String view;
+    private Map<String, Object> attributeOps;
+    
+    private Map<String, Object> attributeValues; 
+    
+    private Map parsedAttributeValues, useBagConstraint;
+    
+    private Map extraValues, selectedBags, bagOps;
+    
+    private String type, name;
+    
+    private String view;
+    
+    /** Name of type parameter **/
+    public static final String TYPE_PARAMETER = "type";
 
+    /** Name of name parameter **/
+    public static final String NAME_PARAMETER = "name";
+    
     /**
      * Constructor
      */
@@ -75,7 +88,7 @@ public class TemplateForm extends ActionForm
      * @param key the key
      * @param value the value
      */
-    public void setAttributeOps(String key, Object value) {
+    public void setAttributeOps(String key, String value) {
         attributeOps.put(key, value);
     }
 
@@ -223,16 +236,16 @@ public class TemplateForm extends ActionForm
      * Get the template name.
      * @return the template name
      */
-    public String getTemplateName() {
-        return templateName;
+    public String getName() {
+        return name;
     }
 
     /**
      * Set the template name.
      * @param templateName the template name
      */
-    public void setTemplateName(String templateName) {
-        this.templateName = templateName;
+    public void setName(String templateName) {
+        this.name = templateName;
     }
 
     /**
@@ -255,16 +268,16 @@ public class TemplateForm extends ActionForm
      * Get the template type.
      * @return the template type
      */
-    public String getTemplateType() {
-        return templateType;
+    public String getType() {
+        return type;
     }
 
     /**
      * Set the template type.
      * @param templateType the template type
      */
-    public void setTemplateType(String templateType) {
-        this.templateType = templateType;
+    public void setType(String templateType) {
+        this.type = templateType;
     }
 
     /**
@@ -274,18 +287,18 @@ public class TemplateForm extends ActionForm
                                  HttpServletRequest request) {
         HttpSession session = request.getSession();
         ServletContext servletContext = session.getServletContext();
-        String queryName = getTemplateName();
+                
+        String queryName = getName();
         String userName = ((Profile) session.getAttribute(Constants.PROFILE)).getUsername();
 
         TemplateQuery template =
             TemplateHelper.findTemplate(servletContext, session, userName,
-                                        queryName, getTemplateType());
+                                        queryName, getType());
         ActionErrors errors = new ActionErrors();
 
         boolean appendWildcard = (request.getParameter("appendWildcard") != null
                                   && !request.getParameter("appendWildcard").equals("no"));
         parseAttributeValues(template, session, errors, appendWildcard);
-
 
         return errors;
     }
@@ -358,8 +371,8 @@ public class TemplateForm extends ActionForm
         selectedBags = new HashMap();
         bagOps = new HashMap();
         extraValues = new HashMap();
-        templateName = null;
-        templateType = null;
+        name = null;
+        type = null;
         view = "";
     }
 }

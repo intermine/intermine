@@ -329,8 +329,8 @@
      <tr>
        <td> 
       
-      <html:hidden property="templateName"/>
-      <html:hidden property="templateType"/>
+      <html:hidden property="name"/>
+      <html:hidden property="type"/>
       <html:hidden property="actionType" value="" styleId="actionType"/>
       <html:submit property="skipBuilder" styleId="showResultsButton"><fmt:message key="template.submitToResults"/></html:submit>
       <html:submit><fmt:message key="template.submitToQuery"/></html:submit>

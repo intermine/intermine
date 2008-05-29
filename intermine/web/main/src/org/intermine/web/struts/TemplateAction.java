@@ -30,6 +30,7 @@ import org.intermine.web.logic.query.QueryMonitorTimeout;
 import org.intermine.web.logic.session.SessionMethods;
 import org.intermine.web.logic.template.TemplateHelper;
 import org.intermine.web.logic.template.TemplateQuery;
+import org.intermine.web.util.URLGenerator;
 import org.intermine.webservice.template.result.TemplateResultLinkGenerator;
 
 /**
@@ -42,6 +43,12 @@ import org.intermine.webservice.template.result.TemplateResultLinkGenerator;
  */
 public class TemplateAction extends InterMineAction
 {
+    /** Name of skipBuilder parameter **/
+    public static final String SKIP_BUILDER_PARAMETER = "skipBuilder";
+
+    /** path of TemplateAction action **/
+    public static final String TEMPLATE_ACTION_PATH = "templateAction.do";
+    
     /**
      * Build a query based on the template and the input from the user.
      * There are some request parameters that, if present, effect the behaviour of
@@ -73,10 +80,10 @@ public class TemplateAction extends InterMineAction
         TemplateForm tf = (TemplateForm) form;
         HttpSession session = request.getSession();
         ServletContext servletContext = session.getServletContext();
-        String templateName = tf.getTemplateName();
-        String templateType = tf.getTemplateType();
+        String templateName = tf.getName();
+        String templateType = tf.getType();
         boolean saveQuery = (request.getParameter("noSaveQuery") == null);
-        boolean skipBuilder = (request.getParameter("skipBuilder") != null);
+        boolean skipBuilder = (request.getParameter(SKIP_BUILDER_PARAMETER) != null);
         boolean editTemplate = (request.getParameter("editTemplate") != null);
 
         SessionMethods.logTemplateQueryUse(session, templateType, templateName);
@@ -91,15 +98,16 @@ public class TemplateAction extends InterMineAction
             TemplateQuery configuredTmpl = TemplateHelper.templateFormToTemplateQuery(tf, template,
                     savedBags);
             TemplateResultLinkGenerator gen = new TemplateResultLinkGenerator();
-            String link = gen.getLink(getBaseUrl(request), configuredTmpl);
+            String link = gen.getLink(new URLGenerator(request).getPermanentBaseURL(), 
+                    configuredTmpl);
             if (gen.getError() != null) {
                 recordError(new ActionMessage("errors.linkGenerationFailed", 
                         gen.getError()), request);
                 return mapping.findForward("template");
             } else {
                 request.setAttribute("link", link);
-                request.setAttribute("highlightedLink", 
-                        gen.getHighlightedLink(getBaseUrl(request), configuredTmpl));
+                request.setAttribute("highlightedLink", gen.getHighlightedLink(
+                        new URLGenerator(request).getPermanentBaseURL(), configuredTmpl));
                 String title = configuredTmpl.getTitle();
                 title = title.replace("-->", "&nbsp;<img src=\"images/tmpl_arrow.png\" "
                         + "style=\"vertical-align:middle\">&nbsp;");
@@ -171,31 +179,6 @@ public class TemplateAction extends InterMineAction
      */
     private boolean forwardToLinksPage(HttpServletRequest request) {
         return "links".equalsIgnoreCase(request.getParameter("actionType"));
-    }
-
-    /**
-     * Generates base url. If default context path is defined in web.properties, then this
-     * path is used, else request context path is used. This enables generation of links to 
-     * the application and not to the particular version of application. 
-     * @param request request
-     * @return base url. For example: http://localhost:8080/query 
-     */
-    private String getBaseUrl(HttpServletRequest request) {
-        String contextPath;
-        if (WebUtil.getDefaultContextPath(request) != null) {
-            contextPath = WebUtil.getDefaultContextPath(request);
-        } else {
-            contextPath = request.getContextPath();
-        }
-        String port = "";
-        if (request.getServerPort() != 80) {
-            port = ":" + request.getServerPort();
-        }
-        String ret = "http://" + request.getServerName() + "" + port;
-        if (contextPath.length() > 0) {
-            ret += "/" + contextPath;
-        }
-        return ret;
     }
 
 }
