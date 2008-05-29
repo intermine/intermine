@@ -11,7 +11,7 @@
 
 <c:set var="note1" value="Also orthologues from these 5 organisms to <i>C. familiaris</i>, <i>D. discoideum</i>, <i>D. rerio</i>, <i>G. gallus</i>, <i>H. sapiens</i>, <i>M. musculus</i>, <i>P. troglodytes</i>, <i>R. norvegicus</i>, <i>S. cerevisiae</i>, <i>S. pombe</i>." />
 <c:set var="note2" value="These data have been re-mapped to genome sequence release 5.0 as of FlyMine release 7.0."/>
-<c:set var="note3" value="These data have been re-mapped and re-blasted to genome sequence release 5.0 as of FlyMine release 13.0."/>
+<c:set var="note3" value="These data have been re-mapped to genome sequence release 5.5 as of FlyMine release 13.0."/>
 
 
 <html:xhtml/>
@@ -98,7 +98,7 @@
         <p> Proteins </p></html:link></td>
     <td> <i>D. melanogaster</i> </td>
     <td> Protein annotation</td>
-    <td> <a href="http://www.ebi.uniprot.org/index.shtml" target="_new">UniProt</a> - Release 13.3</td>
+    <td> <a href="http://www.ebi.uniprot.org/index.shtml" target="_new">UniProt</a> - Release 13.4</td>
     <td> UniProt Consortium - <a href="http://www.ncbi.nlm.nih.gov/entrez/query.fcgi?cmd=Retrieve&db=PubMed&dopt=Abstract&list_uids=17142230" target="_new">PubMed: 17142230</a></td>
     <td> &nbsp;</td>
   </tr>
@@ -106,7 +106,7 @@
   <tr>
     <td> <i>A. gambiae</i></td>
     <td> Protein annotation</td>
-    <td> <a href="http://www.ebi.uniprot.org/index.shtml" target="_new">UniProt</a> - Release 13.3</td>
+    <td> <a href="http://www.ebi.uniprot.org/index.shtml" target="_new">UniProt</a> - Release 13.4</td>
     <td> UniProt Consortium - <a href="http://www.ncbi.nlm.nih.gov/entrez/query.fcgi?cmd=Retrieve&db=PubMed&dopt=Abstract&list_uids=17142230" target="_new">PubMed: 17142230</a></td>
     <td> &nbsp;</td>
   </tr>
@@ -114,7 +114,7 @@
   <tr>
     <td> <i>C. elegans</i> </td>
     <td> Protein annotation</td>
-    <td> <a href="http://www.ebi.uniprot.org/index.shtml" target="_new">UniProt</a> - Release 13.3</td>
+    <td> <a href="http://www.ebi.uniprot.org/index.shtml" target="_new">UniProt</a> - Release 13.4</td>
     <td> UniProt Consortium - <a href="http://www.ncbi.nlm.nih.gov/entrez/query.fcgi?cmd=Retrieve&db=PubMed&dopt=Abstract&list_uids=17142230" target="_new">PubMed: 17142230</a></td>
     <td> &nbsp;</td>
   </tr>
@@ -122,7 +122,7 @@
   <tr>
     <td> <i>H. sapiens</i></td>
     <td> Protein annotation</td>
-    <td> <a href="http://www.ebi.uniprot.org/index.shtml" target="_new">UniProt</a> - Release 13.3</td>
+    <td> <a href="http://www.ebi.uniprot.org/index.shtml" target="_new">UniProt</a> - Release 13.4</td>
     <td> UniProt Consortium - <a href="http://www.ncbi.nlm.nih.gov/entrez/query.fcgi?cmd=Retrieve&db=PubMed&dopt=Abstract&list_uids=17142230">PubMed: 17142230</a></td>
     <td> &nbsp;</td>
   </tr>
@@ -130,7 +130,7 @@
   <tr>
     <td> <i>M. musculus</i></td>
     <td> Protein annotation</td>
-    <td> <a href="http://www.ebi.uniprot.org/index.shtml" target="_new">UniProt</a> - Release 13.3</td>
+    <td> <a href="http://www.ebi.uniprot.org/index.shtml" target="_new">UniProt</a> - Release 13.4</td>
     <td> UniProt Consortium - <a href="http://www.ncbi.nlm.nih.gov/entrez/query.fcgi?cmd=Retrieve&db=PubMed&dopt=Abstract&list_uids=17142230" target="_new">PubMed: 17142230</a></td>
     <td> &nbsp;</td>
   </tr>
@@ -138,7 +138,7 @@
   <tr>
     <td> <i>D. melanogaster</i></td>
     <td> Protein family and domain assignments to proteins</td>
-    <td> <a href="http://www.ebi.ac.uk/interpro" target="_new">InterPro</a> (from Uniprot release 13.3)</td>
+    <td> <a href="http://www.ebi.ac.uk/interpro" target="_new">InterPro</a> (from Uniprot release 13.4)</td>
     <td> Mulder et al - <a href="http://www.ncbi.nlm.nih.gov/entrez/query.fcgi?cmd=Retrieve&db=PubMed&dopt=Abstract&list_uids=17202162" target="_new">PubMed: 17202162</a></td>
     <td> &nbsp;</td>
   </tr>
@@ -146,7 +146,7 @@
   <tr>
     <td> <i>A. gambiae</i></td>
     <td> Protein family and domain assignments to proteins</td>
-    <td> <a href="http://www.ebi.ac.uk/interpro" target="_new">InterPro</a> (from Uniprot release 13.3)</td>
+    <td> <a href="http://www.ebi.ac.uk/interpro" target="_new">InterPro</a> (from Uniprot release 13.4)</td>
     <td> Mulder et al - <a href="http://www.ncbi.nlm.nih.gov/entrez/query.fcgi?cmd=Retrieve&db=PubMed&dopt=Abstract&list_uids=17202162" target="_new">PubMed: 17202162</a></td>
     <td> &nbsp;</td>
   </tr>
@@ -154,7 +154,7 @@
   <tr>
     <td> <i>C. elegans</i> </td>
     <td> Protein family and domain assignments to proteins</td>
-    <td> <a href="http://www.ebi.ac.uk/interpro" target="_new">InterPro</a> (from Uniprot release 13.3)</td>
+    <td> <a href="http://www.ebi.ac.uk/interpro" target="_new">InterPro</a> (from Uniprot release 13.4)</td>
     <td> Mulder et al - <a href="http://www.ncbi.nlm.nih.gov/entrez/query.fcgi?cmd=Retrieve&db=PubMed&dopt=Abstract&list_uids=17202162" target="_new">PubMed: 17202162</a></td>
     <td> &nbsp;</td>
   </tr>
@@ -195,7 +195,7 @@
         <p> Interactions</p></html:link></td>
     <td> <i>D. melanogaster</i> </td>
     <td> High-throughput yeast 2-hybrid protein interaction datasets </td>
-    <td> <a href="http://www.ebi.ac.uk/intact" target="_new">IntAct</a> - 8th May 2008</td>
+    <td> <a href="http://www.ebi.ac.uk/intact" target="_new">IntAct</a> - 27th May 2008</td>
     <td> Kerrien et al - <a href="http://www.ncbi.nlm.nih.gov/entrez/query.fcgi?cmd=Retrieve&db=PubMed&dopt=Abstract&list_uids=17145710" target="_new">PubMed:17145710</a></td>
     <td> &nbsp;</td>
   </tr>
@@ -203,7 +203,7 @@
   <tr>
     <td> <i>C. elegans</i></td>
     <td> High-throughput yeast 2-hybrid protein interaction datasets </td>
-    <td> <a href="http://www.ebi.ac.uk/intact" target="_new">IntAct</a> - 8th May 2008</td>
+    <td> <a href="http://www.ebi.ac.uk/intact" target="_new">IntAct</a> - 27th May 2008</td>
     <td> Kerrien et al - <a href="http://www.ncbi.nlm.nih.gov/entrez/query.fcgi?cmd=Retrieve&db=PubMed&dopt=Abstract&list_uids=17145710" target="_new">PubMed:17145710</a></td>
     <td> &nbsp;</td>
   </tr>
@@ -211,7 +211,7 @@
   <tr>
     <td> <i>S. cerevisiae</i></td>
     <td> High-throughput yeast 2-hybrid protein interaction datasets </td>
-    <td> <a href="http://www.ebi.ac.uk/intact" target="_new">IntAct</a> - 8th May 2008</td>
+    <td> <a href="http://www.ebi.ac.uk/intact" target="_new">IntAct</a> - 27th May 2008</td>
     <td> Kerrien et al - <a href="http://www.ncbi.nlm.nih.gov/entrez/query.fcgi?cmd=Retrieve&db=PubMed&dopt=Abstract&list_uids=17145710" target="_new">PubMed:17145710</a></td>
     <td> &nbsp;</td>
   </tr>
@@ -422,7 +422,7 @@
         <p> Pathways</p></html:link></td>
     <td> <i>D. melanogaster</i></td>
     <td> Pathway information and the genes involved in them</td>
-    <td> <a href="http://www.genome.jp/kegg/" target="_new">KEGG</a> - Release 46.0</td>
+    <td> <a href="http://www.genome.jp/kegg/" target="_new">KEGG</a> - Release 46.0, 23rd May 2008</td>
     <td> Kanehisa et al - <a href="http://www.ncbi.nlm.nih.gov/entrez/query.fcgi?cmd=Retrieve&db=PubMed&dopt=Abstract&list_uids=16381885" target="_new">PubMed: 16381885</a></td>
     <td> &nbsp;</td>
   </tr>
@@ -510,7 +510,7 @@
 
     <td> <i>D. melanogaster</i> </td>
     <td> Gene versus publications</td>
-    <td> <a href="http://www.ncbi.nlm.nih.gov" target="_new">NCBI</a> - 5th May 2008</td>
+    <td> <a href="http://www.ncbi.nlm.nih.gov" target="_new">NCBI</a> - 27th May 2008</td>
     <td> &nbsp;</td>
     <td> &nbsp;</td>
   </tr>
@@ -518,7 +518,7 @@
   <tr>
     <td> <i>C. elegans</i></td>
     <td> Gene versus publications</td>
-    <td> <a href="http://www.ncbi.nlm.nih.gov" target="_new">NCBI</a> - 5th May 2008</td>
+    <td> <a href="http://www.ncbi.nlm.nih.gov" target="_new">NCBI</a> -27th May 2008</td>
     <td> &nbsp;</td>
     <td> &nbsp;</td>
   </tr>
@@ -526,7 +526,7 @@
   <tr>
     <td> <i>S. cerevisiae</i> </td>
     <td> Gene versus publications</td>
-    <td> <a href="http://www.ncbi.nlm.nih.gov" target="_new">NCBI</a> - 5th May 2008</td>
+    <td> <a href="http://www.ncbi.nlm.nih.gov" target="_new">NCBI</a> - 27th May 2008</td>
     <td> &nbsp;</td>
     <td> &nbsp;</td>
   </tr>
