@@ -36,6 +36,13 @@ public class TemplateResultRequestParser extends WebServiceRequestParser
     
     private static Logger logger = Logger.getLogger(TemplateResultRequestParser.class);
     
+    private static final String OPERATION_PARAMETER = "op";
+    
+    private static final String EXTRA_PARAMETER = "extra";
+    
+    private static final String VALUE_PARAMETER = "value";
+    
+    
     /**
      * TemplateResultRequestProcessor constructor.
      * @param request request
@@ -75,14 +82,14 @@ public class TemplateResultRequestParser extends WebServiceRequestParser
         List<ConstraintLoad> ret = new ArrayList<ConstraintLoad>();
         for (int i = 0; i < 50; i++) {
             
-            String opParameter = "op" + i;
+            String opParameter = OPERATION_PARAMETER + i;
             String opString = request.getParameter(opParameter);
             ConstraintOp op = ConstraintOp.getConstraintOp(CodeTranslator.getCode(opString));
             
-            String valueParameter = "value" + i;
+            String valueParameter = VALUE_PARAMETER + i;
             String value = request.getParameter(valueParameter);            
             
-            String extraParameter = "extraValue" + i;
+            String extraParameter = EXTRA_PARAMETER + i;
             String extraValue = request.getParameter(extraParameter);
             
             if (opString != null && opString.length() > 0 && op == null) {
