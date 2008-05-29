@@ -30,8 +30,6 @@ import org.intermine.webservice.WebServiceConstants;
 public class TemplateResultLinkGenerator
 {
 
-    private static final int LINE_LENGTH = 70;
-
     /**
      * Default value of size parameter 
      */
@@ -92,7 +90,7 @@ public class TemplateResultLinkGenerator
             ret += "&value" + code + "=";
             ret += format(TemplateResultLinkGenerator.encode(cs.getValue()), highlighted);
             if (cs.getOp().equals(ConstraintOp.LOOKUP)) {
-                ret += "&extraValue" + code + "="  
+                ret += "&extra" + code + "="  
                 + TemplateResultLinkGenerator.encode(cs.getExtraValue());                
             }
         }
