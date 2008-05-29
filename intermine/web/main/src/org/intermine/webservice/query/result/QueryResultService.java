@@ -39,6 +39,7 @@ import org.intermine.webservice.WebServiceException;
 import org.intermine.webservice.core.PathQueryExecutor;
 import org.intermine.webservice.core.ResultProcessor;
 import org.intermine.webservice.output.MemoryOutput;
+import org.intermine.webservice.output.Output;
 
 /**
  * Executes query and returns results. Other parameters in request can specify 
@@ -56,7 +57,9 @@ public class QueryResultService extends WebService
 {
 
     private static final Logger LOG = Logger.getLogger(SessionMethods.class);
+    
     private static final String XML_SCHEMA_LOCATION = "webservice/query.xsd";
+    
     private static final int BATCH_SIZE = 5000;
     
     private Map<Object, InterMineBag> savedBags;
@@ -78,16 +81,11 @@ public class QueryResultService extends WebService
                 getXMLSchemaUrl(),
                 request.getSession().getServletContext(), savedBags);
         if (builder.isQueryValid()) {
-            try {
                 PathQuery query = builder.getQuery();
                 runPathQuery(query, input.getStart() - 1 , input.getMaxCount(), 
                         input.isComputeTotalCount(), null, null, input, null);
-            } catch (Throwable t) {
-                LOG.error("Execution of web service request failed.", t);
-                output.addError("Execution of web service failed. Please contact support.");
-            }
         } else {
-            output.addErrors(builder.getErrors());
+            output.addErrors(builder.getErrors(), Output.SC_BAD_REQUEST);
         }
     }
 

@@ -65,8 +65,6 @@ public abstract class WebService
     /** HTML format constant **/
     public static final int HTML_FORMAT = 2;
     
-    private static final int FORBIDDEN_HTTP_CODE = 403;
-    
     private static final String WEB_SERVICE_DISABLED_PROPERTY = "webservice.disabled";
 
     /**
@@ -111,26 +109,29 @@ public abstract class WebService
             Properties webProperties = (Properties) request.getSession()
                 .getServletContext().getAttribute(Constants.WEB_PROPERTIES);
             if ("true".equalsIgnoreCase(webProperties.getProperty(WEB_SERVICE_DISABLED_PROPERTY))) {
-                response.setStatus(FORBIDDEN_HTTP_CODE);
-                output.addError("Web service is disabled.");
+                output.addError("Web service is disabled.", Output.SC_FORBIDDEN);
                 return;
             }
                  
             execute(request, response);
+            if (!response.isCommitted() && output.getStatus() != Output.SC_OK) {
+                response.setStatus(output.getStatus());
+            }
             output.flush();
         } catch (WebServiceException ex) {
             if (ex.getMessage() != null && ex.getMessage().length() >= 0) {
-                output.addError(ex.getMessage());
+                output.addError(ex.getMessage(), Output.SC_INTERNAL_SERVER_ERROR);
             } else {
-                output.addError(WebServiceConstants.SERVICE_FAILED_MSG);
+                output.addError(WebServiceConstants.SERVICE_FAILED_MSG, 
+                        Output.SC_INTERNAL_SERVER_ERROR);
             }
             logger.error("Service failed.", ex);
         } catch (Throwable t) {
-            output.addError(WebServiceConstants.SERVICE_FAILED_MSG);
+            output.addError(WebServiceConstants.SERVICE_FAILED_MSG, 
+                    Output.SC_INTERNAL_SERVER_ERROR);
             logger.error("Service failed.", t);
         }
     }
-    
 
     private void initOutput(HttpServletResponse response) {
         PrintWriter out;
@@ -196,7 +197,7 @@ public abstract class WebService
      */
     protected boolean validate(WebServiceInput input) {
         if (!input.isValid()) {
-            output.addErrors(input.getErrors());
+            output.addErrors(input.getErrors(), Output.SC_BAD_REQUEST);
             return false;
         } else {
             return true;

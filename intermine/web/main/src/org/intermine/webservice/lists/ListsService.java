@@ -72,7 +72,7 @@ public class ListsService extends WebService
         } else {
             objectId = input.getMineId();
             if (!objectExists(request, objectId)) {
-                output.addError("object with specified id doesn't exist.");
+                output.addError("object with specified id doesn't exist.", Output.SC_NOT_FOUND);
                 output.flush();
                 return;
             }
@@ -111,7 +111,8 @@ public class ListsService extends WebService
         // checks  type
         if (model.getClassDescriptorByName(input.getType()) == null) {
             output.addError("invalid " + ListsRequestParser.TYPE_PARAMETER + " parameter." 
-                    + " Specified type of the object doesn't exist: " + input.getType());
+                    + " Specified type of the object doesn't exist: " + input.getType(), 
+                    Output.SC_BAD_REQUEST);
             output.flush();
             return null;                
         }
@@ -126,11 +127,11 @@ public class ListsService extends WebService
         Results results = executor.getResults();
         if (results.size() != 1) {
             if (results.size() == 0) {
-                output.addError("No objects of type " + input.getType() 
-                        + " with public id " + input.getPublicId() + " were found.");
+                output.addError("No objects of type " + input.getType() + " with public id " 
+                        + input.getPublicId() + " were found.", Output.SC_NOT_FOUND);
             } else {
-                output.addError("Multiple objects of type " + input.getType() 
-                        + " with public id " + input.getPublicId() + " were found.");
+                output.addError("Multiple objects of type " + input.getType() + " with public id " 
+                        + input.getPublicId() + " were found.", Output.SC_BAD_REQUEST);
             }
             output.flush();
             return null;

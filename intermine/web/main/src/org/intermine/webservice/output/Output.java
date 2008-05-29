@@ -14,6 +14,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
+
 /**
  * Abstract class representing output of web service or something else.
  * Data written to output can be streamed to user via http or saved in memory or something else.
@@ -24,8 +25,42 @@ import java.util.Map;
  */
 public abstract class Output  
 {
-   
+       
+    // implicit status code is ok, if something goes wrong that service 
+    // sets this code to different error status code
+    private int statusCode = Output.SC_OK;
+    
     private Map<String, String> headerAttributes;
+
+    /**
+     * Bad request http status code.
+     */
+    public static final int SC_BAD_REQUEST = 400;
+
+    /**
+     * Internal server http status code.
+     */
+    public static final int SC_INTERNAL_SERVER_ERROR = 500;
+
+    /**
+     * Forbidden http status code.
+     */
+    public static final int SC_FORBIDDEN = 403;
+
+    /**
+     * OK http status code.
+     */
+    public static final int SC_OK = 200;
+
+    /**
+     * No content http status code.
+     */
+    public static final int SC_NO_CONTENT = 204;
+    
+    /**
+     * Resource not found http status code.
+     */
+    public static final int SC_NOT_FOUND = 404;
     
     /**
      * Adds data to output.
@@ -36,17 +71,19 @@ public abstract class Output
     /**
      * Adds error messages to output.  
      * @param errors error messages
+     * @param statusCode status code
      */
-    public abstract void addErrors(List<String> errors);
+    public abstract void addErrors(List<String> errors, int statusCode);
 
     /**
      * Adds error message to output.
      * @param error error message
+     * @param statusCode status code
      */
-    public void addError(String error) {
+    public void addError(String error, int statusCode) {
         List<String> errors = new ArrayList<String>();
         errors.add(error);
-        addErrors(errors);
+        addErrors(errors, statusCode);
     }
 
     /**
@@ -69,4 +106,33 @@ public abstract class Output
     public Map<String, String>  getHeaderAttributes() {
         return headerAttributes;
     }
+ 
+    /**
+     * @return returned status code
+     */
+    public int getStatus() {
+        if (statusCode == Output.SC_OK) {
+            if (getErrorsCount() == 0 && getResultsCount() == 0) {
+                return Output.SC_NO_CONTENT;
+            }             
+        } 
+        return statusCode;
+    }
+    
+    /**
+     * @param code status code
+     */
+    public void setStatus(int code) {
+        this.statusCode = code;
+    }
+    
+    /**
+     * @return errors count
+     */
+    protected abstract int getErrorsCount();
+
+    /**
+     * @return number of written results
+     */
+    protected abstract int getResultsCount();     
 }
