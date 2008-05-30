@@ -23,5 +23,69 @@ for <i>D. melanogaster</i> and <i>D. pseudoobscura</i> from FlyBase.
 
 
     </td>
+
+    <td width="40%" valign="top">
+      <div class="heading2">
+        Bulk download
+      </div>
+      <div class="body">
+        <ul>
+
+          <li>
+           <im:querylink text="All <i> D. melanogaster</i> publications"  skipBuilder="true">
+<query name="" model="genomic" view="Gene.publications.year Gene.publications.firstAuthor Gene.publications.journal Gene.publications.title Gene.publications.pubMedId" sortOrder="Gene.publications.year asc">
+  <node path="Gene" type="Gene">
+  </node>
+  <node path="Gene.organism" type="Organism">
+    <constraint op="LOOKUP" value="Drosophila melanogaster" description="" identifier="" code="A" extraValue="">
+    </constraint>
+  </node>
+</query>
+       </im:querylink>
+          </li>
+
+          <li>
+           <im:querylink text="All <i> D. pseudoobscura</i> publications"  skipBuilder="true">
+<query name="" model="genomic" view="Gene.publications.year Gene.publications.firstAuthor Gene.publications.journal Gene.publications.title Gene.publications.pubMedId" sortOrder="Gene.publications.year asc">
+  <node path="Gene" type="Gene">
+  </node>
+  <node path="Gene.organism" type="Organism">
+    <constraint op="LOOKUP" value="Drosophila pseudoobscura" description="" identifier="" code="A" extraValue="">
+    </constraint>
+  </node>
+</query>
+       </im:querylink>
+          </li>
+
+          <li>
+           <im:querylink text="All <i> C. elegans</i> publications"  skipBuilder="true">
+<query name="" model="genomic" view="Gene.publications.year Gene.publications.firstAuthor Gene.publications.journal Gene.publications.title Gene.publications.pubMedId" sortOrder="Gene.publications.year asc">
+  <node path="Gene" type="Gene">
+  </node>
+  <node path="Gene.organism" type="Organism">
+    <constraint op="LOOKUP" value="Caenorhabditis elegans" description="" identifier="" code="A" extraValue="">
+    </constraint>
+  </node>
+</query>
+           </im:querylink>
+          </li>
+
+          <li>
+          <im:querylink text="All <i> S. cerevisiae</i> publications"  skipBuilder="true">
+<query name="" model="genomic" view="Gene.publications.year Gene.publications.firstAuthor Gene.publications.journal Gene.publications.title Gene.publications.pubMedId" sortOrder="Gene.publications.year asc">
+  <node path="Gene" type="Gene">
+  </node>
+  <node path="Gene.organism" type="Organism">
+    <constraint op="LOOKUP" value="Saccharomyces cerevisiae" description="" identifier="" code="A" extraValue="">
+    </constraint>
+  </node>
+</query>
+           </im:querylink>
+          </li>
+
+        </ul>
+      </div>
+    </td>
+
   </tr>
 </table>

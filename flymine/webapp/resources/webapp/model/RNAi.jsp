@@ -94,21 +94,49 @@
           
           <ul>
             <li>
+<im:querylink text="All <i>D. melanogaster</i> alleles linked to genes " skipBuilder="true">
+<query name="" model="genomic" view="Gene.primaryIdentifier Gene.symbol Gene.alleles.primaryIdentifier Gene.alleles.secondaryIdentifier Gene.alleles.mutagen" sortOrder="Gene.primaryIdentifier asc">
+  <node path="Gene" type="Gene">
+  </node>
+  <node path="Gene.organism" type="Organism">
+    <constraint op="LOOKUP" value="Drosophila melanogaster" description="" identifier="" code="A" extraValue="">
+    </constraint>
+  </node>
+</query>
+              </im:querylink>
+            </li>
+
+           <li>
+<im:querylink text="All <i>D. melanogaster</i> alleles with phenotypes " skipBuilder="true">
+<query name="" model="genomic" view="Gene.primaryIdentifier Gene.symbol Gene.alleles.primaryIdentifier Gene.alleles.secondaryIdentifier Gene.alleles.mutagen Gene.alleles.alleleClass Gene.alleles.phenotypeAnnotations.annotationType Gene.alleles.phenotypeAnnotations.description" sortOrder="Gene.primaryIdentifier asc">
+  <node path="Gene" type="Gene">
+  </node>
+  <node path="Gene.organism" type="Organism">
+    <constraint op="LOOKUP" value="Drosophila melanogaster" description="" identifier="" code="A" extraValue="">
+    </constraint>
+  </node>
+</query>
+              </im:querylink>
+            </li>
+
+          <li>
              <im:querylink text="All <i>D. melanogaster</i> RNAi data " skipBuilder="true">
-              <query name="" model="genomic" view="Gene.rnaiResults.analysis.publication.pubMedId Gene.rnaiResults.analysis.name Gene.rnaiResults.analysis.cellLine Gene.rnaiResults.analysis.analysisDescription Gene.primaryIdentifier Gene.rnaiResults.amplicon.identifier Gene.rnaiResults.result Gene.rnaiResults.strength Gene.rnaiResults.numOffTargets ">
-               <node path="Gene" type="Gene">
-                </node>
-               <node path="Gene.rnaiResults" type="RNAiScreenHit">
-                </node>
-               <node path="Gene.rnaiResults.analysis" type="RNAiScreen">
-                </node>
-               <node path="Gene.organism" type="Organism">
-                </node>
-               <node path="Gene.organism.name" type="String">
-                 <constraint op="=" value="Drosophila melanogaster" description="" identifier="" code="A">
-                  </constraint>
-               </node>
-              </query>
+<query name="" model="genomic" view="Gene.rnaiResults.rnaiScreen.publication.pubMedId Gene.rnaiResults.amplicon.primaryIdentifier Gene.rnaiResults.result" sortOrder="Gene.rnaiResults.rnaiScreen.publication.pubMedId asc">
+  <node path="Gene" type="Gene">
+  </node>
+  <node path="Gene.rnaiResults" type="RNAiScreenHit">
+  </node>
+  <node path="Gene.rnaiResults.amplicon" type="Amplicon">
+  </node>
+  <node path="Gene.rnaiResults.amplicon.evidence" type="DataSet">
+  </node>
+  <node path="Gene.organism" type="Organism">
+  </node>
+  <node path="Gene.organism.name" type="String">
+    <constraint op="=" value="Drosophila melanogaster" description="" identifier="" code="A">
+    </constraint>
+  </node>
+</query>
               </im:querylink>
             </li>
 
