@@ -160,78 +160,117 @@
 
           <li>
             <im:querylink text="All DrosDel deletions " skipBuilder="true">
-              <query name="" model="genomic" view="ArtificialDeletion.primaryIdentifier ArtificialDeletion.available ArtificialDeletion.chromosome.primaryIdentifier ArtificialDeletion.chromosomeLocation.start ArtificialDeletion.chromosomeLocation.end">
-                <node path="ArtificialDeletion" type="ArtificialDeletion">
-                </node>
-                <node path="ArtificialDeletion.organism" type="Organism">
-                </node>
-                <node path="ArtificialDeletion.organism.name" type="String">
-                  <constraint op="=" value="Drosophila melanogaster" description="" identifier="" code="A">
-                  </constraint>
-                </node>
-              </query>
+<query name="" model="genomic" view="ArtificialDeletion.primaryIdentifier ArtificialDeletion.available ArtificialDeletion.chromosome.primaryIdentifier ArtificialDeletion.chromosomeLocation.start ArtificialDeletion.chromosomeLocation.end ArtificialDeletion.element1.primaryIdentifier ArtificialDeletion.element2.primaryIdentifier" sortOrder="ArtificialDeletion.primaryIdentifier asc">
+  <node path="ArtificialDeletion" type="ArtificialDeletion">
+  </node>
+  <node path="ArtificialDeletion.organism" type="Organism">
+  </node>
+  <node path="ArtificialDeletion.organism.name" type="String">
+    <constraint op="=" value="Drosophila melanogaster" description="" identifier="" code="A">
+    </constraint>
+  </node>
+</query>
             </im:querylink>
           </li>
 
           <li>
             <im:querylink text="All available DrosDel deletions " skipBuilder="true">
-              <query name="" model="genomic" view="ArtificialDeletion.primaryIdentifier ArtificialDeletion.chromosome.primaryIdentifier ArtificialDeletion.chromosomeLocation.start ArtificialDeletion.chromosomeLocation.end">
-                <node path="ArtificialDeletion" type="ArtificialDeletion">
-                </node>
-                <node path="ArtificialDeletion.organism" type="Organism">
-                </node>
-                <node path="ArtificialDeletion.organism.name" type="String">
-                  <constraint op="=" value="Drosophila melanogaster" description="" identifier="" code="A">
-                  </constraint>
-                  <node path="ArtificialDeletion.available" type="Boolean">
-                    <constraint op="=" value="true" description="" identifier="" code="B">
-                    </constraint>
-                  </node>
-               </node>
-              </query>
+<query name="" model="genomic" view="ArtificialDeletion.primaryIdentifier ArtificialDeletion.secondaryIdentifier ArtificialDeletion.chromosome.primaryIdentifier ArtificialDeletion.chromosomeLocation.start ArtificialDeletion.chromosomeLocation.end" sortOrder="ArtificialDeletion.primaryIdentifier asc" constraintLogic="A and B">
+  <node path="ArtificialDeletion" type="ArtificialDeletion">
+  </node>
+  <node path="ArtificialDeletion.organism" type="Organism">
+  </node>
+  <node path="ArtificialDeletion.organism.name" type="String">
+    <constraint op="=" value="Drosophila melanogaster" description="" identifier="" code="A">
+    </constraint>
+  </node>
+  <node path="ArtificialDeletion.available" type="Boolean">
+    <constraint op="=" value="true" description="" identifier="" code="B">
+    </constraint>
+  </node>
+</query>
             </im:querylink>
           </li>
 
           <li>
             <im:querylink text="All DrosDel insertions " skipBuilder="true">
-            <query name="" model="genomic" view="TransposableElementInsertionSite.primaryIdentifier TransposableElementInsertionSite.type TransposableElementInsertionSite.subType TransposableElementInsertionSite.chromosome.primaryIdentifier TransposableElementInsertionSite.chromosomeLocation.start TransposableElementInsertionSite.chromosomeLocation.end" constraintLogic="A and B">
-             <node path="TransposableElementInsertionSite" type="TransposableElementInsertionSite">
-              </node>
-             <node path="TransposableElementInsertionSite.organism" type="Organism">
-              </node>
-             <node path="TransposableElementInsertionSite.organism.name" type="String">
-               <constraint op="=" value="Drosophila melanogaster" description="" identifier="" code="A">
-               </constraint>
-              </node>
-             <node path="TransposableElementInsertionSite.evidence" type="DataSet">
-              </node>
-             <node path="TransposableElementInsertionSite.evidence.title" type="String">
-              <constraint op="LIKE" value="%DrosDel%" description="" identifier="" code="B">
-              </constraint>
-             </node>
-            </query>
+<query name="" model="genomic" view="TransposableElementInsertionSite.primaryIdentifier TransposableElementInsertionSite.name TransposableElementInsertionSite.type TransposableElementInsertionSite.subType TransposableElementInsertionSite.chromosome.primaryIdentifier TransposableElementInsertionSite.chromosomeLocation.start TransposableElementInsertionSite.chromosomeLocation.end" sortOrder="TransposableElementInsertionSite.primaryIdentifier asc" constraintLogic="A and B">
+  <node path="TransposableElementInsertionSite" type="TransposableElementInsertionSite">
+  </node>
+  <node path="TransposableElementInsertionSite.organism" type="Organism">
+  </node>
+  <node path="TransposableElementInsertionSite.organism.name" type="String">
+    <constraint op="=" value="Drosophila melanogaster" description="" identifier="" code="A">
+    </constraint>
+  </node>
+  <node path="TransposableElementInsertionSite.evidence" type="DataSet">
+  </node>
+  <node path="TransposableElementInsertionSite.evidence.title" type="String">
+    <constraint op="LIKE" value="%DrosDel%" description="" identifier="" code="B">
+    </constraint>
+  </node>
+</query>
            </im:querylink>
           </li>
 
         <li>
-            <im:querylink text="All transposon insertions (including Exelixis and DrosDel)" skipBuilder="true">
-              <query name="" model="genomic" view="TransposableElementInsertionSite.primaryIdentifier TransposableElementInsertionSite.type TransposableElementInsertionSite.subType TransposableElementInsertionSite.chromosome.primaryIdentifier TransposableElementInsertionSite.chromosomeLocation.start TransposableElementInsertionSite.chromosomeLocation.end">
-                <node path="TransposableElementInsertionSite" type="TransposableElementInsertionSite">
-                </node>
-                <node path="TransposableElementInsertionSite.organism" type="Organism">
-                </node>
-                <node path="TransposableElementInsertionSite.organism.name" type="String">
-                  <constraint op="=" value="Drosophila melanogaster" description="" identifier="" code="A">
-                  </constraint>
-                </node>
-              </query>
-            </im:querylink>
+            <im:querylink text="All <i>D. melanogaster</i> transposon insertions (including Exelixis and DrosDel)" skipBuilder="true">
+<query name="" model="genomic" view="TransposableElementInsertionSite.primaryIdentifier TransposableElementInsertionSite.name TransposableElementInsertionSite.cytoLocation " sortOrder="TransposableElementInsertionSite.primaryIdentifier asc">
+  <node path="TransposableElementInsertionSite" type="TransposableElementInsertionSite">
+  </node>
+  <node path="TransposableElementInsertionSite.organism" type="Organism">
+  </node>
+  <node path="TransposableElementInsertionSite.organism.name" type="String">
+    <constraint op="=" value="Drosophila melanogaster" description="" identifier="" code="A">
+    </constraint>
+  </node>
+</query>
+          </im:querylink>
           </li>
 
-            <li>
-             <im:querylink text="All Affymetrix probes from the GeneChip <i>Drosophila</i> Genome 2.0 Array " skipBuilder="true">
-              <query name="" model="genomic" view="ProbeSet.primaryIdentifier ProbeSet.isControl">
-               </query>
+          <li>
+      <im:querylink text="All mapped <i>D. melanogaster</i> transposon insertions (including Exelixis and DrosDel)" skipBuilder="true">
+<query name="" model="genomic" view="TransposableElementInsertionSite.primaryIdentifier TransposableElementInsertionSite.name TransposableElementInsertionSite.cytoLocation TransposableElementInsertionSite.chromosome.primaryIdentifier TransposableElementInsertionSite.chromosomeLocation.start TransposableElementInsertionSite.chromosomeLocation.end" sortOrder="TransposableElementInsertionSite.primaryIdentifier asc">
+  <node path="TransposableElementInsertionSite" type="TransposableElementInsertionSite">
+  </node>
+  <node path="TransposableElementInsertionSite.organism" type="Organism">
+  </node>
+  <node path="TransposableElementInsertionSite.organism.name" type="String">
+    <constraint op="=" value="Drosophila melanogaster" description="" identifier="" code="A">
+    </constraint>
+  </node>
+</query>
+          </im:querylink>
+          </li>
+
+
+           <li>
+             <im:querylink text="All Affymetrix probes from the GeneChip <i>Drosophila</i> Genome Array " skipBuilder="true">
+<query name="" model="genomic" view="ProbeSet.primaryIdentifier" sortOrder="ProbeSet.primaryIdentifier asc">
+  <node path="ProbeSet" type="ProbeSet">
+  </node>
+  <node path="ProbeSet.evidence" type="DataSet">
+  </node>
+  <node path="ProbeSet.evidence.title" type="String">
+    <constraint op="=" value="Affymetrix array: Drosophila Genome Array" description="" identifier="" code="A" extraValue="">
+    </constraint>
+  </node>
+</query>
+           </im:querylink>
+          </li>
+
+          <li>            
+             <im:querylink text="All Affymetrix probes from the GeneChip <i>Drosophila</i> 2 Array " skipBuilder="true">
+<query name="" model="genomic" view="ProbeSet.primaryIdentifier" sortOrder="ProbeSet.primaryIdentifier asc">
+  <node path="ProbeSet" type="ProbeSet">
+  </node>
+  <node path="ProbeSet.evidence" type="DataSet">
+  </node>
+  <node path="ProbeSet.evidence.title" type="String">
+    <constraint op="=" value="Affymetrix array: Drosophila\\_2 Array" description="" identifier="" code="A" extraValue="">
+    </constraint>
+  </node>
+</query>
              </im:querylink>
             </li>
 

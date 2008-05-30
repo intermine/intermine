@@ -111,7 +111,7 @@
 
           <li>
             <im:querylink text="All 3-D protein structure data for <i>D. melanogaster</i> (PDB data) " skipBuilder="true">
-<query name="PDB_bulkdownload" model="genomic" view="Protein.primaryIdentifier Protein.name Protein.structures.title Protein.structures.technique Protein.structures.resolution" sortOrder="Protein.primaryIdentifier asc">
+<query name="" model="genomic" view="Protein.primaryIdentifier Protein.name Protein.structures.identifier Protein.structures.title Protein.structures.technique Protein.structures.resolution" sortOrder="Protein.primaryIdentifier asc">
   <node path="Protein" type="Protein">
   </node>
   <node path="Protein.structures" type="ProteinStructure">

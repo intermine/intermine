@@ -5,12 +5,12 @@
 
 <table width="100%">
   <tr>
-
     <td valign="top">
       <div class="heading2">
         Current data
       </div>
       <div class="body">
+
         <dl>
           <h4>
             <a href="javascript:toggleDiv('hiddenDiv1');">
@@ -64,13 +64,17 @@
 
           <li>
             <im:querylink text="REDfly <i>cis</i>-regulatory modules " skipBuilder="true">
-<query name="" model="genomic" view="CRM.primaryIdentifier CRM.length CRM.elementEvidence CRM.gene.primaryIdentifier CRM.gene.symbol CRM.organism.shortName" sortOrder="CRM.primaryIdentifier CRM.length CRM.elementEvidence CRM.gene.primaryIdentifier CRM.gene.symbol CRM.organism.shortName">
+<query name="" model="genomic" view="CRM.primaryIdentifier CRM.length CRM.chromosome.primaryIdentifier CRM.chromosomeLocation.start CRM.chromosomeLocation.end CRM.elementEvidence" sortOrder="CRM.primaryIdentifier asc" constraintLogic="A and B">
   <node path="CRM" type="CRM">
   </node>
   <node path="CRM.evidence" type="DataSet">
   </node>
   <node path="CRM.evidence.title" type="String">
     <constraint op="=" value="REDfly Drosophila transcriptional cis-regulatory modules" description="" identifier="" code="B" extraValue="">
+    </constraint>
+  </node>
+  <node path="CRM.organism" type="Organism">
+    <constraint op="LOOKUP" value="Drosophila melanogaster" description="" identifier="" code="A" extraValue="">
     </constraint>
   </node>
 </query>
@@ -80,32 +84,31 @@
 
           <li>
             <im:querylink text="REDfly transcription factor binding sites " skipBuilder="true">
-<query name="" model="genomic" view="TFBindingSite.primaryIdentifier TFBindingSite.length TFBindingSite.chromosomeLocation.start TFBindingSite.chromosomeLocation.end TFBindingSite.gene.primaryIdentifier TFBindingSite.gene.symbol TFBindingSite.organism.shortName" sortOrder="TFBindingSite.primaryIdentifier asc" constraintLogic="A and B">
+
+<query name="" model="genomic" view="TFBindingSite.primaryIdentifier TFBindingSite.length TFBindingSite.chromosomeLocation.start TFBindingSite.chromosomeLocation.end" sortOrder="TFBindingSite.primaryIdentifier asc" constraintLogic="A and B">
   <node path="TFBindingSite" type="TFBindingSite">
   </node>
   <node path="TFBindingSite.organism" type="Organism">
     <constraint op="LOOKUP" value="Drosophila melanogaster" description="" identifier="" code="B" extraValue="">
     </constraint>
   </node>
-  <node path="TFBindingSite.evidence" type="InfoSource">
+  <node path="TFBindingSite.evidence" type="DataSet">
   </node>
   <node path="TFBindingSite.evidence.title" type="String">
-    <constraint op="CONTAINS" value="REDfly" description="" identifier="" code="A" extraValue="">
+    <constraint op="=" value="REDfly Drosophila transcription factor binding sites" description="" identifier="" code="A" extraValue="">
     </constraint>
   </node>
 </query>
- </im:querylink>
+          </im:querylink>
           </li>
 
           <li>
             <im:querylink text="FlyBase enhancers " skipBuilder="true">
-<query name="" model="genomic" view="Enhancer.primaryIdentifier Enhancer.length Enhancer.chromosomeLocation.start Enhancer.chromosomeLocation.end Enhancer.gene.symbol Enhancer.gene.primaryIdentifier Enhancer.organism.shortName" sortOrder="Enhancer.primaryIdentifier asc">
+<query name="" model="genomic" view="Enhancer.primaryIdentifier Enhancer.length Enhancer.chromosome.primaryIdentifier Enhancer.chromosomeLocation.start Enhancer.chromosomeLocation.end" sortOrder="Enhancer.primaryIdentifier asc">
   <node path="Enhancer" type="Enhancer">
   </node>
-  <node path="Enhancer.evidence" type="DataSet">
-  </node>
-  <node path="Enhancer.evidence.title" type="String">
-    <constraint op="=" value="FlyBase Drosophila melanogaster data set" description="" identifier="" code="B" extraValue="">
+  <node path="Enhancer.organism" type="Organism">
+    <constraint op="LOOKUP" value="Drosophila melanogaster" description="" identifier="" code="A" extraValue="">
     </constraint>
   </node>
 </query>
@@ -152,5 +155,6 @@
         </ul>
       </div>
     </td>
+
   </tr>
 </table>

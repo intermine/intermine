@@ -102,40 +102,44 @@
 
           <li>
             <im:querylink text="All gene/GO annotation pairs from <i>D. melanogaster</i> " skipBuilder="true">
-             <query name="" model="genomic" view="Gene.secondaryIdentifier Gene.primaryIdentifier Gene.symbol Gene.goAnnotation.identifier Gene.goAnnotation.name">
-              <node path="Gene" type="Gene">
-               </node>
-              <node path="Gene.organism" type="Organism">
-               </node>
-              <node path="Gene.organism.name" type="String">
-              <constraint op="=" value="Drosophila melanogaster" description="" identifier="" code="A">
-             </constraint>
-              </node>
-           </query>
+<query name="" model="genomic" view="Gene.primaryIdentifier Gene.secondaryIdentifier Gene.symbol Gene.goAnnotation.identifier Gene.goAnnotation.name Gene.goAnnotation.property.namespace" sortOrder="Gene.primaryIdentifier asc">
+  <node path="Gene" type="Gene">
+  </node>
+  <node path="Gene.organism" type="Organism">
+  </node>
+  <node path="Gene.organism.name" type="String">
+    <constraint op="=" value="Drosophila melanogaster" description="" identifier="" code="A">
+    </constraint>
+  </node>
+  <node path="Gene.goAnnotation" type="GOAnnotation">
+  </node>
+  <node path="Gene.goAnnotation.property" type="GOTerm">
+  </node>
+</query>
           </im:querylink>
          </li>
 
          <li>
            <im:querylink text="All gene/GO annotation pairs from <i>A. gambiae</i> " skipBuilder="true">
-            <query name="" model="genomic" view="Gene.secondaryIdentifier Gene.primaryIdentifier Gene.symbol Gene.annotations.identifier Gene.annotations.name">
-             <node path="Gene" type="Gene">
-              </node>
-             <node path="Gene.organism" type="Organism">
-              </node>
-             <node path="Gene.organism.name" type="String">
-             <constraint op="=" value="Anopheles gambiae str. PEST" description="" identifier="" code="A">
-            </constraint>
-           </node>
-            <node path="Gene.annotations" type="GOAnnotation">
-           </node>
-          </query>
-         </im:querylink>
+<query name="" model="genomic" view="Gene.primaryIdentifier Gene.secondaryIdentifier Gene.annotations.identifier Gene.annotations.name" sortOrder="Gene.primaryIdentifier asc">
+  <node path="Gene" type="Gene">
+  </node>
+  <node path="Gene.organism" type="Organism">
+  </node>
+  <node path="Gene.organism.name" type="String">
+    <constraint op="=" value="Anopheles gambiae str. PEST" description="" identifier="" code="A">
+    </constraint>
+  </node>
+  <node path="Gene.annotations" type="GOAnnotation">
+  </node>
+</query>
+ </im:querylink>
         </li>
 
         <li>
          <im:querylink text="All GO Term identifiers with names and descriptions " skipBuilder="true">
-          <query name="" model="genomic" view="GOTerm.identifier GOTerm.name GOTerm.description">
-           </query>
+<query name="" model="genomic" view="GOTerm.identifier GOTerm.namespace GOTerm.name GOTerm.description" sortOrder="GOTerm.identifier asc">
+</query>
          </im:querylink>
         </li>
 
