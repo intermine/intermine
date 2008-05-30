@@ -12,10 +12,10 @@ package org.intermine.webservice;
 
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.util.List;
 import java.util.Properties;
 
 import javax.servlet.RequestDispatcher;
-import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
@@ -81,13 +81,7 @@ public abstract class WebService
     protected HttpServletResponse response;
     
     protected Output output;
-
-    private void initService(HttpServletRequest request,
-            HttpServletResponse response) throws ServletException, IOException {
-        this.request = request;
-        this.response = response;
-    }
-
+    
     /**
      * Starting method of web service. The web service should be run like 
      * <pre>
@@ -99,6 +93,7 @@ public abstract class WebService
      * @param request request
      * @param response response
      */
+    @SuppressWarnings("deprecation")
     public void doGet(HttpServletRequest request, HttpServletResponse response) {
         try {
 
@@ -114,10 +109,7 @@ public abstract class WebService
             }
                  
             execute(request, response);
-            if (!response.isCommitted() && output.getStatus() != Output.SC_OK) {
-                response.setStatus(output.getStatus());
-            }
-            output.flush();
+
         } catch (WebServiceException ex) {
             if (ex.getMessage() != null && ex.getMessage().length() >= 0) {
                 output.addError(ex.getMessage(), Output.SC_INTERNAL_SERVER_ERROR);
@@ -130,7 +122,58 @@ public abstract class WebService
             output.addError(WebServiceConstants.SERVICE_FAILED_MSG, 
                     Output.SC_INTERNAL_SERVER_ERROR);
             logger.error("Service failed.", t);
+        } finally {
+            if (output.getStatus() != Output.SC_OK 
+                    && output.getStatus() != Output.SC_NO_CONTENT) {
+                sendErrorMsg(response);
+            }
+            output.flush();
         }
+    }
+
+    private void sendErrorMsg(HttpServletResponse response) {
+        // When status is set, buffer with previous results is cleaned and
+        // that's why errors must be set again
+        // Used deprecated setStatus method because there isn't any other 
+        // method for sending error with simple description which wouldn't be formatted
+        // by server
+        String msg = formatErrorMsg(output.getStatus(), output.getErrors());
+        if (!response.isCommitted()) {
+            // Cheating there. It is xml output, but when content type is set to html, then 
+            // browsers try to display in more readable way then xml
+            response.setContentType("text/html");
+            try {
+                // Error message is written together with response status code 
+                // and as well to the output
+                response.setStatus(output.getStatus(), msg);
+                response.getWriter().print(msg);
+            } catch (IOException e) {
+                logger.error("Writing error to response failed.", e);
+            }
+        } else {
+            try {
+                response.getWriter().print(msg);
+            } catch (IOException e) {
+                logger.error("Writing error to response failed.", e);
+            }
+        }
+    }
+
+    private String formatErrorMsg(int status, List<String> errors) {
+        StringBuilder sb = new StringBuilder();
+        sb.append("<error>");
+        printMessage(StatusDictionary.getDescription(status), sb);
+        for (String error : errors) {
+            printMessage(error, sb);
+        }
+        sb.append("</error>");
+        return sb.toString();
+    }
+
+    private void printMessage(String string, StringBuilder sb) {
+        sb.append("<message>");
+        sb.append(string);
+        sb.append("</message>");
     }
 
     private void initOutput(HttpServletResponse response) {

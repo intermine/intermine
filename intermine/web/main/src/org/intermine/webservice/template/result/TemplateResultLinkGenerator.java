@@ -77,20 +77,20 @@ public class TemplateResultLinkGenerator
         List<Constraint> constraints = getConstraints(template);
         for (int i = 0; i < constraints.size(); i++) {
             Constraint cs = constraints.get(i);
-            int code = i + 1;
+            int index = i + 1;
             String opString;
             if (i != 0) {
                 opString = "&op";
             } else {
                 opString = "op";
             }
-            ret += opString + code + "=";
-            ret += format(TemplateResultLinkGenerator.encode(
+            ret += opString + index + "=";
+            ret += format(encode(
                     CodeTranslator.getAbbreviation(cs.getOp().toString())), highlighted);
-            ret += "&value" + code + "=";
-            ret += format(TemplateResultLinkGenerator.encode(cs.getValue()), highlighted);
+            ret += "&value" + index + "=";
+            ret += format(encode(cs.getValue()), highlighted);
             if (cs.getOp().equals(ConstraintOp.LOOKUP)) {
-                ret += "&extra" + code + "="  
+                ret += "&extra" + index + "="  
                 + TemplateResultLinkGenerator.encode(cs.getExtraValue());                
             }
         }

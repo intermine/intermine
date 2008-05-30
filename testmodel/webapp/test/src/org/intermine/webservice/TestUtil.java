@@ -28,6 +28,7 @@ import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
 
 import com.meterware.httpunit.GetMethodWebRequest;
+import com.meterware.httpunit.HttpException;
 import com.meterware.httpunit.WebConversation;
 import com.meterware.httpunit.WebRequest;
 
@@ -66,6 +67,27 @@ public class TestUtil
         WebConversation wc = new WebConversation();
         WebRequest     req = new GetMethodWebRequest( requestString);
         return wc.getResponse(req).getText();
+    }
+    
+    
+    public static int getResponseCode(String requestString) throws MalformedURLException, IOException, SAXException {
+        try {
+            WebConversation wc = new WebConversation();
+            WebRequest     req = new GetMethodWebRequest( requestString);
+            return wc.getResponse(req).getResponseCode();
+        } catch (HttpException e) {
+            return e.getResponseCode();
+        }
+    }
+    
+    public static String getResponseMessage(String requestString) throws MalformedURLException, IOException, SAXException {
+        try {
+            WebConversation wc = new WebConversation();
+            WebRequest     req = new GetMethodWebRequest( requestString);
+            return wc.getResponse(req).getResponseMessage();
+        } catch (HttpException e) {
+            return e.getResponseMessage();
+        }
     }
 
     public static void checkEmployee(List<String> employee, String name,
