@@ -134,17 +134,18 @@ public abstract class WebService
     private void sendErrorMsg(HttpServletResponse response) {
         // When status is set, buffer with previous results is cleaned and
         // that's why errors must be set again
-        // Used deprecated setStatus method because there isn't any other 
-        // method for sending error with simple description which wouldn't be formatted
-        // by server
         String msg = formatErrorMsg(output.getStatus(), output.getErrors());
         if (!response.isCommitted()) {
-            // Cheating there. It is xml output, but when content type is set to html, then 
+            // Cheating here. It is an xml output, but when content type is set to html, then 
             // browsers try to display in more readable way then xml
             response.setContentType("text/html");
             try {
                 // Error message is written together with response status code 
-                // and as well to the output
+                // and it is written to the output as well. So it is displayed 
+                // in browser in case of problems.
+                // Used deprecated setStatus method because there isn't any other 
+                // method for sending error with simple description which wouldn't be formatted
+                // by server
                 response.setStatus(output.getStatus(), msg);
                 response.getWriter().print(msg);
             } catch (IOException e) {
