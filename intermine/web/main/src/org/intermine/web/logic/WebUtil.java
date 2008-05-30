@@ -219,6 +219,41 @@ public abstract class WebUtil
 
         return sb.toString();
     }
+    
+    /**
+     * Reverse operation to wildcardUserToSql  
+     * @param str treated string
+     * @return original string
+     */
+    public static String sqlTreatedToOriginal(String str)  {
+        StringBuffer sb = new StringBuffer();
+
+        for (int i = 0; i < str.length(); i++) {
+            String substring = str.substring(i);
+            if (substring.startsWith("%")) {
+                sb.append("*");
+            } else if (substring.startsWith("_")) {
+                sb.append("?");
+            } else if (substring.startsWith("*")) {
+                sb.append("\\*");
+            } else if (substring.startsWith("?")) {
+                sb.append("\\?");
+            } else if (substring.startsWith("\\\\%")) {
+                sb.append("%");
+                i = i + 2;
+            } else if (substring.startsWith("\\\\_")) {
+                sb.append("_");
+                i = i + 2;
+            } else if (substring.startsWith("\\\\\\\\")) {
+                sb.append("\\");
+                i = i + 3;
+            } else {
+                sb.append(substring.charAt(0));
+            }
+        }
+
+        return sb.toString();        
+    }
 
     /**
      * Make a copy of a Results object, but with a different batch size.

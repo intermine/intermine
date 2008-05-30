@@ -16,6 +16,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.intermine.objectstore.query.ConstraintOp;
+import org.intermine.web.logic.WebUtil;
 import org.intermine.web.logic.query.Constraint;
 import org.intermine.web.logic.query.PathNode;
 import org.intermine.web.logic.template.TemplateQuery;
@@ -85,13 +86,16 @@ public class TemplateResultLinkGenerator
                 opString = "op";
             }
             ret += opString + index + "=";
-            ret += format(encode(
-                    CodeTranslator.getAbbreviation(cs.getOp().toString())), highlighted);
+            ret += format(encode(CodeTranslator.getAbbreviation(
+                    cs.getOp().toString())), highlighted);
             ret += "&value" + index + "=";
-            ret += format(encode(cs.getValue()), highlighted);
+            // value could be  treated to be sql valid before, 
+            // so we have to find original untreated string
+            String value = encode(WebUtil.sqlTreatedToOriginal(cs.getValue().toString()));
+            ret += format(value, highlighted);
             if (cs.getOp().equals(ConstraintOp.LOOKUP)) {
                 ret += "&extra" + index + "="  
-                + TemplateResultLinkGenerator.encode(cs.getExtraValue());                
+                + TemplateResultLinkGenerator.encode(cs.getExtraValue().toString());                
             }
         }
         ret += "&size=";
@@ -126,7 +130,7 @@ public class TemplateResultLinkGenerator
      * @param o encoded object
      * @return encoded string
      */
-    private static String encode(Object o) {
+    private static String encode(String o) {
         if (o == null) {
             return "";
         } else {
