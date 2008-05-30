@@ -26,6 +26,7 @@ import junit.framework.TestCase;
 import org.intermine.web.task.PrecomputeTemplatesTask;
 import org.intermine.webservice.TestUtil;
 import org.intermine.webservice.WebServiceConstants;
+import org.intermine.webservice.output.Output;
 
 
 
@@ -82,23 +83,38 @@ public class TemplateResultTest extends TestCase
         assertEquals("false", results.get(0).get(3));
     }
          
+    private String getRequestString(String parameterString) {
+        return getServiceUrl() + parameterString;
+    }
+    
     /**
      * Tests that error message appear when public template with this name doesn't exist.
      * @throws Exception when an error occurs
      */
-    public void testErrorXMLQuery() throws Exception {
-        String result = getResultForQueryString("name=unknown").trim();
-        assertTrue(result.startsWith("<error>"));
-        assertTrue(result.contains("<message>"));
-        assertTrue(result.contains("exist"));
-        assertTrue(result.contains("</message>"));
-        assertTrue(result.endsWith("</error>"));        
+    public void testErrorXMLOutput() throws Exception {
+        String req = getRequestString("name=unknown").trim();
+        String msg = TestUtil.getResponseMessage(req);
+        assertTrue(msg.startsWith("<error>"));
+        assertTrue(msg.contains("<message>"));
+        assertTrue(msg.contains("exist"));
+        assertTrue(msg.contains("</message>"));
+        assertTrue(msg.endsWith("</error>"));        
     }
 
+    /**
+     * Test that appropriate response status code is returned 
+     * for unknown template.
+     * @throws Exception
+     */
+    public void testErrorXMLStatus() throws Exception {
+        String req = getRequestString("name=unknown").trim();
+        int status = TestUtil.getResponseCode(req);
+        assertEquals(Output.SC_NOT_FOUND, status);
+    }
+    
     public String getServiceUrl() {
         return serviceUrl;
     }
-    
 
     private String getResultForQueryString(String parameterString) throws Exception {
         String requestString = getServiceUrl() + parameterString;
