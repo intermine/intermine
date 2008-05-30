@@ -25,7 +25,9 @@ import java.util.Map;
  */
 public abstract class Output  
 {
-       
+    
+    private List<String> errors = new ArrayList<String>();
+    
     // implicit status code is ok, if something goes wrong that service 
     // sets this code to different error status code
     private int statusCode = Output.SC_OK;
@@ -69,13 +71,6 @@ public abstract class Output
     public abstract void addResultItem(List<String> item);
 
     /**
-     * Adds error messages to output.  
-     * @param errors error messages
-     * @param statusCode status code
-     */
-    public abstract void addErrors(List<String> errors, int statusCode);
-
-    /**
      * Adds error message to output.
      * @param error error message
      * @param statusCode status code
@@ -112,7 +107,7 @@ public abstract class Output
      */
     public int getStatus() {
         if (statusCode == Output.SC_OK) {
-            if (getErrorsCount() == 0 && getResultsCount() == 0) {
+            if (getErrors().size() == 0 && getResultsCount() == 0) {
                 return Output.SC_NO_CONTENT;
             }             
         } 
@@ -127,12 +122,31 @@ public abstract class Output
     }
     
     /**
-     * @return errors count
-     */
-    protected abstract int getErrorsCount();
-
-    /**
      * @return number of written results
      */
-    protected abstract int getResultsCount();     
+    protected abstract int getResultsCount();
+    
+    /**
+     * @return errors error messages
+     */
+    public List<String> getErrors() {
+        return errors;
+    }
+    
+    /**
+     * Set errors. 
+     * @param errors errors
+     */
+    public void setErrors(List<String> errors) {
+        this.errors = errors;
+    }
+
+     /**
+     * @param errors error messages
+     * @param statusCode status code of web service that should be returned
+     * */
+    public void addErrors(List<String> errors, int statusCode) {
+        this.errors.addAll(errors);
+        setStatus(statusCode);
+    }
 }

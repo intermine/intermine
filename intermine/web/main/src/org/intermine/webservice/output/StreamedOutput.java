@@ -16,9 +16,6 @@ import java.util.Map;
 
 import org.intermine.webservice.WebServiceException;
 
-
-
-
 /**
  * Immediately as the data or error messages are added they are streamed via http connection.
  * So the data can not be retrieved later. Before streaming they are formatted with 
@@ -27,9 +24,7 @@ import org.intermine.webservice.WebServiceException;
  **/
 public class StreamedOutput extends Output
 {
-     
-    private int errorsCount = 0;
-    
+         
     private int resultsCount = 0;
     
     private PrintWriter writer;
@@ -37,7 +32,7 @@ public class StreamedOutput extends Output
     private Formatter formatter;
     
     private boolean headerPrinted = false;
-   
+    
     /** Constructor. 
      * @param writer writer where the data will be printed
      * @param formatter associated formatter that formats data
@@ -46,23 +41,6 @@ public class StreamedOutput extends Output
     public StreamedOutput(PrintWriter writer, Formatter formatter) {
         this.writer = writer;
         this.formatter = formatter;
-    }
-
-    /** Forwards error messages to associated writer 
-     * @param errors error messages
-     * @param statusCode status code
-     * **/
-    @Override
-    public void addErrors(List<String> errors, int statusCode) {
-        setStatus(statusCode);
-        writer.write("<error>\n");
-        for (String error : errors) {
-            writer.write("    <message>");
-            writer.write(error);
-            writer.write("</message>\n");
-        }
-        writer.write("</error>");
-        errorsCount++;
     }
     
     private void printHeader() {
@@ -106,8 +84,8 @@ public class StreamedOutput extends Output
         if (headerPrinted) {
             writer.print(formatter.formatFooter());    
         }
+        writer.flush();
     }
-    
     
     /**
      * {@inheritDoc}
@@ -120,18 +98,11 @@ public class StreamedOutput extends Output
         }
         super.setHeaderAttributes(attributes);
     }
-
-    /**
-     * {@inheritDoc}
-     */
-    public int getErrorsCount() {
-        return errorsCount;
-    }
     
     /**
      * {@inheritDoc}
      */
     public int getResultsCount() {
         return resultsCount;
-    }
+    }    
 }

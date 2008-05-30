@@ -21,6 +21,9 @@ import java.util.List;
 import junit.framework.TestCase;
 
 import org.intermine.webservice.TestUtil;
+import org.intermine.webservice.output.Output;
+
+import com.meterware.httpunit.HttpException;
 
 
 
@@ -65,48 +68,29 @@ public class QueryResultTest extends TestCase
      * Tests that error message appear when query xml is not well formatted.
      * @throws Exception when an error occurs
      */
-    public void testErrorXMLQuery() throws Exception {
-        String result = getResultForQueryString("query=a" + getQuery()).trim();
-        assertTrue(result.startsWith("<error>"));
-        assertTrue(result.contains("<message>"));
-        assertTrue(result.contains("</message>"));
-        assertTrue(result.endsWith("</error>"));        
+    public void testErrorXMLresponseMessage() throws Exception {
+        String req = getRequestString("query=a");
+        String msg = TestUtil.getResponseMessage(req);
+        assertTrue(msg.startsWith("<error>"));
+        assertTrue(msg.contains("<message>"));
+        assertTrue(msg.contains("</message>"));
+        assertTrue(msg.endsWith("</error>"));     
+    }
+    
+    public void testErrorXMLResponseCode() throws Exception {
+        String req = getRequestString("query=a" + getQuery());
+        assertEquals(Output.SC_BAD_REQUEST, TestUtil.getResponseCode(req));        
     }
 
     /**
      * Tests that when parameter 'onlyTotalCount' is set, then only total count of results is returned.
      * @throws Exception when an error occurs 
      */
-//    public void testOnlyTotalCount() throws Exception {
-//        String result = getResult("onlyTotalCount=yes&query=" + getQuery()).trim();
-//        assertEquals("6", result);
-//    }
+    public void testOnlyTotalCount() throws Exception {
+        String result = getResultForQueryString("tcount&query=" + getQuery()).trim();
+        assertEquals("6", result);
+    }
     
-    /**
-     * Tests functionality of counting of all results and count of results returned 
-     * @throws Exception
-     */
-//    public void testXMLResultAttributes() throws Exception {
-//        String xmlResult = getResult("totalCount=yes&format=xml&start=5&query=" + getQuery()).trim();
-//        InputSource is = new  InputSource(new StringReader(xmlResult));
-//        SAXParserFactory factory = SAXParserFactory.newInstance();
-//        factory.setValidating(true);
-//        XMLResultHandler handler = new XMLResultHandler();
-//        factory.newSAXParser().parse(is, handler);
-//        Attributes atts = handler.getRootAttributes();
-//        for (int i=0; i<atts.getLength(); i++) {
-//            if (atts.getLocalName(i).equals("firstResultPosition")) {
-//                assertEquals("5", atts.getValue(i).trim());        
-//            }
-//            if (atts.getLocalName(i).equals("totalResultsReturned")) {
-//                assertEquals("2", atts.getValue(i).trim());        
-//            }
-//            if (atts.getLocalName(i).equals("totalResultsAvailable")) {
-//                assertEquals("6", atts.getValue(i).trim());        
-//            }
-//        }
-//    }
-
     public String getServiceUrl() {
         return serviceUrl;
     }
@@ -121,8 +105,11 @@ public class QueryResultTest extends TestCase
     }
 
     private String getResultForQueryString(String parameterString) throws Exception {
-        String requestString = getServiceUrl() + parameterString;
-        return TestUtil.getResult(requestString);
+        return TestUtil.getResult(getRequestString(parameterString));
+    }
+
+    private String getRequestString(String parameterString) {
+        return getServiceUrl() + parameterString;
     }
 
     private String getQuery() throws IOException {
