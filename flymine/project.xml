@@ -163,84 +163,84 @@
       <property name="fasta.className" value="org.flymine.model.genomic.Gene"/>
       <property name="fasta.classAttribute" value="primaryIdentifier"/>
       <property name="fasta.includes" value="dmel-all-gene-*.fasta"/>
-      <property name="src.data.dir" location="/shared/data/flybase/FB2008_04/fasta"/>
+      <property name="src.data.dir" location="/shared/data/flybase/FB2008_05/fasta"/>
     </source>
     <source name="flybase-dpse-gene-fasta" type="fasta">
       <property name="fasta.taxonId" value="7237"/>
       <property name="fasta.className" value="org.flymine.model.genomic.Gene"/>
       <property name="fasta.classAttribute" value="primaryIdentifier"/>
       <property name="fasta.includes" value="dpse-all-gene-*.fasta"/>
-      <property name="src.data.dir" location="/shared/data/flybase/FB2008_04/fasta"/>
+      <property name="src.data.dir" location="/shared/data/flybase/FB2008_05/fasta"/>
     </source>
     <source name="flybase-dana-gene-fasta" type="fasta">
       <property name="fasta.taxonId" value="7217"/>
       <property name="fasta.className" value="org.flymine.model.genomic.Gene"/>
       <property name="fasta.classAttribute" value="primaryIdentifier"/>
       <property name="fasta.includes" value="dana-all-gene-*.fasta"/>
-      <property name="src.data.dir" location="/shared/data/flybase/FB2008_04/fasta"/>
+      <property name="src.data.dir" location="/shared/data/flybase/FB2008_05/fasta"/>
     </source>
     <source name="flybase-dere-gene-fasta" type="fasta">
       <property name="fasta.taxonId" value="7220"/>
       <property name="fasta.className" value="org.flymine.model.genomic.Gene"/>
       <property name="fasta.classAttribute" value="primaryIdentifier"/>
       <property name="fasta.includes" value="dere-all-gene-*.fasta"/>
-      <property name="src.data.dir" location="/shared/data/flybase/FB2008_04/fasta"/>
+      <property name="src.data.dir" location="/shared/data/flybase/FB2008_05/fasta"/>
     </source>
     <source name="flybase-dgri-gene-fasta" type="fasta">
       <property name="fasta.taxonId" value="7222"/>
       <property name="fasta.className" value="org.flymine.model.genomic.Gene"/>
       <property name="fasta.classAttribute" value="primaryIdentifier"/>
       <property name="fasta.includes" value="dgri-all-gene-*.fasta"/>
-      <property name="src.data.dir" location="/shared/data/flybase/FB2008_04/fasta"/>
+      <property name="src.data.dir" location="/shared/data/flybase/FB2008_05/fasta"/>
     </source>
     <source name="flybase-dmoj-gene-fasta" type="fasta">
       <property name="fasta.taxonId" value="7230"/>
       <property name="fasta.className" value="org.flymine.model.genomic.Gene"/>
       <property name="fasta.classAttribute" value="primaryIdentifier"/>
       <property name="fasta.includes" value="dmoj-all-gene-*.fasta"/>
-      <property name="src.data.dir" location="/shared/data/flybase/FB2008_04/fasta"/>
+      <property name="src.data.dir" location="/shared/data/flybase/FB2008_05/fasta"/>
     </source>
     <source name="flybase-dper-gene-fasta" type="fasta">
       <property name="fasta.taxonId" value="7234"/>
       <property name="fasta.className" value="org.flymine.model.genomic.Gene"/>
       <property name="fasta.classAttribute" value="primaryIdentifier"/>
       <property name="fasta.includes" value="dper-all-gene-*.fasta"/>
-      <property name="src.data.dir" location="/shared/data/flybase/FB2008_04/fasta"/>
+      <property name="src.data.dir" location="/shared/data/flybase/FB2008_05/fasta"/>
     </source>
     <source name="flybase-dsec-gene-fasta" type="fasta">
       <property name="fasta.taxonId" value="7238"/>
       <property name="fasta.className" value="org.flymine.model.genomic.Gene"/>
       <property name="fasta.classAttribute" value="primaryIdentifier"/>
       <property name="fasta.includes" value="dsec-all-gene-*.fasta"/>
-      <property name="src.data.dir" location="/shared/data/flybase/FB2008_04/fasta"/>
+      <property name="src.data.dir" location="/shared/data/flybase/FB2008_05/fasta"/>
     </source>
     <source name="flybase-dsim-gene-fasta" type="fasta">
       <property name="fasta.taxonId" value="7240"/>
       <property name="fasta.className" value="org.flymine.model.genomic.Gene"/>
       <property name="fasta.classAttribute" value="primaryIdentifier"/>
       <property name="fasta.includes" value="dsim-all-gene-*.fasta"/>
-      <property name="src.data.dir" location="/shared/data/flybase/FB2008_04/fasta"/>
+      <property name="src.data.dir" location="/shared/data/flybase/FB2008_05/fasta"/>
     </source>
     <source name="flybase-dvir-gene-fasta" type="fasta">
       <property name="fasta.taxonId" value="7244"/>
       <property name="fasta.className" value="org.flymine.model.genomic.Gene"/>
       <property name="fasta.classAttribute" value="primaryIdentifier"/>
       <property name="fasta.includes" value="dvir-all-gene-*.fasta"/>
-      <property name="src.data.dir" location="/shared/data/flybase/FB2008_04/fasta"/>
+      <property name="src.data.dir" location="/shared/data/flybase/FB2008_05/fasta"/>
     </source>
     <source name="flybase-dwil-gene-fasta" type="fasta">
       <property name="fasta.taxonId" value="7260"/>
       <property name="fasta.className" value="org.flymine.model.genomic.Gene"/>
       <property name="fasta.classAttribute" value="primaryIdentifier"/>
       <property name="fasta.includes" value="dwil-all-gene-*.fasta"/>
-      <property name="src.data.dir" location="/shared/data/flybase/FB2008_04/fasta"/>
+      <property name="src.data.dir" location="/shared/data/flybase/FB2008_05/fasta"/>
     </source>
     <source name="flybase-dyak-gene-fasta" type="fasta">
       <property name="fasta.taxonId" value="7245"/>
       <property name="fasta.className" value="org.flymine.model.genomic.Gene"/>
       <property name="fasta.classAttribute" value="primaryIdentifier"/>
       <property name="fasta.includes" value="dyak-all-gene-*.fasta"/>
-      <property name="src.data.dir" location="/shared/data/flybase/FB2008_04/fasta"/>
+      <property name="src.data.dir" location="/shared/data/flybase/FB2008_05/fasta"/>
     </source>
     <source name="flybase-dmel-cds-fasta" type="fasta">
       <property name="fasta.loaderClassName" 
@@ -250,7 +250,7 @@
       <property name="fasta.classAttribute" value="primaryIdentifier"/>
       <property name="fasta.includes" value="dmel-all-CDS-*.fasta"/>
       <property name="fasta.dataSetTitle" value="FlyBase Drosophila melanogaster data set"/>
-      <property name="src.data.dir" location="/shared/data/flybase/FB2008_04/fasta"/>
+      <property name="src.data.dir" location="/shared/data/flybase/FB2008_05/fasta"/>
     </source>
     <source name="flybase-dpse-cds-fasta" type="fasta">
       <property name="fasta.loaderClassName" 
@@ -260,7 +260,7 @@
       <property name="fasta.classAttribute" value="primaryIdentifier"/>
       <property name="fasta.includes" value="dpse-all-CDS-*.fasta"/>
       <property name="fasta.dataSetTitle" value="FlyBase Drosophila pseudoobscura pseudoobscura data set"/>
-      <property name="src.data.dir" location="/shared/data/flybase/FB2008_04/fasta"/>
+      <property name="src.data.dir" location="/shared/data/flybase/FB2008_05/fasta"/>
     </source>
     <source name="flybase-dana-cds-fasta" type="fasta">
       <property name="fasta.loaderClassName" 
@@ -270,7 +270,7 @@
       <property name="fasta.classAttribute" value="primaryIdentifier"/>
       <property name="fasta.includes" value="dana-all-CDS-*.fasta"/>
       <property name="fasta.dataSetTitle" value="FlyBase Drosophila ananassae data set"/>
-      <property name="src.data.dir" location="/shared/data/flybase/FB2008_04/fasta"/>
+      <property name="src.data.dir" location="/shared/data/flybase/FB2008_05/fasta"/>
     </source>
     <source name="flybase-dere-cds-fasta" type="fasta">
       <property name="fasta.loaderClassName" 
@@ -280,7 +280,7 @@
       <property name="fasta.classAttribute" value="primaryIdentifier"/>
       <property name="fasta.includes" value="dere-all-CDS-*.fasta"/>
       <property name="fasta.dataSetTitle" value="FlyBase Drosophila erecta data set"/>
-      <property name="src.data.dir" location="/shared/data/flybase/FB2008_04/fasta"/>
+      <property name="src.data.dir" location="/shared/data/flybase/FB2008_05/fasta"/>
     </source>
     <source name="flybase-dgri-cds-fasta" type="fasta">
       <property name="fasta.loaderClassName" 
@@ -290,7 +290,7 @@
       <property name="fasta.classAttribute" value="primaryIdentifier"/>
       <property name="fasta.includes" value="dgri-all-CDS-*.fasta"/>
       <property name="fasta.dataSetTitle" value="FlyBase Drosophila grimshawi data set"/>
-      <property name="src.data.dir" location="/shared/data/flybase/FB2008_04/fasta"/>
+      <property name="src.data.dir" location="/shared/data/flybase/FB2008_05/fasta"/>
     </source>
     <source name="flybase-dmoj-cds-fasta" type="fasta">
       <property name="fasta.loaderClassName" 
@@ -300,7 +300,7 @@
       <property name="fasta.classAttribute" value="primaryIdentifier"/>
       <property name="fasta.includes" value="dmoj-all-CDS-*.fasta"/>
       <property name="fasta.dataSetTitle" value="FlyBase Drosophila mojavensis data set"/>
-      <property name="src.data.dir" location="/shared/data/flybase/FB2008_04/fasta"/>
+      <property name="src.data.dir" location="/shared/data/flybase/FB2008_05/fasta"/>
     </source>
     <source name="flybase-dper-cds-fasta" type="fasta">
       <property name="fasta.loaderClassName" 
@@ -310,7 +310,7 @@
       <property name="fasta.classAttribute" value="primaryIdentifier"/>
       <property name="fasta.includes" value="dper-all-CDS-*.fasta"/>
       <property name="fasta.dataSetTitle" value="FlyBase Drosophila persimilis data set"/>
-      <property name="src.data.dir" location="/shared/data/flybase/FB2008_04/fasta"/>
+      <property name="src.data.dir" location="/shared/data/flybase/FB2008_05/fasta"/>
     </source>
     <source name="flybase-dsec-cds-fasta" type="fasta">
       <property name="fasta.loaderClassName" 
@@ -320,7 +320,7 @@
       <property name="fasta.classAttribute" value="primaryIdentifier"/>
       <property name="fasta.includes" value="dsec-all-CDS-*.fasta"/>
       <property name="fasta.dataSetTitle" value="FlyBase Drosophila sechellia data set"/>
-      <property name="src.data.dir" location="/shared/data/flybase/FB2008_04/fasta"/>
+      <property name="src.data.dir" location="/shared/data/flybase/FB2008_05/fasta"/>
     </source>
     <source name="flybase-dsim-cds-fasta" type="fasta">
       <property name="fasta.loaderClassName" 
@@ -330,7 +330,7 @@
       <property name="fasta.classAttribute" value="primaryIdentifier"/>
       <property name="fasta.includes" value="dsim-all-CDS-*.fasta"/>
       <property name="fasta.dataSetTitle" value="FlyBase Drosophila simulans data set"/>
-      <property name="src.data.dir" location="/shared/data/flybase/FB2008_04/fasta"/>
+      <property name="src.data.dir" location="/shared/data/flybase/FB2008_05/fasta"/>
     </source>
     <source name="flybase-dvir-cds-fasta" type="fasta">
       <property name="fasta.loaderClassName" 
@@ -340,7 +340,7 @@
       <property name="fasta.classAttribute" value="primaryIdentifier"/>
       <property name="fasta.includes" value="dvir-all-CDS-*.fasta"/>
       <property name="fasta.dataSetTitle" value="FlyBase Drosophila virilis data set"/>
-      <property name="src.data.dir" location="/shared/data/flybase/FB2008_04/fasta"/>
+      <property name="src.data.dir" location="/shared/data/flybase/FB2008_05/fasta"/>
     </source>
     <source name="flybase-dwil-cds-fasta" type="fasta">
       <property name="fasta.loaderClassName" 
@@ -350,7 +350,7 @@
       <property name="fasta.classAttribute" value="primaryIdentifier"/>
       <property name="fasta.includes" value="dwil-all-CDS-*.fasta"/>
       <property name="fasta.dataSetTitle" value="FlyBase Drosophila willistoni data set"/>
-      <property name="src.data.dir" location="/shared/data/flybase/FB2008_04/fasta"/>
+      <property name="src.data.dir" location="/shared/data/flybase/FB2008_05/fasta"/>
     </source>
     <source name="flybase-dyak-cds-fasta" type="fasta">
       <property name="fasta.loaderClassName" 
@@ -360,7 +360,7 @@
       <property name="fasta.classAttribute" value="primaryIdentifier"/>
       <property name="fasta.includes" value="dyak-all-CDS-*.fasta"/>
       <property name="fasta.dataSetTitle" value="FlyBase Drosophila yakuba data set"/>
-      <property name="src.data.dir" location="/shared/data/flybase/FB2008_04/fasta"/>
+      <property name="src.data.dir" location="/shared/data/flybase/FB2008_05/fasta"/>
     </source>
     <source name="flybase-dmel-5prime-utr-fasta" type="fasta">
       <property name="fasta.loaderClassName" value="org.intermine.bio.dataconversion.FlyBaseUTRFastaLoaderTask"/>
@@ -369,7 +369,7 @@
       <property name="fasta.classAttribute" value="primaryIdentifier"/>
       <property name="fasta.includes" value="dmel-all-five_prime_UTR-*.fasta"/>
       <property name="fasta.dataSetTitle" value="FlyBase Drosophila melanogaster data set"/>
-      <property name="src.data.dir" location="/shared/data/flybase/FB2008_04/fasta"/>
+      <property name="src.data.dir" location="/shared/data/flybase/FB2008_05/fasta"/>
     </source>
     <source name="flybase-dmel-3prime-utr-fasta" type="fasta" dump="true">
       <property name="fasta.loaderClassName" value="org.intermine.bio.dataconversion.FlyBaseUTRFastaLoaderTask"/>
@@ -378,7 +378,7 @@
       <property name="fasta.classAttribute" value="primaryIdentifier"/>
       <property name="fasta.includes" value="dmel-all-three_prime_UTR-*.fasta"/>
       <property name="fasta.dataSetTitle" value="FlyBase Drosophila melanogaster data set"/>
-      <property name="src.data.dir" location="/shared/data/flybase/FB2008_04/fasta"/>
+      <property name="src.data.dir" location="/shared/data/flybase/FB2008_05/fasta"/>
     </source>
     <source name="ncbigene2pubmed" type="intermine-items-xml-file">
       <property name="src.data.file" location="/shared/data/pubmed/current/ncbiID_pubmedID.xml"/>
