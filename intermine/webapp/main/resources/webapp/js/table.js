@@ -61,7 +61,8 @@ function disableOtherColumns(className, checkedColumn) {
                 input.disabled = true;
             }
 
-            if (input.id != 'selectedObjects_'  + checkedColumn) {
+            if (input.id != 'selectedObjects_'  + checkedColumn
+                && !input.id.startsWith('selectedObjects_'  + checkedColumn + '_')) {
                 input.disabled = true;
             }
         });
