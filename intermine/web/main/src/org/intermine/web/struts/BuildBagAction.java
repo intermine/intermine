@@ -56,7 +56,7 @@ public class BuildBagAction extends InterMineAction
      * Action for creating a bag of InterMineObjects or Strings from identifiers in text field.
      *
      * @param mapping The ActionMapping used to select this instance
-     * @param form The optional ActionForm bean for this request (if any)
+     * @param frm The optional ActionForm bean for this request (if any)
      * @param request The HTTP request we are processing
      * @param response The HTTP response we are creating
      * @return an ActionForward object defining where control goes next
@@ -64,15 +64,15 @@ public class BuildBagAction extends InterMineAction
      *  an exception
      */
     public ActionForward execute(ActionMapping mapping,
-                                 ActionForm form,
+                                 ActionForm frm,
                                  HttpServletRequest request,
                                  @SuppressWarnings("unused") HttpServletResponse response)
     throws Exception {
         HttpSession session = request.getSession();
-        BuildBagForm buildBagForm = (BuildBagForm) form;
+        BuildBagForm form = (BuildBagForm) frm;
         ServletContext servletContext = session.getServletContext();
         ObjectStore os = (ObjectStore) servletContext.getAttribute(Constants.OBJECTSTORE);
-        String type = buildBagForm.getType();
+        String type = form.getType();
 
         if (StringUtils.isEmpty(type)) {
             recordError(new ActionMessage("bagBuild.noBagPaste"), request);
@@ -95,32 +95,30 @@ public class BuildBagAction extends InterMineAction
 
         BufferedReader reader = null;
 
-        FormFile formFile = buildBagForm.getFormFile();
-
-        if (formFile != null && formFile.getFileName() != null
-                            && formFile.getFileName().length() > 0) {
-
+        FormFile formFile = form.getFormFile();
+        
+        if (isFileUpload(form)) {
             String mimetype = formFile.getContentType();
             if (!mimetype.equals("application/octet-stream") && !mimetype.startsWith("text")) {
                 recordError(new ActionMessage("bagBuild.notText",
                                               mimetype), request);
                 return mapping.findForward("bags");
             }
-            reader = new BufferedReader(new InputStreamReader(formFile.getInputStream()));
-
-        } else if (buildBagForm.getText() != null && buildBagForm.getText().length() != 0) {
-            String trimmedText = buildBagForm.getText().trim();
-            if (trimmedText.length() == 0) {
-                recordError(new ActionMessage("bagBuild.noBagPaste"), request);
-                return mapping.findForward("bags");
-            } else {
-                reader = new BufferedReader(new StringReader(trimmedText));
+            if (form.getFormFile() == null || form.getFormFile().getFileName() == null 
+                    || form.getFormFile().getFileName().trim().length() == 0) {
+                recordError(new ActionMessage("bagBuild.noBagFile"), request);
+                return mapping.findForward("bags");                
             }
-        } else {
-            recordError(new ActionMessage("bagBuild.noBagFile"), request);
-            return mapping.findForward("bags");
-        }
-
+            reader = new BufferedReader(new InputStreamReader(formFile.getInputStream()));
+        } else { 
+            if (form.getText() != null && form.getText().trim().length() != 0) {
+                String trimmedText = form.getText().trim();
+                reader = new BufferedReader(new StringReader(trimmedText));
+            } else {
+                recordError(new ActionMessage("bagBuild.noBagPaste"), request);
+                return mapping.findForward("bags");                
+            }
+        } 
         reader.mark(READ_AHEAD_CHARS);
 
         char buf[] = new char[READ_AHEAD_CHARS];
@@ -162,10 +160,20 @@ public class BuildBagAction extends InterMineAction
         }
 
         BagQueryResult bagQueryResult =
-            bagRunner.searchForBag(type, list, buildBagForm.getExtraFieldValue(), false);
+            bagRunner.searchForBag(type, list, form.getExtraFieldValue(), false);
         session.setAttribute("bagQueryResult", bagQueryResult);
         request.setAttribute("bagType", type);
 
         return mapping.findForward("bagUploadConfirm");
+    }
+    
+    private boolean isFileUpload(BuildBagForm form) {
+        if (form.getUploadType() != null) {
+            return form.getUploadType().trim().equalsIgnoreCase("file");
+        } else {
+            FormFile formFile = form.getFormFile();
+            return (formFile != null && formFile.getFileName() != null
+                    && formFile.getFileName().length() > 0);
+        }
     }
 }

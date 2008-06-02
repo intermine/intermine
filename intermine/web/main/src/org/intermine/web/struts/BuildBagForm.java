@@ -26,11 +26,14 @@ public class BuildBagForm extends ActionForm
 {
 
     private FormFile formFile;
+    
     private String text;
+    
     private String type;
+    
     private String extraFieldValue;
-    private String whichInput;
 
+    private String uploadType;
     /**
      * Get the bag type
      * @return the bag type string
@@ -98,11 +101,11 @@ public class BuildBagForm extends ActionForm
     }
 
     /**
-     * Set the method the user used to upload her bag.
-     * @param whichInput Which method the user used: paste or file
+     * Set the type the user used to upload the bag.
+     * @param uploadType which type of upload the user used: paste or file
      */
-    public void setWhichInput(String whichInput) {
-        this.whichInput = whichInput;
+    public void setUploadType(String uploadType) {
+        this.uploadType = uploadType;
     }
 
     /**
@@ -110,25 +113,10 @@ public class BuildBagForm extends ActionForm
      * they typed in the entries via the form.  File if they uploaded a file from their computer.
      * @return which method the user used to upload her bag: paste or file
      */
-    public String getWhichInput() {
-        return whichInput;
+    public String getUploadType() {
+        return uploadType;
     }
 
-//    /**
-//     * {@inheritDoc}
-//     */
-//    public ActionErrors validate(ActionMapping mapping, HttpServletRequest request) {
-//        HttpSession session = request.getSession();
-//        ServletContext servletContext = session.getServletContext();
-//        ProfileManager pm = (ProfileManager)
-//   servletContext.getAttribute(Constants.PROFILE_MANAGER);
-//        ActionErrors errors = new ActionErrors();
-//        if (StringUtils.isEmpty(type)) {
-//            errors.add(ActionMessages.GLOBAL_MESSAGE,
-//                       new ActionMessage("bagBuild.typeNotSet", request));
-//        }
-//        return errors;
-//    }
     
     /**
      * {@inheritDoc}
@@ -140,7 +128,6 @@ public class BuildBagForm extends ActionForm
         text = "";
         //type = "";
         extraFieldValue = "";
-        whichInput = "";
+        uploadType = null;
     }
-
 }
