@@ -14,6 +14,8 @@
    function switchInputs(open, close) {
       $(open + 'Input').disabled = false;
       $(close + 'Input').disabled = true;
+      $(open + 'Type').checked = true;
+      $(close + 'Type').checked = false;      
       $('submitBag').disabled = false;
     }
 
@@ -45,7 +47,6 @@
    </c:forEach>
 
    function typeChanged() {
-     document.getElementById('submitBag').disabled = true;
      var type = document.getElementById('typeSelector').value;
      var el = document.getElementById('extraConstraintSelect');
      if (typeToEnable[type] == null){
@@ -57,7 +58,6 @@
 //]]>-->
 </script>
 
-
 <im:boxarea titleKey="bagBuild.makeNewBag" stylename="plainbox" fixedWidth="60%">
   <div class="body">
     <html:form action="/buildBag" method="post" enctype="multipart/form-data" >
@@ -68,64 +68,79 @@
         <li>Qualify any identifiers that contain whitespace with double quotes like so:  "even skipped".</li>
       </ul>
       <br/>
-<ol id="buildbaglist">
-  <li>
-      <label><fmt:message key="bagBuild.bagType"/></label>
-      <html:select styleId="typeSelector" property="type" onchange="typeChanged()">
-      <c:forEach items="${preferredTypeList}" var="type">
-          <html:option value="${type}" style="font-weight:bold">${type}</html:option>
-      </c:forEach>
-        <html:option value="" style="text-align:center">----------------</html:option>
-        <c:forEach items="${typeList}" var="type">
-          <html:option value="${type}">${type}</html:option>
-        </c:forEach>
-      </html:select>
-  </li>
-  <li>
-      <c:if test="${!empty extraBagQueryClass}">
-       <label>
-         <fmt:message key="bagBuild.extraConstraint">
-           <fmt:param value="${extraBagQueryClass}"/>
-         </fmt:message>
-       </label>
-         <html:select property="extraFieldValue" styleId="extraConstraintSelect" disabled="false" >
-           <html:option value="">Any</html:option>
-           <c:forEach items="${extraClassFieldValues}" var="value">
-             <html:option value="${value}">${value}</html:option>
-           </c:forEach>
-         </html:select>
-      </c:if>
-   </li>
-   <li>
-   <%-- textarea --%>
-   <label><fmt:message key="bagBuild.bagPaste"/></label>
-   <span>
-   <%-- example bag --%>
-     <c:set var="bagExampleComment" value="${WEB_PROPERTIES['bag.example.comment']}"/>
-     <c:if test="${!empty bagExampleIdentifiers}">
-         <div style="text-align:right;width:87%;">
-           <html:link href=""
-                      onclick="javascript:loadExample('${bagExampleIdentifiers}');return false;">
-             (click to see an example)<img src="images/disclosed.gif" title="Click to Show example"/>
-           </html:link>
-         </div>
-     </c:if>
-   <html:textarea styleId="pasteInput" property="text" rows="10" cols="60" onfocus="if (this.value != '') switchInputs('paste','file');" onkeypress="switchInputs('paste','file');" />
-   </span>
-   </li>
-     <%-- file input --%>
-    <li>
-      <label><fmt:message key="bagBuild.or"/></label>
-      <html:file styleId="fileInput" property="formFile" onchange="switchInputs('file','paste');" />
-    </li>
-    </ol>
-    <div align="right">
-       <%-- reset button --%>
-       <input type="button" onClick="resetInputs()" value="Reset" />
-       <html:submit styleId="submitBag"><fmt:message key="bagBuild.makeBag"/></html:submit>
-    </div>
-
-    <html:hidden styleId="whichInput" property="whichInput" />
+      
+	  <table class="bagTable">
+		  <tr>
+		      <td valign="top" class="title">
+		          <label><fmt:message key="bagBuild.bagType"/></label>
+		      </td>
+		      <td>
+			      <html:select styleId="typeSelector" property="type" onchange="typeChanged()">
+			      <c:forEach items="${preferredTypeList}" var="type">
+			          <html:option value="${type}" style="font-weight:bold">${type}</html:option>
+			      </c:forEach>
+			        <html:option value="" style="text-align:center">----------------</html:option>
+			        <c:forEach items="${typeList}" var="type">
+			          <html:option value="${type}">${type}</html:option>
+			        </c:forEach>
+			      </html:select>
+			   </td>
+		  </tr>
+		  <c:if test="${!empty extraBagQueryClass}">
+		  <tr>		      
+		       <td valign="top" class="title">
+		          <label><fmt:message key="bagBuild.extraConstraint">
+		          <fmt:param value="${extraBagQueryClass}"/>
+		          </fmt:message></label>
+		       </td>
+		       <td>
+		         <html:select property="extraFieldValue" styleId="extraConstraintSelect" disabled="false" >
+		           <html:option value="">Any</html:option>
+		           <c:forEach items="${extraClassFieldValues}" var="value">
+		             <html:option value="${value}">${value}</html:option>
+		           </c:forEach>
+		         </html:select>
+		       </td>
+		   </tr>
+		   </c:if>
+		   <tr>
+		   <%-- textarea --%>
+			   <td valign="top" class="title">
+			      <input type="radio" name="uploadType" id="pasteType" value="paste" onclick="switchInputs('paste','file');"/>
+			      <label for="pasteType"><fmt:message key="bagBuild.bagPaste"/></label>
+			   </td>
+			   <td>
+				   <%-- example bag --%>
+				     <c:set var="bagExampleComment" value="${WEB_PROPERTIES['bag.example.comment']}"/>
+				     <c:if test="${!empty bagExampleIdentifiers}">
+				         <div style="text-align:right;">
+				           <html:link href=""
+				                      onclick="javascript:loadExample('${bagExampleIdentifiers}');return false;">
+				             (click to see an example)<img src="images/disclosed.gif" title="Click to Show example"/>
+				           </html:link>
+				         </div>
+				     </c:if>
+   				   <html:textarea styleId="pasteInput" property="text" rows="10" cols="60" onfocus="if (this.value != '') switchInputs('paste','file');" onkeypress="switchInputs('paste','file');" />
+			   </td>
+		   </tr>
+		     <%-- file input --%>
+		    <tr>
+		      <td valign="top" class="title">
+		          <input type="radio" name="uploadType" id="fileType" value="file" onclick="switchInputs('file','paste');"/>
+		          <label for="fileType"><fmt:message key="bagBuild.or"/></label>
+		      </td>
+		      <td>
+		          <html:file styleId="fileInput" property="formFile" onchange="switchInputs('file','paste');" />
+		      </td>
+		    </tr>
+	    </table>
+	    
+	    <div align="right">
+	       <%-- reset button --%>
+	       <input type="button" onClick="resetInputs()" value="Reset" />
+	       <html:submit styleId="submitBag"><fmt:message key="bagBuild.makeBag"/></html:submit>
+	    </div>
+	
   </html:form>
 </div>
 </im:boxarea>
