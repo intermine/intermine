@@ -107,14 +107,6 @@ function itemChecked(columnsToDisable, columnsToHighlight, checkedRow, checkedCo
               async:false
             }
          );
-/*        if($('selectedIds').value.strip() != '') {
-          var splitted = $('selectedIds').value.split(',');
-          splitted.push(objectId);
-        } else {
-          var splitted=objectId;
-        }
-        $('selectedIds').value=splitted;
-*/
     } else {
         AjaxServices.deSelectId(objectId,tableid, {
               callback: function(selectedIds) { 
@@ -122,18 +114,6 @@ function itemChecked(columnsToDisable, columnsToHighlight, checkedRow, checkedCo
               },
              async:false
          });
-/*
-        var splitted = $('selectedIds').value.split(',');
-        var count=0;
-        splitted.each(function(item){
-           if(item.strip() == objectId) {
-           	 index = count;
-           }
-           count++;
-        })
-        var removed = splitted.splice(index,1);
-        $('selectedIds').value=splitted;
-*/
     }
     
     // Hightlight all cells for this object
