@@ -219,9 +219,9 @@ public abstract class WebUtil
 
         return sb.toString();
     }
-    
+
     /**
-     * Reverse operation to wildcardUserToSql  
+     * Reverse operation to wildcardUserToSql
      * @param str treated string
      * @return original string
      */
@@ -252,7 +252,7 @@ public abstract class WebUtil
             }
         }
 
-        return sb.toString();        
+        return sb.toString();
     }
 
     /**
@@ -544,15 +544,16 @@ public abstract class WebUtil
                     Long countBag = countMap.get(id);
                     Long countAll = (java.lang.Long) rrAll.get(1);
 
+                    // (k,n,M,N)
                     double p = Hypergeometric.calculateP(countBag.intValue(), sampleTotal,
                                                          countAll.intValue(), populationTotal);
 
                     try {
                         resultsMap.put(id, new BigDecimal(p));
                     } catch (Exception e) {
-                        String msg = p + " isn't a double.  calculated using sample size: "
-                        + countBag + ", population size: " + countAll + ", bag size: "
-                        + sampleTotal + ", total: " + populationTotal
+                        String msg = p + " isn't a double.  calculated using k: "
+                        + countBag + ", n: " + sampleTotal + ", M: "
+                        + countAll + ", N: " + populationTotal
                         + ".  population query used: "
                         + ldr.getPopulationQuery(false).toString();
                         throw new RuntimeException(msg, e);
@@ -591,7 +592,7 @@ public abstract class WebUtil
     /**
      * See online help docs for detailed description of what error correction is and why we need it.
      * Briefly, in all experiments certain things happen that look interesting but really just
-     * happened by chance.  We need to account for this phenonomenon to ensure our numbers are
+     * happened by chance.  We need to account for this phenomenon to ensure our numbers are
      * interesting behaviour and not just random happenstance.
      *
      * To do this we take all of our p-values and adjust them.  Here we are using on of our two
@@ -627,11 +628,11 @@ public abstract class WebUtil
         Object[] o = os.executeSingleton(q).toArray();
         return  ((java.lang.Long) o[0]).intValue();
     }
-    
+
     /**
      * @param request request
-     * @return default context path. This context path can be used for example for 
-     * generating links to web service that are not tighten to particular webapp release. 
+     * @return default context path. This context path can be used for example for
+     * generating links to web service that are not tighten to particular webapp release.
      */
     public static String getDefaultContextPath(HttpServletRequest request) {
         Properties props = InterMineAction.getWebProperties(request);
