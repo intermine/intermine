@@ -343,7 +343,7 @@ public class WebResults extends AbstractList<List<Object>> implements WebTable
                 }
             }
             Object fieldValue = (o == null ? null : path.resolve(o));
-            if (makeResultElements && (fieldValue != null)) {
+            if (makeResultElements) {
                 String fieldCDName = path.getLastClassDescriptor().getName();
                 String unqualifiedFieldCD = TypeUtil.unqualifiedName(fieldCDName);
                 boolean isKeyField = ClassKeyHelper.isKeyField(classKeys, unqualifiedFieldCD,
