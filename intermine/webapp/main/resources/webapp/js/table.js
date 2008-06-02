@@ -100,10 +100,13 @@ function itemChecked(columnsToDisable, columnsToHighlight, checkedRow, checkedCo
 
     // Update list and save selected state
     if(checkbox.checked) {
-        AjaxServices.selectId(objectId,tableid,
-            function(selectedIds) { 
-            	$('selectedIdFields').update(selectedIds.join(', ')); 
-        });
+        AjaxServices.selectId(objectId,tableid, {
+              callback: function(selectedIds) { 
+                    $('selectedIdFields').update(selectedIds.join(', ')); 
+                },
+              async:false
+            }
+         );
 /*        if($('selectedIds').value.strip() != '') {
           var splitted = $('selectedIds').value.split(',');
           splitted.push(objectId);
@@ -113,9 +116,12 @@ function itemChecked(columnsToDisable, columnsToHighlight, checkedRow, checkedCo
         $('selectedIds').value=splitted;
 */
     } else {
-        AjaxServices.deSelectId(objectId,tableid, function(selectedIds) { 
+        AjaxServices.deSelectId(objectId,tableid, {
+              callback: function(selectedIds) { 
                 $('selectedIdFields').update(selectedIds.join(', ')); 
-        });
+              },
+             async:false
+         });
 /*
         var splitted = $('selectedIds').value.split(',');
         var count=0;
