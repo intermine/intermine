@@ -57,13 +57,10 @@ function isClear() {
  */
 function disableOtherColumns(className, checkedColumn) {
     $$('input.selectable').each(function(input){
-            if (! input.hasClassName(className)) {
-                input.disabled = true;
-            }
-
-            if (input.id != 'selectedObjects_'  + checkedColumn
-                && !input.id.startsWith('selectedObjects_'  + checkedColumn + '_')) {
-                input.disabled = true;
+            if (input.id != 'selectedObjects_'  + checkedColumn) {
+                if (! input.hasClassName(className)) {
+                    input.disabled = true;
+                }
             }
         });
 }
