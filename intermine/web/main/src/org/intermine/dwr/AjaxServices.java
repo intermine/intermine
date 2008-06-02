@@ -89,6 +89,7 @@ public class AjaxServices
 {
     protected static final Logger LOG = Logger.getLogger(AjaxServices.class);
     private static final Object ERROR_MSG = "Error happened during DWR ajax service.";
+    private static final int SELECTED_IDS_RETURN_MAX = 100;
 
     /**
      * Creates a favourite Tag for the given templateName
@@ -768,7 +769,7 @@ public class AjaxServices
                     servletContext.getAttribute(Constants.WEB_PROPERTIES);
                 String defaultName = properties.getProperty("lists.input.example");
 
-                if (!operation.equals("copy") && (bagName.equals("") 
+                if (!operation.equals("copy") && (bagName.equals("")
                         || (bagName.equalsIgnoreCase(defaultName)))) {
                     return "New list name is required";
                 } else if (!WebUtil.isValidName(bagName)) {
@@ -937,7 +938,7 @@ public class AjaxServices
         }
         return null;
     }
-    
+
     /**
      * Add an ID to the PagedTable selection
      * @param selectedId the id
@@ -945,13 +946,12 @@ public class AjaxServices
      * @return a String[]
      */
     public static List<String> selectId(String selectedId, String tableId) {
-        ServletContext servletContext = WebContextFactory.get().getServletContext();
         HttpSession session = WebContextFactory.get().getSession();
         PagedTable pt = SessionMethods.getResultsTable(session, tableId);
         pt.selectId(new Integer(selectedId));
-        return new ArrayList<String>(pt.getSelectedIds().values());
+        return pt.getFirstSelectedFields();
     }
-    
+
     /**
      * De-select an Id from the PagedTable
      * @param deSelectId the ID to remove from the selection
@@ -959,36 +959,33 @@ public class AjaxServices
      * @return a String[]
      */
     public static List<String> deSelectId(String deSelectId, String tableId) {
-        ServletContext servletContext = WebContextFactory.get().getServletContext();
         HttpSession session = WebContextFactory.get().getSession();
         PagedTable pt = SessionMethods.getResultsTable(session, tableId);
-        pt.getSelectedIds().remove(new Integer(deSelectId));
-        return new ArrayList<String>(pt.getSelectedIds().values());
+        pt.deSelectId(new Integer(deSelectId));
+        return pt.getFirstSelectedFields();
     }
-    
+
     /**
      * Set the class of the selected column of ids for the PagedTable
      * @param className the className
      * @param tableId the PagedTable identifier
      */
     public static void setClassForId(String className, String tableId) {
-        ServletContext servletContext = WebContextFactory.get().getServletContext();
         HttpSession session = WebContextFactory.get().getSession();
         PagedTable pt = SessionMethods.getResultsTable(session, tableId);
         pt.setSelectedClass(className);
     }
-    
+
     /**
      * Select all the elements in a PagedTable
      * @param index the index of the selected column
      * @param tableId the PagedTable identifier
      */
     public static void selectAll(int index, String tableId) {
-        ServletContext servletContext = WebContextFactory.get().getServletContext();
         HttpSession session = WebContextFactory.get().getSession();
         PagedTable pt = SessionMethods.getResultsTable(session, tableId);
         pt.clearSelectIds();
-        pt.setAllSelected(index);
+        pt.setAllSelectedColumn(index);
     }
-    
+
 }

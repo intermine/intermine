@@ -193,7 +193,7 @@
                         </c:if>
                         <td align="center" class="${checkboxClass} ${highlightObjectClass}" id="cell_checkbox,${status2.index},${(status.index + 1) * 1000 + multiRowStatus.index},${subRow[column.index].value.typeClsString}" rowspan="${subRow[column.index].rowspan}">
                           <c:if test="${resultElement.id != null}">
-                            <html:multibox property="selectedIdStrings" name="pagedResults"
+                            <html:multibox property="currentSelectedIdStrings" name="pagedResults"
                                  styleId="selectedObjects_${status2.index}_${(status.index + 1) * 1000 + multiRowStatus.index}_${subRow[column.index].value.typeClsString}"
                                  styleClass="selectable"
                                  onclick="itemChecked(columnsToDisable, columnsToHighlight, ${(status.index + 1) * 1000 + multiRowStatus.index}, ${status2.index}, '${pagedResults.tableid}', this)">
@@ -241,7 +241,7 @@
 
                   <%-- the checkbox to select this object --%>
                   <c:set var="ischecked" value=""/>
-                    <c:forEach items="${pagedResults.selectedIdStrings}" var="selectedId">
+                    <c:forEach items="${pagedResults.currentSelectedIdStrings}" var="selectedId">
                       <c:if test="${(! empty resultElement.typeClsString) && (resultElement.id == selectedId)}">
                         <c:set var="ischecked" value="highlightCell"/>
                       </c:if>
@@ -253,7 +253,7 @@
                   <c:if test="${column.selectable && ((!isWebCollection) || (! noBagSave && status2.count<=1)) && empty bag}">
                     <td align="center" class="checkbox ${highlightObjectClass} id_${resultElement.id} class_${row[column.index].typeClsString} ${ischecked}" id="cell_checkbox,${status2.index},${status.index},${row[column.index].typeClsString}">
                       <c:if test="${resultElement.id != null}">
-                        <html:multibox property="selectedIdStrings" name="pagedResults"
+                        <html:multibox property="currentSelectedIdStrings" name="pagedResults"
                                  styleId="selectedObjects_${status2.index}_${status.index}_${row[column.index].typeClsString}"
                                  styleClass="selectable id_${resultElement.id} class_${row[column.index].typeClsString}"
                                  onclick="itemChecked(columnsToDisable, columnsToHighlight, ${status.index},${status2.index}, '${pagedResults.tableid}', this)" 
@@ -290,23 +290,22 @@
   <tr>
   <td colspan="${colcount}">
   <html:hidden property="tableid" value="${pagedResults.tableid}" />
-  <c:set var="selectedIds" >
-     <c:forEach items="${pagedResults.selectedIds}" var="selected" varStatus="status"><c:if test="${status.count > 1}">${selectedIds},</c:if><c:out value="${selected.key}"/></c:forEach>
+  <c:set var="selectedIds">
+     <c:forEach items="${pagedResults.currentSelectedIdStrings}" var="selected" varStatus="status"><c:if test="${status.count > 1}">${selectedIds}, </c:if><c:out value="${selected}"/></c:forEach>
   </c:set>
-  <c:set var="selectedIdFields" >
-     <c:forEach items="${pagedResults.selectedIds}" var="selected" varStatus="status"><c:if test="${status.count > 1}">${selectedIdFields},</c:if><c:out value="${selected.value}"/></c:forEach>
+  <c:set var="selectedIdFields">
+     <c:forEach items="${pagedResults.firstSelectedFields}" var="selected" varStatus="status"><c:if test="${status.count > 1}">${selectedIdFields}, </c:if><c:out value="${selected}"/></c:forEach>
   </c:set>
-  <html:hidden property="selectedIds" value="${selectedIds}" styleId="selectedIds"/> 
   <b>Selected:</b><span id="selectedIdFields">
   <c:choose>
-   <c:when test="${pagedResults.allSelected != -1}">All selected on all pages</c:when>
+   <c:when test="${pagedResults.allSelectedColumn != -1}">All selected on all pages</c:when>
    <c:otherwise>${selectedIdFields}</c:otherwise>
   </c:choose>   
   </span>
   </td>
   </tr>
   </tfoot>
-    <c:if test="${! empty pagedResults.selectedIds || pagedResults.allSelected != -1}">
+    <c:if test="${! pagedResults.emptySelection}">
     <script type="text/javascript" charset="utf-8">
       $('newBagName').disabled = false;
       $('saveNewBag').disabled = false;

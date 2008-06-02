@@ -23,13 +23,12 @@ function selectAll(columnsToDisable, columnsToHighlight, columnIndex, tableid) {
     if($('selectedObjects_' + columnIndex).checked) {
         AjaxServices.selectAll(columnIndex, tableid);
         $('selectedIdFields').update(' All selected on all pages');
-        $('selectedIds').value = 'all_' + columnIndex;
     } else {
         AjaxServices.selectAll(-1, tableid);
         $('selectedIdFields').update('');
-        $('selectedIds').value = '';
     }
-    setToolbarAvailability(!$('selectedObjects_' + columnIndex).checked);    if (isClear()) {
+    setToolbarAvailability(!$('selectedObjects_' + columnIndex).checked);
+    if (isClear()) {
         enableAll();
     }
 }
@@ -48,20 +47,24 @@ function enableAll() {
  * Checks that nothing is selected
  */
 function isClear() {
-	return ($('selectedIds').value.strip() == '');
+    var selectedIdFields = $('selectedIdFields');
+    return (selectedIdFields.innerHTML.strip() == '');
 }
 
 
 /**
  * Disable columns with a different class
- * TODO there seems to be a bug when adding classes with []
  */
-function disableOtherColumns(className) {
-	$$('input.selectable').each(function(input){
-		if(! input.hasClassName(className)) {
-            input.disabled = true;
-        }
-	});
+function disableOtherColumns(className, checkedColumn) {
+    $$('input.selectable').each(function(input){
+            if (! input.hasClassName(className)) {
+                input.disabled = true;
+            }
+
+            if (input.id != 'selectedObjects_'  + checkedColumn) {
+                input.disabled = true;
+            }
+        });
 }
 
 /**
@@ -94,23 +97,25 @@ function itemChecked(columnsToDisable, columnsToHighlight, checkedRow, checkedCo
         }
     })
 
-    // Update list at the top and save selected state
+    // Update list and save selected state
     if(checkbox.checked) {
         AjaxServices.selectId(objectId,tableid,
             function(selectedIds) { 
-            	$('selectedIdFields').update(selectedIds); 
+            	$('selectedIdFields').update(selectedIds.join(', ')); 
         });
-        if($('selectedIds').value.strip() != '') {
+/*        if($('selectedIds').value.strip() != '') {
           var splitted = $('selectedIds').value.split(',');
           splitted.push(objectId);
         } else {
           var splitted=objectId;
         }
         $('selectedIds').value=splitted;
+*/
     } else {
         AjaxServices.deSelectId(objectId,tableid, function(selectedIds) { 
-                $('selectedIdFields').update(selectedIds); 
+                $('selectedIdFields').update(selectedIds.join(', ')); 
         });
+/*
         var splitted = $('selectedIds').value.split(',');
         var count=0;
         splitted.each(function(item){
@@ -121,6 +126,7 @@ function itemChecked(columnsToDisable, columnsToHighlight, checkedRow, checkedCo
         })
         var removed = splitted.splice(index,1);
         $('selectedIds').value=splitted;
+*/
     }
     
     // Hightlight all cells for this object
@@ -142,11 +148,11 @@ function itemChecked(columnsToDisable, columnsToHighlight, checkedRow, checkedCo
         AjaxServices.setClassForId('', tableid);
         bagType = null;
     } else {
-        disableOtherColumns(objectClass);
+        disableOtherColumns(objectClass, checkedColumn);
         AjaxServices.setClassForId(objectClass.sub('class_',''), tableid);
     }
     
-    setToolbarAvailability($('selectedIds').value.strip() == '');
+    setToolbarAvailability($('selectedIdFields').innerHTML.strip() == '');
     
     /*var columnsToHighlightArray = columnsToHighlight[checkedColumn]
     $$('td').each(function(item){
