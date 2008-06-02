@@ -315,7 +315,11 @@ public class PagedTable
         if (allSelected == -1) {
             ResultElement resultElement = findIdInVisible(objectId);
             if (resultElement != null) {
-                selectionIds.put(objectId, resultElement.getField().toString());
+                if (resultElement.getField() == null) {
+                    selectionIds.put(objectId, null);
+                } else {
+                    selectionIds.put(objectId, resultElement.getField().toString());
+                }
             }
         } else {
             // remove because the all checkbox is on
@@ -332,10 +336,7 @@ public class PagedTable
            selectionIds.remove(objectId);
        } else {
            // add because the all checkbox is on
-           ResultElement resultElement = findIdInVisible(objectId);
-           if (resultElement != null) {
-               selectionIds.put(objectId, resultElement.getField().toString());
-           }
+           selectionIds.put(objectId, null);
        }
     }
 
@@ -362,13 +363,22 @@ public class PagedTable
     public List<String> getFirstSelectedFields() {
         List<String> retList = new ArrayList<String>();
         Iterator<SelectionEntry> selectedEntryIter = selectedEntryIterator();
+        boolean seenNull = false;
         while (selectedEntryIter.hasNext()) {
             if (retList.size() < FIRST_SELECTED_FIELDS_COUNT) {
-                retList.add(selectedEntryIter.next().fieldName);
+                String fieldValue = selectedEntryIter.next().fieldValue;
+                if (fieldValue == null) {
+                    seenNull = true;
+                } else {
+                    retList.add(fieldValue);
+                }
             } else {
                 retList.add("...");
-                break;
+                return retList;
             }
+        }
+        if (seenNull) {
+            retList.add("...");
         }
         return retList;
     }
@@ -422,7 +432,7 @@ public class PagedTable
 
     private class SelectionEntry {
         Integer id;
-        String fieldName;
+        String fieldValue;
     }
 
     /**
@@ -440,7 +450,7 @@ public class PagedTable
                     SelectionEntry retEntry = new SelectionEntry();
                     Map.Entry<Integer, String> entry = selectionIter.next();
                     retEntry.id = entry.getKey();
-                    retEntry.fieldName = entry.getValue();
+                    retEntry.fieldValue = entry.getValue();
                     return retEntry;
                 }
                 public void remove() {
@@ -464,7 +474,11 @@ public class PagedTable
                             if (!selectionIds.containsKey(elementId)) {
                                 nextEntry = new SelectionEntry();
                                 nextEntry.id = elementId;
-                                nextEntry.fieldName = element.getField().toString();
+                                if (element.getField() == null) {
+                                    nextEntry.fieldValue = null;
+                                } else {
+                                    nextEntry.fieldValue = element.getField().toString();
+                                }
                                 break;
                             }
                         } catch (IndexOutOfBoundsException e) {
