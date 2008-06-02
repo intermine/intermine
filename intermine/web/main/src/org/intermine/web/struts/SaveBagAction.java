@@ -12,6 +12,7 @@ package org.intermine.web.struts;
 
 import java.util.Date;
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.Set;
 
 import javax.servlet.ServletContext;
@@ -115,7 +116,7 @@ public class SaveBagAction extends InterMineAction
             return null;
         }
 
-        if (pt.getSelectedIds().keySet().size() == 0) {
+        if (pt.isEmptySelection()) {
             ActionMessage actionMessage = new ActionMessage("errors.bag.empty");
             recordError(actionMessage, request);
             return mapping.findForward("results");
@@ -174,7 +175,9 @@ public class SaveBagAction extends InterMineAction
 
             osw = new ObjectStoreWriterInterMineImpl(os);
             // Second pass through, to actually copy the data.
-            for (Integer id : pt.getSelectedIds().keySet()) {
+            Iterator<Integer> iterator = pt.selectedIdsIterator();
+            while (iterator.hasNext()) {
+                Integer id = iterator.next();
                 osw.addToBag(bag.getOsb(), id);
 //                String selectedObjectString = sbf.getSelectedObjects()[i];
 //                int indexOfFirstComma = selectedObjectString.indexOf(',');

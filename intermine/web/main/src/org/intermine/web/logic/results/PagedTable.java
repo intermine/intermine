@@ -19,8 +19,10 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.intermine.objectstore.flatouterjoins.MultiRow;
 import org.intermine.objectstore.query.ResultsRow;
+
+import org.intermine.objectstore.flatouterjoins.MultiRow;
+import org.intermine.util.TypeUtil;
 import org.intermine.web.logic.Constants;
 
 /**
@@ -31,6 +33,7 @@ import org.intermine.web.logic.Constants;
  */
 public class PagedTable
 {
+    private static final int FIRST_SELECTED_FIELDS_COUNT = 25;
     private WebTable webTable;
     private List<String> columnNames = null;
     private List resultElementRows = null;
@@ -44,10 +47,14 @@ public class PagedTable
 
     // object ids that have been selected in the table
     // TODO this may be more memory efficient with an IntPresentSet
-    private Map<Integer, String> selectedIds = new HashMap<Integer, String>();
+    // note: if allSelected != -1 then this map contains those objects that are NOT selected
+    private Map<Integer, String> selectionIds = new HashMap<Integer, String>();
+
+    // the index of the column the has all checkbox checked
     private int allSelected = -1;
+
     private String selectedClass;
-    
+
     /**
      * Construct a PagedTable with a list of column names
      * @param webTable the WebTable that this PagedTable will display
@@ -300,75 +307,235 @@ public class PagedTable
     }
 
     /**
-     * Add an object id and its field value 
+     * Add an object id and its field value
      * that has been selected in the table.
      * @param objectId the id to select
      */
     public void selectId(Integer objectId) {
+        if (allSelected == -1) {
+            ResultElement resultElement = findIdInVisible(objectId);
+            if (resultElement != null) {
+                selectionIds.put(objectId, resultElement.getField().toString());
+            }
+        } else {
+            // remove because the all checkbox is on
+            selectionIds.remove(objectId);
+        }
+    }
+
+    /**
+     * Remove the object with the given object id from the list of selected objects.
+     * @param objectId the object store id
+     */
+    public void deSelectId(Integer objectId) {
+       if (allSelected == -1) {
+           selectionIds.remove(objectId);
+       } else {
+           // add because the all checkbox is on
+           ResultElement resultElement = findIdInVisible(objectId);
+           if (resultElement != null) {
+               selectionIds.put(objectId, resultElement.getField().toString());
+           }
+       }
+    }
+
+    /**
+     * Search the visible rows and return the first ResultElement with the given ID./
+     */
+    private ResultElement findIdInVisible(Integer id) {
         for (List<ResultElement> resultElements: getResultElementRows()) {
             for (ResultElement resultElement : resultElements) {
-                if ((resultElement != null) && (resultElement.getId().equals(objectId))
+                if ((resultElement != null) && (resultElement.getId().equals(id))
                     && (resultElement.isKeyField())) {
-                    this.selectedIds.put(objectId, resultElement.getField().toString());
-                    return;
+                    return resultElement;
                 }
             }
         }
+        return null;
     }
-    
+
     /**
-     * Return selected object ids as a String[], needed for jsp multibox.
-     * @return selected ids as Strings.
+     * Return the fields for the first selected objects.  Return the first
+     * FIRST_SELECTED_FIELDS_COUNT fields.  If there are more than that, append "..."
+     * @return the list
      */
-    public String[] getSelectedIdStrings() {
-        String[] s;
-        int i = 0;
-        if (allSelected == -1) {
-            s = new String[selectedIds.size()];
-            for (Integer id : selectedIds.keySet()) {
-                s[i] = id.toString();
-                i++;
-            }
-        } else {
-            s =  new String[this.getResultElementRows().size()];
-            for (List<ResultElement> currentRow : this.getResultElementRows()) {
-                ResultElement resElt = currentRow.get(allSelected);
-                s[i] = resElt.getId().toString();
-                i++;
+    public List<String> getFirstSelectedFields() {
+        List<String> retList = new ArrayList<String>();
+        Iterator<SelectionEntry> selectedEntryIter = selectedEntryIterator();
+        while (selectedEntryIter.hasNext()) {
+            if (retList.size() < FIRST_SELECTED_FIELDS_COUNT) {
+                retList.add(selectedEntryIter.next().fieldName);
+            } else {
+                retList.add("...");
+                break;
             }
         }
-        return s;
+        return retList;
     }
-    
+
     /**
-     * Return a map of object ids that have been selected
-     * to their field values.
-     * @return selected object ids and field values
+     * Return selected object ids of the current page as a String[], needed for jsp multibox.
+     * @return selected ids as Strings.
      */
-    public Map<Integer, String> getSelectedIds() {
-        return selectedIds;
+    public String[] getCurrentSelectedIdStrings() {
+        return getCurrentSelectedIdStringsList().toArray(new String[0]);
     }
-    
+
+    /**
+     * Return selected object ids of the current page as a List.
+     * @return the list.
+     */
+    public List<String> getCurrentSelectedIdStringsList() {
+        List<String> selected = new ArrayList<String>();
+        if (allSelected == -1) {
+            if (!selectionIds.isEmpty()) {
+                for (List<ResultElement> currentRow: getResultElementRows()) {
+                    for (ResultElement resElt: currentRow) {
+                        if (resElt != null) {
+                            if (selectionIds.containsKey(resElt.getId())) {
+                                selected.add(resElt.getId().toString());
+                            }
+                        }
+                    }
+                }
+            }
+        } else {
+            for (List<ResultElement> currentRow: getResultElementRows()) {
+                ResultElement resElt = currentRow.get(allSelected);
+                if (resElt != null) {
+                    if (!selectionIds.containsKey(resElt.getId())) {
+                        selected.add(resElt.getId().toString());
+                    }
+                }
+            }
+        }
+        return selected;
+    }
+
     /**
      * Clear the table selection
      */
     public void clearSelectIds() {
-        selectedIds = new LinkedHashMap<Integer, String>();
+        selectionIds = new LinkedHashMap<Integer, String>();
+        allSelected = -1;
     }
-    
-    
-    /**
-     * @return the allSelected
-     */
-    public int getAllSelected() {
-        return allSelected;
+
+    private class SelectionEntry {
+        Integer id;
+        String fieldName;
     }
 
     /**
-     * @param allSelected the allSelected to set
+     * Return an Iterator over the selected id/fieldname pairs
      */
-    public void setAllSelected(int allSelected) {
-        this.allSelected = allSelected;
+    private Iterator<SelectionEntry> selectedEntryIterator() {
+        if (allSelected == -1) {
+            return new Iterator<SelectionEntry>() {
+                Iterator<Map.Entry<Integer, String>> selectionIter =
+                    selectionIds.entrySet().iterator();
+                public boolean hasNext() {
+                    return selectionIter.hasNext();
+                }
+                public SelectionEntry next() {
+                    SelectionEntry retEntry = new SelectionEntry();
+                    Map.Entry<Integer, String> entry = selectionIter.next();
+                    retEntry.id = entry.getKey();
+                    retEntry.fieldName = entry.getValue();
+                    return retEntry;
+                }
+                public void remove() {
+                    throw new UnsupportedOperationException();
+                }
+            };
+        } else {
+            return new Iterator<SelectionEntry>() {
+                SelectionEntry nextEntry = null;
+                int currentIndex = 0;
+                {
+                    moveToNext();
+                }
+
+                private void moveToNext() {
+                    while (true) {
+                        try {
+                            List<ResultElement> row = getAllRows().getResultElements(currentIndex);
+                            ResultElement element = row.get(allSelected);
+                            Integer elementId = element.getId();
+                            if (!selectionIds.containsKey(elementId)) {
+                                nextEntry = new SelectionEntry();
+                                nextEntry.id = elementId;
+                                nextEntry.fieldName = element.getField().toString();
+                                break;
+                            }
+                        } catch (IndexOutOfBoundsException e) {
+                            nextEntry = null;
+                            break;
+                        } finally {
+                            currentIndex++;
+                        }
+                    }
+                }
+
+                public boolean hasNext() {
+                    return nextEntry != null;
+                }
+
+                public SelectionEntry next() {
+                   SelectionEntry retVal = nextEntry;
+                   moveToNext();
+                   return retVal;
+                }
+
+                public void remove() {
+                    throw new UnsupportedOperationException();
+                }
+            };
+        }
+    }
+
+    /**
+     * Return an Iterator over the selected Ids
+     * @return the Iterator
+     */
+    public Iterator<Integer> selectedIdsIterator() {
+        return new Iterator<Integer>() {
+            Iterator<SelectionEntry> selectedEntryIter = selectedEntryIterator();
+            public boolean hasNext() {
+               return selectedEntryIter.hasNext();
+            }
+            public Integer next() {
+                return selectedEntryIter.next().id;
+            }
+            public void remove() {
+                throw new UnsupportedOperationException();
+            }
+        };
+    }
+
+    /**
+     * If a whole column is selected, return its index, otherwise return -1.
+     * @return the index of the column that is selected
+     */
+    public int getAllSelectedColumn() {
+        if (selectionIds.isEmpty()) {
+            return allSelected;
+        } else {
+            return -1;
+        }
+    }
+
+    /**
+     * Select a whole column.
+     * @param columnSelected the column index
+     */
+    public void setAllSelectedColumn(int columnSelected) {
+        if (columnSelected == -1) {
+            selectedClass = null;
+        } else {
+            Class<?> columnClass = getAllRows().getColumns().get(columnSelected).getClass();
+            selectedClass = TypeUtil.unqualifiedName(columnClass.getName());
+        }
+        this.allSelected = columnSelected;
     }
 
     /**
@@ -426,9 +593,9 @@ public class PagedTable
             try {
                 List<ResultElement> resultsRow = getAllRows().getResultElements(i);
                 // if some objects already selected, set corresponding  ResultElements here
-                if (!selectedIds.isEmpty()) {
+                if (!selectionIds.isEmpty()) {
                     for (ResultElement re : resultsRow) {
-                        if (re != null && selectedIds.keySet().contains(re.getId())) {
+                        if (re != null && selectionIds.keySet().contains(re.getId())) {
                             re.setSelected(true);
                         }
                     }
@@ -573,5 +740,13 @@ public class PagedTable
                 throw (new UnsupportedOperationException());
             }
         }
+    }
+
+    /**
+     * Return true if and only if nothing is selected
+     * @return true if and only if nothing is selected
+     */
+    public boolean isEmptySelection() {
+        return !selectedIdsIterator().hasNext();
     }
 }

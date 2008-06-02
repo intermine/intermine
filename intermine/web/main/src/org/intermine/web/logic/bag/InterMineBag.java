@@ -302,7 +302,7 @@ public class InterMineBag implements WebSearchable, Cloneable
     public String getTitle() {
        return getName();
     }
-    
+
     /**
      * Create copy of bag. Bag is saved to objectstore.
      * @param userOSW objectstore writer used for saving bag
@@ -336,7 +336,7 @@ public class InterMineBag implements WebSearchable, Cloneable
             }
         }
     }
-    
+
     private InterMineBag cloneShallowIntermineBag(ObjectStoreWriter userOSW) {
         // doesn't clone class descriptions and object store because they shouldn't change
         // -> cloned instance shares it with the original instance
@@ -346,7 +346,7 @@ public class InterMineBag implements WebSearchable, Cloneable
             copy.savedBagId = null;
             SavedBag savedBag = copy.store(userOSW);
             copy.savedBagId = savedBag.getId();
-//            copy = new InterMineBag(name, type, description, dateCreated, 
+//            copy = new InterMineBag(name, type, description, dateCreated,
 //                    os, profileId, userOSW);
         } catch (ObjectStoreException ex) {
             throw new RuntimeException("Clone failed.", ex);
@@ -361,6 +361,6 @@ public class InterMineBag implements WebSearchable, Cloneable
      * @param date new date
      */
     public void setDate(Date date) {
-        this.dateCreated = date;        
+        this.dateCreated = date;
     }
 }
