@@ -532,7 +532,7 @@ public class PagedTable
         if (columnSelected == -1) {
             selectedClass = null;
         } else {
-            Class<?> columnClass = getAllRows().getColumns().get(columnSelected).getClass();
+            Class<?> columnClass = getAllRows().getColumns().get(columnSelected).getType();
             selectedClass = TypeUtil.unqualifiedName(columnClass.getName());
         }
         this.allSelected = columnSelected;
