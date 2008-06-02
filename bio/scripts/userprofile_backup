@@ -32,10 +32,11 @@ my $mirror_server = shift;
 
 my $HOST_NAME = hostname();
 
-
-my @dump_command = ("pg_dump", "-h", $HOST_NAME, "-c", "-U", "userprofile");
-my @psql_command = qw[psql -q -U userprofile];
-my @createdb_command = qw[createdb -U userprofile];
+my $prod_db_username = 'flymine';
+my $userprofile_db_username = 'userprofile';
+my @dump_command = ("pg_dump", "-h", $HOST_NAME, "-c", "-U");
+my @psql_command = qw[psql -q -U];
+my @createdb_command = qw[createdb -U];
 my $db_prefix = "userprofile-release-";
 my $prod_db_prefix = "production-release-";
 
@@ -75,18 +76,23 @@ sub write_version {
 sub make_dump {
   my $db_name = shift;
   my $dump_file = shift;
-  my $write_bags_only = shift;
+  my $write_bags = shift;
 
   my @params = ("-f", $dump_file, $db_name);
 
-  if ($write_bags_only) {
+  my $username;
+
+  if ($write_bags) {
     unshift @params, ('-t', 'osbag_int');
+    $username = $prod_db_username;
+  } else {
+    $username = $userprofile_db_username;
   }
 
-  print "dumping " . ($write_bags_only ? 'bags ' : '') . "with: @dump_command @params\n";
+  print "dumping " . ($write_bags ? 'bags ' : '') . "with: @dump_command $username @params\n";
 
   system qw[pg_dump --version];
-  system @dump_command, @params;
+  system @dump_command, $username, @params;
 
 }
 
