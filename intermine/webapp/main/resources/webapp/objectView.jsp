@@ -21,26 +21,31 @@
       <fmt:message key="objectDetails.nullField" var="nullFieldText"/>
       <c:set var="maxLength" value="60"/>
       <c:choose>
-        <c:when test="${object != null && object.class.name == 'java.lang.String' && fn:length(object) > maxLength}">
-      <html:link action="${detailsLink}"><im:abbreviate value="${object}" length="${maxLength}"/>...</html:link>
+        <c:when test="${!empty object && fn:startsWith(fn:trim(object), 'http://')}">
+          <a href="${object}" class="value extlink">
+            ${object}
+          </a>
+        </c:when>
+        <c:when test="${object != null && object.class.name == 'java.lang.String' && fn:length(object) > maxLength && resultElement.keyField}">
+           <html:link action="${detailsLink}">
+             <im:abbreviate value="${object}" length="${maxLength}"/>...
+           </html:link>
+        </c:when>
+        <c:when test="${object != null && object.class.name == 'java.lang.String' && fn:length(object) > maxLength && !resultElement.keyField}">
+          <im:abbreviate value="${object}" length="${maxLength}"/>...
         </c:when>
         <c:when test="${resultElement.keyField}">
           <html:link action="${detailsLink}">
             <c:out value="${object}" default="${nullFieldText}"/>
           </html:link>
           <c:if test="${(!empty columnType) && (resultElement.typeClass != columnType)}">
-       [<c:out value="${resultElement.type}" />]
-     </c:if>
-        </c:when>
-        <c:when test="${!empty object && fn:startsWith(fn:trim(object), 'http://')}">
-          <a href="${object}" class="value extlink">
-            ${object}
-          </a>
+             <c:out value="${resultElement.type}" />]
+          </c:if>
         </c:when>
         <c:when test="${empty object}">
           ${nullFieldText}
         </c:when>
-        <c:otherwise>     
+        <c:otherwise>
             <c:out value="${object}" default="${nullFieldText}"/>
             <%-- for IE 6: --%> &nbsp;
         </c:otherwise>
