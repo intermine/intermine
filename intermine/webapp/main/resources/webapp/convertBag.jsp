@@ -14,7 +14,7 @@
         getConvertCountForBag('${bag.name}','${type}','${idname}');
       </script>
       <c:set var="nameForURL"/>
-      <str:encodeUrl var="nameForURL">${bag.name}</str:encodeUrl>      
+      <str:encodeUrl var="nameForURL">${bag.name}</str:encodeUrl>
       <html:link action="/modifyBagDetailsAction.do?convert=${type}&bagName=${nameForURL}">${type}</html:link>&nbsp;&nbsp;<span id="${type}_convertcount_${idname}">&nbsp;</span><br>
     </c:forEach>
     <c:if test="${orientation!='h'}">
@@ -31,11 +31,11 @@
     </html:select>
     <html:submit property="convertToThing">Convert</html:submit>
     </p>
-    </c:forEach> 
+    </c:forEach>
     </c:if>
 
 <c:if test="${empty conversionTypes}">
-    <div><i>no results found</i></div>
+    <div><i><fmt:message key="convert.noresults"/></i></div>
 </c:if>
 
 <!-- /convertBag.jsp -->
