@@ -7,7 +7,7 @@ export PATH
 
 dumps_dir=/shared/dumps/userprofile
 
-/software/noarch/bio_scripts/userprofile_backup -p 5432 $dumps_dir/userprofile_backup smeagol > $HOME/.userprofile_backup.output.new 2>&1
+/software/noarch/bio_scripts/userprofile_backup -p 5432 $dumps_dir/userprofile_backup prod2 > $HOME/.userprofile_backup.output.new 2>&1
 
 latest_version=`cat $HOME/.userprofile_latest_version`
 
