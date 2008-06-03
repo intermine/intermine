@@ -70,7 +70,7 @@ function disableOtherColumns(className, checkedColumn) {
  * Run when a user selects a keyfield in the results table.  internal is true
  * when called from other methods in this file (ie. not from an onclick in table.jsp)
  **/
-function itemChecked(columnsToDisable, columnsToHighlight, checkedRow, checkedColumn, tableid, checkbox, internal) {
+function itemChecked(checkedRow, checkedColumn, tableid, checkbox, internal) {
     /*if (bagType == null) {
         var columnsToDisableArray = columnsToDisable[checkedColumn];
         if (columnsToDisableArray != null) {
@@ -98,7 +98,7 @@ function itemChecked(columnsToDisable, columnsToHighlight, checkedRow, checkedCo
 
     // Update list and save selected state
     if(checkbox.checked) {
-        AjaxServices.selectId(objectId,tableid, {
+        AjaxServices.selectId(objectId,tableid,checkedColumn, {
               callback: function(selectedIds) { 
                     $('selectedIdFields').update(selectedIds.join(', ')); 
                 },
@@ -130,11 +130,9 @@ function itemChecked(columnsToDisable, columnsToHighlight, checkedRow, checkedCo
         // Disable/enable other classes columns
     if (isClear()) {
         enableAll();
-        AjaxServices.setClassForId('', tableid);
         bagType = null;
     } else {
         disableOtherColumns(objectClass, checkedColumn);
-        AjaxServices.setClassForId(objectClass.sub('class_',''), tableid);
     }
     
     setToolbarAvailability($('selectedIdFields').innerHTML.strip() == '');
