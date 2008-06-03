@@ -146,13 +146,13 @@ public class WebResultsTest extends TestCase
          pathQuery.setView(view);
          QueryClass dept1 = new QueryClass(Department.class);
          QueryField depName = new QueryField(dept1, "name");
-         
+
          QueryClass man1 = new QueryClass(Manager.class);
          QueryField manName = new QueryField(man1, "name");
-         
+
          QueryClass emp1 = new QueryClass(Employee.class);
          QueryField empName = new QueryField(emp1, "name");
-         
+
 
          Map<String, QuerySelectable> pathToQueryNode = new HashMap();
          pathToQueryNode.put("Department", dept1);
@@ -173,7 +173,7 @@ public class WebResultsTest extends TestCase
          expected.put("Department", 0);
          assertEquals(expected, actual);
     }
-    
+
     // create a PathQuery, create expected column objects and compare.  Include:
     //   - some paths with descriptions
     //   - select fields that are/aren't class keys
@@ -207,7 +207,7 @@ public class WebResultsTest extends TestCase
         assertEquals(expectedColumns.get(2), webResults.getColumns().get(2));
         assertEquals(expectedColumns.get(3), webResults.getColumns().get(3));
     }
-    
+
     // Test with a PathQuery and some dummy results, call method with a made up row,
     // create expected ResultElements.  Doesn't need too much testing as Path.resolve() is tested.
      public void testTranslateRow() throws Exception {
@@ -229,7 +229,7 @@ public class WebResultsTest extends TestCase
          expected.add(res2);
          assertEquals(expected, row1);
      }
-    
+
     public void test() {
         IqlQuery fq =
             new IqlQuery("SELECT DISTINCT a1_, a3_, a4_ FROM org.intermine.model.testmodel.Department AS a1_," +
@@ -249,7 +249,7 @@ public class WebResultsTest extends TestCase
         }};
         PathQuery pathQuery = new PathQuery(model);
         pathQuery.setView(view);
-        Map<String, QueryNode> pathToQueryNode = new HashMap<String, QueryNode>();
+        Map<String, QuerySelectable> pathToQueryNode = new HashMap<String, QuerySelectable>();
         QueryClass deptQC = (QueryClass) query.getSelect().get(0);
         pathToQueryNode.put("Department", deptQC);
         QueryField deptNameQF = new QueryField(deptQC, "name");
@@ -265,7 +265,8 @@ public class WebResultsTest extends TestCase
         QueryClass manQC = (QueryClass) query.getSelect().get(2);
         QueryField manSeniority = new QueryField(manQC, "seniority");
         pathToQueryNode.put("Department.employees.seniority", manSeniority);
-        WebResults webResults = new WebResults(pathQuery, results, model, pathToQueryNode, classKeys, null);
+        WebResults webResults =
+            new WebResults(pathQuery, results, model, pathToQueryNode, classKeys, null);
 
         assertEquals("Department1", ((List) webResults.get(0)).get(0));
         assertEquals("Company1", ((List) webResults.get(0)).get(1));

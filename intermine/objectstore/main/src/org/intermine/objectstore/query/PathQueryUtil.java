@@ -212,7 +212,7 @@ public class PathQueryUtil
             qRef = new QueryCollectionReference(qcStart, refName);
         }
         ContainsConstraint cc = new ContainsConstraint(qRef, ConstraintOp.CONTAINS, qcEnd);
-        QueryHelper.addConstraint(q, cc);
+        QueryHelper.addAndConstraint(q, cc);
 
         return qcEnd;
     }

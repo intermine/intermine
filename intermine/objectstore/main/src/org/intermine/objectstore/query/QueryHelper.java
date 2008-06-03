@@ -21,19 +21,17 @@ import java.util.ArrayList;
  */
 public abstract class QueryHelper
 {
-
-
     /**
-     * Add a constraint to those present in a Query.  If the Query currently
+     * Add a constraint to be ANDed with those present in a Query.  If the Query currently
      * has no constraints just add the newConstraint.  If q.getConstraint()
-     * returns a ConstraintSet add newConstraint to it.  If q.getConstraint()
-     * returns something that isn't a ConstraintSet make and add a new
-     * ConstraintSet that contains both the old and new constraints.
+     * returns a ConstraintSet of type AND, add newConstraint to it.  If q.getConstraint()
+     * returns something make other than an AND constraint, add new
+     * ConstraintSet of type AND that contains both the old and new constraints.
      *
      * @param q the query in question
      * @param constraint the constraint to add
      */
-    public static void addConstraint(Query q, Constraint constraint) {
+    public static void addAndConstraint(Query q, Constraint constraint) {
         if (q == null) {
             throw new NullPointerException("q cannot be null");
         }
@@ -45,9 +43,11 @@ public abstract class QueryHelper
 
         if (queryConstraint == null) {
             q.setConstraint(constraint);
-        } else if (queryConstraint instanceof ConstraintSet) {
+        } else if (queryConstraint instanceof ConstraintSet
+                   && queryConstraint.getOp().equals(ConstraintOp.AND)) {
             // add all constraints, avoid nesting ConstraintSets
-            if (constraint instanceof ConstraintSet) {
+            if (constraint instanceof ConstraintSet
+                && constraint.getOp().equals(ConstraintOp.AND)) {
                 Iterator iter = ((ConstraintSet) constraint).getConstraints().iterator();
                 while (iter.hasNext()) {
                     ((ConstraintSet) queryConstraint).addConstraint((Constraint) iter.next());
@@ -58,7 +58,8 @@ public abstract class QueryHelper
         } else { // any other type of constraint, avoid nesting ConstraintSets
             ConstraintSet constraints = new ConstraintSet(ConstraintOp.AND);
             constraints.addConstraint(queryConstraint);
-            if (constraint instanceof ConstraintSet) {
+            if (constraint instanceof ConstraintSet
+                && constraint.getOp().equals(ConstraintOp.AND)) {
                 Iterator iter = ((ConstraintSet) constraint).getConstraints().iterator();
                 while (iter.hasNext()) {
                    constraints.addConstraint((Constraint) iter.next());
