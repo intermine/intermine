@@ -43,7 +43,7 @@
       </fileset>
     </copy>
 
-    <copy file="rss.xml" todir="${dist.www}"/>
+    <copy file="rss.xml" todir="${dist.www}"/> 
     <copy file="${src.www}/robots.txt" todir="${dist.www}"/>
 
     <copy todir="${dist.www}">
