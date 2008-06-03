@@ -60,9 +60,9 @@
             <c:if test="${(column.selectable && ((!isWebCollection) || (! noBagSave && status.count<=1))) && empty bag}">
             <c:set var="colcount" value="${colcount+1}"/>
             <th align="center" class="checkbox">
-              <html:multibox property="selectedObjects" styleId="selectedObjects_${status.index}"
+              <html:multibox property="currentSelectedIdStrings" name="pagedResults" styleId="selectedObjects_${status.index}"
                              styleClass="selectable"
-                             onclick="selectAll(columnsToDisable, columnsToHighlight, ${status.index}, '${pagedResults.tableid}')"
+                             onclick="selectAll(${status.index}, '${column.typeClsString}','${pagedResults.tableid}')"
                              disabled="${pagedResults.maxRetrievableIndex > pagedResults.estimatedSize ? 'false' : 'true'}">
                 <c:out value="${column.columnId}"/>
               </html:multibox>
