@@ -268,7 +268,7 @@ public class BagTableWidgetLoader
                 qfStartId = new QueryField(qcStart, "id");
                 qcExport = qcStart;
                 q.addFrom(qcStart);
-                QueryHelper.addConstraint(q,
+                QueryHelper.addAndConstraint(q,
                 new BagConstraint(qfStartId, ConstraintOp.IN, bag.getOsb()));
             }
 
@@ -312,7 +312,7 @@ public class BagTableWidgetLoader
                 SimpleConstraint sc = new SimpleConstraint(new QueryField(qcEnd, constraintName),
                                                            ConstraintOp.EQUALS,
                                                            new QueryValue(constraintValue));
-                QueryHelper.addConstraint(q, sc);
+                QueryHelper.addAndConstraint(q, sc);
                 constraintName = null;
                 constraintValue = null;
             }
@@ -327,7 +327,7 @@ public class BagTableWidgetLoader
 
                     QueryField keyField = new QueryField(qcEnd, getKeyField(displayFields));
                     BagConstraint bc = new BagConstraint(keyField, ConstraintOp.IN, keys);
-                    QueryHelper.addConstraint(q, bc);
+                    QueryHelper.addAndConstraint(q, bc);
 
                     q.addToSelect(new QueryField(qcEnd, getKeyField(displayFields)));
 
@@ -391,7 +391,7 @@ public class BagTableWidgetLoader
             qRef = new QueryCollectionReference(qcStart, refName);
         }
         ContainsConstraint cc = new ContainsConstraint(qRef, ConstraintOp.CONTAINS, qcEnd);
-        QueryHelper.addConstraint(q, cc);
+        QueryHelper.addAndConstraint(q, cc);
 
         return qcEnd;
     }

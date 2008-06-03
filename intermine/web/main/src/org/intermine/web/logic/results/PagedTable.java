@@ -18,6 +18,15 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.intermine.objectstore.query.BagConstraint;
+import org.intermine.objectstore.query.ConstraintOp;
+import org.intermine.objectstore.query.Query;
+import org.intermine.objectstore.query.QueryClass;
+import org.intermine.objectstore.query.QueryCloner;
+import org.intermine.objectstore.query.QueryHelper;
+import org.intermine.objectstore.query.QueryNode;
+import org.intermine.objectstore.query.QuerySelectable;
+import org.intermine.objectstore.query.Results;
 import org.intermine.objectstore.query.ResultsRow;
 
 import org.intermine.metadata.FieldDescriptor;
@@ -25,6 +34,7 @@ import org.intermine.model.InterMineObject;
 import org.intermine.objectstore.ObjectStore;
 import org.intermine.objectstore.ObjectStoreException;
 import org.intermine.objectstore.flatouterjoins.MultiRow;
+import org.intermine.path.Path;
 import org.intermine.util.DynamicUtil;
 import org.intermine.util.TypeUtil;
 import org.intermine.web.logic.Constants;
@@ -838,4 +848,86 @@ public class PagedTable
             return selectionIds.size() == 0;
         }
     }
+
+
+    public Query getBagCreationQuery() {
+        if (allSelected == -1) {
+            Query query = new Query();
+            QueryClass qc = new QueryClass(InterMineObject.class);
+            query.addFrom(qc);
+            query.addToSelect(qc);
+
+            BagConstraint bc = new BagConstraint(qc, ConstraintOp.IN, selectionIds.keySet());
+
+            query.setConstraint(bc);
+
+            return query;
+        } else {
+            WebResults webResults = (WebResults) getAllRows();
+            Results results = webResults.getInterMineResults();
+            Query origQuery = results.getQuery();
+            Query newQuery = QueryCloner.cloneQuery(origQuery);
+
+            Map<Path, QueryNode> pathToQueryNodeMap = webResults.getPathToQueryNode();
+            Path path = columns.get(allSelected).getPath().getPrefix();
+            QueryNode qn = pathToQueryNodeMap.get(path.toStringNoConstraints());
+
+            int nodeIndex = origQuery.getSelect().indexOf(qn);
+
+            QueryClass newNode = (QueryClass) newQuery.getSelect().get(nodeIndex);
+
+            newQuery.clearSelect();
+
+            newQuery.addToSelect(newNode);
+
+            BagConstraint bc =
+                new BagConstraint(newNode, ConstraintOp.NOT_IN, selectionIds.keySet());
+
+            QueryHelper.addAndConstraint(newQuery, bc);
+
+            return newQuery;
+        }
+    }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 }

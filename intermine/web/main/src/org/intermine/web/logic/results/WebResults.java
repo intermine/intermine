@@ -19,7 +19,17 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import org.apache.log4j.Logger;
+import org.intermine.objectstore.query.Query;
+import org.intermine.objectstore.query.QueryClass;
+import org.intermine.objectstore.query.QueryCollectionPathExpression;
+import org.intermine.objectstore.query.QueryField;
+import org.intermine.objectstore.query.QueryNode;
+import org.intermine.objectstore.query.QueryObjectPathExpression;
+import org.intermine.objectstore.query.QuerySelectable;
+import org.intermine.objectstore.query.Results;
+import org.intermine.objectstore.query.ResultsInfo;
+import org.intermine.objectstore.query.ResultsRow;
+
 import org.intermine.metadata.Model;
 import org.intermine.model.InterMineObject;
 import org.intermine.objectstore.ObjectStore;
@@ -28,15 +38,6 @@ import org.intermine.objectstore.flatouterjoins.MultiRow;
 import org.intermine.objectstore.flatouterjoins.MultiRowFirstValue;
 import org.intermine.objectstore.flatouterjoins.MultiRowValue;
 import org.intermine.objectstore.intermine.ObjectStoreInterMineImpl;
-import org.intermine.objectstore.query.Query;
-import org.intermine.objectstore.query.QueryClass;
-import org.intermine.objectstore.query.QueryCollectionPathExpression;
-import org.intermine.objectstore.query.QueryField;
-import org.intermine.objectstore.query.QueryObjectPathExpression;
-import org.intermine.objectstore.query.QuerySelectable;
-import org.intermine.objectstore.query.Results;
-import org.intermine.objectstore.query.ResultsInfo;
-import org.intermine.objectstore.query.ResultsRow;
 import org.intermine.path.Path;
 import org.intermine.util.DynamicUtil;
 import org.intermine.util.TypeUtil;
@@ -45,6 +46,8 @@ import org.intermine.web.logic.WebUtil;
 import org.intermine.web.logic.bag.BagQueryResult;
 import org.intermine.web.logic.query.PathQuery;
 import org.intermine.web.logic.query.PathQueryBinding;
+
+import org.apache.log4j.Logger;
 
 /**
  * The web version of a Results object.  This class handles the mapping between the paths that user
@@ -62,7 +65,7 @@ public class WebResults extends AbstractList<List<Object>> implements WebTable
     private Results osResults;
     private List columnNames;
     private Map classKeys;
-    private Map pathToQueryNode;
+    private Map<String, QuerySelectable> pathToQueryNode;
     private Map<String, BagQueryResult> pathToBagQueryResult;
     private PathQuery pathQuery;
 
@@ -77,7 +80,8 @@ public class WebResults extends AbstractList<List<Object>> implements WebTable
      * @param classKeys the Map from class name to set of defined keys
      * @param pathToBagQueryResult a Map containing results from LOOKUP operations
      */
-    public WebResults(PathQuery pathQuery, Results results, Model model, Map pathToQueryNode,
+    public WebResults(PathQuery pathQuery, Results results, Model model,
+                      Map<String, QuerySelectable> pathToQueryNode,
                       Map classKeys, Map<String, BagQueryResult> pathToBagQueryResult) {
         this.osResults = results;
         this.model = model;

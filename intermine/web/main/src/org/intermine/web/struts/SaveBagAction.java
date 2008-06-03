@@ -10,9 +10,13 @@ package org.intermine.web.struts;
  *
  */
 
+import java.util.Collection;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 import javax.servlet.ServletContext;
@@ -30,17 +34,23 @@ import org.intermine.objectstore.ObjectStore;
 import org.intermine.objectstore.ObjectStoreException;
 import org.intermine.objectstore.ObjectStoreWriter;
 import org.intermine.objectstore.intermine.ObjectStoreWriterInterMineImpl;
+import org.intermine.path.Path;
+
 import org.intermine.objectstore.query.BagConstraint;
 import org.intermine.objectstore.query.ConstraintOp;
 import org.intermine.objectstore.query.Query;
 import org.intermine.objectstore.query.QueryClass;
 import org.intermine.objectstore.query.QueryField;
+import org.intermine.objectstore.query.QuerySelectable;
 import org.intermine.objectstore.query.Results;
 import org.intermine.web.logic.Constants;
+import org.intermine.web.logic.bag.BagQueryConfig;
 import org.intermine.web.logic.bag.InterMineBag;
 import org.intermine.web.logic.profile.Profile;
 import org.intermine.web.logic.profile.ProfileManager;
+import org.intermine.web.logic.query.PathQuery;
 import org.intermine.web.logic.results.PagedTable;
+import org.intermine.web.logic.results.WebResults;
 import org.intermine.web.logic.results.WebTable;
 import org.intermine.web.logic.session.SessionMethods;
 
@@ -174,45 +184,10 @@ public class SaveBagAction extends InterMineAction
             }
 
             osw = new ObjectStoreWriterInterMineImpl(os);
-            // Second pass through, to actually copy the data.
-            Iterator<Integer> iterator = pt.selectedIdsIterator();
-            while (iterator.hasNext()) {
-                Integer id = iterator.next();
-                osw.addToBag(bag.getOsb(), id);
-//                String selectedObjectString = sbf.getSelectedObjects()[i];
-//                int indexOfFirstComma = selectedObjectString.indexOf(',');
-//                String columnIndexString = selectedObjectString.substring(0, indexOfFirstComma);
-//                int columnIndex = Integer.parseInt(columnIndexString);
-//                Path columnPath = allRows.getColumns().get(columnIndex).getPath();
-//                int indexOfLastComma = selectedObjectString.lastIndexOf(',');
-//                if (indexOfFirstComma == indexOfLastComma) {
-//                    // there's just one comma eg. "1,Gene", so save the whole column
-//
-//                    if (allRows instanceof WebResults) {
-//                        Query q = QueryCloner.cloneQuery(((WebResults) allRows)
-//                                .getInterMineResults().getQuery());
-//                        QuerySelectable qs = (QuerySelectable) ((WebResults) allRows)
-//                            .getPathToQueryNode().get(columnPath.toStringNoConstraints());
-//                        if (qs instanceof QueryField) {
-//                            qs = (QueryClass) ((QueryField) qs).getFromElement();
-//                        }
-//                        q.clearSelect();
-//                        q.addToSelect(qs);
-//
-//                        osw.addToBagFromQuery(bag.getOsb(), q);
-//
-//                    } else { // TODO XXX FIXME
-//                            throw new ClassCastException("Unhandled table type: "
-//                                                         + allRows.getClass());
-//                    }
-//                } else {
-//                    // It's an individual object.
-//                    int row = Integer.parseInt(selectedObjectString.substring(indexOfFirstComma + 1,
-//                                indexOfLastComma));
-//                    ResultElement value = pt.getResultElementRows().get(row).get(columnIndex);
-//                    osw.addToBag(bag.getOsb(), value.getId());
-//                }
-            }
+
+            Query bagQuery = pt.getBagCreationQuery();
+
+            osw.addToBagFromQuery(bag.getOsb(), bagQuery);
 
             recordMessage(new ActionMessage("bag.saved", bagName), request);
             SessionMethods.invalidateBagTable(session, bagName);
