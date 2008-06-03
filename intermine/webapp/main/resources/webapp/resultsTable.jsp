@@ -196,7 +196,7 @@
                             <html:multibox property="currentSelectedIdStrings" name="pagedResults"
                                  styleId="selectedObjects_${status2.index}_${(status.index + 1) * 1000 + multiRowStatus.index}_${subRow[column.index].value.typeClsString}"
                                  styleClass="selectable"
-                                 onclick="itemChecked(columnsToDisable, columnsToHighlight, ${(status.index + 1) * 1000 + multiRowStatus.index}, ${status2.index}, '${pagedResults.tableid}', this)">
+                                 onclick="itemChecked(${(status.index + 1) * 1000 + multiRowStatus.index}, ${status2.index}, '${pagedResults.tableid}', this)">
                               <c:out value="${resultElement.id}"/>
                             </html:multibox>
                           </c:if>
@@ -256,7 +256,7 @@
                         <html:multibox property="currentSelectedIdStrings" name="pagedResults"
                                  styleId="selectedObjects_${status2.index}_${status.index}_${row[column.index].typeClsString}"
                                  styleClass="selectable id_${resultElement.id} class_${row[column.index].typeClsString}"
-                                 onclick="itemChecked(columnsToDisable, columnsToHighlight, ${status.index},${status2.index}, '${pagedResults.tableid}', this)" 
+                                 onclick="itemChecked(${status.index},${status2.index}, '${pagedResults.tableid}', this)" 
                                  disabled="${disabled}">
                           <c:out value="${resultElement.id}"/>
                         </html:multibox>

@@ -315,7 +315,7 @@ public class PagedTable
      * that has been selected in the table.
      * @param objectId the id to select
      */
-    public void selectId(Integer objectId) {
+    public void selectId(Integer objectId, int columnIndex) {
         if (allSelected == -1) {
             ResultElement resultElement = findIdInVisible(objectId);
             if (resultElement != null) {
@@ -324,6 +324,8 @@ public class PagedTable
                 } else {
                     selectionIds.put(objectId, resultElement.getField().toString());
                 }
+                setSelectedClass(TypeUtil.unqualifiedName(columns.get(columnIndex).getType()
+                                    .getName()));
             }
         } else {
             // remove because the all checkbox is on
@@ -338,6 +340,9 @@ public class PagedTable
     public void deSelectId(Integer objectId) {
        if (allSelected == -1) {
            selectionIds.remove(objectId);
+           if (selectionIds.size() <= 0) {
+                setSelectedClass(null);
+            }
        } else {
            // add because the all checkbox is on
            selectionIds.put(objectId, null);

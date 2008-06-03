@@ -948,12 +948,12 @@ public class AjaxServices
      * @param tableId the identifier for the PagedTable
      * @return a String[]
      */
-    public static List<String> selectId(String selectedId, String tableId) {
+    public static List<String> selectId(String selectedId, String tableId, String columnIndex) {
         WebContext ctx = WebContextFactory.get();
         HttpSession session = ctx.getSession();
         ServletContext servletContext = ctx.getServletContext();
         PagedTable pt = SessionMethods.getResultsTable(session, tableId);
-        pt.selectId(new Integer(selectedId));
+        pt.selectId(new Integer(selectedId), new Integer(columnIndex));
         Map<String, List<FieldDescriptor>> classKeys = getClassKeys(servletContext);
         ObjectStore os = (ObjectStore) servletContext.getAttribute(Constants.OBJECTSTORE);
         return pt.getFirstSelectedFields(os, classKeys);
@@ -979,17 +979,6 @@ public class AjaxServices
     @SuppressWarnings("unchecked")
     private static Map<String, List<FieldDescriptor>> getClassKeys(ServletContext servletContext) {
         return (Map) servletContext.getAttribute(Constants.CLASS_KEYS);
-    }
-
-    /**
-     * Set the class of the selected column of ids for the PagedTable
-     * @param className the className
-     * @param tableId the PagedTable identifier
-     */
-    public static void setClassForId(String className, String tableId) {
-        HttpSession session = WebContextFactory.get().getSession();
-        PagedTable pt = SessionMethods.getResultsTable(session, tableId);
-        pt.setSelectedClass(className);
     }
 
     /**
