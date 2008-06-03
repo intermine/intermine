@@ -205,7 +205,7 @@
 
                       <%-- test whether already selected and highlight if needed --%>                
                       <c:set var="cellClass" value="${resultElement.id}"/>
-                      <c:if test="${resultElement.selected}">
+                      <c:if test="${resultElement.selected && empty bagName}">
                         <c:set var="cellClass" value="${cellClass} highlightCell"/>
                       </c:if>
 
@@ -242,7 +242,7 @@
                   <%-- the checkbox to select this object --%>
                   <c:set var="ischecked" value=""/>
                     <c:forEach items="${pagedResults.currentSelectedIdStrings}" var="selectedId">
-                      <c:if test="${(! empty resultElement.typeClsString) && (resultElement.id == selectedId)}">
+                      <c:if test="${(! empty resultElement.typeClsString) && (resultElement.id == selectedId) && empty bagName}">
                         <c:set var="ischecked" value="highlightCell"/>
                       </c:if>
                     </c:forEach>
