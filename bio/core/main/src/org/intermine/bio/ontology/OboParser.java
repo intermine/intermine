@@ -200,7 +200,7 @@ public class OboParser
 
         in.close();
 
-        LOG.info("Found " + tagValuesList.size() + " root terms");
+        //LOG.info("Found " + tagValuesList.size() + " root terms");
 
         // Just build all the OboTerms disconnected
         for (Iterator iter = tagValuesList.iterator(); iter.hasNext();) {
@@ -259,13 +259,13 @@ public class OboParser
                 for (Iterator iter = relationships.iterator(); iter.hasNext();) {
                     String relationship = (String) iter.next();
                     String bits[] = StringUtils.split(relationship);
-                    String relationshipType = bits[0]; 
+                    String relationshipType = bits[0];
                     if (relationshipType.equals("part_of")
-                                    || relationshipType.equals("regulates") 
+                                    || relationshipType.equals("regulates")
                                     || relationshipType.equals("negatively_regulates")
                                     || relationshipType.equals("positively_regulates")) {
                         OboTerm pt = terms.get(bits[1]);
-                        LOG.debug(term + relationshipType + pt);
+                        //LOG.debug(term + relationshipType + pt);
                         if (pt == null) {
                             LOG.warn("child term (" + term
                                      + ") in OBO file refers to a non-existant "
