@@ -13,7 +13,6 @@ package org.intermine.web.logic.results;
 import java.util.AbstractList;
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.HashMap;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -21,7 +20,12 @@ import java.util.Map;
 
 import org.intermine.objectstore.query.ResultsRow;
 
+import org.intermine.metadata.FieldDescriptor;
+import org.intermine.model.InterMineObject;
+import org.intermine.objectstore.ObjectStore;
+import org.intermine.objectstore.ObjectStoreException;
 import org.intermine.objectstore.flatouterjoins.MultiRow;
+import org.intermine.util.DynamicUtil;
 import org.intermine.util.TypeUtil;
 import org.intermine.web.logic.Constants;
 
@@ -48,7 +52,7 @@ public class PagedTable
     // object ids that have been selected in the table
     // TODO this may be more memory efficient with an IntPresentSet
     // note: if allSelected != -1 then this map contains those objects that are NOT selected
-    private Map<Integer, String> selectionIds = new HashMap<Integer, String>();
+    private Map<Integer, String> selectionIds = new LinkedHashMap<Integer, String>();
 
     // the index of the column the has all checkbox checked
     private int allSelected = -1;
@@ -358,17 +362,39 @@ public class PagedTable
     /**
      * Return the fields for the first selected objects.  Return the first
      * FIRST_SELECTED_FIELDS_COUNT fields.  If there are more than that, append "..."
+     * @param os the ObjectStore
+     * @param classKeysMap map of key field for a given class name
      * @return the list
      */
-    public List<String> getFirstSelectedFields() {
+    public List<String> getFirstSelectedFields(ObjectStore os,
+                                               Map<String, List<FieldDescriptor>> classKeysMap) {
         List<String> retList = new ArrayList<String>();
         Iterator<SelectionEntry> selectedEntryIter = selectedEntryIterator();
-        boolean seenNull = false;
+        boolean seenNullField = false;
         while (selectedEntryIter.hasNext()) {
             if (retList.size() < FIRST_SELECTED_FIELDS_COUNT) {
-                String fieldValue = selectedEntryIter.next().fieldValue;
+                SelectionEntry entry = selectedEntryIter.next();
+                String fieldValue = entry.fieldValue;
                 if (fieldValue == null) {
-                    seenNull = true;
+                    // the select column doesn't have a value for this object; use class keys to
+                    // find a value
+                    InterMineObject object;
+                    try {
+                        Integer id = entry.id;
+                        object = os.getObjectById(id);
+                        if (object == null) {
+                            throw new RuntimeException("internal error - unknown object id: " + id);
+                        } else {
+                            String classKeyFieldValue = findClassKeyValue(classKeysMap, object);
+                            if (classKeyFieldValue == null) {
+                                seenNullField = true;
+                            } else {
+                                retList.add(classKeyFieldValue);
+                            }
+                        }
+                    } catch (ObjectStoreException e) {
+                        seenNullField = true;
+                    }
                 } else {
                     retList.add(fieldValue);
                 }
@@ -377,10 +403,32 @@ public class PagedTable
                 return retList;
             }
         }
-        if (seenNull) {
+        if (seenNullField) {
+            // if there are null that we can't find a field value for, just append "..." because
+            // showing "[no value]" in the webapp is of no value
             retList.add("...");
         }
         return retList;
+    }
+
+    /**
+     * Return the first non-null class key field for the object with the given id.
+     */
+    private String findClassKeyValue(Map<String, List<FieldDescriptor>> classKeysMap,
+                                     InterMineObject object) {
+        try {
+            String objectClassName = DynamicUtil.getFriendlyName(object.getClass());
+            List<FieldDescriptor> classKeyFds = classKeysMap.get(objectClassName);
+            for (FieldDescriptor fd: classKeyFds) {
+                Object value = TypeUtil.getFieldValue(object, fd.getName());
+                if (value != null) {
+                    return value.toString();
+                }
+            }
+            return null;
+        } catch (IllegalAccessException e) {
+            return null;
+        }
     }
 
     /**
@@ -762,5 +810,26 @@ public class PagedTable
      */
     public boolean isEmptySelection() {
         return !selectedIdsIterator().hasNext();
+    }
+
+    public boolean isAllSelected() {
+        if (allSelected == -1) {
+            int selectedCount = selectionIds.size();
+            if (selectedCount > 0) {
+                // If there is at least one more row than there are selected elements, it's not
+                // all selected.  We use get()/try/catch to avoid callin size() which can be slow
+                try {
+                    getAllRows().get(selectedCount);
+                    // success
+                    return false;
+                } catch (IndexOutOfBoundsException e) {
+                    return true;
+                }
+            } else {
+                return false;
+            }
+        } else {
+            return selectionIds.size() == 0;
+        }
     }
 }

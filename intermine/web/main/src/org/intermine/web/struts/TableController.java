@@ -17,6 +17,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Properties;
 
+import org.intermine.metadata.FieldDescriptor;
+import org.intermine.objectstore.ObjectStore;
 import org.intermine.path.Path;
 import org.intermine.web.logic.Constants;
 import org.intermine.web.logic.bag.BagQueryResult;
@@ -221,7 +223,16 @@ public class TableController extends TilesAction
         }
         request.setAttribute("pathNames", pathNames);
 
+        Map<String, List<FieldDescriptor>> classKeys = getClassKeys(servletContext);
+        ObjectStore os = (ObjectStore) servletContext.getAttribute(Constants.OBJECTSTORE);
+        request.setAttribute("firstSelectedFields", pt.getFirstSelectedFields(os, classKeys));
+
         return null;
+    }
+
+    @SuppressWarnings("unchecked")
+    private static Map<String, List<FieldDescriptor>> getClassKeys(ServletContext servletContext) {
+        return (Map) servletContext.getAttribute(Constants.CLASS_KEYS);
     }
 
     private HashMap<String, String> setSortOrderMap(PathQuery q) {

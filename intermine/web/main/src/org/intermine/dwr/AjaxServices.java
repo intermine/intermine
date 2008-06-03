@@ -10,10 +10,8 @@ package org.intermine.dwr;
  *
  */
 
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -23,27 +21,18 @@ import java.util.Map;
 import java.util.Properties;
 import java.util.Set;
 
-import javax.servlet.ServletContext;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpSession;
+import org.intermine.objectstore.query.Query;
+import org.intermine.objectstore.query.QuerySelectable;
+import org.intermine.objectstore.query.Results;
 
-import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
-import org.apache.lucene.queryParser.ParseException;
-import org.apache.struts.Globals;
-import org.apache.struts.util.MessageResources;
-import org.directwebremoting.WebContext;
-import org.directwebremoting.WebContextFactory;
 import org.intermine.InterMineException;
+import org.intermine.metadata.FieldDescriptor;
 import org.intermine.metadata.Model;
 import org.intermine.model.userprofile.Tag;
 import org.intermine.objectstore.ObjectStore;
 import org.intermine.objectstore.ObjectStoreException;
 import org.intermine.objectstore.ObjectStoreWriter;
 import org.intermine.objectstore.intermine.ObjectStoreInterMineImpl;
-import org.intermine.objectstore.query.Query;
-import org.intermine.objectstore.query.QuerySelectable;
-import org.intermine.objectstore.query.Results;
 import org.intermine.path.Path;
 import org.intermine.util.TypeUtil;
 import org.intermine.web.logic.Constants;
@@ -77,6 +66,20 @@ import org.intermine.web.logic.widget.EnrichmentWidget;
 import org.intermine.web.logic.widget.GraphWidget;
 import org.intermine.web.logic.widget.TableWidget;
 import org.intermine.web.logic.widget.Widget;
+
+import java.io.IOException;
+
+import javax.servlet.ServletContext;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpSession;
+
+import org.apache.commons.lang.StringUtils;
+import org.apache.log4j.Logger;
+import org.apache.lucene.queryParser.ParseException;
+import org.apache.struts.Globals;
+import org.apache.struts.util.MessageResources;
+import org.directwebremoting.WebContext;
+import org.directwebremoting.WebContextFactory;
 
 
 /**
@@ -656,7 +659,7 @@ public class AjaxServices
                 Query query = MainHelper.makeQuery(pathQuery, bagMap, pathToQueryNode,
                     servletContext, null, false,
                     (ObjectStore) servletContext.getAttribute(Constants.OBJECTSTORE),
-                    (Map) servletContext.getAttribute(Constants.CLASS_KEYS),
+                    getClassKeys(servletContext),
                     (BagQueryConfig) servletContext.getAttribute(Constants.BAG_QUERY_CONFIG));
                 count = os.count(query, ObjectStore.SEQUENCE_IGNORE);
             } catch (Exception e) {
@@ -863,7 +866,7 @@ public class AjaxServices
             SearchRepository searchRepository =
                 SearchRepository.getGlobalSearchRepository(servletContext);
             InterMineBag imBag = BagHelper.getBag(profile, searchRepository, bagName);
-            Map classKeys = (Map) servletContext.getAttribute(Constants.CLASS_KEYS);
+            Map classKeys = getClassKeys(servletContext);
 
             Type type = (Type) webConfig.getTypes().get(model.getPackageName()
                             + "." + imBag.getType());
@@ -946,10 +949,14 @@ public class AjaxServices
      * @return a String[]
      */
     public static List<String> selectId(String selectedId, String tableId) {
-        HttpSession session = WebContextFactory.get().getSession();
+        WebContext ctx = WebContextFactory.get();
+        HttpSession session = ctx.getSession();
+        ServletContext servletContext = ctx.getServletContext();
         PagedTable pt = SessionMethods.getResultsTable(session, tableId);
         pt.selectId(new Integer(selectedId));
-        return pt.getFirstSelectedFields();
+        Map<String, List<FieldDescriptor>> classKeys = getClassKeys(servletContext);
+        ObjectStore os = (ObjectStore) servletContext.getAttribute(Constants.OBJECTSTORE);
+        return pt.getFirstSelectedFields(os, classKeys);
     }
 
     /**
@@ -959,10 +966,19 @@ public class AjaxServices
      * @return a String[]
      */
     public static List<String> deSelectId(String deSelectId, String tableId) {
-        HttpSession session = WebContextFactory.get().getSession();
+        WebContext ctx = WebContextFactory.get();
+        HttpSession session = ctx.getSession();
+        ServletContext servletContext = ctx.getServletContext();
         PagedTable pt = SessionMethods.getResultsTable(session, tableId);
         pt.deSelectId(new Integer(deSelectId));
-        return pt.getFirstSelectedFields();
+        Map<String, List<FieldDescriptor>> classKeys = getClassKeys(servletContext);
+        ObjectStore os = (ObjectStore) servletContext.getAttribute(Constants.OBJECTSTORE);
+        return pt.getFirstSelectedFields(os, classKeys);
+    }
+
+    @SuppressWarnings("unchecked")
+    private static Map<String, List<FieldDescriptor>> getClassKeys(ServletContext servletContext) {
+        return (Map) servletContext.getAttribute(Constants.CLASS_KEYS);
     }
 
     /**
@@ -970,12 +986,12 @@ public class AjaxServices
      * @param className the className
      * @param tableId the PagedTable identifier
      */
-    public static void setClassForId(String className, String tableId) {
+/*    public static void setClassForId(String className, String tableId) {
         HttpSession session = WebContextFactory.get().getSession();
         PagedTable pt = SessionMethods.getResultsTable(session, tableId);
         pt.setSelectedClass(className);
     }
-
+*/
     /**
      * Select all the elements in a PagedTable
      * @param index the index of the selected column
