@@ -114,7 +114,7 @@ public class OboTerm
 
     /**
      * Create a string representation of the term.
-     * @return a string represenation of the term
+     * @return a string representation of the term
      */
     public String toString() {
         return id + ", " + name;
