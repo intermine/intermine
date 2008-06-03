@@ -23,8 +23,8 @@
               <img border="0" class="arrow" src="images/right-arrow.gif" title="Click here to import a query"/>
             </html:link>
             <br/>
-            <%-- TODO this should be done elsewhere --%>  
-          <c:choose>  
+            <%-- TODO this should be done elsewhere --%>
+          <c:choose>
             <c:when test="${empty PROFILE.username}">
               <c:set var="linky" value="login.do?returnto=%2Fmymine.do%3Fpage%3Dsaved"/>
               <html:link action="${linky}">
@@ -40,32 +40,24 @@
             </html:link>
             </c:otherwise>
           </c:choose>
-            
-
-            
           </im:boxarea>
    </div>
 
    <div id="rightCol">
-  <%-- class chooser --%>  
+  <%-- class chooser --%>
   <im:boxarea titleKey="customQuery.classChooser" stylename="gradientbox">
     <tiles:insert name="classChooser.tile"/>
   </im:boxarea>
    </div>
 
-  <div id="clearLine"> 
-         <%-- query history --%> 
-         <im:boxarea title="Query History" stylename="gradientbox"> 
-          <tiles:insert name="historyQueryView.jsp"> 
-             <tiles:put name="type" value="history"/> 
-           </tiles:insert>          
-          </im:boxarea> 
-        
-
-
-  </div> 
-
-
+  <div id="clearLine">
+         <%-- query history --%>
+         <im:boxarea title="Query History" stylename="gradientbox">
+          <tiles:insert name="historyQueryView.jsp">
+             <tiles:put name="type" value="history"/>
+           </tiles:insert>
+          </im:boxarea>
+  </div>
 </div>
 
 <script type="text/javascript">
