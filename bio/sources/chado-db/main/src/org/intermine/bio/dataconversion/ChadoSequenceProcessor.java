@@ -1145,9 +1145,6 @@ public class ChadoSequenceProcessor extends ChadoProcessor
         if (fdat == null) {
             throw new RuntimeException("feature " + featureId + " not found in features Map");
         }
-        if (argEvidenceIds.size() == 0) {
-            return;
-        }
         List<String> evidenceIds = new ArrayList<String>(argEvidenceIds);
         int taxonId = fdat.getOrganismData().getTaxonId();
         Item dataSetItem = getChadoDBConverter().getDataSetItem(taxonId);
