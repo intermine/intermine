@@ -1,7 +1,7 @@
 /**
  * Called when a whole column is selected/deselected
  */
-function selectAll(columnsToDisable, columnsToHighlight, columnIndex, tableid) {
+function selectAll(columnIndex, columnClass, tableid) {
     $$('.selectable').each(function(item) {
        if(item.id.split("_")[1] == columnIndex) {
            item.checked = $('selectedObjects_' + columnIndex).checked;
@@ -27,6 +27,7 @@ function selectAll(columnsToDisable, columnsToHighlight, columnIndex, tableid) {
         AjaxServices.selectAll(-1, tableid);
         $('selectedIdFields').update('');
     }
+    disableOtherColumns('class_'+columnClass, columnIndex);
     setToolbarAvailability(!$('selectedObjects_' + columnIndex).checked);
     if (isClear()) {
         enableAll();

@@ -466,6 +466,7 @@ public class PagedTable
                     }
                 }
             }
+            selected.add(columns.get(allSelected).getColumnId());
         }
         return selected;
     }
