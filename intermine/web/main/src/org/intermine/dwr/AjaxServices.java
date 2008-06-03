@@ -986,12 +986,12 @@ public class AjaxServices
      * @param className the className
      * @param tableId the PagedTable identifier
      */
-/*    public static void setClassForId(String className, String tableId) {
+    public static void setClassForId(String className, String tableId) {
         HttpSession session = WebContextFactory.get().getSession();
         PagedTable pt = SessionMethods.getResultsTable(session, tableId);
         pt.setSelectedClass(className);
     }
-*/
+
     /**
      * Select all the elements in a PagedTable
      * @param index the index of the selected column
