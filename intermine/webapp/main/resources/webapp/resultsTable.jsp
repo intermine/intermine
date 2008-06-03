@@ -294,11 +294,11 @@
      <c:forEach items="${pagedResults.currentSelectedIdStrings}" var="selected" varStatus="status"><c:if test="${status.count > 1}">${selectedIds}, </c:if><c:out value="${selected}"/></c:forEach>
   </c:set>
   <c:set var="selectedIdFields">
-     <c:forEach items="${pagedResults.firstSelectedFields}" var="selected" varStatus="status"><c:if test="${status.count > 1}">${selectedIdFields}, </c:if><c:out value="${selected}"/></c:forEach>
+     <c:forEach items="${firstSelectedFields}" var="selected" varStatus="status"><c:if test="${status.count > 1}">${selectedIdFields}, </c:if><c:out value="${selected}"/></c:forEach>
   </c:set>
   <b>Selected:</b><span id="selectedIdFields">
   <c:choose>
-   <c:when test="${pagedResults.allSelectedColumn != -1}">All selected on all pages</c:when>
+   <c:when test="${pagedResults.allSelected}">All selected on all pages</c:when>
    <c:otherwise>${selectedIdFields}</c:otherwise>
   </c:choose>   
   </span>

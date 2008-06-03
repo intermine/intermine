@@ -26,6 +26,7 @@ import java.util.TreeSet;
 
 import org.intermine.cache.InterMineCache;
 import org.intermine.metadata.ClassDescriptor;
+import org.intermine.metadata.FieldDescriptor;
 import org.intermine.metadata.Model;
 import org.intermine.model.InterMineObject;
 import org.intermine.model.userprofile.Tag;
@@ -58,7 +59,6 @@ import java.io.InputStream;
 
 import javax.servlet.ServletContext;
 import javax.servlet.ServletException;
-
 
 import org.apache.log4j.Logger;
 import org.apache.struts.action.ActionServlet;
@@ -236,7 +236,8 @@ public class InitialiserPlugin implements PlugIn
         } catch (Exception e) {
             throw new ServletException("Error loading class descriptions", e);
         }
-        Map classKeys = ClassKeyHelper.readKeys(os.getModel(), classKeyProps);
+        Map<String, List<FieldDescriptor>>  classKeys =
+            ClassKeyHelper.readKeys(os.getModel(), classKeyProps);
         servletContext.setAttribute(Constants.CLASS_KEYS, classKeys);
     }
 
