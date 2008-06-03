@@ -489,104 +489,112 @@ public abstract class WebUtil
                                       Double maxValue,
                                       String errorCorrection) {
 
-            ArrayList<Map> maps = new ArrayList<Map>();
+        ArrayList<Map> maps = new ArrayList<Map>();
 
-            int populationTotal = calcTotal(os, ldr, true);    // objects annotated in database
-            int sampleTotal = calcTotal(os, ldr, false);    // objects annotated in bag
+        int populationTotal = calcTotal(os, ldr, true); // objects annotated in database
+        int sampleTotal = calcTotal(os, ldr, false);    // objects annotated in bag
 
-            // sample query
-            Results r = os.execute(ldr.getSampleQuery(false));
-            r.setBatchSize(10000);
-            Iterator iter = r.iterator();
-            HashMap<String, Long> countMap = new HashMap<String, Long>();
-            HashMap<String, String> idMap = new HashMap<String, String>();
+        // sample query
+        Results r = os.execute(ldr.getSampleQuery(false));
+        r.setBatchSize(10000);
+        Iterator iter = r.iterator();
+        HashMap<String, Long> countMap = new HashMap<String, Long>();
+        HashMap<String, String> idMap = new HashMap<String, String>();
 
-            while (iter.hasNext()) {
+        while (iter.hasNext()) {
 
-                // extract results
-                ResultsRow rr =  (ResultsRow) iter.next();
+            // extract results
+            ResultsRow rr =  (ResultsRow) iter.next();
 
-                // id of item
-                String id = (String) rr.get(0);
+            // id of item
+            String id = (String) rr.get(0);
 
-                // count of item
-                Long count = (Long) rr.get(1);
+            // count of item
+            Long count = (Long) rr.get(1);
 
-                // id & count
-                countMap.put(id, count);
+            // id & count
+            countMap.put(id, count);
 
-                // id & label
-                idMap.put(id, (String) rr.get(2));
+            // id & label
+            idMap.put(id, (String) rr.get(2));
 
-            }
+        }
 
-            // run population query
-            List rAll = statsCalcCache.get(ldr.getPopulationQuery(false).toString());
-            if (rAll == null) {
-                rAll = os.execute(ldr.getPopulationQuery(false));
-                ((Results) rAll).setBatchSize(10000);
-                rAll = new ArrayList(rAll);
-                statsCalcCache.put(ldr.getPopulationQuery(false).toString(), rAll);
-            }
+        // run population query
+        List rAll = statsCalcCache.get(ldr.getPopulationQuery(false).toString());
+        if (rAll == null) {
+            rAll = os.execute(ldr.getPopulationQuery(false));
+            ((Results) rAll).setBatchSize(10000);
+            rAll = new ArrayList(rAll);
+            statsCalcCache.put(ldr.getPopulationQuery(false).toString(), rAll);
+        }
 
-            HashMap<String, BigDecimal> resultsMap = new HashMap<String, BigDecimal>();
-            Iterator itAll = rAll.iterator();
+        HashMap<String, BigDecimal> resultsMap = new HashMap<String, BigDecimal>();
+        Iterator itAll = rAll.iterator();
 
-            // loop through results again to calculate p-values
-            while (itAll.hasNext()) {
+        // loop through results again to calculate p-values
+        while (itAll.hasNext()) {
 
-                ResultsRow rrAll =  (ResultsRow) itAll.next();
+            ResultsRow rrAll =  (ResultsRow) itAll.next();
 
-                String id = (String) rrAll.get(0);
+            String id = (String) rrAll.get(0);
 
-                if (countMap.containsKey(id)) {
+            if (countMap.containsKey(id)) {
 
-                    Long countBag = countMap.get(id);
-                    Long countAll = (java.lang.Long) rrAll.get(1);
+                Long countBag = countMap.get(id);
+                Long countAll = (java.lang.Long) rrAll.get(1);
 
-                    // (k,n,M,N)
-                    double p = Hypergeometric.calculateP(countBag.intValue(), sampleTotal,
-                                                         countAll.intValue(), populationTotal);
+                // (k,n,M,N)
+                double p = Hypergeometric.calculateP(countBag.intValue(), sampleTotal,
+                                                     countAll.intValue(), populationTotal);
+                try {
+                    resultsMap.put(id, new BigDecimal(p));
+                } catch (Exception e) {
+                    String msg = p + " isn't a double.  calculated for " + id + " using "
+                    + " k: "  + countBag
+                    + ", n: " + sampleTotal
+                    + ", M: " + countAll
+                    + ", N: " + populationTotal
+                    + ".  k query: "
+                    + ldr.getSampleQuery(false).toString()
+                    + ".  n query: "
+                    + ldr.getSampleQuery(true).toString()
+                    + ".  M query: "
+                    + ldr.getPopulationQuery(false).toString()
+                    + ".  N query: "
+                    + ldr.getPopulationQuery(true).toString();
 
-                    try {
-                        resultsMap.put(id, new BigDecimal(p));
-                    } catch (Exception e) {
-                        String msg = p + " isn't a double.  calculated using k: "
-                        + countBag + ", n: " + sampleTotal + ", M: "
-                        + countAll + ", N: " + populationTotal
-                        + ".  population query used: "
-                        + ldr.getPopulationQuery(false).toString();
-                        throw new RuntimeException(msg, e);
-                    }
+                    throw new RuntimeException(msg, e);
                 }
             }
+        }
 
-            Map<String, BigDecimal> adjustedResultsMap = new HashMap<String, BigDecimal>();
+        Map<String, BigDecimal> adjustedResultsMap = new HashMap<String, BigDecimal>();
 
-            if (!errorCorrection.equals("None")) {
-                adjustedResultsMap = calcErrorCorrection(errorCorrection, maxValue, resultsMap);
-            } else {
-                // TODO move this to the ErrorCorrection class
-                BigDecimal max = new BigDecimal(maxValue.doubleValue());
-                for (String id : resultsMap.keySet()) {
-                    BigDecimal pvalue = resultsMap.get(id);
-                    if (pvalue.compareTo(max) <= 0) {
-                        adjustedResultsMap.put(id, pvalue);
-                    }
+        if (!errorCorrection.equals("None")) {
+            adjustedResultsMap = calcErrorCorrection(errorCorrection, maxValue, resultsMap);
+        } else {
+            // TODO move this to the ErrorCorrection class
+            BigDecimal max = new BigDecimal(maxValue.doubleValue());
+            for (String id : resultsMap.keySet()) {
+                BigDecimal pvalue = resultsMap.get(id);
+                if (pvalue.compareTo(max) <= 0) {
+                    adjustedResultsMap.put(id, pvalue);
                 }
             }
+        }
 
-            SortableMap sortedMap = new SortableMap(adjustedResultsMap);
-            sortedMap.sortValues();
+        SortableMap sortedMap = new SortableMap(adjustedResultsMap);
+        sortedMap.sortValues();
 
-            Map dummy = new HashMap();
-            dummy.put("widgetTotal", new Integer(sampleTotal));
+        Map dummy = new HashMap();
+        dummy.put("widgetTotal", new Integer(sampleTotal));
 
-            maps.add(0, sortedMap);
-            maps.add(1, countMap);
-            maps.add(2, idMap);
-            maps.add(3, dummy);
-            return maps;
+        maps.add(0, sortedMap);
+        maps.add(1, countMap);
+        maps.add(2, idMap);
+        maps.add(3, dummy);
+        return maps;
     }
 
     /**
@@ -618,15 +626,22 @@ public abstract class WebUtil
         return e.getAdjustedMap();
     }
 
-    private static int calcTotal(ObjectStore os, EnrichmentWidgetLdr ldr, boolean calcPopulation) {
+    private static int calcTotal(ObjectStore os, EnrichmentWidgetLdr ldr, boolean calcTotal) {
         Query q = new Query();
-        if (calcPopulation) {
+        if (calcTotal) {
             q = ldr.getPopulationQuery(true);
         } else {
             q = ldr.getSampleQuery(true);
         }
-        Object[] o = os.executeSingleton(q).toArray();
-        return  ((java.lang.Long) o[0]).intValue();
+        List r = os.execute(q);
+        Iterator it = r.iterator();
+        while (it.hasNext()) {
+            ResultsRow rr =  (ResultsRow) it.next();
+            return ((java.lang.Long) rr.get(0)).intValue();
+        }
+        return 0;
+        //Object[] o = os.executeSingleton(q).toArray();
+        //return  ((java.lang.Long) o[0]).intValue();
     }
 
     /**
