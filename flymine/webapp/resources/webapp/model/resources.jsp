@@ -58,7 +58,7 @@
           <dt> Probe sets from the <a href="http://www.affymetrix.com/" target="_new">Affymetrix</a> GeneChip <i>Drosophila</i> Genome 1.0 and 2.0 Arrays, a
            microarray tool for studying expression of <i>D. melanogaster</i> transcripts.The 1.0 array set comprises probe sets interrogating more than 13,500 <i>D. melanogaster</i> genes. Sequences used in the design of this array were selected from FlyBase version 1.0.  The 2.0 array set comprises 18,880 probe sets for the analysis 
            of over 18,500 transcripts. Sequences used in the design of this GeneChip were selected from Flybase version 3.1.</dt>
-		</p>
+		</br></p>
 
         </div>
        </dl>   
@@ -81,7 +81,7 @@
             will incorporate the results of these tests when available.</dt>
 
             <dt>Note: FlyMine curently stores the positions of the oligos relative to the transcript rather than to the chromosome.</dt>
-			</p>
+			</br></p>
         </div>
       </dl> 
 
