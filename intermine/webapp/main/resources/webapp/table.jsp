@@ -137,8 +137,7 @@
 
 <div id="tool_bar_item_createlist" style="visibility:hidden;width:350px" class="tool_bar_item" >
       <em>(with selected items)</em>
-      FIXME: no selectedIds in table.jsp
-<%-- selectedIds has gone, we need a new plan:     $ { pagedResults.selectedIds.length} --%>
+<%-- FIXME: selectedIds has gone, we need a new plan:   $ { pagedResults.selectedIds.length} --%>
       <fmt:message key="bag.new"/><br/>
       <input type="text" name="newBagName" id="newBagName" onkeypress="javascript:onSaveBagEnter('saveBagForm')"/>
       <input type="hidden" name="__intermine_forward_params__" value="${pageContext.request.queryString}"/>
