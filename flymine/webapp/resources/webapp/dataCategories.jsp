@@ -11,7 +11,6 @@
 
 <c:set var="note1" value="Also orthologues from these 5 organisms to <i>C. familiaris</i>, <i>D. discoideum</i>, <i>D. rerio</i>, <i>G. gallus</i>, <i>H. sapiens</i>, <i>M. musculus</i>, <i>P. troglodytes</i>, <i>R. norvegicus</i>, <i>S. cerevisiae</i>, <i>S. pombe</i>." />
 <c:set var="note2" value="These data have been re-mapped to genome sequence release 5.0 as of FlyMine release 7.0."/>
-<c:set var="note3" value="These data have been re-mapped to genome sequence release 5.5 as of FlyMine release 13.0."/>
 
 
 <html:xhtml/>
@@ -242,7 +241,7 @@
  <tr>
     <td> <i>D. melanogaster</i></td>
     <td> miRNA target predictions from miRBase</td>
-    <td> <a href="http://microrna.sanger.ac.uk/targets/v5/" target="_new">BioGRID</a> - Version 5 </td>
+    <td> <a href="http://microrna.sanger.ac.uk/targets/v5/" target="_new">miRBase</a> - Version 5 </td>
     <td> Enright et al - <a href="http://www.ncbi.nlm.nih.gov/entrez/query.fcgi?cmd=Retrieve&db=PubMed&dopt=Abstract&list_uids=14709173" target="_new">PubMed:14709173</a></td>
     <td> &nbsp;</td>
   </tr>
@@ -470,7 +469,7 @@
     <td> Probe sets from the Affymetrix GeneChip Drosophila Genome 1.0 Array</td>
     <td> <a href="http://www.affymetrix.com/" target="_new">Affymetrix</a></td>
     <td> &nbsp;</td>
-    <td><html:link action="/dataCategories" anchor="note1" title="${note3}">#3</html:link></td>  
+    <td> &nbsp;</td>  
   </tr>
 
   <tr>
@@ -478,7 +477,7 @@
     <td> Probe sets from the Affymetrix GeneChip Drosophila Genome 2.0 Array</td>
     <td> <a href="http://www.affymetrix.com/" target="_new">Affymetrix</a></td>
     <td> &nbsp;</td>
-    <td><html:link action="/dataCategories" anchor="note1" title="${note3}">#3</html:link></td>   
+    <td> &nbsp;</td>   
   </tr>
 
   <tr>
@@ -537,7 +536,6 @@
 <ol>
 	<li><a name="note1">${note1}</a></li>
 	<li><a name="note2">${note2}</a></li>
-        <li><a name="note3">${note3}</a></li>
 </ol>
 </div>
 
