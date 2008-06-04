@@ -946,7 +946,8 @@ public class AjaxServices
      * Add an ID to the PagedTable selection
      * @param selectedId the id
      * @param tableId the identifier for the PagedTable
-     * @return a String[]
+     * @param columnIndex the column of the selected id
+     * @return the field values of the first selected objects
      */
     public static List<String> selectId(String selectedId, String tableId, String columnIndex) {
         WebContext ctx = WebContextFactory.get();
@@ -963,7 +964,7 @@ public class AjaxServices
      * De-select an Id from the PagedTable
      * @param deSelectId the ID to remove from the selection
      * @param tableId the PagedTable identifier
-     * @return a String[]
+     * @return the field values of the first selected objects
      */
     public static List<String> deSelectId(String deSelectId, String tableId) {
         WebContext ctx = WebContextFactory.get();

@@ -25,7 +25,6 @@ import org.intermine.objectstore.query.QueryClass;
 import org.intermine.objectstore.query.QueryCloner;
 import org.intermine.objectstore.query.QueryHelper;
 import org.intermine.objectstore.query.QueryNode;
-import org.intermine.objectstore.query.QuerySelectable;
 import org.intermine.objectstore.query.Results;
 import org.intermine.objectstore.query.ResultsRow;
 
@@ -50,7 +49,7 @@ public class PagedTable
     private static final int FIRST_SELECTED_FIELDS_COUNT = 25;
     private WebTable webTable;
     private List<String> columnNames = null;
-    private List resultElementRows = null;
+    private List<List<ResultElement>> resultElementRows = null;
     private int startRow = 0;
 
     private int pageSize = Constants.DEFAULT_TABLE_SIZE;
@@ -324,6 +323,7 @@ public class PagedTable
      * Add an object id and its field value
      * that has been selected in the table.
      * @param objectId the id to select
+     * @param columnIndex the column of the selected id
      */
     public void selectId(Integer objectId, int columnIndex) {
         if (allSelected == -1) {
@@ -494,7 +494,8 @@ public class PagedTable
         allSelected = -1;
     }
 
-    private class SelectionEntry {
+    private class SelectionEntry
+    {
         Integer id;
         String fieldValue;
     }
@@ -828,6 +829,10 @@ public class PagedTable
         return !selectedIdsIterator().hasNext();
     }
 
+    /**
+     * Return true iff a whole column is selected.
+     * @return if a column is selected
+     */
     public boolean isAllSelected() {
         if (allSelected == -1) {
             int selectedCount = selectionIds.size();
@@ -849,7 +854,10 @@ public class PagedTable
         }
     }
 
-
+    /**
+     * Return a Query that produces a Results object of the selected objects.
+     * @return the query
+     */
     public Query getBagCreationQuery() {
         if (allSelected == -1) {
             Query query = new Query();
@@ -888,46 +896,5 @@ public class PagedTable
             return newQuery;
         }
     }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 }
