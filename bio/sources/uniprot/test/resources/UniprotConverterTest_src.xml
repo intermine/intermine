@@ -1,639 +1,73 @@
 <uniprot xsi:schemaLocation="http://uniprot.org/uniprot http://www.uniprot.org/support/docs/uniprot.xsd">
-
-	<entry dataset="Swiss-Prot" created="1988-01-01" modified="2008-04-29" version="93">
-<accession>P06602</accession>
-<accession>P07667</accession>
-<accession>Q9V5E6</accession>
+<entry dataset="Swiss-Prot" created="1988-01-01" modified="2008-04-29" version="93">
+<accession>eve accession</accession>
 <name>EVE_DROME</name>
-
-	<protein>
-<name>Segmentation protein even-skipped</name>
+<protein>
+	<name>eve's name</name>
 </protein>
-
-	<gene>
-<name type="primary">eve</name>
-<name type="ORF">CG2328</name>
+<gene>
+	<name type="primary">eve</name>
+	<name type="ORF">CG1111</name>
 </gene>
-
-	<organism key="1">
-<name type="scientific">Drosophila melanogaster</name>
-<name type="common">Fruit fly</name>
-<dbReference type="NCBI Taxonomy" id="7227" key="2"/>
-
-	<lineage>
-<taxon>Eukaryota</taxon>
-<taxon>Metazoa</taxon>
-<taxon>Arthropoda</taxon>
-<taxon>Hexapoda</taxon>
-<taxon>Insecta</taxon>
-<taxon>Pterygota</taxon>
-<taxon>Neoptera</taxon>
-<taxon>Endopterygota</taxon>
-<taxon>Diptera</taxon>
-<taxon>Brachycera</taxon>
-<taxon>Muscomorpha</taxon>
-<taxon>Ephydroidea</taxon>
-<taxon>Drosophilidae</taxon>
-<taxon>Drosophila</taxon>
-<taxon>Sophophora</taxon>
-</lineage>
+<organism key="1">
+	<dbReference type="NCBI Taxonomy" id="7227" key="2"/>
 </organism>
-
-	<reference key="3">
-
-	<citation type="journal article" date="1986" name="Cell" volume="47" first="721" last="734">
-
-	<title>
-Isolation, structure, and expression of even-skipped: a second pair-rule gene of Drosophila containing a homeo box.
-</title>
-
-	<authorList>
-<person name="McDonald P.M."/>
-<person name="Ingham P."/>
-<person name="Struhl G."/>
-</authorList>
-<dbReference type="DOI" id="10.1016/0092-8674(86)90515-5" key="4"/>
-<dbReference type="MEDLINE" id="87051744" key="5"/>
-<dbReference type="PubMed" id="2877745" key="6"/>
-</citation>
-<scope>NUCLEOTIDE SEQUENCE [GENOMIC DNA]</scope>
+<reference key="3">
+	<citation>
+		<dbReference type="PubMed" id="222222" key="6"/>
+	</citation>
 </reference>
-
-	<reference key="7">
-
-	<citation type="journal article" date="1987" name="EMBO J." volume="6" first="749" last="759">
-
-	<title>
-Characterization and localization of the even-skipped protein of Drosophila.
-</title>
-
-	<authorList>
-<person name="Frasch M."/>
-<person name="Hoey T."/>
-<person name="Rushlow C."/>
-<person name="Doyle H."/>
-<person name="Levine M."/>
-</authorList>
-<dbReference type="MEDLINE" id="87218536" key="8"/>
-<dbReference type="PubMed" id="2884106" key="9"/>
-</citation>
-<scope>NUCLEOTIDE SEQUENCE [MRNA]</scope>
+<reference key="7">
+	<citation>
+		<dbReference type="PubMed" id="1111111" key="9"/>
+	</citation>
 </reference>
-
-	<reference key="10">
-
-	<citation type="journal article" date="2000" name="Science" volume="287" first="2185" last="2195">
-<title>The genome sequence of Drosophila melanogaster.</title>
-
-	<authorList>
-<person name="Adams M.D."/>
-<person name="Celniker S.E."/>
-<person name="Holt R.A."/>
-<person name="Evans C.A."/>
-<person name="Gocayne J.D."/>
-<person name="Amanatides P.G."/>
-<person name="Scherer S.E."/>
-<person name="Li P.W."/>
-<person name="Hoskins R.A."/>
-<person name="Galle R.F."/>
-<person name="George R.A."/>
-<person name="Lewis S.E."/>
-<person name="Richards S."/>
-<person name="Ashburner M."/>
-<person name="Henderson S.N."/>
-<person name="Sutton G.G."/>
-<person name="Wortman J.R."/>
-<person name="Yandell M.D."/>
-<person name="Zhang Q."/>
-<person name="Chen L.X."/>
-<person name="Brandon R.C."/>
-<person name="Rogers Y.-H.C."/>
-<person name="Blazej R.G."/>
-<person name="Champe M."/>
-<person name="Pfeiffer B.D."/>
-<person name="Wan K.H."/>
-<person name="Doyle C."/>
-<person name="Baxter E.G."/>
-<person name="Helt G."/>
-<person name="Nelson C.R."/>
-<person name="Miklos G.L.G."/>
-<person name="Abril J.F."/>
-<person name="Agbayani A."/>
-<person name="An H.-J."/>
-<person name="Andrews-Pfannkoch C."/>
-<person name="Baldwin D."/>
-<person name="Ballew R.M."/>
-<person name="Basu A."/>
-<person name="Baxendale J."/>
-<person name="Bayraktaroglu L."/>
-<person name="Beasley E.M."/>
-<person name="Beeson K.Y."/>
-<person name="Benos P.V."/>
-<person name="Berman B.P."/>
-<person name="Bhandari D."/>
-<person name="Bolshakov S."/>
-<person name="Borkova D."/>
-<person name="Botchan M.R."/>
-<person name="Bouck J."/>
-<person name="Brokstein P."/>
-<person name="Brottier P."/>
-<person name="Burtis K.C."/>
-<person name="Busam D.A."/>
-<person name="Butler H."/>
-<person name="Cadieu E."/>
-<person name="Center A."/>
-<person name="Chandra I."/>
-<person name="Cherry J.M."/>
-<person name="Cawley S."/>
-<person name="Dahlke C."/>
-<person name="Davenport L.B."/>
-<person name="Davies P."/>
-<person name="de Pablos B."/>
-<person name="Delcher A."/>
-<person name="Deng Z."/>
-<person name="Mays A.D."/>
-<person name="Dew I."/>
-<person name="Dietz S.M."/>
-<person name="Dodson K."/>
-<person name="Doup L.E."/>
-<person name="Downes M."/>
-<person name="Dugan-Rocha S."/>
-<person name="Dunkov B.C."/>
-<person name="Dunn P."/>
-<person name="Durbin K.J."/>
-<person name="Evangelista C.C."/>
-<person name="Ferraz C."/>
-<person name="Ferriera S."/>
-<person name="Fleischmann W."/>
-<person name="Fosler C."/>
-<person name="Gabrielian A.E."/>
-<person name="Garg N.S."/>
-<person name="Gelbart W.M."/>
-<person name="Glasser K."/>
-<person name="Glodek A."/>
-<person name="Gong F."/>
-<person name="Gorrell J.H."/>
-<person name="Gu Z."/>
-<person name="Guan P."/>
-<person name="Harris M."/>
-<person name="Harris N.L."/>
-<person name="Harvey D.A."/>
-<person name="Heiman T.J."/>
-<person name="Hernandez J.R."/>
-<person name="Houck J."/>
-<person name="Hostin D."/>
-<person name="Houston K.A."/>
-<person name="Howland T.J."/>
-<person name="Wei M.-H."/>
-<person name="Ibegwam C."/>
-<person name="Jalali M."/>
-<person name="Kalush F."/>
-<person name="Karpen G.H."/>
-<person name="Ke Z."/>
-<person name="Kennison J.A."/>
-<person name="Ketchum K.A."/>
-<person name="Kimmel B.E."/>
-<person name="Kodira C.D."/>
-<person name="Kraft C.L."/>
-<person name="Kravitz S."/>
-<person name="Kulp D."/>
-<person name="Lai Z."/>
-<person name="Lasko P."/>
-<person name="Lei Y."/>
-<person name="Levitsky A.A."/>
-<person name="Li J.H."/>
-<person name="Li Z."/>
-<person name="Liang Y."/>
-<person name="Lin X."/>
-<person name="Liu X."/>
-<person name="Mattei B."/>
-<person name="McIntosh T.C."/>
-<person name="McLeod M.P."/>
-<person name="McPherson D."/>
-<person name="Merkulov G."/>
-<person name="Milshina N.V."/>
-<person name="Mobarry C."/>
-<person name="Morris J."/>
-<person name="Moshrefi A."/>
-<person name="Mount S.M."/>
-<person name="Moy M."/>
-<person name="Murphy B."/>
-<person name="Murphy L."/>
-<person name="Muzny D.M."/>
-<person name="Nelson D.L."/>
-<person name="Nelson D.R."/>
-<person name="Nelson K.A."/>
-<person name="Nixon K."/>
-<person name="Nusskern D.R."/>
-<person name="Pacleb J.M."/>
-<person name="Palazzolo M."/>
-<person name="Pittman G.S."/>
-<person name="Pan S."/>
-<person name="Pollard J."/>
-<person name="Puri V."/>
-<person name="Reese M.G."/>
-<person name="Reinert K."/>
-<person name="Remington K."/>
-<person name="Saunders R.D.C."/>
-<person name="Scheeler F."/>
-<person name="Shen H."/>
-<person name="Shue B.C."/>
-<person name="Siden-Kiamos I."/>
-<person name="Simpson M."/>
-<person name="Skupski M.P."/>
-<person name="Smith T.J."/>
-<person name="Spier E."/>
-<person name="Spradling A.C."/>
-<person name="Stapleton M."/>
-<person name="Strong R."/>
-<person name="Sun E."/>
-<person name="Svirskas R."/>
-<person name="Tector C."/>
-<person name="Turner R."/>
-<person name="Venter E."/>
-<person name="Wang A.H."/>
-<person name="Wang X."/>
-<person name="Wang Z.-Y."/>
-<person name="Wassarman D.A."/>
-<person name="Weinstock G.M."/>
-<person name="Weissenbach J."/>
-<person name="Williams S.M."/>
-<person name="Woodage T."/>
-<person name="Worley K.C."/>
-<person name="Wu D."/>
-<person name="Yang S."/>
-<person name="Yao Q.A."/>
-<person name="Ye J."/>
-<person name="Yeh R.-F."/>
-<person name="Zaveri J.S."/>
-<person name="Zhan M."/>
-<person name="Zhang G."/>
-<person name="Zhao Q."/>
-<person name="Zheng L."/>
-<person name="Zheng X.H."/>
-<person name="Zhong F.N."/>
-<person name="Zhong W."/>
-<person name="Zhou X."/>
-<person name="Zhu S.C."/>
-<person name="Zhu X."/>
-<person name="Smith H.O."/>
-<person name="Gibbs R.A."/>
-<person name="Myers E.W."/>
-<person name="Rubin G.M."/>
-<person name="Venter J.C."/>
-</authorList>
-<dbReference type="DOI" id="10.1126/science.287.5461.2185" key="11"/>
-<dbReference type="MEDLINE" id="20196006" key="12"/>
-<dbReference type="PubMed" id="10731132" key="13"/>
-</citation>
-<scope>NUCLEOTIDE SEQUENCE [LARGE SCALE GENOMIC DNA]</scope>
-
-	<source>
-<strain>Berkeley</strain>
-</source>
-</reference>
-
-	<reference key="14">
-
-	<citation type="journal article" date="2002" name="Genome Biol." volume="3" first="RESEARCH0083.1" last="RESEARCH0083.22">
-
-	<title>
-Annotation of the Drosophila melanogaster euchromatic genome: a systematic review.
-</title>
-
-	<authorList>
-<person name="Misra S."/>
-<person name="Crosby M.A."/>
-<person name="Mungall C.J."/>
-<person name="Matthews B.B."/>
-<person name="Campbell K.S."/>
-<person name="Hradecky P."/>
-<person name="Huang Y."/>
-<person name="Kaminker J.S."/>
-<person name="Millburn G.H."/>
-<person name="Prochnik S.E."/>
-<person name="Smith C.D."/>
-<person name="Tupy J.L."/>
-<person name="Whitfield E.J."/>
-<person name="Bayraktaroglu L."/>
-<person name="Berman B.P."/>
-<person name="Bettencourt B.R."/>
-<person name="Celniker S.E."/>
-<person name="de Grey A.D.N.J."/>
-<person name="Drysdale R.A."/>
-<person name="Harris N.L."/>
-<person name="Richter J."/>
-<person name="Russo S."/>
-<person name="Schroeder A.J."/>
-<person name="Shu S.Q."/>
-<person name="Stapleton M."/>
-<person name="Yamada C."/>
-<person name="Ashburner M."/>
-<person name="Gelbart W.M."/>
-<person name="Rubin G.M."/>
-<person name="Lewis S.E."/>
-</authorList>
-<dbReference type="MEDLINE" id="22426069" key="15"/>
-<dbReference type="PubMed" id="12537572" key="16"/>
-</citation>
-<scope>GENOME REANNOTATION</scope>
-</reference>
-
-	<reference key="17">
-
-	<citation type="journal article" date="1995" name="Mol. Biol. Evol." volume="12" first="1002" last="1011">
-
-	<title>
-Evolutionary dynamics of the enhancer region of even-skipped in Drosophila.
-</title>
-
-	<authorList>
-<person name="Ludwig M.Z."/>
-<person name="Kreitman M."/>
-</authorList>
-<dbReference type="MEDLINE" id="96038621" key="18"/>
-<dbReference type="PubMed" id="8524036" key="19"/>
-</citation>
-<scope>NUCLEOTIDE SEQUENCE [GENOMIC DNA] OF 1-58</scope>
-
-	<source>
-<strain>AF-S</strain>
-<strain>FL-S</strain>
-<strain>Oregon-RC</strain>
-<strain>WA-F</strain>
-<strain>ZM56</strain>
-</source>
-</reference>
-
-	<reference key="20">
-
-	<citation type="journal article" date="1995" name="EMBO J." volume="14" first="6280" last="6291">
-
-	<title>
-Structure of the even-skipped homeodomain complexed to AT-rich DNA: new perspectives on homeodomain specificity.
-</title>
-
-	<authorList>
-<person name="Hirsch J.A."/>
-<person name="Aggarwal A.K."/>
-</authorList>
-<dbReference type="MEDLINE" id="96134926" key="21"/>
-<dbReference type="PubMed" id="8557047" key="22"/>
-</citation>
-<scope>X-RAY CRYSTALLOGRAPHY (2.0 ANGSTROMS) OF 70-189</scope>
-</reference>
-
-	<comment type="function">
-
-	<text>
-May play a role in determining neuronal identity. May be directly involved in specifying identity of individual neurons. Pair-rule protein required for segmentation; involved in transforming the broad, spatial, aperiodic expression patterns of the gap genes into a system of precise periodic expression patterns of the pair-rule and segmentary polarity genes.
-</text>
+<comment type="subcellular location">
+	<text>Nucleus.</text>
 </comment>
-
-	<comment type="subcellular location">
-<text>Nucleus.</text>
+<comment type="similarity">
+	<text>I'm a duplicate!</text>
 </comment>
-
-	<comment type="similarity">
-<text>Belongs to the even-skipped homeobox family.</text>
+<comment type="similarity">
+	<text>Contains 1 homeobox DNA-binding domain.</text>
 </comment>
-
-	<comment type="similarity">
-<text>Contains 1 homeobox DNA-binding domain.</text>
-</comment>
-
-	<dbReference type="EMBL" id="M14767" key="23">
-<property type="protein sequence ID" value="AAA28522.1"/>
-<property type="molecule type" value="Genomic_DNA"/>
+<dbReference type="FlyBase" id="FBgn0000001" key="40">
+	<property type="gene designation" value="eve"/>
 </dbReference>
-
-	<dbReference type="EMBL" id="X05138" key="24">
-<property type="protein sequence ID" value="CAA28784.1"/>
-<property type="molecule type" value="mRNA"/>
+<dbReference type="GO" id="GO:0000001" key="44">
+	<property type="term" value="P:cell fate determination"/>
+	<property type="evidence" value="NAS:FlyBase"/>
 </dbReference>
-
-	<dbReference type="EMBL" id="AE013599" key="25">
-<property type="protein sequence ID" value="AAF58865.1"/>
-<property type="molecule type" value="Genomic_DNA"/>
+<dbReference type="GO" id="GO:0000002" key="45">
+	<property type="term" value="P:central nervous system development"/>
+	<property type="evidence" value="NAS:FlyBase"/>
 </dbReference>
-
-	<dbReference type="EMBL" id="U32087" key="26">
-<property type="protein sequence ID" value="AAB05358.1"/>
-<property type="molecule type" value="Genomic_DNA"/>
+<dbReference type="GO" id="GO:0000003" key="46">
+	<property type="term" value="P:cephalic furrow formation"/>
+	<property type="evidence" value="IMP:FlyBase"/>
 </dbReference>
-
-	<dbReference type="EMBL" id="U32088" key="27">
-<property type="protein sequence ID" value="AAB05359.1"/>
-<property type="molecule type" value="Genomic_DNA"/>
-</dbReference>
-
-	<dbReference type="EMBL" id="U32089" key="28">
-<property type="protein sequence ID" value="AAB05360.1"/>
-<property type="molecule type" value="Genomic_DNA"/>
-</dbReference>
-
-	<dbReference type="EMBL" id="U32090" key="29">
-<property type="protein sequence ID" value="AAB05361.1"/>
-<property type="molecule type" value="Genomic_DNA"/>
-</dbReference>
-
-	<dbReference type="EMBL" id="U32091" key="30">
-<property type="protein sequence ID" value="AAB05362.1"/>
-<property type="molecule type" value="Genomic_DNA"/>
-</dbReference>
-
-	<dbReference type="PIR" id="A26066" key="31">
-<property type="entry name" value="A26066"/>
-</dbReference>
-<dbReference type="RefSeq" id="NP_523670.2" key="32"/>
-<dbReference type="UniGene" id="Dm.18510" key="33"/>
-
-	<dbReference type="PDB" id="1JGG" key="34">
-<property type="method" value="X-ray"/>
-<property type="resolution" value="2.00"/>
-<property type="chains" value="A/B=70-129"/>
-</dbReference>
-<dbReference type="PDBsum" id="1JGG" key="35"/>
-
-	<dbReference type="Ensembl" id="CG2328" key="36">
-<property type="organism name" value="Drosophila melanogaster"/>
-</dbReference>
-<dbReference type="GeneID" id="36039" key="37"/>
-<dbReference type="KEGG" id="dme:Dmel_CG2328" key="38"/>
-<dbReference type="NMPDR" id="fig|7227.3.peg.4350" key="39"/>
-
-	<dbReference type="FlyBase" id="FBgn0000606" key="40">
-<property type="gene designation" value="eve"/>
-</dbReference>
-<dbReference type="BioCyc" id="DMEL-XXX-02:DMEL-XXX-02-003750-MON" key="41"/>
-<dbReference type="ArrayExpress" id="P06602" key="42"/>
-
-	<dbReference type="GermOnline" id="CG2328" key="43">
-<property type="organism name" value="Drosophila melanogaster"/>
-</dbReference>
-
-	<dbReference type="GO" id="GO:0001709" key="44">
-<property type="term" value="P:cell fate determination"/>
-<property type="evidence" value="NAS:FlyBase"/>
-</dbReference>
-
-	<dbReference type="GO" id="GO:0007417" key="45">
-<property type="term" value="P:central nervous system development"/>
-<property type="evidence" value="NAS:FlyBase"/>
-</dbReference>
-
-	<dbReference type="GO" id="GO:0007376" key="46">
-<property type="term" value="P:cephalic furrow formation"/>
-<property type="evidence" value="IMP:FlyBase"/>
-</dbReference>
-
-	<dbReference type="GO" id="GO:0008595" key="47">
-<property type="term" value="P:determination of anterior/posterior axis, e..."/>
-<property type="evidence" value="NAS:FlyBase"/>
-</dbReference>
-
-	<dbReference type="GO" id="GO:0007377" key="48">
-<property type="term" value="P:germ-band extension"/>
-<property type="evidence" value="IMP:FlyBase"/>
-</dbReference>
-
-	<dbReference type="GO" id="GO:0008045" key="49">
-<property type="term" value="P:motor axon guidance"/>
-<property type="evidence" value="IMP:FlyBase"/>
-</dbReference>
-
-	<dbReference type="GO" id="GO:0007517" key="50">
-<property type="term" value="P:muscle development"/>
-<property type="evidence" value="TAS:FlyBase"/>
-</dbReference>
-
-	<dbReference type="GO" id="GO:0009997" key="51">
-<property type="term" value="P:negative regulation of cardioblast cell fat..."/>
-<property type="evidence" value="IMP:FlyBase"/>
-</dbReference>
-
-	<dbReference type="GO" id="GO:0007366" key="52">
-<property type="term" value="P:periodic partitioning by pair rule gene"/>
-<property type="evidence" value="TAS:FlyBase"/>
-</dbReference>
-
-	<dbReference type="GO" id="GO:0035289" key="53">
-<property type="term" value="P:posterior head segmentation"/>
-<property type="evidence" value="TAS:FlyBase"/>
-</dbReference>
-
-	<dbReference type="GO" id="GO:0050770" key="54">
-<property type="term" value="P:regulation of axonogenesis"/>
-<property type="evidence" value="IMP:FlyBase"/>
-</dbReference>
-
-	<dbReference type="GO" id="GO:0035290" key="55">
-<property type="term" value="P:trunk segmentation"/>
-<property type="evidence" value="TAS:FlyBase"/>
-</dbReference>
-
-	<dbReference type="InterPro" id="IPR001356" key="56">
-<property type="entry name" value="Homeobox"/>
-</dbReference>
-
-	<dbReference type="Pfam" id="PF00046" key="57">
-<property type="entry name" value="Homeobox"/>
-<property type="match status" value="1"/>
-</dbReference>
-
-	<dbReference type="PRINTS" id="PR00024" key="58">
-<property type="entry name" value="HOMEOBOX"/>
-</dbReference>
-
-	<dbReference type="ProDom" id="PD000010" key="59">
-<property type="entry name" value="Homeobox"/>
-<property type="match status" value="1"/>
-</dbReference>
-
-	<dbReference type="SMART" id="SM00389" key="60">
-<property type="entry name" value="HOX"/>
-<property type="match status" value="1"/>
-</dbReference>
-
-	<dbReference type="PROSITE" id="PS00027" key="61">
-<property type="entry name" value="HOMEOBOX_1"/>
-<property type="match status" value="1"/>
-</dbReference>
-
-	<dbReference type="PROSITE" id="PS50071" key="62">
-<property type="entry name" value="HOMEOBOX_2"/>
-<property type="match status" value="1"/>
-</dbReference>
-<proteinExistence type="Evidence at protein level"/>
-<keyword id="KW-0002">3D-structure</keyword>
-<keyword id="KW-0181">Complete proteome</keyword>
-<keyword id="KW-0238">DNA-binding</keyword>
-<keyword id="KW-0217">Developmental protein</keyword>
-<keyword id="KW-0371">Homeobox</keyword>
-<keyword id="KW-0539">Nucleus</keyword>
-<keyword id="KW-0562">Pair-rule protein</keyword>
-<keyword id="KW-0804">Transcription</keyword>
-<keyword id="KW-0805">Transcription regulation</keyword>
-
-	<feature type="chain" description="Segmentation protein even-skipped" id="PRO_0000049060">
-
-	<location>
-<begin position="1"/>
-<end position="376"/>
-</location>
-</feature>
-
-	<feature type="DNA-binding region" description="Homeobox">
-
-	<location>
-<begin position="70"/>
-<end position="129"/>
-</location>
-</feature>
-
-	<feature type="compositionally biased region" description="Ala-rich">
-
-	<location>
-<begin position="165"/>
-<end position="179"/>
-</location>
-</feature>
-
-	<feature type="sequence conflict" description="In Ref. 1; AAA28522." ref="3">
-<original>L</original>
-<variation>V</variation>
-
-	<location>
-<position position="300"/>
-</location>
-</feature>
-
-	<feature type="helix">
-
-	<location>
+<keyword id="KW-0001">keyword!</keyword>
+<keyword id="KW-0002">Complete proteome</keyword>
+<keyword id="KW-0003">DNA-binding</keyword>
+<feature type="helix">
+<location>
 <begin position="79"/>
 <end position="91"/>
 </location>
 </feature>
-
-	<feature type="helix">
-
-	<location>
+<feature type="helix">
+<location>
 <begin position="97"/>
 <end position="107"/>
 </location>
 </feature>
-
-	<feature type="helix">
-
-	<location>
+<feature type="helix">
+<location>
 <begin position="111"/>
 <end position="127"/>
 </location>
 </feature>
-
-	<sequence length="376" mass="39970" checksum="59058E0634B1BED0" modified="2000-12-01" version="3">
-
+<sequence length="376" mass="39970" checksum="59058E0634B1BED0" modified="2000-12-01" version="3">
 MHGYRTYNMESHHAHHDASPVDQKPLVVDLLATQYGKPQTPPPSPNECLSSPDNSLNGSR
 GSEIPADPSVRRYRTAFTRDQLGRLEKEFYKENYVSRPRRCELAAQLNLPESTIKVWFQN
 RRMKDKRQRIAVAWPYAAVYSDPAFAASILQAAANSVGMPYPPYAPAAAAAAAAAAAVAT
@@ -643,9 +77,46 @@ SPVGSDHAKVFDRSPVAQSAPSVPAPAPLTTTSPLPAPGLLMPSAKRPASDMSPPPTTTV
 IAEPKPKLFKPYKTEA
 </sequence>
 </entry>
-
-	<copyright>
-
+<entry dataset="Swiss-Prot" created="1988-01-01" modified="2008-04-29" version="93">
+<accession>Q000</accession>
+<name>JULIE_DROME</name>
+<protein>
+	<name>protein name</name>
+</protein>
+<gene>
+	<name type="primary">julie jeans</name>
+	<name type="ORF">CG2222</name>
+</gene>
+<organism key="1">
+	<dbReference type="NCBI Taxonomy" id="7227" key="2"/>
+</organism>
+<reference key="3">
+	<citation>
+		<dbReference type="PubMed" id="1111111" key="6"/>
+	</citation>
+</reference>
+<comment type="similarity">
+	<text>I'm a duplicate!</text>
+</comment>
+<dbReference type="FlyBase" id="FBgn0000002" key="40">
+	<property type="gene designation" value="julie jeans"/>
+</dbReference>
+<dbReference type="GO" id="GO:0001" key="44">
+	<property type="term" value="go term!"/>
+	<property type="evidence" value="NAS:FlyBase"/>
+</dbReference>
+<keyword id="KW-0539">keyword!</keyword>
+<feature type="feature!" description="description!" id="1">
+<location>
+	<begin position="1"/>
+	<end position="2"/>
+</location>
+</feature>
+<sequence length="13" mass="31" checksum="59058E0634B1BED0" modified="2000-12-01" version="3">
+JULIESEQUENCE
+</sequence>
+</entry>
+<copyright>
 Copyrighted by the UniProt Consortium, see http://www.uniprot.org/terms
 Distributed under the Creative Commons Attribution-NoDerivs License
 </copyright>

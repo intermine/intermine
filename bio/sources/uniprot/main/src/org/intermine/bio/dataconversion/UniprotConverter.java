@@ -54,12 +54,13 @@ public class UniprotConverter extends FileConverter
     protected static final String PROP_FILE = "uniprot_config.properties";
     private static final Logger LOG = Logger.getLogger(UniprotConverter.class);
     private Map<String, String> pubMaster = new HashMap<String, String>();
-    private Map<String, Item> orgMaster = new HashMap<String, Item>();
+    private Map<String, String> orgMaster = new HashMap<String, String>();
     private Map<String, Item> dbMaster = new HashMap<String, Item>();
     private Map<String, Item> dsMaster = new HashMap<String, Item>();
     private Map<String, Item> ontoMaster = new HashMap<String, Item>();
     private Map<String, String> geneMaster = new LinkedHashMap<String, String>();
-    private Map<String, String> interproMaster = new HashMap<String, String>();
+    private Map<String, Item> interproMaster = new HashMap<String, Item>();
+    private Map<String, String> commentMaster = new HashMap<String, String>();
     private Set<String> geneIdentifiers = new LinkedHashSet<String>();
 
     // map of taxonId to object which determine which data to use for which organism
@@ -276,7 +277,7 @@ public class UniprotConverter extends FileConverter
         // the below are reset for each protein
         private Item protein;
         private Item sequence;
-        private Item comment;
+        private String comment;
         private Item feature;
         private Item interpro;  // protein feature
         private Map<String, Item> synonyms;
@@ -286,12 +287,6 @@ public class UniprotConverter extends FileConverter
         private String dbName;
         private String evidence;
         private boolean hasPrimary;
-
-        private ReferenceList pubCollection;
-        private ReferenceList commentCollection;
-        private ReferenceList keywordCollection;
-        private ReferenceList featureCollection;
-        private ReferenceList interproCollection;
 
         // maps genes for this protein to that gene's lists of names, identifiers, etc
         private Map<String, Map<String, String>> geneTOgeneNameTypeToName;
@@ -309,9 +304,7 @@ public class UniprotConverter extends FileConverter
         private Item datasource;
         private Item dataset;
 
-
         private ItemWriter writer;
-
         private Stack<String> stack = new Stack<String>();
         private String attName = null;
         private StringBuffer attValue = null;
@@ -326,7 +319,6 @@ public class UniprotConverter extends FileConverter
             this.writer = writer;
         }
 
-
         /**
          * {@inheritDoc}
          */
@@ -335,249 +327,206 @@ public class UniprotConverter extends FileConverter
             throws SAXException {
             attName = null;
             try {
-                // <entry>
-                if (qName.equals("entry")) {
-                    // TODO only store for swiss prot or trembl?
-                    if (attrs.getValue("dataset") != null) {
+                if (qName.equals("entry")) { // <entry>
+                    if (attrs.getValue("dataset") != null) { // TODO only store swiss prot / trembl?
                         isProtein = true;
-
-                        // create, clear all lists for each new protein
                         initProtein();
-                        // will be tremble or swiss-prot
                         dataset = getDataSet(attrs.getValue("dataset"));
                     } else {
                         isProtein = false;
                     }
                 }
-
                 if (isProtein) {
-                // <entry><protein>
-                if (qName.equals("protein")) {
-                    String isFragment = "false";
-                    // check for <protein type="fragment*">
-                    if (attrs.getValue("type") != null) {
-                        String type = attrs.getValue("type");
-                        if (type.startsWith("fragment")) {
-                            isFragment = "true";
+                    // <entry><protein>
+                    if (qName.equals("protein")) {
+                        String isFragment = "false";
+                        if (attrs.getValue("type") != null) { // <protein type="fragment*">
+                            String type = attrs.getValue("type");
+                            if (type.startsWith("fragment")) {
+                                isFragment = "true";
+                            }
                         }
-                    }
-                    protein.setAttribute("isFragment", isFragment);
-                // <entry><protein><name>
-                } else if (qName.equals("name") && stack.peek().equals("protein")) {
-                    attName = "name";
-                    evidence = attrs.getValue("evidence");
-                // <entry><name>
-                } else if (qName.equals("name") && stack.peek().equals("entry")) {
-                    attName = "primaryIdentifier";
-                // <entry><accession>
-                } else if (qName.equals("accession")) {
-                    attName = "value";
-                // <entry><sequence>
-                } else if (qName.equals("sequence")) {
-                    String strLength = attrs.getValue("length");
-                    String strMass = attrs.getValue("mass");
-                    if (strLength != null) {
-                        sequence = createItem("Sequence");
-                        sequence.setAttribute("length", strLength);
-                        protein.setAttribute("length", strLength);
-                        attName = "residues";
-                    }
-                    if (strMass != null) {
-                        protein.setAttribute("molecularWeight", strMass);
-                    }
-                // <entry><feature>
-                } else if (qName.equals("feature")
-                                && attrs.getValue("type") != null
-                                && FEATURE_TYPES.contains(attrs.getValue("type"))) {
-                    String strType = attrs.getValue("type");
-                    String strName = attrs.getValue("description");
-                    String strStatus = null;
-                    feature = createItem("UniProtFeature");
-                    feature.addReference(new Reference("protein", protein.getIdentifier()));
-                    if (featureCollection.getRefIds().isEmpty()) {
-                        protein.addCollection(featureCollection);
-                    }
-                    featureCollection.addRefId(feature.getIdentifier());
-                    feature.setAttribute("type", strType);
-                    Item keyword = getKeyword(strType);
-                    feature.addReference(new Reference("feature", keyword.getIdentifier()));
-                    if (attrs.getValue("status") != null) {
-                        strStatus = attrs.getValue("status");
-                        if (strName != null) {
-                            strName += " (" + strStatus + ")";
-                        } else {
-                            strName = strStatus;
+                        protein.setAttribute("isFragment", isFragment);
+                        // <entry><protein><name>
+                    } else if (qName.equals("name") && stack.peek().equals("protein")) {
+                        attName = "name";
+                        evidence = attrs.getValue("evidence");
+                        // <entry><name>
+                    } else if (qName.equals("name") && stack.peek().equals("entry")) {
+                        attName = "primaryIdentifier";
+                        // <entry><accession>
+                    } else if (qName.equals("accession")) {
+                        attName = "value";
+                        // <entry><sequence>
+                    } else if (qName.equals("sequence")) {
+                        String strLength = attrs.getValue("length");
+                        String strMass = attrs.getValue("mass");
+                        if (strLength != null) {
+                            sequence = createItem("Sequence");
+                            sequence.setAttribute("length", strLength);
+                            protein.setAttribute("length", strLength);
+                            attName = "residues";
                         }
-                    }
-                    if (!StringUtils.isEmpty(strName)) {
-                        feature.setAttribute("description", strName);
-                    }
-                // <entry><feature><location><start||end>
-                } else if ((qName.equals("begin") || qName.equals("end")
-                                || qName.equals("position"))
-                                && stack.peek().equals("location")
-                                && attrs.getValue("position") != null
-                                && feature != null) {
-
+                        if (strMass != null) {
+                            protein.setAttribute("molecularWeight", strMass);
+                        }
+                        // <entry><feature>
+                    } else if (qName.equals("feature")
+                                    && attrs.getValue("type") != null
+                                    && FEATURE_TYPES.contains(attrs.getValue("type"))) {
+                        String strType = attrs.getValue("type");
+                        String strName = attrs.getValue("description");
+                        String strStatus = null;
+                        feature = createItem("UniProtFeature");
+                        feature.addReference(new Reference("protein", protein.getIdentifier()));
+                        if (!protein.hasCollection("features")) {
+                            protein.addCollection(new ReferenceList("features",
+                                                                    new ArrayList<String>()));
+                        }
+                        protein.getCollection("features").addRefId(feature.getIdentifier());
+                        feature.setAttribute("type", strType);
+                        Item keyword = getKeyword(strType);
+                        feature.addReference(new Reference("feature", keyword.getIdentifier()));
+                        if (attrs.getValue("status") != null) {
+                            strStatus = attrs.getValue("status");
+                            if (strName != null) {
+                                strName += " (" + strStatus + ")";
+                            } else {
+                                strName = strStatus;
+                            }
+                        }
+                        if (!StringUtils.isEmpty(strName)) {
+                            feature.setAttribute("description", strName);
+                        }
+                        // <entry><feature><location><start||end>
+                    } else if ((qName.equals("begin") || qName.equals("end")
+                                    || qName.equals("position"))
+                                    && stack.peek().equals("location")
+                                    && attrs.getValue("position") != null && feature != null) {
                         if (qName.equals("begin") || qName.equals("end")) {
                             feature.setAttribute(qName, attrs.getValue("position"));
                         } else {
                             feature.setAttribute("begin", attrs.getValue("position"));
                             feature.setAttribute("end", attrs.getValue("position"));
                         }
-                // <entry><dbreference type="InterPro" >
-                } else if (createInterpro
-                                && qName.equals("dbReference")
-                                && attrs.getValue("type").equals("InterPro")) {
-                        String interproId = attrs.getValue("id").toString();
-                        String interproItemId = null;
-                        if (interproMaster.get(interproId) == null) {
-                            interpro = createItem("ProteinDomain");
-                            interpro.setAttribute("primaryIdentifier", interproId);
-                            interproItemId = interpro.getIdentifier();
-                            interproMaster.put(interproId, interproItemId);
-                        } else {
-                            interproItemId = interproMaster.get(interproId);
+                    // <entry><dbreference type="InterPro" >
+                    } else if (createInterpro
+                                    && qName.equals("dbReference")
+                                    && attrs.getValue("type").equals("InterPro")) {
+                        interpro = getInterpro(attrs.getValue("id").toString());
+                        if (!protein.hasCollection("proteinDomains")) {
+                            protein.addCollection(new ReferenceList("proteinDomains",
+                                                                    new ArrayList<String>()));
                         }
-                        if (interproCollection.getRefIds().isEmpty()) {
-                            protein.addCollection(interproCollection);
-                        }
-                        interproCollection.addRefId(interproItemId);
-                // <entry><dbreference type="InterPro"><property type="entry name" value="***"/>
-                } else if (createInterpro
-                                && qName.equals("property")
-                                && attrs.getValue("type").equals("entry name")
-                                && stack.peek().equals("dbReference")) {
+                        protein.getCollection("proteinDomains").addRefId(interpro.getIdentifier());
+                    // <entry><dbreference type="InterPro"><property type="entry name" value="***"/>
+                    } else if (createInterpro
+                                    && qName.equals("property")
+                                    && attrs.getValue("type").equals("entry name")
+                                    && stack.peek().equals("dbReference")) {
                         if (interpro != null) {
                             interpro.setAttribute("shortName", attrs.getValue("value").toString());
                             writer.store(ItemHelper.convert(interpro));
                             interpro = null;
                         }
-                // <entry><organism><dbreference>
-                } else if (qName.equals("dbReference") && stack.peek().equals("organism")) {
-                    taxonId = attrs.getValue("id");
-                    Item organism;
-                    if (orgMaster.get(taxonId) == null) {
-                        organism = createItem("Organism");
-                        orgMaster.put(attrs.getValue("id"), organism);
-                        organism.setAttribute("taxonId", taxonId);
-                        writer.store(ItemHelper.convert(organism));
-                    } else {
-                        organism = orgMaster.get(taxonId);
-                    }
-                    protein.setReference("organism", organism.getIdentifier());
-                    // get relevant database for this organism
-                    // dbName = (String) taxIdToDb.get(taxonId);
-                    UniProtGeneDataMap geneDataMap = geneDataMaps.get(taxonId);
-                    boolean noDatabase = false;
-                    if (geneDataMap != null) {
-                        dbName = geneDataMap.getSource();
-                        if (dbName == null) {
+                        // <entry><organism><dbreference>
+                    } else if (qName.equals("dbReference") && stack.peek().equals("organism")) {
+                        taxonId = attrs.getValue("id");
+                        protein.setReference("organism", getOrganism(taxonId));
+                        UniProtGeneDataMap geneDataMap = geneDataMaps.get(taxonId);
+                        boolean noDatabase = false;
+                        if (geneDataMap != null) {
+                            dbName = geneDataMap.getSource();
+                            if (dbName == null) {
+                                noDatabase = true;
+                            }
+                        } else {    // there was no data in the config file
+                            geneDataMap = new UniProtGeneDataMap("UniProt");
                             noDatabase = true;
                         }
-                    } else {
-                        // there was no data in the config file
-                        geneDataMap = new UniProtGeneDataMap("UniProt");
-                        noDatabase = true;
-                    }
-                    if (noDatabase) {
-                        geneDataMap.setSource("UniProt");
-                        String message = "No gene source database defined for organism: "
-                            + taxonId + ", using UniProt.[" + geneDataMap.toString()  + "]";
-                        LOG.warn(message);
-                        dbName = "UniProt";
-                    }
-                // <entry><reference><citation><dbreference>
-                } else if (hasPrimary  && qName.equals("dbReference")
-                           && stack.peek().equals("citation")
-                           && attrs.getValue("type").equals("PubMed")) {
-                    String pubId;
-                    if (pubMaster.get(attrs.getValue("id")) == null) {
-                        Item pub = createItem("Publication");
-                        pub.setAttribute("pubMedId", attrs.getValue("id"));
-                        pubMaster.put(attrs.getValue("id"), pub.getIdentifier());
-                        pubId = pub.getIdentifier();
-                        writer.store(ItemHelper.convert(pub));
-                    } else {
-                        pubId = pubMaster.get(attrs.getValue("id"));
-                    }
-                    if (pubCollection.getRefIds().isEmpty()) {
-                        protein.addCollection(pubCollection);
-                    }
-                    pubCollection.addRefId(pubId);
-                // <entry><comment>
-                } else if (qName.equals("comment") && attrs.getValue("type") != null) {
-                    comment = createItem("Comment");
-                    comment.setAttribute("type", attrs.getValue("type"));
-                // <entry><comment><text>
-                } else if (qName.equals("text") && stack.peek().equals("comment")) {
-                    attName = "text";
-                // <entry><keyword>
-                } else if (qName.equals("keyword")) {
-                    attName = "keyword";
-                // <entry><gene>
-                } else if (qName.equals("gene")) {
-                    initGene();
-                // <entry><gene><name>
-                } else if (qName.equals("name") && stack.peek().equals("gene")) {
-                    // will be primary, ORF, synonym or ordered locus
-                    attName = attrs.getValue("type");
-                // <dbreference type="EC">
-                } else if (qName.equals("dbReference") && attrs.getValue("type").equals("EC")) {
-                    String ecNumber = attrs.getValue("id");
-                    if (ecNumber != null) {
-                        protein.setAttribute("ecNumber", ecNumber);
-                    }
-                    // <dbreference type="FlyBase/UniProt/etc.." id="*" key="12345">
-                } else if (qName.equals("dbReference")
-                           && geneSources.contains(attrs.getValue("type"))) {
-                    // could be identifier but check next tag to see if this is a gene designation
-                    possibleGeneId = attrs.getValue("id");
-                    possibleGeneIdSource = attrs.getValue("type");
-                //    <dbreference><property type="gene designation" value="*">
-                } else if (qName.equals("property") && stack.peek().equals("dbReference")
-                           && attrs.getValue("type").equals("gene designation")
-                           && geneNames.contains(attrs.getValue("value"))) {
-                    /* for everyone but homo sapiens & honeybees */
-                    if (possibleGeneIdSource != null && possibleGeneId != null) {
-                        geneDesignations.put(possibleGeneIdSource, new String(possibleGeneId));
-                    }
-                // <dbreference type="RefSeq">
-                } else if (qName.equals("dbReference") && attrs.getValue("type").equals("RefSeq")) {
-                    String refSeqId = attrs.getValue("id");
-                    if (refSeqId != null) {
-                        refSeqId.trim();
-                        Item syn = createSynonym(protein.getIdentifier(), "identifier",
-                                                 refSeqId.trim(), datasource.getIdentifier());
-                        if (syn != null) {
-                            writer.store(ItemHelper.convert(syn));
+                        if (noDatabase) {
+                            geneDataMap.setSource("UniProt");
+                            String message = "No gene source database defined for organism: "
+                                + taxonId + ", using UniProt.[" + geneDataMap.toString()  + "]";
+                            LOG.warn(message);
+                            dbName = "UniProt";
+                        }
+                        // <entry><reference><citation><dbreference>
+                    } else if (hasPrimary  && qName.equals("dbReference")
+                                    && stack.peek().equals("citation")
+                                    && attrs.getValue("type").equals("PubMed")) {
+                        String pubId = getPub(attrs.getValue("id"));
+                        if (!protein.hasCollection("publications")) {
+                            protein.addCollection(new ReferenceList("publications",
+                                                                    new ArrayList<String>()));
+                        }
+                        protein.getCollection("publications").addRefId(pubId);
+                        // <entry><comment>
+                    } else if (qName.equals("comment") && attrs.getValue("type") != null) {
+                        comment = attrs.getValue("type");
+                        // <entry><comment><text>
+                    } else if (qName.equals("text") && stack.peek().equals("comment")) {
+                        attName = "text";
+                    } else if (qName.equals("keyword")) {   // <entry><keyword>
+                        attName = "keyword";
+                    } else if (qName.equals("gene")) {      // <entry><gene>
+                        initGene();
+                        // <entry><gene><name>
+                    } else if (qName.equals("name") && stack.peek().equals("gene")) {
+                        // will be primary, ORF, synonym or ordered locus
+                        attName = attrs.getValue("type");
+                        // <dbreference type="EC">
+                    } else if (qName.equals("dbReference") && attrs.getValue("type").equals("EC")) {
+                        String ecNumber = attrs.getValue("id");
+                        if (ecNumber != null) {
+                            protein.setAttribute("ecNumber", ecNumber);
+                        }
+                        // <dbreference type="FlyBase/UniProt/etc.." id="*" key="12345">
+                    } else if (qName.equals("dbReference")
+                                    && geneSources.contains(attrs.getValue("type"))) {
+                        // could be identifier but check next tag to see if this is a gene desig
+                        possibleGeneId = attrs.getValue("id");
+                        possibleGeneIdSource = attrs.getValue("type");
+                        //    <dbreference><property type="gene designation" value="*">
+                    } else if (qName.equals("property") && stack.peek().equals("dbReference")
+                                    && attrs.getValue("type").equals("gene designation")
+                                    && geneNames.contains(attrs.getValue("value"))) {
+                        /* for everyone but homo sapiens & honeybees */
+                        if (possibleGeneIdSource != null && possibleGeneId != null) {
+                            geneDesignations.put(possibleGeneIdSource, new String(possibleGeneId));
+                        }
+                        // <dbreference type="RefSeq">
+                    } else if (qName.equals("dbReference")
+                                    && attrs.getValue("type").equals("RefSeq")) {
+                        String refSeqId = attrs.getValue("id");
+                        if (refSeqId != null) {
+                            refSeqId.trim();
+                            Item syn = createSynonym(protein.getIdentifier(), "identifier",
+                                                     refSeqId.trim(), datasource.getIdentifier());
+                            if (syn != null) {
+                                writer.store(ItemHelper.convert(syn));
+                            }
+                        }
+                    // <dbreference><property type="organism name" value="Homo sapiens"/>
+                    } else if (qName.equals("property") && stack.peek().equals("dbReference")
+                                    && attrs.getValue("type").equals("organism name")
+                                    && (attrs.getValue("value").equals("Homo sapiens")
+                                    || attrs.getValue("value").equals("Apis mellifera"))) {
+                        if ((possibleGeneIdSource != null) && (possibleGeneId != null)) {
+                            // we probably don't have a <gene> reference
+                            initGene();
+                            Item gene = createItem("Gene");
+                            genes.put(gene.getIdentifier(), gene);
+                            // associate gene with lists
+                            geneTOgeneNameTypeToName.put(gene.getIdentifier(), geneNameTypeToName);
+                            geneTOgeneDesignations.put(gene.getIdentifier(), geneDesignations);
+                            geneDesignations.put(possibleGeneIdSource, new String(possibleGeneId));
                         }
                     }
-                //    <dbreference><property type="organism name" value="Homo sapiens"/>
-                } else if (qName.equals("property") && stack.peek().equals("dbReference")
-                           && attrs.getValue("type").equals("organism name")
-                           && (attrs.getValue("value").equals("Homo sapiens")
-                                           || attrs.getValue("value").equals("Apis mellifera"))) {
-                    if ((possibleGeneIdSource != null) && (possibleGeneId != null)) {
-
-                        // we probably don't have a <gene> reference
-                        initGene();
-                        Item gene = createItem("Gene");
-                        genes.put(gene.getIdentifier(), gene);
-
-                        // associate gene with lists
-                        geneTOgeneNameTypeToName.put(gene.getIdentifier(), geneNameTypeToName);
-                        geneTOgeneDesignations.put(gene.getIdentifier(), geneDesignations);
-
-                        geneDesignations.put(possibleGeneIdSource, new String(possibleGeneId));
-                    }
                 }
+                if (qName.equals("uniprot")) {  // <uniprot>
+                    initData();
                 }
-                // <uniprot>
-                if (qName.equals("uniprot")) {
-                   initData();
-                }
-
             } catch (ObjectStoreException e) {
                 throw new SAXException(e);
             }
@@ -654,7 +603,6 @@ public class UniprotConverter extends FileConverter
                                 finaliseGene(gene, protein.getReference("organism").getRefId());
                             }
                         }
-
                         // <entry><name> is a synonym
                         String proteinPrimaryIdentifier =
                             protein.getAttribute("primaryIdentifier").getValue();
@@ -662,27 +610,23 @@ public class UniprotConverter extends FileConverter
                                                  proteinPrimaryIdentifier,
                                                  datasource.getIdentifier());
                         if (protein == null) {
-                            throw new RuntimeException("hey!" + proteinPrimaryIdentifier);
+                            throw new RuntimeException("Lost protein:" + proteinPrimaryIdentifier);
                         } else {
                             writer.store(ItemHelper.convert(protein));
                         }
                         if (syn != null) {
                             writer.store(ItemHelper.convert(syn));
                         }
-
                     } else {
                        LOG.info("Entry " + protein.getAttribute("name")
                                 + " does not have any accessions");
                     }
-
                     for (Item item : delayedItems) {
                         writer.store(ItemHelper.convert(item));
                     }
                     delayedItems.clear();
-
                 // <entry><sequence>
                 } else if (hasPrimary && qName.equals("sequence")) {
-
                     if (attName != null) {
                         sequence.setAttribute(attName, attValue.toString().replaceAll("\n", ""));
                         protein.addReference(new Reference("sequence", sequence.getIdentifier()));
@@ -691,7 +635,6 @@ public class UniprotConverter extends FileConverter
                         LOG.info("Sequence for " + protein.getAttribute("name").getValue()
                                 + " does not have a length");
                     }
-
                 // <entry><protein><name>
                 } else if (hasPrimary && qName.equals("name") && stack.peek().equals("protein")) {
 
@@ -716,16 +659,14 @@ public class UniprotConverter extends FileConverter
 
                 // <entry><comment><text>
                 } else if (hasPrimary && qName.equals("text") && attName != null) {
-
-                    if (comment.hasAttribute("type") && attValue.toString() != null) {
-
-                        comment.setAttribute(attName, attValue.toString());
-                        comment.setReference("source", dataset.getIdentifier());
-                        if (commentCollection.getRefIds().isEmpty()) {
-                            protein.addCollection(commentCollection);
+                    String commentText = attValue.toString();
+                    if (comment != null && commentText != null) {
+                        String refId = getComment(comment, commentText);
+                        if (!protein.hasCollection("comments")) {
+                            protein.addCollection(new ReferenceList("comments",
+                                                                    new ArrayList<String>()));
                         }
-                        commentCollection.addRefId(comment.getIdentifier());
-                        writer.store(ItemHelper.convert(comment));
+                        protein.getCollection("comments").addRefId(refId);
                     }
 
                 // <entry><gene><name>
@@ -758,36 +699,28 @@ public class UniprotConverter extends FileConverter
 
                 // <entry><keyword>
                 } else if (qName.equals("keyword")) {
-
                     if (attName != null) {
                         Item keyword = getKeyword(attValue.toString());
-                        if (keywordCollection.getRefIds().isEmpty()) {
-                            protein.addCollection(keywordCollection);
+                        if (!protein.hasCollection("keywords")) {
+                            protein.addCollection(new ReferenceList("keywords",
+                                                                    new ArrayList<String>()));
                         }
-                        keywordCollection.addRefId(keyword.getIdentifier());
+                        protein.getCollection("keywords").addRefId(keyword.getIdentifier());
                     }
-
                 // <entry><feature>
                 } else if (qName.equals("feature") && feature != null) {
-
                     delayedItems.add(feature);
                     feature = null;
-
                 // <entry><name>
                 } else if (qName.equals("name")) {
-
                     if (attName != null) {
                         protein.setAttribute(attName, attValue.toString());
                     }
-
                 // <entry><accession>
                 } else if (qName.equals("accession") && !attValue.toString().equals("")) {
-
                     Item syn = createSynonym(protein.getIdentifier(), "accession",
                                            attValue.toString(), datasource.getIdentifier());
                     if (syn != null) {
-
-                        // if this is the first accession value, its the primary accession
                         if (protein.getAttribute("primaryAccession") == null) {
                             protein.setAttribute("primaryAccession", attValue.toString());
                             hasPrimary = true;
@@ -834,15 +767,7 @@ public class UniprotConverter extends FileConverter
         // clears all protein-related lists/values
         // called when new protein is created
         private void initProtein() {
-
             protein = createItem("Protein");
-            featureCollection = new ReferenceList("features", new ArrayList<String>());
-            keywordCollection = new ReferenceList("keywords", new ArrayList<String>());
-            commentCollection = new ReferenceList("comments", new ArrayList<String>());
-            pubCollection = new ReferenceList("publications", new ArrayList<String>());
-            interproCollection = new ReferenceList("proteinDomains", new ArrayList<String>());
-
-
             genes = new LinkedHashMap<String, Item>();
             synonyms = new LinkedHashMap<String, Item>();
             descr = new StringBuffer();
@@ -910,6 +835,71 @@ public class UniprotConverter extends FileConverter
             return keyword;
         }
 
+        private String getComment(String type, String text)
+        throws SAXException {
+            String refId = commentMaster.get(type + text);
+            try {
+                if (refId == null) {
+                    Item item = createItem("Comment");
+                    item.setAttribute("type", type);
+                    item.setAttribute("text", text);
+                    item.setReference("source", dataset.getIdentifier());
+                    refId = item.getIdentifier();
+                    commentMaster.put(type + text, refId);
+                    writer.store(ItemHelper.convert(item));
+                }
+
+            } catch (ObjectStoreException e) {
+                throw new SAXException(e);
+            }
+            return refId;
+        }
+
+        private Item getInterpro(String identifier) {
+            Item item = interproMaster.get(identifier);
+            if (item == null) {
+                item = createItem("ProteinDomain");
+                item.setAttribute("primaryIdentifier", identifier);
+                interproMaster.put(identifier, item);
+            }
+            return item;
+        }
+
+        private String getOrganism(String orgId)
+        throws SAXException {
+            String refId = orgMaster.get(orgId);
+            try {
+                if (refId == null) {
+                    Item item = createItem("Organism");
+                    item.setAttribute("taxonId", orgId);
+                    orgMaster.put(orgId, item.getIdentifier());
+                    writer.store(ItemHelper.convert(item));
+                    refId = item.getIdentifier();
+                }
+            } catch (ObjectStoreException e) {
+                throw new SAXException(e);
+            }
+            return refId;
+        }
+
+
+        private String getPub(String pubMedId)
+        throws SAXException {
+            String refId = pubMaster.get(pubMedId);
+            try {
+                if (refId == null) {
+                    Item item = createItem("Publication");
+                    item.setAttribute("pubMedId", pubMedId);
+                    pubMaster.put(pubMedId, item.getIdentifier());
+                    writer.store(ItemHelper.convert(item));
+                    refId = item.getIdentifier();
+                }
+            } catch (ObjectStoreException e) {
+                throw new SAXException(e);
+            }
+            return refId;
+        }
+
         private Item getDataSet(String title)
             throws SAXException {
             Item ds = dsMaster.get(title);
@@ -921,10 +911,8 @@ public class UniprotConverter extends FileConverter
                     ds.setReference("dataSource", datasource);
                     dsMaster.put(title, ds);
 
-                    ReferenceList evidenceColl =
-                        new ReferenceList("evidence", new ArrayList<String>());
-                    protein.addCollection(evidenceColl);
-                    evidenceColl.addRefId(ds.getIdentifier());
+                    protein.addCollection(new ReferenceList("evidence", new ArrayList<String>()));
+                    protein.getCollection("evidence").addRefId(ds.getIdentifier());
                     writer.store(ItemHelper.convert(ds));
                 }
 
@@ -970,10 +958,8 @@ public class UniprotConverter extends FileConverter
                 String notCG = null;
                 Iterator<String> i = nameTypeToName.keySet().iterator();
                 while (i.hasNext()) {
-
                     String type = i.next();
                     String name = nameTypeToName.get(type);
-
                     if (type.equals("primary")) {
                         primaryGeneName = name;
                     } else if (type.equals("ORF")) {
@@ -984,7 +970,6 @@ public class UniprotConverter extends FileConverter
                         }
                     }
                 }
-
                 // Some UniProt entries have CGxxx as Dmel_CGxxx - need to strip prefix
                 // so that they match identifiers from other sources.  Some genes have
                 // embl identifiers and no FlyBase id, ignore these.
@@ -1002,12 +987,10 @@ public class UniprotConverter extends FileConverter
                 // genePrimaryIdentifier = <entry><dbReference><type="FlyBase/WormBase/..">
                 //            where designation = primary gene name
                 String genePrimaryIdentifier = null;
-
                 // use map to find out where to get ids
                 UniProtGeneDataMap geneDataMap = geneDataMaps.get(taxonId);
 
                 if (geneDataMap != null) {
-
                     /* set vars if they come from datasource or name */
                     genePrimaryIdentifier = setGeneVars(designations, nameTypeToName, null,
                                                  geneDataMap.getPrimaryIdentifierSrcType(),
@@ -1121,29 +1104,24 @@ public class UniprotConverter extends FileConverter
                                             && !taxonId.equals("7227")) {
                                 gene.setAttribute("symbol", primaryGeneName);
                             }
-
                             geneMaster.put(uniqueGeneIdentifier, gene.getIdentifier());
                             if (!protein.hasCollection("genes")) {
                                 protein.addCollection(new ReferenceList("genes",
                                                                         new ArrayList<String>()));
                             }
                             protein.getCollection("genes").addRefId(gene.getIdentifier());
-
                             gene.setReference("organism", orgId);
                             writer.store(ItemHelper.convert(gene));
                             i = nameTypeToName.keySet().iterator();
                             while (i.hasNext() && !taxonId.equals("7227")) {
-
                                 String synonymDescr = "";
                                 String type = i.next();
                                 String name = nameTypeToName.get(type);
-
                                 if (type.equals("ordered locus")) {
                                     synonymDescr = "ordered locus";
                                 } else {
                                     synonymDescr =  "symbol";
                                 }
-
                                 // all gene names are synonyms
                                 // ORF is already identifer, so skip
                                 // TODO if name is empty something has gone wrong
