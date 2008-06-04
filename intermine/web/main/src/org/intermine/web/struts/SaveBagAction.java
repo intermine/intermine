@@ -10,14 +10,7 @@ package org.intermine.web.struts;
  *
  */
 
-import java.util.Collection;
 import java.util.Date;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
 
 import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletRequest;
@@ -29,28 +22,16 @@ import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
 import org.apache.struts.action.ActionMessage;
-import org.intermine.model.InterMineObject;
 import org.intermine.objectstore.ObjectStore;
 import org.intermine.objectstore.ObjectStoreException;
 import org.intermine.objectstore.ObjectStoreWriter;
 import org.intermine.objectstore.intermine.ObjectStoreWriterInterMineImpl;
-import org.intermine.path.Path;
-
-import org.intermine.objectstore.query.BagConstraint;
-import org.intermine.objectstore.query.ConstraintOp;
 import org.intermine.objectstore.query.Query;
-import org.intermine.objectstore.query.QueryClass;
-import org.intermine.objectstore.query.QueryField;
-import org.intermine.objectstore.query.QuerySelectable;
-import org.intermine.objectstore.query.Results;
 import org.intermine.web.logic.Constants;
-import org.intermine.web.logic.bag.BagQueryConfig;
 import org.intermine.web.logic.bag.InterMineBag;
 import org.intermine.web.logic.profile.Profile;
 import org.intermine.web.logic.profile.ProfileManager;
-import org.intermine.web.logic.query.PathQuery;
 import org.intermine.web.logic.results.PagedTable;
-import org.intermine.web.logic.results.WebResults;
 import org.intermine.web.logic.results.WebTable;
 import org.intermine.web.logic.session.SessionMethods;
 
@@ -134,12 +115,13 @@ public class SaveBagAction extends InterMineAction
 
         InterMineBag bag = profile.getSavedBags().get(bagName);
 
-        WebTable allRows = pt.getAllRows();
-        Set<String> objectTypes = new HashSet<String>();
-        if (bag != null) {
-            objectTypes.add(bag.getType());
+        if (!bag.getType().equals(pt.getSelectedClass())) {
+            ActionMessage actionMessage = new ActionMessage("bag.moreThanOneType");
+            recordError(actionMessage, request);
+            return mapping.findForward("results");
         }
 
+        WebTable allRows = pt.getAllRows();
         boolean seenAllRows = false;
         if (allRows.size() < 10 && !allRows.isSizeEstimate()) {
             // hack to avoid problems with results from quick search - ignore the column type
@@ -169,11 +151,6 @@ public class SaveBagAction extends InterMineAction
 //            objectTypes.add(TypeUtil.unqualifiedName(columnType));
 //        }
 //
-//        if (objectTypes.size() > 1) {
-//            ActionMessage actionMessage = new ActionMessage("bag.moreThanOneType");
-//            recordError(actionMessage, request);
-//            return mapping.findForward("results");
-//        }
 
         ObjectStoreWriter osw = null;
         try {
