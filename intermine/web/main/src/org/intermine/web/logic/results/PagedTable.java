@@ -23,6 +23,7 @@ import org.intermine.objectstore.query.ConstraintOp;
 import org.intermine.objectstore.query.Query;
 import org.intermine.objectstore.query.QueryClass;
 import org.intermine.objectstore.query.QueryCloner;
+import org.intermine.objectstore.query.QueryField;
 import org.intermine.objectstore.query.QueryHelper;
 import org.intermine.objectstore.query.QueryNode;
 import org.intermine.objectstore.query.Results;
@@ -865,7 +866,8 @@ public class PagedTable
             query.addFrom(qc);
             query.addToSelect(qc);
 
-            BagConstraint bc = new BagConstraint(qc, ConstraintOp.IN, selectionIds.keySet());
+            BagConstraint bc = new BagConstraint(new QueryField(qc, "id"),
+                                                 ConstraintOp.IN, selectionIds.keySet());
 
             query.setConstraint(bc);
 
