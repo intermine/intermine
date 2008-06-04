@@ -50,6 +50,7 @@ import org.intermine.web.logic.query.SaveQueryHelper;
 import org.intermine.web.logic.query.SavedQuery;
 import org.intermine.web.logic.results.DisplayObject;
 import org.intermine.web.logic.results.DisplayObjectFactory;
+import org.intermine.web.logic.results.GuiObject;
 import org.intermine.web.logic.results.PagedTable;
 import org.intermine.web.logic.results.TableHelper;
 import org.intermine.web.logic.results.WebResults;
@@ -916,6 +917,15 @@ public class SessionMethods
             throw new RuntimeException("WebConfig not present in web session.");
         }
         return wc;
+    }
+
+    public static GuiObject getGuiObject(HttpSession session) {
+        GuiObject guiObject = (GuiObject) session.getAttribute(Constants.GUI_OBJECT);
+        if (guiObject == null) {
+            guiObject = new GuiObject();
+            session.setAttribute(Constants.GUI_OBJECT, guiObject);
+        }
+        return guiObject;
     }
     
 }

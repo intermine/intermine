@@ -299,6 +299,7 @@ function filterWebSearchablesHandler(event, object, type, wsListId) {
 // given a list of WebSearchables names,scores and descriptions, filter the
 // wsFilterList given by the wsListId and type parameters
 function do_filtering(filteredList, type, wsListId) {
+    setItemsFiltered(true);
     if (filteredList.length == 0) {
         document.getElementById(wsListId+'_'+type+'_no_matches').style.display='block';
         $(wsListId + '_' + type + '_spinner').style.display = 'none';
@@ -394,7 +395,45 @@ function do_filtering(filteredList, type, wsListId) {
 
         $(wsListId + '_' + type + '_spinner').style.display = 'none';
         $(wsListId + '_' + type + '_container').style.display = 'block';
+        showDescriptions(wsListId, type, isDescriptionShown());
     }
+}
+
+function showElement(el, show) {
+    if (el) {
+        if (show) {
+            el.style.display = 'block';
+        } else {
+            el.style.display = 'none';
+        }
+    }
+}
+
+descriptionShown = true;
+
+function showDescriptions(listId, type, show) {
+    descriptionShown = show;
+    var prefix = listId + '_' + type + '_item_description';
+    var divs = document.getElementsByTagName('div');
+    var i = 0;
+    for (i = 0; i < divs.length; i++) {
+        var el = divs[i];
+        // it is div with description 
+        if (el.id.match(prefix) != null) {
+            // if items are filtered there are 2 descriptions: normal and highlighted 
+            // and we want to work only with highlighted, normal are hidden all the time
+            if (areItemsFiltered()) {
+                if (el.id.match('_highlight') != null) {
+                    showElement(el, show);
+                }
+            } else {
+                if (!(el.id.match('_highlight') != null)) {
+                    showElement(el, show);                    
+                }
+            } 
+        }
+    }
+    AjaxServices.setAttribute(prefix, show);
 }
 
 // un-hide all the rows in the webSearchableList
@@ -423,6 +462,23 @@ function showAll(wsListId, type) {
     $(wsListId + '_' + type + '_no_matches').style.display='none';
 }
 
+itemsFiltered = false;
+
+function areItemsFiltered() {
+    return itemsFiltered;
+}
+
+function setItemsFiltered(filtered) {
+    itemsFiltered = filtered;
+}
+
+function isDescriptionShown() {
+    if (descriptionShown) {
+        return descriptionShown;
+    } else {
+        return false;
+    }
+}
 
 // call AjaxServices.filterWebSearchables() then hide those WebSearchables in
 // the webSearchableList that don't match
@@ -534,6 +590,7 @@ function changeScope(type, wsListId) {
 }
 
 function clearFilter(type, wsListId) {
+    setItemsFiltered(false);
     var scopeId = 'filterScope_'+wsListId+'_'+type;
     var favId = 'filterAction_'+wsListId+'_'+type;
     var aspectId = wsListId+'_'+type+'_filter_aspect';

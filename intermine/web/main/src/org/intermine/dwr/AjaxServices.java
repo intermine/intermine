@@ -352,6 +352,14 @@ public class AjaxServices
         }
     }
 
+    /*
+     * Cannot be refactored from AjaxServices, else WebContextFactory.get() returns null 
+     */
+    private static GuiObject getGuiObject() {
+        HttpSession session = WebContextFactory.get().getSession();
+        return SessionMethods.getGuiObject(session);
+    }
+
     /**
      * Get the summary for the given column
      * @param summaryPath the path for the column as a String
@@ -680,18 +688,38 @@ public class AjaxServices
      */
     public static void saveToggleState(String elementId, boolean opened) {
         try {
-            HttpSession session = WebContextFactory.get().getSession();
-            GuiObject guiObject = (GuiObject) session.getAttribute(Constants.GUI_OBJECT);
-            if (guiObject == null) {
-                guiObject = new GuiObject();
-                session.setAttribute(Constants.GUI_OBJECT, guiObject);
-            }
-            guiObject.getToggledElements().put(elementId, Boolean.valueOf(opened));
+            AjaxServices.getGuiObject().getToggledElements().put(elementId, 
+                    Boolean.valueOf(opened));
         } catch (RuntimeException e) {
             processException(e);
         }
     }
 
+    /**
+     * @param name name 
+     * @param value value
+     */
+    public static void setAttribute(String name, String value) {
+        try {
+            AjaxServices.getGuiObject().setAttribute(name, value);
+        } catch (RuntimeException e) {
+            processException(e);
+        }        
+    }
+    
+    /**
+     * @param name name
+     * @return value
+     */
+    public static Object getAttribute(String name) {
+        try {
+            return AjaxServices.getGuiObject().getAttribute(name);
+        } catch (RuntimeException e) {
+            processException(e);
+        }
+        return null;
+    }
+    
     /**
      * validate bag upload
      * @param bagName name of new bag to be validated
