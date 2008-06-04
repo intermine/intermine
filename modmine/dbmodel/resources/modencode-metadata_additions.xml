@@ -71,6 +71,8 @@
 		<attribute name="description" type="java.lang.String" />
 		<attribute name="type" type="java.lang.String" />
 		<attribute name="url" type="java.lang.String" />
+		<attribute name="arrayDataFile" type="java.lang.String" />
+		<attribute name="derivedArrayDataFile" type="java.lang.String" />
 		<collection name="experimentSubmissions"
 			referenced-type="org.flymine.model.genomic.ExperimentSubmission"
 			reverse-reference="protocols" />
