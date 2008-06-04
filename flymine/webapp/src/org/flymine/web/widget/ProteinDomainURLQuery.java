@@ -60,20 +60,27 @@ public class ProteinDomainURLQuery implements WidgetURLQuery
         List<Path> view = new ArrayList<Path>();
         String bagType = bag.getType();
 
-        Path secondaryIdentifier = null;
-        Path primaryIdentifier = MainHelper.makePath(model, q, bagType + ".primaryIdentifier");
-        Path name = MainHelper.makePath(model, q, bagType + ".name");
-        Path organism = MainHelper.makePath(model, q, bagType + ".organism.name");
-        Path domainIdentifier = null;
-        Path domainName = null;
+        Path primaryIdentifier = null, primaryAccession = null;
+        Path organism = null, domainIdentifier = null, domainName = null;
+        Path geneIdentifier = null, secondaryIdentifier = null;
 
         if (bagType.equals("Gene")) {
+
+            primaryIdentifier = MainHelper.makePath(model, q, "Gene.proteins.primaryIdentifier");
+            primaryAccession = MainHelper.makePath(model, q, "Gene.proteins.primaryAccession");
+            organism = MainHelper.makePath(model, q, "Gene.proteins.organism.name");
+            geneIdentifier = MainHelper.makePath(model, q, "Gene.primaryIdentifier");
             secondaryIdentifier = MainHelper.makePath(model, q, "Gene.secondaryIdentifier");
             domainIdentifier
             =  MainHelper.makePath(model, q, "Gene.proteins.proteinDomains.primaryIdentifier");
             domainName =  MainHelper.makePath(model, q, "Gene.proteins.proteinDomains.name");
+
+
         } else if (bagType.equals("Protein")) {
-            secondaryIdentifier = MainHelper.makePath(model, q, "Protein.primaryAccession");
+
+            primaryIdentifier = MainHelper.makePath(model, q, "Protein.primaryIdentifier");
+            primaryAccession = MainHelper.makePath(model, q, "Protein.primaryAccession");
+            organism = MainHelper.makePath(model, q, "Protein.organism.name");
             domainIdentifier
             =  MainHelper.makePath(model, q, "Protein.proteinDomains.primaryIdentifier");
             domainName =  MainHelper.makePath(model, q, "Protein.proteinDomains.name");
@@ -107,9 +114,13 @@ public class ProteinDomainURLQuery implements WidgetURLQuery
         }
 
         view.add(primaryIdentifier);
-        view.add(secondaryIdentifier);
-        view.add(name);
+        view.add(primaryAccession);
         view.add(organism);
+        if (bagType.equals("Gene")) {
+            view.add(geneIdentifier);
+            view.add(secondaryIdentifier);
+        }
+
         if (keys == null) {
             view.add(domainIdentifier);
             view.add(domainName);
@@ -124,9 +135,12 @@ public class ProteinDomainURLQuery implements WidgetURLQuery
             sortOrder.add(new OrderBy(domainName, "asc"));
         }
         sortOrder.add(new OrderBy(primaryIdentifier, "asc"));
-        sortOrder.add(new OrderBy(secondaryIdentifier, "asc"));
-        sortOrder.add(new OrderBy(name, "asc"));
+        sortOrder.add(new OrderBy(primaryAccession, "asc"));
         sortOrder.add(new OrderBy(organism, "asc"));
+        if (bagType.equals("Gene")) {
+            sortOrder.add(new OrderBy(geneIdentifier, "asc"));
+            sortOrder.add(new OrderBy(secondaryIdentifier, "asc"));
+        }
         q.setSortOrder(sortOrder);
 
         return q;

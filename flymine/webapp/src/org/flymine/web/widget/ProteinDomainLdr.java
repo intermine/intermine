@@ -120,57 +120,41 @@ public class ProteinDomainLdr extends EnrichmentWidgetLdr
         }
 
         Query q = new Query();
-
-        // calculating totals OR getting IDs for notAnalysed display
-        if (action.endsWith("Total") || action.equals("analysed")) {
-
-            Query subQ = new Query();
-            subQ.setDistinct(true);
-            if (bagType.equals("Protein")) {
-                subQ.addToSelect(qfProteinId);
-            } else {
-                subQ.addToSelect(qfGeneId);
-            }
-            subQ.addFrom(qcProtein);
-            subQ.addFrom(qcOrganism);
-            subQ.addFrom(qcProteinFeature);
-            if (bagType.equals("Gene")) {
-                subQ.addFrom(qcGene);
-            }
-            subQ.setConstraint(cs);
-            if (action.equals("analysed")) {
-                return subQ;
-            }
-
-            q.addFrom(subQ);
-            q.addToSelect(objectCount);
-
-        // exporting identifiers OR doing enrichment calculations
-        } else {
-
-            q.addFrom(qcProtein);
-            q.addFrom(qcOrganism);
-            q.addFrom(qcProteinFeature);
-            if (bagType.equals("Gene")) {
-                q.addFrom(qcGene);
-            }
-            q.setConstraint(cs);
-
-            if (action.equals("export")) {
-                q.addToSelect(qfId);
-                q.addToSelect(qfPrimaryIdentifier);
-                q.addToOrderBy(qfId);
-            } else {
-                q.setDistinct(false);
-                q.addToSelect(qfId);
-                q.addToGroupBy(qfId);
-                q.addToSelect(objectCount);
-                if (action.equals("sample")) {
-                    q.addToSelect(qfName);
-                    q.addToGroupBy(qfName);
-                }
-            }
+        q.setDistinct(true);
+        q.addFrom(qcProtein);
+        q.addFrom(qcOrganism);
+        q.addFrom(qcProteinFeature);
+        if (bagType.equals("Gene")) {
+            q.addFrom(qcGene);
         }
+        q.setConstraint(cs);
+
+        if (action.equals("export")) {
+            q.addToSelect(qfId);
+            q.addToSelect(qfPrimaryIdentifier);
+            q.addToOrderBy(qfId);
+        } else if (action.equals("analysed")) {
+            if (bagType.equals("Protein")) {
+                q.addToSelect(qfProteinId);
+            } else {
+                q.addToSelect(qfGeneId);
+            }
+        } else if (action.endsWith("Total")) {
+            q.addToSelect(new QueryField(qcGene, "id"));
+            Query superQ = new Query();
+            superQ.addFrom(q);
+            superQ.addToSelect(objectCount);
+            return superQ;
+        } else {    // enrichment calculations
+            q.setDistinct(false);
+            q.addToSelect(qfId);
+            q.addToGroupBy(qfId);
+            q.addToSelect(objectCount);
+            if (action.equals("sample")) {
+                q.addToSelect(qfName);
+                q.addToGroupBy(qfName);
+            }
+         }
         return q;
     }
 }
