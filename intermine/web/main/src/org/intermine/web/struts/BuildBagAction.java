@@ -10,21 +10,12 @@ package org.intermine.web.struts;
  *
  */
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-
-import org.intermine.objectstore.ObjectStore;
-import org.intermine.web.logic.Constants;
-import org.intermine.web.logic.WebUtil;
-import org.intermine.web.logic.bag.BagQueryConfig;
-import org.intermine.web.logic.bag.BagQueryResult;
-import org.intermine.web.logic.bag.BagQueryRunner;
-import org.intermine.web.logic.profile.Profile;
-
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
 import java.io.StringReader;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
 
 import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletRequest;
@@ -39,6 +30,13 @@ import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
 import org.apache.struts.action.ActionMessage;
 import org.apache.struts.upload.FormFile;
+import org.intermine.objectstore.ObjectStore;
+import org.intermine.web.logic.Constants;
+import org.intermine.web.logic.WebUtil;
+import org.intermine.web.logic.bag.BagQueryConfig;
+import org.intermine.web.logic.bag.BagQueryResult;
+import org.intermine.web.logic.bag.BagQueryRunner;
+import org.intermine.web.logic.profile.Profile;
 
 
 /**
@@ -56,7 +54,7 @@ public class BuildBagAction extends InterMineAction
      * Action for creating a bag of InterMineObjects or Strings from identifiers in text field.
      *
      * @param mapping The ActionMapping used to select this instance
-     * @param frm The optional ActionForm bean for this request (if any)
+     * @param form The optional ActionForm bean for this request (if any)
      * @param request The HTTP request we are processing
      * @param response The HTTP response we are creating
      * @return an ActionForward object defining where control goes next
@@ -64,15 +62,15 @@ public class BuildBagAction extends InterMineAction
      *  an exception
      */
     public ActionForward execute(ActionMapping mapping,
-                                 ActionForm frm,
+                                 ActionForm form,
                                  HttpServletRequest request,
                                  @SuppressWarnings("unused") HttpServletResponse response)
     throws Exception {
         HttpSession session = request.getSession();
-        BuildBagForm form = (BuildBagForm) frm;
+        BuildBagForm buildBagForm = (BuildBagForm) form;
         ServletContext servletContext = session.getServletContext();
         ObjectStore os = (ObjectStore) servletContext.getAttribute(Constants.OBJECTSTORE);
-        String type = form.getType();
+        String type = buildBagForm.getType();
 
         if (StringUtils.isEmpty(type)) {
             recordError(new ActionMessage("bagBuild.noBagPaste"), request);
@@ -95,30 +93,42 @@ public class BuildBagAction extends InterMineAction
 
         BufferedReader reader = null;
 
-        FormFile formFile = form.getFormFile();
-        
-        if (isFileUpload(form)) {
+        FormFile formFile = buildBagForm.getFormFile();
+
+        /*
+         * FormFile used from Struts works a bit strangely. 
+         * 1. Although the file does't exist formFile.getInputStream() doesn't 
+         * throw FileNotFoundException.
+         * 2. When user specified empty file path or very invalid file path, 
+         * like file path not starting at '/' then formFile.getFileName() returns empty string. 
+         */
+        if (formFile != null && formFile.getFileName() != null
+                            && formFile.getFileName().length() > 0) {
+
             String mimetype = formFile.getContentType();
             if (!mimetype.equals("application/octet-stream") && !mimetype.startsWith("text")) {
                 recordError(new ActionMessage("bagBuild.notText",
                                               mimetype), request);
                 return mapping.findForward("bags");
             }
-            if (form.getFormFile() == null || form.getFormFile().getFileName() == null 
-                    || form.getFormFile().getFileName().trim().length() == 0) {
-                recordError(new ActionMessage("bagBuild.noBagFile"), request);
+            if (formFile.getFileSize() == 0) {
+                recordError(new ActionMessage("bagBuild.noBagFileOrEmpty"), request);
                 return mapping.findForward("bags");                
             }
             reader = new BufferedReader(new InputStreamReader(formFile.getInputStream()));
-        } else { 
-            if (form.getText() != null && form.getText().trim().length() != 0) {
-                String trimmedText = form.getText().trim();
-                reader = new BufferedReader(new StringReader(trimmedText));
-            } else {
+        } else if (buildBagForm.getText() != null && buildBagForm.getText().length() != 0) {
+            String trimmedText = buildBagForm.getText().trim();
+            if (trimmedText.length() == 0) {
                 recordError(new ActionMessage("bagBuild.noBagPaste"), request);
-                return mapping.findForward("bags");                
+                return mapping.findForward("bags");
+            } else {
+                reader = new BufferedReader(new StringReader(trimmedText));
             }
-        } 
+        } else {
+            recordError(new ActionMessage("bagBuild.noBagFile"), request);
+            return mapping.findForward("bags");
+        }
+
         reader.mark(READ_AHEAD_CHARS);
 
         char buf[] = new char[READ_AHEAD_CHARS];
@@ -160,20 +170,10 @@ public class BuildBagAction extends InterMineAction
         }
 
         BagQueryResult bagQueryResult =
-            bagRunner.searchForBag(type, list, form.getExtraFieldValue(), false);
+            bagRunner.searchForBag(type, list, buildBagForm.getExtraFieldValue(), false);
         session.setAttribute("bagQueryResult", bagQueryResult);
         request.setAttribute("bagType", type);
 
         return mapping.findForward("bagUploadConfirm");
-    }
-    
-    private boolean isFileUpload(BuildBagForm form) {
-        if (form.getUploadType() != null) {
-            return form.getUploadType().trim().equalsIgnoreCase("file");
-        } else {
-            FormFile formFile = form.getFormFile();
-            return (formFile != null && formFile.getFileName() != null
-                    && formFile.getFileName().length() > 0);
-        }
     }
 }

@@ -22,18 +22,15 @@ import org.apache.struts.upload.FormFile;
  * @author Kim Rutherford
  */
 
-public class BuildBagForm extends ActionForm
+public class BuildBagForm extends ActionForm 
 {
 
     private FormFile formFile;
-    
     private String text;
-    
     private String type;
-    
     private String extraFieldValue;
+    private String whichInput;
 
-    private String uploadType;
     /**
      * Get the bag type
      * @return the bag type string
@@ -101,11 +98,11 @@ public class BuildBagForm extends ActionForm
     }
 
     /**
-     * Set the type the user used to upload the bag.
-     * @param uploadType which type of upload the user used: paste or file
+     * Set the method the user used to upload her bag.
+     * @param whichInput Which method the user used: paste or file
      */
-    public void setUploadType(String uploadType) {
-        this.uploadType = uploadType;
+    public void setWhichInput(String whichInput) {
+        this.whichInput = whichInput;
     }
 
     /**
@@ -113,10 +110,9 @@ public class BuildBagForm extends ActionForm
      * they typed in the entries via the form.  File if they uploaded a file from their computer.
      * @return which method the user used to upload her bag: paste or file
      */
-    public String getUploadType() {
-        return uploadType;
+    public String getWhichInput() {
+        return whichInput;
     }
-
     
     /**
      * {@inheritDoc}
@@ -128,6 +124,7 @@ public class BuildBagForm extends ActionForm
         text = "";
         //type = "";
         extraFieldValue = "";
-        uploadType = null;
+        whichInput = "";
     }
+
 }
