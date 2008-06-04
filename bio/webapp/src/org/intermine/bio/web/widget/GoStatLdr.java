@@ -94,10 +94,14 @@ public class GoStatLdr extends EnrichmentWidgetLdr
         QueryField qfProteinId = new QueryField(qcProtein, "id");
 
         QueryField qfPrimaryIdentifier = null;
-        if (bag.getType().equalsIgnoreCase("protein")) {
+        QueryField qfId = null;
+
+        if (bagType.equals("Protein")) {
             qfPrimaryIdentifier = new QueryField(qcProtein, "primaryIdentifier");
+            qfId = qfProteinId;
         } else {
             qfPrimaryIdentifier = new QueryField(qcGene, "primaryIdentifier");
+            qfId = qfGeneId;
         }
         QueryFunction objectCount = new QueryFunction();
 
@@ -120,6 +124,7 @@ public class GoStatLdr extends EnrichmentWidgetLdr
             cs.addConstraint(new SimpleConstraint(qf2, ConstraintOp.NOT_EQUALS,
                                                   new QueryValue(ids[i])));
         }
+
         // gene is from organism
         QueryObjectReference qor1 = new QueryObjectReference(qcGene, "organism");
         cs.addConstraint(new ContainsConstraint(qor1, ConstraintOp.CONTAINS, qcOrganism));
@@ -137,25 +142,16 @@ public class GoStatLdr extends EnrichmentWidgetLdr
                                               new QueryValue(namespace.toLowerCase())));
 
         if (!action.startsWith("population")) {
-            if (bag.getType().equalsIgnoreCase("protein")) {
-                cs.addConstraint(new BagConstraint(qfProteinId, ConstraintOp.IN, bag.getOsb()));
-            } else {
-                cs.addConstraint(new BagConstraint(qfGeneId, ConstraintOp.IN, bag.getOsb()));
-            }
+            cs.addConstraint(new BagConstraint(qfId, ConstraintOp.IN, bag.getOsb()));
         }
 
         if (bagType.equals("Protein")) {
-            QueryObjectReference qor3 = new QueryObjectReference(qcProtein, "organism");
-            cs.addConstraint(new ContainsConstraint(qor3, ConstraintOp.CONTAINS, qcOrganism));
-
             QueryCollectionReference qcr2 = new QueryCollectionReference(qcProtein, "genes");
             cs.addConstraint(new ContainsConstraint(qcr2, ConstraintOp.CONTAINS, qcGene));
-        } else {
-            QueryObjectReference qor4 = new QueryObjectReference(qcGene, "organism");
-            cs.addConstraint(new ContainsConstraint(qor4, ConstraintOp.CONTAINS, qcOrganism));
         }
 
         Query q = new Query();
+        q.setDistinct(true);
         q.addFrom(qcGene);
         q.addFrom(qcGoAnnotation);
         q.addFrom(qcOrganism);
@@ -165,30 +161,26 @@ public class GoStatLdr extends EnrichmentWidgetLdr
         }
         q.setConstraint(cs);
 
-        if (action.endsWith("Total") || action.equals("analysed")) {
-            q.setDistinct(true);
-            q.addToSelect(qfGeneId);
-            if (action.endsWith("Total")) {
-                Query superQ = new Query();
-                superQ.addFrom(q);
-                superQ.addToSelect(objectCount);
-                q = superQ;
-            }
-        } else {
+        if (action.equals("analysed")) {
+            q.addToSelect(qfId);
+        } else if (action.endsWith("Total")) {
+            q.addToSelect(qfId);
+            Query superQ = new Query();
+            superQ.addFrom(q);
+            superQ.addToSelect(objectCount);
+            return superQ;
+        } else if (action.equals("export")) {
+            q.addToSelect(qfGoTermId);
+            q.addToSelect(qfPrimaryIdentifier);
+            q.addToOrderBy(qfGoTermId);
+        } else {    // calculating enrichment
             q.setDistinct(false);
-            if (action.equals("export")) {
-                q.setDistinct(true);
-                q.addToSelect(qfGoTermId);
-                q.addToSelect(qfPrimaryIdentifier);
-                q.addToOrderBy(qfGoTermId);
-            } else {
-                q.addToSelect(qfGoTermId);
-                q.addToGroupBy(qfGoTermId);
-                q.addToSelect(objectCount);
-                if (action.equals("sample")) {
-                    q.addToSelect(qfGoTerm);
-                    q.addToGroupBy(qfGoTerm);
-                }
+            q.addToSelect(qfGoTermId);
+            q.addToGroupBy(qfGoTermId);
+            q.addToSelect(objectCount);
+            if (action.equals("sample")) {
+                q.addToSelect(qfGoTerm);
+                q.addToGroupBy(qfGoTerm);
             }
         }
         return q;
