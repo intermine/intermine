@@ -101,7 +101,7 @@ public class ProteinDomainLdr extends EnrichmentWidgetLdr
         cs.addConstraint(new SimpleConstraint(qf2, ConstraintOp.MATCHES, new QueryValue("ipr%")));
 
         if (!action.startsWith("population")) {
-            if (bag.getType().equalsIgnoreCase("protein")) {
+            if (bagType.equals("Protein")) {
                 cs.addConstraint(new BagConstraint(qfProteinId, ConstraintOp.IN, bag.getOsb()));
             } else {
                 cs.addConstraint(new BagConstraint(qfGeneId, ConstraintOp.IN, bag.getOsb()));
@@ -140,7 +140,12 @@ public class ProteinDomainLdr extends EnrichmentWidgetLdr
                 q.addToSelect(qfGeneId);
             }
         } else if (action.endsWith("Total")) {
-            q.addToSelect(new QueryField(qcGene, "id"));
+            if (bagType.equals("Protein")) {
+                q.addToSelect(qfProteinId);
+            } else {
+                q.addToSelect(qfGeneId);
+            }
+
             Query superQ = new Query();
             superQ.addFrom(q);
             superQ.addToSelect(objectCount);
