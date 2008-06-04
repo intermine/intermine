@@ -1,15 +1,19 @@
-table.bagTable td.title {
-    padding-right:1em;
-    padding-top: 5px;
-    padding-bottom: 5px;
-    width:9em;
-    font-size:1.2em;
-    font-weight:bold;
-    text-align: right;
-}
+ol#buildbaglist, ol#buildbaglist li{
+    margin:0;padding:0;
+    list-style: none;}
 
-table.bagTable select, table.bagTable textarea{
-	width:60%;}
+ol#buildbaglist label{
+    float:left;
+    margin-right:1em;width:10em;
+    text-align:right;font-size:1.2em;font-weight:bold;}
+
+ol#buildbaglist li {
+    float:left;clear:left;
+    width:100%;padding-bottom:1em;}
+
+ol#buildbaglist select, ol#buildbaglist textarea{
+    width:60%;}
 
 textarea#pasteInput {
   width: 345px;}
+ 
