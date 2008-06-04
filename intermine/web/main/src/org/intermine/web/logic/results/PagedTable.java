@@ -891,7 +891,8 @@ public class PagedTable
             newQuery.addToSelect(newNode);
 
             BagConstraint bc =
-                new BagConstraint(newNode, ConstraintOp.NOT_IN, selectionIds.keySet());
+                new BagConstraint(new QueryField(newNode, "id"),
+                                  ConstraintOp.NOT_IN, selectionIds.keySet());
 
             QueryHelper.addAndConstraint(newQuery, bc);
 
