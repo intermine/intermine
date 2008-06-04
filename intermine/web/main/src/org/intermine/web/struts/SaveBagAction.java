@@ -115,7 +115,7 @@ public class SaveBagAction extends InterMineAction
 
         InterMineBag bag = profile.getSavedBags().get(bagName);
 
-        if (!bag.getType().equals(pt.getSelectedClass())) {
+        if ((bag != null) && (!bag.getType().equals(pt.getSelectedClass()))) {
             ActionMessage actionMessage = new ActionMessage("bag.moreThanOneType");
             recordError(actionMessage, request);
             return mapping.findForward("results");
