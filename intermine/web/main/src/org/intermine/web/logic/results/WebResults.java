@@ -19,17 +19,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import org.intermine.objectstore.query.Query;
-import org.intermine.objectstore.query.QueryClass;
-import org.intermine.objectstore.query.QueryCollectionPathExpression;
-import org.intermine.objectstore.query.QueryField;
-import org.intermine.objectstore.query.QueryNode;
-import org.intermine.objectstore.query.QueryObjectPathExpression;
-import org.intermine.objectstore.query.QuerySelectable;
-import org.intermine.objectstore.query.Results;
-import org.intermine.objectstore.query.ResultsInfo;
-import org.intermine.objectstore.query.ResultsRow;
-
+import org.apache.log4j.Logger;
 import org.intermine.metadata.Model;
 import org.intermine.model.InterMineObject;
 import org.intermine.objectstore.ObjectStore;
@@ -38,6 +28,15 @@ import org.intermine.objectstore.flatouterjoins.MultiRow;
 import org.intermine.objectstore.flatouterjoins.MultiRowFirstValue;
 import org.intermine.objectstore.flatouterjoins.MultiRowValue;
 import org.intermine.objectstore.intermine.ObjectStoreInterMineImpl;
+import org.intermine.objectstore.query.Query;
+import org.intermine.objectstore.query.QueryClass;
+import org.intermine.objectstore.query.QueryCollectionPathExpression;
+import org.intermine.objectstore.query.QueryField;
+import org.intermine.objectstore.query.QueryObjectPathExpression;
+import org.intermine.objectstore.query.QuerySelectable;
+import org.intermine.objectstore.query.Results;
+import org.intermine.objectstore.query.ResultsInfo;
+import org.intermine.objectstore.query.ResultsRow;
 import org.intermine.path.Path;
 import org.intermine.util.DynamicUtil;
 import org.intermine.util.TypeUtil;
@@ -46,8 +45,6 @@ import org.intermine.web.logic.WebUtil;
 import org.intermine.web.logic.bag.BagQueryResult;
 import org.intermine.web.logic.query.PathQuery;
 import org.intermine.web.logic.query.PathQueryBinding;
-
-import org.apache.log4j.Logger;
 
 /**
  * The web version of a Results object.  This class handles the mapping between the paths that user
@@ -346,8 +343,12 @@ public class WebResults extends AbstractList<List<Object>> implements WebTable
                     o = ((Collection) o).iterator().next();
                 }
             }
+            // Three cases:
+            // 1) attribute has a value so create a result element
+            // 2) we have an object but attribute is null -> create a ResultElement with value null
+            // 3) the object is null (outer join) so add null value rowCells
             Object fieldValue = (o == null ? null : path.resolve(o));
-            if (makeResultElements) {
+            if (makeResultElements && o != null) {
                 String fieldCDName = path.getLastClassDescriptor().getName();
                 String unqualifiedFieldCD = TypeUtil.unqualifiedName(fieldCDName);
                 boolean isKeyField = ClassKeyHelper.isKeyField(classKeys, unqualifiedFieldCD,
