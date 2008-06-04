@@ -340,7 +340,7 @@
 
   <class className="org.flymine.model.genomic.GOAnnotation">
     <fields>
-      <fieldconfig fieldExpr="subject.primaryIdentifier" showInInlineCollection="false" showInResults="false"/>
+      <fieldconfig fieldExpr="subject.primaryIdentifier" showInInlineCollection="false" showInResults="true"/>
       <fieldconfig fieldExpr="identifier"/>
       <fieldconfig fieldExpr="name"/>
       <fieldconfig fieldExpr="property[GOTerm].namespace"/>
