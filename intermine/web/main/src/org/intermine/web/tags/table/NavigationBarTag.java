@@ -12,7 +12,6 @@ package org.intermine.web.tags.table;
 
 import java.io.IOException;
 
-import javax.servlet.jsp.JspException;
 import javax.servlet.jsp.JspWriter;
 import javax.servlet.jsp.tagext.SimpleTagSupport;
 
@@ -24,11 +23,11 @@ public class NavigationBarTag extends SimpleTagSupport
 {
 
     private String baseLink;
-    
+
     private Integer pageSize;
-    
+
     private Integer currentPage;
-    
+
     private boolean nextEnabled = false;
 
     /**
@@ -46,14 +45,15 @@ public class NavigationBarTag extends SimpleTagSupport
     }
 
     /**
-     * According pageSize and currentPage parameter navigation bar 
-     * computes link to following and previous page. 
+     * According pageSize and currentPage parameter navigation bar
+     * computes link to following and previous page.
      * example of base link: http://localhost:8080/query/data/template/results?name=
      *      AllGene_Chromosome&op1=eq&value1=Drosophila+melanogaster&size=10
-     * <b>Important:</b> baseLink can't contain size or start parameter 
-     * @throws JspException, IOException if some error happens 
+     * <b>Important:</b> baseLink can't contain size or start parameter
+     * @throws IOException if some error happens
      */
-    public void doTag() throws JspException, IOException {
+    @Override
+    public void doTag() throws IOException {
         JspWriter writer = getJspContext().getOut();
         writer.print("<span class=\"navigationBar\" style=\"white-space:nowrap;\">");
         writer.print(getLinkHtml("< Previous", getPreviousLink(currentPage)));
@@ -63,7 +63,7 @@ public class NavigationBarTag extends SimpleTagSupport
         writer.print(getLinkHtml("Next >", getNextLink(currentPage)));
         writer.print("</span>");
     }
-    
+
     /**
      * @return baseLink that is prefix common for all links
      */
@@ -86,14 +86,14 @@ public class NavigationBarTag extends SimpleTagSupport
             return title;
         }
     }
-    
+
     /**
      * @param pageIndex index
      * @return link to page next to the page with provided index
      */
     public String getNextLink(int pageIndex) {
         if (nextEnabled) {
-            return getPageLink(pageIndex + 1);    
+            return getPageLink(pageIndex + 1);
         } else {
             return null;
         }
@@ -120,7 +120,7 @@ public class NavigationBarTag extends SimpleTagSupport
      */
     public String getPreviousLink(int pageIndex) {
         if (pageIndex > 0) {
-            return getPageLink(pageIndex - 1);    
+            return getPageLink(pageIndex - 1);
         } else {
             return null;
         }
@@ -134,7 +134,7 @@ public class NavigationBarTag extends SimpleTagSupport
     }
 
     /**
-     * @param currentPage index of page that should be current 
+     * @param currentPage index of page that should be current
      */
     public void setCurrentPage(Integer currentPage) {
         this.currentPage = currentPage;
@@ -150,6 +150,7 @@ public class NavigationBarTag extends SimpleTagSupport
     /**
      * @return html of navigation bar.
      */
+    @Override
     public String toString() {
         String ret = "<span class=\"navigationBar\" style=\"white-space:nowrap;\">";
         ret += getLinkHtml("< Previous", getPreviousLink(currentPage));
