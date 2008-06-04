@@ -3,6 +3,10 @@
 <attribute name="title" value="Swiss-Prot data set"/>
 <reference name="dataSource" ref_id="0_1"/>
 </item>
+<item id="8_3" class="http://www.flymine.org/model/genomic#Comment">
+<attribute name="text" value="Contains 1 homeobox DNA-binding domain."/>
+<attribute name="type" value="similarity"/>
+</item>
 <item id="4_2" class="http://www.flymine.org/model/genomic#Synonym">
 <attribute name="type" value="name"/>
 <attribute name="value" value="eve's name"/>
@@ -89,16 +93,6 @@
 <attribute name="length" value="376"/>
 <attribute name="residues" value="MHGYRTYNMESHHAHHDASPVDQKPLVVDLLATQYGKPQTPPPSPNECLSSPDNSLNGSRGSEIPADPSVRRYRTAFTRDQLGRLEKEFYKENYVSRPRRCELAAQLNLPESTIKVWFQNRRMKDKRQRIAVAWPYAAVYSDPAFAASILQAAANSVGMPYPPYAPAAAAAAAAAAAVATNPMMATGMPPMGMPQMPTMQMPGHSGHAGHPSPYGQYRYTPYHIPARPAPPHPAGPHMHHPHMMGSSATGSSYSAGAAGLLGALPSATCYTGLGVGVPKTQTPPLDLQSSSSPHSSTLSLSPVGSDHAKVFDRSPVAQSAPSVPAPAPLTTTSPLPAPGLLMPSAKRPASDMSPPPTTTVIAEPKPKLFKPYKTEA"/>
 </item>
-<item id="8_3" class="http://www.flymine.org/model/genomic#Comment">
-<attribute name="text" value="Contains 1 homeobox DNA-binding domain."/>
-<attribute name="type" value="similarity"/>
-<reference name="source" ref_id="3_1"/>
-</item>
-<item id="8_2" class="http://www.flymine.org/model/genomic#Comment">
-<attribute name="text" value="I'm a duplicate!"/>
-<attribute name="type" value="similarity"/>
-<reference name="source" ref_id="3_1"/>
-</item>
 <item id="7_2" class="http://www.flymine.org/model/genomic#Publication">
 <attribute name="pubMedId" value="1111111"/>
 </item>
@@ -124,9 +118,12 @@
 <item id="8_1" class="http://www.flymine.org/model/genomic#Comment">
 <attribute name="text" value="Nucleus."/>
 <attribute name="type" value="subcellular location"/>
-<reference name="source" ref_id="3_1"/>
 </item>
 <item id="0_1" class="http://www.flymine.org/model/genomic#DataSource">
 <attribute name="name" value="UniProt"/>
+</item>
+<item id="8_2" class="http://www.flymine.org/model/genomic#Comment">
+<attribute name="text" value="I'm a duplicate!"/>
+<attribute name="type" value="similarity"/>
 </item>
 </items>
