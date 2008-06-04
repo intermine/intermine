@@ -261,7 +261,7 @@
       <bagtabledisplayer title="Genetic Interactions"
                          pathStrings="Gene.geneticInteractions.interactingGenes"
                          link="org.intermine.bio.web.widget.GeneticInteractionURLQuery"
-                         description="Genes that genetically interact with genes in this list - data from &lt;a href=&quot;http://www.thebiogrid.org/&quot; target=&quot;_new&quot;&gt;BioGRID&lt;/a&gt;.  Counts may include the same interaction more than once if observed in multiple experiments."
+                         description="Genes (from the list or not) that genetically interact with genes in this list - data from &lt;a href=&quot;http://www.thebiogrid.org/&quot; target=&quot;_new&quot;&gt;BioGRID&lt;/a&gt;.  Counts may include the same interaction more than once if observed in multiple experiments."
                          displayFields="primaryIdentifier"
                          exportFields="primaryIdentifier"
                          columnTitle="Interactions"/>
