@@ -26,7 +26,6 @@ import org.intermine.objectstore.ObjectStore;
 import org.intermine.objectstore.ObjectStoreException;
 import org.intermine.objectstore.ObjectStoreWriter;
 import org.intermine.objectstore.intermine.ObjectStoreWriterInterMineImpl;
-import org.intermine.objectstore.query.Query;
 import org.intermine.web.logic.Constants;
 import org.intermine.web.logic.bag.InterMineBag;
 import org.intermine.web.logic.profile.Profile;
@@ -162,9 +161,7 @@ public class SaveBagAction extends InterMineAction
 
             osw = new ObjectStoreWriterInterMineImpl(os);
 
-            Query bagQuery = pt.getBagCreationQuery();
-
-            osw.addToBagFromQuery(bag.getOsb(), bagQuery);
+            pt.addSelectedToBag(osw, bag.getOsb());
 
             recordMessage(new ActionMessage("bag.saved", bagName), request);
             SessionMethods.invalidateBagTable(session, bagName);

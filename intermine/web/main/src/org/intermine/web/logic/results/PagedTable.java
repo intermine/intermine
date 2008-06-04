@@ -20,12 +20,16 @@ import java.util.Map;
 
 import org.intermine.objectstore.query.BagConstraint;
 import org.intermine.objectstore.query.ConstraintOp;
+import org.intermine.objectstore.query.ContainsConstraint;
+import org.intermine.objectstore.query.ObjectStoreBag;
 import org.intermine.objectstore.query.Query;
 import org.intermine.objectstore.query.QueryClass;
 import org.intermine.objectstore.query.QueryCloner;
 import org.intermine.objectstore.query.QueryField;
 import org.intermine.objectstore.query.QueryHelper;
-import org.intermine.objectstore.query.QueryNode;
+import org.intermine.objectstore.query.QueryObjectPathExpression;
+import org.intermine.objectstore.query.QueryObjectReference;
+import org.intermine.objectstore.query.QuerySelectable;
 import org.intermine.objectstore.query.Results;
 import org.intermine.objectstore.query.ResultsRow;
 
@@ -33,6 +37,7 @@ import org.intermine.metadata.FieldDescriptor;
 import org.intermine.model.InterMineObject;
 import org.intermine.objectstore.ObjectStore;
 import org.intermine.objectstore.ObjectStoreException;
+import org.intermine.objectstore.ObjectStoreWriter;
 import org.intermine.objectstore.flatouterjoins.MultiRow;
 import org.intermine.path.Path;
 import org.intermine.util.DynamicUtil;
@@ -878,26 +883,64 @@ public class PagedTable
             Query origQuery = results.getQuery();
             Query newQuery = QueryCloner.cloneQuery(origQuery);
 
-            Map<Path, QueryNode> pathToQueryNodeMap = webResults.getPathToQueryNode();
+            Map<String, QuerySelectable> pathToQueryNodeMap = webResults.getPathToQueryNode();
             Path path = columns.get(allSelected).getPath().getPrefix();
-            QueryNode qn = pathToQueryNodeMap.get(path.toStringNoConstraints());
+            QuerySelectable qn = pathToQueryNodeMap.get(path.toStringNoConstraints());
 
             int nodeIndex = origQuery.getSelect().indexOf(qn);
 
-            QueryClass newNode = (QueryClass) newQuery.getSelect().get(nodeIndex);
-
+            QuerySelectable newSelectable = newQuery.getSelect().get(nodeIndex);
             newQuery.clearSelect();
+            QueryClass newNode;
+            if (newSelectable instanceof QueryClass) {
+                newNode = (QueryClass) newSelectable;
+            } else {
+                QueryObjectPathExpression qope = (QueryObjectPathExpression) newSelectable;
+                // We need to morph the query from an outer join to an inner join. This will not
+                // affect the results, which are ids from the path expression, except by removing
+                // "null".
+                newNode = new QueryClass(qope.getType());
+                newQuery.addFrom(newNode);
+                QueryClass lastQc = newNode;
+                QueryObjectPathExpression nextQope = qope.getQope();
+                while (nextQope != null) {
+                    QueryClass newQc = new QueryClass(nextQope.getType());
+                    newQuery.addFrom(newQc);
+                    QueryHelper.addAndConstraint(newQuery, new ContainsConstraint(
+                                new QueryObjectReference(newQc, qope.getFieldName()),
+                                ConstraintOp.CONTAINS, lastQc));
+                    qope = nextQope;
+                    lastQc = newQc;
+                    nextQope = qope.getQope();
+                }
+                QueryClass rootQc = qope.getQueryClass();
+                QueryHelper.addAndConstraint(newQuery, new ContainsConstraint(
+                            new QueryObjectReference(rootQc, qope.getFieldName()),
+                            ConstraintOp.CONTAINS, lastQc));
+            }
 
             newQuery.addToSelect(newNode);
-
             BagConstraint bc =
                 new BagConstraint(new QueryField(newNode, "id"),
                                   ConstraintOp.NOT_IN, selectionIds.keySet());
-
             QueryHelper.addAndConstraint(newQuery, bc);
-
             return newQuery;
         }
     }
 
+    /**
+     * Adds the selected objects to the given bag in the given objectstore.
+     *
+     * @param osw the ObjectStoreWriter
+     * @param osb the bag to write to
+     * @throws ObjectStoreException if an error occurs
+     */
+    public void addSelectedToBag(ObjectStoreWriter osw, ObjectStoreBag osb)
+    throws ObjectStoreException {
+        if (allSelected == -1) {
+            osw.addAllToBag(osb, selectionIds.keySet());
+        } else {
+            osw.addToBagFromQuery(osb, getBagCreationQuery());
+        }
+    }
 }

@@ -93,11 +93,12 @@ public class WebResults extends AbstractList<List<Object>> implements WebTable
     }
 
     // pathToQueryNode is map from string paths to QueryNodes from ObjectStore query
-    public static LinkedHashMap getPathToIndex(Query query, Map pathToQueryNode) {
+    public static LinkedHashMap getPathToIndex(Query query,
+            Map<String, QuerySelectable> pathToQueryNode) {
         LinkedHashMap returnMap =  new LinkedHashMap();
         for (Iterator iter = pathToQueryNode.keySet().iterator(); iter.hasNext();) {
             String path = (String) iter.next();
-            QuerySelectable queryNode = (QuerySelectable) pathToQueryNode.get(path);
+            QuerySelectable queryNode = pathToQueryNode.get(path);
             if ((queryNode instanceof QueryClass)
                     || (queryNode instanceof QueryObjectPathExpression)
                     || (queryNode instanceof QueryCollectionPathExpression)) {
@@ -230,7 +231,7 @@ public class WebResults extends AbstractList<List<Object>> implements WebTable
      *
      * @return a Map
      */
-    public Map getPathToQueryNode() {
+    public Map<String, QuerySelectable> getPathToQueryNode() {
         return pathToQueryNode;
     }
 
