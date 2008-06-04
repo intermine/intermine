@@ -23,6 +23,8 @@ public class GuiObject
 
     private Map<String, Boolean> toggledElements = new HashMap<String, Boolean>();
 
+    private Map<String, Object> attributesMap = new HashMap<String, Object>();
+    
     /**
      * Gets map of ids of elements that were in the past (during session) toggled
      * - if they are opened or closed.
@@ -38,6 +40,18 @@ public class GuiObject
      */
     public void setToggledElements(Map<String, Boolean> toggledElements) {
         this.toggledElements = toggledElements;
+    }
+    
+    public void setAttribute(String name, Object  value) {
+        attributesMap.put(name, value);
+    }
+    
+    public Object getAttribute(String name) {
+        return attributesMap.get(name);
+    }
+    
+    public Map<String, Object> getAttributes() {
+        return attributesMap;
     }
 }
 

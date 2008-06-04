@@ -6,6 +6,9 @@
 
 <!-- wsFilterList.jsp -->
 
+<%@ page import="org.intermine.dwr.AjaxServices" %>
+<%@ page import="org.intermine.web.logic.session.SessionMethods" %>
+
 <tiles:importAttribute name="type"/>
 <tiles:importAttribute name="wsListId"/>
 <tiles:importAttribute name="scope"/>
@@ -26,10 +29,18 @@
 <tiles:importAttribute name="showCount" ignore="true"/>
 
 <html:xhtml/>
+<%
+      String id =  pageContext.getAttribute("wsListId") + "_" + pageContext.getAttribute("type") + "_item_description";
+      org.intermine.web.logic.results.GuiObject guiObject = SessionMethods.getGuiObject(session);
+      if (guiObject.getAttribute(id) != null) {
+          if (guiObject.getAttribute(id).toString().equals("true")) {
+              pageContext.setAttribute("userShowDescription", true);        
+          }
+      }
+%>
 
 <c:set var="ws_input_id" value="${wsListId}_${type}_filter_text"/>
 <c:set var="ws_input_aspect" value="${wsListId}_${type}_filter_aspect"/>
-
 
 <div class="filterBar">
 <ul class="filterActions">
@@ -71,6 +82,13 @@
     &nbsp;&nbsp;<a href="#" onclick="javascript:return clearFilter('${type}', '${wsListId}')">
       <img src="theme/reset.png" title="Reset search"/>
     </a>
+  </li>
+  <c:if test="${! empty userShowDescription}">
+    <c:set var="checkboxChecked" value="checked" />
+  </c:if>
+  <li>&nbsp;&nbsp;&nbsp;<input type="checkbox" <c:out value="${checkboxChecked}" /> id="showCheckbox" 
+    onclick="showDescriptions('<c:out value="${wsListId}" />', '<c:out value="${type}" />', this.checked)">
+    &nbsp;<label for="showCheckbox">Show descriptions</label>
   </li>
 </ul>
 <input type="hidden" name="filterAction_${wsListId}_${type}" id="filterAction_${wsListId}_${type}"/>
@@ -144,6 +162,13 @@
     $('${ws_input_id}').disabled = false;
 //]]>-->
   </script>
+
+<c:if test="${empty userShowDescription}">
+    <script type="text/javascript">
+<%-- If show description checkbox is not checked, then descriptions should be hidden --%>
+    showDescriptions('<c:out value="${wsListId}" />', '<c:out value="${type}" />', false);
+    </script>
+</c:if>
 
 <c:if test="${!empty initialFilterText}">
   <script type="text/javascript">
