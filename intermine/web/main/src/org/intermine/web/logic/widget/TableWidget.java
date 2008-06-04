@@ -135,13 +135,6 @@ public class TableWidget extends Widget
     }
 
     /**
-     * @return the classKeys
-     */
-    public Map<String, List<FieldDescriptor>> getClassKeys() {
-        return classKeys;
-    }
-
-    /**
      * @param classKeys the classKeys to set
      */
     public void setClassKeys(Map<String, List<FieldDescriptor>> classKeys) {
