@@ -55,6 +55,10 @@ import org.apache.log4j.Logger;
  */
 public class ChadoSequenceProcessor extends ChadoProcessor
 {
+    // incremented each time we make a new ChadoSequenceProcessor to make sure we have a unique
+    // name for the temporary table
+    private static int tempTableCount = 0;
+
     private static final Logger LOG = Logger.getLogger(ChadoSequenceProcessor.class);
 
     private Map<Integer, FeatureData> featureMap = new HashMap<Integer, FeatureData>();
@@ -62,6 +66,8 @@ public class ChadoSequenceProcessor extends ChadoProcessor
 
     // a map from chado pubmed id to item identifier for the publication
     private Map<Integer, String> publications = new HashMap<Integer, String>();
+
+    private String tempTableName = null;
 
     private static final List<String> PARTOF_RELATIONS = Arrays.asList("partof", "part_of");
 
@@ -90,7 +96,7 @@ public class ChadoSequenceProcessor extends ChadoProcessor
      */
     protected static final ConfigAction DO_NOTHING_ACTION = new DoNothingAction();
 
-    private static final String TEMP_FEATURE_TABLE_NAME = "intermine_chado_features_temp";
+    private static final String TEMP_FEATURE_TABLE_NAME_PREFIX = "intermine_chado_features_temp";
 
     /**
      * Create a new ChadoSequenceModuleProcessor
@@ -98,6 +104,10 @@ public class ChadoSequenceProcessor extends ChadoProcessor
      */
     public ChadoSequenceProcessor(ChadoDBConverter chadoDBConverter) {
         super(chadoDBConverter);
+        synchronized (this) {
+            tempTableCount++;
+            tempTableName  = TEMP_FEATURE_TABLE_NAME_PREFIX + "_" + tempTableCount;
+        }
     }
 
     /**
@@ -1183,7 +1193,7 @@ public class ChadoSequenceProcessor extends ChadoProcessor
      */
     protected ResultSet getFeatureResultSet(Connection connection)
         throws SQLException {
-        String query = "SELECT * FROM " + TEMP_FEATURE_TABLE_NAME;
+        String query = "SELECT * FROM " + tempTableName;
         LOG.info("executing: " + query);
         Statement stmt = connection.createStatement();
         ResultSet res = stmt.executeQuery(query);
@@ -1234,7 +1244,7 @@ public class ChadoSequenceProcessor extends ChadoProcessor
         }
 
         String query =
-            "CREATE TEMPORARY TABLE " + TEMP_FEATURE_TABLE_NAME + " AS"
+            "CREATE TEMPORARY TABLE " + tempTableName + " AS"
             + " SELECT feature_id, feature.name, uniquename, cvterm.name as type, seqlen,"
             + "        is_analysis, residues, organism_id"
             + "    FROM feature, cvterm"
@@ -1248,15 +1258,15 @@ public class ChadoSequenceProcessor extends ChadoProcessor
         Statement stmt = connection.createStatement();
         LOG.info("executing: " + query);
         stmt.execute(query);
-        String idIndexQuery = "CREATE INDEX " + TEMP_FEATURE_TABLE_NAME + "_feature_index ON "
-            + TEMP_FEATURE_TABLE_NAME + "(feature_id)";
+        String idIndexQuery = "CREATE INDEX " + tempTableName + "_feature_index ON "
+            + tempTableName + "(feature_id)";
         LOG.info("executing: " + idIndexQuery);
         stmt.execute(idIndexQuery);
-        String typeIndexQuery = "CREATE INDEX " + TEMP_FEATURE_TABLE_NAME + "_type_index ON "
-            + TEMP_FEATURE_TABLE_NAME + "(type)";
+        String typeIndexQuery = "CREATE INDEX " + tempTableName + "_type_index ON "
+            + tempTableName + "(type)";
         LOG.info("executing: " + typeIndexQuery);
         stmt.execute(typeIndexQuery);
-        String analyze = "ANALYZE " + TEMP_FEATURE_TABLE_NAME;
+        String analyze = "ANALYZE " + tempTableName;
         LOG.info("executing: " + analyze);
         stmt.execute(analyze);
     }
@@ -1293,7 +1303,7 @@ public class ChadoSequenceProcessor extends ChadoProcessor
      * @return the SQL string
      */
     protected String getFeatureIdQuery() {
-        return "SELECT feature_id FROM " + TEMP_FEATURE_TABLE_NAME;
+        return "SELECT feature_id FROM " + tempTableName;
     }
 
     /**
