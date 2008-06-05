@@ -17,7 +17,7 @@ import javax.servlet.jsp.JspWriter;
 import javax.servlet.jsp.PageContext;
 
 import org.intermine.web.logic.Constants;
-import org.intermine.web.logic.results.GuiObject;
+import org.intermine.web.logic.results.WebState;
 
 /**
  * This class renders disclosure tag. See tag library descriptor for tag description.
@@ -92,11 +92,11 @@ public class DisclosureTag extends BaseDisclosureTag
      */
     public boolean getOpened() {
         if (isConsistentType()) {
-            GuiObject guiObject =
-                (GuiObject) getJspContext().getAttribute(Constants.GUI_OBJECT,
+            WebState webState =
+                (WebState) getJspContext().getAttribute(Constants.WEB_STATE,
                                                          PageContext.SESSION_SCOPE);
-            if (guiObject != null) {
-                Boolean ret = guiObject.getToggledElements().get(getId());
+            if (webState != null) {
+                Boolean ret = webState.getToggledElements().get(getId());
                 if (ret != null) {
                     return ret;
                 }

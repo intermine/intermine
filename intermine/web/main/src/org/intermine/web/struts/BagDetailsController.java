@@ -15,25 +15,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.intermine.metadata.Model;
-import org.intermine.objectstore.ObjectStore;
-import org.intermine.web.logic.Constants;
-import org.intermine.web.logic.bag.BagQueryConfig;
-import org.intermine.web.logic.bag.InterMineBag;
-import org.intermine.web.logic.config.Type;
-import org.intermine.web.logic.config.WebConfig;
-import org.intermine.web.logic.profile.Profile;
-import org.intermine.web.logic.results.GuiObject;
-import org.intermine.web.logic.results.PagedTable;
-import org.intermine.web.logic.results.ResultElement;
-import org.intermine.web.logic.results.WebTable;
-import org.intermine.web.logic.search.SearchRepository;
-import org.intermine.web.logic.search.WebSearchable;
-import org.intermine.web.logic.session.SessionMethods;
-import org.intermine.web.logic.tagging.TagTypes;
-import org.intermine.web.logic.template.TemplateHelper;
-import org.intermine.web.logic.widget.Widget;
-
 import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -44,6 +25,23 @@ import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
 import org.apache.struts.tiles.ComponentContext;
 import org.apache.struts.tiles.actions.TilesAction;
+import org.intermine.metadata.Model;
+import org.intermine.objectstore.ObjectStore;
+import org.intermine.web.logic.Constants;
+import org.intermine.web.logic.bag.BagQueryConfig;
+import org.intermine.web.logic.bag.InterMineBag;
+import org.intermine.web.logic.config.Type;
+import org.intermine.web.logic.config.WebConfig;
+import org.intermine.web.logic.profile.Profile;
+import org.intermine.web.logic.results.PagedTable;
+import org.intermine.web.logic.results.ResultElement;
+import org.intermine.web.logic.results.WebTable;
+import org.intermine.web.logic.search.SearchRepository;
+import org.intermine.web.logic.search.WebSearchable;
+import org.intermine.web.logic.session.SessionMethods;
+import org.intermine.web.logic.tagging.TagTypes;
+import org.intermine.web.logic.template.TemplateHelper;
+import org.intermine.web.logic.widget.Widget;
 
 /**
  * @author Xavier Watkins
@@ -148,12 +146,8 @@ public class BagDetailsController extends TilesAction
         }
 
         // Get the widget toggle state
-        GuiObject guiObj = (GuiObject) session.getAttribute(Constants.GUI_OBJECT);
-        if (guiObj == null) {
-            guiObj = new GuiObject();
-            session.setAttribute(Constants.GUI_OBJECT, guiObj);
-        }
-        request.setAttribute("toggledElements", guiObj.getToggledElements());
+        request.setAttribute("toggledElements", SessionMethods.getWebState(session).
+                getToggledElements());
 
         // Set the size
         String pageStr = request.getParameter("page");
