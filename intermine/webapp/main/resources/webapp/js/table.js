@@ -135,8 +135,13 @@ function itemChecked(checkedRow, checkedColumn, tableid, checkbox, internal) {
         disableOtherColumns(objectClass, checkedColumn);
     }
     
-    setToolbarAvailability($('selectedIdFields').innerHTML.strip() == '');
-    
+    var nothingSelected = $('selectedIdFields').innerHTML.strip() == '';
+
+    setToolbarAvailability(nothingSelected);
+    if (nothingSelected) {
+        unselectColumnCheckbox(checkedColumn);
+    }
+
     /*var columnsToHighlightArray = columnsToHighlight[checkedColumn]
     $$('td').each(function(item){
     	var splitter = item.id.split(',');
