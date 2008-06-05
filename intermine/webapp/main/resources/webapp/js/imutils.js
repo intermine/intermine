@@ -249,3 +249,24 @@ BrowserDetect.init();
 function trim(s) {
   return s.replace(/^\s+|\s+$/g,"");
 }
+
+/*
+    Checks when enter is typed and then form with id or name that is equal to formId is submitted.
+    Usage: <input type="text" onKeyPress="checkEnter(event, 'bagUploadConfirmForm')"> 
+*/
+function submitOnEnter(event, formId){ 
+    if (document.getElementById(formId)) {
+       form = document.getElementById(formId);
+    } else {
+       form = document.getElementsByName(formId)[0];
+    }
+    if(event.keyCode == 13){ 
+       if (form) {
+	       form.submit();
+	       return false;       
+       }
+    }
+    else{
+       return true;
+    }
+}

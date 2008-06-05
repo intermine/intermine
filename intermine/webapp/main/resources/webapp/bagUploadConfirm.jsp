@@ -6,7 +6,7 @@
 
 <!-- bagUploadConfirm.jsp -->
 <html:xhtml/>
-<html:form action="/bagUploadConfirm" focus="newBagName" method="post" enctype="multipart/form-data">
+<html:form action="/bagUploadConfirm" focus="newBagName" method="post" enctype="multipart/form-data" styleId="bagUploadConfirmForm">
 <html:hidden property="matchIDs" styleId="matchIDs"/>
 <html:hidden property="bagType"/>
 <script type="text/javascript" src="js/baguploadconfirm.js"></script>
@@ -76,7 +76,7 @@ function toggleForm(matchCount) {
         </c:otherwise>
       </c:choose>
       <fmt:message key="bagUploadConfirm.bagName"/>:
-      <html:text property="newBagName" size="20" value="" />
+      <html:text property="newBagName" size="20" value="" onkeypress="submitOnEnter(event, 'bagUploadConfirmForm')"/>
     <input type="button" name="confirmBagUpload" value="Save list" onclick="javascript:validateBagName('bagUploadConfirmForm');"/>
     </div>
   </div>
