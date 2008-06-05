@@ -28,8 +28,8 @@
 <div id="widgetcontainer${widget.id}" class="widgetcontainer">
   <span id="closewidget${widget.id}" class="widgetcloser"><a href="javascript:toggleWidget('widgetcontainer${widget.id}','togglelink${widget.id}');">close x</a></span>
   <h3>${widget.title}</h3>
-  <p>${widget.description}</p>
-  <p>Number of ${bag.type}s in this list not analysed in this widget:
+  <p>${widget.description}<br/>
+  <span style="margin-top:5px">Number of ${bag.type}s in this list not analysed in this widget:
 <%-- disable until links configured for table and graph widgets
 	<c:choose>
 	<c:when test="${type == 'EnrichmentWidget'}">
@@ -40,7 +40,7 @@
     	<span id="widgetnotanalysed${widget.id}">${widget.notAnalysed}</span>
     	<%--
     </c:otherwise>
-	</c:choose>
+	</c:choose></span>
 	 --%>
  </p>
  <c:set var="extraAttrMap" value="${widget2extraAttrs[widget.id]}" />
@@ -60,7 +60,7 @@
       <option value="None">None</option>
     </select>
     </li>
-    <li>
+    <li style="float:right">
     <label>Maximum value to display</label>
     <select name="max${widget.id}" id="max${widget.id}" onchange="getProcessEnrichmentWidget('${widget.id}','${bag.name}')">
       <option value="0.01">0.01</option>
