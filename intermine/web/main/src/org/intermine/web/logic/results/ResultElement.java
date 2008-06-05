@@ -162,6 +162,15 @@ public class ResultElement implements Serializable
     public void setId(Integer id) {
         this.id = id;
     }
+    
+    /**
+     * Get the id as a String
+     * Needed by jsp
+     * @return the id as a String
+     */
+    public String getIdString() {
+        return id.toString();
+    }
 
     /**
      * @return the path
