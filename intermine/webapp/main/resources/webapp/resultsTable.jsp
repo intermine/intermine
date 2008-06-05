@@ -246,7 +246,7 @@
                   <%-- the checkbox to select this object --%>
                   <c:set var="ischecked" value=""/>
                     <c:forEach items="${pagedResults.currentSelectedIdStrings}" var="selectedId">
-                      <c:if test="${(! empty resultElement.typeClsString) && (resultElement.id == selectedId) && empty bagName}">
+                      <c:if test="${(! empty resultElement.typeClsString) && (resultElement.idString == selectedId) && empty bagName}">
                         <c:set var="ischecked" value="highlightCell"/>
                       </c:if>
                     </c:forEach>
