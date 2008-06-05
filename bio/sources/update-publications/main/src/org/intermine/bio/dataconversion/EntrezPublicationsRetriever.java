@@ -85,7 +85,7 @@ public class EntrezPublicationsRetriever
     // number of times to try the same bacth from the server
     private static final int MAX_TRIES = 5;
     private String osAlias = null, outputFile = null;
-    private Set<String> seenPubMeds = new HashSet<String>();
+    private Set<Integer> seenPubMeds = new HashSet<Integer>();
     private Map<String, Item> authorMap = new HashMap<String, Item>();
     private String cacheDirName;
     private ItemFactory itemFactory;
@@ -158,13 +158,22 @@ public class EntrezPublicationsRetriever
             Writer writer = new FileWriter(outputFile);
             ObjectStore os = ObjectStoreFactory.getObjectStore(osAlias);
 
-            Set<String> idsToFetch = new HashSet<String>();
+            Set<Integer> idsToFetch = new HashSet<Integer>();
             itemFactory = new ItemFactory(os.getModel(), "-1_");
             writer.write(FullRenderer.getHeader() + ENDL);
             for (Iterator<Publication> iter = getPublications(os).iterator(); iter.hasNext();) {
                 String pubMedId = iter.next().getPubMedId();
 
-                if (seenPubMeds.contains(pubMedId)) {
+                Integer pubMedIdInteger;
+
+                try {
+                    pubMedIdInteger = Integer.valueOf(pubMedId);
+                } catch (NumberFormatException e) {
+                    // not a pubmed id
+                    continue;
+                }
+
+                if (seenPubMeds.contains(pubMedIdInteger)) {
                     continue;
                 }
 
@@ -178,22 +187,22 @@ public class EntrezPublicationsRetriever
                         Map<String, Object> pubMap = (Map) deserializer.readObject();
                         writeItems(writer, mapToItems(itemFactory, pubMap));
                         // System.err. println("found in cache: " + pubMedId);
-                        seenPubMeds.add(pubMedId);
+                        seenPubMeds.add(pubMedIdInteger);
                     } catch (EOFException e) {
                         // ignore and fetch it again
                         System.err .println("found in cache, but igored due to cache problem: "
-                                            + pubMedId);
+                                            + pubMedIdInteger);
                     }
                 } else {
-                    idsToFetch.add(pubMedId);
+                    idsToFetch.add(pubMedIdInteger);
                 }
             }
 
-            Iterator<String> idIter = idsToFetch.iterator();
-            Set<String> thisBatch = new HashSet<String>();
+            Iterator<Integer> idIter = idsToFetch.iterator();
+            Set<Integer> thisBatch = new HashSet<Integer>();
             while (idIter.hasNext()) {
-                String pubMedId = idIter.next();
-                thisBatch.add(pubMedId);
+                Integer pubMedIdInteger = idIter.next();
+                thisBatch.add(pubMedIdInteger);
                 if (thisBatch.size() == BATCH_SIZE || !idIter.hasNext() && thisBatch.size() > 0) {
                     try {
                         // the server may return less publications than we ask for, so keep a Map
@@ -316,7 +325,7 @@ public class EntrezPublicationsRetriever
      * @return a Reader for the information
      * @throws Exception if an error occurs
      */
-    protected Reader getReader(Set<String> ids) throws Exception {
+    protected Reader getReader(Set<Integer> ids) throws Exception {
         String urlString = ESUMMARY_URL + StringUtil.join(ids, ",");
         System.err .println("retrieving: " + urlString);
         return new BufferedReader(new InputStreamReader(new URL(urlString).openStream()));
@@ -421,14 +430,24 @@ public class EntrezPublicationsRetriever
                 LOG.error("Unable to retrieve pubmed record: " + characters);
             } else if ("Id".equals(name)) {
                 String pubMedId = characters.toString();
-                if (seenPubMeds.contains(pubMedId)) {
-                    duplicateEntry = true;
-                    return;
+
+                Integer pubMedIdInteger;
+
+                try {
+                    pubMedIdInteger = Integer.valueOf(pubMedId);
+
+                    if (seenPubMeds.contains(pubMedId)) {
+                        duplicateEntry = true;
+                        return;
+                    }
+                    pubMap = new HashMap<String, Object>();
+                    pubMap.put("id", pubMedId);
+                    seenPubMeds.add(pubMedIdInteger);
+                    cache.put(pubMedId, pubMap);
+
+                } catch (NumberFormatException e) {
+                    throw new RuntimeException("got non-integer pubmed id from NCBI: " + pubMedId);
                 }
-                pubMap = new HashMap<String, Object>();
-                pubMap.put("id", pubMedId);
-                seenPubMeds.add(pubMedId);
-                cache.put(pubMedId, pubMap);
             } else if ("PubDate".equals(name)) {
                 String year = characters.toString().split(" ")[0];
                 try {
