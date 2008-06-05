@@ -363,6 +363,9 @@ public class PagedTable
        } else {
            // add because the all checkbox is on
            selectionIds.put(objectId, null);
+           if (isEmptySelection()) {
+               clearSelectIds();
+           }
        }
     }
 
@@ -497,8 +500,9 @@ public class PagedTable
      * Clear the table selection
      */
     public void clearSelectIds() {
-        selectionIds = new LinkedHashMap<Integer, String>();
+        selectionIds.clear();
         allSelected = -1;
+        selectedClass = null;
     }
 
     private class SelectionEntry
