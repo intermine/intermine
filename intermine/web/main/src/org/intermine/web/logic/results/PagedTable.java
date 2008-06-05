@@ -389,7 +389,7 @@ public class PagedTable
      */
     public List<String> getFirstSelectedFields(ObjectStore os,
                                                Map<String, List<FieldDescriptor>> classKeysMap) {
-        List<String> retList = new ArrayList<String>();
+        Set<String> retList = new LinkedHashSet<String>();
         Iterator<SelectionEntry> selectedEntryIter = selectedEntryIterator();
         boolean seenNullField = false;
         while (selectedEntryIter.hasNext()) {
@@ -421,7 +421,7 @@ public class PagedTable
                 }
             } else {
                 retList.add("...");
-                return retList;
+                return new ArrayList<String>(retList);
             }
         }
         if (seenNullField) {
@@ -429,7 +429,7 @@ public class PagedTable
             // showing "[no value]" in the webapp is of no value
             retList.add("...");
         }
-        return retList;
+        return new ArrayList<String>(retList);
     }
 
     /**
