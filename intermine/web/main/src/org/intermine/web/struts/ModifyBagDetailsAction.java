@@ -104,6 +104,7 @@ public class ModifyBagDetailsAction extends InterMineAction
                     String identifier = "col" + index++;
                     SessionMethods.setResultsTable(session, identifier, pc);
                     String trail = "|bag." + imBag.getName();
+                    session.removeAttribute(Constants.QUERY);
                     return new ForwardParameters(mapping.findForward("results"))
                     .addParameter("table", identifier)
                     .addParameter("trail", trail).forward();
@@ -145,6 +146,7 @@ public class ModifyBagDetailsAction extends InterMineAction
 
             SessionMethods.setResultsTable(session, identifier, pc);
             String trail = "|bag." + imBag.getName();
+            session.removeAttribute(Constants.QUERY);
             return new ForwardParameters(mapping.findForward("results"))
                             .addParameter("table", identifier)
                             .addParameter("size", "25")
