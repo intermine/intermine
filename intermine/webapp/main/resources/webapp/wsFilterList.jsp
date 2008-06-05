@@ -36,6 +36,8 @@
           if (guiObject.getAttribute(id).toString().equals("true")) {
               pageContext.setAttribute("userShowDescription", true);        
           }
+      } else {
+          pageContext.setAttribute("userShowDescription", true);
       }
 %>
 
