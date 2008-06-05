@@ -39,7 +39,7 @@
             <c:out value="${object}" default="${nullFieldText}"/>
           </html:link>
           <c:if test="${(!empty columnType) && (resultElement.typeClass != columnType)}">
-             <c:out value="${resultElement.type}" />]
+             [<c:out value="${resultElement.type}" />]
           </c:if>
         </c:when>
         <c:when test="${empty object}">
