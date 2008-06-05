@@ -91,13 +91,13 @@ public class FindInListAction extends InterMineAction
                 ClassKeyHelper.getKeyFieldNames(classKeys, bagQualifiedType);
             int foundId = -1;
             if (keyFields.size() > 0) {
-                Query q = makeQuery(textToFind, bag, keyFields);
+                Query q = makeQuery(textToFind, bag, keyFields, os.getModel());
                 foundId = findFirst(os, q);
             }
             if (foundId == -1) {
                 // no class key fields match so try all keys
                 List<String> allStringFields = getStringFields(os, bagQualifiedType);
-                Query q = makeQuery(textToFind, bag, allStringFields);
+                Query q = makeQuery(textToFind, bag, allStringFields, os.getModel());
                 foundId = findFirst(os, q);
             }
 
@@ -126,13 +126,16 @@ public class FindInListAction extends InterMineAction
     }
 
     private Query makeQuery(String searchTerm, InterMineBag bag,
-                            Collection<String> identifierFieldNames) {
+                            Collection<String> identifierFieldNames, Model model) {
 //        Object lowerSearchTerm = searchTerm.toLowerCase();
+        String bagClassName = bag.getQualifiedType();
+
+        ClassDescriptor cd = model.getClassDescriptorByName(bagClassName);
 
         Query q = new Query();
         QueryClass qc;
         try {
-            qc = new QueryClass(Class.forName(bag.getQualifiedType()));
+            qc = new QueryClass(Class.forName(bagClassName));
         } catch (ClassNotFoundException e) {
             throw new RuntimeException("class not found", e);
         }
@@ -152,8 +155,35 @@ public class FindInListAction extends InterMineAction
 //            QueryExpression lowerQF = new QueryExpression(QueryExpression.LOWER, qf);
 //            SimpleConstraint sc =
 //              new SimpleConstraint(lowerQF, ConstraintOp.EQUALS, new QueryValue(lowerSearchTerm));
+
+            QueryValue queryValue = new QueryValue(searchTerm);
+
+            AttributeDescriptor attDesc = cd.getAttributeDescriptorByName(fieldName, true);
+
+            String attType = attDesc.getType();
+
+            if (attType.equals("java.lang.Integer")) {
+                try {
+                    Integer intSearchTerm = Integer.valueOf(searchTerm);
+                    queryValue = new QueryValue(intSearchTerm);
+                } catch (NumberFormatException e) {
+                    // not a number so don't constrain this field
+                    continue;
+                }
+            }
+
+            if (attType.equals("java.lang.Long")) {
+                try {
+                    Long longSearchTerm = Long.valueOf(searchTerm);
+                    queryValue = new QueryValue(longSearchTerm);
+                } catch (NumberFormatException e) {
+                    // not a number so don't constrain this field
+                    continue;
+                }
+            }
+
             SimpleConstraint sc =
-                new SimpleConstraint(qf, ConstraintOp.EQUALS, new QueryValue(searchTerm));
+                new SimpleConstraint(qf, ConstraintOp.EQUALS, queryValue);
             fieldCS.addConstraint(sc);
         }
 
