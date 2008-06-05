@@ -19,8 +19,12 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import org.intermine.objectstore.query.ConstraintOp;
+import org.intermine.objectstore.query.ConstraintSet;
 import org.intermine.objectstore.query.Query;
 import org.intermine.objectstore.query.QueryClass;
+import org.intermine.objectstore.query.QueryField;
+import org.intermine.objectstore.query.SimpleConstraint;
 
 import org.intermine.objectstore.ObjectStore;
 import org.intermine.objectstore.ObjectStoreFactory;
@@ -286,6 +290,23 @@ public class EntrezPublicationsRetriever
         QueryClass qc = new QueryClass(Publication.class);
         q.addFrom(qc);
         q.addToSelect(qc);
+
+        ConstraintSet cs = new ConstraintSet(ConstraintOp.OR);
+
+        SimpleConstraint scTitle =
+            new SimpleConstraint(new QueryField(qc, "title"), ConstraintOp.IS_NULL);
+        cs.addConstraint(scTitle);
+
+        SimpleConstraint scYear =
+            new SimpleConstraint(new QueryField(qc, "year"), ConstraintOp.IS_NULL);
+        cs.addConstraint(scYear);
+
+        SimpleConstraint scFirstAuthor =
+            new SimpleConstraint(new QueryField(qc, "firstAuthor"), ConstraintOp.IS_NULL);
+        cs.addConstraint(scFirstAuthor);
+
+        q.setConstraint(cs);
+
         return (List<Publication>) os.executeSingleton(q);
     }
 
