@@ -31,10 +31,6 @@
       return confirm("Do you really want to delete the selected queries?")
     }
 
-  function trim(s) {
-    return s.replace(/^\s+|\s+$/g,"");
-  }
-
     function doQueryAction(name, url){
       queryName = document.getElementById('name_'+name).innerHTML.replace(/[\t\n]/g, '')
         location.href = url + trim(queryName);
