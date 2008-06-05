@@ -14,16 +14,16 @@ import java.util.HashMap;
 import java.util.Map;
 
 /**
- * This class saves things related to GUI. It  is meant as wrapper for future
+ * This class saves things related to the state of web GUI. It  is meant as box for future
  * staff that must be hold in session and is related to web application GUI.
  * @author Jakub Kulaviak
  */
-public class GuiObject 
+public class WebState 
 {
 
     private Map<String, Boolean> toggledElements = new HashMap<String, Boolean>();
 
-    private Map<String, Object> attributesMap = new HashMap<String, Object>();
+    private Map<String, Object> statesMap = new HashMap<String, Object>();
     
     /**
      * Gets map of ids of elements that were in the past (during session) toggled
@@ -42,16 +42,28 @@ public class GuiObject
         this.toggledElements = toggledElements;
     }
     
-    public void setAttribute(String name, Object  value) {
-        attributesMap.put(name, value);
+    /**
+     * Set attribute. 
+     * @param name name of attribute
+     * @param value value of attribute
+     */
+    public void setState(String name, Object  value) {
+        statesMap.put(name, value);
     }
     
-    public Object getAttribute(String name) {
-        return attributesMap.get(name);
+    /**
+     * @param name name of state
+     * @return value of state or null if state wasn't set
+     */
+    public Object getState(String name) {
+        return statesMap.get(name);
     }
     
-    public Map<String, Object> getAttributes() {
-        return attributesMap;
+    /**
+     * @return map of states
+     */
+    public Map<String, Object> getStates() {
+        return statesMap;
     }
 }
 

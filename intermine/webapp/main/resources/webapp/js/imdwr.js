@@ -433,7 +433,7 @@ function showDescriptions(listId, type, show) {
             } 
         }
     }
-    AjaxServices.setAttribute(prefix, show);
+    AjaxServices.setState(prefix, show);
 }
 
 // un-hide all the rows in the webSearchableList

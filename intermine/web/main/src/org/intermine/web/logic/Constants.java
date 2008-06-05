@@ -233,7 +233,7 @@ public interface Constants
     public static final String RESULTS_TABLE_SIZE = "RESULTS_TABLE_SIZE";
 
     /**
-     * Session attribute used to store GuiObject.
+     * Session attribute used to store WebState object.
      */
-    public static final String GUI_OBJECT = "GUI_OBJECT";
+    public static final String WEB_STATE = "WEB_STATE";
 }

@@ -51,7 +51,7 @@ import org.intermine.web.logic.query.PageTableQueryMonitor;
 import org.intermine.web.logic.query.PathQuery;
 import org.intermine.web.logic.query.QueryMonitorTimeout;
 import org.intermine.web.logic.query.SavedQuery;
-import org.intermine.web.logic.results.GuiObject;
+import org.intermine.web.logic.results.WebState;
 import org.intermine.web.logic.results.PagedTable;
 import org.intermine.web.logic.results.WebResultsSimple;
 import org.intermine.web.logic.results.WebTable;
@@ -355,9 +355,9 @@ public class AjaxServices
     /*
      * Cannot be refactored from AjaxServices, else WebContextFactory.get() returns null 
      */
-    private static GuiObject getGuiObject() {
+    private static WebState getWebState() {
         HttpSession session = WebContextFactory.get().getSession();
-        return SessionMethods.getGuiObject(session);
+        return SessionMethods.getWebState(session);
     }
 
     /**
@@ -688,7 +688,7 @@ public class AjaxServices
      */
     public static void saveToggleState(String elementId, boolean opened) {
         try {
-            AjaxServices.getGuiObject().getToggledElements().put(elementId, 
+            AjaxServices.getWebState().getToggledElements().put(elementId, 
                     Boolean.valueOf(opened));
         } catch (RuntimeException e) {
             processException(e);
@@ -696,24 +696,26 @@ public class AjaxServices
     }
 
     /**
-     * @param name name 
-     * @param value value
+     * Set state that should be saved during the session. 
+     * @param name name of state 
+     * @param value value of state
      */
-    public static void setAttribute(String name, String value) {
+    public static void setState(String name, String value) {
         try {
-            AjaxServices.getGuiObject().setAttribute(name, value);
+            AjaxServices.getWebState().setState(name, value);
         } catch (RuntimeException e) {
             processException(e);
         }        
     }
     
     /**
-     * @param name name
-     * @return value
+     * Get state. 
+     * @param name name of state
+     * @return value if state was set before during the session else null
      */
-    public static Object getAttribute(String name) {
+    public static String getState(String name) {
         try {
-            return AjaxServices.getGuiObject().getAttribute(name);
+            return (String) AjaxServices.getWebState().getState(name);
         } catch (RuntimeException e) {
             processException(e);
         }

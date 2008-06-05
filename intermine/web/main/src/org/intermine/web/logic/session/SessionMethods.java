@@ -10,6 +10,8 @@ package org.intermine.web.logic.session;
  *
  */
 
+import java.io.PrintWriter;
+import java.io.StringWriter;
 import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
@@ -18,6 +20,14 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import javax.servlet.ServletContext;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
+
+import org.apache.commons.collections.map.LRUMap;
+import org.apache.log4j.Logger;
+import org.apache.struts.util.MessageResources;
 import org.intermine.metadata.FieldDescriptor;
 import org.intermine.metadata.Model;
 import org.intermine.model.InterMineObject;
@@ -27,7 +37,6 @@ import org.intermine.objectstore.ObjectStoreQueryDurationException;
 import org.intermine.objectstore.flatouterjoins.ObjectStoreFlatOuterJoinsImpl;
 import org.intermine.objectstore.intermine.ObjectStoreInterMineImpl;
 import org.intermine.objectstore.query.Query;
-import org.intermine.objectstore.query.QueryNode;
 import org.intermine.objectstore.query.QuerySelectable;
 import org.intermine.objectstore.query.Results;
 import org.intermine.path.Path;
@@ -50,26 +59,14 @@ import org.intermine.web.logic.query.SaveQueryHelper;
 import org.intermine.web.logic.query.SavedQuery;
 import org.intermine.web.logic.results.DisplayObject;
 import org.intermine.web.logic.results.DisplayObjectFactory;
-import org.intermine.web.logic.results.GuiObject;
 import org.intermine.web.logic.results.PagedTable;
 import org.intermine.web.logic.results.TableHelper;
 import org.intermine.web.logic.results.WebResults;
+import org.intermine.web.logic.results.WebState;
 import org.intermine.web.logic.template.TemplateBuildState;
 import org.intermine.web.logic.template.TemplateQuery;
 import org.intermine.web.struts.LoadQueryAction;
 import org.intermine.web.struts.TemplateAction;
-
-import java.io.PrintWriter;
-import java.io.StringWriter;
-
-import javax.servlet.ServletContext;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-import javax.servlet.http.HttpSession;
-
-import org.apache.commons.collections.map.LRUMap;
-import org.apache.log4j.Logger;
-import org.apache.struts.util.MessageResources;
 
 /**
  * Business logic that interacts with session data. These methods are generally
@@ -919,13 +916,18 @@ public class SessionMethods
         return wc;
     }
 
-    public static GuiObject getGuiObject(HttpSession session) {
-        GuiObject guiObject = (GuiObject) session.getAttribute(Constants.GUI_OBJECT);
-        if (guiObject == null) {
-            guiObject = new GuiObject();
-            session.setAttribute(Constants.GUI_OBJECT, guiObject);
+    /**
+     * Get WebState object that is used for saving state of webapp GUI.
+     * @param session session
+     * @return WebState
+     */
+    public static WebState getWebState(HttpSession session) {
+        WebState webState = (WebState) session.getAttribute(Constants.WEB_STATE);
+        if (webState == null) {
+            webState = new WebState();
+            session.setAttribute(Constants.WEB_STATE, webState);
         }
-        return guiObject;
+        return webState;
     }
     
 }

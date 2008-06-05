@@ -30,10 +30,10 @@
 
 <html:xhtml/>
 <%
-      String id =  pageContext.getAttribute("wsListId") + "_" + pageContext.getAttribute("type") + "_item_description";
-      org.intermine.web.logic.results.GuiObject guiObject = SessionMethods.getGuiObject(session);
-      if (guiObject.getAttribute(id) != null) {
-          if (guiObject.getAttribute(id).toString().equals("true")) {
+    String id =  pageContext.getAttribute("wsListId") + "_" + pageContext.getAttribute("type") + "_item_description";
+      org.intermine.web.logic.results.WebState webState = SessionMethods.getWebState(session);
+      if (webState.getState(id) != null) {
+          if (webState.getState(id).toString().equals("true")) {
               pageContext.setAttribute("userShowDescription", true);        
           }
       } else {
