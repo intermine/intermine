@@ -156,7 +156,7 @@ public class FindInListAction extends InterMineAction
 //            SimpleConstraint sc =
 //              new SimpleConstraint(lowerQF, ConstraintOp.EQUALS, new QueryValue(lowerSearchTerm));
 
-            QueryValue queryValue = new QueryValue(searchTerm);
+            QueryValue queryValue;
 
             AttributeDescriptor attDesc = cd.getAttributeDescriptorByName(fieldName, true);
 
@@ -170,15 +170,22 @@ public class FindInListAction extends InterMineAction
                     // not a number so don't constrain this field
                     continue;
                 }
-            }
+            } else {
+                if (attType.equals("java.lang.Long")) {
 
-            if (attType.equals("java.lang.Long")) {
-                try {
-                    Long longSearchTerm = Long.valueOf(searchTerm);
-                    queryValue = new QueryValue(longSearchTerm);
-                } catch (NumberFormatException e) {
-                    // not a number so don't constrain this field
-                    continue;
+                    try {
+                        Long longSearchTerm = Long.valueOf(searchTerm);
+                        queryValue = new QueryValue(longSearchTerm);
+                    } catch (NumberFormatException e) {
+                        // not a number so don't constrain this field
+                        continue;
+                    }
+                } else {
+                    if (attType.equals("java.lang.String")) {
+                        queryValue = new QueryValue(searchTerm);
+                    } else {
+                        continue;
+                    }
                 }
             }
 
