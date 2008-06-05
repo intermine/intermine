@@ -35,7 +35,7 @@
         <p> Genomics </p></html:link></td>
     <td> <i>Drosophila</i> </td>
     <td> Genome annotation for D. melanogaster (R5.5), D. ananassae (R1.0), D. erecta (R1.0), D. grimshawi (R1.0), D. mojavensis (R1.0), D. persimilis (R1.0), D. pseudoobscura pseudoobscura (R2.1), D. sechellia (R1.0), D. simulans (R1.0), D. virilis (R1.0), D. willistoni (R1.0) and D. yakuba (R1.0).</td>
-    <td><a href="http://www.flybase.org" target="_new">Flybase</a> - Version FB2008_04</td>
+    <td><a href="http://www.flybase.org" target="_new">Flybase</a> - Version FB2008_05</td>
     <td> Crosby et al - <a href="http://www.ncbi.nlm.nih.gov/entrez/query.fcgi?cmd=Retrieve&db=PubMed&dopt=Abstract&list_uids=17099233" target="_new">PubMed: 17099233</a></td>
     <td> &nbsp;</td>
   </tr>
@@ -182,7 +182,7 @@
   <tr>
     <td> <i>D. melanogaster</i> </td>
     <td> Experimentally determined 3-D structures</td>
-    <td> <a href="http://www.rcsb.org/pdb/home/home.do" target="_new">PDB [Protein Data Bank]</a> - 13th May 2008</td>
+    <td> <a href="http://www.rcsb.org/pdb/home/home.do" target="_new">PDB [Protein Data Bank]</a> - 16th May 2008</td>
     <td> &nbsp;</td>
     <td> &nbsp;</td>
   </tr>
@@ -255,7 +255,7 @@
     <td> <i>D. melanogaster</i> </td>
     <td> GO annotations </td>
     <td> <a href="http://www.geneontology.org" target="_new">Gene Ontology
-    Site</a> - 5th May 2008</td>
+    Site</a> - 11th May 2008</td>
     <td> Gene Ontology Consortium - <a href="http://www.ncbi.nlm.nih.gov/entrez/query.fcgi?cmd=Retrieve&db=PubMed&dopt=Abstract&list_uids= 10802651" target="_new">PubMed:10802651</a></td>
     <td> &nbsp;</td>
   </tr>
@@ -263,7 +263,7 @@
   <tr>
     <td> <i>C. elegans</i></td>
     <td> GO annotations </td>
-    <td> <a href="http://www.geneontology.org" target="_new">Gene Ontology Site</a> - 5th May 2008</td>
+    <td> <a href="http://www.geneontology.org" target="_new">Gene Ontology Site</a> - 11th May 2008</td>
     <td> Gene Ontology Consortium - <a href="http://www.ncbi.nlm.nih.gov/entrez/query.fcgi?cmd=Retrieve&db=PubMed&dopt=Abstract&list_uids= 10802651" target="_new">PubMed:10802651</a></td>
     <td> &nbsp;</td>
   </tr>
@@ -271,7 +271,7 @@
   <tr>
     <td> <i>M. musculus</i></td>
     <td> GO annotations </td>
-    <td> <a href="http://www.geneontology.org" target="_new">Gene Ontology Site</a> - 5th May 2008</td>
+    <td> <a href="http://www.geneontology.org" target="_new">Gene Ontology Site</a> - 24th May 2008</td>
     <td> Gene Ontology Consortium - <a href="http://www.ncbi.nlm.nih.gov/entrez/query.fcgi?cmd=Retrieve&db=PubMed&dopt=Abstract&list_uids= 10802651" target="_new">PubMed:10802651</a></td>
     <td> &nbsp;</td>
   </tr>
@@ -279,7 +279,7 @@
   <tr>
     <td> <i>S. cerevisiae</i></td>
     <td> GO annotations </td>
-    <td> <a href="http://www.geneontology.org" target="_new">Gene Ontology Site</a> - 5th May 2008</td>
+    <td> <a href="http://www.geneontology.org" target="_new">Gene Ontology Site</a> - 25th May 2008</td>
     <td> Gene Ontology Consortium - <a href="http://www.ncbi.nlm.nih.gov/entrez/query.fcgi?cmd=Retrieve&db=PubMed&dopt=Abstract&list_uids= 10802651" target="_new">PubMed:10802651</a></td>
     <td> &nbsp;</td>
   </tr>
@@ -287,7 +287,7 @@
   <tr>
     <td> <i>S. pombe</i></td>
     <td> GO annotations </td>
-    <td> <a href="http://www.geneontology.org" target="_new">Gene Ontology Site</a> - 5th May 2008</td>
+    <td> <a href="http://www.geneontology.org" target="_new">Gene Ontology Site</a> - 15th May 2008</td>
     <td> Gene Ontology Consortium - <a href="http://www.ncbi.nlm.nih.gov/entrez/query.fcgi?cmd=Retrieve&db=PubMed&dopt=Abstract&list_uids= 10802651" target="_new">PubMed:10802651</a></td>
     <td> &nbsp;</td>
   </tr>
@@ -295,7 +295,7 @@
   <tr>
     <td> <i>A. gambiae</i> </td>
     <td> GO annotations </td>
-    <td> <a href="http://www.ebi.ac.uk/GOA/uniprot_release.html" target="_new">Uniprot GOA</a> - 15th February 2008</td>
+    <td> <a href="http://www.ebi.ac.uk/GOA/uniprot_release.html" target="_new">Uniprot GOA</a> - 23rd May 2008</td>
     <td> Camon et al - <a href="http://www.ncbi.nlm.nih.gov/entrez/query.fcgi?cmd=Retrieve&db=PubMed&dopt=Abstract&list_uids=14681408" target="_new">PubMed: 14681408</a></td>
     <td> &nbsp;</td>
   </tr>
@@ -303,7 +303,7 @@
   <tr>
     <td> <i>A. mellifera</i> </td>
     <td> GO annotations </td>
-    <td> <a href="http://www.ebi.ac.uk/GOA/uniprot_release.html" target="_new">Uniprot GOA</a> - 15th February 2008</td>
+    <td> <a href="http://www.ebi.ac.uk/GOA/uniprot_release.html" target="_new">Uniprot GOA</a> - 23rd May 2008</td>
     <td> Camon et al - <a href="http://www.ncbi.nlm.nih.gov/entrez/query.fcgi?cmd=Retrieve&db=PubMed&dopt=Abstract&list_uids=14681408" target="_new">PubMed: 14681408</a></td>
     <td> &nbsp;</td>
   </tr>
@@ -375,7 +375,7 @@
   <tr>
     <td> <i>D. melanogaster</i> </td>
     <td> Enhancers</td>
-    <td> <a href="http://www.flybase.org" target="_new">Flybase</a> - Version FB2008_04</td>
+    <td> <a href="http://www.flybase.org" target="_new">Flybase</a> - Version FB2008_05</td>
     <td> Crosby et al - <a href="http://www.ncbi.nlm.nih.gov/entrez/query.fcgi?cmd=Retrieve&db=PubMed&dopt=Abstract&list_uids=17099233" target="_new">PubMed: 17099233</a></td>
     <td> &nbsp;</td>
   </tr>
@@ -394,7 +394,7 @@
         <p> Phenotypes</p></html:link></td>
    <td> <i>D. melanogaster</i> </td>
     <td> Alleles and phenotypes</td>
-    <td> <a href="http://www.flybase.org" target="_new">Flybase</a> - Version FB2008_04</td>
+    <td> <a href="http://www.flybase.org" target="_new">Flybase</a> - Version FB2008_05</td>
     <td> Crosby et al - <a href="http://www.ncbi.nlm.nih.gov/entrez/query.fcgi?cmd=Retrieve&db=PubMed&dopt=Abstract&list_uids=17099233" target="_new">PubMed: 17099233</a></td>
     <td> &nbsp;</td>
   </tr>
@@ -443,7 +443,7 @@
         <p> Resources</p></html:link></td>
     <td> <i>D. melanogaster</i> </td>
     <td> Insertions and deletions from <a href="http://www.drosdel.org.uk" target="_new">DrosDel</a></td>
-    <td> <a href="http://www.flybase.org" target="_new">FlyBase </a> - Version FB2008_04</td>
+    <td> <a href="http://www.flybase.org" target="_new">FlyBase </a> - Version FB2008_05</td>
     <td> Ryder et al - <a href="http://www.ncbi.nlm.nih.gov/entrez/query.fcgi?cmd=Retrieve&db=PubMed&dopt=Abstract&list_uids=15238529" target="_new">PubMed: 15238529</a></td>
     <td><html:link action="/dataCategories" anchor="note2" title="${note2}">#2</html:link></td> 
   </tr>
@@ -451,7 +451,7 @@
   <tr>
     <td> <i>D. melanogaster</i> </td>
     <td> Insertions from <a href="http://drosophila.med.harvard.edu" target="_new">Exelixis</a></td>
-    <td> <a href="http://www.flybase.org" target="_new">FlyBase </a> - Version FB2008_04</td>
+    <td> <a href="http://www.flybase.org" target="_new">FlyBase </a> - Version FB2008_05</td>
     <td> &nbsp;</td>
     <td> &nbsp;</td>
    </tr>
@@ -459,7 +459,7 @@
   <tr>
     <td> <i>D. melanogaster</i> </td>
     <td> Insertions</td>
-    <td> <a href="http://www.flybase.org" target="_new">Flybase</a> - Version FB2008_04</td>
+    <td> <a href="http://www.flybase.org" target="_new">Flybase</a> - Version FB2008_05</td>
     <td> Crosby et al - <a href="http://www.ncbi.nlm.nih.gov/entrez/query.fcgi?cmd=Retrieve&db=PubMed&dopt=Abstract&list_uids=17099233" target="_new">PubMed: 17099233</a></td>
     <td>&nbsp;</td>
   </tr>
@@ -502,7 +502,7 @@
         <p> Literature</p></html:link></td>
     <td> <i>Drosophila</i> </td>
     <td> Gene versus publications</td>
-    <td><a href="http://www.flybase.org" target="_new">Flybase</a> - Version FB2008_04</td>
+    <td><a href="http://www.flybase.org" target="_new">Flybase</a> - Version FB2008_05</td>
     <td> Crosby et al - <a href="http://www.ncbi.nlm.nih.gov/entrez/query.fcgi?cmd=Retrieve&db=PubMed&dopt=Abstract&list_uids=17099233" target="_new">PubMed: 17099233</a></td>
     <td> &nbsp;</td>
   </tr>
