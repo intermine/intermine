@@ -138,15 +138,17 @@ public class PerformanceTester
             System .out.println("Thread " + threadNo + ": template " + templateName + " took "
                     + (queryEndTime - queryStartTime) + " ms");
             if (results.isEmpty()) {
-                System .out.println("Template " + templateName + " does not return any rows");
+                System .out.println("Thread " + threadNo + ": template " + templateName
+                        + " does not return any rows");
             } else if (results.size() < 1000) {
-                System .out.println("Template " + templateName + " returned " + results.size()
+                System .out.println("Thread " + threadNo + ": template " + templateName
+                        + " returned " + results.size()
                         + " rows");
             } else {
                 int count = productionOs.count(q, ObjectStore.SEQUENCE_IGNORE);
-                System .out.println("Template " + templateName + " returned " + count
-                        + " rows (took " + (System.currentTimeMillis() - queryEndTime)
-                        + " ms for count)");
+                System .out.println("Thread " + threadNo + ": template " + templateName
+                        + " returned " + count + " rows (took "
+                        + (System.currentTimeMillis() - queryEndTime) + " ms for count)");
             }
         } catch (Exception e) {
             System .err.println("Thread " + threadNo + ": template " + templateName
