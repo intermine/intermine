@@ -134,10 +134,19 @@ public class PerformanceTester
                     + " with query " + q + ", SQL: " + sqlString);
             List results = productionOs.execute(q, 0, 1000, false, false,
                     ObjectStore.SEQUENCE_IGNORE);
+            long queryEndTime = System.currentTimeMillis();
             System .out.println("Thread " + threadNo + ": template " + templateName + " took "
-                    + (System.currentTimeMillis() - queryStartTime) + " ms");
+                    + (queryEndTime - queryStartTime) + " ms");
             if (results.isEmpty()) {
                 System .out.println("Template " + templateName + " does not return any rows");
+            } else if (results.size() < 1000) {
+                System .out.println("Template " + templateName + " returned " + results.size()
+                        + " rows");
+            } else {
+                int count = productionOs.count(q, ObjectStore.SEQUENCE_IGNORE);
+                System .out.println("Template " + templateName + " returned " + count
+                        + " rows (took " + (System.currentTimeMillis() - queryEndTime)
+                        + " ms for count)");
             }
         } catch (Exception e) {
             System .err.println("Thread " + threadNo + ": template " + templateName
