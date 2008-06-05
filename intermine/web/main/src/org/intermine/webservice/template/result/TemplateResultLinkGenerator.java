@@ -94,8 +94,8 @@ public class TemplateResultLinkGenerator
             String value = encode(WebUtil.sqlTreatedToOriginal(cs.getValue().toString()));
             ret += format(value, highlighted);
             if (cs.getOp().equals(ConstraintOp.LOOKUP)) {
-                ret += "&extra" + index + "="  
-                + TemplateResultLinkGenerator.encode(cs.getExtraValue().toString());                
+                ret += "&extra" + index + "=";  
+                ret += TemplateResultLinkGenerator.encode(cs.getExtraValue());                
             }
         }
         ret += "&size=";
@@ -130,7 +130,7 @@ public class TemplateResultLinkGenerator
      * @param o encoded object
      * @return encoded string
      */
-    private static String encode(String o) {
+    private static String encode(Object o) {
         if (o == null) {
             return "";
         } else {
