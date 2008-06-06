@@ -164,15 +164,6 @@ public class ResultElement implements Serializable
     }
     
     /**
-     * Get the id as a String
-     * Needed by jsp
-     * @return the id as a String
-     */
-    public String getIdString() {
-        return id.toString();
-    }
-
-    /**
      * @return the path
      */
     public Path getPath() {

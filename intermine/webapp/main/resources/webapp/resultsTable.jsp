@@ -245,13 +245,14 @@
 
                   <%-- the checkbox to select this object --%>
                   <c:set var="ischecked" value=""/>
+                    <fmt:formatNumber value="${resultElement.id}" var="resultElementIdString" scope="page" />
                     <c:forEach items="${pagedResults.currentSelectedIdStrings}" var="selectedId">
-                      <c:if test="${(! empty resultElement.typeClsString) && (resultElement.idString == selectedId) && empty bagName}">
+                      <c:if test="${(! empty resultElement.typeClsString) && (fn:replace(resultElementIdString,',','') == selectedId) && empty bagName}">
                         <c:set var="ischecked" value="highlightCell"/>
                       </c:if>
                     </c:forEach>
                   <c:set var="disabled" value="false"/>
-                  <c:if test="${(!empty resultsTable.selectedClass) && (resultsTable.selectedClass != resultElement.typeClsString)}">
+                  <c:if test="${(!empty resultsTable.selectedClass) && ((resultsTable.selectedClass != resultElement.typeClsString)&&(resultsTable.selectedClass != column.typeClsString))}">
                     <c:set var="disabled" value="true"/>
                   </c:if>
                   <c:if test="${column.selectable && ((!isWebCollection) || (! noBagSave && status2.count<=1)) && empty bag}">
@@ -259,7 +260,7 @@
                       <c:if test="${resultElement.id != null}">
                         <html:multibox property="currentSelectedIdStrings" name="pagedResults"
                                  styleId="selectedObjects_${status2.index}_${status.index}_${row[column.index].typeClsString}"
-                                 styleClass="selectable id_${resultElement.id} class_${row[column.index].typeClsString}"
+                                 styleClass="selectable id_${resultElement.id} class_${row[column.index].typeClsString} class_${column.typeClsString}"
                                  onclick="itemChecked(${status.index},${status2.index}, '${pagedResults.tableid}', this)" 
                                  disabled="${disabled}">
                           <c:out value="${resultElement.id}"/>
