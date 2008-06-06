@@ -54,7 +54,9 @@ div.wsLine p.description a{
   font-size: small;}
 
 div.filterBar {
-	padding:15px;height:20px;margin:10px 0px 10px 0px;
+	padding: 0px;
+	height:68px;
+	margin:10px 0px 10px 0px;
 	font-weight: bold;}
 	
 div.filterBar label {
