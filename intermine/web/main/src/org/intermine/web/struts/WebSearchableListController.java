@@ -177,10 +177,10 @@ public class WebSearchableListController extends TilesAction
 
         Map<String, WebSearchable> sortedMap =
                new TreeMap<String, WebSearchable>(comparator);
+        sortedMap.putAll(filteredWebSearchables);
         if (filteredWebSearchables.size() != sortedMap.size()) {
             LOG.error("Important error. Sorting of web searchables removed some items.");
         }
-        sortedMap.putAll(filteredWebSearchables);
         return sortedMap;
     }
 
