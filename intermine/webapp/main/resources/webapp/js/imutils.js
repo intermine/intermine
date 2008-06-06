@@ -251,7 +251,8 @@ function trim(s) {
 }
 
 /*
-    Checks when enter is typed and then form with id or name that is equal to formId is submitted.
+    Checks when enter is typed and then form with id or name that is
+    equal to formId is submitted.
     Usage: <input type="text" onKeyPress="checkEnter(event, 'bagUploadConfirmForm')"> 
 */
 function submitOnEnter(event, formId){ 

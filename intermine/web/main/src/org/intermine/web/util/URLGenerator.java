@@ -15,7 +15,7 @@ import javax.servlet.http.HttpServletRequest;
 import org.intermine.web.logic.WebUtil;
 
 /**
- * Class generating usefull links like base link: http://localhost:8080/query
+ * Class generating useful links like base link: http://localhost:8080/query
  * @author Jakub Kulaviak
  **/
 public class URLGenerator
