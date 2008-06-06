@@ -45,6 +45,7 @@
 <c:set var="ws_input_aspect" value="${wsListId}_${type}_filter_aspect"/>
 
 <div class="filterBar">
+<div style="padding-left: 15px; padding-right: 15px; padding-top: 15px;">
 <ul class="filterActions">
   <li>Search:&nbsp;</li>
   <li><input type="text" id="${ws_input_id}" name="newName_${name}" size="20" 
@@ -85,13 +86,6 @@
       <img src="theme/reset.png" title="Reset search"/>
     </a>
   </li>
-  <c:if test="${! empty userShowDescription}">
-    <c:set var="checkboxChecked" value="checked" />
-  </c:if>
-  <li>&nbsp;&nbsp;&nbsp;<input type="checkbox" <c:out value="${checkboxChecked}" /> id="showCheckbox" 
-    onclick="showDescriptions('<c:out value="${wsListId}" />', '<c:out value="${type}" />', this.checked)">
-    &nbsp;<label for="showCheckbox">Show descriptions</label>
-  </li>
 </ul>
 <input type="hidden" name="filterAction_${wsListId}_${type}" id="filterAction_${wsListId}_${type}"/>
 <input type="hidden" name="filterScope_${wsListId}_${type}" id="filterScope_${wsListId}_${type}" value="${scope}"/>
@@ -126,8 +120,18 @@
 </c:otherwise>
 </c:choose>
 </div>
-
 </div>
+<div style="clear:both; padding-left:15px; padding-right:15px; padding-bottom: 15px;">
+  <c:if test="${! empty userShowDescription}">
+    <c:set var="checkboxChecked" value="checked" />
+  </c:if>
+  <input type="checkbox" <c:out value="${checkboxChecked}" /> id="showCheckbox" 
+    onclick="showDescriptions('<c:out value="${wsListId}" />', '<c:out value="${type}" />', this.checked)">
+    &nbsp;<label for="showCheckbox">Show descriptions</label>
+</div>
+</div>
+
+
 
 <script type="text/javascript">
   <%-- turn off autocomplete because of a Gecko bug:
