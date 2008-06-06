@@ -345,6 +345,7 @@
       <fieldconfig fieldExpr="name"/>
       <fieldconfig fieldExpr="property[GOTerm].namespace"/>
       <fieldconfig fieldExpr="qualifier"/>
+      <fieldconfig fieldExpr="isPrimaryAssignment"/>
     </fields>
     <longdisplayers>
       <displayer src="attributeLinkDisplayer.tile"/>
