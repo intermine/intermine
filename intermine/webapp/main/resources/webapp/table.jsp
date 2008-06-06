@@ -158,7 +158,7 @@
           <html:select property="existingBagName">
              <c:forEach items="${PROFILE.savedBags}" var="entry">
               <c:if test="${param.bagName != entry.key}">
-                <html:option value="${entry.key}"/>
+                <html:option value="${entry.key}">${entry.key} [${entry.value.type}]</html:option>
               </c:if>
              </c:forEach>
           </html:select>              
