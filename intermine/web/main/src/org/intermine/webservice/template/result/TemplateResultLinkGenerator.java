@@ -78,24 +78,14 @@ public class TemplateResultLinkGenerator
         List<Constraint> constraints = getConstraints(template);
         for (int i = 0; i < constraints.size(); i++) {
             Constraint cs = constraints.get(i);
-            int index = i + 1;
-            String opString;
             if (i != 0) {
-                opString = "&op";
-            } else {
-                opString = "op";
+                ret += "&";
             }
-            ret += opString + index + "=";
-            ret += format(encode(CodeTranslator.getAbbreviation(
-                    cs.getOp().toString())), highlighted);
-            ret += "&value" + index + "=";
-            // value could be  treated to be sql valid before, 
-            // so we have to find original untreated string
-            String value = encode(WebUtil.sqlTreatedToOriginal(cs.getValue().toString()));
-            ret += format(value, highlighted);
+            int index = i + 1;
+            ret += operationToString(cs.getOp(), index , highlighted);
+            ret += "&" + valueToString(cs.getValue(), index, highlighted);
             if (cs.getOp().equals(ConstraintOp.LOOKUP)) {
-                ret += "&extra" + index + "=";  
-                ret += TemplateResultLinkGenerator.encode(cs.getExtraValue());                
+                ret += "&" + extraToString(cs.getExtraValue(), index);
             }
         }
         ret += "&size=";
@@ -103,6 +93,39 @@ public class TemplateResultLinkGenerator
         return ret;
     }
 
+    private String operationToString(ConstraintOp op, int index, boolean highlighted) {
+        String ret = "";
+        ret += "op" + index + "=";
+        ret += format(encode(CodeTranslator.getAbbreviation(
+                op.toString())), highlighted);
+        return ret;
+    }
+
+    private String valueToString(Object valueObject, int index, boolean highlighted) {
+        String ret = "";
+        ret += "value" + index + "=";
+        // value could be  treated to be sql valid before, 
+        // so we have to find original untreated string
+        String value = encode(WebUtil.sqlTreatedToOriginal(objectToString(valueObject)));
+        ret += format(value, highlighted);
+        return ret;
+    }
+
+    private String objectToString(Object o) {
+        if (o != null) {
+            return o.toString();
+        } else {
+            return "";
+        }
+    }
+
+    private String extraToString(Object extraValue, int index) {
+        String ret = "";
+        ret += "extra" + index + "=";  
+        ret += encode(WebUtil.sqlTreatedToOriginal(objectToString(extraValue)));
+        return ret;
+    }
+    
     /**
      * This method is made to be consistent with the way in which TemplateConfigurator
      * parses constraints. So the order of constraints is correct.

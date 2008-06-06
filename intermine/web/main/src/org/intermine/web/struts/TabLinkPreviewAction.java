@@ -19,6 +19,7 @@ import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
 import org.intermine.web.util.HttpClient;
+import org.intermine.web.util.URLUtil;
 import org.intermine.webservice.WebService;
 import org.intermine.webservice.query.result.WebServiceRequestParser;
 
@@ -37,13 +38,11 @@ public class TabLinkPreviewAction extends InterMineAction
     public ActionForward execute(ActionMapping mapping, ActionForm form,
             HttpServletRequest request, HttpServletResponse response)
             throws Exception {
+        PrintWriter writer = response.getWriter();
         String link = request.getParameter("link");
-        String url = link.replaceAll("XXXXX", "&");
-        url = url + "&" + WebService.OUTPUT_PARAMETER + "=" 
-            + WebServiceRequestParser.FORMAT_PARAMETER_TAB;
+        String url = prepareURL(link);
         HttpClient client = new HttpClient();
         byte[] data = client.download(url);
-        PrintWriter writer = response.getWriter();
         writer.println("<html>");
         String content;
         if (data.length == 0) {
@@ -55,6 +54,14 @@ public class TabLinkPreviewAction extends InterMineAction
         }
         printPage(content, writer);
         return null;
+    }
+
+    private String prepareURL(String link) {
+        String url = link.replaceAll("XXXXX", "&");
+        url = URLUtil.encodeURL(url); 
+        url = url + "&" + WebService.OUTPUT_PARAMETER + "=" 
+            + WebServiceRequestParser.FORMAT_PARAMETER_TAB;
+        return url;
     }
 
     private void printPage(String content, PrintWriter writer) {
