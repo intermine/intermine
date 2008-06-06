@@ -55,7 +55,13 @@ public class URLUtil
         return ret;
     }
 
-    private static String encodeString(String s) {
+    /**
+     * Encodes string to be URL safe. For encoding URL use encodeURL 
+     * method.
+     * @param s string to be encoded
+     * @return encoded string
+     */
+    public static String encodeString(String s) {
         try {
             return URLEncoder.encode(s, "UTF-8");
         } catch (UnsupportedEncodingException e) {
