@@ -48,20 +48,21 @@ function handleTableWidget(widget) {
 	  var widgetdatawait = document.getElementById('widgetdatawait' + widget.id);
 
 	  var row = document.createElement("tr");
+
+	  // checkbox
+	  var checkboxCell = document.createElement("th");
+	  var formName = "widgetaction" + widget.id;
+	  var checky = "<input type=\"checkbox\" name=\"select_all\" id=\"selected_all" + widget.id + "\"";
+          checky += " onclick=\"toggleAllChecks('" + formName + "', " + widget.id + ")\">";
+	  checkboxCell.innerHTML = checky;
+	  row.appendChild(checkboxCell);
+
+      // column names
 	  for(var i = 0; i < widget.columns.length ; i++){
 	    var cell = document.createElement("th");
-	    if (i == 0) {
-	       var formName = "widgetaction" + widget.id;
-	       var checky = "<input type=\"checkbox\" name=\"select_all\" id=\"selected_all" + widget.id + "\"";
-               checky += " onclick=\"toggleAllChecks('" + formName + "', " + widget.id + ")\">";
-	       cell.innerHTML = checky;
-	    } else {
-	       cell.innerHTML = widget.columns[i];
-	    }
+	    cell.innerHTML = widget.columns[i];
 	    row.appendChild(cell);
 	  }
-
-	  row.appendChild(document.createElement("th"));
 
 	  $("tablewidget"+widget.id+"head").appendChild(row);
 
