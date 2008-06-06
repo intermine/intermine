@@ -742,6 +742,9 @@ public class MainHelper
                         && ((!onlyEquals)
                             || ((c.getOp() == ConstraintOp.EQUALS)
                                 && (codeToCS.get(c.getCode()) == andcs)))) {
+                    if (c.getValue() instanceof InterMineBag) {
+                        continue;
+                    }
                     String dest = (String) c.getValue();
                     String finalDest = loops.get(dest);
                     if (finalDest == null) {
