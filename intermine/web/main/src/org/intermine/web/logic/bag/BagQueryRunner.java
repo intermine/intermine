@@ -136,7 +136,7 @@ public class BagQueryRunner
         // CollectionUtil.groupByClass will sort out the strings and types
         Class typeCls = Class.forName(model.getPackageName() + "." + type);
         List<BagQuery> queries =
-            getBagQueriesForType(bagQueryConfig.getBagQueries(), typeCls.getName(), cleanInput);
+            getBagQueriesForType(bagQueryConfig, typeCls.getName());
         Set<String> unresolved = new LinkedHashSet<String>(cleanInput);
         Set wildcardUnresolved = new LinkedHashSet(wildcardInput);
         Iterator<BagQuery> qIter = queries.iterator();
@@ -418,21 +418,23 @@ public class BagQueryRunner
     }
 
     // temporary method - will be replaced by BagQueryHelper method
-    private List<BagQuery> getBagQueriesForType(Map bagQueries, String type, List<String> input)
+    private List<BagQuery> getBagQueriesForType(BagQueryConfig bagQueryConfig, String type)
     throws ClassNotFoundException {
         List<BagQuery> queries = new ArrayList<BagQuery>();
+        
+        // some queries should run before the default
+        queries.addAll(bagQueryConfig.getPreDefaultBagQueries(TypeUtil.unqualifiedName(type)));
+        
         // create the default query and put it first in the list
-        BagQuery defaultQuery = BagQueryHelper.createDefaultBagQuery(type, bagQueryConfig, model,
-                                                                     classKeys, input);
+        BagQuery defaultQuery = new BagQuery(bagQueryConfig, model, classKeys, type);
+
         if (defaultQuery != null) {
             queries.add(defaultQuery);
         }
 
         // add any queries that are configured for this type
-        List<BagQuery> bqs = (List<BagQuery>) bagQueries.get(TypeUtil.unqualifiedName(type));
-        if (bqs != null) {
-            queries.addAll(bqs);
-        }
+        queries.addAll(bagQueryConfig.getBagQueries(TypeUtil.unqualifiedName(type)));
+
         return queries;
     }
     

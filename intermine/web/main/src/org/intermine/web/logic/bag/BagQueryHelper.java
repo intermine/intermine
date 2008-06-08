@@ -57,7 +57,7 @@ public class BagQueryHelper
      * key fields match any of the input identifiers
      * @throws ClassNotFoundException if the type isn't in the model
      */
-    public static BagQuery createDefaultBagQuery(String type, BagQueryConfig bagQueryConfig,
+    public static Query createDefaultBagQuery(String type, BagQueryConfig bagQueryConfig,
                                                  Model model, Map classKeys, Collection input)
         throws ClassNotFoundException {
 
@@ -115,8 +115,7 @@ public class BagQueryHelper
                 "Internal error - could not find any usable key fields for type: " + type + ".";
             throw new IllegalArgumentException(message);
         }
-        BagQuery bq = new BagQuery(bagQueryConfig, model, q, DEFAULT_MESSAGE, false);
-        return bq;
+        return q;
     }
 
     /**

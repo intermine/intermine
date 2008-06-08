@@ -10,6 +10,8 @@ package org.intermine.web.logic.bag;
  *
  */
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -21,16 +23,21 @@ public class BagQueryConfig
     private String connectField;
     private String extraConstraintClassName;
     private String constrainField;
-    private final Map bagQueries;
+    private final Map<String, List<BagQuery>> bagQueries;
+    private final Map<String, List<BagQuery>> preDefaultBagQueries;
     private Map<String, Map> additionalConverters;
 
     /**
      * Create a new BagQueryConfig object.
      * @param bagQueries a Map from class name to bag query
+     * @param preDefaultBagQueries a separate map of queries to run before the default
      * @param additionalConverters extra converters configured
      */
-    public BagQueryConfig(Map bagQueries, Map additionalConverters) {
+    public BagQueryConfig(Map<String, List<BagQuery>> bagQueries,
+                          Map<String, List<BagQuery>> preDefaultBagQueries,
+                          Map additionalConverters) {
         this.bagQueries = bagQueries;
+        this.preDefaultBagQueries = preDefaultBagQueries;
         this.additionalConverters = additionalConverters;
     }
 
@@ -91,13 +98,27 @@ public class BagQueryConfig
     }
 
     /**
-     * Return a Map from type name to a List of BagQuerys to run for that type
+     * Return a list of BagQuerys to run for a given type
+     * @param type the type to fetch queries for
      * @return the BagQuerys Map
      */
-    public Map getBagQueries() {
-        return bagQueries;
+    public List<BagQuery> getBagQueries(String type) {
+        List<BagQuery> bqs = bagQueries.get(type);
+        return ((bqs == null) ? new ArrayList<BagQuery>() : bqs);
     }
 
+    /**
+     * Return a List of BagQuerys for the given type that should be run before the
+     * default query
+     * @param type the type to fetch queries for
+     * @return the BagQuerys Map
+     */
+    public List<BagQuery> getPreDefaultBagQueries(String type) {
+//       List<BagQuery> bqs = preDefaultBagQueries.get(type);
+//        return ((bqs == null) ? new ArrayList<BagQuery>() : bqs);
+        return preDefaultBagQueries.get(type);
+    }
+    
     /**
      * Return a Map from converter Class name to field name to use in the url to get that field
      * @param type get converters for this type or a subtype of it
