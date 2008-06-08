@@ -34,8 +34,11 @@ import org.xml.sax.helpers.DefaultHandler;
 public class BagQueryHandler extends DefaultHandler
 {
     private List<BagQuery> queryList;
+    private List<BagQuery> preDefaultQueryList;
 
     private Map<String, List<BagQuery>> bagQueries = new HashMap();
+
+    private Map<String, List<BagQuery>> preDefaultBagQueries = new HashMap();
 
     private Map<String, Map> additionalConverters = new HashMap();
 
@@ -43,13 +46,16 @@ public class BagQueryHandler extends DefaultHandler
 
     private Boolean matchesAreIssues;
 
+    private Boolean runBeforeDefault;
+    
     private Model model;
 
     private StringBuffer sb;
 
     private String pkg = null;
 
-    private BagQueryConfig bagQueryConfig = new BagQueryConfig(bagQueries, additionalConverters);
+    private BagQueryConfig bagQueryConfig = new BagQueryConfig(bagQueries, preDefaultBagQueries, 
+                                                               additionalConverters);
 
     private String connectField;
 
@@ -100,6 +106,7 @@ public class BagQueryHandler extends DefaultHandler
                 throw new SAXException("Type was not found in model: " + type);
             }
             queryList = new ArrayList<BagQuery>();
+            preDefaultQueryList = new ArrayList<BagQuery>();
             if (bagQueries.containsKey(type)) {
                 throw new SAXException("Duplicate query lists defined for type: " + type);
             }
@@ -107,6 +114,7 @@ public class BagQueryHandler extends DefaultHandler
         if (qName.equals("query")) {
             message = attrs.getValue("message");
             matchesAreIssues = Boolean.valueOf(attrs.getValue("matchesAreIssues"));
+            runBeforeDefault = Boolean.valueOf(attrs.getValue("runBeforeDefault"));
             sb = new StringBuffer();
         }
         if (qName.equals("additional-converter")) {
@@ -173,11 +181,16 @@ public class BagQueryHandler extends DefaultHandler
             if (queryString != null && message != null && matchesAreIssues != null) {
                 BagQuery bq = new BagQuery(bagQueryConfig, model, queryString, message, pkg,
                                            matchesAreIssues.booleanValue());
-                queryList.add(bq);
+                if (runBeforeDefault) {
+                    preDefaultQueryList.add(bq);
+                } else {
+                    queryList.add(bq);
+                }
             }
             queryString = null;
             matchesAreIssues = null;
             message = null;
+            runBeforeDefault = null;
         }
 
         // add bag query to map for specified class and all subclasses
@@ -195,6 +208,12 @@ public class BagQueryHandler extends DefaultHandler
                     bagQueries.put(clsName, typeQueries);
                 }
                 typeQueries.addAll(queryList);
+                List<BagQuery> preDefaultTypeQueries = preDefaultBagQueries.get(clsName);
+                if (preDefaultTypeQueries == null) {
+                    preDefaultTypeQueries = new ArrayList<BagQuery>();
+                    preDefaultBagQueries.put(clsName, preDefaultTypeQueries);
+                }
+                preDefaultTypeQueries.addAll(preDefaultQueryList);
             }
         }
     }

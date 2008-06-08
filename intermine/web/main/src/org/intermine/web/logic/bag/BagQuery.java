@@ -49,12 +49,14 @@ import org.intermine.objectstore.query.iql.IqlQuery;
  */
 public class BagQuery
 {
-    private Query query;
     private String message, queryString, packageName;
     private boolean matchesAreIssues;
     private final BagQueryConfig bagQueryConfig;
     private final Model model;
-
+    private boolean isDefaultQuery;
+    private Map classKeys;
+    private String type;
+    
     /**
      * Create a new BagQuery object.
      * @param bagQueryConfig the configuration to use
@@ -76,29 +78,29 @@ public class BagQuery
         this.message = message;
         this.matchesAreIssues = matchesAreIssues;
         this.packageName = packageName;
-        this.query = null;
+        this.isDefaultQuery = false;
     }
 
     /**
-     * Create a new BagQuery object.
+     * Create a new BagQuery object for the default query - search for all key fields
+     * of the given class.
      * @param bagQueryConfig the configuration to use
      * @param model the Model for the query
-     * @param query the Query
-     * @param message the message from the bag-queries.xml describing this query
-     * @param matchesAreIssues true if and and if matches for this bag query should be treated as
-     * issues (aka low quality matches)
+     * @param classKeys map of class key fields
+     * @param type the qualified class name of the type to build query for
      */
-    public BagQuery(BagQueryConfig bagQueryConfig, Model model, Query query,
-                    String message, boolean matchesAreIssues) {
+    public BagQuery(BagQueryConfig bagQueryConfig, Model model, Map classKeys, String type) {
         if (bagQueryConfig == null) {
             throw new IllegalArgumentException("bagQueryConfig argument cannot be null");
         }
         this.bagQueryConfig = bagQueryConfig;
         this.model = model;
         this.queryString = "";
-        this.query = query;
-        this.message = message;
-        this.matchesAreIssues = matchesAreIssues;
+        this.isDefaultQuery = true;
+        this.classKeys = classKeys;
+        this.type = type;
+        this.message = BagQueryHelper.DEFAULT_MESSAGE;
+        this.matchesAreIssues = false;
     }
 
     /**
@@ -106,8 +108,9 @@ public class BagQuery
      * @param bag the collection to use to constrain the query
      * @param extraFieldValue the value used if any extra constraint is configured
      * @return the Query
+     * @throws ClassNotFoundException if class given by type not found
      */
-    public Query getQuery(Collection bag, String extraFieldValue) {
+    public Query getQuery(Collection bag, String extraFieldValue) throws ClassNotFoundException {
         List lowerCaseBag = new ArrayList();
         for (Object o : bag) {
             if (o instanceof String) {
@@ -124,12 +127,16 @@ public class BagQuery
             }
         }
 
-        if (query == null) {
+        // if this should be the default query using class key fields, create it now        
+        if (isDefaultQuery) {
+            Query q = BagQueryHelper.createDefaultBagQuery(type, bagQueryConfig, model,
+                                                              classKeys, lowerCaseBag);
+            return addExtraConstraint(q, extraFieldValue);
+        } else {
             IqlQuery q = new IqlQuery(queryString, packageName,
                                       new ArrayList(Collections.singleton(lowerCaseBag)));
             return addExtraConstraint(q.toQuery(), extraFieldValue);
         }
-        return addExtraConstraint(query, extraFieldValue);
     }
 
     /**
@@ -138,8 +145,10 @@ public class BagQuery
      * @param bag the Collection of strings to use to constrain the query
      * @param extraFieldValue the value used if any extra constraint is configured
      * @return the Query
+     * @throws ClassNotFoundException if class specified by type not found
      */
-    public Query getQueryForWildcards(Collection<String> bag, String extraFieldValue) {
+    public Query getQueryForWildcards(Collection<String> bag, String extraFieldValue)
+    throws ClassNotFoundException {
         Query q = QueryCloner.cloneQuery(getQuery(Collections.EMPTY_SET, extraFieldValue));
         Map<QueryEvaluable, ConstraintSet> nodes = new HashMap<QueryEvaluable, ConstraintSet>();
         if (q.getConstraint() instanceof BagConstraint) {
