@@ -6,13 +6,13 @@
 
 <!-- news.jsp -->
    <div>
-      <h2>News</h2>
+      <h2 style="display:inline">News</h2>&nbsp;<a href="${WEB_PROPERTIES['project.sitePrefix']}/news.shtml">more...</a>
       <ol id="news">
       <c:choose>
 	      <c:when test="${! empty rssMap and fn:length(rssMap) != 0}">
-		      <c:forEach items="${rssMap}" var="rssItem" end="1">
-		        <li><strong>${rssItem.title}</strong> ${rssItem.description.value}
-		        <br/><em>${rssItem.publishedDate}</em>
+		      <c:forEach items="${rssMap}" var="rssItem" end="2">
+		        <li><strong>${rssItem.title}</strong> - <em><fmt:formatDate value="${rssItem.publishedDate}" pattern ="dd/MM/yyyy"/></em><br/>
+		        ${rssItem.description.value}
 		        </li>
 		      </c:forEach>
 	      </c:when>
