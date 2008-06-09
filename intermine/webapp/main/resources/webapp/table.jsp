@@ -27,7 +27,7 @@
 
   var columnsToDisable = ${columnsToDisable};
   var columnsToHighlight = ${columnsToHighlight};
-  var bagType = null;  
+  var bagType = null;
 
 //]]>-->
 </script>
@@ -43,8 +43,8 @@
           <div class="resultsTableTemplateHeader">
             <div>
               <fmt:message key="results.templateTitle"/>:
-              <span class="templateTitleBold"> 
-              <c:choose>              
+              <span class="templateTitleBold">
+              <c:choose>
                 <c:when test="${!empty param.templateQueryTitle}">
                  ${param.templateQueryTitle}
                  </c:when>
@@ -56,7 +56,7 @@
             </div>
             <div class="templateDescription">
              <c:choose>
-              
+
                 <c:when test="${!empty param.templateQueryTitle}">
                  ${param.templateQueryDescription}
                  </c:when>
@@ -102,7 +102,7 @@
 <li class="tool_bar_separator"><span>&nbsp;//&nbsp;</span></li>
 <li class="tool_bar_link">
 <html:form action="/changeTableSize">
-  
+
   <%-- Page size controls --%>
   <span style="float:left;padding:4px 5px 0 10px;"><fmt:message key="results.changepagesize"/></span>
     <html:select property="pageSize" onchange="changePageSize()" value="${resultsTable.pageSize}">
@@ -139,7 +139,7 @@
       <em>(with selected items)</em>
 <%-- FIXME: selectedIds has gone, we need a new plan:   $ { pagedResults.selectedIds.length} --%>
       <fmt:message key="bag.new"/><br/>
-      <input type="text" name="newBagName" id="newBagName" onkeypress="javascript:onSaveBagEnter('saveBagForm')"/>
+      <input type="text" name="newBagName" id="newBagName" onkeypress="if (event.keyCode == 13) {validateBagName('saveBagForm');return false;}"/>
       <input type="hidden" name="__intermine_forward_params__" value="${pageContext.request.queryString}"/>
       <input type="hidden" name="table" value="${param.table}"/>
       <input type="button" name="saveNewBag" value="Save selected" id="saveNewBag" onclick="javascript:validateBagName('saveBagForm');"/>
@@ -161,7 +161,7 @@
                 <html:option value="${entry.key}">${entry.key} [${entry.value.type}]</html:option>
               </c:if>
              </c:forEach>
-          </html:select>              
+          </html:select>
      <input type="submit" name="addToBag" id="addToBag" value="Add selected" />
      <script type="text/javascript" charset="utf-8">
           $('addToBag').disabled = true;
@@ -194,7 +194,7 @@
                                 src="images/close.png" title="${hideColumnTitle}" />
             Close column <c:if test="${isWebResults}">-
             <img src="images/summary_maths.png" style="vertical-align:text-bottom;" title="Click here to view Column Summary statistics">
-              Get summary statistics for column</img></c:if> 
+              Get summary statistics for column</img></c:if>
  </div>--%>
 
 

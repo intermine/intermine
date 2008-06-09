@@ -418,9 +418,9 @@ function showDescriptions(listId, type, show) {
     var i = 0;
     for (i = 0; i < divs.length; i++) {
         var el = divs[i];
-        // it is div with description 
+        // it is div with description
         if (el.id.match(prefix) != null) {
-            // if items are filtered there are 2 descriptions: normal and highlighted 
+            // if items are filtered there are 2 descriptions: normal and highlighted
             // and we want to work only with highlighted, normal are hidden all the time
             if (areItemsFiltered()) {
                 if (el.id.match('_highlight') != null) {
@@ -428,9 +428,9 @@ function showDescriptions(listId, type, show) {
                 }
             } else {
                 if (!(el.id.match('_highlight') != null)) {
-                    showElement(el, show);                    
+                    showElement(el, show);
                 }
-            } 
+            }
         }
     }
     AjaxServices.setState(prefix, show);
@@ -682,7 +682,7 @@ function validateBagOperations(formName, operation) {
 		            selectedBags[j] = frm.selectedBags[i].value;
 		            j++;
 		        }
-		    }        
+		    }
         }
     }
     AjaxServices.validateBagOperations(
@@ -699,9 +699,7 @@ function validateBagOperations(formName, operation) {
 
 // table.jsp, bagUploadConfirm.jsp
 function validateBagName(formName) {
-
-    if (Event && (Event.keyCode == 13
-                  || Event.keyCode == 33
+    if (Event && (Event.keyCode == 33
                   || Event.keyCode == 34
                   || Event.keyCode == 35
                   || Event.keyCode == 36
@@ -711,7 +709,6 @@ function validateBagName(formName) {
                   || Event.keyCode ==  40)) {
         return;
     }
-
     var frm = document.forms[formName];
 
     var bagName = frm.newBagName.value;
