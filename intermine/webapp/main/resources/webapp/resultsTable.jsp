@@ -314,6 +314,7 @@
     <script type="text/javascript" charset="utf-8">
       $('newBagName').disabled = false;
       $('saveNewBag').disabled = false;
+      $('addToBag').disabled = false;
     </script>
     </c:if>
   </c:if>
