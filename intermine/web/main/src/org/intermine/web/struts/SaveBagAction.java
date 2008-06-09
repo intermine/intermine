@@ -31,7 +31,6 @@ import org.intermine.web.logic.bag.InterMineBag;
 import org.intermine.web.logic.profile.Profile;
 import org.intermine.web.logic.profile.ProfileManager;
 import org.intermine.web.logic.results.PagedTable;
-import org.intermine.web.logic.results.WebTable;
 import org.intermine.web.logic.session.SessionMethods;
 
 /**
@@ -120,13 +119,13 @@ public class SaveBagAction extends InterMineAction
             return mapping.findForward("results");
         }
 
-        WebTable allRows = pt.getAllRows();
-        boolean seenAllRows = false;
-        if (allRows.size() < 10 && !allRows.isSizeEstimate()) {
-            // hack to avoid problems with results from quick search - ignore the column type
-            // if all rows are selected
-            seenAllRows = true;
-        }
+//        WebTable allRows = pt.getAllRows();
+//        boolean seenAllRows = false;
+//        if (allRows.size() < 10 && !allRows.isSizeEstimate()) {
+//            // hack to avoid problems with results from quick search - ignore the column type
+//            // if all rows are selected
+//            seenAllRows = true;
+//        }
 
         // First pass through, just to check types are compatible.
 //        for (int i = 0; i < sbf.getSelectedObjects().length; i++) {
