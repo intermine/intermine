@@ -34,7 +34,7 @@ public class ExcelHttpExporter extends HttpExporterBase implements TableHttpExpo
      * Constructor.
      */
     public ExcelHttpExporter() { }
-    
+
     /**
      * {@inheritDoc}
      */
@@ -42,21 +42,20 @@ public class ExcelHttpExporter extends HttpExporterBase implements TableHttpExpo
     public void export(PagedTable pt, HttpServletRequest request, HttpServletResponse response) {
         int defaultMax = 10000;
 
-        int maxExcelSize =
-            WebUtil.getIntSessionProperty(request.getSession(), 
+        int maxExcelSize = WebUtil.getIntSessionProperty(request.getSession(),
                     "max.excel.export.size", defaultMax);
-        
+
         // Excel 2000 limitations are 65,536 rows but because data are flushed at the end
         // and must be saved in memory limits there can be lower
         if (pt.getExactSize() > maxExcelSize) {
-            
+
             throw new ExportException("Result is too big for export in excel format. "
                     + "Table for export can have at the most "
                     + maxExcelSize + " rows.");
         }
         super.export(pt, request, response);
     }
-    
+
     /**
      * {@inheritDoc}
      */
