@@ -77,12 +77,6 @@ public class TableController extends TilesAction
         String sizeStr = request.getParameter("size");
         String trail = request.getParameter("trail");
 
-        PathQuery query = (PathQuery) session.getAttribute(Constants.QUERY);
-        if (query != null) {
-            HashMap<String, String> sortOrderMap = setSortOrderMap(query);
-            request.setAttribute("sortOrderMap", sortOrderMap);
-        }
-
         request.setAttribute("trail", trail);
 
         SaveBagForm bagForm = (SaveBagForm) session.getAttribute("saveBagForm");
@@ -95,6 +89,13 @@ public class TableController extends TilesAction
             LOG.error("PagedTable for " + request.getParameter("table") + " is null");
             return null;
         }
+        
+        PathQuery query = (PathQuery) pt.getWebTable().getPathQuery();
+        if (query != null) {
+            HashMap<String, String> sortOrderMap = setSortOrderMap(query);
+            request.setAttribute("sortOrderMap", sortOrderMap);
+        }
+        
         request.setAttribute("resultsTable", pt);
         if ((request.getAttribute("lookupResults") != null)) {
           //Do nothing
