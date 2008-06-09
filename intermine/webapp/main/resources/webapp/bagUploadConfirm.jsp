@@ -76,28 +76,28 @@ function toggleForm(matchCount) {
         </c:otherwise>
       </c:choose>
       <fmt:message key="bagUploadConfirm.bagName"/>:
-      <html:text property="newBagName" size="20" value="" onkeypress="submitOnEnter(event, 'bagUploadConfirmForm')"/>
+      <html:text property="newBagName" size="20" value="" onkeypress="if (event.keyCode == 13) {validateBagName('bagUploadConfirmForm');return false;} "/>
     <input type="button" name="confirmBagUpload" value="Save list" onclick="javascript:validateBagName('bagUploadConfirmForm');"/>
     </div>
   </div>
   <c:if test="${!empty duplicates || ! empty lowQualityMatches || ! empty convertedObjects}">
     <div class="heading">
-      <fmt:message key="bagUploadConfirm.issues"/>    
+      <fmt:message key="bagUploadConfirm.issues"/>
   </div>
     <div class="body">
-    
-  <p><b><span id="addAllLink" onclick="addAll('all','${jsArray}');" class="fakelink">Add all</span> | 
+
+  <p><b><span id="addAllLink" onclick="addAll('all','${jsArray}');" class="fakelink">Add all</span> |
     <span id="removeAllLink" onclick="removeAll('all','${jsArray}');">Remove all</span></b></p>
-        
+
         <br/>
-        
+
     <p><fmt:message key="bagUploadConfirm.issuesHelp">
          <fmt:param value="${bagUploadConfirmForm.bagType}"/>
        </fmt:message></p>
     <c:if test="${! empty lowQualityMatches}">
     <br/>
-      <p> 
-        <h3>Low quality matches</h3> 
+      <p>
+        <h3>Low quality matches</h3>
     </p>
       <p>
         <c:set var="issueMap" value="${lowQualityMatches}"/>
@@ -112,8 +112,8 @@ function toggleForm(matchCount) {
     </c:if>
     <c:if test="${! empty duplicates}">
       <br/>
-      <p> 
-        <h3>Duplicates</h3> 
+      <p>
+        <h3>Duplicates</h3>
       </p>
     <p>
         <c:set var="issueMap" value="${duplicates}"/>
@@ -130,7 +130,7 @@ function toggleForm(matchCount) {
     <c:if test="${!empty convertedObjects}">
     <br/>
       <p>
-        <h3><fmt:message key="bagUploadConfirm.convertedHeader"/></h3> 
+        <h3><fmt:message key="bagUploadConfirm.convertedHeader"/></h3>
   </p>
       <p>
         <c:set var="issueMap" value="${convertedObjects}"/>
@@ -149,7 +149,7 @@ function toggleForm(matchCount) {
 
   <c:if test="${fn:length(unresolved) > 0}">
     <div class="heading">
-      <fmt:message key="bagUploadConfirm.unresolvedDesc"/> 
+      <fmt:message key="bagUploadConfirm.unresolvedDesc"/>
     </div>
     <div class="body">
       <p>
@@ -164,9 +164,9 @@ function toggleForm(matchCount) {
       </p>
     </div>
     <div class="body">
-    <html:submit property="goBack"> 
-      <fmt:message key="bagUploadConfirm.goBack"/> 
-    </html:submit>   
+    <html:submit property="goBack">
+      <fmt:message key="bagUploadConfirm.goBack"/>
+    </html:submit>
     </div>
   </c:if>
 </html:form>

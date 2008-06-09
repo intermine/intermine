@@ -68,7 +68,7 @@ function toggleAll(count, prefix, display, extraField, saveState) {
 	for (i = 0; i < count; i++) {
 		var elementId = prefix + i;
 		var element = document.getElementById(elementId);
-		if (element != null) {    		
+		if (element != null) {
 			if(display=='expand') {
 				toggleOpen(element, elementId);
 			} else {
@@ -84,7 +84,7 @@ function toggleAll(count, prefix, display, extraField, saveState) {
 				toggleOpen(element, extraField);
 			} else {
 				toggleClose(element, extraField);
-			}		
+			}
 			if (window.saveToggleState /* function exists*/) {
 				saveToggleState(extraField);
 			}
@@ -106,7 +106,7 @@ function display(id, beDisplayed) {
     if (beDisplayed == true) {
         document.getElementById(id).style.display = 'block';
     } else {
-        document.getElementById(id).style.display = 'none'; 
+        document.getElementById(id).style.display = 'none';
     }
 }
 
@@ -126,7 +126,7 @@ function center(id) {
     /* I prefer center a bit above real center */
     y = y - 50;
     el.style.position = 'absolute';
-    el.style.left = x + 'px';  
+    el.style.left = x + 'px';
     el.style.top = y + 'px';
 }
 
@@ -250,24 +250,4 @@ function trim(s) {
   return s.replace(/^\s+|\s+$/g,"");
 }
 
-/*
-    Checks when enter is typed and then form with id or name that is
-    equal to formId is submitted.
-    Usage: <input type="text" onKeyPress="checkEnter(event, 'bagUploadConfirmForm')"> 
-*/
-function submitOnEnter(event, formId){ 
-    if (document.getElementById(formId)) {
-       form = document.getElementById(formId);
-    } else {
-       form = document.getElementsByName(formId)[0];
-    }
-    if(event.keyCode == 13){ 
-       if (form) {
-	       form.submit();
-	       return false;       
-       }
-    }
-    else{
-       return true;
-    }
-}
+
