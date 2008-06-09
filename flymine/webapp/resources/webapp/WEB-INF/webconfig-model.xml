@@ -343,7 +343,7 @@
       <fieldconfig fieldExpr="subject.primaryIdentifier" showInInlineCollection="false" showInResults="true"/>
       <fieldconfig fieldExpr="identifier"/>
       <fieldconfig fieldExpr="name"/>
-      <fieldconfig fieldExpr="property[GOTerm].namespace"/>
+      <fieldconfig fieldExpr="property[GOTerm].namespace" showInInlineCollection="false" showInResults="false" />
       <fieldconfig fieldExpr="qualifier"/>
       <fieldconfig fieldExpr="isPrimaryAssignment"/>
     </fields>
@@ -902,10 +902,6 @@
       <fieldconfig fieldExpr="end"/>
     </fields>
   </class>
-
-
-
-
 
   <tableExportConfig id="sequenceExporter" actionPath="/exportAction?type=sequenceExporter"
                      className="org.intermine.bio.web.export.SequenceHttpExporter"/>

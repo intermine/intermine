@@ -540,7 +540,7 @@ public class QueryBuilderChange extends DispatchAction
                 Path pathToAdd = new Path(model, path.toString() + "." + fc.getFieldExpr());
                 if (pathToAdd.getEndClassDescriptor() == null
                                 && !view.contains(pathToAdd)
-                                && fc.getShowInResults()) {
+                                && (fc.getDisplayer() == null && fc.getShowInSummary())) {
                     view.add(pathToAdd);
                     newQuery = false;
                 }
