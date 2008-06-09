@@ -129,6 +129,7 @@ public class ChadoSequenceProcessor extends ChadoProcessor
      * {@inheritDoc}
      */
     @Override
+    
     public void process(Connection connection) throws Exception {
         createFeatureTempTable(connection);
         earlyExtraProcessing(connection);

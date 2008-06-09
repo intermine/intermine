@@ -5,8 +5,22 @@
     <put name="pageName" value="flymineQuickStart"/>
   </definition>
 
+ 
+  <definition name="modEncodeProjects.page" extends="layout.template">
+<!-- ><put name="body" value="modEncodeProjects.tile"/>
+    <put name="pageName" value="modEncodeProjects"/>
+-->
+
+  </definition>
+
+
+
   <definition name="orthologueDisplayer.tile" path="/model/orthologueDisplayer.jsp" 
   	controllerUrl="/initOrthologueDisplayer.do"/>
   	
   <definition name="attributeLinkDisplayer.tile" path="/model/attributeLinkDisplayer.jsp" 
   	      controllerUrl="/initAttributeLinkDisplayer.do"/>
+
+  <definition name="modEncodeProjects.tile" path="/model/modEncodeProjects.jsp" 
+          controllerUrl="/modEncodeProjects.do"/>
+  	      

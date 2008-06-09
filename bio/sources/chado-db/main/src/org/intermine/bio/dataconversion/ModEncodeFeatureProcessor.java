@@ -56,7 +56,7 @@ public class ModEncodeFeatureProcessor extends ChadoSequenceProcessor
     protected String getExtraFeatureConstraint() {
         String queryList = forINclause();
 
-        LOG.info("LISTA " + queryList);
+//        LOG.info("LISTA " + queryList);
 
         return " feature_id IN "
             + " (SELECT feature_id "
