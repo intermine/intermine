@@ -633,15 +633,8 @@ public abstract class WebUtil
         } else {
             q = ldr.getSampleQuery(true);
         }
-        List r = os.execute(q);
-        Iterator it = r.iterator();
-        while (it.hasNext()) {
-            ResultsRow rr =  (ResultsRow) it.next();
-            return ((java.lang.Long) rr.get(0)).intValue();
-        }
-        return 0;
-        //Object[] o = os.executeSingleton(q).toArray();
-        //return  ((java.lang.Long) o[0]).intValue();
+        Object[] o = os.executeSingleton(q).toArray();
+        return  ((java.lang.Long) o[0]).intValue();
     }
 
     /**
