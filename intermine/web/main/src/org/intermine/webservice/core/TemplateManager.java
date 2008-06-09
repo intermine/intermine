@@ -40,7 +40,7 @@ public class TemplateManager
      * @param name template name
      * @return TemplateQuery or null if template wasn't found 
      */
-    public TemplateQuery getQuery(String name) {
+    public TemplateQuery getGlobalTemplate(String name) {
         String userName = ((Profile) request.getSession().
                 getAttribute(Constants.PROFILE)).getUsername();
         return TemplateHelper.findTemplate(request.getSession().getServletContext(),
