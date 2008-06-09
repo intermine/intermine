@@ -14,7 +14,7 @@
    function switchInputs(open, close) {
       $(open + 'Input').disabled = false;
       $(close + 'Input').disabled = true;
-      $('submitBag').disabled = false;
+      //$('submitBag').disabled = false;
     }
 
     function clearExample() {
@@ -30,7 +30,7 @@
        $('pasteInput').disabled = false;
        $('fileInput').value = '';
        $('pasteInput').value = '';
-       $('submitBag').disabled = true;
+       //$('submitBag').disabled = true;
     }
 
     function loadExample(example) {
