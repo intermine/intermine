@@ -74,6 +74,7 @@ public class PagedTable
     private int allSelected = -1;
 
     private String selectedClass;
+    private int selectedColumn;
 
     /**
      * Construct a PagedTable with a list of column names
@@ -341,6 +342,7 @@ public class PagedTable
                 } else {
                     selectionIds.put(objectId, resultElement.getField().toString());
                 }
+                setSelectedColumn(columnIndex);
                 setSelectedClass(TypeUtil.unqualifiedName(columns.get(columnIndex).getType()
                                     .getName()));
             }
@@ -359,6 +361,7 @@ public class PagedTable
            selectionIds.remove(objectId);
            if (selectionIds.size() <= 0) {
                 setSelectedClass(null);
+                setSelectedColumn(-1);
             }
        } else {
            // add because the all checkbox is on
@@ -626,6 +629,20 @@ public class PagedTable
             selectedClass = TypeUtil.unqualifiedName(columnClass.getName());
         }
         this.allSelected = columnSelected;
+    }
+
+    /**
+     * @return the selectedColumn
+     */
+    public int getSelectedColumn() {
+        return selectedColumn;
+    }
+
+    /**
+     * @param selectedColumn the selectedColumn to set
+     */
+    public void setSelectedColumn(int selectedColumn) {
+        this.selectedColumn = selectedColumn;
     }
 
     /**

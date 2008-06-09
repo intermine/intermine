@@ -27,7 +27,7 @@ function selectAll(columnIndex, columnClass, tableid) {
         AjaxServices.selectAll(-1, tableid);
         $('selectedIdFields').update('');
     }
-    disableOtherColumns('class_'+columnClass, columnIndex);
+    disableOtherColumns(columnIndex);
     setToolbarAvailability(!$('selectedObjects_' + columnIndex).checked);
     if (isClear()) {
         enableAll();
@@ -56,10 +56,10 @@ function isClear() {
 /**
  * Disable columns with a different class
  */
-function disableOtherColumns(className, checkedColumn) {
+function disableOtherColumns(index) {
     $$('input.selectable').each(function(input){
-            if (input.id != 'selectedObjects_'  + checkedColumn) {
-                if (! input.hasClassName(className)) {
+            if (input.id != 'selectedObjects_'  + index) {
+                if (! input.hasClassName('index_' + index)) {
                     input.disabled = true;
                 }
             }
@@ -84,7 +84,6 @@ function itemChecked(checkedRow, checkedColumn, tableid, checkbox, internal) {
     /*if (!internal) {
         unselectColumnCheckbox(checkedColumn);
     }*/
-    
     var objectId;
     var objectClass;
     $w(checkbox.className).each(function(className){
@@ -132,7 +131,7 @@ function itemChecked(checkedRow, checkedColumn, tableid, checkbox, internal) {
         enableAll();
         bagType = null;
     } else {
-        disableOtherColumns(objectClass, checkedColumn);
+        disableOtherColumns(checkedColumn);
     }
     
     var nothingSelected = $('selectedIdFields').innerHTML.strip() == '';
