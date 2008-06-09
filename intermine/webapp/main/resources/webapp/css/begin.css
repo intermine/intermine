@@ -24,6 +24,6 @@ div.frontBoxList {
 	margin-top:10px;}
 
 ol#news li {
-    line-height: 20px;
     list-style: disc;
+    margin-bottom:5px;
 }
