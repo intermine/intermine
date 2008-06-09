@@ -343,7 +343,7 @@
       <fieldconfig fieldExpr="subject.primaryIdentifier" showInInlineCollection="false" showInResults="true"/>
       <fieldconfig fieldExpr="identifier"/>
       <fieldconfig fieldExpr="name"/>
-      <fieldconfig fieldExpr="property[GOTerm].namespace" showInInlineCollection="false" showInResults="false" />
+      <fieldconfig fieldExpr="property[GOTerm].namespace" showInSummary="false" />
       <fieldconfig fieldExpr="qualifier"/>
       <fieldconfig fieldExpr="isPrimaryAssignment"/>
     </fields>
