@@ -7,21 +7,15 @@
     <action path="/chartRenderer"
             type="org.flymine.web.ChartRenderer"
             parameter="method"/>
-    
-    <action path="/quickStart" forward="flymineQuickStart.page"/>
-    
-	<action path="/initOrthologueDisplayer" 
-		type="org.flymine.web.OrthologueDisplayerController"/>
-		
-    <action path="/orthologueAction"
-            type="org.flymine.web.OrthologueAction">
-      <forward name="results" path="/results.do" redirect="true"/>
-      <forward name="details" path="/objectDetails.do" redirect="true"/>
-    </action>
-    
+
     <action path="/initAttributeLinkDisplayer"
             type="org.intermine.bio.web.AttributeLinkDisplayerController"/>
 
+    <action path="/modEncodeProjects" forward="modEncodeProjects.page">
+    </action>
 
-    
-    
+<!-- 
+
+    <action path="/modEncodeProjects"
+            type="org.modmine.web.ModEncodeProjectsController"/>
+-->
