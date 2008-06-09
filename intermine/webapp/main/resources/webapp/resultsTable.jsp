@@ -79,7 +79,7 @@
             <tr>
             <td align="left" width="100%" style="background:none;border:none;padding:0;margin:0">
               <%-- summary --%>
-              <c:if test="${!empty column.path.noConstraintsString}">
+              <c:if test="${!empty column.path.noConstraintsString && !fn:contains(column.path.noConstraintsString, ':')}">
               <fmt:message key="columnsummary.getsummary" var="summaryTitle" />
                 <a href="javascript:getColumnSummary('${pagedResults.tableid}','${column.path.noConstraintsString}', &quot;${columnDisplayName}&quot;)"
                    title="${summaryTitle}"><img src="images/summary_maths.png" title="${summaryTitle}"/></a>
@@ -207,7 +207,7 @@
                         </td>
                       </c:if>
 
-                      <%-- test whether already selected and highlight if needed --%>                
+                      <%-- test whether already selected and highlight if needed --%>
                       <c:set var="cellClass" value="${resultElement.id}"/>
                       <c:if test="${resultElement.selected && empty bagName}">
                         <c:set var="cellClass" value="${cellClass} highlightCell"/>
@@ -261,7 +261,7 @@
                         <html:multibox property="currentSelectedIdStrings" name="pagedResults"
                                  styleId="selectedObjects_${status2.index}_${status.index}_${row[column.index].typeClsString}"
                                  styleClass="selectable id_${resultElement.id} class_${row[column.index].typeClsString} class_${column.typeClsString}"
-                                 onclick="itemChecked(${status.index},${status2.index}, '${pagedResults.tableid}', this)" 
+                                 onclick="itemChecked(${status.index},${status2.index}, '${pagedResults.tableid}', this)"
                                  disabled="${disabled}">
                           <c:out value="${resultElement.id}"/>
                         </html:multibox>
@@ -269,7 +269,7 @@
                     </td>
                   </c:if>
 
-                  <%-- test whether already selected and highlight if needed --%>                
+                  <%-- test whether already selected and highlight if needed --%>
                   <td id="cell,${status2.index},${status.index},${row[column.index].typeClsString}"
                        class="${highlightObjectClass} id_${resultElement.id} class_${row[column.index].typeClsString} ${ischecked}">
                     <c:set var="columnType" value="${column.type}" scope="request"/>
@@ -305,7 +305,7 @@
   <c:choose>
    <c:when test="${pagedResults.allSelected}">All selected on all pages</c:when>
    <c:otherwise>${selectedIdFields}</c:otherwise>
-  </c:choose>   
+  </c:choose>
   </span>
   </td>
   </tr>
