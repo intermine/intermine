@@ -211,6 +211,7 @@ public class WriteGFFTask extends Task
                     writeTranscriptsAndExons(gffWriter, currentChr, seenTranscripts,
                                              seenTranscriptParts, synonymMap, evidenceMap);
                     seenTranscripts = new HashMap<Transcript, Location>();
+                    seenTranscriptParts = new HashMap<String, Location>();
                 }
 
                 synonymMap = makeSynonymMap(os, resultChrId);
