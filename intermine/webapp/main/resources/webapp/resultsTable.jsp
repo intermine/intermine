@@ -75,9 +75,9 @@
 
           <th align="center" valign="top" >
             <%-- put in left, right, hide and show buttons --%>
-            <table cellspacing="0" cellpadding="0" border="0">
+            <table cellspacing="0" cellpadding="0" border="0" class="theadbuttons">
             <tr>
-            <td align="left" width="100%" style="background:none;border:none;padding:0;margin:0">
+            <td align="left" width="100%">
               <%-- summary --%>
               <c:if test="${!empty column.path.noConstraintsString && !fn:contains(column.path.noConstraintsString, ':')}">
               <fmt:message key="columnsummary.getsummary" var="summaryTitle" />
@@ -85,16 +85,18 @@
                    title="${summaryTitle}"><img src="images/summary_maths.png" title="${summaryTitle}"/></a>
               </c:if>
             </td>
-            <td style="white-space:nowrap;background:none;border:none;padding:0;margin:0">
            <%-- sort img --%>
              <c:if test="${not empty sortOrderMap[column.name] && empty bag}">
+               <td>
                   <img border="0"
                        width="17" height="16" src="images/${sortOrderMap[column.name]}_gray.gif"
                           title="Results are sorted by ${column.name}"/>
+               </td>
               </c:if>
 
               <%-- left --%>
               <c:if test="${not status.first}">
+                <td>
                 <fmt:message key="results.moveLeftHelp" var="moveLeftTitle">
                   <fmt:param value="${column.name}"/>
                 </fmt:message>
@@ -105,10 +107,12 @@
                        width="13" height="13" src="images/left_arrow.png"
                        title="${moveLeftString}"/>
                 </html:link>
+                </td>
               </c:if>
 
               <%-- right --%>
               <c:if test="${not status.last}">
+                <td>
                 <fmt:message key="results.moveRightHelp" var="moveRightTitle">
                   <fmt:param value="${column.name}"/>
                 </fmt:message>
@@ -119,11 +123,13 @@
                        width="13" height="13"
                        src="images/right_arrow.png" title="${moveRightString}"/>
                 </html:link>
+                </td>
               </c:if>
 
               <%-- show/hide --%>
               <c:if test="${fn:length(pagedResults.columns) > 1}">
                 <c:if test="${pagedResults.visibleColumnCount > 1}">
+                <td>
                   <fmt:message key="results.hideColumnHelp" var="hideColumnTitle">
                     <fmt:param value="${column.name}"/>
                   </fmt:message>
@@ -132,6 +138,7 @@
                     <img border="0"
                          src="images/close.png" title="${hideColumnTitle}" />
                   </html:link>
+                </td>
                 </c:if>
               </c:if>
 
