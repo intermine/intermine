@@ -196,7 +196,7 @@ public class EnrichmentWidget extends Widget
     public List<String> getColumns() {
         return Arrays.asList(new String[]
             {
-                label, "p-Value"
+                label, "p-Value", ""
             });
     }
 
