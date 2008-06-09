@@ -114,9 +114,8 @@ public class BagQueryConfig
      * @return the BagQuerys Map
      */
     public List<BagQuery> getPreDefaultBagQueries(String type) {
-//       List<BagQuery> bqs = preDefaultBagQueries.get(type);
-//        return ((bqs == null) ? new ArrayList<BagQuery>() : bqs);
-        return preDefaultBagQueries.get(type);
+        List<BagQuery> bqs = preDefaultBagQueries.get(type);
+        return ((bqs == null) ? new ArrayList<BagQuery>() : bqs);
     }
     
     /**
