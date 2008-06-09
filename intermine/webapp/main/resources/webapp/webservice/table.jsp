@@ -72,7 +72,7 @@ body {
     <span class="description">${description}</span>
     <div>
          <span style="white-space:nowrap; margin-left:5px;">
-           <a href="" onclick="javascript:window.open('${mineLinkUrl}', '', 'fullscreen=yes, scrollbars=auto');return false;"><c:out value="${mineLinkText}" /></a>
+           <a href="" onclick="javascript:window.open('${mineLinkUrl}');return false;"><c:out value="${mineLinkText}" /></a>
          </span>
 	     <span style="margin-left:15px;">
 	       <imutil:navigationBar baseLink="${baseLink}" pageSize="${pageSize}" currentPage="${currentPage}" nextEnabled="${pageSize == fn:length(rows)}"/>
@@ -81,7 +81,7 @@ body {
 	       Results:&nbsp;<span id="resultCount">in progress</span>
 	     </span>
          <span style="white-space:nowrap; margin-left:15px;">
-           <a href="" onclick="javascript:window.open(window.location.href, '', 'fullscreen=yes, scrollbars=auto');return false;">Open in new window</a>
+           <a href="" onclick="javascript:window.open(window.location.href);return false;">Open in new window</a>
          </span>
     </div>
     <c:choose>
