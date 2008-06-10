@@ -20,6 +20,8 @@ import java.util.regex.Pattern;
 import java.io.IOException;
 import java.io.InputStream;
 
+import org.apache.commons.collections.keyvalue.MultiKey;
+
 /**
  * A class to hold information about organisms.
  * @author Kim Rutherford
@@ -29,6 +31,7 @@ public class OrganismRepository
     private static OrganismRepository or = null;
     private Map<Integer, OrganismData> taxonMap = new HashMap<Integer, OrganismData>();
     private Map<String, OrganismData> abbreviationMap = new HashMap<String, OrganismData>();
+    private Map<MultiKey, OrganismData> genusSpeciesMap = new HashMap<MultiKey, OrganismData>();
 
     private static final String PROP_FILE = "organism_config.properties";
     private static final String PREFIX = "taxon";
@@ -65,12 +68,12 @@ public class OrganismRepository
 
             or = new OrganismRepository();
 
-            Enumeration propNames = props.propertyNames();
+            Enumeration<String> propNames = (Enumeration<String>) props.propertyNames();
 
             Pattern pattern = Pattern.compile(REGULAR_EXPRESSION);
 
             while (propNames.hasMoreElements()) {
-                String name = (String) propNames.nextElement();
+                String name = propNames.nextElement();
                 if (name.startsWith(PREFIX)) {
                     Matcher matcher = pattern.matcher(name);
                     if (matcher.matches()) {
@@ -104,6 +107,10 @@ public class OrganismRepository
                                                + PREFIX + ".");
                 }
             }
+
+            for (OrganismData od: or.taxonMap.values()) {
+                or.genusSpeciesMap.put(new MultiKey(od.getGenus(), od.getSpecies()), od);
+            }
         }
 
         return or;
@@ -135,7 +142,7 @@ public class OrganismRepository
     }
 
     /**
-     * Look up OrganismData objects by abbreviation, abbreviations are not cases sensitive.
+     * Look up OrganismData objects by abbreviation, abbreviations are not case sensitive.
      * Return null if there is no such organism.
      * @param abbreviation the abbreviation
      * @return the OrganismData
@@ -145,5 +152,18 @@ public class OrganismRepository
             return null;
         }
         return abbreviationMap.get(abbreviation.toLowerCase());
+    }
+
+    /**
+     * Look up OrganismData objects by genus and species - both must match.  Returns null if there
+     * is no OrganismData in this OrganismRepository that matches.
+     * @param genus the genus
+     * @param species the species
+     * @return the OrganismData
+     */
+    public OrganismData getOrganismDataByGenusSpecies(String genus, String species) {
+        MultiKey key = new MultiKey(genus, species);
+
+        return genusSpeciesMap.get(key);
     }
 }
