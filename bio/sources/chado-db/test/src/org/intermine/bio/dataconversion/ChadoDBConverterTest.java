@@ -15,6 +15,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.intermine.bio.util.OrganismData;
+import org.intermine.bio.util.OrganismRepository;
 import org.intermine.dataconversion.ItemWriter;
 import org.intermine.dataconversion.ItemsTestCase;
 import org.intermine.dataconversion.MockItemWriter;
@@ -110,12 +112,11 @@ public class ChadoDBConverterTest extends ItemsTestCase
             super(database, tgtModel, writer);
         }
 
-        protected Map<String, Integer> getChadoOrganismIds(@SuppressWarnings("unused")
-                                                           Connection connection,
-                                                           @SuppressWarnings("unused")
-                                                           List<String> abbreviations) {
-            Map<String, Integer> retMap = new HashMap<String, Integer>();
-            retMap.put("Dmel", 7227);
+        @Override
+        protected Map<Integer, OrganismData> getChadoOrganismIds(@SuppressWarnings("unused")
+                                                                 Connection connection) {
+            Map<Integer, OrganismData> retMap = new HashMap<Integer, OrganismData>();
+            retMap.put(1, OrganismRepository.getOrganismRepository().getOrganismDataByTaxon(7227));
             return retMap;
         }
     }
