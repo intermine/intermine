@@ -3,6 +3,65 @@
 
   <div style="clear:" class="box">
 
+<div class="heading2">FlyMine version 13.0 - release notes (10th June 2008)</div>
+<div class="body">
+<p style="font-size: +1.1em;">
+In Release 13.0 we have improved integration of data with old <i>Drosophila</i> gene identifiers from several sources, this information is now applied to a current FlyBase gene where possible.  We have also added allele and phenotype information from FlyBase and miRNA target predictions from miRBase.  Data from FlyBase is updated to the FB2008_05 release and other sources have been updated to the latest version.  User interface improvements focus on uploading and saving lists.  We have also launched a RESTful web service allowing queries to be run from scripts and remote sites.</p>
+
+<h3>Data integration</h3>
+<p>In this release we have made a major effort to update old identifiers for <i>Drosophila</i> genes that are provided by many data sources to match a current FlyBase identifier.  We have done this with a synonym lookup, for example when we download data from a particular source that references gene CG12802 which is no longer a current gene identifier but is a synonym (an old identifier) for FBgn0250818.  Where an old identifier did not match a single gene we did not load data for it.  As a result we have improved data integration, you should see more data attached to current genes and no longer see old genes with data from only one source.</p>
+
+<h3>Data</h3>
+<p>We have added <i>Drosophila</i> allele and phenotype data from FlyBase and miRNA target predictions from miRBase.  Data from FlyBase is updated to the FB2008_05 release and many other sources have been updated to the latest versions, new data are detailed below.  For a complete list of all data included in FlyMine see the 'Data' tab above.</p>
+<p>
+<ul>
+  <li>NEW - <i>Drosophila melanogaster</i> allele and phenoytype data from FlyBase.</li>
+  <li>NEW - <i>Drosophila melanogaster</i> predicted miRNA targets from miRBase.</li>
+  <li>UPDATE - three new RNAi screens added from DRSC.</li>
+</ul>
+</p>
+
+<h3>Saving lists</h3>
+<p>We have enhanced creation of lists from results tables and fixed some selection issues.</p>
+<p>
+<ul>
+  <li>NEW - a 'Selection' bar below the results table tracks objects that have been selected.</li>
+  <li>NEW - where the same object appears on multiple rows, selecting it once will select all rows even if on different pages.</li>
+  <li>FIX - performance of list creation from results improved.</li>
+  <li>FIX - selecting individual objects from multiple pages now works correctly.</li>
+  <li>FIX - selecting a whole column then de-selecting some rows now works as expected.</li>
+</ul>
+</p>
+
+<h3>Web Services</h3>
+<p>We have begun to introduce RESTful web services to for more flexible query access to FlyMine.</p>
+
+<h3>List upload</h3>
+<p>
+<ul>
+  <li>NEW - organism name is now displayed for issues on list confirmation page.</li>
+  <li>FIX - fixed problems uploading from a file on some versions of Safari.</li>
+  <li>FIX - improved performance and fixed unresponsive script errors when clicking 'Add all' with very large numbers (hundreds) of issues on upload confirmation page.</li>
+  <li>FIX - improved error messages for incorrect file names typed into file upload box.</li>
+  <li>FIX - improved disabling of paste/browse options on list upload page.</li>
+</ul>
+</p>
+
+<h3>User interface</h3>
+<p>
+<ul>
+  <li>NEW - the List Analysis page menu bar has a 'Find' option to search for a particular identifier in the list.</li>
+  <li>NEW - the Lists tab now has a 'Copy' option.  Select a list and type a new name to create a copy, or select multiple lists and they will be named automaticaly.  You can copy public lists as well your own lists.</li>
+  <li>NEW - option to show/hide descriptions in the Template and List tabs.</li>
+  <li>NEW - widgets on List Analysis pages now show a count of objects that have no data for the widget.</li>
+  <li>FIX - linking to FlyBase with a list of genes from the List Analysis page now works with large lists.</li>
+  <li>NEW - link to FlyExpress with a list of genes from List Analsyis page.</li>
+  <li>NEW - added links to external databases in enrichment widgets.</li>
+  <li>NEW - link to BDGP <i>in situ</i> data from gene report pages. </li>
+</ul>
+</p>
+
+</div>
 
 <div class="heading2">FlyMine version 12.0 - release notes (30th March 2008)</div>
 <div class="body">
