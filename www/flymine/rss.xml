@@ -10,6 +10,28 @@
 
     <!-- Add new news at the top here -->
     <item>
+      <title>FlyMine 13.0 Released</title>
+      <link>http://www.flymine.org/</link>
+      <description>
+        &lt;a href="http://www.flymine.org"&gt;
+        FlyMine 13.0&lt;/a&gt; is now available.  See 
+        &lt;a href="http://www.flymine.org/release-notes.shtml"&gt;
+        release notes&lt;/a&gt;.
+      </description>
+      <pubDate>Sun, 10 Jun 2008 11:58 GMT</pubDate>
+    </item>
+    <item>
+      <title>FlyBase/FlyMine Workshop</title>
+      <link>http://www.flymine.org/</link>
+      <description>
+ &lt;a href="http://www.flymine.org"&gt;
+        FlyMine &lt;/a&gt; is running a joint workshop with FlyBase in
+        Cambridge on June 12th (free of charge). For more information and to sign up see 
+        &lt;a href="http://www.biomed.cam.ac.uk/gradschool/current/courses/bioinformatics.html"&gt;here&lt;/a&gt;
+      </description>
+      <pubDate>Sun, 8 May 2008 11:31 GMT</pubDate>
+    </item>
+    <item>
       <title>FlyMine 12.0 Released</title>
       <link>http://www.flymine.org/</link>
       <description>
