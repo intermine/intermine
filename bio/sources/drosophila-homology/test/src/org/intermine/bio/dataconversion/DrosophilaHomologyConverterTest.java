@@ -14,7 +14,6 @@ import java.io.InputStreamReader;
 import java.util.Collections;
 import java.util.HashMap;
 
-import org.intermine.dataconversion.FileConverter;
 import org.intermine.dataconversion.ItemsTestCase;
 import org.intermine.dataconversion.MockItemWriter;
 import org.intermine.metadata.Model;
