@@ -21,7 +21,7 @@ import java.util.Set;
 
 /**
  * Hold data about primary identifiers and synonyms for a particular class in the
- * data model and provide methods to resolved synonms into correseponding
+ * data model and provide methods to resolved synonyms into corresponding
  * primary identifier(s).
  * @author rns
  *
