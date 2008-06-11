@@ -28,8 +28,8 @@
     <form-bean name="templateSettingsForm" type="org.intermine.web.struts.TemplateSettingsForm"/>
     <form-bean name="createAccountForm" type="org.intermine.web.struts.CreateAccountForm"/>
     <form-bean name="changePasswordForm" type="org.intermine.web.struts.ChangePasswordForm"/>
-    <form-bean name="modifyBagDetailsForm" type="org.intermine.web.struts.ModifyBagDetailsForm"/>  
-    <form-bean name="widgetForm" type="org.intermine.web.struts.WidgetForm"/> 
+    <form-bean name="modifyBagDetailsForm" type="org.intermine.web.struts.ModifyBagDetailsForm"/>
+    <form-bean name="widgetForm" type="org.intermine.web.struts.WidgetForm"/>
   </form-beans>
   <!-- ========== Exceptions Configuration ================================ -->
   <global-exceptions>
@@ -112,15 +112,15 @@
     <action path="/showStatic" forward="showStatic.page">
     </action>
     <action path="/serviceLink" forward="serviceLink.page" >
-    </action>    
+    </action>
     <action path="/linkPreview" forward="/linkPreview.jsp">
-    </action>    		
+    </action>
 	<action path="/tabLinkPreview" type="org.intermine.web.struts.TabLinkPreviewAction">
 	</action>
-		
+
     <action path="/modifyQueryChange" type="org.intermine.web.struts.ModifyQueryChangeAction" parameter="method">
       <forward name="query" redirect="true" path="/query.do"/>
-      <forward name="mymine" redirect="true" path="/mymine.do"/>      
+      <forward name="mymine" redirect="true" path="/mymine.do"/>
       <forward name="bagDetails" redirect="true" path="/bagDetails.do"/>
       <forward name="waiting" redirect="true" path="/pollQuery.do"/>
       <forward name="template" redirect="true" path="/template.do"/>
@@ -161,7 +161,7 @@
     <action path="/sortOrderChange" type="org.intermine.web.struts.SortOrderChange" parameter="method">
       <forward name="query" redirect="true" path="/query.do"/>
     </action>
-    <action path="/exportAction" type="org.intermine.web.struts.TableExportAction" parameter="method">      
+    <action path="/exportAction" type="org.intermine.web.struts.TableExportAction" parameter="method">
     </action>
     <action path="/changeTable" type="org.intermine.web.struts.ChangeTableAction" parameter="method">
       <forward name="results" redirect="true" path="/results.do"/>
@@ -194,7 +194,7 @@
     <action path="/queryForGraphAction" type="org.intermine.web.struts.QueryForGraphAction">
       <forward name="results" redirect="true" path="/results.do"/>
       <forward name="waiting" redirect="true" path="/pollTemplateQuery.do"/>
-    </action>    
+    </action>
     <action path="/pollQuery" type="org.intermine.web.struts.PollQueryAction">
       <!-- some kind of error in the action to do with session state or the request -->
       <forward name="error" path="error.page"/>
@@ -269,7 +269,7 @@
       <forward name="contact" path="contact.page"/>
     </action>
     <action path="/widgetAction" name="widgetForm" type="org.intermine.web.struts.WidgetAction">
-      <forward name="waiting" redirect="true" path="/pollQuery.do"/>      
+      <forward name="waiting" redirect="true" path="/pollQuery.do"/>
     </action>
     <action path="/modifyQuery" name="modifyQueryForm" type="org.intermine.web.struts.ModifyQueryAction" scope="request" input="history" parameter="action">
       <forward name="mymine" redirect="true" path="/mymine.do"/>
@@ -289,7 +289,7 @@
     </action>
     <action path="/saveQuery" name="saveQueryForm" type="org.intermine.web.struts.SaveQueryAction" input="query">
       <forward name="query" path="query.page"/>
-      <forward name="mymine" redirect="true" path="/mymine.do"/>      
+      <forward name="mymine" redirect="true" path="/mymine.do"/>
     </action>
     <action path="/buildBag" name="buildBagForm" type="org.intermine.web.struts.BuildBagAction" input="bags" parameter="action" validate="false">
       <forward name="bags" path="bag.page"/>
@@ -396,7 +396,7 @@
     <action path="/initAspect" type="org.intermine.web.struts.AspectController">
     </action>
     <action path="/initBagBuild" name="buildBagForm" type="org.intermine.web.struts.BagBuildController">
-    </action>  
+    </action>
     <action path="/initBagUploadConfirm" name="bagUploadConfirmForm" type="org.intermine.web.struts.BagUploadConfirmController" validate="false">
     </action>
     <action path="/initBagUploadConfirmIssue" type="org.intermine.web.struts.BagUploadConfirmIssueController">
@@ -416,7 +416,7 @@
     <action path="/initTip" type="org.intermine.web.struts.TipController">
     </action>
     <action path="/initSubMenu" type="org.intermine.web.struts.SubMenuController">
-    </action>	
+    </action>
     <action path="/initSingleResult" type="org.intermine.web.struts.SingleResultController"/>
     <action path="/initTableCountEstimate" type="org.intermine.web.struts.CountTableController"/>
     <action path="/initConvertBag" type="org.intermine.web.struts.ConvertBagController"/>
@@ -428,7 +428,7 @@
     <!-- don't (re)move this - it's used for importing any model-specific actions -->
     <!--@MODEL_INCLUDE@-->
   </action-mappings>
-  <controller nocache="true" processorClass="org.intermine.web.struts.InterMineRequestProcessor">
+  <controller nocache="false" processorClass="org.intermine.web.struts.InterMineRequestProcessor">
     <set-property property="inputForward" value="true"/>
   </controller>
   <message-resources parameter="InterMineWebApp"/>
