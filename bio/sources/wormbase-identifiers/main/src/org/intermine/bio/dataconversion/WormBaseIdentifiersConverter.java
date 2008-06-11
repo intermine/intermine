@@ -12,14 +12,12 @@ package org.intermine.bio.dataconversion;
 
 import java.io.Reader;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
 
 import org.intermine.dataconversion.FileConverter;
 import org.intermine.dataconversion.ItemWriter;
-import org.intermine.metadata.MetaDataException;
 import org.intermine.metadata.Model;
 import org.intermine.objectstore.ObjectStoreException;
 import org.intermine.util.FormattedTextParser;
@@ -40,10 +38,9 @@ public class WormBaseIdentifiersConverter extends FileConverter
      * @param writer the ItemWriter used to handle the resultant items
      * @param model the Model
      * @throws ObjectStoreException if an error occurs in storing
-     * @throws MetaDataException if cannot generate model
      */
     public WormBaseIdentifiersConverter(ItemWriter writer, Model model)
-        throws ObjectStoreException, MetaDataException {
+        throws ObjectStoreException {
         super(writer, model);
 
         dataSource = createItem("DataSource");
@@ -75,18 +72,18 @@ public class WormBaseIdentifiersConverter extends FileConverter
         while (lineIter.hasNext()) {
             String[] line = (String[]) lineIter.next();
 
-            if (line.length <= 1 || line[0].startsWith("#")) {
+            if (line.length != 3 || line[0].startsWith("#")) {
                 continue;
             }
 
-            if (line.length < 3) {
-                throw new RuntimeException("Line does not have enough elements: "
-                                           + Arrays.asList(line));
-            }
+//            if (line.length < 3) {
+//                throw new RuntimeException("Line does not have enough elements: "
+//                                           + Arrays.asList(line));
+//            }
             String primaryidentifier = line[0];
             String identifier = line[1];
             String symbol = line[2];
-            List synonyms = new ArrayList();
+            List<Item> synonyms = new ArrayList<Item>();
 
             Item gene = createItem("Gene");
             if (primaryidentifier != null && !primaryidentifier.equals("")) {
@@ -103,16 +100,15 @@ public class WormBaseIdentifiersConverter extends FileConverter
             }
 
             gene.setReference("organism", worm.getIdentifier());
-            gene.setCollection("evidence",
-                               new ArrayList(Collections.singleton(dataSet.getIdentifier())));
+            gene.setCollection("evidence", new
+                               ArrayList<String>(Collections.singleton(dataSet.getIdentifier())));
             store(gene);
             store(synonyms);
 
         }
     }
 
-    private Item createSynonym(Item subject, String type, String value)
-        throws ObjectStoreException {
+    private Item createSynonym(Item subject, String type, String value) {
         Item synonym = createItem("Synonym");
         synonym.setAttribute("type", type);
         synonym.setAttribute("value", value);
