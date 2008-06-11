@@ -37,7 +37,7 @@ use strict;
 =head2 new
 
  Title   : new
- Usage   : $factory = new InterMine::Model(file => $model_file);
+ Usage   : $model = new InterMine::Model(file => $model_file);
  Function: return a Model object for the given file
  Args    : file - the InterMine model XML file
 
