@@ -472,9 +472,8 @@ public class BioGridConverter extends FileConverter
 
         private Item getGene(String taxonId, String identifier) {
             // for Drosophila attempt to update to a current gene identifier
-            if (taxonId.equals("7227")) {
-                IdResolver resolver = resolverFactory.getIdResolver();
-
+            IdResolver resolver = resolverFactory.getIdResolver(false);
+            if (taxonId.equals("7227") && resolver != null) {
                 int resCount = resolver.countResolutions(taxonId, identifier);
                 if (resCount != 1) {
                     LOG.info("RESOLVER: failed to resolve gene to one identifier, ignoring gene: "

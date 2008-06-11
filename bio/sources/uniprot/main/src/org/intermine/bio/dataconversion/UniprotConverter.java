@@ -1195,12 +1195,11 @@ public class UniprotConverter extends FileConverter
 
         private String resolveGene(String primaryIdentifier, String secondaryIdentifier,
                                    String name) {
-            resolver = resolverFactory.getIdResolver();
-            //            resolver = resolverFactory.getIdResolver(false);
-//            // we aren't using a resolver so just return what we were given
-//            if (resolver == null) {
-//                return primaryIdentifier;
-//            }
+            resolver = resolverFactory.getIdResolver(false);
+            // we aren't using a resolver so just return what we were given
+            if (resolver == null) {
+                return primaryIdentifier;
+            }
             String flyBaseLookUpId = null;
             if (primaryIdentifier != null) {
                 flyBaseLookUpId = primaryIdentifier;
