@@ -141,8 +141,8 @@ public class KeggPathwayConverter extends FileConverter
 
     private Item getGene(String geneCG, String taxonId, ReferenceList referenceList) throws ObjectStoreException {
         String identifier = null;
-        if (taxonId.equals("7227")) { 
-            IdResolver resolver = resolverFactory.getIdResolver();
+        IdResolver resolver = resolverFactory.getIdResolver(false);
+        if (taxonId.equals("7227") && resolver != null) { 
             int resCount = resolver.countResolutions(taxonId, geneCG);
             if (resCount != 1) {
                 LOG.info("RESOLVER: failed to resolve gene to one identifier, ignoring gene: "
@@ -160,10 +160,10 @@ public class KeggPathwayConverter extends FileConverter
             Item organism = getAndStoreItemOnce("Organism", "taxonId", taxonId);
 
             gene = createItem("Gene");
-            if (taxonId.equals("7227")) {
+            if (taxonId.equals("7227") && resolver != null) {
                 gene.setAttribute("primaryIdentifier", identifier);
             } else {
-                gene.setAttribute("symbol", identifier);
+                gene.setAttribute("secondaryIdentifier", identifier);
             }
             gene.setReference("organism", organism);
             gene.addCollection(referenceList);

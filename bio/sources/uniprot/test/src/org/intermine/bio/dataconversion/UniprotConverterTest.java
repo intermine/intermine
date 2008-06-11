@@ -44,6 +44,7 @@ public class UniprotConverterTest extends ItemsTestCase
         Reader reader = new InputStreamReader(getClass().getClassLoader()
                                               .getResourceAsStream("UniprotConverterTest_src.xml"));
         converter.setCreateinterpro("true");
+        converter.setUseFilter("true");
         converter.process(reader);
         converter.close();
 
