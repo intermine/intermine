@@ -74,7 +74,7 @@ public class UniprotConverter extends FileConverter
     private boolean createInterpro = false;
     private Set<String> taxonIds = null;
     private Set<String> doneTaxonIds = new HashSet<String>();
-    private boolean useSplitFiles = false;
+    private boolean useSplitFiles = true;
     protected IdResolverFactory resolverFactory;
     private IdResolver resolver;
     private static final Set<String> FEATURE_TYPES = new HashSet<String>();
@@ -264,11 +264,11 @@ public class UniprotConverter extends FileConverter
      * @param useSplitFiles if true the files in /split will be loaded and if false the files in
      * the root directory will be loaded
      */
-    public void setUseSplitFiles(String useSplitFiles) {
-        if (useSplitFiles.equals("true")) {
-            this.useSplitFiles = true;
-        } else {
+    public void setUseFilter(String useFilter) {
+        if (useFilter.equals("true")) {
             this.useSplitFiles = false;
+        } else {
+            this.useSplitFiles = true;
         }
     }
 
@@ -636,7 +636,7 @@ public class UniprotConverter extends FileConverter
                         protein.addReference(new Reference("sequence", sequence.getIdentifier()));
                         writer.store(ItemHelper.convert(sequence));
                     } else {
-                        LOG.info("Sequence for " + protein.getAttribute("name").getValue()
+                        LOG.debug("Sequence for " + protein.getAttribute("name").getValue()
                                 + " does not have a length");
                     }
                 // <entry><protein><name>
@@ -1196,6 +1196,11 @@ public class UniprotConverter extends FileConverter
         private String resolveGene(String primaryIdentifier, String secondaryIdentifier,
                                    String name) {
             resolver = resolverFactory.getIdResolver();
+            //            resolver = resolverFactory.getIdResolver(false);
+//            // we aren't using a resolver so just return what we were given
+//            if (resolver == null) {
+//                return primaryIdentifier;
+//            }
             String flyBaseLookUpId = null;
             if (primaryIdentifier != null) {
                 flyBaseLookUpId = primaryIdentifier;
