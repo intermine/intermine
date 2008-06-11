@@ -106,7 +106,7 @@ public class TemplateResultLinkGenerator
         ret += "value" + index + "=";
         // value could be  treated to be sql valid before, 
         // so we have to find original untreated string
-        String value = encode(WebUtil.sqlTreatedToOriginal(objectToString(valueObject)));
+        String value = encode(WebUtil.wildcardSqlToUser(objectToString(valueObject)));
         ret += format(value, highlighted);
         return ret;
     }
@@ -122,7 +122,7 @@ public class TemplateResultLinkGenerator
     private String extraToString(Object extraValue, int index) {
         String ret = "";
         ret += "extra" + index + "=";  
-        ret += encode(WebUtil.sqlTreatedToOriginal(objectToString(extraValue)));
+        ret += encode(WebUtil.wildcardSqlToUser(objectToString(extraValue)));
         return ret;
     }
     
