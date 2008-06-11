@@ -10,10 +10,8 @@ package org.intermine.bio.dataconversion;
  *
  */
 
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
@@ -176,7 +174,7 @@ public class ChadoDBConverter extends BioDBConverter
             }
 
             if (od == null) {
-                throw new RuntimeException("can't find OrganismData for speices: " + species
+                throw new RuntimeException("can't find OrganismData for species: " + species
                                            + " genus: " + genus + " abbreviation: " + abbreviation);
             }
 
