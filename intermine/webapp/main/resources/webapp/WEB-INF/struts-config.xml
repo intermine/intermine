@@ -428,7 +428,7 @@
     <!-- don't (re)move this - it's used for importing any model-specific actions -->
     <!--@MODEL_INCLUDE@-->
   </action-mappings>
-  <controller nocache="false" processorClass="org.intermine.web.struts.InterMineRequestProcessor">
+  <controller nocache="true" processorClass="org.intermine.web.struts.InterMineRequestProcessor">
     <set-property property="inputForward" value="true"/>
   </controller>
   <message-resources parameter="InterMineWebApp"/>
