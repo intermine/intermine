@@ -822,6 +822,7 @@
     <longdisplayers>
       <displayer src="/model/tiffinBindingSiteDisplayer.jsp"/>
       <displayer src="attributeLinkDisplayer.tile"/>
+      <displayer src="/model/locatedSequenceFeatureImage.jsp"/>
     </longdisplayers>
   </class>
 
