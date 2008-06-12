@@ -41,13 +41,14 @@ public class ModEncodeMetaDataProcessor extends ChadoProcessor
     // and chado identifiers with item identifiers (Integer, String)
     private Map<Integer, Integer> protocolIdMap = new HashMap<Integer, Integer>();
     private Map<Integer, String> protocolIdRefMap = new HashMap<Integer, String>();
-
-    private Map<String, Integer> providerIdMap = new HashMap<String, Integer>();
-//    private Map<Integer, Integer> providerIdMap = new HashMap<Integer, Integer>();
-//    private Map<Integer, String> providerIdRefMap = new HashMap<Integer, String>();
-    private Map<String, String> providerIdRefMap = new HashMap<String, String>();
     private Map<Integer, Integer> appliedProtocolIdMap = new HashMap<Integer, Integer>();
     private Map<Integer, String> appliedProtocolIdRefMap = new HashMap<Integer, String>();
+
+    // for providers, the maps link the provider name with the identifiers...
+    private Map<String, Integer> providerIdMap = new HashMap<String, Integer>();
+    private Map<String, String> providerIdRefMap = new HashMap<String, String>();
+    // ...we need a further map to link to experiment 
+    private Map<Integer, String> experimentProviderMap = new HashMap<Integer, String>();
 
     // maps from chado identifier to specific objects
     private Map<Integer, ExperimentSubmissionDetails> experimentMap =
@@ -79,11 +80,6 @@ public class ModEncodeMetaDataProcessor extends ChadoProcessor
     private Map<String, String> debugMap = new HashMap<String, String>(); // itemIdentifier, type
     private static final String PREFIX = "http://www.flymine.org/model/genomic#";
 
-    
-    
-    private Map<Integer, String> experimentProviderMap = new HashMap<Integer, String>();
-
-    
 
     private static class ExperimentSubmissionDetails
     {
