@@ -55,12 +55,11 @@ import org.intermine.web.logic.config.WebConfig;
  * @author Xavier Watkins
  *
  */
-public class BagTableWidgetLoader
+public class TableWidgetLdr implements WidgetLdr
 {
     private List<String> columns;
     private List flattenedResults;
     private String title, description;
-    protected Query q;
     private int widgetTotal = 0;
     private InterMineBag bag;
     private String pathString;
@@ -68,7 +67,6 @@ public class BagTableWidgetLoader
     private String displayFields, exportFields;
     private ObjectStore os;
     private Path origPath;
-    private Map classKeys;
     private String type;
 
     /**
@@ -89,22 +87,20 @@ public class BagTableWidgetLoader
      * @param columnTitle title for count column
      * @param externalLink link to external source
      * @param externalLinkLabel name of external data source
-     * @throws ClassNotFoundException if some class in the widget paths is not found
      * @throws UnsupportedEncodingException if something goes wrong encoding the URL
      */
-    public BagTableWidgetLoader(String pathStr, InterMineBag imBag, ObjectStore os,
+    @SuppressWarnings("unchecked")
+    public TableWidgetLdr(String pathStr, InterMineBag imBag, ObjectStore os,
                                 WebConfig webConfig, Model model,
                                 Map<String, List<FieldDescriptor>> classKeys,
                                 String displayFields, String exportFields, String urlGen,
-                                String columnTitle,
-                                String externalLink, String externalLinkLabel)
-    throws ClassNotFoundException, UnsupportedEncodingException {
+                                String columnTitle, String externalLink, String externalLinkLabel)
+    throws UnsupportedEncodingException {
 
         this.pathString = pathStr;
         this.origPath = new Path(model, pathWithNoConstraints(pathString));
         ClassDescriptor cld = origPath.getEndClassDescriptor();
         this.type = cld.getUnqualifiedName();
-        this.classKeys = classKeys;
         this.bag = imBag;
         this.model = model;
         this.displayFields = displayFields;
@@ -113,7 +109,7 @@ public class BagTableWidgetLoader
 
         // TODO validate start type vs. bag type
 
-        q = constructQuery(false, null);
+        Query q = getQuery(false, null);
 
         List results;
         try {
@@ -199,7 +195,7 @@ public class BagTableWidgetLoader
                 } else if (element instanceof Long) {
                     flattenedRow.add(new String[]
                                                 {
-                        String.valueOf((Long) element),
+                        String.valueOf(element),
                         "widgetAction.do?bagName=" + bag.getName() + "&link=" + urlGen
                         + "&key=" + URLEncoder.encode(key, "UTF-8")
                                                 });
@@ -215,7 +211,7 @@ public class BagTableWidgetLoader
             columns.add(bag.getType() + "s");
         }
 
-        q = constructQuery(true, null);
+        q = getQuery(true, null);
         widgetTotal = calcTotal(os, q);
     }
 
@@ -231,7 +227,7 @@ public class BagTableWidgetLoader
      * Get the columnNames
      * @return the columnNames
      */
-    public List getColumns() {
+    public List<String> getColumns() {
         return columns;
     }
 
@@ -251,11 +247,13 @@ public class BagTableWidgetLoader
         return description;
     }
 
-    private Query constructQuery(boolean calcTotal, List<String> keys)
-        throws ClassNotFoundException, IllegalArgumentException {
+    /**
+     * {@inheritDoc}
+     */
+    public Query getQuery(boolean calcTotal, List<String> keys)
+        throws IllegalArgumentException {
 
         Query q = new Query();
-        boolean first = true;
         String[] queryBits = pathString.split("\\.");
         QueryClass qcStart = null;
         QueryField qfStartId = null;
@@ -359,7 +357,6 @@ public class BagTableWidgetLoader
             }
             cldStart = cldEnd;
             qcStart = qcEnd;
-            first = false;
         }
 
         return q;
@@ -420,6 +417,7 @@ public class BagTableWidgetLoader
         return widgetTotal;
     }
 
+    @SuppressWarnings("unchecked")
     private static int calcTotal(ObjectStore os, Query q) {
         Results res = os.execute(q);
         Iterator iter = res.iterator();
@@ -434,12 +432,13 @@ public class BagTableWidgetLoader
     /**
      * {@inheritDoc}
      */
+    @SuppressWarnings("unchecked")
     public List<List<String>> getExportResults(String[] selected) throws Exception {
 
         List<List<String>> exportResults = new ArrayList<List<String>>();
         List<String> selectedIds = Arrays.asList(selected);
 
-        Query q = constructQuery(false, selectedIds);
+        Query q = getQuery(false, selectedIds);
 
         Results res = os.execute(q);
         Iterator iter = res.iterator();
@@ -467,7 +466,6 @@ public class BagTableWidgetLoader
                     sb.append(term);
                 }
                 row.add(sb.toString());
-
                 exportResults.add(row);
             }
         }
@@ -475,10 +473,10 @@ public class BagTableWidgetLoader
     }
 
     private String getKeyField(String s) {
-       if (s.contains(",")) {
-        String[] strings = s.split(",");
-        return strings[0];
-       }
-       return s;
+        if (s.contains(",")) {
+            String[] strings = s.split(",");
+            return strings[0];
+        }
+        return s;
     }
 }
