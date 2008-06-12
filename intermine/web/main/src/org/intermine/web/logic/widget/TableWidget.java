@@ -39,7 +39,7 @@ public class TableWidget extends Widget
     private String displayFields, exportFields;
     private WebConfig webConfig;
     private Map<String, List<FieldDescriptor>> classKeys;
-    private BagTableWidgetLoader bagWidgLdr;
+    private TableWidgetLdr bagWidgLdr;
     private String pathStrings, externalLink, externalLinkLabel;
     private String columnTitle = null;
     private int notAnalysed = 0;
@@ -48,7 +48,7 @@ public class TableWidget extends Widget
      * {@inheritDoc}
      */
     public void process(InterMineBag bag, ObjectStore os) throws Exception {
-        bagWidgLdr = new BagTableWidgetLoader(pathStrings, bag, os, webConfig,
+        bagWidgLdr = new TableWidgetLdr(pathStrings, bag, os, webConfig,
                         os.getModel(), classKeys, displayFields, getExportFields(), 
                         getLink(), getColumnTitle(),
                         getExternalLink(), getExternalLinkLabel());
