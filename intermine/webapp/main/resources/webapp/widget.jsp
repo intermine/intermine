@@ -30,18 +30,19 @@
   <h3>${widget.title}</h3>
   <p>${widget.description}<br/>
   <span style="margin-top:5px">Number of ${bag.type}s in this list not analysed in this widget:
-
+<%-- hide until table and graph widgets can handle this link
 	<c:choose>
 	<c:when test="${type == 'EnrichmentWidget'}">
     	<a href="javascript:displayNotAnalysed(${widget.id})"><span id="widgetnotanalysed${widget.id}">${widget.notAnalysed}</span></a>
 	</c:when>
 	<c:otherwise>
-
+ --%>
     	<span id="widgetnotanalysed${widget.id}">${widget.notAnalysed}</span>
-
+<%--
     </c:otherwise>
-	</c:choose></span>
-
+	</c:choose>
+	--%>
+	</span>
  </p>
  <c:set var="extraAttrMap" value="${widget2extraAttrs[widget.id]}" />
  <c:if test="${type == 'EnrichmentWidget' || fn:length(extraAttrMap)>0}" >
