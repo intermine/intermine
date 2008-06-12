@@ -35,12 +35,12 @@ public class Query implements FromElement
 {
     private boolean distinct = true;
     private Constraint constraint = null;
-    private Set<FromElement> queryClasses = new LinkedHashSet();
-    private List<QuerySelectable> select = new ArrayList();
-    private List orderBy = new ArrayList(); // @element-type QueryNode
-    private Set groupBy = new LinkedHashSet(); // @element-type QueryNode
-    private Map<Object, String> aliases = new IdentityHashMap();
-    private Map<String, Object> reverseAliases = new HashMap();
+    private Set<FromElement> queryClasses = new LinkedHashSet<FromElement>();
+    private List<QuerySelectable> select = new ArrayList<QuerySelectable>();
+    private List<QueryOrderable> orderBy = new ArrayList<QueryOrderable>();
+    private Set<QueryNode> groupBy = new LinkedHashSet<QueryNode>(); // @element-type QueryNode
+    private Map<Object, String> aliases = new IdentityHashMap<Object, String>();
+    private Map<String, Object> reverseAliases = new HashMap<String, Object>();
     private int limit = Integer.MAX_VALUE;
 
     private int aliasNo = 1;
@@ -109,7 +109,7 @@ public class Query implements FromElement
      */
     public Query deleteFrom(FromElement cls) {
         queryClasses.remove(cls);
-        String alias = (String) aliases.remove(cls);
+        String alias = aliases.remove(cls);
         if (alias != null) {
             reverseAliases.remove(alias);
         }
@@ -172,7 +172,7 @@ public class Query implements FromElement
      *
      * @return the set of GROUP BY nodes
      */
-    public Set getGroupBy() {
+    public Set<QueryNode> getGroupBy() {
         return Collections.unmodifiableSet(groupBy);
     }
 
@@ -230,7 +230,7 @@ public class Query implements FromElement
      *
      * @return the List of ORDER BY nodes
      */
-    public List getOrderBy() {
+    public List<QueryOrderable> getOrderBy() {
         return Collections.unmodifiableList(orderBy);
     }
 

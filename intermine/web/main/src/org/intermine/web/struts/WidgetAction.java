@@ -14,7 +14,6 @@ import java.io.PrintWriter;
 import java.lang.reflect.Constructor;
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
@@ -32,7 +31,6 @@ import org.intermine.metadata.Model;
 import org.intermine.model.InterMineObject;
 import org.intermine.objectstore.ObjectStore;
 import org.intermine.objectstore.query.Query;
-import org.intermine.objectstore.query.ResultsRow;
 import org.intermine.util.TypeUtil;
 import org.intermine.web.logic.Constants;
 import org.intermine.web.logic.WebUtil;
@@ -142,17 +140,11 @@ public class WidgetAction extends InterMineAction
                                                          });
 
         Query q = enrichmentWidgetLdr.getQuery("analysed", null);
+        Object[] o = os.executeSingleton(q).toArray();
+        int n = ((java.lang.Long) o[0]).intValue();
 
-        // TODO use singleton get list
-        Iterator iter = os.execute(q).iterator();
         Collection<InterMineObject> widgetObjects = new ArrayList<InterMineObject>();
-        while (iter.hasNext()) {
-            ResultsRow resRow = (ResultsRow) iter.next();
-            InterMineObject o = os.getObjectById((Integer) resRow.get(0));
-            if (!widgetObjects.contains(o)) {
-                widgetObjects.add(o);
-            }
-        }
+        widgetObjects.add(os.getObjectById(new Integer(n)));
 
         clazz = TypeUtil.instantiate(urlQuery);
 
