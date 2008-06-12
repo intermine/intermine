@@ -28,6 +28,14 @@
     </fields>
   </class>
 
+  <class className="org.flymine.model.genomic.SubmissionData">
+    <fields>
+      <fieldconfig fieldExpr="direction"/>
+      <fieldconfig fieldExpr="name"/>
+      <fieldconfig fieldExpr="type"/>
+    </fields>
+  </class>
+
   <class className="org.flymine.model.genomic.Analysis">
     <fields>
       <fieldconfig fieldExpr="publication.title"/>
