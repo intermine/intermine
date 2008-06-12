@@ -20,8 +20,8 @@
 </c:choose>
 <div id="submenu" class="${styleClass}">
 <div id="quicksearch">
-  <tiles:insert name="quickSearch.tile"> 
-    <tiles:put name="menuItem" value="true"/> 
+  <tiles:insert name="quickSearch.tile">
+    <tiles:put name="menuItem" value="true"/>
   </tiles:insert>
 </div>
 
@@ -40,7 +40,7 @@
     </c:when>
     <c:when test="${(tabArray[3] == '1') && (loggedin == false)}">
       <li>
-        <fmt:message key="${tabArray[1]}"/>
+        <span onclick="alert('You need to log in'); return false;"><fmt:message key="${tabArray[1]}"/></span>
       </li>
     </c:when>
     <c:otherwise>

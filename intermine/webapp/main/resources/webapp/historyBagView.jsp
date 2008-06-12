@@ -17,6 +17,9 @@
 
   <p>
     <fmt:message key="history.savedbags.intro"/>
+     <c:if test="${empty PROFILE.username}">
+      <html:link action="/login?returnto=/mymine.do?subtab=lists"><fmt:message key="history.savedbags.login"/></html:link>&nbsp;&nbsp;
+    </c:if>
   </p>
 <br/>
   <c:choose>
@@ -28,7 +31,7 @@
     <c:otherwise>
 
       <html:form action="/modifyBag">
-        
+
         <table class="sortable-onload-2 rowstyle-alt no-arrow" cellspacing="0">
           <tr>
             <th>
@@ -64,12 +67,12 @@
                       <tiles:put name="type" value="${type}"/>
                       <tiles:put name="index" value="${status.count-1}"/>
                     </tiles:insert>
-                    
+
                     <tiles:insert name="setFavourite.tile">
                       <tiles:put name="name" value="${savedBag.value.name}"/>
                       <tiles:put name="type" value="${type}"/>
                     </tiles:insert>
-                    
+
                     <c:if test="${IS_SUPERUSER}">
                       <c:set var="taggable" value="${savedBag.value}"/>
                       <tiles:insert name="inlineTagEditor.tile">
@@ -78,8 +81,8 @@
                         <tiles:put name="show" value="true"/>
                       </tiles:insert>
                     </c:if>
-                    
-              </td>     
+
+              </td>
               <td class="sorting">
                 <c:choose>
                   <c:when test="${fn:length(savedBag.value.description) > 100}">
@@ -88,10 +91,10 @@
                   <c:otherwise>
                     ${savedBag.value.description}
                   </c:otherwise>
-                </c:choose>                
+                </c:choose>
                 &nbsp;
               </td>
-              
+
               <td class="sorting"><c:out value="${savedBag.value.type}"/></td>
               <td class="sorting" align="right">
                 <c:out value="${savedBag.value.size}"/>
@@ -114,7 +117,7 @@
         </c:if>
         <input type="button" onclick="validateBagOperations('modifyBagForm', 'delete')" value="Delete"/>
         <input type="button" onclick="validateBagOperations('modifyBagForm', 'copy')" value="Copy"/>
-        
+
         <html:hidden property="pageName" value="MyMine"/>
         <html:hidden property="listsButton" value="" styleId="listsButton"/>
       </html:form>
@@ -124,7 +127,7 @@
   </c:choose>
 
 </im:body>
-  
-  
+
+
 
 <!-- /historyBagView.jsp -->

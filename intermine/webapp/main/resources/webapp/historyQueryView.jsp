@@ -12,7 +12,7 @@
   <link rel="stylesheet" type="text/css" href="css/sorting.css"/>
 
 <tiles:useAttribute id="type" name="type"/>
-  
+
 <c:choose>
   <c:when test="${type == 'saved'}">
     <c:set var="queryMap" value="${PROFILE.savedQueries}"/>
@@ -41,6 +41,11 @@
 
   <p>
     <fmt:message key="${messageKey}"/>
+      <c:if test="${empty PROFILE.username}">
+           <html:link action="/login?returnto=/mymine.do?subtab=history">
+            <fmt:message key="history.history.login"/>
+            </html:link>&nbsp;&nbsp;
+      </c:if>
   </p>
 <br/>
     <%-- Choose the queries to display --%>
@@ -93,15 +98,15 @@
                     <c:out value="${savedQuery.key}" escapeXml="false"/>
                   </html:multibox>
                 </td>
-                
+
                 <td class="sorting">
                 <c:choose>
                   <c:when test="${!validQuery}">
-                   
+
                       <html:link action="/templateProblems?name=${savedQuery.key}&amp;type=saved" styleClass="brokenTmplLink">
                       <strike>${savedQuery.value.name}</strike>
                       </html:link>
-                    
+
                   </c:when>
                   <c:otherwise>
                     <tiles:insert name="renamableElement.jsp">
@@ -111,7 +116,7 @@
                     </tiles:insert>
                   </c:otherwise>
                 </c:choose>
-                
+
                 </td>
                 <td class="sorting" align="center" nowrap>
                   <c:choose>
@@ -208,9 +213,9 @@
         <html:link action="/importQueries">
           <fmt:message key="begin.importQuery" />
         </html:link>
-    
-    
-    
+
+
+
   </im:body>
 
 
