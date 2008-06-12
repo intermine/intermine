@@ -92,7 +92,6 @@ public class AjaxServices
 {
     protected static final Logger LOG = Logger.getLogger(AjaxServices.class);
     private static final Object ERROR_MSG = "Error happened during DWR ajax service.";
-    private static final int SELECTED_IDS_RETURN_MAX = 100;
 
     /**
      * Creates a favourite Tag for the given templateName
@@ -165,11 +164,11 @@ public class AjaxServices
             HttpSession session = ctx.getSession();
             ServletContext servletContext = ctx.getServletContext();
             Profile profile = (Profile) session.getAttribute(Constants.PROFILE);
-            Map templates = profile.getSavedTemplates();
-            TemplateQuery template = (TemplateQuery) templates.get(templateName);
+            Map<String, TemplateQuery> templates = profile.getSavedTemplates();
+            TemplateQuery template = templates.get(templateName);
             ObjectStoreInterMineImpl os = (ObjectStoreInterMineImpl) servletContext
                     .getAttribute(Constants.OBJECTSTORE);
-            List indexes = new ArrayList();
+            List<QuerySelectable> indexes = new ArrayList<QuerySelectable>();
             Query query = TemplateHelper.getPrecomputeQuery(template, indexes, null);
 
             try {
@@ -200,8 +199,8 @@ public class AjaxServices
             HttpSession session = ctx.getSession();
             ServletContext servletContext = ctx.getServletContext();
             Profile profile = (Profile) session.getAttribute(Constants.PROFILE);
-            Map templates = profile.getSavedTemplates();
-            TemplateQuery template = (TemplateQuery) templates.get(templateName);
+            Map<String, TemplateQuery> templates = profile.getSavedTemplates();
+            TemplateQuery template = templates.get(templateName);
             ObjectStoreInterMineImpl os = (ObjectStoreInterMineImpl) servletContext
                     .getAttribute(Constants.OBJECTSTORE);
             ObjectStoreWriter osw = ((ProfileManager) servletContext.getAttribute(
@@ -298,7 +297,7 @@ public class AjaxServices
     /**
      * For a given bag, set its description
      * @param bagName the bag
-     * @param description the desciprion as entered by the user
+     * @param description the description as entered by the user
      * @return the description for display on the jsp page
      * @throws Exception an exception
      */
@@ -353,7 +352,7 @@ public class AjaxServices
     }
 
     /*
-     * Cannot be refactored from AjaxServices, else WebContextFactory.get() returns null 
+     * Cannot be refactored from AjaxServices, else WebContextFactory.get() returns null
      */
     private static WebState getWebState() {
         HttpSession session = WebContextFactory.get().getSession();
@@ -416,51 +415,6 @@ public class AjaxServices
     }
 
     /**
-     * Return the results from the query with the given query id.  If the results aren't yet
-     * available, return null.  The returned List is the visible rows from the PagedTable associated
-     * with the query id.
-     * @param qid the id
-     * @return the current rows from the table
-     */
-   /* public static List getResults(String qid) {
-        // results to return if there is an internal error
-        List<List<String>> unavailableListList = new ArrayList<List<String>>();
-        ArrayList<String> unavailableList = new ArrayList<String>();
-        unavailableList.add("results unavailable");
-        unavailableListList.add(unavailableList);
-
-        if (StringUtils.isEmpty(qid)) {
-            return unavailableListList;
-        }
-        WebContext ctx = WebContextFactory.get();
-        HttpSession session = ctx.getSession();
-        QueryMonitorTimeout controller = (QueryMonitorTimeout)
-            SessionMethods.getRunningQueryController(qid, session);
-
-        // First tickle the controller to avoid timeout
-        controller.tickle();
-
-        if (controller.isCancelledWithError()) {
-            LOG.debug("query qid " + qid + " error");
-
-            return unavailableListList;
-        } else if (controller.isCancelled()) {
-            LOG.debug("query qid " + qid + " cancelled");
-            return unavailableListList;
-        } else if (controller.isCompleted()) {
-            LOG.debug("query qid " + qid + " complete");
-            // Look at results, if only one result, go straight to object details page
-            PagedTable pr = SessionMethods.getResultsTable(session, "results." + qid);
-            return pr.getRows();
-        } else {
-            // query still running
-            LOG.debug("query qid " + qid + " still running, making client wait");
-            return null;
-        }
-    }
-*/
-
-    /**
      * Return the number of rows of results from the query with the given query id.  If the size
      * isn't yet available, return null.  The query must be started with
      * SessionMethods.startPagedTableCount().
@@ -489,10 +443,10 @@ public class AjaxServices
 
                 if (controller instanceof PageTableQueryMonitor) {
                     PagedTable pt = ((PageTableQueryMonitor) controller).getPagedTable();
-                    return pt.getExactSize();
+                    return new Integer(pt.getExactSize());
                 } else {
                     if (controller instanceof QueryCountQueryMonitor) {
-                        return ((QueryCountQueryMonitor) controller).getCount();
+                        return new Integer(((QueryCountQueryMonitor) controller).getCount());
                     } else {
                         LOG.debug("query qid " + qid + " - unknown controller type");
                         return null;
@@ -688,7 +642,7 @@ public class AjaxServices
      */
     public static void saveToggleState(String elementId, boolean opened) {
         try {
-            AjaxServices.getWebState().getToggledElements().put(elementId, 
+            AjaxServices.getWebState().getToggledElements().put(elementId,
                     Boolean.valueOf(opened));
         } catch (RuntimeException e) {
             processException(e);
@@ -696,8 +650,8 @@ public class AjaxServices
     }
 
     /**
-     * Set state that should be saved during the session. 
-     * @param name name of state 
+     * Set state that should be saved during the session.
+     * @param name name of state
      * @param value value of state
      */
     public static void setState(String name, String value) {
@@ -705,11 +659,11 @@ public class AjaxServices
             AjaxServices.getWebState().setState(name, value);
         } catch (RuntimeException e) {
             processException(e);
-        }        
+        }
     }
-    
+
     /**
-     * Get state. 
+     * Get state.
      * @param name name of state
      * @return value if state was set before during the session else null
      */
@@ -721,7 +675,7 @@ public class AjaxServices
         }
         return null;
     }
-    
+
     /**
      * validate bag upload
      * @param bagName name of new bag to be validated
@@ -991,7 +945,7 @@ public class AjaxServices
     }
 
     /**
-     * De-select an Id from the PagedTable
+     * remove an Id from the PagedTable
      * @param deSelectId the ID to remove from the selection
      * @param tableId the PagedTable identifier
      * @return the field values of the first selected objects
