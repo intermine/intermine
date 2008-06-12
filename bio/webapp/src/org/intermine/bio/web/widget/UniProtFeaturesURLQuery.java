@@ -1,4 +1,3 @@
-
 package org.intermine.bio.web.widget;
 
 /*
