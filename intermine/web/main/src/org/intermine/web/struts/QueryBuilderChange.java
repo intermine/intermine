@@ -347,7 +347,6 @@ public class QueryBuilderChange extends DispatchAction
         session.setAttribute("editingNode", query.getNodes().get(path));
         session.setAttribute("editingConstraintIndex", new Integer(index));
         session.setAttribute("editingTemplateConstraint", Boolean.TRUE);
-        session.setAttribute("editingNodePath", path);
         return mapping.findForward("query");
     }
 

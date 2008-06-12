@@ -13,11 +13,6 @@
 </div>
 
 <c:set var="editable" value="${constraint.editable}"/>
-<c:set var="label" value="${constraint.description}"/>
-<c:if test="${label == ''}">
-  <c:set var="label" value="${editingNodePath}"/>
-</c:if>
-
 <div style="body">
     <table border="0" width="100%">
       <tr>
@@ -27,7 +22,7 @@
       <tr>
         <td align="right" nowrap><fmt:message key="templateBuilder.label"/></td>
         <td><html:text property="templateLabel" size="20"
-             value="${editable ? label : ''}"/></td>
+             value="${editable ? constraint.description : ''}"/></td>
       </tr>
       <c:if test="${IS_SUPERUSER}">
         <tr>
