@@ -55,6 +55,7 @@ import org.intermine.objectstore.query.QueryEvaluable;
 import org.intermine.objectstore.query.QueryExpression;
 import org.intermine.objectstore.query.QueryField;
 import org.intermine.objectstore.query.QueryFunction;
+import org.intermine.objectstore.query.QueryHelper;
 import org.intermine.objectstore.query.QueryNode;
 import org.intermine.objectstore.query.QueryObjectPathExpression;
 import org.intermine.objectstore.query.QueryObjectReference;
@@ -1166,8 +1167,78 @@ public class MainHelper
         }
         QueryField qf = (QueryField) origPathToQueryNode.get(summaryPath);
         if (qf == null) {
-            throw new NullPointerException("Error - path " + summaryPath + " is not in map "
-                    + origPathToQueryNode);
+            // This column may be an outer join
+            String prefix = summaryPath.substring(0, summaryPath.lastIndexOf('.'));
+            String fieldName = summaryPath.substring(summaryPath.lastIndexOf('.') + 1);
+            QuerySelectable qs = origPathToQueryNode.get(prefix);
+            if (qs == null) {
+                throw new NullPointerException("Error - path " + summaryPath + " is not in map "
+                        + origPathToQueryNode);
+            } else if (qs instanceof QueryObjectPathExpression) {
+                QueryObjectPathExpression qope = (QueryObjectPathExpression) qs;
+                // We need to add QueryClasses to the query for this outer join. This will make it
+                // an inner join, so the "no object" results will disappear.
+                QueryClass lastQc = new QueryClass(qope.getType());
+                qf = new QueryField(lastQc, fieldName);
+                subQ.addFrom(lastQc);
+                QueryObjectPathExpression nextQope = qope.getQope();
+                while (nextQope != null) {
+                    QueryClass nextQc = new QueryClass(nextQope.getType());
+                    subQ.addFrom(nextQc);
+                    QueryHelper.addAndConstraint(subQ, new ContainsConstraint(
+                                new QueryObjectReference(nextQc, qope.getFieldName()),
+                                ConstraintOp.CONTAINS, lastQc));
+                    qope = nextQope;
+                    lastQc = nextQc;
+                    nextQope = qope.getQope();
+                }
+                QueryClass rootQc = qope.getQueryClass();
+                QueryHelper.addAndConstraint(subQ, new ContainsConstraint(
+                            new QueryObjectReference(rootQc, qope.getFieldName()),
+                            ConstraintOp.CONTAINS, lastQc));
+            } else if (qs instanceof QueryCollectionPathExpression) {
+                QueryCollectionPathExpression qcpe = (QueryCollectionPathExpression) qs;
+                if (qcpe.getSelect().isEmpty() && qcpe.getFrom().isEmpty()
+                        && (qcpe.getConstraint() == null)) {
+                    QueryClass firstQc = new QueryClass(qcpe.getDefaultClass().getType());
+                    qf = new QueryField(firstQc, fieldName);
+                    subQ.addFrom(firstQc);
+                    QueryClass rootQc = qcpe.getQueryClass();
+                    if (rootQc == null) {
+                        QueryObjectPathExpression qope = qcpe.getQope();
+                        QueryClass lastQc = new QueryClass(qope.getType());
+                        subQ.addFrom(lastQc);
+                        QueryHelper.addAndConstraint(subQ, new ContainsConstraint(
+                                    new QueryCollectionReference(lastQc, qcpe.getCollectionName()),
+                                    ConstraintOp.CONTAINS, firstQc));
+                        QueryObjectPathExpression nextQope = qope.getQope();
+                        while (nextQope != null) {
+                            QueryClass nextQc = new QueryClass(nextQope.getType());
+                            subQ.addFrom(nextQc);
+                            QueryHelper.addAndConstraint(subQ, new ContainsConstraint(
+                                        new QueryObjectReference(nextQc, qope.getFieldName()),
+                                        ConstraintOp.CONTAINS, lastQc));
+                            qope = nextQope;
+                            lastQc = nextQc;
+                            nextQope = qope.getQope();
+                        }
+                        rootQc = qope.getQueryClass();
+                        QueryHelper.addAndConstraint(subQ, new ContainsConstraint(
+                                    new QueryObjectReference(rootQc, qope.getFieldName()),
+                                    ConstraintOp.CONTAINS, lastQc));
+                    } else {
+                        QueryHelper.addAndConstraint(subQ, new ContainsConstraint(
+                                    new QueryCollectionReference(rootQc, qcpe.getCollectionName()),
+                                    ConstraintOp.CONTAINS, firstQc));
+                    }
+                } else {
+                    throw new IllegalArgumentException("QueryCollectionPathExpression is too"
+                            + " complicated to summarise");
+                }
+            } else {
+                throw new IllegalArgumentException("Error - path " + prefix + " resolves to unknown"
+                        + " object " + qs);
+            }
         }
         Query q = new Query();
         q.addFrom(subQ);
