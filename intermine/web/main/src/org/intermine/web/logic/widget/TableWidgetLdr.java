@@ -55,7 +55,7 @@ import org.intermine.web.logic.config.WebConfig;
  * @author Xavier Watkins
  *
  */
-public class TableWidgetLdr implements WidgetLdr
+public class TableWidgetLdr
 {
     private List<String> columns;
     private List flattenedResults;
