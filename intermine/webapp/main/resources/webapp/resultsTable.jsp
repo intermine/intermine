@@ -79,7 +79,7 @@
             <tr>
             <td align="left" width="100%">
               <%-- summary --%>
-              <c:if test="${!empty column.path.noConstraintsString && !fn:contains(column.path.noConstraintsString, ':')}">
+              <c:if test="${!empty column.path.noConstraintsString}">
               <fmt:message key="columnsummary.getsummary" var="summaryTitle" />
                 <a href="javascript:getColumnSummary('${pagedResults.tableid}','${column.path.noConstraintsString}', &quot;${columnDisplayName}&quot;)"
                    title="${summaryTitle}"><img src="images/summary_maths.png" title="${summaryTitle}"/></a>
