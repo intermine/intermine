@@ -2,7 +2,6 @@
 <%@ taglib uri="/WEB-INF/struts-html.tld" prefix="html" %>
 <%@ taglib uri="/WEB-INF/struts-tiles.tld" prefix="tiles" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
-<%@ taglib uri="http://java.sun.com/jsp/jstl/functions" prefix="fn" %>
 <%@ taglib tagdir="/WEB-INF/tags" prefix="im" %>
 
 <tiles:importAttribute/>
@@ -18,7 +17,7 @@
     <td rowspan="2" valign="top" width="50%" class="modelbrowse">
       <tiles:insert page="/mainBrowser.jsp"/>
     </td>
-    
+
     <td valign="top">
       <div id="main-paths">
         <tiles:insert name="mainPaths.tile"/>
@@ -26,7 +25,7 @@
       <tiles:insert page="/mainLogic.jsp"/>
     </td>
   </tr>
-  
+
   <a name="constraint-editor"></a>
     <tr>
       <td valign="top">

@@ -2,7 +2,6 @@
 <%@ taglib uri="/WEB-INF/struts-html.tld" prefix="html" %>
 <%@ taglib uri="/WEB-INF/struts-tiles.tld" prefix="tiles" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
-<%@ taglib uri="http://java.sun.com/jsp/jstl/functions" prefix="fn" %>
 <%@ taglib tagdir="/WEB-INF/tags" prefix="im" %>
 
 
@@ -31,7 +30,7 @@
     }
     return false;
   }
-  
+
   function addConstraint(path) {
     if (isExplorer()) {
       return true;
@@ -45,7 +44,7 @@
     });
     return false;
   }
-  
+
   function isExplorer() {
     return (navigator.appVersion.toLowerCase().indexOf('msie') >= 0);
   }
@@ -56,7 +55,7 @@
   <fmt:message key="query.currentclass"/>
 </div>
 <div class="body">
-  <div> 
+  <div>
     <fmt:message key="query.currentclass.detail"/>
   </div>
   <br/>

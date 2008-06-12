@@ -1,5 +1,4 @@
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
-<%@ taglib uri="http://java.sun.com/jsp/jstl/functions" prefix="fn" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
 <%@ taglib uri="/WEB-INF/struts-html.tld" prefix="html" %>
 <%@ taglib uri="/WEB-INF/struts-tiles.tld" prefix="tiles" %>
@@ -24,7 +23,7 @@
     <table border="0" cellspacing="0" class="refSummary" align="right">
       <thead style="text-align: center">
         <tr>
-          <td width="10"> 
+          <td width="10">
             <fmt:message key="objectDetails.class"/>
           </td>
           <c:forEach items="${collection.table.columnNames}" var="fd"
@@ -43,12 +42,12 @@
         </tr>
       </thead>
       <tbody>
-        <c:forEach items="${collection.table.rowObjects}" 
+        <c:forEach items="${collection.table.rowObjects}"
                    var="thisRowObject" varStatus="status">
-          
+
           <c:set var="thisRowObject" value="${thisRowObject}" />
           <c:set var="rowValues" value="${collection.table.rowFieldValues[thisRowObject]}"/>
-                 
+
           <tr>
             <td width="1%" nowrap>
               <c:forEach items="${collection.table.types[status.index]}" var="cld">
@@ -75,9 +74,9 @@
                       </tiles:insert>
                     </span>
                   </c:when>
-                  <c:when test="${!empty fieldConfig && !empty fieldConfig.fieldExpr}">                    
+                  <c:when test="${!empty fieldConfig && !empty fieldConfig.fieldExpr}">
                     <c:set var="outVal" value="${rowValues[fieldConfig.fieldExpr]}"/>
-                    <span class="value">${outVal}</span>                    
+                    <span class="value">${outVal}</span>
                     <c:if test="${empty outVal}">
                       &nbsp;<%--for IE--%>
                     </c:if>

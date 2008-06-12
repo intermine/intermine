@@ -1,5 +1,4 @@
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
-<%@ taglib uri="http://java.sun.com/jsp/jstl/functions" prefix="fn" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
 <%@ taglib uri="/WEB-INF/struts-html.tld" prefix="html" %>
 <%@ taglib uri="/WEB-INF/struts-logic.tld" prefix="logic" %>
@@ -36,10 +35,10 @@
     </table>
     </div>
   </html:form>
-  
+
   <br/>
   <br/>
-  
+
   <font size="0.8em"><fmt:message key="importTemplates.message"/></font>
 </im:boxarea>
 </div>

@@ -2,7 +2,6 @@
 <%@ taglib uri="/WEB-INF/struts-html.tld" prefix="html" %>
 <%@ taglib uri="/WEB-INF/struts-tiles.tld" prefix="tiles" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
-<%@ taglib uri="http://java.sun.com/jsp/jstl/functions" prefix="fn" %>
 <%@ taglib tagdir="/WEB-INF/tags" prefix="im"%>
 
 <!-- dataCategories -->
@@ -11,7 +10,7 @@
 <div class="body">
   <div id="leftCol">
       <div id="pageDesc" class="pageDesc"><p><fmt:message key="dataCategories.intro"/></p></div>
-      <im:boxarea title="Actions" stylename="plainbox" >           
+      <im:boxarea title="Actions" stylename="plainbox" >
            <html:link action="/templates">
              <fmt:message key="dataCategories.viewTemplates"/>
              <img border="0" class="arrow" src="images/right-arrow.gif" alt="Go"/>

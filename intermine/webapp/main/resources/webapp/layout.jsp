@@ -5,7 +5,6 @@
 <%@ taglib uri="/WEB-INF/struts-html.tld" prefix="html" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
-<%@ taglib uri="http://java.sun.com/jsp/jstl/functions" prefix="fn" %>
 <%@ taglib tagdir="/WEB-INF/tags" prefix="im"%>
 
 <!-- layout.jsp -->
@@ -16,34 +15,34 @@
 <c:set var="iePre7" value='<%= new Boolean(request.getHeader("user-agent").matches(".*MSIE [123456].*")) %>' scope="request"/>
 
   <tiles:importAttribute name="pageName" scope="request"/>
-  
+
   <head>
     <!-- for google webmaster -->
   <meta name="verify-v1" content="hZtrkqyKEW4WN60PvB9GLrRIWMbEVxvAQ4GqmHGq3Fk=" />
-  
+
   <!-- for yahoo -->
   <META name="y_key" content="05e821942b9c36fb" />
-   
+
    <!-- for microsoft -->
    <meta name="msvalidate.01" content="2D1A5F3E13044E589AC7B268B7A96A62" />
-   
-   
+
+
     <html:base/>
-    
+
     <fmt:message key="${pageName}.noFollow" var="noFollow" />
-    
+
     <c:if test="${noFollow == 'true'}">
       <META NAME="ROBOTS" CONTENT="NOFOLLOW"/>
   </c:if>
-  
+
   <fmt:message key="${pageName}.title" var="pageNameTitle"/>
-  
+
     <tiles:insert name="htmlHead.tile">
       <tiles:put name="bagName" value="${param.bagName}"/>
       <tiles:put name="objectId" value="${param.id}"/>
       <tiles:put name="name" value="${param.name}"/>
       <tiles:put name="pageName" value="${pageName}"/>
-      <tiles:put name="pageNameTitle" value="${pageNameTitle}"/>  
+      <tiles:put name="pageNameTitle" value="${pageNameTitle}"/>
       <tiles:put name="scope" value="${scope}"/>
     </tiles:insert>
   </head>
@@ -55,28 +54,28 @@
   </tiles:insert>
 
   <div id="pagecontent">
-    
+
       <%-- Render messages --%>
       <tiles:get name="errorMessagesContainers"/>
 
       <%-- Context help bar --%>
       <tiles:insert page="/contextHelp.jsp"/>
-      
+
       <tiles:get name="body"/>
 
       <%-- Render messages --%>
       <tiles:get name="errorMessages"/>
-      
+
       <%-- footer (welcome logo, bottom nav, and feedback link) --%>
     <c:import url="footer.jsp"/>
-      
+
       <c:if test="${param.debug != null}">
         <im:vspacer height="11"/>
           <tiles:insert page="/session.jsp"/>
       </c:if>
-      
+
     </div>
-        
+
     <c:if test="${IS_SUPERUSER}">
       <div class="admin-msg">
         <span class="smallnote">
@@ -84,9 +83,9 @@
         </span>
       </div>
     </c:if>
-    
+
     <c:set var="googleAnalyticsId" value="${WEB_PROPERTIES['google.analytics.id']}"/>
-    <c:if test="${!empty googleAnalyticsId}">    
+    <c:if test="${!empty googleAnalyticsId}">
         <script type="text/javascript">
             document.write(unescape("%3Cscript src='http://www.google-analytics.com/ga.js' type='text/javascript'%3E%3C/script%3E"));
         </script>
@@ -94,7 +93,7 @@
             var pageTracker = _gat._getTracker('${googleAnalyticsId}');
             pageTracker._initData();
             pageTracker._trackPageview();
-        </script>       
+        </script>
     </c:if>
 
   </body>

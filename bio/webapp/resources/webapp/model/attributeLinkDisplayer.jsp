@@ -1,7 +1,6 @@
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
 <%@ taglib uri="/WEB-INF/struts-html.tld" prefix="html" %>
-<%@ taglib uri="http://java.sun.com/jsp/jstl/functions" prefix="fn" %>
 
 <!-- attributeLinkDisplayer.jsp -->
 <fmt:setBundle basename="model"/>
@@ -17,7 +16,7 @@
     <c:if test="${!empty confMapEntry.value.valid && !empty confMapEntry.value.attributeValue}">
     <tr>
         <c:choose>
-	        
+
 	        <%-- GET form --%>
 	        <c:when test="${empty usePost}">
 	            <td align="right">
@@ -29,9 +28,9 @@
 		            <c:if test="${!empty text}">
 		              <a href="${href}" class="ext_link" target="_new">${text}&nbsp;<img src="images/ext_link.png" title="${text}"/></a>
 		            </c:if>
-	            </td>        
+	            </td>
 	        </c:when>
-	        
+
 	        <%-- POST form --%>
 	        <c:otherwise>
                 <td align="right">
@@ -48,11 +47,11 @@
 	                  </a>
 	                </c:if>
                 </td>
-                
+
                 <form action="${href}" method="post" id="${linkId}Form" target="_blank">
                      <c:forEach var="par" items="${parameters}">
                          <input type="hidden" value="${par.value}" name="${par.key}" />
-                     </c:forEach>	                    
+                     </c:forEach>
                 </form>
 	        </c:otherwise>
         </c:choose>
