@@ -52,59 +52,59 @@ public class TestFlyBaseModuleProcessor extends FlyBaseModuleProcessor
         Object[][] resObjects = new Object[][] {
             {
                 23269151, "4.5SRNA", "FBgn0000001", "gene", 1001,
-                "acgacagatcattccacttttgacagctcactcggcagtaccagaaaatcc", 1
+                "acgacagatcattccacttttgacagctcactcggcagtaccagaaaatcc", 7227
             },
             {
                 10012345, "CG12345", "FBgn012345", "gene", 200,
-                "atatagctagctaggaggattattatta", 1
+                "atatagctagctaggaggattattatta", 7227
             },
             {
                 3117509, "CG10006", "FBgn0036461", "gene", 5023,
-                "gtcatgcactactatccagttcaccaggctaaagtcggctcctat", 1
+                "gtcatgcactactatccagttcaccaggctaaagtcggctcctat", 7227
             },
             {
                 411, "CG10000-RA", "FBtr0085315", "mRNA", 2528,
-                "tctgcctcccaactacaatcagatgaactccaaccccaccac", 1
+                "tctgcctcccaactacaatcagatgaactccaaccccaccac", 7227
             },
             {
                 412, "CG10000-RB", "FBtr0085316", "mRNA", 3000,
-                "cccgcagcatgtgcatcagcagcatgtgtcatcggacgag", 1
+                "cccgcagcatgtgcatcagcagcatgtgtcatcggacgag", 7227
             },
             {
                 11494725, "3", "3L", "chromosome_arm", 24543557,
                 "ccacgactcgcagagggtgaagcttaagcgatcacggac"
-                + "tcaatcctggcatcccagttcccaaagtcaggtccccacgagcatg", 1
+                + "tcaatcctggcatcccagttcccaaagtcaggtccccacgagcatg", 7227
             },
             {
                 11494726, "3", "3R", "chromosome_arm", 27905053,
                 "ggtggaacttgagaacgagttcaagagcaacatgtact"
-                + "gatgaatctgtcgtggggcgagcctgctgccaagtcgagaaagctgag", 1
+                + "gatgaatctgtcgtggggcgagcctgctgccaagtcgagaaagctgag", 7227
             },
             {
                 3175412, "CG10000:1", "CG10000:1", "exon", 148,
-                "gattgctcagcgcgaacg", 1
+                "gattgctcagcgcgaacg", 7227
             },
             {
                 3175413, "CG10000:2", "CG10000:2", "exon", 161,
-                "cttgtccctgtg", 1
+                "cttgtccctgtg", 7227
             },
             {
                 1000000, "CG10000-RA_prot", "FBpp10000", "protein", 2345,
-                "ccaggtg", 1
+                "ccaggtg", 7227
             },
             {
                 // this is actually an allele
                 2340000, "CG10006[GD2461]", "FBal0198867", "gene", null,
-                null, 1
+                null, 7227
             },
             {
                 // this is actually an allele
                 2345000, "Scer\\GAL4[sd-SG29.1]", "FBal0060667", "gene", null,
-                null, 1
+                null, 7227
             },
             {
                 7000000, null, "&bgr;Tub85D[10g]", "point_mutation", null,
-                null, 1
+                null, 7227
             }
         };
         MockMultiRowResultSet res = new MockMultiRowResultSet();
