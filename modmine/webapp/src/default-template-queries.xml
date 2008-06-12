@@ -1,5 +1,5 @@
+<userprofile>
 <template-queries>
-<<<<<<< .working
 	<template name="AllGene_Chromosome" title="All genes in organism --&gt; All chromosomal locations." longDescription="Show the chromosomal location and sequence for all genes from a particular organism." comment="">
 		<query name="AllGene_Chromosome" model="genomic" view="Gene.chromosome.identifier Gene.chromosomeLocation.strand Gene.chromosomeLocation.start Gene.chromosomeLocation.end Gene.length Gene.primaryIdentifier Gene.identifier Gene.symbol Gene.evidence.title" sortOrder="Gene.chromosome.identifier asc">
 			<pathDescription pathString="Gene.evidence" description="Dataset">
@@ -4420,4 +4420,3 @@
   </tag>
 </tags>
 </userprofile>
->>>>>>> .merge-right.r14424
