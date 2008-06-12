@@ -10,6 +10,7 @@ package org.intermine.web.logic.widget;
  *
  */
 
+import java.math.BigDecimal;
 import java.util.HashMap;
 
 /**
@@ -26,5 +27,5 @@ public interface ErrorCorrection
     /**
      * @return adjusted map
      */
-    public HashMap getAdjustedMap();
+    public HashMap<String, BigDecimal> getAdjustedMap();
 }

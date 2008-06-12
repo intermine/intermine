@@ -39,6 +39,7 @@ public class Bonferroni implements ErrorCorrection
     /**
      * @param max maximum value to display
      */
+    @SuppressWarnings("unchecked")
     public void calculate(Double max) {
 
         for (Iterator iter = originalMap.keySet().iterator(); iter.hasNext();) {

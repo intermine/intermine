@@ -109,8 +109,8 @@ public class BagDetailsController extends TilesAction
         Type type = (Type) webConfig.getTypes().get(model.getPackageName() + "." + imBag.getType());
 
         List<Widget> widgets = type.getWidgets();
-        Map<Integer, Map<String, Collection>> widget2extraAttrs
-        = new HashMap<Integer, Map<String, Collection>>();
+        Map<Integer, Map<String, Collection<String>>> widget2extraAttrs
+        = new HashMap<Integer, Map<String, Collection<String>>>();
         for (Widget widget2 : widgets) {
             widget2extraAttrs.put(new Integer(widget2.getId()), widget2.getExtraAttributes(
                             imBag, os));

@@ -40,6 +40,7 @@ public class BenjaminiHochberg implements ErrorCorrection
     /**
     * @param originalMap HashMap of go terms and their p-value
      */
+    @SuppressWarnings("unchecked")
     public BenjaminiHochberg(HashMap<String, BigDecimal> originalMap) {
         numberOfTests = originalMap.size();
         SortableMap sortedMap = new SortableMap(originalMap);
@@ -53,6 +54,7 @@ public class BenjaminiHochberg implements ErrorCorrection
      * the false discovery rate
      * @param max maximum value we are interested in - used for display purposes only
      */
+    @SuppressWarnings("unchecked")
     public void calculate(Double max) {
 
         adjustedMap = new HashMap<String, BigDecimal>();
