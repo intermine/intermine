@@ -104,7 +104,9 @@
 	<class name="org.flymine.model.genomic.SubmissionData"
 		is-interface="true">
 		<attribute name="name" type="java.lang.String" />
+<!-- rm after swap back to dataId 
 		<attribute name="direction" type="java.lang.String" />
+-->
 		<attribute name="type" type="java.lang.String" />
 		<attribute name="value" type="java.lang.String" />
 		<reference name="feature"

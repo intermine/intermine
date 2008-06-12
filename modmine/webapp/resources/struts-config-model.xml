@@ -10,10 +10,10 @@
 
     <action path="/initAttributeLinkDisplayer"
             type="org.intermine.bio.web.AttributeLinkDisplayerController"/>
-
+<!-- 
     <action path="/modEncodeProjects" forward="modEncodeProjects.page">
     </action>
-
+-->
 <!-- 
 
     <action path="/modEncodeProjects"
