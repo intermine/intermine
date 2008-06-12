@@ -3,7 +3,6 @@
 <%@ taglib uri="/WEB-INF/struts-html.tld" prefix="html" %>
 <%@ taglib uri="/WEB-INF/struts-tiles.tld" prefix="tiles" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
-<%@ taglib uri="http://java.sun.com/jsp/jstl/functions" prefix="fn" %>
 <%@ taglib tagdir="/WEB-INF/tags" prefix="im"%>
 
 <!-- aspect -->
@@ -12,7 +11,7 @@
 
 <script language="javascript">
 <!--//<![CDATA[
-  
+
    function toggleDiv(elementId) {
       var element = document.getElementById(elementId);
       var display = element.style.display;
@@ -22,9 +21,9 @@
       } else {
           element.style.display='none';
           document.getElementById(elementId + 'Toggle').src = 'images/undisclosed.gif';
-      }      
+      }
    }
-   
+
    function hideCurrentDataDivs() {
      var hasHidden = true;
      var index = 1;
@@ -34,7 +33,7 @@
          index ++;
        } else {
             hasHidden = false;
-    }     
+    }
      }
    }
    window.onload = function() {

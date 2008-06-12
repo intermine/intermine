@@ -1,5 +1,4 @@
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
-<%@ taglib uri="http://java.sun.com/jsp/jstl/functions" prefix="fn" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
 <%@ taglib uri="/WEB-INF/struts-html.tld" prefix="html" %>
 <%@ taglib uri="/WEB-INF/struts-logic.tld" prefix="logic" %>
@@ -9,16 +8,16 @@
 <html:xhtml/>
 <div class="body" align="center">
 <im:boxarea stylename="plainbox" fixedWidth="60%">
-  
+
 <p><fmt:message key="importQuery.intro"/></p>
 
 <br/>
 
 <p>
   <html:form action="/importQueriesAction?query_build=${param.query_builder}">
-  
+
     <html:hidden property="query_builder" value="${param.query_builder}"/>
-    
+
     <div align="center">
     <table cellspacing="0" cellpadding="0" border="0">
     <tr>
@@ -33,10 +32,10 @@
     </table>
     </div>
   </html:form>
-  
+
   <br/>
   <br/>
-  
+
   <p><font size="0.8em"><fmt:message key="importQuery.message"/></font></p>
 </im:boxarea>
 </div>

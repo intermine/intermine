@@ -3,7 +3,7 @@
 <%@ taglib uri="/WEB-INF/struts-html.tld" prefix="html" %>
 <%@ taglib tagdir="/WEB-INF/tags" prefix="im" %>
 <%@ taglib uri="/WEB-INF/struts-tiles.tld" prefix="tiles" %>
-<%@ taglib uri="http://java.sun.com/jsp/jstl/functions" prefix="fn" %>
+
 
 <!-- wsBagTable.jsp -->
 <tiles:importAttribute name="scope"/>
@@ -21,7 +21,7 @@
 
 <im:boxarea title="${titleKey}" stylename="gradientbox" minWidth="800px" htmlId="liststop">
 <div class="" id="ws_${wsListId}_bag"><fmt:message key="lists.intro"/>
- 
+
 <tiles:insert name="wsFilterList.tile">
   <tiles:put name="type" value="bag"/>
   <tiles:put name="scope" value="${scope}"/>

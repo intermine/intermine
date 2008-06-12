@@ -88,7 +88,7 @@ public class CreateTemplateAction extends InterMineAction
         if (query.getBagNames().size() != 0) {
             recordError(new ActionMessage("errors.createtemplate.templatewithlist"), request);
             seenProblem = true;
-        }        
+        }
         Iterator iter = query.getNodes().values().iterator();
         boolean foundEditableConstraint = false;
         boolean foundNonEditableLookup = false;
@@ -107,19 +107,19 @@ public class CreateTemplateAction extends InterMineAction
                 }
             }
         }
-        
+
         // template must have at least one editable constrain
         if (!foundEditableConstraint) {
             recordError(new ActionMessage("errors.createtemplate.noconstraints"), request);
             seenProblem = true;
         }
-        
+
         // template cannot have non-editable LOOKUP constraints
         if (foundNonEditableLookup) {
             recordError(new ActionMessage("errors.createtemplate.noneditablelookup"), request);
             seenProblem = true;
         }
-        
+
         // Check for a name clash with system templates
         Profile superUser = SessionMethods.getSuperUserProfile(servletContext);
         if (!superUser.equals(profile)) {

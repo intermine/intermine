@@ -1,6 +1,5 @@
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
-<%@ taglib uri="http://java.sun.com/jsp/jstl/functions" prefix="fn" %>
 <%@ taglib uri="/WEB-INF/struts-html.tld" prefix="html" %>
 
 <!-- locatedSequenceFeatureImage.jsp -->
@@ -12,14 +11,14 @@
             && object.organism.abbreviation != 'RN' && cld.unqualifiedName != 'ChromosomeBand'}">
 
   <c:set var="type" value="${cld.unqualifiedName}s"/>
-  
-  <c:if test="${cld.unqualifiedName == 'MRNA' || cld.unqualifiedName == 'Transcript' 
+
+  <c:if test="${cld.unqualifiedName == 'MRNA' || cld.unqualifiedName == 'Transcript'
               || cld.unqualifiedName == 'Pseudogene'}">
     <c:set var="type" value="Genes"/>
   </c:if>
-  
+
   <c:set var="label" value="${type}"/>
-  
+
   <c:if test="${type == 'TilingPathSpans'}">
     <c:set var="type" value="${type}+ReversePrimers+ForwardPrimers+PCRProducts"/>
     <c:set var="label" value="${label}-ReversePrimers-ForwardPrimers-PCRProducts"/>
@@ -29,27 +28,27 @@
     <c:set var="type" value="${type}+ReversePrimers+ForwardPrimers+TilingPathSpans"/>
     <c:set var="label" value="${label}-ReversePrimers-ForwardPrimers-TilingPathSpans"/>
   </c:if>
-  
+
   <c:if test="${type == 'ReversePrimers'}">
     <c:set var="type" value="${type}+ForwardPrimers+TilingPathSpans+PCRProducts"/>
     <c:set var="label" value="${label}-ForwardPrimers-TilingPathSpans-PCRProducts"/>
   </c:if>
-  
+
   <c:if test="${type == 'ForwardPrimers'}">
     <c:set var="type" value="${type}+ReversePrimers+TilingPathSpans+PCRProducts"/>
     <c:set var="label" value="${label}-ReversePrimers-TilingPathSpans-PCRProducts"/>
   </c:if>
-  
+
   <c:if test="${type == 'ArtificialDeletions'}">
     <c:set var="type" value="${type}+TransposableElementInsertionSites"/>
     <c:set var="label" value="${label}-TransposableElementInsertionSites"/>
   </c:if>
-  
+
   <c:if test="${type != 'Genes'}">
     <c:set var="type" value="${type}+Genes"/>
     <c:set var="label" value="${label}-Genes"/>
   </c:if>
-  
+
   <c:set var="name" value="FlyMineInternalID_${object.id}"/>
 
   <c:if test="${cld.unqualifiedName == 'MRNA' || cld.unqualifiedName == 'Transcript'}">

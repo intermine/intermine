@@ -2,7 +2,6 @@
 <%@ taglib uri="/WEB-INF/struts-html.tld" prefix="html" %>
 <%@ taglib uri="/WEB-INF/struts-tiles.tld" prefix="tiles" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
-<%@ taglib uri="http://java.sun.com/jsp/jstl/functions" prefix="fn" %>
 <%@ taglib tagdir="/WEB-INF/tags" prefix="im"%>
 <%@ taglib uri="http://flymine.org/imutil" prefix="imutil" %>
 
@@ -10,7 +9,7 @@
 
 <c:if test="${TEMPLATE_BUILD_STATE != null}">
   <link rel="stylesheet" type="text/css" href="css/templatePreview.css"/>
-  
+
   <imutil:disclosure id="template-preview" opened="true" styleClass="body">
         Template preview
   <imutil:disclosureBody style="align:center;">
@@ -21,10 +20,10 @@
         <tiles:insert name="template.tile">
           <tiles:put name="builder" value="yes"/>
         </tiles:insert>
-      </div>  
+      </div>
   </imutil:disclosureBody>
   </imutil:disclosure>
-  
+
     <div align="center">
       <table border="0">
         <tr>
@@ -49,8 +48,7 @@
       </table>
       <br/>
     </div>
-  
+
 </c:if>
-  
+
 <!-- /templatePreview.jsp -->
-  

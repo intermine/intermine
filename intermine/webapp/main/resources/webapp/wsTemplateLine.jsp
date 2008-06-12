@@ -1,7 +1,6 @@
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
 <%@ taglib uri="/WEB-INF/struts-html.tld" prefix="html" %>
-<%@ taglib uri="http://java.sun.com/jsp/jstl/functions" prefix="fn" %>
 <%@ taglib tagdir="/WEB-INF/tags" prefix="im" %>
 <%@ taglib uri="/WEB-INF/struts-tiles.tld" prefix="tiles" %>
 
@@ -38,11 +37,11 @@
         </html:link>
     </c:when>
     <c:otherwise>
-  
+
         <fmt:message var="linkTitle" key="templateList.run">
     <fmt:param value="${webSearchable.name}"/>
-        </fmt:message> 
-        
+        </fmt:message>
+
         ${webSearchable.name}
         <tiles:insert name="setFavourite.tile">
           <tiles:put name="name" value="${webSearchable.name}"/>

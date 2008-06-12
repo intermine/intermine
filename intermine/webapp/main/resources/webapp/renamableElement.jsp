@@ -1,7 +1,6 @@
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 <%@ taglib uri="/WEB-INF/struts-tiles.tld" prefix="tiles" %>
 <%@ taglib uri="/WEB-INF/struts-html.tld" prefix="html" %>
-<%@ taglib uri="http://java.sun.com/jsp/jstl/functions" prefix="fn" %>
 <%@ taglib uri="http://jakarta.apache.org/taglibs/string-1.1" prefix="str" %>
 
 <tiles:useAttribute id="name" name="name"/>
@@ -17,16 +16,16 @@
   <span id="name_${name}">
     <c:set var="nameForURL"/>
     <str:encodeUrl var="nameForURL">${name}</str:encodeUrl>
-  <c:choose> 
-         <c:when test="${type == 'bag'}"> 
-           <html:link action="/bagDetails?bagName=${nameForURL}"> 
-             <c:out value="${name}"/> 
-           </html:link> 
-         </c:when> 
-         <c:otherwise> 
-           <c:out value="${name}"/> 
-      </c:otherwise> 
-  </c:choose> 
+  <c:choose>
+         <c:when test="${type == 'bag'}">
+           <html:link action="/bagDetails?bagName=${nameForURL}">
+             <c:out value="${name}"/>
+           </html:link>
+         </c:when>
+         <c:otherwise>
+           <c:out value="${name}"/>
+      </c:otherwise>
+  </c:choose>
  </span>
   <a href="javascript:editName('${name}');">
     <img border="0" src="images/edit.gif" width="13" height="13" title="Click here to rename this item"/>
