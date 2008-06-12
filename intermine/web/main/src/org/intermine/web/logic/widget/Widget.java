@@ -31,35 +31,35 @@ public abstract class Widget
     private String dataSetLoader;
     private String link;
     private String selectedExtraAttribute;
-    
+
     /**
      * The Constructor
      */
     public Widget() {
         super();
     }
-    
+
     /**
      * @return the id
      */
     public int getId() {
         return id;
     }
-    
+
     /**
      * @param id the id to set
      */
     public void setId(int id) {
         this.id = id;
     }
-    
+
     /**
      * @return the description
      */
     public String getDescription() {
         return description;
     }
-    
+
     /**
      * @param description the description to set
      */
@@ -80,7 +80,7 @@ public abstract class Widget
     public void setTitle(String title) {
         this.title = title;
     }
-    
+
     /**
      * Get the value of dataSetLoader
      * @return the value of dataSetLoader
@@ -97,7 +97,7 @@ public abstract class Widget
     public void setDataSetLoader(String dataSetLoader) {
         this.dataSetLoader = dataSetLoader;
     }
-    
+
     /**
      * Get the link
      * @return the link
@@ -113,10 +113,10 @@ public abstract class Widget
     public void setLink(String link) {
         this.link = link;
     }
-    
+
     /**
      * Process the data and create the widget
-     * 
+     *
      * @param imBag the InterMineBag
      * @param os the ObjectStore
      * @throws Exception if one of the classes in the widget isn't found
@@ -128,10 +128,10 @@ public abstract class Widget
      * @param imBag the InterMineBag
      * @param os the ObjectStore
      * @return the getExtraAttributes
-     * @exception Exception if something goes wrong      
+     * @exception Exception if something goes wrong
      */
-    public abstract Map<String, Collection> getExtraAttributes(InterMineBag imBag, 
-                                                  ObjectStore os) 
+    public abstract Map<String, Collection<String>> getExtraAttributes(InterMineBag imBag,
+                                                  ObjectStore os)
     throws Exception;
 
     /**
@@ -162,7 +162,7 @@ public abstract class Widget
      * @param externalLink the externalLink to set
      */
     public abstract void setExternalLink(String externalLink);
-        
+
     /**
      * @return the externalLinkLabel
      */
@@ -172,7 +172,7 @@ public abstract class Widget
      * @param externalLinkLabel the externalLinkLabel to set
      */
     public abstract void setExternalLinkLabel(String externalLinkLabel);
-    
+
     /**
      * @return the number of objects not analysed in this widget
      */
@@ -182,16 +182,16 @@ public abstract class Widget
      * @param notAnalysed the number of objects not analysed in this widget
      */
     public abstract void setNotAnalysed(int notAnalysed);
-    
+
     /**
-     * 
+     *
      * @param selected the list of checked items from the form
      * @return the checked items in export format
      * @throws Exception something has gone wrong. oh no.
      */
     public abstract List<List<String>> getExportResults(String[]selected) throws Exception;
-    
-    
+
+
     /**
      * @return results of widget
      */

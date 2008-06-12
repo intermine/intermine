@@ -43,19 +43,19 @@ public class TableWidget extends Widget
     private String pathStrings, externalLink, externalLinkLabel;
     private String columnTitle = null;
     private int notAnalysed = 0;
-    
+
     /**
      * {@inheritDoc}
      */
     public void process(InterMineBag bag, ObjectStore os) throws Exception {
         bagWidgLdr = new TableWidgetLdr(pathStrings, bag, os, webConfig,
-                        os.getModel(), classKeys, displayFields, getExportFields(), 
+                        os.getModel(), classKeys, displayFields, getExportFields(),
                         getLink(), getColumnTitle(),
                         getExternalLink(), getExternalLinkLabel());
 
-        notAnalysed = bag.getSize() - bagWidgLdr.getWidgetTotal();        
+        notAnalysed = bag.getSize() - bagWidgLdr.getWidgetTotal();
     }
-    
+
     /**
      * Get the flattened results
      * @return the List of flattened results
@@ -63,21 +63,21 @@ public class TableWidget extends Widget
     public List getFlattenedResults() {
         return bagWidgLdr.getFlattenedResults();
     }
-    
+
     /**
      * {@inheritDoc}
      */
     public List<List<String>> getExportResults(String[] selected) throws Exception {
         return bagWidgLdr.getExportResults(selected);
     }
-    
+
     /**
      * Get the columns
      * @return the columns
      */
-    public List getColumns() {
+    public List<String> getColumns() {
         return bagWidgLdr.getColumns();
-    }    
+    }
 
     /**
      * @return the fields
@@ -92,9 +92,9 @@ public class TableWidget extends Widget
     public void setDisplayFields(String fields) {
         this.displayFields = fields;
     }
-    
 
-    
+
+
     /**
      * @return the title for the count column
      */
@@ -108,14 +108,14 @@ public class TableWidget extends Widget
     public void setColumnTitle(String columnTitle) {
         this.columnTitle = columnTitle;
     }
-    
+
     /**
      * Do-nothing implementation of superclass method
      * @param imBag a bag
      * @param os the objectstore
      * @return null
      */
-    public Map<String, Collection> getExtraAttributes(InterMineBag imBag,
+    public Map<String, Collection<String>> getExtraAttributes(InterMineBag imBag,
                                                       ObjectStore os) {
         return null;
     }
@@ -140,7 +140,7 @@ public class TableWidget extends Widget
     public void setClassKeys(Map<String, List<FieldDescriptor>> classKeys) {
         this.classKeys = classKeys;
     }
-    
+
     /**
      * {@inheritDoc}
      */
@@ -149,7 +149,7 @@ public class TableWidget extends Widget
     }
 
     /**
-     * Comma separated list of path strings to appear in the widget, ie Employee.firstName, 
+     * Comma separated list of path strings to appear in the widget, ie Employee.firstName,
      * Employee.lastName
      * @return the pathStrings
      */
@@ -163,7 +163,7 @@ public class TableWidget extends Widget
     public void setPathStrings(String pathStrings) {
         this.pathStrings = pathStrings;
     }
-    
+
     /**
      * {@inheritDoc}
      */
@@ -219,8 +219,8 @@ public class TableWidget extends Widget
     public void setExportFields(String exportFields) {
         this.exportFields = exportFields;
     }
-    
 
-    
-    
+
+
+
 }

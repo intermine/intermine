@@ -250,8 +250,7 @@ public class TableWidgetLdr
     /**
      * {@inheritDoc}
      */
-    public Query getQuery(boolean calcTotal, List<String> keys)
-        throws IllegalArgumentException {
+    public Query getQuery(boolean calcTotal, List<String> keys) {
 
         Query q = new Query();
         String[] queryBits = pathString.split("\\.");

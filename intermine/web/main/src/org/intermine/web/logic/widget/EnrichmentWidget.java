@@ -22,14 +22,11 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
-import org.intermine.metadata.Model;
 import org.intermine.objectstore.ObjectStore;
 import org.intermine.objectstore.ObjectStoreException;
 import org.intermine.objectstore.query.Query;
-import org.intermine.objectstore.query.QueryClass;
 import org.intermine.objectstore.query.Results;
 import org.intermine.objectstore.query.ResultsRow;
-import org.intermine.util.StringUtil;
 import org.intermine.util.TypeUtil;
 import org.intermine.web.logic.WebUtil;
 import org.intermine.web.logic.bag.InterMineBag;
@@ -37,6 +34,7 @@ import org.intermine.web.logic.bag.InterMineBag;
 /**
  * @author Julie Sullivan
  */
+@SuppressWarnings("unchecked")
 public class EnrichmentWidget extends Widget
 {
     private String max, filters, filterLabel, errorCorrection;
@@ -51,6 +49,7 @@ public class EnrichmentWidget extends Widget
     /**
      * {@inheritDoc}
      */
+    @SuppressWarnings("unchecked")
     public void process(InterMineBag imbag, ObjectStore ost) {
         try {
             this.bag = imbag;
@@ -183,8 +182,10 @@ public class EnrichmentWidget extends Widget
     /**
      * {@inheritDoc}
      */
-    public Map<String, Collection> getExtraAttributes(InterMineBag imBag, ObjectStore os) {
-        Map<String, Collection> returnMap = new HashMap<String, Collection>();
+    @SuppressWarnings("unused")
+    public Map<String, Collection<String>> getExtraAttributes(InterMineBag imBag,
+                                                              ObjectStore obstore) {
+        Map<String, Collection<String>> returnMap = new HashMap<String, Collection<String>>();
         returnMap.put(getFilterLabel(), Arrays.asList(getFilters().split(",")));
         return returnMap;
     }
@@ -218,16 +219,16 @@ public class EnrichmentWidget extends Widget
                                         + "\" type=\"checkbox\">"
                     });
 
-                String label = labelToId.get(id);
+                String name = labelToId.get(id);
                 if (externalLink != null && !externalLink.equals("")) {
-                    label += " <a href=\"" + externalLink + id
+                    name += " <a href=\"" + externalLink + id
                              + "\" target=\"_new\" class=\"extlink\">[";
                      if (externalLinkLabel != null && !externalLinkLabel.equals("")) {
-                         label += externalLinkLabel;
+                         name += externalLinkLabel;
                      }
-                     label += id + "]</a>";
+                     name += id + "]</a>";
                 }
-                row.add(new String[] {label});
+                row.add(new String[] {name});
 
                 row.add(new String[] {bd.setScale(7,
                 BigDecimal.ROUND_HALF_EVEN).toEngineeringString()});
@@ -250,7 +251,7 @@ public class EnrichmentWidget extends Widget
     public List<List<String>> getExportResults(String[]selected) throws Exception {
 
         Map<String, BigDecimal> pvalues = resultMaps.get(0);
-        Map<String, Long> totals = resultMaps.get(1);
+        //Map<String, Long> totals = resultMaps.get(1);
         Map<String, String> labelToId = resultMaps.get(2);
         List<List<String>> exportResults = new ArrayList<List<String>>();
         List<String> selectedIds = Arrays.asList(selected);
@@ -265,9 +266,6 @@ public class EnrichmentWidget extends Widget
                                                                                       {
             bag, os, getSelectedExtraAttribute()
                                                                                       });
-        Model model = os.getModel();
-        Class<?> bagCls = Class.forName(model.getPackageName() + "." + bag.getType());
-        QueryClass qc = new QueryClass(bagCls);
 
         Query q = ldr.getExportQuery(selectedIds);
 
@@ -291,7 +289,7 @@ public class EnrichmentWidget extends Widget
                 row.add(id);
 
                 BigDecimal bd = pvalues.get(id);
-                Double d = bd.doubleValue();
+                Double d = new Double(bd.doubleValue());
                 row.add(d);
 
                 List<String> ids = termsToIds.get(id);

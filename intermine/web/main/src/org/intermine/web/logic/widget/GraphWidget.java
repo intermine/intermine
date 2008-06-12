@@ -58,7 +58,7 @@ public class GraphWidget extends Widget
     private String domainLabel;
     private String rangeLabel;
     private String toolTipGen;
-    
+
     private String graphType;
     private String fileName = null;
     private String imageMap = null;
@@ -68,7 +68,7 @@ public class GraphWidget extends Widget
     private HttpSession session;
     private DataSetLdr dataSetLdr;
     private int notAnalysed = 0;
-    
+
     /**
      * {@inheritDoc}
      */
@@ -86,7 +86,7 @@ public class GraphWidget extends Widget
                 });
 
             notAnalysed = imBag.getSize() - dataSetLdr.getWidgetTotal();
-            
+
             // TODO use caching here
             JFreeChart chart = null;
             CategoryPlot plot = null;
@@ -190,7 +190,7 @@ public class GraphWidget extends Widget
             Class<?> clazz1 = TypeUtil.instantiate(toolTipGen);
             Constructor<?> toolTipConstructor = clazz1.getConstructor(new Class[]
                 {});
-            CategoryToolTipGenerator categoryToolTipGen 
+            CategoryToolTipGenerator categoryToolTipGen
             = (CategoryToolTipGenerator) toolTipConstructor
                             .newInstance(new Object[]
                                 {});
@@ -235,7 +235,7 @@ public class GraphWidget extends Widget
             throw new RuntimeException("unexpected exception", e);
         }
     }
-    
+
     /**
      * @param session the session to set
      */
@@ -348,15 +348,15 @@ public class GraphWidget extends Widget
     public void setExtraAttributeClass(String extraAttributeClass) {
         this.extraAttributeClass = extraAttributeClass;
     }
-    
-    
+
+
     /**
      * {@inheritDoc}
      */
-    public Map<String, Collection> getExtraAttributes(InterMineBag imBag, ObjectStore os)
+    public Map<String, Collection<String>> getExtraAttributes(InterMineBag imBag, ObjectStore os)
         throws Exception {
         Collection<String> extraAttributes = new ArrayList<String>();
-        Map<String, Collection> returnMap = new HashMap<String, Collection>();
+        Map<String, Collection<String>> returnMap = new HashMap<String, Collection<String>>();
         if (extraAttributeClass != null && extraAttributeClass.length() > 0) {
             try {
                 Class<?> clazz = TypeUtil.instantiate(extraAttributeClass);
@@ -376,14 +376,14 @@ public class GraphWidget extends Widget
         }
         return returnMap;
     }
-    
+
     /**
      * {@inheritDoc}
      */
     public boolean getHasResults() {
         return (dataSetLdr.getResults() != null && dataSetLdr.getResults().size() > 0);
     }
-    
+
     /**
      * {@inheritDoc}
      */
@@ -411,7 +411,7 @@ public class GraphWidget extends Widget
     public void setExternalLinkLabel(String externalLinkLabel) {
         this.externalLinkLabel = externalLinkLabel;
     }
-    
+
     /**
      * {@inheritDoc}
      */
@@ -425,15 +425,15 @@ public class GraphWidget extends Widget
     public void setNotAnalysed(int notAnalysed) {
         this.notAnalysed = notAnalysed;
     }
-    
+
     /**
      * {@inheritDoc}
      */
     public List<List<String>> getExportResults(String[]selected) throws Exception {
         // TODO this method
         return null;
-    }    
-    
+    }
+
     /**
      * {@inheritDoc}
      */
