@@ -34,7 +34,7 @@
 <reference name="organism" ref_id="6_1"/>
 <reference name="sequence" ref_id="10_2"/>
 <collection name="comments"><reference ref_id="8_2"/></collection>
-<collection name="evidence"><reference ref_id="3_1"/></collection>
+<collection name="dataSets"><reference ref_id="3_1"/></collection>
 <collection name="genes"><reference ref_id="5_2"/></collection>
 <collection name="keywords"><reference ref_id="9_1"/></collection>
 <collection name="publications"><reference ref_id="7_2"/></collection>
@@ -80,7 +80,7 @@
 <reference name="organism" ref_id="6_1"/>
 <reference name="sequence" ref_id="10_1"/>
 <collection name="comments"><reference ref_id="8_1"/><reference ref_id="8_2"/><reference ref_id="8_3"/></collection>
-<collection name="evidence"><reference ref_id="3_1"/></collection>
+<collection name="dataSets"><reference ref_id="3_1"/></collection>
 <collection name="genes"><reference ref_id="5_1"/></collection>
 <collection name="keywords"><reference ref_id="9_1"/><reference ref_id="9_2"/><reference ref_id="9_3"/></collection>
 <collection name="publications"><reference ref_id="7_1"/><reference ref_id="7_2"/></collection>
