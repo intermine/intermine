@@ -68,7 +68,7 @@ public class RedFlyGFF3RecordHandler extends GFF3RecordHandler
         if (record.getAttributes().containsKey("Evidence")) {
             List<String> evidenceList = record.getAttributes().get("Evidence");
             String elementEvidence = evidenceList.get(0);
-            feature.addAttribute(new Attribute("elementEvidence", elementEvidence));
+            feature.addAttribute(new Attribute("evidenceMethod", elementEvidence));
         }
 
         List<String> ontologyTermIds = record.getAttributes().get("Ontology_term");

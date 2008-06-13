@@ -78,7 +78,12 @@ public class FlyRegGFF3RecordHandler extends GFF3RecordHandler
 
         bindingSite.setAttribute("name", name);
 
-        String geneNs = nameSpace + "Gene";
+        if (record.getAttributes().containsKey("Evidence")) {
+            List<String> evidenceList = record.getAttributes().get("Evidence");
+            String elementEvidence = evidenceList.get(0);
+            bindingSite.setAttribute("evidenceMethod", elementEvidence);
+        }
+
         String publicationNs = nameSpace + "Publication";
 
         List<String> dbxrefs = record.getAttributes().get("Dbxref");

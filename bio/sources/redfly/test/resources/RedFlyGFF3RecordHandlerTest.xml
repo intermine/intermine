@@ -1,7 +1,7 @@
 <items>
   <item id="1_1" class="http://www.flymine.org/model/genomic#CRM">
     <attribute name="curated" value="true"/>
-    <attribute name="elementEvidence" value="reporter construct (in vivo)"/>
+    <attribute name="evidenceMethod" value="reporter construct (in vivo)"/>
     <attribute name="primaryIdentifier" value="prd_A8_repressor"/>
     <attribute name="secondaryIdentifier" value="391"/>
     <reference name="gene" ref_id="1_5"/>
@@ -27,7 +27,7 @@
   </item>
   <item id="1_7" class="http://www.flymine.org/model/genomic#CRM">
     <attribute name="curated" value="true"/>
-    <attribute name="elementEvidence" value="reporter construct (in vivo)"/>
+    <attribute name="evidenceMethod" value="reporter construct (in vivo)"/>
     <attribute name="primaryIdentifier" value="prd_P1_enhancer"/>
     <attribute name="secondaryIdentifier" value="392"/>
     <reference name="gene" ref_id="1_5"/>
@@ -40,7 +40,7 @@
   </item>
   <item id="1_9" class="http://www.flymine.org/model/genomic#CRM">
     <attribute name="curated" value="true"/>
-    <attribute name="elementEvidence" value="reporter construct (in vivo)"/>
+    <attribute name="evidenceMethod" value="reporter construct (in vivo)"/>
     <attribute name="primaryIdentifier" value="Scr_BSR"/>
     <attribute name="secondaryIdentifier" value="576"/>
     <reference name="gene" ref_id="1_11"/>
