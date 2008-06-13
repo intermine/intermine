@@ -108,6 +108,8 @@
     <reference name="property" referenced-type="org.flymine.model.genomic.BioProperty" reverse-reference="annotations"/>
     <reference name="subject" referenced-type="org.flymine.model.genomic.BioEntity" reverse-reference="annotations"/>
     <collection name="evidence" referenced-type="org.flymine.model.genomic.Evidence" ordered="true"/>
+    <collection name="dataSets" referenced-type="org.flymine.model.genomic.DataSet" ordered="true"/>
+    <collection name="publications" referenced-type="org.flymine.model.genomic.Publication" ordered="true"/>
   </class>
 
   <class name="org.flymine.model.genomic.BioProperty" is-interface="true">
