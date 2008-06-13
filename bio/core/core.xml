@@ -7,7 +7,7 @@
     <collection name="dataSets"
                 referenced-type="org.flymine.model.genomic.DataSet" reverse-reference="dataSource"/>
   </class>
-  <class name="org.flymine.model.genomic.DataSet" extends="org.flymine.model.genomic.InfoSource" is-interface="true">
+  <class name="org.flymine.model.genomic.DataSet" is-interface="true">
     <attribute name="url" type="java.lang.String"/>
     <attribute name="description" type="java.lang.String"/>
     <attribute name="version" type="java.lang.String"/>
@@ -29,6 +29,8 @@
     <collection name="annotations" referenced-type="org.flymine.model.genomic.Annotation" ordered="true" reverse-reference="subject"/>
     <collection name="synonyms" referenced-type="org.flymine.model.genomic.Synonym" ordered="true" reverse-reference="subject"/>
     <collection name="evidence" referenced-type="org.flymine.model.genomic.Evidence" ordered="true"/>
+    <collection name="dataSets" referenced-type="org.flymine.model.genomic.DataSet" ordered="true"/>
+    <collection name="publications" referenced-type="org.flymine.model.genomic.Publication" ordered="true"/>
   </class>
   <class name="org.flymine.model.genomic.ComputationalAnalysis" extends="org.flymine.model.genomic.Analysis" is-interface="true">
     <attribute name="algorithm" type="java.lang.String"/>
@@ -70,7 +72,7 @@
   </class>
   <class name="org.flymine.model.genomic.OverlapRelation" extends="org.flymine.model.genomic.SymmetricalRelation" is-interface="true">
   </class>
-  <class name="org.flymine.model.genomic.Publication" extends="org.flymine.model.genomic.InfoSource" is-interface="true">
+  <class name="org.flymine.model.genomic.Publication" is-interface="true">
     <attribute name="issue" type="java.lang.String"/>
     <attribute name="pubMedId" type="java.lang.String"/>
     <attribute name="pages" type="java.lang.String"/>
