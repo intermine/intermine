@@ -44,6 +44,7 @@
     <reference name="subject" referenced-type="org.flymine.model.genomic.BioEntity" reverse-reference="objects"/>
     <reference name="object" referenced-type="org.flymine.model.genomic.BioEntity" reverse-reference="subjects"/>
     <collection name="evidence" referenced-type="org.flymine.model.genomic.Evidence" ordered="true" reverse-reference="relations"/>
+    <collection name="dataSets" referenced-type="org.flymine.model.genomic.DataSet" ordered="true" reverse-reference="relations"/>
   </class>
   <class name="org.flymine.model.genomic.Experiment" extends="org.flymine.model.genomic.Analysis" is-interface="true"/>
   <class name="org.flymine.model.genomic.Location" extends="org.flymine.model.genomic.Relation" is-interface="true">
