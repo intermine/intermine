@@ -1,11 +1,13 @@
 <?xml version="1.0"?>
 <classes>
-  <class name="org.flymine.model.genomic.CRM" 
+  <class name="org.flymine.model.genomic.CRM"
          extends="org.flymine.model.genomic.RegulatoryRegion" is-interface="true">
-    <attribute name="elementEvidence" type="java.lang.String"/>
     <attribute name="primaryIdentifier" type="java.lang.String"/>
     <collection name="anatomyOntology" referenced-type="org.flymine.model.genomic.AnatomyTerm"/>
   </class>
   <class name="org.flymine.model.genomic.Enhancer" extends="org.flymine.model.genomic.CRM" is-interface="true"/>
   <class name="org.flymine.model.genomic.AnatomyTerm" extends="org.flymine.model.genomic.OntologyTerm" is-interface="true"/>
+  <class name="org.flymine.model.genomic.RegulatoryRegion" is-interface="true">
+  	<attribute name="evidenceMethod" type="java.lang.String"/>
+  </class>
 </classes>
