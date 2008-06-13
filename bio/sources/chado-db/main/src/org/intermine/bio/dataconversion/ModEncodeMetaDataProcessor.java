@@ -381,7 +381,7 @@ public class ModEncodeMetaDataProcessor extends ChadoProcessor
             count++;
         }
         LOG.info("created " + appliedProtocolMap.size() 
-                + "|[" + count + " applied data points] DAG nodes in map");
+                + "(" + count + " applied data points) DAG nodes in map");
         res.close();
 
         // now traverse the DAG, and associate experiment with all the applied protocols
@@ -524,6 +524,7 @@ public class ModEncodeMetaDataProcessor extends ChadoProcessor
         Iterator <Integer> thisInput = experiments.iterator();
 
         while (thisInput.hasNext()) {
+            // TODO: use local maps
             // FOR EACH EXPERIMENT
             // clear the maps
             inOutDataMap.clear();
@@ -615,8 +616,6 @@ public class ModEncodeMetaDataProcessor extends ChadoProcessor
      *
      */
     private void buildOutInMap() {
-        LOG.error("ICI: buildOutInMap");
-
         Set <Integer> in = inOutDataMap.keySet();
         Iterator <Integer> ins = in.iterator();
         while (ins.hasNext()) {
@@ -1408,7 +1407,7 @@ public class ModEncodeMetaDataProcessor extends ChadoProcessor
 
             List<Integer> outIds = ap.outputData;
             if (!outIds.isEmpty()) {
-                Iterator<Integer> i = dataIds.iterator();
+                Iterator<Integer> i = outIds.iterator();
                 ReferenceList collection = new ReferenceList();
                 collection.setName("outputData");
                 while (i.hasNext()) {
