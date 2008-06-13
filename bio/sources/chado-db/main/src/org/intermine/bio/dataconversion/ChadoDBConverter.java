@@ -10,10 +10,8 @@ package org.intermine.bio.dataconversion;
  *
  */
 
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
@@ -121,23 +119,19 @@ public class ChadoDBConverter extends BioDBConverter
             throw new IllegalArgumentException("processors not set in ChadoDBConverter");
         }
 
-        List<String> orgAbbrevationsToProcess = new ArrayList<String>();
+        Map<OrganismData, Integer> tempChadoOrgMap = getChadoOrganismIds(connection);
+
         for (OrganismData od: organismsToProcess) {
-            orgAbbrevationsToProcess.add(od.getAbbreviation());
+            Integer chadoId = tempChadoOrgMap.get(od);
+            if (chadoId == null) {
+                throw new RuntimeException("Organism " + od
+                                           + " not found in the chado organism table");
+            }
+            chadoToOrgData.put(chadoId, od);
         }
 
-        if (orgAbbrevationsToProcess.size() > 0) {
-            Map<String, Integer> abbrevChadoIdMap =
-                getChadoOrganismIds(connection, orgAbbrevationsToProcess);
-
-            for (Map.Entry<String, Integer> entry: abbrevChadoIdMap.entrySet()) {
-                String abbreviation = entry.getKey();
-                Integer chadoOrganismId = entry.getValue();
-
-                OrganismData orgData =
-                    organismRepository.getOrganismDataByAbbreviation(abbreviation);
-                chadoToOrgData.put(chadoOrganismId, orgData);
-            }
+        if (chadoToOrgData.size() == 0) {
+            throw new RuntimeException("can't find any known organisms in the organism table");
         }
 
         String[] bits = processors.trim().split("[ \\t]+");
@@ -153,36 +147,48 @@ public class ChadoDBConverter extends BioDBConverter
     }
 
     /**
-     * Return the chado organism id for the given organism abbreviations.  This is a protected
-     * method so that it can be overriden for testing
+     * Return a map from chado organism id to OrganismData for the organisms in the organism table
+     * in chado.  This is a protected method so that it can be overriden for testing
      * @param connection the db connection
-     * @param abbreviations a space separated list of the organism abbreviations to look up in the
-     * organism table eg. "Dmel Dpse"
+     * @param organismsToProcess2
      * @return a Map from abbreviation to chado organism_id
      * @throws SQLException if the is a database problem
      */
-    protected Map<String, Integer> getChadoOrganismIds(Connection connection,
-                                                       List<String> abbreviations)
+    protected Map<OrganismData, Integer> getChadoOrganismIds(Connection connection)
         throws SQLException {
-        StringBuffer abbrevBuffer = new StringBuffer();
-        for (int i = 0; i < abbreviations.size(); i++) {
-            if (i != 0) {
-                abbrevBuffer.append(", ");
-            }
-            abbrevBuffer.append("'").append(abbreviations.get(i)).append("'");
-        }
-        String query = "select organism_id, abbreviation from organism where abbreviation IN ("
-            + abbrevBuffer.toString() + ")";
+        String query = "select organism_id, abbreviation, genus, species from organism";
         LOG.info("executing: " + query);
         Statement stmt = connection.createStatement();
         ResultSet res = stmt.executeQuery(query);
 
-        Map<String, Integer> retMap = new HashMap<String, Integer>();
+        Map<OrganismData, Integer> retMap = new HashMap<OrganismData, Integer>();
+
+        OrganismRepository or = OrganismRepository.getOrganismRepository();
 
         while (res.next()) {
             int organismId = res.getInt("organism_id");
             String abbreviation = res.getString("abbreviation");
-            retMap.put(abbreviation, new Integer(organismId));
+            String genus = res.getString("genus");
+            String species = res.getString("species");
+
+            OrganismData od = null;
+
+            if (genus != null && species != null) {
+                od = or.getOrganismDataByGenusSpecies(genus, species);
+            }
+
+            if (od == null) {
+                if (abbreviation != null) {
+                    od = or.getOrganismDataByAbbreviation(abbreviation);
+                }
+            }
+
+            if (od == null) {
+                LOG.warn("can't find OrganismData for species: " + species
+                         + " genus: " + genus + " abbreviation: " + abbreviation);
+            }
+
+            retMap.put(od, new Integer(organismId));
         }
 
         return retMap;
