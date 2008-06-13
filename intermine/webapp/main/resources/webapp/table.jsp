@@ -148,7 +148,7 @@
         $('saveNewBag').disabled = true;
       </script>
     <hr>
-  <a href="javascript:hideMenu('tool_bar_item_createlist')" >Cancel</a>
+  <a href="javascript:hideMenu('tool_bar_item_createlist')" ><fmt:message key="confirm.cancel"/></a>
 </div>
 <%-- Add to existing list --%>
 <div id="tool_bar_item_addtolist" style="visibility:hidden;width:300px" class="tool_bar_item" >
@@ -168,7 +168,7 @@
         </script>
     </c:when>
     <c:otherwise>
-      <em>no lists saved</em>
+      <em><fmt:message key="toolbar.noLists"/></em>
     </c:otherwise>
     </c:choose>
     <hr>
@@ -180,23 +180,8 @@
     <c:set var="pagedTable" value="${resultsTable}" scope="request"/>
     <tiles:get name="export.tile"/>
     <hr>
-  <a href="javascript:hideMenu('tool_bar_item_export')" >Cancel</a>
+  <a href="javascript:hideMenu('tool_bar_item_export')" ><fmt:message key="confirm.cancel"/></a>
 </div>
-
- <%--           <strong>Legend: </strong>
-            <img style="vertical-align:text-bottom;" border="0"
-                 width="13" height="13" src="images/left_arrow.png"
-                 title="${moveLeftString}"/>
-            &nbsp;&amp;&nbsp;<img style="vertical-align:text-bottom;" border="0"
-                                  width="13" height="13" src="images/right_arrow.png"
-                                  title="${moveLeftString}"/>
-            Move columns - <img style="vertical-align:text-bottom;" border="0"
-                                src="images/close.png" title="${hideColumnTitle}" />
-            Close column <c:if test="${isWebResults}">-
-            <img src="images/summary_maths.png" style="vertical-align:text-bottom;" title="Click here to view Column Summary statistics">
-              Get summary statistics for column</img></c:if>
- </div>--%>
-
 
 <div class="resultsPage">
 <tiles:insert name="resultsTable.tile">
@@ -204,16 +189,6 @@
      <tiles:put name="currentPage" value="results" />
 </tiles:insert>
 </div>
-        <%-- Return to main results link
-             <c:if test="${!isWebResults
-                         && QUERY_RESULTS != null && !fn:startsWith(param.table, 'bag')}">
-               <p>
-                 <html:link action="/results?table=results">
-                   <fmt:message key="results.return"/>
-                 </html:link>
-               </p>
-             </c:if>
-             --%>
 
       </div> <%-- end of main results table body div --%>
     </html:form>
