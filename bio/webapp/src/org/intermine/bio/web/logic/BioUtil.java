@@ -47,7 +47,7 @@ public class BioUtil implements WidgetUtil
     public BioUtil() {
         super();
     }
-    
+
     /**
      * For a bag of objects, returns a list of organisms
      * @param os ObjectStore
@@ -55,7 +55,8 @@ public class BioUtil implements WidgetUtil
      * @param bag InterMineBag
      * @return collection of organism names
      */
-    public static Collection<String> getOrganisms(ObjectStore os, InterMineBag bag, 
+    @SuppressWarnings("unchecked")
+    public static Collection<String> getOrganisms(ObjectStore os, InterMineBag bag,
                                                   boolean lowercase) {
 
         Query q = new Query();
@@ -104,26 +105,27 @@ public class BioUtil implements WidgetUtil
         return organismNames;
     }
 
-    
+
     /**
      * Return a list of chromosomes for specified organism
      * @param os ObjectStore
      * @param organisms Organism names.  Assumes they are lowercase.
-     * @param lowercase if true returns lowercase chromosome names.  the precomputed tables indexes 
-     * are all lowercase, so the chromosome names need to be lowercase when used in queries 
+     * @param lowercase if true returns lowercase chromosome names.  the precomputed tables indexes
+     * are all lowercase, so the chromosome names need to be lowercase when used in queries
      * @return collection of chromosome names
      */
-    public static Collection<String> getChromosomes(ObjectStore os, 
-                                                    Collection<String> organisms, 
+    @SuppressWarnings("unchecked")
+    public static Collection<String> getChromosomes(ObjectStore os,
+                                                    Collection<String> organisms,
                                                     boolean lowercase) {
 
-        
-        final String dmel = "drosophila melanogaster";        
+
+        final String dmel = "drosophila melanogaster";
         ArrayList<String> chromosomes = new ArrayList<String>();
-        
+
         // TODO this may well go away once chromosomes sorted out in #1186
         if (organisms.contains(dmel)) {
-            
+
             if (lowercase) {
                 chromosomes.add("2l");
                 chromosomes.add("2r");
@@ -164,11 +166,11 @@ public class BioUtil implements WidgetUtil
         QueryObjectReference qr = new QueryObjectReference(qcChromosome, "organism");
         ContainsConstraint cc = new ContainsConstraint(qr, ConstraintOp.CONTAINS, qcOrganism);
         cs.addConstraint(cc);
-        
-        QueryExpression qf = new QueryExpression(QueryExpression.LOWER, qfOrganismName);        
+
+        QueryExpression qf = new QueryExpression(QueryExpression.LOWER, qfOrganismName);
         BagConstraint bc = new BagConstraint(qf, ConstraintOp.IN, organisms);
         cs.addConstraint(bc);
-        
+
         q.setConstraint(cs);
 
         q.addToOrderBy(qfChromosome);
@@ -186,7 +188,7 @@ public class BioUtil implements WidgetUtil
         }
         return chromosomes;
     }
-    
+
     /**
      * {@inheritDoc}
      */

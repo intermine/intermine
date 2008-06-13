@@ -63,28 +63,19 @@ public class OrthologueConverter implements BagConverter
      */
     public WebResults getConvertedObjects (HttpSession session, String organism,
                                       List<Integer> fromList, String type)
-                                      throws ClassNotFoundException,
-                                      ObjectStoreException {
+                                      throws ObjectStoreException {
         ServletContext servletContext = session.getServletContext();
         Model model = ((ObjectStore) servletContext.getAttribute(Constants.OBJECTSTORE)).getModel();
-        Class typeClass = TypeUtil.instantiate(model.getPackageName() + "." + type);
-        Map<String, QueryNode> pathToQueryNode = new HashMap<String, QueryNode>();
-        Map<String, BagQueryResult> pathToBagQueryResult = new HashMap<String, BagQueryResult>();
         ObjectStore os = (ObjectStore) servletContext.getAttribute(Constants.OBJECTSTORE);
-
         Profile profile = (Profile) session.getAttribute(Constants.PROFILE);
-        Map<String, InterMineBag> allBags =
-            WebUtil.getAllBags(profile.getSavedBags(), servletContext);
-
         PathQuery pathQuery = new PathQuery(model);
-
         WebConfig webConfig = (WebConfig) servletContext.getAttribute(Constants.WEBCONFIG);
         List<Path> view = PathQueryResultHelper.getDefaultView(type, model, webConfig,
                         "Gene.homologues.homologue", false);
         pathQuery.setView(view);
         String label = null, id = null, code = pathQuery.getUnusedConstraintCode();
-        List objectList = os.getObjectsByIds(fromList);
-        List newList = new ArrayList();
+        List<InterMineObject> objectList = os.getObjectsByIds(fromList);
+        List<InterMineObject> newList = new ArrayList<InterMineObject>();
         for (Object object : objectList) {
             ResultsRow resRow = (ResultsRow) object;
             newList.add((InterMineObject) resRow.get(0));
@@ -117,7 +108,7 @@ public class OrthologueConverter implements BagConverter
      */
     public ActionMessage getActionMessage(Model model, String externalids, int convertedSize,
                                           String type, String organism)
-                    throws ObjectStoreException, UnsupportedEncodingException {
+                    throws UnsupportedEncodingException {
         PathQuery pathQuery = new PathQuery(model);
 
         List<Path> view = new ArrayList<Path>();

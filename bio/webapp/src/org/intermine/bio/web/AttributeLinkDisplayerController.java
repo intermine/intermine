@@ -75,7 +75,7 @@ public class AttributeLinkDisplayerController extends TilesAction
                                  @SuppressWarnings("unused") ActionForm form,
                                  HttpServletRequest request,
                                  @SuppressWarnings("unused") HttpServletResponse response) {
-        
+
         ServletContext servletContext = request.getSession().getServletContext();
 
         InterMineBag bag = (InterMineBag) request.getAttribute("bag");
@@ -132,7 +132,7 @@ public class AttributeLinkDisplayerController extends TilesAction
         Map<String, ConfigMap> linkConfigs = new HashMap<String, ConfigMap>();
         Properties webProperties =
             (Properties) servletContext.getAttribute(Constants.WEB_PROPERTIES);
-        final String regexp = "attributelink\\.([^.]+)\\." + geneOrgKey 
+        final String regexp = "attributelink\\.([^.]+)\\." + geneOrgKey
             + "\\.([^.]+)(\\.list)?\\.(url|text|imageName|usePost)";
         Pattern p = Pattern.compile(regexp);
         String className = null;
@@ -246,7 +246,7 @@ public class AttributeLinkDisplayerController extends TilesAction
      */
     private void processConfigs(Map<String, ConfigMap> linkConfigs) {
         for (ConfigMap config : linkConfigs.values()) {
-            if (config.get("usePost") != null 
+            if (config.get("usePost") != null
                     && ((String) config.get("usePost")).equalsIgnoreCase("true")) {
                 modifyConfigToPost(config);
             }
@@ -265,7 +265,7 @@ public class AttributeLinkDisplayerController extends TilesAction
         }
         config.put("url", link.getBaseURL());
         if (link.getParameters().size() > 0) {
-            config.put("parameters", link.getParameters());    
+            config.put("parameters", link.getParameters());
         }
     }
 
@@ -323,9 +323,10 @@ public class AttributeLinkDisplayerController extends TilesAction
      * @return a set of tax ids
      *
      * Note: works with gene and protein QueryClass.
+     * TODO merge with similar method in BioUtil
      **/
 
-    public Set getTaxIds(InterMineBag bag, ObjectStore os) {
+    public Set<String> getTaxIds(InterMineBag bag, ObjectStore os) {
         Results results;
 
         Query q = new Query();
@@ -334,7 +335,7 @@ public class AttributeLinkDisplayerController extends TilesAction
             queryClass = new QueryClass(Class.forName(bag.getQualifiedType()));
 
             //check if you can query for organism
-            final Class qc = Class.forName(bag.getQualifiedType());
+            final Class<?> qc = Class.forName(bag.getQualifiedType());
             Set<ClassDescriptor> cds = os.getModel().getClassDescriptorsForClass(qc);
             ClassDescriptor cd = cds.iterator().next();
 

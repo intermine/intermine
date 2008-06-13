@@ -51,7 +51,7 @@ import org.intermine.web.struts.InterMineAction;
  *
  * @author Kim Rutherford
  */
-public class SequenceExportAction extends InterMineAction 
+public class SequenceExportAction extends InterMineAction
 {
     /**
      * This action is invoked directly to export LocatedSequenceFeatures.
@@ -79,13 +79,13 @@ public class SequenceExportAction extends InterMineAction
             getAttribute(Constants.WEB_PROPERTIES);
         Integer objectId = new Integer(request.getParameter("object"));
         InterMineObject obj = getObject(os, webProps, objectId);
-        
+
         if (obj instanceof LocatedSequenceFeature || obj instanceof Protein
                         || obj instanceof Translation) {
             bioSequence = createBioSequence(obj);
             if (bioSequence != null) {
                 OutputStream out = response.getOutputStream();
-                SeqIOTools.writeFasta(out, bioSequence);                
+                SeqIOTools.writeFasta(out, bioSequence);
             }
         }
 
@@ -129,7 +129,7 @@ public class SequenceExportAction extends InterMineAction
     private InterMineObject getObject(ObjectStore os, Properties webProps,
             Integer objectId) throws ObjectStoreException {
         String classNames = webProps.getProperty("fasta.export.classes");
-        List <Class> classList = new ArrayList<Class>();
+        List <Class<?>> classList = new ArrayList<Class<?>>();
         if (classNames != null && classNames.length() != 0) {
             String [] classArray = classNames.split(",");
             for (int i = 0; i < classArray.length; i++) {
@@ -137,15 +137,15 @@ public class SequenceExportAction extends InterMineAction
                                                    + classArray[i]));
             }
         } else {
-            classList.addAll(Arrays.asList(new Class[] {Protein.class,
+            classList.addAll(Arrays.asList(new Class<?>[] {Protein.class,
                 LocatedSequenceFeature.class,
                 Translation.class}));
         }
-        
+
         InterMineObject obj = os.getObjectById(objectId);
         if (obj instanceof Sequence) {
             Sequence sequence = (Sequence) obj;
-            for (Class clazz : classList) {
+            for (Class<?> clazz : classList) {
                 obj = ResidueFieldExporter.getIMObjectForSequence(os, clazz,
                                                                   sequence);
                 if (obj != null) {
