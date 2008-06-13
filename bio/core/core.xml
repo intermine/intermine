@@ -8,6 +8,7 @@
                 referenced-type="org.flymine.model.genomic.DataSet" reverse-reference="dataSource"/>
   </class>
   <class name="org.flymine.model.genomic.DataSet" is-interface="true">
+    <attribute name="title" type="java.lang.String"/>
     <attribute name="url" type="java.lang.String"/>
     <attribute name="description" type="java.lang.String"/>
     <attribute name="version" type="java.lang.String"/>
