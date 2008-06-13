@@ -27,7 +27,9 @@ public class SortingPerformance
     public static final int QUICKSORT_HYBRID = 7;
     public static final int BUCKET_SORT = 8;
     public static final int BUCKET_SORT_B = 9;
-    public static final int ALGO_COUNT = 10;
+    public static final int HEAP_SORT = 10;
+    public static final int COCKTAIL_SORT = 11;
+    public static final int ALGO_COUNT = 12;
 
     public static void main(String args[]) {
         int testControl[] = new int[TEST_SIZE];
@@ -40,6 +42,8 @@ public class SortingPerformance
         int testSampleQuickSortHybrid[] = new int[TEST_SIZE];
         int testSampleBucketSort[] = new int[TEST_SIZE];
         int testSampleBucketSortB[] = new int[TEST_SIZE];
+        int testSampleHeapSort[] = new int[TEST_SIZE];
+        int testSampleCocktailSort[] = new int[TEST_SIZE];
         Random random = new Random();
         for (int i = 0; i < TEST_SIZE; i++) {
             testControl[i] = random.nextInt();
@@ -52,6 +56,8 @@ public class SortingPerformance
             testSampleQuickSortHybrid[i] = testControl[i];
             testSampleBucketSort[i] = testControl[i];
             testSampleBucketSortB[i] = testControl[i];
+            testSampleHeapSort[i] = testControl[i];
+            testSampleCocktailSort[i] = testControl[i];
         }
         Arrays.sort(testControl);
         bubbleSort(testSampleBubble, 0, TEST_SIZE);
@@ -63,6 +69,8 @@ public class SortingPerformance
         quickSortHybrid(testSampleQuickSortHybrid, 0, TEST_SIZE);
         bucketSort(testSampleBucketSort, 0, TEST_SIZE);
         bucketSortB(testSampleBucketSortB, 0, TEST_SIZE);
+        heapSort(testSampleHeapSort, TEST_SIZE);
+        cocktailSort(testSampleCocktailSort, 0, TEST_SIZE);
         for (int i = 0; i < TEST_SIZE; i++) {
             if (testSampleBubble[i] != testControl[i]) {
                 throw new IllegalArgumentException("Bubble sort is broken: expected " + testControl[i] + " but was " + testSampleBubble[i]);
@@ -91,12 +99,18 @@ public class SortingPerformance
             if (testSampleBucketSortB[i] != testControl[i]) {
                 throw new IllegalArgumentException("Bucket sort B is broken: expected " + testControl[i] + " but was " + testSampleBucketSortB[i]);
             }
+            if (testSampleHeapSort[i] != testControl[i]) {
+                throw new IllegalArgumentException("Heap sort is broken: expected " + testControl[i] + " but was " + testSampleHeapSort[i]);
+            }
+            if (testSampleCocktailSort[i] != testControl[i]) {
+                throw new IllegalArgumentException("Cocktail sort is broken: expected " + testControl[i] + " but was " + testSampleCocktailSort[i]);
+            }
         }
         boolean alive[] = new boolean[ALGO_COUNT];
         for (int i = 0; i < ALGO_COUNT; i++) {
             alive[i] = true;
         }
-        System.out.println("Size\tRepeats\tBubble\tBubbleI\tInsert\tArrays\tShell\tSelect\tQuick\tQuickH\tBucket\tBucketB");
+        System.out.println("Size\tRepeats\tBubble\tBubbleI\tInsert\tArrays\tShell\tSelect\tQuick\tQuickH\tBucket\tBucketB\tHeap\tCocktail");
         for(int i = 0; i < DATA_SIZE.length; i++) {
             System.out.print(DATA_SIZE[i] + "\t" + REPEATS[i]);
             for(int sortType = 0; sortType < ALGO_COUNT; sortType++) {
@@ -224,6 +238,18 @@ public class SortingPerformance
                 bucketSortB(data, start, start + dataSize);
             }
             return new MeasuredResult("Bucket sort B", dataSize, repeatCount,
+                    System.currentTimeMillis() - startTime);
+        } else if (sortType == HEAP_SORT) {
+            for (int start = 0; start < end; start += dataSize) {
+                heapSort(data, dataSize);
+            }
+            return new MeasuredResult("Bucket sort B", dataSize, repeatCount,
+                    System.currentTimeMillis() - startTime);
+        } else if (sortType == COCKTAIL_SORT) {
+            for (int start = 0; start < end; start += dataSize) {
+                cocktailSort(data, start, start + dataSize);
+            }
+            return new MeasuredResult("Cocktail sort", dataSize, repeatCount,
                     System.currentTimeMillis() - startTime);
         } else {
             throw new IllegalArgumentException("No such algorithm " + sortType);
@@ -400,11 +426,11 @@ public class SortingPerformance
         insertionSort(a, start, end);
     }
 
-    public static final int B_BUCKET_DIV = 10000;
-    public static final int B_BUCKET_SIZE = 12000;
-    public static final int B_BUCKET_DEGRADE = 300000;
+    public static final int B_BUCKET_DIV = 40000;
+    public static final int B_BUCKET_SIZE = 50000;
+    public static final int B_BUCKET_DEGRADE = 500000;
     public static final int C_BUCKET_DIV = 10;
-    public static final int C_BUCKET_SIZE = 30;
+    public static final int C_BUCKET_SIZE = 40;
 
     private static void bucketSortB(int a[], int start, int end) {
         if (end - start < B_BUCKET_DEGRADE) {
@@ -438,6 +464,9 @@ public class SortingPerformance
             for (int o = 0; o < bucketSize[i]; o++) {
                 int value = buckets[i * B_BUCKET_SIZE + o];
                 int bucketNo = (int) ((((long) subBucketCount) * (((long) value) - subBase)) / subWidth);
+                if (subBucketSize[bucketNo] >= C_BUCKET_SIZE) {
+                    throw new IllegalArgumentException("Array is not sortable");
+                }
                 subBuckets[bucketNo * C_BUCKET_SIZE + (subBucketSize[bucketNo]++)] = value;
             }
             for (int o = 0; o < subBucketCount; o++) {
@@ -447,5 +476,88 @@ public class SortingPerformance
             }
         }
         insertionSort(a, start, end);
+    }
+
+    public static void heapSort(int a[], int end) {
+        heapify(a, end);
+        for (int i = end - 1; i > 0; i--) {
+            //for (int o : a) {
+            //    System.out.println("" + o);
+            //}
+            //System.out.println("");
+            //System.out.println("Swap 0 (" + a[0] + ") with " + i + " (" + a[i] + ")");
+            int swap = a[i];
+            a[i] = a[0];
+            a[0] = swap;
+            //for (int o : a) {
+            //    System.out.println("" + o);
+            //}
+            //System.out.println("");
+            siftDown(a, 0, i);
+        }
+    }
+
+    public static void siftDown(int a[], int i, int end) {
+        //System.out.println("Called siftDown(a, " + i + ", " + end + ")");
+        int state = 1;
+        int finish = end / 2;
+        while (i < finish && state != 0) {
+            //System.out.println("Checking with i = " + i);
+            state = 0;
+            if (i == finish - 1 || a[i * 2 + 1] > a[i * 2 + 2]) {
+                if (a[i * 2 + 1] > a[i]) {
+                    //System.out.println("Swap " + i + " (" + a[i] + ") with child " + (i * 2 + 1) + " (" + a[i * 2 + 1] + ")");
+                    int swap = a[i];
+                    a[i] = a[i * 2 + 1];
+                    a[i * 2 + 1] = swap;
+                    state = 1;
+                }
+            } else {
+                if (a[i * 2 + 2] > a[i]) {
+                    //System.out.println("Swap " + i + " (" + a[i] + ") with child " + (i * 2 + 2) + " (" + a[i * 2 + 2] + ")");
+                    int swap = a[i];
+                    a[i] = a[i * 2 + 2];
+                    a[i * 2 + 2] = swap;
+                    state = 2;
+                }
+            }
+            i = i * 2 + state;
+        }
+    }
+
+    public static void heapify(int a[], int end) {
+        for (int i = (end - 1) / 2; i >= 0; i--) {
+            siftDown(a, i, end);
+        }
+    }
+
+    private static void cocktailSort(int a[], int start, int end) {
+        boolean swapped;
+        int last = end - 1;
+        int first = start;
+        do {
+            swapped = false;
+            for (int i = first; i < last; i++) {
+                if (a[i] > a[i + 1]) {
+                    int swap = a[i];
+                    a[i] = a[i + 1];
+                    a[i + 1] = swap;
+                    swapped = true;
+                }
+            }
+            last--;
+            if (swapped) {
+                swapped = false;
+                for (int i = last - 1; i >= first; i--) {
+                    if (a[i] > a[i + 1]) {
+                        int swap = a[i];
+                        a[i] = a[i + 1];
+                        a[i + 1] = swap;
+                        swapped = true;
+                    }
+                }
+                first++;
+            }
+        } while (swapped);
     }
 }
