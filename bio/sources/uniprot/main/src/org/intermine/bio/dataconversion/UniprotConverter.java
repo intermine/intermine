@@ -761,6 +761,9 @@ public class UniprotConverter extends FileConverter
         // if synonym new, create and put in synonyms map for this <entry>
         private Item createSynonym(String subjectId, String type, String value, String dbId) {
             String key = subjectId + type + value + dbId;
+            if (value == null) {
+                return null;
+            }
             if (!synonyms.containsKey(key)) {
                 Item syn = createItem("Synonym");
                 syn.addReference(new Reference("subject", subjectId));
