@@ -73,8 +73,7 @@ public class UniprotConverter extends FileConverter
 
     private boolean createInterpro = false;
     private Set<String> taxonIds = null;
-    private Set<String> doneTaxonIds = new HashSet<String>();
-    private boolean useSplitFiles = true;
+
     protected IdResolverFactory resolverFactory;
     private IdResolver resolver;
     private static final Set<String> FEATURE_TYPES = new HashSet<String>();
@@ -119,20 +118,6 @@ public class UniprotConverter extends FileConverter
     @Override
     public void process(Reader reader) throws Exception {
         boolean doProcess = true;
-        if (useSplitFiles) {
-            doProcess = false;
-            String fileName = getCurrentFile().getName();
-            String taxonId = fileName.substring(0, fileName.indexOf("_"));
-            if (taxonIds.contains(taxonId)) {
-                doProcess = true;
-                doneTaxonIds.add(taxonId);
-            } else {
-                System .out.println("Not reading from " + fileName
-                                    + " - not in list of organisms.");
-                LOG.error("Not reading from " + fileName + " - not in list of organisms.");
-            }
-        }
-
         if (doProcess) {
             readConfig();
             UniprotHandler handler = new UniprotHandler(getItemWriter());
@@ -146,18 +131,6 @@ public class UniprotConverter extends FileConverter
         }
     }
 
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public void close() throws Exception {
-        if (useSplitFiles) {
-            if (!doneTaxonIds.containsAll(taxonIds)) {
-                throw new Exception("Did not process all required taxonIds. Required = " + taxonIds
-                        + ", done = " + doneTaxonIds);
-            }
-        }
-    }
 
     private void readConfig() {
         Properties props = new Properties();
@@ -256,20 +229,6 @@ public class UniprotConverter extends FileConverter
     public void setUniprotOrganisms(String taxonIds) {
         this.taxonIds = new HashSet<String>(Arrays.asList(StringUtil.split(taxonIds, " ")));
         LOG.info("Setting list of organisms to " + this.taxonIds);
-    }
-
-    /**
-     * Sets the parameter that determines whether the files in the split directory will be read, or
-     * the files in the root directory will be used.
-     * @param useSplitFiles if true the files in /split will be loaded and if false the files in
-     * the root directory will be loaded
-     */
-    public void setUseFilter(String useFilter) {
-        if (useFilter.equals("true")) {
-            this.useSplitFiles = false;
-        } else {
-            this.useSplitFiles = true;
-        }
     }
 
     private class UniprotHandler extends DefaultHandler
@@ -595,7 +554,7 @@ public class UniprotConverter extends FileConverter
                     if (hasPrimary) {
                         protein.setAttribute("description", descr.toString());
                         ReferenceList evidenceColl =
-                            new ReferenceList("evidence", new ArrayList<String>());
+                            new ReferenceList("dataSets", new ArrayList<String>());
                         protein.addCollection(evidenceColl);
                         evidenceColl.addRefId(dataset.getIdentifier());
 
@@ -928,7 +887,7 @@ public class UniprotConverter extends FileConverter
                     dsMaster.put(title, ds);
 
                     ReferenceList evidenceColl =
-                        new ReferenceList("evidence", new ArrayList<String>());
+                        new ReferenceList("dataSets", new ArrayList<String>());
                     protein.addCollection(evidenceColl);
                     evidenceColl.addRefId(ds.getIdentifier());
                     writer.store(ItemHelper.convert(ds));
