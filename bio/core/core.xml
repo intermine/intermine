@@ -14,6 +14,7 @@
     <attribute name="version" type="java.lang.String"/>
     <reference name="dataSource"
                referenced-type="org.flymine.model.genomic.DataSource" reverse-reference="dataSets"/>
+    <collection name="bioEntities" referenced-type="org.flymine.model.genomic.BioEntity" ordered="true" reverse-reference="dataSets"/>
   </class>
   <class name="org.flymine.model.genomic.Ontology" extends="org.flymine.model.genomic.InfoSource" is-interface="true">
     <attribute name="url" type="java.lang.String"/>
@@ -30,7 +31,7 @@
     <collection name="annotations" referenced-type="org.flymine.model.genomic.Annotation" ordered="true" reverse-reference="subject"/>
     <collection name="synonyms" referenced-type="org.flymine.model.genomic.Synonym" ordered="true" reverse-reference="subject"/>
     <collection name="evidence" referenced-type="org.flymine.model.genomic.Evidence" ordered="true"/>
-    <collection name="dataSets" referenced-type="org.flymine.model.genomic.DataSet" ordered="true"/>
+    <collection name="dataSets" referenced-type="org.flymine.model.genomic.DataSet" ordered="true" reverse-reference="bioEntities"/>
     <collection name="publications" referenced-type="org.flymine.model.genomic.Publication" ordered="true"/>
   </class>
   <class name="org.flymine.model.genomic.ComputationalAnalysis" extends="org.flymine.model.genomic.Analysis" is-interface="true">
@@ -44,7 +45,7 @@
     <reference name="subject" referenced-type="org.flymine.model.genomic.BioEntity" reverse-reference="objects"/>
     <reference name="object" referenced-type="org.flymine.model.genomic.BioEntity" reverse-reference="subjects"/>
     <collection name="evidence" referenced-type="org.flymine.model.genomic.Evidence" ordered="true" reverse-reference="relations"/>
-    <collection name="dataSets" referenced-type="org.flymine.model.genomic.DataSet" ordered="true" reverse-reference="relations"/>
+    <collection name="dataSets" referenced-type="org.flymine.model.genomic.DataSet" ordered="true"/>
   </class>
   <class name="org.flymine.model.genomic.Experiment" extends="org.flymine.model.genomic.Analysis" is-interface="true"/>
   <class name="org.flymine.model.genomic.Location" extends="org.flymine.model.genomic.Relation" is-interface="true">
