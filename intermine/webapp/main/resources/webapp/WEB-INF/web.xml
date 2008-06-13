@@ -114,34 +114,21 @@
   </taglib>
 
   <filter>
-    <filter-name>
-      CacheControlHeaderFilter
-    </filter-name>
-    <filter-class>
-      org.intermine.web.filters.HeaderFilter
-    </filter-class>
+    <filter-name>DontCache</filter-name>
+    <filter-class>org.intermine.web.filters.HeaderFilter</filter-class>
     <init-param>
-      <param-name>
-        Cache-Control
-      </param-name>
-      <param-value>
-        max-age=3600
-      </param-value>
+      <param-name>Cache-Control</param-name>
+	  <param-value>no-cache,no-store,max-age=0</param-value>
+    </init-param>
+    <init-param>
+      <param-name>Expires</param-name>
+	  <param-value>0</param-value>
     </init-param>
   </filter>
 
   <filter-mapping>
-    <filter-name>
-      CacheControlHeaderFilter
-    </filter-name>
-    <url-pattern>*.css</url-pattern>
-  </filter-mapping>
-
-  <filter-mapping>
-    <filter-name>
-      CacheControlHeaderFilter
-    </filter-name>
-    <url-pattern>*.js</url-pattern>
+    <filter-name>DontCache</filter-name>
+    <url-pattern>/query.do</url-pattern>
   </filter-mapping>
 
   <error-page>
