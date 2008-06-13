@@ -429,6 +429,7 @@ public class GraphWidget extends Widget
     /**
      * {@inheritDoc}
      */
+    @SuppressWarnings("unused")
     public List<List<String>> getExportResults(String[]selected) throws Exception {
         // TODO this method
         return null;

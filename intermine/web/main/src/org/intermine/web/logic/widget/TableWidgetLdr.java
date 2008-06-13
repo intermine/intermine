@@ -248,7 +248,9 @@ public class TableWidgetLdr
     }
 
     /**
-     * {@inheritDoc}
+     * @param calcTotal if we are generating the query to calculate the widget totals
+     * @param keys constraints to add to the query
+     * @return query representing data related to a table widget
      */
     public Query getQuery(boolean calcTotal, List<String> keys) {
 
@@ -364,7 +366,7 @@ public class TableWidgetLdr
     /**
      * Add a contains constraint to Query (q) from qcStart from qcEnd via reference refName.
      * Return qcEnd as it may need to be passed into mehod again as qcStart.
-     * @param model the Model use to find meta data
+     * @param m the Model use to find meta data
      * @param q the query
      * @param qcStart the QueryClass that contains the reference
      * @param refName name of reference to qcEnd
@@ -372,12 +374,12 @@ public class TableWidgetLdr
      * to the query
      * @return QueryClass return qcEnd
      */
-    private QueryClass addReferenceConstraint(Model model, Query q, QueryClass qcStart,
+    private QueryClass addReferenceConstraint(Model m, Query q, QueryClass qcStart,
                                               String refName, QueryClass qcEnd) {
         q.addFrom(qcEnd);
 
         // already validated against model
-        ClassDescriptor startCld = model.getClassDescriptorByName(qcStart.getType().getName());
+        ClassDescriptor startCld = m.getClassDescriptorByName(qcStart.getType().getName());
         FieldDescriptor fd = startCld.getFieldDescriptorByName(refName);
 
         QueryReference qRef;
