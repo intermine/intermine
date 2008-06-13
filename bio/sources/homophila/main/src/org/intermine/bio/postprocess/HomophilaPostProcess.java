@@ -126,9 +126,9 @@ public class HomophilaPostProcess extends PostProcessor
                     (Annotation) DynamicUtil.createObject(Collections.singleton(Annotation.class));
                 annotation.setSubject(gene);
                 annotation.setProperty(disease);
-                annotation.addEvidence(homophilaDataSet);
-                annotation.addEvidence(pub1);
-                annotation.addEvidence(pub2);
+                annotation.addDataSets(homophilaDataSet);
+                annotation.addPublications(pub1);
+                annotation.addPublications(pub2);
                 osw.store(annotation);
 
             } catch (IllegalAccessException e) {
