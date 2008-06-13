@@ -302,7 +302,7 @@ public class FastaLoaderTask extends FileDirectDataLoaderTask
 
         if (!StringUtils.isEmpty(dataSetTitle)) {
             DataSet dataSet = getDataSet(dataSetTitle);
-            imo.addEvidence(dataSet);
+            imo.addDataSets(dataSet);
         }
 
         try {
