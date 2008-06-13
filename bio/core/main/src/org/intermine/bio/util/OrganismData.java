@@ -100,4 +100,20 @@ public class OrganismData
     public String toString() {
         return genus + " " + species + ", " + abbreviation + ", " + taxonId;
     }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public boolean equals(Object obj) {
+        return obj instanceof OrganismData && ((OrganismData) obj).toString().equals(toString());
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public int hashCode() {
+        return toString().hashCode();
+    }
 }
