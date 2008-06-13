@@ -1,0 +1,34 @@
+size 800 600
+0 load 0 images/0.pnm
+0 load 1 images/1.pnm
+0 load 2 images/2.pnm
+0 load 3 images/3.pnm
+0 load 4 images/4.pnm
+0 load 5 images/5.pnm
+0 load 6 images/6.pnm
+0 load 7 images/7.pnm
+0 load 8 images/8.pnm
+0 load 9 images/9.pnm
+0 position 0 110 277
+0 position 1 168 277
+0 position 2 226 277
+0 position 3 284 277
+0 position 4 342 277
+0 position 5 400 277
+0 position 6 458 277
+0 position 7 516 277
+0 position 8 574 277
+0 position 9 632 277
+0 place 0 0
+0 place 1 1
+0 place 2 2
+0 place 3 3
+0 place 4 4
+0 place 5 5
+0 place 6 6
+0 place 7 7
+0 place 8 8
+0 place 9 9
+1 move 0 1 20
+1 swing 1 0 20
+23 stop
