@@ -33,7 +33,6 @@ import org.intermine.web.logic.bag.BagQueryRunner;
 import org.intermine.web.logic.bag.InterMineBag;
 import org.intermine.web.logic.bag.TypeConverter;
 import org.intermine.web.logic.profile.Profile;
-import org.intermine.web.logic.profile.ProfileManager;
 import org.intermine.web.logic.query.PathQuery;
 import org.intermine.web.logic.results.PagedTable;
 import org.intermine.web.logic.results.WebResults;

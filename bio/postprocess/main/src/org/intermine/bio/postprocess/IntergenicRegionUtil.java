@@ -241,12 +241,12 @@ public class IntergenicRegionUtil
                 location.setEndIsPartial(Boolean.FALSE);
                 location.setSubject(intergenicRegion);
                 location.setObject(chr);
-                //location.addDataSets(dataSet);
+                location.addDataSets(dataSet);
                 intergenicRegion.setChromosomeLocation(location);
                 intergenicRegion.setChromosome(chr);
                 intergenicRegion.setOrganism(chr.getOrganism());
                 intergenicRegion.addSynonyms(synonym);
-                //intergenicRegion.addDataSets(dataSet);
+                intergenicRegion.addDataSets(dataSet);
                 synonym.addDataSets(dataSet);
                 synonym.setSource(dataSource);
                 synonym.setSubject(intergenicRegion);
