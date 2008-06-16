@@ -80,6 +80,7 @@ public abstract class BioDBConverter extends DBConverter
 
     /**
      * Return the DataSet Item created from the dataSetTitle.
+     * @param taxonId the taxon id of the to use when creating the DataSet
      * @return the DataSet Item
      */
     public Item getDataSetItem(int taxonId) {
@@ -172,6 +173,11 @@ public abstract class BioDBConverter extends DBConverter
         return getDataSetItem(title, null, null, dataSourceItem);
     }
 
+    /**
+     * Return the DataSet title for a given taxon id.
+     * @param taxonId the taxon id
+     * @return the title
+     */
     public abstract String getDataSetTitle(int taxonId);
 
     /**
@@ -230,12 +236,11 @@ public abstract class BioDBConverter extends DBConverter
      * @param type the Synonym type
      * @param value the Synonym value
      * @param isPrimary true if this is a primary identifier
-     * @param evidence the Synonym evidence (eg. a DataSet)
+     * @param evidence the Synonym evidence
      * @return the new Synonym
-     * @throws ObjectStoreException if there is a problem while storing
      */
     public Item createSynonym(String subjectId, String type, String value, boolean isPrimary,
-                              List<Item> evidence) throws ObjectStoreException {
+                              List<Item> evidence) {
         Item synonym = createItem("Synonym");
         synonym.setAttribute("type", type);
         synonym.setAttribute("value", value);
