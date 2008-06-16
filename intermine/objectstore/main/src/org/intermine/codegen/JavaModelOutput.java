@@ -224,7 +224,7 @@ public class JavaModelOutput extends ModelOutput
      * {@inheritDoc}
      */
     protected String generate(CollectionDescriptor col, boolean field) {
-        String type = "java.util.Set";
+        String type = "java.util.Set<" + col.getReferencedClassName() + ">";
         String impl = "java.util.HashSet";
 
         StringBuffer sb = new StringBuffer();
@@ -458,7 +458,7 @@ public class JavaModelOutput extends ModelOutput
         if (field instanceof AttributeDescriptor) {
             type = ((AttributeDescriptor) field).getType();
         } else if (field instanceof CollectionDescriptor) {
-            type = "java.util.Set";
+            type = "java.util.Set<" + ((CollectionDescriptor) field).getReferencedClassName() + ">";
         } else {
             type = ((ReferenceDescriptor) field).getReferencedClassDescriptor().getName();
         }
