@@ -24,3 +24,5 @@
 <action path="/initAttributeLinkDisplayer"
         type="org.intermine.bio.web.AttributeLinkDisplayerController"/>
 
+<action path="/initAutoCompletion"
+        type="org.unimine.web.AutoCompletionController"/>

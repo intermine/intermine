@@ -242,6 +242,31 @@ public class PostProcessOperationsTask extends DynamicAttributeTask
                                       PropertiesUtil.serialize(oss.toProperties()));
             } else if ("precompute-queries".equals(operation)) {
                 PrecomputeTask.precompute(false, getObjectStoreWriter().getObjectStore(), 0);
+            } else if ("create-lucene-index".equals(operation)) {
+                System.out .println("create lucene index ...");
+                ObjectStore os = getObjectStoreWriter().getObjectStore();
+                if (!(os instanceof ObjectStoreInterMineImpl)) {
+                    throw new RuntimeException("cannot summarise ObjectStore - must be an "
+                                   + "instance of ObjectStoreInterMineImpl (create lucene index)");
+                }
+                String configFileName = "objectstoresummary.config.properties";
+                ClassLoader classLoader = PostProcessOperationsTask.class.getClassLoader();
+                InputStream configStream =
+                    classLoader.getResourceAsStream(configFileName);
+                if (configStream == null) {
+                    throw new RuntimeException("can't find resource: " + configFileName);
+                }
+
+                Properties properties = new Properties();
+                properties.load(configStream);
+
+                Database db = ((ObjectStoreInterMineImpl) os).getDatabase();
+
+                AutoCompleter ac = new AutoCompleter(os, properties);
+                if (ac.getBinaryIndexMap() != null) {
+                    MetadataManager.storeBinary(db, MetadataManager.AUTOCOMPLETE_INDEX,
+                                        ac.getBinaryIndexMap());
+                }
             } else {
                 throw new BuildException("unknown operation: " + operation);
             }

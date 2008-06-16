@@ -15,7 +15,7 @@
       <property name="src.data.dir.includes" value="uniprot_sprot.xml"/>
     </source>-->
     <source name="uniprot-keywords" type="uniprot-keywords">
-      <property name="src.data.dir" location="/shared/data/uniprot/current"/>
+      <property name="src.data.dir" location="/shared/data/uniprot/current/unimine/"/>
       <property name="src.data.dir.includes" value="keywlist.xml"/>
     </source>
 
@@ -29,19 +29,19 @@
     </source>
 
     <source name="psi-intact" type="psi">
-      <property name="src.data.dir" location="/shared/data/psi/intact/current"/>
-      <property name="organisms" value="7227 6239 4932"/>
+      <property name="src.data.dir" location="/shared/data/unimine/psi/intact/current"/>
+      <property name="organisms" value="7227 6239 4932 10090 9606"/>
     </source>
 
     <source name="go" type="go" dump="true">
       <property name="src.data.file" location="/shared/data/go-annotation/gene_ontology.obo"/>
     </source>
 
-    <source name="go-annotation" type="go-annotation">
+    <!--<source name="go-annotation" type="go-annotation">
       <property name="ontologyfile" location="/shared/data/go-annotation/gene_ontology.obo"/>
       <property name="src.data.dir" location="/shared/data/go-annotation/current"/>
       <property name="src.data.dir.includes" value="*/gene_association*"/>
-    </source>
+    </source>-->
 
     <source name="pride" type="pride" dump="true">
       <property name="src.data.dir" location="/shared/data/pride/xml/"/>
@@ -71,7 +71,7 @@
     <!--<post-process name="synonym-updat"/>-->
    <!-- <post-process name="create-attribute-indexes"/>-->
     <post-process name="summarise-objectstore"/>
- 
+    <post-process name="create-lucene-index"/>
   </post-processing>
 
 </project>

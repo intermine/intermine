@@ -10,7 +10,12 @@
 
 <tiles:importAttribute/>
 <html:xhtml/>
+<script type="text/javascript" src="js/autocompleter.js"></script>
+<link rel="stylesheet" href="css/autocompleter.css" type="text/css"/>
 <link rel="stylesheet" type="text/css" href="css/template.css"/>
+
+
+
 <script type="text/javascript">
   <!--
 
@@ -131,6 +136,7 @@
   //-->
 </script>
 
+
 <tiles:get name="objectTrail.tile"/>
 <div class="body" align="center">
 <im:boxarea stylename="plainbox" fixedWidth="60%">
@@ -198,7 +204,46 @@
              </c:choose>
             <span nowrap>
               <span id="operandEditSpan${index-1}">
-                <html:text property="attributeValues(${index})"/>
+              	
+				
+				              	
+                <c:set var="pathString" value="${node.pathString}"/>
+              	<c:set var="classDesc" value="${classDesc}"/>
+                <c:set var="fieldDesc" value="${fieldDesc}"/>
+                <c:set var="acPath" value="${classDesc[pathString]}.${fieldDesc[pathString]}"/>
+              	<c:set var="hasAutoC" value="0"/>
+              	<c:forEach items="${autoCompleterMap[acPath]}" var="useAC">
+              		<%-- exist for this field a autocompleter --%>             		
+              		<c:if test="${!empty useAC  and hasAutoC eq 0}">
+            			<input name="attributeValues(${index})" id="attributeId_${index}" size="45" autocomplete="off" 
+            			       style="background:#ffffc8" 
+            			       onKeyDown="getId(this.id); isEnter(event);" 
+            			       onKeyUp="readInput(event, '${classDesc[pathString]}', '${fieldDesc[pathString]}');" 
+            			       onMouseOver="setMouseOver(${index});"
+   		  					   onMouseOut="setMouseOver(0);" 
+            			       onBlur="if(MOUSE_OVER != ${index}) { removeList(); }"/>
+            			<div class="error_auto_complete" id="attributeId_${index}_error" tabindex="-1"></div>
+            			<iframe width="100%" height="0" id="attributeId_${index}_IEbugFixFrame" tabindex="-1"
+            			        marginheight="0" marginwidth="0" frameborder="0" style="position:absolute;" ></iframe> 
+                        <div class="auto_complete" id="attributeId_${index}_display" tabindex="-1"
+                             onMouseOver="setMouseOver(${index});"
+   						     onMouseOut="setMouseOver(0);" 
+   						     onBlur="if(MOUSE_OVER != ${index}) { removeList(); }"></div>
+            			<c:set var="hasAutoC" value="1"/>
+            		</c:if>
+            	</c:forEach>
+            	
+            	<%-- if no auto completer exist --%>
+             	<c:if test="${hasAutoC eq 0}">
+              		<html:text property="attributeValues(${index})"/>
+                </c:if>  	
+
+ 
+
+                
+                
+                
+                
                 <c:if test="${!empty keyFields[con]}">
                   <span onMouseDown="displayHelpMsg(event,'lookupHelp')" style="cursor:pointer">?</span>
                   <div class="smallnote helpnote" id="lookupHelp" style="display:none" >

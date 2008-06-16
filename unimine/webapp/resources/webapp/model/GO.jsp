@@ -5,119 +5,59 @@
 
 <table width="100%">
   <tr>
-    <td valign="top">
+    <td>
       <div class="heading2">
-        Current data
+        GO annotation in FlyMine
       </div>
       <div class="body">
-
- <h4>
-   <a href="javascript:toggleDiv('hiddenDiv1');">
-    <img id='hiddenDiv1Toggle' src="images/disclosed.gif"/>
-    GO annotation in UniMine ...
-   </a>
- </h4>
-
-<div id="hiddenDiv1" class="dataSetDescription">
-      <p>
-      The Gene Ontology project provides a controlled vocabulary to describe 
-      gene and gene product attributes in any organism.  The GO collaborators 
-      are developing three structured, controlled vocabularies (ontologies) 
-      that describe gene products in terms of their associated biological 
-      processes, cellular components and molecular functions in a species-independent manner.
-      </p>
-      <p>
-      UniMine has GO annotations for <i>Drosophila Melanogaster</i> (and will be later also available for other organisms).
-      </p>      
-        <ul>
-         <li><i>D. melanogaster</i> - GO annotations for <i>D. melanogaster</i> gene products assigned by <a href="http://www.flybase.org" target="_new">FlyBase</a></li><br/>
-         <li><i>A. gambiae</i> - GO annotations for <i>A. gambiae</i> gene products assigned by the <a href="http://www.ebi.ac.uk/GOA/" target="_new">GO annotation@EBI</a> project.</li><br/>
-         <li><i>C. elegans</i> - GO annotations for <i>C. elegans</i> gene products assigned by <a href="http://www.wormbase.org" target="_new">WormBase</a>.</li><br/>
-         <li><i>S. cerevisiae</i> - GO annotations for <i>S. cerevisiae</i> gene products assigned by <a href="http://www.yeastgenome.org/" target="_new">SGD</a>.</li><br/>
-         <li><i>M. musculus</i> - GO annotations for <i>M. musculus</i> gene products assigned by <a href="http://www.informatics.jax.org" target="_new">MGI</a>.</li><br/>
-       </ul>
+        <DL>
+          <P>
+      The GO collaborators are developing three structured, controlled
+      vocabularies (ontologies) that describe gene products in terms of
+      their associated biological processes, cellular components and
+      molecular functions in a species-independent manner.
+          </P>
+          <DT><I>Plasmodium falciparum 3D7</I></DT>
+          <DD>
+            GO annotations for <I>Plasmodium falciparum 3D7</I> gene products assigned by <a href="http://www.informatics.jax.org">MGI</a>, updated 15th April 2006.<BR/>
+          </DD>
+        </DL>
       </div>
-
-
- <h4>
-   <a href="javascript:toggleDiv('hiddenDiv2');">
-    <img id='hiddenDiv2Toggle' src="images/disclosed.gif"/>
-    GO Evidence Codes ...
-   </a>
- </h4>
-
-<div id="hiddenDiv2"  class="dataSetDescription">
-
-      <p> Every GO annotation indicates the type of evidence that
-      supports it; these evidence codes correspond to broad categories
-      of experimental or other support. The codes are listed below. For more
-      information, go to <a href="http://www.geneontology.org/GO.evidence.shtml" target="_new">Guide to GO Evidence Codes</a>. </p>
-      <p> IC = Inferred by Curator </p> 
-      <p> IDA = Inferred from Direct Assay </p> 
-      <p> IEA = Inferred from Electronic Annotation </p> 
-      <p> IEP = Inferred from Expression Pattern </p> 
-      <p> IGI = Inferred from Genetic Interaction </p> 
-      <p> IMP = Inferred from Mutant Phenotype </p> 
-      <p> IPI = Inferred from Physical Interaction </p> 
-      <p> ISS = Inferred from Sequence or Structural Similarity </p> 
-      <p> NAS = Non-traceable Author Statement </p> 
-      <p> ND = No biological Data available </p> 
-      <p> RCA = inferred from Reviewed Computational Analysis </p> 
-      <p> TAS = Traceable Author Statement </p> 
-      <p> NR = Not Recorded  </p> 
-     <br/>
-    </div>
-
-
-
- <h4>
-   <a href="javascript:toggleDiv('hiddenDiv3');">
-    <img id='hiddenDiv3Toggle' src="images/disclosed.gif"/>
-    GO Qualifiers ...
-   </a>
- </h4>
-
-<div id="hiddenDiv3"  class="dataSetDescription">
-
-      <p> The Qualifier column is used for flags that modify the
-      interpretation of an annotation. Allowable values are
-      'contributes_to', 'colocalizes_with' and 'NOT'.
-      'colocalizes_with' is used only with cellular component terms. 
-      'contributes_to' is used only with molecular function terms.
-      'NOT' is used with terms from any of the three ontologies. </p>
-     </div>
-    </div>
-   </td>
-
-
-
+    </td>
     <td width="40%" valign="top">
       <div class="heading2">
         Bulk download
       </div>
       <div class="body">
         <ul>
-
           <li>
-            <im:querylink text="All gene/GO annotation pairs from <i>D. melanogaster</i> " skipBuilder="true">
-              <query name="" model="genomic" view="Gene.primaryIdentifier Gene.ncbiGeneNumber Gene.symbol Gene.goAnnotation.identifier Gene.goAnnotation.name" sortOrder="Gene.primaryIdentifier asc">
-                <node path="Gene" type="Gene">
-                </node>
-                <node path="Gene.organism" type="Organism">
-                </node>
-                <node path="Gene.organism.taxonId" type="Integer">
-                  <constraint op="=" value="7227" description="" identifier="" code="A">
-                  </constraint>
-                </node>
-              </query>
-           </im:querylink>
-         </li>
-
-         <li>
-	   For other organisms this feature will also available in future... 
-         </li>
-
-       </ul>
+            All gene/GO annotation pairs from <i>Plasmodium falciparum 3D7</i>
+            <im:querylink text="(browse)" skipBuilder="true">
+<query name="" model="genomic" view="Gene Gene.goAnnotation">
+  <node path="Gene" type="Gene">
+  </node>
+  <node path="Gene.organism" type="Organism">
+  </node>
+  <node path="Gene.organism.name" type="String">
+    <constraint op="=" value="Plasmodium falciparum 3D7" description="" identifier="" code="A">
+    </constraint>
+  </node>
+</query>
+            </im:querylink>
+            <im:querylink text="(export)" skipBuilder="true">
+<query name="" model="genomic" view="Gene.identifier Gene.primaryIdentifier Gene.symbol Gene.goAnnotation.identifier Gene.goAnnotation.name Gene.goAnnotation.qualifier">
+  <node path="Gene" type="Gene">
+  </node>
+  <node path="Gene.organism" type="Organism">
+  </node>
+  <node path="Gene.organism.name" type="String">
+    <constraint op="=" value="Plasmodium falciparum 3D7" description="" identifier="" code="A">
+    </constraint>
+  </node>
+</query>
+            </im:querylink>
+          </li>
+        </ul>
       </div>
     </td>
   </tr>

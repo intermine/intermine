@@ -182,7 +182,6 @@
 
   <class className="org.flymine.model.genomic.Translation">
     <fields>
-      <fieldconfig fieldExpr="primaryIdentifier"/>
       <fieldconfig fieldExpr="secondaryIdentifier"/>
       <fieldconfig fieldExpr="symbol"/>
     </fields>

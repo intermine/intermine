@@ -16,17 +16,27 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
-import org.intermine.objectstore.query.BagConstraint;
-import org.intermine.objectstore.query.ClassConstraint;
-import org.intermine.objectstore.query.ConstraintOp;
+import javax.servlet.ServletContext;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
 
+import org.apache.struts.action.ActionForm;
+import org.apache.struts.action.ActionForward;
+import org.apache.struts.action.ActionMapping;
+import org.apache.struts.tiles.ComponentContext;
+import org.apache.struts.tiles.actions.TilesAction;
 import org.intermine.metadata.FieldDescriptor;
 import org.intermine.metadata.Model;
 import org.intermine.metadata.ReferenceDescriptor;
 import org.intermine.objectstore.ObjectStore;
 import org.intermine.objectstore.ObjectStoreSummary;
+import org.intermine.objectstore.query.BagConstraint;
+import org.intermine.objectstore.query.ClassConstraint;
+import org.intermine.objectstore.query.ConstraintOp;
 import org.intermine.util.StringUtil;
 import org.intermine.util.TypeUtil;
+import org.intermine.web.autocompletion.AutoCompleter;
 import org.intermine.web.logic.ClassKeyHelper;
 import org.intermine.web.logic.Constants;
 import org.intermine.web.logic.WebUtil;
@@ -38,17 +48,6 @@ import org.intermine.web.logic.query.MainHelper;
 import org.intermine.web.logic.query.PathNode;
 import org.intermine.web.logic.query.PathQuery;
 import org.intermine.web.logic.session.SessionMethods;
-
-import javax.servlet.ServletContext;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-import javax.servlet.http.HttpSession;
-
-import org.apache.struts.action.ActionForm;
-import org.apache.struts.action.ActionForward;
-import org.apache.struts.action.ActionMapping;
-import org.apache.struts.tiles.ComponentContext;
-import org.apache.struts.tiles.actions.TilesAction;
 
 /**
  * Controller for the main constraint editing tile
@@ -118,6 +117,16 @@ public class QueryBuilderConstraintController extends TilesAction
                         node.getPathString().lastIndexOf(".")))).getType();
                 useBags = ClassKeyHelper.isKeyField(classKeys, nodeType, node
                         .getFieldName());
+                //fetch AutoCompleter from servletContext
+                AutoCompleter ac = (AutoCompleter) 
+                                        servletContext.getAttribute(Constants.AUTO_COMPLETER);
+                if (ac.hasAutocompleter(node.getParentType(), node.getFieldName())) {
+                    // ac.createRAMIndex(node.getParentType() + "." + node.getFieldName());
+                    request.setAttribute("useAutoCompleter", ac);
+                    request.setAttribute("classDescriptor", node.getParentType());
+                    request.setAttribute("fieldDescriptor", node.getFieldName());
+                }
+                
             } else {
                 if ((node.getPathString().indexOf('.')) >= 0) {
                     nodeType = TypeUtil.unqualifiedName(MainHelper.getTypeForPath(

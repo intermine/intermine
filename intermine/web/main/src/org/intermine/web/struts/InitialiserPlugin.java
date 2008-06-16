@@ -55,16 +55,6 @@ import org.intermine.web.logic.tagging.TagTypes;
 import org.intermine.web.logic.template.TemplateHelper;
 import org.intermine.web.logic.template.TemplateQuery;
 
-import java.io.InputStream;
-
-import javax.servlet.ServletContext;
-import javax.servlet.ServletException;
-
-import org.apache.log4j.Logger;
-import org.apache.struts.action.ActionServlet;
-import org.apache.struts.action.PlugIn;
-import org.apache.struts.config.ModuleConfig;
-
 /**
  * Initialiser for the InterMine web application.
  * Anything that needs global initialisation goes here.
@@ -163,6 +153,8 @@ public class InitialiserPlugin implements PlugIn
 
         makeCache(servletContext, os);
 
+        loadAutoCompleter(servletContext, os);
+
         cleanTags(pm);
     }
 
@@ -189,6 +181,28 @@ public class InitialiserPlugin implements PlugIn
             servletContext.setAttribute(Constants.CATEGORIES,
                     Collections.unmodifiableSet(sets.keySet()));
         }
+    }
+
+    private void loadAutoCompleter(ServletContext servletContext, ObjectStore os)
+            throws ServletException {
+
+            if (os instanceof ObjectStoreInterMineImpl) {
+                Database db = ((ObjectStoreInterMineImpl) os).getDatabase();
+                try {
+                    InputStream is = MetadataManager.retrieveBLOBInputStream(db,
+                            MetadataManager.AUTOCOMPLETE_INDEX);
+                    AutoCompleter ac;
+
+                    if (is != null) {
+                        ac = new AutoCompleter(is);
+                    } else {
+                        ac = null;
+                    }
+                    servletContext.setAttribute(Constants.AUTO_COMPLETER, ac);
+                } catch (SQLException e) {
+                    e.printStackTrace();
+                }
+            }
     }
 
     /**
