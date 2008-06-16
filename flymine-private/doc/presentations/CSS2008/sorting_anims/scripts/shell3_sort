@@ -1,0 +1,177 @@
+size 800 600
+0 load 0 images/0.pnm
+0 load 1 images/1.pnm
+0 load 2 images/2.pnm
+0 load 3 images/3.pnm
+0 load 4 images/4.pnm
+0 load 5 images/5.pnm
+0 load 6 images/6.pnm
+0 load 7 images/7.pnm
+0 load 8 images/8.pnm
+0 load 9 images/9.pnm
+0 load 10 images/stop_here.pnm
+0 load 11 images/compare.pnm
+0 load 12 images/compare_good.pnm
+0 load 13 images/compare_3.pnm
+0 load 14 images/compare_3_good.pnm
+0 position 0 110 277
+0 position 1 168 277
+0 position 2 226 277
+0 position 3 284 277
+0 position 4 342 277
+0 position 5 400 277
+0 position 6 458 277
+0 position 7 516 277
+0 position 8 574 277
+0 position 9 632 277
+0 position 10 139 208
+0 position 11 197 208
+0 position 12 255 208
+0 position 13 313 208
+0 position 14 371 208
+0 position 15 429 208
+0 position 16 487 208
+0 position 17 545 208
+0 position 18 603 208
+0 position 19 661 208
+0 place 5 0
+0 place 2 1
+0 place 9 2
+0 place 4 3
+0 place 1 4
+0 place 6 5
+0 place 8 6
+0 place 0 7
+0 place 3 8
+0 place 7 9
+0 # Pass 1.1:      5 2 9 4 1 6 8 0 3 7
+40 place 10 13
+50 place 13 10
+70 place 13 -1
+80 swing 5 3 30
+80 swing 4 0 30
+80 # Pass 1.2:     4 2 9 5 1 6 8 0 3 7
+110 move 10 14 10
+130 place 13 11
+150 place 13 -1
+160 swing 2 4 30
+160 swing 1 1 30
+160 # Pass 1.3:    4 1 9 5 2 6 8 0 3 7
+190 move 10 15 10
+210 place 13 12
+230 place 13 -1
+240 swing 9 5 30
+240 swing 6 2 30
+240 # Pass 1.4:    4 1 6 5 2 9 8 0 3 7
+270 move 10 16 10
+290 place 14 13
+310 place 14 -1
+310 # Pass 1.5:    4 1 6 5 2 9 8 0 3 7
+310 move 10 17 10
+330 place 13 14
+350 place 13 -1
+360 swing 2 7 30
+360 swing 0 4 30
+400 place 13 11
+420 place 13 -1
+430 swing 1 4 30
+430 swing 0 1 30
+430 # Pass 1.6:    4 0 6 5 1 9 8 2 3 7
+460 move 10 18 10
+480 place 13 15
+500 place 13 -1
+510 swing 9 8 30
+510 swing 3 5 30
+550 place 13 12
+570 place 13 -1
+580 swing 6 5 30
+580 swing 3 2 30
+580 # Pass 1.7:    4 0 3 5 1 6 8 2 9 7
+610 move 10 19 10
+620 place 10 -1
+630 place 13 16
+650 place 13 -1
+660 swing 8 9 30
+660 swing 7 6 30
+700 place 14 13
+720 place 14 -1
+720 # Pass 2.1:    4 0 3 5 1 6 7 2 9 8
+730 place 10 11
+740 place 11 10
+760 place 11 -1
+770 swing 4 1 30
+770 swing 0 0 30
+770 # Pass 2.2:    0 4 3 5 1 6 7 2 9 8
+800 move 10 12 10
+820 place 11 11
+840 place 11 -1
+850 swing 4 2 30
+850 swing 3 1 30
+890 place 12 10
+910 place 12 -1
+910 # Pass 2.3:    0 3 4 5 1 6 7 2 9 8
+910 move 10 13 10
+930 place 12 12
+950 place 12 -1
+950 # Pass 2.4:    0 3 4 5 1 6 7 2 9 8
+950 move 10 14 10
+970 place 11 13
+990 place 11 -1
+1000 swing 5 4 30
+1000 swing 1 3 30
+1040 place 11 12
+1060 place 11 -1
+1070 swing 4 3 30
+1070 swing 1 2 30
+1110 place 11 11
+1130 place 11 -1
+1140 swing 3 2 30
+1140 swing 1 1 30
+1180 place 12 10
+1200 place 12 -1
+1200 # Pass 2.5:   0 1 3 4 5 6 7 2 9 8
+1200 move 10 15 10
+1220 place 12 14
+1240 place 12 -1
+1240 # Pass 2.6:   0 1 3 4 5 6 7 2 9 8
+1240 move 10 16 10
+1260 place 12 15
+1280 place 12 -1
+1280 # Pass 2.7:   0 1 3 4 5 6 7 2 9 8
+1280 move 10 17 10
+1300 place 11 16
+1320 place 11 -1
+1330 swing 7 7 30
+1330 swing 2 6 30
+1370 place 11 15
+1390 place 11 -1
+1400 swing 6 6 30
+1400 swing 2 5 30
+1440 place 11 14
+1460 place 11 -1
+1470 swing 5 5 30
+1470 swing 2 4 30
+1510 place 11 13
+1510 place 11 -1
+1520 swing 4 4 30
+1520 swing 2 3 30
+1560 place 11 12
+1580 place 11 -1
+1590 swing 3 3 30
+1590 swing 2 2 30
+1630 place 12 11
+1650 place 12 -1
+1650 # Pass 2.8:   0 1 2 3 4 5 6 7 9 8
+1650 move 10 18 10
+1670 place 12 17
+1690 place 12 -1
+1690 # Pass 2.9:   0 1 2 3 4 5 6 7 9 8
+1690 move 10 19 10
+1700 place 10 -1
+1710 place 11 18
+1730 place 11 -1
+1740 swing 9 9 30
+1740 swing 8 8 30
+1780 place 12 17
+1800 place 12 -1
+1850 stop
