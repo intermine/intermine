@@ -446,11 +446,13 @@ public class ChadoSequenceProcessor extends ChadoProcessor
                                                    + "a chromosome reference", e);
                     }
                     if (LocatedSequenceFeature.class.isAssignableFrom(featureClass)) {
-                        Reference chrReference = new Reference();
-                        chrReference.setName("chromosome");
-                        chrReference.setRefId(srcFeatureData.itemIdentifier);
                         Integer featureIntermineObjectId = featureData.getIntermineObjectId();
-                        getChadoDBConverter().store(chrReference, featureIntermineObjectId);
+                        if (srcFeatureData.interMineType.equals("Chromosome")) {
+                            Reference chrReference = new Reference();
+                            chrReference.setName("chromosome");
+                            chrReference.setRefId(srcFeatureData.itemIdentifier);
+                            getChadoDBConverter().store(chrReference, featureIntermineObjectId);
+                        }
                         Reference locReference = new Reference();
                         locReference.setName("chromosomeLocation");
                         locReference.setRefId(location.getIdentifier());
