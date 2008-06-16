@@ -1,166 +1,241 @@
 size 800 600
-0 load 0 images/0.pnm
-0 load 1 images/1.pnm
-0 load 2 images/2.pnm
-0 load 3 images/3.pnm
-0 load 4 images/4.pnm
-0 load 5 images/5.pnm
-0 load 6 images/6.pnm
-0 load 7 images/7.pnm
-0 load 8 images/8.pnm
-0 load 9 images/9.pnm
-0 load 10 images/red_arrow.pnm
-0 load 11 images/green_arrow.pnm
-0 position 0 110 277
-0 position 1 168 277
-0 position 2 226 277
-0 position 3 284 277
-0 position 4 342 277
-0 position 5 400 277
-0 position 6 458 277
-0 position 7 516 277
-0 position 8 574 277
-0 position 9 632 277
-0 position 10 110 232
-0 position 11 168 232
-0 position 12 226 232
-0 position 13 284 232
-0 position 14 342 232
-0 position 15 400 232
-0 position 16 458 232
-0 position 17 516 232
-0 position 18 574 232
-0 position 19 632 232
-0 place 5 0
-0 place 2 1
-0 place 9 2
-0 place 4 3
-0 place 1 4
-0 place 6 5
-0 place 8 6
-0 place 0 7
-0 place 3 8
-0 place 7 9
-0 # Pass 1:      5 2 9 4 1 6 8 0 3 7
-40 place 10 10
-50 place 11 10
-50 move 10 11 20
-80 move 11 11 10
-80 move 10 12 20
-110 move 10 13 20
-140 move 10 14 20
-170 move 11 14 10
-170 move 10 15 20
-200 move 10 16 20
-230 move 10 17 20
-260 move 11 17 20
-260 move 10 18 20
-290 move 10 19 20
-320 place 10 -1
-320 place 11 -1
-320 swing 5 7 30
-320 swing 0 0 30
-320 # Pass 2:    0 2 9 4 1 6 8 5 3 7
-360 place 10 11
-370 place 11 11
-370 move 10 12 20
-400 move 10 13 20
-430 move 10 14 20
-460 move 11 14 10
-460 move 10 15 20
-490 move 10 16 20
-520 move 10 17 20
-550 move 10 18 20
-580 move 10 19 20
-610 place 10 -1
-610 place 11 -1
-610 swing 2 4 30
-610 swing 1 1 30
-610 # Pass 3:    0 1 9 4 2 6 8 5 3 7
-650 place 10 12
-660 place 11 12
-660 move 10 13 20
-690 move 11 13 10
-690 move 10 14 20
-720 move 11 14 10
-720 move 10 15 20
-750 move 10 16 20
-780 move 10 17 20
-810 move 10 18 20
-840 move 10 19 20
-870 place 10 -1
-870 place 11 -1
-870 swing 9 4 30
-870 swing 2 2 30
-870 # Pass 4:    0 1 2 4 9 6 8 5 3 7
-910 place 10 13
-920 place 11 13
-920 move 10 14 20
-950 move 10 15 20
-980 move 10 16 20
-1010 move 10 17 20
-1040 move 10 18 20
-1070 move 11 18 10
-1070 move 10 19 20
-1100 place 10 -1
-1100 place 11 -1
-1100 swing 4 8 30
-1100 swing 3 3 30
-1100 # Pass 5:    0 1 2 3 9 6 8 5 4 7
-1140 place 10 14
-1150 place 11 14
-1150 move 10 15 20
-1180 move 11 15 10
-1180 move 10 16 20
-1210 move 10 17 20
-1240 move 11 17 10
-1240 move 10 18 20
-1270 move 11 18 10
-1270 move 10 19 20
-1300 place 10 -1
-1300 place 11 -1
-1300 swing 9 8 30
-1300 swing 4 4 30
-1300 # Pass 6:     0 1 2 3 4 6 8 5 9 7
-1340 place 10 15
-1350 place 11 15
-1350 move 10 16 20
-1380 move 10 17 20
-1410 move 11 17 10
-1410 move 10 18 20
-1440 move 10 19 20
-1470 place 10 -1
-1470 place 11 -1
-1470 swing 6 7 30
-1470 swing 5 5 30
-1470 # Pass 7:     0 1 2 3 4 5 8 6 9 7
-1510 place 10 16
-1520 place 11 16
-1520 move 10 17 20
-1550 move 11 17 10
-1550 move 10 18 20
-1580 move 10 19 20
-1610 place 10 -1
-1610 place 11 -1
-1610 swing 8 7 30
-1610 swing 6 6 30
-1610 # Pass 8:     0 1 2 3 4 5 6 8 9 7
-1650 place 10 17
-1660 place 11 17
-1660 move 10 18 20
-1690 move 10 19 20
-1720 move 11 19 10
-1720 place 10 -1
-1750 place 11 -1
-1750 swing 8 9 30
-1750 swing 7 7 30
-1750 # Pass 9:     0 1 2 3 4 5 6 7 9 8
-1790 place 10 18
-1800 place 11 18
-1800 move 10 19 20
-1830 move 11 19 10
-1830 place 10 -1
-1860 place 11 -1
-1860 swing 8 8 30
-1860 swing 9 9 30
-1940 stop
+load 0 images/0.pnm
+load 1 images/1.pnm
+load 2 images/2.pnm
+load 3 images/3.pnm
+load 4 images/4.pnm
+load 5 images/5.pnm
+load 6 images/6.pnm
+load 7 images/7.pnm
+load 8 images/8.pnm
+load 9 images/9.pnm
+load 10 images/red_arrow.pnm
+load 11 images/green_arrow.pnm
+position 0 110 277
+position 1 168 277
+position 2 226 277
+position 3 284 277
+position 4 342 277
+position 5 400 277
+position 6 458 277
+position 7 516 277
+position 8 574 277
+position 9 632 277
+position 10 110 232
+position 11 168 232
+position 12 226 232
+position 13 284 232
+position 14 342 232
+position 15 400 232
+position 16 458 232
+position 17 516 232
+position 18 574 232
+position 19 632 232
+place 5 0
+place 2 1
+place 9 2
+place 4 3
+place 1 4
+place 6 5
+place 8 6
+place 0 7
+place 3 8
+place 7 9
+advance 50
+# Pass 1:      5 2 9 4 1 6 8 0 3 7
+fadein 10 10 10
+advance 10
+fadein 11 10 10
+move 10 11 20
+advance 30
+move 11 11 10
+move 10 12 20
+advance 30
+move 10 13 20
+advance 30
+move 10 14 20
+advance 30
+move 11 14 10
+move 10 15 20
+advance 30
+move 10 16 20
+advance 30
+move 10 17 20
+advance 30
+move 11 17 20
+move 10 18 20
+advance 30
+move 10 19 20
+advance 30
+fadeout 10 10
+fadeout 11 10
+advance 10
+swing 5 7 30
+swing 0 0 30
+advance 40
+# Pass 2:    0 2 9 4 1 6 8 5 3 7
+fadein 10 11 10
+advance 10
+fadein 11 11 10
+move 10 12 20
+advance 30
+move 10 13 20
+advance 30
+move 10 14 20
+advance 30
+move 11 14 10
+move 10 15 20
+advance 30
+move 10 16 20
+advance 30
+move 10 17 20
+advance 30
+move 10 18 20
+advance 30
+move 10 19 20
+advance 30
+fadeout 10 10
+fadeout 11 10
+advance 10
+swing 2 4 30
+swing 1 1 30
+advance 40
+# Pass 3:    0 1 9 4 2 6 8 5 3 7
+fadein 10 12 10
+advance 10
+fadein 11 12 10
+move 10 13 20
+advance 30
+move 11 13 10
+move 10 14 20
+advance 30
+move 11 14 10
+move 10 15 20
+advance 30
+move 10 16 20
+advance 30
+move 10 17 20
+advance 30
+move 10 18 20
+advance 30
+move 10 19 20
+advance 30
+fadeout 10 10
+fadeout 11 10
+advance 10
+swing 9 4 30
+swing 2 2 30
+advance 40
+# Pass 4:    0 1 2 4 9 6 8 5 3 7
+fadein 10 13 10
+advance 10
+fadein 11 13 10
+move 10 14 20
+advance 30
+move 10 15 20
+advance 30
+move 10 16 20
+advance 30
+move 10 17 20
+advance 30
+move 10 18 20
+advance 30
+move 11 18 10
+move 10 19 20
+advance 30
+fadeout 10 10
+fadeout 11 10
+advance 10
+swing 4 8 30
+swing 3 3 30
+advance 40
+# Pass 5:    0 1 2 3 9 6 8 5 4 7
+fadein 10 14 10
+advance 10
+fadein 11 14 10
+move 10 15 20
+advance 30
+move 11 15 10
+move 10 16 20
+advance 30
+move 10 17 20
+advance 30
+move 11 17 10
+move 10 18 20
+advance 30
+move 11 18 10
+move 10 19 20
+advance 30
+fadeout 10 10
+fadeout 11 10
+advance 10
+swing 9 8 30
+swing 4 4 30
+advance 40
+# Pass 6:     0 1 2 3 4 6 8 5 9 7
+fadein 10 15 10
+advance 10
+fadein 11 15 10
+move 10 16 20
+advance 30
+move 10 17 20
+advance 30
+move 11 17 10
+move 10 18 20
+advance 30
+move 10 19 20
+advance 30
+fadeout 10 10
+fadeout 11 10
+advance 10
+swing 6 7 30
+swing 5 5 30
+advance 40
+# Pass 7:     0 1 2 3 4 5 8 6 9 7
+fadein 10 16 10
+advance 10
+fadein 11 16 10
+move 10 17 20
+advance 30
+move 11 17 10
+move 10 18 20
+advance 30
+move 10 19 20
+advance 30
+fadeout 10 10
+fadeout 11 10
+advance 10
+swing 8 7 30
+swing 6 6 30
+advance 40
+# Pass 8:     0 1 2 3 4 5 6 8 9 7
+fadein 10 17 10
+advance 10
+fadein 11 17 10
+move 10 18 20
+advance 30
+move 10 19 20
+advance 30
+move 11 19 10
+fadeout 10 10
+advance 30
+fadeout 11 10
+advance 10
+swing 8 9 30
+swing 7 7 30
+advance 40
+# Pass 9:     0 1 2 3 4 5 6 7 9 8
+fadein 10 18 10
+advance 10
+fadein 11 18 10
+move 10 19 20
+advance 30
+move 11 19 10
+fadeout 10 10
+advance 30
+fadeout 11 10
+advance 10
+swing 8 8 30
+swing 9 9 30
+advance 80
+stop

@@ -147,6 +147,22 @@ public class Pnm
         }
     }
 
+    public void copyIn(Pnm source, int xo, int yo, double fade) {
+        int ymax = Math.min(source.ysize, ysize - yo);
+        for (int y = Math.max(0, 0 - yo); y < ymax; y++) {
+            int yd = yo + y;
+            int xmax = Math.min(source.xsize, xsize - xo);
+            for (int x = Math.max(0, 0 - xo); x < xmax; x++) {
+                int xd = xo + x;
+                int id = (xd + (yd * xsize)) * 3;
+                int i = (x + (y * source.xsize)) * 3;
+                buf[id] = (byte) Math.min((buf[id] + 512) & 0xFF, ((int) ((((source.buf[i] + 512) & 0xFF) - 255) * fade)) + 255);
+                buf[id + 1] = (byte) Math.min((buf[id + 1] + 512) & 0xFF, ((int) ((((source.buf[i + 1] + 512) & 0xFF) - 255) * fade)) + 255);
+                buf[id + 2] = (byte) Math.min((buf[id + 2] + 512) & 0xFF, ((int) ((((source.buf[i + 2] + 512) & 0xFF) - 255) * fade)) + 255);
+            }
+        }
+    }
+
     public void writeImage(PrintStream out) throws IOException {
         out.println("P6 " + xsize + " " + ysize + " 255");
         out.write(buf);
