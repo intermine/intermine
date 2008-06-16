@@ -442,7 +442,8 @@ public class ChadoSequenceProcessor extends ChadoProcessor
                         throw new RuntimeException("unable to find class object for setting "
                                                    + "a chromosome reference", e);
                     }
-                    if (LocatedSequenceFeature.class.isAssignableFrom(featureClass)) {
+                    if (LocatedSequenceFeature.class.isAssignableFrom(featureClass)
+                            && featureData.interMineType == "chromosome") {
                         Integer featureIntermineObjectId = featureData.getIntermineObjectId();
                         if (srcFeatureData.interMineType.equals("Chromosome")) {
                             Reference chrReference = new Reference();
@@ -459,6 +460,9 @@ public class ChadoSequenceProcessor extends ChadoProcessor
                             setAttribute(featureData.intermineObjectId, "length",
                                          String.valueOf(end - start + 1));
                         }
+                    } else {
+                        LOG.warn("featureId (" + featureId + ") from location " + featureLocId
+                                + " was expected to be a chromosome");
                     }
                     count++;
                 } else {
