@@ -205,7 +205,7 @@ public class ModEncodeMetaDataProcessor extends ChadoProcessor
             }
             String featureItemId = featureData.getItemIdentifier();
             FeatureData fd = featureData;
-            LOG.error(fd.getInterMineType() + ": " + fd.getChadoFeatureName()
+            LOG.info("FD " + fd.getInterMineType() + ": " + fd.getChadoFeatureName()
                     + ", " + fd.getChadoFeatureUniqueName());
             Reference featureRef = new Reference("feature", featureItemId);
             getChadoDBConverter().store(featureRef,
@@ -217,11 +217,15 @@ public class ModEncodeMetaDataProcessor extends ChadoProcessor
     throws SQLException {
         String query =
             "SELECT df.data_id, df.feature_id"
-            + " FROM data d, data_feature df"
-            + " WHERE df.data_id = d.data_id"
-            + " AND d.heading != 'Result File'";
+            + " FROM data_feature df";
+//            + " WHERE df.data_id = d.data_id"
+//            + " AND d.heading != 'Result File'";
 
-        LOG.info("executing: " + query);
+//        "SELECT df.data_id, df.feature_id"
+//        + " FROM data d, data_feature df"
+//        + " WHERE df.data_id = d.data_id"
+//        + " AND d.heading != 'Result File'";
+       LOG.info("executing: " + query);
         Statement stmt = connection.createStatement();
         ResultSet res = stmt.executeQuery(query);
         return res;
@@ -236,6 +240,10 @@ public class ModEncodeMetaDataProcessor extends ChadoProcessor
             ExperimentSubmissionDetails experimentSubmissionDetails = entry.getValue();
             String experimentItemIdentifier = experimentSubmissionDetails.itemIdentifier;
             String providerItemIdentifier = experimentSubmissionDetails.providerItemIdentifier;
+
+            LOG.info("xFEATDAT: exp>" + experimentItemIdentifier 
+                    + "< prov>" + providerItemIdentifier + "<");
+            
             ModEncodeFeatureProcessor processor =
                 new ModEncodeFeatureProcessor(getChadoDBConverter(), experimentItemIdentifier,
                         providerItemIdentifier, experimentDataMap.get(chadoExperimentId));
@@ -243,9 +251,9 @@ public class ModEncodeMetaDataProcessor extends ChadoProcessor
             processor.process(connection);
             featureMap.putAll(processor.getFeatureMap());
 
-            LOG.info("FEAT2:     " + chadoExperimentId);
-            LOG.info("FEAT2  featureMap keys:   " + featureMap.keySet().size());
-            LOG.info("FEAT2  featureMap values: " + featureMap.values().size());
+            LOG.info("FEATMAP: experiment " + chadoExperimentId + "|"    
+                    + "featureMap keys: " + featureMap.keySet().size()
+                    + " values: " + featureMap.values().size());
         }
         return featureMap;
     }
@@ -521,18 +529,17 @@ public class ModEncodeMetaDataProcessor extends ChadoProcessor
     private void linksInOut(Connection connection)
     throws SQLException, ObjectStoreException {
         Set <Integer> experiments = experimentInDataMap.keySet();
-        Iterator <Integer> thisInput = experiments.iterator();
+        Iterator <Integer> thisExperiment = experiments.iterator();
 
-        while (thisInput.hasNext()) {
-            // TODO: use local maps
+        while (thisExperiment.hasNext()) {
+            // TODO: use local maps?
             // FOR EACH EXPERIMENT
             // clear the maps
             inOutDataMap.clear();
             outInDataMap.clear();
 
-            LOG.info("INOUT MAP =========");
             // build In-Out map
-            buildInOutMap (thisInput.next());
+            buildInOutMap (thisExperiment.next());
             // the reverse map is built from the previous one
             buildOutInMap();
 
@@ -564,10 +571,11 @@ public class ModEncodeMetaDataProcessor extends ChadoProcessor
             currentIteration.add(currentId);
 
             while (currentIteration.size() > 0) {
+                                
                 nextIteration = getOutputs (currentIteration, currentId);
                 currentIteration = nextIteration;
             }
-            LOG.info("INOUT MAP " + currentId + "|" +  inOutDataMap.get(currentId));
+            LOG.info("INOUT MAP " + currentId + "-|-" +  inOutDataMap.get(currentId));
         }
     }
 
