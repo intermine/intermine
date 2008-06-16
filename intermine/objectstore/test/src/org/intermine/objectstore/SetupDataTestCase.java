@@ -286,7 +286,7 @@ public abstract class SetupDataTestCase extends ObjectStoreQueriesTestCase
 
         departmentB2.setCompany(companyB);
         departmentB2.setManager(employeeB3);
-        departmentB2.setEmployees(Collections.singleton(employeeB3));
+        departmentB2.setEmployees(Collections.singleton((Employee) employeeB3));
 
         employeeB3.setDepartment(departmentB2);
         employeeB3.setAddress(address4);
