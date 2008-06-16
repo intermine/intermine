@@ -316,7 +316,7 @@ public class IntronUtil
 
                 intron.setChromosome(chr);
                 intron.setOrganism(chr.getOrganism());
-                //intron.addDataSets(dataSet);
+                intron.addDataSets(dataSet);
                 intron.setPrimaryIdentifier(identifier);
 
 
@@ -328,9 +328,9 @@ public class IntronUtil
                 location.setEndIsPartial(Boolean.FALSE);
                 location.setSubject(intron);
                 location.setObject(transcript);
-                //location.addDataSets(dataSet);
+                location.addDataSets(dataSet);
 
-                //synonym.addDataSets(dataSet);
+                synonym.addDataSets(dataSet);
                 synonym.setSource(dataSource);
                 synonym.setSubject(intron);
                 synonym.setType("identifier");
