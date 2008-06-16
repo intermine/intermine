@@ -359,7 +359,7 @@ public class CreateReferencesTest extends TestCase {
             expectedChromosomeExonLocation, expectedExonRelation})));
         expectedExon.setChromosome(expectedChromosome);
 
-        expectedChromosome.setSubjects(Collections.singleton(expectedExonRelation));
+        expectedChromosome.setSubjects(Collections.singleton((Relation) expectedExonRelation));
 
         OverlapRelation expectedOverlapRelation =
             (OverlapRelation) DynamicUtil.createObject(Collections.singleton(OverlapRelation.class));
@@ -435,7 +435,7 @@ public class CreateReferencesTest extends TestCase {
         Gene expectedGene1 = (Gene) DynamicUtil.createObject(Collections.singleton(Gene.class));
         expectedGene1.setPrimaryIdentifier("gene1");
         expectedGene1.setId(storedGene1.getId());
-        expectedGene1.setObjects(Collections.singleton(expectedGeneLocation1));
+        expectedGene1.setObjects(Collections.singleton((Relation) expectedGeneLocation1));
 
         Location expectedGeneLocation2 =
             (Location) DynamicUtil.createObject(Collections.singleton(Location.class));
@@ -444,7 +444,7 @@ public class CreateReferencesTest extends TestCase {
         Gene expectedGene2 = (Gene) DynamicUtil.createObject(Collections.singleton(Gene.class));
         expectedGene2.setPrimaryIdentifier("gene2");
         expectedGene2.setId(storedGene2.getId());
-        expectedGene2.setObjects(Collections.singleton(expectedGeneLocation2));
+        expectedGene2.setObjects(Collections.singleton((Relation) expectedGeneLocation2));
 
         Transcript expectedTranscript1 =
             (Transcript) DynamicUtil.createObject(Collections.singleton(Transcript.class));
@@ -587,7 +587,7 @@ public class CreateReferencesTest extends TestCase {
         expectedExonRelation.setId(storedExonRankedRelation.getId());
         expectedExonRelation.setRank(new Integer(1));
         expectedExonRelation.setObject(expectedTranscript);
-        expectedTranscript.setSubjects(Collections.singleton(expectedExonRelation));
+        expectedTranscript.setSubjects(Collections.singleton((Relation) expectedExonRelation));
 
         Item expGeneItem = toItem(expectedGene);
         Item expTranscriptItem = toItem(expectedTranscript);
@@ -747,7 +747,7 @@ public class CreateReferencesTest extends TestCase {
         expectedExonRelation.setRank(new Integer(1));
         expectedExonRelation.setObject(expectedTranscript);
         expectedExonRelation.setSubject(expectedExon);
-        expectedTranscript.setSubjects(Collections.singleton(expectedExonRelation));
+        expectedTranscript.setSubjects(Collections.singleton((Relation) expectedExonRelation));
 
         expectedChromosome.setPrimaryIdentifier("chr1");
         expectedChromosome.setId(storedChromosome.getId());
