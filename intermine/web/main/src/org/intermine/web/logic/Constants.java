@@ -45,7 +45,11 @@ public interface Constants
      * ServletContext attribute, List of category names.
      */
     public static final String CATEGORIES = "CATEGORIES";
-
+    
+    /**
+     * ServletContext attribute, autocompletion.
+     */
+    public static final String AUTO_COMPLETER = "AUTO_COMPLETER";
     /**
      * ServletContext attribute, Map from unqualified type name to list of subclass names.
      */

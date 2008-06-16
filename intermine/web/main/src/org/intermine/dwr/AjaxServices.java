@@ -35,6 +35,7 @@ import org.intermine.objectstore.ObjectStoreWriter;
 import org.intermine.objectstore.intermine.ObjectStoreInterMineImpl;
 import org.intermine.path.Path;
 import org.intermine.util.TypeUtil;
+import org.intermine.web.autocompletion.AutoCompleter;
 import org.intermine.web.logic.Constants;
 import org.intermine.web.logic.WebUtil;
 import org.intermine.web.logic.bag.BagHelper;
@@ -978,4 +979,19 @@ public class AjaxServices
         pt.setAllSelectedColumn(index);
     }
 
+    public String[] getContent(String suffix, boolean wholeList, String field, String className) {      
+        ServletContext servletContext = WebContextFactory.get().getServletContext();
+        AutoCompleter ac = (AutoCompleter) servletContext.getAttribute(Constants.AUTO_COMPLETER);
+        ac.createRAMIndex(className + "." + field);
+        if (!wholeList && suffix.length() > 0) {
+            String[] shortList = ac.getFastList(suffix, field, 31);
+            return shortList;
+        } else if (suffix.length() > 2 && wholeList) {
+            String[] longList = ac.getList(suffix, field); 
+            return longList;
+        }
+        String[] defaultList = {""}; 
+        return defaultList;
+    }
+    
 }

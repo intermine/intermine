@@ -98,6 +98,9 @@ public class UniprotConverter extends FileConverter
         FEATURE_TYPES.add("splice variant");           // zen
         FEATURE_TYPES.add("sequence variant");         // AMYA_DROME
         FEATURE_TYPES.add("unsure residue");            // none
+        FEATURE_TYPES.add("strand");
+        FEATURE_TYPES.add("turn");
+        FEATURE_TYPES.add("helix");
     }
 
     /**
@@ -609,15 +612,16 @@ public class UniprotConverter extends FileConverter
                     } else {
                         descr.append(" (" + proteinName + ")");
                     }
-
-                    // all names are synonyms
-                    if (evidence != null) {
-                        proteinName += " (Evidence " + evidence + ")";
-                    }
-                    Item syn = createSynonym(protein.getIdentifier(), "name", proteinName,
-                                  datasource.getIdentifier());
-                    if (syn != null) {
-                        delayedItems.add(syn);
+                    if (proteinName != null && proteinName.length() != 0) {
+                        // all names are synonyms
+                        if (evidence != null) {
+                            proteinName += " (Evidence " + evidence + ")";
+                        }
+                        Item syn = createSynonym(protein.getIdentifier(), "name", proteinName,
+                                      datasource.getIdentifier());
+                        if (syn != null) {
+                            delayedItems.add(syn);
+                        }
                     }
 
                 // <entry><comment><text>

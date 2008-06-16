@@ -159,9 +159,49 @@ if (${!empty constrainOnBag}) {
                   </td>
                   <td valign="top" align="center">
                     <span id="operandEditSpan0">
-                      <html:text property="attributeValue" styleId="attribute6"
-                                 value="${editingConstraintValue}"
-                                 onkeypress="if(event.keyCode == 13) {$('attribute').click();return false;}"/>
+
+
+
+
+
+
+                        <c:set var="ac" value="${useAutoCompleter}"/>
+                        <c:set var="classDesc" value="${classDescriptor}"/>
+                        <c:set var="fieldDesc" value="${fieldDescriptor}"/>
+                        <c:choose>
+                        	<%-- inputfield for an autocompletion --%>
+                        	<c:when test="${!empty ac}">
+                            	<input name="attributeValue" id="attribute6" size="55" autocomplete ="off"
+                            		   style="background:#ffffc8"
+                              	       value="${editingConstraintValue}"
+                                       onKeyDown="getId(this.id); isSubmit(event);"
+                                   	   onKeyUp="readInput(event, '${classDesc}', '${fieldDesc}');"
+                                   	   onMouseOver="setMouseOver(1);"
+   		  						       onMouseOut="setMouseOver(0);"
+          						       onBlur="if(MOUSE_OVER != 1) { removeList(); }"/>
+          						<iframe width="100%" height="0" id="attribute6_IEbugFixFrame"
+            			                marginheight="0" marginwidth="0" frameborder="0" style="position:absolute;" ></iframe>
+                            	<div class="auto_complete" id="attribute6_display"
+                                     onMouseOver="setMouseOver(1);"
+   								     onMouseOut="setMouseOver(0);"
+   		  						     onBlur="if(MOUSE_OVER != 1) { removeList(); }" ></div>
+   		  						<div class="error_auto_complete" id="attribute6_error"></div>
+                      		</c:when>
+                      		<%-- normal inputfield --%>
+ 						    <c:otherwise>
+                                <html:text property="attributeValue" styleId="attribute6"
+                                           value="${editingConstraintValue}"
+                                           onkeypress="if(event.keyCode == 13) {$('attribute').click();return false;}"/>
+                            </c:otherwise>
+                         </c:choose>      
+                        
+                        
+                        
+                        
+                        
+                        
+                        
+                                 
                       <%-- might want to show up arrow --%>
                       <c:if test="${!empty options}">
                         <br/><im:vspacer height="2"/>

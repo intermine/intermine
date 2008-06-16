@@ -10,14 +10,6 @@ package org.intermine.modelproduction;
  *
  */
 
-import java.util.Properties;
-
-import org.intermine.metadata.Model;
-import org.intermine.modelproduction.xml.InterMineModelParser;
-import org.intermine.sql.Database;
-import org.intermine.util.PropertiesUtil;
-import org.intermine.util.StringUtil;
-
 import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileReader;
@@ -27,10 +19,19 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.StringReader;
 import java.sql.Connection;
+import java.sql.PreparedStatement;
 import java.sql.ResultSet;
+import java.sql.ResultSetMetaData;
 import java.sql.SQLException;
+import java.sql.Statement;
+import java.util.Properties;
 
 import org.apache.commons.io.IOUtils;
+import org.intermine.metadata.Model;
+import org.intermine.modelproduction.xml.InterMineModelParser;
+import org.intermine.sql.Database;
+import org.intermine.util.PropertiesUtil;
+import org.intermine.util.StringUtil;
 
 /**
  * Class to handle persistence of an intermine objectstore's metadata to the objectstore's database
@@ -64,6 +65,10 @@ public class MetadataManager
     public static final String OS_SUMMARY = "objectStoreSummary";
 
     /**
+     * The name of the key to use to store the autocomplete RAMIndexes.
+     */
+    public static final String AUTOCOMPLETE_INDEX = "autocomplete";
+    /**
      * Name of the key under which to store the serialized version of the class descriptions
      */
     //public static final String CLASS_DESCRIPTIONS = "classDescs";
@@ -85,6 +90,51 @@ public class MetadataManager
             connection.createStatement().execute("INSERT INTO " + METADATA_TABLE + " (key, value) "
                                                  + "VALUES('" + key + "', '"
                                                  + StringUtil.duplicateQuotes(value) + "')");
+        } finally {
+            connection.setAutoCommit(autoCommit);
+            connection.close();
+        }
+    }
+    
+    /**
+     * Store a binary (key, value) pair in the metadata table of the database
+     * @param database the database
+     * @param key the key
+     * @param value the byte array of the value
+     * @throws SQLException if an error occurs
+     */
+    public static void storeBinary(Database database, String key, byte[] value)
+                throws SQLException {
+        Connection connection = database.getConnection();
+        boolean autoCommit = connection.getAutoCommit();
+        
+        try {
+            connection.setAutoCommit(false);
+            
+            ResultSet rs = connection.createStatement().
+                    executeQuery("SELECT * FROM " + METADATA_TABLE); 
+            ResultSetMetaData meta = rs.getMetaData(); 
+      
+            if (meta.getColumnCount() != 3) {
+                connection.createStatement().execute("ALTER TABLE " 
+                        + METADATA_TABLE + " ADD blob_value BYTEA");
+            }
+            
+            connection.createStatement().execute("DELETE FROM " + METADATA_TABLE + " where key = '"
+                    + key + "'");
+                        
+            PreparedStatement pstmt = connection.prepareStatement("INSERT INTO "
+                    + METADATA_TABLE + " (key, blob_value) "
+                    + "VALUES('" + key + "', ?)");
+  
+            pstmt.setBytes(1, value);
+            
+            pstmt.executeUpdate();
+            
+            connection.commit();
+            
+            pstmt.close();
+            
         } finally {
             connection.setAutoCommit(autoCommit);
             connection.close();
@@ -113,6 +163,35 @@ public class MetadataManager
             connection.close();
         }
         return value;
+    }
+    
+    /**
+     * Retrieve the BLOB value for a given key from the metadata table of the database
+     * @param database the database
+     * @param key the key
+     * @return the InputStream of the value
+     * @throws SQLException if an error occurs
+     */
+    public static InputStream retrieveBLOBInputStream(Database database, String key)
+            throws SQLException {
+        InputStream value = null;
+        Connection connection = database.getConnection();
+        try {
+            String sql = "SELECT blob_value FROM " + METADATA_TABLE + " WHERE key ='" + key + "'";
+            Statement  st    = connection.createStatement();
+            ResultSet  rs    = st.executeQuery(sql);
+            
+            if (rs.next()) {
+                value = rs.getBinaryStream("blob_value");
+                
+                return value;
+            } else {
+                return null;
+            }
+            
+        } finally {
+            connection.close();
+        }
     }
 
     /**
