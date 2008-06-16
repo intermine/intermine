@@ -189,9 +189,9 @@ public class JavaModelOutputTest extends TestCase
             + INDENT + "public void proxyRfd1(org.intermine.objectstore.proxy.ProxyReference rfd1) { this.rfd1 = rfd1; }" + ENDL
             + INDENT + "public org.intermine.model.InterMineObject proxGetRfd1() { return rfd1; }" + ENDL + ENDL
             + INDENT + "// Col: package.name.Class1.cod1" + ENDL
-            + INDENT + "protected java.util.Set cod1 = new java.util.HashSet();" + ENDL
-            + INDENT + "public java.util.Set getCod1() { return cod1; }" + ENDL
-            + INDENT + "public void setCod1(java.util.Set cod1) { this.cod1 = cod1; }" + ENDL
+            + INDENT + "protected java.util.Set<package.name.Class2> cod1 = new java.util.HashSet();" + ENDL
+            + INDENT + "public java.util.Set<package.name.Class2> getCod1() { return cod1; }" + ENDL
+            + INDENT + "public void setCod1(java.util.Set<package.name.Class2> cod1) { this.cod1 = cod1; }" + ENDL
             + INDENT + "public void addCod1(package.name.Class2 arg) { cod1.add(arg); }" + ENDL + ENDL
             + INDENT + "// Attr: org.intermine.model.InterMineObject.id" + ENDL
             + INDENT + "protected java.lang.Integer id;" + ENDL
@@ -244,9 +244,9 @@ public class JavaModelOutputTest extends TestCase
         Model model = new Model("model", uri, new HashSet(Arrays.asList(new Object[] {cld1, cld2})));
 
         String expected = INDENT + "// Col: Class1.cod1" + ENDL
-            + INDENT + "protected java.util.Set cod1 = new java.util.HashSet();" + ENDL
-            + INDENT + "public java.util.Set getCod1() { return cod1; }" + ENDL
-            + INDENT + "public void setCod1(java.util.Set cod1) { this.cod1 = cod1; }" + ENDL
+            + INDENT + "protected java.util.Set<Class2> cod1 = new java.util.HashSet();" + ENDL
+            + INDENT + "public java.util.Set<Class2> getCod1() { return cod1; }" + ENDL
+            + INDENT + "public void setCod1(java.util.Set<Class2> cod1) { this.cod1 = cod1; }" + ENDL
             + INDENT + "public void addCod1(Class2 arg) { cod1.add(arg); }" + ENDL + ENDL;
 
         assertEquals(expected, mo.generate(cod1, true));
@@ -309,7 +309,7 @@ public class JavaModelOutputTest extends TestCase
         Model model = new Model("model", uri, new HashSet(Arrays.asList(new Object[] {cld1, cld2})));
 
         assertEquals("Class2", mo.getType(rfd1));
-        assertEquals("java.util.Set", mo.getType(cod1));
+        assertEquals("java.util.Set<Class2>", mo.getType(cod1));
     }
 
     public void testGenerateMultiInheritanceLegal() throws Exception {
