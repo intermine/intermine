@@ -207,7 +207,7 @@ public class FindInListAction extends InterMineAction
     private int findFirst(ObjectStore os, Query q) {
         Results res = os.execute(q);
         try {
-            return (Integer) ((ResultsRow) res.get(0)).get(0);
+            return ((Integer) ((ResultsRow) res.get(0)).get(0)).intValue();
         } catch (IndexOutOfBoundsException e) {
             return -1;
         }

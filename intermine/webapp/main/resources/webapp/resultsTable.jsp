@@ -57,7 +57,7 @@
 
       <c:choose>
         <c:when test="${column.visible}">
-            <c:if test="${(column.selectable && ((!isWebCollection) || (! noBagSave && status.count<=1))) && empty bag}">
+            <c:if test="${column.selectable}">
             <c:set var="colcount" value="${colcount+1}"/>
             <th align="center" class="checkbox">
               <c:set var="disabled" value="false"/>
@@ -197,7 +197,7 @@
                       </c:if>
 
                       <%-- the checkbox to select this object --%>
-                      <c:if test="${column.selectable && ((!isWebCollection) || (! noBagSave && status2.count<=1))}">
+                      <c:if test="${column.selectable && ((! noBagSave && status2.count<=1))}">
                         <c:set var="checkboxClass" value="checkbox ${resultElement.id}"/>
                         <c:if test="${resultElement.selected}">
                           <c:set var="checkboxClass" value="${checkboxClass} highlightCell"/>
@@ -262,7 +262,7 @@
                   <c:if test="${(!empty resultsTable.selectedClass) && ((resultsTable.selectedClass != resultElement.typeClsString)&&(resultsTable.selectedClass != column.typeClsString) && resultsTable.selectedColumn != column.index)}">
                     <c:set var="disabled" value="true"/>
                   </c:if>
-                  <c:if test="${column.selectable && ((!isWebCollection) || (! noBagSave && status2.count<=1)) && empty bag}">
+                  <c:if test="${column.selectable}">
                     <td align="center" class="checkbox ${highlightObjectClass} id_${resultElement.id} class_${row[column.index].typeClsString} ${ischecked}" id="cell_checkbox,${status2.index},${status.index},${row[column.index].typeClsString}">
                       <c:if test="${resultElement.id != null}">
                         <html:multibox property="currentSelectedIdStrings" name="pagedResults"
@@ -297,7 +297,7 @@
     </c:forEach>
     </tbody>
   </c:if>
-  <c:if test="${empty bag}">
+
   <tfoot>
   <tr>
   <td colspan="${colcount}">
@@ -319,12 +319,21 @@
   </tfoot>
     <c:if test="${! pagedResults.emptySelection}">
     <script type="text/javascript" charset="utf-8">
-      $('newBagName').disabled = false;
-      $('saveNewBag').disabled = false;
-      $('addToBag').disabled = false;
+    if ($('newBagName')) {
+      	$('newBagName').disabled = false;
+	}
+	if ($('saveNewBag')) {
+		$('saveNewBag').disabled = false;
+	}
+    if ($('addToBag')) {
+      	$('addToBag').disabled = false;
+    }
+    if ($('removeFromBag')) {
+      	$('removeFromBag').disabled = false;
+    }
     </script>
     </c:if>
-  </c:if>
+
 </table>
 <%--  The Summary table --%>
 <div id="summary" style="display:none;" >
