@@ -70,8 +70,8 @@ public class FlyBaseUTRFastaLoaderTaskTest extends TestCase {
 
         for (Object rr: r) {
             FivePrimeUTR utr = (FivePrimeUTR) ((ResultsRow) rr).get(0);
-            assertEquals(1, utr.getEvidence().size());
-            DataSet dataSet = ((DataSet) utr.getEvidence().iterator().next());
+            assertEquals(1, utr.getDataSets().size());
+            DataSet dataSet = utr.getDataSets().iterator().next();
             assertEquals(dataSetTitle, dataSet.getTitle());
 
             assertNotNull(utr.getChromosomeLocation());
@@ -118,8 +118,8 @@ public class FlyBaseUTRFastaLoaderTaskTest extends TestCase {
 
         for (Object rr: r) {
             ThreePrimeUTR utr = (ThreePrimeUTR) ((ResultsRow) rr).get(0);
-            assertEquals(1, utr.getEvidence().size());
-            DataSet dataSet = ((DataSet) utr.getEvidence().iterator().next());
+            assertEquals(1, utr.getDataSets().size());
+            DataSet dataSet = utr.getDataSets().iterator().next();
             assertEquals(dataSetTitle, dataSet.getTitle());
 
             assertNotNull(utr.getChromosomeLocation());
