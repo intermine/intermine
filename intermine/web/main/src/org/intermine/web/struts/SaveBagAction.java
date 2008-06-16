@@ -119,37 +119,6 @@ public class SaveBagAction extends InterMineAction
             return mapping.findForward("results");
         }
 
-//        WebTable allRows = pt.getAllRows();
-//        boolean seenAllRows = false;
-//        if (allRows.size() < 10 && !allRows.isSizeEstimate()) {
-//            // hack to avoid problems with results from quick search - ignore the column type
-//            // if all rows are selected
-//            seenAllRows = true;
-//        }
-
-        // First pass through, just to check types are compatible.
-//        for (int i = 0; i < sbf.getSelectedObjects().length; i++) {
-//            String selectedObjectString = sbf.getSelectedObjects()[i];
-//            if (!selectedObjectString.matches(".*,.*,.*") && seenAllRows) {
-//                // ignore the column type as we're going to iterate over all rows
-//                continue;
-//            }
-//            int indexOfFirstComma = selectedObjectString.indexOf(",");
-//            String columnIndexString = selectedObjectString.substring(0, indexOfFirstComma);
-//            int columnIndex = Integer.parseInt(columnIndexString);
-//            Path columnPath = allRows.getColumns().get(columnIndex).getPath();
-//            String columnType = null;
-//            String cls = columnPath.getStartClassDescriptor().getUnqualifiedName();
-//            if (cls.equals("Synonym")) {
-//                int indexOfUnderscore = selectedObjectString.indexOf("_");
-//                columnType = selectedObjectString.substring(++indexOfUnderscore);
-//            } else {
-//                columnType = columnPath.getLastClassDescriptor().getName();
-//            }
-//            objectTypes.add(TypeUtil.unqualifiedName(columnType));
-//        }
-//
-
         ObjectStoreWriter osw = null;
         try {
             if (bag == null) {
@@ -182,8 +151,7 @@ public class SaveBagAction extends InterMineAction
         if (operation.equals("saveNewBag")) {
             return new ForwardParameters(mapping.findForward("bag")).addParameter("bagName",
                 bag.getName()).forward();
-        } else {
-            return mapping.findForward("results");
         }
+        return mapping.findForward("results");
     }
 }

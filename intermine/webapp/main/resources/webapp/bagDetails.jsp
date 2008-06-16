@@ -4,39 +4,28 @@
 <%@ taglib uri="/WEB-INF/struts-tiles.tld" prefix="tiles" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/functions" prefix="fn" %>
 <%@ taglib tagdir="/WEB-INF/tags" prefix="im" %>
-<%@ taglib uri="http://flymine.org/imutil" prefix="imutil" %>
 <%@ taglib uri="http://jakarta.apache.org/taglibs/string-1.1" prefix="str" %>
 
 <!-- bagDetails.jsp -->
 <html:xhtml/>
 <link rel="stylesheet" href="css/resultstables.css" type="text/css" />
+
 <script type="text/javascript">
-  <!--//<![CDATA[
-      var modifyDetailsURL = '<html:rewrite action="/modifyDetails"/>';
-      var detailsType = 'bag';
-
-  function useBag(where) {
-    if (where == "query") {
-        document.modifyBagDetailsForm.useBagInQuery.value = 'true';
-    }    
-    document.modifyBagDetailsForm.submit();
-  }
-
-
-      //]]>-->
+<!--//<![CDATA[
+  var modifyDetailsURL = '<html:rewrite action="/modifyDetails"/>';
+  var detailsType = 'bag';
+//]]>-->
 </script>
 <script type="text/javascript" src="js/inlinetemplate.js">
   var modifyDetailsURL = '<html:rewrite action="/modifyDetails"/>';
 </script>
 <script type="text/javascript" src="js/widget.js"></script>
 
-
 <div class="heading">
      <fmt:message key="bagDetails.title"/> <span style="font-size:0.9em;font-weight:normal">for <b>${bag.name}</b> (${bag.size} ${bag.type}s)</span>
 </div>
 
 <div class="body">
-
 
 <table cellspacing="0" width="100%">
 <tr>
@@ -45,13 +34,15 @@
 <script type="text/javascript" src="js/toolbar.js"></script>
 <div id="tool_bar_div">
     <ul id="button_bar" onclick="toggleToolBarMenu(event);">
-        <%-- <li id="tool_bar_li_convert"><img style="cursor: pointer;" src="images/icons/null.gif" width="94" height="25" alt="Convert" border="0" id="tool_bar_button_convert" class="tool_bar_button"></li> --%>
         <li id="tool_bar_li_display"><img style="cursor: pointer;" src="images/icons/null.gif" width="62" height="25" title="Display related templates or widgets" border="0" id="tool_bar_button_display" class="tool_bar_button"/></li>
         <li id="tool_bar_li_export"><img style="cursor: pointer;" src="images/icons/null.gif" width="64" height="25" title="Export this list" border="0" id="tool_bar_button_export" class="tool_bar_button"/></li>
         <li id="tool_bar_li_use"><img style="cursor: pointer;" src="images/icons/null.gif" width="43" height="25" title="Use this list in a template or a query" border="0" id="tool_bar_button_use" class="tool_bar_button"/></li>
+        <c:if test="${myBag == 'true'}">
+        	<li id="tool_bar_li_edit"><img style="cursor: pointer;" src="images/icons/null.gif" width="94" height="25" alt="Edit" border="0" id="tool_bar_button_edit" class="tool_bar_button"></li>
+		</c:if>
         <li class="tool_bar_separator"><span>&nbsp;//&nbsp;</span></li>
         <li class="tool_bar_link">
-          <html:form action="/findInList">
+           <html:form action="/findInList">
             <input type="text" name="textToFind" id="textToFind"/>
             <input type="hidden" name="bagName" value="${bag.name}"/>
             <html:submit>
@@ -62,19 +53,14 @@
     </ul>
 </div>
 
-<%-- <div id="tool_bar_item_convert" style="visibility:hidden" class="tool_bar_item">
-  <tiles:insert name="convertBag.tile">
-       <tiles:put name="bag" beanName="bag" />
-       <tiles:put name="idname" value="bar" />
-  </tiles:insert>
-    <hr>
-  <a href="javascript:hideMenu('tool_bar_item_convert')" >Cancel</a>
-</div> --%>
+<html:form action="/modifyBagDetailsAction" styleId="bagDetailsForm">
+<html:hidden property="bagName" value="${bag.name}"/>
+
 <div id="tool_bar_item_display" style="visibility:hidden;width:100px" class="tool_bar_item">
     <html:link anchor="relatedTemplates" action="bagDetails?bagName=${bag.name}">related templates</html:link><br/>
     <html:link anchor="widgets" action="bagDetails?bagName=${bag.name}">related widgets</html:link>
     <hr/>
-  <a href="javascript:hideMenu('tool_bar_item_display')">Cancel</a>
+    <a href="javascript:hideMenu('tool_bar_item_display')"><fmt:message key="confirm.cancel"/></a>
 </div>
 
 <div id="tool_bar_item_export" style="visibility:hidden;width:300px" class="tool_bar_item">
@@ -82,16 +68,49 @@
     <c:set var="pagedTable" value="${pagedResults}" scope="request"/>
     <tiles:get name="export.tile"/>
     <hr>
-  <a href="javascript:hideMenu('tool_bar_item_export')" >Cancel</a>
+    <a href="javascript:hideMenu('tool_bar_item_export')" ><fmt:message key="confirm.cancel"/></a>
 </div>
 
 <div id="tool_bar_item_use" style="visibility:hidden;width:100px" class="tool_bar_item">
-    <a href="javascript:useBag('query');">in a query</a><br/>
-    
-  <html:link action="/templates">in a template</html:link>
-  <hr/>
-    <a href="javascript:hideMenu('tool_bar_item_use')" >Cancel</a>
+    <html:link action="/modifyBagDetailsAction.do?useBag=1&bagName=${bag.name}">in a query</html:link><br/>
+	<html:link action="/templates">in a template</html:link>
+    <hr/>
+    <a href="javascript:hideMenu('tool_bar_item_use')" ><fmt:message key="confirm.cancel"/></a>
 </div>
+
+<div id="tool_bar_item_edit" style="visibility:hidden" class="tool_bar_item">
+	<%-- add selected to bag --%>
+   <c:choose>
+   <c:when test="${!empty PROFILE.savedBags}">
+          Add selected to another list:
+          <html:select property="existingBagName">
+             <c:forEach items="${PROFILE.savedBags}" var="entry">
+              <c:if test="${param.bagName != entry.key}">
+                <html:option value="${entry.key}">${entry.key} [${entry.value.type}]</html:option>
+              </c:if>
+             </c:forEach>
+          </html:select>
+     <input type="submit" name="addToBag" id="addToBag" value="Add selected" />
+     <script type="text/javascript" charset="utf-8">
+          $('addToBag').disabled = true;
+        </script>
+    </c:when>
+    <c:otherwise>
+      <em><fmt:message key="toolbar.noLists"/></em>
+    </c:otherwise>
+    </c:choose>
+	<br/>
+    <%-- remove selected from bag --%>
+    <input type="submit" name="removeFromBag" id="removeFromBag" value="Remove selected" />
+
+     <script type="text/javascript" charset="utf-8">
+     	$('removeFromBag').disabled = true;
+     </script>
+
+    <hr>
+  <a href="javascript:hideMenu('tool_bar_item_edit')" ><fmt:message key="confirm.cancel"/></a>
+</div>
+
 </TD>
 </TR>
 <TR>
@@ -128,7 +147,7 @@
             <p><c:out value="${bag.description}" escapeXml="false" /></p>
           </c:when>
           <c:otherwise>
-            <div id="emptyDesc">Click here to enter a description for your list.</div>
+            <div id="emptyDesc"><fmt:message key="bagDetails.bagDescr"/></div>
           </c:otherwise>
         </c:choose>
       </div>
@@ -136,8 +155,8 @@
         <textarea id="textarea"><c:if test="${! empty bag.description}"><c:out value="${fn:replace(bag.description,'<br/>','')}" /></c:if></textarea>
         <div align="right">
           <button onclick="Element.toggle('bagDescriptionTextarea');
-              Element.toggle('bagDescriptionDiv'); return false;">Cancel</button>
-          <button onclick="saveBagDescription('${bag.name}'); return false;">Save</button>
+              Element.toggle('bagDescriptionDiv'); return false;"><fmt:message key="confirm.cancel"/></button>
+          <button onclick="saveBagDescription('${bag.name}'); return false;"><fmt:message key="button.save"/></button>
         </div>
       </div>
       </c:when>
@@ -174,18 +193,17 @@
 <div id="convertList" class="listtoolbox" align="left">
 <h3><img src="images/icons/convert.png" title="Convert objects in this bag to different type"/>&nbsp;Convert</h3>
 <p>
-<html:form action="/modifyBagDetailsAction" styleId="bagDetailsForm">
-<html:hidden property="bagName" value="${bag.name}"/> 
+
+
 <tiles:insert name="convertBag.tile">
      <tiles:put name="bag" beanName="bag" />
      <tiles:put name="idname" value="cp" />
      <tiles:put name="orientation" value="h" />
 </tiles:insert>
-<input type="hidden" name="useBagInQuery" />
-</html:form>
+
 </p>
 </div>
-
+</html:form>
 <tiles:insert page="/bagDisplayers.jsp">
    <tiles:put name="bag" beanName="bag"/>
 </tiles:insert>
@@ -225,7 +243,7 @@
     <tiles:put name="bag" beanName="bag"/>
     <tiles:put name="widget2extraAttrs" beanName="widget2extraAttrs" />
   </tiles:insert>
-</c:forEach> 
+</c:forEach>
 <div style="clear:both;">&nbsp;</div>
 
 <!-- templates -->
@@ -233,7 +251,7 @@
 <c:set var="templateIdPrefix" value="bagDetailsTemplate${bag.type}"/>
 <c:set value="${fn:length(CATEGORIES)}" var="aspectCount"/>
 <div class="heading">
-   <a id="relatedTemplates">Template results for '${bag.name}' &nbsp;</a>&nbsp;&nbsp;<span style="font-size:0.8em;"> 
+   <a id="relatedTemplates">Template results for '${bag.name}' &nbsp;</a>&nbsp;&nbsp;<span style="font-size:0.8em;">
   (<a href="javascript:toggleAll(${aspectCount}, '${templateIdPrefix}', 'expand', null, true);">expand all <img src="images/disclosed.gif"/></a> / <a href="javascript:toggleAll(${aspectCount}, '${templateIdPrefix}', 'collapse', null, true);">collapse all <img src="images/undisclosed.gif"/></a>)</span>
   </div>
 
@@ -241,7 +259,7 @@
   <div class="body">
   <fmt:message key="bagDetails.templatesHelp">
     <fmt:param>
-              <img src="images/disclosed.gif"/> / <img src="images/undisclosed.gif"/>  
+              <img src="images/disclosed.gif"/> / <img src="images/undisclosed.gif"/>
       </fmt:param>
   </fmt:message>
 

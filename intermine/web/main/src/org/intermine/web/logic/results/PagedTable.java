@@ -20,12 +20,15 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import javax.servlet.http.HttpSession;
+
 import org.intermine.metadata.FieldDescriptor;
 import org.intermine.model.InterMineObject;
 import org.intermine.objectstore.ObjectStore;
 import org.intermine.objectstore.ObjectStoreException;
 import org.intermine.objectstore.ObjectStoreWriter;
 import org.intermine.objectstore.flatouterjoins.MultiRow;
+import org.intermine.objectstore.intermine.ObjectStoreWriterInterMineImpl;
 import org.intermine.objectstore.query.BagConstraint;
 import org.intermine.objectstore.query.ConstraintOp;
 import org.intermine.objectstore.query.ContainsConstraint;
@@ -44,6 +47,9 @@ import org.intermine.path.Path;
 import org.intermine.util.DynamicUtil;
 import org.intermine.util.TypeUtil;
 import org.intermine.web.logic.Constants;
+import org.intermine.web.logic.bag.InterMineBag;
+import org.intermine.web.logic.profile.Profile;
+import org.intermine.web.logic.session.SessionMethods;
 
 /**
  * A pageable and configurable table of data.
@@ -412,13 +418,12 @@ public class PagedTable
                         object = os.getObjectById(id);
                         if (object == null) {
                             throw new RuntimeException("internal error - unknown object id: " + id);
+                        }
+                        String classKeyFieldValue = findClassKeyValue(classKeysMap, object);
+                        if (classKeyFieldValue == null) {
+                            seenNullField = true;
                         } else {
-                            String classKeyFieldValue = findClassKeyValue(classKeysMap, object);
-                            if (classKeyFieldValue == null) {
-                                seenNullField = true;
-                            } else {
-                                retList.add(classKeyFieldValue);
-                            }
+                            retList.add(classKeyFieldValue);
                         }
                     } catch (ObjectStoreException e) {
                         seenNullField = true;
@@ -536,54 +541,54 @@ public class PagedTable
                     throw new UnsupportedOperationException();
                 }
             };
-        } else {
-            return new Iterator<SelectionEntry>() {
-                SelectionEntry nextEntry = null;
-                int currentIndex = 0;
-                {
-                    moveToNext();
-                }
+        }
+        return new Iterator<SelectionEntry>() {
+            SelectionEntry nextEntry = null;
+            int currentIndex = 0;
+            {
+                moveToNext();
+            }
 
-                private void moveToNext() {
-                    while (true) {
-                        try {
-                            List<ResultElement> row = getAllRows().getResultElements(currentIndex);
-                            ResultElement element = row.get(allSelected);
-                            Integer elementId = element.getId();
-                            if (!selectionIds.containsKey(elementId)) {
-                                nextEntry = new SelectionEntry();
-                                nextEntry.id = elementId;
-                                if (element.getField() == null) {
-                                    nextEntry.fieldValue = null;
-                                } else {
-                                    nextEntry.fieldValue = element.getField().toString();
-                                }
-                                break;
+            private void moveToNext() {
+                while (true) {
+                    try {
+                        List<ResultElement> row = getAllRows().getResultElements(currentIndex);
+                        ResultElement element = row.get(allSelected);
+                        Integer elementId = element.getId();
+                        if (!selectionIds.containsKey(elementId)) {
+                            nextEntry = new SelectionEntry();
+                            nextEntry.id = elementId;
+                            if (element.getField() == null) {
+                                nextEntry.fieldValue = null;
+                            } else {
+                                nextEntry.fieldValue = element.getField().toString();
                             }
-                        } catch (IndexOutOfBoundsException e) {
-                            nextEntry = null;
                             break;
-                        } finally {
-                            currentIndex++;
                         }
+                    } catch (IndexOutOfBoundsException e) {
+                        nextEntry = null;
+                        break;
+                    } finally {
+                        currentIndex++;
                     }
                 }
+            }
 
-                public boolean hasNext() {
-                    return nextEntry != null;
-                }
+            public boolean hasNext() {
+                return nextEntry != null;
+            }
 
-                public SelectionEntry next() {
-                   SelectionEntry retVal = nextEntry;
-                   moveToNext();
-                   return retVal;
-                }
+            public SelectionEntry next() {
+                SelectionEntry retVal = nextEntry;
+                moveToNext();
+                return retVal;
+            }
 
-                public void remove() {
-                    throw new UnsupportedOperationException();
-                }
-            };
-        }
+            public void remove() {
+                throw new UnsupportedOperationException();
+            }
+        };
+
     }
 
     /**
@@ -612,9 +617,8 @@ public class PagedTable
     public int getAllSelectedColumn() {
         if (selectionIds.isEmpty()) {
             return allSelected;
-        } else {
-            return -1;
         }
+        return -1;
     }
 
     /**
@@ -776,7 +780,7 @@ public class PagedTable
         List<Integer> ret = new ArrayList<Integer>();
         for (int i = 0; i < getColumns().size(); i++) {
             if (getColumns().get(i) != null && getColumns().get(i).isVisible()) {
-                ret.add(getColumns().get(i).getIndex());
+                ret.add(new Integer(getColumns().get(i).getIndex()));
             }
         }
 
@@ -796,6 +800,9 @@ public class PagedTable
     {
         private List<Integer> visibleIndexes;
 
+        /**
+         * Constructor
+         */
         public RearrangedList() {
             visibleIndexes = getVisibleIndexes();
         }
@@ -815,7 +822,7 @@ public class PagedTable
             }
             List ret = new ResultsRow();
             for (int i = 0; i < visibleIndexes.size(); i++) {
-                ret.add(row.get(visibleIndexes.get(i)));
+                ret.add(row.get(visibleIndexes.get(i).intValue()));
             }
             return ret;
         }
@@ -874,12 +881,10 @@ public class PagedTable
                 } catch (IndexOutOfBoundsException e) {
                     return true;
                 }
-            } else {
-                return false;
             }
-        } else {
-            return selectionIds.size() == 0;
+            return false;
         }
+        return selectionIds.size() == 0;
     }
 
     /**
@@ -899,55 +904,55 @@ public class PagedTable
             query.setConstraint(bc);
 
             return query;
-        } else {
-            WebResults webResults = (WebResults) getAllRows();
-            Results results = webResults.getInterMineResults();
-            Query origQuery = results.getQuery();
-            Query newQuery = QueryCloner.cloneQuery(origQuery);
-
-            Map<String, QuerySelectable> pathToQueryNodeMap = webResults.getPathToQueryNode();
-            Path path = columns.get(allSelected).getPath().getPrefix();
-            QuerySelectable qn = pathToQueryNodeMap.get(path.toStringNoConstraints());
-
-            int nodeIndex = origQuery.getSelect().indexOf(qn);
-
-            QuerySelectable newSelectable = newQuery.getSelect().get(nodeIndex);
-            newQuery.clearSelect();
-            QueryClass newNode;
-            if (newSelectable instanceof QueryClass) {
-                newNode = (QueryClass) newSelectable;
-            } else {
-                QueryObjectPathExpression qope = (QueryObjectPathExpression) newSelectable;
-                // We need to morph the query from an outer join to an inner join. This will not
-                // affect the results, which are ids from the path expression, except by removing
-                // "null".
-                newNode = new QueryClass(qope.getType());
-                newQuery.addFrom(newNode);
-                QueryClass lastQc = newNode;
-                QueryObjectPathExpression nextQope = qope.getQope();
-                while (nextQope != null) {
-                    QueryClass newQc = new QueryClass(nextQope.getType());
-                    newQuery.addFrom(newQc);
-                    QueryHelper.addAndConstraint(newQuery, new ContainsConstraint(
-                                new QueryObjectReference(newQc, qope.getFieldName()),
-                                ConstraintOp.CONTAINS, lastQc));
-                    qope = nextQope;
-                    lastQc = newQc;
-                    nextQope = qope.getQope();
-                }
-                QueryClass rootQc = qope.getQueryClass();
-                QueryHelper.addAndConstraint(newQuery, new ContainsConstraint(
-                            new QueryObjectReference(rootQc, qope.getFieldName()),
-                            ConstraintOp.CONTAINS, lastQc));
-            }
-
-            newQuery.addToSelect(newNode);
-            BagConstraint bc =
-                new BagConstraint(new QueryField(newNode, "id"),
-                                  ConstraintOp.NOT_IN, selectionIds.keySet());
-            QueryHelper.addAndConstraint(newQuery, bc);
-            return newQuery;
         }
+        WebResults webResults = (WebResults) getAllRows();
+        Results results = webResults.getInterMineResults();
+        Query origQuery = results.getQuery();
+        Query newQuery = QueryCloner.cloneQuery(origQuery);
+
+        Map<String, QuerySelectable> pathToQueryNodeMap = webResults.getPathToQueryNode();
+        Path path = columns.get(allSelected).getPath().getPrefix();
+        QuerySelectable qn = pathToQueryNodeMap.get(path.toStringNoConstraints());
+
+        int nodeIndex = origQuery.getSelect().indexOf(qn);
+
+        QuerySelectable newSelectable = newQuery.getSelect().get(nodeIndex);
+        newQuery.clearSelect();
+        QueryClass newNode;
+        if (newSelectable instanceof QueryClass) {
+            newNode = (QueryClass) newSelectable;
+        } else {
+            QueryObjectPathExpression qope = (QueryObjectPathExpression) newSelectable;
+            // We need to morph the query from an outer join to an inner join. This will not
+            // affect the results, which are ids from the path expression, except by removing
+            // "null".
+            newNode = new QueryClass(qope.getType());
+            newQuery.addFrom(newNode);
+            QueryClass lastQc = newNode;
+            QueryObjectPathExpression nextQope = qope.getQope();
+            while (nextQope != null) {
+                QueryClass newQc = new QueryClass(nextQope.getType());
+                newQuery.addFrom(newQc);
+                QueryHelper.addAndConstraint(newQuery, new ContainsConstraint(
+                new QueryObjectReference(newQc, qope.getFieldName()),
+                ConstraintOp.CONTAINS, lastQc));
+                qope = nextQope;
+                lastQc = newQc;
+                nextQope = qope.getQope();
+            }
+            QueryClass rootQc = qope.getQueryClass();
+            QueryHelper.addAndConstraint(newQuery, new ContainsConstraint(
+            new QueryObjectReference(rootQc, qope.getFieldName()),
+            ConstraintOp.CONTAINS, lastQc));
+        }
+
+        newQuery.addToSelect(newNode);
+        BagConstraint bc =
+            new BagConstraint(new QueryField(newNode, "id"),
+                              ConstraintOp.NOT_IN, selectionIds.keySet());
+        QueryHelper.addAndConstraint(newQuery, bc);
+        return newQuery;
+
     }
 
     /**
@@ -964,5 +969,61 @@ public class PagedTable
         } else {
             osw.addToBagFromQuery(osb, getBagCreationQuery());
         }
+    }
+
+    /**
+     * Adds the selected objects to the given bag in the given objectstore.
+     * @param os object store
+     * @param bag bag to add to
+     * @throws ObjectStoreException if an error occurs
+     */
+    public void addSelectedToBag(ObjectStore os, InterMineBag bag)
+    throws ObjectStoreException {
+
+        ObjectStoreWriter osw = null;
+        try {
+            osw = new ObjectStoreWriterInterMineImpl(os);
+            ObjectStoreBag osb = bag.getOsb();
+            addSelectedToBag(osw, osb);
+        } finally {
+            if (osw != null) {
+                osw.close();
+            }
+        }
+    }
+
+
+    /**
+     * remove the selected elements from the bag.  No action is taken if user selects all records
+     * to be deleted.
+     *
+     * @param bagName name of bag
+     * @param profile user's profile
+     * @param os object store
+     * @param session user's session
+     * @exception Exception if the application business logic throws
+     *  an exception
+     */
+    public void removeFromBag(String bagName, Profile profile, ObjectStore os, HttpSession session)
+    throws Exception {
+
+        if (allSelected != -1) {
+            return;
+        }
+
+        Map savedBags = profile.getSavedBags();
+        InterMineBag interMineBag = (InterMineBag) savedBags.get(bagName);
+        ObjectStoreWriter osw = null;
+        try {
+            osw = new ObjectStoreWriterInterMineImpl(os);
+            for (Integer key : selectionIds.keySet()) {
+                osw.removeFromBag(interMineBag.getOsb(), key);
+            }
+        } finally {
+            if (osw != null) {
+                osw.close();
+            }
+        }
+        SessionMethods.invalidateBagTable(session, bagName);
     }
 }

@@ -12,7 +12,6 @@ package org.intermine.web.struts;
 
 import javax.servlet.http.HttpServletRequest;
 
-import org.apache.struts.action.ActionErrors;
 import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionMapping;
 
@@ -23,7 +22,7 @@ import org.apache.struts.action.ActionMapping;
 public class ModifyBagDetailsForm extends ActionForm
 {
     protected String[] selectedElements;
-    protected String bagName;
+    protected String bagName, existingBagName;
     protected String extraFieldValue;
 
     /**
@@ -88,16 +87,21 @@ public class ModifyBagDetailsForm extends ActionForm
     }
 
     /**
-     * {@inheritDoc}
+     * Gets the value of existingBagName
+     *
+     * @return the value of existingBagName
      */
-    public ActionErrors validate(@SuppressWarnings("unused") ActionMapping mapping,
-                                 @SuppressWarnings("unused") HttpServletRequest request) {
-        //HttpSession session = request.getSession();
-        //Profile profile = (Profile) session.getAttribute(Constants.PROFILE);
+    public String getExistingBagName()  {
+        return existingBagName;
+    }
 
-        ActionErrors errors = new ActionErrors();
-        return errors;
-
+    /**
+     * Sets the value of existingBagName
+     *
+     * @param existingBagName Value to assign to this.existingBagName
+     */
+    public void setExistingBagName(String existingBagName) {
+        this.existingBagName = existingBagName;
     }
 
     /**

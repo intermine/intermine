@@ -80,7 +80,7 @@ function itemChecked(checkedRow, checkedColumn, tableid, checkbox, internal) {
         }
         bagType = checkedColumn;
     }*/
-    
+
     /*if (!internal) {
         unselectColumnCheckbox(checkedColumn);
     }*/
@@ -98,21 +98,21 @@ function itemChecked(checkedRow, checkedColumn, tableid, checkbox, internal) {
     // Update list and save selected state
     if(checkbox.checked) {
         AjaxServices.selectId(objectId,tableid,checkedColumn, {
-              callback: function(selectedIds) { 
-                    $('selectedIdFields').update(selectedIds.join(', ')); 
+              callback: function(selectedIds) {
+                    $('selectedIdFields').update(selectedIds.join(', '));
                 },
               async:false
             }
          );
     } else {
         AjaxServices.deSelectId(objectId,tableid, {
-              callback: function(selectedIds) { 
-                $('selectedIdFields').update(selectedIds.join(', ')); 
+              callback: function(selectedIds) {
+                $('selectedIdFields').update(selectedIds.join(', '));
               },
              async:false
          });
     }
-    
+
     // Hightlight all cells for this object
     $$("td.id_"+objectId).each(function(cell){
         if(checkbox.checked) {
@@ -121,11 +121,11 @@ function itemChecked(checkedRow, checkedColumn, tableid, checkbox, internal) {
             cell.removeClassName('highlightCell');
         }
     });
-    
+
     $$("input.id_"+objectId).each(function(box){
         box.checked = checkbox.checked;
     });
-    
+
         // Disable/enable other classes columns
     if (isClear()) {
         enableAll();
@@ -133,7 +133,7 @@ function itemChecked(checkedRow, checkedColumn, tableid, checkbox, internal) {
     } else {
         disableOtherColumns(checkedColumn);
     }
-    
+
     var nothingSelected = $('selectedIdFields').innerHTML.strip() == '';
 
     setToolbarAvailability(nothingSelected);
@@ -193,8 +193,12 @@ function unselectColumnCheckbox(column) {
 }
 
 function setToolbarAvailability(status) {
-$('newBagName').disabled = status;
-    $('saveNewBag').disabled = status;
+	if ($('newBagName')) {
+		$('newBagName').disabled = status;
+	}
+	if ($('saveNewBag')) {
+    	$('saveNewBag').disabled = status;
+	}
     if($('addToBag')){
             with($('addToBag')) {
                 $('addToBag').disabled = status;

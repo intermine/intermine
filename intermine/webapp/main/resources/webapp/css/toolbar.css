@@ -17,13 +17,13 @@ ul#button_bar {
   background: url('../images/icons/toolbar_left.png') no-repeat left;
 }
 
-#tool_bar_li_convert{
+#tool_bar_li_edit{
     background-image: url('../images/icons/convert_grey.png');
 }
-#tool_bar_li_convert:hover{
+#tool_bar_li_edit:hover{
     background-image: url('../images/icons/convert_hover.png');
 }
-.tool_bar_button_convert{
+.tool_bar_button_edit{
     background-image: url('../images/icons/convert_down.png');
     background-color:#CCC;
 }
@@ -45,7 +45,7 @@ ul#button_bar {
     background-image: url('../images/icons/export_hover.png');
 }
 .tool_bar_button_export{
-    background-image: url('../images/icons/export_down.png');    
+    background-image: url('../images/icons/export_down.png');
 }
 
 #tool_bar_li_use {
