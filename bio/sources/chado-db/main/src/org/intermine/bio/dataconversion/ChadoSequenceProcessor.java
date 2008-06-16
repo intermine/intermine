@@ -138,7 +138,6 @@ public class ChadoSequenceProcessor extends ChadoProcessor
         processDbxrefTable(connection);
         processSynonymTable(connection);
         processFeaturePropTable(connection);
-        addMissingDataEvidence();
         extraProcessing(connection, featureMap);
     }
 
@@ -1065,7 +1064,7 @@ public class ChadoSequenceProcessor extends ChadoProcessor
         throws SQLException, ObjectStoreException {
         ResultSet res = getPubResultSet(connection);
 
-        List<String> currentEvidenceIds = new ArrayList<String>();
+        List<String> currentPublicationIds = new ArrayList<String>();
         Integer lastPubFeatureId = null;
         int featureWarnings = 0;
         int count = 0;
@@ -1086,19 +1085,17 @@ public class ChadoSequenceProcessor extends ChadoProcessor
             }
             Integer pubMedId = Integer.parseInt(res.getString("pub_db_identifier"));
             if (lastPubFeatureId != null && !featureId.equals(lastPubFeatureId)) {
-                makeFeaturePublications(lastPubFeatureId, currentEvidenceIds);
-                makeFeatureEvidence(lastPubFeatureId, currentEvidenceIds);
-                currentEvidenceIds = new ArrayList<String>();
+                makeFeaturePublications(lastPubFeatureId, currentPublicationIds);
+                currentPublicationIds = new ArrayList<String>();
             }
             String publicationId = makePublication(pubMedId);
-            currentEvidenceIds.add(publicationId);
+            currentPublicationIds.add(publicationId);
             lastPubFeatureId = featureId;
             count++;
         }
 
         if (lastPubFeatureId != null) {
-            makeFeaturePublications(lastPubFeatureId, currentEvidenceIds);
-            makeFeatureEvidence(lastPubFeatureId, currentEvidenceIds);
+            makeFeaturePublications(lastPubFeatureId, currentPublicationIds);
         }
         LOG.info("Created " + count + " publications");
         res.close();
@@ -1166,22 +1163,6 @@ public class ChadoSequenceProcessor extends ChadoProcessor
         getChadoDBConverter().store(referenceList, fdat.intermineObjectId);
 
         fdat.flags |= FeatureData.EVIDENCE_CREATED;
-    }
-
-    /**
-     * For those features in the features Map that don't yet have a evidence collection, create one
-     * containing the DataSet.  We know if a feature doesn't have an evidence collection if it
-     * doesn't have it's EVIDENCE_CREATED flag set.
-     */
-    private void addMissingDataEvidence() throws ObjectStoreException {
-        List<String> emptyList = Collections.emptyList();
-        for (Map.Entry<Integer, FeatureData> entry: featureMap.entrySet()) {
-            Integer featureId = entry.getKey();
-            FeatureData featureData = entry.getValue();
-            if ((featureData.flags & FeatureData.EVIDENCE_CREATED) == 0) {
-                makeFeatureEvidence(featureId, emptyList);
-            }
-        }
     }
 
     /**
