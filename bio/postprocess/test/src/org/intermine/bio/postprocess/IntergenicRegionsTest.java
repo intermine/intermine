@@ -151,7 +151,7 @@ public class IntergenicRegionsTest extends TestCase
                 assertNotNull(ir.getOrganism());
                 assertNotNull(ir.getLength());
                 assertTrue(ir.getLength().intValue() > 0);
-                assertEquals(1, ir.getEvidence().size());
+                assertEquals(1, ir.getDataSets().size());
 
                 Location loc = ir.getChromosomeLocation();
                 assertNotNull(loc);
@@ -161,7 +161,7 @@ public class IntergenicRegionsTest extends TestCase
                 assertNotNull(loc.getPhase());
                 assertNotNull(loc.getStartIsPartial());
                 assertNotNull(loc.getEndIsPartial());
-                assertEquals(1, loc.getEvidence().size());
+                assertEquals(1, loc.getDataSets().size());
 
                 int locStart = loc.getStart().intValue();
                 if (locStart > 0) {
