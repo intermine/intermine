@@ -71,8 +71,6 @@ public class ChadoSequenceProcessor extends ChadoProcessor
 
     private static final List<String> PARTOF_RELATIONS = Arrays.asList("partof", "part_of");
 
-    private static final List<Item> EMPTY_ITEM_LIST = Collections.emptyList();
-
     // feature type to query from the feature table
     private static final List<String> DEFAULT_FEATURES = Arrays.asList(
             "gene", "mRNA", "transcript",
@@ -129,7 +127,7 @@ public class ChadoSequenceProcessor extends ChadoProcessor
      * {@inheritDoc}
      */
     @Override
-    
+
     public void process(Connection connection) throws Exception {
         createFeatureTempTable(connection);
         earlyExtraProcessing(connection);
@@ -288,7 +286,7 @@ public class ChadoSequenceProcessor extends ChadoProcessor
             uniqueNameSet = true;
         }
         Item uniqueNameSynonym =
-            createSynonym(fdat, "identifier", uniqueName, uniqueNameSet, EMPTY_ITEM_LIST);
+            createSynonym(fdat, "identifier", uniqueName, uniqueNameSet, null);
         getChadoDBConverter().store(uniqueNameSynonym);
 
         if (name != null) {
@@ -317,7 +315,7 @@ public class ChadoSequenceProcessor extends ChadoProcessor
                         nameSet = true;
                     }
                     Item nameSynonym =
-                        createSynonym(fdat, "name", fixedName, nameSet, EMPTY_ITEM_LIST);
+                        createSynonym(fdat, "name", fixedName, nameSet, null);
                     getChadoDBConverter().store(nameSynonym);
                 }
             }
@@ -886,7 +884,7 @@ public class ChadoSequenceProcessor extends ChadoProcessor
                                 isPrimary = true;
                             }
                             Item synonym = createSynonym(fdat, "identifier", newFieldValue,
-                                                         isPrimary, EMPTY_ITEM_LIST);
+                                                         isPrimary, null);
                             getChadoDBConverter().store(synonym);
                             count++;
                         }
@@ -959,7 +957,7 @@ public class ChadoSequenceProcessor extends ChadoProcessor
                                 isPrimary = true;
                             }
                             Item synonym = createSynonym(fdat, synonymType, newFieldValue,
-                                                         isPrimary, EMPTY_ITEM_LIST);
+                                                         isPrimary, null);
                             getChadoDBConverter().store(synonym);
                             count++;
                         }
@@ -1037,7 +1035,7 @@ public class ChadoSequenceProcessor extends ChadoProcessor
                         } else {
                             Item synonym =
                                 createSynonym(fdat, synonymTypeName, newFieldValue, setField,
-                                              EMPTY_ITEM_LIST);
+                                              null);
                             getChadoDBConverter().store(synonym);
                             count++;
                         }
@@ -1458,7 +1456,9 @@ public class ChadoSequenceProcessor extends ChadoProcessor
                                                + fdat.existingSynonyms);
         }
         List<Item> allEvidence = new ArrayList<Item>();
-        allEvidence.addAll(otherEvidence);
+        if (otherEvidence != null) {
+            allEvidence.addAll(otherEvidence);
+        }
         Item returnItem = getChadoDBConverter().createSynonym(fdat.itemIdentifier, type,
                                                               identifier, isPrimary,
                                                               allEvidence);
