@@ -10,11 +10,6 @@ package org.intermine.bio.dataconversion;
  *
  */
 
-import java.sql.Connection;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.sql.Statement;
-import java.util.Arrays;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
@@ -24,6 +19,11 @@ import org.intermine.objectstore.ObjectStoreException;
 import org.intermine.sql.Database;
 import org.intermine.xml.full.Item;
 import org.intermine.xml.full.ItemHelper;
+
+import java.sql.Connection;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.sql.Statement;
 
 /**
  * DataConverter to read from AnoEST's MySQL database into items
@@ -80,7 +80,6 @@ public class AnoESTConverter extends BioDBConverter
             Item dataSet = getDataSetItem(ANOPHELES_TAXON_ID);
             cluster.setAttribute("curated", "false");
             cluster.setReference("organism", getOrganismItem(ANOPHELES_TAXON_ID));
-            cluster.addToCollection("evidence", dataSet);
             getItemWriter().store(ItemHelper.convert(cluster));
 
             Item synonym =
@@ -134,7 +133,7 @@ public class AnoESTConverter extends BioDBConverter
 
                 est.setAttribute("curated", "false");
                 est.setReference("organism", getOrganismItem(ANOPHELES_TAXON_ID));
-                est.addToCollection("evidence", dataSet);
+                est.addToCollection("dataSets", dataSet);
 
                 cloneIds.put(accession, cloneId);
             }
@@ -145,15 +144,16 @@ public class AnoESTConverter extends BioDBConverter
             }
         }
 
+
         for (Map.Entry<String, Item> entry: ests.entrySet()) {
             String accession = entry.getKey();
             Item est = entry.getValue();
             store(est);
-            Item synonym = createSynonym(est.getIdentifier(), "identifier", accession, true,
-                                         Arrays.asList(dataSet));
+
+            Item synonym = createSynonym(est.getIdentifier(), "identifier", accession, true, null);
             store(synonym);
             Item synonym2 = createSynonym(est.getIdentifier(), "identifier",
-                                         cloneIds.get(accession), false, Arrays.asList(dataSet));
+                                          cloneIds.get(accession), false, null);
             store(synonym2);
         }
     }
