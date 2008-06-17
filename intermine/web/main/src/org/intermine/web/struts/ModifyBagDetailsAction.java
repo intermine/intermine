@@ -75,16 +75,27 @@ public class ModifyBagDetailsAction extends InterMineAction
 
         if (request.getParameter("removeFromBag") != null) {
             PagedTable pc = SessionMethods.getResultsTable(session, bagIdentifier);
-            pc.removeFromBag(mbdf.getBagName(), profile, os, session);
-            SessionMethods.recordMessage("You have removed items from your list.", session);
+            String msg = "";
+            int n = imBag.getSize();
+            if (pc.isAllSelected()) {
+                // TODO these messages need to be moved to properties file
+                msg = "You can't remove all items from your list.  Try deleting your list instead.";
+            } else {
+                pc.removeFromBag(mbdf.getBagName(), profile, os, session);
+                int removed = n - imBag.size();
+                msg = "You have removed " + removed + " items from your list.";
+            }
+            SessionMethods.recordMessage(msg, session);
         } else if (request.getParameter("addToBag") != null) {
                 PagedTable pc = SessionMethods.getResultsTable(session, bagIdentifier);
                 InterMineBag newBag = BagHelper.getBag(profile, globalRepository,
                                                        mbdf.getExistingBagName());
+                int size = pc.getCurrentSelectedIdStringsList().size();
                 pc.addSelectedToBag(os, newBag);
-                SessionMethods.recordMessage("You have added items from your list to another list.",
-                                             session);
-            // orthologues form
+                String msg = "You have added " + size + " items from list <strong>"
+                + imBag.getName() + "</strong> to list <strong>" + newBag.getName() + "</strong>";
+                SessionMethods.recordMessage(msg, session);
+        // orthologues form
         } else if (request.getParameter("convertToThing") != null) {
             BagQueryConfig bagQueryConfig =
                 (BagQueryConfig) servletContext.getAttribute(Constants.BAG_QUERY_CONFIG);
@@ -110,17 +121,15 @@ public class ModifyBagDetailsAction extends InterMineAction
                     .addParameter("trail", trail).forward();
                 }
             }
-            // "use in bag" link
+        // "use in bag" link
         } else if (request.getParameter("useBag") != null) {
             PagedTable pc = SessionMethods.getResultsTable(session, bagIdentifier);
             PathQuery pathQuery = pc.getWebTable().getPathQuery().clone();
-
             session.setAttribute(Constants.QUERY, pathQuery);
             session.setAttribute("path", imBag.getType());
             session.setAttribute("prefix", imBag.getType());
-            ActionMessage actionMessage =
-                new ActionMessage("You can now create a query using your list.");
-            recordError(actionMessage, request);
+            String msg = "You can now create a query using your list " + imBag.getName();
+            SessionMethods.recordMessage(msg, session);
             return mapping.findForward("query");
         // convert links
         } else if (request.getParameter("convert") != null

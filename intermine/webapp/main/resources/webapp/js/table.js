@@ -204,6 +204,11 @@ function setToolbarAvailability(status) {
                 $('addToBag').disabled = status;
             }
     }
+    if($('removeFromBag')){
+            with($('removeFromBag')) {
+                $('removeFromBag').disabled = status;
+            }
+    }
 }
 
 function onSaveBagEnter(formName) {

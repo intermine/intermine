@@ -85,7 +85,7 @@
                    title="${summaryTitle}"><img src="images/summary_maths.png" title="${summaryTitle}"/></a>
               </c:if>
             </td>
-           <%-- sort img --%>
+             <%-- sort img --%>
              <c:if test="${not empty sortOrderMap[column.name] && empty bag}">
                <td>
                   <img border="0"
