@@ -2,7 +2,7 @@
 
 # The following environment variables need to be set
 # INTERMINE: location of local InterMine installation
-# FLYMINE: location of local InterMine installation
+# FLYMINE: location of local FlyMine installation
 
 cd $INTERMINE
 
