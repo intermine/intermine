@@ -123,7 +123,7 @@ public class FlyRegGFF3RecordHandler extends GFF3RecordHandler
             addItem(pubmedItem);
         }
 
-        addEvidence(pubmedItem);
+        addPublication(pubmedItem);
 
         String factorGeneName = record.getAttributes().get("Factor").get(0);
 

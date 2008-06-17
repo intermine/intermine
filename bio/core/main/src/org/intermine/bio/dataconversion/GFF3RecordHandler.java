@@ -47,7 +47,8 @@ public class GFF3RecordHandler
     private ItemFactory itemFactory;
     private Item organism;
     private ReferenceList evidenceReferenceList = new ReferenceList("evidence");
-
+    private ReferenceList dataSetReferenceList = new ReferenceList("dataSets");
+    private ReferenceList publicationReferenceList = new ReferenceList("publications");
     protected Map tgtSeqs = new HashMap();
     private Item tgtOrganism;
     private Reference tgtOrgRef;
@@ -193,6 +194,53 @@ public class GFF3RecordHandler
      */
     public void clearEvidenceReferenceList() {
         evidenceReferenceList = new ReferenceList("evidence");
+    }
+
+    /**
+     * Add an DataSet Item to this handler, to be retrieved later with getDataSetReferenceList().
+     * @param dataSet the data set
+     */
+    public void addDataSet(Item dataSet) {
+        dataSetReferenceList.addRefId(dataSet.getIdentifier());
+    }
+
+    /**
+     * Return a ReferenceList containing the DataSet Items ids set by addDataSet()
+     * @return the ReferenceList
+     */
+    public ReferenceList getDataSetReferenceList() {
+        return dataSetReferenceList;
+    }
+
+    /**
+     * Reset the list of DataSet items.
+     */
+    public void clearDataSetReferenceList() {
+        dataSetReferenceList = new ReferenceList("dataSets");
+    }
+
+    /**
+     * Add an Publication Item to this handler, to be retrieved later with
+     * getPublicationReferenceList().
+     * @param publication the data set
+     */
+    public void addPublication(Item publication) {
+        publicationReferenceList.addRefId(publication.getIdentifier());
+    }
+
+    /**
+     * Return a ReferenceList containing the Publication Items ids set by addPublication()
+     * @return the ReferenceList
+     */
+    public ReferenceList getPublicationReferenceList() {
+        return publicationReferenceList;
+    }
+
+    /**
+     * Reset the list of Publication items.
+     */
+    public void clearPublicationReferenceList() {
+        publicationReferenceList = new ReferenceList("publications");
     }
 
     /**
