@@ -20,7 +20,7 @@ import org.intermine.objectstore.ObjectStoreException;
 import org.intermine.xml.full.Item;
 
 /**
- * BioFileConverter class
+ * A FileConverter that automatically sets the dataSets collection of objects as they are stored.
  *
  * @author Kim Rutherford
  */
