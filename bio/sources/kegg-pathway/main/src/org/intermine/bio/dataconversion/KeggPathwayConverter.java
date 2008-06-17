@@ -21,7 +21,6 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import org.apache.log4j.Logger;
-import org.intermine.dataconversion.FileConverter;
 import org.intermine.dataconversion.ItemWriter;
 import org.intermine.metadata.MetaDataException;
 import org.intermine.metadata.Model;
@@ -36,17 +35,15 @@ import org.intermine.xml.full.ReferenceList;
  *
  * @author Xavier Watkins
  */
-public class KeggPathwayConverter extends FileConverter
+public class KeggPathwayConverter extends BioFileConverter
 {
     protected static final Logger LOG = Logger.getLogger(KeggPathwayConverter.class);
-    
-    protected Item dataSource, dataSet;
     protected Map<String, String> keggOrganismToTaxonId = new HashMap<String, String>();
     protected HashMap pathwayMap = new HashMap();
     private Map<String, Item> geneItems = new HashMap<String, Item>();
     private String dataLocation;
     protected IdResolverFactory resolverFactory;
-    
+
     /**
      * Constructor
      * @param writer the ItemWriter used to handle the resultant items
@@ -56,7 +53,7 @@ public class KeggPathwayConverter extends FileConverter
      */
     public KeggPathwayConverter(ItemWriter writer, Model model)
         throws ObjectStoreException, MetaDataException {
-        super(writer, model);
+        super(writer, model, "Kyoto Encyclopedia of Genes and Genomes", "KEGG PATHWAY - dme");
 
         // Drosophila melanogaster
         keggOrganismToTaxonId.put("dme", "7227");
@@ -67,14 +64,6 @@ public class KeggPathwayConverter extends FileConverter
         // Apis mellifera
 //        keggOrganismToTaxonId.put("dame", "7460");
 
-        dataSource = createItem("DataSource");
-        dataSource.setAttribute("name", "Kyoto Encyclopedia of Genes and Genomes");
-        dataSet = createItem("DataSet");
-        dataSet.setAttribute("title", "KEGG PATHWAY - dme");
-        dataSet.setAttribute("url", "http://www.genome.jp/kegg/pathway.html");
-        store(dataSource);
-        store(dataSet);
-        
         // only construct factory here so can be replaced by mock factory in tests
         resolverFactory = new FlyBaseIdResolverFactory();
     }
@@ -95,7 +84,7 @@ public class KeggPathwayConverter extends FileConverter
         // Map Id | name
 
         File currentFile = getCurrentFile();
-        
+
         while (lineIter.hasNext()) {
             String[] line = (String[]) lineIter.next();
             Pattern filePattern = Pattern.compile("^(\\S+)_gene_map.*");
@@ -108,9 +97,6 @@ public class KeggPathwayConverter extends FileConverter
                 String mapName = line[1];
                 Item pathway = getAndStoreItemOnce("Pathway", "identifier", mapIdentifier);
                 pathway.setAttribute("name", mapName);
-                pathway.setCollection("evidence",
-                                      new ArrayList(Collections
-                                                    .singleton(dataSet.getIdentifier())));
                 store(pathway);
             } else if (matcher.find()) {
                 LOG.error("MATCHED");
@@ -142,7 +128,7 @@ public class KeggPathwayConverter extends FileConverter
     private Item getGene(String geneCG, String taxonId, ReferenceList referenceList) throws ObjectStoreException {
         String identifier = null;
         IdResolver resolver = resolverFactory.getIdResolver(false);
-        if (taxonId.equals("7227") && resolver != null) { 
+        if (taxonId.equals("7227") && resolver != null) {
             int resCount = resolver.countResolutions(taxonId, geneCG);
             if (resCount != 1) {
                 LOG.info("RESOLVER: failed to resolve gene to one identifier, ignoring gene: "
@@ -172,7 +158,7 @@ public class KeggPathwayConverter extends FileConverter
         }
         return gene;
     }
-    
+
     /**
      * Pick up the data location from the ant, the translator needs to open some more files.
      * @param srcdatadir location of the source data

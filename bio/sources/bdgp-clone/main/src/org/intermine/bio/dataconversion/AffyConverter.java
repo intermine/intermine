@@ -34,8 +34,6 @@ public class AffyConverter extends CDNACloneConverter
 {
     protected static final Logger LOG = Logger.getLogger(AffyConverter.class);
 
-    protected Item dataSource;
-    protected Item dataSet;
     protected Item organism;
     protected Map geneMap = new HashMap();
     protected Map probeMap = new HashMap();
@@ -51,15 +49,7 @@ public class AffyConverter extends CDNACloneConverter
      */
     public AffyConverter(ItemWriter writer, Model model)
         throws ObjectStoreException, MetaDataException {
-        super(writer, model);
-
-        dataSource = createItem("DataSource");
-        dataSource.setAttribute("name", "Affymetrix GeneChip");
-        store(dataSource);
-
-        dataSet = createItem("DataSet");
-        dataSet.setAttribute("title", "Affymetrix HG-U133A annotation data set");
-        store(dataSet);
+        super(writer, model, "Affymetrix GeneChip", "Affymetrix HG-U133A annotation data set");
 
         organism = createItem("Organism");
         organism.setAttribute("abbreviation", "HS");

@@ -13,7 +13,6 @@ package org.intermine.bio.dataconversion;
 import java.io.Reader;
 
 import org.apache.log4j.Logger;
-import org.intermine.dataconversion.FileConverter;
 import org.intermine.dataconversion.ItemWriter;
 import org.intermine.metadata.MetaDataException;
 import org.intermine.metadata.Model;
@@ -24,7 +23,7 @@ import org.intermine.xml.full.Item;
  * DataConverter to load flat file linking cdna clones to genes.
  * @author Wenyan Ji
  */
-public abstract class CDNACloneConverter extends FileConverter
+public abstract class CDNACloneConverter extends BioFileConverter
 {
     protected static final Logger LOG = Logger.getLogger(CDNACloneConverter.class);
 
@@ -38,11 +37,14 @@ public abstract class CDNACloneConverter extends FileConverter
      * @param model the Model
      * @throws ObjectStoreException if an error occurs in storing
      * @throws MetaDataException if cannot generate model
+     * @param dataSourceName the DataSource name
+     * @param dataSetTitle the DataSet title
      */
-    public CDNACloneConverter(ItemWriter writer, Model model)
+    public CDNACloneConverter(ItemWriter writer, Model model,
+                              String dataSourceName, String dataSetTitle)
         throws ObjectStoreException,
                MetaDataException {
-        super(writer, model);
+        super(writer, model, dataSourceName, dataSetTitle);
     }
 
 

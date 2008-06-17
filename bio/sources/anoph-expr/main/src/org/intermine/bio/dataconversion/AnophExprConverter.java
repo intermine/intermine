@@ -15,7 +15,6 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.intermine.dataconversion.FileConverter;
 import org.intermine.dataconversion.ItemWriter;
 import org.intermine.metadata.Model;
 import org.intermine.objectstore.ObjectStoreException;
@@ -38,7 +37,7 @@ import org.apache.log4j.Logger;
  *
  * @author Julie Sullivan
  */
-public class AnophExprConverter extends FileConverter
+public class AnophExprConverter extends BioFileConverter
 {
     private static final Logger LOG = Logger.getLogger(AnophExprConverter.class);
     private Map<String, String> reporterToGene = new HashMap<String, String>();
@@ -46,7 +45,6 @@ public class AnophExprConverter extends FileConverter
     private Map<String, Item> assays = new HashMap<String, Item>();
     private static final String TYPE = "Geometric mean of ratios";
     Item org;
-    private Item dataSet;
     private Item pub;
     private Item experiment;
     protected File geneFile;
@@ -59,15 +57,11 @@ public class AnophExprConverter extends FileConverter
      * @throws ObjectStoreException if an error occurs in storing
      */
     public AnophExprConverter(ItemWriter writer, Model model) throws ObjectStoreException {
-        super(writer, model);
+        super(writer, model, null, "Anoph-Expr data set");
 
         org = createItem("Organism");
         org.addAttribute(new Attribute("taxonId", "180454"));
         store(org);
-
-        dataSet = createItem("DataSet");
-        dataSet.addAttribute(new Attribute("title", "Anoph-Expr data set"));
-        store(dataSet);
 
         pub = createItem("Publication");
         pub.addAttribute(new Attribute("pubMedId", "17563388"));
@@ -208,14 +202,9 @@ public class AnophExprConverter extends FileConverter
                 Item material = createItem("ProbeSet");
                 material.setAttribute("name", probe);
                 material.setAttribute("primaryIdentifier", probe);
-                material.setReference("organism", org.getIdentifier());                
+                material.setReference("organism", org.getIdentifier());
                 material.setCollection("genes",
                                        new ArrayList(Collections.singleton(gene.getIdentifier())));
-                
-                ReferenceList evidence = new ReferenceList("evidence",
-                                                             new ArrayList<String>());
-                evidence.addRefId(dataSet.getIdentifier());
-                material.addCollection(evidence);
 
                 int index = 1;
                 for (int i = 0; i < lineBits.length; i++) {

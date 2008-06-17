@@ -18,7 +18,6 @@ import java.util.Iterator;
 import java.util.Map;
 
 import org.apache.commons.lang.StringUtils;
-import org.intermine.dataconversion.FileConverter;
 import org.intermine.dataconversion.ItemWriter;
 import org.intermine.metadata.Model;
 import org.intermine.objectstore.ObjectStoreException;
@@ -31,11 +30,11 @@ import org.intermine.xml.full.Item;
  * @author Andrew Varley
  * @author Kim Rutherford
  */
-public class RNAiConverter extends FileConverter
+public class RNAiConverter extends BioFileConverter
 {
     private Map geneMap = new HashMap(), screenMap = new HashMap(),
         pubMap = new HashMap(), phenotypeMap = new HashMap();
-    private Item dataSource, dataSet, org, ontology;
+    private Item org, ontology;
 
     /**
      * Constructor
@@ -44,16 +43,7 @@ public class RNAiConverter extends FileConverter
      * @throws ObjectStoreException of problem reading/writing data
      */
     public RNAiConverter(ItemWriter writer, Model model) throws ObjectStoreException {
-        super(writer, model);
-
-        dataSource = createItem("DataSource");
-        dataSource.setAttribute("name", "WormBase");
-        store(dataSource);
-
-        dataSet = createItem("DataSet");
-        dataSet.setAttribute("title", "WormBase RNAi Phenotype");
-        dataSet.setReference("dataSource", dataSource.getIdentifier());
-        store(dataSet);
+        super(writer, model, "WormBase", "WormBase RNAi Phenotype");
 
         org = createItem("Organism");
         org.setAttribute("taxonId", "6239");
@@ -127,7 +117,6 @@ public class RNAiConverter extends FileConverter
             synonym.setAttribute("value", primaryIdentifier);
             synonym.setAttribute("type", "identifier");
             synonym.setReference("subject", gene.getIdentifier());
-            synonym.setReference("source", dataSource.getIdentifier());
 
             store(gene);
             store(synonym);

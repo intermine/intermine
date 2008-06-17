@@ -18,7 +18,6 @@ import java.util.Map;
 import java.util.Stack;
 
 import org.apache.log4j.Logger;
-import org.intermine.dataconversion.FileConverter;
 import org.intermine.dataconversion.ItemWriter;
 import org.intermine.metadata.Model;
 import org.intermine.objectstore.ObjectStoreException;
@@ -38,7 +37,7 @@ import org.xml.sax.helpers.DefaultHandler;
  * DataConverter to parse UniProt data into items
  * @author Richard Smith
  */
-public class ChadoXmlConverter extends FileConverter
+public class ChadoXmlConverter extends BioFileConverter
 {
     protected static final String GENOMIC_NS = "http://www.flymine.org/model/genomic#";
     protected static final String PROP_FILE = "uniprot_config.properties";
@@ -51,7 +50,8 @@ public class ChadoXmlConverter extends FileConverter
      * @param model the Model
      */
     public ChadoXmlConverter(ItemWriter writer, Model model) {
-        super(writer, model);
+        // XXX FIXME TODO - pass in the right data set title / source name
+        super(writer, model, null, null);
     }
 
 

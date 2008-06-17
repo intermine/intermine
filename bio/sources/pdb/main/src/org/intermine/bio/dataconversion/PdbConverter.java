@@ -20,7 +20,6 @@ import java.util.List;
 import org.apache.log4j.Logger;
 import org.biojava.bio.structure.Structure;
 import org.biojava.bio.structure.io.PDBFileParser;
-import org.intermine.dataconversion.FileConverter;
 import org.intermine.dataconversion.ItemWriter;
 import org.intermine.metadata.Model;
 import org.intermine.objectstore.ObjectStoreException;
@@ -30,12 +29,11 @@ import org.intermine.xml.full.Item;
  * @author Xavier Watkins
  *
  */
-public class PdbConverter extends FileConverter
+public class PdbConverter extends BioFileConverter
 {
 
     private static final Logger LOG = Logger.getLogger(PdbConverter.class);
     protected static final String ENDL = System.getProperty("line.separator");
-    private Item dataSource, dataSet;
 
     /**
      * Create a new PdbConverter object.
@@ -44,13 +42,7 @@ public class PdbConverter extends FileConverter
      * @throws ObjectStoreException if there is a problem while storing
      */
     public PdbConverter(ItemWriter writer, Model model) throws ObjectStoreException {
-        super(writer, model);
-        dataSource = createItem("DataSource");
-        dataSource.setAttribute("name", "The RCSB Protein Data Bank (PDB)");
-        dataSet = createItem("DataSet");
-        dataSet.setAttribute("title", "PDB data - dmel");
-        dataSet.setAttribute("url", "http://www.rcsb.org/pdb/");
-        store(dataSet);
+        super(writer, model, "The RCSB Protein Data Bank (PDB)", "PDB data - dmel");
     }
 
     /**
@@ -99,7 +91,6 @@ public class PdbConverter extends FileConverter
 
             proteinStructure.setAttribute("atm", atm);
             proteinStructure.setCollection("proteins", proteins);
-            proteinStructure.addToCollection("evidence", dataSet);
 
             store(proteinStructure);
         }

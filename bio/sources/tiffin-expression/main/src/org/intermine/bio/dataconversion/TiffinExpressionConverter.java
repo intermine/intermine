@@ -15,7 +15,6 @@ import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import org.intermine.dataconversion.FileConverter;
 import org.intermine.dataconversion.ItemWriter;
 import org.intermine.metadata.Model;
 import org.intermine.objectstore.ObjectStoreException;
@@ -31,7 +30,7 @@ import org.apache.log4j.Logger;
  * DataConverter to parse Tiffin expression data file into Items.
  * @author Kim Rutherford
  */
-public class TiffinExpressionConverter extends FileConverter
+public class TiffinExpressionConverter extends BioFileConverter
 {
     protected static final Logger LOG = Logger.getLogger(TiffinExpressionConverter.class);
 
@@ -48,7 +47,7 @@ public class TiffinExpressionConverter extends FileConverter
      * @throws ObjectStoreException if an error occurs in storing
      */
     public TiffinExpressionConverter(ItemWriter writer, Model model) throws ObjectStoreException {
-        super(writer, model);
+        super(writer, model, "Sanger", "Tiffin");
 
         orgDrosophila = createItem("Organism");
         orgDrosophila.addAttribute(new Attribute("taxonId", "7227"));

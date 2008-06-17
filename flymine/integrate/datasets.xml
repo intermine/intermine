@@ -372,6 +372,66 @@
         <reference name="dataSource" ref_id="340"/>
     </item>
     
-    
-</items>
+    <item id="480" class="" implements="http://www.flymine.org/model/genomic#DataSource">
+        <attribute name="name" value="fly-FISH"/>
+        <attribute name="description" value=""/>
+        <attribute name="url" value="http://fly-fish.ccbr.utoronto.ca"/>
+    </item>
+    <item id="481" class="" implements="http://www.flymine.org/model/genomic#DataSet">
+        <attribute name="title" value="fly-Fish data set"/>
+        <attribute name="description"
+                   value="fly-Fish data set of Drosophila embryo mRNA localization patterns"/>
+        <attribute name="url" 
+                   value="http://fly-fish.ccbr.utoronto.ca"/>
+        <reference name="dataSource" ref_id="480"/>
+    </item>
 
+    <item id="491" class="" implements="http://www.flymine.org/model/genomic#DataSet">
+        <attribute name="title" value="KEGG PATHWAY - dme"/>
+        <attribute name="url" 
+                   value="http://www.genome.jp/kegg/pathway.html"/>
+        <reference name="dataSource" ref_id="480"/>
+    </item>
+
+    <item id="500" class="" implements="http://www.flymine.org/model/genomic#DataSource">
+        <attribute name="name" value="Proceedings of the National Academy of Sciences USA"/>
+        <attribute name="description" value=""/>
+        <attribute name="url" value="http://www.pnas.org"/>
+    </item>
+    <item id="501" class="" implements="http://www.flymine.org/model/genomic#DataSet">
+        <attribute name="title" value="Rossi et al, 2005 MAGE data set"/>
+        <attribute name="description"
+                   value="Rossi et al, 2005: Compare blood stem cells from young vs old mice"/>
+        <attribute name="url" 
+                   value="http://www.pnas.org/content/vol0/issue2005/images/data/0503280102/DC1/03280Table4.xls"/>
+        <reference name="dataSource" ref_id="500"/>
+    </item>
+
+    <item id="510" class="" implements="http://www.flymine.org/model/genomic#DataSource">
+        <attribute name="name" 
+                   value="The Weatherall Institute of Molecular Medicine, Oxford University"/>
+        <attribute name="url" value="http://www.imm.ox.ac.uk/"/>
+    </item>
+    <item id="511" class="" implements="http://www.flymine.org/model/genomic#DataSet">
+        <attribute name="title" value="FDCP"/>
+        <attribute name="description"
+                   value="Molecular Signatures of Self-Renewal, Differentiation,  and Lineage Choice in Multipotential Hemopoietic Progenitor Cells In Vitro"/>
+        <attribute name="url" 
+                   value="http://www.imm.ox.ac.uk/pages/research/molecular_haematology/tariq.htm"/>
+        <reference name="dataSource" ref_id="510"/>
+    </item>
+
+    <item id="520" class="" implements="http://www.flymine.org/model/genomic#DataSource">
+        <attribute name="name" value="PDB"/>
+        <attribute name="description"
+                   value="The RCSB Protein Data Bank (PDB)"/>
+        <attribute name="url" value="http://www.rcsb.org/pdb/"/>
+    </item>
+    <item id="521" class="" implements="http://www.flymine.org/model/genomic#DataSet">
+        <attribute name="title" value="PDB dmel data set"/>
+        <attribute name="description"
+                   value="PDB data for Drosophila melanogaster"/>
+        <attribute name="url" value="http://www.rcsb.org/pdb/"/>
+        <reference name="dataSource" ref_id="520"/>
+    </item>
+</items>

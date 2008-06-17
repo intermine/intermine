@@ -75,6 +75,10 @@ public class DataSetStoreHook implements DataConverterStoreHook
             item.setReference("dataSource", dataSourceId);
         }
 
+        if (item.canHaveReference("dataSet") && !item.hasReference("dataSet")) {
+            item.setReference("dataSet", dataSetId);
+        }
+
         if (item.canHaveCollection("dataSets")) {
             item.addToCollection("dataSets", dataSetId);
         }

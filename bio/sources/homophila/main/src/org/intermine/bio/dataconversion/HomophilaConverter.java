@@ -20,7 +20,6 @@ import java.util.Map;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
-import org.intermine.dataconversion.FileConverter;
 import org.intermine.dataconversion.ItemWriter;
 import org.intermine.metadata.Model;
 import org.intermine.objectstore.ObjectStoreException;
@@ -33,7 +32,7 @@ import org.intermine.xml.full.Reference;
  *
  * @author Thomas Riley
  */
-public class HomophilaConverter extends FileConverter
+public class HomophilaConverter extends BioFileConverter
 {
     private static final Logger LOG = Logger.getLogger(HomophilaConverter.class);
 
@@ -57,7 +56,6 @@ public class HomophilaConverter extends FileConverter
     /* Singleton items. */
     protected Item orgHuman;
     protected Item orgDrosophila;
-    protected Item homophilaDb;
     protected Item pub1, pub2;
 
     protected File diseaseFile;
@@ -71,7 +69,7 @@ public class HomophilaConverter extends FileConverter
      * @throws ObjectStoreException if an error occurs in storing
      */
     public HomophilaConverter(ItemWriter writer, Model model) throws ObjectStoreException {
-        super(writer, model);
+        super(writer, model, null, "Homophila data set");
 
         orgHuman = createItem("Organism");
         orgHuman.addAttribute(new Attribute("taxonId", "9606"));
@@ -80,10 +78,6 @@ public class HomophilaConverter extends FileConverter
         orgDrosophila = createItem("Organism");
         orgDrosophila.addAttribute(new Attribute("taxonId", "7227"));
         store(orgDrosophila);
-
-        homophilaDb = createItem("DataSet");
-        homophilaDb.addAttribute(new Attribute("title", "Homophila data set"));
-        store(homophilaDb);
 
         pub1 = createItem("Publication");
         pub1.addAttribute(new Attribute("pubMedId", "11381037"));
@@ -233,7 +227,6 @@ public class HomophilaConverter extends FileConverter
         item.addReference(new Reference("subject", findProtein(array).getIdentifier()));
         item.addReference(new Reference("object", findTranslation(array).getIdentifier()));
         item.addAttribute(new Attribute("EValue", array[E_VALUE]));
-        item.addToCollection("evidence", homophilaDb);
         store(item);
         matchCount++;
         return item;
@@ -252,7 +245,6 @@ public class HomophilaConverter extends FileConverter
             translation = createItem("Translation");
             translation.addAttribute(new Attribute("secondaryIdentifier", array[TRANSLATION_ID]));
             translation.addReference(new Reference("organism", orgDrosophila.getIdentifier()));
-            translation.addToCollection("evidence", homophilaDb);
             translations.put(array[TRANSLATION_ID], translation);
             store(translation);
         }
@@ -302,7 +294,6 @@ public class HomophilaConverter extends FileConverter
             gene.addAttribute(new Attribute("symbol", geneId));
             gene.addReference(new Reference("organism", orgHuman.getIdentifier()));
             gene.addToCollection("omimDiseases", findDisease(array));
-            gene.addToCollection("evidence", homophilaDb);
             store(gene);
             newAnnotation(gene, findDisease(array));
         }
@@ -322,9 +313,8 @@ public class HomophilaConverter extends FileConverter
         Item annotation = createItem("Annotation");
         annotation.addReference(new Reference("subject", gene.getIdentifier()));
         annotation.addReference(new Reference("property", disease.getIdentifier()));
-        annotation.addToCollection("evidence", homophilaDb);
-        annotation.addToCollection("evidence", pub1);
-        annotation.addToCollection("evidence", pub2);
+        annotation.addToCollection("publications", pub1);
+        annotation.addToCollection("publications", pub2);
         store(annotation);
         annotationCount++;
         return annotation;
@@ -343,7 +333,6 @@ public class HomophilaConverter extends FileConverter
             disease = createItem("Disease");
             diseases.put(array[OMIM_ID], disease);
             disease.addAttribute(new Attribute("omimId", array[OMIM_ID]));
-            disease.addToCollection("evidence", homophilaDb);
             String desc = diseaseDescriptions.get(array[OMIM_ID]);
             if (desc == null) {
                 LOG.error("no disease description for OMIM " + array[OMIM_ID]);

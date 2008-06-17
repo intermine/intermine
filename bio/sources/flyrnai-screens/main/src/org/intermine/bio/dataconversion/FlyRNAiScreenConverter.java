@@ -22,7 +22,6 @@ import java.util.Set;
 
 import org.apache.log4j.Logger;
 import org.apache.tools.ant.BuildException;
-import org.intermine.dataconversion.FileConverter;
 import org.intermine.dataconversion.ItemWriter;
 import org.intermine.metadata.Model;
 import org.intermine.objectstore.ObjectStoreException;
@@ -36,9 +35,9 @@ import org.intermine.xml.full.ReferenceList;
  * @author Kim Rutherford
  * @author Richard Smith
  */
-public class FlyRNAiScreenConverter extends FileConverter
+public class FlyRNAiScreenConverter extends BioFileConverter
 {
-    protected Item dataSource, organism, hfaSource;
+    protected Item organism, hfaSource;
 
     private Map<String, Item> genes = new HashMap<String, Item>();
     private Map<String, Item> publications = new HashMap<String, Item>();
@@ -49,7 +48,6 @@ public class FlyRNAiScreenConverter extends FileConverter
     private String fileName;
     private Set<String> hitScreenNames = new HashSet<String>();
     private Set<String> detailsScreenNames = new HashSet<String>();
-    private Item dataSet;
     protected IdResolverFactory resolverFactory;
 
     protected static final Logger LOG = Logger.getLogger(FlyRNAiScreenConverter.class);
@@ -59,7 +57,7 @@ public class FlyRNAiScreenConverter extends FileConverter
      * @param model the Model
      */
     public FlyRNAiScreenConverter(ItemWriter writer, Model model) {
-        super(writer, model);
+        super(writer, model, "Drosophila RNAi Screening Center", "DRSC RNAi data set");
 
         // only construct factory here so can be replaced by mock factory in tests
         resolverFactory = new FlyBaseIdResolverFactory();
@@ -68,25 +66,13 @@ public class FlyRNAiScreenConverter extends FileConverter
     /**
      * {@inheritDoc}
      */
+    @Override
     public void process(Reader reader) throws Exception {
         // set up common items
         if (organism == null) {
             organism = createItem("Organism");
             organism.setAttribute("taxonId", TAXON_ID);
             store(organism);
-        }
-
-        if (dataSource == null) {
-            dataSource = createItem("DataSource");
-            dataSource.setAttribute("name", "Drosophila RNAi Screening Center");
-            store(dataSource);
-        }
-
-        if (dataSet == null) {
-            dataSet = createItem("DataSet");
-            dataSet.setAttribute("title", "DRSC RNAi data set");
-            dataSet.setReference("dataSource", dataSource);
-            store(dataSet);
         }
 
         fileName = getCurrentFile().getName();
@@ -101,6 +87,7 @@ public class FlyRNAiScreenConverter extends FileConverter
      * Check that we have seen the same screen names in the hits and details files.
      * {@inheritDoc}
      */
+    @Override
     public void close() throws Exception {
 
         for (Item screen : screenMap.values()) {
@@ -182,11 +169,8 @@ public class FlyRNAiScreenConverter extends FileConverter
                 Item amplicon = createItem("Amplicon");
                 amplicon.setAttribute("primaryIdentifier", ampliconIdentifier);
                 amplicon.setReference("organism", organism);
-                amplicon.addToCollection("evidence", dataSet);
                 amplicon.addCollection(new ReferenceList("rnaiScreenHits",
                                                          new ArrayList<String>()));
-
-                newSynonym(ampliconIdentifier, amplicon, dataSource);
 
                 // the amplicon may target zero or more genes, a gene can be targeted
                 // by more than one amplicon.

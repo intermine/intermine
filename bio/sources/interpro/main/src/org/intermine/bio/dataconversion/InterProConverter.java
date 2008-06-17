@@ -338,7 +338,7 @@ public class InterProConverter extends FileConverter
 
             synonyms = new HashMap();
 
-            ReferenceList evidenceColl = new ReferenceList("evidence", new ArrayList());
+            ReferenceList evidenceColl = new ReferenceList("dataSets", new ArrayList());
             proteinDomain.addCollection(evidenceColl);
             evidenceColl.addRefId(dataset.getIdentifier());
 

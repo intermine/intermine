@@ -27,7 +27,6 @@ import org.intermine.xml.full.ReferenceList;
 
 import java.io.Reader;
 
-//import org.apache.log4j.Logger;
 import org.xml.sax.Attributes;
 import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;

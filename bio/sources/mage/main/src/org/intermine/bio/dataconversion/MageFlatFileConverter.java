@@ -25,7 +25,6 @@ import org.intermine.objectstore.ObjectStoreException;
 import org.intermine.metadata.Model;
 import org.intermine.metadata.MetaDataException;
 import org.intermine.xml.full.Item;
-import org.intermine.dataconversion.FileConverter;
 import org.intermine.dataconversion.ItemWriter;
 import org.intermine.xml.full.ReferenceList;
 
@@ -36,13 +35,13 @@ import org.apache.log4j.Logger;
  * @author Wenyan Ji
  */
 
-public class MageFlatFileConverter extends FileConverter
+public class MageFlatFileConverter extends BioFileConverter
 {
     protected static final Logger LOG = Logger.getLogger(MageFlatFileConverter.class);
     private static final String PROBEPREFIX = "Affymetrix:CompositeSequence:Mouse430:";
 
     protected Map config = new HashMap();
-    protected Item dataSource, dataSet, organismMM, experiment;
+    protected Item organismMM, experiment;
     protected String expName = "E-SMDB-3450";
     private String propertiesFileName = "mage_config.properties";
 
@@ -56,7 +55,8 @@ public class MageFlatFileConverter extends FileConverter
      */
     public MageFlatFileConverter(ItemWriter writer, Model model)
         throws ObjectStoreException, MetaDataException, IOException {
-        super(writer, model);
+        super(writer, model, "Proceedings of the National Academy of Sciences USA",
+              "Rossi et al, 2005 MAGE data set");
 
         init(writer);
     }
@@ -72,29 +72,13 @@ public class MageFlatFileConverter extends FileConverter
      */
     protected MageFlatFileConverter(ItemWriter writer, Model model, String propertiesFileName)
         throws ObjectStoreException, MetaDataException, IOException {
-        super(writer, model);
+        this(writer, model);
         this.propertiesFileName = propertiesFileName;
-        init(writer);
     }
 
     private void init(ItemWriter writer) throws IOException, ObjectStoreException {
         readConfig();
         LOG.info("config " + config);
-
-        dataSource = createItem("DataSource");
-        dataSource.setAttribute("name", "Proceedings of the National Academy of Sciences USA");
-        dataSource.setAttribute("url", "http://www.pnas.org/");
-        store(dataSource);
-
-        dataSet = createItem("DataSet");
-        dataSet.setReference("dataSource", dataSource.getIdentifier());
-        dataSet.setAttribute("title", "E-SMDB-3450");
-        dataSet.setAttribute("description",
-                "Rossi et al, 2005: Compare blood stem cells from young vs old mice");
-
-        dataSet.setAttribute("url",
-        "http://www.pnas.org/content/vol0/issue2005/images/data/0503280102/DC1/03280Table4.xls");
-        store(dataSet);
 
         organismMM = createItem("Organism");
         organismMM.setAttribute("abbreviation", "MM");
@@ -145,8 +129,7 @@ public class MageFlatFileConverter extends FileConverter
             String foldChange = array[1];
 
             Item probe = createProbe("ProbeSet", PROBEPREFIX, probeId,
-                                     organismMM.getIdentifier(), dataSource.getIdentifier(),
-                                     dataSet.getIdentifier(), getItemWriter());
+                                     organismMM.getIdentifier(), getItemWriter());
             Item result = createItem("MicroArrayResult");
             result.setAttribute("type", "Fold Change");
             result.setAttribute("scale", "linear");
@@ -173,20 +156,17 @@ public class MageFlatFileConverter extends FileConverter
      * @throws exception if anything goes wrong when writing items to objectstore
      */
      private Item createProbe(String clsName, String probePre, String id, String orgId,
-                              String datasourceId, String datasetId, ItemWriter writer)
+                              ItemWriter writer)
         throws Exception {
         Item probe = createItem(clsName);
         probe.setAttribute("primaryIdentifier", probePre + id);
         probe.setAttribute("name", id);
         //probe.setAttribute("url", PROBEURL + id);
         probe.setReference("organism", orgId);
-        probe.addCollection(new ReferenceList("evidence",
-                            new ArrayList(Collections.singleton(datasetId))));
 
         Item synonym = createItem("Synonym");
         synonym.setAttribute("type", "identifier");
         synonym.setAttribute("value", PROBEPREFIX + id);
-        synonym.setReference("source", datasourceId);
         synonym.setReference("subject", probe.getIdentifier());
         store(synonym);
 

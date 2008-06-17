@@ -19,7 +19,6 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
 
-import org.intermine.dataconversion.FileConverter;
 import org.intermine.dataconversion.ItemWriter;
 import org.intermine.metadata.MetaDataException;
 import org.intermine.metadata.Model;
@@ -33,11 +32,11 @@ import org.intermine.xml.full.Item;
  *
  * @author Richard Smith
  */
-public class AnophelesIdentifiersConverter extends FileConverter
+public class AnophelesIdentifiersConverter extends BioFileConverter
 {
     protected static final String GENOMIC_NS = "http://www.flymine.org/model/genomic#";
 
-    protected Item dataSource, organism, dataSet;
+    protected Item organism;
     protected Set<String> seenEnsIds = new HashSet<String>();
 
     /**
@@ -49,16 +48,7 @@ public class AnophelesIdentifiersConverter extends FileConverter
      */
     public AnophelesIdentifiersConverter(ItemWriter writer, Model model)
         throws ObjectStoreException, MetaDataException {
-        super(writer, model);
-
-        dataSource = createItem("DataSource");
-        dataSource.setAttribute("name", "VectorBase");
-        store(dataSource);
-
-        dataSet = createItem("DataSet");
-        dataSet.setAttribute("title", "Anopheles genes");
-        dataSet.setReference("dataSource", dataSource);
-        store(dataSet);
+        super(writer, model, "VectorBase", "Anopheles genes");
 
         organism = createItem("Organism");
         organism.setAttribute("taxonId", "180454");
@@ -127,8 +117,6 @@ public class AnophelesIdentifiersConverter extends FileConverter
             }
 
             feature.setReference("organism", organism.getIdentifier());
-            feature.setCollection("evidence",
-                               new ArrayList(Collections.singleton(dataSet.getIdentifier())));
             store(feature);
             store(synonyms);
 
@@ -140,7 +128,6 @@ public class AnophelesIdentifiersConverter extends FileConverter
         Item synonym = createItem("Synonym");
         synonym.setAttribute("type", type);
         synonym.setAttribute("value", value);
-        synonym.setReference("source", dataSource.getIdentifier());
         synonym.setReference("subject", subject.getIdentifier());
         return synonym;
     }

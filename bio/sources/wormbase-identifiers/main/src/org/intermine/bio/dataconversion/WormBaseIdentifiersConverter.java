@@ -16,7 +16,6 @@ import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
 
-import org.intermine.dataconversion.FileConverter;
 import org.intermine.dataconversion.ItemWriter;
 import org.intermine.metadata.Model;
 import org.intermine.objectstore.ObjectStoreException;
@@ -29,9 +28,9 @@ import org.intermine.xml.full.Item;
  *
  * @author Richard Smith
  */
-public class WormBaseIdentifiersConverter extends FileConverter
+public class WormBaseIdentifiersConverter extends BioFileConverter
 {
-    protected Item dataSource, worm, dataSet;
+    protected Item worm;
 
     /**
      * Constructor
@@ -41,16 +40,7 @@ public class WormBaseIdentifiersConverter extends FileConverter
      */
     public WormBaseIdentifiersConverter(ItemWriter writer, Model model)
         throws ObjectStoreException {
-        super(writer, model);
-
-        dataSource = createItem("DataSource");
-        dataSource.setAttribute("name", "WormBase");
-        store(dataSource);
-
-        dataSet = createItem("DataSet");
-        dataSet.setAttribute("title", "WormBase genes");
-        dataSet.setReference("dataSource", dataSource);
-        store(dataSet);
+        super(writer, model, "WormBase", "WormBase genes");
 
         worm = createItem("Organism");
         worm.setAttribute("taxonId", "6239");
@@ -100,8 +90,7 @@ public class WormBaseIdentifiersConverter extends FileConverter
             }
 
             gene.setReference("organism", worm.getIdentifier());
-            gene.setCollection("evidence", new
-                               ArrayList<String>(Collections.singleton(dataSet.getIdentifier())));
+
             store(gene);
             store(synonyms);
 
@@ -112,7 +101,6 @@ public class WormBaseIdentifiersConverter extends FileConverter
         Item synonym = createItem("Synonym");
         synonym.setAttribute("type", type);
         synonym.setAttribute("value", value);
-        synonym.setReference("source", dataSource.getIdentifier());
         synonym.setReference("subject", subject.getIdentifier());
         return synonym;
     }
