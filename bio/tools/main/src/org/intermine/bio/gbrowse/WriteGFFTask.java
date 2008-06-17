@@ -197,15 +197,6 @@ public class WriteGFFTask extends Task
                 continue;
             }
 
-            // special case for stemcellmine
-            if (feature.getChromosome() == null) {
-                continue;
-            }
-
-            if (feature.getChromosome().getPrimaryIdentifier() == null) {
-                continue;
-            }
-
             if (currentChrId == null || !currentChrId.equals(resultChrId)) {
                 if (currentChrId != null) {
                     writeTranscriptsAndExons(gffWriter, currentChr, seenTranscripts,
