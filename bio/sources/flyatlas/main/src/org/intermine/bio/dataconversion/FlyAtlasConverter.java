@@ -40,7 +40,7 @@ public class FlyAtlasConverter extends BioFileConverter
      * @throws ObjectStoreException if an error occurs in storing
      */
     public FlyAtlasConverter(ItemWriter writer, Model model) throws ObjectStoreException {
-        super(writer, model, null, "FlyAtlas");
+        super(writer, model, "University of Glasgow", "FlyAtlas");
         setupItems();
     }
 
