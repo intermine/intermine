@@ -91,14 +91,20 @@ public class FlyRegGFF3RecordHandlerTest extends ItemsTestCase
             handler.clearPublicationReferenceList();
             handler.process(record);
             // evidence collection is normally set in GFF3Converter, we just want to check Publication
-            feature.addCollection(handler.getDataSetReferenceList());
-            feature.addCollection(handler.getEvidenceReferenceList());
-            feature.addCollection(handler.getPublicationReferenceList());
+            if (handler.getDataSetReferenceList().getRefIds().size() > 0) {
+                feature.addCollection(handler.getDataSetReferenceList());
+            }
+            if (handler.getEvidenceReferenceList().getRefIds().size() > 0) {
+                feature.addCollection(handler.getEvidenceReferenceList());
+            }
+            if (handler.getPublicationReferenceList().getRefIds().size() > 0) {
+                feature.addCollection(handler.getPublicationReferenceList());
+            }
             allItems.addAll(handler.getItems());
         }
 
         // uncomment to write a new target items files
-        writeItemsFile(allItems, "/tmp/flyreg-tgt-items.xml");
+        //writeItemsFile(allItems, "/tmp/flyreg-tgt-items.xml");
 
         Set expected = readItemSet("FlyRegGFF3RecordHandlerTest.xml");
 
