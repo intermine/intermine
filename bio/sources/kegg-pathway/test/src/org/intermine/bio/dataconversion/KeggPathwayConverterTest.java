@@ -24,7 +24,7 @@ public class KeggPathwayConverterTest extends ItemsTestCase
     Model model = Model.getInstanceByName("genomic");
     KeggPathwayConverter converter;
     MockItemWriter itemWriter;
-    
+
     public KeggPathwayConverterTest(String arg) {
         super(arg);
     }
@@ -48,11 +48,11 @@ public class KeggPathwayConverterTest extends ItemsTestCase
         srcFile = new File(getClass().getClassLoader().getResource("dme/dme_gene_map.tab").toURI());
         converter.setCurrentFile(srcFile);
         converter.process(new FileReader(srcFile));
-        
+
         converter.close();
 
         // uncomment to write out a new target items file
-        //writeItemsFile(itemWriter.getItems(), "/tmp/kegg-tgt-items.xml");
+        writeItemsFile(itemWriter.getItems(), "/tmp/kegg-tgt-items.xml");
 
         assertEquals(readItemSet("kegg-tgt-items.xml"), itemWriter.getItems());
     }

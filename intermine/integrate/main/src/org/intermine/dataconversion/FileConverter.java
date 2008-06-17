@@ -70,6 +70,17 @@ public abstract class FileConverter extends DataConverter
     }
 
     /**
+     * Get an item, if it doesn't already exist create it.  If it does exist just return it.
+     * @param className the name of the class
+     * @param attributeName the name of the attribute to set
+     * @param identifier the identifier
+     * @return an Item
+     */
+    public Item getItemCreateOnce(String className, String attributeName, String identifier) {
+        return getItemInternal(className, attributeName, identifier, false);
+    }
+
+    /**
      * Get an item and if it doesn't already exist create it and store it
      * @param className the name of the class
      * @param attributeName the name of the attribute to set
@@ -77,6 +88,20 @@ public abstract class FileConverter extends DataConverter
      * @return an Item
      */
     public Item getAndStoreItemOnce(String className, String attributeName, String identifier) {
+        return getItemInternal(className, attributeName, identifier, true);
+    }
+
+    /**
+     * Get an item and if it doesn't already exist create it and store it if the store argument is
+     * true.
+     * @param className the name of the class
+     * @param attributeName the name of the attribute to set
+     * @param identifier the identifier
+     * @param store if true, store after creating
+     * @return an Item
+     */
+    private Item getItemInternal(String className, String attributeName, String identifier,
+                                 boolean store) {
         MultiKey key = new MultiKey(className, identifier);
         Item item = (Item) itemsMap.get(key);
         if (itemsMap.get(key) == null) {
@@ -84,10 +109,12 @@ public abstract class FileConverter extends DataConverter
             item = createItem(className);
             item.setAttribute(attributeName, identifier);
             itemsMap.put(key, item);
-            try {
-                store(item);
-            } catch (ObjectStoreException e) {
-                throw new RuntimeException("error while storing: " + identifier, e);
+            if (store) {
+                try {
+                    store(item);
+                } catch (ObjectStoreException e) {
+                    throw new RuntimeException("error while storing: " + identifier, e);
+                }
             }
         }
         return item;

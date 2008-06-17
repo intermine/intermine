@@ -95,7 +95,7 @@ public class KeggPathwayConverter extends BioFileConverter
             if (currentFile.getName().startsWith("map_title")) {
                 String mapIdentifier = line[0];
                 String mapName = line[1];
-                Item pathway = getAndStoreItemOnce("Pathway", "identifier", mapIdentifier);
+                Item pathway = getItemCreateOnce("Pathway", "identifier", mapIdentifier);
                 pathway.setAttribute("name", mapName);
                 store(pathway);
             } else if (matcher.find()) {
