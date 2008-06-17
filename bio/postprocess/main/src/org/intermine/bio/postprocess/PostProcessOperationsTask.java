@@ -26,6 +26,7 @@ import org.intermine.task.CreateIndexesTask;
 import org.intermine.task.DynamicAttributeTask;
 import org.intermine.task.PrecomputeTask;
 import org.intermine.util.PropertiesUtil;
+import org.intermine.web.autocompletion.AutoCompleter;
 
 import org.flymine.model.genomic.Exon;
 import org.flymine.model.genomic.Gene;
