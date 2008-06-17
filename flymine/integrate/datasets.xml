@@ -443,7 +443,7 @@
         <attribute name="title" value="Anoph-Expr data set"/>
         <attribute name="description"
                    value="Anopheles gambiae life cycle exression data"/>
-        <attribute name="url" value="http://www.rcsb.org/pdb/"/>
+        <attribute name="url" value="http://www.ebi.ac.uk/microarray-as/aer/#ae-browse/q=E-TABM-186"/>
         <reference name="dataSource" ref_id="530"/>
     </item>
 
