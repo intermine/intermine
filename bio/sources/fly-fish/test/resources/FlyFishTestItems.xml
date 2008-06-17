@@ -1,77 +1,229 @@
 <items>
-<item id="6_17" class="http://www.flymine.org/model/genomic#MRNAExpressionResult">
-<attribute name="expressed" value="true"/>
-<attribute name="stageRange" value="stage 1-3 (fly-FISH)"/>
-<reference name="gene" ref_id="5_4"/>
-<reference name="publication" ref_id="3_1"/>
-<reference name="source" ref_id="2_1"/>
-<collection name="mRNAExpressionTerms"><reference ref_id="7_2"/><reference ref_id="7_3"/></collection>
-<collection name="stages"><reference ref_id="4_1"/><reference ref_id="4_2"/><reference ref_id="4_3"/></collection>
-</item>
-<item id="7_16" class="http://www.flymine.org/model/genomic#MRNAExpressionTerm">
-<attribute name="name" value="Degraded completely stage 8"/>
-<attribute name="type" value="fly-FISH"/>
-</item>
-<item id="7_2" class="http://www.flymine.org/model/genomic#MRNAExpressionTerm">
-<attribute name="name" value="Maternal"/>
-<attribute name="type" value="fly-FISH"/>
-</item>
-<item id="4_8" class="http://www.flymine.org/model/genomic#Stage">
-<attribute name="name" value="Stage 8"/>
-</item>
-<item id="6_2" class="http://www.flymine.org/model/genomic#MRNAExpressionResult">
-<attribute name="expressed" value="false"/>
-<attribute name="stageRange" value="stage 4-5 (fly-FISH)"/>
-<reference name="gene" ref_id="5_1"/>
-<reference name="publication" ref_id="3_1"/>
-<reference name="source" ref_id="2_1"/>
-<collection name="mRNAExpressionTerms"><reference ref_id="7_1"/></collection>
-<collection name="stages"><reference ref_id="4_4"/><reference ref_id="4_5"/></collection>
-</item>
 <item id="7_11" class="http://www.flymine.org/model/genomic#MRNAExpressionTerm">
 <attribute name="name" value="Apical exclusion"/>
 <attribute name="type" value="fly-FISH"/>
 </item>
+<item id="5_2" class="http://www.flymine.org/model/genomic#Gene">
+<attribute name="primaryIdentifier" value="FBgn0037874"/>
+<reference name="organism" ref_id="2_1"/>
+<collection name="dataSets"><reference ref_id="1_1"/></collection>
+</item>
+<item id="7_8" class="http://www.flymine.org/model/genomic#MRNAExpressionTerm">
+<attribute name="name" value="Basal localization"/>
+<attribute name="type" value="fly-FISH"/>
+</item>
+<item id="6_19" class="http://www.flymine.org/model/genomic#MRNAExpressionResult">
+<attribute name="expressed" value="true"/>
+<attribute name="stageRange" value="stage 6-7 (fly-FISH)"/>
+<reference name="dataSet" ref_id="1_1"/>
+<reference name="gene" ref_id="5_4"/>
+<reference name="publication" ref_id="3_1"/>
+<collection name="mRNAExpressionTerms"><reference ref_id="7_2"/><reference ref_id="7_4"/><reference ref_id="7_5"/><reference ref_id="7_10"/><reference ref_id="7_12"/></collection>
+<collection name="stages"><reference ref_id="4_6"/><reference ref_id="4_7"/></collection>
+</item>
+<item id="4_10" class="http://www.flymine.org/model/genomic#Stage">
+<attribute name="name" value="Stage 10"/>
+</item>
+<item id="6_7" class="http://www.flymine.org/model/genomic#MRNAExpressionResult">
+<attribute name="expressed" value="true"/>
+<attribute name="stageRange" value="stage 6-7 (fly-FISH)"/>
+<reference name="dataSet" ref_id="1_1"/>
+<reference name="gene" ref_id="5_2"/>
+<reference name="publication" ref_id="3_1"/>
+<collection name="mRNAExpressionTerms"><reference ref_id="7_2"/><reference ref_id="7_4"/><reference ref_id="7_5"/><reference ref_id="7_8"/><reference ref_id="7_6"/><reference ref_id="7_7"/><reference ref_id="7_9"/><reference ref_id="7_10"/><reference ref_id="7_11"/><reference ref_id="7_12"/></collection>
+<collection name="stages"><reference ref_id="4_6"/><reference ref_id="4_7"/></collection>
+</item>
+<item id="1_1" class="http://www.flymine.org/model/genomic#DataSet">
+<attribute name="title" value="fly-Fish data set"/>
+<reference name="dataSource" ref_id="0_1"/>
+</item>
+<item id="4_16" class="http://www.flymine.org/model/genomic#Stage">
+<attribute name="name" value="Stage 16"/>
+</item>
+<item id="4_6" class="http://www.flymine.org/model/genomic#Stage">
+<attribute name="name" value="Stage 6"/>
+</item>
+<item id="6_12" class="http://www.flymine.org/model/genomic#MRNAExpressionResult">
+<attribute name="expressed" value="true"/>
+<attribute name="stageRange" value="stage 8-9 (fly-FISH)"/>
+<reference name="dataSet" ref_id="1_1"/>
+<reference name="gene" ref_id="5_3"/>
+<reference name="publication" ref_id="3_1"/>
+<collection name="mRNAExpressionTerms"><reference ref_id="7_14"/><reference ref_id="7_16"/><reference ref_id="7_17"/></collection>
+<collection name="stages"><reference ref_id="4_8"/><reference ref_id="4_9"/></collection>
+</item>
+<item id="6_11" class="http://www.flymine.org/model/genomic#MRNAExpressionResult">
+<attribute name="expressed" value="true"/>
+<attribute name="stageRange" value="stage 6-7 (fly-FISH)"/>
+<reference name="dataSet" ref_id="1_1"/>
+<reference name="gene" ref_id="5_3"/>
+<reference name="publication" ref_id="3_1"/>
+<collection name="mRNAExpressionTerms"><reference ref_id="7_2"/><reference ref_id="7_4"/><reference ref_id="7_5"/><reference ref_id="7_8"/><reference ref_id="7_9"/><reference ref_id="7_10"/><reference ref_id="7_11"/></collection>
+<collection name="stages"><reference ref_id="4_6"/><reference ref_id="4_7"/></collection>
+</item>
+<item id="6_17" class="http://www.flymine.org/model/genomic#MRNAExpressionResult">
+<attribute name="expressed" value="true"/>
+<attribute name="stageRange" value="stage 1-3 (fly-FISH)"/>
+<reference name="dataSet" ref_id="1_1"/>
+<reference name="gene" ref_id="5_4"/>
+<reference name="publication" ref_id="3_1"/>
+<collection name="mRNAExpressionTerms"><reference ref_id="7_2"/><reference ref_id="7_3"/></collection>
+<collection name="stages"><reference ref_id="4_1"/><reference ref_id="4_2"/><reference ref_id="4_3"/></collection>
+</item>
+<item id="7_18" class="http://www.flymine.org/model/genomic#MRNAExpressionTerm">
+<attribute name="name" value="Ubiquitous (unlocalized)"/>
+<attribute name="type" value="fly-FISH"/>
+</item>
+<item id="7_15" class="http://www.flymine.org/model/genomic#MRNAExpressionTerm">
+<attribute name="name" value="Degraded partially stage 4"/>
+<attribute name="type" value="fly-FISH"/>
+</item>
+<item id="2_1" class="http://www.flymine.org/model/genomic#Organism">
+<attribute name="taxonId" value="7227"/>
+</item>
+<item id="7_19" class="http://www.flymine.org/model/genomic#MRNAExpressionTerm">
+<attribute name="name" value="Degraded completely stage 5"/>
+<attribute name="type" value="fly-FISH"/>
+</item>
+<item id="4_5" class="http://www.flymine.org/model/genomic#Stage">
+<attribute name="name" value="Stage 5"/>
+</item>
+<item id="4_15" class="http://www.flymine.org/model/genomic#Stage">
+<attribute name="name" value="Stage 15"/>
+</item>
+<item id="7_10" class="http://www.flymine.org/model/genomic#MRNAExpressionTerm">
+<attribute name="name" value="Exclusionary patterns"/>
+<attribute name="type" value="fly-FISH"/>
+</item>
+<item id="4_13" class="http://www.flymine.org/model/genomic#Stage">
+<attribute name="name" value="Stage 13"/>
+</item>
+<item id="7_1" class="http://www.flymine.org/model/genomic#MRNAExpressionTerm">
+<attribute name="name" value="Non-expressed"/>
+<attribute name="type" value="fly-FISH"/>
+</item>
+<item id="5_1" class="http://www.flymine.org/model/genomic#Gene">
+<attribute name="primaryIdentifier" value="FBgn0020415"/>
+<reference name="organism" ref_id="2_1"/>
+<collection name="dataSets"><reference ref_id="1_1"/></collection>
+</item>
+<item id="6_1" class="http://www.flymine.org/model/genomic#MRNAExpressionResult">
+<attribute name="expressed" value="false"/>
+<attribute name="stageRange" value="stage 1-3 (fly-FISH)"/>
+<reference name="dataSet" ref_id="1_1"/>
+<reference name="gene" ref_id="5_1"/>
+<reference name="publication" ref_id="3_1"/>
+<collection name="mRNAExpressionTerms"><reference ref_id="7_1"/></collection>
+<collection name="stages"><reference ref_id="4_1"/><reference ref_id="4_2"/><reference ref_id="4_3"/></collection>
+</item>
+<item id="6_13" class="http://www.flymine.org/model/genomic#MRNAExpressionResult">
+<attribute name="expressed" value="true"/>
+<attribute name="stageRange" value="stage 1-3 (fly-FISH)"/>
+<reference name="dataSet" ref_id="1_1"/>
+<reference name="gene" ref_id="5_4"/>
+<reference name="publication" ref_id="3_1"/>
+<collection name="mRNAExpressionTerms"><reference ref_id="7_2"/><reference ref_id="7_3"/></collection>
+<collection name="stages"><reference ref_id="4_1"/><reference ref_id="4_2"/><reference ref_id="4_3"/></collection>
+</item>
+<item id="0_1" class="http://www.flymine.org/model/genomic#DataSource">
+<attribute name="name" value="fly-FISH"/>
+</item>
+<item id="7_17" class="http://www.flymine.org/model/genomic#MRNAExpressionTerm">
+<attribute name="name" value="Degradation maternal transcripts"/>
+<attribute name="type" value="fly-FISH"/>
+</item>
+<item id="4_11" class="http://www.flymine.org/model/genomic#Stage">
+<attribute name="name" value="Stage 11"/>
+</item>
+<item id="6_3" class="http://www.flymine.org/model/genomic#MRNAExpressionResult">
+<attribute name="expressed" value="false"/>
+<attribute name="stageRange" value="stage 6-7 (fly-FISH)"/>
+<reference name="dataSet" ref_id="1_1"/>
+<reference name="gene" ref_id="5_1"/>
+<reference name="publication" ref_id="3_1"/>
+<collection name="mRNAExpressionTerms"><reference ref_id="7_1"/></collection>
+<collection name="stages"><reference ref_id="4_6"/><reference ref_id="4_7"/></collection>
+</item>
+<item id="4_9" class="http://www.flymine.org/model/genomic#Stage">
+<attribute name="name" value="Stage 9"/>
+</item>
 <item id="4_4" class="http://www.flymine.org/model/genomic#Stage">
 <attribute name="name" value="Stage 4"/>
 </item>
-<item id="6_16" class="http://www.flymine.org/model/genomic#MRNAExpressionResult">
-<attribute name="expressed" value="false"/>
-<attribute name="stageRange" value="stage 8-9 (fly-FISH)"/>
-<reference name="gene" ref_id="5_4"/>
-<reference name="publication" ref_id="3_1"/>
-<reference name="source" ref_id="2_1"/>
-<collection name="mRNAExpressionTerms"><reference ref_id="7_1"/></collection>
-<collection name="stages"><reference ref_id="4_8"/><reference ref_id="4_9"/></collection>
+<item id="7_13" class="http://www.flymine.org/model/genomic#MRNAExpressionTerm">
+<attribute name="name" value="Apical Localization Neuroblasts"/>
+<attribute name="type" value="fly-FISH"/>
 </item>
 <item id="7_14" class="http://www.flymine.org/model/genomic#MRNAExpressionTerm">
 <attribute name="name" value="Degraded"/>
 <attribute name="type" value="fly-FISH"/>
 </item>
+<item id="6_8" class="http://www.flymine.org/model/genomic#MRNAExpressionResult">
+<attribute name="expressed" value="true"/>
+<attribute name="stageRange" value="stage 8-9 (fly-FISH)"/>
+<reference name="dataSet" ref_id="1_1"/>
+<reference name="gene" ref_id="5_2"/>
+<reference name="publication" ref_id="3_1"/>
+<collection name="mRNAExpressionTerms"><reference ref_id="7_2"/><reference ref_id="7_4"/><reference ref_id="7_5"/><reference ref_id="7_8"/><reference ref_id="7_9"/><reference ref_id="7_13"/></collection>
+<collection name="stages"><reference ref_id="4_8"/><reference ref_id="4_9"/></collection>
+</item>
+<item id="6_6" class="http://www.flymine.org/model/genomic#MRNAExpressionResult">
+<attribute name="expressed" value="true"/>
+<attribute name="stageRange" value="stage 4-5 (fly-FISH)"/>
+<reference name="dataSet" ref_id="1_1"/>
+<reference name="gene" ref_id="5_2"/>
+<reference name="publication" ref_id="3_1"/>
+<collection name="mRNAExpressionTerms"><reference ref_id="7_2"/><reference ref_id="7_4"/><reference ref_id="7_5"/><reference ref_id="7_6"/><reference ref_id="7_7"/><reference ref_id="7_10"/><reference ref_id="7_11"/><reference ref_id="7_12"/></collection>
+<collection name="stages"><reference ref_id="4_4"/><reference ref_id="4_5"/></collection>
+</item>
+<item id="7_2" class="http://www.flymine.org/model/genomic#MRNAExpressionTerm">
+<attribute name="name" value="Maternal"/>
+<attribute name="type" value="fly-FISH"/>
+</item>
+<item id="4_1" class="http://www.flymine.org/model/genomic#Stage">
+<attribute name="name" value="Stage 1"/>
+</item>
+<item id="6_18" class="http://www.flymine.org/model/genomic#MRNAExpressionResult">
+<attribute name="expressed" value="true"/>
+<attribute name="stageRange" value="stage 4-5 (fly-FISH)"/>
+<reference name="dataSet" ref_id="1_1"/>
+<reference name="gene" ref_id="5_4"/>
+<reference name="publication" ref_id="3_1"/>
+<collection name="mRNAExpressionTerms"><reference ref_id="7_2"/><reference ref_id="7_4"/><reference ref_id="7_5"/><reference ref_id="7_10"/><reference ref_id="7_12"/></collection>
+<collection name="stages"><reference ref_id="4_4"/><reference ref_id="4_5"/></collection>
+</item>
+<item id="4_8" class="http://www.flymine.org/model/genomic#Stage">
+<attribute name="name" value="Stage 8"/>
+</item>
+<item id="7_9" class="http://www.flymine.org/model/genomic#MRNAExpressionTerm">
+<attribute name="name" value="Basal enrichment"/>
+<attribute name="type" value="fly-FISH"/>
+</item>
 <item id="6_5" class="http://www.flymine.org/model/genomic#MRNAExpressionResult">
 <attribute name="expressed" value="true"/>
 <attribute name="stageRange" value="stage 1-3 (fly-FISH)"/>
+<reference name="dataSet" ref_id="1_1"/>
 <reference name="gene" ref_id="5_2"/>
 <reference name="publication" ref_id="3_1"/>
-<reference name="source" ref_id="2_1"/>
 <collection name="mRNAExpressionTerms"><reference ref_id="7_2"/><reference ref_id="7_3"/></collection>
 <collection name="stages"><reference ref_id="4_1"/><reference ref_id="4_2"/><reference ref_id="4_3"/></collection>
 </item>
-<item id="4_2" class="http://www.flymine.org/model/genomic#Stage">
-<attribute name="name" value="Stage 2"/>
+<item id="7_4" class="http://www.flymine.org/model/genomic#MRNAExpressionTerm">
+<attribute name="name" value="Localized"/>
+<attribute name="type" value="fly-FISH"/>
 </item>
-<item id="6_20" class="http://www.flymine.org/model/genomic#MRNAExpressionResult">
+<item id="7_12" class="http://www.flymine.org/model/genomic#MRNAExpressionTerm">
+<attribute name="name" value="Pole cell exclusion"/>
+<attribute name="type" value="fly-FISH"/>
+</item>
+<item id="6_9" class="http://www.flymine.org/model/genomic#MRNAExpressionResult">
 <attribute name="expressed" value="true"/>
-<attribute name="stageRange" value="stage 8-9 (fly-FISH)"/>
-<reference name="gene" ref_id="5_4"/>
+<attribute name="stageRange" value="stage 1-3 (fly-FISH)"/>
+<reference name="dataSet" ref_id="1_1"/>
+<reference name="gene" ref_id="5_3"/>
 <reference name="publication" ref_id="3_1"/>
-<reference name="source" ref_id="2_1"/>
-<collection name="mRNAExpressionTerms"><reference ref_id="7_14"/><reference ref_id="7_16"/><reference ref_id="7_17"/></collection>
-<collection name="stages"><reference ref_id="4_8"/><reference ref_id="4_9"/></collection>
-</item>
-<item id="5_2" class="http://www.flymine.org/model/genomic#Gene">
-<attribute name="primaryIdentifier" value="FBgn0037874"/>
-<reference name="organism" ref_id="0_1"/>
+<collection name="mRNAExpressionTerms"><reference ref_id="7_2"/><reference ref_id="7_3"/></collection>
+<collection name="stages"><reference ref_id="4_1"/><reference ref_id="4_2"/><reference ref_id="4_3"/></collection>
 </item>
 <item id="4_3" class="http://www.flymine.org/model/genomic#Stage">
 <attribute name="name" value="Stage 3"/>
@@ -79,258 +231,109 @@
 <item id="4_12" class="http://www.flymine.org/model/genomic#Stage">
 <attribute name="name" value="Stage 12"/>
 </item>
-<item id="6_6" class="http://www.flymine.org/model/genomic#MRNAExpressionResult">
-<attribute name="expressed" value="true"/>
-<attribute name="stageRange" value="stage 4-5 (fly-FISH)"/>
-<reference name="gene" ref_id="5_2"/>
-<reference name="publication" ref_id="3_1"/>
-<reference name="source" ref_id="2_1"/>
-<collection name="mRNAExpressionTerms"><reference ref_id="7_2"/><reference ref_id="7_4"/><reference ref_id="7_5"/><reference ref_id="7_6"/><reference ref_id="7_7"/><reference ref_id="7_10"/><reference ref_id="7_11"/><reference ref_id="7_12"/></collection>
-<collection name="stages"><reference ref_id="4_4"/><reference ref_id="4_5"/></collection>
-</item>
-<item id="6_8" class="http://www.flymine.org/model/genomic#MRNAExpressionResult">
-<attribute name="expressed" value="true"/>
-<attribute name="stageRange" value="stage 8-9 (fly-FISH)"/>
-<reference name="gene" ref_id="5_2"/>
-<reference name="publication" ref_id="3_1"/>
-<reference name="source" ref_id="2_1"/>
-<collection name="mRNAExpressionTerms"><reference ref_id="7_2"/><reference ref_id="7_4"/><reference ref_id="7_5"/><reference ref_id="7_8"/><reference ref_id="7_9"/><reference ref_id="7_13"/></collection>
-<collection name="stages"><reference ref_id="4_8"/><reference ref_id="4_9"/></collection>
-</item>
-<item id="7_10" class="http://www.flymine.org/model/genomic#MRNAExpressionTerm">
-<attribute name="name" value="Exclusionary patterns"/>
+<item id="7_6" class="http://www.flymine.org/model/genomic#MRNAExpressionTerm">
+<attribute name="name" value="Yolk cortex localization"/>
 <attribute name="type" value="fly-FISH"/>
 </item>
-<item id="4_9" class="http://www.flymine.org/model/genomic#Stage">
-<attribute name="name" value="Stage 9"/>
-</item>
-<item id="4_5" class="http://www.flymine.org/model/genomic#Stage">
-<attribute name="name" value="Stage 5"/>
-</item>
-<item id="4_10" class="http://www.flymine.org/model/genomic#Stage">
-<attribute name="name" value="Stage 10"/>
-</item>
-<item id="7_12" class="http://www.flymine.org/model/genomic#MRNAExpressionTerm">
-<attribute name="name" value="Pole cell exclusion"/>
-<attribute name="type" value="fly-FISH"/>
-</item>
-<item id="0_1" class="http://www.flymine.org/model/genomic#Organism">
-<attribute name="taxonId" value="7227"/>
-</item>
-<item id="5_1" class="http://www.flymine.org/model/genomic#Gene">
-<attribute name="primaryIdentifier" value="FBgn0020415"/>
-<reference name="organism" ref_id="0_1"/>
-</item>
-<item id="4_11" class="http://www.flymine.org/model/genomic#Stage">
-<attribute name="name" value="Stage 11"/>
-</item>
-<item id="6_13" class="http://www.flymine.org/model/genomic#MRNAExpressionResult">
-<attribute name="expressed" value="true"/>
-<attribute name="stageRange" value="stage 1-3 (fly-FISH)"/>
-<reference name="gene" ref_id="5_4"/>
-<reference name="publication" ref_id="3_1"/>
-<reference name="source" ref_id="2_1"/>
-<collection name="mRNAExpressionTerms"><reference ref_id="7_2"/><reference ref_id="7_3"/></collection>
-<collection name="stages"><reference ref_id="4_1"/><reference ref_id="4_2"/><reference ref_id="4_3"/></collection>
-</item>
-<item id="6_3" class="http://www.flymine.org/model/genomic#MRNAExpressionResult">
+<item id="6_4" class="http://www.flymine.org/model/genomic#MRNAExpressionResult">
 <attribute name="expressed" value="false"/>
-<attribute name="stageRange" value="stage 6-7 (fly-FISH)"/>
-<reference name="gene" ref_id="5_1"/>
-<reference name="publication" ref_id="3_1"/>
-<reference name="source" ref_id="2_1"/>
-<collection name="mRNAExpressionTerms"><reference ref_id="7_1"/></collection>
-<collection name="stages"><reference ref_id="4_6"/><reference ref_id="4_7"/></collection>
-</item>
-<item id="6_18" class="http://www.flymine.org/model/genomic#MRNAExpressionResult">
-<attribute name="expressed" value="true"/>
-<attribute name="stageRange" value="stage 4-5 (fly-FISH)"/>
-<reference name="gene" ref_id="5_4"/>
-<reference name="publication" ref_id="3_1"/>
-<reference name="source" ref_id="2_1"/>
-<collection name="mRNAExpressionTerms"><reference ref_id="7_2"/><reference ref_id="7_4"/><reference ref_id="7_5"/><reference ref_id="7_10"/><reference ref_id="7_12"/></collection>
-<collection name="stages"><reference ref_id="4_4"/><reference ref_id="4_5"/></collection>
-</item>
-<item id="5_3" class="http://www.flymine.org/model/genomic#Gene">
-<attribute name="primaryIdentifier" value="FBgn0039830"/>
-<reference name="organism" ref_id="0_1"/>
-</item>
-<item id="6_12" class="http://www.flymine.org/model/genomic#MRNAExpressionResult">
-<attribute name="expressed" value="true"/>
 <attribute name="stageRange" value="stage 8-9 (fly-FISH)"/>
-<reference name="gene" ref_id="5_3"/>
-<reference name="publication" ref_id="3_1"/>
-<reference name="source" ref_id="2_1"/>
-<collection name="mRNAExpressionTerms"><reference ref_id="7_14"/><reference ref_id="7_16"/><reference ref_id="7_17"/></collection>
-<collection name="stages"><reference ref_id="4_8"/><reference ref_id="4_9"/></collection>
-</item>
-<item id="6_1" class="http://www.flymine.org/model/genomic#MRNAExpressionResult">
-<attribute name="expressed" value="false"/>
-<attribute name="stageRange" value="stage 1-3 (fly-FISH)"/>
+<reference name="dataSet" ref_id="1_1"/>
 <reference name="gene" ref_id="5_1"/>
 <reference name="publication" ref_id="3_1"/>
-<reference name="source" ref_id="2_1"/>
 <collection name="mRNAExpressionTerms"><reference ref_id="7_1"/></collection>
-<collection name="stages"><reference ref_id="4_1"/><reference ref_id="4_2"/><reference ref_id="4_3"/></collection>
-</item>
-<item id="6_9" class="http://www.flymine.org/model/genomic#MRNAExpressionResult">
-<attribute name="expressed" value="true"/>
-<attribute name="stageRange" value="stage 1-3 (fly-FISH)"/>
-<reference name="gene" ref_id="5_3"/>
-<reference name="publication" ref_id="3_1"/>
-<reference name="source" ref_id="2_1"/>
-<collection name="mRNAExpressionTerms"><reference ref_id="7_2"/><reference ref_id="7_3"/></collection>
-<collection name="stages"><reference ref_id="4_1"/><reference ref_id="4_2"/><reference ref_id="4_3"/></collection>
+<collection name="stages"><reference ref_id="4_8"/><reference ref_id="4_9"/></collection>
 </item>
 <item id="7_5" class="http://www.flymine.org/model/genomic#MRNAExpressionTerm">
 <attribute name="name" value="Embryonic localization patterns"/>
 <attribute name="type" value="fly-FISH"/>
 </item>
-<item id="3_1" class="http://www.flymine.org/model/genomic#Publication">
-<attribute name="pubMedId" value="17923096"/>
+<item id="6_15" class="http://www.flymine.org/model/genomic#MRNAExpressionResult">
+<attribute name="expressed" value="false"/>
+<attribute name="stageRange" value="stage 6-7 (fly-FISH)"/>
+<reference name="dataSet" ref_id="1_1"/>
+<reference name="gene" ref_id="5_4"/>
+<reference name="publication" ref_id="3_1"/>
+<collection name="mRNAExpressionTerms"><reference ref_id="7_1"/></collection>
+<collection name="stages"><reference ref_id="4_6"/><reference ref_id="4_7"/></collection>
 </item>
-<item id="4_14" class="http://www.flymine.org/model/genomic#Stage">
-<attribute name="name" value="Stage 14"/>
+<item id="6_16" class="http://www.flymine.org/model/genomic#MRNAExpressionResult">
+<attribute name="expressed" value="false"/>
+<attribute name="stageRange" value="stage 8-9 (fly-FISH)"/>
+<reference name="dataSet" ref_id="1_1"/>
+<reference name="gene" ref_id="5_4"/>
+<reference name="publication" ref_id="3_1"/>
+<collection name="mRNAExpressionTerms"><reference ref_id="7_1"/></collection>
+<collection name="stages"><reference ref_id="4_8"/><reference ref_id="4_9"/></collection>
+</item>
+<item id="6_2" class="http://www.flymine.org/model/genomic#MRNAExpressionResult">
+<attribute name="expressed" value="false"/>
+<attribute name="stageRange" value="stage 4-5 (fly-FISH)"/>
+<reference name="dataSet" ref_id="1_1"/>
+<reference name="gene" ref_id="5_1"/>
+<reference name="publication" ref_id="3_1"/>
+<collection name="mRNAExpressionTerms"><reference ref_id="7_1"/></collection>
+<collection name="stages"><reference ref_id="4_4"/><reference ref_id="4_5"/></collection>
 </item>
 <item id="5_4" class="http://www.flymine.org/model/genomic#Gene">
 <attribute name="primaryIdentifier" value="FBgn0019830"/>
-<reference name="organism" ref_id="0_1"/>
+<reference name="organism" ref_id="2_1"/>
+<collection name="dataSets"><reference ref_id="1_1"/></collection>
 </item>
-<item id="7_15" class="http://www.flymine.org/model/genomic#MRNAExpressionTerm">
-<attribute name="name" value="Degraded partially stage 4"/>
-<attribute name="type" value="fly-FISH"/>
-</item>
-<item id="7_1" class="http://www.flymine.org/model/genomic#MRNAExpressionTerm">
-<attribute name="name" value="Non-expressed"/>
-<attribute name="type" value="fly-FISH"/>
-</item>
-<item id="4_13" class="http://www.flymine.org/model/genomic#Stage">
-<attribute name="name" value="Stage 13"/>
-</item>
-<item id="6_14" class="http://www.flymine.org/model/genomic#MRNAExpressionResult">
-<attribute name="expressed" value="true"/>
-<attribute name="stageRange" value="stage 4-5 (fly-FISH)"/>
-<reference name="gene" ref_id="5_4"/>
-<reference name="publication" ref_id="3_1"/>
-<reference name="source" ref_id="2_1"/>
-<collection name="mRNAExpressionTerms"><reference ref_id="7_2"/><reference ref_id="7_18"/><reference ref_id="7_14"/><reference ref_id="7_15"/><reference ref_id="7_19"/><reference ref_id="7_17"/></collection>
-<collection name="stages"><reference ref_id="4_4"/><reference ref_id="4_5"/></collection>
-</item>
-<item id="6_19" class="http://www.flymine.org/model/genomic#MRNAExpressionResult">
-<attribute name="expressed" value="true"/>
-<attribute name="stageRange" value="stage 6-7 (fly-FISH)"/>
-<reference name="gene" ref_id="5_4"/>
-<reference name="publication" ref_id="3_1"/>
-<reference name="source" ref_id="2_1"/>
-<collection name="mRNAExpressionTerms"><reference ref_id="7_2"/><reference ref_id="7_4"/><reference ref_id="7_5"/><reference ref_id="7_10"/><reference ref_id="7_12"/></collection>
-<collection name="stages"><reference ref_id="4_6"/><reference ref_id="4_7"/></collection>
-</item>
-<item id="2_1" class="http://www.flymine.org/model/genomic#DataSet">
-<attribute name="title" value="fly-Fish data set of Drosophila embryo mRNA localization patterns"/>
-<reference name="dataSource" ref_id="1_1"/>
-</item>
-<item id="4_1" class="http://www.flymine.org/model/genomic#Stage">
-<attribute name="name" value="Stage 1"/>
+<item id="5_3" class="http://www.flymine.org/model/genomic#Gene">
+<attribute name="primaryIdentifier" value="FBgn0039830"/>
+<reference name="organism" ref_id="2_1"/>
+<collection name="dataSets"><reference ref_id="1_1"/></collection>
 </item>
 <item id="7_3" class="http://www.flymine.org/model/genomic#MRNAExpressionTerm">
 <attribute name="name" value="Ubiquitous (Unlocalized)"/>
 <attribute name="type" value="fly-FISH"/>
 </item>
-<item id="7_9" class="http://www.flymine.org/model/genomic#MRNAExpressionTerm">
-<attribute name="name" value="Basal enrichment"/>
-<attribute name="type" value="fly-FISH"/>
-</item>
-<item id="4_6" class="http://www.flymine.org/model/genomic#Stage">
-<attribute name="name" value="Stage 6"/>
-</item>
-<item id="7_13" class="http://www.flymine.org/model/genomic#MRNAExpressionTerm">
-<attribute name="name" value="Apical Localization Neuroblasts"/>
-<attribute name="type" value="fly-FISH"/>
-</item>
-<item id="7_4" class="http://www.flymine.org/model/genomic#MRNAExpressionTerm">
-<attribute name="name" value="Localized"/>
-<attribute name="type" value="fly-FISH"/>
+<item id="6_14" class="http://www.flymine.org/model/genomic#MRNAExpressionResult">
+<attribute name="expressed" value="true"/>
+<attribute name="stageRange" value="stage 4-5 (fly-FISH)"/>
+<reference name="dataSet" ref_id="1_1"/>
+<reference name="gene" ref_id="5_4"/>
+<reference name="publication" ref_id="3_1"/>
+<collection name="mRNAExpressionTerms"><reference ref_id="7_2"/><reference ref_id="7_18"/><reference ref_id="7_14"/><reference ref_id="7_15"/><reference ref_id="7_19"/><reference ref_id="7_17"/></collection>
+<collection name="stages"><reference ref_id="4_4"/><reference ref_id="4_5"/></collection>
 </item>
 <item id="6_10" class="http://www.flymine.org/model/genomic#MRNAExpressionResult">
 <attribute name="expressed" value="true"/>
 <attribute name="stageRange" value="stage 4-5 (fly-FISH)"/>
+<reference name="dataSet" ref_id="1_1"/>
 <reference name="gene" ref_id="5_3"/>
 <reference name="publication" ref_id="3_1"/>
-<reference name="source" ref_id="2_1"/>
 <collection name="mRNAExpressionTerms"><reference ref_id="7_2"/><reference ref_id="7_4"/><reference ref_id="7_5"/><reference ref_id="7_6"/><reference ref_id="7_7"/><reference ref_id="7_14"/><reference ref_id="7_15"/><reference ref_id="7_10"/><reference ref_id="7_11"/><reference ref_id="7_17"/></collection>
 <collection name="stages"><reference ref_id="4_4"/><reference ref_id="4_5"/></collection>
-</item>
-<item id="6_11" class="http://www.flymine.org/model/genomic#MRNAExpressionResult">
-<attribute name="expressed" value="true"/>
-<attribute name="stageRange" value="stage 6-7 (fly-FISH)"/>
-<reference name="gene" ref_id="5_3"/>
-<reference name="publication" ref_id="3_1"/>
-<reference name="source" ref_id="2_1"/>
-<collection name="mRNAExpressionTerms"><reference ref_id="7_2"/><reference ref_id="7_4"/><reference ref_id="7_5"/><reference ref_id="7_8"/><reference ref_id="7_9"/><reference ref_id="7_10"/><reference ref_id="7_11"/></collection>
-<collection name="stages"><reference ref_id="4_6"/><reference ref_id="4_7"/></collection>
-</item>
-<item id="6_7" class="http://www.flymine.org/model/genomic#MRNAExpressionResult">
-<attribute name="expressed" value="true"/>
-<attribute name="stageRange" value="stage 6-7 (fly-FISH)"/>
-<reference name="gene" ref_id="5_2"/>
-<reference name="publication" ref_id="3_1"/>
-<reference name="source" ref_id="2_1"/>
-<collection name="mRNAExpressionTerms"><reference ref_id="7_2"/><reference ref_id="7_4"/><reference ref_id="7_5"/><reference ref_id="7_8"/><reference ref_id="7_6"/><reference ref_id="7_7"/><reference ref_id="7_9"/><reference ref_id="7_10"/><reference ref_id="7_11"/><reference ref_id="7_12"/></collection>
-<collection name="stages"><reference ref_id="4_6"/><reference ref_id="4_7"/></collection>
-</item>
-<item id="7_18" class="http://www.flymine.org/model/genomic#MRNAExpressionTerm">
-<attribute name="name" value="Ubiquitous (unlocalized)"/>
-<attribute name="type" value="fly-FISH"/>
-</item>
-<item id="4_15" class="http://www.flymine.org/model/genomic#Stage">
-<attribute name="name" value="Stage 15"/>
 </item>
 <item id="7_7" class="http://www.flymine.org/model/genomic#MRNAExpressionTerm">
 <attribute name="name" value="Yolk cortex enrichment"/>
 <attribute name="type" value="fly-FISH"/>
 </item>
-<item id="4_7" class="http://www.flymine.org/model/genomic#Stage">
-<attribute name="name" value="Stage 7"/>
+<item id="3_1" class="http://www.flymine.org/model/genomic#Publication">
+<attribute name="pubMedId" value="17923096"/>
 </item>
-<item id="6_4" class="http://www.flymine.org/model/genomic#MRNAExpressionResult">
-<attribute name="expressed" value="false"/>
+<item id="6_20" class="http://www.flymine.org/model/genomic#MRNAExpressionResult">
+<attribute name="expressed" value="true"/>
 <attribute name="stageRange" value="stage 8-9 (fly-FISH)"/>
-<reference name="gene" ref_id="5_1"/>
-<reference name="publication" ref_id="3_1"/>
-<reference name="source" ref_id="2_1"/>
-<collection name="mRNAExpressionTerms"><reference ref_id="7_1"/></collection>
-<collection name="stages"><reference ref_id="4_8"/><reference ref_id="4_9"/></collection>
-</item>
-<item id="4_16" class="http://www.flymine.org/model/genomic#Stage">
-<attribute name="name" value="Stage 16"/>
-</item>
-<item id="7_17" class="http://www.flymine.org/model/genomic#MRNAExpressionTerm">
-<attribute name="name" value="Degradation maternal transcripts"/>
-<attribute name="type" value="fly-FISH"/>
-</item>
-<item id="1_1" class="http://www.flymine.org/model/genomic#DataSource">
-<attribute name="name" value="fly-FISH"/>
-<attribute name="url" value="http://fly-fish.ccbr.utoronto.ca"/>
-</item>
-<item id="7_19" class="http://www.flymine.org/model/genomic#MRNAExpressionTerm">
-<attribute name="name" value="Degraded completely stage 5"/>
-<attribute name="type" value="fly-FISH"/>
-</item>
-<item id="6_15" class="http://www.flymine.org/model/genomic#MRNAExpressionResult">
-<attribute name="expressed" value="false"/>
-<attribute name="stageRange" value="stage 6-7 (fly-FISH)"/>
+<reference name="dataSet" ref_id="1_1"/>
 <reference name="gene" ref_id="5_4"/>
 <reference name="publication" ref_id="3_1"/>
-<reference name="source" ref_id="2_1"/>
-<collection name="mRNAExpressionTerms"><reference ref_id="7_1"/></collection>
-<collection name="stages"><reference ref_id="4_6"/><reference ref_id="4_7"/></collection>
+<collection name="mRNAExpressionTerms"><reference ref_id="7_14"/><reference ref_id="7_16"/><reference ref_id="7_17"/></collection>
+<collection name="stages"><reference ref_id="4_8"/><reference ref_id="4_9"/></collection>
 </item>
-<item id="7_8" class="http://www.flymine.org/model/genomic#MRNAExpressionTerm">
-<attribute name="name" value="Basal localization"/>
+<item id="7_16" class="http://www.flymine.org/model/genomic#MRNAExpressionTerm">
+<attribute name="name" value="Degraded completely stage 8"/>
 <attribute name="type" value="fly-FISH"/>
 </item>
-<item id="7_6" class="http://www.flymine.org/model/genomic#MRNAExpressionTerm">
-<attribute name="name" value="Yolk cortex localization"/>
-<attribute name="type" value="fly-FISH"/>
+<item id="4_2" class="http://www.flymine.org/model/genomic#Stage">
+<attribute name="name" value="Stage 2"/>
+</item>
+<item id="4_14" class="http://www.flymine.org/model/genomic#Stage">
+<attribute name="name" value="Stage 14"/>
+</item>
+<item id="4_7" class="http://www.flymine.org/model/genomic#Stage">
+<attribute name="name" value="Stage 7"/>
 </item>
 </items>
