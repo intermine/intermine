@@ -112,14 +112,14 @@ public class OboParser
 
         //Ok now we can do some work here to iterate over the root terms and set their children to
         //point to them...
-        Map termToParentTermSetMap = new HashMap(termMap.size());
+        Map termToParentTerm = new HashMap(termMap.size());
 
         //loop over all the terms and build a map of their ids pointing to their parent set.
         for (OboTerm nextTerm : termMap.values()) {
-            termToParentTermSetMap.put(nextTerm.getId(), nextTerm.getAllParentIds());
+            termToParentTerm.put(nextTerm.getId(), nextTerm.getAllParentIds());
         }
 
-        return termToParentTermSetMap;
+        return termToParentTerm;
     }
 
     //Does the actual work
@@ -137,12 +137,12 @@ public class OboParser
 
         // descend into children of this term
         for (OboTerm childTerm : nextTerm.getChildren()) {
-            setParentTermsViaOntologyDepthSearch(currentBranchStack, (OboTerm) childTerm);
+            setParentTermsViaOntologyDepthSearch(currentBranchStack, childTerm);
         }
 
         // descend into terms that are part_of this one
         for (OboTerm componentTerm : nextTerm.getComponents()) {
-            setParentTermsViaOntologyDepthSearch(currentBranchStack, (OboTerm) componentTerm);
+            setParentTermsViaOntologyDepthSearch(currentBranchStack, componentTerm);
         }
 
         // we have reached a leaf term
