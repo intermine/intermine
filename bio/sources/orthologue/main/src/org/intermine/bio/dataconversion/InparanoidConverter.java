@@ -11,7 +11,6 @@ package org.intermine.bio.dataconversion;
  */
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -27,7 +26,6 @@ import org.intermine.metadata.Model;
 import org.intermine.objectstore.ObjectStoreException;
 import org.intermine.util.PropertiesUtil;
 import org.intermine.xml.full.Item;
-import org.intermine.xml.full.ReferenceList;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -297,8 +295,8 @@ public class InparanoidConverter extends FileConverter
         homologue.setAttribute("type", type);
         homologue.setAttribute("clusterName", cluster);
 
-        homologue.addCollection(new ReferenceList("evidence",
-            Arrays.asList(new String[] {db.getIdentifier(), pub.getIdentifier()})));
+        homologue.addToCollection("dataSets", db.getIdentifier());
+        homologue.addToCollection("publications", pub.getIdentifier());
         return homologue;
     }
 

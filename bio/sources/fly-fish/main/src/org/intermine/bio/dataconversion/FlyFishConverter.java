@@ -18,7 +18,6 @@ import java.util.Map;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
-import org.intermine.dataconversion.FileConverter;
 import org.intermine.dataconversion.ItemWriter;
 import org.intermine.metadata.Model;
 import org.intermine.objectstore.ObjectStoreException;
@@ -31,7 +30,7 @@ import org.intermine.xml.full.ReferenceList;
  *
  * @author Kim Rutherford
  */
-public class FlyFishConverter extends FileConverter
+public class FlyFishConverter extends BioFileConverter
 {
     protected static final Logger LOG = Logger.getLogger(FlyFishConverter.class);
 
@@ -39,7 +38,6 @@ public class FlyFishConverter extends FileConverter
     private Map<String, Item> termItems = new HashMap<String, Item>();
 
     Item orgDrosophila;
-    private Item dataSet;
     private Item pub;
     private String[] stages;
     protected IdResolverFactory resolverFactory;
@@ -53,23 +51,11 @@ public class FlyFishConverter extends FileConverter
      * @throws ObjectStoreException if an error occurs in storing
      */
     public FlyFishConverter(ItemWriter writer, Model model) throws ObjectStoreException {
-        super(writer, model);
+        super(writer, model, "fly-FISH", "fly-Fish data set");
 
         orgDrosophila = createItem("Organism");
         orgDrosophila.addAttribute(new Attribute("taxonId", TAXON_ID));
         store(orgDrosophila);
-
-        Item dataSource = createItem("DataSource");
-        dataSource.setAttribute("name", "fly-FISH");
-        dataSource.setAttribute("url", "http://fly-fish.ccbr.utoronto.ca");
-        store(dataSource);
-
-        // the widget depends on this name.  if you change the name, change the widget too pls.
-        dataSet = createItem("DataSet");
-        String datasetTitle = "fly-Fish data set of Drosophila embryo mRNA localization patterns";
-        dataSet.setAttribute("title", datasetTitle);
-        dataSet.setReference("dataSource", dataSource);
-        store(dataSet);
 
         pub = createItem("Publication");
         pub.setAttribute("pubMedId", "17923096");
@@ -136,7 +122,6 @@ public class FlyFishConverter extends FileConverter
                 Item result = createItem("MRNAExpressionResult");
                 result.setReference("gene", gene);
                 result.setReference("publication", pub);
-                result.setReference("source", dataSet);
                 ReferenceList mRNAExpressionTerms = new ReferenceList("mRNAExpressionTerms",
                                                                       new ArrayList<String>());
                 result.addCollection(mRNAExpressionTerms);

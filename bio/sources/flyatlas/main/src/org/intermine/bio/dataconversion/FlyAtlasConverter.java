@@ -18,7 +18,6 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
 
-import org.intermine.dataconversion.FileConverter;
 import org.intermine.dataconversion.ItemWriter;
 import org.intermine.metadata.Model;
 import org.intermine.objectstore.ObjectStoreException;
@@ -29,9 +28,9 @@ import org.intermine.xml.full.Item;
  * DataConverter to parse FlyAtlas expression data into items
  * @author Richard Smith
  */
-public class FlyAtlasConverter extends FileConverter
+public class FlyAtlasConverter extends BioFileConverter
 {
-    private Item expt, org, dataSet;
+    private Item expt, org;
     private Map assays = new HashMap();
 
     /**
@@ -41,7 +40,7 @@ public class FlyAtlasConverter extends FileConverter
      * @throws ObjectStoreException if an error occurs in storing
      */
     public FlyAtlasConverter(ItemWriter writer, Model model) throws ObjectStoreException {
-        super(writer, model);
+        super(writer, model, null, "FlyAtlas");
         setupItems();
     }
 
@@ -98,7 +97,6 @@ public class FlyAtlasConverter extends FileConverter
         store(org);
         store(expt);
         store(assays.values());
-        store(dataSet);
     }
 
     private Item createProbe(String probeId) {
@@ -120,7 +118,6 @@ public class FlyAtlasConverter extends FileConverter
         if (results[4] != null) {
             result.setAttribute("enrichment", round(results[4], 2));
         }
-        result.setReference("source", dataSet.getIdentifier());
 
         // set assay
         if (!assays.containsKey(tissue)) {
@@ -143,9 +140,6 @@ public class FlyAtlasConverter extends FileConverter
     protected void setupItems() throws ObjectStoreException {
         org = createItem("Organism");
         org.setAttribute("taxonId", "7227");
-
-        dataSet = createItem("DataSet");
-        dataSet.setAttribute("title", "FlyAtlas");
 
         expt = createItem("MicroArrayExperiment");
         expt.setAttribute("name", "FlyAtlas: Gene expression in the adult fly.");

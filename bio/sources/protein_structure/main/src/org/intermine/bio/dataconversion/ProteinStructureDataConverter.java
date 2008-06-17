@@ -23,7 +23,6 @@ import java.util.Stack;
 
 import org.apache.log4j.Logger;
 import org.intermine.InterMineException;
-import org.intermine.dataconversion.FileConverter;
 import org.intermine.dataconversion.ItemWriter;
 import org.intermine.metadata.Model;
 import org.intermine.objectstore.ObjectStoreException;
@@ -39,12 +38,11 @@ import org.xml.sax.helpers.DefaultHandler;
  * @author Xavier Watkins
  *
  */
-public class ProteinStructureDataConverter extends FileConverter
+public class ProteinStructureDataConverter extends BioFileConverter
 {
     private static final Logger LOG = Logger.getLogger(ProteinStructureDataConverter.class);
     private String dataLocation;
     protected static final String ENDL = System.getProperty("line.separator");
-    private Item dataSet;
     private final Map<String, Item> featureMap = new HashMap<String, Item>();
     private final Map<String, String> proteinMap = new HashMap<String, String>();
     private String parentDir;
@@ -55,16 +53,7 @@ public class ProteinStructureDataConverter extends FileConverter
      * @param model the Model
      */
     public ProteinStructureDataConverter(ItemWriter writer, Model model) {
-        super(writer, model);
-        dataSet = createItem("DataSet");
-        dataSet.setAttribute("title", "Kenji Mizuguchi - NIBIO, Japan");
-        dataSet.setAttribute("url", "http://www.nibio.go.jp");
-        try {
-            store(dataSet);
-        } catch (ObjectStoreException e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
-        }
+        super(writer, model, "Kenji Mizuguchi", "Mizuguchi protein structure predictions");
     }
 
     /**
@@ -101,7 +90,7 @@ public class ProteinStructureDataConverter extends FileConverter
 
     /**
      * Get the content of the file as a String
-     * 
+     *
      * @param fileName the name of the file
      * @param extention the file extension
      * @return a String
@@ -254,8 +243,6 @@ public class ProteinStructureDataConverter extends FileConverter
                 } else if (qName.equals("protein_structure")) {
                     proteinStructure.setAttribute("technique", "Computer prediction");
                     proteinStructure.setAttribute("identifier", protId + "_" + pfamId);
-                    proteinStructure.setCollection("evidence",
-                        new ArrayList(Collections.singleton(dataSet.getIdentifier())));
                     writer.store(ItemHelper.convert(proteinStructure));
                     protId = null;
                     pfamId = null;

@@ -25,7 +25,6 @@ import org.intermine.objectstore.ObjectStoreException;
 import org.intermine.metadata.Model;
 import org.intermine.metadata.MetaDataException;
 import org.intermine.xml.full.Item;
-import org.intermine.dataconversion.FileConverter;
 import org.intermine.dataconversion.ItemWriter;
 import org.intermine.xml.full.ReferenceList;
 
@@ -36,14 +35,14 @@ import org.apache.log4j.Logger;
  * @author Wenyan Ji
  */
 
-public class MageTimeCourseMasFileConverter extends FileConverter
+public class MageTimeCourseMasFileConverter extends BioFileConverter
 {
     protected static final Logger LOG = Logger.getLogger(MageTimeCourseMasFileConverter.class);
     private static final String PROBEPREFIX = "Affymetrix:CompositeSequence:MG_U74Av2:";
     private static final String PROBEURL = "https://www.affymetrix.com/LinkServlet?probeset=";
 
     protected Map config = new HashMap();
-    protected Item dataSource, dataSet, organismMM, experiment, sample1;
+    protected Item organismMM, experiment, sample1;
     protected String expName = "FDCP";
     protected Map assayMap = new HashMap();
 
@@ -57,28 +56,11 @@ public class MageTimeCourseMasFileConverter extends FileConverter
      */
     public MageTimeCourseMasFileConverter(ItemWriter writer, Model model)
         throws ObjectStoreException, MetaDataException, IOException {
-        super(writer, model);
+        super(writer, model, "The Weatherall Institute of Molecular Medicine, "
+              + "Oxford University", "FDCP");
 
         readConfig();
         LOG.info("config " + config);
-
-        dataSource = createItem("DataSource");
-        dataSource.setAttribute("name", "The Weatherall Institute of Molecular Medicine, "
-                                + "Oxford University");
-        dataSource.setAttribute("url", "http://www.imm.ox.ac.uk/");
-        store(dataSource);
-
-        dataSet = createItem("DataSet");
-        dataSet.setReference("dataSource", dataSource.getIdentifier());
-        dataSet.setAttribute("title", "FDCP");
-        dataSet.setAttribute("description",
-                             "Molecular Signatures of Self-Renewal, Differentiation, "
-                             + "and Lineage Choice in Multipotential Hemopoietic Progenitor "
-                             + "Cells In Vitro");
-
-        dataSet.setAttribute("url",
-                        "http://www.imm.ox.ac.uk/pages/research/molecular_haematology/tariq.htm");
-        store(dataSet);
 
         organismMM = createItem("Organism");
         organismMM.setAttribute("abbreviation", "MM");
@@ -150,8 +132,8 @@ public class MageTimeCourseMasFileConverter extends FileConverter
             aveAPCall = Integer.parseInt(apcall) / Integer.parseInt(replicates);
 
             Item probe = createProbe("CompositeSequence", PROBEPREFIX, probeId,
-                                     organismMM.getIdentifier(), dataSource.getIdentifier(),
-                                     dataSet.getIdentifier(), getItemWriter());
+                                     organismMM.getIdentifier(),
+                                     getItemWriter());
 
             String name = timePoint.concat(" ").concat(timeUnit);
             Item assay = getAssay(name, getItemWriter());
@@ -191,20 +173,17 @@ public class MageTimeCourseMasFileConverter extends FileConverter
      * @throws exception if anything goes wrong when writing items to objectstore
      */
      private Item createProbe(String clsName, String probePre, String id, String orgId,
-                              String datasourceId, String datasetId, ItemWriter writer)
+                              ItemWriter writer)
         throws Exception {
         Item probe = createItem(clsName);
         probe.setAttribute("primaryIdentifier", probePre + id);
         probe.setAttribute("name", id);
         probe.setAttribute("url", PROBEURL + id);
         probe.setReference("organism", orgId);
-        probe.addCollection(new ReferenceList("evidence",
-                            new ArrayList(Collections.singleton(datasetId))));
 
         Item synonym = createItem("Synonym");
         synonym.setAttribute("type", "identifier");
         synonym.setAttribute("value", PROBEPREFIX + id);
-        synonym.setReference("source", datasourceId);
         synonym.setReference("subject", probe.getIdentifier());
         store(synonym);
 

@@ -46,15 +46,7 @@ public class BDGPCloneConverter extends CDNACloneConverter
     public BDGPCloneConverter(ItemWriter writer, Model model)
         throws ObjectStoreException,
                MetaDataException {
-        super(writer, model);
-
-        dataSource = createItem("DataSource");
-        dataSource.setAttribute("name", "BDGP");
-        store(dataSource);
-
-        dataSet = createItem("DataSet");
-        dataSet.setAttribute("title", "BDGP cDNA clone data set");
-        store(dataSet);
+        super(writer, model, "BDGP", "BDGP cDNA clone data set");
 
         organism = createItem("Organism");
         organism.setAttribute("taxonId", TAXON_ID);

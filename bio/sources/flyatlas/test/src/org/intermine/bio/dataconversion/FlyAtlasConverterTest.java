@@ -13,7 +13,6 @@ package org.intermine.bio.dataconversion;
 import java.io.StringReader;
 import java.util.HashMap;
 
-import org.intermine.dataconversion.FileConverter;
 import org.intermine.dataconversion.ItemsTestCase;
 import org.intermine.dataconversion.MockItemWriter;
 import org.intermine.metadata.Model;
@@ -34,7 +33,7 @@ public class FlyAtlasConverterTest extends ItemsTestCase
             + "1616608_a_at\tDown\t1016.15\t23.17392572\t4\t0.696947874\tUp\t1874.55\t85.33788237\t4\t1.285699588\t1458\t127.7786302\t4" + ENDL;
 
         MockItemWriter itemWriter = new MockItemWriter(new HashMap());
-        FileConverter converter = new FlyAtlasConverter(itemWriter,
+        BioFileConverter converter = new FlyAtlasConverter(itemWriter,
                                                         Model.getInstanceByName("genomic"));
         converter.process(new StringReader(input));
         converter.close();

@@ -14,7 +14,6 @@ import java.io.File;
 import java.io.FileReader;
 import java.util.HashMap;
 
-import org.intermine.dataconversion.FileConverter;
 import org.intermine.dataconversion.ItemsTestCase;
 import org.intermine.dataconversion.MockItemWriter;
 import org.intermine.metadata.Model;
@@ -32,7 +31,7 @@ public class AnophelesIdentifiersConverterTest extends ItemsTestCase
     public void testProcess() throws Exception {
 
         MockItemWriter itemWriter = new MockItemWriter(new HashMap());
-        FileConverter converter = new AnophelesIdentifiersConverter(itemWriter,
+        BioFileConverter converter = new AnophelesIdentifiersConverter(itemWriter,
                                                                     Model.getInstanceByName("genomic"));
 
         File srcFile1 = new File(getClass().getClassLoader().getResource("New_IDs_to_Old_IDs-Genes.tsv").toURI());

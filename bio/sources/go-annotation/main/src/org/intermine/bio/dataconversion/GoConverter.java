@@ -136,7 +136,7 @@ public class GoConverter extends FileConverter
                                                    + "taxon: " + taxonId + " in file: "
                                                    + PROP_FILE);
             }
-            if (!(geneAttribute.equals("identifier") 
+            if (!(geneAttribute.equals("identifier")
                             || geneAttribute.equals("primaryIdentifier"))) {
                 throw new IllegalArgumentException("Invalid geneAttribute value for taxon: "
                                                    + taxonId + " was: " + geneAttribute);
@@ -211,7 +211,7 @@ public class GoConverter extends FileConverter
             if ("protein".equalsIgnoreCase(array[11]) && !array[0].startsWith("UniProt")) {
                 continue;
             }
-            
+
             // if we move onto a new product id store the last one, we require that files
             // are ordered by product id
             if (lastProductId != null && !lastProductId.equals(productId)) {
@@ -393,7 +393,7 @@ public class GoConverter extends FileConverter
 
         // evidence collection (datasources and publications)
         ReferenceList references = new ReferenceList();
-        references.setName("evidence");
+        references.setName("dataSets");
         references.addRefId(placeHolder.getDatasource().getIdentifier());
         if (placeHolder.getPublicationId() != null) {
             references.addRefId(placeHolder.getPublicationId());
@@ -645,7 +645,7 @@ public class GoConverter extends FileConverter
         product.setAttribute(idField, accession);
 
         //Record some evidence that says we got/matched the gene from GO data.
-        product.addToCollection("evidence", newDatasource("Gene Ontology"));
+        product.addToCollection("dataSets", newDatasource("Gene Ontology"));
 
         Item synonym = newSynonym(
                 product.getIdentifier(),

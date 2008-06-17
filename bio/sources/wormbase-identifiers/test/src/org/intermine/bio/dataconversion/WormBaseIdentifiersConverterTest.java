@@ -14,7 +14,6 @@ import java.io.StringReader;
 import java.util.Collection;
 import java.util.HashMap;
 
-import org.intermine.dataconversion.FileConverter;
 import org.intermine.dataconversion.ItemsTestCase;
 import org.intermine.dataconversion.MockItemWriter;
 import org.intermine.metadata.Model;
@@ -37,7 +36,7 @@ public class WormBaseIdentifiersConverterTest extends ItemsTestCase
             + "WBGene00007168\tB0393.3\t" + ENDL;
 
         MockItemWriter itemWriter = new MockItemWriter(new HashMap());
-        FileConverter converter = new WormBaseIdentifiersConverter(itemWriter,
+        BioFileConverter converter = new WormBaseIdentifiersConverter(itemWriter,
                                                                    Model.getInstanceByName("genomic"));
         converter.process(new StringReader(input));
         converter.close();

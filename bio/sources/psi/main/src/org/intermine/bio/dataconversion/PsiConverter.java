@@ -53,9 +53,9 @@ public class PsiConverter extends FileConverter
     private Map<String, String> aliases = new HashMap<String, String>();
     private Map<String, Map> mapMaster = new HashMap<String, Map>();  // map of maps
     private Map<String, String> organisms = new HashMap<String, String>();
-    private Map<String, String> pubs = new HashMap<String, String>();  
+    private Map<String, String> pubs = new HashMap<String, String>();
     private Map<String, String> accessionsToRefIds = new HashMap<String, String>();
-    private Map<String, String> refIdsToAccessions = new HashMap<String, String>();    
+    private Map<String, String> refIdsToAccessions = new HashMap<String, String>();
     private Map<String, Object> experimentNames = new HashMap<String, Object>();
     private Map<String, String> terms = new HashMap<String, String>();
     private Map<String, String> masterList = new HashMap<String, String>();
@@ -152,7 +152,7 @@ public class PsiConverter extends FileConverter
         private Set<Item> synonyms;
         private String psiDagTermItemId, experimentId, datasourceItemId;
         private String regionName = "";
-        
+
         /**
          * Constructor
          * @param writer the ItemWriter used to handle the resultant items
@@ -294,7 +294,7 @@ public class PsiConverter extends FileConverter
                     } else {
                         primaryAccession = id;
                     }
-                    
+
                     protein = createItem("Protein");
                     protein.setAttribute("primaryAccession", primaryAccession);
                     String proteinRefId = accessionsToRefIds.get(primaryAccession);
@@ -392,13 +392,13 @@ public class PsiConverter extends FileConverter
 
                 attName = "endStatus";
 
-                
+
            //     <featureList><feature id="24"><names><shortLabel>
             } else if (qName.equals("shortLabel")
                        && stack.search("feature") == 2) {
 
                 attName = "regionName";
-                
+
             // <participantList><participant id="6919"><featureList><feature id="6920">
             // <featureType><xref><primaryRef db="psi-mi" dbAc="MI:0488" id="MI:0117"
             } else if (qName.equals("primaryRef")
@@ -410,11 +410,11 @@ public class PsiConverter extends FileConverter
 
                 // create interacting region
                 Item interactionRegion = createItem("ProteinInteractionRegion");
-                interactionRegion.setAttribute("name", regionName);                
+                interactionRegion.setAttribute("name", regionName);
                 interactionRegion.setReference("protein", interactorHolder.proteinId);
                 interactionRegion.setReference("ontologyTerm", psiDagTermItemId);
-                
-                                
+
+
                 // create new location object (start and end are coming later)
                 Item location = createItem("Location");
                 location.setReference("object", interactorHolder.proteinId);
@@ -434,20 +434,20 @@ public class PsiConverter extends FileConverter
                        && stack.peek().equals("featureRange")
                        && interactorHolder != null
                        && interactorHolder.isRegionFeature) {
-                
-                String start = attrs.getValue("position");                
-                interactorHolder.setStart(start);                
-                
+
+                String start = attrs.getValue("position");
+                interactorHolder.setStart(start);
+
                 // <participantList><participant id="6919"><featureList><feature id="6920">
                 //    <featureRangeList><featureRange><end position="470"/>
             } else if (qName.equals("end")
                        && stack.peek().equals("featureRange")
                        && interactorHolder != null
                        && interactorHolder.isRegionFeature) {
-                
-                String end = attrs.getValue("position");                
+
+                String end = attrs.getValue("position");
                 interactorHolder.setEnd(end);
-                
+
                 // <entry>
             } else if (qName.equals("entry")) {
                 /* stuff done only once */
@@ -572,13 +572,13 @@ public class PsiConverter extends FileConverter
                     String accession = protein.getAttribute("primaryAccession").getValue();
                     if (!accessionsToRefIds.containsKey(accession)) {
                         writer.store(ItemHelper.convert(protein));
-                        
-                        String primaryAccession 
+
+                        String primaryAccession
                         = protein.getAttribute("primaryAccession").getValue();
                         String refId = protein.getIdentifier();
                         accessionsToRefIds.put(primaryAccession, refId);
                         refIdsToAccessions.put(refId, primaryAccession);
-                        
+
                         for (Item item : synonyms) {
                             writer.store(ItemHelper.convert(item));
                         }
@@ -673,13 +673,13 @@ public class PsiConverter extends FileConverter
 
                 //     <featureList><feature id="24"><names><shortLabel>
                 } else if (qName.equals("shortLabel")
-                           && stack.search("feature") == 2                                
+                           && stack.search("feature") == 2
                            && attName != null
                            && attName.equals("regionName")) {
 
                     regionName  = attValue.toString();
-                    
-                    
+
+
                 //<interactionList><interaction>
                 } else if (qName.equals("interaction")
                                 && holder != null) {
@@ -752,9 +752,9 @@ public class PsiConverter extends FileConverter
 
 
                     // add dataset
-                    ReferenceList evidenceColl = new ReferenceList("evidence", new ArrayList());
-                    interaction.addCollection(evidenceColl);
-                    evidenceColl.addRefId(masterList.get("dataset"));
+                    ReferenceList dataSetsColl = new ReferenceList("dataSets", new ArrayList());
+                    interaction.addCollection(dataSetsColl);
+                    dataSetsColl.addRefId(masterList.get("dataset"));
 
                     /* store all protein interaction-related items */
                     writer.store(ItemHelper.convert(interaction));
@@ -769,15 +769,15 @@ public class PsiConverter extends FileConverter
                                                  interactorHolder.endStatus);
                         }
                         region.setReference("interaction", interaction);
-                        
-                        String regionIdentifier = interactionHolder.shortName + "_" 
+
+                        String regionIdentifier = interactionHolder.shortName + "_"
                             + refIdsToAccessions.get(interactorHolder.proteinId);
                         if (interactorHolder.start != null && !interactorHolder.start.equals("0")) {
-                            regionIdentifier += ":" + interactorHolder.start; 
+                            regionIdentifier += ":" + interactorHolder.start;
                             regionIdentifier += "-" + interactorHolder.end;
                         }
                         region.setAttribute("primaryIdentifier", regionIdentifier);
-                        
+
                         writer.store(ItemHelper.convert(region));
                         writer.store(ItemHelper.convert(interactorHolder.location));
                     }
@@ -907,7 +907,7 @@ public class PsiConverter extends FileConverter
             try {
                 Item evidenceDatasource = createItem("DataSource");
                 evidenceDatasource.setAttribute("name", "IntAct");
-                
+
                 Item dataSet = createItem("DataSet");
                 dataSet.setAttribute("title", "IntAct data set");
                 dataSet.setReference("dataSource", evidenceDatasource.getIdentifier());
@@ -1087,7 +1087,7 @@ public class PsiConverter extends FileConverter
                 location.setAttribute("start", start);
                 this.start = start;
             }
-            
+
             /**
              * @param end the end position of the region
              */
@@ -1095,7 +1095,7 @@ public class PsiConverter extends FileConverter
                 location.setAttribute("end", end);
                 this.end = end;
             }
-            
+
         }
 
         /**

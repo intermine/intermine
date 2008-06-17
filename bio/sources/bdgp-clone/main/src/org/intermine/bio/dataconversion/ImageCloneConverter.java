@@ -35,8 +35,6 @@ public class ImageCloneConverter extends CDNACloneConverter
 {
     protected static final Logger LOG = Logger.getLogger(ImageCloneConverter.class);
 
-    protected Item dataSource;
-    protected Item dataSet;
     protected Item organism;
     protected Map geneMap = new HashMap();
     protected Map cloneMap = new HashMap();
@@ -50,15 +48,7 @@ public class ImageCloneConverter extends CDNACloneConverter
      */
     public ImageCloneConverter(ItemWriter writer, Model model)
         throws ObjectStoreException, MetaDataException {
-        super(writer, model);
-
-        dataSource = createItem("DataSource");
-        dataSource.setAttribute("name", "RZPD");
-        store(dataSource);
-
-        dataSet = createItem("DataSet");
-        dataSet.setAttribute("title", "RZPD uniprot data set");
-        store(dataSet);
+        super(writer, model, "RZPD", "RZPD uniprot data set");
 
         organism = createItem("Organism");
         organism.setAttribute("abbreviation", "HS");
