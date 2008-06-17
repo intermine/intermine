@@ -46,7 +46,7 @@
 <attribute name="shortName" value="appl-aplip1-2"/>
 <reference name="experiment" ref_id="5_1"/>
 <reference name="protein" ref_id="9_2"/>
-<collection name="evidence"><reference ref_id="4_1"/></collection>
+<collection name="dataSets"><reference ref_id="4_1"/></collection>
 <collection name="interactingProteins"><reference ref_id="9_1"/></collection>
 <collection name="interactingRegions"><reference ref_id="12_1"/></collection>
 </item>
@@ -64,7 +64,7 @@
 <attribute name="shortName" value="appl-aplip1-2"/>
 <reference name="experiment" ref_id="5_1"/>
 <reference name="protein" ref_id="9_1"/>
-<collection name="evidence"><reference ref_id="4_1"/></collection>
+<collection name="dataSets"><reference ref_id="4_1"/></collection>
 <collection name="interactingProteins"><reference ref_id="9_2"/></collection>
 <collection name="interactingRegions"><reference ref_id="12_1"/></collection>
 </item>

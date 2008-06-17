@@ -24,8 +24,10 @@
     <attribute name="type" value="paralogue"/>
     <reference name="gene" ref_id="3_2"/>
     <reference name="homologue" ref_id="3_4"/>
-    <collection name="evidence">
+    <collection name="dataSets">
       <reference ref_id="1_1"/>
+    </collection>
+    <collection name="publications">
       <reference ref_id="2_1"/>
     </collection>
   </item>
@@ -34,8 +36,10 @@
     <attribute name="type" value="paralogue"/>
     <reference name="gene" ref_id="3_3"/>
     <reference name="homologue" ref_id="3_2"/>
-    <collection name="evidence">
+    <collection name="dataSets">
       <reference ref_id="1_1"/>
+    </collection>
+    <collection name="publications">
       <reference ref_id="2_1"/>
     </collection>
   </item>
@@ -44,8 +48,10 @@
     <attribute name="type" value="paralogue"/>
     <reference name="gene" ref_id="3_2"/>
     <reference name="homologue" ref_id="3_3"/>
-    <collection name="evidence">
+    <collection name="dataSets">
       <reference ref_id="1_1"/>
+    </collection>
+    <collection name="publications">
       <reference ref_id="2_1"/>
     </collection>
   </item>
@@ -54,8 +60,10 @@
     <attribute name="type" value="orthologue"/>
     <reference name="gene" ref_id="3_2"/>
     <reference name="homologue" ref_id="3_1"/>
-    <collection name="evidence">
+    <collection name="dataSets">
       <reference ref_id="1_1"/>
+    </collection>
+    <collection name="publications">
       <reference ref_id="2_1"/>
     </collection>
   </item>
@@ -67,8 +75,10 @@
     <attribute name="type" value="paralogue"/>
     <reference name="gene" ref_id="3_4"/>
     <reference name="homologue" ref_id="3_1"/>
-    <collection name="evidence">
+    <collection name="dataSets">
       <reference ref_id="1_1"/>
+    </collection>
+    <collection name="publications">
       <reference ref_id="2_1"/>
     </collection>
   </item>
@@ -77,8 +87,10 @@
     <attribute name="type" value="orthologue"/>
     <reference name="gene" ref_id="3_1"/>
     <reference name="homologue" ref_id="3_2"/>
-    <collection name="evidence">
+    <collection name="dataSets">
       <reference ref_id="1_1"/>
+    </collection>
+    <collection name="publications">
       <reference ref_id="2_1"/>
     </collection>
   </item>
@@ -94,8 +106,10 @@
     <attribute name="type" value="paralogue"/>
     <reference name="gene" ref_id="3_4"/>
     <reference name="homologue" ref_id="3_2"/>
-    <collection name="evidence">
+    <collection name="dataSets">
       <reference ref_id="1_1"/>
+    </collection>
+    <collection name="publications">
       <reference ref_id="2_1"/>
     </collection>
   </item>
@@ -110,8 +124,10 @@
     <attribute name="type" value="paralogue"/>
     <reference name="gene" ref_id="3_3"/>
     <reference name="homologue" ref_id="3_1"/>
-    <collection name="evidence">
+    <collection name="dataSets">
       <reference ref_id="1_1"/>
+    </collection>
+    <collection name="publications">
       <reference ref_id="2_1"/>
     </collection>
   </item>
@@ -120,8 +136,10 @@
     <attribute name="type" value="paralogue"/>
     <reference name="gene" ref_id="3_1"/>
     <reference name="homologue" ref_id="3_4"/>
-    <collection name="evidence">
+    <collection name="dataSets">
       <reference ref_id="1_1"/>
+    </collection>
+    <collection name="publications">
       <reference ref_id="2_1"/>
     </collection>
   </item>
@@ -130,8 +148,10 @@
     <attribute name="type" value="paralogue"/>
     <reference name="gene" ref_id="3_1"/>
     <reference name="homologue" ref_id="3_3"/>
-    <collection name="evidence">
+    <collection name="dataSets">
       <reference ref_id="1_1"/>
+    </collection>
+    <collection name="publications">
       <reference ref_id="2_1"/>
     </collection>
   </item>

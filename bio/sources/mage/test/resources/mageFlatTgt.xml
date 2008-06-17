@@ -30,7 +30,7 @@
 <attribute name="primaryIdentifier" value="Affymetrix:CompositeSequence:Mouse430:1415904_at"/>
 <attribute name="name" value="1415904_at"/>
 <reference name="organism" ref_id="2_1"/>
-<collection name="evidence">
+<collection name="dataSets">
 <reference ref_id="1_1"/>
 </collection>
 <collection name="results">
@@ -57,7 +57,7 @@
 <attribute name="primaryIdentifier" value="Affymetrix:CompositeSequence:Mouse430:1415965_at"/>
 <attribute name="name" value="1415965_at"/>
 <reference name="organism" ref_id="2_1"/>
-<collection name="evidence">
+<collection name="dataSets">
 <reference ref_id="1_1"/>
 </collection>
 <collection name="results">

@@ -80,7 +80,7 @@
 <attribute name="shortName" value="tubby"/>
 <attribute name="type" value="Domain"/>
 <reference name="domainRelationships" ref_id="3_1"/>
-<collection name="evidence"><reference ref_id="1_1"/></collection>
+<collection name="dataSets"><reference ref_id="1_1"/></collection>
 <collection name="publications"><reference ref_id="4_1"/><reference ref_id="4_2"/><reference ref_id="4_3"/><reference ref_id="4_4"/></collection>
 </item>
 <item id="5_6" class="http://www.flymine.org/model/genomic#Synonym">
@@ -115,7 +115,7 @@
 <attribute name="shortName" value="monkey"/>
 <attribute name="type" value="Domain"/>
 <reference name="domainRelationships" ref_id="3_2"/>
-<collection name="evidence"><reference ref_id="1_1"/></collection>
+<collection name="dataSets"><reference ref_id="1_1"/></collection>
 <collection name="publications"><reference ref_id="4_1"/><reference ref_id="4_2"/><reference ref_id="4_5"/></collection>
 </item>
 <item id="2_7" class="http://www.flymine.org/model/genomic#ProteinDomain">

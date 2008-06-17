@@ -27,9 +27,6 @@
     <collection name="allGoAnnotation">
       <reference ref_id="7_5"/>
     </collection>
-    <collection name="evidence">
-      <reference ref_id="0_3"/>
-    </collection>
     <collection name="goAnnotation">
       <reference ref_id="7_5"/>
     </collection>
@@ -42,9 +39,6 @@
       <reference ref_id="7_2"/>
       <reference ref_id="7_3"/>
       <reference ref_id="7_4"/>
-    </collection>
-    <collection name="evidence">
-      <reference ref_id="0_3"/>
     </collection>
     <collection name="goAnnotation">
       <reference ref_id="7_1"/>
@@ -60,9 +54,6 @@
     <reference name="subject" ref_id="5_2"/>
     <collection name="actualGoTerms">
       <reference ref_id="3_4"/>
-    </collection>
-    <collection name="evidence">
-      <reference ref_id="0_2"/>
     </collection>
     <collection name="goEvidenceCodes">
       <reference ref_id="2_1"/>
@@ -80,9 +71,6 @@
     <reference name="subject" ref_id="5_1"/>
     <collection name="actualGoTerms">
       <reference ref_id="3_3"/>
-    </collection>
-    <collection name="evidence">
-      <reference ref_id="0_2"/>
     </collection>
     <collection name="goEvidenceCodes">
       <reference ref_id="2_1"/>
@@ -111,9 +99,6 @@
       <reference ref_id="3_1"/>
       <reference ref_id="3_3"/>
     </collection>
-    <collection name="evidence">
-      <reference ref_id="0_2"/>
-    </collection>
     <collection name="goEvidenceCodes">
       <reference ref_id="2_1"/>
     </collection>
@@ -127,9 +112,6 @@
     <collection name="actualGoTerms">
       <reference ref_id="3_2"/>
       <reference ref_id="3_3"/>
-    </collection>
-    <collection name="evidence">
-      <reference ref_id="0_2"/>
     </collection>
     <collection name="goEvidenceCodes">
       <reference ref_id="2_1"/>

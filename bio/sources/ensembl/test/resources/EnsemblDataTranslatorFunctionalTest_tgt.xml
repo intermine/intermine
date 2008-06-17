@@ -24,7 +24,7 @@
 <attribute name="primaryIdentifier" value="X"/>
 <reference name="organism" ref_id="-1_1"/>
 <reference name="sequence" ref_id="40_1"/>
-<collection name="evidence"><reference ref_id="-1_12"/></collection>
+<collection name="dataSets"><reference ref_id="-1_12"/></collection>
 </item>
 <item id="23_2" class="http://www.flymine.org/model/genomic#RepeatRegion">
 <attribute name="consensus" value="N"/>
@@ -33,7 +33,7 @@
 <attribute name="start" value="1"/>
 <attribute name="type" value="Low_complexity"/>
 <reference name="organism" ref_id="-1_1"/>
-<collection name="evidence"><reference ref_id="-1_26"/><reference ref_id="-1_12"/></collection>
+<collection name="dataSets"><reference ref_id="-1_26"/><reference ref_id="-1_12"/></collection>
 </item>
 <item id="-1_20" class="http://www.flymine.org/model/genomic#Location">
 <attribute name="end" value="124200000"/>
@@ -50,7 +50,7 @@
 <attribute name="min_primer_dist" value="142"/>
 <attribute name="right_primer" value="GCTCCAGCGTCATGGAGG"/>
 <reference name="organism" ref_id="-1_1"/>
-<collection name="evidence"><reference ref_id="-1_12"/></collection>
+<collection name="dataSets"><reference ref_id="-1_12"/></collection>
 </item>
 <item id="-1_9" class="http://www.flymine.org/model/genomic#DataSource">
 <attribute name="description" value="The Ensembl eukaryotic genome annotation database"/>
@@ -80,7 +80,7 @@
 <attribute name="primaryIdentifier" value="ENSG00000100109"/>
 <reference name="comment" ref_id="-1_18"/>
 <reference name="organism" ref_id="-1_1"/>
-<collection name="evidence"><reference ref_id="-1_12"/></collection>
+<collection name="dataSets"><reference ref_id="-1_12"/></collection>
 </item>
 <item id="40_1" class="http://www.flymine.org/model/genomic#Sequence">
 <attribute name="length" value="12"/>
@@ -91,7 +91,7 @@
 <attribute name="value" value="ENSG00000100109"/>
 <reference name="source" ref_id="-1_9"/>
 <reference name="subject" ref_id="4_327"/>
-<collection name="evidence"><reference ref_id="-1_12"/></collection>
+<collection name="dataSets"><reference ref_id="-1_12"/></collection>
 </item>
 <item id="-1_26" class="http://www.flymine.org/model/genomic#ComputationalResult">
 <attribute name="score" value="23.0"/>
@@ -109,7 +109,7 @@
 <attribute name="value" value="ENST00000343885"/>
 <reference name="source" ref_id="-1_9"/>
 <reference name="subject" ref_id="3_1"/>
-<collection name="evidence"><reference ref_id="-1_12"/></collection>
+<collection name="dataSets"><reference ref_id="-1_12"/></collection>
 </item>
 <item id="-1_32" class="http://www.flymine.org/model/genomic#ComputationalResult">
 <attribute name="score" value="59.85"/>
@@ -130,7 +130,7 @@
 <item id="-1_34" class="http://www.flymine.org/model/genomic#CDS">
 <attribute name="primaryIdentifier" value="ENSP00000339205_CDS"/>
 <reference name="organism" ref_id="-1_1"/>
-<collection name="evidence"><reference ref_id="-1_12"/></collection>
+<collection name="dataSets"><reference ref_id="-1_12"/></collection>
 <collection name="polypeptides"><reference ref_id="8_478"/></collection>
 </item>
 <item id="11_4" class="http://www.flymine.org/model/genomic#ComputationalAnalysis">
@@ -141,14 +141,14 @@
 <attribute name="value" value="ENSE00001383955"/>
 <reference name="source" ref_id="-1_9"/>
 <reference name="subject" ref_id="0_1"/>
-<collection name="evidence"><reference ref_id="-1_12"/></collection>
+<collection name="dataSets"><reference ref_id="-1_12"/></collection>
 </item>
 <item id="9_1" class="http://www.flymine.org/model/genomic#Synonym">
 <attribute name="type" value="identifier"/>
 <attribute name="value" value="ENSP00000339205"/>
 <reference name="source" ref_id="-1_9"/>
 <reference name="subject" ref_id="8_478"/>
-<collection name="evidence"><reference ref_id="-1_12"/></collection>
+<collection name="dataSets"><reference ref_id="-1_12"/></collection>
 </item>
 <item id="-1_4" class="http://www.flymine.org/model/genomic#DataSource">
 <attribute name="description" value="The Human Genome Organisation"/>
@@ -222,7 +222,7 @@
 <attribute name="name" value="D1S243"/>
 <attribute name="right_primer" value="GCTCCAGCGTCATGGACT"/>
 <reference name="organism" ref_id="-1_1"/>
-<collection name="evidence"><reference ref_id="-1_12"/></collection>
+<collection name="dataSets"><reference ref_id="-1_12"/></collection>
 </item>
 <item id="-1_11" class="http://www.flymine.org/model/genomic#DataSource">
 <attribute name="description" value="A comprehensive database of sequence tagged sites (STSs)"/>
@@ -257,7 +257,7 @@
 <reference name="organism" ref_id="-1_1"/>
 <reference name="translation" ref_id="8_478"/>
 <collection name="CDSs"><reference ref_id="-1_34"/></collection>
-<collection name="evidence"><reference ref_id="-1_12"/></collection>
+<collection name="dataSets"><reference ref_id="-1_12"/></collection>
 </item>
 <item id="-1_8" class="http://www.flymine.org/model/genomic#DataSource">
 <attribute name="description" value="put something usefull here"/>
@@ -274,7 +274,7 @@
 <attribute name="stain" value="acen"/>
 <reference name="chromosome" ref_id="-1_14"/>
 <reference name="organism" ref_id="-1_1"/>
-<collection name="evidence"><reference ref_id="-1_12"/></collection>
+<collection name="dataSets"><reference ref_id="-1_12"/></collection>
 </item>
 <item id="-1_18" class="http://www.flymine.org/model/genomic#Comment">
 <attribute name="text" value="RNA, U39 small nucleolar (RNU39) on chromosome 1 [Source:RefSeq_dna;Acc:NR_000015]"/>
@@ -289,7 +289,7 @@
 <attribute name="value" value="ENSG00000187981"/>
 <reference name="source" ref_id="-1_9"/>
 <reference name="subject" ref_id="4_1"/>
-<collection name="evidence"><reference ref_id="-1_12"/></collection>
+<collection name="dataSets"><reference ref_id="-1_12"/></collection>
 </item>
 <item id="-1_21" class="http://www.flymine.org/model/genomic#Synonym">
 <attribute name="type" value="identifier"/>
@@ -311,18 +311,22 @@
 <item id="-1_29" class="http://www.flymine.org/model/genomic#TRNA">
 <attribute name="primaryIdentifier" value="TRNA_X:24304..24376"/>
 <reference name="organism" ref_id="-1_1"/>
-<collection name="evidence"><reference ref_id="-1_32"/><reference ref_id="-1_12"/></collection>
+<collection name="evidence"><reference ref_id="-1_32"/>
+</collection>
+<collection name="dataSets">
+  <reference ref_id="-1_12"/>
+</collection>
 </item>
 <item id="0_1" class="http://www.flymine.org/model/genomic#Exon">
 <attribute name="primaryIdentifier" value="ENSE00001383955"/>
 <reference name="organism" ref_id="-1_1"/>
-<collection name="evidence"><reference ref_id="-1_12"/></collection>
+<collection name="dataSets"><reference ref_id="-1_12"/></collection>
 </item>
 <item id="4_1" class="http://www.flymine.org/model/genomic#Gene">
 <attribute name="primaryIdentifier" value="ENSG00000187981"/>
 <reference name="comment" ref_id="-1_16"/>
 <reference name="organism" ref_id="-1_1"/>
-<collection name="evidence"><reference ref_id="-1_12"/></collection>
+<collection name="dataSets"><reference ref_id="-1_12"/></collection>
 </item>
 <item id="-1_2" class="http://www.flymine.org/model/genomic#DataSource">
 <attribute name="description" value="The GDB Human Genome Database"/>

@@ -15,7 +15,7 @@
     <attribute name="strand" value="0"/>
     <reference name="object" ref_id="0_3"/>
     <reference name="subject" ref_id="0_5"/>
-    <collection name="evidence">
+    <collection name="dataSets">
       <reference ref_id="0_1"/>
     </collection>
   </item>
@@ -56,7 +56,7 @@
     <attribute name="strand" value="0"/>
     <reference name="object" ref_id="0_3"/>
     <reference name="subject" ref_id="0_10"/>
-    <collection name="evidence">
+    <collection name="dataSets">
       <reference ref_id="0_1"/>
     </collection>
   </item>
@@ -65,8 +65,10 @@
     <attribute name="primaryIdentifier" value="ENr231"/>
     <attribute name="type" value="encodeRegion"/>
     <reference name="organism" ref_id="0_0"/>
-    <collection name="evidence">
+    <collection name="dataSets">
       <reference ref_id="0_1"/>
+    </collection>
+    <collection name="evidence">
       <reference ref_id="0_7"/>
     </collection>
   </item>
@@ -75,8 +77,10 @@
     <attribute name="primaryIdentifier" value="ENr112"/>
     <attribute name="type" value="encodeRegion"/>
     <reference name="organism" ref_id="0_0"/>
-    <collection name="evidence">
+    <collection name="dataSets">
       <reference ref_id="0_1"/>
+    </collection>
+    <collection name="evidence">
       <reference ref_id="0_12"/>
     </collection>
   </item>

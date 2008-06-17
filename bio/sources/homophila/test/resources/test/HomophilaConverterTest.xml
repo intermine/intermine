@@ -6,8 +6,10 @@
   <item id="7_1" class="http://www.flymine.org/model/genomic#Annotation">
     <reference name="property" ref_id="6_1"/>
     <reference name="subject" ref_id="5_1"/>
-    <collection name="evidence">
+    <collection name="dataSets">
       <reference ref_id="1_1"/>
+    </collection>
+    <collection name="publications">
       <reference ref_id="2_1"/>
       <reference ref_id="2_2"/>
     </collection>
@@ -28,7 +30,7 @@
   <item id="8_1" class="http://www.flymine.org/model/genomic#Translation">
     <attribute name="secondaryIdentifier" value="CG7052-PA"/>
     <reference name="organism" ref_id="0_2"/>
-    <collection name="evidence">
+    <collection name="dataSets">
       <reference ref_id="1_1"/>
     </collection>
   </item>
@@ -38,7 +40,7 @@
   <item id="6_1" class="http://www.flymine.org/model/genomic#Disease">
     <attribute name="description" value="Emphysema due to alpha-2-macroglobulin deficiency (1); {Alzheimer disease, susceptibility to} (3)"/>
     <attribute name="omimId" value="103950"/>
-    <collection name="evidence">
+    <collection name="dataSets">
       <reference ref_id="1_1"/>
     </collection>
   </item>
@@ -46,14 +48,14 @@
     <attribute name="EValue" value="123"/>
     <reference name="object" ref_id="8_1"/>
     <reference name="subject" ref_id="4_1"/>
-    <collection name="evidence">
+    <collection name="dataSets">
       <reference ref_id="1_1"/>
     </collection>
   </item>
   <item id="5_1" class="http://www.flymine.org/model/genomic#Gene">
     <attribute name="symbol" value="A2M"/>
     <reference name="organism" ref_id="0_1"/>
-    <collection name="evidence">
+    <collection name="dataSets">
       <reference ref_id="1_1"/>
     </collection>
     <collection name="omimDiseases">

@@ -20,7 +20,7 @@
     <attribute name="primaryIdentifier" value="2331399"/>
     <reference name="gene" ref_id="-1_7"/>
     <reference name="organism" ref_id="-1_3"/>
-    <collection name="evidence">
+    <collection name="dataSets">
       <reference ref_id="-1_2"/>
     </collection>
   </item>
@@ -41,7 +41,7 @@
     <attribute name="primaryIdentifier" value="1654313"/>
     <reference name="gene" ref_id="-1_4"/>
     <reference name="organism" ref_id="-1_3"/>
-    <collection name="evidence">
+    <collection name="dataSets">
       <reference ref_id="-1_2"/>
     </collection>
   </item>

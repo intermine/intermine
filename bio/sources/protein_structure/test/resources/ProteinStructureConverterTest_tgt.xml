@@ -19,7 +19,7 @@
 <attribute name="technique" value="Computer prediction"/>
 <attribute name="prosaZScore" value="-8.75"/>
 <reference name="proteinDomain" ref_id="3_1"/>
-<collection name="evidence"><reference ref_id="0_1"/></collection>
+<collection name="dataSets"><reference ref_id="0_1"/></collection>
 <collection name="proteins"><reference ref_id="2_1"/></collection>
 </item>
 </items>

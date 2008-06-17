@@ -13,7 +13,7 @@
     <attribute name="primaryIdentifier" value="RE21586"/>
     <reference name="gene" ref_id="3_1"/>
     <reference name="organism" ref_id="2_1"/>
-    <collection name="evidence">
+    <collection name="dataSets">
       <reference ref_id="1_1"/>
     </collection>
   </item>
