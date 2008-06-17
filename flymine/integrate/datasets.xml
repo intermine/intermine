@@ -447,4 +447,9 @@
         <reference name="dataSource" ref_id="530"/>
     </item>
 
+    <item id="530" class="" implements="http://www.flymine.org/model/genomic#DataSource">
+        <attribute name="name" value="GeneDB"/>
+        <attribute name="url" value="http://www.genedb.org/"/>
+    </item>
+
 </items>
