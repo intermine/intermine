@@ -195,7 +195,7 @@ public abstract class DataConverter
      */
     public void store(Collection<Item> c) throws ObjectStoreException {
         for (Item item : c) {
-            getItemWriter().store(ItemHelper.convert(item));
+            store(item);
         }
     }
 }
