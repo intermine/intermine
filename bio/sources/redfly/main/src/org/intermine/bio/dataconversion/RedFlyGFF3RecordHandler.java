@@ -141,7 +141,7 @@ public class RedFlyGFF3RecordHandler extends GFF3RecordHandler
         }
 
         if (!pubmedId.equals("")) {
-            addEvidence(getPublication(pubmedId));
+            addPublication(getPublication(pubmedId));
         }
 
         feature.setAttribute("primaryIdentifier", name);

@@ -275,14 +275,14 @@ public class GFF3Converter
             }
             relation.addReference(new Reference("object", seq.getIdentifier()));
             relation.addReference(new Reference("subject", feature.getIdentifier()));
-            relation.addCollection(new ReferenceList("evidence", Arrays.asList(new String[]
+            relation.addCollection(new ReferenceList("dataSets", Arrays.asList(new String[]
                 {
                     dataSet.getIdentifier()
                 })));
             handler.setLocation(relation);
         }
 
-        handler.addEvidence(dataSet);
+        handler.addDataSet(dataSet);
 
         if (record.getScore() != null) {
             Item computationalResult = createItem("ComputationalResult");
@@ -357,9 +357,14 @@ public class GFF3Converter
         }
 
         handler.process(record);
+        feature.addCollection(handler.getDataSetReferenceList());
+        handler.clearDataSetReferenceList();
+
         feature.addCollection(handler.getEvidenceReferenceList());
         handler.clearEvidenceReferenceList();
 
+        feature.addCollection(handler.getPublicationReferenceList());
+        handler.clearPublicationReferenceList();
 
         try {
             Iterator iter = handler.getItems().iterator();
