@@ -58,7 +58,6 @@ public class Drosophila2ProbeConverter extends FileConverter
         org.setAttribute("taxonId", TAXON_ID);
         store(org);
 
-
         // only construct factory here so can be replaced by mock factory in tests
         resolverFactory = new FlyBaseIdResolverFactory();
     }
@@ -175,7 +174,7 @@ public class Drosophila2ProbeConverter extends FileConverter
         probeSet.setAttribute("primaryIdentifier", probeSetId);
         probeSet.setAttribute("name", probeSetId);
         probeSet.setReference("organism", org.getIdentifier());
-        probeSet.setCollection("evidence",
+        probeSet.setCollection("dataSets",
             new ArrayList(Collections.singleton(dataSet.getIdentifier())));
 
         Item synonym = createItem("Synonym");
