@@ -94,8 +94,7 @@ public class RNAiConverter extends BioFileConverter
                     phenotype.setReference("gene", gene.getIdentifier());
 
                     Item pub = createPub(line[11]);
-                    phenotype.setCollection("evidence",
-                        new ArrayList(Collections.singleton(pub.getIdentifier())));
+                    phenotype.addToCollection("publications", pub.getIdentifier());
                     Item screen = createScreen(pub);
                     phenotype.setReference("analysis", screen.getIdentifier());
 
