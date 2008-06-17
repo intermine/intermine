@@ -30,12 +30,12 @@ public class LongOligoGFF3RecordHandlerTest extends ItemsTestCase
     String seqClsName = "MRNA";
     String taxonId = "7227";
     String dataSetTitle = "INDAC long oligo data set";
-    String dataSourceName = "Micklem lab";    
+    String dataSourceName = "Micklem lab";
 
     public LongOligoGFF3RecordHandlerTest(String arg) {
         super(arg);
     }
-    
+
     public void setUp() throws Exception {
         Model tgtModel = Model.getInstanceByName("genomic");
         handler = new LongOligoGFF3RecordHandler(tgtModel);
@@ -55,7 +55,7 @@ public class LongOligoGFF3RecordHandlerTest extends ItemsTestCase
         converter.store();
 
         // uncomment to write a new items xml file
-        writeItemsFile(writer.getItems(), "long-oligo_items.xml");
+        // writeItemsFile(writer.getItems(), "/tmp/long-oligo_items.xml");
 
         Set expected = readItemSet("LongOligoGFF3RecordHandlerTest.xml");
         assertEquals(expected, writer.getItems());
