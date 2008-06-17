@@ -20,7 +20,7 @@
         <reference name="experiment" referenced-type="org.flymine.model.genomic.ProteinInteractionExperiment" reverse-reference="interactions"/>
         <collection name="interactingRegions" referenced-type="org.flymine.model.genomic.ProteinInteractionRegion" ordered="true" reverse-reference="interaction"/>
         <collection name="interactingProteins" referenced-type="org.flymine.model.genomic.Protein" ordered="true" reverse-reference="proteinInteractions"/>
-        <collection name="evidence" referenced-type="org.flymine.model.genomic.Evidence"/>
+        <collection name="dataSets" referenced-type="org.flymine.model.genomic.DataSet"/>
     </class>
 
     <class name="org.flymine.model.genomic.Protein" is-interface="true">       
