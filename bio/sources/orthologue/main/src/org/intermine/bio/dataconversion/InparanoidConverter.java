@@ -40,7 +40,7 @@ public class InparanoidConverter extends FileConverter
 {
     protected static final String PROP_FILE = "inparanoid_config.properties";
     protected Map bioEntities = new HashMap();
-    protected Item db, pub;
+    protected Item dataSet, pub;
     protected Map organisms = new LinkedHashMap();
     protected Map sources = new LinkedHashMap();
     protected Map orgSources = new HashMap();
@@ -295,7 +295,7 @@ public class InparanoidConverter extends FileConverter
         homologue.setAttribute("type", type);
         homologue.setAttribute("clusterName", cluster);
 
-        homologue.addToCollection("dataSets", db.getIdentifier());
+        homologue.addToCollection("dataSets", dataSet.getIdentifier());
         homologue.addToCollection("publications", pub.getIdentifier());
         return homologue;
     }
@@ -380,10 +380,10 @@ public class InparanoidConverter extends FileConverter
         pub = createItem("Publication");
         pub.setAttribute("pubMedId", "11743721");
 
-        db = createItem("DataSet");
-        db.setAttribute("title", "InParanoid data set");
+        dataSet = createItem("DataSet");
+        dataSet.setAttribute("title", "InParanoid data set");
 
-        store(db);
+        store(dataSet);
         store(pub);
     }
 
