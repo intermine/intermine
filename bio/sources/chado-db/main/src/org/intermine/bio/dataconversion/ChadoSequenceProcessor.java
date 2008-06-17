@@ -442,8 +442,7 @@ public class ChadoSequenceProcessor extends ChadoProcessor
                         throw new RuntimeException("unable to find class object for setting "
                                                    + "a chromosome reference", e);
                     }
-                    if (LocatedSequenceFeature.class.isAssignableFrom(featureClass)
-                            && featureData.interMineType == "chromosome") {
+                    if (LocatedSequenceFeature.class.isAssignableFrom(featureClass)) {
                         Integer featureIntermineObjectId = featureData.getIntermineObjectId();
                         if (srcFeatureData.interMineType.equals("Chromosome")) {
                             Reference chrReference = new Reference();
