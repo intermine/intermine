@@ -3,9 +3,27 @@
 <attribute name="analysisDescription" value="Drosophila C Virus infection assay"/>
 <attribute name="cellLine" value="S2 cells"/>
 <attribute name="name" value="DCV Screen"/>
-<reference name="organism" ref_id="0_1"/>
+<reference name="organism" ref_id="2_1"/>
 <reference name="publication" ref_id="3_2"/>
 <collection name="rnaiScreenHits"><reference ref_id="7_2"/><reference ref_id="7_5"/><reference ref_id="7_6"/></collection>
+</item>
+<item id="7_1" class="http://www.flymine.org/model/genomic#RNAiScreenHit">
+<attribute name="result" value="Not a Hit"/>
+<reference name="amplicon" ref_id="5_1"/>
+<reference name="rnaiScreen" ref_id="4_1"/>
+</item>
+<item id="6_1" class="http://www.flymine.org/model/genomic#Synonym">
+<attribute name="type" value="identifier"/>
+<attribute name="value" value="DRSC00001"/>
+<reference name="source" ref_id="0_1"/>
+<reference name="subject" ref_id="5_1"/>
+<collection name="dataSets"><reference ref_id="1_1"/></collection>
+</item>
+<item id="8_2" class="http://www.flymine.org/model/genomic#Gene">
+<attribute name="primaryIdentifier" value="FBgn002"/>
+<reference name="organism" ref_id="2_1"/>
+<collection name="dataSets"><reference ref_id="1_1"/></collection>
+<collection name="rnaiResults"><reference ref_id="7_4"/><reference ref_id="7_6"/></collection>
 </item>
 <item id="7_4" class="http://www.flymine.org/model/genomic#RNAiScreenHit">
 <attribute name="result" value="Weak Hit"/>
@@ -13,66 +31,11 @@
 <reference name="gene" ref_id="8_2"/>
 <reference name="rnaiScreen" ref_id="4_1"/>
 </item>
-<item id="8_1" class="http://www.flymine.org/model/genomic#Gene">
-<attribute name="primaryIdentifier" value="FBgn001"/>
-<reference name="organism" ref_id="0_1"/>
-<collection name="rnaiResults"><reference ref_id="7_3"/><reference ref_id="7_5"/></collection>
-</item>
-<item id="6_1" class="http://www.flymine.org/model/genomic#Synonym">
-<attribute name="type" value="identifier"/>
-<attribute name="value" value="DRSC00001"/>
-<reference name="source" ref_id="1_1"/>
-<reference name="subject" ref_id="5_1"/>
-</item>
-<item id="0_1" class="http://www.flymine.org/model/genomic#Organism">
-<attribute name="taxonId" value="7227"/>
-</item>
-<item id="7_2" class="http://www.flymine.org/model/genomic#RNAiScreenHit">
-<attribute name="result" value="Strong Hit"/>
-<reference name="amplicon" ref_id="5_1"/>
-<reference name="rnaiScreen" ref_id="4_2"/>
-</item>
-<item id="3_1" class="http://www.flymine.org/model/genomic#Publication">
-<attribute name="pubMedId" value="14764878"/>
-</item>
-<item id="4_1" class="http://www.flymine.org/model/genomic#RNAiScreen">
-<attribute name="analysisDescription" value="ATP viability assay"/>
-<attribute name="cellLine" value="S2R+ cells and Kc167 cells"/>
-<attribute name="name" value="Cell Growth and Viability"/>
-<reference name="organism" ref_id="0_1"/>
-<reference name="publication" ref_id="3_1"/>
-<collection name="rnaiScreenHits"><reference ref_id="7_1"/><reference ref_id="7_3"/><reference ref_id="7_4"/></collection>
-</item>
-<item id="2_1" class="http://www.flymine.org/model/genomic#DataSet">
-<attribute name="title" value="DRSC RNAi data set"/>
-<reference name="dataSource" ref_id="1_1"/>
-</item>
-<item id="5_1" class="http://www.flymine.org/model/genomic#Amplicon">
-<attribute name="primaryIdentifier" value="DRSC00001"/>
-<reference name="organism" ref_id="0_1"/>
-<collection name="dataSets"><reference ref_id="2_1"/></collection>
-<collection name="rnaiScreenHits"><reference ref_id="7_1"/><reference ref_id="7_2"/></collection>
-</item>
-<item id="3_2" class="http://www.flymine.org/model/genomic#Publication">
-<attribute name="pubMedId" value="15713840"/>
-</item>
-<item id="5_2" class="http://www.flymine.org/model/genomic#Amplicon">
-<attribute name="primaryIdentifier" value="DRSC00003"/>
-<reference name="organism" ref_id="0_1"/>
-<collection name="dataSets"><reference ref_id="2_1"/></collection>
-<collection name="genes"><reference ref_id="8_1"/><reference ref_id="8_2"/></collection>
-<collection name="rnaiScreenHits"><reference ref_id="7_3"/><reference ref_id="7_4"/><reference ref_id="7_5"/><reference ref_id="7_6"/></collection>
-</item>
-<item id="8_2" class="http://www.flymine.org/model/genomic#Gene">
-<attribute name="primaryIdentifier" value="FBgn002"/>
-<reference name="organism" ref_id="0_1"/>
-<collection name="rnaiResults"><reference ref_id="7_4"/><reference ref_id="7_6"/></collection>
-</item>
-<item id="7_5" class="http://www.flymine.org/model/genomic#RNAiScreenHit">
-<attribute name="result" value="Not a Hit"/>
+<item id="7_3" class="http://www.flymine.org/model/genomic#RNAiScreenHit">
+<attribute name="result" value="Weak Hit"/>
 <reference name="amplicon" ref_id="5_2"/>
 <reference name="gene" ref_id="8_1"/>
-<reference name="rnaiScreen" ref_id="4_2"/>
+<reference name="rnaiScreen" ref_id="4_1"/>
 </item>
 <item id="7_6" class="http://www.flymine.org/model/genomic#RNAiScreenHit">
 <attribute name="result" value="Not a Hit"/>
@@ -80,24 +43,65 @@
 <reference name="gene" ref_id="8_2"/>
 <reference name="rnaiScreen" ref_id="4_2"/>
 </item>
-<item id="1_1" class="http://www.flymine.org/model/genomic#DataSource">
+<item id="5_1" class="http://www.flymine.org/model/genomic#Amplicon">
+<attribute name="primaryIdentifier" value="DRSC00001"/>
+<reference name="organism" ref_id="2_1"/>
+<collection name="dataSets"><reference ref_id="1_1"/></collection>
+<collection name="rnaiScreenHits"><reference ref_id="7_1"/><reference ref_id="7_2"/></collection>
+</item>
+<item id="0_1" class="http://www.flymine.org/model/genomic#DataSource">
 <attribute name="name" value="Drosophila RNAi Screening Center"/>
 </item>
 <item id="6_2" class="http://www.flymine.org/model/genomic#Synonym">
 <attribute name="type" value="identifier"/>
 <attribute name="value" value="DRSC00003"/>
-<reference name="source" ref_id="1_1"/>
+<reference name="source" ref_id="0_1"/>
 <reference name="subject" ref_id="5_2"/>
+<collection name="dataSets"><reference ref_id="1_1"/></collection>
 </item>
-<item id="7_3" class="http://www.flymine.org/model/genomic#RNAiScreenHit">
-<attribute name="result" value="Weak Hit"/>
+<item id="8_1" class="http://www.flymine.org/model/genomic#Gene">
+<attribute name="primaryIdentifier" value="FBgn001"/>
+<reference name="organism" ref_id="2_1"/>
+<collection name="dataSets"><reference ref_id="1_1"/></collection>
+<collection name="rnaiResults"><reference ref_id="7_3"/><reference ref_id="7_5"/></collection>
+</item>
+<item id="4_1" class="http://www.flymine.org/model/genomic#RNAiScreen">
+<attribute name="analysisDescription" value="ATP viability assay"/>
+<attribute name="cellLine" value="S2R+ cells and Kc167 cells"/>
+<attribute name="name" value="Cell Growth and Viability"/>
+<reference name="organism" ref_id="2_1"/>
+<reference name="publication" ref_id="3_1"/>
+<collection name="rnaiScreenHits"><reference ref_id="7_1"/><reference ref_id="7_3"/><reference ref_id="7_4"/></collection>
+</item>
+<item id="7_2" class="http://www.flymine.org/model/genomic#RNAiScreenHit">
+<attribute name="result" value="Strong Hit"/>
+<reference name="amplicon" ref_id="5_1"/>
+<reference name="rnaiScreen" ref_id="4_2"/>
+</item>
+<item id="5_2" class="http://www.flymine.org/model/genomic#Amplicon">
+<attribute name="primaryIdentifier" value="DRSC00003"/>
+<reference name="organism" ref_id="2_1"/>
+<collection name="dataSets"><reference ref_id="1_1"/></collection>
+<collection name="genes"><reference ref_id="8_1"/><reference ref_id="8_2"/></collection>
+<collection name="rnaiScreenHits"><reference ref_id="7_3"/><reference ref_id="7_4"/><reference ref_id="7_5"/><reference ref_id="7_6"/></collection>
+</item>
+<item id="2_1" class="http://www.flymine.org/model/genomic#Organism">
+<attribute name="taxonId" value="7227"/>
+</item>
+<item id="1_1" class="http://www.flymine.org/model/genomic#DataSet">
+<attribute name="title" value="DRSC RNAi data set"/>
+<reference name="dataSource" ref_id="0_1"/>
+</item>
+<item id="3_2" class="http://www.flymine.org/model/genomic#Publication">
+<attribute name="pubMedId" value="15713840"/>
+</item>
+<item id="7_5" class="http://www.flymine.org/model/genomic#RNAiScreenHit">
+<attribute name="result" value="Not a Hit"/>
 <reference name="amplicon" ref_id="5_2"/>
 <reference name="gene" ref_id="8_1"/>
-<reference name="rnaiScreen" ref_id="4_1"/>
+<reference name="rnaiScreen" ref_id="4_2"/>
 </item>
-<item id="7_1" class="http://www.flymine.org/model/genomic#RNAiScreenHit">
-<attribute name="result" value="Not a Hit"/>
-<reference name="amplicon" ref_id="5_1"/>
-<reference name="rnaiScreen" ref_id="4_1"/>
+<item id="3_1" class="http://www.flymine.org/model/genomic#Publication">
+<attribute name="pubMedId" value="14764878"/>
 </item>
 </items>

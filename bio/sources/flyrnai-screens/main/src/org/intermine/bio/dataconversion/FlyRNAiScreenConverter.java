@@ -172,6 +172,8 @@ public class FlyRNAiScreenConverter extends BioFileConverter
                 amplicon.addCollection(new ReferenceList("rnaiScreenHits",
                                                          new ArrayList<String>()));
 
+                newSynonym(ampliconIdentifier, amplicon);
+
                 // the amplicon may target zero or more genes, a gene can be targeted
                 // by more than one amplicon.
                 if (!(line[1] == null || line[1].equals(""))) {
@@ -331,7 +333,7 @@ public class FlyRNAiScreenConverter extends BioFileConverter
      * @return a new synonym Item
      * @throws ObjectStoreException if the is an ObjectStore problem
      */
-    protected Item newSynonym(String synonymName, Item subject, Item source)
+    protected Item newSynonym(String synonymName, Item subject)
         throws ObjectStoreException {
         if (synonymName == null) {
             throw new RuntimeException("synonymName can't be null");
@@ -340,7 +342,6 @@ public class FlyRNAiScreenConverter extends BioFileConverter
         item.setAttribute("value", synonymName);
         item.setAttribute("type", "identifier");
         item.setReference("subject", subject.getIdentifier());
-        item.setReference("source", source.getIdentifier());
         store(item);
         return item;
     }

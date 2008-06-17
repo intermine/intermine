@@ -39,7 +39,7 @@ public class FlyRNAiScreenConverterTest extends ItemsTestCase
         resolverFactory.addResolverEntry("7227", "FBgn002", Collections.singleton("eve"));
         converter.resolverFactory = resolverFactory;
     }
-    
+
     public void testProcess() throws Exception {
         File srcFile = new File(getClass().getClassLoader().getResource("RNAi_screen_details").toURI());
         converter.setCurrentFile(srcFile);
@@ -51,7 +51,7 @@ public class FlyRNAiScreenConverterTest extends ItemsTestCase
         converter.close();
 
         // uncomment to write out a new target items file
-        //writeItemsFile(itemWriter.getItems(), "flyrnai-tgt-items.xml");
+        writeItemsFile(itemWriter.getItems(), "/tmp/flyrnai-tgt-items.xml");
 
         Set expected = readItemSet("FlyRNAiConverterTest_tgt.xml");
 
