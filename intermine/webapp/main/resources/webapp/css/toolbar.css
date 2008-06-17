@@ -18,13 +18,13 @@ ul#button_bar {
 }
 
 #tool_bar_li_edit{
-    background-image: url('../images/icons/convert_grey.png');
+    background-image: url('../images/icons/edit_grey.png');
 }
 #tool_bar_li_edit:hover{
-    background-image: url('../images/icons/convert_hover.png');
+    background-image: url('../images/icons/edit_hover.png');
 }
 .tool_bar_button_edit{
-    background-image: url('../images/icons/convert_down.png');
+    background-image: url('../images/icons/edit_down.png');
     background-color:#CCC;
 }
 

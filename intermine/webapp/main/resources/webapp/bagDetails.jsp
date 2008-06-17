@@ -38,7 +38,7 @@
         <li id="tool_bar_li_export"><img style="cursor: pointer;" src="images/icons/null.gif" width="64" height="25" title="Export this list" border="0" id="tool_bar_button_export" class="tool_bar_button"/></li>
         <li id="tool_bar_li_use"><img style="cursor: pointer;" src="images/icons/null.gif" width="43" height="25" title="Use this list in a template or a query" border="0" id="tool_bar_button_use" class="tool_bar_button"/></li>
         <c:if test="${myBag == 'true'}">
-        	<li id="tool_bar_li_edit"><img style="cursor: pointer;" src="images/icons/null.gif" width="94" height="25" alt="Edit" border="0" id="tool_bar_button_edit" class="tool_bar_button"></li>
+        	<li id="tool_bar_li_edit"><img style="cursor: pointer;" src="images/icons/null.gif" width="56" height="25" alt="Edit" border="0" id="tool_bar_button_edit" class="tool_bar_button"></li>
 		</c:if>
         <li class="tool_bar_separator"><span>&nbsp;//&nbsp;</span></li>
         <li class="tool_bar_link">
@@ -78,7 +78,7 @@
     <a href="javascript:hideMenu('tool_bar_item_use')" ><fmt:message key="confirm.cancel"/></a>
 </div>
 
-<div id="tool_bar_item_edit" style="visibility:hidden" class="tool_bar_item">
+<div id="tool_bar_item_edit" style="visibility:hidden;width:300px" class="tool_bar_item">
 	<%-- add selected to bag --%>
    <c:choose>
    <c:when test="${!empty PROFILE.savedBags}">
