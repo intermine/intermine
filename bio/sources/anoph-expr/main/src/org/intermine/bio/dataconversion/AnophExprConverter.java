@@ -57,7 +57,7 @@ public class AnophExprConverter extends BioFileConverter
      * @throws ObjectStoreException if an error occurs in storing
      */
     public AnophExprConverter(ItemWriter writer, Model model) throws ObjectStoreException {
-        super(writer, model, null, "Anoph-Expr data set");
+        super(writer, model, "ArrayExpress", "Anoph-Expr data set");
 
         org = createItem("Organism");
         org.addAttribute(new Attribute("taxonId", "180454"));
@@ -249,13 +249,12 @@ public class AnophExprConverter extends BioFileConverter
     private Item getGene(String geneCG) {
         if (genes.containsKey(geneCG)) {
             return genes.get(geneCG);
-        } else {
-            Item gene = createItem("Gene");
-            gene.setAttribute("primaryIdentifier", geneCG);
-            gene.setReference("organism", org.getIdentifier());
-            genes.put(geneCG, gene);
-            return gene;
         }
+        Item gene = createItem("Gene");
+        gene.setAttribute("primaryIdentifier", geneCG);
+        gene.setReference("organism", org.getIdentifier());
+        genes.put(geneCG, gene);
+        return gene;
     }
 }
 

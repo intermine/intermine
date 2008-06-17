@@ -327,7 +327,7 @@
         <attribute name="description"
                    value="Annotated EST clusters for Anopheles gambiae"/>
         <attribute name="version" value="8"/>
-        <attribute name="url" 
+        <attribute name="url"
                    value="http://agambiae.vectorbase.org/SequenceData/EST"/>
         <reference name="dataSource" ref_id="350"/>
     </item>
@@ -341,7 +341,7 @@
         <attribute name="description"
                    value="Regulatory element database for Drosophila"/>
         <attribute name="version" value="2.0"/>
-        <attribute name="url" 
+        <attribute name="url"
                    value="http://redfly.ccr.buffalo.edu/?content=/search.php"/>
         <reference name="dataSource" ref_id="450"/>
     </item>
@@ -351,7 +351,7 @@
         <attribute name="description"
                    value="Regulatory element database for Drosophila"/>
         <attribute name="version" value="2.0"/>
-        <attribute name="url" 
+        <attribute name="url"
                    value="http://redfly.ccr.buffalo.edu/?content=/search.php"/>
         <reference name="dataSource" ref_id="450"/>
     </item>
@@ -361,17 +361,17 @@
       <attribute name="description" value="The Krause Lab"/>
       <attribute name="url" value="http://www.utoronto.ca/krause/"/>
     </item>
-    
+
     <item id="471" class="" implements="http://www.flymine.org/model/genomic#DataSet">
         <attribute name="title" value="miRBase Targets"/>
         <attribute name="description"
                    value="Identification of potential microRNA targets by using the miRanda software (Computational Biology Center of Memorial Sloan-Kettering Cancer Center)"/>
         <attribute name="version" value="5.0"/>
-        <attribute name="url" 
+        <attribute name="url"
                    value="http://microrna.sanger.ac.uk/targets/v5/"/>
         <reference name="dataSource" ref_id="340"/>
     </item>
-    
+
     <item id="480" class="" implements="http://www.flymine.org/model/genomic#DataSource">
         <attribute name="name" value="fly-FISH"/>
         <attribute name="description" value=""/>
@@ -381,14 +381,14 @@
         <attribute name="title" value="fly-Fish data set"/>
         <attribute name="description"
                    value="fly-Fish data set of Drosophila embryo mRNA localization patterns"/>
-        <attribute name="url" 
+        <attribute name="url"
                    value="http://fly-fish.ccbr.utoronto.ca"/>
         <reference name="dataSource" ref_id="480"/>
     </item>
 
     <item id="491" class="" implements="http://www.flymine.org/model/genomic#DataSet">
         <attribute name="title" value="KEGG PATHWAY - dme"/>
-        <attribute name="url" 
+        <attribute name="url"
                    value="http://www.genome.jp/kegg/pathway.html"/>
         <reference name="dataSource" ref_id="480"/>
     </item>
@@ -402,13 +402,13 @@
         <attribute name="title" value="Rossi et al, 2005 MAGE data set"/>
         <attribute name="description"
                    value="Rossi et al, 2005: Compare blood stem cells from young vs old mice"/>
-        <attribute name="url" 
+        <attribute name="url"
                    value="http://www.pnas.org/content/vol0/issue2005/images/data/0503280102/DC1/03280Table4.xls"/>
         <reference name="dataSource" ref_id="500"/>
     </item>
 
     <item id="510" class="" implements="http://www.flymine.org/model/genomic#DataSource">
-        <attribute name="name" 
+        <attribute name="name"
                    value="The Weatherall Institute of Molecular Medicine, Oxford University"/>
         <attribute name="url" value="http://www.imm.ox.ac.uk/"/>
     </item>
@@ -416,7 +416,7 @@
         <attribute name="title" value="FDCP"/>
         <attribute name="description"
                    value="Molecular Signatures of Self-Renewal, Differentiation,  and Lineage Choice in Multipotential Hemopoietic Progenitor Cells In Vitro"/>
-        <attribute name="url" 
+        <attribute name="url"
                    value="http://www.imm.ox.ac.uk/pages/research/molecular_haematology/tariq.htm"/>
         <reference name="dataSource" ref_id="510"/>
     </item>
@@ -434,4 +434,17 @@
         <attribute name="url" value="http://www.rcsb.org/pdb/"/>
         <reference name="dataSource" ref_id="520"/>
     </item>
+
+    <item id="530" class="" implements="http://www.flymine.org/model/genomic#DataSource">
+        <attribute name="name" value="ArrayExpress"/>
+        <attribute name="url" value="http://www.ebi.ac.uk/microarray-as/aer/"/>
+    </item>
+    <item id="531" class="" implements="http://www.flymine.org/model/genomic#DataSet">
+        <attribute name="title" value="Anoph-Expr data set"/>
+        <attribute name="description"
+                   value="Anopheles gambiae life cycle exression data"/>
+        <attribute name="url" value="http://www.rcsb.org/pdb/"/>
+        <reference name="dataSource" ref_id="530"/>
+    </item>
+
 </items>
