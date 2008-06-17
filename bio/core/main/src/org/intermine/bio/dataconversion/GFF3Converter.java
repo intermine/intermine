@@ -357,13 +357,19 @@ public class GFF3Converter
         }
 
         handler.process(record);
-        feature.addCollection(handler.getDataSetReferenceList());
+        if (handler.getDataSetReferenceList().getRefIds().size() > 0) {
+            feature.addCollection(handler.getDataSetReferenceList());
+        }
         handler.clearDataSetReferenceList();
 
-        feature.addCollection(handler.getEvidenceReferenceList());
+        if (handler.getEvidenceReferenceList().getRefIds().size() > 0) {
+            feature.addCollection(handler.getEvidenceReferenceList());
+        }
         handler.clearEvidenceReferenceList();
 
-        feature.addCollection(handler.getPublicationReferenceList());
+        if (handler.getPublicationReferenceList().getRefIds().size() > 0) {
+            feature.addCollection(handler.getPublicationReferenceList());
+        }
         handler.clearPublicationReferenceList();
 
         try {
