@@ -13,8 +13,10 @@
     <attribute name="type" value="inParalogue"/>
     <reference name="homologueTranslation" ref_id="6_1"/>
     <reference name="translation" ref_id="6_3"/>
-    <collection name="evidence">
+    <collection name="dataSets">
       <reference ref_id="1_1"/>
+    </collection>
+    <collection name="publications">
       <reference ref_id="0_1"/>
     </collection>
   </item>
@@ -27,8 +29,10 @@
     <attribute name="type" value="inParalogue"/>
     <reference name="gene" ref_id="3_1"/>
     <reference name="homologueTranslation" ref_id="6_2"/>
-    <collection name="evidence">
+    <collection name="dataSets">
       <reference ref_id="1_1"/>
+    </collection>
+    <collection name="publications">
       <reference ref_id="0_1"/>
     </collection>
   </item>
@@ -38,8 +42,10 @@
     <attribute name="type" value="inParalogue"/>
     <reference name="homologue" ref_id="3_1"/>
     <reference name="translation" ref_id="6_1"/>
-    <collection name="evidence">
+    <collection name="dataSets">
       <reference ref_id="1_1"/>
+    </collection>
+    <collection name="publications">
       <reference ref_id="0_1"/>
     </collection>
   </item>
@@ -51,8 +57,10 @@
     <attribute name="type" value="orthologue"/>
     <reference name="homologue" ref_id="3_2"/>
     <reference name="translation" ref_id="6_2"/>
-    <collection name="evidence">
+    <collection name="dataSets">
       <reference ref_id="1_1"/>
+    </collection>
+    <collection name="publications">
       <reference ref_id="0_1"/>
     </collection>
   </item>
@@ -62,8 +70,10 @@
     <attribute name="type" value="inParalogue"/>
     <reference name="homologueTranslation" ref_id="6_2"/>
     <reference name="translation" ref_id="6_1"/>
-    <collection name="evidence">
+    <collection name="dataSets">
       <reference ref_id="1_1"/>
+    </collection>
+    <collection name="publications">
       <reference ref_id="0_1"/>
     </collection>
   </item>
@@ -73,8 +83,10 @@
     <attribute name="type" value="inParalogue"/>
     <reference name="homologueTranslation" ref_id="6_2"/>
     <reference name="translation" ref_id="6_3"/>
-    <collection name="evidence">
+    <collection name="dataSets">
       <reference ref_id="1_1"/>
+    </collection>
+    <collection name="publications">
       <reference ref_id="0_1"/>
     </collection>
   </item>
@@ -94,8 +106,10 @@
     <attribute name="type" value="inParalogue"/>
     <reference name="homologue" ref_id="3_2"/>
     <reference name="translation" ref_id="6_3"/>
-    <collection name="evidence">
+    <collection name="dataSets">
       <reference ref_id="1_1"/>
+    </collection>
+    <collection name="publications">
       <reference ref_id="0_1"/>
     </collection>
   </item>
@@ -111,8 +125,10 @@
     <attribute name="type" value="inParalogue"/>
     <reference name="homologueTranslation" ref_id="6_3"/>
     <reference name="translation" ref_id="6_1"/>
-    <collection name="evidence">
+    <collection name="dataSets">
       <reference ref_id="1_1"/>
+    </collection>
+    <collection name="publications">
       <reference ref_id="0_1"/>
     </collection>
   </item>
@@ -136,8 +152,10 @@
     <attribute name="type" value="orthologue"/>
     <reference name="homologue" ref_id="3_2"/>
     <reference name="translation" ref_id="6_1"/>
-    <collection name="evidence">
+    <collection name="dataSets">
       <reference ref_id="1_1"/>
+    </collection>
+    <collection name="publications">
       <reference ref_id="0_1"/>
     </collection>
   </item>
@@ -147,8 +165,10 @@
     <attribute name="type" value="inParalogue"/>
     <reference name="homologueTranslation" ref_id="6_3"/>
     <reference name="translation" ref_id="6_2"/>
-    <collection name="evidence">
+    <collection name="dataSets">
       <reference ref_id="1_1"/>
+    </collection>
+    <collection name="publications">
       <reference ref_id="0_1"/>
     </collection>
   </item>
@@ -162,8 +182,10 @@
     <attribute name="type" value="inParalogue"/>
     <reference name="homologue" ref_id="3_1"/>
     <reference name="translation" ref_id="6_2"/>
-    <collection name="evidence">
+    <collection name="dataSets">
       <reference ref_id="1_1"/>
+    </collection>
+    <collection name="publications">
       <reference ref_id="0_1"/>
     </collection>
   </item>
@@ -173,8 +195,10 @@
     <attribute name="type" value="inParalogue"/>
     <reference name="gene" ref_id="3_1"/>
     <reference name="homologueTranslation" ref_id="6_1"/>
-    <collection name="evidence">
+    <collection name="dataSets">
       <reference ref_id="1_1"/>
+    </collection>
+    <collection name="publications">
       <reference ref_id="0_1"/>
     </collection>
   </item>
@@ -186,8 +210,10 @@
     <attribute name="type" value="orthologue"/>
     <reference name="gene" ref_id="3_2"/>
     <reference name="homologueTranslation" ref_id="6_1"/>
-    <collection name="evidence">
+    <collection name="dataSets">
       <reference ref_id="1_1"/>
+    </collection>
+    <collection name="publications">
       <reference ref_id="0_1"/>
     </collection>
   </item>
@@ -216,8 +242,10 @@
     <attribute name="type" value="inParalogue"/>
     <reference name="gene" ref_id="3_2"/>
     <reference name="homologueTranslation" ref_id="6_3"/>
-    <collection name="evidence">
+    <collection name="dataSets">
       <reference ref_id="1_1"/>
+    </collection>
+    <collection name="publications">
       <reference ref_id="0_1"/>
     </collection>
   </item>
@@ -227,8 +255,10 @@
     <attribute name="type" value="inParalogue"/>
     <reference name="gene" ref_id="3_1"/>
     <reference name="homologue" ref_id="3_2"/>
-    <collection name="evidence">
+    <collection name="dataSets">
       <reference ref_id="1_1"/>
+    </collection>
+    <collection name="publications">
       <reference ref_id="0_1"/>
     </collection>
   </item>
@@ -238,8 +268,10 @@
     <attribute name="type" value="inParalogue"/>
     <reference name="homologueTranslation" ref_id="6_1"/>
     <reference name="translation" ref_id="6_2"/>
-    <collection name="evidence">
+    <collection name="dataSets">
       <reference ref_id="1_1"/>
+    </collection>
+    <collection name="publications">
       <reference ref_id="0_1"/>
     </collection>
   </item>
@@ -252,8 +284,10 @@
     <attribute name="type" value="inParalogue"/>
     <reference name="gene" ref_id="3_2"/>
     <reference name="homologue" ref_id="3_1"/>
-    <collection name="evidence">
+    <collection name="dataSets">
       <reference ref_id="1_1"/>
+    </collection>
+    <collection name="publications">
       <reference ref_id="0_1"/>
     </collection>
   </item>
@@ -269,8 +303,10 @@
     <attribute name="type" value="orthologue"/>
     <reference name="gene" ref_id="3_2"/>
     <reference name="homologueTranslation" ref_id="6_2"/>
-    <collection name="evidence">
+    <collection name="dataSets">
       <reference ref_id="1_1"/>
+    </collection>
+    <collection name="publications">
       <reference ref_id="0_1"/>
     </collection>
   </item>

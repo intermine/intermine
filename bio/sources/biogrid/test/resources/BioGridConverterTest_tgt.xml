@@ -12,7 +12,7 @@
 <attribute name="geneRole" value="bait"/>
 <reference name="experiment" ref_id="3_1"/>
 <reference name="gene" ref_id="5_1"/>
-<collection name="evidence"><reference ref_id="2_1"/></collection>
+<collection name="dataSets"><reference ref_id="2_1"/></collection>
 <collection name="interactingGenes"><reference ref_id="5_2"/></collection>
 </item>
 <item id="6_1" class="http://www.flymine.org/model/genomic#Organism">
@@ -27,7 +27,7 @@
 <attribute name="geneRole" value="prey"/>
 <reference name="experiment" ref_id="3_1"/>
 <reference name="gene" ref_id="5_2"/>
-<collection name="evidence"><reference ref_id="2_1"/></collection>
+<collection name="dataSets"><reference ref_id="2_1"/></collection>
 <collection name="interactingGenes"><reference ref_id="5_1"/></collection>
 </item>
 <item id="5_1" class="http://www.flymine.org/model/genomic#Gene">

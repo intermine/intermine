@@ -23,7 +23,7 @@
     <attribute name="secondaryIdentifier" value="ENSANGG00000027829"/>
     <attribute name="primaryIdentifier" value="AGAP000035"/>
     <reference name="organism" ref_id="2_1"/>
-    <collection name="evidence">
+    <collection name="dataSets">
       <reference ref_id="1_1"/>
     </collection>
   </item>
@@ -34,7 +34,7 @@
     <attribute name="secondaryIdentifier" value="ENSANGG00000014848"/>
     <attribute name="primaryIdentifier" value="AGAP000034"/>
     <reference name="organism" ref_id="2_1"/>
-    <collection name="evidence">
+    <collection name="dataSets">
       <reference ref_id="1_1"/>
     </collection>
   </item>

@@ -9,8 +9,10 @@
     <attribute name="identifier" value="CpGWindow(14+):chr1:917400..917601"/>
     <attribute name="name" value="CpGWindow(14+)"/>
     <reference name="organism" ref_id="0_0"/>
-    <collection name="evidence">
+    <collection name="dataSets">
       <reference ref_id="0_1"/>
+    </collection>
+    <collection name="evidence">
       <reference ref_id="0_18"/>
     </collection>
   </item>
@@ -24,8 +26,10 @@
     <attribute name="identifier" value="promoter(2179-):chr1:2096850..2097419"/>
     <attribute name="name" value="promoter(2179-)"/>
     <reference name="organism" ref_id="0_0"/>
-    <collection name="evidence">
+    <collection name="dataSets">
       <reference ref_id="0_1"/>
+    </collection>
+    <collection name="evidence">
       <reference ref_id="0_7"/>
     </collection>
   </item>
@@ -35,7 +39,7 @@
     <attribute name="strand" value="-1"/>
     <reference name="object" ref_id="0_3"/>
     <reference name="subject" ref_id="0_4"/>
-    <collection name="evidence">
+    <collection name="dataSets">
       <reference ref_id="0_1"/>
     </collection>
   </item>
@@ -81,7 +85,7 @@
     <attribute name="strand" value="1"/>
     <reference name="object" ref_id="0_10"/>
     <reference name="subject" ref_id="0_15"/>
-    <collection name="evidence">
+    <collection name="dataSets">
       <reference ref_id="0_1"/>
     </collection>
   </item>
@@ -103,7 +107,7 @@
     <attribute name="identifier" value="exon(2179-)#2:chr1:2097064..2097289"/>
     <attribute name="symbol" value="exon(2179-)#2"/>
     <reference name="organism" ref_id="0_0"/>
-    <collection name="evidence">
+    <collection name="dataSets">
       <reference ref_id="0_1"/>
     </collection>
   </item>
@@ -113,7 +117,7 @@
     <attribute name="strand" value="-1"/>
     <reference name="object" ref_id="0_10"/>
     <reference name="subject" ref_id="0_11"/>
-    <collection name="evidence">
+    <collection name="dataSets">
       <reference ref_id="0_1"/>
     </collection>
   </item>

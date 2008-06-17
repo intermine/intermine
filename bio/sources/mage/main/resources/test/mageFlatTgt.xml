@@ -31,7 +31,7 @@
 <attribute name="name" value="1415904_at"/>
 <attribute name="url" value="https://www.affymetrix.com/LinkServlet?probeset=1415904_at"/>
 <reference name="organism" ref_id="-1_3"/>
-<collection name="evidence">
+<collection name="dataSets">
 <reference ref_id="-1_2"/>
 </collection>
 <collection name="results">
@@ -59,7 +59,7 @@
 <attribute name="name" value="1415965_at"/>
 <attribute name="url" value="https://www.affymetrix.com/LinkServlet?probeset=1415965_at"/>
 <reference name="organism" ref_id="-1_3"/>
-<collection name="evidence">
+<collection name="dataSets">
 <reference ref_id="-1_2"/>
 </collection>
 <collection name="results">

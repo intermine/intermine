@@ -50,7 +50,7 @@
 <item id="5_1" class="http://www.flymine.org/model/genomic#Amplicon">
 <attribute name="primaryIdentifier" value="DRSC00001"/>
 <reference name="organism" ref_id="0_1"/>
-<collection name="evidence"><reference ref_id="2_1"/></collection>
+<collection name="dataSets"><reference ref_id="2_1"/></collection>
 <collection name="rnaiScreenHits"><reference ref_id="7_1"/><reference ref_id="7_2"/></collection>
 </item>
 <item id="3_2" class="http://www.flymine.org/model/genomic#Publication">
@@ -59,7 +59,7 @@
 <item id="5_2" class="http://www.flymine.org/model/genomic#Amplicon">
 <attribute name="primaryIdentifier" value="DRSC00003"/>
 <reference name="organism" ref_id="0_1"/>
-<collection name="evidence"><reference ref_id="2_1"/></collection>
+<collection name="dataSets"><reference ref_id="2_1"/></collection>
 <collection name="genes"><reference ref_id="8_1"/><reference ref_id="8_2"/></collection>
 <collection name="rnaiScreenHits"><reference ref_id="7_3"/><reference ref_id="7_4"/><reference ref_id="7_5"/><reference ref_id="7_6"/></collection>
 </item>

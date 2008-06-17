@@ -5,7 +5,7 @@
 <attribute name="primaryIdentifier" value="TF000068"/>
 <attribute name="secondaryIdentifier" value="644"/>
 <reference name="gene" ref_id="1_5"/>
-<collection name="evidence"><reference ref_id="1_4"/></collection>
+<collection name="publications"><reference ref_id="1_4"/></collection>
 </item>
 <item id="1_2" class="http://www.flymine.org/model/genomic#Synonym">
 <attribute name="type" value="identifier"/>
@@ -33,7 +33,7 @@
 <attribute name="secondaryIdentifier" value="645"/>
 <reference name="factor" ref_id="1_10"/>
 <reference name="gene" ref_id="1_5"/>
-<collection name="evidence"><reference ref_id="1_9"/></collection>
+<collection name="publications"><reference ref_id="1_9"/></collection>
 </item>
 <item id="1_7" class="http://www.flymine.org/model/genomic#Synonym">
 <attribute name="type" value="identifier"/>
@@ -60,7 +60,7 @@
 <attribute name="primaryIdentifier" value="TF000067"/>
 <attribute name="secondaryIdentifier" value="643"/>
 <reference name="gene" ref_id="1_5"/>
-<collection name="evidence"><reference ref_id="1_4"/></collection>
+<collection name="publications"><reference ref_id="1_4"/></collection>
 </item>
 <item id="1_12" class="http://www.flymine.org/model/genomic#Synonym">
 <attribute name="type" value="identifier"/>

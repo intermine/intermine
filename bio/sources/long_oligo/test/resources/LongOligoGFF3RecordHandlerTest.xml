@@ -40,8 +40,10 @@
     <reference name="organism" ref_id="0_0"/>
     <reference name="sequence" ref_id="1_1"/>
     <reference name="transcript" ref_id="0_3"/>
-    <collection name="evidence">
+    <collection name="dataSets">
       <reference ref_id="0_1"/>
+    </collection>
+    <collection name="evidence">
       <reference ref_id="0_7"/>
     </collection>
   </item>
@@ -57,7 +59,7 @@
   <item id="0_6" class="http://www.flymine.org/model/genomic#SimpleRelation">
     <reference name="object" ref_id="0_3"/>
     <reference name="subject" ref_id="0_5"/>
-    <collection name="evidence">
+    <collection name="dataSets">
       <reference ref_id="0_1"/>
     </collection>
   </item>

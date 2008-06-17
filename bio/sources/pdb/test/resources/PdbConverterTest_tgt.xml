@@ -13,7 +13,7 @@
     <attribute name="resolution" value="2.0"/>
     <attribute name="technique" value="NMR, 10 STRUCTURES "/>
     <attribute name="title" value="NMR STRUCTURE OF THE COMPLEX BETWEEN THE C32S-Y7V MUTANT OF THE NSH3 DOMAIN OF GRB2 WITH A PEPTIDE FROM SOS, 10 STRUCTURES "/>
-    <collection name="evidence"><reference ref_id="1_1"/></collection>
+    <collection name="dataSets"><reference ref_id="1_1"/></collection>
     <collection name="proteins"><reference ref_id="3_1"/><reference ref_id="3_2"/></collection>
   </item>
   <item id="3_1" class="http://www.flymine.org/model/genomic#Protein">
