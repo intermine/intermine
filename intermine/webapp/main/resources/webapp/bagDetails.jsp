@@ -101,12 +101,7 @@
     </c:choose>
 	<br/>
     <%-- remove selected from bag --%>
-    <input type="submit" name="removeFromBag" id="removeFromBag" value="Remove selected" />
-
-     <script type="text/javascript" charset="utf-8">
-     	$('removeFromBag').disabled = true;
-     </script>
-
+    <input type="submit" name="removeFromBag" id="removeFromBag" value="Remove selected" disabled="true" />
     <hr>
   <a href="javascript:hideMenu('tool_bar_item_edit')" ><fmt:message key="confirm.cancel"/></a>
 </div>
