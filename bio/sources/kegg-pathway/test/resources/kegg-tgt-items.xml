@@ -1,17 +1,16 @@
-<?xml version="1.0"?>
 <items>
-  <item id="4_1" class="http://www.flymine.org/model/genomic#Gene">
-    <attribute name="primaryIdentifier" value="FBgn001"/>
+  <item id="3_1" class="http://www.flymine.org/model/genomic#Organism">
+    <attribute name="taxonId" value="7227"/>
+  </item>
+  <item id="4_2" class="http://www.flymine.org/model/genomic#Gene">
+    <attribute name="primaryIdentifier" value="FBgn002"/>
     <reference name="organism" ref_id="3_1"/>
+    <collection name="dataSets">
+      <reference ref_id="1_1"/>
+    </collection>
     <collection name="pathways">
       <reference ref_id="2_1"/>
-    </collection>
-  </item>
-  <item id="4_3" class="http://www.flymine.org/model/genomic#Gene">
-    <attribute name="primaryIdentifier" value="FBgn003"/>
-    <reference name="organism" ref_id="3_1"/>
-    <collection name="pathways">
-      <reference ref_id="2_3"/>
+      <reference ref_id="2_2"/>
     </collection>
   </item>
   <item id="2_2" class="http://www.flymine.org/model/genomic#Pathway">
@@ -21,6 +20,10 @@
       <reference ref_id="1_1"/>
     </collection>
   </item>
+  <item id="1_1" class="http://www.flymine.org/model/genomic#DataSet">
+    <attribute name="title" value="KEGG PATHWAY - dme"/>
+    <reference name="dataSource" ref_id="0_1"/>
+  </item>
   <item id="2_1" class="http://www.flymine.org/model/genomic#Pathway">
     <attribute name="identifier" value="00010"/>
     <attribute name="name" value="Glycolysis / Gluconeogenesis"/>
@@ -28,19 +31,18 @@
       <reference ref_id="1_1"/>
     </collection>
   </item>
-  <item id="4_2" class="http://www.flymine.org/model/genomic#Gene">
-    <attribute name="primaryIdentifier" value="FBgn002"/>
+  <item id="4_1" class="http://www.flymine.org/model/genomic#Gene">
+    <attribute name="primaryIdentifier" value="FBgn001"/>
     <reference name="organism" ref_id="3_1"/>
+    <collection name="dataSets">
+      <reference ref_id="1_1"/>
+    </collection>
     <collection name="pathways">
       <reference ref_id="2_1"/>
-      <reference ref_id="2_2"/>
     </collection>
   </item>
   <item id="0_1" class="http://www.flymine.org/model/genomic#DataSource">
     <attribute name="name" value="Kyoto Encyclopedia of Genes and Genomes"/>
-  </item>
-  <item id="3_1" class="http://www.flymine.org/model/genomic#Organism">
-    <attribute name="taxonId" value="7227"/>
   </item>
   <item id="2_3" class="http://www.flymine.org/model/genomic#Pathway">
     <attribute name="identifier" value="00030"/>
@@ -49,8 +51,14 @@
       <reference ref_id="1_1"/>
     </collection>
   </item>
-  <item id="1_1" class="http://www.flymine.org/model/genomic#DataSet">
-    <attribute name="title" value="KEGG PATHWAY - dme"/>
-    <attribute name="url" value="http://www.genome.jp/kegg/pathway.html"/>
+  <item id="4_3" class="http://www.flymine.org/model/genomic#Gene">
+    <attribute name="primaryIdentifier" value="FBgn003"/>
+    <reference name="organism" ref_id="3_1"/>
+    <collection name="dataSets">
+      <reference ref_id="1_1"/>
+    </collection>
+    <collection name="pathways">
+      <reference ref_id="2_3"/>
+    </collection>
   </item>
 </items>
