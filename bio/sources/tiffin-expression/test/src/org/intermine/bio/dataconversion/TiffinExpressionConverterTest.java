@@ -54,7 +54,7 @@ public class TiffinExpressionConverterTest extends ItemsTestCase
         converter.close();
 
         // uncomment to create a new target items files
-        //writeItemsFile(itemWriter.getItems(), "TiffinExpressionTestItems_actual.xml");
+        //writeItemsFile(itemWriter.getItems(), "/tmp/TiffinExpressionTestItems_actual.xml");
 
         Set<org.intermine.xml.full.Item> expected = readItemSet("TiffinExpressionTestItems.xml");
         assertEquals(expected, itemWriter.getItems());
