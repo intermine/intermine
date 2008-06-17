@@ -715,24 +715,6 @@ public class DataTranslator
         }
     }
 
-
-    /**
-     * Add an element to a collection field of an Item
-     * @param item the item
-     * @param refListName the collection name
-     * @param element the element
-     */
-    protected static void addToCollection(Item item, String refListName, Item element) {
-        ReferenceList refList = item.getCollection(refListName);
-        if (refList == null) {
-            refList = new ReferenceList(refListName);
-            item.addCollection(refList);
-        }
-        if (!refList.getRefIds().contains(element.getIdentifier())) {
-            refList.addRefId(element.getIdentifier());
-        }
-    }
-
     /**
      * Check if a ReferenceList contains exactly one element.
      * @param col a ReferenceList

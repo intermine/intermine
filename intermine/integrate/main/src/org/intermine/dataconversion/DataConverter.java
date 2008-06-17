@@ -85,27 +85,6 @@ public abstract class DataConverter
     }
 
     /**
-     * Add an Item to a named collection on another Item. If the collection does not exist
-     * if will be created.
-     *
-     * @param item item with collection
-     * @param collection collection name
-     * @param addition item to add to collection
-     * @throws ObjectStoreException if something goes wrong
-     * @deprecated should use Item.addToCollection() instead
-     */
-    @Deprecated
-    protected void addToCollection(Item item, String collection, Item addition)
-        throws ObjectStoreException {
-        ReferenceList coll = item.getCollection(collection);
-        if (coll == null) {
-            coll = new ReferenceList(collection);
-            item.addCollection(coll);
-        }
-        coll.addRefId(addition.getIdentifier());
-    }
-
-    /**
      * Set a hook for this converter that will be called just before each Item is stored.
      * The processItem() method in DataConverterStoreHook will be passed the Item, which
      * it can modify.
