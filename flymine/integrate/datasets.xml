@@ -422,8 +422,7 @@
 
     <item id="520" class="" implements="http://www.flymine.org/model/genomic#DataSource">
         <attribute name="name" value="PDB"/>
-        <attribute name="description"
-                   value="The RCSB Protein Data Bank (PDB)"/>
+        <attribute name="description" value="The RCSB Protein Data Bank (PDB)"/>
         <attribute name="url" value="http://www.rcsb.org/pdb/"/>
     </item>
     <item id="521" class="" implements="http://www.flymine.org/model/genomic#DataSet">
@@ -449,4 +448,33 @@
         <attribute name="url" value="http://www.genedb.org/"/>
     </item>
 
+    <item id="550" class="" implements="http://www.flymine.org/model/genomic#DataSource">
+        <attribute name="name" value="Reactome"/>
+		<attribute name="description" value="Curated knowledgebase of biological pathways"/>
+        <attribute name="url" value="http://www.reactome.org/"/>
+    </item>
+
+    <item id="560" class="" implements="http://www.flymine.org/model/genomic#DataSource">
+        <attribute name="name" value="HGNC"/>
+		<attribute name="description" value="HUGO Gene Nomenclature Committee"/>
+        <attribute name="url" value="http://www.genenames.org/"/>
+    </item>
+
+    <item id="570" class="" implements="http://www.flymine.org/model/genomic#DataSource">
+        <attribute name="name" value="Proteome Inc."/>
+		<attribute name="description" value="Human GO annotation data"/>
+        <attribute name="url" value="http://www.proteome.com/"/>
+    </item>
+
+    <item id="580" class="" implements="http://www.flymine.org/model/genomic#DataSource">
+        <attribute name="name" value="BHF-UCL"/>
+		<attribute name="description" value="British Heart Foundation - University College London"/>
+        <attribute name="url" value="http://www.ucl.ac.uk/medicine/cardiovascular-genetics/geneontology.html"/>
+    </item>
+
+    <item id="590" class="" implements="http://www.flymine.org/model/genomic#DataSource">
+        <attribute name="name" value="Roslin_Institute"/>
+		<attribute name="description" value="The Roslin Institute"/>
+        <attribute name="url" value="http://www.roslin.ac.uk/"/>
+    </item>
 </items>
