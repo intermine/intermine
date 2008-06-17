@@ -11,7 +11,6 @@ package org.intermine.bio.dataconversion;
  */
 
 import java.io.Reader;
-import java.util.Collections;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashSet;
@@ -47,9 +46,8 @@ public class AnophelesIdentifiersConverter extends BioFileConverter
      * @throws MetaDataException if cannot generate model
      */
     public AnophelesIdentifiersConverter(ItemWriter writer, Model model)
-        throws ObjectStoreException, MetaDataException {
+        throws ObjectStoreException {
         super(writer, model, "VectorBase", "Anopheles genes");
-
         organism = createItem("Organism");
         organism.setAttribute("taxonId", "180454");
         store(organism);
@@ -78,7 +76,6 @@ public class AnophelesIdentifiersConverter extends BioFileConverter
             throw new RuntimeException("Could not determine class from filename: "
                                        + fileName);
         }
-
 
         while (lineIter.hasNext()) {
             String[] line = (String[]) lineIter.next();
@@ -119,12 +116,10 @@ public class AnophelesIdentifiersConverter extends BioFileConverter
             feature.setReference("organism", organism.getIdentifier());
             store(feature);
             store(synonyms);
-
         }
     }
 
-    private Item createSynonym(Item subject, String type, String value)
-        throws ObjectStoreException {
+    private Item createSynonym(Item subject, String type, String value) {
         Item synonym = createItem("Synonym");
         synonym.setAttribute("type", type);
         synonym.setAttribute("value", value);
