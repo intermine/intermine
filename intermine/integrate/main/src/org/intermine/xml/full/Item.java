@@ -34,8 +34,8 @@ public class Item implements Comparable
     private String className = "";
     private String implementations = "";
     private Map<String, Attribute> attributes = new HashMap<String, Attribute>();
-    private Map references = new HashMap();
-    private Map collections = new HashMap();
+    private Map<String, Reference> references = new HashMap();
+    private Map<String, ReferenceList> collections = new HashMap();
     private Model model = null;
     private ClassDescriptor classDescriptor = null;
     private Set implementationClassDescriptors = null;
