@@ -173,7 +173,7 @@ public class EnsemblDataTranslator extends DataTranslator
                         moveField(stableId, tgtItem, "stable_id", "primaryIdentifier");
                     }
                     addReferencedItem(tgtItem, config.getEnsemblDataSet(),
-                            "evidence", true, "", false);
+                                      "dataSets", true, "", false);
                     Item location = createLocation(srcItem, tgtItem, true); // seq_region
                     // seq_region.coord-sys
                     result.add(location);
@@ -181,7 +181,7 @@ public class EnsemblDataTranslator extends DataTranslator
                 } else if ("gene".equals(srcItemClassName)) {
                     tgtItem.addReference(config.getOrganismRef());
                     addReferencedItem(tgtItem, config.getEnsemblDataSet(),
-                            "evidence", true, "", false);
+                                      "dataSets", true, "", false);
                     Item comment = createComment(srcItem, tgtItem);
                     if (comment != null) {
                         result.add(comment);
@@ -230,7 +230,7 @@ public class EnsemblDataTranslator extends DataTranslator
 //                         }
 //                     }
 
-                    tgtItem.addToCollection("evidence", config.getEnsemblDataSet());
+                    tgtItem.addToCollection("dataSets", config.getEnsemblDataSet());
                     tgtItem.addReference(config.getEnsemblDataSrcRef());
                     tgtItem.addAttribute(new Attribute("type", "identifier"));
                 } else if ("repeat_feature".equals(srcItemClassName)) {
@@ -249,7 +249,7 @@ public class EnsemblDataTranslator extends DataTranslator
                     }
 
                     addReferencedItem(tgtItem,
-                            config.getEnsemblDataSet(), "evidence", true, "", false);
+                            config.getEnsemblDataSet(), "dataSets", true, "", false);
                     Set locations = createLocations(srcItem, tgtItem, srcNs);
                     // <- marker_feature.marker
                     // (<- marker_feature.marker).seq_region
@@ -298,7 +298,7 @@ public class EnsemblDataTranslator extends DataTranslator
             throws ObjectStoreException {
 
         tgtItem.addReference(config.getOrganismRef());
-        addReferencedItem(tgtItem, config.getEnsemblDataSet(), "evidence", true, "", false);
+        addReferencedItem(tgtItem, config.getEnsemblDataSet(), "dataSets", true, "", false);
         Item location = createLocation(srcItem, tgtItem, true); // seq_region
         // seq_region.coord-sys
         location.addAttribute(new Attribute("strand", "0"));
@@ -320,7 +320,7 @@ public class EnsemblDataTranslator extends DataTranslator
 
         tgtItem.addReference(config.getOrganismRef());
         addReferencedItem(tgtItem,
-                config.getEnsemblDataSet(), "evidence", true, "", false);
+                config.getEnsemblDataSet(), "dataSets", true, "", false);
         // SimpleRelation between Gene and Transcript
 
         result.add(createSimpleRelation(tgtItem.getReference("gene").getRefId(),
@@ -358,7 +358,7 @@ public class EnsemblDataTranslator extends DataTranslator
 
             cds.addReference(config.getOrganismRef());
             addReferencedItem(cds,
-                    config.getEnsemblDataSet(), "evidence", true, "", false);
+                    config.getEnsemblDataSet(), "dataSets", true, "", false);
 
             tgtItem.addToCollection("CDSs", cds);
             result.add(cds);
@@ -376,7 +376,7 @@ public class EnsemblDataTranslator extends DataTranslator
     private void translateRepeatFeature(Item srcItem, Item tgtItem, Collection result)
             throws ObjectStoreException {
         tgtItem.addReference(config.getOrganismRef());
-        addReferencedItem(tgtItem, config.getEnsemblDataSet(), "evidence", true, "", false);
+        addReferencedItem(tgtItem, config.getEnsemblDataSet(), "dataSets", true, "", false);
         result.add(createAnalysisResult(srcItem, tgtItem));
         // analysis
         result.add(createLocation(srcItem, tgtItem, true));
@@ -752,7 +752,7 @@ public class EnsemblDataTranslator extends DataTranslator
                     seq.addAttribute(new Attribute("length",
                             seqRegion.getAttribute("length").getValue()));
                 }
-                addReferencedItem(seq, config.getEnsemblDataSet(), "evidence", true, "", false);
+                addReferencedItem(seq, config.getEnsemblDataSet(), "dataSets", true, "", false);
                 seqIdMap.put(refId, seq);
 
                 if (config.doStoreDna()) {
@@ -807,9 +807,12 @@ public class EnsemblDataTranslator extends DataTranslator
             moveField(srcItem, result, "score", "score");
         }
         result.addReference(config.getEnsemblDataSetRef());
-        ReferenceList evidence = new ReferenceList("evidence", Arrays.asList(new String[]
-        {result.getIdentifier(), config.getEnsemblDataSet().getIdentifier()}));
+        ReferenceList evidence =
+            new ReferenceList("evidence", Arrays.asList(result.getIdentifier()));
         tgtItem.addCollection(evidence);
+
+        tgtItem.addToCollection("dataSets", config.getEnsemblDataSet().getIdentifier());
+
         return result;
     }
 
@@ -887,7 +890,7 @@ public class EnsemblDataTranslator extends DataTranslator
                 simpleFeature.addAttribute(new Attribute("primaryIdentifier",
                                                          newIdBuff.toString()));
                 addReferencedItem(simpleFeature,
-                        config.getEnsemblDataSet(), "evidence", true, "", false);
+                                  config.getEnsemblDataSet(), "dataSets", true, "", false);
 
                 Item sfSyn = createSynonym(
                             simpleFeature.getIdentifier(),
