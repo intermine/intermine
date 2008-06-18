@@ -33,6 +33,7 @@ import org.intermine.dataconversion.ItemWriter;
 import org.intermine.metadata.Model;
 import org.intermine.objectstore.ObjectStoreException;
 import org.intermine.util.PropertiesUtil;
+import org.intermine.util.StringUtil;
 import org.intermine.xml.full.Item;
 import org.intermine.xml.full.ReferenceList;
 
@@ -89,14 +90,14 @@ public class GoConverter extends FileConverter
         synonymTypes.put("gene", "identifier");
         synonymTypes.put("Gene", "identifier");
 
-        Item dataSourceItem = createItem("DataSource");
-        dataSourceItem.setAttribute("name", "Gene Ontology");
-
-        Item dataSetItem = createItem("DataSet");
-        Date now = new Date(System.currentTimeMillis());
-
-        dataSetItem.setAttribute("description", "GO Annotation loaded on " + now.toString());
-        dataSetItem.setReference("dataSource", dataSourceItem);
+//        Item dataSourceItem = createItem("DataSource");
+//        dataSourceItem.setAttribute("name", "Gene Ontology");
+//
+//        Item dataSetItem = createItem("DataSet");
+//        Date now = new Date(System.currentTimeMillis());
+//
+//        dataSetItem.setAttribute("description", "GO Annotation loaded on " + now.toString());
+//        dataSetItem.setReference("dataSource", dataSourceItem);
 
         readConfig();
     }
@@ -764,23 +765,25 @@ public class GoConverter extends FileConverter
      * @return the publication
      */
     private String newPublication(String codes) throws ObjectStoreException {
-        String pubId = null;
+        String pubRefId = null;
         String[] array = codes.split("[|]");
         for (int i = 0; i < array.length; i++) {
             if (array[i].startsWith("PMID:")) {
-                String code = array[i].substring(5);
-                pubId = publications.get(code);
-                if (pubId == null) {
-                    Item item = createItem("Publication");
-                    item.setAttribute("pubMedId", code);
-                    pubId = item.getIdentifier();
-                    publications.put(code, pubId);
-                    store(item);
+                String pubMedId = array[i].substring(5);
+                if (StringUtil.allDigits(pubMedId)) {
+                    pubRefId = publications.get(pubMedId);
+                    if (pubRefId == null) {
+                        Item item = createItem("Publication");
+                        item.setAttribute("pubMedId", pubMedId);
+                        pubRefId = item.getIdentifier();
+                        publications.put(pubMedId, pubRefId);
+                        store(item);
+                    }
+                    break;
                 }
-                break;
             }
         }
-        return pubId;
+        return pubRefId;
     }
 
     /**
