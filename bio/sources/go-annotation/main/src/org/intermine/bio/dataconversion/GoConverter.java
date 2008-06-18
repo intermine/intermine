@@ -17,7 +17,6 @@ import java.io.IOException;
 import java.io.Reader;
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.Date;
 import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -70,7 +69,6 @@ public class GoConverter extends FileConverter
     protected Set<String> productIds = new HashSet<String>();
     private Map<String, Set> goTermId2ParentTermIdSetsMap = null;
     private static final Logger LOG = Logger.getLogger(GoConverter.class);
-    private static final Date NOW = new Date(System.currentTimeMillis());
 
     // TODO: datasources Map to contains ids not items?
     // TODO: store product after each one finished?  'with' field may be a problem
@@ -734,7 +732,9 @@ public class GoConverter extends FileConverter
             title = "GeneDB";
         } else if ("GOA".equals(code)) {
             title = "Gene Ontology";
-        } else {
+        } else if ("PINC".equals(code)) {
+          title = "Proteme Inc.";
+        } else {    // MGI, SGD, Pfam
             title = code;
         }
 
@@ -744,7 +744,7 @@ public class GoConverter extends FileConverter
             item.setAttribute("name", title);
             datasources.put(title, item);
 
-            String key = "GO Annotation for " + title + " loaded on " + NOW;
+            String key = "GO Annotation for " + title;
             String datasetId = newDataset(item.getIdentifier(), key);
             item.setCollection("dataSets", new ArrayList(Collections.singleton(datasetId)));
 
