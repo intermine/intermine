@@ -69,10 +69,9 @@ public class GoConverter extends FileConverter
     protected Set<String> productIds = new HashSet<String>();
     private Map<String, Set> goTermId2ParentTermIdSetsMap = null;
     private static final Logger LOG = Logger.getLogger(GoConverter.class);
-    private static final String DEFAULT_DATASOURCE = "Gene Ontology";
 
-    // TODO: datasources Map to contains ids not items?
-    // TODO: store product after each one finished?  'with' field may be a problem
+    // TODO: datasources Map to contains ids not items? - need the dataset later on
+    // TODO: store product after each one finished? - 'with' field may be a problem
 
     /**
      * Constructor
@@ -89,16 +88,6 @@ public class GoConverter extends FileConverter
         synonymTypes.put("Protein", "accession");
         synonymTypes.put("gene", "identifier");
         synonymTypes.put("Gene", "identifier");
-
-//        Item dataSourceItem = createItem("DataSource");
-//        dataSourceItem.setAttribute("name", "Gene Ontology");
-//
-//        Item dataSetItem = createItem("DataSet");
-//        Date now = new Date(System.currentTimeMillis());
-//
-//        dataSetItem.setAttribute("description", "GO Annotation loaded on " + now.toString());
-//        dataSetItem.setReference("dataSource", dataSourceItem);
-
         readConfig();
     }
 
@@ -637,7 +626,7 @@ public class GoConverter extends FileConverter
                 product.getIdentifier(),
                 synonymTypes.get(type),
                 accession,
-                dataSource.getIdentifier());
+                dataSource);
 
         ItemWrapper newProductWrapper = new ItemWrapper(key, product, synonym);
         productWrapperMap.put(key, newProductWrapper);
@@ -773,12 +762,14 @@ public class GoConverter extends FileConverter
     }
 
     // TODO set dataset
-    private Item newSynonym(String subjectId, String type, String value, String dataSourceId) {
+    private Item newSynonym(String subjectId, String type, String value, Item dataSource) {
         Item synonym = createItem("Synonym");
         synonym.setReference("subject", subjectId);
         synonym.setAttribute("type", type);
         synonym.setAttribute("value", value);
-        synonym.setReference("source", dataSourceId);
+        synonym.setReference("source", dataSource.getIdentifier());
+        String datasetId = dataSource.getCollection("dataSets").getRefIds().get(0);
+        synonym.setCollection("dataSets", new ArrayList(Collections.singleton(datasetId)));
         return synonym;
     }
 

@@ -23,12 +23,6 @@
 <collection name="dataSets"><reference ref_id="2_1"/></collection>
 <collection name="goEvidenceCodes"><reference ref_id="0_1"/></collection>
 </item>
-<item id="6_2" class="http://www.flymine.org/model/genomic#Synonym">
-<attribute name="type" value="identifier"/>
-<attribute name="value" value="FBgn0020002"/>
-<reference name="source" ref_id="1_1"/>
-<reference name="subject" ref_id="5_2"/>
-</item>
 <item id="3_2" class="http://www.flymine.org/model/genomic#GOTerm">
 <attribute name="identifier" value="GO:0000005"/>
 </item>
@@ -51,14 +45,15 @@
 <collection name="dataSets"><reference ref_id="2_1"/></collection>
 <collection name="goAnnotation"><reference ref_id="7_5"/></collection>
 </item>
+<item id="3_1" class="http://www.flymine.org/model/genomic#GOTerm">
+<attribute name="identifier" value="GO:0000004"/>
+</item>
 <item id="6_1" class="http://www.flymine.org/model/genomic#Synonym">
 <attribute name="type" value="identifier"/>
 <attribute name="value" value="FBgn0015567"/>
 <reference name="source" ref_id="1_1"/>
 <reference name="subject" ref_id="5_1"/>
-</item>
-<item id="3_1" class="http://www.flymine.org/model/genomic#GOTerm">
-<attribute name="identifier" value="GO:0000004"/>
+<collection name="dataSets"><reference ref_id="2_1"/></collection>
 </item>
 <item id="3_4" class="http://www.flymine.org/model/genomic#GOTerm">
 <attribute name="identifier" value="GO:0000001"/>
@@ -82,6 +77,13 @@
 <collection name="actualGoTerms"><reference ref_id="3_2"/><reference ref_id="3_3"/></collection>
 <collection name="dataSets"><reference ref_id="2_1"/></collection>
 <collection name="goEvidenceCodes"><reference ref_id="0_1"/></collection>
+</item>
+<item id="6_2" class="http://www.flymine.org/model/genomic#Synonym">
+<attribute name="type" value="identifier"/>
+<attribute name="value" value="FBgn0020002"/>
+<reference name="source" ref_id="1_1"/>
+<reference name="subject" ref_id="5_2"/>
+<collection name="dataSets"><reference ref_id="2_1"/></collection>
 </item>
 <item id="1_1" class="http://www.flymine.org/model/genomic#DataSource">
 <attribute name="name" value="FlyBase"/>
