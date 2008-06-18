@@ -1389,7 +1389,7 @@ public class MageDataTranslator extends DataTranslator
                     maResult.setReference("experiment", experimentId);
                     maResult.setReference("analysis", experimentId);
                     // source refrence to DataSet
-                    maResult.setReference("source", (String) exptToDataSet.get(experimentId));
+                    maResult.addToCollection("dataSets", (String) exptToDataSet.get(experimentId));
                 }
             }
         }
