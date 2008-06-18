@@ -1,219 +1,506 @@
 <?xml version="1.0" encoding="ISO-8859-1" standalone="yes"?>
 <ExperimentCollection version="2.1">
 	<Experiment>
-		<ExperimentAccession>1008</ExperimentAccession>
-		<Title>Protein complexes in Saccharomyces cerevisiae (GPM06600002303)</Title>
-		<ShortLabel>GPM06600002303</ShortLabel>
+		<ExperimentAccession>3195</ExperimentAccession>
+		<Title>Pride Test Experiment Title</Title>
+		<Reference>
+			<RefLine>Test Reference Line</RefLine>
+			<additional>
+				<cvParam cvLabel="ISBN" accession="ISBN:1202031212" name="ISBN:1202031212" />
+				<userParam name="Describes method used." />
+			</additional>
+		</Reference>
+		<Reference>
+			<RefLine>Second Reference</RefLine>
+			<additional>
+				<cvParam cvLabel="ISBN" accession="0-12345-678-9" name="0-12345-678-9" />
+			</additional>
+		</Reference>
+		<ShortLabel>Pride Test Experiment Short Title</ShortLabel>
 		<Protocol>
-			<ProtocolName>None</ProtocolName>
+			<ProtocolName>Test Protocol Name</ProtocolName>
+			<ProtocolSteps>
+				<StepDescription>
+					<cvParam cvLabel="MI" accession="MI:0091" name="chromatography technology" />
+					<userParam name="Reverse Phase" />
+				</StepDescription>
+				<StepDescription>
+					<cvParam cvLabel="MI" accession="MI:0308" name="electroporation" />
+				</StepDescription>
+			</ProtocolSteps>
 		</Protocol>
-		<mzData version="1.05" accessionNumber="1008">
-			<cvLookup cvLabel="GO" fullName="Gene Ontology" version="0.0" address="http://www.geneontology.org/" />
-			<cvLookup cvLabel="GPMDB" fullName="GPM Proteomics Repository" version="0.0" address="http://gpmdb.thegpm.org" />
-			<cvLookup cvLabel="ISBN" fullName="International Standard Book Numbering" version="0.0" address="http://www.isbn-international.org/" />
-			<cvLookup cvLabel="MeSH" fullName="Medical Subject Headings" version="0.0" address="http://www.nlm.nih.gov/mesh/MBrowser.html" />
-			<cvLookup cvLabel="NEWT" fullName="NEWT UniProt Taxonomy Database" version="0.0" address="http://www.ebi.ac.uk/newt" />
-			<cvLookup cvLabel="PRIDE" fullName="PRIDE Controlled Vocabulary" version="0.0" address="http://www.ebi.ac.uk/pride/help_resources/pride_obo_CV" />
-			<cvLookup cvLabel="PSI" fullName="PSI Mass Spectrometry Ontology" version="0.0" address="http://psidev.sourceforge.net/ontology/index.html" />
-			<cvLookup cvLabel="PubMed" fullName="National Library of Medicine, PubMed Database" version="0.0" address="http://www.ncbi.nlm.nih.gov/entrez/query.fcgi" />
-			<cvLookup cvLabel="RESID" fullName="RESID Database of Protein Modifications" version="0.0" address="http://www.ebi.ac.uk/RESID/" />
-			<cvLookup cvLabel="UNIMOD" fullName="UNIMOD Protein Modifications for Mass Spectrometry" version="0.0" address="http://www.unimod.org/" />
+		<mzData version="1.05" accessionNumber="3195">
+			<cvLookup cvLabel="BTO" fullName="BRENDA Tissue Ontology" version="0" address="http://www.brenda.uni-koeln.de/" />
+			<cvLookup cvLabel="CL" fullName="OBO Cell Type Ontology" version="0" address="http://obo.sourceforge.net/cgi-bin/detail.cgi?cell" />
+			<cvLookup cvLabel="DOI" fullName="The Digital Object Identifier System" version="0" address="http://www.doi.org/" />
+			<cvLookup cvLabel="DOID" fullName="Disease Ontology" version="0" address="http://diseaseontology.sourceforge.net/" />
+			<cvLookup cvLabel="GO" fullName="Gene Ontology" version="0" address="http://www.geneontology.org/" />
+			<cvLookup cvLabel="ISBN" fullName="International Standard Book Numbering" version="0" address="http://www.isbn-international.org/" />
+			<cvLookup cvLabel="NEWT" fullName="The NEWT Taxonomy" version="0" address="http://www.ebi.ac.uk/newt" />
+			<cvLookup cvLabel="NEWT" fullName="NEWT" version="0" address="http://www.ebi.ac.uk/newt" />
+			<cvLookup cvLabel="PRIDE" fullName="PRIDE Controlled Vocabulary" version="0" address="http://www.ebi.ac.uk/pride/help_resources/pride_obo_CV" />
+			<cvLookup cvLabel="PSI-MOD" fullName="Proteomics Standards Initiative: Protein Modifications" version="0" address="http://www.ebi.ac.uk/ontology-lookup/browse.do?ontName=MOD" />
+			<cvLookup cvLabel="PSI-MS" fullName="Proteomics Standards Initiative: Mass Spectrometry" version="0" address="http://psidev.sourceforge.net/ontology/index.html" />
+			<cvLookup cvLabel="PubMed" fullName="National Library of Medicine, PubMed Database" version="0" address="http://www.ncbi.nlm.nih.gov/entrez/query.fcgi" />
+			<cvLookup cvLabel="RESID" fullName="RESID Database of Protein Modifications" version="0" address="http://www.ebi.ac.uk/RESID/" />
+			<cvLookup cvLabel="UNIMOD" fullName="UNIMOD Protein Modifications for Mass Spectrometry" version="0" address="http://www.unimod.org/" />
 			<description>
 				<admin>
-					<sampleName>GPM06600002303</sampleName>
-					<sampleDescription comment="Ho, Y., et al., Systematic identification of protein complexes in Saccharomyces cerevisiae by mass spectrometry. Nature. 2002 Jan 10;415(6868):180-3.">
-						<cvParam cvLabel="NEWT" accession="4932" name="Saccharomyces cerevisiae (Baker's yeast)" value="Saccharomyces cerevisiae" />
+					<sampleName>Chicken Liver</sampleName>
+					<sampleDescription comment="Red and squishy.">
+						<cvParam cvLabel="NEWT" accession="9031" name="Gallus gallus (Chicken)" />
+						<cvParam cvLabel="BTO" accession="BTO:0000759" name="liver" />
+						<cvParam cvLabel="CL" accession="CL:0000182" name="hepatocyte" />
 					</sampleDescription>
+					<sourceFile>
+						<nameOfFile>Name of the Source File</nameOfFile>
+						<pathToFile>http://qtofsourcefile.com/</pathToFile>
+						<fileType>QtoF Source File</fileType>
+					</sourceFile>
 					<contact>
-						<name>Chris Hogue</name>
-						<institution>SLRI, Mount Sinai Hospital, Toronto, Canada</institution>
-						<contactInfo>chogue@blueprint.org</contactInfo>
+						<name>Lennart Martens</name>
+						<institution>EBI</institution>
+						<contactInfo>lennart.martens@ebi.ac.uk</contactInfo>
+					</contact>
+					<contact>
+						<name>Phil Jones</name>
+						<institution>EBI</institution>
+						<contactInfo>pjones@ebi.ac.uk</contactInfo>
+					</contact>
+					<contact>
+						<name>Richard Cote</name>
+						<institution>EBI</institution>
+						<contactInfo>rcote@ebi.ac.uk</contactInfo>
 					</contact>
 				</admin>
 				<instrument>
-					<instrumentName>Not specified</instrumentName>
-					<source />
-					<analyzerList count="1">
+					<instrumentName>QToF</instrumentName>
+					<source>
+						<cvParam cvLabel="PSI" accession="PSI:1000057" name="ElectrosprayInlet" />
+						<userParam name="Diameter" value="50nM" />
+					</source>
+					<analyzerList count="3">
 						<analyzer>
-							<userParam name="No Analyzer Components Listed" />
+							<cvParam cvLabel="PSI" accession="PSI:1000081" name="Quadrupole" />
+							<userParam name="Volume" value="3 mL" />
+						</analyzer>
+						<analyzer>
+							<cvParam cvLabel="PSI" accession="PSI:1000083" name="RadialEjectionLinearIonTrap" />
+							<userParam name="Length" value="4 cm" />
+						</analyzer>
+						<analyzer>
+							<cvParam cvLabel="PSI" accession="PSI:1000078" name="AxialEjectionLinearIonTrap" />
 						</analyzer>
 					</analyzerList>
-					<detector />
+					<detector>
+						<cvParam cvLabel="PSI" accession="PSI:1000114" name="Microchannel plate" />
+						<userParam name="Duty cycle" value="1.5 ms" />
+					</detector>
+					<additional>
+						<userParam name="Additional Instrument user defined parameter" value="This is a very nice spectrometer!" />
+					</additional>
 				</instrument>
 				<dataProcessing>
-					<software>
-						<name>Unknown</name>
-						<version>Unknown</version>
+					<software completionTime="2006-08-08T12:00:00">
+						<name>My Instrument Software</name>
+						<version>Version n.nn</version>
+						<comments>This is a software comment.</comments>
 					</software>
+					<processingMethod>
+						<cvParam cvLabel="PSI" accession="PSI:1000114" name="Microchannel Plate Detector" />
+						<userParam name="User description of instrument software" value="This is my user description value for the instrument software." />
+					</processingMethod>
 				</dataProcessing>
 			</description>
 			<spectrumList count="0" />
 		</mzData>
 		<GelFreeIdentification>
-			<Accession>gi|136429|</Accession>
-			<Database>NCBI NR</Database>
+			<Accession>Q12349</Accession>
+			<SpliceIsoform>Isoform9</SpliceIsoform>
+			<Database>UniProt</Database>
+			<DatabaseVersion>2006</DatabaseVersion>
 			<PeptideItem>
-				<Sequence>LGEHNIDVLEGNEQFINAAK</Sequence>
-				<Start>58</Start>
-				<End>77</End>
+				<Sequence>WCFRTRGTRVCWVGEWECF</Sequence>
+				<Start>264</Start>
+				<End>282</End>
+				<SpectrumReference>952</SpectrumReference>
+				<ModificationItem>
+					<ModLocation>7</ModLocation>
+					<ModAccession>MOD:00419</ModAccession>
+					<ModDatabase>PSI-MOD</ModDatabase>
+					<ModMonoDelta>115.2</ModMonoDelta>
+					<ModAvgDelta>115.1</ModAvgDelta>
+					<additional>
+						<cvParam cvLabel="PSI-MOD" accession="MOD:00419" name="S-carbamoylmethylcysteine cyclization (N-terminus)" />
+					</additional>
+				</ModificationItem>
+				<ModificationItem>
+					<ModLocation>15</ModLocation>
+					<ModAccession>MOD:00260</ModAccession>
+					<ModDatabase>PSI-MOD</ModDatabase>
+					<ModMonoDelta>116.2</ModMonoDelta>
+					<ModAvgDelta>116.1</ModAvgDelta>
+					<additional>
+						<cvParam cvLabel="PSI-MOD" accession="MOD:00260" name="O-(phospho-5'-DNA)-L-threonine" />
+					</additional>
+				</ModificationItem>
+				<additional>
+					<cvParam cvLabel="GO" accession="GO:0048202" name="clathrin coating of Golgi vesicle" />
+					<cvParam cvLabel="MeSH" accession="MESH:A.11.284.195.190.875.336" name="golgi_apparatus" />
+				</additional>
 			</PeptideItem>
 			<PeptideItem>
-				<Sequence>LGEHNIDVLEGNEQFINAAKIITHPNFNGN</Sequence>
-				<Start>58</Start>
-				<End>87</End>
+				<Sequence>TRBGEVRGEVFRTGERE</Sequence>
+				<Start>269</Start>
+				<End>285</End>
+				<SpectrumReference>951</SpectrumReference>
+				<ModificationItem>
+					<ModLocation>3</ModLocation>
+					<ModAccession>MOD:00260</ModAccession>
+					<ModDatabase>PSI-MOD</ModDatabase>
+					<ModMonoDelta>117.2</ModMonoDelta>
+					<ModAvgDelta>117.1</ModAvgDelta>
+					<additional>
+						<cvParam cvLabel="PSI-MOD" accession="MOD:00260" name="O-(phospho-5'-DNA)-L-threonine" />
+					</additional>
+				</ModificationItem>
+				<ModificationItem>
+					<ModLocation>8</ModLocation>
+					<ModAccession>MOD:00419</ModAccession>
+					<ModDatabase>PSI-MOD</ModDatabase>
+					<ModMonoDelta>118.2</ModMonoDelta>
+					<ModAvgDelta>118.1</ModAvgDelta>
+					<additional>
+						<cvParam cvLabel="PSI-MOD" accession="MOD:00419" name="S-carbamoylmethylcysteine cyclization (N-terminus)" />
+					</additional>
+				</ModificationItem>
 			</PeptideItem>
 			<PeptideItem>
-				<Sequence>LGEHNIDVLEGNEQFINAAK</Sequence>
-				<Start>58</Start>
-				<End>77</End>
+				<Sequence>ERCFERGEVGEGEGERGE</Sequence>
+				<Start>274</Start>
+				<End>291</End>
+				<SpectrumReference>950</SpectrumReference>
+				<ModificationItem>
+					<ModLocation>9</ModLocation>
+					<ModAccession>MOD:00260</ModAccession>
+					<ModDatabase>PSI-MOD</ModDatabase>
+					<ModMonoDelta>119.2</ModMonoDelta>
+					<ModAvgDelta>119.1</ModAvgDelta>
+					<additional>
+						<cvParam cvLabel="PSI-MOD" accession="MOD:00260" name="O-(phospho-5'-DNA)-L-threonine" />
+					</additional>
+				</ModificationItem>
+				<ModificationItem>
+					<ModLocation>13</ModLocation>
+					<ModAccession>MOD:00419</ModAccession>
+					<ModDatabase>PSI-MOD</ModDatabase>
+					<ModMonoDelta>120.2</ModMonoDelta>
+					<ModAvgDelta>120.1</ModAvgDelta>
+					<additional>
+						<cvParam cvLabel="PSI-MOD" accession="MOD:00419" name="S-carbamoylmethylcysteine cyclization (N-terminus)" />
+					</additional>
+				</ModificationItem>
 			</PeptideItem>
 			<PeptideItem>
-				<Sequence>NIDVLEGNEQFINAAK</Sequence>
-				<Start>62</Start>
-				<End>77</End>
+				<Sequence>EWTRWEFSDFVXCV</Sequence>
+				<Start>279</Start>
+				<End>292</End>
+				<SpectrumReference>949</SpectrumReference>
 			</PeptideItem>
 			<PeptideItem>
-				<Sequence>SSYPGQITGN</Sequence>
-				<Start>158</Start>
-				<End>167</End>
+				<Sequence>SWDFWEFRSDFVDSD</Sequence>
+				<Start>284</Start>
+				<End>298</End>
+				<SpectrumReference>948</SpectrumReference>
 			</PeptideItem>
 			<PeptideItem>
-				<Sequence>YVNWIQQTIAAN</Sequence>
-				<Start>220</Start>
-				<End>231</End>
+				<Sequence>SSERSDFRSDCDV</Sequence>
+				<Start>289</Start>
+				<End>301</End>
+				<SpectrumReference>947</SpectrumReference>
 			</PeptideItem>
+			<PeptideItem>
+				<Sequence>SDCVDFSERFSDFSDF</Sequence>
+				<Start>294</Start>
+				<End>309</End>
+				<SpectrumReference>946</SpectrumReference>
+			</PeptideItem>
+			<SpectrumReference>508</SpectrumReference>
 			<additional>
-				<cvParam cvLabel="PRIDE" accession="PRIDE:0000165" name="Automatic allocation" value="PRF:732135C" />
-				<cvParam cvLabel="PRIDE" accession="PRIDE:0000165" name="Automatic allocation" value="SWISSPROT:P00761.1, SWISSPROT:TRYP_PIG" />
-				<userParam name="Submitted Database" value="NCBI NR" />
-				<userParam name="Submitted ID" value="gi|136429|" />
-				<userParam name="Submitted Confidence" value="-45.5" />
-				<userParam name="Coverage" value="0.210" />
+				<cvParam cvLabel="NEWT" accession="9606" name="Homo sapiens (Human)" />
 			</additional>
-			<SearchEngine>X! Tandem</SearchEngine>
+			<Score>13.6</Score>
+			<Threshold>23.0</Threshold>
+			<SearchEngine>Mascot</SearchEngine>
+			<SequenceCoverage>0.09</SequenceCoverage>
 		</GelFreeIdentification>
 		<GelFreeIdentification>
-			<Accession>YFR053C</Accession>
-			<Database>SGD</Database>
+			<Accession>Q12350</Accession>
+			<SpliceIsoform>Isoform10</SpliceIsoform>
+			<Database>UniProt</Database>
+			<DatabaseVersion>2006</DatabaseVersion>
 			<PeptideItem>
-				<Sequence>ESGNYLAIDLGGTNLR</Sequence>
-				<Start>78</Start>
-				<End>93</End>
+				<Sequence>WERSDFSD</Sequence>
+				<Start>299</Start>
+				<End>306</End>
+				<SpectrumReference>945</SpectrumReference>
 			</PeptideItem>
 			<PeptideItem>
-				<Sequence>LSGNHTFDTTQSK</Sequence>
-				<Start>99</Start>
-				<End>111</End>
+				<Sequence>SDFWEFREFSDSDSDFSFS</Sequence>
+				<Start>304</Start>
+				<End>322</End>
+				<SpectrumReference>944</SpectrumReference>
 			</PeptideItem>
 			<PeptideItem>
-				<Sequence>DFMVEQELLNTK</Sequence>
-				<Start>137</Start>
-				<End>148</End>
+				<Sequence>EWRSDFSDVFVSDFSDF</Sequence>
+				<Start>309</Start>
+				<End>325</End>
+				<SpectrumReference>943</SpectrumReference>
 			</PeptideItem>
 			<PeptideItem>
-				<Sequence>IEDDPFENLEDTDDIFQK</Sequence>
-				<Start>350</Start>
-				<End>367</End>
+				<Sequence>WERSDFSVSDVFSDVDFVDFVWER</Sequence>
+				<Start>314</Start>
+				<End>337</End>
+				<SpectrumReference>942</SpectrumReference>
 			</PeptideItem>
 			<PeptideItem>
-				<Sequence>DPITIVPAEDGSGAGAAVIAALSEK</Sequence>
-				<Start>448</Start>
-				<End>472</End>
+				<Sequence>SWERDSDFWERE</Sequence>
+				<Start>319</Start>
+				<End>330</End>
+				<SpectrumReference>941</SpectrumReference>
 			</PeptideItem>
-			<additional>
-				<cvParam cvLabel="PRIDE" accession="PRIDE:0000165" name="Automatic allocation" value="EMBL:AAA34698.1, EMBL:BAA09292.1, EMBL:CAA27202.1" />
-				<cvParam cvLabel="PRIDE" accession="PRIDE:0000165" name="Automatic allocation" value="PRF:2214543P" />
-				<cvParam cvLabel="PRIDE" accession="PRIDE:0000165" name="Automatic allocation" value="REFSEQ:NP_116711.1" />
-				<cvParam cvLabel="PRIDE" accession="PRIDE:0000165" name="Automatic allocation" value="SGD:HXK1, SGD:S000001949, SGD:YFR053C" />
-				<cvParam cvLabel="PRIDE" accession="PRIDE:0000165" name="Automatic allocation" value="SWISSPROT:HXKA_YEAST, SWISSPROT:P04806.2" />
-				<userParam name="Submitted Database" value="SGD" />
-				<userParam name="Submitted ID" value="YFR053C" />
-				<userParam name="Submitted Confidence" value="-41.5" />
-				<userParam name="Coverage" value="0.160" />
-			</additional>
-			<SearchEngine>X! Tandem</SearchEngine>
+			<PeptideItem>
+				<Sequence>SDFVWEFWEGVWEF</Sequence>
+				<Start>324</Start>
+				<End>337</End>
+				<SpectrumReference>940</SpectrumReference>
+			</PeptideItem>
+			<PeptideItem>
+				<Sequence>WCFRTRGTRVCWVGEWECF</Sequence>
+				<Start>329</Start>
+				<End>347</End>
+				<SpectrumReference>939</SpectrumReference>
+			</PeptideItem>
+			<SpectrumReference>509</SpectrumReference>
+			<additional />
+			<Score>13.8</Score>
+			<Threshold>23.0</Threshold>
+			<SearchEngine>Mascot</SearchEngine>
+			<SequenceCoverage>0.1</SequenceCoverage>
 		</GelFreeIdentification>
 		<GelFreeIdentification>
-			<Accession>gi|999627|</Accession>
-			<Database>NCBI NR</Database>
+			<Accession>Q12351</Accession>
+			<SpliceIsoform>Isoform11</SpliceIsoform>
+			<Database>UniProt</Database>
+			<DatabaseVersion>2006</DatabaseVersion>
 			<PeptideItem>
-				<Sequence>NIDVLEGNEQF</Sequence>
-				<Start>11</Start>
-				<End>21</End>
+				<Sequence>TRBGEVRGEVFRTGERE</Sequence>
+				<Start>334</Start>
+				<End>350</End>
+				<SpectrumReference>938</SpectrumReference>
 			</PeptideItem>
-			<additional>
-				<userParam name="Submitted Database" value="NCBI NR" />
-				<userParam name="Submitted ID" value="gi|999627|" />
-				<userParam name="Submitted Confidence" value="-40.1" />
-				<userParam name="Coverage" value="0.120" />
-			</additional>
-			<SearchEngine>X! Tandem</SearchEngine>
+			<PeptideItem>
+				<Sequence>ERCFERGEVGEGEGERGE</Sequence>
+				<Start>339</Start>
+				<End>356</End>
+				<SpectrumReference>937</SpectrumReference>
+			</PeptideItem>
+			<PeptideItem>
+				<Sequence>EWTRWEFSDFVXCV</Sequence>
+				<Start>344</Start>
+				<End>357</End>
+				<SpectrumReference>936</SpectrumReference>
+			</PeptideItem>
+			<PeptideItem>
+				<Sequence>SWDFWEFRSDFVDSD</Sequence>
+				<Start>349</Start>
+				<End>363</End>
+				<SpectrumReference>935</SpectrumReference>
+			</PeptideItem>
+			<PeptideItem>
+				<Sequence>SSERSDFRSDCDV</Sequence>
+				<Start>354</Start>
+				<End>366</End>
+				<SpectrumReference>934</SpectrumReference>
+			</PeptideItem>
+			<PeptideItem>
+				<Sequence>SDCVDFSERFSDFSDF</Sequence>
+				<Start>359</Start>
+				<End>374</End>
+				<SpectrumReference>933</SpectrumReference>
+			</PeptideItem>
+			<SpectrumReference>510</SpectrumReference>
+			<additional />
+			<Score>14.0</Score>
+			<Threshold>23.0</Threshold>
+			<SearchEngine>Mascot</SearchEngine>
+			<SequenceCoverage>0.11</SequenceCoverage>
 		</GelFreeIdentification>
 		<GelFreeIdentification>
-			<Accession>YCL040W</Accession>
-			<Database>SGD</Database>
+			<Accession>Q12352</Accession>
+			<SpliceIsoform>Isoform12</SpliceIsoform>
+			<Database>UniProt</Database>
+			<DatabaseVersion>2006</DatabaseVersion>
 			<PeptideItem>
-				<Sequence>IPDDLLDDENVTSDDLFGFLAR</Sequence>
-				<Start>113</Start>
-				<End>134</End>
+				<Sequence>WERSDFSD</Sequence>
+				<Start>364</Start>
+				<End>371</End>
+				<SpectrumReference>932</SpectrumReference>
 			</PeptideItem>
-			<additional>
-				<cvParam cvLabel="PRIDE" accession="PRIDE:0000165" name="Automatic allocation" value="EMBL:AAA53536.1, EMBL:CAA42376.1" />
-				<cvParam cvLabel="PRIDE" accession="PRIDE:0000165" name="Automatic allocation" value="PRF:1503165A, PRF:1906418D" />
-				<cvParam cvLabel="PRIDE" accession="PRIDE:0000165" name="Automatic allocation" value="REFSEQ:NP_009890.1" />
-				<cvParam cvLabel="PRIDE" accession="PRIDE:0000165" name="Automatic allocation" value="SGD:GLK1, SGD:S000000545, SGD:YCL040W" />
-				<cvParam cvLabel="PRIDE" accession="PRIDE:0000165" name="Automatic allocation" value="SWISSPROT:HXKG_YEAST, SWISSPROT:P17709.1" />
-				<userParam name="Submitted Database" value="SGD" />
-				<userParam name="Submitted ID" value="YCL040W" />
-				<userParam name="Submitted Confidence" value="-11.1" />
-				<userParam name="Coverage" value="0.042" />
-			</additional>
-			<SearchEngine>X! Tandem</SearchEngine>
+			<PeptideItem>
+				<Sequence>SDFWEFREFSDSDSDFSFS</Sequence>
+				<Start>369</Start>
+				<End>387</End>
+				<SpectrumReference>931</SpectrumReference>
+			</PeptideItem>
+			<PeptideItem>
+				<Sequence>EWRSDFSDVFVSDFSDF</Sequence>
+				<Start>374</Start>
+				<End>390</End>
+				<SpectrumReference>930</SpectrumReference>
+			</PeptideItem>
+			<PeptideItem>
+				<Sequence>WERSDFSVSDVFSDVDFVDFVWER</Sequence>
+				<Start>379</Start>
+				<End>402</End>
+				<SpectrumReference>929</SpectrumReference>
+			</PeptideItem>
+			<PeptideItem>
+				<Sequence>SWERDSDFWERE</Sequence>
+				<Start>384</Start>
+				<End>395</End>
+				<SpectrumReference>928</SpectrumReference>
+			</PeptideItem>
+			<PeptideItem>
+				<Sequence>SDFVWEFWEGVWEF</Sequence>
+				<Start>389</Start>
+				<End>402</End>
+				<SpectrumReference>927</SpectrumReference>
+			</PeptideItem>
+			<PeptideItem>
+				<Sequence>WCFRTRGTRVCWVGEWECF</Sequence>
+				<Start>394</Start>
+				<End>412</End>
+				<SpectrumReference>926</SpectrumReference>
+			</PeptideItem>
+			<SpectrumReference>511</SpectrumReference>
+			<additional />
+			<Score>14.2</Score>
+			<Threshold>23.0</Threshold>
+			<SearchEngine>Mascot</SearchEngine>
+			<SequenceCoverage>0.12</SequenceCoverage>
 		</GelFreeIdentification>
 		<GelFreeIdentification>
-			<Accession>YAL005C</Accession>
-			<Database>SGD</Database>
+			<Accession>Q12354</Accession>
+			<SpliceIsoform>Isoform14</SpliceIsoform>
+			<Database>UniProt</Database>
+			<DatabaseVersion>2006</DatabaseVersion>
 			<PeptideItem>
-				<Sequence>SQVDEIVLVGGSTR</Sequence>
-				<Start>326</Start>
-				<End>339</End>
+				<Sequence>SDCVDFSERFSDFSDF</Sequence>
+				<Start>424</Start>
+				<End>439</End>
+				<SpectrumReference>920</SpectrumReference>
 			</PeptideItem>
-			<additional>
-				<cvParam cvLabel="PRIDE" accession="PRIDE:0000165" name="Automatic allocation" value="EMBL:AAA35095.1, EMBL:AAC04952.1, EMBL:CAA31393.1" />
-				<cvParam cvLabel="PRIDE" accession="PRIDE:0000165" name="Automatic allocation" value="PRF:2115443J" />
-				<cvParam cvLabel="PRIDE" accession="PRIDE:0000165" name="Automatic allocation" value="REFSEQ:NP_009396.2" />
-				<cvParam cvLabel="PRIDE" accession="PRIDE:0000165" name="Automatic allocation" value="SGD:S000000004, SGD:SSA1, SGD:YAL005C" />
-				<cvParam cvLabel="PRIDE" accession="PRIDE:0000165" name="Automatic allocation" value="SWISSPROT:HSP71_YEAST, SWISSPROT:P10591.4" />
-				<cvParam cvLabel="PRIDE" accession="PRIDE:0000165" name="Automatic allocation" value="TREMBL:Q05829.1, TREMBL:Q05829_YEAST" />
-				<userParam name="Submitted Database" value="SGD" />
-				<userParam name="Submitted ID" value="YAL005C" />
-				<userParam name="Submitted Confidence" value="-3.9" />
-				<userParam name="Coverage" value="0.020" />
-			</additional>
-			<SearchEngine>X! Tandem</SearchEngine>
+			<PeptideItem>
+				<Sequence>WERSDFSD</Sequence>
+				<Start>429</Start>
+				<End>436</End>
+				<SpectrumReference>919</SpectrumReference>
+			</PeptideItem>
+			<PeptideItem>
+				<Sequence>SDFWEFREFSDSDSDFSFS</Sequence>
+				<Start>434</Start>
+				<End>452</End>
+				<SpectrumReference>918</SpectrumReference>
+			</PeptideItem>
+			<PeptideItem>
+				<Sequence>EWRSDFSDVFVSDFSDF</Sequence>
+				<Start>439</Start>
+				<End>455</End>
+				<SpectrumReference>917</SpectrumReference>
+			</PeptideItem>
+			<PeptideItem>
+				<Sequence>WERSDFSVSDVFSDVDFVDFVWER</Sequence>
+				<Start>444</Start>
+				<End>467</End>
+				<SpectrumReference>916</SpectrumReference>
+			</PeptideItem>
+			<PeptideItem>
+				<Sequence>SWERDSDFWERE</Sequence>
+				<Start>449</Start>
+				<End>460</End>
+				<SpectrumReference>915</SpectrumReference>
+			</PeptideItem>
+			<PeptideItem>
+				<Sequence>SDFVWEFWEGVWEF</Sequence>
+				<Start>454</Start>
+				<End>467</End>
+				<SpectrumReference>914</SpectrumReference>
+			</PeptideItem>
+			<SpectrumReference>513</SpectrumReference>
+			<additional />
+			<Score>14.6</Score>
+			<Threshold>23.0</Threshold>
+			<SearchEngine>Mascot</SearchEngine>
+			<SequenceCoverage>0.14</SequenceCoverage>
 		</GelFreeIdentification>
 		<GelFreeIdentification>
-			<Accession>YAR010C</Accession>
-			<Database>SGD</Database>
+			<Accession>Q12355</Accession>
+			<SpliceIsoform>Isoform15</SpliceIsoform>
+			<Database>UniProt</Database>
+			<DatabaseVersion>2006</DatabaseVersion>
 			<PeptideItem>
-				<Sequence>EVHTNQDPLDVSASK</Sequence>
-				<Start>25</Start>
-				<End>39</End>
+				<Sequence>WCFRTRGTRVCWVGEWECF</Sequence>
+				<Start>459</Start>
+				<End>477</End>
+				<SpectrumReference>913</SpectrumReference>
 			</PeptideItem>
-			<additional>
-				<cvParam cvLabel="PRIDE" accession="PRIDE:0000165" name="Automatic allocation" value="EMBL:AAC04966.1" />
-				<cvParam cvLabel="PRIDE" accession="PRIDE:0000165" name="Automatic allocation" value="REFSEQ:NP_009407.1, REFSEQ:NP_058192.1" />
-				<cvParam cvLabel="PRIDE" accession="PRIDE:0000165" name="Automatic allocation" value="SGD:S000000068, SGD:S000007359, SGD:YAR010C, SGD:YPR137C-A" />
-				<cvParam cvLabel="PRIDE" accession="PRIDE:0000165" name="Automatic allocation" value="SWISSPROT:O13528.1, SWISSPROT:YA11A_YEAST" />
-				<userParam name="Submitted Database" value="SGD" />
-				<userParam name="Submitted ID" value="YAR010C" />
-				<userParam name="Submitted Confidence" value="-3.0" />
-				<userParam name="Coverage" value="0.032" />
-			</additional>
-			<SearchEngine>X! Tandem</SearchEngine>
+			<PeptideItem>
+				<Sequence>TRBGEVRGEVFRTGERE</Sequence>
+				<Start>464</Start>
+				<End>480</End>
+				<SpectrumReference>912</SpectrumReference>
+			</PeptideItem>
+			<PeptideItem>
+				<Sequence>ERCFERGEVGEGEGERGE</Sequence>
+				<Start>469</Start>
+				<End>486</End>
+				<SpectrumReference>911</SpectrumReference>
+			</PeptideItem>
+			<PeptideItem>
+				<Sequence>EWTRWEFSDFVXCV</Sequence>
+				<Start>474</Start>
+				<End>487</End>
+				<SpectrumReference>910</SpectrumReference>
+			</PeptideItem>
+			<PeptideItem>
+				<Sequence>SWDFWEFRSDFVDSD</Sequence>
+				<Start>479</Start>
+				<End>493</End>
+				<SpectrumReference>909</SpectrumReference>
+			</PeptideItem>
+			<PeptideItem>
+				<Sequence>SSERSDFRSDCDV</Sequence>
+				<Start>484</Start>
+				<End>496</End>
+				<SpectrumReference>908</SpectrumReference>
+			</PeptideItem>
+			<PeptideItem>
+				<Sequence>SDCVDFSERFSDFSDF</Sequence>
+				<Start>489</Start>
+				<End>504</End>
+				<SpectrumReference>907</SpectrumReference>
+			</PeptideItem>
+			<SpectrumReference>514</SpectrumReference>
+			<additional />
+			<Score>14.8</Score>
+			<Threshold>23.0</Threshold>
+			<SearchEngine>Mascot</SearchEngine>
+			<SequenceCoverage>0.15</SequenceCoverage>
 		</GelFreeIdentification>
-		<additional>
-			<cvParam cvLabel="PRIDE" accession="PRIDE:0000097" name="Project" value="GPMDB Submission: Protein complexes in Saccharomyces cerevisiae" />
+			<additional>
+			<cvParam cvLabel="PRIDE" accession="PRIDE:0000097" name="Project" value="Test Project Title" />
+			<cvParam cvLabel="PRIDE" accession="PRIDE:0000018" name="Disease free" />
 		</additional>
 	</Experiment>
 </ExperimentCollection>
