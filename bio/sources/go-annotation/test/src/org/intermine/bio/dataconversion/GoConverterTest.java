@@ -14,6 +14,8 @@ import java.io.File;
 import java.io.FileWriter;
 import java.io.InputStreamReader;
 import java.io.Reader;
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashSet;
 import java.util.LinkedHashMap;
 import java.util.Set;
@@ -68,7 +70,7 @@ public class GoConverterTest extends ItemsTestCase
         converter.close();
 
         // uncomment to write a new target items file
-        //writeItemsFile(writer.getItems(), "go-tgt-items.xml");
+        writeItemsFile(writer.getItems(), "go-tgt-items.xml");
 
         assertEquals(readItemSet("GoConverterOboTest_tgt.xml"), writer.getItems());
     }
@@ -83,17 +85,23 @@ public class GoConverterTest extends ItemsTestCase
         Item gene1 = tgtItemFactory.makeItem("0_1", GENOMIC_NS + "Gene", "");
         gene1.setAttribute("primaryIdentifier", "FBgn0026430");
         gene1.setReference("organism", "3_1");
-        gene1.addToCollection("dataSets", "1_1");
+        gene1.addToCollection("dataSets", "2_1");
         expected.add(gene1);
         Item gene2 = tgtItemFactory.makeItem("0_2", GENOMIC_NS + "Gene", "");
         gene2.setAttribute("primaryIdentifier", "FBgn0001612");
         gene2.setReference("organism", "3_1");
-        gene2.addToCollection("dataSets", "1_1");
+        gene2.addToCollection("dataSets", "2_1");
         expected.add(gene2);
         Item organism = tgtItemFactory.makeItem("3_1", GENOMIC_NS + "Organism", "");
         organism.setAttribute("taxonId", "7227");
+        Item datasource = tgtItemFactory.makeItem("1_1", GENOMIC_NS + "DataSource", "");
+        datasource.setAttribute("name", "FlyBase");
+
+        Item dataset = tgtItemFactory.makeItem("2_1", GENOMIC_NS + "DataSet", "");
+        dataset.setAttribute("title", "Gene Annotation for FlyBase");
+        datasource.setCollection("dataSets", new ArrayList(Collections.singleton(dataset.getIdentifier())));
         assertEquals(expected, new HashSet(converter.createWithObjects(
-                "FLYBASE:Grip84; FB:FBgn0026430, FLYBASE:l(1)dd4; FB:FBgn0001612", organism, "10_10")));
+                "FLYBASE:Grip84; FB:FBgn0026430, FLYBASE:l(1)dd4; FB:FBgn0001612", organism, datasource)));
     }
 
 
