@@ -23,7 +23,7 @@ public class DrosophilaHomologyConverterTest extends ItemsTestCase
     Model model = Model.getInstanceByName("genomic");
     DrosophilaHomologyConverter converter;
     MockItemWriter itemWriter;
-    
+
     public DrosophilaHomologyConverterTest(String arg) {
         super(arg);
     }
@@ -44,9 +44,9 @@ public class DrosophilaHomologyConverterTest extends ItemsTestCase
 
         InputStreamReader reader = new InputStreamReader(getClass().getClassLoader().getResourceAsStream("DrosophilaHomologyConverterTest_src.tsv"));
         converter.process(reader);
-        
+
         // uncomment to write out a new target items file
-        //writeItemsFile(itemWriter.getItems(), "dros-homology-tgt.xml");
+        writeItemsFile(itemWriter.getItems(), "/tmp/dros-homology-tgt.xml");
 
         assertEquals(readItemSet("DrosophilaHomologyConverterTest.xml"), itemWriter.getItems());
     }
