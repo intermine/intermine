@@ -1,4 +1,4 @@
- <project type="bio">
+<project type="bio">
   <property name="target.model" value="genomic"/>
   <property name="common.os.prefix" value="common"/>
   <property name="intermine.properties.file" value="flymine.properties"/>
@@ -317,7 +317,7 @@
                 value="org.intermine.bio.dataconversion.FlyBaseCDSFastaLoaderTask"/>
       <property name="fasta.taxonId" value="7238"/>
       <property name="fasta.className" value="org.flymine.model.genomic.CDS"/>
-      <property name="fasta.classAttribute" value="primaryIdentifier"/>
+      <property name="fasta.classAttribute" value="primaryIdentifier"/>      <property name="fasta.loaderClassName" value="org.intermine.bio.dataconversion.FlyBaseUTRFastaLoaderTask"/>
       <property name="fasta.includes" value="dsec-all-CDS-*.fasta"/>
       <property name="fasta.dataSetTitle" value="FlyBase Drosophila sechellia data set"/>
       <property name="src.data.dir" location="/shared/data/flybase/FB2008_05/fasta"/>
@@ -371,7 +371,7 @@
       <property name="fasta.dataSetTitle" value="FlyBase Drosophila melanogaster data set"/>
       <property name="src.data.dir" location="/shared/data/flybase/FB2008_05/fasta"/>
     </source>
-    <source name="flybase-dmel-3prime-utr-fasta" type="fasta" dump="true">
+    <source name="flybase-dmel-3prime-utr-fasta" type="fasta" dump="true">      <property name="fasta.loaderClassName" value="org.intermine.bio.dataconversion.FlyBaseUTRFastaLoaderTask"/>
       <property name="fasta.loaderClassName" value="org.intermine.bio.dataconversion.FlyBaseUTRFastaLoaderTask"/>
       <property name="fasta.taxonId" value="7227"/>
       <property name="fasta.className" value="org.flymine.model.genomic.ThreePrimeUTR"/>
@@ -380,9 +380,10 @@
       <property name="fasta.dataSetTitle" value="FlyBase Drosophila melanogaster data set"/>
       <property name="src.data.dir" location="/shared/data/flybase/FB2008_05/fasta"/>
     </source>
-    <source name="ncbigene2pubmed" type="intermine-items-xml-file">
-      <property name="src.data.file" location="/shared/data/pubmed/current/ncbiID_pubmedID.xml"/>
-      <property name="ignore.duplicates" value="true"/>
+    <source name="pubmed-gene" type="pubmed-gene">
+      <property name="src.data.dir" location="/shared/data/pubmed/current"/>
+      <property name="src.data.dir.includes" value="gene2pubmed"/>
+      <property name="infoFile" location="/shared/data/pubmed/current/gene_info"/> 
     </source>
     <source name="redfly" type="redfly">
       <property name="gff3.taxonId" value="7227"/>
