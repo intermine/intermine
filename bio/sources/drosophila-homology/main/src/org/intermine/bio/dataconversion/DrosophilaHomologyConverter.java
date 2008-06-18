@@ -35,9 +35,9 @@ import org.intermine.xml.full.Item;
  *
  * @author Richard Smith
  */
-public class DrosophilaHomologyConverter extends FileConverter
+public class DrosophilaHomologyConverter extends BioFileConverter
 {
-    private Item dataSource, dataSet, pub;
+    private Item pub;
     private Map<String, String> genes = new HashMap();
     private Map<String, String> fbgns = new HashMap();
     private Map<String, String> organisms = new HashMap();
@@ -56,16 +56,7 @@ public class DrosophilaHomologyConverter extends FileConverter
      */
     public DrosophilaHomologyConverter(ItemWriter writer, Model model)
         throws ObjectStoreException, MetaDataException {
-        super(writer, model);
-
-        dataSource = createItem("DataSource");
-        dataSource.setAttribute("name", "FlyBase");
-        store(dataSource);
-
-        dataSet = createItem("DataSet");
-        dataSet.setAttribute("title", "Drosophila 12 Genomes Consortium homology");
-        dataSet.setReference("dataSource", dataSource);
-        store(dataSet);
+        super(writer, model, "FlyBase", "Drosophila 12 Genomes Consortium homology");
 
         pub = createItem("Publication");
         pub.setAttribute("pubMedId", "17994087");
@@ -165,8 +156,7 @@ public class DrosophilaHomologyConverter extends FileConverter
         homologue.setAttribute("clusterName", "Drosophila homology:" + cluster);
         homologue.setReference("gene", gene);
         homologue.setReference("homologue", homGene);
-        homologue.addToCollection("evidence", dataSet);
-        homologue.addToCollection("evidence", pub);
+        homologue.addToCollection("publications", pub);
         store(homologue);
     }
 
