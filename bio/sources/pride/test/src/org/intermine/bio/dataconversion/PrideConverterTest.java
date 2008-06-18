@@ -32,11 +32,12 @@ public class PrideConverterTest extends ItemsTestCase
     public void testProcess() throws Exception {
 
         Reader reader = 
-            new InputStreamReader(getClass().getClassLoader().getResourceAsStream("pride_test.xml"));
+            new InputStreamReader(getClass().getClassLoader().getResourceAsStream("pride1.xml"));
 
         MockItemWriter itemWriter = new MockItemWriter(new HashMap<String, Item>());
         PrideConverter converter = new PrideConverter(itemWriter,
                                                           Model.getInstanceByName("genomic"));
+        converter.setFastaPath("test/resources/fasta/");
 
         converter.process(reader);
         converter.close();
