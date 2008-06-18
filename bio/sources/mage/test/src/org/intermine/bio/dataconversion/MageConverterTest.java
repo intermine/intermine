@@ -35,18 +35,23 @@ public class MageConverterTest extends ItemsTestCase
     String ns = "http://www.intermine.org/model/mage#";
     File f = null;
     Model model;
-
+    ClassLoader cl;
 
     public MageConverterTest(String arg) {
         super(arg);
     }
 
     public void setUp() throws Exception {
+        // Needed so that STAX can find it's implementation classes
+        cl = Thread.currentThread().getContextClassLoader();
+        Thread.currentThread().setContextClassLoader(getClass().getClassLoader());
+
         model = Model.getInstanceByName("genomic");
         converter = new MageConverter(new MockItemWriter(new HashMap()), model);
     }
 
     public void tearDown() throws Exception {
+        Thread.currentThread().setContextClassLoader(cl);
         converter.close();
         if (f != null) {
             f.delete();
