@@ -12,6 +12,7 @@
   <reference name="translation" referenced-type="org.flymine.model.genomic.Translation"/>
   <reference name="homologueTranslation" referenced-type="org.flymine.model.genomic.Translation"/>
   <collection name="dataSets" referenced-type="org.flymine.model.genomic.DataSet"/>
+  <collection name="publications" referenced-type="org.flymine.model.genomic.Publication"/>
 </class>
 <class name="org.flymine.model.genomic.Gene" is-interface="true">
   <collection name="homologues" referenced-type="org.flymine.model.genomic.Homologue" reverse-reference="gene"/>
