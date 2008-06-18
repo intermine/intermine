@@ -16,6 +16,7 @@ import java.io.FileReader;
 import java.io.IOException;
 import java.io.Reader;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -66,9 +67,9 @@ public class GoConverter extends FileConverter
     private Map<GoTermToGene, PlaceHolder> holderMap =
         new LinkedHashMap<GoTermToGene, PlaceHolder>();
     protected Set<String> productIds = new HashSet<String>();
-    // map between
     private Map<String, Set> goTermId2ParentTermIdSetsMap = null;
     private static final Logger LOG = Logger.getLogger(GoConverter.class);
+    private static final Date NOW = new Date(System.currentTimeMillis());
 
     // TODO: datasources Map to contains ids not items?
     // TODO: store product after each one finished?  'with' field may be a problem
@@ -272,16 +273,15 @@ public class GoConverter extends FileConverter
 
                 holderMap.put(key, newPlaceHolder);
 
-
             } else {
                 // we have already seen this product/go term pair so add extra pubs/evidence
                 PlaceHolder holder = holderMap.get(key);
 
-                String extraPubItem = newPublication(array[5]);
+                String pubRefId = newPublication(array[5]);
 
                 // add extra publication
-                if (extraPubItem != null) {
-                    holder.getExtraPublicationList().add(extraPubItem);
+                if (pubRefId != null) {
+                    holder.getPubs().addRefId(pubRefId);
                 // add reference to new evidence object
                 } else if (evidence != null) {
                     ReferenceList goEvidenceColl = null;
@@ -391,13 +391,10 @@ public class GoConverter extends FileConverter
             }
         }
 
-        // evidence collection (datasources and publications)
+        // evidence collection
         ReferenceList references = new ReferenceList();
         references.setName("dataSets");
         references.addRefId(placeHolder.getDatasource().getIdentifier());
-        if (placeHolder.getPublicationId() != null) {
-            references.addRefId(placeHolder.getPublicationId());
-        }
         currentGoItem.addCollection(references);
 
         // add item to gene go collections
@@ -825,19 +822,13 @@ public class GoConverter extends FileConverter
     {
         private String qualifier;
         private Item datasource;
-        private String publicationId;
+        private ReferenceList pubs;
         private ReferenceList goEvidenceColl;
         private ItemWrapper geneProduct;
         private Item goTerm;
         private String withText;
         private Item organism;
         private Item goAnno;
-
-        private ArrayList extraPublicationList;
-
-        private PlaceHolder() {
-            extraPublicationList = new ArrayList();
-        }
 
         /**
          * @param qualifier   qualifier (eg NOT) or null
@@ -853,10 +844,10 @@ public class GoConverter extends FileConverter
                 String qualifier, Item datasource, String publicationId,
                 ReferenceList goEvidenceColl, ItemWrapper product, Item goTerm,
                 String withText, Item organism) {
-            this();
             this.qualifier = qualifier;
             this.datasource = datasource;
-            this.publicationId = publicationId;
+            pubs = new ReferenceList("publications", new ArrayList());
+            pubs.addRefId(publicationId);
             this.goEvidenceColl = goEvidenceColl;
             this.geneProduct = product;
             this.goTerm = goTerm;
@@ -879,10 +870,10 @@ public class GoConverter extends FileConverter
         }
 
         /**
-         * @return the related Publication item
+         * @return the Publication collection
          */
-        public String getPublicationId() {
-            return publicationId;
+        public ReferenceList getPubs() {
+            return pubs;
         }
 
         /**
@@ -919,13 +910,6 @@ public class GoConverter extends FileConverter
          */
         public Item getOrganism() {
             return organism;
-        }
-
-        /**
-         * @return a list of any extra publication items that we want to link to this go annotation.
-         */
-        public ArrayList getExtraPublicationList() {
-            return extraPublicationList;
         }
 
         /**
