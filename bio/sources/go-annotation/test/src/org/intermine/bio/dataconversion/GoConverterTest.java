@@ -70,7 +70,7 @@ public class GoConverterTest extends ItemsTestCase
         converter.close();
 
         // uncomment to write a new target items file
-        writeItemsFile(writer.getItems(), "go-tgt-items.xml");
+        //writeItemsFile(writer.getItems(), "go-tgt-items.xml");
 
         assertEquals(readItemSet("GoConverterOboTest_tgt.xml"), writer.getItems());
     }
