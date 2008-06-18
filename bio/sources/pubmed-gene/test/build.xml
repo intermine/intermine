@@ -1,0 +1,5 @@
+<project name="test-tasks" default="default" basedir=".">
+  <description>build test tasks</description>
+  <import file="../../../../imbuild/tests.xml"/>
+  <import file="../../../../imbuild/task.xml"/>
+</project>
