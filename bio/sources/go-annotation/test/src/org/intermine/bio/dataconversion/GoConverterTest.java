@@ -80,17 +80,17 @@ public class GoConverterTest extends ItemsTestCase
 
         Set expected = new HashSet();
         ItemFactory tgtItemFactory = new ItemFactory(Model.getInstanceByName("genomic"));
-        Item gene1 = tgtItemFactory.makeItem("2_1", GENOMIC_NS + "Gene", "");
+        Item gene1 = tgtItemFactory.makeItem("0_1", GENOMIC_NS + "Gene", "");
         gene1.setAttribute("primaryIdentifier", "FBgn0026430");
-        gene1.setReference("organism", "1_1");
-        gene1.addToCollection("evidence", "0_2");
+        gene1.setReference("organism", "3_1");
+        gene1.addToCollection("dataSets", "1_1");
         expected.add(gene1);
-        Item gene2 = tgtItemFactory.makeItem("2_2", GENOMIC_NS + "Gene", "");
+        Item gene2 = tgtItemFactory.makeItem("0_2", GENOMIC_NS + "Gene", "");
         gene2.setAttribute("primaryIdentifier", "FBgn0001612");
-        gene2.setReference("organism", "1_1");
-        gene2.addToCollection("evidence", "0_2");
+        gene2.setReference("organism", "3_1");
+        gene2.addToCollection("dataSets", "1_1");
         expected.add(gene2);
-        Item organism = tgtItemFactory.makeItem("1_1", GENOMIC_NS + "Organism", "");
+        Item organism = tgtItemFactory.makeItem("3_1", GENOMIC_NS + "Organism", "");
         organism.setAttribute("taxonId", "7227");
         assertEquals(expected, new HashSet(converter.createWithObjects(
                 "FLYBASE:Grip84; FB:FBgn0026430, FLYBASE:l(1)dd4; FB:FBgn0001612", organism, "10_10")));
