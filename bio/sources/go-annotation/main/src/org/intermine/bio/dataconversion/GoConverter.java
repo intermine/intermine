@@ -16,6 +16,7 @@ import java.io.FileReader;
 import java.io.IOException;
 import java.io.Reader;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Date;
 import java.util.Enumeration;
 import java.util.HashMap;
@@ -54,9 +55,9 @@ public class GoConverter extends FileConverter
 
     protected Map<String, Item> goTerms = new LinkedHashMap<String, Item>();
     protected Map<GoTermToGene, Item> goAnnoItems;
-    // list of evidence terms, e.g. IEA
     private Map<String, Item> goEvidence = new LinkedHashMap<String, Item>();
     private Map<String, Item> datasources = new LinkedHashMap<String, Item>();
+    private Map<String, String> datasets = new LinkedHashMap<String, String>();
     private Map<String, String> publications = new LinkedHashMap<String, String>();
     private Map<String, Item> organisms = new LinkedHashMap<String, Item>();
     private Map<String, String> termIdNameMap = null;
@@ -208,7 +209,7 @@ public class GoConverter extends FileConverter
             String productId = array[1];
 
             // Wormbase has some proteins with UniProt accessions and some with WB:WP ids,
-            // hack here to get just the UniPort ones.
+            // hack here to get just the UniProt ones.
             if ("protein".equalsIgnoreCase(array[11]) && !array[0].startsWith("UniProt")) {
                 continue;
             }
@@ -236,7 +237,7 @@ public class GoConverter extends FileConverter
             String qualifier = array[3];
             String strEvidence = array[6];
             Item evidence = null;
-            if (strEvidence != null) {
+            if (strEvidence != null && !strEvidence.equals("")) {
                 evidence = newGoEvidence(strEvidence);
             }
             String type = array[11];
@@ -246,24 +247,23 @@ public class GoConverter extends FileConverter
 
             // A term can be applied to a product with multiple publications/evidence codes, this
             // is done with an extra line in the association file.  We create just one GoAnnotation
-            // object but have collections of publications (evidence) and goEvidenceCodes
+            // object but have collections of publications and goEvidenceCodes
             if (!holderMap.containsKey(key)) {
 
                 // get the rest of the data
                 Item newDatasource = newDatasource(array[14]);
                 String newPublicationId = newPublication(array[5]);
                 Item newGoTerm = newGoTerm(goId);
-                ReferenceList newGoEvidenceColl = null;
+                ReferenceList newGoEvidenceColl =
+                    new ReferenceList("goEvidenceCodes", new ArrayList());
                 if (evidence != null) {
-                    newGoEvidenceColl = new ReferenceList("goEvidenceCodes", new ArrayList());
                     newGoEvidenceColl.addRefId(evidence.getIdentifier());
                 }
                 Item newOrganism = newOrganism(array[12]);
 
                 // new gene/protein
-                ItemWrapper newProductWrapper =
-                    newProduct(productId, type, newOrganism,
-                               newDatasource.getIdentifier(), true, null);
+                ItemWrapper newProductWrapper = newProduct(productId, type, newOrganism,
+                                                newDatasource.getIdentifier(), true, null);
 
                 // temporary object while we are rattling through the file
                 // needed because we may have extra publications
@@ -284,12 +284,7 @@ public class GoConverter extends FileConverter
                     holder.getPubs().addRefId(pubRefId);
                 // add reference to new evidence object
                 } else if (evidence != null) {
-                    ReferenceList goEvidenceColl = null;
-                    goEvidenceColl = holder.getGoEvidenceColl();
-                    if (goEvidenceColl == null) {
-                        goEvidenceColl = new ReferenceList("goEvidenceCodes", new ArrayList());
-                    }
-                    goEvidenceColl.addRefId(evidence.getIdentifier());
+                    holder.getGoEvidenceColl().addRefId(evidence.getIdentifier());
                 }
             }
         }
@@ -511,8 +506,7 @@ public class GoConverter extends FileConverter
         Item goAnnoItem = createItem("GOAnnotation");
         goAnnoItem.setAttribute("identifier", identifier);
         goAnnoItem.setAttribute("isPrimaryAssignment", isPrimaryAssignment);
-        //goAnnoItem.setAttribute("evidenceCode", evidenceCode);
-        if (goEvidenceColl != null) {
+        if (goEvidenceColl != null && !goEvidenceColl.getRefIds().isEmpty()) {
             goAnnoItem.addCollection(goEvidenceColl);
         }
         if (actualGoTerms != null) {
@@ -749,17 +743,31 @@ public class GoConverter extends FileConverter
             item = createItem("DataSource");
             item.setAttribute("name", title);
             datasources.put(title, item);
+
+            String key = "GO Annotation for " + title + " loaded on " + NOW;
+            String datasetId = newDataset(item.getIdentifier(), key);
+            item.setCollection("dataSets", new ArrayList(Collections.singleton(datasetId)));
+
             store(item);
         }
         return item;
     }
 
-    /**
-     * Create a new publication given list of codes
-     *
-     * @param codes the codes
-     * @return the publication
-     */
+    private String newDataset(String dataSourceRefId, String title)
+    throws ObjectStoreException {
+        String refId = datasets.get(title);
+        if (refId == null) {
+            Item item = createItem("DataSet");
+            item.setAttribute("title", title);
+            item.setReference("dataSource", dataSourceRefId);
+            refId = item.getIdentifier();
+            datasets.put(title, refId);
+            store(item);
+        }
+        return refId;
+    }
+
+
     private String newPublication(String codes) throws ObjectStoreException {
         String pubRefId = null;
         String[] array = codes.split("[|]");
