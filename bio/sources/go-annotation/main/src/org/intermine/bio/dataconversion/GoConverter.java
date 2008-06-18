@@ -16,7 +16,6 @@ import java.io.FileReader;
 import java.io.IOException;
 import java.io.Reader;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -330,15 +329,15 @@ public class GoConverter extends FileConverter
     /**
      * iterate through the list of parents and process those.
      * @param placeHolder Object that holds all go annotation related information
-     * @param goTermId2ParentTermIdSetsMap map of go terms to parent go terms
+     * @param goTermId2ParentTermId map of go terms to parent go terms
      * @throws ObjectStoreException if there is a problem
      */
-    protected void newParentGoAnnotation(Map<String, Set> goTermId2ParentTermIdSetsMap,
+    protected void newParentGoAnnotation(Map<String, Set> goTermId2ParentTermId,
                                          PlaceHolder placeHolder)
         throws ObjectStoreException {
         String goId = placeHolder.getGoTerm().getAttribute("identifier").getValue();
-        if (goTermId2ParentTermIdSetsMap.containsKey(goId)) {
-            Set parentTermIdsSet = goTermId2ParentTermIdSetsMap.get(goId);
+        if (goTermId2ParentTermId.containsKey(goId)) {
+            Set parentTermIdsSet = goTermId2ParentTermId.get(goId);
             if (parentTermIdsSet != null) {
                 processParents(placeHolder, parentTermIdsSet);
             }
@@ -442,7 +441,7 @@ public class GoConverter extends FileConverter
             // gene&goterm combo already exists
             if (holderMap.containsKey(key)) {
 
-                PlaceHolder parentPlaceHolder = (PlaceHolder) holderMap.get(key);
+                PlaceHolder parentPlaceHolder = holderMap.get(key);
                 parentItem = parentPlaceHolder.getGoAnno();
                 // add this go term to the parent's collection of children
                 parentItem.getCollection("actualGoTerms").addRefId(placeHolder.getGoTerm()
@@ -454,7 +453,7 @@ public class GoConverter extends FileConverter
             } else {
                 ReferenceList actualGoTerms = null;
                 if (goAnnoItems.containsKey(key)) {
-                    parentItem = (Item) goAnnoItems.get(key);
+                    parentItem = goAnnoItems.get(key);
                     actualGoTerms = parentItem.getCollection("actualGoTerms");
                 } else {
                     // start a list of kids for this new parent
@@ -594,7 +593,7 @@ public class GoConverter extends FileConverter
      * @param organism the organism of the product, may be null if a protein
      * @param dataSourceId the id of the datasource the product is from.
      * @param createOrganism if true then reference the organism from created BioEntity
-     * @param idField the attribute of created BioEntity to put identifier in
+     * @param identifier the attribute of created BioEntity to put identifier in
      * @return the geneProduct
      * @throws ObjectStoreException if an error occurs in storing
      */
@@ -603,9 +602,9 @@ public class GoConverter extends FileConverter
                                      Item organism,
                                      String dataSourceId,
                                      boolean createOrganism,
-                                     String idField) throws ObjectStoreException {
+                                     String identifier) throws ObjectStoreException {
         String clsName;
-
+        String idField = identifier;
         // find gene attribute first to see if organism shoudld be part of key
         if ("gene".equalsIgnoreCase(type)) {
             clsName = "Gene";
