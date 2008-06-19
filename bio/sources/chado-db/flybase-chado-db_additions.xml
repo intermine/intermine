@@ -42,4 +42,7 @@
     
   </class>
 
+  <class name="org.flymine.model.genomic.Gene" is-interface="true">
+    <attribute name="flyBaseFeatureType" type="java.lang.String"/>
+  </class>
 </classes>
