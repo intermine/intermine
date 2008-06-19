@@ -571,6 +571,7 @@ public class FlyBaseModuleProcessor extends ChadoSequenceProcessor
 
         Map<Integer, List<String>> mutagenMap = makeMutagenMap(connection);
         for (Integer alleleFeatureId: mutagenMap.keySet()) {
+            FeatureData alleleDat = features.get(alleleFeatureId);
             List<String> mutagenRefIds = new ArrayList<String>();
             for (String mutagenDescription: mutagenMap.get(alleleFeatureId)) {
                 Item mutagen = getMutagen(mutagenDescription);
@@ -579,11 +580,9 @@ public class FlyBaseModuleProcessor extends ChadoSequenceProcessor
             ReferenceList referenceList = new ReferenceList();
             referenceList.setName("mutagens");
             referenceList.setRefIds(mutagenRefIds);
-            getChadoDBConverter().store(referenceList, alleleFeatureId);
+            getChadoDBConverter().store(referenceList, alleleDat.getIntermineObjectId());
         }
     }
-
-
 
     private Item getMutagen(String description) throws ObjectStoreException {
         if (mutagensMap.containsKey(description)) {
