@@ -220,106 +220,6 @@
 
       <displayer src="attributeLinkDisplayer.tile"/>
 
-      <graphdisplayer title="Chromosome Distribution" domainLabel="Chromosome" rangeLabel="Gene Count" dataSetLoader="org.intermine.bio.web.widget.ChromosomeDistributionDataSetLdr"
-                      toolTipGen="org.intermine.web.logic.widget.ToolTipGenerator" link="org.intermine.bio.web.widget.ChromosomeDistributionGraphURLGenerator"
-                      description="Actual: number of genes in this list found on each chromosome.  Expected: given the total number of genes on the chromosome and the number of genes in this list, the number of genes expected to be found on each chromosome."
-                      graphType="BarChart" extraAttributeClass="org.intermine.bio.web.logic.BioUtil"/>
-
-      <graphdisplayer title="Gene Expression in the Adult Fly (FlyAtlas)" domainLabel="Tissue" rangeLabel="Up (+) or Down (-) gene count" dataSetLoader="org.flymine.web.widget.FlyAtlasDataSetLdr"
-                      toolTipGen="org.intermine.web.logic.widget.ToolTipGenerator" link="org.flymine.web.widget.FlyAtlasGraphURLGenerator"
-                      description="For each tissue in the adult fly, the number of genes from this list for which the levels of expression are significantly high (Up) or low (Down) according to &lt;a href=&quot;http://www.flyatlas.org/&quot; target=&quot;_new&quot;&gt;FlyAtlas&lt;/a&gt; AffyCall."
-                      graphType="StackedBarChart" />
-
-      <graphdisplayer title="mRNA subcellular localisation (fly-FISH)" domainLabel="Stage" rangeLabel="Gene count" dataSetLoader="org.flymine.web.widget.FlyFishDataSetLdr"
-                      toolTipGen="org.intermine.web.logic.widget.ToolTipGenerator" link="org.flymine.web.widget.FlyFishGraphURLGenerator"
-                      description="Expression patterns of Drosophila mRNAs at the subcellular level during early embryogenesis - data from  &lt;a href=&quot;http://fly-fish.ccbr.utoronto.ca/&quot; target=&quot;_new&quot;&gt;Fly-FISH&lt;/a&gt;.  Note that not all genes have been assayed by &lt;a href=&quot;http://fly-fish.ccbr.utoronto.ca/&quot; target=&quot;_new&quot;&gt;Fly-FISH&lt;/a&gt;."
-                      graphType="BarChart" />
-
-      <graphdisplayer title="BDGP expression patterns"
-                      link="org.flymine.web.widget.BDGPinsituGraphURLGenerator"
-                      dataSetLoader="org.flymine.web.widget.BDGPinsituDataSetLdr"
-                      description="Expression patterns of Drosophila mRNAs during embryogenesis - data from  &lt;a href=&quot;http://www.fruitfly.org/cgi-bin/ex/insitu.pl&quot; target=&quot;_new&quot;&gt;BGDP&lt;/a&gt;.  Note that not all genes have been assayed by &lt;a href=&quot;http://www.fruitfly.org/cgi-bin/ex/insitu.pl&quot; target=&quot;_new&quot;&gt;BGDP&lt;/a&gt;. "
-                      toolTipGen="org.intermine.web.logic.widget.ToolTipGenerator"
-                      domainLabel="Stage"
-                      rangeLabel="Gene count"
-                      graphType="BarChart" />
-
-
-      <bagtabledisplayer title="Pathway Information (KEGG)" pathStrings="Gene.pathways" link="org.intermine.bio.web.widget.PathwayURLQuery"
-                         description="Most common &lt;a href=&quot;http://www.genome.jp/kegg/&quot; target=&quot;_new&quot;&gt;KEGG pathways&lt;/a&gt; for this list."
-                         displayFields="identifier,name"
-                         exportFields="primaryIdentifier"
-                         externalLink="http://www.genome.jp/dbget-bin/www_bget?pathway+dme"
-                         externalLinkLabel="KEGG" />
-
-      <bagtabledisplayer title="Orthologues" pathStrings="Gene.homologues[type=orthologue].homologue.organism" link="org.intermine.bio.web.widget.HomologueURLQuery"
-                         description="Counts of orthologues in other organisms for the genes in this list."
-                         displayFields="name"
-                         exportFields="primaryIdentifier"
-                         columnTitle="Orthologues"/>
-
-      <bagtabledisplayer title="Genetic Interactions"
-                         pathStrings="Gene.geneticInteractions.interactingGenes"
-                         link="org.intermine.bio.web.widget.GeneticInteractionURLQuery"
-                         description="Genes (from the list or not) that genetically interact with genes in this list - data from &lt;a href=&quot;http://www.thebiogrid.org/&quot; target=&quot;_new&quot;&gt;BioGRID&lt;/a&gt;.  Counts may include the same interaction more than once if observed in multiple experiments."
-                         displayFields="primaryIdentifier"
-                         exportFields="primaryIdentifier"
-                         columnTitle="Interactions"/>
-
-      <enrichmentwidgetdisplayer title="Gene Ontology Enrichment"
-                                 link="org.intermine.bio.web.widget.GoStatURLQuery"
-                                 dataSetLoader="org.intermine.bio.web.widget.GoStatLdr"
-                                 description="GO terms enriched for genes in this list."
-                                 label="GO Term"
-                                 filters="biological_process,cellular_component,molecular_function"
-                                 filterLabel="Ontology"
-                                 max="0.10"
-                                 externalLink="http://amigo.geneontology.org/cgi-bin/amigo/term-details.cgi?term=" />
-
-      <enrichmentwidgetdisplayer title="Protein Domain Enrichment"
-                                 link="org.flymine.web.widget.ProteinDomainURLQuery"
-                                 dataSetLoader="org.flymine.web.widget.ProteinDomainLdr"
-                                 label="Protein Domain"
-                                 description="Protein Domains enriched for genes in this list."
-                                 filters=""
-                                 filterLabel=""
-                                 max="0.10"
-                                 externalLink="http://www.ebi.ac.uk/interpro/IEntry?ac=" />
-
-
-      <enrichmentwidgetdisplayer title="Publication Enrichment"
-                                 link="org.intermine.bio.web.widget.PublicationURLQuery"
-                                 dataSetLoader="org.intermine.bio.web.widget.PublicationLdr"
-                                 label="Publication"
-                                 description="Publications enriched for genes in this list."
-                                 filters=""
-                                 filterLabel=""
-                                 max="0.10"
-                                 externalLink="http://www.ncbi.nlm.nih.gov/entrez/query.fcgi?cmd=Retrieve&amp;db=PubMed&amp;dopt=Abstract&amp;list_uids="
-                                 externalLinkLabel="PubMed:" />
-
-      <enrichmentwidgetdisplayer title="BDGP Enrichment"
-                                 link="org.flymine.web.widget.BDGPURLQuery"
-                                 dataSetLoader="org.flymine.web.widget.BDGPLdr"
-                                 label="Terms"
-                                 description="ImaGO terms enriched for genes in this list - data from &lt;a href=&quot;http://www.fruitfly.org/cgi-bin/ex/insitu.pl&quot; target=&quot;_new&quot;&gt;BGDP&lt;/a&gt;.  Note that not all genes have been assayed by BDGP."
-                                 filters=""
-                                 filterLabel=""
-                                 max="0.10"
-                                 externalLink="" />
-
-<!--
-     <enrichmentwidgetdisplayer title="Tiffin Motif Enrichment"
-                                      link="org.flymine.web.widget.TiffinURLQuery"
-                                      dataSetLoader="org.flymine.web.widget.TiffinLdr"
-                                      description="Tiffin Motifs enriched for genes in this list."
-                                      max="0.10"
-                                      label="Motif"
-                                      filters=""
-                                      filterLabel=""
-                                      externalLink="http://servlet.sanger.ac.uk/tiffin/motif.jsp?acc="
-                                      append=".2" />
--->
     </bagdisplayers>
   </class>
 
@@ -416,10 +316,6 @@
       <displayer src="/model/locatedSequenceFeatureImage.jsp"/>
     </longdisplayers>
     <bagdisplayers>
-      <graphdisplayer title="Chromosome Distribution" domainLabel="Chromosome" rangeLabel="Count" dataSetLoader="org.intermine.bio.web.widget.ChromosomeDistributionDataSetLdr"
-                      toolTipGen="org.intermine.web.logic.widget.ToolTipGenerator" link="org.intermine.bio.web.widget.ChromosomeDistributionGraphURLGenerator"
-                      description="Actual: number of features in this list found on each chromosome.  Expected: given the total number of featres on the chromosome and the number in this list, the number of features expected to be found on each chromosome."
-                      graphType="BarChart" extraAttributeClass="org.intermine.bio.web.logic.BioUtil"/>
     </bagdisplayers>
   </class>
 
@@ -580,48 +476,6 @@
     </longdisplayers>
 
     <bagdisplayers>
-
-      <enrichmentwidgetdisplayer title="Gene Ontology Enrichment"
-                                 link="org.intermine.bio.web.widget.GoStatURLQuery"
-                                 dataSetLoader="org.intermine.bio.web.widget.GoStatLdr"
-                                 description="Go terms enriched for proteins in this list."
-                                 label="GO Term"
-                                 filters="biological_process,cellular_component,molecular_function"
-                                 filterLabel="ontology"
-                                 max="0.10"
-                                 externalLink="http://amigo.geneontology.org/cgi-bin/amigo/term-details.cgi?term="
-                                 />
-
-      <enrichmentwidgetdisplayer title="Protein Domain Enrichment"
-                                 link="org.flymine.web.widget.ProteinDomainURLQuery"
-                                 dataSetLoader="org.flymine.web.widget.ProteinDomainLdr"
-                                 label="Protein Domain"
-                                 description="Protein Domains enriched for proteins in this list."
-                                 filters=""
-                                 filterLabel=""
-                                 max="0.10"
-                                 externalLink="http://www.ebi.ac.uk/interpro/IEntry?ac=" />
-                                  />
-
-      <enrichmentwidgetdisplayer title="UniProt Features"
-                                 link="org.intermine.bio.web.widget.UniProtFeaturesURLQuery"
-                                 dataSetLoader="org.intermine.bio.web.widget.UniProtFeaturesLdr"
-                                 label="Feature"
-                                 description="UniProt features enriched for proteins in this list."
-                                 filters=""
-                                 filterLabel=""
-                                 max="0.10"  />
-
-      <enrichmentwidgetdisplayer title="UniProt Keywords"
-                                 link="org.intermine.bio.web.widget.UniProtKeywordsURLQuery"
-                                 dataSetLoader="org.intermine.bio.web.widget.UniProtKeywordsLdr"
-                                 label="Keyword"
-                                 description="UniProt keywords enriched for proteins in this list."
-                                 filters=""
-                                 filterLabel=""
-                                 max="0.10"  />
-
-
     </bagdisplayers>
   </class>
 
@@ -874,10 +728,6 @@
     </fields>
     <!-- inherits longdisplayers -->
     <bagdisplayers>
-      <graphdisplayer title="Chromosome Distribution" domainLabel="Chromosome" rangeLabel="Count" dataSetLoader="org.intermine.bio.web.widget.ChromosomeDistributionDataSetLdr"
-                      toolTipGen="org.intermine.web.logic.widget.ToolTipGenerator" link="org.intermine.bio.web.widget.ChromosomeDistributionGraphURLGenerator"
-                      description="Actual: number of features in this list found on each chromosome.  Expected: given the total number of featres on the chromosome and the number in this list, the number of features expected to be found on each chromosome."
-                      graphType="BarChart" extraAttributeClass="org.intermine.bio.web.logic.BioUtil"/>
     </bagdisplayers>
   </class>
 
@@ -910,4 +760,138 @@
                      className="org.intermine.bio.web.export.GFF3HttpExporter"/>
   <tableExportConfig id="proteinInteractionExporter" actionPath="/exportAction?type=proteinInteractionExporter"
                      className="org.intermine.bio.web.ProteinInteractionExporter"/>
+                     
+   <widgets>
+      <enrichmentwidgetdisplayer id="protein_features" title="UniProt Features"
+                                 link="org.intermine.bio.web.widget.UniProtFeaturesURLQuery"
+                                 dataSetLoader="org.intermine.bio.web.widget.UniProtFeaturesLdr"
+                                 label="Feature"
+                                 description="UniProt features enriched for proteins in this list."
+                                 filters=""
+                                 filterLabel=""
+                                 typeClass="org.flymine.model.genomic.Protein"
+                                 max="0.10"  />
+
+      <enrichmentwidgetdisplayer id="uniprot_keywords" title="UniProt Keywords"
+                                 link="org.intermine.bio.web.widget.UniProtKeywordsURLQuery"
+                                 dataSetLoader="org.intermine.bio.web.widget.UniProtKeywordsLdr"
+                                 label="Keyword"
+                                 description="UniProt keywords enriched for proteins in this list."
+                                 filters=""
+                                 filterLabel=""
+                                 typeClass="org.flymine.model.genomic.Protein"
+                                 max="0.10"  />   
+
+      <graphdisplayer id="chromosome_distribution" title="Chromosome Distribution" domainLabel="Chromosome" rangeLabel="Count" dataSetLoader="org.intermine.bio.web.widget.ChromosomeDistributionDataSetLdr"
+                      toolTipGen="org.intermine.web.logic.widget.ToolTipGenerator" link="org.intermine.bio.web.widget.ChromosomeDistributionGraphURLGenerator"
+                      description="Actual: number of items in this list found on each chromosome.  Expected: given the total number of items on the chromosome and the number of items in this list, the number of items expected to be found on each chromosome."
+                      graphType="BarChart" extraAttributeClass="org.intermine.bio.web.logic.BioUtil"
+                      typeClass="org.flymine.model.genomic.Gene,org.flymine.model.genomic.LocatedSequenceFeature,org.flymine.model.genomic.TransposableElementInsertionSite"
+                      />
+
+      <graphdisplayer id="flyatlas" title="Gene Expression in the Adult Fly (FlyAtlas)" domainLabel="Tissue" rangeLabel="Up (+) or Down (-) gene count" dataSetLoader="org.flymine.web.widget.FlyAtlasDataSetLdr"
+                      toolTipGen="org.intermine.web.logic.widget.ToolTipGenerator" link="org.flymine.web.widget.FlyAtlasGraphURLGenerator"
+                      description="For each tissue in the adult fly, the number of genes from this list for which the levels of expression are significantly high (Up) or low (Down) according to &lt;a href=&quot;http://www.flyatlas.org/&quot; target=&quot;_new&quot;&gt;FlyAtlas&lt;/a&gt; AffyCall."
+                      typeClass="org.flymine.model.genomic.Gene"
+                      graphType="StackedBarChart" />
+
+      <graphdisplayer id="flyfish" title="mRNA subcellular localisation (fly-FISH)" domainLabel="Stage" rangeLabel="Gene count" dataSetLoader="org.flymine.web.widget.FlyFishDataSetLdr"
+                      toolTipGen="org.intermine.web.logic.widget.ToolTipGenerator" link="org.flymine.web.widget.FlyFishGraphURLGenerator"
+                      description="Expression patterns of Drosophila mRNAs at the subcellular level during early embryogenesis - data from  &lt;a href=&quot;http://fly-fish.ccbr.utoronto.ca/&quot; target=&quot;_new&quot;&gt;Fly-FISH&lt;/a&gt;.  Note that not all genes have been assayed by &lt;a href=&quot;http://fly-fish.ccbr.utoronto.ca/&quot; target=&quot;_new&quot;&gt;Fly-FISH&lt;/a&gt;."
+                      typeClass="org.flymine.model.genomic.Gene"
+                      graphType="BarChart" />
+
+      <graphdisplayer id="bdgp" title="BDGP expression patterns"
+                      link="org.flymine.web.widget.BDGPinsituGraphURLGenerator"
+                      dataSetLoader="org.flymine.web.widget.BDGPinsituDataSetLdr"
+                      description="Expression patterns of Drosophila mRNAs during embryogenesis - data from  &lt;a href=&quot;http://www.fruitfly.org/cgi-bin/ex/insitu.pl&quot; target=&quot;_new&quot;&gt;BGDP&lt;/a&gt;.  Note that not all genes have been assayed by &lt;a href=&quot;http://www.fruitfly.org/cgi-bin/ex/insitu.pl&quot; target=&quot;_new&quot;&gt;BGDP&lt;/a&gt;. "
+                      toolTipGen="org.intermine.web.logic.widget.ToolTipGenerator"
+                      domainLabel="Stage"
+                      rangeLabel="Gene count"
+                      typeClass="org.flymine.model.genomic.Gene"
+                      graphType="BarChart" />
+
+
+      <bagtabledisplayer id="kegg" title="Pathway Information (KEGG)" pathStrings="Gene.pathways" link="org.intermine.bio.web.widget.PathwayURLQuery"
+                         description="Most common &lt;a href=&quot;http://www.genome.jp/kegg/&quot; target=&quot;_new&quot;&gt;KEGG pathways&lt;/a&gt; for this list."
+                         displayFields="identifier,name"
+                         exportFields="primaryIdentifier"
+                         externalLink="http://www.genome.jp/dbget-bin/www_bget?pathway+dme"
+                         typeClass="org.flymine.model.genomic.Gene"
+                         externalLinkLabel="KEGG" />
+
+      <bagtabledisplayer id="orthologues" title="Orthologues" pathStrings="Gene.homologues[type=orthologue].homologue.organism" link="org.intermine.bio.web.widget.HomologueURLQuery"
+                         description="Counts of orthologues in other organisms for the genes in this list."
+                         displayFields="name"
+                         exportFields="primaryIdentifier"
+                         typeClass="org.flymine.model.genomic.Gene"
+                         columnTitle="Orthologues"/>
+
+      <bagtabledisplayer id="genetic_interactions" title="Genetic Interactions"
+                         pathStrings="Gene.geneticInteractions.interactingGenes"
+                         link="org.intermine.bio.web.widget.GeneticInteractionURLQuery"
+                         description="Genes (from the list or not) that genetically interact with genes in this list - data from &lt;a href=&quot;http://www.thebiogrid.org/&quot; target=&quot;_new&quot;&gt;BioGRID&lt;/a&gt;.  Counts may include the same interaction more than once if observed in multiple experiments."
+                         displayFields="primaryIdentifier"
+                         exportFields="primaryIdentifier"
+                         typeClass="org.flymine.model.genomic.Gene"
+                         columnTitle="Interactions"/>
+
+      <enrichmentwidgetdisplayer id="go_enrichment" title="Gene Ontology Enrichment"
+                                 link="org.intermine.bio.web.widget.GoStatURLQuery"
+                                 dataSetLoader="org.intermine.bio.web.widget.GoStatLdr"
+                                 description="GO terms enriched for items in this list."
+                                 label="GO Term"
+                                 filters="biological_process,cellular_component,molecular_function"
+                                 filterLabel="Ontology"
+                                 max="0.10"
+                                 typeClass="org.flymine.model.genomic.Gene,org.flymine.model.genomic.Protein"
+                                 externalLink="http://amigo.geneontology.org/cgi-bin/amigo/term-details.cgi?term=" />
+
+      <enrichmentwidgetdisplayer id="prot_dom_enrichment" title="Protein Domain Enrichment"
+                                 link="org.flymine.web.widget.ProteinDomainURLQuery"
+                                 dataSetLoader="org.flymine.web.widget.ProteinDomainLdr"
+                                 label="Protein Domain"
+                                 description="Protein Domains enriched for items in this list."
+                                 filters=""
+                                 filterLabel=""
+                                 max="0.10"
+                                 typeClass="org.flymine.model.genomic.Gene,org.flymine.model.genomic.Protein"
+                                 externalLink="http://www.ebi.ac.uk/interpro/IEntry?ac=" />
+
+      <enrichmentwidgetdisplayer id="publication_enrichment" itle="Publication Enrichment"
+                                 link="org.intermine.bio.web.widget.PublicationURLQuery"
+                                 dataSetLoader="org.intermine.bio.web.widget.PublicationLdr"
+                                 label="Publication"
+                                 description="Publications enriched for genes in this list."
+                                 filters=""
+                                 filterLabel=""
+                                 max="0.10"
+                                 externalLink="http://www.ncbi.nlm.nih.gov/entrez/query.fcgi?cmd=Retrieve&amp;db=PubMed&amp;dopt=Abstract&amp;list_uids="
+                                 typeClass="org.flymine.model.genomic.Gene"
+                                 externalLinkLabel="PubMed:" />
+
+      <enrichmentwidgetdisplayer id="bdgp_enrichment" title="BDGP Enrichment"
+                                 link="org.flymine.web.widget.BDGPURLQuery"
+                                 dataSetLoader="org.flymine.web.widget.BDGPLdr"
+                                 label="Terms"
+                                 description="ImaGO terms enriched for genes in this list - data from &lt;a href=&quot;http://www.fruitfly.org/cgi-bin/ex/insitu.pl&quot; target=&quot;_new&quot;&gt;BGDP&lt;/a&gt;.  Note that not all genes have been assayed by BDGP."
+                                 filters=""
+                                 filterLabel=""
+                                 max="0.10"
+                                 typeClass="org.flymine.model.genomic.Gene"
+                                 externalLink="" />
+
+<!--
+     <enrichmentwidgetdisplayer title="Tiffin Motif Enrichment"
+                                      link="org.flymine.web.widget.TiffinURLQuery"
+                                      dataSetLoader="org.flymine.web.widget.TiffinLdr"
+                                      description="Tiffin Motifs enriched for genes in this list."
+                                      max="0.10"
+                                      label="Motif"
+                                      filters=""
+                                      filterLabel=""
+                                      externalLink="http://servlet.sanger.ac.uk/tiffin/motif.jsp?acc="
+                                      append=".2" />
+-->
+    </widgets>
 </webconfig>
