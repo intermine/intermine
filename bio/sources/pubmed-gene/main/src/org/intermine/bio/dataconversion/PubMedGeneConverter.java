@@ -70,7 +70,7 @@ public class PubMedGeneConverter extends FileConverter
     
     private Set<Integer> organismsToProcess = new HashSet<Integer>();
     
-    private Map<Integer, Item> publications = new HashMap<Integer, Item>();
+    private Map<Integer, String> publications = new HashMap<Integer, String>();
     
     /**
      * @param writer item writer
@@ -118,7 +118,7 @@ public class PubMedGeneConverter extends FileConverter
                 PubMedReference ref = it.next();
                 Integer organismId = ref.getOrganism();
                 if (organismsToProcess.contains(organismId)) {
-                    Map<Integer, List<Item>> geneToPub = convertAndStorePubs(ref.getReferences());
+                    Map<Integer, List<String>> geneToPub = convertAndStorePubs(ref.getReferences());
                     Item organism = createOrganism(organismId);
                     geneConverter.processGenes(geneToPub, organismId, organism);
                 }
@@ -139,20 +139,21 @@ public class PubMedGeneConverter extends FileConverter
         }
     }
     
-    private Map<Integer, List<Item>> convertAndStorePubs(
+    private Map<Integer, List<String>> convertAndStorePubs(
             Map<Integer, List<Integer>> geneToPub) throws ObjectStoreException {
-        Map<Integer, List<Item>> ret = new HashMap<Integer, List<Item>>();
+        Map<Integer, List<String>> ret = new HashMap<Integer, List<String>>();
         for (Integer geneId : geneToPub.keySet()) {
             List<Integer> pubs = geneToPub.get(geneId);
-            List<Item> list = new ArrayList<Item>();
+            List<String> list = new ArrayList<String>();
             for (Integer pubId : pubs) {
-                Item pub = publications.get(pubId);
-                if (pub == null) {
-                    pub = createPublication(pubId);
-                    publications.put(pubId, pub);
+                String writerPubId = publications.get(pubId);
+                if (writerPubId == null) {
+                    Item pub = createPublication(pubId);
+                    writerPubId = pub.getIdentifier();
+                    publications.put(pubId, writerPubId);
                     store(pub);
                 }
-                list.add(pub);
+                list.add(writerPubId);
             }
             ret.put(geneId, list);
         }
