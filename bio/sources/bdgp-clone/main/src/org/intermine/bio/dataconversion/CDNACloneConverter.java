@@ -27,8 +27,6 @@ public abstract class CDNACloneConverter extends BioFileConverter
 {
     protected static final Logger LOG = Logger.getLogger(CDNACloneConverter.class);
 
-    protected Item dataSource;
-    protected Item dataSet;
     protected Item organism;
 
     /**

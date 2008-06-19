@@ -10,20 +10,18 @@ package org.intermine.bio.dataconversion;
  *
  */
 
-import java.io.Reader;
-import java.io.BufferedReader;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Map;
 import java.util.HashMap;
+import java.util.Map;
 
-import org.intermine.objectstore.ObjectStoreException;
-import org.intermine.metadata.Model;
-import org.intermine.metadata.MetaDataException;
-import org.intermine.xml.full.Item;
-import org.intermine.xml.full.ReferenceList;
 import org.intermine.dataconversion.ItemWriter;
+import org.intermine.metadata.MetaDataException;
+import org.intermine.metadata.Model;
+import org.intermine.objectstore.ObjectStoreException;
 import org.intermine.util.StringUtil;
+import org.intermine.xml.full.Item;
+
+import java.io.BufferedReader;
+import java.io.Reader;
 
 import org.apache.log4j.Logger;
 
@@ -82,8 +80,7 @@ public class ImageCloneConverter extends CDNACloneConverter
                 Item gene = createGene("Gene", geneId[0], organism.getIdentifier(),
                                        getItemWriter());
                 createClone("CDNAClone", cloneId, organism.getIdentifier(),
-                            gene.getIdentifier(), dataSource.getIdentifier(),
-                            dataSet.getIdentifier(), getItemWriter());
+                            gene.getIdentifier(), getItemWriter());
             }
         }
 
@@ -121,7 +118,7 @@ public class ImageCloneConverter extends CDNACloneConverter
      * @throws exception if anything goes wrong when writing items to objectstore
      */
      private void createClone(String clsName, String id, String orgId, String geneId,
-                              String datasourceId, String datasetId, ItemWriter writer)
+                              ItemWriter writer)
         throws Exception {
         Item clone = (Item) cloneMap.get(id);
         if (clone == null) {
@@ -129,15 +126,12 @@ public class ImageCloneConverter extends CDNACloneConverter
             clone.setAttribute("primaryIdentifier", id);
             clone.setReference("organism", orgId);
             clone.setReference("gene", geneId);
-            clone.addCollection(new ReferenceList("evidence",
-                                new ArrayList(Collections.singleton(datasetId))));
             cloneMap.put(id, clone);
             store(clone);
 
             Item synonym = createItem("Synonym");
             synonym.setAttribute("type", "identifier");
             synonym.setAttribute("value", id);
-            synonym.setReference("source", datasourceId);
             synonym.setReference("subject", clone.getIdentifier());
             store(synonym);
         }

@@ -88,11 +88,8 @@ public class BDGPCloneConverter extends CDNACloneConverter
                 Item synonym = createItem("Synonym");
                 synonym.setAttribute("type", "identifier");
                 synonym.setAttribute("value", cloneIds[i]);
-                synonym.setReference("source", dataSource.getIdentifier());
                 synonym.setReference("subject", clone.getIdentifier());
 
-                clone.addCollection(new ReferenceList("evidence",
-                    new ArrayList(Collections.singleton(dataSet.getIdentifier()))));
                 store(clone);
                 store(synonym);
             }
