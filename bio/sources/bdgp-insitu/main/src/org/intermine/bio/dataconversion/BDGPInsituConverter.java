@@ -68,7 +68,6 @@ public class BDGPInsituConverter extends FileConverter
 
         Item dataSource = createItem("DataSource");
         dataSource.setAttribute("name", "BDGP");
-        dataSource.setAttribute("url", "http://www.fruitfly.org");
         store(dataSource);
 
         // the widget depends on this name
@@ -160,26 +159,22 @@ public class BDGPInsituConverter extends FileConverter
     {
         if (results.containsKey(key)) {
             return results.get(key);
-        } else {
-            Item result = createItem("MRNAExpressionResult");
-
-            result.setAttribute("expressed", "true");
-
-            result.setReference("gene", geneId);
-            result.setReference("publication", pubId);
-            result.setReference("source", dataSetId);
-
-            setTheStage(result, stage);
-
-            ReferenceList imgColl = new ReferenceList("images", new ArrayList<String>());
-            result.addCollection(imgColl);
-            ReferenceList termColl = new ReferenceList("mRNAExpressionTerms",
-                                                       new ArrayList<String>());
-            result.addCollection(termColl);
-            results.put(key, result);
-
-            return result;
         }
+        Item result = createItem("MRNAExpressionResult");
+
+        result.setAttribute("expressed", "true");
+
+        result.setReference("gene", geneId);
+        result.setReference("publication", pubId);
+        result.setReference("dataSet", dataSetId);
+
+        setTheStage(result, stage);
+
+        result.setCollection("images", new ArrayList<String>());
+        result.setCollection("mRNAExpressionTerms", new ArrayList<String>());
+        results.put(key, result);
+
+        return result;
     }
 
     private void setTheStage(Item result, String stage) {
@@ -258,14 +253,13 @@ public class BDGPInsituConverter extends FileConverter
 
         if (genes.containsKey(primaryIdentifier)) {
             return genes.get(primaryIdentifier);
-        } else {
-            Item gene = createItem("Gene");
-            gene.setAttribute("primaryIdentifier", primaryIdentifier);
-            gene.setReference("organism", orgDrosophila);
-            genes.put(primaryIdentifier, gene);
-            store(gene);
-            return gene;
         }
+        Item gene = createItem("Gene");
+        gene.setAttribute("primaryIdentifier", primaryIdentifier);
+        gene.setReference("organism", orgDrosophila);
+        genes.put(primaryIdentifier, gene);
+        store(gene);
+        return gene;
     }
 
     private void setImage(Item result, String img) {
