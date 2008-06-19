@@ -8,6 +8,9 @@
     <attribute name="value" value="AGAP000035"/>
     <reference name="source" ref_id="0_1"/>
     <reference name="subject" ref_id="3_2"/>
+    <collection name="dataSets">
+      <reference ref_id="1_1"/>
+    </collection>
   </item>
   <item id="1_1" class="http://www.flymine.org/model/genomic#DataSet">
     <attribute name="title" value="Anopheles genes"/>
@@ -18,6 +21,9 @@
     <attribute name="value" value="ENSANGG00000014848"/>
     <reference name="source" ref_id="0_1"/>
     <reference name="subject" ref_id="3_1"/>
+    <collection name="dataSets">
+      <reference ref_id="1_1"/>
+    </collection>
   </item>
   <item id="3_2" class="http://www.flymine.org/model/genomic#Gene">
     <attribute name="secondaryIdentifier" value="ENSANGG00000027829"/>
@@ -43,17 +49,26 @@
     <attribute name="value" value="AGAP000034"/>
     <reference name="source" ref_id="0_1"/>
     <reference name="subject" ref_id="3_1"/>
+    <collection name="dataSets">
+      <reference ref_id="1_1"/>
+    </collection>
   </item>
   <item id="4_5" class="http://www.flymine.org/model/genomic#Synonym">
     <attribute name="type" value="identifier"/>
     <attribute name="value" value="ENSANGG00000014969"/>
     <reference name="source" ref_id="0_1"/>
     <reference name="subject" ref_id="3_2"/>
+    <collection name="dataSets">
+      <reference ref_id="1_1"/>
+    </collection>
   </item>
   <item id="4_3" class="http://www.flymine.org/model/genomic#Synonym">
     <attribute name="type" value="identifier"/>
     <attribute name="value" value="ENSANGG00000027829"/>
     <reference name="source" ref_id="0_1"/>
     <reference name="subject" ref_id="3_2"/>
+    <collection name="dataSets">
+      <reference ref_id="1_1"/>
+    </collection>
   </item>
 </items>
