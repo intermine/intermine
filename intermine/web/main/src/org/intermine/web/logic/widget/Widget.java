@@ -1,9 +1,5 @@
 package org.intermine.web.logic.widget;
 
-import java.util.List;
-
-import org.intermine.web.logic.widget.config.WidgetConfig;
-
 /*
  * Copyright (C) 2002-2008 FlyMine
  *
@@ -14,6 +10,10 @@ import org.intermine.web.logic.widget.config.WidgetConfig;
  *
  */
 
+import java.util.List;
+
+import org.intermine.web.logic.widget.config.WidgetConfig;
+
 
 /**
  * @author "Xavier Watkins"
@@ -21,8 +21,8 @@ import org.intermine.web.logic.widget.config.WidgetConfig;
  */
 public abstract class Widget
 {
-    public WidgetConfig config;
-    
+    private WidgetConfig config;
+
     /**
      * The constructor
      * @param config the WidgetConfig
@@ -34,14 +34,12 @@ public abstract class Widget
     /**
      * Process the data and create the widget
      *
-     * @param imBag the InterMineBag
-     * @param os the ObjectStore
      * @throws Exception if one of the classes in the widget isn't found
      */
     public abstract void process()
     throws Exception;
 
-    
+
     /**
      * @return the number of objects not analysed in this widget
      */
@@ -70,7 +68,7 @@ public abstract class Widget
      * @return the hasResults
      */
     public abstract boolean getHasResults();
-    
+
     /**
      * Get the ID of the corresponding WidgetConfig
      * @return the WidgetConfig ID
