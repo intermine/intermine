@@ -33,7 +33,8 @@
 <attribute name="start" value="1"/>
 <attribute name="type" value="Low_complexity"/>
 <reference name="organism" ref_id="-1_1"/>
-<collection name="dataSets"><reference ref_id="-1_26"/><reference ref_id="-1_12"/></collection>
+<collection name="evidence"><reference ref_id="-1_26"/></collection>
+<collection name="dataSets"><reference ref_id="-1_12"/></collection>
 </item>
 <item id="-1_20" class="http://www.flymine.org/model/genomic#Location">
 <attribute name="end" value="124200000"/>
@@ -96,7 +97,7 @@
 <item id="-1_26" class="http://www.flymine.org/model/genomic#ComputationalResult">
 <attribute name="score" value="23.0"/>
 <reference name="analysis" ref_id="11_2"/>
-<reference name="source" ref_id="-1_12"/>
+<reference name="dataSet" ref_id="-1_12"/>
 </item>
 <item id="-1_28" class="http://www.flymine.org/model/genomic#Synonym">
 <attribute name="type" value="identifier"/>
@@ -114,7 +115,7 @@
 <item id="-1_32" class="http://www.flymine.org/model/genomic#ComputationalResult">
 <attribute name="score" value="59.85"/>
 <reference name="analysis" ref_id="11_4"/>
-<reference name="source" ref_id="-1_12"/>
+<reference name="dataSet" ref_id="-1_12"/>
 </item>
 <item id="-1_13" class="http://www.flymine.org/model/genomic#Location">
 <attribute name="end" value="3329"/>
