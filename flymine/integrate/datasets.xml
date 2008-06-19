@@ -500,5 +500,8 @@
         <reference name="dataSource" ref_id="610"/>
     </item>
 
-
+    <item id="620" class="" implements="http://www.flymine.org/model/genomic#DataSource">
+        <attribute name="name" value="AffyMetrix"/>
+        <attribute name="url" value="http://www.affymetrix.com/"/>
+    </item>
 </items>
