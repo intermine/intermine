@@ -10,6 +10,7 @@ package org.intermine.bio.dataconversion;
  *
  */
 
+import java.io.Reader;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -19,25 +20,18 @@ import java.util.Map;
 import java.util.Set;
 import java.util.Stack;
 
+import org.apache.log4j.Logger;
 import org.intermine.dataconversion.ItemWriter;
 import org.intermine.metadata.Model;
 import org.intermine.objectstore.ObjectStoreException;
 import org.intermine.util.SAXParser;
 import org.intermine.util.StringUtil;
 import org.intermine.xml.full.Item;
-import org.intermine.xml.full.ItemFactory;
-import org.intermine.xml.full.ItemHelper;
 import org.intermine.xml.full.ReferenceList;
-
-import java.io.Reader;
-
-import org.apache.log4j.Logger;
 import org.xml.sax.Attributes;
 import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
 import org.xml.sax.helpers.DefaultHandler;
-
-import com.sun.corba.se.spi.ior.MakeImmutable;
 
 
 /**
@@ -69,7 +63,7 @@ public class BioGridConverter extends BioFileConverter
      */
     public void process(Reader reader) throws Exception {
 
-        BioGridHandler handler = new BioGridHandler(masterList);
+        BioGridHandler handler = new BioGridHandler();
 
         try {
             SAXParser.parse(new InputSource(reader), handler);
@@ -84,8 +78,6 @@ public class BioGridConverter extends BioFileConverter
      */
     class BioGridHandler extends DefaultHandler
     {
-        private ItemFactory itemFactory;
-        private Map<String, Integer> ids = new HashMap<String, Integer>();
         private Map<String, String> aliases = new HashMap<String, String>();
         private Map<String, Item> genes = new HashMap<String, Item>();
         private Map<String, String> geneIdsToIdentifiers = new HashMap<String, String>();
@@ -110,11 +102,9 @@ public class BioGridConverter extends BioFileConverter
 
         /**
          * Constructor
-         * @param writer the ItemWriter used to handle the resultant items
-         * @param masterList a map holding objects that span the XML files (dataset and classId)
          */
-        public BioGridHandler(Map masterList) {
-            itemFactory = new ItemFactory(Model.getInstanceByName("genomic"));
+        public BioGridHandler() {
+            // nothing to do
         }
 
         /**
@@ -241,14 +231,15 @@ public class BioGridConverter extends BioFileConverter
          * {@inheritDoc}
          */
         public void characters(char[] ch, int start, int length) {
-
+            int st = start;
+            int l = length;
             if (attName != null) {
 
                 // DefaultHandler may call this method more than once for a single
                 // attribute content -> hold text & create attribute in endElement
-                while (length > 0) {
+                while (l > 0) {
                     boolean whitespace = false;
-                    switch(ch[start]) {
+                    switch(ch[st]) {
                     case ' ':
                     case '\r':
                     case '\n':
@@ -261,13 +252,13 @@ public class BioGridConverter extends BioFileConverter
                     if (!whitespace) {
                         break;
                     }
-                    ++start;
-                    --length;
+                    ++st;
+                    --l;
                 }
 
-                if (length > 0) {
+                if (l > 0) {
                     StringBuffer s = new StringBuffer();
-                    s.append(ch, start, length);
+                    s.append(ch, st, l);
                     attValue.append(s);
                 }
             }
@@ -458,7 +449,8 @@ public class BioGridConverter extends BioFileConverter
             return itemId;
         }
 
-        private Item getGene(String taxonId, String identifier) {
+        private Item getGene(String taxonId, String id) {
+            String identifier = id;
             // for Drosophila attempt to update to a current gene identifier
             IdResolver resolver = resolverFactory.getIdResolver(false);
             if (taxonId.equals("7227") && resolver != null) {
@@ -503,16 +495,16 @@ public class BioGridConverter extends BioFileConverter
             return eh;
         }
 
-        private String newId(String className) {
-            Integer id = ids.get(className);
-            if (id == null) {
-                id = new Integer(0);
-                ids.put(className, id);
-            }
-            id = new Integer(id.intValue() + 1);
-            ids.put(className, id);
-            return id.toString();
-        }
+//        private String newId(String className) {
+//            Integer id = ids.get(className);
+//            if (id == null) {
+//                id = new Integer(0);
+//                ids.put(className, id);
+//            }
+//            id = new Integer(id.intValue() + 1);
+//            ids.put(className, id);
+//            return id.toString();
+//        }
 
         /**
          * Uniquely alias a className
