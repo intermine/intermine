@@ -149,9 +149,8 @@ public class AjaxServices
         LOG.error(ERROR_MSG, e);
         if (e instanceof RuntimeException) {
             throw (RuntimeException) e;
-        } else {
-            throw new RuntimeException(e);
         }
+        throw new RuntimeException(e);
     }
 
     /**
@@ -445,14 +444,12 @@ public class AjaxServices
                 if (controller instanceof PageTableQueryMonitor) {
                     PagedTable pt = ((PageTableQueryMonitor) controller).getPagedTable();
                     return new Integer(pt.getExactSize());
-                } else {
-                    if (controller instanceof QueryCountQueryMonitor) {
-                        return new Integer(((QueryCountQueryMonitor) controller).getCount());
-                    } else {
-                        LOG.debug("query qid " + qid + " - unknown controller type");
-                        return null;
-                    }
                 }
+                if (controller instanceof QueryCountQueryMonitor) {
+                    return new Integer(((QueryCountQueryMonitor) controller).getCount());
+                }
+                LOG.debug("query qid " + qid + " - unknown controller type");
+                return null;
             } else {
                 // query still running
                 LOG.debug("query qid " + qid + " still running, making client wait");
@@ -559,7 +556,7 @@ public class AjaxServices
                         (String) servletContext.getAttribute(Constants.SUPERUSER_ACCOUNT));
             }
 
-            if (profile.getUsername() != null && userTags != null && userTags.size() > 0) {
+            if (profile.getUsername() != null && userTags.size() > 0) {
                 filteredWsMap = pm.filterByTags(wsMap, userTags, type, profile.getUsername());
             } else {
                 filteredWsMap = wsMap;
@@ -600,7 +597,6 @@ public class AjaxServices
     public static int getConvertCountForBag(String bagName, String type) {
         try {
             ServletContext servletContext = WebContextFactory.get().getServletContext();
-            ProfileManager pm = SessionMethods.getProfileManager(servletContext);
             HttpSession session = WebContextFactory.get().getSession();
             ObjectStore os = (ObjectStore) servletContext.getAttribute(Constants.OBJECTSTORE);
             String pckName =  os.getModel().getPackageName();
@@ -686,7 +682,6 @@ public class AjaxServices
 
         try {
             ServletContext servletContext = WebContextFactory.get().getServletContext();
-            ProfileManager pm = SessionMethods.getProfileManager(servletContext);
             HttpSession session = WebContextFactory.get().getSession();
             Profile profile = (Profile) session.getAttribute(Constants.PROFILE);
 
@@ -731,7 +726,6 @@ public class AjaxServices
                                                String operation) {
 
         try {
-            bagName = bagName.trim();
             ServletContext servletContext = WebContextFactory.get().getServletContext();
             HttpSession session = WebContextFactory.get().getSession();
             Profile profile = (Profile) session.getAttribute(Constants.PROFILE);
@@ -754,11 +748,10 @@ public class AjaxServices
                 }
             } else {
                 Properties properties = (Properties)
-                    servletContext.getAttribute(Constants.WEB_PROPERTIES);
+                servletContext.getAttribute(Constants.WEB_PROPERTIES);
                 String defaultName = properties.getProperty("lists.input.example");
-
                 if (!operation.equals("copy") && (bagName.equals("")
-                        || (bagName.equalsIgnoreCase(defaultName)))) {
+                                || (bagName.equalsIgnoreCase(defaultName)))) {
                     return "New list name is required";
                 } else if (!WebUtil.isValidName(bagName)) {
                     return "Invalid name. Names can only contain letters, numbers, spaces, "
@@ -874,12 +867,12 @@ public class AjaxServices
     }
 
     /**
-     * #
+     *
      * @param widgetId unique ID for each widget
      * @param bagName name of list
      * @param errorCorrection error correction method to use
      * @param max maximum value to display
-     * @param selectedExtraAttribute extra attribute to filter by
+     * @param filters list of strings used to filter widget results, ie Ontology
      * @param externalLink link to external datasource
      * @param externalLinkLabel name of external datasource.
      * @return enrichment widget
@@ -904,7 +897,7 @@ public class AjaxServices
             List<WidgetConfig> widgets = type.getWidgets();
             for (WidgetConfig widgetConfig : widgets) {
                 if (widgetConfig.getId().equals(widgetId)) {
-                    EnrichmentWidgetConfig enrichmentWidgetConfig = 
+                    EnrichmentWidgetConfig enrichmentWidgetConfig =
                                                         (EnrichmentWidgetConfig) widgetConfig;
                     enrichmentWidgetConfig.setExternalLink(externalLink);
                     enrichmentWidgetConfig.setExternalLinkLabel(externalLinkLabel);
@@ -934,7 +927,7 @@ public class AjaxServices
         HttpSession session = ctx.getSession();
         ServletContext servletContext = ctx.getServletContext();
         PagedTable pt = SessionMethods.getResultsTable(session, tableId);
-        pt.selectId(new Integer(selectedId), new Integer(columnIndex));
+        pt.selectId(new Integer(selectedId), (new Integer(columnIndex)).intValue());
         Map<String, List<FieldDescriptor>> classKeys = getClassKeys(servletContext);
         ObjectStore os = (ObjectStore) servletContext.getAttribute(Constants.OBJECTSTORE);
         return pt.getFirstSelectedFields(os, classKeys);
@@ -974,7 +967,7 @@ public class AjaxServices
         pt.setAllSelectedColumn(index);
     }
 
-    public String[] getContent(String suffix, boolean wholeList, String field, String className) {      
+    public String[] getContent(String suffix, boolean wholeList, String field, String className) {
         ServletContext servletContext = WebContextFactory.get().getServletContext();
         AutoCompleter ac = (AutoCompleter) servletContext.getAttribute(Constants.AUTO_COMPLETER);
         ac.createRAMIndex(className + "." + field);
@@ -982,11 +975,11 @@ public class AjaxServices
             String[] shortList = ac.getFastList(suffix, field, 31);
             return shortList;
         } else if (suffix.length() > 2 && wholeList) {
-            String[] longList = ac.getList(suffix, field); 
+            String[] longList = ac.getList(suffix, field);
             return longList;
         }
-        String[] defaultList = {""}; 
+        String[] defaultList = {""};
         return defaultList;
     }
-    
+
 }

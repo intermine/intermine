@@ -60,10 +60,10 @@ public class GraphWidget extends Widget
 
 
     /**
-     * @param config
-     * @param interMineBag
-     * @param os
-     * @param selectedExtraAttribute
+     * @param config config for widget
+     * @param interMineBag bag for widget
+     * @param os objectstore
+     * @param selectedExtraAttribute extra attribute
      */
     public GraphWidget(GraphWidgetConfig config, InterMineBag interMineBag, ObjectStore os,
                        String selectedExtraAttribute) {
