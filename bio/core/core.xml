@@ -174,7 +174,7 @@
   <class name="org.flymine.model.genomic.AnalysisResult" extends="org.flymine.model.genomic.Evidence" is-interface="true">
     <attribute name="confidence" type="java.lang.Float"/>
     <reference name="analysis" referenced-type="org.flymine.model.genomic.Analysis"/>
-    <reference name="source" referenced-type="org.flymine.model.genomic.InfoSource"/>
+    <reference name="dataSet" referenced-type="org.flymine.model.genomic.DataSet"/>
   </class>
 
   <class name="org.flymine.model.genomic.Comment" is-interface="true">
