@@ -21,7 +21,9 @@
     <attribute name="presentCall" value="4"/>
     <reference name="experiment" ref_id="2_1"/>
     <reference name="material" ref_id="4_1"/>
-    <reference name="source" ref_id="1_1"/>
+    <collection name="dataSets">
+      <reference ref_id="1_1"/>
+    </collection>
     <collection name="assays">
       <reference ref_id="3_1"/>
     </collection>
@@ -45,7 +47,9 @@
     <attribute name="presentCall" value="4"/>
     <reference name="experiment" ref_id="2_1"/>
     <reference name="material" ref_id="4_1"/>
-    <reference name="source" ref_id="1_1"/>
+    <collection name="dataSets">
+      <reference ref_id="1_1"/>
+    </collection>
     <collection name="assays">
       <reference ref_id="3_8"/>
     </collection>
@@ -67,7 +71,9 @@
     <attribute name="presentCall" value="4"/>
     <reference name="experiment" ref_id="2_1"/>
     <reference name="material" ref_id="4_1"/>
-    <reference name="source" ref_id="1_1"/>
+    <collection name="dataSets">
+      <reference ref_id="1_1"/>
+    </collection>
     <collection name="assays">
       <reference ref_id="3_2"/>
     </collection>
@@ -83,6 +89,11 @@
   </item>
   <item id="1_1" class="http://www.flymine.org/model/genomic#DataSet">
     <attribute name="title" value="FlyAtlas"/>
+    <reference ref_id="0_1"/>
+  </item>
+  <item id="0_1" class="http://www.flymine.org/model/genomic#DataSource">
+    <attribute name="title" value=""/>
+    <reference ref_id="0_1"/>
   </item>
   <item id="3_5" class="http://www.flymine.org/model/genomic#MicroArrayAssay">
     <attribute name="name" value="Tubule"/>
