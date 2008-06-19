@@ -18,7 +18,6 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.Map;
 
 import org.intermine.metadata.AttributeDescriptor;
 import org.intermine.metadata.ClassDescriptor;
@@ -50,6 +49,8 @@ import org.intermine.web.logic.bag.InterMineBag;
 import org.intermine.web.logic.config.FieldConfig;
 import org.intermine.web.logic.config.FieldConfigHelper;
 import org.intermine.web.logic.config.WebConfig;
+import org.intermine.web.logic.widget.config.TableWidgetConfig;
+import org.intermine.web.logic.widget.config.WidgetConfig;
 
 /**
  * @author Xavier Watkins
@@ -68,44 +69,33 @@ public class TableWidgetLdr
     private ObjectStore os;
     private Path origPath;
     private String type;
+    private TableWidgetConfig config;
 
     /**
      * This class loads and formats the data for the count
      * table widgets in the bag details page
      *
-     * @param pathStr the path to group the objects by, ie Employee.city will return the list of
-     * employees by city
-     * @param imBag the bag
+     * @param widgetConfig the configuration settings for this widget
+     * @param bag bag for this widget
      * @param os the objectstore
-     * @param webConfig the webConfig
-     * @param model the model
-     * @param classKeys the classKeys
-     * @param displayFields fields displayed in widget
-     * @param exportFields fields, along with the key for the originating class, that will be
-     * printed in the export file
-     * @param urlGen the class that generates the pathquery used in the links from the widget
-     * @param columnTitle title for count column
-     * @param externalLink link to external source
-     * @param externalLinkLabel name of external data source
      * @throws UnsupportedEncodingException if something goes wrong encoding the URL
      */
     @SuppressWarnings("unchecked")
-    public TableWidgetLdr(String pathStr, InterMineBag imBag, ObjectStore os,
-                                WebConfig webConfig, Model model,
-                                Map<String, List<FieldDescriptor>> classKeys,
-                                String displayFields, String exportFields, String urlGen,
-                                String columnTitle, String externalLink, String externalLinkLabel)
+    public TableWidgetLdr(WidgetConfig widgetConfig, InterMineBag bag, ObjectStore os)
     throws UnsupportedEncodingException {
 
-        this.pathString = pathStr;
-        this.origPath = new Path(model, pathWithNoConstraints(pathString));
-        ClassDescriptor cld = origPath.getEndClassDescriptor();
-        this.type = cld.getUnqualifiedName();
-        this.bag = imBag;
-        this.model = model;
-        this.displayFields = displayFields;
-        this.exportFields = exportFields;
         this.os = os;
+        this.bag = bag;
+        this.config = (TableWidgetConfig) widgetConfig;
+        pathString = config.getPathStrings();
+        origPath = new Path(model, pathWithNoConstraints(pathString));
+        ClassDescriptor cld = origPath.getEndClassDescriptor();
+        type = cld.getUnqualifiedName();
+        model = os.getModel();
+        displayFields = config.getDisplayFields();
+        exportFields = config.getExportFields();
+        WebConfig webConfig = config.getWebConfig();
+        String externalLink = config.getExternalLink();
 
         // TODO validate start type vs. bag type
 
@@ -160,7 +150,7 @@ public class TableWidgetLdr
                         Object fieldValue = path.resolve(o);
                         Class thisType = path.getStartClassDescriptor().getType();
                         String fieldName = path.getEndFieldDescriptor().getName();
-                        boolean isKeyField = ClassKeyHelper.isKeyField(classKeys,
+                        boolean isKeyField = ClassKeyHelper.isKeyField(config.getClassKeys(),
                                 TypeUtil.unqualifiedName(thisType.getName()), fieldName);
                         String link = null;
                         String val = fieldValue.toString();
@@ -171,7 +161,7 @@ public class TableWidgetLdr
                         } else if (externalLink != null && !externalLink.equals("")) {
                             val = val + " <a href=\"" + externalLink + key
                             + "\" target=\"_new\" class=\"extlink\">["
-                            + externalLinkLabel + "]</a>";
+                            + config.getExternalLinkLabel() + "]</a>";
                         }
 
                         if (isFirst) {
@@ -196,7 +186,7 @@ public class TableWidgetLdr
                     flattenedRow.add(new String[]
                                                 {
                         String.valueOf(element),
-                        "widgetAction.do?bagName=" + bag.getName() + "&link=" + urlGen
+                        "widgetAction.do?bagName=" + bag.getName() + "&link=" + config.getLink()
                         + "&key=" + URLEncoder.encode(key, "UTF-8")
                                                 });
                 }
@@ -205,8 +195,8 @@ public class TableWidgetLdr
             flattenedResults.add(flattenedRow);
         }
         // Add the count column
-        if (columnTitle != null) {
-            columns.add(columnTitle);
+        if (config.getColumnTitle() != null) {
+            columns.add(config.getColumnTitle());
         } else {
             columns.add(bag.getType() + "s");
         }
@@ -431,7 +421,10 @@ public class TableWidgetLdr
     }
 
     /**
-     * {@inheritDoc}
+     *
+     * @param selected selected records to export
+     * @return list of lists of records to export
+     * @throws Exception if something goes horribly wrong
      */
     @SuppressWarnings("unchecked")
     public List<List<String>> getExportResults(String[] selected) throws Exception {

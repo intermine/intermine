@@ -65,7 +65,8 @@ public class GraphWidget extends Widget
      * @param os
      * @param selectedExtraAttribute
      */
-    public GraphWidget(GraphWidgetConfig config, InterMineBag interMineBag, ObjectStore os, String selectedExtraAttribute) {
+    public GraphWidget(GraphWidgetConfig config, InterMineBag interMineBag, ObjectStore os,
+                       String selectedExtraAttribute) {
         super(config);
         this.bag = interMineBag;
         this.os = os;
@@ -117,8 +118,8 @@ public class GraphWidget extends Widget
                 /* regular bar chart */
             } else {
                     chart = ChartFactory.createBarChart(config.getTitle(), // chart title
-                                    ((GraphWidgetConfig) config).getDomainLabel(), // domain axis label
-                                    ((GraphWidgetConfig) config).getRangeLabel(), // range axis label
+                                    ((GraphWidgetConfig) config).getDomainLabel(),
+                                    ((GraphWidgetConfig) config).getRangeLabel(),
                                     graphDataSet, // data
                                     PlotOrientation.VERTICAL, true, true, // tooltips?
                                     false // URLs?
@@ -233,8 +234,10 @@ public class GraphWidget extends Widget
             ChartRenderingInfo info = new ChartRenderingInfo(new StandardEntityCollection());
 
             // generate the image and imagemap
-            fileName = ServletUtilities.saveChartAsPNG(chart, ((GraphWidgetConfig) config).getWIDTH(),
-                            ((GraphWidgetConfig) config).getHEIGHT(), info, ((GraphWidgetConfig) config).getSession());
+            fileName = ServletUtilities.saveChartAsPNG(chart,
+                            ((GraphWidgetConfig) config).getWIDTH(),
+                            ((GraphWidgetConfig) config).getHEIGHT(), info,
+                            ((GraphWidgetConfig) config).getSession());
             imageMap = ImageMapUtilities.getImageMap("chart" + fileName, info);
         } catch (Exception e) {
             throw new RuntimeException("unexpected exception", e);
@@ -244,7 +247,8 @@ public class GraphWidget extends Widget
     /**
      * {@inheritDoc}
      */
-    public List<List<String>> getExportResults(String[] selected) throws Exception {
+    public List<List<String>> getExportResults(@SuppressWarnings("unused") String[] selected)
+        throws Exception {
         // TODO Auto-generated method stub
         return null;
     }
@@ -279,29 +283,6 @@ public class GraphWidget extends Widget
     public int getNotAnalysed() {
         return notAnalysed;
     }
-    
-//    /**
-//     * {@inheritDoc}
-//     */
-//    public void setSelectedExtraAttribute(String selectedExtraAttribute) {
-//        this.selectedExtraAttribute = selectedExtraAttribute;
-//    }
-//
-//    /**
-//     * {@inheritDoc}
-//     */
-//    public String getSelectedExtraAttribute() {
-//        // TODO Auto-generated method stub
-//        if (selectedExtraAttribute == null || selectedExtraAttribute.length() == 0) {
-//            try {
-//                setSelectedExtraAttribute(config.getExtraAttributes(bag, os).keySet().iterator()
-//                                .next());
-//            } catch (Exception e) {
-//                // TODO handle exception
-//            }
-//        }
-//        return selectedExtraAttribute;
-//    }
 
     /**
      * Get the HTML that will display the graph and imagemap
@@ -309,9 +290,9 @@ public class GraphWidget extends Widget
      */
     public String getHtml() {
         StringBuffer sb = new StringBuffer("<img src=\"loadTmpImg.do?fileName=" + fileName
-                                           + "\" width=\"" + ((GraphWidgetConfig) config).getWIDTH() + "\" height=\""
-                                           + ((GraphWidgetConfig) config).getHEIGHT()
-                                           + "\" usemap=\"#chart" + fileName + "\">");
+                          + "\" width=\"" + ((GraphWidgetConfig) config).getWIDTH() + "\" height=\""
+                          + ((GraphWidgetConfig) config).getHEIGHT()
+                          + "\" usemap=\"#chart" + fileName + "\">");
         sb.append(imageMap);
         return sb.toString();
     }
