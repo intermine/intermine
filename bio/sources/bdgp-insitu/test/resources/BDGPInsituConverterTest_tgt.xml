@@ -1,13 +1,10 @@
 <items>
-<item id="6_2" class="http://www.flymine.org/model/genomic#MRNAExpressionResult">
-<attribute name="expressed" value="true"/>
-<attribute name="stageRange" value="stage 4-6 (BDGP in situ)"/>
-<reference name="gene" ref_id="5_1"/>
-<reference name="publication" ref_id="3_1"/>
-<reference name="source" ref_id="2_1"/>
-<collection name="images"><reference ref_id="7_3"/></collection>
-<collection name="mRNAExpressionTerms"><reference ref_id="8_1"/><reference ref_id="8_3"/></collection>
-<collection name="stages"><reference ref_id="4_4"/><reference ref_id="4_5"/><reference ref_id="4_6"/></collection>
+<item id="1_1" class="http://www.flymine.org/model/genomic#DataSource">
+<attribute name="name" value="BDGP"/>
+</item>
+<item id="5_1" class="http://www.flymine.org/model/genomic#Gene">
+<attribute name="primaryIdentifier" value="FBgn1"/>
+<reference name="organism" ref_id="0_1"/>
 </item>
 <item id="4_8" class="http://www.flymine.org/model/genomic#Stage">
 <attribute name="name" value="Stage 8"/>
@@ -15,21 +12,21 @@
 <item id="7_7" class="http://www.flymine.org/model/genomic#Image">
 <attribute name="url" value="http://www.fruitfly.org/insituimages/insitu_images/thumbnails/imageNoTerm.jpg"/>
 </item>
-<item id="6_1" class="http://www.flymine.org/model/genomic#MRNAExpressionResult">
-<attribute name="expressed" value="true"/>
-<attribute name="stageRange" value="stage 1-3 (BDGP in situ)"/>
-<reference name="gene" ref_id="5_1"/>
-<reference name="publication" ref_id="3_1"/>
-<reference name="source" ref_id="2_1"/>
-<collection name="images"><reference ref_id="7_1"/><reference ref_id="7_2"/></collection>
-<collection name="mRNAExpressionTerms"><reference ref_id="8_1"/><reference ref_id="8_2"/><reference ref_id="8_1"/><reference ref_id="8_2"/></collection>
-<collection name="stages"><reference ref_id="4_1"/><reference ref_id="4_2"/><reference ref_id="4_3"/></collection>
-</item>
 <item id="4_4" class="http://www.flymine.org/model/genomic#Stage">
 <attribute name="name" value="Stage 4"/>
 </item>
 <item id="3_1" class="http://www.flymine.org/model/genomic#Publication">
 <attribute name="pubMedId" value="17645804"/>
+</item>
+<item id="6_1" class="http://www.flymine.org/model/genomic#MRNAExpressionResult">
+<attribute name="expressed" value="true"/>
+<attribute name="stageRange" value="stage 1-3 (BDGP in situ)"/>
+<reference name="dataSet" ref_id="2_1"/>
+<reference name="gene" ref_id="5_1"/>
+<reference name="publication" ref_id="3_1"/>
+<collection name="images"><reference ref_id="7_1"/><reference ref_id="7_2"/></collection>
+<collection name="mRNAExpressionTerms"><reference ref_id="8_1"/><reference ref_id="8_2"/><reference ref_id="8_1"/><reference ref_id="8_2"/></collection>
+<collection name="stages"><reference ref_id="4_1"/><reference ref_id="4_2"/><reference ref_id="4_3"/></collection>
 </item>
 <item id="8_1" class="http://www.flymine.org/model/genomic#MRNAExpressionTerm">
 <attribute name="name" value="term1"/>
@@ -40,6 +37,16 @@
 </item>
 <item id="7_2" class="http://www.flymine.org/model/genomic#Image">
 <attribute name="url" value="http://www.fruitfly.org/insituimages/insitu_images/thumbnails/image2.jpg"/>
+</item>
+<item id="6_5" class="http://www.flymine.org/model/genomic#MRNAExpressionResult">
+<attribute name="expressed" value="true"/>
+<attribute name="stageRange" value="stage 7-8 (BDGP in situ)"/>
+<reference name="dataSet" ref_id="2_1"/>
+<reference name="gene" ref_id="5_2"/>
+<reference name="publication" ref_id="3_1"/>
+<collection name="images"><reference ref_id="7_7"/></collection>
+<collection name="mRNAExpressionTerms"><reference ref_id="8_5"/><reference ref_id="8_6"/></collection>
+<collection name="stages"><reference ref_id="4_7"/><reference ref_id="4_8"/></collection>
 </item>
 <item id="4_2" class="http://www.flymine.org/model/genomic#Stage">
 <attribute name="name" value="Stage 2"/>
@@ -55,18 +62,22 @@
 <item id="7_1" class="http://www.flymine.org/model/genomic#Image">
 <attribute name="url" value="http://www.fruitfly.org/insituimages/insitu_images/thumbnails/image1.jpg"/>
 </item>
+<item id="4_13" class="http://www.flymine.org/model/genomic#Stage">
+<attribute name="name" value="Stage 13"/>
+</item>
 <item id="6_4" class="http://www.flymine.org/model/genomic#MRNAExpressionResult">
 <attribute name="expressed" value="false"/>
 <attribute name="stageRange" value="stage 4-6 (BDGP in situ)"/>
+<reference name="dataSet" ref_id="2_1"/>
 <reference name="gene" ref_id="5_2"/>
 <reference name="publication" ref_id="3_1"/>
-<reference name="source" ref_id="2_1"/>
 <collection name="images"><reference ref_id="7_6"/></collection>
 <collection name="mRNAExpressionTerms"><reference ref_id="8_4"/></collection>
 <collection name="stages"><reference ref_id="4_4"/><reference ref_id="4_5"/><reference ref_id="4_6"/></collection>
 </item>
-<item id="4_13" class="http://www.flymine.org/model/genomic#Stage">
-<attribute name="name" value="Stage 13"/>
+<item id="5_2" class="http://www.flymine.org/model/genomic#Gene">
+<attribute name="primaryIdentifier" value="FBgn2"/>
+<reference name="organism" ref_id="0_1"/>
 </item>
 <item id="4_3" class="http://www.flymine.org/model/genomic#Stage">
 <attribute name="name" value="Stage 3"/>
@@ -85,10 +96,6 @@
 <item id="4_1" class="http://www.flymine.org/model/genomic#Stage">
 <attribute name="name" value="Stage 1"/>
 </item>
-<item id="1_1" class="http://www.flymine.org/model/genomic#DataSource">
-<attribute name="name" value="BDGP"/>
-<attribute name="url" value="http://www.fruitfly.org"/>
-</item>
 <item id="4_6" class="http://www.flymine.org/model/genomic#Stage">
 <attribute name="name" value="Stage 6"/>
 </item>
@@ -98,6 +105,26 @@
 </item>
 <item id="4_9" class="http://www.flymine.org/model/genomic#Stage">
 <attribute name="name" value="Stage 9"/>
+</item>
+<item id="6_2" class="http://www.flymine.org/model/genomic#MRNAExpressionResult">
+<attribute name="expressed" value="true"/>
+<attribute name="stageRange" value="stage 4-6 (BDGP in situ)"/>
+<reference name="dataSet" ref_id="2_1"/>
+<reference name="gene" ref_id="5_1"/>
+<reference name="publication" ref_id="3_1"/>
+<collection name="images"><reference ref_id="7_3"/></collection>
+<collection name="mRNAExpressionTerms"><reference ref_id="8_1"/><reference ref_id="8_3"/></collection>
+<collection name="stages"><reference ref_id="4_4"/><reference ref_id="4_5"/><reference ref_id="4_6"/></collection>
+</item>
+<item id="6_3" class="http://www.flymine.org/model/genomic#MRNAExpressionResult">
+<attribute name="expressed" value="true"/>
+<attribute name="stageRange" value="stage 1-3 (BDGP in situ)"/>
+<reference name="dataSet" ref_id="2_1"/>
+<reference name="gene" ref_id="5_2"/>
+<reference name="publication" ref_id="3_1"/>
+<collection name="images"><reference ref_id="7_4"/><reference ref_id="7_5"/></collection>
+<collection name="mRNAExpressionTerms"><reference ref_id="8_1"/><reference ref_id="8_2"/></collection>
+<collection name="stages"><reference ref_id="4_1"/><reference ref_id="4_2"/><reference ref_id="4_3"/></collection>
 </item>
 <item id="4_5" class="http://www.flymine.org/model/genomic#Stage">
 <attribute name="name" value="Stage 5"/>
@@ -111,10 +138,6 @@
 <item id="4_7" class="http://www.flymine.org/model/genomic#Stage">
 <attribute name="name" value="Stage 7"/>
 </item>
-<item id="5_1" class="http://www.flymine.org/model/genomic#Gene">
-<attribute name="primaryIdentifier" value="FBgn1"/>
-<reference name="organism" ref_id="0_1"/>
-</item>
 <item id="4_15" class="http://www.flymine.org/model/genomic#Stage">
 <attribute name="name" value="Stage 15"/>
 </item>
@@ -124,16 +147,6 @@
 <item id="4_16" class="http://www.flymine.org/model/genomic#Stage">
 <attribute name="name" value="Stage 16"/>
 </item>
-<item id="6_5" class="http://www.flymine.org/model/genomic#MRNAExpressionResult">
-<attribute name="expressed" value="true"/>
-<attribute name="stageRange" value="stage 7-8 (BDGP in situ)"/>
-<reference name="gene" ref_id="5_2"/>
-<reference name="publication" ref_id="3_1"/>
-<reference name="source" ref_id="2_1"/>
-<collection name="images"><reference ref_id="7_7"/></collection>
-<collection name="mRNAExpressionTerms"><reference ref_id="8_5"/><reference ref_id="8_6"/></collection>
-<collection name="stages"><reference ref_id="4_7"/><reference ref_id="4_8"/></collection>
-</item>
 <item id="8_2" class="http://www.flymine.org/model/genomic#MRNAExpressionTerm">
 <attribute name="name" value="term2"/>
 <attribute name="type" value="ImaGO"/>
@@ -141,22 +154,8 @@
 <item id="4_11" class="http://www.flymine.org/model/genomic#Stage">
 <attribute name="name" value="Stage 11"/>
 </item>
-<item id="6_3" class="http://www.flymine.org/model/genomic#MRNAExpressionResult">
-<attribute name="expressed" value="true"/>
-<attribute name="stageRange" value="stage 1-3 (BDGP in situ)"/>
-<reference name="gene" ref_id="5_2"/>
-<reference name="publication" ref_id="3_1"/>
-<reference name="source" ref_id="2_1"/>
-<collection name="images"><reference ref_id="7_4"/><reference ref_id="7_5"/></collection>
-<collection name="mRNAExpressionTerms"><reference ref_id="8_1"/><reference ref_id="8_2"/></collection>
-<collection name="stages"><reference ref_id="4_1"/><reference ref_id="4_2"/><reference ref_id="4_3"/></collection>
-</item>
 <item id="7_3" class="http://www.flymine.org/model/genomic#Image">
 <attribute name="url" value="http://www.fruitfly.org/insituimages/insitu_images/thumbnails/image3.jpg"/>
-</item>
-<item id="5_2" class="http://www.flymine.org/model/genomic#Gene">
-<attribute name="primaryIdentifier" value="FBgn2"/>
-<reference name="organism" ref_id="0_1"/>
 </item>
 <item id="7_5" class="http://www.flymine.org/model/genomic#Image">
 <attribute name="url" value="http://www.fruitfly.org/insituimages/insitu_images/thumbnails/image5.jpg"/>
