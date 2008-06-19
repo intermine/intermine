@@ -17,11 +17,10 @@ import org.intermine.web.logic.widget.config.WidgetConfig;
 
 /**
  * @author "Xavier Watkins"
- *
  */
 public abstract class Widget
 {
-    public WidgetConfig config;
+    protected WidgetConfig config;
 
     /**
      * The constructor

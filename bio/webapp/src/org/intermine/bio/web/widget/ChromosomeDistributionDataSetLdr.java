@@ -204,7 +204,7 @@ public class ChromosomeDistributionDataSetLdr implements DataSetLdr
             chrs.add(chromosomeName);
         }
 
-        if (chrs != null && !chrs.isEmpty()) {
+        if (!chrs.isEmpty()) {
             QueryField qfChrId = new QueryField(chromosomeQC, "primaryIdentifier");
             QueryExpression qf = new QueryExpression(QueryExpression.LOWER, qfChrId);
             cs.addConstraint(new BagConstraint(qf, ConstraintOp.IN, chrs));
@@ -238,14 +238,13 @@ public class ChromosomeDistributionDataSetLdr implements DataSetLdr
             q.addToGroupBy(chromoQF);
             q.addToOrderBy(chromoQF);
             return q;
-        } else {
-            q.setDistinct(true);
-            q.addToSelect(new QueryField(featureQC, "id"));
-            Query superQ = new Query();
-            superQ.addFrom(q);
-            superQ.addToSelect(countQF);
-            return superQ;
         }
+        q.setDistinct(true);
+        q.addToSelect(new QueryField(featureQC, "id"));
+        Query superQ = new Query();
+        superQ.addFrom(q);
+        superQ.addToSelect(countQF);
+        return superQ;
     }
 
     private void calcTotal(InterMineBag bag, String organismName) throws ClassNotFoundException {

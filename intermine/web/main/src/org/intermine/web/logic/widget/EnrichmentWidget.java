@@ -21,11 +21,9 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
-import org.intermine.metadata.Model;
 import org.intermine.objectstore.ObjectStore;
 import org.intermine.objectstore.ObjectStoreException;
 import org.intermine.objectstore.query.Query;
-import org.intermine.objectstore.query.QueryClass;
 import org.intermine.objectstore.query.Results;
 import org.intermine.objectstore.query.ResultsRow;
 import org.intermine.util.TypeUtil;
@@ -40,7 +38,7 @@ import org.intermine.web.logic.widget.config.EnrichmentWidgetConfig;
  */
 public class EnrichmentWidget extends Widget
 {
-    
+
     private int notAnalysed = 0;
     private InterMineBag bag;
     private ObjectStore os;
@@ -48,17 +46,17 @@ public class EnrichmentWidget extends Widget
     private ArrayList<Map> resultMaps = new ArrayList<Map>();
     private String errorCorrection, max;
 
-    
+
     /**
-     * @param config
-     * @param interMineBag
-     * @param os
-     * @param errorCorrection
-     * @param max
-     * @param filter
+     * @param config widget config
+     * @param interMineBag bag for this widget
+     * @param os object store
+     * @param errorCorrection which error correction to use (Bonferroni, etc)
+     * @param max maximum value to display (0 - 1)
+     * @param filter filter to use (ie Ontology)
      */
-    public EnrichmentWidget(EnrichmentWidgetConfig config, InterMineBag interMineBag, ObjectStore os,
-        String filter, String max, String errorCorrection) {
+    public EnrichmentWidget(EnrichmentWidgetConfig config, InterMineBag interMineBag,
+                            ObjectStore os, String filter, String max, String errorCorrection) {
         super(config);
         this.bag = interMineBag;
         this.os = os;
@@ -138,14 +136,14 @@ public class EnrichmentWidget extends Widget
     public boolean getHasResults() {
         return (resultMaps.get(0) != null && resultMaps.get(0).size() > 0);
     }
-    
+
     /**
      * {@inheritDoc}
      */
     public List<List<String>> getExportResults(String[]selected) throws Exception {
 
         Map<String, BigDecimal> pvalues = resultMaps.get(0);
-        Map<String, Long> totals = resultMaps.get(1);
+        //Map<String, Long> totals = resultMaps.get(1);
         Map<String, String> labelToId = resultMaps.get(2);
         List<List<String>> exportResults = new ArrayList<List<String>>();
         List<String> selectedIds = Arrays.asList(selected);
@@ -160,9 +158,6 @@ public class EnrichmentWidget extends Widget
                                                                                       {
             bag, os, filter
                                                                                       });
-        Model model = os.getModel();
-        Class<?> bagCls = Class.forName(model.getPackageName() + "." + bag.getType());
-        QueryClass qc = new QueryClass(bagCls);
 
         Query q = ldr.getExportQuery(selectedIds);
 
@@ -186,7 +181,7 @@ public class EnrichmentWidget extends Widget
                 row.add(id);
 
                 BigDecimal bd = pvalues.get(id);
-                Double d = bd.doubleValue();
+                Double d = new Double(bd.doubleValue());
                 row.add(d);
 
                 List<String> ids = termsToIds.get(id);
@@ -249,7 +244,7 @@ public class EnrichmentWidget extends Widget
         }
         return null;
     }
-    
+
     /**
     *
     * @return List of column labels
@@ -257,7 +252,7 @@ public class EnrichmentWidget extends Widget
    public List<String> getColumns() {
        return Arrays.asList(new String[]
            {
-               ((EnrichmentWidgetConfig)config).getLabel(), "p-Value", ""
+               ((EnrichmentWidgetConfig) config).getLabel(), "p-Value", ""
            });
    }
 
