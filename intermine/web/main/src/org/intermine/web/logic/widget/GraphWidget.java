@@ -13,17 +13,12 @@ package org.intermine.web.logic.widget;
 import java.awt.BasicStroke;
 import java.awt.Font;
 import java.lang.reflect.Constructor;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
-
-import javax.servlet.http.HttpSession;
 
 import org.intermine.objectstore.ObjectStore;
 import org.intermine.util.TypeUtil;
 import org.intermine.web.logic.bag.InterMineBag;
+import org.intermine.web.logic.widget.config.GraphWidgetConfig;
 import org.jfree.chart.ChartColor;
 import org.jfree.chart.ChartFactory;
 import org.jfree.chart.ChartRenderingInfo;
@@ -49,32 +44,41 @@ import org.jfree.ui.RectangleInsets;
 import org.jfree.ui.TextAnchor;
 
 /**
- * Configuration object describing details of a graph displayer
+ * @author "Xavier Watkins"
  *
- * @author Xavier Watkins
  */
 public class GraphWidget extends Widget
 {
-    private String domainLabel;
-    private String rangeLabel;
-    private String toolTipGen;
 
-    private String graphType;
+    private int notAnalysed = 0;
+    private DataSetLdr dataSetLdr;
+    private InterMineBag bag;
+    private ObjectStore os;
     private String fileName = null;
     private String imageMap = null;
-    private static final int WIDTH = 430;
-    private static final int HEIGHT = 350;
-    private String extraAttributeClass, externalLink, externalLinkLabel;
-    private HttpSession session;
-    private DataSetLdr dataSetLdr;
-    private int notAnalysed = 0;
+    private String selectedExtraAttribute;
+
+
+    /**
+     * @param config
+     * @param interMineBag
+     * @param os
+     * @param selectedExtraAttribute
+     */
+    public GraphWidget(GraphWidgetConfig config, InterMineBag interMineBag, ObjectStore os, String selectedExtraAttribute) {
+        super(config);
+        this.bag = interMineBag;
+        this.os = os;
+        this.selectedExtraAttribute = selectedExtraAttribute;
+        process();
+    }
 
     /**
      * {@inheritDoc}
      */
-    public void process(InterMineBag imBag, ObjectStore os) {
+    public void process() {
         try {
-            String dataSetLoader = getDataSetLoader();
+            String dataSetLoader = config.getDataSetLoader();
             Class<?> clazz = TypeUtil.instantiate(dataSetLoader);
             Constructor<?> constr = clazz.getConstructor(new Class[]
                 {
@@ -82,10 +86,10 @@ public class GraphWidget extends Widget
                 });
             dataSetLdr = (DataSetLdr) constr.newInstance(new Object[]
                 {
-                    imBag, os, getSelectedExtraAttribute()
+                    bag, os, selectedExtraAttribute
                 });
 
-            notAnalysed = imBag.getSize() - dataSetLdr.getWidgetTotal();
+            notAnalysed = bag.getSize() - dataSetLdr.getWidgetTotal();
 
             // TODO use caching here
             JFreeChart chart = null;
@@ -94,10 +98,10 @@ public class GraphWidget extends Widget
             CategoryDataset graphDataSet = dataSetLdr.getDataSet();
 
             /* stacked bar chart */
-            if (graphType.equals("StackedBarChart")) {
-                chart = ChartFactory.createStackedBarChart(getTitle(), // chart title
-                                getDomainLabel(), // domain axis label
-                                getRangeLabel(), // range axis label
+            if (((GraphWidgetConfig) config).getGraphType().equals("StackedBarChart")) {
+                chart = ChartFactory.createStackedBarChart(config.getTitle(), // chart title
+                                ((GraphWidgetConfig) config).getDomainLabel(), // domain axis label
+                                ((GraphWidgetConfig) config).getRangeLabel(), // range axis label
                                 graphDataSet, // data
                                 PlotOrientation.VERTICAL, true, true, // tooltips?
                                 false // URLs?
@@ -112,18 +116,18 @@ public class GraphWidget extends Widget
 
                 /* regular bar chart */
             } else {
-                    chart = ChartFactory.createBarChart(getTitle(), // chart title
-                                    getDomainLabel(), // domain axis label
-                                    getRangeLabel(), // range axis label
+                    chart = ChartFactory.createBarChart(config.getTitle(), // chart title
+                                    ((GraphWidgetConfig) config).getDomainLabel(), // domain axis label
+                                    ((GraphWidgetConfig) config).getRangeLabel(), // range axis label
                                     graphDataSet, // data
                                     PlotOrientation.VERTICAL, true, true, // tooltips?
                                     false // URLs?
                                     );
                     chart.setPadding(new RectangleInsets(5.0, 5.0, 5.0, 5.0));
 
-                    if (getSelectedExtraAttribute() != null
-                    && !getSelectedExtraAttribute().startsWith("any")) {
-                        TextTitle subtitleText = new TextTitle(getSelectedExtraAttribute());
+                    if (selectedExtraAttribute != null
+                    && !selectedExtraAttribute.startsWith("any")) {
+                        TextTitle subtitleText = new TextTitle(selectedExtraAttribute);
                         subtitleText.setFont(new Font("SansSerif", Font.ITALIC, 10));
                         chart.addSubtitle(subtitleText);
                     }
@@ -137,7 +141,7 @@ public class GraphWidget extends Widget
                     // set series 0 to have URLgenerator specified in config file
                     // set series 1 to have no URL generator.
                     try {
-                        Class<?> clazz2 = TypeUtil.instantiate(getLink());
+                        Class<?> clazz2 = TypeUtil.instantiate(config.getLink());
                         Constructor<?> urlGenConstructor = clazz2.getConstructor(new Class[]
                             {
                                 String.class, String.class
@@ -145,7 +149,7 @@ public class GraphWidget extends Widget
                         categoryUrlGen = (CategoryURLGenerator) urlGenConstructor
                                         .newInstance(new Object[]
                                             {
-                                                imBag.getName(), getSelectedExtraAttribute()
+                                                bag.getName(), selectedExtraAttribute
                                             });
 
                     } catch (Exception err) {
@@ -187,7 +191,7 @@ public class GraphWidget extends Widget
             // renderer.setDrawBarOutline(false);
             renderer.setSeriesOutlineStroke(1, new BasicStroke(0.0F));
 
-            Class<?> clazz1 = TypeUtil.instantiate(toolTipGen);
+            Class<?> clazz1 = TypeUtil.instantiate(((GraphWidgetConfig) config).getToolTipGen());
             Constructor<?> toolTipConstructor = clazz1.getConstructor(new Class[]
                 {});
             CategoryToolTipGenerator categoryToolTipGen
@@ -198,8 +202,8 @@ public class GraphWidget extends Widget
 
             // url to display genes
             // this may be already set individually for the different series
-            if (getLink() != null) {
-                Class<?> clazz2 = TypeUtil.instantiate(getLink());
+            if (config.getLink() != null) {
+                Class<?> clazz2 = TypeUtil.instantiate(config.getLink());
                 Constructor<?> urlGenConstructor = clazz2.getConstructor(new Class[]
                     {
                         String.class, String.class
@@ -207,7 +211,7 @@ public class GraphWidget extends Widget
                 CategoryURLGenerator categoryUrlGen = (CategoryURLGenerator) urlGenConstructor
                                 .newInstance(new Object[]
                                     {
-                                        imBag.getName(), getSelectedExtraAttribute()
+                                        bag.getName(), selectedExtraAttribute
                                     });
                 plot.getRenderer().setBaseItemURLGenerator(categoryUrlGen);
             }
@@ -229,7 +233,8 @@ public class GraphWidget extends Widget
             ChartRenderingInfo info = new ChartRenderingInfo(new StandardEntityCollection());
 
             // generate the image and imagemap
-            fileName = ServletUtilities.saveChartAsPNG(chart, WIDTH, HEIGHT, info, session);
+            fileName = ServletUtilities.saveChartAsPNG(chart, ((GraphWidgetConfig) config).getWIDTH(),
+                            ((GraphWidgetConfig) config).getHEIGHT(), info, ((GraphWidgetConfig) config).getSession());
             imageMap = ImageMapUtilities.getImageMap("chart" + fileName, info);
         } catch (Exception e) {
             throw new RuntimeException("unexpected exception", e);
@@ -237,149 +242,25 @@ public class GraphWidget extends Widget
     }
 
     /**
-     * @param session the session to set
-     */
-    public void setSession(HttpSession session) {
-        this.session = session;
-    }
-
-    /**
-     * Get the domainLabel
-     * @return the domainLabel
-     */
-    public String getDomainLabel() {
-        return domainLabel;
-    }
-
-
-    /**
-     * Set the value of domainLabel
-     * @param domainLabel a String
-     */
-    public void setDomainLabel(String domainLabel) {
-        this.domainLabel = domainLabel;
-    }
-
-
-    /**
-     * Get the value of rangeLabel
-     * @return the rangeLabel
-     */
-    public String getRangeLabel() {
-        return rangeLabel;
-    }
-
-
-    /**
-     * Set the value of rangeLabel
-     * @param rangeLabel a String
-     */
-    public void setRangeLabel(String rangeLabel) {
-        this.rangeLabel = rangeLabel;
-    }
-
-
-    /**
-     * Get the value of toolTipGen
-     * @return the toolTipGen
-     */
-    public String getToolTipGen() {
-        return toolTipGen;
-    }
-
-
-    /**
-     * Set the value of toolTipGen
-     * @param toolTipGen a String
-     */
-    public void setToolTipGen(String toolTipGen) {
-        this.toolTipGen = toolTipGen;
-    }
-
-
-    /**
-     * @param graphType type of graph, e.g. BarChart, StackedBarChart
-     */
-    public void setGraphType(String graphType) {
-        this.graphType = graphType;
-    }
-
-
-    /**
-     * Get the type of this graph, e.g. BarChart, StackedBarChart
-     * @return the type of this graph
-     */
-    public String getGraphType() {
-        return graphType;
-    }
-
-    /**
-     * Return an XML String of this Type object
-     * @return a String version of this WebConfig object
-     */
-    public String toString() {
-        return "< title=\"" + getTitle() + " domainLabel=\"" + domainLabel + " rangeLabel=\""
-               + rangeLabel + " dataSetLoader=\"" + getDataSetLoader() + " toolTipGen=\""
-               + toolTipGen + " urlGen=\"" + getLink() + "\" />";
-    }
-
-    /**
-     * Get the HTML that will display the graph and imagemap
-     * @return the HTML as a String
-     */
-    public String getHtml() {
-        StringBuffer sb = new StringBuffer("<img src=\"loadTmpImg.do?fileName=" + fileName
-                                           + "\" width=\"" + WIDTH + "\" height=\"" + HEIGHT
-                                           + "\" usemap=\"#chart" + fileName + "\">");
-        sb.append(imageMap);
-        return sb.toString();
-    }
-
-    /**
-     * @return the extraAttributeClass
-     */
-    public String getExtraAttributeClass() {
-        return extraAttributeClass;
-    }
-
-    /**
-     * @param extraAttributeClass the extraAttributeClass to set
-     */
-    public void setExtraAttributeClass(String extraAttributeClass) {
-        this.extraAttributeClass = extraAttributeClass;
-    }
-
-
-    /**
      * {@inheritDoc}
      */
-    public Map<String, Collection<String>> getExtraAttributes(InterMineBag imBag, ObjectStore os)
-        throws Exception {
-        Collection<String> extraAttributes = new ArrayList<String>();
-        Map<String, Collection<String>> returnMap = new HashMap<String, Collection<String>>();
-        if (extraAttributeClass != null && extraAttributeClass.length() > 0) {
-            try {
-                Class<?> clazz = TypeUtil.instantiate(extraAttributeClass);
-                Constructor<?> constr = clazz.getConstructor(new Class[]{});
-                WidgetUtil widgetUtil = (WidgetUtil) constr.newInstance(new Object[] {});
-                extraAttributes = widgetUtil.getExtraAttributes(os, imBag);
-                if (getSelectedExtraAttribute() == null
-                    || getSelectedExtraAttribute().length() == 0) {
-                    setSelectedExtraAttribute(extraAttributes.iterator().next());
-                }
-            } catch (Exception e) {
-                throw new Exception(e.getMessage());
-            }
-        }
-        if (extraAttributes.size() > 0) {
-            returnMap.put("Organism", extraAttributes);
-        }
-        return returnMap;
+    public List<List<String>> getExportResults(String[] selected) throws Exception {
+        // TODO Auto-generated method stub
+        return null;
     }
 
     /**
      * {@inheritDoc}
      */
+    public List<List<String[]>> getFlattenedResults() {
+        // TODO Auto-generated method stub
+        return null;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+
     public boolean getHasResults() {
         return (dataSetLdr.getResults() != null && dataSetLdr.getResults().size() > 0);
     }
@@ -387,29 +268,9 @@ public class GraphWidget extends Widget
     /**
      * {@inheritDoc}
      */
-    public String getExternalLink() {
-        return externalLink;
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    public void setExternalLink(String externalLink) {
-        this.externalLink = externalLink;
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    public String getExternalLinkLabel() {
-        return externalLinkLabel;
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    public void setExternalLinkLabel(String externalLinkLabel) {
-        this.externalLinkLabel = externalLinkLabel;
+    public void setNotAnalysed(int notAnalysed) {
+        // TODO Auto-generated method stub
+        this.notAnalysed = notAnalysed;
     }
 
     /**
@@ -418,28 +279,41 @@ public class GraphWidget extends Widget
     public int getNotAnalysed() {
         return notAnalysed;
     }
+    
+//    /**
+//     * {@inheritDoc}
+//     */
+//    public void setSelectedExtraAttribute(String selectedExtraAttribute) {
+//        this.selectedExtraAttribute = selectedExtraAttribute;
+//    }
+//
+//    /**
+//     * {@inheritDoc}
+//     */
+//    public String getSelectedExtraAttribute() {
+//        // TODO Auto-generated method stub
+//        if (selectedExtraAttribute == null || selectedExtraAttribute.length() == 0) {
+//            try {
+//                setSelectedExtraAttribute(config.getExtraAttributes(bag, os).keySet().iterator()
+//                                .next());
+//            } catch (Exception e) {
+//                // TODO handle exception
+//            }
+//        }
+//        return selectedExtraAttribute;
+//    }
 
     /**
-    * {@inheritDoc}
+     * Get the HTML that will display the graph and imagemap
+     * @return the HTML as a String
      */
-    public void setNotAnalysed(int notAnalysed) {
-        this.notAnalysed = notAnalysed;
+    public String getHtml() {
+        StringBuffer sb = new StringBuffer("<img src=\"loadTmpImg.do?fileName=" + fileName
+                                           + "\" width=\"" + ((GraphWidgetConfig) config).getWIDTH() + "\" height=\""
+                                           + ((GraphWidgetConfig) config).getHEIGHT()
+                                           + "\" usemap=\"#chart" + fileName + "\">");
+        sb.append(imageMap);
+        return sb.toString();
     }
 
-    /**
-     * {@inheritDoc}
-     */
-    @SuppressWarnings("unused")
-    public List<List<String>> getExportResults(String[]selected) throws Exception {
-        // TODO this method
-        return null;
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    public List<List<String[]>> getFlattenedResults() {
-        // TODO this method
-        return null;
-    }
 }

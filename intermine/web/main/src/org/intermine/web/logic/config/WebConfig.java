@@ -26,10 +26,10 @@ import org.intermine.metadata.ClassDescriptor;
 import org.intermine.metadata.Model;
 import org.intermine.path.Path;
 import org.intermine.path.PathError;
-import org.intermine.web.logic.widget.EnrichmentWidget;
-import org.intermine.web.logic.widget.GraphWidget;
-import org.intermine.web.logic.widget.TableWidget;
-import org.intermine.web.logic.widget.Widget;
+import org.intermine.web.logic.widget.config.EnrichmentWidgetConfig;
+import org.intermine.web.logic.widget.config.GraphWidgetConfig;
+import org.intermine.web.logic.widget.config.TableWidgetConfig;
+import org.intermine.web.logic.widget.config.WidgetConfig;
 import org.xml.sax.SAXException;
 
 /**
@@ -41,6 +41,7 @@ public class WebConfig
 {
     private Map<String, Type> types = new HashMap();
     private Map tableExportConfigs = new HashMap();
+    private Map<String, WidgetConfig> widgets = new HashMap();
     
     /**
      * Parse a WebConfig XML file
@@ -99,22 +100,20 @@ public class WebConfig
         digester.addCallParam("webconfig/class/bagdisplayers/displayer/param", 0, "name");
         digester.addCallParam("webconfig/class/bagdisplayers/displayer/param", 1, "value");
 
-        digester.addObjectCreate("webconfig/class/bagdisplayers/graphdisplayer",
-                                 GraphWidget.class);
-        digester.addSetProperties("webconfig/class/bagdisplayers/graphdisplayer");
-        digester.addSetNext("webconfig/class/bagdisplayers/graphdisplayer", "addWidget");
+        digester.addObjectCreate("webconfig/widgets/graphdisplayer",
+                                 GraphWidgetConfig.class);
+        digester.addSetProperties("webconfig/widgets/graphdisplayer");
+        digester.addSetNext("webconfig/widgets/graphdisplayer", "addWidget");
 
-        digester.addObjectCreate("webconfig/class/bagdisplayers/bagtabledisplayer",
-                                 TableWidget.class);
-        digester.addSetProperties("webconfig/class/bagdisplayers/bagtabledisplayer");
-        digester.addSetNext("webconfig/class/bagdisplayers/bagtabledisplayer",
-                            "addWidget");
+        digester.addObjectCreate("webconfig/widgets/bagtabledisplayer",
+                                 TableWidgetConfig.class);
+        digester.addSetProperties("webconfig/widgets/bagtabledisplayer");
+        digester.addSetNext("webconfig/widgets/bagtabledisplayer", "addWidget");
 
-        digester.addObjectCreate("webconfig/class/bagdisplayers/enrichmentwidgetdisplayer",
-                                 EnrichmentWidget.class);
-        digester.addSetProperties("webconfig/class/bagdisplayers/enrichmentwidgetdisplayer");
-        digester.addSetNext("webconfig/class/bagdisplayers/enrichmentwidgetdisplayer",
-                            "addWidget");
+        digester.addObjectCreate("webconfig/widgets/enrichmentwidgetdisplayer",
+                                 EnrichmentWidgetConfig.class);
+        digester.addSetProperties("webconfig/widgets/enrichmentwidgetdisplayer");
+        digester.addSetNext("webconfig/widgets/enrichmentwidgetdisplayer", "addWidget");
 
         digester.addSetNext("webconfig/class", "addType");
 
@@ -185,6 +184,25 @@ public class WebConfig
      */
     public Map getTypes() {
         return this.types;
+    }
+
+    /**
+     * @return the widgets
+     */
+    public Map<String, WidgetConfig> getWidgets() {
+        return widgets;
+    }
+
+    /**
+     * @param widget the widget
+     */
+    public void addWidget(WidgetConfig widget) {
+        widgets.put(widget.getId(), widget);
+        String[] widgetTypes = widget.getTypeClass().split(",");
+        for (String widgetType: widgetTypes) {
+            Type type = types.get(widgetType);
+            type.addWidget(widget);
+        }
     }
 
     /**
@@ -295,7 +313,7 @@ public class WebConfig
                         = superClassType.getWidgets().iterator();
 
                         while (widgetIter.hasNext()) {
-                            Widget wi = (Widget) widgetIter.next();
+                            WidgetConfig wi = (WidgetConfig) widgetIter.next();
                             thisClassType.addWidget(wi);
                         }
                     }

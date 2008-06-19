@@ -23,7 +23,7 @@ import java.util.Set;
 import org.apache.commons.collections.set.ListOrderedSet;
 import org.apache.commons.lang.ObjectUtils;
 import org.apache.commons.lang.StringUtils;
-import org.intermine.web.logic.widget.Widget;
+import org.intermine.web.logic.widget.config.WidgetConfig;
 
 /**
  * Configuration object for displaying a class
@@ -39,10 +39,9 @@ public class Type
     private LinkedHashMap fieldConfigMap = new LinkedHashMap();
     private ListOrderedSet longDisplayers = new ListOrderedSet();
     private ListOrderedSet bagDisplayers = new ListOrderedSet();
-    private List<Widget> widgets = new ArrayList<Widget>();
+    private List<WidgetConfig> widgets = new ArrayList<WidgetConfig>();
     private Displayer tableDisplayer;
     private Map aspectDisplayers = new HashMap();
-    private static int widgetIdCount = 0;
 
 
     /**
@@ -119,7 +118,7 @@ public class Type
     /**
      * @return the widgets
      */
-    public List<Widget> getWidgets() {
+    public List<WidgetConfig> getWidgets() {
         return widgets;
     }
 
@@ -134,10 +133,8 @@ public class Type
      * Add a widget to the Type
      * @param widget a widget
      */
-    public synchronized void addWidget(Widget widget) {
-        widget.setId(widgetIdCount);
+    public synchronized void addWidget(WidgetConfig widget) {
         widgets.add(widget);
-        widgetIdCount++;
     }
 
     /**

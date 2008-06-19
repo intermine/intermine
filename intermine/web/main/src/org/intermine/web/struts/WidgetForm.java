@@ -34,6 +34,10 @@ public class WidgetForm extends ActionForm
     private String action;
     private String widgetid;
     private String exporttype;
+    private String selectedExtraAttribute;
+    private String errorCorrection;
+    private String max;
+    
 
     /**
      * returns the value of the checkboxes checked by the user on the form.
@@ -87,6 +91,7 @@ public class WidgetForm extends ActionForm
         link = "";
         bagName = "";
         selected = new String[0];
+        selectedExtraAttribute = "";
     }
 
 
@@ -164,6 +169,49 @@ public class WidgetForm extends ActionForm
      */
     public void setExporttype(String exporttype) {
         this.exporttype = exporttype;
+    }
+
+    /**
+     * @return the selectedExtraAttribute
+     */
+    public String getSelectedExtraAttribute() {
+        return selectedExtraAttribute;
+    }
+
+    /**
+     * @param selectedExtraAttribute the selectedExtraAttribute to set
+     */
+    public void setSelectedExtraAttribute(String selectedExtraAttribute) {
+        this.selectedExtraAttribute = selectedExtraAttribute;
+    }
+    
+
+    /**
+     * @return the errorCorrection
+     */
+    public String getErrorCorrection() {
+        return errorCorrection;
+    }
+
+    /**
+     * @param errorCorrection the errorCorrection to set
+     */
+    public void setErrorCorrection(String errorCorrection) {
+        this.errorCorrection = errorCorrection;
+    }
+
+    /**
+     * @return the max
+     */
+    public String getMax() {
+        return max;
+    }
+
+    /**
+     * @param max the max to set
+     */
+    public void setMax(String max) {
+        this.max = max;
     }
 
     /**
