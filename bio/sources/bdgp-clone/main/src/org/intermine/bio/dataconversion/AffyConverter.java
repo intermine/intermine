@@ -10,21 +10,21 @@ package org.intermine.bio.dataconversion;
  *
  */
 
-import java.io.BufferedReader;
-import java.io.Reader;
-import java.util.ArrayList;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.StringTokenizer;
 
-import org.apache.log4j.Logger;
 import org.intermine.dataconversion.ItemWriter;
 import org.intermine.metadata.MetaDataException;
 import org.intermine.metadata.Model;
 import org.intermine.objectstore.ObjectStoreException;
 import org.intermine.xml.full.Item;
 import org.intermine.xml.full.ReferenceList;
+
+import java.io.BufferedReader;
+import java.io.Reader;
+
+import org.apache.log4j.Logger;
 
 /**
  * DataConverter to load flat file linking BDGP clones to Flybase genes.
@@ -81,8 +81,7 @@ public class AffyConverter extends CDNACloneConverter
             //don't create probe if no ensembl id is given in the file
             if (geneEnsembl.startsWith("ENSG")) {
                 Item probe = createProbe("CompositeSequence", probeId.trim(),
-                                 organism.getIdentifier(), dataSource.getIdentifier(),
-                                 dataSet.getIdentifier(), getItemWriter());
+                                         organism.getIdentifier(), getItemWriter());
                 StringTokenizer st = new StringTokenizer(geneEnsembl, "///");
                 ReferenceList rf = new ReferenceList("genes");
                 while (st.hasMoreTokens()) {
@@ -130,23 +129,17 @@ public class AffyConverter extends CDNACloneConverter
      * @return item
      * @throws exception if anything goes wrong when writing items to objectstore
      */
-     private Item createProbe(String clsName, String id, String orgId,
-                              String datasourceId, String datasetId, ItemWriter writer)
+     private Item createProbe(String clsName, String id, String orgId, ItemWriter writer)
         throws Exception {
         Item probe = createItem(clsName);
         probe.setAttribute("primaryIdentifier", PROBEPREFIX + id);
         probe.setAttribute("name", id);
         probe.setAttribute("url", PROBEURL + id);
         probe.setReference("organism", orgId);
-        //      probe.addCollection(new ReferenceList("genes", geneId));
-        probe.addCollection(new ReferenceList("evidence",
-                            new ArrayList(Collections.singleton(datasetId))));
-        //writer.store(ItemHelper.convert(probe));
 
         Item synonym = createItem("Synonym");
         synonym.setAttribute("type", "identifier");
         synonym.setAttribute("value", PROBEPREFIX + id);
-        synonym.setReference("source", datasourceId);
         synonym.setReference("subject", probe.getIdentifier());
         store(synonym);
 
