@@ -13,7 +13,7 @@
         <reference name="gene" referenced-type="org.flymine.model.genomic.Gene" reverse-reference="geneticInteractions" />
         <reference name="experiment" referenced-type="org.flymine.model.genomic.GeneticInteractionExperiment" reverse-reference="interactions"/>
         <collection name="interactingGenes" referenced-type="org.flymine.model.genomic.Gene" ordered="true" reverse-reference="geneticInteractions"/>
-        <collection name="evidence" referenced-type="org.flymine.model.genomic.Evidence"/>
+        <collection name="dataSets" referenced-type="org.flymine.model.genomic.DataSet"/>
     </class>
 
     <class name="org.flymine.model.genomic.Gene" is-interface="true">       

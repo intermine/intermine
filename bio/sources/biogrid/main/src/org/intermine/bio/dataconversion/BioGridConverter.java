@@ -37,6 +37,8 @@ import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
 import org.xml.sax.helpers.DefaultHandler;
 
+import com.sun.corba.se.spi.ior.MakeImmutable;
+
 
 /**
  * DataConverter to parse biogrid data into items
@@ -67,7 +69,7 @@ public class BioGridConverter extends BioFileConverter
      */
     public void process(Reader reader) throws Exception {
 
-        BioGridHandler handler = new BioGridHandler(getItemWriter(), masterList);
+        BioGridHandler handler = new BioGridHandler(masterList);
 
         try {
             SAXParser.parse(new InputSource(reader), handler);
@@ -94,7 +96,6 @@ public class BioGridConverter extends BioFileConverter
         private Map<String, ExperimentHolder> experimentIds
         = new HashMap<String, ExperimentHolder>();
         private InteractorHolder interactorHolder;
-        private ItemWriter writer;
         private Stack<String> stack = new Stack<String>();
         private String attName = null;
         private StringBuffer attValue = null;
@@ -112,10 +113,8 @@ public class BioGridConverter extends BioFileConverter
          * @param writer the ItemWriter used to handle the resultant items
          * @param masterList a map holding objects that span the XML files (dataset and classId)
          */
-        public BioGridHandler(ItemWriter writer, Map masterList) {
-
+        public BioGridHandler(Map masterList) {
             itemFactory = new ItemFactory(Model.getInstanceByName("genomic"));
-            this.writer = writer;
         }
 
         /**
@@ -230,10 +229,6 @@ public class BioGridConverter extends BioFileConverter
 
                 attName = "interactionType";
 
-            // <entry>
-            } else if (qName.equals("entry")) {
-
-                initDatasources();
             }
 
             super.startElement(uri, localName, qName, attrs);
@@ -423,27 +418,21 @@ public class BioGridConverter extends BioFileConverter
                     interaction.addCollection(geneList);
                     geneIds.add(geneRefId);
 
-                    // add dataset
-                    ReferenceList evidenceColl
-                    = new ReferenceList("evidence", new ArrayList<String>());
-                    interaction.addCollection(evidenceColl);
-                    evidenceColl.addRefId(masterList.get("dataset"));
-
                     /* store all interaction-related items */
                     if (!storedItems.contains(gene.getAttribute("primaryIdentifier").getValue())) {
                         gene.setReference("organism", organism.getIdentifier());
-                        writer.store(ItemHelper.convert(gene));
+                        store(gene);
                         storedItems.add(gene.getAttribute("primaryIdentifier").getValue());
                     }
 
                     interaction.setAttribute("geneRole", interactorHolder.role);
-                    writer.store(ItemHelper.convert(interaction));
+                    store(interaction);
                 }
 
                 ExperimentHolder eh = interactionHolder.eh;
                 if (!eh.isStored) {
                     eh.isStored = true;
-                    writer.store(ItemHelper.convert(eh.experiment));
+                    store(eh.experiment);
                 }
 
             } catch (ObjectStoreException e) {
@@ -461,7 +450,7 @@ public class BioGridConverter extends BioFileConverter
                     pub.setAttribute("pubMedId", pubMedId);
                     itemId = pub.getIdentifier();
                     pubs.put(pubMedId, itemId);
-                    writer.store(ItemHelper.convert(pub));
+                    store(pub);
                 } catch (ObjectStoreException e) {
                     throw new SAXException(e);
                 }
@@ -496,7 +485,7 @@ public class BioGridConverter extends BioFileConverter
             try {
                 Item item = createItem("Organism");
                 item.setAttribute("taxonId", taxonId);
-                writer.store(ItemHelper.convert(item));
+                store(item);
                 return item;
             } catch (ObjectStoreException e) {
                 throw new SAXException(e);
@@ -513,38 +502,6 @@ public class BioGridConverter extends BioFileConverter
             }
             return eh;
         }
-
-        private void initDatasources()
-        throws SAXException {
-            if (!masterList.containsKey("datasource")) {
-                try {
-
-                    Item datasource = createItem("DataSource");
-                    datasource.setAttribute("name", "BioGRID");
-                    Item dataSet = createItem("DataSet");
-                    dataSet.setAttribute("title", "BioGRID data set");
-                    dataSet.setReference("dataSource", datasource.getIdentifier());
-                    writer.store(ItemHelper.convert(dataSet));
-                    masterList.put("dataset", dataSet.getIdentifier());
-                    writer.store(ItemHelper.convert(datasource));
-                    masterList.put("datasource", datasource.getIdentifier());
-
-                } catch (ObjectStoreException e) {
-                    throw new SAXException(e);
-                }
-            }
-        }
-
-        /**
-         * Convenience method for creating a new Item
-         * @param className the name of the class
-         * @return a new Item
-         */
-        protected Item createItem(String className) {
-            return itemFactory.makeItem(alias(className) + "_" + newId(className),
-                                        GENOMIC_NS + className, "");
-        }
-
 
         private String newId(String className) {
             Integer id = ids.get(className);
