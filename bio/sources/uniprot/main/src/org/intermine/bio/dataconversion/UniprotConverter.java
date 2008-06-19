@@ -50,7 +50,6 @@ import org.xml.sax.helpers.DefaultHandler;
  */
 public class UniprotConverter extends FileConverter
 {
-    //TODO: This should come from props files!!!!
     protected static final String PROP_FILE = "uniprot_config.properties";
     private static final Logger LOG = Logger.getLogger(UniprotConverter.class);
     private Map<String, String> pubMaster = new HashMap<String, String>();
@@ -221,7 +220,6 @@ public class UniprotConverter extends FileConverter
         } else {
             this.createInterpro = false;
         }
-
     }
 
     /**
@@ -290,7 +288,7 @@ public class UniprotConverter extends FileConverter
             attName = null;
             try {
                 if (qName.equals("entry")) { // <entry>
-                    if (attrs.getValue("dataset") != null) { // TODO only store swiss prot / trembl?
+                    if (attrs.getValue("dataset") != null) {
                         isProtein = true;
                         initProtein();
                         dataset = getDataSet(attrs.getValue("dataset"));
@@ -383,8 +381,7 @@ public class UniprotConverter extends FileConverter
                         }
                         protein.getCollection("proteinDomains").addRefId(interpro.getIdentifier());
                     // <entry><dbreference type="InterPro"><property type="entry name" value="***"/>
-                    } else if (createInterpro
-                                    && qName.equals("property")
+                    } else if (createInterpro && qName.equals("property")
                                     && attrs.getValue("type").equals("entry name")
                                     && stack.peek().equals("dbReference")) {
                         if (interpro != null) {
@@ -431,11 +428,9 @@ public class UniprotConverter extends FileConverter
                         // <entry><comment><text>
                     } else if (qName.equals("text") && stack.peek().equals("comment")) {
                         attName = "text";
-                        // <entry><keyword>
-                    } else if (qName.equals("keyword")) {
+                    } else if (qName.equals("keyword")) {   // <entry><keyword>
                         attName = "keyword";
-                        // <entry><gene>
-                    } else if (qName.equals("gene")) {
+                    } else if (qName.equals("gene")) {  // <entry><gene>
                         initGene();
                         // <entry><gene><name>
                     } else if (qName.equals("name") && stack.peek().equals("gene")) {
@@ -507,13 +502,15 @@ public class UniprotConverter extends FileConverter
          */
         @Override
         public void characters(char[] ch, int start, int length) {
+            int st = start;
+            int l = length;
             if (attName != null) {
 
                 // DefaultHandler may call this method more than once for a single
                 // attribute content -> hold text & create attribute in endElement
-                while (length > 0) {
+                while (l > 0) {
                     boolean whitespace = false;
-                    switch(ch[start]) {
+                    switch(ch[st]) {
                     case ' ':
                     case '\r':
                     case '\n':
@@ -526,13 +523,13 @@ public class UniprotConverter extends FileConverter
                     if (!whitespace) {
                         break;
                     }
-                    ++start;
-                    --length;
+                    ++st;
+                    --l;
                 }
 
-                if (length > 0) {
+                if (l > 0) {
                     StringBuffer s = new StringBuffer();
-                    s.append(ch, start, length);
+                    s.append(ch, st, l);
                     attValue.append(s);
                 }
             }
@@ -577,9 +574,9 @@ public class UniprotConverter extends FileConverter
                                                  datasource.getIdentifier());
                         if (protein == null) {
                             throw new RuntimeException("Lost protein:" + proteinPrimaryIdentifier);
-                        } else {
-                            writer.store(ItemHelper.convert(protein));
                         }
+                        writer.store(ItemHelper.convert(protein));
+
                         if (syn != null) {
                             writer.store(ItemHelper.convert(syn));
                         }
@@ -735,9 +732,8 @@ public class UniprotConverter extends FileConverter
                 syn.addReference(new Reference("source", dbId));
                 synonyms.put(key, syn);
                 return syn;
-            } else {
-                return null;
             }
+            return null;
         }
 
 
@@ -1105,7 +1101,6 @@ public class UniprotConverter extends FileConverter
                                 }
                                 // all gene names are synonyms
                                 // ORF is already identifer, so skip
-                                // TODO if name is empty something has gone wrong
                                 if (!type.equals("ORF") && !name.equals("")) {
                                     Item syn = createSynonym(gene.getIdentifier(), synonymDescr,
                                                              name,
@@ -1184,9 +1179,8 @@ public class UniprotConverter extends FileConverter
                          + flyBaseLookUpId + " count: " + resCount + " FBgn: "
                          + resolver.resolveId(taxonId, flyBaseLookUpId));
                 return null;
-            } else {
-                return resolver.resolveId(taxonId, flyBaseLookUpId).iterator().next();
             }
+            return resolver.resolveId(taxonId, flyBaseLookUpId).iterator().next();
         }
     }
 
