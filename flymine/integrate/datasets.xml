@@ -450,31 +450,31 @@
 
     <item id="550" class="" implements="http://www.flymine.org/model/genomic#DataSource">
         <attribute name="name" value="Reactome"/>
-		<attribute name="description" value="Curated knowledgebase of biological pathways"/>
+        <attribute name="description" value="Curated knowledgebase of biological pathways"/>
         <attribute name="url" value="http://www.reactome.org/"/>
     </item>
 
     <item id="560" class="" implements="http://www.flymine.org/model/genomic#DataSource">
         <attribute name="name" value="HGNC"/>
-		<attribute name="description" value="HUGO Gene Nomenclature Committee"/>
+        <attribute name="description" value="HUGO Gene Nomenclature Committee"/>
         <attribute name="url" value="http://www.genenames.org/"/>
     </item>
 
     <item id="570" class="" implements="http://www.flymine.org/model/genomic#DataSource">
         <attribute name="name" value="Proteome Inc."/>
-		<attribute name="description" value="Human GO annotation data"/>
+        <attribute name="description" value="Human GO annotation data"/>
         <attribute name="url" value="http://www.proteome.com/"/>
     </item>
 
     <item id="580" class="" implements="http://www.flymine.org/model/genomic#DataSource">
         <attribute name="name" value="BHF-UCL"/>
-		<attribute name="description" value="British Heart Foundation - University College London"/>
+        <attribute name="description" value="British Heart Foundation - University College London"/>
         <attribute name="url" value="http://www.ucl.ac.uk/medicine/cardiovascular-genetics/geneontology.html"/>
     </item>
 
     <item id="590" class="" implements="http://www.flymine.org/model/genomic#DataSource">
         <attribute name="name" value="Roslin_Institute"/>
-		<attribute name="description" value="The Roslin Institute"/>
+        <attribute name="description" value="The Roslin Institute"/>
         <attribute name="url" value="http://www.roslin.ac.uk/"/>
     </item>
 
@@ -488,4 +488,17 @@
         <attribute name="url" value="http://www.flyatlas.org/"/>
         <reference name="dataSource" ref_id="600"/>
     </item>
+
+    <item id="610" class="" implements="http://www.flymine.org/model/genomic#DataSource">
+        <attribute name="name" value="BDGP"/>
+        <attribute name="description" value="Berkeley Drosophila Genome Project"/>
+        <attribute name="url" value="http://www.fruitfly.org/"/>
+    </item>
+    <item id="611" class="" implements="http://www.flymine.org/model/genomic#DataSet">
+        <attribute name="title" value="BDGP in situ data set"/>
+        <attribute name="url" value="http://www.fruitfly.org/cgi-bin/ex/insitu.pl"/>
+        <reference name="dataSource" ref_id="610"/>
+    </item>
+
+
 </items>
