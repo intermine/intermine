@@ -25,7 +25,7 @@ public class BioGridConverterTest extends ItemsTestCase
     Model model = Model.getInstanceByName("genomic");
     BioGridConverter converter;
     MockItemWriter itemWriter;
-    
+
     public BioGridConverterTest(String arg) {
         super(arg);
     }
@@ -48,7 +48,7 @@ public class BioGridConverterTest extends ItemsTestCase
         converter.close();
 
         // uncomment to write out a new target items file
-        //writeItemsFile(itemWriter.getItems(), "biogrid-tgt-items.xml");
+        writeItemsFile(itemWriter.getItems(), "/tmp/biogrid-tgt-items.xml");
 
         Set expected = readItemSet("BioGridConverterTest_tgt.xml");
 
