@@ -18,11 +18,20 @@
   <class name="org.flymine.model.genomic.Allele" 
          extends="org.flymine.model.genomic.BioEntity" is-interface="true">
     <attribute name="alleleClass" type="java.lang.String"/>
-    <attribute name="mutagen" type="java.lang.String"/>
+    <collection name="mutagens"
+                referenced-type="org.flymine.model.genomic.Mutagen"
+                reverse-reference="alleles"/>
     <collection name="phenotypeAnnotations"
                 referenced-type="org.flymine.model.genomic.PhenotypeAnnotation" 
                 reverse-reference="allele"/>
   </class>
+  <class name="org.flymine.model.genomic.Mutagen" is-interface="true">
+    <attribute name="description" type="java.lang.String"/>
+    <collection name="alleles"
+                referenced-type="org.flymine.model.genomic.Allele"
+                reverse-reference="mutagens"/>
+  </class>
+
   <class name="org.flymine.model.genomic.AnatomyTerm" extends="org.flymine.model.genomic.OntologyTerm" is-interface="true">
     
   </class>
