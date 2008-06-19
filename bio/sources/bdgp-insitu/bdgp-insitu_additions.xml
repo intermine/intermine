@@ -9,6 +9,7 @@
     <attribute name="expressed" type="java.lang.Boolean"/>
     <reference name="publication" referenced-type="org.flymine.model.genomic.Publication"/>
     <reference name="dataSet" referenced-type="org.flymine.model.genomic.DataSet"/>
+    <reference name="source" referenced-type="org.flymine.model.genomic.DataSource"/>
     <reference name="gene" referenced-type="org.flymine.model.genomic.Gene" reverse-reference="mRNAExpressionResults"/>    
     <collection name="images" referenced-type="org.flymine.model.genomic.Image"/>
     <collection name="stages" referenced-type="org.flymine.model.genomic.Stage"/>
