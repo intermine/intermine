@@ -44,9 +44,8 @@ public class Hypergeometric
         if (n == 0) {
             if (r == 0) {
                 return 0;
-            } else {
-                return Double.NEGATIVE_INFINITY;
             }
+            return Double.NEGATIVE_INFINITY;
         }
         if (r == 0) {
             return 0;
