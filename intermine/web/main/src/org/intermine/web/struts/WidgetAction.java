@@ -49,6 +49,7 @@ import org.intermine.web.logic.session.SessionMethods;
 import org.intermine.web.logic.widget.EnrichmentWidgetLdr;
 import org.intermine.web.logic.widget.Widget;
 import org.intermine.web.logic.widget.WidgetURLQuery;
+import org.intermine.web.logic.widget.config.WidgetConfig;
 /**
  * Runs a query based on which record the user clicked on in the widget.  Used by bag table and
  * enrichment widgets.
@@ -108,16 +109,15 @@ public class WidgetAction extends InterMineAction
         String bagName = wf.getBagName();
         String ldr = null, urlQuery = null;
         String widgetId = wf.getWidgetid();
-        String selectedExtraAttribute = null;
+        String selectedExtraAttribute = wf.getSelectedExtraAttribute();
 
         Type type = (Type) webConfig.getTypes().get(model.getPackageName()
                                                     + "." + wf.getBagType());
-        List<Widget> widgets = type.getWidgets();
-        for (Widget widget : widgets) {
-            if (widget.getId() == (new Integer(widgetId).intValue())) {
-                selectedExtraAttribute = widget.getSelectedExtraAttribute();
-                ldr = widget.getDataSetLoader();
-                urlQuery = widget.getLink();
+        List<WidgetConfig> widgets = type.getWidgets();
+        for (WidgetConfig widgetConfig : widgets) {
+            if (widgetConfig.getId() == widgetId) {
+                ldr = widgetConfig.getDataSetLoader();
+                urlQuery = widgetConfig.getLink();
             }
         }
 
@@ -253,9 +253,9 @@ public class WidgetAction extends InterMineAction
         String widgetId = widgetForm.getWidgetid();
         Type type = (Type) webConfig.getTypes().get(
                         model.getPackageName() + "." + widgetForm.getBagType());
-        List<Widget> widgets = type.getWidgets();
-        for (Widget widget : widgets) {
-            if (widget.getId() == (new Integer(widgetId).intValue())) {
+        List<WidgetConfig> widgets = type.getWidgets();
+        for (WidgetConfig widgetConfig : widgets) {
+            if (widgetConfig.getId().equals(widgetId)) {
                 StringTableExporter stringExporter;
                 PrintWriter writer = HttpExportUtil.
                     getPrintWriterForClient(request, response.getOutputStream());
@@ -268,6 +268,15 @@ public class WidgetAction extends InterMineAction
                     ResponseUtil.setTabHeader(response, "widget" + widgetForm.getWidgetid()
                                                         + ".tsv");
                 }
+                List<String> attributes = new ArrayList<String>();
+                attributes.add(widgetForm.getSelectedExtraAttribute());
+                attributes.add(widgetForm.getMax());
+                attributes.add(widgetForm.getErrorCorrection());
+                Profile currentProfile = (Profile) session.getAttribute(Constants.PROFILE);
+                Map<String, InterMineBag> allBags =
+                    WebUtil.getAllBags(currentProfile.getSavedBags(), servletContext);
+                InterMineBag bag = allBags.get(widgetForm.getBagName());
+                Widget widget = widgetConfig.getWidget(bag, os, attributes);
                 stringExporter.export(widget.getExportResults(widgetForm.getSelected()));
             }
         }

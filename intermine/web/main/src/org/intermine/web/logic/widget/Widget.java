@@ -1,5 +1,9 @@
 package org.intermine.web.logic.widget;
 
+import java.util.List;
+
+import org.intermine.web.logic.widget.config.WidgetConfig;
+
 /*
  * Copyright (C) 2002-2008 FlyMine
  *
@@ -11,107 +15,20 @@ package org.intermine.web.logic.widget;
  */
 
 
-import java.util.Collection;
-import java.util.List;
-import java.util.Map;
-
-import org.intermine.objectstore.ObjectStore;
-import org.intermine.web.logic.bag.InterMineBag;
-
-
 /**
- * Class representing a Widget in the WebApp
  * @author "Xavier Watkins"
+ *
  */
 public abstract class Widget
 {
-    private int id;
-    private String description;
-    private String title;
-    private String dataSetLoader;
-    private String link;
-    private String selectedExtraAttribute;
-
+    public WidgetConfig config;
+    
     /**
-     * The Constructor
+     * The constructor
+     * @param config the WidgetConfig
      */
-    public Widget() {
-        super();
-    }
-
-    /**
-     * @return the id
-     */
-    public int getId() {
-        return id;
-    }
-
-    /**
-     * @param id the id to set
-     */
-    public void setId(int id) {
-        this.id = id;
-    }
-
-    /**
-     * @return the description
-     */
-    public String getDescription() {
-        return description;
-    }
-
-    /**
-     * @param description the description to set
-     */
-    public void setDescription(String description) {
-        this.description = description;
-    }
-
-    /**
-     * @return the title
-     */
-    public String getTitle() {
-        return title;
-    }
-
-    /**
-     * @param title the title to set
-     */
-    public void setTitle(String title) {
-        this.title = title;
-    }
-
-    /**
-     * Get the value of dataSetLoader
-     * @return the value of dataSetLoader
-     */
-    public String getDataSetLoader() {
-        return dataSetLoader;
-    }
-
-
-    /**
-     * Set the value of dataSetLoader
-     * @param dataSetLoader a String
-     */
-    public void setDataSetLoader(String dataSetLoader) {
-        this.dataSetLoader = dataSetLoader;
-    }
-
-    /**
-     * Get the link
-     * @return the link
-     */
-    public String getLink() {
-        return link;
-    }
-
-    /**
-     * Set the link
-     * @param link the link
-     */
-    public void setLink(String link) {
-        this.link = link;
+    public Widget(WidgetConfig config) {
+        this.config = config;
     }
 
     /**
@@ -121,58 +38,10 @@ public abstract class Widget
      * @param os the ObjectStore
      * @throws Exception if one of the classes in the widget isn't found
      */
-    public abstract void process(InterMineBag imBag, ObjectStore os)
+    public abstract void process()
     throws Exception;
 
-    /**
-     * @param imBag the InterMineBag
-     * @param os the ObjectStore
-     * @return the getExtraAttributes
-     * @exception Exception if something goes wrong
-     */
-    public abstract Map<String, Collection<String>> getExtraAttributes(InterMineBag imBag,
-                                                  ObjectStore os)
-    throws Exception;
-
-    /**
-     * @return the selectedExtraAttribute
-     */
-    public String getSelectedExtraAttribute() {
-        return selectedExtraAttribute;
-    }
-
-    /**
-     * @param selectedExtraAttribute the selectedExtraAttribute to set
-     */
-    public void setSelectedExtraAttribute(String selectedExtraAttribute) {
-        this.selectedExtraAttribute = selectedExtraAttribute;
-    }
-
-    /**
-     * @return the hasResults
-     */
-    public abstract boolean getHasResults();
-
-    /**
-     * @return the externalLink
-     */
-    public abstract String getExternalLink();
-
-    /**
-     * @param externalLink the externalLink to set
-     */
-    public abstract void setExternalLink(String externalLink);
-
-    /**
-     * @return the externalLinkLabel
-     */
-    public abstract String getExternalLinkLabel();
-
-    /**
-     * @param externalLinkLabel the externalLinkLabel to set
-     */
-    public abstract void setExternalLinkLabel(String externalLinkLabel);
-
+    
     /**
      * @return the number of objects not analysed in this widget
      */
@@ -196,4 +65,18 @@ public abstract class Widget
      * @return results of widget
      */
     public abstract List<List<String[]>> getFlattenedResults();
+
+    /**
+     * @return the hasResults
+     */
+    public abstract boolean getHasResults();
+    
+    /**
+     * Get the ID of the corresponding WidgetConfig
+     * @return the WidgetConfig ID
+     */
+    public String getConfigId() {
+        return config.getId();
+    }
+
 }

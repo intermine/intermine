@@ -1,4 +1,4 @@
-function getProcessGraphWidget(widgetId, bagName) {
+function getProcessGraphWidgetConfig(widgetId, bagName) {
   var widgetdataname = document.getElementById('widgetdata' + widgetId);
   var widgetdatawait = document.getElementById('widgetdatawait' + widgetId);
 
@@ -15,23 +15,23 @@ function handleGraphWidget(widget) {
 
   calcNotAnalysed(widget);
 
-  Element.hide($('widgetdatanoresults' + widget.id));
+  Element.hide($('widgetdatanoresults' + widget.configId));
   if(widget.hasResults) {
-    var widgetdataname = document.getElementById('widgetdata' + widget.id);
-    var widgetdatawait = document.getElementById('widgetdatawait' + widget.id);
+    var widgetdataname = document.getElementById('widgetdata' + widget.configId);
+    var widgetdatawait = document.getElementById('widgetdatawait' + widget.configId);
 
     Element.update($(widgetdataname),widget.html);
     Element.hide($(widgetdatawait));
     Element.show($(widgetdataname));
   } else {
-  	Element.hide($('widgetdatawait' + widget.id));
-    Element.hide($('widgetdata' + widget.id));
-    Element.show($('widgetdatanoresults' + widget.id));
-    //toggleWidget('widgetcontainer' + widget.id, 'togglelink' + widget.id);
+  	Element.hide($('widgetdatawait' + widget.configId));
+    Element.hide($('widgetdata' + widget.configId));
+    Element.show($('widgetdatanoresults' + widget.configId));
+    //toggleWidget('widgetcontainer' + widget.configId, 'togglelink' + widget.configId);
   }
 }
 
-function getProcessTableWidget(widgetId, bagName) {
+function getProcessTableWidgetConfig(widgetId, bagName) {
   AjaxServices.getProcessTableWidget(widgetId,bagName,handleTableWidget);
 }
 
@@ -39,21 +39,21 @@ function handleTableWidget(widget) {
 
   calcNotAnalysed(widget);
 
-  Element.hide($('widgetdatanoresults' + widget.id));
+  Element.hide($('widgetdatanoresults' + widget.configId));
 
   if(widget.hasResults) {
-	  removeChildren($("tablewidget"+widget.id+"head"));
-	  removeChildren($("tablewidget"+widget.id+"body"));
-	  var widgetdataname = document.getElementById('widgetdata' + widget.id);
-	  var widgetdatawait = document.getElementById('widgetdatawait' + widget.id);
+	  removeChildren($("tablewidget"+widget.configId+"head"));
+	  removeChildren($("tablewidget"+widget.configId+"body"));
+	  var widgetdataname = document.getElementById('widgetdata' + widget.configId);
+	  var widgetdatawait = document.getElementById('widgetdatawait' + widget.configId);
 
 	  var row = document.createElement("tr");
 
 	  // checkbox
 	  var checkboxCell = document.createElement("th");
-	  var formName = "widgetaction" + widget.id;
-	  var checky = "<input type=\"checkbox\" name=\"select_all\" id=\"selected_all" + widget.id + "\"";
-          checky += " onclick=\"toggleAllChecks('" + formName + "', " + widget.id + ")\">";
+	  var formName = "widgetaction" + widget.configId;
+	  var checky = "<input type=\"checkbox\" name=\"select_all\" id=\"selected_all" + widget.configId + "\"";
+          checky += " onclick=\"toggleAllChecks('" + formName + "','" + widget.configId + "')\">";
 	  checkboxCell.innerHTML = checky;
 	  row.appendChild(checkboxCell);
 
@@ -64,7 +64,7 @@ function handleTableWidget(widget) {
 	    row.appendChild(cell);
 	  }
 
-	  $("tablewidget"+widget.id+"head").appendChild(row);
+	  $("tablewidget"+widget.configId+"head").appendChild(row);
 
 	for(var i = 0; i < widget.flattenedResults.length ; i++){
 		row = document.createElement("tr");
@@ -84,19 +84,19 @@ function handleTableWidget(widget) {
 	     	row.appendChild(cell);
 		}
 
-	    $("tablewidget"+widget.id+"body").appendChild(row);
+	    $("tablewidget"+widget.configId+"body").appendChild(row);
 	  }
 	  Element.hide($(widgetdatawait));
       Element.show($(widgetdataname));
   } else {
-    Element.hide($('widgetdatawait' + widget.id));
-    Element.hide($('widgetdata' + widget.id));
-    Element.show($('widgetdatanoresults' + widget.id));
-    //toggleWidget('widgetcontainer' + widget.id, 'togglelink' + widget.id);
+    Element.hide($('widgetdatawait' + widget.configId));
+    Element.hide($('widgetdata' + widget.configId));
+    Element.show($('widgetdatanoresults' + widget.configId));
+    //toggleWidget('widgetcontainer' + widget.configId, 'togglelink' + widget.configId);
   }
 }
 
-function getProcessEnrichmentWidget(widgetId, bagName) {
+function getProcessEnrichmentWidgetConfig(widgetId, bagName) {
   var widgetdataname = document.getElementById('widgetdata' + widgetId);
   var widgetdatawait = document.getElementById('widgetdatawait' + widgetId);
 
@@ -158,7 +158,7 @@ function displayNotAnalysed(widgetId,type,extra) {
 }
 
 function calcNotAnalysed(widget) {
-    $('widgetnotanalysed' + widget.id).update(widget.notAnalysed);
+    $('widgetnotanalysed' + widget.configId).update(widget.notAnalysed);
 }
 
 function toggleAllChecks(formName, widgetId) {

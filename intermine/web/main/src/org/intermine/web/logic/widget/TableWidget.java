@@ -10,52 +10,71 @@ package org.intermine.web.logic.widget;
  *
  */
 
-import java.util.Collection;
+import java.io.UnsupportedEncodingException;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
-import org.intermine.metadata.FieldDescriptor;
 import org.intermine.objectstore.ObjectStore;
+import org.intermine.objectstore.ObjectStoreException;
 import org.intermine.web.logic.bag.InterMineBag;
-import org.intermine.web.logic.config.WebConfig;
-
-/*
- * Copyright (C) 2002-2008 FlyMine
- *
- * This code may be freely distributed and modified under the
- * terms of the GNU Lesser General Public Licence.  This should
- * be distributed with the code.  See the LICENSE file for more
- * information or http://www.gnu.org/copyleft/lesser.html.
- *
- */
+import org.intermine.web.logic.widget.config.EnrichmentWidgetConfig;
+import org.intermine.web.logic.widget.config.GraphWidgetConfig;
+import org.intermine.web.logic.widget.config.TableWidgetConfig;
+import org.intermine.web.logic.widget.config.WidgetConfig;
 
 /**
- * @author Xavier Watkins
+ * @author "Xavier Watkins"
  *
  */
 public class TableWidget extends Widget
 {
-
-    private String displayFields, exportFields;
-    private WebConfig webConfig;
-    private Map<String, List<FieldDescriptor>> classKeys;
-    private TableWidgetLdr bagWidgLdr;
-    private String pathStrings, externalLink, externalLinkLabel;
-    private String columnTitle = null;
+    
     private int notAnalysed = 0;
+    private InterMineBag bag;
+    private ObjectStore os;
+    private String selectedExtraAttribute;
+    private ArrayList<Map> resultMaps = new ArrayList<Map>();
+    private TableWidgetLdr bagWidgLdr;
 
+    /**
+     * @param config
+     * @param interMineBag
+     * @param os
+     * @param selectedExtraAttribute
+     */
+    public TableWidget(TableWidgetConfig config, InterMineBag interMineBag, ObjectStore os,
+        String selectedExtraAttribute) {
+        super(config);
+        this.bag = interMineBag;
+        this.os = os;
+        this.selectedExtraAttribute = selectedExtraAttribute;
+        process();
+    }
+    
     /**
      * {@inheritDoc}
      */
-    public void process(InterMineBag bag, ObjectStore os) throws Exception {
-        bagWidgLdr = new TableWidgetLdr(pathStrings, bag, os, webConfig,
-                        os.getModel(), classKeys, displayFields, getExportFields(),
-                        getLink(), getColumnTitle(),
-                        getExternalLink(), getExternalLinkLabel());
-
-        notAnalysed = bag.getSize() - bagWidgLdr.getWidgetTotal();
+    public void process() {
+            try {
+                bagWidgLdr = new TableWidgetLdr(((TableWidgetConfig) config).getPathStrings(), bag, 
+                            os,
+                            ((TableWidgetConfig) config).getWebConfig(), os.getModel(),
+                            ((TableWidgetConfig) config).getClassKeys(),
+                            ((TableWidgetConfig) config).getDisplayFields(),
+                            ((TableWidgetConfig) config).getExportFields(), config.getLink(),
+                            ((TableWidgetConfig) config).getColumnTitle(),
+                            config.getExternalLink(), config.getExternalLinkLabel());
+                notAnalysed = bag.getSize() - bagWidgLdr.getWidgetTotal();
+            } catch (UnsupportedEncodingException e) {
+                // TODO Auto-generated catch block
+                e.printStackTrace();
+            } catch (ObjectStoreException e) {
+                // TODO Auto-generated catch block
+                e.printStackTrace();
+            }
     }
-
+    
     /**
      * Get the flattened results
      * @return the List of flattened results
@@ -63,82 +82,12 @@ public class TableWidget extends Widget
     public List getFlattenedResults() {
         return bagWidgLdr.getFlattenedResults();
     }
-
+    
     /**
      * {@inheritDoc}
      */
     public List<List<String>> getExportResults(String[] selected) throws Exception {
         return bagWidgLdr.getExportResults(selected);
-    }
-
-    /**
-     * Get the columns
-     * @return the columns
-     */
-    public List<String> getColumns() {
-        return bagWidgLdr.getColumns();
-    }
-
-    /**
-     * @return the fields
-     */
-    public String getDisplayFields() {
-        return displayFields;
-    }
-
-    /**
-     * @param fields the fields to set
-     */
-    public void setDisplayFields(String fields) {
-        this.displayFields = fields;
-    }
-
-
-
-    /**
-     * @return the title for the count column
-     */
-    public String getColumnTitle() {
-        return columnTitle;
-    }
-
-    /**
-     * @param columnTitle set title for count column
-     */
-    public void setColumnTitle(String columnTitle) {
-        this.columnTitle = columnTitle;
-    }
-
-    /**
-     * Do-nothing implementation of superclass method
-     * @param imBag a bag
-     * @param os the objectstore
-     * @return null
-     */
-    public Map<String, Collection<String>> getExtraAttributes(InterMineBag imBag,
-                                                      ObjectStore os) {
-        return null;
-    }
-
-    /**
-     * @return the webConfig
-     */
-    public WebConfig getWebConfig() {
-        return webConfig;
-    }
-
-    /**
-     * @param webConfig the webConfig to set
-     */
-    public void setWebConfig(WebConfig webConfig) {
-        this.webConfig = webConfig;
-    }
-
-    /**
-     * @param classKeys the classKeys to set
-     */
-    public void setClassKeys(Map<String, List<FieldDescriptor>> classKeys) {
-        this.classKeys = classKeys;
     }
 
     /**
@@ -148,49 +97,6 @@ public class TableWidget extends Widget
         return (bagWidgLdr.getFlattenedResults().size() > 0);
     }
 
-    /**
-     * Comma separated list of path strings to appear in the widget, ie Employee.firstName,
-     * Employee.lastName
-     * @return the pathStrings
-     */
-    public String getPathStrings() {
-        return pathStrings;
-    }
-
-    /**
-     * @param pathStrings the pathString to set
-     */
-    public void setPathStrings(String pathStrings) {
-        this.pathStrings = pathStrings;
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    public String getExternalLink() {
-        return externalLink;
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    public void setExternalLink(String externalLink) {
-        this.externalLink = externalLink;
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    public String getExternalLinkLabel() {
-        return externalLinkLabel;
-    }
-
-    /**
-    * {@inheritDoc}
-     */
-    public void setExternalLinkLabel(String externalLinkLabel) {
-        this.externalLinkLabel = externalLinkLabel;
-    }
 
     /**
      * {@inheritDoc}
@@ -199,28 +105,20 @@ public class TableWidget extends Widget
         return notAnalysed;
     }
 
-    /**
-    * {@inheritDoc}
-     */
-    public void setNotAnalysed(int notAnalysed) {
-        this.notAnalysed = notAnalysed;
-    }
 
     /**
-     * @return the exportFields
-     */
-    public String getExportFields() {
-        return exportFields;
-    }
-
-    /**
-     * @param exportFields the exportFields to set
-     */
-    public void setExportFields(String exportFields) {
-        this.exportFields = exportFields;
-    }
-
-
-
+     * {@inheritDoc}
+      */
+     public void setNotAnalysed(int notAnalysed) {
+         this.notAnalysed = notAnalysed;
+     }
+     
+     /**
+      * Get the columns
+      * @return the columns
+      */
+     public List getColumns() {
+         return bagWidgLdr.getColumns();
+     }
 
 }

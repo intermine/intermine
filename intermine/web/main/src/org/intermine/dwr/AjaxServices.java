@@ -10,6 +10,7 @@ package org.intermine.dwr;
  *
  */
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -21,10 +22,17 @@ import java.util.Map;
 import java.util.Properties;
 import java.util.Set;
 
-import org.intermine.objectstore.query.Query;
-import org.intermine.objectstore.query.QuerySelectable;
-import org.intermine.objectstore.query.Results;
+import javax.servlet.ServletContext;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpSession;
 
+import org.apache.commons.lang.StringUtils;
+import org.apache.log4j.Logger;
+import org.apache.lucene.queryParser.ParseException;
+import org.apache.struts.Globals;
+import org.apache.struts.util.MessageResources;
+import org.directwebremoting.WebContext;
+import org.directwebremoting.WebContextFactory;
 import org.intermine.InterMineException;
 import org.intermine.metadata.FieldDescriptor;
 import org.intermine.metadata.Model;
@@ -33,6 +41,9 @@ import org.intermine.objectstore.ObjectStore;
 import org.intermine.objectstore.ObjectStoreException;
 import org.intermine.objectstore.ObjectStoreWriter;
 import org.intermine.objectstore.intermine.ObjectStoreInterMineImpl;
+import org.intermine.objectstore.query.Query;
+import org.intermine.objectstore.query.QuerySelectable;
+import org.intermine.objectstore.query.Results;
 import org.intermine.path.Path;
 import org.intermine.util.TypeUtil;
 import org.intermine.web.autocompletion.AutoCompleter;
@@ -52,9 +63,9 @@ import org.intermine.web.logic.query.PageTableQueryMonitor;
 import org.intermine.web.logic.query.PathQuery;
 import org.intermine.web.logic.query.QueryMonitorTimeout;
 import org.intermine.web.logic.query.SavedQuery;
-import org.intermine.web.logic.results.WebState;
 import org.intermine.web.logic.results.PagedTable;
 import org.intermine.web.logic.results.WebResultsSimple;
+import org.intermine.web.logic.results.WebState;
 import org.intermine.web.logic.results.WebTable;
 import org.intermine.web.logic.search.SearchRepository;
 import org.intermine.web.logic.search.WebSearchable;
@@ -66,21 +77,10 @@ import org.intermine.web.logic.template.TemplateQuery;
 import org.intermine.web.logic.widget.EnrichmentWidget;
 import org.intermine.web.logic.widget.GraphWidget;
 import org.intermine.web.logic.widget.TableWidget;
-import org.intermine.web.logic.widget.Widget;
-
-import java.io.IOException;
-
-import javax.servlet.ServletContext;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpSession;
-
-import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
-import org.apache.lucene.queryParser.ParseException;
-import org.apache.struts.Globals;
-import org.apache.struts.util.MessageResources;
-import org.directwebremoting.WebContext;
-import org.directwebremoting.WebContextFactory;
+import org.intermine.web.logic.widget.config.EnrichmentWidgetConfig;
+import org.intermine.web.logic.widget.config.GraphWidgetConfig;
+import org.intermine.web.logic.widget.config.TableWidgetConfig;
+import org.intermine.web.logic.widget.config.WidgetConfig;
 
 
 /**
@@ -816,13 +816,13 @@ public class AjaxServices
 
             Type type = (Type) webConfig.getTypes().get(model.getPackageName()
                             + "." + imBag.getType());
-            List<Widget> widgets = type.getWidgets();
-            for (Widget widget: widgets) {
-                if (widget.getId() == Integer.parseInt(widgetId)) {
-                    GraphWidget graphWidget = (GraphWidget) widget;
-                    graphWidget.setSession(session);
-                    graphWidget.setSelectedExtraAttribute(selectedExtraAttribute);
-                    graphWidget.process(imBag, os);
+            List<WidgetConfig> widgets = type.getWidgets();
+            for (WidgetConfig widget: widgets) {
+                if (widget.getId().equals(widgetId)) {
+                    GraphWidgetConfig graphWidgetConf = (GraphWidgetConfig) widget;
+                    graphWidgetConf.setSession(session);
+                    GraphWidget graphWidget = new GraphWidget(graphWidgetConf, imBag, os,
+                                    selectedExtraAttribute);
                     return graphWidget;
                 }
             }
@@ -855,18 +855,13 @@ public class AjaxServices
 
             Type type = (Type) webConfig.getTypes().get(model.getPackageName()
                             + "." + imBag.getType());
-            List<Widget> widgets = type.getWidgets();
-            for (Widget widget: widgets) {
-                if (widget.getId() == Integer.parseInt(widgetId)) {
-                    TableWidget tableWidget = (TableWidget) widget;
-                    tableWidget.setClassKeys(classKeys);
-                    tableWidget.setWebConfig(webConfig);
-                    try {
-                        tableWidget.process(imBag, os);
-                    } catch (Exception e) {
-                        return null;
-                    }
-
+            List<WidgetConfig> widgets = type.getWidgets();
+            for (WidgetConfig widgetConfig: widgets) {
+                if (widgetConfig.getId().equals(widgetId)) {
+                    TableWidgetConfig tableWidgetConfig = (TableWidgetConfig) widgetConfig;
+                    tableWidgetConfig.setClassKeys(classKeys);
+                    tableWidgetConfig.setWebConfig(webConfig);
+                    TableWidget tableWidget = new TableWidget(tableWidgetConfig, imBag, os, null);
                     return tableWidget;
                 }
             }
@@ -891,7 +886,7 @@ public class AjaxServices
      */
     public static EnrichmentWidget getProcessEnrichmentWidget(String widgetId, String bagName,
                                                               String errorCorrection, String max,
-                                                              String selectedExtraAttribute,
+                                                              String filters,
                                                               String externalLink,
                                                               String externalLinkLabel) {
         try {
@@ -906,16 +901,16 @@ public class AjaxServices
             InterMineBag imBag = BagHelper.getBag(profile, searchRepository, bagName);
             Type type = (Type) webConfig.getTypes().get(model.getPackageName()
                     + "." + imBag.getType());
-            List<Widget> widgets = type.getWidgets();
-            for (Widget widget : widgets) {
-                if (widget.getId() == Integer.parseInt(widgetId)) {
-                    EnrichmentWidget enrichmentWidget = (EnrichmentWidget) widget;
-                    enrichmentWidget.setMax(max);
-                    enrichmentWidget.setErrorCorrection(errorCorrection);
-                    enrichmentWidget.setSelectedExtraAttribute(selectedExtraAttribute);
-                    enrichmentWidget.setExternalLink(externalLink);
-                    enrichmentWidget.setExternalLinkLabel(externalLinkLabel);
-                    enrichmentWidget.process(imBag, os);
+            List<WidgetConfig> widgets = type.getWidgets();
+            for (WidgetConfig widgetConfig : widgets) {
+                if (widgetConfig.getId().equals(widgetId)) {
+                    EnrichmentWidgetConfig enrichmentWidgetConfig = 
+                                                        (EnrichmentWidgetConfig) widgetConfig;
+                    enrichmentWidgetConfig.setExternalLink(externalLink);
+                    enrichmentWidgetConfig.setExternalLinkLabel(externalLinkLabel);
+                    EnrichmentWidget enrichmentWidget = new EnrichmentWidget(
+                                    enrichmentWidgetConfig, imBag, os, filters, max,
+                                    errorCorrection);
                     return enrichmentWidget;
                 }
             }
