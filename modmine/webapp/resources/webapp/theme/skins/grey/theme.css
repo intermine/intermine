@@ -75,12 +75,12 @@ div.filterBar {
 
 #header #title h1 a
 {
-    color: #fff;
+    color: #000;
 }
 
 #header p
 {
-    color: white;
+    color: black;
 }
 
 .box .title {
