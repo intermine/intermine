@@ -21,7 +21,7 @@ import org.intermine.web.logic.widget.config.WidgetConfig;
  */
 public abstract class Widget
 {
-    private WidgetConfig config;
+    public WidgetConfig config;
 
     /**
      * The constructor
