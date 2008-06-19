@@ -10,6 +10,7 @@ package org.intermine.web.logic.widget;
  *
  */
 
+import java.io.UnsupportedEncodingException;
 import java.util.List;
 
 import org.intermine.objectstore.ObjectStore;
@@ -50,6 +51,9 @@ public class TableWidget extends Widget
             try {
                 bagWidgLdr = new TableWidgetLdr(config, bag, os);
                 notAnalysed = bag.getSize() - bagWidgLdr.getWidgetTotal();
+            } catch (UnsupportedEncodingException e) {
+                // TODO Auto-generated catch block
+                e.printStackTrace();
             } catch (ObjectStoreException e) {
                 // TODO Auto-generated catch block
                 e.printStackTrace();
