@@ -102,6 +102,8 @@ public class FlyBaseModuleProcessor extends ChadoSequenceProcessor
     // an object representing the FlyBase miscellaneous CV
     private ChadoCV flyBaseMiscCv = null;
 
+    private Map<String, Item> mutagensMap = new HashMap<String, Item>();
+
     private static final String ALLELE_TEMP_TABLE_NAME = "intermine_flybase_allele_temp";
 
     /**
@@ -567,13 +569,36 @@ public class FlyBaseModuleProcessor extends ChadoSequenceProcessor
 
         processAlleleProps(connection, features);
 
-        Map<Integer, String> mutagenMap = makeMutagenMap(connection);
+        Map<Integer, List<String>> mutagenMap = makeMutagenMap(connection);
         for (Integer alleleFeatureId: mutagenMap.keySet()) {
-            FeatureData alleleDat = features.get(alleleFeatureId);
-
-            setAttribute(alleleDat.getIntermineObjectId(), "mutagen",
-                         mutagenMap.get(alleleFeatureId));
+            List<String> mutagenRefIds = new ArrayList<String>();
+            for (String mutagenDescription: mutagenMap.get(alleleFeatureId)) {
+                Item mutagen = getMutagen(mutagenDescription);
+                mutagenRefIds.add(mutagen.getIdentifier());
+            }
+            ReferenceList referenceList = new ReferenceList();
+            referenceList.setName("mutagens");
+            referenceList.setRefIds(mutagenRefIds);
+            getChadoDBConverter().store(referenceList, alleleFeatureId);
         }
+    }
+
+
+
+    private Item getMutagen(String description) throws ObjectStoreException {
+        if (mutagensMap.containsKey(description)) {
+            return mutagensMap.get(description);
+        } else {
+            Item mutagen = getChadoDBConverter().createItem("Mutagen");
+            mutagen.setAttribute("description", description);
+            mutagensMap.put(description, mutagen);
+            store(mutagen);
+            return mutagen;
+        }
+    }
+
+    private void store(Item item) throws ObjectStoreException {
+        getChadoDBConverter().store(item);
     }
 
     // map from anatomy identifier (eg. "FBbt0001234") to Item identifier
@@ -626,9 +651,9 @@ public class FlyBaseModuleProcessor extends ChadoSequenceProcessor
      * that are associated with each feature and saving those terms that have "origin of mutation"
      * as a parent term.
      */
-    private Map<Integer, String> makeMutagenMap(Connection connection)
+    private Map<Integer, List<String>> makeMutagenMap(Connection connection)
         throws SQLException {
-        Map<Integer, String> retMap = new HashMap<Integer, String>();
+        Map<Integer, List<String>> retMap = new HashMap<Integer, List<String>>();
 
         ResultSet res = getAlleleCVTermsResultSet(connection);
       RESULTS:
@@ -642,7 +667,16 @@ public class FlyBaseModuleProcessor extends ChadoSequenceProcessor
 
             for (ChadoCVTerm parent: parents) {
                 if (parent.getName().equals("origin of mutation")) {
-                    retMap.put(featureId, XmlUtil.fixEntityNames(cvterm.getName()));
+                    String fixedName = XmlUtil.fixEntityNames(cvterm.getName());
+                    List<String> mutagens;
+                    if (retMap.containsKey(featureId)) {
+                        mutagens = retMap.get(featureId);
+
+                    } else {
+                        mutagens = new ArrayList<String>();
+                        retMap.put(featureId, mutagens);
+                    }
+                    mutagens.add(fixedName);
                     continue RESULTS;
                 }
             }
