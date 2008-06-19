@@ -1462,7 +1462,7 @@ public class EnsemblDataTranslator extends DataTranslator
 
             Item dataSrc = getDataSrcByName(dsName);
             ensemblDataSet.addReference(new Reference("dataSource", dataSrc.getIdentifier()));
-            ensemblDataSetRef = new Reference("source", ensemblDataSet.getIdentifier());
+            ensemblDataSetRef = new Reference("dataSet", ensemblDataSet.getIdentifier());
         }
 
         //------------------------------------------------------------------------------------------
