@@ -99,27 +99,28 @@ public class Drosophila2ProbeConverter extends FileConverter
 
             String cgs = line[17];
             if (!cgs.equals("---")) {
-
                 String transcriptIdentifier = line[6].trim();
                 if (transcriptIdentifier.startsWith("CG")
-                    || transcriptIdentifier.startsWith("a_merged")) {
+                    || transcriptIdentifier.startsWith("a_merged")
+                    || transcriptIdentifier.startsWith("a_predict")) {
+
                     if (transcriptIdentifier.startsWith("CG")) {
                         Item transcript = createBioEntity("Transcript", transcriptIdentifier);
                         probeSet.setReference("transcript", transcript.getIdentifier());
                     }
-                        // eg. "CG10332 /// CG33706"
-                        String[] genes = cgs.split(" /// ");
-                        ReferenceList geneColl =
-                            new ReferenceList("genes", new ArrayList<String>());
-                        for (String identifier : genes) {
-                            if (identifier.trim().startsWith("CG")) {
-                                Item gene = createBioEntity("Gene", identifier);
-                                if (gene != null) {
-                                    geneColl.addRefId(gene.getIdentifier());
-                                }
+
+                    // eg. "CG10332 /// CG33706"
+                    String[] genes = cgs.split(" /// ");
+                    ReferenceList geneColl = new ReferenceList("genes", new ArrayList<String>());
+                    for (String identifier : genes) {
+                        if (identifier.trim().startsWith("CG")) {
+                            Item gene = createBioEntity("Gene", identifier);
+                            if (gene != null) {
+                                geneColl.addRefId(gene.getIdentifier());
                             }
                         }
-                        probeSet.addCollection(geneColl);
+                    }
+                    probeSet.addCollection(geneColl);
                 }
             }
             store(probeSet);
@@ -130,11 +131,12 @@ public class Drosophila2ProbeConverter extends FileConverter
         }
     }
 
-    private Item createBioEntity(String clsName, String identifier)
-        throws ObjectStoreException {
+    private Item createBioEntity(String clsName, String id)
+    throws ObjectStoreException {
+        String identifier = id;
         if (clsName.equals("Gene")) {
-             IdResolver resolver = resolverFactory.getIdResolver();
-             int resCount = resolver.countResolutions(TAXON_ID, identifier);
+            IdResolver resolver = resolverFactory.getIdResolver();
+            int resCount = resolver.countResolutions(TAXON_ID, identifier);
              if (resCount != 1) {
                  LOG.info("RESOLVER: failed to resolve gene to one identifier, ignoring gene: "
                           + identifier + " count: " + resCount + " FBgn: "
