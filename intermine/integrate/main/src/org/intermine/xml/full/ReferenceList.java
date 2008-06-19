@@ -78,7 +78,9 @@ public class ReferenceList
      * @param refId the value
      */
     public void addRefId(String refId) {
-        refIds.add(refId);
+        if (!refIds.contains(refId)) {
+            refIds.add(refId);
+        }
     }
 
     /**
