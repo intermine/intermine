@@ -69,7 +69,7 @@ public class HomophilaConverter extends BioFileConverter
      * @throws ObjectStoreException if an error occurs in storing
      */
     public HomophilaConverter(ItemWriter writer, Model model) throws ObjectStoreException {
-        super(writer, model, null, "Homophila data set");
+        super(writer, model, "Homophila", "Homophila data set");
 
         orgHuman = createItem("Organism");
         orgHuman.addAttribute(new Attribute("taxonId", "9606"));
@@ -99,9 +99,6 @@ public class HomophilaConverter extends BioFileConverter
     protected void readDiseaseDescriptions(Reader reader) throws IOException {
         BufferedReader br = new BufferedReader(reader);
         String line;
-
-        LOG.info("Reading disease descriptions...");
-
         StringBuffer descBuff = new StringBuffer();
         String omim = "";
         while ((line = br.readLine()) != null) {
@@ -122,8 +119,6 @@ public class HomophilaConverter extends BioFileConverter
             }
         }
         diseaseDescriptions.put(omim, descBuff.toString()); // last line
-
-        LOG.info("" + diseaseDescriptions.size() + " descriptions read.");
     }
 
     /**
@@ -136,9 +131,6 @@ public class HomophilaConverter extends BioFileConverter
         BufferedReader br = new BufferedReader(reader);
         String line;
         int done = 1;
-
-        LOG.info("Reading protein_gene mapping...");
-
         while ((line = br.readLine()) != null) {
             String fields[] = StringUtils.split(line, '\t');
             if (fields.length == 2) {
@@ -149,8 +141,6 @@ public class HomophilaConverter extends BioFileConverter
             }
             done++;
         }
-
-        LOG.info("" + proteinToGene.size() + " proteins read.");
     }
 
     /**
@@ -262,14 +252,21 @@ public class HomophilaConverter extends BioFileConverter
         Item protein = proteins.get(array[PROTEIN_ID]);
         if (protein == null) {
             protein = createItem("Protein");
-            protein.addAttribute(new Attribute("primaryIdentifier", array[PROTEIN_ID]));
-            protein.addReference(new Reference("organism", orgHuman.getIdentifier()));
+            String primaryIdentifier = array[PROTEIN_ID];
+            protein.setAttribute("primaryIdentifier", primaryIdentifier);
+            protein.setReference("organism", orgHuman.getIdentifier());
             Item gene = findGene(array);
             if (gene != null) {
                 protein.addToCollection("genes", gene);
             }
             proteins.put(array[PROTEIN_ID], protein);
             store(protein);
+
+            Item synonym = createItem("Synonym");
+            synonym.setAttribute("type", "identifier");
+            synonym.setAttribute("value", primaryIdentifier);
+            synonym.setReference("subject", protein.getIdentifier());
+            store(synonym);
         }
         return protein;
     }
@@ -295,6 +292,14 @@ public class HomophilaConverter extends BioFileConverter
             gene.addReference(new Reference("organism", orgHuman.getIdentifier()));
             gene.addToCollection("omimDiseases", findDisease(array));
             store(gene);
+
+
+            Item synonym = createItem("Synonym");
+            synonym.setAttribute("type", "symbol");
+            synonym.setAttribute("value", geneId);
+            synonym.setReference("subject", gene.getIdentifier());
+            store(synonym);
+
             newAnnotation(gene, findDisease(array));
         }
         return gene;
