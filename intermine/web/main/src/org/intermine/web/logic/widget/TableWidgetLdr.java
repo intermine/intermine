@@ -70,6 +70,7 @@ public class TableWidgetLdr
     private Path origPath;
     private String type;
     private TableWidgetConfig config;
+    private ClassDescriptor cld;
 
     /**
      * This class loads and formats the data for the count
@@ -78,26 +79,34 @@ public class TableWidgetLdr
      * @param widgetConfig the configuration settings for this widget
      * @param bag bag for this widget
      * @param os the objectstore
-     * @throws UnsupportedEncodingException if something goes wrong encoding the URL
+     * @throws UnsupportedEncodingException if can't encode url
      */
     @SuppressWarnings("unchecked")
     public TableWidgetLdr(WidgetConfig widgetConfig, InterMineBag bag, ObjectStore os)
-    throws UnsupportedEncodingException {
+        throws UnsupportedEncodingException {
 
         this.os = os;
         this.bag = bag;
         this.config = (TableWidgetConfig) widgetConfig;
         pathString = config.getPathStrings();
         origPath = new Path(model, pathWithNoConstraints(pathString));
-        ClassDescriptor cld = origPath.getEndClassDescriptor();
+        cld = origPath.getEndClassDescriptor();
         type = cld.getUnqualifiedName();
         model = os.getModel();
         displayFields = config.getDisplayFields();
         exportFields = config.getExportFields();
+
+        setFlattenedResults();
+    }
+
+
+    /**
+     * builds, runs query.  builds the results sets to be used to build widget
+     * @throws UnsupportedEncodingException if url can't be encoded
+     */
+    public void setFlattenedResults() throws UnsupportedEncodingException {
         WebConfig webConfig = config.getWebConfig();
         String externalLink = config.getExternalLink();
-
-        // TODO validate start type vs. bag type
 
         Query q = getQuery(false, null);
 
@@ -204,6 +213,7 @@ public class TableWidgetLdr
         q = getQuery(true, null);
         widgetTotal = calcTotal(os, q);
     }
+
 
     /**
      * get the flattened results
