@@ -30,7 +30,7 @@
     <attribute name="mRNASignal" value="1016.15"/>
     <attribute name="mRNASignalSEM" value="23.17"/>
     <attribute name="presentCall" value="4"/>
-    <reference name="dataSet" ref_id="1_1"/>
+    <collection name="dataSets"><reference ref_id="1_1"/></collection>
     <reference name="experiment" ref_id="3_1"/>
     <reference name="material" ref_id="5_1"/>
     <collection name="assays"><reference ref_id="4_1"/></collection>
@@ -47,7 +47,7 @@
     <attribute name="mRNASignal" value="1874.55"/>
     <attribute name="mRNASignalSEM" value="85.34"/>
     <attribute name="presentCall" value="4"/>
-    <reference name="dataSet" ref_id="1_1"/>
+    <collection name="dataSets"><reference ref_id="1_1"/></collection>
     <reference name="experiment" ref_id="3_1"/>
     <reference name="material" ref_id="5_1"/>
     <collection name="assays"><reference ref_id="4_2"/></collection>
@@ -59,7 +59,7 @@
     <attribute name="mRNASignal" value="1458"/>
     <attribute name="mRNASignalSEM" value="127.78"/>
     <attribute name="presentCall" value="4"/>
-    <reference name="dataSet" ref_id="1_1"/>
+    <collection name="dataSets"><reference ref_id="1_1"/></collection>
     <reference name="experiment" ref_id="3_1"/>
     <reference name="material" ref_id="5_1"/>
     <collection name="assays"><reference ref_id="4_8"/></collection>
