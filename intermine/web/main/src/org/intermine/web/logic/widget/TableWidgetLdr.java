@@ -394,8 +394,11 @@ public class TableWidgetLdr
         return qcEnd;
     }
 
-    // return a path with out any [] constraints
-    private String pathWithNoConstraints(String path) {
+    /**
+     * @param path the path to parse
+     * @return a path with out any [] constraints
+     */
+    protected String pathWithNoConstraints(String path) {
         StringBuffer sb = new StringBuffer(path.length());
         String[] queryBits = path.split("\\.");
         for (int i = 0; i < queryBits.length; i++) {

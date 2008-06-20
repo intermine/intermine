@@ -32,35 +32,35 @@ public abstract class WidgetConfig
     private String dataSetLoader;
     private String link;
     private String typeClass;
-    
+
     /**
      * The Constructor
      */
     public WidgetConfig() {
         super();
     }
-    
+
     /**
      * @return the id
      */
     public String getId() {
         return id;
     }
-    
+
     /**
      * @param id the id to set
      */
     public void setId(String id) {
         this.id = id;
     }
-    
+
     /**
      * @return the description
      */
     public String getDescription() {
         return description;
     }
-    
+
     /**
      * @param description the description to set
      */
@@ -81,7 +81,7 @@ public abstract class WidgetConfig
     public void setTitle(String title) {
         this.title = title;
     }
-    
+
     /**
      * Get the value of dataSetLoader
      * @return the value of dataSetLoader
@@ -98,7 +98,7 @@ public abstract class WidgetConfig
     public void setDataSetLoader(String dataSetLoader) {
         this.dataSetLoader = dataSetLoader;
     }
-    
+
     /**
      * Get the link
      * @return the link
@@ -114,16 +114,16 @@ public abstract class WidgetConfig
     public void setLink(String link) {
         this.link = link;
     }
-    
+
 
     /**
      * @param imBag the InterMineBag
      * @param os the ObjectStore
      * @return the getExtraAttributes
-     * @exception Exception if something goes wrong      
+     * @exception Exception if something goes wrong
      */
-    public abstract Map<String, Collection<String>> getExtraAttributes(InterMineBag imBag, 
-                                                  ObjectStore os) 
+    public abstract Map<String, Collection<String>> getExtraAttributes(InterMineBag imBag,
+                                                  ObjectStore os)
     throws Exception;
 
     /**
@@ -135,7 +135,7 @@ public abstract class WidgetConfig
      * @param externalLink the externalLink to set
      */
     public abstract void setExternalLink(String externalLink);
-        
+
     /**
      * @return the externalLinkLabel
      */
@@ -159,15 +159,15 @@ public abstract class WidgetConfig
     public void setTypeClass(String typeClass) {
         this.typeClass = typeClass;
     }
-    
+
     /**
-     * @param imBag
-     * @param os
-     * @param selectedExtraAttribute
-     * @return
+     * @param imBag the bag for this widget
+     * @param os objectstore
+     * @param attributes extra attribute - like organism
+     * @return the widget
      */
     public abstract Widget getWidget(InterMineBag imBag, ObjectStore os,
                                      List<String> attributes);
 
-    
+
 }
