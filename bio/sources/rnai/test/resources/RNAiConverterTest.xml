@@ -81,6 +81,7 @@
 <item id="9_2" class="http://www.flymine.org/model/genomic#RNAiScreen">
 <reference name="organism" ref_id="2_1"/>
 <reference name="publication" ref_id="8_2"/>
+<collection name="dataSet" ref_id="1_1"/>
 </item>
 <item id="4_1" class="http://www.flymine.org/model/genomic#Gene">
 <attribute name="primaryIdentifier" value="WBGene00000516"/>
