@@ -11,5 +11,6 @@
 	<classpathentry combineaccessrules="false" kind="src" path="/intermine-objectstore-test"/>
 	<classpathentry combineaccessrules="false" kind="src" path="/bio-postprocess-main"/>
 	<classpathentry combineaccessrules="false" kind="src" path="/bio-postprocess-test"/>
+	<classpathentry kind="lib" path="test/resources"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>
