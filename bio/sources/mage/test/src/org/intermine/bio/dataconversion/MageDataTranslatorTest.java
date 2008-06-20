@@ -22,6 +22,7 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.TreeSet;
 
 import org.intermine.dataconversion.DataTranslatorTestCase;
 import org.intermine.dataconversion.MockItemReader;
@@ -622,7 +623,7 @@ public class MageDataTranslatorTest extends DataTranslatorTestCase {
         expResult.setCollection("reporters", new ArrayList(Collections.singleton("3_1")));
         expResult.setReference("analysis", "6_1");
         expResult.setReference("experiment", "6_1");
-        expResult.setReference("source", "-1_1");
+        expResult.setReference("dataSet", "-1_1");
         expResult.setCollection("samples", new ArrayList(Collections.singleton("16_1")));
 
         assertEquals(expResult, translator.processMicroArrayResult(rh));
@@ -849,9 +850,9 @@ public class MageDataTranslatorTest extends DataTranslatorTestCase {
         translator.translate(tgtIw);
 
         Map expMap = new LinkedHashMap();
-        expMap.put("57_2", new ArrayList(Arrays.asList(new Object[]{"5_2", "5_3"})));
-        expMap.put("57_3", new ArrayList(Arrays.asList(new Object[]{"5_4", "5_5"})));
-        expMap.put("57_1", new ArrayList(Arrays.asList(new Object[]{"5_2", "5_3", "5_4", "5_5"})));
+        expMap.put("57_2", new TreeSet(Arrays.asList("5_2", "5_3")));
+        expMap.put("57_3", new TreeSet(Arrays.asList("5_4", "5_5")));
+        expMap.put("57_1", new TreeSet(Arrays.asList("5_2", "5_3", "5_4", "5_5")));
         assertEquals(expMap, translator.bioAssayMap);
 
     }
