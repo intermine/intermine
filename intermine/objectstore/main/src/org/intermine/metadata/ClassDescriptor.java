@@ -20,6 +20,7 @@ import java.util.Set;
 import org.intermine.util.StringUtil;
 import org.intermine.util.TextTable;
 import org.intermine.util.TypeUtil;
+import org.intermine.util.Util;
 
 /**
  * Describe a business model class.  Gives access to attribute, reference and collection
@@ -200,13 +201,37 @@ public class ClassDescriptor implements Comparable<ClassDescriptor>
             for (FieldDescriptor fd : toAdd.values()) {
                 FieldDescriptor fdAlready = map.get(fd.getName());
                 if ((fdAlready != null) && (fd != fdAlready)) {
-                    if (!((fd instanceof AttributeDescriptor)
-                                && (fdAlready instanceof AttributeDescriptor)
-                                && (((AttributeDescriptor) fd).getType()
-                                    .equals(((AttributeDescriptor) fdAlready).getType())))) {
+                    if (fd.relationType() != fdAlready.relationType()) {
                         throw new MetaDataException("Incompatible similarly named fields ("
                                                     + fd.getName() + ") inherited"
                                 + " from multiple superclasses and interfaces in " + getName());
+                    }
+
+                    if (fd instanceof AttributeDescriptor) {
+                        AttributeDescriptor ad = (AttributeDescriptor) fd;
+                        if (!ad.getType().equals(((AttributeDescriptor) fdAlready).getType())) {
+                            throw new MetaDataException("Incompatible similarly named fields ("
+                                                        + fd.getName() + ") inherited"
+                                    + " from multiple superclasses and interfaces in " + getName());
+                        }
+                    } else {
+                        if (fd instanceof ReferenceDescriptor) {
+                            ReferenceDescriptor rd = (ReferenceDescriptor) fd;
+                            ReferenceDescriptor rdAlready = (ReferenceDescriptor) fdAlready;
+                            String referencedClassName = rd.getReferencedClassName();
+                            String reverseFieldName = rd.getReverseReferenceFieldName();
+                            String alreadyRevFieldName = rdAlready.getReverseReferenceFieldName();
+                            if (!referencedClassName.equals(rdAlready.getReferencedClassName())
+                                || !Util.equals(reverseFieldName, alreadyRevFieldName)) {
+                                throw new MetaDataException("Incompatible similarly named fields ("
+                                                            + fd.getName() + ") inherited"
+                                        + " from multiple superclasses and interfaces in "
+                                        + getName());
+                            }
+                        } else {
+                            throw new IllegalArgumentException("Descriptor has unknown type: "
+                                                               + fd);
+                        }
                     }
                 } else {
                     map.put(fd.getName(), fd);
