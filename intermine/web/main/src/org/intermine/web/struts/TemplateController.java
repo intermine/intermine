@@ -397,7 +397,8 @@ public class TemplateController extends TilesAction
                 //fetch AutoCompleter from servletContext
                 AutoCompleter ac = (AutoCompleter) 
                                         servletContext.getAttribute(Constants.AUTO_COMPLETER);
-                if (ac.hasAutocompleter(node.getParentType(), node.getFieldName())) {
+                if (ac != null 
+                        && ac.hasAutocompleter(node.getParentType(), node.getFieldName())) {
                     autoMap.put(node.getParentType() + "." + node.getFieldName(),
                             "useAutoCompleter");
                     //request.setAttribute("classDescriptor", node.getParentType());
