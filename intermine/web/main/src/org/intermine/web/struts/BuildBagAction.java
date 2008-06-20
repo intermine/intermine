@@ -73,7 +73,7 @@ public class BuildBagAction extends InterMineAction
         String type = buildBagForm.getType();
 
         if (StringUtils.isEmpty(type)) {
-            recordError(new ActionMessage("bagBuild.noBagPaste"), request);
+            recordError(new ActionMessage("bagBuild.typeNotSet"), request);
             return mapping.findForward("bags");
         }
 
@@ -96,24 +96,23 @@ public class BuildBagAction extends InterMineAction
         FormFile formFile = buildBagForm.getFormFile();
 
         /*
-         * FormFile used from Struts works a bit strangely. 
-         * 1. Although the file does't exist formFile.getInputStream() doesn't 
+         * FormFile used from Struts works a bit strangely.
+         * 1. Although the file does't exist formFile.getInputStream() doesn't
          * throw FileNotFoundException.
-         * 2. When user specified empty file path or very invalid file path, 
-         * like file path not starting at '/' then formFile.getFileName() returns empty string. 
+         * 2. When user specified empty file path or very invalid file path,
+         * like file path not starting at '/' then formFile.getFileName() returns empty string.
          */
         if (formFile != null && formFile.getFileName() != null
                             && formFile.getFileName().length() > 0) {
 
             String mimetype = formFile.getContentType();
             if (!mimetype.equals("application/octet-stream") && !mimetype.startsWith("text")) {
-                recordError(new ActionMessage("bagBuild.notText",
-                                              mimetype), request);
+                recordError(new ActionMessage("bagBuild.notText", mimetype), request);
                 return mapping.findForward("bags");
             }
             if (formFile.getFileSize() == 0) {
                 recordError(new ActionMessage("bagBuild.noBagFileOrEmpty"), request);
-                return mapping.findForward("bags");                
+                return mapping.findForward("bags");
             }
             reader = new BufferedReader(new InputStreamReader(formFile.getInputStream()));
         } else if (buildBagForm.getText() != null && buildBagForm.getText().length() != 0) {
@@ -121,9 +120,8 @@ public class BuildBagAction extends InterMineAction
             if (trimmedText.length() == 0) {
                 recordError(new ActionMessage("bagBuild.noBagPaste"), request);
                 return mapping.findForward("bags");
-            } else {
-                reader = new BufferedReader(new StringReader(trimmedText));
             }
+            reader = new BufferedReader(new StringReader(trimmedText));
         } else {
             recordError(new ActionMessage("bagBuild.noBagFile"), request);
             return mapping.findForward("bags");
