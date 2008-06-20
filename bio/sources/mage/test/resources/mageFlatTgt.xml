@@ -16,6 +16,7 @@
     <attribute name="type" value="Fold Change"/>
     <attribute name="value" value="1.77306715111304"/>
     <reference name="experiment" ref_id="3_1"/>
+    <reference name="dataSet" ref_id="1_1"/>
   </item>
   <item id="5_1" class="http://www.flymine.org/model/genomic#Synonym">
     <attribute name="type" value="identifier"/>
@@ -43,6 +44,7 @@
     <attribute name="type" value="Fold Change"/>
     <attribute name="value" value="1.70531060431265"/>
     <reference name="experiment" ref_id="3_1"/>
+    <reference name="dataSet" ref_id="1_1"/>
   </item>
   <item id="0_1" class="http://www.flymine.org/model/genomic#DataSource">
     <attribute name="name" value="Proceedings of the National Academy of Sciences USA"/>
