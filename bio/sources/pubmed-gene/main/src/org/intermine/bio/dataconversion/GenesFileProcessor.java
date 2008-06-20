@@ -194,6 +194,9 @@ public class GenesFileProcessor
         // if there isn't primary identifier gene is skipped
         if (publications != null && !primIdentifier.equals("-")) {
             primIdentifier = removeDatabasePrefix(primIdentifier);
+            if (!isValidPrimIdentifier(primIdentifier)) {
+                return;
+            }
             Item gene = createGene(ncbiGeneId, primIdentifier, organism);
             for (String writerPubId : publications) {
                 gene.addToCollection("publications", writerPubId);
@@ -214,6 +217,10 @@ public class GenesFileProcessor
             }
             alreadyProcessedGenes.add(ncbiGeneId);
         }
+    }
+
+    private boolean isValidPrimIdentifier(String primIdentifier) {
+        return !primIdentifier.contains("|");
     }
 
     private String resolvePrimIdentifier(String taxonId, String primIdentifier) {
@@ -249,7 +256,7 @@ public class GenesFileProcessor
             dbId = dbId.substring(9);
         } else if (dbId.toUpperCase().startsWith("FLYBASE:")) {
             dbId = dbId.substring(8);
-        } else if (dbId.startsWith("VECTORBASE:")) {
+        } else if (dbId.toUpperCase().startsWith("VECTORBASE:")) {
             dbId = dbId.substring(11);
         }
         return dbId;

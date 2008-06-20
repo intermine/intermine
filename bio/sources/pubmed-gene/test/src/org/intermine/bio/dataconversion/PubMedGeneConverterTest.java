@@ -49,6 +49,10 @@ public class PubMedGeneConverterTest extends ItemsTestCase
         converter = new PubMedGeneConverter(itemWriter, model);
     }
 
+    /**
+     * Basic test of converter functionality.
+     * @throws Exception
+     */
     public void testSimpleFiles() throws Exception {
         process("gene2pubmed", "gene_info");
         
@@ -62,6 +66,17 @@ public class PubMedGeneConverterTest extends ItemsTestCase
         checkGene("171595", "WBGene00021678", "6239", new String[]{"3"});
         checkGene("171597", "WBGene00021679", "6239", new String[]{"4"});
     }
+    
+    /**
+     * Test that redundant database prefixes of primary identifiers are removed.
+     */
+    public void testPrefixRemoved() throws Exception {
+        process("gene2pubmed", "gene_infoPrefixRemoved");
+        checkGene("4126706", "WbGene308375", "34", new String[]{"16689796", "17573816", "17581122", "17590236"});
+        checkGene("171593", "WbGene00022279", "6239", new String[]{"1"});
+        checkGene("171594", "WbGene00021677", "6239", new String[]{"2"});
+    }
+
 
     /**
      * Test case when there is gene in gene information file without
@@ -72,6 +87,17 @@ public class PubMedGeneConverterTest extends ItemsTestCase
         process("gene2pubmedWithoutPublications", "gene_info");
         // only one gene, others don't  have publications
         assertEquals(1, getGenes().size());
+    }
+    
+    /**
+     * Test case when primary identifier is invalid, for example 
+     * is  like WbGene308375|WbGene3083343 that denotes that 
+     * gene with specific ncbi id corresponds more WB genes but 
+     * for us it is invalid gene and is not processed
+     */
+    public void  testInvalidIdsRemoved() throws Exception {
+        process("gene2pubmed", "gene_infoInvalidIdsRemoved");
+        assertEquals(4, getGenes().size());
     }
     
     /**
@@ -199,4 +225,5 @@ public class PubMedGeneConverterTest extends ItemsTestCase
         }
         return null;
     }
+    
 }
