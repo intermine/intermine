@@ -19,7 +19,7 @@
   <class className="org.flymine.model.genomic.AnalysisResult">
     <fields>
       <fieldconfig fieldExpr="confidence"/>
-      <fieldconfig fieldExpr="source.title"/>
+      <fieldconfig fieldExpr="dataSet.title"/>
     </fields>
   </class>
 
@@ -122,7 +122,7 @@
     <fields>
       <fieldconfig fieldExpr="score"/>
       <fieldconfig fieldExpr="confidence"/>
-      <fieldconfig fieldExpr="source.title"/>
+      <fieldconfig fieldExpr="dataSet.title"/>
     </fields>
   </class>
 
@@ -760,7 +760,7 @@
                      className="org.intermine.bio.web.export.GFF3HttpExporter"/>
   <tableExportConfig id="proteinInteractionExporter" actionPath="/exportAction?type=proteinInteractionExporter"
                      className="org.intermine.bio.web.ProteinInteractionExporter"/>
-                     
+
    <widgets>
       <enrichmentwidgetdisplayer id="protein_features" title="UniProt Features"
                                  link="org.intermine.bio.web.widget.UniProtFeaturesURLQuery"
@@ -780,7 +780,7 @@
                                  filters=""
                                  filterLabel=""
                                  typeClass="org.flymine.model.genomic.Protein"
-                                 max="0.10"  />   
+                                 max="0.10"  />
 
       <graphdisplayer id="chromosome_distribution" title="Chromosome Distribution" domainLabel="Chromosome" rangeLabel="Count" dataSetLoader="org.intermine.bio.web.widget.ChromosomeDistributionDataSetLdr"
                       toolTipGen="org.intermine.web.logic.widget.ToolTipGenerator" link="org.intermine.bio.web.widget.ChromosomeDistributionGraphURLGenerator"
