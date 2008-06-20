@@ -49,7 +49,7 @@ public class MageFlatFileConverterTest extends ItemsTestCase {
         converter.close();
 
         // uncomment to write a new target items file
-        writeItemsFile(writer.getItems(), "/tmp/mage-flat-tgt-items.xml");
+//        writeItemsFile(writer.getItems(), "/tmp/mage-flat-tgt-items.xml");
 
         Set expected = readItemSet("mageFlatTgt.xml");
 

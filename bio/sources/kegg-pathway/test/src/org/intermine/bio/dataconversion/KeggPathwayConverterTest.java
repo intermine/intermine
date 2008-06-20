@@ -52,7 +52,7 @@ public class KeggPathwayConverterTest extends ItemsTestCase
         converter.close();
 
         // uncomment to write out a new target items file
-        writeItemsFile(itemWriter.getItems(), "/tmp/kegg-tgt-items.xml");
+//        writeItemsFile(itemWriter.getItems(), "/tmp/kegg-tgt-items.xml");
 
         assertEquals(readItemSet("kegg-tgt-items.xml"), itemWriter.getItems());
     }

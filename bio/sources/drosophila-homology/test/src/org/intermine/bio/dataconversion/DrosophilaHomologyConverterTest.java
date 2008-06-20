@@ -46,7 +46,7 @@ public class DrosophilaHomologyConverterTest extends ItemsTestCase
         converter.process(reader);
 
         // uncomment to write out a new target items file
-        writeItemsFile(itemWriter.getItems(), "/tmp/dros-homology-tgt.xml");
+//        writeItemsFile(itemWriter.getItems(), "/tmp/dros-homology-tgt.xml");
 
         assertEquals(readItemSet("DrosophilaHomologyConverterTest.xml"), itemWriter.getItems());
     }
