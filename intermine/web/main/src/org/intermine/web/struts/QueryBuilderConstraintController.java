@@ -118,15 +118,15 @@ public class QueryBuilderConstraintController extends TilesAction
                 useBags = ClassKeyHelper.isKeyField(classKeys, nodeType, node
                         .getFieldName());
                 //fetch AutoCompleter from servletContext
-                AutoCompleter ac = (AutoCompleter) 
+                AutoCompleter ac = (AutoCompleter)
                                         servletContext.getAttribute(Constants.AUTO_COMPLETER);
-                if (ac.hasAutocompleter(node.getParentType(), node.getFieldName())) {
+                if (ac != null && ac.hasAutocompleter(node.getParentType(), node.getFieldName())) {
                     // ac.createRAMIndex(node.getParentType() + "." + node.getFieldName());
                     request.setAttribute("useAutoCompleter", ac);
-                    request.setAttribute("classDescriptor", node.getParentType());
-                    request.setAttribute("fieldDescriptor", node.getFieldName());
                 }
-                
+                request.setAttribute("classDescriptor", node.getParentType());
+                request.setAttribute("fieldDescriptor", node.getFieldName());
+
             } else {
                 if ((node.getPathString().indexOf('.')) >= 0) {
                     nodeType = TypeUtil.unqualifiedName(MainHelper.getTypeForPath(
