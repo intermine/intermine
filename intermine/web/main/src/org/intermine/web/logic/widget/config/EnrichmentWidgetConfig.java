@@ -43,7 +43,7 @@ public class EnrichmentWidgetConfig extends WidgetConfig
     public void setLabel(String label) {
         this.label = label;
     }
-    
+
     /**
      * @return the filters
      */
@@ -100,7 +100,10 @@ public class EnrichmentWidgetConfig extends WidgetConfig
     /**
      * {@inheritDoc}
      */
-    public Map<String, Collection<String>> getExtraAttributes(InterMineBag imBag, ObjectStore os) {
+    public Map<String, Collection<String>> getExtraAttributes(@SuppressWarnings("unused")
+                                                              InterMineBag imBag,
+                                                              @SuppressWarnings("unused")
+                                                              ObjectStore os) {
         Map<String, Collection<String>> returnMap = new HashMap<String, Collection<String>>();
         returnMap.put(getFilterLabel(), Arrays.asList(getFilters().split(",")));
         return returnMap;
@@ -135,7 +138,7 @@ public class EnrichmentWidgetConfig extends WidgetConfig
     public void setExternalLinkLabel(String externalLinkLabel) {
         this.externalLinkLabel = externalLinkLabel;
     }
-    
+
     /**
      * {@inheritDoc}
      */

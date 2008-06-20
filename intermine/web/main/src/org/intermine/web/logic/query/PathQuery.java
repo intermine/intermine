@@ -82,9 +82,8 @@ public class PathQuery
     public String getConstraintLogic() {
         if (constraintLogic == null) {
             return null;
-        } else {
-            return constraintLogic.toString();
         }
+        return constraintLogic.toString();
     }
 
     /**

@@ -42,7 +42,8 @@ public class TableWidgetConfig extends WidgetConfig
     private Map<String, List<FieldDescriptor>> classKeys;
     private String pathStrings, externalLink, externalLinkLabel;
     private String columnTitle = null;
-    
+
+
     /**
      * @return the fields
      */
@@ -56,9 +57,9 @@ public class TableWidgetConfig extends WidgetConfig
     public void setDisplayFields(String fields) {
         this.displayFields = fields;
     }
-    
 
-    
+
+
     /**
      * @return the title for the count column
      */
@@ -72,7 +73,7 @@ public class TableWidgetConfig extends WidgetConfig
     public void setColumnTitle(String columnTitle) {
         this.columnTitle = columnTitle;
     }
-    
+
     /**
      * Do-nothing implementation of superclass method
      * @param imBag a bag
@@ -104,7 +105,7 @@ public class TableWidgetConfig extends WidgetConfig
     public void setClassKeys(Map<String, List<FieldDescriptor>> classKeys) {
         this.classKeys = classKeys;
     }
-    
+
     /**
      * Get the classKeys
      * @return the class keys
@@ -112,10 +113,10 @@ public class TableWidgetConfig extends WidgetConfig
     public Map<String, List<FieldDescriptor>> getClassKeys() {
         return classKeys;
     }
-    
+
 
     /**
-     * Comma separated list of path strings to appear in the widget, ie Employee.firstName, 
+     * Comma separated list of path strings to appear in the widget, ie Employee.firstName,
      * Employee.lastName
      * @return the pathStrings
      */
@@ -129,7 +130,7 @@ public class TableWidgetConfig extends WidgetConfig
     public void setPathStrings(String pathStrings) {
         this.pathStrings = pathStrings;
     }
-    
+
     /**
      * {@inheritDoc}
      */
@@ -171,16 +172,13 @@ public class TableWidgetConfig extends WidgetConfig
     public void setExportFields(String exportFields) {
         this.exportFields = exportFields;
     }
-    
+
     /**
-     * @param imBag
-     * @param os
-     * @param selectedExtraAttribute
-     * @return
+     * {@inheritDoc}
      */
     public TableWidget getWidget(InterMineBag imBag, ObjectStore os,
                                  List<String> selectedExtraAttribute) {
         return new TableWidget(this, imBag, os, selectedExtraAttribute.get(0));
     }
-    
+
 }
