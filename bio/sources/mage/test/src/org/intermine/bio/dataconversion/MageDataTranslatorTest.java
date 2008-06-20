@@ -623,7 +623,7 @@ public class MageDataTranslatorTest extends DataTranslatorTestCase {
         expResult.setCollection("reporters", new ArrayList(Collections.singleton("3_1")));
         expResult.setReference("analysis", "6_1");
         expResult.setReference("experiment", "6_1");
-        expResult.setReference("dataSet", "-1_1");
+        expResult.setCollection("dataSets", new ArrayList(Collections.singleton("-1_1")));
         expResult.setCollection("samples", new ArrayList(Collections.singleton("16_1")));
 
         assertEquals(expResult, translator.processMicroArrayResult(rh));

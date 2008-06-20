@@ -10,8 +10,12 @@ package org.intermine.bio.dataconversion;
  *
  */
 
+import java.io.IOException;
+import java.io.InputStream;
+import java.lang.reflect.Constructor;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -25,6 +29,7 @@ import java.util.Set;
 import java.util.StringTokenizer;
 import java.util.TreeSet;
 
+import org.apache.log4j.Logger;
 import org.intermine.InterMineException;
 import org.intermine.dataconversion.DataTranslator;
 import org.intermine.dataconversion.ItemPath;
@@ -39,12 +44,6 @@ import org.intermine.xml.full.Item;
 import org.intermine.xml.full.ItemHelper;
 import org.intermine.xml.full.Reference;
 import org.intermine.xml.full.ReferenceList;
-
-import java.io.IOException;
-import java.io.InputStream;
-import java.lang.reflect.Constructor;
-
-import org.apache.log4j.Logger;
 
 /**
  * Convert MAGE data in fulldata Item format conforming to a source OWL definition
@@ -1391,7 +1390,9 @@ public class MageDataTranslator extends DataTranslator
                     maResult.setReference("experiment", experimentId);
                     maResult.setReference("analysis", experimentId);
                     // source refrence to DataSet
-                    maResult.setReference("dataSet", (String) exptToDataSet.get(experimentId));
+                    //maResult.setReference("dataSet", (String) exptToDataSet.get(experimentId));
+                    maResult.setCollection("dataSets",
+                    new ArrayList(Collections.singleton((String) exptToDataSet.get(experimentId))));
                 }
             }
         }
