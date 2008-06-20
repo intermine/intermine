@@ -267,6 +267,32 @@ public class ClassDescriptorTest extends TestCase
         Model model = new Model("model", uri, new HashSet(Arrays.asList(new Object[] {cld1, cld2, cld3})));
     }
 
+    public void testMultiInheritanceLegalRef() throws Exception {
+        ReferenceDescriptor atd1 = new ReferenceDescriptor("atd1", "package.name.Class2", null);
+        Set atds1 = new HashSet(Collections.singleton(atd1));
+        ReferenceDescriptor atd2 = new ReferenceDescriptor("atd1", "package.name.Class2", null);
+        Set atds2 = new HashSet(Collections.singleton(atd2));
+        ClassDescriptor cld1 = new ClassDescriptor("package.name.Class1", null, true, new HashSet(), atds1, new HashSet());
+        ClassDescriptor cld2 = new ClassDescriptor("package.name.Class2", null, true, new HashSet(), atds2, new HashSet());
+        ClassDescriptor cld3 = new ClassDescriptor("package.name.Class3", "package.name.Class1 package.name.Class2", false, new HashSet(), new HashSet(), new HashSet());
+        Model model = new Model("model", uri, new HashSet(Arrays.asList(new Object[] {cld1, cld2, cld3})));
+        ReferenceDescriptor rd = cld3.getReferenceDescriptorByName("atd1", true);
+        assertEquals("package.name.Class2", rd.getReferencedClassName());
+    }
+
+    public void testMultiInheritanceLegalCol() throws Exception {
+        CollectionDescriptor atd1 = new CollectionDescriptor("atd1", "package.name.Class2", null);
+        Set atds1 = new HashSet(Collections.singleton(atd1));
+        CollectionDescriptor atd2 = new CollectionDescriptor("atd1", "package.name.Class2", null);
+        Set atds2 = new HashSet(Collections.singleton(atd2));
+        ClassDescriptor cld1 = new ClassDescriptor("package.name.Class1", null, true, new HashSet(), new HashSet(), atds1);
+        ClassDescriptor cld2 = new ClassDescriptor("package.name.Class2", null, true, new HashSet(), new HashSet(), atds2);
+        ClassDescriptor cld3 = new ClassDescriptor("package.name.Class3", "package.name.Class1 package.name.Class2", false, new HashSet(), new HashSet(), new HashSet());
+        Model model = new Model("model", uri, new HashSet(Arrays.asList(new Object[] {cld1, cld2, cld3})));
+        ReferenceDescriptor rd = cld3.getCollectionDescriptorByName("atd1", true);
+        assertEquals("package.name.Class2", rd.getReferencedClassName());
+    }
+
     public void testMultiInheritanceIllegalAtt() throws Exception {
         AttributeDescriptor atd1 = new AttributeDescriptor("atd1", "int");
         Set atds1 = new HashSet(Collections.singleton(atd1));
@@ -319,36 +345,6 @@ public class ClassDescriptorTest extends TestCase
         Set atds2 = new HashSet(Collections.singleton(atd2));
         ClassDescriptor cld1 = new ClassDescriptor("package.name.Class1", null, true, new HashSet(), new HashSet(), atds1);
         ClassDescriptor cld2 = new ClassDescriptor("package.name.Class2", null, true, new HashSet(), atds2, new HashSet());
-        ClassDescriptor cld3 = new ClassDescriptor("package.name.Class3", "package.name.Class1 package.name.Class2", false, new HashSet(), new HashSet(), new HashSet());
-        try {
-            Model model = new Model("model", uri, new HashSet(Arrays.asList(new Object[] {cld1, cld2, cld3})));
-            fail("Expected: MetaDataException");
-        } catch (MetaDataException e) {
-        }
-    }
-
-    public void testMultiInheritanceIllegalRef() throws Exception {
-        ReferenceDescriptor atd1 = new ReferenceDescriptor("atd1", "package.name.Class2", null);
-        Set atds1 = new HashSet(Collections.singleton(atd1));
-        ReferenceDescriptor atd2 = new ReferenceDescriptor("atd1", "package.name.Class2", null);
-        Set atds2 = new HashSet(Collections.singleton(atd2));
-        ClassDescriptor cld1 = new ClassDescriptor("package.name.Class1", null, true, new HashSet(), atds1, new HashSet());
-        ClassDescriptor cld2 = new ClassDescriptor("package.name.Class2", null, true, new HashSet(), atds2, new HashSet());
-        ClassDescriptor cld3 = new ClassDescriptor("package.name.Class3", "package.name.Class1 package.name.Class2", false, new HashSet(), new HashSet(), new HashSet());
-        try {
-            Model model = new Model("model", uri, new HashSet(Arrays.asList(new Object[] {cld1, cld2, cld3})));
-            fail("Expected: MetaDataException");
-        } catch (MetaDataException e) {
-        }
-    }
-
-    public void testMultiInheritanceIllegalCol() throws Exception {
-        CollectionDescriptor atd1 = new CollectionDescriptor("atd1", "package.name.Class2", null);
-        Set atds1 = new HashSet(Collections.singleton(atd1));
-        CollectionDescriptor atd2 = new CollectionDescriptor("atd1", "package.name.Class2", null);
-        Set atds2 = new HashSet(Collections.singleton(atd2));
-        ClassDescriptor cld1 = new ClassDescriptor("package.name.Class1", null, true, new HashSet(), new HashSet(), atds1);
-        ClassDescriptor cld2 = new ClassDescriptor("package.name.Class2", null, true, new HashSet(), new HashSet(), atds2);
         ClassDescriptor cld3 = new ClassDescriptor("package.name.Class3", "package.name.Class1 package.name.Class2", false, new HashSet(), new HashSet(), new HashSet());
         try {
             Model model = new Model("model", uri, new HashSet(Arrays.asList(new Object[] {cld1, cld2, cld3})));
