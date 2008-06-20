@@ -12,11 +12,11 @@
 
   <script type="text/javascript" src="js/tablesort.js"></script>
   <link rel="stylesheet" type="text/css" href="css/sorting.css"/>
-  
+
   <tiles:useAttribute id="type" name="type"/>
 
   <im:body id="savedTemplates">
-  
+
     <script LANGUAGE="JavaScript">
       <!--//<![CDATA[
           function confirmAction() {
@@ -28,9 +28,17 @@
     <p>
       <fmt:message key="history.savedtemplates.intro"/>
     </p>
-    
+
     <br/>
-    
+
+        <span class="smallnote">
+      <html:link action="/import" titleKey="begin.importTemplatesDesc">
+        <fmt:message key="begin.importTemplates"/>
+      </html:link>
+    </span>
+
+     <br/> <br/>
+
     <%-- Choose the queries to display --%>
     <c:choose>
       <c:when test="${empty PROFILE.savedTemplates}">
@@ -39,7 +47,7 @@
         </div>
       </c:when>
       <c:otherwise>
-        
+
         <html:form action="/modifyTemplate">
         <table class="sortable-onload-3 rowstyle-alt no-arrow" cellspacing="0">
           <tr>
@@ -62,7 +70,7 @@
             <th align="center" nowrap>
               <fmt:message key="history.actionscolumnheader"/>
             </th>
-          </tr>    
+          </tr>
           <c:forEach items="${PROFILE.savedTemplates}" var="savedTemplate" varStatus="status">
             <tr>
               <td align="center" style="border-right: 1px solid #C1DAD7; border-bottom: 1px solid #C1DAD7;">
@@ -71,7 +79,7 @@
                   <c:out value="${savedTemplate.key}"/>
                 </html:multibox>
               </td>
-              
+
               <c:choose>
                 <c:when test="${!savedTemplate.value.valid}">
                   <td class="sorting" align="left" nowrap>
@@ -101,7 +109,7 @@
                   </td>
                 </c:otherwise>
               </c:choose>
-              
+
               <td class="sorting">
                 ${savedTemplate.value.title}
               </td>
@@ -124,11 +132,11 @@
                   <c:otherwise>
                     ${savedTemplate.value.comment}
                   </c:otherwise>
-                </c:choose>                
+                </c:choose>
                 &nbsp;
               </td>
               <td class="sorting" align="center" nowrap>
-               <html:link action="/template?name=${savedTemplate.value.name}&amp;scope=user" 
+               <html:link action="/template?name=${savedTemplate.value.name}&amp;scope=user"
                          titleKey="history.action.execute.hover">
                   <fmt:message key="history.action.execute"/>
                </html:link> |
@@ -153,7 +161,7 @@
           </c:forEach>
         </table>
         <br/>
-        <html:submit property="delete" disabled="true" styleId="delete_button" 
+        <html:submit property="delete" disabled="true" styleId="delete_button"
                      onclick="return confirmAction()">
           <fmt:message key="history.delete"/>
         </html:submit>
