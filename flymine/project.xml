@@ -317,7 +317,7 @@
                 value="org.intermine.bio.dataconversion.FlyBaseCDSFastaLoaderTask"/>
       <property name="fasta.taxonId" value="7238"/>
       <property name="fasta.className" value="org.flymine.model.genomic.CDS"/>
-      <property name="fasta.classAttribute" value="primaryIdentifier"/>      <property name="fasta.loaderClassName" value="org.intermine.bio.dataconversion.FlyBaseUTRFastaLoaderTask"/>
+      <property name="fasta.classAttribute" value="primaryIdentifier"/>
       <property name="fasta.includes" value="dsec-all-CDS-*.fasta"/>
       <property name="fasta.dataSetTitle" value="FlyBase Drosophila sechellia data set"/>
       <property name="src.data.dir" location="/shared/data/flybase/FB2008_05/fasta"/>
