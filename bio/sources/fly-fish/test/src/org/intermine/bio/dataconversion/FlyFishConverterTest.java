@@ -63,7 +63,7 @@ public class FlyFishConverterTest extends ItemsTestCase
         converter.close();
 
         // uncomment to create a new target items files
-        writeItemsFile(itemWriter.getItems(), "/tmp/flyfish_tgt.xml");
+//        writeItemsFile(itemWriter.getItems(), "/tmp/flyfish_tgt.xml");
 
         Set expected = readItemSet("FlyFishTestItems.xml");
         assertEquals(expected, itemWriter.getItems());

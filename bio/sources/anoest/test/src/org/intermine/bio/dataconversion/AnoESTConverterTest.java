@@ -42,7 +42,7 @@ public class AnoESTConverterTest extends ItemsTestCase
         converter.setDataSourceName("FlyBase");
         converter.process();
         itemWriter.close();
-        writeItemsFile(itemWriter.getItems(), "/tmp/AnoESTConverterTest.xml");
+//        writeItemsFile(itemWriter.getItems(), "/tmp/AnoESTConverterTest.xml");
         assertEquals(readItemSet("AnoESTConverterTest.xml"), itemWriter.getItems());
     }
 

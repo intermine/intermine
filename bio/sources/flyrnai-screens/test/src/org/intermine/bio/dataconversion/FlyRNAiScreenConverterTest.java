@@ -51,7 +51,7 @@ public class FlyRNAiScreenConverterTest extends ItemsTestCase
         converter.close();
 
         // uncomment to write out a new target items file
-        writeItemsFile(itemWriter.getItems(), "/tmp/flyrnai-tgt-items.xml");
+//        writeItemsFile(itemWriter.getItems(), "/tmp/flyrnai-tgt-items.xml");
 
         Set expected = readItemSet("FlyRNAiConverterTest_tgt.xml");
 

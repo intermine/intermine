@@ -63,7 +63,7 @@ public class ChadoDBConverterTest extends ItemsTestCase
         converter.setDataSourceName("FlyBase");
         converter.process();
         itemWriter.close();
-        FileWriter fw = new FileWriter("/tmp/chado-db-test-items-" + orgId + ".xml");
+//        FileWriter fw = new FileWriter("/tmp/chado-db-test-items-" + orgId + ".xml");
         PrintWriter pw = new PrintWriter(fw);
         pw.println("<items>");
         for (Object item: itemWriter.getItems()) {

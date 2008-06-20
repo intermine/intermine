@@ -61,7 +61,7 @@ public class EntrezPublicationRetrieverTest extends ItemsTestCase
         public TestEntrezPublicationsRetriever() {
             super();
             setOsAlias("os.bio-test");
-            setOutputFile("/tmp/TestEntrezPublicationsRetriever_dummy");
+//            setOutputFile("/tmp/TestEntrezPublicationsRetriever_dummy");
         }
 
         protected List getPublications(ObjectStore os) {

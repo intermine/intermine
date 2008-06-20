@@ -63,7 +63,7 @@ public class EntrezOrganismRetrieverTest extends ItemsTestCase
         public TestEntrezOrganismRetriever() {
             super();
             setOsAlias("os.bio-test");
-            setOutputFile("/tmp/TestEntrezOrganismRetriever_dummy");
+//            setOutputFile("/tmp/TestEntrezOrganismRetriever_dummy");
         }
 
         protected Map getOrganisms(ObjectStore os) {
