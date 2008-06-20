@@ -10,9 +10,6 @@ package org.intermine.bio.dataconversion;
  *
  */
 
-import java.io.IOException;
-import java.io.InputStream;
-import java.lang.reflect.Constructor;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Comparator;
@@ -28,7 +25,6 @@ import java.util.Set;
 import java.util.StringTokenizer;
 import java.util.TreeSet;
 
-import org.apache.log4j.Logger;
 import org.intermine.InterMineException;
 import org.intermine.dataconversion.DataTranslator;
 import org.intermine.dataconversion.ItemPath;
@@ -43,6 +39,12 @@ import org.intermine.xml.full.Item;
 import org.intermine.xml.full.ItemHelper;
 import org.intermine.xml.full.Reference;
 import org.intermine.xml.full.ReferenceList;
+
+import java.io.IOException;
+import java.io.InputStream;
+import java.lang.reflect.Constructor;
+
+import org.apache.log4j.Logger;
 
 /**
  * Convert MAGE data in fulldata Item format conforming to a source OWL definition
@@ -388,7 +390,7 @@ public class MageDataTranslator extends DataTranslator
             if (derivedBioAssayNs == null) {
                 derivedBioAssayNs = namespaceFromIdentifier(srcItem.getIdentifier());
             }
-            List baList = new ArrayList();
+            Set baList = new TreeSet();
             bioAssayMap.put(srcItem.getIdentifier(), setDerivedBAToMeasuredBA(srcItem, baList));
         }
 
@@ -573,7 +575,7 @@ public class MageDataTranslator extends DataTranslator
      * set up a map of derivedBioAssay to MeasuredBioAssay
      * to be used when setting MicroArrayResult -->bioAssay
      */
-    protected List setDerivedBAToMeasuredBA(Item srcItem, List baList)
+    protected Set setDerivedBAToMeasuredBA(Item srcItem, Set baList)
         throws ObjectStoreException {
 
         if (srcItem.hasCollection("derivedBioAssayMap")) {
@@ -589,7 +591,7 @@ public class MageDataTranslator extends DataTranslator
                                 baList.add(sbaItem.getIdentifier());
                             } else if (sbaItem.getClassName().endsWith("DerivedBioAssay")) {
                                 if (bioAssayMap.containsKey(sbaItem.getIdentifier())) {
-                                    List tempList = (List) bioAssayMap.get(sbaItem.getIdentifier());
+                                    Set tempList = (Set) bioAssayMap.get(sbaItem.getIdentifier());
                                     Iterator listIter = tempList.iterator();
                                     while (listIter.hasNext()) {
                                         baList.add((String) listIter.next());
