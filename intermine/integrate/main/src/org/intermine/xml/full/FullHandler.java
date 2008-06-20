@@ -66,11 +66,15 @@ public class FullHandler extends DefaultHandler
             currentItem.setAttribute(attrs.getValue("name"), attrs.getValue("value"));
         }
         if (qName.equals("reference")) {
+            String value = attrs.getValue("ref_id");
             if (currentCollectionName == null) {
-                currentItem.setReference(attrs.getValue("name"), attrs.getValue("ref_id"));
+                if (attrs.getValue("name") == null) {
+                    throw new RuntimeException("no name given for reference with value: " + value);
+                }
+                currentItem.setReference(attrs.getValue("name"), value);
             } else {
                 // a reference element within a collection element
-                currentItem.addToCollection(currentCollectionName, attrs.getValue("ref_id"));
+                currentItem.addToCollection(currentCollectionName, value);
             }
         }
         if (qName.equals("collection")) {
