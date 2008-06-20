@@ -135,5 +135,6 @@
     <post-process name="create-attribute-indexes"/>
     <post-process name="precompute-queries"/>
     <post-process name="summarise-objectstore"/>
+		<post-process name="create-lucene-index"/>
   </post-processing>
 </project>
