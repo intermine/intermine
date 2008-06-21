@@ -373,7 +373,6 @@
 
     <item id="480" class="" implements="http://www.flymine.org/model/genomic#DataSource">
         <attribute name="name" value="fly-FISH"/>
-        <attribute name="description" value=""/>
         <attribute name="url" value="http://fly-fish.ccbr.utoronto.ca"/>
     </item>
     <item id="481" class="" implements="http://www.flymine.org/model/genomic#DataSet">
@@ -394,7 +393,6 @@
 
     <item id="500" class="" implements="http://www.flymine.org/model/genomic#DataSource">
         <attribute name="name" value="Proceedings of the National Academy of Sciences USA"/>
-        <attribute name="description" value=""/>
         <attribute name="url" value="http://www.pnas.org"/>
     </item>
     <item id="501" class="" implements="http://www.flymine.org/model/genomic#DataSet">
