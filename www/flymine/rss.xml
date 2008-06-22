@@ -10,6 +10,14 @@
 
     <!-- Add new news at the top here -->
     <item>
+      <title>Update of list contents from 12.0 to 13.0 fixed</title>
+      <link>http://www.flymine.org/</link>
+      <description>
+        Problems updating list contents from release 12.0 to 13.0 have now been fixed.  All lists saved in user accounts in release 12.0 have now been correctly updated in 13.0, lists created since the 13.0 release are unaffected.  No saved data has been lost.  Please contact us if you have any questions.
+      </description>
+      <pubDate>Sun, 22 Jun 2008 17:00 GMT</pubDate>
+    </item>
+    <item>
       <title>FlyMine 13.0 Released</title>
       <link>http://www.flymine.org/</link>
       <description>
