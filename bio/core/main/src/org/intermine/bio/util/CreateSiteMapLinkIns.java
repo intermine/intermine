@@ -44,7 +44,7 @@ public class CreateSiteMapLinkIns
     private static String date;
     private static final String PREFIX = "http://www.flymine.org/query/";
     private static final String OBJECTDETAILSWEIGHT = "0.8";
-    private static final String WEBPAGEWEIGHT = "1.0";
+    private static final String WEBPAGEWEIGHT = "0.5";
 
     /**
      * Create sitemaps
@@ -82,8 +82,14 @@ public class CreateSiteMapLinkIns
                     while (i.hasNext()) {
                         ResultsRow r =  (ResultsRow) i.next();
                         String identifier = (String) r.get(0);
-                        writer.write(getURL(LOC + identifier
-                                            + "&amp;class=" + o, OBJECTDETAILSWEIGHT));
+                        String priority = OBJECTDETAILSWEIGHT;
+                        if (id.equals("180454")
+                                        || id.equals("6239")
+                                        || id.equals("7227")
+                                        || id.equals("7237")) {
+                            priority = "1.0";
+                        }
+                        writer.write(getURL(LOC + identifier + "&amp;class=" + o, priority));
                     }
                     closeFile(writer);
                 }
