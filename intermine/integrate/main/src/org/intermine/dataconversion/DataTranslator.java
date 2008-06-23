@@ -731,7 +731,7 @@ public class DataTranslator
      */
     protected static String getFirstId(ReferenceList col) {
         if (col.getRefIds().size() > 0) {
-            return (String) col.getRefIds().get(0);
+            return col.getRefIds().get(0);
         }
         return null;
     }

@@ -97,7 +97,7 @@
 <item id="-1_26" class="http://www.flymine.org/model/genomic#ComputationalResult">
 <attribute name="score" value="23.0"/>
 <reference name="analysis" ref_id="11_2"/>
-<reference name="dataSet" ref_id="-1_12"/>
+<collection name="dataSets"><reference ref_id="-1_12"/></collection>
 </item>
 <item id="-1_28" class="http://www.flymine.org/model/genomic#Synonym">
 <attribute name="type" value="identifier"/>
@@ -115,7 +115,7 @@
 <item id="-1_32" class="http://www.flymine.org/model/genomic#ComputationalResult">
 <attribute name="score" value="59.85"/>
 <reference name="analysis" ref_id="11_4"/>
-<reference name="dataSet" ref_id="-1_12"/>
+<collection name="dataSets"><reference ref_id="-1_12"/></collection>
 </item>
 <item id="-1_13" class="http://www.flymine.org/model/genomic#Location">
 <attribute name="end" value="3329"/>
