@@ -42,7 +42,7 @@ public class PdbConverter extends BioFileConverter
      * @throws ObjectStoreException if there is a problem while storing
      */
     public PdbConverter(ItemWriter writer, Model model) throws ObjectStoreException {
-        super(writer, model, "The RCSB Protein Data Bank (PDB)", "PDB data - dmel");
+        super(writer, model, "PDB", "PDB dmel data set");
     }
 
     /**
