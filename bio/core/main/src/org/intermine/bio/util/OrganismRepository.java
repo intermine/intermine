@@ -59,9 +59,9 @@ public class OrganismRepository
                     OrganismRepository.class.getClassLoader().getResourceAsStream(PROP_FILE);
                 if (propsResource == null) {
                     throw new RuntimeException("can't find " + PROP_FILE + " in class path");
-                } else {
-                    props.load(propsResource);
                 }
+                props.load(propsResource);
+
             } catch (IOException e) {
                 throw new RuntimeException("Problem loading properties '" + PROP_FILE + "'", e);
             }
@@ -123,11 +123,11 @@ public class OrganismRepository
      * @return the OrganismData
      */
     public OrganismData getOrganismDataByTaxonInternal(int taxonId) {
-        OrganismData od = taxonMap.get(taxonId);
+        OrganismData od = taxonMap.get(new Integer(taxonId));
         if (od == null) {
             od = new OrganismData();
             od.setTaxonId(taxonId);
-            taxonMap.put(taxonId, od);
+            taxonMap.put(new Integer(taxonId), od);
         }
         return od;
     }
