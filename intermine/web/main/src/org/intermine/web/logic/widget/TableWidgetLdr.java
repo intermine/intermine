@@ -1,4 +1,4 @@
-  package org.intermine.web.logic.widget;
+package org.intermine.web.logic.widget;
 
 /*
  * Copyright (C) 2002-2008 FlyMine
@@ -89,10 +89,10 @@ public class TableWidgetLdr
         this.bag = bag;
         this.config = (TableWidgetConfig) widgetConfig;
         pathString = config.getPathStrings();
+        model = os.getModel();
         origPath = new Path(model, pathWithNoConstraints(pathString));
         cld = origPath.getEndClassDescriptor();
         type = cld.getUnqualifiedName();
-        model = os.getModel();
         displayFields = config.getDisplayFields();
         exportFields = config.getExportFields();
 

@@ -39,8 +39,9 @@ public class FlyAtlasGraphURLGenerator implements GraphCategoryURLGenerator
     /**
      * Creates a FlyAtlasGraphURLGenerator for the chart
      * @param bagName the bag name
+     * @param extra unused
      */
-    public FlyAtlasGraphURLGenerator(String bagName, String extra) {
+    public FlyAtlasGraphURLGenerator(String bagName, @SuppressWarnings("unused") String extra) {
         super();
         this.bagName = bagName;
     }
@@ -53,7 +54,7 @@ public class FlyAtlasGraphURLGenerator implements GraphCategoryURLGenerator
         super();
         this.bagName = bagName;
     }
-    
+
     /**
      * {@inheritDoc}
      * @see org.jfree.chart.urls.CategoryURLGenerator#generateURL(
@@ -80,9 +81,9 @@ public class FlyAtlasGraphURLGenerator implements GraphCategoryURLGenerator
         Model model = os.getModel();
         PathQuery q = new PathQuery(model);
 
-        Path secondaryIdentifier = MainHelper.makePath(model, q, 
+        Path secondaryIdentifier = MainHelper.makePath(model, q,
                                                        "FlyAtlasResult.genes.secondaryIdentifier");
-        Path primaryIdentifier = MainHelper.makePath(model, q, 
+        Path primaryIdentifier = MainHelper.makePath(model, q,
                                                      "FlyAtlasResult.genes.primaryIdentifier");
         Path name = MainHelper.makePath(model, q, "FlyAtlasResult.genes.name");
         Path org = MainHelper.makePath(model, q, "FlyAtlasResult.genes.organism.name");
