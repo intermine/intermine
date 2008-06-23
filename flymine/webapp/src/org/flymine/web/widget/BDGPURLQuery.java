@@ -63,7 +63,7 @@ public class BDGPURLQuery implements WidgetURLQuery
         Path organism = MainHelper.makePath(model, q, "Gene.organism.name");
         Path primaryIdentifier = MainHelper.makePath(model, q, "Gene.primaryIdentifier");
         Path stage  =  MainHelper.makePath(model, q, "Gene.mRNAExpressionResults.stageRange");
-        Path dataset = MainHelper.makePath(model, q, "Gene.mRNAExpressionResults.source.title");
+        Path dataset = MainHelper.makePath(model, q, "Gene.mRNAExpressionResults.dataSet.title");
         Path term =  MainHelper.makePath(model, q,
                                          "Gene.mRNAExpressionResults.mRNAExpressionTerms.name");
 
@@ -96,7 +96,7 @@ public class BDGPURLQuery implements WidgetURLQuery
 
             constraintOp = ConstraintOp.EQUALS;
             code = q.getUnusedConstraintCode();
-            PathNode datasetNode = q.addNode("Gene.mRNAExpressionResults.source.title");
+            PathNode datasetNode = q.addNode("Gene.mRNAExpressionResults.dataSet.title");
             datasetNode.getConstraints().add(new Constraint(constraintOp, "BDGP in situ data set",
                                                             false, label, code, id, null));
             q.setConstraintLogic("A and B and C and D");

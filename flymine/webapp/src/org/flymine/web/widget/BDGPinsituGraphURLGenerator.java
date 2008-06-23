@@ -112,12 +112,12 @@ public class BDGPinsituGraphURLGenerator implements GraphCategoryURLGenerator
         // filter out BDGP
         constraintOp = ConstraintOp.EQUALS;
         code = q.getUnusedConstraintCode();
-        PathNode datasetNode = q.addNode("Gene.mRNAExpressionResults.source.title");
+        PathNode datasetNode = q.addNode("Gene.mRNAExpressionResults.dataSet.title");
         String dataset = "BDGP in situ data set";
         Constraint datasetConstraint
                         = new Constraint(constraintOp, dataset, false, label, code, id, null);
         datasetNode.getConstraints().add(datasetConstraint);
-        
+
         // stage (series)
         constraintOp = ConstraintOp.EQUALS;
         code = q.getUnusedConstraintCode();

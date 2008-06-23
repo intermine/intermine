@@ -93,7 +93,7 @@ public class FlyFishGraphURLGenerator implements GraphCategoryURLGenerator
 
         List<Path> view = new ArrayList<Path>();
         view.add(MainHelper.makePath(model, q, "Gene.primaryIdentifier"));
-        view.add(MainHelper.makePath(model, q, "Gene.secondaryIdentifier"));        
+        view.add(MainHelper.makePath(model, q, "Gene.secondaryIdentifier"));
         view.add(MainHelper.makePath(model, q, "Gene.name"));
         view.add(MainHelper.makePath(model, q, "Gene.organism.name"));
         view.add(MainHelper.makePath(model, q, "Gene.mRNAExpressionResults.stageRange"));
@@ -112,12 +112,12 @@ public class FlyFishGraphURLGenerator implements GraphCategoryURLGenerator
         // filter out BDGP
         constraintOp = ConstraintOp.EQUALS;
         code = q.getUnusedConstraintCode();
-        PathNode datasetNode = q.addNode("Gene.mRNAExpressionResults.source.title");
+        PathNode datasetNode = q.addNode("Gene.mRNAExpressionResults.dataSet.title");
         String dataset = "fly-Fish data set of Drosophila embryo mRNA localization patterns";
         Constraint datasetConstraint
                         = new Constraint(constraintOp, dataset, false, label, code, id, null);
         datasetNode.getConstraints().add(datasetConstraint);
-                
+
         // stage (series)
         constraintOp = ConstraintOp.EQUALS;
         code = q.getUnusedConstraintCode();

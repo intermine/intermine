@@ -41,12 +41,12 @@ import org.jfree.data.category.DefaultCategoryDataset;
  * @author Julie Sullivan
  */
 public class BDGPinsituDataSetLdr implements DataSetLdr
-{    
+{
     private DefaultCategoryDataset dataSet;
     private Results results;
     private int widgetTotal = 0;
     private final String dataset = "BDGP in situ data set";
-    
+
     /**
      * Creates a DataSetLdr used to retrieve, organise
      * and structure the BDGP data to create a graph
@@ -82,12 +82,12 @@ public class BDGPinsituDataSetLdr implements DataSetLdr
             String stage = (String) resRow.get(0);
             stage = (stage.split(" \\("))[0];
 
-            Boolean expressed = (Boolean) resRow.get(1);            
+            Boolean expressed = (Boolean) resRow.get(1);
             Long geneCount = (Long) resRow.get(2);
 
-            if (expressed.booleanValue()) {                
+            if (expressed.booleanValue()) {
                 (callTable.get(stage))[0] = geneCount.intValue();
-            } else {                
+            } else {
                 (callTable.get(stage))[1] = geneCount.intValue();
             }
         }
@@ -99,12 +99,12 @@ public class BDGPinsituDataSetLdr implements DataSetLdr
             dataSet.addValue((callTable.get(stage))[0], "Expressed", stage);
             dataSet.addValue((callTable.get(stage))[1], "NotExpressed", stage);
         }
-        calcTotal(bag, os);       
+        calcTotal(bag, os);
     }
-    
+
     private Query createQuery(InterMineBag bag, boolean calcTotal) {
 
-        
+
 
         QueryClass mrnaResult = new QueryClass(MRNAExpressionResult.class);
         QueryClass gene = new QueryClass(Gene.class);
@@ -122,18 +122,18 @@ public class BDGPinsituDataSetLdr implements DataSetLdr
         QueryCollectionReference r = new QueryCollectionReference(gene, "mRNAExpressionResults");
         cs.addConstraint(new ContainsConstraint(r, ConstraintOp.CONTAINS, mrnaResult));
 
-        QueryObjectReference qcr = new QueryObjectReference(mrnaResult, "source");
+        QueryObjectReference qcr = new QueryObjectReference(mrnaResult, "dataSet");
         cs.addConstraint(new ContainsConstraint(qcr, ConstraintOp.CONTAINS, ds));
 
 
         QueryExpression qf2 = new QueryExpression(QueryExpression.LOWER,
                                                   new QueryField(ds, "title"));
-        cs.addConstraint(new SimpleConstraint(qf2, ConstraintOp.EQUALS, 
+        cs.addConstraint(new SimpleConstraint(qf2, ConstraintOp.EQUALS,
                                               new QueryValue(dataset.toLowerCase())));
 
         Query q = new Query();
         q.setDistinct(false);
-        
+
         if (!calcTotal) {
             q.addToSelect(qfStage);
             q.addToSelect(qfExpressed);
@@ -151,13 +151,13 @@ public class BDGPinsituDataSetLdr implements DataSetLdr
         } else {
             Query subQ = new Query();
             subQ.setDistinct(true);
-            
+
             subQ.addToSelect(qf);
-            
+
             subQ.addFrom(mrnaResult);
             subQ.addFrom(gene);
             subQ.addFrom(ds);
-            
+
             subQ.setConstraint(cs);
 
             q.addFrom(subQ);
@@ -166,38 +166,38 @@ public class BDGPinsituDataSetLdr implements DataSetLdr
 
         return q;
     }
-    
 
-    private LinkedHashMap<String, int[]> 
+
+    private LinkedHashMap<String, int[]>
                             initCallTable() {
         LinkedHashMap<String, int[]> callTable = new LinkedHashMap<String, int[]>();
-        String[] stageLabels = new String[6]; 
-        
+        String[] stageLabels = new String[6];
+
         stageLabels[0] = "stage 1-3";
         stageLabels[1] = "stage 4-6";
         stageLabels[2] = "stage 7-8";
         stageLabels[3] = "stage 9-10";
         stageLabels[4] = "stage 11-12";
         stageLabels[5] = "stage 13-16";
-        
-        for (String stage : stageLabels) {            
+
+        for (String stage : stageLabels) {
             int[] count = new int[2];
-            count[0] = 0; 
+            count[0] = 0;
             count[1] = 0;
             callTable.put(stage, count);
         }
         return callTable;
     }
-                            
+
     private void calcTotal(InterMineBag bag, ObjectStore os) {
-        Results res = os.execute(createQuery(bag, true));        
+        Results res = os.execute(createQuery(bag, true));
         Iterator iter = res.iterator();
         while (iter.hasNext()) {
             ResultsRow resRow = (ResultsRow) iter.next();
             widgetTotal = ((java.lang.Long) resRow.get(0)).intValue();
         }
-    }                            
-                            
+    }
+
     /**
      * {@inheritDoc}
      */
