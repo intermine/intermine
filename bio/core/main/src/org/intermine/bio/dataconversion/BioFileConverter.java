@@ -47,9 +47,9 @@ public abstract class BioFileConverter extends FileConverter
     }
 
     /**
-     * Return a DataSet item for the given title
-     * @param name the DataSet name
-     * @return the DataSet Item
+     * Return a DataSource item for the given title
+     * @param name the DataSource name
+     * @return the DataSource Item
      */
     public Item getDataSourceItem(String name) {
         if (name == null) {
@@ -71,7 +71,7 @@ public abstract class BioFileConverter extends FileConverter
     }
 
     /**
-     * Return a DataSource item for the given name
+     * Return a DataSet item for the given name
      * @param title the DataSet title
      * @param dataSourceItem the DataSource referenced by the the DataSet
      * @return the DataSet Item
@@ -81,7 +81,7 @@ public abstract class BioFileConverter extends FileConverter
     }
 
     /**
-     * Return a DataSource item with the given details.
+     * Return a DataSet item with the given details.
      * @param title the DataSet title
      * @param url the new url field, or null if the url shouldn't be set
      * @param description the new description field, or null if the field shouldn't be set

@@ -10,9 +10,6 @@ package org.intermine.bio.dataconversion;
  *
  */
 
-import java.util.HashSet;
-import java.util.Set;
-
 import org.intermine.dataconversion.DataConverter;
 import org.intermine.dataconversion.DataConverterStoreHook;
 import org.intermine.metadata.ClassDescriptor;
