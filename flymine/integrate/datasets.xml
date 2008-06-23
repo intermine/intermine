@@ -496,4 +496,18 @@
         <attribute name="name" value="AffyMetrix"/>
         <attribute name="url" value="http://www.affymetrix.com/"/>
     </item>
+
+
+    <item id="630" class="" implements="http://www.flymine.org/model/genomic#DataSource">
+        <attribute name="name" value="BioGRID"/>
+        <attribute name="description" value="General repository for interaction datasets"/>
+        <attribute name="url" value="http://www.thebiogrid.org/"/>
+    </item>
+    <item id="631" class="" implements="http://www.flymine.org/model/genomic#DataSet">
+        <attribute name="title" value="BioGRID data set"/>
+        <attribute name="url" value="http://www.thebiogrid.org/downloads.php"/>
+        <reference name="dataSource" ref_id="630"/>
+    </item>
+
+
 </items>
