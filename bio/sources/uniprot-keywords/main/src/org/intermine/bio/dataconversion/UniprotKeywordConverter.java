@@ -142,14 +142,15 @@ public class UniprotKeywordConverter extends FileConverter
          * {@inheritDoc}
          */
         public void characters(char[] ch, int start, int length) {
-
+            int st = start;
+            int l = length;
             if (attName != null) {
 
                 // DefaultHandler may call this method more than once for a single
                 // attribute content -> hold text & create attribute in endElement
-                while (length > 0) {
+                while (l > 0) {
                     boolean whitespace = false;
-                    switch(ch[start]) {
+                    switch(ch[st]) {
                     case ' ':
                     case '\r':
                     case '\n':
@@ -162,13 +163,13 @@ public class UniprotKeywordConverter extends FileConverter
                     if (!whitespace) {
                         break;
                     }
-                    ++start;
-                    --length;
+                    ++st;
+                    --l;
                 }
 
-                if (length > 0) {
+                if (l > 0) {
                     StringBuffer s = new StringBuffer();
-                    s.append(ch, start, length);
+                    s.append(ch, st, l);
                     attValue.append(s);
                 }
             }
@@ -227,10 +228,7 @@ public class UniprotKeywordConverter extends FileConverter
             }
         }
 
-
-
-        private Item getItem(Map map, String itemType, String titleType, String title)
-        throws SAXException {
+        private Item getItem(Map map, String itemType, String titleType, String title) {
 
             Item item = (Item) map.get(title);
             if (item == null) {
