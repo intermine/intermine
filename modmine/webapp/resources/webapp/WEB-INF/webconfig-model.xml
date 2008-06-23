@@ -13,18 +13,35 @@
   <class className="org.flymine.model.genomic.ModEncodeProvider">
     <fields>
       <fieldconfig fieldExpr="name"/>
+      <fieldconfig fieldExpr="affiliation"/>
+      <fieldconfig fieldExpr="project.surnamePI"/>
+    </fields>
+  </class>
+
+
+  <class className="org.flymine.model.genomic.Protocol">
+    <fields>
+      <fieldconfig fieldExpr="name"/>
+      <fieldconfig fieldExpr="description" doNotTruncate="true"/>
+      <fieldconfig fieldExpr="type"/>
+    </fields>
+  </class>
+
+  <class className="org.flymine.model.genomic.AppliedProtocol">
+    <fields>
+      <fieldconfig fieldExpr="protocol.type"/>
+      <fieldconfig fieldExpr="protocol.name"/>    
+      <fieldconfig fieldExpr="experimentSubmission.title"/>
     </fields>
   </class>
 
   <class className="org.flymine.model.genomic.ExperimentSubmission">
     <fields>
       <fieldconfig fieldExpr="title"/>
-      <fieldconfig fieldExpr="description"/>
       <fieldconfig fieldExpr="design"/>
       <fieldconfig fieldExpr="factorName"/>
       <fieldconfig fieldExpr="factorType"/>
-      <fieldconfig fieldExpr="qualityControl"/>
-      <fieldconfig fieldExpr="replicate"/>
+      <fieldconfig fieldExpr="description" showInResults="false"/>
     </fields>
   </class>
 
@@ -481,12 +498,6 @@
     </longdisplayers>
   </class>
 
-  <class className="org.flymine.model.genomic.Protocol">
-    <fields>
-      <fieldconfig fieldExpr="name"/>
-      <fieldconfig fieldExpr="description" doNotTruncate="true"/>
-    </fields>
-  </class>
 
   <class className="org.flymine.model.genomic.Publication">
     <fields>
