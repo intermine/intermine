@@ -692,7 +692,9 @@ public class GoConverter extends FileConverter
             title = "Gene Ontology";
         } else if ("PINC".equals(code)) {
           title = "Proteome Inc.";
-        } else {    // MGI, SGD, Pfam
+        } else if ("Pfam".equals(code)) {
+            title = "PFAM"; // to merge with interpro
+        } else {    // MGI, SGD
             title = code;
         }
 
