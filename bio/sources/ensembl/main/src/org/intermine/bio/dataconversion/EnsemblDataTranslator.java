@@ -797,8 +797,7 @@ public class EnsemblDataTranslator extends DataTranslator
      * @throws org.intermine.objectstore.ObjectStoreException
      *          when anything goes wrong.
      */
-    protected Item createAnalysisResult(Item srcItem, Item tgtItem)
-            throws ObjectStoreException {
+    protected Item createAnalysisResult(Item srcItem, Item tgtItem) {
         Item result = createItem(tgtNs + "ComputationalResult", "");
         if (srcItem.hasReference("analysis")) {
             moveField(srcItem, result, "analysis", "analysis");
@@ -806,7 +805,8 @@ public class EnsemblDataTranslator extends DataTranslator
         if (srcItem.hasAttribute("score")) {
             moveField(srcItem, result, "score", "score");
         }
-        result.addReference(config.getEnsemblDataSetRef());
+//        result.addReference(config.getEnsemblDataSetRef());
+        addReferencedItem(result, config.getEnsemblDataSet(), "dataSets", true, "", false);
         ReferenceList evidence =
             new ReferenceList("evidence", Arrays.asList(result.getIdentifier()));
         tgtItem.addCollection(evidence);
@@ -947,17 +947,16 @@ public class EnsemblDataTranslator extends DataTranslator
 
         if (stableIds.hasNext()) {
             return ItemHelper.convert((org.intermine.model.fulldata.Item) stableIds.next());
-        } else {
-            StringBuffer bob = new StringBuffer();
-            bob.append("getStableId unable to find a stableId for:");
-            bob.append(ensemblType);
-            bob.append("__");
-            bob.append(identifier);
-            bob.append("__");
-            bob.append(srcNs);
-
-            return null;
         }
+        StringBuffer bob = new StringBuffer();
+        bob.append("getStableId unable to find a stableId for:");
+        bob.append(ensemblType);
+        bob.append("__");
+        bob.append(identifier);
+        bob.append("__");
+        bob.append(srcNs);
+
+        return null;
     }
 
     /**
