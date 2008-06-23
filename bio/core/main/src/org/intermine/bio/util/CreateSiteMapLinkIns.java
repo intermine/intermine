@@ -64,8 +64,8 @@ public class CreateSiteMapLinkIns
         writeStartPages(writer);
         closeFile(writer);
 
+        // TODO put classes, taxonIds and priorities in properties file
         String[] bioentity = {"gene", "protein"};
-        // TODO put this in the properties file
         String[] ids = {"180454", "6239", "7227", "7237", "7217", "7220",
                         "7222", "7230", "7234", "7238", "7240", "7244", "7260",
                         "7245"};
@@ -77,21 +77,23 @@ public class CreateSiteMapLinkIns
             for (String id : ids) {
                 File newFile = new File(outputFile + id + o + EXT);
                 if (!newFile.exists()) {
-                    writer = startFile(newFile);
                     Iterator i = getResults(os, o, id);
-                    while (i.hasNext()) {
-                        ResultsRow r =  (ResultsRow) i.next();
-                        String identifier = (String) r.get(0);
-                        String priority = OBJECTDETAILSWEIGHT;
-                        if (id.equals("180454")
-                                        || id.equals("6239")
-                                        || id.equals("7227")
-                                        || id.equals("7237")) {
-                            priority = "1.0";
+                    if (i.hasNext()) {  // don't create empty files
+                        writer = startFile(newFile);
+                        while (i.hasNext()) {
+                            ResultsRow r =  (ResultsRow) i.next();
+                            String identifier = (String) r.get(0);
+                            String priority = OBJECTDETAILSWEIGHT;
+                            if (id.equals("180454")
+                                            || id.equals("6239")
+                                            || id.equals("7227")
+                                            || id.equals("7237")) {
+                                priority = "1.0";
+                            }
+                            writer.write(getURL(LOC + identifier + "&amp;class=" + o, priority));
                         }
-                        writer.write(getURL(LOC + identifier + "&amp;class=" + o, priority));
+                        closeFile(writer);
                     }
-                    closeFile(writer);
                 }
             }
         }
