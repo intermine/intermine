@@ -4491,7 +4491,7 @@
 </template>
 </template-queries>
 <tags>
-  <tag name="Aspect:Protein Interactions" objectIdentifier="interactionsForOrganism" type="template">
+  <tag name="aspect:Protein Interactions" objectIdentifier="interactionsForOrganism" type="template">
   </tag>
   <tag name="aspect:Binding Sites" objectIdentifier="TFbindingsite2geneAndFactor" type="template">
   </tag>
@@ -5959,13 +5959,13 @@
   </tag>
   <tag name="aspect:Transcriptional Regulation" objectIdentifier="ChromLocation_CRM" type="template">
   </tag>
-  <tag name="aspect:protein Interactions" objectIdentifier="ProteinInteraction_OrthologueRNAi" type="template">
+  <tag name="aspect:Interactions" objectIdentifier="ProteinInteraction_OrthologueRNAi" type="template">
   </tag>
-  <tag name="aspect:transcriptional regulation" objectIdentifier="TranscriptionFactor_Genes" type="template">
+  <tag name="aspect:Transcriptional regulation" objectIdentifier="TranscriptionFactor_Genes" type="template">
   </tag>
-  <tag name="aspects:Disease" objectIdentifier="Gene.omimDiseases" type="collection">
+  <tag name="aspect:Disease" objectIdentifier="Gene.omimDiseases" type="collection">
   </tag>
-  <tag name="aspeect:Comparative Genomics" objectIdentifier="RNAiphenotype2genes2orthologues" type="template">
+  <tag name="aspect:Comparative Genomics" objectIdentifier="RNAiphenotype2genes2orthologues" type="template">
   </tag>
   <tag name="favourite" objectIdentifier="RacheltestSubtract" type="bag">
   </tag>
