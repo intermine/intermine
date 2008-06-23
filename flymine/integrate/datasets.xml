@@ -209,7 +209,7 @@
     </item>
 
     <item id="210" class="" implements="http://www.flymine.org/model/genomic#DataSource">
-        <attribute name="name" value="ensembl"/>
+        <attribute name="name" value="Ensembl"/>
         <attribute name="description"
             value="The Ensembl eukaryotic genome annotation database"/>
         <attribute name="url" value="http://www.ensembl.org"/>

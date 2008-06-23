@@ -1,6 +1,6 @@
 <items>
   <item id="0_1" class="http://www.flymine.org/model/genomic#DataSource">
-    <attribute name="name" value="BioGrid"/>
+    <attribute name="name" value="BioGRID"/>
   </item>
   <item id="4_1" class="http://www.flymine.org/model/genomic#Gene">
     <attribute name="primaryIdentifier" value="FBgn001"/>
