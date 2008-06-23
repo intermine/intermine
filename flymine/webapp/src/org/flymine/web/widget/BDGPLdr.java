@@ -101,7 +101,7 @@ public class BDGPLdr extends EnrichmentWidgetLdr
                                                                    "mRNAExpressionTerms");
         cs.addConstraint(new ContainsConstraint(r2, ConstraintOp.CONTAINS, qcTerm));
 
-        QueryObjectReference qcr = new QueryObjectReference(qcMrnaResult, "source");
+        QueryObjectReference qcr = new QueryObjectReference(qcMrnaResult, "dataSet");
         cs.addConstraint(new ContainsConstraint(qcr, ConstraintOp.CONTAINS, qcDataset));
 
         QueryExpression qf2 = new QueryExpression(QueryExpression.LOWER,
