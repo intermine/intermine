@@ -10,6 +10,7 @@
 <tiles:importAttribute/>
 <html:xhtml/>
 <link rel="stylesheet" href="css/resultstables.css" type="text/css" />
+<link rel="stylesheet" href="css/table.css" type="text/css" />
 <tiles:get name="objectTrail.tile"/> <%--<im:vspacer height="1"/>--%>
 
 <script type="text/javascript">
