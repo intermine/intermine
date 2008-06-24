@@ -100,12 +100,11 @@
                 <fmt:message key="results.moveLeftHelp" var="moveLeftTitle">
                   <fmt:param value="${column.name}"/>
                 </fmt:message>
-                <fmt:message key="results.moveLeftSymbol" var="moveLeftString"/>
                 <html:link action="/changeTable?currentPage=${currentPage}&amp;bagName=${bagName}&amp;table=${param.table}&amp;method=moveColumnLeft&amp;index=${status.index}&amp;trail=${param.trail}"
                            title="${moveLeftTitle}">
                   <img border="0"
                        width="13" height="13" src="images/left_arrow.png"
-                       title="${moveLeftString}"/>
+                       title="${moveLeftTitle}"/>
                 </html:link>
                 </td>
               </c:if>
@@ -116,12 +115,11 @@
                 <fmt:message key="results.moveRightHelp" var="moveRightTitle">
                   <fmt:param value="${column.name}"/>
                 </fmt:message>
-                <fmt:message key="results.moveRightSymbol" var="moveRightString"/>
                 <html:link action="/changeTable?currentPage=${currentPage}&amp;bagName=${bagName}&amp;table=${param.table}&amp;method=moveColumnRight&amp;index=${status.index}&amp;trail=${param.trail}"
                            title="${moveRightTitle}">
                   <img border="0"
                        width="13" height="13"
-                       src="images/right_arrow.png" title="${moveRightString}"/>
+                       src="images/right_arrow.png" title="${moveRightTitle}"/>
                 </html:link>
                 </td>
               </c:if>
@@ -142,7 +140,6 @@
                 </c:if>
               </c:if>
 
-            </td>
             </tr>
             </table>
             <div>
