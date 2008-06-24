@@ -27,9 +27,9 @@ public class Constraints
      * @param constraint2 second constraint
      * @return the constraint
      */
-    public static Constraints and(Constraints constraint1, Constraints constraint2) {
-        return null;
-    }
+//    public static Constraint and(Constraint constraint1, Constraint constraint2) {
+//        return null;
+//    }
 
 
     /**
@@ -38,9 +38,9 @@ public class Constraints
      * @param constraint2 second constraint
      * @return the constraint
      */
-    public static Constraints or(Constraints constraint1, Constraints constraint2) {
-        return null;
-    }
+//    public static Constraint or(Constraint constraint1, Constraint constraint2) {
+//        return null;
+//    }
 
 
     /**
@@ -49,7 +49,7 @@ public class Constraints
      * @param value value to constrain field to
      * @return the EQUALS constraint
      */
-    public static Constraints eq(String path, Object value) {
+    public static Constraint eq(String path, Object value) {
         return null;
     }
 
@@ -59,7 +59,7 @@ public class Constraints
      * @param value value to constrain field to
      * @return the NOT_EQUALS constraint
      */
-    public static Constraints neq(String path, Object value) {
+    public static Constraint neq(String path, Object value) {
         return null;
     }
 
@@ -69,7 +69,7 @@ public class Constraints
      * @param value value of field
      * @return the LIKE constraint
      */
-    public static Constraints like(String path, String value) {
+    public static Constraint like(String path, String value) {
         return null;
     }
 
@@ -79,7 +79,7 @@ public class Constraints
      * @param value value of field
      * @return the CONTAINS constraint
      */
-    public static Constraints contains(String path, String value) {
+    public static Constraint contains(String path, String value) {
         return null;
     }
 
@@ -90,7 +90,7 @@ public class Constraints
      * @param value value of field
      * @return the LOOKUP constraint
      */
-    public static Constraints lookup(String node, String value) {
+    public static Constraint lookup(String node, String value) {
         return null;
     }
 
@@ -117,12 +117,13 @@ public class Constraints
 
 
     /**
-     * Creates constraint with the operator IN
+     * Creates constraint with the operator IN.  validate that list is the same type as the
+     * attribute in the model
      * @param path the field in the query to constrain
      * @param values list of values
      * @return the IN constraint
      */
-    public static Constraints in(String path, List<String> values) {
+    public static Constraints in(String path, List<?> values) {
         return null;
     }
 
@@ -144,7 +145,7 @@ public class Constraints
      * @param values list of values
      * @return the NOT_IN constraint
      */
-    public static Constraints notIn(String path, List<String> values) {
+    public static Constraint notIn(String path, List<?> values) {
         return null;
     }
 
@@ -152,7 +153,7 @@ public class Constraints
      * @param path the field in the query to constrain
      * @return the NULL constraint
      */
-    public static Constraints isNull(String path) {
+    public static Constraint isNull(String path) {
         return null;
     }
 
@@ -160,7 +161,7 @@ public class Constraints
      * @param path the field in the query to constrain
      * @return the NOT_NULL constraint
      */
-    public static Constraints isNotNull(String path) {
+    public static Constraint isNotNull(String path) {
         return null;
     }
 
@@ -170,7 +171,7 @@ public class Constraints
      * @param value value to constrain field to
      * @return the constraint
      */
-    public static Constraints greaterThan(String path, Object value) {
+    public static Constraint greaterThan(String path, Object value) {
         return null;
     }
 
@@ -180,7 +181,7 @@ public class Constraints
      * @param value value to constrain field to
      * @return the constraint
      */
-    public static Constraints greaterThanEqualTo(String path, Object value) {
+    public static Constraint greaterThanEqualTo(String path, Object value) {
         return null;
     }
 
@@ -190,7 +191,7 @@ public class Constraints
      * @param value value to constrain field to
      * @return the constraint
      */
-    public static Constraints lessThan(String path, Object value) {
+    public static Constraint lessThan(String path, Object value) {
         return null;
     }
 
@@ -200,7 +201,7 @@ public class Constraints
      * @param value value to constrain field to
      * @return the constraint
      */
-    public static Constraints lessThanEqualTo(String path, Object value) {
+    public static Constraint lessThanEqualTo(String path, Object value) {
         return null;
     }
 
