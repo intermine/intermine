@@ -24,7 +24,6 @@ import org.intermine.pathquery.OrderBy;
 import org.intermine.pathquery.PathNode;
 import org.intermine.pathquery.PathQuery;
 import org.intermine.web.logic.bag.InterMineBag;
-import org.intermine.web.logic.query.MainHelper;
 import org.intermine.web.logic.widget.WidgetURLQuery;
 
 /**
@@ -59,19 +58,19 @@ public class ProteinInteractionURLQuery implements WidgetURLQuery
 
         List<Path> view = new ArrayList<Path>();
 
-        Path primaryIdentifier = MainHelper.makePath(model, q, "Protein.primaryIdentifier");
-        Path primaryAccesion = MainHelper.makePath(model, q, "Protein.primaryAccession");
-        Path interactPrimaryIdentifier = MainHelper.makePath(model, q,
+        Path primaryIdentifier = PathQuery.makePath(model, q, "Protein.primaryIdentifier");
+        Path primaryAccesion = PathQuery.makePath(model, q, "Protein.primaryAccession");
+        Path interactPrimaryIdentifier = PathQuery.makePath(model, q,
                 "Protein.proteinInteractions.interactingProteins.primaryIdentifier");
-        Path interactPrimaryAccession = MainHelper.makePath(model, q,
+        Path interactPrimaryAccession = PathQuery.makePath(model, q,
                 "Protein.proteinInteractions.interactingProteins.primaryAccession");
-        Path interactName = MainHelper.makePath(model, q,
+        Path interactName = PathQuery.makePath(model, q,
                 "Protein.proteinInteractions.interactingProteins.name");
-        Path interactShortname = MainHelper.makePath(model, q,
+        Path interactShortname = PathQuery.makePath(model, q,
                 "Protein.proteinInteractions.shortName");
-        Path interactPathRole = MainHelper.makePath(model, q,
+        Path interactPathRole = PathQuery.makePath(model, q,
                 "Protein.proteinInteractions.proteinRole");
-        Path interactPubMedId = MainHelper.makePath(model, q,
+        Path interactPubMedId = PathQuery.makePath(model, q,
                 "Protein.proteinInteractions.experiment.publication.pubMedId");
 
         view.add(primaryIdentifier);

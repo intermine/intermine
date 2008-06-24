@@ -12,7 +12,6 @@ package org.intermine.pathquery;
 
 import org.intermine.objectstore.query.ConstraintOp;
 import org.intermine.util.Util;
-import org.intermine.web.logic.WebUtil;
 
 /**
  * A simple constraint representation
@@ -130,7 +129,7 @@ public class Constraint
     public String getDisplayValue() {
         if (op == ConstraintOp.MATCHES || op == ConstraintOp.DOES_NOT_MATCH
             || op == ConstraintOp.EQUALS || op == ConstraintOp.NOT_EQUALS) {
-            return WebUtil.wildcardSqlToUser(getValue().toString());
+            return Util.wildcardSqlToUser(getValue().toString());
         } else if (op == ConstraintOp.IS_NOT_NULL || op == ConstraintOp.IS_NULL) {
             return "";
         } else {
@@ -148,7 +147,7 @@ public class Constraint
     public String getReallyDisplayValue() {
         if (op == ConstraintOp.MATCHES || op == ConstraintOp.DOES_NOT_MATCH
             || op == ConstraintOp.EQUALS || op == ConstraintOp.NOT_EQUALS) {
-            return WebUtil.wildcardSqlToUser(getValue().toString());
+            return Util.wildcardSqlToUser(getValue().toString());
         } else if (op == ConstraintOp.IS_NOT_NULL || op == ConstraintOp.IS_NULL) {
             return "";
         } else if ((op == ConstraintOp.LOOKUP) && (extraValue != null)

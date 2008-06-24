@@ -21,7 +21,6 @@ import java.util.Map;
 import java.util.Set;
 import java.util.Map.Entry;
 
-import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.intermine.metadata.Model;
 import org.intermine.objectstore.query.BagConstraint;
@@ -30,7 +29,7 @@ import org.intermine.objectstore.query.ResultsInfo;
 import org.intermine.path.Path;
 import org.intermine.path.PathError;
 import org.intermine.util.CollectionUtil;
-import org.intermine.web.logic.query.MainHelper;
+import org.intermine.util.StringUtil;
 
 
 /**
@@ -48,7 +47,7 @@ public class PathQuery
     private List<Path> view = new ArrayList<Path>();
     private List<OrderBy> sortOrder = new ArrayList<OrderBy>();
     private ResultsInfo info;
-    ArrayList<Throwable> problems = new ArrayList<Throwable>();
+    private List<Throwable> problems = new ArrayList<Throwable>();
     protected LogicExpression constraintLogic = null;
     private Map<Path, String> pathDescriptions = new HashMap<Path, String>();
 
@@ -391,7 +390,7 @@ public class PathQuery
      */
     public void addPathStringToView(String viewString) {
         try {
-            view.add(MainHelper.makePath(model, this, viewString));
+            view.add(PathQuery.makePath(model, this, viewString));
             if (sortOrder.isEmpty()) {
                 Path p = getFirstPathFromView();
                 if (p != null) {
@@ -449,7 +448,7 @@ public class PathQuery
             if (sortOrder != null && !sortOrder.isEmpty()) {
                 sortOrder.get(0).setDirection(direction);
             } else {
-                Path p = MainHelper.makePath(model, this, view.get(0).toStringNoConstraints());
+                Path p = PathQuery.makePath(model, this, view.get(0).toStringNoConstraints());
                 OrderBy o = new OrderBy(p, direction);
                 sortOrder.add(o);
             }
@@ -467,7 +466,7 @@ public class PathQuery
     public void addPathStringToSortOrder(String sortOrderString, String direction) {
         try {
             sortOrder.clear(); // there can only be one sort column
-            Path p = MainHelper.makePath(model, this, sortOrderString);
+            Path p = PathQuery.makePath(model, this, sortOrderString);
             OrderBy o = new OrderBy(p, direction);
             sortOrder.add(o);
         } catch (PathError e) {
@@ -580,7 +579,7 @@ public class PathQuery
             node = new PathNode(path);
             // Check whether starting point exists
             try {
-                MainHelper.getQualifiedTypeName(path, model);
+                model.getQualifiedTypeName(path);
             } catch (ClassNotFoundException err) {
                 addProblem(err);
             }
@@ -621,6 +620,14 @@ public class PathQuery
      */
     public Throwable[] getProblems() {
         return problems.toArray(new Throwable[0]);
+    }
+    
+    /**
+     * Sets problems.
+     * @param problems problems
+     */
+    public void setProblems(List<Throwable> problems) {
+        this.problems = problems;
     }
 
     /**
@@ -774,7 +781,7 @@ public class PathQuery
             logic = "(" + logic + ")";
         }
         for (Iterator<String> iter = codes.iterator(); iter.hasNext(); ) {
-            if (!StringUtils.isEmpty(logic)) {
+            if (!StringUtil.isEmpty(logic)) {
                 logic += " " + operator + " ";
             }
             logic += iter.next();
@@ -862,10 +869,34 @@ public class PathQuery
      */
     public void addPathStringDescription(String viewString, String description) {
         try {
-            Path path = MainHelper.makePath(model, this, viewString);
+            Path path = PathQuery.makePath(model, this, viewString);
             pathDescriptions.put(path, description);
         } catch (PathError e) {
             addProblem(e);
         }
+    }
+
+    /**
+     * Given the string version of a path (eg. "Department.employees.seniority"), and a PathQuery,
+     * create a Path object.  The PathQuery is needed to find the class constraints that affect the
+     * path.
+     *
+     * @param model the Model to pass to the Path constructor
+     * @param query the PathQuery
+     * @param fullPathName the full path as a string
+     * @return a new Path object
+     */
+    public static Path makePath(Model model, PathQuery query, String fullPathName) {
+        Map<String, String> subClassConstraintMap = new HashMap<String, String>();
+    
+        Iterator viewPathNameIter = query.getNodes().keySet().iterator();
+        while (viewPathNameIter.hasNext()) {
+            String viewPathName = (String) viewPathNameIter.next();
+            PathNode pathNode = query.getNode(viewPathName);
+            subClassConstraintMap.put(viewPathName.replace(':', '.'), pathNode.getType());
+        }
+    
+        Path path = new Path(model, fullPathName, subClassConstraintMap);
+        return path;
     }
 }

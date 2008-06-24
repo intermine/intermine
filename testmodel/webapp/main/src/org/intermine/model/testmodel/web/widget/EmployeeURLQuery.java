@@ -23,7 +23,6 @@ import org.intermine.pathquery.Constraint;
 import org.intermine.pathquery.PathNode;
 import org.intermine.pathquery.PathQuery;
 import org.intermine.web.logic.bag.InterMineBag;
-import org.intermine.web.logic.query.MainHelper;
 import org.intermine.web.logic.widget.WidgetURLQuery;
 
 /**
@@ -57,10 +56,10 @@ public class EmployeeURLQuery implements WidgetURLQuery
         PathQuery q = new PathQuery(model);
 
         List view = new ArrayList();
-        view.add(MainHelper.makePath(model, q, "Employee.name"));
-        view.add(MainHelper.makePath(model, q, "Employee.department.name"));
-        view.add(MainHelper.makePath(model, q, "Employee.department.company.name"));
-        view.add(MainHelper.makePath(model, q, "Employee.fullTime"));
+        view.add(PathQuery.makePath(model, q, "Employee.name"));
+        view.add(PathQuery.makePath(model, q, "Employee.department.name"));
+        view.add(PathQuery.makePath(model, q, "Employee.department.company.name"));
+        view.add(PathQuery.makePath(model, q, "Employee.fullTime"));
 
         q.setView(view);
 

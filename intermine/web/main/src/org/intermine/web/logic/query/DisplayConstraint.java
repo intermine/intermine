@@ -79,7 +79,7 @@ public class DisplayConstraint
         }
 
         if (node.isAttribute()) {
-            Class nodeType = MainHelper.getClass(node.getType());
+            Class nodeType = TypeUtil.getClass(node.getType());
             List<ConstraintOp> allOps = SimpleConstraint.validOps(nodeType);
 
             List<ConstraintOp> simpleConstraintOps = new ArrayList<ConstraintOp>(allOps);
@@ -121,10 +121,10 @@ public class DisplayConstraint
             String fieldName;
             try {
                 if (node.isAttribute()) {
-                    parentClass = MainHelper.getClass(parentType, model);
+                    parentClass = TypeUtil.getClass(parentType, model);
                     fieldName = node.getFieldName();
                 } else {
-                    parentClass = MainHelper.getClass(node.getType(), model);
+                    parentClass = TypeUtil.getClass(node.getType(), model);
                     Collection keyFieldNames = ClassKeyHelper
                                 .getKeyFieldNames(classKeys, node.getType());
                     if (keyFieldNames == null || keyFieldNames.size() == 0) {

@@ -22,7 +22,6 @@ import org.intermine.pathquery.Constraint;
 import org.intermine.pathquery.PathNode;
 import org.intermine.pathquery.PathQuery;
 import org.intermine.web.logic.bag.InterMineBag;
-import org.intermine.web.logic.query.MainHelper;
 import org.intermine.web.logic.widget.GraphCategoryURLGenerator;
 
 import org.jfree.data.category.CategoryDataset;
@@ -92,12 +91,12 @@ public class FlyFishGraphURLGenerator implements GraphCategoryURLGenerator
         PathQuery q = new PathQuery(model);
 
         List<Path> view = new ArrayList<Path>();
-        view.add(MainHelper.makePath(model, q, "Gene.primaryIdentifier"));
-        view.add(MainHelper.makePath(model, q, "Gene.secondaryIdentifier"));
-        view.add(MainHelper.makePath(model, q, "Gene.name"));
-        view.add(MainHelper.makePath(model, q, "Gene.organism.name"));
-        view.add(MainHelper.makePath(model, q, "Gene.mRNAExpressionResults.stageRange"));
-        view.add(MainHelper.makePath(model, q, "Gene.mRNAExpressionResults.expressed"));
+        view.add(PathQuery.makePath(model, q, "Gene.primaryIdentifier"));
+        view.add(PathQuery.makePath(model, q, "Gene.secondaryIdentifier"));
+        view.add(PathQuery.makePath(model, q, "Gene.name"));
+        view.add(PathQuery.makePath(model, q, "Gene.organism.name"));
+        view.add(PathQuery.makePath(model, q, "Gene.mRNAExpressionResults.stageRange"));
+        view.add(PathQuery.makePath(model, q, "Gene.mRNAExpressionResults.expressed"));
 
         q.setView(view);
 

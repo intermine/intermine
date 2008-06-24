@@ -30,6 +30,7 @@ import java.util.Set;
 import java.util.StringTokenizer;
 import java.util.TreeMap;
 
+import org.intermine.metadata.Model;
 import org.intermine.model.InterMineObject;
 import org.intermine.objectstore.proxy.ProxyReference;
 
@@ -687,5 +688,49 @@ public class TypeUtil
         public Class getElementType() {
             return adder.getParameterTypes()[0];
         }
+    }
+
+    /**
+     * Instantiate a class by unqualified name
+     * The name should be "Date" or that of a primitive container class such as "Integer"
+     * @param className the name of the class
+     * @return the relevant Class
+     */
+    public static Class<?> getClass(String className) {
+        Class cls = instantiate(className);
+        if (cls == null) {
+            if ("Date".equals(className)) {
+                cls = Date.class;
+            } else {
+                if ("BigDecimal".equals(className)) {
+                    cls = BigDecimal.class;
+                } else {
+                    try {
+                        cls = Class.forName("java.lang." + className);
+                    } catch (Exception e) {
+                        throw new RuntimeException("unknown class: " + className);
+                    }
+                }
+            }
+        }
+        return cls;
+    }
+
+    /**
+     * Instantiate a class by unqualified name
+     * The name should be "InterMineObject" or the name of class in the model provided
+     * @param className the name of the class
+     * @param model the Model used to resolve class names
+     * @return the relevant Class
+     * @throws ClassNotFoundException if the class name is not in the model
+     */
+    public static Class getClass(String className, Model model)
+        throws ClassNotFoundException {
+        if ("InterMineObject".equals(className)) {
+            className = "org.intermine.model.InterMineObject";
+        } else {
+            className = model.getPackageName() + "." + className;
+        }
+        return Class.forName(className);
     }
 }

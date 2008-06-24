@@ -16,7 +16,7 @@ import java.util.Locale;
 
 import org.intermine.pathquery.Constraint;
 import org.intermine.pathquery.PathNode;
-import org.intermine.web.logic.query.MainHelper;
+import org.intermine.util.TypeUtil;
 import org.intermine.web.logic.template.ConstraintValueParser;
 import org.intermine.web.logic.template.ParseValueException;
 import org.intermine.web.logic.template.TemplateQuery;
@@ -99,7 +99,7 @@ public class TemplateConfigurator
     private Class getType(PathNode node) {
         Class fieldClass;
         if (node.isAttribute()) {
-            fieldClass = MainHelper.getClass(node.getType());
+            fieldClass = TypeUtil.getClass(node.getType());
         } else {
             fieldClass = String.class;
         }

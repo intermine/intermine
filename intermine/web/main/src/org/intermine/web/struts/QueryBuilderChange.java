@@ -520,7 +520,7 @@ public class QueryBuilderChange extends DispatchAction
         PathQuery query = (PathQuery) session.getAttribute(Constants.QUERY);
         String prefix = (String) session.getAttribute("prefix");
         String fullPathName = MainHelper.toPath(prefix, pathName);
-        Path path = MainHelper.makePath(model, query, fullPathName);
+        Path path = PathQuery.makePath(model, query, fullPathName);
 
         /* this test can't just rely on the sort order being empty
            because sort order may have been populated by javascript by default

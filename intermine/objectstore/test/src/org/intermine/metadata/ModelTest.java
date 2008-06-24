@@ -243,4 +243,32 @@ public class ModelTest extends TestCase
         assertEquals(2, cld.getAllFieldDescriptors().size());
         assertEquals(new HashSet(Arrays.asList("employee", "name")), model.getFieldDescriptorsForClass(SimpleObject.class).keySet());
     }
+    
+    public void testGetQualifiedTypeName() throws Exception {
+        Model model = Model.getInstanceByName("testmodel");
+        assertEquals("org.intermine.model.testmodel.Employee",
+                     model.getQualifiedTypeName("Employee"));
+        assertEquals("java.lang.String",
+                     model.getQualifiedTypeName("String"));
+        assertEquals("int",
+                     model.getQualifiedTypeName("int"));
+        assertEquals("java.util.Date",
+                     model.getQualifiedTypeName("Date"));
+        assertEquals("java.math.BigDecimal",
+                     model.getQualifiedTypeName("BigDecimal"));
+
+        try {
+            model.getQualifiedTypeName("SomeUnkownClass");
+            fail("Expected ClassNotFoundException");
+        } catch (ClassNotFoundException e) {
+            // expected
+        }
+
+        try {
+            model.getQualifiedTypeName("java.lang.String");
+            fail("Expected IllegalArgumentException");
+        } catch (IllegalArgumentException e) {
+            // expected
+        }
+    }
 }

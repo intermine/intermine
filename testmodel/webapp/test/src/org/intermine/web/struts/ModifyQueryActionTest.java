@@ -12,7 +12,6 @@ import org.intermine.pathquery.PathQuery;
 import org.intermine.web.logic.Constants;
 import org.intermine.web.logic.bag.InterMineBag;
 import org.intermine.web.logic.profile.Profile;
-import org.intermine.web.logic.query.MainHelper;
 import org.intermine.web.logic.query.SavedQuery;
 import org.intermine.web.logic.session.SessionMethods;
 import org.intermine.web.logic.template.TemplateQuery;
@@ -39,12 +38,12 @@ public class ModifyQueryActionTest extends MockStrutsTestCase
         Model testmodel = Model.getInstanceByName("testmodel");
         query = new PathQuery(testmodel);
 
-        query.getView().add(MainHelper.makePath(testmodel, query, "Employee"));
-        query.getView().add(MainHelper.makePath(testmodel, query, "Employee.name"));
+        query.getView().add(PathQuery.makePath(testmodel, query, "Employee"));
+        query.getView().add(PathQuery.makePath(testmodel, query, "Employee.name"));
         queryBag = new PathQuery(testmodel);
 
-        queryBag.getView().add(MainHelper.makePath(testmodel, query, "Employee"));
-        queryBag.getView().add(MainHelper.makePath(testmodel, query, "Employee.name"));
+        queryBag.getView().add(PathQuery.makePath(testmodel, query, "Employee"));
+        queryBag.getView().add(PathQuery.makePath(testmodel, query, "Employee.name"));
         queryBag.addNode("Employee.name").getConstraints().add(new Constraint(ConstraintOp.IN, "bag2"));
         sq = new SavedQuery("query1", date, query);
         sqBag = new SavedQuery("query3", date, queryBag);

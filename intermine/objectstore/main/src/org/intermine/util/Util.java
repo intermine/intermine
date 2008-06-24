@@ -119,4 +119,94 @@ public class Util
     public static int lcm(int a, int b) {
         return (a / gcd(a, b)) * b;
     }
+
+    /**
+     * Convert an SQL LIKE/NOT LIKE expression to a * wildcard expression.
+     *
+     * @param exp  the wildcard expression
+     * @return     the SQL LIKE parameter
+     */
+    public static String wildcardSqlToUser(String exp) {
+        StringBuffer sb = new StringBuffer();
+    
+        // To quote a '%' in PostgreSQL we need to pass \\% because it strips one level of
+        // backslashes when parsing a string and another when parsing a LIKE expression.
+        // Java needs backslashes to be backslashed in strings, hence all the blashslashes below
+        // see. http://www.postgresql.org/docs/7.3/static/functions-matching.html
+    
+        for (int i = 0; i < exp.length(); i++) {
+            String substring = exp.substring(i);
+            if (substring.startsWith("%")) {
+                sb.append("*");
+            } else {
+                if (substring.startsWith("_")) {
+                    sb.append("?");
+                } else {
+                    if (substring.startsWith("\\\\%")) {
+                        sb.append("%");
+                        i += 2;
+                    } else {
+                        if (substring.startsWith("\\\\_")) {
+                            sb.append("_");
+                            i += 2;
+                        } else {
+                            if (substring.startsWith("*")) {
+                                sb.append("\\*");
+                            } else {
+                                if (substring.startsWith("?")) {
+                                    sb.append("\\?");
+                                } else {
+                                    if (substring.startsWith("\\\\\\\\")) {
+                                        i += 3;
+                                        sb.append("\\\\");
+                                    } else {
+                                        sb.append(substring.charAt(0));
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    
+        return sb.toString();
+    }
+
+    /**
+     * Turn a user supplied wildcard expression with * into an SQL LIKE/NOT LIKE
+     * expression with %'s.
+     *
+     * @param exp  the SQL LIKE parameter
+     * @return     the equivalent wildcard expression
+     */
+    public static String wildcardUserToSql(String exp) {
+        StringBuffer sb = new StringBuffer();
+    
+        for (int i = 0; i < exp.length(); i++) {
+            String substring = exp.substring(i);
+            if (substring.startsWith("*")) {
+                sb.append("%");
+            } else if (substring.startsWith("?")) {
+                sb.append("_");
+            } else if (substring.startsWith("\\*")) {
+                sb.append("*");
+                i++;
+            } else if (substring.startsWith("\\?")) {
+                sb.append("?");
+                i++;
+            } else if (substring.startsWith("%")) {
+                sb.append("\\\\%");
+            } else if (substring.startsWith("_")) {
+                sb.append("\\\\_");
+            } else if (substring.startsWith("\\")) {
+                sb.append("\\\\\\\\");
+                i++;
+            } else {
+                sb.append(substring.charAt(0));
+            }
+        }
+    
+        return sb.toString();
+    }
 }

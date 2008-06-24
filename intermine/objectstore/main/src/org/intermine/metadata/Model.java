@@ -11,6 +11,7 @@ package org.intermine.metadata;
  */
 
 import java.util.Collections;
+import java.util.Date;
 import java.util.Map;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -19,6 +20,7 @@ import java.util.LinkedHashMap;
 import java.util.Set;
 import java.util.Stack;
 import java.util.TreeSet;
+import java.math.BigDecimal;
 import java.net.URI;
 import java.net.URISyntaxException;
 
@@ -321,6 +323,46 @@ public class Model
                 classToFieldDescriptorMap.put(c, retval);
             }
             return retval;
+        }
+    }
+
+    /**
+     * Return the qualified name of the given unqualified class name.  The className must be in the
+     * given model or in the java.lang package or one of java.util.Date or java.math.BigDecimal.
+     * @param className the name of the class
+     * @return the fully qualified name of the class
+     * @throws ClassNotFoundException if the class can't be found
+     */
+    public String getQualifiedTypeName(String className)
+        throws ClassNotFoundException {
+    
+        if (className.indexOf(".") != -1) {
+            throw new IllegalArgumentException("Expected an unqualified class name: " + className);
+        }
+    
+        if (TypeUtil.instantiate(className) != null) {
+            // a primative type
+            return className;
+        } else {
+            if ("InterMineObject".equals(className)) {
+                return "org.intermine.model.InterMineObject";
+            } else {
+                try {
+                    return Class.forName(getPackageName() + "." + className).getName();
+                } catch (ClassNotFoundException e) {
+                    // fall through and try java.lang
+                }
+            }
+    
+            if ("Date".equals(className)) {
+                return Date.class.getName();
+            }
+    
+            if ("BigDecimal".equals(className)) {
+                return BigDecimal.class.getName();
+            }
+    
+            return Class.forName("java.lang." + className).getName();
         }
     }
 }

@@ -24,7 +24,6 @@ import org.intermine.pathquery.OrderBy;
 import org.intermine.pathquery.PathNode;
 import org.intermine.pathquery.PathQuery;
 import org.intermine.web.logic.bag.InterMineBag;
-import org.intermine.web.logic.query.MainHelper;
 import org.intermine.web.logic.widget.WidgetURLQuery;
 
 /**
@@ -66,24 +65,24 @@ public class ProteinDomainURLQuery implements WidgetURLQuery
 
         if (bagType.equals("Gene")) {
 
-            primaryIdentifier = MainHelper.makePath(model, q, "Gene.proteins.primaryIdentifier");
-            primaryAccession = MainHelper.makePath(model, q, "Gene.proteins.primaryAccession");
-            organism = MainHelper.makePath(model, q, "Gene.proteins.organism.name");
-            geneIdentifier = MainHelper.makePath(model, q, "Gene.primaryIdentifier");
-            secondaryIdentifier = MainHelper.makePath(model, q, "Gene.secondaryIdentifier");
+            primaryIdentifier = PathQuery.makePath(model, q, "Gene.proteins.primaryIdentifier");
+            primaryAccession = PathQuery.makePath(model, q, "Gene.proteins.primaryAccession");
+            organism = PathQuery.makePath(model, q, "Gene.proteins.organism.name");
+            geneIdentifier = PathQuery.makePath(model, q, "Gene.primaryIdentifier");
+            secondaryIdentifier = PathQuery.makePath(model, q, "Gene.secondaryIdentifier");
             domainIdentifier
-            =  MainHelper.makePath(model, q, "Gene.proteins.proteinDomains.primaryIdentifier");
-            domainName =  MainHelper.makePath(model, q, "Gene.proteins.proteinDomains.name");
+            =  PathQuery.makePath(model, q, "Gene.proteins.proteinDomains.primaryIdentifier");
+            domainName =  PathQuery.makePath(model, q, "Gene.proteins.proteinDomains.name");
 
 
         } else if (bagType.equals("Protein")) {
 
-            primaryIdentifier = MainHelper.makePath(model, q, "Protein.primaryIdentifier");
-            primaryAccession = MainHelper.makePath(model, q, "Protein.primaryAccession");
-            organism = MainHelper.makePath(model, q, "Protein.organism.name");
+            primaryIdentifier = PathQuery.makePath(model, q, "Protein.primaryIdentifier");
+            primaryAccession = PathQuery.makePath(model, q, "Protein.primaryAccession");
+            organism = PathQuery.makePath(model, q, "Protein.organism.name");
             domainIdentifier
-            =  MainHelper.makePath(model, q, "Protein.proteinDomains.primaryIdentifier");
-            domainName =  MainHelper.makePath(model, q, "Protein.proteinDomains.name");
+            =  PathQuery.makePath(model, q, "Protein.proteinDomains.primaryIdentifier");
+            domainName =  PathQuery.makePath(model, q, "Protein.proteinDomains.name");
         }
 
         ConstraintOp constraintOp = ConstraintOp.IN;

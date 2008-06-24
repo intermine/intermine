@@ -24,7 +24,6 @@ import org.intermine.pathquery.OrderBy;
 import org.intermine.pathquery.PathNode;
 import org.intermine.pathquery.PathQuery;
 import org.intermine.web.logic.bag.InterMineBag;
-import org.intermine.web.logic.query.MainHelper;
 import org.intermine.web.logic.widget.WidgetURLQuery;
 
 /**
@@ -60,13 +59,13 @@ public class PathwayURLQuery implements WidgetURLQuery
 
         List<Path> view = new ArrayList<Path>();
 
-        Path geneSecondaryIdentifier = MainHelper.makePath(model, q, "Gene.secondaryIdentifier");
-        Path genePrimaryIdentifier = MainHelper.makePath(model, q, "Gene.primaryIdentifier");
-        Path geneName = MainHelper.makePath(model, q, "Gene.name");
-        Path organismName = MainHelper.makePath(model, q, "Gene.organism.name");
+        Path geneSecondaryIdentifier = PathQuery.makePath(model, q, "Gene.secondaryIdentifier");
+        Path genePrimaryIdentifier = PathQuery.makePath(model, q, "Gene.primaryIdentifier");
+        Path geneName = PathQuery.makePath(model, q, "Gene.name");
+        Path organismName = PathQuery.makePath(model, q, "Gene.organism.name");
 
-        Path pathwayIdentifier = MainHelper.makePath(model, q, "Gene.pathways.identifier");
-        Path pathwayName = MainHelper.makePath(model, q, "Gene.pathways.name");
+        Path pathwayIdentifier = PathQuery.makePath(model, q, "Gene.pathways.identifier");
+        Path pathwayName = PathQuery.makePath(model, q, "Gene.pathways.name");
 
         view.add(genePrimaryIdentifier);
         view.add(geneSecondaryIdentifier);

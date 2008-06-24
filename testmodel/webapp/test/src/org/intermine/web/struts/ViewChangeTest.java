@@ -18,7 +18,6 @@ import org.intermine.path.Path;
 import org.intermine.pathquery.PathQuery;
 import org.intermine.web.logic.Constants;
 import org.intermine.web.logic.profile.Profile;
-import org.intermine.web.logic.query.MainHelper;
 
 import servletunit.struts.MockStrutsTestCase;
 
@@ -41,8 +40,8 @@ public class ViewChangeTest extends MockStrutsTestCase
     public void testRemove() throws Exception {
         Model model = Model.getInstanceByName("testmodel");
         PathQuery query = new PathQuery(model);
-        query.getView().add(MainHelper.makePath(model, query, "Employee.name"));
-        query.getView().add(MainHelper.makePath(model, query, "Employee.age"));
+        query.getView().add(PathQuery.makePath(model, query, "Employee.name"));
+        query.getView().add(PathQuery.makePath(model, query, "Employee.age"));
         getSession().setAttribute(Constants.QUERY, query);
 
         addRequestParameter("path", "Employee.age");
@@ -60,7 +59,7 @@ public class ViewChangeTest extends MockStrutsTestCase
         //verifyForward("query");
 
         ArrayList<Path> expected = new ArrayList<Path>();
-        expected.add(MainHelper.makePath(model, query, "Employee.name"));
+        expected.add(PathQuery.makePath(model, query, "Employee.name"));
         assertEquals(expected, ((PathQuery) getSession().getAttribute(Constants.QUERY)).getView());
     }
 }

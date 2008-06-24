@@ -9,7 +9,6 @@ import org.intermine.pathquery.PathQuery;
 import org.intermine.web.logic.Constants;
 import org.intermine.web.logic.bag.InterMineBag;
 import org.intermine.web.logic.profile.Profile;
-import org.intermine.web.logic.query.MainHelper;
 import org.intermine.web.logic.query.SavedQuery;
 import org.intermine.web.logic.session.SessionMethods;
 import org.intermine.web.logic.template.TemplateQuery;
@@ -37,8 +36,8 @@ public class ModifyQueryChangeActionTest extends MockStrutsTestCase
         Model testmodel = Model.getInstanceByName("testmodel");
         query = new PathQuery(testmodel);
 
-        query.getView().add(MainHelper.makePath(testmodel, query, "Employee"));
-        query.getView().add(MainHelper.makePath(testmodel, query, "Employee.name"));
+        query.getView().add(PathQuery.makePath(testmodel, query, "Employee"));
+        query.getView().add(PathQuery.makePath(testmodel, query, "Employee.name"));
         sq = new SavedQuery("query1", date, query);
         hist = new SavedQuery("query2", date, (PathQuery) query.clone());
         hist2 = new SavedQuery("query1", date, (PathQuery) query.clone());

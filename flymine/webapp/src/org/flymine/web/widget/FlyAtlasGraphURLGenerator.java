@@ -23,7 +23,6 @@ import org.intermine.pathquery.OrderBy;
 import org.intermine.pathquery.PathNode;
 import org.intermine.pathquery.PathQuery;
 import org.intermine.web.logic.bag.InterMineBag;
-import org.intermine.web.logic.query.MainHelper;
 import org.intermine.web.logic.widget.GraphCategoryURLGenerator;
 
 import org.jfree.data.category.CategoryDataset;
@@ -81,18 +80,18 @@ public class FlyAtlasGraphURLGenerator implements GraphCategoryURLGenerator
         Model model = os.getModel();
         PathQuery q = new PathQuery(model);
 
-        Path secondaryIdentifier = MainHelper.makePath(model, q,
+        Path secondaryIdentifier = PathQuery.makePath(model, q,
                                                        "FlyAtlasResult.genes.secondaryIdentifier");
-        Path primaryIdentifier = MainHelper.makePath(model, q,
+        Path primaryIdentifier = PathQuery.makePath(model, q,
                                                      "FlyAtlasResult.genes.primaryIdentifier");
-        Path name = MainHelper.makePath(model, q, "FlyAtlasResult.genes.name");
-        Path org = MainHelper.makePath(model, q, "FlyAtlasResult.genes.organism.name");
-        Path assays = MainHelper.makePath(model, q, "FlyAtlasResult.assays.name");
-        Path enrichment = MainHelper.makePath(model, q, "FlyAtlasResult.enrichment");
-        Path affyCall = MainHelper.makePath(model, q, "FlyAtlasResult.affyCall");
-        Path signal = MainHelper.makePath(model, q, "FlyAtlasResult.mRNASignal");
-        Path sem = MainHelper.makePath(model, q, "FlyAtlasResult.mRNASignalSEM");
-        Path presentCall = MainHelper.makePath(model, q, "FlyAtlasResult.presentCall");
+        Path name = PathQuery.makePath(model, q, "FlyAtlasResult.genes.name");
+        Path org = PathQuery.makePath(model, q, "FlyAtlasResult.genes.organism.name");
+        Path assays = PathQuery.makePath(model, q, "FlyAtlasResult.assays.name");
+        Path enrichment = PathQuery.makePath(model, q, "FlyAtlasResult.enrichment");
+        Path affyCall = PathQuery.makePath(model, q, "FlyAtlasResult.affyCall");
+        Path signal = PathQuery.makePath(model, q, "FlyAtlasResult.mRNASignal");
+        Path sem = PathQuery.makePath(model, q, "FlyAtlasResult.mRNASignalSEM");
+        Path presentCall = PathQuery.makePath(model, q, "FlyAtlasResult.presentCall");
 
         List<Path> view = new ArrayList<Path>();
 

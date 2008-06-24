@@ -406,4 +406,17 @@ public class StringUtil
         }
         return sb.toString();
     }
+    
+    /**
+     * @param str checked string
+     * @return true if string is empty
+     */
+
+    public static boolean isEmpty(String str) {
+        if (str == null) {
+            return true;
+        } else {
+            return str.length() == 0;
+        }
+    }
 }
