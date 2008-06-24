@@ -34,6 +34,10 @@ import org.intermine.objectstore.query.QueryField;
 import org.intermine.objectstore.query.QueryObjectReference;
 import org.intermine.objectstore.query.QueryValue;
 import org.intermine.objectstore.query.SimpleConstraint;
+import org.intermine.pathquery.LogicExpression;
+import org.intermine.pathquery.PathNode;
+import org.intermine.pathquery.PathQuery;
+import org.intermine.pathquery.PathQueryBinding;
 
 /**
  * Tests for the MainHelper class

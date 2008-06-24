@@ -16,9 +16,9 @@ import java.util.Map;
 import java.util.Properties;
 
 import org.intermine.metadata.Model;
+import org.intermine.pathquery.PathQuery;
 import org.intermine.web.logic.ClassKeyHelper;
 import org.intermine.web.logic.Constants;
-import org.intermine.web.logic.query.PathQuery;
 import org.intermine.web.logic.query.SavedQuery;
 import org.intermine.web.logic.query.SavedQueryBinding;
 import org.intermine.web.logic.session.SessionMethods;

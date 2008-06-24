@@ -15,10 +15,10 @@ import java.util.HashSet;
 
 import org.intermine.metadata.Model;
 import org.intermine.objectstore.ObjectStoreSummary;
+import org.intermine.pathquery.PathNode;
+import org.intermine.pathquery.PathQuery;
 import org.intermine.web.logic.Constants;
 import org.intermine.web.logic.query.DisplayConstraint;
-import org.intermine.web.logic.query.PathNode;
-import org.intermine.web.logic.query.PathQuery;
 
 import servletunit.struts.MockStrutsTestCase;
 

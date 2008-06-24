@@ -1,4 +1,4 @@
-package org.intermine.web.logic.query;
+package org.intermine.pathquery;
 
 /*
  * Copyright (C) 2002-2008 FlyMine
@@ -19,6 +19,7 @@ import org.intermine.metadata.AttributeDescriptor;
 import org.intermine.metadata.ReferenceDescriptor;
 import org.intermine.util.TypeUtil;
 import org.intermine.util.Util;
+import org.intermine.web.logic.query.MainHelper;
 
 /**
  * Superclass of left and right nodes

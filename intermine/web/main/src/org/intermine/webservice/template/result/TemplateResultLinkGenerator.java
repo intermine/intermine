@@ -16,9 +16,9 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.intermine.objectstore.query.ConstraintOp;
+import org.intermine.pathquery.Constraint;
+import org.intermine.pathquery.PathNode;
 import org.intermine.web.logic.WebUtil;
-import org.intermine.web.logic.query.Constraint;
-import org.intermine.web.logic.query.PathNode;
 import org.intermine.web.logic.template.TemplateQuery;
 import org.intermine.webservice.CodeTranslator;
 import org.intermine.webservice.WebServiceConstants;

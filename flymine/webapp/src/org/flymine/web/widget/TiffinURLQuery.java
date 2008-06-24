@@ -14,8 +14,8 @@ import java.util.Collection;
 
 import org.intermine.model.InterMineObject;
 import org.intermine.objectstore.ObjectStore;
+import org.intermine.pathquery.PathQuery;
 import org.intermine.web.logic.bag.InterMineBag;
-import org.intermine.web.logic.query.PathQuery;
 import org.intermine.web.logic.widget.WidgetURLQuery;
 
 /**

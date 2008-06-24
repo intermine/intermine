@@ -14,12 +14,12 @@ import java.util.Map;
 
 import org.intermine.objectstore.ObjectStore;
 import org.intermine.objectstore.ObjectStoreException;
+import org.intermine.pathquery.PathQuery;
 import org.intermine.web.logic.Constants;
 import org.intermine.web.logic.WebUtil;
 import org.intermine.web.logic.bag.InterMineBag;
 import org.intermine.web.logic.profile.Profile;
 import org.intermine.web.logic.query.MainHelper;
-import org.intermine.web.logic.query.PathQuery;
 import org.intermine.web.logic.session.SessionMethods;
 
 import javax.servlet.ServletContext;

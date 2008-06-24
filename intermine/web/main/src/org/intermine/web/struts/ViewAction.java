@@ -19,8 +19,8 @@ import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
 import org.apache.struts.util.MessageResources;
+import org.intermine.pathquery.PathQuery;
 import org.intermine.web.logic.Constants;
-import org.intermine.web.logic.query.PathQuery;
 import org.intermine.web.logic.query.QueryMonitorTimeout;
 import org.intermine.web.logic.session.SessionMethods;
 

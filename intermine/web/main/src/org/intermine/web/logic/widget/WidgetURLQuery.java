@@ -13,7 +13,7 @@ package org.intermine.web.logic.widget;
 import java.util.Collection;
 
 import org.intermine.model.InterMineObject;
-import org.intermine.web.logic.query.PathQuery;
+import org.intermine.pathquery.PathQuery;
 
 /**
  * Builds the query needed to generate the results for the user based on what they clicked on

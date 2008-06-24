@@ -34,9 +34,9 @@ import org.intermine.objectstore.query.ContainsConstraint;
 import org.intermine.objectstore.query.Query;
 import org.intermine.objectstore.query.QueryClass;
 import org.intermine.objectstore.query.QueryObjectReference;
-import org.intermine.web.logic.query.Constraint;
-import org.intermine.web.logic.query.PathNode;
-import org.intermine.web.logic.query.PathQuery;
+import org.intermine.pathquery.Constraint;
+import org.intermine.pathquery.PathNode;
+import org.intermine.pathquery.PathQuery;
 import org.intermine.web.logic.search.WebSearchable;
 
 import net.sourceforge.iharder.Base64;

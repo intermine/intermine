@@ -21,9 +21,9 @@ import org.intermine.objectstore.ObjectStoreException;
 import org.intermine.objectstore.ObjectStoreFactory;
 import org.intermine.objectstore.ObjectStoreWriter;
 import org.intermine.objectstore.ObjectStoreWriterFactory;
+import org.intermine.pathquery.PathQuery;
 import org.intermine.web.logic.ClassKeyHelper;
 import org.intermine.web.logic.bag.InterMineBag;
-import org.intermine.web.logic.query.PathQuery;
 import org.intermine.web.logic.query.SavedQuery;
 import org.intermine.web.logic.template.TemplateQuery;
 

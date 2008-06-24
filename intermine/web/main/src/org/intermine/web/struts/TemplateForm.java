@@ -24,11 +24,11 @@ import org.apache.struts.action.ActionErrors;
 import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionMapping;
 import org.intermine.objectstore.query.ConstraintOp;
+import org.intermine.pathquery.Constraint;
+import org.intermine.pathquery.PathNode;
 import org.intermine.web.logic.Constants;
 import org.intermine.web.logic.profile.Profile;
-import org.intermine.web.logic.query.Constraint;
 import org.intermine.web.logic.query.MainHelper;
-import org.intermine.web.logic.query.PathNode;
 import org.intermine.web.logic.template.TemplateHelper;
 import org.intermine.web.logic.template.TemplateQuery;
 

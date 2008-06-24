@@ -31,6 +31,7 @@ import org.intermine.objectstore.ObjectStoreFactory;
 import org.intermine.objectstore.ObjectStoreWriter;
 import org.intermine.objectstore.ObjectStoreWriterFactory;
 import org.intermine.path.Path;
+import org.intermine.pathquery.PathQuery;
 import org.intermine.web.logic.ClassKeyHelper;
 import org.intermine.web.logic.Constants;
 import org.intermine.web.logic.bag.BagQueryConfig;
@@ -41,7 +42,6 @@ import org.intermine.web.logic.config.WebConfig;
 import org.intermine.web.logic.profile.Profile;
 import org.intermine.web.logic.profile.ProfileManager;
 import org.intermine.web.logic.query.MainHelper;
-import org.intermine.web.logic.query.PathQuery;
 import org.intermine.web.logic.results.WebResults;
 import org.intermine.web.logic.search.SearchRepository;
 

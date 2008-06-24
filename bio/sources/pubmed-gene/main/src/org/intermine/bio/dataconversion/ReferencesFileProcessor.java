@@ -110,7 +110,7 @@ public class ReferencesFileProcessor
                             + "file is sorted according to the organism id else the "
                             + "behaviour is undefined.");
                 }
-                if (lineCounter % 100000 == 0) {
+                if (lineCounter % 1000000 == 0) {
                     System.out.println("Processing line: " + lineCounter);
                 }
             }

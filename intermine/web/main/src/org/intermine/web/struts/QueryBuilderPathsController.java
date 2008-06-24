@@ -19,9 +19,9 @@ import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
 import org.apache.struts.tiles.ComponentContext;
 import org.apache.struts.tiles.actions.TilesAction;
+import org.intermine.pathquery.PathQuery;
 import org.intermine.web.logic.Constants;
 import org.intermine.web.logic.query.MainHelper;
-import org.intermine.web.logic.query.PathQuery;
 
 /**
  * Controller for the main paths tile.

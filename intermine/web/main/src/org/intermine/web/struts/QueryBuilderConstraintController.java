@@ -34,6 +34,8 @@ import org.intermine.objectstore.ObjectStoreSummary;
 import org.intermine.objectstore.query.BagConstraint;
 import org.intermine.objectstore.query.ClassConstraint;
 import org.intermine.objectstore.query.ConstraintOp;
+import org.intermine.pathquery.PathNode;
+import org.intermine.pathquery.PathQuery;
 import org.intermine.util.StringUtil;
 import org.intermine.util.TypeUtil;
 import org.intermine.web.autocompletion.AutoCompleter;
@@ -45,8 +47,6 @@ import org.intermine.web.logic.bag.InterMineBag;
 import org.intermine.web.logic.profile.Profile;
 import org.intermine.web.logic.query.DisplayConstraint;
 import org.intermine.web.logic.query.MainHelper;
-import org.intermine.web.logic.query.PathNode;
-import org.intermine.web.logic.query.PathQuery;
 import org.intermine.web.logic.session.SessionMethods;
 
 /**

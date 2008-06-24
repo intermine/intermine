@@ -21,8 +21,8 @@ import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamWriter;
 
 import org.intermine.metadata.FieldDescriptor;
+import org.intermine.pathquery.PathQueryBinding;
 import org.intermine.util.SAXParser;
-import org.intermine.web.logic.query.PathQueryBinding;
 import org.xml.sax.InputSource;
 
 /**

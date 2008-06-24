@@ -14,10 +14,10 @@ import java.util.HashMap;
 import java.util.Map;
 
 import org.intermine.objectstore.query.ConstraintOp;
+import org.intermine.pathquery.PathNode;
 
 import org.intermine.web.logic.Constants;
 import org.intermine.web.logic.profile.Profile;
-import org.intermine.web.logic.query.PathNode;
 import org.intermine.web.logic.query.QueryMonitorTimeout;
 import org.intermine.web.logic.session.SessionMethods;
 import org.intermine.web.logic.template.TemplateHelper;

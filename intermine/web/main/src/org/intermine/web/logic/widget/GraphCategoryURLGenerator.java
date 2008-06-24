@@ -11,8 +11,8 @@ package org.intermine.web.logic.widget;
  */
 
 import org.intermine.objectstore.ObjectStore;
+import org.intermine.pathquery.PathQuery;
 import org.intermine.web.logic.bag.InterMineBag;
-import org.intermine.web.logic.query.PathQuery;
 
 import org.jfree.chart.urls.CategoryURLGenerator;
 import org.jfree.data.category.CategoryDataset;

@@ -22,11 +22,11 @@ import org.apache.log4j.Logger;
 import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
+import org.intermine.pathquery.PathQuery;
+import org.intermine.pathquery.PathQueryBinding;
 import org.intermine.util.XmlUtil;
 import org.intermine.web.logic.Constants;
 import org.intermine.web.logic.profile.Profile;
-import org.intermine.web.logic.query.PathQuery;
-import org.intermine.web.logic.query.PathQueryBinding;
 import org.intermine.web.logic.query.SavedQuery;
 
 /**

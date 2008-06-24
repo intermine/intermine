@@ -16,9 +16,9 @@ import java.util.Map;
 
 import javax.servlet.ServletContext;
 
+import org.intermine.pathquery.PathQuery;
 import org.intermine.web.logic.ServletMethods;
 import org.intermine.web.logic.bag.InterMineBag;
-import org.intermine.web.logic.query.PathQuery;
 
 
 /**

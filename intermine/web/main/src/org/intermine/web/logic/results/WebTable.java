@@ -15,8 +15,8 @@ import java.util.Map;
 
 import org.intermine.objectstore.ObjectStoreException;
 import org.intermine.objectstore.query.ResultsInfo;
+import org.intermine.pathquery.PathQuery;
 import org.intermine.web.logic.bag.BagQueryResult;
-import org.intermine.web.logic.query.PathQuery;
 
 /**
  * A List that can understand ResultElement objects.
