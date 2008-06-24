@@ -75,6 +75,141 @@ public class PathQuery
         this.pathDescriptions = new HashMap<Path, String>(query.pathDescriptions);
     }
 
+
+    /**
+     * Sets the select list of the query to the list of paths given.  Paths can be a single path
+     * or a comma delimited list of paths.  To append a path to the list instead use addView.
+     * @param paths a list of paths to be the view list
+     */
+    public void setView(String paths) {
+        // TODO new API method
+    }
+
+
+    /**
+     * Sets the value of view
+     * @param view a List of Paths
+     */
+    public void setView(List<Path> view) {
+        if (view == null) {
+            throw new RuntimeException("setView() was passed null");
+        }
+        this.view = view;
+        if (sortOrder.isEmpty()) {
+            Path p = getFirstPathFromView();
+            if (p != null) {
+                OrderBy o = new OrderBy(p, "asc");
+                sortOrder.add(o);
+            }
+        }
+        // Set constraints on types
+        for (Path path : view) {
+            for (Map.Entry<String, String> entry : path.getSubClassConstraintPaths().entrySet()) {
+                String simplePath = entry.getKey();
+                String colonPath = path.toStringNoConstraints().substring(0, simplePath.length());
+                PathNode node = addNode(colonPath);
+                node.setType(entry.getValue());
+            }
+        }
+    }
+
+
+    /**
+     * Appends the paths to the end of the select list. Paths can be a single path
+     * or a comma delimited list of paths.
+     * @param paths a list of paths to be appended to the end of the view list
+     */
+    public void addView(String paths) {
+        // TODO new API method
+    }
+
+    /**
+     * Appends the paths to the end of the select list.
+     * @param paths a list of paths to be appended to the end of the view list
+     */
+    public void addView(List<String> paths) {
+        // TODO new API method
+    }
+
+
+    /**
+     * Sets the order by list of the query to the list of paths given.  Paths can be a single path
+     * or a comma delimited list of paths.  To append a path to the list instead use addOrderBy.
+     * @param paths paths to create the order by list
+     */
+    public void setOrderBy(String paths) {
+        // TODO new API method
+    }
+
+    /**
+     * Sets the order by list of the query to the list of paths given.  Paths can be a single path
+     * or a comma delimited list of paths.  To append a path to the list instead use addOrderBy.
+     * @param paths paths to create the order by list
+     * @param sortAscending whether or not to sort all fields in ascending order
+     */
+    public void setOrderBy(String paths, Boolean sortAscending) {
+        // TODO new API method
+    }
+
+
+    /**
+     * Sets the order by list of the query to the list of paths given.  Paths can be a single path
+     * or a comma delimited list of paths.  To append a path to the list instead use addOrderBy.
+     * @param paths paths to create the order by list
+     */
+    public void setOrderBy(List<String> paths) {
+        // TODO new API method
+    }
+
+    /**
+     * Sets the order by list of the query to the list of paths given.  Paths can be a single path
+     * or a comma delimited list of paths.  To append a path to the list instead use addOrderBy.
+     * @param paths paths to create the order by list
+     * @param sortAscending whether or not to sort all fields in ascending order
+     */
+    public void setOrderBy(List<String> paths, Boolean sortAscending) {
+        // TODO new API method
+    }
+
+    /**
+     * Appends the paths to the end of the order by list.  Paths can be a single path
+     * or a comma delimited list of paths.
+     * @param paths a list of paths to be appended to the end of the order by list
+     */
+    public void addOrderBy(String paths) {
+        // TODO new API method
+    }
+
+    /**
+     * Appends the paths to the end of the order by list.  Paths can be a single path
+     * or a comma delimited list of paths.
+     * @param paths a list of paths to be appended to the end of the order by list
+     * @param sortAscending whether or not to sort these fields in ascending order
+     */
+    public void addOrderBy(String paths, Boolean sortAscending) {
+        // TODO new API method
+    }
+
+    /**
+     * Appends the paths to the end of the order by list.
+     * @param paths a list of paths to be appended to the end of the order by list
+     */
+    public void addOrderBy(List<String> paths) {
+        // TODO new API method
+    }
+
+    /**
+     * Appends the paths to the end of the order by list.
+     * @param paths a list of paths to be appended to the end of the order by list
+     * @param sortAscending whether or not to sort these fields in ascending order
+     */
+    public void addOrderBy(List<String> paths, Boolean sortAscending) {
+        // TODO new API method
+    }
+
+
+    /*****************************************************************************/
+
     /**
      * Get the constraint logic expression.
      * @return the constraint logic expression
@@ -174,32 +309,6 @@ public class PathQuery
         return list;
     }
 
-    /**
-     * Sets the value of view
-     * @param view a List of Path
-     */
-    public void setView(List<Path> view) {
-        if (view == null) {
-            throw new RuntimeException("setView() was passed null");
-        }
-        this.view = view;
-        if (sortOrder.isEmpty()) {
-            Path p = getFirstPathFromView();
-            if (p != null) {
-                OrderBy o = new OrderBy(p, "asc");
-                sortOrder.add(o);
-            }
-        }
-        // Set constraints on types
-        for (Path path : view) {
-            for (Map.Entry<String, String> entry : path.getSubClassConstraintPaths().entrySet()) {
-                String simplePath = entry.getKey();
-                String colonPath = path.toStringNoConstraints().substring(0, simplePath.length());
-                PathNode node = addNode(colonPath);
-                node.setType(entry.getValue());
-            }
-        }
-    }
 
     /**
      * Gets the value of view
@@ -225,7 +334,7 @@ public class PathQuery
      * Sets the sort order
      * @param sortOrder list of paths
      */
-    public void setSortOrder(List<OrderBy> sortOrder) {
+    @Deprecated public void setSortOrder(List<OrderBy> sortOrder) {
         this.sortOrder = sortOrder;
     }
 
