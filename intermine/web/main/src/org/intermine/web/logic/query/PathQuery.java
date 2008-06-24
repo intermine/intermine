@@ -85,6 +85,9 @@ public class PathQuery
         // TODO new API method
     }
 
+//    public void setView(List<String> view) {
+//
+//    }
 
     /**
      * Sets the value of view
@@ -127,17 +130,48 @@ public class PathQuery
      * Appends the paths to the end of the select list.
      * @param paths a list of paths to be appended to the end of the view list
      */
-    public void addView(List<String> paths) {
+    public void addView(List<?> paths) {
         // TODO new API method
     }
 
     /**
      * Add a constraint to the query
      * @param constraint constraint to add to the query
+     * @return label of constraint
      */
-    public void addConstraint(Constraints constraint) {
+    public String addConstraint(Constraints constraint) {
         // TODO new API method
+        return null;
     }
+
+    /**
+     * Add a constraint to the query
+     * @param constraint constraint to add to the query
+     * @param label label for constraint
+     * @return label of constraint
+     */
+    public String addConstraint(Constraints constraint, String label) {
+        // TODO new API method
+        return label;
+    }
+
+    /**
+     * Set the constraint logic expression. This expresses the AND and OR
+     * relation between constraints.
+     * @param constraintLogic the constraint logic expression
+     */
+    public void setConstraintLogic(String constraintLogic) {
+        if (constraintLogic == null) {
+            this.constraintLogic = null;
+            return;
+        }
+        try {
+            this.constraintLogic = new LogicExpression(constraintLogic);
+        } catch (IllegalArgumentException err) {
+            LOG.error("Failed to parse constraintLogic: " + constraintLogic, err);
+        }
+    }
+
 
     /**
      * Sets the order by list of the query to the list of paths given.  Paths can be a single path
@@ -227,22 +261,7 @@ public class PathQuery
         return constraintLogic.toString();
     }
 
-    /**
-     * Set the constraint logic expression. This expresses the AND and OR
-     * relation between constraints.
-     * @param constraintLogic the constraint logic expression
-     */
-    public void setConstraintLogic(String constraintLogic) {
-        if (constraintLogic == null) {
-            this.constraintLogic = null;
-            return;
-        }
-        try {
-            this.constraintLogic = new LogicExpression(constraintLogic);
-        } catch (IllegalArgumentException err) {
-            LOG.error("Failed to parse constraintLogic: " + constraintLogic, err);
-        }
-    }
+
 
     /**
      * Make sure that the logic expression is valid for the current query. Remove
