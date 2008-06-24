@@ -100,7 +100,7 @@ public class ConstraintOp
      * @return the ConstraintOp
      */
     public static ConstraintOp getOpForIndex(Integer index) {
-        return (ConstraintOp) values.get(index.intValue());
+        return values.get(index.intValue());
     }
 
     /**
@@ -157,10 +157,10 @@ public class ConstraintOp
         }
         throw new IllegalArgumentException("Unknown op");
     }
-    
+
     /**
-     * Get ConstraintOp for given operation code. 
-     * @param operationCode operation as string 
+     * Get ConstraintOp for given operation code.
+     * @param operationCode operation as string
      * @return ConstraintOp if operation code is valid else null
      */
     public static ConstraintOp getConstraintOp(String operationCode) {
@@ -175,7 +175,7 @@ public class ConstraintOp
         }
         return null;
     }
-    
+
     private String getName() {
         return name;
     }
