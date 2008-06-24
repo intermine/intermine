@@ -12,6 +12,8 @@ package org.intermine.web.logic.query;
 
 import java.util.Date;
 
+import org.intermine.pathquery.PathQuery;
+
 
 /**
  * Container for a saved query.

@@ -13,11 +13,11 @@ package org.intermine.web.struts;
 import java.util.Map;
 
 import org.intermine.objectstore.ObjectStore;
+import org.intermine.pathquery.PathQuery;
 import org.intermine.util.TypeUtil;
 import org.intermine.web.logic.Constants;
 import org.intermine.web.logic.bag.InterMineBag;
 import org.intermine.web.logic.profile.Profile;
-import org.intermine.web.logic.query.PathQuery;
 import org.intermine.web.logic.query.QueryMonitorTimeout;
 import org.intermine.web.logic.search.SearchRepository;
 import org.intermine.web.logic.search.WebSearchable;

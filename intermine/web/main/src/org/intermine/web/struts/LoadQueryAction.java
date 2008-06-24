@@ -12,10 +12,10 @@ package org.intermine.web.struts;
 
 import java.util.Map;
 
+import org.intermine.pathquery.PathQuery;
+import org.intermine.pathquery.PathQueryBinding;
 import org.intermine.web.logic.Constants;
 import org.intermine.web.logic.profile.Profile;
-import org.intermine.web.logic.query.PathQuery;
-import org.intermine.web.logic.query.PathQueryBinding;
 import org.intermine.web.logic.query.QueryMonitorTimeout;
 import org.intermine.web.logic.session.SessionMethods;
 

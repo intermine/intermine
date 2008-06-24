@@ -1,6 +1,6 @@
 package org.intermine.web;
 
-import org.intermine.web.logic.query.LogicExpression;
+import org.intermine.pathquery.LogicExpression;
 
 import junit.framework.TestCase;
 

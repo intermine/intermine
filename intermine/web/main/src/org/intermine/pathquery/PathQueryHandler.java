@@ -1,4 +1,4 @@
-package org.intermine.web.logic.query;
+package org.intermine.pathquery;
 
 /*
  * Copyright (C) 2002-2008 FlyMine
@@ -24,6 +24,7 @@ import org.intermine.util.StringUtil;
 import org.intermine.util.TypeUtil;
 import org.intermine.web.logic.ClassKeyHelper;
 import org.intermine.web.logic.bag.InterMineBag;
+import org.intermine.web.logic.query.MainHelper;
 import org.xml.sax.Attributes;
 import org.xml.sax.SAXException;
 import org.xml.sax.helpers.DefaultHandler;

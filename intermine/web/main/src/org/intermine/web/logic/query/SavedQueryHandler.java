@@ -16,6 +16,8 @@ import java.util.List;
 import java.util.Map;
 
 import org.intermine.metadata.FieldDescriptor;
+import org.intermine.pathquery.PathQuery;
+import org.intermine.pathquery.PathQueryHandler;
 import org.xml.sax.Attributes;
 import org.xml.sax.SAXException;
 

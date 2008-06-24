@@ -22,10 +22,10 @@ import org.intermine.objectstore.query.Query;
 import org.intermine.objectstore.query.QueryNode;
 import org.intermine.objectstore.query.QuerySelectable;
 import org.intermine.objectstore.query.Results;
+import org.intermine.pathquery.PathQuery;
 import org.intermine.web.logic.Constants;
 import org.intermine.web.logic.bag.InterMineBag;
 import org.intermine.web.logic.query.MainHelper;
-import org.intermine.web.logic.query.PathQuery;
 import org.intermine.webservice.WebServiceException;
 
 

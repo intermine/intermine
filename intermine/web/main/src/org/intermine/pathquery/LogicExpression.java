@@ -1,4 +1,4 @@
-package org.intermine.web.logic.query;
+package org.intermine.pathquery;
 
 /*
  * Copyright (C) 2002-2008 FlyMine
@@ -29,7 +29,7 @@ import antlr.collections.AST;
  * if a parse error occurs (use the cause exception to find out why).
  *
  * @author Thomas Riley
- * @see org.intermine.web.logic.query.PathQuery
+ * @see org.intermine.pathquery.PathQuery
  */
 public class LogicExpression
 {

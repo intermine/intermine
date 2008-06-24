@@ -38,13 +38,13 @@ import org.intermine.objectstore.query.Results;
 import org.intermine.objectstore.query.ResultsInfo;
 import org.intermine.objectstore.query.ResultsRow;
 import org.intermine.path.Path;
+import org.intermine.pathquery.PathQuery;
+import org.intermine.pathquery.PathQueryBinding;
 import org.intermine.util.DynamicUtil;
 import org.intermine.util.TypeUtil;
 import org.intermine.web.logic.ClassKeyHelper;
 import org.intermine.web.logic.WebUtil;
 import org.intermine.web.logic.bag.BagQueryResult;
-import org.intermine.web.logic.query.PathQuery;
-import org.intermine.web.logic.query.PathQueryBinding;
 
 /**
  * The web version of a Results object.  This class handles the mapping between the paths that user

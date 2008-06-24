@@ -26,6 +26,10 @@ import org.intermine.TestUtil;
 import org.intermine.metadata.Model;
 import org.intermine.objectstore.query.ConstraintOp;
 import org.intermine.path.Path;
+import org.intermine.pathquery.Constraint;
+import org.intermine.pathquery.PathNode;
+import org.intermine.pathquery.PathQuery;
+import org.intermine.pathquery.PathQueryBinding;
 import org.intermine.web.logic.ClassKeyHelper;
 
 /**

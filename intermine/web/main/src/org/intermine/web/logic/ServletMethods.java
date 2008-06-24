@@ -15,8 +15,8 @@ import java.util.Map;
 import javax.servlet.ServletContext;
 
 import org.intermine.cache.InterMineCache;
-import org.intermine.web.logic.query.PathQuery;
-import org.intermine.web.logic.query.PathQueryBinding;
+import org.intermine.pathquery.PathQuery;
+import org.intermine.pathquery.PathQueryBinding;
 import org.intermine.web.logic.session.SessionMethods;
 
 /**

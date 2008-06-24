@@ -13,9 +13,9 @@ package org.intermine.web.struts;
 
 import java.util.List;
 
+import org.intermine.pathquery.OrderBy;
+import org.intermine.pathquery.PathQuery;
 import org.intermine.web.logic.Constants;
-import org.intermine.web.logic.query.OrderBy;
-import org.intermine.web.logic.query.PathQuery;
 import org.intermine.web.logic.session.SessionMethods;
 
 import javax.servlet.http.HttpServletRequest;

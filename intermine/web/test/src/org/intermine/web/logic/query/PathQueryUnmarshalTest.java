@@ -13,6 +13,8 @@ import junit.framework.TestCase;
 import org.intermine.metadata.FieldDescriptor;
 import org.intermine.metadata.Model;
 import org.intermine.objectstore.query.PathQueryUtil;
+import org.intermine.pathquery.PathQuery;
+import org.intermine.pathquery.PathQueryBinding;
 import org.intermine.web.logic.ClassKeyHelper;
 
 /*

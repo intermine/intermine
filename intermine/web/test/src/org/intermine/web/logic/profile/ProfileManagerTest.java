@@ -39,6 +39,7 @@ import org.intermine.objectstore.ObjectStore;
 import org.intermine.objectstore.ObjectStoreException;
 import org.intermine.objectstore.ObjectStoreWriter;
 import org.intermine.objectstore.ObjectStoreWriterFactory;
+import org.intermine.pathquery.PathQuery;
 import org.intermine.util.DynamicUtil;
 import org.intermine.web.ProfileBinding;
 import org.intermine.web.ProfileManagerBinding;
@@ -46,7 +47,6 @@ import org.intermine.web.bag.PkQueryIdUpgrader;
 import org.intermine.web.logic.ClassKeyHelper;
 import org.intermine.web.logic.Constants;
 import org.intermine.web.logic.bag.InterMineBag;
-import org.intermine.web.logic.query.PathQuery;
 import org.intermine.web.logic.query.SavedQuery;
 import org.intermine.web.logic.template.TemplateQuery;
 

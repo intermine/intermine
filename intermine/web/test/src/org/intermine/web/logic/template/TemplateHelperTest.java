@@ -26,13 +26,13 @@ import org.apache.struts.action.ActionErrors;
 import org.intermine.TestUtil;
 import org.intermine.objectstore.query.ConstraintOp;
 import org.intermine.objectstore.query.Query;
+import org.intermine.pathquery.Constraint;
+import org.intermine.pathquery.PathNode;
+import org.intermine.pathquery.PathQuery;
+import org.intermine.pathquery.PathQueryBinding;
 import org.intermine.web.logic.ServletMethods;
 import org.intermine.web.logic.bag.InterMineBag;
-import org.intermine.web.logic.query.Constraint;
 import org.intermine.web.logic.query.MainHelper;
-import org.intermine.web.logic.query.PathNode;
-import org.intermine.web.logic.query.PathQuery;
-import org.intermine.web.logic.query.PathQueryBinding;
 import org.intermine.web.struts.TemplateForm;
 
 public class TemplateHelperTest extends TestCase

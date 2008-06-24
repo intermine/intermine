@@ -16,9 +16,9 @@ import java.util.List;
 
 import org.intermine.metadata.Model;
 import org.intermine.path.Path;
+import org.intermine.pathquery.PathNode;
+import org.intermine.pathquery.PathQuery;
 import org.intermine.web.logic.query.MainHelper;
-import org.intermine.web.logic.query.PathNode;
-import org.intermine.web.logic.query.PathQuery;
 import org.intermine.web.struts.QueryBuilderChange;
 
 import junit.framework.TestCase;

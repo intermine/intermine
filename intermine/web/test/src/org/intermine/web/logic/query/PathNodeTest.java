@@ -14,6 +14,8 @@ import java.util.Map;
 import java.util.Properties;
 
 import org.intermine.metadata.Model;
+import org.intermine.pathquery.Node;
+import org.intermine.pathquery.PathNode;
 import org.intermine.web.logic.ClassKeyHelper;
 
 import junit.framework.TestCase;

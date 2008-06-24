@@ -1,4 +1,4 @@
-package org.intermine.web.logic.query;
+package org.intermine.pathquery;
 
 /*
  * Copyright (C) 2002-2008 FlyMine

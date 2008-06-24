@@ -21,6 +21,7 @@ import org.intermine.metadata.Model;
 import org.intermine.objectstore.ObjectStoreSummary;
 import org.intermine.objectstore.query.ConstraintOp;
 import org.intermine.objectstore.query.SimpleConstraint;
+import org.intermine.pathquery.PathNode;
 import org.intermine.util.TypeUtil;
 import org.intermine.web.logic.ClassKeyHelper;
 

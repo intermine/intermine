@@ -14,9 +14,9 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Locale;
 
-import org.intermine.web.logic.query.Constraint;
+import org.intermine.pathquery.Constraint;
+import org.intermine.pathquery.PathNode;
 import org.intermine.web.logic.query.MainHelper;
-import org.intermine.web.logic.query.PathNode;
 import org.intermine.web.logic.template.ConstraintValueParser;
 import org.intermine.web.logic.template.ParseValueException;
 import org.intermine.web.logic.template.TemplateQuery;
