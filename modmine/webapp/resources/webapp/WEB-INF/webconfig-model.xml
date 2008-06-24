@@ -22,13 +22,14 @@
   <class className="org.flymine.model.genomic.Protocol">
     <fields>
       <fieldconfig fieldExpr="name"/>
-      <fieldconfig fieldExpr="description" doNotTruncate="true"/>
+      <fieldconfig fieldExpr="description"/>
       <fieldconfig fieldExpr="type"/>
     </fields>
   </class>
 
   <class className="org.flymine.model.genomic.AppliedProtocol">
     <fields>
+      <fieldconfig fieldExpr="name"/>    
       <fieldconfig fieldExpr="protocol.type"/>
       <fieldconfig fieldExpr="protocol.name"/>    
       <fieldconfig fieldExpr="experimentSubmission.title"/>
