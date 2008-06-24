@@ -151,10 +151,8 @@ public class ProteinStructureDataConverter extends BioFileConverter
          * @param writer the ItemWriter used to handle the resultant items
          * @param proteinMap the Map of proteins
          * @param featureMap the Map of features
-         * @throws ObjectStoreException an exception
          */
-        public ProteinStructureHandler (ItemWriter writer, Map proteinMap, Map featureMap)
-            throws ObjectStoreException {
+        public ProteinStructureHandler (ItemWriter writer, Map proteinMap, Map featureMap) {
             this.writer = writer;
             this.proteinMap = proteinMap;
             this.featureMap = featureMap;
@@ -264,9 +262,8 @@ public class ProteinStructureDataConverter extends BioFileConverter
                     throw new RuntimeException("error while storing: " + proteinItemIdentifier, e);
                 }
                 return protein.getIdentifier();
-            } else {
-                return proteinIdentifier;
             }
+            return proteinIdentifier;
         }
 
         private Item getFeature(String identifier) throws ObjectStoreException {
@@ -285,14 +282,15 @@ public class ProteinStructureDataConverter extends BioFileConverter
          */
         public void characters(char[] ch, int start, int length) throws SAXException
         {
-
+            int st = start;
+            int l = length;
             if (attName != null) {
 
                 // DefaultHandler may call this method more than once for a single
                 // attribute content -> hold text & create attribute in endElement
-                while (length > 0) {
+                while (l > 0) {
                     boolean whitespace = false;
-                    switch(ch[start]) {
+                    switch(ch[st]) {
                     case ' ':
                     case '\r':
                     case '\n':
@@ -305,13 +303,13 @@ public class ProteinStructureDataConverter extends BioFileConverter
                     if (!whitespace) {
                         break;
                     }
-                    ++start;
-                    --length;
+                    ++st;
+                    --l;
                 }
 
-                if (length > 0) {
+                if (l > 0) {
                     StringBuffer s = new StringBuffer();
-                    s.append(ch, start, length);
+                    s.append(ch, st, l);
                     attValue.append(s);
                 }
             }
