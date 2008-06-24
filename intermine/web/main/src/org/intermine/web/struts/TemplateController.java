@@ -162,12 +162,12 @@ public class TemplateController extends TilesAction
         Map selectedBagNames = new HashMap();
         Map keyFields = new HashMap();
         Map haveExtraConstraint = new HashMap();
-        
+
         // for the autocompleter
         Map<String, String> classDesc = new HashMap<String, String>();
         Map<String, String> fieldDesc = new HashMap<String, String>();
 
-        
+
 
         servletContext = session.getServletContext();
         Map classKeys = (Map) servletContext.getAttribute(Constants.CLASS_KEYS);
@@ -195,13 +195,15 @@ public class TemplateController extends TilesAction
 
         for (PathNode node : template.getEditableNodes()) {
             PathNode displayNode = displayTemplate.getNodes().get(node.getPathString());
-            
-            // for the autocompleter 
+
+            // for the autocompleter
             Path path = new Path(os.getModel(), node.getPathString());
-            fieldDesc.put(node.getPathString(), path.getEndFieldDescriptor().getName());
-            String[] tmp =  path.getLastClassDescriptor().getName().split("\\.");
-            classDesc.put(node.getPathString(), tmp[ tmp.length - 1]);
-            
+            if (path.getEndFieldDescriptor() != null) {
+                fieldDesc.put(node.getPathString(), path.getEndFieldDescriptor().getName());
+                String[] tmp =  path.getLastClassDescriptor().getName().split("\\.");
+                classDesc.put(node.getPathString(), tmp[ tmp.length - 1]);
+            }
+
             int j = 1;
             for (Iterator ci = displayTemplate.getEditableConstraints(node).iterator(); ci
                     .hasNext();) {
@@ -320,8 +322,8 @@ public class TemplateController extends TilesAction
 
         tf.setName(queryName);
         tf.setType(scope);
-        
-        
+
+
         // A Map which have as key the pathstring and as value the name of the last class
         request.setAttribute("classDesc", classDesc);
         // A Map which containts as key the pathstring and as value the field name
@@ -366,9 +368,9 @@ public class TemplateController extends TilesAction
             TemplateForm tf, HttpServletRequest request, ServletContext servletContext,
             InterMineObject imObject) {
         int j = 0;
-        
+
         Map<String, String> autoMap = new HashMap<String, String>();
-        
+
         for (Iterator i = template.getEditableNodes().iterator(); i.hasNext();) {
             PathNode node = (PathNode) i.next();
 
@@ -395,9 +397,9 @@ public class TemplateController extends TilesAction
                     tf.setAttributeValues(attributeKey, value);
                 }
                 //fetch AutoCompleter from servletContext
-                AutoCompleter ac = (AutoCompleter) 
+                AutoCompleter ac = (AutoCompleter)
                                         servletContext.getAttribute(Constants.AUTO_COMPLETER);
-                if (ac != null 
+                if (ac != null
                         && ac.hasAutocompleter(node.getParentType(), node.getFieldName())) {
                     autoMap.put(node.getParentType() + "." + node.getFieldName(),
                             "useAutoCompleter");
