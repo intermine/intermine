@@ -10,7 +10,7 @@ package org.intermine.web.struts;
  *
  */
 
-import org.intermine.web.logic.WebUtil;
+import org.intermine.util.Util;
 
 import junit.framework.TestCase;
 
@@ -27,67 +27,67 @@ public class WebUtilTest extends TestCase
     }
 
     public void testWildcardSqlToUser() throws Exception {
-        String value = WebUtil.wildcardSqlToUser("a");
+        String value = Util.wildcardSqlToUser("a");
         assertEquals("wildcardSqlToUser(a)", "a", value);
 
-        value = WebUtil.wildcardSqlToUser("a%");
+        value = Util.wildcardSqlToUser("a%");
         assertEquals("wildcardSqlToUser(a%)", "a*", value);
 
-        value = WebUtil.wildcardSqlToUser("%a");
+        value = Util.wildcardSqlToUser("%a");
         assertEquals("wildcardSqlToUser(%a)", "*a", value);
 
-        value = WebUtil.wildcardSqlToUser("a\\\\\\\\a");
+        value = Util.wildcardSqlToUser("a\\\\\\\\a");
         assertEquals("wildcardSqlToUser(a\\\\\\\\a)", "a\\\\a", value);
 
-        value = WebUtil.wildcardSqlToUser("\\\\%a");
+        value = Util.wildcardSqlToUser("\\\\%a");
         assertEquals("wildcardSqlToUser(\\\\%a)", "%a", value);
 
-        value = WebUtil.wildcardSqlToUser("_a");
+        value = Util.wildcardSqlToUser("_a");
         assertEquals("wildcardSqlToUser(_a)", "?a", value);
 
-        value = WebUtil.wildcardSqlToUser("\\\\_a");
+        value = Util.wildcardSqlToUser("\\\\_a");
         assertEquals("wildcardSqlToUser(\\\\_a)", "_a", value);
 
-        value = WebUtil.wildcardSqlToUser("?a");
+        value = Util.wildcardSqlToUser("?a");
         assertEquals("wildcardSqlToUser(?a)", "\\?a", value);
 
-        value = WebUtil.wildcardSqlToUser("*a");
+        value = Util.wildcardSqlToUser("*a");
         assertEquals("wildcardSqlToUser(*a)", "\\*a", value);
 
-        value = WebUtil.wildcardSqlToUser("*?%_\\\\%\\\\_");
+        value = Util.wildcardSqlToUser("*?%_\\\\%\\\\_");
         assertEquals("wildcardSqlToUser(*?%_\\\\%\\\\_)", "\\*\\?*?%_", value);
     }
 
 
     public void testWildcardUserToSql() throws Exception {
-        String value = WebUtil.wildcardUserToSql("a");
+        String value = Util.wildcardUserToSql("a");
         assertEquals("wildcardUserToSql(a)", "a", value);
 
-        value = WebUtil.wildcardUserToSql("a*");
+        value = Util.wildcardUserToSql("a*");
         assertEquals("wildcardUserToSql(a*)", "a%", value);
 
-        value = WebUtil.wildcardUserToSql("*a");
+        value = Util.wildcardUserToSql("*a");
         assertEquals("wildcardUserToSql(*a)", "%a", value);
 
-        value = WebUtil.wildcardUserToSql("a\\\\a");
+        value = Util.wildcardUserToSql("a\\\\a");
         assertEquals("wildcardUserToSql(a\\a)", "a\\\\\\\\a", value);
 
-        value = WebUtil.wildcardUserToSql("\\*a");
+        value = Util.wildcardUserToSql("\\*a");
         assertEquals("wildcardUserToSql(\\*a)", "*a", value);
 
-        value = WebUtil.wildcardUserToSql("?a");
+        value = Util.wildcardUserToSql("?a");
         assertEquals("wildcardUserToSql(?a)", "_a", value);
 
-        value = WebUtil.wildcardUserToSql("\\?a");
+        value = Util.wildcardUserToSql("\\?a");
         assertEquals("wildcardUserToSql(\\?a)", "?a", value);
 
-        value = WebUtil.wildcardUserToSql("_a");
+        value = Util.wildcardUserToSql("_a");
         assertEquals("wildcardSqlToUser(_a)", "\\\\_a", value);
 
-        value = WebUtil.wildcardUserToSql("%a");
+        value = Util.wildcardUserToSql("%a");
         assertEquals("wildcardSqlToUser(%a)", "\\\\%a", value);
 
-        value = WebUtil.wildcardUserToSql("*?%_\\*\\?");
+        value = Util.wildcardUserToSql("*?%_\\*\\?");
         assertEquals("wildcardUserToSql(*?%_\\*\\?\\%\\_)", "%_\\\\%\\\\_*?", value);
     }
 
@@ -99,7 +99,7 @@ public class WebUtilTest extends TestCase
 
         for (int i = 0; i < testStrings.length; i++) {
             assertEquals("testing: " + testStrings[i], testStrings[i],
-                         WebUtil.wildcardSqlToUser(WebUtil.wildcardUserToSql(testStrings[i])));
+                         Util.wildcardSqlToUser(Util.wildcardUserToSql(testStrings[i])));
         }
     }
 }

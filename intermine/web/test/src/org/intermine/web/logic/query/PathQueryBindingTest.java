@@ -14,6 +14,7 @@ import java.io.ByteArrayInputStream;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -62,7 +63,7 @@ public class PathQueryBindingTest extends TestCase
         // allCompanies
         PathQuery allCompanies = new PathQuery(model);
         List<Path> view = new ArrayList();
-        view.add(MainHelper.makePath(model, allCompanies, "Company"));
+        view.add(PathQuery.makePath(model, allCompanies, "Company"));
         allCompanies.setView(view);
         expected.put("allCompanies", allCompanies);
 
@@ -70,10 +71,10 @@ public class PathQueryBindingTest extends TestCase
         // employeesWithOldManagers
         PathQuery employeesWithOldManagers = new PathQuery(model);
         view = new ArrayList();
-        view.add(MainHelper.makePath(model, employeesWithOldManagers, "Employee.name"));
-        view.add(MainHelper.makePath(model, employeesWithOldManagers, "Employee.age"));
-        view.add(MainHelper.makePath(model, employeesWithOldManagers, "Employee.department.name"));
-        view.add(MainHelper.makePath(model, employeesWithOldManagers,
+        view.add(PathQuery.makePath(model, employeesWithOldManagers, "Employee.name"));
+        view.add(PathQuery.makePath(model, employeesWithOldManagers, "Employee.age"));
+        view.add(PathQuery.makePath(model, employeesWithOldManagers, "Employee.department.name"));
+        view.add(PathQuery.makePath(model, employeesWithOldManagers,
                                      "Employee.department.manager.age"));
         employeesWithOldManagers.setView(view);
         PathNode age = employeesWithOldManagers.addNode("Employee.department.manager.age");
@@ -86,7 +87,7 @@ public class PathQueryBindingTest extends TestCase
         // vatNumberInBag
         PathQuery vatNumberInBag = new PathQuery(model);
         view = new ArrayList();
-        view.add(MainHelper.makePath(model, vatNumberInBag, "Company"));
+        view.add(PathQuery.makePath(model, vatNumberInBag, "Company"));
         vatNumberInBag.setView(view);
         PathNode company = vatNumberInBag.addNode("Company");
         company.getConstraints().add(new Constraint(ConstraintOp.IN, "bag1"));
@@ -100,10 +101,10 @@ public class PathQueryBindingTest extends TestCase
         queryWithConstraint.addNode("Company.departments");
         PathNode pathNode = queryWithConstraint.addNode("Company.departments.employees");
         pathNode.setType("CEO");
-        view.add(MainHelper.makePath(model, queryWithConstraint, "Company.name"));
-        view.add(MainHelper.makePath(model, queryWithConstraint, "Company.departments.name"));
-        view.add(MainHelper.makePath(model, queryWithConstraint, "Company.departments.employees.name"));
-        view.add(MainHelper.makePath(model, queryWithConstraint, "Company.departments.employees.title"));
+        view.add(PathQuery.makePath(model, queryWithConstraint, "Company.name"));
+        view.add(PathQuery.makePath(model, queryWithConstraint, "Company.departments.name"));
+        view.add(PathQuery.makePath(model, queryWithConstraint, "Company.departments.employees.name"));
+        view.add(PathQuery.makePath(model, queryWithConstraint, "Company.departments.employees.title"));
 
         queryWithConstraint.setView(view);
         expected.put("queryWithConstraint", queryWithConstraint);
@@ -111,13 +112,16 @@ public class PathQueryBindingTest extends TestCase
         // employeesInBag
         PathQuery employeesInBag = new PathQuery(model);
         view = new ArrayList();
-        view.add(MainHelper.makePath(model, employeesInBag, "Employee.name"));
+        view.add(PathQuery.makePath(model, employeesInBag, "Employee.name"));
         employeesInBag.setView(view);
         PathNode employeeEnd = employeesInBag.addNode("Employee.end");
         employeeEnd.getConstraints().add(new Constraint(ConstraintOp.IN, "bag1"));
         Exception e = new Exception("Invalid bag constraint - only objects can be"
                                     + "constrained to be in bags.");
-        employeesInBag.problems.add(e);
+        //employeesInBag.problems.add(e);
+        List<Throwable> problems = Arrays.asList(employeesInBag.getProblems());
+        problems.add(e);
+        employeesInBag.setProblems(problems);
         expected.put("employeeEndInBag", employeesInBag);
 
         return expected;
@@ -139,7 +143,8 @@ public class PathQueryBindingTest extends TestCase
     public void employeeEndInBag() throws Exception {
         assertEquals(expected.get("employeeEndInBag"), savedQueries.get("employeeEndInBag"));
         System.out.println(((PathQuery) savedQueries.get("employeeEndInBag")));
-        assertEquals(((PathQuery) expected.get("employeeEndInBag")).problems,
+        List<Throwable> problems = Arrays.asList(((PathQuery) expected.get("employeeEndInBag")).getProblems());
+        assertEquals(problems,
                 ((PathQuery) savedQueries.get("employeeEndInBag")));
     }
 

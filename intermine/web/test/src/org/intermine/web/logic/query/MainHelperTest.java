@@ -57,34 +57,6 @@ public class MainHelperTest extends TestCase {
         classKeys = TestUtil.getClassKeys(TestUtil.getModel());
     }
 
-    public void testGetQualifiedTypeName() throws Exception {
-        Model model = Model.getInstanceByName("testmodel");
-        assertEquals("org.intermine.model.testmodel.Employee",
-                     MainHelper.getQualifiedTypeName("Employee", model));
-        assertEquals("java.lang.String",
-                     MainHelper.getQualifiedTypeName("String", model));
-        assertEquals("int",
-                     MainHelper.getQualifiedTypeName("int", model));
-        assertEquals("java.util.Date",
-                     MainHelper.getQualifiedTypeName("Date", model));
-        assertEquals("java.math.BigDecimal",
-                     MainHelper.getQualifiedTypeName("BigDecimal", model));
-
-        try {
-            MainHelper.getQualifiedTypeName("SomeUnkownClass", model);
-            fail("Expected ClassNotFoundException");
-        } catch (ClassNotFoundException e) {
-            // expected
-        }
-
-        try {
-            MainHelper.getQualifiedTypeName("java.lang.String", model);
-            fail("Expected IllegalArgumentException");
-        } catch (IllegalArgumentException e) {
-            // expected
-        }
-    }
-
     public void testGetTypeForPath() throws Exception {
         Model model = Model.getInstanceByName("testmodel");
         PathQuery query = new PathQuery(model);
@@ -94,13 +66,13 @@ public class MainHelperTest extends TestCase {
         query.addNode("Employee.age");
         PathNode managerNode = query.addNode("Employee.department.manager");
         managerNode.setType("CEO");
-        query.getView().add(MainHelper.makePath(model, query, "Employee"));
-        query.getView().add(MainHelper.makePath(model, query, "Employee.end"));
-        query.getView().add(MainHelper.makePath(model, query, "Employee.age"));
-        query.getView().add(MainHelper.makePath(model, query, "Employee.department.manager"));
-        query.getView().add(MainHelper.makePath(model, query, "Employee.department.manager.seniority"));
-        query.getView().add(MainHelper.makePath(model, query, "Employee.department.manager.secretarys.name"));
-        query.getView().add(MainHelper.makePath(model, query, "Employee.address.address"));
+        query.getView().add(PathQuery.makePath(model, query, "Employee"));
+        query.getView().add(PathQuery.makePath(model, query, "Employee.end"));
+        query.getView().add(PathQuery.makePath(model, query, "Employee.age"));
+        query.getView().add(PathQuery.makePath(model, query, "Employee.department.manager"));
+        query.getView().add(PathQuery.makePath(model, query, "Employee.department.manager.seniority"));
+        query.getView().add(PathQuery.makePath(model, query, "Employee.department.manager.secretarys.name"));
+        query.getView().add(PathQuery.makePath(model, query, "Employee.address.address"));
 
         assertEquals("org.intermine.model.testmodel.Employee",
                      MainHelper.getTypeForPath("Employee", query));

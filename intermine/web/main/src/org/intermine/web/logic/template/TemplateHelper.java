@@ -758,7 +758,7 @@ public class TemplateHelper
                 String path = node.getPathString();
                 if (!c.getOp().equals(ConstraintOp.LOOKUP)) {
                     if (!templateClone.viewContains(path)) {
-                        templateClone.getView().add(MainHelper.makePath(templateClone.getModel(),
+                        templateClone.getView().add(PathQuery.makePath(templateClone.getModel(),
                                                                         templateClone, path));
                     }
                     if (!indexPaths.contains(path)) {

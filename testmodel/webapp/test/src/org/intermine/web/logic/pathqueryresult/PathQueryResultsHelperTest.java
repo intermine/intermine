@@ -41,7 +41,6 @@ import org.intermine.web.logic.config.Type;
 import org.intermine.web.logic.config.WebConfig;
 import org.intermine.web.logic.profile.Profile;
 import org.intermine.web.logic.profile.ProfileManager;
-import org.intermine.web.logic.query.MainHelper;
 import org.intermine.web.logic.results.WebResults;
 import org.intermine.web.logic.search.SearchRepository;
 
@@ -116,8 +115,8 @@ public class PathQueryResultsHelperTest extends MockStrutsTestCase
         servletContext.setAttribute(Constants.GLOBAL_SEARCH_REPOSITORY, new SearchRepository(null));
         
         PathQuery pathQuery = new PathQuery(model);
-        pathQuery.getView().add(MainHelper.makePath(model, pathQuery, "Employee.age"));
-        pathQuery.getView().add(MainHelper.makePath(model, pathQuery, "Employee.name"));
+        pathQuery.getView().add(PathQuery.makePath(model, pathQuery, "Employee.age"));
+        pathQuery.getView().add(PathQuery.makePath(model, pathQuery, "Employee.name"));
         WebResults webResults = PathQueryResultHelper.createPathQueryGetResults(pathQuery, profile, os, classKeys, bagQueryConfig, servletContext);
         assertEquals(webResults.size(), 1);
     }

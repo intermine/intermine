@@ -16,8 +16,8 @@ import org.intermine.objectstore.query.ConstraintOp;
 import org.intermine.pathquery.PathNode;
 import org.intermine.pathquery.PathQuery;
 
+import org.intermine.util.TypeUtil;
 import org.intermine.web.logic.Constants;
-import org.intermine.web.logic.query.MainHelper;
 import org.intermine.web.logic.session.SessionMethods;
 import org.intermine.web.logic.template.ConstraintValueParser;
 import org.intermine.web.logic.template.ParseValueException;
@@ -332,7 +332,7 @@ public class QueryBuilderForm extends ActionForm
             PathNode node = query.getNodes().get(path);
             Class fieldClass;
             if (node.isAttribute()) {
-                fieldClass = MainHelper.getClass(node.getType());
+                fieldClass = TypeUtil.getClass(node.getType());
             } else {
                 fieldClass = String.class;
             }

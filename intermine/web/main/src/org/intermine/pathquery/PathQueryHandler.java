@@ -11,6 +11,7 @@ package org.intermine.pathquery;
  */
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
@@ -123,7 +124,9 @@ public class PathQueryHandler extends DefaultHandler
                     } else {
                         Exception e = new Exception("Invalid bag constraint - only objects can be"
                                 + "constrained to be in bags.");
-                        query.problems.add(e);
+                        List<Throwable> problems = Arrays.asList(query.getProblems());
+                        problems.add(e);
+                        query.setProblems(problems);
                     }
                 }
             } else {
@@ -131,13 +134,13 @@ public class PathQueryHandler extends DefaultHandler
                 if (model != null && !node.getType().startsWith(model.getPackageName())) {
                     String type = model.getPackageName() + "." + node.getType();
                     try {
-                        c = MainHelper.getClass(type);
+                        c = TypeUtil.getClass(type);
                     } catch (RuntimeException e) {
                         // ignore - probably a String/BigDecimal etc.
                     }
                 }
                 if (c == null) {
-                    c = MainHelper.getClass(node.getType());
+                    c = TypeUtil.getClass(node.getType());
                 }
                 if (constraintOp != ConstraintOp.IS_NULL
                         && constraintOp != ConstraintOp.IS_NOT_NULL) {

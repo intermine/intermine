@@ -24,7 +24,6 @@ import org.intermine.pathquery.OrderBy;
 import org.intermine.pathquery.PathNode;
 import org.intermine.pathquery.PathQuery;
 import org.intermine.web.logic.bag.InterMineBag;
-import org.intermine.web.logic.query.MainHelper;
 import org.intermine.web.logic.widget.WidgetURLQuery;
 
 /**
@@ -59,11 +58,11 @@ public class PrideExperimentURLQuery implements WidgetURLQuery
 
         List<Path> view = new ArrayList<Path>();
 
-        Path pride = MainHelper.makePath(model, q,
+        Path pride = PathQuery.makePath(model, q,
                 "Protein.proteinIdentifications.prideExperiment.title");
-        Path proteinId = MainHelper.makePath(model, q, "Protein.primaryIdentifier");
-        Path proteinAcc = MainHelper.makePath(model, q, "Protein.primaryAccession");
-        Path proteinName = MainHelper.makePath(model, q, "Protein.name");
+        Path proteinId = PathQuery.makePath(model, q, "Protein.primaryIdentifier");
+        Path proteinAcc = PathQuery.makePath(model, q, "Protein.primaryAccession");
+        Path proteinName = PathQuery.makePath(model, q, "Protein.name");
 
         view.add(pride);
         view.add(proteinId);

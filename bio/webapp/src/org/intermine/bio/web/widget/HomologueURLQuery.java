@@ -24,7 +24,6 @@ import org.intermine.pathquery.OrderBy;
 import org.intermine.pathquery.PathNode;
 import org.intermine.pathquery.PathQuery;
 import org.intermine.web.logic.bag.InterMineBag;
-import org.intermine.web.logic.query.MainHelper;
 import org.intermine.web.logic.widget.WidgetURLQuery;
 
 /**
@@ -60,18 +59,18 @@ public class HomologueURLQuery implements WidgetURLQuery
 
         List<Path> view = new ArrayList<Path>();
 
-        Path genePrimaryIdentifier = MainHelper.makePath(model, q, "Gene.primaryIdentifier");
-        Path geneSymbol = MainHelper.makePath(model, q, "Gene.symbol");
-        Path organismName = MainHelper.makePath(model, q, "Gene.organism.name");
+        Path genePrimaryIdentifier = PathQuery.makePath(model, q, "Gene.primaryIdentifier");
+        Path geneSymbol = PathQuery.makePath(model, q, "Gene.symbol");
+        Path organismName = PathQuery.makePath(model, q, "Gene.organism.name");
 
         Path homologueIdentifier
-        = MainHelper.makePath(model, q, "Gene.homologues.homologue.primaryIdentifier");
+        = PathQuery.makePath(model, q, "Gene.homologues.homologue.primaryIdentifier");
         Path homologueSymbol
-        = MainHelper.makePath(model, q, "Gene.homologues.homologue.symbol");
+        = PathQuery.makePath(model, q, "Gene.homologues.homologue.symbol");
         Path homologueOrganism
-        = MainHelper.makePath(model, q, "Gene.homologues.homologue.organism.name");
+        = PathQuery.makePath(model, q, "Gene.homologues.homologue.organism.name");
         Path homologueType
-        = MainHelper.makePath(model, q, "Gene.homologues.type");
+        = PathQuery.makePath(model, q, "Gene.homologues.type");
 
         view.add(genePrimaryIdentifier);
         view.add(geneSymbol);

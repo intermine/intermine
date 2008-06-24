@@ -10,12 +10,10 @@ package org.intermine.pathquery;
  *
  */
 
-import org.apache.log4j.Logger;
-
-import org.intermine.metadata.Model;
+import org.intermine.metadata.AttributeDescriptor;
 import org.intermine.metadata.ClassDescriptor;
 import org.intermine.metadata.FieldDescriptor;
-import org.intermine.metadata.AttributeDescriptor;
+import org.intermine.metadata.Model;
 import org.intermine.metadata.ReferenceDescriptor;
 import org.intermine.util.TypeUtil;
 import org.intermine.util.Util;
@@ -27,8 +25,6 @@ import org.intermine.web.logic.query.MainHelper;
  */
 public class Node
 {
-    private static final Logger LOG = Logger.getLogger(Node.class);
-
     private Node parent;
     private String fieldName, pathString, prefix, type;
     private boolean attribute = false, reference = false, collection = false, outer = false;

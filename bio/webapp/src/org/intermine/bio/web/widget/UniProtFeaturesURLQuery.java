@@ -24,7 +24,6 @@ import org.intermine.pathquery.OrderBy;
 import org.intermine.pathquery.PathNode;
 import org.intermine.pathquery.PathQuery;
 import org.intermine.web.logic.bag.InterMineBag;
-import org.intermine.web.logic.query.MainHelper;
 import org.intermine.web.logic.widget.WidgetURLQuery;
 
 /**
@@ -59,13 +58,13 @@ public class UniProtFeaturesURLQuery implements WidgetURLQuery
 
         List<Path> view = new ArrayList<Path>();
 
-        Path identifier = MainHelper.makePath(model, q, "Protein.primaryIdentifier");
-        Path sec = MainHelper.makePath(model, q, "Protein.primaryAccession");
-        Path organism = MainHelper.makePath(model, q, "Protein.organism.name");
-        Path name = MainHelper.makePath(model, q, "Protein.features.feature.name");
-        Path descr =  MainHelper.makePath(model, q, "Protein.features.description");
-        Path begin = MainHelper.makePath(model, q, "Protein.features.begin");
-        Path end = MainHelper.makePath(model, q, "Protein.features.end");
+        Path identifier = PathQuery.makePath(model, q, "Protein.primaryIdentifier");
+        Path sec = PathQuery.makePath(model, q, "Protein.primaryAccession");
+        Path organism = PathQuery.makePath(model, q, "Protein.organism.name");
+        Path name = PathQuery.makePath(model, q, "Protein.features.feature.name");
+        Path descr =  PathQuery.makePath(model, q, "Protein.features.description");
+        Path begin = PathQuery.makePath(model, q, "Protein.features.begin");
+        Path end = PathQuery.makePath(model, q, "Protein.features.end");
 
         view.add(identifier);
         view.add(sec);

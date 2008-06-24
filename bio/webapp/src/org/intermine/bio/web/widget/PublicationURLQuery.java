@@ -24,7 +24,6 @@ import org.intermine.pathquery.OrderBy;
 import org.intermine.pathquery.PathNode;
 import org.intermine.pathquery.PathQuery;
 import org.intermine.web.logic.bag.InterMineBag;
-import org.intermine.web.logic.query.MainHelper;
 import org.intermine.web.logic.widget.WidgetURLQuery;
 
 /**
@@ -59,15 +58,15 @@ public class PublicationURLQuery implements WidgetURLQuery
 
         List<Path> view = new ArrayList<Path>();
 
-        Path geneSecondaryIdentifier = MainHelper.makePath(model, q, "Gene.secondaryIdentifier");
-        Path genePrimaryIdentifier = MainHelper.makePath(model, q, "Gene.primaryIdentifier");
-        Path geneName = MainHelper.makePath(model, q, "Gene.name");
-        Path organismName = MainHelper.makePath(model, q, "Gene.organism.name");
-        Path title = MainHelper.makePath(model, q, "Gene.publications.title");
-        Path author = MainHelper.makePath(model, q, "Gene.publications.firstAuthor");
-        Path journal = MainHelper.makePath(model, q, "Gene.publications.journal");
-        Path year = MainHelper.makePath(model, q, "Gene.publications.year");
-        Path pubmedid = MainHelper.makePath(model, q, "Gene.publications.pubMedId");
+        Path geneSecondaryIdentifier = PathQuery.makePath(model, q, "Gene.secondaryIdentifier");
+        Path genePrimaryIdentifier = PathQuery.makePath(model, q, "Gene.primaryIdentifier");
+        Path geneName = PathQuery.makePath(model, q, "Gene.name");
+        Path organismName = PathQuery.makePath(model, q, "Gene.organism.name");
+        Path title = PathQuery.makePath(model, q, "Gene.publications.title");
+        Path author = PathQuery.makePath(model, q, "Gene.publications.firstAuthor");
+        Path journal = PathQuery.makePath(model, q, "Gene.publications.journal");
+        Path year = PathQuery.makePath(model, q, "Gene.publications.year");
+        Path pubmedid = PathQuery.makePath(model, q, "Gene.publications.pubMedId");
 
         view.add(genePrimaryIdentifier);
         view.add(geneSecondaryIdentifier);

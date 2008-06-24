@@ -23,7 +23,6 @@ import org.intermine.pathquery.OrderBy;
 import org.intermine.pathquery.PathNode;
 import org.intermine.pathquery.PathQuery;
 import org.intermine.web.logic.bag.InterMineBag;
-import org.intermine.web.logic.query.MainHelper;
 import org.intermine.web.logic.widget.GraphCategoryURLGenerator;
 
 import org.jfree.data.category.CategoryDataset;
@@ -81,14 +80,14 @@ public class ChromosomeDistributionGraphURLGenerator implements GraphCategoryURL
         PathQuery q = new PathQuery(model);
         String bagType = bag.getType();
 
-        Path identifier = MainHelper.makePath(model, q, bagType + ".secondaryIdentifier");
-        Path primaryIdentifier = MainHelper.makePath(model, q, bagType + ".primaryIdentifier");
-        Path name = MainHelper.makePath(model, q, bagType + ".organism.name");
-        Path chromoIdentifier = MainHelper.makePath(model, q, bagType
+        Path identifier = PathQuery.makePath(model, q, bagType + ".secondaryIdentifier");
+        Path primaryIdentifier = PathQuery.makePath(model, q, bagType + ".primaryIdentifier");
+        Path name = PathQuery.makePath(model, q, bagType + ".organism.name");
+        Path chromoIdentifier = PathQuery.makePath(model, q, bagType
                                                     + ".chromosome.primaryIdentifier");
-        Path start = MainHelper.makePath(model, q, bagType + ".chromosomeLocation.start");
-        Path end = MainHelper.makePath(model, q, bagType + ".chromosomeLocation.end");
-        Path strand = MainHelper.makePath(model, q, bagType + ".chromosomeLocation.strand");
+        Path start = PathQuery.makePath(model, q, bagType + ".chromosomeLocation.start");
+        Path end = PathQuery.makePath(model, q, bagType + ".chromosomeLocation.end");
+        Path strand = PathQuery.makePath(model, q, bagType + ".chromosomeLocation.strand");
 
         List<Path> view = new ArrayList<Path>();
 

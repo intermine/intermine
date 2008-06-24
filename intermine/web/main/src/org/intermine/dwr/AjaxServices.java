@@ -337,7 +337,7 @@ public class AjaxServices
             WebContext ctx = WebContextFactory.get();
             HttpSession session = ctx.getSession();
             PathQuery query = (PathQuery) session.getAttribute(Constants.QUERY);
-            Path path = MainHelper.makePath(query.getModel(), query, pathString);
+            Path path = PathQuery.makePath(query.getModel(), query, pathString);
             Path prefixPath = path.getPrefix();
             if (descr == null) {
                 query.getPathDescriptions().remove(prefixPath);

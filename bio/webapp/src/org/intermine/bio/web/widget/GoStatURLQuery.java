@@ -24,7 +24,6 @@ import org.intermine.pathquery.OrderBy;
 import org.intermine.pathquery.PathNode;
 import org.intermine.pathquery.PathQuery;
 import org.intermine.web.logic.bag.InterMineBag;
-import org.intermine.web.logic.query.MainHelper;
 import org.intermine.web.logic.widget.WidgetURLQuery;
 
 
@@ -71,32 +70,32 @@ public class GoStatURLQuery implements WidgetURLQuery
          if (bag.getType().equalsIgnoreCase("protein")) {
 
              geneSecondaryIdentifier
-                         = MainHelper.makePath(model, q, "Protein.genes.primaryAccession");
+                         = PathQuery.makePath(model, q, "Protein.genes.primaryAccession");
              genePrimaryIdentifier
-                         = MainHelper.makePath(model, q, "Protein.genes.primaryIdentifier");
-             geneName = MainHelper.makePath(model, q, "Protein.genes.name");
-             organismName = MainHelper.makePath(model, q, "Protein.genes.organism.name");
-             goId = MainHelper.makePath(model, q, "Protein.genes.allGoAnnotation.identifier");
-             goName = MainHelper.makePath(model, q, "Protein.genes.allGoAnnotation.name");
-             actualGoName = MainHelper.makePath(
+                         = PathQuery.makePath(model, q, "Protein.genes.primaryIdentifier");
+             geneName = PathQuery.makePath(model, q, "Protein.genes.name");
+             organismName = PathQuery.makePath(model, q, "Protein.genes.organism.name");
+             goId = PathQuery.makePath(model, q, "Protein.genes.allGoAnnotation.identifier");
+             goName = PathQuery.makePath(model, q, "Protein.genes.allGoAnnotation.name");
+             actualGoName = PathQuery.makePath(
                             model, q, "Protein.genes.allGoAnnotation.actualGoTerms.name");
-             actualGoId = MainHelper.makePath(
+             actualGoId = PathQuery.makePath(
                           model, q, "Protein.genes.allGoAnnotation.actualGoTerms.identifier");
 
-             view.add(MainHelper.makePath(model, q, "Protein.primaryIdentifier"));
-             view.add(MainHelper.makePath(model, q, "Protein.primaryAccession"));
+             view.add(PathQuery.makePath(model, q, "Protein.primaryIdentifier"));
+             view.add(PathQuery.makePath(model, q, "Protein.primaryAccession"));
 
          } else {
 
-             geneSecondaryIdentifier = MainHelper.makePath(model, q, "Gene.secondaryIdentifier");
-             genePrimaryIdentifier = MainHelper.makePath(model, q, "Gene.primaryIdentifier");
-             geneName = MainHelper.makePath(model, q, "Gene.name");
-             organismName = MainHelper.makePath(model, q, "Gene.organism.name");
-             goId = MainHelper.makePath(model, q, "Gene.allGoAnnotation.identifier");
-             goName = MainHelper.makePath(model, q, "Gene.allGoAnnotation.name");
-             actualGoName = MainHelper.makePath(model,
+             geneSecondaryIdentifier = PathQuery.makePath(model, q, "Gene.secondaryIdentifier");
+             genePrimaryIdentifier = PathQuery.makePath(model, q, "Gene.primaryIdentifier");
+             geneName = PathQuery.makePath(model, q, "Gene.name");
+             organismName = PathQuery.makePath(model, q, "Gene.organism.name");
+             goId = PathQuery.makePath(model, q, "Gene.allGoAnnotation.identifier");
+             goName = PathQuery.makePath(model, q, "Gene.allGoAnnotation.name");
+             actualGoName = PathQuery.makePath(model,
                                                 q, "Gene.allGoAnnotation.actualGoTerms.name");
-             actualGoId = MainHelper.makePath(model,
+             actualGoId = PathQuery.makePath(model,
                                               q, "Gene.allGoAnnotation.actualGoTerms.identifier");
          }
 

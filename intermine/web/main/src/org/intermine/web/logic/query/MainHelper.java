@@ -15,7 +15,6 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Comparator;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
@@ -357,7 +356,7 @@ public class MainHelper
                     if (path.indexOf(".") == -1) {
                         QueryClass qc;
                         try {
-                            qc = new QueryClass(getClass(node.getType(), model));
+                            qc = new QueryClass(TypeUtil.getClass(node.getType(), model));
                         } catch (ClassNotFoundException e) {
                             throw new IllegalArgumentException("class not found in the model: "
                                                                + node.getType(), e);
@@ -389,7 +388,7 @@ public class MainHelper
                             }
                             QueryClass qc;
                             try {
-                                qc = new QueryClass(getClass(node.getType(), model));
+                                qc = new QueryClass(TypeUtil.getClass(node.getType(), model));
                             } catch (ClassNotFoundException e) {
                                 throw new IllegalArgumentException("class not found in the model: "
                                                                    + node.getType(), e);
@@ -856,50 +855,6 @@ public class MainHelper
     }
 
     /**
-     * Instantiate a class by unqualified name
-     * The name should be "InterMineObject" or the name of class in the model provided
-     * @param className the name of the class
-     * @param model the Model used to resolve class names
-     * @return the relevant Class
-     * @throws ClassNotFoundException if the class name is not in the model
-     */
-    public static Class getClass(String className, Model model)
-        throws ClassNotFoundException {
-        if ("InterMineObject".equals(className)) {
-            className = "org.intermine.model.InterMineObject";
-        } else {
-            className = model.getPackageName() + "." + className;
-        }
-        return Class.forName(className);
-    }
-
-    /**
-     * Instantiate a class by unqualified name
-     * The name should be "Date" or that of a primitive container class such as "Integer"
-     * @param className the name of the class
-     * @return the relevant Class
-     */
-    public static Class<?> getClass(String className) {
-        Class cls = TypeUtil.instantiate(className);
-        if (cls == null) {
-            if ("Date".equals(className)) {
-                cls = Date.class;
-            } else {
-                if ("BigDecimal".equals(className)) {
-                    cls = BigDecimal.class;
-                } else {
-                    try {
-                        cls = Class.forName("java.lang." + className);
-                    } catch (Exception e) {
-                        throw new RuntimeException("unknown class: " + className);
-                    }
-                }
-            }
-        }
-        return cls;
-    }
-
-    /**
      * Get the metadata for a class by unqualified name
      * The name is looked up in the provided model
      * @param className the name of the class
@@ -909,7 +864,7 @@ public class MainHelper
      */
     public static ClassDescriptor getClassDescriptor(String className, Model model)
         throws ClassNotFoundException {
-        return model.getClassDescriptorByName(getClass(className, model).getName());
+        return model.getClassDescriptorByName(TypeUtil.getClass(className, model).getName());
     }
 
     /**
@@ -946,47 +901,6 @@ public class MainHelper
             }
         }
         return map;
-    }
-
-    /**
-     * Return the qualified name of the given unqualified class name.  The className must be in the
-     * given model or in the java.lang package or one of java.util.Date or java.math.BigDecimal.
-     * @param className the name of the class
-     * @param model the Model used to resolve class names
-     * @return the fully qualified name of the class
-     * @throws ClassNotFoundException if the class can't be found
-     */
-    public static String getQualifiedTypeName(String className, Model model)
-        throws ClassNotFoundException {
-
-        if (className.indexOf(".") != -1) {
-            throw new IllegalArgumentException("Expected an unqualified class name: " + className);
-        }
-
-        if (TypeUtil.instantiate(className) != null) {
-            // a primative type
-            return className;
-        } else {
-            if ("InterMineObject".equals(className)) {
-                return "org.intermine.model.InterMineObject";
-            } else {
-                try {
-                    return Class.forName(model.getPackageName() + "." + className).getName();
-                } catch (ClassNotFoundException e) {
-                    // fall through and try java.lang
-                }
-            }
-
-            if ("Date".equals(className)) {
-                return Date.class.getName();
-            }
-
-            if ("BigDecimal".equals(className)) {
-                return BigDecimal.class.getName();
-            }
-
-            return Class.forName("java.lang." + className).getName();
-        }
     }
 
     /**
@@ -1027,7 +941,7 @@ public class MainHelper
         PathNode testPathNode = pathQuery.getNodes().get(path);
         if (testPathNode != null) {
             try {
-                return getQualifiedTypeName(testPathNode.getType(), model);
+                return model.getQualifiedTypeName(testPathNode.getType());
             } catch (ClassNotFoundException e) {
                 throw new IllegalArgumentException("class \"" + testPathNode.getType()
                                                    + "\" not found");
@@ -1056,7 +970,7 @@ public class MainHelper
 
         if (bitsList.size() == 0) {
             try {
-                cld = model.getClassDescriptorByName(getQualifiedTypeName(bits[0], model));
+                cld = model.getClassDescriptorByName(model.getQualifiedTypeName(bits[0]));
             } catch (ClassNotFoundException e) {
                 throw new IllegalArgumentException("class \"" + bits[0] + "\" not found");
             }
@@ -1090,30 +1004,6 @@ public class MainHelper
         }
 
         return cld.getName();
-    }
-
-    /**
-     * Given the string version of a path (eg. "Department.employees.seniority"), and a PathQuery,
-     * create a Path object.  The PathQuery is needed to find the class constraints that affect the
-     * path.
-     *
-     * @param model the Model to pass to the Path constructor
-     * @param query the PathQuery
-     * @param fullPathName the full path as a string
-     * @return a new Path object
-     */
-    public static Path makePath(Model model, PathQuery query, String fullPathName) {
-        Map<String, String> subClassConstraintMap = new HashMap<String, String>();
-
-        Iterator viewPathNameIter = query.getNodes().keySet().iterator();
-        while (viewPathNameIter.hasNext()) {
-            String viewPathName = (String) viewPathNameIter.next();
-            PathNode pathNode = query.getNode(viewPathName);
-            subClassConstraintMap.put(viewPathName.replace(':', '.'), pathNode.getType());
-        }
-
-        Path path = new Path(model, fullPathName, subClassConstraintMap);
-        return path;
     }
 
     /**

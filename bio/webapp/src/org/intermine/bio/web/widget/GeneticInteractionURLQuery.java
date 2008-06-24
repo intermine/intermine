@@ -24,7 +24,6 @@ import org.intermine.pathquery.OrderBy;
 import org.intermine.pathquery.PathNode;
 import org.intermine.pathquery.PathQuery;
 import org.intermine.web.logic.bag.InterMineBag;
-import org.intermine.web.logic.query.MainHelper;
 import org.intermine.web.logic.widget.WidgetURLQuery;
 
 /**
@@ -60,19 +59,19 @@ public class GeneticInteractionURLQuery implements WidgetURLQuery
 
         List<Path> view = new ArrayList<Path>();
 
-        Path genePrimaryIdentifier = MainHelper.makePath(model, q, "Gene.primaryIdentifier");
-        Path geneSymbol = MainHelper.makePath(model, q, "Gene.symbol");
-        Path organismName = MainHelper.makePath(model, q, "Gene.organism.shortName");
+        Path genePrimaryIdentifier = PathQuery.makePath(model, q, "Gene.primaryIdentifier");
+        Path geneSymbol = PathQuery.makePath(model, q, "Gene.symbol");
+        Path organismName = PathQuery.makePath(model, q, "Gene.organism.shortName");
 
-        Path interactionName = MainHelper.makePath(model,
+        Path interactionName = PathQuery.makePath(model,
                                                    q, "Gene.geneticInteractions.shortName");
-        Path interactionType = MainHelper.makePath(model,
+        Path interactionType = PathQuery.makePath(model,
                                                    q, "Gene.geneticInteractions.type");
-        Path interactionRole = MainHelper.makePath(model,
+        Path interactionRole = PathQuery.makePath(model,
                                                    q, "Gene.geneticInteractions.geneRole");
-        Path interactor = MainHelper.makePath(model, q,
+        Path interactor = PathQuery.makePath(model, q,
         "Gene.geneticInteractions.interactingGenes.primaryIdentifier");
-        Path experimentName = MainHelper.makePath(model, q,
+        Path experimentName = PathQuery.makePath(model, q,
         "Gene.geneticInteractions.experiment.name");
 
         view.add(genePrimaryIdentifier);

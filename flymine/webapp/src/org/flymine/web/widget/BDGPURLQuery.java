@@ -24,7 +24,6 @@ import org.intermine.pathquery.OrderBy;
 import org.intermine.pathquery.PathNode;
 import org.intermine.pathquery.PathQuery;
 import org.intermine.web.logic.bag.InterMineBag;
-import org.intermine.web.logic.query.MainHelper;
 import org.intermine.web.logic.widget.WidgetURLQuery;
 
 /**
@@ -58,13 +57,13 @@ public class BDGPURLQuery implements WidgetURLQuery
 
         List<Path> view = new ArrayList<Path>();
 
-        Path secondaryIdentifier = MainHelper.makePath(model, q, "Gene.secondaryIdentifier");
-        Path name = MainHelper.makePath(model, q, "Gene.name");
-        Path organism = MainHelper.makePath(model, q, "Gene.organism.name");
-        Path primaryIdentifier = MainHelper.makePath(model, q, "Gene.primaryIdentifier");
-        Path stage  =  MainHelper.makePath(model, q, "Gene.mRNAExpressionResults.stageRange");
-        Path dataset = MainHelper.makePath(model, q, "Gene.mRNAExpressionResults.dataSet.title");
-        Path term =  MainHelper.makePath(model, q,
+        Path secondaryIdentifier = PathQuery.makePath(model, q, "Gene.secondaryIdentifier");
+        Path name = PathQuery.makePath(model, q, "Gene.name");
+        Path organism = PathQuery.makePath(model, q, "Gene.organism.name");
+        Path primaryIdentifier = PathQuery.makePath(model, q, "Gene.primaryIdentifier");
+        Path stage  =  PathQuery.makePath(model, q, "Gene.mRNAExpressionResults.stageRange");
+        Path dataset = PathQuery.makePath(model, q, "Gene.mRNAExpressionResults.dataSet.title");
+        Path term =  PathQuery.makePath(model, q,
                                          "Gene.mRNAExpressionResults.mRNAExpressionTerms.name");
 
         String bagType = bag.getType();

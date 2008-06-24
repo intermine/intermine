@@ -17,7 +17,7 @@ import java.util.Locale;
 
 import org.intermine.objectstore.query.ConstraintOp;
 import org.intermine.util.TypeUtil;
-import org.intermine.web.logic.WebUtil;
+import org.intermine.util.Util;
 
 /**
  * Parser for parsing constraint value. 
@@ -66,7 +66,7 @@ public class ConstraintValueParser
                     || constraintOp == ConstraintOp.NOT_EQUALS
                     || constraintOp == ConstraintOp.MATCHES
                     || constraintOp == ConstraintOp.DOES_NOT_MATCH) {
-                    parsedValue = WebUtil.wildcardUserToSql(trimmedValue);
+                    parsedValue = Util.wildcardUserToSql(trimmedValue);
                 } else {
                     parsedValue = trimmedValue;
                 }
