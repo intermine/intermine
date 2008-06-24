@@ -21,11 +21,11 @@ import java.util.Map;
 import java.util.Set;
 import java.util.Map.Entry;
 
-
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.intermine.metadata.Model;
 import org.intermine.objectstore.query.BagConstraint;
+import org.intermine.objectstore.query.Constraints;
 import org.intermine.objectstore.query.ResultsInfo;
 import org.intermine.path.Path;
 import org.intermine.path.PathError;
@@ -131,6 +131,13 @@ public class PathQuery
         // TODO new API method
     }
 
+    /**
+     * Add a constraint to the query
+     * @param constraint constraint to add to the query
+     */
+    public void addConstraint(Constraints constraint) {
+        // TODO new API method
+    }
 
     /**
      * Sets the order by list of the query to the list of paths given.  Paths can be a single path
@@ -150,7 +157,6 @@ public class PathQuery
     public void setOrderBy(String paths, Boolean sortAscending) {
         // TODO new API method
     }
-
 
     /**
      * Sets the order by list of the query to the list of paths given.  Paths can be a single path
