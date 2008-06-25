@@ -46,8 +46,8 @@ public class PathQueryBindingTest extends TestCase
         super.setUp();
         InputStream is = getClass().getClassLoader().getResourceAsStream("PathQueryBindingTest.xml");
         classKeys = TestUtil.getClassKeys(TestUtil.getModel());
-        savedQueries = PathQueryBinding.unmarshal(new InputStreamReader(is), new HashMap(),
-                classKeys);
+        savedQueries = PathQueryBinding.unmarshal(new InputStreamReader(is), classKeys);
+        MainHelper.checkPathQueries(savedQueries, new HashMap());
         expected = getExpectedQueries();
     }
 
@@ -153,8 +153,8 @@ public class PathQueryBindingTest extends TestCase
         String xml = PathQueryBinding.marshal((PathQuery) expected.get("employeesWithOldManagers"),
                                               "employeesWithOldManagers", "testmodel");
         Map readFromXml = new LinkedHashMap();
-        readFromXml = PathQueryBinding.unmarshal(new InputStreamReader(new ByteArrayInputStream(xml.getBytes())),
-                        new HashMap(), classKeys);
+        readFromXml = PathQueryBinding.unmarshal(new InputStreamReader(new ByteArrayInputStream(xml.getBytes())), classKeys);
+        MainHelper.checkPathQueries(readFromXml, new HashMap());
         Map expectedQuery = new LinkedHashMap();
         expectedQuery.put("employeesWithOldManagers", expected.get("employeesWithOldManagers"));
 
@@ -163,8 +163,8 @@ public class PathQueryBindingTest extends TestCase
         xml = PathQueryBinding.marshal((PathQuery) expected.get("queryWithConstraint"),
                                        "queryWithConstraint", "testmodel");
         readFromXml = new LinkedHashMap();
-        readFromXml = PathQueryBinding.unmarshal(new InputStreamReader(new ByteArrayInputStream(xml.getBytes())),
-                        new HashMap(), classKeys);
+        readFromXml = PathQueryBinding.unmarshal(new InputStreamReader(new ByteArrayInputStream(xml.getBytes())), classKeys);
+        MainHelper.checkPathQueries(readFromXml, new HashMap());        
         expectedQuery = new LinkedHashMap();
         expectedQuery.put("queryWithConstraint", expected.get("queryWithConstraint"));
 

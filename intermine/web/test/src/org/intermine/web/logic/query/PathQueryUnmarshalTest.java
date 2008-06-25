@@ -120,7 +120,9 @@ public class PathQueryUnmarshalTest extends  TestCase
                 throw new RuntimeException("Exception occured", e);
             }
         Map<String, List<FieldDescriptor>> classKeys = ClassKeyHelper.readKeys(model, classKeyProps);
-        return PathQueryBinding.unmarshal(new InputStreamReader(is), new HashMap(),
+        PathQuery ret = PathQueryBinding.unmarshal(new InputStreamReader(is),
                 classKeys).values().iterator().next();
+        MainHelper.checkPathQuery(ret, new HashMap());
+        return ret;
     }    
 }

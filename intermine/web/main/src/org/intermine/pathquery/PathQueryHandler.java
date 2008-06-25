@@ -24,8 +24,6 @@ import org.intermine.objectstore.query.ConstraintOp;
 import org.intermine.util.StringUtil;
 import org.intermine.util.TypeUtil;
 import org.intermine.web.logic.ClassKeyHelper;
-import org.intermine.web.logic.bag.InterMineBag;
-import org.intermine.web.logic.query.MainHelper;
 import org.xml.sax.Attributes;
 import org.xml.sax.SAXException;
 import org.xml.sax.helpers.DefaultHandler;
@@ -45,7 +43,6 @@ public class PathQueryHandler extends DefaultHandler
     private PathNode node;
     protected PathQuery query;
     private Model model = null;
-    private Map<String, InterMineBag> savedBags;
     private List<String> viewStrings = new ArrayList<String>();
     private String sortOrderString = "";
     private String directionString = ""; // will be asc or desc
@@ -55,13 +52,11 @@ public class PathQueryHandler extends DefaultHandler
      * Constructor
      * @param queries Map from query name to PathQuery
      * @param classKeys class keys
-     * @param savedBags saved bags
      */
-    public PathQueryHandler(Map<String, PathQuery> queries, Map<String, InterMineBag> savedBags,
+    public PathQueryHandler(Map<String, PathQuery> queries, 
             Map<String, List<FieldDescriptor>> classKeys) {
         this.classKeys = classKeys;
         this.queries = queries;
-        this.savedBags = savedBags;
     }
 
     /**
@@ -182,7 +177,6 @@ public class PathQueryHandler extends DefaultHandler
     public void endElement(String uri, String localName, String qName) {
         if (qName.equals("query")) {
             query.syncLogicExpression("and"); // always and for old queries
-            MainHelper.checkPathQuery(query, savedBags);
             for (String viewElement: viewStrings) {
                 query.addPathStringToView(viewElement);
             }

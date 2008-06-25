@@ -284,7 +284,9 @@ public class MainHelperTest extends TestCase {
 
     private Map readQueries() throws Exception {
         InputStream is = getClass().getClassLoader().getResourceAsStream("MainHelperTest.xml");
-        return PathQueryBinding.unmarshal(new InputStreamReader(is), new HashMap(), classKeys);
+        Map ret = PathQueryBinding.unmarshal(new InputStreamReader(is), classKeys);
+        MainHelper.checkPathQueries(ret, new HashMap());
+        return ret;
     }
     public void test1() throws Exception {
         doQuery("<query name=\"test\" model=\"testmodel\" view=\"Employee\"></query>",
@@ -352,7 +354,7 @@ public class MainHelperTest extends TestCase {
     }
 
     public void doQuery(String web, String iql) throws Exception {
-        Map parsed = PathQueryBinding.unmarshal(new StringReader(web), new HashMap(), classKeys);
+        Map parsed = PathQueryBinding.unmarshal(new StringReader(web), classKeys);
         PathQuery pq = (PathQuery) parsed.get("test");
         Query q = MainHelper.makeQuery(pq, Collections.EMPTY_MAP, null, null);
         String got = q.toString();

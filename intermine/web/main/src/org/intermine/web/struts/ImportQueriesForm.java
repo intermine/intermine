@@ -17,6 +17,7 @@ import org.intermine.web.logic.Constants;
 import org.intermine.web.logic.WebUtil;
 import org.intermine.web.logic.bag.InterMineBag;
 import org.intermine.web.logic.profile.Profile;
+import org.intermine.web.logic.query.MainHelper;
 import org.intermine.web.logic.session.SessionMethods;
 
 import java.io.StringReader;
@@ -59,11 +60,13 @@ public class ImportQueriesForm extends ValidatorForm
     public Map getQueryMap(Map savedBags, ServletContext servletContext) {
         if (map == null) {
             try {
-                map = PathQueryBinding.unmarshal(new StringReader(getXml()), savedBags,
+                map = PathQueryBinding.unmarshal(new StringReader(getXml()),
                         SessionMethods.getClassKeys(servletContext));
+                MainHelper.checkPathQueries(map, savedBags);
             } catch (Exception e) {
                 map = PathQueryBinding.unmarshal(new StringReader("<queries>" + getXml()
-                         + "</queries>"), savedBags, SessionMethods.getClassKeys(servletContext));
+                         + "</queries>"), SessionMethods.getClassKeys(servletContext));
+                MainHelper.checkPathQueries(map, savedBags);
             }
         }
         return map;

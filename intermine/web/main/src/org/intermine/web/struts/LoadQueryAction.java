@@ -16,6 +16,7 @@ import org.intermine.pathquery.PathQuery;
 import org.intermine.pathquery.PathQueryBinding;
 import org.intermine.web.logic.Constants;
 import org.intermine.web.logic.profile.Profile;
+import org.intermine.web.logic.query.MainHelper;
 import org.intermine.web.logic.query.QueryMonitorTimeout;
 import org.intermine.web.logic.session.SessionMethods;
 
@@ -69,8 +70,8 @@ public class LoadQueryAction extends DispatchAction
         //Map<String, InterMineBag> allBags =
         //    WebUtil.getAllBags(profile.getSavedBags(), servletContext);
         Map queries = PathQueryBinding.unmarshal(new StringReader(queryXml),
-                                                 profile.getSavedBags(),
                                                  SessionMethods.getClassKeys(servletContext));
+        MainHelper.checkPathQueries(queries, profile.getSavedBags());
         PathQuery query = (PathQuery) queries.values().iterator().next();
         SessionMethods.loadQuery(query, session, response);
 

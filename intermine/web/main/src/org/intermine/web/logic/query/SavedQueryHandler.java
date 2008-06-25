@@ -39,7 +39,7 @@ public class SavedQueryHandler extends PathQueryHandler
      */
     public SavedQueryHandler(Map<String, SavedQuery> queries, Map savedBags,
             Map<String, List<FieldDescriptor>> classKeys) {
-        super(new HashMap<String, PathQuery> (), savedBags, classKeys);
+        super(new HashMap<String, PathQuery> (), classKeys);
         this.queries = queries;
     }
 

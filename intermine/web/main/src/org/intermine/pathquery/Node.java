@@ -17,7 +17,6 @@ import org.intermine.metadata.Model;
 import org.intermine.metadata.ReferenceDescriptor;
 import org.intermine.util.TypeUtil;
 import org.intermine.util.Util;
-import org.intermine.web.logic.query.MainHelper;
 
 /**
  * Superclass of left and right nodes
@@ -69,7 +68,8 @@ public class Node
      * @throws ClassNotFoundException if the class name is not in the model
      */
     public void setModel(Model model) throws IllegalArgumentException, ClassNotFoundException {
-        ClassDescriptor cld = MainHelper.getClassDescriptor(getParentType(), model);
+        ClassDescriptor cld = model.getClassDescriptorByName(TypeUtil.getClass(getParentType(), 
+                model).getName());
         if (cld == null) {
             throw new IllegalArgumentException("No class '" + getParentType() + "' found in model"
                                        + " '" + model.getName() + "'");
