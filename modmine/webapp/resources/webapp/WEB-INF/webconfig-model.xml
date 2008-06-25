@@ -62,14 +62,14 @@
       <fieldconfig fieldExpr="publication.journal"/>
     </fields>
   </class>
-
+<!-- FIXME failing compilation
   <class className="org.flymine.model.genomic.AnalysisResult">
     <fields>
       <fieldconfig fieldExpr="confidence"/>
-      <fieldconfig fieldExpr="source.title"/>
+      <fieldconfig fieldExpr="dataSet.title"/>
     </fields>
   </class>
-
+-->
   <class className="org.flymine.model.genomic.Author">
     <fields>
       <fieldconfig fieldExpr="name"/>
@@ -124,15 +124,15 @@
       <fieldconfig fieldExpr="text"/>
     </fields>
   </class>
-
+<!-- FIXME failing compilation
   <class className="org.flymine.model.genomic.ComputationalResult">
     <fields>
       <fieldconfig fieldExpr="score"/>
       <fieldconfig fieldExpr="confidence"/>
-      <fieldconfig fieldExpr="source.title"/>
+      <fieldconfig fieldExpr="dataSet.title"/>
     </fields>
   </class>
-
+-->
   <class className="org.flymine.model.genomic.DataSet">
     <fields>
       <fieldconfig fieldExpr="title"/>
