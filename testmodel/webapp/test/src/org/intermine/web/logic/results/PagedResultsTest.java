@@ -237,9 +237,7 @@ public class PagedResultsTest extends TestCase
 
     private Map readQueries() throws Exception {
         InputStream is = getClass().getClassLoader().getResourceAsStream("MainHelperTest.xml");
-        Map ret = PathQueryBinding.unmarshal(new InputStreamReader(is), null);
-        MainHelper.checkPathQueries(ret, null);
-        return ret;
+        return PathQueryBinding.unmarshal(new InputStreamReader(is), null);
     }
 
 //     public void testSizeLow() throws Exception {
