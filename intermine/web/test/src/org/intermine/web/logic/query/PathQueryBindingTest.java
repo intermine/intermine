@@ -47,6 +47,7 @@ public class PathQueryBindingTest extends TestCase
         InputStream is = getClass().getClassLoader().getResourceAsStream("PathQueryBindingTest.xml");
         classKeys = TestUtil.getClassKeys(TestUtil.getModel());
         savedQueries = PathQueryBinding.unmarshal(new InputStreamReader(is), classKeys);
+        // checking can be removed maybe
         MainHelper.checkPathQueries(savedQueries, new HashMap());
         expected = getExpectedQueries();
     }
@@ -154,6 +155,7 @@ public class PathQueryBindingTest extends TestCase
                                               "employeesWithOldManagers", "testmodel");
         Map readFromXml = new LinkedHashMap();
         readFromXml = PathQueryBinding.unmarshal(new InputStreamReader(new ByteArrayInputStream(xml.getBytes())), classKeys);
+        // checking can be removed maybe
         MainHelper.checkPathQueries(readFromXml, new HashMap());
         Map expectedQuery = new LinkedHashMap();
         expectedQuery.put("employeesWithOldManagers", expected.get("employeesWithOldManagers"));

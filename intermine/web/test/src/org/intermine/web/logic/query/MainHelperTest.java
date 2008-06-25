@@ -285,7 +285,6 @@ public class MainHelperTest extends TestCase {
     private Map readQueries() throws Exception {
         InputStream is = getClass().getClassLoader().getResourceAsStream("MainHelperTest.xml");
         Map ret = PathQueryBinding.unmarshal(new InputStreamReader(is), classKeys);
-        MainHelper.checkPathQueries(ret, new HashMap());
         return ret;
     }
     public void test1() throws Exception {
