@@ -44,7 +44,7 @@ public class TemplateQueryHandler extends PathQueryHandler
      */
     public TemplateQueryHandler(Map templates,
             Map<String, InterMineBag> savedBags, Map<String, List<FieldDescriptor>> classKeys) {
-        super(new HashMap(), savedBags, classKeys);
+        super(new HashMap(), classKeys);
         this.templates = templates;
         reset();
     }

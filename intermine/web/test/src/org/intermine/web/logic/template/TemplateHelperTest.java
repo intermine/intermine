@@ -30,7 +30,6 @@ import org.intermine.pathquery.Constraint;
 import org.intermine.pathquery.PathNode;
 import org.intermine.pathquery.PathQuery;
 import org.intermine.pathquery.PathQueryBinding;
-import org.intermine.web.logic.ServletMethods;
 import org.intermine.web.logic.bag.InterMineBag;
 import org.intermine.web.logic.query.MainHelper;
 import org.intermine.web.struts.TemplateForm;
@@ -54,8 +53,9 @@ public class TemplateHelperTest extends TestCase
             "SELECT DISTINCT a1_, a1_.name AS a2_ FROM org.intermine.model.testmodel.Employee AS a1_ ORDER BY a1_.name, a1_.age";
         String queryXml = "<query name=\"\" model=\"testmodel\" view=\"Employee Employee.name\"><node path=\"Employee\" type=\"Employee\"></node></query>";
         Map pathToQueryNode = new HashMap();
-        PathQuery pathQuery = PathQueryBinding.unmarshal(new StringReader(queryXml), new HashMap<String, InterMineBag>(), 
+        PathQuery pathQuery = PathQueryBinding.unmarshal(new StringReader(queryXml), 
                 classKeys).values().iterator().next();
+        MainHelper.checkPathQuery(pathQuery, new HashMap<String, InterMineBag>());
         MainHelper.makeQuery(pathQuery,
                 new HashMap(), pathToQueryNode, null, null, false, null, null, null);
         List indexes = new ArrayList();

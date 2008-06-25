@@ -25,7 +25,6 @@ import org.intermine.metadata.FieldDescriptor;
 import org.intermine.path.Path;
 import org.intermine.util.SAXParser;
 import org.intermine.util.StringUtil;
-import org.intermine.web.logic.bag.InterMineBag;
 import org.xml.sax.InputSource;
 
 /**
@@ -145,16 +144,14 @@ public class PathQueryBinding
     /**
      * Parse PathQueries from XML
      * @param reader the saved queries
-     * @param savedBags map from bag name to bag
      * @param classKeys class keys
      * @return a Map from query name to PathQuery
      */
-    public static Map<String, PathQuery> unmarshal(Reader reader, Map<String, 
-            InterMineBag> savedBags, Map<String, List<FieldDescriptor>> classKeys) {
+    public static Map<String, PathQuery> unmarshal(Reader reader, 
+            Map<String, List<FieldDescriptor>> classKeys) {
         Map<String, PathQuery> queries = new LinkedHashMap<String, PathQuery>();
         try {
-            SAXParser.parse(new InputSource(reader), new PathQueryHandler(queries, 
-                    savedBags, classKeys));
+            SAXParser.parse(new InputSource(reader), new PathQueryHandler(queries, classKeys));
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
