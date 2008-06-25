@@ -24,7 +24,7 @@ import java.util.Map.Entry;
 import org.apache.log4j.Logger;
 import org.intermine.metadata.Model;
 import org.intermine.objectstore.query.BagConstraint;
-import org.intermine.objectstore.query.Constraints;
+
 import org.intermine.objectstore.query.ResultsInfo;
 import org.intermine.path.Path;
 import org.intermine.path.PathError;
@@ -139,7 +139,7 @@ public class PathQuery
      * @param constraint constraint to add to the query
      * @return label of constraint
      */
-    public String addConstraint(Constraints constraint) {
+    public String addConstraint(Constraint constraint) {
         // TODO new API method
         return null;
     }
@@ -150,7 +150,7 @@ public class PathQuery
      * @param label label for constraint
      * @return label of constraint
      */
-    public String addConstraint(Constraints constraint, String label) {
+    public String addConstraint(Constraint constraint, String label) {
         // TODO new API method
         return label;
     }

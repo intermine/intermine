@@ -1,4 +1,4 @@
-package org.intermine.objectstore.query;
+package org.intermine.web.logic.query;
 
 /*
  * Copyright (C) 2002-2008 FlyMine
@@ -12,6 +12,8 @@ package org.intermine.objectstore.query;
 
 
 import java.util.List;
+
+import org.intermine.objectstore.query.ConstraintOp;
 
 /**
  * Builds constraints for the PathQuery
@@ -50,7 +52,7 @@ public class Constraints
      * @return the EQUALS constraint
      */
     public static Constraint eq(String path, Object value) {
-        return null;
+        return new Constraint(ConstraintOp.EQUALS, value);
     }
 
     /**
@@ -60,7 +62,7 @@ public class Constraints
      * @return the NOT_EQUALS constraint
      */
     public static Constraint neq(String path, Object value) {
-        return null;
+        return new Constraint(ConstraintOp.NOT_EQUALS, value);
     }
 
     /**
@@ -70,7 +72,7 @@ public class Constraints
      * @return the LIKE constraint
      */
     public static Constraint like(String path, String value) {
-        return null;
+        return new Constraint(ConstraintOp.CONTAINS, value);
     }
 
     /**
