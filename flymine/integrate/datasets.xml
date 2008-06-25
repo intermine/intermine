@@ -182,11 +182,11 @@
             value="Public repository for microarray data"/>
         <attribute name="url" value="http://www.ebi.ac.uk/arrayexpress"/>
     </item>
-    <item id="531" class="" implements="http://www.flymine.org/model/genomic#DataSet">
+    <item id="161" class="" implements="http://www.flymine.org/model/genomic#DataSet">
         <attribute name="title" value="Anoph-Expr data set"/>
         <attribute name="description" value="Anopheles gambiae life cycle exression data"/>
         <attribute name="url" value="http://www.ebi.ac.uk/microarray-as/aer/#ae-browse/q=E-TABM-186"/>
-        <reference name="dataSource" ref_id="161"/>
+        <reference name="dataSource" ref_id="160"/>
     </item>
 
     <item id="170" class="" implements="http://www.flymine.org/model/genomic#DataSource">
