@@ -3,7 +3,7 @@
 //
 
 header {
-package org.intermine.web;
+package org.intermine.pathquery;
 }
 
 //

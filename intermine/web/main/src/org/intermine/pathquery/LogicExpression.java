@@ -17,9 +17,6 @@ import java.util.Iterator;
 import java.util.LinkedHashSet;
 import java.util.Set;
 
-import org.intermine.web.LogicLexer;
-import org.intermine.web.LogicParser;
-
 import antlr.collections.AST;
 
 /**
