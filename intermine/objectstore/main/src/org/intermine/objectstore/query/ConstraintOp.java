@@ -71,6 +71,9 @@ public class ConstraintOp
     /** Special operation indicating a bag upload step should be used, for the webapp only. */
     public static final ConstraintOp LOOKUP = new ConstraintOp("LOOKUP");
 
+    /** Require that first argument is between second and third argument inclusive **/
+    public static final ConstraintOp BETWEEN = new ConstraintOp("BETWEEN");
+
     private ConstraintOp(String name) {
         this.name = name;
         values.add(this);

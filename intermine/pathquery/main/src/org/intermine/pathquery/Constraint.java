@@ -41,6 +41,31 @@ public class Constraint
     }
 
     /**
+     * Make a new Constraint with no description or identifier, and which has the editable flag set
+     * to false.  Used for the between constraint.
+     * @param op the constraintOp for this constraint
+     * @param start the lower value
+     * @param end the upper value
+     */
+    public Constraint(ConstraintOp op, Object start, Object end) {
+        this.op = op;
+        this.value = start;
+        this.extraValue = end;
+        this.editable = false;
+    }
+
+    /**
+     * Make a new Constraint with no description or identifier, and which has the editable flag set
+     * to false.  Used for the NULL/NOT NULL constraint.
+     * @param op the constraintOp for this constraint
+     */
+    public Constraint(ConstraintOp op) {
+        this.op = op;
+        this.editable = false;
+    }
+
+
+    /**
      * Make a new Constraint with a description and an identifier.
      * @param op the constraintOp for this constraint
      * @param value the value for this constraint
