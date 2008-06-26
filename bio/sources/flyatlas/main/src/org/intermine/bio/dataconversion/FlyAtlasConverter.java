@@ -183,6 +183,9 @@ public class FlyAtlasConverter extends BioFileConverter
         assays.put("crop", createAssay("Crop"));
         assays.put("tag", createAssay("Thoracicoabdominal ganglion"));
         assays.put("car", createAssay("Adult carcass"));
+        assays.put("sg", createAssay("Salivary gland"));
+
+
     }
 
     private Item createAssay(String name) {
