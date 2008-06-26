@@ -115,10 +115,10 @@ public class HomologueURLQuery implements WidgetURLQuery
         q.syncLogicExpression("and");
 
         List<OrderBy>  sortOrder = new ArrayList<OrderBy>();
-        sortOrder.add(new OrderBy(organismName, "asc"));
-        sortOrder.add(new OrderBy(genePrimaryIdentifier, "asc"));
-        sortOrder.add(new OrderBy(homologueOrganism, "asc"));
-        sortOrder.add(new OrderBy(homologueIdentifier, "asc"));
+        sortOrder.add(new OrderBy(organismName));
+        sortOrder.add(new OrderBy(genePrimaryIdentifier));
+        sortOrder.add(new OrderBy(homologueOrganism));
+        sortOrder.add(new OrderBy(homologueIdentifier));
         q.setSortOrder(sortOrder);
 
         return q;

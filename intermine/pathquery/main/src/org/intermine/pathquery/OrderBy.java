@@ -22,6 +22,15 @@ public class OrderBy
     String direction;
 
     /**
+     * Constructs a new order by with the default direction, ascending
+     * @param field A field in the query
+     */
+    public OrderBy(Path field) {
+        this.field = field;
+        this.direction = "asc";
+    }
+
+    /**
      * Construct a new instance
      * @param field A field in the query
      * @param direction Either ascending or descending

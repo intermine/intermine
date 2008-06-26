@@ -132,13 +132,13 @@ public class ChromosomeDistributionGraphURLGenerator implements GraphCategoryURL
         q.syncLogicExpression("and");
 
         List<OrderBy>  sortOrder = new ArrayList<OrderBy>();
-        sortOrder.add(new OrderBy(start, "asc"));
-        sortOrder.add(new OrderBy(identifier, "asc"));
-        sortOrder.add(new OrderBy(primaryIdentifier, "asc"));
-        sortOrder.add(new OrderBy(name, "asc"));
-        sortOrder.add(new OrderBy(chromoIdentifier, "asc"));
-        sortOrder.add(new OrderBy(end, "asc"));
-        sortOrder.add(new OrderBy(strand, "asc"));
+        sortOrder.add(new OrderBy(start));
+        sortOrder.add(new OrderBy(identifier));
+        sortOrder.add(new OrderBy(primaryIdentifier));
+        sortOrder.add(new OrderBy(name));
+        sortOrder.add(new OrderBy(chromoIdentifier));
+        sortOrder.add(new OrderBy(end));
+        sortOrder.add(new OrderBy(strand));
         q.setSortOrder(sortOrder);
         return q;
     }

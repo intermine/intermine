@@ -96,7 +96,7 @@ public class PrideExperimentURLQuery implements WidgetURLQuery
         q.syncLogicExpression("and");
 
         List<OrderBy>  sortOrder = new ArrayList<OrderBy>();
-        sortOrder.add(new OrderBy(pride, "asc"));
+        sortOrder.add(new OrderBy(pride));
         q.setSortOrder(sortOrder);
 
         return q;

@@ -118,11 +118,11 @@ public class BDGPURLQuery implements WidgetURLQuery
 
         List<OrderBy>  sortOrder = new ArrayList<OrderBy>();
         if (keys == null) {
-            sortOrder.add(new OrderBy(term, "asc"));
-            sortOrder.add(new OrderBy(primaryIdentifier, "asc"));
-            sortOrder.add(new OrderBy(stage, "asc"));
+            sortOrder.add(new OrderBy(term));
+            sortOrder.add(new OrderBy(primaryIdentifier));
+            sortOrder.add(new OrderBy(stage));
         } else {
-            sortOrder.add(new OrderBy(primaryIdentifier, "asc"));
+            sortOrder.add(new OrderBy(primaryIdentifier));
         }
         q.setSortOrder(sortOrder);
 

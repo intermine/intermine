@@ -103,9 +103,9 @@ public class UniProtFeaturesURLQuery implements WidgetURLQuery
 
         List<OrderBy>  sortOrder = new ArrayList<OrderBy>();
         if (keys == null) {
-            sortOrder.add(new OrderBy(name, "asc"));
+            sortOrder.add(new OrderBy(name));
         }
-        sortOrder.add(new OrderBy(identifier, "asc"));
+        sortOrder.add(new OrderBy(identifier));
         q.setSortOrder(sortOrder);
 
         return q;
