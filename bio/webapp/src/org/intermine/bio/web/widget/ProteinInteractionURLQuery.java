@@ -109,9 +109,9 @@ public class ProteinInteractionURLQuery implements WidgetURLQuery
         q.syncLogicExpression("and");
 
         List<OrderBy>  sortOrder = new ArrayList<OrderBy>();
-        sortOrder.add(new OrderBy(primaryIdentifier, "asc"));
-        sortOrder.add(new OrderBy(primaryAccesion, "asc"));
-        sortOrder.add(new OrderBy(interactName, "asc"));
+        sortOrder.add(new OrderBy(primaryIdentifier));
+        sortOrder.add(new OrderBy(primaryAccesion));
+        sortOrder.add(new OrderBy(interactName));
 
         q.setSortOrder(sortOrder);
 

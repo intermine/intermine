@@ -97,8 +97,8 @@ public class UniProtKeywordsURLQuery implements WidgetURLQuery
         q.syncLogicExpression("and");
 
         List<OrderBy>  sortOrder = new ArrayList<OrderBy>();
-        sortOrder.add(new OrderBy(name, "asc"));
-        sortOrder.add(new OrderBy(identifier, "asc"));
+        sortOrder.add(new OrderBy(name));
+        sortOrder.add(new OrderBy(identifier));
         q.setSortOrder(sortOrder);
 
         return q;

@@ -106,9 +106,9 @@ public class PublicationURLQuery implements WidgetURLQuery
 
         List<OrderBy>  sortOrder = new ArrayList<OrderBy>();
         if (keys == null) {
-            sortOrder.add(new OrderBy(pubmedid, "asc"));
+            sortOrder.add(new OrderBy(pubmedid));
         }
-        sortOrder.add(new OrderBy(genePrimaryIdentifier, "asc"));
+        sortOrder.add(new OrderBy(genePrimaryIdentifier));
 
         q.setSortOrder(sortOrder);
 

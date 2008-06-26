@@ -140,11 +140,11 @@ public class FlyAtlasGraphURLGenerator implements GraphCategoryURLGenerator
         List<OrderBy>  sortOrder = new ArrayList<OrderBy>();
 
         sortOrder.add(new OrderBy(enrichment, direction));
-        sortOrder.add(new OrderBy(secondaryIdentifier, "asc"));
-        sortOrder.add(new OrderBy(primaryIdentifier, "asc"));
-        sortOrder.add(new OrderBy(name, "asc"));
-        sortOrder.add(new OrderBy(assays, "asc"));
-        sortOrder.add(new OrderBy(affyCall, "asc"));
+        sortOrder.add(new OrderBy(secondaryIdentifier));
+        sortOrder.add(new OrderBy(primaryIdentifier));
+        sortOrder.add(new OrderBy(name));
+        sortOrder.add(new OrderBy(assays));
+        sortOrder.add(new OrderBy(affyCall));
 
         q.setSortOrder(sortOrder);
 

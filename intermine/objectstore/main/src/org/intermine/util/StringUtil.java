@@ -10,10 +10,10 @@ package org.intermine.util;
  *
  */
 
-import java.util.List;
 import java.util.ArrayList;
-import java.util.StringTokenizer;
 import java.util.Collection;
+import java.util.List;
+import java.util.StringTokenizer;
 import java.util.TreeSet;
 
 /**
@@ -27,6 +27,7 @@ public class StringUtil
         = {'0', '1', '2', '3', '4', '5', '6', '7', '8', '9', 'A', 'B', 'C', 'D', 'E', 'F' };
 
     private StringUtil() {
+        // TODO do we need this?
     }
 
     /**
@@ -71,6 +72,25 @@ public class StringUtil
     }
 
     /**
+     * @param str the String to tokenize
+     * @param delimiter the delimiter
+     * @return the String tokens
+     * @throws NullPointerException if  str is null
+     */
+    public static List<String> tokenize(String str, String delimiter) {
+         if (str == null) {
+            throw new NullPointerException("Cannot pass null arguments to tokenize");
+        }
+        List<String> l = new ArrayList<String>();
+        StringTokenizer st = new StringTokenizer(str, delimiter);
+        while (st.hasMoreTokens()) {
+            l.add(st.nextToken());
+        }
+        return l;
+    }
+
+
+    /**
      * Returns a list of tokens delimited by whitespace in String str (useful when handling XML)
      *
      * @param str the String to tokenize
@@ -104,14 +124,14 @@ public class StringUtil
         Collection<String> coll = new ArrayList<String>();
         for (String s : strings.split(",")) {
             if (lowercase) {
-                coll.add(s.toLowerCase());  
+                coll.add(s.toLowerCase());
             } else {
                 coll.add(s);
             }
         }
         return coll;
     }
-    
+
     /**
      * Convert a byte buffer to a hexadecimal string.
      * @param buffer byte buffer
@@ -312,9 +332,8 @@ public class StringUtil
     public static String duplicateQuotes(String s) {
         if (s.indexOf('\'') == -1) {
             return s;
-        } else {
-            return s.replaceAll("'", "''");
         }
+        return s.replaceAll("'", "''");
     }
 
     /**
@@ -326,9 +345,8 @@ public class StringUtil
     public static String escapeBackslash(String s) {
         if (s.indexOf('\\') == -1) {
             return s;
-        } else {
-            return s.replaceAll("\\\\", "/");
         }
+        return s.replaceAll("\\\\", "/");
     }
 
 
@@ -406,7 +424,7 @@ public class StringUtil
         }
         return sb.toString();
     }
-    
+
     /**
      * @param str checked string
      * @return true if string is empty
@@ -415,8 +433,7 @@ public class StringUtil
     public static boolean isEmpty(String str) {
         if (str == null) {
             return true;
-        } else {
-            return str.length() == 0;
         }
+        return str.length() == 0;
     }
 }

@@ -11,6 +11,7 @@ package org.intermine.pathquery;
  */
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.IdentityHashMap;
@@ -24,13 +25,11 @@ import java.util.Map.Entry;
 import org.apache.log4j.Logger;
 import org.intermine.metadata.Model;
 import org.intermine.objectstore.query.BagConstraint;
-
 import org.intermine.objectstore.query.ResultsInfo;
 import org.intermine.path.Path;
 import org.intermine.path.PathError;
 import org.intermine.util.CollectionUtil;
 import org.intermine.util.StringUtil;
-
 
 /**
  * Class to represent a path-based query.
@@ -41,7 +40,6 @@ import org.intermine.util.StringUtil;
 public class PathQuery
 {
     private static final Logger LOG = Logger.getLogger(PathQuery.class);
-
     private Model model;
     protected LinkedHashMap<String, PathNode> nodes = new LinkedHashMap<String, PathNode>();
     private List<Path> view = new ArrayList<Path>();
@@ -58,6 +56,7 @@ public class PathQuery
     public PathQuery(Model model) {
         this.model = model;
     }
+
 
     /**
      * Construct a new instance of PathQuery from an existing
@@ -81,21 +80,28 @@ public class PathQuery
      * or a comma delimited list of paths.  To append a path to the list instead use addView.
      * @param paths a list of paths to be the view list
      */
-    public void setViewStrings(String paths) {
-        // TODO new API method
+    public void setView(String paths) {
+        String [] pathStrings = paths.split(",");
+        setView(new ArrayList<String>(Arrays.asList(pathStrings)));
     }
 
+
     /**
-     * Sets the value of view
-     * @param view a List of Paths
+     * Clears the view list and sets the value of view to the list of strings given
+     * @param view a list of strings.
      */
-    public void setViewString(List<String> view) {
-        // TODO new API method
+    public void setView(List<String> view) {
+        Iterator it = view.listIterator();
+        List<Path> viewPaths = new ArrayList<Path>();
+        while (it.hasNext()) {
+            String path = it.toString();
+            viewPaths.add(makePath(model, this, path));
+        }
+        setViewPaths(viewPaths);
     }
 
 
     /**
-     * TODO we need to add a list of strings
      * Sets the value of view
      * @param view a List of Paths
      */
@@ -104,14 +110,7 @@ public class PathQuery
             throw new RuntimeException("setView() was passed null");
         }
         this.view = view;
-        // this is needed for the querybuilder
-        if (sortOrder.isEmpty()) {
-            Path p = getFirstPathFromView();
-            if (p != null) {
-                OrderBy o = new OrderBy(p, "asc");
-                sortOrder.add(o);
-            }
-        }
+        updateSortOrder();
         // Set constraints on types
         for (Path path : view) {
             for (Map.Entry<String, String> entry : path.getSubClassConstraintPaths().entrySet()) {
@@ -130,16 +129,52 @@ public class PathQuery
      * @param paths a list of paths to be appended to the end of the view list
      */
     public void addView(String paths) {
-        // TODO new API method
+        String [] pathStrings = paths.split(",");
+        addView(new ArrayList<String>(Arrays.asList(pathStrings)));
     }
+
 
     /**
      * Appends the paths to the end of the select list.
      * @param paths a list of paths to be appended to the end of the view list
      */
-    public void addView(List<?> paths) {
-        // TODO new API method
+    public void addView(List<String> paths) {
+        try {
+            for (String path : paths) {
+                view.add(makePath(model, this, path));
+            }
+        } catch (PathError e) {
+            LOG.error("Path error", e);
+            addProblem(e);
+        }
     }
+
+
+    /**
+     * Appends the paths to the end of the select list.
+     * @param paths a list of paths to be appended to the end of the view list
+     */
+    public void addPathToView(List<Path> paths) {
+        try {
+            view.addAll(paths);
+        } catch (PathError e) {
+            LOG.error("Path error", e);
+            addProblem(e);
+        }
+    }
+
+    // the querybuilder requires that the sort order have one field in it.  perhaps the QB could
+    // handle this more gracefully
+    private void updateSortOrder() {
+        if (sortOrder.isEmpty()) {
+            Path p = getFirstPathFromView();
+            if (p != null) {
+                OrderBy o = new OrderBy(p);
+                sortOrder.add(o);
+            }
+        }
+    }
+
 
     /**
      * Add a constraint to the query
@@ -152,6 +187,7 @@ public class PathQuery
         constraint.code = code;
         return addConstraint(path, constraint, code);
     }
+
 
     /**
      * Add a constraint to the query
@@ -192,8 +228,9 @@ public class PathQuery
      * @param paths paths to create the order by list
      */
     public void setOrderBy(String paths) {
-        // TODO new API method
+        setOrderBy(paths, Boolean.TRUE);
     }
+
 
     /**
      * Sets the order by list of the query to the list of paths given.  Paths can be a single path
@@ -202,27 +239,60 @@ public class PathQuery
      * @param sortAscending whether or not to sort all fields in ascending order
      */
     public void setOrderBy(String paths, Boolean sortAscending) {
-        // TODO new API method
+        List<OrderBy> orderBy = new ArrayList<OrderBy>();
+        String direction = (sortAscending.booleanValue() ? "asc" : "desc");
+        try {
+            for (String path : paths.split(",")) {
+                orderBy.add(new OrderBy(makePath(model, this, path), direction));
+            }
+        } catch (PathError e) {
+            LOG.error("Path error", e);
+            addProblem(e);
+        }
+        sortOrder = orderBy;
     }
+
 
     /**
      * Sets the order by list of the query to the list of paths given.  Paths can be a single path
      * or a comma delimited list of paths.  To append a path to the list instead use addOrderBy.
+     *
      * @param paths paths to create the order by list
      */
     public void setOrderBy(List<String> paths) {
-        // TODO new API method
+        setOrderBy(paths, Boolean.TRUE);
+    }
+
+
+    /**
+     * Sets the order by list of the query to the list of paths given.  Paths can be a single path
+     * or a comma delimited list of paths.  To append a path to the list instead use addOrderBy.
+     * @param paths paths to create the order by list
+     * @param sortAscending whether to sort all order by columns in ascending order
+     */
+    public void setOrderBy(List<String> paths, Boolean sortAscending) {
+
+        List<OrderBy> orderBy = new ArrayList<OrderBy>();
+        try {
+            for (String path : paths) {
+                orderBy.add(new OrderBy(makePath(model, this, path)));
+            }
+        } catch (PathError e) {
+            LOG.error("Path error", e);
+            addProblem(e);
+        }
+        sortOrder = orderBy;
     }
 
     /**
      * Sets the order by list of the query to the list of paths given.  Paths can be a single path
      * or a comma delimited list of paths.  To append a path to the list instead use addOrderBy.
      * @param paths paths to create the order by list
-     * @param sortAscending whether or not to sort all fields in ascending order
      */
-    public void setOrderBy(List<String> paths, Boolean sortAscending) {
-        // TODO new API method
+    public void setOrderByList(List<OrderBy> paths) {
+        sortOrder = paths;
     }
+
 
     /**
      * Appends the paths to the end of the order by list.  Paths can be a single path
@@ -230,8 +300,9 @@ public class PathQuery
      * @param paths a list of paths to be appended to the end of the order by list
      */
     public void addOrderBy(String paths) {
-        // TODO new API method
+        addOrderBy(paths, Boolean.TRUE);
     }
+
 
     /**
      * Appends the paths to the end of the order by list.  Paths can be a single path
@@ -240,16 +311,28 @@ public class PathQuery
      * @param sortAscending whether or not to sort these fields in ascending order
      */
     public void addOrderBy(String paths, Boolean sortAscending) {
-        // TODO new API method
+        List<OrderBy> orderBy = new ArrayList<OrderBy>();
+        String direction = (sortAscending.booleanValue() ? "asc" : "desc");
+        try {
+            for (String path : paths.split(",")) {
+                orderBy.add(new OrderBy(makePath(model, this, path), direction));
+            }
+        } catch (PathError e) {
+            LOG.error("Path error", e);
+            addProblem(e);
+        }
+        sortOrder.addAll(orderBy);
     }
+
 
     /**
      * Appends the paths to the end of the order by list.
      * @param paths a list of paths to be appended to the end of the order by list
      */
     public void addOrderBy(List<String> paths) {
-        // TODO new API method
+        addOrderBy(paths, Boolean.TRUE);
     }
+
 
     /**
      * Appends the paths to the end of the order by list.
@@ -257,7 +340,16 @@ public class PathQuery
      * @param sortAscending whether or not to sort these fields in ascending order
      */
     public void addOrderBy(List<String> paths, Boolean sortAscending) {
-        // TODO new API method
+        List<OrderBy> orderBy = new ArrayList<OrderBy>();
+        try {
+            for (String path : paths) {
+                orderBy.add(new OrderBy(makePath(model, this, path)));
+            }
+        } catch (PathError e) {
+            LOG.error("Path error", e);
+            addProblem(e);
+        }
+        sortOrder.addAll(orderBy);
     }
 
 
@@ -401,7 +493,7 @@ public class PathQuery
      * @param viewString the String version of the path to add - should not include any class
      * constraints (ie. use "Departement.employee.name" not "Departement.employee[Contractor].name")
      */
-    public void addPathStringToView(String viewString) {
+    @Deprecated public void addPathStringToView(String viewString) {
         try {
             view.add(PathQuery.makePath(model, this, viewString));
             if (sortOrder.isEmpty()) {

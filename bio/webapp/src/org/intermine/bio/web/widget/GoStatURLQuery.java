@@ -159,13 +159,13 @@ public class GoStatURLQuery implements WidgetURLQuery
          q.syncLogicExpression("and");
 
          List<OrderBy>  sortOrder = new ArrayList<OrderBy>();
-         sortOrder.add(new OrderBy(goId, "asc"));
-         sortOrder.add(new OrderBy(goName, "asc"));
+         sortOrder.add(new OrderBy(goId));
+         sortOrder.add(new OrderBy(goName));
          if (widgetObjects == null) {
-             sortOrder.add(new OrderBy(actualGoName, "asc"));
-             sortOrder.add(new OrderBy(actualGoId, "asc"));
-             sortOrder.add(new OrderBy(organismName, "asc"));
-             sortOrder.add(new OrderBy(genePrimaryIdentifier, "asc"));
+             sortOrder.add(new OrderBy(actualGoName));
+             sortOrder.add(new OrderBy(actualGoId));
+             sortOrder.add(new OrderBy(organismName));
+             sortOrder.add(new OrderBy(genePrimaryIdentifier));
          }
          q.setSortOrder(sortOrder);
 

@@ -101,10 +101,10 @@ public class PathwayURLQuery implements WidgetURLQuery
         q.syncLogicExpression("and");
 
         List<OrderBy>  sortOrder = new ArrayList<OrderBy>();
-        sortOrder.add(new OrderBy(pathwayIdentifier, "asc"));
-        sortOrder.add(new OrderBy(pathwayName, "asc"));
-        sortOrder.add(new OrderBy(organismName, "asc"));
-        sortOrder.add(new OrderBy(genePrimaryIdentifier, "asc"));
+        sortOrder.add(new OrderBy(pathwayIdentifier));
+        sortOrder.add(new OrderBy(pathwayName));
+        sortOrder.add(new OrderBy(organismName));
+        sortOrder.add(new OrderBy(genePrimaryIdentifier));
         q.setSortOrder(sortOrder);
 
         return q;

@@ -130,15 +130,15 @@ public class ProteinDomainURLQuery implements WidgetURLQuery
 
         List<OrderBy>  sortOrder = new ArrayList<OrderBy>();
         if (keys == null) {
-            sortOrder.add(new OrderBy(domainIdentifier, "asc"));
-            sortOrder.add(new OrderBy(domainName, "asc"));
+            sortOrder.add(new OrderBy(domainIdentifier));
+            sortOrder.add(new OrderBy(domainName));
         }
-        sortOrder.add(new OrderBy(primaryIdentifier, "asc"));
-        sortOrder.add(new OrderBy(primaryAccession, "asc"));
-        sortOrder.add(new OrderBy(organism, "asc"));
+        sortOrder.add(new OrderBy(primaryIdentifier));
+        sortOrder.add(new OrderBy(primaryAccession));
+        sortOrder.add(new OrderBy(organism));
         if (bagType.equals("Gene")) {
-            sortOrder.add(new OrderBy(geneIdentifier, "asc"));
-            sortOrder.add(new OrderBy(secondaryIdentifier, "asc"));
+            sortOrder.add(new OrderBy(geneIdentifier));
+            sortOrder.add(new OrderBy(secondaryIdentifier));
         }
         q.setSortOrder(sortOrder);
 
