@@ -120,8 +120,10 @@ public class QueryBuilderConstraintController extends TilesAction
                 //fetch AutoCompleter from servletContext
                 AutoCompleter ac = (AutoCompleter)
                                         servletContext.getAttribute(Constants.AUTO_COMPLETER);
+
                 if (ac != null && ac.hasAutocompleter(node.getParentType(), node.getFieldName())) {
                     request.setAttribute("useAutoCompleter", ac);
+
                 }
                 request.setAttribute("classDescriptor", node.getParentType());
                 request.setAttribute("fieldDescriptor", node.getFieldName());
