@@ -85,10 +85,6 @@ public class PathQuery
         // TODO new API method
     }
 
-//    public void setView(List<String> view) {
-//
-//    }
-
     /**
      * Sets the value of view
      * @param view a List of Paths
@@ -137,23 +133,29 @@ public class PathQuery
     /**
      * Add a constraint to the query
      * @param constraint constraint to add to the query
+     * @param path path to constrain, eg Employee.firstName
      * @return label of constraint
      */
-    public String addConstraint(Constraint constraint) {
-        // TODO new API method
-        return null;
+    public String addConstraint(String path, Constraint constraint) {
+        String code = getUnusedConstraintCode();
+        constraint.code = code;
+        return addConstraint(path, constraint, code);
     }
 
     /**
      * Add a constraint to the query
      * @param constraint constraint to add to the query
-     * @param label label for constraint
+     * @param code code for constraint
+     * @param path path to constrain, eg Employee.firstName
      * @return label of constraint
      */
-    public String addConstraint(Constraint constraint, String label) {
-        // TODO new API method
-        return label;
+    public String addConstraint(String path, Constraint constraint, String code) {
+        PathNode node = addNode(path);
+        constraint.code = code;
+        node.getConstraints().add(constraint);
+        return code;
     }
+
 
     /**
      * Set the constraint logic expression. This expresses the AND and OR
@@ -621,7 +623,7 @@ public class PathQuery
     public Throwable[] getProblems() {
         return problems.toArray(new Throwable[0]);
     }
-    
+
     /**
      * Sets problems.
      * @param problems problems
@@ -888,14 +890,14 @@ public class PathQuery
      */
     public static Path makePath(Model model, PathQuery query, String fullPathName) {
         Map<String, String> subClassConstraintMap = new HashMap<String, String>();
-    
+
         Iterator viewPathNameIter = query.getNodes().keySet().iterator();
         while (viewPathNameIter.hasNext()) {
             String viewPathName = (String) viewPathNameIter.next();
             PathNode pathNode = query.getNode(viewPathName);
             subClassConstraintMap.put(viewPathName.replace(':', '.'), pathNode.getType());
         }
-    
+
         Path path = new Path(model, fullPathName, subClassConstraintMap);
         return path;
     }
