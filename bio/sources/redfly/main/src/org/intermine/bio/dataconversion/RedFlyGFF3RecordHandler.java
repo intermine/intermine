@@ -37,7 +37,6 @@ public class RedFlyGFF3RecordHandler extends GFF3RecordHandler
     private Map<String, Item> geneMap = new HashMap<String, Item>();
     private Map<String, Item> publications = new HashMap<String, Item>();
     protected IdResolverFactory resolverFactory;
-    private IdResolver resolver = null;
     private static final String TAXON_ID = "7227";
 
     protected static final Logger LOG = Logger.getLogger(RedFlyGFF3RecordHandler.class);

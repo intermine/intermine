@@ -1,4 +1,7 @@
 <items>
+<item id="4_15" class="http://www.flymine.org/model/genomic#MicroArrayAssay">
+<attribute name="name" value="Salivary gland"/>
+</item>
   <item id="4_13" class="http://www.flymine.org/model/genomic#MicroArrayAssay">
     <attribute name="name" value="Thoracicoabdominal ganglion"/>
   </item>
