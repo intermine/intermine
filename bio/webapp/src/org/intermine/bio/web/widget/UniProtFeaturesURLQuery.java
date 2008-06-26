@@ -75,7 +75,7 @@ public class UniProtFeaturesURLQuery implements WidgetURLQuery
             view.add(begin);
             view.add(end);
         }
-        q.setView(view);
+        q.setViewPaths(view);
 
         String bagType = bag.getType();
 

@@ -65,7 +65,7 @@ public class OrthologueConverter implements BagConverter
         WebConfig webConfig = (WebConfig) servletContext.getAttribute(Constants.WEBCONFIG);
         List<Path> view = PathQueryResultHelper.getDefaultView(type, model, webConfig,
                         "Gene.homologues.homologue", false);
-        pathQuery.setView(view);
+        pathQuery.setViewPaths(view);
         String label = null, id = null, code = pathQuery.getUnusedConstraintCode();
         List<InterMineObject> objectList = os.getObjectsByIds(fromList);
         List<InterMineObject> newList = new ArrayList<InterMineObject>();
@@ -113,7 +113,7 @@ public class OrthologueConverter implements BagConverter
                                                 "Gene.homologues.homologue.organism.shortName"));
         view.add(PathQuery.makePath(model, pathQuery, "Gene.homologues.type"));
         view.add(PathQuery.makePath(model, pathQuery, "Gene.homologues.inParanoidScore"));
-        pathQuery.setView(view);
+        pathQuery.setViewPaths(view);
 
         String label = null, id = null, code = pathQuery.getUnusedConstraintCode();
 

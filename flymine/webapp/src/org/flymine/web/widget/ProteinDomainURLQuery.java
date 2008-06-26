@@ -124,7 +124,7 @@ public class ProteinDomainURLQuery implements WidgetURLQuery
             view.add(domainIdentifier);
             view.add(domainName);
         }
-        q.setView(view);
+        q.setViewPaths(view);
         q.setConstraintLogic("A and B");
         q.syncLogicExpression("and");
 

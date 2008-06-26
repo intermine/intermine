@@ -79,7 +79,7 @@ public class PublicationURLQuery implements WidgetURLQuery
             view.add(year);
             view.add(pubmedid);
         }
-        q.setView(view);
+        q.setViewPaths(view);
 
         String bagType = bag.getType();
 

@@ -106,7 +106,7 @@ public class FlyAtlasGraphURLGenerator implements GraphCategoryURLGenerator
         view.add(sem);
         view.add(presentCall);
 
-        q.setView(view);
+        q.setViewPaths(view);
 
         ConstraintOp constraintOp = ConstraintOp.IN;
         String constraintValue = bag.getName();

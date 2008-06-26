@@ -113,7 +113,7 @@ public class BDGPURLQuery implements WidgetURLQuery
             view.add(dataset);
         }
 
-        q.setView(view);
+        q.setViewPaths(view);
         q.syncLogicExpression("and");
 
         List<OrderBy>  sortOrder = new ArrayList<OrderBy>();

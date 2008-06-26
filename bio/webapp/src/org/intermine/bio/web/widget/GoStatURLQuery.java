@@ -110,7 +110,7 @@ public class GoStatURLQuery implements WidgetURLQuery
              view.add(actualGoId);
          }
 
-         q.setView(view);
+         q.setViewPaths(view);
 
          String bagType = bag.getType();
 

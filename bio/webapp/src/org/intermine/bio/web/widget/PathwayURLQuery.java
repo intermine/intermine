@@ -74,7 +74,7 @@ public class PathwayURLQuery implements WidgetURLQuery
         view.add(pathwayIdentifier);
         view.add(pathwayName);
 
-        q.setView(view);
+        q.setViewPaths(view);
 
         String bagType = bag.getType();
 

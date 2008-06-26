@@ -69,7 +69,7 @@ public class PrideExperimentURLQuery implements WidgetURLQuery
         view.add(proteinAcc);
         view.add(proteinName);
 
-        q.setView(view);
+        q.setViewPaths(view);
 
         String bagType = bag.getType();
         ConstraintOp constraintOp = ConstraintOp.IN;

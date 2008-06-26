@@ -65,7 +65,7 @@ public class PathQueryBindingTest extends TestCase
         PathQuery allCompanies = new PathQuery(model);
         List<Path> view = new ArrayList();
         view.add(PathQuery.makePath(model, allCompanies, "Company"));
-        allCompanies.setView(view);
+        allCompanies.setViewPaths(view);
         expected.put("allCompanies", allCompanies);
 
         view = new ArrayList();
@@ -77,7 +77,7 @@ public class PathQueryBindingTest extends TestCase
         view.add(PathQuery.makePath(model, employeesWithOldManagers, "Employee.department.name"));
         view.add(PathQuery.makePath(model, employeesWithOldManagers,
                                      "Employee.department.manager.age"));
-        employeesWithOldManagers.setView(view);
+        employeesWithOldManagers.setViewPaths(view);
         PathNode age = employeesWithOldManagers.addNode("Employee.department.manager.age");
         age.getConstraints().add(new Constraint(ConstraintOp.GREATER_THAN, new Integer(10),
                                                 true, "age is greater than 10", null, "age_gt_10", null));
@@ -89,7 +89,7 @@ public class PathQueryBindingTest extends TestCase
         PathQuery vatNumberInBag = new PathQuery(model);
         view = new ArrayList();
         view.add(PathQuery.makePath(model, vatNumberInBag, "Company"));
-        vatNumberInBag.setView(view);
+        vatNumberInBag.setViewPaths(view);
         PathNode company = vatNumberInBag.addNode("Company");
         company.getConstraints().add(new Constraint(ConstraintOp.IN, "bag1"));
         PathNode vatNumber = vatNumberInBag.addNode("Company.vatNumber");
@@ -107,14 +107,14 @@ public class PathQueryBindingTest extends TestCase
         view.add(PathQuery.makePath(model, queryWithConstraint, "Company.departments.employees.name"));
         view.add(PathQuery.makePath(model, queryWithConstraint, "Company.departments.employees.title"));
 
-        queryWithConstraint.setView(view);
+        queryWithConstraint.setViewPaths(view);
         expected.put("queryWithConstraint", queryWithConstraint);
 
         // employeesInBag
         PathQuery employeesInBag = new PathQuery(model);
         view = new ArrayList();
         view.add(PathQuery.makePath(model, employeesInBag, "Employee.name"));
-        employeesInBag.setView(view);
+        employeesInBag.setViewPaths(view);
         PathNode employeeEnd = employeesInBag.addNode("Employee.end");
         employeeEnd.getConstraints().add(new Constraint(ConstraintOp.IN, "bag1"));
         Exception e = new Exception("Invalid bag constraint - only objects can be"
