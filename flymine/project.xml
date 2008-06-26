@@ -4,7 +4,7 @@
   <property name="intermine.properties.file" value="flymine.properties"/>
   <property name="default.intermine.properties.file" location="../default.intermine.integrate.properties"/>
   <sources>
-    <source name="chado-db-flybase-dmel" type="chado-db">
+    <source name="chado-db-flybase-dmel" type="chado-db" dump="true">
       <property name="source.db.name" value="flybase"/>
       <property name="organisms" value="7227"/>
       <property name="dataSourceName" value="FlyBase"/>
@@ -42,7 +42,7 @@
       <property name="src.data.dir" location="/shared/data/anopheles/mappings"/>
       <property name="src.data.dir.includes" value="New_IDs*"/>
     </source>
-    <source name="uniprot" type="uniprot">
+    <source name="uniprot" type="uniprot" dump="true">
       <property name="uniprot.organisms" value="7227 7237 6239 180454 7460 4932 9606 10090"/>
       <property name="src.data.dir" location="/shared/data/uniprot/current/split"/>
       <property name="createinterpro" value="true"/>
@@ -68,7 +68,7 @@
       <property name="gff3.seqDataSourceName" value="Micklem lab"/>
       <property name="src.data.dir" location="/shared/data/long_oligo"/>
     </source>
-    <source name="ensembl-anopheles" type="ensembl">
+    <source name="ensembl-anopheles" type="ensembl" dump="true">
       <property name="organism" value="AGP"/>
     </source>
     <source name="ensembl-apis-mellifera" type="ensembl">
@@ -134,7 +134,7 @@
     <source name="psi-mi-ontology" type="psi-mi-ontology">
       <property name="src.data.file" location="/shared/data/psi/ontology/current/psi-mi.obo"/>
     </source>
-    <source name="go" type="go">
+    <source name="go" type="go" dump="true">
       <property name="src.data.file" location="/shared/data/go-annotation/gene_ontology.obo"/>
     </source>
 
@@ -158,7 +158,7 @@
       <property name="src.data.dir" location="/shared/data/flyfish"/>
       <property name="src.data.dir.includes" value="annotation_matrix_filter_3.csv"/>
     </source>
-    <source name="flybase-dmel-gene-fasta" type="fasta">
+    <source name="flybase-dmel-gene-fasta" type="fasta" dump="true">
       <property name="fasta.taxonId" value="7227"/>
       <property name="fasta.className" value="org.flymine.model.genomic.Gene"/>
       <property name="fasta.classAttribute" value="primaryIdentifier"/>
@@ -414,7 +414,7 @@
       <property name="src.data.dir" location="/shared/data/affy-probes/current"/>
       <property name="src.data.dir.includes" value="*.csv"/>
     </source>
-    <source name="biogrid" type="biogrid">
+    <source name="biogrid" type="biogrid" dump="true">
       <property name="src.data.dir" location="/shared/data/biogrid/current"/>
       <property name="src.data.dir.includes" value="*psi25.xml"/>
     </source>
@@ -435,7 +435,7 @@
     <source name="flymine-static" type="intermine-items-xml-file">
       <property name="src.data.file" location="datasets.xml"/>
     </source>
-    <source name="update-publications" type="update-publications">
+    <source name="update-publications" type="update-publications" dump="true">
       <!-- this source finds the publication ids (pubmed ids) in the
            objectstore, retrieves the details of the publication from Entrez
            into an InterMine format XML file, loads that file into a target
