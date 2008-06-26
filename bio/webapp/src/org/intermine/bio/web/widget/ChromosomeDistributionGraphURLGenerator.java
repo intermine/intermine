@@ -99,7 +99,7 @@ public class ChromosomeDistributionGraphURLGenerator implements GraphCategoryURL
         view.add(end);
         view.add(strand);
 
-        q.setView(view);
+        q.setViewPaths(view);
 
         ConstraintOp constraintOp = ConstraintOp.IN;
         String constraintValue = bag.getName();

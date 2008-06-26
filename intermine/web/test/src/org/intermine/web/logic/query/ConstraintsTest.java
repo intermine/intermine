@@ -2,6 +2,8 @@ package org.intermine.web.logic.query;
 
 import junit.framework.TestCase;
 
+import org.intermine.pathquery.Constraint;
+
 
 public class ConstraintsTest extends TestCase
 {
@@ -18,7 +20,7 @@ public class ConstraintsTest extends TestCase
         xml = xml + "</query>";
 
 
-        Constraint c = Constraints.eq("Employee.age", new Integer(10));
+        Constraint c = Constraints.eq(new Integer(10));
 
         assertEquals(xml, "");
 
@@ -27,7 +29,7 @@ public class ConstraintsTest extends TestCase
     }
 
     public void testNeq() {
-        Constraints.neq("", "");
+        Constraints.neq("");
     }
 
     public void testLike() {

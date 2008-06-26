@@ -156,7 +156,7 @@ public class TypeConverter
         Path configuredPath = pq.getView().get(0);
         WebConfig webConfig = (WebConfig) servletContext.getAttribute(Constants.WEBCONFIG);
         Model model = ((ObjectStore) servletContext.getAttribute(Constants.OBJECTSTORE)).getModel();
-        pq.setView(PathQueryResultHelper
+        pq.setViewPaths(PathQueryResultHelper
                         .getDefaultView(TypeUtil.unqualifiedName(typeB.getName()), model,
                                         webConfig, configuredPath.getPrefix()
                                                         .toStringNoConstraints(), false));

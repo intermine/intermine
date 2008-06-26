@@ -81,7 +81,7 @@ public class PathQuery
      * or a comma delimited list of paths.  To append a path to the list instead use addView.
      * @param paths a list of paths to be the view list
      */
-    public void setView(String paths) {
+    public void setViewStrings(String paths) {
         // TODO new API method
     }
 
@@ -89,11 +89,22 @@ public class PathQuery
      * Sets the value of view
      * @param view a List of Paths
      */
-    public void setView(List<Path> view) {
+    public void setViewString(List<String> view) {
+        // TODO new API method
+    }
+
+
+    /**
+     * TODO we need to add a list of strings
+     * Sets the value of view
+     * @param view a List of Paths
+     */
+    public void setViewPaths(List<Path> view) {
         if (view == null) {
             throw new RuntimeException("setView() was passed null");
         }
         this.view = view;
+        // this is needed for the querybuilder
         if (sortOrder.isEmpty()) {
             Path p = getFirstPathFromView();
             if (p != null) {

@@ -133,7 +133,7 @@ public class PathQueryResultHelper
         List<Path> view = PathQueryResultHelper.getDefaultView(imBag.getType(), model, webConfig,
             null, true);
 
-        pathQuery.setView(view);
+        pathQuery.setViewPaths(view);
         String label = null, id = null, code = pathQuery.getUnusedConstraintCode();
         Constraint c = new Constraint(ConstraintOp.IN, imBag.getName(), false, label, code, id,
                                       null);
@@ -194,7 +194,7 @@ public class PathQueryResultHelper
                                        + "." + field, false);
 
         PathQuery pathQuery = new PathQuery(os.getModel());
-        pathQuery.setView(view);
+        pathQuery.setViewPaths(view);
         String label = null, id2 = null, code = pathQuery.getUnusedConstraintCode();
         Constraint c = new Constraint(ConstraintOp.EQUALS, object.getId(), false, label, code, id2,
                         null);

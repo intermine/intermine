@@ -82,7 +82,7 @@ public class ProteinInteractionURLQuery implements WidgetURLQuery
         view.add(interactPubMedId);
         view.add(interactShortname);
 
-        q.setView(view);
+        q.setViewPaths(view);
 
         String bagType = bag.getType();
 

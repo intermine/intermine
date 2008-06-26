@@ -80,7 +80,7 @@ public class HomologueURLQuery implements WidgetURLQuery
         view.add(homologueSymbol);
         view.add(homologueOrganism);
 
-        q.setView(view);
+        q.setViewPaths(view);
         String bagType = bag.getType();
         ConstraintOp constraintOp = ConstraintOp.IN;
         String constraintValue = bag.getName();

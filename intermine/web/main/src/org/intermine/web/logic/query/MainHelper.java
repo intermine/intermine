@@ -1202,7 +1202,7 @@ public class MainHelper
             Column column = (Column) iter.next();
             view.add((Path) column.getPath());
         }
-        pathQuery.setView(view);
+        pathQuery.setViewPaths(view);
 
         String bagType = bag.getType();
         ConstraintOp constraintOp = ConstraintOp.IN;

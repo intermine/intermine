@@ -196,7 +196,7 @@ public class PagedResultsTest extends TestCase
             Map pathToQueryNode = new HashMap();
             Query q = MainHelper.makeQuery(pq, new HashMap(), pathToQueryNode, null, null, false, null, null, null);
             Results r = new DummyResults(os, q, (List) results.get(queryName));
-            pq.setView((List) headers.get(queryName));
+            pq.setViewPaths((List) headers.get(queryName));
 //            PagedTable pr = new PagedTable(pq.getView(), r, model, pathToQueryNode, null);
             WebResults webResults = new WebResults(pq,r, model, pathToQueryNode, classKeys, null);
             PagedTable pr = new PagedTable(webResults);

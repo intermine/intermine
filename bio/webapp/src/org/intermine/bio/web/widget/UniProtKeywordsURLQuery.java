@@ -71,7 +71,7 @@ public class UniProtKeywordsURLQuery implements WidgetURLQuery
             view.add(descr);
         }
 
-        q.setView(view);
+        q.setViewPaths(view);
 
         String bagType = bag.getType();
 

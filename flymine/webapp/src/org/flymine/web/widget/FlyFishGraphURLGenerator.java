@@ -98,7 +98,7 @@ public class FlyFishGraphURLGenerator implements GraphCategoryURLGenerator
         view.add(PathQuery.makePath(model, q, "Gene.mRNAExpressionResults.stageRange"));
         view.add(PathQuery.makePath(model, q, "Gene.mRNAExpressionResults.expressed"));
 
-        q.setView(view);
+        q.setViewPaths(view);
 
         String bagType = bag.getType();
         ConstraintOp constraintOp = ConstraintOp.IN;

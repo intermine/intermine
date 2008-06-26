@@ -61,7 +61,7 @@ public class EmployeeURLQuery implements WidgetURLQuery
         view.add(PathQuery.makePath(model, q, "Employee.department.company.name"));
         view.add(PathQuery.makePath(model, q, "Employee.fullTime"));
 
-        q.setView(view);
+        q.setViewPaths(view);
 
         String bagType = bag.getType();
         ConstraintOp constraintOp = ConstraintOp.IN;

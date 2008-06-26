@@ -143,7 +143,7 @@ public class WebResultsTest extends TestCase
              add(new Path(model, "Department.employees.name"));
          }};
          PathQuery pathQuery = new PathQuery(model);
-         pathQuery.setView(view);
+         pathQuery.setViewPaths(view);
          QueryClass dept1 = new QueryClass(Department.class);
          QueryField depName = new QueryField(dept1, "name");
 
@@ -186,7 +186,7 @@ public class WebResultsTest extends TestCase
             add(new Path(model, "Employee.name"));
         }};
         pq.addPathStringDescription("Company", "description 1");
-        pq.setView(view);
+        pq.setViewPaths(view);
         Map<String, QuerySelectable> pathToQueryNode = new HashMap();
         Query query = MainHelper.makeQuery(pq , new HashMap(), pathToQueryNode, null, null, true);
         Results results = os.execute(query);
@@ -216,7 +216,7 @@ public class WebResultsTest extends TestCase
              add(new Path(model, "Department.name"));
              add(new Path(model, "Department.company.name"));
          }};
-         pq.setView(view);
+         pq.setViewPaths(view);
          Map<String, QuerySelectable> pathToQueryNode = new HashMap();
          Query query = MainHelper.makeQuery(pq , new HashMap(), pathToQueryNode, null, null, true);
          Results results = os.execute(query);
@@ -248,7 +248,7 @@ public class WebResultsTest extends TestCase
             add(new Path(model, "Department.employees[Manager].seniority"));
         }};
         PathQuery pathQuery = new PathQuery(model);
-        pathQuery.setView(view);
+        pathQuery.setViewPaths(view);
         Map<String, QuerySelectable> pathToQueryNode = new HashMap<String, QuerySelectable>();
         QueryClass deptQC = (QueryClass) query.getSelect().get(0);
         pathToQueryNode.put("Department", deptQC);

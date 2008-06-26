@@ -83,7 +83,7 @@ public class GeneticInteractionURLQuery implements WidgetURLQuery
         view.add(interactor);
         view.add(experimentName);
 
-        q.setView(view);
+        q.setViewPaths(view);
 
         String bagType = bag.getType();
 

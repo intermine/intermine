@@ -181,7 +181,7 @@ public class PortalQueryAction extends InterMineAction
         List<Path> view = PathQueryResultHelper.getDefaultView(className, model, webConfig,
             null, true);
 
-        pathQuery.setView(view);
+        pathQuery.setViewPaths(view);
         String label = null, id = null, code = pathQuery.getUnusedConstraintCode();
         Constraint c = new Constraint(ConstraintOp.LOOKUP, StringUtils.replace(extId, ",", "\t"),
                         false, label, code, id, null);
