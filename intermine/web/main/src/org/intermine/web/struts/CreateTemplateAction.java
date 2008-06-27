@@ -10,6 +10,7 @@ package org.intermine.web.struts;
  *
  */
 
+import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.Map;
 
@@ -167,7 +168,7 @@ public class CreateTemplateAction extends InterMineAction
         }
 
         // no problems!  TODO this should be updated somewhere else
-        query.setProblems(null);
+        query.setProblems(new ArrayList<Throwable>());
 
         TemplateQuery template = TemplateHelper.buildTemplateQuery(tbs, query);
         TemplateQuery editing = tbs.getUpdatingTemplate();
