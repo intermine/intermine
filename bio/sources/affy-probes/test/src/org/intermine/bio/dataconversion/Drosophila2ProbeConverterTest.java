@@ -25,7 +25,7 @@ public class Drosophila2ProbeConverterTest extends ItemsTestCase
     Model model = Model.getInstanceByName("genomic");
     Drosophila2ProbeConverter converter;
     MockItemWriter itemWriter;
-    
+
     public Drosophila2ProbeConverterTest(String arg) {
         super(arg);
     }
@@ -33,11 +33,12 @@ public class Drosophila2ProbeConverterTest extends ItemsTestCase
     public void setUp() throws Exception {
         super.setUp();
         itemWriter = new MockItemWriter(new HashMap());
-        converter = new Drosophila2ProbeConverter(itemWriter, model);  
+        converter = new Drosophila2ProbeConverter(itemWriter, model);
         MockIdResolverFactory resolverFactory = new MockIdResolverFactory("Gene");
-        resolverFactory.addResolverEntry("7227", "FBgn001", Collections.singleton("CG9042"));
-        resolverFactory.addResolverEntry("7227", "FBgn002", Collections.singleton("CG33057"));
-        resolverFactory.addResolverEntry("7227", "FBgn003", Collections.singleton("CG7163"));
+        resolverFactory.addResolverEntry("7227", "FBgn005", Collections.singleton("FBgn001"));
+        resolverFactory.addResolverEntry("7227", "FBgn002", Collections.singleton("FBgn002"));
+        resolverFactory.addResolverEntry("7227", "FBgn003", Collections.singleton("FBgn003"));
+        resolverFactory.addResolverEntry("7227", "FBgn004", Collections.singleton("FBgn004"));
         converter.resolverFactory = resolverFactory;
     }
 

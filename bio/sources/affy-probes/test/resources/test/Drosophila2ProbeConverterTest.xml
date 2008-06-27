@@ -3,12 +3,19 @@
 <attribute name="primaryIdentifier" value="FBgn003"/>
 <reference name="organism" ref_id="1_1"/>
 </item>
+<item id="1_1" class="http://www.flymine.org/model/genomic#Organism">
+<attribute name="taxonId" value="7227"/>
+</item>
 <item id="5_2" class="http://www.flymine.org/model/genomic#Transcript">
 <attribute name="secondaryIdentifier" value="CG7163-RA"/>
 <reference name="organism" ref_id="1_1"/>
 </item>
-<item id="1_1" class="http://www.flymine.org/model/genomic#Organism">
-<attribute name="taxonId" value="7227"/>
+<item id="3_3" class="http://www.flymine.org/model/genomic#ProbeSet">
+<attribute name="name" value="153347_at"/>
+<attribute name="primaryIdentifier" value="153347_at"/>
+<reference name="organism" ref_id="1_1"/>
+<collection name="dataSets"><reference ref_id="2_1"/></collection>
+<collection name="genes"><reference ref_id="6_4"/></collection>
 </item>
 <item id="4_3" class="http://www.flymine.org/model/genomic#Synonym">
 <attribute name="type" value="identifier"/>
@@ -29,20 +36,13 @@
 <attribute name="secondaryIdentifier" value="CG9042-RB"/>
 <reference name="organism" ref_id="1_1"/>
 </item>
-<item id="6_1" class="http://www.flymine.org/model/genomic#Gene">
-<attribute name="primaryIdentifier" value="FBgn001"/>
+<item id="6_4" class="http://www.flymine.org/model/genomic#Gene">
+<attribute name="primaryIdentifier" value="FBgn004"/>
 <reference name="organism" ref_id="1_1"/>
 </item>
 <item id="6_2" class="http://www.flymine.org/model/genomic#Gene">
 <attribute name="primaryIdentifier" value="FBgn002"/>
 <reference name="organism" ref_id="1_1"/>
-</item>
-<item id="3_3" class="http://www.flymine.org/model/genomic#ProbeSet">
-<attribute name="name" value="153347_at"/>
-<attribute name="primaryIdentifier" value="153347_at"/>
-<reference name="organism" ref_id="1_1"/>
-<collection name="dataSets"><reference ref_id="2_1"/></collection>
-<collection name="genes"><reference ref_id="6_1"/></collection>
 </item>
 <item id="3_1" class="http://www.flymine.org/model/genomic#ProbeSet">
 <attribute name="name" value="1616608_a_at"/>
@@ -61,6 +61,10 @@
 <item id="2_1" class="http://www.flymine.org/model/genomic#DataSet">
 <attribute name="title" value="Affymetrix array: Drosophila_2 Array"/>
 <reference name="dataSource" ref_id="0_1"/>
+</item>
+<item id="6_1" class="http://www.flymine.org/model/genomic#Gene">
+<attribute name="primaryIdentifier" value="FBgn005"/>
+<reference name="organism" ref_id="1_1"/>
 </item>
 <item id="3_2" class="http://www.flymine.org/model/genomic#ProbeSet">
 <attribute name="name" value="1622892_s_at"/>

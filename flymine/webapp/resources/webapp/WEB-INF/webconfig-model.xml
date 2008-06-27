@@ -8,14 +8,6 @@
     </fields>
   </class>
 
-  <class className="org.flymine.model.genomic.Mutagen">
-    <fields>
-      <fieldconfig fieldExpr="description"/>
-    </fields>
-  </class>
-
-
-
   <class className="org.flymine.model.genomic.Analysis">
     <fields>
       <fieldconfig fieldExpr="publication.title"/>
@@ -389,6 +381,12 @@
     <fields>
       <fieldconfig fieldExpr="name"/>
       <fieldconfig fieldExpr="type"/>
+    </fields>
+  </class>
+
+  <class className="org.flymine.model.genomic.Mutagen">
+    <fields>
+      <fieldconfig fieldExpr="description"/>
     </fields>
   </class>
 
