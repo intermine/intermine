@@ -100,11 +100,11 @@ public class CreateTemplateAction extends InterMineAction
                 if (c.isEditable()) {
                     foundEditableConstraint = true;
                     break;
-                } else {
-                    if (c.getOp().equals(ConstraintOp.LOOKUP)) {
-                        foundNonEditableLookup = true;
-                    }
                 }
+                if (c.getOp().equals(ConstraintOp.LOOKUP)) {
+                    foundNonEditableLookup = true;
+                }
+
             }
         }
 
@@ -165,6 +165,9 @@ public class CreateTemplateAction extends InterMineAction
         if (seenProblem) {
             return mapping.findForward("query");
         }
+
+        // no problems!  TODO this should be updated somewhere else
+        query.setProblems(null);
 
         TemplateQuery template = TemplateHelper.buildTemplateQuery(tbs, query);
         TemplateQuery editing = tbs.getUpdatingTemplate();
