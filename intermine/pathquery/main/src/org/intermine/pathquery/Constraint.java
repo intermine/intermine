@@ -208,6 +208,20 @@ public class Constraint
     }
 
     /**
+     * @return constraint in XML format.  Just used for testing.
+     */
+    public String toXML() {
+        //"<constraint op=\"=\" value=\"10\" description=\"\" identifier=\"\" " +
+        //"code=\"A\"></constraint>"
+        return "<constraint op=\"" + op + "\" value=\"" + value + "\" "
+            + "description=\"" + (description == null ? "" : description) + "\" "
+            + "identifier=\"" + (identifier == null ? "" : identifier) + "\" "
+            + "code=\"" + (code == null ? "" : code) + "\""
+            + "></constraint>";
+    }
+
+
+    /**
      * {@inheritDoc}
      */
     public boolean equals(Object o) {

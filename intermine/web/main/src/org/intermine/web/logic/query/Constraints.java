@@ -81,7 +81,7 @@ public class Constraints
      * @return the CONTAINS constraint
      */
     public static Constraint contains(String value) {
-        return new Constraint(ConstraintOp.EQUALS, value);
+        return new Constraint(ConstraintOp.CONTAINS, value);
     }
 
     /**
