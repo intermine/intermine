@@ -216,7 +216,8 @@ public class Constraint
         return "<constraint op=\"" + op + "\" value=\"" + value + "\" "
             + "description=\"" + (description == null ? "" : description) + "\" "
             + "identifier=\"" + (identifier == null ? "" : identifier) + "\" "
-            + "code=\"" + (code == null ? "" : code) + "\""
+            + "code=\"" + (code == null ? "" : code) + "\" "
+            + "extraValue=\"" + (extraValue == null ? "" : extraValue) + "\""
             + "></constraint>";
     }
 
