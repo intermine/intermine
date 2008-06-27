@@ -1,5 +1,7 @@
 <?xml version="1.0"?>
 <classes>
+  <class name="org.flymine.model.genomic.OriginOfReplication"
+    extends="org.flymine.model.genomic.Region" is-interface="true"/>
 
 	<class name="org.flymine.model.genomic.ModEncodeProject"
 		is-interface="true">
