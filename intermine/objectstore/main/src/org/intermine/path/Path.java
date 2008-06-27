@@ -154,9 +154,6 @@ public class Path
         String clsName = parts[0];
         ClassDescriptor cld = null;
         if (!("".equals(clsName))) {
-            LOG.error(" ~~~~ classname:" + clsName);
-            LOG.error(" ~~~~ package name:" + model.getPackageName());
-            LOG.error(" ~~~~ descriptor:" + model.getClassDescriptorByName(model.getPackageName() + "." + clsName));
             cld = model.getClassDescriptorByName(model.getPackageName() + "." + clsName);
             if (cld == null) {
                 throw new PathError("Unable to resolve path '" + path + "': class '" + clsName
