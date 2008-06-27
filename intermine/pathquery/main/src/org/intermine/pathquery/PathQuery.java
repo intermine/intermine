@@ -91,10 +91,10 @@ public class PathQuery
      * @param view a list of strings.
      */
     public void setView(List<String> view) {
-        Iterator it = view.listIterator();
+        Iterator it = view.iterator();
         List<Path> viewPaths = new ArrayList<Path>();
         while (it.hasNext()) {
-            String path = it.toString();
+            String path = (String) it.next();
             viewPaths.add(makePath(model, this, path));
         }
         setViewPaths(viewPaths);

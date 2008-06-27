@@ -21,9 +21,7 @@ import java.util.StringTokenizer;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import org.apache.log4j.Logger;
 import org.apache.commons.lang.StringUtils;
-
 import org.intermine.metadata.AttributeDescriptor;
 import org.intermine.metadata.ClassDescriptor;
 import org.intermine.metadata.CollectionDescriptor;
@@ -33,6 +31,7 @@ import org.intermine.metadata.ReferenceDescriptor;
 import org.intermine.util.DynamicUtil;
 import org.intermine.util.StringUtil;
 import org.intermine.util.TypeUtil;
+import org.apache.log4j.Logger;
 
 /**
  * Object to represent a path through an InterMine model.  Construction from
@@ -41,7 +40,6 @@ import org.intermine.util.TypeUtil;
  */
 public class Path
 {
-    private static final Logger LOG = Logger.getLogger(Path.class);
     private ClassDescriptor startCld;
     private List<String> elements;
     private FieldDescriptor endFld;
@@ -52,7 +50,7 @@ public class Path
     private Map<String, String> subClassConstraintPaths;
     private List<ClassDescriptor> elementClassDescriptors;
     private List<Boolean> outers;
-
+    private static final Logger LOG = Logger.getLogger(Path.class);
     /**
      * Create a new Path object. The Path must start with a class name.
      * @param model the Model used to check ClassDescriptors and FieldDescriptors
@@ -156,13 +154,16 @@ public class Path
         String clsName = parts[0];
         ClassDescriptor cld = null;
         if (!("".equals(clsName))) {
+            LOG.error(" ~~~~ classname:" + clsName);
+            LOG.error(" ~~~~ package name:" + model.getPackageName());
+            LOG.error(" ~~~~ descriptor:" + model.getClassDescriptorByName(model.getPackageName() + "." + clsName));
             cld = model.getClassDescriptorByName(model.getPackageName() + "." + clsName);
-            this.startCld = cld;
-            elementClassDescriptors.add(cld);
             if (cld == null) {
                 throw new PathError("Unable to resolve path '" + path + "': class '" + clsName
                                     + "' not found in model '" + model.getName() + "'", path);
             }
+            this.startCld = cld;
+            elementClassDescriptors.add(cld);
         }
 
         StringBuffer currentPath = new StringBuffer(parts[0]);
@@ -239,7 +240,7 @@ public class Path
     public boolean containsReferences() {
         return containsReferences;
     }
-    
+
     /**
      * Return true if the Path does not contain references or collections
      * @return a boolean
@@ -333,10 +334,9 @@ public class Path
     public Path getPrefix() {
         if (getElements().size() == 0) {
             throw new RuntimeException("path (" + this + ") has only one element");
-        } else {
-            String pathString = toString();
-            return new Path(model, pathString.substring(0, pathString.lastIndexOf('.')));
         }
+        String pathString = toString();
+        return new Path(model, pathString.substring(0, pathString.lastIndexOf('.')));
     }
 
     /**
@@ -398,7 +398,7 @@ public class Path
                 current = TypeUtil.getFieldValue(current, fieldName);
                 if (current instanceof Collection) {
                     throw new RuntimeException("Attempt to to get value of "
-                       + "field \"" + fieldName + "\" for collection: " + o 
+                       + "field \"" + fieldName + "\" for collection: " + o
                        + "It must be simple object. This operation is not allowed for collection.");
                 }
             } catch (IllegalAccessException e) {
@@ -502,7 +502,7 @@ public class Path
         }
         return getStartClassDescriptor().getUnqualifiedName() + sb.toString();
     }
-    
+
     /**
      * Required for jsp
      * @return a String version of the Path
