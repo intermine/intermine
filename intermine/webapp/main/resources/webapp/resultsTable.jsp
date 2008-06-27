@@ -194,12 +194,12 @@
                       </c:if>
 
                       <%-- the checkbox to select this object --%>
-                      <c:if test="${column.selectable && ((! noBagSave && status2.count<=1))}">
+                      <c:if test="${column.selectable}">
                         <c:set var="checkboxClass" value="checkbox ${resultElement.id}"/>
                         <c:if test="${resultElement.selected}">
                           <c:set var="checkboxClass" value="${checkboxClass} highlightCell"/>
                         </c:if>
-                        <td align="center" class="${checkboxClass} ${highlightObjectClass}" id="cell_checkbox,${status2.index},${(status.index + 1) * 1000 + multiRowStatus.index},${subRow[column.index].value.typeClsString}" rowspan="${subRow[column.index].rowspan}">
+                        <td align="center" class="checkbox ${highlightObjectClass} id_${resultElement.id} class_${subRow[column.index].value.typeClsString} ${ischecked}" id="cell_checkbox,${status2.index},${(status.index + 1) * 1000 + multiRowStatus.index},${subRow[column.index].value.typeClsString}" rowspan="${subRow[column.index].rowspan}">
                           <c:if test="${resultElement.id != null}">
                             <html:multibox property="currentSelectedIdStrings" name="pagedResults"
                                  styleId="selectedObjects_${status2.index}_${(status.index + 1) * 1000 + multiRowStatus.index}_${subRow[column.index].value.typeClsString}"
@@ -218,7 +218,7 @@
                       </c:if>
 
                       <td id="cell,${status2.index},${(status.index + 1) * 1000 + multiRowStatus.index},${subRow[column.index].value.typeClsString}"
-                            class="${cellClass} ${highlightObjectClass}" rowspan="${subRow[column.index].rowspan}">
+                            class="${highlightObjectClass} id_${resultElement.id} class_${subRow[column.index].value.typeClsString} ${ischecked}" rowspan="${subRow[column.index].rowspan}">
                         <c:set var="columnType" value="${column.type}" scope="request"/>
                         <div>
                           <tiles:insert name="objectView.tile" /> <%-- uses resultElement? --%>
