@@ -31,7 +31,6 @@ import org.intermine.metadata.ReferenceDescriptor;
 import org.intermine.util.DynamicUtil;
 import org.intermine.util.StringUtil;
 import org.intermine.util.TypeUtil;
-import org.apache.log4j.Logger;
 
 /**
  * Object to represent a path through an InterMine model.  Construction from
@@ -50,7 +49,7 @@ public class Path
     private Map<String, String> subClassConstraintPaths;
     private List<ClassDescriptor> elementClassDescriptors;
     private List<Boolean> outers;
-    private static final Logger LOG = Logger.getLogger(Path.class);
+
     /**
      * Create a new Path object. The Path must start with a class name.
      * @param model the Model used to check ClassDescriptors and FieldDescriptors
