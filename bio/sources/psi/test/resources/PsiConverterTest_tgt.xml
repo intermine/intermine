@@ -2,10 +2,14 @@
 <item id="2_1" class="http://www.flymine.org/model/genomic#Organism">
 <attribute name="taxonId" value="7227"/>
 </item>
-<item id="9_2" class="http://www.flymine.org/model/genomic#Protein">
-<attribute name="primaryAccession" value="P14599"/>
-<reference name="organism" ref_id="2_1"/>
-<reference name="sequence" ref_id="11_2"/>
+<item id="14_2" class="http://www.flymine.org/model/genomic#ProteinInteraction">
+<attribute name="proteinRole" value="bait"/>
+<attribute name="shortName" value="appl-aplip1-2"/>
+<reference name="experiment" ref_id="5_1"/>
+<reference name="protein" ref_id="9_2"/>
+<collection name="dataSets"><reference ref_id="4_1"/></collection>
+<collection name="interactingProteins"><reference ref_id="9_1"/></collection>
+<collection name="interactingRegions"><reference ref_id="12_1"/></collection>
 </item>
 <item id="12_1" class="http://www.flymine.org/model/genomic#ProteinInteractionRegion">
 <attribute name="endStatus" value="certain"/>
@@ -21,34 +25,26 @@
 <attribute name="length" value="490"/>
 <attribute name="residues" value="MADSEFEEFHRPIFEPHTIAGFGSGAGSKKNNPHAFYSLIPNDDLEDSHSSKSDGDGSDQEDGIGLVDHEPKMRQVEDDELGDGLKVTLSSDGSLDTNDSFNSHRHHPLNHQDAIGGFLGMDTSGLGGNSAPVTIGASTDLLAPNTAATRRRRKLPEIPKNKKSSILHLLGGSNFGSLADEFRNGGGGGIPPAVRSGQQRSFLSLKCGYLMDEDSSPDSERMQSLGDVDSGHSTAHSPNDFKSMSPQITSPVSQSPFPPPFGGVPFGQLEMLEATHRGLHKFVPRHHDEIELEIGDAIYVQKEAEDLWCEGVNLRTGRQGIFPSAYAVDLDYNEFDPTVQLVKKERYLLGYLGSVETLAHKGTGVVCQAVRKIVGEYGNSPTGQTCILEVSDQGLRMVDRSGPNQNKKDKKPCIDYFYSLKNVSFCAFHPRDHRFIGFITKHPTVQRFACHVFKGSESTRPVAEAVGRAFQRFYQKFIETAYPIEDIYIE"/>
 </item>
+<item id="11_2" class="http://www.flymine.org/model/genomic#Sequence">
+<attribute name="length" value="887"/>
+<attribute name="residues" value="MCAALRRNLLLRSLWVVLAIGTAQVQAASPRWEPQIAVLCEAGQIYQPQYLSEEGRWVTDLSKKTTGPTCLRDKMDLLDYCKKAYPNRDITNIVESSHYQKIGGWCRQGALNAAKCKGSHRWIKPFRCLGPFQSDALLVPEGCLFDHIHNASRCWPFVRWNQTGAAACQERGMQMRSFAMLLPCGISVFSGVEFVCCPKHFKTDEIHVKKTDLPVMPAAQINSANDELVMNDEDDSNDSNYSKDANEDDLDDEDDLMGDDEEDDMVADEAATAGGSPNTGSSGDSNSGSLDDINAEYDSGEEGDNYEEDGAGSESEAEVEASWDQSGGAKVVSLKSDSSSPSSAPVAPAPEKAPVKSESVTSTPQLSASAAAFVAANSGNSGTGAGAPPSTAQPTSDPYFTHFDPHYEHQSYKVSQKRLEESHREKVTRVMKDWSDLEEKYQDMRLADPKAAQSFKQRMTARFQTSVQALEEEGNAEKHQLAAMHQQRVLAHINQRKREAMTCYTQALTEQPPNAHHVEKCLQKLLRALHKDRAHALAHYRHLLNSGGPGGLEAAASERPRTLERLIDIDRAVNQSMTMLKRYPELSAKIAQLMNDYILALRSKDDIPGSSLGMSEEAEAGILDKYRVEIERKVAEKERLRLAEKQRKEQRAAEREKLREEKLRLEAKKVDDMLKSQVAEQQSQPTQSSTQSQAQQQQQEKSLPGKELGPDAALVTAANPNLETTKSEKDLSDTEYGEATVSSTKVQTVLPTVDDDAVQRAVEDVAAAVAHQEAEPQVQHFMTHDLGHRESSFSLRREFAQHAHAAKEGRNVYFTLSFAGIALMAAVFVGVAVAKWRTSRSPHAQGFIEVDQNVTTHHPIVREEKIVPNMQINGYENPTYKYFEVKE"/>
+</item>
 <item id="10_1" class="http://www.flymine.org/model/genomic#Synonym">
 <attribute name="type" value="accession"/>
 <attribute name="value" value="Q9W0K0"/>
 <reference name="source" ref_id="3_2"/>
 <reference name="subject" ref_id="9_1"/>
-</item>
-<item id="11_2" class="http://www.flymine.org/model/genomic#Sequence">
-<attribute name="length" value="887"/>
-<attribute name="residues" value="MCAALRRNLLLRSLWVVLAIGTAQVQAASPRWEPQIAVLCEAGQIYQPQYLSEEGRWVTDLSKKTTGPTCLRDKMDLLDYCKKAYPNRDITNIVESSHYQKIGGWCRQGALNAAKCKGSHRWIKPFRCLGPFQSDALLVPEGCLFDHIHNASRCWPFVRWNQTGAAACQERGMQMRSFAMLLPCGISVFSGVEFVCCPKHFKTDEIHVKKTDLPVMPAAQINSANDELVMNDEDDSNDSNYSKDANEDDLDDEDDLMGDDEEDDMVADEAATAGGSPNTGSSGDSNSGSLDDINAEYDSGEEGDNYEEDGAGSESEAEVEASWDQSGGAKVVSLKSDSSSPSSAPVAPAPEKAPVKSESVTSTPQLSASAAAFVAANSGNSGTGAGAPPSTAQPTSDPYFTHFDPHYEHQSYKVSQKRLEESHREKVTRVMKDWSDLEEKYQDMRLADPKAAQSFKQRMTARFQTSVQALEEEGNAEKHQLAAMHQQRVLAHINQRKREAMTCYTQALTEQPPNAHHVEKCLQKLLRALHKDRAHALAHYRHLLNSGGPGGLEAAASERPRTLERLIDIDRAVNQSMTMLKRYPELSAKIAQLMNDYILALRSKDDIPGSSLGMSEEAEAGILDKYRVEIERKVAEKERLRLAEKQRKEQRAAEREKLREEKLRLEAKKVDDMLKSQVAEQQSQPTQSSTQSQAQQQQQEKSLPGKELGPDAALVTAANPNLETTKSEKDLSDTEYGEATVSSTKVQTVLPTVDDDAVQRAVEDVAAAVAHQEAEPQVQHFMTHDLGHRESSFSLRREFAQHAHAAKEGRNVYFTLSFAGIALMAAVFVGVAVAKWRTSRSPHAQGFIEVDQNVTTHHPIVREEKIVPNMQINGYENPTYKYFEVKE"/>
-</item>
-<item id="10_5" class="http://www.flymine.org/model/genomic#Synonym">
-<attribute name="type" value="accession"/>
-<attribute name="value" value="Q19762"/>
-<reference name="source" ref_id="3_2"/>
-<reference name="subject" ref_id="9_3"/>
+<collection name="dataSets"><reference ref_id="4_1"/></collection>
 </item>
 <item id="8_1" class="http://www.flymine.org/model/genomic#Comment">
 <attribute name="text" value="Taru H., Iijima K., Hase M., Kirino Y., Yagi Y., Suzuki T."/>
 <attribute name="type" value="author-list"/>
 </item>
-<item id="14_2" class="http://www.flymine.org/model/genomic#ProteinInteraction">
-<attribute name="proteinRole" value="bait"/>
-<attribute name="shortName" value="appl-aplip1-2"/>
-<reference name="experiment" ref_id="5_1"/>
-<reference name="protein" ref_id="9_2"/>
+<item id="9_2" class="http://www.flymine.org/model/genomic#Protein">
+<attribute name="primaryAccession" value="P14599"/>
+<reference name="organism" ref_id="2_1"/>
+<reference name="sequence" ref_id="11_2"/>
 <collection name="dataSets"><reference ref_id="4_1"/></collection>
-<collection name="interactingProteins"><reference ref_id="9_1"/></collection>
-<collection name="interactingRegions"><reference ref_id="12_1"/></collection>
 </item>
 <item id="13_1" class="http://www.flymine.org/model/genomic#Location">
 <attribute name="end" value="370"/>
@@ -68,24 +64,23 @@
 <collection name="interactingProteins"><reference ref_id="9_2"/></collection>
 <collection name="interactingRegions"><reference ref_id="12_1"/></collection>
 </item>
+<item id="10_5" class="http://www.flymine.org/model/genomic#Synonym">
+<attribute name="type" value="accession"/>
+<attribute name="value" value="Q19762"/>
+<reference name="source" ref_id="3_2"/>
+<reference name="subject" ref_id="9_3"/>
+<collection name="dataSets"><reference ref_id="4_1"/></collection>
+</item>
 <item id="10_3" class="http://www.flymine.org/model/genomic#Synonym">
 <attribute name="type" value="accession"/>
 <attribute name="value" value="P14599"/>
 <reference name="source" ref_id="3_2"/>
 <reference name="subject" ref_id="9_2"/>
-</item>
-<item id="9_1" class="http://www.flymine.org/model/genomic#Protein">
-<attribute name="primaryAccession" value="Q9W0K0"/>
-<reference name="organism" ref_id="2_1"/>
-<reference name="sequence" ref_id="11_1"/>
+<collection name="dataSets"><reference ref_id="4_1"/></collection>
 </item>
 <item id="4_1" class="http://www.flymine.org/model/genomic#DataSet">
 <attribute name="title" value="IntAct data set"/>
 <reference name="dataSource" ref_id="3_1"/>
-</item>
-<item id="9_3" class="http://www.flymine.org/model/genomic#Protein">
-<attribute name="primaryAccession" value="Q19762"/>
-<reference name="sequence" ref_id="11_3"/>
 </item>
 <item id="5_1" class="http://www.flymine.org/model/genomic#ProteinInteractionExperiment">
 <attribute name="hostOrganism" value="cercopithecus aethiops, by transformation with SV40"/>
@@ -104,12 +99,23 @@
 <item id="6_1" class="http://www.flymine.org/model/genomic#Publication">
 <attribute name="pubMedId" value="11912189"/>
 </item>
+<item id="9_3" class="http://www.flymine.org/model/genomic#Protein">
+<attribute name="primaryAccession" value="Q19762"/>
+<reference name="sequence" ref_id="11_3"/>
+<collection name="dataSets"><reference ref_id="4_1"/></collection>
+</item>
 <item id="8_2" class="http://www.flymine.org/model/genomic#Comment">
 <attribute name="text" value="2002"/>
 <attribute name="type" value="publication-year"/>
 </item>
 <item id="3_1" class="http://www.flymine.org/model/genomic#DataSource">
 <attribute name="name" value="IntAct"/>
+</item>
+<item id="9_1" class="http://www.flymine.org/model/genomic#Protein">
+<attribute name="primaryAccession" value="Q9W0K0"/>
+<reference name="organism" ref_id="2_1"/>
+<reference name="sequence" ref_id="11_1"/>
+<collection name="dataSets"><reference ref_id="4_1"/></collection>
 </item>
 <item id="8_3" class="http://www.flymine.org/model/genomic#Comment">
 <attribute name="text" value="J. Biol. Chem. (0021-9258)"/>

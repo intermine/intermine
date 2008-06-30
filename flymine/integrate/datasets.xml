@@ -101,6 +101,12 @@
         <attribute name="description" value="Protein interaction database"/>
         <attribute name="url" value="http://www.ebi.ac.uk/intact"/>
     </item>
+    <item id="81" class="" implements="http://www.flymine.org/model/genomic#DataSet">
+        <attribute name="title" value="IntAct data set"/>
+        <attribute name="url" value="http://www.ebi.ac.uk/intact"/>
+        <reference name="dataSource" ref_id="80"/>
+    </item>
+
 
     <item id="100" class="" implements="http://www.flymine.org/model/genomic#DataSource">
         <attribute name="name" value="INDAC"/>
