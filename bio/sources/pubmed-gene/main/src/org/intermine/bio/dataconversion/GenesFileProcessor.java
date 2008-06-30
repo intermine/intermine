@@ -14,6 +14,7 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.Reader;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -30,62 +31,56 @@ import org.intermine.xml.full.Item;
 /**
  * Processor of file with information about genes. Format of file:
  * <tt>
- * tax_id GeneID Symbol LocusTag Synonyms dbXrefs chromosome map_location description 
- * type_of_gene Symbol_from_nomenclature_authority Full_name_from_nomenclature_authority 
- * Nomenclature_status Other_designations Modification_date (tab is used as a separator, 
+ * tax_id GeneID Symbol LocusTag Synonyms dbXrefs chromosome map_location description
+ * type_of_gene Symbol_from_nomenclature_authority Full_name_from_nomenclature_authority
+ * Nomenclature_status Other_designations Modification_date (tab is used as a separator,
  * pound sign - start of a comment)
- * </tt> 
+ * </tt>
  * @author Jakub Kulaviak
  **/
-public class GenesFileProcessor 
+public class GenesFileProcessor
 {
 
     private BufferedReader infoReader;
-    
     private int lineCounter = 0;
-
     private Map<String, Item> genes = new HashMap<String, Item>();
-    
     private String lastLine = null;
-    
     private DataConverter converter;
-
     private Integer checkOrganismId = null;
-    
     private Set<Integer> alreadyProcessedGenes = new  HashSet<Integer>();
-    
     private Set<String> genesToRemove = new TreeSet<String>();
-    
     private IdResolver resolver;
-    
     private static Logger logger = Logger.getLogger(GenesFileProcessor.class);
-    
+    private String datasetRefId;
+
     /**
-     * Constructor. 
+     * Constructor.
      * @param fileReader file reader, this class is not responsible for closing fileReader
      * @param converter associated converter that is used for creating and saving items
+     * @param datasetRefId reference to dataset object for the gene
      */
-    public GenesFileProcessor(Reader fileReader, DataConverter converter) {
+    public GenesFileProcessor(Reader fileReader, DataConverter converter, String datasetRefId) {
         // converter is needed  for creating items method
-        // all converters must used one central converter for creating items because 
+        // all converters must used one central converter for creating items because
         // to be sure, that created items will have unique id
         this.converter = converter;
+        this.datasetRefId = datasetRefId;
         initReader(fileReader);
         resolver = new FlyBaseIdResolverFactory().getIdResolver(false);
     }
-    
+
     private void initReader(Reader fileReader) {
          infoReader = new BufferedReader(fileReader);
     }
 
     /**
-     * 
+     *
      * @param geneToPub map between gene and list of publication that mentions this gene
      * @param orgToProcessId organism to be processed id
      * @param orgToProcess organism to be processed
-     * @throws IOException when error happens during reading from file 
+     * @throws IOException when error happens during reading from file
      */
-    public void processGenes(Map<Integer, List<String>> geneToPub, 
+    public void processGenes(Map<Integer, List<String>> geneToPub,
             Integer orgToProcessId, Item orgToProcess) throws IOException {
         String line;
         // use taxonID to get correct type of data where available
@@ -97,7 +92,7 @@ public class GenesFileProcessor
             }
             String[] parts = line.split("\\t");
             if (parts.length < 6) {
-                throw new GenesProcessorException("Invalid " + lineCounter 
+                throw new GenesProcessorException("Invalid " + lineCounter
                         + " line. There isn't enough items at the line.");
             }
             Integer organismId, ncbiGeneId;
@@ -108,11 +103,11 @@ public class GenesFileProcessor
                 throw new GenesProcessorException("Invalid identifiers at line " + line);
             }
             checkFileIsSorted(organismId);
-            String identifier = parts[3].trim();
+            //String identifier = parts[3].trim();
             String dbId = parts[5].trim();
             if (orgToProcessId.intValue() == organismId.intValue()) {
-                processGeneInfo(ncbiGeneId, identifier, organismId, dbId, 
-                        geneToPub.get(ncbiGeneId), orgToProcess);
+                processGeneInfo(ncbiGeneId, organismId, dbId, geneToPub.get(ncbiGeneId),
+                                orgToProcess);
                 geneToPub.remove(ncbiGeneId);
             } else if (organismId.intValue() > orgToProcessId.intValue()) {
                 lastLine = line;
@@ -121,12 +116,12 @@ public class GenesFileProcessor
                 return;
             } else {
                 continue;
-            }                        
+            }
         }
         storeGenes();
         checkGenesProcessed(geneToPub);
     }
-    
+
     private void checkGenesProcessed(Map<Integer, List<String>> geneToPub) {
         if (geneToPub.size() != 0) {
             throw new GenesProcessorException("There isn't information for "
@@ -158,9 +153,8 @@ public class GenesFileProcessor
             String tmp = lastLine;
             lastLine = null;
             return tmp;
-        } else {
-            return infoReader.readLine();
         }
+        return infoReader.readLine();
     }
 
     private void storeGenes()  {
@@ -183,8 +177,11 @@ public class GenesFileProcessor
         converter.store(genes2);
     }
 
-    private void processGeneInfo(Integer ncbiGeneId, String identifier, 
-            Integer organismId, String primIdentifier, List<String> publications, Item organism) {
+    private void processGeneInfo(Integer ncbiGeneId, Integer organismId, String primaryIdentifier,
+                                 List<String> publications, Item organism) {
+
+        String primIdentifier = primaryIdentifier;
+
         // If gene was already mentioned in gene info file then is skipped
         if (alreadyProcessedGenes.contains(ncbiGeneId)) {
             return;
@@ -204,14 +201,14 @@ public class GenesFileProcessor
             primIdentifier = resolvePrimIdentifier(organismId.toString(), primIdentifier);
             if (primIdentifier == null) {
                 logger.warn("RESOLVER: failed to resolve gene to one identifier, ignoring gene: "
-                        + primIdentifier + ". Number of matched ids: " 
+                        + primIdentifier + ". Number of matched ids: "
                         + resolver.countResolutions(organismId.toString(), primIdentifier));
                 return;
             }
-            // checks gene duplicates - if there are two or more same genes with 
+            // checks gene duplicates - if there are two or more same genes with
             // the same primIdentifier but different ncbi gene id then all these genes are removed
             if (genes.get(primIdentifier) == null) {
-                genes.put(primIdentifier, gene);    
+                genes.put(primIdentifier, gene);
             } else {
                 genesToRemove.add(primIdentifier);
             }
@@ -246,10 +243,13 @@ public class GenesFileProcessor
         gene.setAttribute("ncbiGeneNumber", ncbiGeneId.toString());
         gene.setAttribute("primaryIdentifier", dbId);
         gene.setReference("organism", organism);
+        gene.setCollection("proteins", new ArrayList(
+                                                 Collections.singleton(datasetRefId)));
         return gene;
     }
 
-    private String removeDatabasePrefix(String dbId) {
+    private String removeDatabasePrefix(String id) {
+        String dbId = id;
         if (dbId.toUpperCase().startsWith("SGD:")) {
             dbId = dbId.substring(4);
         } else if (dbId.toUpperCase().startsWith("WORMBASE:")) {
@@ -261,7 +261,7 @@ public class GenesFileProcessor
         }
         return dbId;
     }
-    
+
     private Item createItem(String className) {
         return converter.createItem(className);
     }
