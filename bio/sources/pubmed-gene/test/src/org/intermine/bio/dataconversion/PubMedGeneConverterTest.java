@@ -181,7 +181,7 @@ public class PubMedGeneConverterTest extends ItemsTestCase
         Item org = getItem(gene.getReference("organism").getRefId());
         assertEquals(orgId, org.getAttribute("taxonId").getValue());
         checkPublications(gene.getCollection("publications").getRefIds(), pubs);
-        checkDataSet(gene.getCollection("datasets").getRefIds(), datasets);
+        checkDataSet(gene.getCollection("dataSets").getRefIds(), datasets);
     }
 
     private void checkDataSet(List<String> refIds, String[] datasets) {
