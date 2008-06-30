@@ -1413,9 +1413,9 @@ public class EnsemblDataTranslator extends DataTranslator
 
             for (Iterator dsnIt = dsNames.values().iterator(); dsnIt.hasNext(); ) {
 
-                String dsName = dsnIt.next().toString().toLowerCase();
+                String dsName = dsnIt.next().toString();
                 Properties dsnNextProps = propsUtil.getPropertiesStartingWith(
-                        "common.datasource." + dsName);
+                        "common.datasource." + dsName.toLowerCase());
 
                 Item nextDataSource = createItem(tgtNs + "DataSource", "");
 
