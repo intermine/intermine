@@ -715,11 +715,9 @@ public class PsiConverter extends FileConverter
                         interaction.addCollection(regionList);
                     }
 
-
                     // add dataset
-                    ReferenceList dataSetsColl = new ReferenceList("dataSets", new ArrayList());
-                    interaction.addCollection(dataSetsColl);
-                    dataSetsColl.addRefId(datasetId);
+                    interaction.setCollection("dataSets",
+                                          new ArrayList(Collections.singleton(datasetId)));
 
                     /* store all protein interaction-related items */
                     writer.store(ItemHelper.convert(interaction));
@@ -984,18 +982,18 @@ public class PsiConverter extends FileConverter
 
             /**
              *
-             * @param interactorHolder object holding interactor
+             * @param h object holding interactor
              */
-            protected void addInteractor(InteractorHolder interactorHolder) {
-                interactors.add(interactorHolder);
+            protected void addInteractor(InteractorHolder h) {
+                interactors.add(h);
             }
 
             /**
              *
-             * @param proteinId protein involved in interaction
+             * @param id protein involved in interaction
              */
-            protected void addProtein(String proteinId) {
-                proteinIds.add(proteinId);
+            protected void addProtein(String id) {
+                proteinIds.add(id);
             }
 
             /**
@@ -1037,10 +1035,10 @@ public class PsiConverter extends FileConverter
 
             /**
              * Constructor
-             * @param proteinId Protein that's part of the interaction
+             * @param id Protein that's part of the interaction
              */
-            public InteractorHolder(String proteinId) {
-                this.proteinId = proteinId;
+            public InteractorHolder(String id) {
+                this.proteinId = id;
             }
 
             /**
