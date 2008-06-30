@@ -261,14 +261,14 @@
 <collection name="dataSets"><reference ref_id="-1_12"/></collection>
 </item>
 <item id="-1_8" class="http://www.flymine.org/model/genomic#DataSource">
-<attribute name="description" value="put something usefull here"/>
+<attribute name="description" value="The Ensembl eukaryotic genome annotation database"/>
 <attribute name="name" value="Anopheles_symbol"/>
 <attribute name="url" value="http://www.ensembl.org"/>
 </item>
 <item id="-1_3" class="http://www.flymine.org/model/genomic#DataSource">
 <attribute name="description" value="NIH genetic sequence database"/>
 <attribute name="name" value="GenBank"/>
-<attribute name="url" value="http://www.ncbi.nlm.nih.gov/genbank"/>
+<attribute name="url" value="http://www.ncbi.nlm.nih.gov/GenBank"/>
 </item>
 <item id="16_1" class="http://www.flymine.org/model/genomic#ChromosomeBand">
 <attribute name="primaryIdentifier" value="p11.1"/>
@@ -282,7 +282,7 @@
 </item>
 <item id="-1_10" class="http://www.flymine.org/model/genomic#DataSource">
 <attribute name="description" value="Mouse Genome Database"/>
-<attribute name="name" value="markersymbol"/>
+<attribute name="name" value="MarkerSymbol"/>
 <attribute name="url" value="http://www.informatics.jax.org"/>
 </item>
 <item id="22_1" class="http://www.flymine.org/model/genomic#Synonym">
@@ -306,7 +306,7 @@
 </item>
 <item id="-1_5" class="http://www.flymine.org/model/genomic#DataSource">
 <attribute name="description" value="NCBI Reference Sequences for genomic DNA"/>
-<attribute name="name" value="Refseq_dna"/>
+<attribute name="name" value="RefSeq_dna"/>
 <attribute name="url" value="http://www.ncbi.nlm.nih.gov/RefSeq"/>
 </item>
 <item id="-1_29" class="http://www.flymine.org/model/genomic#TRNA">
