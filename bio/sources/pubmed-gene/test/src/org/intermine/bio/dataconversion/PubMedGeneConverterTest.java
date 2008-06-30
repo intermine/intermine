@@ -25,19 +25,17 @@ import org.intermine.xml.full.Item;
 
 /**
  * Test of PubMedGeneConverter class. There are 2 small example files, that are converted
- * by this test: test_gene2pubmed and test_gene_info  
+ * by this test: test_gene2pubmed and test_gene_info
  * @author Jakub Kulaviak
  *
  */
 public class PubMedGeneConverterTest extends ItemsTestCase
 {
     Model model = Model.getInstanceByName("genomic");
-    
     PubMedGeneConverter converter;
-    
     MockItemWriter itemWriter;
-    
     private Set<Item> storedItems;
+    private static final String DATASET = "PubMed to gene mapping";
 
     public PubMedGeneConverterTest(String arg) {
         super(arg);
@@ -55,26 +53,26 @@ public class PubMedGeneConverterTest extends ItemsTestCase
      */
     public void testSimpleFiles() throws Exception {
         process("gene2pubmed", "gene_info");
-        
+
         // 2 organisms, 5 genes, 8 publications
-        assertEquals(15, itemWriter.getItems().size());
+        assertEquals(17, itemWriter.getItems().size());
         // uncomment to write out a new target items file
         // Set<org.intermine.xml.full.Item> expected = readItemSet("PubMedGeneConverterTest_tgt.xml");
-        checkGene("4126706", "WBGene308375", "34", new String[]{"16689796", "17573816", "17581122", "17590236"});
-        checkGene("171593", "WBGene00022279", "6239", new String[]{"1"});
-        checkGene("171594", "WBGene00021677", "6239", new String[]{"2"});
-        checkGene("171595", "WBGene00021678", "6239", new String[]{"3"});
-        checkGene("171597", "WBGene00021679", "6239", new String[]{"4"});
+        checkGene("4126706", "WBGene308375", "34", new String[]{"16689796", "17573816", "17581122", "17590236"}, new String[]{DATASET});
+        checkGene("171593", "WBGene00022279", "6239", new String[]{"1"}, new String[]{DATASET});
+        checkGene("171594", "WBGene00021677", "6239", new String[]{"2"}, new String[]{DATASET});
+        checkGene("171595", "WBGene00021678", "6239", new String[]{"3"}, new String[]{DATASET});
+        checkGene("171597", "WBGene00021679", "6239", new String[]{"4"}, new String[]{DATASET});
     }
-    
+
     /**
      * Test that redundant database prefixes of primary identifiers are removed.
      */
     public void testPrefixRemoved() throws Exception {
         process("gene2pubmed", "gene_infoPrefixRemoved");
-        checkGene("4126706", "WbGene308375", "34", new String[]{"16689796", "17573816", "17581122", "17590236"});
-        checkGene("171593", "WbGene00022279", "6239", new String[]{"1"});
-        checkGene("171594", "WbGene00021677", "6239", new String[]{"2"});
+        checkGene("4126706", "WbGene308375", "34", new String[]{"16689796", "17573816", "17581122", "17590236"}, new String[]{DATASET});
+        checkGene("171593", "WbGene00022279", "6239", new String[]{"1"}, new String[]{DATASET});
+        checkGene("171594", "WbGene00021677", "6239", new String[]{"2"}, new String[]{DATASET});
     }
 
 
@@ -88,20 +86,20 @@ public class PubMedGeneConverterTest extends ItemsTestCase
         // only one gene, others don't  have publications
         assertEquals(1, getGenes().size());
     }
-    
+
     /**
-     * Test case when primary identifier is invalid, for example 
-     * is  like WbGene308375|WbGene3083343 that denotes that 
-     * gene with specific ncbi id corresponds more WB genes but 
+     * Test case when primary identifier is invalid, for example
+     * is  like WbGene308375|WbGene3083343 that denotes that
+     * gene with specific ncbi id corresponds more WB genes but
      * for us it is invalid gene and is not processed
      */
     public void  testInvalidIdsRemoved() throws Exception {
         process("gene2pubmed", "gene_infoInvalidIdsRemoved");
         assertEquals(4, getGenes().size());
     }
-    
+
     /**
-     * Test case when there are two genes in gene information file with 
+     * Test case when there are two genes in gene information file with
      * different NCBI identifiers but same primary identifiers. None
      * of them should be read.
      * @throws Exception
@@ -110,10 +108,10 @@ public class PubMedGeneConverterTest extends ItemsTestCase
         process("gene2pubmedTwoPrimaryIdentifiers", "gene_infoTwoPrimaryIdentifiers");
         assertEquals(4, getGenes().size());
     }
-    
+
     /**
-     * Test case when there is no information in gene information file 
-     * for gene that is mentioned in gene2pubmed file. Exception should be thrown. 
+     * Test case when there is no information in gene information file
+     * for gene that is mentioned in gene2pubmed file. Exception should be thrown.
      * @throws Exception
      */
     public void testGeneNoInformation() throws Exception {
@@ -124,10 +122,10 @@ public class PubMedGeneConverterTest extends ItemsTestCase
             // ok
         }
     }
-    
+
     /**
-     * Test case when references file (gene2pubmed) is not 
-     * sorted by organism id. Exception should be thrown. 
+     * Test case when references file (gene2pubmed) is not
+     * sorted by organism id. Exception should be thrown.
      * @throws Exception
      */
     public void testReferencesFileBadOrder() throws Exception {
@@ -138,7 +136,7 @@ public class PubMedGeneConverterTest extends ItemsTestCase
             // ok
         }
     }
-    
+
     /**
      * Test case when gene info file is not sorted by organism id. Exception should be thrown.
      * @throws Exception
@@ -150,7 +148,7 @@ public class PubMedGeneConverterTest extends ItemsTestCase
         } catch (RuntimeException ex) {
             // ok
         }
-    }    
+    }
 
     private List<Item> getGenes() {
         List<Item> ret = new  ArrayList<Item>();
@@ -177,14 +175,32 @@ public class PubMedGeneConverterTest extends ItemsTestCase
     }
 
     private void checkGene(String ncbiId, String primId, String orgId,
-            String[] pubs) {
+            String[] pubs, String[] datasets) {
         Item gene = getGene(ncbiId);
         assertEquals(primId, gene.getAttribute("primaryIdentifier").getValue());
         Item org = getItem(gene.getReference("organism").getRefId());
         assertEquals(orgId, org.getAttribute("taxonId").getValue());
         checkPublications(gene.getCollection("publications").getRefIds(), pubs);
+        checkDataSet(gene.getCollection("datasets").getRefIds(), datasets);
     }
-    
+
+    private void checkDataSet(List<String> refIds, String[] datasets) {
+        assertEquals(refIds.size(), datasets.length);
+        for (String title : datasets) {
+            boolean found = false;
+            for (String refId : refIds) {
+                Item item = getItem(refId);
+                if (item.getAttribute("title").getValue().equals(title)) {
+                    found = true;
+                    break;
+                }
+            }
+            if (!found) {
+                fail("dataset with id " + title + " not found.");
+            }
+        }
+    }
+
     private void checkPublications(List<String> refIds, String[] pubsIds) {
         assertEquals(refIds.size(), pubsIds.length);
         for (String pubId : pubsIds) {
@@ -197,7 +213,7 @@ public class PubMedGeneConverterTest extends ItemsTestCase
                 }
             }
             if (!found) {
-                fail("publication with id " + pubId + " not found.");    
+                fail("publication with id " + pubId + " not found.");
             }
         }
     }
@@ -208,9 +224,9 @@ public class PubMedGeneConverterTest extends ItemsTestCase
                 return item;
             }
         }
-        return null;        
+        return null;
     }
-    
+
     private Item getGene(String ncbiId) {
         return getItem("Gene", "ncbiGeneNumber", ncbiId);
     }
@@ -225,5 +241,5 @@ public class PubMedGeneConverterTest extends ItemsTestCase
         }
         return null;
     }
-    
+
 }
