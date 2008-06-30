@@ -82,9 +82,8 @@
     </item>
 
     <item id="70" class="" implements="http://www.flymine.org/model/genomic#DataSource">
-        <attribute name="name" value="Pfam"/>
-        <attribute name="description"
-            value="Database of multiple alignments of protein domains and conserved protein regions"/>
+        <attribute name="name" value="PFAM"/>
+        <attribute name="description" value="Database of multiple alignments of protein domains and conserved protein regions"/>
         <attribute name="url" value="http://www.sanger.ac.uk/Software/Pfam"/>
     </item>
 
