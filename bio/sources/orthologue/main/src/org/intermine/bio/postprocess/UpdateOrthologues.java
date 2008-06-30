@@ -129,8 +129,7 @@ public class UpdateOrthologues extends PostProcessor
             if (!(translation.equals(lastTranslation) && o.equals(lastObject))) {
                 // clone so we don't change ObjectStore cache
                 try {
-                    InterMineObject newO = (InterMineObject) PostProcessUtil
-                    .cloneInterMineObject(o);
+                    InterMineObject newO = PostProcessUtil.cloneInterMineObject(o);
                     // set reference to Gene
                     TypeUtil.setFieldValue(newO, newRef, gene);
                     osw.store(newO);
@@ -141,7 +140,7 @@ public class UpdateOrthologues extends PostProcessor
             } else if (!(gene.equals(lastGene) && o.equals(lastObject))) {
                 try {
                     // create new [Ortho|Para]logue and set reference to Gene
-                    InterMineObject newO = (InterMineObject) PostProcessUtil.copyInterMineObject(o);
+                    InterMineObject newO = PostProcessUtil.copyInterMineObject(o);
                     TypeUtil.setFieldValue(newO, newRef, gene);
                     osw.store(newO);
                     created++;

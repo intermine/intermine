@@ -10,7 +10,11 @@ package org.intermine.bio.dataconversion;
  *
  */
 
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.Reader;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -27,10 +31,6 @@ import org.intermine.objectstore.ObjectStoreException;
 import org.intermine.util.PropertiesUtil;
 import org.intermine.xml.full.Item;
 
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.Reader;
-
 /**
  * DataConverter to parse an INPARANOID Orthologue/Paralogue "sqltable" data file into Items
  * @author Mark Woodbridge
@@ -42,7 +42,7 @@ public class InparanoidConverter extends FileConverter
     protected Map bioEntities = new HashMap();
     protected Item dataSet, pub;
     protected Map organisms = new LinkedHashMap();
-    protected Map sources = new LinkedHashMap();
+    protected Map<String, Item> sources = new LinkedHashMap<String, Item>();
     protected Map orgSources = new HashMap();
     protected Map taxonIds = new HashMap();
     protected Map attributes = new HashMap();
@@ -323,6 +323,8 @@ public class InparanoidConverter extends FileConverter
         Item item = createItem(type);
         item.setAttribute(attribute, value);
         item.setReference("organism", organism.getIdentifier());
+        item.setCollection("dataSets",
+                            new ArrayList(Collections.singleton(dataSet.getIdentifier())));
         store(item);                                                 // Stores BioEntity
         bioEntities.put(key, item);
 
@@ -333,6 +335,8 @@ public class InparanoidConverter extends FileConverter
         synonym.setReference("subject", item.getIdentifier());
         Item source = getSourceForOrganism(organism.getAttribute("taxonId").getValue());
         synonym.setReference("source", source.getIdentifier());
+        item.setCollection("dataSets",
+                           new ArrayList(Collections.singleton(dataSet.getIdentifier())));
         store(synonym);                                              // Stores Synonym -> BioEntity
 
         return item;
@@ -379,12 +383,10 @@ public class InparanoidConverter extends FileConverter
     protected void setupItems() throws ObjectStoreException {
         pub = createItem("Publication");
         pub.setAttribute("pubMedId", "11743721");
-
+        store(pub);
         dataSet = createItem("DataSet");
         dataSet.setAttribute("title", "InParanoid data set");
-
         store(dataSet);
-        store(pub);
     }
 
     private class BioAndScores

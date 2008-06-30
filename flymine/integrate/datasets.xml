@@ -56,25 +56,21 @@
     </item>
 
     <item id="30" class="" implements="http://www.flymine.org/model/genomic#DataSource">
-        <attribute name="name" value="CGB, KI"/>
-        <attribute name="description"
-            value="Center for Genomics and Bioinformatics, Karolinska Institutet"/>
-        <attribute name="url" value="http://www.flybase.org"/>
+        <attribute name="name" value="SBC"/>
+        <attribute name="description" value="Stockholm Bioinformatics Center"/>
+        <attribute name="url" value="http://inparanoid.sbc.su.se"/>
     </item>
 
     <item id="31" class="" implements="http://www.flymine.org/model/genomic#DataSet">
         <attribute name="title" value="InParanoid data set"/>
-        <attribute name="description"
-            value="InParanoid eukaryotic orthologue groups"/>
-        <attribute name="version" value="04/01/07"/>
-        <attribute name="url" value="http://inparanoid.cgb.ki.se"/>
+        <attribute name="description" value="InParanoid eukaryotic orthologue groups"/>
+        <attribute name="url" value="http://inparanoid.sbc.su.se/download/current/sqltables"/>
         <reference name="dataSource" ref_id="30"/>
     </item>
 
     <item id="40" class="" implements="http://www.flymine.org/model/genomic#DataSource">
         <attribute name="name" value="WormBase"/>
-        <attribute name="description"
-            value="The database of the genetics, genomics and biology of Caenorhabditis elegans"/>
+        <attribute name="description" value="The database of the genetics, genomics and biology of Caenorhabditis elegans"/>
         <attribute name="url" value="http://www.wormbase.org"/>
     </item>
     <item id="50" class="" implements="http://www.flymine.org/model/genomic#DataSource">
