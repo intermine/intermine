@@ -55,7 +55,7 @@
 </item>
 <item id="-1_9" class="http://www.flymine.org/model/genomic#DataSource">
 <attribute name="description" value="The Ensembl eukaryotic genome annotation database"/>
-<attribute name="name" value="ensembl"/>
+<attribute name="name" value="Ensembl"/>
 <attribute name="url" value="http://www.ensembl.org"/>
 </item>
 <item id="-1_25" class="http://www.flymine.org/model/genomic#Synonym">
@@ -153,7 +153,7 @@
 </item>
 <item id="-1_4" class="http://www.flymine.org/model/genomic#DataSource">
 <attribute name="description" value="The Human Genome Organisation"/>
-<attribute name="name" value="hugo"/>
+<attribute name="name" value="HUGO"/>
 <attribute name="url" value="http://www.hugo-international.org"/>
 </item>
 <item id="-1_19" class="http://www.flymine.org/model/genomic#Location">
@@ -176,7 +176,7 @@
 </item>
 <item id="-1_7" class="http://www.flymine.org/model/genomic#DataSource">
 <attribute name="description" value="UniProt Universal Protein Resource"/>
-<attribute name="name" value="uniprot"/>
+<attribute name="name" value="UniProt"/>
 <attribute name="url" value="http://www.uniprot.org"/>
 </item>
 <item id="-1_16" class="http://www.flymine.org/model/genomic#Comment">
@@ -197,7 +197,7 @@
 </item>
 <item id="-1_6" class="http://www.flymine.org/model/genomic#DataSource">
 <attribute name="description" value="NCBI Reference Sequences"/>
-<attribute name="name" value="refseq"/>
+<attribute name="name" value="RefSeq"/>
 <attribute name="url" value="http://www.ncbi.nlm.nih.gov/RefSeq"/>
 </item>
 <item id="11_2" class="http://www.flymine.org/model/genomic#ComputationalAnalysis">
@@ -227,7 +227,7 @@
 </item>
 <item id="-1_11" class="http://www.flymine.org/model/genomic#DataSource">
 <attribute name="description" value="A comprehensive database of sequence tagged sites (STSs)"/>
-<attribute name="name" value="unists"/>
+<attribute name="name" value="UniSTS"/>
 <attribute name="url" value="http://www.ncbi.nlm.nih.gov/entrez/query.fcgi?db=unists"/>
 </item>
 <item id="-1_33" class="http://www.flymine.org/model/genomic#SimpleRelation">
@@ -262,12 +262,12 @@
 </item>
 <item id="-1_8" class="http://www.flymine.org/model/genomic#DataSource">
 <attribute name="description" value="put something usefull here"/>
-<attribute name="name" value="anopheles_symbol"/>
+<attribute name="name" value="Anopheles_symbol"/>
 <attribute name="url" value="http://www.ensembl.org"/>
 </item>
 <item id="-1_3" class="http://www.flymine.org/model/genomic#DataSource">
 <attribute name="description" value="NIH genetic sequence database"/>
-<attribute name="name" value="genbank"/>
+<attribute name="name" value="GenBank"/>
 <attribute name="url" value="http://www.ncbi.nlm.nih.gov/genbank"/>
 </item>
 <item id="16_1" class="http://www.flymine.org/model/genomic#ChromosomeBand">
@@ -306,7 +306,7 @@
 </item>
 <item id="-1_5" class="http://www.flymine.org/model/genomic#DataSource">
 <attribute name="description" value="NCBI Reference Sequences for genomic DNA"/>
-<attribute name="name" value="refseq_dna"/>
+<attribute name="name" value="Refseq_dna"/>
 <attribute name="url" value="http://www.ncbi.nlm.nih.gov/RefSeq"/>
 </item>
 <item id="-1_29" class="http://www.flymine.org/model/genomic#TRNA">
@@ -331,7 +331,7 @@
 </item>
 <item id="-1_2" class="http://www.flymine.org/model/genomic#DataSource">
 <attribute name="description" value="The GDB Human Genome Database"/>
-<attribute name="name" value="gdb"/>
+<attribute name="name" value="GDB"/>
 <attribute name="url" value="http://gdbwww.gdb.org"/>
 </item>
 <item id="-1_12" class="http://www.flymine.org/model/genomic#DataSet">

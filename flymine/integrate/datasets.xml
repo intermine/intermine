@@ -15,29 +15,25 @@
     <item id="11" class="" implements="http://www.flymine.org/model/genomic#DataSet">
         <attribute name="title" value="Swiss-Prot data set"/>
         <attribute name="description" value="The Swiss-Prot protein knowledge base"/>
-        <attribute name="version" value="UniProt 9.6"/>
         <attribute name="url" value="http://ca.expasy.org/sprot"/>
         <reference name="dataSource" ref_id="10"/>
     </item>
     <item id="12" class="" implements="http://www.flymine.org/model/genomic#DataSet">
         <attribute name="title" value="TrEMBL data set"/>
         <attribute name="description" value="Translated CDSs from the EMBL database"/>
-        <attribute name="version" value="UniProt 9.6"/>
         <attribute name="url" value="http://www.ebi.ac.uk/trembl/"/>
         <reference name="dataSource" ref_id="10"/>
     </item>
     <item id="13" class="" implements="http://www.flymine.org/model/genomic#DataSet">
         <attribute name="title" value="UniProt data set"/>
         <attribute name="description" value="UniProt Knowledgebase"/>
-        <attribute name="version" value="9.6"/>
         <attribute name="url" value="http://www.ebi.uniprot.org/uniprot-srv/uniProtSearch.do"/>
         <reference name="dataSource" ref_id="10"/>
     </item>
 
     <item id="20" class="" implements="http://www.flymine.org/model/genomic#DataSource">
         <attribute name="name" value="FlyBase"/>
-        <attribute name="description"
-            value="A database of genetic and molecular data for Drosophila"/>
+        <attribute name="description" value="A database of genetic and molecular data for Drosophila"/>
         <attribute name="url" value="http://www.flybase.org"/>
     </item>
     <item id="21" class="" implements="http://www.flymine.org/model/genomic#DataSet">
