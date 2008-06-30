@@ -10,8 +10,10 @@ package org.intermine.bio.dataconversion;
  *
  */
 
+import java.io.Reader;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -21,6 +23,7 @@ import java.util.Map;
 import java.util.Set;
 import java.util.Stack;
 
+import org.apache.log4j.Logger;
 import org.intermine.dataconversion.FileConverter;
 import org.intermine.dataconversion.ItemWriter;
 import org.intermine.metadata.Model;
@@ -31,10 +34,6 @@ import org.intermine.xml.full.Item;
 import org.intermine.xml.full.ItemFactory;
 import org.intermine.xml.full.ItemHelper;
 import org.intermine.xml.full.ReferenceList;
-
-import java.io.Reader;
-
-import org.apache.log4j.Logger;
 import org.xml.sax.Attributes;
 import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
@@ -59,8 +58,8 @@ public class PsiConverter extends FileConverter
     private Map<String, Object> experimentNames = new HashMap<String, Object>();
     private Map<String, String> terms = new HashMap<String, String>();
     private Map<String, String> masterList = new HashMap<String, String>();
-    //private int nextClsId;
-
+    private Map<String, String> validProteins = new HashMap<String, String>();
+    private String psiDagTermItemId, experimentId, uniProtDataSourceId, datasetId;
 
     /**
      * Constructor
@@ -86,26 +85,10 @@ public class PsiConverter extends FileConverter
     }
 
 
-    // master map of all maps used across XML files
-    private void mapMaps() {
-        mapMaster.put("ids", ids);
-        mapMaster.put("aliases", aliases);
-        mapMaster.put("organisms", organisms);
-        mapMaster.put("publications", pubs);
-        mapMaster.put("experimentNames", experimentNames);
-        mapMaster.put("refIdsToAccessions", refIdsToAccessions);
-        mapMaster.put("accessionsToRefIds", accessionsToRefIds);
-        mapMaster.put("terms", terms);
-        mapMaster.put("masterList", masterList);
-    }
-
-
     /**
      * {@inheritDoc}
      */
     public void process(Reader reader) throws Exception {
-
-        mapMaps();
         PsiHandler handler = new PsiHandler(getItemWriter(), mapMaster);
 
         try {
@@ -119,22 +102,11 @@ public class PsiConverter extends FileConverter
     /**
      * Handles xml file
      */
-    static class PsiHandler extends DefaultHandler
+    class PsiHandler extends DefaultHandler
     {
         //private int nextClsId = 0;
         private ItemFactory itemFactory;
-        private Map<String, Integer> ids;
-        private Map<String, String> aliases;
-        private Map<String, String> pubs;
-        private Map<String, String> validProteins = new HashMap<String, String>();
-        private Map<String, String> accessionsToRefIds = new HashMap<String, String>();
-        private Map<String, String> refIdsToAccessions = new HashMap<String, String>();
-        private Map<String, String> organisms = new HashMap<String, String>();
-        private Map<String, String> terms = new HashMap<String, String>();
-        private Map<String, String> masterList = new HashMap<String, String>();
-        // [experiment name] [experiment holder]
-        private Map<String, ExperimentHolder> experimentNames;  // keeps names until experiment is
-                                                                // stored
+
         // [id][experimentholder]1
         private Map<String, ExperimentHolder> experimentIds     // keeps names for this file only
                                                         = new HashMap<String, ExperimentHolder>();
@@ -150,7 +122,7 @@ public class PsiConverter extends FileConverter
         private ReferenceList commentCollection;
         private String proteinId; // id used in xml to refer to protein
         private Set<Item> synonyms;
-        private String psiDagTermItemId, experimentId, datasourceItemId;
+
         private String regionName = "";
 
         /**
@@ -159,25 +131,9 @@ public class PsiConverter extends FileConverter
          * @param mapMaster master map of all maps used across XML files
          */
         public PsiHandler(ItemWriter writer, Map mapMaster) {
-
             itemFactory = new ItemFactory(Model.getInstanceByName("genomic"));
             this.writer = writer;
-            this.ids = (Map) mapMaster.get("ids");
-            this.aliases = (Map) mapMaster.get("aliases");
-            this.organisms = (Map) mapMaster.get("organisms");
-            this.pubs = (Map) mapMaster.get("publications");
-            this.accessionsToRefIds = (Map) mapMaster.get("accessionsToRefIds");
-            this.refIdsToAccessions = (Map) mapMaster.get("refIdsToAccessions");
-            this.experimentNames = (Map) mapMaster.get("experimentNames");
-            this.terms = (Map) mapMaster.get("terms");
-            this.masterList = (Map) mapMaster.get("masterList");
-            if (masterList.size() > 1) {
-                this.psiDagTermItemId = masterList.get("psiDagTerm");
-                this.datasourceItemId = masterList.get("datasource");  // for proteins
-            }
-            //nextClsId = mastproteinAccessionserList.get("nextClsId");
-            validProteins = new HashMap<String, String>();
-        }
+       }
 
 
         /**
@@ -306,13 +262,18 @@ public class PsiConverter extends FileConverter
                         protein.setIdentifier(proteinRefId);
                     }
 
+                    protein.setCollection("dataSets",
+                    new ArrayList(Collections.singleton(datasetId)));
+
                     // TODO this should maybe create a data source for each db
                     Item synonym = createItem("Synonym");
                     synonym.setAttribute("value", id);
                     synonym.setAttribute("type", db.startsWith("uniprot")
                                          ? "accession" : "identifier");
-                    synonym.setReference("source", datasourceItemId);
+                    synonym.setReference("source", uniProtDataSourceId);
                     synonym.setReference("subject", proteinRefId);
+                    synonym.setCollection("dataSets",
+                                          new ArrayList(Collections.singleton(datasetId)));
                     synonyms.add(synonym);
 
                     // create an extra synonym for proteins that have an IntAct identifier
@@ -320,8 +281,10 @@ public class PsiConverter extends FileConverter
                         Item syn1 = createItem("Synonym");
                         syn1.setAttribute("value", id);
                         syn1.setAttribute("type", "identifier");
-                        syn1.setReference("source", datasourceItemId);
+                        syn1.setReference("source", uniProtDataSourceId);
                         syn1.setReference("subject", proteinRefId);
+                        synonym.setCollection("dataSets",
+                                              new ArrayList(Collections.singleton(datasetId)));
                         synonyms.add(synonym);
                     }
 
@@ -329,8 +292,10 @@ public class PsiConverter extends FileConverter
                     Item syn2 = createItem("Synonym");
                     syn2.setAttribute("value", id);
                     syn2.setAttribute("type", "accession");
-                    syn2.setReference("source", datasourceItemId);
+                    syn2.setReference("source", uniProtDataSourceId);
                     syn2.setReference("subject", proteinRefId);
+                    synonym.setCollection("dataSets",
+                                          new ArrayList(Collections.singleton(datasetId)));
                     synonyms.add(synonym);
                 }
 
@@ -754,7 +719,7 @@ public class PsiConverter extends FileConverter
                     // add dataset
                     ReferenceList dataSetsColl = new ReferenceList("dataSets", new ArrayList());
                     interaction.addCollection(dataSetsColl);
-                    dataSetsColl.addRefId(masterList.get("dataset"));
+                    dataSetsColl.addRefId(datasetId);
 
                     /* store all protein interaction-related items */
                     writer.store(ItemHelper.convert(interaction));
@@ -843,7 +808,7 @@ public class PsiConverter extends FileConverter
 
         private ExperimentHolder checkExperiment(String name) {
 
-            ExperimentHolder eh = experimentNames.get(name);
+            ExperimentHolder eh = (ExperimentHolder) experimentNames.get(name);
             if (eh == null) {
                 Item exp = createItem("ProteinInteractionExperiment");
                 eh = new ExperimentHolder(exp);
@@ -912,15 +877,13 @@ public class PsiConverter extends FileConverter
                 dataSet.setAttribute("title", "IntAct data set");
                 dataSet.setReference("dataSource", evidenceDatasource.getIdentifier());
                 writer.store(ItemHelper.convert(dataSet));
-                masterList.put("dataset", dataSet.getIdentifier());
+                datasetId =  dataSet.getIdentifier();
                 writer.store(ItemHelper.convert(evidenceDatasource));
-                masterList.put("evidenceDatasource", evidenceDatasource.getIdentifier());
 
                 Item datasource = createItem("DataSource");
                 datasource.setAttribute("name", "UniProt");
-                datasourceItemId = datasource.getIdentifier();
+                uniProtDataSourceId = datasource.getIdentifier();
                 writer.store(ItemHelper.convert(datasource));
-                masterList.put("datasource", datasource.getIdentifier());
 
             } catch (ObjectStoreException e) {
                 throw new SAXException(e);
@@ -977,7 +940,7 @@ public class PsiConverter extends FileConverter
          * it's verified that all organisms are in the list given.
          * @author Julie Sullivan
          */
-        public static class InteractionHolder
+        public class InteractionHolder
         {
             private String shortName;
             private ExperimentHolder experimentHolder;
@@ -1052,7 +1015,7 @@ public class PsiConverter extends FileConverter
          * interaction until it's verified that all organisms are in the list given.
          * @author Julie Sullivan
          */
-        public static class InteractorHolder
+        public class InteractorHolder
         {
             private String proteinId;   // protein.getIdentifier()
             private String proteinRole;
@@ -1103,7 +1066,7 @@ public class PsiConverter extends FileConverter
          * an interaction is verified to have only valid organisms
          * @author Julie Sullivan
          */
-        public static class ExperimentHolder
+        public class ExperimentHolder
         {
 
             protected String name;
