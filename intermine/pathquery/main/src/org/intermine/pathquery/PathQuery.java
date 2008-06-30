@@ -111,12 +111,11 @@ public class PathQuery
         }
         this.view = view;
         updateSortOrder();
-        // Set constraints on types
+        // sets subclasses nodes
         for (Path path : view) {
             for (Map.Entry<String, String> entry : path.getSubClassConstraintPaths().entrySet()) {
-                String simplePath = entry.getKey();
-                String colonPath = path.toStringNoConstraints().substring(0, simplePath.length());
-                PathNode node = addNode(colonPath);
+                String stringPath = entry.getKey();
+                PathNode node = addNode(stringPath);
                 node.setType(entry.getValue());
             }
         }
