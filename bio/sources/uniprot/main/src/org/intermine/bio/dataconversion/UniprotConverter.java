@@ -14,6 +14,7 @@ import java.io.IOException;
 import java.io.Reader;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -553,10 +554,8 @@ public class UniprotConverter extends FileConverter
                     // only store the protein if it has a primary accession value
                     if (hasPrimary) {
                         protein.setAttribute("description", descr.toString());
-                        ReferenceList evidenceColl =
-                            new ReferenceList("dataSets", new ArrayList<String>());
-                        protein.addCollection(evidenceColl);
-                        evidenceColl.addRefId(dataset.getIdentifier());
+                        protein.setCollection("dataSets",
+                        new ArrayList(Collections.singleton(dataset.getIdentifier())));
 
                         // now that we know the taxonID, we can store the genes
                         if (hasPrimary && !genes.isEmpty()) {
@@ -1088,6 +1087,8 @@ public class UniprotConverter extends FileConverter
                             }
                             protein.getCollection("genes").addRefId(gene.getIdentifier());
                             gene.setReference("organism", orgId);
+                            gene.setCollection("dataSets",
+                                    new ArrayList(Collections.singleton(dataset.getIdentifier())));
                             writer.store(ItemHelper.convert(gene));
                             i = nameTypeToName.keySet().iterator();
                             while (i.hasNext() && !taxonId.equals("7227")) {

@@ -28,10 +28,6 @@
 <reference name="source" ref_id="0_1"/>
 <reference name="subject" ref_id="2_2"/>
 </item>
-<item id="5_2" class="http://www.flymine.org/model/genomic#Gene">
-<attribute name="primaryIdentifier" value="FBgn0000002"/>
-<reference name="organism" ref_id="6_1"/>
-</item>
 <item id="4_1" class="http://www.flymine.org/model/genomic#Synonym">
 <attribute name="type" value="accession"/>
 <attribute name="value" value="eve accession"/>
@@ -96,6 +92,7 @@
 <item id="5_1" class="http://www.flymine.org/model/genomic#Gene">
 <attribute name="primaryIdentifier" value="FBgn0000001"/>
 <reference name="organism" ref_id="6_1"/>
+<collection name="dataSets"><reference ref_id="3_1"/></collection>
 </item>
 <item id="7_1" class="http://www.flymine.org/model/genomic#Publication">
 <attribute name="pubMedId" value="222222"/>
@@ -147,6 +144,11 @@
 <attribute name="value" value="protein name"/>
 <reference name="source" ref_id="0_1"/>
 <reference name="subject" ref_id="2_2"/>
+</item>
+<item id="5_2" class="http://www.flymine.org/model/genomic#Gene">
+<attribute name="primaryIdentifier" value="FBgn0000002"/>
+<reference name="organism" ref_id="6_1"/>
+<collection name="dataSets"><reference ref_id="3_1"/></collection>
 </item>
 <item id="8_2" class="http://www.flymine.org/model/genomic#Comment">
 <attribute name="text" value="I'm a duplicate!"/>
