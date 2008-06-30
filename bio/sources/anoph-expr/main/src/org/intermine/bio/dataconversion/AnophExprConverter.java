@@ -60,11 +60,11 @@ public class AnophExprConverter extends BioFileConverter
         super(writer, model, "ArrayExpress", "Anoph-Expr data set");
 
         org = createItem("Organism");
-        org.addAttribute(new Attribute("taxonId", "180454"));
+        org.setAttribute("taxonId", "180454");
         store(org);
 
         pub = createItem("Publication");
-        pub.addAttribute(new Attribute("pubMedId", "17563388"));
+        pub.setAttribute("pubMedId", "17563388");
         store(pub);
 
         String experimentName = "Koutos AC:  Life cycle transcriptions of malaria mosquito "
