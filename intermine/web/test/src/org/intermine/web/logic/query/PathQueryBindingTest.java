@@ -120,7 +120,7 @@ public class PathQueryBindingTest extends TestCase
         Exception e = new Exception("Invalid bag constraint - only objects can be"
                                     + "constrained to be in bags.");
         //employeesInBag.problems.add(e);
-        List<Throwable> problems = Arrays.asList(employeesInBag.getProblems());
+        List<Throwable> problems = new ArrayList<Throwable>(Arrays.asList(employeesInBag.getProblems()));
         problems.add(e);
         employeesInBag.setProblems(problems);
         expected.put("employeeEndInBag", employeesInBag);
