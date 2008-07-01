@@ -74,8 +74,7 @@ public class PathQueryBinding
                 writer.writeAttribute("sortOrder",
                                       StringUtil.join(query.getSortOrderStrings(), " "));
             } else {
-                writer.writeAttribute("sortOrder",
-                                      StringUtil.join(query.getViewStrings(), " "));
+                writer.writeAttribute("sortOrder", query.getViewStrings().get(0));
             }
             if (query.getConstraintLogic() != null) {
                 writer.writeAttribute("constraintLogic", query.getConstraintLogic());
@@ -147,7 +146,7 @@ public class PathQueryBinding
      * @param classKeys class keys
      * @return a Map from query name to PathQuery
      */
-    public static Map<String, PathQuery> unmarshal(Reader reader, 
+    public static Map<String, PathQuery> unmarshal(Reader reader,
             Map<String, List<FieldDescriptor>> classKeys) {
         Map<String, PathQuery> queries = new LinkedHashMap<String, PathQuery>();
         try {
