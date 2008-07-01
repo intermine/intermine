@@ -57,7 +57,6 @@ public class PathQuery
         this.model = model;
     }
 
-
     /**
      * Construct a new instance of PathQuery from an existing
      * instance.
@@ -84,6 +83,9 @@ public class PathQuery
      * @param paths a list of paths to be the view list
      */
     public void setView(String paths) {
+        if (paths == null || paths.equals("")) {
+            throw new RuntimeException("setView() was passed null or empty string");
+        }
         String [] pathStrings = paths.split(",");
         setView(new ArrayList<String>(Arrays.asList(pathStrings)));
     }
@@ -93,13 +95,18 @@ public class PathQuery
      * @param view a list of strings.
      */
     public void setView(List<String> view) {
-        Iterator it = view.iterator();
-        List<Path> viewPaths = new ArrayList<Path>();
-        while (it.hasNext()) {
-            String path = (String) it.next();
-            viewPaths.add(makePath(model, this, path.trim()));
+        try {
+            Iterator it = view.iterator();
+            List<Path> viewPaths = new ArrayList<Path>();
+            while (it.hasNext()) {
+                String path = (String) it.next();
+                viewPaths.add(makePath(model, this, path.trim()));
+            }
+            setViewPaths(viewPaths);
+        } catch (PathError e) {
+            LOG.error("Path error", e);
+            addProblem(e);
         }
-        setViewPaths(viewPaths);
     }
 
     /**
@@ -107,18 +114,21 @@ public class PathQuery
      * @param view a List of Paths
      */
     public void setViewPaths(List<Path> view) {
-        if (view == null) {
-            throw new RuntimeException("setView() was passed null");
-        }
-        this.view = view;
-        updateSortOrder();
-        // sets subclasses nodes
-        for (Path path : view) {
-            for (Map.Entry<String, String> entry : path.getSubClassConstraintPaths().entrySet()) {
-                String stringPath = entry.getKey();
-                PathNode node = addNode(stringPath);
-                node.setType(entry.getValue());
+        try {
+            this.view = view;
+            updateSortOrder();
+            // sets subclasses nodes
+            for (Path path : view) {
+                for (Map.Entry<String, String> entry
+                                : path.getSubClassConstraintPaths().entrySet()) {
+                    String stringPath = entry.getKey();
+                    PathNode node = addNode(stringPath);
+                    node.setType(entry.getValue());
+                }
             }
+        } catch (PathError e) {
+            LOG.error("Path error", e);
+            addProblem(e);
         }
     }
 
@@ -128,6 +138,9 @@ public class PathQuery
      * @param paths a list of paths to be appended to the end of the view list
      */
     public void addView(String paths) {
+        if (paths == null || paths.equals("")) {
+            throw new RuntimeException("setView() was passed null or empty string");
+        }
         String [] pathStrings = paths.split(",");
         addView(new ArrayList<String>(Arrays.asList(pathStrings)));
     }
@@ -201,7 +214,6 @@ public class PathQuery
         return retList;
     }
 
-
     /**
      * Remove the Path with the given String representation from the view.  If the pathString
      * refers to a path that appears in a PathError in the problems collection, remove that problem.
@@ -226,17 +238,18 @@ public class PathQuery
                 }
             }
         }
+
+        // remove from sort list too, only if this is the sorted field
+        removePathStringFromSortOrder(pathString);
+
     }
 
     private Path getFirstPathFromView() {
-        Path viewPath = null;
         if (!view.isEmpty()) {
-            Iterator<Path> iter = view.iterator();
-            viewPath = iter.next();
+            return view.get(0);
         }
-        return viewPath;
+        return null;
     }
-
 
     /**
      * Return true if and only if the view contains a Path that has pathString as its String
@@ -254,7 +267,9 @@ public class PathQuery
         return false;
     }
 
+
     /*****************************************************************************************/
+
 
     /**
      * Add a constraint to the query
@@ -267,7 +282,6 @@ public class PathQuery
         constraint.code = code;
         return addConstraint(path, constraint, code);
     }
-
 
     /**
      * Add a constraint to the query
@@ -282,7 +296,6 @@ public class PathQuery
         node.getConstraints().add(constraint);
         return code;
     }
-
 
     /**
      * Set the constraint logic expression. This expresses the AND and OR
@@ -384,7 +397,6 @@ public class PathQuery
         return null;
     }
 
-
     /**
      * Add a set of codes to the logical expression using the given operator.
      * @param codes Set of codes (Strings)
@@ -422,6 +434,7 @@ public class PathQuery
 
     /*****************************************************************************************/
 
+
     // the querybuilder requires that the sort order have one field in it.  perhaps the QB could
     // handle this more gracefully
     private void updateSortOrder() {
@@ -434,7 +447,6 @@ public class PathQuery
         }
     }
 
-
     /**
      * Sets the order by list of the query to the list of paths given.  Paths can be a single path
      * or a comma delimited list of paths.  To append a path to the list instead use addOrderBy.
@@ -443,7 +455,6 @@ public class PathQuery
     public void setOrderBy(String paths) {
         setOrderBy(paths, Boolean.TRUE);
     }
-
 
     /**
      * Sets the order by list of the query to the list of paths given.  Paths can be a single path
@@ -465,7 +476,6 @@ public class PathQuery
         sortOrder = orderBy;
     }
 
-
     /**
      * Sets the order by list of the query to the list of paths given.  Paths can be a single path
      * or a comma delimited list of paths.  To append a path to the list instead use addOrderBy.
@@ -475,7 +485,6 @@ public class PathQuery
     public void setOrderBy(List<String> paths) {
         setOrderBy(paths, Boolean.TRUE);
     }
-
 
     /**
      * Sets the order by list of the query to the list of paths given.  Paths can be a single path
@@ -506,7 +515,6 @@ public class PathQuery
         sortOrder = paths;
     }
 
-
     /**
      * Appends the paths to the end of the order by list.  Paths can be a single path
      * or a comma delimited list of paths.
@@ -515,7 +523,6 @@ public class PathQuery
     public void addOrderBy(String paths) {
         addOrderBy(paths, Boolean.TRUE);
     }
-
 
     /**
      * Appends the paths to the end of the order by list.  Paths can be a single path
@@ -537,7 +544,6 @@ public class PathQuery
         sortOrder.addAll(orderBy);
     }
 
-
     /**
      * Appends the paths to the end of the order by list.
      * @param paths a list of paths to be appended to the end of the order by list
@@ -545,7 +551,6 @@ public class PathQuery
     public void addOrderBy(List<String> paths) {
         addOrderBy(paths, Boolean.TRUE);
     }
-
 
     /**
      * Appends the paths to the end of the order by list.
@@ -564,7 +569,6 @@ public class PathQuery
         }
         sortOrder.addAll(orderBy);
     }
-
 
     /**
      * Sets the sort order
@@ -593,7 +597,6 @@ public class PathQuery
         }
         return retList;
     }
-
 
     /**
      * @param direction New sorting direction - asc or desc
@@ -629,17 +632,17 @@ public class PathQuery
         }
     }
 
-
     /**
-     * Clear the order by list and replace with first item on select list.
+     * Clear the order by list and replace with first path on select list.
+     * Used by the querybuilder only, as the querybuilder only ever has one path in the order
+     * by clause.
      */
-    public void removePathStringFromSortOrder() {
+    public void resetSortOrder() {
         try {
-            sortOrder.clear(); // there can only be one sort column
+            sortOrder.clear(); // there is only one sort column in the querybuilder
             Path p = getFirstPathFromView();
             if (p != null) {
-                OrderBy o = new OrderBy(p, "asc");
-                sortOrder.add(o);
+                sortOrder.add(new OrderBy(p, "asc"));
             }
         } catch (PathError e) {
             addProblem(e);
@@ -648,16 +651,17 @@ public class PathQuery
 
     /**
      * Remove a path from the sort order.  If on the order by list, replace with first item
-     * on select list.
+     * on select list.  Used by the querybuilder only, as the querybuilder only ever has one
+     * path in the order by clause.
      * @param viewString The string being removed from the view list
      */
-    public void removePathStringFromSortOrder(String viewString) {
+    private void removePathStringFromSortOrder(String viewString) {
         Iterator<OrderBy> iter = sortOrder.iterator();
         while (iter.hasNext()) {
             OrderBy sort = iter.next();
             if (sort.getField().toStringNoConstraints().equals(viewString)) {
                 // this is the field on the sort order, so clear and add first item on view list
-                removePathStringFromSortOrder();
+                resetSortOrder();
                 return;
             }
         }
@@ -665,6 +669,7 @@ public class PathQuery
 
 
     /*****************************************************************************/
+
 
     /**
      * Gets the value of nodes
@@ -738,7 +743,6 @@ public class PathQuery
         return node;
     }
 
-
     /**
      * Clone this PathQuery
      * @return a PathQuery
@@ -806,7 +810,6 @@ public class PathQuery
         return newNode;
     }
 
-
     /**
      * Gets the value of model
      * @return the value of model
@@ -815,7 +818,6 @@ public class PathQuery
         return model;
     }
 
-
     /**
      * Return the map from Path objects (from the view) to their descriptions.
      * @return the path descriptions map
@@ -823,7 +825,6 @@ public class PathQuery
     public Map<Path, String> getPathDescriptions() {
         return pathDescriptions;
     }
-
 
     /**
      * Return the description for the given path from the view.
@@ -840,7 +841,6 @@ public class PathQuery
         return null;
     }
 
-
     /**
      * Return the description for the given path from the view.
      * @return the description Map
@@ -853,7 +853,6 @@ public class PathQuery
         }
         return retMap;
     }
-
 
     /**
      * Add a description to a path in the view.  If the viewString isn't a valid view path, add an
@@ -869,7 +868,6 @@ public class PathQuery
             addProblem(e);
         }
     }
-
 
     /**
      * Provide a list of the names of bags mentioned in the query
@@ -888,7 +886,6 @@ public class PathQuery
         }
         return bagNames;
     }
-
 
     /**
      * Given the string version of a path (eg. "Department.employees.seniority"), and a PathQuery,
@@ -914,7 +911,6 @@ public class PathQuery
         return path;
     }
 
-
     /**
      * Get info regarding this query
      * @return the info
@@ -922,7 +918,6 @@ public class PathQuery
     public ResultsInfo getInfo() {
         return info;
     }
-
 
     /**
      * Set info about this query
@@ -932,7 +927,6 @@ public class PathQuery
         this.info = info;
     }
 
-
     /**
      * Get the exceptions generated while deserialising this path query query.
      * @return exceptions relating to this path query
@@ -940,7 +934,6 @@ public class PathQuery
     public Throwable[] getProblems() {
         return problems.toArray(new Throwable[0]);
     }
-
 
     /**
      * Sets problems.
@@ -950,7 +943,6 @@ public class PathQuery
         this.problems = (problems != null ?  problems : new ArrayList<Throwable>());
     }
 
-
     /**
      * Find out whether the path query is valid against the current model.
      * @return true if query is valid, false if not
@@ -959,7 +951,6 @@ public class PathQuery
         return (problems.size() == 0);
     }
 
-
     /**
      * Adds problem to path query.
      * @param err problem
@@ -967,7 +958,6 @@ public class PathQuery
     public void addProblem(Throwable err) {
         problems.add(err);
     }
-
 
     /**
      * Serialise this query in XML format.
@@ -978,7 +968,6 @@ public class PathQuery
         return PathQueryBinding.marshal(this, name, model.getName());
     }
 
-
     /**
      * Serialise to XML with no name.
      * @return the XML
@@ -986,7 +975,6 @@ public class PathQuery
     public String toXml() {
         return PathQueryBinding.marshal(this, "", model.getName());
     }
-
 
     /**
      * {@inheritDoc}
@@ -1000,7 +988,6 @@ public class PathQuery
         && pathDescriptions.equals(((PathQuery) o).pathDescriptions);
     }
 
-
     /**
      * {@inheritDoc}
      */
@@ -1010,7 +997,6 @@ public class PathQuery
         + 5 * view.hashCode()
         + 7 * sortOrder.hashCode();
     }
-
 
     /**
      * {@inheritDoc}

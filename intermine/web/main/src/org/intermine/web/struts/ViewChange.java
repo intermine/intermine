@@ -54,9 +54,6 @@ public class ViewChange extends DispatchAction
 
         query.removePathStringFromView(path);
 
-        // remove from sort list too, only if this is the sorted field
-        query.removePathStringFromSortOrder(path);
-
         return new ForwardParameters(mapping.findForward("query"))
             .addAnchor("showing").forward();
     }
