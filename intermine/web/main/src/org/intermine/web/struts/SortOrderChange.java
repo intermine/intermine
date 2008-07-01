@@ -27,7 +27,7 @@ import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
 import org.apache.struts.actions.DispatchAction;
 /**
- * Action to handle changes to sort order on query page
+ * Action to handle changes to sort order on query builder
  * @author Julie Sullivan
  */
 public class SortOrderChange extends DispatchAction
@@ -49,7 +49,7 @@ public class SortOrderChange extends DispatchAction
         HttpSession session = request.getSession();
         PathQuery query = (PathQuery) session.getAttribute(Constants.QUERY);
 
-        query.removePathStringFromSortOrder();
+        query.resetSortOrder();
 
         return new ForwardParameters(mapping.findForward("query"))
             .addAnchor("showing").forward();
