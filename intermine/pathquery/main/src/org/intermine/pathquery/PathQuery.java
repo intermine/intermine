@@ -219,7 +219,7 @@ public class PathQuery
      * refers to a path that appears in a PathError in the problems collection, remove that problem.
      * @param pathString the path to remove
      */
-    public void removePathStringFromView(String pathString) {
+    public void removeFromView(String pathString) {
         Iterator<Path> iter = view.iterator();
         while (iter.hasNext()) {
             Path viewPath = iter.next();
@@ -238,10 +238,7 @@ public class PathQuery
                 }
             }
         }
-
-        // remove from sort list too, only if this is the sorted field
-        removePathStringFromSortOrder(pathString);
-
+        removeOrderBy(pathString);
     }
 
     private Path getFirstPathFromView() {
@@ -616,14 +613,24 @@ public class PathQuery
     }
 
     /**
+     * Set order by to a path
+     * @param sortOrderString the String version of the path - should not include any class
+     * constraints (ie. use "Departement.employee.name" not "Departement.employee[Contractor].name")
+     * @param direction asc or desc
+     */
+    public void setOrderBy(String sortOrderString, String direction) {
+        resetSortOrder();
+        addOrderBy(sortOrderString, direction);
+    }
+
+    /**
      * Add a path to the sort order
      * @param sortOrderString the String version of the path to add - should not include any class
      * constraints (ie. use "Departement.employee.name" not "Departement.employee[Contractor].name")
      * @param direction asc or desc
      */
-    public void addPathStringToSortOrder(String sortOrderString, String direction) {
+    public void addOrderBy(String sortOrderString, String direction) {
         try {
-            sortOrder.clear(); // there can only be one sort column
             Path p = PathQuery.makePath(model, this, sortOrderString);
             OrderBy o = new OrderBy(p, direction);
             sortOrder.add(o);
@@ -631,6 +638,7 @@ public class PathQuery
             addProblem(e);
         }
     }
+
 
     /**
      * Clear the order by list and replace with first path on select list.
@@ -655,7 +663,7 @@ public class PathQuery
      * path in the order by clause.
      * @param viewString The string being removed from the view list
      */
-    private void removePathStringFromSortOrder(String viewString) {
+    private void removeOrderBy(String viewString) {
         Iterator<OrderBy> iter = sortOrder.iterator();
         while (iter.hasNext()) {
             OrderBy sort = iter.next();

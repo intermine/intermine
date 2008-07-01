@@ -73,7 +73,7 @@ public class PathQueryBinding
             if (query.getSortOrderStrings() != null && !query.getSortOrderStrings().isEmpty()) {
                 writer.writeAttribute("sortOrder",
                                       StringUtil.join(query.getSortOrderStrings(), " "));
-            } else {
+            } else if (!query.getViewStrings().isEmpty()) {
                 writer.writeAttribute("sortOrder", query.getViewStrings().get(0));
             }
             if (query.getConstraintLogic() != null) {

@@ -52,7 +52,7 @@ public class ViewChange extends DispatchAction
         String path = request.getParameter("path");
         PathQuery query = (PathQuery) session.getAttribute(Constants.QUERY);
 
-        query.removePathStringFromView(path);
+        query.removeFromView(path);
 
         return new ForwardParameters(mapping.findForward("query"))
             .addAnchor("showing").forward();
