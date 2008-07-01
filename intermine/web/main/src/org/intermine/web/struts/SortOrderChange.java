@@ -77,7 +77,8 @@ public class SortOrderChange extends DispatchAction
         if (direction == null) {
             direction = "asc";
         }
-        query.addPathStringToSortOrder(path, direction);
+
+        query.setOrderBy(path, direction);
 
         return new ForwardParameters(mapping.findForward("query"))
             .addAnchor("showing").forward();
