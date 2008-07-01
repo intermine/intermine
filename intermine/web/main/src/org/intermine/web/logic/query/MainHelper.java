@@ -281,13 +281,13 @@ public class MainHelper
      * @param queries path queries
      * @param savedBags saved bags
      */
-    public static void checkPathQueries(Map<String, PathQuery> queries, 
+    public static void checkPathQueries(Map<String, PathQuery> queries,
             Map<String, InterMineBag> savedBags) {
         for (PathQuery pathQuery : queries.values()) {
             checkPathQuery(pathQuery, savedBags);
         }
     }
-    
+
 
     /**
      * Other version of makeQuery.
