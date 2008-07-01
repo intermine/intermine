@@ -140,7 +140,7 @@ public class PathQuery
     public void addView(List<String> paths) {
         try {
             for (String path : paths) {
-                view.add(makePath(model, this, path));
+                view.add(makePath(model, this, path.trim()));
             }
         } catch (PathError e) {
             LOG.error("Path error", e);
@@ -731,7 +731,7 @@ public class PathQuery
      * @param problems problems
      */
     public void setProblems(List<Throwable> problems) {
-        this.problems = problems;
+        this.problems = (problems != null ?  problems : new ArrayList<Throwable>());
     }
 
     /**
