@@ -75,6 +75,9 @@ public class PathQuery
     }
 
 
+    /*****************************************************************************************/
+
+
     /**
      * Sets the select list of the query to the list of paths given.  Paths can be a single path
      * or a comma delimited list of paths.  To append a path to the list instead use addView.
@@ -84,7 +87,6 @@ public class PathQuery
         String [] pathStrings = paths.split(",");
         setView(new ArrayList<String>(Arrays.asList(pathStrings)));
     }
-
 
     /**
      * Clears the view list and sets the value of view to the list of strings given
@@ -99,7 +101,6 @@ public class PathQuery
         }
         setViewPaths(viewPaths);
     }
-
 
     /**
      * Sets the value of view
@@ -121,7 +122,6 @@ public class PathQuery
         }
     }
 
-
     /**
      * Appends the paths to the end of the select list. Paths can be a single path
      * or a comma delimited list of paths.
@@ -131,7 +131,6 @@ public class PathQuery
         String [] pathStrings = paths.split(",");
         addView(new ArrayList<String>(Arrays.asList(pathStrings)));
     }
-
 
     /**
      * Appends the paths to the end of the select list.
@@ -148,7 +147,6 @@ public class PathQuery
         }
     }
 
-
     /**
      * Appends the paths to the end of the select list.
      * @param paths a list of paths to be appended to the end of the view list
@@ -162,18 +160,101 @@ public class PathQuery
         }
     }
 
-    // the querybuilder requires that the sort order have one field in it.  perhaps the QB could
-    // handle this more gracefully
-    private void updateSortOrder() {
-        if (sortOrder.isEmpty()) {
-            Path p = getFirstPathFromView();
-            if (p != null) {
-                OrderBy o = new OrderBy(p);
-                sortOrder.add(o);
+    /**
+     * Add a path to the view
+     * @param viewString the String version of the path to add - should not include any class
+     * constraints (ie. use "Departement.employee.name" not "Departement.employee[Contractor].name")
+     */
+    @Deprecated public void addPathStringToView(String viewString) {
+        try {
+            view.add(PathQuery.makePath(model, this, viewString));
+            if (sortOrder.isEmpty()) {
+                Path p = getFirstPathFromView();
+                if (p != null) {
+                    OrderBy o = new OrderBy(p, "asc");
+                    sortOrder.add(o);
+                }
+            }
+        } catch (PathError e) {
+            LOG.error("Path error", e);
+            addProblem(e);
+        }
+    }
+
+    /**
+     * Gets the value of view
+     * @return a List of paths
+     */
+    public List<Path> getView() {
+        return view;
+    }
+
+    /**
+     * Return the view as a List of Strings.
+     * @return the view as Strings
+     */
+    public List<String> getViewStrings() {
+        List<String> retList = new ArrayList<String>();
+        for (Path path: view) {
+            retList.add(path.toStringNoConstraints());
+        }
+        return retList;
+    }
+
+
+    /**
+     * Remove the Path with the given String representation from the view.  If the pathString
+     * refers to a path that appears in a PathError in the problems collection, remove that problem.
+     * @param pathString the path to remove
+     */
+    public void removePathStringFromView(String pathString) {
+        Iterator<Path> iter = view.iterator();
+        while (iter.hasNext()) {
+            Path viewPath = iter.next();
+            if (viewPath.toStringNoConstraints().equals(pathString)
+                            || viewPath.toString().equals(pathString)) {
+                iter.remove();
+            }
+        }
+        Iterator<Throwable> throwIter = problems.iterator();
+        while (throwIter.hasNext()) {
+            Throwable thr = throwIter.next();
+            if (thr instanceof PathError) {
+                PathError pe = (PathError) thr;
+                if (pe.getPathString().equals(pathString)) {
+                    throwIter.remove();
+                }
             }
         }
     }
 
+    private Path getFirstPathFromView() {
+        Path viewPath = null;
+        if (!view.isEmpty()) {
+            Iterator<Path> iter = view.iterator();
+            viewPath = iter.next();
+        }
+        return viewPath;
+    }
+
+
+    /**
+     * Return true if and only if the view contains a Path that has pathString as its String
+     * representation.
+     * @param pathString the path to test
+     * @return true if found
+     */
+    public boolean viewContains(String pathString) {
+        for (Path viewPath: getView()) {
+            if (viewPath.toStringNoConstraints().equals(pathString)
+                            || viewPath.toString().equals(pathString)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    /*****************************************************************************************/
 
     /**
      * Add a constraint to the query
@@ -217,6 +298,139 @@ public class PathQuery
             this.constraintLogic = new LogicExpression(constraintLogic);
         } catch (IllegalArgumentException err) {
             LOG.error("Failed to parse constraintLogic: " + constraintLogic, err);
+        }
+    }
+
+    /**
+     * Get the constraint logic expression as a string.  Will return null of there are < 2
+     * constraints
+     * @return the constraint logic expression as a string
+     */
+    public String getConstraintLogic() {
+        if (constraintLogic == null) {
+            return null;
+        }
+        return constraintLogic.toString();
+    }
+
+    /**
+     * Get the LogicExpression. If there are one or zero constraints then
+     * this method will return null.
+     * @return the current LogicExpression or null
+     */
+    public LogicExpression getLogic() {
+        return constraintLogic;
+    }
+
+    /**
+     * Make sure that the logic expression is valid for the current query. Remove
+     * any unknown constraint codes and add any constraints that aren't included
+     * (using the default operator).
+     * @param defaultOperator the default logical operator
+     */
+    public void syncLogicExpression(String defaultOperator) {
+        if (getAllConstraints().size() <= 1) {
+            setConstraintLogic(null);
+        } else {
+            Set<String> codes = getConstraintCodes();
+            if (constraintLogic != null) {
+                // limit to the actual variables
+                constraintLogic.removeAllVariablesExcept(getConstraintCodes());
+                // add anything that isn't there
+                codes.removeAll(constraintLogic.getVariableNames());
+            }
+            addCodesToLogic(codes, defaultOperator);
+        }
+    }
+
+    /**
+     * Get all constraint codes.
+     * @return all present constraint codes
+     */
+    private Set<String> getConstraintCodes() {
+        Set<String> codes = new HashSet<String>();
+        for (Iterator<Constraint> iter = getAllConstraints().iterator(); iter.hasNext(); ) {
+            codes.add(iter.next().getCode());
+        }
+        return codes;
+    }
+
+    /**
+     * Get a constraint code that hasn't been used yet.
+     * @return a constraint code that hasn't been used yet
+     */
+    public String getUnusedConstraintCode() {
+        char c = 'A';
+        while (getConstraintByCode("" + c) != null) {
+            c++;
+        }
+        return "" + c;
+    }
+
+    /**
+     * Get a Constraint involved in this query by code. Returns null if no
+     * constraint with the given code was found.
+     * @param string the constraint code
+     * @return the Constraint with matching code or null
+     */
+    public Constraint getConstraintByCode(String string) {
+        Iterator<Constraint> iter = getAllConstraints().iterator();
+        while (iter.hasNext()) {
+            Constraint c = iter.next();
+            if (string.equals(c.getCode())) {
+                return c;
+            }
+        }
+        return null;
+    }
+
+
+    /**
+     * Add a set of codes to the logical expression using the given operator.
+     * @param codes Set of codes (Strings)
+     * @param operator operator to add with
+     */
+    protected void addCodesToLogic(Set<String> codes, String operator) {
+        String logic = getConstraintLogic();
+        if (logic == null) {
+            logic = "";
+        } else {
+            logic = "(" + logic + ")";
+        }
+        for (Iterator<String> iter = codes.iterator(); iter.hasNext(); ) {
+            if (!StringUtil.isEmpty(logic)) {
+                logic += " " + operator + " ";
+            }
+            logic += iter.next();
+        }
+        setConstraintLogic(logic);
+    }
+
+    /**
+     * Get all constraints.
+     * @return all constraints
+     */
+    public List<Constraint> getAllConstraints() {
+        List<Constraint> list = new ArrayList<Constraint>();
+        for (Iterator<PathNode> iter = nodes.values().iterator(); iter.hasNext(); ) {
+            PathNode node = iter.next();
+            list.addAll(node.getConstraints());
+        }
+        return list;
+    }
+
+
+    /*****************************************************************************************/
+
+    // the querybuilder requires that the sort order have one field in it.  perhaps the QB could
+    // handle this more gracefully
+    private void updateSortOrder() {
+        if (sortOrder.isEmpty()) {
+            Path p = getFirstPathFromView();
+            if (p != null) {
+                OrderBy o = new OrderBy(p);
+                sortOrder.add(o);
+            }
         }
     }
 
@@ -352,113 +566,6 @@ public class PathQuery
     }
 
 
-    /*****************************************************************************/
-
-    /**
-     * Get the constraint logic expression.
-     * @return the constraint logic expression
-     */
-    public String getConstraintLogic() {
-        if (constraintLogic == null) {
-            return null;
-        }
-        return constraintLogic.toString();
-    }
-
-
-
-    /**
-     * Make sure that the logic expression is valid for the current query. Remove
-     * any unknown constraint codes and add any constraints that aren't included
-     * (using the default operator).
-     * @param defaultOperator the default logical operator
-     */
-    public void syncLogicExpression(String defaultOperator) {
-        if (getAllConstraints().size() <= 1) {
-            setConstraintLogic(null);
-        } else {
-            Set<String> codes = getConstraintCodes();
-            if (constraintLogic != null) {
-                // limit to the actual variables
-                constraintLogic.removeAllVariablesExcept(getConstraintCodes());
-                // add anything that isn't there
-                codes.removeAll(constraintLogic.getVariableNames());
-            }
-            addCodesToLogic(codes, defaultOperator);
-        }
-    }
-
-    /**
-     * Get all constraint codes.
-     * @return all present constraint codes
-     */
-    private Set<String> getConstraintCodes() {
-        Set<String> codes = new HashSet<String>();
-        for (Iterator<Constraint> iter = getAllConstraints().iterator(); iter.hasNext(); ) {
-            codes.add(iter.next().getCode());
-        }
-        return codes;
-    }
-
-    /**
-     * Gets the value of model
-     * @return the value of model
-     */
-    public Model getModel() {
-        return model;
-    }
-
-    /**
-     * Gets the value of nodes
-     * @return the value of nodes
-     */
-    public Map<String, PathNode> getNodes() {
-        return nodes;
-    }
-
-    /**
-     * Get a PathNode by path.
-     * @param path a path
-     * @return the PathNode for path path
-     */
-    public PathNode getNode(String path) {
-        return nodes.get(path);
-    }
-
-    /**
-     * Get all constraints.
-     * @return all constraints
-     */
-    public List<Constraint> getAllConstraints() {
-        List<Constraint> list = new ArrayList<Constraint>();
-        for (Iterator<PathNode> iter = nodes.values().iterator(); iter.hasNext(); ) {
-            PathNode node = iter.next();
-            list.addAll(node.getConstraints());
-        }
-        return list;
-    }
-
-
-    /**
-     * Gets the value of view
-     * @return a List of paths
-     */
-    public List<Path> getView() {
-        return view;
-    }
-
-    /**
-     * Return the view as a List of Strings.
-     * @return the view as Strings
-     */
-    public List<String> getViewStrings() {
-        List<String> retList = new ArrayList<String>();
-        for (Path path: view) {
-            retList.add(path.toStringNoConstraints());
-        }
-        return retList;
-    }
-
     /**
      * Sets the sort order
      * @param sortOrder list of paths
@@ -485,62 +592,6 @@ public class PathQuery
             retList.add(orderBy.getField().toStringNoConstraints() + " " + orderBy.getDirection());
         }
         return retList;
-    }
-
-    /**
-     * Add a path to the view
-     * @param viewString the String version of the path to add - should not include any class
-     * constraints (ie. use "Departement.employee.name" not "Departement.employee[Contractor].name")
-     */
-    @Deprecated public void addPathStringToView(String viewString) {
-        try {
-            view.add(PathQuery.makePath(model, this, viewString));
-            if (sortOrder.isEmpty()) {
-                Path p = getFirstPathFromView();
-                if (p != null) {
-                    OrderBy o = new OrderBy(p, "asc");
-                    sortOrder.add(o);
-                }
-            }
-        } catch (PathError e) {
-            LOG.error("Path error", e);
-            addProblem(e);
-        }
-    }
-
-    /**
-     * Remove the Path with the given String representation from the view.  If the pathString
-     * refers to a path that appears in a PathError in the problems collection, remove that problem.
-     * @param pathString the path to remove
-     */
-    public void removePathStringFromView(String pathString) {
-        Iterator<Path> iter = view.iterator();
-        while (iter.hasNext()) {
-            Path viewPath = iter.next();
-            if (viewPath.toStringNoConstraints().equals(pathString)
-                || viewPath.toString().equals(pathString)) {
-                iter.remove();
-            }
-        }
-        Iterator<Throwable> throwIter = problems.iterator();
-        while (throwIter.hasNext()) {
-            Throwable thr = throwIter.next();
-            if (thr instanceof PathError) {
-                PathError pe = (PathError) thr;
-                if (pe.getPathString().equals(pathString)) {
-                    throwIter.remove();
-                }
-            }
-        }
-    }
-
-    private Path getFirstPathFromView() {
-        Path viewPath = null;
-        if (!view.isEmpty()) {
-            Iterator<Path> iter = view.iterator();
-             viewPath = iter.next();
-        }
-        return viewPath;
     }
 
 
@@ -613,54 +664,23 @@ public class PathQuery
     }
 
 
+    /*****************************************************************************/
+
     /**
-     * Return true if and only if the view contains a Path that has pathString as its String
-     * representation.
-     * @param pathString the path to test
-     * @return true if found
+     * Gets the value of nodes
+     * @return the value of nodes
      */
-    public boolean viewContains(String pathString) {
-        for (Path viewPath: getView()) {
-            if (viewPath.toStringNoConstraints().equals(pathString)
-                || viewPath.toString().equals(pathString)) {
-                return true;
-            }
-        }
-        return false;
+    public Map<String, PathNode> getNodes() {
+        return nodes;
     }
 
     /**
-     * Get info regarding this query
-     * @return the info
+     * Get a PathNode by path.
+     * @param path a path
+     * @return the PathNode for path path
      */
-    public ResultsInfo getInfo() {
-        return info;
-    }
-
-    /**
-     * Set info about this query
-     * @param info the info
-     */
-    public void setInfo(ResultsInfo info) {
-        this.info = info;
-    }
-
-    /**
-     * Provide a list of the names of bags mentioned in the query
-     * @return the list of bag names
-     */
-    public List<Object> getBagNames() {
-        List<Object> bagNames = new ArrayList<Object>();
-        for (Iterator<PathNode> i = nodes.values().iterator(); i.hasNext();) {
-            PathNode node = i.next();
-            for (Iterator j = node.getConstraints().iterator(); j.hasNext();) {
-                Constraint c = (Constraint) j.next();
-                if (BagConstraint.VALID_OPS.contains(c.getOp())) {
-                    bagNames.add(c.getValue());
-                }
-            }
-        }
-        return bagNames;
+    public PathNode getNode(String path) {
+        return nodes.get(path);
     }
 
     /**
@@ -718,29 +738,6 @@ public class PathQuery
         return node;
     }
 
-    /**
-     * Get the exceptions generated while deserialising this path query query.
-     * @return exceptions relating to this path query
-     */
-    public Throwable[] getProblems() {
-        return problems.toArray(new Throwable[0]);
-    }
-
-    /**
-     * Sets problems.
-     * @param problems problems
-     */
-    public void setProblems(List<Throwable> problems) {
-        this.problems = (problems != null ?  problems : new ArrayList<Throwable>());
-    }
-
-    /**
-     * Find out whether the path query is valid against the current model.
-     * @return true if query is valid, false if not
-     */
-    public boolean isValid() {
-        return (problems.size() == 0);
-    }
 
     /**
      * Clone this PathQuery
@@ -752,7 +749,7 @@ public class PathQuery
         for (Iterator<Entry<String, PathNode>> i = nodes.entrySet().iterator(); i.hasNext();) {
             Entry<String, PathNode> entry = i.next();
             query.getNodes().put(entry.getKey(), cloneNode(query, entry.getValue(), newNodes,
-                        model));
+                                                           model));
         }
         query.getView().addAll(view);
         query.getSortOrder().addAll(sortOrder);
@@ -775,7 +772,7 @@ public class PathQuery
      * @return a copy of the PathNode
      */
     protected static PathNode cloneNode(PathQuery query, PathNode node,
-            IdentityHashMap<PathNode, PathNode> newNodes, Model model) {
+                                        IdentityHashMap<PathNode, PathNode> newNodes, Model model) {
         if (newNodes.containsKey(node)) {
             return newNodes.get(node);
         }
@@ -797,137 +794,27 @@ public class PathQuery
         }
         for (Iterator i = node.getConstraints().iterator(); i.hasNext();) {
             Constraint constraint = (Constraint) i.next();
-            newNode.getConstraints().add(new Constraint(constraint.getOp(), constraint.getValue(),
-                    constraint.isEditable(), constraint.getDescription(), constraint.getCode(),
-                    constraint.getIdentifier(), constraint.getExtraValue()));
+            newNode.getConstraints().add(new Constraint(constraint.getOp(),
+                                                        constraint.getValue(),
+                                                        constraint.isEditable(),
+                                                        constraint.getDescription(),
+                                                        constraint.getCode(),
+                                                        constraint.getIdentifier(),
+                                                        constraint.getExtraValue()));
         }
         newNodes.put(node, newNode);
         return newNode;
     }
 
-    /**
-     * {@inheritDoc}
-     */
-    public boolean equals(Object o) {
-        return (o instanceof PathQuery)
-            && model.equals(((PathQuery) o).model)
-            && nodes.equals(((PathQuery) o).nodes)
-            && view.equals(((PathQuery) o).view)
-            && sortOrder.equals(((PathQuery) o).sortOrder)
-            && pathDescriptions.equals(((PathQuery) o).pathDescriptions);
-    }
 
     /**
-     * {@inheritDoc}
+     * Gets the value of model
+     * @return the value of model
      */
-    public int hashCode() {
-        return 2 * model.hashCode()
-            + 3 * nodes.hashCode()
-            + 5 * view.hashCode()
-            + 7 * sortOrder.hashCode();
+    public Model getModel() {
+        return model;
     }
 
-    /**
-     * {@inheritDoc}
-     */
-    public String toString() {
-        return "{PathQuery: model=" + model.getName() + ", nodes=" + nodes + ", view=" + view
-            + ", sortOrder=" + sortOrder + ", pathDescriptions=" + pathDescriptions + "}";
-    }
-
-    /**
-     * Adds problem to path query.
-     * @param err problem
-     */
-    public void addProblem(Throwable err) {
-        problems.add(err);
-    }
-
-    /**
-     * Get a constraint code that hasn't been used yet.
-     * @return a constraint code that hasn't been used yet
-     */
-    public String getUnusedConstraintCode() {
-        char c = 'A';
-        while (getConstraintByCode("" + c) != null) {
-            c++;
-        }
-        return "" + c;
-    }
-
-    /**
-     * Get a Constraint involved in this query by code. Returns null if no
-     * constraint with the given code was found.
-     * @param string the constraint code
-     * @return the Constraint with matching code or null
-     */
-    public Constraint getConstraintByCode(String string) {
-        Iterator<Constraint> iter = getAllConstraints().iterator();
-        while (iter.hasNext()) {
-            Constraint c = iter.next();
-            if (string.equals(c.getCode())) {
-                return c;
-            }
-        }
-        return null;
-    }
-
-    /**
-     * Add a set of codes to the logical expression using the given operator.
-     * @param codes Set of codes (Strings)
-     * @param operator operator to add with
-     */
-    protected void addCodesToLogic(Set<String> codes, String operator) {
-        String logic = getConstraintLogic();
-        if (logic == null) {
-            logic = "";
-        } else {
-            logic = "(" + logic + ")";
-        }
-        for (Iterator<String> iter = codes.iterator(); iter.hasNext(); ) {
-            if (!StringUtil.isEmpty(logic)) {
-                logic += " " + operator + " ";
-            }
-            logic += iter.next();
-        }
-        setConstraintLogic(logic);
-    }
-
-    /**
-     * Remove some constraint code from the logic expression.
-     * @param code the code to remove
-     */
-    public void removeCodeFromLogic(String code) {
-        if (constraintLogic != null) {
-            constraintLogic.removeVariable(code);
-        }
-    }
-
-    /**
-     * Get the LogicExpression. If there are one or zero constraints then
-     * this method will return null.
-     * @return the current LogicExpression or null
-     */
-    public LogicExpression getLogic() {
-        return constraintLogic;
-    }
-
-    /**
-     * Serialise this query in XML format.
-     * @param name query name to put in xml
-     * @return PathQuery in XML format
-     */
-    public String toXml(String name) {
-        return PathQueryBinding.marshal(this, name, model.getName());
-    }
-
-    /**
-     * Serialise to XML with no name.
-     * @return the XML
-     */
-    public String toXml() {
-        return PathQueryBinding.marshal(this, "", model.getName());
-    }
 
     /**
      * Return the map from Path objects (from the view) to their descriptions.
@@ -937,6 +824,7 @@ public class PathQuery
         return pathDescriptions;
     }
 
+
     /**
      * Return the description for the given path from the view.
      * @param pathString the path as a string
@@ -945,12 +833,13 @@ public class PathQuery
     public String getPathDescription(String pathString) {
         for (Map.Entry<Path, String> entry: pathDescriptions.entrySet()) {
             if (entry.getKey().toStringNoConstraints().equals(pathString)
-                || entry.getKey().toString().equals(pathString)) {
+                            || entry.getKey().toString().equals(pathString)) {
                 return entry.getValue();
             }
         }
         return null;
     }
+
 
     /**
      * Return the description for the given path from the view.
@@ -964,6 +853,7 @@ public class PathQuery
         }
         return retMap;
     }
+
 
     /**
      * Add a description to a path in the view.  If the viewString isn't a valid view path, add an
@@ -979,6 +869,26 @@ public class PathQuery
             addProblem(e);
         }
     }
+
+
+    /**
+     * Provide a list of the names of bags mentioned in the query
+     * @return the list of bag names
+     */
+    public List<Object> getBagNames() {
+        List<Object> bagNames = new ArrayList<Object>();
+        for (Iterator<PathNode> i = nodes.values().iterator(); i.hasNext();) {
+            PathNode node = i.next();
+            for (Iterator j = node.getConstraints().iterator(); j.hasNext();) {
+                Constraint c = (Constraint) j.next();
+                if (BagConstraint.VALID_OPS.contains(c.getOp())) {
+                    bagNames.add(c.getValue());
+                }
+            }
+        }
+        return bagNames;
+    }
+
 
     /**
      * Given the string version of a path (eg. "Department.employees.seniority"), and a PathQuery,
@@ -1002,5 +912,111 @@ public class PathQuery
 
         Path path = new Path(model, fullPathName, subClassConstraintMap);
         return path;
+    }
+
+
+    /**
+     * Get info regarding this query
+     * @return the info
+     */
+    public ResultsInfo getInfo() {
+        return info;
+    }
+
+
+    /**
+     * Set info about this query
+     * @param info the info
+     */
+    public void setInfo(ResultsInfo info) {
+        this.info = info;
+    }
+
+
+    /**
+     * Get the exceptions generated while deserialising this path query query.
+     * @return exceptions relating to this path query
+     */
+    public Throwable[] getProblems() {
+        return problems.toArray(new Throwable[0]);
+    }
+
+
+    /**
+     * Sets problems.
+     * @param problems problems
+     */
+    public void setProblems(List<Throwable> problems) {
+        this.problems = (problems != null ?  problems : new ArrayList<Throwable>());
+    }
+
+
+    /**
+     * Find out whether the path query is valid against the current model.
+     * @return true if query is valid, false if not
+     */
+    public boolean isValid() {
+        return (problems.size() == 0);
+    }
+
+
+    /**
+     * Adds problem to path query.
+     * @param err problem
+     */
+    public void addProblem(Throwable err) {
+        problems.add(err);
+    }
+
+
+    /**
+     * Serialise this query in XML format.
+     * @param name query name to put in xml
+     * @return PathQuery in XML format
+     */
+    public String toXml(String name) {
+        return PathQueryBinding.marshal(this, name, model.getName());
+    }
+
+
+    /**
+     * Serialise to XML with no name.
+     * @return the XML
+     */
+    public String toXml() {
+        return PathQueryBinding.marshal(this, "", model.getName());
+    }
+
+
+    /**
+     * {@inheritDoc}
+     */
+    public boolean equals(Object o) {
+        return (o instanceof PathQuery)
+        && model.equals(((PathQuery) o).model)
+        && nodes.equals(((PathQuery) o).nodes)
+        && view.equals(((PathQuery) o).view)
+        && sortOrder.equals(((PathQuery) o).sortOrder)
+        && pathDescriptions.equals(((PathQuery) o).pathDescriptions);
+    }
+
+
+    /**
+     * {@inheritDoc}
+     */
+    public int hashCode() {
+        return 2 * model.hashCode()
+        + 3 * nodes.hashCode()
+        + 5 * view.hashCode()
+        + 7 * sortOrder.hashCode();
+    }
+
+
+    /**
+     * {@inheritDoc}
+     */
+    public String toString() {
+        return "{PathQuery: model=" + model.getName() + ", nodes=" + nodes + ", view=" + view
+        + ", sortOrder=" + sortOrder + ", pathDescriptions=" + pathDescriptions + "}";
     }
 }
