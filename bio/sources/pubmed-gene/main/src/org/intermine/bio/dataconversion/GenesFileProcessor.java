@@ -243,8 +243,7 @@ public class GenesFileProcessor
         gene.setAttribute("ncbiGeneNumber", ncbiGeneId.toString());
         gene.setAttribute("primaryIdentifier", dbId);
         gene.setReference("organism", organism);
-        gene.setCollection("proteins", new ArrayList(
-                                                 Collections.singleton(datasetRefId)));
+        gene.setCollection("dataSets", new ArrayList(Collections.singleton(datasetRefId)));
         return gene;
     }
 
