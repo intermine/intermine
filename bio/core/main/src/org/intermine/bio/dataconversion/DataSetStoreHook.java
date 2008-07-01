@@ -10,6 +10,7 @@ package org.intermine.bio.dataconversion;
  *
  */
 
+import org.apache.log4j.Logger;
 import org.intermine.dataconversion.DataConverter;
 import org.intermine.dataconversion.DataConverterStoreHook;
 import org.intermine.metadata.ClassDescriptor;
@@ -25,7 +26,7 @@ import org.intermine.xml.full.Item;
  */
 public class DataSetStoreHook implements DataConverterStoreHook
 {
-
+    private static final Logger LOG = Logger.getLogger(DataSetStoreHook.class);
     private final Item dataSet;
     private final Item dataSource;
     private final Model model;
@@ -63,21 +64,26 @@ public class DataSetStoreHook implements DataConverterStoreHook
         ClassDescriptor cd = model.getClassDescriptorByName(className);
         ReferenceDescriptor rd = cd.getReferenceDescriptorByName("source");
         String dataSourceClassName = "org.flymine.model.genomic.DataSource";
+        LOG.error("className:" + className);
         if (rd != null && rd.getReferencedClassDescriptor().getName().equals(dataSourceClassName)
             && !item.hasReference("source")) {
             item.setReference("source", dataSourceId);
+            LOG.error("source:ds1:" + className);
         }
 
         if (item.canHaveReference("dataSource") && !item.hasReference("dataSource")) {
             item.setReference("dataSource", dataSourceId);
+            LOG.error("className:ds2: " + className);
         }
 
         if (item.canHaveReference("dataSet") && !item.hasReference("dataSet")) {
             item.setReference("dataSet", dataSetId);
+            LOG.error("className:set1:" + className);
         }
 
         if (item.canHaveCollection("dataSets")) {
             item.addToCollection("dataSets", dataSetId);
+            LOG.error("className:set2:" + className);
         }
     }
 }
