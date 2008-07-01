@@ -19,7 +19,6 @@ import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Properties;
 
 import junit.framework.TestCase;
 
@@ -31,7 +30,6 @@ import org.intermine.pathquery.Constraint;
 import org.intermine.pathquery.PathNode;
 import org.intermine.pathquery.PathQuery;
 import org.intermine.pathquery.PathQueryBinding;
-import org.intermine.web.logic.ClassKeyHelper;
 
 /**
  * Tests for the PathQueryBinding class
@@ -166,7 +164,7 @@ public class PathQueryBindingTest extends TestCase
                                        "queryWithConstraint", "testmodel");
         readFromXml = new LinkedHashMap();
         readFromXml = PathQueryBinding.unmarshal(new InputStreamReader(new ByteArrayInputStream(xml.getBytes())), classKeys);
-        MainHelper.checkPathQueries(readFromXml, new HashMap());        
+        MainHelper.checkPathQueries(readFromXml, new HashMap());
         expectedQuery = new LinkedHashMap();
         expectedQuery.put("queryWithConstraint", expected.get("queryWithConstraint"));
 
