@@ -28,7 +28,6 @@ import org.intermine.metadata.Model;
 import org.intermine.objectstore.ObjectStoreException;
 import org.intermine.util.SAXParser;
 import org.intermine.xml.full.Item;
-import org.intermine.xml.full.ItemHelper;
 import org.xml.sax.Attributes;
 import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
@@ -76,8 +75,7 @@ public class ProteinStructureDataConverter extends BioFileConverter
                 throw new IllegalArgumentException("No data location specified, required"
                                   + "for finding .atm structure files (was: " + dataLocation + ")");
             }
-            ProteinStructureHandler handler =
-                new ProteinStructureHandler (getItemWriter(), proteinMap, featureMap);
+            ProteinStructureHandler handler = new ProteinStructureHandler();
             try {
                 SAXParser.parse(new InputSource(reader), handler);
             } catch (Exception e) {
@@ -138,24 +136,15 @@ public class ProteinStructureDataConverter extends BioFileConverter
         private Item proteinFeature;
         private String attName = null;
         private StringBuffer attValue = null;
-        private ItemWriter writer;
         private boolean alignmentFile = false;
         private Stack stack = new Stack();
-        private Map<String, Item> featureMap;
-        private Map<String, String> proteinMap;
         private String protId, strId, pfamId;
 
         /**
          * Constructor
-         *
-         * @param writer the ItemWriter used to handle the resultant items
-         * @param proteinMap the Map of proteins
-         * @param featureMap the Map of features
          */
-        public ProteinStructureHandler (ItemWriter writer, Map proteinMap, Map featureMap) {
-            this.writer = writer;
-            this.proteinMap = proteinMap;
-            this.featureMap = featureMap;
+        public ProteinStructureHandler () {
+            // nothing to do
         }
 
         /**
@@ -241,7 +230,7 @@ public class ProteinStructureDataConverter extends BioFileConverter
                 } else if (qName.equals("protein_structure")) {
                     proteinStructure.setAttribute("technique", "Computer prediction");
                     proteinStructure.setAttribute("identifier", protId + "_" + pfamId);
-                    writer.store(ItemHelper.convert(proteinStructure));
+                    store(proteinStructure);
                     protId = null;
                     pfamId = null;
                 }
@@ -257,7 +246,7 @@ public class ProteinStructureDataConverter extends BioFileConverter
                 protein.setAttribute("primaryAccession", identifier);
                 proteinMap.put(identifier, protein.getIdentifier());
                 try {
-                    writer.store(ItemHelper.convert(protein));
+                    store(protein);
                 } catch (ObjectStoreException e) {
                     throw new RuntimeException("error while storing: " + proteinItemIdentifier, e);
                 }
@@ -280,8 +269,7 @@ public class ProteinStructureDataConverter extends BioFileConverter
         /**
          * {@inheritDoc}
          */
-        public void characters(char[] ch, int start, int length) throws SAXException
-        {
+        public void characters(char[] ch, int start, int length) {
             int st = start;
             int l = length;
             if (attName != null) {

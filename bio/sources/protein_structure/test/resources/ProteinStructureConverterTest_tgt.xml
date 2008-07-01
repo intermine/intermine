@@ -10,6 +10,7 @@
 <attribute name="technique" value="Computer prediction"/>
 <reference name="proteinDomain" ref_id="4_1"/>
 <collection name="proteins"><reference ref_id="3_1"/></collection>
+<collection name="dataSets"><reference ref_id="1_1"/></collection>
 </item>
 <item id="4_1" class="http://www.flymine.org/model/genomic#ProteinDomain">
 <attribute name="primaryIdentifier" value="PF00089"/>
@@ -17,6 +18,7 @@
 </item>
 <item id="3_1" class="http://www.flymine.org/model/genomic#Protein">
 <attribute name="primaryAccession" value="Q8IQ89"/>
+<collection name="dataSets"><reference ref_id="1_1"/></collection>
 </item>
 <item id="0_1" class="http://www.flymine.org/model/genomic#DataSource">
 <attribute name="name" value="Kenji Mizuguchi"/>
