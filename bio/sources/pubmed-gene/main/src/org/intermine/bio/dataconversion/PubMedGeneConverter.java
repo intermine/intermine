@@ -68,7 +68,7 @@ public class PubMedGeneConverter extends FileConverter
     private Map<Integer, String> publications = new HashMap<Integer, String>();
     private String datasetRefId;
     private String datasourceRefId;
-
+    protected IdResolverFactory resolverFactory;
     /**
      * @param writer item writer
      * @param model model
@@ -96,6 +96,7 @@ public class PubMedGeneConverter extends FileConverter
         dataset.setReference("dataSource", datasourceRefId);
         store(dataset);
         datasetRefId = dataset.getIdentifier();
+        resolverFactory = new FlyBaseIdResolverFactory();
     }
 
     /**
@@ -114,7 +115,8 @@ public class PubMedGeneConverter extends FileConverter
             ReferencesFileProcessor proc = new ReferencesFileProcessor(reader);
             infoReader = new FileReader(getInfoFile());
             GenesFileProcessor geneConverter = new GenesFileProcessor(infoReader, this,
-                                                                      datasetRefId);
+                                                                      datasetRefId,
+                                                                      resolverFactory);
             Iterator<PubMedReference> it = proc.getReferencesIterator();
             /* Uses ReferencesFileProcessor to obtain iterator over data in
              * references file. In each iteration data for one organism is

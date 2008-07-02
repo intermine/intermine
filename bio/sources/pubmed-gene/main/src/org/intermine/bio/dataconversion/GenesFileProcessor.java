@@ -58,15 +58,17 @@ public class GenesFileProcessor
      * @param fileReader file reader, this class is not responsible for closing fileReader
      * @param converter associated converter that is used for creating and saving items
      * @param datasetRefId reference to dataset object for the gene
+     * @param resolverFactory the FlyBase id resolver factory
      */
-    public GenesFileProcessor(Reader fileReader, DataConverter converter, String datasetRefId) {
+    public GenesFileProcessor(Reader fileReader, DataConverter converter, String datasetRefId,
+                              IdResolverFactory resolverFactory) {
         // converter is needed  for creating items method
         // all converters must used one central converter for creating items because
         // to be sure, that created items will have unique id
         this.converter = converter;
         this.datasetRefId = datasetRefId;
         initReader(fileReader);
-        resolver = new FlyBaseIdResolverFactory().getIdResolver(false);
+        resolver = resolverFactory.getIdResolver(false);
     }
 
     private void initReader(Reader fileReader) {
