@@ -99,8 +99,6 @@
     </action>
     <action path="/exportQuery" type="org.intermine.web.struts.ExportQueryAction">
     </action>
-    <action path="/loadTmpImg" type="org.intermine.web.struts.TempImageLoader">
-    </action>
     <action path="/tips" forward="tips.page">
     </action>
     <action path="/aspects" forward="aspects.page">
