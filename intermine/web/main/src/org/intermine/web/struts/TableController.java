@@ -89,13 +89,13 @@ public class TableController extends TilesAction
             LOG.error("PagedTable for " + request.getParameter("table") + " is null");
             return null;
         }
-        
-        PathQuery query = (PathQuery) pt.getWebTable().getPathQuery();
+
+        PathQuery query = pt.getWebTable().getPathQuery();
         if (query != null) {
             HashMap<String, String> sortOrderMap = setSortOrderMap(query);
             request.setAttribute("sortOrderMap", sortOrderMap);
         }
-        
+
         request.setAttribute("resultsTable", pt);
         if ((request.getAttribute("lookupResults") != null)) {
           //Do nothing
@@ -164,18 +164,18 @@ public class TableController extends TilesAction
                         Column otherColumn = columns.get(otherColumnIndex);
                         if (otherColumn.equals(column) || !otherColumn.isSelectable()) {
                             continue;
-                        } else {
-                            Path otherColumnPath = otherColumn.getPath();
-                            if (otherColumnPath != null) {
-                                Class otherColumnEndType =
-                                    otherColumnPath.getLastClassDescriptor().getType();
-                                if (otherColumnEndType != null) {
-                                    if (!columnEndType.equals(otherColumnEndType)) {
-                                        columnsToDisable.add("" + otherColumnIndex);
-                                    }
+                        }
+                        Path otherColumnPath = otherColumn.getPath();
+                        if (otherColumnPath != null) {
+                            Class otherColumnEndType =
+                                otherColumnPath.getLastClassDescriptor().getType();
+                            if (otherColumnEndType != null) {
+                                if (!columnEndType.equals(otherColumnEndType)) {
+                                    columnsToDisable.add("" + otherColumnIndex);
                                 }
                             }
                         }
+
                     }
                     columnsToDisableMap.put("" + columnIndex, columnsToDisable);
                 }

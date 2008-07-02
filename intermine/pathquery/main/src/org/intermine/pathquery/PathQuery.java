@@ -116,7 +116,7 @@ public class PathQuery
     public void setViewPaths(List<Path> view) {
         try {
             this.view = view;
-            updateSortOrder();
+            validateOrderBy();  // QueryBuilder can't have empty order by clause
             // sets subclasses nodes
             for (Path path : view) {
                 for (Map.Entry<String, String> entry
@@ -181,13 +181,7 @@ public class PathQuery
     @Deprecated public void addPathStringToView(String viewString) {
         try {
             view.add(PathQuery.makePath(model, this, viewString));
-            if (sortOrder.isEmpty()) {
-                Path p = getFirstPathFromView();
-                if (p != null) {
-                    OrderBy o = new OrderBy(p, "asc");
-                    sortOrder.add(o);
-                }
-            }
+            validateOrderBy();
         } catch (PathError e) {
             LOG.error("Path error", e);
             addProblem(e);
@@ -432,24 +426,29 @@ public class PathQuery
     /*****************************************************************************************/
 
 
-    // the querybuilder requires that the sort order have one field in it.  perhaps the QB could
-    // handle this more gracefully
-    private void updateSortOrder() {
+    /**
+     * If order by clause is empty, adds first path in the view.
+     * The querybuilder currently (stupidly) assumes there is at least one path in the order by
+     * list, so we need to check this.
+     */
+    public void validateOrderBy() {
         if (sortOrder.isEmpty()) {
             Path p = getFirstPathFromView();
             if (p != null) {
-                OrderBy o = new OrderBy(p);
-                sortOrder.add(o);
+                sortOrder.add(new OrderBy(p));
             }
         }
     }
 
     /**
-     * Sets the order by list of the query to the list of paths given.  Paths can be a single path
-     * or a comma delimited list of paths.  To append a path to the list instead use addOrderBy.
+     * Sets the order by list to the list of paths given.  Paths can be a single path or a comma
+     * delimited list of paths.  To append a path to the list instead use addOrderBy.
      * @param paths paths to create the order by list
      */
     public void setOrderBy(String paths) {
+        if (paths == null || paths.equals("")) {
+            return;
+        }
         setOrderBy(paths, Boolean.TRUE);
     }
 
@@ -460,11 +459,13 @@ public class PathQuery
      * @param sortAscending whether or not to sort all fields in ascending order
      */
     public void setOrderBy(String paths, Boolean sortAscending) {
+        if (paths == null || paths.equals("")) {
+            return;
+        }
         List<OrderBy> orderBy = new ArrayList<OrderBy>();
-        String direction = (sortAscending.booleanValue() ? "asc" : "desc");
         try {
             for (String path : paths.split(",")) {
-                orderBy.add(new OrderBy(makePath(model, this, path), direction));
+                orderBy.add(new OrderBy(makePath(model, this, path), sortAscending));
             }
         } catch (PathError e) {
             LOG.error("Path error", e);
@@ -480,6 +481,9 @@ public class PathQuery
      * @param paths paths to create the order by list
      */
     public void setOrderBy(List<String> paths) {
+        if (paths == null || paths.equals("")) {
+            return;
+        }
         setOrderBy(paths, Boolean.TRUE);
     }
 
@@ -490,11 +494,13 @@ public class PathQuery
      * @param sortAscending whether to sort all order by columns in ascending order
      */
     public void setOrderBy(List<String> paths, Boolean sortAscending) {
-
+        if (paths == null || paths.equals("")) {
+            return;
+        }
         List<OrderBy> orderBy = new ArrayList<OrderBy>();
         try {
             for (String path : paths) {
-                orderBy.add(new OrderBy(makePath(model, this, path)));
+                orderBy.add(new OrderBy(makePath(model, this, path), sortAscending));
             }
         } catch (PathError e) {
             LOG.error("Path error", e);
@@ -613,51 +619,6 @@ public class PathQuery
     }
 
     /**
-     * Set order by to a path
-     * @param sortOrderString the String version of the path - should not include any class
-     * constraints (ie. use "Departement.employee.name" not "Departement.employee[Contractor].name")
-     * @param direction asc or desc
-     */
-    public void setOrderBy(String sortOrderString, String direction) {
-        resetSortOrder();
-        addOrderBy(sortOrderString, direction);
-    }
-
-    /**
-     * Add a path to the sort order
-     * @param sortOrderString the String version of the path to add - should not include any class
-     * constraints (ie. use "Departement.employee.name" not "Departement.employee[Contractor].name")
-     * @param direction asc or desc
-     */
-    public void addOrderBy(String sortOrderString, String direction) {
-        try {
-            Path p = PathQuery.makePath(model, this, sortOrderString);
-            OrderBy o = new OrderBy(p, direction);
-            sortOrder.add(o);
-        } catch (PathError e) {
-            addProblem(e);
-        }
-    }
-
-
-    /**
-     * Clear the order by list and replace with first path on select list.
-     * Used by the querybuilder only, as the querybuilder only ever has one path in the order
-     * by clause.
-     */
-    public void resetSortOrder() {
-        try {
-            sortOrder.clear(); // there is only one sort column in the querybuilder
-            Path p = getFirstPathFromView();
-            if (p != null) {
-                sortOrder.add(new OrderBy(p, "asc"));
-            }
-        } catch (PathError e) {
-            addProblem(e);
-        }
-    }
-
-    /**
      * Remove a path from the sort order.  If on the order by list, replace with first item
      * on select list.  Used by the querybuilder only, as the querybuilder only ever has one
      * path in the order by clause.
@@ -668,8 +629,8 @@ public class PathQuery
         while (iter.hasNext()) {
             OrderBy sort = iter.next();
             if (sort.getField().toStringNoConstraints().equals(viewString)) {
-                // this is the field on the sort order, so clear and add first item on view list
-                resetSortOrder();
+                iter.remove();          // remove this path from the order by clause
+                validateOrderBy();      // QB requires that the order by clause not be empty
                 return;
             }
         }

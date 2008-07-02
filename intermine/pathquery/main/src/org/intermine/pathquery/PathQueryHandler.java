@@ -14,7 +14,6 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Iterator;
-import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -46,7 +45,6 @@ public class PathQueryHandler extends DefaultHandler
     private Model model = null;
     private List<String> viewStrings = new ArrayList<String>();
     private Map<String, String> pathStringDescriptions = new HashMap<String, String>();
-    private Map<String, String> sortOrder = new LinkedHashMap<String, String>();
 
     /**
      * Constructor
@@ -82,25 +80,27 @@ public class PathQueryHandler extends DefaultHandler
             }
 
             /*
-             * allow the following syntax:
-             *  Employee.name Employee.age
-             *  Employee.name asc Employee.age desc
-             *  Employee.name Employee.age desc
+             *  Currently you can't have more than one field in the sort order when you build
+             *  queries in the querybuilder.  However you can have several fields in the order by
+             *  clause when you use the PathQuery API.  therefore to be safe, we should allow for
+             *  the following cases:
+             *      Employee.name Employee.age
+             *      Employee.name asc Employee.age desc
+             *      Employee.name Employee.age desc
              */
             if (attrs.getValue("sortOrder") != null) {
                String[] s = (attrs.getValue("sortOrder")).split(" ");
                for (int i = 0; i < s.length; i++) {
                    String sortOrderString = s[i];
-                   String directionString = "asc";
+                   Boolean directionString = Boolean.TRUE;
                    if (s.length > i + 1) {
                        if (s[i + 1].equalsIgnoreCase("desc")) {
-                           directionString = "desc";
+                           directionString = Boolean.FALSE;
                            i++;
                        } else if (s[i + 1].equalsIgnoreCase("asc")) {
                            i++;
                        }
                    }
-                   sortOrder.put(sortOrderString, directionString);
                    query.addOrderBy(sortOrderString, directionString);
                }
             }
@@ -226,10 +226,8 @@ public class PathQueryHandler extends DefaultHandler
                 return;
             }
 
-            // validate sort order
-            if (query.getSortOrder().isEmpty()) {
-                query.resetSortOrder();
-            }
+            // XML might not have had an sort order, and we need at least one path in the order by
+            query.validateOrderBy();
 
             for (Map.Entry<String, String> entry: pathStringDescriptions.entrySet()) {
                 query.addPathStringDescription(entry.getKey(), entry.getValue());
