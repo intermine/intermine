@@ -28,6 +28,8 @@ import org.intermine.objectstore.ObjectStoreWriter;
 import org.intermine.objectstore.intermine.ObjectStoreWriterInterMineImpl;
 import org.intermine.objectstore.query.ConstraintOp;
 import org.intermine.path.Path;
+import org.intermine.pathquery.Constraint;
+import org.intermine.pathquery.PathQuery;
 import org.intermine.util.StringUtil;
 import org.intermine.util.TypeUtil;
 import org.intermine.web.logic.Constants;
@@ -37,8 +39,6 @@ import org.intermine.web.logic.bag.InterMineBag;
 import org.intermine.web.logic.config.WebConfig;
 import org.intermine.web.logic.pathqueryresult.PathQueryResultHelper;
 import org.intermine.web.logic.profile.Profile;
-import org.intermine.web.logic.query.Constraint;
-import org.intermine.web.logic.query.PathQuery;
 import org.intermine.web.logic.results.WebResults;
 import org.intermine.web.logic.widget.config.EnrichmentWidgetConfig;
 import org.intermine.web.logic.widget.config.GraphWidgetConfig;
@@ -134,7 +134,7 @@ public class WidgetsService extends WebService
         List<Path> view = PathQueryResultHelper.getDefaultView(className, model, webConfig,
             null, true);
 
-        pathQuery.setView(view);
+        pathQuery.setViewPaths(view);
         String label = null, id = null, code = pathQuery.getUnusedConstraintCode();
         StringBuffer sb = new StringBuffer();
         for (String ident : ids) {
