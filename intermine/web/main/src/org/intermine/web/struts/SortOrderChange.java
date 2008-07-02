@@ -49,7 +49,7 @@ public class SortOrderChange extends DispatchAction
         HttpSession session = request.getSession();
         PathQuery query = (PathQuery) session.getAttribute(Constants.QUERY);
 
-        query.resetSortOrder();
+        query.resetOrderBy();
 
         return new ForwardParameters(mapping.findForward("query"))
             .addAnchor("showing").forward();
@@ -74,11 +74,11 @@ public class SortOrderChange extends DispatchAction
         String direction = request.getParameter("direction");
         PathQuery query = (PathQuery) session.getAttribute(Constants.QUERY);
 
-        if (direction == null) {
-            direction = "asc";
+        Boolean sortAscending = Boolean.TRUE;
+        if (direction != null && direction.equals("desc")) {
+            sortAscending = Boolean.FALSE;
         }
-
-        query.setOrderBy(path, direction);
+        query.setOrderBy(path, sortAscending);
 
         return new ForwardParameters(mapping.findForward("query"))
             .addAnchor("showing").forward();

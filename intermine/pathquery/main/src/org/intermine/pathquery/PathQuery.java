@@ -636,6 +636,14 @@ public class PathQuery
         }
     }
 
+    /**
+     * Removes everything from the order by list and adds the first path in the view list
+     */
+    public void resetOrderBy() {
+        sortOrder.clear();
+        validateOrderBy();
+    }
+
 
     /*****************************************************************************/
 
