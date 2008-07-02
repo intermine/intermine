@@ -51,7 +51,7 @@ public class FlyBaseCDSFastaLoaderTask extends FlyBaseFeatureFastaLoaderTask
         } else {
             throw new RuntimeException("the InterMineObject passed to "
                                        + "FlyBaseCDSFastaLoaderTask.extraProcessing() is not a "
-                                       + "CDS");
+                                       + "CDS: " + interMineObject);
         }
 
         String cdsIdentifier = cds.getPrimaryIdentifier();
