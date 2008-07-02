@@ -52,6 +52,8 @@ my $START_DATE = UnixDate("now", "%O");
 my $LOG_FILENAME = "$ENV{HOME}/logs/$START_DATE.log";
 my $GBROWSE_CONF_DIR = '/gbrowse/etc/gbrowse.conf/';
 
+my $rel_date = `date +"(%d%b%Y)"`; #it appears with the release version
+
 sub die_with_log
 {
   my $message = shift;
@@ -135,7 +137,15 @@ sub create_properties_file
       if ($line =~ /$prop_name=(.*)(\d+)(.*)/) {
         if ($2 == $current_version) {
           $fixed{$prop_name} = 1;
-          $line = "$prop_name=$1$new_version$3\n";
+	  
+	  #$line = "$prop_name=$1$new_version$3\n";
+	  # changed to accomodate date..
+          if ($prop_name eq "project.releaseVersion")  {	  
+	      $line = "$prop_name=$1$new_version $rel_date $3\n"
+	  } else {
+	      $line = "$prop_name=$1$new_version$3\n";
+      }
+
           last;
         } else {
           die "line has wrong version ($1): $line\n";
