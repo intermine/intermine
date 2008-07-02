@@ -12,8 +12,12 @@ package org.intermine.web.logic.widget;
 
 import java.awt.BasicStroke;
 import java.awt.Font;
+import java.io.File;
+import java.io.FileInputStream;
 import java.lang.reflect.Constructor;
 import java.util.List;
+
+import net.sourceforge.iharder.Base64;
 
 import org.intermine.objectstore.ObjectStore;
 import org.intermine.util.TypeUtil;
@@ -288,11 +292,19 @@ public class GraphWidget extends Widget
      * Get the HTML that will display the graph and imagemap
      * @return the HTML as a String
      */
-    public String getHtml() {
-        StringBuffer sb = new StringBuffer("<img src=\"loadTmpImg.do?fileName=" + fileName
-                          + "\" width=\"" + ((GraphWidgetConfig) config).getWIDTH() + "\" height=\""
-                          + ((GraphWidgetConfig) config).getHEIGHT()
-                          + "\" usemap=\"#chart" + fileName + "\">");
+    public String getHtml() throws Exception{
+        File file = new File(System.getProperty("java.io.tmpdir"), fileName);
+        FileInputStream is = new FileInputStream(file);
+        // Create the byte array to hold the data
+        byte[] bytes = new byte[(int) file.length()];
+        String h;
+        is.read(bytes);
+        h = Base64.encodeBytes(bytes);
+        StringBuffer sb = new StringBuffer("<img src=\"data:image/png;base64," + h + "\" width=\""
+                                           + ((GraphWidgetConfig) config).getWIDTH()
+                                           + "\" height=\""
+                                           + ((GraphWidgetConfig) config).getHEIGHT()
+                                           + "\" usemap=\"#chart" + fileName + "\">");
         sb.append(imageMap);
         return sb.toString();
     }
