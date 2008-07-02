@@ -41,6 +41,16 @@ public class OrderBy
     }
 
     /**
+     * Construct a new instance
+     * @param field A field in the query
+     * @param sortAscending true = sort ascending, false = sort descending
+     */
+    public OrderBy(Path field, Boolean sortAscending) {
+        this.field = field;
+        direction = (sortAscending.booleanValue() ? "asc" : "desc");
+    }
+
+    /**
      * Returns which way this field will be sorted, ascending or descending
      * @return direction Either asc or desc
      */
