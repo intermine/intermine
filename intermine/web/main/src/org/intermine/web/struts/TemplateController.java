@@ -167,8 +167,6 @@ public class TemplateController extends TilesAction
         Map<String, String> classDesc = new HashMap<String, String>();
         Map<String, String> fieldDesc = new HashMap<String, String>();
 
-
-
         servletContext = session.getServletContext();
         Map classKeys = (Map) servletContext.getAttribute(Constants.CLASS_KEYS);
 
@@ -197,11 +195,15 @@ public class TemplateController extends TilesAction
             PathNode displayNode = displayTemplate.getNodes().get(node.getPathString());
 
             // for the autocompleter
-            Path path = new Path(os.getModel(), node.getPathString());
-            if (path.getEndFieldDescriptor() != null) {
-                fieldDesc.put(node.getPathString(), path.getEndFieldDescriptor().getName());
-                String[] tmp =  path.getLastClassDescriptor().getName().split("\\.");
-                classDesc.put(node.getPathString(), tmp[ tmp.length - 1]);
+            AutoCompleter ac = (AutoCompleter)
+            servletContext.getAttribute(Constants.AUTO_COMPLETER);
+            if (ac != null && ac.hasAutocompleter(node.getParentType(), node.getFieldName())) {
+                Path path = new Path(os.getModel(), node.getPathString());
+                if (path.getEndFieldDescriptor() != null) {
+                    fieldDesc.put(node.getPathString(), path.getEndFieldDescriptor().getName());
+                    String[] tmp =  path.getLastClassDescriptor().getName().split("\\.");
+                    classDesc.put(node.getPathString(), tmp[ tmp.length - 1]);
+                }
             }
 
             int j = 1;
