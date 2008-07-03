@@ -43,6 +43,8 @@ public class ModEncodeMetaDataProcessor extends ChadoProcessor
     private Map<Integer, String> protocolIdRefMap = new HashMap<Integer, String>();
     private Map<Integer, Integer> appliedProtocolIdMap = new HashMap<Integer, Integer>();
     private Map<Integer, String> appliedProtocolIdRefMap = new HashMap<Integer, String>();
+    private Map<Integer, Integer> dataAttributeIdMap = new HashMap<Integer, Integer>();
+    private Map<Integer, String> dataAttributeIdRefMap = new HashMap<Integer, String>();
 
     // for providers, the maps link the provider name with the identifiers...
     private Map<String, Integer> providerIdMap = new HashMap<String, Integer>();
@@ -156,6 +158,9 @@ public class ModEncodeMetaDataProcessor extends ChadoProcessor
         processAppliedProtocolTable(connection);
         LOG.info("ICI:  applied data");
         processAppliedData(connection);
+
+        LOG.info("ICI:  applied data attributes");
+        processAppliedDataAttributes(connection);
 
         LOG.info("ICI:  DAG");
         processDag(connection);
@@ -1110,27 +1115,6 @@ public class ModEncodeMetaDataProcessor extends ChadoProcessor
      * @return the SQL result set
      * @throws SQLException if a database problem occurs
      */
-    protected ResultSet getAppliedProtocolDataResultSet(Connection connection)
-    throws SQLException {
-        String query =
-            "SELECT apd.applied_protocol_id, apd.applied_protocol_data_id, apd.data_id,"
-            + " apd.direction, d.heading, d.name, d.value"
-            + " FROM applied_protocol_data apd, data d"
-            + " WHERE apd.data_id = d.data_id";
-
-        LOG.info("executing: " + query);
-        Statement stmt = connection.createStatement();
-        ResultSet res = stmt.executeQuery(query);
-        return res;
-    }
-
-    /**
-     * Return the rows needed for data from the applied_protocol_data table.
-     *
-     * @param connection the db connection
-     * @return the SQL result set
-     * @throws SQLException if a database problem occurs
-     */
     protected ResultSet getAppliedDataResultSet(Connection connection)
     throws SQLException {
         String query =
@@ -1146,7 +1130,7 @@ public class ModEncodeMetaDataProcessor extends ChadoProcessor
 
 
     /**
-     * to store applied protocols attributes
+     * to store applied data attributes
      * 
      *  NOT USED
      *
@@ -1154,6 +1138,106 @@ public class ModEncodeMetaDataProcessor extends ChadoProcessor
      * @throws SQLException
      * @throws ObjectStoreException
      */
+    private void processAppliedDataAttributes(Connection connection)
+    throws SQLException, ObjectStoreException {
+        ResultSet res = getAppliedDataAttributesResultSet(connection);
+        int count = 0;
+        while (res.next()) {
+            Integer dataId = new Integer(res.getInt("data_id"));
+            String name  = res.getString("heading");
+            String value = res.getString("value");
+            String type  = res.getString("name");
+            Item dataAttribute = getChadoDBConverter().createItem("SubmissionDataAttribute");
+                        
+            if (name != null && !name.equals("")) {
+                dataAttribute.setAttribute("name", name);
+            }
+            if (!StringUtils.isEmpty(value)) {
+                dataAttribute.setAttribute("value", value);
+            }
+            if (!StringUtils.isEmpty(type)) {
+                dataAttribute.setAttribute("type", type);
+            }
+ 
+            // setting references to dataSubmission
+            dataAttribute.setReference("submissionData", appliedDataMap.get(dataId).itemIdentifier);
+
+            // store it and add to object and maps
+            Integer intermineObjectId = getChadoDBConverter().store(dataAttribute);
+
+            
+//            dataAttributeIdMap .put(dataId, intermineObjectId);
+//            dataAttributeIdRefMap .put(dataId, dataAttribute.getIdentifier());
+
+//            AppliedData aData = new AppliedData();
+//            aData.intermineObjectId = intermineObjectId;
+//            aData.itemIdentifier = submissionData.getIdentifier();
+//            appliedDataMap.put(dataId, aData);
+            
+            count++;
+        }
+        LOG.info("created " + count + " data attributes");
+        res.close();
+    }
+
+    /**
+     * Query to get the attributes for data linked to applied protocols
+     * (see previous get method).
+     * This is a protected method so that it can be overridden for testing.
+     *
+     *  NOT USED
+     *
+     * @param connection the db connection
+     * @return the SQL result set
+     * @throws SQLException if a database problem occurs
+     */
+    protected ResultSet getAppliedDataAttributesResultSet(Connection connection)
+    throws SQLException {
+        String query =
+            "select da.data_id, a.heading, a.value, a.name "
+            + " from data_attribute da, attribute a"
+            + " where da.attribute_id = a.attribute_id";
+
+        LOG.info("executing: " + query);
+        Statement stmt = connection.createStatement();
+        ResultSet res = stmt.executeQuery(query);
+        return res;
+    }
+
+    
+    /*
+     * to store references between submissionData and its attributes
+     * (1 to many)
+     */
+    private void setDataAttributeRefs(Connection connection)
+    throws ObjectStoreException {
+        Iterator<Integer> dataId = dataAttributeIdMap.keySet().iterator();
+        while (dataId.hasNext()) {
+            Integer thisExperimentId = dataId.next();
+            List<Integer> dataIds = experimentDataMap.get(thisExperimentId);
+            Iterator<Integer> dat = dataIds.iterator();
+            while (dat.hasNext()) {
+                Integer currentId = dat.next();
+                if (appliedDataMap.get(currentId).intermineObjectId == null) {
+                    continue;
+                }
+
+                Reference reference = new Reference();
+                reference.setName("experimentSubmission");
+                reference.setRefId(experimentMap.get(thisExperimentId).itemIdentifier);
+
+                LOG.info("DEBUG: expRefs " + currentId + "|" 
+                        + appliedDataMap.get(currentId).intermineObjectId);
+
+                getChadoDBConverter().store(reference,
+                        appliedDataMap.get(currentId).intermineObjectId);
+            }
+        }
+    }
+
+    
+    /* -------copia---------------*/
+    
     private void processAppliedProtocolDataAttributes(Connection connection)
     throws SQLException, ObjectStoreException {
         ResultSet res = getAppliedProtocolDataAttributesResultSet(connection);
@@ -1201,6 +1285,35 @@ public class ModEncodeMetaDataProcessor extends ChadoProcessor
     }
 
     /**
+     * Return the rows needed for data from the applied_protocol_data table.
+     *
+     * NOT USED
+     *
+     * @param connection the db connection
+     * @return the SQL result set
+     * @throws SQLException if a database problem occurs
+     */
+    protected ResultSet getAppliedProtocolDataResultSet(Connection connection)
+    throws SQLException {
+        String query =
+            "SELECT apd.applied_protocol_id, apd.applied_protocol_data_id, apd.data_id,"
+            + " apd.direction, d.heading, d.name, d.value"
+            + " FROM applied_protocol_data apd, data d"
+            + " WHERE apd.data_id = d.data_id";
+
+        LOG.info("executing: " + query);
+        Statement stmt = connection.createStatement();
+        ResultSet res = stmt.executeQuery(query);
+        return res;
+    }
+  
+    
+    /**
+     * 
+     * ================
+     *    REFERENCES
+     * ================
+     * 
      * to store references between experiment and submissionData
      * (1 to many)
      */
@@ -1413,10 +1526,12 @@ public class ModEncodeMetaDataProcessor extends ChadoProcessor
 
 
 
+
+
     /**
      * maps from chado field names to ours.
      * 
-     * TODO: check if up to datte
+     * TODO: check if up to date
      * 
      * if a field is not needed it is marked with NOT_TO_BE_LOADED
      * a check is performed and fields unaccounted for are logged.
@@ -1457,12 +1572,12 @@ public class ModEncodeMetaDataProcessor extends ChadoProcessor
         FIELD_NAME_MAP.put("genome version", "genomeVersion");
         FIELD_NAME_MAP.put("median value", "medianValue");
         // data: result values
-        FIELD_NAME_MAP.put("transcript ID", "transcriptId");
+        //FIELD_NAME_MAP.put("transcript ID", "transcriptId");
         //FIELD_NAME_MAP.put("inner primer", "innerPrimer");
         FIELD_NAME_MAP.put("outer primer", "outerPrimer");
         FIELD_NAME_MAP.put("TraceArchive ID", "traceArchiveId");
-        FIELD_NAME_MAP.put("genbank ID", "genBankId");
-        FIELD_NAME_MAP.put("EST acc", "estAcc");
+        //FIELD_NAME_MAP.put("genbank ID", "genBankId");
+        //FIELD_NAME_MAP.put("EST acc", "estAcc");
         // data: source attributes
         FIELD_NAME_MAP.put("Source Name", "source");
         FIELD_NAME_MAP.put("RNA ID", "RNAId");
@@ -1492,7 +1607,7 @@ public class ModEncodeMetaDataProcessor extends ChadoProcessor
         FIELD_NAME_MAP.put("references", NOT_TO_BE_LOADED);
     }
 
-    static {
+    static { // to remove, now provider is all static
         PROVIDER_FIELD_NAME_MAP.put("Person Affiliation", "affiliation");
         PROVIDER_FIELD_NAME_MAP.put("Person Last Name", NOT_TO_BE_LOADED);
         PROVIDER_FIELD_NAME_MAP.put("Experiment Description", NOT_TO_BE_LOADED);

@@ -116,6 +116,9 @@
     <attribute name="direction" type="java.lang.String" />
 		<attribute name="type" type="java.lang.String" />
 		<attribute name="value" type="java.lang.String" />
+    <collection name="dataAttributes"
+      referenced-type="org.flymine.model.genomic.SubmissionDataAttribute"
+      reverse-reference="submissionData" />
 		<reference name="feature"
 			referenced-type="org.flymine.model.genomic.LocatedSequenceFeature" />
 		<collection name="nextAppliedProtocols"
@@ -132,6 +135,18 @@
     <collection name="relatedOutputs"
       referenced-type="org.flymine.model.genomic.SubmissionData"/>
 	</class>
+
+
+  <class name="org.flymine.model.genomic.SubmissionDataAttribute"
+    is-interface="true">
+    <attribute name="name" type="java.lang.String" />
+    <attribute name="value" type="java.lang.String" />
+    <attribute name="type" type="java.lang.String" />
+    <reference name="submissionData"
+      referenced-type="org.flymine.model.genomic.SubmissionData"
+      reverse-reference="dataAttributes" />
+</class>
+
 
 </classes>
 
