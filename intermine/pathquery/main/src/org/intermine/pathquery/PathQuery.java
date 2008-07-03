@@ -582,6 +582,24 @@ public class PathQuery
     }
 
     /**
+     * Add a path to the sort order
+     * @param sortOrderString the String version of the path to add - should not include any class
+     * constraints (ie. use "Departement.employee.name" not "Departement.employee[Contractor].name")
+     * @param direction asc or desc
+     */
+    @Deprecated public void addPathStringToSortOrder(String sortOrderString, String direction) {
+        try {
+            sortOrder.clear(); // there can only be one sort column
+            Path p = PathQuery.makePath(model, this, sortOrderString);
+            OrderBy o = new OrderBy(p, direction);
+            sortOrder.add(o);
+        } catch (PathError e) {
+            addProblem(e);
+        }
+    }
+
+
+    /**
      * Gets the sort order
      * @return a List of paths
      */
