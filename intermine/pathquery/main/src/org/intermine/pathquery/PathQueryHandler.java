@@ -35,7 +35,6 @@ import org.xml.sax.helpers.DefaultHandler;
  */
 public class PathQueryHandler extends DefaultHandler
 {
-    //private static final Logger LOG = Logger.getLogger(PathQueryHandler.class);
     Map<String, List<FieldDescriptor>> classKeys;
     private Map<String, PathQuery> queries;
     private String queryName;
@@ -44,6 +43,8 @@ public class PathQueryHandler extends DefaultHandler
     protected PathQuery query;
     private Model model = null;
     private List<String> viewStrings = new ArrayList<String>();
+    private String sortOrderString = "";
+    private String directionString = ""; // will be asc or desc
     private Map<String, String> pathStringDescriptions = new HashMap<String, String>();
 
     /**
@@ -51,7 +52,7 @@ public class PathQueryHandler extends DefaultHandler
      * @param queries Map from query name to PathQuery
      * @param classKeys class keys
      */
-    public PathQueryHandler(Map<String, PathQuery> queries,
+    public PathQueryHandler(Map<String, PathQuery> queries, 
             Map<String, List<FieldDescriptor>> classKeys) {
         this.classKeys = classKeys;
         this.queries = queries;
@@ -60,10 +61,7 @@ public class PathQueryHandler extends DefaultHandler
     /**
      * {@inheritDoc}
      */
-    public void startElement(@SuppressWarnings("unused") String uri,
-                             @SuppressWarnings("unused") String localName,
-                             String qName,
-                             Attributes attrs)
+    public void startElement(String uri, String localName, String qName, Attributes attrs)
     throws SAXException {
         if (qName.equals("query")) {
             // reset things
@@ -77,31 +75,15 @@ public class PathQueryHandler extends DefaultHandler
             query = new PathQuery(model);
             if (attrs.getValue("view") != null) {
                 viewStrings = StringUtil.tokenize(attrs.getValue("view"));
-            }
 
-            /*
-             *  Currently you can't have more than one field in the sort order when you build
-             *  queries in the querybuilder.  However you can have several fields in the order by
-             *  clause when you use the PathQuery API.  therefore to be safe, we should allow for
-             *  the following cases:
-             *      Employee.name Employee.age
-             *      Employee.name asc Employee.age desc
-             *      Employee.name Employee.age desc
-             */
+            }
             if (attrs.getValue("sortOrder") != null) {
                String[] s = (attrs.getValue("sortOrder")).split(" ");
-               for (int i = 0; i < s.length; i++) {
-                   String sortOrderString = s[i];
-                   Boolean directionString = Boolean.TRUE;
-                   if (s.length > i + 1) {
-                       if (s[i + 1].equalsIgnoreCase("desc")) {
-                           directionString = Boolean.FALSE;
-                           i++;
-                       } else if (s[i + 1].equalsIgnoreCase("asc")) {
-                           i++;
-                       }
-                   }
-                   query.addOrderBy(sortOrderString, directionString);
+               sortOrderString = s[0];
+               if ((s.length > 1) && (s[1].equalsIgnoreCase("desc"))) {
+                   directionString = "desc";
+               } else {
+                   directionString = "asc";
                }
             }
             if (attrs.getValue("constraintLogic") != null) {
@@ -136,7 +118,7 @@ public class PathQueryHandler extends DefaultHandler
                     } else {
                         Exception e = new Exception("Invalid bag constraint - only objects can be"
                                 + "constrained to be in bags.");
-                        // such complicated because list created by Arrays.asList doesn't
+                        // such complicated because list created by Arrays.asList doesn't 
                         // support add method
                         List<Throwable> problems = new ArrayList<Throwable>(Arrays.asList(
                                 query.getProblems()));
@@ -190,7 +172,7 @@ public class PathQueryHandler extends DefaultHandler
             pathStringDescriptions.put(pathString, description);
         }
     }
-
+    
     // copyed from ClassKeyHelper, so this class is independent at it and can be part of client
     private static boolean isKeyField(Map<String, List<FieldDescriptor>> classKeys, String clsName,
             String fieldName) {
@@ -213,9 +195,7 @@ public class PathQueryHandler extends DefaultHandler
     /**
      * {@inheritDoc}
      */
-    public void endElement(@SuppressWarnings("unused") String uri,
-                           @SuppressWarnings("unused") String localName,
-                           String qName) {
+    public void endElement(String uri, String localName, String qName) {
         if (qName.equals("query")) {
             query.syncLogicExpression("and"); // always and for old queries
             for (String viewElement: viewStrings) {
@@ -225,15 +205,16 @@ public class PathQueryHandler extends DefaultHandler
                 // query has no valid view paths, which we can't handle at the moment
                 return;
             }
-
-            // XML might not have had an sort order, and we need at least one path in the order by
-            query.validateOrderBy();
+            if (sortOrderString.length() > 0 && directionString.length() > 0) {
+                query.addPathStringToSortOrder(sortOrderString, directionString);
+            }
 
             for (Map.Entry<String, String> entry: pathStringDescriptions.entrySet()) {
                 query.addPathStringDescription(entry.getKey(), entry.getValue());
             }
             queries.put(queryName, query);
             viewStrings = new ArrayList<String>();
+
             pathStringDescriptions = new HashMap<String, String>();
         }
     }
@@ -271,7 +252,8 @@ public class PathQueryHandler extends DefaultHandler
                 }
                 i++;
             }
+        } else {
+            return validatedName;
         }
-        return validatedName;
     }
 }

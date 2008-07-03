@@ -394,7 +394,6 @@ public class StringUtil
      */
     public static String prettyList(Collection<String> elements) {
         return StringUtil.prettyList(elements, false);
-
     }
 
     /**
