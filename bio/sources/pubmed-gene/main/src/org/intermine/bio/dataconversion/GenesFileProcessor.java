@@ -50,7 +50,7 @@ public class GenesFileProcessor
     private Set<Integer> alreadyProcessedGenes = new  HashSet<Integer>();
     private Set<String> genesToRemove = new TreeSet<String>();
     private IdResolver resolver;
-    private static Logger logger = Logger.getLogger(GenesFileProcessor.class);
+    private static final Logger LOG = Logger.getLogger(GenesFileProcessor.class);
     private String datasetRefId;
 
     /**
@@ -94,8 +94,8 @@ public class GenesFileProcessor
             }
             String[] parts = line.split("\\t");
             if (parts.length < 6) {
-                throw new GenesProcessorException("Invalid " + lineCounter
-                        + " line. There isn't enough items at the line.");
+                throw new GenesProcessorException("Invalid line - line " + lineCounter
+                        + ". There are " + parts.length + " bits but there should be more than 6");
             }
             Integer organismId, ncbiGeneId;
             try {
@@ -106,12 +106,14 @@ public class GenesFileProcessor
             }
             checkFileIsSorted(organismId);
             //String identifier = parts[3].trim();
-            String dbId = parts[5].trim();
+            String pubMedId = parts[5].trim();
             if (orgToProcessId.intValue() == organismId.intValue()) {
-                processGeneInfo(ncbiGeneId, organismId, dbId, geneToPub.get(ncbiGeneId),
+                LOG.error(" ~~~ processing org " + organismId);
+                processGeneInfo(ncbiGeneId, organismId, pubMedId, geneToPub.get(ncbiGeneId),
                                 orgToProcess);
                 geneToPub.remove(ncbiGeneId);
             } else if (organismId.intValue() > orgToProcessId.intValue()) {
+                LOG.error(" ~~~ done processing org " + organismId);
                 lastLine = line;
                 storeGenes();
                 checkGenesProcessed(geneToPub);
@@ -200,9 +202,12 @@ public class GenesFileProcessor
             for (String writerPubId : publications) {
                 gene.addToCollection("publications", writerPubId);
             }
-            primIdentifier = resolvePrimIdentifier(organismId.toString(), primIdentifier);
+            if (isDrosophilaMelanogaster(organismId.toString()) && resolver != null) {
+                LOG.error("processing dmel");
+                primIdentifier = resolvePrimIdentifier(organismId.toString(), primIdentifier);
+            }
             if (primIdentifier == null) {
-                logger.warn("RESOLVER: failed to resolve gene to one identifier, ignoring gene: "
+                LOG.warn("RESOLVER: failed to resolve gene to one identifier, ignoring gene: "
                         + primIdentifier + ". Number of matched ids: "
                         + resolver.countResolutions(organismId.toString(), primIdentifier));
                 return;
@@ -223,27 +228,21 @@ public class GenesFileProcessor
     }
 
     private String resolvePrimIdentifier(String taxonId, String primIdentifier) {
-        String ret = null;
-        if (isDrosophilaMelanogaster(taxonId) && resolver != null) {
-            int resCount = resolver.countResolutions(taxonId, primIdentifier);
-            if (resCount != 1) {
-                return null;
-            }
-            ret = resolver.resolveId(taxonId, primIdentifier).iterator().next();
-        } else {
-            ret = primIdentifier;
+        int resCount = resolver.countResolutions(taxonId, primIdentifier);
+        if (resCount != 1) {
+            return null;
         }
-        return ret;
+        return resolver.resolveId(taxonId, primIdentifier).iterator().next();
     }
 
     private boolean isDrosophilaMelanogaster(String taxonId) {
         return taxonId.equals("7227");
     }
 
-    private Item createGene(Integer ncbiGeneId, String dbId, Item organism) {
+    private Item createGene(Integer ncbiGeneId, String primaryIdentifier, Item organism) {
         Item gene = createItem("Gene");
         gene.setAttribute("ncbiGeneNumber", ncbiGeneId.toString());
-        gene.setAttribute("primaryIdentifier", dbId);
+        gene.setAttribute("primaryIdentifier", primaryIdentifier);
         gene.setReference("organism", organism);
         gene.setCollection("dataSets", new ArrayList(Collections.singleton(datasetRefId)));
         return gene;

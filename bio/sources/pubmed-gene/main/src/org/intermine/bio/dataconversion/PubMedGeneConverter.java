@@ -107,8 +107,7 @@ public class PubMedGeneConverter extends FileConverter
      */
     public void process(Reader reader) throws Exception {
         if (getInfoFile() == null) {
-            throw new RuntimeException("PubMedGeneConverter: Property "
-                + "infoFile is not set.");
+            throw new RuntimeException("PubMedGeneConverter: Property infoFile is not set.");
         }
         Reader infoReader = null;
         try {
