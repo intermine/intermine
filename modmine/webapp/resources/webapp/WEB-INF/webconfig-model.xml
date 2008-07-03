@@ -55,6 +55,14 @@
     </fields>
   </class>
 
+  <class className="org.flymine.model.genomic.SubmissionDataAttribute">
+    <fields>
+      <fieldconfig fieldExpr="name"/>
+      <fieldconfig fieldExpr="value"/>      
+      <fieldconfig fieldExpr="type"/>
+    </fields>
+  </class>
+
   <class className="org.flymine.model.genomic.Analysis">
     <fields>
       <fieldconfig fieldExpr="publication.title"/>
