@@ -13,6 +13,7 @@ package org.intermine.bio.dataconversion;
 import java.io.File;
 import java.io.FileReader;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -42,9 +43,14 @@ public class PubMedGeneConverterTest extends ItemsTestCase
     }
 
     public void setUp() throws Exception {
-        super.setUp();
         itemWriter = new MockItemWriter(new HashMap());
         converter = new PubMedGeneConverter(itemWriter, model);
+        MockIdResolverFactory resolverFactory = new MockIdResolverFactory("Gene");
+        resolverFactory.addResolverEntry("7227", "FBgn003", Collections.singleton("1234"));
+        resolverFactory.addResolverEntry("7227", "FBgn002", Collections.singleton("2222"));
+        resolverFactory.addResolverEntry("7227", "FBgn001", Collections.singleton("1111"));
+        converter.resolverFactory = resolverFactory;
+        super.setUp();
     }
 
     /**
@@ -54,8 +60,8 @@ public class PubMedGeneConverterTest extends ItemsTestCase
     public void testSimpleFiles() throws Exception {
         process("gene2pubmed", "gene_info");
 
-        // 2 organisms, 5 genes, 8 publications
-        assertEquals(17, itemWriter.getItems().size());
+        // 3 organisms, 8 genes, 8 publications, 1 dataset
+        assertEquals(21, itemWriter.getItems().size());
         // uncomment to write out a new target items file
         // Set<org.intermine.xml.full.Item> expected = readItemSet("PubMedGeneConverterTest_tgt.xml");
         checkGene("4126706", "WBGene308375", "34", new String[]{"16689796", "17573816", "17581122", "17590236"}, new String[]{DATASET});
@@ -63,6 +69,9 @@ public class PubMedGeneConverterTest extends ItemsTestCase
         checkGene("171594", "WBGene00021677", "6239", new String[]{"2"}, new String[]{DATASET});
         checkGene("171595", "WBGene00021678", "6239", new String[]{"3"}, new String[]{DATASET});
         checkGene("171597", "WBGene00021679", "6239", new String[]{"4"}, new String[]{DATASET});
+        checkGene("1234", "FBgn003", "7227", new String[]{"4"}, new String[]{DATASET});
+        checkGene("2222", "FBgn002", "7227", new String[]{"2", "3"}, new String[]{DATASET});
+        checkGene("1111", "FBgn001", "7227", new String[]{"1"}, new String[]{DATASET});
     }
 
     /**
@@ -74,7 +83,6 @@ public class PubMedGeneConverterTest extends ItemsTestCase
         checkGene("171593", "WbGene00022279", "6239", new String[]{"1"}, new String[]{DATASET});
         checkGene("171594", "WbGene00021677", "6239", new String[]{"2"}, new String[]{DATASET});
     }
-
 
     /**
      * Test case when there is gene in gene information file without
@@ -95,7 +103,7 @@ public class PubMedGeneConverterTest extends ItemsTestCase
      */
     public void  testInvalidIdsRemoved() throws Exception {
         process("gene2pubmed", "gene_infoInvalidIdsRemoved");
-        assertEquals(4, getGenes().size());
+        assertEquals(7, getGenes().size());
     }
 
     /**
@@ -162,20 +170,20 @@ public class PubMedGeneConverterTest extends ItemsTestCase
 
     private void process(String referencesFile, String infoFile) throws Exception {
         File gene2pubmed = new File(getClass().getClassLoader().getResource(
-                referencesFile).toURI());
+                                                                referencesFile).toURI());
         File geneInfo = new File(getClass().getClassLoader().getResource(infoFile).toURI());
         converter.setInfoFile(geneInfo);
         converter.setCurrentFile(gene2pubmed);
         Set<Integer> orgs = new HashSet<Integer>();
         orgs.add(34);
         orgs.add(6239);
+        orgs.add(7227);
         converter.setOrganismsToProcess(orgs);
         converter.process(new FileReader(gene2pubmed));
         storedItems = itemWriter.getItems();
     }
 
-    private void checkGene(String ncbiId, String primId, String orgId,
-            String[] pubs, String[] datasets) {
+    private void checkGene(String ncbiId, String primId, String orgId, String[] pubs, String[] datasets) {
         Item gene = getGene(ncbiId);
         assertEquals(primId, gene.getAttribute("primaryIdentifier").getValue());
         Item org = getItem(gene.getReference("organism").getRefId());
