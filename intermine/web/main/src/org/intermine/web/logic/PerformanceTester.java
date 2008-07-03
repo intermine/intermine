@@ -47,6 +47,10 @@ public class PerformanceTester
 {
     public static final String SUPERUSER = "rachel@flymine.org";
 
+    /**
+     * @param args number of threads you want to run
+     * @throws Exception if something goes horribly wrong
+     */
     public static void main(String args[]) throws Exception {
         ObjectStore productionOs = ObjectStoreFactory.getObjectStore("os.production");
         ObjectStoreFactory.getObjectStore("os.userprofile-production");
