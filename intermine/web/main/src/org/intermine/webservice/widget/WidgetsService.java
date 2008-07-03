@@ -44,6 +44,7 @@ import org.intermine.web.logic.widget.config.EnrichmentWidgetConfig;
 import org.intermine.web.logic.widget.config.GraphWidgetConfig;
 import org.intermine.web.logic.widget.config.TableWidgetConfig;
 import org.intermine.web.logic.widget.config.WidgetConfig;
+import org.intermine.web.util.URLGenerator;
 import org.intermine.webservice.WebService;
 
 /**
@@ -85,7 +86,8 @@ public class WidgetsService extends WebService
             ((TableWidgetConfig) widgetConfig).setClassKeys((Map) servletContext
                             .getAttribute(Constants.CLASS_KEYS));
         }
-        response.getWriter().print(getHtml(widgetConfig, imBag, os));
+         response.getWriter().print(
+                        getHtml(widgetConfig, imBag, new URLGenerator(request).getBaseURL(), os));
     }
     
     /**
@@ -182,22 +184,22 @@ public class WidgetsService extends WebService
      * @return a String representing the generated HTML
      * @throws Exception an error has occured
      */
-    private String getHtml(WidgetConfig widgetConfig, InterMineBag bag, ObjectStore os)
+    private String getHtml(WidgetConfig widgetConfig, InterMineBag bag, String prefix, ObjectStore os)
                     throws Exception {
         StringBuffer sb = new StringBuffer();
         sb.append("<html><head>");
-        sb
-                        .append("<script type=\"text/javascript\" src=\"http://sauron.flymine.org:8080/flymine/dwr/interface/AjaxServices.js\"></script>");
-        sb
-                        .append("<script type=\"text/javascript\" src=\"http://sauron.flymine.org:8080/flymine/dwr/engine.js\"></script>");
-        sb
-                        .append("<script type=\"text/javascript\" src=\"http://sauron.flymine.org:8080/flymine/dwr/util.js\"></script>");
-        sb
-                        .append("<script type=\"text/javascript\" src=\"http://sauron.flymine.org:8080/flymine/js/widget.js\"></script>");
-        sb
-                        .append("<link rel=\"stylesheet\" type=\"text/css\" href=\"http://sauron.flymine.org:8080/flymine/css/widget.css\"/>");
-        sb.append("<script type=\"text/javascript\" src=\"http://sauron.flymine.org:8080/flymine/js/prototype.js\"></script>");
-        sb.append("<script type=\"text/javascript\" src=\"http://sauron.flymine.org:8080/flymine/js/scriptaculous.js\"></script>");
+        sb.append("<script type=\"text/javascript\" src=\"" + prefix
+                  + "/dwr/interface/AjaxServices.js\"></script>");
+        sb.append("<script type=\"text/javascript\" src=\"" + prefix
+                  + "/dwr/engine.js\"></script>");
+        sb.append("<script type=\"text/javascript\" src=\"" + prefix + "/dwr/util.js\"></script>");
+        sb.append("<script type=\"text/javascript\" src=\"" + prefix + "/js/widget.js\"></script>");
+        sb.append("<link rel=\"stylesheet\" type=\"text/css\" href=\"" + prefix
+                  + "/css/widget.css\"/>");
+        sb.append("<script type=\"text/javascript\" src=\"" + prefix
+                  + "/js/prototype.js\"></script>");
+        sb.append("<script type=\"text/javascript\" src=\"" + prefix
+                  + "/js/scriptaculous.js\"></script>");
         sb.append("</head><body>");
         sb.append("<form action=\"/widgetAction\" id=\"widgetaction"
                   + widgetConfig.getId() + "\">");
@@ -320,10 +322,9 @@ public class WidgetsService extends WebService
             sb.append("</table>");
         }
         sb.append("</div>");
-        sb
-                        .append("<div id=\"widgetdatawait"
-                                + widgetConfig.getId()
-                                + "\" class=\"widgetdatawait\"><img src=\"http://sauron.flymine.org:8080/flymine/images/wait30.gif\" title=\"Searching...\"/></div>");
+        sb.append("<div id=\"widgetdatawait" + widgetConfig.getId()
+                  + "\" class=\"widgetdatawait\"><img src=\"" + prefix
+                  + "/images/wait30.gif\" title=\"Searching...\"/></div>");
         sb
                         .append("<div id=\"widgetdatanoresults"
                                 + widgetConfig.getId()
