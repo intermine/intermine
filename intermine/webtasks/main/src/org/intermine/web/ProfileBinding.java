@@ -300,12 +300,7 @@ public class ProfileBinding
     public static Profile unmarshal(Reader reader, ProfileManager profileManager, String username,
             String password, Set tags, ServletContext servletContext, ObjectStoreWriter osw) {
         try {
-            IdUpgrader idUpgrader = new IdUpgrader() {
-                public Set getNewIds(InterMineObject oldObject, ObjectStore os) {
-                    throw new RuntimeException("Shouldn't call getNewIds() in a"
-                                               + " running webapp");
-                }
-            };
+            IdUpgrader idUpgrader = IdUpgrader.ERROR_UPGRADER;
             ProfileHandler profileHandler =
                 new ProfileHandler(profileManager, idUpgrader, username, password, tags,
                                    servletContext, osw, false);

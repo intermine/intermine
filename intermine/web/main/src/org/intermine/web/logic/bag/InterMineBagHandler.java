@@ -106,7 +106,8 @@ public class InterMineBagHandler extends DefaultHandler
                 elementsInOldBag++;
                 Integer id = new Integer(attrs.getValue("id"));
 
-                if (osw.getObjectById(id) == null && idToObjectMap.containsKey(id)) {
+                if (idUpgrader.doUpgrade() && idToObjectMap.containsKey(id)) {
+                //if (osw.getObjectById(id) == null && idToObjectMap.containsKey(id)) {
                     // the id isn't in the database and we have an Item representing the object from
                     // a previous database
                     InterMineObject oldObject = (InterMineObject) idToObjectMap.get(id);
@@ -117,7 +118,9 @@ public class InterMineBagHandler extends DefaultHandler
                         bagContents.add((Integer) newIdIter.next());
                     }
                 } else {
-                    bagContents.add(id);
+                	if (osw.getObjectById(id) != null) {
+                		bagContents.add(id);
+                	}
                 }
             }
         } catch (ObjectStoreException e) {
@@ -134,7 +137,7 @@ public class InterMineBagHandler extends DefaultHandler
         try {
             if (qName.equals("bag")) {
                 if (bag != null && !bagContents.isEmpty()) {
-                    osw.addAllToBag(bag.getOsb(), bagContents);
+                	osw.addAllToBag(bag.getOsb(), bagContents);
                     bags.put(bagName, bag);
                 }
                 LOG.debug("XML bag \"" + bagName + "\" contained " + elementsInOldBag
