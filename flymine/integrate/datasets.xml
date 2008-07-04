@@ -75,7 +75,7 @@
 
     <item id="60" class="" implements="http://www.flymine.org/model/genomic#DataSource">
         <attribute name="name" value="SGD"/>
-        <attribute name="description" value="Saccharomyces cerevisiae genome database"/>
+        <attribute name="description" value="Saccharomyces cerevisiae Genome Database"/>
         <attribute name="url" value="http://www.yeastgenome.org"/>
     </item>
 
@@ -94,6 +94,21 @@
         <attribute name="title" value="IntAct data set"/>
         <attribute name="url" value="http://www.ebi.ac.uk/intact"/>
         <reference name="dataSource" ref_id="80"/>
+    </item>
+
+
+    <item id="90" class="" implements="http://www.flymine.org/model/genomic#DataSource">
+        <attribute name="name" value="VectorBase"/>
+        <attribute name="description" value="Database for disease vectors"/>
+        <attribute name="url" value="http://www.vectorbase.org/">
+    </item>
+    <item id="91" class="" implements="http://www.flymine.org/model/genomic#DataSet">
+        <attribute name="title" value="VectorBase Anopheles"/>
+        <attribute name="description"
+            value="The VectorBase Anopheles gambiae genome annotation"/>
+        <attribute name="version" value="AgamP3"/>
+        <attribute name="url" value="http://www.ensembl.org/Anopheles_gambiae"/>
+        <reference name="dataSource" ref_id="90"/>
     </item>
 
 
@@ -143,7 +158,7 @@
         <attribute name="url" value="http://www.drosdel.org.uk/"/>
     </item>
     <item id="131" class="" implements="http://www.flymine.org/model/genomic#DataSet">
-        <attribute name="title" value="DrosDel data set"/>
+        <attribute name="title" value="DrosDel P-element and Deletion collection"/>
         <attribute name="description" value="DrosDel deletion data"/>
         <attribute name="version" value="FlyBase 5.1 mapping"/>
         <attribute name="url" value="http://www.drosdel.org.uk/"/>
@@ -281,7 +296,7 @@
         <attribute name="url" value="http://www.vectorbase.org/"/>
     </item>
     <item id="351" class="" implements="http://www.flymine.org/model/genomic#DataSet">
-        <attribute name="title" value="AnoEST clusters"/>
+        <attribute name="title" value="VectorBase AnoEST clusters"/>
         <attribute name="description" value="Annotated EST clusters for Anopheles gambiae"/>
         <attribute name="version" value="8"/>
         <attribute name="url" value="http://agambiae.vectorbase.org/SequenceData/EST"/>
@@ -416,7 +431,7 @@
     <item id="601" class="" implements="http://www.flymine.org/model/genomic#DataSet">
         <attribute name="title" value="FlyAtlas"/>
         <attribute name="description" value="Drosophila adult gene expression atlas"/>
-        <attribute name="url" value="http://www.flyatlas.org/"/>
+        <Attribute name="url" value="http://www.flyatlas.org/"/>
         <reference name="dataSource" ref_id="600"/>
     </item>
 
@@ -427,6 +442,7 @@
     </item>
     <item id="611" class="" implements="http://www.flymine.org/model/genomic#DataSet">
         <attribute name="title" value="BDGP in situ data set"/>
+        <attribute name="description" value="Patterns of gene expression in Drosophila embryogenesis by RNA in situ"/>
         <attribute name="url" value="http://www.fruitfly.org/cgi-bin/ex/insitu.pl"/>
         <reference name="dataSource" ref_id="610"/>
     </item>
@@ -443,7 +459,7 @@
         <attribute name="url" value="http://www.thebiogrid.org/"/>
     </item>
     <item id="631" class="" implements="http://www.flymine.org/model/genomic#DataSet">
-        <attribute name="title" value="BioGRID data set"/>
+        <attribute name="title" value="BioGRID genetic interaction data set"/>
         <attribute name="url" value="http://www.thebiogrid.org/downloads.php"/>
         <reference name="dataSource" ref_id="630"/>
     </item>
@@ -459,4 +475,19 @@
         <attribute name="url" value="ftp://ftp.ncbi.nlm.nih.gov/gene/DATA/"/>
         <reference name="dataSource" ref_id="640"/>
     </item>
+
+    <item id="650" class="" implements="http://www.flymine.org/model/genomic#DataSource">
+        <attribute name="name" value="DRSC"/>
+        <attribute name="description" value="Drosophila RNAi Screening Center"/>
+        <attribute name="url" value="http://flyrnai.org/"/>
+    </item>
+    <item id="651" class="" implements="http://www.flymine.org/model/genomic#DataSet">
+        <attribute name="title" value="DRSC data set"/>
+        <attribute name="description" value="RNAi screen results from the DRSC"/>
+        <attribute name="url" value="http://flyrnai.org/"/>
+        <reference name="dataSource" ref_id="650"/>
+    </item>
+
+
+
 </items>
