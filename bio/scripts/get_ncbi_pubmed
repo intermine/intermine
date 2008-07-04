@@ -72,5 +72,5 @@ if($updated == 1){
 	&write_version($ncbi_main_dir,$version_buffer);
 	system "chmod -R a+r,g+w $download_dir";
 }
-write_log($log_buffer,$logdir,$logname);
+&write_log($log_buffer,$logdir,$logname);
 
