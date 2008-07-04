@@ -1132,10 +1132,6 @@ public class ChadoSequenceProcessor extends ChadoProcessor
         if (fdat == null) {
             throw new RuntimeException("feature " + featureId + " not found in features Map");
         }
-        if (!fdat.interMineType.equals("Gene")) {
-            // only Gene has a publications collection - FIXME XXX
-            return;
-        }
         if (argPublicationIds.size() == 0) {
             return;
         }
