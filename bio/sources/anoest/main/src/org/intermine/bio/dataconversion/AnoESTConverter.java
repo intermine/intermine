@@ -10,6 +10,12 @@ package org.intermine.bio.dataconversion;
  *
  */
 
+import java.sql.Connection;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.sql.Statement;
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
@@ -19,11 +25,6 @@ import org.intermine.objectstore.ObjectStoreException;
 import org.intermine.sql.Database;
 import org.intermine.xml.full.Item;
 import org.intermine.xml.full.ItemHelper;
-
-import java.sql.Connection;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.sql.Statement;
 
 /**
  * DataConverter to read from AnoEST's MySQL database into items
@@ -77,10 +78,11 @@ public class AnoESTConverter extends BioDBConverter
 
             Item cluster = createItem("ESTCluster");
             cluster.setAttribute("primaryIdentifier", identifier);
-            Item dataSet = getDataSetItem(ANOPHELES_TAXON_ID);
+            //cluster.setCollection("dataSets",
+            //                  new ArrayList(Collections.singleton(dataSet.getIdentifier())));
             cluster.setAttribute("curated", "false");
             cluster.setReference("organism", getOrganismItem(ANOPHELES_TAXON_ID));
-            getItemWriter().store(ItemHelper.convert(cluster));
+            store(cluster);
 
             Item synonym =
                 createSynonym(cluster.getIdentifier(), "identifier", identifier, true, null);
