@@ -75,9 +75,9 @@ public class MirandaConverterTest extends ItemsTestCase
     
     public void testMirandaHandler() throws Exception {
         String gff =
-            "3R\tmiRanda\tmiRNA_target\t9403\t9424\t16.9418\t+\t.\ttarget=CG11023-RA;score=3.057390e-02;ID=dme-miR-312"
+            "3R\tmiRanda\tmiRNA_target\t9403\t9424\t16.9418\t+\t.\ttarget=CG11023-RA;pvalue=3.057390e-02;Name=dme-miR-312;ID=AAA;"
                      + ENDL
-                     + "3R\tmiRanda\tmiRNA_target\t9403\t9424\t17.7377\t+\t.\ttarget=CG11023-RA;score=1.179130e-02;ID=dme-miR-92b"
+                     + "3R\tmiRanda\tmiRNA_target\t9403\t9424\t17.7377\t+\t.\ttarget=CG11023-RA;pvalue=1.179130e-02;Name=dme-miR-92b;ID=BBB"
                      + ENDL;
         
         
@@ -104,10 +104,9 @@ public class MirandaConverterTest extends ItemsTestCase
         }
                 
         // uncomment to write a new tgt items file
-        writeItemsFile(allItems, "/tmp/miranda-tgt-items.xml");
+        // writeItemsFile(allItems, "/tmp/miranda-tgt-items.xml");
 
         Set expected = readItemSet("miranda-tgt-items.xml");
-       System.out.println(ItemsTestCase.compareItemSets(expected, allItems));
         assertEquals(expected, allItems);
     }
 
