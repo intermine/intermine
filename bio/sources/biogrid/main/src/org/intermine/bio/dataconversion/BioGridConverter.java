@@ -52,7 +52,7 @@ public class BioGridConverter extends BioFileConverter
      * @param model the Model
      */
     public BioGridConverter(ItemWriter writer, Model model) {
-        super(writer, model, "BioGRID", "BioGRID data set");
+        super(writer, model, "BioGRID", "BioGRID genetic interaction data set");
 
         // only construct factory here so can be replaced by mock factory in tests
         resolverFactory = new FlyBaseIdResolverFactory();

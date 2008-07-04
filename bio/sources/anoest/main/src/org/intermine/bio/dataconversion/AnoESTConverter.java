@@ -33,7 +33,7 @@ import org.intermine.xml.full.ItemHelper;
 public class AnoESTConverter extends BioDBConverter
 {
     private static final int ANOPHELES_TAXON_ID = 180454;
-    private static final String DATASET_TITLE = "AnoEST clusters";
+    private static final String DATASET_TITLE = "VectorBase AnoEST clusters";
     private static final String DATA_SOURCE_NAME = "VectorBase";
     private final Map<String, Item> clusters = new LinkedHashMap<String, Item>();
     private final Map<String, Item> ests = new LinkedHashMap<String, Item>();
