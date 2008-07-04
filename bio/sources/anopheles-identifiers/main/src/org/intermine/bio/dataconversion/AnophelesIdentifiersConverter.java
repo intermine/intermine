@@ -47,7 +47,7 @@ public class AnophelesIdentifiersConverter extends BioFileConverter
      */
     public AnophelesIdentifiersConverter(ItemWriter writer, Model model)
         throws ObjectStoreException {
-        super(writer, model, "VectorBase", "Anopheles genes");
+        super(writer, model, "VectorBase", "Anopheles genome annotation");
         organism = createItem("Organism");
         organism.setAttribute("taxonId", "180454");
         store(organism);
