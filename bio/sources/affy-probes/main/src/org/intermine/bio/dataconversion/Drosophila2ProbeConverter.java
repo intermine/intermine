@@ -158,6 +158,8 @@ public class Drosophila2ProbeConverter extends FileConverter
             } else {
                 bio.setAttribute("secondaryIdentifier", identifier);
             }
+            bio.setCollection("dataSets",
+                              new ArrayList(Collections.singleton(dataSet.getIdentifier())));
             bioMap.put(identifier, bio);
             store(bio);
         }
