@@ -420,10 +420,10 @@
     </source>
     <source name="miranda" type="miranda">
       <property name="gff3.seqClsName" value="Chromosome"/>
-      <property name="gff3.seqDataSourceName" value="miRanda"/>
-      <property name="gff3.dontCreateLocations" value="true"/>
+      <property name="gff3.taxonId" value="7227"/>
+      <property name="gff3.seqDataSourceName" value="Sanger"/>
       <property name="src.data.dir" location="/shared/data/miRNA/miRanda/current"/>
-      <property name="src.data.dir.includes" value="v5.gff.drosophila_melanogaster"/>
+      <property name="src.data.dir.includes" value="v5.gff.drosophila_melanogaster.gff"/>
     </source>
     <source name="entrez-organism" type="entrez-organism">
       <!-- this source finds the taxon ids in the objectstore, retrieves
