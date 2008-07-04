@@ -69,7 +69,8 @@ public class GoConverter extends FileConverter
     protected Set<String> productIds = new HashSet<String>();
     private Map<String, Set> goTermId2ParentTermIdSetsMap = null;
     private static final Logger LOG = Logger.getLogger(GoConverter.class);
-
+    protected IdResolverFactory resolverFactory;
+    
     // TODO: datasources Map to contains ids not items? - need the dataset later on
     // TODO: store product after each one finished? - 'with' field may be a problem
 
@@ -88,6 +89,10 @@ public class GoConverter extends FileConverter
         synonymTypes.put("Protein", "accession");
         synonymTypes.put("gene", "identifier");
         synonymTypes.put("Gene", "identifier");
+        
+        // only construct factory here so can be replaced by mock factory in tests
+        resolverFactory = new FlyBaseIdResolverFactory();
+        
         readConfig();
     }
 
@@ -256,10 +261,15 @@ public class GoConverter extends FileConverter
 
                 // temporary object while we are rattling through the file
                 // needed because we may have extra publications
-                PlaceHolder newPlaceHolder = new PlaceHolder(
-                        qualifier, newDatasource, newPublicationId, newGoEvidenceColl,
-                        newProductWrapper, newGoTerm, array[7], newOrganism);
-                holderMap.put(key, newPlaceHolder);
+                
+                // check for null productWrapper - where idResolver could not find a current id
+                if (newProductWrapper != null) {
+                    PlaceHolder newPlaceHolder = 
+                        new PlaceHolder(qualifier, newDatasource, newPublicationId, 
+                                        newGoEvidenceColl, newProductWrapper, newGoTerm,
+                                        array[7], newOrganism);
+                    holderMap.put(key, newPlaceHolder);
+                }
 
             } else {
                 // we have already seen this product/go term pair so add extra pubs/evidence
@@ -546,8 +556,10 @@ public class GoConverter extends FileConverter
                             productWrapper = newProduct(value, wt.clsName,
                                                         organism, dataSource, true, null);
                         }
-                        Item withProduct = productWrapper.getItem();
-                        withProductList.add(withProduct);
+                        if (productWrapper != null) {
+                            Item withProduct = productWrapper.getItem();
+                            withProductList.add(withProduct);
+                        }
                     } else {
                         LOG.debug("createWithObjects skipping a withType prefix:" + prefix);
                     }
@@ -568,7 +580,7 @@ public class GoConverter extends FileConverter
      * @param organism the organism of the product, may be null if a protein
      * @param dataSource the id of the datasource the product is from.
      * @param createOrganism if true then reference the organism from created BioEntity
-     * @param identifier the attribute of created BioEntity to put identifier in
+     * @param idField the attribute of created BioEntity to put identifier in
      * @return the geneProduct
      */
     protected ItemWrapper newProduct(String accession,
@@ -576,20 +588,31 @@ public class GoConverter extends FileConverter
                                      Item organism,
                                      Item dataSource,
                                      boolean createOrganism,
-                                     String identifier) {
+                                     String idField) {
         String clsName;
-        String idField = identifier;
-        // find gene attribute first to see if organism shoudld be part of key
+        // find gene attribute first to see if organism should be part of key
         if ("gene".equalsIgnoreCase(type)) {
             clsName = "Gene";
-
+            String taxonId = organism.getAttribute("taxonId").getValue();
             if (idField == null) {
-                String taxonId = organism.getAttribute("taxonId").getValue();
                 idField = geneAttributes.get(taxonId);
                 if (idField == null) {
                     throw new RuntimeException("Could not find a geneAttribute property for taxon: "
                                                + taxonId + " check properties file: " + PROP_FILE);
                 }
+            }
+
+            // if a Dmel gene we need to use FlyBaseIdResolver to find a current id    
+            if (taxonId.equals("7227")) {
+                IdResolver resolver = resolverFactory.getIdResolver();
+                int resCount = resolver.countResolutions(taxonId, accession);
+                if (resCount != 1) {
+                    LOG.info("RESOLVER: failed to resolve gene to one identifier, ignoring gene: "
+                             + accession + " count: " + resCount + " FBgn: "
+                             + resolver.resolveId(taxonId, accession));
+                    return null;
+                }
+                accession = resolver.resolveId(taxonId, accession).iterator().next();
             }
         } else if ("protein".equalsIgnoreCase(type)) {
             clsName = "Protein";
@@ -612,6 +635,8 @@ public class GoConverter extends FileConverter
             return productWrapperMap.get(key);
         }
 
+        // if a Dmel gene we need to use FlyBaseIdResolver to find a current id
+        
         Item product = createItem(clsName);
         if (organism != null && createOrganism) {
             product.setReference("organism", organism.getIdentifier());
