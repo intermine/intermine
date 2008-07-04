@@ -54,7 +54,7 @@
     <collection name="rnaiScreenHits"><reference ref_id="7_1"/><reference ref_id="7_2"/></collection>
   </item>
   <item id="0_1" class="http://www.flymine.org/model/genomic#DataSource">
-    <attribute name="name" value="Drosophila RNAi Screening Center"/>
+    <attribute name="name" value="DRSC"/>
   </item>
   <item id="6_2" class="http://www.flymine.org/model/genomic#Synonym">
     <attribute name="type" value="identifier"/>
@@ -94,7 +94,7 @@
     <attribute name="taxonId" value="7227"/>
   </item>
   <item id="1_1" class="http://www.flymine.org/model/genomic#DataSet">
-    <attribute name="title" value="DRSC RNAi data set"/>
+    <attribute name="title" value="DRSC data set"/>
     <reference name="dataSource" ref_id="0_1"/>
   </item>
   <item id="3_2" class="http://www.flymine.org/model/genomic#Publication">
