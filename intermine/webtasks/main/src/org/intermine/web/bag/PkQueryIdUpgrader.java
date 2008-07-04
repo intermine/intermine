@@ -62,6 +62,10 @@ public class PkQueryIdUpgrader implements IdUpgrader
         this.eof = new BaseEquivalentObjectFetcher(os.getModel(), new IntToIntMap(), os);
     }
 
+    public boolean doUpgrade() {
+    	return true;
+    }
+    
     /**
      * For the given object from an old ObjectStore, find the corresponding InterMineObjects in a
      * new ObjectStore.  Primary keys are used to find the objects.

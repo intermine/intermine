@@ -172,7 +172,7 @@ public class LoadDefaultTemplatesTask extends Task
                  if (pm.getTags(tag.getTagName(), tag.getObjectIdentifier(),
                                             tag.getType(), profileDest.getUsername()).isEmpty()) {
                      pm.addTag(tag.getTagName(), tag.getObjectIdentifier(), tag.getType(),
-                                        profileDest.getUsername());
+                                        profileDest.getUsername(), false);
                  }
              }
 

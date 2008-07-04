@@ -31,12 +31,18 @@ public interface IdUpgrader
      */
     public Set getNewIds(InterMineObject oldObject, ObjectStore os);
 
+    public boolean doUpgrade();
+    
     /**
      * An upgrader that always fails.  For use when upgrading shouldn't be happening.
      */
     public static final IdUpgrader ERROR_UPGRADER = new IdUpgrader() {
         public Set getNewIds(InterMineObject oldObject, ObjectStore objectStore) {
             throw new RuntimeException("Shouldn't call getNewIds() in a running webapp");
+        }
+        
+        public boolean doUpgrade() {
+        	return false;
         }
     };
 }
