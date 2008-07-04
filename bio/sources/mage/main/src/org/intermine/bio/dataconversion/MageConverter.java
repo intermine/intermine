@@ -120,10 +120,10 @@ public class MageConverter extends FileConverter
         }
 
         createItem(MageConverter.readMage(reader), true);
-        LOG.info("refMap.size: " + refMap.size());
-        LOG.info("seenMap.size: " + seenMap.size());
-        System.out .println("refMap.size: " + refMap.size());
-        System.out .println("seenMap.size: " + seenMap.size());
+//        LOG.info("refMap.size: " + refMap.size());
+//        LOG.info("seenMap.size: " + seenMap.size());
+//        System.out .println("refMap.size: " + refMap.size());
+//        System.out .println("seenMap.size: " + seenMap.size());
 
     }
 
@@ -336,11 +336,9 @@ public class MageConverter extends FileConverter
         if (className.equals("DerivedBioAssayData")) {
             BioAssayData bad = (BioAssayData) obj;
 
-            DesignElementDimension ddimension =
-                (DesignElementDimension) bad.getDesignElementDimension(); //D
-            QuantitationTypeDimension qdimension =
-                (QuantitationTypeDimension) bad.getQuantitationTypeDimension(); //Q
-            BioAssayDimension bdimension = (BioAssayDimension) bad.getBioAssayDimension(); //B
+            DesignElementDimension ddimension = bad.getDesignElementDimension(); //D
+            QuantitationTypeDimension qdimension = bad.getQuantitationTypeDimension(); //Q
+            BioAssayDimension bdimension = bad.getBioAssayDimension(); //B
 
             List cubeD = null; //D
             if (ddimension instanceof FeatureDimension) {
