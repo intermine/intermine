@@ -122,7 +122,6 @@
     <fields>
       <fieldconfig fieldExpr="score"/>
       <fieldconfig fieldExpr="confidence"/>
-      <fieldconfig fieldExpr="dataSets.title"/>
     </fields>
   </class>
 
