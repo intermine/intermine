@@ -82,8 +82,8 @@ public class GenesFileProcessor
      * @param orgToProcess organism to be processed
      * @throws IOException when error happens during reading from file
      */
-    public void processGenes(Map<Integer, List<String>> geneToPub,
-            Integer orgToProcessId, Item orgToProcess) throws IOException {
+    public void processGenes(Map<Integer, List<String>> geneToPub, Integer orgToProcessId,
+                             Item orgToProcess) throws IOException {
         String line;
         // use taxonID to get correct type of data where available
         while ((line = getLine()) != null) {
@@ -108,12 +108,10 @@ public class GenesFileProcessor
             //String identifier = parts[3].trim();
             String pubMedId = parts[5].trim();
             if (orgToProcessId.intValue() == organismId.intValue()) {
-                LOG.error(" ~~~ processing org " + organismId);
                 processGeneInfo(ncbiGeneId, organismId, pubMedId, geneToPub.get(ncbiGeneId),
                                 orgToProcess);
                 geneToPub.remove(ncbiGeneId);
             } else if (organismId.intValue() > orgToProcessId.intValue()) {
-                LOG.error(" ~~~ done processing org " + organismId);
                 lastLine = line;
                 storeGenes();
                 checkGenesProcessed(geneToPub);
@@ -128,8 +126,9 @@ public class GenesFileProcessor
 
     private void checkGenesProcessed(Map<Integer, List<String>> geneToPub) {
         if (geneToPub.size() != 0) {
-            throw new GenesProcessorException("There isn't information for "
-                    + "following genes: " + formatGeneNames(geneToPub.keySet()));
+            throw new GenesProcessorException("These " + geneToPub.size() + " genes were in the "
+                                              + "PubMed2Gene file but not in the gene info file: "
+                                              + formatGeneNames(geneToPub.keySet()));
         }
     }
 
@@ -198,19 +197,20 @@ public class GenesFileProcessor
             if (!isValidPrimIdentifier(primIdentifier)) {
                 return;
             }
+
+            if (isDrosophilaMelanogaster(organismId.toString()) && resolver != null) {
+                primIdentifier = resolvePrimIdentifier(organismId.toString(), primIdentifier);
+            }
+
+            if (primIdentifier == null) {
+                LOG.warn("RESOLVER: failed to resolve gene to one identifier, ignoring gene: "
+                        + primaryIdentifier + ". Number of matched ids: "
+                        + resolver.countResolutions(organismId.toString(), primIdentifier));
+                return;
+            }
             Item gene = createGene(ncbiGeneId, primIdentifier, organism);
             for (String writerPubId : publications) {
                 gene.addToCollection("publications", writerPubId);
-            }
-            if (isDrosophilaMelanogaster(organismId.toString()) && resolver != null) {
-                LOG.error("processing dmel");
-                primIdentifier = resolvePrimIdentifier(organismId.toString(), primIdentifier);
-            }
-            if (primIdentifier == null) {
-                LOG.warn("RESOLVER: failed to resolve gene to one identifier, ignoring gene: "
-                        + primIdentifier + ". Number of matched ids: "
-                        + resolver.countResolutions(organismId.toString(), primIdentifier));
-                return;
             }
             // checks gene duplicates - if there are two or more same genes with
             // the same primIdentifier but different ncbi gene id then all these genes are removed
