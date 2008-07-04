@@ -34,7 +34,6 @@
 <attribute name="value" value="Q9W0K0"/>
 <reference name="source" ref_id="3_2"/>
 <reference name="subject" ref_id="9_1"/>
-<collection name="dataSets"><reference ref_id="4_1"/></collection>
 </item>
 <item id="8_1" class="http://www.flymine.org/model/genomic#Comment">
 <attribute name="text" value="Taru H., Iijima K., Hase M., Kirino Y., Yagi Y., Suzuki T."/>
@@ -69,14 +68,12 @@
 <attribute name="value" value="Q19762"/>
 <reference name="source" ref_id="3_2"/>
 <reference name="subject" ref_id="9_3"/>
-<collection name="dataSets"><reference ref_id="4_1"/></collection>
 </item>
 <item id="10_3" class="http://www.flymine.org/model/genomic#Synonym">
 <attribute name="type" value="accession"/>
 <attribute name="value" value="P14599"/>
 <reference name="source" ref_id="3_2"/>
 <reference name="subject" ref_id="9_2"/>
-<collection name="dataSets"><reference ref_id="4_1"/></collection>
 </item>
 <item id="4_1" class="http://www.flymine.org/model/genomic#DataSet">
 <attribute name="title" value="IntAct data set"/>
