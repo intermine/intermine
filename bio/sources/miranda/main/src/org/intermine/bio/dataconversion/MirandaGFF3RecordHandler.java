@@ -6,20 +6,14 @@ package org.intermine.bio.dataconversion;
  * LICENSE file for more information or http://www.gnu.org/copyleft/lesser.html.
  */
 
-import java.io.BufferedReader;
-import java.io.File;
-import java.io.Reader;
 import java.net.URI;
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.Iterator;
 import java.util.Map;
 import java.util.Set;
 
 import org.apache.log4j.Logger;
-import org.intermine.bio.io.gff3.GFF3Parser;
 import org.intermine.bio.io.gff3.GFF3Record;
-import org.intermine.dataconversion.ItemWriter;
 import org.intermine.metadata.Model;
 import org.intermine.objectstore.ObjectStoreException;
 import org.intermine.xml.full.Item;
@@ -63,14 +57,6 @@ public class MirandaGFF3RecordHandler extends GFF3RecordHandler
                 if (gene != null) {
                     feature.setReference("mirnagene", gene);
                     feature.setReference("target", target);
-//                    Item miRNAtarget = createItem("MiRNATarget");
-//                    miRNAtarget.setAttribute("score", Double.toString(record.getScore()));
-//                    miRNAtarget.setAttribute("start", Integer.toString(record.getStart()));
-//                    miRNAtarget.setAttribute("end", Integer.toString(record.getEnd()));
-                    // TODO error in file score should be pvalue
-//                    miRNAtarget.setAttribute("pvalue", record.getAttributes().get("score").iterator()
-//                                             .next());
-//                    miRNAtarget.setReference("mirnagene", gene);
                 }
             } catch (ObjectStoreException e) {
                 // TODO Auto-generated catch block
@@ -83,6 +69,7 @@ public class MirandaGFF3RecordHandler extends GFF3RecordHandler
         if (target == null) {
             target = createItem("MRNA");
             target.setAttribute("secondaryIdentifier", targetName);
+            target.addToCollection("dataSets", getDataSet());
             targets.put(targetName, target);
             addEarlyItem(target);
         }
@@ -112,6 +99,7 @@ public class MirandaGFF3RecordHandler extends GFF3RecordHandler
             if (gene == null) {
                 gene = createItem("Gene");
                 gene.setAttribute("primaryIdentifier", primaryIdentifier);
+                gene.addToCollection("dataSets", getDataSet());
                 miRNAgenes.put(primaryIdentifier, gene);
                 addItem(gene);
             }
@@ -122,6 +110,7 @@ public class MirandaGFF3RecordHandler extends GFF3RecordHandler
             if (gene == null) {
                 gene = createItem("Gene");
                 gene.setAttribute("symbol", symbol);
+                gene.addToCollection("dataSets", getDataSet());
                 miRNAgenes.put(symbol, gene);
                 addItem(gene);
             }
