@@ -321,6 +321,9 @@ public class TestFlyBaseModuleProcessor extends FlyBaseModuleProcessor
             },
             {
                 3175412, "7720555"
+            },
+            {
+                2345000, "7772020"
             }
         };
         MockMultiRowResultSet res = new MockMultiRowResultSet();
