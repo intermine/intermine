@@ -431,7 +431,7 @@
     <item id="601" class="" implements="http://www.flymine.org/model/genomic#DataSet">
         <attribute name="title" value="FlyAtlas"/>
         <attribute name="description" value="Drosophila adult gene expression atlas"/>
-        <Attribute name="url" value="http://www.flyatlas.org/"/>
+        <attribute name="url" value="http://www.flyatlas.org/"/>
         <reference name="dataSource" ref_id="600"/>
     </item>
 
@@ -487,7 +487,4 @@
         <attribute name="url" value="http://flyrnai.org/"/>
         <reference name="dataSource" ref_id="650"/>
     </item>
-
-
-
 </items>

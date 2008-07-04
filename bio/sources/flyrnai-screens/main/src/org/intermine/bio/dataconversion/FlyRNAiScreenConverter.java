@@ -57,7 +57,7 @@ public class FlyRNAiScreenConverter extends BioFileConverter
      * @param model the Model
      */
     public FlyRNAiScreenConverter(ItemWriter writer, Model model) {
-        super(writer, model, "Drosophila RNAi Screening Center", "DRSC RNAi data set");
+        super(writer, model, "DRSC", "DRSC data set");
 
         // only construct factory here so can be replaced by mock factory in tests
         resolverFactory = new FlyBaseIdResolverFactory();
