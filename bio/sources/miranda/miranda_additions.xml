@@ -3,14 +3,8 @@
 <class name="org.flymine.model.genomic.Gene" is-interface="true" >
   <collection name="miRNAtargets" referenced-type="org.flymine.model.genomic.MiRNATarget" reverse-reference="mirnagene"/>
 </class>
-<class name="org.flymine.model.genomic.MiRNATarget" is-interface="true" >
-  <attribute name="start" type="java.lang.Integer" />
-  <attribute name="end" type="java.lang.Integer" />
-  <attribute name="score" type="java.lang.Float" />
-  <attribute name="pvalue" type="java.lang.Float" />
-  <attribute name="method" type="java.lang.String" />
-  <reference name="dataset" referenced-type="org.flymine.model.genomic.DataSet"/>
-  <reference name="publication" referenced-type="org.flymine.model.genomic.Publication"/>
+<class name="org.flymine.model.genomic.MiRNATarget" extends="org.flymine.model.genomic.LocatedSequenceFeature" is-interface="true" >
+  <attribute name="pvalue" type="java.lang.Float"/>
   <reference name="target" referenced-type="org.flymine.model.genomic.MRNA" reverse-reference="miRNAinteractions"/>
   <reference name="mirnagene" referenced-type="org.flymine.model.genomic.Gene" reverse-reference="miRNAtargets"/>
 </class>

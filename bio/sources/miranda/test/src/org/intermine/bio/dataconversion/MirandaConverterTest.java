@@ -10,15 +10,26 @@ package org.intermine.bio.dataconversion;
  *
  */
 
+import java.io.BufferedReader;
 import java.io.File;
 import java.io.StringReader;
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.Iterator;
+import java.util.LinkedHashMap;
+import java.util.LinkedHashSet;
+import java.util.List;
 import java.util.Set;
 
+import org.intermine.bio.io.gff3.GFF3Parser;
+import org.intermine.bio.io.gff3.GFF3Record;
 import org.intermine.dataconversion.ItemsTestCase;
 import org.intermine.dataconversion.MockItemWriter;
 import org.intermine.metadata.Model;
+import org.intermine.util.TypeUtil;
+import org.intermine.xml.full.Item;
+import org.intermine.xml.full.ItemFactory;
 
 /**
  * Test for data from miRanda
@@ -28,8 +39,17 @@ import org.intermine.metadata.Model;
  */
 public class MirandaConverterTest extends ItemsTestCase
 {
-    MockItemWriter itemWriter;
-    MirandaConverter converter;
+    MirandaGFF3RecordHandler handler;
+    private List featureIdentifiers;
+    private ItemFactory itemFactory;
+    private String tgtNs;
+    private Model tgtModel;
+    private GFF3Converter converter;
+    private MockItemWriter tgtIw = new MockItemWriter(new LinkedHashMap());
+    private String seqClsName = "Chromosome";
+    private String taxonId = "DM";
+    private String dataSourceName = "Sanger";
+    private String dataSetTitle = "miRanda";
     
     public MirandaConverterTest(String arg) {
         super(arg);
@@ -37,34 +57,58 @@ public class MirandaConverterTest extends ItemsTestCase
 
     protected void setUp() throws Exception {
         super.setUp();
-        itemWriter = new MockItemWriter(new HashMap());
-        converter = new MirandaConverter(itemWriter, Model.getInstanceByName("genomic"));
+        tgtModel = Model.getInstanceByName("genomic");
+        handler = new MirandaGFF3RecordHandler(tgtModel);
+        converter = new GFF3Converter(tgtIw, seqClsName, taxonId, dataSourceName,
+                        "FlyBase", dataSetTitle, tgtModel, handler, null);
+        itemFactory = handler.getItemFactory();
+        tgtNs = tgtModel.getNameSpace().toString();
         MockIdResolverFactory resolverFactory = new MockIdResolverFactory("Gene");
         resolverFactory.addResolverEntry("7227", "FBgn001", Collections.singleton("mir-92b"));
         resolverFactory.addResolverEntry("7227", "FBgn002", Collections.singleton("mir-312"));
-        converter.resolverFactory = resolverFactory;
+        handler.resolverFactory = resolverFactory;
     }
 
     protected void tearDown() throws Exception {
-        super.tearDown();
+        converter.close();
     }
     
     public void testMirandaHandler() throws Exception {
         String gff =
-            "dme-miR-312\tmiRanda\tmiRNA_target\t9403\t9424\t16.9418\t+\t.\ttarget=CG11023-RA;score=3.057390e-02"
+            "3R\tmiRanda\tmiRNA_target\t9403\t9424\t16.9418\t+\t.\ttarget=CG11023-RA;score=3.057390e-02;ID=dme-miR-312"
                      + ENDL
-                     + "dme-miR-92b\tmiRanda\tmiRNA_target\t9403\t9424\t17.7377\t+\t.\ttarget=CG11023-RA;score=1.179130e-02"
+                     + "3R\tmiRanda\tmiRNA_target\t9403\t9424\t17.7377\t+\t.\ttarget=CG11023-RA;score=1.179130e-02;ID=dme-miR-92b"
                      + ENDL;
-        converter.setCurrentFile(new File("v5.gff.drosophila_melanogaster"));
-        converter.process(new StringReader(gff));
-        converter.close();
         
+        
+        BufferedReader srcReader = new BufferedReader(new StringReader(gff));
+
+        LinkedHashSet allItems = new LinkedHashSet();
+
+        Iterator iter = GFF3Parser.parse(srcReader);
+
+        featureIdentifiers = new ArrayList();
+
+        while (iter.hasNext()) {
+            GFF3Record record = (GFF3Record) iter.next();
+            String term = record.getType();
+            String className = TypeUtil.javaiseClassName(term);
+            Item feature = itemFactory.makeItem(null, tgtNs + className, "");
+
+            handler.setFeature(feature);
+            handler.process(record);
+
+            featureIdentifiers.add(feature.getIdentifier());
+
+            allItems.addAll(handler.getItems());
+        }
+                
         // uncomment to write a new tgt items file
-        //writeItemsFile(itemWriter.getItems(), "/tmp/miranda-tgt-items.xml");
+        writeItemsFile(allItems, "/tmp/miranda-tgt-items.xml");
 
         Set expected = readItemSet("miranda-tgt-items.xml");
-//       System.out.println(ItemsTestCase.compareItemSets(expected, allItems));
-        assertEquals(expected, itemWriter.getItems());
+       System.out.println(ItemsTestCase.compareItemSets(expected, allItems));
+        assertEquals(expected, allItems);
     }
 
 }

@@ -9,6 +9,7 @@ package org.intermine.bio.dataconversion;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.Reader;
+import java.net.URI;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -18,7 +19,6 @@ import java.util.Set;
 import org.apache.log4j.Logger;
 import org.intermine.bio.io.gff3.GFF3Parser;
 import org.intermine.bio.io.gff3.GFF3Record;
-import org.intermine.dataconversion.FileConverter;
 import org.intermine.dataconversion.ItemWriter;
 import org.intermine.metadata.Model;
 import org.intermine.objectstore.ObjectStoreException;
@@ -27,72 +27,64 @@ import org.intermine.xml.full.Item;
 /**
  * @author "Xavier Watkins"
  */
-public class MirandaConverter extends FileConverter
+public class MirandaGFF3RecordHandler extends GFF3RecordHandler
 {
     private Map<String, Item> targets = new HashMap<String, Item>();
 
     private Map<String, Item> miRNAgenes = new HashMap<String, Item>();
 
-    private Map<String, Item> organisms = new HashMap<String, Item>();
     private Set<String> problems = new HashSet<String>();
-    private Item dataSet;
 
+    private URI nameSpace;
+    
     private Map<String, String> mirandaToTaxonId = new HashMap<String, String>();
     protected IdResolverFactory resolverFactory;
-    protected static final Logger LOG = Logger.getLogger(MirandaConverter.class);
+    protected static final Logger LOG = Logger.getLogger(MirandaGFF3RecordHandler.class);
     
-    public MirandaConverter(ItemWriter writer, Model model) throws ObjectStoreException {
-        super(writer, model);
-        mirandaToTaxonId.put("drosophila_melanogaster", "7227");
-        mirandaToTaxonId.put("drosophila_pseudoobscura", "7237");
-        mirandaToTaxonId.put("aedes_aegypti", "7159");
-        mirandaToTaxonId.put("anopheles_gambiae", "7165");
-        mirandaToTaxonId.put("dme", "7227");
-        mirandaToTaxonId.put("aga", "7165");
-        dataSet = createItem("DataSet");
-        dataSet.setAttribute("title", "miRBase Targets");
-        store(dataSet);
-        // only construct factory here so can be replaced by mock factory in tests
+    public MirandaGFF3RecordHandler(Model tgtModel) {
+        super(tgtModel);
         resolverFactory = new FlyBaseIdResolverFactory();
     }
 
     /**
      * {@inheritDoc}
      */
-    public void process(Reader reader) throws Exception {
-        File currentFile = getCurrentFile();
-        String fileName = currentFile.getName();
-        String taxonId = mirandaToTaxonId.get(fileName.substring(fileName.lastIndexOf(".")+1));
-        Item organism = getOrganism(taxonId);
-        for (Iterator i = GFF3Parser.parse(new BufferedReader(reader)); i.hasNext();) {
-            GFF3Record record = (GFF3Record) i.next();
-            String geneName = record.getSequenceID();
-            Item gene = getMiRNAGene(geneName);
-            if (gene != null) {
-                Item miRNAtarget = createItem("MiRNATarget");
-                miRNAtarget.setAttribute("score", Double.toString(record.getScore()));
-                miRNAtarget.setAttribute("start", Integer.toString(record.getStart()));
-                miRNAtarget.setAttribute("end", Integer.toString(record.getEnd()));
-                // TODO error in file score should be pvalue
-                miRNAtarget.setAttribute("pvalue", record.getAttributes().get("score").iterator()
-                                         .next());
-                miRNAtarget.setReference("mirnagene", gene);
-                miRNAtarget.setReference("target", getTarget(record.getAttributes().get("target")
-                                                             .iterator().next(), organism));
-                miRNAtarget.setReference("dataset", dataSet);
-                store(miRNAtarget);
+    @Override
+    public void process(GFF3Record record) {
+            Item feature = getFeature();
+            nameSpace = getTargetModel().getNameSpace();
+            feature.setClassName(nameSpace + "MiRNATarget");
+            String geneName = record.getAttributes().get("Name").iterator().next();
+            String targetName = record.getAttributes().get("target").iterator().next();
+            feature.setAttribute("pvalue", record.getAttributes().get("pvalue").iterator().next());
+            try {
+                Item gene = getMiRNAGene(geneName);
+                Item target = getTarget(targetName);
+                if (gene != null) {
+                    feature.setReference("mirnagene", gene);
+                    feature.setReference("target", target);
+//                    Item miRNAtarget = createItem("MiRNATarget");
+//                    miRNAtarget.setAttribute("score", Double.toString(record.getScore()));
+//                    miRNAtarget.setAttribute("start", Integer.toString(record.getStart()));
+//                    miRNAtarget.setAttribute("end", Integer.toString(record.getEnd()));
+                    // TODO error in file score should be pvalue
+//                    miRNAtarget.setAttribute("pvalue", record.getAttributes().get("score").iterator()
+//                                             .next());
+//                    miRNAtarget.setReference("mirnagene", gene);
+                }
+            } catch (ObjectStoreException e) {
+                // TODO Auto-generated catch block
+                e.printStackTrace();
             }
-        }
     }
 
-    private Item getTarget(String targetName, Item organism) throws ObjectStoreException {
+    private Item getTarget(String targetName) throws ObjectStoreException {
         Item target = targets.get(targetName);
         if (target == null) {
             target = createItem("MRNA");
             target.setAttribute("secondaryIdentifier", targetName);
-            target.setReference("organism", organism);
             targets.put(targetName, target);
-            store(target);
+            addEarlyItem(target);
         }
         return target;
     }
@@ -103,7 +95,6 @@ public class MirandaConverter extends FileConverter
         // in FlyBase symbols are e.g. mir-5 not miR-5
         String symbol = geneNameToUse.toLowerCase();
         String taxonId = mirandaToTaxonId.get(geneName.substring(0, geneName.indexOf("-")));
-        Item organism = getOrganism(taxonId);
         IdResolver resolver = resolverFactory.getIdResolver();
         if (resolver.hasTaxon(taxonId)) {
             int resCount = resolver.countResolutions(taxonId, symbol);
@@ -121,9 +112,8 @@ public class MirandaConverter extends FileConverter
             if (gene == null) {
                 gene = createItem("Gene");
                 gene.setAttribute("primaryIdentifier", primaryIdentifier);
-                gene.setReference("organism", organism);
                 miRNAgenes.put(primaryIdentifier, gene);
-                store(gene);
+                addItem(gene);
             }
             return gene;
         } else {
@@ -132,23 +122,11 @@ public class MirandaConverter extends FileConverter
             if (gene == null) {
                 gene = createItem("Gene");
                 gene.setAttribute("symbol", symbol);
-                gene.setReference("organism", organism);
                 miRNAgenes.put(symbol, gene);
-                store(gene);
+                addItem(gene);
             }
             return gene;
         }
-    }
-    
-    private Item getOrganism(String taxonId) throws ObjectStoreException {
-        Item organism = organisms.get(taxonId);
-        if (organism == null) {
-            organism = createItem("Organism");
-            organism.setAttribute("taxonId", taxonId);
-            organisms.put(taxonId, organism);
-            store(organism);
-        }
-        return organism;
     }
     
 }
