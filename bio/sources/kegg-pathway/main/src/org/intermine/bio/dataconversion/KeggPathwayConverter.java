@@ -53,7 +53,7 @@ public class KeggPathwayConverter extends BioFileConverter
      */
     public KeggPathwayConverter(ItemWriter writer, Model model)
         throws ObjectStoreException, MetaDataException {
-        super(writer, model, "Kyoto Encyclopedia of Genes and Genomes", "KEGG PATHWAY - dme");
+        super(writer, model, "GenomeNet", "KEGG PATHWAY - dme");
 
         // Drosophila melanogaster
         keggOrganismToTaxonId.put("dme", "7227");
