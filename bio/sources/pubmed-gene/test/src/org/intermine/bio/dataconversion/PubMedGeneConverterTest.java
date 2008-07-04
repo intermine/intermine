@@ -48,7 +48,7 @@ public class PubMedGeneConverterTest extends ItemsTestCase
         MockIdResolverFactory resolverFactory = new MockIdResolverFactory("Gene");
         resolverFactory.addResolverEntry("7227", "FBgn003", Collections.singleton("1234"));
         resolverFactory.addResolverEntry("7227", "FBgn002", Collections.singleton("2222"));
-        resolverFactory.addResolverEntry("7227", "FBgn001", Collections.singleton("FBgn004"));
+        resolverFactory.addResolverEntry("7227", "FBgn001", Collections.singleton("1111"));
         converter.resolverFactory = resolverFactory;
         super.setUp();
     }
@@ -69,7 +69,7 @@ public class PubMedGeneConverterTest extends ItemsTestCase
         checkGene("171594", "WBGene00021677", "6239", new String[]{"2"}, new String[]{DATASET});
         checkGene("171595", "WBGene00021678", "6239", new String[]{"3"}, new String[]{DATASET});
         checkGene("171597", "WBGene00021679", "6239", new String[]{"4"}, new String[]{DATASET});
-        checkGene("1234", "FBgn001", "7227", new String[]{"4"}, new String[]{DATASET});
+        checkGene("1234", "FBgn003", "7227", new String[]{"4"}, new String[]{DATASET});
         checkGene("2222", "FBgn002", "7227", new String[]{"2", "3"}, new String[]{DATASET});
         checkGene("1111", "FBgn001", "7227", new String[]{"1"}, new String[]{DATASET});
     }
