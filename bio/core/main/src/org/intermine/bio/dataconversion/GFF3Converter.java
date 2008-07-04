@@ -10,7 +10,11 @@ package org.intermine.bio.dataconversion;
  *
  */
 
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -18,6 +22,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import org.apache.log4j.Logger;
 import org.intermine.bio.io.gff3.GFF3Parser;
 import org.intermine.bio.io.gff3.GFF3Record;
 import org.intermine.dataconversion.ItemWriter;
@@ -31,12 +36,6 @@ import org.intermine.xml.full.ItemFactory;
 import org.intermine.xml.full.ItemHelper;
 import org.intermine.xml.full.Reference;
 import org.intermine.xml.full.ReferenceList;
-
-
-import java.io.BufferedReader;
-import java.io.IOException;
-
-import org.apache.log4j.Logger;
 
 /**
  * Class to read a GFF3 source data and produce a data representation
@@ -92,13 +91,14 @@ public class GFF3Converter
 
         organism = getOrganism();
 
-        dataSet = createItem("DataSet");
-        dataSet.addAttribute(new Attribute("title", dataSetTitle));
-        writer.store(ItemHelper.convert(dataSet));
-
         dataSource = createItem("DataSource");
         dataSource.addAttribute(new Attribute("name", dataSourceName));
         writer.store(ItemHelper.convert(dataSource));
+
+        dataSet = createItem("DataSet");
+        dataSet.addAttribute(new Attribute("title", dataSetTitle));
+        dataSet.setReference("dataSource", dataSource);
+        writer.store(ItemHelper.convert(dataSet));
 
         if (!seqDataSourceName.equals(dataSourceName)) {
             seqDataSource = createItem("DataSource");
@@ -225,6 +225,8 @@ public class GFF3Converter
         }
 
         feature.addReference(getOrgRef());
+        feature.setCollection("dataSets",
+                              new ArrayList(Collections.singleton(dataSet.getIdentifier())));
 
         // if parents -> create a SimpleRelation
         if (record.getParents() != null) {
