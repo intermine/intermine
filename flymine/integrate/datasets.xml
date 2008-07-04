@@ -331,10 +331,13 @@
         <reference name="dataSource" ref_id="480"/>
     </item>
 
+    <item id="490" class="" implements="http://www.flymine.org/model/genomic#DataSource">
+        <attribute name="name" value="GenomeNet"/>
+    </item>
     <item id="491" class="" implements="http://www.flymine.org/model/genomic#DataSet">
         <attribute name="title" value="KEGG PATHWAY - dme"/>
         <attribute name="url" value="http://www.genome.jp/kegg/pathway.html"/>
-        <reference name="dataSource" ref_id="480"/>
+        <reference name="dataSource" ref_id="490"/>
     </item>
 
 <!-- not used
