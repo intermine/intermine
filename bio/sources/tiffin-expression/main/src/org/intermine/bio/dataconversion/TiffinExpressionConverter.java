@@ -47,7 +47,7 @@ public class TiffinExpressionConverter extends BioFileConverter
      * @throws ObjectStoreException if an error occurs in storing
      */
     public TiffinExpressionConverter(ItemWriter writer, Model model) throws ObjectStoreException {
-        super(writer, model, "Sanger", "Tiffin");
+        super(writer, model, "Sanger Institute", "Tiffin");
 
         orgDrosophila = createItem("Organism");
         orgDrosophila.addAttribute(new Attribute("taxonId", "7227"));
