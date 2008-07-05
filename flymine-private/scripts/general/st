@@ -44,8 +44,9 @@ or
   $0 -d <ticket_num>|<branch_name>
     delete a branch
 or
-  $0 -l
+  $0 -l [-v]
     list the existing branches, ticket branches first
+    with -v, list tags too
 or
   $0 -t
     switch working copy to trunk
