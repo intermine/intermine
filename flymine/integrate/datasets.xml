@@ -100,7 +100,7 @@
     <item id="90" class="" implements="http://www.flymine.org/model/genomic#DataSource">
         <attribute name="name" value="VectorBase"/>
         <attribute name="description" value="Database for disease vectors"/>
-        <attribute name="url" value="http://www.vectorbase.org/">
+        <attribute name="url" value="http://www.vectorbase.org"/>
     </item>
     <item id="91" class="" implements="http://www.flymine.org/model/genomic#DataSet">
         <attribute name="title" value="VectorBase Anopheles"/>
