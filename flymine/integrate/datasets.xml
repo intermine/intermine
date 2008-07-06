@@ -290,17 +290,12 @@
         <reference name="dataSource" ref_id="340"/>
     </item>
 
-    <item id="350" class="" implements="http://www.flymine.org/model/genomic#DataSource">
-        <attribute name="name" value="VectorBase"/>
-        <attribute name="description" value="Database for disease vectors"/>
-        <attribute name="url" value="http://www.vectorbase.org/"/>
-    </item>
     <item id="351" class="" implements="http://www.flymine.org/model/genomic#DataSet">
         <attribute name="title" value="VectorBase AnoEST clusters"/>
         <attribute name="description" value="Annotated EST clusters for Anopheles gambiae"/>
         <attribute name="version" value="8"/>
         <attribute name="url" value="http://agambiae.vectorbase.org/SequenceData/EST"/>
-        <reference name="dataSource" ref_id="350"/>
+        <reference name="dataSource" ref_id="90"/>
     </item>
     <item id="450" class="" implements="http://www.flymine.org/model/genomic#DataSource">
         <attribute name="name" value="REDfly"/>
