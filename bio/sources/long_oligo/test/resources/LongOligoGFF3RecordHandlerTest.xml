@@ -14,8 +14,9 @@
     <attribute name="secondaryIdentifier" value="CG4314-RA"/>
     <reference name="organism" ref_id="0_0"/>
   </item>
-  <item id="0_1" class="http://www.flymine.org/model/genomic#DataSet">
+  <item id="0_2" class="http://www.flymine.org/model/genomic#DataSet">
     <attribute name="title" value="INDAC long oligo data set"/>
+    <reference name="dataSource" ref_id="0_1"/>
   </item>
   <item id="0_0" class="http://www.flymine.org/model/genomic#Organism">
     <attribute name="taxonId" value="7227"/>
@@ -23,13 +24,13 @@
   <item id="0_9" class="http://www.flymine.org/model/genomic#Synonym">
     <attribute name="type" value="identifier"/>
     <attribute name="value" value="1000044388"/>
-    <reference name="source" ref_id="0_2"/>
+    <reference name="source" ref_id="0_1"/>
     <reference name="subject" ref_id="0_5"/>
   </item>
   <item id="1_2" class="http://www.flymine.org/model/genomic#Synonym">
     <attribute name="type" value="identifier"/>
     <attribute name="value" value="12-CG4314-RA_1"/>
-    <reference name="source" ref_id="0_2"/>
+    <reference name="source" ref_id="0_1"/>
     <reference name="subject" ref_id="0_5"/>
   </item>
   <item id="0_5" class="http://www.flymine.org/model/genomic#MicroarrayOligo">
@@ -41,7 +42,7 @@
     <reference name="sequence" ref_id="1_1"/>
     <reference name="transcript" ref_id="0_3"/>
     <collection name="dataSets">
-      <reference ref_id="0_1"/>
+      <reference ref_id="0_2"/>
     </collection>
     <collection name="evidence">
       <reference ref_id="0_7"/>
@@ -50,17 +51,17 @@
   <item id="0_4" class="http://www.flymine.org/model/genomic#Synonym">
     <attribute name="type" value="identifier"/>
     <attribute name="value" value="CG4314-RA"/>
-    <reference name="source" ref_id="0_2"/>
+    <reference name="source" ref_id="0_1"/>
     <reference name="subject" ref_id="0_3"/>
   </item>
-  <item id="0_2" class="http://www.flymine.org/model/genomic#DataSource">
+  <item id="0_1" class="http://www.flymine.org/model/genomic#DataSource">
     <attribute name="name" value="Micklem lab"/>
   </item>
   <item id="0_6" class="http://www.flymine.org/model/genomic#SimpleRelation">
     <reference name="object" ref_id="0_3"/>
     <reference name="subject" ref_id="0_5"/>
     <collection name="dataSets">
-      <reference ref_id="0_1"/>
+      <reference ref_id="0_2"/>
     </collection>
   </item>
 </items>
