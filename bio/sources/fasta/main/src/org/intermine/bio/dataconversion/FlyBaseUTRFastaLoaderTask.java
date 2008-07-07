@@ -86,6 +86,7 @@ public class FlyBaseUTRFastaLoaderTask extends FlyBaseFeatureFastaLoaderTask
         MRNA mrna = (MRNA) getDirectDataLoader().createObject(MRNA.class);
         mrna.setPrimaryIdentifier(mrnaIdentifier);
         mrna.setOrganism(organism);
+        mrna.addDataSets(getDataSet());
         getDirectDataLoader().store(mrna);
         return mrna;
     }
