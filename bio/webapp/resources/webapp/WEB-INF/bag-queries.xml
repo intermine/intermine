@@ -2,12 +2,6 @@
   <extra-bag-query-class connect-field="organism" class-name="org.flymine.model.genomic.Organism" 
                          constrain-field="shortName"/>
 	<bag-type type="BioEntity">
-	    <query message="searching synonyms of bioentities that have locations" matchesAreIssues="false" runBeforeDefault="true">
-	    SELECT DISTINCT a2_.id as a5_, a1_.value as a6_ FROM org.flymine.model.genomic.Synonym AS a1_, org.flymine.model.genomic.BioEntity AS a2_, org.flymine.model.genomic.Relation AS a3_, org.flymine.model.genomic.Chromosome AS a4_ WHERE (LOWER(a1_.value) in ? AND a1_.subject CONTAINS a2_ AND a2_.objects CONTAINS a3_ AND a3_.object CONTAINS a4_ AND a1_.isPrimary = true and LOWER(a1_.value) like 'fbgn%')
-	    </query>
-	    <query message="searching synonyms of bioentities that have locations" matchesAreIssues="true" runBeforeDefault="true">
-        SELECT DISTINCT a2_.id as a5_, a1_.value as a6_ FROM org.flymine.model.genomic.Synonym AS a1_, org.flymine.model.genomic.BioEntity AS a2_, org.flymine.model.genomic.Relation AS a3_, org.flymine.model.genomic.Chromosome AS a4_ WHERE (LOWER(a1_.value) in ? AND a1_.subject CONTAINS a2_ AND a2_.objects CONTAINS a3_ AND a3_.object CONTAINS a4_ AND a1_.isPrimary = false and LOWER(a1_.value) like 'fbgn%')
-        </query>
 		<query message="searching key fields for all types" matchesAreIssues="true" runBeforeDefault="false">
 		SELECT DISTINCT a1_.id as a3_, a2_.value as a4_ FROM org.flymine.model.genomic.BioEntity AS a1_, 
 org.flymine.model.genomic.Synonym AS a2_ WHERE (a1_.synonyms CONTAINS a2_ AND a2_.isPrimary = true and lower(a2_.value) in ?)
