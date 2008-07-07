@@ -37,7 +37,7 @@ public class MirandaConverterTest extends ItemsTestCase
     private GFF3Converter converter;
     private MockItemWriter writer = new MockItemWriter(new LinkedHashMap());
     private String seqClsName = "Chromosome";
-    private String taxonId = "DM";
+    private String taxonId = "7227";
     private String dataSourceName = "Sanger Institute";
     private String dataSetTitle = "miRanda";
 
@@ -73,7 +73,7 @@ public class MirandaConverterTest extends ItemsTestCase
         converter.store();
 
         // uncomment to write a new tgt items file
-        //writeItemsFile(writer.getItems(), "miranda-tgt-items.xml");
+        // writeItemsFile(writer.getItems(), "miranda-tgt-items.xml");
 
         Set expected = readItemSet("miranda-tgt-items.xml");
         assertEquals(expected, writer.getItems());
