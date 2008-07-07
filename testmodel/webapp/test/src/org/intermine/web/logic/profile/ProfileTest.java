@@ -53,7 +53,7 @@ public class ProfileTest extends MockStrutsTestCase
         query = new PathQuery(Model.getInstanceByName("testmodel"));
         userprofileOS = ObjectStoreWriterFactory.getObjectStoreWriter("osw.userprofile-test");
         objectstoreOS = ObjectStoreFactory.getObjectStore("os.unittest");
-        bag = new InterMineBag("bob", "String", "Description", new Date(),
+        bag = new InterMineBag("bob", "Company", "Description", new Date(),
                                objectstoreOS, bobId, userprofileOS);
         //Collections.singleton("testElement"));
 //        bag = new InterMinePrimitiveBag(bobId, "bob", userprofileOS, Collections.singleton("1234"));
