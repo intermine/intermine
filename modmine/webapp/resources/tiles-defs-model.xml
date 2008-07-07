@@ -5,6 +5,16 @@
     <put name="pageName" value="flymineQuickStart"/>
   </definition>
 
+
+<definition name="providerSubmissions.tile" path="/model/providerSubmissions.jsp" 
+        controllerUrl="/initProviderSubmissions.do"/>
+
+
+
+
+
+
+
  <!-- 
   <definition name="modEncodeProjects.page" extends="layout.template">
 -->
@@ -15,11 +25,9 @@
 -->
 
 
-  <definition name="orthologueDisplayer.tile" path="/model/orthologueDisplayer.jsp" 
-  	controllerUrl="/initOrthologueDisplayer.do"/>
-  	
-  <definition name="attributeLinkDisplayer.tile" path="/model/attributeLinkDisplayer.jsp" 
-  	      controllerUrl="/initAttributeLinkDisplayer.do"/>
+
+
+
 <!-- 
   <definition name="modEncodeProjects.tile" path="/model/modEncodeProjects.jsp" 
           controllerUrl="/modEncodeProjects.do"/>

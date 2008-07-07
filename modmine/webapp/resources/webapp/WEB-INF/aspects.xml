@@ -4,13 +4,13 @@
     <icon-image>model/images/genomics.gif</icon-image>
     <large-image>model/images/genomics.gif</large-image>
     <intro-text>
-      The gene structure and other genome annotation in modENCODEMine are provided by
-      a variety of source databases.  In most cases modENCODEMine includes
+      The gene structure and other genome annotation in modMine are provided by
+      a variety of source databases.  In most cases modMine includes
       all genome features that have chromosomal locations (e.g. genes and repeat regions).
     </intro-text>
     <tile-name>model/genomics.jsp</tile-name>
     <aspect-source name="FlyBase" url="http://www.flybase.org"/>
-    <aspect-source name="Ensembl" url="http://www.ensembl.org/Anopheles_gambiae/"/>
+    <aspect-source name="WormBase" url="http://www.wormbase.org/"/>
   </aspect>
 
   <aspect name="Comparative Genomics">

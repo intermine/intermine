@@ -1,21 +1,24 @@
 <!-- this comment is here to prevent ant from setting model.struts.config to null -->
-  	
-               
-    <action path="/sequenceExporter"
-            type="org.intermine.bio.web.struts.SequenceExportAction"/>
-    
-    <action path="/chartRenderer"
-            type="org.flymine.web.ChartRenderer"
-            parameter="method"/>
 
-    <action path="/initAttributeLinkDisplayer"
-            type="org.intermine.bio.web.AttributeLinkDisplayerController"/>
+
+<action path="/sequenceExporter"
+	type="org.intermine.bio.web.struts.SequenceExportAction" />
+
+<action path="/chartRenderer" type="org.flymine.web.ChartRenderer"
+	parameter="method" />
+
+<action path="/initAttributeLinkDisplayer"
+	type="org.intermine.bio.web.AttributeLinkDisplayerController" />
+
+<action path="/initProviderSubmissions"
+	type="org.flymine.web.ProviderSubmissionsController" />
+
+
 <!-- 
-    <action path="/modEncodeProjects" forward="modEncodeProjects.page">
-    </action>
+	<action path="/modEncodeProjects" forward="modEncodeProjects.page">
+	</action>
 -->
 <!-- 
-
-    <action path="/modEncodeProjects"
-            type="org.modmine.web.ModEncodeProjectsController"/>
+	<action path="/modEncodeProjects"
+	type="org.modmine.web.ModEncodeProjectsController"/>
 -->

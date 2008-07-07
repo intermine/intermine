@@ -27,7 +27,7 @@
       processes, cellular components and molecular functions in a species-independent manner.
       </p>
       <p>
-      modENCODEMine has GO annotations for <i>Drosophila</i> and
+      modMine has GO annotations for <i>Drosophila</i> and
       <i>C. elegans</i>.
 <%--
   GO annotation for
