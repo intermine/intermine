@@ -50,7 +50,7 @@ public class LongOligoGFF3RecordHandlerTest extends ItemsTestCase
 
     public void testParse() throws Exception {
         String gff = "CG4314-RA\tINDAC_1.0\tmicroarray_oligo\t0\t0\t.\t.\t.\tID=1000044388;olen=14;oaTm=92.25;geneID=CG4314;Alias=12-CG4314-RA_1;sequence=ACACGGGTCAGGAT";
-            BufferedReader srcReader = new BufferedReader(new StringReader(gff));
+        BufferedReader srcReader = new BufferedReader(new StringReader(gff));
         converter.parse(srcReader);
         converter.store();
 
