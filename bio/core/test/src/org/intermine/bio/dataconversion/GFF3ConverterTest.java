@@ -73,20 +73,19 @@ public class GFF3ConverterTest extends TestCase {
         converter.parse(srcReader);
         converter.store();
 
-        //FileWriter writerSrc = new FileWriter(new File("gff_items.xml"));
-        //writerSrc.write(FullRenderer.render(writer.getItems()));
-        //writerSrc.close();
 
         Set expected = new HashSet(getExpectedLocatedItems());
 
-        String expectedNotActual =
-            "in expected, not actual: " + compareItemSets(expected, writer.getItems());
-        String actualNotExpected =
-            "in actual, not expected: " + compareItemSets(writer.getItems(), expected);
-        if (expectedNotActual.length() > 25) {
-            System.out.println(expectedNotActual);
-            System.out.println(actualNotExpected);
-        }
+      FileWriter fw = new FileWriter("GFF3ConverterTestLocated-tmp.xml");
+      PrintWriter pw = new PrintWriter(fw);
+      pw.println("<items>");
+      for (Object item: writer.getItems()) {
+          pw.println(item);
+      }
+      pw.println("</items>");
+      pw.close();
+      fw.close();
+
 
         assertEquals(expected, writer.getItems());
     }
@@ -107,29 +106,18 @@ public class GFF3ConverterTest extends TestCase {
         converter.parse(srcReader);
         converter.store();
 
-        //FileWriter writerSrc = new FileWriter(new File("gff_items.xml"));
-        //writerSrc.write(FullRenderer.render(writer.getItems()));
-        //writerSrc.close();
-
         Set expected = new HashSet(getExpectedUnLocatedItems());
 
-        String expectedNotActual =
-            "in expected, not actual: " + compareItemSets(expected, writer.getItems());
-        String actualNotExpected =
-            "in actual, not expected: " + compareItemSets(writer.getItems(), expected);
-        if (expectedNotActual.length() > 25) {
-            System.out.println(expectedNotActual);
-            System.out.println(actualNotExpected);
-        }
-        FileWriter fw = new FileWriter("/tmp/GFF3ConverterTestUnLocated.xml");
-        PrintWriter pw = new PrintWriter(fw);
-        pw.println("<items>");
-        for (Object item: writer.getItems()) {
-            pw.println(item);
-        }
-        pw.println("</items>");
-        pw.close();
-        fw.close();
+//        FileWriter fw = new FileWriter("GFF3ConverterTestUnLocated-tmp.xml");
+//        PrintWriter pw = new PrintWriter(fw);
+//        pw.println("<items>");
+//        for (Object item: writer.getItems()) {
+//            pw.println(item);
+//        }
+//        pw.println("</items>");
+//        pw.close();
+//        fw.close();
+
         assertEquals(expected, writer.getItems());
     }
 
