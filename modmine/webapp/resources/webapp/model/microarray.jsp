@@ -70,6 +70,7 @@ Arbeitman et al reported gene expression patterns for nearly one third of all <i
 </div>
 </td>
 
+<%-- 
 
      <td width="40%" valign="top">
       <div class="heading2">
@@ -88,5 +89,7 @@ Arbeitman et al reported gene expression patterns for nearly one third of all <i
           </ul>
         </div>
       </td>
+--%>
+
     </tr>
 </table>

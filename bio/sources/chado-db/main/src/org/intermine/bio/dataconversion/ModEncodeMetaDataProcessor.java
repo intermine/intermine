@@ -78,7 +78,6 @@ public class ModEncodeMetaDataProcessor extends ChadoProcessor
 
     // just for debugging
     private Map<String, String> debugMap = new HashMap<String, String>(); // itemIdentifier, type
-    private static final String PREFIX = "http://www.flymine.org/model/genomic#";
 
 
     private static class ExperimentSubmissionDetails
