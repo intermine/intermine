@@ -413,7 +413,7 @@
 <attribute name="type" value="ImaGO"/>
 </item>
 <item id="0_1" class="http://www.flymine.org/model/genomic#DataSource">
-<attribute name="name" value="Sanger"/>
+<attribute name="name" value="Sanger Institute"/>
 </item>
 <item id="5_86" class="http://www.flymine.org/model/genomic#MRNAExpressionTerm">
 <attribute name="name" value="stomodeal invagination"/>
