@@ -1,24 +1,110 @@
 <items>
-<item id="1_1" class="http://www.flymine.org/model/genomic#MRNA">
-<attribute name="secondaryIdentifier" value="CG11023-RA"/>
-<collection name="dataSets"><reference ref_id="0_1"/></collection>
+<item id="0_10" class="http://www.flymine.org/model/genomic#ComputationalAnalysis">
+<attribute name="algorithm" value="miRanda"/>
 </item>
-<item id="1_1" class="http://www.flymine.org/model/genomic#MiRNATarget">
-<attribute name="pvalue" value="3.057390e-02"/>
-<reference name="mirnagene" ref_id="1_0"/>
-<reference name="target" ref_id="1_1"/>
+<item id="0_2" class="http://www.flymine.org/model/genomic#DataSet">
+<attribute name="title" value="miRanda"/>
+<reference name="dataSource" ref_id="0_1"/>
+</item>
+<item id="0_9" class="http://www.flymine.org/model/genomic#ComputationalResult">
+<attribute name="score" value="16.9418"/>
+<attribute name="type" value="score"/>
+<reference name="analysis" ref_id="0_10"/>
+</item>
+<item id="0_16" class="http://www.flymine.org/model/genomic#Synonym">
+<attribute name="type" value="identifier"/>
+<attribute name="value" value="BBB"/>
+<reference name="source" ref_id="0_1"/>
+<reference name="subject" ref_id="0_12"/>
+</item>
+<item id="0_8" class="http://www.flymine.org/model/genomic#Location">
+<attribute name="end" value="9424"/>
+<attribute name="start" value="9403"/>
+<attribute name="strand" value="1"/>
+<reference name="object" ref_id="0_4"/>
+<reference name="subject" ref_id="0_6"/>
+<collection name="dataSets"><reference ref_id="0_2"/></collection>
 </item>
 <item id="1_0" class="http://www.flymine.org/model/genomic#Gene">
 <attribute name="symbol" value="mir-312"/>
-<collection name="dataSets"><reference ref_id="0_1"/></collection>
+<collection name="dataSets"><reference ref_id="0_2"/></collection>
 </item>
-<item id="1_2" class="http://www.flymine.org/model/genomic#MiRNATarget">
-<attribute name="pvalue" value="1.179130e-02"/>
-<reference name="mirnagene" ref_id="1_2"/>
-<reference name="target" ref_id="1_1"/>
+<item id="0_5" class="http://www.flymine.org/model/genomic#Synonym">
+<attribute name="type" value="identifier"/>
+<attribute name="value" value="3R"/>
+<reference name="source" ref_id="0_3"/>
+<reference name="subject" ref_id="0_4"/>
+</item>
+<item id="0_0" class="http://www.flymine.org/model/genomic#Organism">
+<attribute name="taxonId" value="DM"/>
 </item>
 <item id="1_2" class="http://www.flymine.org/model/genomic#Gene">
 <attribute name="symbol" value="mir-92b"/>
-<collection name="dataSets"><reference ref_id="0_1"/></collection>
+<collection name="dataSets"><reference ref_id="0_2"/></collection>
+</item>
+<item id="0_15" class="http://www.flymine.org/model/genomic#ComputationalResult">
+<attribute name="score" value="17.7377"/>
+<attribute name="type" value="score"/>
+<reference name="analysis" ref_id="0_10"/>
+</item>
+<item id="0_13" class="http://www.flymine.org/model/genomic#Synonym">
+<attribute name="type" value="name"/>
+<attribute name="value" value="dme-miR-92b"/>
+<reference name="source" ref_id="0_1"/>
+<reference name="subject" ref_id="0_12"/>
+</item>
+<item id="0_7" class="http://www.flymine.org/model/genomic#Synonym">
+<attribute name="type" value="name"/>
+<attribute name="value" value="dme-miR-312"/>
+<reference name="source" ref_id="0_1"/>
+<reference name="subject" ref_id="0_6"/>
+</item>
+<item id="0_1" class="http://www.flymine.org/model/genomic#DataSource">
+<attribute name="name" value="Sanger Institute"/>
+</item>
+<item id="0_3" class="http://www.flymine.org/model/genomic#DataSource">
+<attribute name="name" value="FlyBase"/>
+</item>
+<item id="0_11" class="http://www.flymine.org/model/genomic#Synonym">
+<attribute name="type" value="identifier"/>
+<attribute name="value" value="AAA"/>
+<reference name="source" ref_id="0_1"/>
+<reference name="subject" ref_id="0_6"/>
+</item>
+<item id="0_12" class="http://www.flymine.org/model/genomic#MiRNATarget">
+<attribute name="name" value="dme-miR-92b"/>
+<attribute name="primaryIdentifier" value="BBB"/>
+<attribute name="pvalue" value="1.179130e-02"/>
+<reference name="mirnagene" ref_id="1_2"/>
+<reference name="organism" ref_id="0_0"/>
+<reference name="target" ref_id="1_1"/>
+<collection name="dataSets"><reference ref_id="0_2"/></collection>
+<collection name="evidence"><reference ref_id="0_15"/></collection>
+</item>
+<item id="0_14" class="http://www.flymine.org/model/genomic#Location">
+<attribute name="end" value="9424"/>
+<attribute name="start" value="9403"/>
+<attribute name="strand" value="1"/>
+<reference name="object" ref_id="0_4"/>
+<reference name="subject" ref_id="0_12"/>
+<collection name="dataSets"><reference ref_id="0_2"/></collection>
+</item>
+<item id="1_1" class="http://www.flymine.org/model/genomic#MRNA">
+<attribute name="secondaryIdentifier" value="CG11023-RA"/>
+<collection name="dataSets"><reference ref_id="0_2"/></collection>
+</item>
+<item id="0_4" class="http://www.flymine.org/model/genomic#Chromosome">
+<attribute name="primaryIdentifier" value="3R"/>
+<reference name="organism" ref_id="0_0"/>
+</item>
+<item id="0_6" class="http://www.flymine.org/model/genomic#MiRNATarget">
+<attribute name="name" value="dme-miR-312"/>
+<attribute name="primaryIdentifier" value="AAA"/>
+<attribute name="pvalue" value="3.057390e-02"/>
+<reference name="mirnagene" ref_id="1_0"/>
+<reference name="organism" ref_id="0_0"/>
+<reference name="target" ref_id="1_1"/>
+<collection name="dataSets"><reference ref_id="0_2"/></collection>
+<collection name="evidence"><reference ref_id="0_9"/></collection>
 </item>
 </items>

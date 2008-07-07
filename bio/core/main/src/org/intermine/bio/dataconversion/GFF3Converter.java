@@ -61,6 +61,7 @@ public class GFF3Converter
     private ItemFactory itemFactory;
     private GFF3SeqHandler sequenceHandler;
     private boolean dontCreateLocations;
+    protected IdResolverFactory resolverFactory;
 
     /**
      * Constructor
@@ -384,7 +385,6 @@ public class GFF3Converter
             LOG.error("Problem writing item to the itemwriter");
             throw e;
         }
-
     }
 
 
