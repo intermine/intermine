@@ -1015,15 +1015,13 @@ public class UniprotConverter extends FileConverter
                     variableLookup = null;
                 }
 
-                if (taxonId.equals("7227")) {
+                if (taxonId.equals("7227") || taxonId.equals("7237")) {
                     uniqueGeneIdentifier = resolveGene(genePrimaryIdentifier,
                                                        geneSecondaryIdentifier, primaryGeneName);
                     genePrimaryIdentifier = uniqueGeneIdentifier;
-                }
-
-                // we don't want to store the CGs for dmel
-                if (taxonId.equals("7227")) {
+                    // we don't want to store the CGs/GAs or symbols for dmel/dpse
                     geneSecondaryIdentifier = null;
+                    primaryGeneName = null;
                 }
 
                 // uniprot data source has primary key of Gene.primaryIdentifier
