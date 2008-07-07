@@ -42,8 +42,6 @@ public class FlyRegGFF3RecordHandlerTest extends ItemsTestCase
     private String orgAbbrev = "DM";
     private String dataSourceName = "FlyReg";
     private String dataSetTitle = "FlyReg data set";
-    private String tgtNs;
-    private ItemFactory itemFactory;
     private GFF3Converter converter;
     private MockItemWriter writer = new MockItemWriter(new LinkedHashMap());
 
@@ -53,15 +51,16 @@ public class FlyRegGFF3RecordHandlerTest extends ItemsTestCase
 
     public void setUp() throws Exception {
         tgtModel = Model.getInstanceByName("genomic");
-        tgtNs = tgtModel.getNameSpace().toString();
+
         handler = new FlyRegGFF3RecordHandler(tgtModel);
+
         MockIdResolverFactory resolverFactory = new MockIdResolverFactory("Gene");
         resolverFactory.addResolverEntry("7227", "FBgn001", Collections.singleton("dpp"));
         resolverFactory.addResolverEntry("7227", "FBgn002", Collections.singleton("dl"));
         handler.resolverFactory = resolverFactory;
         converter = new GFF3Converter(writer, seqClsName, orgAbbrev, dataSourceName,
-                                      "FlyBase", dataSetTitle, tgtModel, handler, null);
-        itemFactory = handler.getItemFactory();
+                                      dataSetTitle, "FlyBase", tgtModel, handler, null);
+
     }
 
     public void tearDown() throws Exception {
@@ -73,42 +72,17 @@ public class FlyRegGFF3RecordHandlerTest extends ItemsTestCase
             "2L\tREDfly\tregulatory_region\t2456365\t2456372\t.\t.\t.\tID=Unspecified_dpp:REDFLY:TF000068; Dbxref=Flybase:FBgn0000490, PMID:8543160, REDfly:644, FlyBase:; Evidence=footprint/binding assay; Factor=Unspecified; Target=dpp\n"
             + "2L\tREDfly\tregulatory_region\t2456352\t2456369\t.\t.\t.\tID=dl_dpp:REDFLY:TF000069; Dbxref=Flybase:FBgn0000490, PMID:8458580, REDfly:645, FlyBase:FBgn0000463; Evidence=footprint/binding assay; Factor=dl; Target=dpp\n"
             + "2L\tREDfly\tregulatory_region\t2456423\t2456433\t.\t.\t.\tID=Unspecified_dpp:REDFLY:TF000067; Dbxref=Flybase:FBgn0000490, PMID:8543160, REDfly:643, FlyBase:; Evidence=footprint/binding assay; Factor=Unspecified; Target=dpp\n";
+
         BufferedReader srcReader = new BufferedReader(new StringReader(gff));
-
-        HashSet allItems = new LinkedHashSet();
-
-        Iterator iter = GFF3Parser.parse(srcReader);
-
-        while (iter.hasNext()) {
-            GFF3Record record = (GFF3Record) iter.next();
-            String term = record.getType();
-            String className = TypeUtil.javaiseClassName(term);
-            Item feature = itemFactory.makeItem(null, tgtNs + className, "");
-
-            handler.setFeature(feature);
-            handler.clearDataSetReferenceList();
-            handler.clearEvidenceReferenceList();
-            handler.clearPublicationReferenceList();
-            handler.process(record);
-            // evidence collection is normally set in GFF3Converter, we just want to check Publication
-            if (handler.getDataSetReferenceList().getRefIds().size() > 0) {
-                feature.addCollection(handler.getDataSetReferenceList());
-            }
-            if (handler.getEvidenceReferenceList().getRefIds().size() > 0) {
-                feature.addCollection(handler.getEvidenceReferenceList());
-            }
-            if (handler.getPublicationReferenceList().getRefIds().size() > 0) {
-                feature.addCollection(handler.getPublicationReferenceList());
-            }
-            allItems.addAll(handler.getItems());
-        }
+        converter.parse(srcReader);
+        converter.store();
 
         // uncomment to write a new target items files
-        //writeItemsFile(allItems, "/tmp/flyreg-tgt-items.xml");
+        //writeItemsFile(writer.getItems(), "flyreg-tgt-items.xml");
 
         Set expected = readItemSet("FlyRegGFF3RecordHandlerTest.xml");
 
-        assertEquals(expected, allItems);
+        assertEquals(expected, writer.getItems());
     }
 
 }

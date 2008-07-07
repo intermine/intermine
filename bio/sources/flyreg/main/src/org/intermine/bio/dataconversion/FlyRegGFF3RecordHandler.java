@@ -10,6 +10,9 @@ package org.intermine.bio.dataconversion;
  *
  */
 
+import java.net.URI;
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -20,8 +23,6 @@ import org.apache.log4j.Logger;
 import org.intermine.bio.io.gff3.GFF3Record;
 import org.intermine.metadata.Model;
 import org.intermine.xml.full.Item;
-
-import java.net.URI;
 
 /**
  * A converter/retriever for flyreg GFF3 files.
@@ -163,6 +164,8 @@ public class FlyRegGFF3RecordHandler extends GFF3RecordHandler
             geneIdMap.put(primaryIdentifier, gene);
             gene.setAttribute("primaryIdentifier", primaryIdentifier);
             gene.setReference("organism", getOrganism().getIdentifier());
+            gene.setCollection("dataSets",
+                               new ArrayList(Collections.singleton(getDataSet().getIdentifier())));
             addItem(gene);
         }
         return gene;
