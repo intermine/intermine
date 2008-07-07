@@ -30,11 +30,11 @@ public class MirandaGFF3RecordHandler extends GFF3RecordHandler
     private Set<String> problems = new HashSet<String>();
 
     private URI nameSpace;
-    
-    private Map<String, String> mirandaToTaxonId = new HashMap<String, String>();
+
     protected IdResolverFactory resolverFactory;
+
     protected static final Logger LOG = Logger.getLogger(MirandaGFF3RecordHandler.class);
-    
+
     public MirandaGFF3RecordHandler(Model tgtModel) {
         super(tgtModel);
         resolverFactory = new FlyBaseIdResolverFactory();
@@ -45,23 +45,23 @@ public class MirandaGFF3RecordHandler extends GFF3RecordHandler
      */
     @Override
     public void process(GFF3Record record) {
-            Item feature = getFeature();
-            nameSpace = getTargetModel().getNameSpace();
-            feature.setClassName(nameSpace + "MiRNATarget");
-            String geneName = record.getAttributes().get("Name").iterator().next();
-            String targetName = record.getAttributes().get("target").iterator().next();
-            feature.setAttribute("pvalue", record.getAttributes().get("pvalue").iterator().next());
-            try {
-                Item gene = getMiRNAGene(geneName);
-                Item target = getTarget(targetName);
-                if (gene != null) {
-                    feature.setReference("mirnagene", gene);
-                    feature.setReference("target", target);
-                }
-            } catch (ObjectStoreException e) {
-                // TODO Auto-generated catch block
-                e.printStackTrace();
+        Item feature = getFeature();
+        nameSpace = getTargetModel().getNameSpace();
+        feature.setClassName(nameSpace + "MiRNATarget");
+        String geneName = record.getAttributes().get("Name").iterator().next();
+        String targetName = record.getAttributes().get("target").iterator().next();
+        feature.setAttribute("pvalue", record.getAttributes().get("pvalue").iterator().next());
+        try {
+            Item gene = getMiRNAGene(geneName);
+            Item target = getTarget(targetName);
+            if (gene != null) {
+                feature.setReference("mirnagene", gene);
+                feature.setReference("target", target);
             }
+        } catch (ObjectStoreException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        }
     }
 
     private Item getTarget(String targetName) throws ObjectStoreException {
@@ -78,18 +78,18 @@ public class MirandaGFF3RecordHandler extends GFF3RecordHandler
 
     private Item getMiRNAGene(String geneName) throws ObjectStoreException {
         String geneNameToUse = (geneName.startsWith("dme")) ? geneName.substring(geneName
-                                                                                 .indexOf("-") + 1) : geneName;
+                        .indexOf("-") + 1) : geneName;
         // in FlyBase symbols are e.g. mir-5 not miR-5
         String symbol = geneNameToUse.toLowerCase();
-        String taxonId = mirandaToTaxonId.get(geneName.substring(0, geneName.indexOf("-")));
+        String taxonId = getOrganism().getAttribute("taxonId").getValue();
         IdResolver resolver = resolverFactory.getIdResolver();
         if (resolver.hasTaxon(taxonId)) {
             int resCount = resolver.countResolutions(taxonId, symbol);
             if (resCount != 1) {
                 if (!problems.contains(symbol)) {
                     LOG.info("RESOLVER: failed to resolve gene to one identifier, ignoring gene: "
-                         + symbol + " count: " + resCount + " FBgn: "
-                         + resolver.resolveId(taxonId, symbol));
+                             + symbol + " count: " + resCount + " FBgn: "
+                             + resolver.resolveId(taxonId, symbol));
                     problems.add(symbol);
                 }
                 return null;
@@ -110,6 +110,7 @@ public class MirandaGFF3RecordHandler extends GFF3RecordHandler
             if (gene == null) {
                 gene = createItem("Gene");
                 gene.setAttribute("symbol", symbol);
+                gene.setReference("organism", getOrganism());
                 gene.addToCollection("dataSets", getDataSet());
                 miRNAgenes.put(symbol, gene);
                 addItem(gene);
@@ -117,5 +118,5 @@ public class MirandaGFF3RecordHandler extends GFF3RecordHandler
             return gene;
         }
     }
-    
+
 }
