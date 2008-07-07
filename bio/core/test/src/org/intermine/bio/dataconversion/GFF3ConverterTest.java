@@ -69,22 +69,22 @@ public class GFF3ConverterTest extends TestCase {
      */
     public void testParseLocated() throws Exception {
         BufferedReader srcReader = new BufferedReader(new
-                   InputStreamReader(getClass().getClassLoader().getResourceAsStream("test.gff")));
+                                                      InputStreamReader(getClass().getClassLoader().getResourceAsStream("test.gff")));
         converter.parse(srcReader);
         converter.store();
 
 
         Set expected = new HashSet(getExpectedLocatedItems());
 
-      FileWriter fw = new FileWriter("GFF3ConverterTestLocated-tmp.xml");
-      PrintWriter pw = new PrintWriter(fw);
-      pw.println("<items>");
-      for (Object item: writer.getItems()) {
-          pw.println(item);
-      }
-      pw.println("</items>");
-      pw.close();
-      fw.close();
+//      FileWriter fw = new FileWriter("GFF3ConverterTestLocated-tmp.xml");
+//      PrintWriter pw = new PrintWriter(fw);
+//      pw.println("<items>");
+//      for (Object item: writer.getItems()) {
+//      pw.println(item);
+//      }
+//      pw.println("</items>");
+//      pw.close();
+//      fw.close();
 
 
         assertEquals(expected, writer.getItems());
@@ -101,22 +101,22 @@ public class GFF3ConverterTest extends TestCase {
      */
     public void testParseUnLocated() throws Exception {
         BufferedReader srcReader = new BufferedReader(new
-                   InputStreamReader(getClass().getClassLoader().getResourceAsStream("test.gff")));
+                                                      InputStreamReader(getClass().getClassLoader().getResourceAsStream("test.gff")));
         converter.setDontCreateLocations(true);
         converter.parse(srcReader);
         converter.store();
 
         Set expected = new HashSet(getExpectedUnLocatedItems());
 
-//        FileWriter fw = new FileWriter("GFF3ConverterTestUnLocated-tmp.xml");
-//        PrintWriter pw = new PrintWriter(fw);
-//        pw.println("<items>");
-//        for (Object item: writer.getItems()) {
-//            pw.println(item);
-//        }
-//        pw.println("</items>");
-//        pw.close();
-//        fw.close();
+//      FileWriter fw = new FileWriter("GFF3ConverterTestUnLocated-tmp.xml");
+//      PrintWriter pw = new PrintWriter(fw);
+//      pw.println("<items>");
+//      for (Object item: writer.getItems()) {
+//      pw.println(item);
+//      }
+//      pw.println("</items>");
+//      pw.close();
+//      fw.close();
 
         assertEquals(expected, writer.getItems());
     }
