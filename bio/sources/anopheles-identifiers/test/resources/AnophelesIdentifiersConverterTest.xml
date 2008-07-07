@@ -13,7 +13,7 @@
     </collection>
   </item>
   <item id="1_1" class="http://www.flymine.org/model/genomic#DataSet">
-    <attribute name="title" value="Anopheles genes"/>
+    <attribute name="title" value="VectorBase Anopheles"/>
     <reference name="dataSource" ref_id="0_1"/>
   </item>
   <item id="4_1" class="http://www.flymine.org/model/genomic#Synonym">
