@@ -47,6 +47,7 @@ public class FlyBaseFeatureFastaLoaderTask extends FastaLoaderTask
             Region chr = (Region) getDirectDataLoader().createObject(Region.class);
             chr.setPrimaryIdentifier(chromosomeId);
             chr.setOrganism(organism);
+            chr.addDataSets(getDataSet());
             getDirectDataLoader().store(chr);
             chrMap.put(chromosomeId, chr);
             return chr;
