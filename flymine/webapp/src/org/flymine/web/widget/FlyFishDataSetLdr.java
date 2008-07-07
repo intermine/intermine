@@ -45,8 +45,7 @@ import org.jfree.data.category.DefaultCategoryDataset;
  */
 public class FlyFishDataSetLdr implements DataSetLdr
 {
-    private final String dataset = "fly-Fish data set of Drosophila "
-        + "embryo mRNA localization patterns";
+    private final String dataset = "fly-Fish data set";
     private DefaultCategoryDataset dataSet;
     private Results results;
     private int widgetTotal = 0;
