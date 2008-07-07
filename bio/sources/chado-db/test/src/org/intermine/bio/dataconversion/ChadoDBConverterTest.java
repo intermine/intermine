@@ -99,7 +99,7 @@ public class ChadoDBConverterTest extends ItemsTestCase
         assertTrue(item.getClassName().endsWith("GoldenPathFragment"));
     }
 
-    private class TestChadoDBConverter extends FlyBaseDBConverter {
+    private class TestChadoDBConverter extends GenomeDBConverter {
         public TestChadoDBConverter(Database database, Model tgtModel, ItemWriter writer) {
             super(database, tgtModel, writer);
         }

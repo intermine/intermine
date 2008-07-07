@@ -24,15 +24,16 @@
       <property name="processors"
                 value="org.intermine.bio.dataconversion.FlyBaseModuleProcessor"/>
       <property name="converter.class" 
-                value="org.intermine.bio.dataconversion.FlyBaseDBConverter"/>
+                value="org.intermine.bio.dataconversion.GenomeDBConverter"/>
     </source>
     <source name="chado-db-wormbase-c_elegans" type="chado-db" dump="true">
       <property name="source.db.name" value="wormbase"/>
       <property name="organisms" value="6239"/>
       <property name="dataSourceName" value="WormBase"/>
-      <property name="dataSetTitle" value="WormBase C.elegans data set"/>
       <property name="processors"
                 value="org.intermine.bio.dataconversion.WormBaseModuleProcessor"/>
+      <property name="converter.class" 
+                value="org.intermine.bio.dataconversion.GenomeDBConverter"/>
     </source>
     <source name="uniprot" type="uniprot">
       <property name="uniprot.organisms" value="7227 6239"/>

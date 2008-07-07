@@ -10,7 +10,6 @@ package org.intermine.bio.dataconversion;
  *
  */
 
-
 import org.intermine.bio.util.OrganismData;
 import org.intermine.bio.util.OrganismRepository;
 import org.intermine.dataconversion.ItemWriter;
@@ -19,10 +18,11 @@ import org.intermine.xml.full.Item;
 import org.intermine.sql.Database;
 
 /**
- *
+ * A ChadoDBConverter that sets the dataset and datasource for genome databases (eg. WormBase and
+ * FlyBase).
  * @author Kim Rutherford
  */
-public class FlyBaseDBConverter extends ChadoDBConverter
+public class GenomeDBConverter extends ChadoDBConverter
 {
 
     /**
@@ -31,9 +31,8 @@ public class FlyBaseDBConverter extends ChadoDBConverter
      * @param tgtModel the Model used by the object store we will write to with the ItemWriter
      * @param writer an ItemWriter used to handle the resultant Items
      */
-    public FlyBaseDBConverter(Database database, Model tgtModel, ItemWriter writer) {
+    public GenomeDBConverter(Database database, Model tgtModel, ItemWriter writer) {
         super(database, tgtModel, writer);
-        // TODO Auto-generated constructor stub
     }
 
     /**
@@ -45,7 +44,7 @@ public class FlyBaseDBConverter extends ChadoDBConverter
         OrganismData od = or.getOrganismDataByTaxon(taxonId);
         String species = od.getSpecies();
         String genus = od.getGenus();
-        return "FlyBase " + genus + " " + species + " data set";
+        return getDataSourceName() + " " + genus + " " + species + " data set";
     }
 
     /**
@@ -57,9 +56,10 @@ public class FlyBaseDBConverter extends ChadoDBConverter
         OrganismData od = or.getOrganismDataByTaxon(taxonId);
         String species = od.getSpecies();
         String genus = od.getGenus();
-        String name = "FlyBase " + genus + " " + species + " data set";
-        String description = "The FlyBase " + genus + " " + species + " genome";
-        return getDataSetItem(name, "http://www.flybase.org", description,
+        String name = getDataSourceName() + " " + genus + " " + species + " data set";
+        String description = "The " + getDataSourceName() + " " + genus + " " + species + " genome";
+        String url = "http://www." + getDataSourceName().toLowerCase() + ".org";
+        return getDataSetItem(name, url, description,
                               getDataSourceItem());
     }
 
