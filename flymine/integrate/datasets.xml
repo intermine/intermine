@@ -220,7 +220,7 @@
         <attribute name="url" value="http://www.ensembl.org"/>
     </item>
     <item id="211" class="" implements="http://www.flymine.org/model/genomic#DataSet">
-        <attribute name="title" value="Ensembl Anopheles"/>
+        <attribute name="title" value="Ensembl Anopheles gambiae str. PEST [AgamP3.4]"/>
         <attribute name="description"
             value="The Ensembl Anopheles gambiae genome annotation"/>
         <attribute name="version" value="AgamP3"/>
@@ -228,7 +228,7 @@
         <reference name="dataSource" ref_id="210"/>
     </item>
     <item id="212" class="" implements="http://www.flymine.org/model/genomic#DataSet">
-        <attribute name="title" value="Ensembl Apis"/>
+        <attribute name="title" value="Ensembl Apis mellifera"/>
         <attribute name="description" value="The Ensembl Apis mellifera genome annotation"/>
         <attribute name="version" value="2.0"/>
         <attribute name="url" value="http://www.ensembl.org/Apis_mellifera"/>
