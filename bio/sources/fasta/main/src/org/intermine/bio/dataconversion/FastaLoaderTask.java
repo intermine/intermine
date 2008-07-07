@@ -301,8 +301,11 @@ public class FastaLoaderTask extends FileDirectDataLoaderTask
         }
 
         if (!StringUtils.isEmpty(dataSetTitle)) {
-            DataSet dataSet = getDataSet(dataSetTitle);
+            DataSet dataSet = getDataSet();
             imo.addDataSets(dataSet);
+            if (synonym != null) {
+                synonym.addDataSets(dataSet);
+            }
         }
 
         try {
@@ -318,7 +321,12 @@ public class FastaLoaderTask extends FileDirectDataLoaderTask
         }
     }
 
-    private DataSet getDataSet(String dataSetTitle) throws ObjectStoreException {
+    /**
+     * Return the DataSet to add to each object.
+     * @return the DataSet
+     * @throws ObjectStoreException if there is an ObjectStore problem
+     */
+    public DataSet getDataSet() throws ObjectStoreException {
         if (dataSets.containsKey(dataSetTitle)) {
             return dataSets.get(dataSetTitle);
         } else {
