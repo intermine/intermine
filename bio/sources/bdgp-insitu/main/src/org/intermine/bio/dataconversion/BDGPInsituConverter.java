@@ -12,6 +12,7 @@ package org.intermine.bio.dataconversion;
 
 import java.io.Reader;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -19,6 +20,7 @@ import java.util.Map;
 import java.util.Set;
 
 import org.apache.log4j.Logger;
+import org.intermine.dataconversion.DataConverter;
 import org.intermine.dataconversion.FileConverter;
 import org.intermine.dataconversion.ItemWriter;
 import org.intermine.metadata.Model;
@@ -257,6 +259,8 @@ public class BDGPInsituConverter extends FileConverter
         Item gene = createItem("Gene");
         gene.setAttribute("primaryIdentifier", primaryIdentifier);
         gene.setReference("organism", orgDrosophila);
+        gene.setCollection("dataSets",
+                           new ArrayList(Collections.singleton(dataSet.getIdentifier())));
         genes.put(primaryIdentifier, gene);
         store(gene);
         return gene;
