@@ -493,6 +493,7 @@ public class GFF3Converter
         if (seq == null) {
             seq = sequenceHandler.makeSequenceItem(this, identifier);
             seq.addReference(getOrgRef());
+            seq.addToCollection("dataSets", getDataSet());
             writer.store(ItemHelper.convert(seq));
 
             Item synonym = createItem("Synonym");
