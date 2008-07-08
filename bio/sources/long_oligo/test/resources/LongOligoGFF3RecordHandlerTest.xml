@@ -13,6 +13,9 @@
   <item id="0_3" class="http://www.flymine.org/model/genomic#MRNA">
     <attribute name="secondaryIdentifier" value="CG4314-RA"/>
     <reference name="organism" ref_id="0_0"/>
+    <collection name="dataSets">
+      <reference ref_id="0_2"/>
+    </collection>
   </item>
   <item id="0_2" class="http://www.flymine.org/model/genomic#DataSet">
     <attribute name="title" value="INDAC long oligo data set"/>
