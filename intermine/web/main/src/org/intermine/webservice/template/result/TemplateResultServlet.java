@@ -38,6 +38,14 @@ public class TemplateResultServlet extends HttpServlet
         runService(request, response);
     }
 
+    /**
+     * {@inheritDoc}}
+     */
+    public void doPost(HttpServletRequest req, HttpServletResponse resp)
+            throws ServletException, IOException {
+        runService(req, resp);
+    }
+    
     private void runService(HttpServletRequest request,
             HttpServletResponse response) {
         new TemplateResultService().doGet(request, response);
