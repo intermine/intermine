@@ -10,13 +10,21 @@ package org.intermine.bio.dataconversion;
  *
  */
 
+import java.util.Arrays;
 import java.util.Iterator;
 import java.util.List;
-import org.apache.log4j.Logger;
+import java.util.Map;
 
+import org.intermine.bio.dataconversion.ChadoSequenceProcessor.FeatureData;
 import org.intermine.bio.util.OrganismData;
 import org.intermine.objectstore.ObjectStoreException;
 import org.intermine.xml.full.Item;
+
+import java.sql.Connection;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+
+import org.apache.log4j.Logger;
 
 /**
  * A processor that loads feature referred to by the modENCODE metadata.  This class is designed
@@ -31,6 +39,15 @@ public class ModEncodeFeatureProcessor extends ChadoSequenceProcessor
     private final String dataSetIdentifier;
     private final String dataSourceIdentifier;
     private final List<Integer> dataList;
+
+    // feature type to query from the feature table
+    private static final List<String> FEATURES = Arrays.asList(
+         "gene", "mRNA", "transcript",
+         "CDS", "intron", "exon", "EST",
+         "five_prime_untranslated_region",
+         "five_prime_UTR", "three_prime_untranslated_region",
+         "three_prime_UTR", "origin_of_replication"
+    );
 
     /**
      * Create a new ModEncodeFeatureProcessor.
@@ -50,6 +67,16 @@ public class ModEncodeFeatureProcessor extends ChadoSequenceProcessor
     }
 
     /**
+     * Get a list of the chado/so types of the LocatedSequenceFeatures we wish to load.  The list
+     * will not include chromosome-like features.
+     * @return the list of features
+     */
+    @Override
+    protected List<String> getFeatures() {
+        return FEATURES;
+    }
+
+    /**
      * {@inheritDoc}
      */
     @Override
@@ -58,7 +85,7 @@ public class ModEncodeFeatureProcessor extends ChadoSequenceProcessor
 
 //        LOG.info("LISTA " + queryList);
 
-        return " feature_id IN "
+        return "cvterm.name = 'chromosome' OR cvterm.name = 'chromosome_arm' OR feature_id IN "
             + " (SELECT feature_id "
             + "   FROM data_feature "
             + "   WHERE data_id IN (" + queryList + "))";
@@ -70,6 +97,18 @@ public class ModEncodeFeatureProcessor extends ChadoSequenceProcessor
             + "   WHERE experiment_id = " + chadoExperimentId + ")";
             */
         //return null;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    protected void extraProcessing(Connection connection, Map<Integer, FeatureData> featureDataMap)
+                    throws ObjectStoreException, SQLException {
+
+        // process indirect locations via match features and featureloc feature<->match<->feature
+        ResultSet matchLocRes = getMatchLocResultSet(connection);
+        processLocationTable(connection, matchLocRes);
     }
 
     /**

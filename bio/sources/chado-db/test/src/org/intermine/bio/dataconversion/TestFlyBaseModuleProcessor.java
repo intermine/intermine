@@ -268,6 +268,24 @@ public class TestFlyBaseModuleProcessor extends FlyBaseModuleProcessor
      * {@inheritDoc}
      */
     @Override
+    protected ResultSet getMatchLocResultSet(Connection connection) throws SQLException {
+        String[] columnNames = new String[] {
+            "featureloc_id", "feature_id", "srcfeature_id", "fmin", "is_fmin_partial",
+            "fmax", "is_fmax_partial", "strand"
+        };
+        MockMultiRowResultSet res = new MockMultiRowResultSet();
+
+        res.setupRows(new Object[][] {
+
+        });
+        res.setupColumnNames(columnNames);
+        return res;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
     protected ResultSet getSynonymResultSet(@SuppressWarnings("unused") Connection connection) {
         String[] columnNames = new String[] {
             "feature_id", "synonym_name", "type_name", "is_current"

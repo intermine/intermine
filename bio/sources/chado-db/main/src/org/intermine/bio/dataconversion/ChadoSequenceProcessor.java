@@ -132,7 +132,11 @@ public class ChadoSequenceProcessor extends ChadoProcessor
         earlyExtraProcessing(connection);
         processFeatureTable(connection);
         processPubTable(connection);
-        processLocationTable(connection);
+
+        // process direct locations
+        ResultSet directLocRes = getFeatureLocResultSet(connection);
+        processLocationTable(connection, directLocRes);
+
         processRelationTable(connection);
         processDbxrefTable(connection);
         processSynonymTable(connection);
@@ -411,9 +415,16 @@ public class ChadoSequenceProcessor extends ChadoProcessor
         // override in subclasses as necessary
     }
 
-    private void processLocationTable(Connection connection)
+    /**
+     * Process a featureloc table and create Location objects.
+     * @param connection the Connectio
+     * @param res a ResultSet that has the columns: featureloc_id, feature_id, srcfeature_id,
+     *    fmin, fmax, strand
+     * @throws SQLException if there is a problem while querying
+     * @throws ObjectStoreException if there is a problem while storing
+     */
+    protected void processLocationTable(Connection connection, ResultSet res)
         throws SQLException, ObjectStoreException {
-        ResultSet res = getFeatureLocResultSet(connection);
         int count = 0;
         int featureWarnings = 0;
         while (res.next()) {
@@ -460,7 +471,7 @@ public class ChadoSequenceProcessor extends ChadoProcessor
                         }
                     } else {
                         LOG.warn("featureId (" + featureId + ") from location " + featureLocId
-                                + " was expected to be a chromosome");
+                                + " was expected to be a LocatedSequenceFeature");
                     }
                     count++;
                 } else {
@@ -1184,11 +1195,9 @@ public class ChadoSequenceProcessor extends ChadoProcessor
      * the chromosome and chromosome_arm feature types.
      * @return the list of features as a string (in SQL list format)
      */
-    private String getFeaturesString() {
-        List<String> features = new ArrayList<String>(getFeatures());
-        features.addAll(CHROMOSOME_FEATURES);
+    private String getFeaturesString(List<String> featuresList) {
         StringBuffer featureListString = new StringBuffer();
-        Iterator<String> i = features.iterator();
+        Iterator<String> i = featuresList.iterator();
         while (i.hasNext()) {
             String item = i.next();
             featureListString.append("'" + item + "'");
@@ -1215,7 +1224,9 @@ public class ChadoSequenceProcessor extends ChadoProcessor
      * @throws SQLException if there is a problem
      */
     protected void createFeatureTempTable(Connection connection) throws SQLException {
-        String featureTypesString = getFeaturesString();
+        List<String> featuresList = new ArrayList<String>(getFeatures());
+        featuresList.addAll(CHROMOSOME_FEATURES);
+        String featureTypesString = getFeaturesString(featuresList);
         String organismConstraint = getOrganismConstraint();
         String orgConstraintForQuery = "";
         if (!StringUtils.isEmpty(organismConstraint)) {
@@ -1285,6 +1296,14 @@ public class ChadoSequenceProcessor extends ChadoProcessor
         return "SELECT feature_id FROM " + tempTableName;
     }
 
+
+    private String getChromosomeFeatureIdQuery() {
+        return
+            "SELECT feature_id FROM feature, cvterm"
+            + "  WHERE type_id = cvterm.cvterm_id"
+            + "    AND cvterm.name IN (" + getFeaturesString(CHROMOSOME_FEATURES) + ")";
+    }
+
     /**
      * Return the interesting rows from the feature_relationship table.
      * This is a protected method so that it can be overriden for testing
@@ -1321,8 +1340,33 @@ public class ChadoSequenceProcessor extends ChadoProcessor
             + "   WHERE feature_id IN"
             + "         (" + getFeatureIdQuery() + ")"
             + "     AND srcfeature_id IN"
-            + "         (" + getFeatureIdQuery() + ")"
+            + "         (" + getChromosomeFeatureIdQuery() + ")"
             + "     AND locgroup = 0";
+        LOG.info("executing: " + query);
+        Statement stmt = connection.createStatement();
+        ResultSet res = stmt.executeQuery(query);
+        return res;
+    }
+
+
+    /**
+     * Return the interesting matches from the featureloc and feature tables.
+     * feature<->featureloc<->match_feature<->featureloc<->feature
+     * This is a protected method so that it can be overriden for testing
+     * @param connection the db connection
+     * @return the SQL result set
+     * @throws SQLException if a database problem occurs
+     */
+    protected ResultSet getMatchLocResultSet(Connection connection) throws SQLException {
+        String query =
+            "SELECT f1loc.featureloc_id, f1.feature_id, f2.feature_id AS srcfeature_id, f2loc.fmin,"
+            + "     false AS is_fmin_partial, f2loc.fmax, false AS is_fmax_partial, f2loc.strand"
+            + "   FROM feature match, feature f1, featureloc f1loc, feature f2, featureloc f2loc"
+            + "  WHERE match.feature_id = f1loc.feature_id AND match.feature_id = f2loc.feature_id"
+            + "    AND f1loc.srcfeature_id = f1.feature_id AND f2loc.srcfeature_id = f2.feature_id"
+            + "    AND f1.feature_id <> f2.feature_id"
+            + "    AND f1.feature_id IN (" + getFeatureIdQuery() + ")"
+            + "    AND f2.feature_id IN (" + getChromosomeFeatureIdQuery() + ")";
         LOG.info("executing: " + query);
         Statement stmt = connection.createStatement();
         ResultSet res = stmt.executeQuery(query);
