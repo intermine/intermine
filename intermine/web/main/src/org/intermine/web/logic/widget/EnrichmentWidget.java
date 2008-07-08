@@ -166,12 +166,12 @@ public class EnrichmentWidget extends Widget
         HashMap<String, List<String>> termsToIds = new HashMap();
         while (iter.hasNext()) {
             ResultsRow resRow = (ResultsRow) iter.next();
-            String term = resRow.get(0).toString();
+            String termId = resRow.get(0).toString();
             String id = resRow.get(1).toString();
-            if (!termsToIds.containsKey(term)) {
-                termsToIds.put(term, new ArrayList<String>());
+            if (!termsToIds.containsKey(termId)) {
+                termsToIds.put(termId, new ArrayList<String>());
             }
-            termsToIds.get(term).add(id);
+            termsToIds.get(termId).add(id);
         }
 
         for (String id : selectedIds) {
@@ -179,6 +179,7 @@ public class EnrichmentWidget extends Widget
                 List row = new LinkedList();
 
                 row.add(id);
+                row.add(labelToId.get(id));
 
                 BigDecimal bd = pvalues.get(id);
                 Double d = new Double(bd.doubleValue());
