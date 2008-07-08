@@ -138,7 +138,9 @@ public class FlyBaseIdResolverFactory extends IdResolverFactory
             throw new RuntimeException(e);
         } finally {
             try {
-                conn.close();
+                if (conn != null) {
+                    conn.close();
+                }
             } catch (SQLException e) {
                 throw new RuntimeException(e);
             }
