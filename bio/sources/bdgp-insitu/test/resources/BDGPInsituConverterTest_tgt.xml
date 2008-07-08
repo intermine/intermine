@@ -5,6 +5,9 @@
 <item id="5_1" class="http://www.flymine.org/model/genomic#Gene">
 <attribute name="primaryIdentifier" value="FBgn1"/>
 <reference name="organism" ref_id="0_1"/>
+<collection name="dataSets">
+  <reference ref_id="2_1"/>
+</collection>
 </item>
 <item id="4_8" class="http://www.flymine.org/model/genomic#Stage">
 <attribute name="name" value="Stage 8"/>
@@ -78,6 +81,9 @@
 <item id="5_2" class="http://www.flymine.org/model/genomic#Gene">
 <attribute name="primaryIdentifier" value="FBgn2"/>
 <reference name="organism" ref_id="0_1"/>
+<collection name="dataSets">
+  <reference ref_id="2_1"/>
+</collection>
 </item>
 <item id="4_3" class="http://www.flymine.org/model/genomic#Stage">
 <attribute name="name" value="Stage 3"/>
