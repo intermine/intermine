@@ -156,5 +156,21 @@ public class PathQueryBinding
         }
         return queries;
     }
+    
+    /**
+     * Parses PathQuery from XML.
+     * @param reader reader containing XML 
+     * @param classKeys class keys
+     * @return PathQuery
+     */
+    public static PathQuery unmarshalPathQuery(Reader reader, 
+            Map<String, List<FieldDescriptor>> classKeys) {
+        Map<String, PathQuery> map =  unmarshal(reader, classKeys);
+        if (map.size() != 0) {
+            return map.values().iterator().next();
+        } else {
+            return null;
+        }
+    }
 }
 
