@@ -368,6 +368,9 @@ public class FastaLoaderTask extends FileDirectDataLoaderTask
     }
 
     private DataSource getDataSource() throws ObjectStoreException {
+        if (StringUtils.isEmpty(synonymSource)) {
+            throw new RuntimeException("synonymSource not set");
+        }
         if (dataSource == null) {
             dataSource = (DataSource) getDirectDataLoader().createObject(DataSource.class);
             dataSource.setName(synonymSource);
