@@ -493,16 +493,4 @@
         <attribute name="url" value="http://www.flyreg.org/"/>
         <reference name="dataSource" ref_id="660"/>
     </item>
-
-
-    <item id="670" class="" implements="http://www.flymine.org/model/genomic#DataSource">
-        <attribute name="name" value="fly-Fish"/>
-        <attribute name="description" value="Drosophila embryo mRNA localization patterns"/>
-        <attribute name="url" value="http://fly-fish.ccbr.utoronto.ca/"/>
-    </item>
-    <item id="671" class="" implements="http://www.flymine.org/model/genomic#DataSet">
-        <attribute name="title" value="fly-Fish data set"/>
-        <attribute name="url" value="http://fly-fish.ccbr.utoronto.ca/"/>
-        <reference name="dataSource" ref_id="670"/>
-    </item>
 </items>
