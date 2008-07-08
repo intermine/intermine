@@ -349,7 +349,7 @@ public class InparanoidConverter extends FileConverter
                 throw new IllegalArgumentException("unable to find source name for organism: "
                                                    + taxonId);
         }
-        Item source = (Item) sources.get(sourceName);
+        Item source = sources.get(sourceName);
         if (source == null) {
             source = createItem("DataSource");
             source.setAttribute("name", sourceName);
