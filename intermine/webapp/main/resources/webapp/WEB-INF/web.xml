@@ -97,6 +97,20 @@
 	<servlet-name>ws-template-results</servlet-name>
 	<url-pattern>/service/template/results</url-pattern>
   </servlet-mapping>
+
+  <servlet>
+    <servlet-name>ws-model</servlet-name>
+    <servlet-class>org.intermine.webservice.model.ModelServlet</servlet-class>
+    <init-param>
+       <param-name>debug</param-name>
+       <param-value>true</param-value>
+    </init-param>
+  </servlet>
+
+  <servlet-mapping>
+    <servlet-name>ws-model</servlet-name>
+    <url-pattern>/service/model</url-pattern>
+  </servlet-mapping>
   
   <servlet>
     <servlet-name>ws-widgets</servlet-name>

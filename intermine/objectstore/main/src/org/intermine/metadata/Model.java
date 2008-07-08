@@ -62,6 +62,15 @@ public class Model
         }
         return models.get(name);
     }
+    
+    /**
+     * Adds model to known models. 
+     * @param name the model name
+     * @param model the model
+     */
+    public static void addModel(String name, Model model) {
+        models.put(name, model);
+    }
 
     /**
      * Construct a Model with a name and set of ClassDescriptors.  The model will be
