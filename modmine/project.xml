@@ -73,6 +73,7 @@
       <property name="fasta.includes" value="dmel-all-gene-*.fasta"/>
       <property name="src.data.dir" location="/shared/data/flybase/FB2008_03/fasta"/>
       <property name="fasta.dataSetTitle" value="FlyBase Drosophila melanogaster data set"/>
+      <property name="fasta.synonymSource" value="FlyBase"/>
     </source>
     <source name="flybase-dmel-cds-fasta" type="fasta">
       <property name="fasta.loaderClassName"
@@ -82,6 +83,7 @@
       <property name="fasta.classAttribute" value="secondaryIdentifier"/>
       <property name="fasta.includes" value="dmel-all-CDS-*.fasta"/>
       <property name="fasta.dataSetTitle" value="FlyBase Drosophila melanogaster data set"/>
+      <property name="fasta.synonymSource" value="FlyBase"/>
       <property name="src.data.dir" location="/shared/data/flybase/FB2008_03/fasta"/>
     </source>
     <source name="flybase-dmel-5prime-utr-fasta" type="fasta">
@@ -91,6 +93,7 @@
       <property name="fasta.classAttribute" value="primaryIdentifier"/>
       <property name="fasta.includes" value="dmel-all-five_prime_UTR-*.fasta"/>
       <property name="fasta.dataSetTitle" value="FlyBase Drosophila melanogaster data set"/>
+      <property name="fasta.synonymSource" value="FlyBase"/>
       <property name="src.data.dir" location="/shared/data/flybase/FB2008_03/fasta"/>
     </source>
     <source name="flybase-dmel-3prime-utr-fasta" type="fasta">
@@ -100,6 +103,7 @@
       <property name="fasta.classAttribute" value="primaryIdentifier"/>
       <property name="fasta.includes" value="dmel-all-three_prime_UTR-*.fasta"/>
       <property name="fasta.dataSetTitle" value="FlyBase Drosophila melanogaster data set"/>
+      <property name="fasta.synonymSource" value="FlyBase"/>
       <property name="src.data.dir" location="/shared/data/flybase/FB2008_03/fasta"/>
     </source>
     <source name="wormbase-c_elegans-chromosome-fasta" type="fasta" dump="true">
