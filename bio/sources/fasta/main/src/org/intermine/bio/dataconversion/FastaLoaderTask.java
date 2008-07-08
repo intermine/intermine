@@ -300,12 +300,14 @@ public class FastaLoaderTask extends FileDirectDataLoaderTask
             synonym.setSource(getDataSource());
         }
 
-        if (!StringUtils.isEmpty(dataSetTitle)) {
-            DataSet dataSet = getDataSet();
-            imo.addDataSets(dataSet);
-            if (synonym != null) {
-                synonym.addDataSets(dataSet);
-            }
+        if (StringUtils.isEmpty(dataSetTitle)) {
+            throw new RuntimeException("DataSet title (fasta.dataSetTitle) not set");
+        }
+
+        DataSet dataSet = getDataSet();
+        imo.addDataSets(dataSet);
+        if (synonym != null) {
+            synonym.addDataSets(dataSet);
         }
 
         try {
