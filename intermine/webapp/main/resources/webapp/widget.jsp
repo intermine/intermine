@@ -28,21 +28,23 @@
 <div id="widgetcontainer${widget.id}" class="widgetcontainer">
   <span id="closewidget${widget.id}" class="widgetcloser"><a href="javascript:toggleWidget('widgetcontainer${widget.id}','togglelink${widget.id}');">close x</a></span>
   <h3>${widget.title}</h3>
-  <p>${widget.description}<br/>
+  <p>${widget.description}<c:if test="${type == 'EnrichmentWidgetConfig'}" >Smaller p-values show greater enrichment. Method: <a href="http://intermine.org/wiki/EnrichmentWidgets" target="_new">Hypergeometric test</a></c:if>
+
+  <br/>
   <span style="margin-top:5px">Number of ${bag.type}s in this list not analysed in this widget:
 <%-- hide until table and graph widgets can handle this link
-	<c:choose>
-	<c:when test="${type == 'EnrichmentWidgetConfig'}">
-    	<a href="javascript:displayNotAnalysed(${widget.id})"><span id="widgetnotanalysed${widget.id}">${widget.notAnalysed}</span></a>
-	</c:when>
-	<c:otherwise>
+  <c:choose>
+  <c:when test="${type == 'EnrichmentWidgetConfig'}">
+      <a href="javascript:displayNotAnalysed(${widget.id})"><span id="widgetnotanalysed${widget.id}">${widget.notAnalysed}</span></a>
+  </c:when>
+  <c:otherwise>
  --%>
-    	<span id="widgetnotanalysed${widget.id}"><%--${widget.notAnalysed}--%></span>
+      <span id="widgetnotanalysed${widget.id}"><%--${widget.notAnalysed}--%></span>
 <%--
     </c:otherwise>
-	</c:choose>
-	--%>
-	</span>
+  </c:choose>
+  --%>
+  </span>
  </p>
  <c:set var="extraAttrMap" value="${widget2extraAttrs[widget.id]}" />
  <c:if test="${type == 'EnrichmentWidgetConfig' || fn:length(extraAttrMap)>0}" >
@@ -73,24 +75,24 @@
     </li>
    </c:if>
     <c:forEach items="${extraAttrMap}" var="entry">
-	  <c:if test="${! empty entry.key}">
-	    <li>
-	      <label>${entry.key}:</label>
-	      <html:select property="selectedExtraAttribute" styleId="widgetselect${widget.id}" onchange="getProcess${type}('${widget.id}','${bag.name}');">
-	      <c:forEach items="${entry.value}" var="extraParams">
-	        <%--<c:choose>
-	          <c:when test="${widget.selectedExtraAttribute == extraParams}">
-	            <option value="${extraParams}" selected>${extraParams}</option>
-	          </c:when>
-	          <c:otherwise>--%>
-	            <html:option value="${extraParams}">${extraParams}</html:option>
-	          <%--</c:otherwise>
-	        </c:choose>--%>
-	      </c:forEach>
-	      </html:select>
-	    </li>
-	  </c:if>
-	</c:forEach>
+    <c:if test="${! empty entry.key}">
+      <li>
+        <label>${entry.key}:</label>
+        <html:select property="selectedExtraAttribute" styleId="widgetselect${widget.id}" onchange="getProcess${type}('${widget.id}','${bag.name}');">
+        <c:forEach items="${entry.value}" var="extraParams">
+          <%--<c:choose>
+            <c:when test="${widget.selectedExtraAttribute == extraParams}">
+              <option value="${extraParams}" selected>${extraParams}</option>
+            </c:when>
+            <c:otherwise>--%>
+              <html:option value="${extraParams}">${extraParams}</html:option>
+            <%--</c:otherwise>
+          </c:choose>--%>
+        </c:forEach>
+        </html:select>
+      </li>
+    </c:if>
+  </c:forEach>
   </ol>
   </fieldset>
  </c:if>
