@@ -23,30 +23,11 @@
         <attribute name="url" value="http://www.ebi.ac.uk/trembl/"/>
         <reference name="dataSource" ref_id="10"/>
     </item>
-    <item id="13" class="" implements="http://www.flymine.org/model/genomic#DataSet">
-        <attribute name="title" value="UniProt data set"/>
-        <attribute name="description" value="UniProt Knowledgebase"/>
-        <attribute name="url" value="http://www.ebi.uniprot.org/uniprot-srv/uniProtSearch.do"/>
-        <reference name="dataSource" ref_id="10"/>
-    </item>
+
     <item id="20" class="" implements="http://www.flymine.org/model/genomic#DataSource">
         <attribute name="name" value="FlyBase"/>
         <attribute name="description" value="A database of genetic and molecular data for Drosophila"/>
         <attribute name="url" value="http://www.flybase.org"/>
-    </item>
-    <item id="21" class="" implements="http://www.flymine.org/model/genomic#DataSet">
-        <attribute name="title" value="FlyBase Drosophila melanogaster data set"/>
-        <attribute name="description" value="The FlyBase Drosophila melanogaster genome data set"/>
-        <attribute name="version" value="5.1"/>
-        <attribute name="url" value="http://www.flybase.org"/>
-        <reference name="dataSource" ref_id="20"/>
-    </item>
-    <item id="22" class="" implements="http://www.flymine.org/model/genomic#DataSet">
-        <attribute name="title" value="FlyBase Drosophila pseudoobscura pseudoobscura data set"/>
-        <attribute name="description" value="The FlyBase Drosophila pseudoobscura pseudoobscura genome data set"/>
-        <attribute name="version" value="2.0"/>
-        <attribute name="url" value="http://www.flybase.org"/>
-        <reference name="dataSource" ref_id="20"/>
     </item>
 
     <item id="30" class="" implements="http://www.flymine.org/model/genomic#DataSource">
