@@ -292,7 +292,7 @@ public class FastaLoaderTask extends FileDirectDataLoaderTask
         extraProcessing(bioJavaSequence, flymineSequence, imo, organism, getDataSource());
 
         Synonym synonym = null;
-        if (synonymSource != null && !synonymSource.equals("")) {
+        if (!StringUtils.isEmpty(synonymSource)) {
             synonym = (Synonym) getDirectDataLoader().createObject(Synonym.class);
             synonym.setValue(attributeValue);
             synonym.setType(classAttribute);
