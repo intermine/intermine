@@ -24,9 +24,7 @@ import org.intermine.metadata.Model;
 import org.intermine.sql.Database;
 import org.intermine.xml.full.Item;
 
-import java.io.FileWriter;
 import java.io.IOException;
-import java.io.PrintWriter;
 import java.sql.Connection;
 
 public class ChadoDBConverterTest extends ItemsTestCase
