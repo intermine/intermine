@@ -98,9 +98,7 @@ public class ObjectTrailController extends TilesAction
                 if (resultsTableId.startsWith("itt")) {
                     // inline template
                     String table = breadcrumbs[1] + "." + breadcrumbs[2] + "." + breadcrumbs[3];
-                    TrailElement e
-                        = new TrailElement(table, elementTrail, "results");
-                    elements.add(e);
+                    elements.add(new TrailElement(table, elementTrail, "results"));
                 } else {
                     /* results.do?table=col0&trail=|results.col0
                      * results.do?table=results.1636&trail=|results.1636
@@ -112,7 +110,7 @@ public class ObjectTrailController extends TilesAction
                     } catch (Exception e)  {
                         // nothing to do
                     }
-                    // for tables with id like 'bag.list50' 
+                    // for tables with id like 'bag.list50'
                     String tableId = "";
                     for (int j = 1; j < breadcrumbs.length; j++) {
                         tableId += breadcrumbs[j];
@@ -120,9 +118,7 @@ public class ObjectTrailController extends TilesAction
                             tableId += ".";
                         }
                     }
-                    TrailElement e
-                        = new TrailElement(prepend + tableId, elementTrail, "results");
-                    elements.add(e);
+                    elements.add(new TrailElement(prepend + tableId, elementTrail, "results"));
                 }
 
             } else if (breadcrumbs[0].equals("bag")) {
@@ -146,8 +142,6 @@ public class ObjectTrailController extends TilesAction
                 elements.add(new TrailElement(label, elementTrail, o.getId().intValue()));
             }
         }
-
-
         request.setAttribute("trailElements", elements);
         return null;
     }

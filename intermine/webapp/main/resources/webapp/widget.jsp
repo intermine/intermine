@@ -28,7 +28,7 @@
 <div id="widgetcontainer${widget.id}" class="widgetcontainer">
   <span id="closewidget${widget.id}" class="widgetcloser"><a href="javascript:toggleWidget('widgetcontainer${widget.id}','togglelink${widget.id}');">close x</a></span>
   <h3>${widget.title}</h3>
-  <p>${widget.description}<c:if test="${type == 'EnrichmentWidgetConfig'}" >Smaller p-values show greater enrichment. Method: <a href="http://intermine.org/wiki/EnrichmentWidgets" target="_new">Hypergeometric test</a></c:if>
+  <p>${widget.description}<c:if test="${type == 'EnrichmentWidgetConfig'}" >&nbsp;&nbsp;Smaller p-values show greater enrichment. Method: <a href="http://intermine.org/wiki/EnrichmentWidgets" target="_new">Hypergeometric test</a></c:if>
 
   <br/>
   <span style="margin-top:5px">Number of ${bag.type}s in this list not analysed in this widget:
