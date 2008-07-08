@@ -96,6 +96,7 @@
 <item id="0_4" class="http://www.flymine.org/model/genomic#Chromosome">
 <attribute name="primaryIdentifier" value="3R"/>
 <reference name="organism" ref_id="0_0"/>
+<collection name="dataSets"><reference ref_id="0_2"/></collection>
 </item>
 <item id="0_6" class="http://www.flymine.org/model/genomic#MiRNATarget">
 <attribute name="name" value="dme-miR-312"/>
