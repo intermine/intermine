@@ -10,20 +10,14 @@ package org.flymine.web.widget;
  *
  */
 
-import java.util.ArrayList;
-import java.util.List;
-
-import org.intermine.objectstore.query.ConstraintOp;
-
 import org.intermine.metadata.Model;
 import org.intermine.objectstore.ObjectStore;
-import org.intermine.path.Path;
+import org.intermine.objectstore.query.ConstraintOp;
 import org.intermine.pathquery.Constraint;
 import org.intermine.pathquery.PathNode;
 import org.intermine.pathquery.PathQuery;
 import org.intermine.web.logic.bag.InterMineBag;
 import org.intermine.web.logic.widget.GraphCategoryURLGenerator;
-
 import org.jfree.data.category.CategoryDataset;
 
 /**
@@ -90,15 +84,9 @@ public class FlyFishGraphURLGenerator implements GraphCategoryURLGenerator
         Model model = os.getModel();
         PathQuery q = new PathQuery(model);
 
-        List<Path> view = new ArrayList<Path>();
-        view.add(PathQuery.makePath(model, q, "Gene.primaryIdentifier"));
-        view.add(PathQuery.makePath(model, q, "Gene.secondaryIdentifier"));
-        view.add(PathQuery.makePath(model, q, "Gene.name"));
-        view.add(PathQuery.makePath(model, q, "Gene.organism.name"));
-        view.add(PathQuery.makePath(model, q, "Gene.mRNAExpressionResults.stageRange"));
-        view.add(PathQuery.makePath(model, q, "Gene.mRNAExpressionResults.expressed"));
-
-        q.setViewPaths(view);
+        q.setView("Gene.primaryIdentifier, Gene.secondaryIdentifier, Gene.name");
+        q.addView("Gene.organism.name, Gene.mRNAExpressionResults.stageRange");
+        q.addView("Gene.mRNAExpressionResults.expressed");
 
         String bagType = bag.getType();
         ConstraintOp constraintOp = ConstraintOp.IN;
@@ -112,7 +100,7 @@ public class FlyFishGraphURLGenerator implements GraphCategoryURLGenerator
         constraintOp = ConstraintOp.EQUALS;
         code = q.getUnusedConstraintCode();
         PathNode datasetNode = q.addNode("Gene.mRNAExpressionResults.dataSet.title");
-        String dataset = "fly-Fish data set of Drosophila embryo mRNA localization patterns";
+        String dataset = "fly-Fish data set";
         Constraint datasetConstraint
                         = new Constraint(constraintOp, dataset, false, label, code, id, null);
         datasetNode.getConstraints().add(datasetConstraint);
