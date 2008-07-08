@@ -354,12 +354,12 @@ sub copy_db
   # retry a few times because sometimes the createdb fails with a "no
   # such file or directory" error because some table/index files
   # (temporary tables maybe) disappear while being copied
-  for (my $i = 0; $i < 10; $i++) {
+  for (my $i = 1; $i <= 25; $i++) {
     eval {
       spawn($pass, @createdb_command, @params);
     };
     if ($@) {
-      my $pause = 10 + $i * 10;
+      my $pause = $i * 5;
       warn "failure ($@) - will try again in $pause seconds ...\n";
       sleep($pause);
     } else {
