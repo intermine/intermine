@@ -1361,9 +1361,11 @@ public class ChadoSequenceProcessor extends ChadoProcessor
         String query =
             "SELECT f1loc.featureloc_id, f1.feature_id, f2.feature_id AS srcfeature_id, f2loc.fmin,"
             + "     false AS is_fmin_partial, f2loc.fmax, false AS is_fmax_partial, f2loc.strand"
-            + "   FROM feature match, feature f1, featureloc f1loc, feature f2, featureloc f2loc"
+            + "   FROM feature match, feature f1, featureloc f1loc, feature f2, featureloc f2loc,"
+            + "        cvterm mt"
             + "  WHERE match.feature_id = f1loc.feature_id AND match.feature_id = f2loc.feature_id"
             + "    AND f1loc.srcfeature_id = f1.feature_id AND f2loc.srcfeature_id = f2.feature_id"
+            + "    AND match.type_id = mt.cvterm_id AND mt.name IN ('match', 'cDNA_match')"
             + "    AND f1.feature_id <> f2.feature_id"
             + "    AND f1.feature_id IN (" + getFeatureIdQuery() + ")"
             + "    AND f2.feature_id IN (" + getChromosomeFeatureIdQuery() + ")";
