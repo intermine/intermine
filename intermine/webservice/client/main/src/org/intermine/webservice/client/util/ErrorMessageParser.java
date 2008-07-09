@@ -25,6 +25,9 @@ public class ErrorMessageParser
      */
     public static String parseError(String errorStr) {
         int pos = errorStr.indexOf("</error>");
+        if (pos == -1) {
+            return "";
+        }
         String str = errorStr.substring(0, pos);
         str = str.replaceAll("<error>", " ");
         str = str.replaceAll("<message>", "");
