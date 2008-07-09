@@ -413,9 +413,7 @@ public class FlyBaseModuleProcessor extends ChadoSequenceProcessor
      */
     @Override
     protected String getExtraFeatureConstraint() {
-        return "NOT ((cvterm.name = 'golden_path_region'"
-            + " OR cvterm.name = 'ultra_scaffold')"
-            + " AND (uniquename LIKE 'Unknown_%' OR uniquename LIKE '%_groupMISC'))"
+        return "NOT (uniquename LIKE 'Unknown_%' OR uniquename LIKE '%_groupMISC')"
             + " AND " + getLocatedGeneAllesSql();
     }
 
