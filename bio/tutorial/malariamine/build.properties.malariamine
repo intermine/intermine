@@ -46,6 +46,5 @@ project.releaseVersion=tutorial
 project.contact=<a href="mailto:test_user%5Bat%5Dmail_account">test_user[at]mail_account</a>
 project.funded.by=MalariaMine is funded by <a href="http://www.wellcome.ac.uk/">The Wellcome Trust</a>
 
-portal.welcome = Welcome to MalariaMine
 feedback.destination = test_user@mail_address
 
