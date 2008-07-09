@@ -232,14 +232,14 @@ public class BDGPInsituConverter extends FileConverter
             return null;
         } else if (terms.containsKey(name)) {
             return terms.get(name);
-        } else {
-            Item termItem = createItem("MRNAExpressionTerm");
-            termItem.setAttribute("name", name);
-            termItem.setAttribute("type", "ImaGO");
-            store(termItem);
-            terms.put(name, termItem);
-            return termItem;
         }
+        Item termItem = createItem("MRNAExpressionTerm");
+        termItem.setAttribute("name", name);
+        termItem.setAttribute("type", "ImaGO");
+        store(termItem);
+        terms.put(name, termItem);
+        return termItem;
+
     }
 
     private Item getGene(String geneCG) throws ObjectStoreException {
