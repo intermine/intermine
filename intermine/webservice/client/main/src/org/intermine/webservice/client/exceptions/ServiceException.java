@@ -57,6 +57,16 @@ public class ServiceException extends RuntimeException
         setHttpErrorCode(connection.getResponseCode());
     }
 
+     /**
+      * {@inheritDoc} 
+      */
+    public String getMessage() {
+        if (super.getMessage() == null || super.getMessage().length() == 0) {
+            return "Error code: " + getHttpErrorCode();
+        } else {
+            return super.getMessage();
+        }    
+    }
     /**
      * @return http error code
      */
