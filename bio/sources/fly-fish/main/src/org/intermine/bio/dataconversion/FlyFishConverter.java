@@ -193,14 +193,14 @@ public class FlyFishConverter extends BioFileConverter
     private Item getMRNAExpressionTerm(String expression) throws ObjectStoreException {
         if (termItems.containsKey(expression)) {
             return termItems.get(expression);
-        } else {
-            Item term = createItem("MRNAExpressionTerm");
-            term.setAttribute("name", expression);
-            term.setAttribute("type", "fly-FISH");
-            store(term);
-            termItems.put(expression, term);
-            return term;
         }
+        Item term = createItem("MRNAExpressionTerm");
+        term.setAttribute("name", expression);
+        term.setAttribute("type", "fly-FISH");
+        store(term);
+        termItems.put(expression, term);
+        return term;
+
     }
 
     private Item getGene(String geneCG) throws ObjectStoreException {
@@ -215,14 +215,14 @@ public class FlyFishConverter extends BioFileConverter
         String primaryIdentifier = resolver.resolveId(TAXON_ID, geneCG).iterator().next();
         if (geneItems.containsKey(primaryIdentifier)) {
             return geneItems.get(primaryIdentifier);
-        } else {
-            Item gene = createItem("Gene");
-            gene.setAttribute("primaryIdentifier", primaryIdentifier);
-            gene.setReference("organism", orgDrosophila);
-            geneItems.put(primaryIdentifier, gene);
-            store(gene);
-            return gene;
         }
+        Item gene = createItem("Gene");
+        gene.setAttribute("primaryIdentifier", primaryIdentifier);
+        gene.setReference("organism", orgDrosophila);
+        geneItems.put(primaryIdentifier, gene);
+        store(gene);
+        return gene;
+
     }
 
     private String[] getStages() throws ObjectStoreException {
