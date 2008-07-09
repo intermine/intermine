@@ -169,6 +169,9 @@ public class TypeUtilTest extends TestCase
         assertEquals(new Character('c'), TypeUtil.stringToObject(Character.class, "c"));
         assertEquals(new Character('c'), TypeUtil.stringToObject(Character.TYPE, "c"));
         assertEquals(new Date(7777777), TypeUtil.stringToObject(Date.class, "7777777"));
+        assertEquals(new Date(1199923200000L), TypeUtil.stringToObject(Date.class, "2008-01-10"));
+        assertEquals(new Date(1199926800000L),
+                     TypeUtil.stringToObject(Date.class, "2008-01-10 01:00:00"));
     }
 
     public void testFilter() throws Exception {

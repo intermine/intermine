@@ -22,13 +22,17 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
-import java.util.Date;
 import java.util.Set;
 import java.util.StringTokenizer;
+import java.util.TimeZone;
 import java.util.TreeMap;
+import java.text.DateFormat;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 
 import org.intermine.metadata.Model;
 import org.intermine.model.InterMineObject;
@@ -477,6 +481,16 @@ public class TypeUtil
         return cls;
     }
 
+    static final private DateFormat DATE_TIME_FORMAT;
+    static final private DateFormat DATE_FORMAT;
+
+    static {
+        DATE_TIME_FORMAT = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+        DATE_TIME_FORMAT.setTimeZone(TimeZone.getTimeZone("UTC"));
+
+        DATE_FORMAT = new SimpleDateFormat("yyyy-MM-dd");
+        DATE_FORMAT.setTimeZone(TimeZone.getTimeZone("UTC"));
+    }
 
     /**
      * Returns an object for a given String
@@ -515,7 +529,19 @@ public class TypeUtil
             return new Character(value.charAt(0));
         }
         if (clazz.equals(Date.class)) {
-            return new Date(Long.parseLong(value));
+            if (value.matches("^\\d+$")) {
+                return new Date(Long.parseLong(value));
+            } else {
+                try {
+                    return DATE_TIME_FORMAT.parse(value);
+                } catch (ParseException e) {
+                    try {
+                        return DATE_FORMAT.parse(value);
+                    } catch (ParseException e1) {
+                        return new RuntimeException("Failed to parse " + value + " as a Date", e);
+                    }
+                }
+            }
         }
         if (clazz.equals(BigDecimal.class)) {
             return new BigDecimal(value);
