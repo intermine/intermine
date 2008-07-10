@@ -27,6 +27,7 @@ import org.intermine.objectstore.ObjectStoreWriter;
 import org.intermine.objectstore.ObjectStoreWriterFactory;
 
 import org.flymine.model.genomic.CDS;
+import org.flymine.model.genomic.DataSet;
 import org.flymine.model.genomic.LocatedSequenceFeature;
 import org.flymine.model.genomic.Location;
 import org.flymine.model.genomic.Sequence;
@@ -50,6 +51,7 @@ public class FlyBaseCDSFastaLoaderTaskTest extends TestCase {
 
     private ObjectStoreWriter osw;
     private static final Logger LOG = Logger.getLogger(FlyBaseCDSFastaLoaderTaskTest.class);
+    private String dataSetTitle = "cds test title";
 
     public void setUp() throws Exception {
         osw = ObjectStoreWriterFactory.getObjectStoreWriter("osw.bio-test");
@@ -68,6 +70,8 @@ public class FlyBaseCDSFastaLoaderTaskTest extends TestCase {
         for (Object rr: r) {
             CDS cds = (CDS) ((ResultsRow) rr).get(0);
             assertNotNull(cds.getChromosomeLocation());
+            DataSet dataSet = cds.getDataSets().iterator().next();
+            assertEquals(dataSetTitle, dataSet.getTitle());
             if (cds.getPrimaryIdentifier().equals("CG4027-PB_CDS")) {
                 seenCG4027PB = true;
                 Location loc = cds.getChromosomeLocation();
@@ -111,6 +115,8 @@ public class FlyBaseCDSFastaLoaderTaskTest extends TestCase {
         flt.setClassAttribute("primaryIdentifier");
         flt.setIntegrationWriterAlias("integration.bio-test");
         flt.setSourceName("fasta-test");
+        flt.setDataSetTitle(dataSetTitle);
+        flt.setSynonymSource("test-source");
 
         File tmpFile = File.createTempFile("FlyBaseCDSFastaLoaderTaskTest", "tmp");
         FileWriter fw = new FileWriter(tmpFile);
