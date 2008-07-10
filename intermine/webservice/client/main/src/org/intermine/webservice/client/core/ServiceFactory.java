@@ -17,10 +17,10 @@ import org.intermine.webservice.client.services.TemplateService;
 
 
 /**
- * Class that should be used for creating of services. You should never
- * create instances of service classes directly with constructors but
- * always use this factory. If you use directly constructors then future 
- * versions of this client library can be incompatible with your code.    
+ * Class that should be used for creating of services. You should never create instances of 
+ * service classes directly with constructors but always use this factory. If you use directly 
+ * constructors then future versions of this client library can be incompatible with your code.    
+ * 
  * @author Jakub Kulaviak
  *
  */
@@ -33,10 +33,10 @@ public class ServiceFactory
     
     /**
      * Constructor.
-     * @param rootUrl base URL of all services, it is prefix common 
-     * for all services, Example: http://www.flymine.org/service 
-     * @param applicationName application name, information for server
-     * which application uses this service
+     * @param rootUrl base URL of all services, it is prefix common for all services. 
+     * Example: http://www.flymine.org/service 
+     * @param applicationName application name, information for server which application uses this 
+     * service
      */
     public ServiceFactory(String rootUrl, String applicationName) {
         this.rootUrl = rootUrl;
@@ -75,8 +75,8 @@ public class ServiceFactory
      * Creates new service for general use. 
      * @param serviceRelativeUrl part of url specific for this service
      * Example: query/results
-     * @param applicationName application name, information for server which application 
-     * uses this service
+     * @param applicationName application name, information for server which application uses this 
+     * service
      * @return created service
      */
     public Service getService(String serviceRelativeUrl, 
