@@ -90,16 +90,14 @@ public class ChartRenderer extends InterMineAction
         if (filename != null) {
             ServletUtilities.sendTempFile(filename, response);
             return null;
-        } else {
-            Method method = getClass().getMethod(request.getParameter("method"), SIG);
-            if (!method.getName().equals("execute")) { // avoid infinite loop
-                return (ActionForward)
-                    method.invoke(this, new Object[] {mapping, form, request, response});
-            } else {
-                LOG.error("bad method parameter \"" + request.getParameter("method") + "\"");
-                return null;
-            }
         }
+        Method method = getClass().getMethod(request.getParameter("method"), SIG);
+        if (!method.getName().equals("execute")) { // avoid infinite loop
+            return (ActionForward)
+            method.invoke(this, new Object[] {mapping, form, request, response});
+        }
+        LOG.error("bad method parameter \"" + request.getParameter("method") + "\"");
+        return null;
     }
 
     /**
