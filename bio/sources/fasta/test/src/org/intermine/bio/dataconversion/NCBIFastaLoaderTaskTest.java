@@ -50,6 +50,7 @@ public class NCBIFastaLoaderTaskTest extends TestCase {
 
     private ObjectStoreWriter osw;
     private static final Logger LOG = Logger.getLogger(NCBIFastaLoaderTaskTest.class);
+    private String dataSetTitle = "cds test title";
 
     public void setUp() throws Exception {
         osw = ObjectStoreWriterFactory.getObjectStoreWriter("osw.bio-test");
@@ -115,6 +116,8 @@ public class NCBIFastaLoaderTaskTest extends TestCase {
         flt.setIntegrationWriterAlias("integration.bio-test");
         flt.setSourceName("fasta-test");
         flt.setSequenceType("protein");
+        flt.setDataSetTitle(dataSetTitle);
+        flt.setSynonymSource("test-source");
 
         File tmpFile = File.createTempFile("NCBIFastaLoaderTaskTest", "tmp");
         FileWriter fw = new FileWriter(tmpFile);
