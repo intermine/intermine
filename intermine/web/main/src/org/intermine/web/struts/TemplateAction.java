@@ -85,6 +85,7 @@ public class TemplateAction extends InterMineAction
         boolean saveQuery = (request.getParameter("noSaveQuery") == null);
         boolean skipBuilder = (request.getParameter(SKIP_BUILDER_PARAMETER) != null);
         boolean editTemplate = (request.getParameter("editTemplate") != null);
+        boolean editQuery = (request.getParameter("editQuery") != null);
 
         SessionMethods.logTemplateQueryUse(session, templateType, templateName);
 
@@ -94,7 +95,7 @@ public class TemplateAction extends InterMineAction
                                                              templateName, templateType);
         Map savedBags = WebUtil.getAllBags(profile.getSavedBags(), servletContext);
         
-        if (forwardToLinksPage(request)) {
+        if (!editQuery && !skipBuilder && !editTemplate && forwardToLinksPage(request)) {
             TemplateQuery configuredTmpl = TemplateHelper.templateFormToTemplateQuery(tf, template,
                     savedBags);
             TemplateResultLinkGenerator gen = new TemplateResultLinkGenerator();
