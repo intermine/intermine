@@ -1,6 +1,8 @@
 Sitemap: http://www.flymine.org/sitemap_index.xml
 
 User-agent: *
+Disallow: /release-15.0/
+Disallow: /release-14.0/
 Disallow: /release-13.0/
 Disallow: /release-12.0/
 Disallow: /release-11.0/
