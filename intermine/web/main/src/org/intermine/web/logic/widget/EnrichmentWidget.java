@@ -13,6 +13,8 @@ package org.intermine.web.logic.widget;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
 import java.math.BigDecimal;
+import java.text.DecimalFormat;
+import java.text.NumberFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -212,7 +214,7 @@ public class EnrichmentWidget extends Widget
             List<List<String[]>> flattenedResults = new LinkedList<List<String[]>>();
             for (String id : pvalues.keySet()) {
                 List<String[]> row = new LinkedList();
-                BigDecimal bd = pvalues.get(id);
+
                 row.add(new String[]
                     {
                         "<input name=\"selected\" value=\"" + id + "\" id=\"selected_" + id
@@ -231,8 +233,16 @@ public class EnrichmentWidget extends Widget
                 }
                 row.add(new String[] {label});
 
-                row.add(new String[] {bd.setScale(7,
-                BigDecimal.ROUND_HALF_EVEN).toEngineeringString()});
+                BigDecimal bd = pvalues.get(id);
+                if (bd.compareTo(new BigDecimal(0.0000001)) <= 0) {
+                    NumberFormat formatter = new DecimalFormat();
+                    formatter = new DecimalFormat("0.######E0");
+                    row.add(new String[] {formatter.format(bd)});
+                } else {
+                    row.add(new String[]
+                           {bd.setScale(7, BigDecimal.ROUND_HALF_EVEN).toEngineeringString()});
+                }
+
                 row.add(new String[]
                     {
                         totals.get(id).toString(),
