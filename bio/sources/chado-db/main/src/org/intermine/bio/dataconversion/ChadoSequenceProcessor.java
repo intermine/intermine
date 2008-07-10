@@ -1243,8 +1243,8 @@ public class ChadoSequenceProcessor extends ChadoProcessor
             + "        AND NOT feature.is_obsolete"
             + "        AND feature.type_id = cvterm.cvterm_id "
             + (getExtraFeatureConstraint() != null
-                            ? " AND (" + getExtraFeatureConstraint() + ")"
-                            : "");
+               ? " AND (" + getExtraFeatureConstraint() + ")"
+               : "");
         Statement stmt = connection.createStatement();
         LOG.info("executing: " + query);
         stmt.execute(query);
@@ -1301,7 +1301,10 @@ public class ChadoSequenceProcessor extends ChadoProcessor
         return
             "SELECT feature_id FROM feature, cvterm"
             + "  WHERE type_id = cvterm.cvterm_id"
-            + "    AND cvterm.name IN (" + getFeaturesString(CHROMOSOME_FEATURES) + ")";
+            + "    AND cvterm.name IN (" + getFeaturesString(CHROMOSOME_FEATURES) + ")"
+            + (getExtraFeatureConstraint() != null
+               ? " AND (" + getExtraFeatureConstraint() + ")"
+               : "");
     }
 
     /**
