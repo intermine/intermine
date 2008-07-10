@@ -265,7 +265,7 @@ public class PrecomputedTableManager
                     QueryOptimiserContext.DEFAULT);
             sql = "CREATE TABLE " + pt.getName() + " AS " + bq.getBestQueryString();
             Exception e = new Exception();
-	    e.fillInStackTrace();
+            e.fillInStackTrace();
             LOG.info("Creating new precomputed table " + sql, e);
             stmt.execute(sql);
 
