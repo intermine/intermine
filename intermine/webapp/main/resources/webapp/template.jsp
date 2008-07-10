@@ -130,7 +130,7 @@
    function forwardToLinks() 
    {
        document.getElementById('actionType').value = 'links';
-       document.getElementById('showResultsButton').click();
+       document.templateForm.submit();
    }
 
   //-->
@@ -378,7 +378,7 @@
       <html:hidden property="type"/>
       <html:hidden property="actionType" value="" styleId="actionType"/>
       <html:submit property="skipBuilder" styleId="showResultsButton"><fmt:message key="template.submitToResults"/></html:submit>
-      <html:submit><fmt:message key="template.submitToQuery"/></html:submit>
+      <html:submit property="editQuery"><fmt:message key="template.submitToQuery"/></html:submit>
       <c:if test="${IS_SUPERUSER}">
         <html:submit property="editTemplate"><fmt:message key="template.submitToQueryEdit"/></html:submit>
       </c:if>
