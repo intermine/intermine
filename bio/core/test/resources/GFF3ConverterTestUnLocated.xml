@@ -85,6 +85,10 @@
 
   <reference name="subject" ref_id="0_31"/>
 
+  <collection name="dataSets">
+    <reference ref_id="0_2"/>
+  </collection>
+
 </item>
 
 <item id="0_0" class="http://www.flymine.org/model/genomic#Organism">
@@ -149,6 +153,10 @@
 
   <reference name="subject" ref_id="0_35"/>
 
+  <collection name="dataSets">
+    <reference ref_id="0_2"/>
+  </collection>
+
 </item>
 
 <item id="0_38" class="http://www.flymine.org/model/genomic#Synonym">
@@ -180,6 +188,10 @@
   <attribute name="primaryIdentifier" value="6"/>
 
   <reference name="organism" ref_id="1_0"/>
+
+  <collection name="dataSets">
+    <reference ref_id="0_2"/>
+  </collection>
 
 </item>
 
@@ -249,6 +261,10 @@
 
   <reference name="subject" ref_id="0_26"/>
 
+  <collection name="dataSets">
+    <reference ref_id="0_2"/>
+  </collection>
+
 </item>
 
 <item id="0_21" class="http://www.flymine.org/model/genomic#SimpleRelation">
@@ -285,6 +301,10 @@
 
   <reference name="organism" ref_id="0_0"/>
 
+  <collection name="dataSets">
+    <reference ref_id="0_2"/>
+  </collection>
+
 </item>
 
 <item id="0_28" class="http://www.flymine.org/model/genomic#ComputationalResult">
@@ -317,6 +337,10 @@
 
   <reference name="organism" ref_id="0_0"/>
 
+  <collection name="dataSets">
+    <reference ref_id="0_2"/>
+  </collection>
+
 </item>
 
 <item id="0_11" class="http://www.flymine.org/model/genomic#SimpleRelation">
@@ -336,6 +360,10 @@
   <attribute name="primaryIdentifier" value="2"/>
 
   <reference name="organism" ref_id="0_0"/>
+
+  <collection name="dataSets">
+    <reference ref_id="0_2"/>
+  </collection>
 
 </item>
 
@@ -374,6 +402,10 @@
   <attribute name="primaryIdentifier" value="13"/>
 
   <reference name="organism" ref_id="1_0"/>
+
+  <collection name="dataSets">
+    <reference ref_id="0_2"/>
+  </collection>
 
 </item>
 

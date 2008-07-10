@@ -482,6 +482,7 @@ public class GFF3RecordHandler
                 tgtOrganism = getTargetOrganism(orgAbb);
 
                 Item targetSeq = getTargetSeq(seqIdentifier, seqClsName, orgAbb);
+                targetSeq.addToCollection("dataSets", getDataSet());
 
                 String locStart = locString.split(" ")[1];
                 String locEnd = locString.split(" ")[2];
@@ -495,6 +496,8 @@ public class GFF3RecordHandler
                     targetLocation.setAttribute("start", locEnd);
                     targetLocation.setAttribute("end", locStart);
                 }
+
+                targetLocation.addToCollection("dataSets", getDataSet());
 
                 if (locStrand != null && locStrand.equals("+")) {
                     targetLocation.setAttribute("strand", "1");
