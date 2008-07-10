@@ -20,6 +20,7 @@
 <item id="0_4" class="http://www.flymine.org/model/genomic#Chromosome">
 <attribute name="primaryIdentifier" value="2L"/>
 <reference name="organism" ref_id="0_0"/>
+<collection name="dataSets"><reference ref_id="0_2"/></collection>
 </item>
 <item id="1_4" class="http://www.flymine.org/model/genomic#Gene">
 <attribute name="primaryIdentifier" value="FBgn001"/>
