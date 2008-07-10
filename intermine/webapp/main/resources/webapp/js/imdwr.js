@@ -420,19 +420,23 @@ function showDescriptions(listId, type, show) {
         var el = divs[i];
         // it is div with description
         if (el.id.match(prefix) != null) {
-            // if items are filtered there are 2 descriptions: normal and highlighted
-            // and we want to work only with highlighted, normal are hidden all the time
+            // there are 2 descriptions: normal and highlighted
+            // Results returned from Lucene search are crazy, sometimes the highlighted 
+            // description is empty after Lucene search and that's why this complicated
+            // logic is needed - normal description is hidden if the highlighted is not empty 
             if (areItemsFiltered()) {
                 if (el.id.match('_highlight') != null) {
                     showElement(el, show);
                 } else {
-                    showElement(el, false);
+                    if (document.getElementById(el.id + '_highlight').innerHTML.length != 0) {
+                        showElement(el, false);
+                    }
                 }
             } else {
-                if (!(el.id.match('_highlight') != null)) {
-                    showElement(el, show);
-                } else {
+                if ((el.id.match('_highlight') != null)) {
                     showElement(el, false);
+                } else {
+                    showElement(el, show);
                 }
             }
         }
