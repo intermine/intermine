@@ -1,11 +1,16 @@
 package org.intermine.webservice.client.services;
 
 import java.io.IOException;
+import java.util.Collections;
 import java.util.List;
 
 import junit.framework.TestCase;
 
+import org.intermine.metadata.Model;
+import org.intermine.objectstore.query.ConstraintOp;
+import org.intermine.pathquery.Constraint;
 import org.intermine.pathquery.PathQuery;
+import org.intermine.webservice.client.core.ServiceFactory;
 import org.intermine.webservice.client.util.TestUtil;
 
 /*
@@ -23,40 +28,23 @@ import org.intermine.webservice.client.util.TestUtil;
  **/
 public class QueryServiceTest extends TestCase
 {
-
-    public void testCreatePathQuery() {
-        QueryService queryService = TestUtil.getQueryService();
-        PathQuery query = queryService.createPathQuery(getSimpleXml());
-        assertNotNull(query);
-        query.getViewStrings();
-    }
     
-//    public void testExecuteClientPathQuery() throws IOException {
-//        ServiceFactory factory = new ServiceFactory(TestUtil.getRootUrl(), "");
-//        ModelService modelService = factory.getModelService();
-//        Model model = modelService.getModel();
-//        PathQuery query = new PathQuery(model);
-//        query.addView("Employee.name");
-//        query.addConstraint("Employee.name", new Constraint(ConstraintOp.CONTAINS, "Employee"));
-//        query.addConstraint("Employee.age", new Constraint(ConstraintOp.LESS_THAN, new Integer(10)));
-//        query.addConstraint("Employee.age", new Constraint(ConstraintOp.GREATER_THAN, new Integer(30)));
-//        query.addConstraint("Employee.fullTime", new Constraint(ConstraintOp.EQUALS, true));
-//        System.out.println("query: ");
-//        System.out.println(query.toXml());
-//        QueryService queryService = factory.getQueryService();
-//        List<List<String>> results = queryService.getResult(query, 1, 100).getData();
-//        printResults(results);
-//    }
+    public void testCreatePathQuery() throws IOException {
+        ServiceFactory factory = new ServiceFactory(TestUtil.getRootUrl(), "");
+        ModelService modelService = factory.getModelService();
+        Model model = modelService.getModel();
+        PathQuery query = new PathQuery(model);
+        query.addView("Employee.name,Employee.age,Employee.end,Employee.fullTime");
+        query.addConstraint("Employee.name", new Constraint(ConstraintOp.CONTAINS, "EmployeeA"));
+        query.addConstraint("Employee.age", new Constraint(ConstraintOp.GREATER_THAN_EQUALS, new Integer(10)));
+        query.addConstraint("Employee.age", new Constraint(ConstraintOp.LESS_THAN, new Integer(60)));
+        query.addConstraint("Employee.fullTime", new Constraint(ConstraintOp.EQUALS, true));
+        QueryService queryService = factory.getQueryService();
+        List<List<String>> result = queryService.getResult(query, 1, 100).getData();
+        TestUtil.checkRow(result.get(0), "EmployeeA1", "10", "1", "true");
+        TestUtil.checkRow(result.get(1), "EmployeeA2", "20", "2", "true");
+    }
 
-//    private void printResults(List<List<String>> results) {
-//        for (List<String> row : results) {
-//            for (String cell : row) {
-//                System.out.print(cell);
-//                System.out.print(" ");
-//            }
-//            System.out.println();
-//        }
-//    }
 
     public void testGetCount() {
         QueryService service = TestUtil.getQueryService();
