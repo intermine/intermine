@@ -425,10 +425,14 @@ function showDescriptions(listId, type, show) {
             if (areItemsFiltered()) {
                 if (el.id.match('_highlight') != null) {
                     showElement(el, show);
+                } else {
+                    showElement(el, false);
                 }
             } else {
                 if (!(el.id.match('_highlight') != null)) {
                     showElement(el, show);
+                } else {
+                    showElement(el, false);
                 }
             }
         }
