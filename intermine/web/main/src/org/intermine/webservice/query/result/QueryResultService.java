@@ -24,10 +24,8 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.apache.commons.collections.EnumerationUtils;
 import org.apache.log4j.Logger;
-import org.intermine.objectstore.ObjectStore;
 import org.intermine.objectstore.query.Results;
 import org.intermine.pathquery.PathQuery;
-import org.intermine.web.logic.Constants;
 import org.intermine.web.logic.bag.InterMineBag;
 import org.intermine.web.logic.results.WebResults;
 import org.intermine.web.logic.session.SessionMethods;
@@ -208,10 +206,5 @@ public class QueryResultService extends WebService
    
     private QueryResultInput getInput() {
         return new QueryResultRequestParser(request).getInput();
-    }
-    
-    private ObjectStore getObjectStore() {
-        return (ObjectStore) request.getSession().getServletContext().
-            getAttribute(Constants.OBJECTSTORE);
-    }
+    }    
 }
