@@ -1001,13 +1001,15 @@ public class PagedTable
      * @param profile user's profile
      * @param os object store
      * @param session user's session
+     * @param bagSize size of bag
      * @exception Exception if the application business logic throws
      *  an exception
      */
-    public void removeFromBag(String bagName, Profile profile, ObjectStore os, HttpSession session)
+    public void removeFromBag(String bagName, Profile profile, ObjectStore os, HttpSession session,
+                              int bagSize)
     throws Exception {
 
-        if (allSelected != -1) {
+        if (bagSize == selectionIds.size()) {
             return;
         }
 
@@ -1016,8 +1018,17 @@ public class PagedTable
         ObjectStoreWriter osw = null;
         try {
             osw = new ObjectStoreWriterInterMineImpl(os);
-            for (Integer key : selectionIds.keySet()) {
-                osw.removeFromBag(interMineBag.getOsb(), key);
+            if (allSelected != -1) {
+                Set<Integer> keys = selectionIds.keySet();
+                for (Integer key : interMineBag.getContentsAsIds()) {
+                    if (!keys.contains(key)) {
+                        osw.removeFromBag(interMineBag.getOsb(), key);
+                    }
+                }
+            } else {
+                for (Integer key : selectionIds.keySet()) {
+                    osw.removeFromBag(interMineBag.getOsb(), key);
+                }
             }
         } finally {
             if (osw != null) {

@@ -81,7 +81,7 @@ public class ModifyBagDetailsAction extends InterMineAction
                 // TODO these messages need to be moved to properties file
                 msg = "You can't remove all items from your list.  Try deleting your list instead.";
             } else {
-                pc.removeFromBag(mbdf.getBagName(), profile, os, session);
+                pc.removeFromBag(mbdf.getBagName(), profile, os, session, n);
                 int removed = n - imBag.size();
                 msg = "You have removed " + removed + " items from your list.";
             }
