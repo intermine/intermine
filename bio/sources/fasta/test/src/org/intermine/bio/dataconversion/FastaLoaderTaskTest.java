@@ -10,24 +10,9 @@ package org.intermine.bio.dataconversion;
  *
  */
 
-import java.io.BufferedReader;
-import java.io.File;
-import java.io.FileWriter;
-import java.io.InputStream;
-import java.io.InputStreamReader;
 import java.util.Iterator;
 import java.util.List;
 
-import junit.framework.TestCase;
-
-import org.apache.log4j.Logger;
-import org.flymine.model.genomic.LocatedSequenceFeature;
-import org.flymine.model.genomic.Protein;
-import org.flymine.model.genomic.Sequence;
-import org.intermine.model.InterMineObject;
-import org.intermine.objectstore.ObjectStore;
-import org.intermine.objectstore.ObjectStoreWriter;
-import org.intermine.objectstore.ObjectStoreWriterFactory;
 import org.intermine.objectstore.query.ConstraintOp;
 import org.intermine.objectstore.query.ContainsConstraint;
 import org.intermine.objectstore.query.Query;
@@ -36,10 +21,31 @@ import org.intermine.objectstore.query.QueryObjectReference;
 import org.intermine.objectstore.query.Results;
 import org.intermine.objectstore.query.SingletonResults;
 
+import org.intermine.model.InterMineObject;
+import org.intermine.objectstore.ObjectStore;
+import org.intermine.objectstore.ObjectStoreWriter;
+import org.intermine.objectstore.ObjectStoreWriterFactory;
+
+import org.flymine.model.genomic.DataSet;
+import org.flymine.model.genomic.LocatedSequenceFeature;
+import org.flymine.model.genomic.Protein;
+import org.flymine.model.genomic.Sequence;
+
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileWriter;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+
+import junit.framework.TestCase;
+
+import org.apache.log4j.Logger;
+
 public class FastaLoaderTaskTest extends TestCase {
 
     private ObjectStoreWriter osw;
     private static final Logger LOG = Logger.getLogger(FastaLoaderTaskTest.class);
+    private String dataSetTitle = "fasta test title";
 
     public void setUp() throws Exception {
         osw = ObjectStoreWriterFactory.getObjectStoreWriter("osw.bio-test");
@@ -54,6 +60,8 @@ public class FastaLoaderTaskTest extends TestCase {
         flt.setClassAttribute("primaryIdentifier");
         flt.setIntegrationWriterAlias("integration.bio-test");
         flt.setSourceName("fasta-test");
+        flt.setDataSetTitle(dataSetTitle);
+        flt.setSynonymSource("test-source");
 
         File[] files = new File[2];
         for (int i = 0; i < 2; i++) {
@@ -102,6 +110,8 @@ public class FastaLoaderTaskTest extends TestCase {
         flt.setClassName("org.flymine.model.genomic.Protein");
         flt.setIntegrationWriterAlias("integration.bio-test");
         flt.setSourceName("fasta-test");
+        flt.setDataSetTitle(dataSetTitle);
+        flt.setSynonymSource("test-source");
 
         File[] files = new File[1];
         files[0] = File.createTempFile("pombe_sid2_short.fasta", "tmp");
@@ -141,6 +151,9 @@ public class FastaLoaderTaskTest extends TestCase {
         assertEquals(1, r.size());
 
         Protein protein = (Protein) ((List) r.get(0)).get(0);
+
+        DataSet dataSet = protein.getDataSets().iterator().next();
+        assertEquals(dataSetTitle, dataSet.getTitle());
 
         assertEquals("MNRVNDMSPVEGDLGLQLSSEADKKFDAYMKRHGLFEPGNLSNNDKERNLEDQFNSMKLS"
                      + "PVASSKENYPDNHMHSKHISKLPIASPIPRGLDRSGELSYKDNNHWSDRSSTGSPRWENG"
