@@ -228,9 +228,7 @@ public class GFF3Converter
         feature.addReference(getOrgRef());
         feature.setCollection("dataSets",
                               new ArrayList(Collections.singleton(dataSet.getIdentifier())));
-
-        // if parents -> create a SimpleRelation
-        if (record.getParents() != null) {
+        if (record.getParents() != null) {  // if parents -> create a SimpleRelation
             Set seenParents = new HashSet();
             for (Iterator i = parents.iterator(); i.hasNext();) {
                 String parentName = (String) i.next();
@@ -244,10 +242,7 @@ public class GFF3Converter
                 }
             }
         }
-
-
         Item relation;
-
         if (!record.getType().equals("chromosome")) {
             if (record.getStart() < 1 || record.getEnd() < 1 || dontCreateLocations
                 || !handler.createLocations(record)) {
@@ -284,9 +279,7 @@ public class GFF3Converter
                 })));
             handler.setLocation(relation);
         }
-
         handler.addDataSet(dataSet);
-
         if (record.getScore() != null) {
             Item computationalResult = createItem("ComputationalResult");
             if (String.valueOf(record.getScore()) != null) {
@@ -294,7 +287,6 @@ public class GFF3Converter
                 computationalResult.addAttribute(new Attribute("score",
                                                  String.valueOf(record.getScore())));
             }
-
             //no sense to create ComputationalAnalysis if there is no ComputationalResult
             if (record.getSource() != null) {
                 Item computationalAnalysis = getComputationalAnalysis(record.getSource());
@@ -302,26 +294,21 @@ public class GFF3Converter
                                                  computationalAnalysis.getIdentifier()));
                 handler.setAnalysis(computationalAnalysis);
             }
-
             handler.setResult(computationalResult);
             handler.addEvidence(computationalResult);
         } else {
             if (record.getSource() != null && !record.getSource().equals("FlyBase")) {
                 // this special case added to cope with pseudoobscura data
                 Item computationalResult = createItem("ComputationalResult");
-
                 Item computationalAnalysis = getComputationalAnalysis(record.getSource());
                 computationalResult.addReference(new Reference("analysis",
                                                  computationalAnalysis.getIdentifier()));
                 handler.setAnalysis(computationalAnalysis);
-
                 handler.setResult(computationalResult);
                 handler.addEvidence(computationalResult);
-
                 feature.addAttribute(new Attribute("curated", "false"));
             }
         }
-
         String orgAbb = null;
         String tgtSeqIdentifier = null;
         if (record.getAttributes().get("Organism") != null) {
@@ -334,7 +321,6 @@ public class GFF3Converter
         if (orgAbb != null && tgtSeqIdentifier != null && tgtLocation != null) {
             handler.setCrossGenomeMatch(feature, orgAbb, tgtSeqIdentifier, seq, tgtLocation);
         }
-
         if (feature.hasAttribute("secondaryIdentifier")) {
             Item synonym = createItem("Synonym");
             synonym.addReference(new Reference("subject", feature.getIdentifier()));
@@ -344,7 +330,6 @@ public class GFF3Converter
             synonym.addReference(new Reference("source", dataSource.getIdentifier()));
             synonymsToAdd.add(synonym);
         }
-
         if (feature.hasAttribute("primaryIdentifier")) {
             Item synonym = createItem("Synonym");
             synonym.addReference(new Reference("subject", feature.getIdentifier()));
@@ -354,27 +339,22 @@ public class GFF3Converter
             synonym.addReference(new Reference("source", dataSource.getIdentifier()));
             synonymsToAdd.add(synonym);
         }
-
         for (Item synonym : synonymsToAdd) {
             handler.addItem(synonym);
         }
-
         handler.process(record);
         if (handler.getDataSetReferenceList().getRefIds().size() > 0) {
             feature.addCollection(handler.getDataSetReferenceList());
         }
         handler.clearDataSetReferenceList();
-
         if (handler.getEvidenceReferenceList().getRefIds().size() > 0) {
             feature.addCollection(handler.getEvidenceReferenceList());
         }
         handler.clearEvidenceReferenceList();
-
         if (handler.getPublicationReferenceList().getRefIds().size() > 0) {
             feature.addCollection(handler.getPublicationReferenceList());
         }
         handler.clearPublicationReferenceList();
-
         try {
             Iterator iter = handler.getItems().iterator();
             while (iter.hasNext()) {
@@ -386,7 +366,6 @@ public class GFF3Converter
             throw e;
         }
     }
-
 
     private String getIdentifier(String id) {
         String identifier = (String) identifierMap.get(id);
@@ -485,7 +464,8 @@ public class GFF3Converter
      * @return return/create item of class seqClsName for given identifier
      * @throws ObjectStoreException if the Item can't be stored
      */
-    private Item getSeq(String identifier) throws ObjectStoreException {
+    private Item getSeq(String id) throws ObjectStoreException {
+        String identifier = id;
         if (identifier.startsWith("chr")) {
             identifier = identifier.substring(3);
         }
