@@ -15,10 +15,16 @@
   type="org.modmine.web.ProviderSubmissionsController" />
 <action path="/initProjectSubmissions"
   type="org.modmine.web.ProjectSubmissionsController" />
+<action path="/initProjects"
+  type="org.modmine.web.ProjectsController" />
 <action path="/initModEncodeProjects"
   type="org.modmine.web.ModEncodeProjectsController" />
 
 <action path="/modEncodeProjects" forward="modEncodeProjects.page">
+</action>
+<action path="/projectSubmissions" forward="projectSubmissions.page">
+</action>
+<action path="/projects" forward="projects2.page">
 </action>
 
 <!-- 

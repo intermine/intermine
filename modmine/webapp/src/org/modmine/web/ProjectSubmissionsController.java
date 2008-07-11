@@ -66,29 +66,34 @@ public class ProjectSubmissionsController extends TilesAction
             q.addToOrderBy(qcName);
             
             Results results = os.executeSingleton(q);
-            
+
             Map<ModEncodeProject, Set<ModEncodeProvider>> pp =
                 new HashMap<ModEncodeProject, Set<ModEncodeProvider>>();
             Map<ModEncodeProvider, Set<ExperimentSubmission>> ps =
                 new HashMap<ModEncodeProvider, Set<ExperimentSubmission>>();
-             
+            Map<ModEncodeProject, Integer> nr =
+                new HashMap<ModEncodeProject, Integer>();
+            
             // for each project, get its providers
             Iterator i = results.iterator();
             while (i.hasNext()) {
                 ModEncodeProject project = (ModEncodeProject) i.next();
                 Set<ModEncodeProvider> providers = project.getProviders();
                 pp.put(project, providers);
-                
+                Integer subNr = 0;
                 // for each provider, get its experiments
                 Iterator p = providers.iterator();
                 while (p.hasNext()) {
                     ModEncodeProvider provider = (ModEncodeProvider) p.next();
                     Set<ExperimentSubmission> subs = provider.getExperimentSubmissions();
                     ps.put(provider, subs);
-                }                
+                    subNr = subNr + subs.size();
+                }
+                nr.put(project, subNr);
             }
-            request.setAttribute("experiments", ps);
+//            request.setAttribute("experiments", ps);
             request.setAttribute("providers", pp);
+            request.setAttribute("counts", nr);
         } catch (Exception err) {
             err.printStackTrace();
         }
@@ -97,3 +102,33 @@ public class ProjectSubmissionsController extends TilesAction
 }
 
 
+//// to count submissions
+//Query c = new Query();
+//QueryClass sub = new QueryClass(ExperimentSubmission.class);
+//QueryClass pj = new QueryClass(ModEncodeProject.class);
+//QueryClass pv = new QueryClass(ModEncodeProvider.class);
+//
+//QueryField qfTitle = new QueryField(sub, "title");
+//QueryField qfProj = new QueryField(pj, "title");
+//QueryFunction qfCount = new QueryFunction();
+//
+//ConstraintSet cs = new ConstraintSet(ConstraintOp.AND);
+//
+//QueryCollectionReference r = new QueryCollectionReference(pj, "providers");
+//cs.addConstraint(new ContainsConstraint(r, ConstraintOp.CONTAINS, pv));
+//
+//  c.addToSelect(qfTitle);
+//  c.addToSelect(qfProj);
+//  c.addToSelect(qfCount);
+//
+//  c.addFrom(sub);
+//  c.addFrom(pj);
+//  c.addFrom(pv);
+//
+//  c.addToGroupBy(qfTitle);
+//  c.addToGroupBy(qfProj);
+//
+//  c.addToOrderBy(qfProj);
+//  c.setConstraint(cs);
+//
+//  Results subsCount = os.execute(c);

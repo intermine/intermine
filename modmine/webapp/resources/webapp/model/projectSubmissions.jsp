@@ -36,44 +36,60 @@
  ${item.key.namePI} ${item.key.surnamePI}
  <td>
  <c:forEach items="${item.value}" var="prov">
-
     <html:link  href="/${WEB_PROPERTIES['webapp.path']}/objectDetails.do?id=${prov.id}">
  ${prov.name}
     </html:link>
   <br>
 </c:forEach>
 <td>
- <im:querylink text="All experiment submissions " skipBuilder="true">
-				<query name="" model="genomic"
-					view="ModEncodeProject.providers.experimentSubmissions.title ModEncodeProject.providers.experimentSubmissions.design ModEncodeProject.providers.experimentSubmissions.factorName ModEncodeProject.providers.experimentSubmissions.factorType ModEncodeProject.providers.experimentSubmissions.description"
-					sortOrder="ModEncodeProject.providers.experimentSubmissions.title">
-				<node path="ModEncodeProject" type="ModEncodeProject">
-				</node>
-				<node path="ModEncodeProject.surnamePI" type="String">
-				<constraint op="=" value="${item.key.surnamePI}" description="" identifier=""
-					code="A">
-				</constraint>
-				</node>
-				</query>
-			</im:querylink>
-			
-			</c:forEach>
 
+<c:forEach items="${counts}" var="nr">
+        <c:if test="${nr.key.surnamePI eq item.key.surnamePI}">
+          <c:set var="nrSubs" value="${nr.value}"/>
+        </c:if>
+</c:forEach> 
+
+<%--
+ <c:forEach items="${counts}" var="nr">
+          <c:out value="${nr.value}"/>
+ </c:forEach> 
+            <im:querylink text="${item.key.surnamePI} All experiment submissions " skipBuilder="true">
+      <im:querylink text="${nrSubs} submissions " skipBuilder="true">
+--%>
+
+      <im:querylink text="${nrSubs} submissions " skipBuilder="true">
+        <query name="" model="genomic"
+          view="ModEncodeProject.providers.experimentSubmissions.title ModEncodeProject.providers.experimentSubmissions.design ModEncodeProject.providers.experimentSubmissions.factorName ModEncodeProject.providers.experimentSubmissions.factorType ModEncodeProject.providers.experimentSubmissions.description"
+          sortOrder="ModEncodeProject.providers.experimentSubmissions.title">
+        <node path="ModEncodeProject" type="ModEncodeProject">
+        </node>
+        <node path="ModEncodeProject.surnamePI" type="String">
+        <constraint op="=" value="${item.key.surnamePI}" description="" identifier=""
+          code="A">
+        </constraint>
+        </node>
+        </query>
+      </im:querylink>
+
+      </c:forEach>
 </tr>
+
 </table>
 </div>
 
 
-            <im:querylink text="All experiment submissions " skipBuilder="true">
-<query name="" model="genomic" view="ModEncodeProvider.experimentSubmissions.title ModEncodeProvider.experimentSubmissions.design ModEncodeProvider.experimentSubmissions.factorName ModEncodeProvider.experimentSubmissions.factorType ModEncodeProvider.experimentSubmissions.description" sortOrder="ModEncodeProvider.experimentSubmissions.title">
-  <node path="ModEncodeProvider" type="ModEncodeProvider">
-  </node>
-  <node path="ModEncodeProvider.name" type="String">
-    <constraint op="=" value="Michael Brent" description="" identifier="" code="A">
-    </constraint>
-  </node>
-</query>
+<%--
 
-            </im:querylink>
-
-
+<c:forEach items="${counts}" var="nr">
+				<c:if test="${nr.key.surnamePI eq item.key.surnamePI}">
+					<c:set var="nrSubs" value="${nr.value}"/>
+				</c:if>
+</c:forEach> 
+      <im:querylink text="${nrSubs} submissions " skipBuilder="true">
+--%>
+	
+	
+ 
+	
+			
+			
