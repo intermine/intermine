@@ -1,10 +1,10 @@
-/* 
+/*
 CSS MUST FOLLOW THE PATTERN:
  style {
     list of positioning attributes;
     list of size/padding/margin;
     list of anything affecting the content;}
- 
+
  */
 
 /* =Tag Redefinition
@@ -28,9 +28,9 @@ a:link:active { color:#58e; text-decoration:none }
 a.extlink , a.extlink:link, a.extlink:visited, a.extlink:active, a.extlink:hover {
   padding-right: 15px; margin-right: 15px;
   white-space: nowrap; background: url('../images/extlink.gif') right center no-repeat; }
-  
+
 pre {
-  background-color:#00FFFF;
+  background-color:#87CEFA;
   margin:10px;
   padding:10px;
   line-height:0.6em;
@@ -83,7 +83,7 @@ li {
 
 #loginbar {
     position:absolute; right:0px; top:85px;
-    padding:5px;}   
+    padding:5px;}
 
 #topnavcontainer {
     position:absolute; right:0px; top:0px;
@@ -126,7 +126,7 @@ li {
 /*.roundcorners {
     background: url('../images/roundcorner_b_l.png') no-repeat bottom left #F5F0FF;}
 */
-.pageDesc { 
+.pageDesc {
     padding: 10px; margin: 0 15px 15px 15px;
     background-color: #F5F0FF; vertical-align: middle; text-align: left;}
 
@@ -198,18 +198,18 @@ div#quicksearch {
 .disclosureBody {
   margin-left: 20px;
 }
- 
-/* Default style of element disclosureHead is style disclosureHead and it should be same as listHeading*/  
+
+/* Default style of element disclosureHead is style disclosureHead and it should be same as listHeading*/
 .listHeading, .disclosureHead {
   height: 1.5em; /* needed to prevent the peekaboo bug on IE: http://www.positioniseverything.net/explorer/peekaboo.html */
-  margin: 0px 0px 4px 0px; 
+  margin: 0px 0px 4px 0px;
   padding:5px 0px 0px 10px;
   font-size: 14px; font-weight:bold; white-space: nowrap; background-color: #eee;
  }
 
 
 
-/* =SPAN 
+/* =SPAN
 -------------------------*/
 #logo {
    float: left;
@@ -274,7 +274,7 @@ div#quicksearch {
     text-align:right;
  }
 
-/* =H 
+/* =H
 -------------------------*/
 #header h1,
 #header h1 a:link,
@@ -290,9 +290,9 @@ div#quicksearch {
 
 .body h3 {
   margin-top: 10px;}
-  
 
-  
+
+
 /* =P
 -------------------------*/
 #header p {
@@ -319,7 +319,7 @@ div#quicksearch {
 #loginbar  a, #loginbar  a:link, #loginbar a:visited, #loginbar{
     font-family:"lucida grande", tahoma, verdana, arial, sans-serif;
     font-size: 1.1em;}
-    
+
 #loginbar  a, #loginbar  a:link, #loginbar a:visited{
     font-weight: bold; text-decoration:underline;}
 
@@ -355,7 +355,7 @@ ul#nav a{
 img.fasta {
   margin-top: 3px; vertical-align: text-bottom;}
 
-/* =TABLE   
+/* =TABLE
 -------------------------*/
 table#headertable{
     width:100%; margin:0px;padding:0px;}
