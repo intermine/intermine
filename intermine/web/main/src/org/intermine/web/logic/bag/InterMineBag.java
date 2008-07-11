@@ -14,6 +14,7 @@ import java.util.Date;
 import java.util.List;
 import java.util.Set;
 
+import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.intermine.metadata.ClassDescriptor;
 import org.intermine.model.InterMineObject;
@@ -232,6 +233,9 @@ public class InterMineBag implements WebSearchable, Cloneable
      * @throws ObjectStoreException if something goes wrong
      */
     public void setName(String name, ObjectStoreWriter uosw) throws ObjectStoreException {
+        if (StringUtils.isEmpty(name)) {
+            throw new RuntimeException("No name specified for the list to save.");
+        }
         this.name = name;
         store(uosw);
     }
