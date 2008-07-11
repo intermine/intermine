@@ -44,7 +44,7 @@ public class TemplateServiceTest extends TestCase
         parameters.add(new TemplateParameter("lt", "10"));
         parameters.add(new TemplateParameter("gt", "30"));
         parameters.add(new TemplateParameter("eq", "true"));
-        List<List<String>> results = service.getResult("fourConstraints", parameters, 1, 10).getData();
+        List<List<String>> results = service.getResult("fourConstraints", parameters, 1, 10);
         assertEquals(3, results.size());
         TestUtil.checkRow(results.get(0), "EmployeeB1", "40", "4", "true");
         TestUtil.checkRow(results.get(1), "EmployeeB2", "50", "5", "true");

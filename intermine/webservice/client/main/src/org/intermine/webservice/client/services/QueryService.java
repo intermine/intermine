@@ -12,6 +12,7 @@ package org.intermine.webservice.client.services;
 
 import java.io.StringReader;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 
 import org.intermine.metadata.FieldDescriptor;
@@ -22,7 +23,6 @@ import org.intermine.webservice.client.core.ContentType;
 import org.intermine.webservice.client.core.RequestImpl;
 import org.intermine.webservice.client.core.Service;
 import org.intermine.webservice.client.core.TabTableResult;
-import org.intermine.webservice.client.core.TableResult;
 import org.intermine.webservice.client.core.Request.RequestType;
 import org.intermine.webservice.client.exceptions.ServiceException;
 import org.intermine.webservice.client.util.HttpConnection;
@@ -119,28 +119,54 @@ public class QueryService extends Service
     }
 
     /**
-     * Returns results of specified PathQuery. 
+     * Returns results of specified PathQuery. If you expect a lot of results 
+     * use getResultIterator() method.
      * @param query query
      * @param start index of first returned result, indexes starts at 1 
      * @param maxCount maximum number of returned results
      * @return results of specified PathQuery
      */
-    public TableResult getResult(PathQuery query, int start, int maxCount) {
-        return getResultInternal(query.toXml(), start, maxCount);
+    public List<List<String>> getResult(PathQuery query, int start, int maxCount) {
+        return getResultInternal(query.toXml(), start, maxCount).getData();
+    }
+
+    /**
+     * Returns results of specified PathQuery as iterator. Use this method if you expects a lot 
+     * of results and you would run out of memory. 
+     * @param query query
+     * @param start index of first returned result, indexes starts at 1 
+     * @param maxCount maximum number of returned results
+     * @return results of specified PathQuery
+     */
+    public Iterator<List<String>> getResultIterator(PathQuery query, int start, int maxCount) {
+        return getResultInternal(query.toXml(), start, maxCount).getIterator();
     }
  
     /**
-     * Returns results of specified PathQuery. 
+     * Returns results of specified PathQuery. If you expect a lot of results 
+     * use getResultIterator() method.
      * @param queryXml PathQuery represented as a XML string
      * @param start index of first returned result, indexes starts at 1 
      * @param maxCount maximum number of returned results
      * @return results of specified PathQuery
      */    
-    public TableResult getResult(String queryXml, int start, int maxCount) {
-        return getResultInternal(queryXml, start, maxCount);
+    public List<List<String>> getResult(String queryXml, int start, int maxCount) {
+        return getResultInternal(queryXml, start, maxCount).getData();
+    }
+
+    /**
+     * Returns results of specified PathQuery. Use this method if you expects a lot 
+     * of results and you would run out of memory. 
+     * @param queryXml PathQuery represented as a XML string
+     * @param start index of first returned result, indexes starts at 1 
+     * @param maxCount maximum number of returned results
+     * @return results of specified PathQuery
+     */    
+    public Iterator<List<String>> getResultIterator(String queryXml, int start, int maxCount) {
+        return getResultInternal(queryXml, start, maxCount).getIterator();
     }
     
-    private TableResult getResultInternal(String queryXml, int start, int maxCount) {
+    private TabTableResult getResultInternal(String queryXml, int start, int maxCount) {
         QueryRequest request = new QueryRequest(RequestType.POST, getUrl(), 
                 ContentType.TEXT_TAB);
         request.setStart(start);

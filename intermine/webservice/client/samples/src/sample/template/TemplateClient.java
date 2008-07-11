@@ -42,7 +42,7 @@ public class TemplateClient
         // second organism should be equal to Caenorhabditis elegans
         parameters.add(new TemplateParameter("eq", "Caenorhabditis elegans"));
         // first 100 results are fetched
-        List<List<String>> result = service.getResult("GeneOrganism1_OrthologueOrganism2", parameters, 1, 100).getData();
+        List<List<String>> result = service.getResult("GeneOrganism1_OrthologueOrganism2", parameters, 1, 100);
         System.out.println("First 100 predicted orthologues between two organisms sorted by FlyBase gene identifier:");
         for (List<String> row : result) {
             for (String cell : row) {

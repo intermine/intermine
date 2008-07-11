@@ -1,7 +1,6 @@
 package org.intermine.webservice.client.services;
 
 import java.io.IOException;
-import java.util.Collections;
 import java.util.List;
 
 import junit.framework.TestCase;
@@ -40,7 +39,7 @@ public class QueryServiceTest extends TestCase
         query.addConstraint("Employee.age", new Constraint(ConstraintOp.LESS_THAN, new Integer(60)));
         query.addConstraint("Employee.fullTime", new Constraint(ConstraintOp.EQUALS, true));
         QueryService queryService = factory.getQueryService();
-        List<List<String>> result = queryService.getResult(query, 1, 100).getData();
+        List<List<String>> result = queryService.getResult(query, 1, 100);
         TestUtil.checkRow(result.get(0), "EmployeeA1", "10", "1", "true");
         TestUtil.checkRow(result.get(1), "EmployeeA2", "20", "2", "true");
     }
@@ -54,7 +53,7 @@ public class QueryServiceTest extends TestCase
     public void testGetResultPathQuery() throws IOException {
         QueryService queryService = TestUtil.getQueryService();
         PathQuery query = queryService.createPathQuery(getSimpleXml());
-        checkResult(queryService.getResult(query, 1, 10).getData());
+        checkResult(queryService.getResult(query, 1, 10));
     }
 
     private String getSimpleXml() {
@@ -73,7 +72,7 @@ public class QueryServiceTest extends TestCase
     
     public void testGetResultStringXmlQuery() throws IOException {
         QueryService service = TestUtil.getQueryService();
-        List<List<String>> result = service.getResult(getSimpleXml(), 1, 10).getData();
+        List<List<String>> result = service.getResult(getSimpleXml(), 1, 10);
         checkResult(result);
     }
 

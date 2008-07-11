@@ -10,13 +10,13 @@ package org.intermine.webservice.client.services;
  *
  */
 
+import java.util.Iterator;
 import java.util.List;
 
 import org.intermine.webservice.client.core.ContentType;
 import org.intermine.webservice.client.core.RequestImpl;
 import org.intermine.webservice.client.core.Service;
 import org.intermine.webservice.client.core.TabTableResult;
-import org.intermine.webservice.client.core.TableResult;
 import org.intermine.webservice.client.core.Request.RequestType;
 import org.intermine.webservice.client.exceptions.ServiceException;
 import org.intermine.webservice.client.template.TemplateParameter;
@@ -100,7 +100,8 @@ public class TemplateService extends Service
     }
     
     /**
-     * Returns template results for given parameters.  
+     * Returns template results for given parameters. If you expect a lot of results 
+     * use getResultIterator() method.  
      * @param templateName template name
      * @param parameters parameters of template
      * @param start index of first result, that should be returned
@@ -108,7 +109,7 @@ public class TemplateService extends Service
      * @see TemplateService
      * @return results
      */
-    public TableResult getResult(String templateName, List<TemplateParameter> parameters, 
+    public List<List<String>> getResult(String templateName, List<TemplateParameter> parameters, 
             int start, int maxCount) {
         TemplateRequest request = new TemplateRequest(RequestType.POST, getUrl(), 
                 ContentType.TEXT_TAB);
@@ -117,6 +118,28 @@ public class TemplateService extends Service
         request.setName(templateName);
         request.setTemplateParameters(parameters);
         HttpConnection connection = executeRequest(request);
-        return new TabTableResult(connection);
+        return new TabTableResult(connection).getData();
     } 
+    
+    /**
+     * Returns template results for given parameters. Use this method if you expects a lot 
+     * of results and you would run out of memory.   
+     * @param templateName template name
+     * @param parameters parameters of template
+     * @param start index of first result, that should be returned
+     * @param maxCount maximum number of returned results 
+     * @see TemplateService
+     * @return results
+     */
+    public Iterator<List<String>> getResultIterator(String templateName, 
+            List<TemplateParameter> parameters, int start, int maxCount) {
+        TemplateRequest request = new TemplateRequest(RequestType.POST, getUrl(), 
+                ContentType.TEXT_TAB);
+        request.setStart(start);
+        request.setMaxCount(maxCount);
+        request.setName(templateName);
+        request.setTemplateParameters(parameters);
+        HttpConnection connection = executeRequest(request);
+        return new TabTableResult(connection).getIterator();
+    }     
 }
