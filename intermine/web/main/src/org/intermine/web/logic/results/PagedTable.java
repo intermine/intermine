@@ -979,7 +979,6 @@ public class PagedTable
      */
     public void addSelectedToBag(ObjectStore os, InterMineBag bag)
     throws ObjectStoreException {
-
         ObjectStoreWriter osw = null;
         try {
             osw = new ObjectStoreWriterInterMineImpl(os);
@@ -1002,15 +1001,16 @@ public class PagedTable
      * @param os object store
      * @param session user's session
      * @param bagSize size of bag
+     * @return number of objects removed from the list
      * @exception Exception if the application business logic throws
      *  an exception
      */
-    public void removeFromBag(String bagName, Profile profile, ObjectStore os, HttpSession session,
+    public int removeFromBag(String bagName, Profile profile, ObjectStore os, HttpSession session,
                               int bagSize)
     throws Exception {
-
+        int i = 0;
         if (bagSize == selectionIds.size()) {
-            return;
+            return i;
         }
 
         Map savedBags = profile.getSavedBags();
@@ -1023,11 +1023,13 @@ public class PagedTable
                 for (Integer key : interMineBag.getContentsAsIds()) {
                     if (!keys.contains(key)) {
                         osw.removeFromBag(interMineBag.getOsb(), key);
+                        i++;
                     }
                 }
             } else {
                 for (Integer key : selectionIds.keySet()) {
                     osw.removeFromBag(interMineBag.getOsb(), key);
+                    i++;
                 }
             }
         } finally {
@@ -1036,5 +1038,6 @@ public class PagedTable
             }
         }
         SessionMethods.invalidateBagTable(session, bagName);
+        return i;
     }
 }
