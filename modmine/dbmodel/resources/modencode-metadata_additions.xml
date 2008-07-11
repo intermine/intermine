@@ -94,7 +94,6 @@
 		<reference name="experimentSubmission"
 			referenced-type="org.flymine.model.genomic.ExperimentSubmission"
 			reverse-reference="appliedProtocols" />
-
 		<collection name="inputData"
 			referenced-type="org.flymine.model.genomic.SubmissionData"
 			reverse-reference="nextAppliedProtocols" />

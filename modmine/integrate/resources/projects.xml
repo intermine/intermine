@@ -238,7 +238,7 @@
 		</collection>
   </item>
   <item id="1013" class="" implements="http://www.flymine.org/model/genomic#ModEncodeProject">
-    <attribute name="name" value="Regulatory Elements"/>
+    <attribute name="name" value="Regulatory Elements in C. elegans"/>
     <attribute name="title" value="Identification of Transcription Factor Binding Regions"/>
     <attribute name="surnamePI" value="Snyder"/>
     <attribute name="namePI" value="Michael"/>
@@ -283,7 +283,7 @@
 		</collection>
   </item>
   <item id="1021" class="" implements="http://www.flymine.org/model/genomic#ModEncodeProject">
-    <attribute name="name" value="Regulatory Elements"/>
+    <attribute name="name" value="Regulatory Elements in Drosophila"/>
     <attribute name="title" value="Identification of Transcription Factor binding sites by high-throughput ChIP-chip experiments in Drosophila"/>
     <attribute name="surnamePI" value="White"/>
     <attribute name="namePI" value="Kevin"/>
@@ -345,7 +345,7 @@
 	</item>
 	<item id="1052" class="" implements="http://www.flymine.org/model/genomic#ModEncodeProvider">
 		<attribute name="surname" value="Ahringer"/>
-		<attribute name="name" value=" Julie Ahringer "/>
+		<attribute name="name" value="Julie Ahringer "/>
 		<attribute name="affiliation" value="University of Cambridge"/>
 		<reference name="project" ref_id="1011"/>
 	</item>

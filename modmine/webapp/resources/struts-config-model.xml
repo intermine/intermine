@@ -10,15 +10,18 @@
 <action path="/initAttributeLinkDisplayer"
 	type="org.intermine.bio.web.AttributeLinkDisplayerController" />
 
+
 <action path="/initProviderSubmissions"
-	type="org.flymine.web.ProviderSubmissionsController" />
+  type="org.modmine.web.ProviderSubmissionsController" />
+<action path="/initProjectSubmissions"
+  type="org.modmine.web.ProjectSubmissionsController" />
+<action path="/initModEncodeProjects"
+  type="org.modmine.web.ModEncodeProjectsController" />
 
+<action path="/modEncodeProjects" forward="modEncodeProjects.page">
+</action>
 
 <!-- 
-	<action path="/modEncodeProjects" forward="modEncodeProjects.page">
-	</action>
--->
-<!-- 
-	<action path="/modEncodeProjects"
-	type="org.modmine.web.ModEncodeProjectsController"/>
+  <forward name="details" path="/objectDetails.do" redirect="true"/>
+</action>  
 -->

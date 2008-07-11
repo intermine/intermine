@@ -8,10 +8,7 @@
 
 <html:xhtml/>
 
-<div class="body">
 <im:boxarea title="Data" stylename="plainbox"><p><fmt:message key="dataCategories.intro"/></p></im:boxarea>
-
-
 <table cellpadding="0" cellspacing="5" border="0" class="dbsources">
   <tr>
     <th>Data Category</th>
@@ -133,14 +130,14 @@
   </tr>
 
 
-
+<%-- 
   <tr><td rowspan="1" class="leftcol">
        <html:link action="/aspect?name=Transcriptional%20Regulation">
         <p> <img src="model/images/bindingSites.png" /></p>
         <p> Transcriptional Regulation</p></html:link></td>
     <td> <i>D. melanogaster</i> </td>
 
-<%--
+
     <td> Transcriptional cis-regulatory modules (CRMs)</td>
     <td> <a href="http://redfly.ccr.buffalo.edu/" target="_new">REDfly</a> - 25th June 2006</td>
     <td> Gallo et al - <a href="http://www.ncbi.nlm.nih.gov/entrez/query.fcgi?cmd=Retrieve&db=PubMed&dopt=Abstract&list_uids=16303794" target="_new">PubMed: 16303794</a></td>
@@ -290,6 +287,9 @@
   </tr>
 
 </table>
+
+
+
 <!--
 <div class="body">
 <ol>
