@@ -180,7 +180,9 @@
     // spezific function for Querybuilder
     function isSubmit(e) {
     	// enter
-    	if (e.which == 13 && INDEX > -1) {
+    	if ((e.which == 13 && INDEX > -1) || (e.keyCode == 13 && INDEX > -1)) {
+    		
+    		Event.stop(e);
         	if (WHOLE_LIST) {
           		$(INPUT).value = CUT_LIST[INDEX];
         	} else {
