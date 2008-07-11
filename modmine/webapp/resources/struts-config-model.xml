@@ -24,7 +24,7 @@
 </action>
 <action path="/projectSubmissions" forward="projectSubmissions.page">
 </action>
-<action path="/projects" forward="projects2.page">
+<action path="/projects" forward="projects.page">
 </action>
 
 <!-- 

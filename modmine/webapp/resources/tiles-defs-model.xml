@@ -12,6 +12,8 @@
         controllerUrl="/initProjectSubmissions.do"/>
 <definition name="modEncodeProjects.tile" path="/model/modEncodeProjects.jsp" 
         controllerUrl="/initModEncodeProjects.do"/>
+<definition name="projects.tile" path="/model/projects.jsp" 
+        controllerUrl="/initProjects.do"/>
         
 <definition name="modEncodeProjects.page" extends="layout.template">
     <put name="body" value="modEncodeProjects.tile"/>
@@ -23,8 +25,8 @@
     <put name="pageName" value="projectSubmissions"/>
   </definition>
 
-  <definition name="projects2.page" extends="layout.template">
+  <definition name="projects.page" extends="layout.template">
     <put name="body" value="projects.tile"/>
-    <put name="pageName" value="projects2"/>
+    <put name="pageName" value="projects"/>
   </definition>
   

@@ -30,25 +30,25 @@
       <fmt:message key="menu.customQuery"/>&nbsp;
     </a>
   </li>
-  <li id="project"  <c:if test="${tab == 'projectSubmissions'}">class="activelink"</c:if>>
+<%--  <li id="project"  <c:if test="${tab == 'projectSubmissions'}">class="activelink"</c:if>>
     <a href="/${WEB_PROPERTIES['webapp.path']}/projectSubmissions.do">
       <fmt:message key="menu.projectSubmissions"/>
     </a>
   </li>
-<%--
+
   <li id="project"  <c:if test="${tab == 'modEncodeProjects'}">class="activelink"</c:if>>
     <a href="/${WEB_PROPERTIES['webapp.path']}/projectSubmissions.do">
       <fmt:message key="menu.projectSubmissions"/>
     </a>
   </li>
+  --%>
   
-  
-  <li id="project2"  <c:if test="${tab == 'projects2'}">class="activelink"</c:if>>
+  <li id="project"  <c:if test="${tab == 'projects'}">class="activelink"</c:if>>
     <a href="/${WEB_PROPERTIES['webapp.path']}/projects.do">
       <fmt:message key="menu.projects"/>
     </a>
   </li>
-  --%>
+ 
   
   <li id="category"  <c:if test="${tab == 'dataCategories'}">class="activelink"</c:if>>
     <a href="/${WEB_PROPERTIES['webapp.path']}/dataCategories.do">
