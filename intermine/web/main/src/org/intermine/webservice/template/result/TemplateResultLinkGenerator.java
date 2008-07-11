@@ -85,7 +85,7 @@ public class TemplateResultLinkGenerator
             ret += operationToString(cs.getOp(), index , highlighted);
             ret += "&" + valueToString(cs.getValue(), index, highlighted);
             if (cs.getOp().equals(ConstraintOp.LOOKUP)) {
-                ret += "&" + extraToString(cs.getExtraValue(), index);
+                ret += "&" + extraToString(cs.getExtraValue(), index, highlighted);
             }
         }
         ret += "&size=";
@@ -119,10 +119,11 @@ public class TemplateResultLinkGenerator
         }
     }
 
-    private String extraToString(Object extraValue, int index) {
+    private String extraToString(Object extraValue, int index, boolean highlighted) {
         String ret = "";
         ret += "extra" + index + "=";  
-        ret += encode(Util.wildcardSqlToUser(objectToString(extraValue)));
+        ret += format(encode(Util.wildcardSqlToUser(objectToString(extraValue))), 
+                highlighted);
         return ret;
     }
     
