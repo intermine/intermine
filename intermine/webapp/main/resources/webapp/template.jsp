@@ -28,7 +28,6 @@
    **********************************************************/
   function updateConstraintForm(index, attrOpElement, attrOptsElement, attrValElement)
   {
-    alert('updated');
     if (attrOptsElement == null)
       return;
 
