@@ -13,6 +13,8 @@
 
 <html:xhtml/>
 
+ <tiles:insert name="projectSubmissions.tile"/>
+
 <div class="body">
 
 <table cellpadding="0" cellspacing="0" border="0" class="dbsources">

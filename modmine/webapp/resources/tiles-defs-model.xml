@@ -18,3 +18,13 @@
     <put name="pageName" value="modEncodeProjects"/>
   </definition>
 
+<definition name="projectSubmissions.page" extends="layout.template">
+    <put name="body" value="projectSubmissions.tile"/>
+    <put name="pageName" value="projectSubmissions"/>
+  </definition>
+
+  <definition name="projects2.page" extends="layout.template">
+    <put name="body" value="projects.tile"/>
+    <put name="pageName" value="projects2"/>
+  </definition>
+  
