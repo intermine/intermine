@@ -86,15 +86,21 @@ public class ModifyBagDetailsAction extends InterMineAction
             }
             SessionMethods.recordMessage(msg, session);
         } else if (request.getParameter("addToBag") != null) {
-                PagedTable pc = SessionMethods.getResultsTable(session, bagIdentifier);
                 InterMineBag newBag = BagHelper.getBag(profile, globalRepository,
-                                                       mbdf.getExistingBagName());
-                int oldSize = newBag.size();
-                pc.addSelectedToBag(os, newBag);
-                int newSize = newBag.size();
-                int added = newSize - oldSize;
-                String msg = "You have added " + added + " items from list <strong>"
-                + imBag.getName() + "</strong> to list <strong>" + newBag.getName() + "</strong>";
+                                                                        mbdf.getExistingBagName());
+                String msg = "";
+                if (newBag.getType().equals(imBag.getType())) {
+                    PagedTable pc = SessionMethods.getResultsTable(session, bagIdentifier);
+                    int oldSize = newBag.size();
+                    pc.addSelectedToBag(os, newBag);
+                    int newSize = newBag.size();
+                    int added = newSize - oldSize;
+                    msg = "You have added " + added + " items from list <strong>"
+                    + imBag.getName() + "</strong> to list <strong>"
+                    + newBag.getName() + "</strong>";
+                } else {
+                    msg = "You can only add objects to other lists of the same type";
+                }
                 SessionMethods.recordMessage(msg, session);
         // orthologues form
         } else if (request.getParameter("convertToThing") != null) {

@@ -973,6 +973,7 @@ public class PagedTable
 
     /**
      * Adds the selected objects to the given bag in the given objectstore.
+     * Assumes table contains same type of object as bag.
      * @param os object store
      * @param bag bag to add to
      * @throws ObjectStoreException if an error occurs
