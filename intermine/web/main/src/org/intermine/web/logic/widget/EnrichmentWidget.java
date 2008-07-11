@@ -234,9 +234,9 @@ public class EnrichmentWidget extends Widget
                 row.add(new String[] {label});
 
                 BigDecimal bd = pvalues.get(id);
-                if (bd.compareTo(new BigDecimal(0.0000001)) <= 0) {
+                if (bd.compareTo(new BigDecimal(0.00000099)) <= 0) {
                     NumberFormat formatter = new DecimalFormat();
-                    formatter = new DecimalFormat("0.#####E0");
+                    formatter = new DecimalFormat("0.####E0");
                     row.add(new String[] {formatter.format(bd)});
                 } else {
                     row.add(new String[]
