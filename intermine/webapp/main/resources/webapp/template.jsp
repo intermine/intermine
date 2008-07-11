@@ -28,6 +28,7 @@
    **********************************************************/
   function updateConstraintForm(index, attrOpElement, attrOptsElement, attrValElement)
   {
+    alert('updated');
     if (attrOptsElement == null)
       return;
 
@@ -40,7 +41,6 @@
         return;
       }
     }
-
     document.getElementById("operandEditSpan" + index).style.display = "";
   }
 
@@ -89,18 +89,18 @@
       if(isIE != 'true') {
       // IE is retarded and doesn't pass the event object
           if (e == null)
-              e = window.event; 
+              e = window.event;
 
           // IE uses srcElement, others use target
           var target = e.target != null ? e.target : e.srcElement;
           // grab the clicked element's position
           _clientX = e.clientX;
           _clientY = e.clientY;
-          
+
           // grab the clicked element's position
            _offsetX = ExtractNumber(target.style.left);
            _offsetY = ExtractNumber(target.style.top);
-          
+
           $(id).style.left = (_clientX + _offsetX) + "px";
           $(id).style.top = (_clientY + _offsetY) + "px";
           Effect.Appear(id, { duration: 0.30 });
@@ -127,7 +127,7 @@
       return n == null || isNaN(n) ? 0 : n;
   }
 
-   function forwardToLinks() 
+   function forwardToLinks()
    {
        document.getElementById('actionType').value = 'links';
        document.templateForm.submit();
@@ -204,46 +204,39 @@
              </c:choose>
             <span nowrap>
               <span id="operandEditSpan${index-1}">
-              	
-				
-				              	
+
                 <c:set var="pathString" value="${node.pathString}"/>
-              	<c:set var="classDesc" value="${classDesc}"/>
+                <c:set var="classDesc" value="${classDesc}"/>
                 <c:set var="fieldDesc" value="${fieldDesc}"/>
                 <c:set var="acPath" value="${classDesc[pathString]}.${fieldDesc[pathString]}"/>
-              	<c:set var="hasAutoC" value="0"/>
-              	<c:forEach items="${autoCompleterMap[acPath]}" var="useAC">
-              		<%-- exist for this field a autocompleter --%>             		
-              		<c:if test="${!empty useAC  and hasAutoC eq 0}">
-            			<input name="attributeValues(${index})" id="attributeId_${index}" size="45" autocomplete="off" 
-            			       style="background:#ffffc8" 
-            			       onKeyDown="getId(this.id); isEnter(event);" 
-            			       onKeyUp="readInput(event, '${classDesc[pathString]}', '${fieldDesc[pathString]}');" 
-            			       onMouseOver="setMouseOver(${index});"
-   		  					   onMouseOut="setMouseOver(0);" 
-            			       onBlur="if(MOUSE_OVER != ${index}) { removeList(); }"/>
-            			<div class="error_auto_complete" id="attributeId_${index}_error" tabindex="-1"></div>
-            			<iframe width="100%" height="0" id="attributeId_${index}_IEbugFixFrame" tabindex="-1"
-            			        marginheight="0" marginwidth="0" frameborder="0" style="position:absolute;" ></iframe> 
+                <c:set var="hasAutoC" value="0"/>
+                <c:forEach items="${autoCompleterMap[acPath]}" var="useAC">
+                  <%-- exist for this field a autocompleter --%>
+                  <c:if test="${!empty useAC  and hasAutoC eq 0}">
+                  <input name="attributeValues(${index})" id="attributeId_${index}" size="45" autocomplete="off"
+                         style="background:#ffffc8"
+                         value="${con.value}"
+                         onKeyDown="getId(this.id); isEnter(event);"
+                         onKeyUp="readInput(event, '${classDesc[pathString]}', '${fieldDesc[pathString]}');"
+                         onMouseOver="setMouseOver(${index});"
+                         onMouseOut="setMouseOver(0);"
+                         onBlur="if(MOUSE_OVER != ${index}) { removeList(); }"/>
+                  <div class="error_auto_complete" id="attributeId_${index}_error" tabindex="-1"></div>
+                  <iframe width="100%" height="0" id="attributeId_${index}_IEbugFixFrame" tabindex="-1"
+                          marginheight="0" marginwidth="0" frameborder="0" style="position:absolute;" ></iframe>
                         <div class="auto_complete" id="attributeId_${index}_display" tabindex="-1"
                              onMouseOver="setMouseOver(${index});"
-   						     onMouseOut="setMouseOver(0);" 
-   						     onBlur="if(MOUSE_OVER != ${index}) { removeList(); }"></div>
-            			<c:set var="hasAutoC" value="1"/>
-            		</c:if>
-            	</c:forEach>
-            	
-            	<%-- if no auto completer exist --%>
-             	<c:if test="${hasAutoC eq 0}">
-              		<html:text property="attributeValues(${index})"/>
-                </c:if>  	
+                    onMouseOut="setMouseOver(0);"
+                    onBlur="if(MOUSE_OVER != ${index}) { removeList(); }"></div>
+                  <c:set var="hasAutoC" value="1"/>
+                </c:if>
+              </c:forEach>
 
- 
+              <%-- if no auto completer exist --%>
+               <c:if test="${hasAutoC eq 0}">
+                  <html:text property="attributeValues(${index})"/>
+                </c:if>
 
-                
-                
-                
-                
                 <c:if test="${!empty keyFields[con]}">
                   <span onMouseDown="displayHelpMsg(event,'lookupHelp')" style="cursor:pointer">?</span>
                   <div class="smallnote helpnote" id="lookupHelp" style="display:none" >
@@ -369,11 +362,11 @@
     </ol>
     <c:if test="${empty previewTemplate}">
       <br/>
-      
+
      <table width="100%">
      <tr>
-       <td> 
-      
+       <td>
+
       <html:hidden property="name"/>
       <html:hidden property="type"/>
       <html:hidden property="actionType" value="" styleId="actionType"/>
@@ -382,25 +375,25 @@
       <c:if test="${IS_SUPERUSER}">
         <html:submit property="editTemplate"><fmt:message key="template.submitToQueryEdit"/></html:submit>
       </c:if>
-   
+
      </td>
      <td align="right">
   <html:link action="/exportTemplates?scope=all&amp;name=${templateQuery.name}">
-    <img src="theme/xml.png" title="Export this template to XML"/>       
+    <img src="theme/xml.png" title="Export this template to XML"/>
   </html:link>
   </td>
   </tr>
   </table>
-      
+
     </c:if>
   </html:form>
-  
+
   <c:if test="${empty previewTemplate}">
-	  <div style="font-style: italic;">
-	    <b>NEW:</b> <a href="javascript:forwardToLinks()">Embed</a> this query. <a href="http://intermine.org/wiki/TemplateWebService">Help</a>
-	  </div>
+    <div style="font-style: italic;">
+      <b>NEW:</b> <a href="javascript:forwardToLinks()">Embed</a> this query. <a href="http://intermine.org/wiki/TemplateWebService">Help</a>
+    </div>
   </c:if>
-  
+
   <c:if test="${empty PROFILE_MANAGER || empty PROFILE.username}">
     <p>
       <i>
