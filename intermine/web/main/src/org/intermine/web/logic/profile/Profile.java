@@ -30,6 +30,7 @@ import org.intermine.web.logic.template.TemplateHelper;
 import org.intermine.web.logic.template.TemplateQuery;
 
 import org.apache.commons.collections.map.ListOrderedMap;
+import org.apache.commons.lang.StringUtils;
 
 /**
  * Class to represent a user of the webapp
@@ -295,6 +296,9 @@ public class Profile
      * @param bag the InterMineBag object
      */
     public void saveBag(String name, InterMineBag bag) {
+        if (StringUtils.isEmpty(name)) {
+            throw new RuntimeException("No name specified for the list to save.");
+        }
         savedBags.put(name, bag);
         reindex(TagTypes.BAG);
     }
