@@ -221,7 +221,7 @@ TEXT
         <tr>
           <td colspan="3" align="right">
             <span style="padding: 3px; font-size: 70%;" onclick="window.close()">close
-              <img src="../images/close.png" title="Close" onmouseout="this.style.cursor='normal';"
+              <img src="images/close.png" title="Close" onmouseout="this.style.cursor='normal';"
                    onmouseover="this.style.cursor='pointer';"/>
             </span>
           </td>
