@@ -12,7 +12,6 @@ package org.intermine.bio.dataconversion;
 
 import java.util.Collection;
 import java.util.HashSet;
-import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.Set;
 
@@ -21,7 +20,6 @@ import org.intermine.dataconversion.ItemsTestCase;
 import org.intermine.dataconversion.MockItemWriter;
 import org.intermine.metadata.Model;
 import org.intermine.xml.full.FullParser;
-import org.intermine.xml.full.Item;
 
 import java.io.BufferedReader;
 import java.io.File;
@@ -38,7 +36,6 @@ import java.io.InputStreamReader;
 public class GFF3ConverterTest extends ItemsTestCase {
     public GFF3ConverterTest(String arg) {
         super(arg);
-
     }
 
     GFF3Converter converter;
