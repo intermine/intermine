@@ -625,6 +625,10 @@ function clearFilter(type, wsListId) {
     filterTextElement.value = '';
 
     showAll(wsListId, type);
+    var checkbox = document.getElementById("showCheckbox"); 
+    if  (checkbox) {
+        checkbox.checked = 'checked';
+    }
     return false;
 }
 
