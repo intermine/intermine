@@ -221,7 +221,7 @@
     // highlight the actual topic
     function markIndex() {
     	if (INDEX != -1) { 
-    		$('li' + INDEX.toString()).style.background = '#effff4';
+    		$('li' + INDEX.toString()).style.background = '#8AECFF';
     	}
     }
     
@@ -278,7 +278,7 @@
                 if (IE) {
                 	input.setAttribute("onmousedown", function() { setWholeList(true); loadList(); });   
                 	input.setAttribute("onmouseout", function() { this.style.background = '#b2cdbf'; }); 
-                	input.setAttribute("onmouseover", function() { this.style.background = '#effff4'; });
+                	input.setAttribute("onmouseover", function() { this.style.background = '#8AECFF'; });
                 	input.style.background = "#b2cdbf";   
     				input.style.color = "#4c4d6b";
     				input.style.border = "none";    
@@ -286,7 +286,7 @@
                 } else { // FF
                 	input.setAttribute("class", "more_results");      
                 	input.setAttribute("onMouseDown", "setWholeList(true); loadList();");  
-                	input.setAttribute("onMouseOver", "this.style.background = '#effff4';");  
+                	input.setAttribute("onMouseOver", "this.style.background = '#8AECFF';");  
                 	input.setAttribute("onMouseOut", "this.style.background = '#b2cdbf';"); 
                 }
      			// IE & FF
