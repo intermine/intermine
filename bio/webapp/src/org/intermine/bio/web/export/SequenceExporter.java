@@ -24,6 +24,7 @@ import org.flymine.model.genomic.LocatedSequenceFeature;
 import org.flymine.model.genomic.Protein;
 import org.flymine.model.genomic.Sequence;
 import org.flymine.model.genomic.Translation;
+import org.flymine.model.genomic.Location;
 import org.intermine.bio.web.biojava.BioSequence;
 import org.intermine.bio.web.biojava.BioSequenceFactory;
 import org.intermine.metadata.ClassDescriptor;
@@ -221,10 +222,13 @@ public class SequenceExporter implements Exporter
         } else {
             header.append(feature.getName());
         }
-        if (feature.getChromosomeLocation() != null) {
-            header.append(' ').append(feature.getChromosome().getPrimaryIdentifier());
-            header.append(':').append(feature.getChromosomeLocation().getStart());
-            header.append('-').append(feature.getChromosomeLocation().getEnd());
+
+        Location chromosomeLoc = feature.getChromosomeLocation();
+        
+        if (chromosomeLoc != null) {
+            header.append(' ').append(chromosomeLoc.getObject().getPrimaryIdentifier());
+            header.append(':').append(chromosomeLoc.getStart());
+            header.append('-').append(chromosomeLoc.getEnd());
             header.append(' ').append(feature.getLength());
         }
         try {
