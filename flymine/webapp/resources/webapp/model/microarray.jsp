@@ -82,7 +82,7 @@
         <div id="hiddenDiv4" class="dataSetDescription">
           <dl>
             <dt>
-              Arbeitman et al (2002) Science 297:2270-2275 (<a href="http://www.ncbi.nlm.nih.gov/entrez/query.fcgi?cmd=Retrieve&db=PubMed&dopt=Abstract&list_uids=12351791" target="_new">PubMed: 12351791</a>) - Gene Expression During the Life Cycle of Drosophila melanogaster - ArrayExpress: <a href="http://www.ebi.ac.uk/microarray-as/aer/result?queryFor=Experiment&eAccession=E-FLYC-6/" target="_new">E-FLYC-6</a>
+              Arbeitman et al (2002) Science 297:2270-2275 (<a href="http://www.ncbi.nlm.nih.gov/entrez/query.fcgi?cmd=Retrieve&db=PubMed&dopt=Abstract&list_uids=12351791" target="_new">PubMed: 12351791</a>) - Gene Expression During the Life Cycle of Drosophila melanogaster - ArrayExpress: <a href="http://www.ebi.ac.uk/microarray-as/aer/result?queryFor=Experiment&eAccession=E-FLYC-6" target="_new">E-FLYC-6</a>
             </dt>
             <dd>
               Arbeitman et al reported gene expression patterns for nearly one third of all <i>Drosophila</i> genes during a complete time course of development.  Graphs are displayed on summary pages for each gene involved in the experiment showing Log 2 exression ratio for 67 time points across life stages.

@@ -39,7 +39,7 @@
         </p>
 
           <p><im:querylink text="Show all pairs of organisms linked by orthologues" skipBuilder="true">
-            <query name="" model="genomic" view="Orthologue.gene.organism.shortName Orthologue.orthologue.organism.shortName"><node path="Orthologue" type="Orthologue"></node></query>
+            <query name="" model="genomic" view="Homologue.gene.organism.shortName Homologue.homologue.organism.shortName"><node path="Homologue" type="Homologue"></node></query>
           </im:querylink></p>
 
 
