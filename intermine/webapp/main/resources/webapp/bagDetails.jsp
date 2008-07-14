@@ -80,7 +80,7 @@
 
 <div id="tool_bar_item_edit" style="visibility:hidden;width:300px" class="tool_bar_item">
   <%-- add selected to bag --%>
-  <fmt:message key="bagDetails.addRecords"/>:&nbsp;&nbsp;
+  <fmt:message key="bagDetails.addRecords"/>:<br/>
    <c:choose>
    <c:when test="${!empty PROFILE.savedBags && fn:length(PROFILE.savedBags) > 1}">
           <html:select property="existingBagName">
@@ -101,9 +101,8 @@
     </c:choose>
   <br/>
     <%-- remove selected from bag --%>
-    <fmt:message key="bagDetails.deleteRecords"/>&nbsp;&nbsp;
+    <fmt:message key="bagDetails.deleteRecords"/>:<br>
     <input type="submit" name="removeFromBag" id="removeFromBag" value="Remove" disabled="true" />
-
     <hr>
   <a href="javascript:hideMenu('tool_bar_item_edit')" ><fmt:message key="confirm.cancel"/></a>
 </div>

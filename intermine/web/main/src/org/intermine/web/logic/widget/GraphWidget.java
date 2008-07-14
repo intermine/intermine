@@ -293,20 +293,32 @@ public class GraphWidget extends Widget
      * @return the HTML as a String
      */
     public String getHtml() throws Exception{
-        File file = new File(System.getProperty("java.io.tmpdir"), fileName);
-        FileInputStream is = new FileInputStream(file);
-        // Create the byte array to hold the data
-        byte[] bytes = new byte[(int) file.length()];
-        String h;
-        is.read(bytes);
-        h = Base64.encodeBytes(bytes);
-        StringBuffer sb = new StringBuffer("<img src=\"data:image/png;base64," + h + "\" width=\""
-                                           + ((GraphWidgetConfig) config).getWIDTH()
-                                           + "\" height=\""
+//        File file = new File(System.getProperty("java.io.tmpdir"), fileName);
+//
+//        FileInputStream is = new FileInputStream(file);
+//        // Create the byte array to hold the data
+//        byte[] bytes = new byte[(int) file.length()];
+//        String h;
+//        is.read(bytes);
+//        h = Base64.encodeBytes(bytes);
+//        StringBuffer sb = new StringBuffer("<img src=\"data:image/x-png;base64," + h + "\" width=\""
+//                                           + ((GraphWidgetConfig) config).getWIDTH()
+//                                           + "\" height=\""
+//                                           + ((GraphWidgetConfig) config).getHEIGHT()
+//                                           + "\" usemap=\"#chart" + fileName + "\">");
+//
+//        sb.append(imageMap);
+//        return sb.toString();
+
+        // IE doesn't support base64, so for now we are just going to pass back location of png file
+        // see http://en.wikipedia.org/wiki/Data:_URI_scheme
+
+
+        StringBuffer sb = new StringBuffer("<img src=\"loadTmpImg.do?fileName=" + fileName
+                                           + "\" width=\"" + ((GraphWidgetConfig) config).getWIDTH() + "\" height=\""
                                            + ((GraphWidgetConfig) config).getHEIGHT()
                                            + "\" usemap=\"#chart" + fileName + "\">");
         sb.append(imageMap);
         return sb.toString();
     }
-
 }

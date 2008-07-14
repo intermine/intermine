@@ -105,6 +105,8 @@
     </action>
     <action path="/dataCategories" forward="dataCategories.page">
     </action>
+    <action path="/loadTmpImg" type="org.intermine.web.struts.TempImageLoader">
+    </action>
     <action path="/customQuery" forward="customQuery.page">
     </action>
     <action path="/showStatic" forward="showStatic.page">
@@ -113,8 +115,8 @@
     </action>
     <action path="/linkPreview" forward="/linkPreview.jsp">
     </action>
-	<action path="/tabLinkPreview" type="org.intermine.web.struts.TabLinkPreviewAction">
-	</action>
+  <action path="/tabLinkPreview" type="org.intermine.web.struts.TabLinkPreviewAction">
+  </action>
 
     <action path="/modifyQueryChange" type="org.intermine.web.struts.ModifyQueryChangeAction" parameter="method">
       <forward name="query" redirect="true" path="/query.do"/>
@@ -347,7 +349,7 @@
     <action path="/ping" type="org.intermine.web.struts.HeartbeatAction">
     </action>
     <action path="/tip" type="org.intermine.web.struts.TipAction">
-	    <forward name="display" path="tip.page"/>
+      <forward name="display" path="tip.page"/>
     </action>
 
     <action path="/gotows" type="org.intermine.web.struts.GotoWebSearchableAction">
