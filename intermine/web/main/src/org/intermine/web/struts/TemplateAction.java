@@ -106,14 +106,14 @@ public class TemplateAction extends InterMineAction
                         gen.getError()), request);
                 return mapping.findForward("template");
             } else {
-                request.setAttribute("link", link);
-                request.setAttribute("highlightedLink", gen.getHighlightedLink(
+                session.setAttribute("link", link);
+                session.setAttribute("highlightedLink", gen.getHighlightedLink(
                         new URLGenerator(request).getPermanentBaseURL(), configuredTmpl));
                 String title = configuredTmpl.getTitle();
                 title = title.replace("-->", "&nbsp;<img src=\"images/tmpl_arrow.png\" "
                         + "style=\"vertical-align:middle\">&nbsp;");
-                request.setAttribute("pageTitle", title);
-                request.setAttribute("pageDescription", configuredTmpl.getDescription());
+                session.setAttribute("pageTitle", title);
+                session.setAttribute("pageDescription", configuredTmpl.getDescription());
                 return mapping.findForward("serviceLink");
             }
         }

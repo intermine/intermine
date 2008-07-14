@@ -3,7 +3,6 @@
 
 <%-- Page displaying link to webservice. --%>
 
-<%@page import="java.net.URLEncoder"%>
 <style type="text/css">
 .highlighted {
     color: red;
@@ -31,8 +30,8 @@
 <div align="center" ><div class="plainbox" style="width:700px; font-size:14px; overflow: auto">
 
 	<c:choose>
-		<c:when test="${requestScope.pageTitle != null}">
-		    <c:set var="pageTitle" value="${requestScope.pageTitle}"></c:set>
+		<c:when test="${pageTitle != null}">
+		    <c:set var="pageTitle" value="${pageTitle}"></c:set>
 		</c:when>
 		<c:otherwise>
 		    <c:set var="pageTitle" value="Resource link"></c:set>
@@ -40,7 +39,7 @@
 	</c:choose>
 
 	<h1>${pageTitle}</h1>
-	<div>${requestScope.pageDescription}</div>
+	<div>${pageDescription}</div>
 	
 	<form action="">
 	
@@ -60,13 +59,13 @@
 	    <%-- Don't split following line --%>
 	    <textarea style="width:100%;height:100px;"><iframe width=&quot;700&quot; height=&quot;500&quot; frameborder=&quot;1&quot; scrolling=&quot;yes&quot; marginheight=&quot;0&quot; marginwidth=&quot;0&quot; src=&quot;${link}&amp;format=html&quot;></iframe></textarea>
 	
-	   <c:if test="${requestScope.highlightedLink != null}">
+	   <c:if test="${highlightedLink != null}">
 	        <div style="margin-top:10px;">
 	           If you want to get results for different parameters, edit the highlighted constraints 
 	           in the URL to the values you need. <a href="javascript:switchLink('showLinkId', 'highLinkId')" id="showLinkId">Show</a> link with constraint values highlighted in red.
 	        </div>
 	        <div id="highLinkId" style="display: none;">
-	           ${requestScope.highlightedLink}
+	           ${highlightedLink}
 	        </div>
         </c:if>
 	
