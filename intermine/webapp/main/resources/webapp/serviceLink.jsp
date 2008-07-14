@@ -3,6 +3,7 @@
 
 <%-- Page displaying link to webservice. --%>
 
+<%@page import="java.net.URLEncoder"%>
 <style type="text/css">
 .highlighted {
     color: red;
@@ -44,7 +45,8 @@
 	<form action="">
 	
 	    <div  style="margin-top: 10px;">
-	       <c:set var="encodedLink" value="${fn:replace(link, '&', 'XXXXX')}"></c:set>
+	       <%-- Replacing & with unique string with almost 0 probability that it will be in url --%>
+           <c:set var="encodedLink" value="${fn:replace(link, '&', 'qwertyui')}"></c:set> 
 	       <table style="width:100%;">
 	           <tr>
 	               <td style="font-size:14px;">
