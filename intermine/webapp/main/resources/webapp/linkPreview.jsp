@@ -7,6 +7,7 @@ the link generated for user. --%>
 <!-- linkPreview.jsp -->
 <?xml version="1.0" encoding="iso-8859-1"?>
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-1-transitional.dtd">
+<%@page import="java.net.URLDecoder"%>
 <html>
 
 <head>
@@ -22,7 +23,7 @@ the link generated for user. --%>
 
 <body title="Example of page with results">
 
-<c:set var="link" value="${fn:replace(param.link, 'XXXXX', '&')}"></c:set>
+<c:set var="link" value="${fn:replace(param.link, 'qwertyui', '&')}"></c:set> 
 
 <h2 style="margin-bottom: 0px; font-family:Verdana,arial,Helvetica,sans-serif;">Your web page</h2>
     <table style="width: 700px; height: 110px; margin-top: 20px; margin-bottom: 20px;" class="content">

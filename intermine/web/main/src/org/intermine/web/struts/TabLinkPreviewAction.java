@@ -11,6 +11,7 @@ package org.intermine.web.struts;
  */
 
 import java.io.PrintWriter;
+import java.io.UnsupportedEncodingException;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -56,8 +57,8 @@ public class TabLinkPreviewAction extends InterMineAction
         return null;
     }
 
-    private String prepareURL(String link) {
-        String url = link.replaceAll("XXXXX", "&");
+    private String prepareURL(String link) throws UnsupportedEncodingException {
+        String url = link.replaceAll("qwertyui", "&");
         url = URLUtil.encodeURL(url); 
         url = url + "&" + WebService.OUTPUT_PARAMETER + "=" 
             + WebServiceRequestParser.FORMAT_PARAMETER_TAB;
