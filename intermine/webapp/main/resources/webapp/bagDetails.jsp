@@ -80,9 +80,9 @@
 
 <div id="tool_bar_item_edit" style="visibility:hidden;width:300px" class="tool_bar_item">
   <%-- add selected to bag --%>
+  <fmt:message key="bagDetails.addRecords"/>:&nbsp;&nbsp;
    <c:choose>
-   <c:when test="${!empty PROFILE.savedBags && PROFILE.savedBags.size > 1}">
-          Add selected to another list:
+   <c:when test="${!empty PROFILE.savedBags && fn:length(PROFILE.savedBags) > 1}">
           <html:select property="existingBagName">
              <c:forEach items="${PROFILE.savedBags}" var="entry">
               <c:if test="${param.bagName != entry.key}">
@@ -90,7 +90,7 @@
               </c:if>
              </c:forEach>
           </html:select>
-     <input type="submit" name="addToBag" id="addToBag" value="Add selected" />
+     <input type="submit" name="addToBag" id="addToBag" value="Add" />
      <script type="text/javascript" charset="utf-8">
           $('addToBag').disabled = true;
         </script>
@@ -99,9 +99,11 @@
       <em><fmt:message key="toolbar.noLists"/></em>
     </c:otherwise>
     </c:choose>
-  <br/><br/>
+  <br/>
     <%-- remove selected from bag --%>
-    <input type="submit" name="removeFromBag" id="removeFromBag" value="Remove selected" disabled="true" />
+    <fmt:message key="bagDetails.deleteRecords"/>&nbsp;&nbsp;
+    <input type="submit" name="removeFromBag" id="removeFromBag" value="Remove" disabled="true" />
+
     <hr>
   <a href="javascript:hideMenu('tool_bar_item_edit')" ><fmt:message key="confirm.cancel"/></a>
 </div>
