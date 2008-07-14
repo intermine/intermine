@@ -1,0 +1,54 @@
+<!-- 
+
+	Ant script to produce distribution zip with webservice client libraries and samples.
+	To build, run 'ant -f <path-to-this-file>'.
+
+-->
+<project name="intermine-webservice-client" basedir="." default="dist">
+
+	<property name="dist.dir" value="client-dist" />
+	<property name="src.dir" value="src" />
+	<property name="build.dir" value="client-build" />
+	<property name="build.doc.dir" value="${build.dir}/doc" />
+	<property name="javadoc.author" value="InterMine team" />
+	<property name="version" value="1.0" />
+
+	<target name="clean">
+		<delete dir="${dist.dir}" failonerror="false"/>
+		<delete dir="${build.dir}" failonerror="false"/>
+	</target>
+
+	<target name="compile">
+		<!-- Calling standard InterMine build scripts -->
+		<ant antfile="build.xml" target="library.jar" inheritall="false"></ant>
+	    <ant antfile="../../pathquery/main/build.xml" target="library.jar" dir="../../../pathquery/main" /> 
+		<ant antfile="../../objectstore/main/build.xml" target="library.jar" dir="../../../objectstore/main"></ant>
+	</target>
+	
+	<target name="javadoc">
+		<ant antfile="../../pathquery/main/build.xml" target="javadoc" dir="../../../pathquery/main" />
+		
+		<javadoc destdir="${build.doc.dir}" source="${src.dir}" notree="true" use="false" nonavbar="false" noindex="false" splitindex="false" author="${javadoc.author}" version="false" failonerror="true">
+			<sourcepath>
+				<pathelement location="${src.dir}" />
+			</sourcepath>
+			<fileset dir="${src.dir}" />
+		</javadoc>
+	</target>
+
+	<target name="build" depends="clean, compile">
+		<mkdir dir="${build.dir}"/>
+		<copydir dest="${build.dir}/src" src="src" />
+		<copydir dest="${build.dir}/lib" src="lib" />
+	    <copyfile dest="${build.dir}/lib/intermine-client.jar" src="dist/intermine-webservice-client.jar"/> 
+	    <copyfile dest="${build.dir}/lib/intermine-pathquery.jar" src="../../../pathquery/main/dist/intermine-pathquery.jar"/> 
+		<copyfile dest="${build.dir}/lib/intermine-objectstore.jar" src="../../../objectstore/main/dist/intermine-objectstore.jar"/>
+	    <copydir dest="${build.dir}/samples" src="../samples" excludes=".*"></copydir>
+	</target>
+
+	<target name="dist" depends="build, javadoc">
+	    <mkdir dir="${dist.dir}"/>
+		<zip destfile="${dist.dir}/intermine-client-${version}.jar" basedir="${build.dir}" />
+	</target>
+
+</project>
