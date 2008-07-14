@@ -26,6 +26,7 @@ import org.apache.struts.action.ActionMapping;
 import org.apache.struts.tiles.ComponentContext;
 import org.apache.struts.tiles.actions.TilesAction;
 import org.flymine.model.genomic.ExperimentSubmission;
+import org.flymine.model.genomic.ModEncodeProject;
 import org.flymine.model.genomic.ModEncodeProvider;
 import org.intermine.objectstore.ObjectStore;
 import org.intermine.objectstore.query.Query;
@@ -66,35 +67,32 @@ public class ProviderSubmissionsController extends TilesAction
 
             Results results = os.executeSingleton(q);
 
-            Map<ModEncodeProvider, ExperimentSubmission> ps =
-                new HashMap<ModEncodeProvider, ExperimentSubmission>();
-
-            Map<ModEncodeProvider, Set<ExperimentSubmission>> ps2 =
+            Map<ModEncodeProvider, Set<ExperimentSubmission>> ps =
                 new HashMap<ModEncodeProvider, Set<ExperimentSubmission>>();
+
+            Map<ModEncodeProvider, ModEncodeProject> pp =
+                new HashMap<ModEncodeProvider, ModEncodeProject>();
 
             Map<String, List<String>> providerSubs = 
                 new HashMap<String, List<String>>();
-            Map<String, String> ugo = 
-                new HashMap<String, String>();
 
             // for each provider, get its attributes and set the values for jsp
             Iterator i = results.iterator();
             while (i.hasNext()) {
                 ModEncodeProvider provider = (ModEncodeProvider) i.next();
                 Set<ExperimentSubmission> subs = provider.getExperimentSubmissions();
-
-                ps2.put(provider, subs);
-
+                ModEncodeProject project = provider.getProject();
+                
+                ps.put(provider, subs);
+                pp.put(provider, project);
+                
                 //List<String> thisProviderSubs = providerSubs.get(provider);
 //              for (ExperimentSubmission experiment: subs) {
 //              ps.put(provider, experiment);                    
 //              }
-//              String mostra = "qq77 sono qui";
-//              request.setAttribute("esempio", mostra);
-//              request.setAttribute("experiments", providerSubs);
-
             }
-            request.setAttribute("experiments", ps2);
+            request.setAttribute("experiments", ps);
+            request.setAttribute("project", pp);
 
         } catch (Exception err) {
             err.printStackTrace();
@@ -186,22 +184,6 @@ public class ProviderSubmissionsController extends TilesAction
 //ModEncodeProvider provider = (ModEncodeProvider) request.getAttribute("object");
 //Set<ExperimentSubmission> subs = provider.getExperimentSubmissions();
 
-
-
-
-
-//Results results =
-//MicroArrayHelper.queryExperimentsInvolvingGene(gene.getPrimaryIdentifier(), os);
-//if (results != null) {
-//ArrayList<Object> experiments = new ArrayList<Object>();
-//for (Iterator iter = results.iterator(); iter.hasNext(); ) {
-//ResultsRow row = (ResultsRow) iter.next();
-//experiments.add(row.get(0));
-//}
-//request.setAttribute("experiments", experiments);
-//}
-
-//request.setAttribute("experiments", subs.toString());
 
 
 

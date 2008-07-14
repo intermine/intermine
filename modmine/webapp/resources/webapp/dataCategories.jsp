@@ -8,6 +8,8 @@
 
 <html:xhtml/>
 
+<div class="body">
+
 <im:boxarea title="Data" stylename="plainbox"><p><fmt:message key="dataCategories.intro"/></p></im:boxarea>
 <table cellpadding="0" cellspacing="5" border="0" class="dbsources">
   <tr>
