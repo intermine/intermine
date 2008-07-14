@@ -10,8 +10,8 @@ package org.modmine.web;
  *
  */
 
-import java.util.HashMap;
 import java.util.Iterator;
+import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Set;
 
@@ -68,9 +68,9 @@ public class ProjectsController extends TilesAction
             Results results = os.executeSingleton(q);
 
             Map<ModEncodeProject, Set<ModEncodeProvider>> pp =
-                new HashMap<ModEncodeProject, Set<ModEncodeProvider>>();
+                new LinkedHashMap<ModEncodeProject, Set<ModEncodeProvider>>();
             Map<ModEncodeProject, Integer> nr =
-                new HashMap<ModEncodeProject, Integer>();
+                new LinkedHashMap<ModEncodeProject, Integer>();
             
             // for each project, get its providers
             Iterator i = results.iterator();

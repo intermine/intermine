@@ -1,11 +1,3 @@
-  <definition name="flymineQuickStart.tile" path="/model/flymineQuickStart.jsp" />
-
-  <definition name="flymineQuickStart.page" extends="layout.template">
-    <put name="body" value="flymineQuickStart.tile"/>
-    <put name="pageName" value="flymineQuickStart"/>
-  </definition>
-
-
 <definition name="providers.tile" path="/model/providers.jsp" 
         controllerUrl="/initProviders.do"/>
 <definition name="projects.tile" path="/model/projects.jsp" 
@@ -20,20 +12,3 @@
     <put name="body" value="providers.tile"/>
     <put name="pageName" value="providers"/>
   </definition>
-
-
-<definition name="projectSubmissions.tile" path="/model/projectSubmissions.jsp" 
-        controllerUrl="/initProjectSubmissions.do"/>
-<definition name="modEncodeProjects.tile" path="/model/modEncodeProjects.jsp" 
-        controllerUrl="/initModEncodeProjects.do"/>
-<definition name="modEncodeProjects.page" extends="layout.template">
-    <put name="body" value="modEncodeProjects.tile"/>
-    <put name="pageName" value="modEncodeProjects"/>
-  </definition>
-
-<definition name="projectSubmissions.page" extends="layout.template">
-    <put name="body" value="projectSubmissions.tile"/>
-    <put name="pageName" value="projectSubmissions"/>
-  </definition>
-
-  

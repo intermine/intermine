@@ -20,23 +20,3 @@
   type="org.modmine.web.ProvidersController" />
 <action path="/providers" forward="providers.page">
 </action>
-
-
-<action path="/initProviderSubmissions"
-  type="org.modmine.web.ProviderSubmissionsController" />
-<action path="/initProjectSubmissions"
-  type="org.modmine.web.ProjectSubmissionsController" />
-<action path="/initModEncodeProjects"
-  type="org.modmine.web.ModEncodeProjectsController" />
-
-<action path="/modEncodeProjects" forward="modEncodeProjects.page">
-</action>
-<action path="/projectSubmissions" forward="projectSubmissions.page">
-</action>
-
-
-
-<!-- 
-  <forward name="details" path="/objectDetails.do" redirect="true"/>
-</action>  
--->
