@@ -10,12 +10,15 @@
 
     <!-- Add new news at the top here -->
     <item>
-      <title>Update of list contents from 12.0 to 13.0 fixed</title>
+      <title>FlyMine 14.0 Released</title>
       <link>http://www.flymine.org/</link>
       <description>
-        Problems updating list contents from release 12.0 to 13.0 have now been fixed.  All lists saved in user accounts in release 12.0 have now been correctly updated in 13.0, lists created since the 13.0 release are unaffected.  No saved data has been lost.  Please contact us if you have any questions.  Our apologies for any inconvenience this may have caused.
+        &lt;a href="http://www.flymine.org"&gt;
+        FlyMine 14.0&lt;/a&gt; is now available.  See 
+        &lt;a href="http://www.flymine.org/release-notes.shtml"&gt;
+        release notes&lt;/a&gt;.
       </description>
-      <pubDate>Sun, 22 Jun 2008 17:00 GMT</pubDate>
+      <pubDate>Mon, 14 Jul 2008 19:30 GMT</pubDate>
     </item>
     <item>
       <title>FlyMine 13.0 Released</title>
