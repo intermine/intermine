@@ -14,6 +14,7 @@
   <tr>
     <th>Provider</th>
     <th>Affiliation</th>
+    <th>Project</th>
     <th>Submissions</th>
   </tr>
 <c:forEach items="${experiments}" var="item">
@@ -21,8 +22,20 @@
     <html:link  href="/${WEB_PROPERTIES['webapp.path']}/objectDetails.do?id=${item.key.id}">
  ${item.key.name}
     </html:link>
+ <td>${item.key.affiliation}
+ <td>
+      <c:forEach items="${project}" var="proj">
+        <c:if test="${proj.key eq item.key}">
+          <c:set var="pName" value="${proj.value.name}" />
+          <c:set var="pId" value="${proj.value.id}" />
+        </c:if>
+      </c:forEach> 
+     <html:link  href="/${WEB_PROPERTIES['webapp.path']}/objectDetails.do?id=${pId}">
+ ${pName}
+    </html:link>
  
- <td>${item.key.affiliation}<td>
+ 
+ <td>
  <c:forEach items="${item.value}" var="sub">
 
     <html:link  href="/${WEB_PROPERTIES['webapp.path']}/objectDetails.do?id=${sub.id}">
