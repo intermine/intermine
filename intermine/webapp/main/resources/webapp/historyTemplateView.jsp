@@ -49,7 +49,7 @@
       <c:otherwise>
 
         <html:form action="/modifyTemplate">
-        <table class="sortable-onload-3 rowstyle-alt no-arrow" cellspacing="0">
+        <table class="sortable-onload-2 rowstyle-alt no-arrow" cellspacing="0">
           <tr>
             <th>
               <input type="checkbox" id="selected_template"
