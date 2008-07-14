@@ -48,6 +48,11 @@
       <fmt:message key="menu.projects"/>
     </a>
   </li>
+  <li id="providers"  <c:if test="${tab == 'providers'}">class="activelink"</c:if>>
+    <a href="/${WEB_PROPERTIES['webapp.path']}/providers.do">
+      <fmt:message key="menu.providers"/>
+    </a>
+  </li>
  
   
   <li id="category"  <c:if test="${tab == 'dataCategories'}">class="activelink"</c:if>>
