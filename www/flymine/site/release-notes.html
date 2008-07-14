@@ -3,6 +3,44 @@
 
   <div style="clear:" class="box">
 
+<div class="heading2">FlyMine version 14.0 - release notes (14th July 2008)</div>
+<div class="body">
+<p style="font-size: +1.1em;">
+In Release 14.0 we have updated data from FlyBase to release FB2008_06 and many sources are updated to the latest versions.  We have added an autocompletion feature for many constraints in template queries and QueryBuilder.  This means that as you type, for example a GO term or protein domain name, suggested matches will be provided.</p>
+
+<h3>Data</h3>
+<p>Data from FlyBase is updated to the FB2008_06 release and many other sources have been updated to the latest versions, specific changes are detailed below.  For a complete list of all data included in FlyMine see the 'Data' tab above.</p>
+<p>
+<ul>
+  <li>NEW - <i>Drosophila</i> genes now have a field 'flyBaseFeatureType' field for the gene type e.g. protein_coding, miRNA_gene.</li>
+  <li>NEW - <i>D. melanogaster</i> microRNATargets now have chromosome locations and appear in GBrowse.</li>
+  <li>FIX - <i>C. elegans</i> genes and proteins are now correctly linked to one another.</li>
+</ul>
+</p>
+
+<h3>Data integration</h3>
+<p>In this release we further improved the data integration system to update old identifiers for <i>Drosophila</i> genes that are provided by many data sources to match a current FlyBase identifier.  We now include only current FlyBase genes that have a genome location (see 13.0 release notes for more details).</p>
+
+<h3>Autocomplation</h3>
+<p>Many name fields in template queries and the QueryBuilder now have type-ahead autocompletion to assist in selecting valid terms.  As you start to type possible matches are fetched from FlyMine, the text you have typed can match anywhere within the suggested completion multiple words can be matched.  This is particularly useful for example with GO terms or protein domain names.</p>
+
+<h3>Removing list entries</h3>
+<p>It is now possible to remove entries from one of your lists.  On the List Analysis page you can now select entries in the list and use the new 'Edit' menu to delete them from your list or add them to another existing list.</p>
+
+<h3>User interface</h3>
+<p>
+<ul>
+  <li>NEW - added linkouts for genes to BDGP <i>in situ</i> and for alleles to FlyBase</li>
+  <li>FIX - you can now access the lists and query history section of MyMine when not logged in.  This allows you to delete your temporary lists.</li>
+  <li>FIX - GLEANR symbols are no longer low quality matches when using them to upload a list of <i>Drosophila</i> genes.</li>
+
+  <li>NEW - statistical enrichment widgets now link to documentation on the method of calculation used.</li>
+  <li>FIX - template and list search pages no longer reset the search term when using the back button.</li>
+</ul>
+</p>
+
+</div>
+
 <div class="heading2">FlyMine version 13.0 - release notes (10th June 2008)</div>
 <div class="body">
 <p style="font-size: +1.1em;">
