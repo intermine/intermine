@@ -162,9 +162,8 @@ public class SessionMethods
                     } catch (RuntimeException e) {
                         if (e.getCause() instanceof ObjectStoreException) {
                             throw (ObjectStoreException) e.getCause();
-                        } else {
-                            throw e;
                         }
+                        throw e;
                     }
                 } catch (ObjectStoreException e) {
                     // put stack trace in the log
@@ -717,9 +716,8 @@ public class SessionMethods
         Map tables = (Map) session.getAttribute(Constants.TABLE_MAP);
         if (tables != null) {
             return (PagedTable) tables.get(identifier);
-        } else {
-            return null;
         }
+        return null;
     }
 
     /**
@@ -929,5 +927,5 @@ public class SessionMethods
         }
         return webState;
     }
-    
+
 }

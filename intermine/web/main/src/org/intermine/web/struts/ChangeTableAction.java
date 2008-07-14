@@ -121,13 +121,9 @@ public class ChangeTableAction extends InterMineDispatchAction
                                          @SuppressWarnings("unused") ActionForm form,
                                          HttpServletRequest request,
                                          @SuppressWarnings("unused") HttpServletResponse response) {
-        HttpSession session = request.getSession();
         PagedTable pt = getPagedTable(request);
-        String forwardName = (String) request.getAttribute("currentPage");
-
         int index = Integer.parseInt(request.getParameter("index"));
         pt.moveColumnRight(index);
-
         return makeForward(mapping, request, pt);
     }
 

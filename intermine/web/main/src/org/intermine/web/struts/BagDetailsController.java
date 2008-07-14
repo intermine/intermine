@@ -146,8 +146,9 @@ public class BagDetailsController extends TilesAction
         }
 
         // Get the widget toggle state
-        request.setAttribute("toggledElements", SessionMethods.getWebState(session).
-                getToggledElements());
+        // TODO this needs to be re-implemented.  see #1660
+//        request.setAttribute("toggledElements", SessionMethods.getWebState(session).
+//                getToggledElements());
 
         // Set the size
         String pageStr = request.getParameter("page");
@@ -158,11 +159,8 @@ public class BagDetailsController extends TilesAction
         if (highlightIdStr != null) {
             highlightId = new Integer(Integer.parseInt(highlightIdStr));
         }
-
         boolean gotoHighlighted = false;
-
         String gotoHighlightedStr = request.getParameter("gotoHighlighted");
-
         if (gotoHighlightedStr != null
             && (gotoHighlightedStr.equalsIgnoreCase("t")
                 || gotoHighlightedStr.equalsIgnoreCase("true"))) {
