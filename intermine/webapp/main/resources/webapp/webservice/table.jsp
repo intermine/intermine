@@ -53,12 +53,13 @@ body {
 	var url = window.location.href + '&tcount';
 	url = url.replace('format=html', 'format=tab');
 	
-	new Ajax.Request(url, {
+	new Ajax.Request(url, 
+	{
 	  method: 'get',
 	  onSuccess: function(transport) {
 	    var countEl = document.getElementById('resultCount');
 	    countEl.innerHTML = transport.responseText;
-	  },
+	  }
 	});
 </script>
 
