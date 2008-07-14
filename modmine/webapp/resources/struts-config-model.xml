@@ -11,6 +11,10 @@
 	type="org.intermine.bio.web.AttributeLinkDisplayerController" />
 
 
+<action path="/initProjectList"
+  type="org.modmine.web.ProjectsController" />
+
+
 <action path="/initProjects"
   type="org.modmine.web.ProjectsController" />
 <action path="/projects" forward="projects.page">

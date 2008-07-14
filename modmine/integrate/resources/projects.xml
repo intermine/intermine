@@ -509,7 +509,7 @@
 	</item>
 	<item id="1079" class="" implements="http://www.flymine.org/model/genomic#ModEncodeProvider">
 		<attribute name="surname" value="Liu"/>
-		<attribute name="name" value="Xiole Liu"/>
+		<attribute name="name" value="Xiaole Liu"/>
 		<attribute name="affiliation" value="Dana Farber Cancer Institute"/>
 		<reference name="project" ref_id="1011"/>
 	</item>
