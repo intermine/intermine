@@ -10,10 +10,6 @@ package org.intermine.web.struts;
  *
  */
 
-import org.intermine.web.logic.results.PagedTable;
-import org.intermine.web.logic.session.SessionMethods;
-
-import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
@@ -22,6 +18,8 @@ import org.apache.struts.action.Action;
 import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
+import org.intermine.web.logic.results.PagedTable;
+import org.intermine.web.logic.session.SessionMethods;
 
 /**
  * Action that builds a PagedCollection to view a bag. Redirects to results.do
@@ -50,9 +48,6 @@ public class BagDetailsAction extends Action
         throws Exception {
         HttpSession session = request.getSession();
 
-        ServletContext servletContext = session.getServletContext();
-
-
         String bagName = request.getParameter("bagName");
         if (bagName == null) {
             bagName = request.getParameter("name");
@@ -60,17 +55,17 @@ public class BagDetailsAction extends Action
         String trail = null;
         if (request.getParameter("trail") != null) {
             trail = request.getParameter("trail");
-        }        
+        }
 
         String identifier = "bag." + bagName;
-        
+
         PagedTable pt = SessionMethods.getResultsTable(session, identifier);
         if (pt != null) {
             if (trail != null) {
                 trail += "|results." + pt.getTableid();
             } else {
                 trail = "|results." + pt.getTableid();
-            }            
+            }
         }
 
         return new ForwardParameters(mapping.findForward("results"))
