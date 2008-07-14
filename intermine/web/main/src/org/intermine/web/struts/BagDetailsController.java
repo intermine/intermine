@@ -186,7 +186,7 @@ public class BagDetailsController extends TilesAction
         }
 
         request.setAttribute("firstSelectedFields",
-                             pagedResults.getFirstSelectedFieldsStrings(os, classKeys));
+                             pagedResults.getFirstSelectedFields(os, classKeys));
 
 
         if (page == -1) {
