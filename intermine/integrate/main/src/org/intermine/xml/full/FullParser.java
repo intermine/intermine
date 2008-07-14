@@ -198,7 +198,15 @@ public class FullParser
                 if (refObj == null) {
                     LOG.warn("no field " + ref.getName() + " in object: " + obj);
                 } else {
-                    TypeUtil.setFieldValue(obj, ref.getName(), refObj);
+                    try {
+                        TypeUtil.setFieldValue(obj, ref.getName(), refObj);
+                    } catch (IllegalArgumentException e) {
+                        if (abortOnError) {
+                            throw e;
+                        } else {
+                            LOG.warn("Failed to set field: " + e);
+                        }
+                    }
                 }
             }
 
