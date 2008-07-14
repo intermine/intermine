@@ -58,6 +58,18 @@ public class ResponseUtil
     }
 
     /**
+     * Sets response header and content type for XML output.
+     * @param response response
+     * @param fileName file name of downloaded file
+     */
+    public static void setXMLHeader(HttpServletResponse response, String fileName) {
+        setNoCache(response);
+        setXMLContentType(response);
+        response.setHeader("Content-Disposition", "inline; filename=\"" + fileName + "\"");
+    }
+
+
+    /**
      * Sets response header and content type for plain text output.
      * @param response response
      * @param fileName file name of downloaded file

@@ -187,11 +187,11 @@ public abstract class WebService
         switch (getFormat()) {
             case XML_FORMAT: 
                 output = new StreamedOutput(out, new XMLFormatter());
-                ResponseUtil.setXMLContentType(response);
+                ResponseUtil.setXMLHeader(response, "result.xml");
                 break;
             case TSV_FORMAT:
                 output = new StreamedOutput(out, new TabFormatter());
-                ResponseUtil.setTabContentType(response);
+                ResponseUtil.setTabHeader(response, "result.tsv");
                 break;
             case HTML_FORMAT:
                 output = new HTMLOutput(out);
