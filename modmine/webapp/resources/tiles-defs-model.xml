@@ -6,15 +6,26 @@
   </definition>
 
 
-<definition name="providerSubmissions.tile" path="/model/providerSubmissions.jsp" 
-        controllerUrl="/initProviderSubmissions.do"/>
+<definition name="providers.tile" path="/model/providers.jsp" 
+        controllerUrl="/initProviders.do"/>
+<definition name="projects.tile" path="/model/projects.jsp" 
+        controllerUrl="/initProjects.do"/>
+        
+  <definition name="projects.page" extends="layout.template">
+    <put name="body" value="projects.tile"/>
+    <put name="pageName" value="projects"/>
+  </definition>
+
+  <definition name="providers.page" extends="layout.template">
+    <put name="body" value="providers.tile"/>
+    <put name="pageName" value="providers"/>
+  </definition>
+
+
 <definition name="projectSubmissions.tile" path="/model/projectSubmissions.jsp" 
         controllerUrl="/initProjectSubmissions.do"/>
 <definition name="modEncodeProjects.tile" path="/model/modEncodeProjects.jsp" 
         controllerUrl="/initModEncodeProjects.do"/>
-<definition name="projects.tile" path="/model/projects.jsp" 
-        controllerUrl="/initProjects.do"/>
-        
 <definition name="modEncodeProjects.page" extends="layout.template">
     <put name="body" value="modEncodeProjects.tile"/>
     <put name="pageName" value="modEncodeProjects"/>
@@ -25,8 +36,4 @@
     <put name="pageName" value="projectSubmissions"/>
   </definition>
 
-  <definition name="projects.page" extends="layout.template">
-    <put name="body" value="projects.tile"/>
-    <put name="pageName" value="projects"/>
-  </definition>
   

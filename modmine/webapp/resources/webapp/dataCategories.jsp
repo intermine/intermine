@@ -31,18 +31,13 @@
     <td> &nbsp;</td>
   </tr>
 
-
   <tr><td rowspan="1"  class="leftcol">
         <html:link action="/aspect?name=Comparative%20Genomics">
           <p>  <img src="model/images/comparativeGenomics.png" /></p>
           <p> Comparative Genomics </p></html:link></td>
     <td>
        <p><i>D. melanogaster</i></p>
-<%--
-       <p><i>D. pseudoobscura</i></p>
-       <p><i>A. gambiae</i></p>
-       <p><i>A. mellifera</i></p>
---%>
+
 <p><i>C. elegans</i></p>
     </td>
     <td> Orthologue and paralogue relationships between these 2 organisms</td>
@@ -289,7 +284,6 @@
   </tr>
 
 </table>
-
 
 
 <!--

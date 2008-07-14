@@ -36,10 +36,10 @@ import org.intermine.objectstore.query.ResultsRow;
 import org.intermine.web.logic.Constants;
 
 /**
- * Controller for providerSubmissions.jsp
+ * Controller for providers.jsp
  * @author Tom Riley
  */
-public class ProviderSubmissionsController extends TilesAction
+public class ProvidersController extends TilesAction
 {
     /**
      * {@inheritDoc}
