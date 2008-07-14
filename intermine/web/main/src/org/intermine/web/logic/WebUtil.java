@@ -422,6 +422,7 @@ public abstract class WebUtil
                 // (k,n,M,N)
                 double p = Hypergeometric.calculateP(countBag.intValue(), sampleTotal,
                                                      countAll.intValue(), populationTotal);
+
                 try {
                     resultsMap.put(id, new BigDecimal(p));
                 } catch (Exception e) {
