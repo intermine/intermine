@@ -27,7 +27,7 @@ import org.intermine.webservice.client.util.HttpConnection;
  * as tab separated values.
  * @author Jakub Kulaviak
  **/
-public class TabTableResult implements TableResult
+public class TabTableResult 
 {
     
     private HttpConnection connection;
