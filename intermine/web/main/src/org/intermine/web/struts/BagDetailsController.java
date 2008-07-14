@@ -25,6 +25,7 @@ import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
 import org.apache.struts.tiles.ComponentContext;
 import org.apache.struts.tiles.actions.TilesAction;
+import org.intermine.metadata.FieldDescriptor;
 import org.intermine.metadata.Model;
 import org.intermine.objectstore.ObjectStore;
 import org.intermine.web.logic.Constants;
@@ -65,7 +66,7 @@ public class BagDetailsController extends TilesAction
         HttpSession session = request.getSession();
         ServletContext servletContext = session.getServletContext();
         ObjectStore os = (ObjectStore) servletContext.getAttribute(Constants.OBJECTSTORE);
-
+        Map<String, List<FieldDescriptor>> classKeys = getClassKeys(servletContext);
         String bagName = request.getParameter("bagName");
         Boolean myBag = Boolean.FALSE;
 
@@ -184,6 +185,10 @@ public class BagDetailsController extends TilesAction
             }
         }
 
+        request.setAttribute("firstSelectedFields",
+                             pagedResults.getFirstSelectedFieldsStrings(os, classKeys));
+
+
         if (page == -1) {
             // use the page from the URL
             page = (pageStr == null ? 0 : Integer.parseInt(pageStr));
@@ -200,5 +205,12 @@ public class BagDetailsController extends TilesAction
 
         return null;
     }
+
+    @SuppressWarnings("unchecked")
+    private static Map<String, List<FieldDescriptor>> getClassKeys(ServletContext servletContext) {
+        return (Map) servletContext.getAttribute(Constants.CLASS_KEYS);
+    }
+
 }
+
 
