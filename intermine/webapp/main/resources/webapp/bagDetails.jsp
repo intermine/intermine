@@ -38,8 +38,8 @@
         <li id="tool_bar_li_export"><img style="cursor: pointer;" src="images/icons/null.gif" width="64" height="25" title="Export this list" border="0" id="tool_bar_button_export" class="tool_bar_button"/></li>
         <li id="tool_bar_li_use"><img style="cursor: pointer;" src="images/icons/null.gif" width="43" height="25" title="Use this list in a template or a query" border="0" id="tool_bar_button_use" class="tool_bar_button"/></li>
         <c:if test="${myBag == 'true'}">
-        	<li id="tool_bar_li_edit"><img style="cursor: pointer;" src="images/icons/null.gif" width="56" height="25" alt="Edit" border="0" id="tool_bar_button_edit" class="tool_bar_button"></li>
-		</c:if>
+          <li id="tool_bar_li_edit"><img style="cursor: pointer;" src="images/icons/null.gif" width="56" height="25" alt="Edit" border="0" id="tool_bar_button_edit" class="tool_bar_button"></li>
+    </c:if>
         <li class="tool_bar_separator"><span>&nbsp;//&nbsp;</span></li>
         <li class="tool_bar_link">
            <html:form action="/findInList">
@@ -73,15 +73,15 @@
 
 <div id="tool_bar_item_use" style="visibility:hidden;width:100px" class="tool_bar_item">
     <html:link action="/modifyBagDetailsAction.do?useBag=1&bagName=${bag.name}">in a query</html:link><br/>
-	<html:link action="/templates">in a template</html:link>
+  <html:link action="/templates">in a template</html:link>
     <hr/>
     <a href="javascript:hideMenu('tool_bar_item_use')" ><fmt:message key="confirm.cancel"/></a>
 </div>
 
 <div id="tool_bar_item_edit" style="visibility:hidden;width:300px" class="tool_bar_item">
-	<%-- add selected to bag --%>
+  <%-- add selected to bag --%>
    <c:choose>
-   <c:when test="${!empty PROFILE.savedBags}">
+   <c:when test="${!empty PROFILE.savedBags && PROFILE.savedBags.size > 1}">
           Add selected to another list:
           <html:select property="existingBagName">
              <c:forEach items="${PROFILE.savedBags}" var="entry">
@@ -99,7 +99,7 @@
       <em><fmt:message key="toolbar.noLists"/></em>
     </c:otherwise>
     </c:choose>
-	<br/>
+  <br/><br/>
     <%-- remove selected from bag --%>
     <input type="submit" name="removeFromBag" id="removeFromBag" value="Remove selected" disabled="true" />
     <hr>
