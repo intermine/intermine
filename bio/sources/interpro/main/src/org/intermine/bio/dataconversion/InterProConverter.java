@@ -24,7 +24,6 @@ import org.intermine.objectstore.ObjectStoreException;
 import org.intermine.util.SAXParser;
 import org.intermine.xml.full.Item;
 import org.intermine.xml.full.ItemHelper;
-import org.intermine.xml.full.Reference;
 import org.intermine.xml.full.ReferenceList;
 import org.xml.sax.Attributes;
 import org.xml.sax.InputSource;
