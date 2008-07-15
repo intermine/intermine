@@ -11,14 +11,12 @@
   <collection name="actualGoTerms" referenced-type="org.flymine.model.genomic.GOTerm"/>
   <collection name="goEvidenceCodes" referenced-type="org.flymine.model.genomic.GOEvidenceCode"/>
   <collection name="with" referenced-type="org.flymine.model.genomic.BioEntity" ordered="true"/>
-
 </class>
 <class name="org.flymine.model.genomic.Gene" is-interface="true">
   <collection name="goAnnotation" referenced-type="org.flymine.model.genomic.GOAnnotation" ordered="true"/>
   <collection name="allGoAnnotation" referenced-type="org.flymine.model.genomic.GOAnnotation" ordered="true"/>
 </class>
 <class name="org.flymine.model.genomic.GOEvidenceCode" is-interface="true">
-	<attribute name="code" type="java.lang.String" />
+  <attribute name="code" type="java.lang.String" />
 </class>
-
 </classes>
