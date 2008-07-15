@@ -70,7 +70,7 @@ public class GoConverter extends FileConverter
     private Map<String, Set> goTermId2ParentTermIdSetsMap = null;
     private static final Logger LOG = Logger.getLogger(GoConverter.class);
     protected IdResolverFactory resolverFactory;
-    
+
     // TODO: datasources Map to contains ids not items? - need the dataset later on
     // TODO: store product after each one finished? - 'with' field may be a problem
 
@@ -89,10 +89,10 @@ public class GoConverter extends FileConverter
         synonymTypes.put("Protein", "accession");
         synonymTypes.put("gene", "identifier");
         synonymTypes.put("Gene", "identifier");
-        
+
         // only construct factory here so can be replaced by mock factory in tests
         resolverFactory = new FlyBaseIdResolverFactory();
-        
+
         readConfig();
     }
 
@@ -247,7 +247,7 @@ public class GoConverter extends FileConverter
                 String ds = array[14];
                 Item newDatasource = newDatasource(ds);
                 String newPublicationId = newPublication(array[5]);
-                Item newGoTerm = newGoTerm(goId);
+                Item newGoTerm = newGoTerm(goId, newDatasource);
                 ReferenceList newGoEvidenceColl =
                     new ReferenceList("goEvidenceCodes", new ArrayList());
                 if (evidenceId != null) {
@@ -261,11 +261,11 @@ public class GoConverter extends FileConverter
 
                 // temporary object while we are rattling through the file
                 // needed because we may have extra publications
-                
+
                 // check for null productWrapper - where idResolver could not find a current id
                 if (newProductWrapper != null) {
-                    PlaceHolder newPlaceHolder = 
-                        new PlaceHolder(qualifier, newDatasource, newPublicationId, 
+                    PlaceHolder newPlaceHolder =
+                        new PlaceHolder(qualifier, newDatasource, newPublicationId,
                                         newGoEvidenceColl, newProductWrapper, newGoTerm,
                                         array[7], newOrganism);
                     holderMap.put(key, newPlaceHolder);
@@ -420,7 +420,7 @@ public class GoConverter extends FileConverter
                         .getClassName().indexOf("Gene") >= 0);
 
         for (String parentTermGoId : parentTermIdsSet) {
-            Item nextParentGoTermId = newGoTerm(parentTermGoId);
+            Item nextParentGoTermId = newGoTerm(parentTermGoId, placeHolder.getDatasource());
 
             Item parentItem = null;
             String geneId = placeHolder.getGeneProductWrapper().getItem().getIdentifier();
@@ -602,7 +602,7 @@ public class GoConverter extends FileConverter
                 }
             }
 
-            // if a Dmel gene we need to use FlyBaseIdResolver to find a current id    
+            // if a Dmel gene we need to use FlyBaseIdResolver to find a current id
             if (taxonId.equals("7227")) {
                 IdResolver resolver = resolverFactory.getIdResolver();
                 int resCount = resolver.countResolutions(taxonId, accession);
@@ -636,7 +636,7 @@ public class GoConverter extends FileConverter
         }
 
         // if a Dmel gene we need to use FlyBaseIdResolver to find a current id
-        
+
         Item product = createItem(clsName);
         if (organism != null && createOrganism) {
             product.setReference("organism", organism.getIdentifier());
@@ -674,13 +674,21 @@ public class GoConverter extends FileConverter
             ? organism.getIdentifier() : "");
     }
 
-    private Item newGoTerm(String identifier) throws ObjectStoreException {
+    private Item newGoTerm(String identifier, Item dataSource) throws ObjectStoreException {
         Item item = goTerms.get(identifier);
         if (item == null) {
             item = createItem("GOTerm");
             item.setAttribute("identifier", identifier);
             goTerms.put(identifier, item);
             store(item);
+
+            Item synonym = newSynonym(
+                                      item.getIdentifier(),
+                                      "identifier",
+                                      identifier,
+                                      dataSource);
+            store(synonym);
+
         }
         return item;
     }
