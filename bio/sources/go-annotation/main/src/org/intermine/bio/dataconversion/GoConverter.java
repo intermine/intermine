@@ -679,14 +679,11 @@ public class GoConverter extends FileConverter
         if (item == null) {
             item = createItem("GOTerm");
             item.setAttribute("identifier", identifier);
+            String datasetId = dataSource.getCollection("dataSets").getRefIds().get(0);
+            item.setCollection("dataSets", new ArrayList(Collections.singleton(datasetId)));
             goTerms.put(identifier, item);
             store(item);
-
-            Item synonym = newSynonym(
-                                      item.getIdentifier(),
-                                      "identifier",
-                                      identifier,
-                                      dataSource);
+            Item synonym = newSynonym(item.getIdentifier(), "identifier", identifier, dataSource);
             store(synonym);
 
         }
