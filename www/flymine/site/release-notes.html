@@ -15,11 +15,17 @@ In Release 14.0 we have updated data from FlyBase to release FB2008_06 and many 
   <li>NEW - <i>Drosophila</i> genes now have a field 'flyBaseFeatureType' field for the gene type e.g. protein_coding, miRNA_gene.</li>
   <li>NEW - <i>D. melanogaster</i> microRNATargets now have chromosome locations and appear in GBrowse.</li>
   <li>FIX - <i>C. elegans</i> genes and proteins are now correctly linked to one another.</li>
+  <li>NEW - CRM and binding sites from REDfly now have an evidence field which contains information about the experiment.</li>
+  <li>FIX - More probesets from AffyMetrix are correctly mapped to genes, including those with predicted transcripts</li>
+  <li>NEW - A new tissue, the salivary gland, has been added to the FlyAtlas dataset.</li>
 </ul>
 </p>
 
 <h3>Data integration</h3>
 <p>In this release we further improved the data integration system to update old identifiers for <i>Drosophila</i> genes that are provided by many data sources to match a current FlyBase identifier.  We now include only current FlyBase genes that have a genome location (see 13.0 release notes for more details).</p>
+
+<h3>Data sources</h3>
+<p>Most data, including all genes and proteins, have been assigned a dataset.  A dataset includes the source of the data, dataset name and URL, allowing you to quickly and easily find the origin of the data.</p>
 
 <h3>Autocompletion</h3>
 <p>Many name fields in template queries and the QueryBuilder now have type-ahead autocompletion to assist in selecting valid terms.  As you start to type, possible matches are fetched from FlyMine; the text you have typed can match anywhere within the terms and multiple words can be matched.  This is particularly useful for GO terms or protein domain names.</p>
@@ -33,9 +39,28 @@ In Release 14.0 we have updated data from FlyBase to release FB2008_06 and many 
   <li>NEW - added linkouts for genes to BDGP <i>in situ</i> and for alleles to FlyBase</li>
   <li>FIX - you can now access the lists and query history section of MyMine when not logged in.  This allows you to delete your temporary lists.</li>
   <li>FIX - GLEANR symbols are no longer low quality matches when using them to upload a list of <i>Drosophila</i> genes.</li>
-
-  <li>NEW - statistical enrichment widgets now link to documentation on the method of calculation used.</li>
   <li>FIX - template and list search pages no longer reset the search term when using the back button.</li>
+</ul>
+</p>
+
+<h3>Template web services</h3>
+<p>
+<ul>
+  <li>FIX - the 'Show link with constraint values highlighted in red' now highlights every value correctly</li>
+  <li>FIX - various javascript errors in Internet Explorer 6.0 have been fixed that prevented the results count from being updated.</li>
+  <li>NEW - results are returned with the correct file extension which makes it easier for programs to correctly open the file</li>
+  <li>FIX - you can now login while on the template web services page</li>
+  <li>FIX - template form correctly updates on error</li>
+</ul>
+</p>
+
+<h3>Widgets</h3>
+<p>
+<ul>
+  <li>NEW - widget export includes extra fields</li>
+  <li>FIX - enrichment widgets include more digits when displayed in scientific notation</li>
+  <li>FIX - enrichment widgets no longer overlap when displayed</li>
+  <li>NEW - statistical enrichment widgets now link to documentation on the method of calculation used</li>
 </ul>
 </p>
 
