@@ -42,7 +42,8 @@ public class TiffinURLQuery implements WidgetURLQuery
     /**
      * {@inheritDoc}
      */
-    public PathQuery generatePathQuery(Collection<InterMineObject> keys) {
+    public PathQuery generatePathQuery(@SuppressWarnings("unused") Collection<InterMineObject> keys)
+    {
         // TODO this method
         return null;
     }

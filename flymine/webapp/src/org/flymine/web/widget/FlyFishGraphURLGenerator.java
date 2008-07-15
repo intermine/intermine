@@ -12,11 +12,9 @@ package org.flymine.web.widget;
 
 import org.intermine.metadata.Model;
 import org.intermine.objectstore.ObjectStore;
-import org.intermine.objectstore.query.ConstraintOp;
-import org.intermine.pathquery.Constraint;
-import org.intermine.pathquery.PathNode;
 import org.intermine.pathquery.PathQuery;
 import org.intermine.web.logic.bag.InterMineBag;
+import org.intermine.web.logic.query.Constraints;
 import org.intermine.web.logic.widget.GraphCategoryURLGenerator;
 import org.jfree.data.category.CategoryDataset;
 
@@ -28,6 +26,7 @@ import org.jfree.data.category.CategoryDataset;
 public class FlyFishGraphURLGenerator implements GraphCategoryURLGenerator
 {
     String bagName;
+    private static final  String DATASET = "fly-Fish data set";
 
     /**
      * Creates a FlyFishGraphURLGenerator for the chart
@@ -84,47 +83,22 @@ public class FlyFishGraphURLGenerator implements GraphCategoryURLGenerator
         Model model = os.getModel();
         PathQuery q = new PathQuery(model);
 
-        q.setView("Gene.primaryIdentifier, Gene.secondaryIdentifier, Gene.name");
-        q.addView("Gene.organism.name, Gene.mRNAExpressionResults.stageRange");
-        q.addView("Gene.mRNAExpressionResults.expressed");
+        q.setView("Gene.primaryIdentifier, Gene.secondaryIdentifier, Gene.name, Gene.organism.name,"
+                  + "Gene.mRNAExpressionResults.stageRange, Gene.mRNAExpressionResults.expressed");
 
-        String bagType = bag.getType();
-        ConstraintOp constraintOp = ConstraintOp.IN;
-        String constraintValue = bag.getName();
-
-        String label = null, id = null, code = q.getUnusedConstraintCode();
-        Constraint c = new Constraint(constraintOp, constraintValue, false, label, code, id, null);
-        q.addNode(bagType).getConstraints().add(c);
+        // bag constraint
+        q.addConstraint("Gene",  Constraints.in(bag.getName()));
 
         // filter out BDGP
-        constraintOp = ConstraintOp.EQUALS;
-        code = q.getUnusedConstraintCode();
-        PathNode datasetNode = q.addNode("Gene.mRNAExpressionResults.dataSet.title");
-        String dataset = "fly-Fish data set";
-        Constraint datasetConstraint
-                        = new Constraint(constraintOp, dataset, false, label, code, id, null);
-        datasetNode.getConstraints().add(datasetConstraint);
+        q.addConstraint("Gene.mRNAExpressionResults.dataSet.title",  Constraints.eq(DATASET));
 
         // stage (series)
-        constraintOp = ConstraintOp.EQUALS;
-        code = q.getUnusedConstraintCode();
-        PathNode stageNode = q.addNode("Gene.mRNAExpressionResults.stageRange");
-        String stageRange = series + " (fly-FISH)";
-        Constraint stageConstraint
-                        = new Constraint(constraintOp, stageRange, false, label, code, id, null);
-        stageNode.getConstraints().add(stageConstraint);
+        q.addConstraint("Gene.mRNAExpressionResults.stageRange",
+                        Constraints.eq(series + " (fly-FISH)"));
 
         // expressed (category)
-        constraintOp = ConstraintOp.EQUALS;
-        Boolean expressed = Boolean.FALSE;
-        if (category.equals("true")) {
-            expressed = Boolean.TRUE;
-        }
-        code = q.getUnusedConstraintCode();
-        PathNode expressedNode = q.addNode("Gene.mRNAExpressionResults.expressed");
-        Constraint expressedConstraint
-                        = new Constraint(constraintOp, expressed, false, label, code, id, null);
-        expressedNode.getConstraints().add(expressedConstraint);
+        Boolean expressed = (category.equals("true") ? Boolean.TRUE : Boolean.FALSE);
+        q.addConstraint("Gene.mRNAExpressionResults.expressed",  Constraints.eq(expressed));
 
         q.setConstraintLogic("A and B and C and D");
         q.syncLogicExpression("and");
