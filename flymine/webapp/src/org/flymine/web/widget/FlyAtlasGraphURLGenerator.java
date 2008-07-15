@@ -10,21 +10,12 @@ package org.flymine.web.widget;
  *
  */
 
-import java.util.ArrayList;
-import java.util.List;
-
-import org.intermine.objectstore.query.ConstraintOp;
-
 import org.intermine.metadata.Model;
 import org.intermine.objectstore.ObjectStore;
-import org.intermine.path.Path;
-import org.intermine.pathquery.Constraint;
-import org.intermine.pathquery.OrderBy;
-import org.intermine.pathquery.PathNode;
 import org.intermine.pathquery.PathQuery;
 import org.intermine.web.logic.bag.InterMineBag;
+import org.intermine.web.logic.query.Constraints;
 import org.intermine.web.logic.widget.GraphCategoryURLGenerator;
-
 import org.jfree.data.category.CategoryDataset;
 /**
  *
@@ -80,74 +71,22 @@ public class FlyAtlasGraphURLGenerator implements GraphCategoryURLGenerator
         Model model = os.getModel();
         PathQuery q = new PathQuery(model);
 
-        Path secondaryIdentifier = PathQuery.makePath(model, q,
-                                                       "FlyAtlasResult.genes.secondaryIdentifier");
-        Path primaryIdentifier = PathQuery.makePath(model, q,
-                                                     "FlyAtlasResult.genes.primaryIdentifier");
-        Path name = PathQuery.makePath(model, q, "FlyAtlasResult.genes.name");
-        Path org = PathQuery.makePath(model, q, "FlyAtlasResult.genes.organism.name");
-        Path assays = PathQuery.makePath(model, q, "FlyAtlasResult.assays.name");
-        Path enrichment = PathQuery.makePath(model, q, "FlyAtlasResult.enrichment");
-        Path affyCall = PathQuery.makePath(model, q, "FlyAtlasResult.affyCall");
-        Path signal = PathQuery.makePath(model, q, "FlyAtlasResult.mRNASignal");
-        Path sem = PathQuery.makePath(model, q, "FlyAtlasResult.mRNASignalSEM");
-        Path presentCall = PathQuery.makePath(model, q, "FlyAtlasResult.presentCall");
+        q.setView("FlyAtlasResult.genes.secondaryIdentifier, FlyAtlasResult.genes.primaryIdentifier"
+                  + ",FlyAtlasResult.genes.name,FlyAtlasResult.genes.organism.name,"
+                  + "FlyAtlasResult.assays.name,FlyAtlasResult.enrichment,FlyAtlasResult.affyCall,"
+                  + "FlyAtlasResult.mRNASignal,FlyAtlasResult.mRNASignalSEM,"
+                  + "FlyAtlasResult.presentCall");
 
-        List<Path> view = new ArrayList<Path>();
+        q.addConstraint("Gene",  Constraints.in(bag.getName()));
+        q.addConstraint("FlyAtlasResult.affyCall",  Constraints.eq(category));
+        q.addConstraint("FlyAtlasResult.assays.name",  Constraints.eq(series));
 
-        view.add(secondaryIdentifier);
-        view.add(primaryIdentifier);
-        view.add(name);
-        view.add(org);
-        view.add(assays);
-        view.add(affyCall);
-        view.add(enrichment);
-        view.add(signal);
-        view.add(sem);
-        view.add(presentCall);
+        Boolean sortAscending = (category.equalsIgnoreCase("up") ? Boolean.FALSE : Boolean.TRUE);
 
-        q.setViewPaths(view);
-
-        ConstraintOp constraintOp = ConstraintOp.IN;
-        String constraintValue = bag.getName();
-
-        String label = null, id = null, code = q.getUnusedConstraintCode();
-        PathNode geneNode = q.addNode("FlyAtlasResult.genes");
-        Constraint c = new Constraint(constraintOp, constraintValue, false, label, code, id, null);
-        geneNode.getConstraints().add(c);
-
-        constraintOp = ConstraintOp.EQUALS;
-        code = q.getUnusedConstraintCode();
-        PathNode categoryNode = q.addNode("FlyAtlasResult.affyCall");
-        Constraint categoryConstraint
-                        = new Constraint(constraintOp, category, false, label, code, id, null);
-        categoryNode.getConstraints().add(categoryConstraint);
-
-        constraintOp = ConstraintOp.EQUALS;
-        code = q.getUnusedConstraintCode();
-        PathNode seriesNode = q.addNode("FlyAtlasResult.assays.name");
-        Constraint seriesConstraint
-                        = new Constraint(constraintOp, series, false, label, code, id, null);
-        seriesNode.getConstraints().add(seriesConstraint);
+        q.setOrderBy("FlyAtlasResult.enrichment", sortAscending);
+        q.addOrderBy("FlyAtlasResult.genes.secondaryIdentifier");
 
         q.setConstraintLogic("A and B and C");
-
-        String direction = "asc";
-        if (category.toLowerCase().equals("up")) {
-            direction = "desc";
-        }
-
-        List<OrderBy>  sortOrder = new ArrayList<OrderBy>();
-
-        sortOrder.add(new OrderBy(enrichment, direction));
-        sortOrder.add(new OrderBy(secondaryIdentifier));
-        sortOrder.add(new OrderBy(primaryIdentifier));
-        sortOrder.add(new OrderBy(name));
-        sortOrder.add(new OrderBy(assays));
-        sortOrder.add(new OrderBy(affyCall));
-
-        q.setSortOrder(sortOrder);
-
         q.syncLogicExpression("and");
 
         return q;

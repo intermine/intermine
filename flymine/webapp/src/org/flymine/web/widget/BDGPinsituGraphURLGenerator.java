@@ -10,20 +10,12 @@ package org.flymine.web.widget;
  *
  */
 
-import java.util.ArrayList;
-import java.util.List;
-
-import org.intermine.objectstore.query.ConstraintOp;
-
 import org.intermine.metadata.Model;
 import org.intermine.objectstore.ObjectStore;
-import org.intermine.path.Path;
-import org.intermine.pathquery.Constraint;
-import org.intermine.pathquery.PathNode;
 import org.intermine.pathquery.PathQuery;
 import org.intermine.web.logic.bag.InterMineBag;
+import org.intermine.web.logic.query.Constraints;
 import org.intermine.web.logic.widget.GraphCategoryURLGenerator;
-
 import org.jfree.data.category.CategoryDataset;
 
 /**
@@ -33,7 +25,8 @@ import org.jfree.data.category.CategoryDataset;
  */
 public class BDGPinsituGraphURLGenerator implements GraphCategoryURLGenerator
 {
-    String bagName;
+    private String bagName;
+    private static final String DATASET = "BDGP in situ data set";
 
     /**
      * Creates a GraphURLGenerator for the chart
@@ -90,53 +83,22 @@ public class BDGPinsituGraphURLGenerator implements GraphCategoryURLGenerator
         Model model = os.getModel();
         PathQuery q = new PathQuery(model);
 
-        List<Path> view = new ArrayList<Path>();
-        view.add(PathQuery.makePath(model, q, "Gene.primaryIdentifier"));
-        view.add(PathQuery.makePath(model, q, "Gene.secondaryIdentifier"));
-        view.add(PathQuery.makePath(model, q, "Gene.name"));
-        view.add(PathQuery.makePath(model, q, "Gene.organism.name"));
-        view.add(PathQuery.makePath(model, q, "Gene.mRNAExpressionResults.stageRange"));
-        view.add(PathQuery.makePath(model, q, "Gene.mRNAExpressionResults.expressed"));
+        q.setView("Gene.primaryIdentifier,Gene.secondaryIdentifier,Gene.name,Gene.organism.name,"
+                  + "Gene.mRNAExpressionResults.stageRange,Gene.mRNAExpressionResults.expressed");
 
-        q.setViewPaths(view);
+        // bag constraint
+        q.addConstraint("Gene",  Constraints.in(bag.getName()));
 
-        String bagType = bag.getType();
-        ConstraintOp constraintOp = ConstraintOp.IN;
-        String constraintValue = bag.getName();
-
-        String label = null, id = null, code = q.getUnusedConstraintCode();
-        Constraint c = new Constraint(constraintOp, constraintValue, false, label, code, id, null);
-        q.addNode(bagType).getConstraints().add(c);
-
-        // filter out BDGP
-        constraintOp = ConstraintOp.EQUALS;
-        code = q.getUnusedConstraintCode();
-        PathNode datasetNode = q.addNode("Gene.mRNAExpressionResults.dataSet.title");
-        String dataset = "BDGP in situ data set";
-        Constraint datasetConstraint
-                        = new Constraint(constraintOp, dataset, false, label, code, id, null);
-        datasetNode.getConstraints().add(datasetConstraint);
+        // filter out flyFish
+        q.addConstraint("Gene.mRNAExpressionResults.dataSet.title",  Constraints.eq(DATASET));
 
         // stage (series)
-        constraintOp = ConstraintOp.EQUALS;
-        code = q.getUnusedConstraintCode();
-        PathNode stageNode = q.addNode("Gene.mRNAExpressionResults.stageRange");
-        String stageRange = series + " (BDGP in situ)";
-        Constraint stageConstraint
-                        = new Constraint(constraintOp, stageRange, false, label, code, id, null);
-        stageNode.getConstraints().add(stageConstraint);
+        q.addConstraint("Gene.mRNAExpressionResults.stageRange",
+                        Constraints.eq(series + " (BDGP in situ)"));
 
         // expressed (category)
-        constraintOp = ConstraintOp.EQUALS;
-        Boolean expressed = Boolean.FALSE;
-        if (category.equals("true")) {
-            expressed = Boolean.TRUE;
-        }
-        code = q.getUnusedConstraintCode();
-        PathNode expressedNode = q.addNode("Gene.mRNAExpressionResults.expressed");
-        Constraint expressedConstraint
-                        = new Constraint(constraintOp, expressed, false, label, code, id, null);
-        expressedNode.getConstraints().add(expressedConstraint);
+        Boolean expressed = (category.equals("true") ? Boolean.TRUE : Boolean.FALSE);
+        q.addConstraint("Gene.mRNAExpressionResults.expressed",  Constraints.eq(expressed));
 
         q.setConstraintLogic("A and B and C and D");
         q.syncLogicExpression("and");
