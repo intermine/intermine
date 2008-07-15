@@ -15,15 +15,18 @@ import java.io.File;
 import java.io.IOException;
 import java.io.Reader;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
+import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.biojava.bio.structure.Structure;
 import org.biojava.bio.structure.io.PDBFileParser;
 import org.intermine.dataconversion.ItemWriter;
 import org.intermine.metadata.Model;
-import org.intermine.objectstore.ObjectStoreException;
 import org.intermine.xml.full.Item;
+
 
 /**
  * @author Xavier Watkins
@@ -34,14 +37,14 @@ public class PdbConverter extends BioFileConverter
 
     private static final Logger LOG = Logger.getLogger(PdbConverter.class);
     protected static final String ENDL = System.getProperty("line.separator");
+    private Map<String, String> synonyms = new HashMap();
 
     /**
      * Create a new PdbConverter object.
      * @param writer the ItemWriter to store the objects in
      * @param model the Model
-     * @throws ObjectStoreException if there is a problem while storing
      */
-    public PdbConverter(ItemWriter writer, Model model) throws ObjectStoreException {
+    public PdbConverter(ItemWriter writer, Model model)  {
         super(writer, model, "PDB", "PDB dmel data set");
     }
 
@@ -61,6 +64,8 @@ public class PdbConverter extends BioFileConverter
 
             String idCode = (String) structure.getHeader().get("idCode");
             proteinStructure.setAttribute("identifier", idCode);
+
+            createSynonym(proteinStructure.getIdentifier(), "identifier", idCode);
 
             List<String> proteins = new ArrayList<String>();
             List<String> dbrefs = pdbBuffReader.getDbrefs();
@@ -86,7 +91,8 @@ public class PdbConverter extends BioFileConverter
             Object resolution = structure.getHeader().get("resolution");
             if (resolution instanceof Float) {
                 final Float resolutionFloat = (Float) structure.getHeader().get("resolution");
-                proteinStructure.setAttribute("resolution", Float.toString(resolutionFloat));
+                proteinStructure.setAttribute("resolution",
+                                              Float.toString(resolutionFloat.floatValue()));
             }
 
             proteinStructure.setAttribute("atm", atm);
@@ -94,6 +100,23 @@ public class PdbConverter extends BioFileConverter
 
             store(proteinStructure);
         }
+    }
+
+    private Item createSynonym(String subjectId, String type, String value) throws Exception {
+        String key = subjectId + type + value;
+        if (StringUtils.isEmpty(value)) {
+            return null;
+        }
+        if (!synonyms.containsKey(key)) {
+            Item syn = createItem("Synonym");
+            syn.setReference("subject", subjectId);
+            syn.setAttribute("type", type);
+            syn.setAttribute("value", value);
+            store(syn);
+            synonyms.put(key, syn.getIdentifier());
+            return syn;
+        }
+        return null;
     }
 
 

@@ -1,10 +1,11 @@
 <items>
-  <item id="1_1" class="http://www.flymine.org/model/genomic#DataSet">
-    <attribute name="title" value="PDB data - dmel"/>
-    <attribute name="url" value="http://www.rcsb.org/pdb/"/>
-  </item>
-  <item id="3_2" class="http://www.flymine.org/model/genomic#Protein">
+<item id="1_1" class="http://www.flymine.org/model/genomic#DataSet">
+<attribute name="title" value="PDB dmel data set"/>
+<reference name="dataSource" ref_id="0_1"/>
+</item>
+  <item id="4_2" class="http://www.flymine.org/model/genomic#Protein">
     <attribute name="primaryAccession" value="P26675"/>
+    <collection name="dataSets"><reference ref_id="1_1"/></collection>
   </item>
   <item id="2_1" class="http://www.flymine.org/model/genomic#ProteinStructure">
     <attribute name="atm" value="EXPDTA    NMR, 1 STRUCTURES&#10;MODEL      1&#10;ATOM      1  N   MET A   1      11.739   3.234   3.588     1     0&#10;ATOM      2  CA  MET A   1      12.086   1.892   3.129     1     0&#10;ATOM      3  C   MET A   1      11.454   1.573   1.758     1     0&#10;ATOM      4  O   MET A   1      10.885   2.442   1.096     1     0&#10;ATOM      5  CB  MET A   1      11.740   0.866   4.234     1     0&#10;ATOM      6  CG  MET A   1      10.249   0.737   4.605     1     0&#10;ATOM      7  SD  MET A   1       9.179  -0.157   3.438     1     0&#10;ATOM      8  CE  MET A   1       7.781  -0.560   4.517     1     0&#10;ENDMDL&#10;"/>
@@ -14,9 +15,20 @@
     <attribute name="technique" value="NMR, 10 STRUCTURES "/>
     <attribute name="title" value="NMR STRUCTURE OF THE COMPLEX BETWEEN THE C32S-Y7V MUTANT OF THE NSH3 DOMAIN OF GRB2 WITH A PEPTIDE FROM SOS, 10 STRUCTURES "/>
     <collection name="dataSets"><reference ref_id="1_1"/></collection>
-    <collection name="proteins"><reference ref_id="3_1"/><reference ref_id="3_2"/></collection>
+    <collection name="proteins"><reference ref_id="4_1"/><reference ref_id="4_2"/></collection>
   </item>
-  <item id="3_1" class="http://www.flymine.org/model/genomic#Protein">
+  <item id="4_1" class="http://www.flymine.org/model/genomic#Protein">
     <attribute name="primaryAccession" value="P29354"/>
+    <collection name="dataSets"><reference ref_id="1_1"/></collection>
   </item>
+  <item id="0_1" class="http://www.flymine.org/model/genomic#DataSource">
+<attribute name="name" value="PDB"/>
+</item>
+<item id="3_1" class="http://www.flymine.org/model/genomic#Synonym">
+<attribute name="type" value="identifier"/>
+<attribute name="value" value="1AZE"/>
+<reference name="source" ref_id="0_1"/>
+<reference name="subject" ref_id="2_1"/>
+<collection name="dataSets"><reference ref_id="1_1"/></collection>
+</item>
 </items>
