@@ -36,6 +36,7 @@ import org.intermine.objectstore.query.QueryObjectReference;
 import org.intermine.objectstore.query.QueryReference;
 import org.intermine.objectstore.query.Results;
 import org.intermine.objectstore.query.SingletonResults;
+import org.intermine.objectstore.query.SimpleConstraint;
 import org.intermine.util.DynamicUtil;
 import org.intermine.util.TypeUtil;
 
@@ -337,6 +338,7 @@ public class PostProcessUtil
         q.setDistinct(false);
         QueryClass qcObj = new QueryClass(objectCls);
         QueryField qfObj = new QueryField(qcObj, "id");
+        QueryField qfObjLength = new QueryField(qcObj, "length");
         q.addFrom(qcObj);
         q.addToSelect(qfObj);
         if (!orderBySubject) {
@@ -358,6 +360,9 @@ public class PostProcessUtil
         QueryObjectReference ref2 = new QueryObjectReference(qcLoc, "subject");
         ContainsConstraint cc2 = new ContainsConstraint(ref2, ConstraintOp.CONTAINS, qcSub);
         cs.addConstraint(cc2);
+        SimpleConstraint lengthNotNull =
+            new SimpleConstraint(qfObjLength, ConstraintOp.IS_NOT_NULL);
+        cs.addConstraint(lengthNotNull);
 
         q.setConstraint(cs);
         Set indexesToCreate = new HashSet();
