@@ -12,6 +12,7 @@ package org.intermine.bio.dataconversion;
 
 import java.io.Reader;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Stack;
@@ -37,7 +38,6 @@ import org.xml.sax.helpers.DefaultHandler;
  */
 public class InterProConverter extends FileConverter
 {
-    private Map<String, Object> mapMaster = new HashMap<String, Object>();
     protected static final String GENOMIC_NS = "http://www.flymine.org/model/genomic#";
     private Map<String, Item> pubMaster = new HashMap<String, Item>();
     private Map<String, Item> dbMaster = new HashMap<String, Item>();
@@ -57,9 +57,7 @@ public class InterProConverter extends FileConverter
      * {@inheritDoc}
      */
     public void process(Reader reader) throws Exception {
-        mapMaps();
-        InterProHandler handler = new InterProHandler(getItemWriter(), mapMaster);
-
+        InterProHandler handler = new InterProHandler(getItemWriter());
         try {
             SAXParser.parse(new InputSource(reader), handler);
         } catch (Exception e) {
@@ -67,13 +65,6 @@ public class InterProConverter extends FileConverter
             throw new RuntimeException(e);
         }
 
-    }
-
-    private void mapMaps() {
-        mapMaster.put("pubMaster", pubMaster);
-        mapMaster.put("dbMaster", dbMaster);
-        mapMaster.put("dsMaster", dsMaster);
-        mapMaster.put("proteinDomains", proteinDomains);
     }
 
     private class InterProHandler extends DefaultHandler
@@ -89,10 +80,6 @@ public class InterProConverter extends FileConverter
         private ReferenceList containsCollection;
 
         private Item domainRelationships;
-        private Map<String, Item> pubMaster;
-        private Map<String, Item> dbMaster;
-        private Map<String, Item> dsMaster;
-        private Map<String, Item> proteinDomains;
         private Item datasource;
         private Item dataset;
 
@@ -108,13 +95,8 @@ public class InterProConverter extends FileConverter
          * @param writer the ItemWriter used to handle the resultant items
          * @param mapMaster the Map of maps
          */
-        public InterProHandler(ItemWriter writer, Map mapMaster) {
-
+        public InterProHandler(ItemWriter writer) {
             this.writer = writer;
-            this.proteinDomains = (Map) mapMaster.get("proteinDomains");
-            this.pubMaster = (Map) mapMaster.get("pubMaster");
-            this.dbMaster = (Map) mapMaster.get("dbMaster");
-            this.dsMaster = (Map) mapMaster.get("dsMaster");
         }
 
 
@@ -218,13 +200,15 @@ public class InterProConverter extends FileConverter
          * {@inheritDoc}
          */
         public void characters(char[] ch, int start, int length) {
+            int st = start;
+            int l = length;
             if (attName != null) {
 
                 // DefaultHandler may call this method more than once for a single
                 // attribute content -> hold text & create attribute in endElement
-                while (length > 0) {
+                while (l > 0) {
                     boolean whitespace = false;
-                    switch(ch[start]) {
+                    switch(ch[st]) {
                     case ' ':
                     case '\r':
                     case '\n':
@@ -237,13 +221,13 @@ public class InterProConverter extends FileConverter
                     if (!whitespace) {
                         break;
                     }
-                    ++start;
-                    --length;
+                    ++st;
+                    --l;
                 }
 
-                if (length > 0) {
+                if (l > 0) {
                     StringBuffer s = new StringBuffer();
-                    s.append(ch, start, length);
+                    s.append(ch, st, l);
                     attValue.append(s);
                     if (attName.equals("description")) {
                         description.append(s);
@@ -267,11 +251,14 @@ public class InterProConverter extends FileConverter
                 if (qName.equals("interprodb")) {
 
                     for (Item item : proteinDomains.values()) {
-                        writer.store(ItemHelper.convert(item));
+                        createSynonym(item.getIdentifier(), "identifier",
+                                      item.getAttribute("primaryIdentifier").getValue(),
+                                      datasource.getIdentifier());
+                        store(item);
                     }
 
                     for (Item item : delayedItems) {
-                        writer.store(ItemHelper.convert(item));
+                        store(item);
                     }
 
                 // <interpro><name>
@@ -311,14 +298,13 @@ public class InterProConverter extends FileConverter
 
             if (synonyms.get(key) == null) {
                 Item syn = createItem("Synonym");
-                syn.addReference(new Reference("subject", subjectId));
+                syn.setReference("subject", subjectId);
                 syn.setAttribute("type", type);
                 syn.setAttribute("value", value);
-                syn.addReference(new Reference("source", dbId));
+                syn.setReference("source", dbId);
                 synonyms.put(key, syn);
                 delayedItems.add(syn);
             }
-
         }
 
         private void initProteinDomain(String identifier) {
@@ -338,12 +324,10 @@ public class InterProConverter extends FileConverter
 
             synonyms = new HashMap();
 
-            ReferenceList evidenceColl = new ReferenceList("dataSets", new ArrayList());
-            proteinDomain.addCollection(evidenceColl);
-            evidenceColl.addRefId(dataset.getIdentifier());
+            proteinDomain.setCollection("dataSets",
+                              new ArrayList(Collections.singleton(dataset.getIdentifier())));
 
             description = new StringBuffer();
-
         }
 
         private Item getItem(Map map, String identifier, String itemType, String attr) {
