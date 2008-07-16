@@ -540,6 +540,8 @@ public class TypeUtil
                     } catch (ParseException e1) {
                         return new RuntimeException("Failed to parse " + value + " as a Date", e);
                     }
+                } catch (NumberFormatException e) {
+                    return new RuntimeException("Failed to parse " + value + " as a Date", e);
                 }
             }
         }
