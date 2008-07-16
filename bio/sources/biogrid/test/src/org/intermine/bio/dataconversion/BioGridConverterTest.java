@@ -48,7 +48,7 @@ public class BioGridConverterTest extends ItemsTestCase
         converter.close();
 
         // uncomment to write out a new target items file
-//        writeItemsFile(itemWriter.getItems(), "/tmp/biogrid-tgt-items.xml");
+        //writeItemsFile(itemWriter.getItems(), "biogrid-tgt-items.xml");
 
         Set expected = readItemSet("BioGridConverterTest_tgt.xml");
 

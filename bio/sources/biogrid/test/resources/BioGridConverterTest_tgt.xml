@@ -4,10 +4,10 @@
   </item>
   <item id="4_1" class="http://www.flymine.org/model/genomic#Gene">
     <attribute name="primaryIdentifier" value="FBgn001"/>
-    <reference name="organism" ref_id="5_1"/>
+    <reference name="organism" ref_id="6_1"/>
     <collection name="dataSets"><reference ref_id="1_1"/></collection>
   </item>
-  <item id="6_1" class="http://www.flymine.org/model/genomic#GeneticInteraction">
+  <item id="7_1" class="http://www.flymine.org/model/genomic#GeneticInteraction">
     <attribute name="geneRole" value="bait"/>
     <attribute name="shortName" value="FBgn0000001_FBgn0000002"/>
     <attribute name="type" value="Phenotypic Suppression"/>
@@ -16,7 +16,7 @@
     <collection name="dataSets"><reference ref_id="1_1"/></collection>
     <collection name="interactingGenes"><reference ref_id="4_2"/></collection>
   </item>
-  <item id="6_2" class="http://www.flymine.org/model/genomic#GeneticInteraction">
+  <item id="7_2" class="http://www.flymine.org/model/genomic#GeneticInteraction">
     <attribute name="geneRole" value="prey"/>
     <attribute name="shortName" value="FBgn0000002_FBgn0000001"/>
     <attribute name="type" value="Phenotypic Suppression"/>
@@ -30,14 +30,14 @@
   </item>
   <item id="4_2" class="http://www.flymine.org/model/genomic#Gene">
     <attribute name="primaryIdentifier" value="FBgn002"/>
-    <reference name="organism" ref_id="5_1"/>
+    <reference name="organism" ref_id="6_1"/>
     <collection name="dataSets"><reference ref_id="1_1"/></collection>
   </item>
   <item id="1_1" class="http://www.flymine.org/model/genomic#DataSet">
     <attribute name="title" value="BioGRID genetic interaction data set"/>
     <reference name="dataSource" ref_id="0_1"/>
   </item>
-  <item id="5_1" class="http://www.flymine.org/model/genomic#Organism">
+  <item id="6_1" class="http://www.flymine.org/model/genomic#Organism">
     <attribute name="taxonId" value="7227"/>
   </item>
   <item id="2_1" class="http://www.flymine.org/model/genomic#GeneticInteractionExperiment">
@@ -45,4 +45,18 @@
     <attribute name="name" value="Giot L (2003)"/>
     <reference name="publication" ref_id="3_1"/>
   </item>
+  <item id="5_1" class="http://www.flymine.org/model/genomic#Synonym">
+<attribute name="type" value="identifier"/>
+<attribute name="value" value="FBgn001"/>
+<reference name="source" ref_id="0_1"/>
+<reference name="subject" ref_id="4_1"/>
+<collection name="dataSets"><reference ref_id="1_1"/></collection>
+</item>
+<item id="5_2" class="http://www.flymine.org/model/genomic#Synonym">
+<attribute name="type" value="identifier"/>
+<attribute name="value" value="FBgn002"/>
+<reference name="source" ref_id="0_1"/>
+<reference name="subject" ref_id="4_2"/>
+<collection name="dataSets"><reference ref_id="1_1"/></collection>
+</item>
 </items>
