@@ -15,7 +15,6 @@ import java.util.Set;
 import org.apache.log4j.Logger;
 import org.intermine.bio.io.gff3.GFF3Record;
 import org.intermine.metadata.Model;
-import org.intermine.objectstore.ObjectStoreException;
 import org.intermine.xml.full.Item;
 
 /**
@@ -35,6 +34,10 @@ public class MirandaGFF3RecordHandler extends GFF3RecordHandler
 
     protected static final Logger LOG = Logger.getLogger(MirandaGFF3RecordHandler.class);
 
+    /**
+     *
+     * @param tgtModel
+     */
     public MirandaGFF3RecordHandler(Model tgtModel) {
         super(tgtModel);
         resolverFactory = new FlyBaseIdResolverFactory();
@@ -51,32 +54,28 @@ public class MirandaGFF3RecordHandler extends GFF3RecordHandler
         String geneName = record.getAttributes().get("Name").iterator().next();
         String targetName = record.getAttributes().get("target").iterator().next();
         feature.setAttribute("pvalue", record.getAttributes().get("pvalue").iterator().next());
-        try {
-            Item gene = getMiRNAGene(geneName);
-            Item target = getTarget(targetName);
-            if (gene != null) {
-                feature.setReference("mirnagene", gene);
-                feature.setReference("target", target);
-            }
-        } catch (ObjectStoreException e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
+        Item gene = getMiRNAGene(geneName);
+        Item target = getTarget(targetName);
+        if (gene != null) {
+            feature.setReference("mirnagene", gene);
+            feature.setReference("target", target);
         }
     }
 
-    private Item getTarget(String targetName) throws ObjectStoreException {
+    private Item getTarget(String targetName) {
         Item target = targets.get(targetName);
         if (target == null) {
             target = createItem("MRNA");
             target.setAttribute("secondaryIdentifier", targetName);
             target.addToCollection("dataSets", getDataSet());
+            target.setReference("organism", getOrganism().getIdentifier());
             targets.put(targetName, target);
             addEarlyItem(target);
         }
         return target;
     }
 
-    private Item getMiRNAGene(String geneName) throws ObjectStoreException {
+    private Item getMiRNAGene(String geneName) {
         String geneNameToUse = (geneName.startsWith("dme")) ? geneName.substring(geneName
                         .indexOf("-") + 1) : geneName;
         // in FlyBase symbols are e.g. mir-5 not miR-5
@@ -104,19 +103,19 @@ public class MirandaGFF3RecordHandler extends GFF3RecordHandler
                 addItem(gene);
             }
             return gene;
-        } else {
-            // no resolver available so use gene symbol
-            Item gene = miRNAgenes.get(symbol);
-            if (gene == null) {
-                gene = createItem("Gene");
-                gene.setAttribute("symbol", symbol);
-                gene.setReference("organism", getOrganism());
-                gene.addToCollection("dataSets", getDataSet());
-                miRNAgenes.put(symbol, gene);
-                addItem(gene);
-            }
-            return gene;
         }
+        // no resolver available so use gene symbol
+        Item gene = miRNAgenes.get(symbol);
+        if (gene == null) {
+            gene = createItem("Gene");
+            gene.setAttribute("symbol", symbol);
+            gene.setReference("organism", getOrganism());
+            gene.addToCollection("dataSets", getDataSet());
+            miRNAgenes.put(symbol, gene);
+            addItem(gene);
+        }
+        return gene;
+
     }
 
 }
