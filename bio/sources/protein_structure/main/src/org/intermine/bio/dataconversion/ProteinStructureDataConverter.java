@@ -21,6 +21,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Stack;
 
+import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.intermine.InterMineException;
 import org.intermine.dataconversion.ItemWriter;
@@ -45,6 +46,7 @@ public class ProteinStructureDataConverter extends BioFileConverter
     private final Map<String, Item> featureMap = new HashMap<String, Item>();
     private final Map<String, String> proteinMap = new HashMap<String, String>();
     private String parentDir;
+    private Map<String, Item> synonyms = new HashMap<String, Item>();
 
     /**
      * Constructor
@@ -239,17 +241,14 @@ public class ProteinStructureDataConverter extends BioFileConverter
             }
         }
 
-        private String getProtein(String identifier) {
+        private String getProtein(String identifier) throws ObjectStoreException {
             String proteinIdentifier = proteinMap.get(identifier);
             if (proteinIdentifier == null) {
                 Item protein = createItem("Protein");
                 protein.setAttribute("primaryAccession", identifier);
                 proteinMap.put(identifier, protein.getIdentifier());
-                try {
-                    store(protein);
-                } catch (ObjectStoreException e) {
-                    throw new RuntimeException("error while storing: " + proteinItemIdentifier, e);
-                }
+                store(protein);
+                createSynonym(protein.getIdentifier(), "accession", identifier);
                 return protein.getIdentifier();
             }
             return proteinIdentifier;
@@ -302,5 +301,23 @@ public class ProteinStructureDataConverter extends BioFileConverter
                 }
             }
         }
+    }
+
+    private Item createSynonym(String subjectId, String type, String value)
+    throws ObjectStoreException {
+        String key = subjectId + type + value;
+        if (StringUtils.isEmpty(value)) {
+            return null;
+        }
+        if (!synonyms.containsKey(key)) {
+            Item syn = createItem("Synonym");
+            syn.setReference("subject", subjectId);
+            syn.setAttribute("type", type);
+            syn.setAttribute("value", value);
+            store(syn);
+            synonyms.put(key, syn);
+            return syn;
+        }
+        return null;
     }
 }

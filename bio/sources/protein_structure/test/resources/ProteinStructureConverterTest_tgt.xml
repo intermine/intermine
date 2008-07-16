@@ -8,11 +8,11 @@
 <attribute name="prosaZScore" value="-8.75"/>
 <attribute name="start" value="66"/>
 <attribute name="technique" value="Computer prediction"/>
-<reference name="proteinDomain" ref_id="4_1"/>
+<reference name="proteinDomain" ref_id="5_1"/>
 <collection name="proteins"><reference ref_id="3_1"/></collection>
 <collection name="dataSets"><reference ref_id="1_1"/></collection>
 </item>
-<item id="4_1" class="http://www.flymine.org/model/genomic#ProteinDomain">
+<item id="5_1" class="http://www.flymine.org/model/genomic#ProteinDomain">
 <attribute name="primaryIdentifier" value="PF00089"/>
 <collection name="dataSets"><reference ref_id="1_1"/></collection>
 </item>
@@ -26,5 +26,12 @@
 <item id="1_1" class="http://www.flymine.org/model/genomic#DataSet">
 <attribute name="title" value="Mizuguchi protein structure predictions"/>
 <reference name="dataSource" ref_id="0_1"/>
+</item>
+<item id="4_1" class="http://www.flymine.org/model/genomic#Synonym">
+<attribute name="type" value="accession"/>
+<attribute name="value" value="Q8IQ89"/>
+<reference name="source" ref_id="0_1"/>
+<reference name="subject" ref_id="3_1"/>
+<collection name="dataSets"><reference ref_id="1_1"/></collection>
 </item>
 </items>
