@@ -21,13 +21,13 @@ import org.intermine.web.logic.results.ResultElement;
 public class ExportTestUtil
 {
 
-    static List<ResultElement> getRow(int i, String string, String string2,
-            String string3) {
+    static List<ResultElement> getRow(int i, String string, boolean bool1,
+            String string2) {
         List<ResultElement> ret = new ArrayList<ResultElement>();
         ret.add(new ResultElement(i));
         ret.add(new ResultElement(string));
+        ret.add(new ResultElement(bool1));
         ret.add(new ResultElement(string2));
-        ret.add(new ResultElement(string3));
         return ret;
     }
 

@@ -56,7 +56,7 @@ public class SequenceHttpExporter implements TableHttpExporter
      */
     public void export(PagedTable pt, HttpServletRequest request,
                                 HttpServletResponse response) {
-        
+
         HttpSession session = request.getSession();
         ObjectStore os =
             (ObjectStore) session.getServletContext().getAttribute(Constants.OBJECTSTORE);
@@ -64,24 +64,24 @@ public class SequenceHttpExporter implements TableHttpExporter
 
         OutputStream outputStream = null;
         try {
-            outputStream = response.getOutputStream();    
+            outputStream = response.getOutputStream();
         } catch (IOException e) {
             throw new ExportException("Export failed.", e);
         }
-        
+
         // the first column that contains exportable features
         int realFeatureIndex = getFeatureColumnIndex(pt);
 
-        SequenceExporter exporter = new SequenceExporter(os, outputStream, 
+        SequenceExporter exporter = new SequenceExporter(os, outputStream,
                 realFeatureIndex);
-        
-        exporter.export(pt.getRearrangedResults());
+
+        exporter.export(pt.getRearrangedResults(), pt.getColumns());
         if (exporter.getWrittenResultsCount() == 0) {
             throw new ExportException("Nothing was found for export.");
         }
     }
 
-    
+
     private int getFeatureColumnIndex(PagedTable pt) {
         List<Class> clazzes = ExportHelper.getColumnClasses(pt);
         for (int i = 0; i < clazzes.size(); i++) {

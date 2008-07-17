@@ -33,7 +33,7 @@ import org.intermine.web.logic.export.http.TableHttpExporter;
 import org.intermine.web.logic.results.PagedTable;
 
 /**
- * An implementation of TableHttpExporter that exports LocatedSequenceFeature 
+ * An implementation of TableHttpExporter that exports LocatedSequenceFeature
  * objects in GFF3 format.
  *
  * @author Kim Rutherford
@@ -60,20 +60,20 @@ public class GFF3HttpExporter implements TableHttpExporter
         ServletContext servletContext = session.getServletContext();
 
         setGFF3Header(response);
-        
-        List<Integer> indexes = ExportHelper.getClassIndexes(ExportHelper.getColumnClasses(pt), 
+
+        List<Integer> indexes = ExportHelper.getClassIndexes(ExportHelper.getColumnClasses(pt),
                 LocatedSequenceFeature.class);
-        
+
         Exporter exporter;
         try {
             PrintWriter writer = HttpExportUtil.
                 getPrintWriterForClient(request, response.getOutputStream());
-            exporter = new GFF3Exporter(writer, 
+            exporter = new GFF3Exporter(writer,
                     indexes, getSoClassNames(servletContext));
         } catch (Exception e) {
             throw new ExportException("Export failed.", e);
-        } 
-        exporter.export(pt.getRearrangedResults());
+        }
+        exporter.export(pt.getRearrangedResults(), pt.getColumns());
         if (exporter.getWrittenResultsCount() == 0) {
             throw new ExportException("Nothing was found for export.");
         }

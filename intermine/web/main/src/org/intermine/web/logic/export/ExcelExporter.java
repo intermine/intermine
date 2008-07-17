@@ -9,15 +9,18 @@ package org.intermine.web.logic.export;
  * information or http://www.gnu.org/copyleft/lesser.html.
  *
  */
-import java.io.IOException;
-import java.io.OutputStream;
 import java.util.Date;
 import java.util.List;
+
+import org.intermine.web.logic.results.Column;
+import org.intermine.web.logic.results.ResultElement;
+
+import java.io.IOException;
+import java.io.OutputStream;
 
 import org.apache.poi.hssf.usermodel.HSSFRow;
 import org.apache.poi.hssf.usermodel.HSSFSheet;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
-import org.intermine.web.logic.results.ResultElement;
 
 
 /**
@@ -26,7 +29,7 @@ import org.intermine.web.logic.results.ResultElement;
  **/
 public class ExcelExporter implements Exporter
 {
-    
+
     private OutputStream out;
     private int writtenResultsCount;
 
@@ -37,22 +40,22 @@ public class ExcelExporter implements Exporter
     public ExcelExporter(OutputStream out) {
         this.out = out;
     }
-    
+
     /**
-     * Exports results.
-     * @param results results to be exported
+     * {@inheritDoc}
      */
-    public void export(List<List<ResultElement>> results) {
+    public void export(List<List<ResultElement>> results,
+                       @SuppressWarnings("unused") List<Column> columns) {
         try {
             HSSFWorkbook wb = new HSSFWorkbook();
             HSSFSheet sheet = wb.createSheet("results");
             ResultElementConverter converter = new ResultElementConverter();
-            
+
             for (int rowIndex = 0; rowIndex < results.size(); rowIndex++) {
-                
+
                 HSSFRow excelRow = sheet.createRow((short) rowIndex);
                 List<Object> row = converter.convert(results.get(rowIndex));
-                
+
                 for (short colIndex = 0; colIndex < row.size(); colIndex++) {
                     Object obj = row.get(colIndex);
                     if (obj == null) {
