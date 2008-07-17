@@ -18,6 +18,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.intermine.dataconversion.FileConverter;
 import org.intermine.dataconversion.ItemWriter;
@@ -39,6 +40,7 @@ public class Drosophila2ProbeConverter extends FileConverter
     protected Map<String, Item> bioMap = new HashMap<String, Item>();
     protected IdResolverFactory resolverFactory;
     private static final String TAXON_ID = "7227";
+    private Map<String, Item> synonyms = new HashMap<String, Item>();
 
     /**
      * Constructor
@@ -105,7 +107,8 @@ public class Drosophila2ProbeConverter extends FileConverter
                     || transcriptIdentifier.startsWith("a_predict")) {
 
                     if (transcriptIdentifier.startsWith("CG")) {
-                        Item transcript = createBioEntity("Transcript", transcriptIdentifier);
+                        Item transcript = createBioEntity("Transcript", transcriptIdentifier,
+                                                          delayedItems);
                         probeSet.setReference("transcript", transcript.getIdentifier());
                     }
 
@@ -117,7 +120,7 @@ public class Drosophila2ProbeConverter extends FileConverter
                             identifier = identifier.substring(3);
                         }
                         if (identifier.trim().startsWith("FBgn")) {
-                            Item gene = createBioEntity("Gene", identifier);
+                            Item gene = createBioEntity("Gene", identifier, delayedItems);
                             if (gene != null) {
                                 geneColl.addRefId(gene.getIdentifier());
                             }
@@ -134,7 +137,7 @@ public class Drosophila2ProbeConverter extends FileConverter
         }
     }
 
-    private Item createBioEntity(String clsName, String id)
+    private Item createBioEntity(String clsName, String id, List<Item> delayedItems)
     throws ObjectStoreException {
         String identifier = id;
         if (clsName.equals("Gene")) {
@@ -162,6 +165,7 @@ public class Drosophila2ProbeConverter extends FileConverter
                               new ArrayList(Collections.singleton(dataSet.getIdentifier())));
             bioMap.put(identifier, bio);
             store(bio);
+            createSynonym(bio.getIdentifier(), "identifier", identifier, delayedItems);
         }
         return bio;
     }
@@ -184,17 +188,33 @@ public class Drosophila2ProbeConverter extends FileConverter
         probeSet.setCollection("dataSets",
             new ArrayList(Collections.singleton(dataSet.getIdentifier())));
 
-        Item synonym = createItem("Synonym");
-        synonym.setAttribute("type", "identifier");
-        synonym.setAttribute("value", probeSetId);
-        synonym.setReference("source", dataSource.getIdentifier());
-        synonym.setReference("subject", probeSet.getIdentifier());
-        delayedItems.add(synonym);
-
+        createSynonym(probeSet.getIdentifier(), "identifier", probeSetId, delayedItems);
         return probeSet;
     }
 
+    private Item createSynonym(String subjectId, String type, String value,
+                               List<Item> delayedItems) {
+        String key = subjectId + type + value;
+        if (StringUtils.isEmpty(value)) {
+            return null;
+        }
+        if (!synonyms.containsKey(key)) {
+            Item syn = createItem("Synonym");
+            syn.setReference("subject", subjectId);
+            syn.setAttribute("type", type);
+            syn.setAttribute("value", value);
+            syn.setReference("source", dataSource.getIdentifier());
+            synonyms.put(key, syn);
+            delayedItems.add(syn);
+            return syn;
+        }
+        return null;
+    }
+
+
+
     // not used
+
 //    private Item createChromosome(String chrId) throws ObjectStoreException {
 //        Item chr = (Item) chrMap.get(chrId);
 //        if (chr == null) {
