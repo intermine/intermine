@@ -683,8 +683,6 @@ public class GoConverter extends FileConverter
             item.setCollection("dataSets", new ArrayList(Collections.singleton(datasetId)));
             goTerms.put(identifier, item);
             store(item);
-            Item synonym = newSynonym(item.getIdentifier(), "identifier", identifier, dataSource);
-            store(synonym);
         }
         return item;
     }
