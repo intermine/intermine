@@ -19,7 +19,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.biojava.bio.structure.Structure;
 import org.biojava.bio.structure.io.PDBFileParser;
@@ -37,7 +36,6 @@ public class PdbConverter extends BioFileConverter
 
     private static final Logger LOG = Logger.getLogger(PdbConverter.class);
     protected static final String ENDL = System.getProperty("line.separator");
-    private Map<String, String> synonyms = new HashMap();
 
     /**
      * Create a new PdbConverter object.
@@ -64,8 +62,6 @@ public class PdbConverter extends BioFileConverter
 
             String idCode = (String) structure.getHeader().get("idCode");
             proteinStructure.setAttribute("identifier", idCode);
-
-            createSynonym(proteinStructure.getIdentifier(), "identifier", idCode);
 
             List<String> proteins = new ArrayList<String>();
             List<String> dbrefs = pdbBuffReader.getDbrefs();
@@ -101,24 +97,6 @@ public class PdbConverter extends BioFileConverter
             store(proteinStructure);
         }
     }
-
-    private Item createSynonym(String subjectId, String type, String value) throws Exception {
-        String key = subjectId + type + value;
-        if (StringUtils.isEmpty(value)) {
-            return null;
-        }
-        if (!synonyms.containsKey(key)) {
-            Item syn = createItem("Synonym");
-            syn.setReference("subject", subjectId);
-            syn.setAttribute("type", type);
-            syn.setAttribute("value", value);
-            store(syn);
-            synonyms.put(key, syn.getIdentifier());
-            return syn;
-        }
-        return null;
-    }
-
 
     /**
      * BioJava doesn't support getting DBREF so we get it as the file is read.
