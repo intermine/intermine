@@ -24,4 +24,18 @@
   <item id="0_1" class="http://www.flymine.org/model/genomic#DataSource">
 <attribute name="name" value="PDB"/>
 </item>
+<item id="4_1" class="http://www.flymine.org/model/genomic#Synonym">
+<attribute name="type" value="accession"/>
+<attribute name="value" value="P29354"/>
+<reference name="source" ref_id="0_1"/>
+<reference name="subject" ref_id="3_1"/>
+<collection name="dataSets"><reference ref_id="1_1"/></collection>
+</item>
+<item id="4_2" class="http://www.flymine.org/model/genomic#Synonym">
+<attribute name="type" value="accession"/>
+<attribute name="value" value="P26675"/>
+<reference name="source" ref_id="0_1"/>
+<reference name="subject" ref_id="3_2"/>
+<collection name="dataSets"><reference ref_id="1_1"/></collection>
+</item>
 </items>
