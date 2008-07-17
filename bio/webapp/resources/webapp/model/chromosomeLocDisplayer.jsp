@@ -5,8 +5,8 @@
 
 <html:xhtml/>
 <c:choose>
-  <c:when test="${!empty interMineObject.chromosome}">
-    ${interMineObject.chromosome.primaryIdentifier}<c:if test="${!empty interMineObject.chromosomeLocation && !empty interMineObject.chromosomeLocation.start}">: ${interMineObject.chromosomeLocation.start}-${interMineObject.chromosomeLocation.end}
+  <c:when test="${!empty interMineObject.chromosomeLocation && !empty interMineObject.chromosomeLocation.object}">
+    ${interMineObject.chromosomeLocation.object.primaryIdentifier}<c:if test="${!empty interMineObject.chromosomeLocation && !empty interMineObject.chromosomeLocation.start}">: ${interMineObject.chromosomeLocation.start}-${interMineObject.chromosomeLocation.end}
     </c:if>
   </c:when>
   <c:otherwise>
