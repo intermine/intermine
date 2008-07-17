@@ -19,7 +19,6 @@
   <class className="org.flymine.model.genomic.AnalysisResult">
     <fields>
       <fieldconfig fieldExpr="confidence"/>
-      <fieldconfig fieldExpr="dataSets.title"/>
     </fields>
   </class>
 
