@@ -27,10 +27,11 @@ import org.intermine.util.TypeUtil.FieldInfo;
 import org.intermine.web.logic.export.ExportException;
 import org.intermine.web.logic.export.ExportHelper;
 import org.intermine.web.logic.export.Exporter;
+import org.intermine.web.logic.results.Column;
 import org.intermine.web.logic.results.ResultElement;
 
 /**
- * Exports LocatedSequenceFeature objects in GFF3 format. 
+ * Exports LocatedSequenceFeature objects in GFF3 format.
  * @author Kim Rutherford
  * @author Jakub Kulaviak
  */
@@ -59,7 +60,8 @@ public class GFF3Exporter implements Exporter
     /**
      * {@inheritDoc}
      */
-    public void export(List<List<ResultElement>> results) {
+    public void export(List<List<ResultElement>> results,
+                       @SuppressWarnings("unused") List<Column> columns) {
         if (featureIndexes.size() == 0) {
             throw new ExportException("No columns with sequence.");
         }
@@ -74,7 +76,8 @@ public class GFF3Exporter implements Exporter
         }
     }
 
-    private void exportRow(List<ResultElement> row) throws ObjectStoreException, 
+    private void exportRow(List<ResultElement> row)
+        throws ObjectStoreException,
         IllegalAccessException {
         ResultElement el = getResultElement(row);
         if (el == null) {
@@ -82,11 +85,11 @@ public class GFF3Exporter implements Exporter
         }
 
         LocatedSequenceFeature lsf = (LocatedSequenceFeature) el.getInterMineObject();
-        
+
         if (exportedIds.contains(lsf.getId())) {
             return;
-        } 
-        
+        }
+
         Map<String, List<String>> extraAttributes = new HashMap<String, List<String>>();
 
         // add some fields as extra attributes if the object has them
@@ -115,7 +118,7 @@ public class GFF3Exporter implements Exporter
             out.println("##gff-version 3");
             headerPrinted = true;
         }
-        
+
         out.println(gff3Record.toGFF3());
         exportedIds.add(lsf.getId());
         writtenResultsCount++;
@@ -138,13 +141,13 @@ public class GFF3Exporter implements Exporter
     public boolean canExport(List<Class> clazzes) {
         return canExportStatic(clazzes);
     }
-    
-    /* Method must have different name than canExport because canExport() method 
+
+    /* Method must have different name than canExport because canExport() method
      * is  inherited from Exporter interface */
     /**
      * @param clazzes classes of result row
-     * @return true if this exporter can export result composed of specified classes 
-     */    
+     * @return true if this exporter can export result composed of specified classes
+     */
     public static boolean canExportStatic(List<Class> clazzes) {
         return ExportHelper.getClassIndex(clazzes, LocatedSequenceFeature.class) >= 0;
     }
@@ -154,5 +157,5 @@ public class GFF3Exporter implements Exporter
      */
     public int getWrittenResultsCount() {
         return writtenResultsCount;
-    }    
+    }
 }

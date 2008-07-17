@@ -7,6 +7,7 @@ import java.util.List;
 
 import junit.framework.TestCase;
 
+import org.intermine.web.logic.results.Column;
 import org.intermine.web.logic.results.ResultElement;
 
 /*
@@ -30,28 +31,28 @@ public class ExporterImplTest extends TestCase
         List<List<ResultElement>> input = ExporterImplTest.getInput();
         RowFormatter formatter = new RowFormatterImpl(",", true);
         ExporterImpl exporter = new ExporterImpl(out, formatter);
-        exporter.export(input);
+        exporter.export(input, new ArrayList<Column>());
         assertEquals(getExpected(), out.toString());
     }
 
     private String getExpected() {
-        return 
-        "10,\"1\",\"true\",\"EmployeeA1\"\n" + 
+        return
+        "10,\"1\",\"true\",\"EmployeeA1\"\n" +
         "20,\"2\",\"true\",\"EmployeeA2\"\n" +
         "30,\"3\",\"false\",\"EmployeeA3\"\n" +
         "40,\"4\",\"true\",\"EmployeeB1\"\n" +
         "50,\"5\",\"true\",\"EmployeeB2\"\n" +
-        "60,\"6\",\"true\",\"EmployeeB3\"\n";    
+        "60,\"6\",\"true\",\"EmployeeB3\"\n";
     }
 
     static List<List<ResultElement>> getInput() {
         List<List<ResultElement>> input = new ArrayList<List<ResultElement>>();
-        input.add(ExportTestUtil.getRow(10, "1", "true", "EmployeeA1"));
-        input.add(ExportTestUtil.getRow(20, "2", "true", "EmployeeA2"));
-        input.add(ExportTestUtil.getRow(30, "3", "false", "EmployeeA3"));
-        input.add(ExportTestUtil.getRow(40, "4", "true", "EmployeeB1"));
-        input.add(ExportTestUtil.getRow(50, "5", "true", "EmployeeB2"));
-        input.add(ExportTestUtil.getRow(60, "6", "true", "EmployeeB3"));
+        input.add(ExportTestUtil.getRow(10, "1", true, "EmployeeA1"));
+        input.add(ExportTestUtil.getRow(20, "2", true, "EmployeeA2"));
+        input.add(ExportTestUtil.getRow(30, "3", false, "EmployeeA3"));
+        input.add(ExportTestUtil.getRow(40, "4", true, "EmployeeB1"));
+        input.add(ExportTestUtil.getRow(50, "5", true, "EmployeeB2"));
+        input.add(ExportTestUtil.getRow(60, "6", true, "EmployeeB3"));
         return input;
     }
 }

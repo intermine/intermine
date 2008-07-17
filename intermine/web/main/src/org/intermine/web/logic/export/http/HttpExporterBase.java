@@ -27,7 +27,7 @@ import org.intermine.web.logic.results.ResultElement;
 /**
  * Abstract class that implements basic functionality common for exporters
  * exporting table with results in simple format like comma separated format.
- * The business logic of export is performed with exporter obtained via 
+ * The business logic of export is performed with exporter obtained via
  * getExport() method and so each subclass can redefine it overwriting this method.
  * @author Jakub Kulaviak
  **/
@@ -38,7 +38,7 @@ public abstract class HttpExporterBase implements TableHttpExporter
      * Constructor.
      */
     public HttpExporterBase() { }
-        
+
     /**
      * @param pt PagedTable
      * @return true if given PagedTable can be exported with this exporter
@@ -53,7 +53,7 @@ public abstract class HttpExporterBase implements TableHttpExporter
      * @param request request
      * @param response response
      */
-    public void export(PagedTable pt, HttpServletRequest request, 
+    public void export(PagedTable pt, HttpServletRequest request,
             HttpServletResponse response) {
 
         List<List<ResultElement>> results = pt.getRearrangedResults();
@@ -72,7 +72,7 @@ public abstract class HttpExporterBase implements TableHttpExporter
             separator = Exporter.UNIX_SEPARATOR;
         }
         Exporter exporter = getExporter(out, separator);
-        exporter.export(results);
+        exporter.export(results, pt.getColumns());
         if (exporter.getWrittenResultsCount() == 0) {
             throw new ExportException("Nothing was found for export.");
         }
@@ -81,14 +81,14 @@ public abstract class HttpExporterBase implements TableHttpExporter
     /**
      * @param out output stream
      * @param separator line separator
-     * @return exporter that will perform the business logic of export. 
+     * @return exporter that will perform the business logic of export.
      */
     protected abstract Exporter getExporter(OutputStream out, String separator);
-    
+
     /**
      * Sets header and content type of result in response.
      * @param response response
      */
     protected abstract void setResponseHeader(HttpServletResponse response);
-    
+
 }

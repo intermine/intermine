@@ -14,6 +14,10 @@ import org.apache.poi.hssf.usermodel.HSSFCell;
 import org.apache.poi.hssf.usermodel.HSSFRow;
 import org.apache.poi.hssf.usermodel.HSSFSheet;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
+
+import org.intermine.metadata.Model;
+import org.intermine.path.Path;
+import org.intermine.web.logic.results.Column;
 import org.intermine.web.logic.results.ResultElement;
 
 /*
@@ -34,31 +38,39 @@ public class ExcelExporterTest extends TestCase
 
     public void testExport() throws IOException {
         List<List<ResultElement>> input = new ArrayList<List<ResultElement>>();
-        input.add(ExportTestUtil.getRow(10, "1", "true", "EmployeeA1"));
-        input.add(ExportTestUtil.getRow(20, "2", "true", "EmployeeA2"));
+        input.add(ExportTestUtil.getRow(10, "1", true, "EmployeeA1"));
+        input.add(ExportTestUtil.getRow(20, "2", false, "EmployeeA2"));
         Date date = new Date();
         input.add(getDateRow(date));
-        
+
+        Model model = Model.getInstanceByName("testmodel");
+
+        List<Column> columns = new ArrayList<Column>();
+        columns.add(new Column(new Path(model, "Employee.age"), "age", 0, Integer.class));
+        columns.add(new Column(new Path(model, "Employee.end"), "end", 1, String.class));
+        columns.add(new Column(new Path(model, "Employee.fullTime"), "fullTime", 2, Boolean.class));
+        columns.add(new Column(new Path(model, "Employee.name"), "name", 3, String.class));
+
         ByteArrayOutputStream out = new ByteArrayOutputStream();
         Exporter exporter = new ExcelExporter(out);
-        exporter.export(input);
+        exporter.export(input, columns);
         InputStream is = new ByteArrayInputStream(out.toByteArray());
         HSSFWorkbook wb = new HSSFWorkbook(is);
         HSSFSheet sheet = wb.getSheet("results");
-     
-        HSSFRow row = sheet.getRow(0);        
+
+        HSSFRow row = sheet.getRow(0);
         assertEquals(10.0, row.getCell((short) 0).getNumericCellValue());
         assertEquals(HSSFCell.CELL_TYPE_NUMERIC, row.getCell((short) 0).getCellType());
         assertEquals("1", row.getCell((short) 1).getStringCellValue());
         assertEquals("true", row.getCell((short) 2).getStringCellValue());
         assertEquals("EmployeeA1", row.getCell((short) 3).getStringCellValue());
 
-        row = sheet.getRow(1);        
+        row = sheet.getRow(1);
         assertEquals(20.0, row.getCell((short) 0).getNumericCellValue());
         assertEquals("2", row.getCell((short) 1).getStringCellValue());
-        assertEquals("true", row.getCell((short) 2).getStringCellValue());
+        assertEquals("false", row.getCell((short) 2).getStringCellValue());
         assertEquals("EmployeeA2", row.getCell((short) 3).getStringCellValue());
-        
+
         // test that date was added with exporter as date - it is numeric format in excel
         row = sheet.getRow(2);
         String expected = date.toString();
@@ -68,7 +80,7 @@ public class ExcelExporterTest extends TestCase
         assertEquals(expected, returned);
         assertEquals(HSSFCell.CELL_TYPE_NUMERIC, row.getCell((short) 0).getCellType());
     }
-    
+
     private List<ResultElement> getDateRow(Date date) {
         List<ResultElement> ret = new ArrayList<ResultElement>();
         ret.add(new ResultElement(date));

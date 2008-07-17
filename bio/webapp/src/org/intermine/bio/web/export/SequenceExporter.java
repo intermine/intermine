@@ -10,21 +10,9 @@ package org.intermine.bio.web.export;
  *
  */
 
-import java.io.OutputStream;
 import java.util.Iterator;
 import java.util.List;
 
-import org.biojava.bio.Annotation;
-import org.biojava.bio.seq.io.FastaFormat;
-import org.biojava.bio.seq.io.SeqIOTools;
-import org.biojava.bio.symbol.IllegalSymbolException;
-import org.flymine.model.genomic.BioEntity;
-import org.flymine.model.genomic.Gene;
-import org.flymine.model.genomic.LocatedSequenceFeature;
-import org.flymine.model.genomic.Protein;
-import org.flymine.model.genomic.Sequence;
-import org.flymine.model.genomic.Translation;
-import org.flymine.model.genomic.Location;
 import org.intermine.bio.web.biojava.BioSequence;
 import org.intermine.bio.web.biojava.BioSequenceFactory;
 import org.intermine.metadata.ClassDescriptor;
@@ -36,7 +24,23 @@ import org.intermine.util.TypeUtil;
 import org.intermine.web.logic.export.ExportException;
 import org.intermine.web.logic.export.ExportHelper;
 import org.intermine.web.logic.export.Exporter;
+import org.intermine.web.logic.results.Column;
 import org.intermine.web.logic.results.ResultElement;
+
+import org.flymine.model.genomic.BioEntity;
+import org.flymine.model.genomic.Gene;
+import org.flymine.model.genomic.LocatedSequenceFeature;
+import org.flymine.model.genomic.Location;
+import org.flymine.model.genomic.Protein;
+import org.flymine.model.genomic.Sequence;
+import org.flymine.model.genomic.Translation;
+
+import java.io.OutputStream;
+
+import org.biojava.bio.Annotation;
+import org.biojava.bio.seq.io.FastaFormat;
+import org.biojava.bio.seq.io.SeqIOTools;
+import org.biojava.bio.symbol.IllegalSymbolException;
 
 
 /**
@@ -57,7 +61,7 @@ public class SequenceExporter implements Exporter
      * Constructor.
      * @param os object store used for fetching sequence for  exported object
      * @param outputStream output stream
-     * @param featureIndex index of cell in row that contains object to be exported 
+     * @param featureIndex index of cell in row that contains object to be exported
      */
     public SequenceExporter(ObjectStore os, OutputStream outputStream,
             int featureIndex) {
@@ -65,23 +69,23 @@ public class SequenceExporter implements Exporter
         this.out = outputStream;
         this.featureIndex = featureIndex;
     }
-    
+
     /**
      * {@inheritDoc}
      */
     public int getWrittenResultsCount() {
         return writtenResultsCount;
     }
-    
+
     /**
      * {@inheritDoc}
-     * Lines are always separated with \n because third party tool writeFasta 
-     * is used for writing sequence. 
+     * Lines are always separated with \n because third party tool writeFasta
+     * is used for writing sequence.
      */
-    public void export(List<List<ResultElement>> results) {
+    public void export(List<List<ResultElement>> results, List<Column> columns) {
         // IDs of the features we have successfully output - used to avoid duplicates
         IntPresentSet exportedIDs = new IntPresentSet();
-        
+
         try {
             for (int rowIndex = 0; rowIndex < results.size(); rowIndex++) {
                 List<ResultElement> row = results.get(rowIndex);
@@ -103,7 +107,7 @@ public class SequenceExporter implements Exporter
                 }
 
                 if (object instanceof LocatedSequenceFeature) {
-                    bioSequence = createLocatedSequenceFeature(header, object);
+                    bioSequence = createLocatedSequenceFeature(header, object, row, columns);
                 } else if (object instanceof Protein) {
                     bioSequence = createProtein(header, object);
                 } else if (object instanceof Translation) {
@@ -122,7 +126,7 @@ public class SequenceExporter implements Exporter
                 Annotation annotation = bioSequence.getAnnotation();
                 String headerString = header.toString();
 
-                if (row.size() > 1 && headerString.length() > 0) {
+                if (headerString.length() > 0) {
                     annotation.setProperty(FastaFormat.PROPERTY_DESCRIPTIONLINE, headerString);
                 } else {
                     if (object instanceof BioEntity) {
@@ -147,7 +151,7 @@ public class SequenceExporter implements Exporter
     }
 
     private BioSequence createTranslation(StringBuffer header, Object object,
-            Model model) throws IllegalSymbolException {
+                                          Model model) throws IllegalSymbolException {
         BioSequence bioSequence;
         ClassDescriptor cld = model.getClassDescriptorByName(model.getPackageName()
                                                              + "." + "Translation");
@@ -188,9 +192,9 @@ public class SequenceExporter implements Exporter
         } else {
             header.append(protein.getName());
         }
-        Iterator iter = protein.getGenes().iterator();
+        Iterator<Gene> iter = protein.getGenes().iterator();
         while (iter.hasNext()) {
-            Gene gene = (Gene) iter.next();
+            Gene gene = iter.next();
             String geneIdentifier = gene.getPrimaryIdentifier();
             if (geneIdentifier != null) {
                 header.append(' ');
@@ -203,28 +207,22 @@ public class SequenceExporter implements Exporter
     }
 
     private BioSequence createLocatedSequenceFeature(StringBuffer header,
-            Object object) throws IllegalSymbolException {
+                                                     Object object, List<ResultElement> row,
+                                                     List<Column> columns)
+        throws IllegalSymbolException {
         BioSequence bioSequence;
         LocatedSequenceFeature feature = (LocatedSequenceFeature) object;
         bioSequence = BioSequenceFactory.make(feature);
         if (feature.getPrimaryIdentifier() == null) {
-            if (feature instanceof Gene) {
-                header.append(((Gene) feature).getPrimaryIdentifier());
-            } else {
-                header.append("[unknown_identifier]");
-            }
+            header.append("[unknown_identifier]");
         } else {
             header.append(feature.getPrimaryIdentifier());
         }
         header.append(' ');
-        if (feature.getName() == null) {
-            header.append("[unknown_name]");
-        } else {
-            header.append(feature.getName());
-        }
+        header.append(getHeadersFromColumns(row, columns));
 
         Location chromosomeLoc = feature.getChromosomeLocation();
-        
+
         if (chromosomeLoc != null) {
             header.append(' ').append(chromosomeLoc.getObject().getPrimaryIdentifier());
             header.append(':').append(chromosomeLoc.getStart());
@@ -246,21 +244,46 @@ public class SequenceExporter implements Exporter
     }
 
     /**
+     * Look at the Columns and the current row and return a String containing all the elements of
+     * the row except the primaryIdentifier (if any).
+     */
+    private String getHeadersFromColumns(List<ResultElement> row, List<Column> columns) {
+        StringBuffer sb = new StringBuffer();
+
+        for (int i = 0; i < row.size(); i++) {
+            Column column = columns.get(i);
+            if (!column.getPath().getEndFieldDescriptor().getName().equals("primaryIdentifier")) {
+                ResultElement resultElement = row.get(i);
+                Object rawField = resultElement.getField();
+                String field;
+                if (rawField == null) {
+                    field = "-";
+                } else {
+                    field = rawField.toString();
+                }
+                sb.append(field).append(' ');
+            }
+        }
+
+        return sb.toString();
+    }
+
+    /**
      * {@inheritDoc}
      */
     public boolean canExport(List<Class> clazzes) {
         return canExportStatic(clazzes);
     }
 
-    /* Method must have different name than canExport because canExport() method 
+    /* Method must have different name than canExport because canExport() method
      * is  inherited from Exporter interface */
     /**
      * @param clazzes classes of result
-     * @return true if this exporter can export result composed of specified classes 
+     * @return true if this exporter can export result composed of specified classes
      */
-    public static boolean canExportStatic(List<Class> clazzes) {        
+    public static boolean canExportStatic(List<Class> clazzes) {
         return (
-                ExportHelper.getClassIndex(clazzes, LocatedSequenceFeature.class) >= 0 
+                ExportHelper.getClassIndex(clazzes, LocatedSequenceFeature.class) >= 0
                 || ExportHelper.getClassIndex(clazzes, Protein.class) >= 0
                 || ExportHelper.getClassIndex(clazzes, Translation.class) >= 0
                 || ExportHelper.getClassIndex(clazzes, Sequence.class) >= 0);

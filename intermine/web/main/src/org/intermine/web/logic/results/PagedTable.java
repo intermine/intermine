@@ -792,7 +792,7 @@ public class PagedTable
      *
      * @return a List of rows, each of which is a List
      */
-    public List getRearrangedResults() {
+    public List<List<ResultElement>> getRearrangedResults() {
         return new RearrangedList();
     }
 
