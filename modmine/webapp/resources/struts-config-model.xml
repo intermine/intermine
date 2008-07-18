@@ -3,7 +3,7 @@
 
 <action path="/sequenceExporter"
 	type="org.intermine.bio.web.struts.SequenceExportAction" />
-
+	
 <action path="/chartRenderer" type="org.flymine.web.ChartRenderer"
 	parameter="method" />
 
@@ -13,6 +13,9 @@
 
 <action path="/initProjectList"
   type="org.modmine.web.ProjectsController" />
+
+<action path="/initSubmissions"
+  type="org.modmine.web.SubmissionsController" />
 
 
 <action path="/initProjects"
