@@ -70,29 +70,15 @@ public class SubmissionsController extends TilesAction
 
             Map< Integer, ExperimentSubmission> subs =
                 new LinkedHashMap<Integer, ExperimentSubmission>();
-//            Map<ModEncodeProject, Integer> nr =
-//                new LinkedHashMap<ModEncodeProject, Integer>();
-            
             // get all submission by date desc
             Integer order = 0;
             Iterator i = results.iterator();
             while (i.hasNext()) {
                 order++;
                 ExperimentSubmission sub = (ExperimentSubmission) i.next();
-//                Set<ModEncodeProvider> providers = project.getProviders();
                 subs.put(order, sub);
-//                Integer subNr = 0;
-//                // for each provider, get its experiments
-//                Iterator p = providers.iterator();
-//                while (p.hasNext()) {
-//                    ModEncodeProvider provider = (ModEncodeProvider) p.next();
-//                    Set<ExperimentSubmission> subs = provider.getExperimentSubmissions();
-//                    subNr = subNr + subs.size();
-//                }
-//                nr.put(project, subNr);
             }
             request.setAttribute("subs", subs);
-//            request.setAttribute("counts", nr);
         } catch (Exception err) {
             err.printStackTrace();
         }

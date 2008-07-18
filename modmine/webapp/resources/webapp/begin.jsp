@@ -13,30 +13,55 @@
 <tr>
 <td valign="top">
 <!-- First column -->
+
      <im:boxarea title="Projects" titleLink="/${WEB_PROPERTIES['webapp.path']}/projects.do" stylename="plainbox" floatValue="left" fixedWidth="300px">
-     <em><p><fmt:message key="projects.intro"/></p></em>
-     
-     
+     <em><p><fmt:message key="projects.intro"/></p></em>     
      <tiles:insert name="projectList.tile"/>
-     
-     <%--
+    </im:boxarea>
+
+     <im:boxarea title="Submissions" titleLink="/${WEB_PROPERTIES['webapp.path']}/providers.do" stylename="plainbox" floatValue="left" fixedWidth="300px">
+    <%-- <em><p><fmt:message key="projects.intro"/></p></em> --%> 
+         <tiles:insert name="submissions.tile"/>
+    </im:boxarea>
+
+<%--
+    <im:boxarea title="Data Categories" titleLink="/${WEB_PROPERTIES['webapp.path']}/dataCategories.do" stylename="plainbox" floatValue="left" fixedWidth="300px">
+     <em><p><fmt:message key="begin.data"/></p></em>
+     <c:set var="numPerCol" value="${fn:length(ASPECTS)/2}"/>
           <table cellpadding="0" cellspacing="0" border="0"><tr>
-         <c:forEach var="entry" items="${providers}" varStatus="status">
+         <c:forEach var="entry" items="${ASPECTS}" varStatus="status">
+           <c:set var="set" value="${entry.value}"/>
+           <c:if test="${status.count%2 == '1'}"></tr><tr></c:if>
+                   <td style="height:80px;padding:4px">
+                     <a href="/${WEB_PROPERTIES['webapp.path']}/aspect.do?name=${set.name}">
+                       <img src="<html:rewrite page="/${set.iconImage}"/>" class="aspectIcon"
+                            title="Click here to view the ${set.name} Data Category"
+                            width="40px" height="40px" />
+                     </a>
+                   </td>
                    <td>
-                     <a href="/${WEB_PROPERTIES['webapp.path']}/objectDetails.do?id=${entry.key.id}">
-                       ${entry.key.name}
+                     <a href="/${WEB_PROPERTIES['webapp.path']}/aspect.do?name=${set.name}">
+                       ${set.name}
                      </a>
                    </td>
              </c:forEach>
           </tr></table>
-          --%>
-          
     </im:boxarea>
+--%>
+
 
 <div id="rightColumn">
-<td rowspan="2" valign="top">
+<td valign="top">
 <!-- Second column - elastic -->
-      <im:boxarea title="Templates" titleLink="/${WEB_PROPERTIES['webapp.path']}/templates.do" stylename="gradientbox">
+
+		<div><tiles:insert name="tipWrapper.tile" /> 
+		<tiles:insert name="news.tile">
+			<tiles:put name="rss"
+				value="${WEB_PROPERTIES['project.sitePrefix']}/rss.xml" />
+		</tiles:insert></div>
+
+
+		<im:boxarea title="Templates" titleLink="/${WEB_PROPERTIES['webapp.path']}/templates.do" stylename="gradientbox">
         <em><p><fmt:message key="begin.templates"/></p></em>
         <br/>
         <div>
@@ -106,42 +131,7 @@
 </td></tr>
 
 
-
-<tr><td>
-     <im:boxarea title="Submissions" titleLink="/${WEB_PROPERTIES['webapp.path']}/providers.do" stylename="plainbox" floatValue="left" fixedWidth="300px">
-    <%-- <em><p><fmt:message key="projects.intro"/></p></em> --%> 
-         <tiles:insert name="submissions.tile"/>
-    </im:boxarea>
-
-
-<%--
-<tr>
-<td>
-    <im:boxarea title="Data Categories" titleLink="/${WEB_PROPERTIES['webapp.path']}/dataCategories.do" stylename="plainbox" floatValue="left" fixedWidth="300px">
-     <em><p><fmt:message key="begin.data"/></p></em>
-     <c:set var="numPerCol" value="${fn:length(ASPECTS)/2}"/>
-          <table cellpadding="0" cellspacing="0" border="0"><tr>
-         <c:forEach var="entry" items="${ASPECTS}" varStatus="status">
-           <c:set var="set" value="${entry.value}"/>
-           <c:if test="${status.count%2 == '1'}"></tr><tr></c:if>
-                   <td style="height:80px;padding:4px">
-                     <a href="/${WEB_PROPERTIES['webapp.path']}/aspect.do?name=${set.name}">
-                       <img src="<html:rewrite page="/${set.iconImage}"/>" class="aspectIcon"
-                            title="Click here to view the ${set.name} Data Category"
-                            width="40px" height="40px" />
-                     </a>
-                   </td>
-                   <td>
-                     <a href="/${WEB_PROPERTIES['webapp.path']}/aspect.do?name=${set.name}">
-                       ${set.name}
-                     </a>
-                   </td>
-             </c:forEach>
-          </tr></table>
-    </im:boxarea>
---%>
-
-</td></tr></table>
+</table>
 </div>
 
 <!-- /begin.jsp -->

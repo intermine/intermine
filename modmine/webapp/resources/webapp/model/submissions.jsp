@@ -31,7 +31,7 @@
 --%>
 
 <c:set var="LIMIT" value="5"/>
-<i>${LIMIT} most recent submissions:</i>
+<em>${LIMIT} most recent submissions:</em>
 
 
 <table cellpadding="0" cellspacing="0" border="0" class="dbsources">
@@ -61,9 +61,12 @@
 		<img src="http://sam.modencode.org/modweb/images/ark/d_s.png" class="aspectIcon"
 			title="Click here to view the  Data Category" width="40px"
 			height="40px" /> </a></td>
+
+<im:querylink text="Fly" showArrow="true" showImage="fly" skipBuilder="true">
+
 --%>
 <td>		
-<im:querylink text="   Fly" showArrow="true" skipBuilder="true">
+<im:querylink text="Fly" showArrow="true" skipBuilder="true">
   <query name="" model="genomic"
     view="ExperimentSubmission.title ExperimentSubmission.design ExperimentSubmission.factorName ExperimentSubmission.factorType ExperimentSubmission.publicReleaseDate ExperimentSubmission.description"
     sortOrder="ExperimentSubmission.title">
@@ -84,7 +87,7 @@
 		</td>
 <td>
 
-<im:querylink text="   Worm" showArrow="true" skipBuilder="true">
+<im:querylink text="Worm" showArrow="true" skipBuilder="true">
   <query name="" model="genomic"
     view="ExperimentSubmission.title ExperimentSubmission.design ExperimentSubmission.factorName ExperimentSubmission.factorType ExperimentSubmission.publicReleaseDate ExperimentSubmission.description"
     sortOrder="ExperimentSubmission.title">
