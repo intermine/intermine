@@ -58,9 +58,6 @@ public class PsiConverter extends FileConverter
     private Map<String, Object> experimentNames = new HashMap<String, Object>();
     private Map<String, String> terms = new HashMap<String, String>();
     private Map<String, String> masterList = new HashMap<String, String>();
-    private static String datasetId;
-    //private int nextClsId;
-
 
     /**
      * Constructor
@@ -188,27 +185,19 @@ public class PsiConverter extends FileConverter
         public void startElement(String uri, String localName, String qName, Attributes attrs)
             throws SAXException {
             attName = null;
-
             // <experimentList><experimentDescription>
             if (qName.equals("experimentDescription")) {
-                // this experiment may have already been created
-                // we won't know until the name is processed
                 try {
                     experimentId = attrs.getValue("id");
                 } catch (Exception e) {
                     throw new SAXException(e);
                 }
-
-                //  <experimentList><experimentDescription id="2"><names><shortLabel>
-            } else if (qName.equals("shortLabel")
-                       && stack.peek().equals("names")
+            //  <experimentList><experimentDescription id="2"><names><shortLabel>
+            } else if (qName.equals("shortLabel") && stack.peek().equals("names")
                        && stack.search("experimentDescription") == 2) {
-                /* experiment.experimentName = shortName */
                 attName = "experimentName";
-
-                //<experimentList><experimentDescription><bibref><xref><primaryRef>
-            } else if (qName.equals("primaryRef")
-                       && stack.peek().equals("xref")
+            //<experimentList><experimentDescription><bibref><xref><primaryRef>
+            } else if (qName.equals("primaryRef") && stack.peek().equals("xref")
                        && stack.search("bibref") == 2
                        && stack.search("experimentDescription") == 3) {
                 String pubMedId = attrs.getValue("id");
@@ -216,68 +205,46 @@ public class PsiConverter extends FileConverter
                     String pub = getPub(pubMedId);
                     experimentHolder.setPublication(pub);
                 }
-
-                //<experimentList><experimentDescription><attributeList><attribute>
-            } else if (qName.equals("attribute")
-                       && stack.peek().equals("attributeList")
+            //<experimentList><experimentDescription><attributeList><attribute>
+            } else if (qName.equals("attribute") && stack.peek().equals("attributeList")
                        && stack.search("experimentDescription") == 2) {
                 String name = attrs.getValue("name");
                 if (experimentHolder.experiment != null && name != null) {
                     comment = createItem("Comment");
                     setComment();
                     comment.setAttribute("type", name);
-                    //                        String title = experimentHolder.name;
-                    //                        Item item = getInfoSource(title);
-                    //                        comment.setReference("source", item.getIdentifier());
                     attName = "experimentAttribute";
                 } else {
                     LOG.info("Can't create comment, bad experiment.");
                 }
-
-                // <hostOrganismList><hostOrganism ncbiTaxId="9534"><names><fullName>
-            } else if (qName.equals("fullName")
-                       && stack.peek().equals("names")
+            // <hostOrganismList><hostOrganism ncbiTaxId="9534"><names><fullName>
+            } else if (qName.equals("fullName") && stack.peek().equals("names")
                        && stack.search("hostOrganism") == 3) {
                 attName = "hostOrganismName";
-
-                //<interactionDetectionMethod><xref><primaryRef>
-            } else if (qName.equals("primaryRef")
-                       && stack.peek().equals("xref")
+            //<interactionDetectionMethod><xref><primaryRef>
+            } else if (qName.equals("primaryRef") && stack.peek().equals("xref")
                        && stack.search("interactionDetectionMethod") == 2) {
-                String id = attrs.getValue("id");
-                String termItemId = getTerm(id);
+                String termItemId = getTerm(attrs.getValue("id"));
                 experimentHolder.setMethod("interactionDetectionMethod", termItemId);
-
-                //<participantIdentificationMethod><xref> <primaryRef>
-            } else if (qName.equals("primaryRef")
-                       && stack.peek().equals("xref")
+            //<participantIdentificationMethod><xref> <primaryRef>
+            } else if (qName.equals("primaryRef") && stack.peek().equals("xref")
                        && stack.search("participantIdentificationMethod") == 2) {
-                String id = attrs.getValue("id");
-                String termItemId = getTerm(id);
+                String termItemId = getTerm(attrs.getValue("id"));
                 experimentHolder.setMethod("participantIdentificationMethod", termItemId);
-
-                // <interactorList><interactor id="4">
-            } else if (qName.equals("interactor")
-                       && stack.peek().equals("interactorList")) {
+            // <interactorList><interactor id="4">
+            } else if (qName.equals("interactor") && stack.peek().equals("interactorList")) {
                 proteinId = attrs.getValue("id");
-
-                // <interactorList><interactor id="4"><organism ncbiTaxId="7227">
-            } else if (qName.equals("organism")
-                       && stack.peek().equals("interactor")) {
-                /* if organism is valid, put the protein in our list for later reference */
+            // <interactorList><interactor id="4"><organism ncbiTaxId="7227">
+            } else if (qName.equals("organism") && stack.peek().equals("interactor")) {
                 String taxId = attrs.getValue("ncbiTaxId");
-                if (organisms.containsKey(taxId)) {
-                    if (protein != null) {
-                        protein.setReference("organism", organisms.get(taxId));
-                        if (!validProteins.containsKey(proteinId)) {
-                            validProteins.put(proteinId, protein.getIdentifier());
-                        }
+                if (organisms.containsKey(taxId) && protein != null) {
+                    protein.setReference("organism", organisms.get(taxId));
+                    if (!validProteins.containsKey(proteinId)) {
+                        validProteins.put(proteinId, protein.getIdentifier());
                     }
                 }
-
-                // <interactorList><interactor id="4"><xref><primaryRef>
-            } else if (qName.equals("primaryRef")
-                       && stack.peek().equals("xref")
+            // <interactorList><interactor id="4"><xref><primaryRef>
+            } else if (qName.equals("primaryRef") && stack.peek().equals("xref")
                        && stack.search("interactor") == 2) {
                 String db = attrs.getValue("db");
                 String id = attrs.getValue("id");
@@ -309,9 +276,6 @@ public class PsiConverter extends FileConverter
                     }
                     protein.setCollection("dataSets", new ArrayList(Collections.singleton(
                                                                     masterList.get("datasetId"))));
-
-
-                    // TODO this should maybe create a data source for each db
                     Item synonym = createItem("Synonym");
                     synonym.setAttribute("value", id);
                     synonym.setAttribute("type", db.startsWith("uniprot")
@@ -319,7 +283,6 @@ public class PsiConverter extends FileConverter
                     synonym.setReference("source", datasourceItemId);
                     synonym.setReference("subject", proteinRefId);
                     synonyms.add(synonym);
-
                     // create an extra synonym for proteins that have an IntAct identifier
                     if (db.equals("intact")) {
                         Item syn1 = createItem("Synonym");
@@ -329,7 +292,6 @@ public class PsiConverter extends FileConverter
                         syn1.setReference("subject", proteinRefId);
                         synonyms.add(synonym);
                     }
-
                     // see ticket #1450
                     Item syn2 = createItem("Synonym");
                     syn2.setAttribute("value", id);
@@ -338,87 +300,52 @@ public class PsiConverter extends FileConverter
                     syn2.setReference("subject", proteinRefId);
                     synonyms.add(synonym);
                 }
-
-                // <interactorList><interactor id="4"><sequence>
-            } else if (qName.equals("sequence")
-                       && stack.peek().equals("interactor")) {
-
+           // <interactorList><interactor id="4"><sequence>
+            } else if (qName.equals("sequence") && stack.peek().equals("interactor")) {
                 attName = "sequence";
-
-                //<interactionList><interaction id="1"><names><shortLabel>
-            } else if (qName.equals("shortLabel")
-                       && stack.peek().equals("names")
+            //<interactionList><interaction id="1"><names><shortLabel>
+            } else if (qName.equals("shortLabel") && stack.peek().equals("names")
                        && stack.search("interaction") == 2) {
-
                 attName = "interactionName";
-
-                //<interaction><confidenceList><confidence><unit><names><shortLabel>
-            } else if (qName.equals("shortLabel")
-                       && stack.peek().equals("names")
+            //<interaction><confidenceList><confidence><unit><names><shortLabel>
+            } else if (qName.equals("shortLabel") && stack.peek().equals("names")
                        && stack.search("confidence") == 3) {
-
                 attName = "confidenceUnit";
-
-                //<interactionList><interaction><confidenceList><confidence><value>
-            } else if (qName.equals("value")
-                       && stack.peek().equals("confidence")) {
-
+            //<interactionList><interaction><confidenceList><confidence><value>
+            } else if (qName.equals("value") && stack.peek().equals("confidence")) {
                 attName = "confidence";
-
-                //<interactionList><interaction>
-                //<participantList><participant id="5"><interactorRef>
+            //<interactionList><interaction>
+            //<participantList><participant id="5"><interactorRef>
             } else if (qName.equals("interactorRef")
                        && stack.peek().equals("participant")) {
-
                 attName = "participantId";
-
-                // <participantList><participant id="5"><experimentalRole><names><shortLabel>
-            } else if (qName.equals("shortLabel")
-                       && stack.search("experimentalRole") == 2) {
-
+            // <participantList><participant id="5"><experimentalRole><names><shortLabel>
+            } else if (qName.equals("shortLabel") && stack.search("experimentalRole") == 2) {
                 attName = "proteinRole";
-
-                //<interactionList><interaction><experimentList><experimentRef>
-            } else if (qName.equals("experimentRef")
-                       && stack.peek().equals("experimentList")) {
+            //<interactionList><interaction><experimentList><experimentRef>
+            } else if (qName.equals("experimentRef") && stack.peek().equals("experimentList")) {
                 attName = "experimentRef";
-
-                // <participantList><participant id="6919"><featureList><feature id="6920">
-                //    <featureRangeList><featureRange><startStatus><names><shortLabel>
-            } else if (qName.equals("shortLabel")
-                       && stack.search("startStatus") == 2) {
-
+            // <participantList><participant id="6919"><featureList><feature id="6920">
+            //    <featureRangeList><featureRange><startStatus><names><shortLabel>
+            } else if (qName.equals("shortLabel") && stack.search("startStatus") == 2) {
                 attName = "startStatus";
-
-                // <participantList><participant id="6919"><featureList><feature id="6920">
-                //    <featureRangeList><featureRange><endStatus><names><shortLabel>
-            } else if (qName.equals("shortLabel")
-                       && stack.search("endStatus") == 2) {
-
+            // <participantList><participant id="6919"><featureList><feature id="6920">
+            //    <featureRangeList><featureRange><endStatus><names><shortLabel>
+            } else if (qName.equals("shortLabel") && stack.search("endStatus") == 2) {
                 attName = "endStatus";
-
-
-           //     <featureList><feature id="24"><names><shortLabel>
-            } else if (qName.equals("shortLabel")
-                       && stack.search("feature") == 2) {
-
+            // <featureList><feature id="24"><names><shortLabel>
+            } else if (qName.equals("shortLabel") && stack.search("feature") == 2) {
                 attName = "regionName";
-
             // <participantList><participant id="6919"><featureList><feature id="6920">
             // <featureType><xref><primaryRef db="psi-mi" dbAc="MI:0488" id="MI:0117"
-            } else if (qName.equals("primaryRef")
-                       && stack.search("featureType") == 2
-                       && attrs.getValue("id").equals("MI:0117")
-                       && interactorHolder != null) {
-
+            } else if (qName.equals("primaryRef") && stack.search("featureType") == 2
+                       && attrs.getValue("id").equals("MI:0117") && interactorHolder != null) {
                 interactorHolder.isRegionFeature = true;
-
                 // create interacting region
                 Item interactionRegion = createItem("ProteinInteractionRegion");
                 interactionRegion.setAttribute("name", regionName);
                 interactionRegion.setReference("protein", interactorHolder.proteinId);
                 interactionRegion.setReference("ontologyTerm", psiDagTermItemId);
-
 
                 // create new location object (start and end are coming later)
                 Item location = createItem("Location");
@@ -439,22 +366,16 @@ public class PsiConverter extends FileConverter
                        && stack.peek().equals("featureRange")
                        && interactorHolder != null
                        && interactorHolder.isRegionFeature) {
-
-                String start = attrs.getValue("position");
-                interactorHolder.setStart(start);
-
-                // <participantList><participant id="6919"><featureList><feature id="6920">
-                //    <featureRangeList><featureRange><end position="470"/>
+                interactorHolder.setStart(attrs.getValue("position"));
+            // <participantList><participant id="6919"><featureList><feature id="6920">
+            //    <featureRangeList><featureRange><end position="470"/>
             } else if (qName.equals("end")
                        && stack.peek().equals("featureRange")
                        && interactorHolder != null
                        && interactorHolder.isRegionFeature) {
+                interactorHolder.setEnd(attrs.getValue("position"));
 
-                String end = attrs.getValue("position");
-                interactorHolder.setEnd(end);
-
-                // <entry>
-            } else if (qName.equals("entry")) {
+            } else if (qName.equals("entry")) { // <entry>
                 /* stuff done only once */
                 if (masterList.size() <= 1) {
                     init();
@@ -471,14 +392,16 @@ public class PsiConverter extends FileConverter
          * {@inheritDoc}
          */
         public void characters(char[] ch, int start, int length) {
+            int st = start;
+            int l = length;
 
             if (attName != null) {
 
                 // DefaultHandler may call this method more than once for a single
                 // attribute content -> hold text & create attribute in endElement
-                while (length > 0) {
+                while (l > 0) {
                     boolean whitespace = false;
-                    switch(ch[start]) {
+                    switch(ch[st]) {
                     case ' ':
                     case '\r':
                     case '\n':
@@ -491,13 +414,13 @@ public class PsiConverter extends FileConverter
                     if (!whitespace) {
                         break;
                     }
-                    ++start;
-                    --length;
+                    ++st;
+                    --l;
                 }
 
-                if (length > 0) {
+                if (l > 0) {
                     StringBuffer s = new StringBuffer();
-                    s.append(ch, start, length);
+                    s.append(ch, st, l);
                     attValue.append(s);
                 }
             }
@@ -523,7 +446,7 @@ public class PsiConverter extends FileConverter
                     String s = attValue.toString();
                     if (comment != null && s != null) {
                         //TODO store these only when valid experiment
-                        if (s != null && !s.equals("")) {
+                        if (!s.equals("")) {
                             comment.setAttribute("text", s);
                         }
                         writer.store(ItemHelper.convert(comment));
