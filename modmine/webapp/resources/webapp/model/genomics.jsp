@@ -38,7 +38,7 @@
          <ul>
          <li>
               <i>Drosophila melanogaster</i> - Genome annotation release 5.1 from <a href="http://www.flybase.org" target="_new">
-                <html:img src="images/FlyBase_logo_mini.png" title="Click here to view FlyBase's website" /> </a>.
+                <html:img src="images/FlyBase_logo_mini.png" title="Click here to view FlyBase's website" />FlyBase</a>.
     </ul>
 
             <ul><li><i>Caenorhabditis elegans</i> - Genome information from <a href="http://www.wormbase.org" target="_new">WormBase</a>

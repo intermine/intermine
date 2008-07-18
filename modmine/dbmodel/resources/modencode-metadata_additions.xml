@@ -41,8 +41,12 @@
 		<attribute name="factorName" type="java.lang.String" />
 		<attribute name="qualityControl" type="java.lang.String" />
 		<attribute name="replicate" type="java.lang.String" />
-                <attribute name="experimentDate" type="java.util.Date" />
-                <attribute name="publicReleaseDate" type="java.util.Date" />
+    <attribute name="experimentDate" type="java.util.Date" />
+    <attribute name="publicReleaseDate" type="java.util.Date" />
+		<!-- temp. changed to string... 
+    <attribute name="experimentDate" type="java.lang.String" />
+    <attribute name="publicReleaseDate" type="java.lang.String" />
+    -->
 		<reference name="organism"
 			referenced-type="org.flymine.model.genomic.Organism" />
 		<!-- 

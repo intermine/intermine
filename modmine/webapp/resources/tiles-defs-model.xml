@@ -2,6 +2,8 @@
         controllerUrl="/initProviders.do"/>
 <definition name="projects.tile" path="/model/projects.jsp" 
         controllerUrl="/initProjects.do"/>
+<definition name="submissions.tile" path="/model/submissions.jsp" 
+        controllerUrl="/initSubmissions.do"/>
 
 <definition name="projectList.tile" path="/model/projectList.jsp" 
         controllerUrl="/initProjectList.do"/>

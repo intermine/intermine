@@ -23,5 +23,15 @@
     <c:if test="${showArrow}">
       <img border="0" class="arrow" src="images/right-arrow.gif" title="-&gt;"/>
     </c:if>
+
+<%--
+<%@ attribute name="showImage" required="false" type="java.lang.String" %>
+
+this is not working, not sure why.
+    ${showImage}
+    <c:when test="${showImage == 'arrow'}"/>
+      <img border="0" class="arrow" src="images/right-arrow.gif" title="-&gt;"/>
+      </c:when>
+    --%>
   </span>
 </html:link>

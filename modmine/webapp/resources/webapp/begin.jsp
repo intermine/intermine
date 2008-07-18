@@ -104,6 +104,17 @@
 
 </div>
 </td></tr>
+
+
+
+<tr><td>
+     <im:boxarea title="Submissions" titleLink="/${WEB_PROPERTIES['webapp.path']}/providers.do" stylename="plainbox" floatValue="left" fixedWidth="300px">
+    <%-- <em><p><fmt:message key="projects.intro"/></p></em> --%> 
+         <tiles:insert name="submissions.tile"/>
+    </im:boxarea>
+
+
+<%--
 <tr>
 <td>
     <im:boxarea title="Data Categories" titleLink="/${WEB_PROPERTIES['webapp.path']}/dataCategories.do" stylename="plainbox" floatValue="left" fixedWidth="300px">
@@ -128,6 +139,7 @@
              </c:forEach>
           </tr></table>
     </im:boxarea>
+--%>
 
 </td></tr></table>
 </div>
