@@ -39,10 +39,11 @@ import org.xml.sax.SAXException;
  */
 public class WebConfig
 {
-    private Map<String, Type> types = new HashMap();
-    private Map tableExportConfigs = new HashMap();
-    private Map<String, WidgetConfig> widgets = new HashMap();
-    
+    private Map<String, Type> types = new HashMap<String, Type>();
+    private Map<String, TableExportConfig> tableExportConfigs =
+        new HashMap<String, TableExportConfig>();
+    private Map<String, WidgetConfig> widgets = new HashMap<String, WidgetConfig>();
+
     /**
      * Parse a WebConfig XML file
      *
@@ -127,14 +128,14 @@ public class WebConfig
         WebConfig webConfig = (WebConfig) digester.parse(is);
 
         webConfig.validate(model);
-        
+
         webConfig.setSubClassConfig(model);
-        
+
         return webConfig;
     }
 
     /**
-     * Validate web config according to the model. Test that configured classes exist in 
+     * Validate web config according to the model. Test that configured classes exist in
      * model and configured fields in web config exist in model.
      * @param model model used for validation
      */
@@ -142,14 +143,14 @@ public class WebConfig
         for (String typeName : types.keySet()) {
             if (!model.getClassNames().contains(typeName)) {
                 throw new RuntimeException("Invalid web config. Class specified in web config "
-                + "doesn't exist in model. Web config class: " + typeName + ".");
+                                   + "doesn't exist in model. Web config class: " + typeName + ".");
             }
             Type type = types.get(typeName);
             Collection<FieldConfig> fieldConfigs = type.getFieldConfigs();
             for (FieldConfig fieldConfig : fieldConfigs) {
                 String pathString;
                 try {
-                    pathString = Class.forName(typeName).getSimpleName() 
+                    pathString = Class.forName(typeName).getSimpleName()
                         + "." + fieldConfig.getFieldExpr();
                 } catch (ClassNotFoundException e) {
                     throw new RuntimeException("Invalid web config. Implementation for "
@@ -157,15 +158,15 @@ public class WebConfig
                             + "web config doesn't exist.", e);
                 }
                 try {
-                    Path path = new Path(model, pathString);
+                    new Path(model, pathString);
                 } catch (PathError e) {
-                    throw new RuntimeException("Invalid web config. Field expression '" 
-                            + fieldConfig.getFieldExpr() + "' for class " 
+                    throw new RuntimeException("Invalid web config. Field expression '"
+                            + fieldConfig.getFieldExpr() + "' for class "
                             + typeName + " is not valid according to the model. "
                             + "Corresponding path " + pathString + " doesn't exist.");
                 }
             }
-        }         
+        }
     }
 
     /**
@@ -258,10 +259,10 @@ public class WebConfig
      */
     void setSubClassConfig(Model model) throws ClassNotFoundException {
         TreeSet<String> classes = new TreeSet<String>(model.getClassNames());
-        for (Iterator modelIter = classes.iterator(); modelIter.hasNext();) {
+        for (Iterator<String> modelIter = classes.iterator(); modelIter.hasNext();) {
 
-            String className = (String) modelIter.next();
-            Type thisClassType = (Type) types.get(className);
+            String className = modelIter.next();
+            Type thisClassType = types.get(className);
 
             if (thisClassType == null) {
                 thisClassType = new Type();
@@ -269,17 +270,17 @@ public class WebConfig
                 types.put(className, thisClassType);
             }
 
-            Set cds = model.getClassDescriptorsForClass(Class.forName(className));
-            List cdList = new ArrayList(cds);
+            Set<ClassDescriptor> cds = model.getClassDescriptorsForClass(Class.forName(className));
+            List<ClassDescriptor> cdList = new ArrayList<ClassDescriptor>(cds);
 
-            for (Iterator cdIter = cdList.iterator(); cdIter.hasNext(); ) {
-                ClassDescriptor cd = (ClassDescriptor) cdIter.next();
+            for (Iterator<ClassDescriptor> cdIter = cdList.iterator(); cdIter.hasNext(); ) {
+                ClassDescriptor cd = cdIter.next();
 
                 if (className.equals(cd.getName())) {
                     continue;
                 }
 
-                Type superClassType = (Type) types.get(cd.getName());
+                Type superClassType = types.get(cd.getName());
 
                 if (superClassType != null) {
                     if (thisClassType.getFieldConfigs().size() == 0) {
@@ -309,8 +310,7 @@ public class WebConfig
                     if (thisClassType.getWidgets().size() == 0
                                     && superClassType.getWidgets() != null
                                     && superClassType.getWidgets().size() > 0) {
-                        Iterator widgetIter
-                        = superClassType.getWidgets().iterator();
+                        Iterator widgetIter = superClassType.getWidgets().iterator();
 
                         while (widgetIter.hasNext()) {
                             WidgetConfig wi = (WidgetConfig) widgetIter.next();
@@ -330,11 +330,11 @@ public class WebConfig
     public String toString() {
         StringBuffer sb = new StringBuffer();
         sb.append("<webconfig>");
-        Iterator typesIter = types.values().iterator();
+        Iterator<Type> typesIter = types.values().iterator();
         while (typesIter.hasNext()) {
             sb.append(typesIter.next().toString());
         }
-        Iterator tableExportConfigIter = tableExportConfigs.values().iterator();
+        Iterator<TableExportConfig> tableExportConfigIter = tableExportConfigs.values().iterator();
         while (tableExportConfigIter.hasNext()) {
             sb.append(tableExportConfigIter.next().toString());
         }
