@@ -20,7 +20,6 @@ import java.util.Map;
 import java.util.Set;
 import java.util.Stack;
 
-import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.intermine.dataconversion.ItemWriter;
 import org.intermine.metadata.Model;
@@ -46,7 +45,6 @@ public class BioGridConverter extends BioFileConverter
     protected static final String GENOMIC_NS = "http://www.flymine.org/model/genomic#";
     private static Map<String, String> masterList = new HashMap<String, String>();
     protected IdResolverFactory resolverFactory;
-    private Map<String, Item> synonyms = new HashMap<String, Item>();
 
     /**
      * Constructor
@@ -190,11 +188,7 @@ public class BioGridConverter extends BioFileConverter
                                                     && dbRef.equalsIgnoreCase("SGD"))) {
                         String identifier = attrs.getValue("id");
                         geneIdsToIdentifiers.put(geneId, identifier);
-                        try {
-                            getGene(organismTaxonId, identifier);
-                        } catch (ObjectStoreException e) {
-                            throw new RuntimeException("error while storing: " + identifier, e);
-                        }
+                        getGene(organismTaxonId, identifier);
                     }
                 }
 
@@ -315,12 +309,7 @@ public class BioGridConverter extends BioFileConverter
                         String identifier = geneIdsToIdentifiers.get(id);
                         Item gene = null;
                         if (identifier != null) {
-                            try {
-                                gene = getGene(organismTaxonId, identifier);
-                            } catch (ObjectStoreException e) {
-                                throw new RuntimeException("error while storing: "
-                                                           + identifier, e);
-                            }
+                            gene = getGene(organismTaxonId, identifier);
                         }
                         if (gene != null) {
                             interactorHolder = new InteractorHolder(gene, identifier);
@@ -460,7 +449,7 @@ public class BioGridConverter extends BioFileConverter
             return itemId;
         }
 
-        private Item getGene(String taxonId, String id) throws ObjectStoreException {
+        private Item getGene(String taxonId, String id) {
             String identifier = id;
             // for Drosophila attempt to update to a current gene identifier
             IdResolver resolver = resolverFactory.getIdResolver(false);
@@ -479,7 +468,6 @@ public class BioGridConverter extends BioFileConverter
                 item = createItem("Gene");
                 item.setAttribute("primaryIdentifier", identifier);
                 genes.put(identifier, item);
-                createSynonym(item.getIdentifier(), "identifier", identifier);
             }
             return item;
         }
@@ -646,22 +634,4 @@ public class BioGridConverter extends BioFileConverter
             }
         }
     }
-    private Item createSynonym(String subjectId, String type, String value)
-    throws ObjectStoreException {
-        String key = subjectId + type + value;
-        if (StringUtils.isEmpty(value)) {
-            return null;
-        }
-        if (!synonyms.containsKey(key)) {
-            Item syn = createItem("Synonym");
-            syn.setReference("subject", subjectId);
-            syn.setAttribute("type", type);
-            syn.setAttribute("value", value);
-            synonyms.put(key, syn);
-            store(syn);
-            return syn;
-        }
-        return null;
-    }
-
 }
