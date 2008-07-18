@@ -219,7 +219,7 @@ public class WebConfig
      * Return a Map of TableExportConfig.id to TableExportConfig objects.
      * @return the TableExportConfig Map
      */
-    public Map getTableExportConfigs() {
+    public Map<String, TableExportConfig> getTableExportConfigs() {
         return tableExportConfigs;
     }
 
@@ -229,6 +229,7 @@ public class WebConfig
      * @param obj the Object to compare with
      * @return true if this is equal to obj
      */
+    @Override
     public boolean equals(Object obj) {
         if (!(obj instanceof WebConfig)) {
             return false;
@@ -245,6 +246,7 @@ public class WebConfig
      *
      * @return the hashCode for this WebConfig object
      */
+    @Override
     public int hashCode() {
         return types.hashCode();
     }
@@ -327,6 +329,7 @@ public class WebConfig
      *
      * @return a String version of this WebConfig object
      */
+    @Override
     public String toString() {
         StringBuffer sb = new StringBuffer();
         sb.append("<webconfig>");
