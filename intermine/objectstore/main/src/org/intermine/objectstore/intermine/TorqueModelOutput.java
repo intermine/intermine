@@ -56,6 +56,8 @@ public class TorqueModelOutput
     protected String className = "";
     protected Set columns = new HashSet();
 
+    private static final String LONG_VAR_BINARY_TYPE = "LONGVARBINARY";
+
     /**
      * Constructor for this class
      *
@@ -133,6 +135,7 @@ public class TorqueModelOutput
         sb.append(INDENT + "<table name=\"" + MetadataManager.METADATA_TABLE + "\">" + ENDL)
             .append(generateColumn("key", "java.lang.String"))
             .append(generateColumn("value", "java.lang.String"))
+            .append(generateColumn("blob_value", "LONGVARBINARY"))
             .append(INDENT + "<unique name=\"" + MetadataManager.METADATA_TABLE + "_key\">" + ENDL)
             .append(INDENT + INDENT + "<unique-column name=\"key\"/>" + ENDL)
             .append(INDENT + "</unique>" + ENDL)
@@ -231,7 +234,8 @@ public class TorqueModelOutput
             .append("\" type=\"")
             .append(generateJdbcType(type))
             .append("\"");
-        if ((type.indexOf(".") == -1) || ("id".equals(name))) {
+        if ((type.indexOf(".") == -1 && !type.equals(LONG_VAR_BINARY_TYPE))
+            || ("id".equals(name))) {
             sb.append(" required=\"true\"");
         }
         sb.append("/>" + ENDL);
@@ -284,6 +288,10 @@ public class TorqueModelOutput
             return "BIGINT";
         } else if (type.equals("java.math.BigDecimal")) {
             return "NUMERIC";
+        } else {
+            if (type.equals(LONG_VAR_BINARY_TYPE)) {
+                return LONG_VAR_BINARY_TYPE;
+            }
         }
         throw new IllegalArgumentException("Invalid type \"" + type + "\"");
     }
