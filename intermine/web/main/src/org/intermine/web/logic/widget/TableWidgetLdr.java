@@ -463,7 +463,10 @@ public class TableWidgetLdr
         for (String id : selectedIds) {
             if (termsToIds.get(id) != null) {
                 List row = new LinkedList();
-                row.add(id);
+
+                row.add(id);                    // identifier
+                row.add(termsToIds.get(id));    // label
+
                 List<String> ids = termsToIds.get(id);
                 StringBuffer sb = new StringBuffer();
                 for (String term : ids) {
