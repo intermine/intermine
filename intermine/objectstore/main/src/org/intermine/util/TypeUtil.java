@@ -10,33 +10,33 @@ package org.intermine.util;
  *
  */
 
-import java.beans.Introspector;
-import java.beans.PropertyDescriptor;
-import java.beans.IntrospectionException;
-import java.lang.reflect.Method;
-import java.math.BigDecimal;
-import java.net.URL;
-import java.net.MalformedURLException;
-import java.util.List;
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Iterator;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.StringTokenizer;
 import java.util.TimeZone;
 import java.util.TreeMap;
-import java.text.DateFormat;
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
 
 import org.intermine.metadata.Model;
 import org.intermine.model.InterMineObject;
 import org.intermine.objectstore.proxy.ProxyReference;
+
+import java.beans.IntrospectionException;
+import java.beans.Introspector;
+import java.beans.PropertyDescriptor;
+import java.lang.reflect.Method;
+import java.math.BigDecimal;
+import java.net.MalformedURLException;
+import java.net.URL;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 
 /**
  * Provides utility methods for working with Java types and reflection
@@ -48,6 +48,7 @@ import org.intermine.objectstore.proxy.ProxyReference;
 public class TypeUtil
 {
     private TypeUtil() {
+        // empty
     }
 
     private static Map<Class, Map<String, FieldInfo>> classToFieldnameToFieldInfo
@@ -534,14 +535,13 @@ public class TypeUtil
             } else {
                 try {
                     return DATE_TIME_FORMAT.parse(value);
-                } catch (ParseException e) {
+                } catch (Exception e) {
+                    // probably ParseException, try a simpler format
                     try {
                         return DATE_FORMAT.parse(value);
-                    } catch (ParseException e1) {
+                    } catch (Exception e1) {
                         return new RuntimeException("Failed to parse " + value + " as a Date", e);
                     }
-                } catch (NumberFormatException e) {
-                    return new RuntimeException("Failed to parse " + value + " as a Date", e);
                 }
             }
         }
