@@ -1,8 +1,8 @@
 PATTERN IBBBPBBBPBBBPBBB
-OUTPUT ../selection_sort.mpg
+OUTPUT ../merge_sort.mpg
 INPUT_DIR .
 INPUT
-pic*.pnm.gz [0000-2039]
+pic*.pnm.gz [0000-1979]
 END_INPUT
 BASE_FILE_FORMAT PPM
 INPUT_CONVERT gunzip -c *

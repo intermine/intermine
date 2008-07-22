@@ -1,0 +1,229 @@
+size 800 600
+load 0 images/0.pnm
+load 1 images/1.pnm
+load 2 images/2.pnm
+load 3 images/3.pnm
+load 4 images/4.pnm
+load 5 images/5.pnm
+load 6 images/6.pnm
+load 7 images/7.pnm
+load 8 images/8.pnm
+load 9 images/9.pnm
+load 10 images/red_arrow.pnm
+load 11 images/red_arrow.pnm
+load 12 images/stop_here.pnm
+load 13 images/stop_here.pnm
+load 20 images/green_arrow.pnm
+load 21 images/green_arrow.pnm
+load 22 images/green_arrow.pnm
+load 23 images/green_arrow.pnm
+load 24 images/green_arrow.pnm
+load 25 images/green_arrow.pnm
+load 26 images/green_arrow.pnm
+load 27 images/green_arrow.pnm
+load 28 images/green_arrow.pnm
+load 29 images/green_arrow.pnm
+position 0 110 277
+position 1 168 277
+position 2 226 277
+position 3 284 277
+position 4 342 277
+position 5 400 277
+position 6 458 277
+position 7 516 277
+position 8 574 277
+position 9 632 277
+position 10 110 232
+position 11 168 232
+position 12 226 232
+position 13 284 232
+position 14 342 232
+position 15 400 232
+position 16 458 232
+position 17 516 232
+position 18 574 232
+position 19 632 232
+position 20 110 255
+position 21 168 255
+position 22 226 255
+position 23 284 255
+position 24 342 255
+position 25 400 255
+position 26 458 255
+position 27 516 255
+position 28 574 255
+position 29 632 255
+position 39 81 208
+position 40 139 208
+position 41 197 208
+position 42 255 208
+position 43 313 208
+position 44 371 208
+position 45 429 208
+position 46 487 208
+position 47 545 208
+position 48 603 208
+position 49 661 208
+place 5 0
+place 2 1
+place 9 2
+place 4 3
+place 1 4
+place 6 5
+place 8 6
+place 0 7
+place 3 8
+place 7 9
+advance 50
+# Pass 0-9:      5 2 9 4 1 6 8 0 3 7
+move 5 20 20
+fadein 12 39 20
+fadein 13 49 20
+advance 20
+fadein 10 11 10
+advance 20
+fadein 21 11 10
+move 10 12 20
+advance 30
+fadein 11 19 10
+advance 20
+fadein 29 19 10
+move 11 18 20
+advance 30
+swap 9 3 30
+advance 40
+fadein 22 12 10
+move 10 13 20
+advance 30
+fadein 23 13 10
+move 10 14 20
+advance 30
+fadein 24 14 10
+move 10 15 20
+advance 30
+fadein 28 18 10
+move 11 17 20
+advance 30
+swap 6 0 30
+advance 40
+fadein 25 15 10
+move 10 16 20
+advance 30
+fadein 27 17 10
+move 11 16 20
+advance 30
+fadeout 10 10
+fadeout 11 10
+fadeout 21 10
+fadeout 22 10
+fadeout 23 10
+fadeout 24 10
+fadeout 25 10
+fadeout 27 10
+fadeout 28 10
+fadeout 29 10
+advance 20
+swing 5 5 30
+swing 0 0 30
+advance 40
+# Pass 0-4:     0 2 3 4 1 5 8 6 9 7
+move 0 20 20
+move 13 44 20
+advance 20
+fadein 10 11 10
+advance 20
+fadein 11 14 10
+advance 20
+fadein 24 14 10
+move 11 13 20
+advance 30
+fadein 23 13 10
+move 11 12 20
+advance 30
+fadein 22 12 10
+move 11 11 20
+advance 30
+fadeout 10 10
+fadeout 11 10
+fadeout 22 10
+fadeout 23 10
+fadeout 24 10
+advance 20
+move 0 0 20
+# Pass 1-4:     0 2 3 4 1 5 8 6 9 7
+move 2 21 20
+move 12 40 20
+advance 20
+fadein 10 12 10
+advance 20
+fadein 11 14 10
+advance 20
+swap 3 1 30
+advance 40
+fadein 22 12 10
+move 10 13 20
+advance 30
+fadein 24 14 10
+move 11 13 20
+advance 30
+fadeout 10 10
+fadeout 11 10
+fadeout 22 10
+fadeout 24 10
+advance 20
+swing 2 2 30
+swing 1 1 30
+advance 40
+# Pass 3-4:     0 1 2 4 3 5 8 6 9 7
+move 4 23 20
+move 12 42 20
+advance 20
+fadein 10 14 10
+advance 20
+fadeout 10 10
+advance 20
+swing 3 3 30
+swing 4 4 30
+advance 40
+# Pass 6-9:     0 1 2 3 4 5 8 6 9 7
+move 8 26 20
+move 12 45 20
+move 13 49 20
+advance 20
+fadein 10 17 10
+advance 20
+fadein 27 17 10
+move 10 18 20
+advance 30
+fadein 11 19 10
+advance 20
+swap 9 7 30
+advance 40
+fadein 28 18 10
+move 10 19 20
+advance 30
+fadeout 10 10
+fadeout 11 10
+fadeout 27 10
+fadeout 28 10
+advance 20
+swing 8 8 30
+swing 7 6 30
+advance 40
+# Pass 6-7:     0 1 2 3 4 5 7 6 8 9
+move 7 26 20
+move 13 47 20
+advance 20
+fadein 10 17 10
+advance 20
+fadeout 10 10
+advance 20
+swing 7 7 30
+swing 6 6 30
+advance 40
+fadeout 12 10
+fadeout 13 10
+advance 10
+# End
+advance 50
+stop

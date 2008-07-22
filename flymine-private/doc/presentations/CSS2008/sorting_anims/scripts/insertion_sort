@@ -1,4 +1,4 @@
-size 800 600
+size 800 250
 load 0 images/0.pnm
 load 1 images/1.pnm
 load 2 images/2.pnm
@@ -12,26 +12,26 @@ load 9 images/9.pnm
 load 10 images/compare.pnm
 load 11 images/stop_here.pnm
 load 12 images/compare_good.pnm
-position 0 110 277
-position 1 168 277
-position 2 226 277
-position 3 284 277
-position 4 342 277
-position 5 400 277
-position 6 458 277
-position 7 516 277
-position 8 574 277
-position 9 632 277
-position 10 139 208
-position 11 197 208
-position 12 255 208
-position 13 313 208
-position 14 371 208
-position 15 429 208
-position 16 487 208
-position 17 545 208
-position 18 603 208
-position 19 661 208
+position 0 110 127
+position 1 168 127
+position 2 226 127
+position 3 284 127
+position 4 342 127
+position 5 400 127
+position 6 458 127
+position 7 516 127
+position 8 574 127
+position 9 632 127
+position 10 139 58
+position 11 197 58
+position 12 255 58
+position 13 313 58
+position 14 371 58
+position 15 429 58
+position 16 487 58
+position 17 545 58
+position 18 603 58
+position 19 661 58
 place 5 0
 place 2 1
 place 9 2
