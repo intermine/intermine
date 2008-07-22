@@ -72,8 +72,8 @@ public class ChromosomeDistributionGraphURLGenerator implements GraphCategoryURL
      */
     public PathQuery generatePathQuery(ObjectStore os,
                                        InterMineBag imBag,
-                                       @SuppressWarnings("unused") String series,
-                                       @SuppressWarnings("unused") String category) {
+                                       @SuppressWarnings("unused") String category,
+                                       @SuppressWarnings("unused") String series) {
 
         Model model = os.getModel();
         InterMineBag bag = imBag;
@@ -113,7 +113,7 @@ public class ChromosomeDistributionGraphURLGenerator implements GraphCategoryURL
         code = q.getUnusedConstraintCode();
         PathNode chromosomeNode = q.addNode(bagType + ".chromosome.primaryIdentifier");
         Constraint chromosomeConstraint
-                        = new Constraint(constraintOp, series, false, label, code, id, null);
+                        = new Constraint(constraintOp, category, false, label, code, id, null);
         chromosomeNode.getConstraints().add(chromosomeConstraint);
 
         if (organism != null) {
