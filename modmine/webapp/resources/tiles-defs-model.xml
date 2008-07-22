@@ -1,3 +1,9 @@
+  <definition name="orthologueDisplayer.tile" path="/model/orthologueDisplayer.jsp" 
+    controllerUrl="/initOrthologueDisplayer.do"/>
+    
+  <definition name="attributeLinkDisplayer.tile" path="/model/attributeLinkDisplayer.jsp" 
+          controllerUrl="/initAttributeLinkDisplayer.do"/>
+
 <definition name="providers.tile" path="/model/providers.jsp" 
         controllerUrl="/initProviders.do"/>
 <definition name="projects.tile" path="/model/projects.jsp" 

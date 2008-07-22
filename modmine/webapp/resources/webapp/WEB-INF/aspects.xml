@@ -1,4 +1,19 @@
 <aspects>
+  <aspect name="modENCODE">
+    <subtitle></subtitle>
+    <icon-image>model/images/modENCODE_s.png</icon-image>
+    <large-image>model/images/modENODE_s.png</large-image>
+    <intro-text>
+      The National Human Genome Research Institute (NHGRI) model organism ENCyclopedia Of DNA Elements 
+      (modENCODE) Project will try to identify all of the sequence-based functional elements in the 
+      Caenorhabditis elegans and Drosophila melanogaster genomes. 
+      The project is run as a Research Network. 
+    </intro-text>
+    <tile-name>model/projects.jsp</tile-name>
+    <aspect-source name="FlyBase" url="http://www.flybase.org"/>
+    <aspect-source name="WormBase" url="http://www.wormbase.org/"/>
+  </aspect>
+
   <aspect name="Genomics">
     <subtitle>Genome annotation</subtitle>
     <icon-image>model/images/genomics.gif</icon-image>
@@ -68,37 +83,6 @@
     <aspect-source name="FlyAtlas" url="http://www.flyatlas.org/"/>
   </aspect>
 
-<!--
-  <aspect name="Transcriptional Regulation">
-    <subtitle>Regulatory regions and&lt;br/&gt;transcription factor binding sites</subtitle>
-    <icon-image>model/images/bindingSites.png</icon-image>
-    <large-image>model/images/bindingSites.png</large-image>
-    <intro-text>
-      Regulatory regions and transcription factor binding sites in &lt;i&gt;Drosophila melanogaster&lt;/i&gt; from FlyReg, REDfly, Tiffin and FlyBase.
-    </intro-text>
-    <tile-name>model/bindingSites.jsp</tile-name>
-    <aspect-source name="FlyReg" url="http://www.flyreg.org/"/>
-    <aspect-source name="REDfly" url="http://redfly.ccr.buffalo.edu/"/>
-    <aspect-source name="FlyBase" url="http://www.flybase.org"/>
-    <aspect-source name="Tiffin" url="http://servlet.sanger.ac.uk/tiffin/"/>
-  </aspect>
-
-  <aspect name="RNAi">
-    <subtitle>RNA interference</subtitle>
-    <icon-image>model/images/rnai.png</icon-image>
-    <large-image>model/images/rnai.png</large-image>
-    <intro-text>
-     Results from cell-based RNAi interference experiments from the
-     &lt;i&gt;Drosophila&lt;/i&gt; RNAi screening center and from
-     &lt;i&gt;in vivo&lt;/i&gt; experiments in &lt;i&gt;Caenorhabditis
-     elegans&lt;/i&gt;.  By using orthologues, gene phenotypes in other
-     organisms can be inferred from the &lt;i&gt;C. elegans&lt;/i&gt;
-     RNAi experiments.
-    </intro-text>
-    <tile-name>model/RNAi.jsp</tile-name>
-    <aspect-source name="Drosophila&lt;/i&gt; RNAi Screening Center" url="http://www.flyrnai.org/"/>
-  </aspect>
--->
 	
   <aspect name="Literature">
     <subtitle></subtitle>
