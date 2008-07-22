@@ -77,8 +77,8 @@ public class FlyFishGraphURLGenerator implements GraphCategoryURLGenerator
      */
     public PathQuery generatePathQuery(ObjectStore os,
                                        InterMineBag bag,
-                                       String series,
-                                       String category) {
+                                       String category,
+                                       String series) {
 
         Model model = os.getModel();
         PathQuery q = new PathQuery(model);
@@ -92,12 +92,12 @@ public class FlyFishGraphURLGenerator implements GraphCategoryURLGenerator
         // filter out BDGP
         q.addConstraint("Gene.mRNAExpressionResults.dataSet.title",  Constraints.eq(DATASET));
 
-        // stage (series)
+        // stage (category)
         q.addConstraint("Gene.mRNAExpressionResults.stageRange",
-                        Constraints.eq(series + " (fly-FISH)"));
+                        Constraints.eq(category + " (fly-FISH)"));
 
-        // expressed (category)
-        Boolean expressed = (category.equals("true") ? Boolean.TRUE : Boolean.FALSE);
+        // expressed (series)
+        Boolean expressed = (series.equals("true") ? Boolean.TRUE : Boolean.FALSE);
         q.addConstraint("Gene.mRNAExpressionResults.expressed",  Constraints.eq(expressed));
 
         q.setConstraintLogic("A and B and C and D");

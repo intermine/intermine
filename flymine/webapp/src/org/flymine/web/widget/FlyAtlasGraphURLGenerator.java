@@ -65,8 +65,8 @@ public class FlyAtlasGraphURLGenerator implements GraphCategoryURLGenerator
      */
     public PathQuery generatePathQuery(ObjectStore os,
                                        InterMineBag bag,
-                                       String series,
-                                       String category) {
+                                       String category,
+                                       String series) {
 
         Model model = os.getModel();
         PathQuery q = new PathQuery(model);
@@ -78,8 +78,8 @@ public class FlyAtlasGraphURLGenerator implements GraphCategoryURLGenerator
                   + "FlyAtlasResult.presentCall");
 
         q.addConstraint("Gene",  Constraints.in(bag.getName()));
-        q.addConstraint("FlyAtlasResult.affyCall",  Constraints.eq(category));
-        q.addConstraint("FlyAtlasResult.assays.name",  Constraints.eq(series));
+        q.addConstraint("FlyAtlasResult.affyCall",  Constraints.eq(series));
+        q.addConstraint("FlyAtlasResult.assays.name",  Constraints.eq(category));
 
         Boolean sortAscending = (category.equalsIgnoreCase("up") ? Boolean.FALSE : Boolean.TRUE);
 
