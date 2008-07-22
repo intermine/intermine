@@ -3,12 +3,13 @@ import java.util.*;
 
 public class MakeAnimation
 {
-    public static final int MAX_IMAGES = 100;
+    public static final int MAX_IMAGES = 1000;
     public static final int MT_MOVE = 0;
     public static final int MT_SWING = 1;
     public static final int MT_FLASH = 2;
     public static final int MT_FADEIN = 3;
     public static final int MT_FADEOUT = 4;
+    public static final int MT_SPLINE = 5;
 
     public static void main(String args[]) throws IOException
     {
@@ -39,6 +40,8 @@ public class MakeAnimation
             int yImages[] = new int[MAX_IMAGES];
             int xMove[] = new int[MAX_IMAGES];
             int yMove[] = new int[MAX_IMAGES];
+            int xSpline[] = new int[MAX_IMAGES];
+            int ySpline[] = new int[MAX_IMAGES];
             int startMove[] = new int[MAX_IMAGES];
             int framesMove[] = new int[MAX_IMAGES];
             int moveType[] = new int[MAX_IMAGES];
@@ -58,13 +61,21 @@ public class MakeAnimation
                                     int yMid = 2 * y + yMove[i];
                                     double xRot = Math.cos(progress * Math.PI) * xMove[i] - Math.sin(progress * Math.PI) * yMove[i];
                                     double yRot = Math.sin(progress * Math.PI) * xMove[i] + Math.cos(progress * Math.PI) * yMove[i];
-                                    x = (int) ((xMid - xRot) / 2);
-                                    y = (int) ((yMid - yRot) / 2);
+                                    x = (int) ((xMid - xRot + 1.0) / 2.0);
+                                    y = (int) ((yMid - yRot + 1.0) / 2.0);
                                     output.copyIn(images[i], x, y);
                                 } else if (moveType[i] == MT_MOVE) {
                                     progress = (1.0 - Math.cos(progress * Math.PI)) / 2.0;
-                                    x = x + (int) (progress * xMove[i]);
-                                    y = y + (int) (progress * yMove[i]);
+                                    x = x + (int) ((progress * xMove[i]) + 0.5);
+                                    y = y + (int) ((progress * yMove[i]) + 0.5);
+                                    output.copyIn(images[i], x, y);
+                                } else if (moveType[i] == MT_SPLINE) {
+                                    progress = (1.0 - Math.cos(progress * Math.PI)) / 2.0;
+                                    double m1 = (1.0 - progress) * (1.0 - progress) * (1.0 - progress);
+                                    double m2 = 3.0 * (progress - (progress * progress));
+                                    double m3 = progress * progress * progress;
+                                    x = (int) ((m1 * xImages[i]) + (m2 * xSpline[i]) + (m3 * xMove[i]) + 0.5);
+                                    y = (int) ((m1 * yImages[i]) + (m2 * ySpline[i]) + (m3 * yMove[i]) + 0.5);
                                     output.copyIn(images[i], x, y);
                                 } else if (moveType[i] == MT_FLASH) {
                                     progress = Math.sin(progress * Math.PI);
@@ -94,6 +105,7 @@ public class MakeAnimation
                                         yImages[i] += yMove[i];
                                         break;
                                     case MT_FADEIN:
+                                    case MT_SPLINE:
                                         xImages[i] = xMove[i];
                                         yImages[i] = yMove[i];
                                         break;
@@ -105,9 +117,9 @@ public class MakeAnimation
                             }
                         }
                     }
-                    String outFileName = basePath + (frameNo < 1000 ? "0" : "") + (frameNo < 100 ? "0" : "") + (frameNo < 10 ? "0" : "") + frameNo + ".pnm";
+                    String outFileName = basePath + (frameNo < 1000 ? "0" : "") + (frameNo < 100 ? "0" : "") + (frameNo < 10 ? "0" : "") + frameNo + ".pnm.gz";
                     System.err.println("Writing file " + outFileName);
-                    output.writeImage(outFileName);
+                    output.writeImageGzip(outFileName);
                     frameNo++;
                 }
                 while (commandFrame <= frameNo) {
@@ -158,6 +170,19 @@ public class MakeAnimation
                         startMove[index] = frameNo;
                         framesMove[index] = frames;
                         moveType[index] = MT_SWING;
+                    } else if ("spline".equals(command)) {
+                        // Moves an image along a spline curve past a control point to a new position
+                        int index = Integer.parseInt(inLine.nextToken());
+                        int position1 = Integer.parseInt(inLine.nextToken());
+                        int position2 = Integer.parseInt(inLine.nextToken());
+                        int frames = Integer.parseInt(inLine.nextToken());
+                        xSpline[index] = xPositions[position1];
+                        ySpline[index] = yPositions[position1];
+                        xMove[index] = xPositions[position2];
+                        yMove[index] = yPositions[position2];
+                        startMove[index] = frameNo;
+                        framesMove[index] = frames;
+                        moveType[index] = MT_SPLINE;
                     } else if ("flash".equals(command)) {
                         // Flashes up an image for a period of time. If the image is already shown,
                         // then this moves it to the new position and back again. Otherwise, it

@@ -12,8 +12,8 @@ load 9 images/9.pnm
 load 10 images/stop_here.pnm
 load 11 images/compare.pnm
 load 12 images/compare_good.pnm
-load 13 images/compare_3.pnm
-load 14 images/compare_3_good.pnm
+load 13 images/stop_here.pnm
+load 14 images/stop_here.pnm
 position 0 110 277
 position 1 168 277
 position 2 226 277
@@ -34,6 +34,46 @@ position 16 487 208
 position 17 545 208
 position 18 603 208
 position 19 661 208
+position 20 110 150
+position 21 168 150
+position 22 226 150
+position 23 284 150
+position 24 342 150
+position 25 400 150
+position 26 458 150
+position 27 516 150
+position 28 574 150
+position 29 632 150
+position 30 139 81
+position 31 197 81
+position 32 255 81
+position 33 313 81
+position 34 371 81
+position 35 429 81
+position 36 487 81
+position 37 545 81
+position 38 603 81
+position 39 661 81
+position 40 110 404
+position 41 168 404
+position 42 226 404
+position 43 284 404
+position 44 342 404
+position 45 400 404
+position 46 458 404
+position 47 516 404
+position 48 574 404
+position 49 632 404
+position 50 139 335
+position 51 197 335
+position 52 255 335
+position 53 313 335
+position 54 371 335
+position 55 429 335
+position 56 487 335
+position 57 545 335
+position 58 603 335
+position 59 661 335
 place 5 0
 place 2 1
 place 9 2
@@ -45,65 +85,91 @@ place 0 7
 place 3 8
 place 7 9
 advance 50
+# Transform
+spline 5 20 23 40
+spline 2 1 3 40
+spline 9 42 43 40
+spline 4 23 24 40
+spline 1 4 4 40
+spline 6 45 44 40
+spline 8 26 25 40
+spline 0 7 5 40
+spline 3 48 45 40
+spline 7 29 26 40
+advance 50
 # Pass 1.1:      5 2 9 4 1 6 8 0 3 7
-fadein 10 13 10
+fadein 10 34 10
+fadein 13 14 10
+fadein 14 54 10
 advance 20
-flash 13 10 20
+flash 11 33 20
 advance 30
 swap 5 4 30
 advance 40
 # Pass 1.2:     4 2 9 5 1 6 8 0 3 7
-move 10 14 10
+move 10 35 10
 advance 20
-flash 13 11 20
+flash 11 13 20
 advance 30
 swap 2 1 30
 advance 40
 # Pass 1.3:    4 1 9 5 2 6 8 0 3 7
-move 10 15 10
-advance 20
-flash 13 12 20
+move 13 15 10
+advance 10
+fadeout 13 40
+advance 10
+flash 11 53 20
 advance 30
 swap 9 6 30
 advance 40
 # Pass 1.4:    4 1 6 5 2 9 8 0 3 7
-move 10 16 10
-advance 20
-flash 14 13 20
+move 14 55 10
+advance 10
+fadeout 14 40
+advance 10
+flash 12 34 20
 advance 30
 # Pass 1.5:    4 1 6 5 2 9 8 0 3 7
-move 10 17 10
-advance 20
-flash 13 14 20
+move 10 36 10
+advance 10
+fadeout 10 40
+advance 10
+flash 11 14 20
 advance 30
 swap 2 0 30
 advance 40
-flash 13 11 20
+flash 11 13 20
 advance 30
 swap 1 0 30
 advance 40
 # Pass 1.6:    4 0 6 5 1 9 8 2 3 7
-move 10 18 10
-advance 20
-flash 13 15 20
+flash 11 54 20
 advance 30
 swap 9 3 30
 advance 40
-flash 13 12 20
+flash 11 53 20
 advance 30
 swap 6 3 30
 advance 40
 # Pass 1.7:    4 0 3 5 1 6 8 2 9 7
-move 10 19 10
-advance 10
-fadeout 10 40
-advance 10
-flash 13 16 20
+flash 11 35 20
 advance 30
 swap 8 7 30
 advance 40
-flash 14 13 20
+flash 12 34 20
 advance 30
+# Transform
+spline 4 20 0 40
+spline 0 1 1 40
+spline 3 42 2 40
+spline 5 23 3 40
+spline 1 4 4 40
+spline 6 45 5 40
+spline 7 26 6 40
+spline 2 7 7 40
+spline 9 48 8 40
+spline 8 29 9 40
+advance 50
 # Pass 2.1:    4 0 3 5 1 6 7 2 9 8
 fadein 10 11 10
 advance 20

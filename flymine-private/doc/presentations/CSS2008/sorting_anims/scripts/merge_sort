@@ -1,0 +1,261 @@
+size 800 400
+load 0 images/0.pnm
+load 1 images/1.pnm
+load 2 images/2.pnm
+load 3 images/3.pnm
+load 4 images/4.pnm
+load 5 images/5.pnm
+load 6 images/6.pnm
+load 7 images/7.pnm
+load 8 images/8.pnm
+load 9 images/9.pnm
+position 0 110 27
+position 1 168 27
+position 2 226 27
+position 3 284 27
+position 4 342 27
+position 5 400 27
+position 6 458 27
+position 7 516 27
+position 8 574 27
+position 9 632 27
+position 10 81 58
+position 11 139 58
+position 12 197 58
+position 13 255 58
+position 14 313 58
+position 15 371 58
+position 16 429 58
+position 17 487 58
+position 18 545 58
+position 19 603 58
+position 20 661 58
+position 30 52 89
+position 31 110 89
+position 32 168 89
+position 33 226 89
+position 34 284 89
+position 35 342 89
+position 36 400 89
+position 37 458 89
+position 38 516 89
+position 39 574 89
+position 40 632 89
+position 41 690 89
+position 50 23 120
+position 51 81 120
+position 52 139 120
+position 53 197 120
+position 54 255 120
+position 55 313 120
+position 56 371 120
+position 57 429 120
+position 58 487 120
+position 59 545 120
+position 60 603 120
+position 61 661 120
+position 62 719 120
+position 100 110 177
+position 101 168 177
+position 102 226 177
+position 103 284 177
+position 104 342 177
+position 105 400 177
+position 106 458 177
+position 107 516 177
+position 108 574 177
+position 109 632 177
+position 110 81 208
+position 111 139 208
+position 112 197 208
+position 113 255 208
+position 114 313 208
+position 115 371 208
+position 116 429 208
+position 117 487 208
+position 118 545 208
+position 119 603 208
+position 120 661 208
+position 130 52 239
+position 131 110 239
+position 132 168 239
+position 133 226 239
+position 134 284 239
+position 135 342 239
+position 136 400 239
+position 137 458 239
+position 138 516 239
+position 139 574 239
+position 140 632 239
+position 141 690 239
+position 150 23 270
+position 151 81 270
+position 152 139 270
+position 153 197 270
+position 154 255 270
+position 155 313 270
+position 156 371 270
+position 157 429 270
+position 158 487 270
+position 159 545 270
+position 160 603 270
+position 161 661 270
+position 162 719 270
+place 5 0
+place 2 1
+place 9 2
+place 4 3
+place 1 4
+place 6 5
+place 8 6
+place 0 7
+place 3 8
+place 7 9
+advance 50
+# Merge sort - first split off the left half
+move 5 10 30
+move 2 11 30
+move 9 12 30
+move 4 13 30
+move 1 14 30
+advance 40
+# Now split off left half again
+move 5 30 30
+move 2 31 30
+move 9 32 30
+advance 40
+# Split off left half yet again
+move 5 50 30
+move 2 51 30
+advance 40
+# Sort 5 and 2
+move 2 150 30
+advance 40
+move 5 151 30
+advance 40
+move 2 50 30
+move 5 51 30
+move 9 53 30
+advance 40
+# Merge 25 and 9
+move 2 130 30
+advance 40
+move 5 131 30
+advance 40
+move 9 132 30
+advance 40
+move 2 30 30
+move 5 31 30
+move 9 32 30
+move 4 34 30
+move 1 35 30
+advance 40
+# Sort 4 and 1
+move 1 134 30
+advance 40
+move 4 135 30
+advance 40
+move 1 34 30
+move 4 35 30
+advance 40
+# Merge 259 and 14
+move 1 110 30
+advance 40
+move 2 111 30
+advance 40
+move 4 112 30
+advance 40
+move 5 113 30
+advance 40
+move 9 114 30
+advance 40
+move 1 10 30
+move 2 11 30
+move 4 12 30
+move 5 13 30
+move 9 14 30
+move 6 16 30
+move 8 17 30
+move 0 18 30
+move 3 19 30
+move 7 20 30
+advance 40
+# Split off 680
+move 6 36 30
+move 8 37 30
+move 0 38 30
+advance 40
+# Split off 68
+move 6 56 30
+move 8 57 30
+advance 40
+# Sort 6 and 8
+move 6 156 30
+advance 40
+move 8 157 30
+advance 40
+move 6 56 30
+move 8 57 30
+move 0 59 30
+advance 40
+# Merge 68 and 0
+move 0 136 30
+advance 40
+move 6 137 30
+advance 40
+move 8 138 30
+advance 40
+move 0 36 30
+move 6 37 30
+move 8 38 30
+move 3 40 30
+move 7 41 30
+advance 40
+# Sort 3 and 7
+move 3 140 30
+advance 40
+move 7 141 30
+advance 40
+move 3 40 30
+move 7 41 30
+advance 40
+# Merge 068 and 37
+move 0 116 30
+advance 40
+move 3 117 30
+advance 40
+move 6 118 30
+advance 40
+move 7 119 30
+advance 40
+move 8 120 30
+advance 40
+move 0 16 30
+move 3 17 30
+move 6 18 30
+move 7 19 30
+move 8 20 30
+advance 40
+# Merge 12459 and 03678
+move 0 100 30
+advance 40
+move 1 101 30
+advance 40
+move 2 102 30
+advance 40
+move 3 103 30
+advance 40
+move 4 104 30
+advance 40
+move 5 105 30
+advance 40
+move 6 106 30
+advance 40
+move 7 107 30
+advance 40
+move 8 108 30
+advance 40
+move 9 109 30
+advance 40
+advance 50
+stop

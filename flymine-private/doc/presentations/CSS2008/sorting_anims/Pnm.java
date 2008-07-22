@@ -1,4 +1,5 @@
 import java.io.*;
+import java.util.zip.GZIPOutputStream;
 
 public class Pnm
 {
@@ -172,6 +173,14 @@ public class Pnm
     }
 
     public void writeImage(String fileName) throws IOException {
-        writeImage(new PrintStream(fileName));
+        PrintStream out = new PrintStream(fileName);
+        writeImage(out);
+        out.close();
+    }
+
+    public void writeImageGzip(String fileName) throws IOException {
+        PrintStream out = new PrintStream(new GZIPOutputStream(new FileOutputStream(fileName)));
+        writeImage(out);
+        out.close();
     }
 }

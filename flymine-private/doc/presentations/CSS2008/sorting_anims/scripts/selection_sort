@@ -1,4 +1,4 @@
-size 800 600
+size 800 340
 load 0 images/0.pnm
 load 1 images/1.pnm
 load 2 images/2.pnm
@@ -11,26 +11,26 @@ load 8 images/8.pnm
 load 9 images/9.pnm
 load 10 images/red_arrow.pnm
 load 11 images/green_arrow.pnm
-position 0 110 277
-position 1 168 277
-position 2 226 277
-position 3 284 277
-position 4 342 277
-position 5 400 277
-position 6 458 277
-position 7 516 277
-position 8 574 277
-position 9 632 277
-position 10 110 232
-position 11 168 232
-position 12 226 232
-position 13 284 232
-position 14 342 232
-position 15 400 232
-position 16 458 232
-position 17 516 232
-position 18 574 232
-position 19 632 232
+position 0 110 147
+position 1 168 147
+position 2 226 147
+position 3 284 147
+position 4 342 147
+position 5 400 147
+position 6 458 147
+position 7 516 147
+position 8 574 147
+position 9 632 147
+position 10 110 102
+position 11 168 102
+position 12 226 102
+position 13 284 102
+position 14 342 102
+position 15 400 102
+position 16 458 102
+position 17 516 102
+position 18 574 102
+position 19 632 102
 place 5 0
 place 2 1
 place 9 2
