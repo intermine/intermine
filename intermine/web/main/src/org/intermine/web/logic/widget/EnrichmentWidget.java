@@ -178,14 +178,16 @@ public class EnrichmentWidget extends Widget
 
         for (String id : selectedIds) {
             if (labelToId.get(id) != null) {
-                List row = new LinkedList();
 
+                List row = new LinkedList();
                 row.add(id);
-                row.add(labelToId.get(id));
+                String label = labelToId.get(id);
+                if (!label.equals(id)) {
+                    row.add(label);
+                }
 
                 BigDecimal bd = pvalues.get(id);
-                Double d = new Double(bd.doubleValue());
-                row.add(d);
+                row.add(new Double(bd.doubleValue()));
 
                 List<String> ids = termsToIds.get(id);
                 StringBuffer sb = new StringBuffer();
