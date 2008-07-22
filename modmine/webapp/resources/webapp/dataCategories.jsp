@@ -21,7 +21,24 @@
     <th>Note</th>
   </tr>
 
-  <tr><td rowspan="1" class="leftcol">
+  <tr><td rowspan="2" class="leftcol">
+        <html:link action="/aspect?name=modENCODE"> <p><img src="model/images/modENCODE.png" /></p>
+        <p> modENCODE </p></html:link></td>
+    <td> <i>D. melanogaster</i> </td>
+    <td> </td>
+    <td> </td>
+    <td> </td>
+    <td> &nbsp;</td>
+  </tr>
+  <tr>
+  <td> <i>C. elegans</i> </td>
+    <td> </td>
+    <td> </td>
+    <td> </td>
+    <td> &nbsp;</td>
+  
+
+  <tr><td rowspan="2" class="leftcol">
         <html:link action="/aspect?name=Genomics"> <p><img src="model/images/genomics.gif" /></p>
         <p> Genomics </p></html:link></td>
     <td> <i>D. melanogaster</i> </td>
@@ -30,7 +47,13 @@
     <td> Crosby et al - <a href="http://www.ncbi.nlm.nih.gov/entrez/query.fcgi?cmd=Retrieve&db=PubMed&dopt=Abstract&list_uids=17099233" target="_new">PubMed: 17099233</a></td>
     <td> &nbsp;</td>
   </tr>
-
+  <tr>
+  <td> <i>C. elegans</i> </td>
+    <td> Genome annotation - Release </td>
+    <td><a href="http://www.wormbase.org" target="_new">Wormbase</a></td>
+    <td> - </td>
+    <td> &nbsp;</td>
+</tr>
   <tr><td rowspan="1"  class="leftcol">
         <html:link action="/aspect?name=Comparative%20Genomics">
           <p>  <img src="model/images/comparativeGenomics.png" /></p>

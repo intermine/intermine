@@ -28,6 +28,9 @@
 	</c:forEach>
 </table>
 </div>
+
+dateStyle="short"
+
 --%>
 
 <c:set var="LIMIT" value="5"/>
@@ -42,8 +45,11 @@
           href="/${WEB_PROPERTIES['webapp.path']}/objectDetails.do?id=${item.value.id}">
  ${item.value.title}
     </html:link>
-    </td><td><fmt:formatDate value="${item.value.publicReleaseDate}" type="date" dateStyle="short"/>
     </td>
+    
+    <td><fmt:formatDate value="${item.value.publicReleaseDate}" type="date" pattern="yyyy-MM-dd"/>
+    </td>
+    
       </tr>
     </c:if>
   </c:forEach>

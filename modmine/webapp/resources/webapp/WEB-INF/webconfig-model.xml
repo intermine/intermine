@@ -42,7 +42,7 @@
       <fieldconfig fieldExpr="design"/>
       <fieldconfig fieldExpr="factorName"/>
       <fieldconfig fieldExpr="factorType"/>
-      <fieldconfig fieldExpr="description" showInResults="false"/>
+ <!--     <fieldconfig fieldExpr="description" showInResults="false"/> -->
     </fields>
   </class>
 
