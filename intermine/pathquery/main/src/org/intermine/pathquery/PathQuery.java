@@ -100,7 +100,7 @@ public class PathQuery
             List<Path> viewPaths = new ArrayList<Path>();
             while (it.hasNext()) {
                 String path = (String) it.next();
-                viewPaths.add(makePath(model, this, path.trim()));
+                viewPaths.add(new Path(model, path.trim()));
             }
             setViewPaths(viewPaths);
         } catch (PathError e) {
@@ -627,7 +627,7 @@ public class PathQuery
             if (sortOrder != null && !sortOrder.isEmpty()) {
                 sortOrder.get(0).setDirection(direction);
             } else {
-                Path p = PathQuery.makePath(model, this, view.get(0).toStringNoConstraints());
+                Path p = makePath(model, this, view.get(0).toStringNoConstraints());
                 OrderBy o = new OrderBy(p, direction);
                 sortOrder.add(o);
             }

@@ -71,13 +71,16 @@ public class FlyAtlasGraphURLGenerator implements GraphCategoryURLGenerator
         Model model = os.getModel();
         PathQuery q = new PathQuery(model);
 
-        q.setView("FlyAtlasResult.genes.secondaryIdentifier, FlyAtlasResult.genes.primaryIdentifier"
-                  + ",FlyAtlasResult.genes.name,FlyAtlasResult.genes.organism.name,"
-                  + "FlyAtlasResult.assays.name,FlyAtlasResult.enrichment,FlyAtlasResult.affyCall,"
-                  + "FlyAtlasResult.mRNASignal,FlyAtlasResult.mRNASignalSEM,"
-                  + "FlyAtlasResult.presentCall");
+        q.setView("FlyAtlasResult.genes.secondaryIdentifier, "
+                  + "FlyAtlasResult.genes.primaryIdentifier,"
+                  + "FlyAtlasResult.genes.name,"
+                  + "FlyAtlasResult.genes.organism.name,"
+                  + "FlyAtlasResult.assays.name,"
+                  + "FlyAtlasResult.enrichment,"
+                  + "FlyAtlasResult.affyCall,FlyAtlasResult.mRNASignal,"
+                  + "FlyAtlasResult.mRNASignalSEM,FlyAtlasResult.presentCall");
 
-        q.addConstraint("Gene",  Constraints.in(bag.getName()));
+        q.addConstraint("FlyAtlasResult.genes",  Constraints.in(bag.getName()));
         q.addConstraint("FlyAtlasResult.affyCall",  Constraints.eq(series));
         q.addConstraint("FlyAtlasResult.assays.name",  Constraints.eq(category));
 

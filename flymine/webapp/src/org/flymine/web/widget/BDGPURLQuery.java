@@ -12,18 +12,13 @@ package org.flymine.web.widget;
 
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.List;
 
 import org.intermine.metadata.Model;
 import org.intermine.model.InterMineObject;
 import org.intermine.objectstore.ObjectStore;
-import org.intermine.objectstore.query.ConstraintOp;
-import org.intermine.path.Path;
-import org.intermine.pathquery.Constraint;
-import org.intermine.pathquery.OrderBy;
-import org.intermine.pathquery.PathNode;
 import org.intermine.pathquery.PathQuery;
 import org.intermine.web.logic.bag.InterMineBag;
+import org.intermine.web.logic.query.Constraints;
 import org.intermine.web.logic.widget.WidgetURLQuery;
 
 /**
@@ -32,9 +27,10 @@ import org.intermine.web.logic.widget.WidgetURLQuery;
 public class BDGPURLQuery implements WidgetURLQuery
 {
 
-    InterMineBag bag;
-    String key;
-    ObjectStore os;
+    private InterMineBag bag;
+    private String key;
+    private ObjectStore os;
+    private static final String DATASET = "BDGP in situ data set";
 
     /**
      * @param key which record the user clicked on
@@ -55,77 +51,35 @@ public class BDGPURLQuery implements WidgetURLQuery
         Model model = os.getModel();
         PathQuery q = new PathQuery(model);
 
-        List<Path> view = new ArrayList<Path>();
+        String viewStrings = "Gene.secondaryIdentifier,Gene.name,Gene.organism.name,"
+            + "Gene.primaryIdentifier";
 
-        Path secondaryIdentifier = PathQuery.makePath(model, q, "Gene.secondaryIdentifier");
-        Path name = PathQuery.makePath(model, q, "Gene.name");
-        Path organism = PathQuery.makePath(model, q, "Gene.organism.name");
-        Path primaryIdentifier = PathQuery.makePath(model, q, "Gene.primaryIdentifier");
-        Path stage  =  PathQuery.makePath(model, q, "Gene.mRNAExpressionResults.stageRange");
-        Path dataset = PathQuery.makePath(model, q, "Gene.mRNAExpressionResults.dataSet.title");
-        Path term =  PathQuery.makePath(model, q,
-                                         "Gene.mRNAExpressionResults.mRNAExpressionTerms.name");
+        String expressionStrings = "Gene.mRNAExpressionResults.stageRange,"
+            + "Gene.mRNAExpressionResults.mRNAExpressionTerms.name,"
+            + "Gene.mRNAExpressionResults.dataSet.title";
 
+        q.setView(viewStrings);
+        if (keys == null) {
+            q.addView(expressionStrings);
+        }
         String bagType = bag.getType();
-
-        ConstraintOp constraintOp = ConstraintOp.IN;
-        String constraintValue = bag.getName();
-        String label = null, id = null, code = q.getUnusedConstraintCode();
-        Constraint c = new Constraint(constraintOp, constraintValue, false, label, code, id, null);
-        q.addNode(bagType).getConstraints().add(c);
-
+        q.addConstraint(bagType,  Constraints.in(bag.getName()));
         if (keys != null) {
-            code = q.getUnusedConstraintCode();
-            constraintOp = ConstraintOp.NOT_IN;
-            c = new Constraint(constraintOp, keys, false, label, code, id, null);
-            q.getNode(bagType).getConstraints().add(c);
+            q.addConstraint(bagType,  Constraints.notIn(new ArrayList(keys)));
             q.setConstraintLogic("A and B");
         } else {
-            constraintOp = ConstraintOp.LOOKUP;
-            code = q.getUnusedConstraintCode();
-            PathNode nameNode = q.addNode("Gene.mRNAExpressionResults.mRNAExpressionTerms");
-            nameNode.getConstraints().add(new Constraint(constraintOp, key, false, label,
-                                                         code, id, null));
-
-            constraintOp = ConstraintOp.EQUALS;
-            code = q.getUnusedConstraintCode();
-            PathNode expressedNode = q.addNode("Gene.mRNAExpressionResults.expressed");
-            expressedNode.getConstraints().add(new Constraint(constraintOp, Boolean.TRUE,
-                                                              false, label, code, id, null));
-
-            constraintOp = ConstraintOp.EQUALS;
-            code = q.getUnusedConstraintCode();
-            PathNode datasetNode = q.addNode("Gene.mRNAExpressionResults.dataSet.title");
-            datasetNode.getConstraints().add(new Constraint(constraintOp, "BDGP in situ data set",
-                                                            false, label, code, id, null));
+            q.addConstraint("Gene.mRNAExpressionResults.mRNAExpressionTerms",
+                            Constraints.lookup(key));
+            q.addConstraint("Gene.mRNAExpressionResults.expressed", Constraints.eq(Boolean.TRUE));
+            q.addConstraint("Gene.mRNAExpressionResults.dataSet.title", Constraints.eq(DATASET));
             q.setConstraintLogic("A and B and C and D");
         }
-
-
-        view.add(primaryIdentifier);
-        view.add(secondaryIdentifier);
-        view.add(name);
-        view.add(organism);
-
-        if (keys == null) {
-            view.add(stage);
-            view.add(term);
-            view.add(dataset);
-        }
-
-        q.setViewPaths(view);
         q.syncLogicExpression("and");
-
-        List<OrderBy>  sortOrder = new ArrayList<OrderBy>();
         if (keys == null) {
-            sortOrder.add(new OrderBy(term));
-            sortOrder.add(new OrderBy(primaryIdentifier));
-            sortOrder.add(new OrderBy(stage));
+            q.setOrderBy(expressionStrings);
         } else {
-            sortOrder.add(new OrderBy(primaryIdentifier));
+            q.setOrderBy("Gene.primaryIdentifier");
         }
-        q.setSortOrder(sortOrder);
-
         return q;
     }
 }

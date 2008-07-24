@@ -12,18 +12,13 @@ package org.flymine.web.widget;
 
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.List;
 
 import org.intermine.metadata.Model;
 import org.intermine.model.InterMineObject;
 import org.intermine.objectstore.ObjectStore;
-import org.intermine.objectstore.query.ConstraintOp;
-import org.intermine.path.Path;
-import org.intermine.pathquery.Constraint;
-import org.intermine.pathquery.OrderBy;
-import org.intermine.pathquery.PathNode;
 import org.intermine.pathquery.PathQuery;
 import org.intermine.web.logic.bag.InterMineBag;
+import org.intermine.web.logic.query.Constraints;
 import org.intermine.web.logic.widget.WidgetURLQuery;
 
 /**
@@ -55,92 +50,44 @@ public class ProteinDomainURLQuery implements WidgetURLQuery
 
         Model model = os.getModel();
         PathQuery q = new PathQuery(model);
-
-        List<Path> view = new ArrayList<Path>();
         String bagType = bag.getType();
 
-        Path primaryIdentifier = null, primaryAccession = null;
-        Path organism = null, domainIdentifier = null, domainName = null;
-        Path geneIdentifier = null, secondaryIdentifier = null;
+        String viewStrings = "";
+        String domainStrings = "";
 
         if (bagType.equals("Gene")) {
-
-            primaryIdentifier = PathQuery.makePath(model, q, "Gene.proteins.primaryIdentifier");
-            primaryAccession = PathQuery.makePath(model, q, "Gene.proteins.primaryAccession");
-            organism = PathQuery.makePath(model, q, "Gene.proteins.organism.name");
-            geneIdentifier = PathQuery.makePath(model, q, "Gene.primaryIdentifier");
-            secondaryIdentifier = PathQuery.makePath(model, q, "Gene.secondaryIdentifier");
-            domainIdentifier
-            =  PathQuery.makePath(model, q, "Gene.proteins.proteinDomains.primaryIdentifier");
-            domainName =  PathQuery.makePath(model, q, "Gene.proteins.proteinDomains.name");
-
-
+            viewStrings = "Gene.proteins.primaryIdentifier,Gene.proteins.primaryAccession,"
+                + "Gene.proteins.organism.name,Gene.primaryIdentifier,"
+                + "Gene.secondaryIdentifier";
+            domainStrings = "Gene.proteins.proteinDomains.primaryIdentifier,"
+                + "Gene.proteins.proteinDomains.name";
         } else if (bagType.equals("Protein")) {
-
-            primaryIdentifier = PathQuery.makePath(model, q, "Protein.primaryIdentifier");
-            primaryAccession = PathQuery.makePath(model, q, "Protein.primaryAccession");
-            organism = PathQuery.makePath(model, q, "Protein.organism.name");
-            domainIdentifier
-            =  PathQuery.makePath(model, q, "Protein.proteinDomains.primaryIdentifier");
-            domainName =  PathQuery.makePath(model, q, "Protein.proteinDomains.name");
+            viewStrings = "Protein.primaryIdentifier,"
+                + "Protein.primaryAccession,Protein.organism.name";
         }
 
-        ConstraintOp constraintOp = ConstraintOp.IN;
-        String constraintValue = bag.getName();
-        String label = null, id = null, code = q.getUnusedConstraintCode();
-        Constraint c = new Constraint(constraintOp, constraintValue, false, label, code, id, null);
-        q.addNode(bagType).getConstraints().add(c);
+        q.setView(viewStrings);
+        if (keys == null) {
+            q.addView(domainStrings);
+        }
+
+        q.addConstraint(bagType,  Constraints.in(bag.getName()));
 
         if (keys != null) {
-            constraintOp = ConstraintOp.NOT_IN;
-            code = q.getUnusedConstraintCode();
-            c = new Constraint(constraintOp, keys, false, label, code, id, null);
-            q.getNode(bagType).getConstraints().add(c);
+            q.addConstraint(bagType,  Constraints.notIn(new ArrayList(keys)));
         } else {
-            if (bagType.equals("Gene")) {
-                constraintOp = ConstraintOp.LOOKUP;
-                code = q.getUnusedConstraintCode();
-                PathNode interproNode = q.addNode("Gene.proteins.proteinDomains");
-                c = new Constraint(constraintOp, key, false, label, code, id, null);
-                interproNode.getConstraints().add(c);
-            } else if (bagType.equals("Protein")) {
-                constraintOp = ConstraintOp.LOOKUP;
-                code = q.getUnusedConstraintCode();
-                PathNode interproNode = q.addNode("Protein.proteinDomains");
-                c = new Constraint(constraintOp, key, false, label, code, id, null);
-                interproNode.getConstraints().add(c);
-            }
+            String pathString = (bagType.equals("Gene") ? "Gene.proteins.proteinDomains"
+                                                          : "Protein.proteinDomains");
+            q.addConstraint(pathString,  Constraints.lookup(key));
         }
 
-        view.add(primaryIdentifier);
-        view.add(primaryAccession);
-        view.add(organism);
-        if (bagType.equals("Gene")) {
-            view.add(geneIdentifier);
-            view.add(secondaryIdentifier);
-        }
-
-        if (keys == null) {
-            view.add(domainIdentifier);
-            view.add(domainName);
-        }
-        q.setViewPaths(view);
         q.setConstraintLogic("A and B");
         q.syncLogicExpression("and");
 
-        List<OrderBy>  sortOrder = new ArrayList<OrderBy>();
         if (keys == null) {
-            sortOrder.add(new OrderBy(domainIdentifier));
-            sortOrder.add(new OrderBy(domainName));
+            q.setOrderBy(domainStrings);
         }
-        sortOrder.add(new OrderBy(primaryIdentifier));
-        sortOrder.add(new OrderBy(primaryAccession));
-        sortOrder.add(new OrderBy(organism));
-        if (bagType.equals("Gene")) {
-            sortOrder.add(new OrderBy(geneIdentifier));
-            sortOrder.add(new OrderBy(secondaryIdentifier));
-        }
-        q.setSortOrder(sortOrder);
+        q.addOrderBy(viewStrings);
 
         return q;
     }
