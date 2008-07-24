@@ -12,8 +12,8 @@
     <attribute name="classification" value="COMPLEX (ADAPTOR PROTEIN/PEPTIDE)"/>
     <attribute name="identifier" value="1AZE"/>
     <attribute name="resolution" value="2.0"/>
-    <attribute name="technique" value="NMR, 10 STRUCTURES "/>
-    <attribute name="title" value="NMR STRUCTURE OF THE COMPLEX BETWEEN THE C32S-Y7V MUTANT OF THE NSH3 DOMAIN OF GRB2 WITH A PEPTIDE FROM SOS, 10 STRUCTURES "/>
+    <attribute name="technique" value="NMR, 10 STRUCTURES"/>
+    <attribute name="title" value="NMR STRUCTURE OF THE COMPLEX BETWEEN THE C32S-Y7V MUTANT OF THE NSH3 DOMAIN OF GRB2 WITH A PEPTIDE FROM SOS, 10 STRUCTURES"/>
     <collection name="dataSets"><reference ref_id="1_1"/></collection>
     <collection name="proteins"><reference ref_id="3_1"/><reference ref_id="3_2"/></collection>
   </item>
