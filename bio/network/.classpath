@@ -38,7 +38,6 @@
 	<classpathentry kind="lib" path="main/lib/tclib.jar"/>
 	<classpathentry kind="lib" path="main/lib/violinstrings-1.0.2.jar"/>
 	<classpathentry kind="lib" path="main/lib/wizard.jar"/>
-	<classpathentry kind="lib" path="test/dist/bio-network-test.jar"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
 	<classpathentry kind="lib" path="main/resources"/>
 	<classpathentry kind="lib" path="test/resources"/>
