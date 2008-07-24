@@ -12,18 +12,12 @@ package org.intermine.bio.web.widget;
 
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.List;
 
-import org.intermine.metadata.Model;
 import org.intermine.model.InterMineObject;
 import org.intermine.objectstore.ObjectStore;
-import org.intermine.objectstore.query.ConstraintOp;
-import org.intermine.path.Path;
-import org.intermine.pathquery.Constraint;
-import org.intermine.pathquery.OrderBy;
-import org.intermine.pathquery.PathNode;
 import org.intermine.pathquery.PathQuery;
 import org.intermine.web.logic.bag.InterMineBag;
+import org.intermine.web.logic.query.Constraints;
 import org.intermine.web.logic.widget.WidgetURLQuery;
 
 /**
@@ -53,74 +47,26 @@ public class HomologueURLQuery implements WidgetURLQuery
      * {@inheritDoc}
      */
     public PathQuery generatePathQuery(Collection<InterMineObject> keys) {
-
-        Model model = os.getModel();
-        PathQuery q = new PathQuery(model);
-
-        List<Path> view = new ArrayList<Path>();
-
-        Path genePrimaryIdentifier = PathQuery.makePath(model, q, "Gene.primaryIdentifier");
-        Path geneSymbol = PathQuery.makePath(model, q, "Gene.symbol");
-        Path organismName = PathQuery.makePath(model, q, "Gene.organism.name");
-
-        Path homologueIdentifier
-        = PathQuery.makePath(model, q, "Gene.homologues.homologue.primaryIdentifier");
-        Path homologueSymbol
-        = PathQuery.makePath(model, q, "Gene.homologues.homologue.symbol");
-        Path homologueOrganism
-        = PathQuery.makePath(model, q, "Gene.homologues.homologue.organism.name");
-        Path homologueType
-        = PathQuery.makePath(model, q, "Gene.homologues.type");
-
-        view.add(genePrimaryIdentifier);
-        view.add(geneSymbol);
-        view.add(organismName);
-        view.add(homologueType);
-        view.add(homologueIdentifier);
-        view.add(homologueSymbol);
-        view.add(homologueOrganism);
-
-        q.setViewPaths(view);
+        PathQuery q = new PathQuery(os.getModel());
+        q.setView("Gene.primaryIdentifier,Gene.symbol,Gene.organism.name,"
+                  + "Gene.homologues.homologue.primaryIdentifier,"
+                  + "Gene.homologues.homologue.symbol,"
+                  + "Gene.homologues.homologue.organism.name,"
+                  + "Gene.homologues.type");
         String bagType = bag.getType();
-        ConstraintOp constraintOp = ConstraintOp.IN;
-        String constraintValue = bag.getName();
-        String label = null, id = null, code = q.getUnusedConstraintCode();
-        Constraint c = new Constraint(constraintOp, constraintValue, false, label, code, id, null);
-        q.addNode(bagType).getConstraints().add(c);
-
+        q.addConstraint(bagType,  Constraints.in(bag.getName()));
         if (keys != null) {
-            constraintOp = ConstraintOp.NOT_IN;
-            code = q.getUnusedConstraintCode();
-            c = new Constraint(constraintOp, keys, false, label, code, id, null);
-            q.addNode(bagType).getConstraints().add(c);
+            q.addConstraint(bagType,  Constraints.notIn(new ArrayList(keys)));
             q.setConstraintLogic("A and B");
         } else {
-
-            // constraint the organism name
-            constraintOp = ConstraintOp.LOOKUP;
-            code = q.getUnusedConstraintCode();
-            PathNode organismNode = q.addNode("Gene.homologues.homologue.organism");
-            c = new Constraint(constraintOp, key, false, label, code, id, null);
-            organismNode.getConstraints().add(c);
-
-            // constrain homologue.type to be 'orthologue;
-            constraintOp = ConstraintOp.EQUALS;
-            code = q.getUnusedConstraintCode();
-            PathNode typeNode = q.addNode("Gene.homologues.type");
-            c = new Constraint(constraintOp, "orthologue", false, label, code, id, null);
-            typeNode.getConstraints().add(c);
+            q.addConstraint("Gene.homologues.homologue.organism",  Constraints.lookup(key));
+            q.addConstraint("Gene.homologues.type",  Constraints.eq("orthologue"));
             q.setConstraintLogic("A and B and C");
         }
-
         q.syncLogicExpression("and");
-
-        List<OrderBy>  sortOrder = new ArrayList<OrderBy>();
-        sortOrder.add(new OrderBy(organismName));
-        sortOrder.add(new OrderBy(genePrimaryIdentifier));
-        sortOrder.add(new OrderBy(homologueOrganism));
-        sortOrder.add(new OrderBy(homologueIdentifier));
-        q.setSortOrder(sortOrder);
-
+        q.setOrderBy("Gene.organism.name,Gene.primaryIdentifier,"
+                     + "Gene.homologues.homologue.organism.name,"
+                     + "Gene.homologues.homologue.primaryIdentifier");
         return q;
     }
 }

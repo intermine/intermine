@@ -86,9 +86,9 @@ public class ChromosomeDistributionGraphURLGenerator implements GraphCategoryURL
             q.setConstraintLogic("A and B");
         }
         q.syncLogicExpression("and");
-        q.setOrderBy(bagType + ".chromosomeLocation.start"
+        q.setOrderBy(bagType + ".chromosomeLocation.start,"
                      + bagType + ".secondaryIdentifier,"
-                     + bagType + ".primaryIdentifier, "
+                     + bagType + ".primaryIdentifier,"
                      + bagType + ".organism.name, "
                      + bagType + ".chromosome.primaryIdentifier");
         return q;
