@@ -289,6 +289,23 @@ public class PathQuery
     }
 
     /**
+     * Add a constraint to the query
+     * @param constraint constraint to add to the query
+     * @param code code for constraint
+     * @param path path to constrain, eg Employee.firstName
+     * @param subclass type of node
+     * @return label of constraint
+     */
+    public String addConstraint(String path, Constraint constraint, String code, String subclass) {
+        PathNode node = addNode(path);
+        constraint.code = code;
+        node.setType(subclass);
+        node.getConstraints().add(constraint);
+        return code;
+    }
+
+
+    /**
      * Set the constraint logic expression. This expresses the AND and OR
      * relation between constraints.
      * @param constraintLogic the constraint logic expression

@@ -12,18 +12,12 @@ package org.intermine.bio.web.widget;
 
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.List;
 
-import org.intermine.metadata.Model;
 import org.intermine.model.InterMineObject;
 import org.intermine.objectstore.ObjectStore;
-import org.intermine.objectstore.query.ConstraintOp;
-import org.intermine.path.Path;
-import org.intermine.pathquery.Constraint;
-import org.intermine.pathquery.OrderBy;
-import org.intermine.pathquery.PathNode;
 import org.intermine.pathquery.PathQuery;
 import org.intermine.web.logic.bag.InterMineBag;
+import org.intermine.web.logic.query.Constraints;
 import org.intermine.web.logic.widget.WidgetURLQuery;
 
 /**
@@ -53,60 +47,19 @@ public class PathwayURLQuery implements WidgetURLQuery
      * {@inheritDoc}
      */
     public PathQuery generatePathQuery(Collection<InterMineObject> keys) {
-
-        Model model = os.getModel();
-        PathQuery q = new PathQuery(model);
-
-        List<Path> view = new ArrayList<Path>();
-
-        Path geneSecondaryIdentifier = PathQuery.makePath(model, q, "Gene.secondaryIdentifier");
-        Path genePrimaryIdentifier = PathQuery.makePath(model, q, "Gene.primaryIdentifier");
-        Path geneName = PathQuery.makePath(model, q, "Gene.name");
-        Path organismName = PathQuery.makePath(model, q, "Gene.organism.name");
-
-        Path pathwayIdentifier = PathQuery.makePath(model, q, "Gene.pathways.identifier");
-        Path pathwayName = PathQuery.makePath(model, q, "Gene.pathways.name");
-
-        view.add(genePrimaryIdentifier);
-        view.add(geneSecondaryIdentifier);
-        view.add(geneName);
-        view.add(organismName);
-        view.add(pathwayIdentifier);
-        view.add(pathwayName);
-
-        q.setViewPaths(view);
-
+        PathQuery q = new PathQuery(os.getModel());
+        q.setView("Gene.secondaryIdentifier,Gene.primaryIdentifier,Gene.name,Gene.organism.name,"
+                  + "Gene.pathways.identifier,Gene.pathways.name");
         String bagType = bag.getType();
-
-        ConstraintOp constraintOp = ConstraintOp.IN;
-        String constraintValue = bag.getName();
-        String label = null, id = null, code = q.getUnusedConstraintCode();
-        Constraint c = new Constraint(constraintOp, constraintValue, false, label, code, id, null);
-        q.addNode(bagType).getConstraints().add(c);
-
+        q.addConstraint(bagType,  Constraints.in(bag.getName()));
         if (keys != null) {
-            constraintOp = ConstraintOp.NOT_IN;
-            code = q.getUnusedConstraintCode();
-            c = new Constraint(constraintOp, keys, false, label, code, id, null);
-            q.getNode(bagType).getConstraints().add(c);
+            q.addConstraint(bagType,  Constraints.notIn(new ArrayList(keys)));
         } else {
-            constraintOp = ConstraintOp.LOOKUP;
-            code = q.getUnusedConstraintCode();
-            PathNode node = q.addNode("Gene.pathways");
-            c = new Constraint(constraintOp, key, false, label, code, id, null);
-            node.getConstraints().add(c);
+            q.addConstraint("Gene.pathways",  Constraints.lookup(key));
         }
-
         q.setConstraintLogic("A and B");
         q.syncLogicExpression("and");
-
-        List<OrderBy>  sortOrder = new ArrayList<OrderBy>();
-        sortOrder.add(new OrderBy(pathwayIdentifier));
-        sortOrder.add(new OrderBy(pathwayName));
-        sortOrder.add(new OrderBy(organismName));
-        sortOrder.add(new OrderBy(genePrimaryIdentifier));
-        q.setSortOrder(sortOrder);
-
+        q.setOrderBy("Gene.pathways.identifier,Gene.pathways.name,Gene.primaryIdentifier");
         return q;
     }
 }

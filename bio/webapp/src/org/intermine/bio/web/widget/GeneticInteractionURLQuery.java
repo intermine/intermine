@@ -12,18 +12,12 @@ package org.intermine.bio.web.widget;
 
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.List;
 
-import org.intermine.metadata.Model;
 import org.intermine.model.InterMineObject;
 import org.intermine.objectstore.ObjectStore;
-import org.intermine.objectstore.query.ConstraintOp;
-import org.intermine.path.Path;
-import org.intermine.pathquery.Constraint;
-import org.intermine.pathquery.OrderBy;
-import org.intermine.pathquery.PathNode;
 import org.intermine.pathquery.PathQuery;
 import org.intermine.web.logic.bag.InterMineBag;
+import org.intermine.web.logic.query.Constraints;
 import org.intermine.web.logic.widget.WidgetURLQuery;
 
 /**
@@ -54,68 +48,28 @@ public class GeneticInteractionURLQuery implements WidgetURLQuery
      */
     public PathQuery generatePathQuery(Collection<InterMineObject> keys) {
 
-        Model model = os.getModel();
-        PathQuery q = new PathQuery(model);
-
-        List<Path> view = new ArrayList<Path>();
-
-        Path genePrimaryIdentifier = PathQuery.makePath(model, q, "Gene.primaryIdentifier");
-        Path geneSymbol = PathQuery.makePath(model, q, "Gene.symbol");
-        Path organismName = PathQuery.makePath(model, q, "Gene.organism.shortName");
-
-        Path interactionName = PathQuery.makePath(model,
-                                                   q, "Gene.geneticInteractions.shortName");
-        Path interactionType = PathQuery.makePath(model,
-                                                   q, "Gene.geneticInteractions.type");
-        Path interactionRole = PathQuery.makePath(model,
-                                                   q, "Gene.geneticInteractions.geneRole");
-        Path interactor = PathQuery.makePath(model, q,
-        "Gene.geneticInteractions.interactingGenes.primaryIdentifier");
-        Path experimentName = PathQuery.makePath(model, q,
-        "Gene.geneticInteractions.experiment.name");
-
-        view.add(genePrimaryIdentifier);
-        view.add(geneSymbol);
-        view.add(organismName);
-        view.add(interactionName);
-        view.add(interactionType);
-        view.add(interactionRole);
-        view.add(interactor);
-        view.add(experimentName);
-
-        q.setViewPaths(view);
+        PathQuery q = new PathQuery(os.getModel());
+        q.setView("Gene.primaryIdentifier,Gene.symbol,Gene.organism.shortName,"
+                  + "Gene.geneticInteractions.shortName,Gene.geneticInteractions.type,"
+                  + "Gene.geneticInteractions.geneRole,"
+                  + "Gene.geneticInteractions.interactingGenes.primaryIdentifier"
+                  + "Gene.geneticInteractions.experiment.name");
 
         String bagType = bag.getType();
 
-        ConstraintOp constraintOp = ConstraintOp.IN;
-        String constraintValue = bag.getName();
-        String label = null, id = null, code = q.getUnusedConstraintCode();
-        Constraint c = new Constraint(constraintOp, constraintValue, false, label, code, id, null);
-        q.addNode(bagType).getConstraints().add(c);
+        q.addConstraint(bagType,  Constraints.in(bag.getName()));
 
         if (keys != null) {
-            constraintOp = ConstraintOp.NOT_IN;
-            code = q.getUnusedConstraintCode();
-            c = new Constraint(constraintOp, keys, false, label, code, id, null);
-            q.addNode(bagType).getConstraints().add(c);
+            q.addConstraint(bagType,  Constraints.notIn(new ArrayList(keys)));
         } else {
-            constraintOp = ConstraintOp.LOOKUP;
-            code = q.getUnusedConstraintCode();
-            PathNode geneNode = q.addNode("Gene.geneticInteractions.interactingGenes");
-            c = new Constraint(constraintOp, key, false, label, code, id, null);
-            geneNode.getConstraints().add(c);
+            q.addConstraint("Gene.geneticInteractions.interactingGenes",  Constraints.lookup(key));
         }
 
         q.setConstraintLogic("A and B");
         q.syncLogicExpression("and");
 
-        List<OrderBy>  sortOrder = new ArrayList<OrderBy>();
-        sortOrder.add(new OrderBy(organismName));
-        sortOrder.add(new OrderBy(genePrimaryIdentifier));
-        sortOrder.add(new OrderBy(interactionName));
-        sortOrder.add(new OrderBy(interactor));
-        q.setSortOrder(sortOrder);
-
+        q.setOrderBy("Gene.organism.shortName,Gene.primaryIdentifier,"
+                  + "Gene.geneticInteractions.shortName,Gene.geneticInteractions.type");
         return q;
     }
 }
