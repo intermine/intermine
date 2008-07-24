@@ -79,7 +79,7 @@ public class PdbConverter extends BioFileConverter
             } else {
                 LOG.warn("No value for title in structure: " + idCode);
             }
-            String technique = (String) structure.getHeader().get("technique");
+            String technique = ((String) structure.getHeader().get("technique")).trim();
             if (technique != null && !technique.equals("")) {
                 proteinStructure.setAttribute("technique", technique);
             } else {
