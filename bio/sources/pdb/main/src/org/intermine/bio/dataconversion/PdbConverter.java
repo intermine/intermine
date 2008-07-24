@@ -73,9 +73,9 @@ public class PdbConverter extends BioFileConverter
                 proteins.add(protein.getIdentifier());
             }
 
-            String title = (String) structure.getHeader().get("title");
+            String title = (((String) structure.getHeader().get("title"))).trim();
             if (title != null && !title.equals("")) {
-                proteinStructure.setAttribute("title", (String) structure.getHeader().get("title"));
+                proteinStructure.setAttribute("title", title);
             } else {
                 LOG.warn("No value for title in structure: " + idCode);
             }
@@ -85,8 +85,9 @@ public class PdbConverter extends BioFileConverter
             } else {
                 LOG.warn("No value for technique in structure: " + idCode);
             }
+            String classification = ((String) structure.getHeader().get("classification")).trim();
             proteinStructure.setAttribute("classification",
-                                          (String) structure.getHeader().get("classification"));
+                                          classification);
             Object resolution = structure.getHeader().get("resolution");
             if (resolution instanceof Float) {
                 final Float resolutionFloat = (Float) structure.getHeader().get("resolution");
