@@ -12,18 +12,12 @@ package org.intermine.bio.web.widget;
 
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.List;
 
-import org.intermine.metadata.Model;
 import org.intermine.model.InterMineObject;
 import org.intermine.objectstore.ObjectStore;
-import org.intermine.objectstore.query.ConstraintOp;
-import org.intermine.path.Path;
-import org.intermine.pathquery.Constraint;
-import org.intermine.pathquery.OrderBy;
-import org.intermine.pathquery.PathNode;
 import org.intermine.pathquery.PathQuery;
 import org.intermine.web.logic.bag.InterMineBag;
+import org.intermine.web.logic.query.Constraints;
 import org.intermine.web.logic.widget.WidgetURLQuery;
 
 /**
@@ -52,66 +46,24 @@ public class PublicationURLQuery implements WidgetURLQuery
      * {@inheritDoc}
      */
     public PathQuery generatePathQuery(Collection<InterMineObject> keys) {
-
-        Model model = os.getModel();
-        PathQuery q = new PathQuery(model);
-
-        List<Path> view = new ArrayList<Path>();
-
-        Path geneSecondaryIdentifier = PathQuery.makePath(model, q, "Gene.secondaryIdentifier");
-        Path genePrimaryIdentifier = PathQuery.makePath(model, q, "Gene.primaryIdentifier");
-        Path geneName = PathQuery.makePath(model, q, "Gene.name");
-        Path organismName = PathQuery.makePath(model, q, "Gene.organism.name");
-        Path title = PathQuery.makePath(model, q, "Gene.publications.title");
-        Path author = PathQuery.makePath(model, q, "Gene.publications.firstAuthor");
-        Path journal = PathQuery.makePath(model, q, "Gene.publications.journal");
-        Path year = PathQuery.makePath(model, q, "Gene.publications.year");
-        Path pubmedid = PathQuery.makePath(model, q, "Gene.publications.pubMedId");
-
-        view.add(genePrimaryIdentifier);
-        view.add(geneSecondaryIdentifier);
-        view.add(geneName);
-        view.add(organismName);
+        PathQuery q = new PathQuery(os.getModel());
+        q.setView("Gene.secondaryIdentifier,Gene.primaryIdentifier,Gene.name,Gene.organism.name");
         if (keys == null) {
-            view.add(title);
-            view.add(author);
-            view.add(journal);
-            view.add(year);
-            view.add(pubmedid);
+            q.addView("Gene.publications.title,Gene.publications.firstAuthor,"
+                      + "Gene.publications.journal,Gene.publications.year,"
+                      + "Gene.publications.pubMedId");
+            q.setOrderBy("Gene.publications.pubMedId");
         }
-        q.setViewPaths(view);
-
+        q.setOrderBy("Gene.primaryIdentifier");
         String bagType = bag.getType();
-
-        ConstraintOp constraintOp = ConstraintOp.IN;
-        String constraintValue = bag.getName();
-        String label = null, id = null, code = q.getUnusedConstraintCode();
-        Constraint c = new Constraint(constraintOp, constraintValue, false, label, code, id, null);
-        q.addNode(bagType).getConstraints().add(c);
-
+        q.addConstraint(bagType,  Constraints.in(bag.getName()));
         if (keys != null) {
-            code = q.getUnusedConstraintCode();
-            constraintOp = ConstraintOp.NOT_IN;
-            c = new Constraint(constraintOp, keys, false, label, code, id, null);
-            q.getNode(bagType).getConstraints().add(c);
+            q.addConstraint(bagType,  Constraints.notIn(new ArrayList(keys)));
         } else {
-            constraintOp = ConstraintOp.LOOKUP;
-            code = q.getUnusedConstraintCode();
-            PathNode node = q.addNode("Gene.publications");
-            c = new Constraint(constraintOp, key, false, label, code, id, null);
-            node.getConstraints().add(c);
+            q.addConstraint("Gene.publications",  Constraints.lookup(key));
         }
         q.setConstraintLogic("A and B");
         q.syncLogicExpression("and");
-
-        List<OrderBy>  sortOrder = new ArrayList<OrderBy>();
-        if (keys == null) {
-            sortOrder.add(new OrderBy(pubmedid));
-        }
-        sortOrder.add(new OrderBy(genePrimaryIdentifier));
-
-        q.setSortOrder(sortOrder);
-
         return q;
     }
 }

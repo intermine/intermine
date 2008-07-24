@@ -12,18 +12,12 @@ package org.intermine.bio.web.widget;
 
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.List;
 
-import org.intermine.metadata.Model;
 import org.intermine.model.InterMineObject;
 import org.intermine.objectstore.ObjectStore;
-import org.intermine.objectstore.query.ConstraintOp;
-import org.intermine.path.Path;
-import org.intermine.pathquery.Constraint;
-import org.intermine.pathquery.OrderBy;
-import org.intermine.pathquery.PathNode;
 import org.intermine.pathquery.PathQuery;
 import org.intermine.web.logic.bag.InterMineBag;
+import org.intermine.web.logic.query.Constraints;
 import org.intermine.web.logic.widget.WidgetURLQuery;
 
 /**
@@ -52,62 +46,23 @@ public class UniProtFeaturesURLQuery implements WidgetURLQuery
      * {@inheritDoc}
      */
     public PathQuery generatePathQuery(Collection<InterMineObject> keys) {
-
-        Model model = os.getModel();
-        PathQuery q = new PathQuery(model);
-
-        List<Path> view = new ArrayList<Path>();
-
-        Path identifier = PathQuery.makePath(model, q, "Protein.primaryIdentifier");
-        Path sec = PathQuery.makePath(model, q, "Protein.primaryAccession");
-        Path organism = PathQuery.makePath(model, q, "Protein.organism.name");
-        Path name = PathQuery.makePath(model, q, "Protein.features.feature.name");
-        Path descr =  PathQuery.makePath(model, q, "Protein.features.description");
-        Path begin = PathQuery.makePath(model, q, "Protein.features.begin");
-        Path end = PathQuery.makePath(model, q, "Protein.features.end");
-
-        view.add(identifier);
-        view.add(sec);
-        view.add(organism);
+       PathQuery q = new PathQuery(os.getModel());
+       q.setView("Protein.primaryIdentifier,Protein.primaryAccession,Protein.organism.name");
         if (keys == null) {
-            view.add(name);
-            view.add(descr);
-            view.add(begin);
-            view.add(end);
+            q.addView("Protein.features.feature.name,Protein.features.description,"
+                      + "Protein.features.begin,Protein.features.end");
+            q.setOrderBy("Protein.features.feature.name");
         }
-        q.setViewPaths(view);
-
+        q.addOrderBy("Protein.primaryAccession");
         String bagType = bag.getType();
-
-        ConstraintOp constraintOp = ConstraintOp.IN;
-        String constraintValue = bag.getName();
-        String label = null, id = null, code = q.getUnusedConstraintCode();
-        Constraint c = new Constraint(constraintOp, constraintValue, false, label, code, id, null);
-        q.addNode(bagType).getConstraints().add(c);
-
+        q.addConstraint(bagType,  Constraints.in(bag.getName()));
         if (keys != null) {
-            constraintOp = ConstraintOp.NOT_IN;
-            code = q.getUnusedConstraintCode();
-            c = new Constraint(constraintOp, keys, false, label, code, id, null);
-            q.getNode(bagType).getConstraints().add(c);
+            q.addConstraint(bagType,  Constraints.notIn(new ArrayList(keys)));
         } else {
-            constraintOp = ConstraintOp.LOOKUP;
-            code = q.getUnusedConstraintCode();
-            PathNode node = q.addNode("Protein.features.feature");
-            c = new Constraint(constraintOp, key, false, label, code, id, null);
-            node.getConstraints().add(c);
+            q.addConstraint("Protein.features.feature",  Constraints.lookup(key));
         }
-
         q.setConstraintLogic("A and B");
         q.syncLogicExpression("and");
-
-        List<OrderBy>  sortOrder = new ArrayList<OrderBy>();
-        if (keys == null) {
-            sortOrder.add(new OrderBy(name));
-        }
-        sortOrder.add(new OrderBy(identifier));
-        q.setSortOrder(sortOrder);
-
         return q;
     }
 }
