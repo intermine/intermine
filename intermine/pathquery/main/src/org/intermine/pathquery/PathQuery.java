@@ -100,7 +100,7 @@ public class PathQuery
             List<Path> viewPaths = new ArrayList<Path>();
             while (it.hasNext()) {
                 String path = (String) it.next();
-                viewPaths.add(new Path(model, path.trim()));
+                viewPaths.add(makePath(model, this, path.trim()));
             }
             setViewPaths(viewPaths);
         } catch (PathError e) {

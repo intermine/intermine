@@ -12,18 +12,13 @@ package org.intermine.bio.web.widget;
 
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.List;
 
 import org.intermine.metadata.Model;
 import org.intermine.model.InterMineObject;
 import org.intermine.objectstore.ObjectStore;
-import org.intermine.objectstore.query.ConstraintOp;
-import org.intermine.path.Path;
-import org.intermine.pathquery.Constraint;
-import org.intermine.pathquery.OrderBy;
-import org.intermine.pathquery.PathNode;
 import org.intermine.pathquery.PathQuery;
 import org.intermine.web.logic.bag.InterMineBag;
+import org.intermine.web.logic.query.Constraints;
 import org.intermine.web.logic.widget.WidgetURLQuery;
 
 /**
@@ -56,51 +51,25 @@ public class UniProtKeywordsURLQuery implements WidgetURLQuery
         Model model = os.getModel();
         PathQuery q = new PathQuery(model);
 
-        Path identifier = PathQuery.makePath(model, q, "Protein.primaryIdentifier");
-        Path sec = PathQuery.makePath(model, q, "Protein.primaryAccession");
-        Path organism = PathQuery.makePath(model, q, "Protein.organism.name");
-        Path name = PathQuery.makePath(model, q, "Protein.keywords.name");
-        Path descr =  PathQuery.makePath(model, q, "Protein.keywords.description");
+        String viewStrings = "Protein.primaryIdentifier,Protein.primaryAccession,"
+            + "Protein.organism.name";
+        String keyStrings = "Protein.keywords.name,Protein.keywords.description";
 
-        List<Path> view = new ArrayList<Path>();
-        view.add(identifier);
-        view.add(sec);
-        view.add(organism);
+        q.setView(viewStrings);
+        q.setOrderBy(viewStrings);
         if (keys == null) {
-            view.add(name);
-            view.add(descr);
+            q.addView(keyStrings);
+            q.addOrderBy(keyStrings);
         }
-
-        q.setViewPaths(view);
-
         String bagType = bag.getType();
-
-        ConstraintOp constraintOp = ConstraintOp.IN;
-        String constraintValue = bag.getName();
-        String label = null, id = null, code = q.getUnusedConstraintCode();
-        Constraint c = new Constraint(constraintOp, constraintValue, false, label, code, id, null);
-        q.addNode(bagType).getConstraints().add(c);
-
+        q.addConstraint(bagType,  Constraints.in(bag.getName()));
         if (keys != null) {
-            constraintOp = ConstraintOp.NOT_IN;
-            code = q.getUnusedConstraintCode();
-            c = new Constraint(constraintOp, keys, false, label, code, id, null);
-            q.getNode(bagType).getConstraints().add(c);
+            q.addConstraint(bagType,  Constraints.notIn(new ArrayList(keys)));
         } else {
-            constraintOp = ConstraintOp.LOOKUP;
-            code = q.getUnusedConstraintCode();
-            PathNode keywordNode = q.addNode("Protein.keywords");
-            c = new Constraint(constraintOp, key, false, label, code, id, null);
-            keywordNode.getConstraints().add(c);
+            q.addConstraint("Protein.keywords",  Constraints.lookup(key));
         }
         q.setConstraintLogic("A and B");
         q.syncLogicExpression("and");
-
-        List<OrderBy>  sortOrder = new ArrayList<OrderBy>();
-        sortOrder.add(new OrderBy(name));
-        sortOrder.add(new OrderBy(identifier));
-        q.setSortOrder(sortOrder);
-
         return q;
     }
 }

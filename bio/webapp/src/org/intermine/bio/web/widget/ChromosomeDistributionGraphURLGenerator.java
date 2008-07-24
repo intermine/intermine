@@ -10,21 +10,11 @@ package org.intermine.bio.web.widget;
  *
  */
 
-import java.util.ArrayList;
-import java.util.List;
-
-import org.intermine.objectstore.query.ConstraintOp;
-
-import org.intermine.metadata.Model;
 import org.intermine.objectstore.ObjectStore;
-import org.intermine.path.Path;
-import org.intermine.pathquery.Constraint;
-import org.intermine.pathquery.OrderBy;
-import org.intermine.pathquery.PathNode;
 import org.intermine.pathquery.PathQuery;
 import org.intermine.web.logic.bag.InterMineBag;
+import org.intermine.web.logic.query.Constraints;
 import org.intermine.web.logic.widget.GraphCategoryURLGenerator;
-
 import org.jfree.data.category.CategoryDataset;
 
 
@@ -75,71 +65,32 @@ public class ChromosomeDistributionGraphURLGenerator implements GraphCategoryURL
                                        @SuppressWarnings("unused") String category,
                                        @SuppressWarnings("unused") String series) {
 
-        Model model = os.getModel();
-        InterMineBag bag = imBag;
-        PathQuery q = new PathQuery(model);
-        String bagType = bag.getType();
 
-        Path identifier = PathQuery.makePath(model, q, bagType + ".secondaryIdentifier");
-        Path primaryIdentifier = PathQuery.makePath(model, q, bagType + ".primaryIdentifier");
-        Path name = PathQuery.makePath(model, q, bagType + ".organism.name");
-        Path chromoIdentifier = PathQuery.makePath(model, q, bagType
-                                                    + ".chromosome.primaryIdentifier");
-        Path start = PathQuery.makePath(model, q, bagType + ".chromosomeLocation.start");
-        Path end = PathQuery.makePath(model, q, bagType + ".chromosomeLocation.end");
-        Path strand = PathQuery.makePath(model, q, bagType + ".chromosomeLocation.strand");
+        PathQuery q = new PathQuery(os.getModel());
+        String bagType = imBag.getType();
 
-        List<Path> view = new ArrayList<Path>();
+        q.setView(bagType + ".secondaryIdentifier,"
+                  + bagType + ".primaryIdentifier, "
+                  + bagType + ".organism.name, "
+                  + bagType + ".chromosome.primaryIdentifier,"
+                  + bagType + ".chromosomeLocation.start,"
+                  + bagType + ".chromosomeLocation.end,"
+                  + bagType + ".chromosomeLocation.strand");
 
-        view.add(identifier);
-        view.add(primaryIdentifier);
-        view.add(name);
-        view.add(chromoIdentifier);
-        view.add(start);
-        view.add(end);
-        view.add(strand);
-
-        q.setViewPaths(view);
-
-        ConstraintOp constraintOp = ConstraintOp.IN;
-        String constraintValue = bag.getName();
-
-        String label = null, id = null, code = q.getUnusedConstraintCode();
-        Constraint c = new Constraint(constraintOp, constraintValue, false, label, code, id, null);
-        q.addNode(bagType).getConstraints().add(c);
-
-        //  constrain to be specific chromosome
-        constraintOp = ConstraintOp.EQUALS;
-        code = q.getUnusedConstraintCode();
-        PathNode chromosomeNode = q.addNode(bagType + ".chromosome.primaryIdentifier");
-        Constraint chromosomeConstraint
-                        = new Constraint(constraintOp, category, false, label, code, id, null);
-        chromosomeNode.getConstraints().add(chromosomeConstraint);
-
+        q.addConstraint(bagType,  Constraints.in(imBag.getName()));
+        q.addConstraint(bagType + ".chromosome.primaryIdentifier",  Constraints.eq(category));
         if (organism != null) {
-            constraintOp = ConstraintOp.LOOKUP;
-            code = q.getUnusedConstraintCode();
-            PathNode orgNode  = q.addNode("Gene.organism");
-            orgNode.setType("Organism");
-            Constraint orgConstraint
-            = new Constraint(constraintOp, organism, false, label, code, id, null);
-            orgNode.getConstraints().add(orgConstraint);
+            q.addConstraint(bagType + ".organism",  Constraints.lookup(organism));
             q.setConstraintLogic("A and B and C");
         } else {
             q.setConstraintLogic("A and B");
         }
-
         q.syncLogicExpression("and");
-
-        List<OrderBy>  sortOrder = new ArrayList<OrderBy>();
-        sortOrder.add(new OrderBy(start));
-        sortOrder.add(new OrderBy(identifier));
-        sortOrder.add(new OrderBy(primaryIdentifier));
-        sortOrder.add(new OrderBy(name));
-        sortOrder.add(new OrderBy(chromoIdentifier));
-        sortOrder.add(new OrderBy(end));
-        sortOrder.add(new OrderBy(strand));
-        q.setSortOrder(sortOrder);
+        q.setOrderBy(bagType + ".chromosomeLocation.start"
+                     + bagType + ".secondaryIdentifier,"
+                     + bagType + ".primaryIdentifier, "
+                     + bagType + ".organism.name, "
+                     + bagType + ".chromosome.primaryIdentifier");
         return q;
     }
 }
