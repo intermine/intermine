@@ -151,11 +151,10 @@ public abstract class WebUtil
     public static boolean isValidName(String name) {
         if (name == null) {
             return false;
-        } else {
-            Pattern p = Pattern.compile("[^\\w\\s\\.:]");
-            Matcher m = p.matcher(name);
-            return !m.find();
         }
+        Pattern p = Pattern.compile("[^\\w\\s\\.\\-:]");
+        Matcher m = p.matcher(name);
+        return !m.find();
     }
 
     /**
@@ -275,10 +274,10 @@ public abstract class WebUtil
      * @return a Map of bag name to bag
      */
     public static Map getBagsOfType(Map<String, InterMineBag> bagMap, String type, Model model) {
-        type = model.getPackageName() + "." + type;
+        String bagType = model.getPackageName() + "." + type;
         Set<String> classAndSubs = new HashSet<String>();
-        classAndSubs.add(type);
-        Iterator subIter = model.getAllSubs(model.getClassDescriptorByName(type)).iterator();
+        classAndSubs.add(bagType);
+        Iterator subIter = model.getAllSubs(model.getClassDescriptorByName(bagType)).iterator();
         while (subIter.hasNext()) {
             classAndSubs.add(((ClassDescriptor) subIter.next()).getType().getName());
         }
