@@ -7,11 +7,9 @@ import java.util.Set;
 
 import junit.framework.TestCase;
 
-import org.flymine.model.genomic.Protein;
-import org.flymine.model.genomic.ProteinInteraction;
-
 import org.apache.tools.ant.BuildException;
-
+import org.flymine.model.genomic.Interaction;
+import org.flymine.model.genomic.Protein;
 import org.intermine.bio.networkview.network.FlyNetwork;
 import org.intermine.bio.networkview.network.FlyNode;
 import org.intermine.metadata.Model;
@@ -47,7 +45,7 @@ public class FlyNetworkCreatorTest extends TestCase
         // creating a Collection of all protein ids (primary accession)
         // from the collection of protein interactions
         for (Iterator iter = interactions.iterator(); iter.hasNext();) {
-            ProteinInteraction ion = (ProteinInteraction) iter.next();
+            Interaction ion = (Interaction) iter.next();
             System.out.println("new interaction...");
             if (!l1.contains(ion.getProtein().getPrimaryAccession())) {
                 l1.add(ion.getProtein().getPrimaryAccession());
@@ -102,8 +100,8 @@ public class FlyNetworkCreatorTest extends TestCase
         Collection list = getExpectedObjects();
         for (Iterator iter = list.iterator(); iter.hasNext();) {
             Object element = (Object) iter.next();
-            if (element instanceof ProteinInteraction) {
-                ProteinInteraction inter = (ProteinInteraction) element;
+            if (element instanceof Interaction) {
+                Interaction inter = (Interaction) element;
                 pi.add(inter);
             }
         }

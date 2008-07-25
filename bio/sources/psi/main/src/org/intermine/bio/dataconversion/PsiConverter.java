@@ -13,7 +13,6 @@ package org.intermine.bio.dataconversion;
 import java.io.Reader;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -24,15 +23,12 @@ import java.util.Set;
 import java.util.Stack;
 
 import org.apache.log4j.Logger;
-import org.intermine.dataconversion.FileConverter;
 import org.intermine.dataconversion.ItemWriter;
 import org.intermine.metadata.Model;
 import org.intermine.objectstore.ObjectStoreException;
 import org.intermine.util.SAXParser;
 import org.intermine.util.StringUtil;
 import org.intermine.xml.full.Item;
-import org.intermine.xml.full.ItemFactory;
-import org.intermine.xml.full.ItemHelper;
 import org.intermine.xml.full.ReferenceList;
 import org.xml.sax.Attributes;
 import org.xml.sax.InputSource;
@@ -44,20 +40,17 @@ import org.xml.sax.helpers.DefaultHandler;
  * DataConverter to parse psi data into items
  * @author Julie Sullivan
  */
-public class PsiConverter extends FileConverter
+public class PsiConverter extends BioFileConverter
 {
     protected static final String GENOMIC_NS = "http://www.flymine.org/model/genomic#";
     private static final Logger LOG = Logger.getLogger(PsiConverter.class);
-    private Map<String, Integer> ids = new HashMap<String, Integer>();
-    private Map<String, String> aliases = new HashMap<String, String>();
-    private Map<String, Map> mapMaster = new HashMap<String, Map>();  // map of maps
     private Map<String, String> organisms = new HashMap<String, String>();
     private Map<String, String> pubs = new HashMap<String, String>();
-    private Map<String, String> accessionsToRefIds = new HashMap<String, String>();
-    private Map<String, String> refIdsToAccessions = new HashMap<String, String>();
     private Map<String, Object> experimentNames = new HashMap<String, Object>();
     private Map<String, String> terms = new HashMap<String, String>();
-    private Map<String, String> masterList = new HashMap<String, String>();
+    private String termId = null;
+    private Map<String, Item> genes = new  HashMap<String, Item>();
+    protected IdResolverFactory resolverFactory;
 
     /**
      * Constructor
@@ -65,11 +58,18 @@ public class PsiConverter extends FileConverter
      * @param model the Model
      */
     public PsiConverter(ItemWriter writer, Model model) {
-        super(writer, model);
+        super(writer, model, "IntAct", "IntAct dataset");
 
+        // only construct factory here so can be replaced by mock factory in tests
+        resolverFactory = new FlyBaseIdResolverFactory();
 
+        try {
+            termId = getTerm("MI:0117");
+            initOrganisms();
+        } catch (SAXException e) {
+            throw new RuntimeException("ack");
+        }
     }
-
 
     /**
      * A space separated list of of NCBI taxonomy ids for which we want to retrieve
@@ -84,28 +84,12 @@ public class PsiConverter extends FileConverter
         }
     }
 
-
-    // master map of all maps used across XML files
-    private void mapMaps() {
-        mapMaster.put("ids", ids);
-        mapMaster.put("aliases", aliases);
-        mapMaster.put("organisms", organisms);
-        mapMaster.put("publications", pubs);
-        mapMaster.put("experimentNames", experimentNames);
-        mapMaster.put("refIdsToAccessions", refIdsToAccessions);
-        mapMaster.put("accessionsToRefIds", accessionsToRefIds);
-        mapMaster.put("terms", terms);
-        mapMaster.put("masterList", masterList);
-    }
-
-
     /**
      * {@inheritDoc}
      */
     public void process(Reader reader) throws Exception {
 
-        mapMaps();
-        PsiHandler handler = new PsiHandler(getItemWriter(), mapMaster);
+        PsiHandler handler = new PsiHandler();
 
         try {
             SAXParser.parse(new InputSource(reader), handler);
@@ -118,238 +102,209 @@ public class PsiConverter extends FileConverter
     /**
      * Handles xml file
      */
-    static class PsiHandler extends DefaultHandler
+    class PsiHandler extends DefaultHandler
     {
-        //private int nextClsId = 0;
-        private ItemFactory itemFactory;
-        private Map<String, Integer> ids;
-        private Map<String, String> aliases;
-        private Map<String, String> pubs;
-        private Map<String, String> validProteins = new HashMap<String, String>();
-        private Map<String, String> accessionsToRefIds = new HashMap<String, String>();
-        private Map<String, String> refIdsToAccessions = new HashMap<String, String>();
-        private Map<String, String> organisms = new HashMap<String, String>();
-        private Map<String, String> terms = new HashMap<String, String>();
-        private Map<String, String> masterList = new HashMap<String, String>();
-        // [experiment name] [experiment holder]
-        private Map<String, ExperimentHolder> experimentNames;  // keeps names until experiment is
-                                                                // stored
-        // [id][experimentholder]1
-        private Map<String, ExperimentHolder> experimentIds     // keeps names for this file only
-                                                        = new HashMap<String, ExperimentHolder>();
-        private InteractorHolder interactorHolder;
-        private ItemWriter writer;
+
+        private Map<String, ExperimentHolder> experimentIds
+        = new HashMap<String, ExperimentHolder>();
+        private InteractionHolder holder = null;
+        private ExperimentHolder experimentHolder = null;
+        private InteractorHolder interactorHolder = null;
+        private Item gene = null, comment = null;
+        private String experimentId = null, interactorId = null;
+        private String secondaryIdentifier = null;
+
+        private Map<String, Item> validGenes = new HashMap<String, Item>();
+        private String regionName = null;
+
         private Stack<String> stack = new Stack<String>();
         private String attName = null;
         private StringBuffer attValue = null;
-        private InteractionHolder holder;
-        private ExperimentHolder experimentHolder;
-        private Item protein, sequence;
-        private Item comment;
-        private ReferenceList commentCollection;
-        private String proteinId; // id used in xml to refer to protein
-        private Set<Item> synonyms;
-        private String psiDagTermItemId, experimentId, datasourceItemId;
-        private String regionName = "";
 
         /**
          * Constructor
-         * @param writer the ItemWriter used to handle the resultant items
-         * @param mapMaster master map of all maps used across XML files
          */
-        public PsiHandler(ItemWriter writer, Map mapMaster) {
-
-            itemFactory = new ItemFactory(Model.getInstanceByName("genomic"));
-            this.writer = writer;
-            this.ids = (Map) mapMaster.get("ids");
-            this.aliases = (Map) mapMaster.get("aliases");
-            this.organisms = (Map) mapMaster.get("organisms");
-            this.pubs = (Map) mapMaster.get("publications");
-            this.accessionsToRefIds = (Map) mapMaster.get("accessionsToRefIds");
-            this.refIdsToAccessions = (Map) mapMaster.get("refIdsToAccessions");
-            this.experimentNames = (Map) mapMaster.get("experimentNames");
-            this.terms = (Map) mapMaster.get("terms");
-            this.masterList = (Map) mapMaster.get("masterList");
-            if (masterList.size() > 1) {
-                this.psiDagTermItemId = masterList.get("psiDagTerm");
-                this.datasourceItemId = masterList.get("datasourceId");  // for proteins
-            }
-            //nextClsId = mastproteinAccessionserList.get("nextClsId");
-            validProteins = new HashMap<String, String>();
+        public PsiHandler() {
+            // nothing to do
         }
-
 
         /**
          * {@inheritDoc}
          */
         public void startElement(String uri, String localName, String qName, Attributes attrs)
-            throws SAXException {
+        throws SAXException {
             attName = null;
             // <experimentList><experimentDescription>
             if (qName.equals("experimentDescription")) {
-                try {
-                    experimentId = attrs.getValue("id");
-                } catch (Exception e) {
-                    throw new SAXException(e);
-                }
-            //  <experimentList><experimentDescription id="2"><names><shortLabel>
+                experimentId = attrs.getValue("id");
+                //  <experimentList><experimentDescription id="2"><names><shortLabel>
             } else if (qName.equals("shortLabel") && stack.peek().equals("names")
-                       && stack.search("experimentDescription") == 2) {
+                            && stack.search("experimentDescription") == 2) {
                 attName = "experimentName";
-            //<experimentList><experimentDescription><bibref><xref><primaryRef>
+                //<experimentList><experimentDescription><bibref><xref><primaryRef>
             } else if (qName.equals("primaryRef") && stack.peek().equals("xref")
-                       && stack.search("bibref") == 2
-                       && stack.search("experimentDescription") == 3) {
+                            && stack.search("bibref") == 2
+                            && stack.search("experimentDescription") == 3) {
                 String pubMedId = attrs.getValue("id");
                 if (StringUtil.allDigits(pubMedId)) {
                     String pub = getPub(pubMedId);
                     experimentHolder.setPublication(pub);
                 }
-            //<experimentList><experimentDescription><attributeList><attribute>
+                //<experimentList><experimentDescription><attributeList><attribute>
             } else if (qName.equals("attribute") && stack.peek().equals("attributeList")
-                       && stack.search("experimentDescription") == 2) {
+                            && stack.search("experimentDescription") == 2) {
                 String name = attrs.getValue("name");
                 if (experimentHolder.experiment != null && name != null) {
                     comment = createItem("Comment");
-                    setComment();
                     comment.setAttribute("type", name);
                     attName = "experimentAttribute";
                 } else {
                     LOG.info("Can't create comment, bad experiment.");
                 }
-            // <hostOrganismList><hostOrganism ncbiTaxId="9534"><names><fullName>
+                // <hostOrganismList><hostOrganism ncbiTaxId="9534"><names><fullName>
             } else if (qName.equals("fullName") && stack.peek().equals("names")
-                       && stack.search("hostOrganism") == 3) {
+                            && stack.search("hostOrganism") == 3) {
                 attName = "hostOrganismName";
-            //<interactionDetectionMethod><xref><primaryRef>
+                //<interactionDetectionMethod><xref><primaryRef>
             } else if (qName.equals("primaryRef") && stack.peek().equals("xref")
-                       && stack.search("interactionDetectionMethod") == 2) {
+                            && stack.search("interactionDetectionMethod") == 2) {
                 String termItemId = getTerm(attrs.getValue("id"));
                 experimentHolder.setMethod("interactionDetectionMethod", termItemId);
-            //<participantIdentificationMethod><xref> <primaryRef>
+                //<participantIdentificationMethod><xref> <primaryRef>
             } else if (qName.equals("primaryRef") && stack.peek().equals("xref")
-                       && stack.search("participantIdentificationMethod") == 2) {
+                            && stack.search("participantIdentificationMethod") == 2) {
                 String termItemId = getTerm(attrs.getValue("id"));
                 experimentHolder.setMethod("participantIdentificationMethod", termItemId);
-            // <interactorList><interactor id="4">
+                // <interactorList><interactor id="4">
             } else if (qName.equals("interactor") && stack.peek().equals("interactorList")) {
-                proteinId = attrs.getValue("id");
-            // <interactorList><interactor id="4"><organism ncbiTaxId="7227">
+                interactorId = attrs.getValue("id");
+                // <interactorList><interactor id="4"><organism ncbiTaxId="7227">
             } else if (qName.equals("organism") && stack.peek().equals("interactor")) {
                 String taxId = attrs.getValue("ncbiTaxId");
-                if (organisms.containsKey(taxId) && protein != null) {
-                    protein.setReference("organism", organisms.get(taxId));
-                    if (!validProteins.containsKey(proteinId)) {
-                        validProteins.put(proteinId, protein.getIdentifier());
+                if (organisms.containsKey(taxId) && secondaryIdentifier != null
+                                && !secondaryIdentifier.equals("")) {
+                    gene = getGene(taxId, secondaryIdentifier);
+                    if (!validGenes.containsKey(interactorId)) {
+                        validGenes.put(interactorId, gene);
                     }
                 }
-            // <interactorList><interactor id="4"><xref><primaryRef>
-            } else if (qName.equals("primaryRef") && stack.peek().equals("xref")
-                       && stack.search("interactor") == 2) {
-                String db = attrs.getValue("db");
-                String id = attrs.getValue("id");
-                synonyms = new HashSet();
-                if (db != null && !db.equals("uniparc")) {
-                    String primaryAccession = null;
-                    if (db.startsWith("uniprot")) {
-                        // accessions like P14734-1 are isoform identifiers, remove the '-n'
-                        // to get back to main protein id
-                        if (id.indexOf("-") > 0) {
-                            id = id.substring(0, id.indexOf("-"));
-                        }
-                        primaryAccession = id;
-                    } else if (db.equals("intact")) {
-                        primaryAccession = "IntAct:" + id;
-                    } else {
-                        primaryAccession = id;
-                    }
 
-                    protein = createItem("Protein");
-                    protein.setAttribute("primaryAccession", primaryAccession);
-                    String proteinRefId = accessionsToRefIds.get(primaryAccession);
-                    if (proteinRefId == null) {
-                        // we have seen this before so set the correct identifier, this won't
-                        // be stored this time.
-                        proteinRefId = protein.getIdentifier();
-                    } else {
-                        protein.setIdentifier(proteinRefId);
-                    }
-                    protein.setCollection("dataSets", new ArrayList(Collections.singleton(
-                                                                    masterList.get("datasetId"))));
-                    Item synonym = createItem("Synonym");
-                    synonym.setAttribute("value", id);
-                    synonym.setAttribute("type", db.startsWith("uniprot")
-                                         ? "accession" : "identifier");
-                    synonym.setReference("source", datasourceItemId);
-                    synonym.setReference("subject", proteinRefId);
-                    synonyms.add(synonym);
-                    // create an extra synonym for proteins that have an IntAct identifier
-                    if (db.equals("intact")) {
-                        Item syn1 = createItem("Synonym");
-                        syn1.setAttribute("value", id);
-                        syn1.setAttribute("type", "identifier");
-                        syn1.setReference("source", datasourceItemId);
-                        syn1.setReference("subject", proteinRefId);
-                        synonyms.add(synonym);
-                    }
-                    // see ticket #1450
-                    Item syn2 = createItem("Synonym");
-                    syn2.setAttribute("value", id);
-                    syn2.setAttribute("type", "accession");
-                    syn2.setReference("source", datasourceItemId);
-                    syn2.setReference("subject", proteinRefId);
-                    synonyms.add(synonym);
-                }
-           // <interactorList><interactor id="4"><sequence>
+                // <interactorList><interactor id="4"><names>
+                // <alias type="locus name" typeAc="MI:0301">HSC82</alias>
+              } else if (qName.equals("alias") && stack.peek().equals("names")
+                              && stack.search("interactor") == 2) {
+                  if (attrs.getValue("type").equals("locus name")) {
+                      attName = "alias";
+                  }
+
+                // we are now using gene instead of protein
+                // <interactorList><interactor id="4"><xref><primaryRef>
+//            } else if (qName.equals("primaryRef") && stack.peek().equals("xref")
+//                            && stack.search("interactor") == 2) {
+//                String db = attrs.getValue("db");
+//                String id = attrs.getValue("id");
+//                synonyms = new HashSet();
+//                if (db != null && !db.equals("uniparc")) {
+//                    String primaryAccession = null;
+//                    if (db.startsWith("uniprot")) {
+//                        // accessions like P14734-1 are isoform identifiers, remove the '-n'
+//                        // to get back to main protein id
+//                        if (id.indexOf("-") > 0) {
+//                            id = id.substring(0, id.indexOf("-"));
+//                        }
+//                        primaryAccession = id;
+//                    } else if (db.equals("intact")) {
+//                        primaryAccession = "IntAct:" + id;
+//                    } else {
+//                        primaryAccession = id;
+//                    }
+//
+//                    gene = createItem("Protein");
+//                    gene.setAttribute("primaryAccession", primaryAccession);
+//                    String proteinRefId = accessionsToRefIds.get(primaryAccession);
+//                    if (proteinRefId == null) {
+//                        // we have seen this before so set the correct identifier, this won't
+//                        // be stored this time.
+//                        proteinRefId = gene.getIdentifier();
+//                    } else {
+//                        gene.setIdentifier(proteinRefId);
+//                    }
+//                    gene.setCollection("dataSets",
+//                  new ArrayList(Collections.singleton("datasetId")));
+//                    Item synonym = createItem("Synonym");
+//                    synonym.setAttribute("value", id);
+//                    synonym.setAttribute("type", db.startsWith("uniprot")
+//                                         ? "accession" : "identifier");
+//                    synonym.setReference("source", datasourceId);
+//                    synonym.setReference("subject", proteinRefId);
+//                    synonyms.add(synonym);
+//                    // create an extra synonym for proteins that have an IntAct identifier
+//                    if (db.equals("intact")) {
+//                        Item syn1 = createItem("Synonym");
+//                        syn1.setAttribute("value", id);
+//                        syn1.setAttribute("type", "identifier");
+//                        syn1.setReference("source", datasourceId);
+//                        syn1.setReference("subject", proteinRefId);
+//                        synonyms.add(synonym);
+//                    }
+//                    // see ticket #1450
+//                    Item syn2 = createItem("Synonym");
+//                    syn2.setAttribute("value", id);
+//                    syn2.setAttribute("type", "accession");
+//                    syn2.setReference("source", datasourceId);
+//                    syn2.setReference("subject", proteinRefId);
+//                    synonyms.add(synonym);
+//                }
+                // <interactorList><interactor id="4"><sequence>
             } else if (qName.equals("sequence") && stack.peek().equals("interactor")) {
                 attName = "sequence";
-            //<interactionList><interaction id="1"><names><shortLabel>
+                //<interactionList><interaction id="1"><names><shortLabel>
             } else if (qName.equals("shortLabel") && stack.peek().equals("names")
-                       && stack.search("interaction") == 2) {
+                            && stack.search("interaction") == 2) {
                 attName = "interactionName";
-            //<interaction><confidenceList><confidence><unit><names><shortLabel>
+                //<interaction><confidenceList><confidence><unit><names><shortLabel>
             } else if (qName.equals("shortLabel") && stack.peek().equals("names")
-                       && stack.search("confidence") == 3) {
+                            && stack.search("confidence") == 3) {
                 attName = "confidenceUnit";
-            //<interactionList><interaction><confidenceList><confidence><value>
+                //<interactionList><interaction><confidenceList><confidence><value>
             } else if (qName.equals("value") && stack.peek().equals("confidence")) {
                 attName = "confidence";
-            //<interactionList><interaction>
-            //<participantList><participant id="5"><interactorRef>
+                //<interactionList><interaction>
+                //<participantList><participant id="5"><interactorRef>
             } else if (qName.equals("interactorRef")
-                       && stack.peek().equals("participant")) {
+                            && stack.peek().equals("participant")) {
                 attName = "participantId";
-            // <participantList><participant id="5"><experimentalRole><names><shortLabel>
+                // <participantList><participant id="5"><experimentalRole><names><shortLabel>
             } else if (qName.equals("shortLabel") && stack.search("experimentalRole") == 2) {
                 attName = "proteinRole";
-            //<interactionList><interaction><experimentList><experimentRef>
+                //<interactionList><interaction><experimentList><experimentRef>
             } else if (qName.equals("experimentRef") && stack.peek().equals("experimentList")) {
                 attName = "experimentRef";
-            // <participantList><participant id="6919"><featureList><feature id="6920">
-            //    <featureRangeList><featureRange><startStatus><names><shortLabel>
+                // <participantList><participant id="6919"><featureList><feature id="6920">
+                //    <featureRangeList><featureRange><startStatus><names><shortLabel>
             } else if (qName.equals("shortLabel") && stack.search("startStatus") == 2) {
                 attName = "startStatus";
-            // <participantList><participant id="6919"><featureList><feature id="6920">
-            //    <featureRangeList><featureRange><endStatus><names><shortLabel>
+                // <participantList><participant id="6919"><featureList><feature id="6920">
+                //    <featureRangeList><featureRange><endStatus><names><shortLabel>
             } else if (qName.equals("shortLabel") && stack.search("endStatus") == 2) {
                 attName = "endStatus";
-            // <featureList><feature id="24"><names><shortLabel>
+                // <featureList><feature id="24"><names><shortLabel>
             } else if (qName.equals("shortLabel") && stack.search("feature") == 2) {
                 attName = "regionName";
-            // <participantList><participant id="6919"><featureList><feature id="6920">
-            // <featureType><xref><primaryRef db="psi-mi" dbAc="MI:0488" id="MI:0117"
+                // <participantList><participant id="6919"><featureList><feature id="6920">
+                // <featureType><xref><primaryRef db="psi-mi" dbAc="MI:0488" id="MI:0117"
             } else if (qName.equals("primaryRef") && stack.search("featureType") == 2
-                       && attrs.getValue("id").equals("MI:0117") && interactorHolder != null) {
+                            && attrs.getValue("id").equals("MI:0117") && interactorHolder != null) {
                 interactorHolder.isRegionFeature = true;
                 // create interacting region
                 Item interactionRegion = createItem("ProteinInteractionRegion");
                 interactionRegion.setAttribute("name", regionName);
-                interactionRegion.setReference("protein", interactorHolder.proteinId);
-                interactionRegion.setReference("ontologyTerm", psiDagTermItemId);
+                interactionRegion.setReference("gene", interactorHolder.geneRefId);
+                interactionRegion.setReference("ontologyTerm", termId);
 
                 // create new location object (start and end are coming later)
                 Item location = createItem("Location");
-                location.setReference("object", interactorHolder.proteinId);
+                location.setReference("object", interactorHolder.geneRefId);
                 location.setReference("subject", interactionRegion.getIdentifier());
 
                 interactionRegion.setReference("location", location);
@@ -363,23 +318,17 @@ public class PsiConverter extends FileConverter
                 // <participantList><participant id="6919"><featureList><feature id="6920">
                 //    <featureRangeList><featureRange><begin position="470"/>
             } else if (qName.equals("begin")
-                       && stack.peek().equals("featureRange")
-                       && interactorHolder != null
-                       && interactorHolder.isRegionFeature) {
+                            && stack.peek().equals("featureRange")
+                            && interactorHolder != null
+                            && interactorHolder.isRegionFeature) {
                 interactorHolder.setStart(attrs.getValue("position"));
-            // <participantList><participant id="6919"><featureList><feature id="6920">
-            //    <featureRangeList><featureRange><end position="470"/>
+                // <participantList><participant id="6919"><featureList><feature id="6920">
+                //    <featureRangeList><featureRange><end position="470"/>
             } else if (qName.equals("end")
-                       && stack.peek().equals("featureRange")
-                       && interactorHolder != null
-                       && interactorHolder.isRegionFeature) {
+                            && stack.peek().equals("featureRange")
+                            && interactorHolder != null
+                            && interactorHolder.isRegionFeature) {
                 interactorHolder.setEnd(attrs.getValue("position"));
-
-            } else if (qName.equals("entry")) { // <entry>
-                /* stuff done only once */
-                if (masterList.size() <= 1) {
-                    init();
-                }
             }
 
             super.startElement(uri, localName, qName, attrs);
@@ -431,7 +380,7 @@ public class PsiConverter extends FileConverter
          * {@inheritDoc}
          */
         public void endElement(String uri, String localName, String qName)
-            throws SAXException {
+        throws SAXException {
 
             super.endElement(uri, localName, qName);
 
@@ -445,18 +394,16 @@ public class PsiConverter extends FileConverter
 
                     String s = attValue.toString();
                     if (comment != null && s != null) {
-                        //TODO store these only when valid experiment
                         if (!s.equals("")) {
                             comment.setAttribute("text", s);
                         }
-                        writer.store(ItemHelper.convert(comment));
+                        store(comment);
                         comment = null;
                     } else {
-                        LOG.info("Experiment " + experimentHolder.name
-                                 + " has a bad comment");
+                        LOG.info("Experiment " + experimentHolder.name + " has a bad comment");
                     }
 
-                // <experimentList><experimentDescription><names><shortLabel>
+                    // <experimentList><experimentDescription><names><shortLabel>
                 } else if (attName != null
                                 && attName.equals("experimentName")
                                 && qName.equals("shortLabel")) {
@@ -464,14 +411,14 @@ public class PsiConverter extends FileConverter
                     String shortLabel = attValue.toString();
                     if (shortLabel != null) {
                         // you can have an experiment spread across several xml files
-                        experimentHolder = checkExperiment(shortLabel);
+                        experimentHolder = getExperiment(shortLabel);
                         experimentIds.put(experimentId, experimentHolder);
                         experimentHolder.setName(shortLabel);
                     } else {
                         LOG.error("Experiment " + experimentId + " doesn't have a shortLabel");
                     }
 
-                // <hostOrganismList><hostOrganism ncbiTaxId="9534"><names><fullName>
+                    // <hostOrganismList><hostOrganism ncbiTaxId="9534"><names><fullName>
                 } else if (attName != null
                                 && attName.equals("hostOrganismName")
                                 && qName.equals("fullName")) {
@@ -483,51 +430,69 @@ public class PsiConverter extends FileConverter
                         LOG.info("Experiment " + experimentHolder.name
                                  + " doesn't have a host organism name");
                     }
-                // <interactorList><interactor id="4"><sequence>
-                } else if (protein != null && attName != null
+                    // <interactorList><interactor id="4"><sequence>
+                } else if (gene != null && attName != null
                                 && attName.equals("sequence")
                                 && qName.equals("sequence")
                                 && stack.peek().equals("interactor")) {
-                    sequence = createItem("Sequence");
+                    Item sequence = createItem("Sequence");
                     String srcResidues = attValue.toString();
                     sequence.setAttribute("residues", srcResidues);
                     sequence.setAttribute("length", "" + srcResidues.length());
-                    writer.store(ItemHelper.convert(sequence));
-                    protein.setReference("sequence", sequence);
-                // <interactorList><interactor id="4">
-                } else if (protein != null && qName.equals("interactor")) {
+                    store(sequence);
+                    gene.setReference("sequence", sequence);
+                    store(gene);
+                    gene = null;
+                    // <interactorList><interactor id="4">
+                } else if (qName.equals("alias")) {
+                    secondaryIdentifier = attValue.toString();
 
-                    String accession = protein.getAttribute("primaryAccession").getValue();
-                    if (!accessionsToRefIds.containsKey(accession)) {
-                        writer.store(ItemHelper.convert(protein));
+//                  String accession = gene.getAttribute("primaryAccession").getValue();
+//                  if (!accessionsToRefIds.containsKey(accession)) {
+//                  writer.store(ItemHelper.convert(gene));
 
-                        String primaryAccession
-                        = protein.getAttribute("primaryAccession").getValue();
-                        String refId = protein.getIdentifier();
-                        accessionsToRefIds.put(primaryAccession, refId);
-                        refIdsToAccessions.put(refId, primaryAccession);
+//                  String primaryAccession
+//                  = gene.getAttribute("primaryAccession").getValue();
+//                  String refId = gene.getIdentifier();
+//                  accessionsToRefIds.put(primaryAccession, refId);
+//                  refIdsToAccessions.put(refId, primaryAccession);
 
-                        for (Item item : synonyms) {
-                            writer.store(ItemHelper.convert(item));
-                        }
-                    }
-                    protein = null;
-                    proteinId = null;
-                    synonyms = null;
-                    sequence = null;
+//                  for (Item item : synonyms) {
+//                  writer.store(ItemHelper.convert(item));
+//                  }
+//                  }
+//                  gene = null;
+//                  interactorId = null;
+//                  synonyms = null;
+//                  sequence = null;
 
-                //<interactionList><interaction>
-                //<participantList><participant id="5"><interactorRef>
+                    //<interactionList><interaction>
+                    //<participantList><participant id="5"><interactorRef>
                 } else if (qName.equals("interactorRef")
                                 && stack.peek().equals("participant")) {
 
                     // get protein from our list, using the id as the key
                     String id = attValue.toString();
-                    if (validProteins.get(id) != null) {
-                        String proteinRefId = validProteins.get(id);
-                        interactorHolder = new InteractorHolder(proteinRefId);
-                        holder.addInteractor(interactorHolder);
-                        holder.addProtein(proteinRefId);
+                    if (validGenes.get(id) != null) {
+                        Item interactor = validGenes.get(id);
+                        String geneRefId = interactor.getIdentifier();
+                        interactorHolder = new InteractorHolder(geneRefId);
+                        String ident = null;
+                        if (interactor.getAttribute("secondaryIdentifier") != null) {
+                            ident = interactor.getAttribute("secondaryIdentifier").toString();
+                        }
+                        if ((ident == null || ident.equals(""))
+                                        && interactor.getAttribute("primaryIdentifier") != null) {
+                            ident = interactor.getAttribute("primaryIdentifier").toString();
+                        }
+                        if (ident != null) {
+                            interactorHolder.identifier = ident;
+
+                            holder.addInteractor(interactorHolder);
+                            holder.addProtein(geneRefId);
+                        } else {
+                            holder.isValid = false;
+                        }
                     } else {
                         holder.isValid = false;
                     }
@@ -537,8 +502,7 @@ public class PsiConverter extends FileConverter
                                 && attName != null
                                 && attName.equals("interactionName")) {
 
-                    String shortLabel = attValue.toString();
-                    holder = new InteractionHolder(shortLabel);
+                    holder = new InteractionHolder(attValue.toString());
 
                     //<interactionList><interaction><experimentList><experimentRef>
                 } else if (qName.equals("experimentRef")
@@ -580,7 +544,7 @@ public class PsiConverter extends FileConverter
                                 && stack.search("experimentalRole") == 2
                                 && interactorHolder != null) {
 
-                    interactorHolder.proteinRole = attValue.toString();
+                    interactorHolder.role = attValue.toString();
 
                     // <participantList><participant id="6919"><featureList><feature id="6920">
                     //    <featureRangeList><featureRange><startStatus><names><shortLabel>
@@ -599,16 +563,16 @@ public class PsiConverter extends FileConverter
 
                     interactorHolder.endStatus = attValue.toString();
 
-                //     <featureList><feature id="24"><names><shortLabel>
+                    //     <featureList><feature id="24"><names><shortLabel>
                 } else if (qName.equals("shortLabel")
-                           && stack.search("feature") == 2
-                           && attName != null
-                           && attName.equals("regionName")) {
+                                && stack.search("feature") == 2
+                                && attName != null
+                                && attName.equals("regionName")) {
 
                     regionName  = attValue.toString();
 
 
-                //<interactionList><interaction>
+                    //<interactionList><interaction>
                 } else if (qName.equals("interaction")
                                 && holder != null) {
 
@@ -628,49 +592,42 @@ public class PsiConverter extends FileConverter
 
         private void storeAll(InteractionHolder interactionHolder) throws SAXException  {
 
-            Set proteinInteractors = interactionHolder.interactors;
+            Set interactors = interactionHolder.interactors;
 
             try {
                 // loop through proteins/interactors in this interaction
-                for (Iterator iter = proteinInteractors.iterator(); iter.hasNext();) {
+                for (Iterator iter = interactors.iterator(); iter.hasNext();) {
 
                     interactorHolder =  (InteractorHolder) iter.next();
 
                     // build & store interactions - one for each protein
-                    Item interaction = createItem("ProteinInteraction");
-                    String proteinRefId = interactorHolder.proteinId;
+                    Item interaction = createItem("Interaction");
+                    String geneRefId = interactorHolder.geneRefId;
+                    String identifier = interactorHolder.identifier;
                     interaction.setAttribute("shortName", interactionHolder.shortName);
-                    interaction.setAttribute("proteinRole",
-                                             interactorHolder.proteinRole);
+                    interaction.setAttribute("role", interactorHolder.role);
 
                     if (interactionHolder.confidence != null) {
                         interaction.setAttribute("confidence",
-                                             interactionHolder.confidence.toString());
+                                                 interactionHolder.confidence.toString());
                     }
                     if (interactionHolder.confidenceText != null) {
                         interaction.setAttribute("confidenceText",
-                                             interactionHolder.confidenceText);
+                                                 interactionHolder.confidenceText);
                     }
-                    interaction.setReference("protein", proteinRefId);
+                    interaction.setReference("gene", geneRefId);
                     interaction.setReference("experiment",
-                           interactionHolder.experimentHolder.experiment.getIdentifier());
+                                             interactionHolder.eh.experiment.getIdentifier());
 
                     // interactingProteins
-                    Set<String> proteinIds = interactionHolder.proteinIds;
-                    proteinIds.remove(proteinRefId);
-                    ReferenceList proteinList = new ReferenceList("interactingProteins",
-                                                                  new ArrayList());
-                    for (Iterator it = proteinIds.iterator(); it.hasNext();) {
-                        proteinList.addRefId((String) it.next());
-                    }
-                    interaction.addCollection(proteinList);
-
-                    proteinIds.add(proteinRefId);
+                    List<String> geneIds = new ArrayList(interactionHolder.geneIds);
+                    geneIds.remove(geneRefId);
+                    interaction.setCollection("interactingGenes", geneIds);
 
                     // interactingRegions
                     Set<String> regionIds = interactionHolder.regionIds;
                     ReferenceList regionList = new ReferenceList("interactingRegions",
-                                                                  new ArrayList());
+                                                                 new ArrayList());
                     for (Iterator it = regionIds.iterator(); it.hasNext();) {
                         regionList.addRefId((String) it.next());
                     }
@@ -678,44 +635,39 @@ public class PsiConverter extends FileConverter
                         interaction.addCollection(regionList);
                     }
 
-                    interaction.setCollection("dataSets", new ArrayList(Collections.singleton(
-                                                        masterList.get("datasetId"))));
-
                     /* store all protein interaction-related items */
-                    writer.store(ItemHelper.convert(interaction));
+                    store(interaction);
                     if (interactorHolder.interactionRegion != null) {
                         Item region = interactorHolder.interactionRegion;
                         if (interactorHolder.startStatus != null) {
-                            region.setAttribute("startStatus",
-                                                 interactorHolder.startStatus);
+                            region.setAttribute("startStatus", interactorHolder.startStatus);
                         }
                         if (interactorHolder.endStatus != null) {
-                            region.setAttribute("endStatus",
-                                                 interactorHolder.endStatus);
+                            region.setAttribute("endStatus", interactorHolder.endStatus);
                         }
                         region.setReference("interaction", interaction);
 
-                        String regionIdentifier = interactionHolder.shortName + "_"
-                            + refIdsToAccessions.get(interactorHolder.proteinId);
+                        String regionIdentifier = interactionHolder.shortName + "_" + identifier;
+
                         if (interactorHolder.start != null && !interactorHolder.start.equals("0")) {
                             regionIdentifier += ":" + interactorHolder.start;
                             regionIdentifier += "-" + interactorHolder.end;
                         }
                         region.setAttribute("primaryIdentifier", regionIdentifier);
 
-                        writer.store(ItemHelper.convert(region));
-                        writer.store(ItemHelper.convert(interactorHolder.location));
+                        store(region);
+                        store(interactorHolder.location);
                     }
 
                 }
 
                 /* store all experiment-related items */
-                ExperimentHolder eh = interactionHolder.experimentHolder;
+                ExperimentHolder eh = interactionHolder.eh;
                 // TODO is this experiment going to have extra items to store, the 2nd time it
                 // gets processed?  In the other XML files?
                 if (!eh.isStored) {
                     eh.isStored = true;
-                    writer.store(ItemHelper.convert(eh.experiment));
+                    store(eh.experiment);
                     //TODO store comments here instead
                     //for (Object o : eh.comments) {
                     //    writer.store(ItemHelper.convert((Item) o));
@@ -728,6 +680,33 @@ public class PsiConverter extends FileConverter
 
         }
 
+        private Item getGene(String taxonId, String id) {
+            String identifier = id;
+            // for Drosophila attempt to update to a current gene identifier
+            IdResolver resolver = resolverFactory.getIdResolver(false);
+            if (taxonId.equals("7227") && resolver != null) {
+                int resCount = resolver.countResolutions(taxonId, identifier);
+                if (resCount != 1) {
+                    LOG.info("RESOLVER: failed to resolve gene to one identifier, ignoring gene: "
+                             + identifier + " count: " + resCount + " FBgn: "
+                             + resolver.resolveId(taxonId, identifier));
+                    return null;
+                }
+                identifier = resolver.resolveId(taxonId, identifier).iterator().next();
+            }
+
+            Item item = genes.get(identifier);
+            if (item == null) {
+                item = createItem("Gene");
+                String identifierLabel = (!taxonId.equals("7227")
+                                         ? "secondaryIdentifier" : "primaryIdentifier");
+                item.setAttribute(identifierLabel, identifier);
+                genes.put(identifier, item);
+            }
+            return item;
+        }
+
+
         private String getPub(String pubMedId)
         throws SAXException {
             String itemId = pubs.get(pubMedId);
@@ -737,27 +716,7 @@ public class PsiConverter extends FileConverter
                     pub.setAttribute("pubMedId", pubMedId);
                     itemId = pub.getIdentifier();
                     pubs.put(pubMedId, itemId);
-                    // TODO could have orphan pubs!
-                    writer.store(ItemHelper.convert(pub));
-                } catch (ObjectStoreException e) {
-                    throw new SAXException(e);
-                }
-            }
-            return itemId;
-        }
-
-        private String getTerm(String identifier)
-        throws SAXException {
-
-            String itemId = terms.get(identifier);
-            if (itemId == null) {
-                try {
-                    Item term = createItem("ProteinInteractionTerm");
-                    term.setAttribute("identifier", identifier);
-                    itemId = term.getIdentifier();
-                    terms.put(identifier, itemId);
-                    // TODO store sensibly
-                    writer.store(ItemHelper.convert(term));
+                    store(pub);
                 } catch (ObjectStoreException e) {
                     throw new SAXException(e);
                 }
@@ -766,152 +725,35 @@ public class PsiConverter extends FileConverter
         }
 
 
-        private ExperimentHolder checkExperiment(String name) {
 
-            ExperimentHolder eh = experimentNames.get(name);
+        private ExperimentHolder getExperiment(String name) {
+
+            ExperimentHolder eh = (ExperimentHolder) experimentNames.get(name);
             if (eh == null) {
-                Item exp = createItem("ProteinInteractionExperiment");
-                eh = new ExperimentHolder(exp);
-                commentCollection = new ReferenceList("comments", new ArrayList());
+                eh = new ExperimentHolder(createItem("InteractionExperiment"));
                 experimentNames.put(name, eh);
             }
             return eh;
         }
 
-        private void setComment() {
-            experimentHolder.comments.add(comment);
-            addToCollection(experimentHolder.experiment, commentCollection, comment);
-        }
-
-        private void addToCollection(Item parent, ReferenceList collection, Item newItem) {
-            //TODO how can collection be null?
-            if (collection != null) {
-                if (collection.getRefIds().isEmpty()) {
-                    parent.addCollection(collection);
-                }
-                collection.addRefId(newItem.getIdentifier());
-            }
-        }
 
 
-        private void init()
-        throws SAXException {
-
-                try {
-                    // TODO why doesn't this call getTerm()???
-                    Item psiDagTerm = createItem("OntologyTerm");
-                    psiDagTermItemId = psiDagTerm.getIdentifier();
-                    psiDagTerm.setAttribute("identifier", "MI:0117");
-                    writer.store(ItemHelper.convert(psiDagTerm));
-                    masterList.put("psiDagTerm", psiDagTermItemId);
-                } catch (ObjectStoreException e) {
-                    throw new SAXException(e);
-                }
-                initOrganisms();
-                initDatasources();
-
-        }
-
-        private void initOrganisms()
-        throws SAXException {
-            try {
-                for (Iterator iter = organisms.keySet().iterator(); iter.hasNext();) {
-                    String taxId = (String) iter.next();
-                    Item organism = createItem("Organism");
-                    organism.setAttribute("taxonId", taxId);
-                    writer.store(ItemHelper.convert(organism));
-                    organisms.put(taxId, organism.getIdentifier());
-                }
-            } catch (ObjectStoreException e) {
-                throw new SAXException(e);
-            }
-        }
-
-        private void initDatasources()
-        throws SAXException {
-            try {
-                Item evidenceDatasource = createItem("DataSource");
-                evidenceDatasource.setAttribute("name", "IntAct");
-
-                Item dataSet = createItem("DataSet");
-                dataSet.setAttribute("title", "IntAct data set");
-                dataSet.setReference("dataSource", evidenceDatasource.getIdentifier());
-                masterList.put("datasetId", dataSet.getIdentifier());
-                writer.store(ItemHelper.convert(dataSet));
-                writer.store(ItemHelper.convert(evidenceDatasource));
-                //masterList.put("evidenceDatasource", evidenceDatasource.getIdentifier());
-
-                Item datasource = createItem("DataSource");
-                datasource.setAttribute("name", "UniProt");
-                datasourceItemId = datasource.getIdentifier();
-                writer.store(ItemHelper.convert(datasource));
-                masterList.put("datasourceId", datasource.getIdentifier());
-
-            } catch (ObjectStoreException e) {
-                throw new SAXException(e);
-            }
-        }
-
-        /**
-         * Convenience method for creating a new Item
-         * @param className the name of the class
-         * @return a new Item
-         */
-        protected Item createItem(String className) {
-            return itemFactory.makeItem(alias(className) + "_" + newId(className),
-                                        GENOMIC_NS + className, "");
-        }
-
-
-        private String newId(String className) {
-            Integer id = ids.get(className);
-            if (id == null) {
-                id = new Integer(0);
-                ids.put(className, id);
-            }
-            id = new Integer(id.intValue() + 1);
-            ids.put(className, id);
-            return id.toString();
-        }
-
-        /**
-         * Uniquely alias a className
-         * @param className the class name
-         * @return the alias
-         */
-        protected String alias(String className) {
-            String alias = aliases.get(className);
-
-            if (alias != null) {
-                return alias;
-            }
-            String s = "0";
-            if (masterList.get("nextClsId") != null) {
-                s = masterList.get("nextClsId");
-            }
-            int i = Integer.parseInt(s);
-            i++;
-            String nextIndex = "" + i;
-            masterList.put("nextClsId", nextIndex);
-            aliases.put(className, nextIndex);
-            return nextIndex;
-        }
 
         /**
          * Holder object for ProteinInteraction.  Holds all information about an interaction until
          * it's verified that all organisms are in the list given.
          * @author Julie Sullivan
          */
-        public static class InteractionHolder
+        public class InteractionHolder
         {
             private String shortName;
-            private ExperimentHolder experimentHolder;
+            private ExperimentHolder eh;
             private Double confidence;
             private String confidenceText;
             private String confidenceUnit;
             private Set<InteractorHolder> interactors = new LinkedHashSet<InteractorHolder>();
             private boolean isValid = true;
-            private Set<String> proteinIds = new HashSet<String>();
+            private Set<String> geneIds = new HashSet<String>();
             private Set<String> regionIds = new HashSet<String>();
 
             /**
@@ -927,7 +769,7 @@ public class PsiConverter extends FileConverter
              * @param experimentHolder object holding experiment object
              */
             protected void setExperiment(ExperimentHolder experimentHolder) {
-                this.experimentHolder = experimentHolder;
+                this.eh = experimentHolder;
             }
 
             /**
@@ -946,18 +788,17 @@ public class PsiConverter extends FileConverter
 
             /**
              *
-             * @param interactorHolder object holding interactor
+             * @param ih object holding interactor
              */
-            protected void addInteractor(InteractorHolder interactorHolder) {
-                interactors.add(interactorHolder);
+            protected void addInteractor(InteractorHolder ih) {
+                interactors.add(ih);
             }
 
             /**
-             *
-             * @param proteinId protein involved in interaction
+             * @param geneId protein involved in interaction
              */
-            protected void addProtein(String proteinId) {
-                proteinIds.add(proteinId);
+            protected void addProtein(String geneId) {
+                geneIds.add(geneId);
             }
 
             /**
@@ -977,14 +818,15 @@ public class PsiConverter extends FileConverter
          * interaction until it's verified that all organisms are in the list given.
          * @author Julie Sullivan
          */
-        public static class InteractorHolder
+        public class InteractorHolder
         {
-            private String proteinId;   // protein.getIdentifier()
-            private String proteinRole;
+            private String geneRefId;   // protein.getIdentifier()
+            private String role;
             private Item interactionRegion; // for storage later
             private Item location;          // for storage later
             private String startStatus, start;
             private String endStatus, end;
+            protected String identifier;
 
             /* we only want to process the binding site feature.  this flag is FALSE until
              *
@@ -999,10 +841,10 @@ public class PsiConverter extends FileConverter
 
             /**
              * Constructor
-             * @param proteinId Protein that's part of the interaction
+             * @param geneId Protein that's part of the interaction
              */
-            public InteractorHolder(String proteinId) {
-                this.proteinId = proteinId;
+            public InteractorHolder(String geneId) {
+                this.geneRefId = geneId;
             }
 
             /**
@@ -1028,7 +870,7 @@ public class PsiConverter extends FileConverter
          * an interaction is verified to have only valid organisms
          * @author Julie Sullivan
          */
-        public static class ExperimentHolder
+        public class ExperimentHolder
         {
 
             protected String name;
@@ -1077,6 +919,39 @@ public class PsiConverter extends FileConverter
             protected void setHostOrganism(String fullName) {
                 experiment.setAttribute("hostOrganism", fullName);
             }
+        }
+    }
+
+    public String getTerm(String identifier)
+    throws SAXException {
+
+        String itemId = terms.get(identifier);
+        if (itemId == null) {
+            try {
+                Item term = createItem("ProteinInteractionTerm");
+                term.setAttribute("identifier", identifier);
+                itemId = term.getIdentifier();
+                terms.put(identifier, itemId);
+                store(term);
+            } catch (ObjectStoreException e) {
+                throw new SAXException(e);
+            }
+        }
+        return itemId;
+    }
+
+    public void initOrganisms()
+    throws SAXException {
+        try {
+            for (Iterator iter = organisms.keySet().iterator(); iter.hasNext();) {
+                String taxId = (String) iter.next();
+                Item organism = createItem("Organism");
+                organism.setAttribute("taxonId", taxId);
+                store(organism);
+                organisms.put(taxId, organism.getIdentifier());
+            }
+        } catch (ObjectStoreException e) {
+            throw new SAXException(e);
         }
     }
 }

@@ -16,6 +16,7 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.LinkedHashSet;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.Stack;
@@ -27,7 +28,6 @@ import org.intermine.objectstore.ObjectStoreException;
 import org.intermine.util.SAXParser;
 import org.intermine.util.StringUtil;
 import org.intermine.xml.full.Item;
-import org.intermine.xml.full.ReferenceList;
 import org.xml.sax.Attributes;
 import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
@@ -36,15 +36,36 @@ import org.xml.sax.helpers.DefaultHandler;
 
 /**
  * DataConverter to parse biogrid data into items
+ *
+ * Genetic interactions are labeled protein interactions, so we can't store or create any objects
+ * until all experiments and interactors are processed.  Holder objects are creating, storing the
+ * data processed until the interactions are processed and we know the interactionType
+ *
+ * EXPERIMENT HOLDER
+ * holds the experiment data until the interactions are processed.
+ * interactions.interactionType tells us if this is a genetic or protein interaction, and thus
+ * which type of experiment object to create
+ *
+ * INTERACTOR HOLDER
+ * holds the identifier
+ * could be gene or protein
+ *
+ * INTERACTION HOLDER
+ * holds all interaction data until the entire entry is processed
+ *
+ * invalid experiments:
+ *  - human interactions use genbank IDs
+ *  - dmel gene doesn't resolve
+ *  - if any of the participants are invalid, we throw away the interaction
+ *
  * @author Julie Sullivan
  */
 public class BioGridConverter extends BioFileConverter
 {
-    private Map<String, String> pubs = new HashMap<String, String>();
     private static final Logger LOG = Logger.getLogger(BioGridConverter.class);
-    protected static final String GENOMIC_NS = "http://www.flymine.org/model/genomic#";
-    private static Map<String, String> masterList = new HashMap<String, String>();
     protected IdResolverFactory resolverFactory;
+    private Map<String, String> terms = new HashMap<String, String>();
+    private Map<String, String> pubs = new HashMap<String, String>();
 
     /**
      * Constructor
@@ -52,19 +73,17 @@ public class BioGridConverter extends BioFileConverter
      * @param model the Model
      */
     public BioGridConverter(ItemWriter writer, Model model) {
-        super(writer, model, "BioGRID", "BioGRID genetic interaction data set");
+        super(writer, model, "BioGRID", "BioGRID interaction data set");
 
         // only construct factory here so can be replaced by mock factory in tests
         resolverFactory = new FlyBaseIdResolverFactory();
     }
 
     /**
-     * {@inheritDoc}final
+     * {@inheritDoc}
      */
     public void process(Reader reader) throws Exception {
-
         BioGridHandler handler = new BioGridHandler();
-
         try {
             SAXParser.parse(new InputSource(reader), handler);
         } catch (Exception e) {
@@ -78,27 +97,23 @@ public class BioGridConverter extends BioFileConverter
      */
     class BioGridHandler extends DefaultHandler
     {
-        private Map<String, String> aliases = new HashMap<String, String>();
         private Map<String, Item> genes = new HashMap<String, Item>();
-        private Map<String, String> geneIdsToIdentifiers = new HashMap<String, String>();
-        // [experiment name] [experiment holder]
-        private Map<String, ExperimentHolder> experimentNames
-        = new HashMap<String, ExperimentHolder>();
+        //private Map<String, Item> proteins = new HashMap<String, Item>();
+        // [participant id] [identifier or accession]
+        private Map<String, InteractorHolder> ids = new HashMap<String, InteractorHolder>();
         // [id][experimentholder]
         private Map<String, ExperimentHolder> experimentIds
-        = new HashMap<String, ExperimentHolder>();
-        private InteractorHolder interactorHolder;
+                                              = new HashMap<String, ExperimentHolder>();
         private Stack<String> stack = new Stack<String>();
         private String attName = null;
         private StringBuffer attValue = null;
         private InteractionHolder holder;
         private ExperimentHolder experimentHolder;
-        private String geneId;
-        private String experimentId;
+        private InteractorHolder interactorHolder;
+        private String interactorId;
         private Item organism = null;
-        private Set<String> storedItems = new HashSet<String>();
-        private String organismTaxonId = null;
-        private Set<String> invalidInteractorIds = new HashSet<String>();
+        private String organismTaxonId = null, currentParticipantId = null;
+        //private Set<String> invalidInteractorIds = new HashSet<String>();
 
         /**
          * Constructor
@@ -111,121 +126,121 @@ public class BioGridConverter extends BioFileConverter
          * {@inheritDoc}
          */
         public void startElement(String uri, String localName, String qName, Attributes attrs)
-            throws SAXException {
+        throws SAXException {
             attName = null;
 
             // <experimentList><experimentDescription>
             if (qName.equals("experimentDescription")) {
 
-                experimentId = attrs.getValue("id");
+                experimentHolder = getExperimentHolder(attrs.getValue("id"));
 
-                // <entry><source release="2.0.37" releaseDate="2008-01-25"><names><shortLabel>
-                // Interactions for BIOGRID-ORGANISM-7227</shortLabel>
-                } else if (qName.equals("shortLabel")
-                                && stack.peek().equals("names")
-                                && stack.search("source") == 2) {
-
-                    attName = "organismTaxonId";
-
-            //  <experimentList><experimentDescription id="2"><names><shortLabel>
+            // <entry><source release="2.0.37" releaseDate="2008-01-25"><names><shortLabel>
+            // Interactions for BIOGRID-ORGANISM-7227</shortLabel>
             } else if (qName.equals("shortLabel")
-                       && stack.peek().equals("names")
-                       && stack.search("experimentDescription") == 2) {
+                            && stack.peek().equals("names")
+                            && stack.search("source") == 2) {
+
+                attName = "organismTaxonId";
+
+                //  <experimentList><experimentDescription id="2"><names><shortLabel>
+            } else if (qName.equals("shortLabel")
+                            && stack.peek().equals("names")
+                            && stack.search("experimentDescription") == 2) {
 
                 attName = "experimentName";
 
-            //  <experimentList><experimentDescription id="2"><names><fullName>
+                //  <experimentList><experimentDescription id="2"><names><fullName>
             } else if (qName.equals("fullName")
-                       && stack.peek().equals("names")
-                       && stack.search("experimentDescription") == 2) {
+                            && stack.peek().equals("names")
+                            && stack.search("experimentDescription") == 2) {
 
                 attName = "experimentDescr";
 
-            //<experimentList><experimentDescription><bibref><xref><primaryRef>
+                //<experimentList><experimentDescription><bibref><xref><primaryRef>
             } else if (qName.equals("primaryRef")
-                       && stack.peek().equals("xref")
-                       && stack.search("bibref") == 2
-                       && stack.search("experimentDescription") == 3) {
+                            && stack.peek().equals("xref")
+                            && stack.search("bibref") == 2
+                            && stack.search("experimentDescription") == 3) {
                 String pubMedId = attrs.getValue("id");
                 if (StringUtil.allDigits(pubMedId)) {
                     String pub = getPub(pubMedId);
                     experimentHolder.setPublication(pub);
                 }
 
-            // <interactorList><interactor id="4"><organism ncbiTaxId="7227">
-            } else if (qName.equals("organism") && stack.peek().equals("interactor")) {
+            //<experimentList><experimentDescription><interactionDetectionMethod><names><shortLabel>
+            } else if (qName.equals("shortLabel")
+                            && stack.peek().equals("names")
+                            && stack.search("interactionDetectionMethod") == 2) {
 
-                String taxId = attrs.getValue("ncbiTaxId");
-                if (organism == null) {
-                    organism = getOrganism(taxId);
-                } else {
-                    String currentTaxId = organism.getAttribute("taxonId").getValue();
-                    if (!taxId.equals(currentTaxId)) {
-                        LOG.error("Interaction with different organisms found:  " + taxId
-                                  + " and " + currentTaxId);
-                        invalidInteractorIds.add(geneId);
-                    }
-                }
+                attName = "interactionDetectionMethod";
 
-            // <interactorList><interactor id="4">
+                // <interactorList><interactor id="4">
             } else if (qName.equals("interactor") && stack.peek().equals("interactorList")) {
 
-                geneId = attrs.getValue("id");
+                interactorId = attrs.getValue("id");
+                interactorHolder = new InteractorHolder(interactorId);
+                ids.put(interactorId, interactorHolder);
+
+                // <interactorList><interactor id="4"><names><shortLabel>YFL039C</shortLabel>
+            } else if (qName.equals("shortLabel") && stack.search("interactor") == 2) {
+
+                attName = "secondaryIdentifier";
 
             // <interactorList><interactor id="4"><xref><primaryRef db="FLYBASE" id="FBgn0000659"
             } else if ((qName.equals("primaryRef") || qName.equals("secondaryRef"))
                             && stack.peek().equals("xref")
                             && stack.search("interactor") == 2) {
+                // TODO we aren't using these at the moment
+//                if (attrs.getValue("db") != null) {
+//                    String dbRef = attrs.getValue("db");
+//                    String identifier = attrs.getValue("id");
+//                    // store all identifiers as we don't know if this is a gene or a protein, yet
+//                    if (dbRef.equalsIgnoreCase("FLYBASE")
+//                     || dbRef.equalsIgnoreCase("WormBase")
+//                     || dbRef.equalsIgnoreCase("SGD")) {
+//                        interactorHolder.primaryIdentifiers.add(identifier);
+//                    } else if (dbRef.equalsIgnoreCase("UNIPROTKB")) {
+//                        interactorHolder.accessions.add(identifier);
+//                    }
+//                }
 
-                if (attrs.getValue("db") != null) {
-                    String dbRef = attrs.getValue("db");
-                    // TODO this should go in a properties file
-                    if ((organismTaxonId.equals("7227")
-                         && dbRef.equalsIgnoreCase("FLYBASE"))
-                                    || (organismTaxonId.equals("6239")
-                                    && dbRef.equalsIgnoreCase("WormBase"))
-                                                    || (organismTaxonId.equals("4932")
-                                                    && dbRef.equalsIgnoreCase("SGD"))) {
-                        String identifier = attrs.getValue("id");
-                        geneIdsToIdentifiers.put(geneId, identifier);
-                        getGene(organismTaxonId, identifier);
-                    }
+                // <interactorList><interactor id="4"><organism ncbiTaxId="7227">
+            } else if (qName.equals("organism") && stack.peek().equals("interactor")) {
+
+                String taxId = attrs.getValue("ncbiTaxId");
+                if (organism == null) {
+                    organism = getOrganism(taxId);
+
+//                } else {
+//                    String currentTaxId = organism.getAttribute("taxonId").getValue();
+//                    if (!taxId.equals(currentTaxId)) {
+//                        LOG.error("Interaction with different organisms found:  " + taxId
+//                                  + " and " + currentTaxId);
+//                        invalidInteractorIds.add(interactorId);
+//                    }
                 }
-
-//                <participant id="62692">
-//                <interactorRef>62692</interactorRef>
-//                <experimentalRoleList><experimentalRole><names><shortLabel>
-            } else if (qName.equals("shortLabel") && stack.search("experimentalRole") == 2) {
-
-                attName = "role";
-
-                //<interactionList><interaction>
-                //<participantList><participant id="5">
-            } else if (qName.equals("interactorRef") && stack.peek().equals("participant")) {
-
-                attName = "participantId";
-
+                interactorId = null;
             //<interactionList><interaction><experimentList><experimentRef>
-            } else if (qName.equals("experimentRef")
-                       && stack.peek().equals("experimentList")) {
-
+            } else if (qName.equals("experimentRef") && stack.peek().equals("experimentList")) {
                 attName = "experimentRef";
                 holder = new InteractionHolder();
-
+           //<interactionList><interaction>   <participantList><participant id="68259">
+            } else if (qName.equals("participant") && stack.peek().equals("participantList")) {
+                currentParticipantId = attrs.getValue("id");
+                holder.addInteractor(ids.get(currentParticipantId));
             //<interactionList><interaction><interactionType><names><shortLabel
-            } else if (qName.equals("shortLabel")
-                            && stack.peek().equals("names")
+            } else if (qName.equals("shortLabel") && stack.peek().equals("names")
                             && stack.search("interactionType") == 2) {
-
                 attName = "interactionType";
-
+            // <participant id="62692"><interactorRef>62692</interactorRef>
+            // <experimentalRoleList><experimentalRole><names><shortLabel>
+            } else if (qName.equals("shortLabel") && stack.search("experimentalRole") == 2) {
+                attName = "role";
             }
-
             super.startElement(uri, localName, qName, attrs);
             stack.push(qName);
             attValue = new StringBuffer();
         }
-
 
         /**
          * {@inheritDoc}
@@ -233,6 +248,7 @@ public class BioGridConverter extends BioFileConverter
         public void characters(char[] ch, int start, int length) {
             int st = start;
             int l = length;
+
             if (attName != null) {
 
                 // DefaultHandler may call this method more than once for a single
@@ -264,168 +280,117 @@ public class BioGridConverter extends BioFileConverter
             }
         }
 
-
         /**
          * {@inheritDoc}
          */
         public void endElement(String uri, String localName, String qName)
-            throws SAXException {
-
+        throws SAXException {
             super.endElement(uri, localName, qName);
-
             stack.pop();
-//             <experimentList><experimentDescription id="13022">
-//            <names><shortLabel>Giot L (2003)</shortLabel>
-                if (attName != null
-                                && attName.equals("experimentName")
-                                && qName.equals("shortLabel")) {
 
-                    String shortLabel = attValue.toString();
+            // <experimentList><experimentDescription id="13022"><names><shortLabel>
+            if (attName != null && attName.equals("experimentName")
+                            && qName.equals("shortLabel")) {
+                experimentHolder.shortName = attValue.toString();
+            //  <experimentList><experimentDescription id="13022"><names><fullName>
+            } else if (attName != null && attName.equals("experimentDescr")
+                            && qName.equals("fullName")) {
+                experimentHolder.setDescription(attValue.toString());
+            //<experimentList><experimentDescription>
+            //<interactionDetectionMethod><names><shortLabel>
+            } else if (attName != null && attName.equals("interactionDetectionMethod")
+                            && qName.equals("shortLabel")) {
+                experimentHolder.setMethod(getTerm(attValue.toString()));
+            // <interactorList><interactor id="4"><names><shortLabel>YFL039C</shortLabel>
+            } else if (attName != null && attName.equals("secondaryIdentifier")
+                            && qName.equals("shortLabel") && stack.search("interactor") == 2) {
 
-                    experimentHolder = checkExperiment(shortLabel);
-                    experimentIds.put(experimentId, experimentHolder);
-                    experimentHolder.setName(shortLabel);
+                interactorHolder.secondaryIdentifier = attValue.toString();
 
-                //  <experimentList><experimentDescription id="13022"><names><fullName>
-                } else if (attName != null
-                                    && attName.equals("experimentDescr")
-                                    && qName.equals("fullName")) {
-
-                    experimentHolder.setDescription(attValue.toString());
-
-                //<interactionList><interaction>
-                //<participantList><participant id="5"><interactorRef>
-                } else if (qName.equals("interactorRef")
-                                && stack.peek().equals("participant")) {
-
-                    String id = attValue.toString();
-
-                    // we don't have a good ID for human genes so don't store those
-                    // interactions
-                    if (invalidInteractorIds.contains(id)) {
-                        holder.validActors = false;
-                    } else {
-
-                        String identifier = geneIdsToIdentifiers.get(id);
-                        Item gene = null;
-                        if (identifier != null) {
-                            gene = getGene(organismTaxonId, identifier);
-                        }
-                        if (gene != null) {
-                            interactorHolder = new InteractorHolder(gene, identifier);
-                            holder.addInteractor(interactorHolder);
-                            holder.addGene(gene.getIdentifier(), identifier);
-                        } else {
-                            holder.validActors = false;
-                            LOG.error("Gene/protein not found - " + identifier + " ( " + id + ")");
-                        }
-                    }
-//          <participant><interactorRef><experimentalRoleList><experimentalRole><names><shortLabel>
-                } else if (attName != null && attName.equals("role")
-                                && qName.equals("shortLabel")) {
-                    if (interactorHolder != null) {
-                                interactorHolder.role = attValue.toString();
-                    }
-                //<interactionList><interaction><experimentList><experimentRef>
-                } else if (qName.equals("experimentRef")
-                                && stack.peek().equals("experimentList")) {
-
-                    String experimentRef = attValue.toString();
-                    holder.setExperiment(experimentIds.get(experimentRef));
-
-                //<interactionType><names><shortLabel>
-                } else if (qName.equals("shortLabel")
-                                && attName != null
-                                && attName.equals("interactionType")) {
-
-                    String type = attValue.toString();
-                    holder.type = type;
-                    if (type.equalsIgnoreCase("Phenotypic Suppression")
-                                    || type.equalsIgnoreCase("Phenotypic Enhancement")) {
-                        holder.validExperiment = true;
-                    }
-
-                //<interactionList><interaction>
-                } else if (qName.equals("interaction")
-                                && holder != null
-                                && holder.validExperiment
-                                && holder.validActors) {
-
-                    /* done processing everything for this interaction */
-                    storeAll(holder);
-                    holder = null;
-                    interactorHolder = null;
-                    //experimentHolder = null;
-
-                } else if (attName != null && attName.equals("organismTaxonId")) {
-                    String shortLabel = attValue.toString();
-                    String[] tokens = shortLabel.split("-");
-                    organismTaxonId = tokens[2];
+            //<participant><interactorRef>
+            //<experimentalRoleList><experimentalRole><names><shortLabel>
+            } else if (attName != null && attName.equals("role") && qName.equals("shortLabel")
+                            && stack.search("experimentalRole") == 2) {
+                holder.interactors.get(currentParticipantId).role = attValue.toString();
+            //<interactionList><interaction><experimentList><experimentRef>
+            } else if (attName != null && attName.equals("experimentRef")
+                            && qName.equals("experimentRef")
+                            && stack.peek().equals("experimentList")) {
+                holder.setExperimentHolder(experimentIds.get(attValue.toString()));
+            //<interactionType><names><shortLabel>
+            } else if (attName != null && attName.equals("interactionType")) {
+                String type = attValue.toString();
+                holder.methodRefId = getTerm(type);
+//                holder.type = type;
+//                if (type.equalsIgnoreCase("Phenotypic Suppression")
+//                                || type.equalsIgnoreCase("Phenotypic Enhancement")) {
+//                    holder.isGeneticInteraction = true;
+//                }
+                // we now know what kind of interaction this is, so we can set our identifiers and
+                // build the correct objects
+                try {
+                    setInteractions(holder);
+                } catch (ObjectStoreException e) {
+                    // TODO something clever
                 }
+
+            //<interactionList><interaction>
+            } else if (qName.equals("interaction") && holder != null && holder.validActors) {
+                try {
+                    storeExperiment(holder.eh);
+                } catch (ObjectStoreException e) {
+                    // TODO something clever here
+                }
+                storeInteraction(holder);
+                holder = null;
+            } else if (attName != null && attName.equals("organismTaxonId")) {
+                String shortLabel = attValue.toString();
+                String[] tokens = shortLabel.split("-");
+                organismTaxonId = tokens[2];
+            }
         }
 
-        private void storeAll(InteractionHolder interactionHolder) throws SAXException  {
+        private void storeInteraction(InteractionHolder h) throws SAXException  {
 
-            Set<InteractorHolder> interactors = interactionHolder.interactors;
+            LinkedHashSet<InteractorHolder> interactors = (LinkedHashSet) h.interactors;
 
             try {
+                Iterator<InteractorHolder> iter = interactors.iterator();
+                while (iter.hasNext()) {
+                    InteractorHolder ih = iter.next();
+                    String refId = ih.refId;
 
-                // loop through genes/interactors in this interaction
-                for (Iterator<InteractorHolder> iter = interactors.iterator(); iter.hasNext();) {
+                    Item interaction = null;
+                    interaction = createItem("Interaction");
+                    if (ih.role != null) {
+                        interaction.setAttribute("role", ih.role);
+                    }
 
-                    interactorHolder =  iter.next();
-                    Item gene = interactorHolder.gene;
-                    String geneRefId = gene.getIdentifier();
+//                    if (ih.type.equals("Gene")) {
+                        interaction.setReference("gene", refId);
+                        interaction.setCollection("interactingGenes",
+                                                  getInteractingObjects(h, refId));
+                        interaction.setReference("type", h.methodRefId);
+//                    } else {
+//                        interaction.setReference("protein", refId);
+//                        interaction.setCollection("interactingProteins",
+//                                                  getInteractingObjects(h, refId));
+//                    }
 
                     String interactionName = "";
-                    for (String identifier : interactionHolder.geneIdentifiers) {
-
-                        if (!identifier.equals(interactorHolder.identifier)) {
+                    for (String identifier : h.identifiers) {
+                        if (!identifier.equals(ih.identifier)) {
                             interactionName += "_" + identifier;
                         } else {
                             interactionName = identifier + interactionName;
                         }
                     }
 
-                    // build & store interactions - one for each gene
-                    Item interaction = createItem("GeneticInteraction");
-
-
+                    interaction.setReference("experiment", h.eh.experimentRefId);
                     interaction.setAttribute("shortName", interactionName);
-                    interaction.setAttribute("type", interactionHolder.type);
 
-                    interaction.setReference("gene", geneRefId);
-                    interaction.setReference("experiment",
-                           interactionHolder.eh.experiment.getIdentifier());
-
-                    // interactingGenes
-                    Set<String> geneIds = interactionHolder.geneIds;
-                    geneIds.remove(geneRefId);
-                    ReferenceList geneList = new ReferenceList("interactingGenes",
-                                                                  new ArrayList<String>());
-                    for (Iterator<String> it = geneIds.iterator(); it.hasNext();) {
-                        geneList.addRefId(it.next());
-                    }
-                    interaction.addCollection(geneList);
-                    geneIds.add(geneRefId);
-
-                    /* store all interaction-related items */
-                    if (!storedItems.contains(gene.getAttribute("primaryIdentifier").getValue())) {
-                        gene.setReference("organism", organism.getIdentifier());
-                        store(gene);
-                        storedItems.add(gene.getAttribute("primaryIdentifier").getValue());
-                    }
-
-                    interaction.setAttribute("geneRole", interactorHolder.role);
                     store(interaction);
                 }
-
-                ExperimentHolder eh = interactionHolder.eh;
-                if (!eh.isStored) {
-                    eh.isStored = true;
-                    store(eh.experiment);
-                }
-
             } catch (ObjectStoreException e) {
                 throw new SAXException(e);
             }
@@ -449,7 +414,8 @@ public class BioGridConverter extends BioFileConverter
             return itemId;
         }
 
-        private Item getGene(String taxonId, String id) {
+        private Item getGene(String taxonId, String id, boolean isPrimaryIdentifier)
+        throws ObjectStoreException {
             String identifier = id;
             // for Drosophila attempt to update to a current gene identifier
             IdResolver resolver = resolverFactory.getIdResolver(false);
@@ -466,11 +432,47 @@ public class BioGridConverter extends BioFileConverter
             Item item = genes.get(identifier);
             if (item == null) {
                 item = createItem("Gene");
-                item.setAttribute("primaryIdentifier", identifier);
+                String identifierLabel = "primaryIdentifier";
+                if (!taxonId.equals("7227") && !isPrimaryIdentifier) {
+                    identifierLabel = "secondaryIdentifier";
+                }
+                item.setAttribute(identifierLabel, identifier);
+                item.setReference("organism", organism.getIdentifier());
+                store(item);
                 genes.put(identifier, item);
             }
             return item;
         }
+// TODO save protein info too?
+//        private Item getProtein(String identifier) throws ObjectStoreException {
+//            Item item = proteins.get(identifier);
+//            if (item == null) {
+//                item = createItem("Protein");
+//                item.setAttribute("primaryAccession", identifier);
+//                item.setReference("organism", organism.getIdentifier());
+//                store(item);
+//                proteins.put(identifier, item);
+//            }
+//            return item;
+//        }
+
+//        private String getBioEntity(boolean isPrimaryIdentifier, String identifier) {
+//            Item bioentity = null;
+//            try {
+//                if (isPrimaryIdentifier) {
+//                    bioentity = getGene(organismTaxonId, identifier, true);
+//                } else {
+//                    bioentity = getProtein(identifier);
+//                }
+//                if (bioentity != null) {
+//                    return bioentity.getIdentifier();
+//                }
+//            } catch (ObjectStoreException e) {
+//                throw new RuntimeException("error while storing: " + identifier, e);
+//            }
+//            LOG.error("couldn't match identifier with a partipantid " + identifier);
+//            return null;
+//        }
 
         private Item getOrganism(String taxonId)
         throws SAXException {
@@ -484,49 +486,78 @@ public class BioGridConverter extends BioFileConverter
             }
         }
 
-        private ExperimentHolder checkExperiment(String name) {
+        private String getTerm(String name)
+        throws SAXException {
+            String refId = terms.get(name);
+            if (refId != null) {
+                return refId;
+            }
+            try {
+                Item item = createItem("ProteinInteractionTerm");
+                item.setAttribute("name", name);
+                terms.put(name, item.getIdentifier());
+                store(item);
+                return item.getIdentifier();
+            } catch (ObjectStoreException e) {
+                throw new SAXException(e);
+            }
+        }
 
-            ExperimentHolder eh = experimentNames.get(name);
+        private ExperimentHolder getExperimentHolder(String experimentId) {
+            ExperimentHolder eh =  experimentIds.get(experimentId);
             if (eh == null) {
-                Item exp = createItem("GeneticInteractionExperiment");
-                eh = new ExperimentHolder(exp);
-                experimentNames.put(name, eh);
+                eh = new ExperimentHolder(experimentId);
+                experimentIds.put(experimentId, eh);
             }
             return eh;
         }
 
-//        private String newId(String className) {
-//            Integer id = ids.get(className);
-//            if (id == null) {
-//                id = new Integer(0);
-//                ids.put(className, id);
-//            }
-//            id = new Integer(id.intValue() + 1);
-//            ids.put(className, id);
-//            return id.toString();
-//        }
+        private void storeExperiment(ExperimentHolder eh)
+        throws ObjectStoreException {
+            if (!eh.isStored) {
+                Item exp = null;
+                exp = createItem("InteractionExperiment");
+                exp.setReference("interactionDetectionMethod", eh.methodRefId);
+                exp.setAttribute("name", eh.shortName);
+                exp.setReference("publication", eh.pubRefId);
+                store(exp);
+                eh.isStored = true;
+                eh.experimentRefId = exp.getIdentifier();
+            }
+        }
+
+        private ArrayList<String> getInteractingObjects(InteractionHolder interactionHolder,
+                                                        String refId) {
+            ArrayList<String> interactorIds = new ArrayList(interactionHolder.refIds);
+            interactorIds.remove(refId);
+            return interactorIds;
+        }
 
         /**
-         * Uniquely alias a className
-         * @param className the class name
-         * @return the alias
+         * we now know what kind of interaction this is, so we can fetch our identifiers from
+         * the correct maps.
+         *
+         * we add the identifiers to a list just for convenience. this list will later be used
+         * to build the indentifier for the entire interaction.
          */
-        protected String alias(String className) {
-            String alias = aliases.get(className);
+        private void setInteractions(InteractionHolder h) throws ObjectStoreException {
 
-            if (alias != null) {
-                return alias;
+            for (InteractorHolder ih : h.interactors.values()) {
+                String refId = null;
+                Item item = getGene(organismTaxonId, ih.secondaryIdentifier, false);
+                if (item != null) {
+                    refId = item.getIdentifier();
+                    ih.refId = refId;
+                    h.refIds.add(refId);
+                    ih.identifier = ih.secondaryIdentifier;
+                    h.identifiers.add(ih.secondaryIdentifier);
+                } else {
+                    h.validActors = false;
+                    String msg = "could not resolve bioentity == "
+                    + ih.secondaryIdentifier + ", participantId: " + ih.participantId;
+                    LOG.error(msg);
+                }
             }
-            String s = "0";
-            if (masterList.get("nextClsId") != null) {
-                s = masterList.get("nextClsId");
-            }
-            int i = Integer.parseInt(s);
-            i++;
-            String nextIndex = "" + i;
-            masterList.put("nextClsId", nextIndex);
-            aliases.put(className, nextIndex);
-            return nextIndex;
         }
 
         /**
@@ -536,18 +567,18 @@ public class BioGridConverter extends BioFileConverter
          */
         public class InteractionHolder
         {
-            protected String type;
             protected ExperimentHolder eh;
-            protected Set<InteractorHolder> interactors = new LinkedHashSet<InteractorHolder>();
-            protected Set<String> geneIds = new HashSet<String>();
-            protected Set<String> geneIdentifiers = new HashSet<String>();
-            protected boolean validExperiment = false;
+            protected Map<String, InteractorHolder> interactors
+                                                        = new HashMap<String, InteractorHolder>();
+            protected Set<String> refIds = new HashSet<String>();
+            protected Set<String> identifiers = new HashSet<String>();
             protected boolean validActors = true;
+            protected String methodRefId;
 
             /**
              * @param eh object holding experiment object
              */
-            protected void setExperiment(ExperimentHolder eh) {
+            protected void setExperimentHolder(ExperimentHolder eh) {
                 this.eh = eh;
             }
 
@@ -555,19 +586,9 @@ public class BioGridConverter extends BioFileConverter
              * @param ih object holding interactor
              */
             protected void addInteractor(InteractorHolder ih) {
-                interactors.add(ih);
-            }
-
-            /**
-             * @param identifier FBgn for a gene - used to create the shortName of the interaction
-             * @param id reference to gene item involved in interaction
-             */
-            protected void addGene(String id, String identifier) {
-                geneIds.add(id);
-                geneIdentifiers.add(identifier);
+                interactors.put(ih.participantId, ih);
             }
         }
-
 
         /**
          * Holder object for GeneInteractor. Holds id and identifier for gene until the experiment
@@ -576,18 +597,21 @@ public class BioGridConverter extends BioFileConverter
          */
         protected class InteractorHolder
         {
-            protected String identifier;    // FBgn
-            protected Item gene;
             protected String role;
+            protected String participantId;
+            protected String identifier;    // same as secondaryIdentifier right now
+            protected String refId;
+            protected List<String> accessions = new ArrayList<String>(); // obsolete?
+            protected List<String> primaryIdentifiers = new ArrayList<String>(); // obsolete?
+            protected String secondaryIdentifier;
+
 
             /**
              * Constructor
-             * @param gene Gene that's part of the interaction
-             * @param identifier of the gene
+             * @param participantId bioGRID id
              */
-            public InteractorHolder(Item gene, String identifier) {
-                this.gene = gene;
-                this.identifier = identifier;
+            public InteractorHolder(String participantId) {
+                this.participantId = participantId;
             }
         }
 
@@ -598,39 +622,44 @@ public class BioGridConverter extends BioFileConverter
          */
         protected class ExperimentHolder
         {
-            protected Item experiment;
+            protected String experimentRefId;
+            protected String shortName;
+            protected String description;
+            protected String pubRefId;
             protected boolean isStored = false;
+            protected String methodRefId;
+            protected String id;
 
             /**
              * Constructor
-             * @param experiment experiment where this interaction was observed
+             * @param id experiment id
              */
-            public ExperimentHolder(Item experiment) {
-                this.experiment = experiment;
+            public ExperimentHolder(String id) {
+                this.id = id;
             }
 
             /**
              *
-             * @param name name of experiment
+             * @param description the full name of the experiments
              */
-            protected void setName(String name) {
-                experiment.setAttribute("name", name);
+            protected void setDescription(String description) {
+                this.description = description;
             }
 
             /**
-            *
-            * @param description the full name of the experiments
-            */
-           protected void setDescription(String description) {
-               experiment.setAttribute("description", description);
-           }
+             *
+             * @param pubRefId reference to publication item for this experiment
+             */
+            protected void setPublication(String pubRefId) {
+                this.pubRefId = pubRefId;
+            }
 
             /**
-             *
-             * @param publication publication of this experiment
+             * terms describe the method used int he experiment, eg two hybrid, etc
+             * @param methodRefId reference to the term item for this experiment
              */
-            protected void setPublication(String publication) {
-                experiment.setReference("publication", publication);
+            protected void setMethod(String methodRefId) {
+                this.methodRefId = methodRefId;
             }
         }
     }

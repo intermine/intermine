@@ -28,7 +28,7 @@ import java.util.Set;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.flymine.model.genomic.ProteinInteraction;
+import org.flymine.model.genomic.Interaction;
 import org.intermine.bio.networkview.FlyNetworkCreator;
 import org.intermine.bio.networkview.network.FlyNetwork;
 import org.intermine.model.InterMineObject;
@@ -65,7 +65,7 @@ public class ProteinInteractionExporter implements TableHttpExporter
         response.setHeader("Content-Disposition ", "attachment; filename=interaction"
                 + StringUtil.uniqueString() + ".sif"); //flo
 
-        int realFeatureIndex = ExportHelper.getFirstColumnForClass(pt, ProteinInteraction.class);
+        int realFeatureIndex = ExportHelper.getFirstColumnForClass(pt, Interaction.class);
 
         int writtenInteractionsCount = 0; //flo
         Set exported = new HashSet();
@@ -95,7 +95,7 @@ public class ProteinInteractionExporter implements TableHttpExporter
 
                 if (!exported.contains(object.getId())) {
                     // cast to ProteinInteraction
-                    ProteinInteraction feature = (ProteinInteraction) object;
+                    Interaction feature = (Interaction) object;
 
                     // try to avoid opening the OutputStream until we know that the query is
                     // going to work - this avoids some problems that occur when
@@ -103,8 +103,8 @@ public class ProteinInteractionExporter implements TableHttpExporter
                     // write the error)
                     printWriter = HttpExportUtil.getPrintWriterForClient(request, response.getOutputStream());
 
-                    Set<ProteinInteraction> interactions =
-                        (Set<ProteinInteraction>) Collections.singleton(feature);
+                    Set<Interaction> interactions =
+                        (Set<Interaction>) Collections.singleton(feature);
                     printWriter.write(getSifLines(interactions));
                     printWriter.flush();
 
@@ -134,7 +134,7 @@ public class ProteinInteractionExporter implements TableHttpExporter
      * @see org.intermine.bio.web.PIUtil#canExport
      */
     public boolean canExport(PagedTable pt) {
-        return ExportHelper.canExport(pt, ProteinInteraction.class);
+        return ExportHelper.canExport(pt, Interaction.class);
     }
 
     /**
@@ -142,7 +142,7 @@ public class ProteinInteractionExporter implements TableHttpExporter
      * @param interactions the interactions
      * @return String respresenting the network in sif format
      */
-    public static String getSifLines(Collection<ProteinInteraction> interactions) {
+    public static String getSifLines(Collection<Interaction> interactions) {
         FlyNetwork fn = FlyNetworkCreator.createFlyNetwork(interactions);
         return fn.toSIF();
     }

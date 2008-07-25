@@ -14,8 +14,8 @@ import java.util.Collection;
 import java.util.Set;
 
 import org.apache.log4j.Logger;
+import org.flymine.model.genomic.Interaction;
 import org.flymine.model.genomic.Protein;
-import org.flymine.model.genomic.ProteinInteraction;
 import org.intermine.bio.networkview.network.FlyNetwork;
 import org.intermine.bio.networkview.network.FlyNode;
 
@@ -34,10 +34,10 @@ public class FlyNetworkCreator
      * @param proteinInteractions Collection of ProteinInteractionS
      * @return the network representing the protein interactions
      */
-    public static FlyNetwork createFlyNetwork(Collection<ProteinInteraction> proteinInteractions) {
+    public static FlyNetwork createFlyNetwork(Collection<Interaction> proteinInteractions) {
         FlyNetwork fn = new FlyNetwork();
 
-        for (ProteinInteraction pIon : proteinInteractions) {
+        for (Interaction pIon : proteinInteractions) {
 
             // TODO: do we want to use the short name? is it unique? -> label or attribute
             // !?there are more than one ProteinInteraction objects for one real interaction!?
