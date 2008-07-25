@@ -9,6 +9,9 @@
     <longdisplayers>
       <displayer src="attributeLinkDisplayer.tile"/>
     </longdisplayers>
+    <bagdisplayers>
+      <displayer src="attributeLinkDisplayer.tile"/>
+    </bagdisplayers>
   </class>
 
   <class className="org.flymine.model.genomic.Analysis">
