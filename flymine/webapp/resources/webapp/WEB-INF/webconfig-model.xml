@@ -227,20 +227,7 @@
     </bagdisplayers>
   </class>
 
-  <class className="org.flymine.model.genomic.GeneticInteraction">
-    <fields>
-      <fieldconfig fieldExpr="gene.primaryIdentifier"/>
-      <fieldconfig fieldExpr="shortName"/>
-      <fieldconfig fieldExpr="type"/>
-    </fields>
-  </class>
 
-  <class className="org.flymine.model.genomic.GeneticInteractionExperiment">
-    <fields>
-      <fieldconfig fieldExpr="name"/>
-      <fieldconfig fieldExpr="description"/>
-    </fields>
-  </class>
 
   <class className="org.flymine.model.genomic.GOAnnotation">
     <fields>
@@ -501,20 +488,10 @@
     </longdisplayers>
   </class>
 
-  <class className="org.flymine.model.genomic.ProteinInteraction">
-    <fields>
-      <fieldconfig fieldExpr="shortName"/>
-      <fieldconfig fieldExpr="confidenceText"/>
-      <fieldconfig fieldExpr="confidence"/>
-      <fieldconfig fieldExpr="proteinRole"/>
-    </fields>
-  </class>
 
   <class className="org.flymine.model.genomic.ProteinInteractionRegion">
     <fields>
       <fieldconfig fieldExpr="name"/>
-      <fieldconfig fieldExpr="protein.primaryAccession"/>
-      <fieldconfig fieldExpr="protein.organism.name"/>
     </fields>
   </class>
 
@@ -832,7 +809,7 @@
 
       <bagtabledisplayer id="orthologues" title="Orthologues" pathStrings="Gene.homologues[type=orthologue].homologue.organism" link="org.intermine.bio.web.widget.HomologueURLQuery"
                          description="Counts of orthologues in other organisms for the genes in this list."
-                         displayFields="name"
+                         displayFields="taxonId,name"
                          exportFields="primaryIdentifier"
                          typeClass="org.flymine.model.genomic.Gene"
                          columnTitle="Orthologues"/>
@@ -841,7 +818,7 @@
                          pathStrings="Gene.geneticInteractions.interactingGenes"
                          link="org.intermine.bio.web.widget.GeneticInteractionURLQuery"
                          description="Genes (from the list or not) that genetically interact with genes in this list - data from &lt;a href=&quot;http://www.thebiogrid.org/&quot; target=&quot;_new&quot;&gt;BioGRID&lt;/a&gt;.  Counts may include the same interaction more than once if observed in multiple experiments."
-                         displayFields="primaryIdentifier"
+                         displayFields="primaryIdentifier,symbol"
                          exportFields="primaryIdentifier"
                          typeClass="org.flymine.model.genomic.Gene"
                          columnTitle="Interactions"/>
