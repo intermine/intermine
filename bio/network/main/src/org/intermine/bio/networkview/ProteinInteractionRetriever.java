@@ -13,8 +13,8 @@ package org.intermine.bio.networkview;
 import java.util.Collection;
 import java.util.Iterator;
 
+import org.flymine.model.genomic.Interaction;
 import org.flymine.model.genomic.Protein;
-import org.flymine.model.genomic.ProteinInteraction;
 import org.intermine.bio.networkview.network.FlyNetwork;
 import org.intermine.bio.networkview.network.FlyNode;
 import org.intermine.objectstore.ObjectStore;
@@ -58,7 +58,7 @@ public class ProteinInteractionRetriever
 
         // create all needed query classes
         QueryClass qcProtein = new QueryClass(Protein.class);
-        QueryClass qcInteraction = new QueryClass(ProteinInteraction.class);
+        QueryClass qcInteraction = new QueryClass(Interaction.class);
 
         // create needed references between the classes
         QueryCollectionReference qcrInteractions =
