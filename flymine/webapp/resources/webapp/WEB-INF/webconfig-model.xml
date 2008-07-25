@@ -6,6 +6,9 @@
       <fieldconfig fieldExpr="secondaryIdentifier"/>
       <fieldconfig fieldExpr="organism.name"/>
     </fields>
+    <longdisplayers>
+      <displayer src="attributeLinkDisplayer.tile"/>
+    </longdisplayers>
   </class>
 
   <class className="org.flymine.model.genomic.Analysis">
