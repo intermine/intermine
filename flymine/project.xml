@@ -71,11 +71,9 @@
     <source name="ensembl-anopheles" type="ensembl" dump="true">
       <property name="organism" value="AGP"/>
     </source>
-<!-- See #1813
     <source name="ensembl-apis-mellifera" type="ensembl">
       <property name="organism" value="AM"/>
     </source>
--->
     <source name="flyreg" type="flyreg">
       <property name="gff3.taxonId" value="7227"/>
       <property name="gff3.seqClsName" value="Chromosome"/>

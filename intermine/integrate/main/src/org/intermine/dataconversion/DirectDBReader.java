@@ -192,7 +192,7 @@ public class DirectDBReader implements DBReader
                     if (rMeta.getColumnType(i) != java.sql.Types.VARCHAR) {
                         sizeQuery += " + 10";
                     } else {
-                        sizeQuery += " + char_length(" + columnName + ")";
+                        sizeQuery += " + char_length(\"" + columnName + "\")";
                     }
                 }
                 sizeQuery += " AS size";
