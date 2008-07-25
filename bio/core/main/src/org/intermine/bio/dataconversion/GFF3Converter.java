@@ -35,7 +35,6 @@ import org.intermine.xml.full.Item;
 import org.intermine.xml.full.ItemFactory;
 import org.intermine.xml.full.ItemHelper;
 import org.intermine.xml.full.Reference;
-import org.intermine.xml.full.ReferenceList;
 
 /**
  * Class to read a GFF3 source data and produce a data representation
@@ -268,30 +267,29 @@ public class GFF3Converter
                     }
 
                 if (record.getPhase() != null) {
-                    relation.addAttribute(new Attribute("phase", record.getPhase()));
+                    relation.setAttribute("phase", record.getPhase());
                 }
             }
-            relation.addReference(new Reference("object", seq.getIdentifier()));
-            relation.addReference(new Reference("subject", feature.getIdentifier()));
-            relation.addCollection(new ReferenceList("dataSets", Arrays.asList(new String[]
+            relation.setReference("object", seq.getIdentifier());
+            relation.setReference("subject", feature.getIdentifier());
+            relation.setCollection("dataSets", Arrays.asList(new String[]
                 {
                     dataSet.getIdentifier()
-                })));
+                }));
             handler.setLocation(relation);
         }
         handler.addDataSet(dataSet);
-        if (record.getScore() != null) {
+        if (record.getScore() != null && !String.valueOf(record.getScore()).equals("")) {
             Item computationalResult = createItem("ComputationalResult");
-            if (String.valueOf(record.getScore()) != null) {
-                computationalResult.addAttribute(new Attribute("type", "score"));
-                computationalResult.addAttribute(new Attribute("score",
-                                                 String.valueOf(record.getScore())));
+            if (String.valueOf(record.getScore()) != null
+                            && !String.valueOf(record.getScore()).equals("")) {
+                computationalResult.setAttribute("type", "score");
+                computationalResult.setAttribute("score", String.valueOf(record.getScore()));
             }
-            //no sense to create ComputationalAnalysis if there is no ComputationalResult
-            if (record.getSource() != null) {
+            // don't create ComputationalAnalysis if there is no ComputationalResult
+            if (record.getSource() != null && !String.valueOf(record.getScore()).equals("")) {
                 Item computationalAnalysis = getComputationalAnalysis(record.getSource());
-                computationalResult.addReference(new Reference("analysis",
-                                                 computationalAnalysis.getIdentifier()));
+                computationalResult.setReference("analysis", computationalAnalysis.getIdentifier());
                 handler.setAnalysis(computationalAnalysis);
             }
             handler.setResult(computationalResult);
@@ -301,12 +299,11 @@ public class GFF3Converter
                 // this special case added to cope with pseudoobscura data
                 Item computationalResult = createItem("ComputationalResult");
                 Item computationalAnalysis = getComputationalAnalysis(record.getSource());
-                computationalResult.addReference(new Reference("analysis",
-                                                 computationalAnalysis.getIdentifier()));
+                computationalResult.setReference("analysis", computationalAnalysis.getIdentifier());
                 handler.setAnalysis(computationalAnalysis);
                 handler.setResult(computationalResult);
                 handler.addEvidence(computationalResult);
-                feature.addAttribute(new Attribute("curated", "false"));
+                feature.setAttribute("curated", "false");
             }
         }
         String orgAbb = null;
@@ -412,7 +409,7 @@ public class GFF3Converter
     public Item getOrganism() throws ObjectStoreException {
         if (organism == null) {
             organism = createItem("Organism");
-            organism.addAttribute(new Attribute("taxonId", orgTaxonId));
+            organism.setAttribute("taxonId", orgTaxonId);
             writer.store(ItemHelper.convert(organism));
         }
         return organism;
@@ -453,7 +450,7 @@ public class GFF3Converter
         Item analysis = (Item) analyses.get(algorithm);
         if (analysis == null) {
             analysis = createItem("ComputationalAnalysis");
-            analysis.addAttribute(new Attribute("algorithm", algorithm));
+            analysis.setAttribute("algorithm", algorithm);
             writer.store(ItemHelper.convert(analysis));
             analyses.put(algorithm, analysis);
         }
@@ -477,10 +474,10 @@ public class GFF3Converter
             writer.store(ItemHelper.convert(seq));
 
             Item synonym = createItem("Synonym");
-            synonym.addReference(new Reference("subject", seq.getIdentifier()));
-            synonym.addAttribute(new Attribute("value", identifier));
-            synonym.addAttribute(new Attribute("type", "identifier"));
-            synonym.addReference(new Reference("source", seqDataSource.getIdentifier()));
+            synonym.setReference("subject", seq.getIdentifier());
+            synonym.setAttribute("value", identifier);
+            synonym.setAttribute("type", "identifier");
+            synonym.setReference("source", seqDataSource.getIdentifier());
             handler.addItem(synonym);
             seqs.put(identifier, seq);
         }
