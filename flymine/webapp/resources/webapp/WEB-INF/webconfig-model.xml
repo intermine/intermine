@@ -809,7 +809,7 @@
 
       <bagtabledisplayer id="orthologues" title="Orthologues" pathStrings="Gene.homologues[type=orthologue].homologue.organism" link="org.intermine.bio.web.widget.HomologueURLQuery"
                          description="Counts of orthologues in other organisms for the genes in this list."
-                         displayFields="taxonId,name"
+                         displayFields="name"
                          exportFields="primaryIdentifier"
                          typeClass="org.flymine.model.genomic.Gene"
                          columnTitle="Orthologues"/>
@@ -818,7 +818,7 @@
                          pathStrings="Gene.geneticInteractions.interactingGenes"
                          link="org.intermine.bio.web.widget.GeneticInteractionURLQuery"
                          description="Genes (from the list or not) that genetically interact with genes in this list - data from &lt;a href=&quot;http://www.thebiogrid.org/&quot; target=&quot;_new&quot;&gt;BioGRID&lt;/a&gt;.  Counts may include the same interaction more than once if observed in multiple experiments."
-                         displayFields="primaryIdentifier,symbol"
+                         displayFields="primaryIdentifier"
                          exportFields="primaryIdentifier"
                          typeClass="org.flymine.model.genomic.Gene"
                          columnTitle="Interactions"/>
