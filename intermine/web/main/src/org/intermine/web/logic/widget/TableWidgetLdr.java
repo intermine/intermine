@@ -465,7 +465,7 @@ public class TableWidgetLdr
                 List row = new LinkedList();
 
                 row.add(id);                    // identifier
-                row.add(termsToIds.get(id));    // label
+
 
                 List<String> ids = termsToIds.get(id);
                 StringBuffer sb = new StringBuffer();
