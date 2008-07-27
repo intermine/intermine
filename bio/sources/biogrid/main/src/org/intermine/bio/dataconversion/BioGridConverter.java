@@ -352,12 +352,14 @@ public class BioGridConverter extends BioFileConverter
 
         private void storeInteraction(InteractionHolder h) throws SAXException  {
 
-            LinkedHashSet<InteractorHolder> interactors = (LinkedHashSet) h.interactors;
+            //List<InteractorHolder> interactors = h.interactors.values);
 
             try {
-                Iterator<InteractorHolder> iter = interactors.iterator();
-                while (iter.hasNext()) {
-                    InteractorHolder ih = iter.next();
+
+
+                //while (iter.hasNext()) {
+                for (InteractorHolder ih: h.interactors.values()) {
+                     // InteractorHolder ih = iter.next();
                     String refId = ih.refId;
 
                     Item interaction = null;
