@@ -1,0 +1,12 @@
+<?xml version="1.0"?>
+<classes>
+  <class name="org.flymine.model.genomic.OMIM" is-interface="true">
+    <attribute name="omimId" type="java.lang.String"/>
+    <attribute name="description" type="java.lang.String"/>
+    <attribute name="title" type="java.lang.String"/>
+    <collection name="genes" referenced-type="org.flymine.model.genomic.Gene" reverse-reference="omimDiseases"/>
+  </class>
+  <class name="org.flymine.model.genomic.Gene" is-interface="true">
+    <collection name="omimDiseases" referenced-type="org.flymine.model.genomic.OMIM" reverse-reference="genes"/>
+  </class>
+</classes>
