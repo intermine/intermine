@@ -37,7 +37,6 @@ import org.intermine.util.SAXParser;
 import org.intermine.util.StringUtil;
 import org.intermine.xml.full.Item;
 import org.intermine.xml.full.ItemHelper;
-import org.intermine.xml.full.Reference;
 import org.intermine.xml.full.ReferenceList;
 import org.xml.sax.Attributes;
 import org.xml.sax.InputSource;
@@ -340,7 +339,7 @@ public class UniprotConverter extends FileConverter
                         String strName = attrs.getValue("description");
                         String strStatus = null;
                         feature = createItem("UniProtFeature");
-                        feature.addReference(new Reference("protein", protein.getIdentifier()));
+                        feature.setReference("protein", protein.getIdentifier());
                         if (!protein.hasCollection("features")) {
                             protein.addCollection(new ReferenceList("features",
                                                                     new ArrayList<String>()));
@@ -348,7 +347,7 @@ public class UniprotConverter extends FileConverter
                         protein.getCollection("features").addRefId(feature.getIdentifier());
                         feature.setAttribute("type", strType);
                         Item keyword = getKeyword(strType);
-                        feature.addReference(new Reference("feature", keyword.getIdentifier()));
+                        feature.setReference("feature", keyword.getIdentifier());
                         if (attrs.getValue("status") != null) {
                             strStatus = attrs.getValue("status");
                             if (strName != null) {
@@ -591,7 +590,7 @@ public class UniprotConverter extends FileConverter
                 } else if (hasPrimary && qName.equals("sequence")) {
                     if (attName != null) {
                         sequence.setAttribute(attName, attValue.toString().replaceAll("\n", ""));
-                        protein.addReference(new Reference("sequence", sequence.getIdentifier()));
+                        protein.setReference("sequence", sequence.getIdentifier());
                         writer.store(ItemHelper.convert(sequence));
                     } else {
                         LOG.debug("Sequence for " + protein.getAttribute("name").getValue()
@@ -725,10 +724,10 @@ public class UniprotConverter extends FileConverter
             }
             if (!synonyms.containsKey(key)) {
                 Item syn = createItem("Synonym");
-                syn.addReference(new Reference("subject", subjectId));
+                syn.setReference("subject", subjectId);
                 syn.setAttribute("type", type);
                 syn.setAttribute("value", value);
-                syn.addReference(new Reference("source", dbId));
+                syn.setReference("source", dbId);
                 synonyms.put(key, syn);
                 return syn;
             }
@@ -798,7 +797,7 @@ public class UniprotConverter extends FileConverter
                     keyword = createItem("OntologyTerm");
                     keyword.setAttribute("name", title);
                     Item ontology = ontoMaster.get("UniProtKeyword");
-                    keyword.addReference(new Reference("ontology", ontology.getIdentifier()));
+                    keyword.setReference("ontology", ontology.getIdentifier());
                     keyMaster.put(title, keyword);
                     writer.store(ItemHelper.convert(keyword));
                 }
