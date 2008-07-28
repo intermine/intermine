@@ -163,7 +163,17 @@ public class PsiConverter extends BioFileConverter
                 // <hostOrganismList><hostOrganism ncbiTaxId="9534"><names><fullName>
             } else if (qName.equals("fullName") && stack.peek().equals("names")
                             && stack.search("hostOrganism") == 3) {
-                attName = "hostOrganismName";   // TODO can't this be taxonId?
+
+                String hostOrganism = attrs.getValue("ncbiTaxId");
+                if (hostOrganism != null) {
+                    String refId = getOrganism(hostOrganism);
+                    experimentHolder.setHostOrganism(refId);
+                } else {
+                    LOG.info("Experiment " + experimentHolder.name
+                             + " doesn't have a host organism");
+                }
+
+
                 //<interactionDetectionMethod><xref><primaryRef>
             } else if (qName.equals("primaryRef") && stack.peek().equals("xref")
                             && stack.search("interactionDetectionMethod") == 2) {
@@ -359,19 +369,6 @@ public class PsiConverter extends BioFileConverter
                         LOG.error("Experiment " + experimentId + " doesn't have a shortLabel");
                     }
 
-                    // <hostOrganismList><hostOrganism ncbiTaxId="9534"><names><fullName>
-                } else if (attName != null
-                                && attName.equals("hostOrganismName")
-                                && qName.equals("fullName")) {
-                    /* experiment.hostOrganism = fullName */
-                    String fullName = attValue.toString();
-                    if (fullName != null) {
-                        experimentHolder.setHostOrganism(fullName);
-                    } else {
-                        LOG.info("Experiment " + experimentHolder.name
-                                 + " doesn't have a host organism name");
-                    }
-
                 // <interactorList><interactor id="4"><names><fullName>
                 } else if ((qName.equals("fullName") || qName.equals("shortLabel"))
                                 && stack.search("interactor") == 2) {
@@ -540,7 +537,8 @@ public class PsiConverter extends BioFileConverter
                     Item interaction = createItem("Interaction");
                     String geneRefId = interactorHolder.geneRefId;
                     String identifier = interactorHolder.identifier;
-                    interaction.setAttribute("shortName", interactionHolder.shortName);
+                    String shortName = interactionHolder.shortName;
+                    interaction.setAttribute("shortName", shortName);
                     interaction.setAttribute("role", interactorHolder.role);
 
                     if (interactionHolder.confidence != null) {
@@ -583,7 +581,7 @@ public class PsiConverter extends BioFileConverter
                         }
                         region.setReference("interaction", interaction);
 
-                        String regionIdentifier = interactionHolder.shortName + "_" + identifier;
+                        String regionIdentifier = shortName + "_" + identifier;
 
                         if (interactorHolder.start != null && !interactorHolder.start.equals("0")) {
                             regionIdentifier += ":" + interactorHolder.start;
@@ -651,6 +649,7 @@ public class PsiConverter extends BioFileConverter
                     return null;
                 }
                 identifier = resolver.resolveId(taxonId, identifier).iterator().next();
+                label = "primaryIdentifier";
             }
 
             Item item = genes.get(identifier);
@@ -905,16 +904,26 @@ public class PsiConverter extends BioFileConverter
      * @throws SAXException if organism objects can't be stored
      */
     protected void initOrganisms() throws SAXException {
+        for (Iterator iter = organisms.keySet().iterator(); iter.hasNext();) {
+            getOrganism((String) iter.next());
+        }
+    }
+
+    private String getOrganism(String taxId) throws SAXException {
+
+        String refId = organisms.get(taxId);
+        if (refId == null) {
+            return refId;
+        }
+        Item organism = createItem("Organism");
+        organism.setAttribute("taxonId", taxId);
         try {
-            for (Iterator iter = organisms.keySet().iterator(); iter.hasNext();) {
-                String taxId = (String) iter.next();
-                Item organism = createItem("Organism");
-                organism.setAttribute("taxonId", taxId);
-                store(organism);
-                organisms.put(taxId, organism.getIdentifier());
-            }
+            store(organism);
         } catch (ObjectStoreException e) {
             throw new SAXException(e);
         }
+        refId = organism.getIdentifier();
+        organisms.put(taxId, refId);
+        return refId;
     }
 }
