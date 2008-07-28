@@ -32,8 +32,8 @@ public class PsiConverterTest extends ItemsTestCase
         itemWriter = new MockItemWriter(new HashMap());
         converter = new PsiConverter(itemWriter, model);
         MockIdResolverFactory resolverFactory = new MockIdResolverFactory("Gene");
-        resolverFactory.addResolverEntry("7227", "FBgn001", Collections.singleton("FBgn0000001"));
-        resolverFactory.addResolverEntry("7227", "FBgn002", Collections.singleton("FBgn0000002"));
+        resolverFactory.addResolverEntry("7227", "FBgn001", Collections.singleton("CG1234"));
+        resolverFactory.addResolverEntry("7227", "FBgn002", Collections.singleton("CG1111"));
         converter.resolverFactory = resolverFactory;
 
     }
