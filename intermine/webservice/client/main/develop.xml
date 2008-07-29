@@ -54,7 +54,7 @@
 
 	<target name="dist" depends="build, javadoc">
 	    <mkdir dir="${dist.dir}"/>
-		<zip destfile="${dist.dir}/intermine-client-${version}.jar" basedir="${build.dir}" />
+		<zip destfile="${dist.dir}/intermine-client-${version}.zip" basedir="${build.dir}" />
 	</target>
 
 </project>
