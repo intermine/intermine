@@ -35,8 +35,8 @@ public class BioGridConverterTest extends ItemsTestCase
         itemWriter = new MockItemWriter(new HashMap());
         converter = new BioGridConverter(itemWriter, model);
         MockIdResolverFactory resolverFactory = new MockIdResolverFactory("Gene");
-        resolverFactory.addResolverEntry("7227", "FBgn001", Collections.singleton("FBgn0000001"));
-        resolverFactory.addResolverEntry("7227", "FBgn002", Collections.singleton("FBgn0000002"));
+        resolverFactory.addResolverEntry("7227", "FBgn001", Collections.singleton("CG1234"));
+        resolverFactory.addResolverEntry("7227", "FBgn002", Collections.singleton("CG1111"));
         converter.resolverFactory = resolverFactory;
     }
 
@@ -48,7 +48,7 @@ public class BioGridConverterTest extends ItemsTestCase
         converter.close();
 
         // uncomment to write out a new target items file
-        writeItemsFile(itemWriter.getItems(), "biogrid-tgt-items.xml");
+        //writeItemsFile(itemWriter.getItems(), "biogrid-tgt-items.xml");
 
         Set expected = readItemSet("BioGridConverterTest_tgt.xml");
 

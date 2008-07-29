@@ -24,7 +24,7 @@
                         <availability id="BIOGRID">This data is freely available to both commercial and academic users for research purposes only. In any articles making use of this data, please refer to Stark C, Breitkreutz BJ, Reguly T, Boucher L, Breitkreutz A, Tyers M. BioGRID: A General Repository for Interaction Datasets. Nucleic Acids Res. Jan1;34:D535-9. This data is distributed for research purposes only, and is provided WITHOUT ANY WARRANTY.</availability>
                 </availabilityList>
                 <experimentList>
-                        <experimentDescription id="12345">
+                        <experimentDescription id="1">
                                 <names>
                                         <shortLabel>Giot L (2003)</shortLabel>
                                         <fullName>A protein interaction map of Drosophila melanogaster.</fullName>
@@ -47,11 +47,11 @@
                                         </xref>
                                 </interactionDetectionMethod>
                         </experimentDescription>
-                </experimentList>  
+                </experimentList>
                 <interactorList>
-                        <interactor id="11111">
+                        <interactor id="1">
                                 <names>
-                                        <shortLabel>CG10002</shortLabel>
+                                        <shortLabel>CG1111</shortLabel>
                                 </names>
                                 <xref>
                                         <primaryRef db="FLYBASE" id="FBgn0000001" />
@@ -83,9 +83,9 @@
                                         </names>
                                 </organism>
                         </interactor>
-                        <interactor id="22222">
+                        <interactor id="2">
                                 <names>
-                                        <shortLabel>CG10002</shortLabel>
+                                        <shortLabel>CG1234</shortLabel>
                                 </names>
                                 <xref>
                                         <primaryRef db="FLYBASE" id="FBgn0000002" />
@@ -118,8 +118,8 @@
                                 </organism>
                         </interactor>
                 </interactorList>
-                <interactionList>                
-                 <interaction id="30772">
+                <interactionList>
+                 <interaction id="1">
                                 <names>
                                         <shortLabel>interaction Short Label</shortLabel>
                                 </names>
@@ -127,11 +127,11 @@
                                         <primaryRef db="grid" dbAc="MI:0463" id="30772" secondary="68259-62692" />
                                 </xref>
                                 <experimentList>
-                                        <experimentRef>12345</experimentRef>
+                                        <experimentRef>1</experimentRef>
                                 </experimentList>
                                 <participantList>
-                                        <participant id="11111">
-                                                <interactorRef>11111</interactorRef>
+                                        <participant id="1">
+                                                <interactorRef>1</interactorRef>
                                                 <experimentalRoleList>
                                                         <experimentalRole>
                                                                 <names>
@@ -144,8 +144,8 @@
                                                         </experimentalRole>
                                                 </experimentalRoleList>
                                         </participant>
-                                        <participant id="22222">
-                                                <interactorRef>22222</interactorRef>
+                                        <participant id="2">
+                                                <interactorRef>2</interactorRef>
                                                 <experimentalRoleList>
                                                         <experimentalRole>
                                                                 <names>
@@ -168,6 +168,6 @@
                                         </xref>
                                 </interactionType>
                         </interaction>
-                 </interactionList>                
+                 </interactionList>
 </entry>
-</entrySet>                 
+</entrySet>
