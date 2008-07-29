@@ -538,8 +538,14 @@ public class FlyBaseModuleProcessor extends ChadoSequenceProcessor
     }
 
     private static final List<String> FEATURES = Arrays.asList(
-          "transposable_element_insertion_site",
-            "chromosome_structure_variation"
+            "gene", "mRNA", "transcript",
+            "intron", "exon",
+            "regulatory_region", "enhancer",
+            // ignore for now:        "EST", "cDNA_clone",
+            "miRNA", "snRNA", "ncRNA", "rRNA", "ncRNA", "snoRNA", "tRNA",
+            "chromosome_band", "transposable_element_insertion_site",
+            "chromosome_structure_variation",
+            "protein", "point_mutation"
     );
 
     /**
@@ -560,10 +566,7 @@ public class FlyBaseModuleProcessor extends ChadoSequenceProcessor
     @Override
     protected void extraProcessing(Connection connection, Map<Integer, FeatureData> features)
         throws ObjectStoreException, SQLException {
-/*
- *
- *
- *
+
         createAllelesTempTable(connection);
 
         for (FeatureData featureData: features.values()) {
@@ -588,7 +591,7 @@ public class FlyBaseModuleProcessor extends ChadoSequenceProcessor
             referenceList.setRefIds(mutagenRefIds);
             getChadoDBConverter().store(referenceList, alleleDat.getIntermineObjectId());
         }
-*/
+
         createIndelReferences(connection);
     }
 

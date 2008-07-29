@@ -131,16 +131,16 @@ public class ChadoSequenceProcessor extends ChadoProcessor
         createFeatureTempTable(connection);
         earlyExtraProcessing(connection);
         processFeatureTable(connection);
-//        processPubTable(connection);
+        processPubTable(connection);
 
         // process direct locations
         ResultSet directLocRes = getFeatureLocResultSet(connection);
         processLocationTable(connection, directLocRes);
-//
-//        processRelationTable(connection);
-//        processDbxrefTable(connection);
-//        processSynonymTable(connection);
-//        processFeaturePropTable(connection);
+
+        processRelationTable(connection);
+        processDbxrefTable(connection);
+        processSynonymTable(connection);
+        processFeaturePropTable(connection);
         extraProcessing(connection, featureMap);
     }
 
