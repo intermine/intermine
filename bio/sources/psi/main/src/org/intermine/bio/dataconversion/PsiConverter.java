@@ -412,11 +412,11 @@ public class PsiConverter extends BioFileConverter
                         interactorHolder = new InteractorHolder(geneRefId);
                         String ident = null;
                         if (interactor.getAttribute("secondaryIdentifier") != null) {
-                            ident = interactor.getAttribute("secondaryIdentifier").toString();
+                            ident = interactor.getAttribute("secondaryIdentifier").getValue();
                         }
                         if ((ident == null || ident.equals(""))
                                         && interactor.getAttribute("symbol") != null) {
-                            ident = interactor.getAttribute("symbol").toString();
+                            ident = interactor.getAttribute("symbol").getValue();
                         }
                         if (ident != null) {
                             interactorHolder.identifier = ident;
