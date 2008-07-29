@@ -9,10 +9,10 @@
 	<property name="dist.dir" value="client-dist" />
 	<property name="src.dir" value="src" />
 	<property name="build.dir" value="client-build" />
-	<property name="build.doc.dir" value="${build.dir}/doc" />
+	<property name="build.doc.dir" value="${build.dir}/doc/javadoc" />
 	<property name="javadoc.author" value="InterMine team" />
 	<property name="version" value="1.0" />
-
+	
 	<target name="clean">
 		<delete dir="${dist.dir}" failonerror="false"/>
 		<delete dir="${build.dir}" failonerror="false"/>
@@ -28,11 +28,12 @@
 	<target name="javadoc">
 		<ant antfile="../../pathquery/main/build.xml" target="javadoc" dir="../../../pathquery/main" />
 		
-		<javadoc destdir="${build.doc.dir}" source="${src.dir}" notree="true" use="false" nonavbar="false" noindex="false" splitindex="false" author="${javadoc.author}" version="false" failonerror="true">
-			<sourcepath>
-				<pathelement location="${src.dir}" />
-			</sourcepath>
-			<fileset dir="${src.dir}" />
+		<javadoc destdir="${build.doc.dir}" source="${src.dir}" notree="true" use="false" nonavbar="false" noindex="false" 
+			splitindex="false" author="${javadoc.author}" version="false" failonerror="true">
+			<fileset dir="${src.dir}">
+				<include name="**/*.java"/>
+				<include name="**/*.html"/>
+			</fileset>
 		</javadoc>
 	</target>
 
@@ -40,10 +41,20 @@
 		<mkdir dir="${build.dir}"/>
 		<copydir dest="${build.dir}/src" src="src" />
 		<copydir dest="${build.dir}/lib" src="lib" />
-	    <copyfile dest="${build.dir}/lib/intermine-client.jar" src="dist/intermine-webservice-client.jar"/> 
+		<!--intermine-webservice-client.jar was created before by calling InterMine build script  -->
+	    <!-- <copyfile dest="${build.dir}/lib/intermine-client.jar" src="dist/intermine-webservice-client.jar"/> -->
+		<jar destfile="${build.dir}/lib/intermine-client.jar">
+			  <zipfileset src="dist/intermine-webservice-client.jar">
+			  </zipfileset> 
+			  <fileset file="${src.dir}/log4j.properties">
+			  </fileset>
+		</jar>
 	    <copyfile dest="${build.dir}/lib/intermine-pathquery.jar" src="../../../pathquery/main/dist/intermine-pathquery.jar"/> 
 		<copyfile dest="${build.dir}/lib/intermine-objectstore.jar" src="../../../objectstore/main/dist/intermine-objectstore.jar"/>
 	    <copydir dest="${build.dir}/samples" src="../samples" excludes=".*"></copydir>
+		
+		
+			
 	</target>
 
 	<target name="dist" depends="build, javadoc">
