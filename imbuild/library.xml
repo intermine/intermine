@@ -172,10 +172,10 @@
             windowtitle="${javadoc.windowtitle}" private="${javadoc.private}"
             additionalparam="${javadoc.additionalparam}" failonerror="true">
       <classpath refid="project.compile.path"/>
-      <sourcepath>
-        <pathelement location="${src.dir}"/>
-      </sourcepath>
-      <fileset dir="${src.dir}"/>
+      <fileset dir="${src.dir}">
+  	  <include name="**/*.java" />
+          <include name="**/*.html" />
+      </fileset>
     </javadoc>
   </target>
 
