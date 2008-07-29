@@ -16,7 +16,6 @@ import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import javax.servlet.http.HttpSession;
 
 import org.apache.struts.Globals;
 import org.apache.struts.action.ActionMessage;
@@ -24,10 +23,7 @@ import org.apache.struts.action.ActionMessages;
 import org.intermine.metadata.ClassDescriptor;
 import org.intermine.model.testmodel.Employee;
 import org.intermine.objectstore.ObjectStoreException;
-import org.intermine.web.logic.RequestUtil;
-import org.intermine.web.logic.export.CustomPrintWriter;
 import org.intermine.web.logic.export.ExportException;
-import org.intermine.web.logic.export.Exporter;
 import org.intermine.web.logic.export.http.HttpExportUtil;
 import org.intermine.web.logic.export.http.TableHttpExporter;
 import org.intermine.web.logic.results.Column;
@@ -50,7 +46,6 @@ public class EmployeeExporter implements TableHttpExporter
      */
     public void export(PagedTable pt, HttpServletRequest request,
                                 HttpServletResponse response) {
-        HttpSession session = request.getSession();
 
         response.setContentType("text/plain");
         response.setHeader("Content-Disposition ", "inline; filename=exployee.txt");
@@ -74,9 +69,8 @@ public class EmployeeExporter implements TableHttpExporter
                     // re-throw as a more specific exception
                     if (e.getCause() instanceof ObjectStoreException) {
                         throw (ObjectStoreException) e.getCause();
-                    } else {
-                        throw e;
                     }
+                    throw e;
                 }
 
                 for (int columnIndex = 0; columnIndex < row.size(); columnIndex++) {
