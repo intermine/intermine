@@ -9,7 +9,6 @@
 	<property name="dist.dir" value="client-dist" />
 	<property name="src.dir" value="src" />
 	<property name="build.dir" value="client-build" />
-	<property name="build.doc.dir" value="${build.dir}/doc/javadoc" />
 	<property name="javadoc.author" value="InterMine team" />
 	<property name="version" value="1.0" />
 	
@@ -27,14 +26,13 @@
 	
 	<target name="javadoc">
 		<ant antfile="../../pathquery/main/build.xml" target="javadoc" dir="../../../pathquery/main" />
-		
-		<javadoc destdir="${build.doc.dir}" source="${src.dir}" notree="true" use="false" nonavbar="false" noindex="false" 
-			splitindex="false" author="${javadoc.author}" version="false" failonerror="true">
-			<fileset dir="${src.dir}">
-				<include name="**/*.java"/>
-				<include name="**/*.html"/>
-			</fileset>
-		</javadoc>
+		<copydir dest="${build.dir}/doc/javadoc-pathquery" src="../../../pathquery/main/build/javadoc"></copydir>
+		<javadoc destdir="${build.dir}/doc/javadoc-client" source="${src.dir}" notree="true" use="false" nonavbar="false" noindex="false" 
+			splitindex="false" author="${javadoc.author}" version="false" failonerror="false">
+			<sourcepath>
+			    <pathelement location="${src.dir}" />
+			</sourcepath>
+		</javadoc> 
 	</target>
 
 	<target name="build" depends="clean, compile">
@@ -52,9 +50,6 @@
 	    <copyfile dest="${build.dir}/lib/intermine-pathquery.jar" src="../../../pathquery/main/dist/intermine-pathquery.jar"/> 
 		<copyfile dest="${build.dir}/lib/intermine-objectstore.jar" src="../../../objectstore/main/dist/intermine-objectstore.jar"/>
 	    <copydir dest="${build.dir}/samples" src="../samples" excludes=".*"></copydir>
-		
-		
-			
 	</target>
 
 	<target name="dist" depends="build, javadoc">
