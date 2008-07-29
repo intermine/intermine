@@ -6,5 +6,6 @@
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
 	<classpathentry kind="src" path="/intermine-objectstore-main"/>
 	<classpathentry kind="lib" path="build/main"/>
+        <classpathentry excluding="log4j.properties" kind="src" path="build/task"/> 
 	<classpathentry kind="output" path="bin"/>
 </classpath>
