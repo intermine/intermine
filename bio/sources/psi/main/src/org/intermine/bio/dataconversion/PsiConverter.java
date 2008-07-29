@@ -29,7 +29,6 @@ import org.intermine.objectstore.ObjectStoreException;
 import org.intermine.util.SAXParser;
 import org.intermine.util.StringUtil;
 import org.intermine.xml.full.Item;
-import org.intermine.xml.full.ReferenceList;
 import org.xml.sax.Attributes;
 import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
@@ -172,8 +171,6 @@ public class PsiConverter extends BioFileConverter
                     LOG.info("Experiment " + experimentHolder.name
                              + " doesn't have a host organism");
                 }
-
-
                 //<interactionDetectionMethod><xref><primaryRef>
             } else if (qName.equals("primaryRef") && stack.peek().equals("xref")
                             && stack.search("interactionDetectionMethod") == 2) {
@@ -203,10 +200,10 @@ public class PsiConverter extends BioFileConverter
                 identifiers = new HashMap();
                 // <interactorList><interactor id="4"><names>
                 // <alias type="locus name" typeAc="MI:0301">HSC82</alias>
-              } else if (qName.equals("alias") && stack.peek().equals("names")
-                              && stack.search("interactor") == 2) {
-                      attName = attrs.getValue("type");
-            // <interactorList><interactor id="4"><sequence>
+            } else if (qName.equals("alias") && stack.peek().equals("names")
+                            && stack.search("interactor") == 2) {
+                attName = attrs.getValue("type");
+                // <interactorList><interactor id="4"><sequence>
             } else if (qName.equals("sequence") && stack.peek().equals("interactor")) {
                 attName = "sequence";
                 //<interactionList><interaction id="1"><names><shortLabel>
@@ -265,6 +262,13 @@ public class PsiConverter extends BioFileConverter
                 interactorHolder.location = location;
 
                 holder.addRegion(interactionRegion.getIdentifier());
+
+                try {
+                    store(interactionRegion);
+                    store(location);
+                } catch (ObjectStoreException e) {
+                    // todo
+                }
 
                 // <participantList><participant id="6919"><featureList><feature id="6920">
                 //    <featureRangeList><featureRange><begin position="470"/>
@@ -336,190 +340,165 @@ public class PsiConverter extends BioFileConverter
             super.endElement(uri, localName, qName);
 
             stack.pop();
-            try {
-                // <experimentList><experimentDescription><attributeList><attribute/>
-                // <attribute name="publication-year">2006</attribute>
-                if (attName != null
-                                && attName.equals("experimentAttribute")
-                                && qName.equals("attribute")) {
 
-                    String s = attValue.toString();
-                    if (comment != null && s != null) {
-                        if (!s.equals("")) {
-                            comment.setAttribute("text", s);
-                        }
+            // <experimentList><experimentDescription><attributeList><attribute/>
+            // <attribute name="publication-year">2006</attribute>
+            if (attName != null && attName.equals("experimentAttribute")
+                            && qName.equals("attribute")) {
+                String s = attValue.toString();
+                if (comment != null && s != null) {
+                    if (!s.equals("")) {
+                        comment.setAttribute("text", s);
+                    }
+                    try {
                         store(comment);
-                        comment = null;
-                    } else {
-                        LOG.info("Experiment " + experimentHolder.name + " has a bad comment");
+                    } catch (ObjectStoreException e) {
+                        // TODO only store for valid experiments
                     }
+                    comment = null;
+                } else {
+                    LOG.info("Experiment " + experimentHolder.name + " has a bad comment");
+                }
 
-                    // <experimentList><experimentDescription><names><shortLabel>
-                } else if (attName != null
-                                && attName.equals("experimentName")
-                                && qName.equals("shortLabel")) {
-                    /* experiment.experimentName = shortLabel */
-                    String shortLabel = attValue.toString();
-                    if (shortLabel != null) {
-                        // you can have an experiment spread across several xml files
-                        experimentHolder = getExperiment(shortLabel);
-                        experimentIds.put(experimentId, experimentHolder);
-                        experimentHolder.setName(shortLabel);
-                    } else {
-                        LOG.error("Experiment " + experimentId + " doesn't have a shortLabel");
-                    }
+                // <experimentList><experimentDescription><names><shortLabel>
+            } else if (attName != null
+                            && attName.equals("experimentName")
+                            && qName.equals("shortLabel")) {
+                /* experiment.experimentName = shortLabel */
+                String shortLabel = attValue.toString();
+                if (shortLabel != null) {
+                    // you can have an experiment spread across several xml files
+                    experimentHolder = getExperiment(shortLabel);
+                    experimentIds.put(experimentId, experimentHolder);
+                    experimentHolder.setName(shortLabel);
+                } else {
+                    LOG.error("Experiment " + experimentId + " doesn't have a shortLabel");
+                }
 
                 // <interactorList><interactor id="4"><names><fullName>
-                } else if ((qName.equals("fullName") || qName.equals("shortLabel"))
-                                && stack.search("interactor") == 2) {
-                    String name = attValue.toString();
-                    if (name != null) {
-                        identifiers.put(qName, name);
-                    }
+            } else if ((qName.equals("fullName") || qName.equals("shortLabel"))
+                            && stack.search("interactor") == 2) {
+                String name = attValue.toString();
+                if (name != null) {
+                    identifiers.put(qName, name);
+                }
                 // <interactorList><interactor id="4">
-                } else if (qName.equals("alias")) {
-                    String identifier = attValue.toString();
-                    if (identifier != null && !identifier.equals("")) {
-                        if (identifier.startsWith("Dmel_")) {
-                            identifier = identifier.substring(5);
-                        }
-                        identifiers.put(attName, identifier);
+            } else if (qName.equals("alias")) {
+                String identifier = attValue.toString();
+                if (identifier != null && !identifier.equals("")) {
+                    if (identifier.startsWith("Dmel_")) {
+                        identifier = identifier.substring(5);
                     }
+                    identifiers.put(attName, identifier);
+                }
                 // <interactorList><interactor id="4"><sequence>
-                } else if (gene != null && attName != null
-                                && attName.equals("sequence")
-                                && qName.equals("sequence")
-                                && stack.peek().equals("interactor")) {
-                    Item sequence = createItem("Sequence");
-                    String srcResidues = attValue.toString();
-                    sequence.setAttribute("residues", srcResidues);
-                    sequence.setAttribute("length", "" + srcResidues.length());
-                    store(sequence);
-                    gene.setReference("sequence", sequence);
+            } else if (gene != null && attName != null && attName.equals("sequence")
+                            && qName.equals("sequence")
+                            && stack.peek().equals("interactor")) {
+                Item sequence = createItem("Sequence");
+                String srcResidues = attValue.toString();
+                sequence.setAttribute("residues", srcResidues);
+                sequence.setAttribute("length", "" + srcResidues.length());
+//              try {
+//              store(sequence);
+//              } catch (ObjectStoreException e) {
+//              // TODO only store for valid genes
+//              }
+                // TODO put this back!
+                //gene.setReference("sequence", sequence);
 
-               // <interactorList><interactor id="4"></interactor>
-                } else if (gene != null && qName.equals("interactor")) {
-                    store(gene);    // TODO couldn't this result in dupes?
-                    gene = null;
+                // <interactorList><interactor id="4"></interactor>
+            } else if (gene != null && qName.equals("interactor")) {
+                try {
+                    store(gene);
+                } catch (ObjectStoreException e) {
+                    // TODO only store valid genes
+                }
+                gene = null;
                 //<interactionList><interaction>
                 //<participantList><participant id="5"><interactorRef>
-                } else if (qName.equals("interactorRef")
-                                && stack.peek().equals("participant")) {
-                    String id = attValue.toString();
-                    if (validGenes.get(id) != null) {
-                        Item interactor = validGenes.get(id);
-                        String geneRefId = interactor.getIdentifier();
-                        interactorHolder = new InteractorHolder(geneRefId);
-                        String ident = null;
-                        if (interactor.getAttribute("secondaryIdentifier") != null) {
-                            ident = interactor.getAttribute("secondaryIdentifier").getValue();
-                        }
-                        if ((ident == null || ident.equals(""))
-                                        && interactor.getAttribute("symbol") != null) {
-                            ident = interactor.getAttribute("symbol").getValue();
-                        }
-                        if (ident != null) {
-                            interactorHolder.identifier = ident;
-
-                            holder.addInteractor(interactorHolder);
-                            holder.addProtein(geneRefId);
-                        } else {
-                            holder.isValid = false;
-                        }
+            } else if (qName.equals("interactorRef") && stack.peek().equals("participant")) {
+                String id = attValue.toString();
+                if (validGenes.get(id) != null) {
+                    Item interactor = validGenes.get(id);
+                    String geneRefId = interactor.getIdentifier();
+                    interactorHolder = new InteractorHolder(geneRefId);
+                    String ident = null;
+                    if (interactor.getAttribute("secondaryIdentifier") != null) {
+                        ident = interactor.getAttribute("secondaryIdentifier").getValue();
+                    }
+                    if ((ident == null || ident.equals(""))
+                                    && interactor.getAttribute("symbol") != null) {
+                        ident = interactor.getAttribute("symbol").getValue();
+                    }
+                    if (ident != null) {
+                        interactorHolder.identifier = ident;
+                        holder.addInteractor(interactorHolder);
+                        holder.addProtein(geneRefId);
                     } else {
                         holder.isValid = false;
                     }
-
-                // <interactionList><interaction><names><shortLabel>
-                } else if (qName.equals("shortLabel")
-                                && attName != null
-                                && attName.equals("interactionName")) {
-
-                    holder = new InteractionHolder(attValue.toString());
-
-                //<interactionList><interaction><experimentList><experimentRef>
-                } else if (qName.equals("experimentRef")
-                                && stack.peek().equals("experimentList")) {
-
-                    String experimentRef = attValue.toString();
-                    if (experimentIds.get(experimentRef) != null) {
-                        holder.setExperiment(experimentIds.get(experimentRef));
-                    } else {
-                        LOG.error("Bad experiment:  [" + experimentRef + "] of "
-                                  + experimentIds.size() + " experiments");
-                    }
-
-                //<interaction><confidenceList><confidence><unit><names><shortLabel>
-                } else if (qName.equals("shortLabel")
-                                && attName != null
-                                && attName.equals("confidenceUnit")
-                                && holder != null) {
-
-                    String shortLabel = attValue.toString();
-                    if (shortLabel != null) {
-                        holder.confidenceUnit = shortLabel;
-                    }
-
-                    //<interactionList><interaction><confidenceList><confidence><value>
-                } else if (qName.equals("value")
-                                && attName != null
-                                && attName.equals("confidence")
-                                && holder != null) {
-
-                    if (holder.confidenceUnit.equals("author-confidence")) {
-                        String value = attValue.toString();
-                        holder.setConfidence(value);
-                    }
-
-                    // <interactionList><interaction><participantList><participant id="5">
-                    // <experimentalRole><names><shortLabel>
-                } else if (qName.equals("shortLabel")
-                                && stack.search("experimentalRole") == 2
-                                && interactorHolder != null) {
-
-                    interactorHolder.role = attValue.toString();
-
-                    // <participantList><participant id="6919"><featureList><feature id="6920">
-                    //    <featureRangeList><featureRange><startStatus><names><shortLabel>
-                } else if (qName.equals("shortLabel")
-                                && stack.search("startStatus") == 2
-                                && interactorHolder != null
-                                && interactorHolder.isRegionFeature) {
-
-                    interactorHolder.startStatus = attValue.toString();
-                    // <participantList><participant id="6919"><featureList><feature id="6920">
-                    //    <featureRangeList><featureRange><endStatus><names><shortLabel>
-                } else if (qName.equals("shortLabel")
-                                && stack.search("endStatus") == 2
-                                && interactorHolder != null
-                                && interactorHolder.isRegionFeature) {
-
-                    interactorHolder.endStatus = attValue.toString();
-
-                    //     <featureList><feature id="24"><names><shortLabel>
-                } else if (qName.equals("shortLabel")
-                                && stack.search("feature") == 2
-                                && attName != null
-                                && attName.equals("regionName")) {
-
-                    regionName  = attValue.toString();
-
-
-                    //<interactionList><interaction>
-                } else if (qName.equals("interaction")
-                                && holder != null) {
-
-                    /* done processing everything for this interaction */
-                    if (holder.isValid) {
-                        storeAll(holder);
-                        holder = null;
-                        interactorHolder = null;
-                        //experimentHolder = null;
-                    }
+                } else {
+                    holder.isValid = false;
                 }
 
-            } catch (ObjectStoreException e) {
-                throw new SAXException(e);
+                // <interactionList><interaction><names><shortLabel>
+            } else if (qName.equals("shortLabel") && attName != null
+                            && attName.equals("interactionName")) {
+                holder = new InteractionHolder(attValue.toString());
+                //<interactionList><interaction><experimentList><experimentRef>
+            } else if (qName.equals("experimentRef") && stack.peek().equals("experimentList")) {
+                String experimentRef = attValue.toString();
+                if (experimentIds.get(experimentRef) != null) {
+                    holder.setExperiment(experimentIds.get(experimentRef));
+                } else {
+                    LOG.error("Bad experiment:  [" + experimentRef + "] of "
+                              + experimentIds.size() + " experiments");
+                }
+                //<interaction><confidenceList><confidence><unit><names><shortLabel>
+            } else if (qName.equals("shortLabel")
+                            && attName != null
+                            && attName.equals("confidenceUnit")
+                            && holder != null) {
+                String shortLabel = attValue.toString();
+                if (shortLabel != null) {
+                    holder.confidenceUnit = shortLabel;
+                }
+                //<interactionList><interaction><confidenceList><confidence><value>
+            } else if (qName.equals("value") && attName != null && attName.equals("confidence")
+                            && holder != null) {
+                if (holder.confidenceUnit.equals("author-confidence")) {
+                    String value = attValue.toString();
+                    holder.setConfidence(value);
+                }
+                // <interactionList><interaction><participantList><participant id="5">
+                // <experimentalRole><names><shortLabel>
+            } else if (qName.equals("shortLabel") && stack.search("experimentalRole") == 2
+                            && interactorHolder != null) {
+                interactorHolder.role = attValue.toString();
+                // <participantList><participant id="6919"><featureList><feature id="6920">
+                //    <featureRangeList><featureRange><startStatus><names><shortLabel>
+            } else if (qName.equals("shortLabel") && stack.search("startStatus") == 2
+                            && interactorHolder != null
+                            && interactorHolder.isRegionFeature) {
+                interactorHolder.startStatus = attValue.toString();
+                // <participantList><participant id="6919"><featureList><feature id="6920">
+                //    <featureRangeList><featureRange><endStatus><names><shortLabel>
+            } else if (qName.equals("shortLabel") && stack.search("endStatus") == 2
+                            && interactorHolder != null
+                            && interactorHolder.isRegionFeature) {
+                interactorHolder.endStatus = attValue.toString();
+                //     <featureList><feature id="24"><names><shortLabel>
+            } else if (qName.equals("shortLabel") && stack.search("feature") == 2
+                            && attName != null && attName.equals("regionName")) {
+                regionName  = attValue.toString();
+                //<interactionList><interaction>
+            } else if (qName.equals("interaction") && holder != null) {
+                if (holder.isValid) {
+                    storeAll(holder);
+                    holder = null;
+                    interactorHolder = null;
+                }
             }
         }
 
@@ -527,91 +506,93 @@ public class PsiConverter extends BioFileConverter
 
             Set interactors = interactionHolder.interactors;
 
-            try {
-                // loop through proteins/interactors in this interaction
-                for (Iterator iter = interactors.iterator(); iter.hasNext();) {
 
-                    interactorHolder =  (InteractorHolder) iter.next();
+            // loop through proteins/interactors in this interaction
+            for (Iterator iter = interactors.iterator(); iter.hasNext();) {
 
-                    // build & store interactions - one for each protein
-                    Item interaction = createItem("Interaction");
-                    String geneRefId = interactorHolder.geneRefId;
-                    String identifier = interactorHolder.identifier;
-                    String shortName = interactionHolder.shortName;
-                    interaction.setAttribute("shortName", shortName);
-                    interaction.setAttribute("role", interactorHolder.role);
+                interactorHolder =  (InteractorHolder) iter.next();
 
-                    if (interactionHolder.confidence != null) {
-                        interaction.setAttribute("confidence",
-                                                 interactionHolder.confidence.toString());
-                    }
-                    if (interactionHolder.confidenceText != null) {
-                        interaction.setAttribute("confidenceText",
-                                                 interactionHolder.confidenceText);
-                    }
-                    interaction.setReference("gene", geneRefId);
-                    interaction.setReference("experiment",
-                                             interactionHolder.eh.experiment.getIdentifier());
+                // build & store interactions - one for each protein
+                Item interaction = createItem("Interaction");
+                String geneRefId = interactorHolder.geneRefId;
+                String identifier = interactorHolder.identifier;
+                String shortName = interactionHolder.shortName;
+                interaction.setAttribute("shortName", shortName);
+                interaction.setAttribute("role", interactorHolder.role);
 
-                    // interactingProteins
-                    List<String> geneIds = new ArrayList(interactionHolder.geneIds);
-                    geneIds.remove(geneRefId);
-                    interaction.setCollection("interactingGenes", geneIds);
+                if (interactionHolder.confidence != null) {
+                    interaction.setAttribute("confidence",
+                                             interactionHolder.confidence.toString());
+                }
+                if (interactionHolder.confidenceText != null) {
+                    interaction.setAttribute("confidenceText",
+                                             interactionHolder.confidenceText);
+                }
+                interaction.setReference("gene", geneRefId);
+                interaction.setReference("experiment",
+                                         interactionHolder.eh.experiment.getIdentifier());
 
-                    // interactingRegions
-                    Set<String> regionIds = interactionHolder.regionIds;
-                    ReferenceList regionList = new ReferenceList("interactingRegions",
-                                                                 new ArrayList());
-                    for (Iterator it = regionIds.iterator(); it.hasNext();) {
-                        regionList.addRefId((String) it.next());
-                    }
-                    if (!regionList.getRefIds().isEmpty()) {
-                        interaction.addCollection(regionList);
-                    }
+                // interactingProteins
+                List<String> geneIds = new ArrayList(interactionHolder.geneIds);
+                geneIds.remove(geneRefId);
+                interaction.setCollection("interactingGenes", geneIds);
 
-                    /* store all protein interaction-related items */
+                // interactingRegions
+                Set<String> regionIds = interactionHolder.regionIds;
+                if (!regionIds.isEmpty()) {
+                    interaction.setCollection("interactingRegions", new ArrayList(regionIds));
+                }
+
+                /* store all protein interaction-related items */
+                try {
                     store(interaction);
-                    if (interactorHolder.interactionRegion != null) {
-                        Item region = interactorHolder.interactionRegion;
-                        if (interactorHolder.startStatus != null) {
-                            region.setAttribute("startStatus", interactorHolder.startStatus);
-                        }
-                        if (interactorHolder.endStatus != null) {
-                            region.setAttribute("endStatus", interactorHolder.endStatus);
-                        }
-                        region.setReference("interaction", interaction);
+                } catch (ObjectStoreException e) {
+                    throw new SAXException(e);
+                }
 
-                        String regionIdentifier = shortName + "_" + identifier;
+                if (interactorHolder.interactionRegion != null) {
+                    Item region = interactorHolder.interactionRegion;
+                    if (interactorHolder.startStatus != null) {
+                        region.setAttribute("startStatus", interactorHolder.startStatus);
+                    }
+                    if (interactorHolder.endStatus != null) {
+                        region.setAttribute("endStatus", interactorHolder.endStatus);
+                    }
+                    region.setReference("interaction", interaction);
 
-                        if (interactorHolder.start != null && !interactorHolder.start.equals("0")) {
-                            regionIdentifier += ":" + interactorHolder.start;
-                            regionIdentifier += "-" + interactorHolder.end;
-                        }
-                        region.setAttribute("primaryIdentifier", regionIdentifier);
+                    String regionIdentifier = shortName + "_" + identifier;
 
+                    if (interactorHolder.start != null && !interactorHolder.start.equals("0")) {
+                        regionIdentifier += ":" + interactorHolder.start;
+                        regionIdentifier += "-" + interactorHolder.end;
+                    }
+                    region.setAttribute("primaryIdentifier", regionIdentifier);
+                    try {
                         store(region);
                         store(interactorHolder.location);
+                    } catch (ObjectStoreException e) {
+                        //
                     }
-
                 }
 
-                /* store all experiment-related items */
-                ExperimentHolder eh = interactionHolder.eh;
-                // TODO is this experiment going to have extra items to store, the 2nd time it
-                // gets processed?  In the other XML files?
-                if (!eh.isStored) {
-                    eh.isStored = true;
-                    store(eh.experiment);
-                    //TODO store comments here instead
-                    //for (Object o : eh.comments) {
-                    //    writer.store(ItemHelper.convert((Item) o));
-                    //}
-                }
-
-            } catch (ObjectStoreException e) {
-                throw new SAXException(e);
             }
 
+            /* store all experiment-related items */
+            ExperimentHolder eh = interactionHolder.eh;
+            // TODO is this experiment going to have extra items to store, the 2nd time it
+            // gets processed?  In the other XML files?
+            if (!eh.isStored) {
+                eh.isStored = true;
+                try {
+                    store(eh.experiment);
+                } catch (ObjectStoreException e) {
+                    //
+                }
+                //TODO store comments here instead
+                //for (Object o : eh.comments) {
+                //    writer.store(ItemHelper.convert((Item) o));
+                //}
+            }
         }
 
         private Item getGene(String taxonId) {
@@ -661,7 +642,6 @@ public class PsiConverter extends BioFileConverter
             return item;
         }
 
-
         private String getPub(String pubMedId)
         throws SAXException {
             String itemId = pubs.get(pubMedId);
@@ -679,8 +659,6 @@ public class PsiConverter extends BioFileConverter
             return itemId;
         }
 
-
-
         private ExperimentHolder getExperiment(String name) {
 
             ExperimentHolder eh = (ExperimentHolder) experimentNames.get(name);
@@ -690,9 +668,6 @@ public class PsiConverter extends BioFileConverter
             }
             return eh;
         }
-
-
-
 
         /**
          * Holder object for ProteinInteraction.  Holds all information about an interaction until
@@ -763,10 +738,7 @@ public class PsiConverter extends BioFileConverter
             protected void addRegion(String regionId) {
                 regionIds.add(regionId);
             }
-
         }
-
-
 
         /**
          * Holder object for ProteinInteraction.  Holds all information about a gene in an
@@ -792,6 +764,7 @@ public class PsiConverter extends BioFileConverter
              *
              * then the flag is set to TRUE until </feature>
              */
+            // TODO this isn't enforced, I think
             private boolean isRegionFeature;
 
             /**
