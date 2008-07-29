@@ -4,7 +4,6 @@
 <attribute name="type" value="journal"/>
 </item>
 <item id="3_1" class="http://www.flymine.org/model/genomic#InteractionExperiment">
-<attribute name="hostOrganism" value="cercopithecus aethiops, by transformation with SV40"/>
 <attribute name="name" value="taru-2002-3"/>
 <reference name="interactionDetectionMethod" ref_id="2_2"/>
 <reference name="participantIdentificationMethod" ref_id="2_3"/>
@@ -16,22 +15,20 @@
 <item id="0_1" class="http://www.flymine.org/model/genomic#DataSource">
 <attribute name="name" value="IntAct"/>
 </item>
-<item id="7_1" class="http://www.flymine.org/model/genomic#Sequence">
-<attribute name="length" value="490"/>
-<attribute name="residues" value="MADSEFEEFHRPIFEPHTIAGFGSGAGSKKNNPHAFYSLIPNDDLEDSHSSKSDGDGSDQEDGIGLVDHEPKMRQVEDDELGDGLKVTLSSDGSLDTNDSFNSHRHHPLNHQDAIGGFLGMDTSGLGGNSAPVTIGASTDLLAPNTAATRRRRKLPEIPKNKKSSILHLLGGSNFGSLADEFRNGGGGGIPPAVRSGQQRSFLSLKCGYLMDEDSSPDSERMQSLGDVDSGHSTAHSPNDFKSMSPQITSPVSQSPFPPPFGGVPFGQLEMLEATHRGLHKFVPRHHDEIELEIGDAIYVQKEAEDLWCEGVNLRTGRQGIFPSAYAVDLDYNEFDPTVQLVKKERYLLGYLGSVETLAHKGTGVVCQAVRKIVGEYGNSPTGQTCILEVSDQGLRMVDRSGPNQNKKDKKPCIDYFYSLKNVSFCAFHPRDHRFIGFITKHPTVQRFACHVFKGSESTRPVAEAVGRAFQRFYQKFIETAYPIEDIYIE"/>
+<item id="8_1" class="http://www.flymine.org/model/genomic#ProteinInteractionRegion">
+<attribute name="endStatus" value="certain"/>
+<attribute name="name" value="region"/>
+<attribute name="primaryIdentifier" value="appl-aplip1-2_FBgn001:1-370"/>
+<attribute name="startStatus" value="certain"/>
+<reference name="gene" ref_id="6_2"/>
+<reference name="interaction" ref_id="10_2"/>
+<reference name="location" ref_id="9_1"/>
+<reference name="ontologyTerm" ref_id="2_1"/>
+<collection name="dataSets"><reference ref_id="1_1"/></collection>
 </item>
 <item id="2_2" class="http://www.flymine.org/model/genomic#ProteinInteractionTerm">
 <attribute name="identifier" value="MI:0007"/>
 <collection name="dataSets"><reference ref_id="1_1"/></collection>
-</item>
-<item id="6_2" class="http://www.flymine.org/model/genomic#Gene">
-<attribute name="secondaryIdentifier" value="FBgn001"/>
-<reference name="sequence" ref_id="7_2"/>
-<collection name="dataSets"><reference ref_id="1_1"/></collection>
-</item>
-<item id="7_2" class="http://www.flymine.org/model/genomic#Sequence">
-<attribute name="length" value="887"/>
-<attribute name="residues" value="MCAALRRNLLLRSLWVVLAIGTAQVQAASPRWEPQIAVLCEAGQIYQPQYLSEEGRWVTDLSKKTTGPTCLRDKMDLLDYCKKAYPNRDITNIVESSHYQKIGGWCRQGALNAAKCKGSHRWIKPFRCLGPFQSDALLVPEGCLFDHIHNASRCWPFVRWNQTGAAACQERGMQMRSFAMLLPCGISVFSGVEFVCCPKHFKTDEIHVKKTDLPVMPAAQINSANDELVMNDEDDSNDSNYSKDANEDDLDDEDDLMGDDEEDDMVADEAATAGGSPNTGSSGDSNSGSLDDINAEYDSGEEGDNYEEDGAGSESEAEVEASWDQSGGAKVVSLKSDSSSPSSAPVAPAPEKAPVKSESVTSTPQLSASAAAFVAANSGNSGTGAGAPPSTAQPTSDPYFTHFDPHYEHQSYKVSQKRLEESHREKVTRVMKDWSDLEEKYQDMRLADPKAAQSFKQRMTARFQTSVQALEEEGNAEKHQLAAMHQQRVLAHINQRKREAMTCYTQALTEQPPNAHHVEKCLQKLLRALHKDRAHALAHYRHLLNSGGPGGLEAAASERPRTLERLIDIDRAVNQSMTMLKRYPELSAKIAQLMNDYILALRSKDDIPGSSLGMSEEAEAGILDKYRVEIERKVAEKERLRLAEKQRKEQRAAEREKLREEKLRLEAKKVDDMLKSQVAEQQSQPTQSSTQSQAQQQQQEKSLPGKELGPDAALVTAANPNLETTKSEKDLSDTEYGEATVSSTKVQTVLPTVDDDAVQRAVEDVAAAVAHQEAEPQVQHFMTHDLGHRESSFSLRREFAQHAHAAKEGRNVYFTLSFAGIALMAAVFVGVAVAKWRTSRSPHAQGFIEVDQNVTTHHPIVREEKIVPNMQINGYENPTYKYFEVKE"/>
 </item>
 <item id="10_2" class="http://www.flymine.org/model/genomic#Interaction">
 <attribute name="role" value="bait"/>
@@ -50,6 +47,14 @@
 <attribute name="title" value="IntAct dataset"/>
 <reference name="dataSource" ref_id="0_1"/>
 </item>
+<item id="6_2" class="http://www.flymine.org/model/genomic#Gene">
+<attribute name="primaryIdentifier" value="FBgn001"/>
+<collection name="dataSets"><reference ref_id="1_1"/></collection>
+</item>
+<item id="6_1" class="http://www.flymine.org/model/genomic#Gene">
+<attribute name="primaryIdentifier" value="FBgn002"/>
+<collection name="dataSets"><reference ref_id="1_1"/></collection>
+</item>
 <item id="2_1" class="http://www.flymine.org/model/genomic#ProteinInteractionTerm">
 <attribute name="identifier" value="MI:0117"/>
 <collection name="dataSets"><reference ref_id="1_1"/></collection>
@@ -67,24 +72,8 @@
 <attribute name="text" value="2002"/>
 <attribute name="type" value="publication-year"/>
 </item>
-<item id="8_1" class="http://www.flymine.org/model/genomic#ProteinInteractionRegion">
-<attribute name="endStatus" value="certain"/>
-<attribute name="name" value="region"/>
-<attribute name="primaryIdentifier" value="appl-aplip1-2_org.intermine.xml.full.Attribute@d37d6f47:1-370"/>
-<attribute name="startStatus" value="certain"/>
-<reference name="gene" ref_id="6_2"/>
-<reference name="interaction" ref_id="10_2"/>
-<reference name="location" ref_id="9_1"/>
-<reference name="ontologyTerm" ref_id="2_1"/>
-<collection name="dataSets"><reference ref_id="1_1"/></collection>
-</item>
 <item id="2_3" class="http://www.flymine.org/model/genomic#ProteinInteractionTerm">
 <attribute name="identifier" value="MI:0086"/>
-<collection name="dataSets"><reference ref_id="1_1"/></collection>
-</item>
-<item id="6_1" class="http://www.flymine.org/model/genomic#Gene">
-<attribute name="secondaryIdentifier" value="FBgn002"/>
-<reference name="sequence" ref_id="7_1"/>
 <collection name="dataSets"><reference ref_id="1_1"/></collection>
 </item>
 <item id="9_1" class="http://www.flymine.org/model/genomic#Location">
