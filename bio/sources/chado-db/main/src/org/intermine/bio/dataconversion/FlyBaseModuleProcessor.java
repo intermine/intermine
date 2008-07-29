@@ -611,7 +611,7 @@ public class FlyBaseModuleProcessor extends ChadoSequenceProcessor
             Integer delId = new Integer(res.getInt("deletion_feature_id"));
             String locationText = res.getString("location_text");
             Integer organismId = new Integer(res.getInt("deletion_organism_id"));
-            FeatureData delFeaureData = getFeatureMap().get(delId);
+            FeatureData delFeatureData = getFeatureMap().get(delId);
 
             Matcher m = DELETION_LOC_PATTERN.matcher(locationText);
             if (m.matches()) {
@@ -623,13 +623,22 @@ public class FlyBaseModuleProcessor extends ChadoSequenceProcessor
                     start = end;
                     end = tmp;
                 }
-                int taxonId = delFeaureData.getOrganismData().getTaxonId();
+                int taxonId = delFeatureData.getOrganismData().getTaxonId();
                 Integer chrFeatureId = getChromosomeFeatureMap(organismId).get(chromosomeName);
                 FeatureData chrFeatureData = getFeatureMap().get(chrFeatureId);
                 Item location =
                     getChadoDBConverter().makeLocation(chrFeatureData.getItemIdentifier(),
-                                                       delFeaureData.getItemIdentifier(),
+                                                       delFeatureData.getItemIdentifier(),
                                                        start, end, 1, taxonId);
+                Item dataSetItem = getChadoDBConverter().getDataSetItem(taxonId);
+
+                location.addToCollection("dataSets", dataSetItem);
+
+                Reference chrLocReference = new Reference();
+                chrLocReference.setName("chromosomeLocation");
+                chrLocReference.setRefId(location.getIdentifier());
+                getChadoDBConverter().store(chrLocReference, delFeatureData.getIntermineObjectId());
+
                 getChadoDBConverter().store(location);
             } else {
                 throw new RuntimeException("can't parse deletion location: " + locationText);
