@@ -27,6 +27,7 @@ import org.intermine.objectstore.ObjectStoreException;
 import org.intermine.util.IntPresentSet;
 import org.intermine.util.XmlUtil;
 import org.intermine.xml.full.Item;
+import org.intermine.xml.full.Reference;
 import org.intermine.xml.full.ReferenceList;
 
 import java.sql.Connection;
@@ -493,8 +494,13 @@ public class FlyBaseModuleProcessor extends ChadoSequenceProcessor
             }
         }
         if (chadoFeatureType.equals("chromosome_structure_variation")) {
-            if (uniqueName.startsWith("FBab") && name.matches("Df\\(.*\\)ED\\d+")) {
-                realInterMineType = "ArtificialDeletion";
+            if (uniqueName.startsWith("FBab")) {
+                if (name.matches("Df\\(.*\\)ED\\d+")) {
+                    realInterMineType = "ArtificialDeletion";
+                } else {
+                    // ignore non-drosdel deletions for now
+                    return null;
+                }
             } else {
                 return null;
             }
@@ -532,14 +538,8 @@ public class FlyBaseModuleProcessor extends ChadoSequenceProcessor
     }
 
     private static final List<String> FEATURES = Arrays.asList(
-            "gene", "mRNA", "transcript",
-            "intron", "exon",
-            "regulatory_region", "enhancer",
-            // ignore for now:        "EST", "cDNA_clone",
-            "miRNA", "snRNA", "ncRNA", "rRNA", "ncRNA", "snoRNA", "tRNA",
-            "chromosome_band", "transposable_element_insertion_site",
-            "chromosome_structure_variation",
-            "protein", "point_mutation"
+          "transposable_element_insertion_site",
+            "chromosome_structure_variation"
     );
 
     /**
@@ -560,7 +560,10 @@ public class FlyBaseModuleProcessor extends ChadoSequenceProcessor
     @Override
     protected void extraProcessing(Connection connection, Map<Integer, FeatureData> features)
         throws ObjectStoreException, SQLException {
-
+/*
+ *
+ *
+ *
         createAllelesTempTable(connection);
 
         for (FeatureData featureData: features.values()) {
@@ -584,6 +587,57 @@ public class FlyBaseModuleProcessor extends ChadoSequenceProcessor
             referenceList.setName("mutagens");
             referenceList.setRefIds(mutagenRefIds);
             getChadoDBConverter().store(referenceList, alleleDat.getIntermineObjectId());
+        }
+*/
+        createIndelReferences(connection);
+    }
+
+    /**
+     * Create the ArtificialDeletion.element1 and element2 references (to
+     * TransposableElementInsertionSite objects)
+     */
+    private void createIndelReferences(Connection connection)
+        throws ObjectStoreException, SQLException {
+        ResultSet res = getIndelResultSet(connection);
+        int featureWarnings = 0;
+        while (res.next()) {
+            Integer delId = new Integer(res.getInt("deletion_feature_id"));
+            Integer insId = new Integer(res.getInt("insertion_feature_id"));
+            String breakType = res.getString("breakpoint_type");
+            Reference reference = new Reference();
+            if (breakType.equals("bk1")) {
+                reference.setName("element1");
+            } else {
+                reference.setName("element2");
+            }
+            FeatureData insFeatureData = getFeatureMap().get(insId);
+            if (insFeatureData == null) {
+                if (featureWarnings <= 20) {
+                    if (featureWarnings < 20) {
+                        LOG.warn("insertion " + insId
+                                 + " was not found in the feature table");
+                    } else {
+                        LOG.warn("further warnings ignored");
+                    }
+                    featureWarnings++;
+                }
+                continue;
+            }
+            reference.setRefId(insFeatureData.getItemIdentifier());
+            FeatureData delFeatureData = getFeatureMap().get(delId);
+            if (delFeatureData == null) {
+                if (featureWarnings <= 20) {
+                    if (featureWarnings < 20) {
+                        LOG.warn("deletion " + delId
+                                 + " was not found in the feature table");
+                    } else {
+                        LOG.warn("further warnings ignored");
+                    }
+                    featureWarnings++;
+                }
+                continue;
+            }
+            getChadoDBConverter().store(reference, delFeatureData.getIntermineObjectId());
         }
     }
 
@@ -924,6 +978,44 @@ public class FlyBaseModuleProcessor extends ChadoSequenceProcessor
             + "   WHERE featureprop.type_id = cvterm.cvterm_id"
             + "       AND feature_id IN (" + getAlleleFeaturesSql() + ")"
             + "   ORDER BY feature_id";
+        LOG.info("executing: " + query);
+        Statement stmt = connection.createStatement();
+        ResultSet res = stmt.executeQuery(query);
+        return res;
+    }
+
+    /**
+     * Return a result set containing pairs of chromosome_structure_variation (deletions) and
+     * transposable_element_insertion_site (insertions).  The method is protected
+     * so that is can be overridden for testing.
+     * @param connection the Connection
+     * @throws SQLException if there is a database problem
+     * @return the ResultSet
+     */
+    protected ResultSet getIndelResultSet(Connection connection) throws SQLException {
+        String query =
+              "SELECT del.feature_id as deletion_feature_id,"
+            + "       ins.feature_id as insertion_feature_id,"
+            + "       substring(break.uniquename FROM ':([^:]+)$') AS breakpoint_type"
+            + "  FROM feature del, cvterm del_type, feature_relationship del_rel,"
+            + "       cvterm del_rel_type,"
+            + "       feature break, cvterm break_type,"
+            + "       feature_relationship ins_rel, cvterm ins_rel_type,"
+            + "       feature ins, cvterm ins_type"
+            + " WHERE del_rel.object_id = del.feature_id"
+            + "   AND del_rel.subject_id = break.feature_id"
+            + "   AND ins_rel.subject_id = break.feature_id"
+            + "   AND ins_rel.object_id = ins.feature_id"
+            + "   AND del.type_id = del_type.cvterm_id"
+            + "   AND ins.type_id = ins_type.cvterm_id"
+            + "   AND del_type.name = 'chromosome_structure_variation'"
+            + "   AND ins_type.name = 'transposable_element_insertion_site'"
+            + "   AND del_rel.type_id = del_rel_type.cvterm_id"
+            + "   AND del_rel_type.name = 'break_of'"
+            + "   AND ins_rel.type_id = ins_rel_type.cvterm_id"
+            + "   AND ins_rel_type.name = 'progenitor'"
+            + "   AND break.type_id = break_type.cvterm_id"
+            + "   AND break_type.name = 'breakpoint'";
         LOG.info("executing: " + query);
         Statement stmt = connection.createStatement();
         ResultSet res = stmt.executeQuery(query);
