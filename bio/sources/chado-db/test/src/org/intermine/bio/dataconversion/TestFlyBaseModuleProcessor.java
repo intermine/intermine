@@ -105,7 +105,48 @@ public class TestFlyBaseModuleProcessor extends FlyBaseModuleProcessor
             {
                 7000000, null, "&bgr;Tub85D[10g]", "point_mutation", null,
                 null, 1
+            },
+            {
+                8747247, "P{RS3}CB-5069-3", "FBti0028380",
+                "transposable_element_insertion_site" , null, null, 1
+            },
+            {
+                11488812, "Df(2L)ED482", "FBab0032193",
+                "chromosome_structure_variation", null, null, 1
+            },
+            {
+                11488720, "Df(2L)ED1454", "FBab0031842",
+                "chromosome_structure_variation", null, null, 1
+            },
+            {
+                8747905, "P{RS3}CB-0697-3", "FBti0028225",
+                "transposable_element_insertion_site", null, null, 1
+            },
+            {
+                11432358, "P{RS5r}5-SZ-4122", "FBti0032815",
+                "transposable_element_insertion_site", null, null, 1
+            },
+            {
+                11431518, "P{RS5r}5-HA-1496", "FBti0031976",
+                "transposable_element_insertion_site", null, null, 1
+            },
+            {
+                11430370, "P{RS3r}CB-5069-3", "FBti0030830",
+                "transposable_element_insertion_site", null, null, 1
+            },
+            {
+                11430215, "P{RS3r}CB-0697-3", "FBti0030675",
+                "transposable_element_insertion_site", null, null, 1
+            },
+            {
+                8748527, "P{RS5}5-SZ-4122", "FBti0030367",
+                "transposable_element_insertion_site", null, null, 1
+            },
+            {
+                8747724, "P{RS5}5-HA-1496", "FBti0029528",
+                "transposable_element_insertion_site", null, null, 1
             }
+
         };
         MockMultiRowResultSet res = new MockMultiRowResultSet();
         res.setupRows(resObjects);
@@ -488,5 +529,70 @@ public class TestFlyBaseModuleProcessor extends FlyBaseModuleProcessor
     @Override
     protected void createAllelesTempTable(Connection connection) throws SQLException {
         // do nothing
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    protected ResultSet getDeletionLocationResultSet(Connection connection) throws SQLException {
+        String[] columnNames = new String[] {
+            "deletion_feature_id", "location_text", "deletion_organism_id"
+        };
+        Object[][] resObjects = new Object[][] {
+            {
+                11488812, "3L:7423765..7576637 (27F4;28B1)", 1
+            },
+            {
+                11488720, "3R:21629316..21657677 (39E3)", 1
+            }
+
+        };
+
+        MockMultiRowResultSet res = new MockMultiRowResultSet();
+        res.setupRows(resObjects);
+        res.setupColumnNames(columnNames);
+        return res;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    protected ResultSet getIndelResultSet(Connection connection) throws SQLException {
+        String[] columnNames = new String[] {
+            "deletion_feature_id", "insertion_feature_id", "breakpoint_type"
+        };
+        Object[][] resObjects = new Object[][] {
+            {
+                11488812,  8747247, "bk1"
+            },
+            {
+                11488812, 11430370, "bk1"
+            },
+            {
+                11488812,  8748527, "bk2"
+            },
+            {
+                11488812, 11432358, "bk2"
+            },
+            {
+                11488720,  8747724, "bk1"
+            },
+            {
+                11488720, 11431518, "bk1"
+            },
+            {
+                11488720,  8747905, "bk2"
+            },
+            {
+                11488720, 11430215, "bk2"
+            }
+        };
+
+        MockMultiRowResultSet res = new MockMultiRowResultSet();
+        res.setupRows(resObjects);
+        res.setupColumnNames(columnNames);
+        return res;
     }
 }
