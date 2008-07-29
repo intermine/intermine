@@ -212,7 +212,7 @@ public class FlyBaseModuleProcessor extends ChadoSequenceProcessor
      */
     @Override
     protected Item makeLocation(int start, int end, int strand, FeatureData srcFeatureData,
-                              FeatureData featureData, int taxonId) throws ObjectStoreException {
+                              FeatureData featureData, int taxonId) {
         Item location =
             super.makeLocation(start, end, strand, srcFeatureData, featureData, taxonId);
         processItem(location, taxonId);
@@ -224,8 +224,7 @@ public class FlyBaseModuleProcessor extends ChadoSequenceProcessor
      */
     @Override
     protected Item createSynonym(FeatureData fdat, String type, String identifier,
-                                 boolean isPrimary, List<Item> otherEvidence)
-        throws ObjectStoreException {
+                                 boolean isPrimary, List<Item> otherEvidence) {
         Item synonym = super.createSynonym(fdat, type, identifier, isPrimary, otherEvidence);
         OrganismData od = fdat.getOrganismData();
         processItem(synonym, od.getTaxonId());
@@ -593,6 +592,49 @@ public class FlyBaseModuleProcessor extends ChadoSequenceProcessor
         }
 
         createIndelReferences(connection);
+
+        createDeletionLocations(connection);
+    }
+
+    private static final Pattern DELETION_LOC_PATTERN =
+        Pattern.compile("^([^:]+):(\\d+)..(\\d+) \\(([^;\\)]+);?([^\\)]*)\\)$");
+
+    /**
+     * Create Location objects for deletions (chromosome_structure_variation) as they don't have
+     * locations in the featureloc table.
+     * @throws ObjectStoreException
+     */
+    private void createDeletionLocations(Connection connection)
+        throws SQLException, ObjectStoreException {
+        ResultSet res = getDeletionLocationResultSet(connection);
+        while (res.next()) {
+            Integer delId = new Integer(res.getInt("deletion_feature_id"));
+            String locationText = res.getString("location_text");
+            Integer organismId = new Integer(res.getInt("deletion_organism_id"));
+            FeatureData delFeaureData = getFeatureMap().get(delId);
+
+            Matcher m = DELETION_LOC_PATTERN.matcher(locationText);
+            if (m.matches()) {
+                String chromosomeName = m.group(1);
+                int start = Integer.parseInt(m.group(2));
+                int end = Integer.parseInt(m.group(3));
+                if (start > end) {
+                    int tmp = start;
+                    start = end;
+                    end = tmp;
+                }
+                int taxonId = delFeaureData.getOrganismData().getTaxonId();
+                Integer chrFeatureId = getChromosomeFeatureMap(organismId).get(chromosomeName);
+                FeatureData chrFeatureData = getFeatureMap().get(chrFeatureId);
+                Item location =
+                    getChadoDBConverter().makeLocation(chrFeatureData.getItemIdentifier(),
+                                                       delFeaureData.getItemIdentifier(),
+                                                       start, end, 1, taxonId);
+                getChadoDBConverter().store(location);
+            } else {
+                throw new RuntimeException("can't parse deletion location: " + locationText);
+            }
+         }
     }
 
     /**
@@ -1025,6 +1067,30 @@ public class FlyBaseModuleProcessor extends ChadoSequenceProcessor
         return res;
     }
 
+    /**
+     * Return a result set containing location for deletions (chromosome_structure_variation)
+     * objects.  The locations are in the featureprop able in the form:
+     *   2R:12716549..12984803 (53D11;53F8)
+     * The method is protected so that is can be overridden for testing.
+     * @param connection the Connection
+     * @throws SQLException if there is a database problem
+     * @return the ResultSet
+     */
+    protected ResultSet getDeletionLocationResultSet(Connection connection) throws SQLException {
+        String query =
+            "SELECT feature.feature_id as deletion_feature_id, value as location_text, "
+            + "     feature.organism_id as deletion_organism_id"
+            + "  FROM featureprop, cvterm prop_type, feature, cvterm feature_type "
+            + "  WHERE featureprop.type_id = prop_type.cvterm_id"
+            + "    AND prop_type.name = 'derived_sequence_location' "
+            + "    AND feature.feature_id = featureprop.feature_id"
+            + "    AND feature.type_id = feature_type.cvterm_id"
+            + "    AND feature_type.name = 'chromosome_structure_variation'";
+        LOG.info("executing: " + query);
+        Statement stmt = connection.createStatement();
+        ResultSet res = stmt.executeQuery(query);
+        return res;
+    }
     /**
      * Return a result set containing the featureprop_id and the publication identifier of the
      * featureprops for al alleles.  The method is protected so that is can be overridden for

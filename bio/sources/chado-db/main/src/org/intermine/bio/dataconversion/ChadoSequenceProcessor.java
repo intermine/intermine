@@ -62,6 +62,8 @@ public class ChadoSequenceProcessor extends ChadoProcessor
 
     private Map<Integer, FeatureData> featureMap = new HashMap<Integer, FeatureData>();
     private Map<Integer, MultiKeyMap> config = new HashMap<Integer, MultiKeyMap>();
+    private Map<Integer, Map<String, Integer>> chromosomeMaps =
+            new HashMap<Integer, Map<String, Integer>>();
 
     // a map from chado pubmed id to item identifier for the publication
     private Map<Integer, String> publications = new HashMap<Integer, String>();
@@ -147,6 +149,7 @@ public class ChadoSequenceProcessor extends ChadoProcessor
 
     private void processFeatureTable(Connection connection)
         throws SQLException, ObjectStoreException {
+        Set<String> chromosomeFeatureTypesSet = new HashSet<String>(getChromosomeFeatureTypes());
         ResultSet res = getFeatureResultSet(connection);
         int count = 0;
         while (res.next()) {
@@ -156,6 +159,9 @@ public class ChadoSequenceProcessor extends ChadoProcessor
             String type = res.getString("type");
             String residues = res.getString("residues");
             Integer organismId = new Integer(res.getInt("organism_id"));
+            if (chromosomeFeatureTypesSet.contains(type)) {
+                addToChromosomeMaps(organismId, uniqueName, featureId);
+            }
             int seqlen = 0;
             if (res.getObject("seqlen") != null) {
                 seqlen = res.getInt("seqlen");
@@ -176,6 +182,20 @@ public class ChadoSequenceProcessor extends ChadoProcessor
         }
         LOG.info("created " + count + " features");
         res.close();
+    }
+
+    /**
+     * Add the given chromosome feature_id, uniqueName and organismId to chromosomeMaps.
+     */
+    private void addToChromosomeMaps(Integer organismId, String chrUniqueName, Integer chrId) {
+        Map<String, Integer> chromosomeMap;
+        if (chromosomeMaps.containsKey(organismId)) {
+            chromosomeMap = chromosomeMaps.get(organismId);
+        } else {
+            chromosomeMap = new HashMap<String, Integer>();
+            chromosomeMaps.put(organismId, chromosomeMap);
+        }
+        chromosomeMap.put(chrUniqueName, chrId);
     }
 
     /**
@@ -363,6 +383,15 @@ public class ChadoSequenceProcessor extends ChadoProcessor
     }
 
     /**
+     * Get a list of the chado/so types of the Chromosome-like objects we wish to load.
+     * (eg. "chromosome" and "chromosome_arm").
+     * @return the list of features
+     */
+    protected List<String> getChromosomeFeatureTypes() {
+        return CHROMOSOME_FEATURES;
+    }
+
+    /**
      * Return a list of types where one logical feature is represented as multiple rows in the
      * feature table.  An example is UTR features in flybase - if a UTR spans multiple exons, each
      * part is a separate row in the feature table.  In InterMine we represent the UTR as a single
@@ -503,10 +532,9 @@ public class ChadoSequenceProcessor extends ChadoProcessor
      * @param featureData the FeatureData for the LocatedSequenceFeature
      * @param taxonId the taxon id to use when finding the Chromosome for the Location
      * @return the new Location object
-     * @throws ObjectStoreException if an Item can't be stored
      */
     protected Item makeLocation(int start, int end, int strand, FeatureData srcFeatureData,
-                              FeatureData featureData, int taxonId) throws ObjectStoreException {
+                                FeatureData featureData, int taxonId) {
         Item location = getChadoDBConverter().makeLocation(srcFeatureData.itemIdentifier,
                                                            featureData.itemIdentifier,
                                                            start, end, strand, taxonId);
@@ -1191,8 +1219,7 @@ public class ChadoSequenceProcessor extends ChadoProcessor
     }
 
     /**
-     * Convert the list of features to a string to be used in a SQL query.  The String will include
-     * the chromosome and chromosome_arm feature types.
+     * Convert the list of features to a string to be used in a SQL query.
      * @return the list of features as a string (in SQL list format)
      */
     private String getFeaturesString(List<String> featuresList) {
@@ -1225,7 +1252,7 @@ public class ChadoSequenceProcessor extends ChadoProcessor
      */
     protected void createFeatureTempTable(Connection connection) throws SQLException {
         List<String> featuresList = new ArrayList<String>(getFeatures());
-        featuresList.addAll(CHROMOSOME_FEATURES);
+        featuresList.addAll(getChromosomeFeatureTypes());
         String featureTypesString = getFeaturesString(featuresList);
         String organismConstraint = getOrganismConstraint();
         String orgConstraintForQuery = "";
@@ -1301,7 +1328,7 @@ public class ChadoSequenceProcessor extends ChadoProcessor
         return
             "SELECT feature_id FROM feature, cvterm"
             + "  WHERE type_id = cvterm.cvterm_id"
-            + "    AND cvterm.name IN (" + getFeaturesString(CHROMOSOME_FEATURES) + ")"
+            + "    AND cvterm.name IN (" + getFeaturesString(getChromosomeFeatureTypes()) + ")"
             + (getExtraFeatureConstraint() != null
                ? " AND (" + getExtraFeatureConstraint() + ")"
                : "");
@@ -1473,11 +1500,9 @@ public class ChadoSequenceProcessor extends ChadoProcessor
      * @param isPrimary true if the synonym is a primary identifier
      * @param otherEvidence the evidence collection to store in the Synonym
      * @return the new Synonym
-     * @throws ObjectStoreException if there is a problem while storing
      */
     protected Item createSynonym(FeatureData fdat, String type, String identifier,
-                                 boolean isPrimary, List<Item> otherEvidence)
-        throws ObjectStoreException {
+                                 boolean isPrimary, List<Item> otherEvidence) {
         if (fdat.existingSynonyms.contains(identifier)) {
             throw new IllegalArgumentException("feature identifier " + identifier
                                                + " is already a synonym for: "
@@ -1500,6 +1525,16 @@ public class ChadoSequenceProcessor extends ChadoProcessor
      */
     protected Map<Integer, FeatureData> getFeatureMap() {
         return this.featureMap;
+    }
+
+    /**
+     * Fetch the populated map of chromosome-like features.  The keys are the chromosome uniqueName
+     * fields and the values are the chado feature_ids.
+     * @param organismId the chado organism_id
+     * @return map of chromosome details
+     */
+    protected Map<String, Integer> getChromosomeFeatureMap(Integer organismId) {
+        return chromosomeMaps.get(organismId);
     }
 
     /**
