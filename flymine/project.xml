@@ -127,10 +127,7 @@
     <source name="pdb" type="pdb">
       <property name="src.data.dir" location="/shared/data/pdb/current"/>
     </source>
-    <source name="psi-intact" type="psi">
-      <property name="src.data.dir" location="/shared/data/psi/intact/current"/>
-      <property name="organisms" value="7227 6239 4932"/>
-    </source>
+
     <source name="psi-mi-ontology" type="psi-mi-ontology">
       <property name="src.data.file" location="/shared/data/psi/ontology/current/psi-mi.obo"/>
     </source>
@@ -449,14 +446,6 @@
       <property name="gff3.seqDataSourceName" value="FlyBase"/>
       <property name="src.data.dir" location="/shared/data/drosdel/2008-03-19/combined/"/>
     </source>
-    <source name="affy-probes" type="affy-probes">
-      <property name="src.data.dir" location="/shared/data/affy-probes/current"/>
-      <property name="src.data.dir.includes" value="*.csv"/>
-    </source>
-    <source name="biogrid" type="biogrid" dump="true">
-      <property name="src.data.dir" location="/shared/data/biogrid/current"/>
-      <property name="src.data.dir.includes" value="*psi25.xml"/>
-    </source>
     <source name="miranda" type="miranda">
       <property name="gff3.seqClsName" value="Chromosome"/>
       <property name="gff3.taxonId" value="7227"/>
@@ -464,6 +453,22 @@
       <property name="src.data.dir" location="/shared/data/miRNA/miRanda/current"/>
       <property name="src.data.dir.includes" value="v5.gff.drosophila_melanogaster.gff"/>
     </source>
+
+    <source name="affy-probes" type="affy-probes" dump="true">
+      <property name="src.data.dir" location="/shared/data/affy-probes/current"/>
+      <property name="src.data.dir.includes" value="*.csv"/>
+    </source>
+
+    <source name="psi-intact" type="psi">
+      <property name="src.data.dir" location="/shared/data/psi/intact/current"/>
+      <property name="organisms" value="7227 6239 4932"/>
+    </source>
+
+    <source name="biogrid" type="biogrid" dump="true">
+      <property name="src.data.dir" location="/shared/data/biogrid/current"/>
+      <property name="src.data.dir.includes" value="*psi25.xml"/>
+    </source>
+
     <source name="entrez-organism" type="entrez-organism">
       <!-- this source finds the taxon ids in the objectstore, retrieves
            species name and genus from Entrez into an InterMine format XML
