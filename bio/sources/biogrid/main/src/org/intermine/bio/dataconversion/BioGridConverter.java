@@ -18,6 +18,7 @@ import java.util.Map;
 import java.util.Set;
 import java.util.Stack;
 
+import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.intermine.dataconversion.ItemWriter;
 import org.intermine.metadata.Model;
@@ -142,8 +143,7 @@ public class BioGridConverter extends BioFileConverter
                             && stack.search("experimentDescription") == 3) {
                 String pubMedId = attrs.getValue("id");
                 if (StringUtil.allDigits(pubMedId)) {
-                    String pub = getPub(pubMedId);
-                    experimentHolder.setPublication(pub);
+                    experimentHolder.setPublication(getPub(pubMedId));
                 }
             //<experimentList><experimentDescription><interactionDetectionMethod><names><shortLabel>
             } else if (qName.equals("shortLabel") && stack.peek().equals("names")
@@ -186,6 +186,14 @@ public class BioGridConverter extends BioFileConverter
                 ih.role = null;
                 holder.addInteractor(participantId, ih);
                 holder.identifiers.add(ih.identifier);
+                holder.refIds.add(ih.refId);
+                if (ih.refId == null) {
+                    LOG.error("~~ bad participant:" + participantId + " - didn't have an organism");
+                    ih.valid = false;
+                }
+                if (!ih.valid) {
+                    holder.validActors = false;
+                }
             //<interactionList><interaction><interactionType><names><shortLabel
             } else if (qName.equals("shortLabel") && stack.peek().equals("names")
                             && stack.search("interactionType") == 2) {
@@ -283,6 +291,9 @@ public class BioGridConverter extends BioFileConverter
                             && qName.equals("shortLabel") && stack.search("interactor") == 2) {
 
                 String secondaryIdentifier = attValue.toString();
+                if (secondaryIdentifier.startsWith("Dmel")) {
+                    secondaryIdentifier = secondaryIdentifier.substring(4);
+                }
                 interactorHolder.secondaryIdentifier = secondaryIdentifier;
 
             /******************* INTERACTIONS ***************************************************/
@@ -304,7 +315,7 @@ public class BioGridConverter extends BioFileConverter
             } else if (attName != null && attName.equals("interactionType")) {
                 holder.methodRefId = getTerm(attValue.toString());
             //</interaction>
-            } else if (qName.equals("interaction") && holder != null) {
+            } else if (qName.equals("interaction") && holder != null && holder.validActors) {
                 storeInteraction(holder);
                 holder = null;
             }
@@ -445,14 +456,16 @@ public class BioGridConverter extends BioFileConverter
 
         private String getTerm(String name)
         throws SAXException {
-            String refId = terms.get(name);
+            String term = name.toLowerCase();
+            term = term.replace("-", "");
+            String refId = terms.get(term);
             if (refId != null) {
                 return refId;
             }
             try {
                 Item item = createItem("ProteinInteractionTerm");
-                item.setAttribute("name", name);
-                terms.put(name, item.getIdentifier());
+                item.setAttribute("name", term);
+                terms.put(term, item.getIdentifier());
                 store(item);
                 return item.getIdentifier();
             } catch (ObjectStoreException e) {
@@ -497,7 +510,7 @@ public class BioGridConverter extends BioFileConverter
             protected Map<String, InteractorHolder> ihs = new HashMap<String, InteractorHolder>();
             protected Set<String> refIds = new HashSet<String>();
             protected Set<String> identifiers = new HashSet<String>();
-            //protected boolean validActors = true;
+            protected boolean validActors = true;
             protected String methodRefId;
 
             /**
