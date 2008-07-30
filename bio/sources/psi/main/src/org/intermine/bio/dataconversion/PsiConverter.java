@@ -244,7 +244,7 @@ public class PsiConverter extends BioFileConverter
                             && attrs.getValue("id").equals("MI:0117") && interactorHolder != null) {
                 interactorHolder.isRegionFeature = true;
                 // create interacting region
-                Item interactionRegion = createItem("ProteinInteractionRegion");
+                Item interactionRegion = createItem("InteractionRegion");
                 interactionRegion.setAttribute("name", regionName);
                 interactionRegion.setReference("gene", interactorHolder.geneRefId);
                 interactionRegion.setReference("ontologyTerm", termId);
@@ -842,7 +842,7 @@ public class PsiConverter extends BioFileConverter
         String itemId = terms.get(identifier);
         if (itemId == null) {
             try {
-                Item term = createItem("ProteinInteractionTerm");
+                Item term = createItem("InteractionTerm");
                 term.setAttribute("identifier", identifier);
                 itemId = term.getIdentifier();
                 terms.put(identifier, itemId);

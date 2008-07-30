@@ -18,7 +18,6 @@ import java.util.Map;
 import java.util.Set;
 import java.util.Stack;
 
-import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.intermine.dataconversion.ItemWriter;
 import org.intermine.metadata.Model;
@@ -73,6 +72,39 @@ public class BioGridConverter extends BioFileConverter
 
         // only construct factory here so can be replaced by mock factory in tests
         resolverFactory = new FlyBaseIdResolverFactory();
+
+        /*
+        Affinity Capture-MS
+        Affinity Capture-RNA
+        Affinity Capture-Western
+        AffinityCapture-MS
+        AffinityCapture-Western
+        Biochemical Activity
+        Co-crystal Structure
+        Co-fractionation
+        Co-localization
+        Co-purification
+        Dosage Growth Defect
+        Dosage GrowthDefect
+        Dosage Lethality
+        Dosage Rescue
+        DosageRescue
+        FRET
+        Far Western
+        PCA
+        Phenotypic Enhancement
+        Phenotypic Suppression
+        PhenotypicEnhancement
+        Protein-RNA
+        Protein-peptide
+        Reconstituted Complex
+        Synthetic Growth Defect
+        Synthetic Lethality
+        Synthetic Rescue
+        SyntheticRescue
+        Two-hybrid
+*/
+
     }
 
     /**
@@ -463,7 +495,7 @@ public class BioGridConverter extends BioFileConverter
                 return refId;
             }
             try {
-                Item item = createItem("ProteinInteractionTerm");
+                Item item = createItem("InteractionTerm");
                 item.setAttribute("name", term);
                 terms.put(term, item.getIdentifier());
                 store(item);

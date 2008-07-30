@@ -3,13 +3,13 @@
     <class name="org.flymine.model.genomic.InteractionExperiment" extends="org.flymine.model.genomic.Experiment" is-interface="true">
         <attribute name="name" type="java.lang.String"/>
         <reference name="hostOrganism" referenced-type="org.flymine.model.genomic.Organism" />
-        <reference name="interactionDetectionMethod" referenced-type="org.flymine.model.genomic.ProteinInteractionTerm"/>
-        <reference name="participantIdentificationMethod" referenced-type="org.flymine.model.genomic.ProteinInteractionTerm"/>
+        <reference name="interactionDetectionMethod" referenced-type="org.flymine.model.genomic.InteractionTerm"/>
+        <reference name="participantIdentificationMethod" referenced-type="org.flymine.model.genomic.InteractionTerm"/>
         <collection name="comments" referenced-type="org.flymine.model.genomic.Comment" ordered="true"/>
         <collection name="interactions" referenced-type="org.flymine.model.genomic.Interaction" ordered="true" reverse-reference="experiment"/>
     </class>
 
-    <class name="org.flymine.model.genomic.ProteinInteractionTerm" extends="org.flymine.model.genomic.OntologyTerm" is-interface="true"/>
+    <class name="org.flymine.model.genomic.InteractionTerm" extends="org.flymine.model.genomic.OntologyTerm" is-interface="true"/>
 
     <class name="org.flymine.model.genomic.Interaction" is-interface="true">
         <attribute name="role" type="java.lang.String"/>
@@ -18,7 +18,7 @@
         <attribute name="confidenceText" type="java.lang.String"/>
         <reference name="gene" referenced-type="org.flymine.model.genomic.Gene" reverse-reference="interactions" />
         <reference name="experiment" referenced-type="org.flymine.model.genomic.InteractionExperiment" reverse-reference="interactions"/>
-        <collection name="interactingRegions" referenced-type="org.flymine.model.genomic.ProteinInteractionRegion" ordered="true" reverse-reference="interaction"/>
+        <collection name="interactingRegions" referenced-type="org.flymine.model.genomic.InteractionRegion" ordered="true" reverse-reference="interaction"/>
         <collection name="interactingGenes" referenced-type="org.flymine.model.genomic.Gene" ordered="true" reverse-reference="interactions"/>
         <collection name="dataSets" referenced-type="org.flymine.model.genomic.DataSet"/>
     </class>
@@ -27,7 +27,7 @@
         <collection name="interactions" referenced-type="org.flymine.model.genomic.Interaction" ordered="true" reverse-reference="gene"/>
     </class>
 
-    <class name="org.flymine.model.genomic.ProteinInteractionRegion" extends ="org.flymine.model.genomic.BioEntity" is-interface="true">
+    <class name="org.flymine.model.genomic.InteractionRegion" extends ="org.flymine.model.genomic.BioEntity" is-interface="true">
       <attribute name="startStatus" type="java.lang.String"/>
       <attribute name="endStatus" type="java.lang.String"/>
       <reference name="gene" referenced-type="org.flymine.model.genomic.Gene" />

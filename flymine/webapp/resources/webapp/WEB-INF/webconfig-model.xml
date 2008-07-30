@@ -283,6 +283,12 @@
     </fields>
   </class>
 
+  <class className="org.flymine.model.genomic.InteractionRegion">
+    <fields>
+      <fieldconfig fieldExpr="name"/>
+    </fields>
+  </class>
+
   <class className="org.flymine.model.genomic.Location">
     <fields>
       <fieldconfig fieldExpr="object.primaryIdentifier"/>
@@ -489,11 +495,7 @@
   </class>
 
 
-  <class className="org.flymine.model.genomic.ProteinInteractionRegion">
-    <fields>
-      <fieldconfig fieldExpr="name"/>
-    </fields>
-  </class>
+
 
   <class className="org.flymine.model.genomic.ProteinStructure">
     <fields>
