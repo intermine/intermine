@@ -1,8 +1,6 @@
 package org.intermine.bio.dataconversion;
 
 /*
- * Copyright (C) 2002-2008 FlyMine
- *
  * This code may be freely distributed and modified under the
  * terms of the GNU Lesser General Public Licence.  This should
  * be distributed with the code.  See the LICENSE file for more
@@ -599,7 +597,7 @@ public class FlyBaseModuleProcessor extends ChadoSequenceProcessor
     }
 
     private static final Pattern DELETION_LOC_PATTERN =
-        Pattern.compile("^([^:]+):(\\d+)..(\\d+) \\(([^;\\)]+);?([^\\)]*)\\)$");
+        Pattern.compile("^([^:]+):(\\d+)(?:-\\d+)?..(?:\\d+-)?(\\d+) \\(([^;\\)]+);?([^\\)]*)\\)$");
 
     /**
      * Create Location objects for deletions (chromosome_structure_variation) as they don't have
