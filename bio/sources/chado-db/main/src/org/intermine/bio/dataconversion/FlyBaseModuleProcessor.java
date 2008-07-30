@@ -212,7 +212,8 @@ public class FlyBaseModuleProcessor extends ChadoSequenceProcessor
      */
     @Override
     protected Item makeLocation(int start, int end, int strand, FeatureData srcFeatureData,
-                              FeatureData featureData, int taxonId) {
+                              FeatureData featureData, int taxonId)
+        throws ObjectStoreException {
         Item location =
             super.makeLocation(start, end, strand, srcFeatureData, featureData, taxonId);
         processItem(location, taxonId);
@@ -224,7 +225,8 @@ public class FlyBaseModuleProcessor extends ChadoSequenceProcessor
      */
     @Override
     protected Item createSynonym(FeatureData fdat, String type, String identifier,
-                                 boolean isPrimary, List<Item> otherEvidence) {
+                                 boolean isPrimary, List<Item> otherEvidence)
+        throws ObjectStoreException {
         Item synonym = super.createSynonym(fdat, type, identifier, isPrimary, otherEvidence);
         OrganismData od = fdat.getOrganismData();
         processItem(synonym, od.getTaxonId());

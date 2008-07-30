@@ -532,9 +532,12 @@ public class ChadoSequenceProcessor extends ChadoProcessor
      * @param featureData the FeatureData for the LocatedSequenceFeature
      * @param taxonId the taxon id to use when finding the Chromosome for the Location
      * @return the new Location object
+     * @throws ObjectStoreException if there is a problem while storing
      */
+    @SuppressWarnings("unused")
     protected Item makeLocation(int start, int end, int strand, FeatureData srcFeatureData,
-                                FeatureData featureData, int taxonId) {
+                                FeatureData featureData, int taxonId)
+        throws ObjectStoreException {
         Item location = getChadoDBConverter().makeLocation(srcFeatureData.itemIdentifier,
                                                            featureData.itemIdentifier,
                                                            start, end, strand, taxonId);
@@ -1500,9 +1503,11 @@ public class ChadoSequenceProcessor extends ChadoProcessor
      * @param isPrimary true if the synonym is a primary identifier
      * @param otherEvidence the evidence collection to store in the Synonym
      * @return the new Synonym
+     * @throws ObjectStoreException if there is a problem while storing
      */
     protected Item createSynonym(FeatureData fdat, String type, String identifier,
-                                 boolean isPrimary, List<Item> otherEvidence) {
+                                 boolean isPrimary, List<Item> otherEvidence)
+        throws ObjectStoreException {
         if (fdat.existingSynonyms.contains(identifier)) {
             throw new IllegalArgumentException("feature identifier " + identifier
                                                + " is already a synonym for: "
