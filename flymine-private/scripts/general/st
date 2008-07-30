@@ -34,6 +34,8 @@ or
   $0 -s <ticket_num>|<branch_name>
     switch the working copy to the given branch or to the branch for the given
     ticket
+  $0 -f -s <ticket_num>|<branch_name>
+    force switch, even if there are local changes
 or
   $0 -g <ticket_num>|<branch_name>
     get a checkout of the given branch
@@ -50,6 +52,8 @@ or
 or
   $0 -t
     switch working copy to trunk
+  $0 -f -t
+    force switch to trunk, even if there are local changes
 or
   $0 <ticket_num>|<branch_name>
     report if the given branch exists
@@ -73,7 +77,7 @@ my $get_status = 0;
 if (@ARGV == 0 or @ARGV == 1 and $ARGV[0] !~ /^-/) {
   $get_status = 1;
 } else {
-  if (!getopts('scgmdltvh?', \%opts)) {
+  if (!getopts('scgmdltvhf?', \%opts)) {
     usage();
   }
 }
@@ -90,6 +94,7 @@ my $list = 0;
 my $get_checkout = 0;
 my $move_to_trunk = 0;
 my $verbose = 0;
+my $force = 0;
 
 if ($opts{s}) {
   $switch = 1;
@@ -114,6 +119,9 @@ if ($opts{t}) {
 }
 if ($opts{v}) {
   $verbose = 1;
+}
+if ($opts{f}) {
+  $force = 1;
 }
 if ($move_to_trunk) {
   if (@ARGV != 0) {
@@ -253,6 +261,8 @@ if ($create) {
 
 if ($switch) {
   my ($type, $branch) = get_branch_name($arg);
+
+  check_for_changes('.');
 
   if (branch_exists($branch)) {
     my @status = get_status('.');
@@ -418,6 +428,8 @@ if ($list) {
 }
 
 if ($move_to_trunk) {
+  check_for_changes('.');
+
   my @status = get_status('.');
 
   if (@status) {
@@ -457,6 +469,30 @@ sub get_short_branch
   $branch =~ s/$REPO/\$REPO/;
 
   return $branch;
+}
+
+sub check_for_changes
+{
+  my $dir = shift;
+
+  if (!$force && has_local_changes($dir)) {
+    die "$0: aborting because check out has local changes, use -f option to force the action\n";
+  }
+}
+
+sub has_local_changes
+{
+  my $status_dir = abs_path(shift);
+
+  my $local_changes = 0;
+  open SVN, "svn status $status_dir|" or die "can't open pipe to svn: $!";
+  while (my $line = <SVN>) {
+    if ($line =~ /^[MCA]/) {
+      $local_changes = 1;
+    }
+  }
+  close SVN;
+  return $local_changes;
 }
 
 sub get_status
