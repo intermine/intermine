@@ -5423,7 +5423,7 @@
   </tag>
   <tag name="aspect:Interactions" objectIdentifier="ProteinInteractionsOrthologues_forProtein" type="template">
   </tag>
-  <tag name="aspect:Interactions" objectIdentifier="org.flymine.model.genomic.ProteinInteractionExperiment" type="class">
+  <tag name="aspect:Interactions" objectIdentifier="org.flymine.model.genomic.InteractionExperiment" type="class">
   </tag>
   <tag name="aspect:Interactions" objectIdentifier="AAE_synonym2proteinInteractions1" type="template">
   </tag>
@@ -5443,7 +5443,7 @@
   </tag>
   <tag name="aspect:Interactions" objectIdentifier="org.flymine.model.genomic.Protein" type="class">
   </tag>
-  <tag name="aspect:Interactions" objectIdentifier="org.flymine.model.genomic.ProteinInteraction" type="class">
+  <tag name="aspect:Interactions" objectIdentifier="org.flymine.model.genomic.Interaction" type="class">
   </tag>
   <tag name="aspect:Interactions" objectIdentifier="Gene_OrthologueProteinInteraction" type="template">
   </tag>
@@ -5451,7 +5451,7 @@
   </tag>
   <tag name="aspect:Interactions" objectIdentifier="Gene_OrthologuesProteinInteraction" type="template">
   </tag>
-  <tag name="aspect:Interactions" objectIdentifier="Protein.proteinInteractions" type="collection">
+  <tag name="aspect:Interactions" objectIdentifier="Gene.interactions" type="collection">
   </tag>
   <tag name="aspect:Interactions" objectIdentifier="ProteinInteractions2orthologues" type="template">
   </tag>
@@ -5465,13 +5465,13 @@
   </tag>
   <tag name="aspect:Interactions" objectIdentifier="Protein_ProteinInteractionDmRNAi" type="template">
   </tag>
-  <tag name="aspect:Interactions" objectIdentifier="ProteinInteraction.interactingProteins" type="collection">
+  <tag name="aspect:Interactions" objectIdentifier="Interaction.interactingGenes" type="collection">
   </tag>
-  <tag name="aspect:Interactions" objectIdentifier="ProteinInteractionExperiment.interactions" type="collection">
+  <tag name="aspect:Interactions" objectIdentifier="InteractionExperiment.interactions" type="collection">
   </tag>
-  <tag name="aspect:Interactions" objectIdentifier="ProteinInteractionExperiment.interactionDetectionMethod" type="reference">
+  <tag name="aspect:Interactions" objectIdentifier="InteractionExperiment.interactionDetectionMethod" type="reference">
   </tag>
-  <tag name="aspect:Interactions" objectIdentifier="ProteinInteractionExperiment.participantIdentificationMethod" type="reference">
+  <tag name="aspect:Interactions" objectIdentifier="InteractionExperiment.participantIdentificationMethod" type="reference">
   </tag>
   <tag name="aspect:Interactions" objectIdentifier="Dataset_proteinInteractions" type="template">
   </tag>
