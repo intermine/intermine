@@ -1,0 +1,6 @@
+<project name="pim" default="default" basedir=".">
+  <description>build, test, package biogrid</description>
+  
+  <import file="../../../imbuild/source.xml"/>
+  
+</project>
