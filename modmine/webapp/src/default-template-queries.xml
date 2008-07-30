@@ -3616,7 +3616,7 @@
   </tag>
   <tag name="aspect:Interactions" objectIdentifier="interProDomainToInteractions" type="template">
   </tag>
-  <tag name="aspect:Interactions" objectIdentifier="org.flymine.model.genomic.Protein" type="class">
+  <tag name="aspect:Interactions" objectIdentifier="org.flymine.model.genomic.Gene" type="class">
   </tag>
   <tag name="aspect:Interactions" objectIdentifier="ProteinInteractionOrganism_ProteinInteractionOrganism" type="template">
   </tag>
@@ -3642,7 +3642,7 @@
   </tag>
   <tag name="aspect:Interactions" objectIdentifier="ProteinInteractions2orthologues" type="template">
   </tag>
-  <tag name="aspect:Interactions" objectIdentifier="org.flymine.model.genomic.ProteinInteractionExperiment" type="class">
+  <tag name="aspect:Interactions" objectIdentifier="org.flymine.model.genomic.InteractionExperiment" type="class">
   </tag>
   <tag name="aspect:Interactions" objectIdentifier="geneInterologues" type="template">
   </tag>
@@ -3656,13 +3656,13 @@
   </tag>
   <tag name="aspect:Interactions" objectIdentifier="Protein_ProteinInteractionDmRNAi" type="template">
   </tag>
-  <tag name="aspect:Interactions" objectIdentifier="ProteinInteraction.interactingProteins" type="collection">
+  <tag name="aspect:Interactions" objectIdentifier="Interaction.interactingGenes" type="collection">
   </tag>
-  <tag name="aspect:Interactions" objectIdentifier="ProteinInteractionExperiment.interactions" type="collection">
+  <tag name="aspect:Interactions" objectIdentifier="InteractionExperiment.interactions" type="collection">
   </tag>
-  <tag name="aspect:Interactions" objectIdentifier="ProteinInteractionExperiment.interactionDetectionMethod" type="reference">
+  <tag name="aspect:Interactions" objectIdentifier="InteractionExperiment.interactionDetectionMethod" type="reference">
   </tag>
-  <tag name="aspect:Interactions" objectIdentifier="ProteinInteractionExperiment.participantIdentificationMethod" type="reference">
+  <tag name="aspect:Interactions" objectIdentifier="InteractionExperiment.participantIdentificationMethod" type="reference">
   </tag>
   <tag name="aspect:Protein Structure" objectIdentifier="AAJ_gene2ProteinStructure1NEW" type="template">
   </tag>
