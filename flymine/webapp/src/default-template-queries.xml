@@ -5383,109 +5383,109 @@
   </tag>
   <tag name="aspect:Pathways" objectIdentifier="Pathway_GenesOrthol_new" type="template">
   </tag>
-  <tag name="aspect:Protein Interaction" objectIdentifier="AAD_GOidentifier2proteinInteractions" type="template">
+  <tag name="aspect:Interactions" objectIdentifier="AAD_GOidentifier2proteinInteractions" type="template">
   </tag>
-  <tag name="aspect:Protein Interaction" objectIdentifier="ProteinInteraction_OrthologueOrganism_new" type="template">
+  <tag name="aspect:Interactions" objectIdentifier="ProteinInteraction_OrthologueOrganism_new" type="template">
   </tag>
-  <tag name="aspect:Protein Interactions" objectIdentifier="AAC_protein2proteinInteraction" type="template">
+  <tag name="aspect:Interactions" objectIdentifier="AAC_protein2proteinInteraction" type="template">
   </tag>
-  <tag name="aspect:Protein Interactions" objectIdentifier="geneInterologues" type="template">
+  <tag name="aspect:Interactions" objectIdentifier="geneInterologues" type="template">
   </tag>
-  <tag name="aspect:Protein Interactions" objectIdentifier="AAG_gene2ProteinInteraction2StructureNEW3" type="template">
+  <tag name="aspect:Interactions" objectIdentifier="AAG_gene2ProteinInteraction2StructureNEW3" type="template">
   </tag>
-  <tag name="aspect:Protein Interactions" objectIdentifier="GOterm2GeneProteinInteraction" type="template">
+  <tag name="aspect:Interactions" objectIdentifier="GOterm2GeneProteinInteraction" type="template">
   </tag>
-  <tag name="aspect:Protein Interactions" objectIdentifier="Protein_ProteinInteractionOrthologue" type="template">
+  <tag name="aspect:Interactions" objectIdentifier="Protein_ProteinInteractionOrthologue" type="template">
   </tag>
-  <tag name="aspect:Protein Interactions" objectIdentifier="projectInteractionsGeneSummary" type="template">
+  <tag name="aspect:Interactions" objectIdentifier="projectInteractionsGeneSummary" type="template">
   </tag>
-  <tag name="aspect:Protein Interactions" objectIdentifier="Protein_ProteinInteractionOrthologueRNAi" type="template">
+  <tag name="aspect:Interactions" objectIdentifier="Protein_ProteinInteractionOrthologueRNAi" type="template">
   </tag>
-  <tag name="aspect:Protein Interactions" objectIdentifier="ProteinInteractionsOrthologuesRNAi_forProtein" type="template">
+  <tag name="aspect:Interactions" objectIdentifier="ProteinInteractionsOrthologuesRNAi_forProtein" type="template">
   </tag>
-  <tag name="aspect:Protein Interactions" objectIdentifier="interactionsForOrganism" type="template">
+  <tag name="aspect:Interactions" objectIdentifier="interactionsForOrganism" type="template">
   </tag>
-  <tag name="aspect:Protein Interactions" objectIdentifier="AAAA_Symbol_toCG" type="template">
+  <tag name="aspect:Interactions" objectIdentifier="AAAA_Symbol_toCG" type="template">
   </tag>
-  <tag name="aspect:Protein Interactions" objectIdentifier="GiotHighConfidenceSet(browse)" type="template">
+  <tag name="aspect:Interactions" objectIdentifier="GiotHighConfidenceSet(browse)" type="template">
   </tag>
-  <tag name="aspect:Protein Interactions" objectIdentifier="DatasetGiot_ProteinInteractions" type="template">
+  <tag name="aspect:Interactions" objectIdentifier="DatasetGiot_ProteinInteractions" type="template">
   </tag>
-  <tag name="aspect:Protein Interactions" objectIdentifier="GeneSymbol_Identifier" type="template">
+  <tag name="aspect:Interactions" objectIdentifier="GeneSymbol_Identifier" type="template">
   </tag>
-  <tag name="aspect:Protein Interactions" objectIdentifier="interologuesOrganisms" type="template">
+  <tag name="aspect:Interactions" objectIdentifier="interologuesOrganisms" type="template">
   </tag>
-  <tag name="aspect:Protein Interactions" objectIdentifier="projectInteractionsGeneSummary2" type="template">
+  <tag name="aspect:Interactions" objectIdentifier="projectInteractionsGeneSummary2" type="template">
   </tag>
-  <tag name="aspect:Protein Interactions" objectIdentifier="Gene_orthol_interaction" type="template">
+  <tag name="aspect:Interactions" objectIdentifier="Gene_orthol_interaction" type="template">
   </tag>
-  <tag name="aspect:Protein Interactions" objectIdentifier="AAG_gene2ProteinInteraction2StructureNEW2" type="template">
+  <tag name="aspect:Interactions" objectIdentifier="AAG_gene2ProteinInteraction2StructureNEW2" type="template">
   </tag>
-  <tag name="aspect:Protein Interactions" objectIdentifier="ProteinInteractionsOrthologues_forProtein" type="template">
+  <tag name="aspect:Interactions" objectIdentifier="ProteinInteractionsOrthologues_forProtein" type="template">
   </tag>
-  <tag name="aspect:Protein Interactions" objectIdentifier="org.flymine.model.genomic.ProteinInteractionExperiment" type="class">
+  <tag name="aspect:Interactions" objectIdentifier="org.flymine.model.genomic.ProteinInteractionExperiment" type="class">
   </tag>
-  <tag name="aspect:Protein Interactions" objectIdentifier="AAE_synonym2proteinInteractions1" type="template">
+  <tag name="aspect:Interactions" objectIdentifier="AAE_synonym2proteinInteractions1" type="template">
   </tag>
-  <tag name="aspect:Protein Interactions" objectIdentifier="ProteinDomain_ProteinInteractingProtein" type="template">
+  <tag name="aspect:Interactions" objectIdentifier="ProteinDomain_ProteinInteractingProtein" type="template">
   </tag>
-  <tag name="aspect:Protein Interactions" objectIdentifier="ProteinInteractionOrganism_ProteinInteractionOrganism" type="template">
+  <tag name="aspect:Interactions" objectIdentifier="ProteinInteractionOrganism_ProteinInteractionOrganism" type="template">
   </tag>
-  <tag name="aspect:Protein Interactions" objectIdentifier="org.flymine.model.genomic.ProteinInteractionTerm" type="class">
+  <tag name="aspect:Interactions" objectIdentifier="org.flymine.model.genomic.InteractionTerm" type="class">
   </tag>
-  <tag name="aspect:Protein Interactions" objectIdentifier="interProDomainToInteractions" type="template">
+  <tag name="aspect:Interactions" objectIdentifier="interProDomainToInteractions" type="template">
   </tag>
-  <tag name="aspect:Protein Interactions" objectIdentifier="proteinInteractionsWithRegions" type="template">
+  <tag name="aspect:Interactions" objectIdentifier="proteinInteractionsWithRegions" type="template">
   </tag>
-  <tag name="aspect:Protein Interactions" objectIdentifier="interologuesOrganism" type="template">
+  <tag name="aspect:Interactions" objectIdentifier="interologuesOrganism" type="template">
   </tag>
-  <tag name="aspect:Protein Interactions" objectIdentifier="InteractionDataSets" type="template">
+  <tag name="aspect:Interactions" objectIdentifier="InteractionDataSets" type="template">
   </tag>
-  <tag name="aspect:Protein Interactions" objectIdentifier="org.flymine.model.genomic.Protein" type="class">
+  <tag name="aspect:Interactions" objectIdentifier="org.flymine.model.genomic.Protein" type="class">
   </tag>
-  <tag name="aspect:Protein Interactions" objectIdentifier="org.flymine.model.genomic.ProteinInteraction" type="class">
+  <tag name="aspect:Interactions" objectIdentifier="org.flymine.model.genomic.ProteinInteraction" type="class">
   </tag>
-  <tag name="aspect:Protein Interactions" objectIdentifier="Gene_OrthologueProteinInteraction" type="template">
+  <tag name="aspect:Interactions" objectIdentifier="Gene_OrthologueProteinInteraction" type="template">
   </tag>
-  <tag name="aspect:Protein Interactions" objectIdentifier="Organism_ProteinInteraction" type="template">
+  <tag name="aspect:Interactions" objectIdentifier="Organism_ProteinInteraction" type="template">
   </tag>
-  <tag name="aspect:Protein Interactions" objectIdentifier="Gene_OrthologuesProteinInteraction" type="template">
+  <tag name="aspect:Interactions" objectIdentifier="Gene_OrthologuesProteinInteraction" type="template">
   </tag>
-  <tag name="aspect:Protein Interactions" objectIdentifier="Protein.proteinInteractions" type="collection">
+  <tag name="aspect:Interactions" objectIdentifier="Protein.proteinInteractions" type="collection">
   </tag>
-  <tag name="aspect:Protein Interactions" objectIdentifier="ProteinInteractions2orthologues" type="template">
+  <tag name="aspect:Interactions" objectIdentifier="ProteinInteractions2orthologues" type="template">
   </tag>
-  <tag name="aspect:Protein Interactions" objectIdentifier="Protein_ProteinInteraction" type="template">
+  <tag name="aspect:Interactions" objectIdentifier="Protein_ProteinInteraction" type="template">
   </tag>
-  <tag name="aspect:Protein Interactions" objectIdentifier="ProteinInteractions2orthologuesAndPhenotypes" type="template">
+  <tag name="aspect:Interactions" objectIdentifier="ProteinInteractions2orthologuesAndPhenotypes" type="template">
   </tag>
-  <tag name="aspect:Protein Interactions" objectIdentifier="ProteinInteraction_OrthologueOrganism" type="template">
+  <tag name="aspect:Interactions" objectIdentifier="ProteinInteraction_OrthologueOrganism" type="template">
   </tag>
-  <tag name="aspect:Protein Interactions" objectIdentifier="DatasetGiot_ProteinInteractions2" type="template">
+  <tag name="aspect:Interactions" objectIdentifier="DatasetGiot_ProteinInteractions2" type="template">
   </tag>
-  <tag name="aspect:Protein Interactions" objectIdentifier="Protein_ProteinInteractionDmRNAi" type="template">
+  <tag name="aspect:Interactions" objectIdentifier="Protein_ProteinInteractionDmRNAi" type="template">
   </tag>
-  <tag name="aspect:Protein Interactions" objectIdentifier="ProteinInteraction.interactingProteins" type="collection">
+  <tag name="aspect:Interactions" objectIdentifier="ProteinInteraction.interactingProteins" type="collection">
   </tag>
-  <tag name="aspect:Protein Interactions" objectIdentifier="ProteinInteractionExperiment.interactions" type="collection">
+  <tag name="aspect:Interactions" objectIdentifier="ProteinInteractionExperiment.interactions" type="collection">
   </tag>
-  <tag name="aspect:Protein Interactions" objectIdentifier="ProteinInteractionExperiment.interactionDetectionMethod" type="reference">
+  <tag name="aspect:Interactions" objectIdentifier="ProteinInteractionExperiment.interactionDetectionMethod" type="reference">
   </tag>
-  <tag name="aspect:Protein Interactions" objectIdentifier="ProteinInteractionExperiment.participantIdentificationMethod" type="reference">
+  <tag name="aspect:Interactions" objectIdentifier="ProteinInteractionExperiment.participantIdentificationMethod" type="reference">
   </tag>
-  <tag name="aspect:Protein Interactions" objectIdentifier="Dataset_proteinInteractions" type="template">
+  <tag name="aspect:Interactions" objectIdentifier="Dataset_proteinInteractions" type="template">
   </tag>
-  <tag name="aspect:Protein Interactions" objectIdentifier="Gene_ProteinInteractingproteinConfidenceOtherDetails" type="template">
+  <tag name="aspect:Interactions" objectIdentifier="Gene_ProteinInteractingproteinConfidenceOtherDetails" type="template">
   </tag>
-  <tag name="aspect:Protein Interactions" objectIdentifier="Gene_ProteinInteractingproteinPfamdomainStructure" type="template">
+  <tag name="aspect:Interactions" objectIdentifier="Gene_ProteinInteractingproteinPfamdomainStructure" type="template">
   </tag>
-  <tag name="aspect:Protein Interactions" objectIdentifier="ProteinInteractionOrganism_ProteinInteractionOrganism_new" type="template">
+  <tag name="aspect:Interactions" objectIdentifier="ProteinInteractionOrganism_ProteinInteractionOrganism_new" type="template">
   </tag>
-  <tag name="aspect:Protein Interactions" objectIdentifier="Gene_OrthologueProteinInteraction_new" type="template">
+  <tag name="aspect:Interactions" objectIdentifier="Gene_OrthologueProteinInteraction_new" type="template">
   </tag>
-  <tag name="aspect:Protein Interactions" objectIdentifier="Protein_ProteinInteractionOrthologue_new" type="template">
+  <tag name="aspect:Interactions" objectIdentifier="Protein_ProteinInteractionOrthologue_new" type="template">
   </tag>
-  <tag name="aspect:Protein Interactions" objectIdentifier="Protein_ProteinInteractionOrthologueRNAi_new" type="template">
+  <tag name="aspect:Interactions" objectIdentifier="Protein_ProteinInteractionOrthologueRNAi_new" type="template">
   </tag>
   <tag name="aspect:Protein Structure" objectIdentifier="AAJ_gene2ProteinStructure1NEW" type="template">
   </tag>
