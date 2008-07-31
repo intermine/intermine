@@ -159,16 +159,13 @@ public class PsiConverter extends BioFileConverter
                     LOG.info("Can't create comment, bad experiment.");
                 }
                 // <hostOrganismList><hostOrganism ncbiTaxId="9534"><names><fullName>
-            } else if (qName.equals("fullName") && stack.peek().equals("names")
-                            && stack.search("hostOrganism") == 3) {
+            } else if (qName.equals("hostOrganism")) {
 
                 String hostOrganism = attrs.getValue("ncbiTaxId");
                 if (hostOrganism != null) {
                     String refId = getOrganism(hostOrganism);
                     experimentHolder.setHostOrganism(refId);
-                } else {
-                    LOG.info("Experiment " + experimentHolder.name
-                             + " doesn't have a host organism");
+
                 }
                 //<interactionDetectionMethod><xref><primaryRef>
             } else if (qName.equals("primaryRef") && stack.peek().equals("xref")
