@@ -1,0 +1,48 @@
+<items>
+<item id="1_1" class="http://www.flymine.org/model/genomic#Organism">
+<attribute name="taxonId" value="7227"/>
+</item>
+<item id="3_2" class="http://www.flymine.org/model/genomic#ProbeSet">
+<attribute name="name" value="153565_at"/>
+<attribute name="primaryIdentifier" value="153565_at"/>
+<reference name="organism" ref_id="1_1"/>
+<reference name="transcript" ref_id="5_2"/>
+<collection name="dataSets"><reference ref_id="2_1"/></collection>
+<collection name="genes"><reference ref_id="6_2"/></collection>
+</item>
+<item id="6_1" class="http://www.flymine.org/model/genomic#Gene">
+<attribute name="primaryIdentifier" value="FBgn001"/>
+<reference name="organism" ref_id="1_1"/>
+<collection name="dataSets"><reference ref_id="2_1"/></collection>
+</item>
+<item id="0_1" class="http://www.flymine.org/model/genomic#DataSource">
+<attribute name="name" value="Affymetrix"/>
+</item>
+<item id="2_1" class="http://www.flymine.org/model/genomic#DataSet">
+<attribute name="title" value="Affymetrix array: Affy drosgenome1"/>
+<reference name="dataSource" ref_id="0_1"/>
+</item>
+<item id="3_1" class="http://www.flymine.org/model/genomic#ProbeSet">
+<attribute name="name" value="145501_at"/>
+<attribute name="primaryIdentifier" value="145501_at"/>
+<reference name="organism" ref_id="1_1"/>
+<reference name="transcript" ref_id="5_1"/>
+<collection name="dataSets"><reference ref_id="2_1"/></collection>
+<collection name="genes"><reference ref_id="6_1"/></collection>
+</item>
+<item id="5_2" class="http://www.flymine.org/model/genomic#Transcript">
+<attribute name="secondaryIdentifier" value="FBtr0078166"/>
+<reference name="organism" ref_id="1_1"/>
+<collection name="dataSets"><reference ref_id="2_1"/></collection>
+</item>
+<item id="6_2" class="http://www.flymine.org/model/genomic#Gene">
+<attribute name="primaryIdentifier" value="FBgn003"/>
+<reference name="organism" ref_id="1_1"/>
+<collection name="dataSets"><reference ref_id="2_1"/></collection>
+</item>
+<item id="5_1" class="http://www.flymine.org/model/genomic#Transcript">
+<attribute name="secondaryIdentifier" value="FBtr0089256"/>
+<reference name="organism" ref_id="1_1"/>
+<collection name="dataSets"><reference ref_id="2_1"/></collection>
+</item>
+</items>

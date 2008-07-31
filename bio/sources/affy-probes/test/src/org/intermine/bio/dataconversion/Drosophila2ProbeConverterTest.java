@@ -35,24 +35,22 @@ public class Drosophila2ProbeConverterTest extends ItemsTestCase
         itemWriter = new MockItemWriter(new HashMap());
         converter = new Drosophila2ProbeConverter(itemWriter, model);
         MockIdResolverFactory resolverFactory = new MockIdResolverFactory("Gene");
-        resolverFactory.addResolverEntry("7227", "FBgn005", Collections.singleton("FBgn001"));
-        resolverFactory.addResolverEntry("7227", "FBgn002", Collections.singleton("FBgn002"));
-        resolverFactory.addResolverEntry("7227", "FBgn003", Collections.singleton("FBgn003"));
-        resolverFactory.addResolverEntry("7227", "FBgn004", Collections.singleton("FBgn004"));
+        resolverFactory.addResolverEntry("7227", "FBgn001", Collections.singleton("FBgn001"));
+        resolverFactory.addResolverEntry("7227", "FBgn003", Collections.singleton("FBgn002"));
         converter.resolverFactory = resolverFactory;
     }
 
     public void testProcess() throws Exception {
 
         Reader reader = new InputStreamReader(getClass().getClassLoader()
-                                              .getResourceAsStream("Drosophilia2ProbeConverterTest_src.csv"));
+                                              .getResourceAsStream("Drosophilia2ProbeConverterTest_src.txt"));
         converter.process(reader);
         converter.close();
 
         // uncomment to write out a new target items file
-        //writeItemsFile(itemWriter.getItems(), "affy-probes-tgt-items.xml");
+        writeItemsFile(itemWriter.getItems(), "affy-probes-tgt-items.xml");
 
-        assertEquals(readItemSet("test/Drosophila2ProbeConverterTest.xml"), itemWriter.getItems());
+        assertEquals(readItemSet("Drosophila2ProbeConverterTest_tgt.xml"), itemWriter.getItems());
     }
 
 }
