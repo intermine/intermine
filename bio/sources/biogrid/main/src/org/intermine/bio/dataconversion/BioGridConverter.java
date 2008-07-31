@@ -489,7 +489,7 @@ public class BioGridConverter extends BioFileConverter
         private String getTerm(String name)
         throws SAXException {
             String term = name.toLowerCase();
-            term = term.replace("-", "");
+            term = term.replace("-", " ");
             String refId = terms.get(term);
             if (refId != null) {
                 return refId;
