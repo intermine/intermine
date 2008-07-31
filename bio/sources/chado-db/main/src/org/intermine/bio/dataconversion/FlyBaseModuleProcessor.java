@@ -623,6 +623,9 @@ public class FlyBaseModuleProcessor extends ChadoSequenceProcessor
                     start = end;
                     end = tmp;
                 }
+		if (delFeatureData == null) {
+                    throw new RuntimeException("can't find deletion " + delId + " in feature map");
+		}
                 int taxonId = delFeatureData.getOrganismData().getTaxonId();
                 Integer chrFeatureId = getChromosomeFeatureMap(organismId).get(chromosomeName);
                 FeatureData chrFeatureData = getFeatureMap().get(chrFeatureId);
