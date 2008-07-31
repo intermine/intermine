@@ -469,6 +469,10 @@
       <property name="src.data.dir.includes" value="*psi25.xml"/>
     </source>
 
+    <source name="pim" type="pim" dump="true">
+      <property name="src.data.dir" location="/shared/data/pim/current"/>
+    </source>
+
     <source name="entrez-organism" type="entrez-organism">
       <!-- this source finds the taxon ids in the objectstore, retrieves
            species name and genus from Entrez into an InterMine format XML
