@@ -8,6 +8,7 @@ import java.util.Set;
 import junit.framework.TestCase;
 
 import org.apache.tools.ant.BuildException;
+import org.flymine.model.genomic.Gene;
 import org.flymine.model.genomic.Interaction;
 import org.flymine.model.genomic.Protein;
 import org.intermine.bio.networkview.network.FlyNetwork;
@@ -47,13 +48,13 @@ public class FlyNetworkCreatorTest extends TestCase
         for (Iterator iter = interactions.iterator(); iter.hasNext();) {
             Interaction ion = (Interaction) iter.next();
             System.out.println("new interaction...");
-            if (!l1.contains(ion.getProtein().getPrimaryAccession())) {
-                l1.add(ion.getProtein().getPrimaryAccession());
+            if (!l1.contains(ion.getGene().getPrimaryIdentifier())) {
+                l1.add(ion.getGene().getPrimaryIdentifier());
             }
-            Set<Protein> interacts = (Set<Protein>) ion.getInteractingProteins();
-            for (Protein protein : interacts) {
-                if (!l1.contains(protein.getPrimaryAccession())) {
-                    l1.add(protein.getPrimaryAccession());
+            Set<Gene> interacts = ion.getInteractingGenes();
+            for (Gene gene : interacts) {
+                if (!l1.contains(gene.getPrimaryIdentifier())) {
+                    l1.add(gene.getPrimaryIdentifier());
                 }
                 count++;
             }
@@ -99,7 +100,7 @@ public class FlyNetworkCreatorTest extends TestCase
         ArrayList pi = new ArrayList();
         Collection list = getExpectedObjects();
         for (Iterator iter = list.iterator(); iter.hasNext();) {
-            Object element = (Object) iter.next();
+            Object element = iter.next();
             if (element instanceof Interaction) {
                 Interaction inter = (Interaction) element;
                 pi.add(inter);

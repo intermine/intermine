@@ -14,6 +14,7 @@ import java.util.Collection;
 import java.util.Set;
 
 import org.apache.log4j.Logger;
+import org.flymine.model.genomic.Gene;
 import org.flymine.model.genomic.Interaction;
 import org.flymine.model.genomic.Protein;
 import org.intermine.bio.networkview.network.FlyNetwork;
@@ -31,13 +32,13 @@ public class FlyNetworkCreator
 
     /**
      * Creates a flymine network from a given Collection of ProteinInteractions
-     * @param proteinInteractions Collection of ProteinInteractionS
+     * @param interactions Collection of interaction
      * @return the network representing the protein interactions
      */
-    public static FlyNetwork createFlyNetwork(Collection<Interaction> proteinInteractions) {
+    public static FlyNetwork createFlyNetwork(Collection<Interaction> interactions) {
         FlyNetwork fn = new FlyNetwork();
 
-        for (Interaction pIon : proteinInteractions) {
+        for (Interaction pIon : interactions) {
 
             // TODO: do we want to use the short name? is it unique? -> label or attribute
             // !?there are more than one ProteinInteraction objects for one real interaction!?
@@ -45,13 +46,13 @@ public class FlyNetworkCreator
 
             if (pIon != null) {
 
-                Set<Protein> interacting = (Set<Protein>) pIon.getInteractingProteins();
+                Set<Gene> interacting = pIon.getInteractingGenes();
                 if (interacting != null && !interacting.isEmpty()) {
                     // set whether this is a binary interaction or a complex
                     String type = (interacting.size() > 1) ? FlyNetwork.COMPLEX_INTERACTION_TYPE
                                                            : FlyNetwork.DEFAULT_INTERACTION_TYPE;
 
-                    FlyNode fnProtein = new FlyNode(pIon.getProtein().getPrimaryAccession());
+                    FlyNode fnProtein = new FlyNode(pIon.getGene().getPrimaryIdentifier());
                     fn.addNode(fnProtein);
 
                     // TODO if we want to add multiple edges if an interaction is observed
@@ -60,8 +61,8 @@ public class FlyNetworkCreator
                     // between each pair of proteins.
                     // TODO this may create two edges as we create interactions in both
                     // directions.  Should check for source and target instead of label.
-                    for (Protein interact : interacting) {
-                        FlyNode fnInteract = new FlyNode(interact.getPrimaryAccession());
+                    for (Gene interact : interacting) {
+                        FlyNode fnInteract = new FlyNode(interact.getPrimaryIdentifier());
                         fn.addNode(fnInteract);
 
                         fn.addEdge(fnProtein, fnInteract, type);
