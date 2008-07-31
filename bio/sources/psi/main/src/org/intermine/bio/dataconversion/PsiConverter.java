@@ -191,7 +191,12 @@ public class PsiConverter extends BioFileConverter
             } else if (qName.equals("organism") && stack.peek().equals("interactor")) {
                 String taxId = attrs.getValue("ncbiTaxId");
                 if (organisms.containsKey(taxId)) {
-                    gene = getGene(taxId);
+                    try {
+                        gene = getGene(taxId);
+                    } catch (ObjectStoreException e) {
+//
+                    }
+
                     if (!validGenes.containsKey(interactorId)) {
                         validGenes.put(interactorId, gene);
                     }
@@ -379,13 +384,13 @@ public class PsiConverter extends BioFileConverter
                     identifiers.put(attName, identifier);
                 }
                 // <interactorList><interactor id="4"><sequence>
-            } else if (gene != null && attName != null && attName.equals("sequence")
-                            && qName.equals("sequence")
-                            && stack.peek().equals("interactor")) {
-                Item sequence = createItem("Sequence");
-                String srcResidues = attValue.toString();
-                sequence.setAttribute("residues", srcResidues);
-                sequence.setAttribute("length", "" + srcResidues.length());
+                //            } else if (gene != null && attName != null && attName.equals("sequence")
+                //            && qName.equals("sequence")
+                //            && stack.peek().equals("interactor")) {
+                //Item sequence = createItem("Sequence");
+                //String srcResidues = attValue.toString();
+                //sequence.setAttribute("residues", srcResidues);
+                //sequence.setAttribute("length", "" + srcResidues.length());
 //              try {
 //              store(sequence);
 //              } catch (ObjectStoreException e) {
@@ -396,11 +401,11 @@ public class PsiConverter extends BioFileConverter
 
                 // <interactorList><interactor id="4"></interactor>
             } else if (gene != null && qName.equals("interactor")) {
-                try {
-                    store(gene);
-                } catch (ObjectStoreException e) {
-                    // TODO only store valid genes
-                }
+                //try {
+                //    store(gene);
+                //} catch (ObjectStoreException e) {
+                //    // TODO only store valid genes
+                // }
                 gene = null;
             //<interactionList><interaction>
             //<participantList><participant id="5"><interactorRef>
@@ -578,7 +583,7 @@ public class PsiConverter extends BioFileConverter
             }
         }
 
-        private Item getGene(String taxonId) {
+        private Item getGene(String taxonId) throws ObjectStoreException {
             String identifier = null;
             String label = "secondaryIdentifier";
             identifier = identifiers.get("orf name");
@@ -621,6 +626,7 @@ public class PsiConverter extends BioFileConverter
                 item = createItem("Gene");
                 item.setAttribute(label, identifier);
                 genes.put(identifier, item);
+                store(item);
             }
             return item;
         }
