@@ -26,7 +26,6 @@ import org.intermine.metadata.Model;
 import org.intermine.objectstore.ObjectStoreException;
 import org.intermine.util.FormattedTextParser;
 import org.intermine.xml.full.Item;
-import org.intermine.xml.full.ReferenceList;
 
 /**
  *
@@ -73,68 +72,35 @@ public class Drosophila2ProbeConverter extends FileConverter
     public void process(Reader reader) throws Exception {
 
         Iterator<String[]> lineIter = FormattedTextParser.parseCsvDelimitedReader(reader);
-        lineIter.next();    // skip header
-        boolean hasDataset = false;
+
+        // process header
+        String[] line = lineIter.next();
+        //Affy drosophila 2
+        //Affy drosgenome1
+
+        dataSet = createItem("DataSet");
+        dataSet.setReference("dataSource", dataSource.getIdentifier());
+        dataSet.setAttribute("title", "Affymetrix array: " + line[2]);
+        store(dataSet);
 
         while (lineIter.hasNext()) {
-
-            String[] line = lineIter.next();
-
-            if (!hasDataset)  {
-                dataSet = createItem("DataSet");
-                dataSet.setReference("dataSource", dataSource.getIdentifier());
-                dataSet.setAttribute("title", "Affymetrix array: " + line[1]);
-                store(dataSet);
-                hasDataset = true;
-            }
-
+            line = lineIter.next();
             List<Item> delayedItems = new ArrayList<Item>();
-            Item probeSet = createProbeSet(line[0], delayedItems);
+            String fbgn = line[0];
+            String transcriptIdentifier = line[1];
+            String probesetIdentifier = line[2];
 
-            String seqType = line[4];
+            Item probeSet = createProbeSet(probesetIdentifier, delayedItems);
+            Item transcript = createBioEntity("Transcript", transcriptIdentifier, delayedItems);
+            probeSet.setReference("transcript", transcript.getIdentifier());
 
-            if (seqType.equalsIgnoreCase("control sequence")) {
-                // TODO add a description and flag
-                // probeSet.setAttribute("description", line[4]);
-                probeSet.setAttribute("isControl", "true");
-            }
-
-            String fbgns = line[7];
-            if (!fbgns.equals("---")) {
-                String transcriptIdentifier = line[6].trim();
-                if (transcriptIdentifier.startsWith("CG")
-                    || transcriptIdentifier.startsWith("a_merged")
-                    || transcriptIdentifier.startsWith("a_predict")) {
-
-                    if (transcriptIdentifier.startsWith("CG")) {
-                        Item transcript = createBioEntity("Transcript", transcriptIdentifier,
-                                                          delayedItems);
-                        probeSet.setReference("transcript", transcript.getIdentifier());
-                    }
-
-
-                    String[] genes = fbgns.split(" ");
-                    ReferenceList geneColl = new ReferenceList("genes", new ArrayList<String>());
-                    for (String identifier : genes) {
-                        if (identifier.trim().startsWith("FB:")) {
-                            identifier = identifier.substring(3);
-                        }
-                        if (identifier.trim().startsWith("FBgn")) {
-                            Item gene = createBioEntity("Gene", identifier, delayedItems);
-                            if (gene != null) {
-                                geneColl.addRefId(gene.getIdentifier());
-                            }
-                        }
-                    }
-                    probeSet.addCollection(geneColl);
-                }
+            Item gene = createBioEntity("Gene", fbgn, delayedItems);
+            if (gene != null) {
+                probeSet.setCollection("genes",
+                              new ArrayList(Collections.singleton(gene.getIdentifier())));
             }
             store(probeSet);
-            for (Item item : delayedItems) {
-                store(item);
-            }
-
-        }
+         }
     }
 
     private Item createBioEntity(String clsName, String id, List<Item> delayedItems)
@@ -187,7 +153,6 @@ public class Drosophila2ProbeConverter extends FileConverter
         probeSet.setReference("organism", org.getIdentifier());
         probeSet.setCollection("dataSets",
             new ArrayList(Collections.singleton(dataSet.getIdentifier())));
-
         createSynonym(probeSet.getIdentifier(), "identifier", probeSetId, delayedItems);
         return probeSet;
     }

@@ -1,0 +1,3 @@
+Ensembl Gene ID,Ensembl Transcript ID,Affy drosgenome1
+FBgn001,FBtr0089256,145501_at
+FBgn002,FBtr0078166,153565_at
