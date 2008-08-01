@@ -416,7 +416,7 @@
       <property name="fasta.synonymSource" value="FlyBase"/>
       <property name="src.data.dir" location="/shared/data/flybase/FB2008_06/fasta"/>
     </source>
-    <source name="pubmed-gene" type="pubmed-gene">
+    <source name="pubmed-gene" type="pubmed-gene" dump="true">
       <property name="src.data.dir" location="/shared/data/pubmed/current"/>
       <property name="src.data.dir.includes" value="gene2pubmed"/>
       <property name="infoFile" location="/shared/data/pubmed/current/gene_info"/> 
@@ -454,7 +454,7 @@
       <property name="src.data.dir.includes" value="v5.gff.drosophila_melanogaster.gff"/>
     </source>
 
-    <source name="affy-probes" type="affy-probes" dump="true">
+    <source name="affy-probes" type="affy-probes">
       <property name="src.data.dir" location="/shared/data/affy-probes/current"/>
       <property name="src.data.dir.includes" value="*.csv"/>
     </source>
@@ -469,7 +469,7 @@
       <property name="src.data.dir.includes" value="*psi25.xml"/>
     </source>
 
-    <source name="pim" type="pim" dump="true">
+    <source name="pim" type="pim">
       <property name="src.data.dir" location="/shared/data/pim/current"/>
     </source>
 
