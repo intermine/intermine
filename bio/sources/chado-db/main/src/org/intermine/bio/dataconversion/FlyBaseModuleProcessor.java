@@ -531,7 +531,9 @@ public class FlyBaseModuleProcessor extends ChadoSequenceProcessor
 
         Item feature = getChadoDBConverter().createItem(realInterMineType);
 
-        alleleIdMap.put(uniqueName, feature);
+        if (realInterMineType.equals("Allele")) {
+            alleleIdMap.put(uniqueName, feature);
+        }
 
         return feature;
     }
@@ -623,9 +625,9 @@ public class FlyBaseModuleProcessor extends ChadoSequenceProcessor
                     start = end;
                     end = tmp;
                 }
-		if (delFeatureData == null) {
+        if (delFeatureData == null) {
                     throw new RuntimeException("can't find deletion " + delId + " in feature map");
-		}
+        }
                 int taxonId = delFeatureData.getOrganismData().getTaxonId();
                 Integer chrFeatureId = getChromosomeFeatureMap(organismId).get(chromosomeName);
                 FeatureData chrFeatureData = getFeatureMap().get(chrFeatureId);
