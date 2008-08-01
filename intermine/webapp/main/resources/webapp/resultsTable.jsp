@@ -144,6 +144,7 @@
             </table>
             <div>
               <c:out value="${columnDisplayName}" escapeXml="false"/>
+              <im:typehelp type="${column.path}" fullPath="true"/>
             </div>
           </th>
         </c:when>
@@ -317,16 +318,16 @@
     <c:if test="${! pagedResults.emptySelection}">
     <script type="text/javascript" charset="utf-8">
     if ($('newBagName')) {
-      	$('newBagName').disabled = false;
-	}
-	if ($('saveNewBag')) {
-		$('saveNewBag').disabled = false;
-	}
+        $('newBagName').disabled = false;
+  }
+  if ($('saveNewBag')) {
+    $('saveNewBag').disabled = false;
+  }
     if ($('addToBag')) {
-      	$('addToBag').disabled = false;
+        $('addToBag').disabled = false;
     }
     if ($('removeFromBag')) {
-      	$('removeFromBag').disabled = false;
+        $('removeFromBag').disabled = false;
     }
     </script>
     </c:if>
