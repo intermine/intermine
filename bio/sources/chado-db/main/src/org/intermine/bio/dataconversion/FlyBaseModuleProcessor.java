@@ -494,12 +494,7 @@ public class FlyBaseModuleProcessor extends ChadoSequenceProcessor
         }
         if (chadoFeatureType.equals("chromosome_structure_variation")) {
             if (uniqueName.startsWith("FBab")) {
-                if (name.matches("Df\\(.*\\)ED\\d+")) {
-                    realInterMineType = "ArtificialDeletion";
-                } else {
-                    // ignore non-drosdel deletions for now
-                    return null;
-                }
+              realInterMineType = "ArtificialDeletion";
             } else {
                 return null;
             }
@@ -625,9 +620,9 @@ public class FlyBaseModuleProcessor extends ChadoSequenceProcessor
                     start = end;
                     end = tmp;
                 }
-        if (delFeatureData == null) {
+                if (delFeatureData == null) {
                     throw new RuntimeException("can't find deletion " + delId + " in feature map");
-        }
+                }
                 int taxonId = delFeatureData.getOrganismData().getTaxonId();
                 Integer chrFeatureId = getChromosomeFeatureMap(organismId).get(chromosomeName);
                 FeatureData chrFeatureData = getFeatureMap().get(chrFeatureId);
