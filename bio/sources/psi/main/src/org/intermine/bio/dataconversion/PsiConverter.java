@@ -160,12 +160,10 @@ public class PsiConverter extends BioFileConverter
                 }
                 // <hostOrganismList><hostOrganism ncbiTaxId="9534"><names><fullName>
             } else if (qName.equals("hostOrganism")) {
-
                 String hostOrganism = attrs.getValue("ncbiTaxId");
                 if (hostOrganism != null) {
                     String refId = getOrganism(hostOrganism);
                     experimentHolder.setHostOrganism(refId);
-
                 }
                 //<interactionDetectionMethod><xref><primaryRef>
             } else if (qName.equals("primaryRef") && stack.peek().equals("xref")
@@ -381,7 +379,8 @@ public class PsiConverter extends BioFileConverter
                     identifiers.put(attName, identifier);
                 }
                 // <interactorList><interactor id="4"><sequence>
-                //            } else if (gene != null && attName != null && attName.equals("sequence")
+                //            } else if (gene != null && attName != null
+                //&& attName.equals("sequence")
                 //            && qName.equals("sequence")
                 //            && stack.peek().equals("interactor")) {
                 //Item sequence = createItem("Sequence");
@@ -827,10 +826,10 @@ public class PsiConverter extends BioFileConverter
 
             /**
              *
-             * @param fullName name of organism
+             * @param ref id representing organism object
              */
-            protected void setHostOrganism(String fullName) {
-                experiment.setAttribute("hostOrganism", fullName);
+            protected void setHostOrganism(String ref) {
+                experiment.setReference("hostOrganism", ref);
             }
         }
     }
@@ -870,7 +869,7 @@ public class PsiConverter extends BioFileConverter
     private String getOrganism(String taxId) throws SAXException {
 
         String refId = organisms.get(taxId);
-        if (refId == null) {
+        if (refId != null) {
             return refId;
         }
         Item organism = createItem("Organism");
