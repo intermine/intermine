@@ -554,7 +554,7 @@ public class PathQuery
         List<OrderBy> orderBy = new ArrayList<OrderBy>();
         String direction = (sortAscending.booleanValue() ? "asc" : "desc");
         try {
-            for (String path : paths.split(",")) {
+            for (String path : paths.split("[, ]")) {
                 orderBy.add(new OrderBy(makePath(model, this, path), direction));
             }
         } catch (PathError e) {
