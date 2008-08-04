@@ -1,5 +1,0 @@
-<project name="height-tasks" default="default" basedir=".">
-  <description>build height tasks</description>
-  <import file="../../../../imbuild/library.xml"/> 
-</project>
-
