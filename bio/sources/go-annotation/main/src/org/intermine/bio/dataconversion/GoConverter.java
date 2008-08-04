@@ -780,6 +780,9 @@ public class GoConverter extends FileConverter
             throw new IllegalArgumentException("No taxon id supplied when creatin organism");
         }
         String taxonIdNew = taxonId.split(":")[1];
+        if (taxonIdNew.contains("|")) {
+            taxonIdNew = taxonIdNew.split("\\|")[0];
+        }
         Item item = organisms.get(taxonIdNew);
         if (item == null) {
             item = createItem("Organism");
