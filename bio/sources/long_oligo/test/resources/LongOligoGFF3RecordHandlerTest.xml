@@ -1,14 +1,8 @@
 <?xml version="1.0"?>
 <items>
-  <item id="0_7" class="http://www.flymine.org/model/genomic#ComputationalResult">
-    <reference name="analysis" ref_id="0_8"/>
-  </item>
   <item id="1_1" class="http://www.flymine.org/model/genomic#Sequence">
     <attribute name="length" value="14"/>
     <attribute name="residues" value="ACACGGGTCAGGAT"/>
-  </item>
-  <item id="0_8" class="http://www.flymine.org/model/genomic#ComputationalAnalysis">
-    <attribute name="algorithm" value="INDAC_1.0"/>
   </item>
   <item id="0_3" class="http://www.flymine.org/model/genomic#MRNA">
     <attribute name="secondaryIdentifier" value="CG4314-RA"/>
@@ -24,7 +18,7 @@
   <item id="0_0" class="http://www.flymine.org/model/genomic#Organism">
     <attribute name="taxonId" value="7227"/>
   </item>
-  <item id="0_9" class="http://www.flymine.org/model/genomic#Synonym">
+  <item id="0_7" class="http://www.flymine.org/model/genomic#Synonym">
     <attribute name="type" value="identifier"/>
     <attribute name="value" value="1000044388"/>
     <reference name="source" ref_id="0_1"/>
@@ -37,7 +31,6 @@
     <reference name="subject" ref_id="0_5"/>
   </item>
   <item id="0_5" class="http://www.flymine.org/model/genomic#MicroarrayOligo">
-    <attribute name="curated" value="false"/>
     <attribute name="length" value="14"/>
     <attribute name="primaryIdentifier" value="1000044388"/>
     <attribute name="tm" value="92.25"/>
@@ -46,9 +39,6 @@
     <reference name="transcript" ref_id="0_3"/>
     <collection name="dataSets">
       <reference ref_id="0_2"/>
-    </collection>
-    <collection name="evidence">
-      <reference ref_id="0_7"/>
     </collection>
   </item>
   <item id="0_4" class="http://www.flymine.org/model/genomic#Synonym">
