@@ -1,0 +1,23 @@
+<?xml version="1.0"?>
+<classes>
+
+  <class name="org.flymine.model.genomic.HaemAtlasProbeSet" is-interface="true">
+    <attribute name="illuId" type="java.lang.String"/>
+    <reference name="gene" referenced-type="org.flymine.model.genomic.Gene" reverse-reference="probeSets"/>
+    <collection name="haemAtlasResults" referenced-type="org.flymine.model.genomic.HaemAtlasResult" reverse-reference="probeSet"/>
+  </class>
+
+  <class name="org.flymine.model.genomic.Gene" is-interface="true">
+    <collection name="probeSets" referenced-type="org.flymine.model.genomic.HaemAtlasProbeSet" reverse-reference="gene"/>   
+  </class>
+  
+  <class name="org.flymine.model.genomic.HaemAtlasResult" is-interface="true">
+    <attribute name="group" type="java.lang.String"/>
+    <attribute name="averageIntensity" type="java.lang.Double"/>
+    <attribute name="sample" type="java.lang.String"/>
+    <attribute name="detectionProbabilities" type="java.lang.Double"/>
+    <attribute name="sampleName" type="java.lang.String"/>
+    <reference name="probeSet" referenced-type="org.flymine.model.genomic.HaemAtlasProbeSet" reverse-reference="haemAtlasResults"/> 
+  </class>
+
+</classes>
