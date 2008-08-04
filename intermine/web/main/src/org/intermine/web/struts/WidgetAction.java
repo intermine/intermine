@@ -272,6 +272,9 @@ public class WidgetAction extends InterMineAction
                 attributes.add(widgetForm.getSelectedExtraAttribute());
                 attributes.add(widgetForm.getMax());
                 attributes.add(widgetForm.getErrorCorrection());
+                attributes.add(widgetForm.getHighlight());
+                attributes.add(widgetForm.getPValue());
+                attributes.add(widgetForm.getNumberOpt());
                 Profile currentProfile = (Profile) session.getAttribute(Constants.PROFILE);
                 Map<String, InterMineBag> allBags =
                     WebUtil.getAllBags(currentProfile.getSavedBags(), servletContext);
