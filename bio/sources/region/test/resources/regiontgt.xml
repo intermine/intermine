@@ -12,12 +12,12 @@
 <reference name="organism" ref_id="0_0"/>
 <collection name="dataSets"><reference ref_id="0_2"/></collection>
 </item>
-<item id="0_11" class="http://www.flymine.org/model/genomic#Location">
+<item id="0_9" class="http://www.flymine.org/model/genomic#Location">
 <attribute name="end" value="52070355"/>
 <attribute name="start" value="51570355"/>
 <attribute name="strand" value="0"/>
 <reference name="object" ref_id="0_3"/>
-<reference name="subject" ref_id="0_10"/>
+<reference name="subject" ref_id="0_8"/>
 <collection name="dataSets"><reference ref_id="0_2"/></collection>
 </item>
 <item id="0_1" class="http://www.flymine.org/model/genomic#DataSource">
@@ -26,31 +26,29 @@
 <item id="0_0" class="http://www.flymine.org/model/genomic#Organism">
 <attribute name="taxonId" value="9606"/>
 </item>
-<item id="0_10" class="http://www.flymine.org/model/genomic#DefinedRegion">
+<item id="0_8" class="http://www.flymine.org/model/genomic#DefinedRegion">
 <attribute name="primaryIdentifier" value="ENr112"/>
 <attribute name="type" value="encodeRegion"/>
 <reference name="organism" ref_id="0_0"/>
 <collection name="dataSets"><reference ref_id="0_2"/></collection>
-<collection name="evidence"><reference ref_id="0_12"/></collection>
 </item>
-<item id="0_9" class="http://www.flymine.org/model/genomic#Synonym">
+<item id="0_7" class="http://www.flymine.org/model/genomic#Synonym">
 <attribute name="type" value="identifier"/>
 <attribute name="value" value="ENr231"/>
 <reference name="source" ref_id="0_1"/>
 <reference name="subject" ref_id="0_5"/>
 </item>
-<item id="0_13" class="http://www.flymine.org/model/genomic#Synonym">
+<item id="0_10" class="http://www.flymine.org/model/genomic#Synonym">
 <attribute name="type" value="identifier"/>
 <attribute name="value" value="ENr112"/>
 <reference name="source" ref_id="0_1"/>
-<reference name="subject" ref_id="0_10"/>
+<reference name="subject" ref_id="0_8"/>
 </item>
 <item id="0_5" class="http://www.flymine.org/model/genomic#DefinedRegion">
 <attribute name="primaryIdentifier" value="ENr231"/>
 <attribute name="type" value="encodeRegion"/>
 <reference name="organism" ref_id="0_0"/>
 <collection name="dataSets"><reference ref_id="0_2"/></collection>
-<collection name="evidence"><reference ref_id="0_7"/></collection>
 </item>
 <item id="0_4" class="http://www.flymine.org/model/genomic#Synonym">
 <attribute name="type" value="identifier"/>
