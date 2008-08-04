@@ -370,7 +370,7 @@ public abstract class WebUtil
 
         // sample query
         Results r = os.execute(ldr.getSampleQuery(false));
-        r.setBatchSize(10000);
+        r.setBatchSize(20000);
         Iterator iter = r.iterator();
         HashMap<String, Long> countMap = new HashMap<String, Long>();
         HashMap<String, String> idMap = new HashMap<String, String>();
@@ -398,7 +398,7 @@ public abstract class WebUtil
         List rAll = statsCalcCache.get(ldr.getPopulationQuery(false).toString());
         if (rAll == null) {
             rAll = os.execute(ldr.getPopulationQuery(false));
-            ((Results) rAll).setBatchSize(10000);
+            ((Results) rAll).setBatchSize(20000);
             rAll = new ArrayList(rAll);
             statsCalcCache.put(ldr.getPopulationQuery(false).toString(), rAll);
         }
@@ -417,7 +417,7 @@ public abstract class WebUtil
 
                 Long countBag = countMap.get(id);
                 Long countAll = (java.lang.Long) rrAll.get(1);
-
+                
                 // (k,n,M,N)
                 double p = Hypergeometric.calculateP(countBag.intValue(), sampleTotal,
                                                      countAll.intValue(), populationTotal);
