@@ -41,6 +41,7 @@ public class GraphWidgetConfig extends WidgetConfig
     private static final int HEIGHT = 350;
     private String extraAttributeClass, externalLink, externalLinkLabel;
     private HttpSession session;
+    private String editable;
     
     /**
      * Get the session
@@ -152,6 +153,19 @@ public class GraphWidgetConfig extends WidgetConfig
         this.extraAttributeClass = extraAttributeClass;
     }
     
+    /**
+     * @return the editable attribute
+     */
+    public String geteditable() {
+        return editable;
+    }
+
+    /**
+     * @param editable editable
+     */
+    public void seteditable(String editable) {
+        this.editable = editable;
+    }
     
     /**
      * {@inheritDoc}
@@ -172,6 +186,9 @@ public class GraphWidgetConfig extends WidgetConfig
         }
         if (extraAttributes.size() > 0) {
             returnMap.put("Organism", extraAttributes);
+        }
+        if (editable != null && editable.equals("true")) {
+            returnMap.put("Editable", new ArrayList<String>());
         }
         return returnMap;
     }

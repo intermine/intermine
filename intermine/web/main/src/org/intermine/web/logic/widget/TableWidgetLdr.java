@@ -51,7 +51,7 @@ import org.intermine.web.logic.config.FieldConfigHelper;
 import org.intermine.web.logic.config.WebConfig;
 import org.intermine.web.logic.widget.config.TableWidgetConfig;
 import org.intermine.web.logic.widget.config.WidgetConfig;
-
+import org.apache.log4j.Logger;
 /**
  * @author Xavier Watkins
  *
@@ -71,6 +71,7 @@ public class TableWidgetLdr
     private String type;
     private TableWidgetConfig config;
     private ClassDescriptor cld;
+    private static final Logger LOG = Logger.getLogger(TableWidgetLdr.class);
 
     /**
      * This class loads and formats the data for the count
@@ -97,6 +98,7 @@ public class TableWidgetLdr
         exportFields = config.getExportFields();
 
         setFlattenedResults();
+        
     }
 
 
@@ -162,11 +164,16 @@ public class TableWidgetLdr
                         boolean isKeyField = ClassKeyHelper.isKeyField(config.getClassKeys(),
                                 TypeUtil.unqualifiedName(thisType.getName()), fieldName);
                         String link = null;
-                        String val = fieldValue.toString();
+                        String val = null;
+                        if (fieldValue != null) {
+                            val = fieldValue.toString();
+                        }
                         if (isKeyField) {
-                            key = fieldValue.toString();
+                            if (fieldValue != null) { 
+                                key = fieldValue.toString();
+                            }
                             link = "objectDetails.do?id=" + o.getId() + "&amp;trail=|bag."
-                                   + bag.getName() + "|" + o.getId();
+                            + bag.getName() + "|" + o.getId();
                         } else if (externalLink != null && !externalLink.equals("")) {
                             val = val + " <a href=\"" + externalLink + key
                             + "\" target=\"_new\" class=\"extlink\">["
@@ -316,7 +323,7 @@ public class TableWidgetLdr
                 constraintValue = null;
             }
 
-            QueryFunction qf = new QueryFunction();
+            QueryFunction qfCount = new QueryFunction();
 
             // if we are at the end of the path, add to select and group by
             if (queryBits.length == (i + 1)) {
@@ -339,9 +346,33 @@ public class TableWidgetLdr
                     q.addToSelect(qcEnd);
                     q.addToGroupBy(qcEnd);
 
-                    q.addToSelect(qf);
-                    q.addToOrderBy(qf, "desc");
-
+                    q.addToSelect(qfCount);
+                    q.addToOrderBy(qfCount, "desc");
+                    
+//                    Query subQ = new Query();
+//                    subQ = q;
+//                    subQ.setDistinct(true);
+//                    subQ.clearSelect();
+//                    QueryField qcEndId = new QueryField(qcEnd, "id");
+//                    subQ.addToSelect(qcEndId);
+//                    subQ.addToSelect(qfStartId);
+//                    
+//                    QueryField qfSubEndId = new QueryField(subQ, qcEndId);
+//                    
+//                    q = new Query();
+//                    q.setDistinct(false);
+//                    
+//                    QueryClass qcOuter = new QueryClass(qcEnd.getType());
+//                    SimpleConstraint idConstraint = 
+//                        new SimpleConstraint(new QueryField(qcOuter, "id"), 
+//                                ConstraintOp.EQUALS, qfSubEndId);
+//                    q.setConstraint(idConstraint);
+//                    q.addToSelect(qcOuter);
+//                    q.addToSelect(qfCount);
+//                    q.addFrom(subQ);
+//                    q.addToGroupBy(qcOuter);
+//                    q.addToOrderBy(qfCount, "desc");
+                    
                 } else {
 
                     Query subQ = new Query();
@@ -352,14 +383,13 @@ public class TableWidgetLdr
 
                     q = new Query();
                     q.setDistinct(false);
-                    q.addToSelect(qf);
+                    q.addToSelect(qfCount);
                     q.addFrom(subQ);
                 }
             }
             cldStart = cldEnd;
             qcStart = qcEnd;
         }
-
         return q;
     }
 

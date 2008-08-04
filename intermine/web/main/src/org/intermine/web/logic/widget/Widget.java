@@ -11,6 +11,7 @@ package org.intermine.web.logic.widget;
  */
 
 import java.util.List;
+import java.util.Vector;
 
 import org.intermine.web.logic.widget.config.WidgetConfig;
 
@@ -67,7 +68,13 @@ public abstract class Widget
      * @return the hasResults
      */
     public abstract boolean getHasResults();
-
+   
+    /**
+     * checks if elem is in bag
+     * @param elem element
+     * @return true if elem is in bag
+     */
+    public abstract List<String> getElementInList();
     /**
      * Get the ID of the corresponding WidgetConfig
      * @return the WidgetConfig ID
@@ -76,4 +83,7 @@ public abstract class Widget
         return config.getId();
     }
 
+    public String getTitle() {
+        return config.getTitle();
+    }
 }

@@ -16,6 +16,7 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.lang.reflect.Constructor;
 import java.util.List;
+import java.util.Vector;
 
 import net.sourceforge.iharder.Base64;
 
@@ -76,6 +77,10 @@ public class GraphWidget extends Widget
         this.os = os;
         this.selectedExtraAttribute = selectedExtraAttribute;
         process();
+    }
+    
+    public List getElementInList() {
+        return new Vector();
     }
 
     /**
