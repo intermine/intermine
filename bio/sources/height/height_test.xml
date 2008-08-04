@@ -1,0 +1,3475 @@
+<items>
+<item id="3_81" class="http://www.flymine.org/model/genomic#SNP">
+<attribute name="allele1" value="A"/>
+<attribute name="allele2" value="T"/>
+<attribute name="snp" value="rs7532752"/>
+<reference name="location" ref_id="4_81"/>
+</item>
+<item id="3_50" class="http://www.flymine.org/model/genomic#SNP">
+<attribute name="allele1" value="A"/>
+<attribute name="allele2" value="T"/>
+<attribute name="snp" value="rs11140816"/>
+<reference name="location" ref_id="4_50"/>
+</item>
+<item id="2_21" class="http://www.flymine.org/model/genomic#LociResult">
+<attribute name="description" value="Juxtaposed with another zinc finger protein 1"/>
+<attribute name="details" value="functions as a transcriptional repressor"/>
+<attribute name="geneName" value="JAZF1"/>
+<attribute name="humanPhenotype" value="A chromosomal aberration involving JAZF1 may be a cause of endometrial stromal tumors"/>
+<attribute name="location" value="intronic"/>
+<attribute name="metaBeta" value="0.0507010672178729"/>
+<attribute name="metaSe" value="0.00870303892824039"/>
+<attribute name="nStudies" value="15"/>
+<attribute name="nSubjects" value="32717"/>
+<attribute name="p" value="0.00000000568825742064405"/>
+<attribute name="z" value="5.82567395549083"/>
+<reference name="snp" ref_id="3_21"/>
+</item>
+<item id="3_27" class="http://www.flymine.org/model/genomic#SNP">
+<attribute name="allele1" value="C"/>
+<attribute name="allele2" value="T"/>
+<attribute name="snp" value="rs12404121"/>
+<reference name="location" ref_id="4_27"/>
+</item>
+<item id="5_32" class="http://www.flymine.org/model/genomic#Chromosome">
+<attribute name="primaryIdentifier" value="6"/>
+</item>
+<item id="2_63" class="http://www.flymine.org/model/genomic#LociResult">
+<attribute name="description" value="Sjoegren syndrome/scleroderma autoantigen 1 (Autoantigen p27). "/>
+<attribute name="geneName" value="SSSCA1"/>
+<attribute name="location" value="5upstream"/>
+<attribute name="metaBeta" value="0.0884296168242997"/>
+<attribute name="metaSe" value="0.0185101588966761"/>
+<attribute name="nStudies" value="15"/>
+<attribute name="nSubjects" value="32708"/>
+<attribute name="p" value="0.0000017761525672455"/>
+<attribute name="z" value="4.77735590050387"/>
+<reference name="snp" ref_id="3_63"/>
+</item>
+<item id="5_60" class="http://www.flymine.org/model/genomic#Chromosome">
+<attribute name="primaryIdentifier" value="6"/>
+</item>
+<item id="3_71" class="http://www.flymine.org/model/genomic#SNP">
+<attribute name="allele1" value="A"/>
+<attribute name="allele2" value="G"/>
+<attribute name="snp" value="rs6096822"/>
+<reference name="location" ref_id="4_71"/>
+</item>
+<item id="4_39" class="http://www.flymine.org/model/genomic#Location">
+<attribute name="end" value="224063803"/>
+<attribute name="start" value="224063803"/>
+<reference name="chromosome" ref_id="5_39"/>
+</item>
+<item id="5_17" class="http://www.flymine.org/model/genomic#Chromosome">
+<attribute name="primaryIdentifier" value="8"/>
+</item>
+<item id="3_92" class="http://www.flymine.org/model/genomic#SNP">
+<attribute name="allele1" value="A"/>
+<attribute name="allele2" value="G"/>
+<attribute name="snp" value="rs9833926"/>
+<reference name="location" ref_id="4_92"/>
+</item>
+<item id="2_10" class="http://www.flymine.org/model/genomic#LociResult">
+<attribute name="description" value="SPAG17: projection protein PF6; TBX15: T-box 15"/>
+<attribute name="details" value="T-box proteins are transcription factors involved in regulation of developmental processes"/>
+<attribute name="geneName" value="far SPAG17, also TBX15"/>
+<attribute name="metaBeta" value="0.0636986783118466"/>
+<attribute name="metaSe" value="0.00919576426885227"/>
+<attribute name="nStudies" value="15"/>
+<attribute name="nSubjects" value="32708"/>
+<attribute name="p" value="0.00000000000429989377437323"/>
+<attribute name="z" value="6.92695859196888"/>
+<reference name="snp" ref_id="3_10"/>
+</item>
+<item id="1_73" class="http://www.flymine.org/model/genomic#Gene">
+<attribute name="symbol" value="MYO6"/>
+<reference name="lociResult" ref_id="2_35"/>
+<reference name="organism" ref_id="0_1"/>
+</item>
+<item id="1_117" class="http://www.flymine.org/model/genomic#Gene">
+<attribute name="symbol" value="PLCB2"/>
+<reference name="lociResult" ref_id="2_57"/>
+<reference name="organism" ref_id="0_1"/>
+</item>
+<item id="3_61" class="http://www.flymine.org/model/genomic#SNP">
+<attribute name="allele1" value="A"/>
+<attribute name="allele2" value="G"/>
+<attribute name="snp" value="rs2280545"/>
+<reference name="location" ref_id="4_61"/>
+</item>
+<item id="1_77" class="http://www.flymine.org/model/genomic#Gene">
+<attribute name="symbol" value="ISL1"/>
+<reference name="lociResult" ref_id="2_37"/>
+<reference name="organism" ref_id="0_1"/>
+</item>
+<item id="2_96" class="http://www.flymine.org/model/genomic#LociResult">
+<attribute name="description" value="transcription factor SOX9"/>
+<attribute name="geneName" value="far SOX9"/>
+<attribute name="metaBeta" value="0.0403827208550007"/>
+<attribute name="metaSe" value="0.008974021366361"/>
+<attribute name="nStudies" value="15"/>
+<attribute name="nSubjects" value="32708"/>
+<attribute name="p" value="0.0000067966832837385"/>
+<attribute name="z" value="4.4999581799944"/>
+<reference name="snp" ref_id="3_96"/>
+</item>
+<item id="2_92" class="http://www.flymine.org/model/genomic#LociResult">
+<attribute name="description" value="retinoblastoma-associated protein 140 "/>
+<attribute name="geneName" value="C3orf63"/>
+<attribute name="location" value="intronic"/>
+<attribute name="metaBeta" value="0.0353531836330013"/>
+<attribute name="metaSe" value="0.00783738736623332"/>
+<attribute name="nStudies" value="15"/>
+<attribute name="nSubjects" value="32708"/>
+<attribute name="p" value="0.00000645720651792914"/>
+<attribute name="z" value="4.5108378571815"/>
+<reference name="snp" ref_id="3_92"/>
+</item>
+<item id="2_25" class="http://www.flymine.org/model/genomic#LociResult">
+<attribute name="description" value="parathyroid hormone-like hormone isoform 1"/>
+<attribute name="details" value="regulates endochondral bone development and epithelial-mesenchymal interactions during the formation of the mammary glands and teeth; Osteostatin (one of 3 major secretory forms) is a potent inhibitor of osteoclastic bone resorption"/>
+<attribute name="geneName" value="PTHLH"/>
+<attribute name="location" value="intronic"/>
+<attribute name="metaBeta" value="-0.053563001156554"/>
+<attribute name="metaSe" value="0.00930518269516728"/>
+<attribute name="mousePhenotype" value="KO mice: perinatal lethality (respiratory failure); dwarfism, numerous skeletal abnormalities; rescued KO mice survive but are small in stature and have a number of developmental defects, including cranial chondrodystrophy and a failure of tooth eruption"/>
+<attribute name="nStudies" value="15"/>
+<attribute name="nSubjects" value="32705"/>
+<attribute name="p" value="0.00000000860006243996736"/>
+<attribute name="z" value="5.75625464982782"/>
+<reference name="snp" ref_id="3_25"/>
+</item>
+<item id="3_8" class="http://www.flymine.org/model/genomic#SNP">
+<attribute name="allele1" value="A"/>
+<attribute name="allele2" value="G"/>
+<attribute name="snp" value="rs8030379"/>
+<reference name="location" ref_id="4_8"/>
+</item>
+<item id="3_106" class="http://www.flymine.org/model/genomic#SNP">
+<attribute name="allele1" value="A"/>
+<attribute name="allele2" value="C"/>
+<attribute name="snp" value="rs12712916"/>
+<reference name="location" ref_id="4_106"/>
+</item>
+<item id="5_3" class="http://www.flymine.org/model/genomic#Chromosome">
+<attribute name="primaryIdentifier" value="12"/>
+</item>
+<item id="5_42" class="http://www.flymine.org/model/genomic#Chromosome">
+<attribute name="primaryIdentifier" value="19"/>
+</item>
+<item id="3_69" class="http://www.flymine.org/model/genomic#SNP">
+<attribute name="allele1" value="C"/>
+<attribute name="allele2" value="T"/>
+<attribute name="snp" value="rs4131346"/>
+<reference name="location" ref_id="4_69"/>
+</item>
+<item id="4_57" class="http://www.flymine.org/model/genomic#Location">
+<attribute name="end" value="38377557"/>
+<attribute name="start" value="38377557"/>
+<reference name="chromosome" ref_id="5_57"/>
+</item>
+<item id="2_61" class="http://www.flymine.org/model/genomic#LociResult">
+<attribute name="description" value="BET1-like protein (Vesicle transport protein GOS15)"/>
+<attribute name="geneName" value="BET1L"/>
+<attribute name="location" value="3downstream"/>
+<attribute name="metaBeta" value="-0.0493360605539893"/>
+<attribute name="metaSe" value="0.0103021124217313"/>
+<attribute name="nStudies" value="14"/>
+<attribute name="nSubjects" value="29149"/>
+<attribute name="p" value="0.00000167675776108212"/>
+<attribute name="z" value="4.78892663313592"/>
+<reference name="snp" ref_id="3_61"/>
+</item>
+<item id="1_143" class="http://www.flymine.org/model/genomic#Gene">
+<attribute name="symbol" value="VSTM2L"/>
+<reference name="lociResult" ref_id="2_71"/>
+<reference name="organism" ref_id="0_1"/>
+</item>
+<item id="4_87" class="http://www.flymine.org/model/genomic#Location">
+<attribute name="end" value="60078349"/>
+<attribute name="start" value="60078349"/>
+<reference name="chromosome" ref_id="5_87"/>
+</item>
+<item id="5_61" class="http://www.flymine.org/model/genomic#Chromosome">
+<attribute name="primaryIdentifier" value="11"/>
+</item>
+<item id="5_65" class="http://www.flymine.org/model/genomic#Chromosome">
+<attribute name="primaryIdentifier" value="1"/>
+</item>
+<item id="2_94" class="http://www.flymine.org/model/genomic#LociResult">
+<attribute name="description" value="Nuclear factor of activated T-cells, cytoplasmic 4"/>
+<attribute name="geneName" value="NFATC4"/>
+<attribute name="location" value="5upstream"/>
+<attribute name="metaBeta" value="-0.0385295905071078"/>
+<attribute name="metaSe" value="0.00854672233370055"/>
+<attribute name="nStudies" value="15"/>
+<attribute name="nSubjects" value="32489"/>
+<attribute name="p" value="0.00000654067244010292"/>
+<attribute name="z" value="4.50811305231971"/>
+<reference name="snp" ref_id="3_94"/>
+</item>
+<item id="4_79" class="http://www.flymine.org/model/genomic#Location">
+<attribute name="end" value="158543384"/>
+<attribute name="start" value="158543384"/>
+<reference name="chromosome" ref_id="5_79"/>
+</item>
+<item id="3_83" class="http://www.flymine.org/model/genomic#SNP">
+<attribute name="allele1" value="C"/>
+<attribute name="allele2" value="G"/>
+<attribute name="snp" value="rs6889721"/>
+<reference name="location" ref_id="4_83"/>
+</item>
+<item id="3_28" class="http://www.flymine.org/model/genomic#SNP">
+<attribute name="allele1" value="A"/>
+<attribute name="allele2" value="G"/>
+<attribute name="snp" value="rs1036821"/>
+<reference name="location" ref_id="4_28"/>
+</item>
+<item id="1_151" class="http://www.flymine.org/model/genomic#Gene">
+<attribute name="symbol" value="CCDC3"/>
+<reference name="lociResult" ref_id="2_75"/>
+<reference name="organism" ref_id="0_1"/>
+</item>
+<item id="5_82" class="http://www.flymine.org/model/genomic#Chromosome">
+<attribute name="primaryIdentifier" value="21"/>
+</item>
+<item id="1_101" class="http://www.flymine.org/model/genomic#Gene">
+<attribute name="symbol" value="CSH2"/>
+<reference name="lociResult" ref_id="2_49"/>
+<reference name="organism" ref_id="0_1"/>
+</item>
+<item id="4_91" class="http://www.flymine.org/model/genomic#Location">
+<attribute name="end" value="33228470"/>
+<attribute name="start" value="33228470"/>
+<reference name="chromosome" ref_id="5_91"/>
+</item>
+<item id="2_73" class="http://www.flymine.org/model/genomic#LociResult">
+<attribute name="description" value="hypothetical protein LOC285154"/>
+<attribute name="geneName" value="MGC34824"/>
+<attribute name="location" value="intronic"/>
+<attribute name="metaBeta" value="-0.0370638124695367"/>
+<attribute name="metaSe" value="0.00793368587834808"/>
+<attribute name="nStudies" value="15"/>
+<attribute name="nSubjects" value="32695"/>
+<attribute name="p" value="0.00000298714821633794"/>
+<attribute name="z" value="4.67170153165353"/>
+<reference name="snp" ref_id="3_73"/>
+</item>
+<item id="4_23" class="http://www.flymine.org/model/genomic#Location">
+<attribute name="end" value="26190060"/>
+<attribute name="start" value="26190060"/>
+<reference name="chromosome" ref_id="5_23"/>
+</item>
+<item id="1_189" class="http://www.flymine.org/model/genomic#Gene">
+<attribute name="symbol" value="NFATC4"/>
+<reference name="lociResult" ref_id="2_94"/>
+<reference name="organism" ref_id="0_1"/>
+</item>
+<item id="4_84" class="http://www.flymine.org/model/genomic#Location">
+<attribute name="end" value="18978326"/>
+<attribute name="start" value="18978326"/>
+<reference name="chromosome" ref_id="5_84"/>
+</item>
+<item id="3_33" class="http://www.flymine.org/model/genomic#SNP">
+<attribute name="allele1" value="C"/>
+<attribute name="allele2" value="G"/>
+<attribute name="snp" value="rs4453686"/>
+<reference name="location" ref_id="4_33"/>
+</item>
+<item id="4_77" class="http://www.flymine.org/model/genomic#Location">
+<attribute name="end" value="92453345"/>
+<attribute name="start" value="92453345"/>
+<reference name="chromosome" ref_id="5_77"/>
+</item>
+<item id="4_34" class="http://www.flymine.org/model/genomic#Location">
+<attribute name="end" value="173719142"/>
+<attribute name="start" value="173719142"/>
+<reference name="chromosome" ref_id="5_34"/>
+</item>
+<item id="3_65" class="http://www.flymine.org/model/genomic#SNP">
+<attribute name="allele1" value="C"/>
+<attribute name="allele2" value="T"/>
+<attribute name="snp" value="rs4656013"/>
+<reference name="location" ref_id="4_65"/>
+</item>
+<item id="1_212" class="http://www.flymine.org/model/genomic#Gene">
+<attribute name="symbol" value="HLA-G"/>
+<reference name="lociResult" ref_id="2_105"/>
+<reference name="organism" ref_id="0_1"/>
+</item>
+<item id="2_83" class="http://www.flymine.org/model/genomic#LociResult">
+<attribute name="description" value="Serine/threonine-protein kinase 10 (Lymphocyte-oriented kinase). "/>
+<attribute name="geneName" value="STK10"/>
+<attribute name="location" value="intronic"/>
+<attribute name="metaBeta" value="-0.0473426275924406"/>
+<attribute name="metaSe" value="0.0103342715492786"/>
+<attribute name="nStudies" value="15"/>
+<attribute name="nSubjects" value="32729"/>
+<attribute name="p" value="0.00000462473199491775"/>
+<attribute name="z" value="4.58112866172417"/>
+<reference name="snp" ref_id="3_83"/>
+</item>
+<item id="3_108" class="http://www.flymine.org/model/genomic#SNP">
+<attribute name="allele1" value="A"/>
+<attribute name="allele2" value="G"/>
+<attribute name="snp" value="rs10142119"/>
+<reference name="location" ref_id="4_108"/>
+</item>
+<item id="4_64" class="http://www.flymine.org/model/genomic#Location">
+<attribute name="end" value="41244792"/>
+<attribute name="start" value="41244792"/>
+<reference name="chromosome" ref_id="5_64"/>
+</item>
+<item id="5_11" class="http://www.flymine.org/model/genomic#Chromosome">
+<attribute name="primaryIdentifier" value="13"/>
+</item>
+<item id="1_75" class="http://www.flymine.org/model/genomic#Gene">
+<attribute name="symbol" value="BMP2"/>
+<reference name="lociResult" ref_id="2_36"/>
+<reference name="organism" ref_id="0_1"/>
+</item>
+<item id="1_67" class="http://www.flymine.org/model/genomic#Gene">
+<attribute name="symbol" value="MICA"/>
+<reference name="lociResult" ref_id="2_32"/>
+<reference name="organism" ref_id="0_1"/>
+</item>
+<item id="3_102" class="http://www.flymine.org/model/genomic#SNP">
+<attribute name="allele1" value="A"/>
+<attribute name="allele2" value="G"/>
+<attribute name="snp" value="rs9461778"/>
+<reference name="location" ref_id="4_102"/>
+</item>
+<item id="1_87" class="http://www.flymine.org/model/genomic#Gene">
+<attribute name="symbol" value="AP3D1"/>
+<reference name="lociResult" ref_id="2_42"/>
+<reference name="organism" ref_id="0_1"/>
+</item>
+<item id="4_53" class="http://www.flymine.org/model/genomic#Location">
+<attribute name="end" value="2545672"/>
+<attribute name="start" value="2545672"/>
+<reference name="chromosome" ref_id="5_53"/>
+</item>
+<item id="3_52" class="http://www.flymine.org/model/genomic#SNP">
+<attribute name="allele1" value="G"/>
+<attribute name="allele2" value="T"/>
+<attribute name="snp" value="rs4704484"/>
+<reference name="location" ref_id="4_52"/>
+</item>
+<item id="2_90" class="http://www.flymine.org/model/genomic#LociResult">
+<attribute name="description" value="hypothetical protein LOC256130"/>
+<attribute name="geneName" value="near MGC42090"/>
+<attribute name="metaBeta" value="0.052196401010934"/>
+<attribute name="metaSe" value="0.0115509570089583"/>
+<attribute name="nStudies" value="15"/>
+<attribute name="nSubjects" value="32708"/>
+<attribute name="p" value="0.00000621927221766683"/>
+<attribute name="z" value="4.51879450078925"/>
+<reference name="snp" ref_id="3_90"/>
+</item>
+<item id="5_93" class="http://www.flymine.org/model/genomic#Chromosome">
+<attribute name="primaryIdentifier" value="5"/>
+</item>
+<item id="3_15" class="http://www.flymine.org/model/genomic#SNP">
+<attribute name="allele1" value="A"/>
+<attribute name="allele2" value="G"/>
+<attribute name="snp" value="rs7869550"/>
+<reference name="location" ref_id="4_15"/>
+</item>
+<item id="1_16" class="http://www.flymine.org/model/genomic#Gene">
+<attribute name="symbol" value="ADAMTSL3"/>
+<reference name="lociResult" ref_id="2_8"/>
+<reference name="organism" ref_id="0_1"/>
+</item>
+<item id="3_48" class="http://www.flymine.org/model/genomic#SNP">
+<attribute name="allele1" value="G"/>
+<attribute name="allele2" value="T"/>
+<attribute name="snp" value="rs8074934"/>
+<reference name="location" ref_id="4_48"/>
+</item>
+<item id="5_34" class="http://www.flymine.org/model/genomic#Chromosome">
+<attribute name="primaryIdentifier" value="3"/>
+</item>
+<item id="3_105" class="http://www.flymine.org/model/genomic#SNP">
+<attribute name="allele1" value="A"/>
+<attribute name="allele2" value="G"/>
+<attribute name="snp" value="rs2734971"/>
+<reference name="location" ref_id="4_105"/>
+</item>
+<item id="4_97" class="http://www.flymine.org/model/genomic#Location">
+<attribute name="end" value="135656232"/>
+<attribute name="start" value="135656232"/>
+<reference name="chromosome" ref_id="5_97"/>
+</item>
+<item id="1_185" class="http://www.flymine.org/model/genomic#Gene">
+<attribute name="symbol" value="C3orf63"/>
+<reference name="lociResult" ref_id="2_92"/>
+<reference name="organism" ref_id="0_1"/>
+</item>
+<item id="2_6" class="http://www.flymine.org/model/genomic#LociResult">
+<attribute name="description" value="R-spondin 3"/>
+<attribute name="geneName" value="RSPO3"/>
+<attribute name="metaBeta" value="0.0599906008879214"/>
+<attribute name="metaSe" value="0.00792461428513352"/>
+<attribute name="mousePhenotype" value="embryonic lethality during organogenesis, embryonic growth arrest, impaired fetal placental development; enhanced oncogenicity"/>
+<attribute name="nStudies" value="15"/>
+<attribute name="nSubjects" value="32708"/>
+<attribute name="p" value="0.0000000000000373034936274053"/>
+<attribute name="z" value="7.57016035473967"/>
+<reference name="snp" ref_id="3_6"/>
+</item>
+<item id="4_37" class="http://www.flymine.org/model/genomic#Location">
+<attribute name="end" value="50522300"/>
+<attribute name="start" value="50522300"/>
+<reference name="chromosome" ref_id="5_37"/>
+</item>
+<item id="1_201" class="http://www.flymine.org/model/genomic#Gene">
+<attribute name="symbol" value="EPB41"/>
+<reference name="lociResult" ref_id="2_100"/>
+<reference name="organism" ref_id="0_1"/>
+</item>
+<item id="3_6" class="http://www.flymine.org/model/genomic#SNP">
+<attribute name="allele1" value="A"/>
+<attribute name="allele2" value="C"/>
+<attribute name="snp" value="rs1155939"/>
+<reference name="location" ref_id="4_6"/>
+</item>
+<item id="5_14" class="http://www.flymine.org/model/genomic#Chromosome">
+<attribute name="primaryIdentifier" value="12"/>
+</item>
+<item id="4_35" class="http://www.flymine.org/model/genomic#Location">
+<attribute name="end" value="76322362"/>
+<attribute name="start" value="76322362"/>
+<reference name="chromosome" ref_id="5_35"/>
+</item>
+<item id="5_15" class="http://www.flymine.org/model/genomic#Chromosome">
+<attribute name="primaryIdentifier" value="9"/>
+</item>
+<item id="4_33" class="http://www.flymine.org/model/genomic#Location">
+<attribute name="end" value="219722055"/>
+<attribute name="start" value="219722055"/>
+<reference name="chromosome" ref_id="5_33"/>
+</item>
+<item id="5_19" class="http://www.flymine.org/model/genomic#Chromosome">
+<attribute name="primaryIdentifier" value="5"/>
+</item>
+<item id="5_67" class="http://www.flymine.org/model/genomic#Chromosome">
+<attribute name="primaryIdentifier" value="9"/>
+</item>
+<item id="5_55" class="http://www.flymine.org/model/genomic#Chromosome">
+<attribute name="primaryIdentifier" value="4"/>
+</item>
+<item id="3_35" class="http://www.flymine.org/model/genomic#SNP">
+<attribute name="allele1" value="G"/>
+<attribute name="allele2" value="T"/>
+<attribute name="snp" value="rs9360921"/>
+<reference name="location" ref_id="4_35"/>
+</item>
+<item id="2_91" class="http://www.flymine.org/model/genomic#LociResult">
+<attribute name="description" value="Serine protease inhibitor Kazal-type 4 precursor (Peptide PEC-60 homolog). "/>
+<attribute name="geneName" value="SPINK4"/>
+<attribute name="location" value="5upstream"/>
+<attribute name="metaBeta" value="0.0425369872969823"/>
+<attribute name="metaSe" value="0.00941371313928745"/>
+<attribute name="nStudies" value="15"/>
+<attribute name="nSubjects" value="32708"/>
+<attribute name="p" value="0.00000622441532738272"/>
+<attribute name="z" value="4.51861945096429"/>
+<reference name="snp" ref_id="3_91"/>
+</item>
+<item id="1_44" class="http://www.flymine.org/model/genomic#Gene">
+<attribute name="symbol" value="JAZF1"/>
+<reference name="lociResult" ref_id="2_21"/>
+<reference name="organism" ref_id="0_1"/>
+</item>
+<item id="1_61" class="http://www.flymine.org/model/genomic#Gene">
+<attribute name="symbol" value="SERPINH1"/>
+<reference name="lociResult" ref_id="2_29"/>
+<reference name="organism" ref_id="0_1"/>
+</item>
+<item id="3_2" class="http://www.flymine.org/model/genomic#SNP">
+<attribute name="allele1" value="A"/>
+<attribute name="allele2" value="G"/>
+<attribute name="snp" value="rs143384"/>
+<reference name="location" ref_id="4_2"/>
+</item>
+<item id="1_46" class="http://www.flymine.org/model/genomic#Gene">
+<attribute name="symbol" value="GPR126"/>
+<reference name="lociResult" ref_id="2_22"/>
+<reference name="organism" ref_id="0_1"/>
+</item>
+<item id="4_82" class="http://www.flymine.org/model/genomic#Location">
+<attribute name="end" value="40055146"/>
+<attribute name="start" value="40055146"/>
+<reference name="chromosome" ref_id="5_82"/>
+</item>
+<item id="1_161" class="http://www.flymine.org/model/genomic#Gene">
+<attribute name="symbol" value="ZNF462"/>
+<reference name="lociResult" ref_id="2_80"/>
+<reference name="organism" ref_id="0_1"/>
+</item>
+<item id="4_16" class="http://www.flymine.org/model/genomic#Location">
+<attribute name="end" value="91529711"/>
+<attribute name="start" value="91529711"/>
+<reference name="chromosome" ref_id="5_16"/>
+</item>
+<item id="2_51" class="http://www.flymine.org/model/genomic#LociResult">
+<attribute name="description" value="Aggrecan core protein precursor (aka Cartilage-specific proteoglycan core protein - CSPCP)"/>
+<attribute name="geneName" value="ACAN"/>
+<attribute name="location" value="intronic"/>
+<attribute name="metaBeta" value="0.0481174432558886"/>
+<attribute name="metaSe" value="0.00962896393884796"/>
+<attribute name="nStudies" value="15"/>
+<attribute name="nSubjects" value="32704"/>
+<attribute name="p" value="0.000000581817572342658"/>
+<attribute name="z" value="4.99715686562697"/>
+<reference name="snp" ref_id="3_51"/>
+</item>
+<item id="4_98" class="http://www.flymine.org/model/genomic#Location">
+<attribute name="end" value="7745305"/>
+<attribute name="start" value="7745305"/>
+<reference name="chromosome" ref_id="5_98"/>
+</item>
+<item id="3_13" class="http://www.flymine.org/model/genomic#SNP">
+<attribute name="allele1" value="A"/>
+<attribute name="allele2" value="C"/>
+<attribute name="snp" value="rs314277"/>
+<reference name="location" ref_id="4_13"/>
+</item>
+<item id="1_25" class="http://www.flymine.org/model/genomic#Gene">
+<attribute name="symbol" value="EFEMP1"/>
+<reference name="lociResult" ref_id="2_12"/>
+<reference name="organism" ref_id="0_1"/>
+</item>
+<item id="5_25" class="http://www.flymine.org/model/genomic#Chromosome">
+<attribute name="primaryIdentifier" value="12"/>
+</item>
+<item id="2_37" class="http://www.flymine.org/model/genomic#LociResult">
+<attribute name="description" value="islet-1"/>
+<attribute name="details" value="transcription factor that binds to the insulin gene enhancer region"/>
+<attribute name="geneName" value="far ISL1"/>
+<attribute name="humanPhenotype" value="possible MODY gene"/>
+<attribute name="metaBeta" value="-0.0441474660273517"/>
+<attribute name="metaSe" value="0.0083141849788385"/>
+<attribute name="mousePhenotype" value="embryonic growth retardation and lethality during organogenesis, abnormal cardiovascular and neural crest development"/>
+<attribute name="nStudies" value="15"/>
+<attribute name="nSubjects" value="32708"/>
+<attribute name="p" value="0.000000109687195326558"/>
+<attribute name="z" value="5.30989701813432"/>
+<reference name="snp" ref_id="3_37"/>
+</item>
+<item id="4_6" class="http://www.flymine.org/model/genomic#Location">
+<attribute name="end" value="126907826"/>
+<attribute name="start" value="126907826"/>
+<reference name="chromosome" ref_id="5_6"/>
+</item>
+<item id="3_78" class="http://www.flymine.org/model/genomic#SNP">
+<attribute name="allele1" value="A"/>
+<attribute name="allele2" value="T"/>
+<attribute name="snp" value="rs2138628"/>
+<reference name="location" ref_id="4_78"/>
+</item>
+<item id="1_69" class="http://www.flymine.org/model/genomic#Gene">
+<attribute name="symbol" value="IHH"/>
+<reference name="lociResult" ref_id="2_33"/>
+<reference name="organism" ref_id="0_1"/>
+</item>
+<item id="3_86" class="http://www.flymine.org/model/genomic#SNP">
+<attribute name="allele1" value="C"/>
+<attribute name="allele2" value="T"/>
+<attribute name="snp" value="rs9506602"/>
+<reference name="location" ref_id="4_86"/>
+</item>
+<item id="3_57" class="http://www.flymine.org/model/genomic#SNP">
+<attribute name="allele1" value="C"/>
+<attribute name="allele2" value="G"/>
+<attribute name="snp" value="rs2305648"/>
+<reference name="location" ref_id="4_57"/>
+</item>
+<item id="3_51" class="http://www.flymine.org/model/genomic#SNP">
+<attribute name="allele1" value="A"/>
+<attribute name="allele2" value="G"/>
+<attribute name="snp" value="rs11635309"/>
+<reference name="location" ref_id="4_51"/>
+</item>
+<item id="4_73" class="http://www.flymine.org/model/genomic#Location">
+<attribute name="end" value="38309093"/>
+<attribute name="start" value="38309093"/>
+<reference name="chromosome" ref_id="5_73"/>
+</item>
+<item id="2_93" class="http://www.flymine.org/model/genomic#LociResult">
+<attribute name="description" value="CDNA FLJ90709 fis, clone PLACE1007881 (Hypothetical protein FLJ90709). "/>
+<attribute name="geneName" value="NP_775785.1"/>
+<attribute name="location" value="coding"/>
+<attribute name="metaBeta" value="0.0375487524225348"/>
+<attribute name="metaSe" value="0.00832847520847669"/>
+<attribute name="nStudies" value="15"/>
+<attribute name="nSubjects" value="32708"/>
+<attribute name="p" value="0.00000652941473822111"/>
+<attribute name="z" value="4.50847862095067"/>
+<reference name="snp" ref_id="3_93"/>
+</item>
+<item id="5_102" class="http://www.flymine.org/model/genomic#Chromosome">
+<attribute name="primaryIdentifier" value="6"/>
+</item>
+<item id="3_62" class="http://www.flymine.org/model/genomic#SNP">
+<attribute name="allele1" value="C"/>
+<attribute name="allele2" value="T"/>
+<attribute name="snp" value="rs6439167"/>
+<reference name="location" ref_id="4_62"/>
+</item>
+<item id="5_76" class="http://www.flymine.org/model/genomic#Chromosome">
+<attribute name="primaryIdentifier" value="8"/>
+</item>
+<item id="5_97" class="http://www.flymine.org/model/genomic#Chromosome">
+<attribute name="primaryIdentifier" value="3"/>
+</item>
+<item id="1_4" class="http://www.flymine.org/model/genomic#Gene">
+<attribute name="symbol" value="GDF5"/>
+<reference name="lociResult" ref_id="2_2"/>
+<reference name="organism" ref_id="0_1"/>
+</item>
+<item id="4_42" class="http://www.flymine.org/model/genomic#Location">
+<attribute name="end" value="2126891"/>
+<attribute name="start" value="2126891"/>
+<reference name="chromosome" ref_id="5_42"/>
+</item>
+<item id="1_49" class="http://www.flymine.org/model/genomic#Gene">
+<attribute name="symbol" value="RNF135"/>
+<reference name="lociResult" ref_id="2_23"/>
+<reference name="organism" ref_id="0_1"/>
+</item>
+<item id="5_74" class="http://www.flymine.org/model/genomic#Chromosome">
+<attribute name="primaryIdentifier" value="14"/>
+</item>
+<item id="5_57" class="http://www.flymine.org/model/genomic#Chromosome">
+<attribute name="primaryIdentifier" value="15"/>
+</item>
+<item id="3_63" class="http://www.flymine.org/model/genomic#SNP">
+<attribute name="allele1" value="C"/>
+<attribute name="allele2" value="T"/>
+<attribute name="snp" value="rs3782089"/>
+<reference name="location" ref_id="4_63"/>
+</item>
+<item id="4_78" class="http://www.flymine.org/model/genomic#Location">
+<attribute name="end" value="106011287"/>
+<attribute name="start" value="106011287"/>
+<reference name="chromosome" ref_id="5_78"/>
+</item>
+<item id="5_24" class="http://www.flymine.org/model/genomic#Chromosome">
+<attribute name="primaryIdentifier" value="18"/>
+</item>
+<item id="3_56" class="http://www.flymine.org/model/genomic#SNP">
+<attribute name="allele1" value="A"/>
+<attribute name="allele2" value="T"/>
+<attribute name="snp" value="rs2834442"/>
+<reference name="location" ref_id="4_56"/>
+</item>
+<item id="2_29" class="http://www.flymine.org/model/genomic#LociResult">
+<attribute name="description" value="Serpin H1 precursor "/>
+<attribute name="details" value="Collagen-binding protein"/>
+<attribute name="geneName" value="SERPINH1"/>
+<attribute name="location" value="intronic"/>
+<attribute name="metaBeta" value="-0.071428962544388"/>
+<attribute name="metaSe" value="0.0128748211346459"/>
+<attribute name="mousePhenotype" value="KO mice are embryonic lethal"/>
+<attribute name="nStudies" value="14"/>
+<attribute name="nSubjects" value="29153"/>
+<attribute name="p" value="0.0000000289025841038182"/>
+<attribute name="z" value="5.54795766072229"/>
+<reference name="snp" ref_id="3_29"/>
+</item>
+<item id="5_75" class="http://www.flymine.org/model/genomic#Chromosome">
+<attribute name="primaryIdentifier" value="10"/>
+</item>
+<item id="4_26" class="http://www.flymine.org/model/genomic#Location">
+<attribute name="end" value="130493638"/>
+<attribute name="start" value="130493638"/>
+<reference name="chromosome" ref_id="5_26"/>
+</item>
+<item id="1_14" class="http://www.flymine.org/model/genomic#Gene">
+<attribute name="symbol" value="HHIP"/>
+<reference name="lociResult" ref_id="2_7"/>
+<reference name="organism" ref_id="0_1"/>
+</item>
+<item id="3_37" class="http://www.flymine.org/model/genomic#SNP">
+<attribute name="allele1" value="C"/>
+<attribute name="allele2" value="G"/>
+<attribute name="snp" value="rs1501981"/>
+<reference name="location" ref_id="4_37"/>
+</item>
+<item id="2_72" class="http://www.flymine.org/model/genomic#LociResult">
+<attribute name="description" value="hypothetical protein LOC144347"/>
+<attribute name="geneName" value="far FAM101A"/>
+<attribute name="metaBeta" value="-0.0472353832040708"/>
+<attribute name="metaSe" value="0.0101047854690423"/>
+<attribute name="nStudies" value="15"/>
+<attribute name="nSubjects" value="32697"/>
+<attribute name="p" value="0.00000294590599025923"/>
+<attribute name="z" value="4.6745557685301"/>
+<reference name="snp" ref_id="3_72"/>
+</item>
+<item id="5_30" class="http://www.flymine.org/model/genomic#Chromosome">
+<attribute name="primaryIdentifier" value="1"/>
+</item>
+<item id="5_86" class="http://www.flymine.org/model/genomic#Chromosome">
+<attribute name="primaryIdentifier" value="13"/>
+</item>
+<item id="3_1" class="http://www.flymine.org/model/genomic#SNP">
+<attribute name="allele1" value="A"/>
+<attribute name="allele2" value="G"/>
+<attribute name="snp" value="rs724016"/>
+<reference name="location" ref_id="4_1"/>
+</item>
+<item id="5_69" class="http://www.flymine.org/model/genomic#Chromosome">
+<attribute name="primaryIdentifier" value="1"/>
+</item>
+<item id="5_6" class="http://www.flymine.org/model/genomic#Chromosome">
+<attribute name="primaryIdentifier" value="6"/>
+</item>
+<item id="3_96" class="http://www.flymine.org/model/genomic#SNP">
+<attribute name="allele1" value="A"/>
+<attribute name="allele2" value="G"/>
+<attribute name="snp" value="rs12952877"/>
+<reference name="location" ref_id="4_96"/>
+</item>
+<item id="2_48" class="http://www.flymine.org/model/genomic#LociResult">
+<attribute name="description" value="diacylglycerol kinase epsilon"/>
+<attribute name="details" value="Highly selective for arachidonate-containing species of diacylglycerol (DAG). Expressed predominantly in testis."/>
+<attribute name="geneName" value="far DGKE"/>
+<attribute name="metaBeta" value="0.0400470292390404"/>
+<attribute name="metaSe" value="0.0078572359631099"/>
+<attribute name="mousePhenotype" value="KO mice: reductions in susceptibility to electroconvulsive shock and arachidonoyldiacylglycerol accumulation in cerebral cortex, and attenuated long-term potentiation in dentate granular cell synapses."/>
+<attribute name="nStudies" value="15"/>
+<attribute name="nSubjects" value="32708"/>
+<attribute name="p" value="0.000000345380506638904"/>
+<attribute name="z" value="5.09683423370039"/>
+<reference name="snp" ref_id="3_48"/>
+</item>
+<item id="1_187" class="http://www.flymine.org/model/genomic#Gene">
+<attribute name="symbol" value="NP_775785.1"/>
+<reference name="lociResult" ref_id="2_93"/>
+<reference name="organism" ref_id="0_1"/>
+</item>
+<item id="2_56" class="http://www.flymine.org/model/genomic#LociResult">
+<attribute name="description" value="potassium voltage-gated channel, Isk-related"/>
+<attribute name="geneName" value="far KCNE2"/>
+<attribute name="metaBeta" value="0.0402618213089435"/>
+<attribute name="metaSe" value="0.00822871777733622"/>
+<attribute name="nStudies" value="15"/>
+<attribute name="nSubjects" value="32708"/>
+<attribute name="p" value="0.00000099389894692159"/>
+<attribute name="z" value="4.89284265160166"/>
+<reference name="snp" ref_id="3_56"/>
+</item>
+<item id="3_110" class="http://www.flymine.org/model/genomic#SNP">
+<attribute name="allele1" value="A"/>
+<attribute name="allele2" value="G"/>
+<attribute name="snp" value="rs12978931"/>
+<reference name="location" ref_id="4_110"/>
+</item>
+<item id="2_28" class="http://www.flymine.org/model/genomic#LociResult">
+<attribute name="description" value="Zinc finger protein 406 (ZFAT zinc finger 1). "/>
+<attribute name="details" value="May be involved in transcriptional regulation"/>
+<attribute name="geneName" value="ZFAT1"/>
+<attribute name="humanPhenotype" value="a functional SNP confers susceptibility to autoimune thyroid disease"/>
+<attribute name="location" value="intronic"/>
+<attribute name="metaBeta" value="-0.0492179904005443"/>
+<attribute name="metaSe" value="0.00867857637400021"/>
+<attribute name="nStudies" value="15"/>
+<attribute name="nSubjects" value="32704"/>
+<attribute name="p" value="0.0000000141796154817797"/>
+<attribute name="z" value="5.67120553873265"/>
+<reference name="snp" ref_id="3_28"/>
+</item>
+<item id="2_71" class="http://www.flymine.org/model/genomic#LociResult">
+<attribute name="description" value="Uncharacterized protein C20orf102 precursor. "/>
+<attribute name="geneName" value="VSTM2L"/>
+<attribute name="location" value="intronic"/>
+<attribute name="metaBeta" value="0.0852498404537873"/>
+<attribute name="metaSe" value="0.0182262934241724"/>
+<attribute name="nStudies" value="15"/>
+<attribute name="nSubjects" value="32708"/>
+<attribute name="p" value="0.0000029067700009211"/>
+<attribute name="z" value="4.67729990238858"/>
+<reference name="snp" ref_id="3_71"/>
+</item>
+<item id="5_111" class="http://www.flymine.org/model/genomic#Chromosome">
+<attribute name="primaryIdentifier" value="17"/>
+</item>
+<item id="5_104" class="http://www.flymine.org/model/genomic#Chromosome">
+<attribute name="primaryIdentifier" value="13"/>
+</item>
+<item id="1_2" class="http://www.flymine.org/model/genomic#Gene">
+<attribute name="symbol" value="ZBTB38"/>
+<reference name="lociResult" ref_id="2_1"/>
+<reference name="organism" ref_id="0_1"/>
+</item>
+<item id="1_222" class="http://www.flymine.org/model/genomic#Gene">
+<attribute name="symbol" value="PVRL2"/>
+<reference name="lociResult" ref_id="2_110"/>
+<reference name="organism" ref_id="0_1"/>
+</item>
+<item id="1_99" class="http://www.flymine.org/model/genomic#Gene">
+<attribute name="symbol" value="DGKE"/>
+<reference name="lociResult" ref_id="2_48"/>
+<reference name="organism" ref_id="0_1"/>
+</item>
+<item id="2_95" class="http://www.flymine.org/model/genomic#LociResult">
+<attribute name="description" value="Protein- tyrosine phosphatase receptor type J"/>
+<attribute name="geneName" value="PTPRJ"/>
+<attribute name="location" value="intronic"/>
+<attribute name="metaBeta" value="0.0450580420529477"/>
+<attribute name="metaSe" value="0.00999801747364805"/>
+<attribute name="nStudies" value="11"/>
+<attribute name="nSubjects" value="25404"/>
+<attribute name="p" value="0.0000065844345815691"/>
+<attribute name="z" value="4.50669766998387"/>
+<reference name="snp" ref_id="3_95"/>
+</item>
+<item id="5_62" class="http://www.flymine.org/model/genomic#Chromosome">
+<attribute name="primaryIdentifier" value="3"/>
+</item>
+<item id="5_47" class="http://www.flymine.org/model/genomic#Chromosome">
+<attribute name="primaryIdentifier" value="10"/>
+</item>
+<item id="5_90" class="http://www.flymine.org/model/genomic#Chromosome">
+<attribute name="primaryIdentifier" value="7"/>
+</item>
+<item id="2_17" class="http://www.flymine.org/model/genomic#LociResult">
+<attribute name="description" value="melanoma-derived leucine zipper, extra-nuclear"/>
+<attribute name="details" value="expression increased with the metastatic potential of several mouse melanoma cell lines"/>
+<attribute name="geneName" value="near MLZE"/>
+<attribute name="metaBeta" value="0.0591785667098551"/>
+<attribute name="metaSe" value="0.00990677544441069"/>
+<attribute name="nStudies" value="15"/>
+<attribute name="nSubjects" value="32708"/>
+<attribute name="p" value="0.0000000023215303013302"/>
+<attribute name="z" value="5.97354477669554"/>
+<reference name="snp" ref_id="3_17"/>
+</item>
+<item id="4_8" class="http://www.flymine.org/model/genomic#Location">
+<attribute name="end" value="82381914"/>
+<attribute name="start" value="82381914"/>
+<reference name="chromosome" ref_id="5_8"/>
+</item>
+<item id="4_3" class="http://www.flymine.org/model/genomic#Location">
+<attribute name="end" value="64646019"/>
+<attribute name="start" value="64646019"/>
+<reference name="chromosome" ref_id="5_3"/>
+</item>
+<item id="1_27" class="http://www.flymine.org/model/genomic#Gene">
+<attribute name="symbol" value="LIN28B"/>
+<reference name="lociResult" ref_id="2_13"/>
+<reference name="organism" ref_id="0_1"/>
+</item>
+<item id="1_169" class="http://www.flymine.org/model/genomic#Gene">
+<attribute name="symbol" value="CABLES1"/>
+<reference name="lociResult" ref_id="2_84"/>
+<reference name="organism" ref_id="0_1"/>
+</item>
+<item id="2_11" class="http://www.flymine.org/model/genomic#LociResult">
+<attribute name="description" value="deleted in lymphocytic leukemia, 7"/>
+<attribute name="geneName" value="DLEU7"/>
+<attribute name="metaBeta" value="-0.0645193233625515"/>
+<attribute name="metaSe" value="0.00932246612227795"/>
+<attribute name="mousePhenotype" value="B-cell chronic lymphocytic leukemia (CLL)"/>
+<attribute name="nStudies" value="15"/>
+<attribute name="nSubjects" value="32720"/>
+<attribute name="p" value="0.00000000000448974191158413"/>
+<attribute name="z" value="6.92084288816768"/>
+<reference name="snp" ref_id="3_11"/>
+</item>
+<item id="4_105" class="http://www.flymine.org/model/genomic#Location">
+<attribute name="end" value="29942428"/>
+<attribute name="start" value="29942428"/>
+<reference name="chromosome" ref_id="5_105"/>
+</item>
+<item id="1_173" class="http://www.flymine.org/model/genomic#Gene">
+<attribute name="symbol" value="LATS2"/>
+<reference name="lociResult" ref_id="2_86"/>
+<reference name="organism" ref_id="0_1"/>
+</item>
+<item id="4_40" class="http://www.flymine.org/model/genomic#Location">
+<attribute name="end" value="56851431"/>
+<attribute name="start" value="56851431"/>
+<reference name="chromosome" ref_id="5_40"/>
+</item>
+<item id="4_51" class="http://www.flymine.org/model/genomic#Location">
+<attribute name="end" value="87197536"/>
+<attribute name="start" value="87197536"/>
+<reference name="chromosome" ref_id="5_51"/>
+</item>
+<item id="5_91" class="http://www.flymine.org/model/genomic#Chromosome">
+<attribute name="primaryIdentifier" value="9"/>
+</item>
+<item id="5_105" class="http://www.flymine.org/model/genomic#Chromosome">
+<attribute name="primaryIdentifier" value="6"/>
+</item>
+<item id="5_77" class="http://www.flymine.org/model/genomic#Chromosome">
+<attribute name="primaryIdentifier" value="9"/>
+</item>
+<item id="4_104" class="http://www.flymine.org/model/genomic#Location">
+<attribute name="end" value="90817156"/>
+<attribute name="start" value="90817156"/>
+<reference name="chromosome" ref_id="5_104"/>
+</item>
+<item id="2_98" class="http://www.flymine.org/model/genomic#LociResult">
+<attribute name="description" value="Bone morphogenetic protein 6 precursor (BMP-6). "/>
+<attribute name="geneName" value="BMP6"/>
+<attribute name="location" value="intronic"/>
+<attribute name="metaBeta" value="0.04749424220488"/>
+<attribute name="metaSe" value="0.0105884128651564"/>
+<attribute name="nStudies" value="15"/>
+<attribute name="nSubjects" value="32708"/>
+<attribute name="p" value="0.00000727458440197282"/>
+<attribute name="z" value="4.48549209496457"/>
+<reference name="snp" ref_id="3_98"/>
+</item>
+<item id="5_38" class="http://www.flymine.org/model/genomic#Chromosome">
+<attribute name="primaryIdentifier" value="2"/>
+</item>
+<item id="2_24" class="http://www.flymine.org/model/genomic#LociResult">
+<attribute name="description" value="Dymeclin (Dyggve-Melchior-Clausen syndrome protein). "/>
+<attribute name="geneName" value="DYM"/>
+<attribute name="location" value="intronic"/>
+<attribute name="metaBeta" value="-0.0466853249729853"/>
+<attribute name="metaSe" value="0.0080989032042329"/>
+<attribute name="nStudies" value="15"/>
+<attribute name="nSubjects" value="32704"/>
+<attribute name="p" value="0.00000000819484080594179"/>
+<attribute name="z" value="5.76440090660488"/>
+<reference name="snp" ref_id="3_24"/>
+</item>
+<item id="2_16" class="http://www.flymine.org/model/genomic#LociResult">
+<attribute name="description" value="Thyroid receptor-interacting protein 11 "/>
+<attribute name="details" value="Binds the ligand binding domain of the thyroid receptor (THRB) in the presence of triiodothyronine and enhances THRB-modulated transcription. Golgi auto-antigen; probably involved in maintaining cis-Golgi structure"/>
+<attribute name="geneName" value="TRIP11"/>
+<attribute name="location" value="intronic"/>
+<attribute name="metaBeta" value="0.0643555146881247"/>
+<attribute name="metaSe" value="0.0104495177727438"/>
+<attribute name="nStudies" value="15"/>
+<attribute name="nSubjects" value="32699"/>
+<attribute name="p" value="0.000000000733414218245798"/>
+<attribute name="z" value="6.15870665878836"/>
+<reference name="snp" ref_id="3_16"/>
+</item>
+<item id="1_218" class="http://www.flymine.org/model/genomic#Gene">
+<attribute name="symbol" value="BCL11B"/>
+<reference name="lociResult" ref_id="2_108"/>
+<reference name="organism" ref_id="0_1"/>
+</item>
+<item id="5_27" class="http://www.flymine.org/model/genomic#Chromosome">
+<attribute name="primaryIdentifier" value="1"/>
+</item>
+<item id="5_110" class="http://www.flymine.org/model/genomic#Chromosome">
+<attribute name="primaryIdentifier" value="19"/>
+</item>
+<item id="3_25" class="http://www.flymine.org/model/genomic#SNP">
+<attribute name="allele1" value="A"/>
+<attribute name="allele2" value="G"/>
+<attribute name="snp" value="rs11049503"/>
+<reference name="location" ref_id="4_25"/>
+</item>
+<item id="2_102" class="http://www.flymine.org/model/genomic#LociResult">
+<attribute name="geneName" value="HLA region"/>
+<attribute name="metaBeta" value="0.0609134097119765"/>
+<attribute name="metaSe" value="0.0136261240494284"/>
+<attribute name="nStudies" value="15"/>
+<attribute name="nSubjects" value="32708"/>
+<attribute name="p" value="0.00000780952865753193"/>
+<attribute name="z" value="4.47034017091103"/>
+<reference name="snp" ref_id="3_102"/>
+</item>
+<item id="3_79" class="http://www.flymine.org/model/genomic#SNP">
+<attribute name="allele1" value="G"/>
+<attribute name="allele2" value="T"/>
+<attribute name="snp" value="rs11756587"/>
+<reference name="location" ref_id="4_79"/>
+</item>
+<item id="5_40" class="http://www.flymine.org/model/genomic#Chromosome">
+<attribute name="primaryIdentifier" value="17"/>
+</item>
+<item id="2_109" class="http://www.flymine.org/model/genomic#LociResult">
+<attribute name="description" value="synaptoporin"/>
+<attribute name="geneName" value="SYNPR"/>
+<attribute name="metaBeta" value="0.0362211927753084"/>
+<attribute name="metaSe" value="0.00818154385748945"/>
+<attribute name="nStudies" value="15"/>
+<attribute name="nSubjects" value="32704"/>
+<attribute name="p" value="0.00000954716829459912"/>
+<attribute name="z" value="4.42718310947526"/>
+<reference name="snp" ref_id="3_109"/>
+</item>
+<item id="2_55" class="http://www.flymine.org/model/genomic#LociResult">
+<attribute name="description" value="protein kinase, cGMP-dependent, type II"/>
+<attribute name="details" value="Belongs to the Ser/Thr protein kinase family. cGMP subfamily"/>
+<attribute name="geneName" value="far PRKG2"/>
+<attribute name="metaBeta" value="0.044861099111025"/>
+<attribute name="metaSe" value="0.00911711025034614"/>
+<attribute name="mousePhenotype" value="KO mice: dwarfism; spontaneous rat:longitudinal growth retardation through attenuated SOX9 function"/>
+<attribute name="nStudies" value="11"/>
+<attribute name="nSubjects" value="25324"/>
+<attribute name="p" value="0.000000863060982236874"/>
+<attribute name="z" value="4.92053928045039"/>
+<reference name="snp" ref_id="3_55"/>
+</item>
+<item id="1_214" class="http://www.flymine.org/model/genomic#Gene">
+<attribute name="symbol" value="SLCA2"/>
+<reference name="lociResult" ref_id="2_106"/>
+<reference name="organism" ref_id="0_1"/>
+</item>
+<item id="5_106" class="http://www.flymine.org/model/genomic#Chromosome">
+<attribute name="primaryIdentifier" value="2"/>
+</item>
+<item id="4_93" class="http://www.flymine.org/model/genomic#Location">
+<attribute name="end" value="54996430"/>
+<attribute name="start" value="54996430"/>
+<reference name="chromosome" ref_id="5_93"/>
+</item>
+<item id="5_68" class="http://www.flymine.org/model/genomic#Chromosome">
+<attribute name="primaryIdentifier" value="13"/>
+</item>
+<item id="2_59" class="http://www.flymine.org/model/genomic#LociResult">
+<attribute name="description" value="Protein patched homolog 1"/>
+<attribute name="geneName" value="PTCH1"/>
+<attribute name="location" value="intronic"/>
+<attribute name="metaBeta" value="0.0399909451092868"/>
+<attribute name="metaSe" value="0.00831726684455322"/>
+<attribute name="nStudies" value="15"/>
+<attribute name="nSubjects" value="32734"/>
+<attribute name="p" value="0.00000152307900824766"/>
+<attribute name="z" value="4.8081834882424"/>
+<reference name="snp" ref_id="3_59"/>
+</item>
+<item id="1_8" class="http://www.flymine.org/model/genomic#Gene">
+<attribute name="symbol" value="CDK6"/>
+<reference name="lociResult" ref_id="2_4"/>
+<reference name="organism" ref_id="0_1"/>
+</item>
+<item id="3_76" class="http://www.flymine.org/model/genomic#SNP">
+<attribute name="allele1" value="C"/>
+<attribute name="allele2" value="T"/>
+<attribute name="snp" value="rs545938"/>
+<reference name="location" ref_id="4_76"/>
+</item>
+<item id="4_48" class="http://www.flymine.org/model/genomic#Location">
+<attribute name="end" value="52213401"/>
+<attribute name="start" value="52213401"/>
+<reference name="chromosome" ref_id="5_48"/>
+</item>
+<item id="1_31" class="http://www.flymine.org/model/genomic#Gene">
+<attribute name="symbol" value="PAPPA"/>
+<reference name="lociResult" ref_id="2_15"/>
+<reference name="organism" ref_id="0_1"/>
+</item>
+<item id="4_109" class="http://www.flymine.org/model/genomic#Location">
+<attribute name="end" value="63314115"/>
+<attribute name="start" value="63314115"/>
+<reference name="chromosome" ref_id="5_109"/>
+</item>
+<item id="5_88" class="http://www.flymine.org/model/genomic#Chromosome">
+<attribute name="primaryIdentifier" value="16"/>
+</item>
+<item id="5_83" class="http://www.flymine.org/model/genomic#Chromosome">
+<attribute name="primaryIdentifier" value="5"/>
+</item>
+<item id="3_7" class="http://www.flymine.org/model/genomic#SNP">
+<attribute name="allele1" value="C"/>
+<attribute name="allele2" value="T"/>
+<attribute name="snp" value="rs1492819"/>
+<reference name="location" ref_id="4_7"/>
+</item>
+<item id="3_34" class="http://www.flymine.org/model/genomic#SNP">
+<attribute name="allele1" value="G"/>
+<attribute name="allele2" value="T"/>
+<attribute name="snp" value="rs231983"/>
+<reference name="location" ref_id="4_34"/>
+</item>
+<item id="2_41" class="http://www.flymine.org/model/genomic#LociResult">
+<attribute name="description" value="synaptic vesicle glycoprotein 2"/>
+<attribute name="details" value="Plays a role in the control of regulated secretion in neural and endocrine cells. Associated with both insulin granules and synaptic-like microvesicles in pancreatic beta cells."/>
+<attribute name="geneName" value="near SV2A"/>
+<attribute name="metaBeta" value="-0.0512345123015651"/>
+<attribute name="metaSe" value="0.00984607062306088"/>
+<attribute name="mousePhenotype" value="KO mice: premature death, postnatal growth retardation, decreased body size, seizures"/>
+<attribute name="nStudies" value="15"/>
+<attribute name="nSubjects" value="32697"/>
+<attribute name="p" value="0.000000195518023993202"/>
+<attribute name="z" value="5.20354913782221"/>
+<reference name="snp" ref_id="3_41"/>
+</item>
+<item id="4_80" class="http://www.flymine.org/model/genomic#Location">
+<attribute name="end" value="106707468"/>
+<attribute name="start" value="106707468"/>
+<reference name="chromosome" ref_id="5_80"/>
+</item>
+<item id="4_67" class="http://www.flymine.org/model/genomic#Location">
+<attribute name="end" value="13759690"/>
+<attribute name="start" value="13759690"/>
+<reference name="chromosome" ref_id="5_67"/>
+</item>
+<item id="2_79" class="http://www.flymine.org/model/genomic#LociResult">
+<attribute name="description" value="Protein SERAC1. "/>
+<attribute name="geneName" value="SERAC1"/>
+<attribute name="location" value="intronic"/>
+<attribute name="metaBeta" value="0.0508094276705902"/>
+<attribute name="metaSe" value="0.0109889008601474"/>
+<attribute name="nStudies" value="15"/>
+<attribute name="nSubjects" value="32708"/>
+<attribute name="p" value="0.0000037694721082282"/>
+<attribute name="z" value="4.62370425552357"/>
+<reference name="snp" ref_id="3_79"/>
+</item>
+<item id="5_94" class="http://www.flymine.org/model/genomic#Chromosome">
+<attribute name="primaryIdentifier" value="14"/>
+</item>
+<item id="4_55" class="http://www.flymine.org/model/genomic#Location">
+<attribute name="end" value="82637812"/>
+<attribute name="start" value="82637812"/>
+<reference name="chromosome" ref_id="5_55"/>
+</item>
+<item id="3_109" class="http://www.flymine.org/model/genomic#SNP">
+<attribute name="allele1" value="G"/>
+<attribute name="allele2" value="T"/>
+<attribute name="snp" value="rs1451303"/>
+<reference name="location" ref_id="4_109"/>
+</item>
+<item id="1_79" class="http://www.flymine.org/model/genomic#Gene">
+<attribute name="symbol" value="AK024261"/>
+<reference name="lociResult" ref_id="2_38"/>
+<reference name="organism" ref_id="0_1"/>
+</item>
+<item id="3_20" class="http://www.flymine.org/model/genomic#SNP">
+<attribute name="allele1" value="A"/>
+<attribute name="allele2" value="T"/>
+<attribute name="snp" value="rs12916269"/>
+<reference name="location" ref_id="4_20"/>
+</item>
+<item id="2_45" class="http://www.flymine.org/model/genomic#LociResult">
+<attribute name="description" value="phosphodiesterase 11A"/>
+<attribute name="details" value="Plays a role in signal transduction by regulating the intracellular concentration of cyclic nucleotides cAMP and cGMP. Catalyzes the hydrolysis of both cAMP and cGMP to 5'-AMP and 5'-GMP, respectively"/>
+<attribute name="geneName" value="PDE11A"/>
+<attribute name="humanPhenotype" value="Cushing syndrome (endocrine disorder caused by high levels of cortisol in the blood from a variety of causes, including primary pituitary adenoma, primary adrenal hyperplasia or neoplasia, ectopic ACTH production, and steroid use)"/>
+<attribute name="location" value="intronic"/>
+<attribute name="metaBeta" value="-0.0620624351731618"/>
+<attribute name="metaSe" value="0.0120442546753607"/>
+<attribute name="nStudies" value="15"/>
+<attribute name="nSubjects" value="32699"/>
+<attribute name="p" value="0.000000256534737896885"/>
+<attribute name="z" value="5.15286639530503"/>
+<reference name="snp" ref_id="3_45"/>
+</item>
+<item id="3_14" class="http://www.flymine.org/model/genomic#SNP">
+<attribute name="allele1" value="G"/>
+<attribute name="allele2" value="T"/>
+<attribute name="snp" value="rs11107116"/>
+<reference name="location" ref_id="4_14"/>
+</item>
+<item id="5_99" class="http://www.flymine.org/model/genomic#Chromosome">
+<attribute name="primaryIdentifier" value="9"/>
+</item>
+<item id="5_22" class="http://www.flymine.org/model/genomic#Chromosome">
+<attribute name="primaryIdentifier" value="6"/>
+</item>
+<item id="5_26" class="http://www.flymine.org/model/genomic#Chromosome">
+<attribute name="primaryIdentifier" value="9"/>
+</item>
+<item id="2_67" class="http://www.flymine.org/model/genomic#LociResult">
+<attribute name="description" value="gene desert"/>
+<attribute name="metaBeta" value="-0.113307255455942"/>
+<attribute name="metaSe" value="0.0240403795643893"/>
+<attribute name="nStudies" value="15"/>
+<attribute name="nSubjects" value="32683"/>
+<attribute name="p" value="0.0000024384975469971"/>
+<attribute name="z" value="4.71320576085175"/>
+<reference name="snp" ref_id="3_67"/>
+</item>
+<item id="3_66" class="http://www.flymine.org/model/genomic#SNP">
+<attribute name="allele1" value="A"/>
+<attribute name="allele2" value="G"/>
+<attribute name="snp" value="rs2580815"/>
+<reference name="location" ref_id="4_66"/>
+</item>
+<item id="2_103" class="http://www.flymine.org/model/genomic#LociResult">
+<attribute name="description" value="CUG triplet repeat, RNA binding protein 2 isoform 1 "/>
+<attribute name="geneName" value="CUGBP2"/>
+<attribute name="location" value="intronic"/>
+<attribute name="metaBeta" value="0.0352885718677294"/>
+<attribute name="metaSe" value="0.00790812778674428"/>
+<attribute name="nStudies" value="15"/>
+<attribute name="nSubjects" value="32708"/>
+<attribute name="p" value="0.00000810782196736248"/>
+<attribute name="z" value="4.46231684911322"/>
+<reference name="snp" ref_id="3_103"/>
+</item>
+<item id="1_63" class="http://www.flymine.org/model/genomic#Gene">
+<attribute name="symbol" value="C1orf19"/>
+<reference name="lociResult" ref_id="2_30"/>
+<reference name="organism" ref_id="0_1"/>
+</item>
+<item id="4_10" class="http://www.flymine.org/model/genomic#Location">
+<attribute name="end" value="118600947"/>
+<attribute name="start" value="118600947"/>
+<reference name="chromosome" ref_id="5_10"/>
+</item>
+<item id="2_50" class="http://www.flymine.org/model/genomic#LociResult">
+<attribute name="description" value="Neurotrophic tyrosine kinase receptor type 2"/>
+<attribute name="details" value="Involved in the development and/or maintenance of the nervous system"/>
+<attribute name="geneName" value="NTRK2"/>
+<attribute name="humanPhenotype" value="1 case: early-onset obesity, hyperphagia, and severe developmental delay"/>
+<attribute name="location" value="intronic"/>
+<attribute name="metaBeta" value="-0.135126932788372"/>
+<attribute name="metaSe" value="0.0268719698631651"/>
+<attribute name="mousePhenotype" value="Different lines of homozygous mice show varied abnormalities including innervation and neural defects, rod defects, impaired ovarian folliculogenesis, and reduced postnatal survival."/>
+<attribute name="nStudies" value="15"/>
+<attribute name="nSubjects" value="32708"/>
+<attribute name="p" value="0.000000494213325819004"/>
+<attribute name="z" value="5.02854585936395"/>
+<reference name="snp" ref_id="3_50"/>
+</item>
+<item id="3_91" class="http://www.flymine.org/model/genomic#SNP">
+<attribute name="allele1" value="C"/>
+<attribute name="allele2" value="T"/>
+<attribute name="snp" value="rs706105"/>
+<reference name="location" ref_id="4_91"/>
+</item>
+<item id="4_106" class="http://www.flymine.org/model/genomic#Location">
+<attribute name="end" value="44393750"/>
+<attribute name="start" value="44393750"/>
+<reference name="chromosome" ref_id="5_106"/>
+</item>
+<item id="3_39" class="http://www.flymine.org/model/genomic#SNP">
+<attribute name="allele1" value="A"/>
+<attribute name="allele2" value="G"/>
+<attribute name="snp" value="rs10916166"/>
+<reference name="location" ref_id="4_39"/>
+</item>
+<item id="1_206" class="http://www.flymine.org/model/genomic#Gene">
+<attribute name="symbol" value="HLA"/>
+<reference name="lociResult" ref_id="2_102"/>
+<reference name="organism" ref_id="0_1"/>
+</item>
+<item id="3_88" class="http://www.flymine.org/model/genomic#SNP">
+<attribute name="allele1" value="A"/>
+<attribute name="allele2" value="C"/>
+<attribute name="snp" value="rs7196597"/>
+<reference name="location" ref_id="4_88"/>
+</item>
+<item id="3_29" class="http://www.flymine.org/model/genomic#SNP">
+<attribute name="allele1" value="G"/>
+<attribute name="allele2" value="T"/>
+<attribute name="snp" value="rs634552"/>
+<reference name="location" ref_id="4_29"/>
+</item>
+<item id="1_181" class="http://www.flymine.org/model/genomic#Gene">
+<attribute name="symbol" value="MGC42090"/>
+<reference name="lociResult" ref_id="2_90"/>
+<reference name="organism" ref_id="0_1"/>
+</item>
+<item id="1_53" class="http://www.flymine.org/model/genomic#Gene">
+<attribute name="symbol" value="PTHLH"/>
+<reference name="lociResult" ref_id="2_25"/>
+<reference name="organism" ref_id="0_1"/>
+</item>
+<item id="3_107" class="http://www.flymine.org/model/genomic#SNP">
+<attribute name="allele1" value="C"/>
+<attribute name="allele2" value="T"/>
+<attribute name="snp" value="rs13081671"/>
+<reference name="location" ref_id="4_107"/>
+</item>
+<item id="5_108" class="http://www.flymine.org/model/genomic#Chromosome">
+<attribute name="primaryIdentifier" value="14"/>
+</item>
+<item id="3_30" class="http://www.flymine.org/model/genomic#SNP">
+<attribute name="allele1" value="A"/>
+<attribute name="allele2" value="G"/>
+<attribute name="snp" value="rs2274432"/>
+<reference name="location" ref_id="4_30"/>
+</item>
+<item id="4_88" class="http://www.flymine.org/model/genomic#Location">
+<attribute name="end" value="7541913"/>
+<attribute name="start" value="7541913"/>
+<reference name="chromosome" ref_id="5_88"/>
+</item>
+<item id="1_103" class="http://www.flymine.org/model/genomic#Gene">
+<attribute name="symbol" value="NTRK2"/>
+<reference name="lociResult" ref_id="2_50"/>
+<reference name="organism" ref_id="0_1"/>
+</item>
+<item id="1_119" class="http://www.flymine.org/model/genomic#Gene">
+<attribute name="symbol" value="FAM44B"/>
+<reference name="lociResult" ref_id="2_58"/>
+<reference name="organism" ref_id="0_1"/>
+</item>
+<item id="5_23" class="http://www.flymine.org/model/genomic#Chromosome">
+<attribute name="primaryIdentifier" value="17"/>
+</item>
+<item id="2_4" class="http://www.flymine.org/model/genomic#LociResult">
+<attribute name="description" value="Cell division protein kinase 6"/>
+<attribute name="geneName" value="CDK6"/>
+<attribute name="location" value="intronic"/>
+<attribute name="metaBeta" value="0.0722479575990425"/>
+<attribute name="metaSe" value="0.00820408069881796"/>
+<attribute name="nStudies" value="15"/>
+<attribute name="nSubjects" value="32719"/>
+<attribute name="p" value="2.18548370528781E-022"/>
+<attribute name="z" value="8.80634409281858"/>
+<reference name="snp" ref_id="3_4"/>
+</item>
+<item id="2_18" class="http://www.flymine.org/model/genomic#LociResult">
+<attribute name="description" value="leiomorphic adenoma gene 1"/>
+<attribute name="details" value="Transcription factor whose activation results in up-regulation of target genes, such as IGFII, leading to uncontrolled cell proliferation; CHCHD7/PLAG1 gene fusion upregulates PLAG1 expression"/>
+<attribute name="geneName" value="PLAG1; possible PLAG1/CHCHD7 fusion"/>
+<attribute name="humanPhenotype" value="A chromosomal rearrangement involving PLAG1 may be a cause of lipoblastomas and salivary gland pleiomorphic adenomas"/>
+<attribute name="location" value="3downstream"/>
+<attribute name="metaBeta" value="-0.0677986109615811"/>
+<attribute name="metaSe" value="0.0114017090892889"/>
+<attribute name="mousePhenotype" value="_-/-: reduced male fertility, small seminal vesicles and ventral prostate, reduced litter size (females only), reduced embryonic and postnatal growth, and delayed eyelid opening"/>
+<attribute name="nStudies" value="15"/>
+<attribute name="nSubjects" value="32707"/>
+<attribute name="p" value="0.00000000274179012826892"/>
+<attribute name="z" value="5.94635509734881"/>
+<reference name="snp" ref_id="3_18"/>
+</item>
+<item id="5_1" class="http://www.flymine.org/model/genomic#Chromosome">
+<attribute name="primaryIdentifier" value="3"/>
+</item>
+<item id="1_12" class="http://www.flymine.org/model/genomic#Gene">
+<attribute name="symbol" value="RSPO3"/>
+<reference name="lociResult" ref_id="2_6"/>
+<reference name="organism" ref_id="0_1"/>
+</item>
+<item id="5_52" class="http://www.flymine.org/model/genomic#Chromosome">
+<attribute name="primaryIdentifier" value="5"/>
+</item>
+<item id="4_45" class="http://www.flymine.org/model/genomic#Location">
+<attribute name="end" value="178590715"/>
+<attribute name="start" value="178590715"/>
+<reference name="chromosome" ref_id="5_45"/>
+</item>
+<item id="1_154" class="http://www.flymine.org/model/genomic#Gene">
+<attribute name="symbol" value="NOL8"/>
+<reference name="lociResult" ref_id="2_77"/>
+<reference name="organism" ref_id="0_1"/>
+</item>
+<item id="3_9" class="http://www.flymine.org/model/genomic#SNP">
+<attribute name="allele1" value="A"/>
+<attribute name="allele2" value="G"/>
+<attribute name="snp" value="rs10946808"/>
+<reference name="location" ref_id="4_9"/>
+</item>
+<item id="5_63" class="http://www.flymine.org/model/genomic#Chromosome">
+<attribute name="primaryIdentifier" value="11"/>
+</item>
+<item id="3_60" class="http://www.flymine.org/model/genomic#SNP">
+<attribute name="allele1" value="A"/>
+<attribute name="allele2" value="G"/>
+<attribute name="snp" value="rs13204629"/>
+<reference name="location" ref_id="4_60"/>
+</item>
+<item id="5_33" class="http://www.flymine.org/model/genomic#Chromosome">
+<attribute name="primaryIdentifier" value="2"/>
+</item>
+<item id="4_52" class="http://www.flymine.org/model/genomic#Location">
+<attribute name="end" value="77493906"/>
+<attribute name="start" value="77493906"/>
+<reference name="chromosome" ref_id="5_52"/>
+</item>
+<item id="4_74" class="http://www.flymine.org/model/genomic#Location">
+<attribute name="end" value="31845602"/>
+<attribute name="start" value="31845602"/>
+<reference name="chromosome" ref_id="5_74"/>
+</item>
+<item id="2_23" class="http://www.flymine.org/model/genomic#LociResult">
+<attribute name="description" value="ring finger protein 135"/>
+<attribute name="details" value="RING finger domain, a motif present in a variety of functionally distinct proteins and known to be involved in protein-protein and protein-DNA interactions"/>
+<attribute name="geneName" value="RNF135"/>
+<attribute name="humanPhenotype" value="overgrowth syndrome characterized by increased postnatal height and weight, macrocephaly, variable learning disability, and dysmorphic facial features"/>
+<attribute name="metaBeta" value="0.0460314751256225"/>
+<attribute name="metaSe" value="0.00798461308744642"/>
+<attribute name="nStudies" value="15"/>
+<attribute name="nSubjects" value="32723"/>
+<attribute name="p" value="0.00000000816468870290521"/>
+<attribute name="z" value="5.76502262808377"/>
+<reference name="snp" ref_id="3_23"/>
+</item>
+<item id="1_197" class="http://www.flymine.org/model/genomic#Gene">
+<attribute name="symbol" value="BMP6"/>
+<reference name="lociResult" ref_id="2_98"/>
+<reference name="organism" ref_id="0_1"/>
+</item>
+<item id="5_101" class="http://www.flymine.org/model/genomic#Chromosome">
+<attribute name="primaryIdentifier" value="15"/>
+</item>
+<item id="4_22" class="http://www.flymine.org/model/genomic#Location">
+<attribute name="end" value="142745570"/>
+<attribute name="start" value="142745570"/>
+<reference name="chromosome" ref_id="5_22"/>
+</item>
+<item id="3_47" class="http://www.flymine.org/model/genomic#SNP">
+<attribute name="allele1" value="C"/>
+<attribute name="allele2" value="G"/>
+<attribute name="snp" value="rs7921987"/>
+<reference name="location" ref_id="4_47"/>
+</item>
+<item id="2_38" class="http://www.flymine.org/model/genomic#LociResult">
+<attribute name="description" value="cDNA FLJ14199 fis, clone NT2RP3002713"/>
+<attribute name="geneName" value="AK024261"/>
+<attribute name="metaBeta" value="0.0417395332401265"/>
+<attribute name="metaSe" value="0.00787329345169693"/>
+<attribute name="nStudies" value="15"/>
+<attribute name="nSubjects" value="32699"/>
+<attribute name="p" value="0.00000011491356488591"/>
+<attribute name="z" value="5.30140702822786"/>
+<reference name="snp" ref_id="3_38"/>
+</item>
+<item id="5_66" class="http://www.flymine.org/model/genomic#Chromosome">
+<attribute name="primaryIdentifier" value="2"/>
+</item>
+<item id="4_96" class="http://www.flymine.org/model/genomic#Location">
+<attribute name="end" value="67441283"/>
+<attribute name="start" value="67441283"/>
+<reference name="chromosome" ref_id="5_96"/>
+</item>
+<item id="1_193" class="http://www.flymine.org/model/genomic#Gene">
+<attribute name="symbol" value="SOX9"/>
+<reference name="lociResult" ref_id="2_96"/>
+<reference name="organism" ref_id="0_1"/>
+</item>
+<item id="2_12" class="http://www.flymine.org/model/genomic#LociResult">
+<attribute name="description" value="EGF-containing fibulin-like extracellular matrix protein 1 precursor "/>
+<attribute name="geneName" value="EFEMP1"/>
+<attribute name="location" value="intronic"/>
+<attribute name="metaBeta" value="0.0619325540558733"/>
+<attribute name="metaSe" value="0.00918537482662922"/>
+<attribute name="nStudies" value="15"/>
+<attribute name="nSubjects" value="32720"/>
+<attribute name="p" value="0.0000000000155664370282693"/>
+<attribute name="z" value="6.74251788575087"/>
+<reference name="snp" ref_id="3_12"/>
+</item>
+<item id="2_31" class="http://www.flymine.org/model/genomic#LociResult">
+<attribute name="description" value="Peroxisome proliferator-activated receptor delta"/>
+<attribute name="details" value="may function as an integrator of transcription repression and nuclear receptor signaling; expression elevated in colorectal cancer cells"/>
+<attribute name="geneName" value="PPARD"/>
+<attribute name="location" value="intronic"/>
+<attribute name="metaBeta" value="0.19372499433255"/>
+<attribute name="metaSe" value="0.035086779497036"/>
+<attribute name="mousePhenotype" value="KO mice: embryonic lethality during organogenesis, embryonic growth retardation"/>
+<attribute name="nStudies" value="11"/>
+<attribute name="nSubjects" value="24989"/>
+<attribute name="p" value="0.0000000336481102980457"/>
+<attribute name="z" value="5.52131022309742"/>
+<reference name="snp" ref_id="3_31"/>
+</item>
+<item id="5_72" class="http://www.flymine.org/model/genomic#Chromosome">
+<attribute name="primaryIdentifier" value="12"/>
+</item>
+<item id="5_16" class="http://www.flymine.org/model/genomic#Chromosome">
+<attribute name="primaryIdentifier" value="14"/>
+</item>
+<item id="3_68" class="http://www.flymine.org/model/genomic#SNP">
+<attribute name="allele1" value="C"/>
+<attribute name="allele2" value="T"/>
+<attribute name="snp" value="rs5014442"/>
+<reference name="location" ref_id="4_68"/>
+</item>
+<item id="1_23" class="http://www.flymine.org/model/genomic#Gene">
+<attribute name="symbol" value="DLEU7"/>
+<reference name="lociResult" ref_id="2_11"/>
+<reference name="organism" ref_id="0_1"/>
+</item>
+<item id="5_12" class="http://www.flymine.org/model/genomic#Chromosome">
+<attribute name="primaryIdentifier" value="2"/>
+</item>
+<item id="3_70" class="http://www.flymine.org/model/genomic#SNP">
+<attribute name="allele1" value="C"/>
+<attribute name="allele2" value="T"/>
+<attribute name="snp" value="rs9302507"/>
+<reference name="location" ref_id="4_70"/>
+</item>
+<item id="3_94" class="http://www.flymine.org/model/genomic#SNP">
+<attribute name="allele1" value="A"/>
+<attribute name="allele2" value="G"/>
+<attribute name="snp" value="rs12590407"/>
+<reference name="location" ref_id="4_94"/>
+</item>
+<item id="4_24" class="http://www.flymine.org/model/genomic#Location">
+<attribute name="end" value="45213498"/>
+<attribute name="start" value="45213498"/>
+<reference name="chromosome" ref_id="5_24"/>
+</item>
+<item id="1_29" class="http://www.flymine.org/model/genomic#Gene">
+<attribute name="symbol" value="SOCS2"/>
+<reference name="lociResult" ref_id="2_14"/>
+<reference name="organism" ref_id="0_1"/>
+</item>
+<item id="4_17" class="http://www.flymine.org/model/genomic#Location">
+<attribute name="end" value="130823901"/>
+<attribute name="start" value="130823901"/>
+<reference name="chromosome" ref_id="5_17"/>
+</item>
+<item id="4_59" class="http://www.flymine.org/model/genomic#Location">
+<attribute name="end" value="95339258"/>
+<attribute name="start" value="95339258"/>
+<reference name="chromosome" ref_id="5_59"/>
+</item>
+<item id="1_157" class="http://www.flymine.org/model/genomic#Gene">
+<attribute name="symbol" value="BC039487"/>
+<reference name="lociResult" ref_id="2_78"/>
+<reference name="organism" ref_id="0_1"/>
+</item>
+<item id="2_13" class="http://www.flymine.org/model/genomic#LociResult">
+<attribute name="description" value="Lin-28 homolog B"/>
+<attribute name="details" value="promotes cell growth; highly upregulated in hepatocellular carcinoma"/>
+<attribute name="geneName" value="LIN28B"/>
+<attribute name="location" value="intronic"/>
+<attribute name="metaBeta" value="0.0857364930859144"/>
+<attribute name="metaSe" value="0.0129393544384422"/>
+<attribute name="nStudies" value="15"/>
+<attribute name="nSubjects" value="32705"/>
+<attribute name="p" value="0.000000000034484637367882"/>
+<attribute name="z" value="6.62602554816762"/>
+<reference name="snp" ref_id="3_13"/>
+</item>
+<item id="1_71" class="http://www.flymine.org/model/genomic#Gene">
+<attribute name="symbol" value="TNFSF10"/>
+<reference name="lociResult" ref_id="2_34"/>
+<reference name="organism" ref_id="0_1"/>
+</item>
+<item id="1_224" class="http://www.flymine.org/model/genomic#Gene">
+<attribute name="symbol" value="LOC146713"/>
+<reference name="lociResult" ref_id="2_111"/>
+<reference name="organism" ref_id="0_1"/>
+</item>
+<item id="2_68" class="http://www.flymine.org/model/genomic#LociResult">
+<attribute name="description" value="RAN binding protein 5"/>
+<attribute name="geneName" value="far RANBP5"/>
+<attribute name="metaBeta" value="0.0497665985329832"/>
+<attribute name="metaSe" value="0.010586691538742"/>
+<attribute name="nStudies" value="15"/>
+<attribute name="nSubjects" value="32697"/>
+<attribute name="p" value="0.00000259062857055348"/>
+<attribute name="z" value="4.70086413218541"/>
+<reference name="snp" ref_id="3_68"/>
+</item>
+<item id="1_97" class="http://www.flymine.org/model/genomic#Gene">
+<attribute name="symbol" value="STAM"/>
+<reference name="lociResult" ref_id="2_47"/>
+<reference name="organism" ref_id="0_1"/>
+</item>
+<item id="1_202" class="http://www.flymine.org/model/genomic#Gene">
+<attribute name="symbol" value="OPRD1 "/>
+<reference name="lociResult" ref_id="2_100"/>
+<reference name="organism" ref_id="0_1"/>
+</item>
+<item id="3_100" class="http://www.flymine.org/model/genomic#SNP">
+<attribute name="allele1" value="A"/>
+<attribute name="allele2" value="G"/>
+<attribute name="snp" value="rs2169257"/>
+<reference name="location" ref_id="4_100"/>
+</item>
+<item id="1_57" class="http://www.flymine.org/model/genomic#Gene">
+<attribute name="symbol" value="SDHB"/>
+<reference name="lociResult" ref_id="2_27"/>
+<reference name="organism" ref_id="0_1"/>
+</item>
+<item id="1_137" class="http://www.flymine.org/model/genomic#Gene">
+<attribute name="symbol" value="RANBP5"/>
+<reference name="lociResult" ref_id="2_68"/>
+<reference name="organism" ref_id="0_1"/>
+</item>
+<item id="2_7" class="http://www.flymine.org/model/genomic#LociResult">
+<attribute name="description" value="Hedgehog-interacting protein precursor"/>
+<attribute name="geneName" value="HHIP"/>
+<attribute name="location" value="intronic"/>
+<attribute name="metaBeta" value="0.0589270533709738"/>
+<attribute name="metaSe" value="0.00780956520864891"/>
+<attribute name="nStudies" value="15"/>
+<attribute name="nSubjects" value="32719"/>
+<attribute name="p" value="0.0000000000000450750547997814"/>
+<attribute name="z" value="7.54549732240067"/>
+<reference name="snp" ref_id="3_7"/>
+</item>
+<item id="3_11" class="http://www.flymine.org/model/genomic#SNP">
+<attribute name="allele1" value="G"/>
+<attribute name="allele2" value="T"/>
+<attribute name="snp" value="rs3116602"/>
+<reference name="location" ref_id="4_11"/>
+</item>
+<item id="2_110" class="http://www.flymine.org/model/genomic#LociResult">
+<attribute name="description" value="Poliovirus receptor-related protein 2 precursor (Herpes virus entry mediator B) "/>
+<attribute name="geneName" value="PVRL2"/>
+<attribute name="location" value="intronic"/>
+<attribute name="metaBeta" value="0.0477729298011684"/>
+<attribute name="metaSe" value="0.0108010401940375"/>
+<attribute name="nStudies" value="15"/>
+<attribute name="nSubjects" value="32699"/>
+<attribute name="p" value="0.00000973427034867136"/>
+<attribute name="z" value="4.42299342868298"/>
+<reference name="snp" ref_id="3_110"/>
+</item>
+<item id="2_86" class="http://www.flymine.org/model/genomic#LociResult">
+<attribute name="description" value="Serine/threonine-protein kinase LATS2  (Large tumor suppressor homolog 2)"/>
+<attribute name="geneName" value="LATS2"/>
+<attribute name="location" value="5upstream"/>
+<attribute name="metaBeta" value="0.048681398562384"/>
+<attribute name="metaSe" value="0.010662757637969"/>
+<attribute name="nStudies" value="15"/>
+<attribute name="nSubjects" value="32718"/>
+<attribute name="p" value="0.00000498176321728216"/>
+<attribute name="z" value="4.56555426046959"/>
+<reference name="snp" ref_id="3_86"/>
+</item>
+<item id="2_5" class="http://www.flymine.org/model/genomic#LociResult">
+<attribute name="description" value="ligand dependent nuclear receptor corepressor-like"/>
+<attribute name="geneName" value="near LCORL"/>
+<attribute name="metaBeta" value="0.083828533760572"/>
+<attribute name="metaSe" value="0.0110295244496567"/>
+<attribute name="nStudies" value="15"/>
+<attribute name="nSubjects" value="32705"/>
+<attribute name="p" value="0.0000000000000295319324550292"/>
+<attribute name="z" value="7.60037607633948"/>
+<reference name="snp" ref_id="3_5"/>
+</item>
+<item id="2_85" class="http://www.flymine.org/model/genomic#LociResult">
+<attribute name="description" value="cDNA FLJ38566 fis, highly similar to Collagen, type XV, alpha 1."/>
+<attribute name="geneName" value="near COL15A1"/>
+<attribute name="metaBeta" value="-0.0408384276665056"/>
+<attribute name="metaSe" value="0.00894441007777256"/>
+<attribute name="nStudies" value="15"/>
+<attribute name="nSubjects" value="32694"/>
+<attribute name="p" value="0.00000497582374814343"/>
+<attribute name="z" value="4.56580448698252"/>
+<reference name="snp" ref_id="3_85"/>
+</item>
+<item id="4_54" class="http://www.flymine.org/model/genomic#Location">
+<attribute name="end" value="20736419"/>
+<attribute name="start" value="20736419"/>
+<reference name="chromosome" ref_id="5_54"/>
+</item>
+<item id="5_100" class="http://www.flymine.org/model/genomic#Chromosome">
+<attribute name="primaryIdentifier" value="1"/>
+</item>
+<item id="2_64" class="http://www.flymine.org/model/genomic#LociResult">
+<attribute name="description" value="Polycomb protein SCMH1 (Sex comb on midleg homolog 1). "/>
+<attribute name="geneName" value="SCMH1"/>
+<attribute name="location" value="intronic"/>
+<attribute name="metaBeta" value="0.0378092583325974"/>
+<attribute name="metaSe" value="0.00792009872577693"/>
+<attribute name="nStudies" value="15"/>
+<attribute name="nSubjects" value="32708"/>
+<attribute name="p" value="0.00000180748920741713"/>
+<attribute name="z" value="4.77383674644642"/>
+<reference name="snp" ref_id="3_64"/>
+</item>
+<item id="5_54" class="http://www.flymine.org/model/genomic#Chromosome">
+<attribute name="primaryIdentifier" value="12"/>
+</item>
+<item id="4_108" class="http://www.flymine.org/model/genomic#Location">
+<attribute name="end" value="97556298"/>
+<attribute name="start" value="97556298"/>
+<reference name="chromosome" ref_id="5_108"/>
+</item>
+<item id="1_51" class="http://www.flymine.org/model/genomic#Gene">
+<attribute name="symbol" value="DYM"/>
+<reference name="lociResult" ref_id="2_24"/>
+<reference name="organism" ref_id="0_1"/>
+</item>
+<item id="4_85" class="http://www.flymine.org/model/genomic#Location">
+<attribute name="end" value="98757591"/>
+<attribute name="start" value="98757591"/>
+<reference name="chromosome" ref_id="5_85"/>
+</item>
+<item id="5_41" class="http://www.flymine.org/model/genomic#Chromosome">
+<attribute name="primaryIdentifier" value="1"/>
+</item>
+<item id="4_111" class="http://www.flymine.org/model/genomic#Location">
+<attribute name="end" value="74839214"/>
+<attribute name="start" value="74839214"/>
+<reference name="chromosome" ref_id="5_111"/>
+</item>
+<item id="2_77" class="http://www.flymine.org/model/genomic#LociResult">
+<attribute name="description" value="NOL8 Nucleolar protein 8; OGN osteoglycin preproprotein"/>
+<attribute name="details" value="NOL8 binds Ras-related GTP-binding proteins and plays a role in cell growth; OGN Induces bone formation in conjunction with TGF-beta-1 or -2"/>
+<attribute name="geneName" value="NOL8; also near OGN"/>
+<attribute name="metaBeta" value="0.0395075468486809"/>
+<attribute name="metaSe" value="0.00851217808067359"/>
+<attribute name="nStudies" value="15"/>
+<attribute name="nSubjects" value="32696"/>
+<attribute name="p" value="0.00000346229015191213"/>
+<attribute name="z" value="4.6412970304722"/>
+<reference name="snp" ref_id="3_77"/>
+</item>
+<item id="1_33" class="http://www.flymine.org/model/genomic#Gene">
+<attribute name="symbol" value="TRIP11"/>
+<reference name="lociResult" ref_id="2_16"/>
+<reference name="organism" ref_id="0_1"/>
+</item>
+<item id="2_70" class="http://www.flymine.org/model/genomic#LociResult">
+<attribute name="description" value="DNA excision repair complementing rodent protein ERCC-4"/>
+<attribute name="geneName" value="far ERCC4"/>
+<attribute name="metaBeta" value="-0.0518798302653487"/>
+<attribute name="metaSe" value="0.0110625316110841"/>
+<attribute name="nStudies" value="15"/>
+<attribute name="nSubjects" value="32704"/>
+<attribute name="p" value="0.00000273620908020078"/>
+<attribute name="z" value="4.68968877009742"/>
+<reference name="snp" ref_id="3_70"/>
+</item>
+<item id="2_47" class="http://www.flymine.org/model/genomic#LociResult">
+<attribute name="description" value="signal transducing adaptor molecule 1"/>
+<attribute name="details" value="nvolved in intracellular signal transduction mediated by cytokines and growth factors. May also play a role in T-cell development"/>
+<attribute name="geneName" value="STAM"/>
+<attribute name="location" value="5upstream"/>
+<attribute name="metaBeta" value="-0.0435098582654833"/>
+<attribute name="metaSe" value="0.00847868333081376"/>
+<attribute name="mousePhenotype" value="KO mice: embryonic lethality during organogenesis; premature death, growth defects (no increase in size after 5 weeks)"/>
+<attribute name="nStudies" value="15"/>
+<attribute name="nSubjects" value="32706"/>
+<attribute name="p" value="0.0000002871730715448"/>
+<attribute name="z" value="5.13167629546406"/>
+<reference name="snp" ref_id="3_47"/>
+</item>
+<item id="1_175" class="http://www.flymine.org/model/genomic#Gene">
+<attribute name="symbol" value="SIX6"/>
+<reference name="lociResult" ref_id="2_87"/>
+<reference name="organism" ref_id="0_1"/>
+</item>
+<item id="3_58" class="http://www.flymine.org/model/genomic#SNP">
+<attribute name="allele1" value="A"/>
+<attribute name="allele2" value="G"/>
+<attribute name="snp" value="rs7733195"/>
+<reference name="location" ref_id="4_58"/>
+</item>
+<item id="4_2" class="http://www.flymine.org/model/genomic#Location">
+<attribute name="end" value="33489170"/>
+<attribute name="start" value="33489170"/>
+<reference name="chromosome" ref_id="5_2"/>
+</item>
+<item id="3_31" class="http://www.flymine.org/model/genomic#SNP">
+<attribute name="allele1" value="C"/>
+<attribute name="allele2" value="T"/>
+<attribute name="snp" value="rs6937510"/>
+<reference name="location" ref_id="4_31"/>
+</item>
+<item id="2_99" class="http://www.flymine.org/model/genomic#LociResult">
+<attribute name="description" value="Proprotein convertase subtilisin/kexin type 5 precursor "/>
+<attribute name="geneName" value="PCSK5"/>
+<attribute name="location" value="intronic"/>
+<attribute name="metaBeta" value="-0.0458076168471976"/>
+<attribute name="metaSe" value="0.01023751153576"/>
+<attribute name="nStudies" value="14"/>
+<attribute name="nSubjects" value="28669"/>
+<attribute name="p" value="0.00000765948274161765"/>
+<attribute name="z" value="4.4744874462109"/>
+<reference name="snp" ref_id="3_99"/>
+</item>
+<item id="3_75" class="http://www.flymine.org/model/genomic#SNP">
+<attribute name="allele1" value="A"/>
+<attribute name="allele2" value="C"/>
+<attribute name="snp" value="rs1888665"/>
+<reference name="location" ref_id="4_75"/>
+</item>
+<item id="2_22" class="http://www.flymine.org/model/genomic#LociResult">
+<attribute name="description" value="developmentally regulated G-protein-coupled receptor alpha 1"/>
+<attribute name="details" value="possibly plays a role in development, not only as a receptor or an adhesion molecule but also as a secreted ligand"/>
+<attribute name="geneName" value="DREG (GPR126) "/>
+<attribute name="location" value="intronic"/>
+<attribute name="metaBeta" value="-0.0486480094464262"/>
+<attribute name="metaSe" value="0.00843407960089268"/>
+<attribute name="nStudies" value="15"/>
+<attribute name="nSubjects" value="32708"/>
+<attribute name="p" value="0.00000000802043609304803"/>
+<attribute name="z" value="5.76802825542187"/>
+<reference name="snp" ref_id="3_22"/>
+</item>
+<item id="5_71" class="http://www.flymine.org/model/genomic#Chromosome">
+<attribute name="primaryIdentifier" value="20"/>
+</item>
+<item id="4_30" class="http://www.flymine.org/model/genomic#Location">
+<attribute name="end" value="180752602"/>
+<attribute name="start" value="180752602"/>
+<reference name="chromosome" ref_id="5_30"/>
+</item>
+<item id="5_107" class="http://www.flymine.org/model/genomic#Chromosome">
+<attribute name="primaryIdentifier" value="3"/>
+</item>
+<item id="3_104" class="http://www.flymine.org/model/genomic#SNP">
+<attribute name="allele1" value="A"/>
+<attribute name="allele2" value="G"/>
+<attribute name="snp" value="rs8001781"/>
+<reference name="location" ref_id="4_104"/>
+</item>
+<item id="4_102" class="http://www.flymine.org/model/genomic#Location">
+<attribute name="end" value="32686330"/>
+<attribute name="start" value="32686330"/>
+<reference name="chromosome" ref_id="5_102"/>
+</item>
+<item id="5_36" class="http://www.flymine.org/model/genomic#Chromosome">
+<attribute name="primaryIdentifier" value="20"/>
+</item>
+<item id="3_77" class="http://www.flymine.org/model/genomic#SNP">
+<attribute name="allele1" value="C"/>
+<attribute name="allele2" value="T"/>
+<attribute name="snp" value="rs2296669"/>
+<reference name="location" ref_id="4_77"/>
+</item>
+<item id="2_52" class="http://www.flymine.org/model/genomic#LociResult">
+<attribute name="description" value="Adapter-related protein complex 3 beta-1 subunit)"/>
+<attribute name="details" value="Appears to be involved in the sorting of a subset of transmembrane proteins targeted to lysosomes and lysosome-related organelles."/>
+<attribute name="geneName" value="AP3B1"/>
+<attribute name="humanPhenotype" value="Hermansky-Pudlak syndrome 2 (HPS2) - culocutaneous albinism, bleeding due to platelet storage pool deficiency, and lysosomal storage defects, plus immunodeficiency"/>
+<attribute name="location" value="intronic"/>
+<attribute name="metaBeta" value="-0.044551744317319"/>
+<attribute name="metaSe" value="0.00895643973138034"/>
+<attribute name="nStudies" value="15"/>
+<attribute name="nSubjects" value="32676"/>
+<attribute name="p" value="0.000000654942046596219"/>
+<attribute name="z" value="4.97426942552013"/>
+<reference name="snp" ref_id="3_52"/>
+</item>
+<item id="4_76" class="http://www.flymine.org/model/genomic#Location">
+<attribute name="end" value="96904720"/>
+<attribute name="start" value="96904720"/>
+<reference name="chromosome" ref_id="5_76"/>
+</item>
+<item id="2_44" class="http://www.flymine.org/model/genomic#LociResult">
+<attribute name="description" value="Dynamin-3 "/>
+<attribute name="details" value="Microtubule-associated force-producing protein involved in producing microtubule bundles and able to bind and hydrolyze GTP. Most probably involved in vesicular trafficking processes, in particular endocytosis"/>
+<attribute name="geneName" value="DNM3"/>
+<attribute name="location" value="intronic"/>
+<attribute name="metaBeta" value="0.0460483285618862"/>
+<attribute name="metaSe" value="0.00891593623415911"/>
+<attribute name="nStudies" value="15"/>
+<attribute name="nSubjects" value="32701"/>
+<attribute name="p" value="0.000000240797032979856"/>
+<attribute name="z" value="5.16472161223673"/>
+<reference name="snp" ref_id="3_44"/>
+</item>
+<item id="1_165" class="http://www.flymine.org/model/genomic#Gene">
+<attribute name="symbol" value="IGSF5"/>
+<reference name="lociResult" ref_id="2_82"/>
+<reference name="organism" ref_id="0_1"/>
+</item>
+<item id="2_80" class="http://www.flymine.org/model/genomic#LociResult">
+<attribute name="description" value="Zinc finger protein 462. "/>
+<attribute name="geneName" value="ZNF462"/>
+<attribute name="location" value="intronic"/>
+<attribute name="metaBeta" value="-0.045068111958815"/>
+<attribute name="metaSe" value="0.00974754700957945"/>
+<attribute name="nStudies" value="15"/>
+<attribute name="nSubjects" value="32708"/>
+<attribute name="p" value="0.00000377257465355996"/>
+<attribute name="z" value="4.62353368642635"/>
+<reference name="snp" ref_id="3_80"/>
+</item>
+<item id="5_18" class="http://www.flymine.org/model/genomic#Chromosome">
+<attribute name="primaryIdentifier" value="8"/>
+</item>
+<item id="2_89" class="http://www.flymine.org/model/genomic#LociResult">
+<attribute name="description" value="DNA polymerase sigma  (Topoisomerase-related function protein 4-1) (TRF4-1) "/>
+<attribute name="geneName" value="POLS"/>
+<attribute name="location" value="intronic"/>
+<attribute name="metaBeta" value="0.0386442343786785"/>
+<attribute name="metaSe" value="0.00851230275492653"/>
+<attribute name="nStudies" value="15"/>
+<attribute name="nSubjects" value="32708"/>
+<attribute name="p" value="0.00000563050313395763"/>
+<attribute name="z" value="4.5398096721023"/>
+<reference name="snp" ref_id="3_89"/>
+</item>
+<item id="4_43" class="http://www.flymine.org/model/genomic#Location">
+<attribute name="end" value="24951733"/>
+<attribute name="start" value="24951733"/>
+<reference name="chromosome" ref_id="5_43"/>
+</item>
+<item id="2_20" class="http://www.flymine.org/model/genomic#LociResult">
+<attribute name="description" value="A disintegrin and metalloproteinase with thrombospondin motif 17"/>
+<attribute name="geneName" value="ADAMTS17"/>
+<attribute name="location" value="intronic"/>
+<attribute name="metaBeta" value="-0.0481289782804942"/>
+<attribute name="metaSe" value="0.0082193310172946"/>
+<attribute name="nStudies" value="15"/>
+<attribute name="nSubjects" value="32700"/>
+<attribute name="p" value="0.00000000475338390870661"/>
+<attribute name="z" value="5.85558340200975"/>
+<reference name="snp" ref_id="3_20"/>
+</item>
+<item id="1_109" class="http://www.flymine.org/model/genomic#Gene">
+<attribute name="symbol" value="GNA12"/>
+<reference name="lociResult" ref_id="2_53"/>
+<reference name="organism" ref_id="0_1"/>
+</item>
+<item id="1_121" class="http://www.flymine.org/model/genomic#Gene">
+<attribute name="symbol" value="PTCH1"/>
+<reference name="lociResult" ref_id="2_59"/>
+<reference name="organism" ref_id="0_1"/>
+</item>
+<item id="2_49" class="http://www.flymine.org/model/genomic#LociResult">
+<attribute name="description" value="Chorionic somatomammotropin hormone"/>
+<attribute name="details" value="Structurally, immunologically, and functionally similar to pituitary growth hormone. Member of the somatotropin/prolactin family of hormones. Expressed mainly in the placenta"/>
+<attribute name="geneName" value="CSH2"/>
+<attribute name="humanPhenotype" value="placental lactogen deficiency and Silver-Russell syndrome (poor growth, low birth weight, short height, and differences in the size of the two sides of the body)"/>
+<attribute name="location" value="intronic"/>
+<attribute name="metaBeta" value="0.0451730528915552"/>
+<attribute name="metaSe" value="0.00895758226590458"/>
+<attribute name="nStudies" value="15"/>
+<attribute name="nSubjects" value="32708"/>
+<attribute name="p" value="0.000000458298472949537"/>
+<attribute name="z" value="5.0429961512604"/>
+<reference name="snp" ref_id="3_49"/>
+</item>
+<item id="4_81" class="http://www.flymine.org/model/genomic#Location">
+<attribute name="end" value="78334950"/>
+<attribute name="start" value="78334950"/>
+<reference name="chromosome" ref_id="5_81"/>
+</item>
+<item id="5_31" class="http://www.flymine.org/model/genomic#Chromosome">
+<attribute name="primaryIdentifier" value="6"/>
+</item>
+<item id="3_99" class="http://www.flymine.org/model/genomic#SNP">
+<attribute name="allele1" value="A"/>
+<attribute name="allele2" value="G"/>
+<attribute name="snp" value="rs4271035"/>
+<reference name="location" ref_id="4_99"/>
+</item>
+<item id="4_46" class="http://www.flymine.org/model/genomic#Location">
+<attribute name="end" value="47411277"/>
+<attribute name="start" value="47411277"/>
+<reference name="chromosome" ref_id="5_46"/>
+</item>
+<item id="2_42" class="http://www.flymine.org/model/genomic#LociResult">
+<attribute name="description" value="adaptor-related protein complex 3, delta 1"/>
+<attribute name="details" value="facilitates the budding of vesicles from the Golgi membrane and may be directly involved in trafficking to lysosomes"/>
+<attribute name="geneName" value="near AP3D1"/>
+<attribute name="metaBeta" value="0.0409957144479415"/>
+<attribute name="metaSe" value="0.00789174808927518"/>
+<attribute name="mousePhenotype" value="Spontaneus deletion: postnatal lethality, growth retardation, reduced pigmentation, abnormal inner ear morphology, hyperactivity"/>
+<attribute name="nStudies" value="15"/>
+<attribute name="nSubjects" value="32708"/>
+<attribute name="p" value="0.000000204987300911341"/>
+<attribute name="z" value="5.19475710377202"/>
+<reference name="snp" ref_id="3_42"/>
+</item>
+<item id="4_83" class="http://www.flymine.org/model/genomic#Location">
+<attribute name="end" value="171446036"/>
+<attribute name="start" value="171446036"/>
+<reference name="chromosome" ref_id="5_83"/>
+</item>
+<item id="2_62" class="http://www.flymine.org/model/genomic#LociResult">
+<attribute name="description" value="H1 histone family, member X"/>
+<attribute name="geneName" value="near H1FX"/>
+<attribute name="metaBeta" value="0.0461528135625123"/>
+<attribute name="metaSe" value="0.00964068108383655"/>
+<attribute name="nStudies" value="15"/>
+<attribute name="nSubjects" value="32703"/>
+<attribute name="p" value="0.00000169041737163589"/>
+<attribute name="z" value="4.7872980302078"/>
+<reference name="snp" ref_id="3_62"/>
+</item>
+<item id="4_75" class="http://www.flymine.org/model/genomic#Location">
+<attribute name="end" value="12973932"/>
+<attribute name="start" value="12973932"/>
+<reference name="chromosome" ref_id="5_75"/>
+</item>
+<item id="3_55" class="http://www.flymine.org/model/genomic#SNP">
+<attribute name="allele1" value="A"/>
+<attribute name="allele2" value="G"/>
+<attribute name="snp" value="rs1993160"/>
+<reference name="location" ref_id="4_55"/>
+</item>
+<item id="2_58" class="http://www.flymine.org/model/genomic#LociResult">
+<attribute name="description" value="hypothetical protein LOC91272"/>
+<attribute name="geneName" value="far FAM44B"/>
+<attribute name="metaBeta" value="-0.0394537524330986"/>
+<attribute name="metaSe" value="0.00811935604631417"/>
+<attribute name="nStudies" value="15"/>
+<attribute name="nSubjects" value="32708"/>
+<attribute name="p" value="0.00000117848062708426"/>
+<attribute name="z" value="4.85922186538535"/>
+<reference name="snp" ref_id="3_58"/>
+</item>
+<item id="5_2" class="http://www.flymine.org/model/genomic#Chromosome">
+<attribute name="primaryIdentifier" value="20"/>
+</item>
+<item id="4_36" class="http://www.flymine.org/model/genomic#Location">
+<attribute name="end" value="6448462"/>
+<attribute name="start" value="6448462"/>
+<reference name="chromosome" ref_id="5_36"/>
+</item>
+<item id="5_96" class="http://www.flymine.org/model/genomic#Chromosome">
+<attribute name="primaryIdentifier" value="17"/>
+</item>
+<item id="4_107" class="http://www.flymine.org/model/genomic#Location">
+<attribute name="end" value="137359247"/>
+<attribute name="start" value="137359247"/>
+<reference name="chromosome" ref_id="5_107"/>
+</item>
+<item id="1_83" class="http://www.flymine.org/model/genomic#Gene">
+<attribute name="symbol" value="TAX2"/>
+<reference name="lociResult" ref_id="2_40"/>
+<reference name="organism" ref_id="0_1"/>
+</item>
+<item id="1_149" class="http://www.flymine.org/model/genomic#Gene">
+<attribute name="symbol" value="AKAP2"/>
+<reference name="lociResult" ref_id="2_74"/>
+<reference name="organism" ref_id="0_1"/>
+</item>
+<item id="4_99" class="http://www.flymine.org/model/genomic#Location">
+<attribute name="end" value="75769599"/>
+<attribute name="start" value="75769599"/>
+<reference name="chromosome" ref_id="5_99"/>
+</item>
+<item id="4_94" class="http://www.flymine.org/model/genomic#Location">
+<attribute name="end" value="23904955"/>
+<attribute name="start" value="23904955"/>
+<reference name="chromosome" ref_id="5_94"/>
+</item>
+<item id="3_40" class="http://www.flymine.org/model/genomic#SNP">
+<attribute name="allele1" value="C"/>
+<attribute name="allele2" value="T"/>
+<attribute name="snp" value="rs2079795"/>
+<reference name="location" ref_id="4_40"/>
+</item>
+<item id="2_2" class="http://www.flymine.org/model/genomic#LociResult">
+<attribute name="description" value="Growth/differentiation factor 5 precursor"/>
+<attribute name="geneName" value="GDF5"/>
+<attribute name="location" value="5utr"/>
+<attribute name="metaBeta" value="-0.0872655544455655"/>
+<attribute name="metaSe" value="0.00849799107040557"/>
+<attribute name="nStudies" value="15"/>
+<attribute name="nSubjects" value="32700"/>
+<attribute name="p" value="2.68181096270425E-028"/>
+<attribute name="z" value="10.2689628316355"/>
+<reference name="snp" ref_id="3_2"/>
+</item>
+<item id="1_199" class="http://www.flymine.org/model/genomic#Gene">
+<attribute name="symbol" value="PCSK5"/>
+<reference name="lociResult" ref_id="2_99"/>
+<reference name="organism" ref_id="0_1"/>
+</item>
+<item id="3_54" class="http://www.flymine.org/model/genomic#SNP">
+<attribute name="allele1" value="A"/>
+<attribute name="allele2" value="G"/>
+<attribute name="snp" value="rs6487133"/>
+<reference name="location" ref_id="4_54"/>
+</item>
+<item id="2_26" class="http://www.flymine.org/model/genomic#LociResult">
+<attribute name="description" value="Far upstream element (FUSE)-binding protein 3"/>
+<attribute name="details" value="binds to the FUSE of the human MYC protooncogene"/>
+<attribute name="geneName" value="FUBP3"/>
+<attribute name="location" value="intronic"/>
+<attribute name="metaBeta" value="0.0477311035406963"/>
+<attribute name="metaSe" value="0.00834322282084188"/>
+<attribute name="nStudies" value="15"/>
+<attribute name="nSubjects" value="32704"/>
+<attribute name="p" value="0.0000000105934334637681"/>
+<attribute name="z" value="5.72094316137178"/>
+<reference name="snp" ref_id="3_26"/>
+</item>
+<item id="5_29" class="http://www.flymine.org/model/genomic#Chromosome">
+<attribute name="primaryIdentifier" value="11"/>
+</item>
+<item id="1_145" class="http://www.flymine.org/model/genomic#Gene">
+<attribute name="symbol" value="FAM101A"/>
+<reference name="lociResult" ref_id="2_72"/>
+<reference name="organism" ref_id="0_1"/>
+</item>
+<item id="1_113" class="http://www.flymine.org/model/genomic#Gene">
+<attribute name="symbol" value="PRKG2"/>
+<reference name="lociResult" ref_id="2_55"/>
+<reference name="organism" ref_id="0_1"/>
+</item>
+<item id="5_84" class="http://www.flymine.org/model/genomic#Chromosome">
+<attribute name="primaryIdentifier" value="18"/>
+</item>
+<item id="4_110" class="http://www.flymine.org/model/genomic#Location">
+<attribute name="end" value="50055540"/>
+<attribute name="start" value="50055540"/>
+<reference name="chromosome" ref_id="5_110"/>
+</item>
+<item id="4_38" class="http://www.flymine.org/model/genomic#Location">
+<attribute name="end" value="218101667"/>
+<attribute name="start" value="218101667"/>
+<reference name="chromosome" ref_id="5_38"/>
+</item>
+<item id="4_13" class="http://www.flymine.org/model/genomic#Location">
+<attribute name="end" value="105514355"/>
+<attribute name="start" value="105514355"/>
+<reference name="chromosome" ref_id="5_13"/>
+</item>
+<item id="5_46" class="http://www.flymine.org/model/genomic#Chromosome">
+<attribute name="primaryIdentifier" value="11"/>
+</item>
+<item id="4_50" class="http://www.flymine.org/model/genomic#Location">
+<attribute name="end" value="84833168"/>
+<attribute name="start" value="84833168"/>
+<reference name="chromosome" ref_id="5_50"/>
+</item>
+<item id="1_139" class="http://www.flymine.org/model/genomic#Gene">
+<attribute name="symbol" value="SNRPE"/>
+<reference name="lociResult" ref_id="2_69"/>
+<reference name="organism" ref_id="0_1"/>
+</item>
+<item id="3_23" class="http://www.flymine.org/model/genomic#SNP">
+<attribute name="allele1" value="C"/>
+<attribute name="allele2" value="G"/>
+<attribute name="snp" value="rs9890032"/>
+<reference name="location" ref_id="4_23"/>
+</item>
+<item id="5_49" class="http://www.flymine.org/model/genomic#Chromosome">
+<attribute name="primaryIdentifier" value="17"/>
+</item>
+<item id="1_167" class="http://www.flymine.org/model/genomic#Gene">
+<attribute name="symbol" value="STK10"/>
+<reference name="lociResult" ref_id="2_83"/>
+<reference name="organism" ref_id="0_1"/>
+</item>
+<item id="2_100" class="http://www.flymine.org/model/genomic#LociResult">
+<attribute name="description" value="erythrocyte membrane protein band 4.1; &amp; opioid receptor, delta 1"/>
+<attribute name="geneName" value="near EPB41, OPRD1 "/>
+<attribute name="metaBeta" value="0.177019282320981"/>
+<attribute name="metaSe" value="0.039562537864446"/>
+<attribute name="nStudies" value="7"/>
+<attribute name="nSubjects" value="20669"/>
+<attribute name="p" value="0.00000766201693913615"/>
+<attribute name="z" value="4.47441675575784"/>
+<reference name="snp" ref_id="3_100"/>
+</item>
+<item id="2_32" class="http://www.flymine.org/model/genomic#LociResult">
+<attribute name="description" value="MHC class I polypeptide-related sequence A"/>
+<attribute name="geneName" value="near MICA"/>
+<attribute name="metaBeta" value="0.0472941577931676"/>
+<attribute name="metaSe" value="0.00860247928662027"/>
+<attribute name="nStudies" value="15"/>
+<attribute name="nSubjects" value="32708"/>
+<attribute name="p" value="0.0000000384698854993815"/>
+<attribute name="z" value="5.49773573610643"/>
+<reference name="snp" ref_id="3_32"/>
+</item>
+<item id="1_91" class="http://www.flymine.org/model/genomic#Gene">
+<attribute name="symbol" value="DNM3"/>
+<reference name="lociResult" ref_id="2_44"/>
+<reference name="organism" ref_id="0_1"/>
+</item>
+<item id="1_127" class="http://www.flymine.org/model/genomic#Gene">
+<attribute name="symbol" value="H1FX"/>
+<reference name="lociResult" ref_id="2_62"/>
+<reference name="organism" ref_id="0_1"/>
+</item>
+<item id="2_111" class="http://www.flymine.org/model/genomic#LociResult">
+<attribute name="geneName" value="LOC146713"/>
+<attribute name="location" value="intronic"/>
+<attribute name="metaBeta" value="-0.0573326982089174"/>
+<attribute name="metaSe" value="0.0129664131348718"/>
+<attribute name="nStudies" value="15"/>
+<attribute name="nSubjects" value="32700"/>
+<attribute name="p" value="0.00000979585072879985"/>
+<attribute name="z" value="4.42163130331914"/>
+<reference name="snp" ref_id="3_111"/>
+</item>
+<item id="1_20" class="http://www.flymine.org/model/genomic#Gene">
+<attribute name="symbol" value="SPAG17"/>
+<reference name="lociResult" ref_id="2_10"/>
+<reference name="organism" ref_id="0_1"/>
+</item>
+<item id="4_89" class="http://www.flymine.org/model/genomic#Location">
+<attribute name="end" value="6800939"/>
+<attribute name="start" value="6800939"/>
+<reference name="chromosome" ref_id="5_89"/>
+</item>
+<item id="3_45" class="http://www.flymine.org/model/genomic#SNP">
+<attribute name="allele1" value="C"/>
+<attribute name="allele2" value="T"/>
+<attribute name="snp" value="rs3108451"/>
+<reference name="location" ref_id="4_45"/>
+</item>
+<item id="5_92" class="http://www.flymine.org/model/genomic#Chromosome">
+<attribute name="primaryIdentifier" value="3"/>
+</item>
+<item id="3_24" class="http://www.flymine.org/model/genomic#SNP">
+<attribute name="allele1" value="C"/>
+<attribute name="allele2" value="G"/>
+<attribute name="snp" value="rs9967417"/>
+<reference name="location" ref_id="4_24"/>
+</item>
+<item id="1_55" class="http://www.flymine.org/model/genomic#Gene">
+<attribute name="symbol" value="FUBP3"/>
+<reference name="lociResult" ref_id="2_26"/>
+<reference name="organism" ref_id="0_1"/>
+</item>
+<item id="4_71" class="http://www.flymine.org/model/genomic#Location">
+<attribute name="end" value="35970860"/>
+<attribute name="start" value="35970860"/>
+<reference name="chromosome" ref_id="5_71"/>
+</item>
+<item id="3_93" class="http://www.flymine.org/model/genomic#SNP">
+<attribute name="allele1" value="C"/>
+<attribute name="allele2" value="G"/>
+<attribute name="snp" value="rs4865615"/>
+<reference name="location" ref_id="4_93"/>
+</item>
+<item id="4_62" class="http://www.flymine.org/model/genomic#Location">
+<attribute name="end" value="130533454"/>
+<attribute name="start" value="130533454"/>
+<reference name="chromosome" ref_id="5_62"/>
+</item>
+<item id="5_109" class="http://www.flymine.org/model/genomic#Chromosome">
+<attribute name="primaryIdentifier" value="3"/>
+</item>
+<item id="5_73" class="http://www.flymine.org/model/genomic#Chromosome">
+<attribute name="primaryIdentifier" value="2"/>
+</item>
+<item id="5_28" class="http://www.flymine.org/model/genomic#Chromosome">
+<attribute name="primaryIdentifier" value="8"/>
+</item>
+<item id="2_3" class="http://www.flymine.org/model/genomic#LociResult">
+<attribute name="description" value="high mobility group AT-hook 2 isoform a"/>
+<attribute name="geneName" value="HMGA2"/>
+<attribute name="metaBeta" value="-0.0770462374753265"/>
+<attribute name="metaSe" value="0.00785944161494302"/>
+<attribute name="nStudies" value="15"/>
+<attribute name="nSubjects" value="32708"/>
+<attribute name="p" value="1.0927418526439E-022"/>
+<attribute name="z" value="9.80301670908018"/>
+<reference name="snp" ref_id="3_3"/>
+</item>
+<item id="4_12" class="http://www.flymine.org/model/genomic#Location">
+<attribute name="end" value="56022960"/>
+<attribute name="start" value="56022960"/>
+<reference name="chromosome" ref_id="5_12"/>
+</item>
+<item id="2_1" class="http://www.flymine.org/model/genomic#LociResult">
+<attribute name="description" value="zinc finger and BTB domain containing 38"/>
+<attribute name="geneName" value="ZBTB38"/>
+<attribute name="location" value="coding"/>
+<attribute name="metaBeta" value="-0.083584297595485"/>
+<attribute name="metaSe" value="0.0075341611860502"/>
+<attribute name="nStudies" value="15"/>
+<attribute name="nSubjects" value="32708"/>
+<attribute name="p" value="1.34090548135213E-028"/>
+<attribute name="z" value="11.0940415968595"/>
+<reference name="snp" ref_id="3_1"/>
+<collection name="genes"><reference ref_id="1_2"/></collection>
+</item>
+<item id="4_58" class="http://www.flymine.org/model/genomic#Location">
+<attribute name="end" value="172927230"/>
+<attribute name="start" value="172927230"/>
+<reference name="chromosome" ref_id="5_58"/>
+</item>
+<item id="3_36" class="http://www.flymine.org/model/genomic#SNP">
+<attribute name="allele1" value="C"/>
+<attribute name="allele2" value="T"/>
+<attribute name="snp" value="rs6085589"/>
+<reference name="location" ref_id="4_36"/>
+</item>
+<item id="2_107" class="http://www.flymine.org/model/genomic#LociResult">
+<attribute name="description" value="ring finger protein 184 "/>
+<attribute name="geneName" value="MSL2L1"/>
+<attribute name="location" value="intronic"/>
+<attribute name="metaBeta" value="0.0406246997127435"/>
+<attribute name="metaSe" value="0.00914497186227732"/>
+<attribute name="nStudies" value="15"/>
+<attribute name="nSubjects" value="32422"/>
+<attribute name="p" value="0.00000890027465594301"/>
+<attribute name="z" value="4.44229903870114"/>
+<reference name="snp" ref_id="3_107"/>
+</item>
+<item id="3_43" class="http://www.flymine.org/model/genomic#SNP">
+<attribute name="allele1" value="C"/>
+<attribute name="allele2" value="T"/>
+<attribute name="snp" value="rs2278483"/>
+<reference name="location" ref_id="4_43"/>
+</item>
+<item id="2_81" class="http://www.flymine.org/model/genomic#LociResult">
+<attribute name="description" value="PDZ domain protein GIPC2"/>
+<attribute name="geneName" value="near GIPC2"/>
+<attribute name="metaBeta" value="-0.0395861836387155"/>
+<attribute name="metaSe" value="0.00858875414415706"/>
+<attribute name="nStudies" value="15"/>
+<attribute name="nSubjects" value="32708"/>
+<attribute name="p" value="0.00000404470841131044"/>
+<attribute name="z" value="4.60907169704537"/>
+<reference name="snp" ref_id="3_81"/>
+</item>
+<item id="5_89" class="http://www.flymine.org/model/genomic#Chromosome">
+<attribute name="primaryIdentifier" value="5"/>
+</item>
+<item id="3_26" class="http://www.flymine.org/model/genomic#SNP">
+<attribute name="allele1" value="A"/>
+<attribute name="allele2" value="G"/>
+<attribute name="snp" value="rs7466269"/>
+<reference name="location" ref_id="4_26"/>
+</item>
+<item id="3_72" class="http://www.flymine.org/model/genomic#SNP">
+<attribute name="allele1" value="A"/>
+<attribute name="allele2" value="G"/>
+<attribute name="snp" value="rs4765138"/>
+<reference name="location" ref_id="4_72"/>
+</item>
+<item id="5_39" class="http://www.flymine.org/model/genomic#Chromosome">
+<attribute name="primaryIdentifier" value="1"/>
+</item>
+<item id="3_111" class="http://www.flymine.org/model/genomic#SNP">
+<attribute name="allele1" value="C"/>
+<attribute name="allele2" value="T"/>
+<attribute name="snp" value="rs9911346"/>
+<reference name="location" ref_id="4_111"/>
+</item>
+<item id="3_82" class="http://www.flymine.org/model/genomic#SNP">
+<attribute name="allele1" value="A"/>
+<attribute name="allele2" value="G"/>
+<attribute name="snp" value="rs1571711"/>
+<reference name="location" ref_id="4_82"/>
+</item>
+<item id="5_45" class="http://www.flymine.org/model/genomic#Chromosome">
+<attribute name="primaryIdentifier" value="2"/>
+</item>
+<item id="5_44" class="http://www.flymine.org/model/genomic#Chromosome">
+<attribute name="primaryIdentifier" value="1"/>
+</item>
+<item id="5_85" class="http://www.flymine.org/model/genomic#Chromosome">
+<attribute name="primaryIdentifier" value="9"/>
+</item>
+<item id="3_59" class="http://www.flymine.org/model/genomic#SNP">
+<attribute name="allele1" value="G"/>
+<attribute name="allele2" value="T"/>
+<attribute name="snp" value="rs10512248"/>
+<reference name="location" ref_id="4_59"/>
+</item>
+<item id="4_19" class="http://www.flymine.org/model/genomic#Location">
+<attribute name="end" value="32864603"/>
+<attribute name="start" value="32864603"/>
+<reference name="chromosome" ref_id="5_19"/>
+</item>
+<item id="3_49" class="http://www.flymine.org/model/genomic#SNP">
+<attribute name="allele1" value="A"/>
+<attribute name="allele2" value="G"/>
+<attribute name="snp" value="rs2727300"/>
+<reference name="location" ref_id="4_49"/>
+</item>
+<item id="1_220" class="http://www.flymine.org/model/genomic#Gene">
+<attribute name="symbol" value="SYNPR"/>
+<reference name="lociResult" ref_id="2_109"/>
+<reference name="organism" ref_id="0_1"/>
+</item>
+<item id="1_208" class="http://www.flymine.org/model/genomic#Gene">
+<attribute name="symbol" value="CUGBP2"/>
+<reference name="lociResult" ref_id="2_103"/>
+<reference name="organism" ref_id="0_1"/>
+</item>
+<item id="1_95" class="http://www.flymine.org/model/genomic#Gene">
+<attribute name="symbol" value="SPI1"/>
+<reference name="lociResult" ref_id="2_46"/>
+<reference name="organism" ref_id="0_1"/>
+</item>
+<item id="3_85" class="http://www.flymine.org/model/genomic#SNP">
+<attribute name="allele1" value="C"/>
+<attribute name="allele2" value="T"/>
+<attribute name="snp" value="rs7470221"/>
+<reference name="location" ref_id="4_85"/>
+</item>
+<item id="3_22" class="http://www.flymine.org/model/genomic#SNP">
+<attribute name="allele1" value="A"/>
+<attribute name="allele2" value="G"/>
+<attribute name="snp" value="rs4896582"/>
+<reference name="location" ref_id="4_22"/>
+</item>
+<item id="4_21" class="http://www.flymine.org/model/genomic#Location">
+<attribute name="end" value="27958331"/>
+<attribute name="start" value="27958331"/>
+<reference name="chromosome" ref_id="5_21"/>
+</item>
+<item id="4_95" class="http://www.flymine.org/model/genomic#Location">
+<attribute name="end" value="48059054"/>
+<attribute name="start" value="48059054"/>
+<reference name="chromosome" ref_id="5_95"/>
+</item>
+<item id="1_65" class="http://www.flymine.org/model/genomic#Gene">
+<attribute name="symbol" value="PPARD"/>
+<reference name="lociResult" ref_id="2_31"/>
+<reference name="organism" ref_id="0_1"/>
+</item>
+<item id="3_32" class="http://www.flymine.org/model/genomic#SNP">
+<attribute name="allele1" value="C"/>
+<attribute name="allele2" value="T"/>
+<attribute name="snp" value="rs9266718"/>
+<reference name="location" ref_id="4_32"/>
+</item>
+<item id="4_44" class="http://www.flymine.org/model/genomic#Location">
+<attribute name="end" value="168784944"/>
+<attribute name="start" value="168784944"/>
+<reference name="chromosome" ref_id="5_44"/>
+</item>
+<item id="2_74" class="http://www.flymine.org/model/genomic#LociResult">
+<attribute name="description" value="A-kinase anchor protein 6"/>
+<attribute name="geneName" value="near AKAP2"/>
+<attribute name="metaBeta" value="-0.0381611145064788"/>
+<attribute name="metaSe" value="0.00817750697814648"/>
+<attribute name="nStudies" value="15"/>
+<attribute name="nSubjects" value="32699"/>
+<attribute name="p" value="0.00000306231857205574"/>
+<attribute name="z" value="4.66659516261623"/>
+<reference name="snp" ref_id="3_74"/>
+</item>
+<item id="4_11" class="http://www.flymine.org/model/genomic#Location">
+<attribute name="end" value="50009356"/>
+<attribute name="start" value="50009356"/>
+<reference name="chromosome" ref_id="5_11"/>
+</item>
+<item id="4_7" class="http://www.flymine.org/model/genomic#Location">
+<attribute name="end" value="145977018"/>
+<attribute name="start" value="145977018"/>
+<reference name="chromosome" ref_id="5_7"/>
+</item>
+<item id="2_39" class="http://www.flymine.org/model/genomic#LociResult">
+<attribute name="description" value="Zinc finger protein 678. "/>
+<attribute name="details" value="May be involved in transcriptional regulation."/>
+<attribute name="geneName" value="ZNF678"/>
+<attribute name="location" value="intronic"/>
+<attribute name="metaBeta" value="0.0539345177557445"/>
+<attribute name="metaSe" value="0.0103133366610906"/>
+<attribute name="nStudies" value="15"/>
+<attribute name="nSubjects" value="32708"/>
+<attribute name="p" value="0.000000169886783973894"/>
+<attribute name="z" value="5.22958956234063"/>
+<reference name="snp" ref_id="3_39"/>
+</item>
+<item id="3_90" class="http://www.flymine.org/model/genomic#SNP">
+<attribute name="allele1" value="C"/>
+<attribute name="allele2" value="T"/>
+<attribute name="snp" value="rs17142098"/>
+<reference name="location" ref_id="4_90"/>
+</item>
+<item id="1_171" class="http://www.flymine.org/model/genomic#Gene">
+<attribute name="symbol" value="COL15A1"/>
+<reference name="lociResult" ref_id="2_85"/>
+<reference name="organism" ref_id="0_1"/>
+</item>
+<item id="4_101" class="http://www.flymine.org/model/genomic#Location">
+<attribute name="end" value="72015444"/>
+<attribute name="start" value="72015444"/>
+<reference name="chromosome" ref_id="5_101"/>
+</item>
+<item id="2_8" class="http://www.flymine.org/model/genomic#LociResult">
+<attribute name="description" value="ADAMTS-like protein 3 precursor"/>
+<attribute name="geneName" value="ADAMTSL3"/>
+<attribute name="location" value="coding"/>
+<attribute name="metaBeta" value="0.0551318937649601"/>
+<attribute name="metaSe" value="0.00781102564513928"/>
+<attribute name="nStudies" value="15"/>
+<attribute name="nSubjects" value="32708"/>
+<attribute name="p" value="0.00000000000168665081901054"/>
+<attribute name="z" value="7.05821440994348"/>
+<reference name="snp" ref_id="3_8"/>
+</item>
+<item id="1_159" class="http://www.flymine.org/model/genomic#Gene">
+<attribute name="symbol" value="SERAC1"/>
+<reference name="lociResult" ref_id="2_79"/>
+<reference name="organism" ref_id="0_1"/>
+</item>
+<item id="4_49" class="http://www.flymine.org/model/genomic#Location">
+<attribute name="end" value="59319130"/>
+<attribute name="start" value="59319130"/>
+<reference name="chromosome" ref_id="5_49"/>
+</item>
+<item id="1_47" class="http://www.flymine.org/model/genomic#Gene">
+<attribute name="symbol" value=" DREG"/>
+<reference name="lociResult" ref_id="2_22"/>
+<reference name="organism" ref_id="0_1"/>
+</item>
+<item id="2_43" class="http://www.flymine.org/model/genomic#LociResult">
+<attribute name="description" value="nuclear receptor coactivator 1"/>
+<attribute name="details" value="Nuclear receptor coactivator that directly binds nuclear receptors and stimulates the transcriptional activities in a hormone-dependent fashion. Required for mediating steroid hormone response"/>
+<attribute name="geneName" value="NCOA1"/>
+<attribute name="location" value="intronic"/>
+<attribute name="metaBeta" value="-0.0489643267525784"/>
+<attribute name="metaSe" value="0.00947334249956792"/>
+<attribute name="mousePhenotype" value="KO mice: slightly obese, elevated serum levels of testosterone and alkaline phosphetase (marker of bone formation ), decreased bone volume and mineral density, abnormal bone remodelling"/>
+<attribute name="nStudies" value="15"/>
+<attribute name="nSubjects" value="32699"/>
+<attribute name="p" value="0.000000235799650027957"/>
+<attribute name="z" value="5.1686431430946"/>
+<reference name="snp" ref_id="3_43"/>
+</item>
+<item id="3_21" class="http://www.flymine.org/model/genomic#SNP">
+<attribute name="allele1" value="A"/>
+<attribute name="allele2" value="G"/>
+<attribute name="snp" value="rs849141"/>
+<reference name="location" ref_id="4_21"/>
+</item>
+<item id="1_129" class="http://www.flymine.org/model/genomic#Gene">
+<attribute name="symbol" value="SSSCA1"/>
+<reference name="lociResult" ref_id="2_63"/>
+<reference name="organism" ref_id="0_1"/>
+</item>
+<item id="2_104" class="http://www.flymine.org/model/genomic#LociResult">
+<attribute name="description" value="glypican 5"/>
+<attribute name="geneName" value="near GPC5"/>
+<attribute name="humanPhenotype" value="may contribute to development and/or progression of lymphomas and other tumors"/>
+<attribute name="metaBeta" value="0.0372438682975724"/>
+<attribute name="metaSe" value="0.00835498380471961"/>
+<attribute name="nStudies" value="15"/>
+<attribute name="nSubjects" value="32708"/>
+<attribute name="p" value="0.00000828503450023277"/>
+<attribute name="z" value="4.45768288342269"/>
+<reference name="snp" ref_id="3_104"/>
+</item>
+<item id="2_75" class="http://www.flymine.org/model/genomic#LociResult">
+<attribute name="description" value="Coiled-coil domain-containing protein 3 precursor. "/>
+<attribute name="geneName" value="CCDC3"/>
+<attribute name="location" value="3downstream"/>
+<attribute name="metaBeta" value="-0.0363722350304161"/>
+<attribute name="metaSe" value="0.00782555293191769"/>
+<attribute name="nStudies" value="15"/>
+<attribute name="nSubjects" value="32713"/>
+<attribute name="p" value="0.00000335363080772311"/>
+<attribute name="z" value="4.64788051999067"/>
+<reference name="snp" ref_id="3_75"/>
+</item>
+<item id="5_13" class="http://www.flymine.org/model/genomic#Chromosome">
+<attribute name="primaryIdentifier" value="6"/>
+</item>
+<item id="1_81" class="http://www.flymine.org/model/genomic#Gene">
+<attribute name="symbol" value="ZNF678"/>
+<reference name="lociResult" ref_id="2_39"/>
+<reference name="organism" ref_id="0_1"/>
+</item>
+<item id="1_89" class="http://www.flymine.org/model/genomic#Gene">
+<attribute name="symbol" value="NCOA1"/>
+<reference name="lociResult" ref_id="2_43"/>
+<reference name="organism" ref_id="0_1"/>
+</item>
+<item id="3_19" class="http://www.flymine.org/model/genomic#SNP">
+<attribute name="allele1" value="C"/>
+<attribute name="allele2" value="T"/>
+<attribute name="snp" value="rs7733331"/>
+<reference name="location" ref_id="4_19"/>
+</item>
+<item id="4_1" class="http://www.flymine.org/model/genomic#Location">
+<attribute name="end" value="142588268"/>
+<attribute name="start" value="142588268"/>
+<reference name="chromosome" ref_id="5_1"/>
+</item>
+<item id="2_69" class="http://www.flymine.org/model/genomic#LociResult">
+<attribute name="description" value="mall nuclear ribonucleoprotein polypeptide E"/>
+<attribute name="geneName" value="near SNRPE"/>
+<attribute name="metaBeta" value="-0.0556727545880387"/>
+<attribute name="metaSe" value="0.0118704156342228"/>
+<attribute name="nStudies" value="15"/>
+<attribute name="nSubjects" value="32708"/>
+<attribute name="p" value="0.00000273148218088437"/>
+<attribute name="z" value="4.69004256494036"/>
+<reference name="snp" ref_id="3_69"/>
+</item>
+<item id="1_42" class="http://www.flymine.org/model/genomic#Gene">
+<attribute name="symbol" value="ADAMTS17"/>
+<reference name="lociResult" ref_id="2_20"/>
+<reference name="organism" ref_id="0_1"/>
+</item>
+<item id="4_72" class="http://www.flymine.org/model/genomic#Location">
+<attribute name="end" value="123286620"/>
+<attribute name="start" value="123286620"/>
+<reference name="chromosome" ref_id="5_72"/>
+</item>
+<item id="5_51" class="http://www.flymine.org/model/genomic#Chromosome">
+<attribute name="primaryIdentifier" value="15"/>
+</item>
+<item id="4_15" class="http://www.flymine.org/model/genomic#Location">
+<attribute name="end" value="116214350"/>
+<attribute name="start" value="116214350"/>
+<reference name="chromosome" ref_id="5_15"/>
+</item>
+<item id="5_8" class="http://www.flymine.org/model/genomic#Chromosome">
+<attribute name="primaryIdentifier" value="15"/>
+</item>
+<item id="1_204" class="http://www.flymine.org/model/genomic#Gene">
+<attribute name="symbol" value="LOXL1"/>
+<reference name="lociResult" ref_id="2_101"/>
+<reference name="organism" ref_id="0_1"/>
+</item>
+<item id="4_61" class="http://www.flymine.org/model/genomic#Location">
+<attribute name="end" value="194147"/>
+<attribute name="start" value="194147"/>
+<reference name="chromosome" ref_id="5_61"/>
+</item>
+<item id="1_6" class="http://www.flymine.org/model/genomic#Gene">
+<attribute name="symbol" value="HMGA2"/>
+<reference name="lociResult" ref_id="2_3"/>
+<reference name="organism" ref_id="0_1"/>
+</item>
+<item id="2_87" class="http://www.flymine.org/model/genomic#LociResult">
+<attribute name="description" value="sine oculis homeobox homolog 6"/>
+<attribute name="geneName" value="near SIX6"/>
+<attribute name="metaBeta" value="-0.0388306958809757"/>
+<attribute name="metaSe" value="0.00853929787058781"/>
+<attribute name="nStudies" value="15"/>
+<attribute name="nSubjects" value="32697"/>
+<attribute name="p" value="0.00000543401294672563"/>
+<attribute name="z" value="4.54729375523035"/>
+<reference name="snp" ref_id="3_87"/>
+</item>
+<item id="5_10" class="http://www.flymine.org/model/genomic#Chromosome">
+<attribute name="primaryIdentifier" value="1"/>
+</item>
+<item id="3_3" class="http://www.flymine.org/model/genomic#SNP">
+<attribute name="allele1" value="A"/>
+<attribute name="allele2" value="C"/>
+<attribute name="snp" value="rs8756"/>
+<reference name="location" ref_id="4_3"/>
+</item>
+<item id="5_98" class="http://www.flymine.org/model/genomic#Chromosome">
+<attribute name="primaryIdentifier" value="6"/>
+</item>
+<item id="2_65" class="http://www.flymine.org/model/genomic#LociResult">
+<attribute name="geneName" value="gene desert"/>
+<attribute name="metaBeta" value="-0.040240380576912"/>
+<attribute name="metaSe" value="0.00844575979905273"/>
+<attribute name="nStudies" value="15"/>
+<attribute name="nSubjects" value="32731"/>
+<attribute name="p" value="0.00000189260508687283"/>
+<attribute name="z" value="4.76456607035229"/>
+<reference name="snp" ref_id="3_65"/>
+</item>
+<item id="5_58" class="http://www.flymine.org/model/genomic#Chromosome">
+<attribute name="primaryIdentifier" value="5"/>
+</item>
+<item id="3_67" class="http://www.flymine.org/model/genomic#SNP">
+<attribute name="allele1" value="A"/>
+<attribute name="allele2" value="T"/>
+<attribute name="snp" value="rs10756499"/>
+<reference name="location" ref_id="4_67"/>
+</item>
+<item id="5_4" class="http://www.flymine.org/model/genomic#Chromosome">
+<attribute name="primaryIdentifier" value="7"/>
+</item>
+<item id="4_103" class="http://www.flymine.org/model/genomic#Location">
+<attribute name="end" value="11137922"/>
+<attribute name="start" value="11137922"/>
+<reference name="chromosome" ref_id="5_103"/>
+</item>
+<item id="1_177" class="http://www.flymine.org/model/genomic#Gene">
+<attribute name="symbol" value="A2BP1_HUMAN"/>
+<reference name="lociResult" ref_id="2_88"/>
+<reference name="organism" ref_id="0_1"/>
+</item>
+<item id="5_87" class="http://www.flymine.org/model/genomic#Chromosome">
+<attribute name="primaryIdentifier" value="14"/>
+</item>
+<item id="3_4" class="http://www.flymine.org/model/genomic#SNP">
+<attribute name="allele1" value="C"/>
+<attribute name="allele2" value="T"/>
+<attribute name="snp" value="rs2282978"/>
+<reference name="location" ref_id="4_4"/>
+</item>
+<item id="2_46" class="http://www.flymine.org/model/genomic#LociResult">
+<attribute name="description" value="hematopoietic transcription factor PU.1 isoform"/>
+<attribute name="details" value="Binds to the PU-box, a purine-rich DNA sequence (5'-GAGGAA-3') that can act as a lymphoid-specific enhancer. Atranscriptional activator that may be specifically involved in the differentiation or activation of macrophages or B-cells."/>
+<attribute name="geneName" value="SPI1"/>
+<attribute name="location" value="intronic"/>
+<attribute name="metaBeta" value="0.044408884066998"/>
+<attribute name="metaSe" value="0.00864952759703215"/>
+<attribute name="mousePhenotype" value="KO mice: premature death, abnormal liver and spleen morphology, hematopoietic and immune system abnormalities; decreased body size, failure of tooth eruption"/>
+<attribute name="nStudies" value="15"/>
+<attribute name="nSubjects" value="32729"/>
+<attribute name="p" value="0.000000283263169142955"/>
+<attribute name="z" value="5.13425543404656"/>
+<reference name="snp" ref_id="3_46"/>
+</item>
+<item id="0_1" class="http://www.flymine.org/model/genomic#Organism">
+<attribute name="taxonId" value="9606"/>
+</item>
+<item id="5_70" class="http://www.flymine.org/model/genomic#Chromosome">
+<attribute name="primaryIdentifier" value="16"/>
+</item>
+<item id="1_195" class="http://www.flymine.org/model/genomic#Gene">
+<attribute name="symbol" value="ANAPC13"/>
+<reference name="lociResult" ref_id="2_97"/>
+<reference name="organism" ref_id="0_1"/>
+</item>
+<item id="4_20" class="http://www.flymine.org/model/genomic#Location">
+<attribute name="end" value="98347739"/>
+<attribute name="start" value="98347739"/>
+<reference name="chromosome" ref_id="5_20"/>
+</item>
+<item id="5_78" class="http://www.flymine.org/model/genomic#Chromosome">
+<attribute name="primaryIdentifier" value="9"/>
+</item>
+<item id="4_69" class="http://www.flymine.org/model/genomic#Location">
+<attribute name="end" value="200587365"/>
+<attribute name="start" value="200587365"/>
+<reference name="chromosome" ref_id="5_69"/>
+</item>
+<item id="1_191" class="http://www.flymine.org/model/genomic#Gene">
+<attribute name="symbol" value="PTPRJ"/>
+<reference name="lociResult" ref_id="2_95"/>
+<reference name="organism" ref_id="0_1"/>
+</item>
+<item id="1_131" class="http://www.flymine.org/model/genomic#Gene">
+<attribute name="symbol" value="SCMH1"/>
+<reference name="lociResult" ref_id="2_64"/>
+<reference name="organism" ref_id="0_1"/>
+</item>
+<item id="5_50" class="http://www.flymine.org/model/genomic#Chromosome">
+<attribute name="primaryIdentifier" value="9"/>
+</item>
+<item id="1_210" class="http://www.flymine.org/model/genomic#Gene">
+<attribute name="symbol" value="GPC5"/>
+<reference name="lociResult" ref_id="2_104"/>
+<reference name="organism" ref_id="0_1"/>
+</item>
+<item id="4_18" class="http://www.flymine.org/model/genomic#Location">
+<attribute name="end" value="57298443"/>
+<attribute name="start" value="57298443"/>
+<reference name="chromosome" ref_id="5_18"/>
+</item>
+<item id="1_125" class="http://www.flymine.org/model/genomic#Gene">
+<attribute name="symbol" value="BET1L"/>
+<reference name="lociResult" ref_id="2_61"/>
+<reference name="organism" ref_id="0_1"/>
+</item>
+<item id="4_92" class="http://www.flymine.org/model/genomic#Location">
+<attribute name="end" value="56625218"/>
+<attribute name="start" value="56625218"/>
+<reference name="chromosome" ref_id="5_92"/>
+</item>
+<item id="5_21" class="http://www.flymine.org/model/genomic#Chromosome">
+<attribute name="primaryIdentifier" value="7"/>
+</item>
+<item id="3_16" class="http://www.flymine.org/model/genomic#SNP">
+<attribute name="allele1" value="C"/>
+<attribute name="allele2" value="T"/>
+<attribute name="snp" value="rs8007661"/>
+<reference name="location" ref_id="4_16"/>
+</item>
+<item id="1_40" class="http://www.flymine.org/model/genomic#Gene">
+<attribute name="symbol" value="NPR3"/>
+<reference name="lociResult" ref_id="2_19"/>
+<reference name="organism" ref_id="0_1"/>
+</item>
+<item id="1_59" class="http://www.flymine.org/model/genomic#Gene">
+<attribute name="symbol" value="ZFAT1"/>
+<reference name="lociResult" ref_id="2_28"/>
+<reference name="organism" ref_id="0_1"/>
+</item>
+<item id="2_106" class="http://www.flymine.org/model/genomic#LociResult">
+<attribute name="description" value="solute carrier family 3, member 1"/>
+<attribute name="geneName" value="SLCA2"/>
+<attribute name="humanPhenotype" value="cystinuria"/>
+<attribute name="metaBeta" value="0.0402355146987458"/>
+<attribute name="metaSe" value="0.00904120025437654"/>
+<attribute name="nStudies" value="15"/>
+<attribute name="nSubjects" value="32481"/>
+<attribute name="p" value="0.0000085774217863932"/>
+<attribute name="z" value="4.45024040688283"/>
+<reference name="snp" ref_id="3_106"/>
+</item>
+<item id="3_42" class="http://www.flymine.org/model/genomic#SNP">
+<attribute name="allele1" value="A"/>
+<attribute name="allele2" value="C"/>
+<attribute name="snp" value="rs12982593"/>
+<reference name="location" ref_id="4_42"/>
+</item>
+<item id="5_81" class="http://www.flymine.org/model/genomic#Chromosome">
+<attribute name="primaryIdentifier" value="1"/>
+</item>
+<item id="1_147" class="http://www.flymine.org/model/genomic#Gene">
+<attribute name="symbol" value="MGC34824"/>
+<reference name="lociResult" ref_id="2_73"/>
+<reference name="organism" ref_id="0_1"/>
+</item>
+<item id="3_73" class="http://www.flymine.org/model/genomic#SNP">
+<attribute name="allele1" value="A"/>
+<attribute name="allele2" value="C"/>
+<attribute name="snp" value="rs2447741"/>
+<reference name="location" ref_id="4_73"/>
+</item>
+<item id="4_41" class="http://www.flymine.org/model/genomic#Location">
+<attribute name="end" value="146705945"/>
+<attribute name="start" value="146705945"/>
+<reference name="chromosome" ref_id="5_41"/>
+</item>
+<item id="1_115" class="http://www.flymine.org/model/genomic#Gene">
+<attribute name="symbol" value="KCNE2"/>
+<reference name="lociResult" ref_id="2_56"/>
+<reference name="organism" ref_id="0_1"/>
+</item>
+<item id="2_108" class="http://www.flymine.org/model/genomic#LociResult">
+<attribute name="description" value="B-cell CLL/lymphoma 11B isoform 1"/>
+<attribute name="geneName" value="near cDNA clones, far BCL11B"/>
+<attribute name="metaBeta" value="0.0380269169919612"/>
+<attribute name="metaSe" value="0.00857759700894228"/>
+<attribute name="nStudies" value="15"/>
+<attribute name="nSubjects" value="32708"/>
+<attribute name="p" value="0.00000928088153506756"/>
+<attribute name="z" value="4.43328323215902"/>
+<reference name="snp" ref_id="3_108"/>
+</item>
+<item id="3_97" class="http://www.flymine.org/model/genomic#SNP">
+<attribute name="allele1" value="C"/>
+<attribute name="allele2" value="T"/>
+<attribute name="snp" value="rs6805388"/>
+<reference name="location" ref_id="4_97"/>
+</item>
+<item id="5_80" class="http://www.flymine.org/model/genomic#Chromosome">
+<attribute name="primaryIdentifier" value="9"/>
+</item>
+<item id="5_64" class="http://www.flymine.org/model/genomic#Chromosome">
+<attribute name="primaryIdentifier" value="1"/>
+</item>
+<item id="3_98" class="http://www.flymine.org/model/genomic#SNP">
+<attribute name="allele1" value="A"/>
+<attribute name="allele2" value="G"/>
+<attribute name="snp" value="rs9942510"/>
+<reference name="location" ref_id="4_98"/>
+</item>
+<item id="2_15" class="http://www.flymine.org/model/genomic#LociResult">
+<attribute name="description" value="Pappalysin-1 precursor (Pregnancy-associated plasma protein-A)"/>
+<attribute name="details" value="low levels associate with pregnancy defects (intrauterine growth restriction, premature delivery, preeclampsia, stillbirth), high levels with CAD"/>
+<attribute name="geneName" value="PAPPA"/>
+<attribute name="location" value="intronic"/>
+<attribute name="metaBeta" value="0.0610921385744153"/>
+<attribute name="metaSe" value="0.00972271019234488"/>
+<attribute name="nStudies" value="15"/>
+<attribute name="nSubjects" value="32701"/>
+<attribute name="p" value="0.000000000331146221554945"/>
+<attribute name="z" value="6.28344745095003"/>
+<reference name="snp" ref_id="3_15"/>
+</item>
+<item id="5_37" class="http://www.flymine.org/model/genomic#Chromosome">
+<attribute name="primaryIdentifier" value="5"/>
+</item>
+<item id="4_4" class="http://www.flymine.org/model/genomic#Location">
+<attribute name="end" value="91909061"/>
+<attribute name="start" value="91909061"/>
+<reference name="chromosome" ref_id="5_4"/>
+</item>
+<item id="2_60" class="http://www.flymine.org/model/genomic#LociResult">
+<attribute name="description" value="Phosphatase and actin regulator 2. "/>
+<attribute name="geneName" value="PHACTR2"/>
+<attribute name="location" value="intronic"/>
+<attribute name="metaBeta" value="-0.0911440516686776"/>
+<attribute name="metaSe" value="0.0189590346490849"/>
+<attribute name="nStudies" value="14"/>
+<attribute name="nSubjects" value="28670"/>
+<attribute name="p" value="0.00000152890177052001"/>
+<attribute name="z" value="4.80742049137385"/>
+<reference name="snp" ref_id="3_60"/>
+</item>
+<item id="4_60" class="http://www.flymine.org/model/genomic#Location">
+<attribute name="end" value="144181544"/>
+<attribute name="start" value="144181544"/>
+<reference name="chromosome" ref_id="5_60"/>
+</item>
+<item id="4_86" class="http://www.flymine.org/model/genomic#Location">
+<attribute name="end" value="20536360"/>
+<attribute name="start" value="20536360"/>
+<reference name="chromosome" ref_id="5_86"/>
+</item>
+<item id="1_93" class="http://www.flymine.org/model/genomic#Gene">
+<attribute name="symbol" value="PDE11A"/>
+<reference name="lociResult" ref_id="2_45"/>
+<reference name="organism" ref_id="0_1"/>
+</item>
+<item id="1_111" class="http://www.flymine.org/model/genomic#Gene">
+<attribute name="symbol" value="SLCO1C1"/>
+<reference name="lociResult" ref_id="2_54"/>
+<reference name="organism" ref_id="0_1"/>
+</item>
+<item id="2_84" class="http://www.flymine.org/model/genomic#LociResult">
+<attribute name="description" value="CDK5 and ABL1 enzyme substrate 1 (Interactor with CDK3 1)"/>
+<attribute name="geneName" value="CABLES1"/>
+<attribute name="location" value="intronic"/>
+<attribute name="metaBeta" value="0.0462500911520394"/>
+<attribute name="metaSe" value="0.0101022959524602"/>
+<attribute name="nStudies" value="15"/>
+<attribute name="nSubjects" value="32700"/>
+<attribute name="p" value="0.00000469047484186191"/>
+<attribute name="z" value="4.57817622545259"/>
+<reference name="snp" ref_id="3_84"/>
+</item>
+<item id="3_95" class="http://www.flymine.org/model/genomic#SNP">
+<attribute name="allele1" value="C"/>
+<attribute name="allele2" value="T"/>
+<attribute name="snp" value="rs10838802"/>
+<reference name="location" ref_id="4_95"/>
+</item>
+<item id="4_9" class="http://www.flymine.org/model/genomic#Location">
+<attribute name="end" value="26341366"/>
+<attribute name="start" value="26341366"/>
+<reference name="chromosome" ref_id="5_9"/>
+</item>
+<item id="5_20" class="http://www.flymine.org/model/genomic#Chromosome">
+<attribute name="primaryIdentifier" value="15"/>
+</item>
+<item id="1_105" class="http://www.flymine.org/model/genomic#Gene">
+<attribute name="symbol" value="ACAN"/>
+<reference name="lociResult" ref_id="2_51"/>
+<reference name="organism" ref_id="0_1"/>
+</item>
+<item id="1_141" class="http://www.flymine.org/model/genomic#Gene">
+<attribute name="symbol" value="ERCC4"/>
+<reference name="lociResult" ref_id="2_70"/>
+<reference name="organism" ref_id="0_1"/>
+</item>
+<item id="4_68" class="http://www.flymine.org/model/genomic#Location">
+<attribute name="end" value="97204779"/>
+<attribute name="start" value="97204779"/>
+<reference name="chromosome" ref_id="5_68"/>
+</item>
+<item id="3_87" class="http://www.flymine.org/model/genomic#SNP">
+<attribute name="allele1" value="C"/>
+<attribute name="allele2" value="T"/>
+<attribute name="snp" value="rs7159392"/>
+<reference name="location" ref_id="4_87"/>
+</item>
+<item id="3_103" class="http://www.flymine.org/model/genomic#SNP">
+<attribute name="allele1" value="A"/>
+<attribute name="allele2" value="C"/>
+<attribute name="snp" value="rs1291833"/>
+<reference name="location" ref_id="4_103"/>
+</item>
+<item id="5_9" class="http://www.flymine.org/model/genomic#Chromosome">
+<attribute name="primaryIdentifier" value="6"/>
+</item>
+<item id="1_155" class="http://www.flymine.org/model/genomic#Gene">
+<attribute name="symbol" value="OGN"/>
+<reference name="lociResult" ref_id="2_77"/>
+<reference name="organism" ref_id="0_1"/>
+</item>
+<item id="4_66" class="http://www.flymine.org/model/genomic#Location">
+<attribute name="end" value="232623200"/>
+<attribute name="start" value="232623200"/>
+<reference name="chromosome" ref_id="5_66"/>
+</item>
+<item id="4_63" class="http://www.flymine.org/model/genomic#Location">
+<attribute name="end" value="65093395"/>
+<attribute name="start" value="65093395"/>
+<reference name="chromosome" ref_id="5_63"/>
+</item>
+<item id="2_54" class="http://www.flymine.org/model/genomic#LociResult">
+<attribute name="description" value="Solute carrier organic anion transporter family member 1C1 "/>
+<attribute name="details" value="Mediates the Na(+)-independent high affinity transport of organic anions such as the thyroid hormones thyroxine (T4) and rT3"/>
+<attribute name="geneName" value="SLCO1C1"/>
+<attribute name="location" value="5upstream"/>
+<attribute name="metaBeta" value="0.0414890561198413"/>
+<attribute name="metaSe" value="0.00839330083178738"/>
+<attribute name="nStudies" value="15"/>
+<attribute name="nSubjects" value="32713"/>
+<attribute name="p" value="0.00000076883905597569"/>
+<attribute name="z" value="4.94311558126364"/>
+<reference name="snp" ref_id="3_54"/>
+</item>
+<item id="1_18" class="http://www.flymine.org/model/genomic#Gene">
+<attribute name="symbol" value="HIST1H2AD"/>
+<reference name="lociResult" ref_id="2_9"/>
+<reference name="organism" ref_id="0_1"/>
+</item>
+<item id="3_10" class="http://www.flymine.org/model/genomic#SNP">
+<attribute name="allele1" value="C"/>
+<attribute name="allele2" value="G"/>
+<attribute name="snp" value="rs12746543"/>
+<reference name="location" ref_id="4_10"/>
+</item>
+<item id="4_56" class="http://www.flymine.org/model/genomic#Location">
+<attribute name="end" value="34612656"/>
+<attribute name="start" value="34612656"/>
+<reference name="chromosome" ref_id="5_56"/>
+</item>
+<item id="2_57" class="http://www.flymine.org/model/genomic#LociResult">
+<attribute name="description" value="1-phosphatidylinositol-4,5-bisphosphate phosphodiesterase beta 2"/>
+<attribute name="geneName" value="PLCB2"/>
+<attribute name="location" value="intronic"/>
+<attribute name="metaBeta" value="0.0392417006894156"/>
+<attribute name="metaSe" value="0.00803884790562316"/>
+<attribute name="nStudies" value="15"/>
+<attribute name="nSubjects" value="32701"/>
+<attribute name="p" value="0.00000105277621131883"/>
+<attribute name="z" value="4.88150804071888"/>
+<reference name="snp" ref_id="3_57"/>
+</item>
+<item id="2_105" class="http://www.flymine.org/model/genomic#LociResult">
+<attribute name="geneName" value="HLA-G"/>
+<attribute name="metaBeta" value="0.0353714127463867"/>
+<attribute name="metaSe" value="0.00794747643986378"/>
+<attribute name="nStudies" value="15"/>
+<attribute name="nSubjects" value="32708"/>
+<attribute name="p" value="0.00000856119391157151"/>
+<attribute name="z" value="4.45064707193934"/>
+<reference name="snp" ref_id="3_105"/>
+</item>
+<item id="3_84" class="http://www.flymine.org/model/genomic#SNP">
+<attribute name="allele1" value="A"/>
+<attribute name="allele2" value="G"/>
+<attribute name="snp" value="rs4800148"/>
+<reference name="location" ref_id="4_84"/>
+</item>
+<item id="1_38" class="http://www.flymine.org/model/genomic#Gene">
+<attribute name="symbol" value="CHCHD7"/>
+<reference name="lociResult" ref_id="2_18"/>
+<reference name="organism" ref_id="0_1"/>
+</item>
+<item id="3_12" class="http://www.flymine.org/model/genomic#SNP">
+<attribute name="allele1" value="C"/>
+<attribute name="allele2" value="T"/>
+<attribute name="snp" value="rs3791675"/>
+<reference name="location" ref_id="4_12"/>
+</item>
+<item id="2_40" class="http://www.flymine.org/model/genomic#LociResult">
+<attribute name="description" value="T-box 2"/>
+<attribute name="details" value="Involved in the transcriptional regulation of genes required for mesoderm differentiation. Probably plays a role in limb pattern formation"/>
+<attribute name="geneName" value="near TAX2"/>
+<attribute name="humanPhenotype" value="amplified in a subset of primary human breast cancers"/>
+<attribute name="metaBeta" value="-0.0434093703563917"/>
+<attribute name="metaSe" value="0.00830879079540404"/>
+<attribute name="mousePhenotype" value="KO mice: embryonic lethality during organogenesis. Abnormal cardiovascular development. Polydactyly"/>
+<attribute name="nStudies" value="15"/>
+<attribute name="nSubjects" value="32723"/>
+<attribute name="p" value="0.000000174615783166132"/>
+<attribute name="z" value="5.22451117440619"/>
+<reference name="snp" ref_id="3_40"/>
+</item>
+<item id="2_78" class="http://www.flymine.org/model/genomic#LociResult">
+<attribute name="description" value="human mRNA clone"/>
+<attribute name="geneName" value="BC039487"/>
+<attribute name="metaBeta" value="-0.0383696548330622"/>
+<attribute name="metaSe" value="0.00828538749162569"/>
+<attribute name="nStudies" value="15"/>
+<attribute name="nSubjects" value="32708"/>
+<attribute name="p" value="0.00000363898500133075"/>
+<attribute name="z" value="4.63100306073116"/>
+<reference name="snp" ref_id="3_78"/>
+</item>
+<item id="4_27" class="http://www.flymine.org/model/genomic#Location">
+<attribute name="end" value="17131410"/>
+<attribute name="start" value="17131410"/>
+<reference name="chromosome" ref_id="5_27"/>
+</item>
+<item id="4_47" class="http://www.flymine.org/model/genomic#Location">
+<attribute name="end" value="17680752"/>
+<attribute name="start" value="17680752"/>
+<reference name="chromosome" ref_id="5_47"/>
+</item>
+<item id="2_97" class="http://www.flymine.org/model/genomic#LociResult">
+<attribute name="description" value="anaphase promoting complex subunit 13"/>
+<attribute name="geneName" value="near ANAPC13"/>
+<attribute name="metaBeta" value="0.0381147630977245"/>
+<attribute name="metaSe" value="0.00849480548646056"/>
+<attribute name="nStudies" value="15"/>
+<attribute name="nSubjects" value="32704"/>
+<attribute name="p" value="0.00000722901119787345"/>
+<attribute name="z" value="4.48683176542108"/>
+<reference name="snp" ref_id="3_97"/>
+</item>
+<item id="3_64" class="http://www.flymine.org/model/genomic#SNP">
+<attribute name="allele1" value="C"/>
+<attribute name="allele2" value="T"/>
+<attribute name="snp" value="rs213734"/>
+<reference name="location" ref_id="4_64"/>
+</item>
+<item id="3_18" class="http://www.flymine.org/model/genomic#SNP">
+<attribute name="allele1" value="C"/>
+<attribute name="allele2" value="T"/>
+<attribute name="snp" value="rs6984782"/>
+<reference name="location" ref_id="4_18"/>
+</item>
+<item id="1_85" class="http://www.flymine.org/model/genomic#Gene">
+<attribute name="symbol" value="SV2A"/>
+<reference name="lociResult" ref_id="2_41"/>
+<reference name="organism" ref_id="0_1"/>
+</item>
+<item id="1_183" class="http://www.flymine.org/model/genomic#Gene">
+<attribute name="symbol" value="SPINK4"/>
+<reference name="lociResult" ref_id="2_91"/>
+<reference name="organism" ref_id="0_1"/>
+</item>
+<item id="1_163" class="http://www.flymine.org/model/genomic#Gene">
+<attribute name="symbol" value="GIPC2"/>
+<reference name="lociResult" ref_id="2_81"/>
+<reference name="organism" ref_id="0_1"/>
+</item>
+<item id="3_74" class="http://www.flymine.org/model/genomic#SNP">
+<attribute name="allele1" value="C"/>
+<attribute name="allele2" value="T"/>
+<attribute name="snp" value="rs2208869"/>
+<reference name="location" ref_id="4_74"/>
+</item>
+<item id="2_36" class="http://www.flymine.org/model/genomic#LociResult">
+<attribute name="description" value="bone morphogenetic protein 2 preproprotein"/>
+<attribute name="details" value="Induces cartilage and bone formation."/>
+<attribute name="geneName" value="far BMP2"/>
+<attribute name="metaBeta" value="0.0442733159437201"/>
+<attribute name="metaSe" value="0.00821307572298492"/>
+<attribute name="mousePhenotype" value="abnormal bone development and morphology; KO are embryonic lethal, with heart and neural tube defects and reduced embryo size"/>
+<attribute name="nStudies" value="15"/>
+<attribute name="nSubjects" value="32708"/>
+<attribute name="p" value="0.000000070227110349208"/>
+<attribute name="z" value="5.39058903594641"/>
+<reference name="snp" ref_id="3_36"/>
+</item>
+<item id="5_43" class="http://www.flymine.org/model/genomic#Chromosome">
+<attribute name="primaryIdentifier" value="2"/>
+</item>
+<item id="3_41" class="http://www.flymine.org/model/genomic#SNP">
+<attribute name="allele1" value="A"/>
+<attribute name="allele2" value="G"/>
+<attribute name="snp" value="rs11205277"/>
+<reference name="location" ref_id="4_41"/>
+</item>
+<item id="1_37" class="http://www.flymine.org/model/genomic#Gene">
+<attribute name="symbol" value="PLAG1"/>
+<reference name="lociResult" ref_id="2_18"/>
+<reference name="organism" ref_id="0_1"/>
+</item>
+<item id="5_95" class="http://www.flymine.org/model/genomic#Chromosome">
+<attribute name="primaryIdentifier" value="11"/>
+</item>
+<item id="4_31" class="http://www.flymine.org/model/genomic#Location">
+<attribute name="end" value="35428789"/>
+<attribute name="start" value="35428789"/>
+<reference name="chromosome" ref_id="5_31"/>
+</item>
+<item id="5_35" class="http://www.flymine.org/model/genomic#Chromosome">
+<attribute name="primaryIdentifier" value="6"/>
+</item>
+<item id="3_80" class="http://www.flymine.org/model/genomic#SNP">
+<attribute name="allele1" value="A"/>
+<attribute name="allele2" value="T"/>
+<attribute name="snp" value="rs4743033"/>
+<reference name="location" ref_id="4_80"/>
+</item>
+<item id="2_30" class="http://www.flymine.org/model/genomic#LociResult">
+<attribute name="description" value="tRNA-splicing endonuclease subunit Sen15"/>
+<attribute name="details" value="homolog of yeast SEN15, a subunit of the tRNA splicing endonuclease, which catalyzes the removal of introns, the first step in tRNA splicing"/>
+<attribute name="geneName" value="C1orf19"/>
+<attribute name="location" value="coding"/>
+<attribute name="metaBeta" value="0.0472979245634248"/>
+<attribute name="metaSe" value="0.00853786914351716"/>
+<attribute name="nStudies" value="15"/>
+<attribute name="nSubjects" value="32698"/>
+<attribute name="p" value="0.0000000302850275968325"/>
+<attribute name="z" value="5.53978091820935"/>
+<reference name="snp" ref_id="3_30"/>
+</item>
+<item id="5_48" class="http://www.flymine.org/model/genomic#Chromosome">
+<attribute name="primaryIdentifier" value="17"/>
+</item>
+<item id="2_35" class="http://www.flymine.org/model/genomic#LociResult">
+<attribute name="description" value="myosin VI"/>
+<attribute name="details" value="Molecular motor involved in intracellular vesicle and organelle transport. Required for structural integrity of inner ear hair cells"/>
+<attribute name="geneName" value="far MYO6"/>
+<attribute name="humanPhenotype" value="congenital sensorineural deafness and occasional mild cardiac symptoms"/>
+<attribute name="metaBeta" value="0.0668032694666586"/>
+<attribute name="metaSe" value="0.0123838310373808"/>
+<attribute name="mousePhenotype" value="KO mice: abnormal cochlear hair cell morphology; slightly reduced body size"/>
+<attribute name="nStudies" value="15"/>
+<attribute name="nSubjects" value="32708"/>
+<attribute name="p" value="0.0000000687550274491855"/>
+<attribute name="z" value="5.39439445394658"/>
+<reference name="snp" ref_id="3_35"/>
+</item>
+<item id="4_14" class="http://www.flymine.org/model/genomic#Location">
+<attribute name="end" value="92480972"/>
+<attribute name="start" value="92480972"/>
+<reference name="chromosome" ref_id="5_14"/>
+</item>
+<item id="3_38" class="http://www.flymine.org/model/genomic#SNP">
+<attribute name="allele1" value="C"/>
+<attribute name="allele2" value="T"/>
+<attribute name="snp" value="rs4674168"/>
+<reference name="location" ref_id="4_38"/>
+</item>
+<item id="5_79" class="http://www.flymine.org/model/genomic#Chromosome">
+<attribute name="primaryIdentifier" value="6"/>
+</item>
+<item id="3_101" class="http://www.flymine.org/model/genomic#SNP">
+<attribute name="allele1" value="A"/>
+<attribute name="allele2" value="G"/>
+<attribute name="snp" value="rs4077284"/>
+<reference name="location" ref_id="4_101"/>
+</item>
+<item id="5_5" class="http://www.flymine.org/model/genomic#Chromosome">
+<attribute name="primaryIdentifier" value="4"/>
+</item>
+<item id="1_10" class="http://www.flymine.org/model/genomic#Gene">
+<attribute name="symbol" value="LCORL"/>
+<reference name="lociResult" ref_id="2_5"/>
+<reference name="organism" ref_id="0_1"/>
+</item>
+<item id="2_76" class="http://www.flymine.org/model/genomic#LociResult">
+<attribute name="geneName" value="gene desert"/>
+<attribute name="metaBeta" value="-0.0405994941148467"/>
+<attribute name="metaSe" value="0.00874692898703554"/>
+<attribute name="nStudies" value="15"/>
+<attribute name="nSubjects" value="32708"/>
+<attribute name="p" value="0.00000345769761800341"/>
+<attribute name="z" value="4.64157125032365"/>
+<reference name="snp" ref_id="3_76"/>
+</item>
+<item id="5_103" class="http://www.flymine.org/model/genomic#Chromosome">
+<attribute name="primaryIdentifier" value="10"/>
+</item>
+<item id="5_7" class="http://www.flymine.org/model/genomic#Chromosome">
+<attribute name="primaryIdentifier" value="4"/>
+</item>
+<item id="2_34" class="http://www.flymine.org/model/genomic#LociResult">
+<attribute name="description" value="Tumor necrosis factor ligand superfamily member 10 (TNF-related apoptosis-inducing ligand)"/>
+<attribute name="details" value="Cytokine. Induces apoptosis"/>
+<attribute name="geneName" value="TNFSF10"/>
+<attribute name="location" value="intronic"/>
+<attribute name="metaBeta" value="0.0456310633208392"/>
+<attribute name="metaSe" value="0.00841437576641618"/>
+<attribute name="mousePhenotype" value="KO mice: increased susceptibility to tumor imitiation and metastasis; aparently normal bone biology"/>
+<attribute name="nStudies" value="15"/>
+<attribute name="nSubjects" value="32700"/>
+<attribute name="p" value="0.0000000586107526956425"/>
+<attribute name="z" value="5.42298853623389"/>
+<reference name="snp" ref_id="3_34"/>
+</item>
+<item id="1_21" class="http://www.flymine.org/model/genomic#Gene">
+<attribute name="symbol" value="TBX15"/>
+<reference name="lociResult" ref_id="2_10"/>
+<reference name="organism" ref_id="0_1"/>
+</item>
+<item id="4_100" class="http://www.flymine.org/model/genomic#Location">
+<attribute name="end" value="29024455"/>
+<attribute name="start" value="29024455"/>
+<reference name="chromosome" ref_id="5_100"/>
+</item>
+<item id="2_27" class="http://www.flymine.org/model/genomic#LociResult">
+<attribute name="description" value="succinate dehydrogenase complex, subunit B;"/>
+<attribute name="geneName" value="near SDHB"/>
+<attribute name="humanPhenotype" value="familial and sporadic pheochromocytoma, paraganglioma, and gastric stromal sarcoma (Carney-Stratakis syndrome)"/>
+<attribute name="metaBeta" value="-0.0462454570469452"/>
+<attribute name="metaSe" value="0.00814588309856892"/>
+<attribute name="nStudies" value="15"/>
+<attribute name="nSubjects" value="32708"/>
+<attribute name="p" value="0.0000000136951787688133"/>
+<attribute name="z" value="5.67715697455438"/>
+<reference name="snp" ref_id="3_27"/>
+</item>
+<item id="3_44" class="http://www.flymine.org/model/genomic#SNP">
+<attribute name="allele1" value="C"/>
+<attribute name="allele2" value="T"/>
+<attribute name="snp" value="rs17346452"/>
+<reference name="location" ref_id="4_44"/>
+</item>
+<item id="2_101" class="http://www.flymine.org/model/genomic#LociResult">
+<attribute name="description" value="Lysyl oxidase homolog 1 precursor "/>
+<attribute name="geneName" value="LOXL1"/>
+<attribute name="location" value="intronic"/>
+<attribute name="metaBeta" value="0.0365482443470115"/>
+<attribute name="metaSe" value="0.0081718386243192"/>
+<attribute name="nStudies" value="15"/>
+<attribute name="nSubjects" value="32708"/>
+<attribute name="p" value="0.00000773238507933982"/>
+<attribute name="z" value="4.4724628112754"/>
+<reference name="snp" ref_id="3_101"/>
+</item>
+<item id="2_9" class="http://www.flymine.org/model/genomic#LociResult">
+<attribute name="description" value="Histone H2A type 1-D"/>
+<attribute name="geneName" value="HIST1H2AD"/>
+<attribute name="location" value="5upstream"/>
+<attribute name="metaBeta" value="0.0651779864170553"/>
+<attribute name="metaSe" value="0.00923872681963164"/>
+<attribute name="nStudies" value="15"/>
+<attribute name="nSubjects" value="32704"/>
+<attribute name="p" value="0.00000000000172772907092167"/>
+<attribute name="z" value="7.05486672455308"/>
+<reference name="snp" ref_id="3_9"/>
+</item>
+<item id="2_33" class="http://www.flymine.org/model/genomic#LociResult">
+<attribute name="description" value="indian hedgehog homolog"/>
+<attribute name="geneName" value="near IHH"/>
+<attribute name="metaBeta" value="0.0682530891700602"/>
+<attribute name="metaSe" value="0.0125426364795151"/>
+<attribute name="nStudies" value="15"/>
+<attribute name="nSubjects" value="32699"/>
+<attribute name="p" value="0.0000000527786501169913"/>
+<attribute name="z" value="5.44168598695598"/>
+<reference name="snp" ref_id="3_33"/>
+</item>
+<item id="3_53" class="http://www.flymine.org/model/genomic#SNP">
+<attribute name="allele1" value="A"/>
+<attribute name="allele2" value="C"/>
+<attribute name="snp" value="rs798528"/>
+<reference name="location" ref_id="4_53"/>
+</item>
+<item id="5_56" class="http://www.flymine.org/model/genomic#Chromosome">
+<attribute name="primaryIdentifier" value="21"/>
+</item>
+<item id="2_53" class="http://www.flymine.org/model/genomic#LociResult">
+<attribute name="description" value="Guanine nucleotide-binding protein alpha-12 subunit"/>
+<attribute name="details" value="Guanine nucleotide-binding proteins (G proteins) are involved as modulators or transducers in various transmembrane signaling systems"/>
+<attribute name="geneName" value="GNA12"/>
+<attribute name="location" value="intronic"/>
+<attribute name="metaBeta" value="0.0423684573050776"/>
+<attribute name="metaSe" value="0.00852546814611397"/>
+<attribute name="mousePhenotype" value="some KO lines: embryonic growth arrest and lethality during organogenesis"/>
+<attribute name="nStudies" value="15"/>
+<attribute name="nSubjects" value="32708"/>
+<attribute name="p" value="0.000000670793764534494"/>
+<attribute name="z" value="4.96963411028517"/>
+<reference name="snp" ref_id="3_53"/>
+</item>
+<item id="5_53" class="http://www.flymine.org/model/genomic#Chromosome">
+<attribute name="primaryIdentifier" value="7"/>
+</item>
+<item id="2_14" class="http://www.flymine.org/model/genomic#LociResult">
+<attribute name="description" value="suppressor of cytokine signaling-2"/>
+<attribute name="geneName" value="near SOCS2"/>
+<attribute name="metaBeta" value="-0.0595542970500272"/>
+<attribute name="metaSe" value="0.00946132418992793"/>
+<attribute name="nStudies" value="15"/>
+<attribute name="nSubjects" value="32736"/>
+<attribute name="p" value="0.000000000308393977022092"/>
+<attribute name="z" value="6.29449914774359"/>
+<reference name="snp" ref_id="3_14"/>
+</item>
+<item id="2_82" class="http://www.flymine.org/model/genomic#LociResult">
+<attribute name="description" value="immunoglobulin superfamily 5 like "/>
+<attribute name="geneName" value="IGSF5"/>
+<attribute name="location" value="intronic"/>
+<attribute name="metaBeta" value="-0.0449574157755123"/>
+<attribute name="metaSe" value="0.00978703892991606"/>
+<attribute name="nStudies" value="15"/>
+<attribute name="nSubjects" value="32698"/>
+<attribute name="p" value="0.00000435733738068933"/>
+<attribute name="z" value="4.59356666479489"/>
+<reference name="snp" ref_id="3_82"/>
+</item>
+<item id="3_46" class="http://www.flymine.org/model/genomic#SNP">
+<attribute name="allele1" value="A"/>
+<attribute name="allele2" value="G"/>
+<attribute name="snp" value="rs10742805"/>
+<reference name="location" ref_id="4_46"/>
+</item>
+<item id="4_65" class="http://www.flymine.org/model/genomic#Location">
+<attribute name="end" value="88316178"/>
+<attribute name="start" value="88316178"/>
+<reference name="chromosome" ref_id="5_65"/>
+</item>
+<item id="1_216" class="http://www.flymine.org/model/genomic#Gene">
+<attribute name="symbol" value="MSL2L1"/>
+<reference name="lociResult" ref_id="2_107"/>
+<reference name="organism" ref_id="0_1"/>
+</item>
+<item id="1_35" class="http://www.flymine.org/model/genomic#Gene">
+<attribute name="symbol" value="MLZE"/>
+<reference name="lociResult" ref_id="2_17"/>
+<reference name="organism" ref_id="0_1"/>
+</item>
+<item id="4_90" class="http://www.flymine.org/model/genomic#Location">
+<attribute name="end" value="19660319"/>
+<attribute name="start" value="19660319"/>
+<reference name="chromosome" ref_id="5_90"/>
+</item>
+<item id="3_17" class="http://www.flymine.org/model/genomic#SNP">
+<attribute name="allele1" value="C"/>
+<attribute name="allele2" value="T"/>
+<attribute name="snp" value="rs4733737"/>
+<reference name="location" ref_id="4_17"/>
+</item>
+<item id="4_25" class="http://www.flymine.org/model/genomic#Location">
+<attribute name="end" value="28326914"/>
+<attribute name="start" value="28326914"/>
+<reference name="chromosome" ref_id="5_25"/>
+</item>
+<item id="2_19" class="http://www.flymine.org/model/genomic#LociResult">
+<attribute name="description" value="natriuretic peptide receptor C. "/>
+<attribute name="details" value="elicit a number of vascular, renal, and endocrine effects that are important in the maintenance of blood pressure and extracellular fluid volume"/>
+<attribute name="geneName" value="far NPR3"/>
+<attribute name="metaBeta" value="-0.0480910077940011"/>
+<attribute name="metaSe" value="0.00812131653953471"/>
+<attribute name="mousePhenotype" value="mice overexpressing brain natriuretic peptide exhibit skeletal overgrowth; KO mice: skeletal overgrowth and other skeletal and metabolic abnormalities, "/>
+<attribute name="nStudies" value="15"/>
+<attribute name="nSubjects" value="32655"/>
+<attribute name="p" value="0.00000000318867376947196"/>
+<attribute name="z" value="5.92157780821536"/>
+<reference name="snp" ref_id="3_19"/>
+</item>
+<item id="1_107" class="http://www.flymine.org/model/genomic#Gene">
+<attribute name="symbol" value="AP3B1"/>
+<reference name="lociResult" ref_id="2_52"/>
+<reference name="organism" ref_id="0_1"/>
+</item>
+<item id="5_59" class="http://www.flymine.org/model/genomic#Chromosome">
+<attribute name="primaryIdentifier" value="9"/>
+</item>
+<item id="1_134" class="http://www.flymine.org/model/genomic#Gene">
+<attribute name="symbol" value="COPS7B"/>
+<reference name="lociResult" ref_id="2_66"/>
+<reference name="organism" ref_id="0_1"/>
+</item>
+<item id="1_179" class="http://www.flymine.org/model/genomic#Gene">
+<attribute name="symbol" value="POLS"/>
+<reference name="lociResult" ref_id="2_89"/>
+<reference name="organism" ref_id="0_1"/>
+</item>
+<item id="1_123" class="http://www.flymine.org/model/genomic#Gene">
+<attribute name="symbol" value="PHACTR2"/>
+<reference name="lociResult" ref_id="2_60"/>
+<reference name="organism" ref_id="0_1"/>
+</item>
+<item id="4_5" class="http://www.flymine.org/model/genomic#Location">
+<attribute name="end" value="17711519"/>
+<attribute name="start" value="17711519"/>
+<reference name="chromosome" ref_id="5_5"/>
+</item>
+<item id="3_5" class="http://www.flymine.org/model/genomic#SNP">
+<attribute name="allele1" value="A"/>
+<attribute name="allele2" value="G"/>
+<attribute name="snp" value="rs2061455"/>
+<reference name="location" ref_id="4_5"/>
+</item>
+<item id="2_88" class="http://www.flymine.org/model/genomic#LociResult">
+<attribute name="description" value="Ataxin-2-binding protein 1. "/>
+<attribute name="geneName" value="A2BP1_HUMAN"/>
+<attribute name="location" value="intronic"/>
+<attribute name="metaBeta" value="0.0673939874623235"/>
+<attribute name="metaSe" value="0.0148267603342007"/>
+<attribute name="nStudies" value="15"/>
+<attribute name="nSubjects" value="32704"/>
+<attribute name="p" value="0.00000548234564456962"/>
+<attribute name="z" value="4.54542907170805"/>
+<reference name="snp" ref_id="3_88"/>
+</item>
+<item id="4_70" class="http://www.flymine.org/model/genomic#Location">
+<attribute name="end" value="13804865"/>
+<attribute name="start" value="13804865"/>
+<reference name="chromosome" ref_id="5_70"/>
+</item>
+<item id="3_89" class="http://www.flymine.org/model/genomic#SNP">
+<attribute name="allele1" value="A"/>
+<attribute name="allele2" value="C"/>
+<attribute name="snp" value="rs172080"/>
+<reference name="location" ref_id="4_89"/>
+</item>
+<item id="4_32" class="http://www.flymine.org/model/genomic#Location">
+<attribute name="end" value="31457767"/>
+<attribute name="start" value="31457767"/>
+<reference name="chromosome" ref_id="5_32"/>
+</item>
+<item id="4_29" class="http://www.flymine.org/model/genomic#Location">
+<attribute name="end" value="74959700"/>
+<attribute name="start" value="74959700"/>
+<reference name="chromosome" ref_id="5_29"/>
+</item>
+<item id="2_66" class="http://www.flymine.org/model/genomic#LociResult">
+<attribute name="description" value="COP9 constitutive photomorphogenic homolog"/>
+<attribute name="geneName" value="far COPS7B"/>
+<attribute name="metaBeta" value="0.0470870601125192"/>
+<attribute name="metaSe" value="0.00999031546173856"/>
+<attribute name="nStudies" value="15"/>
+<attribute name="nSubjects" value="32689"/>
+<attribute name="p" value="0.0000024377215768201"/>
+<attribute name="z" value="4.71327059619446"/>
+<reference name="snp" ref_id="3_66"/>
+</item>
+<item id="4_28" class="http://www.flymine.org/model/genomic#Location">
+<attribute name="end" value="135719665"/>
+<attribute name="start" value="135719665"/>
+<reference name="chromosome" ref_id="5_28"/>
+</item>
+</items>
