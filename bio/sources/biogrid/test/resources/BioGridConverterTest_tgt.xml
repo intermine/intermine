@@ -6,10 +6,6 @@
 <attribute name="title" value="BioGRID interaction data set"/>
 <reference name="dataSource" ref_id="0_1"/>
 </item>
-<item id="3_1" class="http://www.flymine.org/model/genomic#InteractionTerm">
-<attribute name="name" value="twohybrid"/>
-<collection name="dataSets"><reference ref_id="1_1"/></collection>
-</item>
 <item id="4_1" class="http://www.flymine.org/model/genomic#InteractionExperiment">
 <attribute name="name" value="Giot L (2003)"/>
 <reference name="interactionDetectionMethod" ref_id="3_1"/>
@@ -21,6 +17,10 @@
 <item id="6_2" class="http://www.flymine.org/model/genomic#Gene">
 <attribute name="primaryIdentifier" value="FBgn001"/>
 <reference name="organism" ref_id="5_1"/>
+<collection name="dataSets"><reference ref_id="1_1"/></collection>
+</item>
+<item id="3_1" class="http://www.flymine.org/model/genomic#InteractionTerm">
+<attribute name="name" value="two hybrid"/>
 <collection name="dataSets"><reference ref_id="1_1"/></collection>
 </item>
 <item id="7_1" class="http://www.flymine.org/model/genomic#Interaction">
@@ -54,4 +54,3 @@
 <collection name="dataSets"><reference ref_id="1_1"/></collection>
 </item>
 </items>
-
