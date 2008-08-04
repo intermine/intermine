@@ -281,30 +281,13 @@ public class GFF3Converter
         handler.addDataSet(dataSet);
         if (record.getScore() != null && !String.valueOf(record.getScore()).equals("")) {
             Item computationalResult = createItem("ComputationalResult");
-            if (String.valueOf(record.getScore()) != null
-                            && !String.valueOf(record.getScore()).equals("")) {
-                computationalResult.setAttribute("type", "score");
-                computationalResult.setAttribute("score", String.valueOf(record.getScore()));
-            }
-            // don't create ComputationalAnalysis if there is no ComputationalResult
-            if (record.getSource() != null && !String.valueOf(record.getScore()).equals("")) {
-                Item computationalAnalysis = getComputationalAnalysis(record.getSource());
-                computationalResult.setReference("analysis", computationalAnalysis.getIdentifier());
-                handler.setAnalysis(computationalAnalysis);
-            }
+            computationalResult.setAttribute("type", "score");
+            computationalResult.setAttribute("score", String.valueOf(record.getScore()));
+            Item computationalAnalysis = getComputationalAnalysis(record.getSource());
+            computationalResult.setReference("analysis", computationalAnalysis.getIdentifier());
+            handler.setAnalysis(computationalAnalysis);
             handler.setResult(computationalResult);
             handler.addEvidence(computationalResult);
-        } else {
-            if (record.getSource() != null && !record.getSource().equals("FlyBase")) {
-                // this special case added to cope with pseudoobscura data
-                Item computationalResult = createItem("ComputationalResult");
-                Item computationalAnalysis = getComputationalAnalysis(record.getSource());
-                computationalResult.setReference("analysis", computationalAnalysis.getIdentifier());
-                handler.setAnalysis(computationalAnalysis);
-                handler.setResult(computationalResult);
-                handler.addEvidence(computationalResult);
-                feature.setAttribute("curated", "false");
-            }
         }
         String orgAbb = null;
         String tgtSeqIdentifier = null;
