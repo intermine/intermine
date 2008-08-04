@@ -98,6 +98,20 @@ public class PathTest extends TestCase
             fail("expected IllegalArgumentException");
         } catch (IllegalArgumentException e) {
             // expected
+
+        }
+    }
+    public void testNotValidConstraintMapColon() {
+        Map constraintMap = new HashMap();
+        constraintMap.put("Department:manager", "CEO");
+
+        String stringPath = "Department.manager.name";
+
+        try {
+            new Path(model, stringPath, constraintMap);
+            fail("expected IllegalArgumentException");
+        } catch (IllegalArgumentException e) {
+            // expected
         }
     }
 
@@ -278,7 +292,39 @@ public class PathTest extends TestCase
         }
 
     }
-    
+
+    public void testGetPrefixOuterJoin() {
+        Map constraintMap = new HashMap();
+        constraintMap.put("Department.manager", "CEO");
+        constraintMap.put("Department.manager.company.departments.employees", "Manager");
+
+        String stringPath = "Department:manager.company:departments.employees.seniority";
+        Path path = new Path(model, stringPath, constraintMap);
+
+        Path prefix = path.getPrefix();
+        assertEquals("Department:manager[CEO].company:departments.employees[Manager]",
+                     prefix.toString());
+        prefix = prefix.getPrefix();
+        assertEquals("Department:manager[CEO].company:departments",
+                     prefix.toString());
+        prefix = prefix.getPrefix();
+        assertEquals("Department:manager[CEO].company",
+                     prefix.toString());
+        prefix = prefix.getPrefix();
+        assertEquals("Department:manager[CEO]",
+                     prefix.toString());
+        prefix = prefix.getPrefix();
+        assertEquals("Department",
+                     prefix.toString());
+        try {
+            prefix = prefix.getPrefix();
+            fail("expected RuntimeException");
+        } catch (RuntimeException e) {
+            // expected
+        }
+
+    }
+
     public void testContainsCollections() {
         String stringPath = "Department.company";
         Path path = new Path(model, stringPath);
@@ -287,7 +333,7 @@ public class PathTest extends TestCase
         path = new Path(model, stringPath);
         assertTrue(path.containsCollections());
     }
-    
+
     public void testContainsReferences() {
         String stringPath = "Department.company";
         Path path = new Path(model, stringPath);
@@ -296,7 +342,7 @@ public class PathTest extends TestCase
         path = new Path(model, stringPath);
         assertFalse(path.containsReferences());
     }
-    
+
     public void testIsOnlyAttribute() {
         String stringPath = "Department.company";
         Path path = new Path(model, stringPath);
@@ -308,5 +354,5 @@ public class PathTest extends TestCase
         path = new Path(model, stringPath);
         assertTrue(path.isOnlyAttribute());
     }
-    
+
 }
