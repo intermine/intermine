@@ -1,0 +1,23 @@
+<?xml version="1.0"?>
+<classes>
+    <class name="org.flymine.model.genomic.GeneticInteractionExperiment" extends="org.flymine.model.genomic.Experiment" is-interface="true">
+        <attribute name="name" type="java.lang.String"/>
+        <attribute name="description" type="java.lang.String"/>        
+        <collection name="interactions" referenced-type="org.flymine.model.genomic.GeneticInteraction" ordered="true" reverse-reference="experiment"/>
+    </class>
+
+    <class name="org.flymine.model.genomic.GeneticInteraction" is-interface="true">
+        <attribute name="type" type="java.lang.String"/>
+        <attribute name="shortName" type="java.lang.String"/>                
+        <attribute name="geneRole" type="java.lang.String"/>                
+        <reference name="gene" referenced-type="org.flymine.model.genomic.Gene" reverse-reference="geneticInteractions" />
+        <reference name="experiment" referenced-type="org.flymine.model.genomic.GeneticInteractionExperiment" reverse-reference="interactions"/>
+        <collection name="interactingGenes" referenced-type="org.flymine.model.genomic.Gene" ordered="true" reverse-reference="geneticInteractions"/>
+        <collection name="evidence" referenced-type="org.flymine.model.genomic.Evidence"/>
+    </class>
+
+    <class name="org.flymine.model.genomic.Gene" is-interface="true">       
+        <collection name="geneticInteractions" referenced-type="org.flymine.model.genomic.GeneticInteraction" ordered="true" reverse-reference="gene"/>
+    </class>
+</classes>
+	
