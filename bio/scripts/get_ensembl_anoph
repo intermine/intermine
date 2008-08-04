@@ -1,0 +1,77 @@
+#!/usr/bin/perl
+
+use strict;
+use warnings;
+use IO::All;
+use Net::FTP;
+
+BEGIN {
+  # find the lib directory by looking at the path to this script
+  push (@INC, ($0 =~ m:(.*)/.*:)[0] . '/../../intermine/perl/lib/');
+}
+use InterMine::DataDownloader;
+
+my $home = "/shared/data";  
+#my $version = $ARGV[0];
+my $version = "";	#eg 50_3k
+my $ensembl_dir = "mysql-ensembl";
+my $species_prefix = "anopheles_gambiae_core_";
+
+# ensembl ftp site
+my $server = "ftp.ensembl.org";
+my $releases_dir = "pub";
+my $current_dir = "current_mysql";
+my $anoph_dir = "";
+
+# -------- access ftp server ------------- #
+my $ftp = Net::FTP->new($server, Passive => 1)
+  or die "Cannot connect to $server: $@";
+
+$ftp->login("anonymous",'-anonymous@')
+  or die "Cannot login ", $ftp->message;
+
+$ftp->cwd($releases_dir)
+  or die "Cannot change working directory ", $ftp->message;
+
+$ftp->cwd($current_dir)
+  or die "Cannot change working directory ", $ftp->message;
+
+#anopheles_gambiae_core_50_3k
+# get list of all directories
+my @dir_list = $ftp->ls();
+for my $dir (@dir_list) {
+
+	if ($dir =~ m/$species_prefix/) {
+		$anoph_dir = $dir;
+	}
+}
+
+$version = substr($anoph_dir, length($species_prefix), length($anoph_dir));
+my $download_dir = "$home/$ensembl_dir/$species_prefix$version";
+
+$ftp->cwd($anoph_dir)
+  or die "Cannot change working directory ", $ftp->message;
+
+# make download directory locally
+if (!(-d $download_dir)) {
+    print "creating $download_dir\n";
+    mkdir "$download_dir" or die "failed to create $download_dir";
+}
+
+# get list of all files
+my @file_list = $ftp->ls();
+
+# download all files
+for my $file (@file_list) {
+	print("downloading ... $file\n");
+	$ftp->get($file, "$download_dir/$file")
+           or die "failed to get file: $file";
+}
+print("done!");
+
+#TODO make version file
+
+
+
+
+
