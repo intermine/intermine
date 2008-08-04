@@ -37,16 +37,12 @@ public class PrideConverterTest extends ItemsTestCase
         MockItemWriter itemWriter = new MockItemWriter(new HashMap<String, Item>());
         PrideConverter converter = new PrideConverter(itemWriter,
                                                           Model.getInstanceByName("genomic"));
-        converter.setFastaPath("test/resources/fasta/");
+        converter.setFastaPath(".");
 
         converter.process(reader);
         converter.close();
 
         // uncomment to write out a new target items file
         writeItemsFile(itemWriter.getItems(), "pride_item_test.xml");
-
-        //Set expected = readItemSet("UniprotConverterTest_tgt.xml");
-
-        //assertEquals(expected, itemWriter.getItems());
     }
 }
