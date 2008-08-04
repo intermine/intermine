@@ -1,6 +1,4 @@
 <webconfig>
-  
-
   <class className="org.flymine.model.genomic.Publication">
     <fields>
       <fieldconfig fieldExpr="firstAuthor"/>
@@ -17,6 +15,12 @@
     </longdisplayers>
   </class>
 
+  <class className="org.flymine.model.genomic.DataSet">
+    <fields>
+      <fieldconfig fieldExpr="title"/>
+      <fieldconfig fieldExpr="url" doNotTruncate="true"/>
+    </fields>
+  </class>
 
 <class className="org.flymine.model.genomic.Author">
     <fields>
@@ -33,8 +37,6 @@
     </longdisplayers>
     <tabledisplayer src="/model/dataSourceShort.jsp"/>
   </class>
-
-
 
   <class className="org.flymine.model.genomic.Organism">
     <fields>
@@ -83,30 +85,7 @@
       <displayer src="geneMicroArrayDisplayer.tile"/>
     </longdisplayers>
     <bagdisplayers>
-      <displayer src="attributeLinkDisplayer.tile"/>
-      <enrichmentwidgetdisplayer title="Gene Ontology Enrichment"
-                                 link="org.intermine.bio.web.widget.GoStatURLQuery"
-                                 dataSetLoader="org.intermine.bio.web.widget.GoStatLdr"
-                                 description="GO terms enriched for genes in this list."
-                                 label="GO Term"
-                                 filters="biological_process,cellular_component,molecular_function"
-                                 filterLabel="Ontology"
-                                 max="0.10" />
-
-      <bagtabledisplayer title="Pathway Information (KEGG)" pathStrings="Gene.pathways" link="org.intermine.bio.web.widget.PathwayURLQuery"
-                         description="Most common &lt;a href=&quot;http://www.genome.jp/kegg/&quot; target=&quot;_new&quot;&gt;KEGG pathways&lt;/a&gt; for this list." />
-
-      <enrichmentwidgetdisplayer title="Publication Enrichment"
-                                 link="org.intermine.bio.web.widget.PublicationURLQuery"
-                                 dataSetLoader="org.intermine.bio.web.widget.PublicationLdr"
-                                 label="Publication"
-                                 description="Publications enriched for genes in this list."
-                                 filters=""
-                                 filterLabel=""
-                                 max="0.10"
-                                 externalLink="http://www.ncbi.nlm.nih.gov/entrez/query.fcgi?cmd=Retrieve&amp;db=PubMed&amp;dopt=Abstract&amp;list_uids="
-                                 append="" />
-    </bagdisplayers>
+    </bagdisplayers>a
   </class>
 
   <class className="org.flymine.model.genomic.Pathway">
@@ -149,50 +128,7 @@
       <displayer src="/model/proteinInteractionGraph.jsp"/>
     </longdisplayers>
 
-
     <bagdisplayers>
-       <displayer src="attributeLinkDisplayer.tile"/>
-
-       <bagtabledisplayer
-         title="Experiment information"
-         pathStrings="Protein.proteinIdentifications.prideExperiment"
-         link="org.intermine.bio.web.widget.PrideExperimentURLQuery"    
-         description="Counts of proteins per PRIDE experiment" />
- 
-        <enrichmentwidgetdisplayer title="Gene Ontology Enrichment"
-                                 link="org.intermine.bio.web.widget.GoStatURLQuery"
-                                 dataSetLoader="org.intermine.bio.web.widget.GoStatLdr"
-                                 description="Go terms enriched for proteins in this list."
-                                 label="GO Term"
-                                 filters="biological_process,cellular_component,molecular_function"
-                                 filterLabel="ontology"
-                                 max="0.10" />
-
-        <enrichmentwidgetdisplayer title="UniProt Features"
-                                 link="org.intermine.bio.web.widget.UniProtFeaturesURLQuery"
-                                 dataSetLoader="org.intermine.bio.web.widget.UniProtFeaturesLdr"
-                                 label="Feature"
-                                 description="UniProt features enriched for proteins in this list."
-                                 filters=""
-                                 filterLabel=""
-                                 max="0.10"  />
-
-        <enrichmentwidgetdisplayer title="UniProt Keywords"
-                                 link="org.intermine.bio.web.widget.UniProtKeywordsURLQuery"
-                                 dataSetLoader="org.intermine.bio.web.widget.UniProtKeywordsLdr"
-                                 label="Keyword"
-                                 descr="UniProt keywords enriched for proteins in this list."
-                                 filters=""
-                                 filterLabel=""
-                                 max="0.10"  />
-
-       <bagtabledisplayer title="Protein Interactions"
-                                 pathStrings="Protein.proteinInteractions.interactingProteins"
-                                 link="org.intermine.bio.web.widget.ProteinInteractionURLQuery"
-                                 description="Proteins that interact with other Proteins in this list - data from &lt;a href=&quot;http://www.thebiogrid.org/&quot; target=&quot;_new&quot;&gt;BioGRID&lt;/a&gt;. Counts may include the same interaction more than once if observed in multiple experiments."
-                                 fields="primaryIdentifier"
-                                 columnTitle="Interactions"/>
-
     </bagdisplayers>
   </class>
 
@@ -240,13 +176,6 @@
         <displayer src="attributeLinkDisplayer.tile"/>
       </longdisplayers>
    </class>
-
-
-  <class className="org.flymine.model.genomic.ProteinIdentification">
-	<fields>
-	   <fieldconfig fieldExpr="protein.primaryAccession"/>
-	</fields>
-  </class>
 
   <class className="org.flymine.model.genomic.Transcript">
     <fields>
@@ -297,7 +226,6 @@
   <class className="org.flymine.model.genomic.AnalysisResult">
     <fields>
       <fieldconfig fieldExpr="confidence"/>
-      <fieldconfig fieldExpr="source.title"/>
     </fields>
   </class>
 
@@ -305,7 +233,6 @@
     <fields>
       <fieldconfig fieldExpr="score"/>
       <fieldconfig fieldExpr="confidence"/>
-      <fieldconfig fieldExpr="source.title"/>
     </fields>
   </class>
 
@@ -357,16 +284,6 @@
     <tabledisplayer src="/model/sequenceShortDisplayer.jsp"/>
   </class>
 
-<!--
-  <class className="org.flymine.model.genomic.GOAnnotation">
-    <fields>
-      <fieldconfig fieldExpr="subject.primaryIdentifier" showInInlineCollection="false"/>
-      <fieldconfig fieldExpr="identifier"/>
-      <fieldconfig fieldExpr="name"/>
-    </fields>
-  </class>
--->
-
 
   <class className="org.flymine.model.genomic.ProteinInteractionRegion">
     <fields>
@@ -385,4 +302,80 @@
     </fields>
    </class>
 
+  <tableExportConfig id="sequenceExporter" actionPath="/exportAction?type=sequenceExporter"
+                     className="org.intermine.bio.web.export.SequenceHttpExporter"/>
+   <widgets>
+
+      <enrichmentwidgetdisplayer id="protein_features" title="UniProt Features"
+                                 link="org.intermine.bio.web.widget.UniProtFeaturesURLQuery"
+                                 dataSetLoader="org.intermine.bio.web.widget.UniProtFeaturesLdr"
+                                 label="Feature"
+                                 description="UniProt features enriched for proteins in this list."
+                                 filters=""
+                                 filterLabel=""
+                                 typeClass="org.flymine.model.genomic.Protein"
+                                 max="0.10"  />
+
+      <enrichmentwidgetdisplayer id="uniprot_keywords" title="UniProt Keywords"
+                                 link="org.intermine.bio.web.widget.UniProtKeywordsURLQuery"
+                                 dataSetLoader="org.intermine.bio.web.widget.UniProtKeywordsLdr"
+                                 label="Keyword"
+                                 description="UniProt keywords enriched for proteins in this list."
+                                 filters=""
+                                 filterLabel=""
+                                 typeClass="org.flymine.model.genomic.Protein"
+                                 max="0.10"  />   
+
+
+      <bagtabledisplayer id="kegg" title="Pathway Information (KEGG)" pathStrings="Gene.pathways" link="org.intermine.bio.web.widget.PathwayURLQuery"
+                         description="Most common &lt;a href=&quot;http://www.genome.jp/kegg/&quot; target=&quot;_new&quot;&gt;KEGG pathways&lt;/a&gt; for this list."
+                         displayFields="identifier,name"
+                         exportFields="identifier"
+                         externalLink="http://www.genome.jp/dbget-bin/www_bget?pathway+hsa"
+                         typeClass="org.flymine.model.genomic.Gene"
+                         externalLinkLabel="KEGG" />
+
+       <bagtabledisplayer
+         id="pride"
+         title="Experiment information"
+         pathStrings="Protein.proteinIdentifications.prideExperiment"
+         link="org.intermine.bio.web.widget.PrideExperimentURLQuery"
+         displayFields="title"
+         typeClass="org.flymine.model.genomic.Protein"
+         externalLinkLabel="PRIDE"
+         description="Counts of proteins per PRIDE experiment" />
+
+       <bagtabledisplayer id="protein_interactions" title="Protein Interactions"
+                                 pathStrings="Protein.proteinInteractions.interactingProteins"
+                                 link="org.intermine.bio.web.widget.ProteinInteractionURLQuery"
+                                 description="Proteins that interact with other Proteins in this list. Counts may include the same interaction more than once if observed in multiple experiments. If a cell is highlighted the protein is also in the list!"
+                                 displayFields="primaryIdentifier"
+                                 exportFields="primaryIdentifier"
+				 typeClass="org.flymine.model.genomic.Protein"
+				 columnTitle="Interactions"/>
+
+      <enrichmentwidgetdisplayer id="go_enrichment" title="Gene Ontology Enrichment"
+                                 link="org.intermine.bio.web.widget.GoStatURLQuery"
+                                 dataSetLoader="org.intermine.bio.web.widget.GoStatLdr"
+                                 description="GO terms enriched for items in this list."
+                                 label="GO Term"
+                                 filters="biological_process,cellular_component,molecular_function"
+                                 filterLabel="Ontology"
+                                 max="0.10"
+                                 typeClass="org.flymine.model.genomic.Gene,org.flymine.model.genomic.Protein"
+                                 externalLink="http://amigo.geneontology.org/cgi-bin/amigo/term-details.cgi?term=" />
+
+      <enrichmentwidgetdisplayer id="publication_enrichment" title="Publication Enrichment"
+                                 link="org.intermine.bio.web.widget.PublicationURLQuery"
+                                 dataSetLoader="org.intermine.bio.web.widget.PublicationLdr"
+                                 label="Publication"
+                                 description="Publications enriched for genes in this list."
+                                 filters=""
+                                 filterLabel=""
+                                 max="0.10"
+                                 externalLink="http://www.ncbi.nlm.nih.gov/entrez/query.fcgi?cmd=Retrieve&amp;db=PubMed&amp;dopt=Abstract&amp;list_uids="
+                                 typeClass="org.flymine.model.genomic.Gene"
+                                 externalLinkLabel="PubMed:" />
+
+    </widgets>
 </webconfig>
