@@ -22,6 +22,7 @@ import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.Vector;
 
 import org.intermine.objectstore.ObjectStore;
 import org.intermine.objectstore.ObjectStoreException;
@@ -116,7 +117,10 @@ public class EnrichmentWidget extends Widget
             e.printStackTrace();
         }
     }
-
+    
+    public List getElementInList() {
+        return new Vector();
+    }
 
     /**
      * {@inheritDoc}
