@@ -78,7 +78,7 @@ public class FlyRegGFF3RecordHandlerTest extends ItemsTestCase
         converter.store();
 
         // uncomment to write a new target items files
-        writeItemsFile(writer.getItems(), "flyreg-tgt-items.xml");
+        //writeItemsFile(writer.getItems(), "flyreg-tgt-items.xml");
 
         Set expected = readItemSet("FlyRegGFF3RecordHandlerTest.xml");
 
