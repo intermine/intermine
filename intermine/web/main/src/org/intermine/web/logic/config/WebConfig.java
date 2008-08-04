@@ -28,6 +28,7 @@ import org.intermine.path.Path;
 import org.intermine.path.PathError;
 import org.intermine.web.logic.widget.config.EnrichmentWidgetConfig;
 import org.intermine.web.logic.widget.config.GraphWidgetConfig;
+import org.intermine.web.logic.widget.config.GridWidgetConfig;
 import org.intermine.web.logic.widget.config.TableWidgetConfig;
 import org.intermine.web.logic.widget.config.WidgetConfig;
 import org.xml.sax.SAXException;
@@ -115,6 +116,11 @@ public class WebConfig
                                  EnrichmentWidgetConfig.class);
         digester.addSetProperties("webconfig/widgets/enrichmentwidgetdisplayer");
         digester.addSetNext("webconfig/widgets/enrichmentwidgetdisplayer", "addWidget");
+        
+        digester.addObjectCreate("webconfig/widgets/griddisplayer",
+                GridWidgetConfig.class);
+        digester.addSetProperties("webconfig/widgets/griddisplayer");
+        digester.addSetNext("webconfig/widgets/griddisplayer", "addWidget");
 
         digester.addSetNext("webconfig/class", "addType");
 
