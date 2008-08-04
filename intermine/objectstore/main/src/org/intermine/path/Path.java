@@ -121,6 +121,13 @@ public class Path
         this.model = model;
         this.path = stringPath;
         this.subClassConstraintPaths = new HashMap<String, String>(constraintMap);
+
+        for (String constaintPath: subClassConstraintPaths.keySet()) {
+            if (constaintPath.indexOf(':') != -1) {
+                throw new IllegalArgumentException("illegal character (':') in constraint map");
+            }
+        }
+
         if (path.indexOf("[") != -1) {
             throw new IllegalArgumentException("path: " + stringPath
                                                + " contains illegal character '['");
@@ -332,7 +339,12 @@ public class Path
             throw new RuntimeException("path (" + this + ") has only one element");
         }
         String pathString = toString();
-        return new Path(model, pathString.substring(0, pathString.lastIndexOf('.')));
+        int lastDotIndex = pathString.lastIndexOf('.');
+        int lastIndex = pathString.lastIndexOf(':');
+        if (lastDotIndex > lastIndex) {
+            lastIndex = lastDotIndex;
+        }
+        return new Path(model, pathString.substring(0, lastIndex));
     }
 
     /**
