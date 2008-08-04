@@ -76,9 +76,11 @@ import org.intermine.web.logic.template.TemplateHelper;
 import org.intermine.web.logic.template.TemplateQuery;
 import org.intermine.web.logic.widget.EnrichmentWidget;
 import org.intermine.web.logic.widget.GraphWidget;
+import org.intermine.web.logic.widget.GridWidget;
 import org.intermine.web.logic.widget.TableWidget;
 import org.intermine.web.logic.widget.config.EnrichmentWidgetConfig;
 import org.intermine.web.logic.widget.config.GraphWidgetConfig;
+import org.intermine.web.logic.widget.config.GridWidgetConfig;
 import org.intermine.web.logic.widget.config.TableWidgetConfig;
 import org.intermine.web.logic.widget.config.WidgetConfig;
 
@@ -914,6 +916,56 @@ public class AjaxServices
         }
         return null;
     }
+    
+    /**
+    *
+    * @param widgetId unique ID for each widget
+    * @param bagName name of list
+    * @param highlight for highlighting
+    * @param pValue pValue
+    * @param numberOpt numberOpt
+    * @param externalLink link to external datasource
+    * @param externalLinkLabel name of external datasource.
+    * @return enrichment widget
+    */
+   public static GridWidget getProcessGridWidget(String widgetId, String bagName,
+                                                             String highlight,
+                                                             String pValue,
+                                                             String numberOpt,
+                                                             String externalLink,
+                                                             String externalLinkLabel) {
+       try {
+           ServletContext servletContext = WebContextFactory.get().getServletContext();
+           HttpSession session = WebContextFactory.get().getSession();
+           WebConfig webConfig = (WebConfig) servletContext.getAttribute(Constants.WEBCONFIG);
+           ObjectStore os = (ObjectStore) servletContext.getAttribute(Constants.OBJECTSTORE);
+           Model model = os.getModel();
+           Profile profile = (Profile) session.getAttribute(Constants.PROFILE);
+           SearchRepository searchRepository = SearchRepository
+                           .getGlobalSearchRepository(servletContext);
+           InterMineBag imBag = BagHelper.getBag(profile, searchRepository, bagName);
+           Type type = (Type) webConfig.getTypes().get(model.getPackageName()
+                   + "." + imBag.getType());
+           List<WidgetConfig> widgets = type.getWidgets();
+           for (WidgetConfig widgetConfig : widgets) {
+               if (widgetConfig.getId().equals(widgetId)) {
+                   GridWidgetConfig gridWidgetConfig =
+                                                       (GridWidgetConfig) widgetConfig;
+                   gridWidgetConfig.setExternalLink(externalLink);
+                   gridWidgetConfig.setExternalLinkLabel(externalLinkLabel);
+                   GridWidget gridWidget = new GridWidget(
+                           gridWidgetConfig, imBag, os, null, highlight, pValue, numberOpt);
+                   return gridWidget;
+               }
+           }
+       } catch (RuntimeException e) {
+           processException(e);
+       } catch (InterMineException e) {
+           processException(e);
+       }
+       return null;
+   }
+
 
     /**
      * Add an ID to the PagedTable selection
