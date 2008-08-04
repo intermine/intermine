@@ -37,6 +37,9 @@ public class WidgetForm extends ActionForm
     private String selectedExtraAttribute;
     private String errorCorrection;
     private String max;
+    private String highlight;
+    private String pValue;
+    private String numberOpt;
     
 
     /**
@@ -74,6 +77,34 @@ public class WidgetForm extends ActionForm
      */
     public void setLink(String link) {
         this.link = link;
+    }
+    
+    /**
+     * @return the pValue
+     */
+    public String getPValue() {
+        return pValue;
+    }
+
+    /**
+     * @param pValue the pValue to set
+     */
+    public void setPValue(String pValue) {
+        this.pValue = pValue;
+    }
+    
+    /**
+     * @return the numberOpt
+     */
+    public String getNumberOpt() {
+        return numberOpt;
+    }
+
+    /**
+     * @param pValue the pValue to set
+     */
+    public void setNumberOpt(String numberOpt) {
+        this.numberOpt = numberOpt;
     }
 
     /**
@@ -206,7 +237,20 @@ public class WidgetForm extends ActionForm
     public String getMax() {
         return max;
     }
+    
+    /**
+     * @return the highlight
+     */
+    public String getHighlight() {
+        return highlight;
+    }
 
+    /**
+     * @param highlight the highlight to set
+     */
+    public void setHighlight(String highlight) {
+        this.highlight = highlight;
+    }
     /**
      * @param max the max to set
      */
