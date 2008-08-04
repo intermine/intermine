@@ -21,6 +21,7 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import org.apache.log4j.Logger;
+import org.intermine.dataconversion.FileConverter;
 import org.intermine.dataconversion.ItemWriter;
 import org.intermine.metadata.MetaDataException;
 import org.intermine.metadata.Model;
@@ -35,15 +36,17 @@ import org.intermine.xml.full.ReferenceList;
  *
  * @author Xavier Watkins
  */
-public class KeggPathwayConverter extends BioFileConverter
+public class KeggPathwayConverter extends FileConverter
 {
     protected static final Logger LOG = Logger.getLogger(KeggPathwayConverter.class);
+    
+    protected Item dataSource, dataSet;
     protected Map<String, String> keggOrganismToTaxonId = new HashMap<String, String>();
     protected HashMap pathwayMap = new HashMap();
     private Map<String, Item> geneItems = new HashMap<String, Item>();
     private String dataLocation;
     protected IdResolverFactory resolverFactory;
-
+    
     /**
      * Constructor
      * @param writer the ItemWriter used to handle the resultant items
@@ -53,10 +56,12 @@ public class KeggPathwayConverter extends BioFileConverter
      */
     public KeggPathwayConverter(ItemWriter writer, Model model)
         throws ObjectStoreException, MetaDataException {
-        super(writer, model, "GenomeNet", "KEGG PATHWAY - dme");
+        super(writer, model);
 
         // Drosophila melanogaster
         keggOrganismToTaxonId.put("dme", "7227");
+        // Homo sapiens
+        keggOrganismToTaxonId.put("hsa", "9609");
         // Drosophila pseudoobscura
 //        keggOrganismToTaxonId.put("dpo", "7237");
         // Anopheles gambiae
@@ -64,6 +69,14 @@ public class KeggPathwayConverter extends BioFileConverter
         // Apis mellifera
 //        keggOrganismToTaxonId.put("dame", "7460");
 
+        dataSource = createItem("DataSource");
+        dataSource.setAttribute("name", "Kyoto Encyclopedia of Genes and Genomes");
+        dataSet = createItem("DataSet");
+        dataSet.setAttribute("title", "KEGG PATHWAY");
+        dataSet.setAttribute("url", "http://www.genome.jp/kegg/pathway.html");
+        store(dataSource);
+        store(dataSet);
+        
         // only construct factory here so can be replaced by mock factory in tests
         resolverFactory = new FlyBaseIdResolverFactory();
     }
@@ -84,7 +97,7 @@ public class KeggPathwayConverter extends BioFileConverter
         // Map Id | name
 
         File currentFile = getCurrentFile();
-
+        
         while (lineIter.hasNext()) {
             String[] line = (String[]) lineIter.next();
             Pattern filePattern = Pattern.compile("^(\\S+)_gene_map.*");
@@ -95,8 +108,11 @@ public class KeggPathwayConverter extends BioFileConverter
             if (currentFile.getName().startsWith("map_title")) {
                 String mapIdentifier = line[0];
                 String mapName = line[1];
-                Item pathway = getItemCreateOnce("Pathway", "identifier", mapIdentifier);
+                Item pathway = getAndStoreItemOnce("Pathway", "identifier", mapIdentifier);
                 pathway.setAttribute("name", mapName);
+                pathway.setCollection("evidence",
+                                      new ArrayList(Collections
+                                                    .singleton(dataSet.getIdentifier())));
                 store(pathway);
             } else if (matcher.find()) {
                 LOG.error("MATCHED");
@@ -128,7 +144,7 @@ public class KeggPathwayConverter extends BioFileConverter
     private Item getGene(String geneCG, String taxonId, ReferenceList referenceList) throws ObjectStoreException {
         String identifier = null;
         IdResolver resolver = resolverFactory.getIdResolver(false);
-        if (taxonId.equals("7227") && resolver != null) {
+        if (taxonId.equals("7227") && resolver != null) { 
             int resCount = resolver.countResolutions(taxonId, geneCG);
             if (resCount != 1) {
                 LOG.info("RESOLVER: failed to resolve gene to one identifier, ignoring gene: "
@@ -137,9 +153,9 @@ public class KeggPathwayConverter extends BioFileConverter
                 return null;
             }
             identifier = resolver.resolveId(taxonId, geneCG).iterator().next();
-        } else {
+        }else {
             identifier = geneCG;
-        }
+        } 
 
         Item gene = geneItems.get(identifier);
         if (gene == null) {
@@ -148,6 +164,8 @@ public class KeggPathwayConverter extends BioFileConverter
             gene = createItem("Gene");
             if (taxonId.equals("7227") && resolver != null) {
                 gene.setAttribute("primaryIdentifier", identifier);
+            } else if (taxonId.equals("9606")) {
+                gene.setAttribute("ncbiGeneNumber", geneCG);
             } else {
                 gene.setAttribute("secondaryIdentifier", identifier);
             }
@@ -155,10 +173,10 @@ public class KeggPathwayConverter extends BioFileConverter
             gene.addCollection(referenceList);
             geneItems.put(identifier, gene);
             store(gene);
-        }
+        } 
         return gene;
     }
-
+    
     /**
      * Pick up the data location from the ant, the translator needs to open some more files.
      * @param srcdatadir location of the source data
