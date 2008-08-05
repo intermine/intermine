@@ -40,12 +40,12 @@ import org.intermine.web.logic.results.ResultElement;
 import org.intermine.web.logic.results.WebTable;
 import org.intermine.web.struts.TableExportForm;
 
+import org.flymine.model.genomic.Interaction;
+
 import java.io.PrintWriter;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-
-import cytoscape.data.Interaction;
 
 /**
  * An implementation of TableHttpExporter that exports protein interactions
