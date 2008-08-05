@@ -9,7 +9,7 @@
       Caenorhabditis elegans and Drosophila melanogaster genomes. 
       The project is run as a Research Network. 
     </intro-text>
-    <tile-name>model/projects.jsp</tile-name>
+    <tile-name></tile-name>
     <aspect-source name="FlyBase" url="http://www.flybase.org"/>
     <aspect-source name="WormBase" url="http://www.wormbase.org/"/>
   </aspect>

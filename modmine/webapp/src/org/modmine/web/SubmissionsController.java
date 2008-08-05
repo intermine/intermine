@@ -13,7 +13,6 @@ package org.modmine.web;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.Map;
-import java.util.Set;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -25,14 +24,11 @@ import org.apache.struts.action.ActionMapping;
 import org.apache.struts.tiles.ComponentContext;
 import org.apache.struts.tiles.actions.TilesAction;
 import org.flymine.model.genomic.ExperimentSubmission;
-import org.flymine.model.genomic.ModEncodeProject;
-import org.flymine.model.genomic.ModEncodeProvider;
 import org.intermine.objectstore.ObjectStore;
 import org.intermine.objectstore.query.Query;
 import org.intermine.objectstore.query.QueryClass;
 import org.intermine.objectstore.query.QueryField;
 import org.intermine.objectstore.query.Results;
-import org.intermine.objectstore.query.ResultsRow;
 import org.intermine.web.logic.Constants;
 
 /**

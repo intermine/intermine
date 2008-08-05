@@ -112,7 +112,6 @@
 <!-- rm after swap back to dataId 
 		<attribute name="direction" type="java.lang.String" />
 -->
-    <attribute name="direction" type="java.lang.String" />
 		<attribute name="type" type="java.lang.String" />
 		<attribute name="value" type="java.lang.String" />
     <collection name="dataAttributes"
