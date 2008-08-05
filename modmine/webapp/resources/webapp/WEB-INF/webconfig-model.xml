@@ -10,7 +10,7 @@
     </fields>
   </class>
 
-  <class className="org.flymine.model.genomic.ModEncodeProvider">
+  <class className="org.flymine.model.genomic.Lab">
     <fields>
       <fieldconfig fieldExpr="name"/>
       <fieldconfig fieldExpr="affiliation"/>

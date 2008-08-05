@@ -26,7 +26,7 @@
 <action path="/projects" forward="projects.page">
 </action>
 
-<action path="/initProviders"
-  type="org.modmine.web.ProvidersController" />
-<action path="/providers" forward="providers.page">
+<action path="/initLabs"
+  type="org.modmine.web.LabsController" />
+<action path="/labs" forward="labs.page">
 </action>

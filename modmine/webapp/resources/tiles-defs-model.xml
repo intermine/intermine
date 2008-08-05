@@ -4,8 +4,8 @@
   <definition name="attributeLinkDisplayer.tile" path="/model/attributeLinkDisplayer.jsp" 
           controllerUrl="/initAttributeLinkDisplayer.do"/>
 
-<definition name="providers.tile" path="/model/providers.jsp" 
-        controllerUrl="/initProviders.do"/>
+<definition name="labs.tile" path="/model/labs.jsp" 
+        controllerUrl="/initLabs.do"/>
 <definition name="projects.tile" path="/model/projects.jsp" 
         controllerUrl="/initProjects.do"/>
 <definition name="submissions.tile" path="/model/submissions.jsp" 
@@ -24,7 +24,7 @@
     <put name="pageName" value="projects"/>
   </definition>
 
-  <definition name="providers.page" extends="layout.template">
-    <put name="body" value="providers.tile"/>
-    <put name="pageName" value="providers"/>
+  <definition name="labs.page" extends="layout.template">
+    <put name="body" value="labs.tile"/>
+    <put name="pageName" value="labs"/>
   </definition>

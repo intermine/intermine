@@ -10,8 +10,8 @@
 		<attribute name="surnamePI" type="java.lang.String" />
 		<attribute name="namePI" type="java.lang.String" />
 		<attribute name="url" type="java.lang.String" />
-		<collection name="providers"
-			referenced-type="org.flymine.model.genomic.ModEncodeProvider"
+		<collection name="labs"
+			referenced-type="org.flymine.model.genomic.Lab"
 			reverse-reference="project" />
 		<!-- 
 			<collection name="organisms" referenced-type="org.flymine.model.genomic.Organism" 
@@ -19,14 +19,14 @@
 		-->
 	</class>
 
-	<class name="org.flymine.model.genomic.ModEncodeProvider"
+	<class name="org.flymine.model.genomic.Lab"
 		extends="org.flymine.model.genomic.DataSource" is-interface="true">
 		<attribute name="name" type="java.lang.String" />
 		<attribute name="surname" type="java.lang.String" />
 		<attribute name="affiliation" type="java.lang.String" />
 		<reference name="project"
 			referenced-type="org.flymine.model.genomic.ModEncodeProject"
-			reverse-reference="providers" />
+			reverse-reference="labs" />
 		<collection name="experimentSubmissions"
 			referenced-type="org.flymine.model.genomic.ExperimentSubmission"
 			reverse-reference="provider" />
@@ -41,12 +41,12 @@
 		<attribute name="factorName" type="java.lang.String" />
 		<attribute name="qualityControl" type="java.lang.String" />
 		<attribute name="replicate" type="java.lang.String" />
+    <!-- temp. changed to string... 
     <attribute name="experimentDate" type="java.util.Date" />
     <attribute name="publicReleaseDate" type="java.util.Date" />
-		<!-- temp. changed to string... 
+    -->
     <attribute name="experimentDate" type="java.lang.String" />
     <attribute name="publicReleaseDate" type="java.lang.String" />
-    -->
 		<reference name="organism"
 			referenced-type="org.flymine.model.genomic.Organism" />
 		<!-- 
@@ -54,7 +54,7 @@
 			<attribute name="fileFormat" type="java.lang.String"/>
 		-->
 		<reference name="provider"
-			referenced-type="org.flymine.model.genomic.ModEncodeProvider"
+			referenced-type="org.flymine.model.genomic.Lab"
 			reverse-reference="experimentSubmissions" />
 		<collection name="appliedProtocols"
 			referenced-type="org.flymine.model.genomic.AppliedProtocol"

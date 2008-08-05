@@ -26,7 +26,7 @@ import org.apache.struts.tiles.ComponentContext;
 import org.apache.struts.tiles.actions.TilesAction;
 import org.flymine.model.genomic.ExperimentSubmission;
 import org.flymine.model.genomic.ModEncodeProject;
-import org.flymine.model.genomic.ModEncodeProvider;
+import org.flymine.model.genomic.Lab;
 import org.intermine.objectstore.ObjectStore;
 import org.intermine.objectstore.query.Query;
 import org.intermine.objectstore.query.QueryClass;
@@ -36,10 +36,10 @@ import org.intermine.objectstore.query.ResultsRow;
 import org.intermine.web.logic.Constants;
 
 /**
- * Controller for providers.jsp
+ * Controller for labs.jsp
  * @author Tom Riley
  */
-public class ProvidersController extends TilesAction
+public class LabsController extends TilesAction
 {
     /**
      * {@inheritDoc}
@@ -55,9 +55,9 @@ public class ProvidersController extends TilesAction
             ObjectStore os =
                 (ObjectStore) session.getServletContext().getAttribute(Constants.OBJECTSTORE);
 
-            //get the list of providers 
+            //get the list of labs 
             Query q = new Query();  
-            QueryClass qc = new QueryClass(ModEncodeProvider.class);
+            QueryClass qc = new QueryClass(Lab.class);
             QueryField qfSurname = new QueryField(qc, "surname");
 
             q.addFrom(qc);
@@ -67,30 +67,30 @@ public class ProvidersController extends TilesAction
             //            Results results = os.executeSingleton(q);
             Results results = os.execute(q);
 
-            Map<ModEncodeProvider, Set<ExperimentSubmission>> ps =
-                new LinkedHashMap<ModEncodeProvider, Set<ExperimentSubmission>>();
+            Map<Lab, Set<ExperimentSubmission>> ps =
+                new LinkedHashMap<Lab, Set<ExperimentSubmission>>();
 
-            Map<ModEncodeProvider, ModEncodeProject> pp =
-                new LinkedHashMap<ModEncodeProvider, ModEncodeProject>();
+            Map<Lab, ModEncodeProject> pp =
+                new LinkedHashMap<Lab, ModEncodeProject>();
 
-            // for each provider, get its attributes and set the values for jsp
+            // for each lab, get its attributes and set the values for jsp
 
             for (Iterator iter = results.iterator(); iter.hasNext(); ) {
                 ResultsRow row = (ResultsRow) iter.next();
 
-                ModEncodeProvider provider = (ModEncodeProvider) row.get(0);
-                Set<ExperimentSubmission> subs = provider.getExperimentSubmissions();
-                ModEncodeProject project = provider.getProject();
+                Lab lab = (Lab) row.get(0);
+                Set<ExperimentSubmission> subs = lab.getExperimentSubmissions();
+                ModEncodeProject project = lab.getProject();
                 
-                ps.put(provider, subs);
-                pp.put(provider, project);
+                ps.put(lab, subs);
+                pp.put(lab, project);
             
             }            
             
 //            Iterator i = results.iterator();
 //            while (i.hasNext()) {
 //                
-//                ModEncodeProvider provider = (ModEncodeProvider) i.next();
+//                Lab provider = (Lab) i.next();
 //                Set<ExperimentSubmission> subs = provider.getExperimentSubmissions();
 //                ModEncodeProject project = provider.getProject();
 //                
