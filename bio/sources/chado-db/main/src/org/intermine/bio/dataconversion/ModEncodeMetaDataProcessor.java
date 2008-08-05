@@ -666,7 +666,7 @@ public class ModEncodeMetaDataProcessor extends ChadoProcessor
                 continue;
             }
             LOG.info("PROV: " + prov);            
-            Item provider = getChadoDBConverter().createItem("ModEncodeProvider");
+            Item provider = getChadoDBConverter().createItem("Lab");
             provider.setAttribute("name", prov);
             Integer intermineObjectId = getChadoDBConverter().store(provider);
             storeInProviderMaps(provider, prov, intermineObjectId);
@@ -1564,12 +1564,12 @@ public class ModEncodeMetaDataProcessor extends ChadoProcessor
      */
     private void storeInProviderMaps(Item i, String providerName, Integer intermineObjectId)
     throws ObjectStoreException {
-        if (i.getClassName().equals("http://www.flymine.org/model/genomic#ModEncodeProvider")) {
+        if (i.getClassName().equals("http://www.flymine.org/model/genomic#Lab")) {
             providerIdMap .put(providerName, intermineObjectId);
             providerIdRefMap .put(providerName, i.getIdentifier());
         } else {
             throw new IllegalArgumentException(
-                    "Type mismatch: expecting ModEncodeProvider, getting "
+                    "Type mismatch: expecting Lab, getting "
                     + i.getClassName().substring(37) + " with intermineObjectId = "
                     + intermineObjectId + ", provider = " + providerName);
         }

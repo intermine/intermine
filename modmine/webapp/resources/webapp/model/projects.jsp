@@ -21,10 +21,10 @@
 		<th>Project</th>
 		<th>Title</th>
 		<th>Principal Investigator</th>
-		<th>Providers</th>
+		<th>Labs</th>
 		<th>Submissions</th>
 	</tr>
-	<c:forEach items="${providers}" var="item">
+	<c:forEach items="${labs}" var="item">
 		<tr>
 			<td><html:link
 				href="/${WEB_PROPERTIES['webapp.path']}/objectDetails.do?id=${item.key.id}">
@@ -54,8 +54,8 @@
 				<c:when test="${nrSubs gt 0}">
 					<im:querylink text="${nrSubs} submissions " skipBuilder="true">
 						<query name="" model="genomic"
-							view="ModEncodeProject.providers.experimentSubmissions.title ModEncodeProject.providers.experimentSubmissions.design ModEncodeProject.providers.experimentSubmissions.factorName ModEncodeProject.providers.experimentSubmissions.factorType ModEncodeProject.providers.experimentSubmissions.description"
-							sortOrder="ModEncodeProject.providers.experimentSubmissions.title">
+							view="ModEncodeProject.labs.experimentSubmissions.title ModEncodeProject.labs.experimentSubmissions.design ModEncodeProject.labs.experimentSubmissions.factorName ModEncodeProject.labs.experimentSubmissions.factorType ModEncodeProject.labs.experimentSubmissions.description"
+							sortOrder="ModEncodeProject.labs.experimentSubmissions.title">
 						<node path="ModEncodeProject" type="ModEncodeProject">
 						</node>
 						<node path="ModEncodeProject.surnamePI" type="String">

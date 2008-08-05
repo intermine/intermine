@@ -25,8 +25,8 @@ import org.apache.struts.action.ActionMapping;
 import org.apache.struts.tiles.ComponentContext;
 import org.apache.struts.tiles.actions.TilesAction;
 import org.flymine.model.genomic.ExperimentSubmission;
+import org.flymine.model.genomic.Lab;
 import org.flymine.model.genomic.ModEncodeProject;
-import org.flymine.model.genomic.ModEncodeProvider;
 import org.intermine.objectstore.ObjectStore;
 import org.intermine.objectstore.query.Query;
 import org.intermine.objectstore.query.QueryClass;
@@ -67,28 +67,28 @@ public class ProjectsController extends TilesAction
             
             Results results = os.executeSingleton(q);
 
-            Map<ModEncodeProject, Set<ModEncodeProvider>> pp =
-                new LinkedHashMap<ModEncodeProject, Set<ModEncodeProvider>>();
+            Map<ModEncodeProject, Set<Lab>> pp =
+                new LinkedHashMap<ModEncodeProject, Set<Lab>>();
             Map<ModEncodeProject, Integer> nr =
                 new LinkedHashMap<ModEncodeProject, Integer>();
             
-            // for each project, get its providers
+            // for each project, get its labs
             Iterator i = results.iterator();
             while (i.hasNext()) {
                 ModEncodeProject project = (ModEncodeProject) i.next();
-                Set<ModEncodeProvider> providers = project.getProviders();
-                pp.put(project, providers);
+                Set<Lab> labs = project.getLabs();
+                pp.put(project, labs);
                 Integer subNr = 0;
-                // for each provider, get its experiments
-                Iterator p = providers.iterator();
+                // for each lab, get its experiments
+                Iterator p = labs.iterator();
                 while (p.hasNext()) {
-                    ModEncodeProvider provider = (ModEncodeProvider) p.next();
-                    Set<ExperimentSubmission> subs = provider.getExperimentSubmissions();
+                    Lab lab = (Lab) p.next();
+                    Set<ExperimentSubmission> subs = lab.getExperimentSubmissions();
                     subNr = subNr + subs.size();
                 }
                 nr.put(project, subNr);
             }
-            request.setAttribute("providers", pp);
+            request.setAttribute("labs", pp);
             request.setAttribute("counts", nr);
         } catch (Exception err) {
             err.printStackTrace();

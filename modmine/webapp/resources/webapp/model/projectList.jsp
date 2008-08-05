@@ -18,7 +18,7 @@
 
 
 <table cellpadding="0" cellspacing="0" border="0" class="dbsources">
-	<c:forEach items="${providers}" var="item" varStatus="status">
+	<c:forEach items="${labs}" var="item" varStatus="status">
 		<c:if test="${status.count%2 eq 1}"><tr></c:if>
 			<td><html:link
 				href="/${WEB_PROPERTIES['webapp.path']}/objectDetails.do?id=${item.key.id}">
