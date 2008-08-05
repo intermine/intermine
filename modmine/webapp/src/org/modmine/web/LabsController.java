@@ -25,7 +25,7 @@ import org.apache.struts.action.ActionMapping;
 import org.apache.struts.tiles.ComponentContext;
 import org.apache.struts.tiles.actions.TilesAction;
 import org.flymine.model.genomic.ExperimentSubmission;
-import org.flymine.model.genomic.ModEncodeProject;
+import org.flymine.model.genomic.Project;
 import org.flymine.model.genomic.Lab;
 import org.intermine.objectstore.ObjectStore;
 import org.intermine.objectstore.query.Query;
@@ -70,8 +70,8 @@ public class LabsController extends TilesAction
             Map<Lab, Set<ExperimentSubmission>> ps =
                 new LinkedHashMap<Lab, Set<ExperimentSubmission>>();
 
-            Map<Lab, ModEncodeProject> pp =
-                new LinkedHashMap<Lab, ModEncodeProject>();
+            Map<Lab, Project> pp =
+                new LinkedHashMap<Lab, Project>();
 
             // for each lab, get its attributes and set the values for jsp
 
@@ -80,24 +80,13 @@ public class LabsController extends TilesAction
 
                 Lab lab = (Lab) row.get(0);
                 Set<ExperimentSubmission> subs = lab.getExperimentSubmissions();
-                ModEncodeProject project = lab.getProject();
+                Project project = lab.getProject();
                 
                 ps.put(lab, subs);
                 pp.put(lab, project);
             
             }            
             
-//            Iterator i = results.iterator();
-//            while (i.hasNext()) {
-//                
-//                Lab provider = (Lab) i.next();
-//                Set<ExperimentSubmission> subs = provider.getExperimentSubmissions();
-//                ModEncodeProject project = provider.getProject();
-//                
-//                ps.put(provider, subs);
-//                pp.put(provider, project);
-//            }
-
             request.setAttribute("experiments", ps);
             request.setAttribute("project", pp);
 

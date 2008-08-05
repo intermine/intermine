@@ -1,6 +1,6 @@
 <webconfig>
 
-  <class className="org.flymine.model.genomic.ModEncodeProject">
+  <class className="org.flymine.model.genomic.Project">
     <fields>
       <fieldconfig fieldExpr="name"/>
       <fieldconfig fieldExpr="namePI"/>

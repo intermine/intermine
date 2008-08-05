@@ -12,7 +12,7 @@
 
 <table cellpadding="0" cellspacing="5" border="0" class="dbsources">
   <tr>
-    <th>Provider</th>
+    <th>Lab</th>
     <th>Affiliation</th>
     <th>Project</th>
     <th>Submissions</th>

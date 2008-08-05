@@ -20,9 +20,7 @@
     </im:boxarea>
 
      <im:boxarea title="Submissions" titleLink="/${WEB_PROPERTIES['webapp.path']}/labs.do" stylename="plainbox" floatValue="left" fixedWidth="300px">
-<%--
          <tiles:insert name="submissions.tile"/>
---%>
     </im:boxarea>
 
 <%--
