@@ -19,7 +19,6 @@ import java.util.Map;
 import org.intermine.bio.io.gff3.GFF3Record;
 import org.intermine.bio.util.GFF3Util;
 import org.intermine.objectstore.ObjectStoreException;
-import org.intermine.path.Path;
 import org.intermine.util.IntPresentSet;
 import org.intermine.util.TypeUtil;
 import org.intermine.util.TypeUtil.FieldInfo;

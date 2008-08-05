@@ -11,6 +11,7 @@ package org.intermine.bio.web.export;
  */
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Properties;
@@ -99,7 +100,9 @@ public class GFF3HttpExporter implements TableHttpExporter
      * SO term name.  The Map is cached as the SO_CLASS_NAMES attribute in the servlet context.
      * @throws ServletException if the SO class names properties file cannot be found
      */
-    private Map getSoClassNames(ServletContext servletContext) throws ServletException {
+    @SuppressWarnings("unchecked")
+    private Map<String, String> getSoClassNames(ServletContext servletContext)
+        throws ServletException {
         final String soClassNames = "SO_CLASS_NAMES";
         Properties soNameProperties;
         if (servletContext.getAttribute(soClassNames) == null) {
@@ -117,7 +120,7 @@ public class GFF3HttpExporter implements TableHttpExporter
             soNameProperties = (Properties) servletContext.getAttribute(soClassNames);
         }
 
-        return soNameProperties;
+        return new HashMap<String, String>((Map) soNameProperties);
     }
 
     /**
