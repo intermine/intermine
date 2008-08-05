@@ -27,12 +27,12 @@
 		<reference name="project"
 			referenced-type="org.flymine.model.genomic.Project"
 			reverse-reference="labs" />
-		<collection name="experimentSubmissions"
-			referenced-type="org.flymine.model.genomic.ExperimentSubmission"
+		<collection name="submissions"
+			referenced-type="org.flymine.model.genomic.Submission"
 			reverse-reference="lab" />
 	</class>
 
-	<class name="org.flymine.model.genomic.ExperimentSubmission"
+	<class name="org.flymine.model.genomic.Submission"
 		extends="org.flymine.model.genomic.DataSet" is-interface="true">
 		<attribute name="title" type="java.lang.String" />
 		<attribute name="description" type="java.lang.String" />
@@ -55,16 +55,16 @@
 		-->
 		<reference name="lab"
 			referenced-type="org.flymine.model.genomic.Lab"
-			reverse-reference="experimentSubmissions" />
+			reverse-reference="submissions" />
 		<collection name="appliedProtocols"
 			referenced-type="org.flymine.model.genomic.AppliedProtocol"
-			reverse-reference="experimentSubmission" />
+			reverse-reference="submission" />
 		<collection name="protocols"
 			referenced-type="org.flymine.model.genomic.Protocol"
-			reverse-reference="experimentSubmissions" />
+			reverse-reference="submissions" />
 		<collection name="submissionData"
 			referenced-type="org.flymine.model.genomic.SubmissionData"
-			reverse-reference="experimentSubmission" />
+			reverse-reference="submission" />
 		<collection name="experimentOutData"
 			referenced-type="org.flymine.model.genomic.SubmissionData" />
 		<collection name="experimentInData"
@@ -79,8 +79,8 @@
 		<attribute name="url" type="java.lang.String" />
 		<attribute name="arrayDataFile" type="java.lang.String" />
 		<attribute name="derivedArrayDataFile" type="java.lang.String" />
-		<collection name="experimentSubmissions"
-			referenced-type="org.flymine.model.genomic.ExperimentSubmission"
+		<collection name="submissions"
+			referenced-type="org.flymine.model.genomic.Submission"
 			reverse-reference="protocols" />
 		<collection name="appliedProtocols"
 			referenced-type="org.flymine.model.genomic.AppliedProtocol"
@@ -95,8 +95,8 @@
 		<reference name="protocol"
 			referenced-type="org.flymine.model.genomic.Protocol"
 			reverse-reference="appliedProtocols" />
-		<reference name="experimentSubmission"
-			referenced-type="org.flymine.model.genomic.ExperimentSubmission"
+		<reference name="submission"
+			referenced-type="org.flymine.model.genomic.Submission"
 			reverse-reference="appliedProtocols" />
 		<collection name="inputData"
 			referenced-type="org.flymine.model.genomic.SubmissionData"
@@ -125,8 +125,8 @@
 		<collection name="previousAppliedProtocols"
 			referenced-type="org.flymine.model.genomic.AppliedProtocol"
 			reverse-reference="outputData" />
-		<reference name="experimentSubmission"
-			referenced-type="org.flymine.model.genomic.ExperimentSubmission"
+		<reference name="submission"
+			referenced-type="org.flymine.model.genomic.Submission"
 			reverse-reference="submissionData" />
     <collection name="relatedInputs"
       referenced-type="org.flymine.model.genomic.SubmissionData"/>

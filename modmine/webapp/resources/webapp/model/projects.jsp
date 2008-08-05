@@ -54,8 +54,8 @@
 				<c:when test="${nrSubs gt 0}">
 					<im:querylink text="${nrSubs} submissions " skipBuilder="true">
 						<query name="" model="genomic"
-							view="Project.labs.experimentSubmissions.title Project.labs.experimentSubmissions.design Project.labs.experimentSubmissions.factorName Project.labs.experimentSubmissions.factorType Project.labs.experimentSubmissions.description"
-							sortOrder="Project.labs.experimentSubmissions.title">
+							view="Project.labs.submissions.title Project.labs.submissions.design Project.labs.submissions.factorName Project.labs.submissions.factorType Project.labs.submissions.description"
+							sortOrder="Project.labs.submissions.title">
 						<node path="Project" type="Project">
 						</node>
 						<node path="Project.surnamePI" type="String">
