@@ -39,7 +39,6 @@ import org.intermine.web.logic.ClassKeyHelper;
 import org.flymine.model.genomic.BioEntity;
 import org.flymine.model.genomic.Synonym;
 
-import java.io.FileInputStream;
 import java.io.InputStream;
 
 /**
@@ -162,8 +161,7 @@ public class SynonymUpdater
      * @throws Exception if the file can't be found
      */
     protected InputStream getClassKeysInputStream() throws Exception {
-        return new FileInputStream("../../bio/core/props/resources/class_keys.properties");
-
+        return getClass().getClassLoader().getResourceAsStream("class_keys.properties");
     }
 
     /**
