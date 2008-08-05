@@ -36,10 +36,11 @@ public class Drosophila2ProbeConverter extends FileConverter
     protected static final Logger LOG = Logger.getLogger(Drosophila2ProbeConverter.class);
 
     protected Item dataSource, dataSet, org;
-    protected Map<String, Item> bioMap = new HashMap<String, Item>();
+    protected Map<String, Item> bioentities = new HashMap<String, Item>();
     protected IdResolverFactory resolverFactory;
     private static final String TAXON_ID = "7227";
     private Map<String, Item> synonyms = new HashMap<String, Item>();
+
 
     /**
      * Constructor
@@ -82,25 +83,31 @@ public class Drosophila2ProbeConverter extends FileConverter
         dataSet.setReference("dataSource", dataSource.getIdentifier());
         dataSet.setAttribute("title", "Affymetrix array: " + line[2]);
         store(dataSet);
+        Map<String, Item> probes = new HashMap<String, Item>();
+        List<Item> delayedItems = new ArrayList<Item>();
 
         while (lineIter.hasNext()) {
             line = lineIter.next();
-            List<Item> delayedItems = new ArrayList<Item>();
+
             String fbgn = line[0];
-            String transcriptIdentifier = line[1];
+//            String transcriptIdentifier = line[1];
             String probesetIdentifier = line[2];
 
-            Item probeSet = createProbeSet(probesetIdentifier, delayedItems);
-            Item transcript = createBioEntity("Transcript", transcriptIdentifier, delayedItems);
-            probeSet.setReference("transcript", transcript.getIdentifier());
+            Item probeSet = createProbeSet(probesetIdentifier, probes, delayedItems);
+//            Item transcript = createBioEntity("Transcript", transcriptIdentifier, delayedItems);
+//            probeSet.setReference("transcript", transcript.getIdentifier());
 
             Item gene = createBioEntity("Gene", fbgn, delayedItems);
             if (gene != null) {
-                probeSet.setCollection("genes",
-                              new ArrayList(Collections.singleton(gene.getIdentifier())));
+                probeSet.addToCollection("genes", gene);
             }
-            store(probeSet);
-         }
+        }
+        for (Item item : probes.values()) {
+            store(item);
+        }
+        for (Item item : delayedItems) {
+            store(item);
+        }
     }
 
     private Item createBioEntity(String clsName, String id, List<Item> delayedItems)
@@ -117,23 +124,23 @@ public class Drosophila2ProbeConverter extends FileConverter
              }
              identifier = resolver.resolveId(TAXON_ID, identifier).iterator().next();
         }
-        Item bio = bioMap.get(identifier);
-        if (bio == null) {
-            bio = createItem(clsName);
-            bio.setReference("organism", org.getIdentifier());
+        Item bioentity = bioentities.get(identifier);
+        if (bioentity == null) {
+            bioentity = createItem(clsName);
+            bioentity.setReference("organism", org.getIdentifier());
 
             if (clsName.equals("Gene")) {
-                bio.setAttribute("primaryIdentifier", identifier);
+                bioentity.setAttribute("primaryIdentifier", identifier);
             } else {
-                bio.setAttribute("secondaryIdentifier", identifier);
+                bioentity.setAttribute("secondaryIdentifier", identifier);
             }
-            bio.setCollection("dataSets",
-                              new ArrayList(Collections.singleton(dataSet.getIdentifier())));
-            bioMap.put(identifier, bio);
-            store(bio);
-            createSynonym(bio.getIdentifier(), "identifier", identifier, delayedItems);
+            bioentity.setCollection("dataSets",
+                               new ArrayList(Collections.singleton(dataSet.getIdentifier())));
+            bioentities.put(identifier, bioentity);
+            store(bioentity);
+            createSynonym(bioentity.getIdentifier(), "identifier", identifier, delayedItems);
         }
-        return bio;
+        return bioentity;
     }
 
     /**
@@ -146,7 +153,12 @@ public class Drosophila2ProbeConverter extends FileConverter
      * @return item
      * @throws exception if anything goes wrong when writing items to objectstore
      */
-    private Item createProbeSet(String probeSetId, List<Item> delayedItems) {
+    private Item createProbeSet(String probeSetId, Map<String, Item> probes,
+                                List<Item> delayedItems) {
+        if (probes.get(probeSetId) != null) {
+            return probes.get(probeSetId);
+        }
+
         Item probeSet = createItem("ProbeSet");
         probeSet.setAttribute("primaryIdentifier", probeSetId);
         probeSet.setAttribute("name", probeSetId);
@@ -154,6 +166,7 @@ public class Drosophila2ProbeConverter extends FileConverter
         probeSet.setCollection("dataSets",
             new ArrayList(Collections.singleton(dataSet.getIdentifier())));
         createSynonym(probeSet.getIdentifier(), "identifier", probeSetId, delayedItems);
+        probes.put(probeSetId, probeSet);
         return probeSet;
     }
 
