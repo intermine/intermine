@@ -8,7 +8,10 @@ tempname="temp_log.txt"
 tempfile=$logdir$tempname
 shared_data="/shared/data"
 config_file="./resources/get_scripts.config"
-unlink($tempfile);
+if [ -a $tempfile ]
+then
+	rm $tempfile;
+fi
 
 $errmsg="";
 
