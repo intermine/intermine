@@ -75,11 +75,11 @@ public class GFF3HttpExporter implements TableHttpExporter
             exporter = new GFF3Exporter(writer,
                     indexes, getSoClassNames(servletContext));
         } catch (Exception e) {
-            throw new ExportException("Export failed.", e);
+            throw new ExportException("Export failed", e);
         }
         exporter.export(pt.getResultElementRows());
         if (exporter.getWrittenResultsCount() == 0) {
-            throw new ExportException("Nothing was found for export.");
+            throw new ExportException("Nothing was found for export");
         }
     }
 
