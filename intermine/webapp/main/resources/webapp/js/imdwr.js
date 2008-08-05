@@ -129,8 +129,8 @@ function resultsCountCallback(size) {
 function getColumnSummary(tableName, columnName, columnDisplayName) {
     document.getElementById('summary_loaded').style.display = "none";
     document.getElementById('summary_loading').style.display = "block";
-    Position.center($('summary'));
-    Effect.Appear('summary', { duration: 0.30 });
+    // Position.center($('summary'));
+    jQuery('#summary').show(300);
     AjaxServices.getColumnSummary(tableName, columnName, function(str){
         var rows = str[0];
         var uniqueCountQid = str[1];

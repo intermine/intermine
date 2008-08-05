@@ -12,9 +12,13 @@ package org.intermine.util;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.StringTokenizer;
 import java.util.TreeSet;
+
+import org.apache.commons.lang.StringUtils;
 
 /**
  * Collection of commonly used String utilities
@@ -435,4 +439,21 @@ public class StringUtil
         }
         return str.length() == 0;
     }
+    
+    /**
+     * Make a Map from the serialized String returned
+     * by jQuery.sortable("serialize")
+     * @param str the String
+     * @return a Map
+     */
+    public static Map<String, String> serializedSortOrderToMap(String str) {
+        Map returnMap = new LinkedHashMap<String, String>();
+        String[] strArray = str.split("&");
+        for (String path: strArray) {
+			returnMap.put(StringUtils.split(path, "[]=")[0], StringUtils.split(
+					path, "[]=")[1]);
+		}
+        return returnMap;
+    }
+    
 }

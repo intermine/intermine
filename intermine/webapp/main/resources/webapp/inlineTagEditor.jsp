@@ -15,7 +15,7 @@
   <div style="margin-top: 5px">
 </c:if>
 
-<img class="tag" src="images/tag.gif" onclick="new Effect.Appear('tags-${uid}', {duration: 0.15})"/>
+<img class="tag" src="images/tag.gif" onclick="jQuery('#tags-${uid}').show(150)"/>
 
 <span id="tags-${uid}" style="${!show?'display:none':''}">
   <span id="currentTags-${uid}">
