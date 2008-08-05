@@ -3,7 +3,7 @@
   <class name="org.flymine.model.genomic.OriginOfReplication"
     extends="org.flymine.model.genomic.Region" is-interface="true"/>
 
-	<class name="org.flymine.model.genomic.ModEncodeProject"
+	<class name="org.flymine.model.genomic.Project"
 		is-interface="true">
 		<attribute name="name" type="java.lang.String" />
 		<attribute name="title" type="java.lang.String" />
@@ -25,11 +25,11 @@
 		<attribute name="surname" type="java.lang.String" />
 		<attribute name="affiliation" type="java.lang.String" />
 		<reference name="project"
-			referenced-type="org.flymine.model.genomic.ModEncodeProject"
+			referenced-type="org.flymine.model.genomic.Project"
 			reverse-reference="labs" />
 		<collection name="experimentSubmissions"
 			referenced-type="org.flymine.model.genomic.ExperimentSubmission"
-			reverse-reference="provider" />
+			reverse-reference="lab" />
 	</class>
 
 	<class name="org.flymine.model.genomic.ExperimentSubmission"
@@ -41,19 +41,19 @@
 		<attribute name="factorName" type="java.lang.String" />
 		<attribute name="qualityControl" type="java.lang.String" />
 		<attribute name="replicate" type="java.lang.String" />
-    <!-- temp. changed to string... 
     <attribute name="experimentDate" type="java.util.Date" />
     <attribute name="publicReleaseDate" type="java.util.Date" />
-    -->
+    <!-- temp. changed to string... 
     <attribute name="experimentDate" type="java.lang.String" />
     <attribute name="publicReleaseDate" type="java.lang.String" />
+    -->
 		<reference name="organism"
 			referenced-type="org.flymine.model.genomic.Organism" />
 		<!-- 
 			<reference name="publication" referenced-type="org.flymine.model.genomic.Publication"/>
 			<attribute name="fileFormat" type="java.lang.String"/>
 		-->
-		<reference name="provider"
+		<reference name="lab"
 			referenced-type="org.flymine.model.genomic.Lab"
 			reverse-reference="experimentSubmissions" />
 		<collection name="appliedProtocols"

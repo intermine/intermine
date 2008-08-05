@@ -89,8 +89,8 @@ Results results = os.execute(q);
 Map<ModEncodeProvider, Set<ExperimentSubmission>> ps =
     new LinkedHashMap<ModEncodeProvider, Set<ExperimentSubmission>>();
 
-Map<ModEncodeProvider, ModEncodeProject> pp =
-    new LinkedHashMap<ModEncodeProvider, ModEncodeProject>();
+Map<ModEncodeProvider, Project> pp =
+    new LinkedHashMap<ModEncodeProvider, Project>();
 
 // for each provider, get its attributes and set the values for jsp
 
@@ -99,7 +99,7 @@ for (Iterator iter = results.iterator(); iter.hasNext(); ) {
 
     ModEncodeProvider provider = (ModEncodeProvider) row.get(0);
     Set<ExperimentSubmission> subs = provider.getExperimentSubmissions();
-    ModEncodeProject project = provider.getProject();
+    Project project = provider.getProject();
     
     ps.put(provider, subs);
     pp.put(provider, project);

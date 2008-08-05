@@ -26,7 +26,7 @@ import org.apache.struts.tiles.ComponentContext;
 import org.apache.struts.tiles.actions.TilesAction;
 import org.flymine.model.genomic.ExperimentSubmission;
 import org.flymine.model.genomic.Lab;
-import org.flymine.model.genomic.ModEncodeProject;
+import org.flymine.model.genomic.Project;
 import org.intermine.objectstore.ObjectStore;
 import org.intermine.objectstore.query.Query;
 import org.intermine.objectstore.query.QueryClass;
@@ -58,7 +58,7 @@ public class ProjectsController extends TilesAction
             
             //get the list of projects 
             Query q = new Query();  
-            QueryClass qc = new QueryClass(ModEncodeProject.class);
+            QueryClass qc = new QueryClass(Project.class);
             QueryField qcName = new QueryField(qc, "name");
 
             q.addFrom(qc);
@@ -67,15 +67,15 @@ public class ProjectsController extends TilesAction
             
             Results results = os.executeSingleton(q);
 
-            Map<ModEncodeProject, Set<Lab>> pp =
-                new LinkedHashMap<ModEncodeProject, Set<Lab>>();
-            Map<ModEncodeProject, Integer> nr =
-                new LinkedHashMap<ModEncodeProject, Integer>();
+            Map<Project, Set<Lab>> pp =
+                new LinkedHashMap<Project, Set<Lab>>();
+            Map<Project, Integer> nr =
+                new LinkedHashMap<Project, Integer>();
             
             // for each project, get its labs
             Iterator i = results.iterator();
             while (i.hasNext()) {
-                ModEncodeProject project = (ModEncodeProject) i.next();
+                Project project = (Project) i.next();
                 Set<Lab> labs = project.getLabs();
                 pp.put(project, labs);
                 Integer subNr = 0;

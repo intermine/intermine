@@ -44,11 +44,11 @@ public class ModEncodeMetaDataProcessor extends ChadoProcessor
     private Map<Integer, Integer> appliedProtocolIdMap = new HashMap<Integer, Integer>();
     private Map<Integer, String> appliedProtocolIdRefMap = new HashMap<Integer, String>();
 
-    // for providers, the maps link the provider name with the identifiers...
-    private Map<String, Integer> providerIdMap = new HashMap<String, Integer>();
-    private Map<String, String> providerIdRefMap = new HashMap<String, String>();
+    // for labs, the maps link the lab name with the identifiers...
+    private Map<String, Integer> labIdMap = new HashMap<String, Integer>();
+    private Map<String, String> labIdRefMap = new HashMap<String, String>();
     // ...we need a further map to link to experiment 
-    private Map<Integer, String> experimentProviderMap = new HashMap<Integer, String>();
+    private Map<Integer, String> experimentLabMap = new HashMap<Integer, String>();
 
     // maps from chado identifier to specific objects
     private Map<Integer, ExperimentSubmissionDetails> experimentMap =
@@ -86,8 +86,8 @@ public class ModEncodeMetaDataProcessor extends ChadoProcessor
         private String itemIdentifier;
         // the object id of the stored Item
         private Integer interMineObjectId;
-        // the identifier assigned to Provider Item for this object
-        private String providerItemIdentifier;
+        // the identifier assigned to lab Item for this object
+        private String labItemIdentifier;
     }
 
     /**
@@ -136,9 +136,9 @@ public class ModEncodeMetaDataProcessor extends ChadoProcessor
     @Override
     public void process(Connection connection) throws Exception {
 
-        LOG.info("ICI:  provider");
-        processProviderTable(connection);
-        //processProviderAttributes(connection);
+        LOG.info("ICI:  lab");
+        processLabTable(connection);
+        //processLabAttributes(connection);
 
         LOG.info("ICI:  experiment");
         processExperimentTable(connection);
@@ -243,14 +243,14 @@ public class ModEncodeMetaDataProcessor extends ChadoProcessor
             Integer chadoExperimentId = entry.getKey();
             ExperimentSubmissionDetails experimentSubmissionDetails = entry.getValue();
             String experimentItemIdentifier = experimentSubmissionDetails.itemIdentifier;
-            String providerItemIdentifier = experimentSubmissionDetails.providerItemIdentifier;
+            String labItemIdentifier = experimentSubmissionDetails.labItemIdentifier;
 
             LOG.info("xFEATDAT: exp>" + experimentItemIdentifier 
-                    + "< prov>" + providerItemIdentifier + "<");
+                    + "< prov>" + labItemIdentifier + "<");
 
             ModEncodeFeatureProcessor processor =
                 new ModEncodeFeatureProcessor(getChadoDBConverter(), experimentItemIdentifier,
-                        providerItemIdentifier, experimentDataMap.get(chadoExperimentId));
+                        labItemIdentifier, experimentDataMap.get(chadoExperimentId));
 
             processor.process(connection);
             featureMap.putAll(processor.getFeatureMap());
@@ -634,57 +634,57 @@ public class ModEncodeMetaDataProcessor extends ChadoProcessor
      *    PROVIDER
      * ==============
      *
-     * Providers are loaded statically. A map is built between experimentId and
-     * provider's name and used for the references. 2 maps store intermine
-     * objectId and itemId, with key the provider name.
-     * Note: the provider and the project are now put in the chadoxml now, as surnames,
+     * Labs are loaded statically. A map is built between experimentId and
+     * lab's name and used for the references. 2 maps store intermine
+     * objectId and itemId, with key the lab name.
+     * Note: the lab and the project are now put in the chadoxml now, as surnames,
      * and we could use those instead.
      * 
      * @param connection
      * @throws SQLException
      * @throws ObjectStoreException
      */
-    private void processProviderTable(Connection connection)
+    private void processLabTable(Connection connection)
     throws SQLException, ObjectStoreException {
-        ResultSet res = getProviderResultSet(connection);
+        ResultSet res = getLabResultSet(connection);
         int count = 0;
         while (res.next()) {
             Integer experimentId = new Integer(res.getInt("experiment_id"));
             String value = res.getString("value");
-            experimentProviderMap.put(experimentId, value);
+            experimentLabMap.put(experimentId, value);
             count++;
         }
         res.close();
 
-        Set <Integer> exp = experimentProviderMap.keySet();
+        Set <Integer> exp = experimentLabMap.keySet();
         Iterator <Integer> i  = exp.iterator();
         while (i.hasNext()) {
             Integer thisExp = i.next();
-            String prov = experimentProviderMap.get(thisExp);  
+            String prov = experimentLabMap.get(thisExp);  
 
-            if (providerIdMap.containsKey(prov)) {
+            if (labIdMap.containsKey(prov)) {
                 continue;
             }
             LOG.info("PROV: " + prov);            
-            Item provider = getChadoDBConverter().createItem("Lab");
-            provider.setAttribute("name", prov);
-            Integer intermineObjectId = getChadoDBConverter().store(provider);
-            storeInProviderMaps(provider, prov, intermineObjectId);
+            Item lab = getChadoDBConverter().createItem("Lab");
+            lab.setAttribute("name", prov);
+            Integer intermineObjectId = getChadoDBConverter().store(lab);
+            storeInLabMaps(lab, prov, intermineObjectId);
         }
-        LOG.info("created " + providerIdMap.size() + " providers");
+        LOG.info("created " + labIdMap.size() + " labs");
     }
 
     /**
-     * Return the rows needed from the provider table.
+     * Return the rows needed from the lab table.
      * We use the surname of the Principal Investigator (person ranked 0)
-     * as the provider name.
+     * as the lab name.
      * This is a protected method so that it can be overridden for testing
      *
      * @param connection the db connection
      * @return the SQL result set
      * @throws SQLException if a database problem occurs
      */
-    protected ResultSet getProviderResultSet(Connection connection)
+    protected ResultSet getLabResultSet(Connection connection)
     throws SQLException {
         String query =
 
@@ -703,7 +703,7 @@ public class ModEncodeMetaDataProcessor extends ChadoProcessor
     }
 
     /**
-     * to store provider attributes
+     * to store lab attributes
      * 
      * NOTE: Not used now. 
      * TODO: to remove
@@ -712,9 +712,9 @@ public class ModEncodeMetaDataProcessor extends ChadoProcessor
      * @throws SQLException
      * @throws ObjectStoreException
      */
-    private void processProviderAttributes(Connection connection)
+    private void processLabAttributes(Connection connection)
     throws SQLException, ObjectStoreException {
-        ResultSet res = getProviderAttributesResultSet(connection);
+        ResultSet res = getLabAttributesResultSet(connection);
         int count = 0;
         while (res.next()) {
             Integer experimentId = new Integer(res.getInt("experiment_id"));
@@ -727,15 +727,15 @@ public class ModEncodeMetaDataProcessor extends ChadoProcessor
             } else if (fieldName == NOT_TO_BE_LOADED) {
                 continue;
             }
-            setAttribute(providerIdMap.get(experimentId), fieldName, value);
+            setAttribute(labIdMap.get(experimentId), fieldName, value);
             count++;
         }
-        LOG.info("created " + count + " provider properties");
+        LOG.info("created " + count + " lab properties");
         res.close();
     }
 
     /**
-     * Return the rows needed for provider from the provider_prop table.
+     * Return the rows needed for lab from the lab_prop table.
      * This is a protected method so that it can be overridden for testing
      *
      * @param connection the db connection
@@ -743,7 +743,7 @@ public class ModEncodeMetaDataProcessor extends ChadoProcessor
      * @throws SQLException if a database problem occurs
      */
 
-    protected ResultSet getProviderAttributesResultSet(Connection connection)
+    protected ResultSet getLabAttributesResultSet(Connection connection)
     throws SQLException {
         String query =
             "SELECT experiment_id, name, value"
@@ -775,16 +775,16 @@ public class ModEncodeMetaDataProcessor extends ChadoProcessor
             Item experiment = getChadoDBConverter().createItem("ExperimentSubmission");
             // experiment.setAttribute("name", name);
 
-            String providerName = experimentProviderMap.get(experimentId);
-            String providerItemIdentifier = providerIdRefMap.get(providerName);
-            experiment.setReference("provider", providerItemIdentifier);
+            String labName = experimentLabMap.get(experimentId);
+            String labItemIdentifier = labIdRefMap.get(labName);
+            experiment.setReference("lab", labItemIdentifier);
             // ..store all
             Integer intermineObjectId = getChadoDBConverter().store(experiment);
             // ..and fill the ExperimentSubmissionDetails object
             ExperimentSubmissionDetails details = new ExperimentSubmissionDetails();
             details.interMineObjectId = intermineObjectId;
             details.itemIdentifier = experiment.getIdentifier();
-            details.providerItemIdentifier = providerItemIdentifier;
+            details.labItemIdentifier = labItemIdentifier;
             experimentMap.put(experimentId, details);
 
             debugMap .put(details.itemIdentifier, experiment.getClassName());
@@ -1389,7 +1389,7 @@ public class ModEncodeMetaDataProcessor extends ChadoProcessor
      * if a field is not needed it is marked with NOT_TO_BE_LOADED
      * a check is performed and fields unaccounted for are logged.
      *
-     * a specific provider field map is needed because we are using the same
+     * a specific lab field map is needed because we are using the same
      * chado table of the experiment to get the data.
      * used only for affiliation(!)
      */
@@ -1462,7 +1462,7 @@ public class ModEncodeMetaDataProcessor extends ChadoProcessor
         FIELD_NAME_MAP.put("references", NOT_TO_BE_LOADED);
     }
 
-    static { // TODO: to remove, now provider is all static
+    static { // TODO: to remove, now lab is all static
         PROVIDER_FIELD_NAME_MAP.put("Person Affiliation", "affiliation");
         PROVIDER_FIELD_NAME_MAP.put("Person Last Name", NOT_TO_BE_LOADED);
         PROVIDER_FIELD_NAME_MAP.put("Experiment Description", NOT_TO_BE_LOADED);
@@ -1556,22 +1556,22 @@ public class ModEncodeMetaDataProcessor extends ChadoProcessor
     }
 
     /**
-     * to store identifiers in provider maps.
+     * to store identifiers in lab maps.
      * @param i
      * @param chadoId
      * @param intermineObjectId
      * @throws ObjectStoreException
      */
-    private void storeInProviderMaps(Item i, String providerName, Integer intermineObjectId)
+    private void storeInLabMaps(Item i, String labName, Integer intermineObjectId)
     throws ObjectStoreException {
         if (i.getClassName().equals("http://www.flymine.org/model/genomic#Lab")) {
-            providerIdMap .put(providerName, intermineObjectId);
-            providerIdRefMap .put(providerName, i.getIdentifier());
+            labIdMap .put(labName, intermineObjectId);
+            labIdRefMap .put(labName, i.getIdentifier());
         } else {
             throw new IllegalArgumentException(
                     "Type mismatch: expecting Lab, getting "
                     + i.getClassName().substring(37) + " with intermineObjectId = "
-                    + intermineObjectId + ", provider = " + providerName);
+                    + intermineObjectId + ", lab = " + labName);
         }
         debugMap .put(i.getIdentifier(), i.getClassName());
     }

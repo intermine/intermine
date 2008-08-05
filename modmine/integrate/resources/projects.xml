@@ -191,7 +191,7 @@
 
 
 <!-- PROJECTS -->	
-  <item id="1010" class="" implements="http://www.flymine.org/model/genomic#ModEncodeProject">
+  <item id="1010" class="" implements="http://www.flymine.org/model/genomic#Project">
     <attribute name="name" value="The C. elegans Transcriptome"/>
     <attribute name="title" value="Global Identification of Transcribed Regions of the C. elegans Genome"/>
     <attribute name="surnamePI" value="Waterstone"/>
@@ -208,7 +208,7 @@
 </collection>
   </item>
 
-  <item id="1011" class="" implements="http://www.flymine.org/model/genomic#ModEncodeProject">
+  <item id="1011" class="" implements="http://www.flymine.org/model/genomic#Project">
     <attribute name="name" value="Chromatin Function"/>
     <attribute name="title" value="Identification of DNA Elements Governing Chromatin Function in C. elegans"/>
     <attribute name="surnamePI" value="Lieb"/>
@@ -226,7 +226,7 @@
 		</collection>
   </item>
 
-  <item id="1012" class="" implements="http://www.flymine.org/model/genomic#ModEncodeProject">
+  <item id="1012" class="" implements="http://www.flymine.org/model/genomic#Project">
     <attribute name="name" value="Histone Variants"/>
     <attribute name="title" value="Genome-wide profiling of histone variants in Drosophila and Caenorhabditis"/>
     <attribute name="surnamePI" value="Henikoff"/>
@@ -237,7 +237,7 @@
 			<reference ref_id="1051"/>
 		</collection>
   </item>
-  <item id="1013" class="" implements="http://www.flymine.org/model/genomic#ModEncodeProject">
+  <item id="1013" class="" implements="http://www.flymine.org/model/genomic#Project">
     <attribute name="name" value="Regulatory Elements in C. elegans"/>
     <attribute name="title" value="Identification of Transcription Factor Binding Regions"/>
     <attribute name="surnamePI" value="Snyder"/>
@@ -252,7 +252,7 @@
 			<reference ref_id="1097"/>
 		</collection>
   </item>
-  <item id="1014" class="" implements="http://www.flymine.org/model/genomic#ModEncodeProject">
+  <item id="1014" class="" implements="http://www.flymine.org/model/genomic#Project">
     <attribute name="name" value="The 3' UTRome"/>
     <attribute name="title" value="Encyclopedia of C. elegans 3\u2019UTRs and their regulatory elements"/>
     <attribute name="surnamePI" value="Piano"/>
@@ -265,7 +265,7 @@
 			<reference ref_id="1089"/>
 		</collection>
   </item>
-  <item id="1020" class="" implements="http://www.flymine.org/model/genomic#ModEncodeProject">
+  <item id="1020" class="" implements="http://www.flymine.org/model/genomic#Project">
     <attribute name="name" value="The Drosophila Transcriptome"/>
     <attribute name="title" value="Comprehensive characterization of the Drosophila transcriptome"/>
     <attribute name="surnamePI" value="Celniker"/>
@@ -282,7 +282,7 @@
 			<reference ref_id="1070"/>
 		</collection>
   </item>
-  <item id="1021" class="" implements="http://www.flymine.org/model/genomic#ModEncodeProject">
+  <item id="1021" class="" implements="http://www.flymine.org/model/genomic#Project">
     <attribute name="name" value="Regulatory Elements in Drosophila"/>
     <attribute name="title" value="Identification of Transcription Factor binding sites by high-throughput ChIP-chip experiments in Drosophila"/>
     <attribute name="surnamePI" value="White"/>
@@ -300,7 +300,7 @@
 			<reference ref_id="1099"/>
 		</collection>
   </item>
-  <item id="1022" class="" implements="http://www.flymine.org/model/genomic#ModEncodeProject">
+  <item id="1022" class="" implements="http://www.flymine.org/model/genomic#Project">
     <attribute name="name" value="Chromosomal Proteins"/>
     <attribute name="title" value="Genome-Wide Mapping of Chromosomal Proteins in Drosophila"/>
     <attribute name="surnamePI" value="Karpen"/>
@@ -313,7 +313,7 @@
 			<reference ref_id="1084"/>
 		</collection>
   </item>
-  <item id="1023" class="" implements="http://www.flymine.org/model/genomic#ModEncodeProject">
+  <item id="1023" class="" implements="http://www.flymine.org/model/genomic#Project">
     <attribute name="name" value="Small and microRNAs"/>
     <attribute name="title" value="Annotation of the small RNA/microRNA component of the Drosophila genome"/>
     <attribute name="surnamePI" value="Lai"/>
@@ -324,7 +324,7 @@
 			<reference ref_id="1068"/>
 		</collection>
   </item>
-  <item id="1024" class="" implements="http://www.flymine.org/model/genomic#ModEncodeProject">
+  <item id="1024" class="" implements="http://www.flymine.org/model/genomic#Project">
     <attribute name="name" value="Origins of Replication"/>
     <attribute name="title" value="The Systematic Identification and Analysis of Replication Origins in Drosophila"/>
     <attribute name="surnamePI" value="MacAlpine"/>

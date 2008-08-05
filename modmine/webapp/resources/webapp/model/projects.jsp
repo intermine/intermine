@@ -54,11 +54,11 @@
 				<c:when test="${nrSubs gt 0}">
 					<im:querylink text="${nrSubs} submissions " skipBuilder="true">
 						<query name="" model="genomic"
-							view="ModEncodeProject.labs.experimentSubmissions.title ModEncodeProject.labs.experimentSubmissions.design ModEncodeProject.labs.experimentSubmissions.factorName ModEncodeProject.labs.experimentSubmissions.factorType ModEncodeProject.labs.experimentSubmissions.description"
-							sortOrder="ModEncodeProject.labs.experimentSubmissions.title">
-						<node path="ModEncodeProject" type="ModEncodeProject">
+							view="Project.labs.experimentSubmissions.title Project.labs.experimentSubmissions.design Project.labs.experimentSubmissions.factorName Project.labs.experimentSubmissions.factorType Project.labs.experimentSubmissions.description"
+							sortOrder="Project.labs.experimentSubmissions.title">
+						<node path="Project" type="Project">
 						</node>
-						<node path="ModEncodeProject.surnamePI" type="String">
+						<node path="Project.surnamePI" type="String">
 						<constraint op="=" value="${item.key.surnamePI}" description=""
 							identifier="" code="A">
 						</constraint>
