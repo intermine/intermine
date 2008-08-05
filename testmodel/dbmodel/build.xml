@@ -6,7 +6,12 @@
           tofile="build/model/testmodel_model.xml"/>
   </target>
 
-  <target name="default" depends="-copy-model, objectstore.default"/>
+  <target name="-copy-props" depends="-pre-init">
+    <copy file="../../intermine/objectstore/model/testmodel/resources/class_keys.properties" 
+          tofile="${build.dir}/model/class_keys.properties"/>
+  </target>
+
+  <target name="default" depends="-copy-model, -copy-props, objectstore.default"/>
 
   <description>perform actions on the testmodel database</description>
   <import file="../../imbuild/objectstore.xml"/>
@@ -18,6 +23,20 @@
                      xmlResource="testmodel_data.xml"
                      sourceName="testsource"/>
   </target>
+
+  <!-- OVERRIDEN TO ADD MODEL XML TO JAR -->
+
+  <target name="-init-presetdef-jar">
+    <presetdef name="jar" uri="http://www.intermine.org/ns/im-lib-proj/1">
+      <jar compress="${jar.compress}" jarfile="${dist.jar}">
+        <fileset dir="${build.classes.dir}"/>
+        <fileset dir="${resources.dir}"/>
+        <fileset file="${build.dir}/model/${model.name}_model.xml"/>
+        <fileset file="${build.dir}/model/class_keys.properties"/>
+      </jar>
+    </presetdef>
+  </target>
+
 
 </project>
 
