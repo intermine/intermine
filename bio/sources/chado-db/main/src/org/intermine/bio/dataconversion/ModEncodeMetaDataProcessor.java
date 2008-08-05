@@ -51,8 +51,8 @@ public class ModEncodeMetaDataProcessor extends ChadoProcessor
     private Map<Integer, String> experimentLabMap = new HashMap<Integer, String>();
 
     // maps from chado identifier to specific objects
-    private Map<Integer, ExperimentSubmissionDetails> experimentMap =
-        new HashMap<Integer, ExperimentSubmissionDetails>();
+    private Map<Integer, SubmissionDetails> experimentMap =
+        new HashMap<Integer, SubmissionDetails>();
     private Map<Integer, AppliedProtocol> appliedProtocolMap =
         new HashMap<Integer, AppliedProtocol>();
     private Map<Integer, AppliedData> appliedDataMap =
@@ -80,7 +80,7 @@ public class ModEncodeMetaDataProcessor extends ChadoProcessor
     private Map<String, String> debugMap = new HashMap<String, String>(); // itemIdentifier, type
 
 
-    private static class ExperimentSubmissionDetails
+    private static class SubmissionDetails
     {
         // the identifier assigned to Item eg. "0_23"
         private String itemIdentifier;
@@ -236,14 +236,14 @@ public class ModEncodeMetaDataProcessor extends ChadoProcessor
     }
 
     private Map<Integer, FeatureData> processFeatures(Connection connection,
-            Map<Integer, ExperimentSubmissionDetails> experimentMap)
+            Map<Integer, SubmissionDetails> experimentMap)
             throws Exception {
         Map<Integer, FeatureData> featureMap = new HashMap<Integer, FeatureData>();
-        for (Map.Entry<Integer, ExperimentSubmissionDetails> entry: experimentMap.entrySet()) {
+        for (Map.Entry<Integer, SubmissionDetails> entry: experimentMap.entrySet()) {
             Integer chadoExperimentId = entry.getKey();
-            ExperimentSubmissionDetails experimentSubmissionDetails = entry.getValue();
-            String experimentItemIdentifier = experimentSubmissionDetails.itemIdentifier;
-            String labItemIdentifier = experimentSubmissionDetails.labItemIdentifier;
+            SubmissionDetails submissionDetails = entry.getValue();
+            String experimentItemIdentifier = submissionDetails.itemIdentifier;
+            String labItemIdentifier = submissionDetails.labItemIdentifier;
 
             LOG.info("xFEATDAT: exp>" + experimentItemIdentifier 
                     + "< prov>" + labItemIdentifier + "<");
@@ -272,7 +272,7 @@ public class ModEncodeMetaDataProcessor extends ChadoProcessor
      * In chado, Applied protocols in a submission are linked to each other via
      * the flow of data (output of a parent AP are input to a child AP).
      * The method process the data from chado to build the objects
-     * (ExperimentSubmissionDetails, AppliedProtocol, AppliedData) and their
+     * (SubmissionDetails, AppliedProtocol, AppliedData) and their
      * respective maps to chado identifiers needed to traverse the DAG.
      * It then traverse the DAG, assigning the experiment_id to all data.
      *
@@ -491,7 +491,7 @@ public class ModEncodeMetaDataProcessor extends ChadoProcessor
 
                     // and set the reference from applied protocol to the submission
                     Reference reference = new Reference();
-                    reference.setName("experimentSubmission");
+                    reference.setName("submission");
                     reference.setRefId(experimentMap.get(experimentId).itemIdentifier);
                     getChadoDBConverter().store(reference, appliedProtocolIdMap.get(currentAPId));
 
@@ -772,7 +772,7 @@ public class ModEncodeMetaDataProcessor extends ChadoProcessor
         while (res.next()) {
             Integer experimentId = new Integer(res.getInt("experiment_id"));
             // String name = res.getString("name");
-            Item experiment = getChadoDBConverter().createItem("ExperimentSubmission");
+            Item experiment = getChadoDBConverter().createItem("Submission");
             // experiment.setAttribute("name", name);
 
             String labName = experimentLabMap.get(experimentId);
@@ -780,8 +780,8 @@ public class ModEncodeMetaDataProcessor extends ChadoProcessor
             experiment.setReference("lab", labItemIdentifier);
             // ..store all
             Integer intermineObjectId = getChadoDBConverter().store(experiment);
-            // ..and fill the ExperimentSubmissionDetails object
-            ExperimentSubmissionDetails details = new ExperimentSubmissionDetails();
+            // ..and fill the SubmissionDetails object
+            SubmissionDetails details = new SubmissionDetails();
             details.interMineObjectId = intermineObjectId;
             details.itemIdentifier = experiment.getIdentifier();
             details.labItemIdentifier = labItemIdentifier;
@@ -987,9 +987,9 @@ public class ModEncodeMetaDataProcessor extends ChadoProcessor
             // setting references to protocols
             appliedProtocol.setReference("protocol", protocolIdRefMap.get(protocolId));
             if (experimentId > 0) {
-                // setting reference to experimentSubmission
+                // setting reference to submission
                 // probably to rm (we do it later anyway). TODO: check
-                appliedProtocol.setReference("experimentSubmission",
+                appliedProtocol.setReference("submission",
                         experimentMap.get(experimentId).itemIdentifier);
             }
             // store it and add to maps
@@ -1188,7 +1188,7 @@ public class ModEncodeMetaDataProcessor extends ChadoProcessor
                 }
 
                 Reference reference = new Reference();
-                reference.setName("experimentSubmission");
+                reference.setName("submission");
                 reference.setRefId(experimentMap.get(thisExperimentId).itemIdentifier);
 
 //                LOG.info("DEBUG: expRefs " + currentId + "|" 

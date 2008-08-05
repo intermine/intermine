@@ -23,7 +23,7 @@ import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
 import org.apache.struts.tiles.ComponentContext;
 import org.apache.struts.tiles.actions.TilesAction;
-import org.flymine.model.genomic.ExperimentSubmission;
+import org.flymine.model.genomic.Submission;
 import org.intermine.objectstore.ObjectStore;
 import org.intermine.objectstore.query.Query;
 import org.intermine.objectstore.query.QueryClass;
@@ -55,7 +55,7 @@ public class SubmissionsController extends TilesAction
             
             //get the list of projects 
             Query q = new Query();  
-            QueryClass qc = new QueryClass(ExperimentSubmission.class);
+            QueryClass qc = new QueryClass(Submission.class);
             QueryField qfDate = new QueryField(qc, "publicReleaseDate");
 
             q.addFrom(qc);
@@ -64,14 +64,14 @@ public class SubmissionsController extends TilesAction
             
             Results results = os.executeSingleton(q);
 
-            Map< Integer, ExperimentSubmission> subs =
-                new LinkedHashMap<Integer, ExperimentSubmission>();
+            Map< Integer, Submission> subs =
+                new LinkedHashMap<Integer, Submission>();
             // get all submission by date desc
             Integer order = 0;
             Iterator i = results.iterator();
             while (i.hasNext()) {
                 order++;
-                ExperimentSubmission sub = (ExperimentSubmission) i.next();
+                Submission sub = (Submission) i.next();
                 subs.put(order, sub);
             }
             request.setAttribute("subs", subs);
@@ -86,8 +86,8 @@ public class SubmissionsController extends TilesAction
 /*
 Results results = os.execute(q);
 
-Map<ModEncodeProvider, Set<ExperimentSubmission>> ps =
-    new LinkedHashMap<ModEncodeProvider, Set<ExperimentSubmission>>();
+Map<ModEncodeProvider, Set<Submission>> ps =
+    new LinkedHashMap<ModEncodeProvider, Set<Submission>>();
 
 Map<ModEncodeProvider, Project> pp =
     new LinkedHashMap<ModEncodeProvider, Project>();
@@ -98,7 +98,7 @@ for (Iterator iter = results.iterator(); iter.hasNext(); ) {
     ResultsRow row = (ResultsRow) iter.next();
 
     ModEncodeProvider provider = (ModEncodeProvider) row.get(0);
-    Set<ExperimentSubmission> subs = provider.getExperimentSubmissions();
+    Set<Submission> subs = provider.getSubmissions();
     Project project = provider.getProject();
     
     ps.put(provider, subs);

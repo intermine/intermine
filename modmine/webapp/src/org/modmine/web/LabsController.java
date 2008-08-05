@@ -24,7 +24,7 @@ import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
 import org.apache.struts.tiles.ComponentContext;
 import org.apache.struts.tiles.actions.TilesAction;
-import org.flymine.model.genomic.ExperimentSubmission;
+import org.flymine.model.genomic.Submission;
 import org.flymine.model.genomic.Project;
 import org.flymine.model.genomic.Lab;
 import org.intermine.objectstore.ObjectStore;
@@ -67,8 +67,8 @@ public class LabsController extends TilesAction
             //            Results results = os.executeSingleton(q);
             Results results = os.execute(q);
 
-            Map<Lab, Set<ExperimentSubmission>> ps =
-                new LinkedHashMap<Lab, Set<ExperimentSubmission>>();
+            Map<Lab, Set<Submission>> ps =
+                new LinkedHashMap<Lab, Set<Submission>>();
 
             Map<Lab, Project> pp =
                 new LinkedHashMap<Lab, Project>();
@@ -79,7 +79,7 @@ public class LabsController extends TilesAction
                 ResultsRow row = (ResultsRow) iter.next();
 
                 Lab lab = (Lab) row.get(0);
-                Set<ExperimentSubmission> subs = lab.getExperimentSubmissions();
+                Set<Submission> subs = lab.getSubmissions();
                 Project project = lab.getProject();
                 
                 ps.put(lab, subs);

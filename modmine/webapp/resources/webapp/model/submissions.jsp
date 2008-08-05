@@ -74,13 +74,13 @@ dateStyle="short"
 <td>		
 <im:querylink text="Fly" showArrow="true" skipBuilder="true">
   <query name="" model="genomic"
-    view="ExperimentSubmission.title ExperimentSubmission.design ExperimentSubmission.factorName ExperimentSubmission.factorType ExperimentSubmission.publicReleaseDate ExperimentSubmission.description"
-    sortOrder="ExperimentSubmission.title">
-  <node path="ExperimentSubmission" type="ExperimentSubmission">
+    view="Submission.title Submission.design Submission.factorName Submission.factorType Submission.publicReleaseDate Submission.description"
+    sortOrder="Submission.title">
+  <node path="Submission" type="Submission">
   </node>
-  <node path="ExperimentSubmission.bioEntities" type="BioEntity">
+  <node path="Submission.bioEntities" type="BioEntity">
   </node>
-  <node path="ExperimentSubmission.bioEntities.organism" type="Organism">
+  <node path="Submission.bioEntities.organism" type="Organism">
   <constraint op="LOOKUP" value="Drosophila melanogaster" description=""
     identifier="" code="A" extraValue="">
   </constraint>
@@ -95,13 +95,13 @@ dateStyle="short"
 
 <im:querylink text="Worm" showArrow="true" skipBuilder="true">
   <query name="" model="genomic"
-    view="ExperimentSubmission.title ExperimentSubmission.design ExperimentSubmission.factorName ExperimentSubmission.factorType ExperimentSubmission.publicReleaseDate ExperimentSubmission.description"
-    sortOrder="ExperimentSubmission.title">
-  <node path="ExperimentSubmission" type="ExperimentSubmission">
+    view="Submission.title Submission.design Submission.factorName Submission.factorType Submission.publicReleaseDate Submission.description"
+    sortOrder="Submission.title">
+  <node path="Submission" type="Submission">
   </node>
-  <node path="ExperimentSubmission.bioEntities" type="BioEntity">
+  <node path="Submission.bioEntities" type="BioEntity">
   </node>
-  <node path="ExperimentSubmission.bioEntities.organism" type="Organism">
+  <node path="Submission.bioEntities.organism" type="Organism">
   <constraint op="LOOKUP" value="Caenorhabditis elegans" description=""
     identifier="" code="A" extraValue="">
   </constraint>
@@ -112,11 +112,11 @@ dateStyle="short"
 <td>
 <im:querylink text="   All submissions" showArrow="true" skipBuilder="true">
   <query name="" model="genomic"
-    view="ExperimentSubmission.title ExperimentSubmission.design ExperimentSubmission.factorName ExperimentSubmission.factorType ExperimentSubmission.publicReleaseDate ExperimentSubmission.description"
-    sortOrder="ExperimentSubmission.title">
-  <node path="ExperimentSubmission" type="ExperimentSubmission">
+    view="Submission.title Submission.design Submission.factorName Submission.factorType Submission.publicReleaseDate Submission.description"
+    sortOrder="Submission.title">
+  <node path="Submission" type="Submission">
   </node>
-  <node path="ExperimentSubmission.bioEntities" type="BioEntity">
+  <node path="Submission.bioEntities" type="BioEntity">
   </node>
   </query>
 </im:querylink> <br>

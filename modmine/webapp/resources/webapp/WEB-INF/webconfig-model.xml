@@ -32,11 +32,11 @@
       <fieldconfig fieldExpr="name"/>    
       <fieldconfig fieldExpr="protocol.type"/>
       <fieldconfig fieldExpr="protocol.name"/>    
-      <fieldconfig fieldExpr="experimentSubmission.title"/>
+      <fieldconfig fieldExpr="submission.title"/>
     </fields>
   </class>
 
-  <class className="org.flymine.model.genomic.ExperimentSubmission">
+  <class className="org.flymine.model.genomic.Submission">
     <fields>
       <fieldconfig fieldExpr="title"/>
       <fieldconfig fieldExpr="design"/>
