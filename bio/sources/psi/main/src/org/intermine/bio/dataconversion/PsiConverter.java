@@ -138,6 +138,11 @@ public class PsiConverter extends BioFileConverter
             } else if (qName.equals("shortLabel") && stack.peek().equals("names")
                             && stack.search("experimentDescription") == 2) {
                 attName = "experimentName";
+
+            //  <experimentList><experimentDescription id="2"><names><fullName>
+            } else if (qName.equals("fullName") && stack.peek().equals("names")
+                            && stack.search("experimentDescription") == 2) {
+                attName = "experimentDescr";
             //<experimentList><experimentDescription><bibref><xref><primaryRef>
             } else if (qName.equals("primaryRef") && stack.peek().equals("xref")
                             && stack.search("bibref") == 2
@@ -361,6 +366,14 @@ public class PsiConverter extends BioFileConverter
                     experimentHolder.setName(shortLabel);
                 } else {
                     LOG.error("Experiment " + experimentId + " doesn't have a shortLabel");
+                }
+
+            // <experimentList><experimentDescription><names><fullName>
+            } else if (attName != null && attName.equals("experimentDescr")
+                            && qName.equals("fullName")) {
+                String descr = attValue.toString();
+                if (descr != null) {
+                    experimentHolder.setDescription(descr);
                 }
             // <interactorList><interactor id="4"><names><fullName>
             } else if ((qName.equals("fullName") || qName.equals("shortLabel"))
@@ -785,7 +798,7 @@ public class PsiConverter extends BioFileConverter
         public class ExperimentHolder
         {
 
-            protected String name;
+            protected String name, description;
             protected Item experiment;
             protected HashSet comments = new HashSet();
             protected boolean isStored = false;
@@ -806,6 +819,13 @@ public class PsiConverter extends BioFileConverter
                 experiment.setAttribute("name", name);
                 this.name = name;
             }
+
+            /**
+            * @param description description of experiment
+            */
+           protected void setDescription(String description) {
+               experiment.setAttribute("description", description);
+           }
 
             /**
              *
