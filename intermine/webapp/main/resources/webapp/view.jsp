@@ -82,32 +82,28 @@
      <!--
        var previousOrder = '';
 
-       if ("${iePre7}" != "true") {
-           Sortable.create('viewDivs', {
-             tag:'div', dropOnEmpty:true,  constraint:'horizontal', overlap:'horizontal', onUpdate:function() {
+	  jQuery(document).ready(function(){
+           jQuery('#viewDivs').sortable({dropOnEmpty:true,update:function() {
                reorderOnServer();
-             }
+           }
            });
            recordCurrentOrder();
-       }
+	       updateSortImgs("${sortByIndex}");
+       });
   
-       updateSortImgs("${sortByIndex}");
 
        function recordCurrentOrder() {
-         previousOrder = Sortable.serialize('viewDivs');
-         previousOrder = previousOrder.replace(/viewDivs/g, 'oldOrder');
+         previousOrder = jQuery('#viewDivs').sortable('serialize');
        }
 
        /**
         * Send the previous order and the new order to the server.
         */
        function reorderOnServer() {
-         var newOrder = Sortable.serialize('viewDivs');
+         var newOrder = jQuery('#viewDivs').sortable('serialize');
          //$('ser').innerHTML=newOrder;
-         new Ajax.Request('<html:rewrite action="/viewChange"/>', {
-           parameters:'method=reorder&'+previousOrder+'&'+newOrder,
-           asynchronous:true
-         });
+         
+         AjaxServices.reorder(newOrder, previousOrder);
          recordCurrentOrder();
        }
 

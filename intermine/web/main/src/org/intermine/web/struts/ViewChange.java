@@ -109,37 +109,4 @@ public class ViewChange extends DispatchAction
         return new ForwardParameters(mapping.findForward("query"))
             .addAnchor("showing").forward();
     }
-
-    /**
-     * AJAX request - reorder view.
-     * @param mapping The ActionMapping used to select this instance
-     * @param form The optional ActionForm bean for this request (if any)
-     * @param request The HTTP request we are processing
-     * @param response The HTTP response we are creating
-     * @return an ActionForward object defining where control goes next
-     * @exception Exception if the application business logic throws
-     */
-    public ActionForward reorder(@SuppressWarnings("unused") ActionMapping mapping,
-                                 @SuppressWarnings("unused")   ActionForm form,
-                                   HttpServletRequest request,
-                                   @SuppressWarnings("unused")   HttpServletResponse response)
-        throws Exception {
-        HttpSession session = request.getSession();
-        String newOrder[] = request.getParameterValues("viewDivs[]");
-        String oldOrder[] = request.getParameterValues("oldOrder[]");
-
-        List view = SessionMethods.getEditingView(session);
-        ArrayList newView = new ArrayList();
-
-        for (int i = 0; i < view.size(); i++) {
-            int newi = Integer.parseInt(newOrder[i]);
-            int oldi = Arrays.asList(oldOrder).indexOf("" + newi);
-            newView.add(view.get(oldi));
-        }
-
-        view.clear();
-        view.addAll(newView);
-
-        return null;
-    }
 }

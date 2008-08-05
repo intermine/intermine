@@ -26,8 +26,14 @@ if(new java.io.File(application.getRealPath("css")+"/"+pageName+".css").exists()
 </c:if>
 <link rel="stylesheet" type="text/css" href="<html:rewrite page='/theme/theme.css'/>"/>
 
+<script src="js/jquery-1.2.6.js" type="text/javascript" ></script>
+<script src="js/jquery-ui-personalized-1.5.2.min.js" type="text/javascript"></script>
+<script type="text/javascript">
+  jQuery.noConflict();
+</script>
+
 <script type="text/javascript" src="<html:rewrite page='/js/prototype.js'/>"></script>
-<script type="text/javascript" src="<html:rewrite page='/js/scriptaculous.js'/>"></script>
+<!-- <script type="text/javascript" src="<html:rewrite page='/js/scriptaculous.js'/>"></script> -->
 
 <script type="text/javascript" src="<html:rewrite page='/dwr/interface/AjaxServices.js'/>"></script>
 <script type="text/javascript" src="<html:rewrite page='/dwr/engine.js'/>"></script>

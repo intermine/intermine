@@ -6,6 +6,7 @@ td.resBar {
 -------------------------------------- */
 #summary {
   position:absolute;
+  display:none;
   min-width:300px; padding:0;
   width:300px !important;
   background-color:#fff; border: solid #CCC 1px;}

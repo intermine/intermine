@@ -65,13 +65,13 @@ var hasmessages=0;
 </c:if>
 
 if(haserrors) {
-    Effect.Appear('error_msg',  { duration: 2.0 });
+    jQuery('#error_msg').show(2000);
 }
 if(hasmessages) {
-    Effect.Appear('msg',  { duration: 2.0 });
+    jQuery('#msg').show(2000);
 }
 if(haslookup) {
-    Effect.Appear('lookup_msg', { duration: 2.0 });
+    jQuery('#lookup_msg').show(2000);
 }
 
 </script>

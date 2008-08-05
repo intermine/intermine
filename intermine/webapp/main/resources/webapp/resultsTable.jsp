@@ -256,11 +256,11 @@
 
 </table>
 <%--  The Summary table --%>
-<div id="summary" style="display:none;" >
+<div id="summary" >
     <div align="right" id="handle">
       <img style="float:right";
            src="images/close.png" title="Close"
-           onclick="javascript:Effect.Fade('summary', { duration: 0.30 });"
+           onclick="javascript:jQuery('#summary').hide(300);"
            onmouseout="this.style.cursor='normal';"
            onmouseover="this.style.cursor='pointer';"/>
     </div>
@@ -269,7 +269,10 @@
 </div>
 <script language="javascript">
   <!--//<![CDATA[
-   new Draggable('summary',{handle:'handle'});
+  jQuery(document).ready(function(){
+   jQuery('#summary').draggable({handle:'#handle'});
+  });
+   //new Draggable('summary',{handle:'handle'});
   //]]>-->
 </script>
 

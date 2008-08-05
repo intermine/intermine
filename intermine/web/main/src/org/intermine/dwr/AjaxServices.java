@@ -17,6 +17,7 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Properties;
@@ -46,6 +47,7 @@ import org.intermine.objectstore.query.QuerySelectable;
 import org.intermine.objectstore.query.Results;
 import org.intermine.path.Path;
 import org.intermine.pathquery.PathQuery;
+import org.intermine.util.StringUtil;
 import org.intermine.util.TypeUtil;
 import org.intermine.web.autocompletion.AutoCompleter;
 import org.intermine.web.logic.Constants;
@@ -1032,6 +1034,29 @@ public class AjaxServices
         }
         String[] defaultList = {""};
         return defaultList;
+    }
+
+    /**
+     * AJAX request - reorder view.
+     */
+    public void reorder(String newOrder, String oldOrder) {
+        HttpSession session = WebContextFactory.get().getSession();
+        List<String> newOrderList = new LinkedList<String>(StringUtil
+				.serializedSortOrderToMap(newOrder).values());
+		List<String> oldOrderList = new LinkedList<String>(StringUtil
+				.serializedSortOrderToMap(oldOrder).values());
+
+        List view = SessionMethods.getEditingView(session);
+        ArrayList newView = new ArrayList();
+
+        for (int i = 0; i < view.size(); i++) {
+            String newi = newOrderList.get(i);
+            int oldi = oldOrderList.indexOf(newi);
+            newView.add(view.get(oldi));
+        }
+
+        view.clear();
+        view.addAll(newView);
     }
 
 }

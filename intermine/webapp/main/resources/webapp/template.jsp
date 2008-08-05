@@ -102,7 +102,7 @@
 
           $(id).style.left = (_clientX + _offsetX) + "px";
           $(id).style.top = (_clientY + _offsetY) + "px";
-          Effect.Appear(id, { duration: 0.30 });
+          jQuery('#' + id).show(300);
           helpMsgArray[helpMsgArray.length] = id;
           ourDate = new Date().getTime();
      } else {
@@ -114,7 +114,7 @@
       newDate = new Date().getTime();
       if(newDate > (ourDate + 100)){
       for(var i=0;i<helpMsgArray.length;i++) {
-          Effect.Fade(helpMsgArray[i], { duration: 0.30 });
+          jQuery('#' + helpMsgArray[i]).hide(300);
           $('DivShim').style.display = "none";
       }
       }
@@ -132,7 +132,7 @@
        if (isBagUsed()) {
             new Insertion.Bottom('error_msg','Link could not be created. This template contains list constraint(s). The service for this special template is not implemented yet. Solution: Don\'t use list contraint.<br/>');
             haserrors=1;
-            Effect.Appear('error_msg');       
+            jQuery('#error_msg').show();
             return;
        }
        document.getElementById('actionType').value = 'links';
