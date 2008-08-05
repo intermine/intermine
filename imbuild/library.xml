@@ -173,7 +173,7 @@
             additionalparam="${javadoc.additionalparam}" failonerror="true">
       <classpath refid="project.compile.path"/>
       <sourcepath>
-	  <pathelement location="${src.dir}" />
+	    <pathelement location="${src.dir}" />
       </sourcepath>
     </javadoc>
   </target>
