@@ -139,6 +139,17 @@ echo "Getting FlyBase FASTA files"
     fi
 echo "==========================================================="
 
+echo "==========================================================="
+echo "Getting Ensembl Anopheles files"
+./get_ensembl_anoph $logdir $tempname $shared_data 
+    if [ $? -ne 0 ]
+    then
+        echo "error getting Ensembl Anopheles files" 2>&1
+#        exit 1
+    fi
+echo "==========================================================="
+
+
 today=$(date +"%F")
 logfile="$logdir/$today.txt"
 mv $tempfile $logfile
