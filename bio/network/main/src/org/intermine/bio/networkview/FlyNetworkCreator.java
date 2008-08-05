@@ -17,6 +17,7 @@ import org.intermine.bio.networkview.network.FlyNetwork;
 import org.intermine.bio.networkview.network.FlyNode;
 
 import org.flymine.model.genomic.Gene;
+import org.flymine.model.genomic.Interaction;
 
 import org.apache.log4j.Logger;
 
