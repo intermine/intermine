@@ -63,7 +63,7 @@ public class GFF3Exporter implements Exporter
      */
     public void export(List<List<ResultElement>> results) {
         if (featureIndexes.size() == 0) {
-            throw new ExportException("No columns with sequence.");
+            throw new ExportException("No columns with sequence");
         }
         try {
             for (int i = 0; i < results.size(); i++) {
@@ -72,7 +72,7 @@ public class GFF3Exporter implements Exporter
             }
             out.flush();
         } catch (Exception ex) {
-            throw new ExportException("Export failed.", ex);
+            throw new ExportException("Export failed", ex);
         }
     }
 
