@@ -68,16 +68,16 @@ $ftp->cwd($anoph_dir)
 
 my $log_buffer = "Ensembl Anopheles\nNew data available in $download_dir";
 
-# make download directory locally
 if (!(-d $download_dir)) {
 
+   # make download directory locally
    print "creating $download_dir\n";
    mkdir "$download_dir" or die "failed to create $download_dir";
    my $date = &convert_date();
 
 	my $version_buffer = "Ensembl Anopheles\n$date\nVersion $version\nhttp://www.ensembl.org\n";
 	&write_version($download_dir,$version_buffer);
-}
+
 	# get list of all files
 	my @file_list = $ftp->ls();
 
@@ -94,7 +94,6 @@ if (!(-d $download_dir)) {
 	if ((system "gzip -dr $download_dir") != 0) {
 	  die qq|system "gzip -dr $download_dir" failed: $?\n|;
 	}
-
 
 } else {
  	$log_buffer = "Ensembl Anopheles\nCurrent data ok\n\n";
