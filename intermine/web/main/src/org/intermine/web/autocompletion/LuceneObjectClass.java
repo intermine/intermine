@@ -61,7 +61,7 @@ public class LuceneObjectClass
             return true;
         }
         else if (fieldNames.contains(fieldName) && values.get(fieldName) != null
-                && values.get(fieldName).contains(value)  == false) {
+                && !values.get(fieldName).contains(value)) {
             List<String> vec = values.get(fieldName);
             vec.add(value);
             values.put(fieldName, vec);
@@ -138,9 +138,11 @@ public class LuceneObjectClass
     public int getSizeValues() {
         int size = 0;
         for (int i = 0; i < fieldNames.size(); i++) {
-           if (size < values.get(fieldNames.get(i)).size()) {
-              size = values.get(fieldNames.get(i)).size();
-           }
+            String fieldName = fieldNames.get(i);
+            if (values.containsKey(fieldName)
+                            && size < values.get(fieldName).size()) {
+                size = values.get(fieldName).size();
+            }
         }
         return size;
     }
