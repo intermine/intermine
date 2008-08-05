@@ -30,6 +30,10 @@
     <form-bean name="changePasswordForm" type="org.intermine.web.struts.ChangePasswordForm"/>
     <form-bean name="modifyBagDetailsForm" type="org.intermine.web.struts.ModifyBagDetailsForm"/>
     <form-bean name="widgetForm" type="org.intermine.web.struts.WidgetForm"/>
+    <form-bean name="csvExportForm" type="org.intermine.web.struts.CSVExportForm"/>
+    <form-bean name="excelExportForm" type="org.intermine.web.struts.TableExportForm"/>
+    <!-- don't (re)move this - it's used for importing any model-specific forms -->
+    <!--@MODEL_FORM_INCLUDE@-->
   </form-beans>
   <!-- ========== Exceptions Configuration ================================ -->
   <global-exceptions>
@@ -113,10 +117,13 @@
     </action>
     <action path="/serviceLink" forward="serviceLink.page" >
     </action>
+    <action path="/exportOptions" forward="exportOptions.page" >
+    </action>
     <action path="/linkPreview" forward="/linkPreview.jsp">
     </action>
-  <action path="/tabLinkPreview" type="org.intermine.web.struts.TabLinkPreviewAction">
-  </action>
+    <action path="/exportOptions" forward="exportOptions.page"/>
+    <action path="/tabLinkPreview" type="org.intermine.web.struts.TabLinkPreviewAction">
+    </action>
 
     <action path="/modifyQueryChange" type="org.intermine.web.struts.ModifyQueryChangeAction" parameter="method">
       <forward name="query" redirect="true" path="/query.do"/>
@@ -161,8 +168,8 @@
     <action path="/sortOrderChange" type="org.intermine.web.struts.SortOrderChange" parameter="method">
       <forward name="query" redirect="true" path="/query.do"/>
     </action>
-    <action path="/exportAction" type="org.intermine.web.struts.TableExportAction" parameter="method">
-    </action>
+    <action path="/csvExportAction" name="csvExportForm" type="org.intermine.web.struts.TableExportAction" parameter="method"/>
+    <action path="/excelExportAction" name="excelExportForm" type="org.intermine.web.struts.TableExportAction" parameter="method"/>
     <action path="/changeTable" type="org.intermine.web.struts.ChangeTableAction" parameter="method">
       <forward name="results" redirect="true" path="/results.do"/>
       <forward name="bagDetails" redirect="true" path="/bagDetails.do"/>
@@ -424,6 +431,7 @@
     <action path="/initResultsTable" type="org.intermine.web.struts.TableController"/>
     <action path="/initObjectDetailsInList" type="org.intermine.web.struts.ObjectDetailsInListController"/>
     <action path="/initNews" type="org.intermine.web.struts.NewsReadController"/>
+    <action path="/initExportOptions" type="org.intermine.web.struts.ExportOptionsController"/>
 
     <!-- don't (re)move this - it's used for importing any model-specific actions -->
     <!--@MODEL_INCLUDE@-->

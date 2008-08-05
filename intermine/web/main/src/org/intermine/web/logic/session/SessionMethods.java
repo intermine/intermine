@@ -872,30 +872,44 @@ public class SessionMethods
      * @param servletContext servlet context
      * @return class keys
      */
+    @SuppressWarnings("unchecked")
     public static Map<String, List<FieldDescriptor>> getClassKeys(ServletContext servletContext) {
         return (Map<String, List<FieldDescriptor>>) servletContext.
             getAttribute(Constants.CLASS_KEYS);
     }
 
-    private static PagedTable doPathQueryGetPagedTable(final PathQuery pathQuery,
+    /**
+     * Execute a path query and return a PagedTable.
+     * @param pathQuery the PathQuery
+     * @param servletContext the context
+     * @param os the ObjectStore
+     * @param model the Model
+     * @param pathToQueryNode optional parameter in which path to QueryNode map can be returned
+     * @param pathToBagQueryResult optional parameter in which any BagQueryResult objects can be
+     * returned
+     * @param allBags a Map of all bags available for this query
+     * @return the PagedTable
+     * @throws ObjectStoreException if there is an ObjectStore problem
+     */
+    public static PagedTable doPathQueryGetPagedTable(final PathQuery pathQuery,
                                              final ServletContext servletContext,
                                              final ObjectStore os, final Model model,
                                              Map<String, QuerySelectable> pathToQueryNode,
                                              Map<String, BagQueryResult> pathToBagQueryResult,
                                              Map<String, InterMineBag> allBags)
                     throws ObjectStoreException {
+        Map<String, List<FieldDescriptor>> classKeys = getClassKeys(servletContext);
         Query q = MainHelper.makeQuery(pathQuery, allBags, pathToQueryNode,
-            servletContext, pathToBagQueryResult, false,
-            (ObjectStore) servletContext.getAttribute(Constants.OBJECTSTORE),
-            (Map) servletContext.getAttribute(Constants.CLASS_KEYS),
-            (BagQueryConfig) servletContext.getAttribute(Constants
-                .BAG_QUERY_CONFIG));
+                     servletContext, pathToBagQueryResult, false,
+                     (ObjectStore) servletContext.getAttribute(Constants.OBJECTSTORE),
+                     classKeys,
+                     (BagQueryConfig) servletContext.getAttribute(Constants.BAG_QUERY_CONFIG));
         Results results = TableHelper.makeResults(os, q);
         results.setNoPrefetch();
 
         WebResults webResults = new WebResults(pathQuery, results, model,
             pathToQueryNode,
-            (Map) servletContext.getAttribute(Constants.CLASS_KEYS),
+            classKeys,
             pathToBagQueryResult);
         PagedTable pr = new PagedTable(webResults);
         return pr;

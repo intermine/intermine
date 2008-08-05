@@ -1,7 +1,8 @@
 <!-- this comment is here to prevent ant from setting model.struts.config to null -->
 
+<!-- used by the fasta... buttons on object details pages -->
 <action path="/sequenceExporter"
-        type="org.intermine.bio.web.struts.SequenceExportAction"/>
+	type="org.intermine.bio.web.struts.SequenceExportAction" />
 
 <action path="/chartRenderer"
         type="org.flymine.web.ChartRenderer"

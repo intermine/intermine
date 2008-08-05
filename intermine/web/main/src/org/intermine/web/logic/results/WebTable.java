@@ -10,11 +10,13 @@ package org.intermine.web.logic.results;
  *
  */
 
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
-import org.intermine.objectstore.ObjectStoreException;
 import org.intermine.objectstore.query.ResultsInfo;
+
+import org.intermine.objectstore.ObjectStoreException;
 import org.intermine.pathquery.PathQuery;
 import org.intermine.web.logic.bag.BagQueryResult;
 

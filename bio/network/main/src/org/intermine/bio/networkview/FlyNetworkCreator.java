@@ -13,12 +13,12 @@ package org.intermine.bio.networkview;
 import java.util.Collection;
 import java.util.Set;
 
-import org.apache.log4j.Logger;
-import org.flymine.model.genomic.Gene;
-import org.flymine.model.genomic.Interaction;
-import org.flymine.model.genomic.Protein;
 import org.intermine.bio.networkview.network.FlyNetwork;
 import org.intermine.bio.networkview.network.FlyNode;
+
+import org.flymine.model.genomic.Gene;
+
+import org.apache.log4j.Logger;
 
 /**
  * creates a FlyNetwork from a given Collection of ProteinInteractionS

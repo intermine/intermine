@@ -754,11 +754,11 @@
     </fields>
   </class>
 
-  <tableExportConfig id="sequenceExporter" actionPath="/exportAction?type=sequenceExporter"
+  <tableExportConfig id="sequence" 
                      className="org.intermine.bio.web.export.SequenceHttpExporter"/>
-  <tableExportConfig id="gff3Exporter" actionPath="/exportAction?type=gff3Exporter"
+  <tableExportConfig id="gff3" 
                      className="org.intermine.bio.web.export.GFF3HttpExporter"/>
-  <tableExportConfig id="proteinInteractionExporter" actionPath="/exportAction?type=proteinInteractionExporter"
+  <tableExportConfig id="proteinInteraction"
                      className="org.intermine.bio.web.ProteinInteractionExporter"/>
 
    <widgets>

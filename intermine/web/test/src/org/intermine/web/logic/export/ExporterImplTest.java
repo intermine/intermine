@@ -1,14 +1,14 @@
 package org.intermine.web.logic.export;
 
-import java.io.ByteArrayOutputStream;
-import java.io.PrintWriter;
 import java.util.ArrayList;
 import java.util.List;
 
-import junit.framework.TestCase;
-
-import org.intermine.web.logic.results.Column;
+import org.intermine.path.Path;
 import org.intermine.web.logic.results.ResultElement;
+
+import java.io.ByteArrayOutputStream;
+
+import junit.framework.TestCase;
 
 /*
  * Copyright (C) 2002-2007 FlyMine
@@ -31,7 +31,7 @@ public class ExporterImplTest extends TestCase
         List<List<ResultElement>> input = ExporterImplTest.getInput();
         RowFormatter formatter = new RowFormatterImpl(",", true);
         ExporterImpl exporter = new ExporterImpl(out, formatter);
-        exporter.export(input, new ArrayList<Column>());
+        exporter.export(input);
         assertEquals(getExpected(), out.toString());
     }
 

@@ -12,7 +12,7 @@ package org.intermine.web.logic.export;
 import java.util.Date;
 import java.util.List;
 
-import org.intermine.web.logic.results.Column;
+import org.intermine.path.Path;
 import org.intermine.web.logic.results.ResultElement;
 
 import java.io.IOException;
@@ -44,8 +44,7 @@ public class ExcelExporter implements Exporter
     /**
      * {@inheritDoc}
      */
-    public void export(List<List<ResultElement>> results,
-                       @SuppressWarnings("unused") List<Column> columns) {
+    public void export(List<List<ResultElement>> results) {
         try {
             HSSFWorkbook wb = new HSSFWorkbook();
             HSSFSheet sheet = wb.createSheet("results");

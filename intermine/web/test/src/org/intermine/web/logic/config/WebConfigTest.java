@@ -93,7 +93,6 @@ public class WebConfigTest extends TestCase
 
         TableExportConfig tableExportConfig = new TableExportConfig();
         tableExportConfig.setId("myExporter");
-        tableExportConfig.setActionPath("/somePath");
         tableExportConfig.setClassName("java.lang.String");
 
         WebConfig wc2 = new WebConfig();

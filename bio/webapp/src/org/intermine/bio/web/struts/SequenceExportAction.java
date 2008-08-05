@@ -10,11 +10,30 @@ package org.intermine.bio.web.struts;
  *
  */
 
-import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Properties;
+
+import org.intermine.bio.web.biojava.BioSequence;
+import org.intermine.bio.web.biojava.BioSequenceFactory;
+import org.intermine.bio.web.biojava.BioSequenceFactory.SequenceType;
+import org.intermine.bio.web.export.ResidueFieldExporter;
+import org.intermine.bio.web.export.SequenceHttpExporter;
+import org.intermine.model.InterMineObject;
+import org.intermine.objectstore.ObjectStore;
+import org.intermine.objectstore.ObjectStoreException;
+import org.intermine.util.TypeUtil;
+import org.intermine.web.logic.Constants;
+import org.intermine.web.struts.InterMineAction;
+
+import org.flymine.model.genomic.BioEntity;
+import org.flymine.model.genomic.LocatedSequenceFeature;
+import org.flymine.model.genomic.Protein;
+import org.flymine.model.genomic.Sequence;
+import org.flymine.model.genomic.Translation;
+
+import java.io.OutputStream;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -28,23 +47,6 @@ import org.biojava.bio.seq.io.FastaFormat;
 import org.biojava.bio.seq.io.SeqIOTools;
 import org.biojava.bio.symbol.IllegalSymbolException;
 import org.biojava.utils.ChangeVetoException;
-import org.flymine.model.genomic.BioEntity;
-import org.flymine.model.genomic.Gene;
-import org.flymine.model.genomic.LocatedSequenceFeature;
-import org.flymine.model.genomic.Protein;
-import org.flymine.model.genomic.Sequence;
-import org.flymine.model.genomic.Translation;
-import org.intermine.bio.web.biojava.BioSequence;
-import org.intermine.bio.web.biojava.BioSequenceFactory;
-import org.intermine.bio.web.biojava.BioSequenceFactory.SequenceType;
-import org.intermine.bio.web.export.ResidueFieldExporter;
-import org.intermine.bio.web.export.SequenceHttpExporter;
-import org.intermine.model.InterMineObject;
-import org.intermine.objectstore.ObjectStore;
-import org.intermine.objectstore.ObjectStoreException;
-import org.intermine.util.TypeUtil;
-import org.intermine.web.logic.Constants;
-import org.intermine.web.struts.InterMineAction;
 
 /**
  * Exports sequence.
@@ -63,6 +65,7 @@ public class SequenceExportAction extends InterMineAction
      * @exception Exception if the application business logic throws
      *  an exception
      */
+    @Override
     public ActionForward execute(ActionMapping mapping,
                                  ActionForm form,
                                  HttpServletRequest request,
@@ -102,22 +105,20 @@ public class SequenceExportAction extends InterMineAction
             return null;
         }
         Annotation annotation = bioSequence.getAnnotation();
+        // try hard to find an identifier
         String identifier = bioEntity.getPrimaryIdentifier();
         if (identifier == null) {
-            identifier = bioEntity.getName();
+            identifier = bioEntity.getSecondaryIdentifier();
             if (identifier == null) {
-                if (bioEntity instanceof Gene) {
-                    Gene gene = ((Gene) bioEntity);
-                    identifier = gene.getPrimaryIdentifier();
+                identifier = bioEntity.getName();
+                if (identifier == null) {
+                    try {
+                        identifier = (String) TypeUtil.getFieldValue(bioEntity, "primaryAccession");
+                    } catch (RuntimeException e) {
+                        // ignore
+                    }
                     if (identifier == null) {
-                        try {
-                            identifier = (String) TypeUtil.getFieldValue(gene, "accession");
-                        } catch (RuntimeException e) {
-                            // ignore
-                        }
-                        if (identifier == null) {
-                            identifier = "[no_identifier]";
-                        }
+                        identifier = "[no_identifier]";
                     }
                 }
             }

@@ -10,19 +10,22 @@ package org.intermine.web.logic.export.http;
  *
  */
 
+import java.util.ArrayList;
+import java.util.List;
+
+import org.intermine.path.Path;
+import org.intermine.web.logic.RequestUtil;
+import org.intermine.web.logic.export.ExportException;
+import org.intermine.web.logic.export.ExportHelper;
+import org.intermine.web.logic.export.Exporter;
+import org.intermine.web.logic.results.PagedTable;
+import org.intermine.web.struts.TableExportForm;
+
 import java.io.IOException;
 import java.io.OutputStream;
-import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-
-import org.intermine.web.logic.RequestUtil;
-import org.intermine.web.logic.export.ExportException;
-import org.intermine.web.logic.export.Exporter;
-import org.intermine.web.logic.results.PagedTable;
-import org.intermine.web.logic.results.ResultElement;
-
 
 /**
  * Abstract class that implements basic functionality common for exporters
@@ -54,9 +57,7 @@ public abstract class HttpExporterBase implements TableHttpExporter
      * @param response response
      */
     public void export(PagedTable pt, HttpServletRequest request,
-            HttpServletResponse response) {
-
-        List<List<ResultElement>> results = pt.getRearrangedResults();
+                       HttpServletResponse response, TableExportForm form) {
 
         OutputStream out = null;
         try {
@@ -72,10 +73,27 @@ public abstract class HttpExporterBase implements TableHttpExporter
             separator = Exporter.UNIX_SEPARATOR;
         }
         Exporter exporter = getExporter(out, separator);
-        exporter.export(results, pt.getColumns());
+        exporter.export(pt.getResultElementRows());
         if (exporter.getWrittenResultsCount() == 0) {
             throw new ExportException("Nothing was found for export.");
         }
+    }
+
+    /**
+     * For TableHttpExporter we always return an empty list because all columns and classes are
+     * equal for this exporter.
+     * {@inheritDoc}
+     */
+    public List<Path> getExportClassPaths(@SuppressWarnings("unused") PagedTable pt) {
+        return new ArrayList<Path>();
+    }
+
+    /**
+     * The intial export path list is just the paths from the columns of the PagedTable.
+     * {@inheritDoc}
+     */
+    public List<Path> getInitialExportPaths(PagedTable pt) {
+        return ExportHelper.getColumnPaths(pt);
     }
 
     /**

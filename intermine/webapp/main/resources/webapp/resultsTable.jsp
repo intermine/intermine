@@ -55,23 +55,21 @@
         </c:otherwise>
       </c:choose>
 
-      <c:choose>
-        <c:when test="${column.visible}">
-            <c:if test="${column.selectable}">
-            <c:set var="colcount" value="${colcount+1}"/>
-            <th align="center" class="checkbox">
-              <c:set var="disabled" value="false"/>
-              <c:if test="${(!empty resultsTable.selectedClass) && (resultsTable.selectedClass != column.typeClsString)}">
-                <c:set var="disabled" value="true"/>
-              </c:if>
-              <html:multibox property="currentSelectedIdStrings" name="pagedResults" styleId="selectedObjects_${status.index}"
-                             styleClass="selectable"
-                             onclick="selectAll(${status.index}, '${column.typeClsString}','${pagedResults.tableid}')"
-                             disabled="${disabled}">
-                <c:out value="${column.columnId}"/>
-              </html:multibox>
-            </th>
-          </c:if>
+        <c:if test="${column.selectable}">
+          <c:set var="colcount" value="${colcount+1}"/>
+          <th align="center" class="checkbox">
+            <c:set var="disabled" value="false"/>
+            <c:if test="${(!empty resultsTable.selectedClass) && (resultsTable.selectedClass != column.typeClsString)}">
+              <c:set var="disabled" value="true"/>
+            </c:if>
+            <html:multibox property="currentSelectedIdStrings" name="pagedResults" styleId="selectedObjects_${status.index}"
+                           styleClass="selectable"
+                           onclick="selectAll(${status.index}, '${column.typeClsString}','${pagedResults.tableid}')"
+                           disabled="${disabled}">
+              <c:out value="${column.columnId}"/>
+            </html:multibox>
+          </th>
+        </c:if>
 
           <th align="center" valign="top" >
             <%-- put in left, right, hide and show buttons --%>
@@ -93,53 +91,6 @@
                           title="Results are sorted by ${column.name}"/>
                </td>
               </c:if>
-
-              <%-- left --%>
-              <c:if test="${not status.first}">
-                <td>
-                <fmt:message key="results.moveLeftHelp" var="moveLeftTitle">
-                  <fmt:param value="${column.name}"/>
-                </fmt:message>
-                <html:link action="/changeTable?currentPage=${currentPage}&amp;bagName=${bagName}&amp;table=${param.table}&amp;method=moveColumnLeft&amp;index=${status.index}&amp;trail=${param.trail}"
-                           title="${moveLeftTitle}">
-                  <img border="0"
-                       width="13" height="13" src="images/left_arrow.png"
-                       title="${moveLeftTitle}"/>
-                </html:link>
-                </td>
-              </c:if>
-
-              <%-- right --%>
-              <c:if test="${not status.last}">
-                <td>
-                <fmt:message key="results.moveRightHelp" var="moveRightTitle">
-                  <fmt:param value="${column.name}"/>
-                </fmt:message>
-                <html:link action="/changeTable?currentPage=${currentPage}&amp;bagName=${bagName}&amp;table=${param.table}&amp;method=moveColumnRight&amp;index=${status.index}&amp;trail=${param.trail}"
-                           title="${moveRightTitle}">
-                  <img border="0"
-                       width="13" height="13"
-                       src="images/right_arrow.png" title="${moveRightTitle}"/>
-                </html:link>
-                </td>
-              </c:if>
-
-              <%-- show/hide --%>
-              <c:if test="${fn:length(pagedResults.columns) > 1}">
-                <c:if test="${pagedResults.visibleColumnCount > 1}">
-                <td>
-                  <fmt:message key="results.hideColumnHelp" var="hideColumnTitle">
-                    <fmt:param value="${column.name}"/>
-                  </fmt:message>
-                  <html:link action="/changeTable?currentPage=${currentPage}&amp;bagName=${bagName}&amp;table=${param.table}&amp;method=hideColumn&amp;index=${status.index}&amp;trail=${param.trail}"
-                             title="${hideColumnTitle}">
-                    <img border="0"
-                         src="images/close.png" title="${hideColumnTitle}" />
-                  </html:link>
-                </td>
-                </c:if>
-              </c:if>
-
             </tr>
             </table>
             <div>
@@ -147,19 +98,6 @@
               <im:typehelp type="${column.path}" fullPath="true"/>
             </div>
           </th>
-        </c:when>
-        <c:otherwise>
-          <th>
-            <%-- <fmt:message key="results.showColumnHelp" var="showColumnTitle">
-                 <fmt:param value="${column.name}"/>
-                 </fmt:message> --%>
-            <html:link action="/changeTable?currentPage=${currentPage}&amp;bagName=${bagName}&amp;table=${param.table}&amp;method=showColumn&amp;index=${status.index}&amp;trail=${param.trail}"
-                       title="${showColumnTitle}">
-              <img src="images/show-column.gif" title="${fn:replace(column.name, '.', '&nbsp;> ')}"/>
-            </html:link>
-          </th>
-        </c:otherwise>
-      </c:choose>
     </c:forEach>
   </tr>
   </thead>
@@ -184,8 +122,6 @@
             <tr class="<c:out value="${rowClass}"/>">
               <c:forEach var="column" items="${pagedResults.columns}" varStatus="status2">
 
-                <c:choose>
-                  <c:when test="${column.visible}">
                     <im:instanceof instanceofObject="${subRow[column.index]}" instanceofClass="org.intermine.objectstore.flatouterjoins.MultiRowFirstValue" instanceofVariable="isFirstValue"/>
                     <c:if test="${isFirstValue == 'true'}">
                       <c:set var="resultElement" value="${subRow[column.index].value}" scope="request"/>
@@ -226,12 +162,6 @@
                         </div>
                       </td>
                     </c:if>
-                  </c:when>
-                  <c:otherwise>
-                    <%-- add a space so that IE renders the borders --%>
-                    <td style="background:#eee;">&nbsp;</td>
-                  </c:otherwise>
-                </c:choose>
               </c:forEach>
             </tr>
           </c:forEach>
@@ -240,8 +170,6 @@
           <tr class="<c:out value="${rowClass}"/>">
             <c:forEach var="column" items="${pagedResults.columns}" varStatus="status2">
 
-              <c:choose>
-                <c:when test="${column.visible}">
                   <c:set var="resultElement" value="${row[column.index]}" scope="request"/>
                   <c:set var="highlightObjectClass" value="noHighlightObject"/>
                   <c:if test="${!empty highlightId && resultElement.id == highlightId}">
@@ -282,12 +210,6 @@
                       <tiles:insert name="objectView.tile"/>
                     </div>
                   </td>
-                </c:when>
-                <c:otherwise>
-                  <%-- add a space so that IE renders the borders --%>
-                  <td style="background:#eee;">&nbsp;</td>
-                </c:otherwise>
-              </c:choose>
             </c:forEach>
           </tr>
         </c:otherwise>

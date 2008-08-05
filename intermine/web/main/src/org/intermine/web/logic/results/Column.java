@@ -20,7 +20,6 @@ import org.intermine.util.TypeUtil;
  */
 public class Column
 {
-    protected boolean visible = true;
     protected int index;
     protected Class type;
     protected boolean selectable = false;
@@ -110,24 +109,6 @@ public class Column
     }
 
     /**
-     * Gets the value of visible
-     *
-     * @return the value of visible
-     */
-    public boolean isVisible()  {
-        return visible;
-    }
-
-    /**
-     * Sets the value of visible
-     *
-     * @param visible value to assign to visible
-     */
-    public void setVisible(boolean visible) {
-        this.visible = visible;
-    }
-
-    /**
      * Gets the value of index
      *
      * @return the value of index
@@ -152,7 +133,7 @@ public class Column
     public Class getType() {
         return type;
     }
-    
+
     /**
      * Get the column type unqualified as a String
      * @return the column type
@@ -182,7 +163,7 @@ public class Column
      * {@inheritDoc}
      */
     public String toString() {
-        return "[Column " + getName() + " " + (visible ? "visible" : "not visible") + "]";
+        return "[Column " + getName() + "]";
     }
 
     /**

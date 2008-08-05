@@ -18,21 +18,18 @@ package org.intermine.bio.web;
  * @author Florian Reisinger
  * @author Richard Smith
  */
-import java.io.PrintWriter;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-
-import org.flymine.model.genomic.Interaction;
 import org.intermine.bio.networkview.FlyNetworkCreator;
 import org.intermine.bio.networkview.network.FlyNetwork;
 import org.intermine.model.InterMineObject;
 import org.intermine.objectstore.ObjectStoreException;
+import org.intermine.path.Path;
 import org.intermine.util.StringUtil;
 import org.intermine.web.logic.export.ExportException;
 import org.intermine.web.logic.export.ExportHelper;
@@ -41,6 +38,14 @@ import org.intermine.web.logic.export.http.TableHttpExporter;
 import org.intermine.web.logic.results.PagedTable;
 import org.intermine.web.logic.results.ResultElement;
 import org.intermine.web.logic.results.WebTable;
+import org.intermine.web.struts.TableExportForm;
+
+import java.io.PrintWriter;
+
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+
+import cytoscape.data.Interaction;
 
 /**
  * An implementation of TableHttpExporter that exports protein interactions
@@ -59,7 +64,8 @@ public class ProteinInteractionExporter implements TableHttpExporter
      * @param request The HTTP request we are processing
      * @param response The HTTP response we are creating
      */
-    public void export(PagedTable pt, HttpServletRequest request, HttpServletResponse response) {
+    public void export(PagedTable pt, HttpServletRequest request, HttpServletResponse response,
+                       TableExportForm form) {
 
         response.setContentType("text/plain");
         response.setHeader("Content-Disposition ", "attachment; filename=interaction"
@@ -124,6 +130,23 @@ public class ProteinInteractionExporter implements TableHttpExporter
         } catch (Exception e) {
             throw new ExportException("Export failed", e);
         }
+    }
+
+    /**
+     * For ProteinInteractionExporter we always return an empty list because all columns and classes are
+     * equal for this exporter.
+     * {@inheritDoc}
+     */
+    public List<Path> getExportClassPaths(@SuppressWarnings("unused") PagedTable pt) {
+        return new ArrayList<Path>();
+    }
+
+    /**
+     * The intial export path list is just the paths from the columns of the PagedTable.
+     * {@inheritDoc}
+     */
+    public List<Path> getInitialExportPaths(PagedTable pt) {
+        return ExportHelper.getColumnPaths(pt);
     }
 
     /**

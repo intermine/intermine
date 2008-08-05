@@ -126,7 +126,6 @@ public class WebConfig
 
         digester.addObjectCreate("webconfig/tableExportConfig", TableExportConfig.class);
         digester.addSetProperties("webconfig/tableExportConfig", "id", "id");
-        digester.addSetProperties("webconfig/tableExportConfig", "actionPath", "actionPath");
         digester.addSetProperties("webconfig/tableExportConfig", "className", "className");
 
         digester.addSetNext("webconfig/tableExportConfig", "addTableExportConfig");
