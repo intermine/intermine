@@ -210,12 +210,13 @@ public class InitialiserPlugin implements PlugIn
 
                     if (is != null) {
                         ac = new AutoCompleter(is);
+                        servletContext.setAttribute(Constants.AUTO_COMPLETER, ac);
                     } else {
                         ac = null;
                     }
-                    servletContext.setAttribute(Constants.AUTO_COMPLETER, ac);
                 } catch (SQLException e) {
-                    e.printStackTrace();
+                    LOG.error("Problem with database", e); 
+                    throw new ServletException("Problem with database", e); 
                 }
             }
     }
