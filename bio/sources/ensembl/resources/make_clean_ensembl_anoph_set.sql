@@ -1,4 +1,4 @@
-drop database ensembl_anopheles_core_50_3k_clean;
+--drop database ensembl_anopheles_core_50_3k_clean;
 create database ensembl_anopheles_core_50_3k_clean;
 
 USE ensembl_anopheles_core_50_3k_clean;

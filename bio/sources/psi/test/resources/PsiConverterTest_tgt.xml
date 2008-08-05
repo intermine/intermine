@@ -42,6 +42,7 @@
 </item>
 <item id="3_1" class="http://www.flymine.org/model/genomic#InteractionExperiment">
 <attribute name="name" value="taru-2002-3"/>
+<attribute name="description" value="Interaction of Alzheimer&apos;s beta -amyloid precursor family proteins with scaffold proteins of the JNK signaling cascade."/>
 <reference name="hostOrganism" ref_id="5_1"/>
 <reference name="interactionDetectionMethod" ref_id="2_2"/>
 <reference name="participantIdentificationMethod" ref_id="2_3"/>
