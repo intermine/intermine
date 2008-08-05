@@ -8,7 +8,8 @@ tempname="temp_log.txt"
 tempfile=$logdir$tempname
 shared_data="/shared/data"
 config_file="./resources/get_scripts.config"
-rm $tempfile
+unlink($tempfile);
+
 $errmsg="";
 
 echo "==========================================================="
