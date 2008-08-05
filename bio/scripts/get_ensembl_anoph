@@ -11,8 +11,18 @@ BEGIN {
 }
 use InterMine::DataDownloader;
 
-my $home = "/shared/data";  
-#my $version = $ARGV[0];
+
+#Define ARGVs
+my ($logdir,$logname,$home);
+if(@ARGV!=3){
+	die "Wrong number of ARGVs!\nget_all.sh should supply the log directory, temporary log name, and /shared/data/.\n";
+}else{
+	$logdir = $ARGV[0];
+	$logname= $ARGV[1];
+	$home = $ARGV[2];
+}
+
+
 my $version = "";	#eg 50_3k
 my $ensembl_dir = "mysql-ensembl";
 my $species_prefix = "anopheles_gambiae_core_";
@@ -36,11 +46,10 @@ $ftp->cwd($releases_dir)
 $ftp->cwd($current_dir)
   or die "Cannot change working directory ", $ftp->message;
 
-#anopheles_gambiae_core_50_3k
+
 # get list of all directories
 my @dir_list = $ftp->ls();
 for my $dir (@dir_list) {
-
 	if ($dir =~ m/$species_prefix/) {
 		$anoph_dir = $dir;
 	}
@@ -56,22 +65,27 @@ $ftp->cwd($anoph_dir)
 if (!(-d $download_dir)) {
     print "creating $download_dir\n";
     mkdir "$download_dir" or die "failed to create $download_dir";
-}
+    
+   my $log_buffer = "Ensembl Anopheles\nNew data available in $new_dir";
+	my $version_buffer = "Ensembl Anopheles\n$date\nVersion $version\nhttp://www.ensembl.org\n";
 
-# get list of all files
-my @file_list = $ftp->ls();
+	&write_version($dir,$version_buffer);
 
-# download all files
-for my $file (@file_list) {
+	# get list of all files
+	my @file_list = $ftp->ls();
+
+	# download all files
+	for my $file (@file_list) {
 	print("downloading ... $file\n");
 	$ftp->get($file, "$download_dir/$file")
            or die "failed to get file: $file";
+	}
+
+} else {
+ 	$log_buffer = "Ensembl Anopheles\nCurrent data ok\n\n";
 }
-print("done!");
 
-#TODO make version file
+&write_log($log_buffer,$logdir,$logname);
 
-
-
-
+#TODO createdb here
 
