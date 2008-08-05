@@ -11,6 +11,9 @@
 <definition name="submissions.tile" path="/model/submissions.jsp" 
         controllerUrl="/initSubmissions.do"/>
 
+<definition name="results.tile" path="/model/results.jsp" 
+        controllerUrl="/initResults.do"/>
+
 <definition name="projectList.tile" path="/model/projectList.jsp" 
         controllerUrl="/initProjectList.do"/>
 

@@ -43,14 +43,14 @@
         <p> Genomics </p></html:link></td>
     <td> <i>D. melanogaster</i> </td>
     <td> Genome annotation - Release 5.1</td>
-    <td><a href="http://www.flybase.org" target="_new">Flybase</a></td>
+    <td><a href="http://www.flybase.org" target="_new">FlyBase</a></td>
     <td> Crosby et al - <a href="http://www.ncbi.nlm.nih.gov/entrez/query.fcgi?cmd=Retrieve&db=PubMed&dopt=Abstract&list_uids=17099233" target="_new">PubMed: 17099233</a></td>
     <td> &nbsp;</td>
   </tr>
   <tr>
   <td> <i>C. elegans</i> </td>
-    <td> Genome annotation - Release </td>
-    <td><a href="http://www.wormbase.org" target="_new">Wormbase</a></td>
+    <td> Genome annotation </td>
+    <td><a href="http://www.wormbase.org" target="_new">WormBase</a></td>
     <td> - </td>
     <td> &nbsp;</td>
 </tr>

@@ -17,6 +17,9 @@
 <action path="/initSubmissions"
   type="org.modmine.web.SubmissionsController" />
 
+<action path="/initResults"
+  type="org.modmine.web.ResultsController" />
+
 
 <action path="/initProjects"
   type="org.modmine.web.ProjectsController" />
