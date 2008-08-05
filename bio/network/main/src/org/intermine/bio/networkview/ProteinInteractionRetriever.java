@@ -13,8 +13,8 @@ package org.intermine.bio.networkview;
 import java.util.Collection;
 import java.util.Iterator;
 
+import org.flymine.model.genomic.Gene;
 import org.flymine.model.genomic.Interaction;
-import org.flymine.model.genomic.Protein;
 import org.intermine.bio.networkview.network.FlyNetwork;
 import org.intermine.bio.networkview.network.FlyNode;
 import org.intermine.objectstore.ObjectStore;
@@ -57,16 +57,16 @@ public class ProteinInteractionRetriever
         Query q = new Query();
 
         // create all needed query classes
-        QueryClass qcProtein = new QueryClass(Protein.class);
+        QueryClass qcProtein = new QueryClass(Gene.class);
         QueryClass qcInteraction = new QueryClass(Interaction.class);
 
         // create needed references between the classes
         QueryCollectionReference qcrInteractions =
-            new QueryCollectionReference(qcProtein, "proteinInteractions");
+            new QueryCollectionReference(qcProtein, "interactions");
 
         // build up constraint
         ConstraintSet cs = new ConstraintSet(ConstraintOp.AND);
-        QueryField qf = new QueryField(qcProtein, "primaryAccession");
+        QueryField qf = new QueryField(qcProtein, "primaryIdentifier");
         // constrain primaryAccession to acc from accs
         BagConstraint bc = new BagConstraint(qf, ConstraintOp.IN, accs);
         // join protein and interactions
