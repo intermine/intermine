@@ -1,0 +1,9 @@
+div.exportPath {
+  float: left;
+  padding: 5px; margin-right: 5px; margin-bottom: 5px;
+  background-color: #E7F1FB;
+  border: 1px solid #bbb;
+  text-align: center;
+  font-size: 11px;
+  cursor: hand;
+}

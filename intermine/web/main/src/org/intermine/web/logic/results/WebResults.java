@@ -334,9 +334,23 @@ public class WebResults extends AbstractList<List<Object>> implements WebTable
                 }
                 o = ((MultiRowValue) o).getValue();
             }
-            String type = TypeUtil.unqualifiedName(columnPath.getLastClassDescriptor().getName());
-            String fieldName = columnName.substring(columnName.lastIndexOf(".") + 1);
-            Path path = new Path(model, type + '.' + fieldName);
+            String lastCd;
+            if (columnPath.endIsAttribute()) {
+                lastCd = columnPath.getLastClassDescriptor().getName();
+            } else {
+                // special case for columns that contain objects eg. Gene.chromosomeLocation
+                lastCd = columnPath.getLastClassDescriptor().getName();
+            }
+            String type = TypeUtil.unqualifiedName(lastCd);
+            Path path;
+            String fieldName = null;
+            if (columnPath.endIsAttribute()) {
+                fieldName = columnName.substring(columnName.lastIndexOf(".") + 1);
+                path = new Path(model, type + '.' + fieldName);
+            } else {
+                // special case for columns that contain objects
+                path = new Path(model, type);
+            }
             if (o instanceof Collection) {
                 if (((Collection) o).isEmpty()) {
                     o = null;
@@ -352,8 +366,14 @@ public class WebResults extends AbstractList<List<Object>> implements WebTable
             if (makeResultElements && o != null) {
                 String fieldCDName = path.getLastClassDescriptor().getName();
                 String unqualifiedFieldCD = TypeUtil.unqualifiedName(fieldCDName);
-                boolean isKeyField = ClassKeyHelper.isKeyField(classKeys, unqualifiedFieldCD,
-                                                               fieldName);
+                boolean isKeyField;
+                if (fieldName == null) {
+                    // special case for columns that contain objects
+                    isKeyField = false;
+                } else {
+                    isKeyField = ClassKeyHelper.isKeyField(classKeys, unqualifiedFieldCD,
+                                                           fieldName);
+                }
                 Set classes = DynamicUtil.decomposeClass(o.getClass());
                 Class cls = (Class) classes.iterator().next();
                 ResultElement resultElement =

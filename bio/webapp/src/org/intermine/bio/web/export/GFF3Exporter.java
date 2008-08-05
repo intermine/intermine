@@ -10,25 +10,27 @@ package org.intermine.bio.web.export;
  *
  */
 
-import java.io.PrintWriter;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.flymine.model.genomic.LocatedSequenceFeature;
 import org.intermine.bio.io.gff3.GFF3Record;
 import org.intermine.bio.util.GFF3Util;
 import org.intermine.objectstore.ObjectStoreException;
+import org.intermine.path.Path;
 import org.intermine.util.IntPresentSet;
 import org.intermine.util.TypeUtil;
 import org.intermine.util.TypeUtil.FieldInfo;
 import org.intermine.web.logic.export.ExportException;
 import org.intermine.web.logic.export.ExportHelper;
 import org.intermine.web.logic.export.Exporter;
-import org.intermine.web.logic.results.Column;
 import org.intermine.web.logic.results.ResultElement;
+
+import org.flymine.model.genomic.LocatedSequenceFeature;
+
+import java.io.PrintWriter;
 
 /**
  * Exports LocatedSequenceFeature objects in GFF3 format.
@@ -60,8 +62,7 @@ public class GFF3Exporter implements Exporter
     /**
      * {@inheritDoc}
      */
-    public void export(List<List<ResultElement>> results,
-                       @SuppressWarnings("unused") List<Column> columns) {
+    public void export(List<List<ResultElement>> results) {
         if (featureIndexes.size() == 0) {
             throw new ExportException("No columns with sequence.");
         }

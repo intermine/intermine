@@ -12,6 +12,8 @@ package org.intermine.model.testmodel.web;
 
 import java.io.IOException;
 import java.io.PrintWriter;
+
+import java.util.ArrayList;
 import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
@@ -23,11 +25,14 @@ import org.apache.struts.action.ActionMessages;
 import org.intermine.metadata.ClassDescriptor;
 import org.intermine.model.testmodel.Employee;
 import org.intermine.objectstore.ObjectStoreException;
+import org.intermine.path.Path;
 import org.intermine.web.logic.export.ExportException;
+import org.intermine.web.logic.export.ExportHelper;
 import org.intermine.web.logic.export.http.HttpExportUtil;
 import org.intermine.web.logic.export.http.TableHttpExporter;
 import org.intermine.web.logic.results.Column;
 import org.intermine.web.logic.results.PagedTable;
+import org.intermine.web.struts.TableExportForm;
 
 /**
  * An implementation of TableExporter that exports Employee objects.
@@ -43,9 +48,11 @@ public class EmployeeExporter implements TableHttpExporter
      * @param pt exported PagedTable
      * @param request The HTTP request we are processing
      * @param response The HTTP response we are creating
+     * @param form the form containing the columns paths to export
      */
     public void export(PagedTable pt, HttpServletRequest request,
-                                HttpServletResponse response) {
+                                HttpServletResponse response,
+                                TableExportForm form) {
 
         response.setContentType("text/plain");
         response.setHeader("Content-Disposition ", "inline; filename=exployee.txt");
@@ -76,10 +83,6 @@ public class EmployeeExporter implements TableHttpExporter
                 for (int columnIndex = 0; columnIndex < row.size(); columnIndex++) {
                     Column thisColumn = (Column) columns.get(columnIndex);
 
-                    if (!thisColumn.isVisible()) {
-                        continue;
-                    }
-
                     // the column order from PagedTable.getList() isn't necessarily the order that
                     // the user has chosen for the columns
                     int realColumnIndex = thisColumn.getIndex();
@@ -103,26 +106,34 @@ public class EmployeeExporter implements TableHttpExporter
         }
     }
 
+    /**
+     * For EmployeeExporter we always return an empty list because all columns and classes are
+     * equal for this exporter.
+     * {@inheritDoc}
+     */
+    public List<Path> getExportClassPaths(@SuppressWarnings("unused") PagedTable pt) {
+        return new ArrayList<Path>();
+    }
+
+    /**
+     * The intial export path list is just the paths from the columns of the PagedTable.
+     * {@inheritDoc}
+     */
+    public List<Path> getInitialExportPaths(PagedTable pt) {
+        return ExportHelper.getColumnPaths(pt);
+    }
 
     /**
      * @see TableHttpExporter#canExport
      */
     public boolean canExport(PagedTable pt) {
         List columns = pt.getColumns();
-
-        if (pt.getVisibleColumnCount() == 1) {
-            for (int i = 0; i < columns.size(); i++) {
-                if (((Column) columns.get(i)).isVisible()) {
-                    Object columnType = ((Column) columns.get(i)).getType();
-
-                    if (columnType instanceof ClassDescriptor) {
-
-                        ClassDescriptor cd = (ClassDescriptor) columnType;
-
-                        if (Employee.class.isAssignableFrom(cd.getType())) {
-                            return true;
-                        }
-                    }
+        for (int i = 0; i < columns.size(); i++) {
+            Object columnType = ((Column) columns.get(i)).getType();
+            if (columnType instanceof ClassDescriptor) {
+                ClassDescriptor cd = (ClassDescriptor) columnType;
+                if (Employee.class.isAssignableFrom(cd.getType())) {
+                    return true;
                 }
             }
         }

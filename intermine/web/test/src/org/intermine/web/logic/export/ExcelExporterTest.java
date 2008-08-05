@@ -43,17 +43,9 @@ public class ExcelExporterTest extends TestCase
         Date date = new Date();
         input.add(getDateRow(date));
 
-        Model model = Model.getInstanceByName("testmodel");
-
-        List<Column> columns = new ArrayList<Column>();
-        columns.add(new Column(new Path(model, "Employee.age"), "age", 0, Integer.class));
-        columns.add(new Column(new Path(model, "Employee.end"), "end", 1, String.class));
-        columns.add(new Column(new Path(model, "Employee.fullTime"), "fullTime", 2, Boolean.class));
-        columns.add(new Column(new Path(model, "Employee.name"), "name", 3, String.class));
-
         ByteArrayOutputStream out = new ByteArrayOutputStream();
         Exporter exporter = new ExcelExporter(out);
-        exporter.export(input, columns);
+        exporter.export(input);
         InputStream is = new ByteArrayInputStream(out.toByteArray());
         HSSFWorkbook wb = new HSSFWorkbook(is);
         HSSFSheet sheet = wb.getSheet("results");

@@ -10,7 +10,7 @@ package org.intermine.bio.web.export;
  *
  */
 
-import java.util.Iterator;
+import java.util.ArrayList;
 import java.util.List;
 
 import org.intermine.bio.web.biojava.BioSequence;
@@ -20,15 +20,13 @@ import org.intermine.metadata.Model;
 import org.intermine.model.InterMineObject;
 import org.intermine.objectstore.ObjectStore;
 import org.intermine.util.IntPresentSet;
-import org.intermine.util.TypeUtil;
+import org.intermine.util.StringUtil;
 import org.intermine.web.logic.export.ExportException;
 import org.intermine.web.logic.export.ExportHelper;
 import org.intermine.web.logic.export.Exporter;
-import org.intermine.web.logic.results.Column;
 import org.intermine.web.logic.results.ResultElement;
 
 import org.flymine.model.genomic.BioEntity;
-import org.flymine.model.genomic.Gene;
 import org.flymine.model.genomic.LocatedSequenceFeature;
 import org.flymine.model.genomic.Location;
 import org.flymine.model.genomic.Protein;
@@ -82,7 +80,7 @@ public class SequenceExporter implements Exporter
      * Lines are always separated with \n because third party tool writeFasta
      * is used for writing sequence.
      */
-    public void export(List<List<ResultElement>> results, List<Column> columns) {
+    public void export(List<List<ResultElement>> results) {
         // IDs of the features we have successfully output - used to avoid duplicates
         IntPresentSet exportedIDs = new IntPresentSet();
 
@@ -107,12 +105,12 @@ public class SequenceExporter implements Exporter
                 }
 
                 if (object instanceof LocatedSequenceFeature) {
-                    bioSequence = createLocatedSequenceFeature(header, object, row, columns);
+                    bioSequence = createLocatedSequenceFeature(header, object, row);
                 } else if (object instanceof Protein) {
-                    bioSequence = createProtein(header, object);
+                    bioSequence = createProtein(header, object, row);
                 } else if (object instanceof Translation) {
                     Model model = os.getModel();
-                    bioSequence = createTranslation(header, object, model);
+                    bioSequence = createTranslation(header, object, model, row);
                 } else {
                     // ignore other objects
                     continue;
@@ -151,121 +149,72 @@ public class SequenceExporter implements Exporter
     }
 
     private BioSequence createTranslation(StringBuffer header, Object object,
-                                          Model model) throws IllegalSymbolException {
+                                          Model model,
+                                          List<ResultElement> row) throws IllegalSymbolException {
         BioSequence bioSequence;
         ClassDescriptor cld = model.getClassDescriptorByName(model.getPackageName()
                                                              + "." + "Translation");
-        if (cld.getReferenceDescriptorByName("sequence", true) != null) {
+        if (cld.getReferenceDescriptorByName("sequence", true) == null) {
+            bioSequence = null;
+        } else {
             Translation translation = (Translation) object;
             bioSequence = BioSequenceFactory.make(translation);
-            header.append(translation.getPrimaryIdentifier());
-            header.append(' ');
-            if (translation.getName() == null) {
-                header.append("[unknown_name]");
-            } else {
-                header.append(translation.getName());
-            }
-            if (translation.getGene() != null) {
-                Gene gene = translation.getGene();
-                String geneIdentifier = gene.getPrimaryIdentifier();
-                if (geneIdentifier != null) {
-                    header.append(' ');
-                    header.append("gene:");
-                    header.append(geneIdentifier);
-                }
-            }
-        } else {
-            bioSequence = null;
+
+            makeHeader(header, row);
         }
         return bioSequence;
     }
 
-    private BioSequence createProtein(StringBuffer header, Object object)
+    private BioSequence createProtein(StringBuffer header, Object object, List<ResultElement> row)
             throws IllegalSymbolException {
         BioSequence bioSequence;
         Protein protein = (Protein) object;
         bioSequence = BioSequenceFactory.make(protein);
-        header.append(protein.getPrimaryIdentifier());
-        header.append(' ');
-        if (protein.getName() == null) {
-            header.append("[unknown_name]");
-        } else {
-            header.append(protein.getName());
-        }
-        Iterator<Gene> iter = protein.getGenes().iterator();
-        while (iter.hasNext()) {
-            Gene gene = iter.next();
-            String geneIdentifier = gene.getPrimaryIdentifier();
-            if (geneIdentifier != null) {
-                header.append(' ');
-                header.append("gene:");
-                header.append(geneIdentifier);
-            }
 
-        }
+        makeHeader(header, row);
+
         return bioSequence;
     }
 
     private BioSequence createLocatedSequenceFeature(StringBuffer header,
-                                                     Object object, List<ResultElement> row,
-                                                     List<Column> columns)
+                                                     Object object, List<ResultElement> row)
         throws IllegalSymbolException {
         BioSequence bioSequence;
         LocatedSequenceFeature feature = (LocatedSequenceFeature) object;
         bioSequence = BioSequenceFactory.make(feature);
-        if (feature.getPrimaryIdentifier() == null) {
-            header.append("[unknown_identifier]");
-        } else {
-            header.append(feature.getPrimaryIdentifier());
-        }
-        header.append(' ');
-        header.append(getHeadersFromColumns(row, columns));
 
-        Location chromosomeLoc = feature.getChromosomeLocation();
+        makeHeader(header, row);
 
-        if (chromosomeLoc != null) {
-            header.append(' ').append(chromosomeLoc.getObject().getPrimaryIdentifier());
-            header.append(':').append(chromosomeLoc.getStart());
-            header.append('-').append(chromosomeLoc.getEnd());
-            header.append(' ').append(feature.getLength());
-        }
-        try {
-            Gene gene = (Gene) TypeUtil.getFieldValue(feature, "gene");
-            if (gene != null) {
-                String geneIdentifier = gene.getPrimaryIdentifier();
-                if (geneIdentifier != null) {
-                    header.append(' ').append("gene:").append(geneIdentifier);
-                }
-            }
-        } catch (IllegalAccessException e) {
-            // ignore
-        }
         return bioSequence;
     }
 
     /**
-     * Look at the Columns and the current row and return a String containing all the elements of
-     * the row except the primaryIdentifier (if any).
+     * Set the header to be the contents of row, separated by spaces.
      */
-    private String getHeadersFromColumns(List<ResultElement> row, List<Column> columns) {
-        StringBuffer sb = new StringBuffer();
+    private void makeHeader(StringBuffer header, List<ResultElement> row) {
 
-        for (int i = 0; i < row.size(); i++) {
-            Column column = columns.get(i);
-            if (!column.getPath().getEndFieldDescriptor().getName().equals("primaryIdentifier")) {
-                ResultElement resultElement = row.get(i);
-                Object rawField = resultElement.getField();
-                String field;
-                if (rawField == null) {
-                    field = "-";
+        List<String> headerBits = new ArrayList<String>();
+
+        for (ResultElement re: row) {
+            Object fieldValue = re.getField();
+            if (fieldValue == null) {
+                headerBits.add("-");
+            } else {
+                if (fieldValue instanceof Location) {
+                    Location location = (Location) fieldValue;
+                    String primaryIdentifier = location.getObject().getPrimaryIdentifier();
+                    Integer start = location.getStart();
+                    Integer end = location.getEnd();
+                    String locString = primaryIdentifier + ':' + start + '-' + end;
+                    headerBits.add(locString);
                 } else {
-                    field = rawField.toString();
+                    headerBits.add(fieldValue.toString());
                 }
-                sb.append(field).append(' ');
             }
         }
 
-        return sb.toString();
+        header.append(StringUtil.join(headerBits, " "));
+
     }
 
     /**

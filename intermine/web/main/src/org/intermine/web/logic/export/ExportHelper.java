@@ -12,6 +12,7 @@ package org.intermine.web.logic.export;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.intermine.path.Path;
 import org.intermine.web.logic.results.Column;
 import org.intermine.web.logic.results.PagedTable;
 
@@ -47,7 +48,7 @@ public class ExportHelper
         }
         return -1;
     }
-    
+
     /**
      * @param clazzes classes
      * @param searched searched class
@@ -73,10 +74,7 @@ public class ExportHelper
         List<Class> ret = new ArrayList<Class>();
 
         for (int i = 0; i < columns.size(); i++) {
-            Column column = (Column) columns.get(i);
-            if (column.isVisible()) {
-                ret.add(pt.getTypeForColumn(i));
-            }
+            ret.add(pt.getTypeForColumn(i));
         }
         return ret;
     }
@@ -92,5 +90,18 @@ public class ExportHelper
     public static int getFirstColumnForClass(PagedTable pt, Class cls) {
         return getClassIndex(getColumnClasses(pt), cls);
     }
-    
+
+    /**
+     * Return a List containing the Path objects from the Columns of this PagedTable.
+     * @param pt the paged table
+     * @return the Paths
+     */
+    public static List<Path> getColumnPaths(PagedTable pt) {
+        List<Path> paths = new ArrayList<Path>();
+        for (Column col: pt.getColumns()) {
+            paths.add(col.getPath());
+        }
+        return paths;
+    }
+
 }

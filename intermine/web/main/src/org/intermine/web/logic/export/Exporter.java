@@ -11,7 +11,6 @@ package org.intermine.web.logic.export;
  */
 import java.util.List;
 
-import org.intermine.web.logic.results.Column;
 import org.intermine.web.logic.results.ResultElement;
 
 
@@ -31,9 +30,8 @@ public interface Exporter
     /**
      * Do export.
      * @param results to be exported
-     * @param columns the columns descriptions
      */
-    public void export(List<List<ResultElement>> results, List<Column> columns);
+    public void export(List<List<ResultElement>> results);
 
     /**
      * This method finds out if result row composed from instances of these

@@ -10,36 +10,32 @@ package org.intermine.web.logic.export.http;
  *
  */
 
-import java.io.OutputStream;
-
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-
 import org.intermine.web.logic.WebUtil;
 import org.intermine.web.logic.export.ExcelExporter;
 import org.intermine.web.logic.export.ExportException;
 import org.intermine.web.logic.export.Exporter;
 import org.intermine.web.logic.export.ResponseUtil;
 import org.intermine.web.logic.results.PagedTable;
+import org.intermine.web.struts.TableExportForm;
+
+import java.io.OutputStream;
+
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 
 
 /**
  * Exporter that exports table with results in excel format.
  * @author Jakub Kulaviak
  **/
-public class ExcelHttpExporter extends HttpExporterBase implements TableHttpExporter
+public class ExcelHttpExporter extends HttpExporterBase
 {
-
-    /**
-     * Constructor.
-     */
-    public ExcelHttpExporter() { }
-
     /**
      * {@inheritDoc}
      */
     @Override
-    public void export(PagedTable pt, HttpServletRequest request, HttpServletResponse response) {
+    public void export(PagedTable pt, HttpServletRequest request, HttpServletResponse response,
+                       TableExportForm form) {
         int defaultMax = 10000;
 
         int maxExcelSize = WebUtil.getIntSessionProperty(request.getSession(),
@@ -53,7 +49,7 @@ public class ExcelHttpExporter extends HttpExporterBase implements TableHttpExpo
                     + "Table for export can have at the most "
                     + maxExcelSize + " rows.");
         }
-        super.export(pt, request, response);
+        super.export(pt, request, response, form);
     }
 
     /**

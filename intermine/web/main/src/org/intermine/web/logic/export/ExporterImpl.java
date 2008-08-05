@@ -14,7 +14,8 @@ import java.util.Iterator;
 import java.util.List;
 
 import org.intermine.objectstore.flatouterjoins.ReallyFlatIterator;
-import org.intermine.web.logic.results.Column;
+import org.intermine.path.Path;
+import org.intermine.web.logic.results.PagedTable;
 import org.intermine.web.logic.results.ResultElement;
 
 import java.io.OutputStream;
@@ -61,10 +62,9 @@ public class ExporterImpl implements Exporter
     }
 
     /**
-     * Exports results.
-     * @param results results to be exported
+     * {@inheritDoc}
      */
-    public void export(List<List<ResultElement>> results, List<Column> columns) {
+    public void export(List<List<ResultElement>> results) {
         try {
             ResultElementConverter converter = new ResultElementConverter();
             Iterator<List<ResultElement>> rowIter = new ReallyFlatIterator(results.iterator());

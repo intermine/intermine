@@ -84,9 +84,10 @@ public class TableController extends TilesAction
             bagForm.reset(mapping, request);
         }
 
-        PagedTable pt = SessionMethods.getResultsTable(session, request.getParameter("table"));
+        String table = request.getParameter("table");
+        PagedTable pt = SessionMethods.getResultsTable(session, table);
         if (pt == null) {
-            LOG.error("PagedTable for " + request.getParameter("table") + " is null");
+            LOG.error("PagedTable for " + table + " is null");
             return null;
         }
 
@@ -213,7 +214,7 @@ public class TableController extends TilesAction
 
         request.setAttribute("columnsToHighlight", jsonWriter.write(columnsToHighlightMap));
         request.setAttribute("pathQuery", pt.getWebTable().getPathQuery());
-        request.setAttribute("table", request.getParameter("table"));
+        request.setAttribute("table", table);
 
         Map<Path, String> pathNames = new HashMap<Path, String> ();
         for (Column column : columns) {

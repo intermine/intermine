@@ -10,7 +10,6 @@ package org.intermine.web.logic.results;
  *
  */
 
-import java.util.AbstractList;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Iterator;
@@ -20,15 +19,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import javax.servlet.http.HttpSession;
-
-import org.intermine.metadata.FieldDescriptor;
-import org.intermine.model.InterMineObject;
-import org.intermine.objectstore.ObjectStore;
-import org.intermine.objectstore.ObjectStoreException;
-import org.intermine.objectstore.ObjectStoreWriter;
-import org.intermine.objectstore.flatouterjoins.MultiRow;
-import org.intermine.objectstore.intermine.ObjectStoreWriterInterMineImpl;
 import org.intermine.objectstore.query.BagConstraint;
 import org.intermine.objectstore.query.ConstraintOp;
 import org.intermine.objectstore.query.ContainsConstraint;
@@ -42,7 +32,13 @@ import org.intermine.objectstore.query.QueryObjectPathExpression;
 import org.intermine.objectstore.query.QueryObjectReference;
 import org.intermine.objectstore.query.QuerySelectable;
 import org.intermine.objectstore.query.Results;
-import org.intermine.objectstore.query.ResultsRow;
+
+import org.intermine.metadata.FieldDescriptor;
+import org.intermine.model.InterMineObject;
+import org.intermine.objectstore.ObjectStore;
+import org.intermine.objectstore.ObjectStoreException;
+import org.intermine.objectstore.ObjectStoreWriter;
+import org.intermine.objectstore.intermine.ObjectStoreWriterInterMineImpl;
 import org.intermine.path.Path;
 import org.intermine.util.DynamicUtil;
 import org.intermine.util.TypeUtil;
@@ -50,6 +46,8 @@ import org.intermine.web.logic.Constants;
 import org.intermine.web.logic.bag.InterMineBag;
 import org.intermine.web.logic.profile.Profile;
 import org.intermine.web.logic.session.SessionMethods;
+
+import javax.servlet.http.HttpSession;
 
 /**
  * A pageable and configurable table of data.
@@ -133,43 +131,6 @@ public class PagedTable
             }
         }
         return columnNames;
-    }
-
-    /**
-     * Return the number of visible columns.  Used by JSP pages.
-     * @return the number of visible columns.
-     */
-    public int getVisibleColumnCount() {
-        int count = 0;
-        for (Iterator<Column> i = getColumnsInternal().iterator(); i.hasNext();) {
-            Column obj = i.next();
-            if (obj.isVisible()) {
-                count++;
-            }
-        }
-        return count;
-    }
-
-    /**
-     * Move a column left
-     *
-     * @param index the index of the column to move
-     */
-    public void moveColumnLeft(int index) {
-        if (index > 0 && index <= getColumnsInternal().size() - 1) {
-            getColumnsInternal().add(index - 1, getColumnsInternal().remove(index));
-        }
-    }
-
-    /**
-     * Move a column right
-     *
-     * @param index the index of the column to move
-     */
-    public void moveColumnRight(int index) {
-        if (index >= 0 && index < getColumnsInternal().size() - 1) {
-            getColumnsInternal().add(index + 1, getColumnsInternal().remove(index));
-        }
     }
 
     /**
@@ -770,90 +731,6 @@ public class PagedTable
      */
     public void setTableid(String tableid) {
         this.tableid = tableid;
-    }
-
-    /**
-     * Returns indexes of columns, that should be displayed.
-     * @return indexes
-     */
-    public List<Integer> getVisibleIndexes() {
-        List<Integer> ret = new ArrayList<Integer>();
-        for (int i = 0; i < getColumns().size(); i++) {
-            if (getColumns().get(i) != null && getColumns().get(i).isVisible()) {
-                ret.add(new Integer(getColumns().get(i).getIndex()));
-            }
-        }
-
-        return ret;
-    }
-
-    /**
-     * Returns a List containing the results, with the columns rearranged.
-     *
-     * @return a List of rows, each of which is a List
-     */
-    public List<List<ResultElement>> getRearrangedResults() {
-        return new RearrangedList();
-    }
-
-    private class RearrangedList extends AbstractList
-    {
-        private List<Integer> visibleIndexes;
-
-        /**
-         * Constructor
-         */
-        public RearrangedList() {
-            visibleIndexes = getVisibleIndexes();
-        }
-
-        @Override
-        public List get(int index) {
-            return translateRow(webTable.getResultElements(index));
-        }
-
-        private List translateRow(List row) {
-            if (row instanceof MultiRow) {
-                MultiRow ret = new MultiRow();
-                for (List subRow : ((List<List>) row)) {
-                    ret.add(translateRow(subRow));
-                }
-                return ret;
-            }
-            List ret = new ResultsRow();
-            for (int i = 0; i < visibleIndexes.size(); i++) {
-                ret.add(row.get(visibleIndexes.get(i).intValue()));
-            }
-            return ret;
-        }
-
-        @Override
-        public int size() {
-            return webTable.size();
-        }
-
-        @Override
-        public Iterator iterator() {
-            return new Iter();
-        }
-
-        private class Iter implements Iterator
-        {
-            private Iterator subIter = webTable.iterator();
-
-            public boolean hasNext() {
-                return subIter.hasNext();
-            }
-
-            public Object next() {
-                List originalRow = (List) subIter.next();
-                return translateRow(originalRow);
-            }
-
-            public void remove() {
-                throw (new UnsupportedOperationException());
-            }
-        }
     }
 
     /**

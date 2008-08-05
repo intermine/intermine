@@ -14,6 +14,13 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
 
+import org.intermine.web.logic.Constants;
+import org.intermine.web.logic.config.TableExportConfig;
+import org.intermine.web.logic.config.WebConfig;
+import org.intermine.web.logic.export.http.TableHttpExporter;
+import org.intermine.web.logic.results.PagedTable;
+import org.intermine.web.logic.session.SessionMethods;
+
 import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -25,12 +32,6 @@ import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
 import org.apache.struts.tiles.ComponentContext;
 import org.apache.struts.tiles.actions.TilesAction;
-import org.intermine.web.logic.Constants;
-import org.intermine.web.logic.config.TableExportConfig;
-import org.intermine.web.logic.config.WebConfig;
-import org.intermine.web.logic.export.http.TableHttpExporter;
-import org.intermine.web.logic.results.PagedTable;
-import org.intermine.web.logic.session.SessionMethods;
 
 /**
  * Controller to initialise for the export.tile
@@ -45,6 +46,7 @@ public class ExportController extends TilesAction
     /**
      * {@inheritDoc}
      */
+    @Override
     public ActionForward execute(@SuppressWarnings("unused") ComponentContext context,
                                  @SuppressWarnings("unused") ActionMapping mapping,
                                  @SuppressWarnings("unused") ActionForm form,
@@ -64,13 +66,14 @@ public class ExportController extends TilesAction
             return null;
         }
 
-        Map allExporters = wc.getTableExportConfigs();
-        Map usableExporters = new HashMap();
+        Map<String, TableExportConfig> allExporters = wc.getTableExportConfigs();
+        Map<String, Map<String, String>> usableExporters =
+            new HashMap<String, Map<String, String>>();
 
-        for (Iterator i = allExporters.keySet().
+        for (Iterator<String> i = allExporters.keySet().
                 iterator(); i.hasNext(); ) {
-            String exporterId = (String) i.next();
-            TableExportConfig tableExportConfig = (TableExportConfig) allExporters.get(exporterId);
+            String exporterId = i.next();
+            TableExportConfig tableExportConfig = allExporters.get(exporterId);
 
             TableHttpExporter tableExporter =
                 (TableHttpExporter) Class.forName(tableExportConfig.getClassName()).newInstance();
@@ -82,7 +85,11 @@ public class ExportController extends TilesAction
                 LOG.error("Caught an error running canExport() for: " + exporterId + ". " + e);
             }
             if (canExport) {
-                usableExporters.put(exporterId, tableExportConfig);
+                // parameters to pass via the URL to the exportOptions page
+                Map<String, String> config = new HashMap<String, String>();
+                config.put("id", tableExportConfig.getId());
+                config.put("className", tableExportConfig.getClassName());
+                usableExporters.put(exporterId, config);
             } else {
                 usableExporters.put(exporterId, null);
             }

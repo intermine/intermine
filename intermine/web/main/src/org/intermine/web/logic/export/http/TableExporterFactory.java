@@ -19,19 +19,18 @@ import org.intermine.web.logic.export.ExportException;
 
 
 /**
- * Factory class that creates and registers TableHttpExporter classes.  
+ * Factory class that creates and registers TableHttpExporter classes.
  * @author Jakub Kulaviak
  **/
 public class TableExporterFactory
 {
-    
     private static final String TAB = "tab";
     private static final String CSV = "csv";
     private static final String EXCEL = "excel";
-    
-    private static Map<String, String> exporters = 
+
+    private static Map<String, String> exporters =
         new HashMap<String, String>();
-        
+
     /**
      * Constructor.
      * @param webConfig web config with configured exporters
@@ -41,7 +40,7 @@ public class TableExporterFactory
             register(TAB, TabHttpExporter.class.getCanonicalName());
             register(CSV, CSVHttpExporter.class.getCanonicalName());
             register(EXCEL, ExcelHttpExporter.class.getCanonicalName());
-            processConfig(webConfig);    
+            processConfig(webConfig);
         } catch (Exception e) {
             throw new ExportException("Export failed.", e);
         }
@@ -56,7 +55,7 @@ public class TableExporterFactory
     }
 
     /**
-     * @param id id of required exporter 
+     * @param id id of required exporter
      * @return exporter or null if exporter with given id doesn't exist
      * @throws Exception if an error happens during obtaining of exporter
      */
@@ -70,15 +69,15 @@ public class TableExporterFactory
     }
 
     /**
-     * Register exporter.   
+     * Register exporter.
      * @param id id of registered exporter
      * @param className class name of exporter
-     * @throws Exception if an error happens during registering of exporter 
+     * @throws Exception if an error happens during registering of exporter
      */
     public void register(String  id, String className) throws Exception {
         TableHttpExporter exp = getExporter(id);
         if (exp == null) {
             exporters.put(id, className);
-        } 
+        }
     }
 }

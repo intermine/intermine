@@ -79,14 +79,15 @@ public class PathQuery
 
     /**
      * Sets the select list of the query to the list of paths given.  Paths can be a single path
-     * or a comma delimited list of paths.  To append a path to the list instead use addView.
+     * or a comma or space delimited list of paths.  To append a path to the list instead use
+     * addView.
      * @param paths a list of paths to be the view list
      */
     public void setView(String paths) {
         if (paths == null || paths.equals("")) {
             throw new RuntimeException("setView() was passed null or empty string");
         }
-        String [] pathStrings = paths.split(",");
+        String [] pathStrings = paths.split("[, ]");
         setView(new ArrayList<String>(Arrays.asList(pathStrings)));
     }
 

@@ -18,7 +18,7 @@ package org.intermine.web.logic.config;
 
 public class TableExportConfig
 {
-    String id, actionPath, className;
+    String id, className;
 
     /**
      * Return the id of this TableExportConfig.
@@ -37,23 +37,7 @@ public class TableExportConfig
     }
 
     /**
-     * Get the actionPath
-     * @return the actionPath
-     */
-    public String getActionPath() {
-        return actionPath;
-    }
-
-    /**
-     * Set the actionPath of this TableExportConfig
-     * @param actionPath the new actionPath
-     */
-    public void setActionPath(String actionPath) {
-        this.actionPath = actionPath;
-    }
-
-    /**
-     * Get the className
+     * Get the class name of the exporter eg. org.intermine.bio.web.export.SequenceHttpExporter
      * @return the className
      */
     public String getClassName() {
@@ -77,7 +61,7 @@ public class TableExportConfig
     public boolean equals (Object obj) {
         if (obj instanceof TableExportConfig) {
             TableExportConfig exporterObj = (TableExportConfig) obj;
-            return exporterObj.id.equals(id) && exporterObj.actionPath.equals(actionPath)
+            return exporterObj.id.equals(id)
                 && exporterObj.className.equals(className);
         } else {
             return false;
@@ -90,14 +74,14 @@ public class TableExportConfig
      * @return the hashCode for this TableExportConfig object
      */
     public int hashCode() {
-        return id.hashCode() * 5 + actionPath.hashCode() + 3 * className.hashCode();
+        return id.hashCode() * 5 + 3 * className.hashCode();
     }
 
     /**
      * {@inheritDoc}
      */
     public String toString() {
-        return "<tableExportConfig id=\"" + id + "\" actionPath=\"" + actionPath
+        return "<tableExportConfig id=\"" + id
             + "\" className=\"" + className + "\"/>";
     }
 }

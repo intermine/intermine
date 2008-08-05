@@ -10,19 +10,12 @@ package org.intermine.bio.web.export;
  *
  */
 
-import java.io.InputStream;
-import java.io.PrintWriter;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.Properties;
 
-import javax.servlet.ServletContext;
-import javax.servlet.ServletException;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-import javax.servlet.http.HttpSession;
-
-import org.flymine.model.genomic.LocatedSequenceFeature;
+import org.intermine.path.Path;
 import org.intermine.util.StringUtil;
 import org.intermine.web.logic.export.ExportException;
 import org.intermine.web.logic.export.ExportHelper;
@@ -31,6 +24,18 @@ import org.intermine.web.logic.export.ResponseUtil;
 import org.intermine.web.logic.export.http.HttpExportUtil;
 import org.intermine.web.logic.export.http.TableHttpExporter;
 import org.intermine.web.logic.results.PagedTable;
+import org.intermine.web.struts.TableExportForm;
+
+import org.flymine.model.genomic.LocatedSequenceFeature;
+
+import java.io.InputStream;
+import java.io.PrintWriter;
+
+import javax.servlet.ServletContext;
+import javax.servlet.ServletException;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
 
 /**
  * An implementation of TableHttpExporter that exports LocatedSequenceFeature
@@ -50,12 +55,10 @@ public class GFF3HttpExporter implements TableHttpExporter
      * Method called to export a PagedTable object as GFF3.  The PagedTable can only be exported if
      * there is exactly one LocatedSequenceFeature column and the other columns (if any), are simple
      * attributes (rather than objects).
-     * @param pt PagedTable
-     * @param request The HTTP request we are processing
-     * @param response The HTTP response we are creating
+     * {@inheritDoc}
      */
-    public void export(PagedTable pt, HttpServletRequest request,
-                                HttpServletResponse response) {
+    public void export(PagedTable pt, HttpServletRequest request, HttpServletResponse response,
+                       TableExportForm form) {
         HttpSession session = request.getSession();
         ServletContext servletContext = session.getServletContext();
 
@@ -73,7 +76,7 @@ public class GFF3HttpExporter implements TableHttpExporter
         } catch (Exception e) {
             throw new ExportException("Export failed.", e);
         }
-        exporter.export(pt.getRearrangedResults(), pt.getColumns());
+        exporter.export(pt.getResultElementRows());
         if (exporter.getWrittenResultsCount() == 0) {
             throw new ExportException("Nothing was found for export.");
         }
@@ -81,6 +84,14 @@ public class GFF3HttpExporter implements TableHttpExporter
 
     private void setGFF3Header(HttpServletResponse response) {
         ResponseUtil.setPlainTextHeader(response, "table" + StringUtil.uniqueString() + ".gff3");
+    }
+
+    /**
+     * The intial export path list is just the paths from the columns of the PagedTable.
+     * {@inheritDoc}
+     */
+    public List<Path> getInitialExportPaths(PagedTable pt) {
+        return ExportHelper.getColumnPaths(pt);
     }
 
     /**
@@ -114,5 +125,12 @@ public class GFF3HttpExporter implements TableHttpExporter
      */
     public boolean canExport(PagedTable pt) {
         return GFF3Exporter.canExportStatic(ExportHelper.getColumnClasses(pt));
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public List<Path> getExportClassPaths(@SuppressWarnings("unused") PagedTable pt) {
+        return new ArrayList<Path>();
     }
 }
