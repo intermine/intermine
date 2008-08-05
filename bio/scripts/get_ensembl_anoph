@@ -15,15 +15,17 @@ use InterMine::DataDownloader;
 #Define ARGVs
 my ($logdir,$logname,$home);
 if(@ARGV!=3){
-	die "Wrong number of ARGVs!\nget_all.sh should supply the log directory, temporary log name, and /shared/data/.\n";
+	$logdir="/shared/data/download_logs/";
+	$logname="temp_log.txt";
+	$home="/shared/data";
+	#die "Wrong number of ARGVs!\nget_all.sh should supply the log directory, temporary log name, and /shared/data/.\n";
 }else{
 	$logdir = $ARGV[0];
 	$logname= $ARGV[1];
 	$home = $ARGV[2];
 }
 
-
-my $version = "";	#eg 50_3k
+my $version = "";	
 my $ensembl_dir = "mysql-ensembl";
 my $species_prefix = "anopheles_gambiae_core_";
 
@@ -47,6 +49,9 @@ $ftp->cwd($current_dir)
   or die "Cannot change working directory ", $ftp->message;
 
 
+my($filetype) = "binary"; 
+$ftp->$filetype;
+
 # get list of all directories
 my @dir_list = $ftp->ls();
 for my $dir (@dir_list) {
@@ -61,16 +66,18 @@ my $download_dir = "$home/$ensembl_dir/$species_prefix$version";
 $ftp->cwd($anoph_dir)
   or die "Cannot change working directory ", $ftp->message;
 
+my $log_buffer = "Ensembl Anopheles\nNew data available in $download_dir";
+
 # make download directory locally
 if (!(-d $download_dir)) {
-    print "creating $download_dir\n";
-    mkdir "$download_dir" or die "failed to create $download_dir";
-    
-   my $log_buffer = "Ensembl Anopheles\nNew data available in $new_dir";
+
+   print "creating $download_dir\n";
+   mkdir "$download_dir" or die "failed to create $download_dir";
+   my $date = &convert_date();
+
 	my $version_buffer = "Ensembl Anopheles\n$date\nVersion $version\nhttp://www.ensembl.org\n";
-
-	&write_version($dir,$version_buffer);
-
+	&write_version($download_dir,$version_buffer);
+}
 	# get list of all files
 	my @file_list = $ftp->ls();
 
@@ -80,6 +87,14 @@ if (!(-d $download_dir)) {
 	$ftp->get($file, "$download_dir/$file")
            or die "failed to get file: $file";
 	}
+
+	# unzip files
+	print"gzip -dr $download_dir\n";
+
+	if ((system "gzip -dr $download_dir") != 0) {
+	  die qq|system "gzip -dr $download_dir" failed: $?\n|;
+	}
+
 
 } else {
  	$log_buffer = "Ensembl Anopheles\nCurrent data ok\n\n";
