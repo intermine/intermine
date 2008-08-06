@@ -67,6 +67,7 @@ public class ExportOptionsController extends TilesAction
 
         WebConfig webConfig = SessionMethods.getWebConfig(request);
         TableExporterFactory factory = new TableExporterFactory(webConfig);
+
         try {
             TableHttpExporter exporter = factory.getExporter(type);
             List<Path> initialPaths = exporter.getInitialExportPaths(pt);

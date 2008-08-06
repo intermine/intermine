@@ -13,6 +13,7 @@ package org.intermine.bio.web.export;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.intermine.bio.web.struts.SequenceExportForm;
 import org.intermine.metadata.Model;
 import org.intermine.objectstore.ObjectStore;
 import org.intermine.path.Path;
@@ -24,11 +25,6 @@ import org.intermine.web.logic.export.ResponseUtil;
 import org.intermine.web.logic.export.http.TableHttpExporter;
 import org.intermine.web.logic.results.PagedTable;
 import org.intermine.web.struts.TableExportForm;
-
-import org.flymine.model.genomic.LocatedSequenceFeature;
-import org.flymine.model.genomic.Protein;
-import org.flymine.model.genomic.Sequence;
-import org.flymine.model.genomic.Translation;
 
 import java.io.IOException;
 import java.io.OutputStream;
@@ -66,6 +62,8 @@ public class SequenceHttpExporter implements TableHttpExporter
         ObjectStore os = (ObjectStore) servletContext.getAttribute(Constants.OBJECTSTORE);
         setSequenceExportHeader(response);
 
+        SequenceExportForm sef = (SequenceExportForm) form;
+
         OutputStream outputStream = null;
         try {
             outputStream = response.getOutputStream();
@@ -73,8 +71,8 @@ public class SequenceHttpExporter implements TableHttpExporter
             throw new ExportException("Export failed.", e);
         }
 
-        // the first column that contains exportable features
-        int realFeatureIndex = getFeatureColumnIndex(pt);
+        // XXX
+        int realFeatureIndex = 0;
 
         SequenceExporter exporter = new SequenceExporter(os, outputStream, realFeatureIndex);
 
@@ -99,23 +97,6 @@ public class SequenceHttpExporter implements TableHttpExporter
         // the Path we need is the parent of one of the paths in the columns
         paths.add(new Path(Model.getInstanceByName("genomic"), "Gene.chromosomeLocation"));
         return paths;
-    }
-
-    /**
-     * Return the first column that contains Sequence objects or features that have a sequence
-     * reference.
-     */
-    private int getFeatureColumnIndex(PagedTable pt) {
-        List<Class> clazzes = ExportHelper.getColumnClasses(pt);
-        for (int i = 0; i < clazzes.size(); i++) {
-            if (Protein.class.isAssignableFrom(clazzes.get(i))
-                || LocatedSequenceFeature.class.isAssignableFrom(clazzes.get(i))
-                || Sequence.class.isAssignableFrom(clazzes.get(i))
-                || Translation.class.isAssignableFrom(clazzes.get(i))) {
-                return i;
-            }
-        }
-        return -1;
     }
 
     /**

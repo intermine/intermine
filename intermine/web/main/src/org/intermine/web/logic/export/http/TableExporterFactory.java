@@ -31,6 +31,8 @@ public class TableExporterFactory
     private static Map<String, String> exporters =
         new HashMap<String, String>();
 
+    private Map<String, TableExportConfig> configs = new HashMap<String, TableExportConfig>();
+
     /**
      * Constructor.
      * @param webConfig web config with configured exporters
@@ -47,7 +49,7 @@ public class TableExporterFactory
     }
 
     private void processConfig(WebConfig webConfig) throws Exception {
-        Map<String, TableExportConfig> configs = webConfig.getTableExportConfigs();
+        configs = webConfig.getTableExportConfigs();
         for (String key : configs.keySet()) {
             TableExportConfig config = configs.get(key);
             register(key, config.getClassName());
@@ -55,6 +57,7 @@ public class TableExporterFactory
     }
 
     /**
+     * Return the exporter class for the given id.
      * @param id id of required exporter
      * @return exporter or null if exporter with given id doesn't exist
      * @throws Exception if an error happens during obtaining of exporter
@@ -66,6 +69,15 @@ public class TableExporterFactory
         } else {
             return null;
         }
+    }
+
+    /**
+     * Return the TableExportConfig for the given id.
+     * @param id id of required config
+     * @return config or null if config with given id doesn't exist
+     */
+    public TableExportConfig getConfig(String id) {
+        return configs.get(id);
     }
 
     /**

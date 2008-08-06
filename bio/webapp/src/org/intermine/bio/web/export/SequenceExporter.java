@@ -62,7 +62,7 @@ public class SequenceExporter implements Exporter
      * @param featureIndex index of cell in row that contains object to be exported
      */
     public SequenceExporter(ObjectStore os, OutputStream outputStream,
-            int featureIndex) {
+                            int featureIndex) {
         this.os = os;
         this.out = outputStream;
         this.featureIndex = featureIndex;

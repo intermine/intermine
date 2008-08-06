@@ -116,7 +116,7 @@ public class WebConfig
                                  EnrichmentWidgetConfig.class);
         digester.addSetProperties("webconfig/widgets/enrichmentwidgetdisplayer");
         digester.addSetNext("webconfig/widgets/enrichmentwidgetdisplayer", "addWidget");
-        
+
         digester.addObjectCreate("webconfig/widgets/griddisplayer",
                 GridWidgetConfig.class);
         digester.addSetProperties("webconfig/widgets/griddisplayer");
