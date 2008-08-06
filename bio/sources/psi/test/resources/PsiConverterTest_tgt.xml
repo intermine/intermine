@@ -3,12 +3,35 @@
 <attribute name="text" value="J. Biol. Chem. (0021-9258)"/>
 <attribute name="type" value="journal"/>
 </item>
+<item id="10_1" class="http://www.flymine.org/model/genomic#Interaction">
+<attribute name="role" value="prey"/>
+<attribute name="shortName" value="appl-aplip1-2"/>
+<reference name="experiment" ref_id="4_1"/>
+<reference name="gene" ref_id="7_1"/>
+<collection name="dataSets"><reference ref_id="1_1"/></collection>
+<collection name="interactingGenes"><reference ref_id="7_2"/></collection>
+<collection name="interactingRegions"><reference ref_id="8_1"/></collection>
+</item>
+<item id="10_2" class="http://www.flymine.org/model/genomic#Interaction">
+<attribute name="role" value="bait"/>
+<attribute name="shortName" value="appl-aplip1-2"/>
+<reference name="experiment" ref_id="4_1"/>
+<reference name="gene" ref_id="7_2"/>
+<collection name="dataSets"><reference ref_id="1_1"/></collection>
+<collection name="interactingGenes"><reference ref_id="7_1"/></collection>
+<collection name="interactingRegions"><reference ref_id="8_1"/></collection>
+</item>
+<item id="4_1" class="http://www.flymine.org/model/genomic#InteractionExperiment">
+<attribute name="description" value="Interaction of Alzheimer's beta -amyloid precursor family proteins with scaffold proteins of the JNK signaling cascade."/>
+<attribute name="name" value="taru-2002-3"/>
+<reference name="hostOrganism" ref_id="3_3"/>
+<reference name="interactionDetectionMethod" ref_id="2_2"/>
+<reference name="participantIdentificationMethod" ref_id="2_3"/>
+<reference name="publication" ref_id="5_1"/>
+</item>
 <item id="7_2" class="http://www.flymine.org/model/genomic#Gene">
 <attribute name="primaryIdentifier" value="FBgn001"/>
 <collection name="dataSets"><reference ref_id="1_1"/></collection>
-</item>
-<item id="4_1" class="http://www.flymine.org/model/genomic#Publication">
-<attribute name="pubMedId" value="11912189"/>
 </item>
 <item id="0_1" class="http://www.flymine.org/model/genomic#DataSource">
 <attribute name="name" value="IntAct"/>
@@ -21,9 +44,18 @@
 <attribute name="identifier" value="MI:0117"/>
 <collection name="dataSets"><reference ref_id="1_1"/></collection>
 </item>
+<item id="3_3" class="http://www.flymine.org/model/genomic#Organism">
+<attribute name="taxonId" value="9534"/>
+</item>
+<item id="3_2" class="http://www.flymine.org/model/genomic#Organism">
+<attribute name="taxonId" value="1234"/>
+</item>
 <item id="6_2" class="http://www.flymine.org/model/genomic#Comment">
 <attribute name="text" value="2002"/>
 <attribute name="type" value="publication-year"/>
+</item>
+<item id="5_1" class="http://www.flymine.org/model/genomic#Publication">
+<attribute name="pubMedId" value="11912189"/>
 </item>
 <item id="9_1" class="http://www.flymine.org/model/genomic#Location">
 <attribute name="end" value="370"/>
@@ -40,14 +72,6 @@
 <attribute name="identifier" value="MI:0086"/>
 <collection name="dataSets"><reference ref_id="1_1"/></collection>
 </item>
-<item id="3_1" class="http://www.flymine.org/model/genomic#InteractionExperiment">
-<attribute name="name" value="taru-2002-3"/>
-<attribute name="description" value="Interaction of Alzheimer&apos;s beta -amyloid precursor family proteins with scaffold proteins of the JNK signaling cascade."/>
-<reference name="hostOrganism" ref_id="5_1"/>
-<reference name="interactionDetectionMethod" ref_id="2_2"/>
-<reference name="participantIdentificationMethod" ref_id="2_3"/>
-<reference name="publication" ref_id="4_1"/>
-</item>
 <item id="1_1" class="http://www.flymine.org/model/genomic#DataSet">
 <attribute name="title" value="IntAct dataset"/>
 <reference name="dataSource" ref_id="0_1"/>
@@ -63,29 +87,11 @@
 <reference name="ontologyTerm" ref_id="2_1"/>
 <collection name="dataSets"><reference ref_id="1_1"/></collection>
 </item>
-<item id="5_1" class="http://www.flymine.org/model/genomic#Organism">
-<attribute name="taxonId" value="9534"/>
-</item>
-<item id="10_1" class="http://www.flymine.org/model/genomic#Interaction">
-<attribute name="role" value="prey"/>
-<attribute name="shortName" value="appl-aplip1-2"/>
-<reference name="experiment" ref_id="3_1"/>
-<reference name="gene" ref_id="7_1"/>
-<collection name="dataSets"><reference ref_id="1_1"/></collection>
-<collection name="interactingGenes"><reference ref_id="7_2"/></collection>
-<collection name="interactingRegions"><reference ref_id="8_1"/></collection>
+<item id="3_1" class="http://www.flymine.org/model/genomic#Organism">
+<attribute name="taxonId" value="7227"/>
 </item>
 <item id="6_1" class="http://www.flymine.org/model/genomic#Comment">
 <attribute name="text" value="Taru H., Iijima K., Hase M., Kirino Y., Yagi Y., Suzuki T."/>
 <attribute name="type" value="author-list"/>
-</item>
-<item id="10_2" class="http://www.flymine.org/model/genomic#Interaction">
-<attribute name="role" value="bait"/>
-<attribute name="shortName" value="appl-aplip1-2"/>
-<reference name="experiment" ref_id="3_1"/>
-<reference name="gene" ref_id="7_2"/>
-<collection name="dataSets"><reference ref_id="1_1"/></collection>
-<collection name="interactingGenes"><reference ref_id="7_1"/></collection>
-<collection name="interactingRegions"><reference ref_id="8_1"/></collection>
 </item>
 </items>
