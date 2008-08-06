@@ -106,7 +106,7 @@ public class FlyBaseModuleProcessor extends ChadoSequenceProcessor
     private Map<String, Item> mutagensMap = new HashMap<String, Item>();
 
     private static final String ALLELE_TEMP_TABLE_NAME = "intermine_flybase_allele_temp";
-    private static final String INSERTION_TEMP_TABLE_NAME = "intermine_flybase_oinsertion_temp";
+    private static final String INSERTION_TEMP_TABLE_NAME = "intermine_flybase_insertion_temp";
 
     /**
      * Create a new FlyBaseChadoDBConverter.
@@ -196,13 +196,7 @@ public class FlyBaseModuleProcessor extends ChadoSequenceProcessor
      * @param connection the connection
      * @throws SQLException if there is a database problem
      */
-    protected void createInsertionTempTable(Connection connection) throws SQLException {
-        String organismConstraint = getOrganismConstraint();
-        String orgConstraintForQuery = "";
-        if (!StringUtils.isEmpty(organismConstraint)) {
-            orgConstraintForQuery = " AND " + organismConstraint;
-        }
-
+    private void createInsertionTempTable(Connection connection) throws SQLException {
         String query =
             " CREATE TEMPORARY TABLE " + INSERTION_TEMP_TABLE_NAME
             + " AS SELECT obj.feature_id AS obj_id, sub.feature_id AS sub_id,"
@@ -618,6 +612,7 @@ public class FlyBaseModuleProcessor extends ChadoSequenceProcessor
         throws ObjectStoreException, SQLException {
 
         createAllelesTempTable(connection);
+        createInsertionTempTable(connection);
 
         for (FeatureData featureData: features.values()) {
             if ((featureData.flags & FeatureData.IDENTIFIER_SET) == 0) {
@@ -643,9 +638,7 @@ public class FlyBaseModuleProcessor extends ChadoSequenceProcessor
         }
 
         createIndelReferences(connection);
-
         createDeletionLocations(connection);
-
         copyInsertionLocations(connection);
     }
 
@@ -776,7 +769,6 @@ public class FlyBaseModuleProcessor extends ChadoSequenceProcessor
     private void copyInsertionLocations(Connection connection)
     throws ObjectStoreException, SQLException {
         ResultSet res = getInsertionLocationsResultSet(connection);
-        int featureWarnings = 0;
         while (res.next()) {
             int subId = res.getInt("sub_id");
             int chrId = res.getInt("chr_feature_id");
@@ -1238,7 +1230,7 @@ public class FlyBaseModuleProcessor extends ChadoSequenceProcessor
      * {@inheritDoc}
      */
     @Override
-    protected String fixIdentifier(String type, String identifier) {
+    protected String fixIdentifier(@SuppressWarnings("unused") String type, String identifier) {
         return XmlUtil.fixEntityNames(identifier);
     }
 
