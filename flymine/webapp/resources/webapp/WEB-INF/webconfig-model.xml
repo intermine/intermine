@@ -754,9 +754,9 @@
     </fields>
   </class>
 
-  <tableExportConfig id="sequence" 
+  <tableExportConfig id="sequence"
                      className="org.intermine.bio.web.export.SequenceHttpExporter"/>
-  <tableExportConfig id="gff3" 
+  <tableExportConfig id="gff3"
                      className="org.intermine.bio.web.export.GFF3HttpExporter"/>
   <tableExportConfig id="proteinInteraction"
                      className="org.intermine.bio.web.ProteinInteractionExporter"/>

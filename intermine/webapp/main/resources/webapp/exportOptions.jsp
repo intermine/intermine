@@ -52,10 +52,12 @@
     </fmt:message>
   </c:when>
   <c:otherwise>
-    <fmt:message bundle="model" key="exporter.${type}.description"/>
+    <%-- <fmt:message bundle="model" key="exporter.${type}.description"/> --%>
   </c:otherwise>
 </c:choose></h2>
 <br/>
+
+<!-- exporting type: ${type} -->
 
 <html:form action="/${type}ExportAction" onsubmit="updatePathsString();">
   <c:choose>
@@ -64,6 +66,13 @@
       <html:radio property="format" value="csv"/>Comma separated values<br/>
       <html:radio property="format" value="tab"/>Tab separated values<br/>
     </c:when>
+    <c:otherwise>
+      <c:set var="tileName" value="${type}ExportOptions.tile"/>
+      <p> tileName: ${tileName} </p>
+      <c:if test="${!empty $tileName}">
+        <tiles:insert name="${tileName}"/>
+      </c:if>
+    </c:otherwise>
   </c:choose>
 
   <br/>

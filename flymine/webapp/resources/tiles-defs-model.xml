@@ -13,3 +13,7 @@
 
 <definition name="attributeLinkDisplayer.tile" path="/model/attributeLinkDisplayer.jsp" 
   	    controllerUrl="/initAttributeLinkDisplayer.do"/>
+
+<definition name="sequenceExportOptions.tile" path="/model/sequenceExportOptions.jsp" 
+  	    controllerUrl="/initSequenceExport.do"/>
+

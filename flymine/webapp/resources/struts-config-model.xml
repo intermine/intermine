@@ -22,6 +22,9 @@
 <action path="/initAttributeLinkDisplayer"
         type="org.intermine.bio.web.AttributeLinkDisplayerController"/>
 
+<action path="/initSequenceExportOptions"
+        type="org.intermine.bio.web.struts.SequenceExportOptionsController"/>
+
 <action path="/sequenceExportAction" name="sequenceExportForm"
         type="org.intermine.web.struts.TableExportAction" parameter="method"/>
 

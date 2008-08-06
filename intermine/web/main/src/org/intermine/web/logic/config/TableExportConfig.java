@@ -19,6 +19,7 @@ package org.intermine.web.logic.config;
 public class TableExportConfig
 {
     String id, className;
+    private String optionsTileName = null;
 
     /**
      * Return the id of this TableExportConfig.
@@ -34,6 +35,24 @@ public class TableExportConfig
      */
     public void setId(String id) {
         this.id = id;
+    }
+
+    /**
+     * Get the optionsTileName of this TableExportConfig - ie. the tile to be inserted into the
+     * export options page for this type of export.  Returns null if there is no tile for this
+     * type.
+     * @return the options tile name
+     */
+    public String getOptionsTileName() {
+        return optionsTileName;
+    }
+
+    /**
+     * Set the optionsTileName of this TableExportConfig
+     * @param optionsTileName the new options tile name
+     */
+    public void setOptionsTileName(String optionsTileName) {
+        this.optionsTileName = optionsTileName;
     }
 
     /**
@@ -58,7 +77,8 @@ public class TableExportConfig
      * @param obj the Object to compare with
      * @return true if this is equal to obj
      */
-    public boolean equals (Object obj) {
+    @Override
+    public boolean equals(Object obj) {
         if (obj instanceof TableExportConfig) {
             TableExportConfig exporterObj = (TableExportConfig) obj;
             return exporterObj.id.equals(id)
@@ -73,6 +93,7 @@ public class TableExportConfig
      *
      * @return the hashCode for this TableExportConfig object
      */
+    @Override
     public int hashCode() {
         return id.hashCode() * 5 + 3 * className.hashCode();
     }
@@ -80,6 +101,7 @@ public class TableExportConfig
     /**
      * {@inheritDoc}
      */
+    @Override
     public String toString() {
         return "<tableExportConfig id=\"" + id
             + "\" className=\"" + className + "\"/>";
