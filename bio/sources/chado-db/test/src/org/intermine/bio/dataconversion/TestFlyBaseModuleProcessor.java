@@ -565,25 +565,13 @@ public class TestFlyBaseModuleProcessor extends FlyBaseModuleProcessor
         };
         Object[][] resObjects = new Object[][] {
             {
-                11488812,  8747247, "bk1"
-            },
-            {
                 11488812, 11430370, "bk1"
-            },
-            {
-                11488812,  8748527, "bk2"
             },
             {
                 11488812, 11432358, "bk2"
             },
             {
-                11488720,  8747724, "bk1"
-            },
-            {
                 11488720, 11431518, "bk1"
-            },
-            {
-                11488720,  8747905, "bk2"
             },
             {
                 11488720, 11430215, "bk2"
@@ -595,4 +583,31 @@ public class TestFlyBaseModuleProcessor extends FlyBaseModuleProcessor
         res.setupColumnNames(columnNames);
         return res;
     }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    protected ResultSet getInsertionLocationsResultSet(Connection connection) {
+        String[] columnNames = new String[] {
+            "sub_id", "fmin", "fmax", "chr_feature_id"
+        };
+        Object[][] resObjects = new Object[][] {
+            {
+                11430215, 21657677, 21657677, 11494725
+            },
+            {
+                11432358, 7576637, 7576637, 11494725
+            },
+            {
+                11431518, 21629316, 21629316, 11494725
+            }
+        };
+
+        MockMultiRowResultSet res = new MockMultiRowResultSet();
+        res.setupRows(resObjects);
+        res.setupColumnNames(columnNames);
+        return res;
+    }
+
 }
