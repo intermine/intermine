@@ -72,39 +72,6 @@ public class BioGridConverter extends BioFileConverter
 
         // only construct factory here so can be replaced by mock factory in tests
         resolverFactory = new FlyBaseIdResolverFactory();
-
-        /*
-        Affinity Capture-MS
-        Affinity Capture-RNA
-        Affinity Capture-Western
-        AffinityCapture-MS
-        AffinityCapture-Western
-        Biochemical Activity
-        Co-crystal Structure
-        Co-fractionation
-        Co-localization
-        Co-purification
-        Dosage Growth Defect
-        Dosage GrowthDefect
-        Dosage Lethality
-        Dosage Rescue
-        DosageRescue
-        FRET
-        Far Western
-        PCA
-        Phenotypic Enhancement
-        Phenotypic Suppression
-        PhenotypicEnhancement
-        Protein-RNA
-        Protein-peptide
-        Reconstituted Complex
-        Synthetic Growth Defect
-        Synthetic Lethality
-        Synthetic Rescue
-        SyntheticRescue
-        Two-hybrid
-*/
-
     }
 
     /**

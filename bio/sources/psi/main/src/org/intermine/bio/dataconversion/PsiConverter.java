@@ -63,7 +63,6 @@ public class PsiConverter extends BioFileConverter
 
         try {
             termId = getTerm("MI:0117");
-            initOrganisms();
         } catch (SAXException e) {
             throw new RuntimeException("ack");
         }
@@ -78,7 +77,11 @@ public class PsiConverter extends BioFileConverter
         List<String> orgArray = Arrays.asList(orgStr.split("\\s"));
         for (Iterator iter = orgArray.iterator(); iter.hasNext();) {
             String taxId = (String) iter.next();
-            organisms.put(taxId, null);
+            try {
+                getOrganism(taxId);
+            } catch (SAXException e) {
+                throw new RuntimeException("ack");
+            }
         }
     }
 
@@ -874,16 +877,6 @@ public class PsiConverter extends BioFileConverter
             }
         }
         return itemId;
-    }
-
-    /**
-     * creates and stores organism objects from list that has been passed by project.xml
-     * @throws SAXException if organism objects can't be stored
-     */
-    protected void initOrganisms() throws SAXException {
-        for (Iterator iter = organisms.keySet().iterator(); iter.hasNext();) {
-            getOrganism((String) iter.next());
-        }
     }
 
     private String getOrganism(String taxId) throws SAXException {
