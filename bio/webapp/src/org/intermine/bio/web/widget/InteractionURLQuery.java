@@ -25,7 +25,7 @@ import org.intermine.web.logic.widget.WidgetURLQuery;
  * @author Julie Sullivan
  */
 
-public class GeneticInteractionURLQuery implements WidgetURLQuery
+public class InteractionURLQuery implements WidgetURLQuery
 {
 
     InterMineBag bag;
@@ -37,7 +37,7 @@ public class GeneticInteractionURLQuery implements WidgetURLQuery
      * @param bag bag included in query
      * @param os object store
      */
-    public GeneticInteractionURLQuery(ObjectStore os, InterMineBag bag, String key) {
+    public InteractionURLQuery(ObjectStore os, InterMineBag bag, String key) {
         this.bag = bag;
         this.key = key;
         this.os = os;
@@ -50,10 +50,10 @@ public class GeneticInteractionURLQuery implements WidgetURLQuery
 
         PathQuery q = new PathQuery(os.getModel());
         q.setView("Gene.primaryIdentifier,Gene.symbol,Gene.organism.shortName,"
-                  + "Gene.geneticInteractions.shortName,Gene.geneticInteractions.type,"
-                  + "Gene.geneticInteractions.geneRole,"
-                  + "Gene.geneticInteractions.interactingGenes.primaryIdentifier"
-                  + "Gene.geneticInteractions.experiment.name");
+                  + "Gene.interactions.shortName,Gene.interactions.type,"
+                  + "Gene.interactions.geneRole,"
+                  + "Gene.interactions.interactingGenes.primaryIdentifier"
+                  + "Gene.interactions.experiment.name");
 
         String bagType = bag.getType();
 
@@ -62,14 +62,14 @@ public class GeneticInteractionURLQuery implements WidgetURLQuery
         if (keys != null) {
             q.addConstraint(bagType,  Constraints.notIn(new ArrayList(keys)));
         } else {
-            q.addConstraint("Gene.geneticInteractions.interactingGenes",  Constraints.lookup(key));
+            q.addConstraint("Gene.interactions.interactingGenes",  Constraints.lookup(key));
         }
 
         q.setConstraintLogic("A and B");
         q.syncLogicExpression("and");
 
         q.setOrderBy("Gene.organism.shortName,Gene.primaryIdentifier,"
-                  + "Gene.geneticInteractions.shortName,Gene.geneticInteractions.type");
+                  + "Gene.interactions.shortName,Gene.interactions.type");
         return q;
     }
 }
