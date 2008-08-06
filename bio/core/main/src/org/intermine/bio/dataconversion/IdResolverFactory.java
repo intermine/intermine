@@ -10,6 +10,10 @@ package org.intermine.bio.dataconversion;
  *
  */
 
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.IOException;
+
 /**
  * Create an IdResolver.
  * @author rns
@@ -46,6 +50,21 @@ public abstract class IdResolverFactory
                 }
             }
         }
+        return resolver;
+    }
+    
+    /**
+     * Read IdResolver contents from a file, allows for caching during build.
+     * @param clsName the class name to resolve
+     * @param f the file to read from
+     * @return a created IdResolver
+     * @throws FileNotFoundException if file not found
+     * @throws IOException if problem reading from file
+     */
+    public IdResolver createFromFile(String clsName, File f) 
+    throws FileNotFoundException, IOException {
+        resolver = new IdResolver(clsName);
+        resolver.populateFromFile(f);
         return resolver;
     }
     
