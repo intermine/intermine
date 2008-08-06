@@ -215,6 +215,14 @@ public class Database implements Shutdownable
     }
 
     /**
+     * Gets the database name only, not the full URL.
+     * @return the database name
+     */
+    public String getName() {
+        return (String) settings.get("datasource.databaseName");
+    }
+    
+    /**
      * Configures a datasource from a Properties object
      *
      * @param props the properties for configuring the Database
