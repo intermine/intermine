@@ -1,6 +1,8 @@
 package org.intermine.bio.dataconversion;
 
 /*
+ * Copyright (C) 2002-2008 FlyMine
+ *
  * This code may be freely distributed and modified under the
  * terms of the GNU Lesser General Public Licence.  This should
  * be distributed with the code.  See the LICENSE file for more
@@ -104,6 +106,7 @@ public class FlyBaseModuleProcessor extends ChadoSequenceProcessor
     private Map<String, Item> mutagensMap = new HashMap<String, Item>();
 
     private static final String ALLELE_TEMP_TABLE_NAME = "intermine_flybase_allele_temp";
+    private static final String INSERTION_TEMP_TABLE_NAME = "intermine_flybase_oinsertion_temp";
 
     /**
      * Create a new FlyBaseChadoDBConverter.
@@ -179,6 +182,57 @@ public class FlyBaseModuleProcessor extends ChadoSequenceProcessor
         LOG.info("executing: " + idIndexQuery);
         stmt.execute(idIndexQuery);
         String analyze = "ANALYZE " + ALLELE_TEMP_TABLE_NAME;
+        LOG.info("executing: " + analyze);
+        stmt.execute(analyze);
+    }
+
+    /**
+     * Create a temporary table from pairs of insertions (eg. "FBti0027974" => "FBti0023081")
+     * containing the feature_ids of the  pair (the object_id, subject_id in the relation table)
+     * and the fmin and fmax of the first insertion in the pair (ie. the progenitor / object from
+     * the feature_relationship table).
+     * The second in the pair is the "Modified descendant of" the first.  The pairs are found using
+     * the 'modified_descendant_of' relation type.  All insertions are from DrosDel.
+     * @param connection the connection
+     * @throws SQLException if there is a database problem
+     */
+    protected void createInsertionTempTable(Connection connection) throws SQLException {
+        String organismConstraint = getOrganismConstraint();
+        String orgConstraintForQuery = "";
+        if (!StringUtils.isEmpty(organismConstraint)) {
+            orgConstraintForQuery = " AND " + organismConstraint;
+        }
+
+        String query =
+            " CREATE TEMPORARY TABLE " + INSERTION_TEMP_TABLE_NAME
+            + " AS SELECT obj.feature_id AS obj_id, sub.feature_id AS sub_id,"
+            + "       obj_loc.fmin, obj_loc.fmax,"
+            + "       obj_loc.srcfeature_id as chr_feature_id"
+            + "  FROM feature sub, cvterm sub_type, feature_relationship rel, cvterm rel_type, "
+            + "       feature obj, cvterm obj_type, featureloc obj_loc"
+            + " WHERE sub.feature_id = rel.subject_id AND rel.object_id = obj.feature_id"
+            + "   AND sub_type.cvterm_id = sub.type_id AND obj_type.cvterm_id = obj.type_id"
+            + "   AND sub_type.name = 'transposable_element_insertion_site' "
+            + "   AND obj_type.name = 'transposable_element_insertion_site' "
+            + "   AND rel.type_id = rel_type.cvterm_id"
+            + "   AND rel_type.name = 'modified_descendant_of'"
+            + "   AND sub.feature_id in (select feature_id from feature_pub where pub_id ="
+            + "      (SELECT pub_id FROM pub"
+            + "       WHERE title = "
+            + "'The DrosDel collection: a set of P-element insertions for "
+            + "generating custom chromosomal aberrations in Drosophila melanogaster.')) "
+            + "   AND obj.feature_id = obj_loc.feature_id";
+
+
+
+        Statement stmt = connection.createStatement();
+        LOG.info("executing: " + query);
+        stmt.execute(query);
+        String idIndexQuery = "CREATE INDEX " + INSERTION_TEMP_TABLE_NAME + "index ON "
+            + INSERTION_TEMP_TABLE_NAME + "(sub_id)";
+        LOG.info("executing: " + idIndexQuery);
+        stmt.execute(idIndexQuery);
+        String analyze = "ANALYZE " + INSERTION_TEMP_TABLE_NAME;
         LOG.info("executing: " + analyze);
         stmt.execute(analyze);
     }
@@ -591,6 +645,8 @@ public class FlyBaseModuleProcessor extends ChadoSequenceProcessor
         createIndelReferences(connection);
 
         createDeletionLocations(connection);
+
+        copyInsertionLocations(connection);
     }
 
     private static final Pattern DELETION_LOC_PATTERN =
@@ -626,25 +682,31 @@ public class FlyBaseModuleProcessor extends ChadoSequenceProcessor
                 }
                 int taxonId = delFeatureData.getOrganismData().getTaxonId();
                 Integer chrFeatureId = getChromosomeFeatureMap(organismId).get(chromosomeName);
-                FeatureData chrFeatureData = getFeatureMap().get(chrFeatureId);
-                Item location =
-                    getChadoDBConverter().makeLocation(chrFeatureData.getItemIdentifier(),
-                                                       delFeatureData.getItemIdentifier(),
-                                                       start, end, 1, taxonId);
-                Item dataSetItem = getChadoDBConverter().getDataSetItem(taxonId);
-
-                location.addToCollection("dataSets", dataSetItem);
-
-                Reference chrLocReference = new Reference();
-                chrLocReference.setName("chromosomeLocation");
-                chrLocReference.setRefId(location.getIdentifier());
-                getChadoDBConverter().store(chrLocReference, delFeatureData.getIntermineObjectId());
-
-                getChadoDBConverter().store(location);
+                makeAndStoreLocation(chrFeatureId, delFeatureData, start, end, 1, taxonId);
             } else {
                 throw new RuntimeException("can't parse deletion location: " + locationText);
             }
          }
+    }
+
+    private void makeAndStoreLocation(Integer chrFeatureId, FeatureData subjectFeatureData,
+                                      int start, int end, int strand, int taxonId)
+        throws ObjectStoreException {
+        FeatureData chrFeatureData = getFeatureMap().get(chrFeatureId);
+        Item location =
+            getChadoDBConverter().makeLocation(chrFeatureData.getItemIdentifier(),
+                                               subjectFeatureData.getItemIdentifier(),
+                                               start, end, strand, taxonId);
+        Item dataSetItem = getChadoDBConverter().getDataSetItem(taxonId);
+
+        location.addToCollection("dataSets", dataSetItem);
+
+        Reference chrLocReference = new Reference();
+        chrLocReference.setName("chromosomeLocation");
+        chrLocReference.setRefId(location.getIdentifier());
+        getChadoDBConverter().store(chrLocReference, subjectFeatureData.getIntermineObjectId());
+
+        getChadoDBConverter().store(location);
     }
 
     /**
@@ -705,6 +767,29 @@ public class FlyBaseModuleProcessor extends ChadoSequenceProcessor
             mutagensMap.put(description, mutagen);
             store(mutagen);
             return mutagen;
+        }
+    }
+
+    /**
+     * @param connection
+     */
+    private void copyInsertionLocations(Connection connection)
+    throws ObjectStoreException, SQLException {
+        ResultSet res = getInsertionLocationsResultSet(connection);
+        int featureWarnings = 0;
+        while (res.next()) {
+            int subId = res.getInt("sub_id");
+            int chrId = res.getInt("chr_feature_id");
+            int fmin = res.getInt("fmin");
+            int fmax = res.getInt("fmax");
+
+            int start = fmin + 1;
+            int end = fmax;
+
+            FeatureData subFeatureData = getFeatureMap().get(subId);
+            int taxonId = subFeatureData.getOrganismData().getTaxonId();
+
+            makeAndStoreLocation(chrId, subFeatureData, start, end, 1, taxonId);
         }
     }
 
@@ -1070,7 +1155,28 @@ public class FlyBaseModuleProcessor extends ChadoSequenceProcessor
             + "   AND ins_rel.type_id = ins_rel_type.cvterm_id"
             + "   AND ins_rel_type.name = 'progenitor'"
             + "   AND break.type_id = break_type.cvterm_id"
-            + "   AND break_type.name = 'breakpoint'";
+            + "   AND break_type.name = 'breakpoint'"
+            // ignore the progenitors so we only set element1 and element2 to be the "descendants"
+            + "   AND ins.feature_id NOT IN (SELECT obj_id FROM " + INSERTION_TEMP_TABLE_NAME + ")";
+        LOG.info("executing: " + query);
+        Statement stmt = connection.createStatement();
+        ResultSet res = stmt.executeQuery(query);
+        return res;
+    }
+
+
+    /**
+     * Return a result set containing pairs of insertion feature_ids (eg. for "FBti0027974" =>
+     * "FBti0023081") and the fmin and fmax of the first insertion in the pair (ie. the progenitor).
+     * The second in the pair is the "Modified descendant of" the first.  The pairs are found using
+     * the 'modified_descendant_of' relation type.  All insertions are from DrosDel.
+     * The method is protected so that is can be overridden for testing.
+     * @param connection the Connection
+     * @throws SQLException if there is a database problem
+     * @return the ResultSet
+     */
+    protected ResultSet getInsertionLocationsResultSet(Connection connection) throws SQLException  {
+        String query = "SELECT * from " + INSERTION_TEMP_TABLE_NAME;
         LOG.info("executing: " + query);
         Statement stmt = connection.createStatement();
         ResultSet res = stmt.executeQuery(query);
