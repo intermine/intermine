@@ -468,4 +468,16 @@
         <attribute name="url" value="http://www.flyreg.org/"/>
         <reference name="dataSource" ref_id="660"/>
     </item>
+
+
+     <item id="670" class="" implements="http://www.flymine.org/model/genomic#DataSource">
+        <attribute name="name" value="PIMRider"/>
+        <attribute name="description" value=""/>
+        <attribute name="url" value=""/>
+    </item>
+    <item id="671" class="" implements="http://www.flymine.org/model/genomic#DataSet">
+        <attribute name="title" value="PIMRider data set"/>
+        <attribute name="url" value=""/>
+        <reference name="dataSource" ref_id="670"/>
+    </item>
 </items>
