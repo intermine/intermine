@@ -169,7 +169,7 @@ public class PsiConverter extends BioFileConverter
                 // <hostOrganismList><hostOrganism ncbiTaxId="9534"><names><fullName>
             } else if (qName.equals("hostOrganism")) {
                 String hostOrganism = attrs.getValue("ncbiTaxId");
-                if (hostOrganism != null) {
+                if (hostOrganism != null && !hostOrganism.equals("-1")) {
                     String refId = getOrganism(hostOrganism);
                     experimentHolder.setHostOrganism(refId);
                 }
