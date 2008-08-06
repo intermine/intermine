@@ -10,6 +10,7 @@ package org.intermine.bio.dataconversion;
  *
  */
 
+import java.io.File;
 import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -37,15 +38,37 @@ public class FlyBaseIdResolverFactory extends IdResolverFactory
      * @return an IdResolver for FlyBase
      */
     protected IdResolver createIdResolver() {
-        IdResolver resolver = new IdResolver("Gene");
-        Connection conn = null;
-        try {
-            OrganismRepository or = OrganismRepository.getOrganismRepository();
+        String clsName = "Gene";
+        IdResolver resolver = new IdResolver(clsName);
 
+        try {
             // TODO maybe this shouldn't be hard coded here?
             db = DatabaseFactory.getDatabase("db.flybase");
-            conn = db.getConnection();
 
+            String cacheFileName = "build/" + db.getName() + "." + clsName;
+            File f = new File(cacheFileName);
+            if (f.exists()) {
+                System.out.println("FlyBaseIdResolver reading from cache file: " + cacheFileName);
+                resolver = createFromFile(clsName, f);
+            } else {
+                resolver = createFromDb(db);
+                resolver.writeToFile(f);
+            }
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+        return resolver;
+    }
+    
+    
+    private IdResolver createFromDb(Database db) {
+        IdResolver resolver = new IdResolver("Gene");
+        Connection conn = null;
+        OrganismRepository or = OrganismRepository.getOrganismRepository();
+        
+        
+        try {
+            conn = db.getConnection();
             String query = "select c.cvterm_id"
                 + " from cvterm c, cv"
                 + " where c.cv_id = cv.cv_id"
@@ -145,6 +168,7 @@ public class FlyBaseIdResolverFactory extends IdResolverFactory
                 throw new RuntimeException(e);
             }
         }
+        
         return resolver;
     }
 }
