@@ -11,8 +11,6 @@ package org.intermine.bio.dataconversion;
  */
 import java.io.File;
 import java.io.Reader;
-import java.util.ArrayList;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;

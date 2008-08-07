@@ -3,14 +3,14 @@
     <class name="org.flymine.model.genomic.InteractionExperiment" extends="org.flymine.model.genomic.Experiment" is-interface="true">
         <attribute name="name" type="java.lang.String"/>
         <attribute name="description" type="java.lang.String"/>
-        <reference name="hostOrganism" referenced-type="org.flymine.model.genomic.Organism" />
+        <attribute name="hostOrganism" type="java.lang.String" />
         <collection name="interactions" referenced-type="org.flymine.model.genomic.Interaction" ordered="true" reverse-reference="experiment"/>
     </class>
    <class name="org.flymine.model.genomic.InteractionTerm" extends="org.flymine.model.genomic.OntologyTerm" is-interface="true"/>
 
     <class name="org.flymine.model.genomic.Interaction" is-interface="true">
         <attribute name="role" type="java.lang.String"/>
-        <attribute name="shortName" type="java.lang.String"/>
+        <attribute name="name" type="java.lang.String"/>
         <reference name="gene" referenced-type="org.flymine.model.genomic.Gene" reverse-reference="interactions" />
         <reference name="experiment" referenced-type="org.flymine.model.genomic.InteractionExperiment" reverse-reference="interactions"/>
         <collection name="interactingGenes" referenced-type="org.flymine.model.genomic.Gene" ordered="true" reverse-reference="interactions"/>

@@ -213,3 +213,12 @@ public class Drosophila2ProbeConverter extends FileConverter
 //        return chr;
 //    }
 }
+/**
+-PROBE => $probe,
+-MISMATCHCOUNT => 0,
+-SLICE => $chr_1_slice,
+-START => 1_000_000,
+-END => 1_000_024,
+-STRAND => -1,
+**/
+
