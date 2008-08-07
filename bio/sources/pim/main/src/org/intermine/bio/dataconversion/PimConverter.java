@@ -109,13 +109,9 @@ public class PimConverter extends BioFileConverter
         public void startElement(String uri, String localName, String qName, Attributes attrs)
         throws SAXException {
             attName = null;
-
-                // ------------- interactors ------------ //
-
             // <interactorList> <proteinInteractor id="cds-1">
             if (qName.equals("proteinInteractor") && stack.peek().equals("interactorList")) {
                 interactorId = attrs.getValue("id");
-
             // <proteinInteractor id="cds-1289"><xref>
             // <secondaryRef db="FlyBase V3" id="FBgn0032414" />
             } else if (qName.equals("secondaryRef") && stack.peek().equals("xref")
@@ -133,40 +129,31 @@ public class PimConverter extends BioFileConverter
                         validGenes.put(interactorId, gene);
                     }
                 }
-
-                // ----------- interaction --------------------- //
-
            //<interactionList><interaction>
            //<participantList><proteinParticipant><proteinInteractorRef ref="cds-1" />
             } else if (qName.equals("proteinInteractorRef")
                             && stack.peek().equals("proteinParticipant")) {
-
-                    String id = attrs.getValue("ref");
-                    if (validGenes.get(id) != null) {
-                        Item interactor = validGenes.get(id);
-                        String geneRefId = interactor.getIdentifier();
-                        interactorHolder = new InteractorHolder(geneRefId);
-                        String ident = null;
-                        if (interactor.getAttribute("primaryIdentifier") != null) {
-                            ident = interactor.getAttribute("primaryIdentifier").getValue();
-                        }
-                        if (ident != null) {
-                            interactorHolder.identifier = ident;
-                            holder.addInteractor(interactorHolder);
-                            holder.addProtein(geneRefId);
-                            holder.addIdentifier(ident);
-                        } else {
-                            holder.isValid = false;
-                        }
-                    } else {
-                        holder.isValid = false;
+                String id = attrs.getValue("ref");
+                holder.isValid = false;
+                if (validGenes.get(id) != null) {
+                    Item interactor = validGenes.get(id);
+                    String geneRefId = interactor.getIdentifier();
+                    interactorHolder = new InteractorHolder(geneRefId);
+                    String ident = null;
+                    if (interactor.getAttribute("primaryIdentifier") != null) {
+                        ident = interactor.getAttribute("primaryIdentifier").getValue();
                     }
-
-
+                    if (ident != null) {
+                        interactorHolder.identifier = ident;
+                        holder.addInteractor(interactorHolder);
+                        holder.addProtein(geneRefId);
+                        holder.addIdentifier(ident);
+                        holder.isValid = true;
+                    }
+                }
             // <participantList><participant id="5"><experimentalRole><names><shortLabel>
             } else if (qName.equals("role")) {
                 attName = "role";
-
             // <participantList><participant id="6919"><featureList><feature id="6920">
             //    <featureRangeList><featureRange><startStatus><names><shortLabel>
             } else if (qName.equals("shortLabel") && stack.search("startStatus") == 2) {
@@ -275,13 +262,9 @@ public class PimConverter extends BioFileConverter
         throws SAXException {
             super.endElement(uri, localName, qName);
             stack.pop();
-
-                // ---  interactions --- ///
-
             // <interactionList><interaction><participantList><participant id="5">
             // <experimentalRole><names><shortLabel>
             if (qName.equals("role") && interactorHolder != null) {
-
                 interactorHolder.role = attValue.toString();
             // <participantList><participant id="6919"><featureList><feature id="6920">
             //    <featureRangeList><featureRange><startStatus><names><shortLabel>
@@ -298,39 +281,29 @@ public class PimConverter extends BioFileConverter
                             && attName != null && attName.equals("regionName")) {
                 regionName  = attValue.toString();
                 //<interactionList><interaction>
-            } else if (qName.equals("interaction") && holder != null) {
-                if (holder.isValid) {
-                    storeAll(holder);
-                    holder = new InteractionHolder();
-                    interactorHolder = null;
-                }
+            } else if (qName.equals("interaction") && holder != null && holder.isValid) {
+                storeAll(holder);
+                holder = new InteractionHolder();
+                interactorHolder = null;
             }
         }
 
         private void storeAll(InteractionHolder interactionHolder) throws SAXException  {
             Set interactors = interactionHolder.interactors;
-            // loop through proteins/interactors in this interaction
             for (Iterator iter = interactors.iterator(); iter.hasNext();) {
-
                 interactorHolder =  (InteractorHolder) iter.next();
-
-                // build & store interactions - one for each protein
                 Item interaction = createItem("Interaction");
                 String geneRefId = interactorHolder.geneRefId;
                 String identifier = interactorHolder.identifier;
-
                 String interactionName = buildName(interactionHolder.identifiers, identifier);
                 interaction.setAttribute("name", interactionName);
-
                 interaction.setAttribute("role", interactorHolder.role);
-
                 if (interactionHolder.confidence != null) {
                     interaction.setAttribute("confidence",
                                              interactionHolder.confidence.toString());
                 }
                 if (interactionHolder.confidenceText != null) {
-                    interaction.setAttribute("confidenceText",
-                                             interactionHolder.confidenceText);
+                    interaction.setAttribute("confidenceText", interactionHolder.confidenceText);
                 }
                 interaction.setReference("gene", geneRefId);
                 interaction.setReference("experiment", experimentId);
@@ -347,7 +320,6 @@ public class PimConverter extends BioFileConverter
                     interaction.setCollection("interactingRegions", new ArrayList(regionIds));
                 }
 
-                /* store all protein interaction-related items */
                 try {
                     store(interaction);
                 } catch (ObjectStoreException e) {
@@ -363,9 +335,7 @@ public class PimConverter extends BioFileConverter
                         region.setAttribute("endStatus", interactorHolder.endStatus);
                     }
                     region.setReference("interaction", interaction);
-
                     String regionIdentifier = EXPERIMENT + "_" + identifier;
-
                     if (interactorHolder.start != null && !interactorHolder.start.equals("0")) {
                         regionIdentifier += ":" + interactorHolder.start;
                         regionIdentifier += "-" + interactorHolder.end;
@@ -375,10 +345,9 @@ public class PimConverter extends BioFileConverter
                         store(region);
                         store(interactorHolder.location);
                     } catch (ObjectStoreException e) {
-                        //
+                        throw new RuntimeException("couldn't store region");
                     }
                 }
-
             }
         }
 
@@ -396,8 +365,6 @@ public class PimConverter extends BioFileConverter
 
         private Item getGene(String fbgn) throws ObjectStoreException {
             String identifier = fbgn;
-
-            // for Drosophila attempt to update to a current gene identifier
             IdResolver resolver = resolverFactory.getIdResolver(false);
             if (resolver != null) {
                 int resCount = resolver.countResolutions(TAXONID, identifier);
@@ -409,7 +376,6 @@ public class PimConverter extends BioFileConverter
                 }
                 identifier = resolver.resolveId(TAXONID, identifier).iterator().next();
             }
-
             Item item = genes.get(identifier);
             if (item == null) {
                 item = createItem("Gene");
@@ -439,15 +405,6 @@ public class PimConverter extends BioFileConverter
             private List<String> identifiers = new ArrayList<String>();
 
             /**
-             * Constructor
-             * @param shortName name of this interaction
-             */
-            public InteractionHolder() {
-                //nothing to do
-            }
-
-            /**
-             *
              * @param confidence confidence score for interaction
              */
             protected void setConfidence(String confidence) {
@@ -461,7 +418,6 @@ public class PimConverter extends BioFileConverter
             }
 
             /**
-             *
              * @param ih object holding interactor
              */
             protected void addInteractor(InteractorHolder ih) {
@@ -514,7 +470,6 @@ public class PimConverter extends BioFileConverter
              *
              * then the flag is set to TRUE until </feature>
              */
-            // TODO this isn't enforced, I think
             private boolean isRegionFeature;
 
             /**
@@ -540,18 +495,9 @@ public class PimConverter extends BioFileConverter
                 location.setAttribute("end", end);
                 this.end = end;
             }
-
         }
-
-
     }
 
-    /**
-     * create and store protein interaction terms
-     * @param identifier identifier for interaction term
-     * @return id representing term object
-     * @throws SAXException if term can't be stored
-     */
     protected String getTerm(String identifier) throws SAXException {
         String itemId = terms.get(identifier);
         if (itemId == null) {
@@ -568,13 +514,11 @@ public class PimConverter extends BioFileConverter
         return itemId;
     }
 
-
     private String getOrganism(String taxId) throws SAXException {
         String refId = organisms.get(taxId);
         if (refId != null) {
             return refId;
         }
-
         Item organism = createItem("Organism");
         organism.setAttribute("taxonId", taxId);
         try {
@@ -590,34 +534,32 @@ public class PimConverter extends BioFileConverter
     private String getPub(String pubMedId)
     throws SAXException {
         String itemId = pubs.get(pubMedId);
-        if (itemId == null) {
-            try {
-                Item pub = createItem("Publication");
-                pub.setAttribute("pubMedId", pubMedId);
-                itemId = pub.getIdentifier();
-                pubs.put(pubMedId, itemId);
-                store(pub);
-            } catch (ObjectStoreException e) {
-                throw new SAXException(e);
-            }
+        if (itemId != null) {
+            return itemId;
         }
-        return itemId;
+        Item pub = createItem("Publication");
+        pub.setAttribute("pubMedId", pubMedId);
+        pubs.put(pubMedId, itemId);
+        try {
+            store(pub);
+        } catch (ObjectStoreException e) {
+            throw new SAXException(e);
+        }
+        return pub.getIdentifier();
     }
-
 
     private String getExperiment()
     throws SAXException {
         String itemId;
-            try {
-                Item item = createItem("InteractionExperiment");
-                item.setAttribute("name", EXPERIMENT);
-                item.setReference("publication", getPub(PUBMEDID));
-                itemId = item.getIdentifier();
-                store(item);
-            } catch (ObjectStoreException e) {
-                throw new SAXException(e);
-            }
-
+        Item item = createItem("InteractionExperiment");
+        item.setAttribute("name", EXPERIMENT);
+        item.setReference("publication", getPub(PUBMEDID));
+        itemId = item.getIdentifier();
+        try {
+            store(item);
+        } catch (ObjectStoreException e) {
+            throw new SAXException(e);
+        }
         return itemId;
     }
 }
