@@ -16,11 +16,11 @@
   // Use jQuery via jQuery(...)
   jQuery(document).ready(function(){
     jQuery('#pathsList').sortable({
-        placeholder: "ui-selected", 
+        placeholder: "ui-selected",
         revert: true
         });
   });
-  
+
   function updatePathsString() {
       var sorted = jQuery('#pathsList').sortable( "serialize");
       jQuery('#pathsString').val(sorted);
@@ -43,6 +43,8 @@
     }
 </style>
 
+<fmt:message var="exportSubmitMessage" key="export.submit"/>
+
 <div class="body" align="center">
 <im:boxarea stylename="plainbox" fixedWidth="60%">
 <h2><c:choose>
@@ -50,11 +52,16 @@
     <fmt:message key="exporter.${type}.description">
       <fmt:param value="${WEB_PROPERTIES['max.excel.export.size']}"/>
     </fmt:message>
+    <fmt:message var="exportReorderMessage" key="export.reorder.columns"/>
   </c:when>
   <c:otherwise>
-    <%-- <fmt:message bundle="model" key="exporter.${type}.description"/> --%>
+    <fmt:message var="exportReorderMessage" key="export.reorder"/>
+    <fmt:setBundle basename="model"/>
+    <fmt:message key="exporter.${type}.description"/>
   </c:otherwise>
 </c:choose></h2>
+<br/>
+${exportReorderMessage}
 <br/>
 
 <!-- exporting type: ${type} -->
@@ -68,7 +75,6 @@
     </c:when>
     <c:otherwise>
       <c:set var="tileName" value="${type}ExportOptions.tile"/>
-      <p> tileName: ${tileName} </p>
       <c:if test="${!empty $tileName}">
         <tiles:insert name="${tileName}"/>
       </c:if>
@@ -81,15 +87,15 @@
   <html:hidden property="table" value="${table}"/>
   <html:hidden property="type" value="${type}"/>
 
-      
+
   <ul id="pathsList">
     <c:forEach var="path" items="${paths}" varStatus="status">
       <li id="${path}_${status.count}">${path}</li>
     </c:forEach>
   </ul>
-  
+
   <br clear="both"/>
-  <html:submit property="submit"><fmt:message key="export.submit"/></html:submit>
+  <html:submit property="submit">${exportSubmitMessage}</html:submit>
 </html:form>
 </im:boxarea>
 </div>

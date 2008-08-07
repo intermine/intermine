@@ -4,6 +4,10 @@
 <!-- sequenceExportOptions.jsp -->
 <html:xhtml/>
 
-Boo!
+<%--
+<fmt:setBundle basename="model"/>
+
+<fmt:message key="exporter.sequence.description"/>
+--%>
 
 <!-- /sequenceExportOptions.jsp -->
