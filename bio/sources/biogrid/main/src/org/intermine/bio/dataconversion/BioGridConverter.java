@@ -61,6 +61,7 @@ public class BioGridConverter extends BioFileConverter
     private Map<String, String> terms = new HashMap<String, String>();
     private Map<String, String> pubs = new HashMap<String, String>();
     private Map<String, String> organisms = new HashMap<String, String>();
+    private static final Map<String, String> PSI_TERMS = new HashMap<String, String>();
 
     /**
      * Constructor
@@ -72,6 +73,17 @@ public class BioGridConverter extends BioFileConverter
 
         // only construct factory here so can be replaced by mock factory in tests
         resolverFactory = new FlyBaseIdResolverFactory();
+    }
+
+    static {
+        PSI_TERMS.put("Biochemical Activity", "biochemical");
+        PSI_TERMS.put("Co-localization", "colocalization");
+        PSI_TERMS.put("Co-purification", "copurification");
+        PSI_TERMS.put("Far Western", "far western blotting");
+        PSI_TERMS.put("FRET", "FRET");
+        PSI_TERMS.put("PCA", "protein complementation assay");
+        PSI_TERMS.put("Synthetic Lethality", "synthetic lethal");
+        PSI_TERMS.put("Two-hybrid", "two hybrid");
     }
 
     /**
@@ -292,6 +304,7 @@ public class BioGridConverter extends BioFileConverter
                 String secondaryIdentifier = attValue.toString();
                 if (secondaryIdentifier.startsWith("Dmel")) {
                     secondaryIdentifier = secondaryIdentifier.substring(4);
+                    secondaryIdentifier = secondaryIdentifier.trim();
                 }
                 interactorHolder.secondaryIdentifier = secondaryIdentifier;
 
@@ -337,11 +350,12 @@ public class BioGridConverter extends BioFileConverter
                     if (!identifier.equals(ih.identifier)) {
                         interactionName += "_" + identifier;
                     } else {
-                        interactionName = identifier + interactionName;
+                        interactionName = "BioGRID:" + identifier + interactionName;
                     }
                 }
+                interaction.setAttribute("name", interactionName);
                 interaction.setReference("experiment", h.eh.experimentRefId);
-                interaction.setAttribute("shortName", interactionName);
+
                 try {
                     store(interaction);
                 } catch (ObjectStoreException e) {
@@ -455,8 +469,12 @@ public class BioGridConverter extends BioFileConverter
 
         private String getTerm(String name)
         throws SAXException {
-            String term = name.toLowerCase();
-            term = term.replace("-", " ");
+            String term = name;
+            if (PSI_TERMS.get(term) != null) {
+                term = PSI_TERMS.get(term);
+            } else {
+                term = term.toLowerCase().replace("-", " ");
+            }
             String refId = terms.get(term);
             if (refId != null) {
                 return refId;

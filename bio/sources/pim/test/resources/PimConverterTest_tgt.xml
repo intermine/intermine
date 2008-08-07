@@ -1,33 +1,33 @@
 <items>
-<item id="7_2" class="http://www.flymine.org/model/genomic#Interaction">
-<attribute name="confidenceText" value="D"/>
-<attribute name="role" value="prey"/>
-<attribute name="shortName" value="Hgx PIM"/>
-<reference name="experiment" ref_id="4_1"/>
-<reference name="gene" ref_id="6_2"/>
-<collection name="dataSets"><reference ref_id="1_1"/></collection>
-<collection name="interactingGenes"><reference ref_id="6_1"/></collection>
+<item id="1_1" class="http://www.flymine.org/model/genomic#DataSet">
+<attribute name="title" value="PIMRider data set"/>
+<reference name="dataSource" ref_id="0_1"/>
 </item>
 <item id="6_1" class="http://www.flymine.org/model/genomic#Gene">
 <attribute name="primaryIdentifier" value="FBgn001"/>
 <reference name="organism" ref_id="3_1"/>
 <collection name="dataSets"><reference ref_id="1_1"/></collection>
 </item>
-<item id="7_1" class="http://www.flymine.org/model/genomic#Interaction">
-<attribute name="confidenceText" value="D"/>
-<attribute name="role" value="bait"/>
-<attribute name="shortName" value="Hgx PIM"/>
-<reference name="experiment" ref_id="4_1"/>
-<reference name="gene" ref_id="6_1"/>
+<item id="4_1" class="http://www.flymine.org/model/genomic#InteractionExperiment">
+<attribute name="name" value="formstecher-2005-1"/>
+<reference name="publication" ref_id="5_1"/>
+</item>
+<item id="0_1" class="http://www.flymine.org/model/genomic#DataSource">
+<attribute name="name" value="PIMRider"/>
+</item>
+<item id="2_2" class="http://www.flymine.org/model/genomic#InteractionTerm">
+<attribute name="identifier" value="MI:0218"/>
 <collection name="dataSets"><reference ref_id="1_1"/></collection>
-<collection name="interactingGenes"><reference ref_id="6_2"/></collection>
 </item>
-<item id="1_1" class="http://www.flymine.org/model/genomic#DataSet">
-<attribute name="title" value="Pim dataset"/>
-<reference name="dataSource" ref_id="0_1"/>
-</item>
-<item id="5_1" class="http://www.flymine.org/model/genomic#Publication">
-<attribute name="pubMedId" value="11196647"/>
+<item id="7_2" class="http://www.flymine.org/model/genomic#Interaction">
+<attribute name="confidenceText" value="D"/>
+<attribute name="name" value="PIMRider:FBgn003_FBgn001"/>
+<attribute name="role" value="prey"/>
+<reference name="experiment" ref_id="4_1"/>
+<reference name="gene" ref_id="6_2"/>
+<reference name="type" ref_id="2_2"/>
+<collection name="dataSets"><reference ref_id="1_1"/></collection>
+<collection name="interactingGenes"><reference ref_id="6_1"/></collection>
 </item>
 <item id="2_1" class="http://www.flymine.org/model/genomic#InteractionTerm">
 <attribute name="identifier" value="MI:0117"/>
@@ -36,16 +36,22 @@
 <item id="3_1" class="http://www.flymine.org/model/genomic#Organism">
 <attribute name="taxonId" value="7227"/>
 </item>
-<item id="4_1" class="http://www.flymine.org/model/genomic#InteractionExperiment">
-<attribute name="name" value="Hgx PIM techno"/>
-<reference name="publication" ref_id="5_1"/>
-</item>
 <item id="6_2" class="http://www.flymine.org/model/genomic#Gene">
 <attribute name="primaryIdentifier" value="FBgn003"/>
 <reference name="organism" ref_id="3_1"/>
 <collection name="dataSets"><reference ref_id="1_1"/></collection>
 </item>
-<item id="0_1" class="http://www.flymine.org/model/genomic#DataSource">
-<attribute name="name" value="Pim"/>
+<item id="5_1" class="http://www.flymine.org/model/genomic#Publication">
+<attribute name="pubMedId" value="15710747"/>
+</item>
+<item id="7_1" class="http://www.flymine.org/model/genomic#Interaction">
+<attribute name="confidenceText" value="D"/>
+<attribute name="name" value="PIMRider:FBgn001_FBgn003"/>
+<attribute name="role" value="bait"/>
+<reference name="experiment" ref_id="4_1"/>
+<reference name="gene" ref_id="6_1"/>
+<reference name="type" ref_id="2_2"/>
+<collection name="dataSets"><reference ref_id="1_1"/></collection>
+<collection name="interactingGenes"><reference ref_id="6_2"/></collection>
 </item>
 </items>

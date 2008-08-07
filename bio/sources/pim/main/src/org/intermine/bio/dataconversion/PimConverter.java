@@ -26,7 +26,6 @@ import org.intermine.dataconversion.ItemWriter;
 import org.intermine.metadata.Model;
 import org.intermine.objectstore.ObjectStoreException;
 import org.intermine.util.SAXParser;
-import org.intermine.util.StringUtil;
 import org.intermine.xml.full.Item;
 import org.xml.sax.Attributes;
 import org.xml.sax.InputSource;
@@ -42,14 +41,15 @@ public class PimConverter extends BioFileConverter
 {
     private static final Logger LOG = Logger.getLogger(PimConverter.class);
     private Map<String, String> pubs = new HashMap<String, String>();
-    private Map<String, Object> experimentNames = new HashMap<String, Object>();
     private Map<String, String> organisms = new HashMap<String, String>();
     private Map<String, String> terms = new HashMap<String, String>();
     private String termId = null, organismId = null;
     private Map<String, Item> genes = new  HashMap<String, Item>();
     protected IdResolverFactory resolverFactory;
     private static final String TAXONID = "7227";
-    private static final String EXPERIMENT = "Hgx PIM";
+    private static final String EXPERIMENT = "formstecher-2005-1";
+    private static final String PUBMEDID = "15710747";
+    private String experimentId = null, interactionTermId;
 
     /**
      * Constructor
@@ -57,14 +57,16 @@ public class PimConverter extends BioFileConverter
      * @param model the Model
      */
     public PimConverter(ItemWriter writer, Model model) {
-        super(writer, model, "Pim", "Pim dataset");
+        super(writer, model, "PIMRider", "PIMRider data set");
 
         // only construct factory here so can be replaced by mock factory in tests
         resolverFactory = new FlyBaseIdResolverFactory();
 
         try {
             termId = getTerm("MI:0117");
+            interactionTermId = getTerm("MI:0218");
             organismId = getOrganism(TAXONID);
+            experimentId = getExperiment();
         } catch (SAXException e) {
             throw new RuntimeException("ack");
         }
@@ -90,12 +92,9 @@ public class PimConverter extends BioFileConverter
      */
     class PimHandler extends DefaultHandler
     {
-        private Map<String, ExperimentHolder> experimentIds
-            = new HashMap<String, ExperimentHolder>();
-        private InteractionHolder holder = null;
-        private ExperimentHolder experimentHolder = null;
+        private InteractionHolder holder = new InteractionHolder();
         private InteractorHolder interactorHolder = null;
-        private String experimentId = null, interactorId = null;
+        private String interactorId = null;
 
         private Map<String, Item> validGenes = new HashMap<String, Item>();
         private String regionName = null;
@@ -111,52 +110,10 @@ public class PimConverter extends BioFileConverter
         throws SAXException {
             attName = null;
 
-            //<experimentList> <experimentDescription id="hgx_experiment">
-            if (qName.equals("experimentDescription")) {
-                experimentId = attrs.getValue("id");
-            //  <experimentList><experimentDescription id="2"><names><shortLabel>
-            } else if (qName.equals("shortLabel") && stack.peek().equals("names")
-                            && stack.search("experimentDescription") == 2) {
-                attName = "experimentName";
-            //<experimentList><experimentDescription><bibref><xref><primaryRef>
-            } else if (qName.equals("primaryRef") && stack.peek().equals("xref")
-                            && stack.search("bibref") == 2
-                            && stack.search("experimentDescription") == 3) {
-                String pubMedId = attrs.getValue("id");
-                if (StringUtil.allDigits(pubMedId)) {
-                    String pub = getPub(pubMedId);
-                    experimentHolder.setPublication(pub);
-                }
-
-            // <hostOrganismList><hostOrganism ncbiTaxId="9534">
-            } else if (qName.equals("hostOrganism") && stack.peek().equals("names")) {
-                String hostOrganism = attrs.getValue("ncbiTaxId");
-                if (hostOrganism != null) {
-                    String refId = getOrganism(hostOrganism);
-                    experimentHolder.setHostOrganism(refId);
-                } else {
-                    LOG.info("Experiment " + experimentHolder.name
-                             + " doesn't have a host organism");
-                }
-
-            //<interactionDetectionMethod><xref><primaryRef>
-            } else if (qName.equals("primaryRef") && stack.peek().equals("xref")
-                            && stack.search("interactionDetectionMethod") == 2) {
-                String termItemId = getTerm(attrs.getValue("id"));
-                experimentHolder.setMethod("interactionDetectionMethod", termItemId);
-
-                //TODO text?
-                //<participantIdentificationMethod><xref> <primaryRef>
-//            } else if (qName.equals("primaryRef") && stack.peek().equals("xref")
-//                            && stack.search("participantIdentificationMethod") == 2) {
-//                String termItemId = getTerm(attrs.getValue("id"));
-//                experimentHolder.setMethod("participantIdentificationMethod", termItemId);
-
-
                 // ------------- interactors ------------ //
 
             // <interactorList> <proteinInteractor id="cds-1">
-            } else if (qName.equals("proteinInteractor") && stack.peek().equals("interactorList")) {
+            if (qName.equals("proteinInteractor") && stack.peek().equals("interactorList")) {
                 interactorId = attrs.getValue("id");
 
             // <proteinInteractor id="cds-1289"><xref>
@@ -197,6 +154,7 @@ public class PimConverter extends BioFileConverter
                             interactorHolder.identifier = ident;
                             holder.addInteractor(interactorHolder);
                             holder.addProtein(geneRefId);
+                            holder.addIdentifier(ident);
                         } else {
                             holder.isValid = false;
                         }
@@ -208,10 +166,7 @@ public class PimConverter extends BioFileConverter
             // <participantList><participant id="5"><experimentalRole><names><shortLabel>
             } else if (qName.equals("role")) {
                 attName = "role";
-            //<interactionList><interaction><experimentList><experimentRef>
-            } else if (qName.equals("experimentRef") && stack.peek().equals("experimentList")) {
-                String experimentRef = attrs.getValue("ref");
-                holder = new InteractionHolder(experimentIds.get(experimentRef));
+
             // <participantList><participant id="6919"><featureList><feature id="6920">
             //    <featureRangeList><featureRange><startStatus><names><shortLabel>
             } else if (qName.equals("shortLabel") && stack.search("startStatus") == 2) {
@@ -320,23 +275,13 @@ public class PimConverter extends BioFileConverter
         throws SAXException {
             super.endElement(uri, localName, qName);
             stack.pop();
-            // <experimentList><experimentDescription><names><shortLabel>
-            if (attName != null && attName.equals("experimentName")
-                            && qName.equals("shortLabel")) {
-                String shortLabel = attValue.toString();
-                if (shortLabel != null) {
-                    experimentHolder = getExperiment(shortLabel);
-                    experimentIds.put(experimentId, experimentHolder);
-                    experimentHolder.setName(shortLabel);
-                } else {
-                    LOG.error("Experiment " + experimentId + " doesn't have a shortLabel");
-                }
 
                 // ---  interactions --- ///
 
             // <interactionList><interaction><participantList><participant id="5">
             // <experimentalRole><names><shortLabel>
-            } else if (qName.equals("role") && interactorHolder != null) {
+            if (qName.equals("role") && interactorHolder != null) {
+
                 interactorHolder.role = attValue.toString();
             // <participantList><participant id="6919"><featureList><feature id="6920">
             //    <featureRangeList><featureRange><startStatus><names><shortLabel>
@@ -356,7 +301,7 @@ public class PimConverter extends BioFileConverter
             } else if (qName.equals("interaction") && holder != null) {
                 if (holder.isValid) {
                     storeAll(holder);
-                    holder = null;
+                    holder = new InteractionHolder();
                     interactorHolder = null;
                 }
             }
@@ -373,8 +318,10 @@ public class PimConverter extends BioFileConverter
                 Item interaction = createItem("Interaction");
                 String geneRefId = interactorHolder.geneRefId;
                 String identifier = interactorHolder.identifier;
-                //String shortName = interactionHolder.shortName;
-                interaction.setAttribute("shortName", EXPERIMENT);
+
+                String interactionName = buildName(interactionHolder.identifiers, identifier);
+                interaction.setAttribute("name", interactionName);
+
                 interaction.setAttribute("role", interactorHolder.role);
 
                 if (interactionHolder.confidence != null) {
@@ -386,8 +333,8 @@ public class PimConverter extends BioFileConverter
                                              interactionHolder.confidenceText);
                 }
                 interaction.setReference("gene", geneRefId);
-                interaction.setReference("experiment",
-                                         interactionHolder.eh.experiment.getIdentifier());
+                interaction.setReference("experiment", experimentId);
+                interaction.setReference("type", interactionTermId);
 
                 // interactingProteins
                 List<String> geneIds = new ArrayList(interactionHolder.geneIds);
@@ -433,23 +380,18 @@ public class PimConverter extends BioFileConverter
                 }
 
             }
+        }
 
-            /* store all experiment-related items */
-            ExperimentHolder eh = interactionHolder.eh;
-            // TODO is this experiment going to have extra items to store, the 2nd time it
-            // gets processed?  In the other XML files?
-            if (!eh.isStored) {
-                eh.isStored = true;
-                try {
-                    store(eh.experiment);
-                } catch (ObjectStoreException e) {
-                    //
+        private String buildName(List<String> primaryIdentifiers, String identifier) {
+            String name = "PIMRider:" + identifier;
+            Iterator it = primaryIdentifiers.iterator();
+            while (it.hasNext()) {
+                String primaryIdentifier = (String) it.next();
+                if (!primaryIdentifier.equals(identifier)) {
+                    name = name + "_" + primaryIdentifier;
                 }
-                //TODO store comments here instead
-                //for (Object o : eh.comments) {
-                //    writer.store(ItemHelper.convert((Item) o));
-                //}
             }
+            return name;
         }
 
         private Item getGene(String fbgn) throws ObjectStoreException {
@@ -479,31 +421,6 @@ public class PimConverter extends BioFileConverter
             return item;
         }
 
-        private String getPub(String pubMedId)
-        throws SAXException {
-            String itemId = pubs.get(pubMedId);
-            if (itemId == null) {
-                try {
-                    Item pub = createItem("Publication");
-                    pub.setAttribute("pubMedId", pubMedId);
-                    itemId = pub.getIdentifier();
-                    pubs.put(pubMedId, itemId);
-                    store(pub);
-                } catch (ObjectStoreException e) {
-                    throw new SAXException(e);
-                }
-            }
-            return itemId;
-        }
-
-        private ExperimentHolder getExperiment(String name) {
-            ExperimentHolder eh = (ExperimentHolder) experimentNames.get(name);
-            if (eh == null) {
-                eh = new ExperimentHolder(createItem("InteractionExperiment"));
-                experimentNames.put(name, eh);
-            }
-            return eh;
-        }
 
         /**
          * Holder object for ProteinInteraction.  Holds all information about an interaction until
@@ -512,21 +429,21 @@ public class PimConverter extends BioFileConverter
          */
         public class InteractionHolder
         {
-            private ExperimentHolder eh;
             private Double confidence;
             private String confidenceText;
-            private String confidenceUnit;
+            protected String confidenceUnit;
             private Set<InteractorHolder> interactors = new LinkedHashSet<InteractorHolder>();
             private boolean isValid = true;
             private Set<String> geneIds = new HashSet<String>();
             private Set<String> regionIds = new HashSet<String>();
+            private List<String> identifiers = new ArrayList<String>();
 
             /**
              * Constructor
              * @param shortName name of this interaction
              */
-            public InteractionHolder(ExperimentHolder eh) {
-                this.eh = eh;
+            public InteractionHolder() {
+                //nothing to do
             }
 
             /**
@@ -559,12 +476,18 @@ public class PimConverter extends BioFileConverter
             }
 
             /**
-             *
              * @param regionId Id of ProteinInteractionRegion object
              */
             protected void addRegion(String regionId) {
                 regionIds.add(regionId);
             }
+
+            /**
+            * @param identifier for a gene in this interaction
+            */
+           protected void addIdentifier(String identifier) {
+               identifiers.add(identifier);
+           }
         }
 
         /**
@@ -620,61 +543,7 @@ public class PimConverter extends BioFileConverter
 
         }
 
-        /**
-         * Holder object for ProteinInteraction.  Holds all information about an experiment until
-         * an interaction is verified to have only valid organisms
-         * @author Julie Sullivan
-         */
-        public class ExperimentHolder
-        {
 
-            protected String name;
-            protected Item experiment;
-            protected HashSet comments = new HashSet();
-            protected boolean isStored = false;
-
-            /**
-             * Constructor
-             * @param experiment experiment where this interaction was observed
-             */
-            public ExperimentHolder(Item experiment) {
-                this.experiment = experiment;
-            }
-
-            /**
-             *
-             * @param name name of experiment
-             */
-            protected void setName(String name) {
-                experiment.setAttribute("name", name);
-                this.name = name;
-            }
-
-            /**
-             *
-             * @param publication publication of this experiment
-             */
-            protected void setPublication(String publication) {
-                experiment.setReference("publication", publication);
-            }
-
-            /**
-             *
-             * @param whichMethod method
-             * @param termItemId termID
-             */
-            protected void setMethod(String whichMethod, String termItemId) {
-                experiment.setReference(whichMethod, termItemId);
-            }
-
-            /**
-             *
-             * @param fullName name of organism
-             */
-            protected void setHostOrganism(String fullName) {
-                experiment.setAttribute("hostOrganism", fullName);
-            }
-        }
     }
 
     /**
@@ -716,5 +585,39 @@ public class PimConverter extends BioFileConverter
         refId = organism.getIdentifier();
         organisms.put(taxId, refId);
         return refId;
+    }
+
+    private String getPub(String pubMedId)
+    throws SAXException {
+        String itemId = pubs.get(pubMedId);
+        if (itemId == null) {
+            try {
+                Item pub = createItem("Publication");
+                pub.setAttribute("pubMedId", pubMedId);
+                itemId = pub.getIdentifier();
+                pubs.put(pubMedId, itemId);
+                store(pub);
+            } catch (ObjectStoreException e) {
+                throw new SAXException(e);
+            }
+        }
+        return itemId;
+    }
+
+
+    private String getExperiment()
+    throws SAXException {
+        String itemId;
+            try {
+                Item item = createItem("InteractionExperiment");
+                item.setAttribute("name", EXPERIMENT);
+                item.setReference("publication", getPub(PUBMEDID));
+                itemId = item.getIdentifier();
+                store(item);
+            } catch (ObjectStoreException e) {
+                throw new SAXException(e);
+            }
+
+        return itemId;
     }
 }
