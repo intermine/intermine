@@ -134,6 +134,21 @@ public class PagedTable
     }
 
     /**
+     * Return the number of visible columns.  Used by JSP pages.
+     * @return the number of visible columns.
+     */
+    public int getVisibleColumnCount() {
+        int count = 0;
+        for (Iterator<Column> i = getColumnsInternal().iterator(); i.hasNext();) {
+            Column obj = i.next();
+            if (obj.isVisible()) {
+                count++;
+            }
+        }
+        return count;
+    }
+
+    /**
      * Set the page size of the table
      *
      * @param pageSize the page size
@@ -731,6 +746,21 @@ public class PagedTable
      */
     public void setTableid(String tableid) {
         this.tableid = tableid;
+    }
+
+    /**
+     * Returns indexes of columns, that should be displayed.
+     * @return indexes
+     */
+    public List<Integer> getVisibleIndexes() {
+        List<Integer> ret = new ArrayList<Integer>();
+        for (int i = 0; i < getColumns().size(); i++) {
+            if (getColumns().get(i) != null && getColumns().get(i).isVisible()) {
+                ret.add(new Integer(getColumns().get(i).getIndex()));
+            }
+        }
+
+        return ret;
     }
 
     /**
