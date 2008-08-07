@@ -49,6 +49,46 @@ public class ChangeTableAction extends InterMineDispatchAction
         return makeForward(mapping, request, pt);
     }
 
+    /**
+     * Hide a column
+     * @param mapping The ActionMapping used to select this instance
+     * @param form The optional ActionForm bean for this request (if any)
+     * @param request The HTTP request we are processing
+     * @param response The HTTP response we are creating
+     * @return an ActionForward object defining where control goes next
+     */
+    public ActionForward hideColumn(ActionMapping mapping,
+                                    @SuppressWarnings("unused") ActionForm form,
+                                    HttpServletRequest request,
+                                    @SuppressWarnings("unused") HttpServletResponse response) {
+        PagedTable pt = getPagedTable(request);
+
+        int index = Integer.parseInt(request.getParameter("index"));
+        pt.getColumns().get(index).setVisible(false);
+
+        return makeForward(mapping, request, pt);
+    }
+
+    /**
+     * Show a column
+     * @param mapping The ActionMapping used to select this instance
+     * @param form The optional ActionForm bean for this request (if any)
+     * @param request The HTTP request we are processing
+     * @param response The HTTP response we are creating
+     * @return an ActionForward object defining where control goes next
+     */
+    public ActionForward showColumn(ActionMapping mapping,
+                                    @SuppressWarnings("unused") ActionForm form,
+                                    HttpServletRequest request,
+                                    @SuppressWarnings("unused") HttpServletResponse response) {
+        PagedTable pt = getPagedTable(request);
+
+        int index = Integer.parseInt(request.getParameter("index"));
+        pt.getColumns().get(index).setVisible(true);
+
+        return makeForward(mapping, request, pt);
+    }
+
     private PagedTable getPagedTable(HttpServletRequest request) {
         String forwardName = request.getParameter("currentPage");
         PagedTable pt = null;
