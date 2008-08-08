@@ -57,16 +57,16 @@ public class ProteinInteractionRetriever
         Query q = new Query();
 
         // create all needed query classes
-        QueryClass qcProtein = new QueryClass(Gene.class);
+        QueryClass qcGene = new QueryClass(Gene.class);
         QueryClass qcInteraction = new QueryClass(Interaction.class);
 
         // create needed references between the classes
         QueryCollectionReference qcrInteractions =
-            new QueryCollectionReference(qcProtein, "interactions");
+            new QueryCollectionReference(qcGene, "interactions");
 
         // build up constraint
         ConstraintSet cs = new ConstraintSet(ConstraintOp.AND);
-        QueryField qf = new QueryField(qcProtein, "primaryIdentifier");
+        QueryField qf = new QueryField(qcGene, "primaryIdentifier");
         // constrain primaryAccession to acc from accs
         BagConstraint bc = new BagConstraint(qf, ConstraintOp.IN, accs);
         // join protein and interactions
@@ -78,7 +78,7 @@ public class ProteinInteractionRetriever
         cs.addConstraint(cc1);
         q.setConstraint(cs);
         q.addToSelect(qcInteraction);
-        q.addFrom(qcProtein);
+        q.addFrom(qcGene);
         q.addFrom(qcInteraction);
 
         // get results

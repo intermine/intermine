@@ -219,15 +219,12 @@
       <displayer src="attributeLinkDisplayer.tile"/>
       <displayer src="/model/locatedSequenceFeatureImage.jsp"/>
       <displayer src="geneMicroArrayDisplayer.tile"/>
+    <displayer src="/model/proteinInteractionGraph.jsp"/>
     </longdisplayers>
     <bagdisplayers>
-
       <displayer src="attributeLinkDisplayer.tile"/>
-
     </bagdisplayers>
   </class>
-
-
 
   <class className="org.flymine.model.genomic.GOAnnotation">
     <fields>
@@ -486,7 +483,7 @@
     </fields>
     <longdisplayers>
       <displayer src="attributeLinkDisplayer.tile"/>
-      <displayer src="/model/proteinInteractionGraph.jsp"/>
+
     </longdisplayers>
 
     <bagdisplayers>
