@@ -469,7 +469,7 @@
         <reference name="dataSource" ref_id="660"/>
     </item>
 
-
+<!-- see #1801
      <item id="670" class="" implements="http://www.flymine.org/model/genomic#DataSource">
         <attribute name="name" value="PIMRider"/>
         <attribute name="description" value=""/>
@@ -480,4 +480,5 @@
         <attribute name="url" value=""/>
         <reference name="dataSource" ref_id="670"/>
     </item>
+    -->
 </items>
