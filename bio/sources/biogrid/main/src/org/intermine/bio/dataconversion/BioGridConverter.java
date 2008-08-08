@@ -219,28 +219,6 @@ public class BioGridConverter extends BioFileConverter
             int st = start;
             int l = length;
             if (attName != null) {
-
-                // DefaultHandler may call this method more than once for a single
-                // attribute content -> hold text & create attribute in endElement
-//                while (l > 0) {
-//                    boolean whitespace = false;
-//                    switch(ch[st]) {
-//                    case ' ':
-//                    case '\r':
-//                    case '\n':
-//                    case '\t':
-//                        whitespace = true;
-//                        break;
-//                    default:
-//                        break;
-//                    }
-//                    if (!whitespace) {
-//                        break;
-//                    }
-//                    ++st;
-//                    --l;
-//                }
-
                 if (l > 0) {
                     StringBuffer s = new StringBuffer();
                     s.append(ch, st, l);
@@ -464,13 +442,11 @@ public class BioGridConverter extends BioFileConverter
 
         private String getTerm(String name)
         throws SAXException {
-
-
             String term = name;
             if (PSI_TERMS.get(term) != null) {
                 term = PSI_TERMS.get(term);
-//              } else {
-//              term = term.toLowerCase();
+            } else {
+                term = term.toLowerCase();
             }
             String refId = terms.get(term);
             if (refId != null) {

@@ -122,13 +122,6 @@ public class PsiConverter extends BioFileConverter
         private StringBuffer attValue = null;
 
         /**
-         * Constructor
-         */
-        public PsiHandler() {
-            // nothing to do
-        }
-
-        /**
          * {@inheritDoc}
          */
         public void startElement(String uri, String localName, String qName, Attributes attrs)
@@ -194,16 +187,15 @@ public class PsiConverter extends BioFileConverter
                 // <interactorList><interactor id="4"><organism ncbiTaxId="7227">
             } else if (qName.equals("organism") && stack.peek().equals("interactor")) {
                 String taxId = attrs.getValue("ncbiTaxId");
-                if (organisms.containsKey(taxId)) {
+//                if (organisms.containsKey(taxId)) {
                     try {
                         gene = getGene(taxId);
                     } catch (ObjectStoreException e) {
-//
+                        throw new RuntimeException("failed storing gene");
                     }
-
                     if (!validGenes.containsKey(interactorId)) {
                         validGenes.put(interactorId, gene);
-                    }
+//                    }
                 }
                 identifiers = new HashMap();
                 // <interactorList><interactor id="4"><names>
@@ -353,18 +345,14 @@ public class PsiConverter extends BioFileConverter
             if (attName != null && attName.equals("experimentAttribute")
                             && qName.equals("attribute")) {
                 String s = attValue.toString();
-                if (comment != null && s != null) {
-                    if (!s.equals("")) {
-                        comment.setAttribute("text", s);
-                    }
+                if (comment != null && s != null && !s.equals("")) {
+                    comment.setAttribute("text", s);
                     try {
                         store(comment);
                     } catch (ObjectStoreException e) {
-                        // TODO only store for valid experiments
+                        throw new RuntimeException("error storing comment");
                     }
                     comment = null;
-                } else {
-                    LOG.info("Experiment " + experimentHolder.name + " has a bad comment");
                 }
             // <experimentList><experimentDescription><names><shortLabel>
             } else if (attName != null && attName.equals("experimentName")
@@ -389,7 +377,7 @@ public class PsiConverter extends BioFileConverter
             } else if (attName != null && attName.equals("hostOrganism")
                             && qName.equals("fullName")) {
                 String hostOrganism = attValue.toString();
-                if (hostOrganism != null && !hostOrganism.equals("-1")) {
+                if (hostOrganism != null) {
                     experimentHolder.setHostOrganism(hostOrganism);
                 }
             // <interactorList><interactor id="4"><names><fullName>
