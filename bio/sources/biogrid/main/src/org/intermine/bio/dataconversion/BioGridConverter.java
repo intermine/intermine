@@ -80,7 +80,6 @@ public class BioGridConverter extends BioFileConverter
         PSI_TERMS.put("Co-localization", "colocalization");
         PSI_TERMS.put("Co-purification", "copurification");
         PSI_TERMS.put("Far Western", "far western blotting");
-        PSI_TERMS.put("FRET", "FRET");
         PSI_TERMS.put("PCA", "protein complementation assay");
         PSI_TERMS.put("Synthetic Lethality", "synthetic lethal");
         PSI_TERMS.put("Two-hybrid", "two hybrid");
@@ -115,13 +114,6 @@ public class BioGridConverter extends BioFileConverter
         private Stack<String> stack = new Stack<String>();
         private String attName = null;
         private StringBuffer attValue = null;
-
-        /**
-         * Constructor
-         */
-        public BioGridHandler() {
-            // nothing to do
-        }
 
         /**
          * {@inheritDoc}
@@ -199,7 +191,6 @@ public class BioGridConverter extends BioFileConverter
                 holder.identifiers.add(ih.identifier);
                 holder.refIds.add(ih.refId);
                 if (ih.refId == null) {
-                    LOG.error("~~ bad participant:" + participantId + " - didn't have an organism");
                     ih.valid = false;
                 }
                 if (!ih.valid) {
@@ -219,35 +210,36 @@ public class BioGridConverter extends BioFileConverter
             attValue = new StringBuffer();
         }
 
+
         /**
          * {@inheritDoc}
          */
+        @Override
         public void characters(char[] ch, int start, int length) {
             int st = start;
             int l = length;
-
             if (attName != null) {
 
                 // DefaultHandler may call this method more than once for a single
                 // attribute content -> hold text & create attribute in endElement
-                while (l > 0) {
-                    boolean whitespace = false;
-                    switch(ch[st]) {
-                    case ' ':
-                    case '\r':
-                    case '\n':
-                    case '\t':
-                        whitespace = true;
-                        break;
-                    default:
-                        break;
-                    }
-                    if (!whitespace) {
-                        break;
-                    }
-                    ++st;
-                    --l;
-                }
+//                while (l > 0) {
+//                    boolean whitespace = false;
+//                    switch(ch[st]) {
+//                    case ' ':
+//                    case '\r':
+//                    case '\n':
+//                    case '\t':
+//                        whitespace = true;
+//                        break;
+//                    default:
+//                        break;
+//                    }
+//                    if (!whitespace) {
+//                        break;
+//                    }
+//                    ++st;
+//                    --l;
+//                }
 
                 if (l > 0) {
                     StringBuffer s = new StringBuffer();
@@ -285,8 +277,10 @@ public class BioGridConverter extends BioFileConverter
             //<interactionDetectionMethod><names><shortLabel>
             } else if (attName != null && attName.equals("interactionDetectionMethod")
                             && qName.equals("shortLabel")) {
-
-                experimentHolder.setMethod(getTerm(attValue.toString()));
+                String term = attValue.toString();
+                if (term != null) {
+                    experimentHolder.setMethod(getTerm(term));
+                }
 
             } else if (qName.equals("experimentDescription")) {
                 try {
@@ -324,9 +318,11 @@ public class BioGridConverter extends BioFileConverter
                             && stack.peek().equals("experimentList")) {
                 holder.setExperimentHolder(experiments.get(attValue.toString()));
             //<interactionType><names><shortLabel>
-            } else if (attName != null && attName.equals("interactionType")) {
-                holder.methodRefId = getTerm(attValue.toString());
-            //</interaction>
+            } else if (attName != null && attName.equals("interactionType")
+                            && qName.equals("shortLabel")) {
+                String term = attValue.toString();
+                holder.methodRefId = getTerm(term);
+                //</interaction>
             } else if (qName.equals("interaction") && holder != null && holder.validActors) {
                 storeInteraction(holder);
                 holder = null;
@@ -455,39 +451,41 @@ public class BioGridConverter extends BioFileConverter
             if (refId != null) {
                 return refId;
             }
+            Item item = createItem("Organism");
+            item.setAttribute("taxonId", taxonId);
+            organisms.put(taxonId, item.getIdentifier());
             try {
-                Item item = createItem("Organism");
-                item.setAttribute("taxonId", taxonId);
                 store(item);
-                organisms.put(taxonId, item.getIdentifier());
-                return item.getIdentifier();
             } catch (ObjectStoreException e) {
                 throw new ObjectStoreException(e);
             }
-
+            return item.getIdentifier();
         }
 
         private String getTerm(String name)
         throws SAXException {
+
+
             String term = name;
             if (PSI_TERMS.get(term) != null) {
                 term = PSI_TERMS.get(term);
-            } else {
-                term = term.toLowerCase().replace("-", " ");
+//              } else {
+//              term = term.toLowerCase();
             }
             String refId = terms.get(term);
             if (refId != null) {
                 return refId;
             }
+
+            Item item = createItem("InteractionTerm");
+            item.setAttribute("name", term);
+            terms.put(term, item.getIdentifier());
             try {
-                Item item = createItem("InteractionTerm");
-                item.setAttribute("name", term);
-                terms.put(term, item.getIdentifier());
                 store(item);
-                return item.getIdentifier();
             } catch (ObjectStoreException e) {
                 throw new SAXException(e);
             }
+            return item.getIdentifier();
         }
 
         private ExperimentHolder getExperimentHolder(String experimentId) {
