@@ -21,10 +21,6 @@
     <html:link action="/exportQuery?as=xml">
       XML
     </html:link>
-    <fmt:message key="begin.or"/>
-    <html:link action="/exportQuery?as=iql">
-      IQL
-    </html:link>
   </div>
 </c:if>
 <!-- /saveQuery.jsp -->
