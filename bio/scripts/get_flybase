@@ -20,13 +20,16 @@ use InterMine::DataDownloader;
 
 #Define ARGVs
 my ($logdir,$logname,$home,$file);
-if(@ARGV!=4){
-	die "Wrong number of ARGVs!\nget_all.sh should supply the log directory, temporary log name, /shared/data/ and config file.\n";
+if(@ARGV!=3){
+	#die "Wrong number of ARGVs!\nget_all.sh should supply the log directory, temporary log name, /shared/data/ and config file.\n";
+    $tempname="temp_log.txt";
+    $logdir="/shared/data/download_logs/";
+    $tempfile=$logdir$tempname;
+    $shared_data="/shared/data";
 }else{
 	$logdir = $ARGV[0];
 	$logname= $ARGV[1];
 	$home = $ARGV[2];
-	$file = $ARGV[3];
 }
 
 
@@ -36,8 +39,6 @@ my $flybase_current_dir = "current";
 my $flybase_dir = "flybase";
 my $genomes_dir = "genomes";
 my $fasta_dir = "fasta";
-
-
 
 #### Access FlyBase ftp server
 my $flybase_ftp = Net::FTP->new($flybase_server, Passive => 1)
