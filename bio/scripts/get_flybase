@@ -71,9 +71,7 @@ for my $file (@file_list) {
     }
 }
 
-print "length(@species_list) - $#species_list";
-
-if (!@species_list) {
+if ($i == 0) {
     die "can't find any species files\n";
 }
 
