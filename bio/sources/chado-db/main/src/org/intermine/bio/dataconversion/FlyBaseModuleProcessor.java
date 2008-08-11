@@ -779,9 +779,13 @@ public class FlyBaseModuleProcessor extends ChadoSequenceProcessor
             int end = fmax;
 
             FeatureData subFeatureData = getFeatureMap().get(subId);
-            int taxonId = subFeatureData.getOrganismData().getTaxonId();
+            if (subFeatureData != null) {
+                // this is a hack - we should make sure that we only query for features that are in
+                // the feature map, ie. those for the current organism
+                int taxonId = subFeatureData.getOrganismData().getTaxonId();
 
-            makeAndStoreLocation(chrId, subFeatureData, start, end, 1, taxonId);
+                makeAndStoreLocation(chrId, subFeatureData, start, end, 1, taxonId);
+            }
         }
     }
 
