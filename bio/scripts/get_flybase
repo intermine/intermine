@@ -22,16 +22,15 @@ use InterMine::DataDownloader;
 my ($logdir,$logname,$home,$file);
 if(@ARGV!=3){
 	#die "Wrong number of ARGVs!\nget_all.sh should supply the log directory, temporary log name, /shared/data/ and config file.\n";
-    $tempname="temp_log.txt";
+    my $tempname="temp_log.txt";
     $logdir="/shared/data/download_logs/";
-    $tempfile=$logdir$tempname;
-    $shared_data="/shared/data";
+    $logname=$logdir.$tempname;
+    $home="/shared/data";
 }else{
 	$logdir = $ARGV[0];
 	$logname= $ARGV[1];
 	$home = $ARGV[2];
 }
-
 
 my $flybase_server = "ftp.flybase.net";
 my $flybase_releases_dir = "releases";
@@ -70,6 +69,12 @@ for my $file (@file_list) {
         $species_list[$i] = $species;
         $i++;
     }
+}
+
+print "length(@species_list) - $#species_list";
+
+if (!@species_list) {
+    die "can't find any species files\n";
 }
 
 print "species: @species_list\n";

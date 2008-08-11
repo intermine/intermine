@@ -460,7 +460,7 @@
 
     <source name="affy-probes" type="affy-probes">
       <property name="src.data.dir" location="/shared/data/affy-probes/current"/>
-      <property name="src.data.dir.includes" value="*.csv"/>
+      <property name="src.data.dir.includes" value="*.txt"/>
     </source>
 
 <!-- they won't let us.  See #1801
