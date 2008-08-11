@@ -52,11 +52,13 @@ $flybase_ftp->cwd($flybase_releases_dir)
 $flybase_ftp->cwd($flybase_current_dir)
   or die "Cannot change working directory ", $flybase_ftp->message;
 
+
+
 # find out the version 
 my @file_list = $flybase_ftp->ls();
 my $version;
 
-my @species_list = undef;
+#my @species_list = undef;
 
 my $i = 0;
 for my $file (@file_list) {
@@ -64,18 +66,12 @@ for my $file (@file_list) {
     if ($start eq "FB") {
         $version = $file;
     }
-    if ($file =~ /^[a-z]{4}_/) {
-        my $species = substr($file, 0, 4);
-        $species_list[$i] = $species;
-        $i++;
-    }
+#    if ($file =~ /^[a-z]{4}_/) {
+#        my $species = substr($file, 0, 4);
+#        $species_list[$i] = $species;
+#        $i++;
+#    }
 }
-
-if ($i == 0) {
-    die "can't find any species files\n";
-}
-
-print "species: @species_list\n";
 
 if (!defined $version) {
     die "can't find file with version number\n";
@@ -119,19 +115,22 @@ $flybase_ftp->$filetype;
 my $species_dir = undef;
 
 my $file_types = "all-CDS|all-gene-|all-five_prime_UTR|all-three_prime_UTR";
+my @species_list = $flybase_ftp->ls();
 
 for my $species (@species_list) {
-    $flybase_ftp->cwd("$species/current/fasta")
-        or die "Could not change to directory: $species/current/fasta";
-    my @files = $flybase_ftp->ls();
-    for my$file (@files) {
-        if ($file =~ $file_types) {
-            $log_buffer .= "downloaded: $file to $download_dir/$fasta_dir/\n";
-            $flybase_ftp->get($file, "$download_dir/$fasta_dir/$file")
-                or die "failed to get file: $file";
+    if (length($species) eq 4) {
+        $flybase_ftp->cwd("$species/current/fasta")
+            or die "Could not change to directory: $species/current/fasta";
+        my @files = $flybase_ftp->ls();
+        for my$file (@files) {
+            if ($file =~ $file_types) {
+                $log_buffer .= "downloaded: $file to $download_dir/$fasta_dir/\n";
+                $flybase_ftp->get($file, "$download_dir/$fasta_dir/$file")
+                    or die "failed to get file: $file";
+            }
         }
+        $flybase_ftp->cwd("../../../");
     }
-    $flybase_ftp->cwd("../../../");
 }
 
 # unzip fasta files
@@ -141,8 +140,8 @@ if ((system "gzip -dr $download_dir/$fasta_dir") != 0) {
   die qq|system "gzip -dr $download_dir/$fasta_dir" failed: $?\n|;
 }
  $log_buffer = "fasta files updated to $download_dir\n";
-
 }
 
 $log_buffer .= "\n";
-&write_log($log_buffer,$logdir,$logname);
+print $log_buffer;
+#&write_log($log_buffer,$logdir,$logname);
