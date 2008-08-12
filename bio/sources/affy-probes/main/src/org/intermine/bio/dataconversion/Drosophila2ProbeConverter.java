@@ -140,7 +140,7 @@ public class Drosophila2ProbeConverter extends FileConverter
         probeSet.setAttribute("name", holder.probesetIdentifier);
         String locationRefId = createLocation(holder, probeSet.getIdentifier());
         probeSet.setReference("chromosomeLocation", locationRefId);
-
+        probeSet.setReference("organism", org.getIdentifier());
         probeSet.addToCollection("dataSets", dataSet);
         probeSet.setCollection("transcripts", holder.transcripts);
         createSynonym(probeSet.getIdentifier(), "identifier", holder.probesetIdentifier,
@@ -196,11 +196,6 @@ public class Drosophila2ProbeConverter extends FileConverter
                 if (end.intValue() < end.intValue()) {
                     this.end = end;
                 }
-//                if (!this.chromosomeRefID.equals(chromosomeRefId)
-//                                || (this.strand != null && !this.strand.equals(strand))) {
-//                    throw new RuntimeException("probeset " + probesetIdentifier + " has "
-//                                               + "inconsitent chromosome or strand data");
-//                }
             }
         }
     }
