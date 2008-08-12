@@ -185,15 +185,19 @@ public class Drosophila2ProbeConverter extends FileConverter
          * @param strand strand, eg -1
          */
         public void setLocation(Integer start, Integer end, String strand) {
-            if (start.intValue() == -1 && end.intValue() == -1) {
-                this.start = start;
-                this.end = end;
-                this.strand = strand;
-            } else {
-                if (start.intValue() > start.intValue()) {
+            if (this.start.intValue() == -1 && this.end.intValue() == -1) {
+                if (start.intValue() != -1) {
                     this.start = start;
                 }
-                if (end.intValue() < end.intValue()) {
+                if (end.intValue() != -1) {
+                    this.end = end;
+                }
+                this.strand = strand;
+            } else {
+                if (start.intValue() < this.start.intValue() && !start.equals(new Integer(-1))) {
+                    this.start = start;
+                }
+                if (end.intValue() > this.end.intValue() && !end.equals(new Integer(-1))) {
                     this.end = end;
                 }
             }
