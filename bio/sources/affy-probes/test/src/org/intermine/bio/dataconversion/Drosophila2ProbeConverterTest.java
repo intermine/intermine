@@ -54,7 +54,7 @@ public class Drosophila2ProbeConverterTest extends ItemsTestCase
         converter.close();
 
         // uncomment to write out a new target items file
-        writeItemsFile(itemWriter.getItems(), "affy-probes-tgt-items.xml");
+        //writeItemsFile(itemWriter.getItems(), "affy-probes-tgt-items.xml");
 
         assertEquals(readItemSet("Drosophila2ProbeConverterTest_tgt.xml"), itemWriter.getItems());
     }
