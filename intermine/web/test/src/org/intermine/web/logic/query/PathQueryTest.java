@@ -47,19 +47,23 @@ public class PathQueryTest extends TestCase
     }
 
     public void testSetViewString() {
+
+        // simple
         e = (PathQuery) expected.get("employeeName");
         q = new PathQuery(model);
         q.setView("Employee.name");
-
         assertEquals(e.getViewStrings(), q.getViewStrings());
 
+        // multiple, long paths, multiple delims
         e = (PathQuery) expected.get("employeeDepartmentCompanyWildcard");
         q = new PathQuery(model);
-        q.setView("Employee.name, Employee.department.name,Employee.department.company.name");
-
+        q.setView("Employee.name ,Employee.department.name, Employee.department.company.name");
         assertEquals(e.getViewStrings(), q.getViewStrings());
 
-        // TODO put bad paths, empty, null
+        // bad path
+        q = new PathQuery(model);
+        q.setView("Employeename");
+        assertTrue(q.getViewStrings().isEmpty());
     }
 
     public void testSetViewListOfString() {

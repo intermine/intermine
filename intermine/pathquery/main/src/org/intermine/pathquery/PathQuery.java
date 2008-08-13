@@ -87,7 +87,7 @@ public class PathQuery
         if (paths == null || paths.equals("")) {
             throw new RuntimeException("setView() was passed null or empty string");
         }
-        String [] pathStrings = paths.split("[, ]");
+        String [] pathStrings = paths.split("[, ]+");
         setView(new ArrayList<String>(Arrays.asList(pathStrings)));
     }
 
@@ -482,7 +482,7 @@ public class PathQuery
         }
         List<OrderBy> orderBy = new ArrayList<OrderBy>();
         try {
-            for (String path : paths.split("[, ]")) {
+            for (String path : paths.split("[, ]+")) {
                 orderBy.add(new OrderBy(makePath(model, this, path), sortAscending));
             }
         } catch (PathError e) {
