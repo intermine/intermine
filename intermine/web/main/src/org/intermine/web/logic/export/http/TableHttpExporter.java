@@ -45,19 +45,6 @@ public interface TableHttpExporter
     public boolean canExport(PagedTable pt);
 
     /**
-     * From the columns of the PagedTable, return a List of the Paths that this exporter will treat
-     * specially.
-     * eg. if the columns are ("Gene.primaryIdentifier", "Gene.secondaryIdentifier",
-     * "Gene.proteins.primaryIdentifier") return ("Gene", "Gene.proteins").  This is needed for
-     * exporters like SequenceExporter that act on certain classes only (for SequenceExporter,
-     * classes that have a sequence reference)
-     * @param pt the PagedTable
-     * @return the list of possible Paths that can be exported or an empty List if this exporter can
-     * only export all columns at once and doesn't treat some classes specially
-     */
-    public List<Path> getExportClassPaths(PagedTable pt);
-
-    /**
      * Return a list of the Paths to show the user as initial export columns or header contents.
      * The List is likely to be based on the columns of the PagedTable plus or minus special cases
      * for this exporter.

@@ -23,6 +23,7 @@ import org.intermine.web.logic.export.ExportException;
 import org.intermine.web.logic.export.ExportHelper;
 import org.intermine.web.logic.export.ResponseUtil;
 import org.intermine.web.logic.export.http.TableHttpExporter;
+import org.intermine.web.logic.results.Column;
 import org.intermine.web.logic.results.PagedTable;
 import org.intermine.web.struts.TableExportForm;
 
@@ -104,12 +105,5 @@ public class SequenceHttpExporter implements TableHttpExporter
      */
     public boolean canExport(PagedTable pt) {
         return SequenceExporter.canExportStatic(ExportHelper.getColumnClasses(pt));
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    public List<Path> getExportClassPaths(@SuppressWarnings("unused") PagedTable pt) {
-        return new ArrayList<Path>();
     }
 }

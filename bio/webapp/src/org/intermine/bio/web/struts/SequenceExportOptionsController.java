@@ -11,11 +11,17 @@ package org.intermine.bio.web.struts;
  */
 
 import java.util.ArrayList;
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
-import org.intermine.util.StringUtil;
-import org.intermine.web.logic.export.ExportHelper;
+import org.intermine.metadata.ClassDescriptor;
+import org.intermine.path.Path;
+import org.intermine.util.DynamicUtil;
+import org.intermine.web.logic.results.Column;
 import org.intermine.web.logic.results.PagedTable;
+import org.intermine.web.logic.session.SessionMethods;
 
 import org.flymine.model.genomic.LocatedSequenceFeature;
 import org.flymine.model.genomic.Protein;
@@ -24,6 +30,7 @@ import org.flymine.model.genomic.Translation;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
 
 import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionForward;
@@ -48,27 +55,52 @@ public class SequenceExportOptionsController extends TilesAction
                                  HttpServletRequest request,
                                  @SuppressWarnings("unused") HttpServletResponse response)
     throws Exception {
-        PagedTable pt = (PagedTable) request.getAttribute("resultsTable");
-        List<Integer> featureColumns = getFeatureColumns(pt);
-        request.setAttribute("testAttr", StringUtil.join(featureColumns, " "));
+        String tableName = request.getParameter("table");
+        HttpSession session = request.getSession();
+        PagedTable pt = SessionMethods.getResultsTable(session, tableName);
+
+        List<Path> exportClassPaths = getExportClassPaths(pt);
+
+        Map<String, String> pathMap = new LinkedHashMap<String, String>();
+
+        for (Path path: exportClassPaths) {
+            String pathString = path.toStringNoConstraints();
+            String displayPath = pathString.replace(".", " &gt; ");
+            pathMap.put(pathString, displayPath);
+        }
+
+        request.setAttribute("exportClassPaths", pathMap);
+
         return null;
     }
 
+
     /**
-     * Return the columns that contains Sequence objects or features that have a sequence
-     * reference.
+     * From the columns of the PagedTable, return a List of the Paths that this exporter will treat
+     * use to find sequences to export.
+     * eg. if the columns are ("Gene.primaryIdentifier", "Gene.secondaryIdentifier",
+     * "Gene.proteins.primaryIdentifier") return ("Gene", "Gene.proteins").
      */
-    private List<Integer> getFeatureColumns(PagedTable pt) {
-        List<Integer> retList = new ArrayList<Integer>();
-        List<Class> clazzes = ExportHelper.getColumnClasses(pt);
-        for (int i = 0; i < clazzes.size(); i++) {
-            if (Protein.class.isAssignableFrom(clazzes.get(i))
-                || LocatedSequenceFeature.class.isAssignableFrom(clazzes.get(i))
-                || Sequence.class.isAssignableFrom(clazzes.get(i))
-                || Translation.class.isAssignableFrom(clazzes.get(i))) {
-                retList.add(i);
+    private List<Path> getExportClassPaths(PagedTable pt) {
+        List<Path> retPaths = new ArrayList<Path>();
+
+        List<Column> columns = pt.getColumns();
+
+        for (Column column: columns) {
+            Path prefix = column.getPath().getPrefix();
+            ClassDescriptor prefixCD = prefix.getLastClassDescriptor();
+            Set<Class> prefixClasses = DynamicUtil.decomposeClass(prefixCD.getType());
+            Class<?> prefixClass = prefixClasses.iterator().next();
+            if (Protein.class.isAssignableFrom(prefixClass)
+                || LocatedSequenceFeature.class.isAssignableFrom(prefixClass)
+                || Sequence.class.isAssignableFrom(prefixClass)
+                || Translation.class.isAssignableFrom(prefixClass)) {
+                if (!retPaths.contains(prefix)) {
+                    retPaths.add(prefix);
+                }
             }
         }
-        return retList;
+
+        return retPaths;
     }
 }
