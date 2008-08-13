@@ -51,7 +51,6 @@ import org.intermine.web.logic.config.FieldConfigHelper;
 import org.intermine.web.logic.config.WebConfig;
 import org.intermine.web.logic.widget.config.TableWidgetConfig;
 import org.intermine.web.logic.widget.config.WidgetConfig;
-import org.apache.log4j.Logger;
 /**
  * @author Xavier Watkins
  *
@@ -71,7 +70,7 @@ public class TableWidgetLdr
     private String type;
     private TableWidgetConfig config;
     private ClassDescriptor cld;
-    private static final Logger LOG = Logger.getLogger(TableWidgetLdr.class);
+    //private static final Logger LOG = Logger.getLogger(TableWidgetLdr.class);
 
     /**
      * This class loads and formats the data for the count
@@ -85,7 +84,6 @@ public class TableWidgetLdr
     @SuppressWarnings("unchecked")
     public TableWidgetLdr(WidgetConfig widgetConfig, InterMineBag bag, ObjectStore os)
         throws UnsupportedEncodingException {
-
         this.os = os;
         this.bag = bag;
         this.config = (TableWidgetConfig) widgetConfig;
@@ -96,9 +94,7 @@ public class TableWidgetLdr
         type = cld.getUnqualifiedName();
         displayFields = config.getDisplayFields();
         exportFields = config.getExportFields();
-
         setFlattenedResults();
-        
     }
 
 
@@ -145,7 +141,6 @@ public class TableWidgetLdr
         for (Iterator iter = results.iterator(); iter.hasNext();) {
             ArrayList<String[]> flattenedRow = new ArrayList<String[]>();
             ResultsRow resRow = (ResultsRow) iter.next();
-            //Integer lastObjectId = null;
             String key = "";
             for (Iterator iterator = resRow.iterator(); iterator.hasNext();) {
 
@@ -169,7 +164,7 @@ public class TableWidgetLdr
                             val = fieldValue.toString();
                         }
                         if (isKeyField) {
-                            if (fieldValue != null) { 
+                            if (fieldValue != null) {
                                 key = fieldValue.toString();
                             }
                             link = "objectDetails.do?id=" + o.getId() + "&amp;trail=|bag."
@@ -334,9 +329,7 @@ public class TableWidgetLdr
                     QueryField keyField = new QueryField(qcEnd, getKeyField(displayFields));
                     BagConstraint bc = new BagConstraint(keyField, ConstraintOp.IN, keys);
                     QueryHelper.addAndConstraint(q, bc);
-
                     q.addToSelect(new QueryField(qcEnd, getKeyField(displayFields)));
-
                     String[] fields = exportFields.split(",");
                     for (String field : fields) {
                         q.addToSelect(new QueryField(qcExport, field));
@@ -348,31 +341,7 @@ public class TableWidgetLdr
 
                     q.addToSelect(qfCount);
                     q.addToOrderBy(qfCount, "desc");
-                    
-//                    Query subQ = new Query();
-//                    subQ = q;
-//                    subQ.setDistinct(true);
-//                    subQ.clearSelect();
-//                    QueryField qcEndId = new QueryField(qcEnd, "id");
-//                    subQ.addToSelect(qcEndId);
-//                    subQ.addToSelect(qfStartId);
-//                    
-//                    QueryField qfSubEndId = new QueryField(subQ, qcEndId);
-//                    
-//                    q = new Query();
-//                    q.setDistinct(false);
-//                    
-//                    QueryClass qcOuter = new QueryClass(qcEnd.getType());
-//                    SimpleConstraint idConstraint = 
-//                        new SimpleConstraint(new QueryField(qcOuter, "id"), 
-//                                ConstraintOp.EQUALS, qfSubEndId);
-//                    q.setConstraint(idConstraint);
-//                    q.addToSelect(qcOuter);
-//                    q.addToSelect(qfCount);
-//                    q.addFrom(subQ);
-//                    q.addToGroupBy(qcOuter);
-//                    q.addToOrderBy(qfCount, "desc");
-                    
+
                 } else {
 
                     Query subQ = new Query();
