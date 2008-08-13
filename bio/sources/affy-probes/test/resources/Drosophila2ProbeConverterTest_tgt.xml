@@ -40,6 +40,7 @@
 <attribute name="primaryIdentifier" value="142519_at"/>
 <reference name="organism" ref_id="1_1"/>
 <collection name="dataSets"><reference ref_id="2_1"/></collection>
+<collection name="genes"><reference ref_id="4_1"/></collection>
 <collection name="locations"><reference ref_id="8_1"/></collection>
 <collection name="transcripts"><reference ref_id="6_1"/></collection>
 </item>
