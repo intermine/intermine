@@ -16,6 +16,7 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
+import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
@@ -49,6 +50,7 @@ public class PsiConverter extends BioFileConverter
     private String termId = null;
     private Map<String, Item> genes = new  HashMap<String, Item>();
     protected IdResolverFactory resolverFactory;
+    private static final Map<String, String> IDENTIFIERS = new LinkedHashMap();
 
     /**
      * Constructor
@@ -66,6 +68,13 @@ public class PsiConverter extends BioFileConverter
         } catch (SAXException e) {
             throw new RuntimeException("ack");
         }
+    }
+
+    static {
+        IDENTIFIERS.put("orf name", "secondaryIdentifier");
+        IDENTIFIERS.put("gene name", "symbol");
+        IDENTIFIERS.put("fullName", "secondaryIdentifier");
+        IDENTIFIERS.put("shortLabel", "symbol");
     }
 
     /**
@@ -162,11 +171,6 @@ public class PsiConverter extends BioFileConverter
                 // <hostOrganismList><hostOrganism ncbiTaxId="9534"><names><fullName>
             } else if (qName.equals("hostOrganism")) {
                 attName = "hostOrganism";
-                String hostOrganism = attrs.getValue("ncbiTaxId");
-                if (hostOrganism != null && !hostOrganism.equals("-1")) {
-                    String refId = getOrganism(hostOrganism);
-                    experimentHolder.setHostOrganism(refId);
-                }
                 //<interactionDetectionMethod><xref><primaryRef>
             } else if (qName.equals("primaryRef") && stack.peek().equals("xref")
                             && stack.search("interactionDetectionMethod") == 2) {
@@ -566,8 +570,6 @@ public class PsiConverter extends BioFileConverter
 
             /* store all experiment-related items */
             ExperimentHolder eh = interactionHolder.eh;
-            // TODO is this experiment going to have extra items to store, the 2nd time it
-            // gets processed?  In the other XML files?
             if (!eh.isStored) {
                 eh.isStored = true;
                 try {
@@ -594,52 +596,58 @@ public class PsiConverter extends BioFileConverter
             return name;
         }
 
-        private Item getGene(String taxonId) throws ObjectStoreException {
-            String identifier = null;
-            String label = "secondaryIdentifier";
-            identifier = identifiers.get("orf name");
-            if (identifier == null) {
-                identifier = identifiers.get("gene name");
-                label = "symbol";
-            }
-
-            if (identifier == null) {
-                identifier = identifiers.get("fullName");
-                label = "secondaryIdentifier";
-            }
-
-            //<names> <shortLabel>mir-13b</shortLabel> </names>
-            if (identifier == null) {
-                identifier = identifiers.get("shortLabel");
-                label = "symbol";
-            }
-
-            if (identifier == null) {
-                throw new RuntimeException(" ~~ org:" + taxonId + " interactor " + interactorId);
-            }
-
-            // for Drosophila attempt to update to a current gene identifier
-            IdResolver resolver = resolverFactory.getIdResolver(false);
-            if (taxonId.equals("7227") && resolver != null) {
-                int resCount = resolver.countResolutions(taxonId, identifier);
-                if (resCount != 1) {
-                    LOG.info("RESOLVER: failed to resolve gene to one identifier, ignoring gene: "
-                             + identifier + " count: " + resCount + " FBgn: "
-                             + resolver.resolveId(taxonId, identifier));
-                    return null;
+        private Item getGene(String taxonId)
+        throws ObjectStoreException, SAXException {
+            String identifier = null, label = null;
+            for (String identifierType : IDENTIFIERS.keySet()) {
+                identifier = identifiers.get(identifierType);
+                if (identifier == null) {
+                    continue;
                 }
-                identifier = resolver.resolveId(taxonId, identifier).iterator().next();
-                label = "primaryIdentifier";
+                if (taxonId.equals("7227")) {
+                    IdResolver resolver = resolverFactory.getIdResolver(false);
+                    if (resolver != null) {
+                        identifier = resolveGene(resolver, taxonId, identifier);
+                    } else {
+                        return null;
+                    }
+                    label = "primaryIdentifier";
+                } else {
+                    label = IDENTIFIERS.get(identifierType);
+                }
+                if (identifier != null) {
+                    break;
+                }
             }
-
+            if (identifier == null) {
+                if (!taxonId.equals("7227")) {
+                    throw new RuntimeException("no identifier found for organism:" + taxonId
+                                           + " interactor " + interactorId);
+                }
+                return null;
+            }
             Item item = genes.get(identifier);
             if (item == null) {
                 item = createItem("Gene");
                 item.setAttribute(label, identifier);
+                item.setReference("organism", getOrganism(taxonId));
                 genes.put(identifier, item);
                 store(item);
             }
             return item;
+        }
+
+        private String resolveGene(IdResolver resolver, String taxonId, String id) {
+            String identifier = id;
+            int resCount = resolver.countResolutions(taxonId, identifier);
+            if (resCount != 1) {
+                LOG.info("RESOLVER: failed to resolve gene to one identifier, ignoring gene: "
+                         + identifier + " count: " + resCount + " FBgn: "
+                         + resolver.resolveId(taxonId, identifier));
+                return null;
+            }
+            identifier = resolver.resolveId(taxonId, identifier).iterator().next();
+            return identifier;
         }
 
         private String getPub(String pubMedId)
