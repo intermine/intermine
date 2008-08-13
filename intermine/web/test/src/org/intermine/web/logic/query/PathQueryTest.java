@@ -225,12 +225,14 @@ public class PathQueryTest extends TestCase
         // no order by clauses
         e = (PathQuery) expected.get("employeeName");
         q = new PathQuery(model);
-        q.setView("Employee.name,Employee.department.name");
+        q.setView("Employee.name");
         assertEquals(e.getSortOrderStrings(), q.getSortOrderStrings());
 
-        e = (PathQuery) expected.get("orderByAsc");
+
+        e = (PathQuery) expected.get("noOrderBy");
         q = new PathQuery(model);
         q.setView("Employee.name,Employee.department.name");
+        q.setOrderBy("Employee.name");
         assertEquals(e.getSortOrder(), q.getSortOrder());
 
         // ASC
