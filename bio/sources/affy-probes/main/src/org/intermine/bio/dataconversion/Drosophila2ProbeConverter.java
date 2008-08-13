@@ -41,17 +41,6 @@ public class Drosophila2ProbeConverter extends FileConverter
     private Map<String, Item> synonyms = new HashMap<String, Item>();
     private Map<String, String> chromosomes = new HashMap<String, String>();
     private Map<String, ProbeHolder> holders;
-//    private static final Set<String> CHROMOSOMES = new HashSet<String>();
-//
-//    static {
-//        CHROMOSOMES.add("2L");
-//        CHROMOSOMES.add("2R");
-//        CHROMOSOMES.add("3L");
-//        CHROMOSOMES.add("3R");
-//        CHROMOSOMES.add("4");
-//        CHROMOSOMES.add("U");
-//        CHROMOSOMES.add("X");
-//    }
 
     /**
      * Constructor
@@ -104,34 +93,25 @@ public class Drosophila2ProbeConverter extends FileConverter
             String strand = line[7];
             String hitCount = line[8];
             String[] hitStrings = hitCount.split(" ");
-            boolean hasHits = false;
             Integer hits = new Integer(0);
             try {
                 hits = new Integer(hitStrings[3]);
-                // probe has to have >= 13 hits to be processed
-                if (hits.compareTo(new Integer(13)) >= 0) {
-                    hasHits = true;
-                }
             } catch (Exception e) {
                 // don't process this data
             }
-
-//            if (CHROMOSOMES.contains(chromosomeIdentifier) && hasHits) {
-            if (hasHits) {
-                String chromosomeRefId = createChromosome(chromosomeIdentifier);
-                Item gene = createGene(fbgn, delayedItems);
-                if (gene != null) {
-                    Item transcript = createTranscript(transcriptIdentifier, gene.getIdentifier(),
-                                                       delayedItems);
-                    ProbeHolder holder = getHolder(probesetIdentifier, transcript.getIdentifier(),
-                                                   gene.getIdentifier(), hits);
-                    try {
-                        Integer start = new Integer(startString);
-                        Integer end = new Integer(endString);
-                        holder.setLocation(chromosomeRefId, start, end, strand);
-                    } catch (NumberFormatException e) {
-                        throw new RuntimeException("bad start/end values");
-                    }
+            String chromosomeRefId = createChromosome(chromosomeIdentifier);
+            Item gene = createGene(fbgn, delayedItems);
+            if (gene != null) {
+                Item transcript = createTranscript(transcriptIdentifier, gene.getIdentifier(),
+                                                   delayedItems);
+                ProbeHolder holder = getHolder(probesetIdentifier, transcript.getIdentifier(),
+                                               gene.getIdentifier(), hits);
+                try {
+                    Integer start = new Integer(startString);
+                    Integer end = new Integer(endString);
+                    holder.setLocation(chromosomeRefId, start, end, strand);
+                } catch (NumberFormatException e) {
+                    throw new RuntimeException("bad start/end values");
                 }
             }
         }
@@ -154,6 +134,7 @@ public class Drosophila2ProbeConverter extends FileConverter
         probeSet.addToCollection("dataSets", dataSet);
         probeSet.setCollection("transcripts", holder.transcripts);
         probeSet.setCollection("locations", holder.createLocations(probeSet.getIdentifier()));
+        probeSet.setCollection("genes", holder.genes);
         createSynonym(probeSet.getIdentifier(), "identifier", holder.probesetIdentifier,
                       delayedItems);
 
@@ -380,6 +361,11 @@ public class Drosophila2ProbeConverter extends FileConverter
         if (holder == null) {
             holder = new ProbeHolder(identifier, transcriptRefId, geneRefId, hits);
             holders.put(identifier, holder);
+        } else {
+            if (hits.compareTo(holder.hits) > 0) {
+                holder.hits = hits;
+            }
+            holder.genes.add(geneRefId);
         }
         return holder;
     }
