@@ -13,11 +13,9 @@ package org.intermine.bio.dataconversion;
 import java.io.Reader;
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
@@ -43,17 +41,17 @@ public class Drosophila2ProbeConverter extends FileConverter
     private Map<String, Item> synonyms = new HashMap<String, Item>();
     private Map<String, String> chromosomes = new HashMap<String, String>();
     private Map<String, ProbeHolder> holders;
-    private static final Set<String> CHROMOSOMES = new HashSet<String>();
-
-    static {
-        CHROMOSOMES.add("2L");
-        CHROMOSOMES.add("2R");
-        CHROMOSOMES.add("3L");
-        CHROMOSOMES.add("3R");
-        CHROMOSOMES.add("4");
-        CHROMOSOMES.add("U");
-        CHROMOSOMES.add("X");
-    }
+//    private static final Set<String> CHROMOSOMES = new HashSet<String>();
+//
+//    static {
+//        CHROMOSOMES.add("2L");
+//        CHROMOSOMES.add("2R");
+//        CHROMOSOMES.add("3L");
+//        CHROMOSOMES.add("3R");
+//        CHROMOSOMES.add("4");
+//        CHROMOSOMES.add("U");
+//        CHROMOSOMES.add("X");
+//    }
 
     /**
      * Constructor
@@ -118,7 +116,8 @@ public class Drosophila2ProbeConverter extends FileConverter
                 // don't process this data
             }
 
-            if (CHROMOSOMES.contains(chromosomeIdentifier) && hasHits) {
+//            if (CHROMOSOMES.contains(chromosomeIdentifier) && hasHits) {
+            if (hasHits) {
                 String chromosomeRefId = createChromosome(chromosomeIdentifier);
                 Item gene = createGene(fbgn, delayedItems);
                 if (gene != null) {
