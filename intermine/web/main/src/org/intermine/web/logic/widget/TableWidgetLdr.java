@@ -18,6 +18,7 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
 
 import org.intermine.metadata.AttributeDescriptor;
 import org.intermine.metadata.ClassDescriptor;
@@ -329,8 +330,11 @@ public class TableWidgetLdr
                     QueryField keyField = new QueryField(qcEnd, getKeyField(displayFields));
                     BagConstraint bc = new BagConstraint(keyField, ConstraintOp.IN, keys);
                     QueryHelper.addAndConstraint(q, bc);
-                    q.addToSelect(new QueryField(qcEnd, getKeyField(displayFields)));
-                    String[] fields = exportFields.split(",");
+                    String[] fields = displayFields.split(",");
+                    for (String field : fields) {
+                        q.addToSelect(new QueryField(qcEnd, field));
+                    }
+                    fields = exportFields.split(",");
                     for (String field : fields) {
                         q.addToSelect(new QueryField(qcExport, field));
                     }
@@ -443,36 +447,45 @@ public class TableWidgetLdr
 
         List<List<String>> exportResults = new ArrayList<List<String>>();
         List<String> selectedIds = Arrays.asList(selected);
-
+        Map<String, String> termToLabel = new HashMap();
         Query q = getQuery(false, selectedIds);
 
         Results res = os.execute(q);
         Iterator iter = res.iterator();
         HashMap<String, List<String>> termsToIds = new HashMap();
+        boolean hasLabelColumn = false;
         while (iter.hasNext()) {
             ResultsRow resRow = (ResultsRow) iter.next();
             String term = (String) resRow.get(0);   // annotation (like go term)
-            String id = (String) resRow.get(1);     // object identifier (like gene.identifier)
+            String id = null;
+            if (resRow.size() > 2) {
+                String name = (String) resRow.get(1);
+                termToLabel.put(term, name);
+                id = (String) resRow.get(2);     // object identifier (like gene.identifier)
+                hasLabelColumn = true;
+            } else {
+                id = (String) resRow.get(1);     // object identifier (like gene.identifier)
+            }
             if (!termsToIds.containsKey(term)) {
                 termsToIds.put(term, new ArrayList<String>());
             }
             termsToIds.get(term).add(id);
         }
 
-        for (String id : selectedIds) {
-            if (termsToIds.get(id) != null) {
+        for (String term : selectedIds) {
+            if (termsToIds.get(term) != null) {
                 List row = new LinkedList();
-
-                row.add(id);                    // identifier
-
-
-                List<String> ids = termsToIds.get(id);
+                row.add(term);                    // identifier
+                if (hasLabelColumn) {
+                    row.add(termToLabel.get(term));     // label, like term name
+                }
+                List<String> ids = termsToIds.get(term);
                 StringBuffer sb = new StringBuffer();
-                for (String term : ids) {
+                for (String identifier : ids) {
                     if (sb.length() > 0) {
                         sb.append(", ");
                     }
-                    sb.append(term);
+                    sb.append(identifier);
                 }
                 row.add(sb.toString());
                 exportResults.add(row);
