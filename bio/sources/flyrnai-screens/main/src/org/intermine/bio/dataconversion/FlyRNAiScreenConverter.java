@@ -329,7 +329,6 @@ public class FlyRNAiScreenConverter extends BioFileConverter
      * Convenience method to create and store a new synonym Item
      * @param synonymName the actual synonym
      * @param subject the synonym's subject item
-     * @param source the source of the Synonym
      * @return a new synonym Item
      * @throws ObjectStoreException if the is an ObjectStore problem
      */
