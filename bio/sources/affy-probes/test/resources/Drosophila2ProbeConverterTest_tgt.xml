@@ -34,6 +34,15 @@
 <item id="0_1" class="http://www.flymine.org/model/genomic#DataSource">
 <attribute name="name" value="Affymetrix"/>
 </item>
+<item id="7_1" class="http://www.flymine.org/model/genomic#ProbeSet">
+<attribute name="hits" value="14"/>
+<attribute name="name" value="142519_at"/>
+<attribute name="primaryIdentifier" value="142519_at"/>
+<reference name="organism" ref_id="1_1"/>
+<collection name="dataSets"><reference ref_id="2_1"/></collection>
+<collection name="locations"><reference ref_id="8_1"/></collection>
+<collection name="transcripts"><reference ref_id="6_1"/></collection>
+</item>
 <item id="3_1" class="http://www.flymine.org/model/genomic#Chromosome">
 <attribute name="primaryIdentifier" value="2R"/>
 <reference name="organism" ref_id="1_1"/>
@@ -43,14 +52,6 @@
 <attribute name="value" value="142519_at"/>
 <reference name="source" ref_id="0_1"/>
 <reference name="subject" ref_id="7_1"/>
-</item>
-<item id="7_1" class="http://www.flymine.org/model/genomic#ProbeSet">
-<attribute name="name" value="142519_at"/>
-<attribute name="primaryIdentifier" value="142519_at"/>
-<reference name="chromosomeLocation" ref_id="8_1"/>
-<reference name="organism" ref_id="1_1"/>
-<collection name="dataSets"><reference ref_id="2_1"/></collection>
-<collection name="transcripts"><reference ref_id="6_1"/></collection>
 </item>
 <item id="5_2" class="http://www.flymine.org/model/genomic#Synonym">
 <attribute name="type" value="identifier"/>

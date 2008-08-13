@@ -2,8 +2,10 @@
 <classes>
 <class name="org.flymine.model.genomic.ProbeSet" extends="org.flymine.model.genomic.LocatedSequenceFeature" is-interface="true">
   <attribute name="description" type="java.lang.String"/>
+  <attribute name="hits" type="java.lang.Integer"/>
   <collection name="genes" referenced-type="org.flymine.model.genomic.Gene" reverse-reference="probeSets"/>
   <collection name="transcripts" referenced-type="org.flymine.model.genomic.Transcript" reverse-reference="probeSets"/>
+  <collection name="locations" referenced-type="org.flymine.model.genomic.Location"  />
 </class>
 <class name="org.flymine.model.genomic.Gene" is-interface="true">
   <collection name="probeSets" referenced-type="org.flymine.model.genomic.ProbeSet" reverse-reference="genes"/>
