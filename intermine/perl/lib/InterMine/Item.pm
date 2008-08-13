@@ -122,8 +122,7 @@ sub set
             if ($field->is_many_to_many()) {
               my @other_collection = @{$other_item->get($field->reverse_reference_name())};
               if (!grep {$_ == $self} @other_collection) {
-                push @other_collection, $self;
-                $other_item->set($field->reverse_reference_name(), \@other_collection);
+                $other_item->add_to_collection($field->reverse_reference_name(), $self);
               }
             }
           }
@@ -197,8 +196,13 @@ sub add_to_collection
   }
 
   my @old_val = @{$self->get($name)};
-  push @old_val, $value;
-  $self->set($name, \@old_val);
+  if (!grep {$_ == $self} @old_val) {
+    if (scalar(@old_val) == 0) {
+      $self->{$name} = [$value];
+    } else {
+      push @{$self->{$name}}, $value;
+    }
+  }
 }
 
 sub model
