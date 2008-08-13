@@ -14,6 +14,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -42,10 +43,9 @@ public class PathQueryHandler extends DefaultHandler
     private PathNode node;
     protected PathQuery query;
     private Model model = null;
-    private List<String> viewStrings = new ArrayList<String>();
-    private String sortOrderString = "";
-    private String directionString = ""; // will be asc or desc
+    private List<String> viewStrings = new ArrayList();
     private Map<String, String> pathStringDescriptions = new HashMap<String, String>();
+    private Map<String, Boolean> sortOrder = new LinkedHashMap();
 
     /**
      * Constructor
@@ -77,15 +77,22 @@ public class PathQueryHandler extends DefaultHandler
             query = new PathQuery(model);
             if (attrs.getValue("view") != null) {
                 viewStrings = StringUtil.tokenize(attrs.getValue("view"));
-
             }
+
             if (attrs.getValue("sortOrder") != null) {
-               String[] s = (attrs.getValue("sortOrder")).split("[, ]+");
-               sortOrderString = s[0];
-               if ((s.length > 1) && (s[1].equalsIgnoreCase("desc"))) {
-                   directionString = "desc";
-               } else {
-                   directionString = "asc";
+               String[] s = (attrs.getValue("sortOrder")).split(" ");
+               for (int i = 0; i < s.length; i++) {
+                   Boolean sortAscending = Boolean.TRUE;
+                   String orderByString = s[i];
+                   // check if next string bit is a direction string
+                   if ((s.length > i + 1) && (s[i + 1].equalsIgnoreCase("desc")
+                                                   || s[i + 1].equalsIgnoreCase("asc"))) {
+                       if (s[i + 1].equalsIgnoreCase("desc")) {
+                           sortAscending = Boolean.FALSE;
+                       }
+                       i++;
+                   }
+                   sortOrder.put(orderByString, sortAscending);
                }
             }
             if (attrs.getValue("constraintLogic") != null) {
@@ -201,15 +208,15 @@ public class PathQueryHandler extends DefaultHandler
                            @SuppressWarnings("unused") String localName, String qName) {
         if (qName.equals("query")) {
             query.syncLogicExpression("and"); // always and for old queries
-            for (String viewElement: viewStrings) {
-                query.addPathStringToView(viewElement);
-            }
+            query.addView(viewStrings);
             if (query.getView().size() == 0) {
                 // query has no valid view paths, which we can't handle at the moment
                 return;
             }
-            if (sortOrderString.length() > 0 && directionString.length() > 0) {
-                query.addPathStringToSortOrder(sortOrderString, directionString);
+            if (sortOrder.isEmpty()) {
+                query.setOrderBy(viewStrings.get(0));
+            } else {
+                setSortOrder();
             }
 
             for (Map.Entry<String, String> entry: pathStringDescriptions.entrySet()) {
@@ -217,7 +224,7 @@ public class PathQueryHandler extends DefaultHandler
             }
             queries.put(queryName, query);
             viewStrings = new ArrayList<String>();
-
+            sortOrder = new LinkedHashMap();
             pathStringDescriptions = new HashMap<String, String>();
         }
     }
@@ -257,5 +264,15 @@ public class PathQueryHandler extends DefaultHandler
             }
         }
         return validatedName;
+    }
+
+    private void setSortOrder() {
+        Iterator it = sortOrder.entrySet().iterator();
+        while (it.hasNext()) {
+            Map.Entry entry = (Map.Entry) it.next();
+            String pathString = (String) entry.getKey();
+            Boolean sortAscending = (Boolean) entry.getValue();
+            query.addOrderBy(pathString, sortAscending);
+        }
     }
 }
