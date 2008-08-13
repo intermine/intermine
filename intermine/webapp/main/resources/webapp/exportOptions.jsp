@@ -75,9 +75,7 @@ ${exportReorderMessage}
     </c:when>
     <c:otherwise>
       <c:set var="tileName" value="${type}ExportOptions.tile"/>
-      <c:if test="${!empty $tileName}">
-        <tiles:insert name="${tileName}"/>
-      </c:if>
+      <tiles:insert name="${tileName}"/>
     </c:otherwise>
   </c:choose>
 

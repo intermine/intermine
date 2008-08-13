@@ -15,5 +15,5 @@
   	    controllerUrl="/initAttributeLinkDisplayer.do"/>
 
 <definition name="sequenceExportOptions.tile" path="/model/sequenceExportOptions.jsp" 
-  	    controllerUrl="/initSequenceExport.do"/>
+  	    controllerUrl="/initSequenceExportOptions.do"/>
 
