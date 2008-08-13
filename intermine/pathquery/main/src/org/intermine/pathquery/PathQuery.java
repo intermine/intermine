@@ -482,7 +482,7 @@ public class PathQuery
         }
         List<OrderBy> orderBy = new ArrayList<OrderBy>();
         try {
-            for (String path : paths.split(",")) {
+            for (String path : paths.split("[, ]")) {
                 orderBy.add(new OrderBy(makePath(model, this, path), sortAscending));
             }
         } catch (PathError e) {
