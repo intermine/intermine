@@ -62,8 +62,19 @@ public class PathQueryTest extends TestCase
 
         // bad path
         q = new PathQuery(model);
-        q.setView("Employeename");
+        q.setView("monkey");
         assertTrue(q.getViewStrings().isEmpty());
+        assertFalse(q.isValid());
+
+        // empty path
+        q.setView("");
+        assertEquals("setView() was passed null or empty string", q.getProblems()[1].getMessage().toString());
+        assertFalse(q.isValid());
+
+        // null path
+        q.setView(new String());
+        assertEquals("setView() was passed null or empty string", q.getProblems()[2].getMessage().toString());
+        assertFalse(q.isValid());
     }
 
     public void testSetViewListOfString() {
@@ -77,8 +88,56 @@ public class PathQueryTest extends TestCase
         q.setView(view);
         assertEquals(e.getViewStrings(), q.getViewStrings());
 
-        // TODO put bad paths, empty, null
+        // bad path
+        q = new PathQuery(model);
+        view = new ArrayList<String>() {{
+            add("Monkey.paths");
+        }};
+        q.setView(view);
+        assertTrue(q.getViewStrings().isEmpty());
+        assertFalse(q.isValid());
 
+        // bad path with good paths
+        q = new PathQuery(model);
+        view = new ArrayList<String>() {{
+            add("Employee.name");
+            add("Employee.department.name");
+            add("Monkey.paths");
+            add("Employee.department.company.name");
+        }};
+        q.setView(view);
+        assertEquals(e.getViewStrings(), q.getViewStrings());
+        assertFalse(q.isValid());
+
+        // bad path with empty path
+        q = new PathQuery(model);
+        view = new ArrayList<String>() {{
+            add("Employee.name");
+            add("Employee.department.name");
+            add("");
+            add("Employee.department.company.name");
+        }};
+        q.setView(view);
+        assertEquals(e.getViewStrings(), q.getViewStrings());
+        assertFalse(q.isValid());
+
+        // null path
+        q = new PathQuery(model);
+        q.setView(new ArrayList<String>());
+        assertFalse(q.isValid());
+
+        // bad paths with empty path
+        q = new PathQuery(model);
+        view = new ArrayList<String>() {{
+            add("Employee.name");
+            add("Employee.department.name");
+            String isnull = null;
+            add(isnull);
+            add("Employee.department.company.name");
+        }};
+        q.setView(view);
+        assertEquals(e.getViewStrings(), q.getViewStrings());
+        assertFalse(q.isValid());
     }
 
     public void testSetViewPaths() {
@@ -90,32 +149,75 @@ public class PathQueryTest extends TestCase
             add(new Path(model, "Employee.department.company.name"));
         }};
         q.setViewPaths(view);
-
         assertEquals(e.getView(), q.getView());
 
-        // TODO put bad paths, empty, null
+        // TODO need to test a bad/empty path
+        q = new PathQuery(model);
+        view = new ArrayList<Path>() {{
+            add(new Path(model, "Employee.name"));
+            try {
+                add(new Path(model, "monkey"));
+            } catch (PathError pathError) {
+                // caught!
+            }
+            add(new Path(model, "Employee.department.name"));
+            add(new Path(model, "Employee.department.company.name"));
+        }};
+        q.setViewPaths(view);
+        assertEquals(e.getView(), q.getView());
+        assertTrue(q.isValid());
 
+        // null paths
+        e = (PathQuery) expected.get("employeeDepartmentCompanyWildcard");
+        q = new PathQuery(model);
+        view = new ArrayList<Path>() {{
+            add(new Path(model, "Employee.name"));
+            Path nullpath = null;
+            add(nullpath);
+            add(new Path(model, "Employee.department.name"));
+            add(new Path(model, "Employee.department.company.name"));
+        }};
+        q.setViewPaths(view);
+        assertEquals(e.getView(), q.getView());
+        assertTrue(q.isValid());
     }
 
     public void testAddViewString() {
 
+        // simple
         e = (PathQuery) expected.get("companyName");
         q = new PathQuery(model);
         q.addView("Company.name");
         assertEquals(e.getViewStrings(), q.getViewStrings());
 
+        // add one then another
         e = (PathQuery) expected.get("employeeDepartmentName");
         q = new PathQuery(model);
         q.addView("Employee.name");
         q.addView("Employee.department.name");
         assertEquals(e.getViewStrings(), q.getViewStrings());
 
+        // add three at once
         e = (PathQuery) expected.get("employeeDepartmentCompany");
         q = new PathQuery(model);
         q.addView("Employee.name, Employee.department.name,Employee.department.company.name");
         assertEquals(e.getViewStrings(), q.getViewStrings());
 
-        // TODO put bad paths, empty, null
+        // bad path
+        q = new PathQuery(model);
+        q.addView("monkey");
+        assertTrue(q.getViewStrings().isEmpty());
+        assertFalse(q.isValid());
+
+        // empty path
+        q.addView("");
+        assertEquals("addView() was passed null or empty string", q.getProblems()[1].getMessage().toString());
+        assertFalse(q.isValid());
+
+        // null path
+        q.addView(new String());
+        assertEquals("addView() was passed null or empty string", q.getProblems()[2].getMessage().toString());
+        assertFalse(q.isValid());
 
     }
 
@@ -153,7 +255,7 @@ public class PathQueryTest extends TestCase
             add(new Path(model, "Employee.department.name"));
             add(new Path(model, "Employee.department.company.name"));
         }};
-        q.addPathToView(view);
+        q.addViewPaths(view);
 
         assertEquals(e.getView(), q.getView());
     }
@@ -227,7 +329,6 @@ public class PathQueryTest extends TestCase
         q = new PathQuery(model);
         q.setView("Employee.name");
         assertEquals(e.getSortOrderStrings(), q.getSortOrderStrings());
-
 
         e = (PathQuery) expected.get("noOrderBy");
         q = new PathQuery(model);

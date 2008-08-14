@@ -77,6 +77,39 @@ public class PathQuery
     /*****************************************************************************************/
 
 
+    private void validateView(List<Path> viewList) {
+        Iterator it = viewList.iterator();
+        while (it.hasNext()) {
+            Path path = (Path) it.next();
+            if (path == null || path.equals("")) {
+                it.remove();
+            }
+        }
+    }
+
+    private List<Path> makePaths(List<String> viewStrings) {
+        List<Path> viewPaths = new ArrayList<Path>();
+        Iterator it = viewStrings.iterator();
+        while (it.hasNext()) {
+            String pathString = (String) it.next();
+            if (pathString == null || pathString.trim().equals("")) {
+                logPathError("View list cannot contain a null or empty string");
+                continue;
+            }
+            Path path = null;
+            try {
+                path = makePath(model, this, pathString.trim());
+            } catch (PathError e) {
+                logPathError(e);
+            }
+            if (path != null) {
+                viewPaths.add(path);
+            }
+        }
+        return viewPaths;
+    }
+
+
     /**
      * Sets the select list of the query to the list of paths given.  Paths can be a single path
      * or a comma or space delimited list of paths.  To append a path to the list instead use
@@ -85,7 +118,8 @@ public class PathQuery
      */
     public void setView(String paths) {
         if (paths == null || paths.equals("")) {
-            throw new RuntimeException("setView() was passed null or empty string");
+            logPathError("setView() was passed null or empty string");
+            return;
         }
         String [] pathStrings = paths.split("[, ]+");
         setView(new ArrayList<String>(Arrays.asList(pathStrings)));
@@ -93,21 +127,14 @@ public class PathQuery
 
     /**
      * Clears the view list and sets the value of view to the list of strings given
-     * @param view a list of strings.
+     * @param viewStrings a list of strings.
      */
-    public void setView(List<String> view) {
-        try {
-            Iterator it = view.iterator();
-            List<Path> viewPaths = new ArrayList<Path>();
-            while (it.hasNext()) {
-                String path = (String) it.next();
-                viewPaths.add(makePath(model, this, path.trim()));
-            }
-            setViewPaths(viewPaths);
-        } catch (PathError e) {
-            LOG.error("Path error", e);
-            addProblem(e);
+    public void setView(List<String> viewStrings) {
+        if (viewStrings.isEmpty()) {
+            logPathError("setView() was passed an empty list");
+            return;
         }
+        setViewPaths(makePaths(viewStrings));
     }
 
     /**
@@ -115,21 +142,17 @@ public class PathQuery
      * @param view a List of Paths
      */
     public void setViewPaths(List<Path> view) {
-        try {
-            this.view = view;
-            validateOrderBy();  // QueryBuilder can't have empty order by clause
-            // sets subclasses nodes
-            for (Path path : view) {
-                for (Map.Entry<String, String> entry
-                                : path.getSubClassConstraintPaths().entrySet()) {
-                    String stringPath = entry.getKey();
-                    PathNode node = addNode(stringPath);
-                    node.setType(entry.getValue());
-                }
+        validateView(view);
+        this.view = view;
+        validateOrderBy();  // QueryBuilder can't have empty order by clause
+        // sets subclasses nodes
+        for (Path path : view) {
+            for (Map.Entry<String, String> entry
+                            : path.getSubClassConstraintPaths().entrySet()) {
+                String stringPath = entry.getKey();
+                PathNode node = addNode(stringPath);
+                node.setType(entry.getValue());
             }
-        } catch (PathError e) {
-            LOG.error("Path error", e);
-            addProblem(e);
         }
     }
 
@@ -140,37 +163,30 @@ public class PathQuery
      */
     public void addView(String paths) {
         if (paths == null || paths.equals("")) {
-            throw new RuntimeException("setView() was passed null or empty string");
+            logPathError("addView() was passed null or empty string");
+            return;
         }
         String [] pathStrings = paths.split(",");
         addView(new ArrayList<String>(Arrays.asList(pathStrings)));
     }
 
     /**
-     * Appends the paths to the end of the select list.
-     * @param paths a list of paths to be appended to the end of the view list
+     * Appends the paths to the end of the select list, ignores any bad paths
+     * @param viewStrings a list of paths to be appended to the end of the view list
      */
-    public void addView(List<String> paths) {
-        try {
-            for (String path : paths) {
-                view.add(makePath(model, this, path.trim()));
-            }
-        } catch (PathError e) {
-            LOG.error("Path error", e);
-            addProblem(e);
-        }
+    public void addView(List<String> viewStrings) {
+        addViewPaths(makePaths(viewStrings));
     }
 
     /**
      * Appends the paths to the end of the select list.
      * @param paths a list of paths to be appended to the end of the view list
      */
-    public void addPathToView(List<Path> paths) {
+    public void addViewPaths(List<Path> paths) {
         try {
             view.addAll(paths);
         } catch (PathError e) {
-            LOG.error("Path error", e);
-            addProblem(e);
+            logPathError(e);
         }
     }
 
@@ -184,8 +200,7 @@ public class PathQuery
             view.add(PathQuery.makePath(model, this, viewString));
             validateOrderBy();
         } catch (PathError e) {
-            LOG.error("Path error", e);
-            addProblem(e);
+            logPathError(e);
         }
     }
 
@@ -304,7 +319,6 @@ public class PathQuery
         node.getConstraints().add(constraint);
         return code;
     }
-
 
     /**
      * Set the constraint logic expression. This expresses the AND and OR
@@ -486,8 +500,7 @@ public class PathQuery
                 orderBy.add(new OrderBy(makePath(model, this, path), sortAscending));
             }
         } catch (PathError e) {
-            LOG.error("Path error", e);
-            addProblem(e);
+            logPathError(e);
         }
         sortOrder = orderBy;
     }
@@ -559,8 +572,7 @@ public class PathQuery
                 orderBy.add(new OrderBy(makePath(model, this, path), direction));
             }
         } catch (PathError e) {
-            LOG.error("Path error", e);
-            addProblem(e);
+            logPathError(e);
         }
         sortOrder.addAll(orderBy);
     }
@@ -585,8 +597,7 @@ public class PathQuery
                 orderBy.add(new OrderBy(makePath(model, this, path)));
             }
         } catch (PathError e) {
-            LOG.error("Path error", e);
-            addProblem(e);
+            logPathError(e);
         }
         sortOrder.addAll(orderBy);
     }
@@ -615,7 +626,6 @@ public class PathQuery
             addProblem(e);
         }
     }
-
 
     /**
      * Gets the sort order
@@ -650,7 +660,7 @@ public class PathQuery
                 sortOrder.add(o);
             }
         } catch (PathError e) {
-            addProblem(e);
+            logPathError(e);
         }
     }
 
@@ -723,7 +733,7 @@ public class PathQuery
             try {
                 model.getQualifiedTypeName(path);
             } catch (ClassNotFoundException err) {
-                addProblem(err);
+                logPathError(err);
             }
         } else {
             String prefix = path.substring(0, lastIndex);
@@ -743,7 +753,7 @@ public class PathQuery
                 try {
                     node.setModel(model);
                 } catch (Exception err) {
-                    addProblem(err);
+                    logPathError(err);
                 }
             } else {
                 addNode(prefix);
@@ -875,10 +885,10 @@ public class PathQuery
      */
     public void addPathStringDescription(String viewString, String description) {
         try {
-            Path path = PathQuery.makePath(model, this, viewString);
+            Path path = makePath(model, this, viewString);
             pathDescriptions.put(path, description);
         } catch (PathError e) {
-            addProblem(e);
+            logPathError(e);
         }
     }
 
@@ -912,14 +922,12 @@ public class PathQuery
      */
     public static Path makePath(Model model, PathQuery query, String fullPathName) {
         Map<String, String> subClassConstraintMap = new HashMap<String, String>();
-
         Iterator viewPathNameIter = query.getNodes().keySet().iterator();
         while (viewPathNameIter.hasNext()) {
             String viewPathName = (String) viewPathNameIter.next();
             PathNode pathNode = query.getNode(viewPathName);
             subClassConstraintMap.put(viewPathName.replace(':', '.'), pathNode.getType());
         }
-
         Path path = new Path(model, fullPathName, subClassConstraintMap);
         return path;
     }
@@ -941,7 +949,7 @@ public class PathQuery
     }
 
     /**
-     * Get the exceptions generated while deserialising this path query query.
+     * Get the exceptions generated while deserialising this path query.
      * @return exceptions relating to this path query
      */
     public Throwable[] getProblems() {
@@ -1017,5 +1025,14 @@ public class PathQuery
     public String toString() {
         return "{PathQuery: model=" + model.getName() + ", nodes=" + nodes + ", view=" + view
         + ", sortOrder=" + sortOrder + ", pathDescriptions=" + pathDescriptions + "}";
+    }
+
+    private void logPathError(String msg) {
+        logPathError(new PathError(msg, null));
+    }
+
+    private void logPathError(Throwable e) {
+        LOG.error("Path error", e);
+        addProblem(e);
     }
 }
