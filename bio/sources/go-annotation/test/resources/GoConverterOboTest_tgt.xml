@@ -25,9 +25,11 @@
 </item>
 <item id="3_2" class="http://www.flymine.org/model/genomic#GOTerm">
 <attribute name="identifier" value="GO:0000005"/>
+<collection name="dataSets"><reference ref_id="2_1"/></collection>
 </item>
 <item id="3_3" class="http://www.flymine.org/model/genomic#GOTerm">
 <attribute name="identifier" value="GO:0000011"/>
+<collection name="dataSets"><reference ref_id="2_1"/></collection>
 </item>
 <item id="7_4" class="http://www.flymine.org/model/genomic#GOAnnotation">
 <attribute name="identifier" value="GO:0000001"/>
@@ -47,6 +49,7 @@
 </item>
 <item id="3_1" class="http://www.flymine.org/model/genomic#GOTerm">
 <attribute name="identifier" value="GO:0000004"/>
+<collection name="dataSets"><reference ref_id="2_1"/></collection>
 </item>
 <item id="6_1" class="http://www.flymine.org/model/genomic#Synonym">
 <attribute name="type" value="identifier"/>
@@ -57,6 +60,7 @@
 </item>
 <item id="3_4" class="http://www.flymine.org/model/genomic#GOTerm">
 <attribute name="identifier" value="GO:0000001"/>
+<collection name="dataSets"><reference ref_id="2_1"/></collection>
 </item>
 <item id="4_1" class="http://www.flymine.org/model/genomic#Organism">
 <attribute name="taxonId" value="7227"/>
