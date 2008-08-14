@@ -13,6 +13,7 @@ package org.intermine.bio.dataconversion;
 import java.io.BufferedReader;
 import java.io.StringReader;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
@@ -63,8 +64,8 @@ public class RedFlyGFF3RecordHandlerTest extends ItemsTestCase
         tgtNs = tgtModel.getNameSpace().toString();
         itemFactory = handler.getItemFactory();
         MockIdResolverFactory resolverFactory = new MockIdResolverFactory("Gene");
-        resolverFactory.addResolverEntry("7227", "FBgn001", Collections.singleton("dpp"));
-        resolverFactory.addResolverEntry("7227", "FBgn002", Collections.singleton("dl"));
+        resolverFactory.addResolverEntry("7227", "FBgn0001", Collections.singleton("FBgn0003145"));
+        resolverFactory.addResolverEntry("7227", "FBgn0002", Collections.singleton("FBgn0003339"));
         handler.resolverFactory = resolverFactory;
     }
 
@@ -80,7 +81,7 @@ public class RedFlyGFF3RecordHandlerTest extends ItemsTestCase
 
         BufferedReader srcReader = new BufferedReader(new StringReader(gff));
 
-        LinkedHashSet allItems = new LinkedHashSet();
+        HashSet allItems = new HashSet();
 
         Iterator iter = GFF3Parser.parse(srcReader);
 
@@ -103,7 +104,7 @@ public class RedFlyGFF3RecordHandlerTest extends ItemsTestCase
         // uncomment to write a new tgt items file
         //writeItemsFile(allItems, "redfly-tgt-items.xml");
 
-        Set expected = readItemSet("RedFlyGFF3RecordHandlerTest.xml");
+        Set expected = new HashSet(readItemSet("RedFlyGFF3RecordHandlerTest.xml"));
         System.out.println(ItemsTestCase.compareItemSets(expected, allItems));
         assertEquals(expected, allItems);
     }
