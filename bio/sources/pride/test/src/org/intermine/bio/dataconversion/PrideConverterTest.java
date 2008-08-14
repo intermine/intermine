@@ -37,7 +37,7 @@ public class PrideConverterTest extends ItemsTestCase
         MockItemWriter itemWriter = new MockItemWriter(new HashMap<String, Item>());
         PrideConverter converter = new PrideConverter(itemWriter,
                                                           Model.getInstanceByName("genomic"));
-        converter.setFastaPath(".");
+        converter.setFastaPath("resources");
 
         converter.process(reader);
         converter.close();

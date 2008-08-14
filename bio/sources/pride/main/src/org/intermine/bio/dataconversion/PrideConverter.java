@@ -52,10 +52,10 @@ public class PrideConverter extends FileConverter
     private Map<String, String> mapProject = new HashMap<String, String>();
     private Map<String, String> mapPeptide = new HashMap<String, String>();
 
-    private PrideIndexFasta proteinIndex = new PrideIndexFasta("/shared/data/pride/fasta/");
-    
-    private String currentPath = "/shared/data/pride/fasta/";
+    private PrideIndexFasta proteinIndex = null;
 
+    private String currentPath = null;
+    
     /**
      * Constructor
      * @param writer the ItemWriter used to handle the resultant items
@@ -65,6 +65,10 @@ public class PrideConverter extends FileConverter
         super(writer, model);
     }
 
+    /**
+     * Set the path to the fasta files to index.
+     * @param path to fasta files
+     */
     public void setFastaPath(String path) {
         currentPath = path;
     }
@@ -74,7 +78,12 @@ public class PrideConverter extends FileConverter
      */
     @Override
     public void process(Reader reader) throws Exception {
-        
+        if (proteinIndex == null) {
+            if (currentPath == null) {
+                throw new RuntimeException("fasta.path was not set!");
+            }
+            proteinIndex = new PrideIndexFasta(currentPath);
+        }
         PrideHandler handler = new PrideHandler(getItemWriter());
 
         try {

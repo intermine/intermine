@@ -48,6 +48,7 @@
 
     <source name="pride" type="pride" dump="true">
       <property name="src.data.dir" location="/shared/data/pride/xml/"/>
+      <property name="fasta.path" location="/shared/data/pride/fasta"/>
     </source>
 
     <source name="kegg-pathway" type="kegg-pathway">
