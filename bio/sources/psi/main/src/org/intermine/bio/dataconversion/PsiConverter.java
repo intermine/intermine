@@ -72,6 +72,7 @@ public class PsiConverter extends BioFileConverter
 
     static {
         IDENTIFIERS.put("orf name", "secondaryIdentifier");
+        IDENTIFIERS.put("primaryIdentifier", "primaryIdentifier");
         IDENTIFIERS.put("gene name", "symbol");
         IDENTIFIERS.put("fullName", "secondaryIdentifier");
         IDENTIFIERS.put("shortLabel", "symbol");
