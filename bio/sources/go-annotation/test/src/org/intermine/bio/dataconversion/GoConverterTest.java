@@ -32,7 +32,9 @@ public class GoConverterTest extends ItemsTestCase
     private File goOboFile;
     Model model;
     protected static final String GENOMIC_NS = "http://www.flymine.org/model/genomic#";
-
+    GoConverter converter;
+    MockItemWriter writer;
+    
     public GoConverterTest(String arg) {
         super(arg);
     }
@@ -43,9 +45,18 @@ public class GoConverterTest extends ItemsTestCase
         Reader goOboReader = new InputStreamReader(
             getClass().getClassLoader().getResourceAsStream("go-tiny.obo"));
         writeTempFile(goOboFile, goOboReader);
+        writer = new MockItemWriter(new LinkedHashMap());
+        converter = new GoConverter(writer, model);
+        converter.setOntologyfile(goOboFile);
+        MockIdResolverFactory resolverFactory = new MockIdResolverFactory("Gene");
+        resolverFactory.addResolverEntry("7227", "FBgn0020002", Collections.singleton("FBgn0020002"));
+        resolverFactory.addResolverEntry("7227", "FBgn0015567", Collections.singleton("FBgn0015567"));
+        resolverFactory.addResolverEntry("7227", "FBgn0026430", Collections.singleton("FBgn0026430"));
+        resolverFactory.addResolverEntry("7227", "FBgn0001612", Collections.singleton("FBgn0001612"));
+        converter.resolverFactory = resolverFactory;
     }
 
-    private void writeTempFile(File outFile, Reader srcFileReader) throws Exception{
+    private void writeTempFile(File outFile, Reader srcFileReader) throws Exception {
         FileWriter fileWriter = new FileWriter(outFile);
         int c;
         while ((c = srcFileReader.read()) > 0) {
@@ -59,12 +70,8 @@ public class GoConverterTest extends ItemsTestCase
     }
 
     public void testProcess() throws Exception {
-
         Reader reader = new InputStreamReader(
                 getClass().getClassLoader().getResourceAsStream("GoConverterOboTest_src.txt"));
-        MockItemWriter writer = new MockItemWriter(new LinkedHashMap());
-        GoConverter converter = new GoConverter(writer, model);
-        converter.setOntologyfile(goOboFile);
         converter.process(reader);
         System.out.println("productWrapperMap: " + converter.productWrapperMap.keySet());
         converter.close();
@@ -77,9 +84,6 @@ public class GoConverterTest extends ItemsTestCase
 
 
     public void testCreateWithObjects() throws Exception {
-        MockItemWriter writer = new MockItemWriter(new LinkedHashMap());
-        GoConverter converter = new GoConverter(writer, model);
-
         Set expected = new HashSet();
         ItemFactory tgtItemFactory = new ItemFactory(Model.getInstanceByName("genomic"));
         Item gene1 = tgtItemFactory.makeItem("0_1", GENOMIC_NS + "Gene", "");
@@ -107,10 +111,6 @@ public class GoConverterTest extends ItemsTestCase
 
     // if we see the same product id twice but not in order process should fail
     public void testFileNotOrdered() throws Exception {
-        MockItemWriter writer = new MockItemWriter(new LinkedHashMap());
-        GoConverter converter = new GoConverter(writer, model);
-        converter.setOntologyfile(goOboFile);
-
         Reader reader = new InputStreamReader(
             getClass().getClassLoader().getResourceAsStream("GoConverterOboTest_src.txt"));
 
