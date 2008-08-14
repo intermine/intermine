@@ -61,7 +61,7 @@ public class Drosophila2ProbeConverter extends FileConverter
         store(org);
 
         // only construct factory here so can be replaced by mock factory in tests
-        resolverFactory = new FlyBaseIdResolverFactory();
+        resolverFactory = new FlyBaseIdResolverFactory("gene");
     }
 
 

@@ -63,8 +63,8 @@ public class RedFlyGFF3RecordHandlerTest extends ItemsTestCase
         tgtNs = tgtModel.getNameSpace().toString();
         itemFactory = handler.getItemFactory();
         MockIdResolverFactory resolverFactory = new MockIdResolverFactory("Gene");
-        resolverFactory.addResolverEntry("7227", "FBgn0001", Collections.singleton("FBgn0003145"));
-        resolverFactory.addResolverEntry("7227", "FBgn0002", Collections.singleton("FBgn0003339"));
+        resolverFactory.addResolverEntry("7227", "FBgn001", Collections.singleton("dpp"));
+        resolverFactory.addResolverEntry("7227", "FBgn002", Collections.singleton("dl"));
         handler.resolverFactory = resolverFactory;
     }
 

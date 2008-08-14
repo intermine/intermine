@@ -12,6 +12,7 @@ package org.intermine.bio.dataconversion;
 
 import java.io.BufferedReader;
 import java.io.StringReader;
+import java.util.Collections;
 import java.util.LinkedHashMap;
 import java.util.Set;
 
@@ -40,6 +41,9 @@ public class LongOligoGFF3RecordHandlerTest extends ItemsTestCase
         Model tgtModel = Model.getInstanceByName("genomic");
         handler = new LongOligoGFF3RecordHandler(tgtModel);
         LongOligoGFF3SeqHandler seqHandler = new LongOligoGFF3SeqHandler();
+        MockIdResolverFactory resolverFactory = new MockIdResolverFactory("mRNA");
+        resolverFactory.addResolverEntry("7227", "FBtr0075391", Collections.singleton("CG4314-RA"));
+        seqHandler.resolverFactory = resolverFactory;
         converter = new GFF3Converter(writer, seqClsName, taxonId, dataSourceName, dataSetTitle,
                                       dataSourceName, tgtModel, handler, seqHandler);
     }

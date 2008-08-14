@@ -32,6 +32,18 @@ public class GFF3SeqHandler
         return seq;
     }
 
+
+    /**
+     * Return the identifier of this sequence, default implementation returns the id passed to it.
+     * Subclasses can override to update identifiers to be used, e.g. if using an IdResolver.  This
+     * method is used by GFF3Converter to make sequence items unique.
+     * @param id the id to lookup
+     * @return the identifier to use
+     */
+    public String getSeqIdentifier(String id) {
+        return id;
+    }
+    
     /**
      * Create the sequence item from the converter.
      * @param converter that we are handling the sequence for

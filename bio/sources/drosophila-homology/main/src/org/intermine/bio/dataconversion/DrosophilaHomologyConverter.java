@@ -65,7 +65,7 @@ public class DrosophilaHomologyConverter extends BioFileConverter
         or = OrganismRepository.getOrganismRepository();
 
         // only construct factory here so can be replaced by mock factory in tests
-        resolverFactory = new FlyBaseIdResolverFactory();
+        resolverFactory = new FlyBaseIdResolverFactory("gene");
     }
 
 

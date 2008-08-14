@@ -5,7 +5,7 @@
     <attribute name="residues" value="ACACGGGTCAGGAT"/>
   </item>
   <item id="0_3" class="http://www.flymine.org/model/genomic#MRNA">
-    <attribute name="secondaryIdentifier" value="CG4314-RA"/>
+    <attribute name="primaryIdentifier" value="FBtr0075391"/>
     <reference name="organism" ref_id="0_0"/>
     <collection name="dataSets">
       <reference ref_id="0_2"/>
@@ -43,7 +43,7 @@
   </item>
   <item id="0_4" class="http://www.flymine.org/model/genomic#Synonym">
     <attribute name="type" value="identifier"/>
-    <attribute name="value" value="CG4314-RA"/>
+    <attribute name="value" value="FBtr0075391"/>
     <reference name="source" ref_id="0_1"/>
     <reference name="subject" ref_id="0_3"/>
   </item>

@@ -96,7 +96,7 @@ public class PubMedGeneConverter extends FileConverter
         dataset.setReference("dataSource", datasourceRefId);
         store(dataset);
         datasetRefId = dataset.getIdentifier();
-        resolverFactory = new FlyBaseIdResolverFactory();
+        resolverFactory = new FlyBaseIdResolverFactory("gene");
     }
 
     /**

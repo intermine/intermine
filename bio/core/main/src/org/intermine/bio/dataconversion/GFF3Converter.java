@@ -242,7 +242,7 @@ public class GFF3Converter
             }
         }
         Item relation;
-        if (!record.getType().equals("chromosome")) {
+        if (!record.getType().equals("chromosome") && seq != null) {
             if (record.getStart() < 1 || record.getEnd() < 1 || dontCreateLocations
                 || !handler.createLocations(record)) {
                 relation = createItem("SimpleRelation");
@@ -445,24 +445,34 @@ public class GFF3Converter
      * @throws ObjectStoreException if the Item can't be stored
      */
     private Item getSeq(String id) throws ObjectStoreException {
-        String identifier = id;
+        // the seqHandler may have changed the id used, e.g. if using an IdResolver
+        String identifier = sequenceHandler.getSeqIdentifier(id);
+        
+        if (identifier == null) {
+            return null;
+        }
+        
         if (identifier.startsWith("chr")) {
             identifier = identifier.substring(3);
         }
+        
         Item seq = (Item) seqs.get(identifier);
         if (seq == null) {
             seq = sequenceHandler.makeSequenceItem(this, identifier);
-            seq.addReference(getOrgRef());
-            seq.addToCollection("dataSets", getDataSet());
-            writer.store(ItemHelper.convert(seq));
+            // sequence handler may choose not to create sequence
+            if (seq != null) {
+                seq.addReference(getOrgRef());
+                seq.addToCollection("dataSets", getDataSet());
+                writer.store(ItemHelper.convert(seq));
 
-            Item synonym = createItem("Synonym");
-            synonym.setReference("subject", seq.getIdentifier());
-            synonym.setAttribute("value", identifier);
-            synonym.setAttribute("type", "identifier");
-            synonym.setReference("source", seqDataSource.getIdentifier());
-            handler.addItem(synonym);
-            seqs.put(identifier, seq);
+                Item synonym = createItem("Synonym");
+                synonym.setReference("subject", seq.getIdentifier());
+                synonym.setAttribute("value", identifier);
+                synonym.setAttribute("type", "identifier");
+                synonym.setReference("source", seqDataSource.getIdentifier());
+                handler.addItem(synonym);
+                seqs.put(identifier, seq);
+            }
         }
         handler.setSequence(seq);
         return seq;

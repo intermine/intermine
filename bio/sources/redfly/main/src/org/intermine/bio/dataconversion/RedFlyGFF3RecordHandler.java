@@ -49,7 +49,7 @@ public class RedFlyGFF3RecordHandler extends GFF3RecordHandler
         super(tgtModel);
         tgtNs = tgtModel.getNameSpace().toString();
         // only construct factory here so can be replaced by mock factory in tests
-        resolverFactory = new FlyBaseIdResolverFactory();
+        resolverFactory = new FlyBaseIdResolverFactory("gene");
     }
 
     /**

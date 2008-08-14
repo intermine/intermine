@@ -13,10 +13,9 @@ package org.intermine.bio.dataconversion;
 import java.util.Iterator;
 import java.util.List;
 
+import org.intermine.bio.io.gff3.GFF3Record;
 import org.intermine.metadata.Model;
 import org.intermine.xml.full.Item;
-
-import org.intermine.bio.io.gff3.GFF3Record;
 
 /**
  * A converter/retriever for the long oligo dataset.
@@ -27,7 +26,7 @@ import org.intermine.bio.io.gff3.GFF3Record;
 public class LongOligoGFF3RecordHandler extends GFF3RecordHandler
 {
     private String tgtNs;
-
+    
     /**
      * Create a new LongOligoGFF3RecordHandler for the given target model.
      * @param tgtModel the model for which items will be created
@@ -48,8 +47,12 @@ public class LongOligoGFF3RecordHandler extends GFF3RecordHandler
         String oaTm = (String) ((List) record.getAttributes().get("oaTm")).get(0);
         oligo.setAttribute("tm", oaTm);
 
-        oligo.setReference("transcript", getSequence().getIdentifier());
-
+        
+        Item transcript = getSequence();
+        if (transcript != null) {
+            oligo.setReference("transcript", transcript.getIdentifier());
+        }
+        
         String residues = (String) ((List) record.getAttributes().get("sequence")).get(0);
         if (residues != null) {
             Item seqItem = getItemFactory().makeItem(null, tgtNs + "Sequence", "");
@@ -68,6 +71,7 @@ public class LongOligoGFF3RecordHandler extends GFF3RecordHandler
         }
     }
 
+    
     /**
      * Create a synonym Item from the given information.
      */

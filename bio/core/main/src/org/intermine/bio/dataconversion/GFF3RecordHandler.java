@@ -143,6 +143,13 @@ public class GFF3RecordHandler
     }
 
     /**
+     * Clear the location item for this record.
+     */
+    public void clearLocation() {
+        items.remove("_location");
+    }
+    
+    /**
      * Set the feature item for this record.
      * @param feature the feature item
      */

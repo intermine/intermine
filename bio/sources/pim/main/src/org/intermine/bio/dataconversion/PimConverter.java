@@ -60,7 +60,7 @@ public class PimConverter extends BioFileConverter
         super(writer, model, "PIMRider", "PIMRider data set");
 
         // only construct factory here so can be replaced by mock factory in tests
-        resolverFactory = new FlyBaseIdResolverFactory();
+        resolverFactory = new FlyBaseIdResolverFactory("gene");
 
         try {
             termId = getTerm("MI:0117");

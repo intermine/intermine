@@ -64,7 +64,7 @@ public class FlyFishConverter extends BioFileConverter
         stages = getStages();
 
         // only construct factory here so can be replaced by mock factory in tests
-        resolverFactory = new FlyBaseIdResolverFactory();
+        resolverFactory = new FlyBaseIdResolverFactory("gene");
     }
 
     private class HeaderConfig

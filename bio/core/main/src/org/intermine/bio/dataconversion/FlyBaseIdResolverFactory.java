@@ -32,24 +32,47 @@ public class FlyBaseIdResolverFactory extends IdResolverFactory
 {
     protected static final Logger LOG = Logger.getLogger(FlyBaseIdResolverFactory.class);
     private Database db;
+    private String soTerm = null, taxonId = null;
 
+
+    /**
+     * Construct with SO term of the feature type to read from chado database.
+     * @param soTerm the feature type to resolve
+     */
+    public FlyBaseIdResolverFactory(String soTerm) {
+        this.soTerm = soTerm;
+    }
+
+    
+    /**
+     * Construct with SO term of the feature type to read from chado database and restrict to
+     * data from only one organism.
+     * @param soTerm the feature type to resolve
+     * @param taxonId taxon id of the organism to resolve identifiers for
+     */
+    public FlyBaseIdResolverFactory(String soTerm, String taxonId) {
+        this.soTerm = soTerm;
+        this.taxonId = taxonId;
+    }
+    
+    
     /**
      * Build an IdResolver for FlyBase by accessing a FlyBase chado database.
      * @return an IdResolver for FlyBase
      */
     protected IdResolver createIdResolver() {
-        String clsName = "Gene";
-        IdResolver resolver = new IdResolver(clsName);
-
+        IdResolver resolver = new IdResolver(soTerm);
+        
         try {
             // TODO maybe this shouldn't be hard coded here?
             db = DatabaseFactory.getDatabase("db.flybase");
 
-            String cacheFileName = "build/" + db.getName() + "." + clsName;
+            String cacheFileName = "build/" + db.getName() + "." + soTerm 
+                + ((taxonId != null) ? "." + taxonId : "");
             File f = new File(cacheFileName);
             if (f.exists()) {
-                System.out.println("FlyBaseIdResolver reading from cache file: " + cacheFileName);
-                resolver = createFromFile(clsName, f);
+                System.out .println("FlyBaseIdResolver reading from cache file: " + cacheFileName);
+                resolver = createFromFile(soTerm, f);
             } else {
                 resolver = createFromDb(db);
                 resolver.writeToFile(f);
@@ -62,7 +85,7 @@ public class FlyBaseIdResolverFactory extends IdResolverFactory
     
     
     private IdResolver createFromDb(Database db) {
-        IdResolver resolver = new IdResolver("Gene");
+        IdResolver resolver = new IdResolver(soTerm);
         Connection conn = null;
         OrganismRepository or = OrganismRepository.getOrganismRepository();
         
@@ -73,32 +96,57 @@ public class FlyBaseIdResolverFactory extends IdResolverFactory
                 + " from cvterm c, cv"
                 + " where c.cv_id = cv.cv_id"
                 + " and cv.name = \'SO\'"
-                + " and c.name =\'gene\'";
+                + " and c.name =\'" + soTerm + "\'";
             Statement stmt = conn.createStatement();
             ResultSet res = stmt.executeQuery(query);
-            String geneTerm = null;
+            String soTermId = null;
             res.next();
-            geneTerm = res.getString("cvterm_id");
+            soTermId = res.getString("cvterm_id");
 
-
+            String orgConstraint = "";
+            if (taxonId != null) {
+                String abbrev = or.getOrganismDataByTaxon(new Integer(taxonId)).getAbbreviation();
+                query = "select organism_id"
+                    + " from organism"
+                    + " where abbreviation = \'" + abbrev + "\'";
+                LOG.info("QUERY: " + query);
+                stmt = conn.createStatement();
+                res = stmt.executeQuery(query);
+                String organismId = null;
+                res.next();
+                organismId = res.getString("organism_id");
+                    
+                orgConstraint = " and o.organism_id = " + organismId;
+            }
+            
+            String extraConstraint = "";
+            if (soTerm.equals("gene")) {
+                extraConstraint = " and  f.uniquename like \'FBgn%\'";
+            }
+            
             // fetch feature name for located genes
             query = "select distinct o.abbreviation, f.uniquename, f.name"
                 + " from feature f, featureloc l, organism o"
                 + " where f.organism_id = o.organism_id"
                 + " and f.is_obsolete = false"
-                + " and f.type_id = " + geneTerm
-                + " and  f.uniquename like \'FBgn%\'"
-                + " and l.feature_id = f.feature_id";
+                + " and f.type_id = " + soTermId
+                + " and l.feature_id = f.feature_id"
+                + orgConstraint
+                + extraConstraint;
+            LOG.info("QUERY: " + query);
             stmt = conn.createStatement();
             res = stmt.executeQuery(query);
+            int i = 0;
             while (res.next()) {
                 String uniquename = res.getString("uniquename");
                 String name = res.getString("name");
                 String organism = res.getString("abbreviation");
                 String taxonId = "" + or.getOrganismDataByAbbreviation(organism).getTaxonId();
                 resolver.addSynonyms(taxonId, uniquename, Collections.singleton(name));
+                i++;
             }
-
+            LOG.info("feature query returned " + i + " rows.");
+            
             // fetch gene synonyms
             query = "select distinct o.abbreviation, f.uniquename, s.name, "
                 + " fs.is_current, c.name as type"
@@ -106,14 +154,17 @@ public class FlyBaseIdResolverFactory extends IdResolverFactory
                 + " organism o, cvterm c"
                 + " where f.organism_id = o.organism_id"
                 + " and f.is_obsolete = false"
-                + " and f.type_id = " + geneTerm
-                + " and f.uniquename like \'FBgn%\'"
+                + " and f.type_id = " + soTermId
                 + " and l.feature_id = f.feature_id"
                 + " and fs.feature_id = f.feature_id "
                 + " and fs.synonym_id = s.synonym_id"
-                + " and s.type_id = c.cvterm_id";
+                + " and s.type_id = c.cvterm_id"
+                + orgConstraint
+                + extraConstraint;
+            LOG.info("QUERY: " + query);
             stmt = conn.createStatement();
             res = stmt.executeQuery(query);
+            i = 0;
             while (res.next()) {
                 String uniquename = res.getString("uniquename");
                 String synonym = res.getString("name");
@@ -127,22 +178,26 @@ public class FlyBaseIdResolverFactory extends IdResolverFactory
                     resolver.addSynonyms(taxonId, uniquename, Collections.singleton(synonym));
                 }
             }
-
+            LOG.info("synonym query returned " + i + " rows.");
+            
             // fetch FlyBase dbxrefs for located genes
             query = "select distinct o.abbreviation, f.uniquename,"
                 + " d.accession, db.name, fd.is_current"
                 + " from feature f, dbxref d, feature_dbxref fd, db, featureloc l, organism o"
                 + " where f.organism_id = o.organism_id"
                 + " and f.is_obsolete = false"
-                + " and f.type_id = " + geneTerm
-                + " and f.uniquename like \'FBgn%\'"
+                + " and f.type_id = " + soTermId
                 + " and f.feature_id = l.feature_id"
                 + " and fd.feature_id = f.feature_id"
                 + " and fd.dbxref_id = d.dbxref_id"
                 + " and d.db_id = db.db_id"
-                + " and db.name like \'FlyBase%\'";
+                + " and db.name like \'FlyBase%\'"
+                + orgConstraint
+                + extraConstraint;
+            LOG.info("QUERY: " + query);
             stmt = conn.createStatement();
             res = stmt.executeQuery(query);
+            i = 0;
             while (res.next()) {
                 String uniquename = res.getString("uniquename");
                 String accession = res.getString("accession");
@@ -156,6 +211,7 @@ public class FlyBaseIdResolverFactory extends IdResolverFactory
                     resolver.addSynonyms(taxonId, uniquename, Collections.singleton(accession));
                 }
             }
+            LOG.info("dbxref query returned " + i + " rows.");
         } catch (Exception e) {
             LOG.error(e);
             throw new RuntimeException(e);

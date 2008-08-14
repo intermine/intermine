@@ -40,7 +40,7 @@ public class MirandaGFF3RecordHandler extends GFF3RecordHandler
      */
     public MirandaGFF3RecordHandler(Model tgtModel) {
         super(tgtModel);
-        resolverFactory = new FlyBaseIdResolverFactory();
+        resolverFactory = new FlyBaseIdResolverFactory("gene", "7227");
     }
 
     /**
