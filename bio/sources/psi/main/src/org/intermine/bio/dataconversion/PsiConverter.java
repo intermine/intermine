@@ -611,11 +611,20 @@ public class PsiConverter extends BioFileConverter
         private Item getGene(String taxonId)
         throws ObjectStoreException, SAXException {
             String identifier = null, label = null;
+            if (taxonId.equals("4932")) {
+                identifier = identifiers.get("primaryIdentifier");
+                label="primaryIdentifier";
+                if (identifier == null) {
+                    LOG.error("couldn't resolve yeast gene: " + identifiers.toString());
+                    return null;
+                }
+            } else {
             for (String identifierType : IDENTIFIERS.keySet()) {
                 // get identifier for next identifier type on the list
                 // yeast has duplicate symbols, eg. RET1
+                // TODO this may not be necessary
                 if (taxonId.equals("4932") && identifierType.equals("symbol")) {
-                  continue;
+                    continue;
                 }
                 identifier = identifiers.get(identifierType);
                 // if this gene doesn't have that type of identifier, keep going
@@ -644,6 +653,7 @@ public class PsiConverter extends BioFileConverter
                                            + " interactor " + interactorId);
                 }
                 return null;
+            }
             }
             Item item = genes.get(identifier);
             if (item == null) {
