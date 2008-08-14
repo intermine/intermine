@@ -40,29 +40,29 @@ import org.intermine.webservice.output.Output;
  * Web service that returns all public lists (bags) that contain object with
  * specified id.
  * See {@link ListsRequestProcessor} for parameter description
- *  URL examples: 
+ *  URL examples:
  *  Get all public lists with specified intermine id
- *  /listswithobject?output=xml&id=1343743 
+ *  /listswithobject?output=xml&id=1343743
  *  Get all public lists with specified id, corresponding intermine id is found with lookup
  *  /listswithobject?output=xml&publicId=1343743
  * @author Jakub Kulaviak
  **/
 public class ListsService extends WebService
 {
-    
+
     /**
-     * Executes service specific logic. 
+     * Executes service specific logic.
      * @param request request
      * @param response response
      */
     @Override
     protected void execute(HttpServletRequest request, HttpServletResponse response) {
-        
+
         ListsServiceInput input = getInput();
         if (!validate(input)) {
             return;
         }
-        
+
         Integer objectId = null;
         if (input.getMineId() == null) {
             objectId = resolveMineId(request, input);
@@ -77,7 +77,7 @@ public class ListsService extends WebService
                 return;
             }
         }
-        
+
         List<String> listNames = new ListManager(request).getListsNames(objectId);
         addListsToOutput(listNames);
         forward(input, output);
@@ -110,13 +110,13 @@ public class ListsService extends WebService
 
         // checks  type
         if (model.getClassDescriptorByName(input.getType()) == null) {
-            output.addError("invalid " + ListsRequestParser.TYPE_PARAMETER + " parameter." 
-                    + " Specified type of the object doesn't exist: " + input.getType(), 
+            output.addError("invalid " + ListsRequestParser.TYPE_PARAMETER + " parameter."
+                    + " Specified type of the object doesn't exist: " + input.getType(),
                     Output.SC_BAD_REQUEST);
             output.flush();
-            return null;                
+            return null;
         }
-        
+
         PathQuery pathQuery = new PathQuery(model);
         PathNode node = new PathNode(input.getType());
         Constraint constraint = new Constraint(ConstraintOp.LOOKUP, input.getPublicId());
@@ -127,18 +127,17 @@ public class ListsService extends WebService
         Results results = executor.getResults();
         if (results.size() != 1) {
             if (results.size() == 0) {
-                output.addError("No objects of type " + input.getType() + " with public id " 
+                output.addError("No objects of type " + input.getType() + " with public id "
                         + input.getPublicId() + " were found.", Output.SC_NOT_FOUND);
             } else {
-                output.addError("Multiple objects of type " + input.getType() + " with public id " 
+                output.addError("Multiple objects of type " + input.getType() + " with public id "
                         + input.getPublicId() + " were found.", Output.SC_BAD_REQUEST);
             }
             output.flush();
             return null;
-        } else {
-            ResultsRow row = (ResultsRow) results.get(0);
-            return ((InterMineObject) row.get(0)).getId();
         }
+        ResultsRow row = (ResultsRow) results.get(0);
+        return ((InterMineObject) row.get(0)).getId();
     }
 
     private void forward(ListsServiceInput input, Output output) {
@@ -153,7 +152,7 @@ public class ListsService extends WebService
                 getHtmlForward().forward(request, response);
             } catch (Exception e) {
                 throw new WebServiceException(WebServiceConstants.SERVICE_FAILED_MSG, e);
-            } 
+            }
         }
     }
 
