@@ -48,6 +48,7 @@ public class PathQuery
     private List<Throwable> problems = new ArrayList<Throwable>();
     protected LogicExpression constraintLogic = null;
     private Map<Path, String> pathDescriptions = new HashMap<Path, String>();
+    private static final String MSG = "View list cannot contain a null or empty string";
 
     /**
      * Construct a new instance of PathQuery.
@@ -93,7 +94,7 @@ public class PathQuery
         while (it.hasNext()) {
             String pathString = (String) it.next();
             if (pathString == null || pathString.trim().equals("")) {
-                logPathError("View list cannot contain a null or empty string");
+                logPathError(MSG);
                 continue;
             }
             Path path = null;
@@ -118,7 +119,7 @@ public class PathQuery
      */
     public void setView(String paths) {
         if (paths == null || paths.equals("")) {
-            logPathError("setView() was passed null or empty string");
+            logPathError(MSG);
             return;
         }
         String [] pathStrings = paths.split("[, ]+");
@@ -131,7 +132,7 @@ public class PathQuery
      */
     public void setView(List<String> viewStrings) {
         if (viewStrings.isEmpty()) {
-            logPathError("setView() was passed an empty list");
+            logPathError(MSG);
             return;
         }
         setViewPaths(makePaths(viewStrings));
@@ -163,7 +164,7 @@ public class PathQuery
      */
     public void addView(String paths) {
         if (paths == null || paths.equals("")) {
-            logPathError("addView() was passed null or empty string");
+            logPathError(MSG);
             return;
         }
         String [] pathStrings = paths.split(",");
@@ -183,6 +184,11 @@ public class PathQuery
      * @param paths a list of paths to be appended to the end of the view list
      */
     public void addViewPaths(List<Path> paths) {
+        validateView(paths);
+        if (paths.isEmpty()) {
+            logPathError(MSG);
+            return;
+        }
         try {
             view.addAll(paths);
         } catch (PathError e) {
