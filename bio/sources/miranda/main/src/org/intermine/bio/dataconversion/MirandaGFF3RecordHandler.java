@@ -30,8 +30,9 @@ public class MirandaGFF3RecordHandler extends GFF3RecordHandler
 
     private URI nameSpace;
 
-    protected IdResolverFactory resolverFactory;
-
+    protected IdResolverFactory geneResolverFactory;
+    protected IdResolverFactory mrnaResolverFactory;
+    
     protected static final Logger LOG = Logger.getLogger(MirandaGFF3RecordHandler.class);
 
     /**
@@ -40,7 +41,8 @@ public class MirandaGFF3RecordHandler extends GFF3RecordHandler
      */
     public MirandaGFF3RecordHandler(Model tgtModel) {
         super(tgtModel);
-        resolverFactory = new FlyBaseIdResolverFactory("gene", "7227");
+        geneResolverFactory = new FlyBaseIdResolverFactory("gene", "7227");
+        mrnaResolverFactory = new FlyBaseIdResolverFactory("mRNA", "7227");
     }
 
     /**
@@ -58,20 +60,33 @@ public class MirandaGFF3RecordHandler extends GFF3RecordHandler
         Item target = getTarget(targetName);
         if (gene != null) {
             feature.setReference("mirnagene", gene);
+        }
+        if (target != null) {
             feature.setReference("target", target);
         }
     }
 
     private Item getTarget(String targetName) {
-        Item target = targets.get(targetName);
-        if (target == null) {
-            target = createItem("MRNA");
-            target.setAttribute("secondaryIdentifier", targetName);
-            target.addToCollection("dataSets", getDataSet());
-            target.setReference("organism", getOrganism().getIdentifier());
-            targets.put(targetName, target);
-            addEarlyItem(target);
-        }
+        Item target = null;
+        
+        IdResolver resolver = mrnaResolverFactory.getIdResolver();
+        String primaryIdentifier = null;
+        int resCount = resolver.countResolutions("7227", targetName);
+        if (resCount == 1) {
+            primaryIdentifier = resolver.resolveId("7227", targetName).iterator().next();
+            target = targets.get(primaryIdentifier);
+            if (target == null) {
+                target = createItem("MRNA");
+                target.setAttribute("primaryIdentifier", primaryIdentifier);
+                target.addToCollection("dataSets", getDataSet());
+                target.setReference("organism", getOrganism().getIdentifier());
+                targets.put(primaryIdentifier, target);
+                addEarlyItem(target);
+            }
+        } else {
+            LOG.info("RESOLVER: failed to resolve mRNA to one identifier, ignoring mRNA: "
+                     + targetName + " count: " + resCount);
+        }       
         return target;
     }
 
@@ -81,7 +96,7 @@ public class MirandaGFF3RecordHandler extends GFF3RecordHandler
         // in FlyBase symbols are e.g. mir-5 not miR-5
         String symbol = geneNameToUse.toLowerCase();
         String taxonId = getOrganism().getAttribute("taxonId").getValue();
-        IdResolver resolver = resolverFactory.getIdResolver();
+        IdResolver resolver = geneResolverFactory.getIdResolver();
         if (resolver.hasTaxon(taxonId)) {
             int resCount = resolver.countResolutions(taxonId, symbol);
             if (resCount != 1) {
