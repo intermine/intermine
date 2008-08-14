@@ -188,6 +188,18 @@ public class PsiConverter extends BioFileConverter
             } else if ((qName.equals("fullName") || qName.equals("shortLabel"))
                             && stack.search("interactor") == 2) {
                 attName = qName;
+            // <interactorList><interactor id="4"><xref>
+            // <secondaryRef db="sgd" dbAc="MI:0484" id="S000006331" secondary="YPR127W"/>
+            } else if (qName.equals("secondaryRef") && stack.search("interactor") == 2) {
+                String db = attrs.getValue("db");
+                if (db != null) {
+                    if (db.equalsIgnoreCase("sgd") || db.equalsIgnoreCase("flybase")) {
+                        identifiers.put("primaryIdentifier", attrs.getValue("id"));
+//                    } else if (db.equalsIgnoreCase("ensembl")) {
+//                        identifiers.put("secondaryIdentifier", attrs.getValue("id"));
+                    }
+                }
+
                 // <interactorList><interactor id="4"><organism ncbiTaxId="7227">
             } else if (qName.equals("organism") && stack.peek().equals("interactor")) {
                 String taxId = attrs.getValue("ncbiTaxId");
@@ -199,8 +211,8 @@ public class PsiConverter extends BioFileConverter
                     }
                     if (!validGenes.containsKey(interactorId)) {
                         validGenes.put(interactorId, gene);
-//                    }
-                }
+                    }
+//                }
                 identifiers = new HashMap();
                 // <interactorList><interactor id="4"><names>
                 // <alias type="locus name" typeAc="MI:0301">HSC82</alias>
@@ -420,12 +432,12 @@ public class PsiConverter extends BioFileConverter
                         ident = interactor.getAttribute("secondaryIdentifier").getValue();
                     }
                     if ((ident == null || ident.equals(""))
-                                    && interactor.getAttribute("symbol") != null) {
-                        ident = interactor.getAttribute("symbol").getValue();
-                    }
-                    if ((ident == null || ident.equals(""))
                                     && interactor.getAttribute("primaryIdentifier") != null) {
                         ident = interactor.getAttribute("primaryIdentifier").getValue();
+                    }
+                    if ((ident == null || ident.equals(""))
+                                    && interactor.getAttribute("symbol") != null) {
+                        ident = interactor.getAttribute("symbol").getValue();
                     }
                     if (ident != null) {
                         interactorHolder.identifier = ident;
@@ -565,7 +577,6 @@ public class PsiConverter extends BioFileConverter
                         //
                     }
                 }
-
             }
 
             /* store all experiment-related items */
@@ -600,10 +611,13 @@ public class PsiConverter extends BioFileConverter
         throws ObjectStoreException, SAXException {
             String identifier = null, label = null;
             for (String identifierType : IDENTIFIERS.keySet()) {
+                // get identifier for next identifier type on the list
                 identifier = identifiers.get(identifierType);
+                // if this gene doesn't have that type of identifier, keep going
                 if (identifier == null) {
                     continue;
                 }
+                // if dmel, use resolver
                 if (taxonId.equals("7227")) {
                     IdResolver resolver = resolverFactory.getIdResolver(false);
                     if (resolver != null) {
