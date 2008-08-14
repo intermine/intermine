@@ -90,7 +90,7 @@
 <collection name="dataSets"><reference ref_id="0_2"/></collection>
 </item>
 <item id="1_1" class="http://www.flymine.org/model/genomic#MRNA">
-<attribute name="secondaryIdentifier" value="CG11023-RA"/>
+<attribute name="primaryIdentifier" value="FBtr0089256"/>
 <collection name="dataSets"><reference ref_id="0_2"/></collection>
 <reference name="organism" ref_id="0_0"/>
 </item>
