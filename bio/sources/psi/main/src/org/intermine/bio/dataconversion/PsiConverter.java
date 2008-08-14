@@ -210,7 +210,7 @@ public class PsiConverter extends BioFileConverter
                     } catch (ObjectStoreException e) {
                         throw new RuntimeException("failed storing gene");
                     }
-                    if (!validGenes.containsKey(interactorId)) {
+                    if (gene != null && !validGenes.containsKey(interactorId)) {
                         validGenes.put(interactorId, gene);
                     }
 //                }
@@ -645,7 +645,10 @@ public class PsiConverter extends BioFileConverter
             if (item == null) {
                 item = createItem("Gene");
                 item.setAttribute(label, identifier);
-                item.setReference("organism", getOrganism(taxonId));
+                // TODO where are these coming from?  do we want to store this gene?
+                if (!taxonId.equals("-1") && !taxonId.equals("-2")) {
+                    item.setReference("organism", getOrganism(taxonId));
+                }
                 genes.put(identifier, item);
                 store(item);
             }
