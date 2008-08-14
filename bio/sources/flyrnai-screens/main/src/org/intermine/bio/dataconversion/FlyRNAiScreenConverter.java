@@ -60,7 +60,7 @@ public class FlyRNAiScreenConverter extends BioFileConverter
         super(writer, model, "DRSC", "DRSC data set");
 
         // only construct factory here so can be replaced by mock factory in tests
-        resolverFactory = new FlyBaseIdResolverFactory();
+        resolverFactory = new FlyBaseIdResolverFactory("gene");
     }
 
     /**

@@ -47,7 +47,7 @@ public class FlyRegGFF3RecordHandler extends GFF3RecordHandler
     public FlyRegGFF3RecordHandler(Model tgtModel) {
         super(tgtModel);
         // only construct factory here so can be replaced by mock factory in tests
-        resolverFactory = new FlyBaseIdResolverFactory();
+        resolverFactory = new FlyBaseIdResolverFactory("gene");
     }
 
     /**

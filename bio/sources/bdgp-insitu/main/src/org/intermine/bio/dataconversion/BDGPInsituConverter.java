@@ -86,7 +86,7 @@ public class BDGPInsituConverter extends FileConverter
         stageDescriptions = getStageDescriptions();
         badTerms = getBadTerms();
 
-        resolverFactory = new FlyBaseIdResolverFactory();
+        resolverFactory = new FlyBaseIdResolverFactory("gene");
     }
 
     /**

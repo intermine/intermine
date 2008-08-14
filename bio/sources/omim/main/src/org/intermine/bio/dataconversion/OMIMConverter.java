@@ -1,7 +1,6 @@
 package org.intermine.bio.dataconversion;
 
 import java.io.BufferedReader;
-import java.io.IOException;
 import java.io.Reader;
 import java.util.HashMap;
 import java.util.List;
@@ -13,156 +12,85 @@ import org.intermine.dataconversion.ItemWriter;
 import org.intermine.metadata.Model;
 import org.intermine.objectstore.ObjectStoreException;
 import org.intermine.xml.full.Item;
-import org.intermine.xml.full.ItemHelper;
 import org.intermine.xml.full.Reference;
 
 public class OMIMConverter extends FileConverter{
 
     protected static final String GENOMIC_NS = "http://www.flymine.org/model/genomic#";
-    
-    public OMIMConverter(ItemWriter writer, Model model) {
+    //private data fields
+    private ItemWriter writer;
+    private BufferedReader in;
+    private List<String> values;
+    private List<List<String>> valueList;
+    private Map<String, String> geneMap = new HashMap<String, String>();
+    private Item organism = null;
+
+    public OMIMConverter(ItemWriter writer, Model model) throws ObjectStoreException {
         super(writer, model);
+        organism = createItem("Organism");
+        organism.setAttribute("taxonId", "9606");
+        store(organism);
     }
+    
+    
     /**
      * {@inheritDoc}
      */
     public void process(Reader reader) throws Exception {
 
-        OMIMHandler handler = new OMIMHandler(getItemWriter());
+        in = new BufferedReader(reader);
 
-        try {
-            handler.parseCVS(reader);
-        } catch (Exception e) {
-            e.printStackTrace();
-            throw new RuntimeException(e);
-        }
+        values = new Vector<String>();
+        valueList = new Vector<List<String>>();
 
-    }
-    
-    private class OMIMHandler
-    {
-        //private data fields
-        private ItemWriter writer;
-        private BufferedReader in;
-        private List<String> values;
-        private List<List<String>> valueList;
-        private Map<String, String> geneMap = new HashMap<String, String>();
-        private Item gene = null;
-        private Item omimDisease = null;
-        private Item organism = null;
-        /**
-         * Constructor
-         * @param writer the ItemWriter used to handle the resultant items
-         */
-        public OMIMHandler(ItemWriter writer) {
-            this.writer = writer;
-        }
-        
-        public void parseCVS(Reader reader) throws IOException, ObjectStoreException {
+        String delimiter = "\\|";
+
+        String readString;
+
+        //read fields and values
+        while((readString = in.readLine()) != null) {
+            String[] tmp = readString.split(delimiter);
+            String disorders = null;
+            String geneSymbols = tmp[5];
+            String status = tmp[6];
+            String title = tmp[7];
+            String omimId = tmp[9];
             
-            in = new BufferedReader(reader);
-            
-            values = new Vector<String>();
-            valueList = new Vector<List<String>>();
-            
-            String delimiter = "\\|";
-            
-            String readString;
-            
-            //read fields and values
-            while((readString = in.readLine()) != null) {
-                String[] tmp = readString.split(delimiter);
-                String disorders = null;
-                values = new Vector<String>();
-                for(int i = 0; i < tmp.length; i++) {
-                    switch(i) {
-                        case 5: { //gene symbols seperated by ,
-                            values.add(tmp[i]);
-                            break;
-                        }
-                        case 7: { //title
-                            values.add(tmp[i]);
-                            break;
-                        }
-                        case 9: { //mimId
-                            values.add(tmp[i]);
-                            break;
-                        }
-                        case 13: { //Disorders1
-                            if(!tmp[i].equals("")) {
-                                disorders = tmp[i];
-                            }
-                            break;
-                        }
-                        case 14: { //Disorders2
-                            if(!tmp[i].equals("")) {
-                                disorders += tmp[i];
-                            }
-                            break;
-                        }
-                        case 15: { //Disorders3
-                            if(!tmp[i].equals("")) {
-                                disorders += tmp[i];
-                            }
-                            break;
-                        }
-                    }
+            for (int i = 13; i <= 15; i++) {
+                if (tmp[i] != null && !tmp[i].equals("")) {
+                    disorders += tmp[i];
                 }
-                if(disorders != null) {
-                    values.add(disorders);
-                }
-                valueList.add(values);
             }
-            organism = createItem("Organism");
-            organism.setAttribute("taxonId", "9606");
-            writer.store(ItemHelper.convert(organism));
             
-            storeValues();
-        }
-        
-       
-        private void storeValues() throws ObjectStoreException {
-            for (int i = 0; i < valueList.size(); i++) {
-                values = valueList.get(i);
-                
-                String geneSymbols = values.get(0);
-                String[] geneSymbol = geneSymbols.split(",");
-                
+            if(disorders != null) {
+                values.add(disorders);
+            }
+            
+            Item disease = createItem("Disease");
+            if (omimId != null && !omimId.equals("")) {
+                disease.setAttribute("omimId", omimId);
+            
+                disease.setAttribute("status", status);
+                disease.setAttribute("description", disorders);
+
                 String geneRefId = null;
-                
-                omimDisease = createItem("OMIM");
-           
+                String[] geneSymbol = geneSymbols.split(",");
                 for (int j = 0; j < geneSymbol.length; j++) {
                     if (geneMap.get(geneSymbol[j]) == null) {
-                        gene = createItem("Gene");
+                        Item gene = createItem("Gene");
                         gene.setAttribute("symbol", geneSymbol[j]);
                         geneRefId = gene.getIdentifier();
                         gene.addReference(new Reference("organism", organism.getIdentifier()));
-                        writer.store(ItemHelper.convert(gene));
+                        store(gene);
                         geneMap.put(geneSymbol[j], geneRefId);
                     } else {
                         geneRefId = geneMap.get(geneSymbol[j]);
                     }
-                    omimDisease.addToCollection("genes", gene);
+                    disease.setReference("gene", geneRefId); 
                 }
-                
-                if (values.get(1) != null) {
-                    omimDisease.setAttribute("title", values.get(1));
-                }
-                if (values.get(2) != null && !values.get(2).equals("")) {
-                    omimDisease.setAttribute("omimId", values.get(2));
-                }
-                if (values.get(3) != null) {
-                    omimDisease.setAttribute("description", values.get(3));
-                }
-                
-                writer.store(ItemHelper.convert(omimDisease));
-                
+                store(disease);
             }
         }
-        
-        protected Item createItem(String className) {
-            return OMIMConverter.this.createItem(className);
-        }
+
     }
 }
