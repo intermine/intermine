@@ -613,6 +613,10 @@ public class PsiConverter extends BioFileConverter
             String identifier = null, label = null;
             for (String identifierType : IDENTIFIERS.keySet()) {
                 // get identifier for next identifier type on the list
+                // yeast has duplicate symbols, eg. RET1
+                if (taxonId.equals("4932") && identifierType.equals("symbol")) {
+                  continue;
+                }
                 identifier = identifiers.get(identifierType);
                 // if this gene doesn't have that type of identifier, keep going
                 if (identifier == null) {
