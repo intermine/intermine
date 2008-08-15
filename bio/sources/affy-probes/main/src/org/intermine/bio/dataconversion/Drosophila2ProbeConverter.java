@@ -91,21 +91,14 @@ public class Drosophila2ProbeConverter extends FileConverter
             String startString = line[5];
             String endString = line[6];
             String strand = line[7];
-            String hitCount = line[8];
-            String[] hitStrings = hitCount.split(" ");
-            Integer hits = new Integer(0);
-            try {
-                hits = new Integer(hitStrings[3]);
-            } catch (Exception e) {
-                // don't process this data
-            }
+
             String chromosomeRefId = createChromosome(chromosomeIdentifier);
             Item gene = createGene(fbgn, delayedItems);
             if (gene != null) {
                 Item transcript = createTranscript(transcriptIdentifier, gene.getIdentifier(),
                                                    delayedItems);
                 ProbeHolder holder = getHolder(probesetIdentifier, transcript.getIdentifier(),
-                                               gene.getIdentifier(), hits);
+                                               gene.getIdentifier());
                 try {
                     Integer start = new Integer(startString);
                     Integer end = new Integer(endString);
@@ -129,7 +122,6 @@ public class Drosophila2ProbeConverter extends FileConverter
         Item probeSet = createItem("ProbeSet");
         probeSet.setAttribute("primaryIdentifier", holder.probesetIdentifier);
         probeSet.setAttribute("name", holder.probesetIdentifier);
-        probeSet.setAttribute("hits", holder.hits.toString());
         probeSet.setReference("organism", org.getIdentifier());
         probeSet.addToCollection("dataSets", dataSet);
         probeSet.setCollection("transcripts", holder.transcripts);
@@ -137,7 +129,6 @@ public class Drosophila2ProbeConverter extends FileConverter
         probeSet.setCollection("genes", holder.genes);
         createSynonym(probeSet.getIdentifier(), "identifier", holder.probesetIdentifier,
                       delayedItems);
-
         store(probeSet);
     }
 
@@ -149,23 +140,19 @@ public class Drosophila2ProbeConverter extends FileConverter
     public class ProbeHolder
     {
         protected String probesetIdentifier;
-        protected Integer hits;
         protected List<String> genes = new ArrayList<String>();
         protected List<String> transcripts = new ArrayList<String>();
         private List<String> locations = new ArrayList<String>();
-        protected Map<String, LocationHolder> locationHolders = new HashMap();
+        protected List<LocationHolder> locationHolders = new ArrayList();
 
         /**
          * @param identifier probeset identifier
          * @param transcriptRefId id representing a transcript object
          * @param geneRefId id representing a gene object
-         * @param hits number of hits, 13 or 14
          */
-        public ProbeHolder(String identifier, String transcriptRefId, String geneRefId,
-                           Integer hits) {
+        public ProbeHolder(String identifier, String transcriptRefId, String geneRefId) {
             probesetIdentifier = identifier;
             transcripts.add(transcriptRefId);
-            this.hits = hits;
             genes.add(geneRefId);
         }
 
@@ -177,13 +164,8 @@ public class Drosophila2ProbeConverter extends FileConverter
          */
         protected void setLocation(String chromosomeRefId, Integer start, Integer end,
                                    String strand) {
-            LocationHolder location = locationHolders.get(chromosomeRefId);
-            if (location == null) {
-                location = new LocationHolder(chromosomeRefId, start, end, strand);
-                locationHolders.put(chromosomeRefId, location);
-            } else {
-                location.setLocation(start, end, strand);
-            }
+            LocationHolder location = new LocationHolder(chromosomeRefId, start, end, strand);
+            locationHolders.add(location);
         }
 
         /**
@@ -195,7 +177,7 @@ public class Drosophila2ProbeConverter extends FileConverter
          */
         protected List<String> createLocations(String probeSetRefId)
         throws ObjectStoreException {
-            for (LocationHolder holder : locationHolders.values()) {
+            for (LocationHolder holder : locationHolders) {
                 locations.add(createLocation(holder, probeSetRefId));
             }
             return locations;
@@ -223,32 +205,6 @@ public class Drosophila2ProbeConverter extends FileConverter
             this.start = start;
             this.end = end;
             this.strand = strand;
-        }
-
-        /**
-         * set the location for these coordinates.  some probes are located on multiple chromosomes
-         * so we have to keep track of several locations at once.
-         * @param start start location
-         * @param end end location
-         * @param strand strand, eg -1
-         */
-        protected void setLocation(Integer start, Integer end, String strand) {
-            if (this.start.intValue() == -1 && this.end.intValue() == -1) {
-                if (start.intValue() != -1) {
-                    this.start = start;
-                }
-                if (end.intValue() != -1) {
-                    this.end = end;
-                }
-                this.strand = strand;
-            } else {
-                if (start.intValue() < this.start.intValue() && !start.equals(new Integer(-1))) {
-                    this.start = start;
-                }
-                if (end.intValue() > this.end.intValue() && !end.equals(new Integer(-1))) {
-                    this.end = end;
-                }
-            }
         }
     }
 
@@ -355,16 +311,12 @@ public class Drosophila2ProbeConverter extends FileConverter
         return item.getIdentifier();
     }
 
-    private ProbeHolder getHolder(String identifier, String transcriptRefId, String geneRefId,
-                                  Integer hits) {
+    private ProbeHolder getHolder(String identifier, String transcriptRefId, String geneRefId) {
         ProbeHolder holder = holders.get(identifier);
         if (holder == null) {
-            holder = new ProbeHolder(identifier, transcriptRefId, geneRefId, hits);
+            holder = new ProbeHolder(identifier, transcriptRefId, geneRefId);
             holders.put(identifier, holder);
         } else {
-            if (hits.compareTo(holder.hits) > 0) {
-                holder.hits = hits;
-            }
             holder.genes.add(geneRefId);
         }
         return holder;
