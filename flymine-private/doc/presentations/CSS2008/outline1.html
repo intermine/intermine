@@ -44,7 +44,8 @@ Points to cover:
                     <LI>Spilling to disc</LI>
                 </UL></LI>
             <LI>Lookup algorithms
-                <UL><LI>Linear search</LI>
+                <UL><LI>Linear array search</LI>
+                    <LI>Linear linked list search</LI>
                     <LI>Binary search
                         <UL><LI>http://www.tbray.org/ongoing/When/200x/2003/03/22/Binary</LI>
                             <LI>java.util.Arrays.binarySearch()</LI>
@@ -75,7 +76,6 @@ Points to cover:
             <LI>ThreadLocal variables</LI>
             <LI>Mutex overhead</LI>
             <LI>Lock contention</LI>
-            <LI>Everyone wakes up on a signal - Postgres ipc when the metadata update message queue is full</LI>
             <LI>java.util.concurrent
                 <UL><LI>ConcurrentHashMap</LI>
                     <LI>ConcurrentSkipListMap</LI>
@@ -92,16 +92,21 @@ Points to cover:
                 <UL><LI>Sequential scan</LI>
                     <LI>Index scan</LI>
                     <LI>Bitmap index scans</LI>
-                    <LI>The limit of indexes</LI>
-                    <LI>Hash table generation</LI>
+                    <LI>The limit of indexes - a &gt; x and b &lt; y</LI>
                     <LI>Nested loop joins</LI>
+                    <LI>Hash table generation - hash joins</LI>
                     <LI>Merge joins</LI>
                     <LI>Sorting</LI>
                     <LI>Hash aggregation</LI>
                 </UL></LI>
             <LI>Query planner</LI>
         </UL></LI>
-    <LI>Reflection and avoiding it</LI>
+    <LI>Reflection and avoiding it
+        <UL><LI>Loading objects from databases, or deserialising XML</LI>
+            <LI>Reflection is slow</LI>
+            <LI>Hibernate method: Generate bytecode per class that accesses the setters</LI>
+            <LI>InterMine method: Add extra methods to the classes</LI>
+        </UL></LI>
     <LI>Funky stuff
         <UL><LI>CPU architecture
                 <UL><LI>Branch prediction</LI>
@@ -115,5 +120,6 @@ Points to cover:
             <LI>Postgres 8.3 - HOT</LI>
             <LI>Journalling and Postgres WAL</LI>
             <LI>Linux network stack hash table attacks - fill up one hash bucket. Solution: crypto hash codes, syncookies</LI>
+            <LI>Everyone wakes up on a signal - Postgres ipc when the metadata update message queue is full</LI>
         </UL></LI>
 </UL>
