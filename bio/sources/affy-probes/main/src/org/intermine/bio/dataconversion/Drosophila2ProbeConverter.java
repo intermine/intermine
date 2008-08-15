@@ -287,7 +287,7 @@ public class Drosophila2ProbeConverter extends FileConverter
         Item bioentity = bioentities.get(identifier);
         if (bioentity == null) {
             bioentity = createItem("Transcript");
-            bioentity.setAttribute("secondaryIdentifier", identifier);
+            bioentity.setAttribute("primaryIdentifier", identifier);
             bioentity.setReference("organism", org.getIdentifier());
             bioentity.setReference("gene", geneRefId);
             bioentity.addToCollection("dataSets", dataSet);
