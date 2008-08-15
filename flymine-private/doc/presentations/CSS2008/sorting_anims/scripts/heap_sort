@@ -9,8 +9,27 @@ load 6 images/6.pnm
 load 7 images/7.pnm
 load 8 images/8.pnm
 load 9 images/9.pnm
-load 11 images/compare.pnm
-load 12 images/compare_good.pnm
+load 11 images/red_l.pnm
+load 12 images/red_r.pnm
+load 13 images/red_ll.pnm
+load 14 images/red_m.pnm
+load 15 images/red_m.pnm
+load 16 images/red_rr.pnm
+load 17 images/red_l.pnm
+load 18 images/red_r.pnm
+load 19 images/red_r.pnm
+load 21 images/green_l.pnm
+load 22 images/green_r.pnm
+load 23 images/green_ll.pnm
+load 24 images/green_m.pnm
+load 25 images/green_m.pnm
+load 26 images/green_rr.pnm
+load 27 images/green_l.pnm
+load 28 images/green_r.pnm
+load 29 images/green_r.pnm
+load 30 images/tree_up_1.pnm
+load 31 images/tree_left_1.pnm
+load 32 images/tree_right_1.pnm
 position 0 110 450
 position 1 168 450
 position 2 226 450
@@ -31,6 +50,16 @@ position 16 458 300
 position 17 255 415
 position 18 313 415
 position 19 371 415
+position 20 371 115
+position 21 313 230
+position 22 371 230
+position 23 284 345
+position 24 342 345
+position 30 360 115
+position 31 302 230
+position 32 418 230
+position 33 273 345
+position 34 347 345
 place 5 0
 place 2 1
 place 9 2
@@ -57,121 +86,458 @@ move 0 17 40
 move 3 18 40
 move 7 19 40
 advance 50
+# Sticks
+fadein 21 20 20
+fadein 12 20 20
+fadein 13 21 20
+fadein 24 21 20
+fadein 25 22 20
+fadein 26 22 20
+fadein 27 23 20
+fadein 28 23 20
+fadein 19 24 20
+advance 30
 # Heapify      5
 #             2 9
 #           4 1 6 8
 #          0 3 7
 # Compare 1 & 7 (14 & 19)
+fadein 30 34 20
+fadein 32 34 20
+advance 20
+fadeout 30 20
+advance 30
+fadeout 32 20
 swap 1 7 30
-advance 40
+fadeout 19 20
+fadeout 24 20
+advance 10
+fadein 29 24 20
+fadein 14 21 20
+advance 30
+# Heapify      5
+#             2 9
+#           4 7 6 8
+#          0 3 1
 # Compare 4, 0, and 3 (13, 17, and 18)
+fadein 30 33 20
+fadein 31 33 20
+fadein 32 33 20
+advance 20
+fadeout 31 20
+fadeout 32 20
+advance 30
+fadeout 30 20
+advance 30
 # Compare 9, 6, and 8 (12, 15, and 16)
+fadein 30 32 20
+fadein 31 32 20
+fadein 32 32 20
+advance 20
+fadeout 31 20
+fadeout 32 20
+advance 30
+fadeout 30 20
+advance 30
 # Compare 2, 4, and 7 (11, 13, and 14)
+fadein 30 31 20
+fadein 31 31 20
+fadein 32 31 20
+advance 20
+fadeout 30 20
+fadeout 31 20
+advance 30
+fadeout 32 20
 swap 2 7 30
-advance 40
+fadeout 21 20
+fadeout 13 20
+fadeout 14 20
+advance 10
+fadein 11 20 20
+fadein 23 21 20
+fadein 24 21 20
+advance 30
+# Heapify      5
+#             7 9
+#           4 2 6 8
+#          0 3 1
 # Compare 2 & 1 (14 & 19)
+fadein 30 34 20
+fadein 32 34 20
+advance 20
+fadeout 32 20
+advance 30
+fadeout 30 20
+advance 30
 # Compare 5, 7, and 9 (10, 11, and 12)
+fadein 30 30 20
+fadein 31 30 20
+fadein 32 30 20
+advance 20
+fadeout 30 20
+fadeout 31 20
+advance 30
+fadeout 32 20
 swap 5 9 30
-advance 40
+fadeout 11 20
+fadeout 12 20
+fadeout 25 20
+fadeout 26 20
+advance 10
+fadein 21 20 20
+fadein 22 20 20
+fadein 15 22 20
+fadein 16 22 20
+advance 30
+# Heapify      9
+#             7 5
+#           4 2 6 8
+#          0 3 1
 # Compare 5, 6, and 8 (12, 15, and 16)
+fadein 30 32 20
+fadein 31 32 20
+fadein 32 32 20
+advance 20
+fadeout 30 20
+fadeout 31 20
+advance 30
+fadeout 32 20
 swap 5 8 30
-advance 40
+fadeout 15 20
+fadeout 16 20
+advance 10
+fadein 25 22 20
+fadein 26 22 20
+advance 30
+# Heapify is done
+advance 60
 # Pass 1:     9
 #            7 8
 #          4 2 6 5
 #         0 3 1
-swap 9 1 30
-advance 40
-move 9 9 50
+swing 9 9 30
+swing 1 10 30
+fadeout 29 20
+fadeout 21 20
+fadeout 22 20
+advance 10
+fadein 11 20 20
+fadein 12 20 20
+advance 30
 # Compare 1, 7, and 8 (10, 11, and 12)
+fadein 30 30 20
+fadein 31 30 20
+fadein 32 30 20
+advance 20
+fadeout 30 20
+fadeout 31 20
+advance 30
+fadeout 32 20
 swap 1 8 30
-advance 40
+fadeout 11 20
+fadeout 12 20
+fadeout 25 20
+fadeout 26 20
+advance 10
+fadein 21 20 20
+fadein 22 20 20
+fadein 15 22 20
+fadein 16 22 20
+advance 30
 # Compare 1, 6, and 5 (12, 15, and 16)
+fadein 30 32 20
+fadein 31 32 20
+fadein 32 32 20
+advance 20
+fadeout 30 20
+fadeout 32 20
+advance 30
+fadeout 31 20
 swap 1 6 30
-advance 40
+fadeout 15 20
+fadeout 16 20
+advance 10
+fadein 25 22 20
+fadein 26 22 20
+advance 30
 # Pass 2:     8
 #            7 6
 #          4 2 1 5
 #         0 3
-swap 8 3 30
-advance 40
-move 8 8 50
+swing 8 8 30
+swing 3 10 30
+fadeout 28 20
+fadeout 21 20
+fadeout 22 20
+advance 10
+fadein 11 20 20
+fadein 12 20 20
+advance 30
 # Compare 3, 7, and 6 (10, 11, and 12)
+fadein 30 30 20
+fadein 31 30 20
+fadein 32 30 20
+advance 20
+fadeout 30 20
+fadeout 32 20
+advance 30
+fadeout 31 20
 swap 3 7 30
-advance 40
+fadeout 11 20
+fadeout 12 20
+fadeout 23 20
+advance 10
+fadein 21 20 20
+fadein 22 20 20
+fadein 13 21 20
+advance 30
 # Compare 3, 4, and 2 (11, 13, and 14)
+fadein 30 31 20
+fadein 31 31 20
+fadein 32 31 20
+advance 20
+fadeout 30 20
+fadeout 32 20
+advance 30
+fadeout 31 20
 swap 3 4 30
-advance 40
+fadeout 13 20
+advance 10
+fadein 23 21 20
+advance 30
 # Compare 3 & 0 (13 & 17)
+fadein 30 33 20
+fadein 31 33 20
+advance 20
+fadeout 31 20
+advance 30
+fadeout 30 20
+advance 30
 # Pass 3:     7
 #            4 6
 #          3 2 1 5
 #         0
-swap 7 0 30
-advance 40
-move 7 7 50
+swing 7 7 30
+swing 0 10 30
+fadeout 27 20
+fadeout 21 20
+fadeout 22 20
+advance 10
+fadein 11 20 20
+fadein 12 20 20
+advance 30
 # Compare 0, 4, and 6 (10, 11, and 12)
+fadein 30 30 20
+fadein 31 30 20
+fadein 32 30 20
+advance 20
+fadeout 30 20
+fadeout 31 20
+advance 30
+fadeout 32 20
 swap 0 6 30
-advance 40
+fadeout 11 20
+fadeout 12 20
+fadeout 25 20
+fadeout 26 20
+advance 10
+fadein 21 20 20
+fadein 22 20 20
+fadein 15 22 20
+fadein 16 22 20
+advance 30
 # Compare 0, 1, and 5 (12, 15, and 16)
+fadein 30 32 20
+fadein 31 32 20
+fadein 32 32 20
+advance 20
+fadeout 30 20
+fadeout 31 20
+advance 30
+fadeout 32 20
 swap 0 5 30
-advance 40
+fadeout 15 20
+fadeout 16 20
+advance 10
+fadein 25 22 20
+fadein 26 22 20
+advance 30
 # Pass 4:     6
 #            4 5
 #          3 2 1 0
-swap 6 0 30
-advance 40
-move 6 6 50
+swing 6 6 30
+swing 0 10 30
+fadeout 26 20
+fadeout 21 20
+fadeout 22 20
+advance 10
+fadein 11 20 20
+fadein 12 20 20
+advance 30
 # Compare 0, 4, and 5 (10, 11, and 12)
+fadein 30 30 20
+fadein 31 30 20
+fadein 32 30 20
+advance 20
+fadeout 30 20
+fadeout 31 20
+advance 30
+fadeout 32 20
 swap 0 5 30
-advance 40
+fadeout 11 20
+fadeout 12 20
+fadeout 25 20
+advance 10
+fadein 21 20 20
+fadein 22 20 20
+fadein 15 22 20
+advance 30
 # Compare 0 and 1 (12 & 15)
+fadein 30 32 20
+fadein 31 32 20
+advance 20
+fadeout 30 20
+advance 30
+fadeout 31 20
 swap 0 1 30
-advance 40
+fadeout 15 20
+advance 10
+fadein 25 22 20
+advance 30
 # Pass 5:     5
 #            4 1
 #          3 2 0
-swap 5 0 30
-advance 40
-move 5 5 50
+swing 5 5 30
+swing 0 10 30
+fadeout 25 20
+fadeout 21 20
+fadeout 22 20
+advance 10
+fadein 11 20 20
+fadein 12 20 20
+advance 30
 # Compare 0, 4, and 1 (10, 11, and 12)
+fadein 30 30 20
+fadein 31 30 20
+fadein 32 30 20
+advance 20
+fadeout 30 20
+fadeout 32 20
+advance 30
+fadeout 31 20
 swap 0 4 30
-advance 40
+fadeout 11 20
+fadeout 12 20
+fadeout 23 20
+fadeout 24 20
+advance 10
+fadein 21 20 20
+fadein 22 20 20
+fadein 13 21 20
+fadein 14 21 20
+advance 30
 # Compare 0, 3, and 2 (11, 13, and 14)
+fadein 30 31 20
+fadein 31 31 20
+fadein 32 31 20
+advance 20
+fadeout 30 20
+fadeout 32 20
+advance 30
+fadeout 31 20
 swap 0 3 30
-advance 40
+fadeout 13 20
+fadeout 14 20
+advance 10
+fadein 23 21 20
+fadein 24 21 20
+advance 30
 # Pass 6:     4
 #            3 1
 #          0 2
-swap 4 2 30
-advance 40
-move 4 4 50
+swing 4 4 30
+swing 2 10 30
+fadeout 24 20
+fadeout 21 20
+fadeout 22 20
+advance 10
+fadein 11 20 20
+fadein 12 20 20
+advance 30
 # Compare 2, 3, and 1 (10, 11, and 12)
+fadein 30 30 20
+fadein 31 30 20
+fadein 32 30 20
+advance 20
+fadeout 30 20
+fadeout 32 20
+advance 30
+fadeout 31 20
 swap 2 3 30
-advance 40
+fadeout 11 20
+fadeout 12 20
+advance 10
+fadein 21 20 20
+fadein 22 20 20
+advance 30
 # Compare 2 and 0 (11 and 13)
+fadein 30 31 20
+fadein 31 31 20
+advance 20
+fadeout 31 20
+advance 30
+fadeout 30 20
+advance 30
 # Pass 7:     3
 #            2 1
 #          0
-swap 3 0 30
-advance 40
-move 3 3 50
+swing 3 3 30
+swing 0 10 30
+fadeout 23 20
+fadeout 21 20
+fadeout 22 20
+advance 10
+fadein 11 20 20
+fadein 12 20 20
+advance 30
 # Compare 0, 2, and 1 (10, 11, and 12)
+fadein 30 30 20
+fadein 31 30 20
+fadein 32 30 20
+advance 20
+fadeout 30 20
+fadeout 32 20
+advance 30
+fadeout 31 20
 swap 0 2 30
-advance 40
+fadeout 11 20
+fadeout 12 20
+advance 10
+fadein 21 20 20
+fadein 22 20 20
+advance 30
 # Pass 8:     2
 #            0 1
-swap 2 1 30
+swing 2 2 30
+swing 1 10 30
+fadeout 22 20
 advance 40
-move 2 2 50
 # Compare 1 and 0 (10 and 11)
+fadein 30 30 20
+fadein 31 30 20
+advance 20
+fadeout 31 20
+advance 30
+fadeout 30 20
+advance 30
 # Pass 9:     1
 #            0
-swap 1 0 30
+swing 1 1 30
+swing 0 10 30
+fadeout 21 20
 advance 40
-move 1 1 50
 advance 20
 # Pass 10
-move 0 0 50
-advance 100
+move 0 0 30
+advance 200
 stop
