@@ -97,8 +97,9 @@ public class Drosophila2ProbeConverter extends FileConverter
             if (gene != null) {
                 Item transcript = createTranscript(transcriptIdentifier, gene.getIdentifier(),
                                                    delayedItems);
-                ProbeHolder holder = getHolder(probesetIdentifier, transcript.getIdentifier(),
-                                               gene.getIdentifier());
+                ProbeHolder holder = getHolder(probesetIdentifier);
+                holder.transcripts.add(transcript.getIdentifier());
+                holder.genes.add(gene.getIdentifier());
                 try {
                     Integer start = new Integer(startString);
                     Integer end = new Integer(endString);
@@ -143,17 +144,15 @@ public class Drosophila2ProbeConverter extends FileConverter
         protected List<String> genes = new ArrayList<String>();
         protected List<String> transcripts = new ArrayList<String>();
         private List<String> locations = new ArrayList<String>();
-        protected List<LocationHolder> locationHolders = new ArrayList();
+        protected Map<String, LocationHolder> locationHolders = new HashMap();
 
         /**
          * @param identifier probeset identifier
          * @param transcriptRefId id representing a transcript object
          * @param geneRefId id representing a gene object
          */
-        public ProbeHolder(String identifier, String transcriptRefId, String geneRefId) {
+        public ProbeHolder(String identifier) {
             probesetIdentifier = identifier;
-            transcripts.add(transcriptRefId);
-            genes.add(geneRefId);
         }
 
         /**
@@ -164,8 +163,11 @@ public class Drosophila2ProbeConverter extends FileConverter
          */
         protected void setLocation(String chromosomeRefId, Integer start, Integer end,
                                    String strand) {
-            LocationHolder location = new LocationHolder(chromosomeRefId, start, end, strand);
-            locationHolders.add(location);
+            String key = chromosomeRefId + "|" + start.toString() + "|" + end.toString() + "|" + strand;
+            if (locationHolders.get(key) == null) {
+                LocationHolder location = new LocationHolder(chromosomeRefId, start, end, strand);
+                locationHolders.put(key, location);
+            }
         }
 
         /**
@@ -177,8 +179,9 @@ public class Drosophila2ProbeConverter extends FileConverter
          */
         protected List<String> createLocations(String probeSetRefId)
         throws ObjectStoreException {
-            for (LocationHolder holder : locationHolders) {
-                locations.add(createLocation(holder, probeSetRefId));
+            for (LocationHolder holder : locationHolders.values()) {
+                String location = createLocation(holder, probeSetRefId);
+                locations.add(location);
             }
             return locations;
         }
@@ -311,13 +314,11 @@ public class Drosophila2ProbeConverter extends FileConverter
         return item.getIdentifier();
     }
 
-    private ProbeHolder getHolder(String identifier, String transcriptRefId, String geneRefId) {
+    private ProbeHolder getHolder(String identifier) {
         ProbeHolder holder = holders.get(identifier);
         if (holder == null) {
-            holder = new ProbeHolder(identifier, transcriptRefId, geneRefId);
+            holder = new ProbeHolder(identifier);
             holders.put(identifier, holder);
-        } else {
-            holder.genes.add(geneRefId);
         }
         return holder;
     }
