@@ -71,8 +71,8 @@ public class PsiConverter extends BioFileConverter
     }
 
     static {
-        IDENTIFIERS.put("orf name", "secondaryIdentifier");
         IDENTIFIERS.put("primaryIdentifier", "primaryIdentifier");
+        IDENTIFIERS.put("orf name", "secondaryIdentifier");
         IDENTIFIERS.put("gene name", "symbol");
         IDENTIFIERS.put("fullName", "secondaryIdentifier");
         IDENTIFIERS.put("shortLabel", "symbol");
@@ -194,10 +194,9 @@ public class PsiConverter extends BioFileConverter
             } else if (qName.equals("secondaryRef") && stack.search("interactor") == 2) {
                 String db = attrs.getValue("db");
                 if (db != null) {
-                    if (db.equalsIgnoreCase("sgd") || db.equalsIgnoreCase("flybase")) {
+                    if (db.equalsIgnoreCase("sgd") || db.equalsIgnoreCase("flybase")
+                                    || db.equalsIgnoreCase("ensembl")) {
                         identifiers.put("primaryIdentifier", attrs.getValue("id"));
-                    } else if (db.equalsIgnoreCase("ensembl")) {
-                        identifiers.put("secondaryIdentifier", attrs.getValue("id"));
                     }
                 }
 
@@ -432,17 +431,17 @@ public class PsiConverter extends BioFileConverter
                     String geneRefId = interactor.getIdentifier();
                     interactorHolder = new InteractorHolder(geneRefId);
                     String ident = null;
-                    if (interactor.getAttribute("secondaryIdentifier") != null) {
+                    if (interactor.getAttribute("primaryIdentifier") != null) {
+                        ident = interactor.getAttribute("primaryIdentifier").getValue();
+                    }
+                    if ((ident == null || ident.equals(""))
+                                    && interactor.getAttribute("secondaryIdentifier") != null) {
                         ident = interactor.getAttribute("secondaryIdentifier").getValue();
                     }
                     if ((ident == null || ident.equals(""))
-                                  && interactor.getAttribute("primaryIdentifier") != null) {
-                        ident = interactor.getAttribute("primaryIdentifier").getValue();
+                                    && interactor.getAttribute("symbol") != null) {
+                        ident = interactor.getAttribute("symbol").getValue();
                     }
-//                    if ((ident == null || ident.equals(""))
-//                                    && interactor.getAttribute("symbol") != null) {
-//                        ident = interactor.getAttribute("symbol").getValue();
-//                    }
                     if (ident != null) {
                         interactorHolder.identifier = ident;
                         holder.addInteractor(interactorHolder);
@@ -616,28 +615,25 @@ public class PsiConverter extends BioFileConverter
 
             String identifier = null, label = null;
 
-            // can't try this for yeast because it has duplicate symbols
-            if (!taxonId.equals("4932") && !taxonId.equals("7227")) {
-                for (String identifierType : IDENTIFIERS.keySet()) {
-                    identifier = identifiers.get(identifierType);
-                    label = IDENTIFIERS.get(identifierType);
-                    if (identifier != null) {
-                        break;
-                    }
+            // yeast has duplicate symbols
+
+            for (String identifierType : IDENTIFIERS.keySet()) {
+                identifier = identifiers.get(identifierType);
+                label = IDENTIFIERS.get(identifierType);
+                if (identifier != null) {
+                    break;
                 }
-            } else {
-                identifier = identifiers.get("primaryIdentifier");
-                label = "primaryIdentifier";
-                if (taxonId.equals("7227")) {
-                    IdResolver resolver = resolverFactory.getIdResolver(false);
-                    if (resolver != null) {
-                        identifier = resolveGene(resolver, taxonId, identifier);
-                        if (identifier == null) {
-                            return null;
-                        }
-                    } else {
+            }
+
+            if (taxonId.equals("7227")) {
+                IdResolver resolver = resolverFactory.getIdResolver(false);
+                if (resolver != null) {
+                    identifier = resolveGene(resolver, taxonId, identifier);
+                    if (identifier == null) {
                         return null;
                     }
+                } else {
+                    return null;
                 }
             }
 
