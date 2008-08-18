@@ -95,7 +95,7 @@
              <secondaryRef db="interpro" dbAc="MI:0449" id="IPR006020" secondary="PTB_PID"/>
              <secondaryRef db="interpro" dbAc="MI:0449" id="IPR001452" secondary="SH3"/>
              <secondaryRef db="uniprotkb" dbAc="MI:0486" id="Q8IGG5" refType="secondary-ac" refTypeAc="MI:0360" secondary="jip1_drome" version="SP_48"/>
-             <secondaryRef db="flybase" dbAc="MI:0478" id="FBgn002" secondary="Aplip1"/>
+             <secondaryRef db="flybase" dbAc="MI:0478" id="FBgn002" secondary="CG1234"/>
              <secondaryRef db="intact" dbAc="MI:0469" id="EBI-74120" secondary="jip1_drome"/>
            </xref>
            <interactorType>
@@ -135,7 +135,7 @@
              <secondaryRef db="uniprotkb" dbAc="MI:0486" id="Q9TVV0" refType="secondary-ac" refTypeAc="MI:0360" secondary="a4_drome" version="SP_48"/>
              <secondaryRef db="uniprotkb" dbAc="MI:0486" id="Q9U4H3" refType="secondary-ac" refTypeAc="MI:0360" secondary="a4_drome" version="SP_48"/>
              <secondaryRef db="uniprotkb" dbAc="MI:0486" id="Q9W5F1" refType="secondary-ac" refTypeAc="MI:0360" secondary="a4_drome" version="SP_48"/>
-             <secondaryRef db="flybase" dbAc="MI:0478" id="FBgn0000108" secondary="Appl"/>
+             <secondaryRef db="flybase" dbAc="MI:0478" id="FBgn001" secondary="Appl"/>
              <secondaryRef db="intact" dbAc="MI:0469" id="EBI-74135" secondary="a4_drome"/>
            </xref>
            <interactorType>
