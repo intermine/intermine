@@ -14,6 +14,7 @@ import java.io.File;
 import java.io.FileReader;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.Set;
 
 import org.intermine.dataconversion.ItemsTestCase;
 import org.intermine.dataconversion.MockItemWriter;
@@ -52,8 +53,9 @@ public class KeggPathwayConverterTest extends ItemsTestCase
         converter.close();
 
         // uncomment to write out a new target items file
-//        writeItemsFile(itemWriter.getItems(), "/tmp/kegg-tgt-items.xml");
+        //writeItemsFile(itemWriter.getItems(), "kegg-tgt-items.xml");
 
-        assertEquals(readItemSet("kegg-tgt-items.xml"), itemWriter.getItems());
+        Set expected = readItemSet("KeggConverterTest_tgt.xml");
+        assertEquals(expected, itemWriter.getItems());
     }
 }
