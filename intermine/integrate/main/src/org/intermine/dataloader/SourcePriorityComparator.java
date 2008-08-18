@@ -112,79 +112,83 @@ public class SourcePriorityComparator implements Comparator
                 } else {
                     source2 = dataTracker.getSource(f2.getId(), field.getName());
                 }
-                if (source1 == null) {
+                if (source1 == null && value1 != null) {
                     throw new IllegalArgumentException("Object o1 is not in the data"
                             + " tracking system; o1 = \"" + o1 + "\", o2 = \"" + o2
-                            + "\" for field \"" + field.getName() + "\"");
+                            + "\" for field \"" + field.getName() + "\" with value \""
+                            + value1 + "\"");
                 }
-                if (source2 == null) {
+                if (source2 == null && value2 != null) {
                     throw new IllegalArgumentException("Object o2 is not in the data"
                             + " tracking system; o1 = \"" + o1 + "\", o2 = \"" + o2
-                            + "\" for field \"" + field.getName() + "\"");
+                            + "\" for field \"" + field.getName() + "\" with value \""
+                            + value2 + "\"");
                 }
-                if (source1.getName().equals(source2.getName())) {
-                    if (source1.getSkeleton() && (!source2.getSkeleton())) {
-                        return -1;
-                    } else if (source2.getSkeleton() && (!source1.getSkeleton())) {
-                        return 1;
-                    } else {
-                        if ((!o1.equals(o2)) && (!source1.getSkeleton())) {
-                            String errMessage = "Duplicate objects from the same data source; "
-                                + "o1 = \"" + DynamicUtil.getFriendlyDesc(o1) + "\" ("
-                                + (o1 == defObj ? "from source, being stored"
-                                        : (dbIdsStored.contains(f1.getId())
-                                            ? "stored earlier in this run" : "in database"))
-                                + "), o2 = \"" + DynamicUtil.getFriendlyDesc(o2) + "\" ("
-                                + (o2 == defObj ? "from source, being stored"
-                                        : (dbIdsStored.contains(f2.getId())
-                                            ? "stored earlier in this run" : "in database"))
-                                + "), source1 = \"" + source1 + "\", source2 = \"" + source2
-                                + "\"";
-                            LOG.error(errMessage);
-                            throw new IllegalArgumentException(errMessage);
+                if (source1 != null && source2 != null) {
+                    if (source1.getName().equals(source2.getName())) {
+                        if (source1.getSkeleton() && (!source2.getSkeleton())) {
+                            return -1;
+                        } else if (source2.getSkeleton() && (!source1.getSkeleton())) {
+                            return 1;
+                        } else {
+                            if ((!o1.equals(o2)) && (!source1.getSkeleton())) {
+                                String errMessage = "Duplicate objects from the same data source; "
+                                    + "o1 = \"" + DynamicUtil.getFriendlyDesc(o1) + "\" ("
+                                    + (o1 == defObj ? "from source, being stored"
+                                            : (dbIdsStored.contains(f1.getId())
+                                                ? "stored earlier in this run" : "in database"))
+                                    + "), o2 = \"" + DynamicUtil.getFriendlyDesc(o2) + "\" ("
+                                    + (o2 == defObj ? "from source, being stored"
+                                            : (dbIdsStored.contains(f2.getId())
+                                                ? "stored earlier in this run" : "in database"))
+                                    + "), source1 = \"" + source1 + "\", source2 = \"" + source2
+                                    + "\"";
+                                LOG.error(errMessage);
+                                throw new IllegalArgumentException(errMessage);
+                            }
+                            return 0;
                         }
-                        return 0;
                     }
-                }
-                int source1Priority = srcs.indexOf(source1.getName());
-                if (source1Priority == -1) {
-                    source1Priority = srcs.indexOf("*");
-                }
-                int source2Priority = srcs.indexOf(source2.getName());
-                if (source2Priority == -1) {
-                    source2Priority = srcs.indexOf("*");
-                }
-                String errorMessage = null;
-                if (source1Priority == -1) {
-                    errorMessage = "Priority configured for " + cldName + "." + field.getName()
-                        + " does not include source " + source1.getName();
-                }
-                if (source2Priority == -1) {
+                    int source1Priority = srcs.indexOf(source1.getName());
+                    if (source1Priority == -1) {
+                        source1Priority = srcs.indexOf("*");
+                    }
+                    int source2Priority = srcs.indexOf(source2.getName());
+                    if (source2Priority == -1) {
+                        source2Priority = srcs.indexOf("*");
+                    }
+                    String errorMessage = null;
+                    if (source1Priority == -1) {
+                        errorMessage = "Priority configured for " + cldName + "." + field.getName()
+                            + " does not include source " + source1.getName();
+                    }
+                    if (source2Priority == -1) {
+                        if (errorMessage != null) {
+                            errorMessage = "Priority configured for " + cldName + "."
+                                + field.getName() + " does not include sources " + source1.getName()
+                                + " or " + source2.getName();
+                        } else {
+                            errorMessage = "Priority configured for " + cldName + "."
+                                + field.getName() + " does not include source " + source2.getName();
+                        }
+                    }
                     if (errorMessage != null) {
-                        errorMessage = "Priority configured for " + cldName + "." + field.getName()
-                            + " does not include sources " + source1.getName() + " or "
-                            + source2.getName();
-                    } else {
-                        errorMessage = "Priority configured for " + cldName + "." + field.getName()
-                            + " does not include source " + source2.getName();
+                        if ((value1 == null) && (value2 == null)) {
+                            return (f1 == defObj ? 1 : -1);
+                        }
+                        if (value1 == null) {
+                            return -1;
+                        }
+                        if (value2 == null) {
+                            return 1;
+                        }
+                        LOG.error(errorMessage);
+                        throw new IllegalArgumentException(errorMessage);
                     }
-                }
-                if (errorMessage != null) {
-                    if ((value1 == null) && (value2 == null)) {
-                        return (f1 == defObj ? 1 : -1);
+                    int retval = source2Priority - source1Priority;
+                    if (retval != 0) {
+                        return retval;
                     }
-                    if (value1 == null) {
-                        return -1;
-                    }
-                    if (value2 == null) {
-                        return 1;
-                    }
-                    LOG.error(errorMessage);
-                    throw new IllegalArgumentException(errorMessage);
-                }
-                int retval = source2Priority - source1Priority;
-                if (retval != 0) {
-                    return retval;
                 }
             }
             if ((value1 == null) && (value2 == null)) {
