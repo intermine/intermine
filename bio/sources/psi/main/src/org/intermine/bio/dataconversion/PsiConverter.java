@@ -196,8 +196,8 @@ public class PsiConverter extends BioFileConverter
                 if (db != null) {
                     if (db.equalsIgnoreCase("sgd") || db.equalsIgnoreCase("flybase")) {
                         identifiers.put("primaryIdentifier", attrs.getValue("id"));
-//                    } else if (db.equalsIgnoreCase("ensembl")) {
-//                        identifiers.put("secondaryIdentifier", attrs.getValue("id"));
+                    } else if (db.equalsIgnoreCase("ensembl")) {
+                        identifiers.put("secondaryIdentifier", attrs.getValue("id"));
                     }
                 }
 
@@ -205,6 +205,7 @@ public class PsiConverter extends BioFileConverter
             } else if (qName.equals("organism") && stack.peek().equals("interactor")) {
                 String taxId = attrs.getValue("ncbiTaxId");
 //                if (organisms.containsKey(taxId)) {
+                if (!taxId.equals("-1") && !taxId.equals("-2")) {
                     try {
                         gene = getGene(taxId);
                     } catch (ObjectStoreException e) {
@@ -213,7 +214,7 @@ public class PsiConverter extends BioFileConverter
                     if (gene != null && !validGenes.containsKey(interactorId)) {
                         validGenes.put(interactorId, gene);
                     }
-//                }
+                }
                 identifiers = new HashMap();
                 // <interactorList><interactor id="4"><names>
                 // <alias type="locus name" typeAc="MI:0301">HSC82</alias>
@@ -390,9 +391,11 @@ public class PsiConverter extends BioFileConverter
                 if (descr != null) {
                     experimentHolder.setDescription(descr);
                 }
-                // <hostOrganismList><hostOrganism ncbiTaxId="9534"><names><fullName>
+            // <hostOrganismList><hostOrganism ncbiTaxId="9534"><names><fullName>
             } else if (attName != null && attName.equals("hostOrganism")
                             && qName.equals("fullName")) {
+                // organism must be a string because several entries are in vivo or in vitro, with
+                // a taxonid of -1 or -2
                 String hostOrganism = attValue.toString();
                 if (hostOrganism != null) {
                     experimentHolder.setHostOrganism(hostOrganism);
@@ -433,13 +436,13 @@ public class PsiConverter extends BioFileConverter
                         ident = interactor.getAttribute("secondaryIdentifier").getValue();
                     }
                     if ((ident == null || ident.equals(""))
-                                    && interactor.getAttribute("primaryIdentifier") != null) {
+                                  && interactor.getAttribute("primaryIdentifier") != null) {
                         ident = interactor.getAttribute("primaryIdentifier").getValue();
                     }
-                    if ((ident == null || ident.equals(""))
-                                    && interactor.getAttribute("symbol") != null) {
-                        ident = interactor.getAttribute("symbol").getValue();
-                    }
+//                    if ((ident == null || ident.equals(""))
+//                                    && interactor.getAttribute("symbol") != null) {
+//                        ident = interactor.getAttribute("symbol").getValue();
+//                    }
                     if (ident != null) {
                         interactorHolder.identifier = ident;
                         holder.addInteractor(interactorHolder);
@@ -610,59 +613,49 @@ public class PsiConverter extends BioFileConverter
 
         private Item getGene(String taxonId)
         throws ObjectStoreException, SAXException {
+
             String identifier = null, label = null;
-            if (taxonId.equals("4932")) {
-                identifier = identifiers.get("primaryIdentifier");
-                label="primaryIdentifier";
-                if (identifier == null) {
-                    LOG.error("couldn't resolve yeast gene: " + identifiers.toString());
-                    return null;
+
+            // can't try this for yeast because it has duplicate symbols
+            if (!taxonId.equals("4932") && !taxonId.equals("7227")) {
+                for (String identifierType : IDENTIFIERS.keySet()) {
+                    identifier = identifiers.get(identifierType);
+                    label = IDENTIFIERS.get(identifierType);
+                    if (identifier != null) {
+                        break;
+                    }
                 }
             } else {
-            for (String identifierType : IDENTIFIERS.keySet()) {
-                // get identifier for next identifier type on the list
-                // yeast has duplicate symbols, eg. RET1
-                // TODO this may not be necessary
-                if (taxonId.equals("4932") && identifierType.equals("symbol")) {
-                    continue;
-                }
-                identifier = identifiers.get(identifierType);
-                // if this gene doesn't have that type of identifier, keep going
-                if (identifier == null) {
-                    continue;
-                }
-                // if dmel, use resolver
+                identifier = identifiers.get("primaryIdentifier");
+                label = "primaryIdentifier";
                 if (taxonId.equals("7227")) {
                     IdResolver resolver = resolverFactory.getIdResolver(false);
                     if (resolver != null) {
                         identifier = resolveGene(resolver, taxonId, identifier);
+                        if (identifier == null) {
+                            return null;
+                        }
                     } else {
                         return null;
                     }
-                    label = "primaryIdentifier";
-                } else {
-                    label = IDENTIFIERS.get(identifierType);
-                }
-                if (identifier != null) {
-                    break;
                 }
             }
+
+            // everyone not using the resolver should have an identifier
             if (identifier == null) {
                 if (!taxonId.equals("7227")) {
-                    throw new RuntimeException("no identifier found for organism:" + taxonId
-                                           + " interactor " + interactorId);
+                   String msg = "no identifier found for organism:" + taxonId
+                                               + " interactor " + interactorId;
+                   LOG.error(msg);
                 }
                 return null;
             }
-            }
+
             Item item = genes.get(identifier);
             if (item == null) {
                 item = createItem("Gene");
                 item.setAttribute(label, identifier);
-                // TODO where are these coming from?  do we want to store this gene?
-                if (!taxonId.equals("-1") && !taxonId.equals("-2")) {
-                    item.setReference("organism", getOrganism(taxonId));
-                }
+                item.setReference("organism", getOrganism(taxonId));
                 genes.put(identifier, item);
                 store(item);
             }

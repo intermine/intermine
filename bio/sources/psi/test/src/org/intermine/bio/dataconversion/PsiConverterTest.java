@@ -32,8 +32,8 @@ public class PsiConverterTest extends ItemsTestCase
         itemWriter = new MockItemWriter(new HashMap());
         converter = new PsiConverter(itemWriter, model);
         MockIdResolverFactory resolverFactory = new MockIdResolverFactory("Gene");
-        resolverFactory.addResolverEntry("7227", "FBgn001", Collections.singleton("CG1234"));
-        resolverFactory.addResolverEntry("7227", "FBgn002", Collections.singleton("CG1111"));
+        resolverFactory.addResolverEntry("7227", "FBgn001", Collections.singleton("FBgn001"));
+        resolverFactory.addResolverEntry("7227", "FBgn002", Collections.singleton("FBgn002"));
         converter.resolverFactory = resolverFactory;
 
     }
@@ -52,7 +52,7 @@ public class PsiConverterTest extends ItemsTestCase
         converter.close();
 
         // uncomment to write out a new target items file
-        writeItemsFile(itemWriter.getItems(), "psi-tgt-items.xml");
+        //writeItemsFile(itemWriter.getItems(), "psi-tgt-items.xml");
 
         Set expected = readItemSet("PsiConverterTest_tgt.xml");
 
