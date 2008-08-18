@@ -1,0 +1,308 @@
+size 800 500
+load 1 images/red_arrow_right.pnm
+load 2 images/red_arrow_right.pnm
+load 3 images/green_arrow_left.pnm
+load 4 images/green_arrow_left.pnm
+load 5 images/red_arrow_left.pnm
+load 7 images/P1.pnm
+load 8 images/P2.pnm
+load 9 images/disc.pnm
+load 10 images/normal.pnm
+load 11 images/anticipatory.pnm
+load 12 images/wait.pnm
+position 1 350 150
+position 2 350 380
+position 3 550 150
+position 4 550 380
+position 5 620 150
+position 6 620 380
+position 7 180 150
+position 8 180 380
+position 9 580 150
+position 10 100 0
+place 10 10
+place 5 5
+place 7 7
+place 8 8
+place 9 9
+advance 50
+fadein 1 1 10
+fadein 2 2 10
+advance 20
+move 1 3 15
+move 2 4 15
+advance 15
+place 1 -1
+place 3 3
+move 3 1 15
+move 5 6 70
+advance 15
+place 3 -1
+place 1 1
+move 1 3 15
+advance 55
+place 2 -1
+place 4 4
+move 4 2 15
+move 5 5 70
+advance 15
+place 4 -1
+place 2 2
+move 2 4 15
+advance 55
+place 1 -1
+place 3 3
+move 3 1 15
+move 5 6 70
+advance 15
+place 3 -1
+place 1 1
+move 1 3 15
+advance 55
+place 2 -1
+place 4 4
+move 4 2 15
+move 5 5 70
+advance 15
+place 4 -1
+place 2 2
+move 2 4 15
+advance 55
+place 1 -1
+place 3 3
+move 3 1 15
+move 5 6 70
+advance 15
+place 3 -1
+place 1 1
+move 1 3 15
+advance 55
+place 2 -1
+place 4 4
+move 4 2 15
+move 5 5 70
+advance 15
+place 4 -1
+place 2 2
+move 2 4 15
+advance 55
+place 1 -1
+place 3 3
+move 3 1 15
+move 5 6 70
+advance 15
+place 3 -1
+place 1 1
+move 1 3 15
+advance 55
+place 2 -1
+place 4 4
+move 4 2 15
+move 5 5 70
+advance 15
+place 4 -1
+place 2 2
+move 2 4 15
+advance 55
+place 1 -1
+place 3 3
+move 3 1 15
+move 5 6 70
+advance 15
+place 3 -1
+place 1 1
+move 1 3 15
+advance 55
+place 2 -1
+place 4 4
+move 4 2 15
+move 5 5 70
+advance 15
+place 4 -1
+place 2 2
+move 2 4 15
+fadeout 10 30
+advance 15
+fadein 11 10 30
+advance 30
+place 1 -1
+place 3 3
+move 3 1 15
+flash 12 5 30
+advance 15
+place 3 -1
+place 1 1
+move 1 3 15
+advance 15
+place 1 -1
+place 3 3
+move 3 1 15
+flash 12 5 30
+advance 15
+place 3 -1
+place 1 1
+move 1 3 15
+advance 15
+place 1 -1
+place 3 3
+move 3 1 15
+flash 12 5 30
+advance 15
+place 3 -1
+place 1 1
+move 1 3 15
+advance 15
+place 1 -1
+place 3 3
+move 3 1 15
+flash 12 5 30
+advance 15
+place 3 -1
+place 1 1
+move 1 3 15
+advance 15
+place 1 -1
+place 3 3
+move 3 1 15
+move 5 6 70
+advance 15
+place 3 -1
+place 1 1
+move 1 3 15
+advance 55
+place 2 -1
+place 4 4
+move 4 2 15
+flash 12 6 30
+advance 15
+place 4 -1
+place 2 2
+move 2 4 15
+advance 15
+place 2 -1
+place 4 4
+move 4 2 15
+flash 12 6 30
+advance 15
+place 4 -1
+place 2 2
+move 2 4 15
+advance 15
+place 2 -1
+place 4 4
+move 4 2 15
+flash 12 6 30
+advance 15
+place 4 -1
+place 2 2
+move 2 4 15
+advance 15
+place 2 -1
+place 4 4
+move 4 2 15
+flash 12 6 30
+advance 15
+place 4 -1
+place 2 2
+move 2 4 15
+advance 15
+place 2 -1
+place 4 4
+move 4 2 15
+move 5 5 70
+advance 15
+place 4 -1
+place 2 2
+move 2 4 15
+advance 55
+place 1 -1
+place 3 3
+move 3 1 15
+flash 12 5 30
+advance 15
+place 3 -1
+place 1 1
+move 1 3 15
+advance 15
+place 1 -1
+place 3 3
+move 3 1 15
+flash 12 5 30
+advance 15
+place 3 -1
+place 1 1
+move 1 3 15
+advance 15
+place 1 -1
+place 3 3
+move 3 1 15
+flash 12 5 30
+advance 15
+place 3 -1
+place 1 1
+move 1 3 15
+advance 15
+place 1 -1
+place 3 3
+move 3 1 15
+flash 12 5 30
+advance 15
+place 3 -1
+place 1 1
+move 1 3 15
+advance 15
+place 1 -1
+place 3 3
+move 3 1 15
+move 5 6 70
+advance 15
+place 3 -1
+place 1 1
+move 1 3 15
+advance 55
+place 2 -1
+place 4 4
+move 4 2 15
+flash 12 6 30
+advance 15
+place 4 -1
+place 2 2
+move 2 4 15
+advance 15
+place 2 -1
+place 4 4
+move 4 2 15
+flash 12 6 30
+advance 15
+place 4 -1
+place 2 2
+move 2 4 15
+advance 15
+place 2 -1
+place 4 4
+move 4 2 15
+flash 12 6 30
+advance 15
+place 4 -1
+place 2 2
+move 2 4 15
+advance 15
+place 2 -1
+place 4 4
+move 4 2 15
+flash 12 6 30
+advance 15
+place 4 -1
+place 2 2
+move 2 4 15
+advance 15
+place 2 -1
+place 4 4
+move 4 2 15
+move 5 5 70
+advance 15
+place 4 -1
+place 2 2
+move 2 4 15
+advance 55
+stop
