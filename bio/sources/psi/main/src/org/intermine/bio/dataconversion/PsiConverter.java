@@ -72,6 +72,7 @@ public class PsiConverter extends BioFileConverter
 
     static {
         IDENTIFIERS.put("primaryIdentifier", "primaryIdentifier");
+        IDENTIFIERS.put("ensembl", null);
         IDENTIFIERS.put("orf name", "secondaryIdentifier");
         IDENTIFIERS.put("gene name", "symbol");
         IDENTIFIERS.put("fullName", "secondaryIdentifier");
@@ -191,12 +192,16 @@ public class PsiConverter extends BioFileConverter
                 attName = qName;
             // <interactorList><interactor id="4"><xref>
             // <secondaryRef db="sgd" dbAc="MI:0484" id="S000006331" secondary="YPR127W"/>
-            } else if (qName.equals("secondaryRef") && stack.search("interactor") == 2) {
+            } else if ((qName.equals("primaryRef") || qName.equals("secondaryRef"))
+                            && stack.search("interactor") == 2) {
                 String db = attrs.getValue("db");
                 if (db != null) {
                     if (db.equalsIgnoreCase("sgd") || db.equalsIgnoreCase("flybase")
                                     || db.equalsIgnoreCase("ensembl")) {
-                        identifiers.put("primaryIdentifier", attrs.getValue("id"));
+                        if (!db.equals("ensembl")) {
+                            db = "primaryIdentifier";
+                        }
+                        identifiers.put(db, attrs.getValue("id"));
                     }
                 }
 
@@ -410,16 +415,10 @@ public class PsiConverter extends BioFileConverter
             } else if (qName.equals("alias")) {
                 String identifier = attValue.toString();
                 if (identifier != null && !identifier.equals("")) {
-                    if (identifier.startsWith("Dmel_")) {
-                        identifier = identifier.substring(5);
-                    }
-                    if (identifier.startsWith("cg")) {
-                        identifier = "CG" + identifier.substring(2);
-                    }
+                    identifier = formatString(identifier);
                     identifiers.put(attName, identifier);
                 }
-
-                // <interactorList><interactor id="4"></interactor>
+            // <interactorList><interactor id="4"></interactor>
             } else if (gene != null && qName.equals("interactor")) {
                 gene = null;
             //<interactionList><interaction>
@@ -430,23 +429,12 @@ public class PsiConverter extends BioFileConverter
                     Item interactor = validGenes.get(id);
                     String geneRefId = interactor.getIdentifier();
                     interactorHolder = new InteractorHolder(geneRefId);
-                    String ident = null;
-                    if (interactor.getAttribute("primaryIdentifier") != null) {
-                        ident = interactor.getAttribute("primaryIdentifier").getValue();
-                    }
-                    if ((ident == null || ident.equals(""))
-                                    && interactor.getAttribute("secondaryIdentifier") != null) {
-                        ident = interactor.getAttribute("secondaryIdentifier").getValue();
-                    }
-                    if ((ident == null || ident.equals(""))
-                                    && interactor.getAttribute("symbol") != null) {
-                        ident = interactor.getAttribute("symbol").getValue();
-                    }
+                    String ident = fetchIdentifier(interactor);
                     if (ident != null) {
                         interactorHolder.identifier = ident;
                         holder.addInteractor(interactorHolder);
-                        holder.addProtein(geneRefId);
-                        holder.addIdentifer(ident);
+                        holder.addGene(geneRefId);
+                        holder.addIdentifier(ident);
                     } else {
                         holder.isValid = false;
                     }
@@ -614,13 +602,23 @@ public class PsiConverter extends BioFileConverter
         throws ObjectStoreException, SAXException {
 
             String identifier = null, label = null;
-
             // yeast has duplicate symbols
-
             for (String identifierType : IDENTIFIERS.keySet()) {
                 identifier = identifiers.get(identifierType);
-                label = IDENTIFIERS.get(identifierType);
                 if (identifier != null) {
+                    if (identifierType.equals("ensembl")) {
+//                      if (taxonId.equals("9606")
+//                      || taxonId.equals("10090")
+//                      || taxonId.equals("10116")) {
+                        if (identifier.startsWith("EN")) {
+                            label = "primaryIdentifier";
+                        } else {
+                            // worm, dmel, yeast
+                            label = "secondaryIdentifier";
+                        }
+                    } else {
+                        label = IDENTIFIERS.get(identifierType);
+                    }
                     break;
                 }
             }
@@ -755,14 +753,14 @@ public class PsiConverter extends BioFileConverter
             /**
              * @param identifier primaryIdentifier for an interactor in this interaction
              */
-            protected void addIdentifer(String identifier) {
+            protected void addIdentifier(String identifier) {
                 primaryIdentifiers.add(identifier);
             }
 
             /**
              * @param geneId protein involved in interaction
              */
-            protected void addProtein(String geneId) {
+            protected void addGene(String geneId) {
                 geneIds.add(geneId);
             }
 
@@ -936,4 +934,32 @@ public class PsiConverter extends BioFileConverter
         organisms.put(taxId, refId);
         return refId;
     }
+
+    private String fetchIdentifier(Item interactor) {
+        String ident = null;
+        if (interactor.getAttribute("primaryIdentifier") != null) {
+            ident = interactor.getAttribute("primaryIdentifier").getValue();
+        }
+        if ((ident == null || ident.equals(""))
+                        && interactor.getAttribute("secondaryIdentifier") != null) {
+            ident = interactor.getAttribute("secondaryIdentifier").getValue();
+        }
+        if ((ident == null || ident.equals(""))
+                        && interactor.getAttribute("symbol") != null) {
+            ident = interactor.getAttribute("symbol").getValue();
+        }
+        return ident;
+    }
+
+    private String formatString(String ident) {
+        String identifier = ident;
+        if (identifier.startsWith("Dmel_")) {
+            identifier = identifier.substring(5);
+        }
+        if (identifier.startsWith("cg")) {
+            identifier = "CG" + identifier.substring(2);
+        }
+        return identifier;
+    }
+
 }
