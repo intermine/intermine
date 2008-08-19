@@ -219,7 +219,7 @@ public class IntergenicRegionsTest extends TestCase
                 }
 
                 assertEquals(1, ir.getSynonyms().size());
-                Synonym synonym = (Synonym) ir.getSynonyms().iterator().next();
+                Synonym synonym = ir.getSynonyms().iterator().next();
                 assertEquals(ir.getPrimaryIdentifier(), synonym.getValue());
                 assertEquals("identifier", synonym.getType());
                 assertEquals("FlyMine", synonym.getSource().getName());

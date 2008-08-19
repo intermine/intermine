@@ -22,15 +22,6 @@ import java.util.Map;
 import java.util.NoSuchElementException;
 import java.util.Set;
 
-import org.intermine.objectstore.query.Results;
-import org.intermine.objectstore.query.ResultsRow;
-
-import org.intermine.model.InterMineObject;
-import org.intermine.objectstore.ObjectStore;
-import org.intermine.objectstore.ObjectStoreException;
-import org.intermine.objectstore.ObjectStoreWriter;
-import org.intermine.util.DynamicUtil;
-
 import org.flymine.model.genomic.Chromosome;
 import org.flymine.model.genomic.DataSet;
 import org.flymine.model.genomic.DataSource;
@@ -38,6 +29,12 @@ import org.flymine.model.genomic.Gene;
 import org.flymine.model.genomic.IntergenicRegion;
 import org.flymine.model.genomic.Location;
 import org.flymine.model.genomic.Synonym;
+import org.intermine.objectstore.ObjectStore;
+import org.intermine.objectstore.ObjectStoreException;
+import org.intermine.objectstore.ObjectStoreWriter;
+import org.intermine.objectstore.query.Results;
+import org.intermine.objectstore.query.ResultsRow;
+import org.intermine.util.DynamicUtil;
 
 /**
  * Methods for creating feature for intergenic regions.
@@ -150,11 +147,11 @@ public class IntergenicRegionUtil
             IntergenicRegion ir = (IntergenicRegion) irIter.next();
             objectStoreWriter.store(ir);
             objectStoreWriter.store(ir.getChromosomeLocation());
-            objectStoreWriter.store((InterMineObject) ir.getSynonyms().iterator().next());
+            objectStoreWriter.store(ir.getSynonyms().iterator().next());
             Set adjacentGenes = ir.getAdjacentGenes();
             Iterator adjacentGenesIter = adjacentGenes.iterator();
             while (adjacentGenesIter.hasNext()) {
-                objectStoreWriter.store((InterMineObject) adjacentGenesIter.next());
+                objectStoreWriter.store(adjacentGenesIter.next());
             }
         }
     }
