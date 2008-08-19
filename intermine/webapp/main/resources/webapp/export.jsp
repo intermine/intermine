@@ -6,13 +6,13 @@
 
 <html:xhtml/>
 
-<html:link action="/exportOptions?table=${tableName}&amp;type=csv">
+<html:link action="/exportOptions?table=${tableName}&amp;type=csv&amp;trail=|query|${tableName}">
   <fmt:message key="exporter.csv.description"/>
 </html:link>
 <br/>
 
 <c:if test="${pagedTable.estimatedSize <= WEB_PROPERTIES['max.excel.export.size']}">
-  <html:link action="/exportOptions?table=${tableName}&amp;type=excel">
+  <html:link action="/exportOptions?table=${tableName}&amp;type=excel&amp;trail=|query|${tableName}">
     <fmt:message key="exporter.excel.description">
       <fmt:param value="${WEB_PROPERTIES['max.excel.export.size']}"/>
     </fmt:message>
@@ -29,7 +29,7 @@
       <span class="nullStrike"><fmt:message key="exporter.${exporterId}.description"/></span><br>
     </c:when>
     <c:otherwise>
-      <html:link action="/exportOptions?table=${tableName}&amp;type=${exporterId}">
+      <html:link action="/exportOptions?table=${tableName}&amp;type=${exporterId}&amp;trail=|query|${tableName}">
         <fmt:message key="exporter.${exporterId}.description"/>
       </html:link><br>
     </c:otherwise>
