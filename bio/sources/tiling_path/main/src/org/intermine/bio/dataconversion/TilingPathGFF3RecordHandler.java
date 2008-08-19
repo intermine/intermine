@@ -53,14 +53,14 @@ public class TilingPathGFF3RecordHandler extends GFF3RecordHandler
         Item feature = getFeature();
         String clsName = XmlUtil.getFragmentFromURI(feature.getClassName());
 
-        List newIds = (List) record.getAttributes().get("newID");
+        List newIds = record.getAttributes().get("newID");
         if (newIds != null) {
             String newId = (String) newIds.get(0);
             addSynonym(feature, "identifier", newId);
             feature.setAttribute("primaryIdentifier", newId);
         }
 
-        List oldIds = (List) record.getAttributes().get("oldID");
+        List oldIds = record.getAttributes().get("oldID");
         if (oldIds != null) {
             String oldId = (String) oldIds.get(0);
             if (!oldId.equals(record.getId())) {
@@ -69,7 +69,7 @@ public class TilingPathGFF3RecordHandler extends GFF3RecordHandler
         }
 
         if (clsName.equals("PCRProduct")) {
-            List promoters = (List) record.getAttributes().get("promotor");
+            List promoters = record.getAttributes().get("promotor");
 
             if (promoters.get(0).equals("1")) {
                 feature.setAttribute("promoter", "true");
