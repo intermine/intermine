@@ -861,6 +861,10 @@ public class PathQuery
      * @return the description
      */
     public String getPathDescription(String pathString) {
+        if (pathString == null) {
+            logPathError("getPathDescription() was passed a null value");
+            return null;
+        }
         for (Map.Entry<Path, String> entry: pathDescriptions.entrySet()) {
             if (entry.getKey().toStringNoConstraints().equals(pathString)
                             || entry.getKey().toString().equals(pathString)) {
