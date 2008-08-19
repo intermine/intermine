@@ -360,9 +360,9 @@ public class PostProcessUtil
         QueryObjectReference ref2 = new QueryObjectReference(qcLoc, "subject");
         ContainsConstraint cc2 = new ContainsConstraint(ref2, ConstraintOp.CONTAINS, qcSub);
         cs.addConstraint(cc2);
-//        SimpleConstraint lengthNotNull =
-//            new SimpleConstraint(qfObjLength, ConstraintOp.IS_NOT_NULL);
-//        cs.addConstraint(lengthNotNull);
+        SimpleConstraint lengthNotNull =
+            new SimpleConstraint(qfObjLength, ConstraintOp.IS_NOT_NULL);
+        cs.addConstraint(lengthNotNull);
 
         q.setConstraint(cs);
         Set indexesToCreate = new HashSet();

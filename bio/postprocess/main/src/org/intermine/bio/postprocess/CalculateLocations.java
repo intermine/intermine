@@ -770,7 +770,7 @@ public class CalculateLocations
     private void storeAll(List list) throws ObjectStoreException {
         Iterator iter = list.iterator();
         while (iter.hasNext()) {
-            osw.store((InterMineObject) iter.next());
+            osw.store(iter.next());
         }
     }
 
