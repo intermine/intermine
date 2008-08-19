@@ -43,6 +43,8 @@
     }
 </style>
 
+<tiles:get name="objectTrail.tile"/>
+
 <fmt:message var="exportSubmitMessage" key="export.submit"/>
 
 <div class="body" align="center">
