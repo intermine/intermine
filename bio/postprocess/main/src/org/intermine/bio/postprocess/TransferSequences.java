@@ -94,7 +94,8 @@ public class TransferSequences
         long startTime = System.currentTimeMillis();
 
         Results results =
-            PostProcessUtil.findLocationAndObjects(os, Chromosome.class, Assembly.class, false);
+            PostProcessUtil.findLocationAndObjects(os, Chromosome.class, Assembly.class,
+                                                   false, false);
         // could try reducing further if still OutOfMemeory problems
         results.setBatchSize(20);
         results.setNoPrefetch();

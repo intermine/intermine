@@ -326,11 +326,13 @@ public class PostProcessUtil
      * @param subjectCls subject type of the Location
      * @param orderBySubject if true order the results using the subjectCls, otherwise order by
      * objectCls
+     * @param hasLength if true, only query locations where the objectCls object has a non-zero
+     * length
      * @return a Results object: object.id, location, subject
      * @throws ObjectStoreException if problem reading ObjectStore
      */
     public static Results findLocationAndObjects(ObjectStore os, Class objectCls, Class subjectCls,
-                                                 boolean orderBySubject)
+                                                 boolean orderBySubject, boolean hasLength)
         throws ObjectStoreException {
         // TODO check objectCls and subjectCls assignable to BioEntity
 
@@ -338,7 +340,6 @@ public class PostProcessUtil
         q.setDistinct(false);
         QueryClass qcObj = new QueryClass(objectCls);
         QueryField qfObj = new QueryField(qcObj, "id");
-        QueryField qfObjLength = new QueryField(qcObj, "length");
         q.addFrom(qcObj);
         q.addToSelect(qfObj);
         if (!orderBySubject) {
@@ -360,10 +361,13 @@ public class PostProcessUtil
         QueryObjectReference ref2 = new QueryObjectReference(qcLoc, "subject");
         ContainsConstraint cc2 = new ContainsConstraint(ref2, ConstraintOp.CONTAINS, qcSub);
         cs.addConstraint(cc2);
-        SimpleConstraint lengthNotNull =
-            new SimpleConstraint(qfObjLength, ConstraintOp.IS_NOT_NULL);
-        cs.addConstraint(lengthNotNull);
 
+        if (hasLength) {
+            QueryField qfObjLength = new QueryField(qcObj, "length");
+            SimpleConstraint lengthNotNull =
+                new SimpleConstraint(qfObjLength, ConstraintOp.IS_NOT_NULL);
+            cs.addConstraint(lengthNotNull);
+        }
         q.setConstraint(cs);
         Set indexesToCreate = new HashSet();
         indexesToCreate.add(qfObj);

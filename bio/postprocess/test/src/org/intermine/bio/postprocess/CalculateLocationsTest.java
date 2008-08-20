@@ -505,7 +505,7 @@ public class CalculateLocationsTest extends TestCase {
         expected.setId(new Integer(0));
         Item expItem = itemFactory.makeItem(expected);
         Results results = PostProcessUtil.findLocationAndObjects(osw.getObjectStore(), ChromosomeBand.class,
-                                                             Supercontig.class, true);
+                                                             Supercontig.class, true, false);
         Iterator iter = results.iterator();
         Location result = (Location) ((ResultsRow) iter.next()).get(2);
         Item resItem = itemFactory.makeItem(result);
@@ -535,7 +535,7 @@ public class CalculateLocationsTest extends TestCase {
         expected.setId(new Integer(0));
         Item expItem = itemFactory.makeItem(expected);
         Results results = PostProcessUtil.findLocationAndObjects(osw.getObjectStore(),
-                                                        ChromosomeBand.class, Supercontig.class, true);
+                                                        ChromosomeBand.class, Supercontig.class, true, false);
         Iterator iter = results.iterator();
         Location result = (Location) ((ResultsRow) iter.next()).get(2);
         Item resItem = itemFactory.makeItem(result);
@@ -572,7 +572,7 @@ public class CalculateLocationsTest extends TestCase {
         Item expItem = itemFactory.makeItem(expected);
         Results results = PostProcessUtil.findLocationAndObjects(osw.getObjectStore(),
                                                                Chromosome.class,
-                                                               Contig.class, true);
+                                                               Contig.class, true, false);
         Iterator chrContigIter = results.iterator();
         Location result = (Location) ((ResultsRow) chrContigIter.next()).get(2);
         Item resItem = itemFactory.makeItem(result);
@@ -585,7 +585,7 @@ public class CalculateLocationsTest extends TestCase {
         expItem = itemFactory.makeItem(expected);
         results =
             PostProcessUtil.findLocationAndObjects(osw.getObjectStore(), ChromosomeBand.class,
-                                                 Contig.class, true);
+                                                 Contig.class, true, false);
         Iterator chrBandContigIter = results.iterator();
 
         result = (Location) ((ResultsRow) chrBandContigIter.next()).get(2);
@@ -621,7 +621,7 @@ public class CalculateLocationsTest extends TestCase {
         expected.setId(new Integer(0));
         Item expItem = itemFactory.makeItem(expected);
         Results results = PostProcessUtil.findLocationAndObjects(osw.getObjectStore(), Chromosome.class,
-                                                        Contig.class, true);
+                                                        Contig.class, true, false);
         Iterator chrContigIter = results.iterator();
         Location result = (Location) ((ResultsRow) chrContigIter.next()).get(2);
         Item resItem = itemFactory.makeItem(result);
@@ -633,7 +633,7 @@ public class CalculateLocationsTest extends TestCase {
         expected.setId(new Integer(0));
         expItem = itemFactory.makeItem(expected);
         results = PostProcessUtil.findLocationAndObjects(osw.getObjectStore(), ChromosomeBand.class,
-                                                Contig.class, true);
+                                                Contig.class, true, false);
         Iterator chrBandContigIter = results.iterator();
         result = (Location) ((ResultsRow) chrBandContigIter.next()).get(2);
         resItem = itemFactory.makeItem(result);
@@ -671,7 +671,8 @@ public class CalculateLocationsTest extends TestCase {
         expected.setId(new Integer(0));
         Item expItem = itemFactory.makeItem(expected);
         Results results = PostProcessUtil.findLocationAndObjects(osw.getObjectStore(),
-                                                                    Chromosome.class, Exon.class, true);
+                                                                 Chromosome.class, Exon.class,
+                                                                 true, false);
         Iterator chrExonIter = results.iterator();
         Location result = (Location) ((ResultsRow) chrExonIter.next()).get(2);
         Item resItem = itemFactory.makeItem(result);
@@ -684,7 +685,7 @@ public class CalculateLocationsTest extends TestCase {
         expItem = itemFactory.makeItem(expected);
         results =
             PostProcessUtil.findLocationAndObjects(osw.getObjectStore(), Supercontig.class,
-                                                 Exon.class, true);
+                                                   Exon.class, true, false);
         Iterator supercontigExonIter = results.iterator();
         result = (Location) ((ResultsRow) supercontigExonIter.next()).get(2);
         resItem = itemFactory.makeItem(result);
@@ -697,7 +698,7 @@ public class CalculateLocationsTest extends TestCase {
         expItem = itemFactory.makeItem(expected);
         results =
             PostProcessUtil.findLocationAndObjects(osw.getObjectStore(), ChromosomeBand.class,
-                                                 Exon.class, true);
+                                                   Exon.class, true, false);
         Iterator chrBandExonIter = results.iterator();
 
         result = (Location) ((ResultsRow) chrBandExonIter.next()).get(2);
@@ -777,7 +778,7 @@ public class CalculateLocationsTest extends TestCase {
         Item expItem = itemFactory.makeItem(expected);
         Results results = PostProcessUtil.findLocationAndObjects(osw.getObjectStore(),
                                                                     Chromosome.class, Exon.class,
-                                                                    true);
+                                                                    true, false);
 
         Iterator chrExonIter = results.iterator();
 
@@ -795,7 +796,7 @@ public class CalculateLocationsTest extends TestCase {
         expected.setId(new Integer(0));
         expItem = itemFactory.makeItem(expected);
         results = PostProcessUtil.findLocationAndObjects(osw.getObjectStore(), Supercontig.class,
-                                                       Exon.class, true);
+                                                            Exon.class, true, false);
         Iterator supercontigExonIter = results.iterator();
 
         Assert.assertTrue(supercontigExonIter.hasNext());
@@ -814,7 +815,7 @@ public class CalculateLocationsTest extends TestCase {
         expected.setId(new Integer(0));
         expItem = itemFactory.makeItem(expected);
         results = PostProcessUtil.findLocationAndObjects(osw.getObjectStore(), ChromosomeBand.class,
-                                                       Exon.class, true);
+                                                         Exon.class, true, false);
         Iterator chrBandExonIter = results.iterator();
 
         Assert.assertTrue(chrBandExonIter.hasNext());
@@ -896,7 +897,7 @@ public class CalculateLocationsTest extends TestCase {
         Item expItem = itemFactory.makeItem(expected);
         Results results = PostProcessUtil.findLocationAndObjects(osw.getObjectStore(),
                                                                Chromosome.class, Exon.class,
-                                                               true);
+                                                               true, false);
 
         Iterator chrExonIter = results.iterator();
 
@@ -914,7 +915,7 @@ public class CalculateLocationsTest extends TestCase {
         expected.setId(new Integer(0));
         expItem = itemFactory.makeItem(expected);
         results = PostProcessUtil.findLocationAndObjects(osw.getObjectStore(), Supercontig.class,
-                                                       Exon.class, true);
+                                                       Exon.class, true, false);
         Iterator supercontigExonIter = results.iterator();
 
         Assert.assertTrue(supercontigExonIter.hasNext());
@@ -933,7 +934,7 @@ public class CalculateLocationsTest extends TestCase {
         expected.setId(new Integer(0));
         expItem = itemFactory.makeItem(expected);
         results = PostProcessUtil.findLocationAndObjects(osw.getObjectStore(), ChromosomeBand.class,
-                                                       Exon.class, true);
+                                                       Exon.class, true, false);
         Iterator chrBandExonIter = results.iterator();
         Assert.assertTrue(chrBandExonIter.hasNext());
         result = (Location) ((ResultsRow) chrBandExonIter.next()).get(2);
@@ -1015,7 +1016,7 @@ public class CalculateLocationsTest extends TestCase {
         Item expItem = itemFactory.makeItem(expected);
         Results results = PostProcessUtil.findLocationAndObjects(osw.getObjectStore(),
                                                               Chromosome.class, Exon.class,
-                                                              true);
+                                                              true, false);
         Iterator chrExonIter = results.iterator();
 
         rr = (ResultsRow) chrExonIter.next();
@@ -1033,7 +1034,7 @@ public class CalculateLocationsTest extends TestCase {
         expItem = itemFactory.makeItem(expected);
         results =
             PostProcessUtil.findLocationAndObjects(osw.getObjectStore(), Supercontig.class,
-                                                 Exon.class, true);
+                                                 Exon.class, true, false);
         Iterator supercontigExonIter = results.iterator();
 
         Assert.assertTrue(supercontigExonIter.hasNext());
@@ -1052,7 +1053,7 @@ public class CalculateLocationsTest extends TestCase {
         expected.setId(new Integer(0));
         expItem = itemFactory.makeItem(expected);
         results = PostProcessUtil.findLocationAndObjects(osw.getObjectStore(), ChromosomeBand.class,
-                                                       Exon.class, true);
+                                                       Exon.class, true, false);
         Iterator chrBandExonIter = results.iterator();
         Assert.assertTrue(chrBandExonIter.hasNext());
         result = (Location) ((ResultsRow) chrBandExonIter.next()).get(2);
@@ -1135,7 +1136,7 @@ public class CalculateLocationsTest extends TestCase {
         Item expItem = itemFactory.makeItem(expected);
         Results results = PostProcessUtil.findLocationAndObjects(osw.getObjectStore(),
                                                                Chromosome.class, Exon.class,
-                                                               true);
+                                                               true, false);
         Iterator chrExonIter = results.iterator();
 
         rr = (ResultsRow) chrExonIter.next();
@@ -1152,7 +1153,7 @@ public class CalculateLocationsTest extends TestCase {
         expected.setId(new Integer(0));
         expItem = itemFactory.makeItem(expected);
         results = PostProcessUtil.findLocationAndObjects(osw.getObjectStore(), Supercontig.class,
-                                                       Exon.class, true);
+                                                       Exon.class, true, false);
         Iterator supercontigExonIter = results.iterator();
 
         Assert.assertTrue(supercontigExonIter.hasNext());
@@ -1171,7 +1172,7 @@ public class CalculateLocationsTest extends TestCase {
         expected.setId(new Integer(0));
         expItem = itemFactory.makeItem(expected);
         results = PostProcessUtil.findLocationAndObjects(osw.getObjectStore(), ChromosomeBand.class,
-                                                       Exon.class, true);
+                                                       Exon.class, true, false);
         Iterator chrBandExonIter = results.iterator();
         Assert.assertTrue(chrBandExonIter.hasNext());
         result = (Location) ((ResultsRow) chrBandExonIter.next()).get(2);
@@ -1253,7 +1254,7 @@ public class CalculateLocationsTest extends TestCase {
         Item expItem = itemFactory.makeItem(expected);
         Results results = PostProcessUtil.findLocationAndObjects(osw.getObjectStore(),
                                                                Chromosome.class, Exon.class,
-                                                               true);
+                                                               true, false);
         Iterator chrExonIter = results.iterator();
 
         rr = (ResultsRow) chrExonIter.next();
@@ -1271,7 +1272,7 @@ public class CalculateLocationsTest extends TestCase {
         expItem = itemFactory.makeItem(expected);
         results =
             PostProcessUtil.findLocationAndObjects(osw.getObjectStore(), Supercontig.class,
-                                                 Exon.class, true);
+                                                 Exon.class, true, false);
 Iterator supercontigExonIter = results.iterator();
 
         Assert.assertTrue(supercontigExonIter.hasNext());
@@ -1291,7 +1292,7 @@ Iterator supercontigExonIter = results.iterator();
         expItem = itemFactory.makeItem(expected);
         results =
             PostProcessUtil.findLocationAndObjects(osw.getObjectStore(), ChromosomeBand.class,
-                                                 Exon.class, true);
+                                                 Exon.class, true, false);
 Iterator chrBandExonIter = results.iterator();
         Assert.assertTrue(chrBandExonIter.hasNext());
         result = (Location) ((ResultsRow) chrBandExonIter.next()).get(2);
@@ -1371,7 +1372,7 @@ Iterator chrBandExonIter = results.iterator();
         expected.setId(new Integer(0));
         Item expItem = itemFactory.makeItem(expected);
         Results results = PostProcessUtil.findLocationAndObjects(osw.getObjectStore(),
-                                                        Chromosome.class, Exon.class, true);
+                                                        Chromosome.class, Exon.class, true, false);
 
         Iterator chrExonIter = results.iterator();
 
@@ -1390,7 +1391,7 @@ Iterator chrBandExonIter = results.iterator();
         expItem = itemFactory.makeItem(expected);
         results =
             PostProcessUtil.findLocationAndObjects(osw.getObjectStore(), Supercontig.class,
-                                                 Exon.class, true);
+                                                 Exon.class, true, false);
         Iterator supercontigExonIter = results.iterator();
 
         Assert.assertTrue(supercontigExonIter.hasNext());
@@ -1410,7 +1411,7 @@ Iterator chrBandExonIter = results.iterator();
         expItem = itemFactory.makeItem(expected);
         results =
             PostProcessUtil.findLocationAndObjects(osw.getObjectStore(), ChromosomeBand.class,
-                                                 Exon.class, true);
+                                                 Exon.class, true, false);
         Iterator chrBandExonIter = results.iterator();
         Assert.assertTrue(chrBandExonIter.hasNext());
         result = (Location) ((ResultsRow) chrBandExonIter.next()).get(2);
@@ -1492,7 +1493,7 @@ Iterator chrBandExonIter = results.iterator();
         Item expItem = itemFactory.makeItem(expected);
         Results results = PostProcessUtil.findLocationAndObjects(osw.getObjectStore(),
                                                         Chromosome.class, Exon.class,
-                                                        true);
+                                                        true, false);
 
         Iterator chrExonIter = results.iterator();
 
@@ -1511,7 +1512,7 @@ Iterator chrBandExonIter = results.iterator();
         expItem = itemFactory.makeItem(expected);
         results =
             PostProcessUtil.findLocationAndObjects(osw.getObjectStore(), Supercontig.class,
-                                                 Exon.class, true);
+                                                 Exon.class, true, false);
 Iterator supercontigExonIter = results.iterator();
 
         Assert.assertTrue(supercontigExonIter.hasNext());
@@ -1531,7 +1532,7 @@ Iterator supercontigExonIter = results.iterator();
         expItem = itemFactory.makeItem(expected);
         results =
             PostProcessUtil.findLocationAndObjects(osw.getObjectStore(), ChromosomeBand.class,
-                                                 Exon.class, true);
+                                                 Exon.class, true, false);
 Iterator chrBandExonIter = results.iterator();
         Assert.assertTrue(chrBandExonIter.hasNext());
         result = (Location) ((ResultsRow) chrBandExonIter.next()).get(2);
@@ -1612,7 +1613,7 @@ Iterator chrBandExonIter = results.iterator();
         Item expItem = itemFactory.makeItem(expected);
         Results results = PostProcessUtil.findLocationAndObjects(osw.getObjectStore(),
                                                         Chromosome.class, Exon.class,
-                                                        true);
+                                                        true, false);
         Iterator chrExonIter = results.iterator();
 
         rr = (ResultsRow) chrExonIter.next();
@@ -1629,7 +1630,7 @@ Iterator chrBandExonIter = results.iterator();
         expected.setId(new Integer(0));
         expItem = itemFactory.makeItem(expected);
         results = PostProcessUtil.findLocationAndObjects(osw.getObjectStore(), Supercontig.class,
-                                                Exon.class, true);
+                                                Exon.class, true, false);
         Iterator supercontigExonIter = results.iterator();
 
         Assert.assertTrue(supercontigExonIter.hasNext());
@@ -1648,7 +1649,7 @@ Iterator chrBandExonIter = results.iterator();
         expected.setId(new Integer(0));
         expItem = itemFactory.makeItem(expected);
         results = PostProcessUtil.findLocationAndObjects(osw.getObjectStore(), ChromosomeBand.class,
-                                                Exon.class, true);
+                                                Exon.class, true, false);
         Iterator chrBandExonIter = results.iterator();
         Assert.assertTrue(chrBandExonIter.hasNext());
         result = (Location) ((ResultsRow) chrBandExonIter.next()).get(2);
@@ -1729,7 +1730,7 @@ Iterator chrBandExonIter = results.iterator();
         Item expItem = itemFactory.makeItem(expected);
         Results results = PostProcessUtil.findLocationAndObjects(osw.getObjectStore(),
                                                         Chromosome.class, Exon.class,
-                                                        true);
+                                                        true, false);
         Iterator chrExonIter = results.iterator();
 
         rr = (ResultsRow) chrExonIter.next();
@@ -1746,7 +1747,7 @@ Iterator chrBandExonIter = results.iterator();
         expected.setId(new Integer(0));
         expItem = itemFactory.makeItem(expected);
         results = PostProcessUtil.findLocationAndObjects(osw.getObjectStore(), Supercontig.class,
-                                                Exon.class, true);
+                                                Exon.class, true, false);
         Iterator supercontigExonIter = results.iterator();
 
         Assert.assertTrue(supercontigExonIter.hasNext());
@@ -1765,7 +1766,7 @@ Iterator chrBandExonIter = results.iterator();
         expected.setId(new Integer(0));
         expItem = itemFactory.makeItem(expected);
         results = PostProcessUtil.findLocationAndObjects(osw.getObjectStore(), ChromosomeBand.class,
-                                                Exon.class, true);
+                                                Exon.class, true, false);
         Iterator chrBandExonIter = results.iterator();
         Assert.assertTrue(chrBandExonIter.hasNext());
         result = (Location) ((ResultsRow) chrBandExonIter.next()).get(2);
@@ -1847,7 +1848,7 @@ Iterator chrBandExonIter = results.iterator();
         Item expItem = itemFactory.makeItem(expected);
         Results results = PostProcessUtil.findLocationAndObjects(osw.getObjectStore(),
                                                         Chromosome.class, Exon.class,
-                                                        true);
+                                                        true, false);
         Iterator chrExonIter = results.iterator();
 
         rr = (ResultsRow) chrExonIter.next();
@@ -1864,7 +1865,7 @@ Iterator chrBandExonIter = results.iterator();
         expected.setId(new Integer(0));
         expItem = itemFactory.makeItem(expected);
         results = PostProcessUtil.findLocationAndObjects(osw.getObjectStore(), Supercontig.class,
-                                                Exon.class, true);
+                                                Exon.class, true, false);
         Iterator supercontigExonIter = results.iterator();
 
         Assert.assertTrue(supercontigExonIter.hasNext());
@@ -1883,7 +1884,7 @@ Iterator chrBandExonIter = results.iterator();
         expected.setId(new Integer(0));
         expItem = itemFactory.makeItem(expected);
         results = PostProcessUtil.findLocationAndObjects(osw.getObjectStore(), ChromosomeBand.class,
-                                                        Exon.class, true);
+                                                        Exon.class, true, false);
         Iterator chrBandExonIter = results.iterator();
         Assert.assertTrue(chrBandExonIter.hasNext());
         result = (Location) ((ResultsRow) chrBandExonIter.next()).get(2);
@@ -1971,7 +1972,7 @@ Iterator chrBandExonIter = results.iterator();
         Item expItem = itemFactory.makeItem(expected);
         Results results= PostProcessUtil.findLocationAndObjects(osw.getObjectStore(),
                                                        Chromosome.class, Exon.class,
-                                                       true);
+                                                       true, false);
         Iterator chrExonIter = results.iterator();
 
         rr = (ResultsRow) chrExonIter.next();
@@ -1990,7 +1991,7 @@ Iterator chrBandExonIter = results.iterator();
         ((PartialLocation) expected).setEndIsPartial(Boolean.TRUE);
         expItem = itemFactory.makeItem(expected);
         results = PostProcessUtil.findLocationAndObjects(osw.getObjectStore(), Supercontig.class,
-                                                Exon.class, true);
+                                                Exon.class, true, false);
         Iterator supercontigExonIter = results.iterator();
 
         Assert.assertTrue(supercontigExonIter.hasNext());
@@ -2026,7 +2027,7 @@ Iterator chrBandExonIter = results.iterator();
         expected.setId(new Integer(0));
         expItem = itemFactory.makeItem(expected);
         results = PostProcessUtil.findLocationAndObjects(osw.getObjectStore(), ChromosomeBand.class,
-                                                Exon.class, true);
+                                                Exon.class, true, false);
         Iterator chrBandExonIter = results.iterator();
         Assert.assertTrue(chrBandExonIter.hasNext());
         result = (Location) ((ResultsRow) chrBandExonIter.next()).get(2);
@@ -2074,7 +2075,7 @@ Iterator chrBandExonIter = results.iterator();
         Item expItem = itemFactory.makeItem(expected);
         Results results = PostProcessUtil.findLocationAndObjects(osw.getObjectStore(),
                                                         Chromosome.class, Exon.class,
-                                                        true);
+                                                        true, false);
         Iterator chrExonIter = results.iterator();
 
         Location result = (Location) ((ResultsRow) chrExonIter.next()).get(2);
@@ -2087,7 +2088,7 @@ Iterator chrBandExonIter = results.iterator();
         expected.setId(new Integer(0));
         expItem = itemFactory.makeItem(expected);
         results = PostProcessUtil.findLocationAndObjects(osw.getObjectStore(), Supercontig.class,
-                                                Exon.class, true);
+                                                Exon.class, true, false);
         Iterator supercontigExonIter = results.iterator();
         result = (Location) ((ResultsRow) supercontigExonIter.next()).get(2);
         resItem = itemFactory.makeItem(result);
@@ -2099,7 +2100,7 @@ Iterator chrBandExonIter = results.iterator();
         expected.setId(new Integer(0));
         expItem = itemFactory.makeItem(expected);
         results = PostProcessUtil.findLocationAndObjects(osw.getObjectStore(), ChromosomeBand.class,
-                                                Exon.class, true);
+                                                Exon.class, true, false);
         Iterator chrBandExonIter = results.iterator();
         result = (Location) ((ResultsRow) chrBandExonIter.next()).get(2);
         resItem = itemFactory.makeItem(result);
@@ -2142,7 +2143,7 @@ Iterator chrBandExonIter = results.iterator();
         expected.setId(new Integer(0));
         Item expItem = itemFactory.makeItem(expected);
         Results results =
-            PostProcessUtil.findLocationAndObjects(osw.getObjectStore(), Chromosome.class, Exon.class, true);
+            PostProcessUtil.findLocationAndObjects(osw.getObjectStore(), Chromosome.class, Exon.class, true, false);
         Iterator chrExonIter = results.iterator();
         Location result = (Location) ((ResultsRow) chrExonIter.next()).get(2);
         Item resItem = itemFactory.makeItem(result);
@@ -2154,7 +2155,7 @@ Iterator chrBandExonIter = results.iterator();
         expected.setId(new Integer(0));
         expItem = itemFactory.makeItem(expected);
         results = PostProcessUtil.findLocationAndObjects(osw.getObjectStore(), Supercontig.class,
-                                                Exon.class, true);
+                                                Exon.class, true, false);
         Iterator supercontigExonIter = results.iterator();
         result = (Location) ((ResultsRow) supercontigExonIter.next()).get(2);
         resItem = itemFactory.makeItem(result);
@@ -2166,7 +2167,7 @@ Iterator chrBandExonIter = results.iterator();
         expected.setId(new Integer(0));
         expItem = itemFactory.makeItem(expected);
         results = PostProcessUtil.findLocationAndObjects(osw.getObjectStore(), ChromosomeBand.class,
-                                                Exon.class, true);
+                                                Exon.class, true, false);
         Iterator chrBandExonIter = results.iterator();
         result = (Location) ((ResultsRow) chrBandExonIter.next()).get(2);
         resItem = itemFactory.makeItem(result);
@@ -2215,7 +2216,7 @@ Iterator chrBandExonIter = results.iterator();
         expected.setId(new Integer(0));
         Item expItem = itemFactory.makeItem(expected);
         Results results =
-            PostProcessUtil.findLocationAndObjects(osw.getObjectStore(), Chromosome.class, Exon.class, true);
+            PostProcessUtil.findLocationAndObjects(osw.getObjectStore(), Chromosome.class, Exon.class, true, false);
         Iterator chrExonIter = results.iterator();
         Location result = (Location) ((ResultsRow) chrExonIter.next()).get(2);
         Item resItem = itemFactory.makeItem(result);
@@ -2236,7 +2237,7 @@ Iterator chrBandExonIter = results.iterator();
         expected.setId(new Integer(0));
         expItem = itemFactory.makeItem(expected);
         results = PostProcessUtil.findLocationAndObjects(osw.getObjectStore(), Supercontig.class,
-                                                Exon.class, true);
+                                                Exon.class, true, false);
         Iterator supercontigExonIter = results.iterator();
         result = (Location) ((ResultsRow) supercontigExonIter.next()).get(2);
         resItem = itemFactory.makeItem(result);
@@ -2257,7 +2258,7 @@ Iterator chrBandExonIter = results.iterator();
         expected.setId(new Integer(0));
         expItem = itemFactory.makeItem(expected);
         results = PostProcessUtil.findLocationAndObjects(osw.getObjectStore(), ChromosomeBand.class,
-                                                Exon.class, true);
+                                                Exon.class, true, false);
         Iterator chrBandExonIter = results.iterator();
         result = (Location) ((ResultsRow) chrBandExonIter.next()).get(2);
         resItem = itemFactory.makeItem(result);
@@ -2309,7 +2310,7 @@ Iterator chrBandExonIter = results.iterator();
         expected.setId(new Integer(0));
         Item expItem = itemFactory.makeItem(expected);
         Results results = PostProcessUtil.findLocationAndObjects(osw.getObjectStore(), Chromosome.class,
-                                                        Exon.class, true);
+                                                        Exon.class, true, false);
         Iterator chrExonIter = results.iterator();
 
         Location result = (Location) ((ResultsRow) chrExonIter.next()).get(2);
@@ -2322,7 +2323,7 @@ Iterator chrBandExonIter = results.iterator();
         expected.setId(new Integer(0));
         expItem = itemFactory.makeItem(expected);
         results = PostProcessUtil.findLocationAndObjects(osw.getObjectStore(), Supercontig.class,
-                                                Exon.class, true);
+                                                Exon.class, true, false);
         Iterator supercontigExonIter = results.iterator();
 
         result = (Location) ((ResultsRow) supercontigExonIter.next()).get(2);
@@ -2335,7 +2336,7 @@ Iterator chrBandExonIter = results.iterator();
         expected.setId(new Integer(0));
         expItem = itemFactory.makeItem(expected);
         results = PostProcessUtil.findLocationAndObjects(osw.getObjectStore(), ChromosomeBand.class,
-                                                Exon.class, true);
+                                                Exon.class, true, false);
         Iterator chrBandExonIter = results.iterator();
 
         result = (Location) ((ResultsRow) chrBandExonIter.next()).get(2);
@@ -2963,7 +2964,7 @@ Iterator chrBandExonIter = results.iterator();
         Item expItem = itemFactory.makeItem(expected);
         Results results = PostProcessUtil.findLocationAndObjects(osw.getObjectStore(),
                                                                Chromosome.class,
-                                                               Contig.class, true);
+                                                               Contig.class, true, false);
         Iterator chrContigIter = results.iterator();
         Location result = (Location) ((ResultsRow) chrContigIter.next()).get(2);
         Item resItem = itemFactory.makeItem(result);
