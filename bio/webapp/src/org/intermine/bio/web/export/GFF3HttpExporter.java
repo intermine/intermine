@@ -77,7 +77,7 @@ public class GFF3HttpExporter implements TableHttpExporter
         } catch (Exception e) {
             throw new ExportException("Export failed", e);
         }
-        exporter.export(pt.getResultElementRows());
+        exporter.export(pt.getAllResultElementRows());
         if (exporter.getWrittenResultsCount() == 0) {
             throw new ExportException("Nothing was found for export");
         }

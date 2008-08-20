@@ -77,7 +77,7 @@ public class SequenceHttpExporter implements TableHttpExporter
 
         SequenceExporter exporter = new SequenceExporter(os, outputStream, realFeatureIndex);
 
-        exporter.export(pt.getResultElementRows());
+        exporter.export(pt.getAllResultElementRows());
         if (exporter.getWrittenResultsCount() == 0) {
             throw new ExportException("Nothing was found for export.");
         }

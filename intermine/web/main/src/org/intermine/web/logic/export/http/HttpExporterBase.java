@@ -73,7 +73,7 @@ public abstract class HttpExporterBase implements TableHttpExporter
             separator = Exporter.UNIX_SEPARATOR;
         }
         Exporter exporter = getExporter(out, separator);
-        exporter.export(pt.getResultElementRows());
+        exporter.export(pt.getAllResultElementRows());
         if (exporter.getWrittenResultsCount() == 0) {
             throw new ExportException("Nothing was found for export.");
         }
