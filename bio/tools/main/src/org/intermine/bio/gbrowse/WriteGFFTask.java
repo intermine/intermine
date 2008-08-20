@@ -139,7 +139,7 @@ public class WriteGFFTask extends Task
 
         Results results =
             PostProcessUtil.findLocationAndObjects(os, Chromosome.class,
-                                                   LOCATED_SEQUENCE_FEATURE_CLASS, false);
+                                                   LOCATED_SEQUENCE_FEATURE_CLASS, false, true);
 
         results.setBatchSize(2000);
 
