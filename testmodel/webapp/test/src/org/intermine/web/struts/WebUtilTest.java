@@ -37,7 +37,7 @@ public class WebUtilTest extends TestCase
         assertEquals("wildcardSqlToUser(%a)", "*a", value);
 
         value = Util.wildcardSqlToUser("a\\\\\\\\a");
-        assertEquals("wildcardSqlToUser(a\\\\\\\\a)", "a\\\\a", value);
+        assertEquals("wildcardSqlToUser(a\\\\\\\\a)", "a\\a", value);
 
         value = Util.wildcardSqlToUser("\\\\%a");
         assertEquals("wildcardSqlToUser(\\\\%a)", "%a", value);
@@ -70,7 +70,7 @@ public class WebUtilTest extends TestCase
         assertEquals("wildcardUserToSql(*a)", "%a", value);
 
         value = Util.wildcardUserToSql("a\\\\a");
-        assertEquals("wildcardUserToSql(a\\a)", "a\\\\\\\\a", value);
+        assertEquals("wildcardUserToSql(a\\\\a)", "a\\\\\\\\\\\\\\\\a", value);
 
         value = Util.wildcardUserToSql("\\*a");
         assertEquals("wildcardUserToSql(\\*a)", "*a", value);
@@ -89,12 +89,17 @@ public class WebUtilTest extends TestCase
 
         value = Util.wildcardUserToSql("*?%_\\*\\?");
         assertEquals("wildcardUserToSql(*?%_\\*\\?\\%\\_)", "%_\\\\%\\\\_*?", value);
+
+        // flybase example
+        value = Util.wildcardUserToSql("Dpse\\GA10108");
+        assertEquals("wildcardSqlToUser(Dpse\\GA10108)", "Dpse\\\\\\\\GA10108", value);
     }
 
     public void testWildcardRoundTrip() {
         String[] testStrings = {
             "*?%_\\*\\?", "a?b*d\\?e\\*f%g_h",
-            "\\\\*?%_a %_\\*..whuiwefhuw\\?\\?\\?????\\??||???? <>"
+            "\\\\*?%_a %_\\*..whuiwefhuw\\?\\?\\?????\\??||???? <>",
+            "Dpse\\GA10108"
         };
 
         for (int i = 0; i < testStrings.length; i++) {

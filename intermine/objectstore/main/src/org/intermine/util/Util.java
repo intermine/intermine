@@ -128,12 +128,12 @@ public class Util
      */
     public static String wildcardSqlToUser(String exp) {
         StringBuffer sb = new StringBuffer();
-    
+
         // To quote a '%' in PostgreSQL we need to pass \\% because it strips one level of
         // backslashes when parsing a string and another when parsing a LIKE expression.
         // Java needs backslashes to be backslashed in strings, hence all the blashslashes below
         // see. http://www.postgresql.org/docs/7.3/static/functions-matching.html
-    
+
         for (int i = 0; i < exp.length(); i++) {
             String substring = exp.substring(i);
             if (substring.startsWith("%")) {
@@ -156,9 +156,10 @@ public class Util
                                 if (substring.startsWith("?")) {
                                     sb.append("\\?");
                                 } else {
+                                    // a single '\' as in Dpse\GA10108
                                     if (substring.startsWith("\\\\\\\\")) {
                                         i += 3;
-                                        sb.append("\\\\");
+                                        sb.append("\\");
                                     } else {
                                         sb.append(substring.charAt(0));
                                     }
@@ -169,7 +170,7 @@ public class Util
                 }
             }
         }
-    
+
         return sb.toString();
     }
 
@@ -182,7 +183,7 @@ public class Util
      */
     public static String wildcardUserToSql(String exp) {
         StringBuffer sb = new StringBuffer();
-    
+
         for (int i = 0; i < exp.length(); i++) {
             String substring = exp.substring(i);
             if (substring.startsWith("*")) {
@@ -201,12 +202,11 @@ public class Util
                 sb.append("\\\\_");
             } else if (substring.startsWith("\\")) {
                 sb.append("\\\\\\\\");
-                i++;
             } else {
                 sb.append(substring.charAt(0));
             }
         }
-    
+
         return sb.toString();
     }
 }
