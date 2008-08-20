@@ -66,14 +66,16 @@ public class BioJavaFlatFileConverter extends FileConverter
 
     private static final String TAXON_PREFIX = "taxon";
 
+    private static Model tgtModel = Model.getInstanceByName("genomic");
+
     /**
      * Constructor
      * @param writer the ItemWriter used to handle the resultant items
      * @throws ObjectStoreException if there is an ObjectStore problem
      */
     public BioJavaFlatFileConverter(ItemWriter writer) throws ObjectStoreException {
-        super(writer);
-        itemFactory = new ItemFactory(Model.getInstanceByName("genomic"), "0_");
+        super(writer, tgtModel);
+        itemFactory = new ItemFactory(tgtModel, "0_");
 
         dataSource = itemFactory.makeItemForClass(GENOMIC_NS + "DataSource");
         dataSource.setAttribute("name", "EMBL");
@@ -127,14 +129,13 @@ public class BioJavaFlatFileConverter extends FileConverter
                 Iterator itemIter = itemsToStore.iterator();
                 while (itemIter.hasNext()) {
                     Item item = (Item) itemIter.next();
-                    if (item.canReference("organism")) {
+                    if (item.canHaveReference("organism")) {
                         item.setReference("organism", org);
                     }
                 }
                 itemIter = itemsToStore.iterator();
                 while (itemIter.hasNext()) {
-                    Item item = (Item) itemIter.next();
-                    writer.store(ItemHelper.convert(item));
+                    store((Item) itemIter.next());
                 }
             } catch (BioException e) {
                 throw new BuildException("exception while reading file: " + getCurrentFile(), e);
