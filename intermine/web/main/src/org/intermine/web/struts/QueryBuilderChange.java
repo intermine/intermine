@@ -149,49 +149,55 @@ public class QueryBuilderChange extends DispatchAction
                 throw new RuntimeException("unexpected exception", e);
             }
             String pathLastField = path.substring(path.lastIndexOf(".") + 1);
-            FieldDescriptor fd = parentCld.getFieldDescriptorByName(pathLastField);
+            if (parentCld == null) {
+                // if the field doesn't exist it means we are editing a PathQuery with errors
+            } else {
+                FieldDescriptor fd = parentCld.getFieldDescriptorByName(pathLastField);
 
-            if (fd instanceof ReferenceDescriptor) {
-                ReferenceDescriptor rf = (ReferenceDescriptor) fd;
-                ClassDescriptor realClassDescriptor = rf.getReferencedClassDescriptor();
+                if (fd instanceof ReferenceDescriptor) {
+                    ReferenceDescriptor rf = (ReferenceDescriptor) fd;
+                    ClassDescriptor realClassDescriptor = rf.getReferencedClassDescriptor();
 
-                Iterator<Path> viewPathIter = pathQuery.getView().iterator();
+                    Iterator<Path> viewPathIter = pathQuery.getView().iterator();
 
-                while (viewPathIter.hasNext()) {
-                    String viewPath = viewPathIter.next().toStringNoConstraints();
+                    while (viewPathIter.hasNext()) {
+                        String viewPath = viewPathIter.next().toStringNoConstraints();
 
-                    if (viewPath.startsWith(path) && !viewPath.equals(path)) {
-                        String fieldName = viewPath.substring(path.length() + 1);
-
-                        if (fieldName.indexOf(".") != -1) {
-                            fieldName = fieldName.substring(0, fieldName.indexOf("."));
-                        }
-
-                        if (realClassDescriptor.getFieldDescriptorByName(fieldName) == null) {
-                            // the field must be in a sub-class rather than the base class so remove
-                            // the viewPath
-                            viewPathIter.remove();
-                        }
-                    }
-                }
-                if (pathQuery.getSortOrder() != null) {
-                    Iterator<OrderBy> sortOrderPathIter = pathQuery.getSortOrder().iterator();
-
-                    while (sortOrderPathIter.hasNext()) {
-                        String sortOrderPath
-                        = sortOrderPathIter.next().getField().toStringNoConstraints();
-
-                        if (sortOrderPath.startsWith(path) && !sortOrderPath.equals(path)) {
-                            String fieldName = sortOrderPath.substring(path.length() + 1);
+                        if (viewPath.startsWith(path) && !viewPath.equals(path)) {
+                            String fieldName = viewPath.substring(path.length() + 1);
 
                             if (fieldName.indexOf(".") != -1) {
                                 fieldName = fieldName.substring(0, fieldName.indexOf("."));
                             }
 
                             if (realClassDescriptor.getFieldDescriptorByName(fieldName) == null) {
-                                // the field must be in a sub-class rather than the base class
-                                // so remove the sortPath
-                                sortOrderPathIter.remove();
+                                // the field must be in a sub-class rather than the base class so
+                                // remove the viewPath
+                                viewPathIter.remove();
+                            }
+                        }
+                    }
+                    if (pathQuery.getSortOrder() != null) {
+                        Iterator<OrderBy> sortOrderPathIter = pathQuery.getSortOrder().iterator();
+
+                        while (sortOrderPathIter.hasNext()) {
+                            String sortOrderPath
+                            = sortOrderPathIter.next().getField().toStringNoConstraints();
+
+                            if (sortOrderPath.startsWith(path) && !sortOrderPath.equals(path)) {
+                                String fieldName = sortOrderPath.substring(path.length() + 1);
+
+                                if (fieldName.indexOf(".") != -1) {
+                                    fieldName = fieldName.substring(0, fieldName.indexOf("."));
+                                }
+
+                                FieldDescriptor fieldDescriptor =
+                                    realClassDescriptor.getFieldDescriptorByName(fieldName);
+                                if (fieldDescriptor == null) {
+                                    // the field must be in a sub-class rather than the base class
+                                    // so remove the sortPath
+                                    sortOrderPathIter.remove();
+                                }
                             }
                         }
                     }
