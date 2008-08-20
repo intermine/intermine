@@ -503,9 +503,6 @@ public class Path
      * @return a String version of the Path
      */
     public String toStringNoConstraints() {
-        if (elements.isEmpty()) {
-            return null;
-        }
         StringBuffer sb = new StringBuffer();
         for (int i = 0; i < elements.size(); i++) {
             sb.append(outers.get(i).booleanValue() ? ":" : ".");

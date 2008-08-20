@@ -133,7 +133,7 @@ public class PathQueryBinding
             Path path = entry.getKey();
             String description = entry.getValue();
             // this can be a bad path
-            if (path.toStringNoConstraints() != null) {
+            if (path.getElements().size() > 0) {
                 writer.writeStartElement("pathDescription");
                 writer.writeAttribute("pathString", path.toStringNoConstraints());
                 writer.writeAttribute("description", description);
