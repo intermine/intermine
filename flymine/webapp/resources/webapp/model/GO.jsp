@@ -127,7 +127,7 @@
 
          <li>
            <im:querylink text="All gene/GO annotation pairs from <i>A. gambiae</i> " skipBuilder="true">
-<query name="" model="genomic" view="Gene.primaryIdentifier Gene.secondaryIdentifier Gene.annotations.identifier Gene.annotations.name" sortOrder="Gene.primaryIdentifier asc">
+<query name="" model="genomic" view="Gene.primaryIdentifier Gene.secondaryIdentifier Gene.goAnnotation.identifier Gene.goAnnotation.name Gene.goAnnotation.property.namespace" sortOrder="Gene.primaryIdentifier asc">
   <node path="Gene" type="Gene">
   </node>
   <node path="Gene.organism" type="Organism">
@@ -138,7 +138,13 @@
   </node>
   <node path="Gene.annotations" type="GOAnnotation">
   </node>
+  <node path="Gene.goAnnotation" type="GOAnnotation">
+  </node>
+  <node path="Gene.goAnnotation.property" type="GOTerm">
+  </node>
 </query>
+
+
  </im:querylink>
         </li>
 

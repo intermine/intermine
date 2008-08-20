@@ -35,7 +35,7 @@
          <ul>
          <li>
             <dt>
-              <i>Drosophila</i> - Genome annotation for D. melanogaster (R5.5), D. ananassae (R1.0), D. erecta (R1.0), D. grimshawi (R1.0), D. mojavensis (R1.0), D. persimilis (R1.0), D. pseudoobscura pseudoobscura (R2.1), D. sechellia (R1.0), D. simulans (R1.0), D. virilis (R1.0), D. willistoni (R1.0) and D. yakuba (R1.0) from <a href="http://www.flybase.org" target="_new">
+              <i>Drosophila</i> - Genome annotation for D. melanogaster (R5.5), D. ananassae (R1.0), D. erecta (R1.0), D. grimshawi (R1.0), D. mojavensis (R1.0), D. persimilis (R1.0), D. pseudoobscura pseudoobscura (R2.1), D. sechellia (R1.0), D. simulans (R1.0), D. virilis (R1.0), D. willistoni (R1.0) and D. yakuba (R1.0) from <a href="http://www.flybase.org" target="_new">. Only mapped genes are loaded for D. melanogaster.
                 <html:img src="model/images/FlyBase_logo_mini.png" title="Click here to view FlyBase's website"/></a>.
             </dt></li>
         <li>

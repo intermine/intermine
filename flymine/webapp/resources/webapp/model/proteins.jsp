@@ -44,11 +44,13 @@
               <li>Primary accession number</li>
               <li>Secondary accession number</li>
               <li>Protein name</li>
+              <li>Gene ORF name</li>
               <li>Comments</li>
+              <li>Features</li>
+              <li>Keywords (Ontology terms)</li>
+              <li>Protein domain assignments from Interpro - see below</li>
               <li>Publications</li>
               <li>Sequence</li>
-              <li>Gene ORF name</li>
-              <li>Protein domain assignments from Interpro - see below</li>
           </ul>     
 
   </div>

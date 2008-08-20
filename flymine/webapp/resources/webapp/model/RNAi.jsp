@@ -142,20 +142,18 @@
 
             <li>
               <im:querylink text="All <i>C. elegans</i> RNAi data " skipBuilder="true">
-                 <query name="" model="genomic" view="Gene.rnaiResults.evidence.pubMedId Gene.primaryIdentifier Gene.rnaiResults.name Gene.rnaiResults.code Gene.rnaiResults.observed Gene.rnaiResults.penetranceFrom Gene.rnaiResults.penetranceTo Gene.rnaiResults.comment" sortOrder="Gene.rnaiResults.evidence.pubMedId asc">
-                 <node path="Gene" type="Gene">
-                  </node>
-                 <node path="Gene.organism" type="Organism">
-                  </node>
-                 <node path="Gene.organism.name" type="String">
-                 <constraint op="=" value="Caenorhabditis elegans" description="" identifier="" code="A">
-                  </constraint>
-                  </node>
-                 <node path="Gene.rnaiResults" type="RNAiPhenotype">
-                  </node>
-                 <node path="Gene.rnaiResults.evidence" type="Publication">
-                  </node>
-                 </query>
+<query name="" model="genomic" view="Gene.primaryIdentifier Gene.rnaiResults.name Gene.rnaiResults.code Gene.rnaiResults.observed Gene.rnaiResults.penetranceFrom Gene.rnaiResults.penetranceTo Gene.rnaiResults.publications.pubMedId" sortOrder="Gene.primaryIdentifier">
+  <node path="Gene" type="Gene">
+  </node>
+  <node path="Gene.organism" type="Organism">
+  </node>
+  <node path="Gene.organism.name" type="String">
+    <constraint op="=" value="Caenorhabditis elegans" description="" identifier="" code="A">
+    </constraint>
+  </node>
+  <node path="Gene.rnaiResults" type="RNAiPhenotype">
+  </node>
+</query>
               </im:querylink>
             </li>
           </ul>
