@@ -694,24 +694,29 @@ public class MainHelper
     private static SimpleConstraint makeQueryStringConstraint(QueryNode qn, Constraint c) {
         QueryExpression qf = new QueryExpression(QueryExpression.LOWER, (QueryField) qn);
         String lowerCaseValue = ((String) c.getValue()).toLowerCase();
-        if (lowerCaseValue.indexOf('%') != -1 || lowerCaseValue.indexOf('_') != -1) {
-            if (c.getOp().equals(ConstraintOp.EQUALS)) {
-                return new SimpleConstraint(qf, ConstraintOp.MATCHES,
+
+        // notes:
+        //   - we always turn EQUALS into a MATCHES(LIKE) constraint and rely on Postgres
+        //     to be sensible
+        //   - lowerCaseValue is quoted in a way suitable for a LIKE constraint, but not for an
+        //     normal equals.  for example 'Dpse\GA10108' needs to be 'Dpse\\GA10108' for equals
+        //     but 'Dpse\\\\GA10108' (and hence "Dpse\\\\\\\\GA10108" as a Java string because
+        //     backslash must be quoted with a backslash)
+        if (c.getOp().equals(ConstraintOp.EQUALS)) {
+            return new SimpleConstraint(qf, ConstraintOp.MATCHES, new QueryValue(lowerCaseValue));
+        } else {
+            if (c.getOp().equals(ConstraintOp.NOT_EQUALS)) {
+                return new SimpleConstraint(qf, ConstraintOp.DOES_NOT_MATCH,
                                             new QueryValue(lowerCaseValue));
             } else {
-                if (c.getOp().equals(ConstraintOp.NOT_EQUALS)) {
-                    return new SimpleConstraint(qf, ConstraintOp.DOES_NOT_MATCH,
-                                                new QueryValue(lowerCaseValue));
+                if (c.getOp().equals(ConstraintOp.CONTAINS)) {
+                    return new SimpleConstraint(qf, ConstraintOp.MATCHES,
+                                                new QueryValue("%" + lowerCaseValue + "%"));
                 } else {
-                    // fail through
+                    return new SimpleConstraint(qf, c.getOp(), new QueryValue(lowerCaseValue));
                 }
             }
         }
-        if (c.getOp().equals(ConstraintOp.CONTAINS)) {
-            return new SimpleConstraint(qf, ConstraintOp.MATCHES,
-                                        new QueryValue("%" + lowerCaseValue + "%"));
-        }
-        return new SimpleConstraint(qf, c.getOp(), new QueryValue(lowerCaseValue));
     }
 
     /**
