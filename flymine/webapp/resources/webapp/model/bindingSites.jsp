@@ -64,17 +64,17 @@
 
           <li>
             <im:querylink text="REDfly <i>cis</i>-regulatory modules " skipBuilder="true">
-<query name="" model="genomic" view="CRM.primaryIdentifier CRM.length CRM.chromosome.primaryIdentifier CRM.chromosomeLocation.start CRM.chromosomeLocation.end CRM.elementEvidence" sortOrder="CRM.primaryIdentifier asc" constraintLogic="A and B">
+<query name="" model="genomic" view="CRM.primaryIdentifier CRM.length CRM.chromosome.primaryIdentifier CRM.chromosomeLocation.start CRM.chromosomeLocation.end" sortOrder="CRM.primaryIdentifier asc" constraintLogic="A and C">
   <node path="CRM" type="CRM">
-  </node>
-  <node path="CRM.evidence" type="DataSet">
-  </node>
-  <node path="CRM.evidence.title" type="String">
-    <constraint op="=" value="REDfly Drosophila transcriptional cis-regulatory modules" description="" identifier="" code="B" extraValue="">
-    </constraint>
   </node>
   <node path="CRM.organism" type="Organism">
     <constraint op="LOOKUP" value="Drosophila melanogaster" description="" identifier="" code="A" extraValue="">
+    </constraint>
+  </node>
+  <node path="CRM.dataSets" type="DataSet">
+  </node>
+  <node path="CRM.dataSets.title" type="String">
+    <constraint op="=" value="REDfly Drosophila transcriptional cis-regulatory modules" description="" identifier="" code="C">
     </constraint>
   </node>
 </query>
@@ -84,18 +84,17 @@
 
           <li>
             <im:querylink text="REDfly transcription factor binding sites " skipBuilder="true">
-
-<query name="" model="genomic" view="TFBindingSite.primaryIdentifier TFBindingSite.length TFBindingSite.chromosomeLocation.start TFBindingSite.chromosomeLocation.end" sortOrder="TFBindingSite.primaryIdentifier asc" constraintLogic="A and B">
+<query name="" model="genomic" view="TFBindingSite.primaryIdentifier TFBindingSite.length TFBindingSite.chromosome.primaryIdentifier TFBindingSite.chromosomeLocation.start TFBindingSite.chromosomeLocation.end" sortOrder="TFBindingSite.primaryIdentifier asc" constraintLogic="A and B">
   <node path="TFBindingSite" type="TFBindingSite">
   </node>
   <node path="TFBindingSite.organism" type="Organism">
     <constraint op="LOOKUP" value="Drosophila melanogaster" description="" identifier="" code="B" extraValue="">
     </constraint>
   </node>
-  <node path="TFBindingSite.evidence" type="DataSet">
+  <node path="TFBindingSite.dataSets" type="DataSet">
   </node>
-  <node path="TFBindingSite.evidence.title" type="String">
-    <constraint op="=" value="REDfly Drosophila transcription factor binding sites" description="" identifier="" code="A" extraValue="">
+  <node path="TFBindingSite.dataSets.title" type="String">
+    <constraint op="=" value="REDfly Drosophila transcription factor binding sites" description="" identifier="" code="A">
     </constraint>
   </node>
 </query>
@@ -123,23 +122,21 @@
 <query name="" model="genomic" view="TFBindingSite.motif.primaryIdentifier TFBindingSite.primaryIdentifier TFBindingSite.chromosome.primaryIdentifier TFBindingSite.chromosomeLocation.start TFBindingSite.chromosomeLocation.end" sortOrder="TFBindingSite.motif.primaryIdentifier asc">
   <pathDescription pathString="TFBindingSite.chromosome" description="Chromosome">
   </pathDescription>
-  <pathDescription pathString="TFBindingSite" description="Binding site">
-  </pathDescription>
   <pathDescription pathString="TFBindingSite.chromosomeLocation" description="Chromosome location">
   </pathDescription>
   <pathDescription pathString="TFBindingSite.motif" description="Motif">
   </pathDescription>
   <node path="TFBindingSite" type="TFBindingSite">
   </node>
-  <node path="TFBindingSite.evidence" type="DataSet">
-  </node>
-  <node path="TFBindingSite.evidence.title" type="String">
-    <constraint op="=" value="Tiffin" description="" identifier="" code="A">
-    </constraint>
-  </node>
   <node path="TFBindingSite.organism" type="Organism">
   </node>
   <node path="TFBindingSite.organism.name" type="String">
+  </node>
+  <node path="TFBindingSite.dataSets" type="DataSet">
+  </node>
+  <node path="TFBindingSite.dataSets.title" type="String">
+    <constraint op="=" value="Tiffin" description="" identifier="" code="A">
+    </constraint>
   </node>
 </query>
             </im:querylink>
