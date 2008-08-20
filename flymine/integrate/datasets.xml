@@ -48,6 +48,13 @@
         <attribute name="description" value="The database of the genetics, genomics and biology of Caenorhabditis elegans"/>
         <attribute name="url" value="http://www.wormbase.org"/>
     </item>
+    <item id="41" class="" implements="http://www.flymine.org/model/genomic#DataSet">
+        <attribute name="title" value="WormBase RNAi Phenotypes"/>
+        <attribute name="url" value="http://www.wormbase.org"/>
+        <reference name="dataSource" ref_id="40"/>
+    </item>
+
+
     <item id="50" class="" implements="http://www.flymine.org/model/genomic#DataSource">
         <attribute name="name" value="MGI"/>
         <attribute name="description" value="Mouse Genome Database Project"/>
@@ -132,6 +139,8 @@
         <reference name="dataSource" ref_id="120"/>
     </item>
 
+
+<!-- not used
     <item id="130" class="" implements="http://www.flymine.org/model/genomic#DataSource">
         <attribute name="name" value="DrosDel"/>
         <attribute name="description" value="An isogenic deficiency kit for Drosophila melanogaster"/>
@@ -139,13 +148,13 @@
     </item>
     <item id="131" class="" implements="http://www.flymine.org/model/genomic#DataSet">
         <attribute name="title" value="DrosDel P-element and Deletion collection"/>
-        <attribute name="description" value="DrosDel deletion data"/>
+        <attribute name="description" value="An isogenic deficiency kit for Drosophila melanogaster"/>
         <attribute name="version" value="FlyBase 5.1 mapping"/>
         <attribute name="url" value="http://www.drosdel.org.uk/"/>
         <reference name="dataSource" ref_id="130"/>
     </item>
 
-<!-- not used
+
     <item id="140" class="" implements="http://www.flymine.org/model/genomic#DataSource">
         <attribute name="name" value="embl"/>
         <attribute name="description" value="The EMBL genome database"/>
@@ -173,6 +182,12 @@
         <attribute name="title" value="Anoph-Expr data set"/>
         <attribute name="description" value="Anopheles gambiae life cycle exression data"/>
         <attribute name="url" value="http://www.ebi.ac.uk/microarray-as/aer/#ae-browse/q=E-TABM-186"/>
+        <reference name="dataSource" ref_id="160"/>
+    </item>
+    <item id="162" class="" implements="http://www.flymine.org/model/genomic#DataSet">
+        <attribute name="title" value="E-FLYC-6"/>
+        <attribute name="description" value="Transcription profiling of Drosophila developmental time course"/>
+        <attribute name="url" value="http://www.ebi.ac.uk/microarray-as/ae/browse.html?keywords=E-FLYC-6"/>
         <reference name="dataSource" ref_id="160"/>
     </item>
 
@@ -305,6 +320,8 @@
 
     <item id="480" class="" implements="http://www.flymine.org/model/genomic#DataSource">
         <attribute name="name" value="fly-FISH"/>
+        <attribute name="description"
+                   value="A database of Drosophila embryo mRNA localization patterns"/>
         <attribute name="url" value="http://fly-fish.ccbr.utoronto.ca"/>
     </item>
     <item id="481" class="" implements="http://www.flymine.org/model/genomic#DataSet">
@@ -318,9 +335,13 @@
 
     <item id="490" class="" implements="http://www.flymine.org/model/genomic#DataSource">
         <attribute name="name" value="GenomeNet"/>
+
+        <attribute name="description" value="Network of database and computational services for genome research and related research areas in biomedical sciences, operated by the Kyoto University Bioinformatics Center. "/>
+        <attribute name="url" value="http://www.genome.jp/en/"/>
     </item>
     <item id="491" class="" implements="http://www.flymine.org/model/genomic#DataSet">
         <attribute name="title" value="KEGG PATHWAY"/>
+        <attribute name="description" value="Manually drawn pathway maps representing our knowledge on the molecular interaction and reaction networks for Drosophila"/>
         <attribute name="url" value="http://www.genome.jp/kegg/pathway.html"/>
         <reference name="dataSource" ref_id="490"/>
     </item>
@@ -361,6 +382,7 @@
     </item>
     <item id="540" class="" implements="http://www.flymine.org/model/genomic#DataSource">
         <attribute name="name" value="GeneDB"/>
+        <attribute name="description" value="Database of the Sanger Institute Pathogen Sequencing Unit's (PSU) activities "/>
         <attribute name="url" value="http://www.genedb.org/"/>
     </item>
 
@@ -417,11 +439,29 @@
         <reference name="dataSource" ref_id="610"/>
     </item>
 
-    <item id="620" class="" implements="http://www.flymine.org/model/genomic#DataSource">
-        <attribute name="name" value="Affymetrix"/>
-        <attribute name="url" value="http://www.affymetrix.com/"/>
+    <item id="612" class="" implements="http://www.flymine.org/model/genomic#DataSet">
+        <attribute name="title" value="BDGP cDNA clone data set"/>
+        <attribute name="url" value="http://www.fruitfly.org/DGC/index.html"/>
+        <reference name="dataSource" ref_id="610"/>
     </item>
 
+
+    <item id="620" class="" implements="http://www.ensembl.org/">
+        <attribute name="name" value="Ensembl"/>
+        <attribute name="url" value="http://www.ensembl.org/"/>
+    </item>
+    <item id="621" class="" implements="http://www.flymine.org/model/genomic#DataSet">
+        <attribute name="title" value="Affymetrix array: Affy drosgenome1"/>
+        <attribute name="description" value="The GeneChip® Drosophila Genome Array is a microarray tool for studying expression of Drosophila melanogaster transcripts."/>
+        <attribute name="url" value="http://www.affymetrix.com/products/arrays/specific/fly.affx"/>
+        <reference name="dataSource" ref_id="620"/>
+    </item>
+    <item id="622" class="" implements="http://www.flymine.org/model/genomic#DataSet">
+        <attribute name="title" value="Affymetrix array: Affy drosophila 2"/>
+        <attribute name="description" value="The GeneChip® Drosophila Genome Array is a microarray tool for studying expression of Drosophila melanogaster transcripts."/>	 	
+        <attribute name="url" value="http://www.affymetrix.com/products/arrays/specific/fly_2.affx"/>
+        <reference name="dataSource" ref_id="620"/>
+    </item>
 
     <item id="630" class="" implements="http://www.flymine.org/model/genomic#DataSource">
         <attribute name="name" value="BioGRID"/>
@@ -429,7 +469,7 @@
         <attribute name="url" value="http://www.thebiogrid.org/"/>
     </item>
     <item id="631" class="" implements="http://www.flymine.org/model/genomic#DataSet">
-        <attribute name="title" value="BioGRID genetic interaction data set"/>
+        <attribute name="title" value="BioGRID interaction data set"/>
         <attribute name="url" value="http://www.thebiogrid.org/downloads.php"/>
         <reference name="dataSource" ref_id="630"/>
     </item>
@@ -458,6 +498,7 @@
         <reference name="dataSource" ref_id="650"/>
     </item>
 
+<!-- not used
     <item id="660" class="" implements="http://www.flymine.org/model/genomic#DataSource">
         <attribute name="name" value="FlyReg"/>
         <attribute name="description" value="Drosophila DNase I Footprint Database (v2.0)"/>
@@ -471,14 +512,28 @@
 
 <!-- see #1801
      <item id="670" class="" implements="http://www.flymine.org/model/genomic#DataSource">
-        <attribute name="name" value="PIMRider"/>
+        <attribute name="name" value="Hybrigenics S.A."/>
         <attribute name="description" value=""/>
-        <attribute name="url" value=""/>
+        <attribute name="url" value="http://www.hybrigenics.com/"/>
     </item>
     <item id="671" class="" implements="http://www.flymine.org/model/genomic#DataSet">
         <attribute name="title" value="PIMRider data set"/>
-        <attribute name="url" value=""/>
+        <attribute name="url" value="http://pim.hybrigenics.com/"/>
         <reference name="dataSource" ref_id="670"/>
     </item>
-    -->
+
+-->
+
+     <item id="680" class="" implements="http://www.flymine.org/model/genomic#DataSource">
+        <attribute name="name" value="YeastFunc"/>
+        <attribute name="description" value=""/>
+        <attribute name="url" value="http://func.med.harvard.edu/yeast/"/>
+    </item>
+    <item id="681" class="" implements="http://www.flymine.org/model/genomic#DataSet">
+        <attribute name="title" value="GO Annotation for YeastFunc"/>
+        <attribute name="url" value=""/>
+        <reference name="dataSource" ref_id="680"/>
+    </item>
 </items>
+
+
