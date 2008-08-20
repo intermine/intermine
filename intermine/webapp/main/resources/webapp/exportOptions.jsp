@@ -75,6 +75,9 @@ ${exportReorderMessage}
       <html:radio property="format" value="csv"/>Comma separated values<br/>
       <html:radio property="format" value="tab"/>Tab separated values<br/>
     </c:when>
+    <c:when test="${type == 'excel'}">
+      <%-- no extra options --%>
+    </c:when>
     <c:otherwise>
       <c:set var="tileName" value="${type}ExportOptions.tile"/>
       <tiles:insert name="${tileName}"/>
