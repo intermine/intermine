@@ -35,8 +35,8 @@
          <ul>
          <li>
             <dt>
-              <i>Drosophila</i> - Genome annotation for D. melanogaster (R5.5), D. ananassae (R1.0), D. erecta (R1.0), D. grimshawi (R1.0), D. mojavensis (R1.0), D. persimilis (R1.0), D. pseudoobscura pseudoobscura (R2.1), D. sechellia (R1.0), D. simulans (R1.0), D. virilis (R1.0), D. willistoni (R1.0) and D. yakuba (R1.0) from <a href="http://www.flybase.org" target="_new">. Only mapped genes are loaded for D. melanogaster.
-                <html:img src="model/images/FlyBase_logo_mini.png" title="Click here to view FlyBase's website"/></a>.
+              <i>Drosophila</i> - Genome annotation for D. melanogaster (R5.5), D. ananassae (R1.0), D. erecta (R1.0), D. grimshawi (R1.0), D. mojavensis (R1.0), D. persimilis (R1.0), D. pseudoobscura pseudoobscura (R2.1), D. sechellia (R1.0), D. simulans (R1.0), D. virilis (R1.0), D. willistoni (R1.0) and D. yakuba (R1.0) from <a href="http://www.flybase.org" target="_new">
+                <html:img src="model/images/FlyBase_logo_mini.png" title="Click here to view FlyBase's website"/></a>. Only mapped genes are loaded for D. melanogaster.
             </dt></li>
         <li>
           <dt>
@@ -141,21 +141,7 @@
             </im:querylink>
           </li>
 
-          <li>
-            <im:querylink text="All <i>Apis mellifera</i> gene identifiers and chromosomal positions " skipBuilder="true">
-<query name="" model="genomic" view="Gene.primaryIdentifier Gene.chromosome.primaryIdentifier Gene.chromosomeLocation.start Gene.chromosomeLocation.end" sortOrder="Gene.primaryIdentifier asc">
-  <node path="Gene" type="Gene">
-  </node>
-  <node path="Gene.organism" type="Organism">
-  </node>
-  <node path="Gene.organism.name" type="String">
-    <constraint op="=" value="Apis mellifera" description="" identifier="" code="A">
-    </constraint>
-  </node>
-</query>
-            </im:querylink>
-          </li>
-
+      
           <li>
             <im:querylink text="All <i>Anopheles gambiae</i> EST clusters from Imperial College" skipBuilder="true">
               <query name="" model="genomic" view="ESTCluster.primaryIdentifier ESTCluster.length ESTCluster.chromosome.primaryIdentifier ESTCluster.chromosomeLocation.start ESTCluster.chromosomeLocation.end">
@@ -176,6 +162,23 @@
               </query>
             </im:querylink>
           </li>
+
+    <li>
+            <im:querylink text="All <i>Apis mellifera</i> gene identifiers and chromosomal positions " skipBuilder="true">
+<query name="" model="genomic" view="Gene.primaryIdentifier Gene.chromosome.primaryIdentifier Gene.chromosomeLocation.start Gene.chromosomeLocation.end" sortOrder="Gene.primaryIdentifier asc">
+  <node path="Gene" type="Gene">
+  </node>
+  <node path="Gene.organism" type="Organism">
+  </node>
+  <node path="Gene.organism.name" type="String">
+    <constraint op="=" value="Apis mellifera" description="" identifier="" code="A">
+    </constraint>
+  </node>
+</query>
+            </im:querylink>
+          </li>
+
+
         </ul>
       </div>
     </td>

@@ -54,25 +54,24 @@
       supports it; these evidence codes correspond to broad categories
       of experimental or other support. The codes are listed below. For more
       information, go to <a href="http://www.geneontology.org/GO.evidence.shtml" target="_new">Guide to GO Evidence Codes</a>. </p>
-      <p> EXP = Inferred from Experiment </p> 
-      <p> IDA = Inferred from Direct Assay </p> 
-      <p> IPI = Inferred from Physical Interaction </p> 
-      <p> IMP = Inferred from Mutant Phenotype </p> 
-      <p> IGI = Inferred from Genetic Interaction </p> 
-      <p> IEP = Inferred from Expression Pattern </p> 
-      <p> ISS = Inferred from Sequence or Structural Similarity </p> 
-      <p> ISO = Inferred from Sequence Orthology </p> 
-      <p> ISA = Inferred from Sequence Alignment </p> 
-      <p> ISM = Inferred from Sequence Model </p> 
-      <p> IGC = Inferred from Genomic Context </p> 
-      <p> RCA = inferred from Reviewed Computational Analysis </p> 
-      <p> TAS = Traceable Author Statement </p> 
-      <p> NAS = Non-traceable Author Statement </p> 
-      <p> IC = Inferred by Curator </p> 
-      <p> ND = No biological Data available </p> 
-      <p> IE = Inferred from Electronic Annotation </p> 
-      <p> NR = Not Recorded </p> 
-
+    <p> EXP = Inferred from Experiment </p> 
+    <p> IDA = Inferred from Direct Assay </p> 
+    <p> IPI = Inferred from Physical Interaction </p> 
+    <p> IMP = Inferred from Mutant Phenotype </p> 
+    <p> IGI = Inferred from Genetic Interaction </p> 
+    <p> IEP = Inferred from Expression Pattern </p> 
+    <p> ISS = Inferred from Sequence or Structural Similarity </p> 
+    <p> ISO = Inferred from Sequence Orthology </p> 
+    <p> ISA = Inferred from Sequence Alignment </p> 
+    <p> ISM = Inferred from Sequence Model </p> 
+    <p> IGC = Inferred from Genomic Context </p> 
+    <p> RCA = inferred from Reviewed Computational Analysis </p> 
+    <p> TAS = Traceable Author Statement </p> 
+    <p> NAS = Non-traceable Author Statement </p> 
+    <p> IC = Inferred by Curator </p> 
+    <p> ND = No biological Data available </p> 
+    <p> IEA = Inferred from Electronic Annotation </p> 
+    <p> NR = Not Recorded </p> 
      <br/>
     </div>
 
