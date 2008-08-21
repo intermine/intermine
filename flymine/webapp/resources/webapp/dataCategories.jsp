@@ -483,7 +483,7 @@
   <tr>
     <td> <i>D. melanogaster</i> </td>
     <td> Whole genome tiling path - Version 4.0</td>
-    <td> &nbsp;</td>
+    <td> University of Cambridge, Dpt of Genetics</td>
     <td> &nbsp; </td>
     <td> &nbsp;</td>
   </tr>
