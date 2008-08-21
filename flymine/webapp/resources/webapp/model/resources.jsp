@@ -55,9 +55,9 @@
 
           <div id="hiddenDiv2" class="dataSetDescription">
 		<p>
+
           <dt> Probe sets from the <a href="http://www.affymetrix.com/" target="_new">Affymetrix</a> GeneChip <i>Drosophila</i> Genome 1.0 and 2.0 Arrays, a
-           microarray tool for studying expression of <i>D. melanogaster</i> transcripts.The 1.0 array set comprises probe sets interrogating more than 13,500 <i>D. melanogaster</i> genes. Sequences used in the design of this array were selected from FlyBase version 1.0.  The 2.0 array set comprises 18,880 probe sets for the analysis 
-           of over 18,500 transcripts. Sequences used in the design of this GeneChip were selected from Flybase version 3.1.</dt>
+           microarray tool for studying expression of <i>D. melanogaster</i> transcripts. Probeset locations and mapped genes (not transcripts) are downloaded from Ensembl. FlyMine only loads probesets that match to at least one gene. For more information on the probeset mappings, go to <a href="http://www.ensembl.org/Homo_sapiens/helpview?kw=microarray;ref=http%3A%2F%2Fwww.ensembl.org%2FMus_musculus%2Findex.html/" target="_new">Ensembl help</a>.  </dt>
 		</br></p>
 
         </div>
@@ -215,13 +215,13 @@
 
         <li>
             <im:querylink text="All <i>D. melanogaster</i> transposon insertions (including Exelixis and DrosDel)" skipBuilder="true">
-<query name="" model="genomic" view="TransposableElementInsertionSite.primaryIdentifier TransposableElementInsertionSite.name TransposableElementInsertionSite.cytoLocation " sortOrder="TransposableElementInsertionSite.primaryIdentifier asc">
+<query name="" model="genomic" view="TransposableElementInsertionSite.primaryIdentifier TransposableElementInsertionSite.secondaryIdentifier" sortOrder="TransposableElementInsertionSite.primaryIdentifier asc">
   <node path="TransposableElementInsertionSite" type="TransposableElementInsertionSite">
   </node>
   <node path="TransposableElementInsertionSite.organism" type="Organism">
   </node>
-  <node path="TransposableElementInsertionSite.organism.name" type="String">
-    <constraint op="=" value="Drosophila melanogaster" description="" identifier="" code="A">
+  <node path="TransposableElementInsertionSite.organism.shortName" type="String">
+    <constraint op="=" value="D. melanogaster" description="" identifier="" code="A">
     </constraint>
   </node>
 </query>
@@ -230,7 +230,7 @@
 
           <li>
       <im:querylink text="All mapped <i>D. melanogaster</i> transposon insertions (including Exelixis and DrosDel)" skipBuilder="true">
-<query name="" model="genomic" view="TransposableElementInsertionSite.primaryIdentifier TransposableElementInsertionSite.name TransposableElementInsertionSite.cytoLocation TransposableElementInsertionSite.chromosome.primaryIdentifier TransposableElementInsertionSite.chromosomeLocation.start TransposableElementInsertionSite.chromosomeLocation.end" sortOrder="TransposableElementInsertionSite.primaryIdentifier asc">
+<query name="" model="genomic" view="TransposableElementInsertionSite.primaryIdentifier TransposableElementInsertionSite.secondaryIdentifier TransposableElementInsertionSite.chromosome.primaryIdentifier TransposableElementInsertionSite.chromosomeLocation.start TransposableElementInsertionSite.chromosomeLocation.end TransposableElementInsertionSite.cytoLocation" sortOrder="TransposableElementInsertionSite.primaryIdentifier asc">
   <node path="TransposableElementInsertionSite" type="TransposableElementInsertionSite">
   </node>
   <node path="TransposableElementInsertionSite.organism" type="Organism">
@@ -245,35 +245,64 @@
 
 
            <li>
-             <im:querylink text="All Affymetrix probes from the GeneChip <i>Drosophila</i> Genome Array " skipBuilder="true">
-<query name="" model="genomic" view="ProbeSet.primaryIdentifier" sortOrder="ProbeSet.primaryIdentifier asc">
+             <im:querylink text="Affymetrix probesets from the GeneChip <i>Drosophila</i> Genome Array with their locations" skipBuilder="true">
+<query name="" model="genomic" view="ProbeSet.primaryIdentifier ProbeSet.locations.object.primaryIdentifier ProbeSet.locations.start ProbeSet.locations.end" sortOrder="ProbeSet.primaryIdentifier asc">
   <node path="ProbeSet" type="ProbeSet">
   </node>
-  <node path="ProbeSet.evidence" type="DataSet">
+  <node path="ProbeSet.dataSets" type="DataSet">
   </node>
-  <node path="ProbeSet.evidence.title" type="String">
-    <constraint op="=" value="Affymetrix array: Drosophila Genome Array" description="" identifier="" code="A" extraValue="">
+  <node path="ProbeSet.dataSets.title" type="String">
+    <constraint op="=" value="Affymetrix array: DrosGenome1" description="" identifier="" code="A">
     </constraint>
   </node>
 </query>
            </im:querylink>
           </li>
 
-          <li>            
-             <im:querylink text="All Affymetrix probes from the GeneChip <i>Drosophila</i> 2 Array " skipBuilder="true">
-<query name="" model="genomic" view="ProbeSet.primaryIdentifier" sortOrder="ProbeSet.primaryIdentifier asc">
+          <li>
+             <im:querylink text="Affymetrix probesets from the GeneChip <i>Drosophila</i> Genome Array with the genes they map to" skipBuilder="true">
+<query name="" model="genomic" view="ProbeSet.primaryIdentifier ProbeSet.genes.primaryIdentifier ProbeSet.genes.symbol" sortOrder="ProbeSet.primaryIdentifier asc">
   <node path="ProbeSet" type="ProbeSet">
   </node>
-  <node path="ProbeSet.evidence" type="DataSet">
+  <node path="ProbeSet.dataSets" type="DataSet">
   </node>
-  <node path="ProbeSet.evidence.title" type="String">
-    <constraint op="=" value="Affymetrix array: Drosophila\\_2 Array" description="" identifier="" code="A" extraValue="">
+  <node path="ProbeSet.dataSets.title" type="String">
+    <constraint op="=" value="Affymetrix array: DrosGenome1" description="" identifier="" code="A">
     </constraint>
   </node>
 </query>
              </im:querylink>
             </li>
 
+          <li>            
+             <im:querylink text="Affymetrix probesets from the GeneChip <i>Drosophila</i> 2 Array with their locations" skipBuilder="true">
+<query name="" model="genomic" view="ProbeSet.primaryIdentifier ProbeSet.locations.object.primaryIdentifier ProbeSet.locations.start ProbeSet.locations.end" sortOrder="ProbeSet.primaryIdentifier asc">
+  <node path="ProbeSet" type="ProbeSet">
+  </node>
+  <node path="ProbeSet.dataSets" type="DataSet">
+  </node>
+  <node path="ProbeSet.dataSets.title" type="String">
+    <constraint op="=" value="Affymetrix array: Drosophila\\_2" description="" identifier="" code="A">
+    </constraint>
+  </node>
+</query>
+             </im:querylink>
+            </li>
+
+     <li>            
+             <im:querylink text="Affymetrix probesets from the GeneChip <i>Drosophila</i> 2 Array with the genes they map to" skipBuilder="true">
+<query name="" model="genomic" view="ProbeSet.primaryIdentifier ProbeSet.genes.primaryIdentifier ProbeSet.genes.symbol" sortOrder="ProbeSet.primaryIdentifier asc">
+  <node path="ProbeSet" type="ProbeSet">
+  </node>
+  <node path="ProbeSet.dataSets" type="DataSet">
+  </node>
+  <node path="ProbeSet.dataSets.title" type="String">
+    <constraint op="=" value="Affymetrix array: Drosophila\\_2" description="" identifier="" code="A">
+    </constraint>
+  </node>
+</query>
+             </im:querylink>
+            </li>
 
           <li>
             <im:querylink text="All INDAC microarray oligos with their length and tm and the identifier of the associated transcript " skipBuilder="true">

@@ -56,12 +56,10 @@
 
           <li>
             <im:querylink text="All 3-D protein structure data (Kenji Mizuguchi and PDB data) " skipBuilder="true">
-  <query name="" model="genomic" view="Protein.organism.name Protein.primaryAccession Protein.name Protein.structures.identifier Protein.structures.evidence.title" sortOrder="Protein.organism.name Protein.primaryAccession Protein.name Protein.structures.identifier Protein.structures.evidence.title">
+<query name="" model="genomic" view="Protein.organism.name Protein.primaryAccession Protein.name Protein.structures.identifier Protein.structures.dataSets.title" sortOrder="Protein.organism.name asc Protein.primaryAccession asc Protein.name asc Protein.structures.identifier asc">
   <node path="Protein" type="Protein">
   </node>
   <node path="Protein.structures" type="ProteinStructure">
-  </node>
-  <node path="Protein.structures.evidence" type="DataSet">
   </node>
 </query>
             </im:querylink>
@@ -69,15 +67,15 @@
 
           <li>
             <im:querylink text="All 3-D protein structure data for <i>A. gambiae</i> (Kenji Mizuguchi data) " skipBuilder="true">
-<query name="kenji_anopheles" model="genomic" view="Protein.primaryIdentifier Protein.primaryAccession Protein.structures.identifier Protein.structures.start Protein.structures.end Protein.structures.prosa_q_score Protein.structures.prosa_z_score Protein.structures.evidence.title" sortOrder="Protein.primaryIdentifier asc" constraintLogic="A and B">
+<query name="" model="genomic" view="Protein.primaryIdentifier Protein.primaryAccession Protein.structures.identifier Protein.structures.start Protein.structures.end" sortOrder="Protein.primaryIdentifier asc" constraintLogic="A and B">
   <node path="Protein" type="Protein">
   </node>
   <node path="Protein.structures" type="ProteinStructure">
   </node>
-  <node path="Protein.structures.evidence" type="DataSet">
+  <node path="Protein.structures.dataSets" type="DataSet">
   </node>
-  <node path="Protein.structures.evidence.title" type="String">
-    <constraint op="CONTAINS" value="Kenji" description="" identifier="" code="A">
+  <node path="Protein.structures.dataSets.title" type="String">
+    <constraint op="=" value="Mizuguchi protein structure predictions" description="" identifier="" code="A">
     </constraint>
   </node>
   <node path="Protein.organism" type="Organism">
@@ -90,15 +88,15 @@
 
           <li>
             <im:querylink text="All 3-D protein structure data for <i>D. melanogaster</i> (Kenji Mizuguchi data) " skipBuilder="true">
-<query name="" model="genomic" view="Protein.primaryIdentifier Protein.primaryAccession Protein.structures.identifier Protein.structures.start Protein.structures.end Protein.structures.prosa_q_score Protein.structures.prosa_z_score Protein.structures.evidence.title" sortOrder="Protein.primaryIdentifier asc" constraintLogic="A and B">
+<query name="" model="genomic" view="Protein.primaryIdentifier Protein.primaryAccession Protein.structures.identifier Protein.structures.start Protein.structures.end" sortOrder="Protein.primaryIdentifier asc" constraintLogic="A and B">
   <node path="Protein" type="Protein">
   </node>
   <node path="Protein.structures" type="ProteinStructure">
   </node>
-  <node path="Protein.structures.evidence" type="DataSet">
+  <node path="Protein.structures.dataSets" type="DataSet">
   </node>
-  <node path="Protein.structures.evidence.title" type="String">
-    <constraint op="CONTAINS" value="Kenji" description="" identifier="" code="A">
+  <node path="Protein.structures.dataSets.title" type="String">
+    <constraint op="=" value="Mizuguchi protein structure predictions" description="" identifier="" code="A">
     </constraint>
   </node>
   <node path="Protein.organism" type="Organism">
@@ -116,10 +114,10 @@
   </node>
   <node path="Protein.structures" type="ProteinStructure">
   </node>
-  <node path="Protein.structures.evidence" type="DataSet">
+  <node path="Protein.structures.dataSets" type="DataSet">
   </node>
-  <node path="Protein.structures.evidence.title" type="String">
-    <constraint op="CONTAINS" value="PDB" description="" identifier="" code="A" extraValue="">
+  <node path="Protein.structures.dataSets.title" type="String">
+    <constraint op="=" value="PDB dmel data set" description="" identifier="" code="A">
     </constraint>
   </node>
 </query>
