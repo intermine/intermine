@@ -56,7 +56,7 @@
           <div id="hiddenDiv2" class="dataSetDescription">
 		<p>
 
-          <dt> Probe sets from the <a href="http://www.affymetrix.com/" target="_new">Affymetrix</a> GeneChip <i>Drosophila</i> Genome 1.0 and 2.0 Arrays, a
+          <dt> Probesets from the <a href="http://www.affymetrix.com/" target="_new">Affymetrix</a> GeneChip <i>Drosophila</i> Genome 1.0 and 2.0 Arrays, a
            microarray tool for studying expression of <i>D. melanogaster</i> transcripts. Probeset locations and mapped genes (not transcripts) are downloaded from Ensembl. FlyMine only loads probesets that match to at least one gene. For more information on the probeset mappings, go to <a href="http://www.ensembl.org/Homo_sapiens/helpview?kw=microarray;ref=http%3A%2F%2Fwww.ensembl.org%2FMus_musculus%2Findex.html/" target="_new">Ensembl help</a>.  </dt>
 		</br></p>
 

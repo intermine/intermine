@@ -143,7 +143,7 @@
 
       
           <li>
-            <im:querylink text="All <i>Anopheles gambiae</i> EST clusters from Imperial College" skipBuilder="true">
+            <im:querylink text="All <i>Anopheles gambiae</i> EST clusters and chromosomal positions" skipBuilder="true">
               <query name="" model="genomic" view="ESTCluster.primaryIdentifier ESTCluster.length ESTCluster.chromosome.primaryIdentifier ESTCluster.chromosomeLocation.start ESTCluster.chromosomeLocation.end">
                 <pathDescription pathString="ESTCluster.chromosomeLocation" description="Chromosome location">
                 </pathDescription>
