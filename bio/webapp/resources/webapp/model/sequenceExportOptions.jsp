@@ -6,7 +6,7 @@
 <html:xhtml/>
 
 Sequence to export:
-
+<br/>
 <c:forEach items="${exportClassPaths}" var="entry">
   <c:set var="path" value="${entry.key}"/>
   <c:choose>
