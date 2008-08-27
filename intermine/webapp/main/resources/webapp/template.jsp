@@ -233,7 +233,7 @@
                   <c:if test="${!empty useAC  and hasAutoC eq 0}">
                   <input name="attributeValues(${index})" id="attributeId_${index}" size="45" autocomplete="off"
                          style="background:#ffffc8"
-                         value="${con.value}"
+                         value="${con.displayValue}"
                          onKeyDown="getId(this.id); isEnter(event);"
                          onKeyUp="readInput(event, '${classDesc[pathString]}', '${fieldDesc[pathString]}');"
                          onMouseOver="setMouseOver(${index});"
