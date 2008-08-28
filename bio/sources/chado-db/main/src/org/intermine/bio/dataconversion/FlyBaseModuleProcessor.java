@@ -196,7 +196,7 @@ public class FlyBaseModuleProcessor extends ChadoSequenceProcessor
      * @param connection the connection
      * @throws SQLException if there is a database problem
      */
-    private void createInsertionTempTable(Connection connection) throws SQLException {
+    protected void createInsertionTempTable(Connection connection) throws SQLException {
         String query =
             " CREATE TEMPORARY TABLE " + INSERTION_TEMP_TABLE_NAME
             + " AS SELECT obj.feature_id AS obj_id, sub.feature_id AS sub_id,"
