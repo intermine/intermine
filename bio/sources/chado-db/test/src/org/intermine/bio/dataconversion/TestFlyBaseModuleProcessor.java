@@ -25,6 +25,7 @@ import com.mockobjects.sql.MockMultiRowResultSet;
  */
 public class TestFlyBaseModuleProcessor extends FlyBaseModuleProcessor
 {
+
     /**
      * Create a new TestFlyBaseModuleProcessor object.
      * @param chadoDBConverter the ChadoDBConverter
@@ -38,6 +39,14 @@ public class TestFlyBaseModuleProcessor extends FlyBaseModuleProcessor
      */
     @Override
     protected void createFeatureTempTable(@SuppressWarnings("unused") Connection connection) {
+        // empty
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    protected void createInsertionTempTable(@SuppressWarnings("unused") Connection connection) {
         // empty
     }
 
