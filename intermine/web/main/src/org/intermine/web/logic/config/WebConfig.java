@@ -145,10 +145,12 @@ public class WebConfig
      * @param model model used for validation
      */
     private void validate(Model model) {
+        StringBuffer invalidClasses = new StringBuffer();
+        StringBuffer badFieldExpressions = new StringBuffer();
         for (String typeName : types.keySet()) {
             if (!model.getClassNames().contains(typeName)) {
-                throw new RuntimeException("Invalid web config. Class specified in web config "
-                                   + "doesn't exist in model. Web config class: " + typeName + ".");
+                invalidClasses.append(" " + typeName);
+                continue;
             }
             Type type = types.get(typeName);
             Collection<FieldConfig> fieldConfigs = type.getFieldConfigs();
@@ -165,12 +167,20 @@ public class WebConfig
                 try {
                     new Path(model, pathString);
                 } catch (PathError e) {
-                    throw new RuntimeException("Invalid web config. Field expression '"
-                            + fieldConfig.getFieldExpr() + "' for class "
-                            + typeName + " is not valid according to the model. "
-                            + "Corresponding path " + pathString + " doesn't exist.");
+                    badFieldExpressions.append(" " + pathString);
+                    continue;
                 }
             }
+        }
+        if (invalidClasses.length() > 0 || badFieldExpressions.length() > 0) {
+            throw new RuntimeException("Invalid web config. "
+                                       + ((invalidClasses.length() > 0) ?
+                                          "Classes specified in web config that don't exist in model: "
+                                          + invalidClasses.toString() + ". " : "")
+                                       + ((badFieldExpressions.length() > 0) ?
+                                          "Path specified in a fieldExpr does note exist in model: "
+                                          + badFieldExpressions + ". " : "")
+                                       );
         }
     }
 
