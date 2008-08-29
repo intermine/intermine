@@ -76,12 +76,15 @@ public class SequenceExportOptionsController extends TilesAction
 
 
     /**
-     * From the columns of the PagedTable, return a List of the Paths that this exporter will treat
-     * use to find sequences to export.
+     * From the columns of the PagedTable, return a List of the Paths that this exporter will
+     * use to find sequences to export.  The returned Paths are a subset of the prefixes of the
+     * column paths.
      * eg. if the columns are ("Gene.primaryIdentifier", "Gene.secondaryIdentifier",
      * "Gene.proteins.primaryIdentifier") return ("Gene", "Gene.proteins").
+     * @param pt the PagedTable
+     * @return a list of Paths that have sequence
      */
-    private List<Path> getExportClassPaths(PagedTable pt) {
+    public static List<Path> getExportClassPaths(PagedTable pt) {
         List<Path> retPaths = new ArrayList<Path>();
 
         List<Column> columns = pt.getColumns();

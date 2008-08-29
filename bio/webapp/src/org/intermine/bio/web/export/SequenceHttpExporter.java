@@ -14,7 +14,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.intermine.bio.web.struts.SequenceExportForm;
-import org.intermine.metadata.Model;
+import org.intermine.bio.web.struts.SequenceExportOptionsController;
 import org.intermine.objectstore.ObjectStore;
 import org.intermine.path.Path;
 import org.intermine.util.StringUtil;
@@ -26,6 +26,8 @@ import org.intermine.web.logic.export.http.TableHttpExporter;
 import org.intermine.web.logic.results.Column;
 import org.intermine.web.logic.results.PagedTable;
 import org.intermine.web.struts.TableExportForm;
+
+import org.flymine.model.genomic.LocatedSequenceFeature;
 
 import java.io.IOException;
 import java.io.OutputStream;
@@ -105,12 +107,16 @@ public class SequenceHttpExporter implements TableHttpExporter
     public List<Path> getInitialExportPaths(PagedTable pt) {
         List<Path> paths = new ArrayList<Path>(ExportHelper.getColumnPaths(pt));
 
-        // XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXx
+        List<Path> sequencePaths = SequenceExportOptionsController.getExportClassPaths(pt);
 
-        // XXX TODO FIXME
+        for (Path seqPath: sequencePaths) {
+            Class<?> seqPathClass = seqPath.getEndClassDescriptor().getType();
+            if (LocatedSequenceFeature.class.isAssignableFrom(seqPathClass)) {
+                // the Path we need is the parent of one of the paths in the columns
+                paths.add(seqPath.append("chromosomeLocation"));
+            }
+        }
 
-        // the Path we need is the parent of one of the paths in the columns
-        paths.add(new Path(Model.getInstanceByName("genomic"), "Gene.chromosomeLocation"));
         return paths;
     }
 
