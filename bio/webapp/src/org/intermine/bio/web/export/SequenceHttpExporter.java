@@ -72,8 +72,22 @@ public class SequenceHttpExporter implements TableHttpExporter
             throw new ExportException("Export failed.", e);
         }
 
-        // XXX
+        String sequencePathString = sef.getSequencePath();
+        sequencePathString = sequencePathString.replaceAll(" > ", ".");
+
         int realFeatureIndex = 0;
+
+        for (Column column: pt.getColumns()) {
+            Path path = column.getPath();
+
+            String pathString = path.toString();
+            if (path.endIsAttribute()
+                && pathString.startsWith(sequencePathString)
+                && !pathString.substring(sequencePathString.length() + 1).contains(".")) {
+                realFeatureIndex = column.getIndex();
+                break;
+            }
+        }
 
         SequenceExporter exporter = new SequenceExporter(os, outputStream, realFeatureIndex);
 
