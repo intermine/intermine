@@ -29,10 +29,10 @@ import org.apache.lucene.store.RAMDirectory;
  */
 public class LuceneSearchEngine
 {
-    
+
     private  IndexSearcher indexSearch;
     private  Analyzer analyzer;
-    
+
     /**
      * LuceneSearchEngine constructor put the indexes to memory and creates
      * an keyword analyser
@@ -41,15 +41,15 @@ public class LuceneSearchEngine
     public LuceneSearchEngine(String fileName) {
         try {
             RAMDirectory ram = new RAMDirectory(fileName);
-            
+
             indexSearch = new IndexSearcher(ram);
-            
+
             analyzer = new KeywordAnalyzer();
         } catch (IOException e) {
             e.printStackTrace();
         }
     }
-    
+
     /**
      * LuceneSearchEngine constructor put the indexes to memory and creates
      * an keyword analyser
@@ -58,40 +58,40 @@ public class LuceneSearchEngine
     public LuceneSearchEngine(RAMDirectory ram) {
         try {
             indexSearch = new IndexSearcher(ram);
-            
+
             analyzer = new KeywordAnalyzer();
         } catch (IOException e) {
             e.printStackTrace();
         }
     }
-    
+
     /**
-     * 
+     * Perform the lucene search.
      * @param queryString the string for what you search in the indexes
      * @param toSearch  the field in which you search
      * @return Hits list of documents (search results)
      * @throws IOException IOException
      * @throws ParseException IOException
      */
-    public Hits performSearch(String queryString, String toSearch) 
+    public Hits performSearch(String queryString, String toSearch)
         throws IOException, ParseException {
-        
+
         QueryParser parser = new QueryParser(toSearch, analyzer);
         BooleanQuery.setMaxClauseCount(4096);
-        
-        if (!queryString.equals("")) {
-        
+
+        if (!queryString.equals("") && !queryString.trim().startsWith("*")) {
+
             Query query;
-            
+
             if (queryString.endsWith(" ")) {
                 queryString = queryString.substring(0, queryString.length() - 1);
             }
-            
+
             String[] tmp;
             if (queryString.contains(" ")) {
                 tmp = queryString.replaceAll(" +", " ").trim().split(" ");
                 queryString = new String();
-                
+
                 for (int i = 0; i < tmp.length; i++) {
                     queryString += tmp[i];
                     if (i < tmp.length - 1) {
@@ -99,41 +99,41 @@ public class LuceneSearchEngine
                     }
                 }
             }
-            query = parser.parse(queryString + "*");  
-            
+            query = parser.parse(queryString + "*");
+
             Hits hits = indexSearch.search(query);
-            
+
             return hits;
         }
-        return null; 
+        return null;
     }
-    
+
     /**
-     * 
+     * Perform the search but only return n results.
      * @param queryS the string for what you search in the indexes
      * @param toSearch the field in which you search
      * @param n first n results
      * @return array of ScoreDoc[] with n elements
      */
     public String[] fastSearch(String queryS, String toSearch, int n) {
-        
+
         QueryParser parser = new QueryParser(toSearch, analyzer);
         BooleanQuery.setMaxClauseCount(4096);
-        String status = "true"; 
+        String status = "true";
         String[] results = null;
-        
 
-        if (!queryS.equals("")) {
+
+        if (!queryS.equals("") && !queryS.trim().startsWith("*")) {
             Query query = null;
             if (queryS.endsWith(" ")) {
                 queryS = queryS.substring(0, queryS.length() - 1);
             }
-            
+
             String[] tmp;
             if (queryS.contains(" ")) {
                 tmp = queryS.replaceAll(" +", " ").trim().split(" ");
                 queryS = new String();
-                
+
                 for (int i = 0; i < tmp.length; i++) {
                     queryS += tmp[i];
                     if (i < tmp.length - 1) {
@@ -141,14 +141,14 @@ public class LuceneSearchEngine
                     }
                 }
             }
-                
+
             try {
                 query = parser.parse(queryS + "*");
                 TopDocs topDoc = null;
                 try {
                     topDoc = indexSearch.search(query, null, n);
                     ScoreDoc[] docs = topDoc.scoreDocs;
-                    
+
                     results = new String[docs.length + 1];
                     for (int i = 1; i < docs.length + 1; i++) {
                         try {
@@ -169,13 +169,13 @@ public class LuceneSearchEngine
                 }
             } catch (ParseException e) {
                 status = "No results! Please try again.";
-            }  
-    
+            }
+
             return results;
         }
-        
+
         return null;
     }
-    
-    
+
+
 }
