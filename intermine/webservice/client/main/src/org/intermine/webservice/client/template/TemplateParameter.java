@@ -12,12 +12,12 @@ package org.intermine.webservice.client.template;
 
 /**
  * The TemplateParameter class is simple class representing template parameter. Template parameter
- * is actually predefined constraint where you can specify constraint operation and constrained 
+ * is predefined constraint where you can specify constraint operation and constrained 
  * value. For example it can be constraint for gene length and you can specify if the gene length 
  * should be less, equal or greater then your specified value.
  * 
  * Parameters of some templates require extra value. See documentation of the template or InterMine
- * web page that generates for user template URL and displays it readily.
+ * web page that generates template URL for user and displays it readily.
  *  
  * @author Jakub Kulaviak
  **/

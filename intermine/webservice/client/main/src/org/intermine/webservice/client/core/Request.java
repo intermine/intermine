@@ -24,9 +24,13 @@ public interface Request
 
     public enum RequestType {
         /**
-         * GET and POST types.
+         * GET type.
          */
-        GET, POST
+        GET, 
+        /**
+         * POST type.
+         */
+        POST
     }
 
     /**
@@ -44,7 +48,7 @@ public interface Request
 
     /**
      * Use only if you are sure, that the parameter has
-     * only one value, else use getParameterValues method. 
+     * only one value else use getParameterValues method. 
      * @param name parameter name
      * @return parameter value
      */

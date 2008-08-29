@@ -21,7 +21,8 @@ import org.intermine.webservice.client.core.Request.RequestType;
 import org.intermine.webservice.client.util.HttpConnection;
 
 /**
- * The ListService is service some information about public lists in InterMine. 
+ * The ListService provides some information about public lists in InterMine like 
+ * which lists contain specified object.
  * 
  * @author Jakub Kulaviak
  **/
@@ -31,7 +32,7 @@ public class ListService extends Service
     private static final String SERVICE_RELATIVE_URL = "listswithobject";
 
     /**
-     * Use {@link ServiceFactory} for creating this service instead of constructor.
+     * Use {@link ServiceFactory} instead of constructor for creating this service .
      * @param rootUrl root URL
      * @param applicationName application name
      */

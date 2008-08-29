@@ -23,8 +23,7 @@ import org.intermine.webservice.client.util.ErrorMessageParser;
 import org.intermine.webservice.client.util.HttpConnection;
 
 /**
- * Implementation of TableResult interface for output formatted 
- * as tab separated values.
+ * Utility class for parsing tab separated result.
  * @author Jakub Kulaviak
  **/
 public class TabTableResult 

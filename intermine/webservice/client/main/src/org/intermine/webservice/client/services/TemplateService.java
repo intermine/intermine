@@ -36,7 +36,7 @@ public class TemplateService extends Service
     private static final String SERVICE_RELATIVE_URL = "template/results";
         
     /**
-     * Use {@link ServiceFactory} for creating this service instead of constructor.
+     * Use {@link ServiceFactory} instead of constructor for creating this service.
      * @param rootUrl root URL
      * @param applicationName application name
      */
