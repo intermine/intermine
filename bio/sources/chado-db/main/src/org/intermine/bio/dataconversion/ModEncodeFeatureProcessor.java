@@ -83,8 +83,6 @@ public class ModEncodeFeatureProcessor extends ChadoSequenceProcessor
     protected String getExtraFeatureConstraint() {
         String queryList = forINclause();
 
-//        LOG.info("LISTA " + queryList);
-
         return "cvterm.name = 'chromosome' OR cvterm.name = 'chromosome_arm' OR feature_id IN "
             + " (SELECT feature_id "
             + "   FROM data_feature "

@@ -21,8 +21,8 @@
 		<th>Project</th>
 		<th>Title</th>
 		<th>Principal Investigator</th>
-		<th>Labs</th>
 		<th>Submissions</th>
+    <th>Labs</th>
 	</tr>
 	<c:forEach items="${labs}" var="item">
 		<tr>
@@ -34,6 +34,8 @@
  ${item.key.title}
     </html:link>
 			<td>${item.key.namePI} ${item.key.surnamePI}
+
+<%--
 			<td><c:forEach items="${item.value}" var="prov">
 				<html:link
 					href="/${WEB_PROPERTIES['webapp.path']}/objectDetails.do?id=${prov.id}">
@@ -41,6 +43,8 @@
     </html:link>
 				<br>
 			</c:forEach>
+			--%>
+			
 			<td>
 			<c:forEach items="${counts}" var="nr">
 				<c:if test="${nr.key.surnamePI eq item.key.surnamePI}">
@@ -67,6 +71,16 @@
 					</im:querylink>
 				</c:when>
 			</c:choose>
+			
+			     <td><c:forEach items="${item.value}" var="prov">
+        <html:link
+          href="/${WEB_PROPERTIES['webapp.path']}/objectDetails.do?id=${prov.id}">
+ ${prov.name}
+    </html:link>
+        <br>
+      </c:forEach>
+			
+			
 	</c:forEach>
 	</tr>
 
