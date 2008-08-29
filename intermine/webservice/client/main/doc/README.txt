@@ -1,9 +1,13 @@
 InterMine Webservice Client 1.0
-14.7.2008
+29.8.2008
 
 Overview
 ========
-There is javadoc documentation and samples. Each sample has its own documentation. 
+There is javadoc documentation and samples. Javadoc documentation to the intermine-client
+library is in javadoc-client directory. javadoc-pathquery directory contains javadoc that 
+is useful when you want to create pathquery java object in programmatic way adding 
+adding constraints.
+There is sample for each service showing how to write client using the service. 
 
 Samples Overview
 ==================

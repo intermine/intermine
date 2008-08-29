@@ -2,6 +2,8 @@
 
 	Ant script to produce distribution zip with webservice client libraries and samples.
 	To build, run 'ant -f <path-to-this-file>'.
+    Generated distribution zip file is saved in directory that is set in this build file
+    under dist.dir property.
 
 -->
 <project name="intermine-webservice-client" basedir="." default="dist">
@@ -40,16 +42,14 @@
 		<copydir dest="${build.dir}/src" src="src" />
 		<copydir dest="${build.dir}/lib" src="lib" />
 		<!--intermine-webservice-client.jar was created before by calling InterMine build script  -->
-	    <!-- <copyfile dest="${build.dir}/lib/intermine-client.jar" src="dist/intermine-webservice-client.jar"/> -->
 		<jar destfile="${build.dir}/lib/intermine-client.jar">
-			  <zipfileset src="dist/intermine-webservice-client.jar">
-			  </zipfileset> 
-			  <fileset file="${src.dir}/log4j.properties">
-			  </fileset>
+			  <zipfileset src="dist/intermine-webservice-client.jar" />
+			  <fileset file="${src.dir}/log4j.properties" />
 		</jar>
 	    <copyfile dest="${build.dir}/lib/intermine-pathquery.jar" src="../../../pathquery/main/dist/intermine-pathquery.jar"/> 
 		<copyfile dest="${build.dir}/lib/intermine-objectstore.jar" src="../../../objectstore/main/dist/intermine-objectstore.jar"/>
 	    <copydir dest="${build.dir}/samples" src="../samples" excludes=".*"></copydir>
+		<copyfile dest="${build.dir}/doc/README.txt" src="doc/README.txt"/>
 	</target>
 
 	<target name="dist" depends="build, javadoc">
