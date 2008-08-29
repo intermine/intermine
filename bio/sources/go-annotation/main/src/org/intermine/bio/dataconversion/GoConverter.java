@@ -604,15 +604,18 @@ public class GoConverter extends FileConverter
 
             // if a Dmel gene we need to use FlyBaseIdResolver to find a current id
             if (taxonId.equals("7227")) {
-                IdResolver resolver = resolverFactory.getIdResolver();
-                int resCount = resolver.countResolutions(taxonId, accession);
-                if (resCount != 1) {
-                    LOG.info("RESOLVER: failed to resolve gene to one identifier, ignoring gene: "
-                             + accession + " count: " + resCount + " FBgn: "
-                             + resolver.resolveId(taxonId, accession));
-                    return null;
+                IdResolver resolver = resolverFactory.getIdResolver(false);
+                if (resolver != null) {
+                    int resCount = resolver.countResolutions(taxonId, accession);
+
+                    if (resCount != 1) {
+                        LOG.info("RESOLVER: failed to resolve gene to one identifier, "
+                                 + "ignoring gene: " + accession + " count: " + resCount + " FBgn: "
+                                 + resolver.resolveId(taxonId, accession));
+                        return null;
+                    }
+                    accession = resolver.resolveId(taxonId, accession).iterator().next();
                 }
-                accession = resolver.resolveId(taxonId, accession).iterator().next();
             }
         } else if ("protein".equalsIgnoreCase(type)) {
             clsName = "Protein";
