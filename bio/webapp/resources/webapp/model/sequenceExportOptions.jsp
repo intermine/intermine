@@ -11,7 +11,8 @@ Sequence to export:
   <c:set var="path" value="${entry.key}"/>
   <c:choose>
     <c:when test="${fn:length(exportClassPaths) == 1}">
-      ${entry.value}
+      <html:hidden property="sequencePath" value="${path}"/>
+      ${entry.value}<br/>
     </c:when>
     <c:otherwise>
       <html:radio property="sequencePath" value="${path}"/>${entry.value}<br/>
