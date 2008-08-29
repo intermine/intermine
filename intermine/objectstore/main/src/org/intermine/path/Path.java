@@ -348,6 +348,15 @@ public class Path
     }
 
     /**
+     * Return new Path that has this Path as its prefix and has fieldName as the last element.
+     * @param fieldName the field name
+     * @return the new Path
+     */
+    public Path append(String fieldName) {
+       return new Path(model, toString() + "." + fieldName);
+    }
+
+    /**
      * If the last element in the path is an attribute, return the Class of the attribute,
      * otherwise return null
      * @return the Class of the last element if an attribute, or null otherwise

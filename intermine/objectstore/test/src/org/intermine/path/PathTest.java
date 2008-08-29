@@ -17,7 +17,6 @@ import java.util.Map;
 import org.intermine.metadata.ClassDescriptor;
 import org.intermine.metadata.FieldDescriptor;
 import org.intermine.metadata.Model;
-import org.intermine.metadata.ReferenceDescriptor;
 import org.intermine.model.testmodel.CEO;
 import org.intermine.model.testmodel.Company;
 import org.intermine.model.testmodel.Department;
@@ -353,6 +352,30 @@ public class PathTest extends TestCase
         stringPath = "Department.name";
         path = new Path(model, stringPath);
         assertTrue(path.isOnlyAttribute());
+    }
+
+    public void testAppend() {
+        Path expDepNamePath = new Path(model, "Department.name");
+        Path path = new Path(model, "Department");
+        Path depNamePath = path.append("name");
+
+        assertEquals(expDepNamePath, depNamePath);
+    }
+
+    public void testAppend2() {
+        Path expDeptPath = new Path(model, "Department.manager[CEO].company.departments");
+        Path expEmpPath = new Path(model, "Department.manager[CEO].company.departments.employees");
+
+        String testPathStr = "Department.manager[CEO].company";
+        Path path = new Path(model, testPathStr);
+
+        Path depPath = path.append("departments");
+
+        assertEquals(expDeptPath.toString(), depPath.toString());
+
+        Path empPath = depPath.append("employees");
+
+        assertEquals(expEmpPath.toString(), empPath.toString());
     }
 
 }
