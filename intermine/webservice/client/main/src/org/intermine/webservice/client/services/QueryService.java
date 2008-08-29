@@ -43,7 +43,7 @@ public class QueryService extends Service
     private static final String SERVICE_RELATIVE_URL = "query/results";
 
     /**
-     * Use {@link ServiceFactory} for creating this service instead of constructor.
+     * Use {@link ServiceFactory} instead for creating this service .
      * @param rootUrl root URL
      * @param applicationName application name
      */

@@ -59,7 +59,7 @@ public class RequestImpl implements Request
     }
 
     /**
-     * {@inheritDoc}} 
+     * {@inheritDoc} 
      */
     public void addParameter(String name, String value) {
         List<String> values = getParameterValues(name);
@@ -71,14 +71,14 @@ public class RequestImpl implements Request
     }
 
     /**
-     * {@inheritDoc}} 
+     * {@inheritDoc} 
      */
     public List<String> getParameterValues(String name) {
         return parameters.get(name);
     }
 
     /**
-     * {@inheritDoc}} 
+     * {@inheritDoc} 
      */
     public String getParameter(String name) {
         List<String>  pars = getParameterValues(name);
@@ -90,14 +90,14 @@ public class RequestImpl implements Request
     }
 
     /**
-     * {@inheritDoc}} 
+     * {@inheritDoc} 
      */
     public Set<String> getParameterNames() {
         return parameters.keySet();
     }
 
     /**
-     * {@inheritDoc}} 
+     * {@inheritDoc} 
      */
     public void setParameter(String name, String value) {
         List<String> values = parameters.get(name);
@@ -110,35 +110,35 @@ public class RequestImpl implements Request
     }
 
     /**
-     * {@inheritDoc}} 
+     * {@inheritDoc} 
      */
     public RequestType getType() {
         return type;
     }
 
     /**
-     * {@inheritDoc}} 
+     * {@inheritDoc} 
      */
     public void setType(RequestType type) {
         this.type = type;
     }
 
     /**
-     * {@inheritDoc}} 
+     * {@inheritDoc} 
      */
     public String getServiceUrl() {
         return serviceUrl;
     }
 
     /**
-     * {@inheritDoc}} 
+     * {@inheritDoc} 
      */
     public void setServiceUrl(String url) {
         this.serviceUrl = url;
     }
 
     /**
-     * {@inheritDoc}} 
+     * {@inheritDoc} 
      */
     public void setUrl(String url) {
         try {
@@ -150,28 +150,28 @@ public class RequestImpl implements Request
     }
 
     /**
-     * {@inheritDoc}} 
+     * {@inheritDoc} 
      */
     public ContentType getContentType() {
         return contentType;
     }
 
     /**
-     * {@inheritDoc}} 
+     * {@inheritDoc} 
      */
     public void setContentType(ContentType contentType) {
         this.contentType = contentType;
     }
 
     /**
-     * {@inheritDoc}} 
+     * {@inheritDoc} 
      */
     public Map<String, List<String>> getParameterMap() {
         return parameters;
     }
 
     /**
-     * {@inheritDoc}} 
+     * {@inheritDoc} 
      */
     public String getUrl(boolean encode) {
         return getUrlInternal(encode);

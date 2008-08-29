@@ -16,7 +16,7 @@ import org.intermine.webservice.client.util.HttpConnection;
 
 /**
  * The ServiceUnavailableException is thrown when an exception occurs that 
- * is temporary; i.e., the user should try again. 
+ * is temporary, the user should try it again. 
  * 
  * @author Jakub Kulaviak
  */

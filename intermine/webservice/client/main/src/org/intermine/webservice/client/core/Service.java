@@ -17,14 +17,12 @@ import org.apache.log4j.Logger;
 import org.intermine.webservice.client.util.HttpConnection;
 
 
-/**
- * The Service class represents a client connection to a InterMine service. It
- * encapsulates all protocol-level interactions with the server. 
- * <p>
+/** 
  * This class provides the base level common functionality required to access
  * any InterMine service. It is also designed to act as a base class that can be
- * customized for specific types of InterMine services. 
- * </p>
+ * customized for specific types of InterMine services. It encapsulates all protocol-level 
+ * interactions with the server.
+ * 
  * @author Jakub Kulaviak
  **/
 public class Service
@@ -69,11 +67,9 @@ public class Service
     }
 
     /**
-     * Executes request. In fact it prepares response and the connection is made inside of the 
-     * HttpConnection when needed. User is responsible for calling close method on response that
-     * will close internal connection.
+     * Open connection and returns connection.
      * @param request request
-     * @return response with prepared connection
+     * @return created connection
      */
     public HttpConnection executeRequest(Request request) {
         assureOutputFormatSpecified(request);

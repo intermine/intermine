@@ -12,7 +12,7 @@ package org.intermine.webservice.client.exceptions;
 
 /**
  * The NotConnectedException is thrown when some method requiring opened connection was
- * called on HttpConnection when the connection wasn't opened.
+ * called on closed HttpConnection.
  * @author Jakub Kulaviak
  **/
 public class NotConnectedException extends ServiceException

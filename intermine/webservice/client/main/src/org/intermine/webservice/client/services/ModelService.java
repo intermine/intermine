@@ -41,7 +41,7 @@ public class ModelService extends Service
     private static Map<String, Model> models = new HashMap<String, Model>();
     
     /**
-     * Use {@link ServiceFactory} for creating this service instead of constructor.
+     * Use {@link ServiceFactory} instead of constructor for creating this service .
      * @param rootUrl root URL
      * @param applicationName application name
      */

@@ -17,8 +17,8 @@ import org.intermine.webservice.client.services.TemplateService;
 
 
 /**
- * Class that should be used for creating of services. You should never create instances of 
- * service classes directly with constructors but always use this factory. If you use directly 
+ * Class that should be used for creating services. You should never create instance of 
+ * service class directly with constructors but always use this factory. If you use directly 
  * constructors then future versions of this client library can be incompatible with your code.    
  * 
  * @author Jakub Kulaviak
