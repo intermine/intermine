@@ -10,6 +10,10 @@ package org.intermine.bio.dataconversion;
  *
  */
 
+import java.sql.Connection;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -22,6 +26,12 @@ import java.util.Set;
 import java.util.TreeSet;
 import java.util.Map.Entry;
 
+import org.apache.commons.collections.keyvalue.MultiKey;
+import org.apache.commons.collections.map.MultiKeyMap;
+import org.apache.commons.lang.StringUtils;
+import org.apache.log4j.Logger;
+import org.flymine.model.genomic.LocatedSequenceFeature;
+import org.flymine.model.genomic.Transcript;
 import org.intermine.bio.util.OrganismData;
 import org.intermine.metadata.ClassDescriptor;
 import org.intermine.metadata.FieldDescriptor;
@@ -34,19 +44,6 @@ import org.intermine.util.XmlUtil;
 import org.intermine.xml.full.Item;
 import org.intermine.xml.full.Reference;
 import org.intermine.xml.full.ReferenceList;
-
-import org.flymine.model.genomic.LocatedSequenceFeature;
-import org.flymine.model.genomic.Transcript;
-
-import java.sql.Connection;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.sql.Statement;
-
-import org.apache.commons.collections.keyvalue.MultiKey;
-import org.apache.commons.collections.map.MultiKeyMap;
-import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
 
 /**
  * A processor for the chado sequence module.
@@ -1293,7 +1290,7 @@ public class ChadoSequenceProcessor extends ChadoProcessor
 
     /**
      * Return some SQL that can be included in the WHERE part of query that restricts features
-     * by organism.  "organism_id" mus be selected.
+     * by organism.  "organism_id" must be selected.
      * @return the SQL
      */
     protected String getOrganismConstraint() {
