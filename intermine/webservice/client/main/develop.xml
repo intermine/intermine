@@ -49,7 +49,7 @@
 	    <copyfile dest="${build.dir}/lib/intermine-pathquery.jar" src="../../../pathquery/main/dist/intermine-pathquery.jar"/> 
 		<copyfile dest="${build.dir}/lib/intermine-objectstore.jar" src="../../../objectstore/main/dist/intermine-objectstore.jar"/>
 	    <copydir dest="${build.dir}/samples" src="../samples" excludes=".*"></copydir>
-		<copyfile dest="${build.dir}/doc/README.txt" src="doc/README.txt"/>
+		<copyfile dest="${build.dir}/README.txt" src="README.txt"/>
 	</target>
 
 	<target name="dist" depends="build, javadoc">
