@@ -13,6 +13,8 @@
       <property name="source.name" value="fasta"/>
       <property name="fasta.className" value="org.flymine.model.genomic.Chromosome"/>
       <property name="fasta.includes" value="MAL*.fasta"/>
+      <property name="fasta.synonymSource" value="PlasmoDB"/>
+      <property name="fasta.dataSetTitle" value="PlasmoDB"/>
       <property name="fasta.taxonId" value="36329"/>
       <property name="src.data.dir" location="my_data_dir/malaria/malaria-genome/fasta"/>
     </source>
