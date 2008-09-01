@@ -2972,7 +2972,60 @@ Iterator chrBandExonIter = results.iterator();
         Assert.assertEquals(expItem, resItem);
     }
 
+    public void testSetChromosomeLocationsAndLengths() throws Exception {
+        Chromosome chr1 = (Chromosome) DynamicUtil.createObject(Collections.singleton(Chromosome.class));
+        chr1.setPrimaryIdentifier("1");
+        chr1.setId(new Integer(101));
+        Chromosome chr2 = (Chromosome) DynamicUtil.createObject(Collections.singleton(Chromosome.class));
+        chr1.setPrimaryIdentifier("2");
+        chr1.setId(new Integer(102));
+        
+        Exon exon1 = (Exon) DynamicUtil.createObject(Collections.singleton(Exon.class));
+        exon1.setId(new Integer(107));
+        Exon exon2 = (Exon) DynamicUtil.createObject(Collections.singleton(Exon.class));
+        exon2.setId(new Integer(108));
+        Exon exon3 = (Exon) DynamicUtil.createObject(Collections.singleton(Exon.class));
+        exon3.setId(new Integer(109));
+        
+        // exon 2 has two chromosome locations, shouldn't get chromosome[Location] references
+        Location exon1OnChr = createLocation(chr1, exon1, "1", 51, 100, Location.class);
+        exon1OnChr.setId(new Integer(1010));
+        Location exon2OnChr = createLocation(chr2, exon2, "1", 201, 250, Location.class);
+        exon2OnChr.setId(new Integer(1011));
+        Location exon2OnChrDup = createLocation(chr1, exon2, "1", 501, 550, Location.class);
+        exon2OnChrDup.setId(new Integer(1012));
+        Location exon3OnChr = createLocation(chr2, exon3, "1", 601, 650, Location.class);
+        exon3OnChr.setId(new Integer(1013));
+        
+        Set toStore = new HashSet(Arrays.asList(new Object[] {
+            chr1, chr2, exon1, exon2, exon3,
+            exon1OnChr, exon2OnChr, exon2OnChrDup, exon3OnChr
+        }));
 
+        Iterator i = toStore.iterator();
+        while (i.hasNext()) {
+            osw.store((InterMineObject) i.next());
+        }
+
+        CalculateLocations cl = new CalculateLocations(osw);
+        cl.setChromosomeLocationsAndLengths();
+        
+        ObjectStore os = osw.getObjectStore();
+        Exon resExon1 = (Exon) os.getObjectById(new Integer(107));
+        Exon resExon2 = (Exon) os.getObjectById(new Integer(108));
+        Exon resExon3 = (Exon) os.getObjectById(new Integer(109));
+        
+        assertEquals(chr1.getId(), resExon1.getChromosome().getId());
+        assertEquals(exon1OnChr.getId(), resExon1.getChromosomeLocation().getId());
+        
+        assertNull(resExon2.getChromosome());
+        assertNull(resExon2.getChromosomeLocation());
+        
+        assertEquals(chr2.getId(), resExon3.getChromosome().getId());
+        assertEquals(exon3OnChr.getId(), resExon3.getChromosomeLocation().getId());
+    }
+    
+    
 // method removed - should test some other way
 //     public void testUpdateCollections() throws Exception {
 //         // Chromosome and ChromosomeBand in db with empty subjects/objects collections

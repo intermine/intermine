@@ -1269,6 +1269,14 @@ public class CalculateLocations
 
         osw.beginTransaction();
 
+        // we need to check that there is only one location before setting chromosome[Location]
+        // references.  If there are duplicates do nothing - this has happened for some affy
+        // probes in FlyMine.
+        Integer lastChrId = null;
+        LocatedSequenceFeature lastFeature = null;
+        boolean storeLastFeature = true;  // will get set to false if duplicate locations seen
+        Location lastLoc = null;
+        
         while (resIter.hasNext()) {
             ResultsRow rr = (ResultsRow) resIter.next();
 
@@ -1276,24 +1284,47 @@ public class CalculateLocations
             LocatedSequenceFeature lsf = (LocatedSequenceFeature) rr.get(1);
             Location locOnChr = (Location) rr.get(2);
 
-            LocatedSequenceFeature lsfClone =
-                (LocatedSequenceFeature) cloneInterMineObject(lsf);
-
-            lsfClone.setChromosomeLocation(locOnChr);
-            if (locOnChr.getStart() != null && locOnChr.getEnd() != null) {
-                int end = locOnChr.getEnd().intValue();
-                int start = locOnChr.getStart().intValue();
-                int length = Math.abs(end - start) + 1;
-                lsfClone.setLength(new Integer(length));
+            if (lastFeature != null && !lsf.getId().equals(lastFeature.getId())) {
+                // not a duplicated so we can set references for last feature
+                if (storeLastFeature) {
+                    setChromosomeReferencesAndStore(lastFeature, lastLoc, lastChrId);
+                }
+                storeLastFeature = true;
+            } else if (lastFeature != null) {
+                storeLastFeature = false;
             }
-            lsfClone.proxyChromosome(new ProxyReference(os, chrId, Chromosome.class));
 
-            osw.store(lsfClone);
+            lastFeature = lsf;
+            lastChrId = chrId;
+            lastLoc = locOnChr;
         }
-
+        
+        // make sure final feature gets stored
+        if (storeLastFeature) {
+            setChromosomeReferencesAndStore(lastFeature, lastLoc, lastChrId);
+        }
+        
         osw.commitTransaction();
     }
 
+    private void setChromosomeReferencesAndStore(LocatedSequenceFeature lsf, Location loc, 
+                                                 Integer chrId) throws Exception {
+        LocatedSequenceFeature lsfClone =
+            (LocatedSequenceFeature) cloneInterMineObject(lsf);
+
+        lsfClone.setChromosomeLocation(loc);
+        if (loc.getStart() != null && loc.getEnd() != null) {
+            int end = loc.getEnd().intValue();
+            int start = loc.getStart().intValue();
+            int length = Math.abs(end - start) + 1;
+            lsfClone.setLength(new Integer(length));
+        }
+        lsfClone.proxyChromosome(new ProxyReference(os, chrId, Chromosome.class));
+
+        osw.store(lsfClone);
+    }
+    
+    
     /**
      * Return true if locations of two objects on some parent object
      * have any overlap.
