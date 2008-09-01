@@ -98,7 +98,7 @@ public class ObjectStoreFastCollectionsForTranslatorImpl extends ObjectStorePass
                 throw (ObjectStoreException) t;
             } else {
                 throw new IllegalArgumentException("ObjectStore '" + underlyingOsAlias
-                                                   + "' not found in properties");
+                                                   + "' not found in properties", e);
             }
         }
         return new ObjectStoreFastCollectionsForTranslatorImpl(objectStore);
