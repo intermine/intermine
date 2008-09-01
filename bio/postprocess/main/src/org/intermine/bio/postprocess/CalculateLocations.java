@@ -594,7 +594,7 @@ public class CalculateLocations
         Query parentIdQuery =
             new IqlQuery("SELECT DISTINCT a1_.id as id FROM "
                          + parentClass.getName() + " AS a1_, org.flymine.model.genomic.Location "
-                         + "AS a2_, org.flymine.model.genomic.Chromosome as a3_"
+                         + "AS a2_, org.flymine.model.genomic.BioEntity as a3_"
                          + " WHERE (a1_.objects CONTAINS a2_ and a3_.subjects CONTAINS a2_)",
                          null).toQuery();
 
@@ -624,8 +624,10 @@ public class CalculateLocations
             BioEntity locatedOnObject = (BioEntity) rr.get(3);
 
             // ignore objects that already have locations on Chromosomes
-            if (locatedOnObject instanceof Chromosome
-                && locatedParents.contains(parentObject.getId())) {
+            Integer parentObjectId = parentObject.getId();
+            if ((locatedOnObject instanceof Chromosome
+                 || locatedOnObject instanceof AssemblyComponent)
+                && locatedParents.contains(parentObjectId)) {
                 continue;
             }
 
@@ -636,11 +638,11 @@ public class CalculateLocations
                 locatedOnObjectMap.put(locatedOnObject.getId(), parentObjectMap);
             }
 
-            SimpleLoc parentObjectSimpleLoc = (SimpleLoc) parentObjectMap.get(parentObject.getId());
+            SimpleLoc parentObjectSimpleLoc = (SimpleLoc) parentObjectMap.get(parentObjectId);
 
             if (parentObjectSimpleLoc == null) {
                 parentObjectSimpleLoc = new SimpleLoc(-1, -1, Integer.MAX_VALUE, -1, "0");
-                parentObjectMap.put(parentObject.getId(), parentObjectSimpleLoc);
+                parentObjectMap.put(parentObjectId, parentObjectSimpleLoc);
             }
 
             int currentParentStart = parentObjectSimpleLoc.getStart();
