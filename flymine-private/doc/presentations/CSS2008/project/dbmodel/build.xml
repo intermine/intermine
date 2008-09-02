@@ -1,0 +1,4 @@
+<project name="tutorial" default="default" basedir=".">
+  <description>For CSS2008</description>
+  <import file="../../../../../../imbuild/objectstore.xml"/>
+</project>

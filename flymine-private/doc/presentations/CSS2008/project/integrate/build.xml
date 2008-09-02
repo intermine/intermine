@@ -1,0 +1,4 @@
+<project name="tutorial-int" default="default" basedir=".">
+  <description>perform integration</description>
+  <import file="../../../../../../imbuild/integrate.xml"/>
+</project>

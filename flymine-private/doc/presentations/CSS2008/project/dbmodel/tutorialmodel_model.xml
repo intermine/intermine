@@ -1,0 +1,17 @@
+<model name="tutorialmodel" namespace="http://www.intermine.org/model/tutorialmodel#">
+    <class name="tutorialmodel.HasName" is-interface="true">
+        <attribute name="name" type="java.lang.String"/>
+    </class>
+    <class name="tutorialmodel.Employee" extends="tutorialmodel.HasName" is-interface="false">
+        <attribute name="fullTime" type="boolean"/>
+        <attribute name="age" type="int"/>
+        <reference name="department" referenced-type="tutorialmodel.Department" reverse-reference="employees"/>
+    </class>
+    <class name="tutorialmodel.Department" extends="tutorialmodel.HasName" is-interface="false">
+        <collection name="employees" referenced-type="tutorialmodel.Employee" reverse-reference="department"/>
+        <reference name="company" referenced-type="tutorialmodel.Company" reverse-reference="departments"/>
+    </class>
+    <class name="tutorialmodel.Company" extends="tutorialmodel.HasName" is-interface="false">
+        <collection name="departments" referenced-type="tutorialmodel.Department" reverse-reference="company"/>
+    </class>
+</model>

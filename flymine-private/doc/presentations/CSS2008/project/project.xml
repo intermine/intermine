@@ -1,0 +1,14 @@
+<project type="../../../../bio">
+  <property name="target.model" value="tutorialmodel"/>
+  <property name="common.os.prefix" value="common"/>
+  <property name="intermine.properties.file" value="csstutorial.properties"/>
+  <property name="default.intermine.properties.file" location="../default.intermine.integrate.properties"/>
+  <sources>
+    <source name="source1" type="intermine-items-xml-file">
+      <property name="src.data.file" location="data/source1.xml"/>
+    </source>
+    <source name="source2" type="intermine-items-xml-file">
+      <property name="src.data.file" location="data/source2.xml"/>
+    </source>
+  </sources>
+</project>

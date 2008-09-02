@@ -1,0 +1,12 @@
+<?xml version="1.0"?>
+<items>
+  <item id="1" class="Employee">
+    <attribute name="name" value="Fred"/>
+    <attribute name="age" value="27"/>
+    <attribute name="fullTime" value="true"/>
+    <reference name="department" ref_id="2"/>
+  </item>
+  <item id="2" class="Department">
+    <attribute name="name" value="Marketing"/>
+  </item>
+</items>
