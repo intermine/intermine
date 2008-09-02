@@ -86,7 +86,7 @@ public class Node
         type = TypeUtil.unqualifiedName(fd.isAttribute()
                                         ? ((AttributeDescriptor) fd).getType()
                                         : ((ReferenceDescriptor) fd)
-                                        .getReferencedClassDescriptor().getType().getName());
+                                        .getReferencedClassDescriptor().getName());
         attribute = fd.isAttribute();
         reference = fd.isReference();
         collection = fd.isCollection();
