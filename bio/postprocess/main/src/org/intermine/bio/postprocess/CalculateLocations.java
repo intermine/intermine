@@ -1316,8 +1316,12 @@ public class CalculateLocations
         if (loc.getStart() != null && loc.getEnd() != null) {
             int end = loc.getEnd().intValue();
             int start = loc.getStart().intValue();
-            int length = Math.abs(end - start) + 1;
-            lsfClone.setLength(new Integer(length));
+            // only set length if it isn't already set to stop eg. mRNA lengths getting broken.
+            // an alternative is to set according to type of feature.
+            if (lsfClone.getLength() == null) {
+                int length = Math.abs(end - start) + 1;
+                lsfClone.setLength(new Integer(length));
+            }
         }
         lsfClone.proxyChromosome(new ProxyReference(os, chrId, Chromosome.class));
 
