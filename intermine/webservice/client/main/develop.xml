@@ -22,12 +22,12 @@
 	<target name="compile">
 		<!-- Calling standard InterMine build scripts -->
 		<ant antfile="build.xml" target="library.jar" inheritall="false"></ant>
-	    <ant antfile="../../pathquery/main/build.xml" target="library.jar" dir="../../../pathquery/main" /> 
-		<ant antfile="../../objectstore/main/build.xml" target="library.jar" dir="../../../objectstore/main"></ant>
+	    <ant antfile="../../pathquery/main/build.xml" target="library.jar" dir="../../../pathquery/main" inheritall="false"/> 
+		<ant antfile="../../objectstore/main/build.xml" target="library.jar" dir="../../../objectstore/main" inheritall="false"></ant>
 	</target>
 	
 	<target name="javadoc">
-		<ant antfile="../../pathquery/main/build.xml" target="javadoc" dir="../../../pathquery/main" />
+		<ant antfile="../../pathquery/main/build.xml" target="javadoc" dir="../../../pathquery/main" inheritall="false"/>
 		<copydir dest="${build.dir}/doc/javadoc-pathquery" src="../../../pathquery/main/build/javadoc"></copydir>
 		<javadoc destdir="${build.dir}/doc/javadoc-client" source="${src.dir}" notree="true" use="false" nonavbar="false" noindex="false" 
 			splitindex="false" author="${javadoc.author}" version="false" failonerror="false">
