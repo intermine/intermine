@@ -1,0 +1,4 @@
+<project name="tutorial-webapp" default="default" basedir=".">
+  <description>Web application</description>
+  <import file="../../../../../../imbuild/application.xml"/>
+</project>

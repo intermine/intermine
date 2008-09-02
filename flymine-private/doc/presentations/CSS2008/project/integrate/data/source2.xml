@@ -1,0 +1,10 @@
+<?xml version="1.0"?>
+<items>
+  <item id="1" class="Department">
+    <attribute name="name" value="Marketing"/>
+    <reference name="company" ref_id="2"/>
+  </item>
+  <item id="2" class="Company">
+    <attribute name="name" value="ACME"/>
+  </item>
+</items>
