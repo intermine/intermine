@@ -385,7 +385,7 @@ public class FlyBaseModuleProcessor extends ChadoSequenceProcessor
                     Arrays.asList(CREATE_SYNONYM_ACTION));
             // the feature type for gene, eg. "rRNA_gene", "protein_coding_gene"
             map.put(new MultiKey("prop", "Gene", "promoted_gene_type"),
-                    Arrays.asList(new SetFieldConfigAction("flyBaseFeatureType")));
+                    Arrays.asList(new SetFieldConfigAction("featureType")));
             map.put(new MultiKey("prop", "TransposableElementInsertionSite",
                                  "curated_cytological_location"),
                                  Arrays.asList(new SetFieldConfigAction("cytoLocation")));

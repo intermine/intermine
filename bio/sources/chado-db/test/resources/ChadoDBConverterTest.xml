@@ -207,7 +207,7 @@
   </item>
   <item id="0_1" class="http://www.flymine.org/model/genomic#Gene">
     <attribute name="GLEANRsymbol" value="dmel_GLEANR_1_synonym"/>
-    <attribute name="flyBaseFeatureType" value="non_protein_coding_gene"/>
+    <attribute name="featureType" value="non_protein_coding_gene"/>
     <attribute name="length" value="1001"/>
     <attribute name="name" value="FBgn0000001_fullname_synonym"/>
     <attribute name="primaryIdentifier" value="FBgn0000001"/>
@@ -314,7 +314,7 @@
   </item>
   <item id="0_2" class="http://www.flymine.org/model/genomic#Gene">
     <attribute name="cytoLocation" value="71B1-71B1"/>
-    <attribute name="flyBaseFeatureType" value="protein_coding_gene"/>
+    <attribute name="featureType" value="protein_coding_gene"/>
     <attribute name="length" value="5023"/>
     <attribute name="primaryIdentifier" value="FBgn0036461"/>
     <reference name="chromosome" ref_id="7_1"/>
