@@ -11,9 +11,9 @@ package org.intermine.bio.web.widget;
  */
 
 import org.intermine.objectstore.ObjectStore;
+import org.intermine.pathquery.Constraints;
 import org.intermine.pathquery.PathQuery;
 import org.intermine.web.logic.bag.InterMineBag;
-import org.intermine.web.logic.query.Constraints;
 import org.intermine.web.logic.widget.GraphCategoryURLGenerator;
 import org.jfree.data.category.CategoryDataset;
 

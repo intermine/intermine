@@ -23,7 +23,6 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.apache.commons.collections.EnumerationUtils;
-import org.apache.log4j.Logger;
 import org.intermine.objectstore.query.Results;
 import org.intermine.pathquery.PathQuery;
 import org.intermine.web.logic.bag.InterMineBag;
@@ -54,8 +53,6 @@ import org.intermine.webservice.output.Output;
 public class QueryResultService extends WebService 
 {
 
-    private static final Logger LOG = Logger.getLogger(SessionMethods.class);
-    
     private static final String XML_SCHEMA_LOCATION = "webservice/query.xsd";
     
     private static final int BATCH_SIZE = 5000;
