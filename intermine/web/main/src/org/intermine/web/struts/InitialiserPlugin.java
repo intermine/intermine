@@ -261,8 +261,8 @@ public class InitialiserPlugin implements PlugIn
         throws ServletException {
         Properties classKeyProps = new Properties();
         try {
-            classKeyProps.load(servletContext
-                    .getResourceAsStream("/WEB-INF/class_keys.properties"));
+            classKeyProps.load(InitialiserPlugin.class.getClassLoader()
+                    .getResourceAsStream("class_keys.properties"));
         } catch (Exception e) {
             throw new ServletException("Error loading class descriptions", e);
         }
