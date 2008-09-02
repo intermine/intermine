@@ -9,6 +9,7 @@ import junit.framework.TestCase;
 
 import org.intermine.TestUtil;
 import org.intermine.pathquery.Constraint;
+import org.intermine.pathquery.Constraints;
 import org.intermine.pathquery.PathQuery;
 import org.intermine.pathquery.PathQueryBinding;
 

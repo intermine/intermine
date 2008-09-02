@@ -1,4 +1,4 @@
-package org.intermine.web.logic.query;
+package org.intermine.pathquery;
 
 /*
  * Copyright (C) 2002-2008 FlyMine
@@ -14,7 +14,6 @@ package org.intermine.web.logic.query;
 import java.util.List;
 
 import org.intermine.objectstore.query.ConstraintOp;
-import org.intermine.pathquery.Constraint;
 
 /**
  * Builds constraints for the PathQuery
