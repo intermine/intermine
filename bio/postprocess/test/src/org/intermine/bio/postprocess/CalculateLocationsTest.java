@@ -2982,6 +2982,7 @@ Iterator chrBandExonIter = results.iterator();
         
         Exon exon1 = (Exon) DynamicUtil.createObject(Collections.singleton(Exon.class));
         exon1.setId(new Integer(107));
+        exon1.setLength(new Integer(1000));
         Exon exon2 = (Exon) DynamicUtil.createObject(Collections.singleton(Exon.class));
         exon2.setId(new Integer(108));
         Exon exon3 = (Exon) DynamicUtil.createObject(Collections.singleton(Exon.class));
@@ -3023,6 +3024,12 @@ Iterator chrBandExonIter = results.iterator();
         
         assertEquals(chr2.getId(), resExon3.getChromosome().getId());
         assertEquals(exon3OnChr.getId(), resExon3.getChromosomeLocation().getId());
+    
+        // exon1 has length set so should stay as 1000, exon3 should get length 50 set from location
+        assertEquals(new Integer(1000), resExon1.getLength());
+        assertEquals(new Integer(50), resExon3.getLength());
+        // nothing done to exon2
+        assertNull(resExon2.getLength());
     }
     
     
