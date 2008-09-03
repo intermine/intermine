@@ -35,8 +35,8 @@ public class BioGridConverterTest extends ItemsTestCase
         itemWriter = new MockItemWriter(new HashMap());
         converter = new BioGridConverter(itemWriter, model);
         MockIdResolverFactory resolverFactory = new MockIdResolverFactory("Gene");
-        resolverFactory.addResolverEntry("7227", "FBgn001", Collections.singleton("CG1234"));
-        resolverFactory.addResolverEntry("7227", "FBgn002", Collections.singleton("CG1111"));
+        resolverFactory.addResolverEntry("7227", "FBgn001", Collections.singleton("FBgn001"));
+        resolverFactory.addResolverEntry("7227", "FBgn003", Collections.singleton("FBgn002"));
         converter.resolverFactory = resolverFactory;
     }
 
