@@ -631,7 +631,7 @@ public class ModEncodeMetaDataProcessor extends ChadoProcessor
     /**
      *
      * ==============
-     *    PROVIDER
+     *    LAB
      * ==============
      *
      * Labs are loaded statically. A map is built between experimentId and

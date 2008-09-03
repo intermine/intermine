@@ -24,9 +24,13 @@ import org.apache.struts.action.ActionMapping;
 import org.apache.struts.tiles.ComponentContext;
 import org.apache.struts.tiles.actions.TilesAction;
 import org.flymine.model.genomic.LocatedSequenceFeature;
+import org.flymine.model.genomic.Submission;
 import org.intermine.objectstore.ObjectStore;
+import org.intermine.objectstore.query.ConstraintOp;
+import org.intermine.objectstore.query.ContainsConstraint;
 import org.intermine.objectstore.query.Query;
 import org.intermine.objectstore.query.QueryClass;
+import org.intermine.objectstore.query.QueryCollectionReference;
 import org.intermine.objectstore.query.QueryField;
 import org.intermine.objectstore.query.QueryFunction;
 import org.intermine.objectstore.query.Results;
@@ -55,32 +59,91 @@ public class ResultsController extends TilesAction
                 (ObjectStore) session.getServletContext().getAttribute(Constants.OBJECTSTORE);
 
             //get the classes and the counts 
-            Query q = new Query();
             
-            QueryClass qc = new QueryClass(LocatedSequenceFeature.class);
-            q.addFrom(qc);
-            QueryField qf = new QueryField(qc, "class");
-            q.addToSelect(qf);
+//            Query q = new Query();
+//            QueryClass qc = new QueryClass(LocatedSequenceFeature.class);
+//            q.addFrom(qc);
+//            QueryField qf = new QueryField(qc, "class");
+//            q.addToSelect(qf);
+//            q.addToSelect(new QueryFunction());
+//            q.addToGroupBy(qf);
+//            q.setDistinct(false);
+
+            
+            Query q = new Query();
+
+            QueryClass sub = new QueryClass(Submission.class);
+            q.addFrom(sub);
+            QueryField qfTitle = new QueryField(sub, "title");
+            q.addToSelect(qfTitle);
+//            QueryField qfDate = new QueryField(sub, "publicReleaseDate");
+//            q.addToSelect(qfDate);
+
+
+            QueryClass lsf = new QueryClass(LocatedSequenceFeature.class);
+            q.addFrom(lsf);
+            QueryField qfClass = new QueryField(lsf, "class");
+            q.addToSelect(qfClass);
+            q.addToGroupBy(qfClass);
+            
+            q.addToGroupBy(qfTitle);
+
+            q.setDistinct(false);                        
             q.addToSelect(new QueryFunction());
-            q.addToGroupBy(qf);
-            q.setDistinct(false);
+            
+            QueryCollectionReference datasets = new QueryCollectionReference(lsf, "dataSets");
+            ContainsConstraint cc = new ContainsConstraint(datasets, ConstraintOp.CONTAINS, sub);
+            q.setConstraint(cc);
 
             Results results = os.execute(q);
 
+
+            
+            
             Map<String, Long> fc =
                 new LinkedHashMap<String, Long>();
 
+            Map<String, Map<String, Long>> subs =
+                new LinkedHashMap<String, Map<String, Long>>();
+
+            
+            StringBuffer lastSub = new StringBuffer("-");
+            Integer iteration = 0;
+            
+            
             // for each classes set the values for jsp
             for (Iterator iter = results.iterator(); iter.hasNext(); ) {
+//                ResultsRow row = (ResultsRow) iter.next();
+//                Class feat = (Class) row.get(0);
+//                Long count = (Long) row.get(1);
+//                fc.put(TypeUtil.unqualifiedName(feat.getName()), count);
+            
+                iteration++;
+                
                 ResultsRow row = (ResultsRow) iter.next();
-                Class feat = (Class) row.get(0);
-                Long count = (Long) row.get(1);
-
+                String thisSub = (String) row.get(0);
+                Class feat = (Class) row.get(1);
+                Long count = (Long) row.get(2);
+                
                 fc.put(TypeUtil.unqualifiedName(feat.getName()), count);
                 
+                if (!thisSub.equals(lastSub.toString())) { 
+                    lastSub.delete(0, lastSub.length());
+                    lastSub.append(thisSub);
+
+                    // if not the first one
+                    if (iteration > 1 && iteration < results.size()) {
+                        subs.put(lastSub.toString(), fc);
+                        fc.clear();
+                    }
+                }
             }            
 
+            subs.put(lastSub.toString(), fc);
+
            request.setAttribute("features", fc);
+           request.setAttribute("sub", lastSub.toString());
+           request.setAttribute("subs", subs);
 
         } catch (Exception err) {
             err.printStackTrace();

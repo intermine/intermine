@@ -173,6 +173,30 @@ public class ModEncodeFeatureProcessor extends ChadoSequenceProcessor
     }
 
 
+    /**
+     * 
+     * copied from FlyBaseModuleProcessor
+     * 
+     * 
+     * {@inheritDoc}
+     */
+    @Override
+    protected Item makeFeature(Integer featureId, String chadoFeatureType, String interMineType,
+                               String name, String uniqueName,
+                               int seqlen, int taxonId) {
+        String realInterMineType = interMineType;
+
+        if (chadoFeatureType.equals("chromosome_arm")
+                || chadoFeatureType.equals("ultra_scaffold")) {
+                realInterMineType = "Chromosome";
+            }
+
+        Item feature = getChadoDBConverter().createItem(realInterMineType);
+
+        return feature;
+    }
+
+    
 
     /**
      * method to transform dataList (list of integers)
