@@ -81,28 +81,3 @@ public class LatestSubsController extends TilesAction
         return null;
     }
 }
-
-
-/*
-Results results = os.execute(q);
-
-Map<ModEncodeProvider, Set<Submission>> ps =
-    new LinkedHashMap<ModEncodeProvider, Set<Submission>>();
-
-Map<ModEncodeProvider, Project> pp =
-    new LinkedHashMap<ModEncodeProvider, Project>();
-
-// for each provider, get its attributes and set the values for jsp
-
-for (Iterator iter = results.iterator(); iter.hasNext(); ) {
-    ResultsRow row = (ResultsRow) iter.next();
-
-    ModEncodeProvider provider = (ModEncodeProvider) row.get(0);
-    Set<Submission> subs = provider.getSubmissions();
-    Project project = provider.getProject();
-    
-    ps.put(provider, subs);
-    pp.put(provider, project);
-
-}            
-*/
