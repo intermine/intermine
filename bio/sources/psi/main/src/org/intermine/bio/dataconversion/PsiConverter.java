@@ -74,9 +74,9 @@ public class PsiConverter extends BioFileConverter
         IDENTIFIERS.put("primaryIdentifier", "primaryIdentifier");
         IDENTIFIERS.put("ensembl", null);
         IDENTIFIERS.put("orf name", "secondaryIdentifier");
-        IDENTIFIERS.put("gene name", "symbol");
+        //IDENTIFIERS.put("gene name", "symbol");
         IDENTIFIERS.put("fullName", "secondaryIdentifier");
-        IDENTIFIERS.put("shortLabel", "symbol");
+        //IDENTIFIERS.put("shortLabel", "symbol");
     }
 
     /**
@@ -598,18 +598,16 @@ public class PsiConverter extends BioFileConverter
             return name;
         }
 
+
         private Item getGene(String taxonId)
         throws ObjectStoreException, SAXException {
 
             String identifier = null, label = null;
-            // yeast has duplicate symbols
+
             for (String identifierType : IDENTIFIERS.keySet()) {
                 identifier = identifiers.get(identifierType);
                 if (identifier != null) {
                     if (identifierType.equals("ensembl")) {
-//                      if (taxonId.equals("9606")
-//                      || taxonId.equals("10090")
-//                      || taxonId.equals("10116")) {
                         if (identifier.startsWith("EN")) {
                             label = "primaryIdentifier";
                         } else {
