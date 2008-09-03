@@ -19,8 +19,8 @@
      <tiles:insert name="projectList.tile"/>
     </im:boxarea>
 
-     <im:boxarea title="Submissions" titleLink="/${WEB_PROPERTIES['webapp.path']}/labs.do" stylename="plainbox" floatValue="left" fixedWidth="300px">
-         <tiles:insert name="submissions.tile"/>
+     <im:boxarea title="Submissions" titleLink="/${WEB_PROPERTIES['webapp.path']}/submissions.do" stylename="plainbox" floatValue="left" fixedWidth="300px">
+         <tiles:insert name="latestSubs.tile"/>
     </im:boxarea>
 
 <%--

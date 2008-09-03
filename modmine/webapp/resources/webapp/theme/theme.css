@@ -149,6 +149,17 @@ table.dbsources td {
 table.dbsources td.leftcol {
 	border-left: 1px solid #C1DAD7;}
 
+table.dbsources td.internal {
+  border-bottom: 1px solid #C1DAD7;background: #fff;}
+
+table.internal {
+  margin:10px 20px 10px 20px;}
+
+table.internal td {
+  padding: 6px 6px 6px 12px;
+  border-right: 0px solid #fff;border-bottom: 1px solid #C1DAD7;background: #fff;}
+
+
 #topnav {
     position:absolute; right:0px; top:0px;
     background-color: #060707; color: #FFF; font: 0.95em Arial,sans-serif;

@@ -9,8 +9,9 @@
 <html:xhtml/>
 
 <div class="body">
+
 <%--
-<tiles:insert name="results.tile"/>
+<tiles:insert name="submissions.tile"/>
 --%>
 
 <im:boxarea title="Data" stylename="plainbox"><p><fmt:message key="dataCategories.intro"/></p></im:boxarea>
