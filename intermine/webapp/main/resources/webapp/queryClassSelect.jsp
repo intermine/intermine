@@ -42,9 +42,6 @@
       addEvent(selector, 'click', handleClassClick);
       $('submitClassSelect').disabled = true;
   }
-
-
-
 -->
 </script>
 <div class="body">

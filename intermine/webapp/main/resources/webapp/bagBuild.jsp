@@ -53,6 +53,11 @@
      } else {
         el.disabled = false;
      }
+     if (type.length > 0){
+        $('submitBag').disabled = false;
+     } else {
+        $('submitBag').disabled = true;
+     }
    }
 //]]>-->
 </script>
@@ -71,7 +76,7 @@
 <ol id="buildbaglist">
   <li>
       <label><fmt:message key="bagBuild.bagType"/></label>
-      <html:select styleId="typeSelector" property="type" onchange="typeChanged()">
+      <html:select styleId="typeSelector" property="type" onchange="typeChanged();">
       <c:forEach items="${preferredTypeList}" var="type">
           <html:option value="${type}" style="font-weight:bold">${type}</html:option>
       </c:forEach>
