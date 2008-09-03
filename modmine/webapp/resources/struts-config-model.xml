@@ -14,12 +14,8 @@
 <action path="/initProjectList"
   type="org.modmine.web.ProjectsController" />
 
-<action path="/initSubmissions"
-  type="org.modmine.web.SubmissionsController" />
-
-<action path="/initResults"
-  type="org.modmine.web.ResultsController" />
-
+<action path="/initLatestSubs"
+  type="org.modmine.web.LatestSubsController" />
 
 <action path="/initProjects"
   type="org.modmine.web.ProjectsController" />
@@ -30,3 +26,9 @@
   type="org.modmine.web.LabsController" />
 <action path="/labs" forward="labs.page">
 </action>
+
+<action path="/initSubmissions"
+  type="org.modmine.web.SubmissionsController" />
+<action path="/submissions" forward="submissions.page">
+</action>
+  

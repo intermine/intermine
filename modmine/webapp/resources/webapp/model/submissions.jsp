@@ -8,124 +8,266 @@
 <%@ taglib uri="http://jakarta.apache.org/taglibs/string-1.1"
 	prefix="str"%>
 
-
 <tiles:importAttribute />
 
 <html:xhtml />
+
 <div class="body">
 
-<%--
+
 <table cellpadding="0" cellspacing="0" border="0" class="dbsources">
-	<c:forEach items="${subs}" var="item" varStatus="status">
-		<c:if test="${status.count le 5">
-			<tr>
-				<td><html:link
-					href="/${WEB_PROPERTIES['webapp.path']}/objectDetails.do?id=${item.value.id}">
- ${item.value.title}
+  <tr>
+    <th>Submission</th>
+    <th>Date</th>
+    <th>Lab</th>
+    <th>Affiliation</th>
+    <th>Project</th>
+    <th>Features count</th>
+  </tr>
+  
+  <c:forEach items="${subs}" var="sub">
+    <tr>
+      <td><html:link
+        href="/${WEB_PROPERTIES['webapp.path']}/objectDetails.do?id=${sub.key.id}">
+ ${sub.key.title}
     </html:link>
-			</tr>
-		</c:if>
-	</c:forEach>
-</table>
-</div>
 
-dateStyle="short"
+			<td><fmt:formatDate value="${sub.key.publicReleaseDate}"
+				type="date"/>
 
+<td> <html:link
+        href="/${WEB_PROPERTIES['webapp.path']}/objectDetails.do?id=${sub.key.lab.id}">
+ ${sub.key.lab.name}
+    </html:link>
+
+<td> ${sub.key.lab.affiliation}
+<td> <html:link
+        href="/${WEB_PROPERTIES['webapp.path']}/objectDetails.do?id=${sub.key.lab.project.id}">
+${sub.key.lab.project.name}
+    </html:link>
+
+<%--
+<html:link
+        href="${sub.key.lab.project.url}">
+->
+    </html:link>
 --%>
 
-<c:set var="LIMIT" value="5"/>
-<em>${LIMIT} most recent submissions:</em>
+<%--
 
+        type="date" pattern="yyyy-MM-dd" />
+
+
+        <td>${sub.key.publicReleaseDate}
+
+          <im:querylink text="${sub.key.title}" skipBuilder="true">
+            <query name="" model="genomic"
+              view="Submission.title Submission.design Submission.factorName Submission.factorType"
+              >
+            <node path="Submission" type="Submission">
+            </node>
+            <node path="Submission.title" type="String">
+            <constraint op="=" value="${sub.key.title}" description=""
+              identifier="" code="A">
+            </constraint>
+            </node>
+            </query>
+          </im:querylink>
+          --%>
+          
+
+<td>
+<table cellpadding="0" cellspacing="0" border="0" class="internal">
+   <c:forEach items="${sub.value}" var="fc" varStatus="status">
+<tr><td>${fc.key} 
+
+<td align="right"><c:choose>
+							<c:when test="${fc.key eq \"Chromosome\"}">
+								<im:querylink text="${fc.value}" skipBuilder="true">
+									<query name="" model="genomic"
+										view="Chromosome.dataSets.title Chromosome.primaryIdentifier"
+										sortOrder="Chromosome.primaryIdentifier asc">
+									<node path="Chromosome" type="Chromosome">
+									</node>
+									<node path="Chromosome.dataSets" type="DataSet">
+									</node>
+									<node path="Chromosome.dataSets.title" type="String">
+									<constraint op="=" value="${sub.key}" description=""
+										identifier="" code="A">
+									</constraint>
+									</node>
+									</query>
+								</im:querylink>
+							</c:when>
+
+							<c:otherwise>
+									<im:querylink text="${fc.value}" skipBuilder="true">
+										<query name="" model="genomic"
+											view="${fc.key}.dataSets.title ${fc.key}.primaryIdentifier ${fc.key}.secondaryIdentifier ${fc.key}.length 
+                  ${fc.key}.chromosomeLocation.object.primaryIdentifier ${fc.key}.chromosomeLocation.start ${fc.key}.chromosomeLocation.end"
+											sortOrder="${fc.key}.primaryIdentifier asc">
+										<node path="${fc.key}" type="${fc.key}">
+										</node>
+										<node path="${fc.key}.dataSets" type="DataSet">
+										</node>
+										<node path="${fc.key}.dataSets.title" type="String">
+										<constraint op="=" value="${sub.key}" description=""
+											identifier="" code="A">
+										</constraint>
+										</node>
+										</query>
+									</im:querylink>
+
+</c:otherwise>
+						</c:choose>
+
+</td>
+
+
+</c:forEach>
+</td>
+</tr>
+</table>
+</c:forEach>
+</table>
+
+</div>
+
+
+<%--
 
 <table cellpadding="0" cellspacing="0" border="0" class="dbsources">
-  <c:forEach items="${subs}" var="item" varStatus="status">
-    <c:if test="${item.key le LIMIT}">
-      <tr>
-        <td><html:link
-          href="/${WEB_PROPERTIES['webapp.path']}/objectDetails.do?id=${item.value.id}">
- ${item.value.title}
-    </html:link>
-    </td>
-    
-    <td><fmt:formatDate value="${item.value.publicReleaseDate}" type="date" pattern="yyyy-MM-dd"/>
-    </td>
-    
-      </tr>
-    </c:if>
+  <tr>
+    <th>Submission</th>
+    <th>Feature type</th>
+    <th>Number of objects</th>
+  </tr>
+  
+<tr><td>${sub}
+</td></tr>
+
+  <c:forEach items="${features}" var="item">
+    <tr>
+<td>${sub}
+      <td>${item.key} </td>
+      <td>${item.value} </td>
+  </tr>
   </c:forEach>
 </table>
 
 
-<hr>
+<table cellpadding="0" cellspacing="0" border="0" class="dbsources">
+  <tr>
+    <th>Submission</th>
+    <th>Features count</th>
+  </tr>
+  
+  <c:forEach items="${subs}" var="sub">
+    <tr>
+<td>
+          <im:querylink text="${sub.key}" skipBuilder="true">
+            <query name="" model="genomic"
+              view="Submission.title Submission.design Submission.factorName Submission.factorType"
+              >
+            <node path="Submission" type="Submission">
+            </node>
+            <node path="Submission.title" type="String">
+            <constraint op="=" value="${sub.key}" description=""
+              identifier="" code="A">
+            </constraint>
+            </node>
+            </query>
+          </im:querylink>
+<td>
+<table cellpadding="0" cellspacing="0" border="0" >
+   <c:forEach items="${sub.value}" var="fc" varStatus="status">
+<tr><td>${fc.key} 
+
+<td>
+      <c:choose>
+        <c:when test="${fc.key eq \"EST\"}">
+          <im:querylink text="${fc.value}" skipBuilder="true">
+                <query name="" model="genomic"
+                  view="EST.dataSets.title EST.primaryIdentifier EST.secondaryIdentifier EST.length 
+                  EST.chromosomeLocation.object.primaryIdentifier EST.chromosomeLocation.start EST.chromosomeLocation.end"
+                  sortOrder="EST.primaryIdentifier asc">
+                <node path="EST" type="EST">
+                </node>
+                <node path="EST.dataSets" type="DataSet">
+                </node>
+                <node path="EST.dataSets.title" type="String">
+                <constraint op="=" value="${sub.key}"
+                  description="" identifier="" code="A">
+                </constraint>
+                </node>
+                </query>
+          </im:querylink>
+        </c:when>
+        <c:when test="${fc.key eq \"MRNA\"}">
+          <im:querylink text="${fc.value}" skipBuilder="true">
+                <query name="" model="genomic"
+                  view="MRNA.dataSets.title MRNA.primaryIdentifier MRNA.secondaryIdentifier MRNA.length 
+                  MRNA.chromosomeLocation.object.primaryIdentifier MRNA.chromosomeLocation.start MRNA.chromosomeLocation.end"
+                  sortOrder="MRNA.primaryIdentifier asc">
+                <node path="MRNA" type="MRNA">
+                </node>
+                <node path="MRNA.dataSets" type="DataSet">
+                </node>
+                <node path="MRNA.dataSets.title" type="String">
+                <constraint op="=" value="${sub.key}"
+                  description="" identifier="" code="A">
+                </constraint>
+                </node>
+                </query>
+          </im:querylink>
+        </c:when>
 
 
-<table cellspacing="4"><tr>
+        <c:when test="${fc.key eq \"Chromosome\"}">
+          <im:querylink text="${fc.value}" skipBuilder="true">
+<query name="" model="genomic" view="Chromosome.dataSets.title Chromosome.primaryIdentifier" sortOrder="Chromosome.primaryIdentifier asc">
+  <node path="Chromosome" type="Chromosome">
+  </node>
+  <node path="Chromosome.dataSets" type="DataSet">
+  </node>
+  <node path="Chromosome.dataSets.title" type="String">
+    <constraint op="=" value="${sub.key}" description="" identifier="" code="A">
+    </constraint>
+  </node>
+</query>
+          </im:querylink>
+        </c:when>
 
-<%--
-		<td style="height: 80px; padding: 4px"><a
-			href="http://sam.modencode.org/modweb/">
-		<img src="http://sam.modencode.org/modweb/images/ark/d_s.png" class="aspectIcon"
-			title="Click here to view the  Data Category" width="40px"
-			height="40px" /> </a></td>
+<c:otherwise>
+${fc.value}
+</c:otherwise>
+</c:choose>
 
-<im:querylink text="Fly" showArrow="true" showImage="fly" skipBuilder="true">
+</td>
+
+
+</c:forEach>
+</td>
+</tr>
+</table>
+</c:forEach>
+</table>
+
+
+
+
+
+
+
+
+
 
 --%>
-<td>		
-<im:querylink text="Fly" showArrow="true" skipBuilder="true">
-  <query name="" model="genomic"
-    view="Submission.title Submission.design Submission.factorName Submission.factorType Submission.publicReleaseDate Submission.description"
-    sortOrder="Submission.title">
-  <node path="Submission" type="Submission">
-  </node>
-  <node path="Submission.bioEntities" type="BioEntity">
-  </node>
-  <node path="Submission.bioEntities.organism" type="Organism">
-  <constraint op="LOOKUP" value="Drosophila melanogaster" description=""
-    identifier="" code="A" extraValue="">
-  </constraint>
-  </node>
-  </query>
-</im:querylink>
-		
-		
-				
-		</td>
-<td>
-
-<im:querylink text="Worm" showArrow="true" skipBuilder="true">
-  <query name="" model="genomic"
-    view="Submission.title Submission.design Submission.factorName Submission.factorType Submission.publicReleaseDate Submission.description"
-    sortOrder="Submission.title">
-  <node path="Submission" type="Submission">
-  </node>
-  <node path="Submission.bioEntities" type="BioEntity">
-  </node>
-  <node path="Submission.bioEntities.organism" type="Organism">
-  <constraint op="LOOKUP" value="Caenorhabditis elegans" description=""
-    identifier="" code="A" extraValue="">
-  </constraint>
-  </node>
-  </query>
-</im:querylink>
-</td>
-<td>
-<im:querylink text="   All submissions" showArrow="true" skipBuilder="true">
-  <query name="" model="genomic"
-    view="Submission.title Submission.design Submission.factorName Submission.factorType Submission.publicReleaseDate Submission.description"
-    sortOrder="Submission.title">
-  <node path="Submission" type="Submission">
-  </node>
-  <node path="Submission.bioEntities" type="BioEntity">
-  </node>
-  </query>
-</im:querylink> <br>
-</td>
-	</tr></table>
- 
 
 
-
-
-
-
+<%--
+      <td><html:link
+        href="/${WEB_PROPERTIES['webapp.path']}/objectDetails.do?id=${item.key.id}">
+ ${item.key.name}
+    </html:link>
+    --%>

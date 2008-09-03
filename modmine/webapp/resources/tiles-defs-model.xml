@@ -11,12 +11,10 @@
 <definition name="submissions.tile" path="/model/submissions.jsp" 
         controllerUrl="/initSubmissions.do"/>
 
-<definition name="results.tile" path="/model/results.jsp" 
-        controllerUrl="/initResults.do"/>
-
+<definition name="latestSubs.tile" path="/model/latestSubs.jsp" 
+        controllerUrl="/initLatestSubs.do"/>
 <definition name="projectList.tile" path="/model/projectList.jsp" 
         controllerUrl="/initProjectList.do"/>
-
 
         
   <definition name="projects.page" extends="layout.template">
@@ -28,3 +26,9 @@
     <put name="body" value="labs.tile"/>
     <put name="pageName" value="labs"/>
   </definition>
+
+    <definition name="submissions.page" extends="layout.template">
+    <put name="body" value="submissions.tile"/>
+    <put name="pageName" value="submissions"/>
+  </definition>
+  
