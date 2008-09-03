@@ -103,7 +103,7 @@ public class BioGridConverter extends BioFileConverter
      */
     class BioGridHandler extends DefaultHandler
     {
-        private Map<String, Item> genes = new HashMap<String, Item>();
+        private Map<String, String> genes = new HashMap();
         private Map<String, InteractorHolder> interactors = new HashMap<String, InteractorHolder>();
         private Map<String, ExperimentHolder> experiments = new HashMap<String, ExperimentHolder>();
         private InteractionHolder holder;
@@ -160,7 +160,18 @@ public class BioGridConverter extends BioFileConverter
                 String interactorId = attrs.getValue("id");
                 interactorHolder = new InteractorHolder(interactorId);
                 interactors.put(interactorId, interactorHolder);
-            // <interactorList><interactor id="4"><names><shortLabel>YFL039C</shortLabel>
+
+            // <interactorList><interactor id="4"><xref>
+            // <secondaryRef db="SGD"  id="S000006331" secondary="YPR127W"/>
+            } else if ((qName.equals("primaryRef") || qName.equals("secondaryRef"))
+                            && stack.search("interactor") == 2) {
+                String db = attrs.getValue("db");
+                if (db != null && (db.equalsIgnoreCase("sgd") || db.equalsIgnoreCase("flybase")
+                                || db.equalsIgnoreCase("wormbase"))) {
+                    interactorHolder.primaryIdentifier = attrs.getValue("id");
+                }
+
+              // <interactorList><interactor id="4"><names><shortLabel>YFL039C</shortLabel>
             } else if (qName.equals("shortLabel") && stack.search("interactor") == 2) {
 
                 attName = "secondaryIdentifier";
@@ -170,11 +181,11 @@ public class BioGridConverter extends BioFileConverter
                 String taxId = attrs.getValue("ncbiTaxId");
                 try {
                     interactorHolder.organismRefId = getOrganism(taxId);
-                    // now that we know which organism it is, we know which identifier to use
-                    setIdentifier(taxId);
+                    setGene(taxId, interactorHolder);
                 } catch (ObjectStoreException e) {
                     LOG.error("couldn't store organism:" + taxId);
                 }
+
 
             /*********************************** INTERACTIONS ***********************************/
 
@@ -186,15 +197,16 @@ public class BioGridConverter extends BioFileConverter
             } else if (qName.equals("participant") && stack.peek().equals("participantList")) {
                 participantId = attrs.getValue("id");
                 InteractorHolder ih = interactors.get(participantId);
+                // TODO make sure this is necessary.  interactor id is reused?
                 ih.role = null;
-                holder.addInteractor(participantId, ih);
-                holder.identifiers.add(ih.identifier);
-                holder.refIds.add(ih.refId);
+                // resolver didn't return valid identifier
                 if (ih.refId == null) {
                     ih.valid = false;
-                }
-                if (!ih.valid) {
                     holder.validActors = false;
+                } else {
+                    holder.refIds.add(ih.refId);
+                    holder.identifiers.add(ih.identifier);
+                    holder.addInteractor(participantId, ih);
                 }
             //<interactionList><interaction><interactionType><names><shortLabel
             } else if (qName.equals("shortLabel") && stack.peek().equals("names")
@@ -268,7 +280,6 @@ public class BioGridConverter extends BioFileConverter
                 }
 
             /********************************* GENES ***********************************/
-
             // <interactorList><interactor id="4"><names><shortLabel>YFL039C</shortLabel>
             } else if (attName != null && attName.equals("secondaryIdentifier")
                             && qName.equals("shortLabel") && stack.search("interactor") == 2) {
@@ -356,50 +367,61 @@ public class BioGridConverter extends BioFileConverter
         }
 
         /**
-         * 1. create/store gene (if new)
-         * 2. set identifier attribute
-         *    - will be primaryIdentifier for dmel and secondaryIdentifier for everyone else
-         *      because the idResolver returns primaryIdentifier
-         * @param taxonId taxonomyId of organism for this gene.  may be different from organism
-         * set at beginning of file
-         */
-        private void setIdentifier(String taxonId) {
-            Item item = null;
-            String secondaryIdentifier = interactorHolder.secondaryIdentifier;
-            try {
-                item = getGene(taxonId, secondaryIdentifier);
-            } catch (ObjectStoreException e) {
-                throw new RuntimeException("couldn't store gene: " + secondaryIdentifier);
-            }
-
-            if (item != null) {
-                interactorHolder.refId = item.getIdentifier();
-                String identifier = null;
-                if (item.getAttribute("secondaryIdentifier") != null) {
-                    identifier = item.getAttribute("secondaryIdentifier").getValue();
-                }
-                if (identifier == null) {
-                    identifier = item.getAttribute("primaryIdentifier").getValue();
-                }
-                interactorHolder.identifier = identifier;
-            } else {
-                interactorHolder.valid = false;
-                LOG.error("could not resolve bioentity == " + secondaryIdentifier
-                          + ", participantId: " + interactorHolder.biogridId);
-            }
-        }
-
-        /**
          * create/store gene (if new)
          * @param taxonId id of organism for this gene
-         * @param id identifier
-         * @return gene item
+         * @param ih interactor holder
          * @throws ObjectStoreException
          */
-        private Item getGene(String taxonId, String id)
+        private void setGene(String taxonId, InteractorHolder ih)
         throws ObjectStoreException {
-            String identifier = id;
+
             IdResolver resolver = resolverFactory.getIdResolver(false);
+
+            // try primaryIdentifier
+            String label = "primaryIdentifier";
+            String identifier = resolveGene(resolver, taxonId, ih.primaryIdentifier);
+
+            // try again
+            if (identifier == null) {
+                if (!taxonId.equals("7227")) {  // resolver returns primaryIdentifier
+                    label = "secondaryIdentifier";
+                }
+                identifier = resolveGene(resolver, taxonId, ih.secondaryIdentifier);
+            }
+
+            // no valid identifiers
+            if (identifier == null) {
+                ih.valid = false;
+                LOG.error("could not resolve bioentity == " + identifier + ", participantId: "
+                          + ih.biogridId);
+                return;
+            }
+
+            String refId = genes.get(identifier);
+            if (refId == null) {
+                Item item = createItem("Gene");
+                item.setAttribute(label, identifier);
+                item.setReference("organism", getOrganism(taxonId));
+                store(item);
+                refId = item.getIdentifier();
+                genes.put(identifier, refId);
+            }
+
+            ih.identifier = identifier;
+            ih.refId = refId;
+
+            return;
+        }
+
+
+        /**
+         * resolve dmel genes
+         * @param taxonId id of organism for this gene
+         * @param ih interactor holder
+         * @throws ObjectStoreException
+         */
+        private String resolveGene(IdResolver resolver, String taxonId, String identifier) {
+            String id = identifier;
             if (taxonId.equals("7227") && resolver != null) {
                 int resCount = resolver.countResolutions(taxonId, identifier);
                 if (resCount != 1) {
@@ -408,19 +430,9 @@ public class BioGridConverter extends BioFileConverter
                              + resolver.resolveId(taxonId, identifier));
                     return null;
                 }
-                identifier = resolver.resolveId(taxonId, identifier).iterator().next();
+                id = resolver.resolveId(taxonId, identifier).iterator().next();
             }
-            Item item = genes.get(identifier);
-            if (item == null) {
-                item = createItem("Gene");
-                String identifierLabel = (!taxonId.equals("7227")
-                                ? "secondaryIdentifier" : "primaryIdentifier");
-                item.setAttribute(identifierLabel, identifier);
-                item.setReference("organism", getOrganism(taxonId));
-                store(item);
-                genes.put(identifier, item);
-            }
-            return item;
+            return id;
         }
 
         private String getOrganism(String taxonId)
@@ -531,6 +543,7 @@ public class BioGridConverter extends BioFileConverter
             protected String biogridId;
             protected String identifier;
             protected String refId;
+            protected String primaryIdentifier;
             protected String secondaryIdentifier;
             protected boolean valid = true;
             protected String organismRefId;

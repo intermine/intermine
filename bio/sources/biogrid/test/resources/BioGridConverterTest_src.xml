@@ -54,7 +54,7 @@
                                         <shortLabel>CG1111</shortLabel>
                                 </names>
                                 <xref>
-                                        <primaryRef db="FLYBASE" id="FBgn0000001" />
+                                        <primaryRef db="FLYBASE" id="FBgn001" />
                                         <secondaryRef db="PROTEIN GI" id="120228" />
                                         <secondaryRef db="PROTEIN Accession" id="AAA28535" />
                                         <secondaryRef db="PROTEIN GI" id="157434" />
@@ -88,7 +88,7 @@
                                         <shortLabel>CG1234</shortLabel>
                                 </names>
                                 <xref>
-                                        <primaryRef db="FLYBASE" id="FBgn0000002" />
+                                        <primaryRef db="FLYBASE" id="FBgn002" />
                                         <secondaryRef db="PROTEIN GI" id="120228" />
                                         <secondaryRef db="PROTEIN Accession" id="AAA28535" />
                                         <secondaryRef db="PROTEIN GI" id="157434" />
