@@ -71,7 +71,7 @@ public class EditTemplateAction extends InterMineAction
 
         PathQuery sessionQuery = (PathQuery) session.getAttribute(Constants.QUERY);
         if (!sessionQuery.isValid()) {
-            recordError(new ActionError("errors.template.incomplete",
+            recordError(new ActionError("errors.template.badtemplate",
                     PathQueryUtil.getProblemsSummary(sessionQuery.getProblems())), request);
         }
 

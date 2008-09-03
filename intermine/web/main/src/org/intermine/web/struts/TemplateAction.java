@@ -18,11 +18,13 @@ import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
 import org.apache.struts.Globals;
+import org.apache.struts.action.ActionError;
 import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
 import org.apache.struts.action.ActionMessage;
 import org.apache.struts.util.MessageResources;
+import org.intermine.objectstore.query.PathQueryUtil;
 import org.intermine.web.logic.Constants;
 import org.intermine.web.logic.WebUtil;
 import org.intermine.web.logic.profile.Profile;
@@ -137,14 +139,21 @@ public class TemplateAction extends InterMineAction
                 return mapping.findForward("template");
             }
             SessionMethods.loadQuery(template, request.getSession(), response);
+            if (!template.isValid()) {
+                recordError(new ActionError("errors.template.badtemplate",
+                        PathQueryUtil.getProblemsSummary(template.getProblems())), request);
+            }
+
             return mapping.findForward("query");
         }
 
         // Otherwise show the results: load the modified query from the template
         TemplateQuery queryCopy = TemplateHelper.templateFormToTemplateQuery(tf, template,
                                                                              savedBags);
-        if (queryCopy.getProblems().length > 0) {
-            recordMessage(new ActionMessage("errors.template.badtemplate"), request);
+        if (!queryCopy.isValid()) {
+            recordError(new ActionError("errors.template.badtemplate",
+                                        PathQueryUtil.getProblemsSummary(template.getProblems())),
+                                        request);
             return mapping.findForward("template");
         }
         if (saveQuery) {
