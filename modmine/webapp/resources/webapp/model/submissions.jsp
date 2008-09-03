@@ -45,7 +45,6 @@
         href="/${WEB_PROPERTIES['webapp.path']}/objectDetails.do?id=${sub.key.lab.project.id}">
 ${sub.key.lab.project.name}
     </html:link>
-
 <%--
 <html:link
         href="${sub.key.lab.project.url}">
@@ -53,35 +52,12 @@ ${sub.key.lab.project.name}
     </html:link>
 --%>
 
-<%--
-
-        type="date" pattern="yyyy-MM-dd" />
-
-
-        <td>${sub.key.publicReleaseDate}
-
-          <im:querylink text="${sub.key.title}" skipBuilder="true">
-            <query name="" model="genomic"
-              view="Submission.title Submission.design Submission.factorName Submission.factorType"
-              >
-            <node path="Submission" type="Submission">
-            </node>
-            <node path="Submission.title" type="String">
-            <constraint op="=" value="${sub.key.title}" description=""
-              identifier="" code="A">
-            </constraint>
-            </node>
-            </query>
-          </im:querylink>
-          --%>
-          
-
 <td>
 <table cellpadding="0" cellspacing="0" border="0" class="internal">
-   <c:forEach items="${sub.value}" var="fc" varStatus="status">
-<tr><td>${fc.key} 
-
-<td align="right"><c:choose>
+				<c:forEach items="${sub.value}" var="fc" varStatus="status">
+					<tr>
+						<td>${fc.key}
+						<td align="right"><c:choose>
 							<c:when test="${fc.key eq \"Chromosome\"}">
 								<im:querylink text="${fc.value}" skipBuilder="true">
 									<query name="" model="genomic"
@@ -101,31 +77,28 @@ ${sub.key.lab.project.name}
 							</c:when>
 
 							<c:otherwise>
-									<im:querylink text="${fc.value}" skipBuilder="true">
-										<query name="" model="genomic"
-											view="${fc.key}.dataSets.title ${fc.key}.primaryIdentifier ${fc.key}.secondaryIdentifier ${fc.key}.length 
+								<im:querylink text="${fc.value}" skipBuilder="true">
+									<query name="" model="genomic"
+										view="${fc.key}.dataSets.title ${fc.key}.primaryIdentifier ${fc.key}.secondaryIdentifier ${fc.key}.length 
                   ${fc.key}.chromosomeLocation.object.primaryIdentifier ${fc.key}.chromosomeLocation.start ${fc.key}.chromosomeLocation.end"
-											sortOrder="${fc.key}.primaryIdentifier asc">
-										<node path="${fc.key}" type="${fc.key}">
-										</node>
-										<node path="${fc.key}.dataSets" type="DataSet">
-										</node>
-										<node path="${fc.key}.dataSets.title" type="String">
-										<constraint op="=" value="${sub.key}" description=""
-											identifier="" code="A">
-										</constraint>
-										</node>
-										</query>
-									</im:querylink>
+										sortOrder="${fc.key}.primaryIdentifier asc">
+									<node path="${fc.key}" type="${fc.key}">
+									</node>
+									<node path="${fc.key}.dataSets" type="DataSet">
+									</node>
+									<node path="${fc.key}.dataSets.title" type="String">
+									<constraint op="=" value="${sub.key}" description=""
+										identifier="" code="A">
+									</constraint>
+									</node>
+									</query>
+								</im:querylink>
 
-</c:otherwise>
+							</c:otherwise>
 						</c:choose>
-
-</td>
-
-
-</c:forEach>
-</td>
+						</td>
+				</c:forEach>
+				</td>
 </tr>
 </table>
 </c:forEach>
@@ -245,23 +218,12 @@ ${fc.value}
 
 </td>
 
-
 </c:forEach>
 </td>
 </tr>
 </table>
 </c:forEach>
 </table>
-
-
-
-
-
-
-
-
-
-
 --%>
 
 
