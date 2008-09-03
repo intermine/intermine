@@ -15,7 +15,7 @@
 <attribute name="pubMedId" value="14605208"/>
 </item>
 <item id="6_2" class="http://www.flymine.org/model/genomic#Gene">
-<attribute name="primaryIdentifier" value="FBgn001"/>
+<attribute name="primaryIdentifier" value="FBgn003"/>
 <reference name="organism" ref_id="5_1"/>
 <collection name="dataSets"><reference ref_id="1_1"/></collection>
 </item>
@@ -25,7 +25,7 @@
 </item>
 <item id="7_1" class="http://www.flymine.org/model/genomic#Interaction">
 <attribute name="role" value="prey"/>
-<attribute name="name" value="BioGRID:FBgn001_FBgn002"/>
+<attribute name="name" value="BioGRID:FBgn003_FBgn002"/>
 <reference name="experiment" ref_id="4_1"/>
 <reference name="gene" ref_id="6_2"/>
 <reference name="type" ref_id="3_2"/>
@@ -41,7 +41,7 @@
 </item>
 <item id="7_2" class="http://www.flymine.org/model/genomic#Interaction">
 <attribute name="role" value="bait"/>
-<attribute name="name" value="BioGRID:FBgn002_FBgn001"/>
+<attribute name="name" value="BioGRID:FBgn003_FBgn001"/>
 <reference name="experiment" ref_id="4_1"/>
 <reference name="gene" ref_id="6_1"/>
 <reference name="type" ref_id="3_2"/>
@@ -49,7 +49,7 @@
 <collection name="interactingGenes"><reference ref_id="6_2"/></collection>
 </item>
 <item id="6_1" class="http://www.flymine.org/model/genomic#Gene">
-<attribute name="primaryIdentifier" value="FBgn002"/>
+<attribute name="primaryIdentifier" value="FBgn001"/>
 <reference name="organism" ref_id="5_1"/>
 <collection name="dataSets"><reference ref_id="1_1"/></collection>
 </item>
