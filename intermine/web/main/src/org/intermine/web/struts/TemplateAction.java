@@ -48,7 +48,7 @@ public class TemplateAction extends InterMineAction
 
     /** path of TemplateAction action **/
     public static final String TEMPLATE_ACTION_PATH = "templateAction.do";
-    
+
     /**
      * Build a query based on the template and the input from the user.
      * There are some request parameters that, if present, effect the behaviour of
@@ -94,31 +94,31 @@ public class TemplateAction extends InterMineAction
         TemplateQuery template = TemplateHelper.findTemplate(servletContext, session, userName,
                                                              templateName, templateType);
         Map savedBags = WebUtil.getAllBags(profile.getSavedBags(), servletContext);
-        
+
         if (!editQuery && !skipBuilder && !editTemplate && forwardToLinksPage(request)) {
             TemplateQuery configuredTmpl = TemplateHelper.templateFormToTemplateQuery(tf, template,
                     savedBags);
             TemplateResultLinkGenerator gen = new TemplateResultLinkGenerator();
-            String link = gen.getLink(new URLGenerator(request).getPermanentBaseURL(), 
+            String link = gen.getLink(new URLGenerator(request).getPermanentBaseURL(),
                     configuredTmpl);
             if (gen.getError() != null) {
-                recordError(new ActionMessage("errors.linkGenerationFailed", 
+                recordError(new ActionMessage("errors.linkGenerationFailed",
                         gen.getError()), request);
                 return mapping.findForward("template");
-            } else {
-                session.setAttribute("link", link);
-                session.setAttribute("highlightedLink", gen.getHighlightedLink(
-                        new URLGenerator(request).getPermanentBaseURL(), configuredTmpl));
-                String title = configuredTmpl.getTitle();
-                title = title.replace("-->", "&nbsp;<img src=\"images/tmpl_arrow.png\" "
-                        + "style=\"vertical-align:middle\">&nbsp;");
-                session.setAttribute("pageTitle", title);
-                session.setAttribute("pageDescription", configuredTmpl.getDescription());
-                return mapping.findForward("serviceLink");
             }
+            session.setAttribute("link", link);
+            String url = new URLGenerator(request).getPermanentBaseURL();
+            session.setAttribute("highlightedLink", gen.getHighlightedLink(url, configuredTmpl));
+            String title = configuredTmpl.getTitle();
+            title = title.replace("-->", "&nbsp;<img src=\"images/tmpl_arrow.png\" "
+                                  + "style=\"vertical-align:middle\">&nbsp;");
+            session.setAttribute("pageTitle", title);
+            session.setAttribute("pageDescription", configuredTmpl.getDescription());
+            return mapping.findForward("serviceLink");
+
         }
 
-        // We're editing the query: load as a PathQuery        
+        // We're editing the query: load as a PathQuery
         if (!skipBuilder && !editTemplate) {
             TemplateQuery queryCopy = TemplateHelper.templateFormToTemplateQuery(tf, template,
                                                                                  savedBags);
@@ -143,6 +143,10 @@ public class TemplateAction extends InterMineAction
         // Otherwise show the results: load the modified query from the template
         TemplateQuery queryCopy = TemplateHelper.templateFormToTemplateQuery(tf, template,
                                                                              savedBags);
+        if (queryCopy.getProblems().length > 0) {
+            recordMessage(new ActionMessage("errors.template.badtemplate"), request);
+            return mapping.findForward("template");
+        }
         if (saveQuery) {
             SessionMethods.loadQuery(queryCopy, request.getSession(), response);
         }
@@ -172,9 +176,9 @@ public class TemplateAction extends InterMineAction
                 .addParameter("trail", trail)
                 .forward();
     }
-    
+
     /**
-     * Methods looks at request parameters if should forward to web service links page. 
+     * Methods looks at request parameters if should forward to web service links page.
      * @param request request
      * @return true if should be forwarded
      */
