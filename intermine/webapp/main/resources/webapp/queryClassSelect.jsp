@@ -26,6 +26,7 @@
           $('submitClassSelect').disabled = false;
       } else {
           $('classSelectDiv').style.display='none';
+          $('submitClassSelect').disabled = true;
       }
   }
 
@@ -41,6 +42,9 @@
       addEvent(selector, 'click', handleClassClick);
       $('submitClassSelect').disabled = true;
   }
+
+
+
 -->
 </script>
 <div class="body">
