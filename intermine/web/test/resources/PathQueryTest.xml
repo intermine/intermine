@@ -6,7 +6,7 @@
     <node path="Employee" type="Employee"></node>
     <node path="Employee.department" type="Department"></node>
     <node path="Employee.department.name" type="String">
-      <constraint op="=" value="DepartmentA1" description="" identifier="" code="A"></constraint>
+      <constraint op="=" value="DepartmentA1" code="A"></constraint>
     </node>
   </query>
     <query name="employeeDepartmentCompanyWildcard" model="testmodel" view="Employee.name Employee.department.name Employee.department.company.name">
@@ -34,6 +34,7 @@
  </query>
  <query name="noOrderBy" model="testmodel" view="Employee.name Employee.department.name"></query>
  <query name="orderByAsc" model="testmodel" view="Employee.name Employee.department.name" sortOrder="Employee.name asc"></query>
+ <query name="orderByDesc" model="testmodel" view="Employee.name Employee.department.name" sortOrder="Employee.name desc"></query>
  <query name="longPath" model="testmodel" view="Employee.name Employee.department.name" sortOrder="Employee.department.name asc"></query>
  <query name="orderByDesc" model="testmodel" view="Employee.name Employee.department.name" sortOrder="Employee.name desc"></query>
  <query name="orderByCompany" model="testmodel" view="Company.name Company.vatNumber Company.address.address" sortOrder="Company.vatNumber desc Company.name"></query>

@@ -14,8 +14,10 @@ import org.intermine.metadata.Model;
 import org.intermine.objectstore.query.ResultsInfo;
 import org.intermine.path.Path;
 import org.intermine.path.PathError;
+import org.intermine.pathquery.Constraints;
 import org.intermine.pathquery.PathQuery;
 import org.intermine.pathquery.PathQueryBinding;
+
 
 
 public class PathQueryTest extends TestCase
@@ -317,12 +319,12 @@ public class PathQueryTest extends TestCase
         q.addViewPaths(view);
         assertEquals(e.getView(), q.getView());
 
-        // adding the same path again
+        // adding the same path again, should work
         view = new ArrayList<Path>() {{
             add(new Path(model, "Employee.name"));
         }};
         q.addViewPaths(view);
-        assertEquals(3, q.getView().size());
+        assertEquals(4, q.getView().size());
 
 
         // null paths
@@ -363,10 +365,20 @@ public class PathQueryTest extends TestCase
 
     /***********************************************************************************/
 
-//    public void testAddConstraintStringConstraint() {
-//        fail("Not yet implemented");
-//    }
-//
+    public void testAddConstraintStringConstraint() {
+        e = (PathQuery) expected.get("employeeDepartmentCompany");
+        q = new PathQuery(model);
+        List<String> view = new ArrayList<String>() {{
+            add("Employee.name");
+            add("Employee.department.name");
+            add("Employee.department.company.name");
+        }};
+        q.addView(view);
+        q.addConstraint("Employee.department.name", Constraints.eq("DepartmentA1"));
+        assertEquals(e.getAllConstraints(), q.getAllConstraints());
+    }
+
+
 //    public void testAddConstraintStringConstraintString() {
 //        fail("Not yet implemented");
 //    }
@@ -374,15 +386,47 @@ public class PathQueryTest extends TestCase
 //    public void testGetAllConstraints() {
 //        fail("Not yet implemented");
 //    }
-//
-//    public void testGetConstraintLogic() {
-//        fail("Not yet implemented");
-//    }
-//
-//    public void testGetLogic() {
-//        fail("Not yet implemented");
-//    }
-//
+
+    public void testGetConstraintLogic() {
+
+        e = (PathQuery) expected.get("employeeDepartmentCompany");
+        q = new PathQuery(model);
+        List<String> view = new ArrayList<String>() {{
+            add("Employee.name");
+            add("Employee.department.name");
+            add("Employee.department.company.name");
+        }};
+        q.addView(view);
+        q.addConstraint("Employee.department.name", Constraints.eq("DepartmentA1"));
+        assertEquals(e.getConstraintLogic(), q.getConstraintLogic());
+
+        e = (PathQuery) expected.get("departmentBagConstraint");
+        assertEquals(e.getConstraintLogic(), "A and B");
+
+        // test me!
+//        q.addConstraint("Employee.name", Constraints.eq("monkey"));
+//        assertEquals(e.getConstraintLogic(), q.getConstraintLogic());
+
+
+    }
+
+    public void testGetLogic() {
+
+        // null logic
+        q = new PathQuery(model);
+        List<String> view = new ArrayList<String>() {{
+            add("Employee.name");
+            add("Employee.department.name");
+            add("Employee.department.company.name");
+        }};
+        q.addView(view);
+        q.addConstraint("Employee.department.name", Constraints.eq("DepartmentA1"));
+        assertEquals(null, q.getLogic());
+
+        // TODO test A and B, A or B, bad logic
+
+    }
+
 //    public void testSyncLogicExpression() {
 //        fail("Not yet implemented");
 //    }
@@ -462,10 +506,60 @@ public class PathQueryTest extends TestCase
 
     }
 
-//    public void testSetOrderByStringBoolean() {
-//        fail("Not yet implemented");
-//    }
-//
+    public void testSetOrderByStringBoolean() {
+
+        // ASC
+        e = (PathQuery) expected.get("orderByAsc");
+        q = new PathQuery(model);
+        q.setView("Employee.name,Employee.department.name");
+        q.setOrderBy("Employee.name", true);
+        assertEquals(e.getSortOrder(), q.getSortOrder());
+
+        // desc
+        e = (PathQuery) expected.get("orderByDesc");
+        q = new PathQuery(model);
+        q.setView("Employee.name,Employee.department.name");
+        q.setOrderBy("Employee.name", false);
+        assertEquals(e.getSortOrder(), q.getSortOrder());
+
+        // long path
+        e = (PathQuery) expected.get("longPath");
+        q = new PathQuery(model);
+        q.setView("Employee.name,Employee.department.name");
+        q.setOrderBy("Employee.department.name", true);
+        assertEquals(e.getSortOrder(), q.getSortOrder());
+
+        // multiple paths
+        e = (PathQuery) expected.get("orderByVat");
+        q = new PathQuery(model);
+        q.setView("Company.vatNumber,Company.name,Company.address.address");
+        q.setOrderBy("Company.vatNumber,Company.name,Company.departments.name", true);
+        assertEquals(e.getSortOrderStrings(), q.getSortOrderStrings());
+
+        // overwrite current orderby
+        e = (PathQuery) expected.get("orderByVat");
+        q = new PathQuery(model);
+        q.setView("Company.vatNumber,Company.name,Company.address.address");
+        q.setOrderBy("Company.address.address", false);
+        q.setOrderBy("Company.vatNumber,Company.name,Company.departments.name", true);
+        assertEquals(e.getSortOrderStrings(), q.getSortOrderStrings());
+
+        q = (PathQuery) expected.get("orderByCompany");
+        q.setOrderBy("Company.departments.name", true);
+        assertEquals("Company.departments.name asc", q.getSortOrderStrings().get(0));
+
+        // bad path
+        q = (PathQuery) expected.get("companyName");
+        q.setOrderBy("monkey.pants", false);
+        assertTrue(q.getSortOrder().isEmpty());
+
+        // empty value
+        q = (PathQuery) expected.get("companyName");
+        q.setOrderBy("", true);
+        assertTrue(q.getSortOrder().isEmpty());
+
+    }
+
 //    public void testSetOrderByListOfString() {
 //        fail("Not yet implemented");
 //    }
