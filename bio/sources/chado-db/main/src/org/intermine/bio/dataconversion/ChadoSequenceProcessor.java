@@ -10,10 +10,6 @@ package org.intermine.bio.dataconversion;
  *
  */
 
-import java.sql.Connection;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -25,25 +21,36 @@ import java.util.Map;
 import java.util.Set;
 import java.util.TreeSet;
 import java.util.Map.Entry;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
-import org.apache.commons.collections.keyvalue.MultiKey;
-import org.apache.commons.collections.map.MultiKeyMap;
-import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
-import org.flymine.model.genomic.LocatedSequenceFeature;
-import org.flymine.model.genomic.Transcript;
 import org.intermine.bio.util.OrganismData;
 import org.intermine.metadata.ClassDescriptor;
 import org.intermine.metadata.FieldDescriptor;
 import org.intermine.metadata.MetaDataException;
 import org.intermine.metadata.ReferenceDescriptor;
 import org.intermine.objectstore.ObjectStoreException;
+import org.intermine.util.CacheMap;
 import org.intermine.util.StringUtil;
 import org.intermine.util.TypeUtil;
 import org.intermine.util.XmlUtil;
 import org.intermine.xml.full.Item;
 import org.intermine.xml.full.Reference;
 import org.intermine.xml.full.ReferenceList;
+
+import org.flymine.model.genomic.LocatedSequenceFeature;
+import org.flymine.model.genomic.Synonym;
+import org.flymine.model.genomic.Transcript;
+
+import java.sql.Connection;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.sql.Statement;
+
+import org.apache.commons.collections.keyvalue.MultiKey;
+import org.apache.commons.collections.map.MultiKeyMap;
+import org.apache.commons.lang.StringUtils;
+import org.apache.log4j.Logger;
 
 /**
  * A processor for the chado sequence module.
@@ -82,7 +89,7 @@ public class ChadoSequenceProcessor extends ChadoProcessor
         Arrays.asList("chromosome", "chromosome_arm", "ultra_scaffold", "golden_path_region");
 
     /**
-     * An action that make a synonym.
+     * An action that makes a synonym.
      */
     protected static final ConfigAction CREATE_SYNONYM_ACTION = new CreateSynonymAction();
 
@@ -233,14 +240,15 @@ public class ChadoSequenceProcessor extends ChadoProcessor
         Set<String> fieldValuesSet = new HashSet<String>();
 
         if (name != null) {
+            String fixedName = fixIdentifier(interMineType, name);
             if (nameActionList == null || nameActionList.size() == 0) {
                 if (feature.checkAttribute("symbol")) {
-                    fieldValuesSet.add(name);
-                    feature.setAttribute("symbol", name);
+                    fieldValuesSet.add(fixedName);
+                    feature.setAttribute("symbol", fixedName);
                 } else {
                     if (feature.checkAttribute("secondaryIdentifier")) {
-                        fieldValuesSet.add(name);
-                        feature.setAttribute("secondaryIdentifier", name);
+                        fieldValuesSet.add(fixedName);
+                        feature.setAttribute("secondaryIdentifier", fixedName);
                     } else {
                         // do nothing, if the name needs to go in a different attribute
                         // it will need to be configured
@@ -251,8 +259,8 @@ public class ChadoSequenceProcessor extends ChadoProcessor
                     if (action instanceof SetFieldConfigAction) {
                         SetFieldConfigAction attrAction =
                             (SetFieldConfigAction) action;
-                        if (attrAction.isValidValue(name)) {
-                            String newFieldValue = attrAction.processValue(name);
+                        if (attrAction.isValidValue(fixedName)) {
+                            String newFieldValue = attrAction.processValue(fixedName);
                             feature.setAttribute(attrAction.getFieldName(), newFieldValue);
                             fieldValuesSet.add(newFieldValue);
                             if (attrAction.getFieldName().equals("primaryIdentifier")) {
@@ -309,33 +317,25 @@ public class ChadoSequenceProcessor extends ChadoProcessor
         getChadoDBConverter().store(uniqueNameSynonym);
 
         if (name != null) {
-            if (nameActionList == null || nameActionList.size() == 0
-                || nameActionList.contains(CREATE_SYNONYM_ACTION)) {
-                String fixedName = fixIdentifier(interMineType, name);
+            String fixedName = fixIdentifier(interMineType, name);
 
-                if (nameActionList != null) {
-                    CreateSynonymAction createSynonymAction = null;
+            if (nameActionList == null || nameActionList.size() == 0) {
+                nameActionList = new ArrayList<ConfigAction>();
+                nameActionList.add(new CreateSynonymAction());
+            }
 
-                    for (ConfigAction action : nameActionList) {
-                        if (action instanceof CreateSynonymAction) {
-                            createSynonymAction = (CreateSynonymAction) action;
-                            break;
+            for (ConfigAction action : nameActionList) {
+                if (action instanceof CreateSynonymAction) {
+                    CreateSynonymAction createSynonymAction = (CreateSynonymAction) action;
+                    if (createSynonymAction.isValidValue(fixedName)) {
+                        String processedName = createSynonymAction.processValue(fixedName);
+                        if (!fdat.existingSynonyms.contains(processedName)) {
+                            boolean nameSet = fieldValuesSet.contains(processedName);
+                            Item nameSynonym =
+                                createSynonym(fdat, "name", processedName, nameSet, null);
+                            getChadoDBConverter().store(nameSynonym);
                         }
                     }
-
-                    if (createSynonymAction != null) {
-                        fixedName = createSynonymAction.processValue(fixedName);
-                    }
-                }
-
-                if (!fdat.existingSynonyms.contains(fixedName)) {
-                    boolean nameSet = false;
-                    if (fieldValuesSet.contains(fixedName)) {
-                        nameSet = true;
-                    }
-                    Item nameSynonym =
-                        createSynonym(fdat, "name", fixedName, nameSet, null);
-                    getChadoDBConverter().store(nameSynonym);
                 }
             }
         }
@@ -915,6 +915,9 @@ public class ChadoSequenceProcessor extends ChadoProcessor
                 for (ConfigAction action: actionList) {
                     if (action instanceof CreateSynonymAction) {
                         CreateSynonymAction createSynonymAction = (CreateSynonymAction) action;
+                        if (!createSynonymAction.isValidValue(accession)) {
+                            continue;
+                        }
                         String newFieldValue = createSynonymAction.processValue(accession);
                         if (fdat.existingSynonyms.contains(newFieldValue)) {
                             continue;
@@ -983,6 +986,9 @@ public class ChadoSequenceProcessor extends ChadoProcessor
                 for (ConfigAction action: actionList) {
                     if (action instanceof CreateSynonymAction) {
                         CreateSynonymAction synonymAction = (CreateSynonymAction) action;
+                        if (!synonymAction.isValidValue(identifier)) {
+                            continue;
+                        }
                         String newFieldValue = synonymAction.processValue(identifier);
                         Set<String> existingSynonyms = fdat.existingSynonyms;
                         if (existingSynonyms.contains(newFieldValue)) {
@@ -1069,6 +1075,9 @@ public class ChadoSequenceProcessor extends ChadoProcessor
                 for (ConfigAction action: actionList) {
                     if (action instanceof CreateSynonymAction) {
                         CreateSynonymAction createSynonymAction = (CreateSynonymAction) action;
+                        if (!createSynonymAction.isValidValue(identifier)) {
+                            continue;
+                        }
                         String newFieldValue = createSynonymAction.processValue(identifier);
                         if (fdat.existingSynonyms.contains(newFieldValue)) {
                             continue;
@@ -1178,28 +1187,6 @@ public class ChadoSequenceProcessor extends ChadoProcessor
         referenceList.setName("publications");
         referenceList.setRefIds(publicationIds);
         getChadoDBConverter().store(referenceList, fdat.intermineObjectId);
-    }
-
-    /**
-     * Set the evidence collection of the feature with the given (chado) feature id.
-     */
-    private void makeFeatureEvidence(Integer featureId, List<String> argEvidenceIds)
-        throws ObjectStoreException {
-        FeatureData fdat = featureMap.get(featureId);
-        if (fdat == null) {
-            throw new RuntimeException("feature " + featureId + " not found in features Map");
-        }
-        List<String> evidenceIds = new ArrayList<String>(argEvidenceIds);
-        int taxonId = fdat.getOrganismData().getTaxonId();
-        Item dataSetItem = getChadoDBConverter().getDataSetItem(taxonId);
-        evidenceIds.add(dataSetItem.getIdentifier());
-        ReferenceList referenceList = new ReferenceList();
-        referenceList.setName("evidence");
-
-        referenceList.setRefIds(evidenceIds);
-        getChadoDBConverter().store(referenceList, fdat.intermineObjectId);
-
-        fdat.flags |= FeatureData.EVIDENCE_CREATED;
     }
 
     /**
@@ -1627,9 +1614,85 @@ public class ChadoSequenceProcessor extends ChadoProcessor
     }
 
     /**
+     *
+     * @author Kim Rutherford
+     */
+    protected static class MatchingFieldConfigAction extends ConfigAction
+    {
+        private final Pattern pattern;
+        private final CacheMap cacheMap = new CacheMap();
+
+        /**
+         * Construct a MatchingFieldConfigAction.
+         */
+        MatchingFieldConfigAction() {
+            pattern = null;
+        }
+
+        /**
+         * Construct with a pattern that values must match.  If the value from chado doesn't match
+         * the pattern it isn't stored.
+         * @param pattern a regular expression pattern
+         */
+        MatchingFieldConfigAction(Pattern pattern) {
+            this.pattern = pattern;
+        }
+
+        /**
+         * Validate a value for this field by matching with pattern set in the constructor.
+         * @param value the value to check
+         * @return true if value matches the pattern
+         */
+        public boolean isValidValue(String value) {
+            if (pattern == null) {
+                return true;
+            }
+            Matcher matcher;
+            if (cacheMap.containsKey(value)) {
+                matcher = (Matcher) cacheMap.get(value);
+            } else {
+                matcher = pattern.matcher(value);
+                cacheMap.put(value, matcher);
+            }
+            return matcher.matches();
+        }
+
+        /**
+         * Process the value to set and return a (possibly) altered version.  If a pattern was set
+         * in the constructor and the pattern contains a capturing group, then return the contents
+         * of the capturing group, otherwise return the whole value.  If there is no pattern, return
+         * the whole value.
+         * @param value the attribute value to process
+         * @return the processed value
+         */
+        public String processValue(String value) {
+            if (pattern == null) {
+                return value;
+            }
+            Matcher matcher = (Matcher) cacheMap.get(value);
+            if (matcher.groupCount() == 0) {
+                // no capturing group in pattern so return the whole value
+                return value;
+            } else {
+                if (matcher.groupCount() == 1) {
+                   if (matcher.group(1) == null) {
+                       // special case - the pattern matches, but doesn't match the capturing group
+                       return value;
+                   } else {
+                       return matcher.group(1);
+                   }
+                } else {
+                    throw new RuntimeException("more than one capturing group in: "
+                                               + pattern.toString());
+                }
+            }
+        }
+    }
+
+    /**
      * An action that sets an attribute in a new Item.
      */
-    protected static class SetFieldConfigAction extends ConfigAction
+    protected static class SetFieldConfigAction extends MatchingFieldConfigAction
     {
         private final String theFieldName;
 
@@ -1638,6 +1701,17 @@ public class ChadoSequenceProcessor extends ChadoProcessor
          * @param fieldName the name of the InterMine object field to set
          */
         SetFieldConfigAction(String fieldName) {
+            super(null);
+            this.theFieldName = fieldName;
+        }
+
+        /**
+         * XXX
+         * @param fieldName
+         * @param pattern
+         */
+        SetFieldConfigAction(String fieldName, Pattern pattern) {
+            super(pattern);
             this.theFieldName = fieldName;
         }
 
@@ -1648,63 +1722,12 @@ public class ChadoSequenceProcessor extends ChadoProcessor
         public String getFieldName() {
             return theFieldName;
         }
-
-        /**
-         * Check whether value provided is valid for this field, default implementation
-         * just checks if value is null.
-         * @param value the field value to check
-         * @return true if field name is valid
-         */
-        public boolean isValidValue(String value) {
-            return !(value == null);
-        }
-
-        /**
-         * Process the value to set and return a (possibly) altered version.  Default implementation
-         * does no processing.
-         * @param value the attribute value to process
-         * @return the processed value
-         */
-        public String processValue(String value) {
-            // default: no processing
-            return value;
-        }
-    }
-
-    /**
-     * An action that sets an attribute in a new Item and can validate a value
-     * for that field against a specified pattern
-     * @author Richard Smith
-     */
-    protected static class SetMatchingFieldConfigAction extends SetFieldConfigAction
-    {
-        private final String pattern;
-
-        /**
-         * Construct with a field name and a pattern that values must match
-         * @param fieldName name of the field
-         * @param pattern a regular expression pattern
-         */
-        SetMatchingFieldConfigAction(String fieldName, String pattern) {
-            super(fieldName);
-            this.pattern = pattern;
-        }
-
-        /**
-         * Validate a value for this field by matching with specied patter
-         * @param value the value to check
-         * @return true if value matches the pattern
-         */
-        @Override
-        public boolean isValidValue(String value) {
-            return (super.isValidValue(value) && value.matches(pattern));
-        }
     }
 
     /**
      * An action that sets a Synonym.
      */
-    protected static class CreateSynonymAction extends ConfigAction
+    protected static class CreateSynonymAction extends MatchingFieldConfigAction
     {
         private final String synonymType;
 
@@ -1713,6 +1736,17 @@ public class ChadoSequenceProcessor extends ChadoProcessor
          * type
          */
         CreateSynonymAction() {
+            super(null);
+            synonymType = null;
+        }
+
+        /**
+         * Make a synonym and use the type from chado ("symbol", "identifier" etc.) as the Synonym
+         * type.  Only create the synonym if the pattern matches.
+         * @param pattern the pattern that the value must match
+         */
+        CreateSynonymAction(Pattern pattern) {
+            super(pattern);
             synonymType = null;
         }
 
@@ -1721,18 +1755,8 @@ public class ChadoSequenceProcessor extends ChadoProcessor
          * @param synonymType the synonym type
          */
         CreateSynonymAction(String synonymType) {
+            super(null);
             this.synonymType = synonymType;
-        }
-
-        /**
-         * Process the value to set and return a (possibly) altered version.  Default implementation
-         * does no processing.
-         * @param value the attribute value to process
-         * @return the processed value
-         */
-        public String processValue(String value) {
-            // default: no processing
-            return value;
         }
     }
 
