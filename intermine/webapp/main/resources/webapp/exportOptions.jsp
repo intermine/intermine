@@ -63,9 +63,7 @@
     <fmt:message key="exporter.${type}.description"/>
   </c:otherwise>
 </c:choose></h2>
-<br/>
-<div style="style="margin-top: 10px; margin-bottom: 10px;">${exportReorderMessage}</div>
-<br/>
+    <div style="margin-top: 10px; margin-bottom: 3px;">${exportReorderMessage}</div>
 
 <!-- exporting type: ${type} -->
 
