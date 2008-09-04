@@ -16,8 +16,7 @@
   // Use jQuery via jQuery(...)
   jQuery(document).ready(function(){
     jQuery('#pathsList').sortable({
-        placeholder: "ui-selected",
-        revert: true
+            revert: true
         });
   });
 
@@ -32,9 +31,6 @@
   }
 </script>
 <style type="text/css" media="screen">
-    .ui-selected{
-        background:#CCFFCC;
-    }
     #pathsList {
         list-style-position: inside; height: 30px; cursor: hand; cursor: pointer;
     }
