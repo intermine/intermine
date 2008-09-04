@@ -156,8 +156,8 @@ table.internal {
   margin:10px 20px 10px 20px;}
 
 table.internal td {
-  padding: 6px 6px 6px 12px;
-  border-right: 0px solid #fff;border-bottom: 1px solid #C1DAD7;background: #fff;}
+  padding: 3px 3px 3px 6px;
+  border-right: 0px solid #fff;border-bottom: 0px solid #fff;background: #fff;}
 
 #topnav {
     position:absolute; right:0px; top:0px;

@@ -12,6 +12,7 @@ package org.modmine.web;
 
 import java.util.Iterator;
 import java.util.LinkedHashMap;
+import java.util.List;
 import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
@@ -59,33 +60,7 @@ public class SubmissionsController extends TilesAction
             ObjectStore os =
                 (ObjectStore) session.getServletContext().getAttribute(Constants.OBJECTSTORE);
 
-            //get the classes and the counts 
-                        
-//            Query q = new Query();
-//
-//            QueryClass sub = new QueryClass(Submission.class);
-//            q.addFrom(sub);
-//            QueryField qfTitle = new QueryField(sub, "title");
-//            q.addToSelect(qfTitle);
-//
-//            QueryClass lsf = new QueryClass(LocatedSequenceFeature.class);
-//            q.addFrom(lsf);
-//            QueryField qfClass = new QueryField(lsf, "class");
-//            q.addToSelect(qfClass);
-//            q.addToGroupBy(qfClass);
-//            
-//            q.addToGroupBy(qfTitle);
-//
-//            q.setDistinct(false);                        
-//            q.addToSelect(new QueryFunction());
-//            
-//            QueryCollectionReference datasets = new QueryCollectionReference(lsf, "dataSets");
-//            ContainsConstraint cc = new ContainsConstraint(datasets, ConstraintOp.CONTAINS, sub);
-//            q.setConstraint(cc);
-//
-//            Results results = os.execute(q);
-
-
+            //get the classes and the counts                         
             Query q = new Query();
 
             QueryClass sub = new QueryClass(Submission.class);
@@ -101,7 +76,10 @@ public class SubmissionsController extends TilesAction
             
 //            q.addToGroupBy(qfTitle);
             q.addToGroupBy(sub);
-
+            
+            q.addToOrderBy(sub);
+            q.addToOrderBy(qfClass, "desc");
+            
             q.setDistinct(false);                        
             q.addToSelect(new QueryFunction());
             
@@ -111,54 +89,34 @@ public class SubmissionsController extends TilesAction
 
             Results results = os.execute(q);
 
-            
-            //            Map<Class, Long> fc =
-//                new LinkedHashMap<Class, Long>();
-//
-//            Map<String, Map<Class, Long>> subs =
-//                new LinkedHashMap<String, Map<Class, Long>>();
-
-            Map<String, Long> fc =
-                new LinkedHashMap<String, Long>();
-
 //            Map<String, Map<String, Long>> subs =
 //                new LinkedHashMap<String, Map<String, Long>>();
             Map<Submission, Map<String, Long>> subs =
                 new LinkedHashMap<Submission, Map<String, Long>>();
 
-            
-            StringBuffer lastSub = new StringBuffer("-");
-            Integer iteration = 0;
-            
             // for each classes set the values for jsp
-            for (Iterator iter = results.iterator(); iter.hasNext(); ) {
-                iteration++;
-                ResultsRow row = (ResultsRow) iter.next();
+            for (Iterator<ResultsRow> iter = results.iterator(); iter.hasNext(); ) {
+                ResultsRow row = iter.next();
                 Submission s = (Submission) row.get(0);
                 Class feat = (Class) row.get(1);
                 Long count = (Long) row.get(2);
-                
-                String thisSub = s.getTitle();
+
+                Map<String, Long> fc =
+                    new LinkedHashMap<String, Long>();
 
                 fc.put(TypeUtil.unqualifiedName(feat.getName()), count);
                 
-                if (!thisSub.equals(lastSub.toString())) { 
-                    lastSub.delete(0, lastSub.length());
-                    lastSub.append(thisSub);
-
-                    // if not the first one
-                    if (iteration > 1 && iteration < results.size()) {
-                        subs.put(s, fc);
-                        fc.clear();
+                // check if you need to add to fc before putting it in subs
+                // Note: the db query get the feature class in descending alphabetical order,
+                // so this will bring back the ascending order
+                if (subs.containsKey(s)) {
+                    for (Map<String, Long> map: subs.values()) {
+                        fc.putAll(map);
                     }
                 }
-
-                if (iteration == results.size()) {
-                    subs.put(s, fc);
-                }
+                subs.put(s, fc);
             }            
 
-           request.setAttribute("features", fc);
            request.setAttribute("subs", subs);
 
         } catch (Exception err) {
