@@ -285,7 +285,7 @@ public class PathQuery
 
 
     /**
-     * Add a constraint to the query
+     * Add a constraint to the query, allow code to be automatically assigned - eg A
      * @param constraint constraint to add to the query
      * @param path path to constrain, eg Employee.firstName
      * @return label of constraint
@@ -297,7 +297,7 @@ public class PathQuery
     }
 
     /**
-     * Add a constraint to the query
+     * Add a constraint to the query and specify the code
      * @param constraint constraint to add to the query
      * @param code code for constraint
      * @param path path to constrain, eg Employee.firstName
@@ -311,7 +311,7 @@ public class PathQuery
     }
 
     /**
-     * Add a constraint to the query
+     * Add a constraint to the query, assign a subclass
      * @param constraint constraint to add to the query
      * @param code code for constraint
      * @param path path to constrain, eg Employee.firstName
@@ -518,7 +518,7 @@ public class PathQuery
      * @param paths paths to create the order by list
      */
     public void setOrderBy(List<String> paths) {
-        if (paths == null || paths.equals("")) {
+        if (paths == null || paths.isEmpty()) {
             return;
         }
         setOrderBy(paths, Boolean.TRUE);
@@ -531,28 +531,49 @@ public class PathQuery
      * @param sortAscending whether to sort all order by columns in ascending order
      */
     public void setOrderBy(List<String> paths, Boolean sortAscending) {
-        if (paths == null || paths.equals("")) {
+        if (paths == null || paths.isEmpty()) {
             return;
         }
         List<OrderBy> orderBy = new ArrayList<OrderBy>();
-        try {
-            for (String path : paths) {
-                orderBy.add(new OrderBy(makePath(model, this, path), sortAscending));
+        for (String path : paths) {
+            if (path != null && !path.equals("")) {
+                try {
+                    Path p =  makePath(model, this, path);
+                    orderBy.add(new OrderBy(p, sortAscending));
+                } catch (PathError e) {
+                    logPathError(e);
+                }
+            } else {
+                logPathError("Invalid path");
             }
-        } catch (PathError e) {
-            LOG.error("Path error", e);
-            addProblem(e);
         }
-        sortOrder = orderBy;
+        if (!orderBy.isEmpty()) {
+            sortOrder = orderBy;
+        }
     }
 
     /**
      * Sets the order by list of the query to the list of paths given.  Paths can be a single path
      * or a comma delimited list of paths.  To append a path to the list instead use addOrderBy.
+     * assumes paths are valid
      * @param paths paths to create the order by list
      */
     public void setOrderByList(List<OrderBy> paths) {
-        sortOrder = paths;
+        if (paths.isEmpty()) {
+            return;
+        }
+        List<OrderBy> orderByList = new ArrayList();
+        for (OrderBy orderBy : paths) {
+            if (orderBy != null && (orderBy.getField() != null
+                            && !orderBy.getDirection().equals(""))) {
+                orderByList.add(orderBy);
+            } else {
+                logPathError("Invalid path in order by clause");
+            }
+        }
+        if (!orderByList.isEmpty()) {
+            sortOrder = orderByList;
+        }
     }
 
     /**
@@ -573,12 +594,16 @@ public class PathQuery
     public void addOrderBy(String paths, Boolean sortAscending) {
         List<OrderBy> orderBy = new ArrayList<OrderBy>();
         String direction = (sortAscending.booleanValue() ? "asc" : "desc");
-        try {
-            for (String path : paths.split("[, ]")) {
-                orderBy.add(new OrderBy(makePath(model, this, path), direction));
+        for (String path : paths.split("[, ]")) {
+            if (path != null && !path.equals("")) {
+                try {
+                    orderBy.add(new OrderBy(makePath(model, this, path), direction));
+                } catch (PathError e) {
+                    logPathError(e);
+                }
+            } else {
+                logPathError("Invalid path");
             }
-        } catch (PathError e) {
-            logPathError(e);
         }
         sortOrder.addAll(orderBy);
     }

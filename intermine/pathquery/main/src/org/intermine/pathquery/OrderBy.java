@@ -18,8 +18,8 @@ import org.intermine.path.Path;
  */
 public class OrderBy
 {
-    Path field;
-    String direction;
+    private Path field;
+    private String direction;
 
     /**
      * Constructs a new order by with the default direction, ascending
