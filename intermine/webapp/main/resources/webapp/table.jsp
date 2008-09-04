@@ -38,8 +38,7 @@
 
       <%-- show the description only if we ve run a query (rather than viewing
            a bag) - see #1031 --%>
-      <c:if test="${param.bagName == null
-                  && (templateQuery.name != WEB_PROPERTIES['begin.browse.template'])}">
+      <c:if test="${param.bagName == null}">
         <div class="body">
           <div class="resultsTableTemplateHeader">
             <div>
@@ -50,14 +49,13 @@
                  ${param.templateQueryTitle}
                  </c:when>
                  <c:otherwise>
-                ${templateQuery.title}
+                  ${templateQuery.title}
                  </c:otherwise>
                  </c:choose>
               </span>
             </div>
             <div class="templateDescription">
              <c:choose>
-
                 <c:when test="${!empty param.templateQueryTitle}">
                  ${param.templateQueryDescription}
                  </c:when>
