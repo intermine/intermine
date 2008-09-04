@@ -446,7 +446,7 @@
     </item>
 
 
-    <item id="620" class="" implements="http://www.ensembl.org/">
+    <item id="620" class="" implements="http://www.flymine.org/model/genomic#DataSource">
         <attribute name="name" value="Ensembl"/>
         <attribute name="url" value="http://www.ensembl.org/"/>
     </item>
