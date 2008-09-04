@@ -54,7 +54,6 @@
         <reference name="dataSource" ref_id="40"/>
     </item>
 
-
     <item id="50" class="" implements="http://www.flymine.org/model/genomic#DataSource">
         <attribute name="name" value="MGI"/>
         <attribute name="description" value="Mouse Genome Database Project"/>
@@ -154,7 +153,6 @@
         <reference name="dataSource" ref_id="130"/>
     </item>
 
-
     <item id="140" class="" implements="http://www.flymine.org/model/genomic#DataSource">
         <attribute name="name" value="embl"/>
         <attribute name="description" value="The EMBL genome database"/>
@@ -216,8 +214,7 @@
     </item>
     <item id="211" class="" implements="http://www.flymine.org/model/genomic#DataSet">
         <attribute name="title" value="Ensembl Anopheles gambiae str. PEST [AgamP3.4]"/>
-        <attribute name="description"
-            value="The Ensembl Anopheles gambiae genome annotation"/>
+        <attribute name="description" value="The Ensembl Anopheles gambiae genome annotation"/>
         <attribute name="version" value="AgamP3"/>
         <attribute name="url" value="http://www.ensembl.org/Anopheles_gambiae"/>
         <reference name="dataSource" ref_id="210"/>
@@ -227,6 +224,19 @@
         <attribute name="description" value="The Ensembl Apis mellifera genome annotation"/>
         <attribute name="version" value="2.0"/>
         <attribute name="url" value="http://www.ensembl.org/Apis_mellifera"/>
+        <reference name="dataSource" ref_id="210"/>
+    </item>
+
+    <item id="621" class="" implements="http://www.flymine.org/model/genomic#DataSet">
+        <attribute name="title" value="Affymetrix array: Affy drosgenome1"/>
+        <attribute name="description" value="The GeneChip® Drosophila Genome Array is a microarray tool for studying expression of Drosophila melanogaster transcripts."/>
+        <attribute name="url" value="http://www.affymetrix.com/products/arrays/specific/fly.affx"/>
+        <reference name="dataSource" ref_id="210"/>
+    </item>
+    <item id="622" class="" implements="http://www.flymine.org/model/genomic#DataSet">
+        <attribute name="title" value="Affymetrix array: Affy drosophila 2"/>
+        <attribute name="description" value="The GeneChip® Drosophila Genome Array is a microarray tool for studying expression of Drosophila melanogaster transcripts."/>
+        <attribute name="url" value="http://www.affymetrix.com/products/arrays/specific/fly_2.affx"/>
         <reference name="dataSource" ref_id="210"/>
     </item>
 
@@ -302,11 +312,9 @@
 
     <item id="452" class="" implements="http://www.flymine.org/model/genomic#DataSet">
         <attribute name="title" value="REDfly Drosophila transcription factor binding sites"/>
-        <attribute name="description"
-                   value="Regulatory element database for Drosophila"/>
+        <attribute name="description" value="Regulatory element database for Drosophila"/>
         <attribute name="version" value="2.0"/>
-        <attribute name="url"
-                   value="http://redfly.ccr.buffalo.edu/?content=/search.php"/>
+        <attribute name="url" value="http://redfly.ccr.buffalo.edu/?content=/search.php"/>
         <reference name="dataSource" ref_id="450"/>
     </item>
 
@@ -320,22 +328,18 @@
 
     <item id="480" class="" implements="http://www.flymine.org/model/genomic#DataSource">
         <attribute name="name" value="fly-FISH"/>
-        <attribute name="description"
-                   value="A database of Drosophila embryo mRNA localization patterns"/>
+        <attribute name="description" value="A database of Drosophila embryo mRNA localization patterns"/>
         <attribute name="url" value="http://fly-fish.ccbr.utoronto.ca"/>
     </item>
     <item id="481" class="" implements="http://www.flymine.org/model/genomic#DataSet">
         <attribute name="title" value="fly-Fish data set"/>
-        <attribute name="description"
-                   value="fly-Fish data set of Drosophila embryo mRNA localization patterns"/>
-        <attribute name="url"
-                   value="http://fly-fish.ccbr.utoronto.ca"/>
+        <attribute name="description" value="fly-Fish data set of Drosophila embryo mRNA localization patterns"/>
+        <attribute name="url" value="http://fly-fish.ccbr.utoronto.ca"/>
         <reference name="dataSource" ref_id="480"/>
     </item>
 
     <item id="490" class="" implements="http://www.flymine.org/model/genomic#DataSource">
         <attribute name="name" value="GenomeNet"/>
-
         <attribute name="description" value="Network of database and computational services for genome research and related research areas in biomedical sciences, operated by the Kyoto University Bioinformatics Center. "/>
         <attribute name="url" value="http://www.genome.jp/en/"/>
     </item>
@@ -438,7 +442,6 @@
         <attribute name="url" value="http://www.fruitfly.org/cgi-bin/ex/insitu.pl"/>
         <reference name="dataSource" ref_id="610"/>
     </item>
-
     <item id="612" class="" implements="http://www.flymine.org/model/genomic#DataSet">
         <attribute name="title" value="BDGP cDNA clone data set"/>
         <attribute name="url" value="http://www.fruitfly.org/DGC/index.html"/>
@@ -446,22 +449,7 @@
     </item>
 
 
-    <item id="620" class="" implements="http://www.flymine.org/model/genomic#DataSource">
-        <attribute name="name" value="Ensembl"/>
-        <attribute name="url" value="http://www.ensembl.org/"/>
-    </item>
-    <item id="621" class="" implements="http://www.flymine.org/model/genomic#DataSet">
-        <attribute name="title" value="Affymetrix array: Affy drosgenome1"/>
-        <attribute name="description" value="The GeneChip® Drosophila Genome Array is a microarray tool for studying expression of Drosophila melanogaster transcripts."/>
-        <attribute name="url" value="http://www.affymetrix.com/products/arrays/specific/fly.affx"/>
-        <reference name="dataSource" ref_id="620"/>
-    </item>
-    <item id="622" class="" implements="http://www.flymine.org/model/genomic#DataSet">
-        <attribute name="title" value="Affymetrix array: Affy drosophila 2"/>
-        <attribute name="description" value="The GeneChip® Drosophila Genome Array is a microarray tool for studying expression of Drosophila melanogaster transcripts."/>
-        <attribute name="url" value="http://www.affymetrix.com/products/arrays/specific/fly_2.affx"/>
-        <reference name="dataSource" ref_id="620"/>
-    </item>
+
 
     <item id="630" class="" implements="http://www.flymine.org/model/genomic#DataSource">
         <attribute name="name" value="BioGRID"/>
@@ -498,7 +486,6 @@
         <reference name="dataSource" ref_id="650"/>
     </item>
 
-
     <item id="660" class="" implements="http://www.flymine.org/model/genomic#DataSource">
         <attribute name="name" value="FlyReg"/>
         <attribute name="description" value="Drosophila DNase I Footprint Database (v2.0)"/>
@@ -509,19 +496,6 @@
         <attribute name="url" value="http://www.flyreg.org/"/>
         <reference name="dataSource" ref_id="660"/>
     </item>
-
-<!-- see #1801
-     <item id="670" class="" implements="http://www.flymine.org/model/genomic#DataSource">
-        <attribute name="name" value="Hybrigenics S.A."/>
-        <attribute name="url" value="http://www.hybrigenics.com/"/>
-    </item>
-    <item id="671" class="" implements="http://www.flymine.org/model/genomic#DataSet">
-        <attribute name="title" value="PIMRider data set"/>
-        <attribute name="url" value="http://pim.hybrigenics.com/"/>
-        <reference name="dataSource" ref_id="670"/>
-    </item>
-
--->
 
      <item id="680" class="" implements="http://www.flymine.org/model/genomic#DataSource">
         <attribute name="name" value="YeastFunc"/>
