@@ -67,10 +67,14 @@ public class QuickSearchAction extends InterMineAction
         if (qsType.equals("ids")) {
             Map webPropertiesMap = (Map) context.getAttribute(Constants.WEB_PROPERTIES);
 
+            // remove the last query ran, otherwise the old query will show up on the results page
+            session.removeAttribute(Constants.QUERY);
+
             String templateName = (String) webPropertiesMap.get("begin.browse.template");
             String templateType = "global";
 
             SessionMethods.logTemplateQueryUse(session, templateType, templateName);
+
             String userName = profile.getUsername();
             TemplateQuery template = TemplateHelper.findTemplate(context, session, userName,
                                                                  templateName, templateType);
@@ -89,8 +93,8 @@ public class QuickSearchAction extends InterMineAction
 
             TemplateQuery queryCopy = TemplateHelper.editTemplate(valuesMap,
                     constraintOpsMap, template, null, new HashMap<String, String>());
-            String qid = SessionMethods.startQuery(clientState, session, messages,
-                                                   false, queryCopy);
+            String qid = SessionMethods.startQuery(clientState, session, messages, false,
+                                                   queryCopy);
             Thread.sleep(200);
             return new ForwardParameters(mapping.findForward("waiting"))
                 .addParameter("qid", qid)
