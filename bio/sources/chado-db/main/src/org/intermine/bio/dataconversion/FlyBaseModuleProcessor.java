@@ -418,9 +418,10 @@ public class FlyBaseModuleProcessor extends ChadoSequenceProcessor
 
             map.put(new MultiKey("feature", "TransposableElementInsertionSite", "FlyBase",
                                  "name"),
-                    Arrays.asList(new SetFieldConfigAction("secondaryIdentifier",
+                    Arrays.asList(new SetFieldConfigAction("symbol",
                                                            PB_INSERTION_PATTERN),
                                   new CreateSynonymAction(PB_INSERTION_PATTERN),
+                                  new SetFieldConfigAction("secondaryIdentifier"),
                                   new CreateSynonymAction()));
 
             map.put(new MultiKey("feature", "Gene", "FlyBase", "uniquename"),
