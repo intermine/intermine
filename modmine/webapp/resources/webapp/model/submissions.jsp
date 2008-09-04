@@ -58,7 +58,7 @@ ${sub.key.lab.project.name}
 					<tr>
 						<td>${fc.key}
 						<td align="right"><c:choose>
-							<c:when test="${fc.key eq \"Chromosome\"}">
+							<c:when test='${fc.key eq "Chromosome"}'>
 								<im:querylink text="${fc.value}" skipBuilder="true">
 									<query name="" model="genomic"
 										view="Chromosome.dataSets.title Chromosome.primaryIdentifier"
@@ -68,7 +68,7 @@ ${sub.key.lab.project.name}
 									<node path="Chromosome.dataSets" type="DataSet">
 									</node>
 									<node path="Chromosome.dataSets.title" type="String">
-									<constraint op="=" value="${sub.key}" description=""
+									<constraint op="=" value="${sub.key.title}" description=""
 										identifier="" code="A">
 									</constraint>
 									</node>
@@ -77,7 +77,7 @@ ${sub.key.lab.project.name}
 							</c:when>
 
 							<c:otherwise>
-								<im:querylink text="${fc.value}" skipBuilder="true">
+															<im:querylink text="${fc.value}" skipBuilder="true">
 									<query name="" model="genomic"
 										view="${fc.key}.dataSets.title ${fc.key}.primaryIdentifier ${fc.key}.secondaryIdentifier ${fc.key}.length 
                   ${fc.key}.chromosomeLocation.object.primaryIdentifier ${fc.key}.chromosomeLocation.start ${fc.key}.chromosomeLocation.end"
@@ -87,13 +87,12 @@ ${sub.key.lab.project.name}
 									<node path="${fc.key}.dataSets" type="DataSet">
 									</node>
 									<node path="${fc.key}.dataSets.title" type="String">
-									<constraint op="=" value="${sub.key}" description=""
+									<constraint op="=" value="${sub.key.title}" description=""
 										identifier="" code="A">
 									</constraint>
 									</node>
 									</query>
 								</im:querylink>
-
 							</c:otherwise>
 						</c:choose>
 						</td>
