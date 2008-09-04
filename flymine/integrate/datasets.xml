@@ -513,7 +513,6 @@
 <!-- see #1801
      <item id="670" class="" implements="http://www.flymine.org/model/genomic#DataSource">
         <attribute name="name" value="Hybrigenics S.A."/>
-        <attribute name="description" value=""/>
         <attribute name="url" value="http://www.hybrigenics.com/"/>
     </item>
     <item id="671" class="" implements="http://www.flymine.org/model/genomic#DataSet">
@@ -526,12 +525,10 @@
 
      <item id="680" class="" implements="http://www.flymine.org/model/genomic#DataSource">
         <attribute name="name" value="YeastFunc"/>
-        <attribute name="description" value=""/>
         <attribute name="url" value="http://func.med.harvard.edu/yeast/"/>
     </item>
     <item id="681" class="" implements="http://www.flymine.org/model/genomic#DataSet">
         <attribute name="title" value="GO Annotation for YeastFunc"/>
-        <attribute name="url" value=""/>
         <reference name="dataSource" ref_id="680"/>
     </item>
 </items>
