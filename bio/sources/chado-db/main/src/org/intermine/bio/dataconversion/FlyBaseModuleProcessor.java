@@ -108,6 +108,16 @@ public class FlyBaseModuleProcessor extends ChadoSequenceProcessor
     private static final String ALLELE_TEMP_TABLE_NAME = "intermine_flybase_allele_temp";
     private static final String INSERTION_TEMP_TABLE_NAME = "intermine_flybase_insertion_temp";
 
+    // pattern to match the names of Exelixis insertions
+    //  - matches "f07705" in "PBac{WH}f07705"
+    //  - matches "f07705" in "PBac{WH}tam[f07705]"
+    //  - otherwise matches the whole value
+    private static final Pattern PB_INSERTION_PATTERN =
+        Pattern.compile("PBac\\{WH\\}(?:tam\\[)?([def]\\d+)(?:\\])?|.*$");
+
+    // pattern to match GLEANR gene symbols from FlyBase chado
+    private static final Pattern GLEANR_PATTERN = Pattern.compile(".*GLEANR.*");
+
     /**
      * Create a new FlyBaseChadoDBConverter.
      * @param chadoDBConverter the converter that created this object
@@ -334,7 +344,7 @@ public class FlyBaseModuleProcessor extends ChadoSequenceProcessor
             map.put(new MultiKey("synonym", "Gene", "symbol", Boolean.FALSE),
                     Arrays.asList(CREATE_SYNONYM_ACTION));
             map.put(new MultiKey("synonym", "Gene", "symbol", Boolean.FALSE),
-                    Arrays.asList(new SetMatchingFieldConfigAction("GLEANRsymbol", ".*GLEANR.*"),
+                    Arrays.asList(new SetFieldConfigAction("GLEANRsymbol", GLEANR_PATTERN),
                                   CREATE_SYNONYM_ACTION));
 
 
@@ -406,9 +416,12 @@ public class FlyBaseModuleProcessor extends ChadoSequenceProcessor
             map.put(new MultiKey("feature", "ChromosomeBand", "FlyBase", "name"),
                     Arrays.asList(DO_NOTHING_ACTION));
 
-            map.put(new MultiKey("feature", "TransposableElementInsertionSite", "FlyBase", "name"),
-                    Arrays.asList(new SetFieldConfigAction("secondaryIdentifier"),
-                                  CREATE_SYNONYM_ACTION));
+            map.put(new MultiKey("feature", "TransposableElementInsertionSite", "FlyBase",
+                                 "name"),
+                    Arrays.asList(new SetFieldConfigAction("secondaryIdentifier",
+                                                           PB_INSERTION_PATTERN),
+                                  new CreateSynonymAction(PB_INSERTION_PATTERN),
+                                  new CreateSynonymAction()));
 
             map.put(new MultiKey("feature", "Gene", "FlyBase", "uniquename"),
                     Arrays.asList(new SetFieldConfigAction("primaryIdentifier")));

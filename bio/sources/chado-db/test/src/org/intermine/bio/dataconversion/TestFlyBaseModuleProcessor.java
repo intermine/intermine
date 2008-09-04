@@ -154,6 +154,10 @@ public class TestFlyBaseModuleProcessor extends FlyBaseModuleProcessor
             {
                 8747724, "P{RS5}5-HA-1496", "FBti0029528",
                 "transposable_element_insertion_site", null, null, 1
+            },
+            {
+                8862364, "PBac{WH}f07990", "FBti0068355",
+                "transposable_element_insertion_site", null, null, 1
             }
 
         };
