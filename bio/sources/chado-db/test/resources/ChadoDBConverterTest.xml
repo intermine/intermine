@@ -9,7 +9,6 @@
   <item id="12_6" class="http://www.flymine.org/model/genomic#TransposableElementInsertionSite">
     <attribute name="primaryIdentifier" value="FBti0030675"/>
     <attribute name="secondaryIdentifier" value="P{RS3r}CB-0697-3"/>
-    <attribute name="symbol" value="P{RS3r}CB-0697-3"/>
     <reference name="chromosomeLocation" ref_id="15_8"/>
     <reference name="organism" ref_id="1_1"/>
     <collection name="dataSets"><reference ref_id="4_1"/></collection>
@@ -169,7 +168,6 @@
   <item id="12_5" class="http://www.flymine.org/model/genomic#TransposableElementInsertionSite">
     <attribute name="primaryIdentifier" value="FBti0030830"/>
     <attribute name="secondaryIdentifier" value="P{RS3r}CB-5069-3"/>
-    <attribute name="symbol" value="P{RS3r}CB-5069-3"/>
     <reference name="organism" ref_id="1_1"/>
     <collection name="dataSets"><reference ref_id="4_1"/></collection>
   </item>
@@ -201,7 +199,6 @@
   <item id="12_1" class="http://www.flymine.org/model/genomic#TransposableElementInsertionSite">
     <attribute name="primaryIdentifier" value="FBti0028380"/>
     <attribute name="secondaryIdentifier" value="P{RS3}CB-5069-3"/>
-    <attribute name="symbol" value="P{RS3}CB-5069-3"/>
     <reference name="organism" ref_id="1_1"/>
     <collection name="dataSets"><reference ref_id="4_1"/></collection>
   </item>
@@ -267,7 +264,6 @@
   <item id="12_3" class="http://www.flymine.org/model/genomic#TransposableElementInsertionSite">
     <attribute name="primaryIdentifier" value="FBti0032815"/>
     <attribute name="secondaryIdentifier" value="P{RS5r}5-SZ-4122"/>
-    <attribute name="symbol" value="P{RS5r}5-SZ-4122"/>
     <reference name="chromosomeLocation" ref_id="15_9"/>
     <reference name="organism" ref_id="1_1"/>
     <collection name="dataSets"><reference ref_id="4_1"/></collection>
@@ -404,7 +400,6 @@
   <item id="12_8" class="http://www.flymine.org/model/genomic#TransposableElementInsertionSite">
     <attribute name="primaryIdentifier" value="FBti0029528"/>
     <attribute name="secondaryIdentifier" value="P{RS5}5-HA-1496"/>
-    <attribute name="symbol" value="P{RS5}5-HA-1496"/>
     <reference name="organism" ref_id="1_1"/>
     <collection name="dataSets"><reference ref_id="4_1"/></collection>
   </item>
@@ -535,7 +530,6 @@
   <item id="12_7" class="http://www.flymine.org/model/genomic#TransposableElementInsertionSite">
     <attribute name="primaryIdentifier" value="FBti0030367"/>
     <attribute name="secondaryIdentifier" value="P{RS5}5-SZ-4122"/>
-    <attribute name="symbol" value="P{RS5}5-SZ-4122"/>
     <reference name="organism" ref_id="1_1"/>
     <collection name="dataSets"><reference ref_id="4_1"/></collection>
   </item>
@@ -710,7 +704,6 @@
   <item id="12_4" class="http://www.flymine.org/model/genomic#TransposableElementInsertionSite">
     <attribute name="primaryIdentifier" value="FBti0031976"/>
     <attribute name="secondaryIdentifier" value="P{RS5r}5-HA-1496"/>
-    <attribute name="symbol" value="P{RS5r}5-HA-1496"/>
     <reference name="chromosomeLocation" ref_id="15_10"/>
     <reference name="organism" ref_id="1_1"/>
     <collection name="dataSets"><reference ref_id="4_1"/></collection>
@@ -736,7 +729,6 @@
   <item id="12_2" class="http://www.flymine.org/model/genomic#TransposableElementInsertionSite">
     <attribute name="primaryIdentifier" value="FBti0028225"/>
     <attribute name="secondaryIdentifier" value="P{RS3}CB-0697-3"/>
-    <attribute name="symbol" value="P{RS3}CB-0697-3"/>
     <reference name="organism" ref_id="1_1"/>
     <collection name="dataSets"><reference ref_id="4_1"/></collection>
   </item>
