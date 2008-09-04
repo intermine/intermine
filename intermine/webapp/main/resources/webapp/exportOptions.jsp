@@ -25,6 +25,11 @@
       var sorted = jQuery('#pathsList').sortable( "serialize");
       jQuery('#pathsString').val(sorted);
   }
+  
+  function removeElement(elid) {
+      var el = document.getElementById(elid);
+      el.parentNode.removeChild(el);
+  }
 </script>
 <style type="text/css" media="screen">
     .ui-selected{
@@ -36,7 +41,7 @@
     #pathsList li{
         float:left;
         list-style: none;
-        border:2px solid #bbbbbb;
+        border:1px solid #bbbbbb;
         background:#FFF;
         padding:5px;
         margin:5px 1px 10px 1px;
@@ -63,7 +68,7 @@
   </c:otherwise>
 </c:choose></h2>
 <br/>
-${exportReorderMessage}
+<div style="style="margin-top: 10px; margin-bottom: 10px;">${exportReorderMessage}</div>
 <br/>
 
 <!-- exporting type: ${type} -->
@@ -93,7 +98,14 @@ ${exportReorderMessage}
 
   <ul id="pathsList">
     <c:forEach var="path" items="${paths}" varStatus="status">
-      <li id="${path}_${status.count}">${path}</li>
+      <li id="${path}_${status.count}">
+          <div class="viewpath">
+          ${path}
+          <a href="javascript:removeElement('${path}_${status.count}')" title="Remove ${path} from the export"><img border="0" align="top"
+           src="images/cross.gif" width="10" height="10" 
+           title="x" style="position: relative; top: -3px; left: 2px;"/></a>
+          </div>
+      </li>
     </c:forEach>
   </ul>
 
