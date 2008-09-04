@@ -25,11 +25,11 @@
   </query>
  <query name="departmentBagConstraint" model="testmodel" view="Department.name" sortOrder="Department.name asc" constraintLogic="A and B">
   <node path="Department" type="Department">
-    <constraint op="IN" value="departmentBag" description="" identifier="" code="A"></constraint>
+    <constraint op="IN" value="departmentBag" code="A"></constraint>
   </node>
   <node path="Department.manager" type="Manager"></node>
   <node path="Department.company" type="Company">
-    <constraint op="LOOKUP" value="*ABC*" description="" identifier="" code="B" extraValue=""></constraint>
+    <constraint op="LOOKUP" value="*ABC*" code="B"></constraint>
   </node>
  </query>
  <query name="noOrderBy" model="testmodel" view="Employee.name Employee.department.name"></query>
