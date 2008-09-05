@@ -113,7 +113,7 @@ public class FlyBaseModuleProcessor extends ChadoSequenceProcessor
     //  - matches "f07705" in "PBac{WH}tam[f07705]"
     //  - otherwise matches the whole value
     private static final Pattern PB_INSERTION_PATTERN =
-        Pattern.compile("PBac\\{WH\\}(?:tam\\[)?([def]\\d+)(?:\\])?|.*$");
+        Pattern.compile(".*\\{.*\\}(?:.*\\[)?([def]\\d+)(?:\\])?");
 
     // pattern to match GLEANR gene symbols from FlyBase chado
     private static final Pattern GLEANR_PATTERN = Pattern.compile(".*GLEANR.*");
