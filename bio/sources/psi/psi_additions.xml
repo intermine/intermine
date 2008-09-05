@@ -18,6 +18,7 @@
         <attribute name="name" type="java.lang.String"/>
         <attribute name="confidence" type="java.lang.Double"/>
         <attribute name="confidenceText" type="java.lang.String"/>
+        <attribute name="interactionType" type="java.lang.String"/>
         <reference name="type" referenced-type="org.flymine.model.genomic.InteractionTerm"/>
         <reference name="gene" referenced-type="org.flymine.model.genomic.Gene" reverse-reference="interactions" />
         <reference name="experiment" referenced-type="org.flymine.model.genomic.InteractionExperiment" reverse-reference="interactions"/>

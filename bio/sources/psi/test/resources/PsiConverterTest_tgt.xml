@@ -28,6 +28,7 @@
 <item id="10_1" class="http://www.flymine.org/model/genomic#Interaction">
 <attribute name="name" value="IntAct:FBgn002_FBgn001"/>
 <attribute name="role" value="prey"/>
+<attribute name="interactionType" value="physical"/>
 <attribute name="shortName" value="appl-aplip1-2"/>
 <reference name="experiment" ref_id="4_1"/>
 <reference name="gene" ref_id="7_1"/>
@@ -72,6 +73,7 @@
 <item id="10_2" class="http://www.flymine.org/model/genomic#Interaction">
 <attribute name="name" value="IntAct:FBgn001_FBgn002"/>
 <attribute name="role" value="bait"/>
+<attribute name="interactionType" value="physical"/>
 <attribute name="shortName" value="appl-aplip1-2"/>
 <reference name="experiment" ref_id="4_1"/>
 <reference name="gene" ref_id="7_2"/>
