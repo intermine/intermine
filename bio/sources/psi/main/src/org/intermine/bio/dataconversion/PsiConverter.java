@@ -622,8 +622,7 @@ public class PsiConverter extends BioFileConverter
 //                }
 //            }
 
-            // use ensembl for worm
-            if (taxonId.equals("7227") || taxonId.equals("6239")) {
+            if (taxonId.equals("7227") || taxonId.equals("4932")) {
                 identifier = identifiers.get("primaryIdentifier");
                 label = "primaryIdentifier";
             } else {
