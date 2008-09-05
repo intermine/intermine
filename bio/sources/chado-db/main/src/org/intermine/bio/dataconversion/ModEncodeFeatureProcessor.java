@@ -46,7 +46,9 @@ public class ModEncodeFeatureProcessor extends ChadoSequenceProcessor
          "CDS", "intron", "exon", "EST",
          "five_prime_untranslated_region",
          "five_prime_UTR", "three_prime_untranslated_region",
-         "three_prime_UTR", "origin_of_replication", "binding_site"
+         "three_prime_UTR", "origin_of_replication", 
+         "binding_site", "protein_binding_site"
+         
     );
 
     /**

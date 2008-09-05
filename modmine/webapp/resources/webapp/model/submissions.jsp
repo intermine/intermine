@@ -75,25 +75,23 @@ ${sub.key.lab.project.name}
 									</query>
 								</im:querylink>
 							</c:when>
-              <c:when test='${fc.key eq "BindingSite"}'>
+              <c:when test='${fc.key eq "BindingSite" || fc.key eq "ProteinBindingSite"}'>
+              <!-- added because at the moment BindingSite don't have a chromosomeLocation -->
                 <im:querylink text="${fc.value}" skipBuilder="true">
-
-
-
-
-<query name="" model="genomic" view="${fc.key}.dataSets.title ${fc.key}.secondaryIdentifier ${fc.key}.primaryIdentifier ${fc.key}.length" sortOrder="${fc.key}.primaryIdentifier asc">
-  <node path="${fc.key}" type="${fc.key}">
-  </node>
-  <node path="${fc.key}.dataSets" type="DataSet">
-  </node>
-  <node path="${fc.key}.dataSets.title" type="String">
-    <constraint op="=" value="${sub.key.title}" description="" identifier="" code="A">
-    </constraint>
-  </node>
-</query>
-
-
-                </im:querylink>
+									<query name="" model="genomic"
+										view="BindingSite.dataSets.title BindingSite.secondaryIdentifier BindingSite.primaryIdentifier BindingSite.length"
+										sortOrder="BindingSite.primaryIdentifier asc">
+									<node path="BindingSite" type="BindingSite">
+									</node>
+									<node path="BindingSite.dataSets" type="DataSet">
+									</node>
+									<node path="BindingSite.dataSets.title" type="String">
+									<constraint op="=" value="${sub.key.title}" description=""
+										identifier="" code="A">
+									</constraint>
+									</node>
+									</query>
+								</im:querylink>
               </c:when>
 
 
