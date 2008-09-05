@@ -75,9 +75,31 @@ ${sub.key.lab.project.name}
 									</query>
 								</im:querylink>
 							</c:when>
+              <c:when test='${fc.key eq "BindingSite"}'>
+                <im:querylink text="${fc.value}" skipBuilder="true">
+
+
+
+
+<query name="" model="genomic" view="${fc.key}.dataSets.title ${fc.key}.secondaryIdentifier ${fc.key}.primaryIdentifier ${fc.key}.length" sortOrder="${fc.key}.primaryIdentifier asc">
+  <node path="${fc.key}" type="${fc.key}">
+  </node>
+  <node path="${fc.key}.dataSets" type="DataSet">
+  </node>
+  <node path="${fc.key}.dataSets.title" type="String">
+    <constraint op="=" value="${sub.key.title}" description="" identifier="" code="A">
+    </constraint>
+  </node>
+</query>
+
+
+                </im:querylink>
+              </c:when>
+
+
 
 							<c:otherwise>
-															<im:querylink text="${fc.value}" skipBuilder="true">
+								<im:querylink text="${fc.value}" skipBuilder="true">
 									<query name="" model="genomic"
 										view="${fc.key}.dataSets.title ${fc.key}.primaryIdentifier ${fc.key}.secondaryIdentifier ${fc.key}.length 
                   ${fc.key}.chromosomeLocation.object.primaryIdentifier ${fc.key}.chromosomeLocation.start ${fc.key}.chromosomeLocation.end"
