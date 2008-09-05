@@ -228,13 +228,13 @@
     </item>
 
     <item id="621" class="" implements="http://www.flymine.org/model/genomic#DataSet">
-        <attribute name="title" value="Affymetrix array: Affy drosgenome1"/>
+        <attribute name="title" value="Affymetrix array: DrosGenome1"/>
         <attribute name="description" value="The GeneChip® Drosophila Genome Array is a microarray tool for studying expression of Drosophila melanogaster transcripts."/>
         <attribute name="url" value="http://www.affymetrix.com/products/arrays/specific/fly.affx"/>
         <reference name="dataSource" ref_id="210"/>
     </item>
     <item id="622" class="" implements="http://www.flymine.org/model/genomic#DataSet">
-        <attribute name="title" value="Affymetrix array: Affy drosophila 2"/>
+        <attribute name="title" value="Affymetrix array: Drosophila_2"/>
         <attribute name="description" value="The GeneChip® Drosophila Genome Array is a microarray tool for studying expression of Drosophila melanogaster transcripts."/>
         <attribute name="url" value="http://www.affymetrix.com/products/arrays/specific/fly_2.affx"/>
         <reference name="dataSource" ref_id="210"/>
