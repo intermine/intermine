@@ -16,7 +16,6 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
-import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
@@ -50,7 +49,7 @@ public class PsiConverter extends BioFileConverter
     private String termId = null;
     private Map<String, Item> genes = new  HashMap<String, Item>();
     protected IdResolverFactory resolverFactory;
-    private static final Map<String, String> IDENTIFIERS = new LinkedHashMap();
+//    private static final Map<String, String> IDENTIFIERS = new LinkedHashMap();
     private static final String INTERACTION_TYPE = "physical";
 
     /**
@@ -71,14 +70,14 @@ public class PsiConverter extends BioFileConverter
         }
     }
 
-    static {
-        IDENTIFIERS.put("primaryIdentifier", "primaryIdentifier");
-//        IDENTIFIERS.put("ensembl", null);
-//        IDENTIFIERS.put("orf name", "secondaryIdentifier");
-        //IDENTIFIERS.put("gene name", "symbol");
-//        IDENTIFIERS.put("fullName", "secondaryIdentifier");
-        //IDENTIFIERS.put("shortLabel", "symbol");
-    }
+//    static {
+//        IDENTIFIERS.put("primaryIdentifier", "primaryIdentifier");
+////        IDENTIFIERS.put("ensembl", null);
+////        IDENTIFIERS.put("orf name", "secondaryIdentifier");
+//        //IDENTIFIERS.put("gene name", "symbol");
+////        IDENTIFIERS.put("fullName", "secondaryIdentifier");
+//        //IDENTIFIERS.put("shortLabel", "symbol");
+//    }
 
     /**
      * A space separated list of of NCBI taxonomy ids for which we want to retrieve
@@ -606,20 +605,32 @@ public class PsiConverter extends BioFileConverter
 
             String identifier = null, label = null;
 
-            for (String identifierType : IDENTIFIERS.keySet()) {
-                identifier = identifiers.get(identifierType);
+//            for (String identifierType : IDENTIFIERS.keySet()) {
+//                identifier = identifiers.get(identifierType);
+//                if (identifier != null) {
+//                    if (identifierType.equals("ensembl")) {
+//                        if (identifier.startsWith("EN")) {
+//                            label = "primaryIdentifier";
+//                        } else {
+//                            // worm, dmel, yeast
+//                            label = "secondaryIdentifier";
+//                        }
+//                    } else {
+//                        label = IDENTIFIERS.get(identifierType);
+//                    }
+//                    break;
+//                }
+//            }
+
+            // use ensembl for worm
+            if (taxonId.equals("7227") || taxonId.equals("6239")) {
+                identifier = identifiers.get("primaryIdentifier");
+                label = "primaryIdentifier";
+            } else {
+                identifier = identifiers.get("ensembl");
                 if (identifier != null) {
-                    if (identifierType.equals("ensembl")) {
-                        if (identifier.startsWith("EN")) {
-                            label = "primaryIdentifier";
-                        } else {
-                            // worm, dmel, yeast
-                            label = "secondaryIdentifier";
-                        }
-                    } else {
-                        label = IDENTIFIERS.get(identifierType);
-                    }
-                    break;
+                    label = (identifier.startsWith("EN")
+                                    ? "primaryIdentifier" : "secondaryIdentifier");
                 }
             }
 
