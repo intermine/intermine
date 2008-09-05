@@ -311,6 +311,10 @@ public class BioGridConverter extends BioFileConverter
                             && qName.equals("shortLabel")) {
                 String term = attValue.toString();
                 holder.methodRefId = getTerm(term);
+                if (term.equalsIgnoreCase("phenotypic enhancement")
+                                || term.equalsIgnoreCase("phenotypic suppression")) {
+                    holder.interactionType = "genetic";
+                }
                 //</interaction>
             } else if (qName.equals("interaction") && holder != null && holder.validActors) {
                 storeInteraction(holder);
@@ -326,6 +330,7 @@ public class BioGridConverter extends BioFileConverter
                 if (ih.role != null) {
                     interaction.setAttribute("role", ih.role);
                 }
+                interaction.setAttribute("interactionType", h.interactionType);
                 interaction.setReference("gene", refId);
                 interaction.setCollection("interactingGenes", getInteractingObjects(h, refId));
                 interaction.setReference("type", h.methodRefId);
@@ -515,6 +520,7 @@ public class BioGridConverter extends BioFileConverter
             protected Set<String> identifiers = new HashSet<String>();
             protected boolean validActors = true;
             protected String methodRefId;
+            protected String interactionType = "physical";
 
             /**
              * @param eh object holding experiment object

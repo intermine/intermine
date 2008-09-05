@@ -25,6 +25,7 @@
 </item>
 <item id="7_1" class="http://www.flymine.org/model/genomic#Interaction">
 <attribute name="role" value="prey"/>
+<attribute name="interactionType" value="genetic"/>
 <attribute name="name" value="BioGRID:FBgn003_FBgn001"/>
 <reference name="experiment" ref_id="4_1"/>
 <reference name="gene" ref_id="6_2"/>
@@ -40,6 +41,7 @@
 <collection name="dataSets"><reference ref_id="1_1"/></collection>
 </item>
 <item id="7_2" class="http://www.flymine.org/model/genomic#Interaction">
+<attribute name="interactionType" value="genetic"/>
 <attribute name="role" value="bait"/>
 <attribute name="name" value="BioGRID:FBgn001_FBgn003"/>
 <reference name="experiment" ref_id="4_1"/>

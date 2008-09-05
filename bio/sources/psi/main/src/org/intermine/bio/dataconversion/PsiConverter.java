@@ -51,6 +51,7 @@ public class PsiConverter extends BioFileConverter
     private Map<String, Item> genes = new  HashMap<String, Item>();
     protected IdResolverFactory resolverFactory;
     private static final Map<String, String> IDENTIFIERS = new LinkedHashMap();
+    private static final String INTERACTION_TYPE = "physical";
 
     /**
      * Constructor
@@ -511,6 +512,7 @@ public class PsiConverter extends BioFileConverter
                 String shortName = interactionHolder.shortName;
                 interaction.setAttribute("shortName", shortName);
                 interaction.setAttribute("role", interactorHolder.role);
+                interaction.setAttribute("interactionType", INTERACTION_TYPE);
 
                 String name = buildName(interactionHolder.primaryIdentifiers, identifier);
                 interaction.setAttribute("name", name);
