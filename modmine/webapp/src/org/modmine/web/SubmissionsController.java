@@ -106,7 +106,7 @@ public class SubmissionsController extends TilesAction
 
                 fc.put(TypeUtil.unqualifiedName(feat.getName()), count);
                 
-                // check if you need to add to fc before putting it in subs
+                // check if there is the need to add to fc before putting it in subs
                 // Note: the db query get the feature class in descending alphabetical order,
                 // so this will bring back the ascending order
                 if (subs.containsKey(s)) {
@@ -125,44 +125,3 @@ public class SubmissionsController extends TilesAction
         return null;
     }
 }
-
-
-//StringBuffer lastSub = new StringBuffer("-");
-//Integer iteration = 0;
-//
-//
-//// for each classes set the values for jsp
-//for (Iterator iter = results.iterator(); iter.hasNext(); ) {
-////    ResultsRow row = (ResultsRow) iter.next();
-////    Class feat = (Class) row.get(0);
-////    Long count = (Long) row.get(1);
-////    fc.put(TypeUtil.unqualifiedName(feat.getName()), count);
-//
-//    iteration++;
-//    
-//    ResultsRow row = (ResultsRow) iter.next();
-//    Submission s = (Submission) row.get(0);
-//    Class feat = (Class) row.get(1);
-//    Long count = (Long) row.get(2);
-//    
-//    String thisSub = s.getTitle();
-//
-//    fc.put(TypeUtil.unqualifiedName(feat.getName()), count);
-//    
-//    if (!thisSub.equals(lastSub.toString())) { 
-//        lastSub.delete(0, lastSub.length());
-//        lastSub.append(thisSub);
-//
-//        // if not the first one
-//        if (iteration > 1 && iteration < results.size()) {
-//            subs.put(lastSub.toString(), fc);
-//            fc.clear();
-//        }
-//    }
-//}            
-//
-//subs.put(lastSub.toString(), fc);
-//
-//request.setAttribute("features", fc);
-////request.setAttribute("sub", lastSub.toString());
-//request.setAttribute("subs", subs);
