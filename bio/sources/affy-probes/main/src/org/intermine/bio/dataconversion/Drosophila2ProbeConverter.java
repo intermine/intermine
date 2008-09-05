@@ -54,7 +54,7 @@ public class Drosophila2ProbeConverter extends FileConverter
         super(writer, model);
 
         dataSource = createItem("DataSource");
-        dataSource.setAttribute("name", "Affymetrix");
+        dataSource.setAttribute("name", "Ensembl");
         store(dataSource);
 
         org = createItem("Organism");
