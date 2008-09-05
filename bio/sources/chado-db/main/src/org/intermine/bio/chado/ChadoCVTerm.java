@@ -13,6 +13,8 @@ package org.intermine.bio.chado;
 import java.util.HashSet;
 import java.util.Set;
 
+import java.lang.ref.WeakReference;
+
 /**
  * Objects of this class represent one row of the chado cvterm table.
  * @author Kim Rutherford
@@ -22,6 +24,8 @@ public class ChadoCVTerm
     private String name;
     private Set<ChadoCVTerm> directParents = new HashSet<ChadoCVTerm>();
     private Set<ChadoCVTerm> directChildren = new HashSet<ChadoCVTerm>();
+    private WeakReference<Set<ChadoCVTerm>> allParentsRef = null;
+    private WeakReference<Set<ChadoCVTerm>> allChildrenRef = null;
 
     /**
      * Create a new cv term object
@@ -105,12 +109,19 @@ public class ChadoCVTerm
      * @return all the parent terms
      */
     public Set<ChadoCVTerm> getAllParents() {
-        Set<ChadoCVTerm> retSet = new HashSet<ChadoCVTerm>();
-        for (ChadoCVTerm parent: getDirectParents()) {
-            retSet.addAll(parent.getAllParents());
+        Set<ChadoCVTerm> allParents = null;
+        if (allParentsRef != null) {
+            allParents = allParentsRef.get();
         }
-        retSet.addAll(getDirectParents());
-        return retSet;
+        if (allParents == null) {
+            allParents = new HashSet<ChadoCVTerm>();
+            for (ChadoCVTerm parent: getDirectParents()) {
+                allParents.addAll(parent.getAllParents());
+            }
+            allParents.addAll(getDirectParents());
+            allParentsRef = new WeakReference<Set<ChadoCVTerm>>(allParents);
+        }
+        return allParents;
     }
 
     /**
@@ -118,12 +129,19 @@ public class ChadoCVTerm
      * @return all the child terms
      */
     public Set<ChadoCVTerm> getAllChildren() {
-        Set<ChadoCVTerm> retSet = new HashSet<ChadoCVTerm>();
-        for (ChadoCVTerm child: getDirectChildren()) {
-            retSet.addAll(child.getAllChildren());
+        Set<ChadoCVTerm> allChildren = null;
+        if (allChildrenRef != null) {
+            allChildren = allChildrenRef.get();
         }
-        retSet.addAll(getDirectChildren());
-        return retSet;
+        if (allChildren == null) {
+            allChildren = new HashSet<ChadoCVTerm>();
+            for (ChadoCVTerm child: getDirectChildren()) {
+                allChildren.addAll(child.getAllChildren());
+            }
+            allChildren.addAll(getDirectChildren());
+            allChildrenRef = new WeakReference<Set<ChadoCVTerm>>(allChildren);
+        }
+        return allChildren;
     }
 
 }
