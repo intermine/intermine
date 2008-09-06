@@ -553,7 +553,7 @@ public class UniprotConverter extends FileConverter
                     // only store the protein if it has a primary accession value
                     if (hasPrimary) {
 
-                        if (descr != null && !descr.equals("")) {
+                        if (descr.length() > 0) {
                             protein.setAttribute("description", descr.toString());
                         }
                         protein.setCollection("dataSets",
