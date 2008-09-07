@@ -596,7 +596,7 @@ public class UniprotConverter extends FileConverter
                         protein.setReference("sequence", sequence.getIdentifier());
                         writer.store(ItemHelper.convert(sequence));
                     } else {
-                        LOG.debug("Sequence for " + protein.getAttribute("name").getValue()
+                        LOG.debug("Sequence for " + protein.getAttribute("primaryIdentifier").getValue()
                                 + " does not have a length");
                     }
                 // <entry><protein><name>
