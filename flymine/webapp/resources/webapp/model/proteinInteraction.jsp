@@ -10,7 +10,7 @@
         Current data
       </div>
       <div class="body">
-        <h4>  
+        <h4>
           <a href="javascript:toggleDiv('hiddenDiv1');">
             <img id='hiddenDiv1Toggle' src="images/disclosed.gif"/>
             Interactions datasets ...
@@ -18,10 +18,10 @@
         </h4>
 
         <div id="hiddenDiv1" class="dataSetDescription">
-          
+
           <ul><li><dt>Protein interactions have been loaded for <i>D. melanogaster</i>, <i>C. elegans</i> and <i>S. cerevisiae</i> from <a href="http://www.ebi.ac.uk/intact/" target="_new">IntAct</a>.</dt></li></ul>
 
-          <ul><li><dt>Genetic and protein interaction data for <i>D. melanogaster</i>, <i>C. elegans</i> and <i>S. cerevisiae</i> have been loaded from the <a href="http://www.thebiogrid.org/" target="_new">BioGrid</a>. These data include both high-throughput studies and conventional focussed studies and have been curated from the literature.</dt></li></ul>
+          <ul><li><dt>Genetic and protein interaction data for <i>D. melanogaster</i>, <i>C. elegans</i> and <i>S. cerevisiae</i> have been loaded from the <a href="http://www.thebiogrid.org/" target="_new">BioGrid</a>. These data include both high-throughput studies and conventional focused studies and have been curated from the literature.</dt></li></ul>
 
         </div>
 
@@ -178,7 +178,7 @@
 
 
    <li>
-            <im:querylink text="All <i>S. cerevisiae</i> interactions from BioGRID " skipBuilder="true">
+            <im:querylink text="All <i>S. cerevisiae</i> interactions from IntAct " skipBuilder="true">
 <query name="" model="genomic" view="Interaction.experiment.publication.pubMedId Interaction.experiment.name Interaction.experiment.interactionDetectionMethod.name Interaction.experiment.participantIdentificationMethod.name Interaction.gene.primaryIdentifier Interaction.role Interaction.interactingGenes.primaryIdentifier Interaction.type.name" sortOrder="Interaction.experiment.publication.pubMedId asc" constraintLogic="A and B">
   <node path="Interaction" type="Interaction">
   </node>
@@ -202,7 +202,7 @@
             </im:querylink>
 </li>
 
-         
+
         </ul>
 
       </div>
