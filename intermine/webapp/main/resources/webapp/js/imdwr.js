@@ -701,7 +701,7 @@ function validateBagOperations(formName, operation) {
       bagName, selectedBags, operation, function(errMsg) {
           if (errMsg != '') {
               new Insertion.Bottom('error_msg',errMsg + '<br/>');
-              Effect.Appear('error_msg');
+              jQuery('#error_msg').fadeIn(2000);
           } else {
               frm.listsButton.value = operation;
               frm.submit();
