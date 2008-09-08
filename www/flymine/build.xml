@@ -64,6 +64,13 @@
         <include name="js/*"/>
       </fileset>
     </copy>
+
+    <copy todir="${dist.www}">
+      <fileset dir="${src.www}">
+        <include name="talks/*.pdf"/>
+      </fileset>
+    </copy>
+
   </target>
 
   <target name="style-site" depends="prepare">
@@ -188,8 +195,6 @@
   <target name="transform-site"
           depends="style-site, validate-site-xhtml"
           description="Transform the website contents from XML to HTML"/>
-
-
 
 
   <target name="release-www" depends="style-site, generate-tour, generate-help, generate-tutorials, generate-sitemap"
