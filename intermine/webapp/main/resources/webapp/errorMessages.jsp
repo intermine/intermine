@@ -65,13 +65,13 @@ var hasmessages=0;
 </c:if>
 
 if(haserrors) {
-    jQuery('#error_msg').show(2000);
+    jQuery('#error_msg').fadeIn(2000);
 }
 if(hasmessages) {
-    jQuery('#msg').show(2000);
+    jQuery('#msg').fadeIn(2000);
 }
 if(haslookup) {
-    jQuery('#lookup_msg').show(2000);
+    jQuery('#lookup_msg').fadeIn(2000);
 }
 
 </script>

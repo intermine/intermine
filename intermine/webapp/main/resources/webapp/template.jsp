@@ -102,7 +102,7 @@
 
           $(id).style.left = (_clientX + _offsetX) + "px";
           $(id).style.top = (_clientY + _offsetY) + "px";
-          jQuery('#' + id).show(300);
+          jQuery('#' + id).fadeIn(300);
           helpMsgArray[helpMsgArray.length] = id;
           ourDate = new Date().getTime();
      } else {
@@ -132,7 +132,7 @@
        if (isBagUsed()) {
             new Insertion.Bottom('error_msg','Link could not be created. This template contains list constraint(s). The service for this special template is not implemented yet. Solution: Don\'t use list contraint.<br/>');
             haserrors=1;
-            jQuery('#error_msg').show();
+            jQuery('#error_msg').fadeIn();
             return;
        }
        document.getElementById('actionType').value = 'links';
