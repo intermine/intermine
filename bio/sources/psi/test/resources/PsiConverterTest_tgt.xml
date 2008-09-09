@@ -9,6 +9,7 @@
 <reference name="interactionDetectionMethod" ref_id="2_2"/>
 <reference name="participantIdentificationMethod" ref_id="2_3"/>
 <reference name="publication" ref_id="5_1"/>
+<collection name="comments"><reference ref_id="6_1"/><reference ref_id="6_2"/><reference ref_id="6_3"/></collection>
 </item>
 <item id="0_1" class="http://www.flymine.org/model/genomic#DataSource">
 <attribute name="name" value="IntAct"/>
