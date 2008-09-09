@@ -600,6 +600,7 @@ public abstract class ObjectStoreTestCase extends StoreDataTestCase
         r = new Object[][] { { DynamicUtil.composeClass(Broke.class, CEO.class), new Long(1) },
                              { DynamicUtil.composeClass(Broke.class, Contractor.class), new Long(1) } };
         results.put("SelectClassFromBrokeEmployable", toList(r));
+        results.put("SelectWhereBackslash", Collections.emptyList());
     }
 
     /**

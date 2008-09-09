@@ -267,6 +267,7 @@ public abstract class ObjectStoreQueriesTestCase extends QueryTestCase
         queries.put("SelectClassFromInterMineObject", selectClassFromInterMineObject());
         queries.put("SelectClassFromEmployee", selectClassFromEmployee());
         queries.put("SelectClassFromBrokeEmployable", selectClassFromBrokeEmployable());
+        queries.put("SelectWhereBackslash", selectWhereBackslash());
     }
 
     /*
@@ -2080,6 +2081,19 @@ public abstract class ObjectStoreQueriesTestCase extends QueryTestCase
         q.addToSelect(qf);
         q.addToSelect(new QueryFunction());
         q.addToGroupBy(qf);
+        q.setDistinct(false);
+        return q;
+    }
+
+    /*
+     * SELECT a1_ FROM Employee WHERE a1_.name = "Fred\Blogs"
+     */
+    public static Query selectWhereBackslash() throws Exception {
+        Query q = new Query();
+        QueryClass qc = new QueryClass(Employee.class);
+        q.addFrom(qc);
+        q.addToSelect(qc);
+        q.setConstraint(new SimpleConstraint(new QueryField(qc, "name"), ConstraintOp.EQUALS, new QueryValue("Fred\\Blog's")));
         q.setDistinct(false);
         return q;
     }

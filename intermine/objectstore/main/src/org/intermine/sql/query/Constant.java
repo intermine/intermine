@@ -82,9 +82,19 @@ public class Constant extends AbstractValue
             if (value.equals(objC.value)) {
                 return EQUAL;
             }
-            boolean thisIsString = ((value.charAt(0) == '\'')
+            boolean thisIsString = ((value.toUpperCase().charAt(0) == 'E')
+                    && (value.charAt(1) == '\'')
                     && (value.charAt(value.length() - 1) == '\''));
-            boolean objIsString = ((objC.value.charAt(0) == '\'')
+            boolean objIsString = ((objC.value.toUpperCase().charAt(0) == 'E')
+                    && (objC.value.charAt(1) == '\'')
+                    && (objC.value.charAt(objC.value.length() - 1) == '\''));
+            if (thisIsString && objIsString) {
+                // Both this and obj are string constants.
+                return (value.compareTo(objC.value) < 0 ? LESS : GREATER);
+            }
+            thisIsString = ((value.charAt(0) == '\'')
+                    && (value.charAt(value.length() - 1) == '\''));
+            objIsString = ((objC.value.charAt(0) == '\'')
                     && (objC.value.charAt(objC.value.length() - 1) == '\''));
             if (thisIsString && objIsString) {
                 // Both this and obj are string constants.

@@ -341,6 +341,22 @@ public class StringUtil
     }
 
     /**
+     * Escapes single quotes and backslashes, with backslashes.
+     *
+     * @param s the string to format
+     * @return the modified string
+     */
+    public static String escapeWithBackslashes(String s) {
+        if (s.indexOf('\\') != -1) {
+            s = s.replace("\\", "\\\\");
+        }
+        if (s.indexOf('\'') != -1) {
+            s = s.replace("\'", "\\\'");
+        }
+        return s;
+    }
+
+    /**
      * Escape single backslash with single forwardslash for correct storage in postgres.
      *
      * @param s the string to format
@@ -450,9 +466,9 @@ public class StringUtil
         Map returnMap = new LinkedHashMap<String, String>();
         String[] strArray = str.split("&");
         for (String path: strArray) {
-			returnMap.put(StringUtils.split(path, "[]=")[0], StringUtils.split(
-					path, "[]=")[1]);
-		}
+            returnMap.put(StringUtils.split(path, "[]=")[0], StringUtils.split(
+                        path, "[]=")[1]);
+        }
         return returnMap;
     }
     

@@ -482,8 +482,8 @@ public class TypeUtil
         return cls;
     }
 
-    static final private DateFormat DATE_TIME_FORMAT;
-    static final private DateFormat DATE_FORMAT;
+    private static final DateFormat DATE_TIME_FORMAT;
+    private static final DateFormat DATE_FORMAT;
 
     static {
         DATE_TIME_FORMAT = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");

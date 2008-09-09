@@ -93,7 +93,7 @@ table_name: #( TABLE_NAME IDENTIFIER ) ;
 
 table_alias: #( TABLE_ALIAS IDENTIFIER ) ;
 
-constant: #( CONSTANT ( QUOTED_STRING | INTEGER | FLOAT | "true" | "false" | "null" ) ) ;
+constant: #( CONSTANT ( QUOTED_STRING | ESCAPED_STRING | INTEGER | FLOAT | "true" | "false" | "null" ) ) ;
 
 typecast: #( TYPECAST abstract_value ("boolean" | "real" | "double" | "smallint" | "integer" | "bigint" | "numeric" | "text")+ );
 
@@ -416,7 +416,7 @@ subquery:
 
 constant:
 //TODO: properly
-        ( QUOTED_STRING | INTEGER | FLOAT | "true" | "false" | "null" )
+        ( QUOTED_STRING | ESCAPED_STRING | INTEGER | FLOAT | "true" | "false" | "null" )
         { #constant = #([CONSTANT, "CONSTANT"], #constant); }
     ;
 
@@ -545,6 +545,10 @@ ALIAS options { testLiterals=true; } :
 
 QUOTED_STRING:
         '\'' ( ~'\'' )* ( '\'' '\'' ( ~'\'' )* )* '\''
+    ;
+
+ESCAPED_STRING:
+        'e' '\'' ( ~('\'' | '\\') )* ( '\\' ( '\'' | '\\' ) ( ~('\'' | '\\') )* )* '\''
     ;
 
 SEMI: ';';
