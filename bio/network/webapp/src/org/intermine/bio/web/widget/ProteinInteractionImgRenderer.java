@@ -24,7 +24,7 @@ import javax.servlet.http.HttpSession;
 import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
-import org.flymine.model.genomic.Protein;
+import org.flymine.model.genomic.Gene;
 import org.intermine.bio.networkview.CyNet2Image;
 import org.intermine.bio.networkview.FlyNetworkIntegrator;
 import org.intermine.bio.networkview.ProteinInteractionRetriever;
@@ -70,11 +70,11 @@ public class ProteinInteractionImgRenderer extends InterMineAction
 
         ServletContext ct = session.getServletContext();
         ObjectStore os = (ObjectStore) ct.getAttribute(Constants.OBJECTSTORE);
-        Protein p = (Protein) os.getObjectById(Integer.valueOf(id));
+        Gene p = (Gene) os.getObjectById(Integer.valueOf(id));
 
         ProteinInteractionRetriever pir = new ProteinInteractionRetriever(os);
         Collection c = new ArrayList();
-        c.add(p.getPrimaryAccession());
+        c.add(p.getPrimaryIdentifier());
         FlyNetwork fn = pir.expandNetworkFromProteins(c);
         if (fn == null) {
             msg.append("expandNetworkFromProteins returned null\n");
