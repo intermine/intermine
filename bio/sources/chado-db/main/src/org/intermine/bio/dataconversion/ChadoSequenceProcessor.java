@@ -21,16 +21,18 @@ import java.util.Map;
 import java.util.Set;
 import java.util.TreeSet;
 import java.util.Map.Entry;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
+import org.intermine.bio.chado.config.ConfigAction;
+import org.intermine.bio.chado.config.CreateCollectionAction;
+import org.intermine.bio.chado.config.CreateSynonymAction;
+import org.intermine.bio.chado.config.DoNothingAction;
+import org.intermine.bio.chado.config.SetFieldConfigAction;
 import org.intermine.bio.util.OrganismData;
 import org.intermine.metadata.ClassDescriptor;
 import org.intermine.metadata.FieldDescriptor;
 import org.intermine.metadata.MetaDataException;
 import org.intermine.metadata.ReferenceDescriptor;
 import org.intermine.objectstore.ObjectStoreException;
-import org.intermine.util.CacheMap;
 import org.intermine.util.StringUtil;
 import org.intermine.util.TypeUtil;
 import org.intermine.util.XmlUtil;
@@ -999,7 +1001,7 @@ public class ChadoSequenceProcessor extends ChadoProcessor
                         if (existingSynonyms.contains(newFieldValue)) {
                             continue;
                         } else {
-                            String synonymType = synonymAction.synonymType;
+                            String synonymType = synonymAction.getSynonymType();
                             if (synonymType == null) {
                                 synonymType = propTypeName;
                             }
@@ -1083,7 +1085,7 @@ public class ChadoSequenceProcessor extends ChadoProcessor
                         if (existingSynonyms.contains(newFieldValue)) {
                             continue;
                         } else {
-                            String synonymType = synonymAction.synonymType;
+                            String synonymType = synonymAction.getSynonymType();
                             boolean isPrimary = false;
                             if (fieldsSet.contains(newFieldValue)) {
                                 isPrimary = true;
@@ -1793,235 +1795,6 @@ public class ChadoSequenceProcessor extends ChadoProcessor
          */
         public String getInterMineType() {
             return interMineType;
-        }
-    }
-
-
-    /**
-     * A class that represents an action while processing synonyms, dbxrefs, etc.
-     * @author Kim Rutherford
-     */
-    protected static class ConfigAction
-    {
-        // empty
-    }
-
-    /**
-     *
-     * @author Kim Rutherford
-     */
-    protected static class MatchingFieldConfigAction extends ConfigAction
-    {
-        private final Pattern pattern;
-        private final CacheMap cacheMap = new CacheMap();
-
-        /**
-         * Construct a MatchingFieldConfigAction.
-         */
-        MatchingFieldConfigAction() {
-            pattern = null;
-        }
-
-        /**
-         * Construct with a pattern that values must match.  If the value from chado doesn't match
-         * the pattern it isn't stored.
-         * @param pattern a regular expression pattern
-         */
-        MatchingFieldConfigAction(Pattern pattern) {
-            this.pattern = pattern;
-        }
-
-        /**
-         * Validate a value for this field by matching with pattern set in the constructor.
-         * @param value the value to check
-         * @return true if value matches the pattern
-         */
-        public boolean isValidValue(String value) {
-            if (pattern == null) {
-                return true;
-            }
-            Matcher matcher;
-            if (cacheMap.containsKey(value)) {
-                matcher = (Matcher) cacheMap.get(value);
-            } else {
-                matcher = pattern.matcher(value);
-                cacheMap.put(value, matcher);
-            }
-            return matcher.matches();
-        }
-
-        /**
-         * Process the value to set and return a (possibly) altered version.  If a pattern was set
-         * in the constructor and the pattern contains a capturing group, then return the contents
-         * of the capturing group, otherwise return the whole value.  If there is no pattern, return
-         * the whole value.
-         * @param value the attribute value to process
-         * @return the processed value
-         */
-        public String processValue(String value) {
-            if (pattern == null) {
-                return value;
-            }
-            Matcher matcher = (Matcher) cacheMap.get(value);
-            if (matcher.groupCount() == 0) {
-                // no capturing group in pattern so return the whole value
-                return value;
-            } else {
-                if (matcher.groupCount() == 1) {
-                   if (matcher.group(1) == null) {
-                       // special case - the pattern matches, but doesn't match the capturing group
-                       return value;
-                   } else {
-                       return matcher.group(1);
-                   }
-                } else {
-                    throw new RuntimeException("more than one capturing group in: "
-                                               + pattern.toString());
-                }
-            }
-        }
-    }
-
-    /**
-     * An action that sets an attribute in a new Item.
-     */
-    protected static class SetFieldConfigAction extends MatchingFieldConfigAction
-    {
-        private final String theFieldName;
-
-        /**
-         * Create a new SetFieldConfigAction that sets the given field.
-         * @param fieldName the name of the InterMine object field to set
-         */
-        SetFieldConfigAction(String fieldName) {
-            super(null);
-            this.theFieldName = fieldName;
-        }
-
-        /**
-         * Create a new SetFieldConfigAction that sets the given field.  The value to set must
-         * match the pattern or the field will not be set.
-         * @param fieldName the name of the InterMine object field to set
-         * @param pattern the pattern to match
-         */
-        SetFieldConfigAction(String fieldName, Pattern pattern) {
-            super(pattern);
-            this.theFieldName = fieldName;
-        }
-
-        /**
-         * Return the field name that was passed to the constructor.
-         * @return the field name
-         */
-        public String getFieldName() {
-            return theFieldName;
-        }
-    }
-
-    /**
-     * An action that sets a Synonym.
-     */
-    protected static class CreateSynonymAction extends MatchingFieldConfigAction
-    {
-        private final String synonymType;
-
-        /**
-         * Make a synonym and use the type from chado ("symbol", "identifier" etc.) as the Synonym
-         * type
-         */
-        CreateSynonymAction() {
-            super(null);
-            synonymType = null;
-        }
-
-        /**
-         * Make a synonym and use the type from chado ("symbol", "identifier" etc.) as the Synonym
-         * type.  Only create the synonym if the pattern matches.
-         * @param pattern the pattern that the value must match
-         */
-        CreateSynonymAction(Pattern pattern) {
-            super(pattern);
-            synonymType = null;
-        }
-
-        /**
-         * Make a synonym and use given type as the Synonym type
-         * @param synonymType the synonym type
-         */
-        CreateSynonymAction(String synonymType) {
-            super(null);
-            this.synonymType = synonymType;
-        }
-    }
-
-    /**
-     * An action that does nothing.
-     */
-    protected static class DoNothingAction extends ConfigAction
-    {
-        // do nothing for this data
-    }
-
-    /**
-     * An action that creates a collection of objects from value.
-     */
-    protected class CreateCollectionAction extends MatchingFieldConfigAction
-    {
-        private final String fieldName;
-        private final String className;
-        private final String referenceName;
-        private final boolean createSingletons;
-
-        /**
-         * Create a new CreateCollectionAction object.
-         * @param className the class name of the object to create for each new value
-         * @param referenceName the name of the reference or collection to set or to add the new
-         * object to
-         * @param fieldName the field name to set in the new object
-         * @param createSingletons if true, create only one object of class className with each
-         * possible fieldName; if false, multiple objects with the same value for fieldName might
-         * be created
-         */
-        CreateCollectionAction(String className, String referenceName, String fieldName,
-                               boolean createSingletons) {
-            super(null);
-            this.className = className;
-            this.referenceName = referenceName;
-            this.fieldName = fieldName;
-            this.createSingletons = createSingletons;
-        }
-
-        /**
-         * Return the fieldName that was passed to the constructor.
-         * @return the fieldName
-         */
-        public final String getFieldName() {
-            return fieldName;
-        }
-
-        /**
-         * Return the className that was passed to the constructor.
-         * @return the className
-         */
-        public final String getClassName() {
-            return className;
-        }
-
-        /**
-         * Return the referenceName that was passed to the constructor.
-         * @return the referenceName
-         */
-        public final String getReferenceName() {
-            return referenceName;
-        }
-
-        /**
-         * If true, create only one object of class className with each possible fieldName;
-         * if false, multiple objects with the same value for fieldName might be created
-         * @return true iff the new items should be singletons
-         */
-        public final boolean createSingletons() {
-            return createSingletons;
         }
     }
 }

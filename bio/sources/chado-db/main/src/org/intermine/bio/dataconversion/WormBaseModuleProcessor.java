@@ -14,6 +14,9 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 
+import org.intermine.bio.chado.config.ConfigAction;
+import org.intermine.bio.chado.config.SetFieldConfigAction;
+
 import org.apache.commons.collections.keyvalue.MultiKey;
 import org.apache.commons.collections.map.MultiKeyMap;
 
