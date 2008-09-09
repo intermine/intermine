@@ -8,6 +8,7 @@
 </item>
 <item id="4_1" class="http://www.flymine.org/model/genomic#InteractionExperiment">
 <attribute name="name" value="Giot L (2003)"/>
+<attribute name="description" value="A protein interaction map of Drosophila melanogaster."/>
 <reference name="interactionDetectionMethod" ref_id="3_1"/>
 <reference name="publication" ref_id="2_1"/>
 </item>
