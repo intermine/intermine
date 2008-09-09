@@ -47,9 +47,21 @@ import org.apache.log4j.Logger;
 public class FlyBaseModuleProcessor extends ChadoSequenceProcessor
 {
     /**
+     * The cv.name for the wild type class term.  For chromosome_structure_variations, used to
+     * identify the "Feature type" from the "Class of aberration" section of a FlyBase aberation
+     * page.
+     */
+    private static final String WT_CLASS_CVTERM = "wt_class";
+
+    /**
      * The cv.name for the FlyBase miscellaneous CV.
      */
-    static final String FLY_BASE_MISCELLANEOUS_CV = "FlyBase miscellaneous CV";
+    static final String FLYBASE_MISCELLANEOUS_CV = "FlyBase miscellaneous CV";
+
+    /**
+     * The cv.name for the FlyBase miscellaneous CV.
+     */
+    static final String FLYBASE_SO_CV_NAME = "SO";
 
     /**
      * A ConfigAction that changes FlyBase attribute tags (like "@FBcv0000289:hypomorph") to text
@@ -103,7 +115,12 @@ public class FlyBaseModuleProcessor extends ChadoSequenceProcessor
     // an object representing the FlyBase miscellaneous CV
     private ChadoCV flyBaseMiscCv = null;
 
+    private ChadoCV sequenceOntologyCV = null;
+
     private Map<String, Item> mutagensMap = new HashMap<String, Item>();
+
+    private Map<Integer, Integer> chromosomeStructureVariationTypes =
+        new HashMap<Integer, Integer>();
 
     private static final String ALLELE_TEMP_TABLE_NAME = "intermine_flybase_allele_temp";
     private static final String INSERTION_TEMP_TABLE_NAME = "intermine_flybase_insertion_temp";
@@ -111,12 +128,30 @@ public class FlyBaseModuleProcessor extends ChadoSequenceProcessor
     // pattern to match the names of Exelixis insertions
     //  - matches "f07705" in "PBac{WH}f07705"
     //  - matches "f07705" in "PBac{WH}tam[f07705]"
-    //  - otherwise matches the whole value
     private static final Pattern PB_INSERTION_PATTERN =
         Pattern.compile(".*\\{.*\\}(?:.*\\[)?([def]\\d+)(?:\\])?");
 
     // pattern to match GLEANR gene symbols from FlyBase chado
     private static final Pattern GLEANR_PATTERN = Pattern.compile(".*GLEANR.*");
+
+    private static final Map<String, String> CHROMOSOME_STRUCTURE_VARIATION_SO_MAP =
+        new HashMap<String, String>();
+
+    static {
+        CHROMOSOME_STRUCTURE_VARIATION_SO_MAP.put("chromosomal_deletion",
+                                                  "ChromosomalDeletion");
+        CHROMOSOME_STRUCTURE_VARIATION_SO_MAP.put("chromosomal_duplication",
+                                                  "ChromosomalDuplication");
+        CHROMOSOME_STRUCTURE_VARIATION_SO_MAP.put("chromosomal_inversion",
+                                                  "ChromosomalInversion");
+        CHROMOSOME_STRUCTURE_VARIATION_SO_MAP.put("chromosomal_translocation",
+                                                  "ChromosomalTranslocation");
+        CHROMOSOME_STRUCTURE_VARIATION_SO_MAP.put("transposition",
+                                                  "Transposition");
+    }
+
+    private static final String CHROMOSOME_STRUCTURE_VARIATION_SO_NAME =
+        "chromosome_structure_variation";
 
     /**
      * Create a new FlyBaseChadoDBConverter.
@@ -142,11 +177,88 @@ public class FlyBaseModuleProcessor extends ChadoSequenceProcessor
             throw new RuntimeException("can't execute query for flybase cv terms", e);
         }
 
+        try {
+            sequenceOntologyCV = getFlyBaseSequenceOntologyCV(connection);
+        } catch (SQLException e) {
+            throw new RuntimeException("can't execute query for so cv terms", e);
+        }
+
+        getLocatedGeneIds(connection);
+
+        getChromosomeStructureVariationTypes(connection);
+    }
+
+    /**
+     * @param connection
+     */
+    private void getChromosomeStructureVariationTypes(Connection connection) {
+        ResultSet res;
+        try {
+            res = getChromosomeStructureVariationResultSet(connection);
+        } catch (SQLException e) {
+            throw new RuntimeException("can't execute query for chromosome_structure_variation "
+                                       + "types", e);
+        }
+
+        try {
+            while (res.next()) {
+                int featureId = res.getInt("feature_id");
+                int cvtermId = res.getInt("cvterm_id");
+                chromosomeStructureVariationTypes.put(featureId, cvtermId);
+            }
+        } catch (SQLException e) {
+            throw new RuntimeException("problem while reading chromosome_structure_variation "
+                                       + "types", e);
+        }
+    }
+
+    private void addToMapList(Map<Integer, List<Integer>> map, int featureId, int typeId) {
+        List<Integer> list;
+        if (map.containsKey(featureId)) {
+            list = map.get(featureId);
+        } else {
+            list = new ArrayList<Integer>();
+            map.put(featureId, list);
+        }
+        list.add(typeId);
+    }
+
+    /**
+     * Return the results of running a query for the chromosome_structure_variation feature types.
+     * @param connection the connection
+     * @return the results
+     * @throws SQLException if there is a database problem
+     */
+    protected ResultSet getChromosomeStructureVariationResultSet(Connection connection)
+        throws SQLException {
+        String query =
+            "  SELECT feature.feature_id, cvterm.cvterm_id"
+            + "  FROM feature, feature_cvterm, cvterm feature_type, cvterm, cv,"
+            + "       feature_cvtermprop, cvterm prop_term"
+            + " WHERE feature.type_id = feature_type.cvterm_id"
+            + "   AND feature_type.name = '" + CHROMOSOME_STRUCTURE_VARIATION_SO_NAME + "' "
+            + "   AND feature_cvterm.feature_id = feature.feature_id"
+            + "   AND feature_cvterm.cvterm_id = cvterm.cvterm_id AND cvterm.cv_id = cv.cv_id"
+            + "   AND cv.name = 'SO' "
+            + "   AND feature_cvtermprop.feature_cvterm_id = feature_cvterm.feature_cvterm_id"
+            + "   AND feature_cvtermprop.type_id = prop_term.cvterm_id AND prop_term.name = '"
+            + WT_CLASS_CVTERM + "'";
+
+        LOG.info("executing: " + query);
+        Statement stmt = connection.createStatement();
+        ResultSet res = stmt.executeQuery(query);
+        return res;
+    }
+
+    /**
+     * @param connection
+     */
+    private void getLocatedGeneIds(Connection connection) {
         ResultSet res;
         try {
             res = getLocatedGenesResultSet(connection);
         } catch (SQLException e) {
-            throw new RuntimeException("can't execute query", e);
+            throw new RuntimeException("can't execute query for located genes", e);
         }
 
         try {
@@ -250,7 +362,19 @@ public class FlyBaseModuleProcessor extends ChadoSequenceProcessor
      */
     protected ChadoCV getFlyBaseMiscCV(Connection connection) throws SQLException {
         ChadoCVFactory cvFactory = new ChadoCVFactory(connection);
-        return cvFactory.getChadoCV(FLY_BASE_MISCELLANEOUS_CV);
+        return cvFactory.getChadoCV(FLYBASE_MISCELLANEOUS_CV);
+    }
+
+    /**
+     * Get ChadoCV object representing SO from FlyBase.
+     * This is a protected method so that it can be overriden for testing
+     * @param connection the database Connection
+     * @return the cv
+     * @throws SQLException if there is a database problem
+     */
+    protected ChadoCV getFlyBaseSequenceOntologyCV(Connection connection) throws SQLException {
+        ChadoCVFactory cvFactory = new ChadoCVFactory(connection);
+        return cvFactory.getChadoCV(FLYBASE_SO_CV_NAME);
     }
 
     /**
@@ -368,7 +492,23 @@ public class FlyBaseModuleProcessor extends ChadoSequenceProcessor
                     Arrays.asList(new SetFieldConfigAction("symbol"),
                                   CREATE_SYNONYM_ACTION));
 
-            map.put(new MultiKey("synonym", "ArtificialDeletion", "fullname", Boolean.TRUE),
+            map.put(new MultiKey("synonym", "ChromosomeStructureVariation", "fullname",
+                                 Boolean.TRUE),
+                    Arrays.asList(new SetFieldConfigAction("name"),
+                                  CREATE_SYNONYM_ACTION));
+            map.put(new MultiKey("synonym", "ChromosomalDeletion", "fullname", Boolean.TRUE),
+                    Arrays.asList(new SetFieldConfigAction("name"),
+                                  CREATE_SYNONYM_ACTION));
+            map.put(new MultiKey("synonym", "ChromosomalDuplication", "fullname", Boolean.TRUE),
+                    Arrays.asList(new SetFieldConfigAction("name"),
+                                  CREATE_SYNONYM_ACTION));
+            map.put(new MultiKey("synonym", "ChromosomalInversion", "fullname", Boolean.TRUE),
+                    Arrays.asList(new SetFieldConfigAction("name"),
+                                  CREATE_SYNONYM_ACTION));
+            map.put(new MultiKey("synonym", "ChromosomalTranslocation", "fullname", Boolean.TRUE),
+                    Arrays.asList(new SetFieldConfigAction("name"),
+                                  CREATE_SYNONYM_ACTION));
+            map.put(new MultiKey("synonym", "Transposition", "fullname", Boolean.TRUE),
                     Arrays.asList(new SetFieldConfigAction("name"),
                                   CREATE_SYNONYM_ACTION));
 
@@ -404,6 +544,19 @@ public class FlyBaseModuleProcessor extends ChadoSequenceProcessor
             map.put(new MultiKey("prop", "Allele", "promoted_allele_class"),
                     Arrays.asList(alleleClassConfigAction));
 
+            // feature_cvterm example:
+            List<String> chromosomeStructureVariationClassNames =
+                Arrays.asList("ChromosomeStructureVariation", "ChromosomalDeletion",
+                              "ChromosomalDuplication", "ChromosomalInversion",
+                              "ChromosomalTranslocation", "Transposition");
+            for (String className: chromosomeStructureVariationClassNames) {
+                map.put(new MultiKey("cvterm", className, "SO"),
+                        Arrays.asList(new CreateCollectionAction("SequenceOntologyTerm",
+                                                                 "featureTerms",
+                                                                 "name", true)));
+            }
+
+
             // feature configuration example: for features of class "Exon", from "FlyBase",
             // set the Gene.symbol to be the "name" field from the chado feature
             map.put(new MultiKey("feature", "Exon", "FlyBase", "name"),
@@ -429,7 +582,7 @@ public class FlyBaseModuleProcessor extends ChadoSequenceProcessor
             map.put(new MultiKey("feature", "Gene", "FlyBase", "name"),
                     Arrays.asList(DO_NOTHING_ACTION));
 
-            map.put(new MultiKey("feature", "ArtificialDeletion", "FlyBase", "name"),
+            map.put(new MultiKey("feature", "ChromosomeStructureVariation", "FlyBase", "name"),
                     Arrays.asList(new SetFieldConfigAction("secondaryIdentifier"),
                                   CREATE_SYNONYM_ACTION));
 
@@ -510,7 +663,6 @@ public class FlyBaseModuleProcessor extends ChadoSequenceProcessor
             }
         }
 
-
         // ignore unknown chromosome from dpse
         if (uniqueName.startsWith("Unknown_")) {
             return null;
@@ -553,13 +705,22 @@ public class FlyBaseModuleProcessor extends ChadoSequenceProcessor
                 }
             }
         }
-        if (chadoFeatureType.equals("chromosome_structure_variation")) {
-            if (uniqueName.startsWith("FBab")) {
-              realInterMineType = "ArtificialDeletion";
-            } else {
-                return null;
+
+        if (chadoFeatureType.equals(CHROMOSOME_STRUCTURE_VARIATION_SO_NAME)) {
+            Integer cvtermId = chromosomeStructureVariationTypes.get(featureId);
+
+            if (cvtermId != null) {
+                ChadoCVTerm term = sequenceOntologyCV.getByChadoId(cvtermId);
+
+                for (String soName: CHROMOSOME_STRUCTURE_VARIATION_SO_MAP.keySet()) {
+                    if (termOrChildrenNameMatches(term, soName)) {
+                        realInterMineType = CHROMOSOME_STRUCTURE_VARIATION_SO_MAP.get(soName);
+                        break;
+                    }
+                }
             }
         }
+
         if (chadoFeatureType.equals("protein")) {
             if (uniqueName.startsWith("FBpp")) {
                 realInterMineType = "Translation";
@@ -594,6 +755,22 @@ public class FlyBaseModuleProcessor extends ChadoSequenceProcessor
         return feature;
     }
 
+    /**
+     * Return true iff the given term or one of its children is named termName.
+     */
+    private boolean termOrChildrenNameMatches(ChadoCVTerm term, String termName) {
+        if (term.getName().equals(termName)) {
+            return true;
+        }
+        Set<ChadoCVTerm> children = term.getAllChildren();
+        for (ChadoCVTerm childTerm: children) {
+            if (childTerm.getName().equals(termName)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
     private static final List<String> FEATURES = Arrays.asList(
             "gene", "mRNA", "transcript",
             "intron", "exon",
@@ -601,7 +778,7 @@ public class FlyBaseModuleProcessor extends ChadoSequenceProcessor
             // ignore for now:        "EST", "cDNA_clone",
             "miRNA", "snRNA", "ncRNA", "rRNA", "ncRNA", "snoRNA", "tRNA",
             "chromosome_band", "transposable_element_insertion_site",
-            "chromosome_structure_variation",
+            CHROMOSOME_STRUCTURE_VARIATION_SO_NAME,
             "protein", "point_mutation"
     );
 
@@ -716,7 +893,7 @@ public class FlyBaseModuleProcessor extends ChadoSequenceProcessor
     }
 
     /**
-     * Create the ArtificialDeletion.element1 and element2 references (to
+     * Create the ChromosomalDeletion.element1 and element2 references (to
      * TransposableElementInsertionSite objects)
      */
     private void createIndelReferences(Connection connection)

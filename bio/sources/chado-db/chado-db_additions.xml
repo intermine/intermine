@@ -87,11 +87,26 @@
          extends="org.flymine.model.genomic.RegulatoryRegion" is-interface="true">
   </class>
   <class name="org.flymine.model.genomic.ChromosomalDeletion"
-         extends="org.flymine.model.genomic.LocatedSequenceFeature"
+         extends="org.flymine.model.genomic.ChromosomeStructureVariation"
          is-interface="true">
-    <attribute name="symbol" type="java.lang.String"/>
   </class>
-  <class name="org.flymine.model.genomic.ArtificialDeletion" 
+  <class name="org.flymine.model.genomic.ChromosomalDuplication"
+         extends="org.flymine.model.genomic.ChromosomeStructureVariation"
+         is-interface="true">
+  </class>
+  <class name="org.flymine.model.genomic.ChromosomalInversion"
+         extends="org.flymine.model.genomic.ChromosomeStructureVariation"
+         is-interface="true">
+  </class>
+  <class name="org.flymine.model.genomic.ChromosomalTranslocation"
+         extends="org.flymine.model.genomic.ChromosomeStructureVariation"
+         is-interface="true">
+  </class>
+  <class name="org.flymine.model.genomic.Transposition"
+         extends="org.flymine.model.genomic.ChromosomeStructureVariation"
+         is-interface="true">
+  </class>
+  <class name="org.flymine.model.genomic.ChromosomeStructureVariation" 
          extends="org.flymine.model.genomic.Region" is-interface="true">
     <attribute name="available" type="java.lang.Boolean"/>
     <attribute name="confirmedByPCR" type="java.lang.Boolean"/>

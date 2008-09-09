@@ -128,6 +128,10 @@ public class TestFlyBaseModuleProcessor extends FlyBaseModuleProcessor
                 "chromosome_structure_variation", null, null, 1
             },
             {
+                11380181, "T(2;3)V21", "FBab0010281",
+                "chromosome_structure_variation", null, null, 1
+            },
+            {
                 8747905, "P{RS3}CB-0697-3", "FBti0028225",
                 "transposable_element_insertion_site", null, null, 1
             },
@@ -506,13 +510,32 @@ public class TestFlyBaseModuleProcessor extends FlyBaseModuleProcessor
      */
     @Override
     protected ChadoCV getFlyBaseMiscCV(Connection connection) throws SQLException {
-        ChadoCV cv = new ChadoCV(FlyBaseModuleProcessor.FLY_BASE_MISCELLANEOUS_CV);
+        ChadoCV cv = new ChadoCV(FlyBaseModuleProcessor.FLYBASE_MISCELLANEOUS_CV);
         ChadoCVTerm root = new ChadoCVTerm("origin of mutation");
         ChadoCVTerm child = new ChadoCVTerm("&agr; ray");
         child.getDirectParents().add(root);
         root.getDirectChildren().add(child);
         cv.addByChadoId(5000001, root);
         cv.addByChadoId(5000002, child);
+        return cv;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    protected ChadoCV getFlyBaseSequenceOntologyCV(Connection connection) throws SQLException {
+        ChadoCV cv = new ChadoCV(FlyBaseModuleProcessor.FLYBASE_SO_CV_NAME);
+        ChadoCVTerm root = new ChadoCVTerm("chromosome_structure_variation");
+        ChadoCVTerm child1 = new ChadoCVTerm("interchromosomal_transposition");
+        ChadoCVTerm child2 = new ChadoCVTerm("chromosomal_translocation");
+        child1.getDirectParents().add(root);
+        root.getDirectChildren().add(child1);
+        child2.getDirectParents().add(root);
+        root.getDirectChildren().add(child2);
+        cv.addByChadoId(33, root);
+        cv.addByChadoId(64, child1);
+        cv.addByChadoId(58, child2);
         return cv;
     }
 
@@ -623,4 +646,50 @@ public class TestFlyBaseModuleProcessor extends FlyBaseModuleProcessor
         return res;
     }
 
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    protected ResultSet getChromosomeStructureVariationResultSet(Connection connection) {
+        String[] columnNames = new String[] {
+            "feature_id", "cvterm_id"
+        };
+        Object[][] resObjects = new Object[][] {
+
+        };
+
+        MockMultiRowResultSet res = new MockMultiRowResultSet();
+        res.setupRows(resObjects);
+        res.setupColumnNames(columnNames);
+        return res;
+    }
+
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    protected ResultSet getFeatureCVTermResultSet(Connection connection)
+                    throws SQLException {
+        String[] columnNames = new String[] {
+            "feature_id", "cvterm_id", "cvterm_name", "cv_name"
+        };
+        Object[][] resObjects = new Object[][] {
+            {
+                11380181, 58, "chromosomal_translocation", "SO"
+            },
+            {
+                11380181, 72, "chromosomal_inversion", "SO"
+            },
+            {
+                11380181, 61021, "Xray", "FlyBasemiscellaneousCV"
+            }
+
+        };
+
+        MockMultiRowResultSet res = new MockMultiRowResultSet();
+        res.setupRows(resObjects);
+        res.setupColumnNames(columnNames);
+        return res;
+    }
 }

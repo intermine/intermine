@@ -39,7 +39,6 @@ import org.intermine.xml.full.Reference;
 import org.intermine.xml.full.ReferenceList;
 
 import org.flymine.model.genomic.LocatedSequenceFeature;
-import org.flymine.model.genomic.Synonym;
 import org.flymine.model.genomic.Transcript;
 
 import java.sql.Connection;
@@ -101,6 +100,8 @@ public class ChadoSequenceProcessor extends ChadoProcessor
 
     private static final String TEMP_FEATURE_TABLE_NAME_PREFIX = "intermine_chado_features_temp";
 
+    private final MultiKeyMap singletonMap = new MultiKeyMap();
+
     /**
      * Create a new ChadoSequenceModuleProcessor
      * @param chadoDBConverter the ChadoDBConverter that is controlling this processor
@@ -137,6 +138,7 @@ public class ChadoSequenceProcessor extends ChadoProcessor
         createFeatureTempTable(connection);
         earlyExtraProcessing(connection);
         processFeatureTable(connection);
+        processFeatureCVTermTable(connection);
         processPubTable(connection);
 
         // process direct locations
@@ -149,7 +151,6 @@ public class ChadoSequenceProcessor extends ChadoProcessor
         processFeaturePropTable(connection);
         extraProcessing(connection, featureMap);
     }
-
 
     private void processFeatureTable(Connection connection)
         throws SQLException, ObjectStoreException {
@@ -541,6 +542,10 @@ public class ChadoSequenceProcessor extends ChadoProcessor
         return location;
     }
 
+    /**
+     * Use the feature_relationship table to set relations (references and collections) between
+     * features.
+     */
     private void processRelationTable(Connection connection)
         throws SQLException, ObjectStoreException {
         ResultSet res = getFeatureRelationshipResultSet(connection);
@@ -1016,6 +1021,171 @@ public class ChadoSequenceProcessor extends ChadoProcessor
         res.close();
     }
 
+    /**
+     * Read the feature, feature_cvterm and cvterm tables, then set fields, create synonyms or
+     * create objects based on the cvterms.
+     * @param connection
+     */
+    private void processFeatureCVTermTable(Connection connection)
+        throws SQLException, ObjectStoreException {
+        ResultSet res = getFeatureCVTermResultSet(connection);
+        int count = 0;
+        Integer previousFeatureId = null;
+
+        // map from reference/collection name to list of Items to store in the reference or
+        // collection
+        Map<String, List<Item>> dataMap = new HashMap<String, List<Item>>();
+
+        while (res.next()) {
+            Integer featureId = new Integer(res.getInt("feature_id"));
+            String cvtermName = res.getString("cvterm_name");
+            String cvName = res.getString("cv_name");
+
+            FeatureData fdat = featureMap.get(featureId);
+
+            if (!featureId.equals(previousFeatureId) && previousFeatureId != null) {
+                processCVTermRefCols(previousFeatureId, dataMap);
+                dataMap = new HashMap<String, List<Item>>();
+            }
+
+            MultiKey key = new MultiKey("cvterm", fdat.interMineType, cvName);
+
+            int taxonId = fdat.organismData.getTaxonId();
+
+            List<ConfigAction> actionList = getConfig(taxonId).get(key);
+            if (actionList == null) {
+                // no actions configured for this prop
+                continue;
+            }
+
+            Set<String> fieldsSet = new HashSet<String>();
+
+            for (ConfigAction action: actionList) {
+                if (action instanceof SetFieldConfigAction) {
+                    SetFieldConfigAction setAction = (SetFieldConfigAction) action;
+                    if (setAction.isValidValue(cvtermName)) {
+                        String newFieldValue = setAction.processValue(cvtermName);
+                        setAttribute(fdat.intermineObjectId, setAction.getFieldName(),
+                                     newFieldValue);
+                        fieldsSet.add(newFieldValue);
+                        if (setAction.getFieldName().equals("primaryIdentifier")) {
+                            fdat.flags |= FeatureData.IDENTIFIER_SET;
+                        }
+                    }
+                } else {
+                    if (action instanceof CreateSynonymAction) {
+                        CreateSynonymAction synonymAction = (CreateSynonymAction) action;
+                        if (!synonymAction.isValidValue(cvtermName)) {
+                            continue;
+                        }
+                        String newFieldValue = synonymAction.processValue(cvtermName);
+                        Set<String> existingSynonyms = fdat.existingSynonyms;
+                        if (existingSynonyms.contains(newFieldValue)) {
+                            continue;
+                        } else {
+                            String synonymType = synonymAction.synonymType;
+                            boolean isPrimary = false;
+                            if (fieldsSet.contains(newFieldValue)) {
+                                isPrimary = true;
+                            }
+                            Item synonym = createSynonym(fdat, synonymType, newFieldValue,
+                                                         isPrimary, null);
+                            getChadoDBConverter().store(synonym);
+                            count++;
+                        }
+
+                    } else {
+                        if (action instanceof CreateCollectionAction) {
+                            CreateCollectionAction cca = (CreateCollectionAction) action;
+
+                            Item item = null;
+                            String fieldName = cca.getFieldName();
+                            String className = cca.getClassName();
+                            if (cca.createSingletons()) {
+                                MultiKey singletonKey =
+                                    new MultiKey(className, fieldName, cvtermName);
+                                item = (Item) singletonMap.get(singletonKey);
+                            }
+                            if (item == null) {
+                                item = getChadoDBConverter().createItem(className);
+                                item.setAttribute(fieldName, cvtermName);
+                                getChadoDBConverter().store(item);
+                                if (cca.createSingletons()) {
+                                    singletonMap.put(key, item);
+                                }
+                            }
+
+                            String referenceName = cca.getReferenceName();
+                            List<Item> itemList;
+                            if (dataMap.containsKey(referenceName)) {
+                                itemList = dataMap.get(referenceName);
+                            } else {
+                                itemList = new ArrayList<Item>();
+                                dataMap.put(referenceName, itemList);
+                            }
+                            itemList.add(item);
+                        }
+                    }
+                }
+            }
+
+            previousFeatureId = featureId;
+        }
+
+        if (previousFeatureId != null) {
+            processCVTermRefCols(previousFeatureId, dataMap);
+        }
+
+        LOG.info("created " + count + " synonyms from the feature_cvterm table");
+        res.close();
+    }
+
+
+    /**
+     * Given the object id and a map of reference/collection names to Items, store the Items in the
+     * reference or collection of the object.
+     */
+    private void processCVTermRefCols(Integer chadoObjectId, Map<String, List<Item>> dataMap)
+        throws ObjectStoreException {
+
+        FeatureData fdat = featureMap.get(chadoObjectId);
+        String interMineType = fdat.interMineType;
+        ClassDescriptor cd = getModel().getClassDescriptorByName(interMineType);
+        for (String referenceName: dataMap.keySet()) {
+            FieldDescriptor fd = cd.getFieldDescriptorByName(referenceName);
+            if (fd == null) {
+                throw new RuntimeException("failed to find " + referenceName + " in "
+                                           + interMineType);
+            }
+            List<Item> itemList = dataMap.get(referenceName);
+            Integer intermineObjectId = fdat.getIntermineObjectId();
+            if (fd.isReference()) {
+                if (itemList.size() > 1) {
+                    throw new RuntimeException("found more than one object for reference "
+                                               + fd + " in class "
+                                               + interMineType + " items: " + itemList);
+                } else {
+                    Item item = itemList.iterator().next();
+                    Reference reference = new Reference();
+                    reference.setName(fd.getName());
+                    String itemIdentifier = item.getIdentifier();
+                    reference.setRefId(itemIdentifier);
+                    getChadoDBConverter().store(reference, intermineObjectId);
+
+                    // XXX FIXME TODO: special case for 1-1 relations - we need to set the reverse
+                    // reference
+                }
+            } else {
+                ReferenceList referenceList = new ReferenceList();
+                referenceList.setName(referenceName);
+                for (Item item: itemList) {
+                    referenceList.addRefId(item.getIdentifier());
+                }
+                getChadoDBConverter().store(referenceList, intermineObjectId);
+            }
+        }
+    }
+
     private void processSynonymTable(Connection connection)
         throws SQLException, ObjectStoreException {
         ResultSet res = getSynonymResultSet(connection);
@@ -1433,6 +1603,29 @@ public class ChadoSequenceProcessor extends ChadoProcessor
     }
 
     /**
+     * Return the interesting rows from the feature_cvterm/cvterm table.  Only returns rows for
+     * those features returned by getFeatureIdQuery().
+     * This is a protected method so that it can be overriden for testing
+     * @param connection the db connection
+     * @return the SQL result set
+     * @throws SQLException if a database problem occurs
+     */
+    protected ResultSet getFeatureCVTermResultSet(Connection connection) throws SQLException {
+        String query =
+            "SELECT DISTINCT feature_id, cvterm.cvterm_id, cvterm.name AS cvterm_name,"
+            + "              cv.name AS cv_name "
+            + "  FROM feature_cvterm, cvterm, cv "
+            + " WHERE feature_id IN (" + getFeatureIdQuery() + ")"
+            + "   AND cvterm.cvterm_id = feature_cvterm.cvterm_id "
+            + "   AND cvterm.cv_id = cv.cv_id "
+            + " ORDER BY feature_id";
+        LOG.info("executing: " + query);
+        Statement stmt = connection.createStatement();
+        ResultSet res = stmt.executeQuery(query);
+        return res;
+    }
+
+    /**
      * Return the interesting rows from the synonym table.
      * This is a protected method so that it can be overriden for testing
      * @param connection the db connection
@@ -1706,9 +1899,10 @@ public class ChadoSequenceProcessor extends ChadoProcessor
         }
 
         /**
-         * XXX
-         * @param fieldName
-         * @param pattern
+         * Create a new SetFieldConfigAction that sets the given field.  The value to set must
+         * match the pattern or the field will not be set.
+         * @param fieldName the name of the InterMine object field to set
+         * @param pattern the pattern to match
          */
         SetFieldConfigAction(String fieldName, Pattern pattern) {
             super(pattern);
@@ -1766,5 +1960,68 @@ public class ChadoSequenceProcessor extends ChadoProcessor
     protected static class DoNothingAction extends ConfigAction
     {
         // do nothing for this data
+    }
+
+    /**
+     * An action that creates a collection of objects from value.
+     */
+    protected class CreateCollectionAction extends MatchingFieldConfigAction
+    {
+        private final String fieldName;
+        private final String className;
+        private final String referenceName;
+        private final boolean createSingletons;
+
+        /**
+         * Create a new CreateCollectionAction object.
+         * @param className the class name of the object to create for each new value
+         * @param referenceName the name of the reference or collection to set or to add the new
+         * object to
+         * @param fieldName the field name to set in the new object
+         * @param createSingletons if true, create only one object of class className with each
+         * possible fieldName; if false, multiple objects with the same value for fieldName might
+         * be created
+         */
+        CreateCollectionAction(String className, String referenceName, String fieldName,
+                               boolean createSingletons) {
+            super(null);
+            this.className = className;
+            this.referenceName = referenceName;
+            this.fieldName = fieldName;
+            this.createSingletons = createSingletons;
+        }
+
+        /**
+         * Return the fieldName that was passed to the constructor.
+         * @return the fieldName
+         */
+        public final String getFieldName() {
+            return fieldName;
+        }
+
+        /**
+         * Return the className that was passed to the constructor.
+         * @return the className
+         */
+        public final String getClassName() {
+            return className;
+        }
+
+        /**
+         * Return the referenceName that was passed to the constructor.
+         * @return the referenceName
+         */
+        public final String getReferenceName() {
+            return referenceName;
+        }
+
+        /**
+         * If true, create only one object of class className with each possible fieldName;
+         * if false, multiple objects with the same value for fieldName might be created
+         * @return true iff the new items should be singletons
+         */
+        public final boolean createSingletons() {
+            return createSingletons;
+        }
     }
 }

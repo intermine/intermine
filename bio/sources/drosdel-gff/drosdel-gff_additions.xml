@@ -1,6 +1,6 @@
 <?xml version="1.0"?>
 <classes>
-  <class name="org.flymine.model.genomic.ArtificialDeletion" 
+  <class name="org.flymine.model.genomic.ChromosomeStructureVariation" 
          extends="org.flymine.model.genomic.Deletion" is-interface="true">
     <attribute name="available" type="java.lang.Boolean"/>
     <attribute name="confirmedByPCR" type="java.lang.Boolean"/>
