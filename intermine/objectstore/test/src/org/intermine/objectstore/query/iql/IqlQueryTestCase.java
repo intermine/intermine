@@ -292,5 +292,7 @@ public abstract class IqlQueryTestCase extends SetupDataTestCase
         results.put("SelectClassFromInterMineObject", new IqlQuery("SELECT a1_.class AS a2_, COUNT(*) AS a3_ FROM org.intermine.model.InterMineObject AS a1_ GROUP BY a1_.class", null));
         results.put("SelectClassFromEmployee", new IqlQuery("SELECT a1_.class AS a2_, COUNT(*) AS a3_ FROM org.intermine.model.testmodel.Employee AS a1_ GROUP BY a1_.class", null));
         results.put("SelectClassFromBrokeEmployable", new IqlQuery("SELECT a1_.class AS a2_, COUNT(*) AS a3_ FROM (org.intermine.model.testmodel.Broke, org.intermine.model.testmodel.Employable) AS a1_ GROUP BY a1_.class", null));
+        results.put("SelectWhereBackslash", new IqlQuery("SELECT a1_ FROM org.intermine.model.testmodel.Employee AS a1_ WHERE a1_.name = 'Fred\\Blog's'", null));
+        results.put("SelectWhereBackslash", NO_RESULT);
     }
 }

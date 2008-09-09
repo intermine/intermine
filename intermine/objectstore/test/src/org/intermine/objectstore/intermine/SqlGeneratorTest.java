@@ -405,6 +405,8 @@ public class SqlGeneratorTest extends SetupDataTestCase
         results2.put("SelectClassFromEmployee", Collections.singleton("Employee"));
         results.put("SelectClassFromBrokeEmployable", new HashSet(Arrays.asList("SELECT a1_.class AS a2_, COUNT(*) AS a3_ FROM Employable AS a1_, Broke AS a1__1 WHERE a1_.id = a1__1.id GROUP BY a1_.class ORDER BY a1_.class, COUNT(*)", "SELECT a1_.class AS a2_, COUNT(*) AS a3_ FROM Broke AS a1_, Employable AS a1__1 WHERE a1_.id = a1__1.id GROUP BY a1_.class ORDER BY a1_.class, COUNT(*)")));
         results2.put("SelectClassFromBrokeEmployable", new HashSet(Arrays.asList("Employable", "Broke")));
+        results.put("SelectWhereBackslash", "SELECT a1_.id AS a1_id FROM Employee AS a1_ WHERE a1_.name = E'Fred\\\\Blog\\'s' ORDER BY a1_.id");
+        results2.put("SelectWhereBackslash", new HashSet(Arrays.asList("Employee", "InterMineObject")));
     }
 
     final static String LARGE_BAG_TABLE_NAME = "large_string_bag_table";

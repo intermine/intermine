@@ -246,6 +246,8 @@ public class WithNotXmlSqlGeneratorTest extends SqlGeneratorTest
         results2.put("MergeFalse", Collections.singleton("Employee"));
         results.put("MergeTrue", "SELECT a1_.OBJECT AS a1_, a1_.id AS a1_id FROM Employee AS a1_ WHERE a1_.age > 3 ORDER BY a1_.id");
         results2.put("MergeTrue", Collections.singleton("Employee"));
+        results.put("SelectWhereBackslash", "SELECT a1_.OBJECT AS a1_, a1_.id AS a1_id FROM Employee AS a1_ WHERE a1_.name = E'Fred\\\\Blog\\'s' ORDER BY a1_.id");
+        results2.put("SelectWhereBackslash", Collections.singleton("Employee"));
     }
 
     protected DatabaseSchema getSchema() {

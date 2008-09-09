@@ -614,9 +614,14 @@ public class DatabaseUtil
         } else if (o instanceof Number) {
             return o.toString();
         } else if (o instanceof String) {
-            return "'" + StringUtil.duplicateQuotes((String) o) + "'";
+            String s = (String) o;
+            if (s.indexOf('\\') != -1) {
+                return "E'" + StringUtil.escapeWithBackslashes(s) + "'";
+            } else {
+                return "'" + StringUtil.duplicateQuotes(s) + "'";
+            }
         } else if (o instanceof CharSequence) {
-            return "'" + StringUtil.duplicateQuotes(((CharSequence) o).toString()) + "'";
+            return objectToString(((CharSequence) o).toString());
         } else if (o instanceof Boolean) {
             return ((Boolean) o).booleanValue() ? "'true'" : "'false'";
         } else if (o == null) {
