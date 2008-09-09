@@ -167,6 +167,7 @@ public class PsiConverter extends BioFileConverter
                     comment = createItem("Comment");
                     comment.setAttribute("type", name);
                     attName = "experimentAttribute";
+
                 } else {
                     LOG.info("Can't create comment, bad experiment.");
                 }
@@ -372,8 +373,9 @@ public class PsiConverter extends BioFileConverter
                     try {
                         store(comment);
                     } catch (ObjectStoreException e) {
-                        throw new RuntimeException("error storing comment");
+                        throw new RuntimeException("Couldn't store comment: ", e);
                     }
+                    experimentHolder.comments.add(comment.getIdentifier());
                     comment = null;
                 }
             // <experimentList><experimentDescription><names><shortLabel>
@@ -576,9 +578,10 @@ public class PsiConverter extends BioFileConverter
             if (!eh.isStored) {
                 eh.isStored = true;
                 try {
+                    eh.experiment.setCollection("comments", eh.comments);
                     store(eh.experiment);
                 } catch (ObjectStoreException e) {
-                    //
+                    throw new RuntimeException("Couldn't store experiment: ", e);
                 }
                 //TODO store comments here instead
                 //for (Object o : eh.comments) {
@@ -851,7 +854,7 @@ public class PsiConverter extends BioFileConverter
 
             protected String name, description;
             protected Item experiment;
-            protected HashSet comments = new HashSet();
+            protected List<String> comments = new ArrayList();
             protected boolean isStored = false;
 
             /**
