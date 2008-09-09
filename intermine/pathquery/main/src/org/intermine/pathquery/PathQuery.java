@@ -48,7 +48,7 @@ public class PathQuery
     private List<Throwable> problems = new ArrayList<Throwable>();
     protected LogicExpression constraintLogic = null;
     private Map<Path, String> pathDescriptions = new HashMap<Path, String>();
-    private static final String MSG = "View list cannot contain a null or empty string";
+    private static final String MSG = "Invalid path - path cannot be a null or empty string";
 
     /**
      * Construct a new instance of PathQuery.
@@ -485,6 +485,7 @@ public class PathQuery
      */
     public void setOrderBy(String paths) {
         if (paths == null || paths.equals("")) {
+            logPathError(MSG);
             return;
         }
         setOrderBy(paths, Boolean.TRUE);
@@ -498,6 +499,7 @@ public class PathQuery
      */
     public void setOrderBy(String paths, Boolean sortAscending) {
         if (paths == null || paths.equals("")) {
+            logPathError(MSG);
             return;
         }
         List<OrderBy> orderBy = new ArrayList<OrderBy>();
@@ -519,6 +521,7 @@ public class PathQuery
      */
     public void setOrderBy(List<String> paths) {
         if (paths == null || paths.isEmpty()) {
+            logPathError(MSG);
             return;
         }
         setOrderBy(paths, Boolean.TRUE);
@@ -532,19 +535,19 @@ public class PathQuery
      */
     public void setOrderBy(List<String> paths, Boolean sortAscending) {
         if (paths == null || paths.isEmpty()) {
+            logPathError(MSG);
             return;
         }
         List<OrderBy> orderBy = new ArrayList<OrderBy>();
         for (String path : paths) {
             if (path != null && !path.equals("")) {
                 try {
-                    Path p =  makePath(model, this, path);
-                    orderBy.add(new OrderBy(p, sortAscending));
+                    orderBy.add(new OrderBy(makePath(model, this, path), sortAscending));
                 } catch (PathError e) {
                     logPathError(e);
                 }
             } else {
-                logPathError("Invalid path");
+                logPathError(MSG);
             }
         }
         if (!orderBy.isEmpty()) {
@@ -560,6 +563,7 @@ public class PathQuery
      */
     public void setOrderByList(List<OrderBy> paths) {
         if (paths.isEmpty()) {
+            logPathError(MSG);
             return;
         }
         List<OrderBy> orderByList = new ArrayList();
@@ -568,7 +572,7 @@ public class PathQuery
                             && !orderBy.getDirection().equals(""))) {
                 orderByList.add(orderBy);
             } else {
-                logPathError("Invalid path in order by clause");
+                logPathError(MSG);
             }
         }
         if (!orderByList.isEmpty()) {
@@ -582,6 +586,10 @@ public class PathQuery
      * @param paths a list of paths to be appended to the end of the order by list
      */
     public void addOrderBy(String paths) {
+        if (paths.equals("")) {
+            logPathError(MSG);
+            return;
+        }
         addOrderBy(paths, Boolean.TRUE);
     }
 
@@ -592,6 +600,10 @@ public class PathQuery
      * @param sortAscending whether or not to sort these fields in ascending order
      */
     public void addOrderBy(String paths, Boolean sortAscending) {
+        if (paths.equals("")) {
+            logPathError(MSG);
+            return;
+        }
         List<OrderBy> orderBy = new ArrayList<OrderBy>();
         String direction = (sortAscending.booleanValue() ? "asc" : "desc");
         for (String path : paths.split("[, ]")) {
@@ -602,7 +614,7 @@ public class PathQuery
                     logPathError(e);
                 }
             } else {
-                logPathError("Invalid path");
+                logPathError(MSG);
             }
         }
         sortOrder.addAll(orderBy);
@@ -613,6 +625,10 @@ public class PathQuery
      * @param paths a list of paths to be appended to the end of the order by list
      */
     public void addOrderBy(List<String> paths) {
+        if (paths.size() == 0) {
+            logPathError(MSG);
+            return;
+        }
         addOrderBy(paths, Boolean.TRUE);
     }
 
@@ -622,15 +638,25 @@ public class PathQuery
      * @param sortAscending whether or not to sort these fields in ascending order
      */
     public void addOrderBy(List<String> paths, Boolean sortAscending) {
+        if (paths.size() == 0) {
+            logPathError(MSG);
+            return;
+        }
         List<OrderBy> orderBy = new ArrayList<OrderBy>();
         try {
             for (String path : paths) {
-                orderBy.add(new OrderBy(makePath(model, this, path)));
+                if (path != null && !path.equals("")) {
+                    orderBy.add(new OrderBy(makePath(model, this, path)));
+                } else {
+                    logPathError(MSG);
+                }
             }
         } catch (PathError e) {
             logPathError(e);
         }
-        sortOrder.addAll(orderBy);
+        if (!orderBy.isEmpty()) {
+            sortOrder.addAll(orderBy);
+        }
     }
 
     /**
@@ -679,19 +705,23 @@ public class PathQuery
     }
 
     /**
+     * Change direction of the first field in the sort order.  used by javascripts on query
+     * builder page, which currently only has one sort field
      * @param direction New sorting direction - asc or desc
      */
     public void changeDirection(String direction) {
-        try {
-            if (sortOrder != null && !sortOrder.isEmpty()) {
-                sortOrder.get(0).setDirection(direction);
+        if (!direction.equals("desc") && !direction.equals("asc")) {
+            logPathError("Invalid directional string, must be asc or desc");
+        }
+        if (sortOrder != null && !sortOrder.isEmpty()) {
+            sortOrder.get(0).setDirection(direction);
+        } else {
+            if (view.size() > 0) {
+                sortOrder = new ArrayList();
+                sortOrder.add(new OrderBy(view.get(0), direction));
             } else {
-                Path p = makePath(model, this, view.get(0).toStringNoConstraints());
-                OrderBy o = new OrderBy(p, direction);
-                sortOrder.add(o);
+                logPathError("View list is empty");
             }
-        } catch (PathError e) {
-            logPathError(e);
         }
     }
 
@@ -717,7 +747,7 @@ public class PathQuery
      * Removes everything from the order by list and adds the first path in the view list
      */
     public void resetOrderBy() {
-        sortOrder.clear();
+        sortOrder = new ArrayList();
         validateOrderBy();
     }
 
