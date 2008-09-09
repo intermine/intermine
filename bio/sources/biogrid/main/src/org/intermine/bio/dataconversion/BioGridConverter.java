@@ -494,6 +494,9 @@ public class BioGridConverter extends BioFileConverter
         throws ObjectStoreException {
             Item exp = createItem("InteractionExperiment");
             exp.setReference("interactionDetectionMethod", eh.methodRefId);
+            if (eh.description != null && !eh.description.equals("")) {
+                exp.setAttribute("description", eh.description);
+            }
             exp.setAttribute("name", eh.shortName);
             exp.setReference("publication", eh.pubRefId);
             store(exp);
