@@ -184,7 +184,7 @@
 
                       <%-- test whether already selected and highlight if needed --%>
                       <c:set var="cellClass" value="${resultElement.id}"/>
-                      <c:if test="${resultElement.selected && empty bagName}">
+                      <c:if test="${resultElement.selected}">
                         <c:set var="cellClass" value="${cellClass} highlightCell"/>
                       </c:if>
 
@@ -222,7 +222,7 @@
                   <c:set var="ischecked" value=""/>
                     <fmt:formatNumber value="${resultElement.id}" var="resultElementIdString" scope="page" />
                     <c:forEach items="${pagedResults.currentSelectedIdStrings}" var="selectedId">
-                      <c:if test="${(! empty resultElement.typeClsString) && (fn:replace(resultElementIdString,',','') == selectedId) && empty bagName}">
+                      <c:if test="${(! empty resultElement.typeClsString) && (fn:replace(resultElementIdString,',','') == selectedId)}">
                         <c:set var="ischecked" value="highlightCell"/>
                       </c:if>
                     </c:forEach>
