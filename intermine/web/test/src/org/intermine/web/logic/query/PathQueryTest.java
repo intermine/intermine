@@ -27,7 +27,7 @@ public class PathQueryTest extends TestCase
     Map expected, classKeys;
     PathQuery e, q;
     Model model;
-    private static final String MSG = "View list cannot contain a null or empty string";
+    private static final String MSG = "Invalid path - path cannot be a null or empty string";
 
     public void setUp() throws Exception {
         super.setUp();
@@ -796,17 +796,50 @@ public class PathQueryTest extends TestCase
         q.setOrderByList(orderBy);
         assertEquals(e.getSortOrder(), q.getSortOrder());
         assertFalse(q.isValid());
+    }
+
+    public void testAddOrderByString() {
+        // TODO just one test to make sure method is there
 
     }
 
-//    public void testAddOrderByString() {
-//        fail("Not yet implemented");
-//    }
-//
-//    public void testAddOrderByStringBoolean() {
-//        fail("Not yet implemented");
-//    }
-//
+    public void testAddOrderByStringBoolean() {
+        // simple
+        e = (PathQuery) expected.get("companyName");
+        q = new PathQuery(model);
+        q.addView("Company.name");
+        assertEquals(e.getViewStrings(), q.getViewStrings());
+
+        // add one then another
+        e = (PathQuery) expected.get("employeeDepartmentName");
+        q = new PathQuery(model);
+        q.addView("Employee.name");
+        q.addView("Employee.department.name");
+        assertEquals(e.getViewStrings(), q.getViewStrings());
+
+        // add three at once
+        e = (PathQuery) expected.get("employeeDepartmentCompany");
+        q = new PathQuery(model);
+        q.addView("Employee.name, Employee.department.name,Employee.department.company.name");
+        assertEquals(e.getViewStrings(), q.getViewStrings());
+
+        // bad path
+        q = new PathQuery(model);
+        q.addView("monkey");
+        assertTrue(q.getViewStrings().isEmpty());
+        assertFalse(q.isValid());
+
+        // empty path
+        q.addView("");
+        assertEquals(MSG, q.getProblems()[1].getMessage().toString());
+        assertFalse(q.isValid());
+
+        // null path
+        q.addView(new String());
+        assertEquals(MSG, q.getProblems()[2].getMessage().toString());
+        assertFalse(q.isValid());
+    }
+
 //    public void testAddOrderByListOfString() {
 //        fail("Not yet implemented");
 //    }
@@ -817,10 +850,17 @@ public class PathQueryTest extends TestCase
 
     // --- old methods -- //
 
-//    public void testChangeDirection() {
-//        fail("Not yet implemented");
-//    }
-//
+    public void testChangeDirection() {
+
+        // simple
+        e = (PathQuery) expected.get("noOrderBy");
+        q = new PathQuery(model);
+        q.addView("Employee.name, Employee.department.name");
+        q.changeDirection("asc");
+        assertEquals(e.getViewStrings(), q.getViewStrings());
+
+    }
+
 //    public void testAddPathStringToSortOrder() {
 //        fail("Not yet implemented");
 //    }
