@@ -45,4 +45,11 @@
   <class name="org.flymine.model.genomic.Gene" is-interface="true">
     <attribute name="featureType" type="java.lang.String"/>
   </class>
+
+  <class name="org.flymine.model.genomic.ChromosomeStructureVariation" 
+         extends="org.flymine.model.genomic.LocatedSequenceFeature"
+         is-interface="true">
+    <collection name="featureTerms"
+                referenced-type="org.flymine.model.genomic.SequenceOntologyTerm"/>
+  </class>
 </classes>

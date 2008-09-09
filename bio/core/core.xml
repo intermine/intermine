@@ -201,4 +201,8 @@
     <attribute name="residues" type="java.lang.String"/>
     <attribute name="length" type="int"/>
   </class>
+
+  <class name="org.flymine.model.genomic.SequenceOntologyTerm"
+         extends="org.flymine.model.genomic.OntologyTerm" is-interface="true">
+  </class>
 </model>
