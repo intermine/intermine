@@ -3,9 +3,9 @@
 # The following environment variables need to be set
 # INTERMINE: location of local InterMine installation
 
-export INTERMINE=~/svn/trunk/intermine
-export FLYMINE=~/svn/trunk/flymine
-export BIO=~/svn/trunk/bio
+export INTERMINE=~/svn/dev/intermine
+export FLYMINE=~/svn/dev/flymine
+export BIO=~/svn/dev/bio
 
 CP=$CLASSPATH
 
