@@ -28,7 +28,7 @@
     </fields>
   </class>
 
-  <class className="org.flymine.model.genomic.ArtificialDeletion">
+  <class className="org.flymine.model.genomic.ChromosomeStructureVariation">
     <fields>
       <fieldconfig fieldExpr="primaryIdentifier"/>
       <fieldconfig fieldExpr="secondaryIdentifier"/>
