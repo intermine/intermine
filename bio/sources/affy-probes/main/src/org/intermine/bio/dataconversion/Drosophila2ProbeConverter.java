@@ -35,12 +35,12 @@ public class Drosophila2ProbeConverter extends FileConverter
     protected static final Logger LOG = Logger.getLogger(Drosophila2ProbeConverter.class);
 
     protected Item dataSource, dataSet, org;
-    protected Map<String, Item> bioentities = new HashMap<String, Item>();
+    protected Map<String, String> bioentities = new HashMap();
     protected IdResolverFactory resolverFactory;
     private static final String TAXON_ID = "7227";
     private Map<String, Item> synonyms = new HashMap<String, Item>();
     private Map<String, String> chromosomes = new HashMap<String, String>();
-    private Map<String, ProbeHolder> holders = new HashMap();
+    private Map<String, ProbeSetHolder> holders = new HashMap();
     List<Item> delayedItems = new ArrayList<Item>();
 
     /**
@@ -91,12 +91,13 @@ public class Drosophila2ProbeConverter extends FileConverter
             String strand = line[7];
 
             String chromosomeRefId = createChromosome(chromosomeIdentifier);
-            Item gene = createGene(fbgn);
-            if (gene != null) {
-                Item transcript = createTranscript(transcriptIdentifier, gene.getIdentifier());
-                ProbeHolder holder = getHolder(probesetIdentifier);
-                holder.transcripts.add(transcript.getIdentifier());
-                holder.genes.add(gene.getIdentifier());
+            String geneRefId = createGene(fbgn);
+            if (geneRefId != null) {
+                String transcriptRefId = createBioentity("Transcript", transcriptIdentifier,
+                                                          geneRefId);
+                ProbeSetHolder holder = getHolder(probesetIdentifier);
+                holder.transcripts.add(transcriptRefId);
+                holder.genes.add(geneRefId);
                 holder.datasets.add(dataSet.getIdentifier());
                 try {
                     Integer start = new Integer(startString);
@@ -114,7 +115,7 @@ public class Drosophila2ProbeConverter extends FileConverter
      * {@inheritDoc}
      */
     public void close() throws Exception {
-        for (ProbeHolder holder : holders.values()) {
+        for (ProbeSetHolder holder : holders.values()) {
             storeProbeSet(holder);
         }
 
@@ -123,7 +124,7 @@ public class Drosophila2ProbeConverter extends FileConverter
         }
     }
 
-    private void storeProbeSet(ProbeHolder holder)
+    private void storeProbeSet(ProbeSetHolder holder)
     throws ObjectStoreException  {
         Item probeSet = createItem("ProbeSet");
         probeSet.setAttribute("primaryIdentifier", holder.probesetIdentifier);
@@ -142,11 +143,11 @@ public class Drosophila2ProbeConverter extends FileConverter
      * start and end
      * @author Julie Sullivan
      */
-    public class ProbeHolder
+    public class ProbeSetHolder
     {
         protected String probesetIdentifier;
-        protected List<String> genes = new ArrayList<String>();
-        protected List<String> transcripts = new ArrayList<String>();
+        protected List<String> genes = new ArrayList();
+        protected List<String> transcripts = new ArrayList();
         private List<String> locations = new ArrayList<String>();
         protected Map<String, LocationHolder> locationHolders = new HashMap();
         protected List<String> datasets = new ArrayList<String>();
@@ -154,7 +155,7 @@ public class Drosophila2ProbeConverter extends FileConverter
         /**
          * @param identifier probeset identifier
          */
-        public ProbeHolder(String identifier) {
+        public ProbeSetHolder(String identifier) {
             probesetIdentifier = identifier;
         }
 
@@ -215,10 +216,9 @@ public class Drosophila2ProbeConverter extends FileConverter
         }
     }
 
-    private Item createGene(String id)
+    private String createGene(String id)
     throws ObjectStoreException {
         String identifier = id;
-
         IdResolver resolver = resolverFactory.getIdResolver();
         int resCount = resolver.countResolutions(TAXON_ID, identifier);
         if (resCount != 1) {
@@ -228,37 +228,28 @@ public class Drosophila2ProbeConverter extends FileConverter
             return null;
         }
         identifier = resolver.resolveId(TAXON_ID, identifier).iterator().next();
-
-        Item bioentity = bioentities.get(identifier);
-        if (bioentity == null) {
-            bioentity = createItem("Gene");
-            bioentity.setReference("organism", org.getIdentifier());
-            bioentity.setAttribute("primaryIdentifier", identifier);
-            bioentity.addToCollection("dataSets", dataSet);
-            bioentities.put(identifier, bioentity);
-            store(bioentity);
-            createSynonym(bioentity.getIdentifier(), "identifier", identifier);
-        }
-        return bioentity;
+        return createBioentity("Gene", identifier, null);
     }
 
-
-    private Item createTranscript(String id, String geneRefId)
+    private String createBioentity(String type, String identifier, String geneRefId)
     throws ObjectStoreException {
-        String identifier = id;
-        Item bioentity = bioentities.get(identifier);
-        if (bioentity == null) {
-            bioentity = createItem("Transcript");
+        String refId = bioentities.get(identifier);
+        if (refId == null) {
+            Item bioentity = createItem(type);
             bioentity.setAttribute("primaryIdentifier", identifier);
             bioentity.setReference("organism", org.getIdentifier());
-            bioentity.setReference("gene", geneRefId);
+            if (type.equals("Transcript")) {
+                bioentity.setReference("gene", geneRefId);
+            }
             bioentity.addToCollection("dataSets", dataSet);
-            bioentities.put(identifier, bioentity);
+            refId = bioentity.getIdentifier();
             store(bioentity);
-            createSynonym(bioentity.getIdentifier(), "identifier", identifier);
+            bioentities.put(identifier, refId);
+            createSynonym(refId, "identifier", identifier);
         }
-        return bioentity;
+        return refId;
     }
+
     private Item createSynonym(String subjectId, String type, String value) {
         String key = subjectId + type + value;
         if (StringUtils.isEmpty(value)) {
@@ -316,10 +307,10 @@ public class Drosophila2ProbeConverter extends FileConverter
         return item.getIdentifier();
     }
 
-    private ProbeHolder getHolder(String identifier) {
-        ProbeHolder holder = holders.get(identifier);
+    private ProbeSetHolder getHolder(String identifier) {
+        ProbeSetHolder holder = holders.get(identifier);
         if (holder == null) {
-            holder = new ProbeHolder(identifier);
+            holder = new ProbeSetHolder(identifier);
             holders.put(identifier, holder);
         }
         return holder;
