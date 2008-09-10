@@ -109,14 +109,13 @@ public class ProfileBinding
                 getProfileObjectIds(profile, os, idSet);
 
                 if (!idSet.isEmpty()) {
-                    List objects = os.getObjectsByIds(idSet);
+                    List<InterMineObject> objects = os.getObjectsByIds(idSet);
 
                     writer.writeStartElement("items");
-                    Iterator objectsIter = objects.iterator();
+                    Iterator<InterMineObject> objectsIter = objects.iterator();
 
                     while (objectsIter.hasNext()) {
-                        ResultsRow rr = (ResultsRow) objectsIter.next();
-                        InterMineObject o = (InterMineObject) rr.get(0);
+                        InterMineObject o = objectsIter.next();
                         Item item = itemFactory.makeItemImpl(o, false);
                         FullRenderer.renderImpl(writer, item, false);
                     }
