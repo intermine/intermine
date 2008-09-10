@@ -410,7 +410,7 @@ public abstract class IntegrationWriterAbstractImpl implements IntegrationWriter
     /**
      * {@inheritDoc}
      */
-    public List getObjectsByIds(Collection ids) throws ObjectStoreException {
+    public List<InterMineObject> getObjectsByIds(Collection ids) throws ObjectStoreException {
         return osw.getObjectsByIds(ids);
     }
 
