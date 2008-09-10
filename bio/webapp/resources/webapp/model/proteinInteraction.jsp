@@ -3,9 +3,7 @@
 <%@ taglib uri="/WEB-INF/struts-html.tld" prefix="html" %>
 <%@ taglib tagdir="/WEB-INF/tags" prefix="im" %>
 
-<p style="color:#e00;">
-    Note: Due to recent format changes in the PSI data format confidence scores may be missing, this will be corrected shortly (12/5/06)
-</p>
+<!-- proteinInteraction.jsp -->
 <TABLE width="100%">
   <TR>
     <TD valign="top">
@@ -28,7 +26,7 @@
          <DT>Stanyon et al (2004) Genome Biology 5: R96 (<a href="http://www.ncbi.nlm.nih.gov/entrez/query.fcgi?cmd=Retrieve&db=PubMed&dopt=Abstract&list_uids=15575970" target="_new">PubMed: 15575970</A>).
          </DT>
          <DD>
-           High-throughput LexA-based two-hybrid system.<BR>  
+           High-throughput LexA-based two-hybrid system.<BR>
            Focussed on proteins related to cell-cycle regulators.<BR>
            1,814 reproducible interactions among 488 proteins.<BR>
            28 interactions in common between this screen and the Giot et al screen described above.<BR>
@@ -112,7 +110,7 @@ More than 2300 protein-protein interactions were identified, of which 710 are of
          </DT>
          <DD>
            Large-scale tandem-affinity purification (TAP) and mass spectrometry to characterize multiprotein complexes in Saccharomyces cerevisiae. <BR>
-          Identified 232 distinct multiprotein complexes.<BR>                   
+          Identified 232 distinct multiprotein complexes.<BR>
          </DD>
          <DT>
            In addition a number of protein interactions and complexes from smaller scale experiments are available.
@@ -137,7 +135,7 @@ More than 2300 protein-protein interactions were identified, of which 710 are of
        Bulk download
       </div>
       <div class="body">
-        
+
         <ul>
           <li>
             <im:querylink text="All <i>D. melanogaster</i> protein interactions (browse)" skipBuilder="true">
@@ -412,3 +410,4 @@ More than 2300 protein-protein interactions were identified, of which 710 are of
     </TD>
   </TR>
 </TABLE>
+<!-- /proteinInteraction.jsp -->
