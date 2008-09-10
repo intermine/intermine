@@ -3,6 +3,8 @@
 <%@ taglib uri="/WEB-INF/struts-html.tld" prefix="html" %>
 <%@ taglib tagdir="/WEB-INF/tags" prefix="im" %>
 
+<!-- RNAi.jsp -->
+
 <table width="100%">
   <tr>
     <td valign="top" rowspan="2">
@@ -52,14 +54,14 @@
           <dt>Data from the <i>Drosophila</i> RNAi Screening Center
           (DRSC): Results show RNAi results, from primary screens,
           linked to genes via amplicons, with the corresponding
-          publication. Results can be:</dt> 
-	  <li><dt>Strong hit,</dt></li>
-	  <li><dt>Medium hit,</dt></li> 
-	  <li><dt>Weak hit,</dt></li>
-	  <li><dt>Not a hit,</li></dt> 
-	  <li><dt>Not screened.</li></dt>
+          publication. Results can be:</dt>
+    <li><dt>Strong hit,</dt></li>
+    <li><dt>Medium hit,</dt></li>
+    <li><dt>Weak hit,</dt></li>
+    <li><dt>Not a hit,</li></dt>
+    <li><dt>Not screened.</li></dt>
 
-	  <dt> These designations are
+    <dt> These designations are
           provided by the authors, except for "Not screened" which is
           annotated by the DRSC based on the screening plates that
           were used.
@@ -69,7 +71,7 @@
 
 </div>
 
-    <h4>   
+    <h4>
       <a href="javascript:toggleDiv('hiddenDiv3');">
         <img id='hiddenDiv3Toggle' src="images/disclosed.gif"/>
           <i>C. elegans</i>  - <i>In vivo</i> RNAi data from WormBase ...
@@ -91,7 +93,7 @@
         Bulk download
       </div>
       <div class="body">
-          
+
           <ul>
             <li>
 <im:querylink text="All <i>D. melanogaster</i> alleles linked to genes " skipBuilder="true">
@@ -128,8 +130,6 @@
   </node>
   <node path="Gene.rnaiResults.amplicon" type="Amplicon">
   </node>
-  <node path="Gene.rnaiResults.amplicon.evidence" type="DataSet">
-  </node>
   <node path="Gene.organism" type="Organism">
   </node>
   <node path="Gene.organism.name" type="String">
@@ -161,3 +161,4 @@
         </div>
       </td>
 </table>
+<!-- /RNAi.jsp -->
