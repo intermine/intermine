@@ -1045,6 +1045,10 @@ public class ChadoSequenceProcessor extends ChadoProcessor
 
             FeatureData fdat = featureMap.get(featureId);
 
+            if (fdat == null) {
+                continue;
+            }
+
             if (!featureId.equals(previousFeatureId) && previousFeatureId != null) {
                 processCVTermRefCols(previousFeatureId, dataMap);
                 dataMap = new HashMap<String, List<Item>>();
