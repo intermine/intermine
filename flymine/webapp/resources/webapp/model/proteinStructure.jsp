@@ -3,6 +3,8 @@
 <%@ taglib uri="/WEB-INF/struts-html.tld" prefix="html" %>
 <%@ taglib tagdir="/WEB-INF/tags" prefix="im" %>
 
+<!-- proteinStructure.jsp -->
+
 <table width="100%">
   <tr>
     <td valign="top">
@@ -46,7 +48,7 @@
      integrated into FlyMine and allows viewing and further analysis of each protein
      structure.
 </dt>
-   </div> 	
+   </div>
   </td>
 
 
@@ -128,3 +130,4 @@
     </td>
   </tr>
 </table>
+<!-- /proteinStructure.jsp -->
