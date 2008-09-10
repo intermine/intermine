@@ -1,4 +1,5 @@
 <%@ taglib uri="/WEB-INF/struts-tiles.tld" prefix="tiles" %>
+<%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 
 <!-- feedback.jsp -->
 
@@ -10,6 +11,9 @@ window.onload = function() {
 // -->
 </script>
 
+
+<c:if test="${empty sent}">
 <tiles:get name="contactForm.jsp"/>
+</c:if>
 
 <!-- /feedback.jsp -->
