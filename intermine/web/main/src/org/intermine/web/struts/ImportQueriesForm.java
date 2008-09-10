@@ -49,8 +49,6 @@ public class ImportQueriesForm extends ValidatorForm
         reset();
     }
 
-
-
     /**
      * Return a Map from query name to Query object.
      * @param savedBags map from bag name to bag
@@ -150,7 +148,7 @@ public class ImportQueriesForm extends ValidatorForm
                 errors = new ActionErrors();
             }
             errors.add(ActionErrors.GLOBAL_MESSAGE,
-                        new ActionMessage("errors.importFailedException", err.getMessage()));
+                        new ActionMessage(err.getCause().getMessage()));
         }
         return errors;
     }
