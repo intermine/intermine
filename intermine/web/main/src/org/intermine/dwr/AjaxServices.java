@@ -432,12 +432,15 @@ public class AjaxServices
             QueryMonitorTimeout controller = (QueryMonitorTimeout)
                 SessionMethods.getRunningQueryController(qid, session);
 
+            if (controller == null) {
+                return null;
+            }
+
             // First tickle the controller to avoid timeout
             controller.tickle();
 
             if (controller.isCancelledWithError()) {
                 LOG.debug("query qid " + qid + " error");
-
                 return null;
             } else if (controller.isCancelled()) {
                 LOG.debug("query qid " + qid + " cancelled");
@@ -918,7 +921,7 @@ public class AjaxServices
         }
         return null;
     }
-    
+
     /**
     *
     * @param widgetId unique ID for each widget
@@ -1042,9 +1045,9 @@ public class AjaxServices
     public void reorder(String newOrder, String oldOrder) {
         HttpSession session = WebContextFactory.get().getSession();
         List<String> newOrderList = new LinkedList<String>(StringUtil
-				.serializedSortOrderToMap(newOrder).values());
-		List<String> oldOrderList = new LinkedList<String>(StringUtil
-				.serializedSortOrderToMap(oldOrder).values());
+                .serializedSortOrderToMap(newOrder).values());
+        List<String> oldOrderList = new LinkedList<String>(StringUtil
+                .serializedSortOrderToMap(oldOrder).values());
 
         List view = SessionMethods.getEditingView(session);
         ArrayList newView = new ArrayList();
