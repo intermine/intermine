@@ -81,7 +81,7 @@ public class ObjectStorePassthruImpl implements ObjectStore
     /**
      * {@inheritDoc}
      */
-    public List getObjectsByIds(Collection ids) throws ObjectStoreException {
+    public List<InterMineObject> getObjectsByIds(Collection ids) throws ObjectStoreException {
         return os.getObjectsByIds(ids);
     }
 
