@@ -268,7 +268,7 @@ public class BagQueryRunner
                         throw new InterMineException("can't fetch: " + ids, e);
                     }
                     while (objIter.hasNext()) {
-                        objs.add(((List) objIter.next()).get(0));
+                        objs.add(objIter.next());
                     }
                     bqr.addIssue(BagQueryResult.DUPLICATE, bq.getMessage(),
                                  (String) entry.getKey(), objs);
