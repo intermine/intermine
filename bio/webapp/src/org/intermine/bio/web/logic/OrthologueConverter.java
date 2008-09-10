@@ -68,12 +68,7 @@ public class OrthologueConverter implements BagConverter
         pathQuery.setViewPaths(view);
         String label = null, id = null, code = pathQuery.getUnusedConstraintCode();
         List<InterMineObject> objectList = os.getObjectsByIds(fromList);
-        List<InterMineObject> newList = new ArrayList<InterMineObject>();
-        for (Object object : objectList) {
-            ResultsRow resRow = (ResultsRow) object;
-            newList.add((InterMineObject) resRow.get(0));
-        }
-        Constraint c = new Constraint(ConstraintOp.IN, newList,
+        Constraint c = new Constraint(ConstraintOp.IN, objectList,
                                         false, label, code, id, null);
         pathQuery.addNode(type).getConstraints().add(c);
 
