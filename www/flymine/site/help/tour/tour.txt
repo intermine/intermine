@@ -100,7 +100,7 @@ Template queries are run for this gene when the page is loaded.
 <h1>5. Results Page</h1>
 
 <p>
-The results table for the template 'Gene --> Orthologues + GO terms of these orthologues' shows the starting gene, homologous genes and organism names with details of each GO term applied to the homologous genes.  Homologue data in FlyMine comes from <a href="http://inparanoid.sbc.su.se/">InParanoid</a> and can be of type 'orthologue' or 'inparalogue'. 
+The results table for the template 'Gene --> Orthologues + GO terms of these orthologues' shows the starting gene, homologous genes and organism names with details of each GO term applied to the homologous genes.  Homologue data in FlyMine comes from <a href="http://inparanoid.sbc.su.se/" target="_new">InParanoid</a> and can be of type 'orthologue' or 'inparalogue'. 
 </p>
 
 <img alt="[Results table]"  src="results_r11.png"/>
@@ -130,7 +130,7 @@ All results pages have a number of export options:
 
 
 <p>
-FlyMine includes a set of 'Public' lists (marked with 'PL') that we think might be useful for our users. Some of these originate from external datasources, eg from the <a href="http://www.flyTF.org/">FlyTF</a> database.</p>
+FlyMine includes a set of 'Public' lists (marked with 'PL') that we think might be useful for our users. Some of these originate from external datasources, eg from the <a href="http://www.flyTF.org/" target="_new">FlyTF</a> database.</p>
 
 <p><i>We can add more lists at any time - it only takes a few minutes - so if you have a suggestion, let us know!</i></p>
 </p>
@@ -190,7 +190,7 @@ Template queries have been executed on the whole list, just like on the gene rep
 <h1>9. Use Lists in Templates</h1>
 
 <p>
-You can use lists in any template query, or in queries you create yourself in the QueryBuilder.  As the list analysis page suggested many of the genes in our list are transcription factors we can run a template to find the genes they regulate.  FlyMine includes FlyReg - a curated DNase1 binding site data set (now incorporated into the <a href="http://http://redfly.ccr.buffalo.edu/">REDfly</a> database) which we can query with another template. 
+You can use lists in any template query, or in queries you create yourself in the QueryBuilder.  As the list analysis page suggested many of the genes in our list are transcription factors we can run a template to find the genes they regulate.  FlyMine includes FlyReg - a curated DNase1 binding site data set (now incorporated into the <a href="http://http://redfly.ccr.buffalo.edu/" target="_new">REDfly</a> database) which we can query with another template. 
 </p>
 
 <p><b>Search the template queries for 'binding site':</b></p>
