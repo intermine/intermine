@@ -10,26 +10,21 @@ package org.intermine.bio.web.export;
  *
  */
 
+import java.io.PrintWriter;
 import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.flymine.model.genomic.LocatedSequenceFeature;
 import org.intermine.bio.io.gff3.GFF3Record;
 import org.intermine.bio.util.GFF3Util;
 import org.intermine.objectstore.ObjectStoreException;
 import org.intermine.util.IntPresentSet;
-import org.intermine.util.TypeUtil;
-import org.intermine.util.TypeUtil.FieldInfo;
 import org.intermine.web.logic.export.ExportException;
 import org.intermine.web.logic.export.ExportHelper;
 import org.intermine.web.logic.export.Exporter;
 import org.intermine.web.logic.results.ResultElement;
-
-import org.flymine.model.genomic.LocatedSequenceFeature;
-
-import java.io.PrintWriter;
 
 /**
  * Exports LocatedSequenceFeature objects in GFF3 format.
@@ -41,21 +36,27 @@ public class GFF3Exporter implements Exporter
 
     PrintWriter out;
     private List<Integer> featureIndexes;
-    private Map soClassNames;
+    private Map<String, String> soClassNames;
     private int writtenResultsCount = 0;
     private boolean headerPrinted = false;
     private IntPresentSet exportedIds = new IntPresentSet();
+    private List<String> attributesNames;
 
     /**
      * Constructor.
      * @param out output stream
      * @param indexes index of column with exported sequence
      * @param soClassNames mapping
+     * @param attributesNames names of attributes that are printed in record, 
+     *  they are names of columns in results table, they are in the same order
+     *  as corresponding columns in results table  
      */
-    public GFF3Exporter(PrintWriter out, List<Integer> indexes, Map soClassNames) {
+    public GFF3Exporter(PrintWriter out, List<Integer> indexes, Map<String, String> soClassNames, 
+            List<String> attributesNames) {
         this.out = out;
         this.featureIndexes = indexes;
         this.soClassNames = soClassNames;
+        this.attributesNames = attributesNames;
     }
 
     /**
@@ -79,35 +80,25 @@ public class GFF3Exporter implements Exporter
     private void exportRow(List<ResultElement> row)
         throws ObjectStoreException,
         IllegalAccessException {
-        ResultElement el = getResultElement(row);
-        if (el == null) {
+        ResultElement elWithObject = getResultElement(row);
+        if (elWithObject == null) {
             return;
         }
 
-        LocatedSequenceFeature lsf = (LocatedSequenceFeature) el.getInterMineObject();
+        LocatedSequenceFeature lsf = (LocatedSequenceFeature) elWithObject.getInterMineObject();
 
         if (exportedIds.contains(lsf.getId())) {
             return;
         }
 
-        Map<String, List<String>> extraAttributes = new HashMap<String, List<String>>();
-
-        // add some fields as extra attributes if the object has them
-
-        List<String> extraFields = Arrays.asList(new String[] {"symbol",
-                "primaryIdentifier", "name" });
-        for (String fieldName : extraFields) {
-            FieldInfo field = TypeUtil.getFieldInfo(lsf.getClass(), fieldName);
-            if (field != null
-                    && (TypeUtil.getFieldValue(lsf, fieldName) != null)) {
-                List<String> values = new ArrayList<String>();
-                values.add((String) TypeUtil.getFieldValue(lsf, fieldName));
-                extraAttributes.put(fieldName, values);
-            }
+        Map<String, List<String>> attributes = new LinkedHashMap<String, List<String>>();
+        for (int i = 0; i < row.size(); i++) {
+            ResultElement el = row.get(i);
+            attributes.put(attributesNames.get(i), formatElementValue(el));
         }
-
+        
         GFF3Record gff3Record = GFF3Util.makeGFF3Record(lsf, soClassNames,
-                extraAttributes);
+                attributes);
 
         if (gff3Record == null) {
             // no chromsome ref or no chromosomeLocation ref
@@ -122,6 +113,19 @@ public class GFF3Exporter implements Exporter
         out.println(gff3Record.toGFF3());
         exportedIds.add(lsf.getId());
         writtenResultsCount++;
+    }
+
+    private List<String> formatElementValue(ResultElement el) {
+        List<String> ret = new ArrayList<String>();
+        Object obj = el.getField();
+        String s;
+        if (obj == null) {
+            s = "-";
+        } else {
+            s = obj.toString();
+        }
+        ret.add(s);
+        return ret;
     }
 
     private ResultElement getResultElement(List<ResultElement> row) {
