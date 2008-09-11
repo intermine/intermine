@@ -358,6 +358,9 @@
     <action path="/tip" type="org.intermine.web.struts.TipAction">
       <forward name="display" path="tip.page"/>
     </action>
+    <action path="/addColumn" type="org.intermine.web.struts.AddColumnAction" name="emptyForm" validate="false">
+        <forward name="results" redirect="true" path="/results.do"/>
+    </action>
 
     <action path="/gotows" type="org.intermine.web.struts.GotoWebSearchableAction">
       <forward name="template" redirect="true" path="/template.do"/>
@@ -432,6 +435,7 @@
     <action path="/initObjectDetailsInList" type="org.intermine.web.struts.ObjectDetailsInListController"/>
     <action path="/initNews" type="org.intermine.web.struts.NewsReadController"/>
     <action path="/initExportOptions" type="org.intermine.web.struts.ExportOptionsController"/>
+    <action path="/initAvailableColumns" type="org.intermine.web.struts.AvailableColumnsController"/>
 
     <!-- don't (re)move this - it's used for importing any model-specific actions -->
     <!--@MODEL_INCLUDE@-->

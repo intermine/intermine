@@ -48,6 +48,17 @@ ul#button_bar {
     background-image: url('../images/icons/export_down.png');
 }
 
+#tool_bar_li_addcolumn {
+    background-image: url('../images/icons/addcolumn_grey.png');
+}
+#tool_bar_li_addcolumn:hover {
+    background-image: url('../images/icons/addcolumn_hover.png');
+}
+.tool_bar_button_addcolumn{
+    background-image: url('../images/icons/addcolumn_down.png');
+}
+
+
 #tool_bar_li_use {
     background-image: url('../images/icons/use_grey.png');
 }
