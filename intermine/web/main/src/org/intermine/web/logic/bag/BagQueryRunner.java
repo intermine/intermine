@@ -104,8 +104,7 @@ public class BagQueryRunner
      * @throws InterMineException if there is any other exception
      */
     public BagQueryResult searchForBag(String type, List input, String extraFieldValue,
-            boolean doWildcards) throws ClassNotFoundException, ObjectStoreException,
-           InterMineException {
+            boolean doWildcards) throws ClassNotFoundException, InterMineException {
 
         Map<String, String> lowerCaseInput = new HashMap<String, String>();
         List<String> cleanInput = new ArrayList<String>();
@@ -197,20 +196,18 @@ public class BagQueryRunner
                         Integer id = (Integer) row.get(0);
                         for (int i = 1; i < row.size(); i++) {
                             String field = "" + row.get(i);
-                            if (field != null) {
-                                String lowerField = field.toLowerCase();
-                                for (String wildcard : wildcardInput) {
-                                    Pattern pattern = patterns.get(wildcard);
-                                    if (pattern.matcher(lowerField).matches()) {
-                                        Set<Integer> ids = resMap.get(wildcard);
-                                        if (ids == null) {
-                                            ids = new HashSet<Integer>();
-                                            resMap.put(wildcard, ids);
-                                        }
-                                        ids.add(id);
-                                        // we have matched at least once with wildcard
-                                        wildcardUnresolved.remove(wildcard);
+                            String lowerField = field.toLowerCase();
+                            for (String wildcard : wildcardInput) {
+                                Pattern pattern = patterns.get(wildcard);
+                                if (pattern.matcher(lowerField).matches()) {
+                                    Set<Integer> ids = resMap.get(wildcard);
+                                    if (ids == null) {
+                                        ids = new HashSet<Integer>();
+                                        resMap.put(wildcard, ids);
                                     }
+                                    ids.add(id);
+                                    // we have matched at least once with wildcard
+                                    wildcardUnresolved.remove(wildcard);
                                 }
                             }
                         }
@@ -286,10 +283,10 @@ public class BagQueryRunner
                 // we have a list of objects that result from some query, divide into any that
                 // match the type of the bag to be created and candidates for conversion
                 while (objIter.hasNext()) {
-                    Object obj = ((List) objIter.next()).get(0);
+                    Object obj = objIter.next();
 
                     // TODO this won't cope with dynamic classes
-                    Class c = (Class) DynamicUtil.decomposeClass(obj.getClass()).iterator().next();
+                    Class c = DynamicUtil.decomposeClass(obj.getClass()).iterator().next();
                     if (type.isAssignableFrom(c)) {
                         objs.add(obj);
                     } else {
@@ -418,26 +415,21 @@ public class BagQueryRunner
     }
 
     // temporary method - will be replaced by BagQueryHelper method
-    private List<BagQuery> getBagQueriesForType(BagQueryConfig bagQueryConfig, String type)
-    throws ClassNotFoundException {
+    private List<BagQuery> getBagQueriesForType(BagQueryConfig config, String type) {
         List<BagQuery> queries = new ArrayList<BagQuery>();
-        
-        // some queries should run before the default
-        queries.addAll(bagQueryConfig.getPreDefaultBagQueries(TypeUtil.unqualifiedName(type)));
-        
-        // create the default query and put it first in the list
-        BagQuery defaultQuery = new BagQuery(bagQueryConfig, model, classKeys, type);
 
-        if (defaultQuery != null) {
-            queries.add(defaultQuery);
-        }
+        // some queries should run before the default
+        queries.addAll(config.getPreDefaultBagQueries(TypeUtil.unqualifiedName(type)));
+
+        // create the default query and put it first in the list
+        queries.add(new BagQuery(config, model, classKeys, type));
 
         // add any queries that are configured for this type
-        queries.addAll(bagQueryConfig.getBagQueries(TypeUtil.unqualifiedName(type)));
+        queries.addAll(config.getBagQueries(TypeUtil.unqualifiedName(type)));
 
         return queries;
     }
-    
+
     /**
      * Find template queries that are tagged for use as converters.
      * @param servletContext use to fetch ProfileManager and superuser account
