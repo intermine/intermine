@@ -15,7 +15,7 @@ DBUSER=sc
 DBPW=sc
 
 FTPURL=ftp://ftp.modencode.org/pub/dcc
-DATADIR=/shared/data/modmine/subs/validation
+DATADIR=/shared/data/modmine/subs/chado
 DBDIR=/shared/data/modmine/
 CHADODB=modchado-$REL
 MINEDB=modmine-$REL
@@ -40,8 +40,9 @@ Usage: $progname [-a] [-n] [-v] [-f] submission_name
    -v: verbode mode
    -f: force building of mine after a failure in the loading in chado 
    
-Notes: At the moment the file is always downloaded (if a file with the
-      same name is present, a back up is created).
+Notes: The file is downloaded only if not present or the remote copy 
+      is newer (in this case a copy of the older should be created)
+      
        Without the -a option, the build will fail if there are active 
       connections to the chado database. 
 
@@ -79,22 +80,12 @@ shift $(($OPTIND - 1))
 
 cd $DATADIR
 
-if test -e $1
-then 
-#already downloaded: make a copy and get it again
-COUNT=`ls -1 $1 | grep -c .`
-cd $1 
-mv $1.chadoxml $1.chadoxml.v$COUNT
-wget $FTPURL/$1.chadoxml
-else
-# create the directory and get it
-mkdir $1
-cd $1
-wget $FTPURL/$1.chadoxml
-fi
+#...and get it if the remote timestamp is newer than the local
+# it will make a copy of the local (as name.chadoxml.n)
+wget -N $FTPURL/$1.chadoxml
 
-#echo "press return to continue.."
-#read 
+echo "press return to continue.."
+read 
 
 #---------------------------------------
 # building the chado db
@@ -107,9 +98,6 @@ if [ "$APPEND" == "n" ]
 then
 dropdb -e $CHADODB -h $DBHOST -U $DBUSER 
 createdb -e $CHADODB -h $DBHOST -U $DBUSER 
-
-#echo "press return to continue.."
-#read 
 
 psql -d $CHADODB -h $DBHOST -U $DBUSER < $DBDIR/build_empty_chado.sql
 #echo "press return to continue.."
@@ -151,5 +139,3 @@ cd webapp
 ant -Drelease=$REL $V default remove-webapp release-webapp
 fi
 
-#cd $DATADIR
-#times
