@@ -12,6 +12,7 @@ package org.intermine.bio.web.export;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Properties;
@@ -72,14 +73,24 @@ public class GFF3HttpExporter implements TableHttpExporter
         try {
             PrintWriter writer = HttpExportUtil.
                 getPrintWriterForClient(request, response.getOutputStream());
+            List<String> paths = new LinkedList<String>(StringUtil.
+                    serializedSortOrderToMap(form.getPathsString()).keySet());
+            removeFirstItemInPaths(paths);
             exporter = new GFF3Exporter(writer,
-                    indexes, getSoClassNames(servletContext));
+                    indexes, getSoClassNames(servletContext), paths);
         } catch (Exception e) {
             throw new ExportException("Export failed", e);
         }
         exporter.export(pt.getAllResultElementRows());
         if (exporter.getWrittenResultsCount() == 0) {
             throw new ExportException("Nothing was found for export");
+        }
+    }
+    
+    private void removeFirstItemInPaths(List<String> paths) {
+        for (int i = 0; i < paths.size(); i++) {
+            String path = paths.get(i); 
+            paths.set(i, path.substring(path.indexOf(".") + 1, path.length()));
         }
     }
 
