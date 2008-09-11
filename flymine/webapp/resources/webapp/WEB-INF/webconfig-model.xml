@@ -27,21 +27,7 @@
       <fieldconfig fieldExpr="confidence"/>
     </fields>
   </class>
-<!-- temporarily removed until it's in the preview
-  <class className="org.flymine.model.genomic.ChromosomeStructureVariation">
-    <fields>
-      <fieldconfig fieldExpr="primaryIdentifier"/>
-      <fieldconfig fieldExpr="secondaryIdentifier"/>
-      <fieldconfig fieldExpr="length" displayer="/model/sequenceShortDisplayerWithField.jsp" />
-      <fieldconfig fieldExpr="chromosomeLocation" displayer="/model/chromosomeLocDisplayer.jsp" showInResults="false" />
-      <fieldconfig fieldExpr="chromosome.primaryIdentifier" showInInlineCollection="false" showInSummary="false" />
-      <fieldconfig fieldExpr="chromosomeLocation.start" showInInlineCollection="false" showInSummary="false" />
-      <fieldconfig fieldExpr="chromosomeLocation.end" showInInlineCollection="false" showInSummary="false" />
-      <fieldconfig fieldExpr="available"/>
-    </fields>
 
-  </class>
--->
 
   <class className="org.flymine.model.genomic.Author">
     <fields>
@@ -110,6 +96,22 @@
       <displayer src="/model/locatedSequenceFeatureImage.jsp"/>
     </longdisplayers>
   </class>
+
+<!-- temporarily removed until it's in the preview
+  <class className="org.flymine.model.genomic.ChromosomeStructureVariation">
+    <fields>
+      <fieldconfig fieldExpr="primaryIdentifier"/>
+      <fieldconfig fieldExpr="secondaryIdentifier"/>
+      <fieldconfig fieldExpr="length" displayer="/model/sequenceShortDisplayerWithField.jsp" />
+      <fieldconfig fieldExpr="chromosomeLocation" displayer="/model/chromosomeLocDisplayer.jsp" showInResults="false" />
+      <fieldconfig fieldExpr="chromosome.primaryIdentifier" showInInlineCollection="false" showInSummary="false" />
+      <fieldconfig fieldExpr="chromosomeLocation.start" showInInlineCollection="false" showInSummary="false" />
+      <fieldconfig fieldExpr="chromosomeLocation.end" showInInlineCollection="false" showInSummary="false" />
+      <fieldconfig fieldExpr="available"/>
+    </fields>
+
+  </class>
+-->
 
   <class className="org.flymine.model.genomic.Clone">
     <fields>
@@ -282,21 +284,26 @@
   </class>
 
   <class className="org.flymine.model.genomic.Interaction">
-         <fields>
-           <fieldconfig fieldExpr="shortName"/>
-           <fieldconfig fieldExpr="confidenceText"/>
-           <fieldconfig fieldExpr="confidence"/>
-           <fieldconfig fieldExpr="role"/>
-         </fields>
-       </class>
-
-       <class className="org.flymine.model.genomic.InteractionExperiment">
-         <fields>
-           <fieldconfig fieldExpr="name"/>
-           <fieldconfig fieldExpr="description"/>
-         </fields>
-       </class>
-
+   <fields>
+     <fieldconfig fieldExpr="gene.primaryIdentifier"/>
+     <fieldconfig fieldExpr="shortName"/>
+     <fieldconfig fieldExpr="confidenceText"/>
+     <fieldconfig fieldExpr="confidence"/>
+     <fieldconfig fieldExpr="role"/>
+    </fields>
+  </class>
+  <class className="org.flymine.model.genomic.InteractionExperiment">
+    <fields>
+      <fieldconfig fieldExpr="name"/>
+      <fieldconfig fieldExpr="description"/>
+    </fields>
+  </class>
+  <class className="org.flymine.model.genomic.InteractionTerm">
+    <fields>
+      <fieldconfig fieldExpr="identifier"/>
+      <fieldconfig fieldExpr="name"/>
+    </fields>
+  </class>
 
   <class className="org.flymine.model.genomic.Location">
     <fields>
