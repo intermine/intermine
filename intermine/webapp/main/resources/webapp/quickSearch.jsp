@@ -18,25 +18,24 @@
 <script type="text/javascript">
 function updateExample(i) {
   if (i==1) {
-     document.getElementById('quickSearchInput').value = '<c:out value="${ids}"/>';     
+     $('quickSearchInput').value = '<c:out value="${ids}"/>';
   } else if (i==2) {
-     document.getElementById('quickSearchInput').value = '<c:out value="${tpls}"/>';
+     $('quickSearchInput').value = '<c:out value="${tpls}"/>';
   } else {
-     document.getElementById('quickSearchInput').value = '<c:out value="${bgs}"/>';
+     $('quickSearchInput').value = '<c:out value="${bgs}"/>';
   }
-  document.getElementById('quickSearchInput').style.color = '#666';
-  document.getElementById('quickSearchInput').style.fontStyle = 'italic';
+  $('quickSearchInput').style.color = '#666';
+  $('quickSearchInput').style.fontStyle = 'italic';
 }
 function clearElement(e) {
    var value =document.getElementById('quickSearchInput').value;
-   if( value == '<c:out value="${ids}"/>'
-   || value == '<c:out value="${tpls}"/>'
-   || value == '<c:out value="${bgs}"/>') {
-  e.value = "";
-  document.getElementById('quickSearchInput').style.color = '#000';
-  document.getElementById('quickSearchInput').style.fontStyle = 'normal';
+   if( value == '<c:out value="${ids}"/>' || value == '<c:out value="${tpls}"/>' || value == '<c:out value="${bgs}"/>') {
+      e.value = "";
+      $('quickSearchInput').style.color = '#000';
+      $('quickSearchInput').style.fontStyle = 'normal';
    }
 }
+
 </script>
 <tiles:importAttribute name="menuItem" ignore="true"/>
 <html:form action="/quickSearchAction" style="display:inline;">
@@ -47,8 +46,7 @@ function clearElement(e) {
   <option value="bgs" <c:if test="${quickSearchType=='bgs'}">selected</c:if>>Lists</option>
   </select>
 <fmt:message key="header.search.mid"/>
-<input style="width:260px;color:#666;font-style:italic;font-size:1em" type="text" id="quickSearchInput" name="value" value="<fmt:bundle basename="model"><fmt:message key="model.quickSearch.example"/></fmt:bundle>" onFocus="clearElement(this);" />  
+<input style="width:260px;color:#666;font-style:italic;font-size:1em" type="text" id="quickSearchInput" name="value" value="<c:choose><c:when test="${quickSearchType=='tpls'}"><c:out value="${tpls}"/></c:when><c:when test="${quickSearchType=='bgs'}"><c:out value="${bgs}"/></c:when><c:otherwise><c:out value="${ids}"/></c:otherwise></c:choose>" onFocus="clearElement(this);" />
 <html:submit><fmt:message key="header.search.button"/></html:submit>
-
 </html:form>
 <!-- /quickSearch.jsp -->
