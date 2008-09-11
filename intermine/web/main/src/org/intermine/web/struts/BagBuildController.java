@@ -99,8 +99,7 @@ public class BagBuildController extends TilesAction
             String className = iter.next();
             String unqualifiedName = TypeUtil.unqualifiedName(className);
             if (ClassKeyHelper.hasKeyFields(classKeys, unqualifiedName)
-                && oss.getClassCount(className) > 0
-                && !preferedTypeList.contains(unqualifiedName)) {
+                && oss.getClassCount(className) > 0) {
                 typeList.add(unqualifiedName);
             }
         }
