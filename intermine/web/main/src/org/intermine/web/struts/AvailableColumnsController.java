@@ -78,7 +78,7 @@ public class AvailableColumnsController extends InterMineAction
             ClassDescriptor desc = getPenultimateDescriptor(path);
             if (!processedDescs.contains(desc)) {
                 processedDescs.add(desc);
-                ret.addAll(getFieldPaths(desc, path.getPrefix().toString()));    
+                ret.addAll(getFieldPaths(desc, path.getPrefix().toStringNoConstraints()));    
             }
         }
         return ret;
