@@ -116,12 +116,18 @@
       		curKey = e.keyCode;
       		IE = true;
       	}
+        
+        // do not use autocompleter if *
+        if($(INPUT).value.match('\\*')) {
+        	removeList();
+            return;
+        }
 		
         // ascii code from "a" till  "z" or
         // ascii code from "0" till "9"
         // backspace  
         // delete 
-		if ((curKey >= 65 && curKey <= 90) ||        // load list
+        if ((curKey >= 65 && curKey <= 90) ||        // load list
             (curKey >= 48 && curKey <= 57) ||
         	(curKey >= 96 && curKey <= 105) ||
         	curKey == 8 || curKey == 46) {
