@@ -11,7 +11,9 @@
 
 <link rel="stylesheet" href="css/exportOptions.css" type="text/css" />
 <script src="js/jquery-1.2.6.js" type="text/javascript" ></script>
+<script src="js/exportoptions.js" type="text/javascript" ></script>
 <script src="js/jquery-ui-personalized-1.5.2.min.js" type="text/javascript"></script>
+
 <script type="text/javascript">
   // Use jQuery via jQuery(...)
   jQuery(document).ready(function(){
@@ -19,17 +21,8 @@
             revert: true
         });
   });
-
-  function updatePathsString() {
-      var sorted = jQuery('#pathsList').sortable( "serialize");
-      jQuery('#pathsString').val(sorted);
-  }
-  
-  function removeElement(elid) {
-      var el = document.getElementById(elid);
-      el.parentNode.removeChild(el);
-  }
 </script>
+
 <style type="text/css" media="screen">
     #pathsList {
         list-style-position: inside; height: 30px; cursor: hand; cursor: pointer;
@@ -63,11 +56,12 @@
     <fmt:message key="exporter.${type}.description"/>
   </c:otherwise>
 </c:choose></h2>
-    <div style="margin-top: 10px; margin-bottom: 3px;">${exportReorderMessage}</div>
+<div style="margin-top: 10px;">${exportReorderMessage}</div>
 
 <!-- exporting type: ${type} -->
 
 <html:form action="/${type}ExportAction" onsubmit="updatePathsString();">
+  <div style="margin-top: 10px; margin-bottom: 10px;">
   <c:choose>
     <c:when test="${type == 'csv'}">
       Choose a format:<br/>
@@ -82,28 +76,33 @@
       <tiles:insert name="${tileName}"/>
     </c:otherwise>
   </c:choose>
-
-  <br/>
+  </div>
 
   <html:hidden property="pathsString" styleId="pathsString" value="${pathsString}"/>
   <html:hidden property="table" value="${table}"/>
   <html:hidden property="type" value="${type}"/>
 
+  Add column &nbsp;
+  <tiles:insert name="availableColumns.tile">
+     <tiles:put name="table" value="${table}" />
+  </tiles:insert>
+  &nbsp;
+  <button type="button" onclick="javascript:addSelectedPath()">Add</button>    
+  <br />
 
   <ul id="pathsList">
-    <c:forEach var="path" items="${paths}" varStatus="status">
-      <li id="${path}_${status.count}">
-          <div class="viewpath">
-          ${path}
-          <a href="javascript:removeElement('${path}_${status.count}')" title="Remove ${path} from the export"><img border="0" align="top"
-           src="images/cross.gif" width="10" height="10" 
-           title="x" style="position: relative; top: -3px; left: 2px;"/></a>
-          </div>
-      </li>
-    </c:forEach>
   </ul>
+  
+  <script type="text/javascript">
+      pathIndex = 1;
+      
+	  <c:forEach var="path" items="${paths}" varStatus="status">
+	     addPathElement("${path}");
+	  </c:forEach>
+  </script>
 
   <br clear="both"/>
+
   <html:submit property="submit">${exportSubmitMessage}</html:submit>
 </html:form>
 </im:boxarea>

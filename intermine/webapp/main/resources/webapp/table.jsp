@@ -97,8 +97,11 @@
 <ul id="button_bar" onclick="toggleToolBarMenu(event);">
 <li id="tool_bar_li_createlist"><img style="cursor: pointer;" src="images/icons/null.gif" width="90" height="25" alt="Create List" border="0" id="tool_bar_button_createlist" class="tool_bar_button"></li>
 <li id="tool_bar_li_addtolist"><img style="cursor: pointer;" src="images/icons/null.gif" width="91" height="25" alt="Add to List" border="0" id="tool_bar_button_addtolist" class="tool_bar_button"></li>
+<li id="tool_bar_li_addcolumn"><img style="cursor: pointer;" src="images/icons/null.gif" width="90" height="25" alt="Export" border="0" id="tool_bar_button_addcolumn" class="tool_bar_button"></li>
 <li id="tool_bar_li_export"><img style="cursor: pointer;" src="images/icons/null.gif" width="64" height="25" alt="Export" border="0" id="tool_bar_button_export" class="tool_bar_button"></li>
+
 <li class="tool_bar_separator"><span>&nbsp;//&nbsp;</span></li>
+
 <li class="tool_bar_link">
 <html:form action="/changeTableSize">
 
@@ -118,7 +121,6 @@
     </html:submit>
   </noscript>
 </html:form>
-</li>
 <li class="tool_bar_link">
     <span class="tablePageLinks">
     <tiles:insert page="/tablePageLinks.jsp">
@@ -173,6 +175,7 @@
     <hr>
   <a href="javascript:hideMenu('tool_bar_item_addtolist')" >Cancel</a>
 </div>
+
 <%-- Export --%>
 <div id="tool_bar_item_export" style="visibility:hidden;width:370px" class="tool_bar_item">
     <c:set var="tableName" value="${param.table}" scope="request"/>
@@ -192,6 +195,17 @@
       </div> <%-- end of main results table body div --%>
     </html:form>
 
+<div id="tool_bar_item_addcolumn" style="visibility:hidden;width:270px;font-size:0.7em" class="tool_bar_item">
+    <tiles:insert name="addColumn.tile">
+      <tiles:put name="table" value="${param.table}" />
+      <tiles:put name="trail" value="${param.trail}" />
+    </tiles:insert> 
+    <hr>
+    <a href="javascript:hideMenu('tool_bar_item_addcolumn')" ><fmt:message key="confirm.cancel"/></a>
+</div>
+
+
   </c:otherwise>
 </c:choose>
+
 <!-- /table.jsp -->

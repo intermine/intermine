@@ -89,7 +89,7 @@ public class WebResults extends AbstractList<List<Object>> implements WebTable
         this.pathQuery = pathQuery;
         pathToIndex = getPathToIndex(osResults.getQuery(), pathToQueryNode);
 
-        setColumns(columnPaths);
+        addColumns(columnPaths);
     }
 
     // pathToQueryNode is map from string paths to QueryNodes from ObjectStore query
@@ -125,8 +125,11 @@ public class WebResults extends AbstractList<List<Object>> implements WebTable
         return columnNames;
     }
 
-    // TODO javadoc to describe what this does
-    private void setColumns(List<Path> columnPaths) {
+    /**
+     * Adds columns that should be displayed to the table.
+     * @param columnPaths columns correspond to paths and columns for these paths should be added  
+     */
+    public void addColumns(List<Path> columnPaths) {
         List<String> types = new ArrayList<String>();
         int i = 0;
         for (Iterator<Path> iter = columnPaths.iterator(); iter.hasNext();) {
