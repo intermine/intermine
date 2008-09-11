@@ -152,7 +152,7 @@
 <%-- Add to existing list --%>
 <div id="tool_bar_item_addtolist" style="visibility:hidden;width:300px" class="tool_bar_item" >
    <c:choose>
-   <c:when test="${!empty PROFILE.savedBags}">
+   <c:when test="${!empty PROFILE.savedBags && (empty param.bagName || PROFILE.savedBags.size > 1)}">
           <fmt:message key="bag.existing"/>
           <html:select property="existingBagName">
              <c:forEach items="${PROFILE.savedBags}" var="entry">
