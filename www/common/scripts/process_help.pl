@@ -148,13 +148,16 @@ sub make_html
 
   my $style_path = 'style';
   my $js_path = 'js';
+  my $img_path = 'images';
 
   if (!-d "$dest_dir/$style_path") {
     $style_path = "../$style_path";
     $js_path = "../$js_path";
+    $img_path = "../$img_path";
     if (!-d "$dest_dir/$style_path") {
       $style_path = "../$style_path";
       $js_path = "../$js_path";
+      $img_path = "../$img_path";
     }
   }
 
@@ -220,8 +223,8 @@ TEXT
       <table width="100%">
         <tr>
           <td colspan="3" align="right">
-            <span style="padding: 3px; font-size: 70%;" onclick="window.close()">close
-              <img src="images/close.png" title="Close" onmouseout="this.style.cursor='normal';"
+            <span style="padding: 3px; font-size: 70%;" onclick="window.close()">
+              <img src="$img_path/close.png" title="Close" onmouseout="this.style.cursor='normal';"
                    onmouseover="this.style.cursor='pointer';"/>
             </span>
           </td>
