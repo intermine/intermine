@@ -432,6 +432,7 @@ public class AjaxServices
             QueryMonitorTimeout controller = (QueryMonitorTimeout)
                 SessionMethods.getRunningQueryController(qid, session);
 
+            // this could happen if the user navigates away then back to the page
             if (controller == null) {
                 return null;
             }
