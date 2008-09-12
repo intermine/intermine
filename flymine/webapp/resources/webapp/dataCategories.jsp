@@ -34,8 +34,8 @@
         <html:link action="/aspect?name=Genomics"> <p><img src="model/images/genomics.gif" /></p>
         <p> Genomics </p></html:link></td>
     <td> <i>Drosophila</i> </td>
-    <td> Genome annotation for D. melanogaster (R5.5), D. ananassae (R1.0), D. erecta (R1.0), D. grimshawi (R1.0), D. mojavensis (R1.0), D. persimilis (R1.0), D. pseudoobscura pseudoobscura (R2.1), D. sechellia (R1.0), D. simulans (R1.0), D. virilis (R1.0), D. willistoni (R1.0) and D. yakuba (R1.0).</td>
-    <td><a href="http://www.flybase.org" target="_new">Flybase</a> - Version FB2008_07</td>
+    <td> Genome annotation for D. melanogaster (R5.11), D. ananassae (R1.3), D. erecta (R1.3), D. grimshawi (R1.3), D. mojavensis (R1.3), D. persimilis (R1.3), D. pseudoobscura pseudoobscura (R2.3), D. sechellia (R1.3), D. simulans (R1.3), D. virilis (R1.2), D. willistoni (R1.3) and D. yakuba (R1.3).</td>
+    <td><a href="http://www.flybase.org" target="_new">Flybase</a> - Version FB2008_08</td>
     <td> Crosby et al - <a href="http://www.ncbi.nlm.nih.gov/entrez/query.fcgi?cmd=Retrieve&db=PubMed&dopt=Abstract&list_uids=17099233" target="_new">PubMed: 17099233</a></td>
     <td> <html:link action="/dataCategories" anchor="note1" title="${note1}">#1</html:link></td>
   </tr>
@@ -43,7 +43,7 @@
   <tr>
     <td> <i>A. gambiae</i></td>
     <td> Genome annotation - Release AgamP3.4</td>
-    <td> <a href="http://www.ensembl.org" target="_new">Ensembl</a> - Release 46.3i</td>
+    <td> <a href="http://www.ensembl.org" target="_new">Ensembl</a> - Release 50.3k</td>
     <td> Hubbard et al - <a href="http://www.ncbi.nlm.nih.gov/entrez/query.fcgi?cmd=Retrieve&db=PubMed&dopt=Abstract&list_uids=17148474 " target="_new">PubMed: 17148474</a></td>
     <td> &nbsp;</td>
   </tr>
@@ -97,7 +97,7 @@
         <p> Proteins </p></html:link></td>
     <td> <i>D. melanogaster</i> </td>
     <td> Protein annotation</td>
-    <td> <a href="http://www.ebi.uniprot.org/index.shtml" target="_new">UniProt</a> - Release 14.0</td>
+    <td> <a href="http://www.ebi.uniprot.org/index.shtml" target="_new">UniProt</a> - Release 14.1</td>
     <td> UniProt Consortium - <a href="http://www.ncbi.nlm.nih.gov/entrez/query.fcgi?cmd=Retrieve&db=PubMed&dopt=Abstract&list_uids=17142230" target="_new">PubMed: 17142230</a></td>
     <td> &nbsp;</td>
   </tr>
@@ -105,7 +105,7 @@
   <tr>
     <td> <i>A. gambiae</i></td>
     <td> Protein annotation</td>
-    <td> <a href="http://www.ebi.uniprot.org/index.shtml" target="_new">UniProt</a> - Release 14.0</td>
+    <td> <a href="http://www.ebi.uniprot.org/index.shtml" target="_new">UniProt</a> - Release 14.1</td>
     <td> UniProt Consortium - <a href="http://www.ncbi.nlm.nih.gov/entrez/query.fcgi?cmd=Retrieve&db=PubMed&dopt=Abstract&list_uids=17142230" target="_new">PubMed: 17142230</a></td>
     <td> &nbsp;</td>
   </tr>
@@ -113,7 +113,7 @@
   <tr>
     <td> <i>C. elegans</i> </td>
     <td> Protein annotation</td>
-    <td> <a href="http://www.ebi.uniprot.org/index.shtml" target="_new">UniProt</a> - Release 14.0</td>
+    <td> <a href="http://www.ebi.uniprot.org/index.shtml" target="_new">UniProt</a> - Release 14.1</td>
     <td> UniProt Consortium - <a href="http://www.ncbi.nlm.nih.gov/entrez/query.fcgi?cmd=Retrieve&db=PubMed&dopt=Abstract&list_uids=17142230" target="_new">PubMed: 17142230</a></td>
     <td> &nbsp;</td>
   </tr>
@@ -121,7 +121,7 @@
   <tr>
     <td> <i>H. sapiens</i></td>
     <td> Protein annotation</td>
-    <td> <a href="http://www.ebi.uniprot.org/index.shtml" target="_new">UniProt</a> - Release 14.0</td>
+    <td> <a href="http://www.ebi.uniprot.org/index.shtml" target="_new">UniProt</a> - Release 14.1</td>
     <td> UniProt Consortium - <a href="http://www.ncbi.nlm.nih.gov/entrez/query.fcgi?cmd=Retrieve&db=PubMed&dopt=Abstract&list_uids=17142230">PubMed: 17142230</a></td>
     <td> &nbsp;</td>
   </tr>
@@ -129,7 +129,7 @@
   <tr>
     <td> <i>M. musculus</i></td>
     <td> Protein annotation</td>
-    <td> <a href="http://www.ebi.uniprot.org/index.shtml" target="_new">UniProt</a> - Release 14.0</td>
+    <td> <a href="http://www.ebi.uniprot.org/index.shtml" target="_new">UniProt</a> - Release 14.1</td>
     <td> UniProt Consortium - <a href="http://www.ncbi.nlm.nih.gov/entrez/query.fcgi?cmd=Retrieve&db=PubMed&dopt=Abstract&list_uids=17142230" target="_new">PubMed: 17142230</a></td>
     <td> &nbsp;</td>
   </tr>
@@ -137,7 +137,7 @@
   <tr>
     <td> <i>D. melanogaster</i></td>
     <td> Protein family and domain assignments to proteins</td>
-    <td> <a href="http://www.ebi.ac.uk/interpro" target="_new">InterPro</a> (from Uniprot release 14.0)</td>
+    <td> <a href="http://www.ebi.ac.uk/interpro" target="_new">InterPro</a> (from UniProt release 14.1)</td>
     <td> Mulder et al - <a href="http://www.ncbi.nlm.nih.gov/entrez/query.fcgi?cmd=Retrieve&db=PubMed&dopt=Abstract&list_uids=17202162" target="_new">PubMed: 17202162</a></td>
     <td> &nbsp;</td>
   </tr>
@@ -145,7 +145,7 @@
   <tr>
     <td> <i>A. gambiae</i></td>
     <td> Protein family and domain assignments to proteins</td>
-    <td> <a href="http://www.ebi.ac.uk/interpro" target="_new">InterPro</a> (from Uniprot release 14.0)</td>
+    <td> <a href="http://www.ebi.ac.uk/interpro" target="_new">InterPro</a> (from UniProt release 14.1)</td>
     <td> Mulder et al - <a href="http://www.ncbi.nlm.nih.gov/entrez/query.fcgi?cmd=Retrieve&db=PubMed&dopt=Abstract&list_uids=17202162" target="_new">PubMed: 17202162</a></td>
     <td> &nbsp;</td>
   </tr>
@@ -153,7 +153,7 @@
   <tr>
     <td> <i>C. elegans</i> </td>
     <td> Protein family and domain assignments to proteins</td>
-    <td> <a href="http://www.ebi.ac.uk/interpro" target="_new">InterPro</a> (from Uniprot release 14.0)</td>
+    <td> <a href="http://www.ebi.ac.uk/interpro" target="_new">InterPro</a> (from UniProt release 14.1)</td>
     <td> Mulder et al - <a href="http://www.ncbi.nlm.nih.gov/entrez/query.fcgi?cmd=Retrieve&db=PubMed&dopt=Abstract&list_uids=17202162" target="_new">PubMed: 17202162</a></td>
     <td> &nbsp;</td>
   </tr>
@@ -194,7 +194,7 @@
         <p> Interactions</p></html:link></td>
     <td> <i>D. melanogaster</i> </td>
     <td> High-throughput yeast 2-hybrid protein interaction datasets </td>
-    <td> <a href="http://www.ebi.ac.uk/intact" target="_new">IntAct</a> - 28th July 2008</td>
+    <td> <a href="http://www.ebi.ac.uk/intact" target="_new">IntAct</a> - 26th August 2008</td>
     <td> Kerrien et al - <a href="http://www.ncbi.nlm.nih.gov/entrez/query.fcgi?cmd=Retrieve&db=PubMed&dopt=Abstract&list_uids=17145710" target="_new">PubMed:17145710</a></td>
     <td> &nbsp;</td>
   </tr>
@@ -202,7 +202,7 @@
   <tr>
     <td> <i>C. elegans</i></td>
     <td> High-throughput yeast 2-hybrid protein interaction datasets </td>
-    <td> <a href="http://www.ebi.ac.uk/intact" target="_new">IntAct</a> - 28th July 2008</td>
+    <td> <a href="http://www.ebi.ac.uk/intact" target="_new">IntAct</a> - 26th August 2008</td>
     <td> Kerrien et al - <a href="http://www.ncbi.nlm.nih.gov/entrez/query.fcgi?cmd=Retrieve&db=PubMed&dopt=Abstract&list_uids=17145710" target="_new">PubMed:17145710</a></td>
     <td> &nbsp;</td>
   </tr>
@@ -210,14 +210,14 @@
   <tr>
     <td> <i>S. cerevisiae</i></td>
     <td> High-throughput yeast 2-hybrid protein interaction datasets </td>
-    <td> <a href="http://www.ebi.ac.uk/intact" target="_new">IntAct</a> - 28th July 2008</td>
+    <td> <a href="http://www.ebi.ac.uk/intact" target="_new">IntAct</a> - 26th August 2008</td>
     <td> Kerrien et al - <a href="http://www.ncbi.nlm.nih.gov/entrez/query.fcgi?cmd=Retrieve&db=PubMed&dopt=Abstract&list_uids=17145710" target="_new">PubMed:17145710</a></td>
     <td> &nbsp;</td>
   </tr>
  <tr>
     <td> <i>D. melanogaster</i></td>
     <td> Interactions from the BioGRID</td>
-    <td> <a href="http://www.thebiogrid.org/" target="_new">BioGRID</a> - Version 2.0.43 </td>
+    <td> <a href="http://www.thebiogrid.org/" target="_new">BioGRID</a> - Version 2.0.44 </td>
     <td> Stark et al - <a href="http://www.ncbi.nlm.nih.gov/entrez/query.fcgi?cmd=Retrieve&db=PubMed&dopt=Abstract&list_uids=16381927" target="_new">PubMed:16381927</a></td>
     <td> &nbsp;</td>
   </tr>
@@ -225,7 +225,7 @@
  <tr>
     <td> <i>C. elegans</i></td>
     <td> Interactions from the BioGRID</td>
-    <td> <a href="http://www.thebiogrid.org/" target="_new">BioGRID</a> - Version 2.0.43 </td>
+    <td> <a href="http://www.thebiogrid.org/" target="_new">BioGRID</a> - Version 2.0.44 </td>
     <td> Stark et al - <a href="http://www.ncbi.nlm.nih.gov/entrez/query.fcgi?cmd=Retrieve&db=PubMed&dopt=Abstract&list_uids=16381927" target="_new">PubMed:16381927</a></td>
     <td> &nbsp;</td>
   </tr>
@@ -233,7 +233,7 @@
  <tr>
     <td> <i>S. cerevisiae</i></td>
     <td> Interactions from the BioGRID</td>
-    <td> <a href="http://www.thebiogrid.org/" target="_new">BioGRID</a> - Version 2.0.43 </td>
+    <td> <a href="http://www.thebiogrid.org/" target="_new">BioGRID</a> - Version 2.0.44 </td>
     <td> Stark et al - <a href="http://www.ncbi.nlm.nih.gov/entrez/query.fcgi?cmd=Retrieve&db=PubMed&dopt=Abstract&list_uids=16381927" target="_new">PubMed:16381927</a></td>
     <td> &nbsp;</td>
   </tr>
@@ -294,7 +294,7 @@
   <tr>
     <td> <i>A. gambiae</i> </td>
     <td> GO annotations </td>
-    <td> <a href="http://www.ebi.ac.uk/GOA/uniprot_release.html" target="_new">Uniprot GOA</a> - 4th July 2008</td>
+    <td> <a href="http://www.ebi.ac.uk/GOA/uniprot_release.html" target="_new">UniProt GOA</a> - 3rd July 2008</td>
     <td> Camon et al - <a href="http://www.ncbi.nlm.nih.gov/entrez/query.fcgi?cmd=Retrieve&db=PubMed&dopt=Abstract&list_uids=14681408" target="_new">PubMed: 14681408</a></td>
     <td> &nbsp;</td>
   </tr>
@@ -302,7 +302,7 @@
   <tr>
     <td> <i>A. mellifera</i> </td>
     <td> GO annotations </td>
-    <td> <a href="http://www.ebi.ac.uk/GOA/uniprot_release.html" target="_new">Uniprot GOA</a> - 4th July 2008</td>
+    <td> <a href="http://www.ebi.ac.uk/GOA/uniprot_release.html" target="_new">UniProt GOA</a> - 3rd July 2008</td>
     <td> Camon et al - <a href="http://www.ncbi.nlm.nih.gov/entrez/query.fcgi?cmd=Retrieve&db=PubMed&dopt=Abstract&list_uids=14681408" target="_new">PubMed: 14681408</a></td>
     <td> &nbsp;</td>
   </tr>
