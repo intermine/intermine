@@ -195,7 +195,7 @@
       </div> <%-- end of main results table body div --%>
     </html:form>
 
-<div id="tool_bar_item_addcolumn" style="visibility:hidden;width:270px;font-size:0.7em" class="tool_bar_item">
+<div id="tool_bar_item_addcolumn" style="visibility:hidden;font-size:0.7em" class="tool_bar_item">
     <tiles:insert name="addColumn.tile">
       <tiles:put name="table" value="${param.table}" />
       <tiles:put name="trail" value="${param.trail}" />
