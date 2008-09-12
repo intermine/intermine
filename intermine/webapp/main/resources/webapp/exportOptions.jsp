@@ -96,7 +96,7 @@
   <script type="text/javascript">
       pathIndex = 1;
       
-	  <c:forEach var="path" items="${paths}" varStatus="status">
+	  <c:forEach var="path" items="${paths}">
 	     addPathElement("${path}");
 	  </c:forEach>
   </script>
