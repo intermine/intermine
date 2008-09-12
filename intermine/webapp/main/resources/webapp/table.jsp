@@ -88,6 +88,10 @@
 
 <div class="body">
 
+<c:if test="${! empty GALAXY_URL}">
+  <tiles:insert name="galaxy.tile"/>
+</c:if>
+
 <%-- Toolbar --%>
 <link rel="stylesheet" href="css/toolbar.css" type="text/css" />
 <link rel="stylesheet" href="css/tablePageLinks.css" type="text/css" >

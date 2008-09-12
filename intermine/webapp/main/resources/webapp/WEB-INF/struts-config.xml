@@ -436,6 +436,7 @@
     <action path="/initNews" type="org.intermine.web.struts.NewsReadController"/>
     <action path="/initExportOptions" type="org.intermine.web.struts.ExportOptionsController"/>
     <action path="/initAvailableColumns" type="org.intermine.web.struts.AvailableColumnsController"/>
+    <action path="/initGalaxy" type="org.intermine.web.struts.GalaxyController"/>
 
     <!-- don't (re)move this - it's used for importing any model-specific actions -->
     <!--@MODEL_INCLUDE@-->
