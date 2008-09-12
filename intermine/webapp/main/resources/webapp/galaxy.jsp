@@ -5,7 +5,6 @@
 <!-- galaxy.jsp -->
 
 <div class="topBar messages">
-${urlSendBack}
 <form action="${GALAXY_URL}" name="galaxy_exchange" method="POST">
   <input type="hidden" name="URL" value="${urlSendBack}">
   Send results to GALAXY: <input type="submit" name="Send" value="Send">
