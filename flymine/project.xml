@@ -440,6 +440,13 @@
     <source name="fly-misc-cvterms" type="fly-misc-cvterms">
       <property name="src.data.file" location="/shared/data/ontologies/fly_cv/current/flybase_controlled_vocabulary.obo"/>
     </source>
+    <source name="drosdel-gff" type="drosdel-gff">
+      <property name="gff3.taxonId" value="7227"/>
+      <property name="gff3.seqClsName" value="Chromosome"/>
+      <property name="gff3.seqDataSourceName" value="FlyBase"/>
+      <property name="src.data.dir" 
+                location="/shared/data/drosdel/2008-03-19/chromosome_structure_variations/"/>
+    </source>
     <source name="miranda" type="miranda">
       <property name="gff3.seqClsName" value="Chromosome"/>
       <property name="gff3.taxonId" value="7227"/>
