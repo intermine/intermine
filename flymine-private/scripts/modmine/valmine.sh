@@ -5,6 +5,9 @@
 # note: you should put the db password in ~/.pgpass if don't
 #       want to be prompted for it
 #
+# TODO: deal with directory structure in ftp://dcc/pub   
+#
+#
 # sc 09/08
 #
 
@@ -43,9 +46,6 @@ Usage: $progname [-a] [-n] [-v] [-f] submission_name
 Notes: The file is downloaded only if not present or the remote copy 
       is newer (in this case a copy of the older should be created)
       
-       Without the -a option, the build will fail if there are active 
-      connections to the chado database. 
-
 example
        $progname submission_name
   
@@ -70,9 +70,6 @@ done
 shift $(($OPTIND - 1))
 #echo "the remaining arguments are: $1 $2 $3"
 
-#echo
-#echo "press return to load $1.."
-#read 
 
 #---------------------------------------
 # getting the chadoxml from ftp site
@@ -87,21 +84,26 @@ wget -N $FTPURL/$1.chadoxml
 echo "press return to continue.."
 read 
 
+
 #---------------------------------------
 # building the chado db
 #---------------------------------------
 #
-# NB: FAILS IF SOME CONNECTION ACTIVE
+# note; it could fail if any connection active
 #
 
 if [ "$APPEND" == "n" ]
 then
-dropdb -e $CHADODB -h $DBHOST -U $DBUSER 
-createdb -e $CHADODB -h $DBHOST -U $DBUSER 
 
-psql -d $CHADODB -h $DBHOST -U $DBUSER < $DBDIR/build_empty_chado.sql
-#echo "press return to continue.."
-#read 
+dropdb -e $CHADODB -h $DBHOST -U $DBUSER\
+|| { printf "%b" "\nMine building FAILED. Please eliminate any active connection to modchado-$REL.\n\n" ; exit 1 ; }
+
+createdb -e $CHADODB -h $DBHOST -U $DBUSER\
+|| { printf "%b" "\nMine building FAILED. Please check previous error message.\n\n" ; exit 1 ; }
+
+psql -d $CHADODB -h $DBHOST -U $DBUSER < $DBDIR/build_empty_chado.sql\
+|| { printf "%b" "\nMine building FAILED. Please check previous error message.\n\n" ; exit 1 ; }
+
 fi
 
 #---------------------------------------
@@ -130,12 +132,33 @@ cd $MINEDIR
 
 
 #---------------------------------------
+# and run acceptance tests
+#---------------------------------------
+
+echo
+echo "running acceptance tests"
+echo
+cd integrate
+ant $V -Drelease=$REL acceptance-tests
+
+mv $MINEDIR/integrate/build/acceptance_test.html $MINEDIR/integrate/build/$1.html
+xterm -bg grey20 -hold -e "elinks file://$MINEDIR/integrate/build/$1.html" &
+
+echo
+echo "acceptance test results in "
+echo "$MINEDIR/integrate/build/$1.html"
+echo
+echo "press return to continue.."
+read 
+
+
+#---------------------------------------
 # building webapp
 #---------------------------------------
 
 if [ "$WEBAPP" == "y" ]
 then
-cd webapp
+cd $MINEDIR/webapp
 ant -Drelease=$REL $V default remove-webapp release-webapp
 fi
 
