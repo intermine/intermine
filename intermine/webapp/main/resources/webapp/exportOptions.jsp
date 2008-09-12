@@ -15,6 +15,7 @@
 <script src="js/jquery-ui-personalized-1.5.2.min.js" type="text/javascript"></script>
 
 <script type="text/javascript">
+  jQuery.noConflict();
   // Use jQuery via jQuery(...)
   jQuery(document).ready(function(){
     jQuery('#pathsList').sortable({
