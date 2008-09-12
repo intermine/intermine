@@ -442,10 +442,9 @@
         <p> <img src="model/images/drosdel.gif" /></p>
         <p> Resources</p></html:link></td>
     <td> <i>D. melanogaster</i> </td>
-
+    <td> <a href="http://www.drosdel.org.uk" target="_new">DrosDel</a> artificial deletions</td>
     <td> <a href="http://www.flybase.org" target="_new">FlyBase </a> - Version FB2008_08</td>
     <td> Ryder et al - <a href="http://www.ncbi.nlm.nih.gov/entrez/query.fcgi?cmd=Retrieve&db=PubMed&dopt=Abstract&list_uids=15238529" target="_new">PubMed: 15238529</a></td>
-    <td> &nbsp;</td>
     <td> &nbsp;</td>
   </tr>
 
