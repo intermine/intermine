@@ -10,14 +10,20 @@ which id is saved in table parameter --%>
 <tiles:importAttribute name="trail" ignore="false" />
 
 <html:form action="/addColumn">
-    Add column to results page <br />
-    <tiles:insert name="availableColumns.tile">
-        <tiles:put name="table" value="${table}" />
-    </tiles:insert>    
-    
-    <input type="hidden" name="table" value="${table}" />
     <input type="hidden" name="trail" value="${trail}" />
-    &nbsp;
-    <html:submit value="Add"></html:submit>
+    <input type="hidden" name="table" value="${table}" />
+    Add column to results page <br />
+    <%-- Select box with non restricted size and button are in hidden table, so they are drawn at one line
+    with needed size in both FF and IE--%>
+    <table><tr>
+	    <td>
+	        <tiles:insert name="availableColumns.tile">
+	            <tiles:put name="table" value="${table}" />
+	        </tiles:insert>        
+	    </td>
+	    <td>
+	        &nbsp;<html:submit value="Add"></html:submit>
+	    </td>
+    </tr></table>
 </html:form>
 <!-- /addColumns.jsp -->
