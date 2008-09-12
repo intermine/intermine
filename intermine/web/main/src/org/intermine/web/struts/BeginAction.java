@@ -15,6 +15,7 @@ import java.util.Map;
 import org.intermine.web.logic.Constants;
 import org.intermine.web.logic.search.SearchRepository;
 import org.intermine.web.logic.search.WebSearchable;
+import org.intermine.web.logic.session.SessionMethods;
 
 import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletRequest;
@@ -54,6 +55,10 @@ public class BeginAction extends InterMineAction
        ServletContext servletContext = session.getServletContext();
        SearchRepository searchRepository = (SearchRepository)
                                servletContext.getAttribute(Constants.GLOBAL_SEARCH_REPOSITORY);
+       if (request.getParameter("GALAXY_URL") != null) {
+           request.getSession().setAttribute("GALAXY_URL", request.getParameter("GALAXY_URL"));
+           SessionMethods.recordMessage("Welcome to FlyMine, GALAXY users. ", session);
+       }
 
        Map<String, ? extends WebSearchable> webSearchables =
                                                        searchRepository.getWebSearchableMap("bag");
