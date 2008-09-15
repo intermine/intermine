@@ -10,6 +10,17 @@
 
     <!-- Add new news at the top here -->
     <item>
+      <title>FlyMine 15.0 Released</title>
+      <link>http://www.flymine.org/</link>
+      <description>
+        &lt;a href="http://www.flymine.org"&gt;
+        FlyMine 15.0&lt;/a&gt; is now available.  See 
+        &lt;a href="http://www.flymine.org/release-notes.shtml"&gt;
+        release notes&lt;/a&gt;.
+      </description>
+      <pubDate>Tue, 16 Sep 2008 19:51 GMT</pubDate>
+    </item>
+    <item>
       <title>Future of FlyMine</title>
       <link>http://www.flymine.org/</link>
       <description>
