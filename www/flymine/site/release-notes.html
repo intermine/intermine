@@ -3,6 +3,48 @@
 
   <div style="clear:" class="box">
 
+
+<div class="heading2">FlyMine version 15.0 - release notes (15th September 2008)</div>
+<div class="body">
+<p style="font-size: +1.1em;">
+In Release 15.0 we have updated data from FlyBase to release FB2008_08 and many sources are updated to the latest versions.</p>
+
+<h3>Data</h3>
+<p>Data from FlyBase is updated to the FB2008_08 release and many other sources have been updated to the latest versions, specific changes are detailed below.  For a complete list of all data included in FlyMine see the 'Data' tab above.</p>
+
+<ul>
+    <li>NEW - FlyMine now loads all types interactions from the BioGRID for D. melanogaster, C. elegans and S. cerevisiae. Currently, no distinction is made between protein and genetic interactions. All of them (the ones from IntAct as well as the ones from the BioGRID) are now called 'Interaction'. The Interaction Term allows to search for a particular interaction, eg phenotypic enhancement, two hybrid.
+    <li>NEW - Affymetrix Probesets from the GeneChip D. melanogaster Genome 1.0 and 2.0 Arrays now have locations and mapped genes, obtained from the Ensembl database. FlyMine only loads probesets that match to at least one gene. More information on the Ensembl probeset mappings, can be found at <a href="http://www.ensembl.org/Homo_sapiens/helpview?kw=microarray;ref=http%3A%2F%2Fwww.ensembl.org%2FMus_musculus%2Findex.html/" target="_new">Ensembl help</a> 
+    <li>NEW - Loaded all aberrations from FlyBase (done) including Drosdel deletions and they are now called Aberration/ChromosomeStructureVariation (not done yet). Each aberration has a feature_type (not done yet). (ticket #1832) 
+    <li>FIXED - The Ensembl id is correctly set for human genes.
+    <li>NEW - Since all flybaseFeatureType are ontology terms, Gene.flybaseFeatureType has been renamed to Gene.featureType.
+    <li>FIXED - all MRNAs now have Translations
+    <li>FIXED - UTRs
+</ul>
+
+<h3>Export</h3>
+<p>In this release, we've extended and improved the export system.  We've optomised and configured the export process which has resulted in marked speed improvements.  Also, we've added new functionality. </p>
+
+
+<h3>User interface</h3>
+<p>
+<ul>
+  <li>NEW - you can now have a dash in a list name</li>
+  <li>NEW - links on the allele list page directly to FlyBase</li>
+  <li>NEW - links on the allele list page to convert list to genes</li>
+  <li>FIXED - improved error handling throughout the site, including the QueryBuilder, template and query import pages</li>
+  <li>FIXED - the quick search now handles special characters correctly so you can search for any identifier, eg. </li>
+  <li>FIXED - selected records in your list stay highlighted even if you navigate away and then back to the list analysis page
+  <li>FIXED - template form handles wildcards correctly
+</ul>
+</p>
+
+
+
+</div>
+
+###########################################################################
+
 <div class="heading2">FlyMine version 14.0 - release notes (14th July 2008)</div>
 <div class="body">
 <p style="font-size: +1.1em;">
