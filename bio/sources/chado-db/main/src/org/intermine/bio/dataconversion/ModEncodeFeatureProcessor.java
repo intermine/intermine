@@ -47,8 +47,7 @@ public class ModEncodeFeatureProcessor extends ChadoSequenceProcessor
          "five_prime_untranslated_region",
          "five_prime_UTR", "three_prime_untranslated_region",
          "three_prime_UTR", "origin_of_replication", 
-         "binding_site", "protein_binding_site"
-         
+         "binding_site", "protein_binding_site", "transcript_region"
     );
 
     /**
@@ -78,6 +77,12 @@ public class ModEncodeFeatureProcessor extends ChadoSequenceProcessor
         return FEATURES;
     }
 
+    /*
+     * gives problems: no row returned for the data_id -> no feature in sub..
+     * (see createFeatureTempTable in ChadoSequenceProcessor)
+     * queryList??
+     * 
+     */
     /**
      * {@inheritDoc}
      */
@@ -89,15 +94,8 @@ public class ModEncodeFeatureProcessor extends ChadoSequenceProcessor
             + " (SELECT feature_id "
             + "   FROM data_feature "
             + "   WHERE data_id IN (" + queryList + "))";
-
-        /* TODO: needs information from EO
-        return "feature_id IN "
-            + "(SELECT feature_id "
-            + "   FROM some_indirection_table "
-            + "   WHERE experiment_id = " + chadoExperimentId + ")";
-            */
-        //return null;
     }
+
 
     /**
      * {@inheritDoc}
