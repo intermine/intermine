@@ -2,6 +2,8 @@
 <classes>
   <class name="org.flymine.model.genomic.OriginOfReplication"
     extends="org.flymine.model.genomic.Region" is-interface="true"/>
+  <class name="org.flymine.model.genomic.TranscriptRegion"
+    extends="org.flymine.model.genomic.Region" is-interface="true"/>
 
 	<class name="org.flymine.model.genomic.Project"
 		is-interface="true">
