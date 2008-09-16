@@ -142,13 +142,13 @@ public class Util
                 if (substring.startsWith("_")) {
                     sb.append("?");
                 } else {
-                    if (substring.startsWith("\\\\%")) {
+                    if (substring.startsWith("\\%")) {
                         sb.append("%");
-                        i += 2;
+                        i++;
                     } else {
-                        if (substring.startsWith("\\\\_")) {
+                        if (substring.startsWith("\\_")) {
                             sb.append("_");
-                            i += 2;
+                            i++;
                         } else {
                             if (substring.startsWith("*")) {
                                 sb.append("\\*");
@@ -157,8 +157,8 @@ public class Util
                                     sb.append("\\?");
                                 } else {
                                     // a single '\' as in Dpse\GA10108
-                                    if (substring.startsWith("\\\\\\\\")) {
-                                        i += 3;
+                                    if (substring.startsWith("\\\\")) {
+                                        i++;
                                         sb.append("\\");
                                     } else {
                                         sb.append(substring.charAt(0));
@@ -197,11 +197,11 @@ public class Util
                 sb.append("?");
                 i++;
             } else if (substring.startsWith("%")) {
-                sb.append("\\\\%");
+                sb.append("\\%");
             } else if (substring.startsWith("_")) {
-                sb.append("\\\\_");
+                sb.append("\\_");
             } else if (substring.startsWith("\\")) {
-                sb.append("\\\\\\\\");
+                sb.append("\\\\");
             } else {
                 sb.append(substring.charAt(0));
             }
