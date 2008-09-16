@@ -27,6 +27,7 @@ import org.intermine.web.logic.results.Column;
 import org.intermine.web.logic.results.PagedTable;
 import org.intermine.web.struts.TableExportForm;
 
+import org.flymine.model.genomic.Chromosome;
 import org.flymine.model.genomic.LocatedSequenceFeature;
 
 import java.io.IOException;
@@ -112,6 +113,12 @@ public class SequenceHttpExporter implements TableHttpExporter
         for (Path seqPath: sequencePaths) {
             Class<?> seqPathClass = seqPath.getEndClassDescriptor().getType();
             if (LocatedSequenceFeature.class.isAssignableFrom(seqPathClass)) {
+                // skip chromosome class, so ...chromosome.chromosomeLocation doesn't appear in 
+                // paths, because chromosome.chromosomeLocation is empty and it caused empty 
+                // export results
+                if (Chromosome.class.isAssignableFrom(seqPathClass)) {
+                    continue;
+                }
                 // the Path we need is the parent of one of the paths in the columns
                 paths.add(seqPath.append("chromosomeLocation"));
             }
