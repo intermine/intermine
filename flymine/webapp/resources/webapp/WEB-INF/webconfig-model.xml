@@ -4,6 +4,7 @@
     <fields>
       <fieldconfig fieldExpr="primaryIdentifier"/>
       <fieldconfig fieldExpr="secondaryIdentifier"/>
+      <fieldconfig fieldExpr="alleleClass"/>
       <fieldconfig fieldExpr="organism.name"/>
     </fields>
     <longdisplayers>
