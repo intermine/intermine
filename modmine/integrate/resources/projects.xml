@@ -413,7 +413,7 @@
 	</item>
 	<item id="1063" class="" implements="http://www.flymine.org/model/genomic#Lab">
 		<attribute name="surname" value="Gingeras"/>
-		<attribute name="name" value="Thomas Gingeras"/>
+		<attribute name="name" value="Tom Gingeras"/>
 		<attribute name="affiliation" value="Affymetrix"/>
 		<reference name="project" ref_id="1020"/>
 	</item>
