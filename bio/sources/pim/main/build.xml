@@ -1,6 +1,0 @@
-
-<project name="pim-tasks" default="default" basedir=".">
-  <description>build pim tasks</description>
-  <import file="../../../../imbuild/library.xml"/> 
-</project>
-
