@@ -175,11 +175,11 @@ public class WriteGFFTask extends Task
 
             try {
                 if (TypeUtil.isInstanceOf(feature,
-                                          "org.flymine.model.genomic.ArtificialDeletion")) {
+                                          "org.flymine.model.genomic.ChromosomalDeletion")) {
                     try {
                         if (TypeUtil.getFieldValue(feature, "available") != Boolean.TRUE) {
                             // write only the available deletions because there are too many
-                            // ArtificialDeletions for GBrowse to work well
+                            // ChromosomalDeletions for GBrowse to work well
                             continue;
                         }
                     } catch (IllegalAccessException e) {
@@ -187,7 +187,7 @@ public class WriteGFFTask extends Task
                     }
                 }
             } catch (ClassNotFoundException e) {
-               // ignore - ArtificialDeletion is not in the model
+               // ignore - ChromosomalDeletion is not in the model
             }
 
             if (feature instanceof CDS) {

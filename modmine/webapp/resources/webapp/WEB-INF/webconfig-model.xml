@@ -645,7 +645,7 @@
     </fields>
   </class>
 
-  <class className="org.flymine.model.genomic.ArtificialDeletion">
+  <class className="org.flymine.model.genomic.ChromosomalDeletion">
     <fields>
       <fieldconfig fieldExpr="primaryIdentifier"/>
       <fieldconfig fieldExpr="chromosomeLocation" displayer="/model/chromosomeLocDisplayer.jsp" showInResults="false" />

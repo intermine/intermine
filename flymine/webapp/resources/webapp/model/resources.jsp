@@ -160,12 +160,12 @@
 
           <li>
             <im:querylink text="All DrosDel deletions " skipBuilder="true">
-<query name="" model="genomic" view="ArtificialDeletion.primaryIdentifier ArtificialDeletion.available ArtificialDeletion.chromosome.primaryIdentifier ArtificialDeletion.chromosomeLocation.start ArtificialDeletion.chromosomeLocation.end ArtificialDeletion.element1.primaryIdentifier ArtificialDeletion.element2.primaryIdentifier" sortOrder="ArtificialDeletion.primaryIdentifier asc">
-  <node path="ArtificialDeletion" type="ArtificialDeletion">
+<query name="" model="genomic" view="ChromosomalDeletion.primaryIdentifier ChromosomalDeletion.available ChromosomalDeletion.chromosome.primaryIdentifier ChromosomalDeletion.chromosomeLocation.start ChromosomalDeletion.chromosomeLocation.end ChromosomalDeletion.element1.primaryIdentifier ChromosomalDeletion.element2.primaryIdentifier" sortOrder="ChromosomalDeletion.primaryIdentifier asc">
+  <node path="ChromosomalDeletion" type="ChromosomalDeletion">
   </node>
-  <node path="ArtificialDeletion.organism" type="Organism">
+  <node path="ChromosomalDeletion.organism" type="Organism">
   </node>
-  <node path="ArtificialDeletion.organism.name" type="String">
+  <node path="ChromosomalDeletion.organism.name" type="String">
     <constraint op="=" value="Drosophila melanogaster" description="" identifier="" code="A">
     </constraint>
   </node>
@@ -175,16 +175,16 @@
 
           <li>
             <im:querylink text="All available DrosDel deletions " skipBuilder="true">
-<query name="" model="genomic" view="ArtificialDeletion.primaryIdentifier ArtificialDeletion.secondaryIdentifier ArtificialDeletion.chromosome.primaryIdentifier ArtificialDeletion.chromosomeLocation.start ArtificialDeletion.chromosomeLocation.end" sortOrder="ArtificialDeletion.primaryIdentifier asc" constraintLogic="A and B">
-  <node path="ArtificialDeletion" type="ArtificialDeletion">
+<query name="" model="genomic" view="ChromosomalDeletion.primaryIdentifier ChromosomalDeletion.secondaryIdentifier ChromosomalDeletion.chromosome.primaryIdentifier ChromosomalDeletion.chromosomeLocation.start ChromosomalDeletion.chromosomeLocation.end" sortOrder="ChromosomalDeletion.primaryIdentifier asc" constraintLogic="A and B">
+  <node path="ChromosomalDeletion" type="ChromosomalDeletion">
   </node>
-  <node path="ArtificialDeletion.organism" type="Organism">
+  <node path="ChromosomalDeletion.organism" type="Organism">
   </node>
-  <node path="ArtificialDeletion.organism.name" type="String">
+  <node path="ChromosomalDeletion.organism.name" type="String">
     <constraint op="=" value="Drosophila melanogaster" description="" identifier="" code="A">
     </constraint>
   </node>
-  <node path="ArtificialDeletion.available" type="Boolean">
+  <node path="ChromosomalDeletion.available" type="Boolean">
     <constraint op="=" value="true" description="" identifier="" code="B">
     </constraint>
   </node>
