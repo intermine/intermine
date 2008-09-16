@@ -39,7 +39,7 @@
     <c:set var="label" value="${label}-ReversePrimers-TilingPathSpans-PCRProducts"/>
   </c:if>
 
-  <c:if test="${type == 'ArtificialDeletions'}">
+  <c:if test="${type == 'ChromosomalDeletions'}">
     <c:set var="type" value="${type}+TransposableElementInsertionSites"/>
     <c:set var="label" value="${label}-TransposableElementInsertionSites"/>
   </c:if>

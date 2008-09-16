@@ -519,7 +519,7 @@
       <constraint op="&lt;" value="100000" description="and" identifier="" editable="true" code="C">
       </constraint>
     </node>
-    <node path="Chromosome.subjects.subject" type="ArtificialDeletion">
+    <node path="Chromosome.subjects.subject" type="ChromosomalDeletion">
     </node>
   </query>
 </template>
@@ -2131,7 +2131,7 @@
       <constraint op="LOOKUP" value="CG9852" description="" identifier="" editable="true" code="B" extraValue="D. melanogaster">
       </constraint>
     </node>
-    <node path="Gene.overlappingFeatures" type="ArtificialDeletion">
+    <node path="Gene.overlappingFeatures" type="ChromosomalDeletion">
     </node>
     <node path="Gene.overlappingFeatures.available" type="Boolean">
       <constraint op="=" value="true" description="" identifier="" code="A">
@@ -2145,7 +2145,7 @@
       <constraint op="LOOKUP" value="CG8340" description="" identifier="" editable="true" code="A" extraValue="D. melanogaster">
       </constraint>
     </node>
-    <node path="Gene.overlappingFeatures" type="ArtificialDeletion">
+    <node path="Gene.overlappingFeatures" type="ChromosomalDeletion">
     </node>
   </query>
 </template>
@@ -2155,7 +2155,7 @@
       <constraint op="LOOKUP" value="CG9852" description="" identifier="" editable="true" code="A" extraValue="D. melanogaster">
       </constraint>
     </node>
-    <node path="Gene.overlappingFeatures" type="ArtificialDeletion">
+    <node path="Gene.overlappingFeatures" type="ChromosomalDeletion">
     </node>
   </query>
 </template>
@@ -3477,7 +3477,7 @@
       <constraint op="LIKE" value="%ion channel%" description="which are annotated with" identifier="" editable="true" code="B">
       </constraint>
     </node>
-    <node path="Gene.overlappingFeatures" type="ArtificialDeletion">
+    <node path="Gene.overlappingFeatures" type="ChromosomalDeletion">
     </node>
     <node path="Gene.overlappingFeatures.evidence" type="DataSet">
     </node>
@@ -4709,7 +4709,7 @@
   </tag>
   <tag name="aspect:DrosDel" objectIdentifier="gene2DrosDelDeletion2" type="template">
   </tag>
-  <tag name="aspect:DrosDel" objectIdentifier="org.flymine.model.genomic.ArtificialDeletion" type="class">
+  <tag name="aspect:DrosDel" objectIdentifier="org.flymine.model.genomic.ChromosomalDeletion" type="class">
   </tag>
   <tag name="aspect:DrosDel" objectIdentifier="AAAA_Symbol_toCG" type="template">
   </tag>
@@ -4723,7 +4723,7 @@
   </tag>
   <tag name="aspect:DrosDel" objectIdentifier="drosDelGeneAll" type="template">
   </tag>
-  <tag name="aspect:DrosDel" objectIdentifier="ArtificialDeletion.element2" type="reference">
+  <tag name="aspect:DrosDel" objectIdentifier="ChromosomalDeletion.element2" type="reference">
   </tag>
   <tag name="aspect:DrosDel" objectIdentifier="geneToInsertionSiteDetails" type="template">
   </tag>
@@ -4731,7 +4731,7 @@
   </tag>
   <tag name="aspect:DrosDel" objectIdentifier="geneToInsertionSite" type="template">
   </tag>
-  <tag name="aspect:DrosDel" objectIdentifier="ArtificialDeletion.element1" type="reference">
+  <tag name="aspect:DrosDel" objectIdentifier="ChromosomalDeletion.element1" type="reference">
   </tag>
   <tag name="aspect:DrosDel" objectIdentifier="DrosDel_GeneChromosome" type="template">
   </tag>
