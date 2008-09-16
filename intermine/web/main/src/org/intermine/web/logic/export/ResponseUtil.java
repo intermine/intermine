@@ -14,7 +14,8 @@ import javax.servlet.http.HttpServletResponse;
 
 
 /**
- * Response util that sets content type and header for various formats.
+ * Response util that sets content type and header for various formats and has
+ * util methods for setting headers controlling cache.
  * @author Jakub Kulaviak
  **/
 public class ResponseUtil
@@ -92,6 +93,19 @@ public class ResponseUtil
         // http://support.microsoft.com/kb/243717
         response.setHeader("Pragma", "no-cache");
         response.setHeader("Cache-Control", "must-revalidate, max-age=0");
+    }
+    
+    /**
+     * Sets enforced no-cache headers to completely disable cache for this response. 
+     * Page is reloaded always, for example when the user uses Go Back button.  
+     * @param response response
+     */
+    public static void setNoCacheEnforced(HttpServletResponse response) {
+        // should work for firefox and IE to refresh always the page when back button is pressed
+        // http://forums.mozillazine.org/viewtopic.php?f=25&t=673135&start=30
+        response.setHeader("Cache-Control", "max-age=0, must-revalidate, no-store, no-cache");
+        response.setHeader("Pragma", "no-cache");
+        response.setHeader("Expires", "Wed, 11 Jan 1984 05:00:00 GMT");            
     }
     
     /**
