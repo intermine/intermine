@@ -25,7 +25,6 @@ import org.intermine.objectstore.ObjectStore;
 import org.intermine.path.Path;
 import org.intermine.pathquery.PathQuery;
 import org.intermine.web.logic.Constants;
-import org.intermine.web.logic.export.ResponseUtil;
 import org.intermine.web.logic.results.PagedTable;
 import org.intermine.web.logic.results.WebResults;
 import org.intermine.web.logic.results.WebTable;
@@ -46,8 +45,7 @@ public class AddColumnAction extends InterMineAction
             @SuppressWarnings("unused")
             ActionForm form, HttpServletRequest request,
             HttpServletResponse response) throws Exception {
-        // works for firefox, IE ignores it 
-        ResponseUtil.setNoCache(response);
+        
         String columnToAdd = request.getParameter("columnToAdd");
         HttpSession session = request.getSession();
         String tableId = request.getParameter("table");

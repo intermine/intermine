@@ -71,7 +71,8 @@
     </action>
     <action path="/templateProblems" forward="templateProblems.page">
     </action>
-    <action path="/results" forward="results.page">
+    <action path="/results" type="org.intermine.web.struts.ResultsAction">
+        <forward name="success" redirect="false" path="results.page"/>
     </action>
     <!-- used if there were no results because we weren't able to run a query
          (as opposed to we ran it but there were no results)  -->
