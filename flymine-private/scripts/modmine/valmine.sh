@@ -5,7 +5,7 @@
 # note: you should put the db password in ~/.pgpass if don't
 #       want to be prompted for it
 #
-# TODO: deal with directory structure in ftp://dcc/pub   
+# TODO: deal with directory structure in ftp://dcc/pub: use wget -r ?  
 #
 #
 # sc 09/08
@@ -44,7 +44,7 @@ Usage: $progname [-a] [-n] [-v] [-f] submission_name
    -f: force building of mine after a failure in the loading in chado 
    
 Notes: The file is downloaded only if not present or the remote copy 
-      is newer (in this case a copy of the older should be created)
+      is newer
       
 example
        $progname submission_name
@@ -77,12 +77,13 @@ shift $(($OPTIND - 1))
 
 cd $DATADIR
 
-#...and get it if the remote timestamp is newer than the local
-# it will make a copy of the local (as name.chadoxml.n)
+#...and get it if the remote timestamp is newer than the local one
+#(or of a different size)
+# 
 wget -N $FTPURL/$1.chadoxml
 
-echo "press return to continue.."
-read 
+#echo "press return to continue.."
+#read 
 
 
 #---------------------------------------
@@ -92,11 +93,11 @@ read
 # note; it could fail if any connection active
 #
 
-if [ "$APPEND" == "n" ]
+if [ "$APPEND" = "n" ]
 then
 
-dropdb -e $CHADODB -h $DBHOST -U $DBUSER\
-|| { printf "%b" "\nMine building FAILED. Please eliminate any active connection to modchado-$REL.\n\n" ; exit 1 ; }
+dropdb -e $CHADODB -h $DBHOST -U $DBUSER
+#|| { printf "%b" "\nMine building FAILED. Please check previous error message.\n\n" ; exit 1 ; }
 
 createdb -e $CHADODB -h $DBHOST -U $DBUSER\
 || { printf "%b" "\nMine building FAILED. Please check previous error message.\n\n" ; exit 1 ; }
@@ -112,8 +113,8 @@ fi
 echo 
 echo "filling the chado db with $1..."
 stag-storenode.pl -D "Pg:$CHADODB@$DBHOST" -user $DBUSER -password\
- $DBPW -noupdate  cvterm,dbxref,db,cv,feature $1.chadoxml \
- || { printf "%b" "\n stag-storenode FAILED.\n" ; $F ; }
+ $DBPW -noupdate cvterm,dbxref,db,cv,feature $1.chadoxml\
+ || { printf "%b" "\n modMine FAILED.\n" ; $F ; }
 
 #echo "press return to continue.."
 #read 
@@ -125,7 +126,8 @@ stag-storenode.pl -D "Pg:$CHADODB@$DBHOST" -user $DBUSER -password\
 
 cd $MINEDIR
 
-../bio/scripts/project_build -a $SOURCES -V $REL $V -b -t localhost /tmp/mod-meta
+../bio/scripts/project_build -a $SOURCES -V $REL $V -b -t localhost /tmp/mod-meta\
+ || { printf "%b" "\n modMine build FAILED.\n" ; exit 1 ; }
 
 #echo "press return to continue.."
 #read 
@@ -148,17 +150,16 @@ echo
 echo "acceptance test results in "
 echo "$MINEDIR/integrate/build/$1.html"
 echo
-echo "press return to continue.."
-read 
+#echo "press return to continue.."
+#read 
 
 
 #---------------------------------------
 # building webapp
 #---------------------------------------
 
-if [ "$WEBAPP" == "y" ]
+if [ "$WEBAPP" = "y" ]
 then
 cd $MINEDIR/webapp
 ant -Drelease=$REL $V default remove-webapp release-webapp
 fi
-
