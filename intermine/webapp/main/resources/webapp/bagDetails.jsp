@@ -57,8 +57,8 @@
 <html:hidden property="bagName" value="${bag.name}"/>
 
 <div id="tool_bar_item_display" style="visibility:hidden;width:100px" class="tool_bar_item">
-    <html:link anchor="relatedTemplates" action="bagDetails?bagName=${bag.name}">related templates</html:link><br/>
-    <html:link anchor="widgets" action="bagDetails?bagName=${bag.name}">related widgets</html:link>
+    <html:link anchor="relatedTemplates" action="bagDetails?bagName=${bag.name}">Related templates</html:link><br/>
+    <html:link anchor="widgets" action="bagDetails?bagName=${bag.name}">Related widgets</html:link>
     <hr/>
     <a href="javascript:hideMenu('tool_bar_item_display')"><fmt:message key="confirm.cancel"/></a>
 </div>
@@ -72,8 +72,8 @@
 </div>
 
 <div id="tool_bar_item_use" style="visibility:hidden;width:100px" class="tool_bar_item">
-    <html:link action="/modifyBagDetailsAction.do?useBag=1&bagName=${bag.name}">in a query</html:link><br/>
-  <html:link action="/templates">in a template</html:link>
+    <html:link action="/modifyBagDetailsAction.do?useBag=1&bagName=${bag.name}">In a query</html:link><br/>
+  <html:link action="/templates">In a template</html:link>
     <hr/>
     <a href="javascript:hideMenu('tool_bar_item_use')" ><fmt:message key="confirm.cancel"/></a>
 </div>
