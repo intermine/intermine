@@ -20,16 +20,16 @@ import org.intermine.util.TypeUtil;
 import org.intermine.util.Util;
 
 /**
- * Parser for parsing constraint value. 
+ * Parser for parsing constraint value.
  * @author Jakub Kulaviak
  **/
 public class ConstraintValueParser
 {
 
     /**
-     * @param value parsed value 
+     * @param value parsed value
      * @param type Java type, it is type of returned object
-     * @param constraintOp operation connected with this value 
+     * @param constraintOp operation connected with this value
      * @param locale locale used for parsing date, floats ...
      * @return converted object
      * @throws ParseValueException if value can not be converted to required type
@@ -37,11 +37,11 @@ public class ConstraintValueParser
     public Object parse(String value, Class type, ConstraintOp constraintOp,
             Locale locale) throws ParseValueException {
         Object parsedValue = null;
-    
+
         if (value == null || value.length() == 0) {
             throw new ParseValueException("No input given, please supply a valid expression");
         }
-    
+
         if (Date.class.equals(type)) {
             DateFormat df;
             if (locale == null) {
@@ -53,7 +53,7 @@ public class ConstraintValueParser
             try {
                 parsedValue = df.parse(value);
             } catch (ParseException e) {
-                throw new ParseValueException(value + " is not a valid date - example: " 
+                throw new ParseValueException(value + " is not a valid date - example: "
                         + df.format(new Date()));
             }
         } else if (String.class.equals(type)) {
@@ -65,7 +65,8 @@ public class ConstraintValueParser
                 if (constraintOp == ConstraintOp.EQUALS
                     || constraintOp == ConstraintOp.NOT_EQUALS
                     || constraintOp == ConstraintOp.MATCHES
-                    || constraintOp == ConstraintOp.DOES_NOT_MATCH) {
+                    || constraintOp == ConstraintOp.DOES_NOT_MATCH
+                    || constraintOp == ConstraintOp.CONTAINS) {
                     parsedValue = Util.wildcardUserToSql(trimmedValue);
                 } else {
                     parsedValue = trimmedValue;
