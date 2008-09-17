@@ -12,7 +12,6 @@ package org.modmine.web;
 
 import java.util.Iterator;
 import java.util.LinkedHashMap;
-import java.util.List;
 import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
@@ -24,7 +23,6 @@ import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
 import org.apache.struts.tiles.ComponentContext;
 import org.apache.struts.tiles.actions.TilesAction;
-import org.flymine.model.genomic.Lab;
 import org.flymine.model.genomic.LocatedSequenceFeature;
 import org.flymine.model.genomic.Submission;
 import org.intermine.objectstore.ObjectStore;
@@ -41,8 +39,8 @@ import org.intermine.util.TypeUtil;
 import org.intermine.web.logic.Constants;
 
 /**
- * Controller for results.jsp
- * @author Tom Riley
+ * Controller for submissions.jsp
+ * @author sc
  */
 public class SubmissionsController extends TilesAction
 {
@@ -78,7 +76,7 @@ public class SubmissionsController extends TilesAction
             q.addToGroupBy(sub);
             
             q.addToOrderBy(sub);
-            q.addToOrderBy(qfClass, "desc");
+            q.addToOrderBy(qfClass);
             
             q.setDistinct(false);                        
             q.addToSelect(new QueryFunction());
@@ -101,6 +99,9 @@ public class SubmissionsController extends TilesAction
                 Class feat = (Class) row.get(1);
                 Long count = (Long) row.get(2);
 
+                // don't record chromosome feature
+                //if (TypeUtil.unqualifiedName(feat.getName()) == "Chromosome") { continue; }
+                                
                 Map<String, Long> fc =
                     new LinkedHashMap<String, Long>();
 
@@ -109,12 +110,20 @@ public class SubmissionsController extends TilesAction
                 // check if there is the need to add to fc before putting it in subs
                 // Note: the db query get the feature class in descending alphabetical order,
                 // so this will bring back the ascending order
+//                if (subs.containsKey(s)) {
+//                    for (Map<String, Long> map: subs.values()) {
+//                        fc.putAll(map);
+//                    }
+//                } 
                 if (subs.containsKey(s)) {
-                    for (Map<String, Long> map: subs.values()) {
-                        fc.putAll(map);
-                    }
+                    Map<String, Long> ft =
+                        new LinkedHashMap<String, Long>();
+                    ft = subs.get(s);
+                    ft.put(TypeUtil.unqualifiedName(feat.getName()), count);
+                    subs.put(s, ft);
+                } else {
+                    subs.put(s, fc);
                 }
-                subs.put(s, fc);
             }            
 
            request.setAttribute("subs", subs);
