@@ -3,48 +3,50 @@
 <accession>eve accession</accession>
 <name>EVE_DROME</name>
 <protein>
-	<name>eve's name</name>
+    <recommendedName>
+      <fullName>eve's name</fullName>
+    </recommendedName>
 </protein>
 <gene>
-	<name type="primary">eve</name>
-	<name type="ORF">CG1111</name>
+  <name type="primary">eve</name>
+  <name type="ORF">CG1111</name>
 </gene>
 <organism key="1">
-	<dbReference type="NCBI Taxonomy" id="7227" key="2"/>
+  <dbReference type="NCBI Taxonomy" id="7227" key="2"/>
 </organism>
 <reference key="3">
-	<citation>
-		<dbReference type="PubMed" id="222222" key="6"/>
-	</citation>
+  <citation>
+    <dbReference type="PubMed" id="222222" key="6"/>
+  </citation>
 </reference>
 <reference key="7">
-	<citation>
-		<dbReference type="PubMed" id="1111111" key="9"/>
-	</citation>
+  <citation>
+    <dbReference type="PubMed" id="1111111" key="9"/>
+  </citation>
 </reference>
 <comment type="subcellular location">
-	<text>Nucleus.</text>
+  <text>Nucleus.</text>
 </comment>
 <comment type="similarity">
-	<text>I'm a duplicate!</text>
+  <text>I'm a duplicate!</text>
 </comment>
 <comment type="similarity">
-	<text>Contains 1 homeobox DNA-binding domain.</text>
+  <text>Contains 1 homeobox DNA-binding domain.</text>
 </comment>
 <dbReference type="FlyBase" id="FBgn0000001" key="40">
-	<property type="gene designation" value="eve"/>
+  <property type="gene designation" value="eve"/>
 </dbReference>
 <dbReference type="GO" id="GO:0000001" key="44">
-	<property type="term" value="P:cell fate determination"/>
-	<property type="evidence" value="NAS:FlyBase"/>
+  <property type="term" value="P:cell fate determination"/>
+  <property type="evidence" value="NAS:FlyBase"/>
 </dbReference>
 <dbReference type="GO" id="GO:0000002" key="45">
-	<property type="term" value="P:central nervous system development"/>
-	<property type="evidence" value="NAS:FlyBase"/>
+  <property type="term" value="P:central nervous system development"/>
+  <property type="evidence" value="NAS:FlyBase"/>
 </dbReference>
 <dbReference type="GO" id="GO:0000003" key="46">
-	<property type="term" value="P:cephalic furrow formation"/>
-	<property type="evidence" value="IMP:FlyBase"/>
+  <property type="term" value="P:cephalic furrow formation"/>
+  <property type="evidence" value="IMP:FlyBase"/>
 </dbReference>
 <keyword id="KW-0001">keyword!</keyword>
 <keyword id="KW-0002">Complete proteome</keyword>
@@ -83,32 +85,32 @@ IAEPKPKLFKPYKTEA
 <protein>
 </protein>
 <gene>
-	<name type="primary">julie jeans</name>
-	<name type="ORF">CG2222</name>
+  <name type="primary">julie jeans</name>
+  <name type="ORF">CG2222</name>
 </gene>
 <organism key="1">
-	<dbReference type="NCBI Taxonomy" id="7227" key="2"/>
+  <dbReference type="NCBI Taxonomy" id="7227" key="2"/>
 </organism>
 <reference key="3">
-	<citation>
-		<dbReference type="PubMed" id="1111111" key="6"/>
-	</citation>
+  <citation>
+    <dbReference type="PubMed" id="1111111" key="6"/>
+  </citation>
 </reference>
 <comment type="similarity">
-	<text>I'm a duplicate!</text>
+  <text>I'm a duplicate!</text>
 </comment>
 <dbReference type="FlyBase" id="FBgn0000002" key="40">
-	<property type="gene designation" value="julie jeans"/>
+  <property type="gene designation" value="julie jeans"/>
 </dbReference>
 <dbReference type="GO" id="GO:0001" key="44">
-	<property type="term" value="go term!"/>
-	<property type="evidence" value="NAS:FlyBase"/>
+  <property type="term" value="go term!"/>
+  <property type="evidence" value="NAS:FlyBase"/>
 </dbReference>
 <keyword id="KW-0539">keyword!</keyword>
 <feature type="feature!" description="description!" id="1">
 <location>
-	<begin position="1"/>
-	<end position="2"/>
+  <begin position="1"/>
+  <end position="2"/>
 </location>
 </feature>
 <sequence length="13" mass="31" checksum="59058E0634B1BED0" modified="2000-12-01" version="3">
