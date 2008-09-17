@@ -11,6 +11,8 @@ package org.intermine.dwr;
  */
 
 import java.io.IOException;
+import java.net.MalformedURLException;
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -31,6 +33,7 @@ import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.apache.lucene.queryParser.ParseException;
 import org.apache.struts.Globals;
+import org.apache.struts.tiles.UrlController;
 import org.apache.struts.util.MessageResources;
 import org.directwebremoting.WebContext;
 import org.directwebremoting.WebContextFactory;
@@ -85,6 +88,12 @@ import org.intermine.web.logic.widget.config.GraphWidgetConfig;
 import org.intermine.web.logic.widget.config.GridWidgetConfig;
 import org.intermine.web.logic.widget.config.TableWidgetConfig;
 import org.intermine.web.logic.widget.config.WidgetConfig;
+
+import com.sun.syndication.feed.synd.SyndEntry;
+import com.sun.syndication.feed.synd.SyndFeed;
+import com.sun.syndication.io.FeedException;
+import com.sun.syndication.io.SyndFeedInput;
+import com.sun.syndication.io.XmlReader;
 
 
 /**
@@ -1063,4 +1072,46 @@ public class AjaxServices
         view.addAll(newView);
     }
 
+    /**
+     * @return
+     * @throws MalformedURLException
+     * @throws FeedException
+     */
+    public static String getNewsRead(String rssURI) {
+        try {
+            URL feedUrl = new URL(rssURI);
+            SyndFeedInput input = new SyndFeedInput();
+            XmlReader reader;
+            try {
+                reader = new XmlReader(feedUrl);
+            } catch (Throwable e) {
+                // xml document at this url doesn't exist or is invalid, so the news cannot be read
+                return "<i>No news</i>";
+            }
+            SyndFeed feed = input.build(reader);
+            List<SyndEntry> entries = feed.getEntries();
+            StringBuffer html = new StringBuffer("<ol id=\"news\">");
+            int counter = 0;
+            for (SyndEntry syndEntry : entries) {
+                if (counter > 4) {
+                    break;
+                }
+                html.append("<li>");
+                html.append("<strong>" + syndEntry.getTitle() + "</strong>");
+                html.append("- <em>" + syndEntry.getPublishedDate() + "</em><br/>");
+                html.append(syndEntry.getDescription().getValue());
+                html.append("</li>");
+                counter++;
+            }
+            html.append("</ol>");
+            return html.toString();
+        } catch (MalformedURLException e) {
+            return "<i>No news at specified URL</i>";
+        } catch (IllegalArgumentException e) {
+            return "<i>No news at specified URL</i>";
+        } catch (FeedException e) {
+            return "<i>No news at specified URL</i>";
+        }
+    }
+    
 }
