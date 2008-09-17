@@ -519,7 +519,7 @@
     <post-process name="create-intergenic-region-features"/>
     <post-process name="transfer-sequences"/>
     <post-process name="create-overlap-relations-flymine"/>
-    <post-process name="do-sources"/>
+    <post-process name="do-sources" dump="true"/>
     <post-process name="create-intron-features">
       <property name="organisms" value="180454,7460"/>
     </post-process>   
