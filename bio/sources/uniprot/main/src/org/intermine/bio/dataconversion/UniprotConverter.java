@@ -309,7 +309,8 @@ public class UniprotConverter extends FileConverter
                         }
                         protein.setAttribute("isFragment", isFragment);
                         // <entry><protein><name>
-                    } else if (qName.equals("name") && stack.peek().equals("protein")) {
+                    } else if (qName.equals("fullName") && stack.peek().equals("recommendedName")
+                                    && stack.search("protein") == 2) {
                         attName = "name";
                         evidence = attrs.getValue("evidence");
                         // <entry><name>
@@ -601,7 +602,9 @@ public class UniprotConverter extends FileConverter
                                 + " does not have a length");
                     }
                 // <entry><protein><name>
-                } else if (hasPrimary && qName.equals("name") && stack.peek().equals("protein")) {
+                } else if (hasPrimary && qName.equals("fullName")
+                                && stack.peek().equals("recommendedName")
+                                && stack.search("protein") == 2) {
 
                     String proteinName = attValue.toString();
 
