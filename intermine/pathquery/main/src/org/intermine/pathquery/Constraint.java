@@ -153,7 +153,8 @@ public class Constraint
      */
     public String getDisplayValue() {
         if (op == ConstraintOp.MATCHES || op == ConstraintOp.DOES_NOT_MATCH
-            || op == ConstraintOp.EQUALS || op == ConstraintOp.NOT_EQUALS) {
+            || op == ConstraintOp.EQUALS || op == ConstraintOp.NOT_EQUALS
+            || op == ConstraintOp.CONTAINS) {
             return Util.wildcardSqlToUser(getValue().toString());
         } else if (op == ConstraintOp.IS_NOT_NULL || op == ConstraintOp.IS_NULL) {
             return "";
@@ -171,7 +172,8 @@ public class Constraint
      */
     public String getReallyDisplayValue() {
         if (op == ConstraintOp.MATCHES || op == ConstraintOp.DOES_NOT_MATCH
-            || op == ConstraintOp.EQUALS || op == ConstraintOp.NOT_EQUALS) {
+            || op == ConstraintOp.EQUALS || op == ConstraintOp.NOT_EQUALS
+            || op == ConstraintOp.CONTAINS) {
             return Util.wildcardSqlToUser(getValue().toString());
         } else if (op == ConstraintOp.IS_NOT_NULL || op == ConstraintOp.IS_NULL) {
             return "";
