@@ -579,14 +579,14 @@ public class UniprotConverter extends FileConverter
                         writer.store(ItemHelper.convert(protein));
 
                         if (syn != null) {
-                            writer.store(ItemHelper.convert(syn));
+                            store(syn);
                         }
                     } else {
                        LOG.info("Entry " + protein.getAttribute("name")
                                 + " does not have any accessions");
                     }
                     for (Item item : delayedItems) {
-                        writer.store(ItemHelper.convert(item));
+                        store(item);
                     }
                     delayedItems.clear();
                 // <entry><sequence>
@@ -596,7 +596,8 @@ public class UniprotConverter extends FileConverter
                         protein.setReference("sequence", sequence.getIdentifier());
                         writer.store(ItemHelper.convert(sequence));
                     } else {
-                        LOG.debug("Sequence for " + protein.getAttribute("primaryIdentifier").getValue()
+                        LOG.debug("Sequence for "
+                                  + protein.getAttribute("primaryIdentifier").getValue()
                                 + " does not have a length");
                     }
                 // <entry><protein><name>
