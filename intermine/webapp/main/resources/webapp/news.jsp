@@ -4,22 +4,20 @@
 <%@ taglib tagdir="/WEB-INF/tags" prefix="im" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/functions" prefix="fn" %>
 
+<html:xhtml/>
+
 <!-- news.jsp -->
-   <div>
-      <h2 style="display:inline">News</h2>&nbsp;<a href="${WEB_PROPERTIES['project.sitePrefix']}/news.shtml">more...</a>
-      <ol id="news">
-      <c:choose>
-	      <c:when test="${! empty rssMap and fn:length(rssMap) != 0}">
-		      <c:forEach items="${rssMap}" var="rssItem" end="2">
-		        <li><strong>${rssItem.title}</strong> - <em><fmt:formatDate value="${rssItem.publishedDate}" pattern ="dd/MM/yyyy"/></em><br/>
-		        ${rssItem.description.value}
-		        </li>
-		      </c:forEach>
-	      </c:when>
-	      <c:otherwise>
-	         <em>There is no news.</em>
-	      </c:otherwise>
-      </c:choose>
-      </ol>
+<script type="text/javascript">
+jQuery(document).ready(function(){
+              AjaxServices.getNewsRead('${WEB_PROPERTIES['project.sitePrefix']}/rss.xml',function(html){
+                jQuery('#newsbox').html(html);
+              });
+           });
+</script>
+
+   <div class="gradientbox" style="width:50%">
+      <h1 style="display:inline">News</h2>
+      <div id="newsbox"><div align="center"><br/><br/><br/><img src="images/wait18.gif" title="Getting news..."/></div></div>
+      <a href="${WEB_PROPERTIES['project.sitePrefix']}/news.shtml">more...</a>
     </div>
  <!-- /news.jsp -->

@@ -434,7 +434,6 @@
     <action path="/initErrorMessages" type="org.intermine.web.struts.ErrorMessagesController"/>
     <action path="/initResultsTable" type="org.intermine.web.struts.TableController"/>
     <action path="/initObjectDetailsInList" type="org.intermine.web.struts.ObjectDetailsInListController"/>
-    <action path="/initNews" type="org.intermine.web.struts.NewsReadController"/>
     <action path="/initExportOptions" type="org.intermine.web.struts.ExportOptionsController"/>
     <action path="/initAvailableColumns" type="org.intermine.web.struts.AvailableColumnsController"/>
     <action path="/initGalaxy" type="org.intermine.web.struts.GalaxyController"/>

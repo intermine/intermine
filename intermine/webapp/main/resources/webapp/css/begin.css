@@ -27,3 +27,8 @@ ol#news li {
     list-style: disc;
     margin-bottom:5px;
 }
+
+#newsbox {
+  height:100px;
+  overflow-y: auto;
+}

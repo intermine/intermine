@@ -243,7 +243,7 @@
   <definition name="widget.tile" path="widget.jsp" />  
   <definition name="linkPopUp.tile" path="linkPopUp.jsp" />
   <definition name="objectDetailsInList.tile" path="objectDetailsInList.jsp" controllerUrl="/initObjectDetailsInList.do"/>
-  <definition name="news.tile" path="news.jsp" controllerUrl="/initNews.do"/>
+  <definition name="news.tile" path="news.jsp" />
   <definition name="exportOptions.tile" path="/exportOptions.jsp" controllerUrl="/initExportOptions.do"/>
   <definition name="addColumn.tile" path="/addColumn.jsp"/>
   <definition name="availableColumns.tile" path="/availableColumns.jsp"  controllerUrl="/initAvailableColumns.do"/>
