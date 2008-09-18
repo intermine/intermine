@@ -68,14 +68,10 @@ public class PerformanceTester
         Map<String, TemplateQuery> templates = p.getSavedTemplates();
         templates = pm.filterByTags(templates, Collections.singletonList(TagNames.IM_PUBLIC),
                 TagTypes.TEMPLATE, SUPERUSER);
-        templates.remove("ChromLocation_RegionOverlappingTFBindingsite");
         templates.remove("gene_adjacentgenes_allflyatlas");
         templates.remove("FlyFish_Genes");
         templates.remove("Gene_FlyFish");
-        templates.remove("Chromosome_RegionOverlappingInsertion");
         templates.remove("All_Genes_In_Organism_To_Publications");
-        templates.remove("ProteinInteractionOrganism_ProteinInteractionOrganism");
-        templates.remove("Stage_FlyFish");
 
         int i = Integer.parseInt(args[0]);
         System .out.println("Running with " + i + " threads:");
