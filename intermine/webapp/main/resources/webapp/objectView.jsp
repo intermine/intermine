@@ -46,7 +46,7 @@
           ${nullFieldText}
         </c:when>
         <c:otherwise>
-            <c:out value="${object}" default="${nullFieldText}"/>
+            <c:out escapeXml="false" value="${object}" default="${nullFieldText}"/>
             <%-- for IE 6: --%> &nbsp;
         </c:otherwise>
       </c:choose>
