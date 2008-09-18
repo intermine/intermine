@@ -83,6 +83,9 @@ IAEPKPKLFKPYKTEA
 <accession>Q000</accession>
 <name>JULIE_DROME</name>
 <protein>
+    <submittedName>
+      <fullName evidence="EI1">12 days embryo spinal ganglion cDNA, RIKEN full-length enriched library, clone:D130050H01 product:similar to kruppel-related zinc finger protein F80-L</fullName>
+    </submittedName>
 </protein>
 <gene>
   <name type="primary">julie jeans</name>
