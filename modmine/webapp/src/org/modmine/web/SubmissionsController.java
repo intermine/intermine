@@ -75,7 +75,7 @@ public class SubmissionsController extends TilesAction
 //            q.addToGroupBy(qfTitle);
             q.addToGroupBy(sub);
             
-            q.addToOrderBy(sub);
+            q.addToOrderBy(new QueryField(sub, "publicReleaseDate"), "desc");
             q.addToOrderBy(qfClass);
             
             q.setDistinct(false);                        
