@@ -26,13 +26,7 @@
         <tiles:insert name="mainPaths.tile"/>
       </div>
       <tiles:insert page="/mainLogic.jsp"/>
-    </td>
-  </tr>
-
-  <a name="constraint-editor"></a>
-    <tr>
-      <td valign="top">
-        <div id="mainConstraint">
+      	<div id="mainConstraint">
           <c:if test="${editingNode != null}">
             <tiles:insert name="mainConstraint.tile"/>
           </c:if>

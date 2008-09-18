@@ -8,7 +8,7 @@
 
 <html:xhtml/>
 
-<div class="listHeading">
+<div class="heading">
   Template constraint settings
 </div>
 
