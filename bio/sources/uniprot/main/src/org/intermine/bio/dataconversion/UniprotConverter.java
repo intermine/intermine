@@ -309,11 +309,14 @@ public class UniprotConverter extends FileConverter
                         }
                         protein.setAttribute("isFragment", isFragment);
                         // <entry><protein><name>
-                    } else if (qName.equals("fullName") && stack.peek().equals("recommendedName")
+                    } else if (qName.equals("fullName")
+                                    && (stack.peek().equals("recommendedName")
+                                                    || stack.peek().equals("submittedName"))
                                     && stack.search("protein") == 2) {
                         attName = "name";
                         evidence = attrs.getValue("evidence");
-                        // <entry><name>
+
+                    // <entry><name>
                     } else if (qName.equals("name") && stack.peek().equals("entry")) {
                         attName = "primaryIdentifier";
                         // <entry><accession>
@@ -603,11 +606,10 @@ public class UniprotConverter extends FileConverter
                     }
                 // <entry><protein><name>
                 } else if (hasPrimary && qName.equals("fullName")
-                                && stack.peek().equals("recommendedName")
+                                && (stack.peek().equals("recommendedName")
+                                                || stack.peek().equals("submittedName"))
                                 && stack.search("protein") == 2) {
-
                     String proteinName = attValue.toString();
-
                     if (!protein.hasAttribute("name")) {
                         protein.setAttribute(attName, proteinName);
                         descr.append(proteinName);
