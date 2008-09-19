@@ -25,7 +25,7 @@ public class StatusDictionary
     public static String getDescription(int statusCode) {
         switch (statusCode) {
         case Output.SC_BAD_REQUEST:
-            return "There is a problem on the client side. Bad request.";
+            return "There is a problem on the client side (In the browser). Bad request.";
         case Output.SC_FORBIDDEN:
             return "Forbidden.";
         case Output.SC_INTERNAL_SERVER_ERROR:
