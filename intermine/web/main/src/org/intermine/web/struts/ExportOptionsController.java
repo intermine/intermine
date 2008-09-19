@@ -10,9 +10,9 @@ package org.intermine.web.struts;
  *
  */
 
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.TreeMap;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -74,7 +74,7 @@ public class ExportOptionsController extends TilesAction
         try {
             TableHttpExporter exporter = factory.getExporter(type);
             List<Path> initialPaths = exporter.getInitialExportPaths(pt);
-            Map<String, String> pathsMap = new TreeMap<String, String>();
+            Map<String, String> pathsMap = new LinkedHashMap<String, String>();
             PathQuery query = pt.getWebTable().getPathQuery();
             for (Path path : initialPaths) {
                 String pathString = path.toStringNoConstraints();

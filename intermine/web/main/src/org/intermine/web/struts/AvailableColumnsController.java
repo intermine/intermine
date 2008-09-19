@@ -11,10 +11,10 @@ package org.intermine.web.struts;
  */
 
 import java.util.ArrayList;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-import java.util.TreeMap;
 import java.util.TreeSet;
 
 import javax.servlet.http.HttpServletRequest;
@@ -57,7 +57,7 @@ public class AvailableColumnsController extends InterMineAction
     }
 
     private Map<String, String> getColumnsThatCanBeAdded(PagedTable pt) {
-        Map<String, String> ret = new TreeMap<String, String>();
+        Map<String, String> ret = new LinkedHashMap<String, String>();
         PathQuery query = pt.getWebTable().getPathQuery();
         List<String> availPaths = getPathsThatCanBeAdded(pt);
         for (String availPath : availPaths) {
