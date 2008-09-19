@@ -521,4 +521,15 @@ public abstract class WebUtil
         Properties props = InterMineAction.getWebProperties(request);
         return props.getProperty("webapp.defaultContext");
     }
+    
+    /**
+     * Formats column name. Replaces all dots and colons in path with '>'. 
+     * @param original
+     * @return modified string
+     */
+    public static String formatColumnName(String original) {
+        // replaces all dots and colons but not dots with following space - they are probably
+        // part of name, e.g. 'D. melanogaster' 
+        return original.replaceAll("[:.](?!\\s)", "&nbsp;> ");
+    }
 }

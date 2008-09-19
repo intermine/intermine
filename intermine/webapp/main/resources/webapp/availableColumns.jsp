@@ -9,7 +9,7 @@ that can be added to results table, which id is saved in table parameter --%>
 
 <select name="columnToAdd" id="columnToAdd">
 <c:forEach var="column" items="${availableColumns}">
-    <option value="${column}" />${column}
+    <option value="${column.key}" />${column.value}
 </c:forEach>
 </select>
 

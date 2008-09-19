@@ -12,7 +12,9 @@ package org.intermine.web.struts;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
+import java.util.TreeMap;
 import java.util.TreeSet;
 
 import javax.servlet.http.HttpServletRequest;
@@ -25,6 +27,8 @@ import org.apache.struts.action.ActionMapping;
 import org.intermine.metadata.AttributeDescriptor;
 import org.intermine.metadata.ClassDescriptor;
 import org.intermine.path.Path;
+import org.intermine.pathquery.PathQuery;
+import org.intermine.web.logic.WebUtil;
 import org.intermine.web.logic.results.PagedTable;
 import org.intermine.web.logic.session.SessionMethods;
 
@@ -47,10 +51,20 @@ public class AvailableColumnsController extends InterMineAction
     HttpServletResponse response) throws Exception {
         HttpSession session = request.getSession();
         String table = request.getParameter("table");
-        PagedTable pt = SessionMethods.getResultsTable(session, table);
-        List<String> availableColumns = getColumnsThatCanBeAdded(pt);
-        request.setAttribute("availableColumns", availableColumns);
+        PagedTable pt = SessionMethods.getResultsTable(session, table);     
+        request.setAttribute("availableColumns", getColumnsThatCanBeAdded(pt));
         return null;
+    }
+
+    private Map<String, String> getColumnsThatCanBeAdded(PagedTable pt) {
+        Map<String, String> ret = new TreeMap<String, String>();
+        PathQuery query = pt.getWebTable().getPathQuery();
+        List<String> availPaths = getPathsThatCanBeAdded(pt);
+        for (String availPath : availPaths) {
+            ret.put(availPath, WebUtil.formatColumnName(
+                    query.getPathDescription(availPath)));
+        }
+        return ret;
     }
 
     /**
@@ -63,7 +77,7 @@ public class AvailableColumnsController extends InterMineAction
      * @param pt results table
      * @return columns that can be added
      */
-    private List<String> getColumnsThatCanBeAdded(PagedTable pt) {
+    private List<String> getPathsThatCanBeAdded(PagedTable pt) {
         List<Path> paths = pt.getWebTable().getPathQuery().getView();
         List<String> ret = new ArrayList<String>();
         Set<ClassDescriptor> processedDescs = new TreeSet<ClassDescriptor>();

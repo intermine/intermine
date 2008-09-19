@@ -909,24 +909,37 @@ public class PathQuery
     public Map<Path, String> getPathDescriptions() {
         return pathDescriptions;
     }
-
+    
     /**
-     * Return the description for the given path from the view.
-     * @param pathString the path as a string
-     * @return the description
-     */
-    public String getPathDescription(String pathString) {
+     * Returns the  path description for given path. Path description is computed according to the 
+     * known paths and corresponding path descriptions. 
+     * @param pathNoConstraints path without constraints
+     * @return computed description or original path
+     */    
+    public String getPathDescription(String pathNoConstraints) {
+        String path = pathNoConstraints;
+        String longestPrefix = "";
+        String longestPrefixAlias = "";
+        // in pathDescription object are saved prefixes and corresponding aliases 
+        // (path descriptions). The longest known prefix is searched in path for and corresponding
+        // alias replaces the prefix.
         for (Map.Entry<Path, String> entry: pathDescriptions.entrySet()) {
             // can be a bad path
-            if (entry.getKey().toStringNoConstraints() != null
-                            && (entry.getKey().toStringNoConstraints().equals(pathString)
-                            || entry.getKey().toString().equals(pathString))) {
-                return entry.getValue();
+            if (entry.getKey().toStringNoConstraints() != null) {
+                String prefix = entry.getKey().toStringNoConstraints(); 
+                if (path.startsWith(prefix) && prefix.length() > longestPrefix.length()) {
+                    longestPrefix = prefix;
+                    longestPrefixAlias = entry.getValue();
+                }
             }
         }
-        return null;
+        if (!longestPrefix.equals("")) {
+            return path.replaceFirst(longestPrefix, longestPrefixAlias);
+        } else {
+            return path;
+        }        
     }
-
+    
     /**
      * Return the description for the given path from the view.
      * @return the description Map
@@ -940,6 +953,7 @@ public class PathQuery
         return retMap;
     }
 
+    
     /**
      * Add a description to a path in the view.  If the viewString isn't a valid view path, add an
      * exception to the problems list.
