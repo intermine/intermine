@@ -549,6 +549,13 @@ public class WriteGFFTask extends Task
 
         attributes.put(idType, identifiers);
 
+        String secondaryIdentifier = bioEntity.getSecondaryIdentifier();
+        if (secondaryIdentifier != null) {
+            List<String> notes = new ArrayList<String>();
+            notes.add(secondaryIdentifier);
+            attributes.put("Note", notes);
+        }
+
         List<String> flyMineIDs = new ArrayList<String>();
         flyMineIDs.add(makeIdString(flyMineId));
 
