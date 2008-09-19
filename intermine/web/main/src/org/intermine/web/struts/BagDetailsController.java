@@ -202,6 +202,9 @@ public class BagDetailsController extends TilesAction
         request.setAttribute("bagSize", new Integer(imBag.size()));
         request.setAttribute("pagedResults", pagedResults);
         request.setAttribute("highlightId", highlightIdStr);
+        // disable using pathquery saved in session in following jsp page
+        // because it caused displaying invalid column names
+        request.setAttribute("notUseQuery", true);
 
         return null;
     }
