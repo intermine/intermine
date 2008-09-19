@@ -110,7 +110,16 @@ public abstract class WebService
                  
             execute(request, response);
 
-        } catch (WebServiceException ex) {
+        } catch (Throwable t) {
+            processException(t);
+        } finally {
+            finallyException();
+        }
+    }
+    
+    private void processException(Throwable t) {
+        if (t instanceof WebServiceException) {
+            WebServiceException ex = (WebServiceException) t;
             if (ex.getMessage() != null && ex.getMessage().length() >= 0) {
                 output.addError(ex.getMessage(), Output.SC_INTERNAL_SERVER_ERROR);
             } else {
@@ -118,17 +127,19 @@ public abstract class WebService
                         Output.SC_INTERNAL_SERVER_ERROR);
             }
             logger.error("Service failed.", ex);
-        } catch (Throwable t) {
+        } else {
             output.addError(WebServiceConstants.SERVICE_FAILED_MSG, 
                     Output.SC_INTERNAL_SERVER_ERROR);
             logger.error("Service failed.", t);
-        } finally {
-            if (output.getStatus() != Output.SC_OK 
-                    && output.getStatus() != Output.SC_NO_CONTENT) {
-                sendErrorMsg(response);
-            }
-            output.flush();
         }
+    }
+    
+    private void finallyException() {
+        if (output.getStatus() != Output.SC_OK 
+                && output.getStatus() != Output.SC_NO_CONTENT) {
+            sendErrorMsg(response);
+        }
+        output.flush();        
     }
 
     private void sendErrorMsg(HttpServletResponse response) {
