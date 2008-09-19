@@ -23,12 +23,12 @@ import org.apache.lucene.index.IndexWriter;
  * Creates the indexes for LuceneObjectClasses
  * @author Dominik Grimm
  */
-public class LuceneIndex 
+public class LuceneIndex
 {
     private IndexWriter indexWriter = null;
     private List<LuceneObjectClass> lObjClass = null;
     private String fileName = null;
-    
+
     /**
      * Constructor
      * @param fileName of the luceneIndex files
@@ -41,17 +41,17 @@ public class LuceneIndex
     /**
      * returns the index writer
      * @param create flag for the IndexWriter
-     * @param fileName which the IndexWriter should use
+     * @param fn which the IndexWriter should use
      * @return current indexWriter
      * @throws IOException IOException
      */
-    public IndexWriter getIndexWriter(boolean create, String fileName) throws IOException {
+    public IndexWriter getIndexWriter(boolean create, String fn) throws IOException {
         if (indexWriter == null) {
-            indexWriter = new IndexWriter(fileName,
+            indexWriter = new IndexWriter(fn,
                                           new StandardAnalyzer(), create);
         }
         return indexWriter;
-   }  
+   }
 
     /**
      * close the current indexWriter
@@ -64,10 +64,10 @@ public class LuceneIndex
             indexWriter = null;
         }
    }
-    
+
     private void indexClass(LuceneObjectClass objClass) {
         try {
-            IndexWriter writer = (IndexWriter) getIndexWriter(false, fileName);
+            IndexWriter writer = getIndexWriter(false, fileName);
 
             for (int i = 0; i < objClass.getSizeValues(); i++) {
                 Document doc = new Document();
@@ -78,12 +78,12 @@ public class LuceneIndex
                 }
                 writer.addDocument(doc);
             }
-            
+
         } catch (IOException e) {
             e.printStackTrace();
         }
     }
-    
+
     /**
      * added a new LuceneObjectClass to internal map
      * @param objClass LuceneObjectClass which contains the data for the specific field
@@ -102,11 +102,11 @@ public class LuceneIndex
      */
     public void rebuildClassIndexes() throws IOException {
         getIndexWriter(true, fileName);
-        
+
         for (int i = 0; i < lObjClass.size(); i++) {
             indexClass(lObjClass.get(i));
         }
-        
+
         closeIndexWriter();
     }
 }
