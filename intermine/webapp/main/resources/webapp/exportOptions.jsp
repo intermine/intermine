@@ -97,12 +97,12 @@
   <script type="text/javascript">
       pathIndex = 1;
       
-	  <c:forEach var="path" items="${paths}">
-	     addPathElement("${path}");
+	  <c:forEach var="path" items="${pathsMap}">
+	     addPathElement("${path.key}", "${path.value}");
 	  </c:forEach>
   </script>
 
-  <br clear="both"/>
+  <br clear="all"/>
 
   <html:submit property="submit">${exportSubmitMessage}</html:submit>
 </html:form>

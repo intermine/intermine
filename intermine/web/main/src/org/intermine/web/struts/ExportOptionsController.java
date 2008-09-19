@@ -11,14 +11,8 @@ package org.intermine.web.struts;
  */
 
 import java.util.List;
-
-import org.intermine.path.Path;
-import org.intermine.util.StringUtil;
-import org.intermine.web.logic.config.WebConfig;
-import org.intermine.web.logic.export.http.TableExporterFactory;
-import org.intermine.web.logic.export.http.TableHttpExporter;
-import org.intermine.web.logic.results.PagedTable;
-import org.intermine.web.logic.session.SessionMethods;
+import java.util.Map;
+import java.util.TreeMap;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -30,6 +24,15 @@ import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
 import org.apache.struts.tiles.ComponentContext;
 import org.apache.struts.tiles.actions.TilesAction;
+import org.intermine.path.Path;
+import org.intermine.pathquery.PathQuery;
+import org.intermine.util.StringUtil;
+import org.intermine.web.logic.WebUtil;
+import org.intermine.web.logic.config.WebConfig;
+import org.intermine.web.logic.export.http.TableExporterFactory;
+import org.intermine.web.logic.export.http.TableHttpExporter;
+import org.intermine.web.logic.results.PagedTable;
+import org.intermine.web.logic.session.SessionMethods;
 
 /**
  * Controller for exportOptions.tile
@@ -71,7 +74,15 @@ public class ExportOptionsController extends TilesAction
         try {
             TableHttpExporter exporter = factory.getExporter(type);
             List<Path> initialPaths = exporter.getInitialExportPaths(pt);
-            request.setAttribute("paths", initialPaths);
+            Map<String, String> pathsMap = new TreeMap<String, String>();
+            PathQuery query = pt.getWebTable().getPathQuery();
+            for (Path path : initialPaths) {
+                String pathString = path.toStringNoConstraints();
+                String title = query.getPathDescription(pathString);
+                title = WebUtil.formatColumnName(title);
+                pathsMap.put(pathString, title);
+            }
+            request.setAttribute("pathsMap", pathsMap);
             String pathStrings = StringUtil.join(initialPaths, " ");
             request.setAttribute("pathsString", pathStrings);
         } catch (Exception e) {

@@ -8,26 +8,32 @@ function removeElement(elid) {
     el.parentNode.removeChild(el);
 }
 
-function removePathElement(path) {
+function removePathElement(path, pathTitle) {
     removeElement(path);
     var index = path.lastIndexOf('_');
     path = path.substr(0, index);
-    addSelectItem(path);
+    addSelectItem(path, pathTitle);
 }
 
 function addSelectedPath() {
-    var value = document.getElementById("columnToAdd").value;
-    addPathElement(value);
+    //var value = document.getElementById("columnToAdd").value;
+    
     var index = document.getElementById('columnToAdd').selectedIndex;
     var child = document.getElementById('columnToAdd')[index];
+    var path = child.value;
+    var pathTitle = child.text;
+    
+    addPathElement(path, pathTitle);
+    
     document.getElementById('columnToAdd').removeChild(child);
+    
 }
 
-function addSelectItem(path) {
+function addSelectItem(path, pathTitle) {
     var select = document.getElementById('columnToAdd');
     var el = document.createElement('option');
     el.setAttribute('value', path);
-    el.innerHTML = path;
+    el.innerHTML = pathTitle;
     select.appendChild(el);
 }
 
@@ -36,26 +42,26 @@ function addSelectItem(path) {
 // contained in innerHTML
 //=================================================
 
-function addPathElement(path) {
+function addPathElement(path, pathTitle) {
     var el = document.createElement('li');
     el.setAttribute('id', path + '_' + pathIndex);
-    el.appendChild(createPathDiv(path));
+    el.appendChild(createPathDiv(path, pathTitle));
     var parent = document.getElementById('pathsList');
     parent.appendChild(el);
     pathIndex = pathIndex + 1;
 }
 
-function createPathDiv(path)  {
+function createPathDiv(path, pathTitle)  {
     var div = document.createElement('div');    
     div.setAttribute('class', 'viewpath');
-    div.innerHTML = path;
-    div.appendChild(createLink(path));
+    div.innerHTML = pathTitle;
+    div.appendChild(createLink(path, pathTitle));
     return div;
 }
 
-function createLink(path) {
+function createLink(path, pathTitle) {
     var link = document.createElement('a');
-    link.setAttribute('href', "javascript:removePathElement('" + path + "_" + pathIndex + "')");
+    link.setAttribute('href', "javascript:removePathElement('" + path + "_" + pathIndex + "','" + pathTitle + "')");
     link.setAttribute('title','Remove ' + path + ' from the export');
     link.appendChild(createImg());
     return link;

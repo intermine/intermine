@@ -142,21 +142,14 @@ public class WebResults extends AbstractList<List<Object>> implements WebTable
             Class typeCls = columnPath.getLastClassDescriptor().getType();
 
             String columnString = columnPath.toString();
-            int dotIndex = columnString.lastIndexOf('.');
-            if (dotIndex == -1) {
-                throw new StringIndexOutOfBoundsException("Could not find a dot in "
-                        + columnString);
-            }
-            String columnPrefix = columnString.substring(0, dotIndex);
-            String columnPathEnd = columnString.substring(dotIndex + 1);
 
-            String columnDescription = pathQuery.getPathDescription(columnPrefix);
+            String columnDescription = pathQuery.getPathDescription(columnPath.toStringNoConstraints());
             Column column;
 
-            if (columnDescription == null) {
+            if (columnDescription.equals(columnPath.toStringNoConstraints())) {
                 column = new Column(columnPath, i, typeCls);
             } else {
-                column = new Column(columnPath, columnDescription + '.' + columnPathEnd, i,
+                column = new Column(columnPath, columnDescription, i,
                                     typeCls);
             }
 
