@@ -67,7 +67,7 @@
           depends="-init-gff, -init-properties, -init-app-properties, init, -init-deps"
           description="call bp_bulk_load_gff.pl to load the GFF dump into GBrowse">
     <exec executable="/bin/sh">
-      <arg line="-c 'bp_bulk_load_gff.pl --maxfeature 1000000000 --create --database dbi:mysql:${gbrowse.database}\;host=${gbrowse.database.host} --user ${gbrowse.database.write.user} --password ${gbrowse.database.write.password} ${build.gbrowse.data}/*.{fa,gff}'"/>
+      <arg line="-c 'bp_bulk_load_gff.pl --local --maxfeature 1000000000 --create --database dbi:mysql:${gbrowse.database}\;host=${gbrowse.database.host} --user ${gbrowse.database.write.user} --password ${gbrowse.database.write.password} ${build.gbrowse.data}/*.{fa,gff}'"/>
     </exec>
   </target>
 
