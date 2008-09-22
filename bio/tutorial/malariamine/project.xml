@@ -53,9 +53,8 @@
     <!-- this runs the postprocessing steps in all sources -->
     <post-process name="do-sources"/>
 
-    <post-process name="set-collection-counts"/>
     <post-process name="summarise-objectstore"/>
+    <post-process name="create-lucene-index"/>
   </post-processing>
-
 </project>
 
