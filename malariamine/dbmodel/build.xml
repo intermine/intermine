@@ -1,5 +1,4 @@
-<project name="malaria-integration" default="default" basedir=".">
-  <description>perform integration</description>
-  
-  <import file="../../imbuild/integrate.xml"/>
+<project name="malariamine-dbmodel" default="default" basedir=".">
+  <description>represents the production objectstore and the model therein</description>
+  <import file="../../imbuild/objectstore.xml"/>
 </project>
