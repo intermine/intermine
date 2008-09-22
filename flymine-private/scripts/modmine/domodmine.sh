@@ -1,52 +1,51 @@
 #!/bin/bash
 # 
-# default usage: domodmine.sh
+# default usage: domodmine.sh rel
 #
 # note: you should put the db password in ~/.pgpass if don't
 #       want to be prompted for it
 #
 # sc 09/08
 #
-# TODO: use wget -r
+# TODO: use wget -r ?
 #       better error logging 
 #
 
-DBHOST=bert
-DBUSER=sc
-DBPW=sc
+# see after argument parsing for all envs related to the release
 
 FTPURL=ftp://ftp.modencode.org/pub/dcc
 DATADIR=/shared/data/modmine/subs/chado
 DBDIR=/shared/data/modmine/
-#CHADODB=modchado-$REL
-#MINEDB=modmine-$REL
 DATELOG=loading_times.log
 
-MINEDIR=~/svn/dev/modmine
+MINEDIR=$HOME/svn/dev/modmine
 SOURCES=modencode-static,entrez-organism,modencode-metadata
 
 # these should not be edited
 WEBAPP=y;   #defaults: build a webapp
-APPEND=n;   #          incremental loading
+APPEND=n;   #          rebuild the db
 BUP=y;      #          do a back up copy of the modchado database       
 V=;         #          non-verbose mode
 F=;         #          continue stag loading (also after errors)
-DIR=
+REL=dev;    #          if no release is passed, do a dev
+DIR=        #          if files in a subdirectory
+ONLYMETA=y  #          do only metadata
 
 progname=$0
 
 function usage () {
    cat <<EOF
 
-Usage: $progname [-a] [-u] [-n] [-d directory_name] [-v] [-f] 
+Usage: $progname [-a] [-c] [-u] [-w] [-d directory_name] [-v] 
    -a: the submission will be APPENDED to the present validation mine
-   -n: no new webapp will be built
+   -c: all data, not only meta-data (FB and WB)
+   -w: no new webapp will be built
+   -d: you can specify the subdirectory in $FTPURL where to look for files
    -u: no back-up of modchado-$REL will be built
    -v: verbode mode
-   -f: force building of mine after a failure in the loading in chado 
    
-Notes: The file is downloaded only if not present or the remote copy 
-      is newer (in this case a copy of the older should be created)
+ Note: The file is downloaded only if not present or the remote copy 
+      is newer or has a different size. 
       
 example
        $progname db_instance {dev/test}
@@ -55,13 +54,14 @@ EOF
    exit 0
 }
 
-while getopts ":anud:v" opt; do
+while getopts ":acwud:v" opt; do
    case $opt in
 
    a )  echo; echo "Append to exinting mine." ; APPEND=y;;
+   c )  echo; echo "Do all (not only meta-data)." ; ONLYMETA=n;;
    u )  echo; echo "Don't build a back-up of the database." ; BUP=n;;
    d )  echo "processing $FTPURL/$OPTARG directory" ; DIR=/$OPTARG;;
-   n )  echo; echo "No new webapp will be built" ; WEBAPP=n;;
+   w )  echo; echo "No new webapp will be built" ; WEBAPP=n;;
 #   f )  echo; echo "Forcing mode: will continue if loading in chado gives errors." ; F=;;
    v )  echo; echo "Verbose mode" ; V=-v;;
    h )  usage ;;
@@ -70,16 +70,24 @@ while getopts ":anud:v" opt; do
 done
 
 shift $(($OPTIND - 1))
-#echo "the remaining arguments are: $1 $2 $3"
 
+if [ -n "$1" ]
+then
 REL=$1
+fi
 CHADODB=modchado-$REL
 MINEDB=modmine-$REL
+DATELOG=loading_times.$REL.log
 
-echo $REL
-echo $DIR
-#echo
-echo "press return to load $1.."
+DBHOST=`grep metadata.datasource.serverName $HOME/modmine.properties.$REL | awk -F "=" '{print $2}'`
+DBUSER=`grep metadata.datasource.user $HOME/modmine.properties.$REL | awk -F "=" '{print $2}'`
+DBPW=`grep metadata.datasource.password $HOME/modmine.properties.$REL | awk -F "=" '{print $2}'`
+
+# this is to avoid to grep on a non-existent file
+touch $DATELOG
+
+echo
+echo "building modmine-$REL on $DBHOST.."
 read 
 
 #---------------------------------------
@@ -90,10 +98,12 @@ cd $DATADIR
 
 #...and get it if the remote timestamp is newer than the local
 # it will make a copy of the local (as name.chadoxml.n)
-#wget -N $FTPURL$DIR/*.chadoxml
+# NB: this assume that the ftp 
+wget -N $FTPURL$DIR/*.chadoxml
+#wget -r -nd -np -l 2 -N $FTPURL/*chadoxml  ?? to test
 
-echo "press return to continue.."
-read 
+#echo "press return to continue.."
+#read 
 
 #---------------------------------------
 # building the chado db
@@ -128,45 +138,51 @@ echo "filling chado db ..."
 
 for sub in *.chadoxml
 do
-# do check of previous loads (if only update)
+# check previous loading status. 
+# it is useful also when not doing an 'append': in fact you can edit
+# the loading_times.$REL.log file in the datadir and remove from a complete list
+# the files you want to reload.
+#
 
-#if [ $APPEND=y ]
-#then
-#if [ $sub -ot $DATELOG ] 
-#then break 
-#fi
-#fi
-echo ...$sub
-
-if [ $APPEND = "y" ] && [ "$sub" -ot "$DATELOG" ]
+#if [ $APPEND = "y" ] && [ $sub == "`grep $sub $DATELOG`" ]
+if [ $sub == "`grep $sub $DATELOG`" ]
 then
- break 
+ echo "$sub already in!!"
+ continue
 fi
-
-stag-storenode.pl -D "Pg:$CHADODB@$DBHOST" -user $DBUSER -password\
- $DBPW -noupdate cvterm,dbxref,db,cv,feature $sub \
- || { printf "\n **** $sub **** stag-storenode FAILED at `date`.\n" "%b" \
- >> `date "+%y%m%d.log"`; $F ; }
+#echo "press ****return to continue.."
+#read 
 
 echo $sub >> $DATELOG;
 
+echo 
+echo "filling the chado db with $sub..."
+stag-storenode.pl -D "Pg:$CHADODB@$DBHOST" -user $DBUSER -password\
+ $DBPW -noupdate cvterm,dbxref,db,cv,feature $sub \
+ || { printf "\n **** $sub **** stag-storenode FAILED at `date`.\n" "%b" \
+ >> `date "+%y%m%d.$REL.log"`; grep -v $sub $DATELOG > tmp ; mv -f tmp $DATELOG; $F ; }
+
 done
 
-echo "press return to continue.."
-read 
-
+#echo "press return to continue.."
+#read 
 
 #---------------------------------------
 # building modmine
 #---------------------------------------
-
 cd $MINEDIR
 
+if [ $ONLYMETA = "y" ]
+then
 ../bio/scripts/project_build -a $SOURCES -V $REL $V -b -t localhost /tmp/mod-meta\
  || { printf "%b" "\n modMine build FAILED.\n" ; exit 1 ; }
+else
+../bio/scripts/project_build -V $REL $V -b -t localhost /tmp/mod-all\
+ || { printf "%b" "\n modMine build FAILED.\n" ; exit 1 ; }
+fi
 
-echo "press return to continue.."
-read 
+#echo "press return to continue.."
+#read 
 
 
 #---------------------------------------
