@@ -13,13 +13,13 @@ In Release 15.0 we have updated data from FlyBase to release FB2008_08 and many 
 <p>Data from FlyBase is updated to the FB2008_08 release and many other sources have been updated to the latest versions, specific changes are detailed below.  For a complete list of all data included in FlyMine see the 'Data' tab above.</p>
 
 <ul>
-    <li>NEW - FlyMine now loads all types interactions from the BioGRID for D. melanogaster, C. elegans and S. cerevisiae. Currently, no distinction is made between protein and genetic interactions. All of them (the ones from IntAct as well as the ones from the BioGRID) are now called 'Interaction'. The Interaction Term allows to search for a particular interaction, eg phenotypic enhancement, two hybrid.
-    <li>NEW - Affymetrix Probesets from the GeneChip D. melanogaster Genome 1.0 and 2.0 Arrays now have locations and mapped genes, obtained from the Ensembl database. FlyMine only loads probesets that match to at least one gene. More information on the Ensembl probeset mappings, can be found at <a href="http://www.ensembl.org/Homo_sapiens/helpview?kw=microarray;ref=http%3A%2F%2Fwww.ensembl.org%2FMus_musculus%2Findex.html/" target="_new">Ensembl help</a> 
-    <li>NEW - Loaded all aberrations from FlyBase including Drosdel deletions and they are now called ChromosomeStructureVariation. Each feature type is represented by a seperate sub-class: ChromosomalDeletion, ChromosomalDuplication, ChromosomalInversion, and ChromosomalTranslocation.
-    <li>FIXED - The Ensembl id is correctly set for human genes.
-    <li>NEW - Since all flybaseFeatureType are ontology terms, Gene.flybaseFeatureType has been renamed to Gene.featureType.
-    <li>FIXED - all MRNAs now have Translations
-    <li>FIXED - UTRs
+    <li>NEW - FlyMine now loads all types interactions from the BioGRID for D. melanogaster, C. elegans and S. cerevisiae. Currently, no distinction is made between protein and genetic interactions. All of them (the ones from IntAct as well as the ones from the BioGRID) are now called 'Interaction'. The Interaction Term allows to search for a particular interaction, eg phenotypic enhancement, two hybrid.</li>
+    <li>NEW - Affymetrix Probesets from the GeneChip D. melanogaster Genome 1.0 and 2.0 Arrays now have locations and mapped genes, obtained from the Ensembl database. FlyMine only loads probesets that match to at least one gene. More information on the Ensembl probeset mappings, can be found at <a href="http://www.ensembl.org/Homo_sapiens/helpview?kw=microarray;ref=http%3A%2F%2Fwww.ensembl.org%2FMus_musculus%2Findex.html/" target="_new">Ensembl help</a> </li>
+    <li>NEW - Loaded all aberrations from FlyBase including Drosdel deletions and they are now called ChromosomeStructureVariation. Each feature type is represented by a seperate sub-class: ChromosomalDeletion, ChromosomalDuplication, ChromosomalInversion, and ChromosomalTranslocation.</li>
+    <li>FIXED - The Ensembl id is correctly set for human genes.</li>
+    <li>NEW - Gene.flybaseFeatureType has been renamed to Gene.featureType.</li>
+    <li>FIXED - all MRNAs now have Translations.</li>
+    <li>FIXED - UTRs now have chromosome locations.</li>
 </ul>
 
 <h3>Export</h3>
@@ -34,8 +34,8 @@ In Release 15.0 we have updated data from FlyBase to release FB2008_08 and many 
   <li>NEW - links on the allele list page to convert list to genes</li>
   <li>FIXED - improved error handling throughout the site, including the QueryBuilder, template and query import pages</li>
   <li>FIXED - the quick search now handles special characters correctly so you can search for any identifier, eg. </li>
-  <li>FIXED - selected records in your list stay highlighted even if you navigate away and then back to the list analysis page
-  <li>FIXED - template form handles wildcards correctly
+  <li>FIXED - selected records in your list stay highlighted even if you navigate away and then back to the list analysis page</li>
+  <li>FIXED - template form handles wildcards correctly</li>
 </ul>
 </p>
 
