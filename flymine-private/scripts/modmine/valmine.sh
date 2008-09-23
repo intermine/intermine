@@ -31,6 +31,7 @@ SOURCES=modencode-static,entrez-organism,modencode-metadata
 APPEND=n;
 WEBAPP=y;
 TESTS=y;
+STAG=y;
 V=;
 F="exit 1";
 
@@ -39,8 +40,9 @@ progname=$0
 function usage () {
    cat <<EOF
 
-Usage: $progname [-a] [-t] [-w] [-v] [-f] submission_name
+Usage: $progname [-a] [-s] [-t] [-w] [-v] [-f] submission_name
    -a: the submission will be APPENDED to the present validation mine
+   -s: no new loading of chado (stag is not run)
    -t: no acceptance test run
    -w: no new webapp will be built
    -v: verbode mode
@@ -56,12 +58,13 @@ EOF
    exit 0
 }
 
-while getopts ":atwvf" opt; do
+while getopts ":astwvf" opt; do
    case $opt in
 
    a )  echo; echo "The submission will be added to the present validation mine." ; 
       APPEND=y;;
 #   b )  echo "found -b and $OPTARG is after -b" ;;
+   s )  echo; echo "Using previous load of chado (stag is not run)" ; STAG=n;;
    t )  echo; echo "No acceptance test run" ; TESTS=n;;
    w )  echo; echo "No new webapp will be built" ; WEBAPP=n;;
    f )  echo; echo "Forcing mode: will continue if loading in chado gives errors." ; F=;;
@@ -80,9 +83,14 @@ cd $DATADIR
 
 #...and get it if the remote timestamp is newer than the local one
 #(or of a different size)
-# 
+# we only try when we want to update chado... 
+
+if [ $STAG = "y" ]
+then
+
 wget -N $FTPURL/$1.chadoxml
 
+fi
 #echo "press return to continue.."
 #read 
 
@@ -93,7 +101,7 @@ wget -N $FTPURL/$1.chadoxml
 # note: it could fail if any connection active
 #
 
-if [ "$APPEND" = "n" ]
+if [ "$APPEND" = "n" ] && [ "$STAG" = "y" ]
 then
 
 dropdb -e $CHADODB -h $DBHOST -U $DBUSER
@@ -109,6 +117,9 @@ fi
 #---------------------------------------
 # filling chado db
 #---------------------------------------
+
+if [ $STAG = "y" ]
+then
 echo 
 echo "filling the chado db with $1..."
 stag-storenode.pl -D "Pg:$CHADODB@$DBHOST" -user $DBUSER -password\
@@ -117,18 +128,25 @@ stag-storenode.pl -D "Pg:$CHADODB@$DBHOST" -user $DBUSER -password\
 
 #echo "press return to continue.."
 #read 
+else
+echo
+echo "Using previously loaded chado."
+echo
+fi
 
 #---------------------------------------
 # building modmine
 #---------------------------------------
 cd $MINEDIR
 
+echo "Building modMine VAL"
+echo
+
 ../bio/scripts/project_build -a $SOURCES -V $REL $V -b -t localhost /tmp/mod-meta\
  || { printf "%b" "\n modMine build FAILED.\n" ; exit 1 ; }
 
 #echo "press return to continue.."
 #read 
-
 
 
 #---------------------------------------
