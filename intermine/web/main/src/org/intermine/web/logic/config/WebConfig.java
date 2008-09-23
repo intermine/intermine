@@ -102,6 +102,12 @@ public class WebConfig
         digester.addCallParam("webconfig/class/bagdisplayers/displayer/param", 0, "name");
         digester.addCallParam("webconfig/class/bagdisplayers/displayer/param", 1, "value");
 
+        digester.addObjectCreate("webconfig/widgets/enrichmentwidgetdisplayer",
+                                 EnrichmentWidgetConfig.class);
+        digester.addSetProperties("webconfig/widgets/enrichmentwidgetdisplayer");
+        digester.addSetNext("webconfig/widgets/enrichmentwidgetdisplayer", "addWidget");
+
+
         digester.addObjectCreate("webconfig/widgets/graphdisplayer",
                                  GraphWidgetConfig.class);
         digester.addSetProperties("webconfig/widgets/graphdisplayer");
@@ -112,10 +118,7 @@ public class WebConfig
         digester.addSetProperties("webconfig/widgets/bagtabledisplayer");
         digester.addSetNext("webconfig/widgets/bagtabledisplayer", "addWidget");
 
-        digester.addObjectCreate("webconfig/widgets/enrichmentwidgetdisplayer",
-                                 EnrichmentWidgetConfig.class);
-        digester.addSetProperties("webconfig/widgets/enrichmentwidgetdisplayer");
-        digester.addSetNext("webconfig/widgets/enrichmentwidgetdisplayer", "addWidget");
+
 
         digester.addObjectCreate("webconfig/widgets/griddisplayer",
                 GridWidgetConfig.class);

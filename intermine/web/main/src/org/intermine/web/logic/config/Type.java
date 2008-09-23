@@ -16,6 +16,7 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -39,7 +40,7 @@ public class Type
     private LinkedHashMap fieldConfigMap = new LinkedHashMap();
     private ListOrderedSet longDisplayers = new ListOrderedSet();
     private ListOrderedSet bagDisplayers = new ListOrderedSet();
-    private List<WidgetConfig> widgets = new ArrayList<WidgetConfig>();
+    private LinkedList<WidgetConfig> widgets = new LinkedList<WidgetConfig>();
     private Displayer tableDisplayer;
     private Map aspectDisplayers = new HashMap();
 
@@ -118,17 +119,17 @@ public class Type
     /**
      * @return the widgets
      */
-    public List<WidgetConfig> getWidgets() {
+    public LinkedList<WidgetConfig> getWidgets() {
         return widgets;
     }
 
     /**
      * @param widgets the widgets to set
      */
-    public void setWidgets(List widgets) {
+    public void setWidgets(LinkedList widgets) {
         this.widgets = widgets;
     }
-    
+
     /**
      * Add a widget to the Type
      * @param widget a widget
