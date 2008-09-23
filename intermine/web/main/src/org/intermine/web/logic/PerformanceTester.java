@@ -45,6 +45,7 @@ import org.intermine.web.logic.template.TemplateQuery;
  */
 public class PerformanceTester
 {
+
     public static final String SUPERUSER = "rachel@flymine.org";
 
     /**
@@ -68,10 +69,11 @@ public class PerformanceTester
         Map<String, TemplateQuery> templates = p.getSavedTemplates();
         templates = pm.filterByTags(templates, Collections.singletonList(TagNames.IM_PUBLIC),
                 TagTypes.TEMPLATE, SUPERUSER);
-        templates.remove("gene_adjacentgenes_allflyatlas");
-        templates.remove("FlyFish_Genes");
-        templates.remove("Gene_FlyFish");
-        templates.remove("All_Genes_In_Organism_To_Publications");
+        // I think these work now.
+//        templates.remove("gene_adjacentgenes_allflyatlas");
+//        templates.remove("FlyFish_Genes");
+//        templates.remove("Gene_FlyFish");
+//        templates.remove("All_Genes_In_Organism_To_Publications");
 
         int i = Integer.parseInt(args[0]);
         System .out.println("Running with " + i + " threads:");
