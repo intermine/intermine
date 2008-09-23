@@ -1,2 +1,6 @@
 <definition name="geneMicroArrayDisplayer.tile" path="/model/geneMicroArrayDisplayer.jsp" controllerUrl="/initGeneMicroArrayDisplayer.do"/>
 
+<definition name="attributeLinkDisplayer.tile" path="/model/attributeLinkDisplayer.jsp"
+                controllerUrl="/initAttributeLinkDisplayer.do"/>
+
+
