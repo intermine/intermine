@@ -333,8 +333,6 @@
     </bagdisplayers>
   </class>
 
-
-
   <class className="org.flymine.model.genomic.MicroArrayExperiment">
     <fields>
       <fieldconfig fieldExpr="name"/>
@@ -492,9 +490,7 @@
     </fields>
     <longdisplayers>
       <displayer src="attributeLinkDisplayer.tile"/>
-
     </longdisplayers>
-
     <bagdisplayers>
     </bagdisplayers>
   </class>
@@ -510,9 +506,6 @@
       <displayer src="attributeLinkDisplayer.tile"/>
     </longdisplayers>
   </class>
-
-
-
 
   <class className="org.flymine.model.genomic.ProteinStructure">
     <fields>
