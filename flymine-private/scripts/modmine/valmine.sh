@@ -130,6 +130,17 @@ cd $MINEDIR
 #read 
 
 
+
+#---------------------------------------
+# building webapp
+#---------------------------------------
+
+if [ "$WEBAPP" = "y" ]
+then
+cd $MINEDIR/webapp
+ant -Drelease=$REL $V default remove-webapp release-webapp
+fi
+
 if [ "$TESTS" = "y" ]
 then
 #---------------------------------------
@@ -142,7 +153,8 @@ cd $MINEDIR/integrate
 ant $V -Drelease=$REL acceptance-tests
 
 mv $MINEDIR/integrate/build/acceptance_test.html $MINEDIR/integrate/build/$1.html
-xterm -bg grey20 -hold -e "elinks file://$MINEDIR/integrate/build/$1.html" &
+#xterm -bg grey20 -hold -e "elinks file://$MINEDIR/integrate/build/$1.html" &
+elinks $MINEDIR/integrate/build/$1.html
 
 echo
 echo "acceptance test results in "
@@ -152,12 +164,3 @@ echo
 #read 
 fi
 
-#---------------------------------------
-# building webapp
-#---------------------------------------
-
-if [ "$WEBAPP" = "y" ]
-then
-cd $MINEDIR/webapp
-ant -Drelease=$REL $V default remove-webapp release-webapp
-fi
