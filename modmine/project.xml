@@ -96,10 +96,12 @@
       <property name="fasta.synonymSource" value="FlyBase"/>
       <property name="src.data.dir" location="/shared/data/flybase/current/fasta"/>
     </source>
-    <source name="wormbase-c_elegans-chromosome-fasta" type="fasta" dump="true">
+		<source name="wormbase-c_elegans-chromosome-fasta" type="fasta" dump="true">
       <property name="fasta.taxonId" value="6239"/>
       <property name="fasta.className" value="org.flymine.model.genomic.Chromosome"/>
       <property name="fasta.includes" value="*chromosome*.fasta"/>
+			<property name="fasta.dataSetTitle" value="WormBase C. Elegans data set"/>
+			<property name="fasta.synonymSource" value="WormBase"/>
       <property name="src.data.dir" location="/shared/data/wormbase/ws175"/>
     </source>
     <source name="entrez-organism" type="entrez-organism">
