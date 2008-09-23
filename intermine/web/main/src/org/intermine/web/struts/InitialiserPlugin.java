@@ -215,8 +215,8 @@ public class InitialiserPlugin implements PlugIn
                         ac = null;
                     }
                 } catch (SQLException e) {
-                    LOG.error("Problem with database", e); 
-                    throw new ServletException("Problem with database", e); 
+                    LOG.error("Problem with database", e);
+                    throw new ServletException("Problem with database", e);
                 }
             }
     }
@@ -328,13 +328,13 @@ public class InitialiserPlugin implements PlugIn
         if (objectStoreSummaryPropertiesStream == null) {
             // there are no model specific properties
             throw new ServletException("Unable to find objectstoresummary.properties");
-        } else {
-            try {
-                objectStoreSummaryProperties.load(objectStoreSummaryPropertiesStream);
-            } catch (Exception e) {
-                throw new ServletException("Unable to read objectstoresummary.properties", e);
-            }
         }
+        try {
+            objectStoreSummaryProperties.load(objectStoreSummaryPropertiesStream);
+        } catch (Exception e) {
+            throw new ServletException("Unable to read objectstoresummary.properties", e);
+        }
+
         final ObjectStoreSummary oss = new ObjectStoreSummary(objectStoreSummaryProperties);
         Model model = os.getModel();
         Map classes = new LinkedHashMap();

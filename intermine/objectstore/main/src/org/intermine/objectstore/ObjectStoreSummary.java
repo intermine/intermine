@@ -157,9 +157,8 @@ public class ObjectStoreSummary
         Integer countInteger = classCountsMap.get(className);
         if (countInteger == null) {
             throw new RuntimeException("cannot find class count for: " + className);
-        } else {
-            return countInteger.intValue();
         }
+        return countInteger.intValue();
     }
 
     /**
