@@ -12,6 +12,7 @@ package org.intermine.web.struts;
 
 import java.util.Collection;
 import java.util.HashMap;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
@@ -109,7 +110,7 @@ public class BagDetailsController extends TilesAction
         Model model = os.getModel();
         Type type = (Type) webConfig.getTypes().get(model.getPackageName() + "." + imBag.getType());
 
-        List<WidgetConfig> widgets = type.getWidgets();
+        LinkedList<WidgetConfig> widgets = type.getWidgets();
         Map<String, Map<String, Collection<String>>> widget2extraAttrs
         = new HashMap<String, Map<String, Collection<String>>>();
         for (WidgetConfig widget2 : widgets) {
@@ -204,7 +205,7 @@ public class BagDetailsController extends TilesAction
         request.setAttribute("highlightId", highlightIdStr);
         // disable using pathquery saved in session in following jsp page
         // because it caused displaying invalid column names
-        request.setAttribute("notUseQuery", true);
+        request.setAttribute("notUseQuery", Boolean.TRUE);
 
         return null;
     }

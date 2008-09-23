@@ -787,6 +787,51 @@
                                  typeClass="org.flymine.model.genomic.Protein"
                                  max="0.10"  />
 
+      <enrichmentwidgetdisplayer id="go_enrichment" title="Gene Ontology Enrichment"
+                                 link="org.intermine.bio.web.widget.GoStatURLQuery"
+                                 dataSetLoader="org.intermine.bio.web.widget.GoStatLdr"
+                                 description="GO terms enriched for items in this list."
+                                 label="GO Term"
+                                 filters="biological_process,cellular_component,molecular_function"
+                                 filterLabel="Ontology"
+                                 max="0.10"
+                                 typeClass="org.flymine.model.genomic.Gene,org.flymine.model.genomic.Protein"
+                                 externalLink="http://amigo.geneontology.org/cgi-bin/amigo/term-details.cgi?term=" />
+
+      <enrichmentwidgetdisplayer id="prot_dom_enrichment" title="Protein Domain Enrichment"
+                                 link="org.flymine.web.widget.ProteinDomainURLQuery"
+                                 dataSetLoader="org.flymine.web.widget.ProteinDomainLdr"
+                                 label="Protein Domain"
+                                 description="Protein Domains enriched for items in this list."
+                                 filters=""
+                                 filterLabel=""
+                                 max="0.10"
+                                 typeClass="org.flymine.model.genomic.Gene,org.flymine.model.genomic.Protein"
+                                 externalLink="http://www.ebi.ac.uk/interpro/IEntry?ac=" />
+
+      <enrichmentwidgetdisplayer id="publication_enrichment" title="Publication Enrichment"
+                                 link="org.intermine.bio.web.widget.PublicationURLQuery"
+                                 dataSetLoader="org.intermine.bio.web.widget.PublicationLdr"
+                                 label="Publication"
+                                 description="Publications enriched for genes in this list."
+                                 filters=""
+                                 filterLabel=""
+                                 max="0.10"
+                                 externalLink="http://www.ncbi.nlm.nih.gov/entrez/query.fcgi?cmd=Retrieve&amp;db=PubMed&amp;dopt=Abstract&amp;list_uids="
+                                 typeClass="org.flymine.model.genomic.Gene"
+                                 externalLinkLabel="PubMed:" />
+
+      <enrichmentwidgetdisplayer id="bdgp_enrichment" title="BDGP Enrichment"
+                                 link="org.flymine.web.widget.BDGPURLQuery"
+                                 dataSetLoader="org.flymine.web.widget.BDGPLdr"
+                                 label="Terms"
+                                 description="ImaGO terms enriched for genes in this list - data from &lt;a href=&quot;http://www.fruitfly.org/cgi-bin/ex/insitu.pl&quot; target=&quot;_new&quot;&gt;BGDP&lt;/a&gt;.  Note that not all genes have been assayed by BDGP."
+                                 filters=""
+                                 filterLabel=""
+                                 max="0.10"
+                                 typeClass="org.flymine.model.genomic.Gene"
+                                 externalLink="" />
+
       <graphdisplayer id="chromosome_distribution" title="Chromosome Distribution" domainLabel="Chromosome" rangeLabel="Count" dataSetLoader="org.intermine.bio.web.widget.ChromosomeDistributionDataSetLdr"
                       toolTipGen="org.intermine.web.logic.widget.ToolTipGenerator" link="org.intermine.bio.web.widget.ChromosomeDistributionGraphURLGenerator"
                       description="Actual: number of items in this list found on each chromosome.  Expected: given the total number of items on the chromosome and the number of items in this list, the number of items expected to be found on each chromosome."
@@ -841,50 +886,7 @@
                          typeClass="org.flymine.model.genomic.Gene"
                          columnTitle="Interactions"/>
 
-      <enrichmentwidgetdisplayer id="go_enrichment" title="Gene Ontology Enrichment"
-                                 link="org.intermine.bio.web.widget.GoStatURLQuery"
-                                 dataSetLoader="org.intermine.bio.web.widget.GoStatLdr"
-                                 description="GO terms enriched for items in this list."
-                                 label="GO Term"
-                                 filters="biological_process,cellular_component,molecular_function"
-                                 filterLabel="Ontology"
-                                 max="0.10"
-                                 typeClass="org.flymine.model.genomic.Gene,org.flymine.model.genomic.Protein"
-                                 externalLink="http://amigo.geneontology.org/cgi-bin/amigo/term-details.cgi?term=" />
 
-      <enrichmentwidgetdisplayer id="prot_dom_enrichment" title="Protein Domain Enrichment"
-                                 link="org.flymine.web.widget.ProteinDomainURLQuery"
-                                 dataSetLoader="org.flymine.web.widget.ProteinDomainLdr"
-                                 label="Protein Domain"
-                                 description="Protein Domains enriched for items in this list."
-                                 filters=""
-                                 filterLabel=""
-                                 max="0.10"
-                                 typeClass="org.flymine.model.genomic.Gene,org.flymine.model.genomic.Protein"
-                                 externalLink="http://www.ebi.ac.uk/interpro/IEntry?ac=" />
-
-      <enrichmentwidgetdisplayer id="publication_enrichment" title="Publication Enrichment"
-                                 link="org.intermine.bio.web.widget.PublicationURLQuery"
-                                 dataSetLoader="org.intermine.bio.web.widget.PublicationLdr"
-                                 label="Publication"
-                                 description="Publications enriched for genes in this list."
-                                 filters=""
-                                 filterLabel=""
-                                 max="0.10"
-                                 externalLink="http://www.ncbi.nlm.nih.gov/entrez/query.fcgi?cmd=Retrieve&amp;db=PubMed&amp;dopt=Abstract&amp;list_uids="
-                                 typeClass="org.flymine.model.genomic.Gene"
-                                 externalLinkLabel="PubMed:" />
-
-      <enrichmentwidgetdisplayer id="bdgp_enrichment" title="BDGP Enrichment"
-                                 link="org.flymine.web.widget.BDGPURLQuery"
-                                 dataSetLoader="org.flymine.web.widget.BDGPLdr"
-                                 label="Terms"
-                                 description="ImaGO terms enriched for genes in this list - data from &lt;a href=&quot;http://www.fruitfly.org/cgi-bin/ex/insitu.pl&quot; target=&quot;_new&quot;&gt;BGDP&lt;/a&gt;.  Note that not all genes have been assayed by BDGP."
-                                 filters=""
-                                 filterLabel=""
-                                 max="0.10"
-                                 typeClass="org.flymine.model.genomic.Gene"
-                                 externalLink="" />
 
 <!--
      <enrichmentwidgetdisplayer title="Tiffin Motif Enrichment"
