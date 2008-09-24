@@ -245,8 +245,8 @@ public class ModEncodeMetaDataProcessor extends ChadoProcessor
             String experimentItemIdentifier = submissionDetails.itemIdentifier;
             String labItemIdentifier = submissionDetails.labItemIdentifier;
 
-            LOG.info("xFEATDAT: exp>" + experimentItemIdentifier 
-                    + "< prov>" + labItemIdentifier + "<");
+//            LOG.info("xFEATDAT: exp>" + experimentItemIdentifier 
+//                    + "< prov>" + labItemIdentifier + "<");
 
             ModEncodeFeatureProcessor processor =
                 new ModEncodeFeatureProcessor(getChadoDBConverter(), experimentItemIdentifier,
@@ -320,8 +320,6 @@ public class ModEncodeMetaDataProcessor extends ChadoProcessor
                 // the experimentId != null for the first applied protocol
                 if (experimentId > 0) {
 
-                    LOG.info("EXPERIMENT: " + experimentId);
-
                     firstAppliedProtocols.add(appliedProtocolId);
                     if (direction.startsWith("in")) {
                         // .. the map of initial data for the experiment
@@ -356,7 +354,7 @@ public class ModEncodeMetaDataProcessor extends ChadoProcessor
                     // it will be used to link to the next set of applied protocols
                     newNode.outputData.add(dataId);
                 } else {
-                    // in case there is some problem with the strings 'input' or 'output'
+                    // there is some problem with the strings 'input' or 'output'
                     throw new IllegalArgumentException("Data direction not valid for dataId: "
                             + dataId + "|" + direction + "|");
                 }
@@ -392,6 +390,7 @@ public class ModEncodeMetaDataProcessor extends ChadoProcessor
         }
         LOG.info("created " + appliedProtocolMap.size() 
                 + "(" + count + " applied data points) DAG nodes in map");
+        
         res.close();
 
         // now traverse the DAG, and associate experiment with all the applied protocols
@@ -495,8 +494,8 @@ public class ModEncodeMetaDataProcessor extends ChadoProcessor
                     reference.setRefId(experimentMap.get(experimentId).itemIdentifier);
                     getChadoDBConverter().store(reference, appliedProtocolIdMap.get(currentAPId));
 
-                    LOG.info("DB REFEX: " + experimentId + "|"
-                            + currentAPId + "|" +  appliedProtocolIdMap.get(currentAPId));
+//                    LOG.info("DEBUG: AP " + experimentId + "|"
+//                            + currentAPId + "|" +  appliedProtocolIdMap.get(currentAPId));
                 }
             }
         }
@@ -1031,8 +1030,6 @@ public class ModEncodeMetaDataProcessor extends ChadoProcessor
     }
 
 
-
-
     /**
      *
      * ======================
@@ -1203,7 +1200,7 @@ public class ModEncodeMetaDataProcessor extends ChadoProcessor
 
     /**
      * to store references between experiment and its initial submissionData
-     * (initial input of the experiment
+     * (initial input of the experiment)
      * (1 to many)
      */
     private void setExperimentInputRefs(Connection connection)
@@ -1221,7 +1218,7 @@ public class ModEncodeMetaDataProcessor extends ChadoProcessor
                     continue;
                 }
 //                LOG.info("DEBUG: expInREfs " + currentId);
-//                collection.addRefId(appliedDataMap.get(currentId).itemIdentifier);
+                collection.addRefId(appliedDataMap.get(currentId).itemIdentifier);
             }
             getChadoDBConverter().store(collection,
                     experimentMap.get(thisExperimentId).interMineObjectId);
@@ -1297,7 +1294,7 @@ public class ModEncodeMetaDataProcessor extends ChadoProcessor
         Iterator<Integer> apId = appliedProtocolMap.keySet().iterator();
         while (apId.hasNext()) {
             Integer thisAP = apId.next();
-            LOG.info("DEBUG: DAGRefs apid = " + thisAP);
+//            LOG.info("DEBUG: DAGRefs apid = " + thisAP);
 
             AppliedProtocol ap = appliedProtocolMap.get(thisAP);
             List<Integer> dataIds = ap.inputData;
