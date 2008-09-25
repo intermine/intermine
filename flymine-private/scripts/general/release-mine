@@ -52,7 +52,7 @@ my $START_DATE = UnixDate("now", "%O");
 my $LOG_FILENAME = "$ENV{HOME}/logs/$START_DATE.log";
 my $GBROWSE_CONF_DIR = '/gbrowse/etc/gbrowse.conf/';
 
-my $PG_OPTIONS = '-E SQL_ASCII -e -h modprod0 -U modmine';
+my $PG_OPTIONS = '-e -h modprod0 -U modmine';
 
 my $rel_date = `date +"(%d%b%Y)"`; #it appears with the release version
 
@@ -221,10 +221,11 @@ sub create_gbrowse_conf
 # system ("createdb modmine-r$new_version >> $LOG_FILE 2>&1") == 0
 #   or die_with_log "createdb failed: $?\n";
 
-#do a dropdb in any case
-exec ("dropdb $PG_OPTIONS modmine-r$new_version-userprofile >> $LOG_FILENAME 2>&1");
+#userprofile: do a dropdb (and make a back-up) anyway, in case is already there.
+system ("createdb modmine-r$new_version-userprofile_BUP -T modmine-r$new_version-userprofile $PG_OPTIONS >> $LOG_FILENAME 2>&1");
+system ("dropdb $PG_OPTIONS modmine-r$new_version-userprofile >> $LOG_FILENAME 2>&1");
 
-system ("createdb $PG_OPTIONS modmine-r$new_version-userprofile >> $LOG_FILENAME 2>&1") == 0
+system ("createdb -E SQL_ASCII $PG_OPTIONS modmine-r$new_version-userprofile >> $LOG_FILENAME 2>&1") == 0
   or die_with_log "createdb failed: $?";
 
 
