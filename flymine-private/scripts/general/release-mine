@@ -220,6 +220,10 @@ sub create_gbrowse_conf
 
 # system ("createdb modmine-r$new_version >> $LOG_FILE 2>&1") == 0
 #   or die_with_log "createdb failed: $?\n";
+
+#do a dropdb in any case
+exec ("dropdb $PG_OPTIONS modmine-r$new_version-userprofile >> $LOG_FILENAME 2>&1");
+
 system ("createdb $PG_OPTIONS modmine-r$new_version-userprofile >> $LOG_FILENAME 2>&1") == 0
   or die_with_log "createdb failed: $?";
 
