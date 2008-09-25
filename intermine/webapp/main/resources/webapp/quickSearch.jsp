@@ -5,21 +5,21 @@
 
 <!-- quickSearch.jsp -->
 <c:set var="ids">
-  <fmt:bundle basename="model"><fmt:message key="model.template.example"/></fmt:bundle>
+  <fmt:bundle basename="model"><fmt:message key="model.quickSearch.example"/></fmt:bundle>
 </c:set>
 <c:set var="tpls">
-  <fmt:bundle basename="model"><fmt:message key="model.bag.example"/></fmt:bundle>
+  <fmt:bundle basename="model"><fmt:message key="model.template.example"/></fmt:bundle>
 </c:set>
 <c:set var="bgs">
-  <fmt:bundle basename="model"><fmt:message key="model.quickSearch.example"/></fmt:bundle>
+  <fmt:bundle basename="model"><fmt:message key="model.bag.example"/></fmt:bundle>
 </c:set>
 
 <script type="text/javascript" src="js/browse.js"></script>
 <script type="text/javascript">
 function updateExample(i) {
-  if (i==1) {
+  if (i==0) {
      $('quickSearchInput').value = '<c:out value="${ids}"/>';
-  } else if (i==2) {
+  } else if (i==1) {
      $('quickSearchInput').value = '<c:out value="${tpls}"/>';
   } else {
      $('quickSearchInput').value = '<c:out value="${bgs}"/>';
@@ -46,7 +46,7 @@ function clearElement(e) {
   <option value="bgs" <c:if test="${quickSearchType=='bgs'}">selected</c:if>>Lists</option>
   </select>
 <fmt:message key="header.search.mid"/>
-<input style="width:260px;color:#666;font-style:italic;font-size:1em" type="text" id="quickSearchInput" name="value" value="<c:choose><c:when test="${quickSearchType=='ids'}"><c:out value="${ids}"/></c:when><c:when test="${quickSearchType=='bgs'}"><c:out value="${bgs}"/></c:when><c:otherwise><c:out value="${tpls}"/></c:otherwise></c:choose>" onFocus="clearElement(this);" />
+<input style="width:260px;color:#666;font-style:italic;font-size:1em" type="text" id="quickSearchInput" name="value" value="<c:out value="${ids}"/>" onFocus="clearElement(this);" />
 <html:submit><fmt:message key="header.search.button"/></html:submit>
 </html:form>
 <!-- /quickSearch.jsp -->
