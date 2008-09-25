@@ -15,7 +15,7 @@ webapp.manager=username
 webapp.password=password
 
 # 'Home' link
-webapp.baseurl=malaria.flymine.org
+webapp.baseurl=http://www.flymine.org
 
 # where to write logs, default is tomcat log directory
 webapp.logdir=/var/log/
@@ -40,8 +40,8 @@ mail.text=Your password for the FlyMine system is: {0}
 
 project.title=MalariaMine
 project.subTitle=An example of InterMine.bio with data from <i>Plasmodium falciparum</i>
-project.sitePrefix=http://malaria.flymine.org
-project.helpLocation=http://malaria.flymine.org/doc
+project.sitePrefix=http://www.flymine.org/malariamine
+project.helpLocation=http://www.flymine.org/doc
 project.releaseVersion=tutorial
 project.contact=<a href="mailto:test_user%5Bat%5Dmail_account">test_user[at]mail_account</a>
 project.funded.by=MalariaMine is funded by <a href="http://www.wellcome.ac.uk/">The Wellcome Trust</a>
