@@ -41,7 +41,8 @@ import org.intermine.util.DynamicUtil;
  * 
  * @author Kim Rutherford
  */
-public class IntergenicRegionUtil {
+public class IntergenicRegionUtil 
+{
     private ObjectStoreWriter osw = null;
     private ObjectStore os;
     private DataSet dataSet;
@@ -327,9 +328,7 @@ public class IntergenicRegionUtil {
                 }
 
                 synonym.setValue(intergenicRegion.getPrimaryIdentifier());
-
                 intergenicRegion.setAdjacentGenes(adjacentGenes);
-
                 return intergenicRegion;
             }
 
