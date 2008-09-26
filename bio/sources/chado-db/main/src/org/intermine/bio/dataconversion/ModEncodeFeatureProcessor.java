@@ -174,10 +174,7 @@ public class ModEncodeFeatureProcessor extends ChadoSequenceProcessor
 
 
     /**
-     * 
-     * copied from FlyBaseModuleProcessor
-     * 
-     * 
+     * copied from FlyBaseProcessor
      * {@inheritDoc}
      */
     @Override

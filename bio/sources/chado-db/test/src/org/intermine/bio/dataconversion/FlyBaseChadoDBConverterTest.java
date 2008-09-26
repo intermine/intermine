@@ -19,8 +19,8 @@ public class FlyBaseChadoDBConverterTest extends ItemsTestCase
     }
 
     public void testAddCVTermColon() {
-        assertEquals("some_value", FlyBaseModuleProcessor.addCVTermColon("some_value"));
-        assertEquals("FBbt:00000001", FlyBaseModuleProcessor.addCVTermColon("FBbt:00000001"));
-        assertEquals("FBbt:00000001", FlyBaseModuleProcessor.addCVTermColon("FBbt00000001"));
+        assertEquals("some_value", FlyBaseProcessor.addCVTermColon("some_value"));
+        assertEquals("FBbt:00000001", FlyBaseProcessor.addCVTermColon("FBbt:00000001"));
+        assertEquals("FBbt:00000001", FlyBaseProcessor.addCVTermColon("FBbt00000001"));
     }
 }

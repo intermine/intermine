@@ -24,7 +24,7 @@ import org.apache.commons.collections.map.MultiKeyMap;
  * A converter for chado that handles WormBase specific configuration.
  * @author Kim Rutherford
  */
-public class WormBaseModuleProcessor extends ChadoSequenceProcessor
+public class WormBaseProcessor extends ChadoSequenceProcessor
 {
     private Map<MultiKey, List<ConfigAction>> config;
 
@@ -32,7 +32,7 @@ public class WormBaseModuleProcessor extends ChadoSequenceProcessor
      * Create a new WormBaseChadoDBConverter.
      * @param chadoDBConverter the converter that created this object
      */
-    public WormBaseModuleProcessor(ChadoDBConverter chadoDBConverter) {
+    public WormBaseProcessor(ChadoDBConverter chadoDBConverter) {
         super(chadoDBConverter);
     }
 

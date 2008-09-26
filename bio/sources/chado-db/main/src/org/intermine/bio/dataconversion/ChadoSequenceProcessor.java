@@ -105,7 +105,7 @@ public class ChadoSequenceProcessor extends ChadoProcessor
     private final MultiKeyMap singletonMap = new MultiKeyMap();
 
     /**
-     * Create a new ChadoSequenceModuleProcessor
+     * Create a new ChadoSequenceProcessor
      * @param chadoDBConverter the ChadoDBConverter that is controlling this processor
      */
     public ChadoSequenceProcessor(ChadoDBConverter chadoDBConverter) {

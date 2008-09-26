@@ -12,7 +12,7 @@
       <property name="organisms" value="7227"/>
       <property name="dataSourceName" value="FlyBase"/>
       <property name="processors"
-                value="org.intermine.bio.dataconversion.FlyBaseModuleProcessor"/>
+                value="org.intermine.bio.dataconversion.FlyBaseProcessor"/>
       <property name="converter.class" 
                 value="org.intermine.bio.dataconversion.GenomeDBConverter"/>
     </source>
@@ -21,7 +21,7 @@
       <property name="organisms" value="6239"/>
       <property name="dataSourceName" value="WormBase"/>
       <property name="processors"
-                value="org.intermine.bio.dataconversion.WormBaseModuleProcessor"/>
+                value="org.intermine.bio.dataconversion.WormBaseProcessor"/>
       <property name="converter.class" 
                 value="org.intermine.bio.dataconversion.GenomeDBConverter"/>
     </source>

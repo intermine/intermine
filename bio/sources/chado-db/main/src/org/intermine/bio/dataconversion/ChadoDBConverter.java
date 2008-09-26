@@ -84,7 +84,7 @@ public class ChadoDBConverter extends BioDBConverter
     }
 
     /**
-     * Set the class names of the ChadoSequenceModuleProcessor to run.
+     * Set the class names of the ChadoSequenceProcessor to run.
      * @param processors a space separated list of the fully-qualified class names of module
      * processors to run
      */
