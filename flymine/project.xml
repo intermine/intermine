@@ -9,8 +9,7 @@
       <property name="organisms" value="7227"/>
       <property name="dataSourceName" value="FlyBase"/>
       <property name="processors"
-                value="org.intermine.bio.dataconversion.FlyBaseProcessor
-                       org.intermine.bio.dataconversion.FlyBaseStockProcessor"/>
+                value="org.intermine.bio.dataconversion.FlyBaseProcessor"/>
       <property name="converter.class" 
                 value="org.intermine.bio.dataconversion.ChadoDBConverter"/>
     </source>
