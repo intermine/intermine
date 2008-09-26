@@ -36,30 +36,38 @@ progname=$0
 function usage () {
    cat <<EOF
 
-Usage: $progname [-a] [-c] [-u] [-w] [-d directory_name] [-v] 
-   -a: the submission will be APPENDED to the present validation mine
+Usage: $progname [-a] [-b] [-c] [-w] [-d directory_name] [-v] 
+   -a: the submission will be APPENDED to the present mine
+   -b: no back-up of modchado-$REL will be built
    -c: all data, not only meta-data (FB and WB)
    -w: no new webapp will be built
-   -d: you can specify the subdirectory in $FTPURL where to look for files
-   -u: no back-up of modchado-$REL will be built
+   -d: you can specify a subdirectory in $FTPURL where to look for files
    -v: verbode mode
    
  Note: The file is downloaded only if not present or the remote copy 
       is newer or has a different size. 
       
-example
-       $progname db_instance {dev/test}
-  
+examples:
+
+$progname
+         will build a modmine-dev with metadata only
+$progname -c test
+         will build a modmine-test with metadata, Flybase and Wormbase
+$progname -a -d ready2publish dev
+         will add to modmine-dev all the new submissions in $FTPURL/ready2publish
+$progname -a test
+         will add to modmine-test all the new submissions in $FTPURL
+
 EOF
    exit 0
 }
 
-while getopts ":acwud:v" opt; do
+while getopts ":abcwd:v" opt; do
    case $opt in
 
    a )  echo; echo "Append to exinting mine." ; APPEND=y;;
+   b )  echo; echo "Don't build a back-up of the database." ; BUP=n;;
    c )  echo; echo "Do all (not only meta-data)." ; ONLYMETA=n;;
-   u )  echo; echo "Don't build a back-up of the database." ; BUP=n;;
    d )  echo "processing $FTPURL/$OPTARG directory" ; DIR=/$OPTARG;;
    w )  echo; echo "No new webapp will be built" ; WEBAPP=n;;
 #   f )  echo; echo "Forcing mode: will continue if loading in chado gives errors." ; F=;;
@@ -189,7 +197,7 @@ fi
 # building webapp
 #---------------------------------------
 
-if [ "$WEBAPP" == "y" ]
+if [ "$WEBAPP" = "y" ]
 then
 cd $MINEDIR/webapp
 ant -Drelease=$REL $V default remove-webapp release-webapp
