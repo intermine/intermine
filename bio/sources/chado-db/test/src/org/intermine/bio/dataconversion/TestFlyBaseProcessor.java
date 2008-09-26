@@ -20,17 +20,17 @@ import java.sql.SQLException;
 import com.mockobjects.sql.MockMultiRowResultSet;
 
 /**
- * An implementation of FlyBaseModuleProcessor for testing.
+ * An implementation of FlyBaseProcessor for testing.
  * @author Kim Rutherford
  */
-public class TestFlyBaseModuleProcessor extends FlyBaseModuleProcessor
+public class TestFlyBaseProcessor extends FlyBaseProcessor
 {
 
     /**
      * Create a new TestFlyBaseModuleProcessor object.
      * @param chadoDBConverter the ChadoDBConverter
      */
-    public TestFlyBaseModuleProcessor(ChadoDBConverter chadoDBConverter) {
+    public TestFlyBaseProcessor(ChadoDBConverter chadoDBConverter) {
         super(chadoDBConverter);
     }
 
@@ -510,7 +510,7 @@ public class TestFlyBaseModuleProcessor extends FlyBaseModuleProcessor
      */
     @Override
     protected ChadoCV getFlyBaseMiscCV(Connection connection) throws SQLException {
-        ChadoCV cv = new ChadoCV(FlyBaseModuleProcessor.FLYBASE_MISCELLANEOUS_CV);
+        ChadoCV cv = new ChadoCV(FlyBaseProcessor.FLYBASE_MISCELLANEOUS_CV);
         ChadoCVTerm root = new ChadoCVTerm("origin of mutation");
         ChadoCVTerm child = new ChadoCVTerm("&agr; ray");
         child.getDirectParents().add(root);
@@ -525,7 +525,7 @@ public class TestFlyBaseModuleProcessor extends FlyBaseModuleProcessor
      */
     @Override
     protected ChadoCV getFlyBaseSequenceOntologyCV(Connection connection) throws SQLException {
-        ChadoCV cv = new ChadoCV(FlyBaseModuleProcessor.FLYBASE_SO_CV_NAME);
+        ChadoCV cv = new ChadoCV(FlyBaseProcessor.FLYBASE_SO_CV_NAME);
         ChadoCVTerm root = new ChadoCVTerm("chromosome_structure_variation");
         ChadoCVTerm child1 = new ChadoCVTerm("interchromosomal_transposition");
         ChadoCVTerm child2 = new ChadoCVTerm("chromosomal_translocation");

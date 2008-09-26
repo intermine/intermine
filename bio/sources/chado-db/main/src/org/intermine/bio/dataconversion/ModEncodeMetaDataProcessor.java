@@ -121,7 +121,7 @@ public class ModEncodeMetaDataProcessor extends ChadoProcessor
     }
 
     /**
-     * Create a new ChadoModuleProcessor object
+     * Create a new ChadoProcessor object
      * @param chadoDBConverter the converter that created this Processor
      */
     public ModEncodeMetaDataProcessor(ChadoDBConverter chadoDBConverter) {

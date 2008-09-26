@@ -57,7 +57,7 @@ public class ChadoDBConverterTest extends ItemsTestCase
         ChadoDBConverter converter =
             new TestChadoDBConverter(null, Model.getInstanceByName("genomic"), itemWriter);
         converter.setOrganisms(orgId);
-        converter.setProcessors("org.intermine.bio.dataconversion.TestFlyBaseModuleProcessor");
+        converter.setProcessors("org.intermine.bio.dataconversion.TestFlyBaseProcessor");
         converter.setDataSourceName("FlyBase");
         converter.process();
         itemWriter.close();
@@ -73,7 +73,7 @@ public class ChadoDBConverterTest extends ItemsTestCase
             new MockItemWriter(new HashMap<String, org.intermine.model.fulldata.Item>());
         ChadoDBConverter converter =
             new TestChadoDBConverter(null, Model.getInstanceByName("genomic"), itemWriter);
-        FlyBaseModuleProcessor processor = new TestFlyBaseModuleProcessor(converter);
+        FlyBaseProcessor processor = new TestFlyBaseProcessor(converter);
         List<String> actualSet = processor.getFeatures();
         assertTrue(actualSet.containsAll(minimalSet));
     }
@@ -84,7 +84,7 @@ public class ChadoDBConverterTest extends ItemsTestCase
             new MockItemWriter(new HashMap<String, org.intermine.model.fulldata.Item>());
         ChadoDBConverter converter =
             new TestChadoDBConverter(null, Model.getInstanceByName("genomic"), itemWriter);
-        FlyBaseModuleProcessor processor = new TestFlyBaseModuleProcessor(converter);
+        FlyBaseProcessor processor = new TestFlyBaseProcessor(converter);
 
         // if not Dmel genomic_path_regions without '_' should become chromosomes
         Item item = processor.makeFeature(null, "golden_path_region", "DummyType", "3R", "3R", 0,

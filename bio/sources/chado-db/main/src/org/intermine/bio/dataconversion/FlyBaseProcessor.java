@@ -48,7 +48,7 @@ import org.apache.log4j.Logger;
  * A converter for chado that handles FlyBase specific configuration.
  * @author Kim Rutherford
  */
-public class FlyBaseModuleProcessor extends ChadoSequenceProcessor
+public class FlyBaseProcessor extends ChadoSequenceProcessor
 {
     /**
      * The cv.name for the wild type class term.  For chromosome_structure_variations, used to
@@ -109,7 +109,7 @@ public class FlyBaseModuleProcessor extends ChadoSequenceProcessor
 
     private static final String FYBASE_PROP_ATTRIBUTE_PATTERN = "@([^@]+)@";
 
-    private static final Logger LOG = Logger.getLogger(FlyBaseModuleProcessor.class);
+    private static final Logger LOG = Logger.getLogger(FlyBaseProcessor.class);
 
     private final Map<Integer, MultiKeyMap> config = new HashMap<Integer, MultiKeyMap>();
     private final IntPresentSet locatedGeneIds = new IntPresentSet();
@@ -161,7 +161,7 @@ public class FlyBaseModuleProcessor extends ChadoSequenceProcessor
      * Create a new FlyBaseChadoDBConverter.
      * @param chadoDBConverter the converter that created this object
      */
-    public FlyBaseModuleProcessor(ChadoDBConverter chadoDBConverter) {
+    public FlyBaseProcessor(ChadoDBConverter chadoDBConverter) {
         super(chadoDBConverter);
         Connection connection;
         if (getDatabase() == null) {
