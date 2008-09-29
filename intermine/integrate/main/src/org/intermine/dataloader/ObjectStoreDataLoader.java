@@ -11,6 +11,7 @@ package org.intermine.dataloader;
  */
 
 import java.util.Iterator;
+import java.util.Properties;
 
 import org.intermine.model.InterMineObject;
 import org.intermine.objectstore.ObjectStore;
@@ -20,6 +21,8 @@ import org.intermine.objectstore.query.Query;
 import org.intermine.objectstore.query.QueryClass;
 import org.intermine.objectstore.query.SingletonResults;
 import org.intermine.util.DynamicUtil;
+import org.intermine.util.IntPresentSet;
+import org.intermine.util.PropertiesUtil;
 
 import org.apache.log4j.Logger;
 
@@ -69,19 +72,42 @@ public class ObjectStoreDataLoader extends DataLoader
      */
     public void process(ObjectStore os, Source source, Source skelSource, Class queryClass)
         throws ObjectStoreException {
+        int errorCount = 0;
         ObjectStore origOs = os;
         try {
             if (os instanceof ObjectStoreFastCollectionsForTranslatorImpl) {
                 ((ObjectStoreFastCollectionsForTranslatorImpl) os).setSource(source);
             }
             if (getIntegrationWriter() instanceof IntegrationWriterDataTrackingImpl) {
-                BatchingFetcher eof = new BatchingFetcher(((IntegrationWriterAbstractImpl)
-                            getIntegrationWriter()).getBaseEof(),
-                        ((IntegrationWriterDataTrackingImpl) getIntegrationWriter())
-                        .getDataTracker(), source);
-                ((IntegrationWriterAbstractImpl) getIntegrationWriter()).setEof(eof);
-                os = eof.getNoseyObjectStore(os);
+                Properties props = PropertiesUtil.getPropertiesStartingWith(
+                        "equivalentObjectFetcher");
+                if (!("false".equals(props.getProperty("equivalentObjectFetcher.useParallel")))) {
+                    LOG.info("Using ParallelBatchingFetcher - set the property "
+                            + "\"equivalentObjectFetcher.useParallel\" to false to use the standard"
+                            + " BatchingFetcher");
+                    ParallelBatchingFetcher eof =
+                        new ParallelBatchingFetcher(((IntegrationWriterAbstractImpl)
+                                getIntegrationWriter()).getBaseEof(),
+                            ((IntegrationWriterDataTrackingImpl) getIntegrationWriter())
+                            .getDataTracker(), source);
+                    ((IntegrationWriterAbstractImpl) getIntegrationWriter()).setEof(eof);
+                    os = eof.getNoseyObjectStore(os);
+                } else {
+                    LOG.info("Using BatchingFetcher - set the property "
+                            + "\"equivalentObjectFetcher.useParallel\" to true to use the "
+                            + "ParallelBatchingFetcher");
+                    BatchingFetcher eof =
+                        new BatchingFetcher(((IntegrationWriterAbstractImpl)
+                                getIntegrationWriter()).getBaseEof(),
+                            ((IntegrationWriterDataTrackingImpl) getIntegrationWriter())
+                            .getDataTracker(), source);
+                    ((IntegrationWriterAbstractImpl) getIntegrationWriter()).setEof(eof);
+                    os = eof.getNoseyObjectStore(os);
+                }
             }
+            Properties props = PropertiesUtil.getPropertiesStartingWith("dataLoader");
+            boolean allowMultipleErrors = !("false".equals(props.getProperty(
+                            "dataLoader.allowMultipleErrors")));
             long times[] = new long[20];
             for (int i = 0; i < 20; i++) {
                 times[i] = -1;
@@ -118,7 +144,22 @@ public class ObjectStoreDataLoader extends DataLoader
                 //    System//.out.println("Storing " + objText.substring(0, (objTextLen > 60 ? 60
                 //                    : objTextLen)));
                 //}
-                getIntegrationWriter().store(obj, source, skelSource);
+                try {
+                    getIntegrationWriter().store(obj, source, skelSource);
+                } catch (RuntimeException e) {
+                    LOG.error("Exception while dataloading", e);
+                    errorCount++;
+                    if (errorCount >= 100) {
+                        throw new RuntimeException("Too many data loading exceptions - to stop on"
+                                + " the first error, set the property"
+                                + " \"dataLoader.allowMultipleErrors\" to false", e);
+                    }
+                    if (!allowMultipleErrors) {
+                        throw new RuntimeException("Exception while dataloading - to allow multiple"
+                                + " errors, set the property \"dataLoader.allowMultipleErrors\" to"
+                                + " true", e);
+                    }
+                }
                 time3 = System.currentTimeMillis();
                 timeSpentWrite += time3 - time2;
                 opCount++;
@@ -159,11 +200,23 @@ public class ObjectStoreDataLoader extends DataLoader
                     + timeSpentWrite + ", Committing: " + timeSpentCommit);
         } catch (RuntimeException e) {
             if (origOs instanceof ObjectStoreFastCollectionsForTranslatorImpl) {
-                LOG.error("Exception while dataloading - doneAlreadyMap = "
-                        + ((ObjectStoreFastCollectionsForTranslatorImpl) origOs).getDoneAlready(),
-                        e);
+                IntPresentSet doneAlready = ((ObjectStoreFastCollectionsForTranslatorImpl) origOs)
+                    .getDoneAlready();
+                if (doneAlready.size() > 100000) {
+                    LOG.error("Exception while dataloading", e);
+                } else {
+                    LOG.error("Exception while dataloading - doneAlreadyMap = "
+                            + ((ObjectStoreFastCollectionsForTranslatorImpl) origOs).getDoneAlready(),
+                            e);
+                }
             }
             throw e;
+        }
+        if (errorCount > 0) {
+            throw new RuntimeException("Dataloading finished. There were errors while loading "
+                    + "- see the logs for details."
+                    + " To stop on the first error, set the property \"dataloader"
+                    + ".allowMultipleErrors\" to false");
         }
     }
 }
