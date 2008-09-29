@@ -11,36 +11,29 @@
 # sc 09/08
 #
 
-REL=val
-
-#getting some setting from the properties file
-DBHOST=`grep metadata.datasource.serverName $HOME/modmine.properties.$REL | awk -F "=" '{print $2}'`
-DBUSER=`grep metadata.datasource.user $HOME/modmine.properties.$REL | awk -F "=" '{print $2}'`
-DBPW=`grep metadata.datasource.password $HOME/modmine.properties.$REL | awk -F "=" '{print $2}'`
 
 FTPURL=ftp://ftp.modencode.org/pub/dcc
 DATADIR=/shared/data/modmine/subs/chado
 DBDIR=/shared/data/modmine/
-CHADODB=modchado-$REL
-MINEDB=modmine-$REL
 
 MINEDIR=$HOME/svn/dev/modmine
 SOURCES=modencode-static,entrez-organism,modencode-metadata
 
 # these should not be edited
-APPEND=n;
-WEBAPP=y;
-TESTS=y;
-STAG=y;
-V=;
-F="exit 1";
+WEBAPP=y;   #defaults: build a webapp
+APPEND=n;   #          rebuild the db
+TESTS=y;    #          run acceptance tests
+STAG=y;     #          run stag loading
+V=;         #          non-verbose mode
+F="exit 1"; #          stop if stag loading errors
+REL=val;    #          if no release is passed, do a val
 
 progname=$0
 
 function usage () {
    cat <<EOF
 
-Usage: $progname [-a] [-s] [-t] [-w] [-v] [-f] submission_name
+Usage: $progname [-a] [-r release_name] [-s] [-t] [-w] [-v] [-f] submission_name
    -a: the submission will be APPENDED to the present validation mine
    -s: no new loading of chado (stag is not run)
    -t: no acceptance test run
@@ -58,12 +51,13 @@ EOF
    exit 0
 }
 
-while getopts ":astwvf" opt; do
+while getopts ":ar:stwvf" opt; do
    case $opt in
 
    a )  echo; echo "The submission will be added to the present validation mine." ; 
       APPEND=y;;
 #   b )  echo "found -b and $OPTARG is after -b" ;;
+   r )  echo; REL=$OPTARG; echo "Set release to sam: will produce modmine-$REL " ;;
    s )  echo; echo "Using previous load of chado (stag is not run)" ; STAG=n;;
    t )  echo; echo "No acceptance test run" ; TESTS=n;;
    w )  echo; echo "No new webapp will be built" ; WEBAPP=n;;
@@ -75,6 +69,18 @@ while getopts ":astwvf" opt; do
 done
 
 shift $(($OPTIND - 1))
+
+# setting related to release
+CHADODB=modchado-$REL
+MINEDB=modmine-$REL
+
+#getting some setting from the properties file
+DBHOST=`grep metadata.datasource.serverName $HOME/modmine.properties.$REL | awk -F "=" '{print $2}'`
+DBUSER=`grep metadata.datasource.user $HOME/modmine.properties.$REL | awk -F "=" '{print $2}'`
+DBPW=`grep metadata.datasource.password $HOME/modmine.properties.$REL | awk -F "=" '{print $2}'`
+
+echo "press return to continue.."
+read 
 
 #---------------------------------------
 # getting the chadoxml from ftp site
