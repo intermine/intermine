@@ -428,19 +428,19 @@ public class JavaModelOutput extends ModelOutput
             while (iter.hasNext()) {
                 Map.Entry entry = (Map.Entry) iter.next();
                 FieldDescriptor field = (FieldDescriptor) entry.getValue();
-                if (needComma) {
-                    sb.append(", ");
-                }
-                needComma = true;
-                sb.append(field.getName());
-                if (field instanceof AttributeDescriptor) {
-                    sb.append("=\\\"\" + " + field.getName() + " + \"\\\"");
-                } else if (field instanceof CollectionDescriptor) {
-                    sb.append(":Collection");
-                } else {
-                    sb.append("=\" + (" + field.getName() + " == null ? \"null\" : ("
-                            + field.getName() + ".getId() == null ? \"no id\" : "
-                            + field.getName() + ".getId().toString())) + \"");
+                if (!(field instanceof CollectionDescriptor)) {
+                    if (needComma) {
+                        sb.append(", ");
+                    }
+                    needComma = true;
+                    sb.append(field.getName());
+                    if (field instanceof AttributeDescriptor) {
+                        sb.append("=\\\"\" + " + field.getName() + " + \"\\\"");
+                    } else {
+                        sb.append("=\" + (" + field.getName() + " == null ? \"null\" : ("
+                                + field.getName() + ".getId() == null ? \"no id\" : "
+                                + field.getName() + ".getId().toString())) + \"");
+                    }
                 }
             }
             sb.append("]\"; }" + ENDL);
