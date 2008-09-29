@@ -180,7 +180,7 @@ public class BatchingFetcher extends HintingFetcher
         Map<InterMineObject, Set<InterMineObject>> results = new HashMap<InterMineObject,
             Set<InterMineObject>>();
         for (InterMineObject object : objects) {
-            results.put(object, new HashSet<InterMineObject>());
+            results.put(object, Collections.synchronizedSet(new HashSet<InterMineObject>()));
         }
 
         Map<PrimaryKey, ClassDescriptor> pksToDo = new HashMap();
@@ -228,36 +228,30 @@ public class BatchingFetcher extends HintingFetcher
                 }
             }
         }
-        Set<Integer> fetchedObjectIds = new HashSet();
+        doPks(pksToDo, results, cldToObjectsForCld, time1);
+        batchQueried += results.size();
+        equivalents.putAll(results);
+    }
+
+    protected void doPks(Map<PrimaryKey, ClassDescriptor> pksToDo,
+            Map<InterMineObject, Set<InterMineObject>> results,
+            Map<ClassDescriptor, List<InterMineObject>> cldToObjectsForCld, long time1)
+    throws ObjectStoreException {
+        Set<Integer> fetchedObjectIds = Collections.synchronizedSet(new HashSet());
+        Map<PrimaryKey, ClassDescriptor> pksNotDone
+            = new HashMap<PrimaryKey, ClassDescriptor>(pksToDo);
         while (!pksToDo.isEmpty()) {
             int startPksToDoSize = pksToDo.size();
             Iterator<PrimaryKey> pkIter = pksToDo.keySet().iterator();
             while (pkIter.hasNext()) {
                 PrimaryKey pk = pkIter.next();
                 ClassDescriptor cld = pksToDo.get(pk);
-                boolean canDoPkNow = true;
-                Iterator<String> fieldNameIter = pk.getFieldNames().iterator();
-                while (fieldNameIter.hasNext() && canDoPkNow) {
-                    String fieldName = fieldNameIter.next();
-                    FieldDescriptor fd = cld.getFieldDescriptorByName(fieldName);
-                    if (fd.isReference()) {
-                        Iterator<ClassDescriptor> otherCldIter = pksToDo.values().iterator();
-                        while (otherCldIter.hasNext() && canDoPkNow) {
-                            ClassDescriptor otherCld = otherCldIter.next();
-                            Class fieldClass = ((ReferenceDescriptor) fd)
-                                .getReferencedClassDescriptor().getType();
-                            if (otherCld.getType().isAssignableFrom(fieldClass)
-                                    || fieldClass.isAssignableFrom(otherCld.getType())) {
-                                canDoPkNow = false;
-                            }
-                        }
-                    }
-                }
-                if (canDoPkNow) {
+                if (canDoPkNow(pk, cld, pksNotDone)) {
                     //LOG.error("Running pk " + cld.getName() + "." + pk.getName());
                     doPk(pk, cld, results, cldToObjectsForCld.get(cld),
                             fetchedObjectIds);
                     pkIter.remove();
+                    pksNotDone.remove(pk);
                 } else {
                     //LOG.error("Cannot do pk " + cld.getName() + "." + pk.getName() + " yet");
                 }
@@ -266,13 +260,39 @@ public class BatchingFetcher extends HintingFetcher
                 throw new RuntimeException("Error - cannot fetch any pks: " + pksToDo.keySet());
             }
         }
-        batchQueried += results.size();
-        equivalents.putAll(results);
         long time2 = System.currentTimeMillis();
         timeSpentPrefetchEquiv += time2 - time1;
         dataTracker.prefetchIds(fetchedObjectIds);
         time1 = System.currentTimeMillis();
         timeSpentPrefetchTracker += time1 - time2;
+    }
+
+    /**
+     * Returns whether this primary key can be fetched now.
+     *
+     * @param pk the PrimaryKey
+     */
+    protected boolean canDoPkNow(PrimaryKey pk, ClassDescriptor cld,
+            Map<PrimaryKey, ClassDescriptor> pksNotDone) {
+        boolean canDoPkNow = true;
+        Iterator<String> fieldNameIter = pk.getFieldNames().iterator();
+        while (fieldNameIter.hasNext() && canDoPkNow) {
+            String fieldName = fieldNameIter.next();
+            FieldDescriptor fd = cld.getFieldDescriptorByName(fieldName);
+            if (fd.isReference()) {
+                Iterator<ClassDescriptor> otherCldIter = pksNotDone.values().iterator();
+                while (otherCldIter.hasNext() && canDoPkNow) {
+                    ClassDescriptor otherCld = otherCldIter.next();
+                    Class fieldClass = ((ReferenceDescriptor) fd)
+                        .getReferencedClassDescriptor().getType();
+                    if (otherCld.getType().isAssignableFrom(fieldClass)
+                            || fieldClass.isAssignableFrom(otherCld.getType())) {
+                        canDoPkNow = false;
+                    }
+                }
+            }
+        }
+        return canDoPkNow;
     }
 
     /**
@@ -412,6 +432,7 @@ public class BatchingFetcher extends HintingFetcher
                 Results res = lookupOs.execute(q);
                 res.setNoExplain();
                 res.setNoOptimise();
+                res.setNoPrefetch();
                 res.setBatchSize(2000);
                 for (ResultsRow row : ((List<ResultsRow>) res)) {
                     List values = new ArrayList();
@@ -425,6 +446,9 @@ public class BatchingFetcher extends HintingFetcher
                     }
                     fetchedObjectIds.add(((InterMineObject) row.get(0)).getId());
                 }
+                LOG.info("Fetched " + res.size() + " equivalent objects for " + objCount
+                        + " objects in " + (System.currentTimeMillis() - time) + " ms for "
+                        + cld.getName() + "." + pk.getName());
             }
         }
     }

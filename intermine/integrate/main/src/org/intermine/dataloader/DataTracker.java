@@ -62,7 +62,6 @@ public class DataTracker
     private HashMap sourceToName = new HashMap();
     private Connection conn;
     private Connection storeConn;
-    private Connection prefetchConn;
     protected Exception broken = null;
     private CacheStorer cacheStorer;
     private int version = 0;
@@ -92,15 +91,12 @@ public class DataTracker
             conn.setAutoCommit(true);
             storeConn = db.getConnection();
             storeConn.setAutoCommit(false);
-            prefetchConn = db.getConnection();
-            prefetchConn.setAutoCommit(true);
             Statement s = conn.createStatement();
             try {
                 s.executeQuery("SELECT * FROM tracker LIMIT 1");
             } catch (SQLException e2) {
                 clear();
             }
-            prefetchConn.createStatement().execute("SET enable_seqscan = off;");
         } catch (SQLException e) {
             IllegalArgumentException e2 = new IllegalArgumentException(
                     "Could not access SQL database");
@@ -138,70 +134,93 @@ public class DataTracker
      * @param ids a Set of Integers
      */
     public void prefetchIds(Set<Integer> ids) {
-        long startTime = System.currentTimeMillis();
-        Set<Integer> toFetch = new HashSet();
-        synchronized (this) {
-            if (broken != null) {
-                IllegalArgumentException e = new IllegalArgumentException();
-                e.initCause(broken);
-                throw e;
-            }
-            for (Integer id : ids) {
-                ObjectDescription desc = (ObjectDescription) cache.get(id);
-                if (desc == null) {
-                    desc = (ObjectDescription) writeBack.get(id);
-                    cache.put(id, desc);
+        Connection prefetchConn = null;
+        try {
+            prefetchConn = db.getConnection();
+            prefetchConn.setAutoCommit(true);
+            prefetchConn.createStatement().execute("SET enable_seqscan = off;");
+            long startTime = System.currentTimeMillis();
+            Set<Integer> toFetch = new HashSet();
+            synchronized (this) {
+                if (broken != null) {
+                    IllegalArgumentException e = new IllegalArgumentException();
+                    e.initCause(broken);
+                    throw e;
                 }
-                if (desc == null) {
-                    toFetch.add(id);
-                }
-            }
-        }
-        Map<Integer, ObjectDescription> idsFetched = new HashMap();
-        if (!toFetch.isEmpty()) {
-            int count = 0;
-            StringBuffer sql = new StringBuffer();
-            boolean needComma = false;
-            Iterator<Integer> idIter = toFetch.iterator();
-            while (idIter.hasNext()) {
-                Integer id = idIter.next();
-                if (needComma) {
-                    sql.append(", ");
-                } else {
-                    sql.append("SELECT objectid, fieldname, sourcename, version"
-                    + " FROM tracker WHERE objectid IN (");
-                }
-                needComma = true;
-                sql.append("" + id);
-                idsFetched.put(id, new ObjectDescription());
-                if ((count % 500 == 0) || (!idIter.hasNext())) {
-                    sql.append(") ORDER BY version");
-                    try {
-                        Statement s = prefetchConn.createStatement();
-                        ResultSet r = s.executeQuery(sql.toString());
-                        while (r.next()) {
-                            ObjectDescription objectDescription =
-                                idsFetched.get(new Integer(r.getInt(1)));
-                            objectDescription.putClean(r.getString(2).intern(),
-                                                       stringToSource(r.getString(3)));
-                        }
-                    } catch (SQLException e) {
-                        broken = e;
-                        IllegalArgumentException e2 = new IllegalArgumentException();
-                        e2.initCause(broken);
-                        throw e2;
+                for (Integer id : ids) {
+                    ObjectDescription desc = (ObjectDescription) cache.get(id);
+                    if (desc == null) {
+                        desc = (ObjectDescription) writeBack.get(id);
+                        cache.put(id, desc);
                     }
-                    needComma = false;
-                    sql = new StringBuffer();
+                    if (desc == null) {
+                        toFetch.add(id);
+                    }
+                }
+            }
+            Map<Integer, ObjectDescription> idsFetched = new HashMap();
+            if (!toFetch.isEmpty()) {
+                int count = 0;
+                StringBuffer sql = new StringBuffer();
+                boolean needComma = false;
+                Iterator<Integer> idIter = toFetch.iterator();
+                while (idIter.hasNext()) {
+                    count++;
+                    Integer id = idIter.next();
+                    if (needComma) {
+                        sql.append(", ");
+                    } else {
+                        sql.append("SELECT objectid, fieldname, sourcename, version"
+                        + " FROM tracker WHERE objectid IN (");
+                    }
+                    needComma = true;
+                    sql.append("" + id);
+                    idsFetched.put(id, new ObjectDescription());
+                    if ((count % 500 == 0) || (!idIter.hasNext())) {
+                        sql.append(") ORDER BY version");
+                        try {
+                            Statement s = prefetchConn.createStatement();
+                            long beforeExecute = System.currentTimeMillis();
+                            ResultSet r = s.executeQuery(sql.toString());
+                            LOG.info("Prefetching " + (((count + 499) % 500) + 1) + " tracks took "
+                                    + (System.currentTimeMillis() - beforeExecute) + " ms");
+                            while (r.next()) {
+                                ObjectDescription objectDescription =
+                                    idsFetched.get(new Integer(r.getInt(1)));
+                                objectDescription.putClean(r.getString(2).intern(),
+                                                           stringToSource(r.getString(3)));
+                            }
+                        } catch (SQLException e) {
+                            broken = e;
+                            IllegalArgumentException e2 = new IllegalArgumentException();
+                            e2.initCause(broken);
+                            throw e2;
+                        }
+                        needComma = false;
+                        sql = new StringBuffer();
+                    }
+                }
+            }
+            synchronized (this) {
+                cache.putAll(idsFetched);
+                maybePoke();
+                batched += idsFetched.size();
+            }
+            timeSpentPrefetching += System.currentTimeMillis() - startTime;
+        } catch (SQLException e) {
+            broken = e;
+            IllegalArgumentException e2 = new IllegalArgumentException();
+            e2.initCause(broken);
+            throw e2;
+        } finally {
+            if (prefetchConn != null) {
+                try {
+                    prefetchConn.close();
+                } catch (SQLException e) {
+                    LOG.error("Error while closing prefetch connection", e);
                 }
             }
         }
-        synchronized (this) {
-            cache.putAll(idsFetched);
-            maybePoke();
-            batched += idsFetched.size();
-        }
-        timeSpentPrefetching += System.currentTimeMillis() - startTime;
     }
 
     /**
