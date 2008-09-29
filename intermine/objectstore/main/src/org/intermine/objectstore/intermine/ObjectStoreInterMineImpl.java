@@ -72,6 +72,7 @@ import org.intermine.sql.precompute.PrecomputedTableManager;
 import org.intermine.sql.precompute.QueryOptimiser;
 import org.intermine.sql.precompute.QueryOptimiserContext;
 import org.intermine.sql.query.ExplainResult;
+import org.intermine.sql.query.PostgresExplainResult;
 import org.intermine.sql.writebatch.Batch;
 import org.intermine.sql.writebatch.BatchWriterPostgresCopyImpl;
 import org.intermine.util.ShutdownHook;
@@ -111,6 +112,7 @@ public class ObjectStoreInterMineImpl extends ObjectStoreAbstractImpl implements
     protected int sequenceBase = 0;
     protected int sequenceOffset = SEQUENCE_MULTIPLE;
     protected static final int SEQUENCE_MULTIPLE = 1000000;
+    protected boolean logExplains = false;
 
     // don't use a table to represent bags if the bag is smaller than this value
     protected int minBagTableSize = -1;
@@ -264,6 +266,7 @@ public class ObjectStoreInterMineImpl extends ObjectStoreAbstractImpl implements
         String logEverythingString = props.getProperty("logEverything");
         String loggerAlias = props.getProperty("logger");
         String verboseQueryLogString = props.getProperty("verboseQueryLog");
+        String logExplainsString = props.getProperty("logExplains");
 
         synchronized (instances) {
             ObjectStoreInterMineImpl os = (ObjectStoreInterMineImpl) instances.get(osAlias);
@@ -358,6 +361,9 @@ public class ObjectStoreInterMineImpl extends ObjectStoreAbstractImpl implements
                 if ("true".equals(verboseQueryLogString)) {
                     os.setVerboseQueryLog(true);
                 }
+                if ("true".equals(logExplainsString)) {
+                    os.setLogExplains(true);
+                }
                 instances.put(osAlias, os);
             }
             return os;
@@ -432,6 +438,15 @@ public class ObjectStoreInterMineImpl extends ObjectStoreAbstractImpl implements
      */
     public void setVerboseQueryLog(boolean verboseQueryLog) {
         this.verboseQueryLog = verboseQueryLog;
+    }
+
+    /**
+      * Sets the logExplains configuration option.
+      *
+      * @param logExplains a boolean
+      */
+    public void setLogExplains(boolean logExplains) {
+        this.logExplains = logExplains;
     }
 
     /**
@@ -824,17 +839,21 @@ public class ObjectStoreInterMineImpl extends ObjectStoreAbstractImpl implements
             long postConvert = System.currentTimeMillis();
             long permittedTime = (objResults.size() * 2) + start + (150 * q.getFrom().size())
                     + (sql.length() / 20) - (q.getFrom().size() == 0 ? 0 : 100);
+            boolean doneExplainLog = false;
             if (postExecute - preExecute > permittedTime) {
-                //if (postExecute - preExecute > sql.length()) {
-                    LOG.info(getModel().getName() + ": Executed SQL (time = "
-                            + (postExecute - preExecute) + " > " + permittedTime + ", rows = "
-                            + objResults.size() + "): " + sql);
-                //} else {
-                //    LOG.info(getModel().getName() + ": Executed SQL (time = "
-                //            + (postExecute - preExecute) + " > " + permittedTime + ", rows = "
-                //            + objResults.size() + "): " + (sql.length() > 1000
-                //            ? sql.substring(0, 1000) : sql));
-                //}
+                LOG.info(getModel().getName() + ": Executed SQL (time = "
+                        + (postExecute - preExecute) + " > " + permittedTime + ", rows = "
+                        + objResults.size() + "): " + sql);
+                if (logExplains) {
+                    doneExplainLog = true;
+                    if (explainResult == null) {
+                        explainResult = ExplainResult.getInstance(sql, c);
+                    }
+                    if (explainResult instanceof PostgresExplainResult) {
+                        LOG.info("EXPLAIN result: " + ((PostgresExplainResult) explainResult)
+                                .getExplainText());
+                    }
+                }
             }
             if ((estimatedTime > 0) || getLogEverything()) {
                 Writer executeLog = getLog();
@@ -876,6 +895,15 @@ public class ObjectStoreInterMineImpl extends ObjectStoreAbstractImpl implements
                         + " ms, convert results: " + conTime + " ms, total: "
                         + (postConvert - preBagTableTime) + " ms" + ", rows: "
                         + objResults.size());
+                if (logExplains && (!doneExplainLog)) {
+                    if (explainResult == null) {
+                        explainResult = ExplainResult.getInstance(sql, c);
+                    }
+                    if (explainResult instanceof PostgresExplainResult) {
+                        LOG.info("EXPLAIN result: " + ((PostgresExplainResult) explainResult)
+                                .getExplainText());
+                    }
+                }
             }
             Object firstOrderByObject = q.getEffectiveOrderBy().iterator().next();
             if ((firstOrderByObject instanceof QueryOrderable)
