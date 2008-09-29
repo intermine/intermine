@@ -540,14 +540,26 @@ public class IntegrationWriterDataTrackingImpl extends IntegrationWriterAbstract
             timeSpentDataTrackerWrite += time1 - time2;
             return newObj;
         } catch (RuntimeException e) {
-            LOG.error("IDMAP contents: " + idMap.toString());
-            LOG.error("Skeletons: " + skeletons.toString());
-            LOG.error("pureObjects: " + pureObjects.toString());
+            if (idMap.size() <= 100000) {
+                LOG.error("IDMAP contents: " + idMap.toString());
+            }
+            if (skeletons.size() <= 100000) {
+                LOG.error("Skeletons: " + skeletons.toString());
+            }
+            if (pureObjects.size() <= 100000) {
+                LOG.error("pureObjects: " + pureObjects.toString());
+            }
             throw new RuntimeException("Exception while loading object " + nimo, e);
         } catch (ObjectStoreException e) {
-            LOG.error("IDMAP contents: " + idMap.toString());
-            LOG.error("Skeletons: " + skeletons.toString());
-            LOG.error("pureObjects: " + pureObjects.toString());
+            if (idMap.size() <= 100000) {
+                LOG.error("IDMAP contents: " + idMap.toString());
+            }
+            if (skeletons.size() <= 100000) {
+                LOG.error("Skeletons: " + skeletons.toString());
+            }
+            if (pureObjects.size() <= 100000) {
+                LOG.error("pureObjects: " + pureObjects.toString());
+            }
             throw new ObjectStoreException("Exception while loading object " + nimo, e);
         } catch (IllegalAccessException e) {
             throw new ObjectStoreException(e);
@@ -575,9 +587,16 @@ public class IntegrationWriterDataTrackingImpl extends IntegrationWriterAbstract
         // throw an exception if any skeletons have been stored but never replace
         // by a real object to give early warning.
         if (!(skeletons.size() == 0)) {
-            LOG.info("Some skeletons where not replaced by real "
-                     + "objects: " + skeletons.toString());
-            LOG.info("IDMAP CONTENTS:" + idMap.toString());
+            if (skeletons.size() <= 100000) {
+                LOG.info("Some skeletons were not replaced by real objects: "
+                        + skeletons.toString());
+            } else {
+                LOG.info(skeletons.size() + " skeletons were not replaced by real objects"
+                       + " - too many to log.");
+            }
+            if (idMap.size() <= 100000) {
+                LOG.info("IDMAP CONTENTS:" + idMap.toString());
+            }
             throw new ObjectStoreException("Some skeletons where not replaced by real "
                                        + "objects: " + skeletons.size());
         }
