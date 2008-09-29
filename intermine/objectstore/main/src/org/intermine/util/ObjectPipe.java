@@ -23,6 +23,7 @@ import java.util.NoSuchElementException;
  * for each other in any way apart from through this object, otherwise deadlocks will occur.
  *
  * @author Matthew Wakeling
+ * @param <E> The element type of the object pipe.
  */
 public class ObjectPipe<E> implements Iterator<E>
 {
