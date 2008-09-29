@@ -241,6 +241,10 @@ public class SourcePriorityComparator implements Comparator
                     source2 = dataTracker.getSource(f2.getId(), field.getName());
                 }
             }
+            if (source1.equals(source2)) {
+                throw new IllegalArgumentException("Merging two distinct objects from the same"
+                       + " data source (" + source1.getName() + "): " + o1 + " and " + o2);
+            }
             throw new IllegalArgumentException("Conflicting values for field "
                     + field.getClassDescriptor().getName() + "." + field.getName()
                     + " between " + source1.getName() + " (value "
