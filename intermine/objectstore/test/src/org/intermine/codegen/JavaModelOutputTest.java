@@ -199,7 +199,7 @@ public class JavaModelOutputTest extends TestCase
             + INDENT + "public void setId(java.lang.Integer id) { this.id = id; }" + ENDL + ENDL
             + INDENT + "public boolean equals(Object o) { return (o instanceof Class1 && id != null) ? id.equals(((Class1)o).getId()) : false; }" + ENDL
             + INDENT + "public int hashCode() { return (id != null) ? id.hashCode() : super.hashCode(); }" + ENDL
-            + INDENT + "public String toString() { return \"Class1 [atd1=\\\"\" + atd1 + \"\\\", cod1:Collection, id=\\\"\" + id + \"\\\", rfd1=\" + (rfd1 == null ? \"null\" : (rfd1.getId() == null ? \"no id\" : rfd1.getId().toString())) + \"]\"; }" + ENDL
+            + INDENT + "public String toString() { return \"Class1 [atd1=\\\"\" + atd1 + \"\\\", id=\\\"\" + id + \"\\\", rfd1=\" + (rfd1 == null ? \"null\" : (rfd1.getId() == null ? \"no id\" : rfd1.getId().toString())) + \"]\"; }" + ENDL
             + "}" + ENDL;
 
         assertEquals(expected, mo.generate(cld1));
