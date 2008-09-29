@@ -637,6 +637,9 @@ public class FlyBaseProcessor extends ChadoSequenceProcessor
             + " AND " + getLocatedGeneAllesSql();
     }
 
+    /**
+     * Query that returns only allele of located genes.
+     */
     private String getLocatedGeneAllesSql() {
         return "(NOT (uniquename LIKE 'FBal%') OR feature_id IN"
             + "   (SELECT subject_id"
