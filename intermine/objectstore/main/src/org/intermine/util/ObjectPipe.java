@@ -24,9 +24,9 @@ import java.util.NoSuchElementException;
  *
  * @author Matthew Wakeling
  */
-public class ObjectPipe implements Iterator
+public class ObjectPipe<E> implements Iterator<E>
 {
-    private LinkedList list = new LinkedList();
+    private LinkedList<E> list = new LinkedList<E>();
     private boolean finished = false;
     private int maxBuffer = 1024;
     private int putters = 0;
@@ -54,7 +54,7 @@ public class ObjectPipe implements Iterator
      *
      * @param o an Object
      */
-    public synchronized void put(Object o) {
+    public synchronized void put(E o) {
         putters++;
         if (finished) {
             throw new IllegalArgumentException("Can't put onto a finished ObjectPipe");
@@ -80,7 +80,7 @@ public class ObjectPipe implements Iterator
      *
      * @param col a Collection
      */
-    public synchronized void putAll(Collection col) {
+    public synchronized void putAll(Collection<? extends E> col) {
         putters++;
         if (finished) {
             throw new IllegalArgumentException("Can't putAll onto a finished ObjectPipe");
@@ -132,7 +132,7 @@ public class ObjectPipe implements Iterator
     /**
      * {@inheritDoc}
      */
-    public synchronized Object next() throws NoSuchElementException {
+    public synchronized E next() throws NoSuchElementException {
         while ((!finished) && list.isEmpty()) {
             try {
                 wait();
