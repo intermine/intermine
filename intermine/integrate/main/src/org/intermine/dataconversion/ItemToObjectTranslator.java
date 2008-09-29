@@ -42,6 +42,7 @@ import org.intermine.objectstore.query.QueryValue;
 import org.intermine.objectstore.query.Constraint;
 import org.intermine.objectstore.query.ConstraintOp;
 import org.intermine.objectstore.query.BagConstraint;
+import org.intermine.objectstore.query.Results;
 import org.intermine.objectstore.query.ResultsRow;
 import org.intermine.objectstore.query.SimpleConstraint;
 import org.intermine.objectstore.query.ConstraintSet;
@@ -97,7 +98,10 @@ public class ItemToObjectTranslator extends Translator
         q.setDistinct(false);
         try {
             if (os != null) {
-                List res = os.execute(q);
+                Results res = os.execute(q);
+                res.setNoExplain();
+                res.setNoOptimise();
+                res.setNoPrefetch();
                 int offset = 0;
                 Iterator iter = res.iterator();
                 while (iter.hasNext()) {
