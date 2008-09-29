@@ -107,18 +107,18 @@ public class DynamicBean implements MethodInterceptor
                 Map.Entry mapEntry = (Map.Entry) mapIter.next();
                 String fieldName = (String) mapEntry.getKey();
                 Object fieldValue = mapEntry.getValue();
-                if (needComma) {
-                    retval.append(", ");
-                }
-                needComma = true;
-                if (fieldValue instanceof ProxyReference) {
-                    retval.append(fieldName + "=" + ((ProxyReference) fieldValue).getId());
-                } else if (fieldValue instanceof InterMineObject) {
-                    retval.append(fieldName + "=" + ((InterMineObject) fieldValue).getId());
-                } else if (fieldValue instanceof Collection) {
-                    retval.append(fieldName + ":Collection");
-                } else {
-                    retval.append(fieldName + "=\"" + fieldValue + "\"");
+                if (!(fieldValue instanceof Collection)) {
+                    if (needComma) {
+                        retval.append(", ");
+                    }
+                    needComma = true;
+                    if (fieldValue instanceof ProxyReference) {
+                        retval.append(fieldName + "=" + ((ProxyReference) fieldValue).getId());
+                    } else if (fieldValue instanceof InterMineObject) {
+                        retval.append(fieldName + "=" + ((InterMineObject) fieldValue).getId());
+                    } else {
+                        retval.append(fieldName + "=\"" + fieldValue + "\"");
+                    }
                 }
             }
             return retval.toString() + "]";
