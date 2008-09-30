@@ -72,7 +72,11 @@ public class StockProcessor extends ChadoProcessor
             }
 
             String stockUniqueName = res.getString("stock_uniquename");
-            Item stock = makeStock(stockUniqueName);
+            String stockDescription= res.getString("stock_description");
+            String stockCenterUniquename= res.getString("stock_center_uniquename");
+            String type = res.getString("type");
+
+            Item stock = makeStock(stockUniqueName, stockDescription, type, stockCenterUniquename);
 
             stocks.add(stock);
             if (lastFeatureId != null && !featureId.equals(lastFeatureId)) {
@@ -97,13 +101,17 @@ public class StockProcessor extends ChadoProcessor
         return features;
     }
 
-    private Item makeStock(String uniqueName) throws ObjectStoreException {
+    private Item makeStock(String uniqueName, String description, String type,
+                           String stockCenterUniqueName) throws ObjectStoreException {
         if (stockItems.containsKey(uniqueName)) {
             return stockItems.get(uniqueName);
         } else {
             Item stock = getChadoDBConverter().createItem("Stock");
-            getChadoDBConverter().store(stock);
             stock.setAttribute("primaryIdentifier", uniqueName);
+            stock.setAttribute("secondaryIdentifier", description);
+            stock.setAttribute("type", type);
+            stock.setAttribute("stockCenter", stockCenterUniqueName);
+            getChadoDBConverter().store(stock);
             stockItems.put(uniqueName, stock);
             return stock;
         }
@@ -134,12 +142,19 @@ public class StockProcessor extends ChadoProcessor
     protected ResultSet getStocksResultSet(Connection connection)
         throws SQLException {
         String query =
-             "SELECT feature.feature_id, stock.uniquename as stock_uniquename "
-            + " FROM stock_genotype, feature, stock, feature_genotype "
+             "SELECT feature.feature_id, stock.uniquename AS stock_uniquename, "
+            + "      stock.description AS stock_description, type_cvterm.name AS type_name, "
+            + "      (SELECT stockcollection.uniquename "
+            + "         FROM stockcollection, stockcollection_stock join_table "
+            + "        WHERE join_table.stockcollection_id = join_table.stockcollection_id "
+            + "          AND stockcollection_stock.stock_id = stock.stock_id) "
+            + "       AS stock_center_uniquename "
+            + " FROM stock_genotype, feature, stock, feature_genotype, cvterm type_cvterm "
             + "WHERE stock.stock_id = stock_genotype.stock_id "
             + "AND feature_genotype.feature_id = feature.feature_id "
             + "AND feature_genotype.genotype_id = stock_genotype.genotype_id "
             + "AND feature.uniquename LIKE 'FBal%' "
+            + "AND stock.type_id = type_cvterm.cvterm_id "
             + "ORDER BY feature.feature_id";
         LOG.info("executing: " + query);
         Statement stmt = connection.createStatement();
