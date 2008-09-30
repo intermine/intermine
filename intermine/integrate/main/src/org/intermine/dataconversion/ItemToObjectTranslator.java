@@ -65,7 +65,7 @@ public class ItemToObjectTranslator extends Translator
 
     protected Model model;
     protected SortedMap idToNamespace = new TreeMap();
-    protected Map namespaceToId = new HashMap();
+    protected Map<String, Integer> namespaceToId = new HashMap();
 
     /**
      * Constructor
@@ -153,7 +153,11 @@ public class ItemToObjectTranslator extends Translator
             throw new RuntimeException("illegal identifier (\"" + identifier + "\") for item");
         }
         String namespace = identifier.substring(0, index);
-        int base = ((Integer) namespaceToId.get(namespace)).intValue();
+        Integer objectId = namespaceToId.get(namespace);
+        if (objectId == null) {
+            throw new RuntimeException("namespace \"" + namespace + "\" not found");
+        }
+        int base = objectId.intValue();
         Integer retval = new Integer(base + Integer.parseInt(identifier.substring(index + 1)));
         return retval;
     }
@@ -323,7 +327,13 @@ public class ItemToObjectTranslator extends Translator
 
             for (Iterator i = item.getReferences().iterator(); i.hasNext();) {
                 Reference ref = (Reference) i.next();
-                Integer identifier = identifierToId(ref.getRefId());
+                Integer identifier;
+                try {
+                    identifier = identifierToId(ref.getRefId());
+                } catch (RuntimeException e) {
+                    throw new RuntimeException("failed to find referenced item in object store: "
+                                               + ref.getRefId(), e);
+                }
                 String refName = ref.getName();
                 if (refName == null) {
                     throw new RuntimeException("reference name is null while translating: " + o);
@@ -350,9 +360,15 @@ public class ItemToObjectTranslator extends Translator
                 ReferenceList refs = (ReferenceList) i.next();
                 QueryClass qc = new QueryClass(InterMineObject.class);
                 QueryField qf = new QueryField(qc, "id");
-                BagConstraint bc =
-                    new BagConstraint(qf, ConstraintOp.IN,
+                BagConstraint bc;
+                try {
+                    bc = new BagConstraint(qf, ConstraintOp.IN,
                         toIntegers(new HashSet(StringUtil.tokenize(refs.getRefIds()))));
+                } catch (Exception e) {
+                    throw new RuntimeException("failed to find referenced item in object store: "
+                                               + refs.getRefIds(), e);
+                }
+
                 Query q = new Query();
                 q.addToSelect(qc);
                 q.addFrom(qc);
