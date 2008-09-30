@@ -1,0 +1,13 @@
+<?xml version="1.0"?>
+<classes>
+  <class name="org.flymine.model.genomic.Allele" extends="org.flymine.model.genomic.BioEntity"
+         is-interface="true">
+    <collection name="stocks" referenced-type="org.flymine.model.genomic.Stock"
+                reverse-reference="alleles"/>
+  </class>
+  <class name="org.flymine.model.genomic.Stock" extends="org.flymine.model.genomic.BioEntity"
+         is-interface="true">
+    <collection name="alleles" referenced-type="org.flymine.model.genomic.Allele"
+                reverse-reference="stocks"/>
+  </class>
+</classes>

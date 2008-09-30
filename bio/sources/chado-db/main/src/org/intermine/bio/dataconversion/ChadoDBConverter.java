@@ -10,8 +10,10 @@ package org.intermine.bio.dataconversion;
  *
  */
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
@@ -46,6 +48,8 @@ public class ChadoDBConverter extends BioDBConverter
     private final Set<OrganismData> organismsToProcess = new HashSet<OrganismData>();
 
     private final OrganismRepository organismRepository;
+
+    private final List<ChadoProcessor> completedProcessors = new ArrayList<ChadoProcessor>();
 
     /**
      * Create a new ChadoDBConverter object.
@@ -84,7 +88,7 @@ public class ChadoDBConverter extends BioDBConverter
     }
 
     /**
-     * Set the class names of the ChadoSequenceProcessor to run.
+     * Set the class names of the ChadoProcessors to run.
      * @param processors a space separated list of the fully-qualified class names of module
      * processors to run
      */
@@ -142,6 +146,7 @@ public class ChadoDBConverter extends BioDBConverter
                 Constructor<?> constructor = cls.getDeclaredConstructor(ChadoDBConverter.class);
                 ChadoProcessor currentProcessor = (ChadoProcessor) constructor.newInstance(this);
                 currentProcessor.process(connection);
+                getCompletedProcessors().add(currentProcessor);
             }
         }
     }
@@ -203,6 +208,35 @@ public class ChadoDBConverter extends BioDBConverter
     }
 
     /**
+     * Look at the list of completed processors and return the processor of the given type.  If
+     * there is none or more than one, throw a RuntimeException
+     * @param cls the class
+     * @return the ChadoProcessor
+     */
+    public ChadoProcessor findProcessor(Class<? extends ChadoProcessor> cls) {
+        ChadoProcessor returnProcessor = null;
+
+        for (ChadoProcessor processor: getCompletedProcessors()) {
+            if (cls.isAssignableFrom(processor.getClass())) {
+                if (returnProcessor == null) {
+                    returnProcessor = processor;
+                } else {
+                    throw new RuntimeException("completed processors list contains two objects of "
+                                               + "type: " + cls.getName());
+                }
+            }
+        }
+
+        if (returnProcessor == null) {
+            throw new RuntimeException("can't find a " + cls.getName() + " before "
+                                       + this.getClass().getName()
+                                       + " in the list of completed processors - must run a "
+                                       + cls.getName() + " first");
+        } else {
+            return returnProcessor;
+        }
+    }
+    /**
      * Default implementation that makes a data set title based on the data source name.
      * {@inheritDoc}
      */
@@ -214,5 +248,12 @@ public class ChadoDBConverter extends BioDBConverter
         } else {
             return getDataSourceName() + " data set";
         }
+    }
+
+    /**
+     * @return the completedProcessors
+     */
+    public List<ChadoProcessor> getCompletedProcessors() {
+        return completedProcessors;
     }
 }
