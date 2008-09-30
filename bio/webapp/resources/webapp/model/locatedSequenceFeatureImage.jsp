@@ -49,7 +49,7 @@
     <c:set var="label" value="${label}-Genes"/>
   </c:if>
 
-  <c:set var="name" value="FlyMineInternalID_${object.id}"/>
+  <c:set var="name" value="${object.primaryIdentifier}"/>
 
   <c:if test="${cld.unqualifiedName == 'MRNA' || cld.unqualifiedName == 'Transcript'}">
     <c:set var="name" value="mRNA:${name}"/>
@@ -62,7 +62,7 @@
   <c:if test="${cld.unqualifiedName == 'CDS'}">
     <%-- special case CDS FlyMineInternalIDs aren't in the GBrowse database,
          so use gene ID instead, but add the CDS track --%>
-    <c:set var="name" value="FlyMineInternalID_${object.gene.id}"/>
+    <c:set var="name" value="${object.gene.primaryIdentifier}"/>
     <c:set var="type" value="${type}+CDSs"/>
     <c:set var="label" value="${label}-CDSs"/>
   </c:if>
