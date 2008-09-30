@@ -179,12 +179,12 @@ create_properties_file($current_build_prop_filename, $new_build_prop_filename,
                        'webapp.path', 'project.releaseVersion',
                        'gbrowse.database.source');
 
-my $new_prop_symlink = "$project_name-webapp.properties.r$new_version";
-symlink $new_prop_filename, $new_prop_symlink
-  or die "can't create symlink to $new_prop_symlink: $!\n";
-my $new_build_prop_symlink = "build.properties.$project_name-webapp.r$new_version";
-symlink $new_build_prop_filename, $new_build_prop_symlink
-  or die "can't create symlink to $new_build_prop_symlink: $!\n";
+# my $new_prop_symlink = "$project_name-webapp.properties.r$new_version";
+# symlink $new_prop_filename, $new_prop_symlink
+#   or die "can't create symlink to $new_prop_symlink: $!\n";
+# my $new_build_prop_symlink = "build.properties.$project_name-webapp.r$new_version";
+# symlink $new_build_prop_filename, $new_build_prop_symlink
+#   or die "can't create symlink to $new_build_prop_symlink: $!\n";
 
 sub create_gbrowse_conf
 {
