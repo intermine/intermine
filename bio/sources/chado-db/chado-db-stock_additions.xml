@@ -7,6 +7,8 @@
   </class>
   <class name="org.flymine.model.genomic.Stock" extends="org.flymine.model.genomic.BioEntity"
          is-interface="true">
+    <attribute name="type" type="java.lang.String"/>
+    <attribute name="stockCenter" type="java.lang.String"/>
     <collection name="alleles" referenced-type="org.flymine.model.genomic.Allele"
                 reverse-reference="stocks"/>
   </class>
