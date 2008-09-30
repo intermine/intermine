@@ -556,11 +556,7 @@ public class WriteGFFTask extends Task
             attributes.put("Note", notes);
         }
 
-        List<String> flyMineIDs = new ArrayList<String>();
-        flyMineIDs.add(makeIdString(flyMineId));
-
-        attributes.put("FlyMineInternalID", new ArrayList<String>(flyMineIDs));
-        List<String> allIds = new ArrayList<String>(flyMineIDs);
+        List<String> allIds = new ArrayList<String>();
 
         if (synonymValues != null) {
             Iterator<String> synonymIter = synonymValues.iterator();
