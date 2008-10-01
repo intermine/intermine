@@ -74,9 +74,10 @@ public class StockProcessor extends ChadoProcessor
             String stockUniqueName = res.getString("stock_uniquename");
             String stockDescription = res.getString("stock_description");
             String stockCenterUniquename = res.getString("stock_center_uniquename");
-            String type = res.getString("type");
+            String stockType = res.getString("stock_type_name");
 
-            Item stock = makeStock(stockUniqueName, stockDescription, type, stockCenterUniquename);
+            Item stock = makeStock(stockUniqueName, stockDescription, stockType,
+                                   stockCenterUniquename);
 
             stocks.add(stock);
             if (lastFeatureId != null && !featureId.equals(lastFeatureId)) {
@@ -101,7 +102,7 @@ public class StockProcessor extends ChadoProcessor
         return features;
     }
 
-    private Item makeStock(String uniqueName, String description, String type,
+    private Item makeStock(String uniqueName, String description, String stockType,
                            String stockCenterUniqueName) throws ObjectStoreException {
         if (stockItems.containsKey(uniqueName)) {
             return stockItems.get(uniqueName);
@@ -109,7 +110,7 @@ public class StockProcessor extends ChadoProcessor
             Item stock = getChadoDBConverter().createItem("Stock");
             stock.setAttribute("primaryIdentifier", uniqueName);
             stock.setAttribute("secondaryIdentifier", description);
-            stock.setAttribute("type", type);
+            stock.setAttribute("type", stockType);
             stock.setAttribute("stockCenter", stockCenterUniqueName);
             getChadoDBConverter().store(stock);
             stockItems.put(uniqueName, stock);
@@ -143,7 +144,7 @@ public class StockProcessor extends ChadoProcessor
         throws SQLException {
         String query =
              "SELECT feature.feature_id, stock.uniquename AS stock_uniquename, "
-            + "      stock.description AS stock_description, type_cvterm.name AS type_name, "
+            + "      stock.description AS stock_description, type_cvterm.name AS stock_type_name, "
             + "      (SELECT stockcollection.uniquename "
             + "         FROM stockcollection, stockcollection_stock join_table "
             + "        WHERE stockcollection.stockcollection_id = join_table.stockcollection_id "
