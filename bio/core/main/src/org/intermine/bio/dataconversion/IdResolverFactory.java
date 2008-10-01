@@ -44,8 +44,8 @@ public abstract class IdResolverFactory
             try {
                 this.resolver = createIdResolver();
             } catch (Exception e) {
+                this.caughtError = true;
                 if (failOnError) {
-                    this.caughtError = true;
                     throw new RuntimeException(e);
                 }
             }
