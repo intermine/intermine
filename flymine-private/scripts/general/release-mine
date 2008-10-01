@@ -225,8 +225,8 @@ sub create_gbrowse_conf
 # system ("createdb modmine-r$new_version-userprofile_BUP -T modmine-r$new_version-userprofile $PG_OPTIONS >> $LOG_FILENAME 2>&1");
 # system ("dropdb $PG_OPTIONS modmine-r$new_version-userprofile >> $LOG_FILENAME 2>&1");
 # 
-# system ("createdb -E SQL_ASCII $PG_OPTIONS modmine-r$new_version-userprofile >> $LOG_FILENAME 2>&1") == 0
-#   or die_with_log "createdb failed: $?";
+ system ("createdb -E SQL_ASCII $PG_OPTIONS modmine-r$new_version-userprofile >> $LOG_FILENAME 2>&1") == 0
+   or die_with_log "createdb failed: $?";
 
 
 # load dump file of production database (if needed)
