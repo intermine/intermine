@@ -72,8 +72,8 @@ public class StockProcessor extends ChadoProcessor
             }
 
             String stockUniqueName = res.getString("stock_uniquename");
-            String stockDescription= res.getString("stock_description");
-            String stockCenterUniquename= res.getString("stock_center_uniquename");
+            String stockDescription = res.getString("stock_description");
+            String stockCenterUniquename = res.getString("stock_center_uniquename");
             String type = res.getString("type");
 
             Item stock = makeStock(stockUniqueName, stockDescription, type, stockCenterUniquename);
@@ -146,8 +146,8 @@ public class StockProcessor extends ChadoProcessor
             + "      stock.description AS stock_description, type_cvterm.name AS type_name, "
             + "      (SELECT stockcollection.uniquename "
             + "         FROM stockcollection, stockcollection_stock join_table "
-            + "        WHERE join_table.stockcollection_id = join_table.stockcollection_id "
-            + "          AND stockcollection_stock.stock_id = stock.stock_id) "
+            + "        WHERE stockcollection.stockcollection_id = join_table.stockcollection_id "
+            + "          AND join_table.stock_id = stock.stock_id) "
             + "       AS stock_center_uniquename "
             + " FROM stock_genotype, feature, stock, feature_genotype, cvterm type_cvterm "
             + "WHERE stock.stock_id = stock_genotype.stock_id "
@@ -161,5 +161,4 @@ public class StockProcessor extends ChadoProcessor
         ResultSet res = stmt.executeQuery(query);
         return res;
     }
-
 }
