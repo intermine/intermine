@@ -1,10 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <classpath>
 	<classpathentry kind="src" path="src"/>
-	<classpathentry exported="true" kind="lib" path="build/webapp/model/jmol/JmolApplet0.jar"/>
-	<classpathentry exported="true" kind="lib" path="build/webapp/WEB-INF/lib/bio-tools.jar" sourcepath="/bio-tools-main/src"/>
-	<classpathentry exported="true" kind="lib" path="build/webapp/WEB-INF/lib/commons-dbcp-1.1.jar"/>
-	<classpathentry exported="true" kind="lib" path="build/webapp/WEB-INF/lib/commons-pool-1.1.jar"/>
 	<classpathentry exported="true" kind="lib" path="lib/commons-dbcp-1.1.jar"/>
 	<classpathentry exported="true" kind="lib" path="lib/commons-pool-1.1.jar"/>
 	<classpathentry exported="true" kind="lib" path="lib/jakarta-regexp-1.4.jar"/>
