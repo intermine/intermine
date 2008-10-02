@@ -139,14 +139,14 @@ sub create_properties_file
       if ($line =~ /$prop_name=(.*)(\d+)(.*)/) {
         if ($2 == $current_version) {
           $fixed{$prop_name} = 1;
-	  
-	  #$line = "$prop_name=$1$new_version$3\n";
-	  # changed to accomodate date..
-          if ($prop_name eq "project.releaseVersion")  {	  
-	      $line = "$prop_name=$1$new_version $rel_date $3\n"
-	  } else {
-	      $line = "$prop_name=$1$new_version$3\n";
-      }
+
+          #$line = "$prop_name=$1$new_version$3\n";
+          # changed to accomodate date..
+          if ($prop_name eq "project.releaseVersion")  {
+            $line = "$prop_name=$1$new_version $rel_date $3\n"
+          } else {
+            $line = "$prop_name=$1$new_version$3\n";
+          }
 
           last;
         } else {
@@ -224,8 +224,8 @@ sub create_gbrowse_conf
 #userprofile: do a dropdb (and make a back-up) anyway, in case is already there.
 # system ("createdb modmine-r$new_version-userprofile_BUP -T modmine-r$new_version-userprofile $PG_OPTIONS >> $LOG_FILENAME 2>&1");
 # system ("dropdb $PG_OPTIONS modmine-r$new_version-userprofile >> $LOG_FILENAME 2>&1");
-# 
- system ("createdb -E SQL_ASCII $PG_OPTIONS modmine-r$new_version-userprofile >> $LOG_FILENAME 2>&1") == 0
+#
+system ("createdb -E SQL_ASCII $PG_OPTIONS modmine-r$new_version-userprofile >> $LOG_FILENAME 2>&1") == 0
    or die_with_log "createdb failed: $?";
 
 
