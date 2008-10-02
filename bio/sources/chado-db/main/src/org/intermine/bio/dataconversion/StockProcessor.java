@@ -172,6 +172,7 @@ public class StockProcessor extends ChadoProcessor
             + "AND feature.uniquename LIKE 'FBal%' "
             + "AND stock.type_id = type_cvterm.cvterm_id "
             + orgConstraintForQuery + " "
+            + "AND stock.organism_id = feature.organism_id "
             + "ORDER BY feature.feature_id";
         LOG.info("executing: " + query);
         Statement stmt = connection.createStatement();
