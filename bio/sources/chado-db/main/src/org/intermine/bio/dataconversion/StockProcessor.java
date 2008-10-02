@@ -16,6 +16,7 @@ import java.util.List;
 import java.util.Map;
 
 import org.intermine.bio.dataconversion.ChadoSequenceProcessor.FeatureData;
+import org.intermine.bio.util.OrganismData;
 import org.intermine.objectstore.ObjectStoreException;
 import org.intermine.xml.full.Item;
 import org.intermine.xml.full.ReferenceList;
@@ -26,6 +27,7 @@ import java.sql.SQLException;
 import java.sql.Statement;
 
 import org.apache.log4j.Logger;
+import org.apache.commons.lang.StringUtils;
 
 /**
  * A ChadoProcessor for the chado stock module.
@@ -75,10 +77,16 @@ public class StockProcessor extends ChadoProcessor
             String stockDescription = res.getString("stock_description");
             String stockCenterUniquename = res.getString("stock_center_uniquename");
             String stockType = res.getString("stock_type_name");
-
+            Integer organismId = new Integer(res.getInt("stock_organism_id"));
+            OrganismData organismData =
+                getChadoDBConverter().getChadoIdToOrgDataMap().get(organismId);
+            if (organismData == null) {
+                throw new RuntimeException("can't get OrganismData for: " + organismId);
+            }
+            Item organismItem = getChadoDBConverter().getOrganismItem(organismData.getTaxonId());
             Item stock = makeStock(stockUniqueName, stockDescription, stockType,
                                    stockCenterUniquename);
-
+            stock.setReference("organism", organismItem);
             stocks.add(stock);
             if (lastFeatureId != null && !featureId.equals(lastFeatureId)) {
                 storeStocks(features, lastFeatureId, stocks);
@@ -142,9 +150,16 @@ public class StockProcessor extends ChadoProcessor
      */
     protected ResultSet getStocksResultSet(Connection connection)
         throws SQLException {
+        String organismConstraint = getOrganismConstraint();
+        String orgConstraintForQuery = "";
+        if (!StringUtils.isEmpty(organismConstraint)) {
+            orgConstraintForQuery = " AND " + organismConstraint;
+        }
+
         String query =
              "SELECT feature.feature_id, stock.uniquename AS stock_uniquename, "
             + "      stock.description AS stock_description, type_cvterm.name AS stock_type_name, "
+            + "      stock.organism_id AS stock_organism_id, "
             + "      (SELECT stockcollection.uniquename "
             + "         FROM stockcollection, stockcollection_stock join_table "
             + "        WHERE stockcollection.stockcollection_id = join_table.stockcollection_id "
@@ -156,10 +171,33 @@ public class StockProcessor extends ChadoProcessor
             + "AND feature_genotype.genotype_id = stock_genotype.genotype_id "
             + "AND feature.uniquename LIKE 'FBal%' "
             + "AND stock.type_id = type_cvterm.cvterm_id "
+            + orgConstraintForQuery + " "
             + "ORDER BY feature.feature_id";
         LOG.info("executing: " + query);
         Statement stmt = connection.createStatement();
         ResultSet res = stmt.executeQuery(query);
         return res;
+    }
+
+    /**
+     * Return a comma separated string containing the organism_ids that with with to query from
+     * chado.
+     */
+    private String getOrganismIdsString() {
+        return StringUtils.join(getChadoDBConverter().getChadoIdToOrgDataMap().keySet(), ", ");
+    }
+
+    /**
+     * Return some SQL that can be included in the WHERE part of query that restricts features
+     * by organism.  "organism_id" must be selected.
+     * @return the SQL
+     */
+    protected String getOrganismConstraint() {
+        String organismIdsString = getOrganismIdsString();
+        if (StringUtils.isEmpty(organismIdsString)) {
+            return "";
+        } else {
+            return "feature.organism_id IN (" + organismIdsString + ")";
+        }
     }
 }
