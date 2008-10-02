@@ -87,6 +87,7 @@ public class StockProcessor extends ChadoProcessor
             Item stock = makeStock(stockUniqueName, stockDescription, stockType,
                                    stockCenterUniquename);
             stock.setReference("organism", organismItem);
+            getChadoDBConverter().store(stock);
             stocks.add(stock);
             if (lastFeatureId != null && !featureId.equals(lastFeatureId)) {
                 storeStocks(features, lastFeatureId, stocks);
@@ -120,7 +121,6 @@ public class StockProcessor extends ChadoProcessor
             stock.setAttribute("secondaryIdentifier", description);
             stock.setAttribute("type", stockType);
             stock.setAttribute("stockCenter", stockCenterUniqueName);
-            getChadoDBConverter().store(stock);
             stockItems.put(uniqueName, stock);
             return stock;
         }
