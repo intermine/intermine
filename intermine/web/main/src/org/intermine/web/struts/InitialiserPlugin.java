@@ -111,7 +111,10 @@ public class InitialiserPlugin implements PlugIn
         try {
             os = ObjectStoreFactory.getObjectStore(osAlias);
         } catch (Exception e) {
-            e.getCause().printStackTrace();
+            Throwable cause = e.getCause();
+            if (cause != null) {
+                cause.printStackTrace();
+            }
             throw new ServletException("Unable to instantiate ObjectStore " + osAlias, e);
         }
         servletContext.setAttribute(Constants.OBJECTSTORE, os);
