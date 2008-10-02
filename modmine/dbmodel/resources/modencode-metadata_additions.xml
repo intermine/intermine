@@ -67,9 +67,9 @@
 		<collection name="submissionData"
 			referenced-type="org.flymine.model.genomic.SubmissionData"
 			reverse-reference="submission" />
-		<collection name="experimentOutData"
+		<collection name="outputs"
 			referenced-type="org.flymine.model.genomic.SubmissionData" />
-		<collection name="experimentInData"
+		<collection name="inputs"
 			referenced-type="org.flymine.model.genomic.SubmissionData" />
 	</class>
 
@@ -100,10 +100,10 @@
 		<reference name="submission"
 			referenced-type="org.flymine.model.genomic.Submission"
 			reverse-reference="appliedProtocols" />
-		<collection name="inputData"
+		<collection name="inputs"
 			referenced-type="org.flymine.model.genomic.SubmissionData"
 			reverse-reference="nextAppliedProtocols" />
-		<collection name="outputData"
+		<collection name="outputs"
 			referenced-type="org.flymine.model.genomic.SubmissionData"
 			reverse-reference="previousAppliedProtocols" />
 	</class>
@@ -123,16 +123,16 @@
 			referenced-type="org.flymine.model.genomic.LocatedSequenceFeature" />
 		<collection name="nextAppliedProtocols"
 			referenced-type="org.flymine.model.genomic.AppliedProtocol"
-			reverse-reference="inputData" />
+			reverse-reference="inputs" />
 		<collection name="previousAppliedProtocols"
 			referenced-type="org.flymine.model.genomic.AppliedProtocol"
-			reverse-reference="outputData" />
+			reverse-reference="outputs" />
 		<reference name="submission"
 			referenced-type="org.flymine.model.genomic.Submission"
 			reverse-reference="submissionData" />
-    <collection name="relatedInputs"
+    <collection name="initialData"
       referenced-type="org.flymine.model.genomic.SubmissionData"/>
-    <collection name="relatedOutputs"
+    <collection name="resultData"
       referenced-type="org.flymine.model.genomic.SubmissionData"/>
 	</class>
 
