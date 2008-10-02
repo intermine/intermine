@@ -1,3 +1,4 @@
+
 <project name="flymine-www" default="transform-site" basedir=".">
   <property name="common" location="../common"/>
   <property name="common.lib" location="${common}/lib"/>
@@ -62,12 +63,6 @@
     <copy todir="${dist.www}">
       <fileset dir="${src.www}">
         <include name="js/*"/>
-      </fileset>
-    </copy>
-
-    <copy todir="${dist.www}">
-      <fileset dir="${src.www}">
-        <include name="talks/*.pdf"/>
       </fileset>
     </copy>
 
