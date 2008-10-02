@@ -1,7 +1,8 @@
-<definition name="geneMicroArrayDisplayer.tile" path="/model/geneMicroArrayDisplayer.jsp" controllerUrl="/initGeneMicroArrayDisplayer.do"/>
+<definition name="geneMicroArrayDisplayer.tile" path="/model/geneMicroArrayDisplayer.jsp"
+        controllerUrl="/initGeneMicroArrayDisplayer.do"/>
 
 <definition name="attributeLinkDisplayer.tile" path="/model/attributeLinkDisplayer.jsp"
-                controllerUrl="/initAttributeLinkDisplayer.do"/>
+        controllerUrl="/initAttributeLinkDisplayer.do"/>
 
 <definition name="sequenceExportOptions.tile" path="/model/sequenceExportOptions.jsp"
         controllerUrl="/initSequenceExportOptions.do"/>

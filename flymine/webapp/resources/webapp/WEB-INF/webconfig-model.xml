@@ -756,12 +756,8 @@
                      className="org.intermine.bio.web.export.SequenceHttpExporter"/>
   <tableExportConfig id="gff3"
                      className="org.intermine.bio.web.export.GFF3HttpExporter"/>
-  <tableExportConfig id="proteinInteraction"
-                     className="org.intermine.bio.web.ProteinInteractionExporter"/>
 
    <widgets>
-
-
       <graphdisplayer id="chromosome_distribution" title="Chromosome Distribution" domainLabel="Chromosome" rangeLabel="Count" dataSetLoader="org.intermine.bio.web.widget.ChromosomeDistributionDataSetLdr"
                       toolTipGen="org.intermine.web.logic.widget.ToolTipGenerator" link="org.intermine.bio.web.widget.ChromosomeDistributionGraphURLGenerator"
                       description="Actual: number of items in this list found on each chromosome.  Expected: given the total number of items on the chromosome and the number of items in this list, the number of items expected to be found on each chromosome."
