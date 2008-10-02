@@ -530,6 +530,8 @@ public class FlyBaseProcessor extends ChadoSequenceProcessor
                     Arrays.asList(new SetFieldConfigAction("gene")));
             map.put(new MultiKey("relationship", "Translation", "producedby", "MRNA"),
                     Arrays.asList(new SetFieldConfigAction("MRNA")));
+            map.put(new MultiKey("relationship", "CDNAClone", "derived_assoc_cdna_clone", "Gene"),
+                    Arrays.asList(new SetFieldConfigAction("gene")));
 
             // featureprop configuration example: for features of class "Gene", if the type name
             // of the prop is "cyto_range", set the "cytoLocation" attribute of the
@@ -782,7 +784,7 @@ public class FlyBaseProcessor extends ChadoSequenceProcessor
             "gene", "mRNA", "transcript",
             "intron", "exon",
             "regulatory_region", "enhancer",
-            // ignore for now:        "EST", "cDNA_clone",
+            "EST", "cDNA_clone",
             "miRNA", "snRNA", "ncRNA", "rRNA", "ncRNA", "snoRNA", "tRNA",
             "chromosome_band", "transposable_element_insertion_site",
             CHROMOSOME_STRUCTURE_VARIATION_SO_NAME,
