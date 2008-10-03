@@ -6,12 +6,18 @@
 # The database to dump will be found by reading the properties from $HOME/<mine_name>.properties
 # where <mine_name> is the name of the directory where the script is run
 
+BEGIN {
+  push (@INC, ($0 =~ m:(.*)/.*:)[0] . '/../../intermine/perl/lib');
+}
+
 use strict;
 use warnings;
 
 use Expect;
 use Getopt::Std;
 use Cwd;
+
+use InterMine::Util qw(get_property_value);
 
 use XML::Parser::PerlSAX;
 use Text::Glob qw(glob_to_regex);
@@ -228,31 +234,6 @@ sub run_and_check_status
     print STDERR "check log: $log_file\n";
     exit $?;
   }
-}
-
-# gets a value from a properties file
-# usage: $val = get_prop_val($prop_name, $prop_file_name)
-sub get_prop_val
-{
-  my $key = shift;
-  my $file = shift;
-
-  open F, "$file" or die "cannot open $file: $!\n";
-
-  my $ret_val;
-
-  while (my $line = <F>) {
-    if ($line =~ /^\s*#/) {
-      next;
-    }
-    if ($line =~ /$key=(.*)/) {
-      $ret_val = $1;
-    }
-  }
-
-  close F;
-
-  return $ret_val;
 }
 
 sub spawn
@@ -570,6 +551,7 @@ sub AUTOLOAD {
 
 package main;
 
+# add missing lines to .pgpass so that createdb and co never ask for a password
 sub fix_pgpass
 {
   my ($db, $user, $pass, $host, $port) = @_;
@@ -803,10 +785,10 @@ sub get_restart_suffix_server
 
 log_and_print "reading properties from: $properties_file\n";
 
-my $prod_host = get_prop_val "db.production.datasource.serverName", $properties_file;
-my $prod_db = get_prop_val "db.production.datasource.databaseName", $properties_file;
-my $prod_user = get_prop_val "db.production.datasource.user", $properties_file;
-my $prod_pass = get_prop_val "db.production.datasource.password", $properties_file;
+my $prod_host = get_property_value("db.production.datasource.serverName", $properties_file);
+my $prod_db = get_property_value("db.production.datasource.databaseName", $properties_file);
+my $prod_user = get_property_value("db.production.datasource.user", $properties_file);
+my $prod_pass = get_property_value("db.production.datasource.password", $properties_file);
 my $prod_port;
 
 if ($prod_host =~ /(.+):(\d+)/) {
