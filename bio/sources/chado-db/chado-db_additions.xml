@@ -74,6 +74,7 @@
          is-interface="true">
   </class>
   <class name="org.flymine.model.genomic.CDNAClone" extends="org.flymine.model.genomic.BioEntity" is-interface="true">
+    <reference name="gene" referenced-type="org.flymine.model.genomic.Gene"/>
     <reference name="MRNA" referenced-type="org.flymine.model.genomic.MRNA"/>
     <reference name="EST" referenced-type="org.flymine.model.genomic.EST"/>
   </class>
