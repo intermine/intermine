@@ -10,6 +10,7 @@
 <html:xhtml/>
 
 <script type="text/javascript" src="js/tablesort.js"></script>
+<script type="text/javascript" src="js/historyBagView.js"></script>
 <link rel="stylesheet" type="text/css" href="css/sorting.css"/>
 <c:set var="type" value="bag"/>
 
@@ -30,9 +31,17 @@
     </c:when>
     <c:otherwise>
 
+	<div style="margin-bottom: 5px;">
+	Filter:&nbsp;
+	<tiles:insert name="tagSelect.tile">
+	        <tiles:put name="type" value="${type}" />
+	        <tiles:put name="onChange" value="filterByTag" />
+	</tiles:insert>
+	</div>
+	  
       <html:form action="/modifyBag">
 
-        <table class="sortable-onload-2 rowstyle-alt no-arrow" cellspacing="0">
+        <table class="sortable-onload-2 rowstyle-alt no-arrow" cellspacing="0" id="bagTable">
           <tr>
             <th>
               <input type="checkbox" id="selected_bag"
@@ -55,7 +64,7 @@
             </th>
           </tr>
           <c:forEach items="${PROFILE.savedBags}" var="savedBag" varStatus="status">
-            <tr>
+            <tr id="${savedBag.value.name}">
               <td class="sorting" align="center">
                 <html:multibox property="selectedBags" styleId="selected_bag_${status.index}">
                   <c:out value="${savedBag.key}"/>

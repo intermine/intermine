@@ -62,6 +62,17 @@
 <c:if test="${! empty PROFILE.username}">
   <li ><a href="javascript:filterFavourites('${type}', '${wsListId}');"><img id="filter_favourites_${wsListId}_${type}" src="images/filter_favourites.png" width="20" height="20" title="Show Only Favourites"/></a></li>
   <li><a href="javascript:changeScope('${type}', '${wsListId}');"><img id="filter_scope_${wsListId}_${type}" src="images/filter_all.png" width="20" height="20" title="Show all or mine only"/></a></li>
+  <c:if test="${type == 'bag'}">
+	<script type="text/javascript">
+		function filterByTag(tag) {
+			filterByUserTag('${type}', '${wsListId}', tag);
+		}
+	</script>
+    <li><tiles:insert name="tagSelect.tile">
+	        <tiles:put name="type" value="${type}" />
+	        <tiles:put name="onChange" value="filterByTag" />
+	</tiles:insert></li>
+  </c:if>
 </c:if>
   <!-- <li><img src="images/filter_sort_desc.png" width="20" height="20" alt="Sort by name"/></li>
   <li><img src="images/filter_date_desc.png" width="20" height="20" alt="Sort by Date"/>&nbsp;</li> -->

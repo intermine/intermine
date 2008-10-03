@@ -248,7 +248,9 @@
   <definition name="addColumn.tile" path="/addColumn.jsp"/>
   <definition name="availableColumns.tile" path="/availableColumns.jsp"  controllerUrl="/initAvailableColumns.do"/>
   <definition name="galaxy.tile" path="/galaxy.jsp"  controllerUrl="/initGalaxy.do"/>
-
+  <definition name="tagSelect.tile" path="/tagSelect.jsp" />
+  <definition name="bagTagSelect.tile" path="/bagTagSelect.jsp" />
+  
   <!-- don't (re)move this - it's used for importing any model-specific actions -->
   <!--@MODEL_INCLUDE@-->
   
