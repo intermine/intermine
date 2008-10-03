@@ -40,6 +40,10 @@ or
   $0 -g <ticket_num>|<branch_name>
     get a checkout of the given branch
 or
+  $0 -p
+    pull latest changes from the trunk into the current ticket or branch
+    directory
+or
   $0 -m <ticket_num>|<branch_name>
     merge a branch back into the trunk and remove the branch
 or
@@ -77,7 +81,7 @@ my $get_status = 0;
 if (@ARGV == 0 or @ARGV == 1 and $ARGV[0] !~ /^-/) {
   $get_status = 1;
 } else {
-  if (!getopts('scgmdltvhf?', \%opts)) {
+  if (!getopts('pscgmdltvhf?', \%opts)) {
     usage();
   }
 }
@@ -95,6 +99,7 @@ my $get_checkout = 0;
 my $move_to_trunk = 0;
 my $verbose = 0;
 my $force = 0;
+my $pull = 0;
 
 if ($opts{s}) {
   $switch = 1;
@@ -104,6 +109,9 @@ if ($opts{c}) {
 }
 if ($opts{d}) {
   $delete = 1;
+}
+if ($opts{p}) {
+  $pull = 1;
 }
 if ($opts{m}) {
   $merge = 1;
@@ -123,7 +131,7 @@ if ($opts{v}) {
 if ($opts{f}) {
   $force = 1;
 }
-if ($move_to_trunk) {
+if ($move_to_trunk || $pull) {
   if (@ARGV != 0) {
     usage("-t needs no argument");
   }
@@ -314,6 +322,29 @@ if ($delete) {
   } else {
     die "$arg does not exist\n";
   }
+}
+
+if ($pull) {
+  my @status = get_status('.');
+
+  if (!@status) {
+    usage "must be in checkout\n";
+  }
+
+  my $status = $status[0];
+
+  if (!($status->{type} eq 'ticket' || $status->{type} eq 'branch')) {
+    usage "must be in ticket or branch checkout\n";
+  }
+
+  if ($status->{subdir}) {
+    usage "must be the top level of a checkout\n";
+  }
+
+  my $branch = $status->{name};
+
+  warn "merging trunk changes into $branch\n";
+  system "$SVN merge $TRUNK";
 }
 
 if ($merge) {
