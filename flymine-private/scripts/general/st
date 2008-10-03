@@ -420,6 +420,27 @@ if ($merge) {
   }
 }
 
+sub get_last_checkin_user
+{
+  my $branch = shift;
+
+  my $user = undef;
+
+  open SVNLOG, "svn log --limit 1 $branch|" or die "can't open pipe to svn: $!";
+  while (my $line = <SVNLOG>) {
+    if ($line =~ /^r\d+ \| (.*?) \| /) {
+      $user = $1;
+    }
+  }
+  close SVNLOG;
+
+  if (defined $user) {
+    return $user;
+  } else {
+    "<unknown>";
+  }
+}
+
 sub get_list_by_type
 {
   my $type = shift;
@@ -432,7 +453,12 @@ sub get_list_by_type
     open SVN, "svn ls $prefix|" or die "can't open pipe to svn: $!";
     while (my $line = <SVN>) {
       if ($line =~ m!^(.*?)/?$!) {
-        push @ret_list, {type => $type, name => $1, url => "$prefix/$1/" }
+        my $branch = "$prefix/$1/";
+        my $last_checkin_user = get_last_checkin_user($branch);
+        push @ret_list, {
+                         type => $type, name => $1, url => $branch,
+                         user => $last_checkin_user
+                        };
       }
     }
     close SVN;
@@ -443,15 +469,15 @@ sub get_list_by_type
 
 sub get_list
 {
-  return (get_list_by_type('ticket'), get_list_by_type('branch'),
-          ($verbose ? get_list_by_type('tag') : ()));
+  return (get_list_by_type('ticket'),
+          ($verbose ? (get_list_by_type('branch'), get_list_by_type('tag')) : ()));
 }
 
 if ($list) {
   my @br_list = get_list();
   if (@br_list) {
     for my $ref (@br_list) {
-      printf "%-8.8s %s\n", $ref->{type}, $ref->{name};
+      printf "%-8.8s %-11.11s %s\n", $ref->{type}, $ref->{user}, $ref->{name};
     }
   } else {
     die "no branches found\n";
