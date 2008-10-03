@@ -14,8 +14,6 @@
 <link rel="stylesheet" href="css/autocompleter.css" type="text/css"/>
 <link rel="stylesheet" type="text/css" href="css/template.css"/>
 
-
-
 <script type="text/javascript">
   <!--
 
@@ -150,7 +148,6 @@
         }
         return false;
    }
-
   //-->
 </script>
 
@@ -320,14 +317,14 @@
                   </c:forEach>
                 </html:select>
                 <fmt:message key="template.bag"/>
-                <html:select property="bag(${index})">
+                <html:select property="bag(${index})" styleId="bagSelect">
                   <c:forEach items="${bags}" var="bag">
                     <html:option value="${bag.key}">
                       <c:out value="${bag.key}"/>
                     </html:option>
                   </c:forEach>
                 </html:select>
-
+                <tiles:insert name="bagTagSelect.tile" ></tiles:insert>
                 <c:if test="${empty bags}">
                   <div class="noBagsMessage">
                     <fmt:message key="template.nobags">

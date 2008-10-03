@@ -110,6 +110,14 @@ function display(id, beDisplayed) {
     }
 }
 
+function displayEl(el) {
+	el.style.display = '';
+}
+
+function hideEl(el) {
+	el.style.display = 'none';
+}
+
 /* Center element with specified id to the center of window */
 function center(id) {
     var el = document.getElementById(id);
@@ -250,4 +258,22 @@ function trim(s) {
   return s.replace(/^\s+|\s+$/g,"");
 }
 
+function setSelectElement(id, title, items) {
+	var select = document.getElementById(id);
+    for (var i = select.length - 1; i >= 0; i--) {
+        select.remove(i);
+    }
+    if (title != null && title != '') {
+    	addSelectOption('', title, select);
+    }
+    for (var i = 0; i < items.length; i++) {
+        addOption(items[i], items[i], select);
+    }    
+}
 
+function addSelectOption(value, name, select) {
+    var option = document.createElement('option');
+    option.setAttribute('value', value);
+    option.innerHTML = name;
+    select.appendChild(option);
+}

@@ -531,6 +531,9 @@ function filterWebSearchables(objectId, scope, type, callId, wsListId) {
         } if(tags['aspects_' + wsListId] != null && tags['aspect_' + wsListId] != '') {
             tagList[tagList.length]=tags['aspects_' + wsListId];
         }
+        if (selectedUserTag && selectedUserTag != null) {
+            tagList[tagList.length] = selectedUserTag; 
+        }
 
         /*  filterAction toggles favourites off and on */
         AjaxServices.filterWebSearchables(scope, type, tagList, object.value, filterAction,
@@ -581,6 +584,16 @@ function filterAspect(type, wsListId) {
     var filterTextElement = document.getElementById(wsListId+'_'+type+'_filter_text');
     return filterWebSearchablesHandler(null, filterTextElement, type, wsListId);
 }
+
+function filterByUserTag(type, wsListId, tag) {
+    // it is checked in filterWebSearchablesHandler
+    selectedUserTag = tag;
+    
+    // boring stuff to reload new filtered web searchables from server
+    var filterTextElement = document.getElementById(wsListId+'_'+type+'_filter_text');
+    return filterWebSearchablesHandler(null, filterTextElement, type, wsListId);
+}
+
 
 function changeScope(type, wsListId) {
     var id = 'filterScope_'+wsListId+'_'+type;
