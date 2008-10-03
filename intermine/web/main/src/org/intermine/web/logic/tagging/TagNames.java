@@ -30,5 +30,9 @@ public interface TagNames
      * String used to tag templates that should not appear on report pages.
      */
     public static final String IM_NO_REPORT = "im:noreport";
-
+    
+    /**
+     * Prefix common for all InterMine internal tags (favourite can be exception) 
+     */
+    public static final String IM_PREFIX = "im:";
 }

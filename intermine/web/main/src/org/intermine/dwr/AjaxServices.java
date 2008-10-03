@@ -33,7 +33,6 @@ import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.apache.lucene.queryParser.ParseException;
 import org.apache.struts.Globals;
-import org.apache.struts.tiles.UrlController;
 import org.apache.struts.util.MessageResources;
 import org.directwebremoting.WebContext;
 import org.directwebremoting.WebContextFactory;
@@ -157,7 +156,7 @@ public class AjaxServices
             processException(e);
         }
     }
-
+     
     private static void processException(Exception e) {
         LOG.error(ERROR_MSG, e);
         if (e instanceof RuntimeException) {
@@ -1114,4 +1113,60 @@ public class AjaxServices
         }
     }
     
+    /**
+     * Returns all objects names tagged with specified tag type and tag name.
+     * @param type tag type
+     * @param tag tag name
+     * @return objects names
+     */
+    public static Set<String> filterByTag(String type, String tag) {
+        Profile profile = getProfile();
+    	SearchRepository searchRepository = profile.getSearchRepository();
+        
+        Map<String, WebSearchable> map = (Map<String, WebSearchable>) searchRepository.getWebSearchableMap(type);
+        List<String> tags = new ArrayList<String>();
+        tags.add(tag);
+        Map<String, WebSearchable> filteredMap = profile.getProfileManager().filterByTags(map, tags, type, profile.getUsername());
+        
+        return filteredMap.keySet();
+    }
+    
+    
+    private static List<String> getTagsInternal(String tagName, String objectIdentifier, String type) {
+        HttpServletRequest request = getRequest();
+        ProfileManager pm = (ProfileManager) request.getSession()
+            .getServletContext().getAttribute(Constants.PROFILE_MANAGER);
+        Profile profile = getProfile(request);
+        
+        List<String> ret = new ArrayList<String>();
+        if (profile != null && pm != null) {
+            List<Tag> tags = pm.getTags(tagName, objectIdentifier, type, profile.getUsername());
+            tags = ProfileManager.filterOutReservedTags(tags);
+            for (Tag tag : tags) {
+                ret.add(tag.getTagName());
+            }
+        }
+        return ret;
+    }
+
+	private static Profile getProfile(HttpServletRequest request) {
+		return (Profile) request.getSession().getAttribute(Constants.PROFILE);
+	}
+	
+	private static Profile getProfile() {
+		return (Profile) getRequest().getSession().getAttribute(Constants.PROFILE);
+	}	
+
+	private static HttpServletRequest getRequest() {
+		return WebContextFactory.get().getHttpServletRequest();
+	}
+    
+	/**
+	 * Returns all tags of specified tag type.
+	 * @param tag type
+	 * @return tags
+	 */
+    public static List<String> getTags(String type) {
+    	return getTagsInternal(null, null, type);
+    }
 }

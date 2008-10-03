@@ -20,6 +20,7 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.TreeSet;
 
 import net.sourceforge.iharder.Base64;
 
@@ -59,6 +60,7 @@ import org.intermine.web.logic.bag.InterMineBag;
 import org.intermine.web.logic.query.MainHelper;
 import org.intermine.web.logic.query.SavedQueryBinding;
 import org.intermine.web.logic.search.WebSearchable;
+import org.intermine.web.logic.tagging.TagNames;
 import org.intermine.web.logic.tagging.TagTypes;
 import org.intermine.web.logic.template.TemplateQuery;
 import org.intermine.web.logic.template.TemplateQueryBinding;
@@ -813,5 +815,33 @@ public class ProfileManager
         };
         newTagCheckers.put("class", classChecker);
         return newTagCheckers;
+    }
+    
+    /**
+     * Filters out tags that are reserved for internal InterMine needs.
+     * @param original tags
+     * @return filtered tags
+     */
+    public static List<Tag> filterOutReservedTags(List<Tag> tags) {
+        List<Tag> ret = new ArrayList<Tag>();
+        Set<String> reservedTagNames = getReservedTagNames();
+        for (Tag tag : tags) {
+            if (!tag.getTagName().startsWith(TagNames.IM_PREFIX) 
+                    && !reservedTagNames.contains(tag.getTagName())) {
+                ret.add(tag);
+            }
+        }
+        return ret;
+    }
+
+    /**
+     * Returns names of tags reserved for internal InterMine needs.
+     * @return tag names
+     */
+    public static Set<String> getReservedTagNames() {
+        Set<String> ret = new TreeSet<String>();
+        ret.add("favourite");
+        ret.add("aspect:");
+        return ret;
     }
 }
