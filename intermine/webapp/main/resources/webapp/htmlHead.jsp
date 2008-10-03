@@ -11,6 +11,9 @@
 
 <link rel="stylesheet" type="text/css" href="<html:rewrite page='/css/webapp.css'/>"/>
 <link rel="stylesheet" type="text/css" href="<html:rewrite page='/css/inlineTagEditor.css'/>"/>
+<link rel="stylesheet" type="text/css" href="<html:rewrite page='/css/datePicker.css'/>"/>
+<link rel="stylesheet" type="text/css" href="<html:rewrite page='/css/datePickerLocal.css'/>"/>
+<link rel="stylesheet" type="text/css" href="<html:rewrite page='/css/inlineTagEditor.css'/>"/>
 
 <link href="${WEB_PROPERTIES['project.sitePrefix']}/rss.xml" rel="alternate" type="application/rss+xml" title="FlyMine | News" />
 
@@ -42,6 +45,9 @@ if(new java.io.File(application.getRealPath("css")+"/"+pageName+".css").exists()
 <script type="text/javascript" src="<html:rewrite page='/js/imdwr.js'/>"></script>
 <script type="text/javascript" src="<html:rewrite page='/js/imutils.js'/>"></script>
 <script type="text/javascript" src="<html:rewrite page='/js/niftycube.js'/>"></script>
+
+<script type="text/javascript" src="<html:rewrite page='/js/date.js'/>"></script>
+<script type="text/javascript" src="<html:rewrite page='/js/jquery.datePicker.js'/>"></script>
 
 <meta content="microarray, bioinformatics, drosophila, genomics" name="keywords"/>
 <meta content="Integrated queryable database for Drosophila and Anopheles genomics"

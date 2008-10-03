@@ -189,9 +189,22 @@ if (${!empty constrainOnBag}) {
                       		</c:when>
                       		<%-- normal inputfield --%>
  						    <c:otherwise>
+
+                                <c:set var="datePickerClass" value=""/>
+                                <c:if test="${editingNode.type == 'Date'}">
+                                  <c:set var="datePickerClass" value="date-pick"/>
+                                </c:if>
+
                                 <html:text property="attributeValue" styleId="attribute6"
                                            value="${editingConstraintValue}"
-                                           onkeypress="if(event.keyCode == 13) {$('attribute').click();return false;}"/>
+                                           onkeypress="if(event.keyCode == 13) {$('attribute').click();return false;}"
+                                           styleClass="${datePickerClass}"/>
+
+                                <c:if test="${editingNode.type == 'Date'}">
+                                  <script type="text/javascript">
+                                    jQuery('.date-pick').datePicker({startDate:'01/01/1970'});
+                                  </script>
+                                </c:if>
                             </c:otherwise>
                          </c:choose>      
                         
