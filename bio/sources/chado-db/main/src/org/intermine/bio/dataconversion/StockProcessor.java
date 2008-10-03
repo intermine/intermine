@@ -112,7 +112,7 @@ public class StockProcessor extends ChadoProcessor
     }
 
     private Item makeStock(String uniqueName, String description, String stockType,
-                           String stockCenterUniqueName) throws ObjectStoreException {
+                           String stockCenterUniqueName) {
         if (stockItems.containsKey(uniqueName)) {
             return stockItems.get(uniqueName);
         } else {
