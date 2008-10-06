@@ -29,6 +29,8 @@ import org.flymine.model.genomic.Gene;
 import org.flymine.model.genomic.IntergenicRegion;
 import org.flymine.model.genomic.Location;
 import org.flymine.model.genomic.Synonym;
+
+import org.intermine.bio.util.BioQueries;
 import org.intermine.objectstore.ObjectStore;
 import org.intermine.objectstore.ObjectStoreException;
 import org.intermine.objectstore.ObjectStoreWriter;
@@ -77,7 +79,7 @@ public class IntergenicRegionUtil
      *             if there is an ObjectStore problem
      */
     public void createIntergenicRegionFeatures() throws ObjectStoreException {
-        Results results = PostProcessUtil.findLocationAndObjects(os,
+        Results results = BioQueries.findLocationAndObjects(os,
                 Chromosome.class, Gene.class, false, false);
         results.setBatchSize(500);
 

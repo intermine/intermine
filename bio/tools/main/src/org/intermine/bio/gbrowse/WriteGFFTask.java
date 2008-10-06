@@ -34,8 +34,8 @@ import org.intermine.objectstore.query.Results;
 import org.intermine.objectstore.query.ResultsRow;
 import org.intermine.objectstore.query.SimpleConstraint;
 
+import org.intermine.bio.util.BioQueries;
 import org.intermine.bio.util.Constants;
-import org.intermine.bio.postprocess.PostProcessUtil;
 import org.intermine.objectstore.ObjectStore;
 import org.intermine.objectstore.ObjectStoreException;
 import org.intermine.objectstore.ObjectStoreFactory;
@@ -138,7 +138,7 @@ public class WriteGFFTask extends Task
         throws ObjectStoreException, IOException {
 
         Results results =
-            PostProcessUtil.findLocationAndObjects(os, Chromosome.class,
+            BioQueries.findLocationAndObjects(os, Chromosome.class,
                                                    LOCATED_SEQUENCE_FEATURE_CLASS, false, true);
 
         results.setBatchSize(2000);
