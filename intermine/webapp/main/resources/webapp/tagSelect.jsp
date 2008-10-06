@@ -4,12 +4,12 @@
 
 <%--Tile usage: 
     type parameter - is type of objects for which you want to display tags like 'bag', 'template' 
-    onChange parameter - is name of function that you want to be called when the select is changed, 
+    onChangeFunction parameter - is name of function that you want to be called when the select is changed, 
         you must define this function with one parameter - value of new select 
     call reloadTagSelect function if you want select to be reloaded --%>
 
 <tiles:importAttribute name="type" ignore="false" />
-<tiles:importAttribute name="onChange" ignore="true" />
+<tiles:importAttribute name="onChangeFunction" ignore="true" />
 
 <script type="text/javascript" src="js/imdwr.js" ></script>
 
@@ -25,10 +25,10 @@ function reloadTagSelect() {
 function callOnChangeFunction() {
     var select = document.getElementById('tagSelect');
     var value = select[select.selectedIndex].value;
-    if ("${onChange}".length > 0 && 
-        window.${onChange} && 
-        (typeof window.${onChange} == "function")) {
-            ${onChange}(value);
+    if ("${onChangeFunction}".length > 0 && 
+        window.${onChangeFunction} && 
+        (typeof window.${onChangeFunction} == "function")) {
+            ${onChangeFunction}(value);
     }
 }
 

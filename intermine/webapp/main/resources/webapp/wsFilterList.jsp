@@ -70,7 +70,7 @@
 	</script>
     <li><tiles:insert name="tagSelect.tile">
 	        <tiles:put name="type" value="${type}" />
-	        <tiles:put name="onChange" value="filterByTag" />
+	        <tiles:put name="onChangeFunction" value="filterByTag" />
 	</tiles:insert></li>
   </c:if>
 </c:if>
