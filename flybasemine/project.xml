@@ -1,0 +1,361 @@
+<project type="bio">
+  <property name="target.model" value="genomic"/>
+  <property name="common.os.prefix" value="common"/>
+  <property name="intermine.properties.file" value="flymine.properties"/>
+  <property name="default.intermine.properties.file" location="../default.intermine.integrate.properties"/>
+  <sources>
+    <source name="chado-db-flybase-dmel" type="chado-db" dump="true">
+      <property name="source.db.name" value="flybase"/>
+      <property name="organisms" value="7227"/>
+      <property name="dataSourceName" value="FlyBase"/>
+      <property name="processors"
+                value="org.intermine.bio.dataconversion.FlyBaseProcessor
+                       org.intermine.bio.dataconversion.StockProcessor"/>
+      <property name="converter.class" 
+                value="org.intermine.bio.dataconversion.ChadoDBConverter"/>
+    </source>
+    <source name="chado-db-flybase-dpse" type="chado-db">
+      <property name="source.db.name" value="flybase"/>
+      <property name="organisms" value="7237"/>
+      <property name="dataSourceName" value="FlyBase"/>
+      <property name="processors"
+                value="org.intermine.bio.dataconversion.FlyBaseProcessor"/>
+      <property name="converter.class" 
+                value="org.intermine.bio.dataconversion.ChadoDBConverter"/>
+    </source>
+    <source name="chado-db-flybase-others" type="chado-db" dump="true">
+      <property name="source.db.name" value="flybase"/>
+      <property name="organisms" value="Dana Dere Dgri Dmoj Dper Dsec Dsim Dvir Dwil Dyak"/>
+      <property name="dataSourceName" value="FlyBase"/>
+      <property name="processors"
+                value="org.intermine.bio.dataconversion.FlyBaseProcessor"/>
+      <property name="converter.class" 
+                value="org.intermine.bio.dataconversion.ChadoDBConverter"/>
+    </source>
+    <source name="drosophila-homology" type="drosophila-homology">
+      <property name="src.data.dir" location="/shared/data/flybase/homology"/>
+      <property name="src.data.dir.includes" value="frb.GLEANR.TEremoved.clusters.tsv"/>
+    </source>
+    <source name="flybase-dmel-gene-fasta" type="fasta" dump="true">
+      <property name="fasta.taxonId" value="7227"/>
+      <property name="fasta.dataSetTitle" value="FlyBase data set for Drosophila melanogaster"/>
+      <property name="fasta.synonymSource" value="FlyBase"/>
+      <property name="fasta.className" value="org.flymine.model.genomic.Gene"/>
+      <property name="fasta.classAttribute" value="primaryIdentifier"/>
+      <property name="fasta.includes" value="dmel-all-gene-*.fasta"/>
+      <property name="src.data.dir" location="/shared/data/flybase/current/fasta"/>
+    </source>
+    <source name="flybase-dpse-gene-fasta" type="fasta">
+      <property name="fasta.taxonId" value="7237"/>
+      <property name="fasta.dataSetTitle"
+                value="FlyBase data set for Drosophila pseudoobscura pseudoobscura"/>
+      <property name="fasta.synonymSource" value="FlyBase"/>
+      <property name="fasta.className" value="org.flymine.model.genomic.Gene"/>
+      <property name="fasta.classAttribute" value="primaryIdentifier"/>
+      <property name="fasta.includes" value="dpse-all-gene-*.fasta"/>
+      <property name="src.data.dir" location="/shared/data/flybase/current/fasta"/>
+    </source>
+    <source name="flybase-dana-gene-fasta" type="fasta">
+      <property name="fasta.taxonId" value="7217"/>
+      <property name="fasta.dataSetTitle" value="FlyBase data set for Drosophila ananassae"/>
+      <property name="fasta.synonymSource" value="FlyBase"/>
+      <property name="fasta.className" value="org.flymine.model.genomic.Gene"/>
+      <property name="fasta.classAttribute" value="primaryIdentifier"/>
+      <property name="fasta.includes" value="dana-all-gene-*.fasta"/>
+      <property name="src.data.dir" location="/shared/data/flybase/current/fasta"/>
+    </source>
+    <source name="flybase-dere-gene-fasta" type="fasta">
+      <property name="fasta.taxonId" value="7220"/>
+      <property name="fasta.dataSetTitle" value="FlyBase data set for Drosophila erecta"/>
+      <property name="fasta.synonymSource" value="FlyBase"/>
+      <property name="fasta.className" value="org.flymine.model.genomic.Gene"/>
+      <property name="fasta.classAttribute" value="primaryIdentifier"/>
+      <property name="fasta.includes" value="dere-all-gene-*.fasta"/>
+      <property name="src.data.dir" location="/shared/data/flybase/current/fasta"/>
+    </source>
+    <source name="flybase-dgri-gene-fasta" type="fasta">
+      <property name="fasta.taxonId" value="7222"/>
+      <property name="fasta.dataSetTitle" value="FlyBase data set for Drosophila grimshawi"/>
+      <property name="fasta.synonymSource" value="FlyBase"/>
+      <property name="fasta.className" value="org.flymine.model.genomic.Gene"/>
+      <property name="fasta.classAttribute" value="primaryIdentifier"/>
+      <property name="fasta.includes" value="dgri-all-gene-*.fasta"/>
+      <property name="src.data.dir" location="/shared/data/flybase/current/fasta"/>
+    </source>
+    <source name="flybase-dmoj-gene-fasta" type="fasta">
+      <property name="fasta.taxonId" value="7230"/>
+      <property name="fasta.dataSetTitle" value="FlyBase data set for Drosophila mojavensis"/>
+      <property name="fasta.synonymSource" value="FlyBase"/>
+      <property name="fasta.className" value="org.flymine.model.genomic.Gene"/>
+      <property name="fasta.classAttribute" value="primaryIdentifier"/>
+      <property name="fasta.includes" value="dmoj-all-gene-*.fasta"/>
+      <property name="src.data.dir" location="/shared/data/flybase/current/fasta"/>
+    </source>
+    <source name="flybase-dper-gene-fasta" type="fasta">
+      <property name="fasta.taxonId" value="7234"/>
+      <property name="fasta.dataSetTitle" value="FlyBase data set for Drosophila persimilis"/>
+      <property name="fasta.synonymSource" value="FlyBase"/>
+      <property name="fasta.className" value="org.flymine.model.genomic.Gene"/>
+      <property name="fasta.classAttribute" value="primaryIdentifier"/>
+      <property name="fasta.includes" value="dper-all-gene-*.fasta"/>
+      <property name="src.data.dir" location="/shared/data/flybase/current/fasta"/>
+    </source>
+    <source name="flybase-dsec-gene-fasta" type="fasta">
+      <property name="fasta.taxonId" value="7238"/>
+      <property name="fasta.dataSetTitle" value="FlyBase data set for Drosophila sechellia"/>
+      <property name="fasta.synonymSource" value="FlyBase"/>
+      <property name="fasta.className" value="org.flymine.model.genomic.Gene"/>
+      <property name="fasta.classAttribute" value="primaryIdentifier"/>
+      <property name="fasta.includes" value="dsec-all-gene-*.fasta"/>
+      <property name="src.data.dir" location="/shared/data/flybase/current/fasta"/>
+    </source>
+    <source name="flybase-dsim-gene-fasta" type="fasta">
+      <property name="fasta.taxonId" value="7240"/>
+      <property name="fasta.dataSetTitle" value="FlyBase data set for Drosophila simulans"/>
+      <property name="fasta.synonymSource" value="FlyBase"/>
+      <property name="fasta.className" value="org.flymine.model.genomic.Gene"/>
+      <property name="fasta.classAttribute" value="primaryIdentifier"/>
+      <property name="fasta.includes" value="dsim-all-gene-*.fasta"/>
+      <property name="src.data.dir" location="/shared/data/flybase/current/fasta"/>
+    </source>
+    <source name="flybase-dvir-gene-fasta" type="fasta">
+      <property name="fasta.taxonId" value="7244"/>
+      <property name="fasta.dataSetTitle" value="FlyBase data set for Drosophila virilis"/>
+      <property name="fasta.synonymSource" value="FlyBase"/>
+      <property name="fasta.className" value="org.flymine.model.genomic.Gene"/>
+      <property name="fasta.classAttribute" value="primaryIdentifier"/>
+      <property name="fasta.includes" value="dvir-all-gene-*.fasta"/>
+      <property name="src.data.dir" location="/shared/data/flybase/current/fasta"/>
+    </source>
+    <source name="flybase-dwil-gene-fasta" type="fasta">
+      <property name="fasta.taxonId" value="7260"/>
+      <property name="fasta.dataSetTitle" value="FlyBase data set for Drosophila willistoni"/>
+      <property name="fasta.synonymSource" value="FlyBase"/>
+      <property name="fasta.className" value="org.flymine.model.genomic.Gene"/>
+      <property name="fasta.classAttribute" value="primaryIdentifier"/>
+      <property name="fasta.includes" value="dwil-all-gene-*.fasta"/>
+      <property name="src.data.dir" location="/shared/data/flybase/current/fasta"/>
+    </source>
+    <source name="flybase-dyak-gene-fasta" type="fasta">
+      <property name="fasta.taxonId" value="7245"/>
+      <property name="fasta.dataSetTitle" value="FlyBase data set for Drosophila yakuba"/>
+      <property name="fasta.synonymSource" value="FlyBase"/>
+      <property name="fasta.className" value="org.flymine.model.genomic.Gene"/>
+      <property name="fasta.classAttribute" value="primaryIdentifier"/>
+      <property name="fasta.includes" value="dyak-all-gene-*.fasta"/>
+      <property name="src.data.dir" location="/shared/data/flybase/current/fasta"/>
+    </source>
+    <source name="flybase-dmel-cds-fasta" type="fasta">
+      <property name="fasta.loaderClassName" 
+                value="org.intermine.bio.dataconversion.FlyBaseCDSFastaLoaderTask"/>
+      <property name="fasta.taxonId" value="7227"/>
+      <property name="fasta.className" value="org.flymine.model.genomic.CDS"/>
+      <property name="fasta.classAttribute" value="primaryIdentifier"/>
+      <property name="fasta.includes" value="dmel-all-CDS-*.fasta"/>
+      <property name="fasta.dataSetTitle" value="FlyBase data set for Drosophila melanogaster"/>
+      <property name="fasta.synonymSource" value="FlyBase"/>
+      <property name="src.data.dir" location="/shared/data/flybase/current/fasta"/>
+    </source>
+    <source name="flybase-dpse-cds-fasta" type="fasta">
+      <property name="fasta.loaderClassName" 
+                value="org.intermine.bio.dataconversion.FlyBaseCDSFastaLoaderTask"/>
+      <property name="fasta.taxonId" value="7237"/>
+      <property name="fasta.className" value="org.flymine.model.genomic.CDS"/>
+      <property name="fasta.classAttribute" value="primaryIdentifier"/>
+      <property name="fasta.includes" value="dpse-all-CDS-*.fasta"/>
+      <property name="fasta.dataSetTitle" value="FlyBase data set for Drosophila pseudoobscura pseudoobscura"/>
+      <property name="fasta.synonymSource" value="FlyBase"/>
+      <property name="src.data.dir" location="/shared/data/flybase/current/fasta"/>
+    </source>
+    <source name="flybase-dana-cds-fasta" type="fasta">
+      <property name="fasta.loaderClassName" 
+                value="org.intermine.bio.dataconversion.FlyBaseCDSFastaLoaderTask"/>
+      <property name="fasta.taxonId" value="7217"/>
+      <property name="fasta.className" value="org.flymine.model.genomic.CDS"/>
+      <property name="fasta.classAttribute" value="primaryIdentifier"/>
+      <property name="fasta.includes" value="dana-all-CDS-*.fasta"/>
+      <property name="fasta.dataSetTitle" value="FlyBase data set for Drosophila ananassae"/>
+      <property name="fasta.synonymSource" value="FlyBase"/>
+      <property name="src.data.dir" location="/shared/data/flybase/current/fasta"/>
+    </source>
+    <source name="flybase-dere-cds-fasta" type="fasta">
+      <property name="fasta.loaderClassName" 
+                value="org.intermine.bio.dataconversion.FlyBaseCDSFastaLoaderTask"/>
+      <property name="fasta.taxonId" value="7220"/>
+      <property name="fasta.className" value="org.flymine.model.genomic.CDS"/>
+      <property name="fasta.classAttribute" value="primaryIdentifier"/>
+      <property name="fasta.includes" value="dere-all-CDS-*.fasta"/>
+      <property name="fasta.dataSetTitle" value="FlyBase data set for Drosophila erecta"/>
+      <property name="fasta.synonymSource" value="FlyBase"/>
+      <property name="src.data.dir" location="/shared/data/flybase/current/fasta"/>
+    </source>
+    <source name="flybase-dgri-cds-fasta" type="fasta">
+      <property name="fasta.loaderClassName" 
+                value="org.intermine.bio.dataconversion.FlyBaseCDSFastaLoaderTask"/>
+      <property name="fasta.taxonId" value="7222"/>
+      <property name="fasta.className" value="org.flymine.model.genomic.CDS"/>
+      <property name="fasta.classAttribute" value="primaryIdentifier"/>
+      <property name="fasta.includes" value="dgri-all-CDS-*.fasta"/>
+      <property name="fasta.dataSetTitle" value="FlyBase data set for Drosophila grimshawi"/>
+      <property name="fasta.synonymSource" value="FlyBase"/>
+      <property name="src.data.dir" location="/shared/data/flybase/current/fasta"/>
+    </source>
+    <source name="flybase-dmoj-cds-fasta" type="fasta">
+      <property name="fasta.loaderClassName" 
+                value="org.intermine.bio.dataconversion.FlyBaseCDSFastaLoaderTask"/>
+      <property name="fasta.taxonId" value="7230"/>
+      <property name="fasta.className" value="org.flymine.model.genomic.CDS"/>
+      <property name="fasta.classAttribute" value="primaryIdentifier"/>
+      <property name="fasta.includes" value="dmoj-all-CDS-*.fasta"/>
+      <property name="fasta.dataSetTitle" value="FlyBase data set for Drosophila mojavensis"/>
+      <property name="fasta.synonymSource" value="FlyBase"/>
+      <property name="src.data.dir" location="/shared/data/flybase/current/fasta"/>
+    </source>
+    <source name="flybase-dper-cds-fasta" type="fasta">
+      <property name="fasta.loaderClassName" 
+                value="org.intermine.bio.dataconversion.FlyBaseCDSFastaLoaderTask"/>
+      <property name="fasta.taxonId" value="7234"/>
+      <property name="fasta.className" value="org.flymine.model.genomic.CDS"/>
+      <property name="fasta.classAttribute" value="primaryIdentifier"/>
+      <property name="fasta.includes" value="dper-all-CDS-*.fasta"/>
+      <property name="fasta.dataSetTitle" value="FlyBase data set for Drosophila persimilis"/>
+      <property name="fasta.synonymSource" value="FlyBase"/>
+      <property name="src.data.dir" location="/shared/data/flybase/current/fasta"/>
+    </source>
+    <source name="flybase-dsec-cds-fasta" type="fasta">
+      <property name="fasta.loaderClassName" 
+                value="org.intermine.bio.dataconversion.FlyBaseCDSFastaLoaderTask"/>
+      <property name="fasta.taxonId" value="7238"/>
+      <property name="fasta.className" value="org.flymine.model.genomic.CDS"/>
+      <property name="fasta.classAttribute" value="primaryIdentifier"/>
+      <property name="fasta.includes" value="dsec-all-CDS-*.fasta"/>
+      <property name="fasta.dataSetTitle" value="FlyBase data set for Drosophila sechellia"/>
+      <property name="fasta.synonymSource" value="FlyBase"/>
+      <property name="src.data.dir" location="/shared/data/flybase/current/fasta"/>
+    </source>
+    <source name="flybase-dsim-cds-fasta" type="fasta">
+      <property name="fasta.loaderClassName" 
+                value="org.intermine.bio.dataconversion.FlyBaseCDSFastaLoaderTask"/>
+      <property name="fasta.taxonId" value="7240"/>
+      <property name="fasta.className" value="org.flymine.model.genomic.CDS"/>
+      <property name="fasta.classAttribute" value="primaryIdentifier"/>
+      <property name="fasta.includes" value="dsim-all-CDS-*.fasta"/>
+      <property name="fasta.dataSetTitle" value="FlyBase data set for Drosophila simulans"/>
+      <property name="fasta.synonymSource" value="FlyBase"/>
+      <property name="src.data.dir" location="/shared/data/flybase/current/fasta"/>
+    </source>
+    <source name="flybase-dvir-cds-fasta" type="fasta">
+      <property name="fasta.loaderClassName" 
+                value="org.intermine.bio.dataconversion.FlyBaseCDSFastaLoaderTask"/>
+      <property name="fasta.taxonId" value="7244"/>
+      <property name="fasta.className" value="org.flymine.model.genomic.CDS"/>
+      <property name="fasta.classAttribute" value="primaryIdentifier"/>
+      <property name="fasta.includes" value="dvir-all-CDS-*.fasta"/>
+      <property name="fasta.dataSetTitle" value="FlyBase data set for Drosophila virilis"/>
+      <property name="fasta.synonymSource" value="FlyBase"/>
+      <property name="src.data.dir" location="/shared/data/flybase/current/fasta"/>
+    </source>
+    <source name="flybase-dwil-cds-fasta" type="fasta">
+      <property name="fasta.loaderClassName" 
+                value="org.intermine.bio.dataconversion.FlyBaseCDSFastaLoaderTask"/>
+      <property name="fasta.taxonId" value="7260"/>
+      <property name="fasta.className" value="org.flymine.model.genomic.CDS"/>
+      <property name="fasta.classAttribute" value="primaryIdentifier"/>
+      <property name="fasta.includes" value="dwil-all-CDS-*.fasta"/>
+      <property name="fasta.dataSetTitle" value="FlyBase data set for Drosophila willistoni"/>
+      <property name="fasta.synonymSource" value="FlyBase"/>
+      <property name="src.data.dir" location="/shared/data/flybase/current/fasta"/>
+    </source>
+    <source name="flybase-dyak-cds-fasta" type="fasta">
+      <property name="fasta.loaderClassName" 
+                value="org.intermine.bio.dataconversion.FlyBaseCDSFastaLoaderTask"/>
+      <property name="fasta.taxonId" value="7245"/>
+      <property name="fasta.className" value="org.flymine.model.genomic.CDS"/>
+      <property name="fasta.classAttribute" value="primaryIdentifier"/>
+      <property name="fasta.includes" value="dyak-all-CDS-*.fasta"/>
+      <property name="fasta.dataSetTitle" value="FlyBase data set for Drosophila yakuba"/>
+      <property name="fasta.synonymSource" value="FlyBase"/>
+      <property name="src.data.dir" location="/shared/data/flybase/current/fasta"/>
+    </source>
+    <source name="flybase-dmel-5prime-utr-fasta" type="fasta">
+      <property name="fasta.loaderClassName" value="org.intermine.bio.dataconversion.FlyBaseUTRFastaLoaderTask"/>
+      <property name="fasta.taxonId" value="7227"/>
+      <property name="fasta.className" value="org.flymine.model.genomic.FivePrimeUTR"/>
+      <property name="fasta.classAttribute" value="primaryIdentifier"/>
+      <property name="fasta.includes" value="dmel-all-five_prime_UTR-*.fasta"/>
+      <property name="fasta.dataSetTitle" value="FlyBase data set for Drosophila melanogaster"/>
+      <property name="fasta.synonymSource" value="FlyBase"/>
+      <property name="src.data.dir" location="/shared/data/flybase/current/fasta"/>
+    </source>
+    <source name="flybase-dmel-3prime-utr-fasta" type="fasta">
+      <property name="fasta.loaderClassName" value="org.intermine.bio.dataconversion.FlyBaseUTRFastaLoaderTask"/>
+      <property name="fasta.taxonId" value="7227"/>
+      <property name="fasta.className" value="org.flymine.model.genomic.ThreePrimeUTR"/>
+      <property name="fasta.classAttribute" value="primaryIdentifier"/>
+      <property name="fasta.includes" value="dmel-all-three_prime_UTR-*.fasta"/>
+      <property name="fasta.dataSetTitle" value="FlyBase data set for Drosophila melanogaster"/>
+      <property name="fasta.synonymSource" value="FlyBase"/>
+      <property name="src.data.dir" location="/shared/data/flybase/current/fasta"/>
+    </source>
+    <source name="fly-anatomy-ontology" type="fly-anatomy-ontology">
+      <property name="src.data.file" location="/shared/data/ontologies/fly_anatomy/current/fly_anatomy.obo"/>
+    </source>
+    <source name="fly-development-ontology" type="fly-development-ontology">
+      <property name="src.data.file" location="/shared/data/ontologies/fly_development/current/fly_development.obo"/>
+    </source>
+    <source name="fly-misc-cvterms" type="fly-misc-cvterms">
+      <property name="src.data.file" location="/shared/data/ontologies/fly_cv/current/flybase_controlled_vocabulary.obo"/>
+    </source>
+    <source name="entrez-organism" type="entrez-organism">
+      <!-- this source finds the taxon ids in the objectstore, retrieves
+           species name and genus from Entrez into an InterMine format XML
+           file, loads that file into a target items DB, then into the final
+           objectstore -->
+      <property name="src.data.file" location="build/organisms.xml"/>
+    </source>
+    <source name="flymine-static" type="intermine-items-xml-file">
+      <property name="src.data.file" location="datasets.xml"/>
+    </source>
+    <source name="update-publications" type="update-publications" dump="true">
+      <!-- this source finds the publication ids (pubmed ids) in the
+           objectstore, retrieves the details of the publication from Entrez
+           into an InterMine format XML file, loads that file into a target
+           items DB, then into the final objectstore -->
+      <property name="src.data.file" location="build/publications.xml"/>
+    </source>
+  </sources>
+
+  <post-processing>
+    <post-process name="create-utr-references"/>
+    <post-process name="calculate-locations"/>
+    <post-process name="create-references" dump="true"/>
+    <post-process name="make-spanning-locations"/>
+    <post-process name="create-chromosome-locations-and-lengths"/>
+    <post-process name="create-intergenic-region-features"/>
+    <post-process name="transfer-sequences"/>
+    <post-process name="create-overlap-relations-flymine"/>
+    <post-process name="do-sources" dump="true"/>
+    <post-process name="create-intron-features">
+      <property name="organisms" value="180454,7460"/>
+    </post-process>   
+    <post-process name="synonym-update"/>
+    <post-process name="create-attribute-indexes"/>
+    <post-process name="summarise-objectstore"/>
+    <post-process name="create-lucene-index"/>
+
+    <!-- grant-db-production/
+    TODO: Not really post processing but just has to be done sometime...
+  <target name="grant-db-production" depends="prepare" - ->
+    <!- - grant 'public' user select permission on production db - ->
+    <taskdef name="grant" classname="org.intermine.task.GrantTask">
+      <classpath refid="models.class.path"/>
+    </taskdef>
+
+    <grant database="db.production" user="PUBLIC" perm="SELECT"/>
+
+  </target>
+    -->
+  </post-processing>
+
+</project>
+
