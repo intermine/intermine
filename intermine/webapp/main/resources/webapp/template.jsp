@@ -324,7 +324,7 @@
                     </html:option>
                   </c:forEach>
                 </html:select>
-                <tiles:insert name="bagTagSelect.tile" ></tiles:insert>
+                <tiles:insert name="bagTagSelect.tile" />
                 <c:if test="${empty bags}">
                   <div class="noBagsMessage">
                     <fmt:message key="template.nobags">

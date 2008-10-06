@@ -12,7 +12,6 @@
 
 <html:xhtml/>
 
-<br/>
 <table cellpadding="0" cellspacing="0" >
 <tr>
   <td><img src="theme/res_bar_left.gif"></td>

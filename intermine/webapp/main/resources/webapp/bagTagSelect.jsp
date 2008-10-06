@@ -14,7 +14,7 @@
 
 <tiles:insert name="tagSelect.tile">
 	<tiles:put name="type" value="bag" />
-	<tiles:put name="onChange" value="filterByTag" />
+	<tiles:put name="onChangeFunction" value="filterByTag" />
 </tiles:insert>                
 
 <!-- /bagTagSelect.jsp -->

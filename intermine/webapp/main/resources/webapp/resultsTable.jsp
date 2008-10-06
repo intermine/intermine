@@ -325,9 +325,11 @@
 </script>
 
 <c:if test="${empty bagName}">
+   <div style="margin-top: 10px;">
    <tiles:insert name="paging.tile">
      <tiles:put name="resultsTable" beanName="resultsTable" />
      <tiles:put name="currentPage" value="results" />
    </tiles:insert>
+   </div>
 </c:if>
 <%--</html:form>--%>

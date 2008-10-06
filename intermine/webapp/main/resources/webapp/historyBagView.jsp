@@ -31,13 +31,13 @@
     </c:when>
     <c:otherwise>
 
-	<div style="margin-bottom: 5px;">
-	Filter:&nbsp;
-	<tiles:insert name="tagSelect.tile">
-	        <tiles:put name="type" value="${type}" />
-	        <tiles:put name="onChange" value="filterByTag" />
-	</tiles:insert>
-	</div>
+	<table><tr><td align="right">
+		Filter:&nbsp;
+		<tiles:insert name="tagSelect.tile">
+		        <tiles:put name="type" value="${type}" />
+		        <tiles:put name="onChangeFunction" value="filterByTag" />
+		</tiles:insert>
+	</td></tr><td>
 	  
       <html:form action="/modifyBag">
 
@@ -82,14 +82,13 @@
                       <tiles:put name="type" value="${type}"/>
                     </tiles:insert>
 
-                    <c:if test="${IS_SUPERUSER}">
-                      <c:set var="taggable" value="${savedBag.value}"/>
-                      <tiles:insert name="inlineTagEditor.tile">
-                        <tiles:put name="taggable" beanName="taggable"/>
-                        <tiles:put name="vertical" value="true"/>
-                        <tiles:put name="show" value="true"/>
-                      </tiles:insert>
-                    </c:if>
+                     <c:set var="taggable" value="${savedBag.value}"/>
+                     <tiles:insert name="inlineTagEditor.tile">
+                       <tiles:put name="taggable" beanName="taggable"/>
+                       <tiles:put name="vertical" value="true"/>
+                       <tiles:put name="show" value="true"/>
+                       <tiles:put name="onChangeCode" value="reloadTagSelect()"/>
+                     </tiles:insert>
 
               </td>
               <td class="sorting">
@@ -130,6 +129,7 @@
         <html:hidden property="pageName" value="MyMine"/>
         <html:hidden property="listsButton" value="" styleId="listsButton"/>
       </html:form>
+      </td></tr></table>
       <br/>
 
     </c:otherwise>

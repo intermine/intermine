@@ -406,7 +406,7 @@ if (${!empty constrainOnBag}) {
               </html:option>
             </c:forEach>
           </html:select>
-          <tiles:insert name="bagTagSelect.tile"></tiles:insert>
+          <tiles:insert name="bagTagSelect.tile" />
           <html:select property="bagValue" styleId="bag2" disabled="true">
             <c:forEach items="${bags}" var="bag">
               <html:option value="${bag.key}">
