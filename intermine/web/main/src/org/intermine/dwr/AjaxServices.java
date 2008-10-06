@@ -1016,6 +1016,11 @@ public class AjaxServices
         return pt.getFirstSelectedFields(os, classKeys);
     }
 
+    /**
+     * 
+     * @param servletContext
+     * @return 
+     */
     @SuppressWarnings("unchecked")
     private static Map<String, List<FieldDescriptor>> getClassKeys(ServletContext servletContext) {
         return (Map) servletContext.getAttribute(Constants.CLASS_KEYS);
@@ -1095,9 +1100,27 @@ public class AjaxServices
                 if (counter > 4) {
                     break;
                 }
+                
+                // NB: apparently, the only accepted formats for getPublishedDate are 
+                // Fri, 28 Jan 2008 11:02 GMT
+                // or
+                // Fri, 8 Jan 2008 11:02 GMT
+                // or
+                // Fri, 8 Jan 08 11:02 GMT
+                //
+                // an annoying error appears if the format is not followed, and news tile hangs.
+                // 
+                // the following is used to display the date without timestamp.
+                // this should always work since the retrieved date has a fixed format,
+                // independent of the one used in the xml.
+                String longDate = syndEntry.getPublishedDate().toString();
+                String dayMonth = longDate.substring(0, 10);
+                String year = longDate.substring(24);
+                                
                 html.append("<li>");
                 html.append("<strong>" + syndEntry.getTitle() + "</strong>");
-                html.append("- <em>" + syndEntry.getPublishedDate() + "</em><br/>");
+                html.append(" - <em>" + dayMonth + " " + year + "</em><br/>");
+//                html.append("- <em>" + syndEntry.getPublishedDate().toString() + "</em><br/>");
                 html.append(syndEntry.getDescription().getValue());
                 html.append("</li>");
                 counter++;
@@ -1111,8 +1134,7 @@ public class AjaxServices
         } catch (FeedException e) {
             return "<i>No news at specified URL</i>";
         }
-    }
-    
+    }    
     /**
      * Returns all objects names tagged with specified tag type and tag name.
      * @param type tag type
