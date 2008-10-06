@@ -25,7 +25,6 @@ import org.intermine.objectstore.query.Results;
 import org.intermine.objectstore.query.ResultsRow;
 
 import org.intermine.bio.util.Constants;
-import org.intermine.bio.util.Constants.PRECOMPUTE_CATEGORY;
 import org.intermine.metadata.ClassDescriptor;
 import org.intermine.metadata.Model;
 import org.intermine.objectstore.ObjectStore;
@@ -46,8 +45,6 @@ import org.flymine.model.genomic.Reporter;
 import java.sql.SQLException;
 
 import org.apache.log4j.Logger;
-
-import static org.intermine.bio.postprocess.PostProcessOperationsTask.PRECOMPUTE_CATEGORY;
 
 /**
  * Code to fix references in the classes from the mage source.
