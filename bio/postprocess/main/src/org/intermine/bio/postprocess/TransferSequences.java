@@ -29,6 +29,7 @@ import org.intermine.objectstore.query.QueryObjectReference;
 import org.intermine.objectstore.query.Results;
 import org.intermine.objectstore.query.ResultsRow;
 
+import org.intermine.bio.util.Constants;
 import org.intermine.objectstore.ObjectStore;
 import org.intermine.objectstore.ObjectStoreException;
 import org.intermine.objectstore.ObjectStoreWriter;
@@ -263,7 +264,7 @@ public class TransferSequences
         indexesToCreate.add(qcLoc);
         indexesToCreate.add(qcSub);
         ((ObjectStoreInterMineImpl) os).precompute(q, indexesToCreate,
-            PostProcessOperationsTask.PRECOMPUTE_CATEGORY);
+            Constants.PRECOMPUTE_CATEGORY);
         Results results = os.execute(q);
 
         results.setBatchSize(1000);
@@ -496,7 +497,7 @@ public class TransferSequences
 
         q.setConstraint(cs);
 
-        ((ObjectStoreInterMineImpl) os).precompute(q, PostProcessOperationsTask
+        ((ObjectStoreInterMineImpl) os).precompute(q, Constants
                                                    .PRECOMPUTE_CATEGORY);
         Results res = os.execute(q);
         res.setBatchSize(1000);

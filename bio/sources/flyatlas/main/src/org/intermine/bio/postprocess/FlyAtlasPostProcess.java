@@ -18,6 +18,8 @@ import org.apache.log4j.Logger;
 import org.flymine.model.genomic.Gene;
 import org.flymine.model.genomic.ProbeSet;
 import org.flymine.model.genomic.MicroArrayResult;
+
+import org.intermine.bio.util.Constants;
 import org.intermine.objectstore.ObjectStore;
 import org.intermine.objectstore.ObjectStoreException;
 import org.intermine.objectstore.ObjectStoreWriter;
@@ -95,7 +97,7 @@ public class FlyAtlasPostProcess extends PostProcessor
         ObjectStore os = osw.getObjectStore();
 
         ((ObjectStoreInterMineImpl) os).precompute(q,
-                                                   PostProcessOperationsTask.PRECOMPUTE_CATEGORY);
+                                                   Constants.PRECOMPUTE_CATEGORY);
         Results res = os.execute(q);
        res.setBatchSize(500);
 

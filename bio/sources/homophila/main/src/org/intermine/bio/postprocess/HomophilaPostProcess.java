@@ -24,6 +24,8 @@ import org.flymine.model.genomic.Gene;
 import org.flymine.model.genomic.Protein;
 import org.flymine.model.genomic.Publication;
 import org.flymine.model.genomic.Translation;
+
+import org.intermine.bio.util.Constants;
 import org.intermine.model.InterMineObject;
 import org.intermine.objectstore.ObjectStore;
 import org.intermine.objectstore.ObjectStoreException;
@@ -197,7 +199,7 @@ public class HomophilaPostProcess extends PostProcessor
         q.setConstraint(cs);
 
         ObjectStoreInterMineImpl osimi = (ObjectStoreInterMineImpl) os;
-        osimi.precompute(q, PostProcessOperationsTask.PRECOMPUTE_CATEGORY);
+        osimi.precompute(q, Constants.PRECOMPUTE_CATEGORY);
         Results res = os.execute(q);
 
         return res;

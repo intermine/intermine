@@ -29,6 +29,7 @@ import org.intermine.objectstore.query.iql.IqlQuery;
 import org.intermine.util.DynamicUtil;
 import org.intermine.util.TypeUtil;
 
+import org.intermine.bio.util.Constants;
 import org.intermine.model.InterMineObject;
 import org.flymine.model.genomic.*;
 import org.apache.log4j.Logger;
@@ -735,7 +736,7 @@ public class CalculateLocations
         q.setConstraint(cs);
 
         ((ObjectStoreInterMineImpl) os).precompute(q,
-            PostProcessOperationsTask.PRECOMPUTE_CATEGORY);
+            Constants.PRECOMPUTE_CATEGORY);
         Results res = os.execute(q);
 
         res.setBatchSize(1000);

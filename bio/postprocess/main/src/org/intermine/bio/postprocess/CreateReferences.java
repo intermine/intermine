@@ -20,6 +20,7 @@ import org.intermine.objectstore.ObjectStore;
 
 import org.intermine.sql.Database;
 
+import org.intermine.bio.util.Constants;
 import org.intermine.metadata.Model;
 import org.intermine.metadata.ClassDescriptor;
 import org.intermine.model.InterMineObject;
@@ -665,7 +666,7 @@ public class CreateReferences
 
         ObjectStore os = osw.getObjectStore();
 
-        ((ObjectStoreInterMineImpl) os).precompute(q, PostProcessOperationsTask
+        ((ObjectStoreInterMineImpl) os).precompute(q, Constants
                                                    .PRECOMPUTE_CATEGORY);
         Results res = os.execute(q);
         res.setBatchSize(500);
@@ -796,7 +797,7 @@ public class CreateReferences
 
         ObjectStore os = osw.getObjectStore();
 
-        ((ObjectStoreInterMineImpl) os).precompute(q, PostProcessOperationsTask
+        ((ObjectStoreInterMineImpl) os).precompute(q, Constants
                                                    .PRECOMPUTE_CATEGORY);
         Results res = os.execute(q);
         res.setBatchSize(500);

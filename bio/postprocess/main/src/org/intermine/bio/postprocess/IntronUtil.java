@@ -29,6 +29,8 @@ import org.flymine.model.genomic.Location;
 import org.flymine.model.genomic.Organism;
 import org.flymine.model.genomic.Synonym;
 import org.flymine.model.genomic.Transcript;
+
+import org.intermine.bio.util.Constants;
 import org.intermine.objectstore.ObjectStore;
 import org.intermine.objectstore.ObjectStoreException;
 import org.intermine.objectstore.ObjectStoreWriter;
@@ -173,7 +175,7 @@ public class IntronUtil
 
         // Precompute this query first, this will create a precomputed table holding
         // all the results.  The will make all batches after the first faster to fetch
-        ((ObjectStoreInterMineImpl) os).precompute(q, PostProcessOperationsTask
+        ((ObjectStoreInterMineImpl) os).precompute(q, Constants
                                                    .PRECOMPUTE_CATEGORY);
 
         // Set up the results, the query isn't actually executed until we begin

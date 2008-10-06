@@ -24,6 +24,8 @@ import org.intermine.objectstore.query.QueryObjectReference;
 import org.intermine.objectstore.query.Results;
 import org.intermine.objectstore.query.ResultsRow;
 
+import org.intermine.bio.util.Constants;
+import org.intermine.bio.util.Constants.PRECOMPUTE_CATEGORY;
 import org.intermine.metadata.ClassDescriptor;
 import org.intermine.metadata.Model;
 import org.intermine.objectstore.ObjectStore;
@@ -131,7 +133,7 @@ public class MagePostProcess extends PostProcessor
         ObjectStore os = osw.getObjectStore();
 
         ((ObjectStoreInterMineImpl) os).precompute(q,
-                                                   PostProcessOperationsTask.PRECOMPUTE_CATEGORY);
+                                                   Constants.PRECOMPUTE_CATEGORY);
         Results res = os.execute(q);
         res.setBatchSize(500);
 
@@ -222,7 +224,7 @@ public class MagePostProcess extends PostProcessor
         q.setConstraint(cs);
         ObjectStore os = osw.getObjectStore();
 
-        ((ObjectStoreInterMineImpl) os).precompute(q, PRECOMPUTE_CATEGORY);
+        ((ObjectStoreInterMineImpl) os).precompute(q, Constants.PRECOMPUTE_CATEGORY);
         Results res = os.execute(q);
         res.setBatchSize(500);
 
@@ -314,7 +316,7 @@ public class MagePostProcess extends PostProcessor
         q.setConstraint(cs);
         ObjectStore os = osw.getObjectStore();
 
-        ((ObjectStoreInterMineImpl) os).precompute(q, PRECOMPUTE_CATEGORY);
+        ((ObjectStoreInterMineImpl) os).precompute(q, Constants.PRECOMPUTE_CATEGORY);
         Results res = os.execute(q);
         res.setBatchSize(500);
 

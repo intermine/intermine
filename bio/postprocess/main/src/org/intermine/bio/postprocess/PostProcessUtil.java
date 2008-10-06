@@ -20,6 +20,8 @@ import java.util.Set;
 
 import org.flymine.model.genomic.Annotation;
 import org.flymine.model.genomic.Location;
+
+import org.intermine.bio.util.Constants;
 import org.intermine.metadata.FieldDescriptor;
 import org.intermine.model.InterMineObject;
 import org.intermine.objectstore.ObjectStore;
@@ -129,7 +131,7 @@ public class PostProcessUtil
         cs.addConstraint(cc1);
         q.setConstraint(cs);
 
-        ((ObjectStoreInterMineImpl) os).precompute(q, PostProcessOperationsTask
+        ((ObjectStoreInterMineImpl) os).precompute(q, Constants
                                                    .PRECOMPUTE_CATEGORY);
         Results res = os.execute(q);
         res.setBatchSize(500);
@@ -208,7 +210,7 @@ public class PostProcessUtil
         cs.addConstraint(cc2);
         q.setConstraint(cs);
 
-        ((ObjectStoreInterMineImpl) os).precompute(q, PostProcessOperationsTask
+        ((ObjectStoreInterMineImpl) os).precompute(q, Constants
                                                    .PRECOMPUTE_CATEGORY);
         Results res = os.execute(q);
         res.setBatchSize(500);
@@ -252,7 +254,7 @@ public class PostProcessUtil
         cs.addConstraint(cc2);
         q.setConstraint(cs);
 
-        ((ObjectStoreInterMineImpl) os).precompute(q, PostProcessOperationsTask
+        ((ObjectStoreInterMineImpl) os).precompute(q, Constants
                                                    .PRECOMPUTE_CATEGORY);
         Results res = os.execute(q);
         res.setBatchSize(500);
@@ -293,7 +295,7 @@ public class PostProcessUtil
         cs.addConstraint(cc2);
         q.setConstraint(cs);
 
-        ((ObjectStoreInterMineImpl) os).precompute(q, PostProcessOperationsTask
+        ((ObjectStoreInterMineImpl) os).precompute(q, Constants
                                                    .PRECOMPUTE_CATEGORY);
         Results res = os.execute(q);
         res.setBatchSize(500);
@@ -374,7 +376,7 @@ public class PostProcessUtil
         indexesToCreate.add(qcLoc);
         indexesToCreate.add(qcSub);
         ((ObjectStoreInterMineImpl) os).precompute(q, indexesToCreate,
-                                                   PostProcessOperationsTask.PRECOMPUTE_CATEGORY);
+                                                   Constants.PRECOMPUTE_CATEGORY);
         Results res = os.execute(q);
 
         return res;
@@ -415,7 +417,7 @@ public class PostProcessUtil
         cs.addConstraint(cc2);
 
         q.setConstraint(cs);
-        ((ObjectStoreInterMineImpl) os).precompute(q, PostProcessOperationsTask
+        ((ObjectStoreInterMineImpl) os).precompute(q, Constants
                                                    .PRECOMPUTE_CATEGORY);
         Results res = os.execute(q);
 
@@ -478,7 +480,7 @@ public class PostProcessUtil
         cs.addConstraint(cc4);
 
         q.setConstraint(cs);
-        ((ObjectStoreInterMineImpl) os).precompute(q, PostProcessOperationsTask
+        ((ObjectStoreInterMineImpl) os).precompute(q, Constants
                                                    .PRECOMPUTE_CATEGORY);
         Results res = os.execute(q);
 
