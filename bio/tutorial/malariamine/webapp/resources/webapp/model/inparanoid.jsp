@@ -29,34 +29,14 @@
       <div class="body">
         <ul>
           <li>
-            Orthologues: <i>Plasmodium falciparum 3D7</i> vs <i>Schizosaccharomyces pombe</i>
-            <im:querylink text="(browse)" skipBuilder="true">
-<query name="" model="genomic" view="Orthologue.object Orthologue.subject Orthologue" constraintLogic="A and B">
-  <node path="Orthologue" type="Orthologue">
-  </node>
-  <node path="Orthologue.object" type="Gene">
-  </node>
-  <node path="Orthologue.object.organism" type="Organism">
-  </node>
-  <node path="Orthologue.object.organism.taxonId" type="Integer">
-    <constraint op="=" value="36329" code="A">
-    </constraint>
-  </node>
-  <node path="Orthologue.subject" type="Gene">
-  </node>
-  <node path="Orthologue.subject.organism" type="Organism">
-  </node>
-  <node path="Orthologue.subject.organism.taxonId" type="Integer">
-    <constraint op="=" value="4896" code="B">
-    </constraint>
-  </node>
-</query>
-</im:querylink>
+                    <p><im:querylink text="Show all pairs of organisms linked by orthologues" skipBuilder="true">
+            <query name="" model="genomic" view="Homologue.gene.organism.shortName Homologue.homologue.organism.shortName"><node path="Homologue" type="Homologue"></node></query>
+          </im:querylink></p>
           </li>
         </ul>
       </div>
     </TD>
   </TR>
 </TABLE>
- 
+
 

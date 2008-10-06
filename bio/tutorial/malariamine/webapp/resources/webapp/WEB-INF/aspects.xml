@@ -13,8 +13,8 @@
       Gene Transcript Exon TRNA NcRNA Chromosome ChromosomeBand
       Orthologue Paralogue IntergenicRegion GOTerm RepeatRegion TransposableElement TFBindingSite
       Pseudogene RRNA SnRNA SnoRNA UTR MRNA
-    </starting-points> 
-    <aspect-source name="Ensembl" url="http://www.ensembl.org/Mus_musculus"/>
+    </starting-points>
+    <aspect-source name="Ensembl" url="http://www.genedb.org"/>
   </aspect>
 
   <aspect name="Comparative Genomics">
@@ -38,8 +38,7 @@
     <icon-image>model/images/proteins.png</icon-image>
     <large-image>model/images/proteins.png</large-image>
     <intro-text>
-      Protein annotation (including family and domain annotation) from UniProt
-      .
+      Protein annotation (including family and domain annotation) from UniProt.
     </intro-text>
     <tile-name>model/proteins.jsp</tile-name>
     <starting-points>Protein ProteinFeature ProteinDomain ProteinFamily</starting-points>
@@ -47,19 +46,17 @@
     <aspect-source name="UniProt" url="http://www.uniprot.org"/>
   </aspect>
 
-  <aspect name="Protein Interactions">
+  <aspect name="Interactions">
     <subtitle>IntAct</subtitle>
-    <icon-image>model/images/proteinInteraction.gif</icon-image>
-    <large-image>model/images/proteinInteraction.gif</large-image>
+    <icon-image>model/images/interaction.gif</icon-image>
+    <large-image>model/images/interaction.gif</large-image>
     <tile-name></tile-name>
     <intro-text>
       Proteins formatted in the Proteomics Standards Initiative (PSI)
       molecular interaction (PSI MI) format can be mapped to the MalariaMine
       data model.
     </intro-text>
-    <starting-points>
-      Protein ProteinInteraction ProteinInteractionExperiment ProteinInteractionTerm
-    </starting-points>
+    <starting-points>Gene Interaction InteractionExperiment</starting-points>
     <tile-name>model/proteinInteraction.jsp</tile-name>
     <aspect-source name="IntAct" url="http://www.ebi.ac.uk/intact/"/>
   </aspect>
