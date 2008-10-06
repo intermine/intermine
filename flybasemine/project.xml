@@ -1,7 +1,7 @@
 <project type="bio">
   <property name="target.model" value="genomic"/>
   <property name="common.os.prefix" value="common"/>
-  <property name="intermine.properties.file" value="flymine.properties"/>
+  <property name="intermine.properties.file" value="flybasemine.properties"/>
   <property name="default.intermine.properties.file" location="../default.intermine.integrate.properties"/>
   <sources>
     <source name="chado-db-flybase-dmel" type="chado-db" dump="true">
