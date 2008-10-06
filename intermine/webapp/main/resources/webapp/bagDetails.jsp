@@ -123,11 +123,24 @@
 </tiles:insert>
 </div>
 
-<tiles:insert name="paging.tile">
-  <tiles:put name="resultsTable" beanName="pagedResults" />
-  <tiles:put name="currentPage" value="bagDetails" />
-  <tiles:put name="bag" beanName="bag" />
-</tiles:insert>
+<table style="margin-top: 10px;">
+	<tr>
+		<td><tiles:insert name="paging.tile">
+		  <tiles:put name="resultsTable" beanName="pagedResults" />
+		  <tiles:put name="currentPage" value="bagDetails" />
+		  <tiles:put name="bag" beanName="bag" />
+		</tiles:insert></td>
+		<td><div style="background-color: #F5F0FF; margin-left: 10px; padding-top: 3px; padding-bottom: 3px; padding-left: 10px; padding-right: 10px;">
+			<table><tr><td><b>Tags&nbsp;&nbsp;</b></td><td>
+			<c:set var="taggable" value="${bag}"/>
+			<tiles:insert name="inlineTagEditor.tile">
+		       <tiles:put name="taggable" beanName="taggable"/>
+		       <tiles:put name="vertical" value="true"/>
+	    	   <tiles:put name="show" value="true"/>
+	     	</tiles:insert></td></tr></table>
+	    </div></td>
+	</tr>
+</table>
 
 <div id="clearLine">&nbsp;</div>
 
