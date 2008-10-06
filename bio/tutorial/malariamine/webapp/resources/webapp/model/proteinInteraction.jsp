@@ -3,9 +3,6 @@
 <%@ taglib uri="/WEB-INF/struts-html.tld" prefix="html" %>
 <%@ taglib tagdir="/WEB-INF/tags" prefix="im" %>
 
-<p style="color:#e00;">
-    Note: Due to recent format changes in the PSI data format confidence scores may be missing, this will be corrected shortly (12/5/06)
-</p>
 <TABLE width="100%">
   <TR>
     <TD valign="top">
@@ -13,22 +10,31 @@
         Current data
       </div>
       <div class="body">
-        <P><B>High-throughput 2-hybrid protein interaction datasets.</B></P>
+        <P><B>High-throughput 2-hybrid interaction datasets.</B></P>
         <P>
-          These datasets were downloaded in <A href="http://psidev.sourceforge.net/mi/xml/doc/user">PSI-MI format</A> from the <A href="http://www.ebi.ac.uk/intact/index.html">intAct</A> database:
+          These datasets were downloaded in <A href="http://psidev.sourceforge.net/mi/xml/doc/user">PSI-MI format</A> from the <A href="http://www.ebi.ac.uk/intact">IntAct</A> database:
 
-             <im:querylink text="Plasmodium falciparum 3D7 experiment list" skipBuilder="true">
-                 <query name="" model="genomic" view="ProteinInteractionExperiment ProteinInteractionExperiment.publication.pubMedId ProteinInteractionExperiment.publication.firstAuthor ProteinInteractionExperiment.publication.year">
-                     <node path="ProteinInteractionExperiment" type="ProteinInteractionExperiment"></node>
-                     <node path="ProteinInteractionExperiment.hostOrganism" type="String"></node>
-                     <node path="ProteinInteractionExperiment.interactions" type="ProteinInteraction"></node>
-                     <node path="ProteinInteractionExperiment.interactions.proteins" type="Protein"></node>
-                     <node path="ProteinInteractionExperiment.interactions.proteins.organism" type="Organism"></node>
-                     <node path="ProteinInteractionExperiment.interactions.proteins.organism.name" type="String">
-                         <constraint op="=" value="36329" description="" taxonId="" code="A"></constraint>
-                     </node>
-                 </query>
-             </im:querylink>
+                         <im:querylink text="All <i>Plasmodium falciparum 3D7</i> interactions from IntAct " skipBuilder="true">
+<query name="" model="genomic" view="Interaction.experiment.publication.pubMedId Interaction.experiment.name Interaction.experiment.interactionDetectionMethod.name Interaction.experiment.participantIdentificationMethod.name Interaction.gene.primaryIdentifier Interaction.role Interaction.interactingGenes.primaryIdentifier Interaction.type.name" sortOrder="Interaction.experiment.publication.pubMedId asc" constraintLogic="A and B">
+  <node path="Interaction" type="Interaction">
+  </node>
+  <node path="Interaction.gene" type="Gene">
+  </node>
+  <node path="Interaction.gene.organism" type="Organism">
+  </node>
+  <node path="Interaction.gene.organism.name" type="String">
+    <constraint op="=" value="Plasmodium falciparum 3D7" description="" taxonId="" code="A"></constraint>
+  </node>
+  <node path="Interaction.dataSets" type="DataSet">
+  </node>
+  <node path="Interaction.dataSets.dataSource" type="DataSource">
+  </node>
+  <node path="Interaction.dataSets.dataSource.name" type="String">
+    <constraint op="=" value="IntAct" description="" identifier="" code="B"></constraint>
+  </node>
+</query>
+            </im:querylink>
+
        </P>
       </div>
     </TD>
