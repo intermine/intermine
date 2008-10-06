@@ -49,11 +49,6 @@ public class PostProcessOperationsTask extends DynamicAttributeTask
 {
     private static final Logger LOG = Logger.getLogger(PostProcessOperationsTask.class);
 
-    /**
-     * The category to pass to ObjectStoreInterMineImpl.precompute().
-     */
-    public static final String PRECOMPUTE_CATEGORY = "precompute";
-
     protected String operation, objectStoreWriter, ensemblDb, organisms = null;
     protected File outputFile;
     protected ObjectStoreWriter osw;

@@ -34,8 +34,7 @@ import org.intermine.objectstore.query.Results;
 import org.intermine.objectstore.query.ResultsRow;
 import org.intermine.objectstore.query.SimpleConstraint;
 
-import org.intermine.bio.postprocess.PostProcessOperationsTask;
-import org.intermine.bio.postprocess.PostProcessUtil;
+import org.intermine.bio.util.Constants;
 import org.intermine.objectstore.ObjectStore;
 import org.intermine.objectstore.ObjectStoreException;
 import org.intermine.objectstore.ObjectStoreFactory;
@@ -695,7 +694,7 @@ public class WriteGFFTask extends Task
         indexesToCreate.add(qfEnt);
         indexesToCreate.add(qfSyn);
         ((ObjectStoreInterMineImpl) os).precompute(q, indexesToCreate,
-                                                   PostProcessOperationsTask.PRECOMPUTE_CATEGORY);
+                                                   Constants.PRECOMPUTE_CATEGORY);
         Results res = os.execute(q);
         res.setBatchSize(50000);
 
@@ -771,7 +770,7 @@ public class WriteGFFTask extends Task
         Set<QueryNode> indexesToCreate = new HashSet<QueryNode>();
         indexesToCreate.add(qfEnt);
         ((ObjectStoreInterMineImpl) os).precompute(q, indexesToCreate,
-                                                   PostProcessOperationsTask.PRECOMPUTE_CATEGORY);
+                                                   Constants.PRECOMPUTE_CATEGORY);
 
         Results res = os.execute(q);
 

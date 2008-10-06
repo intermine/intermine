@@ -27,6 +27,7 @@ import org.intermine.objectstore.query.Results;
 import org.intermine.objectstore.query.ResultsRow;
 import org.intermine.objectstore.query.SimpleConstraint;
 
+import org.intermine.bio.util.Constants;
 import org.intermine.metadata.FieldDescriptor;
 import org.intermine.metadata.Model;
 import org.intermine.objectstore.ObjectStore;
@@ -111,7 +112,7 @@ public class SynonymUpdater
 
         ObjectStore os = osw.getObjectStore();
 
-        ((ObjectStoreInterMineImpl) os).precompute(q, PostProcessOperationsTask
+        ((ObjectStoreInterMineImpl) os).precompute(q, Constants
                                                    .PRECOMPUTE_CATEGORY);
         Results res = os.execute(q);
         res.setBatchSize(5000);
