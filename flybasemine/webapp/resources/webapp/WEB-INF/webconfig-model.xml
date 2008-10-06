@@ -323,13 +323,6 @@
     </fields>
   </class>
 
-  <class className="org.flymine.model.genomic.Reporter">
-    <fields>
-      <fieldconfig fieldExpr="controlType"/>
-      <fieldconfig fieldExpr="isControl"/>
-    </fields>
-  </class>
-
   <class className="org.flymine.model.genomic.Sequence">
     <fields>
       <fieldconfig fieldExpr="residues" fieldExporter="org.flymine.web.ResidueFieldExporter"
