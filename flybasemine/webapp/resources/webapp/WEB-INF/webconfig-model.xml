@@ -1,0 +1,894 @@
+<webconfig>
+
+  <class className="org.flymine.model.genomic.Allele">
+    <fields>
+      <fieldconfig fieldExpr="primaryIdentifier"/>
+      <fieldconfig fieldExpr="secondaryIdentifier"/>
+      <fieldconfig fieldExpr="alleleClass"/>
+      <fieldconfig fieldExpr="organism.name"/>
+    </fields>
+    <longdisplayers>
+      <displayer src="attributeLinkDisplayer.tile"/>
+    </longdisplayers>
+    <bagdisplayers>
+      <displayer src="attributeLinkDisplayer.tile"/>
+    </bagdisplayers>
+  </class>
+
+  <class className="org.flymine.model.genomic.Analysis">
+    <fields>
+      <fieldconfig fieldExpr="publication.title"/>
+      <fieldconfig fieldExpr="publication.firstAuthor"/>
+      <fieldconfig fieldExpr="publication.journal"/>
+    </fields>
+  </class>
+
+  <class className="org.flymine.model.genomic.AnalysisResult">
+    <fields>
+      <fieldconfig fieldExpr="confidence"/>
+    </fields>
+  </class>
+
+
+  <class className="org.flymine.model.genomic.Author">
+    <fields>
+      <fieldconfig fieldExpr="name"/>
+    </fields>
+  </class>
+
+  <class className="org.flymine.model.genomic.BindingSite">
+    <fields>
+      <fieldconfig fieldExpr="primaryIdentifier"/>
+      <fieldconfig fieldExpr="factor.primaryIdentifier"/>
+      <fieldconfig fieldExpr="chromosomeLocation" displayer="/model/chromosomeLocDisplayer.jsp" showInResults="false" />
+      <fieldconfig fieldExpr="chromosome.primaryIdentifier" showInInlineCollection="false" showInSummary="false" />
+      <fieldconfig fieldExpr="chromosomeLocation.start" showInInlineCollection="false" showInSummary="false" />
+      <fieldconfig fieldExpr="chromosomeLocation.end" showInInlineCollection="false" showInSummary="false" />
+    </fields>
+    <longdisplayers>
+      <displayer src="attributeLinkDisplayer.tile"/>
+      <displayer src="/model/locatedSequenceFeatureImage.jsp"/>
+    </longdisplayers>
+  </class>
+
+  <class className="org.flymine.model.genomic.BioEntity">
+    <fields>
+      <fieldconfig fieldExpr="primaryIdentifier"/>
+    </fields>
+    <longdisplayers>
+      <displayer src="attributeLinkDisplayer.tile"/>
+    </longdisplayers>
+  </class>
+
+  <class className="org.flymine.model.genomic.BlastMatch">
+    <fields>
+      <fieldconfig fieldExpr="object.primaryIdentifier"/>
+      <fieldconfig fieldExpr="subject.primaryIdentifier"/>
+      <fieldconfig fieldExpr="EValue"/>
+    </fields>
+  </class>
+
+  <class className="org.flymine.model.genomic.CDS">
+    <fields>
+      <fieldconfig fieldExpr="primaryIdentifier"/>
+      <fieldconfig fieldExpr="symbol" showInResults="false" showInInlineCollection="false"/>
+      <fieldconfig fieldExpr="length" displayer="/model/sequenceShortDisplayerWithField.jsp" />
+      <fieldconfig fieldExpr="chromosomeLocation" displayer="/model/chromosomeLocDisplayer.jsp" showInResults="false"/>
+      <fieldconfig fieldExpr="chromosome.primaryIdentifier" showInInlineCollection="false" showInSummary="false" />
+      <fieldconfig fieldExpr="chromosomeLocation.start" showInInlineCollection="false" showInSummary="false" />
+      <fieldconfig fieldExpr="chromosomeLocation.end" showInInlineCollection="false" showInSummary="false" />
+      <fieldconfig fieldExpr="gene.primaryIdentifier" showInInlineCollection="false"/>
+      <fieldconfig fieldExpr="organism.name"/>
+    </fields>
+    <longdisplayers>
+      <displayer src="attributeLinkDisplayer.tile"/>
+      <displayer src="/model/locatedSequenceFeatureImage.jsp"/>
+    </longdisplayers>
+  </class>
+
+  <class className="org.flymine.model.genomic.Chromosome">
+    <fields>
+      <fieldconfig fieldExpr="primaryIdentifier"/>
+      <fieldconfig fieldExpr="organism.name"/>
+      <fieldconfig fieldExpr="length" displayer="/model/sequenceShortDisplayerWithField.jsp" />
+    </fields>
+    <longdisplayers>
+      <displayer src="attributeLinkDisplayer.tile"/>
+      <displayer src="/model/locatedSequenceFeatureImage.jsp"/>
+    </longdisplayers>
+  </class>
+
+<!-- temporarily removed until it's in the preview
+  <class className="org.flymine.model.genomic.ChromosomeStructureVariation">
+    <fields>
+      <fieldconfig fieldExpr="primaryIdentifier"/>
+      <fieldconfig fieldExpr="secondaryIdentifier"/>
+      <fieldconfig fieldExpr="length" displayer="/model/sequenceShortDisplayerWithField.jsp" />
+      <fieldconfig fieldExpr="chromosomeLocation" displayer="/model/chromosomeLocDisplayer.jsp" showInResults="false" />
+      <fieldconfig fieldExpr="chromosome.primaryIdentifier" showInInlineCollection="false" showInSummary="false" />
+      <fieldconfig fieldExpr="chromosomeLocation.start" showInInlineCollection="false" showInSummary="false" />
+      <fieldconfig fieldExpr="chromosomeLocation.end" showInInlineCollection="false" showInSummary="false" />
+      <fieldconfig fieldExpr="available"/>
+    </fields>
+
+  </class>
+-->
+
+  <class className="org.flymine.model.genomic.Clone">
+    <fields>
+      <fieldconfig fieldExpr="primaryIdentifier"/>
+    </fields>
+  </class>
+
+  <class className="org.flymine.model.genomic.Comment">
+    <fields>
+      <fieldconfig fieldExpr="type"/>
+      <fieldconfig fieldExpr="text"/>
+    </fields>
+  </class>
+
+  <class className="org.flymine.model.genomic.ComputationalResult">
+    <fields>
+      <fieldconfig fieldExpr="score"/>
+      <fieldconfig fieldExpr="confidence"/>
+    </fields>
+  </class>
+
+  <class className="org.flymine.model.genomic.DataSet">
+    <fields>
+      <fieldconfig fieldExpr="title"/>
+      <fieldconfig fieldExpr="url" doNotTruncate="true"/>
+    </fields>
+  </class>
+
+  <class className="org.flymine.model.genomic.DataSource">
+    <fields>
+      <fieldconfig fieldExpr="name"/>
+      <fieldconfig fieldExpr="url" doNotTruncate="true"/>
+    </fields>
+    <longdisplayers>
+      <displayer src="/model/dataSourceLong.jsp"/>
+    </longdisplayers>
+    <tabledisplayer src="/model/dataSourceShort.jsp"/>
+  </class>
+
+<!--
+  - FIXME the Path.resolve() method can't cope with collection so these
+  - fieldconfigs fail:
+
+  <class className="org.flymine.model.genomic.DomainRelationship">
+    <fields>
+      <fieldconfig fieldExpr="childFeatures.primaryIdentifier"/>
+      <fieldconfig fieldExpr="contains.primaryIdentifier"/>
+      <fieldconfig fieldExpr="foundIn.primaryIdentifier"/>
+      <fieldconfig fieldExpr="parentFeatures.primaryIdentifier"/>
+    </fields>
+  </class>
+-->
+
+  <class className="org.flymine.model.genomic.Disease">
+    <fields>
+      <fieldconfig fieldExpr="omimId"/>
+      <fieldconfig fieldExpr="description"/>
+    </fields>
+    <longdisplayers>
+      <displayer src="attributeLinkDisplayer.tile"/>
+    </longdisplayers>
+  </class>
+
+  <class className="org.flymine.model.genomic.Exon">
+    <fields>
+      <fieldconfig fieldExpr="primaryIdentifier"/>
+      <fieldconfig fieldExpr="symbol"/>
+      <fieldconfig fieldExpr="length" displayer="/model/sequenceShortDisplayerWithField.jsp" />
+      <fieldconfig fieldExpr="chromosomeLocation"  displayer="/model/chromosomeLocDisplayer.jsp" showInResults="false"/>
+      <fieldconfig fieldExpr="chromosome.primaryIdentifier" showInInlineCollection="false" showInSummary="false" />
+      <fieldconfig fieldExpr="chromosomeLocation.start" showInInlineCollection="false" showInSummary="false" />
+      <fieldconfig fieldExpr="chromosomeLocation.end" showInInlineCollection="false" showInSummary="false" />
+      <fieldconfig fieldExpr="gene.primaryIdentifier" showInInlineCollection="false"/>
+    </fields>
+    <longdisplayers>
+      <displayer src="attributeLinkDisplayer.tile"/>
+      <displayer src="/model/locatedSequenceFeatureImage.jsp"/>
+    </longdisplayers>
+  </class>
+
+  <class className="org.flymine.model.genomic.FlyAtlasResult">
+    <fields>
+      <fieldconfig fieldExpr="affyCall"/>
+      <fieldconfig fieldExpr="enrichment"/>
+      <fieldconfig fieldExpr="mRNASignal"/>
+      <fieldconfig fieldExpr="mRNASignalSEM"/>
+      <fieldconfig fieldExpr="presentCall"/>
+    </fields>
+    <longdisplayers>
+      <displayer src="attributeLinkDisplayer.tile"/>
+    </longdisplayers>
+  </class>
+
+  <class className="org.flymine.model.genomic.Gene">
+    <fields>
+      <fieldconfig fieldExpr="primaryIdentifier"/>
+      <fieldconfig fieldExpr="secondaryIdentifier"/>
+      <fieldconfig fieldExpr="symbol"/>
+      <fieldconfig fieldExpr="name"/>
+      <fieldconfig fieldExpr="length" displayer="/model/sequenceShortDisplayerWithField.jsp" />
+      <fieldconfig fieldExpr="chromosomeLocation" displayer="/model/chromosomeLocDisplayer.jsp" showInResults="false" />
+      <fieldconfig fieldExpr="chromosome.primaryIdentifier" showInInlineCollection="false" showInSummary="false" />
+      <fieldconfig fieldExpr="chromosomeLocation.start" showInInlineCollection="false" showInSummary="false" />
+      <fieldconfig fieldExpr="chromosomeLocation.end" showInInlineCollection="false" showInSummary="false" />
+      <fieldconfig fieldExpr="organism.shortName" />
+    </fields>
+    <longdisplayers>
+      <displayer src="attributeLinkDisplayer.tile"/>
+      <displayer src="/model/locatedSequenceFeatureImage.jsp"/>
+      <displayer src="geneMicroArrayDisplayer.tile"/>
+    <displayer src="/model/proteinInteractionGraph.jsp"/>
+    </longdisplayers>
+    <bagdisplayers>
+      <displayer src="attributeLinkDisplayer.tile"/>
+    </bagdisplayers>
+  </class>
+
+  <class className="org.flymine.model.genomic.GOAnnotation">
+    <fields>
+      <fieldconfig fieldExpr="subject.primaryIdentifier" showInInlineCollection="false" showInResults="true"/>
+      <fieldconfig fieldExpr="identifier"/>
+      <fieldconfig fieldExpr="name"/>
+      <fieldconfig fieldExpr="property[GOTerm].namespace" showInSummary="false" />
+      <fieldconfig fieldExpr="qualifier"/>
+      <fieldconfig fieldExpr="isPrimaryAssignment"/>
+    </fields>
+    <longdisplayers>
+      <displayer src="attributeLinkDisplayer.tile"/>
+    </longdisplayers>
+  </class>
+
+  <class className="org.flymine.model.genomic.GOEvidenceCode">
+    <fields>
+      <fieldconfig fieldExpr="code"/>
+    </fields>
+    <longdisplayers>
+      <displayer src="attributeLinkDisplayer.tile"/>
+    </longdisplayers>
+  </class>
+
+   <class className="org.flymine.model.genomic.GOTerm">
+    <fields>
+      <fieldconfig fieldExpr="identifier"/>
+      <fieldconfig fieldExpr="name"/>
+    </fields>
+  </class>
+
+  <class className="org.flymine.model.genomic.Homologue">
+    <fields>
+      <fieldconfig fieldExpr="type"/>
+      <fieldconfig fieldExpr="gene.primaryIdentifier" showInResults="false" showInInlineCollection="false" />
+      <fieldconfig fieldExpr="inParanoidScore"/>
+      <fieldconfig fieldExpr="homologue.primaryIdentifier"/>
+      <fieldconfig fieldExpr="homologue.organism.shortName"/>
+      <fieldconfig fieldExpr="homologueTranslation.primaryIdentifier"/>
+    </fields>
+  </class>
+
+  <class className="org.flymine.model.genomic.Image">
+    <fieldconfig fieldExpr="url"/>
+    <fields>
+      <fieldconfig fieldExpr="url" displayer="/model/imageDisplayer.jsp" />
+    </fields>
+  </class>
+
+  <class className="org.flymine.model.genomic.InfoSource">
+    <fields>
+      <fieldconfig fieldExpr="title"/>
+    </fields>
+  </class>
+
+  <class className="org.flymine.model.genomic.Interaction">
+   <fields>
+     <fieldconfig fieldExpr="gene.primaryIdentifier"/>
+     <fieldconfig fieldExpr="shortName"/>
+     <fieldconfig fieldExpr="confidenceText"/>
+     <fieldconfig fieldExpr="confidence"/>
+     <fieldconfig fieldExpr="role"/>
+    </fields>
+  </class>
+  <class className="org.flymine.model.genomic.InteractionExperiment">
+    <fields>
+      <fieldconfig fieldExpr="name"/>
+      <fieldconfig fieldExpr="description"/>
+    </fields>
+  </class>
+  <class className="org.flymine.model.genomic.InteractionTerm">
+    <fields>
+      <fieldconfig fieldExpr="identifier"/>
+      <fieldconfig fieldExpr="name"/>
+    </fields>
+  </class>
+
+  <class className="org.flymine.model.genomic.Location">
+    <fields>
+      <fieldconfig fieldExpr="object.primaryIdentifier"/>
+      <fieldconfig fieldExpr="start"/>
+      <fieldconfig fieldExpr="end"/>
+      <fieldconfig fieldExpr="strand"/>
+    </fields>
+  </class>
+
+  <class className="org.flymine.model.genomic.LocatedSequenceFeature">
+    <fields>
+      <fieldconfig fieldExpr="primaryIdentifier"/>
+      <fieldconfig fieldExpr="length" displayer="/model/sequenceShortDisplayerWithField.jsp" />
+      <fieldconfig fieldExpr="chromosomeLocation" displayer="/model/chromosomeLocDisplayer.jsp" showInResults="false" />
+      <fieldconfig fieldExpr="chromosome.primaryIdentifier" showInInlineCollection="false" showInSummary="false" />
+      <fieldconfig fieldExpr="chromosomeLocation.start" showInInlineCollection="false" showInSummary="false" />
+      <fieldconfig fieldExpr="chromosomeLocation.end" showInInlineCollection="false" showInSummary="false" />
+      <fieldconfig fieldExpr="organism.name"/>
+    </fields>
+    <longdisplayers>
+      <displayer src="attributeLinkDisplayer.tile"/>
+      <displayer src="/model/locatedSequenceFeatureImage.jsp"/>
+    </longdisplayers>
+    <bagdisplayers>
+    </bagdisplayers>
+  </class>
+
+  <class className="org.flymine.model.genomic.MicroArrayExperiment">
+    <fields>
+      <fieldconfig fieldExpr="name"/>
+      <fieldconfig fieldExpr="description" sectionOnRight="true" sectionTitle="Description" openByDefault="true"/>
+    </fields>
+  </class>
+
+  <class className="org.flymine.model.genomic.MicroArrayResult">
+    <fields>
+      <fieldconfig fieldExpr="type"/>
+      <fieldconfig fieldExpr="value"/>
+      <fieldconfig fieldExpr="scale"/>
+      <fieldconfig fieldExpr="isControl"/>
+    </fields>
+  </class>
+
+  <class className="org.flymine.model.genomic.MicroArrayAssay">
+    <fields>
+      <fieldconfig fieldExpr="name"/>
+      <fieldconfig fieldExpr="sample1"/>
+      <fieldconfig fieldExpr="sample2"/>
+    </fields>
+  </class>
+
+  <class className="org.flymine.model.genomic.MicroarrayOligo">
+    <fields>
+      <fieldconfig fieldExpr="primaryIdentifier"/>
+      <fieldconfig fieldExpr="length"/>
+      <fieldconfig fieldExpr="tm"/>
+    </fields>
+    <longdisplayers>
+      <!-- disable the LocatedSequenceFeature displayer (GBrowse) because
+           MicroarrayOligos aren't located at the moment -->
+      <displayer src="attributeLinkDisplayer.tile"/>
+    </longdisplayers>
+  </class>
+
+  <class className="org.flymine.model.genomic.Motif">
+    <fields>
+      <fieldconfig fieldExpr="primaryIdentifier" />
+    </fields>
+    <longdisplayers>
+      <displayer src="/model/tiffinMotifDisplayer.jsp"/>
+    </longdisplayers>
+  </class>
+
+  <class className="org.flymine.model.genomic.MRNAExpressionResult">
+    <fields>
+      <fieldconfig fieldExpr="stageRange"/>
+      <fieldconfig fieldExpr="expressed"/>
+    </fields>
+    <longdisplayers>
+      <displayer src="/model/BDGPLinkOut.jsp"/>
+    </longdisplayers>
+  </class>
+
+  <class className="org.flymine.model.genomic.MRNAExpressionTerm">
+    <fields>
+      <fieldconfig fieldExpr="name"/>
+      <fieldconfig fieldExpr="type"/>
+    </fields>
+  </class>
+
+  <class className="org.flymine.model.genomic.Mutagen">
+    <fields>
+      <fieldconfig fieldExpr="description"/>
+    </fields>
+  </class>
+
+  <class className="org.flymine.model.genomic.OntologyRelation">
+    <fields>
+      <fieldconfig fieldExpr="type"/>
+      <fieldconfig fieldExpr="parentTerm.identifier"/>
+      <fieldconfig fieldExpr="childTerm.identifier"/>
+    </fields>
+    <longdisplayers>
+      <displayer src="attributeLinkDisplayer.tile"/>
+    </longdisplayers>
+  </class>
+
+  <class className="org.flymine.model.genomic.OntologyTerm">
+    <fields>
+      <fieldconfig fieldExpr="identifier"/>
+      <fieldconfig fieldExpr="name"/>
+      <fieldconfig fieldExpr="description" doNotTruncate="true" />
+    </fields>
+  </class>
+
+  <class className="org.flymine.model.genomic.OntologyTermSynonym">
+    <fields>
+      <fieldconfig fieldExpr="name"/>
+      <fieldconfig fieldExpr="type"/>
+    </fields>
+  </class>
+
+  <class className="org.flymine.model.genomic.Organism">
+    <fields>
+      <fieldconfig fieldExpr="name"/>
+      <fieldconfig fieldExpr="taxonId" />
+    </fields>
+    <longdisplayers>
+      <displayer src="attributeLinkDisplayer.tile"/>
+    </longdisplayers>
+  </class>
+
+  <class className="org.flymine.model.genomic.Pathway">
+    <fields>
+      <fieldconfig fieldExpr="identifier" />
+      <fieldconfig fieldExpr="name" />
+    </fields>
+    <longdisplayers>
+      <displayer src="attributeLinkDisplayer.tile"/>
+    </longdisplayers>
+  </class>
+
+  <class className="org.flymine.model.genomic.PhenotypeAnnotation">
+    <fields>
+      <fieldconfig fieldExpr="annotationType"/>
+      <fieldconfig fieldExpr="description"/>
+      <fieldconfig fieldExpr="allele.primaryIdentifier"/>
+    </fields>
+  </class>
+
+  <class className="org.flymine.model.genomic.Primer">
+    <fields>
+      <fieldconfig fieldExpr="name"/>
+      <fieldconfig fieldExpr="primaryIdentifier"/>
+      <fieldconfig fieldExpr="length" displayer="/model/sequenceShortDisplayerWithField.jsp" />
+      <fieldconfig fieldExpr="chromosomeLocation" displayer="/model/chromosomeLocDisplayer.jsp" showInResults="false" />
+      <fieldconfig fieldExpr="chromosome.primaryIdentifier" showInInlineCollection="false" showInSummary="false" />
+      <fieldconfig fieldExpr="chromosomeLocation.start" showInInlineCollection="false" showInSummary="false" />
+      <fieldconfig fieldExpr="chromosomeLocation.end" showInInlineCollection="false" showInSummary="false" />
+    </fields>
+  </class>
+
+  <class className="org.flymine.model.genomic.ProbeSet">
+    <fields>
+      <fieldconfig fieldExpr="primaryIdentifier"/>
+    </fields>
+  </class>
+
+  <class className="org.flymine.model.genomic.Polypeptide">
+    <fields>
+      <fieldconfig fieldExpr="primaryIdentifier"/>
+      <fieldconfig fieldExpr="organism.name"/>
+    </fields>
+  </class>
+
+  <class className="org.flymine.model.genomic.Protein">
+    <fields>
+      <fieldconfig fieldExpr="primaryIdentifier"/>
+      <fieldconfig fieldExpr="primaryAccession"/>
+      <fieldconfig fieldExpr="organism.name"/>
+      <fieldconfig fieldExpr="length" displayer="/model/sequenceShortDisplayerWithField.jsp" />
+    </fields>
+    <longdisplayers>
+      <displayer src="attributeLinkDisplayer.tile"/>
+    </longdisplayers>
+    <bagdisplayers>
+    </bagdisplayers>
+  </class>
+
+  <class className="org.flymine.model.genomic.ProteinDomain">
+    <fields>
+      <fieldconfig fieldExpr="primaryIdentifier"/>
+      <fieldconfig fieldExpr="name"/>
+      <fieldconfig fieldExpr="shortName"/>
+      <fieldconfig fieldExpr="type"/>
+    </fields>
+    <longdisplayers>
+      <displayer src="attributeLinkDisplayer.tile"/>
+    </longdisplayers>
+  </class>
+
+  <class className="org.flymine.model.genomic.ProteinStructure">
+    <fields>
+      <fieldconfig fieldExpr="identifier"/>
+      <fieldconfig fieldExpr="title"/>
+      <fieldconfig fieldExpr="technique"/>
+      <fieldconfig fieldExpr="classification"/>
+      <fieldconfig fieldExpr="resolution" />
+      <fieldconfig fieldExpr="prosaQScore"/>
+      <fieldconfig fieldExpr="prosaZScore"/>
+      <fieldconfig fieldExpr="start"/>
+      <fieldconfig fieldExpr="end"/>
+      <fieldconfig fieldExpr="alignment" showInResults="false" />
+    </fields>
+    <longdisplayers>
+      <displayer src="attributeLinkDisplayer.tile"/>
+      <displayer src="/model/modelledStructure.jsp"/>
+    </longdisplayers>
+  </class>
+
+  <class className="org.flymine.model.genomic.Protocol">
+    <fields>
+      <fieldconfig fieldExpr="name"/>
+      <fieldconfig fieldExpr="description" doNotTruncate="true"/>
+    </fields>
+  </class>
+
+  <class className="org.flymine.model.genomic.Publication">
+    <fields>
+      <fieldconfig fieldExpr="firstAuthor"/>
+      <fieldconfig fieldExpr="title"/>
+      <fieldconfig fieldExpr="year"/>
+      <fieldconfig fieldExpr="journal"/>
+      <fieldconfig fieldExpr="volume"/>
+      <fieldconfig fieldExpr="pages"/>
+      <fieldconfig fieldExpr="pubMedId"/>
+    </fields>
+
+    <longdisplayers>
+      <displayer src="attributeLinkDisplayer.tile"/>
+    </longdisplayers>
+  </class>
+
+  <class className="org.flymine.model.genomic.RegulatoryRegion">
+    <fields>
+      <fieldconfig fieldExpr="primaryIdentifier"/>
+      <fieldconfig fieldExpr="chromosomeLocation" displayer="/model/chromosomeLocDisplayer.jsp" showInResults="false" />
+      <fieldconfig fieldExpr="chromosome.primaryIdentifier" showInInlineCollection="false" showInSummary="false" />
+      <fieldconfig fieldExpr="chromosomeLocation.start" showInInlineCollection="false" showInSummary="false" />
+      <fieldconfig fieldExpr="chromosomeLocation.end" showInInlineCollection="false" showInSummary="false" />
+    </fields>
+    <longdisplayers>
+      <displayer src="attributeLinkDisplayer.tile"/>
+      <displayer src="/model/locatedSequenceFeatureImage.jsp"/>
+    </longdisplayers>
+  </class>
+
+  <class className="org.flymine.model.genomic.Relation">
+    <fields>
+      <fieldconfig fieldExpr="object.primaryIdentifier"/>
+      <fieldconfig fieldExpr="subject.primaryIdentifier"/>
+    </fields>
+  </class>
+
+  <class className="org.flymine.model.genomic.Reporter">
+    <fields>
+      <fieldconfig fieldExpr="controlType"/>
+      <fieldconfig fieldExpr="isControl"/>
+    </fields>
+  </class>
+
+  <class className="org.flymine.model.genomic.RNAiPhenotype">
+    <fields>
+      <fieldconfig fieldExpr="comment"/>
+      <fieldconfig fieldExpr="name"/>
+      <fieldconfig fieldExpr="code"/>
+    </fields>
+    <longdisplayers>
+      <displayer src="attributeLinkDisplayer.tile"/>
+    </longdisplayers>
+  </class>
+
+
+  <class className="org.flymine.model.genomic.RNAiScreen">
+    <fields>
+      <fieldconfig fieldExpr="name"/>
+      <fieldconfig fieldExpr="cellLine"/>
+      <fieldconfig fieldExpr="publication.title"/>
+    </fields>
+    <longdisplayers>
+      <displayer src="attributeLinkDisplayer.tile"/>
+    </longdisplayers>
+  </class>
+
+  <class className="org.flymine.model.genomic.RNAiScreenHit">
+    <fields>
+      <fieldconfig fieldExpr="result"/>
+      <fieldconfig fieldExpr="amplicon.primaryIdentifier"/>
+      <fieldconfig fieldExpr="rnaiScreen.name"/>
+      <fieldconfig fieldExpr="rnaiScreen.publication.pubMedId"/>
+    </fields>
+  </class>
+
+  <class className="org.flymine.model.genomic.Sample">
+    <fields>
+      <fieldconfig fieldExpr="materialType"/>
+      <fieldconfig fieldExpr="organism.name"/>
+      <fieldconfig fieldExpr="primaryCharacteristicType"/>
+      <fieldconfig fieldExpr="primaryCharacteristic"/>
+    </fields>
+  </class>
+
+  <class className="org.flymine.model.genomic.SampleCharacteristic">
+    <fields>
+      <fieldconfig fieldExpr="type"/>
+      <fieldconfig fieldExpr="value"/>
+    </fields>
+  </class>
+
+  <class className="org.flymine.model.genomic.Sequence">
+    <fields>
+      <fieldconfig fieldExpr="residues" fieldExporter="org.flymine.web.ResidueFieldExporter"
+                   sectionOnRight="true" sectionTitle="Residues" openByDefault="true"
+                   showInSummary="false" showInResults="false" showInInlineCollection="false"/>
+      <fieldconfig fieldExpr="length"/>
+    </fields>
+    <tabledisplayer src="/model/sequenceShortDisplayer.jsp"/>
+  </class>
+
+   <class className="org.flymine.model.genomic.Stage">
+    <fields>
+      <fieldconfig fieldExpr="name"/>
+    </fields>
+  </class>
+
+  <class className="org.flymine.model.genomic.Synonym">
+    <fields>
+      <fieldconfig fieldExpr="value"/>
+      <fieldconfig fieldExpr="type"/>
+      <fieldconfig fieldExpr="source.name"/>
+    </fields>
+  </class>
+
+  <class className="org.flymine.model.genomic.SyntenicRegion">
+    <fields>
+      <fieldconfig fieldExpr="primaryIdentifier"/>
+      <fieldconfig fieldExpr="length" displayer="/model/sequenceShortDisplayerWithField.jsp" />
+      <fieldconfig fieldExpr="chromosomeLocation" displayer="/model/chromosomeLocDisplayer.jsp" showInResults="false" />
+      <fieldconfig fieldExpr="chromosome.primaryIdentifier" showInInlineCollection="false" showInSummary="false" />
+      <fieldconfig fieldExpr="chromosomeLocation.start" showInInlineCollection="false" showInSummary="false" />
+      <fieldconfig fieldExpr="chromosomeLocation.end" showInInlineCollection="false" showInSummary="false" />
+      <fieldconfig fieldExpr="organism.name"/>
+      <fieldconfig fieldExpr="organism.taxonId"/>
+    </fields>
+  </class>
+
+  <class className="org.flymine.model.genomic.TFBindingSite">
+    <fields>
+      <fieldconfig fieldExpr="primaryIdentifier"/>
+      <fieldconfig fieldExpr="gene.primaryIdentifier"/>
+      <fieldconfig fieldExpr="factor.primaryIdentifier"/>
+      <fieldconfig fieldExpr="chromosomeLocation" displayer="/model/chromosomeLocDisplayer.jsp" showInResults="false" />
+      <fieldconfig fieldExpr="chromosome.primaryIdentifier" showInInlineCollection="false" showInSummary="false" />
+      <fieldconfig fieldExpr="chromosomeLocation.start" showInInlineCollection="false" showInSummary="false" />
+      <fieldconfig fieldExpr="chromosomeLocation.end" showInInlineCollection="false" showInSummary="false" />
+    </fields>
+    <longdisplayers>
+      <displayer src="/model/tiffinBindingSiteDisplayer.jsp"/>
+      <displayer src="attributeLinkDisplayer.tile"/>
+      <displayer src="/model/locatedSequenceFeatureImage.jsp"/>
+    </longdisplayers>
+  </class>
+
+  <class className="org.flymine.model.genomic.TFmodule">
+    <longdisplayers>
+      <displayer src="/model/redflyDisplayer.jsp"/>
+      <displayer src="attributeLinkDisplayer.tile"/>
+    </longdisplayers>
+  </class>
+
+  <class className="org.flymine.model.genomic.Transcript">
+    <fields>
+      <fieldconfig fieldExpr="primaryIdentifier"/>
+      <fieldconfig fieldExpr="exonCount"/>
+      <fieldconfig fieldExpr="length" displayer="/model/sequenceShortDisplayerWithField.jsp" />
+      <fieldconfig fieldExpr="chromosomeLocation" displayer="/model/chromosomeLocDisplayer.jsp" showInResults="false"/>
+      <fieldconfig fieldExpr="chromosome.primaryIdentifier" showInInlineCollection="false" showInSummary="false" />
+      <fieldconfig fieldExpr="chromosomeLocation.start" showInInlineCollection="false" showInSummary="false" />
+      <fieldconfig fieldExpr="chromosomeLocation.end" showInInlineCollection="false" showInSummary="false" />
+    </fields>
+    <longdisplayers>
+      <displayer src="attributeLinkDisplayer.tile"/>
+      <displayer src="/model/locatedSequenceFeatureImage.jsp"/>
+    </longdisplayers>
+  </class>
+
+  <class className="org.flymine.model.genomic.Translation">
+    <fields>
+      <fieldconfig fieldExpr="primaryIdentifier"/>
+      <fieldconfig fieldExpr="secondaryIdentifier"/>
+      <fieldconfig fieldExpr="organism.name"/>
+    </fields>
+    <longdisplayers>
+      <displayer src="attributeLinkDisplayer.tile"/>
+    </longdisplayers>
+  </class>
+
+  <class className="org.flymine.model.genomic.TransposableElementInsertionSite">
+    <fields>
+      <fieldconfig fieldExpr="primaryIdentifier"/>
+      <fieldconfig fieldExpr="secondaryIdentifier"/>
+      <fieldconfig fieldExpr="cytoLocation"/>
+      <fieldconfig fieldExpr="length" displayer="/model/sequenceShortDisplayerWithField.jsp" />
+      <fieldconfig fieldExpr="chromosomeLocation" displayer="/model/chromosomeLocDisplayer.jsp" showInResults="false" />
+      <fieldconfig fieldExpr="chromosome.primaryIdentifier" showInInlineCollection="false" showInSummary="false" />
+      <fieldconfig fieldExpr="chromosomeLocation.start" showInInlineCollection="false" showInSummary="false" />
+      <fieldconfig fieldExpr="chromosomeLocation.end" showInInlineCollection="false" showInSummary="false" />
+    </fields>
+    <!-- inherits longdisplayers -->
+    <bagdisplayers>
+    </bagdisplayers>
+  </class>
+
+  <class className="org.flymine.model.genomic.TreatmentParameter">
+    <fields>
+      <fieldconfig fieldExpr="type"/>
+      <fieldconfig fieldExpr="value"/>
+      <fieldconfig fieldExpr="units"/>
+    </fields>
+  </class>
+
+  <class className="org.flymine.model.genomic.Treatment">
+    <fields>
+      <fieldconfig fieldExpr="action"/>
+    </fields>
+  </class>
+
+  <class className="org.flymine.model.genomic.UniProtFeature">
+    <fields>
+      <fieldconfig fieldExpr="type"/>
+      <fieldconfig fieldExpr="description"/>
+      <fieldconfig fieldExpr="begin"/>
+      <fieldconfig fieldExpr="end"/>
+    </fields>
+  </class>
+
+  <tableExportConfig id="sequence"
+                     className="org.intermine.bio.web.export.SequenceHttpExporter"/>
+  <tableExportConfig id="gff3"
+                     className="org.intermine.bio.web.export.GFF3HttpExporter"/>
+
+   <widgets>
+      <graphdisplayer id="chromosome_distribution" title="Chromosome Distribution" domainLabel="Chromosome" rangeLabel="Count" dataSetLoader="org.intermine.bio.web.widget.ChromosomeDistributionDataSetLdr"
+                      toolTipGen="org.intermine.web.logic.widget.ToolTipGenerator" link="org.intermine.bio.web.widget.ChromosomeDistributionGraphURLGenerator"
+                      description="Actual: number of items in this list found on each chromosome.  Expected: given the total number of items on the chromosome and the number of items in this list, the number of items expected to be found on each chromosome."
+                      graphType="BarChart" extraAttributeClass="org.intermine.bio.web.logic.BioUtil"
+                      typeClass="org.flymine.model.genomic.Gene,org.flymine.model.genomic.LocatedSequenceFeature,org.flymine.model.genomic.TransposableElementInsertionSite"
+                      />
+
+      <graphdisplayer id="flyatlas" title="Gene Expression in the Adult Fly (FlyAtlas)" domainLabel="Tissue" rangeLabel="Up (+) or Down (-) gene count" dataSetLoader="org.flymine.web.widget.FlyAtlasDataSetLdr"
+                      toolTipGen="org.intermine.web.logic.widget.ToolTipGenerator" link="org.flymine.web.widget.FlyAtlasGraphURLGenerator"
+                      description="For each tissue in the adult fly, the number of genes from this list for which the levels of expression are significantly high (Up) or low (Down) according to &lt;a href=&quot;http://www.flyatlas.org/&quot; target=&quot;_new&quot;&gt;FlyAtlas&lt;/a&gt; AffyCall."
+                      typeClass="org.flymine.model.genomic.Gene"
+                      graphType="StackedBarChart" />
+
+      <graphdisplayer id="flyfish" title="mRNA subcellular localisation (fly-FISH)" domainLabel="Stage" rangeLabel="Gene count" dataSetLoader="org.flymine.web.widget.FlyFishDataSetLdr"
+                      toolTipGen="org.intermine.web.logic.widget.ToolTipGenerator" link="org.flymine.web.widget.FlyFishGraphURLGenerator"
+                      description="Expression patterns of Drosophila mRNAs at the subcellular level during early embryogenesis - data from  &lt;a href=&quot;http://fly-fish.ccbr.utoronto.ca/&quot; target=&quot;_new&quot;&gt;Fly-FISH&lt;/a&gt;.  Note that not all genes have been assayed by &lt;a href=&quot;http://fly-fish.ccbr.utoronto.ca/&quot; target=&quot;_new&quot;&gt;Fly-FISH&lt;/a&gt;."
+                      typeClass="org.flymine.model.genomic.Gene"
+                      graphType="BarChart" />
+
+      <graphdisplayer id="bdgp" title="BDGP expression patterns"
+                      link="org.flymine.web.widget.BDGPinsituGraphURLGenerator"
+                      dataSetLoader="org.flymine.web.widget.BDGPinsituDataSetLdr"
+                      description="Expression patterns of Drosophila mRNAs during embryogenesis - data from  &lt;a href=&quot;http://www.fruitfly.org/cgi-bin/ex/insitu.pl&quot; target=&quot;_new&quot;&gt;BGDP&lt;/a&gt;.  Note that not all genes have been assayed by &lt;a href=&quot;http://www.fruitfly.org/cgi-bin/ex/insitu.pl&quot; target=&quot;_new&quot;&gt;BGDP&lt;/a&gt;. "
+                      toolTipGen="org.intermine.web.logic.widget.ToolTipGenerator"
+                      domainLabel="Stage"
+                      rangeLabel="Gene count"
+                      typeClass="org.flymine.model.genomic.Gene"
+                      graphType="BarChart" />
+
+      <enrichmentwidgetdisplayer id="protein_features" title="UniProt Features"
+                                 link="org.intermine.bio.web.widget.UniProtFeaturesURLQuery"
+                                 dataSetLoader="org.intermine.bio.web.widget.UniProtFeaturesLdr"
+                                 label="Feature"
+                                 description="UniProt features enriched for proteins in this list."
+                                 filters=""
+                                 filterLabel=""
+                                 typeClass="org.flymine.model.genomic.Protein"
+                                 max="0.10"  />
+
+      <enrichmentwidgetdisplayer id="uniprot_keywords" title="UniProt Keywords"
+                                 link="org.intermine.bio.web.widget.UniProtKeywordsURLQuery"
+                                 dataSetLoader="org.intermine.bio.web.widget.UniProtKeywordsLdr"
+                                 label="Keyword"
+                                 description="UniProt keywords enriched for proteins in this list."
+                                 filters=""
+                                 filterLabel=""
+                                 typeClass="org.flymine.model.genomic.Protein"
+                                 max="0.10"  />
+
+      <enrichmentwidgetdisplayer id="go_enrichment" title="Gene Ontology Enrichment"
+                                 link="org.intermine.bio.web.widget.GoStatURLQuery"
+                                 dataSetLoader="org.intermine.bio.web.widget.GoStatLdr"
+                                 description="GO terms enriched for items in this list."
+                                 label="GO Term"
+                                 filters="biological_process,cellular_component,molecular_function"
+                                 filterLabel="Ontology"
+                                 max="0.10"
+                                 typeClass="org.flymine.model.genomic.Gene,org.flymine.model.genomic.Protein"
+                                 externalLink="http://amigo.geneontology.org/cgi-bin/amigo/term-details.cgi?term=" />
+
+      <enrichmentwidgetdisplayer id="prot_dom_enrichment" title="Protein Domain Enrichment"
+                                 link="org.flymine.web.widget.ProteinDomainURLQuery"
+                                 dataSetLoader="org.flymine.web.widget.ProteinDomainLdr"
+                                 label="Protein Domain"
+                                 description="Protein Domains enriched for items in this list."
+                                 filters=""
+                                 filterLabel=""
+                                 max="0.10"
+                                 typeClass="org.flymine.model.genomic.Gene,org.flymine.model.genomic.Protein"
+                                 externalLink="http://www.ebi.ac.uk/interpro/IEntry?ac=" />
+
+      <enrichmentwidgetdisplayer id="publication_enrichment" title="Publication Enrichment"
+                                 link="org.intermine.bio.web.widget.PublicationURLQuery"
+                                 dataSetLoader="org.intermine.bio.web.widget.PublicationLdr"
+                                 label="Publication"
+                                 description="Publications enriched for genes in this list."
+                                 filters=""
+                                 filterLabel=""
+                                 max="0.10"
+                                 externalLink="http://www.ncbi.nlm.nih.gov/entrez/query.fcgi?cmd=Retrieve&amp;db=PubMed&amp;dopt=Abstract&amp;list_uids="
+                                 typeClass="org.flymine.model.genomic.Gene"
+                                 externalLinkLabel="PubMed:" />
+
+      <enrichmentwidgetdisplayer id="bdgp_enrichment" title="BDGP Enrichment"
+                                 link="org.flymine.web.widget.BDGPURLQuery"
+                                 dataSetLoader="org.flymine.web.widget.BDGPLdr"
+                                 label="Terms"
+                                 description="ImaGO terms enriched for genes in this list - data from &lt;a href=&quot;http://www.fruitfly.org/cgi-bin/ex/insitu.pl&quot; target=&quot;_new&quot;&gt;BGDP&lt;/a&gt;.  Note that not all genes have been assayed by BDGP."
+                                 filters=""
+                                 filterLabel=""
+                                 max="0.10"
+                                 typeClass="org.flymine.model.genomic.Gene"
+                                 externalLink="" />
+
+      <bagtabledisplayer id="kegg" title="Pathway Information (KEGG)" pathStrings="Gene.pathways" link="org.intermine.bio.web.widget.PathwayURLQuery"
+                         description="Most common &lt;a href=&quot;http://www.genome.jp/kegg/&quot; target=&quot;_new&quot;&gt;KEGG pathways&lt;/a&gt; for this list."
+                         displayFields="identifier,name"
+                         exportFields="primaryIdentifier"
+                         externalLink="http://www.genome.jp/dbget-bin/www_bget?pathway+dme"
+                         typeClass="org.flymine.model.genomic.Gene"
+                         externalLinkLabel="KEGG" />
+
+      <bagtabledisplayer id="orthologues" title="Orthologues" pathStrings="Gene.homologues[type=orthologue].homologue.organism" link="org.intermine.bio.web.widget.HomologueURLQuery"
+                         description="Counts of orthologues in other organisms for the genes in this list."
+                         displayFields="name"
+                         exportFields="primaryIdentifier"
+                         typeClass="org.flymine.model.genomic.Gene"
+                         columnTitle="Orthologues"/>
+
+      <bagtabledisplayer id="interactions" title="Interactions"
+                         pathStrings="Gene.interactions.interactingGenes"
+                         link="org.intermine.bio.web.widget.InteractionURLQuery"
+                         description="Genes (from the list or not) that interact with genes in this list.  Counts may include the same interaction more than once if observed in multiple experiments."
+                         displayFields="primaryIdentifier"
+                         exportFields="primaryIdentifier"
+                         typeClass="org.flymine.model.genomic.Gene"
+                         columnTitle="Interactions"/>
+
+
+
+<!--
+     <enrichmentwidgetdisplayer title="Tiffin Motif Enrichment"
+                                      link="org.flymine.web.widget.TiffinURLQuery"
+                                      dataSetLoader="org.flymine.web.widget.TiffinLdr"
+                                      description="Tiffin Motifs enriched for genes in this list."
+                                      max="0.10"
+                                      label="Motif"
+                                      filters=""
+                                      filterLabel=""
+                                      externalLink="http://servlet.sanger.ac.uk/tiffin/motif.jsp?acc="
+                                      append=".2" />
+-->
+    </widgets>
+</webconfig>

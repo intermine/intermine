@@ -1,0 +1,195 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE article PUBLIC "-//OASIS//DTD Simplified DocBook XML V1.0//EN"
+"http://www.oasis-open.org/docbook/xml/simple/1.0/sdocbook.dtd">
+<article>
+  <section>
+    <title>Tutorial 4: Bags and History</title>
+
+
+    <para>All queries in FlyMine can be performed on lists or 'bags'
+    that you create yourself. Bags are holders for lists of data,
+    e.g. a list of gene identifiers. Saved bags of data can be used to
+    constrain queries (either a template query or in the
+    QueryBuilder), perform logical operations (union, intersect,
+    subtract) and can be exported.</para>
+
+    <itemizedlist>
+      <listitem><para>Bags can be created from an external source:
+      click on 'Bags' on the top menu bar of any FlyMine page and type
+      or past in a list of identifiers, or upload a file containing
+      the list.</para></listitem>
+ 
+      <listitem><para>Data from previous queries can also be saved
+      into a bag. To save your data to a bag select the required data
+      on a result page and either add it to an existing bag or save it
+      to a new bag, using the boxes displayed underneath the
+      results. Selecting the check boxes next to the column headings
+      will select the entire column for saving. Alternatively,
+      individual items can be saved by selecting check boxes next to
+      the items.</para></listitem>
+
+   </itemizedlist>
+
+      <para>This tutorial will illustrate how to create bags and how
+      to make use of bags. As an example, we will search for the
+      orthologues of <emphasis>D. melanogaster</emphasis> eye
+      specification genes in <emphasis>D. pseudoobscura</emphasis>. We
+      will then export the gene sequences for all the orthologues at
+      once. To find the orthologues of the
+      <emphasis>D. melanogaster</emphasis> genes in
+      <emphasis>D. pseudoobscura</emphasis>, we will first make a bag
+      of the <emphasis>D. melanogaster</emphasis> genes. Click on
+      'Bags' in the top menu bar.</para>
+
+        <mediaobject>
+          <imageobject>
+            <imagedata fileref="bag-homepage.png" />
+          </imageobject><textobject><phrase> </phrase></textobject>
+        </mediaobject>
+
+     <para>To make your bag:</para>
+ 
+   <orderedlist>
+
+
+      
+      <listitem><para>You must first decide what type of bag you are
+		going to create as it is not possible to create mixed
+		bags.  We are going to make a bag of genes, so select
+		'Gene' from the drop down list.  You can also
+		optionally set the organism for the bag you want to
+		create.  This is useful if, for example, you have a
+		list of gene symbols, as the same symbol may be
+		present in more than one organism.  As we are
+		uploading a list of gene symbols from
+		<emphasis>D. melanogaster</emphasis>, select tis
+		organism from the drop down list. </para></listitem>
+
+      <listitem><para>Either type or cut and paste in a list of
+      identifiers, or upload a list from a file. As an example, type
+      in the gene symbols 'eya', 'pax6', 'toy', 'dac' and 'so' into
+      the box.</para></listitem>
+
+    
+
+      <listitem><para>Click on 'Create bag' to upload your
+      bag.</para></listitem>
+    </orderedlist>
+
+        <mediaobject>
+          <imageobject>
+            <imagedata fileref="bag-create.png" />
+          </imageobject><textobject><phrase> </phrase></textobject>
+        </mediaobject>
+
+    <para>When you press 'Create bag' FlyMine will perform a check of
+    all the items in your list against the FlyMine database to make
+    sure it can find them.  The next page displayed will show you any
+    discrepencies that have been found and will allow you to give your
+    bag a name and save it.  In this case one of the symbols in our
+    list was found only as a synonym in FlyMine - in other words we
+    did not have the official gene symbol for that gene (ey) in our
+    list.  In this case, this dosn't maatter as it is still the gene
+    we want, so we can add this to our list.  See the manual for other
+    types of discrepencies that may be reported.</para>
+
+    <para>Once you are happy with the items in your bag, enter a name
+    and press 'Save bag'. </para>
+
+
+        <mediaobject>
+          <imageobject>
+            <imagedata fileref="confirmBag.png" />
+          </imageobject><textobject><phrase> </phrase></textobject>
+        </mediaobject>
+
+
+    <para>The next page displayed is a 'Bag details page', which
+    provides a summary of the contents of your bag, some widgets
+    showing gene expression, pathway and GO term enrichment data
+    (where available) and a set of templates that have been
+    automatically run on the contents of your bag.</para>
+
+    <para>If you click on 'bags' in the top menu bar you will find
+    your saved bag in your MyMine account. If you are logged in this
+    will be saved permanently. </para>
+
+    <para>Now we want to find all the orthologous genes in
+    <emphasis>D. pseudoobscura</emphasis> using an existing
+    template. Find the template 'Gene --> Orthologues in one specific
+    organism' (Comparative Genomics aspect).</para>
+
+   <para>Any variable in a template query can be constrained to a bag
+    (or 'not in' a bag) rather than a single value, providing you have
+    a bag of the correct type saved in your MyMine account. Click on
+    the check-box below the Synonym value box to constrain the gene
+    synonym value to be in a bag. If you have bags of the correct type
+    saved in your 'MyMine' account the option to constrain each
+    variable to a bag will appear automatically. The name of the bag
+    you just created will appear in the drop-down menu. Select the
+    right organisms from the two other drop-down menus and run the
+    query.</para>
+
+        <mediaobject>
+          <imageobject>
+            <imagedata fileref="bag-template.png" />
+          </imageobject><textobject><phrase> </phrase></textobject>
+        </mediaobject>
+
+   <para>The results table shows the
+   <emphasis>D. melanogaster</emphasis> genes with their corresponding
+   orthologues in <emphasis>D. pseudoobscura</emphasis>. Only 4 out of
+   the 5 <emphasis>D. melanogaster</emphasis> genes have orthologues
+   in <emphasis>D. pseudoobscura</emphasis>.</para>
+
+    
+
+   <para>Save the orthologous genes in a new bag:</para>
+ 
+    <itemizedlist>
+      <listitem><para>Click on the check-box in the title of column 4
+      which contains the gene symbols for the orthologues. This
+      selects all items in the column (on every result page, if more
+      than one page). Alternatively, select individual items in the
+      column.</para></listitem>
+
+     <listitem><para>At the bottom of the page is an option to save
+      the selected results in a new bag. Choose a new bag name
+      e.g. 'eye-genes_dpse' and click 'Save'.</para></listitem>
+    </itemizedlist>
+
+        <mediaobject>
+          <imageobject>
+            <imagedata fileref="bag-template-results.png" />
+          </imageobject><textobject><phrase> </phrase></textobject>
+        </mediaobject>
+
+    <para>Bags of data, as well as previously executed queries, can be
+    retrieved from your MyMine account page at the top menu bar on any
+    FlyMine page (bags can also be directly accessed through the
+    'Bags' link). Your bags and query history will remain available to
+    you only for the duration of a session unless you create and use a
+    login. If you log in (via button on top menu bar), your bags and
+    query history can be stored permanently. Click on 'MyMine' in the
+    top menu bar.</para>
+
+   <mediaobject>
+          <imageobject>
+            <imagedata fileref="bag-MyMine.png" />
+          </imageobject><textobject><phrase> </phrase></textobject>
+        </mediaobject> 
+ 
+  <para>Find your bags back in 'Bags'.</para>
+
+       <mediaobject>
+          <imageobject>
+            <imagedata fileref="bag-history.png" />
+          </imageobject><textobject><phrase> </phrase></textobject>
+        </mediaobject>
+
+ 
+   <para>To find out how to export the contents of a bag, see <ulink
+   url="tutorial5-Export.xml">Tutorial 5</ulink>.</para>
+
+ </section>
+</article>
