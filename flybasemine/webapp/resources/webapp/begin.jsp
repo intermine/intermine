@@ -38,10 +38,6 @@
 <!-- Second column - elastic -->
 <div id="rightColumn">
 
-         <div>
-           <tiles:insert name="tipWrapper.tile"/>
-         </div>
-
       <im:boxarea title="Templates" titleLink="/${WEB_PROPERTIES['webapp.path']}/templates.do" stylename="gradientbox">
         <em><p><fmt:message key="begin.templates"/></p></em>
         <br/>
