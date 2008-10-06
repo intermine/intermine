@@ -29,6 +29,7 @@ import org.intermine.objectstore.query.iql.IqlQuery;
 import org.intermine.util.DynamicUtil;
 import org.intermine.util.TypeUtil;
 
+import org.intermine.bio.util.BioQueries;
 import org.intermine.bio.util.Constants;
 import org.intermine.model.InterMineObject;
 import org.flymine.model.genomic.*;
@@ -96,7 +97,7 @@ public class CalculateLocations
      */
     private void fixPartials(Class objectCls, Class subjectCls) throws Exception {
         Results results =
-            PostProcessUtil.findLocationAndObjects(os, objectCls, subjectCls, true, false);
+            BioQueries.findLocationAndObjects(os, objectCls, subjectCls, true, false);
         results.setBatchSize(500);
 
         osw.beginTransaction();
@@ -272,7 +273,7 @@ public class CalculateLocations
 
         // 4. For all BioEntities located on Contigs compute other offsets on all parents
         Results results =
-            PostProcessUtil.findLocationAndObjects(os, Contig.class, BioEntity.class, false, false);
+            BioQueries.findLocationAndObjects(os, Contig.class, BioEntity.class, false, false);
         results.setBatchSize(500);
 
         Iterator resIter = results.iterator();
@@ -989,7 +990,7 @@ public class CalculateLocations
      */
     private void makeChromosomeBandLocations() throws Exception {
         Results results =
-            PostProcessUtil.findLocationAndObjects(os, Chromosome.class, ChromosomeBand.class,
+            BioQueries.findLocationAndObjects(os, Chromosome.class, ChromosomeBand.class,
                                                    true, false);
         results.setBatchSize(500);
 
@@ -1016,7 +1017,7 @@ public class CalculateLocations
      */
     private void makeSupercontigLocations() throws Exception {
         Results results =
-            PostProcessUtil.findLocationAndObjects(os, Chromosome.class, Supercontig.class,
+            BioQueries.findLocationAndObjects(os, Chromosome.class, Supercontig.class,
                                                    true, false);
         results.setBatchSize(500);
 
@@ -1070,7 +1071,7 @@ public class CalculateLocations
      */
     private void makeContigLocations() throws Exception {
         Results results =
-            PostProcessUtil.findLocationAndObjects(os, Supercontig.class, Contig.class,
+            BioQueries.findLocationAndObjects(os, Supercontig.class, Contig.class,
                                                    true, false);
         results.setBatchSize(500);
 
@@ -1263,7 +1264,7 @@ public class CalculateLocations
      * @throws Exception if anything goes wrong
      */
     public void setChromosomeLocationsAndLengths() throws Exception {
-        Results results = PostProcessUtil.findLocationAndObjects(os, Chromosome.class,
+        Results results = BioQueries.findLocationAndObjects(os, Chromosome.class,
                                                         LocatedSequenceFeature.class, true, false);
         results.setBatchSize(10000);
         Iterator resIter = results.iterator();

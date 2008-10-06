@@ -29,6 +29,7 @@ import org.intermine.objectstore.query.QueryObjectReference;
 import org.intermine.objectstore.query.Results;
 import org.intermine.objectstore.query.ResultsRow;
 
+import org.intermine.bio.util.BioQueries;
 import org.intermine.bio.util.Constants;
 import org.intermine.objectstore.ObjectStore;
 import org.intermine.objectstore.ObjectStoreException;
@@ -95,7 +96,7 @@ public class TransferSequences
         long startTime = System.currentTimeMillis();
 
         Results results =
-            PostProcessUtil.findLocationAndObjects(os, Chromosome.class, Assembly.class,
+            BioQueries.findLocationAndObjects(os, Chromosome.class, Assembly.class,
                                                    false, false);
         // could try reducing further if still OutOfMemeory problems
         results.setBatchSize(20);
