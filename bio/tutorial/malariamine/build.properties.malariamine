@@ -40,7 +40,7 @@ mail.text=Your password for the FlyMine system is: {0}
 
 project.title=MalariaMine
 project.subTitle=An example of InterMine.bio with data from <i>Plasmodium falciparum</i>
-project.sitePrefix=http://www.flymine.org/malariamine
+project.sitePrefix=http://www.flymine.org
 project.helpLocation=http://www.flymine.org/doc
 project.releaseVersion=tutorial
 project.contact=<a href="mailto:test_user%5Bat%5Dmail_account">test_user[at]mail_account</a>

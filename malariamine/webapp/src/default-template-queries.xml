@@ -256,22 +256,6 @@
     </node>
   </query>
 </template>
-<template name="Organism_ProteinInteraction" title="Organism --&gt; All protein interactions." longDescription="For a particular organism, show all pairs of interacting proteins and the PubMed ID of the paper describing the experiment." comment="">
-  <query name="Organism_ProteinInteraction" model="genomic" view="Protein.primaryAccession Protein.proteinInteractions.interactingProteins.primaryAccession Protein.proteinInteractions.experiment.publication.pubMedId Protein.organism.taxonId" sortOrder="Protein.primaryAccession asc">
-    <pathDescription pathString="Protein.proteinInteractions.interactingProteins" description="Interacting protein">
-    </pathDescription>
-    <pathDescription pathString="Protein.proteinInteractions.experiment.publication" description="Protein interaction experiment">
-    </pathDescription>
-    <node path="Protein" type="Protein">
-    </node>
-    <node path="Protein.organism" type="Organism">
-    </node>
-    <node path="Protein.organism.taxonId" type="Integer">
-      <constraint op="=" value="36329" description="from" identifier="organism.taxonid" editable="true" code="A" extraValue="">
-      </constraint>
-    </node>
-  </query>
-</template>
 <template name="Organism_Protein" title="Organism --&gt; All proteins." longDescription="Show all the proteins from a particular organism." comment="">
   <query name="Organism_Protein" model="genomic" view="Protein.primaryAccession" sortOrder="Protein.primaryAccession asc">
     <node path="Protein" type="Protein">
@@ -288,18 +272,6 @@
   <query name="Protein_Gene" model="genomic" view="Protein.primaryAccession Protein.name Protein.genes.symbol Protein.genes.primaryIdentifier" sortOrder="Protein.primaryAccession asc">
     <node path="Protein" type="Protein">
       <constraint op="LOOKUP" value="P46468" description="Protein:" identifier="Protein.class" editable="true" code="A">
-      </constraint>
-    </node>
-  </query>
-</template>
-<template name="Protein_ProteinInteraction" title="Protein --&gt; Interacting proteins." longDescription="Show protein interactions for a particular protein." comment="06.06.07 updated to work from protein class - Philip">
-  <query name="Protein_ProteinInteraction" model="genomic" view="Protein.primaryAccession Protein.proteinInteractions.interactingProteins.primaryAccession Protein.proteinInteractions.experiment.publication.pubMedId" sortOrder="Protein.primaryAccession asc">
-    <pathDescription pathString="Protein.proteinInteractions.interactingProteins" description="Interacting protein">
-    </pathDescription>
-    <pathDescription pathString="Protein.proteinInteractions.experiment.publication" description="Protein interaction experiment &gt; publication">
-    </pathDescription>
-    <node path="Protein" type="Protein">
-      <constraint op="LOOKUP" value="P46468" description="Show interactions for protein primary accession:" identifier="Protein.class" editable="true" code="A">
       </constraint>
     </node>
   </query>
@@ -374,17 +346,13 @@
   </tag>
   <tag name="aspect:GO" objectIdentifier="GOtermidentifier_name" type="template">
   </tag>
-  <tag name="aspect:Protein Interactions" objectIdentifier="org.flymine.model.genomic.ProteinInteraction" type="class">
+  <tag name="aspect:Interactions" objectIdentifier="org.flymine.model.genomic.Interaction" type="class">
   </tag>
-  <tag name="aspect:Protein Interactions" objectIdentifier="Protein_ProteinInteraction" type="template">
+  <tag name="aspect:Interactions" objectIdentifier="org.flymine.model.genomic.InteractionExperiment" type="class">
   </tag>
-  <tag name="aspect:Protein Interactions" objectIdentifier="Organism_ProteinInteraction" type="template">
+  <tag name="aspect:Interactions" objectIdentifier="org.flymine.model.genomic.Gene" type="class">
   </tag>
-  <tag name="aspect:Protein Interactions" objectIdentifier="org.flymine.model.genomic.ProteinInteractionExperiment" type="class">
-  </tag>
-  <tag name="aspect:Protein Interactions" objectIdentifier="org.flymine.model.genomic.Protein" type="class">
-  </tag>
-  <tag name="aspect:Protein Interactions" objectIdentifier="org.flymine.model.genomic.ProteinInteractionTerm" type="class">
+  <tag name="aspect:Interactions" objectIdentifier="org.flymine.model.genomic.InteractionTerm" type="class">
   </tag>
   <tag name="aspect:Proteins" objectIdentifier="Organism_Protein" type="template">
   </tag>
@@ -393,10 +361,6 @@
   <tag name="aspect:Proteins" objectIdentifier="org.flymine.model.genomic.Protein" type="class">
   </tag>
   <tag name="aspect:Protein Structure" objectIdentifier="org.flymine.model.genomic.Protein" type="class">
-  </tag>
-  <tag name="favourite" objectIdentifier="ChromLocation_GeneTranscriptExon" type="template">
-  </tag>
-  <tag name="favourite" objectIdentifier="AllGene_Chromosome" type="template">
   </tag>
   <tag name="im:frontpage" objectIdentifier="AllGene_Chromosome" type="template">
   </tag>
