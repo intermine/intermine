@@ -35,4 +35,9 @@ public interface TagNames
      * Prefix common for all InterMine internal tags (favourite can be exception) 
      */
     public static final String IM_PREFIX = "im:";
+    
+    /**
+     * Tag separator. 
+     */
+    public static final String SEPARATOR = ":";
 }
