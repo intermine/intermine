@@ -19,6 +19,7 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
+import java.util.LinkedHashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
@@ -75,6 +76,7 @@ import org.intermine.web.logic.search.SearchRepository;
 import org.intermine.web.logic.search.WebSearchable;
 import org.intermine.web.logic.session.QueryCountQueryMonitor;
 import org.intermine.web.logic.session.SessionMethods;
+import org.intermine.web.logic.tagging.TagNames;
 import org.intermine.web.logic.tagging.TagTypes;
 import org.intermine.web.logic.template.TemplateHelper;
 import org.intermine.web.logic.template.TemplateQuery;
@@ -1143,18 +1145,43 @@ public class AjaxServices
      */
     public static Set<String> filterByTag(String type, String tag) {
         Profile profile = getProfile();
+
+        // implementation of hierarchical tag structure
+        // if user selects tag 'bio' than it automatically includes all tags with bio prefix like 
+        // 'bio:experiment1', 'bio:experiment2' 
+        List<String> tags = getAllPrefixTags(type, tag);
     	SearchRepository searchRepository = profile.getSearchRepository();
-        
         Map<String, WebSearchable> map = (Map<String, WebSearchable>) searchRepository.getWebSearchableMap(type);
-        List<String> tags = new ArrayList<String>();
-        tags.add(tag);
+        if (map == null) {
+        	return null;
+        }
         Map<String, WebSearchable> filteredMap = profile.getProfileManager().filterByTags(map, tags, type, profile.getUsername());
         
         return filteredMap.keySet();
     }
     
+
+    /** Returns all tags of specified type and starting at specified prefix. 
+     * @param type type
+     * @param prefix prefix
+     * @return tags
+     */
+    private static List<String> getAllPrefixTags(String type, String prefix) {
+    	List<String> tags = getDatabaseTags(type);
+    	List<String> ret = new ArrayList<String>();
+    	for (String tag : tags) {
+    		if (tag.startsWith(prefix)) {
+    			ret.add(tag);
+    		}
+    	}
+    	return ret;
+	}
+
+    private static List<String> getDatabaseTags(String type) {
+    	return getDatabaseTags(null, null, type);
+    }
     
-    private static List<String> getTagsInternal(String tagName, String objectIdentifier, String type) {
+	private static List<String> getDatabaseTags(String tagName, String objectIdentifier, String type) {
         HttpServletRequest request = getRequest();
         ProfileManager pm = (ProfileManager) request.getSession()
             .getServletContext().getAttribute(Constants.PROFILE_MANAGER);
@@ -1184,11 +1211,36 @@ public class AjaxServices
 	}
     
 	/**
-	 * Returns all tags of specified tag type.
+	 * Returns all tags of specified tag type together with prefixes of these tags. 
+	 * For instance: for tag 'bio:experiment' it automatically adds 'bio' tag. 
 	 * @param tag type
 	 * @return tags
 	 */
-    public static List<String> getTags(String type) {
-    	return getTagsInternal(null, null, type);
+    public static Set<String> getTags(String type) {
+    	List<String> tags = getDatabaseTags(type);
+    	Set<String> ret = new LinkedHashSet<String>();
+    	for (String tag : tags) {
+    		if (tag.contains(TagNames.SEPARATOR)) {
+    			ret.addAll(getPrefixes(tag));
+    		} else {
+    			ret.add(tag);
+    		}
+    	}
+    	return ret;
     }
+
+	private static List<String> getPrefixes(String s) {
+		List<String> ret = new ArrayList<String>();
+		String[] parts = s.split(TagNames.SEPARATOR);
+		String prefix = "";
+		for (int i = 0; i < parts.length; i++) {
+			String part = parts[i];
+			prefix += part;
+			ret.add(prefix);
+			if (i != (parts.length - 1)) {
+				prefix += TagNames.SEPARATOR;
+			}
+		}
+		return ret;
+	}
 }
