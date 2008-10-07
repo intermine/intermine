@@ -26,23 +26,23 @@
 
           <div id="hiddenDiv1" class="dataSetDescription">
 
-		<p>
+    <p>
          <ul>
           <li><dt><a href="http://www.drosdel.org.uk" target="_new" title="DrosDel">DrosDel</a> is a collection
           of <i>P</i>-element insertions for generating custom chromosomal aberrations
           in <i>D. melanogaster</i>. The locations of the <i>P</i>-element insertions
           and the deletions that can be constructed from them have been loaded into
-          FlyMine. Constructed deletions are tagged as available in FlyMine. Stocks 
+          FlyMine. Constructed deletions are tagged as available in FlyMine. Stocks
           can be ordered from the <a href="http://expbio.bio.u-szeged.hu/fly/index.php" target="_new">Szeged stock centre</a>.</dt></li>
 
-          <li><dt>FlyMine has additional insertions from <a href="http://www.flybase.org/" target="_new">FlyBase</a> and 
+          <li><dt>FlyMine has additional insertions from <a href="http://www.flybase.org/" target="_new">FlyBase</a> and
           from the <a href="http://drosophila.med.harvard.edu" target="_new">Exelixis</a> collection.</dt></li>
          </ul>
 
 
 </p>
         </div>
-      </dl> 
+      </dl>
 
 
         <dl>
@@ -54,14 +54,14 @@
           </h4>
 
           <div id="hiddenDiv2" class="dataSetDescription">
-		<p>
+    <p>
 
           <dt> Probesets from the <a href="http://www.affymetrix.com/" target="_new">Affymetrix</a> GeneChip <i>Drosophila</i> Genome 1.0 and 2.0 Arrays, a
            microarray tool for studying expression of <i>D. melanogaster</i> transcripts. Probeset locations and mapped genes (not transcripts) are downloaded from Ensembl. FlyMine only loads probesets that match to at least one gene. For more information on the probeset mappings, go to <a href="http://www.ensembl.org/Homo_sapiens/helpview?kw=microarray;ref=http%3A%2F%2Fwww.ensembl.org%2FMus_musculus%2Findex.html/" target="_new">Ensembl help</a>.  </dt>
-		</br></p>
+    </br></p>
 
         </div>
-       </dl>   
+       </dl>
 
         <dl>
           <h4>
@@ -72,18 +72,18 @@
           </h4>
 
           <div id="hiddenDiv3" class="dataSetDescription">
-			
-			<p>
-            <dt>The aim of INDAC is to produce a widely available and uniform set of array reagents so that microarray data collected from 
+
+      <p>
+            <dt>The aim of INDAC is to produce a widely available and uniform set of array reagents so that microarray data collected from
             different studies may be more easily compared. On behalf of INDAC, the FlyChip group has designed a set of 65-69mer long
             oligonucleotides to release 4.1 of the D. melanogaster genome. Oligos were designed using a modified version of OligoArray2 and other
-            post-processing steps (David Kreil, Debashis Rana, Gos Micklem unpublished).Synthesis of the set by Illumina began in April 2005. FlyMine 
+            post-processing steps (David Kreil, Debashis Rana, Gos Micklem unpublished).Synthesis of the set by Illumina began in April 2005. FlyMine
             will incorporate the results of these tests when available.</dt>
 
             <dt>Note: FlyMine curently stores the positions of the oligos relative to the transcript rather than to the chromosome.</dt>
-			</br></p>
+      </br></p>
         </div>
-      </dl> 
+      </dl>
 
 
         <dl>
@@ -98,15 +98,15 @@
 
 
         <p>Note: From 7.0 of FlyMine the format for the tiling path
-	span, PCR product and primer identifiers has changed.  Previously the
-	identifier included the genomic location (e.g.
-	span2L:1-7529_amplimer_1). However, in order for identifiers to remain
-	consistent between genome sequence releases, this has now been changed
-	to a numerical identifier (eg span2L:0000001_amplimer_1).  The old
-	identifiers (with chromosome locations according to genome release
-	4.0) can be found in the synonyms and can still be searched for using
-	the quick search. The tiling path data has been re-mapped to
-	genome sequence release 5.0 as of FlyMine release 7.0. </p>
+  span, PCR product and primer identifiers has changed.  Previously the
+  identifier included the genomic location (e.g.
+  span2L:1-7529_amplimer_1). However, in order for identifiers to remain
+  consistent between genome sequence releases, this has now been changed
+  to a numerical identifier (eg span2L:0000001_amplimer_1).  The old
+  identifiers (with chromosome locations according to genome release
+  4.0) can be found in the synonyms and can still be searched for using
+  the quick search. The tiling path data has been re-mapped to
+  genome sequence release 5.0 as of FlyMine release 7.0. </p>
 
 
         <p>Whole genome tiling path primers for ChIP-chip experiments
@@ -116,8 +116,8 @@
         amplimers, the "promoter" amplimers, are positioned adjacent to the 5' end of
         annotated genes.  Rana and Micklem (unpublished).<br/></p>
 
-        <p>The purpose of designing the tiling array in this way was to allow the "promoter" 
-        amplimers to be organised into separate plates to allow the printing of "promoter" 
+        <p>The purpose of designing the tiling array in this way was to allow the "promoter"
+        amplimers to be organised into separate plates to allow the printing of "promoter"
         only arrays.  In order to satisfy the need for these
         promoter amplimers and to attempt to cover the genome optimally, the
         genome was divided into "tiling path spans".  All spans started or
@@ -132,7 +132,7 @@
         depending on relative orientation but are useful in order to
         understand the relationship between amplimers.<br/></p>
 
-        <p>The Flymine GBrowse views below show the relationship between spans, PCR primers 
+        <p>The Flymine GBrowse views below show the relationship between spans, PCR primers
         and PCR products.  The PCR products that overlap a promoter region are highlighted:</p>
 
         <div style="margin-left: 20px">
@@ -274,7 +274,7 @@
              </im:querylink>
             </li>
 
-          <li>            
+          <li>
              <im:querylink text="Affymetrix probesets from the GeneChip <i>Drosophila</i> 2 Array with their locations" skipBuilder="true">
 <query name="" model="genomic" view="ProbeSet.primaryIdentifier ProbeSet.locations.object.primaryIdentifier ProbeSet.locations.start ProbeSet.locations.end" sortOrder="ProbeSet.primaryIdentifier asc">
   <node path="ProbeSet" type="ProbeSet">
@@ -282,14 +282,14 @@
   <node path="ProbeSet.dataSets" type="DataSet">
   </node>
   <node path="ProbeSet.dataSets.title" type="String">
-    <constraint op="=" value="Affymetrix array: Drosophila\\_2" description="" identifier="" code="A">
+    <constraint op="=" value="Affymetrix array: Drosophila_2" description="" identifier="" code="A">
     </constraint>
   </node>
 </query>
              </im:querylink>
             </li>
 
-     <li>            
+     <li>
              <im:querylink text="Affymetrix probesets from the GeneChip <i>Drosophila</i> 2 Array with the genes they map to" skipBuilder="true">
 <query name="" model="genomic" view="ProbeSet.primaryIdentifier ProbeSet.genes.primaryIdentifier ProbeSet.genes.symbol" sortOrder="ProbeSet.primaryIdentifier asc">
   <node path="ProbeSet" type="ProbeSet">
@@ -297,7 +297,7 @@
   <node path="ProbeSet.dataSets" type="DataSet">
   </node>
   <node path="ProbeSet.dataSets.title" type="String">
-    <constraint op="=" value="Affymetrix array: Drosophila\\_2" description="" identifier="" code="A">
+    <constraint op="=" value="Affymetrix array: Drosophila_2" description="" identifier="" code="A">
     </constraint>
   </node>
 </query>
