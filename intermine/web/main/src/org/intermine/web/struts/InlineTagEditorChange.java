@@ -64,7 +64,7 @@ public class InlineTagEditorChange extends DispatchAction
             HttpSession session = request.getSession();
             ServletContext servletContext = session.getServletContext();
             Boolean isSuperUser = (Boolean) session.getAttribute(Constants.IS_SUPERUSER);
-            if (isSuperUser.booleanValue()) {
+            if (isSuperUser != null && isSuperUser.booleanValue()) {
                 SearchRepository tr = SearchRepository.getGlobalSearchRepository(servletContext);
                 tr.webSearchableTagged(tag);
             }
@@ -93,7 +93,7 @@ public class InlineTagEditorChange extends DispatchAction
                 HttpSession session = request.getSession();
                 ServletContext servletContext = session.getServletContext();
                 Boolean isSuperUser = (Boolean) session.getAttribute(Constants.IS_SUPERUSER);
-                if (isSuperUser.booleanValue()) {
+                if (isSuperUser != null && isSuperUser.booleanValue()) {
                     SearchRepository tr =
                         SearchRepository.getGlobalSearchRepository(servletContext);
                     tr.webSearchableUnTagged(tag);
