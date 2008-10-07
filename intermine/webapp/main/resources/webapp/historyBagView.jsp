@@ -82,13 +82,15 @@
                       <tiles:put name="type" value="${type}"/>
                     </tiles:insert>
 
-                     <c:set var="taggable" value="${savedBag.value}"/>
-                     <tiles:insert name="inlineTagEditor.tile">
-                       <tiles:put name="taggable" beanName="taggable"/>
-                       <tiles:put name="vertical" value="true"/>
-                       <tiles:put name="show" value="true"/>
-                       <tiles:put name="onChangeCode" value="reloadTagSelect()"/>
-                     </tiles:insert>
+                     <c:if test="${! empty PROFILE.username}">
+	                 	 <c:set var="taggable" value="${savedBag.value}"/>
+	                     <tiles:insert name="inlineTagEditor.tile">
+	                       <tiles:put name="taggable" beanName="taggable"/>
+	                       <tiles:put name="vertical" value="true"/>
+	                       <tiles:put name="show" value="true"/>
+	                       <tiles:put name="onChangeCode" value="reloadTagSelect()"/>
+	                     </tiles:insert>
+                     </c:if>
 
               </td>
               <td class="sorting">

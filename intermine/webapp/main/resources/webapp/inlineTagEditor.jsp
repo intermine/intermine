@@ -16,8 +16,6 @@
   <div style="margin-top: 5px">
 </c:if>
 
-<img class="tag" src="images/tag.gif" onclick="jQuery('#tags-${uid}').show(150)"/>
-
 <span id="tags-${uid}" style="${!show?'display:none':''}">
   <span id="currentTags-${uid}">
     <tiles:insert page="/currentTags.jsp">
