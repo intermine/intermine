@@ -148,18 +148,22 @@
     </node>
   </query>
 </template>
-<template name="Gene_paralogues" title="Gene --&gt; paralogues" longDescription="For a particular gene, show its paralogues." comment="07.06.07 updated to work from transcript class - Philip">
-  <query name="Gene_paralogues" model="genomic" view="Gene.symbol Gene.organism.taxonId Gene.organism.name Gene.primaryIdentifier" sortOrder="Gene.symbol asc" constraintLogic="A and B">
+<template name="Gene_Inparalogue" title="Gene --&gt; InParalogues." longDescription="Show all the InParalogues of a specific gene, with the InParanoid score (if available). (Data Source: InParanoid, Drosophila Consortium)." comment="request from user">
+  <query name="Gene_Inparalogue" model="genomic" view="Gene.primaryIdentifier Gene.symbol Gene.homologues.homologue.primaryIdentifier Gene.homologues.homologue.secondaryIdentifier Gene.homologues.inParanoidScore Gene.homologues.type Gene.homologues.homologue.organism.name Gene.homologues.dataSets.title" sortOrder="Gene.primaryIdentifier asc" constraintLogic="A and B">
+    <pathDescription pathString="Gene.homologues" description="Homologue">
+    </pathDescription>
+    <pathDescription pathString="Gene.homologues.homologue.organism" description="Homologue &gt; organism">
+    </pathDescription>
+    <pathDescription pathString="Gene.homologues.homologue" description="Homologue">
+    </pathDescription>
     <node path="Gene" type="Gene">
-    </node>
-    <node path="Gene.organism" type="Organism">
-    </node>
-    <node path="Gene.organism.taxonId" type="Integer">
-      <constraint op="=" value="36329" description="from" identifier="organism.taxonid" editable="true" code="A" extraValue="">
+      <constraint op="LOOKUP" value="CG3936" description="" identifier="" editable="true" code="B" extraValue="D. melanogaster">
       </constraint>
     </node>
-    <node path="Gene.primaryIdentifier" type="String">
-      <constraint op="=" value="MAL1\\_18s" description="from" identifier="" editable="true" code="B" extraValue="">
+    <node path="Gene.homologues" type="Homologue">
+    </node>
+    <node path="Gene.homologues.type" type="String">
+      <constraint op="=" value="inParalogue" description="" identifier="" code="A">
       </constraint>
     </node>
   </query>
@@ -278,7 +282,7 @@
 </template>
 </template-queries>
 <tags>
-  <tag name="aspect:Comparative Genomics" objectIdentifier="Gene_paralogues" type="template">
+  <tag name="aspect:Comparative Genomics" objectIdentifier="Gene_Inparalogues" type="template">
   </tag>
   <tag name="aspect:Comparative Genomics" objectIdentifier="org.flymine.model.genomic.Gene" type="class">
   </tag>
