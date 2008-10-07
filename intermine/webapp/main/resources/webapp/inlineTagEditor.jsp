@@ -10,6 +10,7 @@
 
 <tiles:importAttribute name="vertical" ignore="true"/>
 <tiles:importAttribute name="show" ignore="true"/>
+<tiles:importAttribute name="onChangeCode" ignore="true"/>
 
 <c:if test="${vertical}">
   <div style="margin-top: 5px">
@@ -19,7 +20,9 @@
 
 <span id="tags-${uid}" style="${!show?'display:none':''}">
   <span id="currentTags-${uid}">
-    <tiles:insert page="/currentTags.jsp"/>
+    <tiles:insert page="/currentTags.jsp">
+    	<tiles:put name="onChangeCode" value="${onChangeCode}" />
+    </tiles:insert>
   </span>
   <span id="addLink-${uid}">
     <a class="addTagLink" href="#" onclick="startEditingTag('${uid}');return false">Add tags</a>
@@ -31,8 +34,8 @@
     <!--<input type="hidden" name="tag-uid" value="${uid}"/>
     <input type="hidden" name="tag-type" value="${type}"/>-->
     <input type="text" style="border: 1px solid #888; padding: 2px; font-size: 10px" size="18" id="tagValue-${uid}" name="tag"
-      onKeyPress="if(event.keyCode == 13) {addTag('${uid}', '${type}');$('tagValue-${uid}').focus();return false;}"/>
-    <input type="button" style="font-size: 10px" value="Add" onclick="addTag('${uid}', '${type}');$('tagValue-${uid}').focus();"/>
+      onKeyPress="if(event.keyCode == 13) {addTag('${uid}', '${type}');$('tagValue-${uid}').focus();${onChangeCode};return false;}"/>
+    <input type="button" style="font-size: 10px" value="Add" onclick="addTag('${uid}', '${type}');${onChangeCode};$('tagValue-${uid}').focus();"/>
     <input type="button" style="font-size: 10px" value="Done" onclick="stopEditingTag('${uid}')"/>
   </span>
 </span>

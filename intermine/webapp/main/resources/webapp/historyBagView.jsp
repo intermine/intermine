@@ -34,7 +34,7 @@
 	<table><tr><td align="right">
 		Filter:&nbsp;
 		<tiles:insert name="tagSelect.tile">
-		        <tiles:put name="type" value="${type}" />
+		        <tiles:put name="type" value="bag" />
 		        <tiles:put name="onChangeFunction" value="filterByTag" />
 		</tiles:insert>
 	</td></tr><td>
