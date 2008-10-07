@@ -10,6 +10,7 @@ package org.intermine.web.autocompletion;
  *
  */
 import java.io.ByteArrayOutputStream;
+import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.ObjectInputStream;
@@ -41,20 +42,20 @@ import org.intermine.objectstore.query.ResultsRow;
  * @author Dominik Grimm
  * @author Michael Menden
  */
-public class AutoCompleter 
+public class AutoCompleter
 {
     private  HashMap<String, String> fieldIndexMap = new HashMap<String, String>();
-    private HashMap<String, LuceneSearchEngine> ramIndexMap = 
+    private HashMap<String, LuceneSearchEngine> ramIndexMap =
                                         new HashMap<String, LuceneSearchEngine>();
     private HashMap<String, RAMDirectory> blobMap = new HashMap<String, RAMDirectory>();
-    private Properties prob;    
+    private Properties prob;
     private LuceneSearchEngine search = null;
-    
+
     /**
      * Autocompleter standard constructor.
      */
     public AutoCompleter() { }
-    
+
     /**
      * Autocompleter build index constructor.
      * @param os Objectstore
@@ -72,26 +73,26 @@ public class AutoCompleter
             e.printStackTrace();
         }
     }
-    
+
     /**
      * Autocompleter rebuild constructor.
      * @param blobInput InputStream from database
      */
     public AutoCompleter(InputStream blobInput) {
         try {
-            
+
             ObjectInputStream objectInput = new ObjectInputStream(blobInput);
-           
-            
+
+
             blobMap = (HashMap<String, RAMDirectory>) objectInput.readObject();
-            
+
             blobInput.close();
-            
+
             if (blobMap instanceof HashMap) {
-                
+
                 for (Iterator iter = blobMap.entrySet().iterator(); iter.hasNext();)
-                { 
-                    Map.Entry<String, RAMDirectory> entry = 
+                {
+                    Map.Entry<String, RAMDirectory> entry =
                         (Map.Entry<String, RAMDirectory>) iter.next();
                     String key = entry.getKey();
                     RAMDirectory value = null;
@@ -102,14 +103,14 @@ public class AutoCompleter
                     fieldIndexMap.put(key, key);
                 }
             }
-            
+
         } catch (IOException e) {
             e.printStackTrace();
         } catch (ClassNotFoundException e) {
             e.printStackTrace();
         }
     }
-    
+
     /**
      * create the RAMIndex for the search engine
      * @param classDes String of the class and the field (e.g. GOTerm.name)
@@ -130,7 +131,7 @@ public class AutoCompleter
             }
         }
     }
-    
+
     /**
      * returns a string array with the search results of the query in the field
      * @param query is the string used for search
@@ -142,22 +143,22 @@ public class AutoCompleter
         String[] stringList = null;
         String status = "true";
         int counter = 1;
-        
+
         Hits hits = null;
         try {
             hits = search.performSearch(query, field);
         } catch (IOException e) {
-            
+
         } catch (ParseException e) {
             status = "Please type in more characters to get results.";
         }
-    
+
         stringList = new String[hits.length() + 1];
-    
+
         if (hits != null) {
-    
+
             Iterator<Hit> iter = hits.iterator();
-        
+
             while (iter.hasNext()) {
                 Hit hit = iter.next();
                 Document doc = null;
@@ -171,10 +172,10 @@ public class AutoCompleter
             }
         }
         stringList[0] = status;
-        
+
         return stringList;
     }
-    
+
     /**
      * Returns n search results
      * @param query is the string used for search
@@ -185,7 +186,7 @@ public class AutoCompleter
     public String[] getFastList(String query, String field, int n) {
         return search.fastSearch(query, field, n);
     }
-    
+
     /**
      * Build the index from the database blob
      * @param os Objectstore
@@ -195,6 +196,17 @@ public class AutoCompleter
      */
     public void buildIndex(ObjectStore os)
         throws IOException, ObjectStoreException, ClassNotFoundException {
+
+        File tempDir = new File("build" + File.separatorChar + "autocompleteIndexes");
+
+        if (tempDir.exists()) {
+            if (!tempDir.isDirectory()) {
+                throw new RuntimeException(tempDir + " exists but isn't a directory - remove it");
+            }
+        } else {
+            tempDir.mkdirs();
+        }
+
     for (Map.Entry<Object, Object> entry: prob.entrySet()) {
         String key = (String) entry.getKey();
         String value = (String) entry.getValue();
@@ -209,38 +221,40 @@ public class AutoCompleter
         }
         List<String> fieldNames = Arrays.asList(value.split(" "));
         for (Iterator<String> i = fieldNames.iterator(); i.hasNext();) {
-            
+
             String fieldName = i.next();
             System.out.println("Indexing " + cld.getUnqualifiedName() + "." + fieldName);
-            fieldIndexMap.put(cld.getUnqualifiedName() + "." 
+            fieldIndexMap.put(cld.getUnqualifiedName() + "."
                     + fieldName, cld.getUnqualifiedName() + "." + fieldName);
-            
-            
+
+
             Query q = new Query();
             q.setDistinct(true);
             QueryClass qc = new QueryClass(Class.forName(cld.getName()));
             q.addToSelect(new QueryField(qc, fieldName));
             q.addFrom(qc);
             Results results = os.execute(q);
-            
+
             LuceneObjectClass objectClass = new LuceneObjectClass(cld.getUnqualifiedName()
                     + "." + fieldName);
             objectClass.addField(fieldName);
-          
-            
+
+
             for (Object resRow: results) {
                 Object fieldValue = ((ResultsRow) resRow).get(0);
                 if (fieldValue != null) {
                     objectClass.addValueToField(objectClass.getFieldName(0), fieldValue.toString());
                 }
             }
-            
-            LuceneIndex indexer = new LuceneIndex(cld.getUnqualifiedName() + "." + fieldName);
+
+            String indexFileName =
+                tempDir.getPath() + File.separatorChar + cld.getUnqualifiedName() + "." + fieldName;
+            LuceneIndex indexer = new LuceneIndex(indexFileName);
             indexer.addClass(objectClass);
             indexer.rebuildClassIndexes();
-            
-            createRAMIndex(cld.getUnqualifiedName() + "." + fieldName);
-            
+
+            createRAMIndex(indexFileName);
+
             }
         }
     }
@@ -251,14 +265,14 @@ public class AutoCompleter
      * @throws IOException IOException
      */
     public byte[] getBinaryIndexMap() throws IOException {
-        ByteArrayOutputStream byteStream = new ByteArrayOutputStream();  
+        ByteArrayOutputStream byteStream = new ByteArrayOutputStream();
         ObjectOutputStream objectStream = new ObjectOutputStream(byteStream);
         objectStream.writeObject(blobMap);
         objectStream.close();
-        
+
         return byteStream.toByteArray();
     }
-    
+
     /**
      * checks if an autocompletin exists
      * @param type classname
