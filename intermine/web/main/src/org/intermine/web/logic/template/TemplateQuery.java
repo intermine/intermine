@@ -83,7 +83,7 @@ public class TemplateQuery extends PathQuery implements WebSearchable
      */
     public TemplateQuery(String name, String title, String description, String comment,
                          PathQuery query, String keywords) {
-        super((PathQuery) query.clone());
+        super(query.clone());
         if (description != null) {
             this.description = description;
         }
@@ -119,17 +119,16 @@ public class TemplateQuery extends PathQuery implements WebSearchable
     public List getEditableConstraints(String path) {
         if (nodes.get(path) == null) {
             return Collections.EMPTY_LIST;
-        } else {
-            List ecs = new ArrayList();
-            Iterator cIter = nodes.get(path).getConstraints().iterator();
-            while (cIter.hasNext()) {
-                Constraint c = (Constraint) cIter.next();
-                if (c.isEditable()) {
-                    ecs.add(c);
-                }
-            }
-            return ecs;
         }
+        List ecs = new ArrayList();
+        Iterator cIter = nodes.get(path).getConstraints().iterator();
+        while (cIter.hasNext()) {
+            Constraint c = (Constraint) cIter.next();
+            if (c.isEditable()) {
+                ecs.add(c);
+            }
+        }
+        return ecs;
     }
 
     /**
@@ -384,7 +383,7 @@ public class TemplateQuery extends PathQuery implements WebSearchable
      * @return a PathQuery
      */
     public PathQuery getPathQuery() {
-        return (PathQuery) super.clone();
+        return super.clone();
     }
 
     /**
