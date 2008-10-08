@@ -475,8 +475,7 @@ public class UniprotConverter extends FileConverter
                         //    <dbreference><property type="organism name" value="Homo sapiens"/>
                     } else if (qName.equals("property") && stack.peek().equals("dbReference")
                                     && attrs.getValue("type").equals("organism name")
-                                    && (attrs.getValue("value").equals("Homo sapiens")
-                                    || attrs.getValue("value").equals("Apis mellifera"))) {
+                                    && attrs.getValue("value").equals("Apis mellifera")) {
                         if ((possibleGeneIdSource != null) && (possibleGeneId != null)) {
                             // we probably don't have a <gene> reference
                             initGene();
