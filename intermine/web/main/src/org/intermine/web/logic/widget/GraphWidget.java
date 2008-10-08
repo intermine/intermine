@@ -12,13 +12,9 @@ package org.intermine.web.logic.widget;
 
 import java.awt.BasicStroke;
 import java.awt.Font;
-import java.io.File;
-import java.io.FileInputStream;
 import java.lang.reflect.Constructor;
 import java.util.List;
 import java.util.Vector;
-
-import net.sourceforge.iharder.Base64;
 
 import org.intermine.objectstore.ObjectStore;
 import org.intermine.util.TypeUtil;
@@ -33,7 +29,6 @@ import org.jfree.chart.axis.NumberAxis;
 import org.jfree.chart.entity.StandardEntityCollection;
 import org.jfree.chart.imagemap.ImageMapUtilities;
 import org.jfree.chart.labels.CategoryItemLabelGenerator;
-import org.jfree.chart.labels.CategoryToolTipGenerator;
 import org.jfree.chart.labels.ItemLabelAnchor;
 import org.jfree.chart.labels.ItemLabelPosition;
 import org.jfree.chart.labels.StandardCategoryItemLabelGenerator;
@@ -78,7 +73,7 @@ public class GraphWidget extends Widget
         this.selectedExtraAttribute = selectedExtraAttribute;
         process();
     }
-    
+
     public List getElementInList() {
         return new Vector();
     }
@@ -201,14 +196,7 @@ public class GraphWidget extends Widget
             // renderer.setDrawBarOutline(false);
             renderer.setSeriesOutlineStroke(1, new BasicStroke(0.0F));
 
-            Class<?> clazz1 = TypeUtil.instantiate(((GraphWidgetConfig) config).getToolTipGen());
-            Constructor<?> toolTipConstructor = clazz1.getConstructor(new Class[]
-                {});
-            CategoryToolTipGenerator categoryToolTipGen
-            = (CategoryToolTipGenerator) toolTipConstructor
-                            .newInstance(new Object[]
-                                {});
-            plot.getRenderer().setBaseToolTipGenerator(categoryToolTipGen);
+            plot.getRenderer().setBaseToolTipGenerator(new ToolTipGenerator());
 
             // url to display genes
             // this may be already set individually for the different series
@@ -282,7 +270,6 @@ public class GraphWidget extends Widget
      * {@inheritDoc}
      */
     public void setNotAnalysed(int notAnalysed) {
-        // TODO Auto-generated method stub
         this.notAnalysed = notAnalysed;
     }
 
@@ -297,32 +284,13 @@ public class GraphWidget extends Widget
      * Get the HTML that will display the graph and imagemap
      * @return the HTML as a String
      */
-    public String getHtml() throws Exception{
-//        File file = new File(System.getProperty("java.io.tmpdir"), fileName);
-//
-//        FileInputStream is = new FileInputStream(file);
-//        // Create the byte array to hold the data
-//        byte[] bytes = new byte[(int) file.length()];
-//        String h;
-//        is.read(bytes);
-//        h = Base64.encodeBytes(bytes);
-//        StringBuffer sb = new StringBuffer("<img src=\"data:image/x-png;base64," + h + "\" width=\""
-//                                           + ((GraphWidgetConfig) config).getWIDTH()
-//                                           + "\" height=\""
-//                                           + ((GraphWidgetConfig) config).getHEIGHT()
-//                                           + "\" usemap=\"#chart" + fileName + "\">");
-//
-//        sb.append(imageMap);
-//        return sb.toString();
-
+    public String getHtml() {
         // IE doesn't support base64, so for now we are just going to pass back location of png file
         // see http://en.wikipedia.org/wiki/Data:_URI_scheme
-
-
         StringBuffer sb = new StringBuffer("<img src=\"loadTmpImg.do?fileName=" + fileName
-                                           + "\" width=\"" + ((GraphWidgetConfig) config).getWIDTH() + "\" height=\""
-                                           + ((GraphWidgetConfig) config).getHEIGHT()
-                                           + "\" usemap=\"#chart" + fileName + "\">");
+                              + "\" width=\"" + ((GraphWidgetConfig) config).getWIDTH()
+                              + "\" height=\"" + ((GraphWidgetConfig) config).getHEIGHT()
+                              + "\" usemap=\"#chart" + fileName + "\">");
         sb.append(imageMap);
         return sb.toString();
     }
