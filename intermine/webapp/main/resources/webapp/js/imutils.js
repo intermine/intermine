@@ -110,12 +110,30 @@ function display(id, beDisplayed) {
     }
 }
 
-function displayEl(el) {
-	el.style.display = '';
+function showEl(elementOrId) {
+	displayElInternal(elementOrId, true);
 }
 
 function hideEl(el) {
-	el.style.display = 'none';
+	displayElInternal(el, false);
+}
+
+function displayElInternal(elementOrId, display) {
+	var el = null;
+	if (elementOrId != null) {
+		if (typeof(elementOrId) == 'object') {
+			el = elementOrId;
+		} else {
+			el = document.getElementById(elementOrId);
+		}
+	}
+	if (el != null) {
+		if (display) {
+			el.style.display = '';
+		} else {
+			el.style.display = 'none';
+		}
+	}	
 }
 
 /* Center element with specified id to the center of window */
@@ -267,7 +285,7 @@ function setSelectElement(id, title, items) {
     	addSelectOption('', title, select);
     }
     for (var i = 0; i < items.length; i++) {
-        addOption(items[i], items[i], select);
+        addSelectOption(items[i], items[i], select);
     }    
 }
 
@@ -276,4 +294,9 @@ function addSelectOption(value, name, select) {
     option.setAttribute('value', value);
     option.innerHTML = name;
     select.appendChild(option);
+}
+
+function getSelectValue(id) {
+    var select = document.getElementById(id);
+    return select[select.selectedIndex].value;
 }

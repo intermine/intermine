@@ -35,6 +35,7 @@
 		Filter:&nbsp;
 		<tiles:insert name="tagSelect.tile">
 		        <tiles:put name="type" value="bag" />
+		        <tiles:put name="selectId" value="mainSelect" />
 		        <tiles:put name="onChangeFunction" value="filterByTag" />
 		</tiles:insert>
 	</td></tr><td>
@@ -88,7 +89,7 @@
 	                       <tiles:put name="taggable" beanName="taggable"/>
 	                       <tiles:put name="vertical" value="true"/>
 	                       <tiles:put name="show" value="true"/>
-	                       <tiles:put name="onChangeCode" value="reloadTagSelect()"/>
+	                       <tiles:put name="onChangeCode" value="reloadTagSelect('mainSelect', 'bag')"/>
 	                     </tiles:insert>
                      </c:if>
 

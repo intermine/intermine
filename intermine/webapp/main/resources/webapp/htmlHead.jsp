@@ -75,48 +75,22 @@ if(new java.io.File(application.getRealPath("css")+"/"+pageName+".css").exists()
     document.getElementById("fbname").focus();
   }
 
-  var editingTag;
-
-  function addTag(uid, type) {
-    var tag = $('tagValue-'+uid).value;
-    new Ajax.Request('<html:rewrite action="/inlineTagEditorChange"/>',
-        {parameters:'method=add&uid='+uid+'&type='+type+'&tag='+tag, asynchronous:false});
-    refreshTags(uid, type);
-    $('tagValue-'+uid).value='';
-  }
-
-  function startEditingTag(uid) {
-    if (editingTag) {
-      stopEditingTag();
-    }
-    editingTag = uid;
-    $('tagsEdit-'+editingTag).style.display='';
-    $('addLink-'+editingTag).style.display='none';
-    $('tagValue-'+editingTag).focus();
-  }
-
-  function stopEditingTag() {
-    if (editingTag) {
-      $('tagsEdit-'+editingTag).style.display='none';
-      $('addLink-'+editingTag).style.display='';
-    }
-    editingTag = '';
-  }
-
-  function refreshTags(uid, type) {
-    new Ajax.Updater('currentTags-'+uid, '<html:rewrite action="/inlineTagEditorChange"/>',
-        {parameters:'method=currentTags&uid='+uid+'&type='+type, asynchronous:true});
-  }
-
-
-  Position.getWindowSize = function(w) {
-      var width, height;
-      w = w ? w : window;
-        width = w.innerWidth || (w.document.documentElement.clientWidth || w.document.body.clientWidth);
-      height = w.innerHeight || (w.document.documentElement.clientHeight || w.document.body.clientHeight);
-      return { width: width, height: height };
-  }
-
+	//must be there because of html:rewrite
+	function addTag(uid, type) {
+		var tag = getAddedTag(uid, type);
+		new Ajax.Request('<html:rewrite action="/inlineTagEditorChange"/>', {
+			parameters :'method=add&uid=' + uid + '&type=' + type + '&tag=' + tag,
+			asynchronous :false
+		});
+		refreshTags(uid, type);
+	}
+	
+	//must be there because of html:rewrite
+	function refreshTags(uid, type) {
+	    new Ajax.Updater('currentTags-'+uid, '<html:rewrite action="/inlineTagEditorChange"/>',
+	        {parameters:'method=currentTags&uid='+uid+'&type='+type, asynchronous:true});
+	}
+	
   Position.center = function(element){
       var options = Object.extend({
             zIndex: 999,
