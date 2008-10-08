@@ -47,8 +47,14 @@
 
   <target name="-init-check-for-intermine-properties"
           depends="-set-release-suffix, -pre-define-task-classpath, -init-project">
-    <available file="${user.home}/${intermine.properties.file}${release-suffix}"
-               property="have.intermine.properties.file"/>
+    <available file="${user.home}/.intermine/${intermine.properties.file}${release-suffix}"
+               property="have.intermine.properties.file" />
+  </target>
+
+  <target name="-init-check-for-intermine-properties-dir"
+          depends="-set-release-suffix, -pre-define-task-classpath, -init-project">
+    <available file="${user.home}/.intermine"
+               property="have.intermine.properties.dir" />
   </target>
 
   <target name="-check-for-intermine-properties-file" depends="-init-project" 
@@ -59,13 +65,23 @@ project.properties.
     </fail>
   </target>
 
+  <target name="-check-for-intermine-properties-dir" 
+          depends="-check-for-intermine-properties-file, -init-check-for-intermine-properties-dir"
+          unless="have.intermine.properties.dir">
+    <fail unless="temporary.webapp.project">
+Couldn't find ${user.home}/.intermine directory.  All InterMine properties files
+should now be kept in a .intermine directory under your home directory, please create this
+directory and move your properties. This includes *mine.properties and build.properties.*mine.
+    </fail>
+  </target>
+
   <target name="-check-for-intermine-properties" 
-          depends="-check-for-intermine-properties-file, -init-check-for-intermine-properties"
+          depends="-check-for-intermine-properties-file, -check-for-intermine-properties-dir, -init-check-for-intermine-properties"
           unless="have.intermine.properties.file">
     <fail unless="temporary.webapp.project">
-Couldn't find ${user.home}/${intermine.properties.file}${release-suffix}
-You need to set the intermine.properties.file property in your
-project.properties.
+Couldn't find ${user.home}/.intermine/${intermine.properties.file}${release-suffix}
+You need to set the intermine.properties.file property in your project.properties or
+specify a valid release suffix with '-Drelease=xxx'.
     </fail>
   </target>
 
@@ -76,7 +92,7 @@ project.properties.
          and the directory is created -->
 
     <!-- Copy intermine.properties onto the classpath -->
-    <copy file="${user.home}/${intermine.properties.file}${release-suffix}" 
+    <copy file="${user.home}/.intermine/${intermine.properties.file}${release-suffix}" 
           tofile="${build.task.dir}/intermine.properties"
           overwrite="true"/>
     <!-- Copy default.intermine.properties onto the classpath -->
@@ -88,7 +104,7 @@ project.properties.
   <target name="-init-check-for-build-properties"
           depends="-set-release-suffix, -init-deps">
     <property name="build.properties.file"
-              value="${user.home}/build.properties.${mine.name}${release-suffix}"/>
+              value="${user.home}/.intermine/build.properties.${mine.name}${release-suffix}"/>
     <available file="${build.properties.file}" property="have.build.properties.file"/>
   </target>
 
@@ -102,7 +118,7 @@ Couldn't find ${build.properties.file}
 
   <target name="-init-app-properties"
           depends="-init-properties, -check-for-build-properties, -pre-define-task-classpath">
-    <property file="${user.home}/build.properties.${mine.name}${release-suffix}"/>
+    <property file="${user.home}/.intermine/build.properties.${mine.name}${release-suffix}"/>
   </target>
 
   <target name="-load-task-taskdefs" depends="-check-task-availability,
