@@ -152,6 +152,7 @@ public class ChadoSequenceProcessor extends ChadoProcessor
         processSynonymTable(connection);
         processFeaturePropTable(connection);
         extraProcessing(connection, featureMap);
+        finishedProcessing(connection, featureMap);
     }
 
     private void processFeatureTable(Connection connection)
@@ -425,9 +426,8 @@ public class ChadoSequenceProcessor extends ChadoProcessor
      * Do any extra processing that is needed before the converter starts querying features
      * @param connection the Connection
      */
-    @SuppressWarnings("unused")
     protected void earlyExtraProcessing(Connection connection) {
-        // empty
+        // override in subclasses as necessary
     }
 
     /**
@@ -437,9 +437,21 @@ public class ChadoSequenceProcessor extends ChadoProcessor
      * @throws ObjectStoreException if there is a problem while storing
      * @throws SQLException if there is a problem
      */
-    @SuppressWarnings("unused")
     protected void extraProcessing(Connection connection,
                                    Map<Integer, FeatureData> featureDataMap)
+        throws ObjectStoreException, SQLException {
+        // override in subclasses as necessary
+    }
+
+    /**
+     * Perform any actions needed after all processing is finished.
+     * @param connection the Connection
+     * @param featureDataMap a map from chado feature_id to data for that feature
+     * @throws ObjectStoreException if there is a problem while storing
+     * @throws SQLException if there is a problem
+     */
+    protected void finishedProcessing(Connection connection,
+                                    Map<Integer, FeatureData> featureDataMap)
         throws ObjectStoreException, SQLException {
         // override in subclasses as necessary
     }
@@ -534,7 +546,6 @@ public class ChadoSequenceProcessor extends ChadoProcessor
      * @return the new Location object
      * @throws ObjectStoreException if there is a problem while storing
      */
-    @SuppressWarnings("unused")
     protected Item makeLocation(int start, int end, int strand, FeatureData srcFeatureData,
                                 FeatureData featureData, int taxonId)
         throws ObjectStoreException {
