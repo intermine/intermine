@@ -10,8 +10,10 @@ package org.modmine.web;
  *
  */
 
+import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
+import java.util.List;
 import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
@@ -58,12 +60,20 @@ public class SubmissionsController extends TilesAction
             ObjectStore os =
                 (ObjectStore) session.getServletContext().getAttribute(Constants.OBJECTSTORE);
 
-            //get the classes and the counts                         
+            // a check has been added in case a submission is without features.
+            // apparently an outer join was not possible since there would be the need
+            // for 2 outer joins.
+            // at the moment it is useful only when there are only submissions without features:
+            // in case some is present, all the submissions will get the chromosome
+            // feature, and this is dealt anyway. This will change.
+            // 
+            // code marked with CHECK
+            
+            // get the classes and the counts                         
             Query q = new Query();
 
             QueryClass sub = new QueryClass(Submission.class);
             q.addFrom(sub);
-//            QueryField qfTitle = new QueryField(sub, "title");
             q.addToSelect(sub);
 
             QueryClass lsf = new QueryClass(LocatedSequenceFeature.class);
@@ -72,7 +82,6 @@ public class SubmissionsController extends TilesAction
             q.addToSelect(qfClass);
             q.addToGroupBy(qfClass);
             
-//            q.addToGroupBy(qfTitle);
             q.addToGroupBy(sub);
             
             q.addToOrderBy(new QueryField(sub, "publicReleaseDate"), "desc");
@@ -87,9 +96,25 @@ public class SubmissionsController extends TilesAction
 
             Results results = os.execute(q);
 
-//            Map<String, Map<String, Long>> subs =
-//                new LinkedHashMap<String, Map<String, Long>>();
-            Map<Submission, Map<String, Long>> subs =
+          // CHECK get all the submissions, to check if any without features
+          Query qA = new Query();
+          QueryClass subA = new QueryClass(Submission.class);
+          qA.addFrom(subA);
+          qA.addToSelect(subA);
+          qA.setDistinct(false);                        
+          Results resA = os.execute(qA);
+
+          List<Submission> all = new ArrayList<Submission>();
+
+          for (Iterator<ResultsRow> row = resA.iterator(); row.hasNext(); ) {
+              Submission s = (Submission) row.next().get(0);
+              all.add(s);
+          }
+
+          // CHECK END
+          
+          // normal case 
+          Map<Submission, Map<String, Long>> subs =
                 new LinkedHashMap<Submission, Map<String, Long>>();
 
             // for each classes set the values for jsp
@@ -100,7 +125,8 @@ public class SubmissionsController extends TilesAction
                 Long count = (Long) row.get(2);
 
                 // don't record chromosome feature
-                //if (TypeUtil.unqualifiedName(feat.getName()) == "Chromosome") { continue; }
+                // now done in the jsp
+                // if (TypeUtil.unqualifiedName(feat.getName()) == "Chromosome") { continue; }
                                 
                 Map<String, Long> fc =
                     new LinkedHashMap<String, Long>();
@@ -110,11 +136,6 @@ public class SubmissionsController extends TilesAction
                 // check if there is the need to add to fc before putting it in subs
                 // Note: the db query get the feature class in descending alphabetical order,
                 // so this will bring back the ascending order
-//                if (subs.containsKey(s)) {
-//                    for (Map<String, Long> map: subs.values()) {
-//                        fc.putAll(map);
-//                    }
-//                } 
                 if (subs.containsKey(s)) {
                     Map<String, Long> ft =
                         new LinkedHashMap<String, Long>();
@@ -124,9 +145,24 @@ public class SubmissionsController extends TilesAction
                 } else {
                     subs.put(s, fc);
                 }
+              all.remove(s); // CHECK
             }            
 
-           request.setAttribute("subs", subs);
+            // CHECK
+            Map<String, Long> noFeat =
+                new LinkedHashMap<String, Long>();
+            noFeat.put("-", null);
+
+            if (!all.isEmpty()) {
+                // add to the map all the subs without features
+                Iterator <Submission> it  = all.iterator();
+                while (it.hasNext()) {
+                    subs.put(it.next(), noFeat);
+                }
+            }
+            // CHECK END
+            
+            request.setAttribute("subs", subs);
 
         } catch (Exception err) {
             err.printStackTrace();
