@@ -26,6 +26,11 @@ Disallow: /t1dmine/
 Disallow: /stemcell-preview/
 Disallow: /stemcell/
 Disallow: /malaria/
+Disallow: /malariamine/
 Disallow: /mouse/
+Disallow: /mousemine/
 Disallow: /plantmine/
 Disallow: /plantmine-preview/
+Disallow: /preview/
+Disallow: /unimine/
+Disallow: /flybasemine/
