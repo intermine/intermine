@@ -12,6 +12,8 @@
 <tiles:importAttribute name="show" ignore="true"/>
 <tiles:importAttribute name="onChangeCode" ignore="true"/>
 
+<script type="text/javascript" src="js/inlineTagEditor.js"></script>
+
 <c:if test="${vertical}">
   <div style="margin-top: 5px">
 </c:if>
@@ -19,11 +21,13 @@
 <span id="tags-${uid}" style="${!show?'display:none':''}">
   <span id="currentTags-${uid}">
     <tiles:insert page="/currentTags.jsp">
-    	<tiles:put name="onChangeCode" value="${onChangeCode}" />
     </tiles:insert>
   </span>
   <span id="addLink-${uid}">
-    <a class="addTagLink" href="#" onclick="startEditingTag('${uid}');return false">Add tags</a>
+    <a class="addTagLink" onclick="javascript:startEditingTag('${uid}')" >Add tags</a>
+  </span>
+  <span>
+  	<a  class="addTagLink" onclick="javascript:switchTagInput('${uid}')" style="display:none;" id="switchLink-${uid}">New tag</a>
   </span>
   <span id="tagsEdit-${uid}" style="display:none; white-space:nowrap">
     <c:if test="${vertical}">
@@ -32,7 +36,12 @@
     <!--<input type="hidden" name="tag-uid" value="${uid}"/>
     <input type="hidden" name="tag-type" value="${type}"/>-->
     <input type="text" style="border: 1px solid #888; padding: 2px; font-size: 10px" size="18" id="tagValue-${uid}" name="tag"
-      onKeyPress="if(event.keyCode == 13) {addTag('${uid}', '${type}');$('tagValue-${uid}').focus();${onChangeCode};return false;}"/>
+      onKeyPress="if(event.keyCode == 13) {addTag('${uid}', '${type}');$('tagValue-${uid}').focus();${onChangeCode};}"/>
+    <tiles:insert name="tagSelect.tile">
+	        <tiles:put name="type" value="${type}" />
+	        <tiles:put name="selectId" value="tagSelect-${uid}" />
+	</tiles:insert>
+    
     <input type="button" style="font-size: 10px" value="Add" onclick="addTag('${uid}', '${type}');${onChangeCode};$('tagValue-${uid}').focus();"/>
     <input type="button" style="font-size: 10px" value="Done" onclick="stopEditingTag('${uid}')"/>
   </span>
