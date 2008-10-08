@@ -758,12 +758,16 @@
                      className="org.intermine.bio.web.export.GFF3HttpExporter"/>
 
    <widgets>
-      <graphdisplayer id="chromosome_distribution" title="Chromosome Distribution" domainLabel="Chromosome" rangeLabel="Count" dataSetLoader="org.intermine.bio.web.widget.ChromosomeDistributionDataSetLdr"
-                      link="org.intermine.bio.web.widget.ChromosomeDistributionGraphURLGenerator"
-                      description="Actual: number of items in this list found on each chromosome.  Expected: given the total number of items on the chromosome and the number of items in this list, the number of items expected to be found on each chromosome."
-                      graphType="BarChart" extraAttributeClass="org.intermine.bio.web.logic.BioUtil"
-                      typeClass="org.flymine.model.genomic.Gene,org.flymine.model.genomic.LocatedSequenceFeature,org.flymine.model.genomic.TransposableElementInsertionSite"
-                      />
+      <graphdisplayer id="chromosome_distribution" title="Chromosome Distribution"
+        domainLabel="Chromosome"
+        rangeLabel="Count"
+        dataSetLoader="org.intermine.bio.web.widget.ChromosomeDistributionDataSetLdr"
+        link="org.intermine.bio.web.widget.ChromosomeDistributionGraphURLGenerator"
+        description="Actual: number of items in this list found on each chromosome.  Expected: given the total number of items on the chromosome and the number of items in this list, the number of items expected to be found on each chromosome."
+        graphType="BarChart"
+        extraAttributeClass="org.intermine.bio.web.logic.BioUtil"
+        typeClass="org.flymine.model.genomic.Gene,org.flymine.model.genomic.LocatedSequenceFeature,org.flymine.model.genomic.TransposableElementInsertionSite"
+       />
 
       <graphdisplayer id="flyatlas" title="Gene Expression in the Adult Fly (FlyAtlas)" domainLabel="Tissue" rangeLabel="Up (+) or Down (-) gene count" dataSetLoader="org.flymine.web.widget.FlyAtlasDataSetLdr"
                       link="org.flymine.web.widget.FlyAtlasGraphURLGenerator"
@@ -851,7 +855,8 @@
                                  typeClass="org.flymine.model.genomic.Gene"
                                  externalLink="" />
 
-      <bagtabledisplayer id="kegg" title="Pathway Information (KEGG)" pathStrings="Gene.pathways" link="org.intermine.bio.web.widget.PathwayURLQuery"
+      <bagtabledisplayer id="kegg" title="Pathway Information (KEGG)" pathStrings="Gene.pathways"
+                         link="org.intermine.bio.web.widget.PathwayURLQuery"
                          description="Most common &lt;a href=&quot;http://www.genome.jp/kegg/&quot; target=&quot;_new&quot;&gt;KEGG pathways&lt;/a&gt; for this list."
                          displayFields="identifier,name"
                          exportFields="primaryIdentifier"
@@ -859,7 +864,8 @@
                          typeClass="org.flymine.model.genomic.Gene"
                          externalLinkLabel="KEGG" />
 
-      <bagtabledisplayer id="orthologues" title="Orthologues" pathStrings="Gene.homologues[type=orthologue].homologue.organism" link="org.intermine.bio.web.widget.HomologueURLQuery"
+      <bagtabledisplayer id="orthologues" title="Orthologues" pathStrings="Gene.homologues[type=orthologue].homologue.organism"
+                         link="org.intermine.bio.web.widget.HomologueURLQuery"
                          description="Counts of orthologues in other organisms for the genes in this list."
                          displayFields="name"
                          exportFields="primaryIdentifier"
@@ -875,19 +881,5 @@
                          typeClass="org.flymine.model.genomic.Gene"
                          columnTitle="Interactions"/>
 
-
-
-<!--
-     <enrichmentwidgetdisplayer title="Tiffin Motif Enrichment"
-                                      link="org.flymine.web.widget.TiffinURLQuery"
-                                      dataSetLoader="org.flymine.web.widget.TiffinLdr"
-                                      description="Tiffin Motifs enriched for genes in this list."
-                                      max="0.10"
-                                      label="Motif"
-                                      filters=""
-                                      filterLabel=""
-                                      externalLink="http://servlet.sanger.ac.uk/tiffin/motif.jsp?acc="
-                                      append=".2" />
--->
     </widgets>
 </webconfig>
