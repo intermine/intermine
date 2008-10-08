@@ -11,7 +11,7 @@ function filterByTag(tag) {
 function showAllTable(tableName) {
 	var els = getTableRows(tableName);
 	for (var i = 0; i < els.length; i++) {
-		displayEl(els[i]);
+		showEl(els[i]);
 	}
 } 
 
@@ -29,7 +29,7 @@ function filterTable(filteredList) {
 			var el = els[i];
 			var objectName = el.id;
 			if (isInArray(filteredList, objectName)) {
-				displayEl(el);
+				showEl(el);
 			} else {
 				hideEl(el);
 			}
