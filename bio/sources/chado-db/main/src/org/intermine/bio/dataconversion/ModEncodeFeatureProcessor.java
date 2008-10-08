@@ -46,7 +46,7 @@ public class ModEncodeFeatureProcessor extends ChadoSequenceProcessor
          "CDS", "intron", "exon", "EST",
          "five_prime_untranslated_region",
          "five_prime_UTR", "three_prime_untranslated_region",
-         "three_prime_UTR", "origin_of_replication", 
+         "three_prime_UTR", "origin_of_replication",
          "binding_site", "protein_binding_site", "transcript_region"
     );
 
@@ -81,7 +81,7 @@ public class ModEncodeFeatureProcessor extends ChadoSequenceProcessor
      * gives problems: no row returned for the data_id -> no feature in sub..
      * (see createFeatureTempTable in ChadoSequenceProcessor)
      * queryList??
-     * 
+     *
      */
     /**
      * {@inheritDoc}
@@ -90,8 +90,14 @@ public class ModEncodeFeatureProcessor extends ChadoSequenceProcessor
     protected String getExtraFeatureConstraint() {
         String queryList = forINclause();
 
-        return "cvterm.name = 'chromosome' OR cvterm.name = 'chromosome_arm' OR feature_id IN "
-            + " (SELECT feature_id "
+        return "(cvterm.name = 'chromosome' OR cvterm.name = 'chromosome_arm') AND "
+            + "  feature_id IN (select srcfeature_id from featureloc WHERE "
+            + "               featureloc.feature_id IN "
+            + " (SELECT data_feature.feature_id "
+            + "   FROM data_feature "
+            + "   WHERE data_id IN (" + queryList + ")))"
+            + "OR feature_id IN "
+            + " (SELECT data_feature.feature_id "
             + "   FROM data_feature "
             + "   WHERE data_id IN (" + queryList + "))";
     }
@@ -193,7 +199,7 @@ public class ModEncodeFeatureProcessor extends ChadoSequenceProcessor
         return feature;
     }
 
-    
+
 
     /**
      * method to transform dataList (list of integers)
