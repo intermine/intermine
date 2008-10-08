@@ -10,6 +10,7 @@
     <collection name="UTRs" referenced-type="org.flymine.model.genomic.UTR" reverse-reference="gene" ordered="true"/>
     <collection name="CDSs" referenced-type="org.flymine.model.genomic.CDS" reverse-reference="gene" ordered="true"/>
     <collection name="alleles" referenced-type="org.flymine.model.genomic.Allele" reverse-reference="gene" ordered="true"/>
+    <collection name="clones" referenced-type="org.flymine.model.genomic.CDNAClone" reverse-reference="gene"/>
   </class>
   <class name="org.flymine.model.genomic.InsertionSite" extends="org.flymine.model.genomic.BioEntity" is-interface="true">
     <collection name="genes" referenced-type="org.flymine.model.genomic.Gene" ordered="true"/>
@@ -74,7 +75,7 @@
          is-interface="true">
   </class>
   <class name="org.flymine.model.genomic.CDNAClone" extends="org.flymine.model.genomic.BioEntity" is-interface="true">
-    <reference name="gene" referenced-type="org.flymine.model.genomic.Gene"/>
+    <reference name="gene" referenced-type="org.flymine.model.genomic.Gene" reverse-reference="clones"/>
     <reference name="MRNA" referenced-type="org.flymine.model.genomic.MRNA"/>
     <reference name="EST" referenced-type="org.flymine.model.genomic.EST"/>
   </class>
