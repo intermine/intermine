@@ -34,15 +34,13 @@ public class GraphWidgetConfig extends WidgetConfig
 {
     private String domainLabel;
     private String rangeLabel;
-    private String toolTipGen;
-    
     private String graphType;
     private static final int WIDTH = 430;
     private static final int HEIGHT = 350;
     private String extraAttributeClass, externalLink, externalLinkLabel;
     private HttpSession session;
     private String editable;
-    
+
     /**
      * Get the session
      * @return the session
@@ -50,7 +48,7 @@ public class GraphWidgetConfig extends WidgetConfig
     public HttpSession getSession() {
         return session;
     }
-    
+
     /**
      * @param session the session to set
      */
@@ -93,25 +91,6 @@ public class GraphWidgetConfig extends WidgetConfig
         this.rangeLabel = rangeLabel;
     }
 
-
-    /**
-     * Get the value of toolTipGen
-     * @return the toolTipGen
-     */
-    public String getToolTipGen() {
-        return toolTipGen;
-    }
-
-
-    /**
-     * Set the value of toolTipGen
-     * @param toolTipGen a String
-     */
-    public void setToolTipGen(String toolTipGen) {
-        this.toolTipGen = toolTipGen;
-    }
-
-
     /**
      * @param graphType type of graph, e.g. BarChart, StackedBarChart
      */
@@ -134,8 +113,8 @@ public class GraphWidgetConfig extends WidgetConfig
      */
     public String toString() {
         return "< title=\"" + getTitle() + " domainLabel=\"" + domainLabel + " rangeLabel=\""
-               + rangeLabel + " dataSetLoader=\"" + getDataSetLoader() + " toolTipGen=\""
-               + toolTipGen + " urlGen=\"" + getLink() + "\" />";
+               + rangeLabel + " dataSetLoader=\"" + getDataSetLoader()
+               + " urlGen=\"" + getLink() + "\" />";
     }
 
 
@@ -152,7 +131,7 @@ public class GraphWidgetConfig extends WidgetConfig
     public void setExtraAttributeClass(String extraAttributeClass) {
         this.extraAttributeClass = extraAttributeClass;
     }
-    
+
     /**
      * @return the editable attribute
      */
@@ -166,7 +145,7 @@ public class GraphWidgetConfig extends WidgetConfig
     public void seteditable(String editable) {
         this.editable = editable;
     }
-    
+
     /**
      * {@inheritDoc}
      */
@@ -192,9 +171,9 @@ public class GraphWidgetConfig extends WidgetConfig
         }
         return returnMap;
     }
-    
 
-    
+
+
     /**
      * {@inheritDoc}
      */
@@ -236,13 +215,13 @@ public class GraphWidgetConfig extends WidgetConfig
     public static int getHEIGHT() {
         return HEIGHT;
     }
-    
+
     /**
      * {@inheritDoc}
      */
-    public GraphWidget getWidget(InterMineBag imBag, ObjectStore os, 
+    public GraphWidget getWidget(InterMineBag imBag, ObjectStore os,
                                  List<String> selectedExtraAttribute) {
         return new GraphWidget(this, imBag, os, selectedExtraAttribute.get(0));
     }
-    
+
 }

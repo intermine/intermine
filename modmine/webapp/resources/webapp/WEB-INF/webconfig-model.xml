@@ -29,9 +29,9 @@
 
   <class className="org.flymine.model.genomic.AppliedProtocol">
     <fields>
-      <fieldconfig fieldExpr="name"/>    
+      <fieldconfig fieldExpr="name"/>
       <fieldconfig fieldExpr="protocol.type"/>
-      <fieldconfig fieldExpr="protocol.name"/>    
+      <fieldconfig fieldExpr="protocol.name"/>
       <fieldconfig fieldExpr="submission.title"/>
     </fields>
   </class>
@@ -51,14 +51,14 @@
   <!--     <fieldconfig fieldExpr="direction"/> -->
       <fieldconfig fieldExpr="name"/>
       <fieldconfig fieldExpr="type"/>
-      <fieldconfig fieldExpr="value"/>      
+      <fieldconfig fieldExpr="value"/>
     </fields>
   </class>
 
   <class className="org.flymine.model.genomic.SubmissionDataAttribute">
     <fields>
       <fieldconfig fieldExpr="name"/>
-      <fieldconfig fieldExpr="value"/>      
+      <fieldconfig fieldExpr="value"/>
       <fieldconfig fieldExpr="type"/>
     </fields>
   </class>
@@ -204,39 +204,9 @@
     <bagdisplayers>
 
       <graphdisplayer title="Chromosome Distribution" domainLabel="Chromosome" rangeLabel="Gene Count" dataSetLoader="org.intermine.bio.web.widget.ChromosomeDistributionDataSetLdr"
-                      toolTipGen="org.intermine.web.logic.widget.ToolTipGenerator" link="org.intermine.bio.web.widget.ChromosomeDistributionGraphURLGenerator"
+                      link="org.intermine.bio.web.widget.ChromosomeDistributionGraphURLGenerator"
                       description="Actual: number of genes in this list found on each chromosome.  Expected: given the total number of genes on the chromosome and the number of genes in this list, the number of genes expected to be found on each chromosome."
                       graphType="BarChart" extraAttributeClass="org.intermine.bio.web.logic.BioUtil"/>
-
-<!--
-      <graphdisplayer title="Gene Expression in the Adult Fly (FlyAtlas)" domainLabel="Tissue" rangeLabel="Up (+) or Down (-) gene count" dataSetLoader="org.flymine.web.widget.FlyAtlasDataSetLdr"
-                      toolTipGen="org.intermine.web.logic.widget.ToolTipGenerator" link="org.flymine.web.widget.FlyAtlasGraphURLGenerator"
-                      description="For each tissue in the adult fly, the number of genes from this list for which the levels of expression are significantly high (Up) or low (Down) according to &lt;a href=&quot;http://www.flyatlas.org/&quot; target=&quot;_new&quot;&gt;FlyAtlas&lt;/a&gt; AffyCall."
-                      graphType="StackedBarChart" />
-
-      <graphdisplayer title="mRNA subcellular localisation (fly-FISH)" domainLabel="Stage" rangeLabel="Gene count" dataSetLoader="org.flymine.web.widget.FlyFishDataSetLdr"
-                      toolTipGen="org.intermine.web.logic.widget.ToolTipGenerator" link="org.flymine.web.widget.FlyFishGraphURLGenerator"
-                      description="Expression patterns of Drosophila mRNAs at the subcellular level during early embryogenesis - data from  &lt;a href=&quot;http://fly-fish.ccbr.utoronto.ca/&quot; target=&quot;_new&quot;&gt;Fly-FISH&lt;/a&gt;.  Note that not all genes have been assayed by &lt;a href=&quot;http://fly-fish.ccbr.utoronto.ca/&quot; target=&quot;_new&quot;&gt;Fly-FISH&lt;/a&gt;."
-                      graphType="BarChart" />
-
-      <graphdisplayer title="BDGP expression patterns"
-                      link="org.flymine.web.widget.BDGPinsituGraphURLGenerator"
-                      dataSetLoader="org.flymine.web.widget.BDGPinsituDataSetLdr"
-                      description="Expression patterns of Drosophila mRNAs during embryogenesis - data from  &lt;a href=&quot;http://www.fruitfly.org/cgi-bin/ex/insitu.pl&quot; target=&quot;_new&quot;&gt;BGDP&lt;/a&gt;.  Note that not all genes have been assayed by &lt;a href=&quot;http://www.fruitfly.org/cgi-bin/ex/insitu.pl&quot; target=&quot;_new&quot;&gt;BGDP&lt;/a&gt;. "
-                      toolTipGen="org.intermine.web.logic.widget.ToolTipGenerator"
-                      domainLabel="Stage"
-                      rangeLabel="Gene count"
-                      graphType="BarChart" />
-
-
-      <bagtabledisplayer title="Pathway Information (KEGG)" pathStrings="Gene.pathways" link="org.intermine.bio.web.widget.PathwayURLQuery"
-                         description="Most common &lt;a href=&quot;http://www.genome.jp/kegg/&quot; target=&quot;_new&quot;&gt;KEGG pathways&lt;/a&gt; for this list."
-                         displayFields="identifier,name"
-                         exportFields="primaryIdentifier"
-                         externalLink="http://www.genome.jp/dbget-bin/www_bget?pathway+dme"
-                         externalLinkLabel="KEGG" />
-
--->
 
       <bagtabledisplayer title="Orthologues" pathStrings="Gene.homologues[type=orthologue].homologue.organism" link="org.intermine.bio.web.widget.HomologueURLQuery"
                          description="Counts of orthologues in other organisms for the genes in this list."
@@ -244,15 +214,7 @@
                          exportFields="primaryIdentifier"
                          columnTitle="Orthologues"/>
 
-<!--
-      <bagtabledisplayer title="Genetic Interactions"
-                         pathStrings="Gene.geneticInteractions.interactingGenes"
-                         link="org.intermine.bio.web.widget.GeneticInteractionURLQuery"
-                         description="Genes that genetically interact with genes in this list - data from &lt;a href=&quot;http://www.thebiogrid.org/&quot; target=&quot;_new&quot;&gt;BioGRID&lt;/a&gt;.  Counts may include the same interaction more than once if observed in multiple experiments."
-                         displayFields="primaryIdentifier"
-                         exportFields="primaryIdentifier"
-                         columnTitle="Interactions"/>
--->
+
 
       <enrichmentwidgetdisplayer title="Gene Ontology Enrichment"
                                  link="org.intermine.bio.web.widget.GoStatURLQuery"
@@ -284,29 +246,6 @@
                                  max="0.10"
                                  externalLink="http://www.ncbi.nlm.nih.gov/entrez/query.fcgi?cmd=Retrieve&amp;db=PubMed&amp;dopt=Abstract&amp;list_uids="
                                  externalLinkLabel="PubMed:" />
-
-<!--
-      <enrichmentwidgetdisplayer title="BDGP Enrichment"
-                                 link="org.flymine.web.widget.BDGPURLQuery"
-                                 dataSetLoader="org.flymine.web.widget.BDGPLdr"
-                                 label="Terms"
-                                 description="ImaGO terms enriched for genes in this list - data from &lt;a href=&quot;http://www.fruitfly.org/cgi-bin/ex/insitu.pl&quot; target=&quot;_new&quot;&gt;BGDP&lt;/a&gt;.  Note that not all genes have been assayed by BDGP."
-                                 filters=""
-                                 filterLabel=""
-                                 max="0.10"
-                                 externalLink="" />
-
-     <enrichmentwidgetdisplayer title="Tiffin Motif Enrichment"
-                                      link="org.flymine.web.widget.TiffinURLQuery"
-                                      dataSetLoader="org.flymine.web.widget.TiffinLdr"
-                                      description="Tiffin Motifs enriched for genes in this list."
-                                      max="0.10"
-                                      label="Motif"
-                                      filters=""
-                                      filterLabel=""
-                                      externalLink="http://servlet.sanger.ac.uk/tiffin/motif.jsp?acc="
-                                      append=".2" />
--->
     </bagdisplayers>
   </class>
 
@@ -383,7 +322,7 @@
     </longdisplayers>
     <bagdisplayers>
       <graphdisplayer title="Chromosome Distribution" domainLabel="Chromosome" rangeLabel="Count" dataSetLoader="org.intermine.bio.web.widget.ChromosomeDistributionDataSetLdr"
-                      toolTipGen="org.intermine.web.logic.widget.ToolTipGenerator" link="org.intermine.bio.web.widget.ChromosomeDistributionGraphURLGenerator"
+                      link="org.intermine.bio.web.widget.ChromosomeDistributionGraphURLGenerator"
                       description="Actual: number of features in this list found on each chromosome.  Expected: given the total number of featres on the chromosome and the number in this list, the number of features expected to be found on each chromosome."
                       graphType="BarChart" extraAttributeClass="org.intermine.bio.web.logic.BioUtil"/>
     </bagdisplayers>
@@ -613,7 +552,7 @@
     <!-- inherits longdisplayers -->
     <bagdisplayers>
       <graphdisplayer title="Chromosome Distribution" domainLabel="Chromosome" rangeLabel="Count" dataSetLoader="org.intermine.bio.web.widget.ChromosomeDistributionDataSetLdr"
-                      toolTipGen="org.intermine.web.logic.widget.ToolTipGenerator" link="org.intermine.bio.web.widget.ChromosomeDistributionGraphURLGenerator"
+                      link="org.intermine.bio.web.widget.ChromosomeDistributionGraphURLGenerator"
                       description="Actual: number of features in this list found on each chromosome.  Expected: given the total number of featres on the chromosome and the number in this list, the number of features expected to be found on each chromosome."
                       graphType="BarChart" extraAttributeClass="org.intermine.bio.web.logic.BioUtil"/>
     </bagdisplayers>
