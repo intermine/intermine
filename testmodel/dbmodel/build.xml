@@ -9,7 +9,8 @@
     <delete file="${objectstoresummary.properties}"/>
     <insert-xml-data integrationWriter="integration.unittestmulti"
                      xmlResource="testmodel_data.xml"
-                     sourceName="testsource"/>
+                     sourceName="testsource"
+                     sourceType="testsource"/>
   </target>
 
   <!-- OVERRIDEN TO ADD MODEL XML TO JAR -->
