@@ -859,7 +859,7 @@
                          link="org.intermine.bio.web.widget.PathwayURLQuery"
                          description="Most common &lt;a href=&quot;http://www.genome.jp/kegg/&quot; target=&quot;_new&quot;&gt;KEGG pathways&lt;/a&gt; for this list."
                          displayFields="identifier,name"
-                         exportFields="primaryIdentifier"
+                         exportField="primaryIdentifier"
                          externalLink="http://www.genome.jp/dbget-bin/www_bget?pathway+dme"
                          typeClass="org.flymine.model.genomic.Gene"
                          externalLinkLabel="KEGG" />
@@ -868,7 +868,7 @@
                          link="org.intermine.bio.web.widget.HomologueURLQuery"
                          description="Counts of orthologues in other organisms for the genes in this list."
                          displayFields="name"
-                         exportFields="primaryIdentifier"
+                         exportField="primaryIdentifier"
                          typeClass="org.flymine.model.genomic.Gene"
                          columnTitle="Orthologues"/>
 
@@ -877,7 +877,7 @@
                          link="org.intermine.bio.web.widget.InteractionURLQuery"
                          description="Genes (from the list or not) that interact with genes in this list.  Counts may include the same interaction more than once if observed in multiple experiments."
                          displayFields="primaryIdentifier"
-                         exportFields="primaryIdentifier"
+                         exportField="primaryIdentifier"
                          typeClass="org.flymine.model.genomic.Gene"
                          columnTitle="Interactions"/>
 

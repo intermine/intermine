@@ -117,7 +117,10 @@ public class EnrichmentWidget extends Widget
             e.printStackTrace();
         }
     }
-    
+
+    /**
+     * {@inheritDoc}
+     */
     public List getElementInList() {
         return new Vector();
     }
