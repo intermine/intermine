@@ -14,6 +14,7 @@ import java.util.Properties;
 
 import org.intermine.metadata.Model;
 import org.intermine.modelproduction.MetadataManager;
+import org.intermine.objectstore.intermine.TorqueModelOutput;
 import org.intermine.sql.Database;
 import org.intermine.sql.DatabaseFactory;
 import org.intermine.util.PropertiesUtil;
@@ -81,6 +82,9 @@ public class StoreMetadataTask extends Task
                 MetadataManager.store(db, MetadataManager.CLASS_DESCRIPTIONS,
                                       PropertiesUtil.serialize(descriptions));
             }*/
+
+            MetadataManager.store(db, MetadataManager.OS_FORMAT_VERSION,
+                    "" + TorqueModelOutput.FORMAT_VERSION);
         } catch (Exception e) {
             if (e instanceof BuildException) {
                 throw (BuildException) e;

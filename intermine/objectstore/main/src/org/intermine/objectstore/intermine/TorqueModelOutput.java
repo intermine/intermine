@@ -47,6 +47,8 @@ public class TorqueModelOutput
 {
     private static final Logger LOG = Logger.getLogger(TorqueModelOutput.class);
 
+    /** The version number of the database format */
+    public static final int FORMAT_VERSION = 0;
     protected static final String INDENT = "    ";
     protected static final String ENDL = System.getProperty("line.separator");
 
