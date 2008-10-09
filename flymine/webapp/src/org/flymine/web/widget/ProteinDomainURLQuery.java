@@ -10,11 +10,6 @@ package org.flymine.web.widget;
  *
  */
 
-import java.util.ArrayList;
-import java.util.Collection;
-
-import org.intermine.metadata.Model;
-import org.intermine.model.InterMineObject;
 import org.intermine.objectstore.ObjectStore;
 import org.intermine.pathquery.Constraints;
 import org.intermine.pathquery.PathQuery;
@@ -27,10 +22,9 @@ import org.intermine.web.logic.widget.WidgetURLQuery;
  */
 public class ProteinDomainURLQuery implements WidgetURLQuery
 {
-
-    InterMineBag bag;
-    String key;
-    ObjectStore os;
+    private InterMineBag bag;
+    private String key;
+    private ObjectStore os;
 
     /**
      * @param key which protein domain the user clicked on
@@ -46,49 +40,26 @@ public class ProteinDomainURLQuery implements WidgetURLQuery
     /**
      * {@inheritDoc}
      */
-    public PathQuery generatePathQuery(Collection<InterMineObject> keys) {
-
-        Model model = os.getModel();
-        PathQuery q = new PathQuery(model);
+    public PathQuery generatePathQuery() {
+        PathQuery q = new PathQuery(os.getModel());
         String bagType = bag.getType();
-
-        String viewStrings = "";
-        String domainStrings = "";
-
+        String paths = "";
         if (bagType.equals("Gene")) {
-            viewStrings = "Gene.proteins.primaryIdentifier,Gene.proteins.primaryAccession,"
+            paths = "Gene.proteins.primaryIdentifier,Gene.proteins.primaryAccession,"
                 + "Gene.proteins.organism.name,Gene.primaryIdentifier,"
-                + "Gene.secondaryIdentifier";
-            domainStrings = "Gene.proteins.proteinDomains.primaryIdentifier,"
+                + "Gene.secondaryIdentifier,Gene.proteins.proteinDomains.primaryIdentifier,"
                 + "Gene.proteins.proteinDomains.name";
         } else if (bagType.equals("Protein")) {
-            viewStrings = "Protein.primaryIdentifier,"
-                + "Protein.primaryAccession,Protein.organism.name";
+            paths = "Protein.primaryIdentifier,Protein.primaryAccession,Protein.organism.name";
         }
-
-        q.setView(viewStrings);
-        if (keys == null) {
-            q.addView(domainStrings);
-        }
-
+        q.setView(paths);
         q.addConstraint(bagType,  Constraints.in(bag.getName()));
-
-        if (keys != null) {
-            q.addConstraint(bagType,  Constraints.notIn(new ArrayList(keys)));
-        } else {
-            String pathString = (bagType.equals("Gene") ? "Gene.proteins.proteinDomains"
-                                                          : "Protein.proteinDomains");
-            q.addConstraint(pathString,  Constraints.lookup(key));
-        }
-
+        String pathString = (bagType.equals("Gene") ? "Gene.proteins.proteinDomains"
+                                                         : "Protein.proteinDomains");
+        q.addConstraint(pathString,  Constraints.lookup(key));
         q.setConstraintLogic("A and B");
         q.syncLogicExpression("and");
-
-        if (keys == null) {
-            q.setOrderBy(domainStrings);
-        }
-        q.addOrderBy(viewStrings);
-
+        q.setOrderBy(paths);
         return q;
     }
 }

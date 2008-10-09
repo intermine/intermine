@@ -10,9 +10,6 @@ package org.flymine.web.widget;
  *
  */
 
-import java.util.Collection;
-
-import org.intermine.model.InterMineObject;
 import org.intermine.objectstore.ObjectStore;
 import org.intermine.pathquery.PathQuery;
 import org.intermine.web.logic.bag.InterMineBag;
@@ -42,8 +39,7 @@ public class TiffinURLQuery implements WidgetURLQuery
     /**
      * {@inheritDoc}
      */
-    public PathQuery generatePathQuery(@SuppressWarnings("unused") Collection<InterMineObject> keys)
-    {
+    public PathQuery generatePathQuery() {
         // TODO this method
         return null;
     }
