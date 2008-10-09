@@ -72,6 +72,10 @@ public class MetadataManager
      * Name of the key under which to store the serialized version of the class descriptions
      */
     //public static final String CLASS_DESCRIPTIONS = "classDescs";
+    /**
+     * The name of the key used to store objectstore format version number.
+     */
+    public static final String OS_FORMAT_VERSION = "osversion";
 
     /**
      * Store a (key, value) pair in the metadata table of the database

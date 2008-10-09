@@ -559,7 +559,7 @@ public class DatabaseUtil
      * @param col CollectionDescriptor
      * @return a valid column name
      */
-    public static String getOutwardIndirectionColumnName(CollectionDescriptor col) {
+    public static String getInwardIndirectionColumnName(CollectionDescriptor col) {
         if (FieldDescriptor.M_N_RELATION != col.relationType()) {
             throw new IllegalArgumentException("Argument must be a CollectionDescriptor for a "
                                                + "many-to-many relation");
@@ -574,7 +574,7 @@ public class DatabaseUtil
      * @param col CollectionDescriptor
      * @return a valid column name
      */
-    public static String getInwardIndirectionColumnName(CollectionDescriptor col) {
+    public static String getOutwardIndirectionColumnName(CollectionDescriptor col) {
         if (FieldDescriptor.M_N_RELATION != col.relationType()) {
             throw new IllegalArgumentException("Argument must be a CollectionDescriptor for a "
                                                + "many-to-many relation");

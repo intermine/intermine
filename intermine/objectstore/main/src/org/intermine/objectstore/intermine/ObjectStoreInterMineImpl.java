@@ -40,6 +40,7 @@ import org.intermine.metadata.ClassDescriptor;
 import org.intermine.metadata.MetaDataException;
 import org.intermine.metadata.Model;
 import org.intermine.model.InterMineObject;
+import org.intermine.modelproduction.MetadataManager;
 import org.intermine.objectstore.ObjectStoreAbstractImpl;
 import org.intermine.objectstore.ObjectStoreException;
 import org.intermine.objectstore.ObjectStoreQueryDurationException;
@@ -113,6 +114,7 @@ public class ObjectStoreInterMineImpl extends ObjectStoreAbstractImpl implements
     protected int sequenceOffset = SEQUENCE_MULTIPLE;
     protected static final int SEQUENCE_MULTIPLE = 1000000;
     protected boolean logExplains = false;
+    private int formatVersion = -1;
 
     // don't use a table to represent bags if the bag is smaller than this value
     protected int minBagTableSize = -1;
@@ -159,6 +161,7 @@ public class ObjectStoreInterMineImpl extends ObjectStoreAbstractImpl implements
     protected ObjectStoreInterMineImpl(Database db, Model model) {
         super(model);
         this.db = db;
+        initFormatVersion();
         schema = new DatabaseSchema(model, Collections.EMPTY_LIST, false, Collections.EMPTY_SET);
         ShutdownHook.registerObject(new WeakReference(this));
         limitedContext = new QueryOptimiserContext();
@@ -178,10 +181,43 @@ public class ObjectStoreInterMineImpl extends ObjectStoreAbstractImpl implements
         super(schema.getModel());
         this.db = db;
         this.schema = schema;
+        initFormatVersion();
         ShutdownHook.registerObject(new WeakReference(this));
         limitedContext = new QueryOptimiserContext();
         limitedContext.setTimeLimit(getMaxTime() / 10);
         description = "ObjectStoreInterMineImpl(" + db + ")";
+    }
+
+    /**
+     * Initialises the format version number of the objectstore from the database. Will throw
+     * an exception if the database format is newer than this code can cope with.
+     */
+    private void initFormatVersion() {
+        if (db != null) {
+            String versionString = null;
+            try {
+                versionString = MetadataManager.retrieve(db, MetadataManager.OS_FORMAT_VERSION);
+            } catch (SQLException e) {
+                LOG.error("Error retrieving database format version number", e);
+            }
+            if (versionString == null) {
+                formatVersion = 0;
+            } else {
+                try {
+                    formatVersion = Integer.parseInt(versionString);
+                } catch (NumberFormatException e) {
+                    NumberFormatException e2 = new NumberFormatException("Cannot parse database"
+                            + " format version \"" + versionString + "\"");
+                    e2.initCause(e);
+                    throw e2;
+                }
+            }
+            if (formatVersion > 0) {
+                throw new IllegalArgumentException("Database version is too new for this code. "
+                        + "Please update to a newer version of InterMine. Database version: "
+                        + formatVersion + ", latest supported version: 0");
+            }
+        }
     }
 
     /**
