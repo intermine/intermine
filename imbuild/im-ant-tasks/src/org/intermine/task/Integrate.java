@@ -54,7 +54,7 @@ public class Integrate extends Task
 
     private File projectXml;
     private Project intermineProject;
-    private String action, source;
+    private String action, sourceAttribute;
     private File workspaceBaseDir;
 
     /**
@@ -78,7 +78,7 @@ public class Integrate extends Task
      * @param source the source
      */
     public void setSource(String source) {
-        this.source = source;
+        this.sourceAttribute = source;
     }
 
     /**
@@ -101,7 +101,7 @@ public class Integrate extends Task
         if (workspaceBaseDir == null) {
             throw new BuildException("no workspaceBaseDir specified");
         }
-        if (source == null || source.trim().equals("")) {
+        if (sourceAttribute == null || sourceAttribute.trim().equals("")) {
             throw new BuildException("no source set, try \"ant -Dsource=all\" or "
                                      + "\"ant -Dsource=source1,source2\"");
         }
@@ -122,49 +122,50 @@ public class Integrate extends Task
 
         System.out.print("Found " + intermineProject.getSources().size() + " sources" + "\n");
 
-        List<String> sources = new ArrayList<String>();
+        List<String> sourceNames = new ArrayList<String>();
 
-        if (source.equals("") || source.equals("all")) {
+        if (sourceAttribute.equals("") || sourceAttribute.equals("all")) {
             Iterator iter = intermineProject.getSources().entrySet().iterator();
             while (iter.hasNext()) {
                 String thisSource = (String) ((Map.Entry) iter.next()).getKey();
-                sources.add(thisSource);
+                sourceNames.add(thisSource);
             }
         } else {
-            Vector<String> bits = StringUtils.split(source, ',');
+            Vector<String> bits = StringUtils.split(sourceAttribute, ',');
             for (String bit: bits) {
-                sources.add(bit);
+                sourceNames.add(bit);
             }
         }
 
-        for (String thisSource: sources) {
-            if (intermineProject.getSources().get(thisSource) == null) {
+        for (String thisSourceName: sourceNames) {
+            Source sourceObject = intermineProject.getSources().get(thisSourceName);
+            if (sourceObject == null) {
                 throw new BuildException("can't find source in project definition file: "
-                                         + thisSource);
+                                         + thisSourceName);
             }
 
             if (action.equals("")) {
-                performAction(thisSource);
+                performAction(thisSourceName, sourceObject.getType());
             } else {
-                performAction(action, thisSource);
+                performAction(action, thisSourceName, sourceObject.getType());
             }
         }
     }
 
-    private void performAction(String sourceName) {
-        performAction("retrieve", sourceName);
-        performAction("translate", sourceName);
-        performAction("load", sourceName);
+    private void performAction(String sourceName, String sourceType) {
+        performAction("retrieve", sourceName, sourceType);
+        performAction("translate", sourceName, sourceType);
+        performAction("load", sourceName, sourceType);
     }
 
-    private void performAction(String actionName, String sourceName) {
+    private void performAction(String actionName, String sourceName, String sourceType) {
         Source s = (Source) intermineProject.getSources().get(sourceName);
         File baseDir = new File(workspaceBaseDir,
                                 intermineProject.getType() + File.separatorChar + SOURCES);
         File sourceDir = new File(baseDir, s.getType());
 
         System.out.print("Performing integration action \"" + actionName + "\" for source \""
-                         + sourceName + "\" in directory: " + sourceDir + "\n");
+                         + sourceName + "\" (" + sourceType + ") in: " + sourceDir + "\n");
 
         Ant ant = new Ant();
         ant.setDir(sourceDir);
@@ -226,9 +227,13 @@ public class Integrate extends Task
         }
 
         // source.name
-        Property prop = ant.createProperty();
-        prop.setName("source.name");
-        prop.setValue(sourceName);
+        Property nameProp = ant.createProperty();
+        nameProp.setName("source.name");
+        nameProp.setValue(sourceName);
+
+        Property typeProp = ant.createProperty();
+        typeProp.setName("source.type");
+        typeProp.setValue(sourceType);
 
         ant.execute();
     }

@@ -74,12 +74,8 @@ public class IntegrationWriterSingleSourceImplTest extends StoreDataTestCase
         c.setName("CompanyC");
         c.setVatNumber(100);
 
-        Source source = new Source();
-        source.setName("testsource");
-        source.setSkeleton(false);
-        Source skelSource = new Source();
-        skelSource.setName("testsource");
-        skelSource.setSkeleton(true);
+        Source source = new Source("testsource", false);
+        Source skelSource = new Source("testsource", true);
 
         iw.store(c, source, skelSource);  // method we are testing
 
@@ -116,12 +112,8 @@ public class IntegrationWriterSingleSourceImplTest extends StoreDataTestCase
         ceo.setCompany(c);
         ceo.setAddress(a2);
 
-        Source source = new Source();
-        source.setName("testsource");
-        source.setSkeleton(false);
-        Source skelSource = new Source();
-        skelSource.setName("testsource");
-        skelSource.setSkeleton(true);
+        Source source = new Source("testsource", false);
+        Source skelSource = new Source("testsource", true);
 
         iw.store(c, source, skelSource); // method we are testing
         iw.store(a, source, skelSource);
@@ -147,12 +139,8 @@ public class IntegrationWriterSingleSourceImplTest extends StoreDataTestCase
     }
 
     public void testUpdateObjectOneToOne2() throws Exception {
-        Source source = new Source();
-        source.setName("testsource");
-        source.setSkeleton(false);
-        Source skelSource = new Source();
-        skelSource.setName("testsource");
-        skelSource.setSkeleton(true);
+        Source source = new Source("testsource", false);
+        Source skelSource = new Source("testsource", true);
 
         {
             Company companyA = (Company) DynamicUtil.createObject(Collections.singleton(Company.class));
@@ -254,12 +242,8 @@ public class IntegrationWriterSingleSourceImplTest extends StoreDataTestCase
         c.setName("CompanyB");
         c.setVatNumber(100);
 
-        Source source = new Source();
-        source.setName("testsource");
-        source.setSkeleton(false);
-        Source skelSource = new Source();
-        skelSource.setName("testsource");
-        skelSource.setSkeleton(true);
+        Source source = new Source("testsource", false);
+        Source skelSource = new Source("testsource", true);
 
         iw.store(c, source, skelSource); // method we are testing
 
@@ -297,12 +281,8 @@ public class IntegrationWriterSingleSourceImplTest extends StoreDataTestCase
         a2.setAddress("Employee Street, AVille");
         e.setAddress(a2);
 
-        Source source = new Source();
-        source.setName("testsource");
-        source.setSkeleton(false);
-        Source skelSource = new Source();
-        skelSource.setName("testsource");
-        skelSource.setSkeleton(true);
+        Source source = new Source("testsource", false);
+        Source skelSource = new Source("testsource", true);
 
         iw.store(e, source, skelSource); // method we are testing
 
@@ -335,12 +315,8 @@ public class IntegrationWriterSingleSourceImplTest extends StoreDataTestCase
         a2.setAddress("Employee Street, AVille");
         e.setAddress(a2);
 
-        Source source = new Source();
-        source.setName("testsource");
-        source.setSkeleton(false);
-        Source skelSource = new Source();
-        skelSource.setName("testsource");
-        skelSource.setSkeleton(true);
+        Source source = new Source("testsource", false);
+        Source skelSource = new Source("testsource", true);
 
         iw.store(e, source, skelSource); // method we are testing
 
@@ -378,12 +354,8 @@ public class IntegrationWriterSingleSourceImplTest extends StoreDataTestCase
         a2.setAddress("Employee Street, AVille");
         e.setAddress(a2);
 
-        Source source = new Source();
-        source.setName("testsource");
-        source.setSkeleton(false);
-        Source skelSource = new Source();
-        skelSource.setName("testsource");
-        skelSource.setSkeleton(true);
+        Source source = new Source("testsource", false);
+        Source skelSource = new Source("testsource", true);
 
         iw.store(d, source, skelSource); // method we are testing
 
@@ -418,12 +390,8 @@ public class IntegrationWriterSingleSourceImplTest extends StoreDataTestCase
         con.addCompanys(companyA);
         companyA.addContractors(con);
 
-        Source source = new Source();
-        source.setName("testsource");
-        source.setSkeleton(false);
-        Source skelSource = new Source();
-        skelSource.setName("testsource");
-        skelSource.setSkeleton(true);
+        Source source = new Source("testsource", false);
+        Source skelSource = new Source("testsource", true);
 
         iw.store(con, source, skelSource); // method we are testing
 
@@ -516,12 +484,8 @@ public class IntegrationWriterSingleSourceImplTest extends StoreDataTestCase
         con.addCompanys(companyA);
         companyA.addContractors(con);
 
-        Source source = new Source();
-        source.setName("testsource");
-        source.setSkeleton(false);
-        Source skelSource = new Source();
-        skelSource.setName("testsource");
-        skelSource.setSkeleton(true);
+        Source source = new Source("testsource", false);
+        Source skelSource = new Source("testsource", true);
 
         // Make sure there are currently multiple copies of CompanyA and ContractorA.
         try {
@@ -569,12 +533,8 @@ public class IntegrationWriterSingleSourceImplTest extends StoreDataTestCase
         e.setName("EmployeeA1");
         ((Broke) e).setDebt(8762);
 
-        Source source = new Source();
-        source.setName("testsource");
-        source.setSkeleton(false);
-        Source skelSource = new Source();
-        skelSource.setName("testsource");
-        skelSource.setSkeleton(true);
+        Source source = new Source("testsource", false);
+        Source skelSource = new Source("testsource", true);
 
         iw.store(e, source, skelSource);
 

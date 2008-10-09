@@ -572,15 +572,23 @@ public class DataTracker
      * @return a Source
      */
     public synchronized Source stringToSource(String name) {
+        return stringToSource(name, null);
+    }
+
+    /**
+     * Converts a string sourcename to a Source if the type is known.
+     *
+     * @param name a string source name
+     * @param type the source type
+     * @return a Source
+     */
+    public synchronized Source stringToSource(String name, String type) {
         Source retval = (Source) nameToSource.get(name);
         if (retval == null) {
-            retval = new Source();
             if (name.startsWith("skel_")) {
-                retval.setName(name.substring(5));
-                retval.setSkeleton(true);
+                retval = new Source(name.substring(5), type, true);
             } else {
-                retval.setName(name);
-                retval.setSkeleton(false);
+                retval = new Source(name, type, false);
             }
             nameToSource.put(name, retval);
             sourceToName.put(retval, name);

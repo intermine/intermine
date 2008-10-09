@@ -37,6 +37,7 @@ public class XmlDataLoaderTask extends Task
     protected String integrationWriter;
     protected FileSet fileSet;
     protected String sourceName;
+    private String sourceType;
     protected boolean ignoreDuplicates = false;
     protected String file, xmlRes;
 
@@ -84,6 +85,15 @@ public class XmlDataLoaderTask extends Task
     }
 
     /**
+     * Set the source type, as used by primary key priority config.
+     *
+     * @param sourceType the type of the data source
+     */
+    public void setSourceType(String sourceType) {
+        this.sourceType = sourceType;
+    }
+
+    /**
      * Set the value of ignoreDuplicates for the IntegrationWriter
      * @param ignoreDuplicates the value of ignoreDuplicates
      */
@@ -103,6 +113,9 @@ public class XmlDataLoaderTask extends Task
         if (sourceName == null) {
             throw new BuildException("sourceName attribute is not set");
         }
+        if (sourceType == null) {
+            throw new BuildException("sourceType attribute is not set");
+        }
         XmlDataLoader loader = null;
         File toRead = null;
         try {
@@ -119,8 +132,8 @@ public class XmlDataLoaderTask extends Task
                                              + "' on classpath.");
                 }
                 loader.processXml(is,
-                                  iw.getMainSource(sourceName),
-                                  iw.getSkeletonSource(sourceName));
+                                  iw.getMainSource(sourceName, sourceType),
+                                  iw.getSkeletonSource(sourceName, sourceType));
                 loader.close();
             } else {
 
@@ -144,8 +157,8 @@ public class XmlDataLoaderTask extends Task
                     toRead = fileIter.next();
                     System.out .println("Processing file " + toRead.toString());
                     loader.processXml(new FileInputStream(toRead),
-                                      iw.getMainSource(sourceName),
-                                      iw.getSkeletonSource(sourceName));
+                                      iw.getMainSource(sourceName, sourceType),
+                                      iw.getSkeletonSource(sourceName, sourceType));
                 }
                 loader.close();
             }

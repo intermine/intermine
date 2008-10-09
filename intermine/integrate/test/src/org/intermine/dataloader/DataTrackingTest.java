@@ -47,7 +47,7 @@ public class DataTrackingTest extends TestCase {
         }
 
         try {
-            dt.setSource(new Integer(46), "name", new Source());
+            dt.setSource(new Integer(46), "name", new Source("dummy"));
             fail("Expected NullPointerException");
         } catch (NullPointerException e) {
         }

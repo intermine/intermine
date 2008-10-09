@@ -26,6 +26,7 @@ public class ObjectStoreDataLoaderTask extends Task
     protected String integrationWriter;
     protected String source;
     protected String sourceName;
+    protected String sourceType;
     protected boolean ignoreDuplicates;
     protected String queryClass = null;
 
@@ -57,6 +58,15 @@ public class ObjectStoreDataLoaderTask extends Task
     }
 
     /**
+     * Set the source type, as used by primary key priority config.
+     *
+     * @param sourceType the name of the data source
+     */
+    public void setSourceType(String sourceType) {
+        this.sourceType = sourceType;
+    }
+
+    /**
      * Set the value of ignoreDuplicates for the IntegrationWriter
      * @param ignoreDuplicates the value of ignoreDuplicates
      */
@@ -75,6 +85,7 @@ public class ObjectStoreDataLoaderTask extends Task
     /**
      * {@inheritDoc}
      */
+    @Override
     public void execute() throws BuildException {
         if (integrationWriter == null) {
             throw new BuildException("integrationWriter attribute is not set");
@@ -88,14 +99,14 @@ public class ObjectStoreDataLoaderTask extends Task
             iw.setIgnoreDuplicates(ignoreDuplicates);
             if (queryClass != null) {
                 new ObjectStoreDataLoader(iw).process(ObjectStoreFactory.getObjectStore(source),
-                                                      iw.getMainSource(sourceName),
-                                                      iw.getSkeletonSource(sourceName),
+                                                      iw.getMainSource(sourceName, sourceType),
+                                                      iw.getSkeletonSource(sourceName, sourceType),
                                                       Class.forName(queryClass));
 
             } else {
                 new ObjectStoreDataLoader(iw).process(ObjectStoreFactory.getObjectStore(source),
-                                                      iw.getMainSource(sourceName),
-                                                      iw.getSkeletonSource(sourceName));
+                                                      iw.getMainSource(sourceName, sourceType),
+                                                      iw.getSkeletonSource(sourceName, sourceType));
             }
         } catch (Exception e) {
             throw new BuildException(e);

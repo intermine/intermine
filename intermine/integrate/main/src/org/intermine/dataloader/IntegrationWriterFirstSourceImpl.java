@@ -63,7 +63,8 @@ public class IntegrationWriterFirstSourceImpl extends IntegrationWriterDataTrack
     protected InterMineObject store(InterMineObject o, Source source, Source skelSource,
             int type) throws ObjectStoreException {
         ((DataTrackerFirstSource) dataTracker).setSkelSource(getSkeletonSource(
-                                                                  skelSource.getName()));
+                                                                  skelSource.getName(),
+                                                                  skelSource.getType()));
         return super.store(o, source, skelSource, type);
     }
 

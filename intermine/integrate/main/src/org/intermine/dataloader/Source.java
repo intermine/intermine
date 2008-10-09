@@ -17,8 +17,53 @@ package org.intermine.dataloader;
  */
 public class Source
 {
-    private String name;
-    private boolean skeleton;
+    private final String name;
+    private final String type;
+    private final boolean skeleton;
+
+    /**
+     * Create a new source object.
+     * @param name the source name
+     * @param type the source type
+     * @param skeleton true if this soruce is a skeleton
+     */
+    public Source(String name, String type, boolean skeleton) {
+        this.name = name;
+        this.type = type;
+        this.skeleton = skeleton;
+    }
+
+    /**
+     * Create a new source object that isn't a skeleton.
+     * @param name the source name
+     * @param type the source type
+     */
+    public Source(String name, String type) {
+        this.name = name;
+        this.type = type;
+        this.skeleton = false;
+    }
+
+    /**
+     * Create a new source object with no type information.
+     * @param name the source name
+     * @param skeleton true if this soruce is a skeleton
+     */
+    public Source(String name, boolean skeleton) {
+        this.name = name;
+        this.type = null;
+        this.skeleton = skeleton;
+    }
+
+    /**
+     * Create a new source object with no type information that isn't a skeleton
+     * @param name the source name
+     */
+    public Source(String name) {
+        this.name = name;
+        this.type = null;
+        this.skeleton = false;
+    }
 
     /**
      * Getter for name.
@@ -27,15 +72,6 @@ public class Source
      */
     public String getName() {
         return name;
-    }
-
-    /**
-     * Setter for name.
-     *
-     * @param name a String
-     */
-    public void setName(String name) {
-        this.name = name;
     }
 
     /**
@@ -48,18 +84,18 @@ public class Source
     }
 
     /**
-     * Setter for skeleton.
-     *
-     * @param skeleton a boolean
+     * {@inheritDoc}
      */
-    public void setSkeleton(boolean skeleton) {
-        this.skeleton = skeleton;
+    @Override
+    public String toString() {
+        return "<Source: name=\"" + getName() + "\", type=\"" + getType() + "\", skeleton="
+            + getSkeleton() + ">";
     }
 
     /**
-     * {@inheritDoc}
+     * @return the type
      */
-    public String toString() {
-        return "<Source: name=\"" + getName() + "\", skeleton=" + getSkeleton() + ">";
+    public String getType() {
+        return type;
     }
 }

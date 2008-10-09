@@ -56,8 +56,7 @@ public class EquivalentObjectFetcherTest extends QueryTestCase
     }
 
     public void testCreateQuery1() throws Exception {
-        Source source = new Source();
-        source.setName("testsource");
+        Source source = new Source("testsource");
         Query q = new Query();
         QueryClass qc = new QueryClass(Employable.class);
         q.addFrom(qc);
@@ -74,8 +73,7 @@ public class EquivalentObjectFetcherTest extends QueryTestCase
     }
 
     public void testCreateQueryNullFields() throws Exception {
-        Source source = new Source();
-        source.setName("testsource");
+        Source source = new Source("testsource");
         Query q = new Query();
         QueryClass qc = new QueryClass(Employable.class);
         q.addFrom(qc);
@@ -94,8 +92,7 @@ public class EquivalentObjectFetcherTest extends QueryTestCase
 
     // null key field in object (attribute)
     public void testCreateQueryDisableNullFields1() throws Exception {
-        Source source = new Source();
-        source.setName("testsource");
+        Source source = new Source("testsource");
 
         Employable e =
             (Employable) DynamicUtil.createObject(Collections.singleton(Employable.class));
@@ -107,8 +104,7 @@ public class EquivalentObjectFetcherTest extends QueryTestCase
 
     // null key field in object (reference)
     public void testCreateQueryDisableNullFields2() throws Exception {
-        Source source = new Source();
-        source.setName("testsource");
+        Source source = new Source("testsource");
 
         Company c =
             (Company) DynamicUtil.createObject(Collections.singleton(Company.class));
@@ -121,8 +117,7 @@ public class EquivalentObjectFetcherTest extends QueryTestCase
 
     // null key fields in referenced object
     public void testCreateQueryDisableNullFields3() throws Exception {
-        Source source = new Source();
-        source.setName("testsource");
+        Source source = new Source("testsource");
 
         Company c =
             (Company) DynamicUtil.createObject(Collections.singleton(Company.class));
@@ -137,8 +132,7 @@ public class EquivalentObjectFetcherTest extends QueryTestCase
 
     // one key has null values, expect just the other key
     public void testCreateQueryDisableNullFields4() throws Exception {
-        Source source = new Source();
-        source.setName("testsource");
+        Source source = new Source("testsource");
 
         Query q = new Query();
         QueryClass qc = new QueryClass(Department.class);
@@ -174,8 +168,7 @@ public class EquivalentObjectFetcherTest extends QueryTestCase
 
     // one key has null values, expect just the other key
     public void testCreateQueryDisableNullFields5() throws Exception {
-        Source source = new Source();
-        source.setName("testsource4");
+        Source source = new Source("testsource4");
 
         Query q = new Query();
         QueryClass qc = new QueryClass(Department.class);
@@ -210,8 +203,7 @@ public class EquivalentObjectFetcherTest extends QueryTestCase
     }
 
     public void testCreateQuery3() throws Exception {
-        Source source = new Source();
-        source.setName("testsource");
+        Source source = new Source("testsource");
         Query q = new Query();
         QueryClass qc = new QueryClass(Company.class);
         q.addFrom(qc);
@@ -243,8 +235,7 @@ public class EquivalentObjectFetcherTest extends QueryTestCase
     }
 
     public void testCreateQuery4() throws Exception {
-        Source source = new Source();
-        source.setName("testsource");
+        Source source = new Source("testsource");
 
         Query q = new Query();
         QueryClass qc = new QueryClass(Company.class);
@@ -264,8 +255,7 @@ public class EquivalentObjectFetcherTest extends QueryTestCase
     }
 
     public void testCreateQuery5() throws Exception {
-        Source source = new Source();
-        source.setName("testsource4");
+        Source source = new Source("testsource4");
 
         Query q = new Query();
         QueryClass qc = new QueryClass(InterMineObject.class);

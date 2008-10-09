@@ -52,12 +52,10 @@ public class DataLoaderHelperTest extends QueryTestCase
 
     public void testGetPrimaryKeysCldSource() throws Exception {
         ClassDescriptor cld = model.getClassDescriptorByName("org.intermine.model.testmodel.Company");
-        Source source = new Source();
-        source.setName("testsource");
+        Source source = new Source("testsource");
         assertEquals(Collections.singleton(new PrimaryKey("key1", "name, address", cld)), DataLoaderHelper.getPrimaryKeys(cld, source));
 
-        source = new Source();
-        source.setName("testsource5");
+        source = new Source("testsource5");
         try {
             DataLoaderHelper.getPrimaryKeys(cld, source);
             fail("Was expecting an exception");
@@ -67,8 +65,7 @@ public class DataLoaderHelperTest extends QueryTestCase
 
     public void testGetPrimaryKeysCldSource2() throws Exception {
         ClassDescriptor cld = model.getClassDescriptorByName("org.intermine.model.testmodel.Company");
-        Source source = new Source();
-        source.setName("testsource4");
+        Source source = new Source("testsource4");
         Set expected = new HashSet();
         expected.add(new PrimaryKey("key1", "name,address", cld));
         expected.add(new PrimaryKey("key2", "vatNumber", cld));
@@ -76,8 +73,7 @@ public class DataLoaderHelperTest extends QueryTestCase
     }
 
     public void testObjectPrimaryKeyIsNull1() throws Exception {
-        Source source = new Source();
-        source.setName("testsource");
+        Source source = new Source("testsource");
 
         Employable e =
             (Employable) DynamicUtil.createObject(Collections.singleton(Employable.class));
@@ -91,8 +87,7 @@ public class DataLoaderHelperTest extends QueryTestCase
     }
 
     public void testObjectPrimaryKeyIsNullNullField() throws Exception {
-        Source source = new Source();
-        source.setName("testsource");
+        Source source = new Source("testsource");
 
         Employable e =
             (Employable) DynamicUtil.createObject(Collections.singleton(Employable.class));
@@ -106,8 +101,7 @@ public class DataLoaderHelperTest extends QueryTestCase
     }
 
     public void testObjectPrimaryKeyIsNull2() throws Exception {
-        Source source = new Source();
-        source.setName("testsource");
+        Source source = new Source("testsource");
 
         Company c = (Company) DynamicUtil.createObject(Collections.singleton(Company.class));
         c.setName("jkhsdfg");
@@ -125,8 +119,7 @@ public class DataLoaderHelperTest extends QueryTestCase
     }
 
     public void testObjectPrimaryKeyIsNullNullField2() throws Exception {
-        Source source = new Source();
-        source.setName("testsource");
+        Source source = new Source("testsource");
 
         Company c = (Company) DynamicUtil.createObject(Collections.singleton(Company.class));
         c.setName("jkhsdfg");

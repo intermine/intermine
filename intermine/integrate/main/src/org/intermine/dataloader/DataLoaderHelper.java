@@ -35,6 +35,8 @@ import org.intermine.util.IntToIntMap;
 import org.intermine.util.PropertiesUtil;
 import org.intermine.util.TypeUtil;
 
+import java.io.IOException;
+
 import org.apache.log4j.Logger;
 
 /**
@@ -174,7 +176,20 @@ public class DataLoaderHelper
         synchronized (sourceKeys) {
             keys = (Properties) sourceKeys.get(source);
             if (keys == null) {
-                keys = PropertiesUtil.loadProperties(source.getName() + "_keys.properties");
+                String sourceNameKeysFileName = source.getName() + "_keys.properties";
+                keys = PropertiesUtil.loadProperties(sourceNameKeysFileName);
+
+                String sourceTypeKeysFileName = source.getType() + "_keys.properties";
+                if (keys == null) {
+                    keys = PropertiesUtil.loadProperties(sourceTypeKeysFileName);
+                }
+
+                if (keys == null) {
+                    throw new RuntimeException("can't find keys for source: " + source
+                                               + " after trying to find: " + sourceNameKeysFileName
+                                               + " and: " + sourceTypeKeysFileName);
+                }
+
                 sourceKeys.put(source, keys);
             }
         }
