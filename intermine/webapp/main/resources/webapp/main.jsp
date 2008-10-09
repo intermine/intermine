@@ -11,8 +11,11 @@
 <html:xhtml/>
 
 <script type="text/javascript" src="js/queryBuilder.js" ></script>
-
+<%-- Javascript files must be included there because they are not processed when mainConstraint 
+ tile is added by Ajax.Updater --%>
 <script type="text/javascript" src="js/autocompleter.js"></script>
+<script type="text/javascript" src="js/imdwr.js" ></script>
+<script type="text/javascript" src="js/tagSelect.js" ></script>
 <link rel="stylesheet" href="css/autocompleter.css" type="text/css" />
 
 <table class="query" width="100%" cellspacing="0">
