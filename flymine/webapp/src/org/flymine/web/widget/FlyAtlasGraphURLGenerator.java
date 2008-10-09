@@ -10,7 +10,6 @@ package org.flymine.web.widget;
  *
  */
 
-import org.intermine.metadata.Model;
 import org.intermine.objectstore.ObjectStore;
 import org.intermine.pathquery.Constraints;
 import org.intermine.pathquery.PathQuery;
@@ -63,14 +62,13 @@ public class FlyAtlasGraphURLGenerator implements GraphCategoryURLGenerator
     /**
      * {@inheritDoc}
      */
-    public PathQuery generatePathQuery(ObjectStore os,
-                                       InterMineBag bag,
-                                       String category,
-                                       String series) {
+    public PathQuery generatePathQuery(ObjectStore os, InterMineBag bag,
+                                       String category, String series) {
 
-        Model model = os.getModel();
-        PathQuery q = new PathQuery(model);
+        // initialise our query
+        PathQuery q = new PathQuery(os.getModel());
 
+        // add columns to the output
         q.setView("FlyAtlasResult.genes.secondaryIdentifier, "
                   + "FlyAtlasResult.genes.primaryIdentifier,"
                   + "FlyAtlasResult.genes.name,"
@@ -80,19 +78,23 @@ public class FlyAtlasGraphURLGenerator implements GraphCategoryURLGenerator
                   + "FlyAtlasResult.affyCall,FlyAtlasResult.mRNASignal,"
                   + "FlyAtlasResult.mRNASignalSEM,FlyAtlasResult.presentCall");
 
-        q.addConstraint("FlyAtlasResult.genes",  Constraints.in(bag.getName()));
-        q.addConstraint("FlyAtlasResult.affyCall",  Constraints.eq(series));
-        q.addConstraint("FlyAtlasResult.assays.name",  Constraints.eq(category));
+        // all results have to be in list
+        q.addConstraint("FlyAtlasResult.genes", Constraints.in(bag.getName()));
 
+        // affyCall (up or down) value has to match what the user clicked on
+        q.addConstraint("FlyAtlasResult.affyCall", Constraints.eq(series));
+
+        // assay (tissue) has to match what the user clicked on
+        q.addConstraint("FlyAtlasResult.assays.name", Constraints.eq(category));
+
+        // sort based on whether up or down regulated
         Boolean sortAscending = (category.equalsIgnoreCase("up") ? Boolean.FALSE : Boolean.TRUE);
-
         q.setOrderBy("FlyAtlasResult.enrichment", sortAscending);
         q.addOrderBy("FlyAtlasResult.genes.secondaryIdentifier");
 
+        // set constraint logic
         q.setConstraintLogic("A and B and C");
         q.syncLogicExpression("and");
-
         return q;
     }
-
 }
