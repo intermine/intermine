@@ -195,11 +195,15 @@ public class TableWidgetLdr
 
                     }
                 } else if (element instanceof Long) {
+                    // if user hasn't configured a link, don't link the counts
+                    String link = (config.getLink() == null ? null : "widgetAction.do?bagName="
+                        + bag.getName()
+                        + "&link=" + config.getLink()
+                        + "&key=" + URLEncoder.encode(key, "UTF-8"));
                     flattenedRow.add(new String[]
                                                 {
                         String.valueOf(element),
-                        "widgetAction.do?bagName=" + bag.getName() + "&link=" + config.getLink()
-                        + "&key=" + URLEncoder.encode(key, "UTF-8")
+                        link
                                                 });
                 }
 
