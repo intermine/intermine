@@ -25,6 +25,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Properties;
 import java.util.Set;
+import java.util.TreeMap;
 
 import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletRequest;
@@ -1155,7 +1156,12 @@ public class AjaxServices
         if (map == null) {
         	return null;
         }
-        Map<String, WebSearchable> filteredMap = profile.getProfileManager().filterByTags(map, tags, type, profile.getUsername());
+        Map<String, WebSearchable> filteredMap = new TreeMap<String, WebSearchable>();
+        for (String currentTag : tags) {
+        	List<String> tagList = new ArrayList<String>();
+        	tagList.add(currentTag);
+        	filteredMap.putAll(profile.getProfileManager().filterByTags(map, tagList, type, profile.getUsername()));	
+        }
         
         return filteredMap.keySet();
     }
