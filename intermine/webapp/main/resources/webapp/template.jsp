@@ -167,7 +167,7 @@
     <ol class="templateForm">
       <c:set var="index" value="${0}"/>
       <c:forEach items="${templateQuery.editableNodes}" var="node">
-        <c:forEach items="${constraints[node]}" var="con">
+        <c:forEach items="${constraints[node]}" var="con" varStatus="constraintStatus">
           <c:set var="index" value="${index+1}"/>
           <c:set var="validOps" value="${displayConstraints[con].validOps}"/>
           <c:set var="fixedOps" value="${displayConstraints[con].fixedOpIndices}"/>
@@ -324,7 +324,9 @@
                     </html:option>
                   </c:forEach>
                 </html:select>
-                <tiles:insert name="bagTagSelect.tile" />
+                <tiles:insert name="bagTagSelect.tile" >
+                	<tiles:put name="selectId" value="tagSelect${constraintStatus.index}"/>
+                </tiles:insert>
                 <c:if test="${empty bags}">
                   <div class="noBagsMessage">
                     <fmt:message key="template.nobags">
