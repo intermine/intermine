@@ -3,7 +3,7 @@
 # Run the FlyMine production build and dump the database occasionally.
 # The project.xml in the current directory controls which actions to
 # run/merge/postprocess.
-# The database to dump will be found by reading the properties from $HOME/<mine_name>.properties
+# The database to dump will be found by reading the properties from $HOME/.intermine/<mine_name>.properties
 # where <mine_name> is the name of the directory where the script is run
 
 BEGIN {
@@ -168,7 +168,7 @@ select $old_handle;
 
 my $current_directory = (getcwd() =~ m:.*/(.*):)[0];
 
-my $properties_file = "$ENV{HOME}/$current_directory.properties";
+my $properties_file = "$ENV{HOME}/.intermine/$current_directory.properties";
 if (defined $release) {
   $properties_file .= ".$release";
 }
