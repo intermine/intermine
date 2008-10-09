@@ -11,10 +11,7 @@ package org.intermine.model.testmodel.web.widget;
  */
 
 
-import java.util.Collection;
-
 import org.intermine.metadata.Model;
-import org.intermine.model.InterMineObject;
 import org.intermine.objectstore.ObjectStore;
 import org.intermine.pathquery.Constraints;
 import org.intermine.pathquery.PathQuery;
@@ -45,7 +42,7 @@ public class EmployeeURLQuery implements WidgetURLQuery
     /**
      * @return Query a query to generate the results needed
      */
-    public PathQuery generatePathQuery(Collection<InterMineObject> keys) {
+    public PathQuery generatePathQuery() {
         Model model = os.getModel();
         PathQuery q = new PathQuery(model);
         q.setView("Employee.name,Employee.department.name,Employee.department.company.name,"
