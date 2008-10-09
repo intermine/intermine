@@ -556,6 +556,8 @@ sub get_status
 {
   my $status_dir = abs_path(shift);
 
+  my $login = getlogin();
+
   my @retval;
 
  DIR:
@@ -570,10 +572,9 @@ sub get_status
           if ($url =~ m!/tickets/ticket-(\d+)(?:|/(.*))$!) {
             maybe_push \@retval, { type => 'ticket', name => $1, subdir => $2, url => $url };
           } else {
-            if ($url =~ m!$REPO/(tag|branch)(?:s|es)/(.*?)(?:|/(.*))$!) {
+            if ($url =~ m!$REPO/(tag|branch)(?:s|es)/((?:$login/)?.*?)(?:|/(.*))$!) {
               maybe_push \@retval, { type => $1, name => $2, subdir => $3, url => $url };
             } else {
-#              push @retval, { type => 'top', url => $url };
               last DIR;
             }
           }
