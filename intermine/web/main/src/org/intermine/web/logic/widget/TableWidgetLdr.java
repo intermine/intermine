@@ -327,10 +327,8 @@ public class TableWidgetLdr
 
             // if we are at the end of the path, add to select and group by
             if (queryBits.length == (i + 1)) {
-
                 if (keys != null) { // export
                     q.setDistinct(true);
-
                     QueryField keyField = new QueryField(qcEnd, getKeyField(displayFields));
                     BagConstraint bc = new BagConstraint(keyField, ConstraintOp.IN, keys);
                     QueryHelper.addAndConstraint(q, bc);
@@ -346,9 +344,7 @@ public class TableWidgetLdr
 
                     q.addToSelect(qfCount);
                     q.addToOrderBy(qfCount, "desc");
-
                 } else {
-
                     Query subQ = new Query();
                     subQ = q;
                     subQ.setDistinct(true);
@@ -427,8 +423,7 @@ public class TableWidgetLdr
 
     @SuppressWarnings("unchecked")
     private static int calcTotal(ObjectStore os, Query q) {
-        Results res = os.execute(q);
-        Iterator iter = res.iterator();
+        Iterator iter = os.executeSingleton(q).iterator();
         int n = 0;
         while (iter.hasNext()) {
             ResultsRow resRow = (ResultsRow) iter.next();

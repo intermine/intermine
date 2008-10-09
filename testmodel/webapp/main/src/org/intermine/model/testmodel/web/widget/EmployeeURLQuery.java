@@ -10,8 +10,6 @@ package org.intermine.model.testmodel.web.widget;
  *
  */
 
-
-import org.intermine.metadata.Model;
 import org.intermine.objectstore.ObjectStore;
 import org.intermine.pathquery.Constraints;
 import org.intermine.pathquery.PathQuery;
@@ -24,10 +22,10 @@ import org.intermine.web.logic.widget.WidgetURLQuery;
  */
 public class EmployeeURLQuery implements WidgetURLQuery
 {
+    private InterMineBag bag;
+    private String key;
+    private ObjectStore os;
 
-    InterMineBag bag;
-    String key;
-    ObjectStore os;
     /**
      * @param key
      * @param bag
@@ -40,15 +38,17 @@ public class EmployeeURLQuery implements WidgetURLQuery
     }
 
     /**
-     * @return Query a query to generate the results needed
+     * {@inheritDoc}
      */
     public PathQuery generatePathQuery() {
-        Model model = os.getModel();
-        PathQuery q = new PathQuery(model);
-        q.setView("Employee.name,Employee.department.name,Employee.department.company.name,"
-                  + "Employee.fullTime");
+        PathQuery q = new PathQuery(os.getModel());
+        // add columns to be displayed in the results
+        q.setView("Employee.name,Employee.department.name,Employee.department.company.name");
+        // restrict results to objects in list
         q.addConstraint(bag.getType(),  Constraints.in(bag.getName()));
+        // only display objects selected
         q.addConstraint("Employee.department",  Constraints.eq(key));
+        // set contraintsa
         q.setConstraintLogic("A and B");
         q.syncLogicExpression("and");
         return q;
