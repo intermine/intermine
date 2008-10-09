@@ -12,7 +12,6 @@ package org.flymine.web.widget;
 
 import java.util.HashSet;
 import java.util.Iterator;
-import java.util.LinkedHashMap;
 import java.util.Set;
 
 import org.apache.log4j.Logger;
@@ -46,7 +45,7 @@ public class FlyAtlasGridDataSetLdr implements GridDataSetLdr
     private int widgetTotal = 0;
     private Set<String> genes = new HashSet<String>();
     protected static final Logger LOG = Logger.getLogger(FlyAtlasGridDataSetLdr.class);
-    
+
     /**
      * Creates a FlyAtlasDataSetLdr used to retrieve, organise
      * and structure the FlyAtlas data to create a graph
@@ -63,7 +62,7 @@ public class FlyAtlasGridDataSetLdr implements GridDataSetLdr
         results = os.execute(q);
         results.setBatchSize(100000);
         Iterator iter = results.iterator();
-        LinkedHashMap<String, int[]> callTable = new LinkedHashMap<String, int[]>();
+        //LinkedHashMap<String, int[]> callTable = new LinkedHashMap<String, int[]>();
 
         while (iter.hasNext()) {
             ResultsRow resRow = (ResultsRow) iter.next();
@@ -79,11 +78,11 @@ public class FlyAtlasGridDataSetLdr implements GridDataSetLdr
                     }
                 genes.add(identifier);
             }
-            
+
         }
         widgetTotal = genes.size();
     }
-    
+
     /**
      * {@inheritDoc}
      */
@@ -91,9 +90,9 @@ public class FlyAtlasGridDataSetLdr implements GridDataSetLdr
         return results;
     }
 
-    
+
     private Query createQuery(InterMineBag bag) {
-                
+
         QueryClass far = new QueryClass(FlyAtlasResult.class);
         QueryClass maa = new QueryClass(MicroArrayAssay.class);
         QueryClass gene = new QueryClass(Gene.class);
@@ -105,8 +104,8 @@ public class FlyAtlasGridDataSetLdr implements GridDataSetLdr
         QueryField qf = new QueryField(gene, "id");
         cs.addConstraint(new BagConstraint(qf, ConstraintOp.IN, bag.getOsb()));
 
-        QueryCollectionReference r1 = new QueryCollectionReference(far, "genes");        
-        QueryCollectionReference r2 = new QueryCollectionReference(far, "assays");        
+        QueryCollectionReference r1 = new QueryCollectionReference(far, "genes");
+        QueryCollectionReference r2 = new QueryCollectionReference(far, "assays");
         cs.addConstraint(new ContainsConstraint(r1, ConstraintOp.CONTAINS, gene));
         cs.addConstraint(new ContainsConstraint(r2, ConstraintOp.CONTAINS, maa));
 
@@ -119,13 +118,13 @@ public class FlyAtlasGridDataSetLdr implements GridDataSetLdr
         q.addFrom(far);
         q.addFrom(maa);
         q.addFrom(gene);
-        
+
         q.setConstraint(cs);
         q.addToOrderBy(tissueName);
 
         return q;
     }
-    
+
     /**
      * {@inheritDoc}
      */
@@ -138,5 +137,5 @@ public class FlyAtlasGridDataSetLdr implements GridDataSetLdr
     public GridDataSet getGridDataSet() {
         return dataSet;
     }
-   
+
 }
