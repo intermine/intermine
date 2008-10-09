@@ -29,6 +29,7 @@ public abstract class DirectDataLoaderTask extends Task
 {
     private String integrationWriterAlias;
     protected String sourceName;
+    private String sourceType;
     private boolean ignoreDuplicates = false;
     private DirectDataLoader directDataLoader;
     private IntegrationWriter iw;
@@ -49,6 +50,15 @@ public abstract class DirectDataLoaderTask extends Task
      */
     public void setSourceName(String sourceName) {
         this.sourceName = sourceName;
+    }
+
+    /**
+     * Set the source type, as used by primary key priority config.
+     *
+     * @param sourceType the type of the data source
+     */
+    public void setSourceType(String sourceType) {
+        this.sourceType = sourceType;
     }
 
     /**
@@ -87,7 +97,7 @@ public abstract class DirectDataLoaderTask extends Task
      */
     public DirectDataLoader getDirectDataLoader() throws ObjectStoreException {
         if (directDataLoader == null) {
-            directDataLoader = new DirectDataLoader(getIntegrationWriter(), sourceName);
+            directDataLoader = new DirectDataLoader(getIntegrationWriter(), sourceName, sourceType);
         }
         return directDataLoader;
     }
@@ -109,6 +119,10 @@ public abstract class DirectDataLoaderTask extends Task
 
         if (sourceName == null) {
             throw new BuildException("FastaLoaderTask - sourceName property not set");
+        }
+
+        if (sourceType == null) {
+            throw new BuildException("FastaLoaderTask - sourceType property not set");
         }
 
         try {

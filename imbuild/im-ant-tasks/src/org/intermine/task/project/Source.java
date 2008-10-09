@@ -17,10 +17,11 @@ package org.intermine.task.project;
 
 public class Source extends Action
 {
-    String type;
+    private String name;
+    private String type;
 
     /**
-     * Set the type of this Source.
+     * Set the name of this Source.
      * @param type the type
      */
     public void setType(String type) {
@@ -33,5 +34,21 @@ public class Source extends Action
      */
     public String getType() {
         return type;
+    }
+
+    /**
+     * Set the name of this Source.
+     * @param name the name
+     */
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    /**
+     * Get the name of this object.
+     * @return the name
+     */
+    public String getName() {
+        return name;
     }
 }

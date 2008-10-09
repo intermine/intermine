@@ -185,15 +185,15 @@ public class IntegrationWriterDataTrackingImpl extends IntegrationWriterAbstract
     /**
      * {@inheritDoc}
      */
-    public Source getMainSource(String name) {
-        return dataTracker.stringToSource(name);
+    public Source getMainSource(String name, String type) {
+        return dataTracker.stringToSource(name, type);
     }
 
     /**
      * {@inheritDoc}
      */
-    public Source getSkeletonSource(String name) {
-        return dataTracker.stringToSource("skel_" + name);
+    public Source getSkeletonSource(String name, String type) {
+        return dataTracker.stringToSource("skel_" + name, type);
     }
 
     /**

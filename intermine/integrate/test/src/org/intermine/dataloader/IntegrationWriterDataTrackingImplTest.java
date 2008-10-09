@@ -105,8 +105,8 @@ public class IntegrationWriterDataTrackingImplTest extends SetupDataTestCase
         try {
             iw.beginTransaction();
 
-            Source source = iw.getMainSource("storedata");
-            Source skelSource = iw.getSkeletonSource("storedata");
+            Source source = iw.getMainSource("storedata", "storedata");
+            Source skelSource = iw.getSkeletonSource("storedata", "storedata");
 
             //DataTracking.precacheObjects(new HashSet(data.values()), iw.getDataTracker());
             Iterator iter = data.entrySet().iterator();
@@ -175,8 +175,8 @@ public class IntegrationWriterDataTrackingImplTest extends SetupDataTestCase
             c.setId(new Integer(1));
             a.setId(new Integer(2));
         }
-        Source source = iw.getMainSource("testsource");
-        Source skelSource = iw.getSkeletonSource("testsource");
+        Source source = iw.getMainSource("testsource", "testsource");
+        Source skelSource = iw.getSkeletonSource("testsource", "testsource");
 
         iw.store(c, source, skelSource);  // method we are testing
 
@@ -212,8 +212,8 @@ public class IntegrationWriterDataTrackingImplTest extends SetupDataTestCase
             d.setId(new Integer(2));
             c.setId(new Integer(3));
         }
-        Source source = iw.getMainSource("testsource3");
-        Source skelSource = iw.getSkeletonSource("testsource3");
+        Source source = iw.getMainSource("testsource3", "testsource3");
+        Source skelSource = iw.getSkeletonSource("testsource3", "testsource3");
 
         iw.store(e, source, skelSource);
         iw.store(d, source, skelSource);
@@ -253,8 +253,8 @@ public class IntegrationWriterDataTrackingImplTest extends SetupDataTestCase
             a2.setId(new Integer(3));
             ceo.setId(new Integer(4));
         }
-        Source source = iw.getMainSource("testsource");
-        Source skelSource = iw.getSkeletonSource("testsource");
+        Source source = iw.getMainSource("testsource", "testsource");
+        Source skelSource = iw.getSkeletonSource("testsource", "testsource");
 
         iw.store(c, source, skelSource);  // method we are testing
         iw.store(a, source, skelSource);
@@ -280,8 +280,8 @@ public class IntegrationWriterDataTrackingImplTest extends SetupDataTestCase
     }
 
     public void testUpdateObjectOneToOne2() throws Exception {
-        Source source = iw.getMainSource("testsource");
-        Source skelSource = iw.getSkeletonSource("testsource");
+        Source source = iw.getMainSource("testsource", "testsource");
+        Source skelSource = iw.getSkeletonSource("testsource", "testsource");
 
         {
             Company companyA = (Company) DynamicUtil.createObject(Collections.singleton(Company.class));
@@ -338,8 +338,8 @@ public class IntegrationWriterDataTrackingImplTest extends SetupDataTestCase
         assertEquals(rCEOA, rCompanyA.getcEO());
         assertEquals(rCEOB, rCompanyB.getcEO());
 
-        Source source2 = iw.getMainSource("testsource2");
-        Source skelSource2 = iw.getSkeletonSource("testsource2");
+        Source source2 = iw.getMainSource("testsource2", "testsource2");
+        Source skelSource2 = iw.getSkeletonSource("testsource2", "testsource2");
         {
             Company c = (Company) DynamicUtil.createObject(Collections.singleton(Company.class));
             Address a = new Address();
@@ -406,8 +406,8 @@ public class IntegrationWriterDataTrackingImplTest extends SetupDataTestCase
             a.setId(new Integer(2));
         }
 
-        Source source = iw.getMainSource("testsource");
-        Source skelSource = iw.getSkeletonSource("testsource");
+        Source source = iw.getMainSource("testsource", "testsource");
+        Source skelSource = iw.getSkeletonSource("testsource", "testsource");
 
         iw.store(c, source, skelSource); // method we are testing
 
@@ -453,8 +453,8 @@ public class IntegrationWriterDataTrackingImplTest extends SetupDataTestCase
             a2.setId(new Integer(5));
         }
 
-        Source source = iw.getMainSource("testsource");
-        Source skelSource = iw.getSkeletonSource("testsource");
+        Source source = iw.getMainSource("testsource", "testsource");
+        Source skelSource = iw.getSkeletonSource("testsource", "testsource");
 
         iw.store(e, source, skelSource);  // method we are testing
 
@@ -492,8 +492,8 @@ public class IntegrationWriterDataTrackingImplTest extends SetupDataTestCase
             a2.setId(new Integer(2));
         }
 
-        Source source = iw.getMainSource("testsource");
-        Source skelSource = iw.getSkeletonSource("testsource");
+        Source source = iw.getMainSource("testsource", "testsource");
+        Source skelSource = iw.getSkeletonSource("testsource", "testsource");
 
         iw.store(e, source, skelSource);  // method we are testing
 
@@ -539,8 +539,8 @@ public class IntegrationWriterDataTrackingImplTest extends SetupDataTestCase
             a2.setId(new Integer(5));
         }
 
-        Source source = iw.getMainSource("testsource");
-        Source skelSource = iw.getSkeletonSource("testsource");
+        Source source = iw.getMainSource("testsource", "testsource");
+        Source skelSource = iw.getSkeletonSource("testsource", "testsource");
 
         iw.store(d, source, skelSource);  // method we are testing
 
@@ -581,8 +581,8 @@ public class IntegrationWriterDataTrackingImplTest extends SetupDataTestCase
             companyA.setId(new Integer(3));
         }
 
-        Source source = iw.getMainSource("testsource");
-        Source skelSource = iw.getSkeletonSource("testsource");
+        Source source = iw.getMainSource("testsource", "testsource");
+        Source skelSource = iw.getSkeletonSource("testsource", "testsource");
 
         iw.store(con, source, skelSource);  // method we are testing
 
@@ -594,8 +594,8 @@ public class IntegrationWriterDataTrackingImplTest extends SetupDataTestCase
         assertTrue(rca.getContractors().contains(rcon));
         assertTrue(rcon.getCompanys().contains(rca));
 
-        Source source2 = iw.getMainSource("testsource2");
-        Source skelSource2 = iw.getSkeletonSource("testsource2");
+        Source source2 = iw.getMainSource("testsource2", "testsource2");
+        Source skelSource2 = iw.getSkeletonSource("testsource2", "testsource2");
 
         Address companyBAddress = new Address();
         Company companyB = (Company) DynamicUtil.createObject(Collections.singleton(Company.class));
@@ -682,7 +682,7 @@ public class IntegrationWriterDataTrackingImplTest extends SetupDataTestCase
         iw.store(conC);
         iw.store(conD);
 
-        Source source = iw.getMainSource("testsource");
+        Source source = iw.getMainSource("testsource", "testsource");
 
         DataTracker dataTracker = iw.getDataTracker();
         dataTracker.clearObj(ca.getId());
@@ -722,8 +722,8 @@ public class IntegrationWriterDataTrackingImplTest extends SetupDataTestCase
             companyAAddress.setId(new Integer(6));
             companyA.setId(new Integer(7));
         }
-        Source source2 = iw.getMainSource("testsource2");
-        Source skelSource2 = iw.getSkeletonSource("testsource2");
+        Source source2 = iw.getMainSource("testsource2", "testsource2");
+        Source skelSource2 = iw.getSkeletonSource("testsource2", "testsource2");
 
         // Make sure there are currently multiple copies of CompanyA and ContractorA.
         try {
@@ -784,8 +784,8 @@ public class IntegrationWriterDataTrackingImplTest extends SetupDataTestCase
             e.setId(new Integer(1));
         }
 
-        Source source = iw.getMainSource("testsource");
-        Source skelSource = iw.getSkeletonSource("testsource");
+        Source source = iw.getMainSource("testsource", "testsource");
+        Source skelSource = iw.getSkeletonSource("testsource", "testsource");
 
         iw.store(e, source, skelSource);  // method we are testing
 
@@ -809,8 +809,8 @@ public class IntegrationWriterDataTrackingImplTest extends SetupDataTestCase
             e2.setId(new Integer(2));
         }
 
-        Source source = iw.getMainSource("testsource");
-        Source skelSource = iw.getSkeletonSource("testsource");
+        Source source = iw.getMainSource("testsource", "testsource");
+        Source skelSource = iw.getSkeletonSource("testsource", "testsource");
 
         iw.store(e1, source, skelSource);
 
@@ -830,8 +830,8 @@ public class IntegrationWriterDataTrackingImplTest extends SetupDataTestCase
             e1.setId(new Integer(1));
         }
 
-        Source source = iw.getMainSource("testsource");
-        Source skelSource = iw.getSkeletonSource("testsource");
+        Source source = iw.getMainSource("testsource", "testsource");
+        Source skelSource = iw.getSkeletonSource("testsource", "testsource");
 
         iw.store(e1, source, skelSource);
 
@@ -877,8 +877,8 @@ public class IntegrationWriterDataTrackingImplTest extends SetupDataTestCase
 
         assertEquals(0, iw.executeSingleton(q).size());
 
-        Source source2 = iw.getMainSource("testsource2");
-        Source skelSource2 = iw.getSkeletonSource("testsource2");
+        Source source2 = iw.getMainSource("testsource2", "testsource2");
+        Source skelSource2 = iw.getSkeletonSource("testsource2", "testsource2");
 
         iw.store(c2, source2, skelSource2);
         iw.store(a2, source2, skelSource2);
@@ -888,8 +888,8 @@ public class IntegrationWriterDataTrackingImplTest extends SetupDataTestCase
         iw.beginTransaction();
         assertEquals(1, iw.executeSingleton(q).size());
 
-        Source source3 = iw.getMainSource("testsource3");
-        Source skelSource3 = iw.getSkeletonSource("testsource3");
+        Source source3 = iw.getMainSource("testsource3", "testsource3");
+        Source skelSource3 = iw.getSkeletonSource("testsource3", "testsource3");
 
         iw.store(c3, source3, skelSource3);
 
@@ -898,8 +898,8 @@ public class IntegrationWriterDataTrackingImplTest extends SetupDataTestCase
         iw.beginTransaction();
         assertEquals(2, iw.executeSingleton(q).size());
 
-        Source source4 = iw.getMainSource("testsource4");
-        Source skelSource4 = iw.getSkeletonSource("testsource4");
+        Source source4 = iw.getMainSource("testsource4", "testsource4");
+        Source skelSource4 = iw.getSkeletonSource("testsource4", "testsource4");
 
         iw.store(c4, source4, skelSource4);
         iw.store(a4, source4, skelSource4);
@@ -928,8 +928,8 @@ public class IntegrationWriterDataTrackingImplTest extends SetupDataTestCase
             c.setId(new Integer(1));
             d.setId(new Integer(3));
         }
-        Source source = iw.getMainSource("testsource3");
-        Source skelSource = iw.getSkeletonSource("testsource3");
+        Source source = iw.getMainSource("testsource3", "testsource3");
+        Source skelSource = iw.getSkeletonSource("testsource3", "testsource3");
 
         Company before = (Company) iw.getObjectByExample(c, Collections.singleton("vatNumber"));
         assertNotNull("before example from db should not be null", before);
@@ -954,8 +954,8 @@ public class IntegrationWriterDataTrackingImplTest extends SetupDataTestCase
         Bank b = (Bank) DynamicUtil.createObject(Collections.singleton(Bank.class));
         b.setName("bank1");
 
-        Source source = iw.getMainSource("testsource");
-        Source skelSource = iw.getSkeletonSource("testsource");
+        Source source = iw.getMainSource("testsource", "testsource");
+        Source skelSource = iw.getSkeletonSource("testsource", "testsource");
         Set objects = iw.getEquivalentObjects(b, source);
         System.out.println(objects);
         assertTrue(objects.isEmpty());
@@ -968,8 +968,8 @@ public class IntegrationWriterDataTrackingImplTest extends SetupDataTestCase
             a.setId(new Integer(1));
         }
 
-        Source source = iw.getMainSource("testsource");
-        Source skelSource = iw.getSkeletonSource("testsource");
+        Source source = iw.getMainSource("testsource", "testsource");
+        Source skelSource = iw.getSkeletonSource("testsource", "testsource");
 
         iw.store(a, source, skelSource, IntegrationWriterDataTrackingImpl.SKELETON);
         assertTrue(iw.skeletons.size() == 1);
@@ -986,8 +986,8 @@ public class IntegrationWriterDataTrackingImplTest extends SetupDataTestCase
 
         IntegrationWriterDataTrackingImpl iw2 = (IntegrationWriterDataTrackingImpl) IntegrationWriterFactory.getIntegrationWriter("integration.unittestmulti");
         ObjectStoreWriter writer2 = (ObjectStoreWriterInterMineImpl) iw2.getObjectStoreWriter();
-        Source source = iw2.getMainSource("testsource");
-        Source skelSource = iw2.getSkeletonSource("testsource");
+        Source source = iw2.getMainSource("testsource", "testsource");
+        Source skelSource = iw2.getSkeletonSource("testsource", "testsource");
 
         iw2.store(a, source, skelSource, IntegrationWriterDataTrackingImpl.SKELETON);
         assertTrue(iw2.skeletons.size() == 1);
@@ -1020,8 +1020,8 @@ public class IntegrationWriterDataTrackingImplTest extends SetupDataTestCase
             m.setId(new Integer(2));
         }
 
-        Source source = iw.getMainSource("testsource");
-        Source skelSource = iw.getSkeletonSource("testsource");
+        Source source = iw.getMainSource("testsource", "testsource");
+        Source skelSource = iw.getSkeletonSource("testsource", "testsource");
 
         iw.store(m, source, skelSource);
 
@@ -1062,8 +1062,8 @@ public class IntegrationWriterDataTrackingImplTest extends SetupDataTestCase
             a.setId(new Integer(2));
         }
 
-        Source source = iw.getMainSource("testsource");
-        Source skelSource = iw.getSkeletonSource("testsource");
+        Source source = iw.getMainSource("testsource", "testsource");
+        Source skelSource = iw.getSkeletonSource("testsource", "testsource");
 
         iw.store(c, source, skelSource);
 
@@ -1090,8 +1090,8 @@ public class IntegrationWriterDataTrackingImplTest extends SetupDataTestCase
             a.setId(new Integer(2));
         }
 
-        Source source = iw.getMainSource("testsource");
-        Source skelSource = iw.getSkeletonSource("testsource");
+        Source source = iw.getMainSource("testsource", "testsource");
+        Source skelSource = iw.getSkeletonSource("testsource", "testsource");
 
         iw.store(c, source, skelSource);
 

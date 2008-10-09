@@ -66,26 +66,21 @@ public class IntegrationWriterSingleSourceImpl extends IntegrationWriterAbstract
     /**
      * {@inheritDoc}
      */
-    public Source getMainSource(String name) throws ObjectStoreException {
-        Source retval = new Source();
-        retval.setName(name);
-        retval.setSkeleton(false);
-        return retval;
+    public Source getMainSource(String name, String type) {
+        return new Source(name, type, false);
     }
 
     /**
      * {@inheritDoc}
      */
-    public Source getSkeletonSource(String name) throws ObjectStoreException {
-        Source retval = new Source();
-        retval.setName(name);
-        retval.setSkeleton(true);
-        return retval;
+    public Source getSkeletonSource(String name, String type) {
+        return new Source(name, type, true);
     }
 
     /**
      * {@inheritDoc}
      */
+    @Override
     protected InterMineObject store(Object nimo, Source source, Source skelSource,
             int type) throws ObjectStoreException {
         if (nimo == null) {

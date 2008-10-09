@@ -77,6 +77,7 @@ public class ProjectXmlBinding
             } else if (qName.equals("source")) {
                 Source source = new Source();
                 source.setType(attrs.getValue("type"));
+                source.setName(attrs.getValue("name"));
                 project.addSource(attrs.getValue("name"), source);
                 action = source;
             } else if (qName.equals("property")) {

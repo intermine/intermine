@@ -32,6 +32,9 @@ public class Project
      * @param source the Source
      */
     public void addSource(String name, Source source) {
+        if (sources.containsKey(name)) {
+            throw new RuntimeException("project.xml contains more than one source named: " + name);
+        }
         sources.put(name, source);
     }
 

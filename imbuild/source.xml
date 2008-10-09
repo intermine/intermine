@@ -405,11 +405,12 @@
   <!-- Load data from tgt items into production -->
   <target name="load" depends="init, -init-deps, -pre-load">
     <echo>
-      Loading ${source.name} tgt items into production DB
+      Loading ${source.name} (${source.type}) tgt items into production DB
     </echo>
     <data-load integrationWriter="integration.production"
                source="os.${common.os.prefix}-translated"
                sourceName="${source.name}"
+               sourceType="${source.type}"
                ignoreDuplicates="${ignore.duplicates}"/>
   </target>
 

@@ -26,16 +26,18 @@ public class DirectDataLoader extends DataLoader
 {
     private int idCounter = 0;
     private String sourceName;
+    private String sourceType;
 
     /**
      * Create a new DirectDataLoader using the given IntegrationWriter and source name.
      * @param iw an IntegrationWriter
      * @param sourceName the source name
-     *
+     * @param sourceType the source type
      */
-    public DirectDataLoader (IntegrationWriter iw, String sourceName) {
+    public DirectDataLoader (IntegrationWriter iw, String sourceName, String sourceType) {
         super(iw);
         this.sourceName = sourceName;
+        this.sourceType = sourceType;
     }
 
 
@@ -45,8 +47,8 @@ public class DirectDataLoader extends DataLoader
      * @throws ObjectStoreException if there is a problem in the IntegrationWriter
      */
     public void store(InterMineObject o) throws ObjectStoreException {
-        Source source = getIntegrationWriter().getMainSource(sourceName);
-        Source skelSource = getIntegrationWriter().getSkeletonSource(sourceName);
+        Source source = getIntegrationWriter().getMainSource(sourceName, sourceType);
+        Source skelSource = getIntegrationWriter().getSkeletonSource(sourceName, sourceType);
 
         getIntegrationWriter().store(o, source, skelSource);
     }
