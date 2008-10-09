@@ -11,11 +11,9 @@ package org.intermine.bio.web.widget;
  */
 
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.List;
 
 import org.intermine.metadata.Model;
-import org.intermine.model.InterMineObject;
 import org.intermine.objectstore.ObjectStore;
 import org.intermine.objectstore.query.ConstraintOp;
 import org.intermine.path.Path;
@@ -33,9 +31,9 @@ import org.intermine.web.logic.widget.WidgetURLQuery;
 public class OMIMDiseaseURLQuery implements WidgetURLQuery
 {
 
-    InterMineBag bag;
-    String key;
-    ObjectStore os;
+    private InterMineBag bag;
+    private String key;
+    private ObjectStore os;
 
     /**
      * @param key value selected by user to display
@@ -51,13 +49,13 @@ public class OMIMDiseaseURLQuery implements WidgetURLQuery
     /**
      * {@inheritDoc}
      */
-    public PathQuery generatePathQuery(Collection<InterMineObject> keys) {
+    public PathQuery generatePathQuery() {
 
         Model model = os.getModel();
         PathQuery q = new PathQuery(model);
 
         List<Path> view = new ArrayList<Path>();
-        
+
         Path genePrimaryIdentifier = PathQuery.makePath(model, q,
                                                         "Gene.primaryIdentifier");
         Path geneSymbol = PathQuery.makePath(model, q, "Gene.symbol");
@@ -81,18 +79,11 @@ public class OMIMDiseaseURLQuery implements WidgetURLQuery
         Constraint c = new Constraint(constraintOp, constraintValue, false, label, code, id, null);
         q.addNode(bagType).getConstraints().add(c);
 
-        if (keys != null) {
-            code = q.getUnusedConstraintCode();
-            constraintOp = ConstraintOp.NOT_IN;
-            c = new Constraint(constraintOp, keys, false, label, code, id, null);
-            q.getNode(bagType).getConstraints().add(c);
-        } else {
-            constraintOp = ConstraintOp.LOOKUP;
-            code = q.getUnusedConstraintCode();
-            PathNode node = q.addNode("Gene.omimDiseases");
-            c = new Constraint(constraintOp, key, false, label, code, id, null);
-            node.getConstraints().add(c);
-        }
+        constraintOp = ConstraintOp.LOOKUP;
+        code = q.getUnusedConstraintCode();
+        PathNode node = q.addNode("Gene.omimDiseases");
+        c = new Constraint(constraintOp, key, false, label, code, id, null);
+        node.getConstraints().add(c);
 
         q.setConstraintLogic("A and B");
         q.syncLogicExpression("and");

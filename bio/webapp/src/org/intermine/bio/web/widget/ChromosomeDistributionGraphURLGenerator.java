@@ -24,8 +24,8 @@ import org.jfree.data.category.CategoryDataset;
  */
 public class ChromosomeDistributionGraphURLGenerator implements GraphCategoryURLGenerator
 {
-    String bagName;
-    String organism = null;
+    private String bagName;
+    private String organism = null;
 
     /**
      * Creates a ChromosomeDistributionGraphURLGenerator for the chart
