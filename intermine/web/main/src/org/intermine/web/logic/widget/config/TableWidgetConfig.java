@@ -37,7 +37,7 @@ import org.intermine.web.logic.widget.TableWidget;
 public class TableWidgetConfig extends WidgetConfig
 {
 
-    private String displayFields, exportFields;
+    private String displayFields, exportField;
     private WebConfig webConfig;
     private Map<String, List<FieldDescriptor>> classKeys;
     private String pathStrings, externalLink, externalLinkLabel;
@@ -160,17 +160,17 @@ public class TableWidgetConfig extends WidgetConfig
     }
 
     /**
-     * @return the exportFields
+     * @return the exportField
      */
-    public String getExportFields() {
-        return exportFields;
+    public String getExportField() {
+        return exportField;
     }
 
     /**
-     * @param exportFields the exportFields to set
+     * @param exportField the exportField to set
      */
-    public void setExportFields(String exportFields) {
-        this.exportFields = exportFields;
+    public void setExportField(String exportField) {
+        this.exportField = exportField;
     }
 
     /**

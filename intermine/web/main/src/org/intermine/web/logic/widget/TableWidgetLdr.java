@@ -65,7 +65,7 @@ public class TableWidgetLdr
     private InterMineBag bag;
     private String pathString;
     private Model model;
-    private String displayFields, exportFields;
+    private String displayFields, exportField;
     private ObjectStore os;
     private Path origPath;
     private String type;
@@ -94,7 +94,7 @@ public class TableWidgetLdr
         cld = origPath.getEndClassDescriptor();
         type = cld.getUnqualifiedName();
         displayFields = config.getDisplayFields();
-        exportFields = config.getExportFields();
+        exportField = config.getExportField();
         setFlattenedResults();
     }
 
@@ -118,7 +118,7 @@ public class TableWidgetLdr
 
         columns = new ArrayList<String>();
         if ((displayFields != null) && (displayFields.length() != 0)) {
-            String[] fieldArray = displayFields.split(",");
+            String[] fieldArray = displayFields.split("[, ]+");
             for (int i = 0; i < fieldArray.length; i++) {
                 String field = fieldArray[i];
                 String newColumnName = type + "." + field;
@@ -334,14 +334,11 @@ public class TableWidgetLdr
                     QueryField keyField = new QueryField(qcEnd, getKeyField(displayFields));
                     BagConstraint bc = new BagConstraint(keyField, ConstraintOp.IN, keys);
                     QueryHelper.addAndConstraint(q, bc);
-                    String[] fields = displayFields.split(",");
+                    String[] fields = displayFields.split("[, ]+");
                     for (String field : fields) {
                         q.addToSelect(new QueryField(qcEnd, field));
                     }
-                    fields = exportFields.split(",");
-                    for (String field : fields) {
-                        q.addToSelect(new QueryField(qcExport, field));
-                    }
+                    q.addToSelect(new QueryField(qcExport, exportField));
                 } else if (!calcTotal) {
                     q.setDistinct(false);
                     q.addToSelect(qcEnd);
@@ -451,7 +448,7 @@ public class TableWidgetLdr
 
         List<List<String>> exportResults = new ArrayList<List<String>>();
         List<String> selectedIds = Arrays.asList(selected);
-        Map<String, String> termToLabel = new HashMap();
+        Map<Object, Object> termToLabel = new HashMap();
         Query q = getQuery(false, selectedIds);
 
         Results res = os.execute(q);
@@ -460,15 +457,14 @@ public class TableWidgetLdr
         boolean hasLabelColumn = false;
         while (iter.hasNext()) {
             ResultsRow resRow = (ResultsRow) iter.next();
-            String term = (String) resRow.get(0);   // annotation (like go term)
+            String term = resRow.get(0).toString();   // annotation (like go term)
             String id = null;
             if (resRow.size() > 2) {
-                String name = (String) resRow.get(1);
-                termToLabel.put(term, name);
-                id = (String) resRow.get(2);     // object identifier (like gene.identifier)
+                termToLabel.put(term, resRow.get(1).toString());
+                id = resRow.get(2).toString();  // object identifier (like gene.identifier)
                 hasLabelColumn = true;
             } else {
-                id = (String) resRow.get(1);     // object identifier (like gene.identifier)
+                id = resRow.get(1).toString();     // object identifier (like gene.identifier)
             }
             if (!termsToIds.containsKey(term)) {
                 termsToIds.put(term, new ArrayList<String>());
@@ -498,9 +494,10 @@ public class TableWidgetLdr
         return exportResults;
     }
 
+    // TODO this is hacky.  assumes key field is first
     private String getKeyField(String s) {
         if (s.contains(",")) {
-            String[] strings = s.split(",");
+            String[] strings = s.split("[, ]+");
             return strings[0];
         }
         return s;
