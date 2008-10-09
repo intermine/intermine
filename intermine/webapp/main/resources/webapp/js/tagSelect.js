@@ -10,7 +10,7 @@ function callOnChangeFunction(selectId, onChangeFunction) {
 
 function displayTagSelect(selectId, type) {
     var callBack = function(tags) {
-		setSelectElement(selectId, '-- select tag --', tags);        
+		setSelectElement(selectId, '-- filter by tag --', tags);        
     }
     AjaxServices.getTags(type, callBack);
 }
