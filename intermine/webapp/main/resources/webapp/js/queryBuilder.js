@@ -83,3 +83,10 @@ function swapInputs(open) {
 
         updateConstraintForm(index, attrOpElement, attrOptsElement, attrValElement, fixedOps);
       }
+      
+      function filterByTag(tag) {
+    		var callBack = function(filteredList) {
+    			setSelectElement('bag2', '', filteredList);
+    		}
+    		AjaxServices.filterByTag('bag', tag, callBack);
+      }

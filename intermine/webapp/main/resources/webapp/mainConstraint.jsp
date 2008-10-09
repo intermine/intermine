@@ -406,9 +406,6 @@ if (${!empty constrainOnBag}) {
               </html:option>
             </c:forEach>
           </html:select>
-          <tiles:insert name="bagTagSelect.tile" >
-          	<tiles:put name="selectId" value="tagSelect" />
-          </tiles:insert>
           <html:select property="bagValue" styleId="bag2" disabled="true">
             <c:forEach items="${bags}" var="bag">
               <html:option value="${bag.key}">
@@ -416,6 +413,12 @@ if (${!empty constrainOnBag}) {
               </html:option>
             </c:forEach>
           </html:select>
+          <tiles:insert name="tagSelect.tile">
+			<tiles:put name="type" value="bag" />
+			<tiles:put name="onChangeFunction" value="filterByTag" />
+			<tiles:put name="selectId" value="bag3" />
+			<tiles:put name="disabled" value="true" />
+		  </tiles:insert>                
           <html:submit property="bag"  styleId="bagSubmit" disabled="true">
             <fmt:message key="query.submitConstraint"/><%--Add to query--%>
           </html:submit>

@@ -148,6 +148,13 @@
         }
         return false;
    }
+
+   function filterByTag(tag) {
+		var callBack = function(filteredList) {
+			setSelectElement('bagSelect', '', filteredList);
+		}
+		AjaxServices.filterByTag('bag', tag, callBack);
+   }
   //-->
 </script>
 
@@ -167,7 +174,7 @@
     <ol class="templateForm">
       <c:set var="index" value="${0}"/>
       <c:forEach items="${templateQuery.editableNodes}" var="node">
-        <c:forEach items="${constraints[node]}" var="con" varStatus="constraintStatus">
+        <c:forEach items="${constraints[node]}" var="con" >
           <c:set var="index" value="${index+1}"/>
           <c:set var="validOps" value="${displayConstraints[con].validOps}"/>
           <c:set var="fixedOps" value="${displayConstraints[con].fixedOpIndices}"/>
@@ -324,9 +331,11 @@
                     </html:option>
                   </c:forEach>
                 </html:select>
-                <tiles:insert name="bagTagSelect.tile" >
-                	<tiles:put name="selectId" value="tagSelect${constraintStatus.index}"/>
-                </tiles:insert>
+                <tiles:insert name="tagSelect.tile">
+					<tiles:put name="type" value="bag" />
+					<tiles:put name="onChangeFunction" value="filterByTag" />
+					<tiles:put name="selectId" value="tagSelect" />
+				</tiles:insert>                                
                 <c:if test="${empty bags}">
                   <div class="noBagsMessage">
                     <fmt:message key="template.nobags">
