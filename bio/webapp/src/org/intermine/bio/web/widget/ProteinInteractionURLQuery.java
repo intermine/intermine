@@ -10,10 +10,6 @@ package org.intermine.bio.web.widget;
  *
  */
 
-import java.util.ArrayList;
-import java.util.Collection;
-
-import org.intermine.model.InterMineObject;
 import org.intermine.objectstore.ObjectStore;
 import org.intermine.pathquery.Constraints;
 import org.intermine.pathquery.PathQuery;
@@ -27,9 +23,9 @@ import org.intermine.web.logic.widget.WidgetURLQuery;
 public class ProteinInteractionURLQuery implements WidgetURLQuery
 {
 
-    InterMineBag bag;
-    String key;
-    ObjectStore os;
+    private InterMineBag bag;
+    private String key;
+    private ObjectStore os;
 
     /**
      * @param key value selected by user to display
@@ -45,11 +41,8 @@ public class ProteinInteractionURLQuery implements WidgetURLQuery
     /**
      * {@inheritDoc}
      */
-    public PathQuery generatePathQuery(Collection<InterMineObject> keys) {
-
-
+    public PathQuery generatePathQuery() {
         PathQuery q = new PathQuery(os.getModel());
-
         q.setView("Protein.primaryIdentifier, Protein.primaryAccession,"
                   + "Protein.proteinInteractions.interactingProteins.primaryIdentifier,"
                   + "Protein.proteinInteractions.interactingProteins.primaryAccession,"
@@ -57,20 +50,10 @@ public class ProteinInteractionURLQuery implements WidgetURLQuery
                   + "Protein.proteinInteractions.shortName,"
                   + "Protein.proteinInteractions.proteinRole,"
                   + "Protein.proteinInteractions.experiment.publication.pubMedId");
-
-        String bagType = bag.getType();
-
-        q.addConstraint(bagType,  Constraints.in(bag.getName()));
-
-        if (keys != null) {
-            q.addConstraint(bagType,  Constraints.notIn(new ArrayList(keys)));
-        } else {
-            q.addConstraint("Protein.proteinInteractions.interactingProteins",
-                            Constraints.lookup(key));
-        }
+        q.addConstraint(bag.getType(), Constraints.in(bag.getName()));
+        q.addConstraint("Protein.proteinInteractions.interactingProteins", Constraints.lookup(key));
         q.setConstraintLogic("A and B");
         q.syncLogicExpression("and");
-
         q.setOrderBy("Protein.primaryIdentifier, Protein.primaryAccession,"
                      + "Protein.proteinInteractions.interactingProteins.name");
         return q;

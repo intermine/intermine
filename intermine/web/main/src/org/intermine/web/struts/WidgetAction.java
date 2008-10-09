@@ -84,6 +84,7 @@ public class WidgetAction extends InterMineAction
 
 
     /**
+     * Currently not used.  See #1719
      * Display selected entries in the results page
      * @param mapping The ActionMapping used to select this instance
      * @param form The optional ActionForm bean for this request (if any)
@@ -159,7 +160,9 @@ public class WidgetAction extends InterMineAction
             os, bag, null
                                                          });
 
-        PathQuery pathQuery = widgetURLQuery.generatePathQuery(widgetObjects);
+        // See #1719
+        //PathQuery pathQuery = widgetURLQuery.generatePathQuery(widgetObjects);
+        PathQuery pathQuery = widgetURLQuery.generatePathQuery();
 
         QueryMonitorTimeout clientState
         = new QueryMonitorTimeout(Constants.QUERY_TIMEOUT_SECONDS * 1000);
@@ -220,7 +223,7 @@ public class WidgetAction extends InterMineAction
         = new QueryMonitorTimeout(Constants.QUERY_TIMEOUT_SECONDS * 1000);
         MessageResources messages
         = (MessageResources) request.getAttribute(Globals.MESSAGES_KEY);
-        PathQuery pathQuery = urlQuery.generatePathQuery(null);
+        PathQuery pathQuery = urlQuery.generatePathQuery();
         SessionMethods.loadQuery(pathQuery, session, response);
         String qid = SessionMethods.startQuery(clientState, session, messages, true, pathQuery);
         Thread.sleep(200); // slight pause in the hope of avoiding holding page

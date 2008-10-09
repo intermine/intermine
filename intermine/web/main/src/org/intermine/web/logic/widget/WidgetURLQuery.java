@@ -10,22 +10,21 @@ package org.intermine.web.logic.widget;
  *
  */
 
-import java.util.Collection;
-
-import org.intermine.model.InterMineObject;
 import org.intermine.pathquery.PathQuery;
 
 /**
- * Builds the query needed to generate the results for the user based on what they clicked on
- * in the widget.
+ * Builds a pathquery based on a widget.
  * @author Julie Sullivan
  */
 public interface WidgetURLQuery
 {
     /**
-     * @param objects list of objects that were used in the widget
+     * the pathquery is built to return all objects that the
+     * user selected from the widget.  This happens when the user checks some checkboxes on the
+     * widget and clicks on the 'display' button.
+     *
      * @return the query generated based on which records the user clicked on in the widget
      */
-    public PathQuery generatePathQuery(Collection<InterMineObject> objects);
+    public PathQuery generatePathQuery();
 
 }

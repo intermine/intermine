@@ -10,10 +10,6 @@ package org.intermine.bio.web.widget;
  *
  */
 
-import java.util.ArrayList;
-import java.util.Collection;
-
-import org.intermine.model.InterMineObject;
 import org.intermine.objectstore.ObjectStore;
 import org.intermine.pathquery.Constraints;
 import org.intermine.pathquery.PathQuery;
@@ -27,9 +23,9 @@ import org.intermine.web.logic.widget.WidgetURLQuery;
  */
 public class GoStatURLQuery implements WidgetURLQuery
 {
-    ObjectStore os;
-    InterMineBag bag;
-    String key;
+    private ObjectStore os;
+    private InterMineBag bag;
+    private String key;
 
     /**
      * @param os object store
@@ -45,56 +41,42 @@ public class GoStatURLQuery implements WidgetURLQuery
     /**
      * {@inheritDoc}
      */
-    public PathQuery generatePathQuery(Collection<InterMineObject> keys) {
+    public PathQuery generatePathQuery() {
 
         PathQuery q = new PathQuery(os.getModel());
         String bagType = bag.getType();
-
-        String pathStrings = "";
-        String widgetStrings = "";
+        String pathStrings;
 
         if (bagType.equals("Protein")) {
             pathStrings = "Protein.genes.primaryAccession,Protein.genes.primaryIdentifier,"
                 + "Protein.genes.name,Protein.genes.organism.name,"
-                + "Protein.primaryIdentifier,Protein.primaryAccession";
-            widgetStrings = "Protein.genes.allGoAnnotation.identifier,"
+                + "Protein.primaryIdentifier,Protein.primaryAccession"
+                + "Protein.genes.allGoAnnotation.identifier,"
                 + "Protein.genes.allGoAnnotation.name,"
                 + "Protein.genes.allGoAnnotation.actualGoTerms.name,"
                 + "Protein.genes.allGoAnnotation.actualGoTerms.identifier";
         } else {
-
             pathStrings = "Gene.secondaryIdentifier,Gene.primaryIdentifier,"
-                + "Gene.name,Gene.organism.name";
-            widgetStrings = "Gene.allGoAnnotation.identifier,"
+                + "Gene.name,Gene.organism.name"
+                + "Gene.allGoAnnotation.identifier,"
                 + "Gene.allGoAnnotation.name,"
                 + "Gene.allGoAnnotation.actualGoTerms.name,"
                 + "Gene.allGoAnnotation.actualGoTerms.identifier";
         }
-
         q.setView(pathStrings);
         q.setOrderBy(pathStrings);
-        if (keys == null) {
-            q.addView(widgetStrings);
-            q.addOrderBy(widgetStrings);
-        }
 
-        q.addConstraint(bagType,  Constraints.in(bag.getName()));
+        q.addConstraint(bagType, Constraints.in(bag.getName()));
+        // can't be a NOT relationship!
+        String pathString = (bagType.equals("Protein") ? "Protein.genes.allGoAnnotation.qualifier"
+                                                         : "Gene.allGoAnnotation.qualifier");
+        q.addConstraint(pathString, Constraints.isNull());
 
-        if (keys != null) {
-            q.addConstraint(bagType,  Constraints.notIn(new ArrayList(keys)));
-            q.setConstraintLogic("A and B");
-        } else {
-            // can't be a NOT relationship!
-            String pathString = (bagType.equals("Protein")
-                   ? "Protein.genes.allGoAnnotation.qualifier" : "Gene.allGoAnnotation.qualifier");
-            q.addConstraint(pathString,  Constraints.isNull());
-
-            // go term
-            pathString = (bagType.equals("Protein")
-            ? "Protein.genes.allGoAnnotation.property" : "Gene.allGoAnnotation.property");
-            q.addConstraint(pathString,  Constraints.lookup(key), "C", "GOTerm");
-            q.setConstraintLogic("A and B and C");
-        }
+        // go term
+        pathString = (bagType.equals("Protein") ? "Protein.genes.allGoAnnotation.property"
+                                                  : "Gene.allGoAnnotation.property");
+        q.addConstraint(pathString, Constraints.lookup(key), "C", "GOTerm");
+        q.setConstraintLogic("A and B and C");
         q.syncLogicExpression("and");
         return q;
     }
