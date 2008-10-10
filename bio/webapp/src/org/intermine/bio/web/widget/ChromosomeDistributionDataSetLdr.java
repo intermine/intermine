@@ -18,7 +18,6 @@ import java.util.Iterator;
 import java.util.LinkedHashMap;
 
 import org.flymine.model.genomic.Chromosome;
-import org.flymine.model.genomic.LocatedSequenceFeature;
 import org.flymine.model.genomic.Organism;
 import org.intermine.bio.web.logic.BioUtil;
 import org.intermine.metadata.Model;
@@ -78,53 +77,33 @@ public class ChromosomeDistributionDataSetLdr implements DataSetLdr
 
         chromosomeList = BioUtil.getChromosomes(os, Arrays.asList(organismName.toLowerCase()),
                                                 false);
-
+        // used for not analysed figure
         calcTotal(bag, organismName);
 
-        /* initialise results list - so all chromosomes are displayed */
+        // initialise results list - so all chromosomes are displayed
         for (Iterator<String> chrIter = chromosomeList.iterator(); chrIter.hasNext();) {
             String chromosomeName = chrIter.next();
             int[] count = new int[3];
-            count[0] = 0;   // actual
+            count[0] = 0;   // actual - total in bag
             count[1] = 0;   // expected
-            count[2] = 0;   // total
+            count[2] = 0;   // total in database
             resultsTable.put(chromosomeName, count);
         }
 
-        Query q = getQuery(organismName, "actual", bag);
+        // calculate chromsome, gene.count for genes in list
+        int totalInBagWithLocation = addActual(resultsTable, organismName, bag);
 
-        if (q == null) {
-            return;
-        }
+        // calculate chromsome, gene.count for genes in database
+        int totalInDBWithLocation = addExpected(resultsTable, organismName);
 
-        results = os.execute(q);
-        results.setBatchSize(50000);
-
-        // find out how many genes in the bag have a chromosome location, use this
-        // to work out the expected number for each chromosome. This is a hack to
-        // deal with the proportion of genes not assigned to a chromosome, it would
-        // be easier of they were located on an 'unknown' chromosome.
-        int totalInBagWithLocation = 0;
-
-        Iterator iter = results.iterator();
-        while (iter.hasNext()) {
-            ResultsRow resRow = (ResultsRow) iter.next();
-            String chromosome = (String) resRow.get(0);
-            Long geneCount = (java.lang.Long) resRow.get(1);
-            (resultsTable.get(chromosome))[0] = geneCount.intValue();
-            totalInBagWithLocation += geneCount.intValue();
-        }
-
-        int grandTotal = addExpected(resultsTable, organismName);
-
+        // calculate expected gene.count for each chromosome
         for (String chromosome : resultsTable.keySet()) {
-
             double expectedValue = 0;
             double proportion = 0.0000000000;
-            double totalWithChromosome = (resultsTable.get(chromosome))[2];
+            double totalInDBWithChromosome = (resultsTable.get(chromosome))[2];
 
-            if (totalWithChromosome > 0) {
-                proportion = totalWithChromosome / grandTotal;
+            if (totalInDBWithChromosome > 0) {
+                proportion = totalInDBWithChromosome / totalInDBWithLocation;
             }
             expectedValue = totalInBagWithLocation * proportion;
             if (resultsTable.get(chromosome) != null) {
@@ -132,6 +111,7 @@ public class ChromosomeDistributionDataSetLdr implements DataSetLdr
             }
         }
 
+        // put all data in dataset rendered in graph
         dataSet = new DefaultCategoryDataset();
         for (Iterator<String> iterator = resultsTable.keySet().iterator(); iterator.hasNext();) {
             String chromosome = iterator.next();
@@ -166,11 +146,41 @@ public class ChromosomeDistributionDataSetLdr implements DataSetLdr
             String chromosome = (String) resRow.get(0);         // chromosome
             Long geneCount = (java.lang.Long) resRow.get(1);    // genecount
 
+            // record total number of genes for this chromosome
             (resultsTable.get(chromosome))[2] = geneCount.intValue();
+            // increase total amount of genes with chromosomes
             grandTotal += geneCount.intValue();
         }
 
         return grandTotal;
+    }
+
+    @SuppressWarnings("unchecked")
+    private int addActual(HashMap<String, int[]> resultsTable, String organismName,
+                          InterMineBag bag)
+        throws ClassNotFoundException {
+        // query for chromosome, gene.count for genes in list
+        Query q = getQuery(organismName, "actual", bag);
+        results = os.execute(q);
+        results.setBatchSize(50000);
+
+        // find out how many genes in the bag have a chromosome location, use this
+        // to work out the expected number for each chromosome. This is a hack to
+        // deal with the proportion of genes not assigned to a chromosome, it would
+        // be easier of they were located on an 'unknown' chromosome.
+        int totalInBagWithLocation = 0;
+
+        Iterator iter = results.iterator();
+        while (iter.hasNext()) {
+            ResultsRow resRow = (ResultsRow) iter.next();
+            String chromosome = (String) resRow.get(0);
+            Long geneCount = (java.lang.Long) resRow.get(1);
+            // set the gene.count for genes in this bag with this chromosome
+            (resultsTable.get(chromosome))[0] = geneCount.intValue();
+            // increase total
+            totalInBagWithLocation += geneCount.intValue();
+        }
+        return totalInBagWithLocation;
     }
 
     private Query getQuery(String organism, String resultsType, InterMineBag bag)
@@ -179,14 +189,15 @@ public class ChromosomeDistributionDataSetLdr implements DataSetLdr
         QueryClass organismQC = new QueryClass(Organism.class);
         QueryClass chromosomeQC = new QueryClass(Chromosome.class);
         Class<?> bagCls = Class.forName(model.getPackageName() + "." + bagType);
-        QueryClass featureQC;
+        QueryClass featureQC = new QueryClass(bagCls);
 
+        /* TODO we need to figure out another way to do this, this returns the wrong data */
         // query LocatedSequenceFeature if possible for better chance of using precompute
-        if (LocatedSequenceFeature.class.isAssignableFrom(bagCls)) {
-            featureQC = new QueryClass(LocatedSequenceFeature.class);
-        } else {
-            featureQC = new QueryClass(bagCls);
-        }
+//        if (LocatedSequenceFeature.class.isAssignableFrom(bagCls)) {
+//            featureQC = new QueryClass(LocatedSequenceFeature.class);
+//        } else {
+//            featureQC = new QueryClass(bagCls);
+//        }
 
         QueryField chromoQF = new QueryField(chromosomeQC, "primaryIdentifier");
         QueryFunction countQF = new QueryFunction();
