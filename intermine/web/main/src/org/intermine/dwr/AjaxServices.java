@@ -1150,7 +1150,7 @@ public class AjaxServices
      * @return objects names
      */
     public static Set<String> filterByTag(String type, String tag) {
-        Profile profile = getProfile();
+        Profile profile = getProfile(getRequest());
 
         // implementation of hierarchical tag structure
         // if user selects tag 'bio' than it automatically includes all tags with bio prefix like 
@@ -1177,12 +1177,12 @@ public class AjaxServices
      * @param tagName tag name
      * @param taggedObject object id that is tagged by this tag
      * @param type  tag type
-     * @return true if adding was successfull
+     * @return true if adding was successful
      */
 	public static boolean addTag(String tagName, String taggedObject, String type) {
         try {
 			HttpServletRequest request = getRequest();
-			ProfileManager pm = getProfileManager(request);
+        	ProfileManager pm = getProfileManager(request);
 			Profile profile = getProfile(request);
 			tagName = tagName.trim();
 
@@ -1251,7 +1251,7 @@ public class AjaxServices
 	 * @return tags
 	 */
     public static Set<String> getTags(String type) {
-    	List<String> tags = getDatabaseTags(type);
+    	List<String> tags = getDatabaseTags(type);	
     	Set<String> ret = new LinkedHashSet<String>();
     	for (String tag : tags) {
     		if (tag.contains(TagNames.SEPARATOR)) {
@@ -1296,7 +1296,7 @@ public class AjaxServices
     
 	private static List<String> getDatabaseTags(String tagName, String objectIdentifier, String type) {
         HttpServletRequest request = getRequest();
-        ProfileManager pm = getProfileManager(request);
+		ProfileManager pm = getProfileManager(request);
         Profile profile = getProfile(request);
         
         List<String> ret = new ArrayList<String>();
@@ -1325,10 +1325,6 @@ public class AjaxServices
 		return (Profile) request.getSession().getAttribute(Constants.PROFILE);
 	}
 	
-	private static Profile getProfile() {
-		return (Profile) getRequest().getSession().getAttribute(Constants.PROFILE);
-	}	
-
 	private static HttpServletRequest getRequest() {
 		return WebContextFactory.get().getHttpServletRequest();
 	}
