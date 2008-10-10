@@ -6,22 +6,14 @@
 
 <!-- currentTags.jsp -->
 
+<%-- currentTags variables are set by inlineTagEditorController, this could be implemented without
+ it but it would cause 100 AJAX calls if there are 100 tags. So when the page is generated tags 
+ are obtained usinginlineTagEditorController, for refresh is used AjaxServices.getObjectTags  --%>
 <script type="text/javascript">
-function deleteTag(tagId, uid, type) {
-	var callBack = function(success) {
-		if (success) {
-			refreshTags(uid, type);
-		} else {
-			window.alert('Deleting tag failed.');
-		}
-	}
-	AjaxServices.deleteTag(tagId, callBack);
-}
+	<c:forEach items="${currentTags}" var="item" varStatus="status">
+		 addTagSpan('${uid}', '${type}', '${item.tagName}');
+	</c:forEach>
 </script>
-
-<c:forEach items="${currentTags}" var="item" varStatus="status">
-  <span class="tag">${item.tagName} <a href="#" class="deleteTagLink" onclick="deleteTag('${item.id}', '${uid}', '${type}');return false;">[x]</a></span>
-</c:forEach>
 
 <!-- /currentTags.jsp -->
 
