@@ -335,21 +335,20 @@ sub copy_db
   # retry a few times because sometimes the createdb fails with a "no
   # such file or directory" error because some table/index files
   # (temporary tables maybe) disappear while being copied
-# Switching off retry for now - this way we get an error message to send to Postgres.
-#  for (my $i = 1; $i <= 25; $i++) {
+  for (my $i = 1; $i <= 25; $i++) {
     eval {
       spawn($pass, @createdb_command, @params);
     };
-#    if ($@) {
-#      my $pause = $i * 5;
-#      warn "failure ($@) - will try again in $pause seconds ...\n";
-#      sleep($pause);
-#    } else {
-#      last;
-#    }
-#  }
+    if ($@) {
+      my $pause = $i * 5;
+      warn "failure ($@) - will try again in $pause seconds ...\n";
+      sleep($pause);
+    } else {
+      last;
+    }
+  }
 
-  die "Please report this error to Matthew, so he can send an error report to Postgres\n$@\n" if $@;
+  die "$@\n" if $@;
 }
 
 sub make_server_backup
