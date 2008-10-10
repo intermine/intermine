@@ -159,10 +159,6 @@
       <forward name="mainConstraint" path="mainConstraint.tile"/>
       <forward name="queryPaths" path="mainPaths.tile"/>
     </action>
-    <action path="/inlineTagEditorChange" type="org.intermine.web.struts.InlineTagEditorChange" parameter="method">
-      <forward name="editTags" path="/editTags.jsp"/>
-      <forward name="currentTags" path="/currentTags.jsp"/>
-    </action>
     <action path="/viewChange" type="org.intermine.web.struts.ViewChange" parameter="method">
       <forward name="query" redirect="true" path="/query.do"/>
     </action>

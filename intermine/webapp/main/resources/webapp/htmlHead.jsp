@@ -74,13 +74,6 @@ if(new java.io.File(application.getRealPath("css")+"/"+pageName+".css").exists()
     window.scrollTo(0, 99999);
     document.getElementById("fbname").focus();
   }
-
-	
-	//must be there because of html:rewrite
-	function refreshTags(uid, type) {
-	    new Ajax.Updater('currentTags-'+uid, '<html:rewrite action="/inlineTagEditorChange"/>',
-	        {parameters:'method=currentTags&uid='+uid+'&type='+type, asynchronous:true});
-	}
 	
   Position.center = function(element){
       var options = Object.extend({
