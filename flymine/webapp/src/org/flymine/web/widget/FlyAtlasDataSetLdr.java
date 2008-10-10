@@ -44,12 +44,11 @@ import org.jfree.data.category.DefaultCategoryDataset;
  */
 public class FlyAtlasDataSetLdr implements DataSetLdr
 {
-
     private Results results;
     private DefaultCategoryDataset dataSet;
     private int widgetTotal = 0;
     private Set<String> genes = new HashSet<String>();
-    
+
     /**
      * Creates a FlyAtlasDataSetLdr used to retrieve, organise
      * and structure the FlyAtlas data to create a graph
@@ -89,7 +88,7 @@ public class FlyAtlasDataSetLdr implements DataSetLdr
                         count[0]++;
                     } else if (affyCall.equals("Down")) {
                         count[1]--;
-                    } 
+                    }
                     callTable.put(tissue, count);
                 }
                 genes.add(identifier);
@@ -108,8 +107,8 @@ public class FlyAtlasDataSetLdr implements DataSetLdr
             } else {
                 dataSet.addValue(-0.0001, "Down", tissue);
             }
-        } 
-      
+        }
+
         widgetTotal = genes.size();
     }
 
@@ -119,7 +118,7 @@ public class FlyAtlasDataSetLdr implements DataSetLdr
     public CategoryDataset getDataSet() {
         return dataSet;
     }
-    
+
     /**
      * {@inheritDoc}
      */
@@ -127,9 +126,9 @@ public class FlyAtlasDataSetLdr implements DataSetLdr
         return results;
     }
 
-    
+
     private Query createQuery(InterMineBag bag) {
-                
+
         QueryClass far = new QueryClass(FlyAtlasResult.class);
         QueryClass maa = new QueryClass(MicroArrayAssay.class);
         QueryClass gene = new QueryClass(Gene.class);
@@ -141,8 +140,8 @@ public class FlyAtlasDataSetLdr implements DataSetLdr
         QueryField qf = new QueryField(gene, "id");
         cs.addConstraint(new BagConstraint(qf, ConstraintOp.IN, bag.getOsb()));
 
-        QueryCollectionReference r1 = new QueryCollectionReference(far, "genes");        
-        QueryCollectionReference r2 = new QueryCollectionReference(far, "assays");        
+        QueryCollectionReference r1 = new QueryCollectionReference(far, "genes");
+        QueryCollectionReference r2 = new QueryCollectionReference(far, "assays");
         cs.addConstraint(new ContainsConstraint(r1, ConstraintOp.CONTAINS, gene));
         cs.addConstraint(new ContainsConstraint(r2, ConstraintOp.CONTAINS, maa));
 
@@ -155,18 +154,18 @@ public class FlyAtlasDataSetLdr implements DataSetLdr
         q.addFrom(far);
         q.addFrom(maa);
         q.addFrom(gene);
-        
+
         q.setConstraint(cs);
         q.addToOrderBy(tissueName);
 
         return q;
     }
-    
+
     /**
      * {@inheritDoc}
      */
     public int getWidgetTotal() {
         return widgetTotal;
     }
-   
+
 }

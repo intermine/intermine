@@ -423,7 +423,9 @@ public class TableWidgetLdr
 
     @SuppressWarnings("unchecked")
     private static int calcTotal(ObjectStore os, Query q) {
-        Iterator iter = os.executeSingleton(q).iterator();
+        Results res = os.execute(q);
+        Iterator iter = res.iterator();
+        //Iterator iter = os.executeSingleton(q).iterator();
         int n = 0;
         while (iter.hasNext()) {
             ResultsRow resRow = (ResultsRow) iter.next();
@@ -433,7 +435,6 @@ public class TableWidgetLdr
     }
 
     /**
-     *
      * @param selected selected records to export
      * @return list of lists of records to export
      * @throws Exception if something goes horribly wrong
