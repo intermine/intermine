@@ -52,12 +52,12 @@ public class InlineTagEditorController extends TilesAction
             .getServletContext().getAttribute(Constants.PROFILE_MANAGER);
         Profile profile = (Profile) request.getSession().getAttribute(Constants.PROFILE);
 
-        String uid = null;
+        String tagged = null;
         String type = null;
 
         if (taggable instanceof FieldDescriptor) {
             FieldDescriptor fd = (FieldDescriptor) taggable;
-            uid = fd.getClassDescriptor().getUnqualifiedName() + "." + fd.getName();
+            tagged = fd.getClassDescriptor().getUnqualifiedName() + "." + fd.getName();
             if (taggable instanceof CollectionDescriptor) {
                 type = "collection";
             } else if (taggable instanceof ReferenceDescriptor) {
@@ -67,18 +67,18 @@ public class InlineTagEditorController extends TilesAction
             }
         } else if (taggable instanceof TemplateQuery) {
             type = TagTypes.TEMPLATE;
-            uid = ((TemplateQuery) taggable).getName();
+            tagged = ((TemplateQuery) taggable).getName();
         } else if (taggable instanceof ClassDescriptor) {
             type = TagTypes.CLASS;
-            uid = ((ClassDescriptor) taggable).getName();
+            tagged = ((ClassDescriptor) taggable).getName();
         } else if (taggable instanceof InterMineBag) {
             type = TagTypes.BAG;
-            uid = ((InterMineBag) taggable).getName();
+            tagged = ((InterMineBag) taggable).getName();
         }
 
-        request.setAttribute("uid", uid);
+        request.setAttribute("tagged", tagged);
         request.setAttribute("type", type);
-        request.setAttribute("currentTags", pm.getTags(null, uid, type, profile.getUsername()));
+        request.setAttribute("currentTags", pm.getTags(null, tagged, type, profile.getUsername()));
 
         return null;
     }
