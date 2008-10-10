@@ -49,6 +49,7 @@
   -->
   <target name="-define-task-classpath">
     <path id="task.class.path">
+      <pathelement location="${integrate.basedir}/resources"/>
       <pathelement location="${build.task.dir}"/>
       <path refid="project.execute.path"/>
       <!-- And add anything in this project -->
