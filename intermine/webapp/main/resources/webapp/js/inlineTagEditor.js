@@ -1,49 +1,49 @@
 var editingTag;
 var inputType;
 
-function getAddedTag(uid, type) {
-	if (getInputType(uid, type) == 'select') {
-		return getSelectValue('tagSelect-' + uid);
+function getAddedTag(tagged, type) {
+	if (getInputType(tagged, type) == 'select') {
+		return getSelectValue('tagSelect-' + tagged);
 	} else {
-		return $('tagValue-' + uid).value;
+		return $('tagValue-' + tagged).value;
 	}
 }
 
-function startEditingTag(uid) {
+function startEditingTag(tagged) {
 	if (editingTag) {
 		stopEditingTag();
 	}
-	editingTag = uid;
-	showEl('switchLink-' + uid);
+	editingTag = tagged;
+	showEl('switchLink-' + tagged);
 	hideEl('addLink-' + editingTag);
-	setInputType(uid, 'select');
-	showEl('tagsEdit-' + uid);
+	setInputType(tagged, 'select');
+	showEl('tagsEdit-' + tagged);
 }
 
-function setInputType(uid, type) {
+function setInputType(tagged, type) {
 	inputType = type;
 	if (type == 'select') {
 		var title = 'New tag';
-		showEl('tagSelect-' + uid);
-		hideEl('tagValue-' + uid);
+		showEl('tagSelect-' + tagged);
+		hideEl('tagValue-' + tagged);
 	} else {
 		var title = 'Select tag';
-		showEl('tagValue-' + uid);
-		hideEl('tagSelect-' + uid);
-		$('tagValue-' + uid).focus();
+		showEl('tagValue-' + tagged);
+		hideEl('tagSelect-' + tagged);
+		$('tagValue-' + tagged).focus();
 	}
-	$('switchLink-' + uid).innerHTML = title;
+	$('switchLink-' + tagged).innerHTML = title;
 }
 
-function switchTagInput(uid) {
-	if (getInputType(uid) == 'select') {
-		setInputType(uid, 'new');
+function switchTagInput(tagged) {
+	if (getInputType(tagged) == 'select') {
+		setInputType(tagged, 'new');
 	} else {
-		setInputType(uid, 'select');
+		setInputType(tagged, 'select');
 	}
 }
 
-function getInputType(uid) {
+function getInputType(tagged) {
 	return inputType;
 }
 
@@ -56,51 +56,51 @@ function stopEditingTag() {
 	editingTag = '';
 }
 
-function addTag(uid, type) {
-	var tag = getAddedTag(uid, type);
+function addTag(tagged, type) {
+	var tag = getAddedTag(tagged, type);
 	var callBack = function(success) {
 		if (success) {
-			refreshTags(uid, type);
+			refreshTags(tagged, type);
 		} else {
 			window.alert('Adding tag failed.');
 		}
 	} 
-	AjaxServices.addTag(tag, uid, type, callBack);
+	AjaxServices.addTag(tag, tagged, type, callBack);
 }
 
-function deleteTag(tag, uid, type) {
+function deleteTag(tag, tagged, type) {
 	var callBack = function(success) {
 		if (success) {
-			refreshTags(uid, type);
+			refreshTags(tagged, type);
 		} else {
 			window.alert('Deleting tag failed.');
 		}
 	}
-	AjaxServices.deleteTag(tag, uid, type, callBack);
+	AjaxServices.deleteTag(tag, tagged, type, callBack);
 }
 
-function displayTags(uid, type, tags) {
-	var parent = $('currentTags-' + uid);
+function displayTags(tagged, type, tags) {
+	var parent = $('currentTags-' + tagged);
 	parent.innerHTML = '';
 	for (var i = 0; i < tags.length; i++) {
 		var tag = tags[i];
-		addTagSpan(uid, type, tag);
+		addTagSpan(tagged, type, tag);
 	}
 }
 
-function addTagSpan(uid, type, tag) {
-	var parent = $('currentTags-' + uid);
+function addTagSpan(tagged, type, tag) {
+	var parent = $('currentTags-' + tagged);
 	var span = document.createElement('span');
 	span.setAttribute('class', 'tag');
 	// for IE
 	span.setAttribute('className', 'tag');
-	span.innerHTML = tag + '<a class="deleteTagLink" onclick="javascript:deleteTag(\'' + tag + '\', \'' + uid + '\', \'' + type + '\')">[x]</a>&nbsp;';
+	span.innerHTML = tag + '<a class="deleteTagLink" onclick="javascript:deleteTag(\'' + tag + '\', \'' + tagged + '\', \'' + type + '\')">[x]</a>&nbsp;';
 	parent.appendChild(span);
 }
 
-function refreshTags(uid, type) {
+function refreshTags(tagged, type) {
 	var callBack = function(tags) {
-		displayTags(uid, type, tags);
+		displayTags(tagged, type, tags);
 	}
-	AjaxServices.getObjectTags(type, uid, callBack);	
+	AjaxServices.getObjectTags(type, tagged, callBack);	
 }

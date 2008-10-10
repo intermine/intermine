@@ -18,32 +18,30 @@
   <div style="margin-top: 5px">
 </c:if>
 
-<span id="tags-${uid}" style="${!show?'display:none':''}">
-  <span id="currentTags-${uid}">
+<span id="tags-${tagged}" style="${!show?'display:none':''}">
+  <span id="currentTags-${tagged}">
     <tiles:insert page="/currentTags.jsp">
     </tiles:insert>
   </span>
-  <span id="addLink-${uid}">
-    <a class="addTagLink" onclick="javascript:startEditingTag('${uid}')" >Add tags</a>
+  <span id="addLink-${tagged}">
+    <a class="addTagLink" onclick="javascript:startEditingTag('${tagged}')" >Add tags</a>
   </span>
   <span>
-  	<a  class="addTagLink" onclick="javascript:switchTagInput('${uid}')" style="display:none;" id="switchLink-${uid}">New tag</a>
+  	<a  class="addTagLink" onclick="javascript:switchTagInput('${tagged}')" style="display:none;" id="switchLink-${tagged}">New tag</a>
   </span>
-  <span id="tagsEdit-${uid}" style="display:none; white-space:nowrap">
+  <span id="tagsEdit-${tagged}" style="display:none; white-space:nowrap">
     <c:if test="${vertical}">
       <br/>
     </c:if>
-    <!--<input type="hidden" name="tag-uid" value="${uid}"/>
-    <input type="hidden" name="tag-type" value="${type}"/>-->
-    <input type="text" style="border: 1px solid #888; padding: 2px; font-size: 10px" size="18" id="tagValue-${uid}" name="tag"
-      onKeyPress="if(event.keyCode == 13) {addTag('${uid}', '${type}');$('tagValue-${uid}').focus();${onChangeCode};}"/>
+    <input type="text" style="border: 1px solid #888; padding: 2px; font-size: 10px" size="18" id="tagValue-${tagged}" name="tag"
+      onKeyPress="if(event.keyCode == 13) {addTag('${tagged}', '${type}');$('tagValue-${tagged}').focus();${onChangeCode};}"/>
     <tiles:insert name="tagSelect.tile">
 	        <tiles:put name="type" value="${type}" />
-	        <tiles:put name="selectId" value="tagSelect-${uid}" />
+	        <tiles:put name="selectId" value="tagSelect-${tagged}" />
 	</tiles:insert>
     
-    <input type="button" style="font-size: 10px" value="Add" onclick="addTag('${uid}', '${type}');${onChangeCode};$('tagValue-${uid}').focus();"/>
-    <input type="button" style="font-size: 10px" value="Done" onclick="stopEditingTag('${uid}')"/>
+    <input type="button" style="font-size: 10px" value="Add" onclick="addTag('${tagged}', '${type}');${onChangeCode};$('tagValue-${tagged}').focus();"/>
+    <input type="button" style="font-size: 10px" value="Done" onclick="stopEditingTag('${tagged}')"/>
   </span>
 </span>
 
