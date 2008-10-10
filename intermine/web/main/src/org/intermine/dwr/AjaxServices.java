@@ -26,6 +26,7 @@ import java.util.Map;
 import java.util.Properties;
 import java.util.Set;
 import java.util.TreeMap;
+import java.util.TreeSet;
 
 import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletRequest;
@@ -1235,28 +1236,28 @@ public class AjaxServices
 		}
 	}
 
-	public static boolean deleteTag(String tagId) {
+	public static boolean deleteTag(String tagName, String tagged, String type) {
 		try {
 			HttpServletRequest request = getRequest();
 			ProfileManager pm = getProfileManager(request); 
 			Profile profile = getProfile(request);	
 
-			if (!StringUtils.isEmpty(tagId)) {
-			    Tag tag = pm.getTagById(Integer.parseInt(tagId));
-			    // only let users delete their own tags
-			    if (tag.getUserProfile().getUsername().equals(profile.getUsername())) {
-			        pm.deleteTag(tag);
-			        HttpSession session = request.getSession();
-			        ServletContext servletContext = session.getServletContext();
-			        Boolean isSuperUser = (Boolean) session.getAttribute(Constants.IS_SUPERUSER);
-			        if (isSuperUser != null && isSuperUser.booleanValue()) {
-			            SearchRepository tr =
-			                SearchRepository.getGlobalSearchRepository(servletContext);
-			            tr.webSearchableUnTagged(tag);
-			        }
-			    }
-			}
-			return true;
+			List<Tag> tags = pm.getTags(tagName, tagged, type, profile.getUsername());
+			if (tags.size() == 1 && tags.get(0) != null) {
+			    Tag tag = tags.get(0);
+		        pm.deleteTag(tag);
+		        HttpSession session = request.getSession();
+		        ServletContext servletContext = session.getServletContext();
+		        Boolean isSuperUser = (Boolean) session.getAttribute(Constants.IS_SUPERUSER);
+		        if (isSuperUser != null && isSuperUser.booleanValue()) {
+		            SearchRepository tr =
+		                SearchRepository.getGlobalSearchRepository(servletContext);
+		            tr.webSearchableUnTagged(tag);
+		        }
+		        return true;
+			} else {
+				return false;
+			}			
 		} catch (Throwable e) {
 			LOG.error("Deleting tag failed", e);
 			return false;
@@ -1292,6 +1293,10 @@ public class AjaxServices
     		}
     	}
     	return ret;
+    }
+    
+    public static Set<String> getObjectTags(String type, String tagged) {
+    	return new TreeSet<String>(getDatabaseTags(null, tagged, type));
     }
 
 	private static List<String> getPrefixes(String s) {
