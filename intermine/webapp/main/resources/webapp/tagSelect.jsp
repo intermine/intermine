@@ -18,7 +18,6 @@
 <script type="text/javascript" src="js/imdwr.js" ></script>
 <script type="text/javascript" src="js/tagSelect.js" ></script>
 
-<%-- Select to which options are appended --%>
 <c:choose>
 	<c:when test="${!empty onChangeFunction}">
 		<select id="${selectId}" onchange="javacript:callOnChangeFunction('${selectId}', '${onChangeFunction}')"></select>

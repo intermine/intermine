@@ -6,10 +6,21 @@
 
 <!-- currentTags.jsp -->
 
-<html:xhtml/>
+<script type="text/javascript">
+function deleteTag(tagId, uid, type) {
+	var callBack = function(success) {
+		if (success) {
+			refreshTags(uid, type);
+		} else {
+			window.alert('Deleting tag failed.');
+		}
+	}
+	AjaxServices.deleteTag(tagId, callBack);
+}
+</script>
 
 <c:forEach items="${currentTags}" var="item" varStatus="status">
-  <span class="tag">${item.tagName} <a href="#" class="deleteTagLink" onclick="new Ajax.Request('<html:rewrite action="/inlineTagEditorChange"/>', {parameters:'method=delete&tagid='+'${item.id}', asynchronous:false});refreshTags('${uid}', '${type}');return false;">[x]</a></span>
+  <span class="tag">${item.tagName} <a href="#" class="deleteTagLink" onclick="deleteTag('${item.id}', '${uid}', '${type}');return false;">[x]</a></span>
 </c:forEach>
 
 <!-- /currentTags.jsp -->

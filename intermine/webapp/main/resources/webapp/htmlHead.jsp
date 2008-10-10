@@ -75,15 +75,6 @@ if(new java.io.File(application.getRealPath("css")+"/"+pageName+".css").exists()
     document.getElementById("fbname").focus();
   }
 
-	//must be there because of html:rewrite
-	function addTag(uid, type) {
-		var tag = getAddedTag(uid, type);
-		new Ajax.Request('<html:rewrite action="/inlineTagEditorChange"/>', {
-			parameters :'method=add&uid=' + uid + '&type=' + type + '&tag=' + tag,
-			asynchronous :false
-		});
-		refreshTags(uid, type);
-	}
 	
 	//must be there because of html:rewrite
 	function refreshTags(uid, type) {

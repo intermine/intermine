@@ -55,3 +55,15 @@ function stopEditingTag() {
 	}
 	editingTag = '';
 }
+
+function addTag(uid, type) {
+	var tag = getAddedTag(uid, type);
+	var callBack = function(success) {
+		if (success) {
+			refreshTags(uid, type);
+		} else {
+			window.alert('Adding tag failed.');
+		}
+	} 
+	AjaxServices.addTag(tag, uid, type, callBack);
+}
