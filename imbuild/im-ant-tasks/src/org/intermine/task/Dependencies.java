@@ -154,7 +154,8 @@ public class Dependencies extends Task
         String dependPathId = type + ".depend.path";
         String executePathId = type + ".execute.path";
         String artifactPathId = type + ".artifact.path";
-
+        String extraDependenciesId = "extra.dependencies";
+        
         // Don't run twice if target not specified.
         if (getProject().getReference(compilePathId) != null && target == null) {
             return;
@@ -205,10 +206,11 @@ public class Dependencies extends Task
         executeFileSet = new FileSet();
         executeFileSet.setDir(new File(workspaceBaseDir.replace('/', File.separatorChar)));
         executeFileSet.setProject(getProject());
-
+        
         String compileIncludes = "";
         String dependIncludes = "";
         String executeIncludes = "";
+        String extraDependenciesIncludes = "";
 
         FileSet artifactFileSet = new FileSet();
         artifactFileSet.setDir(new File(workspaceBaseDir.replace('/', File.separatorChar)));
@@ -219,7 +221,7 @@ public class Dependencies extends Task
         getProject().addReference(dependPathId, dependPath);
         getProject().addReference(executePathId, executePath);
         getProject().addReference(artifactPathId, artifactPath);
-
+        
         String projName = calcThisProjectName();
 
         if (getProject().getUserProperty("mine.name") == null) {
@@ -259,7 +261,7 @@ public class Dependencies extends Task
         compileIncludes += projName + "/lib/*.jar ";
         dependIncludes += projName + "/lib/*.jar ";
         executeIncludes += projName + "/lib/*.jar ";
-
+        
         for (int i = 0; i < allProjectNames.size(); i++) {
             String depName = (String) allProjectNames.get(i);
             File projDir = getProjectBaseDir(depName);
@@ -335,6 +337,9 @@ public class Dependencies extends Task
                 dependIncludes += depName + "/lib/*.jar ";
 
                 artifactIncludes += depName + "/dist/* ";
+            } else {
+            	extraDependenciesIncludes += depName + "/dist/* ";
+            	extraDependenciesIncludes += depName + "/lib/*.jar ";
             }
         }
 
@@ -352,6 +357,15 @@ public class Dependencies extends Task
             getProject().addReference(executePathId + ".fileset", executeFileSet);
             getProject().addReference(executePathId + ".fileset.text", executeIncludes);
         }
+
+
+        // add the extra dependencies fileset even if it is empty
+        getProject().addReference(extraDependenciesId 
+           		+ ".fileset.text", extraDependenciesIncludes);
+        //String key = extraDependenciesPathId + ".fileset.text";
+        //System.out.println("KEY " + key);
+        //getProject().addReference("monkey" 
+        //   		+ ".fileset.text", extraDependenciesIncludes);
 
         if (artifactIncludes.length() > 0) {
             artifactFileSet.setIncludes(artifactIncludes);
