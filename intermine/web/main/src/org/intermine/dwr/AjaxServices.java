@@ -123,8 +123,7 @@ public class AjaxServices
             Profile profile = (Profile) session.getAttribute(Constants.PROFILE);
             HttpServletRequest request = ctx.getHttpServletRequest();
             String nameCopy = name.replaceAll("#039;", "'");
-            ProfileManager pm = (ProfileManager) request.getSession().
-                getServletContext().getAttribute(Constants.PROFILE_MANAGER);
+            ProfileManager pm = getProfileManager(request);
 
             // already a favourite.  turning off.
             if (isFavourite) {
@@ -1189,8 +1188,7 @@ public class AjaxServices
     
 	private static List<String> getDatabaseTags(String tagName, String objectIdentifier, String type) {
         HttpServletRequest request = getRequest();
-        ProfileManager pm = (ProfileManager) request.getSession()
-            .getServletContext().getAttribute(Constants.PROFILE_MANAGER);
+        ProfileManager pm = getProfileManager(request);
         Profile profile = getProfile(request);
         
         List<String> ret = new ArrayList<String>();
@@ -1204,6 +1202,67 @@ public class AjaxServices
         return ret;
     }
 
+	private static ProfileManager getProfileManager(HttpServletRequest request) {
+		ProfileManager pm = (ProfileManager) request.getSession()
+            .getServletContext().getAttribute(Constants.PROFILE_MANAGER);
+		return pm;
+	}
+	
+	public static boolean addTag(String tag, String taggedObject, String type) {
+        try {
+			HttpServletRequest request = getRequest();
+			ProfileManager pm = getProfileManager(request);
+			Profile profile = getProfile(request);
+			String tagName = tag.trim();
+
+			if (profile.getUsername() != null 
+					&& !StringUtils.isEmpty(tagName)
+					&& !StringUtils.isEmpty(type)
+					&& !StringUtils.isEmpty(taggedObject)) {
+			    Tag createdTag = pm.addTag(tagName, taggedObject, type, profile.getUsername());
+			    HttpSession session = request.getSession();
+			    ServletContext servletContext = session.getServletContext();
+			    Boolean isSuperUser = (Boolean) session.getAttribute(Constants.IS_SUPERUSER);
+			    if (isSuperUser != null && isSuperUser.booleanValue()) {
+			        SearchRepository tr = SearchRepository.getGlobalSearchRepository(servletContext);
+			        tr.webSearchableTagged(createdTag);
+			    }
+			}
+			return true;
+		} catch (Throwable e) {
+			LOG.error("Adding tag failed", e);
+			return false;
+		}
+	}
+
+	public static boolean deleteTag(String tagId) {
+		try {
+			HttpServletRequest request = getRequest();
+			ProfileManager pm = getProfileManager(request); 
+			Profile profile = getProfile(request);	
+
+			if (!StringUtils.isEmpty(tagId)) {
+			    Tag tag = pm.getTagById(Integer.parseInt(tagId));
+			    // only let users delete their own tags
+			    if (tag.getUserProfile().getUsername().equals(profile.getUsername())) {
+			        pm.deleteTag(tag);
+			        HttpSession session = request.getSession();
+			        ServletContext servletContext = session.getServletContext();
+			        Boolean isSuperUser = (Boolean) session.getAttribute(Constants.IS_SUPERUSER);
+			        if (isSuperUser != null && isSuperUser.booleanValue()) {
+			            SearchRepository tr =
+			                SearchRepository.getGlobalSearchRepository(servletContext);
+			            tr.webSearchableUnTagged(tag);
+			        }
+			    }
+			}
+			return true;
+		} catch (Throwable e) {
+			LOG.error("Deleting tag failed", e);
+			return false;
+		} 
+	}
+	
 	private static Profile getProfile(HttpServletRequest request) {
 		return (Profile) request.getSession().getAttribute(Constants.PROFILE);
 	}
