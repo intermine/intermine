@@ -103,7 +103,8 @@ public class GraphWidget extends Widget
             CategoryDataset graphDataSet = dataSetLdr.getDataSet();
 
             /* stacked bar chart */
-            if (((GraphWidgetConfig) config).getGraphType().equals("StackedBarChart")) {
+            if (((GraphWidgetConfig) config).getGraphType() != null &&
+                            ((GraphWidgetConfig) config).getGraphType().equals("StackedBarChart")) {
                 chart = ChartFactory.createStackedBarChart(config.getTitle(), // chart title
                                 ((GraphWidgetConfig) config).getDomainLabel(), // domain axis label
                                 ((GraphWidgetConfig) config).getRangeLabel(), // range axis label
@@ -143,27 +144,29 @@ public class GraphWidget extends Widget
                     renderer.setItemMargin(0);
                     plot.setRenderer(renderer);
                     CategoryURLGenerator categoryUrlGen = null;
-                    // set series 0 to have URLgenerator specified in config file
-                    // set series 1 to have no URL generator.
-                    try {
-                        Class<?> clazz2 = TypeUtil.instantiate(config.getLink());
-                        Constructor<?> urlGenConstructor = clazz2.getConstructor(new Class[]
-                            {
+                    if (config.getLink() != null) {
+                        // set series 0 to have URLgenerator specified in config file
+                        // set series 1 to have no URL generator.
+                        try {
+                            Class<?> clazz2 = TypeUtil.instantiate(config.getLink());
+                            Constructor<?> urlGenConstructor = clazz2.getConstructor(new Class[]
+                                                                                               {
                                 String.class, String.class
-                            });
-                        categoryUrlGen = (CategoryURLGenerator) urlGenConstructor
-                                        .newInstance(new Object[]
-                                            {
-                                                bag.getName(), selectedExtraAttribute
-                                            });
+                                                                                               });
+                            categoryUrlGen = (CategoryURLGenerator) urlGenConstructor
+                            .newInstance(new Object[]
+                                                    {
+                                bag.getName(), selectedExtraAttribute
+                                                    });
 
-                    } catch (Exception err) {
-                        err.printStackTrace();
+                        } catch (Exception err) {
+                            err.printStackTrace();
+                        }
+
+                        // renderer.setItemURLGenerator(null);
+                        renderer.setSeriesItemURLGenerator(0, categoryUrlGen);
+                        renderer.setSeriesItemURLGenerator(1, categoryUrlGen);
                     }
-
-                    // renderer.setItemURLGenerator(null);
-                    renderer.setSeriesItemURLGenerator(0, categoryUrlGen);
-                    renderer.setSeriesItemURLGenerator(1, categoryUrlGen);
 
                     // integers only
                     NumberAxis rangeAxis = (NumberAxis) plot.getRangeAxis();
@@ -171,7 +174,9 @@ public class GraphWidget extends Widget
 
                 }
 
-            chart.getTitle().setFont(new Font("SansSerif", Font.BOLD, 12));
+            if (chart.getTitle() != null) {
+                chart.getTitle().setFont(new Font("SansSerif", Font.BOLD, 12));
+            }
 
             // display values for each column
             CategoryItemLabelGenerator generator = new StandardCategoryItemLabelGenerator();
@@ -287,10 +292,11 @@ public class GraphWidget extends Widget
     public String getHtml() {
         // IE doesn't support base64, so for now we are just going to pass back location of png file
         // see http://en.wikipedia.org/wiki/Data:_URI_scheme
-        StringBuffer sb = new StringBuffer("<img src=\"loadTmpImg.do?fileName=" + fileName
-                              + "\" width=\"" + ((GraphWidgetConfig) config).getWIDTH()
-                              + "\" height=\"" + ((GraphWidgetConfig) config).getHEIGHT()
-                              + "\" usemap=\"#chart" + fileName + "\">");
+        String img = "<img src=\"loadTmpImg.do?fileName=" + fileName
+        + "\" width=\"" + ((GraphWidgetConfig) config).getWIDTH()
+        + "\" height=\"" + ((GraphWidgetConfig) config).getHEIGHT()
+        + "\" usemap=\"#chart" + fileName + "\">";
+        StringBuffer sb = new StringBuffer(img);
         sb.append(imageMap);
         return sb.toString();
     }
