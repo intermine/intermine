@@ -105,7 +105,9 @@ public class EnrichmentWidgetConfig extends WidgetConfig
                                                               @SuppressWarnings("unused")
                                                               ObjectStore os) {
         Map<String, Collection<String>> returnMap = new HashMap<String, Collection<String>>();
-        returnMap.put(getFilterLabel(), Arrays.asList(getFilters().split(",")));
+        if (getFilters() != null) {
+            returnMap.put(getFilterLabel(), Arrays.asList(getFilters().split(",")));
+        }
         return returnMap;
     }
 
