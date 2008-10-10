@@ -111,9 +111,10 @@
           depends="-init-properties, init, -init-deps, -init-task-xml,
                    -pre-generate-retrieve, -pre-generate-properties"
           unless="doing.build.db">
-    <copy file="${resources.dir}/${model.name}_*.properties"
-          todir="${build.classes.dir}" preservelastmodified="true"
-          failonerror="false"/>
+    <copy todir="${build.classes.dir}" preservelastmodified="true"
+          failonerror="false">
+      <fileset dir="${resources.dir}" includes="${model.name}_*.properties"/>
+    </copy>
   </target>
 
   <!--
