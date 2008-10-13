@@ -52,6 +52,7 @@ public class PublicationLdr extends EnrichmentWidgetLdr
     public PublicationLdr(InterMineBag bag, ObjectStore os, String extraAttribute) {
         this.bag = bag;
         organisms = BioUtil.getOrganisms(os, bag, false);
+        //  having attributes lowercase increases the chances the indexes will be used
         for (String s : organisms) {
             organismsLower.add(s.toLowerCase());
         }
@@ -62,70 +63,81 @@ public class PublicationLdr extends EnrichmentWidgetLdr
      */
     public Query getQuery(String action, List<String> keys) {
 
+        // classes for FROM clause
         QueryClass qcGene = new QueryClass(Gene.class);
         QueryClass qcPub = new QueryClass(Publication.class);
         QueryClass qcOrganism = new QueryClass(Organism.class);
 
+        // fields for SELECT clause
         QueryField qfGeneId = new QueryField(qcGene, "id");
         QueryField qfOrganismName = new QueryField(qcOrganism, "name");
         QueryField qfId = new QueryField(qcPub, "pubMedId");
         QueryField qfPubTitle = new QueryField(qcPub, "title");
         QueryField qfPrimaryIdentifier = new QueryField(qcGene, "primaryIdentifier");
 
-        QueryFunction geneCount = new QueryFunction();
-
+        // constraints
         ConstraintSet cs = new ConstraintSet(ConstraintOp.AND);
 
+        // constrain genes to be in subset of list the user selected
         if (keys != null) {
             cs.addConstraint(new BagConstraint(qfId, ConstraintOp.IN, keys));
         }
 
+        // constrain genes to be in list
         if (!action.startsWith("population")) {
             cs.addConstraint(new BagConstraint(qfGeneId, ConstraintOp.IN, bag.getOsb()));
         }
+
+        // organism in our list
         QueryExpression qe = new QueryExpression(QueryExpression.LOWER, qfOrganismName);
         cs.addConstraint(new BagConstraint(qe, ConstraintOp.IN, organismsLower));
 
+        // gene.organism = organism
         QueryObjectReference qor = new QueryObjectReference(qcGene, "organism");
         cs.addConstraint(new ContainsConstraint(qor, ConstraintOp.CONTAINS, qcOrganism));
 
+        // gene.publication = publication
         QueryCollectionReference qcr = new QueryCollectionReference(qcGene, "publications");
         cs.addConstraint(new ContainsConstraint(qcr, ConstraintOp.CONTAINS, qcPub));
 
-        Query q = new Query();
-        q.setDistinct(false);
 
-        if (action.endsWith("Total") || action.equals("analysed")) {
-            Query subQ = new Query();
-            subQ.setDistinct(true);
-            subQ.addFrom(qcGene);
-            subQ.addFrom(qcPub);
-            subQ.addFrom(qcOrganism);
-            subQ.addToSelect(qfGeneId);
-            subQ.setConstraint(cs);
-            if (action.equals("analysed")) {
-                return subQ;
-            }
+        Query q = new Query();
+        q.setDistinct(true);
+
+        // from statement
+        q.addFrom(qcGene);
+        q.addFrom(qcPub);
+        q.addFrom(qcOrganism);
+
+        // add constraints to query
+        q.setConstraint(cs);
+
+        // needed for the 'not analysed' number
+        if (action.equals("analysed")) {
+            q.addToSelect(qfGeneId);
+        // export query
+        // needed for export button on widget
+        } else if (action.equals("export")) {
+            q.addToSelect(qfId);
+            q.addToSelect(qfPrimaryIdentifier);
+            q.addToOrderBy(qfId);
+        // total queries
+        // needed for enrichment calculations
+        } else if (action.endsWith("Total")) {
+            q.addToSelect(qfGeneId);
+            Query subQ = q;
+            q = new Query();
             q.addFrom(subQ);
-            q.addToSelect(geneCount);
-        } else {
-            q.addFrom(qcGene);
-            q.addFrom(qcPub);
-            q.addFrom(qcOrganism);
-            if (action.equals("export")) {
-                q.addToSelect(qfId);
-                q.addToSelect(qfPrimaryIdentifier);
-                q.addToOrderBy(qfId);
-            } else {
-                q.addToSelect(qfId);
-                q.addToGroupBy(qfId);
-                q.addToSelect(geneCount);
-                if (action.equals("sample")) {
-                    q.addToSelect(qfPubTitle);
-                    q.addToGroupBy(qfPubTitle);
-                }
+            q.addToSelect(new QueryFunction()); // gene count
+        // needed for enrichment calculations
+        } else  {
+            q.addToSelect(qfId);
+            q.addToGroupBy(qfId);
+            q.addToSelect(new QueryFunction()); // gene count
+            if (action.equals("sample")) {
+                q.addToSelect(qfPubTitle);
+                q.addToGroupBy(qfPubTitle);
             }
-            q.setConstraint(cs);
         }
         return q;
     }

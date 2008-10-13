@@ -103,8 +103,6 @@ public class GoStatLdr extends EnrichmentWidgetLdr
             qfPrimaryIdentifier = new QueryField(qcGene, "primaryIdentifier");
             qfId = qfGeneId;
         }
-        QueryFunction objectCount = new QueryFunction();
-
         ConstraintSet cs = new ConstraintSet(ConstraintOp.AND);
 
         if (keys != null) {
@@ -163,21 +161,21 @@ public class GoStatLdr extends EnrichmentWidgetLdr
 
         if (action.equals("analysed")) {
             q.addToSelect(qfId);
-        } else if (action.endsWith("Total")) {
-            q.addToSelect(qfId);
-            Query superQ = new Query();
-            superQ.addFrom(q);
-            superQ.addToSelect(objectCount);
-            return superQ;
         } else if (action.equals("export")) {
             q.addToSelect(qfGoTermId);
             q.addToSelect(qfPrimaryIdentifier);
             q.addToOrderBy(qfGoTermId);
+        } else if (action.endsWith("Total")) {
+            q.addToSelect(qfId);
+            Query subQ = q;
+            q = new Query();
+            q.addFrom(subQ);
+            q.addToSelect(new QueryFunction());
         } else {    // calculating enrichment
             q.setDistinct(false);
             q.addToSelect(qfGoTermId);
             q.addToGroupBy(qfGoTermId);
-            q.addToSelect(objectCount);
+            q.addToSelect(new QueryFunction());
             if (action.equals("sample")) {
                 q.addToSelect(qfGoTerm);
                 q.addToGroupBy(qfGoTerm);

@@ -92,34 +92,37 @@ public class UniProtFeaturesLdr extends EnrichmentWidgetLdr
         cs.addConstraint(new ContainsConstraint(qcr, ConstraintOp.CONTAINS, qcUniProtFeature));
 
         Query q = new Query();
-        q.setDistinct(false);
+        q.setDistinct(true);
 
-        Query subQ = new Query();
-        subQ.setDistinct(true);
+        q.addFrom(qcProtein);
+        q.addFrom(qcOrganism);
+        q.addFrom(qcUniProtFeature);
+        q.setConstraint(cs);
 
-        subQ.addFrom(qcProtein);
-        subQ.addFrom(qcOrganism);
-        subQ.addFrom(qcUniProtFeature);
-        subQ.setConstraint(cs);
 
-        subQ.addToSelect(qfProtId);
-
+        // needed for the 'not analysed' number
         if (action.equals("analysed")) {
-            return subQ;
-        } else  if (action.equals("export")) {
-            subQ.clearSelect();
-            subQ.addToSelect(qfName);
-            subQ.addToSelect(qfPrimaryIdentifier);
-            subQ.addToOrderBy(qfName);
-            return subQ;
+            q.addToSelect(qfProtId);
+        // export button on the widget
+        } else if (action.equals("export")) {
+            q.addToSelect(qfName);
+            q.addToSelect(qfPrimaryIdentifier);
+            q.addToOrderBy(qfName);
+        // used to calculate total values
+        // needed for enrichment calculations
         } else if (action.endsWith("Total")) {
+            q.addToSelect(qfProtId);
+            Query subQ = q;
+            q = new Query();
             q.addFrom(subQ);
             q.addToSelect(new QueryFunction());
         } else  {
+            Query subQ = new Query();
+            subQ = q;
             subQ.addToSelect(qfName);
-
             QueryField qfType = new QueryField(subQ, qfName);
 
+            q.setDistinct(false);
             q.addFrom(subQ);
             q.addToSelect(qfType);
             q.addToSelect(new QueryFunction());
