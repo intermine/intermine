@@ -78,11 +78,5 @@
    <div id="${wsListId}_${type}_item_description_${webSearchable.name}_highlight" style="display:none" class="description"></div>
 </c:if>
 
-<c:set var="taggable" value="${webSearchable}"/>
-<tiles:insert name="inlineTagEditor.tile">
-  <tiles:put name="taggable" beanName="taggable"/>
-  <tiles:put name="vertical" value="true"/>
-  <tiles:put name="show" value="true"/>
-</tiles:insert>
 </div>
 <!-- /wsBagLine.jsp -->
