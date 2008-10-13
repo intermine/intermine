@@ -137,8 +137,8 @@ public class ChadoSequenceProcessor extends ChadoProcessor
     @Override
 
     public void process(Connection connection) throws Exception {
-        createFeatureTempTable(connection);
         earlyExtraProcessing(connection);
+        createFeatureTempTable(connection);
         processFeatureTable(connection);
         processFeatureCVTermTable(connection);
         processPubTable(connection);
@@ -426,7 +426,8 @@ public class ChadoSequenceProcessor extends ChadoProcessor
      * Do any extra processing that is needed before the converter starts querying features
      * @param connection the Connection
      */
-    protected void earlyExtraProcessing(Connection connection) {
+    protected void earlyExtraProcessing(Connection connection) 
+    throws ObjectStoreException, SQLException {
         // override in subclasses as necessary
     }
 
