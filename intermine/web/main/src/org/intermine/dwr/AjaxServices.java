@@ -1300,9 +1300,8 @@ public class AjaxServices
         Profile profile = getProfile(request);
         
         List<String> ret = new ArrayList<String>();
-        if (profile != null && pm != null) {
+        if (profile != null && pm != null && profile.isLoggedIn()) {
             List<Tag> tags = pm.getTags(tagName, objectIdentifier, type, profile.getUsername());
-            tags = ProfileManager.filterOutReservedTags(tags);
             for (Tag tag : tags) {
                 ret.add(tag.getTagName());
             }
