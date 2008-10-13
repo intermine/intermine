@@ -10,21 +10,19 @@ package org.intermine.bio.dataconversion;
  *
  */
 
+import java.sql.Connection;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.sql.Statement;
 import java.util.Arrays;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
-import org.intermine.bio.dataconversion.ChadoSequenceProcessor.FeatureData;
+import org.apache.log4j.Logger;
 import org.intermine.bio.util.OrganismData;
 import org.intermine.objectstore.ObjectStoreException;
 import org.intermine.xml.full.Item;
-
-import java.sql.Connection;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-
-import org.apache.log4j.Logger;
 
 /**
  * A processor that loads feature referred to by the modENCODE metadata.  This class is designed
@@ -40,6 +38,9 @@ public class ModEncodeFeatureProcessor extends ChadoSequenceProcessor
     private final String dataSourceIdentifier;
     private final List<Integer> dataList;
 
+    private static final String SUBFEATUREID_TEMP_TABLE_NAME = "modmine_subfeatureid_temp";
+
+    
     // feature type to query from the feature table
     private static final List<String> FEATURES = Arrays.asList(
          "gene", "mRNA", "transcript",
@@ -47,7 +48,7 @@ public class ModEncodeFeatureProcessor extends ChadoSequenceProcessor
          "five_prime_untranslated_region",
          "five_prime_UTR", "three_prime_untranslated_region",
          "three_prime_UTR", "origin_of_replication",
-         "binding_site", "protein_binding_site", "transcript_region"
+         "binding_site", "protein_binding_site", "TF_binding_site", "transcript_region"
     );
 
     /**
@@ -77,29 +78,31 @@ public class ModEncodeFeatureProcessor extends ChadoSequenceProcessor
         return FEATURES;
     }
 
-    /*
-     * gives problems: no row returned for the data_id -> no feature in sub..
-     * (see createFeatureTempTable in ChadoSequenceProcessor)
-     * queryList??
-     *
-     */
     /**
      * {@inheritDoc}
      */
     @Override
     protected String getExtraFeatureConstraint() {
-        String queryList = forINclause();
+        /*
+         * tried also other queries (using union, without join), this seems better
+         */
 
         return "(cvterm.name = 'chromosome' OR cvterm.name = 'chromosome_arm') AND "
-            + "  feature_id IN (select srcfeature_id from featureloc WHERE "
-            + "               featureloc.feature_id IN "
-            + " (SELECT data_feature.feature_id "
-            + "   FROM data_feature "
-            + "   WHERE data_id IN (" + queryList + ")))"
-            + "OR feature_id IN "
-            + " (SELECT data_feature.feature_id "
-            + "   FROM data_feature "
-            + "   WHERE data_id IN (" + queryList + "))";
+        + " feature_id IN ( SELECT featureloc.srcfeature_id "
+        + " FROM featureloc, " + SUBFEATUREID_TEMP_TABLE_NAME 
+        + " WHERE featureloc.feature_id = " + SUBFEATUREID_TEMP_TABLE_NAME + ".feature_id) "
+        + " OR feature_id IN ( SELECT feature_id "
+        + " FROM " + SUBFEATUREID_TEMP_TABLE_NAME + " ) ";
+
+/*        return "(cvterm.name = 'chromosome' OR cvterm.name = 'chromosome_arm') AND "
+        + " feature_id IN ( SELECT featureloc.srcfeature_id "
+        + " FROM featureloc " 
+        + " WHERE featureloc.feature_id IN ( SELECT feature_id "
+        + " FROM " + SUBFEATUREID_TEMP_TABLE_NAME + " )) "
+        + " OR feature_id IN ( SELECT feature_id "
+        + " FROM " + SUBFEATUREID_TEMP_TABLE_NAME + " ) ";        
+*/
+    
     }
 
 
@@ -221,4 +224,71 @@ public class ModEncodeFeatureProcessor extends ChadoSequenceProcessor
         }
         return ql.toString();
     }
+    
+    /**
+     * Create a temporary table of all feature_ids.  The table will only have features
+     * with locations.
+     * @param connection the connection
+     * @throws SQLException if there is a database problem
+     */
+    protected void createSubFeatureIdTempTable(Connection connection) throws SQLException {
+        String queryList = forINclause();
+        
+        String query =
+            " CREATE TEMPORARY TABLE " + SUBFEATUREID_TEMP_TABLE_NAME
+            + " AS SELECT data_feature.feature_id "
+            + " FROM data_feature "
+            + " WHERE data_id IN (" + queryList + ")";
+            
+        Statement stmt = connection.createStatement();
+        LOG.info("executing: " + query);
+        stmt.execute(query);
+        String idIndexQuery = "CREATE INDEX " + SUBFEATUREID_TEMP_TABLE_NAME + "_feature_index ON "
+            + SUBFEATUREID_TEMP_TABLE_NAME + "(feature_id)";
+        LOG.info("executing: " + idIndexQuery);
+        stmt.execute(idIndexQuery);
+        String analyze = "ANALYZE " + SUBFEATUREID_TEMP_TABLE_NAME;
+        LOG.info("executing: " + analyze);
+        stmt.execute(analyze);
+    }
+
+  
+    
+    
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+   protected void earlyExtraProcessing(Connection connection) throws  SQLException {
+        createSubFeatureIdTempTable(connection);
+        
+        // override in subclasses as necessary
+    }
+
+    
+    
+    /**
+     * Perform any actions needed after all processing is finished.
+     * override ChadoSequenceProcessor
+     * @param connection the Connection
+     * @throws SQLException if there is a problem
+     */
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    protected void finishedProcessing(Connection connection, 
+            Map<Integer, FeatureData> featureDataMap)
+        throws SQLException {
+        // override in subclasses as necessary
+        String query =
+            " DROP TABLE " + SUBFEATUREID_TEMP_TABLE_NAME;
+            
+        Statement stmt = connection.createStatement();
+        LOG.info("executing: " + query);
+        stmt.execute(query);
+    
+    }
+
+    
 }
