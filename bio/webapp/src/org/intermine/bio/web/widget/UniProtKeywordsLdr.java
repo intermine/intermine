@@ -15,6 +15,12 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
+import org.flymine.model.genomic.Ontology;
+import org.flymine.model.genomic.OntologyTerm;
+import org.flymine.model.genomic.Organism;
+import org.flymine.model.genomic.Protein;
+import org.intermine.bio.web.logic.BioUtil;
+import org.intermine.objectstore.ObjectStore;
 import org.intermine.objectstore.query.BagConstraint;
 import org.intermine.objectstore.query.ConstraintOp;
 import org.intermine.objectstore.query.ConstraintSet;
@@ -28,16 +34,8 @@ import org.intermine.objectstore.query.QueryFunction;
 import org.intermine.objectstore.query.QueryObjectReference;
 import org.intermine.objectstore.query.QueryValue;
 import org.intermine.objectstore.query.SimpleConstraint;
-
-import org.intermine.bio.web.logic.BioUtil;
-import org.intermine.objectstore.ObjectStore;
 import org.intermine.web.logic.bag.InterMineBag;
 import org.intermine.web.logic.widget.EnrichmentWidgetLdr;
-
-import org.flymine.model.genomic.Ontology;
-import org.flymine.model.genomic.OntologyTerm;
-import org.flymine.model.genomic.Organism;
-import org.flymine.model.genomic.Protein;
 
 /**
  * {@inheritDoc}
@@ -80,8 +78,6 @@ public class UniProtKeywordsLdr extends EnrichmentWidgetLdr
         QueryField qfOnto = new QueryField(qcOntology, "title");
         QueryField qfPrimaryIdentifier = new QueryField(qcProtein, "primaryIdentifier");
 
-        QueryFunction protCount = new QueryFunction();
-
         ConstraintSet cs = new ConstraintSet(ConstraintOp.AND);
 
         if (keys != null) {
@@ -107,44 +103,33 @@ public class UniProtKeywordsLdr extends EnrichmentWidgetLdr
                                               new QueryValue("UniProtKeyword")));
 
         Query q = new Query();
-        q.setDistinct(false);
+        q.setDistinct(true);
 
-        if (action.endsWith("Total") || action.equals("analysed")) {
+        q.addFrom(qcProtein);
+        q.addFrom(qcOrganism);
+        q.addFrom(qcOntology);
+        q.addFrom(qcOntoTerm);
+        q.setConstraint(cs);
 
-            Query subQ = new Query();
-            subQ.setDistinct(true);
-            subQ.addFrom(qcProtein);
-            subQ.addFrom(qcOrganism);
-            subQ.addFrom(qcOntology);
-            subQ.addFrom(qcOntoTerm);
-            subQ.addToSelect(qfProtId);
-            subQ.setConstraint(cs);
-            if (action.equals("analysed")) {
-                return subQ;
-            }
+        if (action.equals("analysed")) {
+            q.addToSelect(qfProtId);
+        } else if (action.equals("export")) {
+            q.addToSelect(qfName);
+            q.addToSelect(qfPrimaryIdentifier);
+            q.addToOrderBy(qfName);
+        } else if (action.endsWith("Total")) {
+            q.addToSelect(qfProtId);
+            Query subQ = q;
+            q = new Query();
             q.addFrom(subQ);
-            q.addToSelect(protCount);
-
+            q.addToSelect(new QueryFunction()); // protein count
         } else {
-
-            q.addFrom(qcProtein);
-            q.addFrom(qcOrganism);
-            q.addFrom(qcOntology);
-            q.addFrom(qcOntoTerm);
-
-            if (action.equals("export")) {
+            q.addToSelect(qfName);
+            q.addToSelect(new QueryFunction()); // protein count
+            if (action.equals("sample")) {
                 q.addToSelect(qfName);
-                q.addToSelect(qfPrimaryIdentifier);
-                q.addToOrderBy(qfName);
-            } else {
-                q.addToSelect(qfName);
-                q.addToSelect(protCount);
-                if (action.equals("sample")) {
-                    q.addToSelect(qfName);
-                }
-                q.addToGroupBy(qfName);
             }
-            q.setConstraint(cs);
+            q.addToGroupBy(qfName);
         }
         return q;
     }
