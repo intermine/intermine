@@ -57,10 +57,33 @@ ${sub.key.lab.project.name}
 					<tr>
 <%--done here because not sure if possible to do outer join in java --%>
             <td><c:choose>
+
+<%-- UNCOMMENT to see the chromosome
+
+              <c:when test='${fc.key eq "Chromosome"}'>
+                <im:querylink text="${fc.value}" skipBuilder="true">
+                  <query name="" model="genomic"
+                    view="Chromosome.dataSets.title Chromosome.primaryIdentifier"
+                    sortOrder="Chromosome.primaryIdentifier asc">
+                  <node path="Chromosome" type="Chromosome">
+                  </node>
+                  <node path="Chromosome.dataSets" type="DataSet">
+                  </node>
+                  <node path="Chromosome.dataSets.title" type="String">
+                  <constraint op="=" value="${sub.key.title}" description=""
+                    identifier="" code="A">
+                  </constraint>
+                  </node>
+                  </query>
+                </im:querylink>
+              </c:when>
+--%>
+
               <c:when test='${fc.key eq "Chromosome"}'>
 								<td>
 								<td align="right">
               </c:when>
+              
               <c:when test='${fc.key eq "BindingSite" || fc.key eq "ProteinBindingSite"}'>
               <!-- added because at the moment BindingSite don't have a chromosomeLocation and ProteinBindingSite is a BindingSite-->
                 <td>${fc.key}
@@ -103,6 +126,9 @@ ${sub.key.lab.project.name}
                 </im:querylink>
               </c:when>
 
+
+
+
               <c:when test='${fc.key eq "-"}'>
               <!-- added because at the moment these features are without chromosome location-->
                 <td>${fc.key}
@@ -144,31 +170,12 @@ ${sub.key.lab.project.name}
 </div>
 
 
-
-
 <%--
       <td><html:link
         href="/${WEB_PROPERTIES['webapp.path']}/objectDetails.do?id=${item.key.id}">
  ${item.key.name}
     </html:link>
     --%>
-<%--  
-              <c:when test='${fc.key eq "Chromosome"}'>
-                <im:querylink text="${fc.value}" skipBuilder="true">
-                  <query name="" model="genomic"
-                    view="Chromosome.dataSets.title Chromosome.primaryIdentifier"
-                    sortOrder="Chromosome.primaryIdentifier asc">
-                  <node path="Chromosome" type="Chromosome">
-                  </node>
-                  <node path="Chromosome.dataSets" type="DataSet">
-                  </node>
-                  <node path="Chromosome.dataSets.title" type="String">
-                  <constraint op="=" value="${sub.key.title}" description=""
-                    identifier="" code="A">
-                  </constraint>
-                  </node>
-                  </query>
-                </im:querylink>
-              </c:when>
- --%>
+    
+
     
