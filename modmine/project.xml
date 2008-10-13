@@ -4,7 +4,7 @@
   <property name="intermine.properties.file" value="modmine.properties"/>
   <property name="default.intermine.properties.file" location="../default.intermine.integrate.properties"/>
   <sources>
-    <source name="modencode-static" type="intermine-items-xml-file" dump="true">
+    <source name="modmine-static" type="intermine-items-xml-file" dump="true">
       <property name="src.data.file" location="resources/projects.xml"/>
     </source>
     <source name="chado-db-flybase-dmel" type="chado-db" dump="true">
