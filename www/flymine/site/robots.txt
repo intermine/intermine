@@ -34,3 +34,5 @@ Disallow: /plantmine-preview/
 Disallow: /preview/
 Disallow: /unimine/
 Disallow: /flybasemine/
+Disallow: /service/
+
