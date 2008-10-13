@@ -115,7 +115,7 @@ public class LoadDefaultTemplatesTask extends Task
             Properties classKeyProps = new Properties();
             classKeyProps.load(getClass().getClassLoader()
                                .getResourceAsStream("class_keys.properties"));
-            Map<String, List<FieldDescriptor>> classKeys 
+            Map<String, List<FieldDescriptor>> classKeys
             = ClassKeyHelper.readKeys(os.getModel(), classKeyProps);
             ServletContext servletContext = new ServletContextSimulator();
             servletContext.setAttribute(Constants.CLASS_KEYS, classKeys);
@@ -180,7 +180,7 @@ public class LoadDefaultTemplatesTask extends Task
             throw new BuildException(e);
         } finally {
             if (profileDest != null) {
-            	profileDest.enableSaving();
+                profileDest.enableSaving();
             }
             Thread.currentThread().setContextClassLoader(cl);
             try {
