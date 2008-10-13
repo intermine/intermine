@@ -90,8 +90,8 @@ ${sub.key.lab.project.name}
                 <td align="right">
                 <im:querylink text="${fc.value}" skipBuilder="true">
 									<query name="" model="genomic"
-										view="BindingSite.dataSets.title BindingSite.secondaryIdentifier BindingSite.primaryIdentifier BindingSite.length"
-										sortOrder="BindingSite.primaryIdentifier asc">
+										view="BindingSite.dataSets.title BindingSite.secondaryIdentifier  BindingSite.length"
+										sortOrder="BindingSite.secondaryIdentifier asc">
 									<node path="BindingSite" type="BindingSite">
 									</node>
 									<node path="BindingSite.dataSets" type="DataSet">
@@ -111,8 +111,8 @@ ${sub.key.lab.project.name}
                 <td align="right">
                 <im:querylink text="${fc.value}" skipBuilder="true">
                   <query name="" model="genomic"
-                    view="${fc.key}.dataSets.title ${fc.key}.secondaryIdentifier ${fc.key}.primaryIdentifier ${fc.key}.length"
-                    sortOrder="${fc.key}.primaryIdentifier asc">
+                    view="${fc.key}.dataSets.title ${fc.key}.secondaryIdentifier ${fc.key}.length"
+                    sortOrder="${fc.key}.secondaryIdentifier asc">
                   <node path="${fc.key}" type="${fc.key}">
                   </node>
                   <node path="${fc.key}.dataSets" type="DataSet">
@@ -143,9 +143,9 @@ ${sub.key.lab.project.name}
                 <td align="right">
 								<im:querylink text="${fc.value}" skipBuilder="true">
 									<query name="" model="genomic"
-										view="${fc.key}.dataSets.title ${fc.key}.primaryIdentifier ${fc.key}.secondaryIdentifier ${fc.key}.length 
+										view="${fc.key}.dataSets.title ${fc.key}.secondaryIdentifier ${fc.key}.length 
                   ${fc.key}.chromosomeLocation.object.primaryIdentifier ${fc.key}.chromosomeLocation.start ${fc.key}.chromosomeLocation.end"
-										sortOrder="${fc.key}.primaryIdentifier asc">
+										sortOrder="${fc.key}.secondaryIdentifier asc">
 									<node path="${fc.key}" type="${fc.key}">
 									</node>
 									<node path="${fc.key}.dataSets" type="DataSet">
