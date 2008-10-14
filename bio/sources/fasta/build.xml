@@ -45,6 +45,7 @@
       classpathref="task.class.path"/>
     <read-fasta integrationWriterAlias="integration.production"
                 sourceName="${source.name}"
+                sourceType="${source.type}"
                 idSuffix="${fasta.idSuffix}"
                 className="${fasta.className}"
                 classAttribute="${fasta.classAttribute}"

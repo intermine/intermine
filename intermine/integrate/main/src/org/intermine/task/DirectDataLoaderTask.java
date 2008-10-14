@@ -114,15 +114,15 @@ public abstract class DirectDataLoaderTask extends Task
     public void execute() throws BuildException {
 
         if (integrationWriterAlias == null) {
-            throw new BuildException("FastaLoaderTask - integrationWriterAlias property not set");
+            throw new BuildException("DirectLoaderTask - integrationWriterAlias property not set");
         }
 
         if (sourceName == null) {
-            throw new BuildException("FastaLoaderTask - sourceName property not set");
+            throw new BuildException("DirectLoaderTask - sourceName property not set");
         }
 
         if (sourceType == null) {
-            throw new BuildException("FastaLoaderTask - sourceType property not set");
+            throw new BuildException("DirectLoaderTask - sourceType property not set");
         }
 
         try {
