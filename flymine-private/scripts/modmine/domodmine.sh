@@ -13,13 +13,12 @@
 
 # see after argument parsing for all envs related to the release
 
-FTPURL=ftp://ftp.modencode.org/pub/dcc
+FTPURL=ftp://ftp.modencode.org/pub/dcc/for_modmine
 DATADIR=/shared/data/modmine/subs/chado
 DBDIR=/shared/data/modmine/
-DATELOG=loading_times.log
 
 MINEDIR=$HOME/svn/dev/modmine
-SOURCES=modencode-static,entrez-organism,modencode-metadata
+SOURCES=modmine-static,entrez-organism,modencode-metadata
 
 # these should not be edited
 WEBAPP=y;   #defaults: build a webapp
@@ -30,6 +29,7 @@ F=;         #          continue stag loading (also after errors)
 REL=dev;    #          if no release is passed, do a dev
 DIR=        #          if files in a subdirectory
 ONLYMETA=y  #          do only metadata
+TIMESTAMP=`date "+%y%m%d.%H%M"`  # used in the log
 
 progname=$0
 
@@ -83,19 +83,22 @@ if [ -n "$1" ]
 then
 REL=$1
 fi
-CHADODB=modchado-$REL
-MINEDB=modmine-$REL
-DATELOG=loading_times.$REL.log
+
+LOADLOG=loading_$REL.log
 
 DBHOST=`grep metadata.datasource.serverName $HOME/modmine.properties.$REL | awk -F "=" '{print $2}'`
 DBUSER=`grep metadata.datasource.user $HOME/modmine.properties.$REL | awk -F "=" '{print $2}'`
 DBPW=`grep metadata.datasource.password $HOME/modmine.properties.$REL | awk -F "=" '{print $2}'`
+CHADODB=`grep metadata.datasource.databaseName $HOME/modmine.properties.$REL | awk -F "=" '{print $2}'`
+MINEDB=`grep db.production.datasource.databaseName $HOME/modmine.properties.$REL | awk -F "=" '{print $2}'`
+#
+# NOTE: it is assumed that dbhost and dbuser are the same for chado and modmine!!
+#
 
-# this is to avoid to grep on a non-existent file
-touch $DATELOG
 
 echo
 echo "building modmine-$REL on $DBHOST.."
+echo "press return to continue.."
 read 
 
 #---------------------------------------
@@ -103,10 +106,11 @@ read
 #---------------------------------------
 
 cd $DATADIR
+# this is to avoid to grep on a non-existent file
+touch $LOADLOG
 
-#...and get it if the remote timestamp is newer than the local
-# it will make a copy of the local (as name.chadoxml.n)
-# NB: this assume that the ftp 
+# get it if the remote timestamp is newer than the local
+
 wget -N $FTPURL$DIR/*.chadoxml
 #wget -r -nd -np -l 2 -N $FTPURL/*chadoxml  ?? to test
 
@@ -134,8 +138,8 @@ createdb -e $CHADODB -h $DBHOST -U $DBUSER || { printf "%b" "\nMine building FAI
 
 psql -d $CHADODB -h $DBHOST -U $DBUSER < $DBDIR/build_empty_chado.sql\
 || { printf "%b" "\nMine building FAILED. Please check previous error message.\n\n" ; exit 1 ; }
-#echo "press return to continue.."
-#read 
+echo "press return to continue.."
+read
 fi
 
 #---------------------------------------
@@ -152,8 +156,8 @@ do
 # the files you want to reload.
 #
 
-#if [ $APPEND = "y" ] && [ $sub == "`grep $sub $DATELOG`" ]
-if [ $sub == "`grep $sub $DATELOG`" ]
+#if [ $APPEND = "y" ] && [ $sub == "`grep $sub $LOADLOG`" ]
+if [ $sub == "`grep $sub $LOADLOG`" ]
 then
  echo "$sub already in!!"
  continue
@@ -161,19 +165,19 @@ fi
 #echo "press ****return to continue.."
 #read 
 
-echo $sub >> $DATELOG;
+echo "`date "+%y%m%d.%H%M"` $sub" >> $LOADLOG
 
 echo 
 echo "filling the chado db with $sub..."
 stag-storenode.pl -D "Pg:$CHADODB@$DBHOST" -user $DBUSER -password\
  $DBPW -noupdate cvterm,dbxref,db,cv,feature $sub \
  || { printf "\n **** $sub **** stag-storenode FAILED at `date`.\n" "%b" \
- >> `date "+%y%m%d.$REL.log"`; grep -v $sub $DATELOG > tmp ; mv -f tmp $DATELOG; $F ; }
+ >> `date "+%y%m%d.$REL.log"`; grep -v $sub $LOADLOG > tmp ; mv -f tmp $LOADLOG; $F ; }
 
 done
 
-#echo "press return to continue.."
-#read 
+echo "press return to continue.."
+read
 
 #---------------------------------------
 # building modmine
@@ -182,10 +186,10 @@ cd $MINEDIR
 
 if [ $ONLYMETA = "y" ]
 then
-../bio/scripts/project_build -a $SOURCES -V $REL $V -b -t localhost /tmp/mod-meta\
+../bio/scripts/project_build -a $SOURCES -V $REL $V -b -t localhost /tmp/mod-meta \
  || { printf "%b" "\n modMine build FAILED.\n" ; exit 1 ; }
 else
-../bio/scripts/project_build -V $REL $V -b -t localhost /tmp/mod-all\
+../bio/scripts/project_build -V $REL $V -b -t localhost /tmp/mod-all \
  || { printf "%b" "\n modMine build FAILED.\n" ; exit 1 ; }
 fi
 
