@@ -12,12 +12,13 @@
 #
 
 
-FTPURL=ftp://ftp.modencode.org/pub/dcc
+
+FTPURL=ftp://ftp.modencode.org/pub/dcc/for_modmine
 DATADIR=/shared/data/modmine/subs/chado
 DBDIR=/shared/data/modmine/
 
 MINEDIR=$HOME/svn/dev/modmine
-SOURCES=modencode-static,entrez-organism,modencode-metadata
+SOURCES=modmine-static,entrez-organism,modencode-metadata
 
 # these should not be edited
 WEBAPP=y;   #defaults: build a webapp
@@ -79,6 +80,8 @@ DBHOST=`grep metadata.datasource.serverName $HOME/modmine.properties.$REL | awk 
 DBUSER=`grep metadata.datasource.user $HOME/modmine.properties.$REL | awk -F "=" '{print $2}'`
 DBPW=`grep metadata.datasource.password $HOME/modmine.properties.$REL | awk -F "=" '{print $2}'`
 
+ echo
+ echo "building modmine-$REL on $DBHOST.."
 echo "press return to continue.."
 read 
 
@@ -106,6 +109,8 @@ fi
 #
 # note: it could fail if any connection active
 #
+
+set -e
 
 if [ "$APPEND" = "n" ] && [ "$STAG" = "y" ]
 then
@@ -145,14 +150,14 @@ fi
 #---------------------------------------
 cd $MINEDIR
 
-echo "Building modMine VAL"
+echo "Building modMine $REL"
 echo
 
-../bio/scripts/project_build -a $SOURCES -V $REL $V -b -t localhost /tmp/mod-meta\
- || { printf "%b" "\n modMine build FAILED.\n" ; exit 1 ; }
+#../bio/scripts/project_build -a $SOURCES -V $REL $V -b -t localhost /tmp/mod-meta || { printf "%b" "\n modMine build FAILED.\n" ; exit 1 ; }
+../bio/scripts/project_build -a $SOURCES -V $REL $V -b -t localhost /tmp/mod-meta || { echo "ohi, ohi" exit 1 ; }
 
-#echo "press return to continue.."
-#read 
+echo "press return to continue.."
+read
 
 
 #---------------------------------------
