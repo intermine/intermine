@@ -178,7 +178,7 @@ public class PrecomputeTemplatesTask extends Task
             if (!template.isValid()) {
                 LOG.warn("template does not validate against the model: " + template.getName());
                 for (int i = 0; i < template.getProblems().length; i++) {
-                    Throwable t = (Throwable) template.getProblems()[i];
+                    Throwable t = template.getProblems()[i];
                     t.fillInStackTrace();
                     LOG.warn("problem with " + template.getName() + ": " + t);
                 }
@@ -279,13 +279,12 @@ public class PrecomputeTemplatesTask extends Task
         }
         if (!pm.hasProfile(username)) {
             throw new BuildException("user profile doesn't exist for " + username);
-        } else {
-            LOG.warn("Profile for " + username + ", clearing template queries");
-            // Adding global search repository to servletContext, unmarshal needs it
-            SearchRepository sr = new SearchRepository(TemplateHelper.ALL_TEMPLATE);
-            servletContext.setAttribute(Constants.GLOBAL_SEARCH_REPOSITORY, sr);
-            Profile profile = pm.getProfile(username, pm.getPassword(username));
-            return profile.getSavedTemplates();
         }
+        LOG.warn("Profile for " + username + ", clearing template queries");
+        // Adding global search repository to servletContext, unmarshal needs it
+        SearchRepository sr = new SearchRepository(TemplateHelper.ALL_TEMPLATE);
+        servletContext.setAttribute(Constants.GLOBAL_SEARCH_REPOSITORY, sr);
+        Profile profile = pm.getProfile(username, pm.getPassword(username));
+        return profile.getSavedTemplates();
     }
 }
