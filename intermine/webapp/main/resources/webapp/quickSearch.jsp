@@ -4,32 +4,27 @@
 <%@ taglib uri="/WEB-INF/struts-html.tld" prefix="html" %>
 
 <!-- quickSearch.jsp -->
-<c:set var="ids">
-  <fmt:bundle basename="model"><fmt:message key="model.quickSearch.example"/></fmt:bundle>
-</c:set>
-<c:set var="tpls">
-  <fmt:bundle basename="model"><fmt:message key="model.template.example"/></fmt:bundle>
-</c:set>
-<c:set var="bgs">
-  <fmt:bundle basename="model"><fmt:message key="model.bag.example"/></fmt:bundle>
-</c:set>
+<c:set var="ids" value="${WEB_PROPERTIES['quickSearch.identifiers']}"/>
+<c:set var="tpls" value="${WEB_PROPERTIES['quickSearch.templates']}"/>
+<c:set var="bgs" value="${WEB_PROPERTIES['quickSearch.lists']}"/>
+
 
 <script type="text/javascript" src="js/browse.js"></script>
 <script type="text/javascript">
 function updateExample(i) {
   if (i==0) {
-     $('quickSearchInput').value = '<c:out value="${ids}"/>';
+     $('quickSearchInput').value = '${ids}';
   } else if (i==1) {
-     $('quickSearchInput').value = '<c:out value="${tpls}"/>';
+     $('quickSearchInput').value = '${tpls}';
   } else {
-     $('quickSearchInput').value = '<c:out value="${bgs}"/>';
+     $('quickSearchInput').value = '${bgs}';
   }
   $('quickSearchInput').style.color = '#666';
   $('quickSearchInput').style.fontStyle = 'italic';
 }
 function clearElement(e) {
    var value =document.getElementById('quickSearchInput').value;
-   if( value == '<c:out value="${ids}"/>' || value == '<c:out value="${tpls}"/>' || value == '<c:out value="${bgs}"/>') {
+   if( value == '${ids}' || value == '${tpls}' || value == '${bgs}') {
       e.value = "";
       $('quickSearchInput').style.color = '#000';
       $('quickSearchInput').style.fontStyle = 'normal';
@@ -46,7 +41,7 @@ function clearElement(e) {
   <option value="bgs" <c:if test="${quickSearchType=='bgs'}">selected</c:if>>Lists</option>
   </select>
 <fmt:message key="header.search.mid"/>
-<input style="width:260px;color:#666;font-style:italic;font-size:1em" type="text" id="quickSearchInput" name="value" value="<c:out value="${ids}"/>" onFocus="clearElement(this);" />
+<input style="width:260px;color:#666;font-style:italic;font-size:1em" type="text" id="quickSearchInput" name="value" value="${ids}" onFocus="clearElement(this);" />
 <html:submit><fmt:message key="header.search.button"/></html:submit>
 </html:form>
 <!-- /quickSearch.jsp -->
