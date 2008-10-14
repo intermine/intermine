@@ -104,7 +104,7 @@ ${sub.key.lab.project.name}
 									</query>
 								</im:querylink>
               </c:when>
-              
+<%--              
               <c:when test='${fc.key eq "OriginOfReplication" || fc.key eq "TranscriptRegion"}'>
               <!-- added because at the moment these features are without chromosome location-->
                 <td>${fc.key}
@@ -125,7 +125,7 @@ ${sub.key.lab.project.name}
                   </query>
                 </im:querylink>
               </c:when>
-
+--%>
 
 
 
