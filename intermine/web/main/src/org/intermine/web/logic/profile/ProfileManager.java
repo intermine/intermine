@@ -20,7 +20,6 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-import java.util.TreeSet;
 
 import net.sourceforge.iharder.Base64;
 
@@ -60,7 +59,6 @@ import org.intermine.web.logic.bag.InterMineBag;
 import org.intermine.web.logic.query.MainHelper;
 import org.intermine.web.logic.query.SavedQueryBinding;
 import org.intermine.web.logic.search.WebSearchable;
-import org.intermine.web.logic.tagging.TagNames;
 import org.intermine.web.logic.tagging.TagTypes;
 import org.intermine.web.logic.template.TemplateQuery;
 import org.intermine.web.logic.template.TemplateQueryBinding;
@@ -175,12 +173,6 @@ public class ProfileManager
      * @return the Profile, or null if one doesn't exist
      */
     public Profile getProfile(String username, String password) {
-        LOG.error(" ** size of profileCache:" + profileCache.size());
-        if (tagCache == null) {
-            LOG.error(" ** size of tagCache:null");
-        } else {
-            LOG.error(" ** size of tagCache:" + tagCache.size());
-        }
         if (hasProfile(username) && validPassword(username, password)) {
             return getProfile(username);
         }
@@ -193,12 +185,6 @@ public class ProfileManager
      * @return the Profile, or null if one doesn't exist
      */
     public synchronized Profile getProfile(String username) {
-        LOG.error(" ** size of profileCache " + profileCache.size());
-        if (tagCache == null) {
-            LOG.error(" ** size of tagCache:null");
-        } else {
-            LOG.error(" ** size of tagCache:" + tagCache.size());
-        }
         Profile profile = (Profile) profileCache.get(username);
         if (profile != null) {
             return profile;
@@ -726,10 +712,9 @@ public class ProfileManager
         } catch (RuntimeException e) {
             if (abortOnError) {
                 throw e;
-            } else {
-                LOG.warn("not storing invalid tag: " + tagName + " on " + objectIdentifier
-                         + " type " + type);
             }
+            LOG.warn("not storing invalid tag: " + tagName + " on " + objectIdentifier
+                         + " type " + type);
         }
         Tag tag = (Tag) DynamicUtil.createObject(Collections.singleton(Tag.class));
         tag.setTagName(tagName);
