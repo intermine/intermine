@@ -19,7 +19,6 @@ import java.util.TreeMap;
 
 import org.apache.commons.collections.map.ListOrderedMap;
 import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
 import org.intermine.model.userprofile.Tag;
 import org.intermine.objectstore.ObjectStore;
 import org.intermine.objectstore.ObjectStoreException;
@@ -40,7 +39,6 @@ import org.intermine.web.logic.template.TemplateQuery;
  */
 public class Profile
 {
-    private static final Logger LOG = Logger.getLogger(Profile.class);
     protected ProfileManager manager;
     protected String username;
     protected Integer userId;
@@ -90,11 +88,6 @@ public class Profile
      * @return the ProfileManager
      */
     public ProfileManager getProfileManager() {
-        LOG.error(" ** size of savedQueries " + savedQueries.size());
-        LOG.error(" ** size of savedBags " + savedBags.size());
-        LOG.error(" ** size of savedTemplates " + savedTemplates.size());
-        LOG.error(" ** size of userOptions " + userOptions.size());
-        LOG.error(" ** size of queryHistory " + queryHistory.size());
         return manager;
 
     }
@@ -353,13 +346,11 @@ public class Profile
     public Map<String, ? extends WebSearchable> getWebSearchablesByType(String type) {
         if (type.equals(TagTypes.TEMPLATE)) {
             return savedTemplates;
-        } else {
-            if (type.equals(TagTypes.BAG)) {
-                return getSavedBags();
-            } else {
-                throw new RuntimeException("unknown type: " + type);
-            }
         }
+        if (type.equals(TagTypes.BAG)) {
+            return getSavedBags();
+        }
+        throw new RuntimeException("unknown type: " + type);
     }
 
     /**

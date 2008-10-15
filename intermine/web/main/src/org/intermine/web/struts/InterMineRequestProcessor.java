@@ -69,9 +69,6 @@ public class InterMineRequestProcessor extends TilesRequestProcessor
      * {@inheritDoc}
      */
     protected boolean processPreprocess(HttpServletRequest request, HttpServletResponse response) {
-
-
-
         try {
             String processPath = processPath(request, response);
             // Avoid creating a session for each page accessed via SSI
@@ -99,8 +96,6 @@ public class InterMineRequestProcessor extends TilesRequestProcessor
 
             ServletContext sc = session.getServletContext();
             ProfileManager pm = (ProfileManager) sc.getAttribute(Constants.PROFILE_MANAGER);
-
-            LOG.error(" ** servlet context - " + sc.getAttributeNames().toString());
 
             if (session.getAttribute("ser") != null) {
                 session.removeAttribute("ser");
