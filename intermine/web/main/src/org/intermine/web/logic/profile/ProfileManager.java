@@ -175,8 +175,12 @@ public class ProfileManager
      * @return the Profile, or null if one doesn't exist
      */
     public Profile getProfile(String username, String password) {
-        LOG.error(" ** size of profileCache " + profileCache.size());
-        LOG.error(" ** size of tagCache " + tagCache.size());
+        LOG.error(" ** size of profileCache:" + profileCache.size());
+        if (tagCache == null) {
+            LOG.error(" ** size of tagCache:null");
+        } else {
+            LOG.error(" ** size of tagCache:" + tagCache.size());
+        }
         if (hasProfile(username) && validPassword(username, password)) {
             return getProfile(username);
         }
@@ -190,7 +194,11 @@ public class ProfileManager
      */
     public synchronized Profile getProfile(String username) {
         LOG.error(" ** size of profileCache " + profileCache.size());
-        LOG.error(" ** size of tagCache " + tagCache.size());
+        if (tagCache == null) {
+            LOG.error(" ** size of tagCache:null");
+        } else {
+            LOG.error(" ** size of tagCache:" + tagCache.size());
+        }
         Profile profile = (Profile) profileCache.get(username);
         if (profile != null) {
             return profile;
