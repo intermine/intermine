@@ -81,7 +81,7 @@ public class ProfileManager
     private Map<String, TagChecker> tagCheckers = null;
     private HashMap<MultiKey, List<Tag>> tagCache = null;
     private Map<String, List<FieldDescriptor>> classKeys = null;
-    
+
     /**
      * Construct a ProfileManager for the webapp
      * @param os the ObjectStore to which the webapp is providing an interface
@@ -91,7 +91,7 @@ public class ProfileManager
     public ProfileManager(ObjectStore os, ObjectStoreWriter userProfileOS,
                           Map classKeys) {
         this.os = os;
-        
+
         tagCheckers = makeTagCheckers(os.getModel());
         this.osw = userProfileOS;
     }
@@ -175,11 +175,12 @@ public class ProfileManager
      * @return the Profile, or null if one doesn't exist
      */
     public Profile getProfile(String username, String password) {
+        LOG.error(" ** size of profileCache " + profileCache.size());
+        LOG.error(" ** size of tagCache " + tagCache.size());
         if (hasProfile(username) && validPassword(username, password)) {
             return getProfile(username);
-        } else {
-            return null;
         }
+        return null;
     }
 
     /**
@@ -188,6 +189,8 @@ public class ProfileManager
      * @return the Profile, or null if one doesn't exist
      */
     public synchronized Profile getProfile(String username) {
+        LOG.error(" ** size of profileCache " + profileCache.size());
+        LOG.error(" ** size of tagCache " + tagCache.size());
         Profile profile = (Profile) profileCache.get(username);
         if (profile != null) {
             return profile;
@@ -228,7 +231,7 @@ public class ProfileManager
             SavedQuery query = (SavedQuery) i.next();
             try {
                 Map queries =
-                    SavedQueryBinding.unmarshal(new StringReader(query.getQuery()), 
+                    SavedQueryBinding.unmarshal(new StringReader(query.getQuery()),
                             savedBags, classKeys);
                 if (queries.size() == 0) {
                     queries =
