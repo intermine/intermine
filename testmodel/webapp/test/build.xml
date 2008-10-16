@@ -27,8 +27,8 @@
   
   <target name="-copy-build-properties">
     <!-- need for the web unit tests to know where the webapp is -->
-    <copy file="${user.home}/.intermine/build.properties.testmodel"
-          tofile="${build.test.resources.dir}/build.properties"/>
+    <copy file="${user.home}/.intermine/testmodel.properties"
+          tofile="${build.test.resources.dir}/intermine.properties"/>
   </target>
   
 </project>
