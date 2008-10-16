@@ -125,7 +125,6 @@ public class BioUtil implements WidgetUtil
 
         // TODO this may well go away once chromosomes sorted out in #1186
         if (organisms.contains(dmel)) {
-
             if (lowercase) {
                 chromosomes.add("2l");
                 chromosomes.add("2r");
@@ -145,9 +144,8 @@ public class BioUtil implements WidgetUtil
             }
             if (organisms.size() == 1) {
                 return chromosomes;
-            } else {
-                organisms.remove(dmel);
             }
+            organisms.remove(dmel);
         }
 
         Query q = new Query();
