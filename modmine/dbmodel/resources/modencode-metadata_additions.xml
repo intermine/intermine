@@ -2,6 +2,8 @@
 <classes>
   <class name="org.flymine.model.genomic.OriginOfReplication"
     extends="org.flymine.model.genomic.Region" is-interface="true"/>
+  <class name="org.flymine.model.genomic.HistoneBindingSite"
+    extends="org.flymine.model.genomic.ProteinBindingSite" is-interface="true"/>
   <class name="org.flymine.model.genomic.TranscriptRegion"
     extends="org.flymine.model.genomic.Region" is-interface="true"/>
 
@@ -119,7 +121,7 @@
     <collection name="dataAttributes"
       referenced-type="org.flymine.model.genomic.SubmissionDataAttribute"
       reverse-reference="submissionData" />
-		<reference name="feature"
+		<collection name="features"
 			referenced-type="org.flymine.model.genomic.LocatedSequenceFeature" />
 		<collection name="nextAppliedProtocols"
 			referenced-type="org.flymine.model.genomic.AppliedProtocol"
