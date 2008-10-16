@@ -531,7 +531,7 @@ function filterWebSearchables(objectId, scope, type, callId, wsListId) {
         } if(tags['aspects_' + wsListId] != null && tags['aspect_' + wsListId] != '') {
             tagList[tagList.length]=tags['aspects_' + wsListId];
         }
-        if (selectedUserTag && selectedUserTag != null) {
+        if (typeof selectedUserTag != "undefined" && selectedUserTag != null) {
             tagList[tagList.length] = selectedUserTag; 
         }
 
