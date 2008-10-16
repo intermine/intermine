@@ -35,4 +35,4 @@ Disallow: /preview/
 Disallow: /unimine/
 Disallow: /flybasemine/
 Disallow: /service/
-
+Disallow: /come/
