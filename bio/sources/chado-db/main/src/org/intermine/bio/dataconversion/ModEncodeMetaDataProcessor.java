@@ -200,10 +200,17 @@ public class ModEncodeMetaDataProcessor extends ChadoProcessor
             FeatureData> featureMap)
     throws SQLException, ObjectStoreException {
         ResultSet res = getDataFeatureResultSet(connection);
+
+        ReferenceList collection = new ReferenceList();
+        collection.setName("features");
+
+        Integer id = 0;
+        
         while (res.next()) {
             Integer dataId = new Integer(res.getInt("data_id"));
             Integer featureId = new Integer(res.getInt("feature_id"));
             FeatureData featureData = featureMap.get(featureId);
+            id = dataId;
             if (featureData == null) {
                 LOG.error("FIXME: no data for feature_id: " + featureId
                         + " in processDataFeatureTable()");
@@ -213,10 +220,15 @@ public class ModEncodeMetaDataProcessor extends ChadoProcessor
             FeatureData fd = featureData;
             LOG.info("FD " + fd.getInterMineType() + ": " + fd.getChadoFeatureName()
                     + ", " + fd.getChadoFeatureUniqueName());
-            Reference featureRef = new Reference("feature", featureItemId);
-            getChadoDBConverter().store(featureRef,
-                    appliedDataMap.get(dataId).intermineObjectId);
+
+            // old ref setting. should we consider one collection per different dataId?
+//            Reference featureRef = new Reference("feature", featureItemId);
+//            getChadoDBConverter().store(featureRef,
+//                    appliedDataMap.get(dataId).intermineObjectId);
+
+            collection.addRefId(featureItemId);
         }
+        getChadoDBConverter().store(collection, appliedDataMap.get(id).intermineObjectId);
     }
 
     private ResultSet getDataFeatureResultSet(Connection connection)
