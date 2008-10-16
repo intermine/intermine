@@ -12,7 +12,7 @@
   <!-- INIT -->
 
   <target name="-init-project">
-    <property file="${user.home}/build.properties"/>
+    <!-- <property file="${user.home}/build.properties"/> -->
     <property file="project.properties"/>
   </target>
 
