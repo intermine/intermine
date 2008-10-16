@@ -6,7 +6,7 @@
 <%@ taglib tagdir="/WEB-INF/tags" prefix="im"%>
 <%@ taglib uri="http://flymine.org/imutil" prefix="imutil"%>
 <%@ taglib uri="http://jakarta.apache.org/taglibs/string-1.1"
-	prefix="str"%>
+  prefix="str"%>
 
 <tiles:importAttribute />
 
@@ -31,8 +31,8 @@
  ${sub.key.title}
     </html:link>
 
-			<td><fmt:formatDate value="${sub.key.publicReleaseDate}"
-				type="date"/>
+      <td><fmt:formatDate value="${sub.key.publicReleaseDate}"
+        type="date"/>
 
 <td> <html:link
         href="/${WEB_PROPERTIES['webapp.path']}/objectDetails.do?id=${sub.key.lab.id}">
@@ -53,8 +53,8 @@ ${sub.key.lab.project.name}
 
 <td>
 <table cellpadding="0" cellspacing="0" border="0" class="internal">
-				<c:forEach items="${sub.value}" var="fc" varStatus="status">
-					<tr>
+        <c:forEach items="${sub.value}" var="fc" varStatus="status">
+          <tr>
 <%--done here because not sure if possible to do outer join in java --%>
             <td><c:choose>
 
@@ -80,39 +80,24 @@ ${sub.key.lab.project.name}
 --%>
 
               <c:when test='${fc.key eq "Chromosome"}'>
-								<td>
-								<td align="right">
+                <td>
+                <td align="right">
               </c:when>
-              
-              <c:when test='${fc.key eq "BindingSite" || fc.key eq "ProteinBindingSite"}'>
-              <!-- added because at the moment BindingSite don't have a chromosomeLocation and ProteinBindingSite is a BindingSite-->
+
+              <c:when test='${fc.key eq "-"}'>
+              <!-- added because at the moment these features are without chromosome location-->
                 <td>${fc.key}
                 <td align="right">
-                <im:querylink text="${fc.value}" skipBuilder="true">
-									<query name="" model="genomic"
-										view="BindingSite.dataSets.title BindingSite.secondaryIdentifier  BindingSite.length"
-										sortOrder="BindingSite.secondaryIdentifier asc">
-									<node path="BindingSite" type="BindingSite">
-									</node>
-									<node path="BindingSite.dataSets" type="DataSet">
-									</node>
-									<node path="BindingSite.dataSets.title" type="String">
-									<constraint op="=" value="${sub.key.title}" description=""
-										identifier="" code="A">
-									</constraint>
-									</node>
-									</query>
-								</im:querylink>
               </c:when>
-<%--              
-              <c:when test='${fc.key eq "OriginOfReplication" || fc.key eq "TranscriptRegion"}'>
-              <!-- added because at the moment these features are without chromosome location-->
+
+              <c:when test='${fc.key eq "EST" || fc.key eq "MNRA"}'>
                 <td>${fc.key}
                 <td align="right">
                 <im:querylink text="${fc.value}" skipBuilder="true">
                   <query name="" model="genomic"
-                    view="${fc.key}.dataSets.title ${fc.key}.secondaryIdentifier ${fc.key}.length"
-                    sortOrder="${fc.key}.secondaryIdentifier asc">
+                    view="${fc.key}.dataSets.title ${fc.key}.primaryIdentifier ${fc.key}.secondaryIdentifier ${fc.key}.length 
+                  ${fc.key}.chromosomeLocation.object.primaryIdentifier ${fc.key}.chromosomeLocation.start ${fc.key}.chromosomeLocation.end"
+                    sortOrder="${fc.key}.primaryIdentifier asc">
                   <node path="${fc.key}" type="${fc.key}">
                   </node>
                   <node path="${fc.key}.dataSets" type="DataSet">
@@ -125,43 +110,34 @@ ${sub.key.lab.project.name}
                   </query>
                 </im:querylink>
               </c:when>
---%>
 
 
 
-              <c:when test='${fc.key eq "-"}'>
-              <!-- added because at the moment these features are without chromosome location-->
+
+              <c:otherwise>
                 <td>${fc.key}
                 <td align="right">
-              </c:when>
-
-
-
-
-							<c:otherwise>
-                <td>${fc.key}
-                <td align="right">
-								<im:querylink text="${fc.value}" skipBuilder="true">
-									<query name="" model="genomic"
-										view="${fc.key}.dataSets.title ${fc.key}.secondaryIdentifier ${fc.key}.length 
+                <im:querylink text="${fc.value}" skipBuilder="true">
+                  <query name="" model="genomic"
+                    view="${fc.key}.dataSets.title ${fc.key}.secondaryIdentifier ${fc.key}.length 
                   ${fc.key}.chromosomeLocation.object.primaryIdentifier ${fc.key}.chromosomeLocation.start ${fc.key}.chromosomeLocation.end"
-										sortOrder="${fc.key}.secondaryIdentifier asc">
-									<node path="${fc.key}" type="${fc.key}">
-									</node>
-									<node path="${fc.key}.dataSets" type="DataSet">
-									</node>
-									<node path="${fc.key}.dataSets.title" type="String">
-									<constraint op="=" value="${sub.key.title}" description=""
-										identifier="" code="A">
-									</constraint>
-									</node>
-									</query>
-								</im:querylink>
-							</c:otherwise>
-						</c:choose>
-						</td>
-				</c:forEach>
-				</td>
+                    sortOrder="${fc.key}.secondaryIdentifier asc">
+                  <node path="${fc.key}" type="${fc.key}">
+                  </node>
+                  <node path="${fc.key}.dataSets" type="DataSet">
+                  </node>
+                  <node path="${fc.key}.dataSets.title" type="String">
+                  <constraint op="=" value="${sub.key.title}" description=""
+                    identifier="" code="A">
+                  </constraint>
+                  </node>
+                  </query>
+                </im:querylink>
+              </c:otherwise>
+            </c:choose>
+            </td>
+        </c:forEach>
+        </td>
 </tr>
 </table>
 </c:forEach>
@@ -176,6 +152,4 @@ ${sub.key.lab.project.name}
  ${item.key.name}
     </html:link>
     --%>
-    
-
     
