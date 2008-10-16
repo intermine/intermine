@@ -71,7 +71,7 @@ project.properties.
     <fail unless="temporary.webapp.project">
 Couldn't find ${user.home}/.intermine directory.  All InterMine properties files
 should now be kept in a .intermine directory under your home directory, please create this
-directory and move your properties. This includes *mine.properties and build.properties.*mine.
+directory and move your properties. This includes *mine.properties
     </fail>
   </target>
 
@@ -99,7 +99,15 @@ specify a valid release suffix with '-Drelease=xxx'.
     <copy file="${default.intermine.properties.file}" 
           tofile="${build.task.dir}/default.intermine.properties"
           overwrite="true"/>
+
+    <!-- make file available for later.  it needs to be copied to web.properties -->
+    <property file="${build.task.dir}/intermine.properties"/>
+
   </target>
+
+<!--
+
+build properties are now merged with *mine.properties file
 
   <target name="-init-check-for-build-properties"
           depends="-set-release-suffix, -init-deps">
@@ -117,9 +125,11 @@ Couldn't find ${build.properties.file}
   </target>
 
   <target name="-init-app-properties"
-          depends="-init-properties, -check-for-build-properties, -pre-define-task-classpath">
+          depends="-init-properties, -pre-define-task-classpath">
     <property file="${user.home}/.intermine/build.properties.${mine.name}${release-suffix}"/>
   </target>
+
+-->
 
   <target name="-load-task-taskdefs" depends="-check-task-availability,
                                               -load-os-tasks,

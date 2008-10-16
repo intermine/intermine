@@ -29,7 +29,7 @@
       Load data from GFF3 files into a PostgreSQL based GBrowse.
     -->
   <target name="load-gbrowse-data"
-          depends="-init-gff, -init-properties, -init-app-properties, init, -init-deps"
+          depends="-init-gff, -init-properties, init, -init-deps"
           description="call bp_load_gff.pl to load the GFF dump into GBrowse">
     <exec dir="${build.gbrowse.data}" executable="bp_load_gff.pl">
       <arg value="--adaptor"/>
@@ -74,10 +74,8 @@
   <target name="do-action" depends="write-gff, load-gbrowse-data-mysql"/>
 
   <target name="install-gbrowse-conf"
-          depends="-init-properties, -init-app-properties"
+          depends="-init-properties"
           description="copy the GBrowse configuration file to the gbrowse.conf directory">
-    <filter token="INTERMINE_WEBAPP_VIEW_BY_ID_PREFIX"
-            value="${webapp.baseurl}/${webapp.path}/${webapp.viewByID.prefix}"/>
     <filter token="WEBAPP_PREFIX" value="${webapp.baseurl}/${webapp.path}"/>
     <filter token="INTERMINE_SITE_PREFIX" value="${project.sitePrefix}"/>
     <filter token="INTERMINE_GBROWSE_DATABASE" value="${gbrowse.database}"/>
@@ -88,9 +86,7 @@
     <filter token="INTERMINE_GBROWSE_DATABASE_ADAPTOR" value="${gbrowse.database.adaptor}"/>
     <filter token="PROJECT_TITLE" value="${project.title}"/>
     <filter token="PROJECT_VERSION" value="${project.releaseVersion}"/>
-    <filter token="PROJECT_SUBTITLE"
-            value="${project.subTitle}"/>
-    <filter token="PROJECT_FUNDED_BY" value="${project.funded.by}"/>
+    <filter token="PROJECT_SUBTITLE" value="${project.subTitle}"/>
     <filter token="PROJECT_CONTACT" value="${project.contact}"/>
 
     <copy file="resources/${project.title}.conf"

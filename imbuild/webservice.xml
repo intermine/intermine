@@ -8,8 +8,10 @@
   <import file="${webservice.xml.basedir}/task.xml"/>
 
   <!-- Local webservice build/deploy properties -->
-  <property name="build.properties.local" value="${user.home}/.intermine/build.properties.${ant.project.name}" />
+<!-- not needed, this file has been merged with *mine.properties
+  <property name="build.properties.local" value="${user.home}/.intermine/${ant.project.name}.properties" />
   <property file="${build.properties.local}"/>
+-->
 
   <!-- INIT -->
 
