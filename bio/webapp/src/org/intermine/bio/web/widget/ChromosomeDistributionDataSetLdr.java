@@ -77,6 +77,11 @@ public class ChromosomeDistributionDataSetLdr implements DataSetLdr
 
         chromosomeList = BioUtil.getChromosomes(os, Arrays.asList(organismName.toLowerCase()),
                                                 false);
+
+        if (chromosomeList.isEmpty()) {
+            return;
+        }
+
         // used for not analysed figure
         calcTotal(bag, organismName);
 
