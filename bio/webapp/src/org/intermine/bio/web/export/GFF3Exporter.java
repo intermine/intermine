@@ -47,11 +47,11 @@ public class GFF3Exporter implements Exporter
      * @param out output stream
      * @param indexes index of column with exported sequence
      * @param soClassNames mapping
-     * @param attributesNames names of attributes that are printed in record, 
+     * @param attributesNames names of attributes that are printed in record,
      *  they are names of columns in results table, they are in the same order
-     *  as corresponding columns in results table  
+     *  as corresponding columns in results table
      */
-    public GFF3Exporter(PrintWriter out, List<Integer> indexes, Map<String, String> soClassNames, 
+    public GFF3Exporter(PrintWriter out, List<Integer> indexes, Map<String, String> soClassNames,
             List<String> attributesNames) {
         this.out = out;
         this.featureIndexes = indexes;
@@ -96,7 +96,7 @@ public class GFF3Exporter implements Exporter
             ResultElement el = row.get(i);
             attributes.put(attributesNames.get(i), formatElementValue(el));
         }
-        
+
         GFF3Record gff3Record = GFF3Util.makeGFF3Record(lsf, soClassNames,
                 attributes);
 
