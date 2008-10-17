@@ -161,18 +161,18 @@ public class SearchRepository
 
     /**
      * Call to update the index when a Tag is added.
-     * @param tag the Tag
+     * @param tagType tag type
      */
-    public void webSearchableTagged(Tag tag) {
-        reindex(tag.getType());
+    public void webSearchableTagged(String tagType) {
+        reindex(tagType);
     }
 
     /**
      * Call to update the index when a Tag is removed.
-     * @param tag the Tag
+     * @param tagType tag type
      */
-    public void webSearchableUnTagged(Tag tag) {
-        reindex(tag.getType());
+    public void webSearchableUnTagged(String tagType) {
+        reindex(tagType);
     }
 
     /**

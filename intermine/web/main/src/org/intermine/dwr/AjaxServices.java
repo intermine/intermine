@@ -1152,10 +1152,6 @@ public class AjaxServices
     public static Set<String> filterByTag(String type, String tag) {
         Profile profile = getProfile(getRequest());
 
-        // implementation of hierarchical tag structure
-        // if user selects tag 'bio' than it automatically includes all tags with bio prefix like 
-        // 'bio:experiment1', 'bio:experiment2' 
-        List<String> tags = getAllPrefixTags(type, tag);
         SearchRepository searchRepository = profile.getSearchRepository();
         Map<String, WebSearchable> map = (Map<String, WebSearchable>) searchRepository.
             getWebSearchableMap(type);
@@ -1163,13 +1159,10 @@ public class AjaxServices
             return null;
         }
         Map<String, WebSearchable> filteredMap = new TreeMap<String, WebSearchable>();
-        for (String currentTag : tags) {
-            List<String> tagList = new ArrayList<String>();
-            tagList.add(currentTag);
-            filteredMap.putAll(profile.getProfileManager().filterByTags(map, tagList, type, 
-                    profile.getUsername()));    
-        }
-        
+        List<String> tagList = new ArrayList<String>();
+        tagList.add(tag);
+        filteredMap.putAll(profile.getProfileManager().filterByTags(map, tagList, type, 
+                profile.getUsername()));    
         return filteredMap.keySet();
     }
 
@@ -1179,71 +1172,79 @@ public class AjaxServices
      * @param tagName tag name
      * @param taggedObject object id that is tagged by this tag
      * @param type  tag type
-     * @return true if adding was successful
+     * @return 'ok' string if succeeded else error string
      */
-    public static boolean addTag(String tagName, String taggedObject, String type) {
+    public static String addTag(String tagName, String taggedObject, String type) {
+        LOG.info("Called addTag(). tagName:" + tagName + " taggedObject:" 
+                + taggedObject + " type: " + type);
+        String errorMsg = "Adding tag failed.";
+        String successMsg = "ok";
         try {
             HttpServletRequest request = getRequest();
-            ProfileManager pm = getProfileManager(request);
+            ProfileManager profileManager = getProfileManager(request);
             Profile profile = getProfile(request);
             tagName = tagName.trim();
-
+            HttpSession session = request.getSession();
+            
             if (profile.getUsername() != null 
                     && !StringUtils.isEmpty(tagName)
                     && !StringUtils.isEmpty(type)
-                    && !StringUtils.isEmpty(taggedObject)
-                    && !tagExists(tagName, taggedObject, type)) {
-                Tag createdTag = pm.addTag(tagName, taggedObject, type, profile.getUsername());
-                HttpSession session = request.getSession();
+                    && !StringUtils.isEmpty(taggedObject)) { 
+                if (tagExists(tagName, taggedObject, type)) {
+                    return "Already tagged with this tag.";
+                }
+                if (tagName.startsWith(TagNames.IM_PREFIX) 
+                        && !SessionMethods.isSuperUser(session)) {
+                    return "You cannot add tag starting at " + TagNames.IM_PREFIX + " ." 
+                        + "It is reserved for internal needs.";
+                }
+                
+                profileManager.addTag(tagName, taggedObject, type, profile.getUsername());
+                
                 ServletContext servletContext = session.getServletContext();
-                Boolean isSuperUser = (Boolean) session.getAttribute(Constants.IS_SUPERUSER);
-                if (isSuperUser != null && isSuperUser.booleanValue()) {
+                if (SessionMethods.isSuperUser(session)) {
                     SearchRepository tr = SearchRepository.
                         getGlobalSearchRepository(servletContext);
-                    tr.webSearchableTagged(createdTag);
+                    tr.webSearchableTagged(type);
                 }
-                return true;
+                return successMsg;
             } else {
-                return false;
+                return errorMsg;
             }
         } catch (Throwable e) {
             LOG.error("Adding tag failed", e);
-            return false;
+            return errorMsg;
         }
     }
-    
+        
     /**
      * Deletes tag.
      * @param tagName tag name 
      * @param tagged id of tagged object
      * @param type tag type
-     * @return true if tag existed and was deleted else false
+     * @return 'ok' string if succeeded else error string
      */
-    public static boolean deleteTag(String tagName, String tagged, String type) {
+    public static String deleteTag(String tagName, String tagged, String type) {
+        LOG.info("Called deleteTag(). tagName:" + tagName + " taggedObject:" 
+                + tagged + " type: " + type);
+        String successMsg = "ok";
+        String errorMsg = "Deleting tag failed.";
         try {
             HttpServletRequest request = getRequest();
-            ProfileManager pm = getProfileManager(request); 
+            ProfileManager profileManager = getProfileManager(request);
             Profile profile = getProfile(request);    
-
-            List<Tag> tags = pm.getTags(tagName, tagged, type, profile.getUsername());
-            if (tags.size() > 0 && tags.get(0) != null) {
-                Tag tag = tags.get(0);
-                pm.deleteTag(tag);
-                HttpSession session = request.getSession();
-                ServletContext servletContext = session.getServletContext();
-                Boolean isSuperUser = (Boolean) session.getAttribute(Constants.IS_SUPERUSER);
-                if (isSuperUser != null && isSuperUser.booleanValue()) {
-                    SearchRepository tr =
-                        SearchRepository.getGlobalSearchRepository(servletContext);
-                    tr.webSearchableUnTagged(tag);
-                }
-                return true;
-            } else {
-                return false;
-            }            
+            profileManager.deleteTag(tagName, tagged, type, profile.getUsername());
+            HttpSession session = request.getSession();
+            ServletContext servletContext = session.getServletContext();
+            if (SessionMethods.isSuperUser(session)) {
+                SearchRepository tr =
+                    SearchRepository.getGlobalSearchRepository(servletContext);
+                tr.webSearchableUnTagged(type);
+            }
+            return successMsg;
         } catch (Throwable e) {
             LOG.error("Deleting tag failed", e);
-            return false;
+            return errorMsg;
         } 
     }
 
@@ -1254,16 +1255,11 @@ public class AjaxServices
      * @return tags
      */
     public static Set<String> getTags(String type) {
-        List<String> tags = getDatabaseTags(type);    
-        Set<String> ret = new LinkedHashSet<String>();
-        for (String tag : tags) {
-            if (tag.contains(TagNames.SEPARATOR)) {
-                ret.addAll(getPrefixes(tag));
-            } else {
-                ret.add(tag);
-            }
-        }
-        return ret;
+        LOG.info("Called getTags(). type: " + type);
+        HttpServletRequest request = getRequest();
+        ProfileManager profileManager = getProfileManager(request);
+        String userName = getProfile(request).getUsername();
+        return profileManager.getUserTagNames(type, userName);
     }
 
     /**
@@ -1273,44 +1269,10 @@ public class AjaxServices
      * @return tags
      */
     public static Set<String> getObjectTags(String type, String tagged) {
-        return new TreeSet<String>(getDatabaseTags(null, tagged, type));
-    }
-
-    
-    /** Returns all tags of specified type and starting at specified prefix. 
-     * @param type type
-     * @param prefix prefix
-     * @return tags
-     */
-    private static List<String> getAllPrefixTags(String type, String prefix) {
-        List<String> tags = getDatabaseTags(type);
-        List<String> ret = new ArrayList<String>();
-        for (String tag : tags) {
-            if (tag.startsWith(prefix)) {
-                ret.add(tag);
-            }
-        }
-        return ret;
-    }
-
-    private static List<String> getDatabaseTags(String type) {
-        return getDatabaseTags(null, null, type);
-    }
-    
-    private static List<String> getDatabaseTags(String tagName, String objectIdentifier, 
-            String type) {
         HttpServletRequest request = getRequest();
-        ProfileManager pm = getProfileManager(request);
-        Profile profile = getProfile(request);
-        
-        List<String> ret = new ArrayList<String>();
-        if (profile != null && pm != null && profile.isLoggedIn()) {
-            List<Tag> tags = pm.getTags(tagName, objectIdentifier, type, profile.getUsername());
-            for (Tag tag : tags) {
-                ret.add(tag.getTagName());
-            }
-        }
-        return ret;
+        ProfileManager profileManager = getProfileManager(request);
+        String userName = getProfile(request).getUsername();
+        return profileManager.getObjectTagNames(tagged, type, userName);
     }
 
     private static ProfileManager getProfileManager(HttpServletRequest request) {
@@ -1320,7 +1282,10 @@ public class AjaxServices
     }
         
     private static boolean tagExists(String tag, String taggedObject, String type) {
-        return getDatabaseTags(tag, taggedObject, type).size() != 0;
+        HttpServletRequest request = getRequest();
+        ProfileManager profileManager = getProfileManager(request);
+        String userName = getProfile(request).getUsername();
+        return profileManager.getObjectTagNames(taggedObject, type, userName).contains(tag);
     }
 
     
@@ -1330,20 +1295,5 @@ public class AjaxServices
     
     private static HttpServletRequest getRequest() {
         return WebContextFactory.get().getHttpServletRequest();
-    }
-
-    private static List<String> getPrefixes(String s) {
-        List<String> ret = new ArrayList<String>();
-        String[] parts = s.split(TagNames.SEPARATOR);
-        String prefix = "";
-        for (int i = 0; i < parts.length; i++) {
-            String part = parts[i];
-            prefix += part;
-            ret.add(prefix);
-            if (i != (parts.length - 1)) {
-                prefix += TagNames.SEPARATOR;
-            }
-        }
-        return ret;
     }
 }
