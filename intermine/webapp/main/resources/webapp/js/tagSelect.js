@@ -1,4 +1,4 @@
-function reloadTagSelect(selectId, type) {
+function refreshTagSelect(selectId, type) {
     displayTagSelect(selectId, type);
 }
 
@@ -9,9 +9,9 @@ function callOnChangeFunction(selectId, onChangeFunction) {
 }
 
 function displayTagSelect(selectId, type) {
-    var callBack = function(tags) {
-		setSelectElement(selectId, '-- filter by tag --', tags);        
+	var callBack = function(tags) {
+		setSelectElement(selectId, '-- filter by tag --', tags);
     }
-    AjaxServices.getTags(type, callBack);
+    AjaxServices.getTags(type, callBack);	
 }
 

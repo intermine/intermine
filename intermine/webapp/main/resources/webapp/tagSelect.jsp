@@ -4,32 +4,46 @@
 <!-- tagSelect.jsp -->
 
 <%--Tile usage: 
-    type parameter - is type of objects for which you want to display tags like 'bag', 'template' 
-    onChangeFunction parameter - is name of function that you want to be called when the select is changed, 
-        you must define this function with exactly one parameter - values of new select
-    disabled - if you want select to be disabled 
-    call reloadTagSelect(selectId, type) function if you want select to be reloaded --%>
+    call refreshTagSelect(selectId, type) function if you want select to be reloaded --%>
 
+<%-- type parameter - is type of objects for which you want to display tags like 'bag', 'template' --%>
 <tiles:importAttribute name="type" ignore="false" />
 <tiles:importAttribute name="selectId" ignore="false" />
+<%-- 
+    onChangeFunction parameter - is name of function that you want to be called when the select is changed, 
+        you must define this function with exactly one parameter - values of new select
+--%>
 <tiles:importAttribute name="onChangeFunction" ignore="true" />
 <tiles:importAttribute name="disabled" ignore="true" />
+<%-- tags - if defined, than select options are rendered by tile else javascript code is inserted that makes AJAX call --%>
+<tiles:importAttribute name="tags" ignore="true" />
 
 <script type="text/javascript" src="js/imdwr.js" ></script>
 <script type="text/javascript" src="js/tagSelect.js" ></script>
 
 <c:choose>
 	<c:when test="${!empty onChangeFunction}">
-		<select id="${selectId}" onchange="javacript:callOnChangeFunction('${selectId}', '${onChangeFunction}')"></select>
+		<select id="${selectId}" onchange="javacript:callOnChangeFunction('${selectId}', '${onChangeFunction}')">
 	</c:when>
 	<c:otherwise>
-		<select id="${selectId}"></select>
+		<select id="${selectId}">
 	</c:otherwise>
 </c:choose>
-
-<script type="text/javascript">
-	displayTagSelect("${selectId}", "${type}");
-</script>
+<c:choose>
+    <c:when test="${!empty tags}">
+        <option value="">-- filter by tag --</option>
+        <c:forEach items="${tags}" var="tag">
+            <option value="${tag}" />${tag}
+        </c:forEach>
+        </select>
+    </c:when>
+    <c:otherwise>
+        </select>
+        <script type="text/javascript">
+             displayTagSelect("${selectId}", "${type}");
+        </script>
+    </c:otherwise>
+</c:choose>
 
 <c:if test="${!empty disabled}">
 	<script type="text/javascript">
