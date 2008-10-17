@@ -7,7 +7,9 @@
 #
 # sc 09/08
 #
-# TODO: better error logging
+# TODO: ant failing and exiting with 0!
+#       2 scenari: new build and incremental (i.e. new chado appended to existing mine)
+#       test with file option
 #
 
 # see after argument parsing for all envs related to the release
@@ -18,14 +20,14 @@ NEWDIR=/shared/data/modmine/subs/chado/new
 DBDIR=/shared/data/modmine/
 
 MINEDIR=$HOME/svn/dev/modmine
-SOURCES=modmine-static,entrez-organism,modencode-metadata
+SOURCES=modmine-static,modencode-metadata,entrez-organism
 
 # these should not be edited
 WEBAPP=y;   #defaults: build a webapp
 APPEND=y;   #          rebuild the db
 BUP=y       #          do a back up copy of the modchado database
 V=;         #          non-verbose mode
-F=;         #          continue stag loading (also after errors)
+#F=;         #          continue stag loading (also after errors)
 REL=dev;    #          if no release is passed, do a dev
 ONLYMETA=y  #          do only metadata
 STAG=y      #          run stag loading
@@ -43,7 +45,7 @@ Usage: $progname [-b] [-c] [-f file_name] [-n] [-s] [-t] [-w] [-v]
    -b: no back-up of modchado-$REL will be built
    -c: all data, not only meta-data (FB and WB)
    -f file_name: using a given list of submissions
-   -n: new modchado build (default: data appended to the chado db)
+   -n: new modMine build (default: data appended to the existing mine)
    -s: no new loading of chado (stag is not run)
    -t: no acceptance test run
    -w: no new webapp will be built
@@ -99,7 +101,10 @@ then
 BUP=n
 fi
 
-LOADLOG=loading_$REL.log
+LOADLOG="$DATADIR/loading_$REL.log"
+
+echo $LOADLOG
+
 
 #
 # Getting some values form the properties file.
@@ -205,6 +210,7 @@ cd $DATADIR
 
 if [ "$BUP" = "y" ]
 then
+dropdb -e "$CHADODB"-old -h $DBHOST -U $DBUSER;
 createdb -e "$CHADODB"-old -T $CHADODB -h $DBHOST -U $DBUSER\
 || { printf "%b" "\nMine building FAILED. Please check previous error message.\n\n" ; exit 1 ; }
 fi
@@ -248,7 +254,7 @@ echo "`date "+%y%m%d.%H%M"` $sub" >> $LOADLOG
 stag-storenode.pl -D "Pg:$CHADODB@$DBHOST" -user $DBUSER -password\
  $DBPW -noupdate cvterm,dbxref,db,cv,feature $sub \
  || { printf "\n **** $sub **** stag-storenode FAILED at `date`.\n" "%b" \
- >> `date "+%y%m%d.$REL.log"`; grep -v $sub $LOADLOG > tmp ; mv -f tmp $LOADLOG; $F ; }
+ >> `date "+%y%m%d.$REL.log"`; grep -v $sub $LOADLOG > tmp ; mv -f tmp $LOADLOG; exit 1 ; }
 # >> `date "+%y%m%d.$REL.log"`; $F ; }
 
 mv $sub $DATADIR
@@ -273,11 +279,19 @@ cd $MINEDIR
 echo "Building modMine $REL"
 echo
 
-if [ $ONLYMETA = "y" ]
+if [ $APPEND = "y" ]
 then
+# just add to present mine
+# NB: if failing won't stop!! ant exit with 0!
+cd integrate
+ant -v -Drelease=$REL -Dsource=modencode-metadata || { printf "%b" "\n modMine build FAILED.\n" ; exit 1 ; }
+elif [ $ONLYMETA = "y" ]
+then
+# new build. static, metadata, organism
 ../bio/scripts/project_build -a $SOURCES -V $REL $V -b -t localhost /tmp/mod-meta\
  || { printf "%b" "\n modMine build FAILED.\n" ; exit 1 ; }
 else
+# new build, all the sources
 ../bio/scripts/project_build -V $REL $V -b -t localhost /tmp/mod-all\
  || { printf "%b" "\n modMine build FAILED.\n" ; exit 1 ; }
 fi
