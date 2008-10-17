@@ -89,7 +89,7 @@
 	                       <tiles:put name="taggable" beanName="taggable"/>
 	                       <tiles:put name="vertical" value="true"/>
 	                       <tiles:put name="show" value="true"/>
-	                       <tiles:put name="onChangeCode" value="reloadTagSelect('mainSelect', 'bag')"/>
+	                       <tiles:put name="onChangeCode" value="refreshTagSelect('mainSelect', 'bag')"/>
 	                     </tiles:insert>
                      </c:if>
 

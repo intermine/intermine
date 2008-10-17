@@ -36,10 +36,10 @@
     <input type="text" style="border: 1px solid #888; padding: 2px; font-size: 10px" size="18" id="tagValue-${tagged}" name="tag"
       onKeyPress="if(event.keyCode == 13) {addTag('${tagged}', '${type}');$('tagValue-${tagged}').focus();${onChangeCode};}"/>
     <tiles:insert name="tagSelect.tile">
-	        <tiles:put name="type" value="${type}" />
-	        <tiles:put name="selectId" value="tagSelect-${tagged}" />
-	</tiles:insert>
-    
+            <tiles:put name="type" value="${type}" />
+            <tiles:put name="selectId" value="tagSelect-${tagged}" />
+            <tiles:put name="tags" beanName="availableTags"/>
+    </tiles:insert>
     <input type="button" style="font-size: 10px" value="Add" onclick="addTag('${tagged}', '${type}');${onChangeCode};$('tagValue-${tagged}').focus();"/>
     <input type="button" style="font-size: 10px" value="Done" onclick="stopEditingTag('${tagged}')"/>
   </span>
@@ -48,5 +48,4 @@
 <c:if test="${vertical}">
   </div>
 </c:if>
-
 <!-- /inlineTagEditor.jsp -->

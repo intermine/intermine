@@ -58,22 +58,24 @@ function stopEditingTag() {
 
 function addTag(tagged, type) {
 	var tag = getAddedTag(tagged, type);
-	var callBack = function(success) {
-		if (success) {
+	var callBack = function(returnStr) {
+		if (returnStr == 'ok') {
 			refreshTags(tagged, type);
 		} else {
-			window.alert('Adding tag failed.');
+			window.alert(returnStr);
 		}
-	} 
-	AjaxServices.addTag(tag, tagged, type, callBack);
+	}
+	if (tag != '') {
+		AjaxServices.addTag(tag, tagged, type, callBack);
+	}
 }
 
 function deleteTag(tag, tagged, type) {
-	var callBack = function(success) {
-		if (success) {
+	var callBack = function(returnStr) {
+		if (returnStr == 'ok') {
 			refreshTags(tagged, type);
 		} else {
-			window.alert('Deleting tag failed.');
+			window.alert(returnStr);
 		}
 	}
 	AjaxServices.deleteTag(tag, tagged, type, callBack);
@@ -98,9 +100,25 @@ function addTagSpan(tagged, type, tag) {
 	parent.appendChild(span);
 }
 
+// Refreshes displayed tags for specified tagged object and refreshes selects in InlineTagEditors 
 function refreshTags(tagged, type) {
 	var callBack = function(tags) {
 		displayTags(tagged, type, tags);
 	}
-	AjaxServices.getObjectTags(type, tagged, callBack);	
+	AjaxServices.getObjectTags(type, tagged, callBack);
+	refreshTagSelects(type);
 }
+
+function refreshTagSelects(type) {
+	var callBack = function(tags) {
+		var selects = document.getElementsByTagName('select');
+		for (var i = 0; i < selects.length; i++) {
+			var select = selects[i];
+			if (select.id.indexOf('tagSelect-') == 0) {
+				setSelectElement(select.id, '-- filter by tag --', tags);
+			}
+		}			
+	}
+	AjaxServices.getTags(type, callBack);
+}
+
