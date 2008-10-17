@@ -10,6 +10,14 @@ package org.intermine.web.struts;
  *
  */
 
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+
+import org.apache.struts.action.ActionForm;
+import org.apache.struts.action.ActionForward;
+import org.apache.struts.action.ActionMapping;
+import org.apache.struts.tiles.ComponentContext;
+import org.apache.struts.tiles.actions.TilesAction;
 import org.intermine.metadata.ClassDescriptor;
 import org.intermine.metadata.CollectionDescriptor;
 import org.intermine.metadata.FieldDescriptor;
@@ -20,15 +28,6 @@ import org.intermine.web.logic.profile.Profile;
 import org.intermine.web.logic.profile.ProfileManager;
 import org.intermine.web.logic.tagging.TagTypes;
 import org.intermine.web.logic.template.TemplateQuery;
-
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-
-import org.apache.struts.action.ActionForm;
-import org.apache.struts.action.ActionForward;
-import org.apache.struts.action.ActionMapping;
-import org.apache.struts.tiles.ComponentContext;
-import org.apache.struts.tiles.actions.TilesAction;
 
 /**
  * Controller for the inline tag editing tile
@@ -78,8 +77,9 @@ public class InlineTagEditorController extends TilesAction
 
         request.setAttribute("tagged", tagged);
         request.setAttribute("type", type);
-        request.setAttribute("currentTags", pm.getTags(null, tagged, type, profile.getUsername()));
-
+        request.setAttribute("currentTags", pm.getObjectTagNames(tagged, type, 
+                profile.getUsername()));
+        request.setAttribute("availableTags", pm.getUserTagNames(type, profile.getUsername()));
         return null;
     }
 }

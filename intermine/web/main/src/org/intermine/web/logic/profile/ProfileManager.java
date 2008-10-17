@@ -20,6 +20,7 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.TreeSet;
 
 import net.sourceforge.iharder.Base64;
 
@@ -458,6 +459,45 @@ public class ProfileManager
             getUserProfileObjectStore().delete(tag);
         } catch (ObjectStoreException err) {
             LOG.error("deleteTag(): " + err);
+        }
+    }
+
+    public void deleteTag(String tagName, String taggedObject, String type, String userName) {
+        List<Tag> tags = getTags(tagName, taggedObject, type, userName);
+        if (tags.size() > 0 && tags.get(0) != null) {
+            deleteTag(tags.get(0));    
+        }
+    }
+
+    private static Set<String> tagsToTagNames(List<Tag> tags) {
+        Set<String> ret = new TreeSet<String>();
+        for (Tag tag : tags) {
+            ret.add(tag.getTagName());
+        }
+        return ret;
+    }
+    
+    public Set<String> getUserTagNames(String type, String userName) {
+        if (getProfile(userName) == null) {
+            throw new UserNotFoundException("User: '" + userName + "' not found.");
+        }
+        if (!userName.equals("")) {
+            List<Tag> tags = getTags(null, null, type, userName);
+            return tagsToTagNames(tags);
+        } else {
+            return new TreeSet<String>();
+        }
+    }
+    
+    public Set<String> getObjectTagNames(String taggedObject, String type, String userName) {
+        if (getProfile(userName) == null) {
+            throw new UserNotFoundException("User: '" + userName + "' not found.");
+        }
+        if (!userName.equals("")) {
+            List<Tag> tags = getTags(null, taggedObject, type, userName);
+            return tagsToTagNames(tags);
+        } else {
+            return new TreeSet<String>();
         }
     }
 
