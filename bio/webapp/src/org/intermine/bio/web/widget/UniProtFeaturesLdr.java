@@ -99,7 +99,6 @@ public class UniProtFeaturesLdr extends EnrichmentWidgetLdr
         q.addFrom(qcUniProtFeature);
         q.setConstraint(cs);
 
-
         // needed for the 'not analysed' number
         if (action.equals("analysed")) {
             q.addToSelect(qfProtId);
@@ -117,11 +116,12 @@ public class UniProtFeaturesLdr extends EnrichmentWidgetLdr
             q.addFrom(subQ);
             q.addToSelect(new QueryFunction());
         } else  {
-            Query subQ = new Query();
-            subQ = q;
+            Query subQ = q;
+            subQ.addToSelect(qfProtId);
             subQ.addToSelect(qfName);
-            QueryField qfType = new QueryField(subQ, qfName);
 
+            QueryField qfType = new QueryField(subQ, qfName);
+            q = new Query();
             q.setDistinct(false);
             q.addFrom(subQ);
             q.addToSelect(qfType);
