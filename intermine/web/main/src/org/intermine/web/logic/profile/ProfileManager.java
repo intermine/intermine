@@ -462,6 +462,14 @@ public class ProfileManager
         }
     }
 
+    /**
+     * Deletes tag object from the database.
+     * @param tagName tag name
+     * @param taggedObject object id of tagged object
+     * @param type tag type
+     * @param userName user name
+     * 
+     */
     public void deleteTag(String tagName, String taggedObject, String type, String userName) {
         List<Tag> tags = getTags(tagName, taggedObject, type, userName);
         if (tags.size() > 0 && tags.get(0) != null) {
@@ -477,6 +485,12 @@ public class ProfileManager
         return ret;
     }
     
+    /**
+     * Returns names of tags of specified user and tag type. For anonymous user returns empty set.  
+     * @param type tag type
+     * @param userName user name
+     * @return tag names
+     */
     public Set<String> getUserTagNames(String type, String userName) {
         if (getProfile(userName) == null) {
             throw new UserNotFoundException("User: '" + userName + "' not found.");
@@ -489,6 +503,13 @@ public class ProfileManager
         }
     }
     
+    /**
+     * Returns names of tagged tags for specified object. For anonymous user returns empty set.  
+     * @param taggedObject tagged object
+     * @param type tag type
+     * @param userName user name
+     * @return tag names
+     */    
     public Set<String> getObjectTagNames(String taggedObject, String type, String userName) {
         if (getProfile(userName) == null) {
             throw new UserNotFoundException("User: '" + userName + "' not found.");
