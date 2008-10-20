@@ -1,8 +1,0 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<classpath>
-	<classpathentry kind="src" path="build/gen/src"/>
-	<classpathentry kind="lib" path="bin/dist/malariamine-dbmodel.jar"/>
-	<classpathentry kind="lib" path="dist/malariamine-dbmodel.jar"/>
-	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
-	<classpathentry kind="output" path="build/classes"/>
-</classpath>
