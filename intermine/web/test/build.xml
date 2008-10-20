@@ -1,9 +1,19 @@
 
 <project name="intermine-web-test" default="default" basedir="."
-  xmlns:imtestsproj="http://www.intermine.org/ns/im-tests-proj/1">
+  xmlns:imtestsproj="http://www.intermine.org/ns/im-tests-proj/1"
+  xmlns:task="http://www.intermine.org/ns/im-task-proj/1">
   
   <description>build, test, package intermine-web-test</description>
   <import file="../../../imbuild/tests.xml"/>
+  <import file="../../../imbuild/task.xml"/>
+
+  <target name="-pre-test" depends="build-db-userprofile"/>
+
+  <target name="build-db-userprofile" depends="init, -init-deps, -init-task-xml">
+    <task:build-db osname="os.userprofile-test"
+                   model="userprofile"/>
+  </target>
+
   
 </project>
 
