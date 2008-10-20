@@ -21,6 +21,7 @@ import java.util.Properties;
 import java.util.Set;
 
 import org.intermine.objectstore.query.ConstraintOp;
+import org.intermine.objectstore.query.PathQueryUtilTest;
 import org.intermine.objectstore.query.Query;
 import org.intermine.objectstore.query.QueryClass;
 import org.intermine.objectstore.query.QueryField;
@@ -39,6 +40,7 @@ import org.intermine.objectstore.ObjectStore;
 import org.intermine.objectstore.ObjectStoreException;
 import org.intermine.objectstore.ObjectStoreWriter;
 import org.intermine.objectstore.ObjectStoreWriterFactory;
+import org.intermine.objectstore.StoreDataTestCase;
 import org.intermine.pathquery.PathQuery;
 import org.intermine.util.DynamicUtil;
 import org.intermine.web.ProfileBinding;
@@ -60,6 +62,8 @@ import javax.xml.stream.XMLOutputFactory;
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamWriter;
 
+import junit.framework.Test;
+
 import org.custommonkey.xmlunit.XMLTestCase;
 import org.custommonkey.xmlunit.XMLUnit;
 
@@ -69,7 +73,7 @@ import servletunit.ServletContextSimulator;
  * Tests for the Profile class.
  */
 
-public class ProfileManagerTest extends XMLTestCase
+public class ProfileManagerTest extends StoreDataTestCase
 {
     private Profile bobProfile, sallyProfile;
     private ProfileManager pm;
@@ -103,6 +107,20 @@ public class ProfileManagerTest extends XMLTestCase
         pm = new ProfileManager(os, uosw, classKeys);
     }
 
+    public void executeTest(String type) {
+    }
+
+    public void testQueries() throws Throwable {
+    }
+    
+    public static void oneTimeSetUp() throws Exception {
+        StoreDataTestCase.oneTimeSetUp();
+    }
+    
+    public static Test suite() {
+        return buildSuite(ProfileManagerTest.class);
+    }
+    
     private void setUpUserProfiles() throws Exception {
 
         PathQuery query = new PathQuery(Model.getInstanceByName("testmodel"));
@@ -113,7 +131,7 @@ public class ProfileManagerTest extends XMLTestCase
         String bobName = "bob";
 
         Set contents = new HashSet();
-        InterMineBag bag = new InterMineBag("bag1", "org.intermine.model.testmodel.Department",
+        InterMineBag bag = new InterMineBag("bag1", "Department",
                                             "This is some description", date, os, bobId, uosw);
 
         Department deptEx = new Department();
@@ -158,7 +176,7 @@ public class ProfileManagerTest extends XMLTestCase
         fieldNames.add("name");
         CEO ceoB1 = (CEO) os.getObjectByExample(ceoEx, fieldNames);
 
-        InterMineBag objectBag = new InterMineBag("bag2", "org.intermine.model.testmodel.Employee",
+        InterMineBag objectBag = new InterMineBag("bag2", "Employee",
                                                   "description", date, os, sallyId, uosw);
         osw.addToBag(objectBag.getOsb(), ceoB1.getId());
 
@@ -233,6 +251,7 @@ public class ProfileManagerTest extends XMLTestCase
 
         pm.addTag("test-tag", "Department.company", "reference", "sally");
 
+       
         try {
             XMLStreamWriter writer = factory.createXMLStreamWriter(sw);
             writer.writeStartElement("userprofiles");
@@ -242,7 +261,7 @@ public class ProfileManagerTest extends XMLTestCase
         } catch (XMLStreamException e) {
             throw new RuntimeException(e);
         }
-
+       
         InputStream is =
             getClass().getClassLoader().getResourceAsStream("ProfileManagerBindingTest.xml");
         BufferedReader bis = new BufferedReader(new InputStreamReader(is));
@@ -269,7 +288,8 @@ public class ProfileManagerTest extends XMLTestCase
 
         ProfileManagerBinding.unmarshal(reader, pm, osw, new PkQueryIdUpgrader(os), servletContext);
 
-        assertEquals(4, pm.getProfileUserNames().size());
+        // only profiles from file, not from setUpUserprofiles()
+        assertEquals(2, pm.getProfileUserNames().size());
 
         assertTrue(pm.getProfileUserNames().contains("bob"));
 
@@ -506,6 +526,6 @@ public class ProfileManagerTest extends XMLTestCase
 
         List allClassTags = pm.getTags(null, "org.intermine.model.testmodel.Department",
                                        "class", null);
-        assertEquals(2, allClassTags.size());
+        assertEquals(1, allClassTags.size());
     }
 }

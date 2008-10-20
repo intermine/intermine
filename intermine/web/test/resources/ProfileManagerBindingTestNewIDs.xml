@@ -9,7 +9,7 @@
       </item>
     </items>
     <bags>
-      <bag name="bag1" type="org.intermine.model.testmodel.Department">
+      <bag name="bag1" type="Department">
         <bagElement id="1" type="org.intermine.model.testmodel.Department"/>
         <bagElement id="2" type="org.intermine.model.testmodel.Department"/>
       </bag>
@@ -71,13 +71,13 @@
       </item>
     </items>
     <bags>
-      <bag name="sally_bag1" type="org.intermine.model.testmodel.Department">
+      <bag name="sally_bag1" type="Department">
           <bagElement type="org.intermine.model.testmodel.Department" id="1006"/>
       </bag>
-      <bag name="sally_bag2" type="org.intermine.model.testmodel.CEO">
+      <bag name="sally_bag2" type="CEO">
           <bagElement type="org.intermine.model.testmodel.CEO" id="1011"/>
       </bag>
-      <bag name="sally_bag3" type="org.intermine.model.testmodel.Employee">
+      <bag name="sally_bag3" type="Employee">
           <bagElement type="org.intermine.model.testmodel.Employee" id="1010"/>
           <bagElement type="org.intermine.model.testmodel.Employee" id="1012"/>
       </bag>
