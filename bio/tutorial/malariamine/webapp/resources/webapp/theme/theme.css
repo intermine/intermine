@@ -7,12 +7,16 @@ html, body {
 /* =CUSTOMISABLE LOOK
 --------------------------*/
 
+h1, h2, h3, h4, h1 a:link, h1 a:visited, .roundcorners h1, .gradientbox h1, .plainbox h1 {
+    color:#181D17;
+}
+
 #header{
-	background: url('top_gradient.png') repeat-x #DFD9EA;}
+	background: url('top_gradient.png') repeat-x #FFF;}
 
 .plainbox {
 	padding:10px; border:1px solid #9E68AE;
-	background-color: #F5F0FF;}
+	background-color: #D3E6CF;}
 
 .gradientbox {
 	padding:10px; 
@@ -31,10 +35,10 @@ ul#nav li.activelink a{
 	color:white;background:url('corner_act_t_r.png') no-repeat top right;}
 
 ul#nav li#mymine {
-	background:#9B89A7 url('corner_my_t_l.png') no-repeat;}
+	background:#9EA492 url('corner_my_t_l.png') no-repeat;}
 
 ul#nav li.activelink {
-	background:#5C0075 url('corner_act_t_l.png') no-repeat;}
+	background:#181D17 url('corner_act_t_l.png') no-repeat;}
 
 ul#submenulist li#subactive_bag {
 	font-weight:bold;color:#FFF;background:url('submenu_indent.png') no-repeat bottom center;}
@@ -43,13 +47,13 @@ ul#submenulist li#subactive_mymine {
 	font-weight:bold;color:#FFF;background:url('submenu_my.png') no-repeat bottom center;}
 
 ul#nav li{
-	text-align: center;background:#9F67AD url('corner_t_l.png') no-repeat;}
+	text-align: center;background:#6D7872 url('corner_t_l.png') no-repeat;}
 
 .submenu{
-	background:#5C0075;}
+	background:#181D17;}
 
 .submenu_mymine{
-	background:#9B89A7;}
+	background:#9EA492;}
 
 ul#submenulist li a {
 	color:#FFF;text-decoration: none;font-weight: bold;}
@@ -58,7 +62,7 @@ ul#submenulist li a:hover {
 	color:#FFF;text-decoration: underline;font-weight: bold;}
 
 div.filterBar {
-    background:#9F67AD;color:white;}
+    background:#6D7872;color:white;}
 
 .imbox {
     padding:5px 5px 10px 5px; border-top:solid 1px #888; border-bottom:solid 1px #888; height:1.2em;
@@ -71,16 +75,22 @@ div.filterBar {
 /* =/CUSTOMISABLE LOOK
 --------------------------*/
 
-div.title h1 {
-    color: #FFF;}
+
+div.title h1 a{
+    color: #000;}
 
 .box .title {
   clear:both;
   padding: 5px;
-  text-align: left; font-weight: normal; font-size: 14px; font-weight: bold; color:#FFF;}
+  text-align: left; font-weight: normal; font-size: 14px; font-weight: bold; color:#000;}
 
-.title a:link{
-	color:#FFF;}
+.title a:link, .title a:visited{
+	color:#000;}
+
+#header h1, #header h1 a:link, #header h1 a:visited, #header p,
+#taketour a:link, #taketour a:visited, #loginbar a:link, #loginbar a:visited {
+    color:#000;
+}
 
 table.results tr td.highlightCell {
   background-color: #FFCBFF;}
@@ -124,3 +134,11 @@ table.dbsources td {
 
 table.dbsources td.leftcol {
 	border-left: 1px solid #C1DAD7;}
+
+.pageDesc, #tipbox {
+    background-color:#D3E6CF;
+}
+
+#topnav {
+    background-color:#181D17;
+}

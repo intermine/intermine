@@ -9,7 +9,7 @@
 <!-- news.jsp -->
 <script type="text/javascript">
 jQuery(document).ready(function(){
-              AjaxServices.getNewsRead('${WEB_PROPERTIES['project.sitePrefix']}/rss.xml',function(html){
+              AjaxServices.getNewsRead('${WEB_PROPERTIES['project.rss']}',function(html){
                 jQuery('#newsbox').html(html);
               });
            });
