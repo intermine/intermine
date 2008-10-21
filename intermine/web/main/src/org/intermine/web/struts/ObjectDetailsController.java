@@ -225,13 +225,12 @@ public class ObjectDetailsController extends InterMineAction
                 // that's why it must be removed
                 removeField(fd.getName(), placementRefsAndCollections);
                 return;
-            } else {
-                if (tagName.startsWith(AspectController.ASPECT_PREFIX)) {
-                    Map<String, DisplayField> refs = placementRefsAndCollections.get(tagName);
-                    if (refs != null) {
-                        refs.put(fd.getName(), dispRef);
-                        miscRefs.remove(fd.getName());
-                    }
+            }
+            if (tagName.startsWith(AspectController.ASPECT_PREFIX)) {
+                Map<String, DisplayField> refs = placementRefsAndCollections.get(tagName);
+                if (refs != null) {
+                    refs.put(fd.getName(), dispRef);
+                    miscRefs.remove(fd.getName());
                 }
             }
         }
@@ -264,23 +263,15 @@ public class ObjectDetailsController extends InterMineAction
      * Read the port.verbose.fields.* properties from WEB_PROPERTIES and call
      * DisplayObject.setVerbosity(true) on the field in the property value.
      */
-    private static void setVerboseCollections(HttpSession session,
-            DisplayObject dobj) {
+    private static void setVerboseCollections(HttpSession session, DisplayObject dobj) {
         ServletContext servletContext = session.getServletContext();
-        Map webProperties = (Map) servletContext
-                .getAttribute(Constants.WEB_PROPERTIES);
-
+        Map webProperties = (Map) servletContext.getAttribute(Constants.WEB_PROPERTIES);
         Set clds = dobj.getClds();
-
         Iterator iter = clds.iterator();
-
         while (iter.hasNext()) {
             ClassDescriptor cd = (ClassDescriptor) iter.next();
-
-            String propName = PORTAL_VERBOSE_FIELDS_PREFIX
-                    + TypeUtil.unqualifiedName(cd.getName());
+            String propName = PORTAL_VERBOSE_FIELDS_PREFIX + TypeUtil.unqualifiedName(cd.getName());
             String fieldNamesString = (String) webProperties.get(propName);
-
             if (fieldNamesString != null) {
                 String[] fieldNames = fieldNamesString.split("\\s*,\\s*");
                 for (int i = 0; i < fieldNames.length; i++) {

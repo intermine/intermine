@@ -214,9 +214,8 @@ public class ModifyDetails extends DispatchAction
 
         if (object.isVerbose(key)) {
             return mapping.findForward("objectDetailsCollectionTable");
-        } else {
-            return null;
         }
+        return null;
     }
 
     /**
@@ -263,21 +262,21 @@ public class ModifyDetails extends DispatchAction
             new ObjectDetailsTemplateController().execute(cc, mapping, form, request, response);
             request.setAttribute("org.apache.struts.taglib.tiles.CompContext", cc);
             return mapping.findForward("objectDetailsTemplateTable");
-        } else {
-            Profile profile = (Profile) session.getAttribute(Constants.PROFILE);
-            Map<String, InterMineBag> allBags = WebUtil.getAllBags(profile.getSavedBags(), sc);
-            InterMineBag interMineIdBag = allBags.get(id);
-            cc.putAttribute("interMineIdBag", interMineIdBag);
-            cc.putAttribute("templateQuery", tq);
-            cc.putAttribute("placement", request.getParameter("placement"));
-            Map fieldExprs = new HashMap();
-            TemplateListHelper.getAspectTemplatesForType(request.getParameter("placement"), sc,
-                                                         interMineIdBag, fieldExprs);
-            cc.putAttribute("fieldExprMap", fieldExprs);
-            new ObjectDetailsTemplateController().execute(cc, mapping, form, request, response);
-            request.setAttribute("org.apache.struts.taglib.tiles.CompContext", cc);
-            return mapping.findForward("objectDetailsTemplateTable");
         }
+        Profile profile = (Profile) session.getAttribute(Constants.PROFILE);
+        Map<String, InterMineBag> allBags = WebUtil.getAllBags(profile.getSavedBags(), sc);
+        InterMineBag interMineIdBag = allBags.get(id);
+        cc.putAttribute("interMineIdBag", interMineIdBag);
+        cc.putAttribute("templateQuery", tq);
+        cc.putAttribute("placement", request.getParameter("placement"));
+        Map fieldExprs = new HashMap();
+        TemplateListHelper.getAspectTemplatesForType(request.getParameter("placement"), sc,
+                                                     interMineIdBag, fieldExprs);
+        cc.putAttribute("fieldExprMap", fieldExprs);
+        new ObjectDetailsTemplateController().execute(cc, mapping, form, request, response);
+        request.setAttribute("org.apache.struts.taglib.tiles.CompContext", cc);
+        return mapping.findForward("objectDetailsTemplateTable");
+
     }
 
     /**
@@ -322,10 +321,8 @@ public class ModifyDetails extends DispatchAction
         Map displayObjects = (Map) session.getAttribute("displayObjects");
         if (displayObjects != null && displayObjects.get(new Integer(idString)) != null) {
             return (DisplayObject) displayObjects.get(new Integer(idString));
-        } else {
-            LOG.error("Could not find DisplayObject on session for id " + idString);
-            return null;
         }
-
+        LOG.error("Could not find DisplayObject on session for id " + idString);
+        return null;
     }
 }
