@@ -38,6 +38,7 @@
             <tiles:put name="type" value="${type}" />
             <tiles:put name="selectId" value="tagSelect-${tagged}" />
             <tiles:put name="tags" beanName="availableTags"/>
+            <tiles:put name="title" value="-- select a tag --"/>
     </tiles:insert>
     <input type="button" style="font-size: 10px" value="Add" onclick="addTag('${tagged}', '${type}');${onChangeCode};"/>
     <input type="button" style="font-size: 10px" value="Done" onclick="stopEditingTag('${tagged}')"/>
