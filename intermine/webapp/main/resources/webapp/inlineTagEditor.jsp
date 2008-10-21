@@ -33,8 +33,7 @@
     <c:if test="${vertical}">
       <br/>
     </c:if>
-    <input type="text" style="border: 1px solid #888; padding: 2px; font-size: 10px" size="18" id="tagValue-${tagged}" name="tag"
-      onKeyPress="if(event.keyCode == 13) {addTag('${tagged}', '${type}');$('tagValue-${tagged}').focus();${onChangeCode};}"/>
+    <input type="text" style="border: 1px solid #888; padding: 2px; font-size: 10px" size="18" id="tagValue-${tagged}" name="tag"/>
     <tiles:insert name="tagSelect.tile">
             <tiles:put name="type" value="${type}" />
             <tiles:put name="selectId" value="tagSelect-${tagged}" />
