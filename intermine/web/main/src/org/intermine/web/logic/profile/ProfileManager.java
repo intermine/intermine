@@ -898,4 +898,33 @@ public class ProfileManager
         return "Invalid tag name. Name can contain only alphabet characters, figures, space, dot"
             + ", colon and dash.";
     }
+    
+    /**
+     * Deletes all tags assigned to a specified object.
+     * @param taggedObject tagged object
+     * @param type tag type
+     * @param userName user name
+     */
+    public void deleteObjectTags(String taggedObject, String type, String userName) {
+        List<Tag> tags = getTags(null, taggedObject, type, userName);
+        for (Tag tag : tags) {
+            deleteTag(tag);
+        }
+    }
+
+    /**
+     * Moves tags from one object to another. 
+     * @param oldTaggedObj name of original tagged object
+     * @param newTaggedObj name of new tagged object
+     * @param type tag type
+     * @param userName user name
+     */
+    public void moveTagsToNewObject(String oldTaggedObj, String newTaggedObj, String type,
+            String userName) {
+        List<Tag> tags = getTags(null, oldTaggedObj, type, userName);
+        for (Tag tag : tags) {
+            addTag(tag.getTagName(), newTaggedObj, type, userName);
+            deleteTag(tag);
+        }
+    }
 }
