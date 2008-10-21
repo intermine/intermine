@@ -331,11 +331,13 @@
                     </html:option>
                   </c:forEach>
                 </html:select>
-                <tiles:insert name="tagSelect.tile">
-					<tiles:put name="type" value="bag" />
-					<tiles:put name="onChangeFunction" value="filterByTag" />
-					<tiles:put name="selectId" value="tagSelect" />
-				</tiles:insert>                                
+                <c:if test="${!empty PROFILE.username}">
+	                <tiles:insert name="tagSelect.tile">
+	                    <tiles:put name="type" value="bag" />
+	                    <tiles:put name="onChangeFunction" value="filterByTag" />
+	                    <tiles:put name="selectId" value="tagSelect" />
+	                </tiles:insert>                                                
+                </c:if>
                 <c:if test="${empty bags}">
                   <div class="noBagsMessage">
                     <fmt:message key="template.nobags">
