@@ -1,5 +1,6 @@
 function refreshTagSelect(selectId, type) {
-    displayTagSelect(selectId, type);
+    var select = document.getElementById(selectId);
+	displayTagSelect(getSelectTitle(select), selectId, type);
 }
 
 function callOnChangeFunction(selectId, onChangeFunction) {
@@ -8,10 +9,17 @@ function callOnChangeFunction(selectId, onChangeFunction) {
     eval(onChangeFunction + '(value)');
 }
 
-function displayTagSelect(selectId, type) {
+function displayTagSelect(title, selectId, type) {
 	var callBack = function(tags) {
-		setSelectElement(selectId, '-- filter by tag --', tags);
+		setSelectElement(selectId, title, tags);
     }
     AjaxServices.getTags(type, callBack);	
 }
 
+function getSelectTitle(select) {
+	if (select.length != 0 && select[0].value == "") {
+		return select[0].text;
+	} else {
+		return title = "";
+	}
+}

@@ -17,9 +17,14 @@
 <tiles:importAttribute name="disabled" ignore="true" />
 <%-- tags - if defined, than select options are rendered by tile else javascript code is inserted that makes AJAX call --%>
 <tiles:importAttribute name="tags" ignore="true" />
+<tiles:importAttribute name="title" ignore="true" />
 
 <script type="text/javascript" src="js/imdwr.js" ></script>
 <script type="text/javascript" src="js/tagSelect.js" ></script>
+
+<c:if test="${empty title}">
+    <c:set var="title" value="-- filter by a tag --"></c:set>
+</c:if>
 
 <c:choose>
 	<c:when test="${!empty onChangeFunction}">
@@ -31,7 +36,7 @@
 </c:choose>
 <c:choose>
     <c:when test="${!empty tags}">
-        <option value="">-- filter by tag --</option>
+        <option value="">${title}</option>
         <c:forEach items="${tags}" var="tag">
             <option value="${tag}" />${tag}
         </c:forEach>
@@ -40,7 +45,7 @@
     <c:otherwise>
         </select>
         <script type="text/javascript">
-             displayTagSelect("${selectId}", "${type}");
+             displayTagSelect("${title}", "${selectId}", "${type}");
         </script>
     </c:otherwise>
 </c:choose>

@@ -115,10 +115,9 @@ function refreshTagSelects(type) {
 		for (var i = 0; i < selects.length; i++) {
 			var select = selects[i];
 			if (select.id.indexOf('tagSelect-') == 0) {
-				setSelectElement(select.id, '-- filter by tag --', tags);
+				setSelectElement(select.id, getSelectTitle(select), tags);
 			}
 		}			
 	}
 	AjaxServices.getTags(type, callBack);
 }
-
