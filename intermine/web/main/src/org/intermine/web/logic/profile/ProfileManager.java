@@ -21,6 +21,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.TreeSet;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import net.sourceforge.iharder.Base64;
 
@@ -872,5 +874,28 @@ public class ProfileManager
         };
         newTagCheckers.put("class", classChecker);
         return newTagCheckers;
+    }
+    
+    /**
+     * Verifies that tag name can only contain A-Z, a-z, 0-9, '_', '-', ' ', ':'
+     * @param name tag name 
+     * @return true if the name is valid else false
+     */
+    public static boolean isValidTagName(String name) {
+        if (name == null) {
+            return false;
+        }
+        Pattern p = Pattern.compile("[^\\w\\s\\.\\-:]");
+        Matcher m = p.matcher(name);
+        return !m.find();        
+    }
+    
+    /**
+     * Returns tag name error message saying which signs are allowed.
+     * @return error message
+     */
+    public static String getInvalidTagNameMessage() {
+        return "Invalid tag name. Name can contain only alphabet characters, figures, space, dot"
+            + ", colon and dash.";
     }
 }
