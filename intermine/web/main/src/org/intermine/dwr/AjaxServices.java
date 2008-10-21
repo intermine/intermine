@@ -297,6 +297,8 @@ public class AjaxServices
                 }
                 InterMineBag bag = profile.getSavedBags().get(name);
                 bag.setName(newName, uosw);
+                getProfileManager(getRequest()).moveTagsToNewObject(name, newName, TagTypes.BAG, 
+                        profile.getUsername());
                 profile.deleteBag(name);
                 profile.saveBag(newName, bag);
             } else {

@@ -194,6 +194,7 @@ public class Profile
     public void deleteTemplate(String name) {
         savedTemplates.remove(name);
         if (manager != null) {
+            manager.deleteObjectTags(name, TagTypes.TEMPLATE, username);
             List favourites = manager.getTags("favourite", name, TagTypes.TEMPLATE, username);
             for (Iterator iter = favourites.iterator(); iter.hasNext();) {
                 Tag tag = (Tag) iter.next();
@@ -326,6 +327,7 @@ public class Profile
      */
     public void deleteBag(String name) {
         savedBags.remove(name);
+        manager.deleteObjectTags(name, TagTypes.BAG, username);
         reindex(TagTypes.BAG);
     }
 
