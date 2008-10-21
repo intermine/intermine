@@ -31,14 +31,18 @@
     </c:when>
     <c:otherwise>
 
-	<table><tr><td align="right">
-		Filter:&nbsp;
-		<tiles:insert name="tagSelect.tile">
-		        <tiles:put name="type" value="bag" />
-		        <tiles:put name="selectId" value="mainSelect" />
-		        <tiles:put name="onChangeFunction" value="filterByTag" />
-		</tiles:insert>
-	</td></tr><td>
+	<table>
+	<c:if test="${!empty PROFILE.username}">
+		<tr><td align="right">
+			Filter:&nbsp;
+			<tiles:insert name="tagSelect.tile">
+			        <tiles:put name="type" value="bag" />
+			        <tiles:put name="selectId" value="mainSelect" />
+			        <tiles:put name="onChangeFunction" value="filterByTag" />
+			</tiles:insert>
+		</td></tr>
+	</c:if>
+	<tr><td>
 	  
       <html:form action="/modifyBag">
 
