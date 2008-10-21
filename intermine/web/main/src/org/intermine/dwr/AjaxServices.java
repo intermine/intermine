@@ -1193,6 +1193,9 @@ public class AjaxServices
                 if (tagExists(tagName, taggedObject, type)) {
                     return "Already tagged with this tag.";
                 }
+                if (!ProfileManager.isValidTagName(tagName)) {
+                    return ProfileManager.getInvalidTagNameMessage();
+                }
                 if (tagName.startsWith(TagNames.IM_PREFIX) 
                         && !SessionMethods.isSuperUser(session)) {
                     return "You cannot add tag starting at " + TagNames.IM_PREFIX + " ." 
