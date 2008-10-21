@@ -328,7 +328,7 @@ public class DisplayObject
                     }
                     className += c.getName();
                 }
-                if (className != null && className.indexOf('.') != -1) {
+                if (className.indexOf('.') != -1) {
                     className = TypeUtil.unqualifiedName(className);
                 }
                 String pathString = className + "." + expr;
