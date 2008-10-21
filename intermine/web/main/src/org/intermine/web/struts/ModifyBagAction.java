@@ -46,7 +46,7 @@ import org.intermine.web.logic.session.SessionMethods;
 
 /**
  * Implementation of <strong>Action</strong> to modify bags
- * 
+ *
  * @author Mark Woodbridge
  */
 public class ModifyBagAction extends InterMineAction
@@ -55,7 +55,7 @@ public class ModifyBagAction extends InterMineAction
 
     /**
      * Forward to the correct method based on the button pressed
-     * 
+     *
      * @param mapping
      *            The ActionMapping used to select this instance
      * @param form
@@ -101,9 +101,9 @@ public class ModifyBagAction extends InterMineAction
         return getReturn(mbf.getPageName(), mapping);
     }
 
-    private void copy(ActionMapping mapping, ActionForm form,
+    private void copy(@SuppressWarnings("unused") ActionMapping mapping, ActionForm form,
         HttpServletRequest request) throws ObjectStoreException {
-        
+
         HttpSession session = request.getSession();
         Profile profile = (Profile) session.getAttribute(Constants.PROFILE);
         ModifyBagForm frm = (ModifyBagForm) form;
@@ -118,7 +118,7 @@ public class ModifyBagAction extends InterMineAction
         ObjectStoreWriter userOSW = profile.getProfileManager().getUserProfileObjectStore();
 
         String newNameTextBox = getNewNameTextBox(request, frm);
-        
+
         if (selectedBagNames.length == 1) {
             String selectedBagName = selectedBagNames[0];
             InterMineBag origBag = allBags.get(selectedBagName);
@@ -134,7 +134,7 @@ public class ModifyBagAction extends InterMineAction
                 return;
             }
             if (createBag(origBag, newBagName, allBags, userOSW, profile, request)) {
-                recordMessage(new ActionMessage("bag.createdlists", newBagName), request);    
+                recordMessage(new ActionMessage("bag.createdlists", newBagName), request);
             }
         } else {
             if (newNameTextBox != null) {
@@ -148,17 +148,17 @@ public class ModifyBagAction extends InterMineAction
                 InterMineBag origBag = allBags.get(selectedBagName);
                 if (origBag == null) {
                     recordError(new ActionMessage("errors.bag.notfound"), request);
-                    return;                        
+                    return;
                 }
                 if (createBag(origBag, newBagName, allBags, userOSW, profile, request)) {
                     msg += newBagName + ", ";
                 }
             }
             if (msg.length() > 2) {
-                msg = msg.substring(0, msg.length() - 2);    
+                msg = msg.substring(0, msg.length() - 2);
             }
             if (msg.length() > 0) {
-                recordMessage(new ActionMessage("bag.createdlists", msg), request);    
+                recordMessage(new ActionMessage("bag.createdlists", msg), request);
             }
         }
     }
@@ -178,8 +178,10 @@ public class ModifyBagAction extends InterMineAction
     }
 
     private boolean createBag(InterMineBag origBag, String newBagName,
-            Map<String, InterMineBag> allBags, ObjectStoreWriter userOSW, 
-            Profile profile, HttpServletRequest request)
+                              @SuppressWarnings("unused") Map<String, InterMineBag> allBags,
+                              ObjectStoreWriter userOSW,
+                              Profile profile,
+                              @SuppressWarnings("unused") HttpServletRequest request)
             throws ObjectStoreException {
         // Clone method clones the bag in the database
         InterMineBag newBag = (InterMineBag) origBag.clone(userOSW);
@@ -199,7 +201,7 @@ public class ModifyBagAction extends InterMineAction
 
     /**
      * Union the selected bags
-     * 
+     *
      * @param mapping
      *            The ActionMapping used to select this instance
      * @param form
@@ -291,7 +293,7 @@ public class ModifyBagAction extends InterMineAction
 
     /**
      * Given a set of bag names, find out whether they are all of the same type.
-     * 
+     *
      * @param bags
      *            map from bag name to InterMineIdBag subclass
      * @param selectedBags
@@ -334,7 +336,7 @@ public class ModifyBagAction extends InterMineAction
 
     /**
      * Delete the selected bags
-     * 
+     *
      * @param mapping
      *            The ActionMapping used to select this instance
      * @param form
@@ -375,9 +377,8 @@ public class ModifyBagAction extends InterMineAction
         if (pageName != null && pageName.equals("MyMine")) {
             return new ForwardParameters(mapping.findForward("mymine"))
                     .addParameter("subtab", "lists").forward();
-        } else {
-            return new ForwardParameters(mapping.findForward("bag"))
-                    .addParameter("subtab", "view").forward();
         }
+        return new ForwardParameters(mapping.findForward("bag"))
+                    .addParameter("subtab", "view").forward();
     }
 }
