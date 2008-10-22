@@ -1263,8 +1263,12 @@ public class AjaxServices
         LOG.info("Called getTags(). type: " + type);
         HttpServletRequest request = getRequest();
         ProfileManager profileManager = getProfileManager(request);
-        String userName = getProfile(request).getUsername();
-        return profileManager.getUserTagNames(type, userName);
+        Profile profile = getProfile(request);
+        if (profile.isLoggedIn()) {
+            return profileManager.getUserTagNames(type, profile.getUsername());    
+        } else {
+            return new TreeSet<String>();
+        }
     }
 
     /**
@@ -1276,8 +1280,12 @@ public class AjaxServices
     public static Set<String> getObjectTags(String type, String tagged) {
         HttpServletRequest request = getRequest();
         ProfileManager profileManager = getProfileManager(request);
-        String userName = getProfile(request).getUsername();
-        return profileManager.getObjectTagNames(tagged, type, userName);
+        Profile profile = getProfile(request);
+        if (profile.isLoggedIn()) {
+            return profileManager.getObjectTagNames(tagged, type, profile.getUsername());    
+        } else {
+            return new TreeSet<String>();
+        }
     }
 
     private static ProfileManager getProfileManager(HttpServletRequest request) {

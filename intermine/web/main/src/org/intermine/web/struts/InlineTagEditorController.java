@@ -10,6 +10,9 @@ package org.intermine.web.struts;
  *
  */
 
+import java.util.Set;
+import java.util.TreeSet;
+
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
@@ -77,9 +80,18 @@ public class InlineTagEditorController extends TilesAction
 
         request.setAttribute("tagged", tagged);
         request.setAttribute("type", type);
-        request.setAttribute("currentTags", pm.getObjectTagNames(tagged, type, 
-                profile.getUsername()));
-        request.setAttribute("availableTags", pm.getUserTagNames(type, profile.getUsername()));
+
+        Set<String> currentTags;
+        Set<String> availableTags;
+        if (profile.isLoggedIn()) {
+            currentTags = pm.getObjectTagNames(tagged, type, profile.getUsername());
+            availableTags = pm.getUserTagNames(type, profile.getUsername());
+        } else {
+            currentTags = new TreeSet<String>();
+            availableTags = new TreeSet<String>();
+        }
+        request.setAttribute("currentTags", currentTags);
+        request.setAttribute("availableTags", availableTags);
         return null;
     }
 }
