@@ -24,7 +24,7 @@
       </c:if>
 
 <br/>
-
+<fmt:setBundle basename="model"/>
 <div><fmt:message key="funding"/></div>
 
 </div>
