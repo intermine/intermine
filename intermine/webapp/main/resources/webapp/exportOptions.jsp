@@ -26,7 +26,9 @@
 
 <style type="text/css" media="screen">
     #pathsList {
-        list-style-position: inside; height: 30px; cursor: hand; cursor: pointer;
+        list-style-position: inside; 
+        cursor: hand; 
+        cursor: pointer;
     }
     #pathsList li{
         float:left;
