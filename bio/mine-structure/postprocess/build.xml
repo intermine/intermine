@@ -1,6 +1,6 @@
-<project name="flymine-postprocess" default="default" basedir=".">
+<project name="${mine-dir}-postprocess" default="default" basedir=".">
 
-  <description>perform post processing for flymine</description>
+  <description>perform post processing for ${mine-dir}</description>
 
   <import file="../../imbuild/postprocess.xml"/>
 

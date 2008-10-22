@@ -32,10 +32,10 @@
           of <i>P</i>-element insertions for generating custom chromosomal aberrations
           in <i>D. melanogaster</i>. The locations of the <i>P</i>-element insertions
           and the deletions that can be constructed from them have been loaded into
-          FlyMine. Constructed deletions are tagged as available in FlyMine. Stocks
+          ${mine-name}. Constructed deletions are tagged as available in ${mine-name}. Stocks
           can be ordered from the <a href="http://expbio.bio.u-szeged.hu/fly/index.php" target="_new">Szeged stock centre</a>.</dt></li>
 
-          <li><dt>FlyMine has additional insertions from <a href="http://www.flybase.org/" target="_new">FlyBase</a> and
+          <li><dt>${mine-name} has additional insertions from <a href="http://www.flybase.org/" target="_new">FlyBase</a> and
           from the <a href="http://drosophila.med.harvard.edu" target="_new">Exelixis</a> collection.</dt></li>
          </ul>
 
@@ -57,7 +57,7 @@
     <p>
 
           <dt> Probesets from the <a href="http://www.affymetrix.com/" target="_new">Affymetrix</a> GeneChip <i>Drosophila</i> Genome 1.0 and 2.0 Arrays, a
-           microarray tool for studying expression of <i>D. melanogaster</i> transcripts. Probeset locations and mapped genes (not transcripts) are downloaded from Ensembl. FlyMine only loads probesets that match to at least one gene. For more information on the probeset mappings, go to <a href="http://www.ensembl.org/Homo_sapiens/helpview?kw=microarray;ref=http%3A%2F%2Fwww.ensembl.org%2FMus_musculus%2Findex.html/" target="_new">Ensembl help</a>.  </dt>
+           microarray tool for studying expression of <i>D. melanogaster</i> transcripts. Probeset locations and mapped genes (not transcripts) are downloaded from Ensembl. ${mine-name} only loads probesets that match to at least one gene. For more information on the probeset mappings, go to <a href="http://www.ensembl.org/Homo_sapiens/helpview?kw=microarray;ref=http%3A%2F%2Fwww.ensembl.org%2FMus_musculus%2Findex.html/" target="_new">Ensembl help</a>.  </dt>
     </br></p>
 
         </div>
@@ -77,10 +77,10 @@
             <dt>The aim of INDAC is to produce a widely available and uniform set of array reagents so that microarray data collected from
             different studies may be more easily compared. On behalf of INDAC, the FlyChip group has designed a set of 65-69mer long
             oligonucleotides to release 4.1 of the D. melanogaster genome. Oligos were designed using a modified version of OligoArray2 and other
-            post-processing steps (David Kreil, Debashis Rana, Gos Micklem unpublished).Synthesis of the set by Illumina began in April 2005. FlyMine
+            post-processing steps (David Kreil, Debashis Rana, Gos Micklem unpublished).Synthesis of the set by Illumina began in April 2005. ${mine-name}
             will incorporate the results of these tests when available.</dt>
 
-            <dt>Note: FlyMine curently stores the positions of the oligos relative to the transcript rather than to the chromosome.</dt>
+            <dt>Note: ${mine-name} curently stores the positions of the oligos relative to the transcript rather than to the chromosome.</dt>
       </br></p>
         </div>
       </dl>
@@ -97,7 +97,7 @@
           <div id="hiddenDiv4" class="dataSetDescription">
 
 
-        <p>Note: From 7.0 of FlyMine the format for the tiling path
+        <p>Note: From 7.0 of ${mine-name} the format for the tiling path
   span, PCR product and primer identifiers has changed.  Previously the
   identifier included the genomic location (e.g.
   span2L:1-7529_amplimer_1). However, in order for identifiers to remain
@@ -106,7 +106,7 @@
   identifiers (with chromosome locations according to genome release
   4.0) can be found in the synonyms and can still be searched for using
   the quick search. The tiling path data has been re-mapped to
-  genome sequence release 5.0 as of FlyMine release 7.0. </p>
+  genome sequence release 5.0 as of ${mine-name} release 7.0. </p>
 
 
         <p>Whole genome tiling path primers for ChIP-chip experiments
@@ -132,7 +132,7 @@
         depending on relative orientation but are useful in order to
         understand the relationship between amplimers.<br/></p>
 
-        <p>The Flymine GBrowse views below show the relationship between spans, PCR primers
+        <p>The ${mine-name} GBrowse views below show the relationship between spans, PCR primers
         and PCR products.  The PCR products that overlap a promoter region are highlighted:</p>
 
         <div style="margin-left: 20px">

@@ -56,7 +56,6 @@
   <div id="pagecontent">
       <%-- Render messages --%>
       <tiles:get name="errorMessagesContainers"/>
-      <div class="topBar errors">An important announcement about the <a href="http://www.flymine.org/notice.shtml">future of FlyMine</a>.</div>
 
       <%-- Context help bar --%>
       <tiles:insert page="/contextHelp.jsp"/>

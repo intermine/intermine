@@ -627,7 +627,7 @@
 
   <class className="org.flymine.model.genomic.Sequence">
     <fields>
-      <fieldconfig fieldExpr="residues" fieldExporter="org.flymine.web.ResidueFieldExporter"
+      <fieldconfig fieldExpr="residues"
                    sectionOnRight="true" sectionTitle="Residues" openByDefault="true"
                    showInSummary="false" showInResults="false" showInInlineCollection="false"/>
       <fieldconfig fieldExpr="length"/>
@@ -769,27 +769,6 @@
         typeClass="org.flymine.model.genomic.Gene,org.flymine.model.genomic.LocatedSequenceFeature,org.flymine.model.genomic.TransposableElementInsertionSite"
        />
 
-      <graphdisplayer id="flyatlas" title="Gene Expression in the Adult Fly (FlyAtlas)" domainLabel="Tissue" rangeLabel="Up (+) or Down (-) gene count" dataSetLoader="org.flymine.web.widget.FlyAtlasDataSetLdr"
-                      link="org.flymine.web.widget.FlyAtlasGraphURLGenerator"
-                      description="For each tissue in the adult fly, the number of genes from this list for which the levels of expression are significantly high (Up) or low (Down) according to &lt;a href=&quot;http://www.flyatlas.org/&quot; target=&quot;_new&quot;&gt;FlyAtlas&lt;/a&gt; AffyCall."
-                      typeClass="org.flymine.model.genomic.Gene"
-                      graphType="StackedBarChart" />
-
-      <graphdisplayer id="flyfish" title="mRNA subcellular localisation (fly-FISH)" domainLabel="Stage" rangeLabel="Gene count" dataSetLoader="org.flymine.web.widget.FlyFishDataSetLdr"
-                      link="org.flymine.web.widget.FlyFishGraphURLGenerator"
-                      description="Expression patterns of Drosophila mRNAs at the subcellular level during early embryogenesis - data from  &lt;a href=&quot;http://fly-fish.ccbr.utoronto.ca/&quot; target=&quot;_new&quot;&gt;Fly-FISH&lt;/a&gt;.  Note that not all genes have been assayed by &lt;a href=&quot;http://fly-fish.ccbr.utoronto.ca/&quot; target=&quot;_new&quot;&gt;Fly-FISH&lt;/a&gt;."
-                      typeClass="org.flymine.model.genomic.Gene"
-                      graphType="BarChart" />
-
-      <graphdisplayer id="bdgp" title="BDGP expression patterns"
-                      link="org.flymine.web.widget.BDGPinsituGraphURLGenerator"
-                      dataSetLoader="org.flymine.web.widget.BDGPinsituDataSetLdr"
-                      description="Expression patterns of Drosophila mRNAs during embryogenesis - data from  &lt;a href=&quot;http://www.fruitfly.org/cgi-bin/ex/insitu.pl&quot; target=&quot;_new&quot;&gt;BGDP&lt;/a&gt;.  Note that not all genes have been assayed by &lt;a href=&quot;http://www.fruitfly.org/cgi-bin/ex/insitu.pl&quot; target=&quot;_new&quot;&gt;BGDP&lt;/a&gt;. "
-                      domainLabel="Stage"
-                      rangeLabel="Gene count"
-                      typeClass="org.flymine.model.genomic.Gene"
-                      graphType="BarChart" />
-
       <enrichmentwidgetdisplayer id="protein_features" title="UniProt Features"
                                  link="org.intermine.bio.web.widget.UniProtFeaturesURLQuery"
                                  dataSetLoader="org.intermine.bio.web.widget.UniProtFeaturesLdr"
@@ -814,14 +793,6 @@
                                  typeClass="org.flymine.model.genomic.Gene,org.flymine.model.genomic.Protein"
                                  externalLink="http://amigo.geneontology.org/cgi-bin/amigo/term-details.cgi?term=" />
 
-      <enrichmentwidgetdisplayer id="prot_dom_enrichment" title="Protein Domain Enrichment"
-                                 link="org.flymine.web.widget.ProteinDomainURLQuery"
-                                 dataSetLoader="org.flymine.web.widget.ProteinDomainLdr"
-                                 label="Protein Domain"
-                                 description="Protein Domains enriched for items in this list."
-                                 typeClass="org.flymine.model.genomic.Gene,org.flymine.model.genomic.Protein"
-                                 externalLink="http://www.ebi.ac.uk/interpro/IEntry?ac=" />
-
       <enrichmentwidgetdisplayer id="publication_enrichment" title="Publication Enrichment"
                                  link="org.intermine.bio.web.widget.PublicationURLQuery"
                                  dataSetLoader="org.intermine.bio.web.widget.PublicationLdr"
@@ -830,13 +801,6 @@
                                  externalLink="http://www.ncbi.nlm.nih.gov/entrez/query.fcgi?cmd=Retrieve&amp;db=PubMed&amp;dopt=Abstract&amp;list_uids="
                                  typeClass="org.flymine.model.genomic.Gene"
                                  externalLinkLabel="PubMed:" />
-
-      <enrichmentwidgetdisplayer id="bdgp_enrichment" title="BDGP Enrichment"
-                                 link="org.flymine.web.widget.BDGPURLQuery"
-                                 dataSetLoader="org.flymine.web.widget.BDGPLdr"
-                                 label="Terms"
-                                 description="ImaGO terms enriched for genes in this list - data from &lt;a href=&quot;http://www.fruitfly.org/cgi-bin/ex/insitu.pl&quot; target=&quot;_new&quot;&gt;BGDP&lt;/a&gt;.  Note that not all genes have been assayed by BDGP."
-                                 typeClass="org.flymine.model.genomic.Gene" />
 
       <bagtabledisplayer id="kegg" title="Pathway Information (KEGG)" pathStrings="Gene.pathways"
                          link="org.intermine.bio.web.widget.PathwayURLQuery"
