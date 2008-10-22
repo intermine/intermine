@@ -627,7 +627,7 @@
 
   <class className="org.flymine.model.genomic.Sequence">
     <fields>
-      <fieldconfig fieldExpr="residues" fieldExporter="org.flymine.web.ResidueFieldExporter"
+      <fieldconfig fieldExpr="residues" fieldExporter="org.intermine.bio.web.export.ResidueFieldExporter"
                    sectionOnRight="true" sectionTitle="Residues" openByDefault="true"
                    showInSummary="false" showInResults="false" showInInlineCollection="false"/>
       <fieldconfig fieldExpr="length"/>
