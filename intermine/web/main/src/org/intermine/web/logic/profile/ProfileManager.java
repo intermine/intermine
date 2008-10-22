@@ -62,10 +62,10 @@ import org.intermine.web.logic.bag.InterMineBag;
 import org.intermine.web.logic.query.MainHelper;
 import org.intermine.web.logic.query.SavedQueryBinding;
 import org.intermine.web.logic.search.WebSearchable;
+import org.intermine.web.logic.tagging.TagNames;
 import org.intermine.web.logic.tagging.TagTypes;
 import org.intermine.web.logic.template.TemplateQuery;
 import org.intermine.web.logic.template.TemplateQueryBinding;
-import org.intermine.web.struts.AspectController;
 
 /**
  * Class to manage and persist user profile data such as saved bags
@@ -298,7 +298,7 @@ public class ProfileManager
                 String aspects[] = keywords.split(",");
                 for (int i = 0; i < aspects.length; i++) {
                     String aspect = aspects[i].trim();
-                    String tag = AspectController.ASPECT_PREFIX + aspect;
+                    String tag = TagNames.IM_ASPECT_PREFIX + aspect;
                     if (getTags(tag, tq.getName(), TagTypes.TEMPLATE, username).size() == 0) {
                         addTag(tag, tq.getName(), TagTypes.TEMPLATE, username);
                     }
@@ -926,5 +926,26 @@ public class ProfileManager
             addTag(tag.getTagName(), newTaggedObj, type, userName);
             deleteTag(tag);
         }
+    }
+    
+    /**
+     * Extracts aspect from tag name. For instance for aspect:Miscellaneous returns Miscellaneous 
+     * @param tagName tag name
+     * @return if it is aspect tag then returns aspect else null
+     */
+    public static String getAspect(String tagName) {
+        if (isAspectTag(tagName)) {
+            return tagName.substring(TagNames.IM_ASPECT_PREFIX.length()).trim();
+        } else {
+            return null;
+        }
+    }
+    
+    /**
+     * @param tagName tag name
+     * @return true if tag is aspect tag else false
+     */
+    public static boolean isAspectTag(String tagName) {
+        return tagName.startsWith(TagNames.IM_ASPECT_PREFIX);
     }
 }

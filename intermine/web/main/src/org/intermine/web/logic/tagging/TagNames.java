@@ -47,6 +47,16 @@ public interface TagNames
     public static final String IM_HIDDEN = "hidden";
 
     /**
+     * String used to tag objects by some aspect  
+     */
+    public static final String IM_ASPECT_PREFIX = "aspect";
+
+    /**
+     * String used to tag objects by Miscellaneous aspect  
+     */
+    public static final String IM_ASPECT_MISC = "aspect:Miscellaneous";
+    
+    /**
      * Tag separator. 
      */
     public static final String SEPARATOR = ":";

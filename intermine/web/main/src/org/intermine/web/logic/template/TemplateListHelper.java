@@ -45,6 +45,7 @@ import org.intermine.web.logic.profile.ProfileManager;
 import org.intermine.web.logic.search.SearchRepository;
 import org.intermine.web.logic.search.WebSearchable;
 import org.intermine.web.logic.session.SessionMethods;
+import org.intermine.web.logic.tagging.TagNames;
 import org.intermine.web.logic.tagging.TagTypes;
 import org.intermine.web.struts.AspectController;
 
@@ -73,10 +74,8 @@ public class TemplateListHelper
 
         for (Iterator iter = tags.iterator(); iter.hasNext(); ) {
             Tag tag = (Tag) iter.next();
-            if (tag.getTagName().startsWith(AspectController.ASPECT_PREFIX)) {
-                String aspectFromTagName = tag.getTagName().substring(7).trim();
-
-                if (StringUtils.equals(aspect, aspectFromTagName)) {
+            if (ProfileManager.isAspectTag(tag.getTagName())) {
+                if (StringUtils.equals(aspect, ProfileManager.getAspect(tag.getTagName()))) {
                     TemplateQuery tq = p.getSavedTemplates().get(tag.getObjectIdentifier());
                     if (tq != null) {
                         templates.put(tq.getName(), tq);
@@ -103,8 +102,8 @@ public class TemplateListHelper
                                                  ServletContext context,
                                                  InterMineObject object,
                                                  Map<TemplateQuery, List<String>> fieldExprsOut) {
-        if (aspect.startsWith(AspectController.ASPECT_PREFIX)) {
-            aspect = aspect.substring(7).trim();
+        if (ProfileManager.isAspectTag(aspect)) {
+            aspect = ProfileManager.getAspect(aspect);
         }
 
         List<TemplateQuery> templates = new ArrayList<TemplateQuery>();
@@ -248,8 +247,8 @@ public class TemplateListHelper
     public static List<TemplateQuery> getAspectTemplatesForType(String aspect,
                               ServletContext context, InterMineBag bag, Map<TemplateQuery,
                               List<String>> fieldExprsOut) {
-        if (aspect.startsWith(AspectController.ASPECT_PREFIX)) {
-            aspect = aspect.substring(7).trim();
+        if (ProfileManager.isAspectTag(aspect)) {
+            aspect = ProfileManager.getAspect(aspect);
         }
         String sup = (String) context.getAttribute(Constants.SUPERUSER_ACCOUNT);
         ProfileManager pm = SessionMethods.getProfileManager(context);
@@ -277,8 +276,8 @@ public class TemplateListHelper
         for (Iterator iter = tags.iterator(); iter.hasNext(); ) {
             Tag tag = (Tag) iter.next();
 
-            if (tag.getTagName().startsWith(AspectController.ASPECT_PREFIX)) {
-                String aspectFromTagName = tag.getTagName().substring(7).trim();
+            if (ProfileManager.isAspectTag(tag.getTagName())) {
+                String aspectFromTagName = ProfileManager.getAspect(tag.getTagName());
 
 
                 if (StringUtils.equals(aspect, aspectFromTagName)) {

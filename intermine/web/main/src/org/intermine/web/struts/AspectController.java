@@ -18,6 +18,7 @@ import org.intermine.model.userprofile.Tag;
 import org.intermine.web.logic.Constants;
 import org.intermine.web.logic.aspects.Aspect;
 import org.intermine.web.logic.session.SessionMethods;
+import org.intermine.web.logic.tagging.TagNames;
 
 import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletRequest;
@@ -42,11 +43,7 @@ import org.apache.struts.tiles.actions.TilesAction;
  */
 public class AspectController extends TilesAction
 {
-    /**
-     * The prefix used for aspect tags.
-     */
-    public static final String ASPECT_PREFIX = "aspect:";
-
+    
     private static final Logger LOG = Logger.getLogger(AspectController.class);
 
     /**
@@ -70,10 +67,11 @@ public class AspectController extends TilesAction
         // look up the classes for this aspect
         String superuser = (String) servletContext.getAttribute(Constants.SUPERUSER_ACCOUNT);
         List<Tag> tags = new ArrayList<Tag>(SessionMethods.getProfileManager(servletContext)
-            .getTags(ASPECT_PREFIX + request.getParameter("name"), null, "class", superuser));
+            .getTags(TagNames.IM_ASPECT_PREFIX + request.getParameter("name"), null, "class", 
+                    superuser));
         CollectionUtils.transform(tags,
                 TransformerUtils.invokerTransformer("getObjectIdentifier"));
         context.putAttribute("startingPoints", tags);
         return null;
-    }
+    }    
 }
