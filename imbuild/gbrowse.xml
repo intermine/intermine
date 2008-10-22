@@ -88,7 +88,7 @@
     <filter token="PROJECT_VERSION" value="${project.releaseVersion}"/>
     <filter token="PROJECT_SUBTITLE" value="${project.subTitle}"/>
     <filter token="PROJECT_CONTACT" value="${project.contact}"/>
-
+    <filter token="INTERMINE_WEBAPP_VIEW_BY_ID_PREFIX" value="${webapp.baseurl}/${webapp.path}/${webapp.viewByID.prefix}"/> 
     <copy file="resources/${project.title}.conf"
           toFile="build/${gbrowse.database.source}.conf"
           filtering="true" overwrite="true"/>
