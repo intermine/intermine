@@ -148,12 +148,12 @@ public class ObjectDetailsController extends InterMineAction
 
         for (Iterator i = aspects.iterator(); i.hasNext();) {
             String aspect = (String) i.next();
-            placementRefsAndCollections.put(AspectController.ASPECT_PREFIX + aspect,
+            placementRefsAndCollections.put(TagNames.IM_ASPECT_PREFIX + aspect,
                                             new TreeMap(String.CASE_INSENSITIVE_ORDER));
         }
 
         Map miscRefs = new TreeMap(dobj.getRefsAndCollections());
-        placementRefsAndCollections.put(SearchRepository.MISC, miscRefs);
+        placementRefsAndCollections.put(TagNames.IM_ASPECT_MISC, miscRefs);
 
         for (Iterator iter = dobj.getRefsAndCollections().entrySet().iterator(); iter
                 .hasNext();) {
@@ -227,7 +227,7 @@ public class ObjectDetailsController extends InterMineAction
                 removeField(fd.getName(), placementRefsAndCollections);
                 return;
             }
-            if (tagName.startsWith(AspectController.ASPECT_PREFIX)) {
+            if (ProfileManager.isAspectTag(tagName)) {
                 Map<String, DisplayField> refs = placementRefsAndCollections.get(tagName);
                 if (refs != null) {
                     refs.put(fd.getName(), dispRef);

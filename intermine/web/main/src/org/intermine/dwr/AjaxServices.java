@@ -19,7 +19,6 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
-import java.util.LinkedHashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
@@ -566,7 +565,7 @@ public class AjaxServices
             List<String> aspectTags = new ArrayList<String>();
             List<String> userTags = new ArrayList<String>();
             for (String tag :tags) {
-                if (tag.startsWith("aspect:")) {
+                if (tag.startsWith(TagNames.IM_ASPECT_PREFIX)) {
                     aspectTags.add(tag);
                 } else {
                     userTags.add(tag);

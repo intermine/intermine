@@ -47,6 +47,7 @@ import org.intermine.web.logic.Constants;
 import org.intermine.web.logic.bag.InterMineBag;
 import org.intermine.web.logic.profile.Profile;
 import org.intermine.web.logic.profile.ProfileManager;
+import org.intermine.web.logic.tagging.TagNames;
 import org.intermine.web.logic.tagging.TagTypes;
 import org.intermine.web.logic.template.TemplateQuery;
 import org.intermine.web.struts.AspectController;
@@ -60,8 +61,6 @@ import org.intermine.web.struts.AspectController;
 public class SearchRepository
 {
     private static final Logger LOG = Logger.getLogger(SearchRepository.class);
-    /** "Miscellaneous" */
-    public static final String MISC = "aspect:Miscellaneous";
 
     private Map<String, Map<String, ? extends WebSearchable>> webSearchablesMap =
         new HashMap<String, Map<String, ? extends WebSearchable>>();
@@ -246,9 +245,8 @@ public class SearchRepository
             List<Tag> tags = pm.getTags(null, webSearchable.getName(), type, profile.getUsername());
             for (Tag tag: tags) {
                 String tagName = tag.getTagName();
-                if (tagName.startsWith(AspectController.ASPECT_PREFIX)) {
-                    String aspect = tagName.substring(AspectController.ASPECT_PREFIX.length());
-                    contentBuffer.append(' ').append(aspect);
+                if (ProfileManager.isAspectTag(tagName)) {
+                    contentBuffer.append(' ').append(ProfileManager.getAspect(tagName));
                 }
             }
 
