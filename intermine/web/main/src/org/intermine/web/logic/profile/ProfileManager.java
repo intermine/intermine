@@ -188,6 +188,9 @@ public class ProfileManager
      * @return the Profile, or null if one doesn't exist
      */
     public synchronized Profile getProfile(String username) {
+        if (username == null) {
+            return null;
+        }
         Profile profile = (Profile) profileCache.get(username);
         if (profile != null) {
             return profile;
@@ -492,17 +495,14 @@ public class ProfileManager
      * @param type tag type
      * @param userName user name
      * @return tag names
+     * @throws UserNotFoundException if there isn't any user with this userName
      */
     public Set<String> getUserTagNames(String type, String userName) {
         if (getProfile(userName) == null) {
             throw new UserNotFoundException("User: '" + userName + "' not found.");
         }
-        if (!userName.equals("")) {
-            List<Tag> tags = getTags(null, null, type, userName);
-            return tagsToTagNames(tags);
-        } else {
-            return new TreeSet<String>();
-        }
+        List<Tag> tags = getTags(null, null, type, userName);
+        return tagsToTagNames(tags);
     }
     
     /**
