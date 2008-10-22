@@ -272,7 +272,6 @@
     <convert-fullxml-file
        osName="osw.${common.os.prefix}-tgt-items"
        sourceName="${source.name}"
-       sourceType="${source.type}"
        file="${src.data.file}"
        modelName="${target.model}">
       <fileset dir="${src.data.dir}">
