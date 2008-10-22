@@ -72,6 +72,13 @@ public class ModifyBagAction extends InterMineAction
             HttpServletRequest request, @SuppressWarnings("unused")
             HttpServletResponse response) throws Exception {
         ModifyBagForm mbf = (ModifyBagForm) form;
+        String[] selectedBagNames = mbf.getSelectedBags();
+
+        // TODO why isn't validateBagName() catching this?
+        if (selectedBagNames.length == 0) {
+            recordError(new ActionMessage("errors.bag.listnotselected"), request);
+            return getReturn(mbf.getPageName(), mapping);
+        }
 
         if (request.getParameter("union") != null
                 || (mbf.getListsButton() != null && mbf.getListsButton()
@@ -109,10 +116,7 @@ public class ModifyBagAction extends InterMineAction
         ModifyBagForm frm = (ModifyBagForm) form;
         String[] selectedBagNames = frm.getSelectedBags();
 
-        if (selectedBagNames.length == 0) {
-            recordError(new ActionMessage("errors.bag.listnotselected"), request);
-            return;
-        }
+
         Map<String, InterMineBag> allBags = WebUtil.getAllBags
             (profile.getSavedBags(), request.getSession().getServletContext());
         ObjectStoreWriter userOSW = profile.getProfileManager().getUserProfileObjectStore();
