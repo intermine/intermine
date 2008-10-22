@@ -38,7 +38,7 @@
           </ul>
           <p>           
             For each protein record in UniProt for each species the following
-            information is extracted and loaded into FlyMine:</p>
+            information is extracted and loaded into ${mine-name}:</p>
          <ul>             
               <li>Entry name</li>
               <li>Primary accession number</li>

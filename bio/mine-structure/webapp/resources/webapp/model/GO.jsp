@@ -14,7 +14,7 @@
  <h4>
    <a href="javascript:toggleDiv('hiddenDiv1');">
     <img id='hiddenDiv1Toggle' src="images/disclosed.gif"/>
-    GO annotation in FlyMine ...
+    GO annotation in ${mine-name} ...
    </a>
  </h4>
 
@@ -27,7 +27,7 @@
       processes, cellular components and molecular functions in a species-independent manner.
       </p>
       <p>
-      FlyMine has GO annotations for <i>Drosophila</i>,
+      ${mine-name} has GO annotations for <i>Drosophila</i>,
       <i>C. elegans</i> and <i>A. gambiae</i>.  GO annotation for
       other organisms is also included and is accessible via orthologues.
       </p>      

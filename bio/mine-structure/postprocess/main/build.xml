@@ -1,4 +1,4 @@
-<project name="flymine-postprocess" default="default" basedir=".">
+<project name="${mine-dir}-postprocess" default="default" basedir=".">
 
     <description>perform post processing operations</description>
 

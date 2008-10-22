@@ -29,7 +29,7 @@
 
         <div id="hiddenDiv1" class="dataSetDescription">
           <p>
-            <a href="/">FlyMine</a> is a resource aimed at the <i>Drosophila</i> and
+            <a href="/">${mine-name}</a> is a resource aimed at the <i>Drosophila</i> and
             <i>Anopheles</i> research communities hence the focus is on those organisms.
           </p>
          <ul>

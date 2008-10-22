@@ -1,5 +1,5 @@
 
-<project name="flymine-sitemap" default="default" basedir=".">
+<project name="${mine-dir}-sitemap" default="default" basedir=".">
   
   <description>represents the production objectstore and the model therein</description>
   <import file="../../imbuild/task.xml"/>

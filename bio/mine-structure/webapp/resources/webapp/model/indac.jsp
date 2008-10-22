@@ -22,11 +22,11 @@
         </p>
         <p>
           Synthesis of the set by <A href="http://www.illumina.com" target="_new">Illumina</A>
-          began in April 2005.  FlyMine will incorporate the results of these tests
+          began in April 2005.  ${mine-name} will incorporate the results of these tests
           when available.
         </p>
         <p>
-          Note: FlyMine curently stores the positions of the oligos relative to
+          Note: ${mine-name} curently stores the positions of the oligos relative to
           the transcript rather than to the chromosome.
         </p>
       </div>
