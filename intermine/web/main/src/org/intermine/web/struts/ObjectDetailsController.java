@@ -52,6 +52,7 @@ import org.intermine.web.logic.results.DisplayReference;
 import org.intermine.web.logic.search.SearchRepository;
 import org.intermine.web.logic.search.WebSearchable;
 import org.intermine.web.logic.session.SessionMethods;
+import org.intermine.web.logic.tagging.TagNames;
 import org.intermine.web.logic.tagging.TagTypes;
 
 /**
@@ -66,7 +67,6 @@ public class ObjectDetailsController extends InterMineAction
 
     protected static final Logger LOG = Logger
             .getLogger(ObjectDetailsController.class);
-    private static final Object HIDDEN_TAG_NAME = "hidden";
 
     /**
      * {@inheritDoc}
@@ -220,7 +220,7 @@ public class ObjectDetailsController extends InterMineAction
         for (Iterator ti = tags.iterator(); ti.hasNext();) {
             Tag tag = (Tag) ti.next();
             String tagName = tag.getTagName();
-            if (!isSuperUser && tagName.equals(HIDDEN_TAG_NAME)) {
+            if (!isSuperUser && tagName.equals(TagNames.IM_HIDDEN)) {
                 miscRefs.remove(fd.getName());
                 // Maybe it was added already to some placement and
                 // that's why it must be removed
