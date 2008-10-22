@@ -561,7 +561,6 @@ function filterFavourites(type, wsListId) {
     } else {
         document.getElementById(id).value = "favourites";
         document.getElementById('filter_favourites_'+wsListId+'_'+type).src = 'images/filter_favourites_active.png';
-        // tags = (tags == '' ? 'favourite' : tags + '|favourite');
         tags['favourites_' + wsListId] = 'favourite';
     }
     var filterTextElement = document.getElementById(wsListId+'_'+type+'_filter_text');
