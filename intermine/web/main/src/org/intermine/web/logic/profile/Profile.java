@@ -27,6 +27,7 @@ import org.intermine.web.logic.bag.InterMineBag;
 import org.intermine.web.logic.query.SavedQuery;
 import org.intermine.web.logic.search.SearchRepository;
 import org.intermine.web.logic.search.WebSearchable;
+import org.intermine.web.logic.tagging.TagNames;
 import org.intermine.web.logic.tagging.TagTypes;
 import org.intermine.web.logic.template.TemplateHelper;
 import org.intermine.web.logic.template.TemplateQuery;
@@ -195,7 +196,7 @@ public class Profile
         savedTemplates.remove(name);
         if (manager != null) {
             manager.deleteObjectTags(name, TagTypes.TEMPLATE, username);
-            List favourites = manager.getTags("favourite", name, TagTypes.TEMPLATE, username);
+            List favourites = manager.getTags(TagNames.IM_FAVOURITE, name, TagTypes.TEMPLATE, username);
             for (Iterator iter = favourites.iterator(); iter.hasNext();) {
                 Tag tag = (Tag) iter.next();
                 manager.deleteTag(tag);

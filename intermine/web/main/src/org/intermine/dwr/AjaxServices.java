@@ -132,10 +132,10 @@ public class AjaxServices
                 List<Tag> tags;
                 Tag tag;
                 if (type.equals(TagTypes.TEMPLATE)) {
-                    tags = pm.getTags("favourite", nameCopy, TagTypes.TEMPLATE,
+                    tags = pm.getTags(TagNames.IM_FAVOURITE, nameCopy, TagTypes.TEMPLATE,
                             profile.getUsername());
                 } else if (type.equals(TagTypes.BAG)) {
-                    tags = pm.getTags("favourite", nameCopy, TagTypes.BAG, profile.getUsername());
+                    tags = pm.getTags(TagNames.IM_FAVOURITE, nameCopy, TagTypes.BAG, profile.getUsername());
                 } else {
                     throw new RuntimeException("Unknown tag type.");
                 }
@@ -148,9 +148,9 @@ public class AjaxServices
             // not a favourite.  turning on.
             } else {
                 if (type.equals(TagTypes.TEMPLATE)) {
-                    pm.addTag("favourite", nameCopy, TagTypes.TEMPLATE, profile.getUsername());
+                    pm.addTag(TagNames.IM_FAVOURITE, nameCopy, TagTypes.TEMPLATE, profile.getUsername());
                 } else if (type.equals(TagTypes.BAG)) {
-                    pm.addTag("favourite", nameCopy, TagTypes.BAG, profile.getUsername());
+                    pm.addTag(TagNames.IM_FAVOURITE, nameCopy, TagTypes.BAG, profile.getUsername());
                 } else {
                     throw new RuntimeException("Unknown tag type.");
                 }
