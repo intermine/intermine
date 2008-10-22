@@ -50,6 +50,7 @@ import org.intermine.web.logic.ClassKeyHelper;
 import org.intermine.web.logic.Constants;
 import org.intermine.web.logic.bag.InterMineBag;
 import org.intermine.web.logic.query.SavedQuery;
+import org.intermine.web.logic.tagging.TagNames;
 import org.intermine.web.logic.template.TemplateQuery;
 
 import java.io.BufferedReader;
@@ -491,8 +492,8 @@ public class ProfileManagerTest extends StoreDataTestCase
 
         List allTags = pm.getTags(null, null, null, null);
 
-        List aspectTags = pm.getTags("aspect:%", null, null, null);
-        List imTags = pm .getTags("im:%", null, null, null);
+        List aspectTags = pm.getTags(TagNames.IM_ASPECT_PREFIX + "%", null, null, null);
+        List imTags = pm .getTags(TagNames.IM_PREFIX + "%", null, null, null);
         int excludeSize = aspectTags.size() + imTags.size();
 
         // 18 tags because ProfileManagerBindingTestNewIDs.xml has 5
