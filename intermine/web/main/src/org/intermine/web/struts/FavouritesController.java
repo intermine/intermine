@@ -30,6 +30,7 @@ import org.intermine.model.userprofile.Tag;
 import org.intermine.web.logic.Constants;
 import org.intermine.web.logic.profile.Profile;
 import org.intermine.web.logic.profile.ProfileManager;
+import org.intermine.web.logic.tagging.TagNames;
 import org.intermine.web.logic.tagging.TagTypes;
 import org.intermine.web.logic.template.TemplateQuery;
 
@@ -66,7 +67,7 @@ public class FavouritesController extends TilesAction
             savedTemplates.putAll(superuserProfile.getSavedTemplates());
             savedTemplates.putAll(profile.getSavedTemplates());
 
-            List userTags = pm.getTags("favourite", null, TagTypes.TEMPLATE, profile.getUsername());
+            List userTags = pm.getTags(TagNames.IM_FAVOURITE, null, TagTypes.TEMPLATE, profile.getUsername());
             for (Iterator iter = userTags.iterator(); iter.hasNext();) {
                 Tag element = (Tag) iter.next();
                 TemplateQuery templateQuery =

@@ -35,6 +35,11 @@ public interface TagNames
      * Prefix common for all InterMine internal tags (favourite can be exception) 
      */
     public static final String IM_PREFIX = "im:";
+
+    /**
+     * String used to tag favourite objects  
+     */
+    public static final String IM_FAVOURITE = "favourite";
     
     /**
      * Tag separator. 

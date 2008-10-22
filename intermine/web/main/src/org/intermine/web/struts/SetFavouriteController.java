@@ -26,6 +26,7 @@ import org.intermine.model.userprofile.Tag;
 import org.intermine.web.logic.Constants;
 import org.intermine.web.logic.profile.Profile;
 import org.intermine.web.logic.profile.ProfileManager;
+import org.intermine.web.logic.tagging.TagNames;
 import org.intermine.web.logic.tagging.TagTypes;
 
 /**
@@ -64,7 +65,7 @@ public class SetFavouriteController extends TilesAction
         String isFavourite = "false";
         for (Iterator iter = userTags.iterator(); iter.hasNext();) {
             Tag tag = (Tag) iter.next();
-            if (tag.getTagName().equals("favourite")) {
+            if (tag.getTagName().equals(TagNames.IM_FAVOURITE)) {
                 isFavourite = "true";
                 break;
             }
