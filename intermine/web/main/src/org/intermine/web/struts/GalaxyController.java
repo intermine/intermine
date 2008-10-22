@@ -27,6 +27,7 @@ import org.intermine.objectstore.ObjectStore;
 import org.intermine.pathquery.PathQuery;
 import org.intermine.pathquery.PathQueryBinding;
 import org.intermine.web.logic.Constants;
+import org.intermine.web.logic.WebUtil;
 
 /**
  * Generates the link to send data to Galaxy
@@ -56,7 +57,7 @@ public class GalaxyController extends TilesAction
         Properties webProperties = InterMineAction.getWebProperties(request);
         StringBuffer stringUrl = new StringBuffer(webProperties.getProperty("project.sitePrefix") 
                         + "/"
-                        + webProperties.getProperty("webapp.defaultContext") 
+                        + WebUtil.getDefaultContextPath(request) 
                         + "/service/query/results?query=" 
                         + encodedQueryXML 
                         + "&size=1000000");
