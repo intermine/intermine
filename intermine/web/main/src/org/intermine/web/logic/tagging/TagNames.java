@@ -40,9 +40,16 @@ public interface TagNames
      * String used to tag favourite objects  
      */
     public static final String IM_FAVOURITE = "favourite";
-    
+
+    /**
+     * String used to tag objects that should be hidden at jsp page  
+     */
+    public static final String IM_HIDDEN = "hidden";
+
     /**
      * Tag separator. 
      */
     public static final String SEPARATOR = ":";
+    
+    
 }
