@@ -28,6 +28,7 @@ import org.intermine.pathquery.PathQuery;
 import org.intermine.pathquery.PathQueryBinding;
 import org.intermine.web.logic.Constants;
 import org.intermine.web.logic.WebUtil;
+import org.intermine.web.util.URLGenerator;
 
 /**
  * Generates the link to send data to Galaxy
@@ -56,8 +57,7 @@ public class GalaxyController extends TilesAction
         String encodedQueryXML = URLEncoder.encode(queryXML, "UTF-8");
         Properties webProperties = InterMineAction.getWebProperties(request);
         StringBuffer stringUrl = new StringBuffer(webProperties.getProperty("project.sitePrefix") 
-                        + "/"
-                        + WebUtil.getDefaultContextPath(request) 
+                        + new URLGenerator(request).getPermanentBaseURL() 
                         + "/service/query/results?query=" 
                         + encodedQueryXML 
                         + "&size=1000000");
