@@ -108,31 +108,31 @@
   </template-queries>
 
   <tags>
-    <tag name="aspect:People" objectIdentifier="org.intermine.model.testmodel.Employee" type="class">
+    <tag name="im:aspect:People" objectIdentifier="org.intermine.model.testmodel.Employee" type="class">
     </tag>
-    <tag name="aspect:People" objectIdentifier="org.intermine.model.testmodel.Manager" type="class">
+    <tag name="im:aspect:People" objectIdentifier="org.intermine.model.testmodel.Manager" type="class">
     </tag>
-    <tag name="aspect:People" objectIdentifier="org.intermine.model.testmodel.CEO" type="class">
+    <tag name="im:aspect:People" objectIdentifier="org.intermine.model.testmodel.CEO" type="class">
     </tag>
-    <tag name="aspect:People" objectIdentifier="org.intermine.model.testmodel.Contractor" type="class">
+    <tag name="im:aspect:People" objectIdentifier="org.intermine.model.testmodel.Contractor" type="class">
     </tag>
-    <tag name="aspect:People" objectIdentifier="org.intermine.model.testmodel.Secretary" type="class">
+    <tag name="im:aspect:People" objectIdentifier="org.intermine.model.testmodel.Secretary" type="class">
     </tag>
-    <tag name="aspect:Entities" objectIdentifier="org.intermine.model.testmodel.Bank" type="class">
+    <tag name="im:aspect:Entities" objectIdentifier="org.intermine.model.testmodel.Bank" type="class">
     </tag>
-    <tag name="aspect:Entities" objectIdentifier="org.intermine.model.testmodel.Department" type="class">
+    <tag name="im:aspect:Entities" objectIdentifier="org.intermine.model.testmodel.Department" type="class">
     </tag>
-    <tag name="aspect:Entities" objectIdentifier="org.intermine.model.testmodel.Address" type="class">
+    <tag name="im:aspect:Entities" objectIdentifier="org.intermine.model.testmodel.Address" type="class">
     </tag>
-    <tag name="aspect:People" objectIdentifier="employeesFromCompanyAndDepartment" type="template">
+    <tag name="im:aspect:People" objectIdentifier="employeesFromCompanyAndDepartment" type="template">
     </tag>
-    <tag name="aspect:People" objectIdentifier="employeesOverACertainAgeFromDepartmentA" type="template"/>
+    <tag name="im:aspect:People" objectIdentifier="employeesOverACertainAgeFromDepartmentA" type="template"/>
     <tag name="im:public" objectIdentifier="employeesFromCompanyAndDepartment" type="template"/>
-    <tag name="aspect:People" objectIdentifier="employeeByName" type="template"/>
+    <tag name="im:aspect:People" objectIdentifier="employeeByName" type="template"/>
     <tag name="im:public" objectIdentifier="employeeByName" type="template"/>
-    <tag name="aspect:People" objectIdentifier="employeesOfACertainAge" type="template"/>
+    <tag name="im:aspect:People" objectIdentifier="employeesOfACertainAge" type="template"/>
     <tag name="im:public" objectIdentifier="employeesOfACertainAge" type="template"/>
-    <tag name="aspect:People" objectIdentifier="ManagerLookup" type="template"/>
+    <tag name="im:aspect:People" objectIdentifier="ManagerLookup" type="template"/>
     <tag name="im:public" objectIdentifier="ManagerLookup" type="template"/>
     <tag name="im:converter" objectIdentifier="convertEmployeesToAddresses" type="template"/>
     <tag name="im:converter" objectIdentifier="convertContractorToEmployees" type="template"/>
