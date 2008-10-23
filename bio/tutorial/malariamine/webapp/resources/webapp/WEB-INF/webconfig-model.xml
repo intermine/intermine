@@ -252,5 +252,40 @@
   <tableExportConfig id="gff3" className="org.intermine.bio.web.export.GFF3HttpExporter"/>
 
 <!-- widgets -->
+      <graphdisplayer id="chromosome_distribution" title="Chromosome Distribution"
+        domainLabel="Chromosome"
+        rangeLabel="Count"
+        dataSetLoader="org.intermine.bio.web.widget.ChromosomeDistributionDataSetLdr"
+        link="org.intermine.bio.web.widget.ChromosomeDistributionGraphURLGenerator"
+        description="Actual: number of items in this list found on each chromosome.  Expected: given the total number of items on the chromosome and the number of items in this list, the number of items expected to be found on each chromosome."
+        graphType="BarChart"
+        extraAttributeClass="org.intermine.bio.web.logic.BioUtil"
+        typeClass="org.flymine.model.genomic.Gene,org.flymine.model.genomic.LocatedSequenceFeature,org.flymine.model.genomic.TransposableElementInsertionSite"
+       />
+
+      <enrichmentwidgetdisplayer id="protein_features" title="UniProt Features"
+                                 link="org.intermine.bio.web.widget.UniProtFeaturesURLQuery"
+                                 dataSetLoader="org.intermine.bio.web.widget.UniProtFeaturesLdr"
+                                 label="Feature"
+                                 description="UniProt features enriched for proteins in this list."
+                                 typeClass="org.flymine.model.genomic.Protein" />
+
+      <enrichmentwidgetdisplayer id="uniprot_keywords" title="UniProt Keywords"
+                                 link="org.intermine.bio.web.widget.UniProtKeywordsURLQuery"
+                                 dataSetLoader="org.intermine.bio.web.widget.UniProtKeywordsLdr"
+                                 label="Keyword"
+                                 description="UniProt keywords enriched for proteins in this list."
+                                 typeClass="org.flymine.model.genomic.Protein" />
+
+
+      <enrichmentwidgetdisplayer id="go_enrichment" title="Gene Ontology Enrichment"
+                                 link="org.intermine.bio.web.widget.GoStatURLQuery"
+                                 dataSetLoader="org.intermine.bio.web.widget.GoStatLdr"
+                                 description="GO terms enriched for items in this list."
+                                 label="GO Term"
+                                 filters="biological_process,cellular_component,molecular_function"
+                                 filterLabel="Ontology"
+                                 typeClass="org.flymine.model.genomic.Gene,org.flymine.model.genomic.Protein"
+                                 externalLink="http://amigo.geneontology.org/cgi-bin/amigo/term-details.cgi?term=" />
 
 </webconfig>
