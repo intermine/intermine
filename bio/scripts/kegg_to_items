@@ -1,0 +1,93 @@
+#!/usr/bin/perl
+
+use warnings;
+use strict;
+
+BEGIN {
+  push (@INC, ($0 =~ m:(.*)/.*:)[0] . '/../../intermine/perl/lib');
+}
+
+use XML::Writer;
+use InterMine::Item;
+use InterMine::ItemFactory;
+use InterMine::Model;
+
+if (@ARGV != 5) {
+  die "usage: $0 data_source taxon_id model_file kegg_map_title_file kegg_gene_map\n";
+}
+
+my ($data_source, $taxon_id, $model_file, $map_title_filename, $gene_map_filename) = @ARGV;
+
+my @items = ();
+
+my $model = new InterMine::Model(file => $model_file);
+
+my $item_factory = new InterMine::ItemFactory(model => $model);
+
+my $data_source_item = make_item("DataSource");
+$data_source_item->set('name', $data_source);
+
+my $data_set_item = make_item("DataSet");
+$data_set_item->set('title', "$data_source data set for taxon id: $taxon_id");
+
+my $org_item = make_item("Organism");
+$org_item->set("taxonId", $taxon_id);
+
+sub make_item
+{
+  my $implements = shift;
+  my $item = $item_factory->make_item(implements => $implements);
+  push @items, $item;
+  if ($item->valid_field('organism')) {
+    $item->set('organism', $org_item);
+  }
+  return $item;
+}
+
+# a map from pathway id to pathway item
+my %pathways = ();
+
+open my $map_title_file, '<', $map_title_filename
+  or die "can't open $map_title_filename for reading: $!\n";
+
+while (my $line = <$map_title_file>) {
+  chomp $line;
+
+  my $pathway_item = make_item("Pathway");
+
+  my ($pathway_identifier, $pathway_title) = split /\t/, $line;
+
+  $pathway_item->set('identifier', $pathway_identifier);
+  $pathway_item->set('name', $pathway_title);
+
+  $pathways{$pathway_identifier} = $pathway_item;
+}
+
+close $map_title_file or die "can't close $map_title_filename\n";
+
+open my $gene_map_file, '<', $gene_map_filename
+  or die "can't open $gene_map_filename for reading: $!\n";
+
+while (my $line = <$gene_map_file>) {
+  chomp $line;
+
+  my $gene_item = make_item("Gene");
+
+  my ($gene_name, $pathways_string) = split /\t/, $line;
+
+  $gene_item->set('primaryIdentifier', $gene_name);
+
+  my @pathway_identifiers = split / /, $pathways_string;
+
+  $gene_item->set('pathways', [map {$pathways{$_}} @pathway_identifiers]);
+}
+
+my $writer = new XML::Writer(DATA_MODE => 1, DATA_INDENT => 3);
+
+$writer->startTag("items");
+
+for my $item (@items) {
+  $item->as_xml($writer);
+}
+
+$writer->endTag("items");
