@@ -2806,1259 +2806,1259 @@
     </template>
   </template-queries>
 <tags>
-  <tag name="aspect:Gene Ontology" objectIdentifier="OrganismGoterm_genesPointMutations" type="template">
+  <tag name="im:aspect:Gene Ontology" objectIdentifier="OrganismGoterm_genesPointMutations" type="template">
   </tag>
-  <tag name="Aspect:Protein Interactions" objectIdentifier="interactionsForOrganism" type="template">
+  <tag name="im:aspect:Protein Interactions" objectIdentifier="interactionsForOrganism" type="template">
   </tag>
-  <tag name="aspect: Gene Ontology" objectIdentifier="OrganismGoTerm_Gene" type="template">
+  <tag name="im:aspect: Gene Ontology" objectIdentifier="OrganismGoTerm_Gene" type="template">
   </tag>
-  <tag name="aspect: Gene Ontology" objectIdentifier="Organism_GoTerm_Gene" type="template">
+  <tag name="im:aspect: Gene Ontology" objectIdentifier="Organism_GoTerm_Gene" type="template">
   </tag>
-  <tag name="aspect: Gene Ontology" objectIdentifier="OrganismGoTerm_GeneWithannotation" type="template">
+  <tag name="im:aspect: Gene Ontology" objectIdentifier="OrganismGoTerm_GeneWithannotation" type="template">
   </tag>
-  <tag name="aspect: INDAC" objectIdentifier="INDAC_GeneChromosomeLocation" type="template">
+  <tag name="im:aspect: INDAC" objectIdentifier="INDAC_GeneChromosomeLocation" type="template">
   </tag>
-  <tag name="aspect: Protein Interactions" objectIdentifier="Gene_ProteinInteractingproteinConfidenceOtherDetails" type="template">
+  <tag name="im:aspect: Protein Interactions" objectIdentifier="Gene_ProteinInteractingproteinConfidenceOtherDetails" type="template">
   </tag>
-  <tag name="aspect: Protein Interactions" objectIdentifier="Dataset_proteinInteractions" type="template">
+  <tag name="im:aspect: Protein Interactions" objectIdentifier="Dataset_proteinInteractions" type="template">
   </tag>
-  <tag name="aspect: Protein Interactions" objectIdentifier="Gene_ProteinInteractingproteinPfamdomainStructure" type="template">
+  <tag name="im:aspect: Protein Interactions" objectIdentifier="Gene_ProteinInteractingproteinPfamdomainStructure" type="template">
   </tag>
-  <tag name="aspect: Protein Structure" objectIdentifier="Protein_Structure" type="template">
+  <tag name="im:aspect: Protein Structure" objectIdentifier="Protein_Structure" type="template">
   </tag>
-  <tag name="aspect: Protein Structure" objectIdentifier="Organism_GeneProteinStructure" type="template">
+  <tag name="im:aspect: Protein Structure" objectIdentifier="Organism_GeneProteinStructure" type="template">
   </tag>
-  <tag name="aspect:Binding Sites" objectIdentifier="org.flymine.model.genomic.ProteinBindingSite" type="class">
+  <tag name="im:aspect:Binding Sites" objectIdentifier="org.flymine.model.genomic.ProteinBindingSite" type="class">
   </tag>
-  <tag name="aspect:Binding Sites" objectIdentifier="TFbindingsite2geneAndFactor" type="template">
+  <tag name="im:aspect:Binding Sites" objectIdentifier="TFbindingsite2geneAndFactor" type="template">
   </tag>
-  <tag name="aspect:Binding Sites" objectIdentifier="BS_forTF" type="template">
+  <tag name="im:aspect:Binding Sites" objectIdentifier="BS_forTF" type="template">
   </tag>
-  <tag name="aspect:Binding Sites" objectIdentifier="FlyBaseProteinBindingSites" type="template">
+  <tag name="im:aspect:Binding Sites" objectIdentifier="FlyBaseProteinBindingSites" type="template">
   </tag>
-  <tag name="aspect:Binding Sites" objectIdentifier="org.flymine.model.genomic.BindingSite" type="class">
+  <tag name="im:aspect:Binding Sites" objectIdentifier="org.flymine.model.genomic.BindingSite" type="class">
   </tag>
-  <tag name="aspect:Binding Sites" objectIdentifier="FlyRegBindingSites" type="template">
+  <tag name="im:aspect:Binding Sites" objectIdentifier="FlyRegBindingSites" type="template">
   </tag>
-  <tag name="aspect:Binding Sites" objectIdentifier="Gene.regulatoryRegions" type="collection">
+  <tag name="im:aspect:Binding Sites" objectIdentifier="Gene.regulatoryRegions" type="collection">
   </tag>
-  <tag name="aspect:Binding Sites" objectIdentifier="TFBindingsitesequence2geneAndFActor" type="template">
+  <tag name="im:aspect:Binding Sites" objectIdentifier="TFBindingsitesequence2geneAndFActor" type="template">
   </tag>
-  <tag name="aspect:Binding Sites" objectIdentifier="org.flymine.model.genomic.Gene" type="class">
+  <tag name="im:aspect:Binding Sites" objectIdentifier="org.flymine.model.genomic.Gene" type="class">
   </tag>
-  <tag name="aspect:Binding Sites" objectIdentifier="Gene2TFbindingsite" type="template">
+  <tag name="im:aspect:Binding Sites" objectIdentifier="Gene2TFbindingsite" type="template">
   </tag>
-  <tag name="aspect:Binding Sites" objectIdentifier="org.flymine.model.genomic.TFBindingSite" type="class">
+  <tag name="im:aspect:Binding Sites" objectIdentifier="org.flymine.model.genomic.TFBindingSite" type="class">
   </tag>
-  <tag name="aspect:Binding Sites" objectIdentifier="chromsosomeLocation2TFbindingSites" type="template">
+  <tag name="im:aspect:Binding Sites" objectIdentifier="chromsosomeLocation2TFbindingSites" type="template">
   </tag>
-  <tag name="aspect:Binding Sites" objectIdentifier="transcriptionFactors1" type="template">
+  <tag name="im:aspect:Binding Sites" objectIdentifier="transcriptionFactors1" type="template">
   </tag>
-  <tag name="aspect:Binding Sites" objectIdentifier="Gene_for2TFs" type="template">
+  <tag name="im:aspect:Binding Sites" objectIdentifier="Gene_for2TFs" type="template">
   </tag>
-  <tag name="aspect:Comparative Genomics" objectIdentifier="orthologues2transcripts" type="template">
+  <tag name="im:aspect:Comparative Genomics" objectIdentifier="orthologues2transcripts" type="template">
   </tag>
-  <tag name="aspect:Comparative Genomics" objectIdentifier="ProteinInteractions2orthologuesAndPhenotypes" type="template">
+  <tag name="im:aspect:Comparative Genomics" objectIdentifier="ProteinInteractions2orthologuesAndPhenotypes" type="template">
   </tag>
-  <tag name="aspect:Comparative Genomics" objectIdentifier="Gene_orthol_interaction" type="template">
+  <tag name="im:aspect:Comparative Genomics" objectIdentifier="Gene_orthol_interaction" type="template">
   </tag>
-  <tag name="aspect:Comparative Genomics" objectIdentifier="Gene_paralogues" type="template">
+  <tag name="im:aspect:Comparative Genomics" objectIdentifier="Gene_paralogues" type="template">
   </tag>
-  <tag name="aspect:Comparative Genomics" objectIdentifier="AAS_phenotype2genesWithOrthologues" type="template">
+  <tag name="im:aspect:Comparative Genomics" objectIdentifier="AAS_phenotype2genesWithOrthologues" type="template">
   </tag>
-  <tag name="aspect:Comparative Genomics" objectIdentifier="AAQ_GeneOrtholSpecies" type="template">
+  <tag name="im:aspect:Comparative Genomics" objectIdentifier="AAQ_GeneOrtholSpecies" type="template">
   </tag>
-  <tag name="aspect:Comparative Genomics" objectIdentifier="ProteinInteractionsOrthologuesRNAi_forProtein" type="template">
+  <tag name="im:aspect:Comparative Genomics" objectIdentifier="ProteinInteractionsOrthologuesRNAi_forProtein" type="template">
   </tag>
-  <tag name="aspect:Comparative Genomics" objectIdentifier="ProteinInteraction_OrthologueRNAi" type="template">
+  <tag name="im:aspect:Comparative Genomics" objectIdentifier="ProteinInteraction_OrthologueRNAi" type="template">
   </tag>
-  <tag name="aspect:Comparative Genomics" objectIdentifier="Gene_OrthologuesProteinInteraction" type="template">
+  <tag name="im:aspect:Comparative Genomics" objectIdentifier="Gene_OrthologuesProteinInteraction" type="template">
   </tag>
-  <tag name="aspect:Comparative Genomics" objectIdentifier="Gene_TranscriptOrthologues" type="template">
+  <tag name="im:aspect:Comparative Genomics" objectIdentifier="Gene_TranscriptOrthologues" type="template">
   </tag>
-  <tag name="aspect:Comparative Genomics" objectIdentifier="Gene_OrthologueOrganism" type="template">
+  <tag name="im:aspect:Comparative Genomics" objectIdentifier="Gene_OrthologueOrganism" type="template">
   </tag>
-  <tag name="aspect:Comparative Genomics" objectIdentifier="GeneOrganism_OrthologueRNAi" type="template">
+  <tag name="im:aspect:Comparative Genomics" objectIdentifier="GeneOrganism_OrthologueRNAi" type="template">
   </tag>
-  <tag name="aspect:Comparative Genomics" objectIdentifier="OrthologueInOneSpecies" type="template">
+  <tag name="im:aspect:Comparative Genomics" objectIdentifier="OrthologueInOneSpecies" type="template">
   </tag>
-  <tag name="aspect:Comparative Genomics" objectIdentifier="interologsOrganisms" type="template">
+  <tag name="im:aspect:Comparative Genomics" objectIdentifier="interologsOrganisms" type="template">
   </tag>
-  <tag name="aspect:Comparative Genomics" objectIdentifier="GeneOrganism_OrthologueOrganismGO" type="template">
+  <tag name="im:aspect:Comparative Genomics" objectIdentifier="GeneOrganism_OrthologueOrganismGO" type="template">
   </tag>
-  <tag name="aspect:Comparative Genomics" objectIdentifier="Gene_RNAiOrthologue" type="template">
+  <tag name="im:aspect:Comparative Genomics" objectIdentifier="Gene_RNAiOrthologue" type="template">
   </tag>
-  <tag name="aspect:Comparative Genomics" objectIdentifier="Gene_OrthologueProteinInteraction" type="template">
+  <tag name="im:aspect:Comparative Genomics" objectIdentifier="Gene_OrthologueProteinInteraction" type="template">
   </tag>
-  <tag name="aspect:Comparative Genomics" objectIdentifier="ProteinInteractions2orthologues" type="template">
+  <tag name="im:aspect:Comparative Genomics" objectIdentifier="ProteinInteractions2orthologues" type="template">
   </tag>
-  <tag name="aspect:Comparative Genomics" objectIdentifier="RNAiPhenotype_GeneOrthologue" type="template">
+  <tag name="im:aspect:Comparative Genomics" objectIdentifier="RNAiPhenotype_GeneOrthologue" type="template">
   </tag>
-  <tag name="aspect:Comparative Genomics" objectIdentifier="ProteinInteractionsOrthologues_forProtein" type="template">
+  <tag name="im:aspect:Comparative Genomics" objectIdentifier="ProteinInteractionsOrthologues_forProtein" type="template">
   </tag>
-  <tag name="aspect:Comparative Genomics" objectIdentifier="GeneOrganism_OrthologueOrganism" type="template">
+  <tag name="im:aspect:Comparative Genomics" objectIdentifier="GeneOrganism_OrthologueOrganism" type="template">
   </tag>
-  <tag name="aspect:Comparative Genomics" objectIdentifier="interloguesOrganisms" type="template">
+  <tag name="im:aspect:Comparative Genomics" objectIdentifier="interloguesOrganisms" type="template">
   </tag>
-  <tag name="aspect:Comparative Genomics" objectIdentifier="AAO_OrthologuesWithGO2" type="template">
+  <tag name="im:aspect:Comparative Genomics" objectIdentifier="AAO_OrthologuesWithGO2" type="template">
   </tag>
-  <tag name="aspect:Comparative Genomics" objectIdentifier="Gene_Orthologue" type="template">
+  <tag name="im:aspect:Comparative Genomics" objectIdentifier="Gene_Orthologue" type="template">
   </tag>
-  <tag name="aspect:Comparative Genomics" objectIdentifier="TranscriptOrthologuesFromGene" type="template">
+  <tag name="im:aspect:Comparative Genomics" objectIdentifier="TranscriptOrthologuesFromGene" type="template">
   </tag>
-  <tag name="aspect:Comparative Genomics" objectIdentifier="AAP_gene2orthologues" type="template">
+  <tag name="im:aspect:Comparative Genomics" objectIdentifier="AAP_gene2orthologues" type="template">
   </tag>
-  <tag name="aspect:Comparative Genomics" objectIdentifier="AAX_genes2CERNAi" type="template">
+  <tag name="im:aspect:Comparative Genomics" objectIdentifier="AAX_genes2CERNAi" type="template">
   </tag>
-  <tag name="aspect:Comparative Genomics" objectIdentifier="tempOrthologuesPhenotypes" type="template">
+  <tag name="im:aspect:Comparative Genomics" objectIdentifier="tempOrthologuesPhenotypes" type="template">
   </tag>
-  <tag name="aspect:Comparative Genomics" objectIdentifier="OthologuesRnai_forProtein" type="template">
+  <tag name="im:aspect:Comparative Genomics" objectIdentifier="OthologuesRnai_forProtein" type="template">
   </tag>
-  <tag name="aspect:Comparative Genomics" objectIdentifier="org.flymine.model.genomic.Orthologue" type="class">
+  <tag name="im:aspect:Comparative Genomics" objectIdentifier="org.flymine.model.genomic.Orthologue" type="class">
   </tag>
-  <tag name="aspect:Comparative Genomics" objectIdentifier="AAO_GeneOrthologuesSequence" type="template">
+  <tag name="im:aspect:Comparative Genomics" objectIdentifier="AAO_GeneOrthologuesSequence" type="template">
   </tag>
-  <tag name="aspect:Comparative Genomics" objectIdentifier="AAY_orthologues" type="template">
+  <tag name="im:aspect:Comparative Genomics" objectIdentifier="AAY_orthologues" type="template">
   </tag>
-  <tag name="aspect:Comparative Genomics" objectIdentifier="geneDetailsOrthologues" type="template">
+  <tag name="im:aspect:Comparative Genomics" objectIdentifier="geneDetailsOrthologues" type="template">
   </tag>
-  <tag name="aspect:Comparative Genomics" objectIdentifier="geneGoOrthologues" type="template">
+  <tag name="im:aspect:Comparative Genomics" objectIdentifier="geneGoOrthologues" type="template">
   </tag>
-  <tag name="aspect:Comparative Genomics" objectIdentifier="Gene.orthologues" type="collection">
+  <tag name="im:aspect:Comparative Genomics" objectIdentifier="Gene.orthologues" type="collection">
   </tag>
-  <tag name="aspect:Comparative Genomics" objectIdentifier="Gene_TranscriptOrthologue" type="template">
+  <tag name="im:aspect:Comparative Genomics" objectIdentifier="Gene_TranscriptOrthologue" type="template">
   </tag>
-  <tag name="aspect:Comparative Genomics" objectIdentifier="Protein_Orthologue_RNAi" type="template">
+  <tag name="im:aspect:Comparative Genomics" objectIdentifier="Protein_Orthologue_RNAi" type="template">
   </tag>
-  <tag name="aspect:Comparative Genomics" objectIdentifier="Gene_OrthologueGO" type="template">
+  <tag name="im:aspect:Comparative Genomics" objectIdentifier="Gene_OrthologueGO" type="template">
   </tag>
-  <tag name="aspect:Comparative Genomics" objectIdentifier="Protein_ProteinInteractionOrthologueRNAi" type="template">
+  <tag name="im:aspect:Comparative Genomics" objectIdentifier="Protein_ProteinInteractionOrthologueRNAi" type="template">
   </tag>
-  <tag name="aspect:Comparative Genomics" objectIdentifier="Gene_OrthologuesGO" type="template">
+  <tag name="im:aspect:Comparative Genomics" objectIdentifier="Gene_OrthologuesGO" type="template">
   </tag>
-  <tag name="aspect:Comparative Genomics" objectIdentifier="Gene_OrthologueRNAi" type="template">
+  <tag name="im:aspect:Comparative Genomics" objectIdentifier="Gene_OrthologueRNAi" type="template">
   </tag>
-  <tag name="aspect:Comparative Genomics" objectIdentifier="AAAA_Symbol_toCG" type="template">
+  <tag name="im:aspect:Comparative Genomics" objectIdentifier="AAAA_Symbol_toCG" type="template">
   </tag>
-  <tag name="aspect:Comparative Genomics" objectIdentifier="AAR_orthologues2transcripts" type="template">
+  <tag name="im:aspect:Comparative Genomics" objectIdentifier="AAR_orthologues2transcripts" type="template">
   </tag>
-  <tag name="aspect:Comparative Genomics" objectIdentifier="org.flymine.model.genomic.Gene" type="class">
+  <tag name="im:aspect:Comparative Genomics" objectIdentifier="org.flymine.model.genomic.Gene" type="class">
   </tag>
-  <tag name="aspect:Comparative Genomics" objectIdentifier="AAQ_orthologues" type="template">
+  <tag name="im:aspect:Comparative Genomics" objectIdentifier="AAQ_orthologues" type="template">
   </tag>
-  <tag name="aspect:Comparative Genomics" objectIdentifier="GeneSymbol_Identifier" type="template">
+  <tag name="im:aspect:Comparative Genomics" objectIdentifier="GeneSymbol_Identifier" type="template">
   </tag>
-  <tag name="aspect:Comparative Genomics" objectIdentifier="org.flymine.model.genomic.Paralogue" type="class">
+  <tag name="im:aspect:Comparative Genomics" objectIdentifier="org.flymine.model.genomic.Paralogue" type="class">
   </tag>
-  <tag name="aspect:Comparative Genomics" objectIdentifier="orthologuesGenePhenotype" type="template">
+  <tag name="im:aspect:Comparative Genomics" objectIdentifier="orthologuesGenePhenotype" type="template">
   </tag>
-  <tag name="aspect:Comparative Genomics" objectIdentifier="Protein_OrthologueRNAi" type="template">
+  <tag name="im:aspect:Comparative Genomics" objectIdentifier="Protein_OrthologueRNAi" type="template">
   </tag>
-  <tag name="aspect:Comparative Genomics" objectIdentifier="interologuesOrganisms" type="template">
+  <tag name="im:aspect:Comparative Genomics" objectIdentifier="interologuesOrganisms" type="template">
   </tag>
-  <tag name="aspect:Comparative Genomics" objectIdentifier="phenotype2genesWithOrthologues" type="template">
+  <tag name="im:aspect:Comparative Genomics" objectIdentifier="phenotype2genesWithOrthologues" type="template">
   </tag>
-  <tag name="aspect:Comparative Genomics" objectIdentifier="AAZ_OrthologuesWithGO2" type="template">
+  <tag name="im:aspect:Comparative Genomics" objectIdentifier="AAZ_OrthologuesWithGO2" type="template">
   </tag>
-  <tag name="aspect:Comparative Genomics" objectIdentifier="Protein_ProteinInteractionOrthologue" type="template">
+  <tag name="im:aspect:Comparative Genomics" objectIdentifier="Protein_ProteinInteractionOrthologue" type="template">
   </tag>
-  <tag name="aspect:Comparative Genomics" objectIdentifier="AAT_RNAiwithOrthologues" type="template">
+  <tag name="im:aspect:Comparative Genomics" objectIdentifier="AAT_RNAiwithOrthologues" type="template">
   </tag>
-  <tag name="aspect:Comparative Genomics" objectIdentifier="AAT_RNAiwithOrthologues2" type="template">
+  <tag name="im:aspect:Comparative Genomics" objectIdentifier="AAT_RNAiwithOrthologues2" type="template">
   </tag>
-  <tag name="aspect:Comparative Genomics" objectIdentifier="GeneOrganism1_OrthologueOrganism2" type="template">
+  <tag name="im:aspect:Comparative Genomics" objectIdentifier="GeneOrganism1_OrthologueOrganism2" type="template">
   </tag>
-  <tag name="aspect:Disease" objectIdentifier="org.flymine.model.genomic.Orthologue" type="class">
+  <tag name="im:aspect:Disease" objectIdentifier="org.flymine.model.genomic.Orthologue" type="class">
   </tag>
-  <tag name="aspect:Disease" objectIdentifier="Gene_GeneDiseaseEValue" type="template">
+  <tag name="im:aspect:Disease" objectIdentifier="Gene_GeneDiseaseEValue" type="template">
   </tag>
-  <tag name="aspect:Disease" objectIdentifier="geneEvalueDiseaseRnai" type="template">
+  <tag name="im:aspect:Disease" objectIdentifier="geneEvalueDiseaseRnai" type="template">
   </tag>
-  <tag name="aspect:Disease" objectIdentifier="Disease_GeneOrthologueEValue" type="template">
+  <tag name="im:aspect:Disease" objectIdentifier="Disease_GeneOrthologueEValue" type="template">
   </tag>
-  <tag name="aspect:Disease" objectIdentifier="DiseaseGenesMatch" type="template">
+  <tag name="im:aspect:Disease" objectIdentifier="DiseaseGenesMatch" type="template">
   </tag>
-  <tag name="aspect:Disease" objectIdentifier="Disease_GeneOrthologue" type="template">
+  <tag name="im:aspect:Disease" objectIdentifier="Disease_GeneOrthologue" type="template">
   </tag>
-  <tag name="aspect:Disease" objectIdentifier="Gene_OrthologueDisease" type="template">
+  <tag name="im:aspect:Disease" objectIdentifier="Gene_OrthologueDisease" type="template">
   </tag>
-  <tag name="aspect:Disease" objectIdentifier="Gene_OrthologueDiseaseEValue" type="template">
+  <tag name="im:aspect:Disease" objectIdentifier="Gene_OrthologueDiseaseEValue" type="template">
   </tag>
-  <tag name="aspect:Disease" objectIdentifier="DiseaseGenesMatchEvalue" type="template">
+  <tag name="im:aspect:Disease" objectIdentifier="DiseaseGenesMatchEvalue" type="template">
   </tag>
-  <tag name="aspect:Disease" objectIdentifier="Gene_OrthologueDiseaseRNAi" type="template">
+  <tag name="im:aspect:Disease" objectIdentifier="Gene_OrthologueDiseaseRNAi" type="template">
   </tag>
-  <tag name="aspect:Disease" objectIdentifier="org.flymine.model.genomic.BlastMatch" type="class">
+  <tag name="im:aspect:Disease" objectIdentifier="org.flymine.model.genomic.BlastMatch" type="class">
   </tag>
-  <tag name="aspect:Disease" objectIdentifier="Gene_GeneDisease" type="template">
+  <tag name="im:aspect:Disease" objectIdentifier="Gene_GeneDisease" type="template">
   </tag>
-  <tag name="aspect:Disease" objectIdentifier="AAAA_Symbol_toCG" type="template">
+  <tag name="im:aspect:Disease" objectIdentifier="AAAA_Symbol_toCG" type="template">
   </tag>
-  <tag name="aspect:Disease" objectIdentifier="org.flymine.model.genomic.Gene" type="class">
+  <tag name="im:aspect:Disease" objectIdentifier="org.flymine.model.genomic.Gene" type="class">
   </tag>
-  <tag name="aspect:Disease" objectIdentifier="geneEvalueDisease" type="template">
+  <tag name="im:aspect:Disease" objectIdentifier="geneEvalueDisease" type="template">
   </tag>
-  <tag name="aspect:Disease" objectIdentifier="Gene.omimDiseases" type="collection">
+  <tag name="im:aspect:Disease" objectIdentifier="Gene.omimDiseases" type="collection">
   </tag>
-  <tag name="aspect:Disease" objectIdentifier="GeneSymbol_Identifier" type="template">
+  <tag name="im:aspect:Disease" objectIdentifier="GeneSymbol_Identifier" type="template">
   </tag>
-  <tag name="aspect:Disease" objectIdentifier="geneBlastMatchDisease" type="template">
+  <tag name="im:aspect:Disease" objectIdentifier="geneBlastMatchDisease" type="template">
   </tag>
-  <tag name="aspect:Disease" objectIdentifier="org.flymine.model.genomic.Disease" type="class">
+  <tag name="im:aspect:Disease" objectIdentifier="org.flymine.model.genomic.Disease" type="class">
   </tag>
-  <tag name="aspect:DrosDel" objectIdentifier="ChromLocation_DrosDelDeletion" type="template">
+  <tag name="im:aspect:DrosDel" objectIdentifier="ChromLocation_DrosDelDeletion" type="template">
   </tag>
-  <tag name="aspect:DrosDel" objectIdentifier="Gene_Insertion" type="template">
+  <tag name="im:aspect:DrosDel" objectIdentifier="Gene_Insertion" type="template">
   </tag>
-  <tag name="aspect:DrosDel" objectIdentifier="AAAA_Symbol_toCG" type="template">
+  <tag name="im:aspect:DrosDel" objectIdentifier="AAAA_Symbol_toCG" type="template">
   </tag>
-  <tag name="aspect:DrosDel" objectIdentifier="drosDelGeneAll" type="template">
+  <tag name="im:aspect:DrosDel" objectIdentifier="drosDelGeneAll" type="template">
   </tag>
-  <tag name="aspect:DrosDel" objectIdentifier="org.flymine.model.genomic.Deletion" type="class">
+  <tag name="im:aspect:DrosDel" objectIdentifier="org.flymine.model.genomic.Deletion" type="class">
   </tag>
-  <tag name="aspect:DrosDel" objectIdentifier="Chromosome_GeneInsertionLocation" type="template">
+  <tag name="im:aspect:DrosDel" objectIdentifier="Chromosome_GeneInsertionLocation" type="template">
   </tag>
-  <tag name="aspect:DrosDel" objectIdentifier="org.flymine.model.genomic.InsertionSite" type="class">
+  <tag name="im:aspect:DrosDel" objectIdentifier="org.flymine.model.genomic.InsertionSite" type="class">
   </tag>
-  <tag name="aspect:DrosDel" objectIdentifier="Chromosome_RegionOverlappingInsertion" type="template">
+  <tag name="im:aspect:DrosDel" objectIdentifier="Chromosome_RegionOverlappingInsertion" type="template">
   </tag>
-  <tag name="aspect:DrosDel" objectIdentifier="GeneSymbol_Identifier" type="template">
+  <tag name="im:aspect:DrosDel" objectIdentifier="GeneSymbol_Identifier" type="template">
   </tag>
-  <tag name="aspect:DrosDel" objectIdentifier="drosDelGeneAvailable" type="template">
+  <tag name="im:aspect:DrosDel" objectIdentifier="drosDelGeneAvailable" type="template">
   </tag>
-  <tag name="aspect:DrosDel" objectIdentifier="Gene_DrosDelDeletion" type="template">
+  <tag name="im:aspect:DrosDel" objectIdentifier="Gene_DrosDelDeletion" type="template">
   </tag>
-  <tag name="aspect:DrosDel" objectIdentifier="Insertion_GeneLocation" type="template">
+  <tag name="im:aspect:DrosDel" objectIdentifier="Insertion_GeneLocation" type="template">
   </tag>
-  <tag name="aspect:DrosDel" objectIdentifier="org.flymine.model.genomic.TransposableElementInsertionSite" type="class">
+  <tag name="im:aspect:DrosDel" objectIdentifier="org.flymine.model.genomic.TransposableElementInsertionSite" type="class">
   </tag>
-  <tag name="aspect:DrosDel" objectIdentifier="Chromosome_DrosDelDeletion" type="template">
+  <tag name="im:aspect:DrosDel" objectIdentifier="Chromosome_DrosDelDeletion" type="template">
   </tag>
-  <tag name="aspect:DrosDel" objectIdentifier="Gene_DrosDelDeletionAvailable" type="template">
+  <tag name="im:aspect:DrosDel" objectIdentifier="Gene_DrosDelDeletionAvailable" type="template">
   </tag>
-  <tag name="aspect:DrosDel" objectIdentifier="gene2DrosDelDeletion1" type="template">
+  <tag name="im:aspect:DrosDel" objectIdentifier="gene2DrosDelDeletion1" type="template">
   </tag>
-  <tag name="aspect:DrosDel" objectIdentifier="chromosomeLocation2Deletion2" type="template">
+  <tag name="im:aspect:DrosDel" objectIdentifier="chromosomeLocation2Deletion2" type="template">
   </tag>
-  <tag name="aspect:DrosDel" objectIdentifier="org.flymine.model.genomic.Gene" type="class">
+  <tag name="im:aspect:DrosDel" objectIdentifier="org.flymine.model.genomic.Gene" type="class">
   </tag>
-  <tag name="aspect:DrosDel" objectIdentifier="DrosDel overlapping gene coordinates" type="template">
+  <tag name="im:aspect:DrosDel" objectIdentifier="DrosDel overlapping gene coordinates" type="template">
   </tag>
-  <tag name="aspect:DrosDel" objectIdentifier="DrosDel_ChromosomeGeneTranscriptINDAC" type="template">
+  <tag name="im:aspect:DrosDel" objectIdentifier="DrosDel_ChromosomeGeneTranscriptINDAC" type="template">
   </tag>
-  <tag name="aspect:DrosDel" objectIdentifier="gene2DrosDelDeletion2" type="template">
+  <tag name="im:aspect:DrosDel" objectIdentifier="gene2DrosDelDeletion2" type="template">
   </tag>
-  <tag name="aspect:DrosDel" objectIdentifier="org.flymine.model.genomic.ChromosomalDeletion" type="class">
+  <tag name="im:aspect:DrosDel" objectIdentifier="org.flymine.model.genomic.ChromosomalDeletion" type="class">
   </tag>
-  <tag name="aspect:DrosDel" objectIdentifier="drosDel2indac1" type="template">
+  <tag name="im:aspect:DrosDel" objectIdentifier="drosDel2indac1" type="template">
   </tag>
-  <tag name="aspect:DrosDel" objectIdentifier="DrosDel_GeneLocation" type="template">
+  <tag name="im:aspect:DrosDel" objectIdentifier="DrosDel_GeneLocation" type="template">
   </tag>
-  <tag name="aspect:DrosDel" objectIdentifier="geneToInsertionSiteDetails" type="template">
+  <tag name="im:aspect:DrosDel" objectIdentifier="geneToInsertionSiteDetails" type="template">
   </tag>
-  <tag name="aspect:DrosDel" objectIdentifier="geneToInsertionSite" type="template">
+  <tag name="im:aspect:DrosDel" objectIdentifier="geneToInsertionSite" type="template">
   </tag>
-  <tag name="aspect:DrosDel" objectIdentifier="ChromosomalDeletion.element1" type="reference">
+  <tag name="im:aspect:DrosDel" objectIdentifier="ChromosomalDeletion.element1" type="reference">
   </tag>
-  <tag name="aspect:DrosDel" objectIdentifier="ChromosomalDeletion.element2" type="reference">
+  <tag name="im:aspect:DrosDel" objectIdentifier="ChromosomalDeletion.element2" type="reference">
   </tag>
-  <tag name="aspect:DrosDel" objectIdentifier="DrosDel_GeneChromosome" type="template">
+  <tag name="im:aspect:DrosDel" objectIdentifier="DrosDel_GeneChromosome" type="template">
   </tag>
-  <tag name="aspect:DrosDel" objectIdentifier="Gene_DrosDelDeletionInsertion" type="template">
+  <tag name="im:aspect:DrosDel" objectIdentifier="Gene_DrosDelDeletionInsertion" type="template">
   </tag>
-  <tag name="aspect:DrosDel" objectIdentifier="DrosDel_LocationGeneTranscriptINDAC" type="template">
+  <tag name="im:aspect:DrosDel" objectIdentifier="DrosDel_LocationGeneTranscriptINDAC" type="template">
   </tag>
-  <tag name="aspect:GO term" objectIdentifier="AAZ_OrthologuesWithGO2" type="template">
+  <tag name="im:aspect:GO term" objectIdentifier="AAZ_OrthologuesWithGO2" type="template">
   </tag>
-  <tag name="aspect:Gene Expression" objectIdentifier="ProbeSet_Gene_Transcript" type="template">
+  <tag name="im:aspect:Gene Expression" objectIdentifier="ProbeSet_Gene_Transcript" type="template">
   </tag>
-  <tag name="aspect:Gene Expression" objectIdentifier="GeneTissue_FlyAtlas" type="template">
+  <tag name="im:aspect:Gene Expression" objectIdentifier="GeneTissue_FlyAtlas" type="template">
   </tag>
-  <tag name="aspect:Gene Expression" objectIdentifier="Gene_TimeCourseResultGeneralStageRatio" type="template">
+  <tag name="im:aspect:Gene Expression" objectIdentifier="Gene_TimeCourseResultGeneralStageRatio" type="template">
   </tag>
-  <tag name="aspect:Gene Expression" objectIdentifier="Transcript.microarrayOligos" type="collection">
+  <tag name="im:aspect:Gene Expression" objectIdentifier="Transcript.microarrayOligos" type="collection">
   </tag>
-  <tag name="aspect:Gene Expression" objectIdentifier="Gene_TimeCourseResultGeneralStage" type="template">
+  <tag name="im:aspect:Gene Expression" objectIdentifier="Gene_TimeCourseResultGeneralStage" type="template">
   </tag>
-  <tag name="aspect:Gene Expression" objectIdentifier="GOterm2microarrayExperiment1" type="template">
+  <tag name="im:aspect:Gene Expression" objectIdentifier="GOterm2microarrayExperiment1" type="template">
   </tag>
-  <tag name="aspect:Gene Expression" objectIdentifier="Gene_TimeCourseResultSpecificStage" type="template">
+  <tag name="im:aspect:Gene Expression" objectIdentifier="Gene_TimeCourseResultSpecificStage" type="template">
   </tag>
-  <tag name="aspect:Gene Expression" objectIdentifier="Gene.microArrayResults" type="collection">
+  <tag name="im:aspect:Gene Expression" objectIdentifier="Gene.microArrayResults" type="collection">
   </tag>
-  <tag name="aspect:Gene Expression" objectIdentifier="geneTimeCourseResults" type="template">
+  <tag name="im:aspect:Gene Expression" objectIdentifier="geneTimeCourseResults" type="template">
   </tag>
-  <tag name="aspect:Gene Expression" objectIdentifier="GOterm2microarrayresult1" type="template">
+  <tag name="im:aspect:Gene Expression" objectIdentifier="GOterm2microarrayresult1" type="template">
   </tag>
-  <tag name="aspect:Gene Expression" objectIdentifier="Gene_TimeCourseResult" type="template">
+  <tag name="im:aspect:Gene Expression" objectIdentifier="Gene_TimeCourseResult" type="template">
   </tag>
-  <tag name="aspect:Gene Expression" objectIdentifier="org.flymine.model.genomic.MicroArrayExperiment" type="class">
+  <tag name="im:aspect:Gene Expression" objectIdentifier="org.flymine.model.genomic.MicroArrayExperiment" type="class">
   </tag>
-  <tag name="aspect:Gene Expression" objectIdentifier="Gene_FlyAtlas(tissue)" type="template">
+  <tag name="im:aspect:Gene Expression" objectIdentifier="Gene_FlyAtlas(tissue)" type="template">
   </tag>
-  <tag name="aspect:Gene Expression" objectIdentifier="GeneSymbol_Identifier" type="template">
+  <tag name="im:aspect:Gene Expression" objectIdentifier="GeneSymbol_Identifier" type="template">
   </tag>
-  <tag name="aspect:Gene Expression" objectIdentifier="AAAA_Symbol_toCG" type="template">
+  <tag name="im:aspect:Gene Expression" objectIdentifier="AAAA_Symbol_toCG" type="template">
   </tag>
-  <tag name="aspect:Gene Expression" objectIdentifier="Tissue_Flyatlas" type="template">
+  <tag name="im:aspect:Gene Expression" objectIdentifier="Tissue_Flyatlas" type="template">
   </tag>
-  <tag name="aspect:Gene Expression" objectIdentifier="Gene_Flyatlas" type="template">
+  <tag name="im:aspect:Gene Expression" objectIdentifier="Gene_Flyatlas" type="template">
   </tag>
-  <tag name="aspect:Gene Expression" objectIdentifier="Gene_FlyAtlas" type="template">
+  <tag name="im:aspect:Gene Expression" objectIdentifier="Gene_FlyAtlas" type="template">
   </tag>
-  <tag name="aspect:Gene Expression" objectIdentifier="org.flymine.model.genomic.Gene" type="class">
+  <tag name="im:aspect:Gene Expression" objectIdentifier="org.flymine.model.genomic.Gene" type="class">
   </tag>
-  <tag name="aspect:Gene Expression" objectIdentifier="Gene_TimeCourseResultSpecificStageRatio" type="template">
+  <tag name="im:aspect:Gene Expression" objectIdentifier="Gene_TimeCourseResultSpecificStageRatio" type="template">
   </tag>
-  <tag name="aspect:Gene Expression" objectIdentifier="Gene.clones" type="collection">
+  <tag name="im:aspect:Gene Expression" objectIdentifier="Gene.clones" type="collection">
   </tag>
-  <tag name="aspect:Gene Expression" objectIdentifier="Gene_Probe" type="template">
+  <tag name="im:aspect:Gene Expression" objectIdentifier="Gene_Probe" type="template">
   </tag>
-  <tag name="aspect:Gene Expression" objectIdentifier="TimeCourseDataGeneralStageRatio_genes" type="template">
+  <tag name="im:aspect:Gene Expression" objectIdentifier="TimeCourseDataGeneralStageRatio_genes" type="template">
   </tag>
-  <tag name="aspect:Gene Expression" objectIdentifier="TimeCourseDataGeneralStage_genes" type="template">
+  <tag name="im:aspect:Gene Expression" objectIdentifier="TimeCourseDataGeneralStage_genes" type="template">
   </tag>
-  <tag name="aspect:Gene Expression" objectIdentifier="geneToMicroarrayAllExpts" type="template">
+  <tag name="im:aspect:Gene Expression" objectIdentifier="geneToMicroarrayAllExpts" type="template">
   </tag>
-  <tag name="aspect:Gene Expression" objectIdentifier="GeneFlyatlas" type="template">
+  <tag name="im:aspect:Gene Expression" objectIdentifier="GeneFlyatlas" type="template">
   </tag>
-  <tag name="aspect:Gene Expression" objectIdentifier="org.flymine.model.genomic.FlyAtlasResult" type="class">
+  <tag name="im:aspect:Gene Expression" objectIdentifier="org.flymine.model.genomic.FlyAtlasResult" type="class">
   </tag>
-  <tag name="aspect:Gene Expression" objectIdentifier="TimeCourseDataSpecificStage_genes" type="template">
+  <tag name="im:aspect:Gene Expression" objectIdentifier="TimeCourseDataSpecificStage_genes" type="template">
   </tag>
-  <tag name="aspect:Gene Expression" objectIdentifier="org.flymine.model.genomic.CDNAClone" type="class">
+  <tag name="im:aspect:Gene Expression" objectIdentifier="org.flymine.model.genomic.CDNAClone" type="class">
   </tag>
-  <tag name="aspect:Gene Expression" objectIdentifier="microarrayResult2Experiment1" type="template">
+  <tag name="im:aspect:Gene Expression" objectIdentifier="microarrayResult2Experiment1" type="template">
   </tag>
-  <tag name="aspect:Gene Expression" objectIdentifier="Gene2MicroarrayExperiment1" type="template">
+  <tag name="im:aspect:Gene Expression" objectIdentifier="Gene2MicroarrayExperiment1" type="template">
   </tag>
-  <tag name="aspect:Gene Expression" objectIdentifier="Probe_Gene" type="template">
+  <tag name="im:aspect:Gene Expression" objectIdentifier="Probe_Gene" type="template">
   </tag>
-  <tag name="aspect:Gene Expression" objectIdentifier="ProbeSet_FlyAtlas" type="template">
+  <tag name="im:aspect:Gene Expression" objectIdentifier="ProbeSet_FlyAtlas" type="template">
   </tag>
-  <tag name="aspect:Gene Expression" objectIdentifier="TissueGenes" type="template">
+  <tag name="im:aspect:Gene Expression" objectIdentifier="TissueGenes" type="template">
   </tag>
-  <tag name="aspect:Gene Expression" objectIdentifier="Gene_FlyAtlasGO" type="template">
+  <tag name="im:aspect:Gene Expression" objectIdentifier="Gene_FlyAtlasGO" type="template">
   </tag>
-  <tag name="aspect:Gene Expression " objectIdentifier="TimeCourseDataSpecificStageRatio_genes" type="template">
+  <tag name="im:aspect:Gene Expression " objectIdentifier="TimeCourseDataSpecificStageRatio_genes" type="template">
   </tag>
-  <tag name="aspect:Gene Ontology" objectIdentifier="GeneSymbol_Identifier" type="template">
+  <tag name="im:aspect:Gene Ontology" objectIdentifier="GeneSymbol_Identifier" type="template">
   </tag>
-  <tag name="aspect:Gene Ontology" objectIdentifier="org.flymine.model.genomic.GOTerm" type="class">
+  <tag name="im:aspect:Gene Ontology" objectIdentifier="org.flymine.model.genomic.GOTerm" type="class">
   </tag>
-  <tag name="aspect:Gene Ontology" objectIdentifier="Organism_GoTerm_GeneWithannotation" type="template">
+  <tag name="im:aspect:Gene Ontology" objectIdentifier="Organism_GoTerm_GeneWithannotation" type="template">
   </tag>
-  <tag name="aspect:Gene Ontology" objectIdentifier="AAZ_OrthologuesWithGO2" type="template">
+  <tag name="im:aspect:Gene Ontology" objectIdentifier="AAZ_OrthologuesWithGO2" type="template">
   </tag>
-  <tag name="aspect:Gene Ontology" objectIdentifier="org.flymine.model.genomic.Gene" type="class">
+  <tag name="im:aspect:Gene Ontology" objectIdentifier="org.flymine.model.genomic.Gene" type="class">
   </tag>
-  <tag name="aspect:Gene Ontology" objectIdentifier="GOterm2microarrayresult1" type="template">
+  <tag name="im:aspect:Gene Ontology" objectIdentifier="GOterm2microarrayresult1" type="template">
   </tag>
-  <tag name="aspect:Gene Ontology" objectIdentifier="AAN_Gene_GoTerms" type="template">
+  <tag name="im:aspect:Gene Ontology" objectIdentifier="AAN_Gene_GoTerms" type="template">
   </tag>
-  <tag name="aspect:Gene Ontology" objectIdentifier="Gene.allGoAnnotation" type="collection">
+  <tag name="im:aspect:Gene Ontology" objectIdentifier="Gene.allGoAnnotation" type="collection">
   </tag>
-  <tag name="aspect:Gene Ontology" objectIdentifier="geneGoOrthologuesMoreSpecific" type="template">
+  <tag name="im:aspect:Gene Ontology" objectIdentifier="geneGoOrthologuesMoreSpecific" type="template">
   </tag>
-  <tag name="aspect:Gene Ontology" objectIdentifier="Gene.goAnnotation" type="collection">
+  <tag name="im:aspect:Gene Ontology" objectIdentifier="Gene.goAnnotation" type="collection">
   </tag>
-  <tag name="aspect:Gene Ontology" objectIdentifier="Gene_FlyAtlasGO" type="template">
+  <tag name="im:aspect:Gene Ontology" objectIdentifier="Gene_FlyAtlasGO" type="template">
   </tag>
-  <tag name="aspect:Gene Ontology" objectIdentifier="GO_GeneOrganism" type="template">
+  <tag name="im:aspect:Gene Ontology" objectIdentifier="GO_GeneOrganism" type="template">
   </tag>
-  <tag name="aspect:Gene Ontology" objectIdentifier="AAO_OrthologuesWithGO2" type="template">
+  <tag name="im:aspect:Gene Ontology" objectIdentifier="AAO_OrthologuesWithGO2" type="template">
   </tag>
-  <tag name="aspect:Gene Ontology" objectIdentifier="GO_Gene" type="template">
+  <tag name="im:aspect:Gene Ontology" objectIdentifier="GO_Gene" type="template">
   </tag>
-  <tag name="aspect:Gene Ontology" objectIdentifier="GOterm2microarrayExperiment1" type="template">
+  <tag name="im:aspect:Gene Ontology" objectIdentifier="GOterm2microarrayExperiment1" type="template">
   </tag>
-  <tag name="aspect:Gene Ontology" objectIdentifier="GO_GenesOrganism" type="template">
+  <tag name="im:aspect:Gene Ontology" objectIdentifier="GO_GenesOrganism" type="template">
   </tag>
-  <tag name="aspect:Gene Ontology" objectIdentifier="AAAA_Symbol_toCG" type="template">
+  <tag name="im:aspect:Gene Ontology" objectIdentifier="AAAA_Symbol_toCG" type="template">
   </tag>
-  <tag name="aspect:Gene Ontology" objectIdentifier="BioEntity.annotations" type="collection">
+  <tag name="im:aspect:Gene Ontology" objectIdentifier="BioEntity.annotations" type="collection">
   </tag>
-  <tag name="aspect:Gene Ontology" objectIdentifier="GOname_Gene" type="template">
+  <tag name="im:aspect:Gene Ontology" objectIdentifier="GOname_Gene" type="template">
   </tag>
-  <tag name="aspect:Gene Ontology" objectIdentifier="Gene_OrthologueGO" type="template">
+  <tag name="im:aspect:Gene Ontology" objectIdentifier="Gene_OrthologueGO" type="template">
   </tag>
-  <tag name="aspect:Gene Ontology" objectIdentifier="Protein_GO" type="template">
+  <tag name="im:aspect:Gene Ontology" objectIdentifier="Protein_GO" type="template">
   </tag>
-  <tag name="aspect:Gene Ontology" objectIdentifier="gene2goTermwithEvidence" type="template">
+  <tag name="im:aspect:Gene Ontology" objectIdentifier="gene2goTermwithEvidence" type="template">
   </tag>
-  <tag name="aspect:Gene Ontology" objectIdentifier="GOterm2GeneProteinInteraction" type="template">
+  <tag name="im:aspect:Gene Ontology" objectIdentifier="GOterm2GeneProteinInteraction" type="template">
   </tag>
-  <tag name="aspect:Gene Ontology" objectIdentifier="GOidentifier_Gene" type="template">
+  <tag name="im:aspect:Gene Ontology" objectIdentifier="GOidentifier_Gene" type="template">
   </tag>
-  <tag name="aspect:Gene Ontology" objectIdentifier="ProteinGeneGO" type="template">
+  <tag name="im:aspect:Gene Ontology" objectIdentifier="ProteinGeneGO" type="template">
   </tag>
-  <tag name="aspect:Gene Ontology" objectIdentifier="org.flymine.model.genomic.GOAnnotation" type="class">
+  <tag name="im:aspect:Gene Ontology" objectIdentifier="org.flymine.model.genomic.GOAnnotation" type="class">
   </tag>
-  <tag name="aspect:Gene Ontology" objectIdentifier="Protein_GOterms" type="template">
+  <tag name="im:aspect:Gene Ontology" objectIdentifier="Protein_GOterms" type="template">
   </tag>
-  <tag name="aspect:Gene Ontology" objectIdentifier="Gene_OrthologuesGO" type="template">
+  <tag name="im:aspect:Gene Ontology" objectIdentifier="Gene_OrthologuesGO" type="template">
   </tag>
-  <tag name="aspect:Gene Ontology" objectIdentifier="geneGoOrthologues" type="template">
+  <tag name="im:aspect:Gene Ontology" objectIdentifier="geneGoOrthologues" type="template">
   </tag>
-  <tag name="aspect:Gene Ontology" objectIdentifier="GeneOrganism_OrthologueOrganismGO" type="template">
+  <tag name="im:aspect:Gene Ontology" objectIdentifier="GeneOrganism_OrthologueOrganismGO" type="template">
   </tag>
-  <tag name="aspect:Gene Ontology" objectIdentifier="Gene_gotermDrosDelDeletion" type="template">
+  <tag name="im:aspect:Gene Ontology" objectIdentifier="Gene_gotermDrosDelDeletion" type="template">
   </tag>
-  <tag name="aspect:Gene Ontology" objectIdentifier="Gene_GO" type="template">
+  <tag name="im:aspect:Gene Ontology" objectIdentifier="Gene_GO" type="template">
   </tag>
-  <tag name="aspect:Gene Ontology" objectIdentifier="OrganismGOterm_GenesTEinsertionsite" type="template">
+  <tag name="im:aspect:Gene Ontology" objectIdentifier="OrganismGOterm_GenesTEinsertionsite" type="template">
   </tag>
-  <tag name="aspect:Gene Ontology" objectIdentifier="goTerm2genesWithEvidenceandWith" type="template">
+  <tag name="im:aspect:Gene Ontology" objectIdentifier="goTerm2genesWithEvidenceandWith" type="template">
   </tag>
-  <tag name="aspect:Gene Ontology" objectIdentifier="Gene_gotermTEinsertionsite" type="template">
+  <tag name="im:aspect:Gene Ontology" objectIdentifier="Gene_gotermTEinsertionsite" type="template">
   </tag>
-  <tag name="aspect:Gene Ontology" objectIdentifier="OrganismGoterm_genesDrosDelDeletion" type="template">
+  <tag name="im:aspect:Gene Ontology" objectIdentifier="OrganismGoterm_genesDrosDelDeletion" type="template">
   </tag>
-  <tag name="aspect:Gene Ontology" objectIdentifier="GOname_GOidentifier" type="template">
+  <tag name="im:aspect:Gene Ontology" objectIdentifier="GOname_GOidentifier" type="template">
   </tag>
-  <tag name="aspect:Gene Ontology" objectIdentifier="AAM_Gene2GO2NEW" type="template">
+  <tag name="im:aspect:Gene Ontology" objectIdentifier="AAM_Gene2GO2NEW" type="template">
   </tag>
-  <tag name="aspect:Gene Ontology" objectIdentifier="Gene_gotermPointMutation" type="template">
+  <tag name="im:aspect:Gene Ontology" objectIdentifier="Gene_gotermPointMutation" type="template">
   </tag>
-  <tag name="aspect:Gene Ontology" objectIdentifier="GO_name_Gene" type="template">
+  <tag name="im:aspect:Gene Ontology" objectIdentifier="GO_name_Gene" type="template">
   </tag>
-  <tag name="aspect:Gene Ontology" objectIdentifier="Gene_particularGoannotation" type="template">
+  <tag name="im:aspect:Gene Ontology" objectIdentifier="Gene_particularGoannotation" type="template">
   </tag>
-  <tag name="aspect:Genomics" objectIdentifier="Gene_Insertion" type="template">
+  <tag name="im:aspect:Genomics" objectIdentifier="Gene_Insertion" type="template">
   </tag>
-  <tag name="aspect:Genomics" objectIdentifier="AAS_phenotype2genesWithOrthologues" type="template">
+  <tag name="im:aspect:Genomics" objectIdentifier="AAS_phenotype2genesWithOrthologues" type="template">
   </tag>
-  <tag name="aspect:Genomics" objectIdentifier="Exon.gene" type="reference">
+  <tag name="im:aspect:Genomics" objectIdentifier="Exon.gene" type="reference">
   </tag>
-  <tag name="aspect:Genomics" objectIdentifier="org.flymine.model.genomic.Intron" type="class">
+  <tag name="im:aspect:Genomics" objectIdentifier="org.flymine.model.genomic.Intron" type="class">
   </tag>
-  <tag name="aspect:Genomics" objectIdentifier="ChromLocation_GeneTranscriptExon" type="template">
+  <tag name="im:aspect:Genomics" objectIdentifier="ChromLocation_GeneTranscriptExon" type="template">
   </tag>
-  <tag name="aspect:Genomics" objectIdentifier="org.flymine.model.genomic.CDS" type="class">
+  <tag name="im:aspect:Genomics" objectIdentifier="org.flymine.model.genomic.CDS" type="class">
   </tag>
-  <tag name="aspect:Genomics" objectIdentifier="Organism_GenePointMutation" type="template">
+  <tag name="im:aspect:Genomics" objectIdentifier="Organism_GenePointMutation" type="template">
   </tag>
-  <tag name="aspect:Genomics" objectIdentifier="geneTranscriptsExons" type="template">
+  <tag name="im:aspect:Genomics" objectIdentifier="geneTranscriptsExons" type="template">
   </tag>
-  <tag name="aspect:Genomics" objectIdentifier="geneToInsertionSite" type="template">
+  <tag name="im:aspect:Genomics" objectIdentifier="geneToInsertionSite" type="template">
   </tag>
-  <tag name="aspect:Genomics" objectIdentifier="MRNA.CDSs" type="collection">
+  <tag name="im:aspect:Genomics" objectIdentifier="MRNA.CDSs" type="collection">
   </tag>
-  <tag name="aspect:Genomics" objectIdentifier="tilingSpanToGene" type="template">
+  <tag name="im:aspect:Genomics" objectIdentifier="tilingSpanToGene" type="template">
   </tag>
-  <tag name="aspect:Genomics" objectIdentifier="AAP_gene2orthologues" type="template">
+  <tag name="im:aspect:Genomics" objectIdentifier="AAP_gene2orthologues" type="template">
   </tag>
-  <tag name="aspect:Genomics" objectIdentifier="AAT_RNAiwithOrthologues2" type="template">
+  <tag name="im:aspect:Genomics" objectIdentifier="AAT_RNAiwithOrthologues2" type="template">
   </tag>
-  <tag name="aspect:Genomics" objectIdentifier="Gene_gotermDrosDelDeletion" type="template">
+  <tag name="im:aspect:Genomics" objectIdentifier="Gene_gotermDrosDelDeletion" type="template">
   </tag>
-  <tag name="aspect:Genomics" objectIdentifier="ProteinGeneLocation" type="template">
+  <tag name="im:aspect:Genomics" objectIdentifier="ProteinGeneLocation" type="template">
   </tag>
-  <tag name="aspect:Genomics" objectIdentifier="Chromosome_GeneTranscriptExon" type="template">
+  <tag name="im:aspect:Genomics" objectIdentifier="Chromosome_GeneTranscriptExon" type="template">
   </tag>
-  <tag name="aspect:Genomics" objectIdentifier="Gene_ChromosomeSequence" type="template">
+  <tag name="im:aspect:Genomics" objectIdentifier="Gene_ChromosomeSequence" type="template">
   </tag>
-  <tag name="aspect:Genomics" objectIdentifier="Transcript.gene" type="reference">
+  <tag name="im:aspect:Genomics" objectIdentifier="Transcript.gene" type="reference">
   </tag>
-  <tag name="aspect:Genomics" objectIdentifier="MRNA.threePrimeUTR" type="reference">
+  <tag name="im:aspect:Genomics" objectIdentifier="MRNA.threePrimeUTR" type="reference">
   </tag>
-  <tag name="aspect:Genomics" objectIdentifier="org.flymine.model.genomic.SnoRNA" type="class">
+  <tag name="im:aspect:Genomics" objectIdentifier="org.flymine.model.genomic.SnoRNA" type="class">
   </tag>
-  <tag name="aspect:Genomics" objectIdentifier="AAR_orthologues2transcripts" type="template">
+  <tag name="im:aspect:Genomics" objectIdentifier="AAR_orthologues2transcripts" type="template">
   </tag>
-  <tag name="aspect:Genomics" objectIdentifier="AAD_genes2fasta" type="template">
+  <tag name="im:aspect:Genomics" objectIdentifier="AAD_genes2fasta" type="template">
   </tag>
-  <tag name="aspect:Genomics" objectIdentifier="Gene_TranscriptIntronLocation" type="template">
+  <tag name="im:aspect:Genomics" objectIdentifier="Gene_TranscriptIntronLocation" type="template">
   </tag>
-  <tag name="aspect:Genomics" objectIdentifier="CDS.MRNA" type="reference">
+  <tag name="im:aspect:Genomics" objectIdentifier="CDS.MRNA" type="reference">
   </tag>
-  <tag name="aspect:Genomics" objectIdentifier="org.flymine.model.genomic.Pseudogene" type="class">
+  <tag name="im:aspect:Genomics" objectIdentifier="org.flymine.model.genomic.Pseudogene" type="class">
   </tag>
-  <tag name="aspect:Genomics" objectIdentifier="AAJ_synonymGene2exonChromosomeLocations1" type="template">
+  <tag name="im:aspect:Genomics" objectIdentifier="AAJ_synonymGene2exonChromosomeLocations1" type="template">
   </tag>
-  <tag name="aspect:Genomics" objectIdentifier="Chromosome_Gene" type="template">
+  <tag name="im:aspect:Genomics" objectIdentifier="Chromosome_Gene" type="template">
   </tag>
-  <tag name="aspect:Genomics" objectIdentifier="Gene_upstreamRegulatoryRegions" type="template">
+  <tag name="im:aspect:Genomics" objectIdentifier="Gene_upstreamRegulatoryRegions" type="template">
   </tag>
-  <tag name="aspect:Genomics" objectIdentifier="Chromosome.transcripts" type="collection">
+  <tag name="im:aspect:Genomics" objectIdentifier="Chromosome.transcripts" type="collection">
   </tag>
-  <tag name="aspect:Genomics" objectIdentifier="org.flymine.model.genomic.RepeatRegion" type="class">
+  <tag name="im:aspect:Genomics" objectIdentifier="org.flymine.model.genomic.RepeatRegion" type="class">
   </tag>
-  <tag name="aspect:Genomics" objectIdentifier="AAAB_geneIdentifiersFromSynonym" type="template">
+  <tag name="im:aspect:Genomics" objectIdentifier="AAAB_geneIdentifiersFromSynonym" type="template">
   </tag>
-  <tag name="aspect:Genomics" objectIdentifier="org.flymine.model.genomic.NcRNA" type="class">
+  <tag name="im:aspect:Genomics" objectIdentifier="org.flymine.model.genomic.NcRNA" type="class">
   </tag>
-  <tag name="aspect:Genomics" objectIdentifier="Organism_Intergenic" type="template">
+  <tag name="im:aspect:Genomics" objectIdentifier="Organism_Intergenic" type="template">
   </tag>
-  <tag name="aspect:Genomics" objectIdentifier="Gene_TranscriptExon" type="template">
+  <tag name="im:aspect:Genomics" objectIdentifier="Gene_TranscriptExon" type="template">
   </tag>
-  <tag name="aspect:Genomics" objectIdentifier="RegulatoryRegion.gene" type="reference">
+  <tag name="im:aspect:Genomics" objectIdentifier="RegulatoryRegion.gene" type="reference">
   </tag>
-  <tag name="aspect:Genomics" objectIdentifier="Gene_Protein" type="template">
+  <tag name="im:aspect:Genomics" objectIdentifier="Gene_Protein" type="template">
   </tag>
-  <tag name="aspect:Genomics" objectIdentifier="Gene_Introns" type="template">
+  <tag name="im:aspect:Genomics" objectIdentifier="Gene_Introns" type="template">
   </tag>
-  <tag name="aspect:Genomics" objectIdentifier="organism_Proteins" type="template">
+  <tag name="im:aspect:Genomics" objectIdentifier="organism_Proteins" type="template">
   </tag>
-  <tag name="aspect:Genomics" objectIdentifier="Organism_Gene" type="template">
+  <tag name="im:aspect:Genomics" objectIdentifier="Organism_Gene" type="template">
   </tag>
-  <tag name="aspect:Genomics" objectIdentifier="UTR.gene" type="reference">
+  <tag name="im:aspect:Genomics" objectIdentifier="UTR.gene" type="reference">
   </tag>
-  <tag name="aspect:Genomics" objectIdentifier="org.flymine.model.genomic.GOTerm" type="class">
+  <tag name="im:aspect:Genomics" objectIdentifier="org.flymine.model.genomic.GOTerm" type="class">
   </tag>
-  <tag name="aspect:Genomics" objectIdentifier="LocatedSequenceFeature.overlappingFeatures" type="collection">
+  <tag name="im:aspect:Genomics" objectIdentifier="LocatedSequenceFeature.overlappingFeatures" type="collection">
   </tag>
-  <tag name="aspect:Genomics" objectIdentifier="GeneSymbol_Identifier" type="template">
+  <tag name="im:aspect:Genomics" objectIdentifier="GeneSymbol_Identifier" type="template">
   </tag>
-  <tag name="aspect:Genomics" objectIdentifier="Gene.regulatoryRegions" type="collection">
+  <tag name="im:aspect:Genomics" objectIdentifier="Gene.regulatoryRegions" type="collection">
   </tag>
-  <tag name="aspect:Genomics" objectIdentifier="geneToInsertionSiteDetails" type="template">
+  <tag name="im:aspect:Genomics" objectIdentifier="geneToInsertionSiteDetails" type="template">
   </tag>
-  <tag name="aspect:Genomics" objectIdentifier="Gene.exons" type="collection">
+  <tag name="im:aspect:Genomics" objectIdentifier="Gene.exons" type="collection">
   </tag>
-  <tag name="aspect:Genomics" objectIdentifier="OrganismGOterm_GenesTEinsertionsite" type="template">
+  <tag name="im:aspect:Genomics" objectIdentifier="OrganismGOterm_GenesTEinsertionsite" type="template">
   </tag>
-  <tag name="aspect:Genomics" objectIdentifier="OrganismGoterm_genesPointMutations" type="template">
+  <tag name="im:aspect:Genomics" objectIdentifier="OrganismGoterm_genesPointMutations" type="template">
   </tag>
-  <tag name="aspect:Genomics" objectIdentifier="CDS.gene" type="reference">
+  <tag name="im:aspect:Genomics" objectIdentifier="CDS.gene" type="reference">
   </tag>
-  <tag name="aspect:Genomics" objectIdentifier="IntergenicRegion.adjacentGenes" type="collection">
+  <tag name="im:aspect:Genomics" objectIdentifier="IntergenicRegion.adjacentGenes" type="collection">
   </tag>
-  <tag name="aspect:Genomics" objectIdentifier="Gene_TranscriptExonIntron" type="template">
+  <tag name="im:aspect:Genomics" objectIdentifier="Gene_TranscriptExonIntron" type="template">
   </tag>
-  <tag name="aspect:Genomics" objectIdentifier="org.flymine.model.genomic.UTR" type="class">
+  <tag name="im:aspect:Genomics" objectIdentifier="org.flymine.model.genomic.UTR" type="class">
   </tag>
-  <tag name="aspect:Genomics" objectIdentifier="AAL_chromosomeLocation2genes2" type="template">
+  <tag name="im:aspect:Genomics" objectIdentifier="AAL_chromosomeLocation2genes2" type="template">
   </tag>
-  <tag name="aspect:Genomics" objectIdentifier="insertionSiteToGene" type="template">
+  <tag name="im:aspect:Genomics" objectIdentifier="insertionSiteToGene" type="template">
   </tag>
-  <tag name="aspect:Genomics" objectIdentifier="AAH_Genes2chromosome1" type="template">
+  <tag name="im:aspect:Genomics" objectIdentifier="AAH_Genes2chromosome1" type="template">
   </tag>
-  <tag name="aspect:Genomics" objectIdentifier="UTR.MRNAs" type="collection">
+  <tag name="im:aspect:Genomics" objectIdentifier="UTR.MRNAs" type="collection">
   </tag>
-  <tag name="aspect:Genomics" objectIdentifier="org.flymine.model.genomic.TransposableElement" type="class">
+  <tag name="im:aspect:Genomics" objectIdentifier="org.flymine.model.genomic.TransposableElement" type="class">
   </tag>
-  <tag name="aspect:Genomics" objectIdentifier="Gene_OverlapppingGenes" type="template">
+  <tag name="im:aspect:Genomics" objectIdentifier="Gene_OverlapppingGenes" type="template">
   </tag>
-  <tag name="aspect:Genomics" objectIdentifier="intergenicSequences" type="template">
+  <tag name="im:aspect:Genomics" objectIdentifier="intergenicSequences" type="template">
   </tag>
-  <tag name="aspect:Genomics" objectIdentifier="Chromosome_GenesInsertionChromosome" type="template">
+  <tag name="im:aspect:Genomics" objectIdentifier="Chromosome_GenesInsertionChromosome" type="template">
   </tag>
-  <tag name="aspect:Genomics" objectIdentifier="org.flymine.model.genomic.Transcript" type="class">
+  <tag name="im:aspect:Genomics" objectIdentifier="org.flymine.model.genomic.Transcript" type="class">
   </tag>
-  <tag name="aspect:Genomics" objectIdentifier="TranscriptOrthologuesFromGene" type="template">
+  <tag name="im:aspect:Genomics" objectIdentifier="TranscriptOrthologuesFromGene" type="template">
   </tag>
-  <tag name="aspect:Genomics" objectIdentifier="Object_Synonym" type="template">
+  <tag name="im:aspect:Genomics" objectIdentifier="Object_Synonym" type="template">
   </tag>
-  <tag name="aspect:Genomics" objectIdentifier="org.flymine.model.genomic.Gene" type="class">
+  <tag name="im:aspect:Genomics" objectIdentifier="org.flymine.model.genomic.Gene" type="class">
   </tag>
-  <tag name="aspect:Genomics" objectIdentifier="AAAA_Symbol_toCG" type="template">
+  <tag name="im:aspect:Genomics" objectIdentifier="AAAA_Symbol_toCG" type="template">
   </tag>
-  <tag name="aspect:Genomics" objectIdentifier="Chromosome_IntergenicSequence" type="template">
+  <tag name="im:aspect:Genomics" objectIdentifier="Chromosome_IntergenicSequence" type="template">
   </tag>
-  <tag name="aspect:Genomics" objectIdentifier="Gene.downstreamIntergenicRegion" type="reference">
+  <tag name="im:aspect:Genomics" objectIdentifier="Gene.downstreamIntergenicRegion" type="reference">
   </tag>
-  <tag name="aspect:Genomics" objectIdentifier="AAO_OrthologuesWithGO2" type="template">
+  <tag name="im:aspect:Genomics" objectIdentifier="AAO_OrthologuesWithGO2" type="template">
   </tag>
-  <tag name="aspect:Genomics" objectIdentifier="Transcript.introns" type="collection">
+  <tag name="im:aspect:Genomics" objectIdentifier="Transcript.introns" type="collection">
   </tag>
-  <tag name="aspect:Genomics" objectIdentifier="Gene_Identifiers" type="template">
+  <tag name="im:aspect:Genomics" objectIdentifier="Gene_Identifiers" type="template">
   </tag>
-  <tag name="aspect:Genomics" objectIdentifier="organismGenesAndPointMutations" type="template">
+  <tag name="im:aspect:Genomics" objectIdentifier="organismGenesAndPointMutations" type="template">
   </tag>
-  <tag name="aspect:Genomics" objectIdentifier="Gene.CDSs" type="collection">
+  <tag name="im:aspect:Genomics" objectIdentifier="Gene.CDSs" type="collection">
   </tag>
-  <tag name="aspect:Genomics" objectIdentifier="gene_adjacentgenes_allflyatlas" type="template">
+  <tag name="im:aspect:Genomics" objectIdentifier="gene_adjacentgenes_allflyatlas" type="template">
   </tag>
-  <tag name="aspect:Genomics" objectIdentifier="Gene.upstreamIntergenicRegion" type="reference">
+  <tag name="im:aspect:Genomics" objectIdentifier="Gene.upstreamIntergenicRegion" type="reference">
   </tag>
-  <tag name="aspect:Genomics" objectIdentifier="OrthologueInOneSpecies" type="template">
+  <tag name="im:aspect:Genomics" objectIdentifier="OrthologueInOneSpecies" type="template">
   </tag>
-  <tag name="aspect:Genomics" objectIdentifier="Gene_paralogues" type="template">
+  <tag name="im:aspect:Genomics" objectIdentifier="Gene_paralogues" type="template">
   </tag>
-  <tag name="aspect:Genomics" objectIdentifier="three_prime_utrs" type="template">
+  <tag name="im:aspect:Genomics" objectIdentifier="three_prime_utrs" type="template">
   </tag>
-  <tag name="aspect:Genomics" objectIdentifier="Gene_PointMutationChromosome" type="template">
+  <tag name="im:aspect:Genomics" objectIdentifier="Gene_PointMutationChromosome" type="template">
   </tag>
-  <tag name="aspect:Genomics" objectIdentifier="PointMutation_Gene_Chromosome" type="template">
+  <tag name="im:aspect:Genomics" objectIdentifier="PointMutation_Gene_Chromosome" type="template">
   </tag>
-  <tag name="aspect:Genomics" objectIdentifier="geneDomain" type="template">
+  <tag name="im:aspect:Genomics" objectIdentifier="geneDomain" type="template">
   </tag>
-  <tag name="aspect:Genomics" objectIdentifier="AAB_Synonyms" type="template">
+  <tag name="im:aspect:Genomics" objectIdentifier="AAB_Synonyms" type="template">
   </tag>
-  <tag name="aspect:Genomics" objectIdentifier="org.flymine.model.genomic.Orthologue" type="class">
+  <tag name="im:aspect:Genomics" objectIdentifier="org.flymine.model.genomic.Orthologue" type="class">
   </tag>
-  <tag name="aspect:Genomics" objectIdentifier="Gene_TranscriptExonChromosome" type="template">
+  <tag name="im:aspect:Genomics" objectIdentifier="Gene_TranscriptExonChromosome" type="template">
   </tag>
-  <tag name="aspect:Genomics" objectIdentifier="A_Object_Identifiers" type="template">
+  <tag name="im:aspect:Genomics" objectIdentifier="A_Object_Identifiers" type="template">
   </tag>
-  <tag name="aspect:Genomics" objectIdentifier="Gene.UTRs" type="collection">
+  <tag name="im:aspect:Genomics" objectIdentifier="Gene.UTRs" type="collection">
   </tag>
-  <tag name="aspect:Genomics" objectIdentifier="pointMutationToGene" type="template">
+  <tag name="im:aspect:Genomics" objectIdentifier="pointMutationToGene" type="template">
   </tag>
-  <tag name="aspect:Genomics" objectIdentifier="AllGene_Chromosome" type="template">
+  <tag name="im:aspect:Genomics" objectIdentifier="AllGene_Chromosome" type="template">
   </tag>
-  <tag name="aspect:Genomics" objectIdentifier="Gene_PointMutationLocation" type="template">
+  <tag name="im:aspect:Genomics" objectIdentifier="Gene_PointMutationLocation" type="template">
   </tag>
-  <tag name="aspect:Genomics" objectIdentifier="Chromosome.exons" type="collection">
+  <tag name="im:aspect:Genomics" objectIdentifier="Chromosome.exons" type="collection">
   </tag>
-  <tag name="aspect:Genomics" objectIdentifier="org.flymine.model.genomic.SnRNA" type="class">
+  <tag name="im:aspect:Genomics" objectIdentifier="org.flymine.model.genomic.SnRNA" type="class">
   </tag>
-  <tag name="aspect:Genomics" objectIdentifier="chromosome2genes" type="template">
+  <tag name="im:aspect:Genomics" objectIdentifier="chromosome2genes" type="template">
   </tag>
-  <tag name="aspect:Genomics" objectIdentifier="AAQ_orthologues" type="template">
+  <tag name="im:aspect:Genomics" objectIdentifier="AAQ_orthologues" type="template">
   </tag>
-  <tag name="aspect:Genomics" objectIdentifier="Insertion_GeneLocation" type="template">
+  <tag name="im:aspect:Genomics" objectIdentifier="Insertion_GeneLocation" type="template">
   </tag>
-  <tag name="aspect:Genomics" objectIdentifier="AAF_gene2exonTranscript1" type="template">
+  <tag name="im:aspect:Genomics" objectIdentifier="AAF_gene2exonTranscript1" type="template">
   </tag>
-  <tag name="aspect:Genomics" objectIdentifier="Gene_ExonChromosome" type="template">
+  <tag name="im:aspect:Genomics" objectIdentifier="Gene_ExonChromosome" type="template">
   </tag>
-  <tag name="aspect:Genomics" objectIdentifier="A_IdentifierSynonym_Object" type="template">
+  <tag name="im:aspect:Genomics" objectIdentifier="A_IdentifierSynonym_Object" type="template">
   </tag>
-  <tag name="aspect:Genomics" objectIdentifier="LocatedSequenceFeature.chromosome" type="reference">
+  <tag name="im:aspect:Genomics" objectIdentifier="LocatedSequenceFeature.chromosome" type="reference">
   </tag>
-  <tag name="aspect:Genomics" objectIdentifier="org.flymine.model.genomic.Chromosome" type="class">
+  <tag name="im:aspect:Genomics" objectIdentifier="org.flymine.model.genomic.Chromosome" type="class">
   </tag>
-  <tag name="aspect:Genomics" objectIdentifier="AAC_organismGenes1" type="template">
+  <tag name="im:aspect:Genomics" objectIdentifier="AAC_organismGenes1" type="template">
   </tag>
-  <tag name="aspect:Genomics" objectIdentifier="org.flymine.model.genomic.RRNA" type="class">
+  <tag name="im:aspect:Genomics" objectIdentifier="org.flymine.model.genomic.RRNA" type="class">
   </tag>
-  <tag name="aspect:Genomics" objectIdentifier="AAE_gene2Transcripts2" type="template">
+  <tag name="im:aspect:Genomics" objectIdentifier="AAE_gene2Transcripts2" type="template">
   </tag>
-  <tag name="aspect:Genomics" objectIdentifier="pathway_genes" type="template">
+  <tag name="im:aspect:Genomics" objectIdentifier="pathway_genes" type="template">
   </tag>
-  <tag name="aspect:Genomics" objectIdentifier="org.flymine.model.genomic.IntergenicRegion" type="class">
+  <tag name="im:aspect:Genomics" objectIdentifier="org.flymine.model.genomic.IntergenicRegion" type="class">
   </tag>
-  <tag name="aspect:Genomics" objectIdentifier="Gene_TranscriptOrthologues" type="template">
+  <tag name="im:aspect:Genomics" objectIdentifier="Gene_TranscriptOrthologues" type="template">
   </tag>
-  <tag name="aspect:Genomics" objectIdentifier="ChromosomeLocation_Gene" type="template">
+  <tag name="im:aspect:Genomics" objectIdentifier="ChromosomeLocation_Gene" type="template">
   </tag>
-  <tag name="aspect:Genomics" objectIdentifier="Gene.transcripts" type="collection">
+  <tag name="im:aspect:Genomics" objectIdentifier="Gene.transcripts" type="collection">
   </tag>
-  <tag name="aspect:Genomics" objectIdentifier="Organism_3UTR" type="template">
+  <tag name="im:aspect:Genomics" objectIdentifier="Organism_3UTR" type="template">
   </tag>
-  <tag name="aspect:Genomics" objectIdentifier="org.flymine.model.genomic.TFBindingSite" type="class">
+  <tag name="im:aspect:Genomics" objectIdentifier="org.flymine.model.genomic.TFBindingSite" type="class">
   </tag>
-  <tag name="aspect:Genomics" objectIdentifier="Gene_Chromosome" type="template">
+  <tag name="im:aspect:Genomics" objectIdentifier="Gene_Chromosome" type="template">
   </tag>
-  <tag name="aspect:Genomics" objectIdentifier="AAI_gene2ChromosomeLocation1" type="template">
+  <tag name="im:aspect:Genomics" objectIdentifier="AAI_gene2ChromosomeLocation1" type="template">
   </tag>
-  <tag name="aspect:Genomics" objectIdentifier="Chromosome.genes" type="collection">
+  <tag name="im:aspect:Genomics" objectIdentifier="Chromosome.genes" type="collection">
   </tag>
-  <tag name="aspect:Genomics" objectIdentifier="Gene_gotermTEinsertionsite" type="template">
+  <tag name="im:aspect:Genomics" objectIdentifier="Gene_gotermTEinsertionsite" type="template">
   </tag>
-  <tag name="aspect:Genomics" objectIdentifier="MicroarrayOligo.transcript" type="reference">
+  <tag name="im:aspect:Genomics" objectIdentifier="MicroarrayOligo.transcript" type="reference">
   </tag>
-  <tag name="aspect:Genomics" objectIdentifier="org.flymine.model.genomic.Exon" type="class">
+  <tag name="im:aspect:Genomics" objectIdentifier="org.flymine.model.genomic.Exon" type="class">
   </tag>
-  <tag name="aspect:Genomics" objectIdentifier="MRNA.fivePrimeUTR" type="reference">
+  <tag name="im:aspect:Genomics" objectIdentifier="MRNA.fivePrimeUTR" type="reference">
   </tag>
-  <tag name="aspect:Genomics" objectIdentifier="AllGene_ChromosomeSequence" type="template">
+  <tag name="im:aspect:Genomics" objectIdentifier="AllGene_ChromosomeSequence" type="template">
   </tag>
-  <tag name="aspect:Genomics" objectIdentifier="ChromLocation_Gene" type="template">
+  <tag name="im:aspect:Genomics" objectIdentifier="ChromLocation_Gene" type="template">
   </tag>
-  <tag name="aspect:Genomics" objectIdentifier="org.flymine.model.genomic.ChromosomeBand" type="class">
+  <tag name="im:aspect:Genomics" objectIdentifier="org.flymine.model.genomic.ChromosomeBand" type="class">
   </tag>
-  <tag name="aspect:Genomics" objectIdentifier="Protein.genes" type="collection">
+  <tag name="im:aspect:Genomics" objectIdentifier="Protein.genes" type="collection">
   </tag>
-  <tag name="aspect:Genomics" objectIdentifier="Gene_IntronChromosome" type="template">
+  <tag name="im:aspect:Genomics" objectIdentifier="Gene_IntronChromosome" type="template">
   </tag>
-  <tag name="aspect:Genomics" objectIdentifier="Gene_upstreamAdjacent_FlyAtlas" type="template">
+  <tag name="im:aspect:Genomics" objectIdentifier="Gene_upstreamAdjacent_FlyAtlas" type="template">
   </tag>
-  <tag name="aspect:Genomics" objectIdentifier="LocatedSequenceFeature.chromosomeLocation" type="reference">
+  <tag name="im:aspect:Genomics" objectIdentifier="LocatedSequenceFeature.chromosomeLocation" type="reference">
   </tag>
-  <tag name="aspect:Genomics" objectIdentifier="geneToPointMutation" type="template">
+  <tag name="im:aspect:Genomics" objectIdentifier="geneToPointMutation" type="template">
   </tag>
-  <tag name="aspect:Genomics" objectIdentifier="Organism_Transcript" type="template">
+  <tag name="im:aspect:Genomics" objectIdentifier="Organism_Transcript" type="template">
   </tag>
-  <tag name="aspect:Genomics" objectIdentifier="Gene _adjacent genes" type="template">
+  <tag name="im:aspect:Genomics" objectIdentifier="Gene _adjacent genes" type="template">
   </tag>
-  <tag name="aspect:Genomics" objectIdentifier="org.flymine.model.genomic.MRNA" type="class">
+  <tag name="im:aspect:Genomics" objectIdentifier="org.flymine.model.genomic.MRNA" type="class">
   </tag>
-  <tag name="aspect:Genomics" objectIdentifier="LocatedSequenceFeature.sequence" type="reference">
+  <tag name="im:aspect:Genomics" objectIdentifier="LocatedSequenceFeature.sequence" type="reference">
   </tag>
-  <tag name="aspect:Genomics" objectIdentifier="geneTranscriptsIntrons" type="template">
+  <tag name="im:aspect:Genomics" objectIdentifier="geneTranscriptsIntrons" type="template">
   </tag>
-  <tag name="aspect:Genomics" objectIdentifier="org.flymine.model.genomic.TRNA" type="class">
+  <tag name="im:aspect:Genomics" objectIdentifier="org.flymine.model.genomic.TRNA" type="class">
   </tag>
-  <tag name="aspect:Genomics" objectIdentifier="Gene_to_upstream_intergenic" type="template">
+  <tag name="im:aspect:Genomics" objectIdentifier="Gene_to_upstream_intergenic" type="template">
   </tag>
-  <tag name="aspect:Genomics" objectIdentifier="gene_downstreamAdjacentgene_FlyAtlas" type="template">
+  <tag name="im:aspect:Genomics" objectIdentifier="gene_downstreamAdjacentgene_FlyAtlas" type="template">
   </tag>
-  <tag name="aspect:Genomics" objectIdentifier="geneOverlapppingGenes" type="template">
+  <tag name="im:aspect:Genomics" objectIdentifier="geneOverlapppingGenes" type="template">
   </tag>
-  <tag name="aspect:Genomics" objectIdentifier="Transcript.exons" type="collection">
+  <tag name="im:aspect:Genomics" objectIdentifier="Transcript.exons" type="collection">
   </tag>
-  <tag name="aspect:Genomics" objectIdentifier="MRNA.UTRs" type="collection">
+  <tag name="im:aspect:Genomics" objectIdentifier="MRNA.UTRs" type="collection">
   </tag>
-  <tag name="aspect:Genomics" objectIdentifier="organism_InterProDomain" type="template">
+  <tag name="im:aspect:Genomics" objectIdentifier="organism_InterProDomain" type="template">
   </tag>
-  <tag name="aspect:Genomics" objectIdentifier="Chromosome.features" type="collection">
+  <tag name="im:aspect:Genomics" objectIdentifier="Chromosome.features" type="collection">
   </tag>
-  <tag name="aspect:Genomics" objectIdentifier="org.flymine.model.genomic.Paralogue" type="class">
+  <tag name="im:aspect:Genomics" objectIdentifier="org.flymine.model.genomic.Paralogue" type="class">
   </tag>
-  <tag name="aspect:Genomics" objectIdentifier="PointMutation_GeneChromosome" type="template">
+  <tag name="im:aspect:Genomics" objectIdentifier="PointMutation_GeneChromosome" type="template">
   </tag>
-  <tag name="aspect:Genomics" objectIdentifier="Exon.transcripts" type="collection">
+  <tag name="im:aspect:Genomics" objectIdentifier="Exon.transcripts" type="collection">
   </tag>
-  <tag name="aspect:Genomics" objectIdentifier="AAG_gene2protein" type="template">
+  <tag name="im:aspect:Genomics" objectIdentifier="AAG_gene2protein" type="template">
   </tag>
-  <tag name="aspect:Genomics" objectIdentifier="Gene_TranscriptExonLocation" type="template">
+  <tag name="im:aspect:Genomics" objectIdentifier="Gene_TranscriptExonLocation" type="template">
   </tag>
-  <tag name="aspect:Genomics" objectIdentifier="AAK_chromosomeLocation2geneSequence1" type="template">
+  <tag name="im:aspect:Genomics" objectIdentifier="AAK_chromosomeLocation2geneSequence1" type="template">
   </tag>
-  <tag name="aspect:Genomics" objectIdentifier="Gene_TranscriptIntronChromosome" type="template">
+  <tag name="im:aspect:Genomics" objectIdentifier="Gene_TranscriptIntronChromosome" type="template">
   </tag>
-  <tag name="aspect:Genomics" objectIdentifier="Protein_GeneChromosomeLength" type="template">
+  <tag name="im:aspect:Genomics" objectIdentifier="Protein_GeneChromosomeLength" type="template">
   </tag>
-  <tag name="aspect:Genomics" objectIdentifier="Gene_ExonLocation" type="template">
+  <tag name="im:aspect:Genomics" objectIdentifier="Gene_ExonLocation" type="template">
   </tag>
-  <tag name="aspect:Genomics" objectIdentifier="Chromosome_GeneInsertionLocation" type="template">
+  <tag name="im:aspect:Genomics" objectIdentifier="Chromosome_GeneInsertionLocation" type="template">
   </tag>
-  <tag name="aspect:Genomics" objectIdentifier="Organism_5UTR" type="template">
+  <tag name="im:aspect:Genomics" objectIdentifier="Organism_5UTR" type="template">
   </tag>
-  <tag name="aspect:Genomics " objectIdentifier="OrganismGoterm_genesDrosDelDeletion" type="template">
+  <tag name="im:aspect:Genomics " objectIdentifier="OrganismGoterm_genesDrosDelDeletion" type="template">
   </tag>
-  <tag name="aspect:Genomics " objectIdentifier="Gene_ExonLocation2" type="template">
+  <tag name="im:aspect:Genomics " objectIdentifier="Gene_ExonLocation2" type="template">
   </tag>
-  <tag name="aspect:Genomics " objectIdentifier="Gene_gotermPointMutation" type="template">
+  <tag name="im:aspect:Genomics " objectIdentifier="Gene_gotermPointMutation" type="template">
   </tag>
-  <tag name="aspect:Genomics Comparative Genomics" objectIdentifier="AAR_orthologues2transcripts" type="template">
+  <tag name="im:aspect:Genomics Comparative Genomics" objectIdentifier="AAR_orthologues2transcripts" type="template">
   </tag>
-  <tag name="aspect:Genomics Comparative Genomics" objectIdentifier="AAQ_orthologues" type="template">
+  <tag name="im:aspect:Genomics Comparative Genomics" objectIdentifier="AAQ_orthologues" type="template">
   </tag>
-  <tag name="aspect:Genomics Comparative Genomics RNAi" objectIdentifier="AAS_phenotype2genesWithOrthologues" type="template">
+  <tag name="im:aspect:Genomics Comparative Genomics RNAi" objectIdentifier="AAS_phenotype2genesWithOrthologues" type="template">
   </tag>
-  <tag name="aspect:Genomics Gene Ontology" objectIdentifier="AAO_OrthologuesWithGO2" type="template">
+  <tag name="im:aspect:Genomics Gene Ontology" objectIdentifier="AAO_OrthologuesWithGO2" type="template">
   </tag>
-  <tag name="aspect:INDAC" objectIdentifier="GeneSymbol_Identifier" type="template">
+  <tag name="im:aspect:INDAC" objectIdentifier="GeneSymbol_Identifier" type="template">
   </tag>
-  <tag name="aspect:INDAC" objectIdentifier="ChromLocation_GeneTranscriptINDAC" type="template">
+  <tag name="im:aspect:INDAC" objectIdentifier="ChromLocation_GeneTranscriptINDAC" type="template">
   </tag>
-  <tag name="aspect:INDAC" objectIdentifier="ChromosomeLocation_GeneTranscriptINDAC" type="template">
+  <tag name="im:aspect:INDAC" objectIdentifier="ChromosomeLocation_GeneTranscriptINDAC" type="template">
   </tag>
-  <tag name="aspect:INDAC" objectIdentifier="INDAC_GeneLocation" type="template">
+  <tag name="im:aspect:INDAC" objectIdentifier="INDAC_GeneLocation" type="template">
   </tag>
-  <tag name="aspect:INDAC" objectIdentifier="DrosDel_LocationGeneTranscriptINDAC" type="template">
+  <tag name="im:aspect:INDAC" objectIdentifier="DrosDel_LocationGeneTranscriptINDAC" type="template">
   </tag>
-  <tag name="aspect:INDAC" objectIdentifier="Gene_INDAC" type="template">
+  <tag name="im:aspect:INDAC" objectIdentifier="Gene_INDAC" type="template">
   </tag>
-  <tag name="aspect:INDAC" objectIdentifier="geneToIndac" type="template">
+  <tag name="im:aspect:INDAC" objectIdentifier="geneToIndac" type="template">
   </tag>
-  <tag name="aspect:INDAC" objectIdentifier="org.flymine.model.genomic.Transcript" type="class">
+  <tag name="im:aspect:INDAC" objectIdentifier="org.flymine.model.genomic.Transcript" type="class">
   </tag>
-  <tag name="aspect:INDAC" objectIdentifier="transcript2longOligo" type="template">
+  <tag name="im:aspect:INDAC" objectIdentifier="transcript2longOligo" type="template">
   </tag>
-  <tag name="aspect:INDAC" objectIdentifier="AAAA_Symbol_toCG" type="template">
+  <tag name="im:aspect:INDAC" objectIdentifier="AAAA_Symbol_toCG" type="template">
   </tag>
-  <tag name="aspect:INDAC" objectIdentifier="indacToGene" type="template">
+  <tag name="im:aspect:INDAC" objectIdentifier="indacToGene" type="template">
   </tag>
-  <tag name="aspect:INDAC" objectIdentifier="ChromosomeLocation2IndacOligos" type="template">
+  <tag name="im:aspect:INDAC" objectIdentifier="ChromosomeLocation2IndacOligos" type="template">
   </tag>
-  <tag name="aspect:INDAC" objectIdentifier="Transcript_INDAC" type="template">
+  <tag name="im:aspect:INDAC" objectIdentifier="Transcript_INDAC" type="template">
   </tag>
-  <tag name="aspect:INDAC" objectIdentifier="org.flymine.model.genomic.MicroarrayOligo" type="class">
+  <tag name="im:aspect:INDAC" objectIdentifier="org.flymine.model.genomic.MicroarrayOligo" type="class">
   </tag>
-  <tag name="aspect:INDAC" objectIdentifier="microarrayOligo2chromosome" type="template">
+  <tag name="im:aspect:INDAC" objectIdentifier="microarrayOligo2chromosome" type="template">
   </tag>
-  <tag name="aspect:INDAC" objectIdentifier="drosDel2indac1" type="template">
+  <tag name="im:aspect:INDAC" objectIdentifier="drosDel2indac1" type="template">
   </tag>
-  <tag name="aspect:INDAC" objectIdentifier="org.flymine.model.genomic.Gene" type="class">
+  <tag name="im:aspect:INDAC" objectIdentifier="org.flymine.model.genomic.Gene" type="class">
   </tag>
-  <tag name="aspect:INDAC DrosDel" objectIdentifier="drosDel2indac1" type="template">
+  <tag name="im:aspect:INDAC DrosDel" objectIdentifier="drosDel2indac1" type="template">
   </tag>
-  <tag name="aspect:Location" objectIdentifier="Gene_Location" type="template">
+  <tag name="im:aspect:Location" objectIdentifier="Gene_Location" type="template">
   </tag>
-  <tag name="aspect:MicroArray" objectIdentifier="microarrayOligo2chromosome" type="template">
+  <tag name="im:aspect:MicroArray" objectIdentifier="microarrayOligo2chromosome" type="template">
   </tag>
-  <tag name="aspect:MicroArray" objectIdentifier="transcript2longOligo" type="template">
+  <tag name="im:aspect:MicroArray" objectIdentifier="transcript2longOligo" type="template">
   </tag>
-  <tag name="aspect:MicroArray PCRProduct amplicon tiling tilingPath" objectIdentifier="tilingAmpliconsInPromoter" type="template">
+  <tag name="im:aspect:MicroArray PCRProduct amplicon tiling tilingPath" objectIdentifier="tilingAmpliconsInPromoter" type="template">
   </tag>
-  <tag name="aspect:MicroArray PCRProduct tiling amplicon" objectIdentifier="chromosome2tilingAmplicon" type="template">
+  <tag name="im:aspect:MicroArray PCRProduct tiling amplicon" objectIdentifier="chromosome2tilingAmplicon" type="template">
   </tag>
-  <tag name="aspect:Interactions" objectIdentifier="AAD_GOidentifier2proteinInteractions" type="template">
+  <tag name="im:aspect:Interactions" objectIdentifier="AAD_GOidentifier2proteinInteractions" type="template">
   </tag>
-  <tag name="aspect:Interactions" objectIdentifier="interologuesOrganisms" type="template">
+  <tag name="im:aspect:Interactions" objectIdentifier="interologuesOrganisms" type="template">
   </tag>
-  <tag name="aspect:Interactions" objectIdentifier="ProteinInteraction_OrthologueOrganism" type="template">
+  <tag name="im:aspect:Interactions" objectIdentifier="ProteinInteraction_OrthologueOrganism" type="template">
   </tag>
-  <tag name="aspect:Interactions" objectIdentifier="Organism_ProteinInteraction" type="template">
+  <tag name="im:aspect:Interactions" objectIdentifier="Organism_ProteinInteraction" type="template">
   </tag>
-  <tag name="aspect:Interactions" objectIdentifier="GiotHighConfidenceSet(browse)" type="template">
+  <tag name="im:aspect:Interactions" objectIdentifier="GiotHighConfidenceSet(browse)" type="template">
   </tag>
-  <tag name="aspect:Interactions" objectIdentifier="ProteinDomain_ProteinInteractingProtein" type="template">
+  <tag name="im:aspect:Interactions" objectIdentifier="ProteinDomain_ProteinInteractingProtein" type="template">
   </tag>
-  <tag name="aspect:Interactions" objectIdentifier="Protein_ProteinInteractionOrthologue" type="template">
+  <tag name="im:aspect:Interactions" objectIdentifier="Protein_ProteinInteractionOrthologue" type="template">
   </tag>
-  <tag name="aspect:Interactions" objectIdentifier="interologuesOrganism" type="template">
+  <tag name="im:aspect:Interactions" objectIdentifier="interologuesOrganism" type="template">
   </tag>
-  <tag name="aspect:Interactions" objectIdentifier="AAE_synonym2proteinInteractions1" type="template">
+  <tag name="im:aspect:Interactions" objectIdentifier="AAE_synonym2proteinInteractions1" type="template">
   </tag>
-  <tag name="aspect:Interactions" objectIdentifier="AAG_gene2ProteinInteraction2StructureNEW2" type="template">
+  <tag name="im:aspect:Interactions" objectIdentifier="AAG_gene2ProteinInteraction2StructureNEW2" type="template">
   </tag>
-  <tag name="aspect:Interactions" objectIdentifier="org.flymine.model.genomic.Interaction" type="class">
+  <tag name="im:aspect:Interactions" objectIdentifier="org.flymine.model.genomic.Interaction" type="class">
   </tag>
-  <tag name="aspect:Interactions" objectIdentifier="org.flymine.model.genomic.InteractionTerm" type="class">
+  <tag name="im:aspect:Interactions" objectIdentifier="org.flymine.model.genomic.InteractionTerm" type="class">
   </tag>
-  <tag name="aspect:Interactions" objectIdentifier="InteractionDataSets" type="template">
+  <tag name="im:aspect:Interactions" objectIdentifier="InteractionDataSets" type="template">
   </tag>
-  <tag name="aspect:Interactions" objectIdentifier="GOterm2GeneProteinInteraction" type="template">
+  <tag name="im:aspect:Interactions" objectIdentifier="GOterm2GeneProteinInteraction" type="template">
   </tag>
-  <tag name="aspect:Interactions" objectIdentifier="DatasetGiot_ProteinInteractions" type="template">
+  <tag name="im:aspect:Interactions" objectIdentifier="DatasetGiot_ProteinInteractions" type="template">
   </tag>
-  <tag name="aspect:Interactions" objectIdentifier="Protein_ProteinInteractionOrthologueRNAi" type="template">
+  <tag name="im:aspect:Interactions" objectIdentifier="Protein_ProteinInteractionOrthologueRNAi" type="template">
   </tag>
-  <tag name="aspect:Interactions" objectIdentifier="AAC_protein2proteinInteraction" type="template">
+  <tag name="im:aspect:Interactions" objectIdentifier="AAC_protein2proteinInteraction" type="template">
   </tag>
-  <tag name="aspect:Interactions" objectIdentifier="proteinInteractionsWithRegions" type="template">
+  <tag name="im:aspect:Interactions" objectIdentifier="proteinInteractionsWithRegions" type="template">
   </tag>
-  <tag name="aspect:Interactions" objectIdentifier="interProDomainToInteractions" type="template">
+  <tag name="im:aspect:Interactions" objectIdentifier="interProDomainToInteractions" type="template">
   </tag>
-  <tag name="aspect:Interactions" objectIdentifier="org.flymine.model.genomic.Gene" type="class">
+  <tag name="im:aspect:Interactions" objectIdentifier="org.flymine.model.genomic.Gene" type="class">
   </tag>
-  <tag name="aspect:Interactions" objectIdentifier="ProteinInteractionOrganism_ProteinInteractionOrganism" type="template">
+  <tag name="im:aspect:Interactions" objectIdentifier="ProteinInteractionOrganism_ProteinInteractionOrganism" type="template">
   </tag>
-  <tag name="aspect:Interactions" objectIdentifier="AAAA_Symbol_toCG" type="template">
+  <tag name="im:aspect:Interactions" objectIdentifier="AAAA_Symbol_toCG" type="template">
   </tag>
-  <tag name="aspect:Interactions" objectIdentifier="interactionsForOrganism" type="template">
+  <tag name="im:aspect:Interactions" objectIdentifier="interactionsForOrganism" type="template">
   </tag>
-  <tag name="aspect:Interactions" objectIdentifier="projectInteractionsGeneSummary2" type="template">
+  <tag name="im:aspect:Interactions" objectIdentifier="projectInteractionsGeneSummary2" type="template">
   </tag>
-  <tag name="aspect:Interactions" objectIdentifier="Gene_OrthologueProteinInteraction" type="template">
+  <tag name="im:aspect:Interactions" objectIdentifier="Gene_OrthologueProteinInteraction" type="template">
   </tag>
-  <tag name="aspect:Interactions" objectIdentifier="ProteinInteractions2orthologuesAndPhenotypes" type="template">
+  <tag name="im:aspect:Interactions" objectIdentifier="ProteinInteractions2orthologuesAndPhenotypes" type="template">
   </tag>
-  <tag name="aspect:Interactions" objectIdentifier="Protein_ProteinInteraction" type="template">
+  <tag name="im:aspect:Interactions" objectIdentifier="Protein_ProteinInteraction" type="template">
   </tag>
-  <tag name="aspect:Interactions" objectIdentifier="ProteinInteractionsOrthologues_forProtein" type="template">
+  <tag name="im:aspect:Interactions" objectIdentifier="ProteinInteractionsOrthologues_forProtein" type="template">
   </tag>
-  <tag name="aspect:Interactions" objectIdentifier="Gene_OrthologuesProteinInteraction" type="template">
+  <tag name="im:aspect:Interactions" objectIdentifier="Gene_OrthologuesProteinInteraction" type="template">
   </tag>
-  <tag name="aspect:Interactions" objectIdentifier="Gene_orthol_interaction" type="template">
+  <tag name="im:aspect:Interactions" objectIdentifier="Gene_orthol_interaction" type="template">
   </tag>
-  <tag name="aspect:Interactions" objectIdentifier="GeneSymbol_Identifier" type="template">
+  <tag name="im:aspect:Interactions" objectIdentifier="GeneSymbol_Identifier" type="template">
   </tag>
-  <tag name="aspect:Interactions" objectIdentifier="ProteinInteractions2orthologues" type="template">
+  <tag name="im:aspect:Interactions" objectIdentifier="ProteinInteractions2orthologues" type="template">
   </tag>
-  <tag name="aspect:Interactions" objectIdentifier="org.flymine.model.genomic.InteractionExperiment" type="class">
+  <tag name="im:aspect:Interactions" objectIdentifier="org.flymine.model.genomic.InteractionExperiment" type="class">
   </tag>
-  <tag name="aspect:Interactions" objectIdentifier="geneInterologues" type="template">
+  <tag name="im:aspect:Interactions" objectIdentifier="geneInterologues" type="template">
   </tag>
-  <tag name="aspect:Interactions" objectIdentifier="projectInteractionsGeneSummary" type="template">
+  <tag name="im:aspect:Interactions" objectIdentifier="projectInteractionsGeneSummary" type="template">
   </tag>
-  <tag name="aspect:Interactions" objectIdentifier="ProteinInteractionsOrthologuesRNAi_forProtein" type="template">
+  <tag name="im:aspect:Interactions" objectIdentifier="ProteinInteractionsOrthologuesRNAi_forProtein" type="template">
   </tag>
-  <tag name="aspect:Interactions" objectIdentifier="AAG_gene2ProteinInteraction2StructureNEW3" type="template">
+  <tag name="im:aspect:Interactions" objectIdentifier="AAG_gene2ProteinInteraction2StructureNEW3" type="template">
   </tag>
-  <tag name="aspect:Interactions" objectIdentifier="DatasetGiot_ProteinInteractions2" type="template">
+  <tag name="im:aspect:Interactions" objectIdentifier="DatasetGiot_ProteinInteractions2" type="template">
   </tag>
-  <tag name="aspect:Interactions" objectIdentifier="Protein_ProteinInteractionDmRNAi" type="template">
+  <tag name="im:aspect:Interactions" objectIdentifier="Protein_ProteinInteractionDmRNAi" type="template">
   </tag>
-  <tag name="aspect:Interactions" objectIdentifier="Interaction.interactingGenes" type="collection">
+  <tag name="im:aspect:Interactions" objectIdentifier="Interaction.interactingGenes" type="collection">
   </tag>
-  <tag name="aspect:Interactions" objectIdentifier="InteractionExperiment.interactions" type="collection">
+  <tag name="im:aspect:Interactions" objectIdentifier="InteractionExperiment.interactions" type="collection">
   </tag>
-  <tag name="aspect:Interactions" objectIdentifier="InteractionExperiment.interactionDetectionMethod" type="reference">
+  <tag name="im:aspect:Interactions" objectIdentifier="InteractionExperiment.interactionDetectionMethod" type="reference">
   </tag>
-  <tag name="aspect:Interactions" objectIdentifier="InteractionExperiment.participantIdentificationMethod" type="reference">
+  <tag name="im:aspect:Interactions" objectIdentifier="InteractionExperiment.participantIdentificationMethod" type="reference">
   </tag>
-  <tag name="aspect:Protein Structure" objectIdentifier="AAJ_gene2ProteinStructure1NEW" type="template">
+  <tag name="im:aspect:Protein Structure" objectIdentifier="AAJ_gene2ProteinStructure1NEW" type="template">
   </tag>
-  <tag name="aspect:Protein Structure" objectIdentifier="AAG_gene2ProteinInteraction2StructureNEW2" type="template">
+  <tag name="im:aspect:Protein Structure" objectIdentifier="AAG_gene2ProteinInteraction2StructureNEW2" type="template">
   </tag>
-  <tag name="aspect:Protein Structure" objectIdentifier="org.flymine.model.genomic.ProteinStructure" type="class">
+  <tag name="im:aspect:Protein Structure" objectIdentifier="org.flymine.model.genomic.ProteinStructure" type="class">
   </tag>
-  <tag name="aspect:Protein Structure" objectIdentifier="AAI_Pfam2proteinStructure" type="template">
+  <tag name="im:aspect:Protein Structure" objectIdentifier="AAI_Pfam2proteinStructure" type="template">
   </tag>
-  <tag name="aspect:Protein Structure" objectIdentifier="AAAA_Symbol_toCG" type="template">
+  <tag name="im:aspect:Protein Structure" objectIdentifier="AAAA_Symbol_toCG" type="template">
   </tag>
-  <tag name="aspect:Protein Structure" objectIdentifier="Organism_GeneProteinStructure." type="template">
+  <tag name="im:aspect:Protein Structure" objectIdentifier="Organism_GeneProteinStructure." type="template">
   </tag>
-  <tag name="aspect:Protein Structure" objectIdentifier="ProteinStructure" type="template">
+  <tag name="im:aspect:Protein Structure" objectIdentifier="ProteinStructure" type="template">
   </tag>
-  <tag name="aspect:Protein Structure" objectIdentifier="org.flymine.model.genomic.ProteinFamily" type="class">
+  <tag name="im:aspect:Protein Structure" objectIdentifier="org.flymine.model.genomic.ProteinFamily" type="class">
   </tag>
-  <tag name="aspect:Protein Structure" objectIdentifier="PfamDomain_ProteinStructure" type="template">
+  <tag name="im:aspect:Protein Structure" objectIdentifier="PfamDomain_ProteinStructure" type="template">
   </tag>
-  <tag name="aspect:Protein Structure" objectIdentifier="org.flymine.model.genomic.ProteinFeature" type="class">
+  <tag name="im:aspect:Protein Structure" objectIdentifier="org.flymine.model.genomic.ProteinFeature" type="class">
   </tag>
-  <tag name="aspect:Protein Structure" objectIdentifier="org.flymine.model.genomic.ProteinDomain" type="class">
+  <tag name="im:aspect:Protein Structure" objectIdentifier="org.flymine.model.genomic.ProteinDomain" type="class">
   </tag>
-  <tag name="aspect:Protein Structure" objectIdentifier="AAG_gene2ProteinInteraction2StructureNEW3" type="template">
+  <tag name="im:aspect:Protein Structure" objectIdentifier="AAG_gene2ProteinInteraction2StructureNEW3" type="template">
   </tag>
-  <tag name="aspect:Protein Structure" objectIdentifier="org.flymine.model.genomic.Protein" type="class">
+  <tag name="im:aspect:Protein Structure" objectIdentifier="org.flymine.model.genomic.Protein" type="class">
   </tag>
-  <tag name="aspect:Protein Structure" objectIdentifier="Gene_ProteinStructure" type="template">
+  <tag name="im:aspect:Protein Structure" objectIdentifier="Gene_ProteinStructure" type="template">
   </tag>
-  <tag name="aspect:Protein Structure" objectIdentifier="AAH_Gene2ProteinStructure2.1NEW2" type="template">
+  <tag name="im:aspect:Protein Structure" objectIdentifier="AAH_Gene2ProteinStructure2.1NEW2" type="template">
   </tag>
-  <tag name="aspect:Protein Structure" objectIdentifier="gene_protein_region" type="template">
+  <tag name="im:aspect:Protein Structure" objectIdentifier="gene_protein_region" type="template">
   </tag>
-  <tag name="aspect:Protein Structure" objectIdentifier="PFam_ProteinStructure" type="template">
+  <tag name="im:aspect:Protein Structure" objectIdentifier="PFam_ProteinStructure" type="template">
   </tag>
-  <tag name="aspect:Proteins" objectIdentifier="ProteinStructure" type="template">
+  <tag name="im:aspect:Proteins" objectIdentifier="ProteinStructure" type="template">
   </tag>
-  <tag name="aspect:Proteins" objectIdentifier="interProDomainToInteractions" type="template">
+  <tag name="im:aspect:Proteins" objectIdentifier="interProDomainToInteractions" type="template">
   </tag>
-  <tag name="aspect:Proteins" objectIdentifier="CDS.polypeptides" type="collection">
+  <tag name="im:aspect:Proteins" objectIdentifier="CDS.polypeptides" type="collection">
   </tag>
-  <tag name="aspect:Proteins" objectIdentifier="AAG_gene2ProteinInteraction2StructureNEW2" type="template">
+  <tag name="im:aspect:Proteins" objectIdentifier="AAG_gene2ProteinInteraction2StructureNEW2" type="template">
   </tag>
-  <tag name="aspect:Proteins" objectIdentifier="ProteinInteractionsOrthologues_forProtein" type="template">
+  <tag name="im:aspect:Proteins" objectIdentifier="ProteinInteractionsOrthologues_forProtein" type="template">
   </tag>
-  <tag name="aspect:Proteins" objectIdentifier="Protein.proteinFeatures" type="collection">
+  <tag name="im:aspect:Proteins" objectIdentifier="Protein.proteinFeatures" type="collection">
   </tag>
-  <tag name="aspect:Proteins" objectIdentifier="org.flymine.model.genomic.Protein" type="class">
+  <tag name="im:aspect:Proteins" objectIdentifier="org.flymine.model.genomic.Protein" type="class">
   </tag>
-  <tag name="aspect:Proteins" objectIdentifier="Protein_Gene" type="template">
+  <tag name="im:aspect:Proteins" objectIdentifier="Protein_Gene" type="template">
   </tag>
-  <tag name="aspect:Proteins" objectIdentifier="Protein_GOterms" type="template">
+  <tag name="im:aspect:Proteins" objectIdentifier="Protein_GOterms" type="template">
   </tag>
-  <tag name="aspect:Proteins" objectIdentifier="AAH_Gene2ProteinStructure2.1NEW2" type="template">
+  <tag name="im:aspect:Proteins" objectIdentifier="AAH_Gene2ProteinStructure2.1NEW2" type="template">
   </tag>
-  <tag name="aspect:Proteins" objectIdentifier="AAA_organismProteins1" type="template">
+  <tag name="im:aspect:Proteins" objectIdentifier="AAA_organismProteins1" type="template">
   </tag>
-  <tag name="aspect:Proteins" objectIdentifier="BioEntity.relations" type="collection">
+  <tag name="im:aspect:Proteins" objectIdentifier="BioEntity.relations" type="collection">
   </tag>
-  <tag name="aspect:Proteins" objectIdentifier="BS_forTF" type="template">
+  <tag name="im:aspect:Proteins" objectIdentifier="BS_forTF" type="template">
   </tag>
-  <tag name="aspect:Proteins" objectIdentifier="InterProDomain_ProteinInteractingProtein" type="template">
+  <tag name="im:aspect:Proteins" objectIdentifier="InterProDomain_ProteinInteractingProtein" type="template">
   </tag>
-  <tag name="aspect:Proteins" objectIdentifier="ProteinGeneGO" type="template">
+  <tag name="im:aspect:Proteins" objectIdentifier="ProteinGeneGO" type="template">
   </tag>
-  <tag name="aspect:Proteins" objectIdentifier="Organism_Protein" type="template">
+  <tag name="im:aspect:Proteins" objectIdentifier="Organism_Protein" type="template">
   </tag>
-  <tag name="aspect:Proteins" objectIdentifier="AAD_GOidentifier2proteinInteractions" type="template">
+  <tag name="im:aspect:Proteins" objectIdentifier="AAD_GOidentifier2proteinInteractions" type="template">
   </tag>
-  <tag name="aspect:Proteins" objectIdentifier="ProteinInteractionsOrthologuesRNAi_forProtein" type="template">
+  <tag name="im:aspect:Proteins" objectIdentifier="ProteinInteractionsOrthologuesRNAi_forProtein" type="template">
   </tag>
-  <tag name="aspect:Proteins" objectIdentifier="proteinToGeneIdentifiers" type="template">
+  <tag name="im:aspect:Proteins" objectIdentifier="proteinToGeneIdentifiers" type="template">
   </tag>
-  <tag name="aspect:Proteins" objectIdentifier="org.flymine.model.genomic.ProteinDomain" type="class">
+  <tag name="im:aspect:Proteins" objectIdentifier="org.flymine.model.genomic.ProteinDomain" type="class">
   </tag>
-  <tag name="aspect:Proteins" objectIdentifier="testInterologsLoop" type="template">
+  <tag name="im:aspect:Proteins" objectIdentifier="testInterologsLoop" type="template">
   </tag>
-  <tag name="aspect:Proteins" objectIdentifier="AAB_proteins2fasta" type="template">
+  <tag name="im:aspect:Proteins" objectIdentifier="AAB_proteins2fasta" type="template">
   </tag>
-  <tag name="aspect:Proteins" objectIdentifier="ProteinSynomyms" type="template">
+  <tag name="im:aspect:Proteins" objectIdentifier="ProteinSynomyms" type="template">
   </tag>
-  <tag name="aspect:Proteins" objectIdentifier="Protein_Interpro" type="template">
+  <tag name="im:aspect:Proteins" objectIdentifier="Protein_Interpro" type="template">
   </tag>
-  <tag name="aspect:Proteins" objectIdentifier="org.flymine.model.genomic.ProteinFeature" type="class">
+  <tag name="im:aspect:Proteins" objectIdentifier="org.flymine.model.genomic.ProteinFeature" type="class">
   </tag>
-  <tag name="aspect:Proteins" objectIdentifier="domainsFamiliesByName" type="template">
+  <tag name="im:aspect:Proteins" objectIdentifier="domainsFamiliesByName" type="template">
   </tag>
-  <tag name="aspect:Proteins" objectIdentifier="AAI_Pfam2proteinStructure" type="template">
+  <tag name="im:aspect:Proteins" objectIdentifier="AAI_Pfam2proteinStructure" type="template">
   </tag>
-  <tag name="aspect:Proteins" objectIdentifier="Organism_ProteinDomain" type="template">
+  <tag name="im:aspect:Proteins" objectIdentifier="Organism_ProteinDomain" type="template">
   </tag>
-  <tag name="aspect:Proteins" objectIdentifier="Organism_Domain" type="template">
+  <tag name="im:aspect:Proteins" objectIdentifier="Organism_Domain" type="template">
   </tag>
-  <tag name="aspect:Proteins" objectIdentifier="ProteinGeneLocation" type="template">
+  <tag name="im:aspect:Proteins" objectIdentifier="ProteinGeneLocation" type="template">
   </tag>
-  <tag name="aspect:Proteins" objectIdentifier="CDS.protein" type="reference">
+  <tag name="im:aspect:Proteins" objectIdentifier="CDS.protein" type="reference">
   </tag>
-  <tag name="aspect:Proteins" objectIdentifier="ProteinDomain_ProteinInteractingProtein" type="template">
+  <tag name="im:aspect:Proteins" objectIdentifier="ProteinDomain_ProteinInteractingProtein" type="template">
   </tag>
-  <tag name="aspect:Proteins" objectIdentifier="AAC_protein2proteinInteraction" type="template">
+  <tag name="im:aspect:Proteins" objectIdentifier="AAC_protein2proteinInteraction" type="template">
   </tag>
-  <tag name="aspect:Proteins" objectIdentifier="Organism_ProteinFasta" type="template">
+  <tag name="im:aspect:Proteins" objectIdentifier="Organism_ProteinFasta" type="template">
   </tag>
-  <tag name="aspect:Proteins" objectIdentifier="ProteinInteractions2orthologuesAndPhenotypes" type="template">
+  <tag name="im:aspect:Proteins" objectIdentifier="ProteinInteractions2orthologuesAndPhenotypes" type="template">
   </tag>
-  <tag name="aspect:Proteins" objectIdentifier="A_Object_Identifiers" type="template">
+  <tag name="im:aspect:Proteins" objectIdentifier="A_Object_Identifiers" type="template">
   </tag>
-  <tag name="aspect:Proteins" objectIdentifier="Organism_Interpro" type="template">
+  <tag name="im:aspect:Proteins" objectIdentifier="Organism_Interpro" type="template">
   </tag>
-  <tag name="aspect:Proteins" objectIdentifier="geneDomain" type="template">
+  <tag name="im:aspect:Proteins" objectIdentifier="geneDomain" type="template">
   </tag>
-  <tag name="aspect:Proteins" objectIdentifier="AAJ_gene2ProteinStructure1NEW" type="template">
+  <tag name="im:aspect:Proteins" objectIdentifier="AAJ_gene2ProteinStructure1NEW" type="template">
   </tag>
-  <tag name="aspect:Proteins" objectIdentifier="InterProDomain_ProteinGene" type="template">
+  <tag name="im:aspect:Proteins" objectIdentifier="InterProDomain_ProteinGene" type="template">
   </tag>
-  <tag name="aspect:Proteins" objectIdentifier="Gene.proteins" type="collection">
+  <tag name="im:aspect:Proteins" objectIdentifier="Gene.proteins" type="collection">
   </tag>
-  <tag name="aspect:Proteins" objectIdentifier="ProteinFeature.proteins" type="collection">
+  <tag name="im:aspect:Proteins" objectIdentifier="ProteinFeature.proteins" type="collection">
   </tag>
-  <tag name="aspect:Proteins" objectIdentifier="InterPro_DomainFamily" type="template">
+  <tag name="im:aspect:Proteins" objectIdentifier="InterPro_DomainFamily" type="template">
   </tag>
-  <tag name="aspect:Proteins" objectIdentifier="proteinFeature2proteins" type="template">
+  <tag name="im:aspect:Proteins" objectIdentifier="proteinFeature2proteins" type="template">
   </tag>
-  <tag name="aspect:Proteins" objectIdentifier="GeneSymbol_Identifier" type="template">
+  <tag name="im:aspect:Proteins" objectIdentifier="GeneSymbol_Identifier" type="template">
   </tag>
-  <tag name="aspect:Proteins" objectIdentifier="org.flymine.model.genomic.ProteinFamily" type="class">
+  <tag name="im:aspect:Proteins" objectIdentifier="org.flymine.model.genomic.ProteinFamily" type="class">
   </tag>
-  <tag name="aspect:Proteins" objectIdentifier="Organism_GeneDomain" type="template">
+  <tag name="im:aspect:Proteins" objectIdentifier="Organism_GeneDomain" type="template">
   </tag>
-  <tag name="aspect:Proteins" objectIdentifier="AAAA_Symbol_toCG" type="template">
+  <tag name="im:aspect:Proteins" objectIdentifier="AAAA_Symbol_toCG" type="template">
   </tag>
-  <tag name="aspect:Proteins" objectIdentifier="Protein_GeneChromosomeLength" type="template">
+  <tag name="im:aspect:Proteins" objectIdentifier="Protein_GeneChromosomeLength" type="template">
   </tag>
-  <tag name="aspect:Proteins" objectIdentifier="ProteinInteractions2orthologues" type="template">
+  <tag name="im:aspect:Proteins" objectIdentifier="ProteinInteractions2orthologues" type="template">
   </tag>
-  <tag name="aspect:Proteins" objectIdentifier="Gene_Protein" type="template">
+  <tag name="im:aspect:Proteins" objectIdentifier="Gene_Protein" type="template">
   </tag>
-  <tag name="aspect:Proteins" objectIdentifier="Protein.sequence" type="reference">
+  <tag name="im:aspect:Proteins" objectIdentifier="Protein.sequence" type="reference">
   </tag>
-  <tag name="aspect:Proteins" objectIdentifier="org.flymine.model.genomic.ProteinInteraction" type="class">
+  <tag name="im:aspect:Proteins" objectIdentifier="org.flymine.model.genomic.ProteinInteraction" type="class">
   </tag>
-  <tag name="aspect:Proteins" objectIdentifier="ProteinInteraction.protein" type="reference">
+  <tag name="im:aspect:Proteins" objectIdentifier="ProteinInteraction.protein" type="reference">
   </tag>
-  <tag name="aspect:Proteins Protein Interaction" objectIdentifier="AAD_GOidentifier2proteinInteractions" type="template">
+  <tag name="im:aspect:Proteins Protein Interaction" objectIdentifier="AAD_GOidentifier2proteinInteractions" type="template">
   </tag>
-  <tag name="aspect:Proteins Protein Structure" objectIdentifier="AAI_Pfam2proteinStructure" type="template">
+  <tag name="im:aspect:Proteins Protein Structure" objectIdentifier="AAI_Pfam2proteinStructure" type="template">
   </tag>
-  <tag name="aspect:Proteins Structure" objectIdentifier="GeneSymbol_Identifier" type="template">
+  <tag name="im:aspect:Proteins Structure" objectIdentifier="GeneSymbol_Identifier" type="template">
   </tag>
-  <tag name="aspect:RNAi" objectIdentifier="DRSCpubmedID" type="template">
+  <tag name="im:aspect:RNAi" objectIdentifier="DRSCpubmedID" type="template">
   </tag>
-  <tag name="aspect:RNAi" objectIdentifier="DRSCScreen_ScreenHit" type="template">
+  <tag name="im:aspect:RNAi" objectIdentifier="DRSCScreen_ScreenHit" type="template">
   </tag>
-  <tag name="aspect:RNAi" objectIdentifier="phenotype2genesWithOrthologues" type="template">
+  <tag name="im:aspect:RNAi" objectIdentifier="phenotype2genesWithOrthologues" type="template">
   </tag>
-  <tag name="aspect:RNAi" objectIdentifier="GeneSymbol_Identifier" type="template">
+  <tag name="im:aspect:RNAi" objectIdentifier="GeneSymbol_Identifier" type="template">
   </tag>
-  <tag name="aspect:RNAi" objectIdentifier="AAX_genes2CERNAi" type="template">
+  <tag name="im:aspect:RNAi" objectIdentifier="AAX_genes2CERNAi" type="template">
   </tag>
-  <tag name="aspect:RNAi" objectIdentifier="ProteinInteraction_OrthologueRNAi" type="template">
+  <tag name="im:aspect:RNAi" objectIdentifier="ProteinInteraction_OrthologueRNAi" type="template">
   </tag>
-  <tag name="aspect:RNAi" objectIdentifier="DRSCScreen_ScreenHit." type="template">
+  <tag name="im:aspect:RNAi" objectIdentifier="DRSCScreen_ScreenHit." type="template">
   </tag>
-  <tag name="aspect:RNAi" objectIdentifier="Gene_DRSCScreenHit" type="template">
+  <tag name="im:aspect:RNAi" objectIdentifier="Gene_DRSCScreenHit" type="template">
   </tag>
-  <tag name="aspect:RNAi" objectIdentifier="GeneDRSC" type="template">
+  <tag name="im:aspect:RNAi" objectIdentifier="GeneDRSC" type="template">
   </tag>
-  <tag name="aspect:RNAi" objectIdentifier="Protein_ProteinInteractionOrthologueRNAi" type="template">
+  <tag name="im:aspect:RNAi" objectIdentifier="Protein_ProteinInteractionOrthologueRNAi" type="template">
   </tag>
-  <tag name="aspect:RNAi" objectIdentifier="AAU_phenotype2genes1" type="template">
+  <tag name="im:aspect:RNAi" objectIdentifier="AAU_phenotype2genes1" type="template">
   </tag>
-  <tag name="aspect:RNAi" objectIdentifier="Gene_DRSCOrthologueRNAiPhenotype" type="template">
+  <tag name="im:aspect:RNAi" objectIdentifier="Gene_DRSCOrthologueRNAiPhenotype" type="template">
   </tag>
-  <tag name="aspect:RNAi" objectIdentifier="AmpliconDRSC" type="template">
+  <tag name="im:aspect:RNAi" objectIdentifier="AmpliconDRSC" type="template">
   </tag>
-  <tag name="aspect:RNAi" objectIdentifier="AAV_Gene2RNAi" type="template">
+  <tag name="im:aspect:RNAi" objectIdentifier="AAV_Gene2RNAi" type="template">
   </tag>
-  <tag name="aspect:RNAi" objectIdentifier="RNAiPhenotype_GeneOrthologue" type="template">
+  <tag name="im:aspect:RNAi" objectIdentifier="RNAiPhenotype_GeneOrthologue" type="template">
   </tag>
-  <tag name="aspect:RNAi" objectIdentifier="RNAiphenotype2genes2orthologues" type="template">
+  <tag name="im:aspect:RNAi" objectIdentifier="RNAiphenotype2genes2orthologues" type="template">
   </tag>
-  <tag name="aspect:RNAi" objectIdentifier="AAU_phenotype2genes" type="template">
+  <tag name="im:aspect:RNAi" objectIdentifier="AAU_phenotype2genes" type="template">
   </tag>
-  <tag name="aspect:RNAi" objectIdentifier="org.flymine.model.genomic.Gene" type="class">
+  <tag name="im:aspect:RNAi" objectIdentifier="org.flymine.model.genomic.Gene" type="class">
   </tag>
-  <tag name="aspect:RNAi" objectIdentifier="DRSCgene" type="template">
+  <tag name="im:aspect:RNAi" objectIdentifier="DRSCgene" type="template">
   </tag>
-  <tag name="aspect:RNAi" objectIdentifier="Gene_RNAiOrthologue" type="template">
+  <tag name="im:aspect:RNAi" objectIdentifier="Gene_RNAiOrthologue" type="template">
   </tag>
-  <tag name="aspect:RNAi" objectIdentifier="AAS_phenotype2genesWithOrthologues" type="template">
+  <tag name="im:aspect:RNAi" objectIdentifier="AAS_phenotype2genesWithOrthologues" type="template">
   </tag>
-  <tag name="aspect:RNAi" objectIdentifier="OthologuesRnai_forProtein" type="template">
+  <tag name="im:aspect:RNAi" objectIdentifier="OthologuesRnai_forProtein" type="template">
   </tag>
-  <tag name="aspect:RNAi" objectIdentifier="org.flymine.model.genomic.Phenotype" type="class">
+  <tag name="im:aspect:RNAi" objectIdentifier="org.flymine.model.genomic.Phenotype" type="class">
   </tag>
-  <tag name="aspect:RNAi" objectIdentifier="Gene_OrthologueRNAi" type="template">
+  <tag name="im:aspect:RNAi" objectIdentifier="Gene_OrthologueRNAi" type="template">
   </tag>
-  <tag name="aspect:RNAi" objectIdentifier="AAAA_Symbol_toCG" type="template">
+  <tag name="im:aspect:RNAi" objectIdentifier="AAAA_Symbol_toCG" type="template">
   </tag>
-  <tag name="aspect:RNAi" objectIdentifier="tempOrthologuesPhenotypes" type="template">
+  <tag name="im:aspect:RNAi" objectIdentifier="tempOrthologuesPhenotypes" type="template">
   </tag>
-  <tag name="aspect:RNAi" objectIdentifier="Protein_OrthologueRNAi" type="template">
+  <tag name="im:aspect:RNAi" objectIdentifier="Protein_OrthologueRNAi" type="template">
   </tag>
-  <tag name="aspect:RNAi" objectIdentifier="ProteinInteractionsOrthologuesRNAi_forProtein" type="template">
+  <tag name="im:aspect:RNAi" objectIdentifier="ProteinInteractionsOrthologuesRNAi_forProtein" type="template">
   </tag>
-  <tag name="aspect:RNAi" objectIdentifier="AAW_gene2CERNAi" type="template">
+  <tag name="im:aspect:RNAi" objectIdentifier="AAW_gene2CERNAi" type="template">
   </tag>
-  <tag name="aspect:RNAi" objectIdentifier="DRSCamplicon_ScreenHit" type="template">
+  <tag name="im:aspect:RNAi" objectIdentifier="DRSCamplicon_ScreenHit" type="template">
   </tag>
-  <tag name="aspect:RNAi" objectIdentifier="DRSCamplicon" type="template">
+  <tag name="im:aspect:RNAi" objectIdentifier="DRSCamplicon" type="template">
   </tag>
-  <tag name="aspect:RNAi" objectIdentifier="Gene_RNAiPhenotype" type="template">
+  <tag name="im:aspect:RNAi" objectIdentifier="Gene_RNAiPhenotype" type="template">
   </tag>
-  <tag name="aspect:RNAi" objectIdentifier="geneEvalueDiseaseRnai" type="template">
+  <tag name="im:aspect:RNAi" objectIdentifier="geneEvalueDiseaseRnai" type="template">
   </tag>
-  <tag name="aspect:RNAi" objectIdentifier="AAT_RNAiwithOrthologues2" type="template">
+  <tag name="im:aspect:RNAi" objectIdentifier="AAT_RNAiwithOrthologues2" type="template">
   </tag>
-  <tag name="aspect:RNAi" objectIdentifier="org.flymine.model.genomic.RNAiScreen" type="class">
+  <tag name="im:aspect:RNAi" objectIdentifier="org.flymine.model.genomic.RNAiScreen" type="class">
   </tag>
-  <tag name="aspect:RNAi" objectIdentifier="orthologuesGenePhenotype" type="template">
+  <tag name="im:aspect:RNAi" objectIdentifier="orthologuesGenePhenotype" type="template">
   </tag>
-  <tag name="aspect:RNAi" objectIdentifier="testflyRNAi" type="template">
+  <tag name="im:aspect:RNAi" objectIdentifier="testflyRNAi" type="template">
   </tag>
-  <tag name="aspect:RNAi" objectIdentifier="RNAi_Gene" type="template">
+  <tag name="im:aspect:RNAi" objectIdentifier="RNAi_Gene" type="template">
   </tag>
-  <tag name="aspect:RNAi" objectIdentifier="GeneOrganism_OrthologueRNAi" type="template">
+  <tag name="im:aspect:RNAi" objectIdentifier="GeneOrganism_OrthologueRNAi" type="template">
   </tag>
-  <tag name="aspect:RNAi" objectIdentifier="AAT_RNAiwithOrthologues" type="template">
+  <tag name="im:aspect:RNAi" objectIdentifier="AAT_RNAiwithOrthologues" type="template">
   </tag>
-  <tag name="aspect:RNAi" objectIdentifier="Protein_ProteinInteractionDmRNAi" type="template">
+  <tag name="im:aspect:RNAi" objectIdentifier="Protein_ProteinInteractionDmRNAi" type="template">
   </tag>
-  <tag name="aspect:RNAi " objectIdentifier="Protein_Orthologue_RNAi" type="template">
+  <tag name="im:aspect:RNAi " objectIdentifier="Protein_Orthologue_RNAi" type="template">
   </tag>
-  <tag name="aspect:Tiling Path" objectIdentifier="chromosome2tilingAmplicon" type="template">
+  <tag name="im:aspect:Tiling Path" objectIdentifier="chromosome2tilingAmplicon" type="template">
   </tag>
-  <tag name="aspect:Tiling Path" objectIdentifier="tilingAmpliconsInPromoter" type="template">
+  <tag name="im:aspect:Tiling Path" objectIdentifier="tilingAmpliconsInPromoter" type="template">
   </tag>
-  <tag name="aspect:Tiling Path" objectIdentifier="org.flymine.model.genomic.Primer" type="class">
+  <tag name="im:aspect:Tiling Path" objectIdentifier="org.flymine.model.genomic.Primer" type="class">
   </tag>
-  <tag name="aspect:Tiling Path" objectIdentifier="org.flymine.model.genomic.PCRProduct" type="class">
+  <tag name="im:aspect:Tiling Path" objectIdentifier="org.flymine.model.genomic.PCRProduct" type="class">
   </tag>
-  <tag name="aspect:Tiling Path" objectIdentifier="PCRProduct.tilingPathSpan" type="reference">
+  <tag name="im:aspect:Tiling Path" objectIdentifier="PCRProduct.tilingPathSpan" type="reference">
   </tag>
-  <tag name="aspect:Tiling Path" objectIdentifier="TilingPathSpan.pcrProducts" type="collection">
+  <tag name="im:aspect:Tiling Path" objectIdentifier="TilingPathSpan.pcrProducts" type="collection">
   </tag>
-  <tag name="aspect:Tiling Path" objectIdentifier="ChrLocation2TilingPathAmplimers2" type="template">
+  <tag name="im:aspect:Tiling Path" objectIdentifier="ChrLocation2TilingPathAmplimers2" type="template">
   </tag>
-  <tag name="aspect:Tiling Path" objectIdentifier="chromLoc2TilingPath" type="template">
+  <tag name="im:aspect:Tiling Path" objectIdentifier="chromLoc2TilingPath" type="template">
   </tag>
-  <tag name="aspect:Tiling Path" objectIdentifier="tilingSpanToGene" type="template">
+  <tag name="im:aspect:Tiling Path" objectIdentifier="tilingSpanToGene" type="template">
   </tag>
-  <tag name="aspect:Tiling Path" objectIdentifier="geneToTilingPathAmplimers" type="template">
+  <tag name="im:aspect:Tiling Path" objectIdentifier="geneToTilingPathAmplimers" type="template">
   </tag>
-  <tag name="aspect:Tiling Path" objectIdentifier="ChromLocation_AmplimerPrimer" type="template">
+  <tag name="im:aspect:Tiling Path" objectIdentifier="ChromLocation_AmplimerPrimer" type="template">
   </tag>
-  <tag name="aspect:Tiling Path" objectIdentifier="ChromosomeLocation_AmplimersPrimers" type="template">
+  <tag name="im:aspect:Tiling Path" objectIdentifier="ChromosomeLocation_AmplimersPrimers" type="template">
   </tag>
-  <tag name="aspect:Tiling Path" objectIdentifier="Gene_TilingPathSpanAmplimerLocation" type="template">
+  <tag name="im:aspect:Tiling Path" objectIdentifier="Gene_TilingPathSpanAmplimerLocation" type="template">
   </tag>
-  <tag name="aspect:Tiling Path" objectIdentifier="GeneSymbol_Identifier" type="template">
+  <tag name="im:aspect:Tiling Path" objectIdentifier="GeneSymbol_Identifier" type="template">
   </tag>
-  <tag name="aspect:Tiling Path" objectIdentifier="org.flymine.model.genomic.TilingPathSpan" type="class">
+  <tag name="im:aspect:Tiling Path" objectIdentifier="org.flymine.model.genomic.TilingPathSpan" type="class">
   </tag>
-  <tag name="aspect:Tiling Path" objectIdentifier="Gene_TilingPathAmplimersLocation" type="template">
+  <tag name="im:aspect:Tiling Path" objectIdentifier="Gene_TilingPathAmplimersLocation" type="template">
   </tag>
-  <tag name="aspect:Tiling Path" objectIdentifier="TilingPathSpan_GeneLocation" type="template">
+  <tag name="im:aspect:Tiling Path" objectIdentifier="TilingPathSpan_GeneLocation" type="template">
   </tag>
-  <tag name="aspect:Tiling Path" objectIdentifier="ChrLocation2PCRProduct" type="template">
+  <tag name="im:aspect:Tiling Path" objectIdentifier="ChrLocation2PCRProduct" type="template">
   </tag>
-  <tag name="aspect:Tiling Path" objectIdentifier="org.flymine.model.genomic.Location" type="class">
+  <tag name="im:aspect:Tiling Path" objectIdentifier="org.flymine.model.genomic.Location" type="class">
   </tag>
-  <tag name="aspect:Tiling Path" objectIdentifier="Chromosome_AmplimerLocation" type="template">
+  <tag name="im:aspect:Tiling Path" objectIdentifier="Chromosome_AmplimerLocation" type="template">
   </tag>
-  <tag name="aspect:Tiling Path" objectIdentifier="geneToTilingSpan" type="template">
+  <tag name="im:aspect:Tiling Path" objectIdentifier="geneToTilingSpan" type="template">
   </tag>
-  <tag name="aspect:Tiling Path" objectIdentifier="org.flymine.model.genomic.Chromosome" type="class">
+  <tag name="im:aspect:Tiling Path" objectIdentifier="org.flymine.model.genomic.Chromosome" type="class">
   </tag>
-  <tag name="aspect:Tiling Path" objectIdentifier="Chromosome_AmplimersLocation" type="template">
+  <tag name="im:aspect:Tiling Path" objectIdentifier="Chromosome_AmplimersLocation" type="template">
   </tag>
-  <tag name="aspect:Tiling Path" objectIdentifier="Gene_TilingPathSpanAmplimersChromosomeLocation" type="template">
+  <tag name="im:aspect:Tiling Path" objectIdentifier="Gene_TilingPathSpanAmplimersChromosomeLocation" type="template">
   </tag>
-  <tag name="aspect:Tiling Path" objectIdentifier="Gene_TilingPathSpanLocation" type="template">
+  <tag name="im:aspect:Tiling Path" objectIdentifier="Gene_TilingPathSpanLocation" type="template">
   </tag>
-  <tag name="aspect:Tiling Path" objectIdentifier="AAAA_Symbol_toCG" type="template">
+  <tag name="im:aspect:Tiling Path" objectIdentifier="AAAA_Symbol_toCG" type="template">
   </tag>
-  <tag name="aspect:TilingPath" objectIdentifier="Gene_TilingPathSpanChromosomeLocation" type="template">
+  <tag name="im:aspect:TilingPath" objectIdentifier="Gene_TilingPathSpanChromosomeLocation" type="template">
   </tag>
-  <tag name="aspect:TilingPath MicroArray amplimer chromosomeLocation" objectIdentifier="ChrLocation2PCRProduct" type="template">
+  <tag name="im:aspect:TilingPath MicroArray amplimer chromosomeLocation" objectIdentifier="ChrLocation2PCRProduct" type="template">
   </tag>
-  <tag name="aspect:TilingPath primers amplimer PCRProduct MicroArray" objectIdentifier="ChrLocation2TilingPathAmplimers2" type="template">
+  <tag name="im:aspect:TilingPath primers amplimer PCRProduct MicroArray" objectIdentifier="ChrLocation2TilingPathAmplimers2" type="template">
   </tag>
-  <tag name="aspect:Transcriptional Regulation" objectIdentifier="TraReg_chrom2BS" type="template">
+  <tag name="im:aspect:Transcriptional Regulation" objectIdentifier="TraReg_chrom2BS" type="template">
   </tag>
-  <tag name="aspect:Transcriptional Regulation" objectIdentifier="org.flymine.model.genomic.TFBindingSite" type="class">
+  <tag name="im:aspect:Transcriptional Regulation" objectIdentifier="org.flymine.model.genomic.TFBindingSite" type="class">
   </tag>
-  <tag name="aspect:Transcriptional Regulation" objectIdentifier="Gene2TFbindingsite" type="template">
+  <tag name="im:aspect:Transcriptional Regulation" objectIdentifier="Gene2TFbindingsite" type="template">
   </tag>
-  <tag name="aspect:Transcriptional Regulation" objectIdentifier="org.flymine.model.genomic.TFmodule" type="class">
+  <tag name="im:aspect:Transcriptional Regulation" objectIdentifier="org.flymine.model.genomic.TFmodule" type="class">
   </tag>
-  <tag name="aspect:Transcriptional Regulation" objectIdentifier="Gene_for2TFs" type="template">
+  <tag name="im:aspect:Transcriptional Regulation" objectIdentifier="Gene_for2TFs" type="template">
   </tag>
-  <tag name="aspect:Transcriptional Regulation" objectIdentifier="org.flymine.model.genomic.Enhancer" type="class">
+  <tag name="im:aspect:Transcriptional Regulation" objectIdentifier="org.flymine.model.genomic.Enhancer" type="class">
   </tag>
-  <tag name="aspect:Transcriptional Regulation" objectIdentifier="TraReg_Gene2BS" type="template">
+  <tag name="im:aspect:Transcriptional Regulation" objectIdentifier="TraReg_Gene2BS" type="template">
   </tag>
-  <tag name="aspect:Transcriptional Regulation" objectIdentifier="TraReg_Gene2BSandRegion" type="template">
+  <tag name="im:aspect:Transcriptional Regulation" objectIdentifier="TraReg_Gene2BSandRegion" type="template">
   </tag>
-  <tag name="aspect:Transcriptional Regulation" objectIdentifier="TFBindingsitesequence2geneAndFActor" type="template">
+  <tag name="im:aspect:Transcriptional Regulation" objectIdentifier="TFBindingsitesequence2geneAndFActor" type="template">
   </tag>
-  <tag name="aspect:Transcriptional Regulation" objectIdentifier="AAAA_Symbol_toCG" type="template">
+  <tag name="im:aspect:Transcriptional Regulation" objectIdentifier="AAAA_Symbol_toCG" type="template">
   </tag>
-  <tag name="aspect:Transcriptional Regulation" objectIdentifier="Gene_TFBindingSiteLocationFactor" type="template">
+  <tag name="im:aspect:Transcriptional Regulation" objectIdentifier="Gene_TFBindingSiteLocationFactor" type="template">
   </tag>
-  <tag name="aspect:Transcriptional Regulation" objectIdentifier="TraReg_BS2geneAndFactor" type="template">
+  <tag name="im:aspect:Transcriptional Regulation" objectIdentifier="TraReg_BS2geneAndFactor" type="template">
   </tag>
-  <tag name="aspect:Transcriptional Regulation" objectIdentifier="GeneSymbol_Identifier" type="template">
+  <tag name="im:aspect:Transcriptional Regulation" objectIdentifier="GeneSymbol_Identifier" type="template">
   </tag>
-  <tag name="aspect:Transcriptional Regulation" objectIdentifier="Gene_TFBindingSiteRegionChromosome" type="template">
+  <tag name="im:aspect:Transcriptional Regulation" objectIdentifier="Gene_TFBindingSiteRegionChromosome" type="template">
   </tag>
-  <tag name="aspect:Transcriptional Regulation" objectIdentifier="Intergenic_RegRegion" type="template">
+  <tag name="im:aspect:Transcriptional Regulation" objectIdentifier="Intergenic_RegRegion" type="template">
   </tag>
-  <tag name="aspect:Transcriptional Regulation" objectIdentifier="transcriptionFactors1" type="template">
+  <tag name="im:aspect:Transcriptional Regulation" objectIdentifier="transcriptionFactors1" type="template">
   </tag>
-  <tag name="aspect:Transcriptional Regulation" objectIdentifier="AnatomyTerm_Region" type="template">
+  <tag name="im:aspect:Transcriptional Regulation" objectIdentifier="AnatomyTerm_Region" type="template">
   </tag>
-  <tag name="aspect:Transcriptional Regulation" objectIdentifier="BS_forTF" type="template">
+  <tag name="im:aspect:Transcriptional Regulation" objectIdentifier="BS_forTF" type="template">
   </tag>
-  <tag name="aspect:Transcriptional Regulation" objectIdentifier="TFbindingsite2geneAndFactor" type="template">
+  <tag name="im:aspect:Transcriptional Regulation" objectIdentifier="TFbindingsite2geneAndFactor" type="template">
   </tag>
-  <tag name="aspect:Transcriptional Regulation" objectIdentifier="TranscriptionFactor_Genes" type="template">
+  <tag name="im:aspect:Transcriptional Regulation" objectIdentifier="TranscriptionFactor_Genes" type="template">
   </tag>
-  <tag name="aspect:Transcriptional Regulation" objectIdentifier="TraReg_Gene2BSsequence" type="template">
+  <tag name="im:aspect:Transcriptional Regulation" objectIdentifier="TraReg_Gene2BSsequence" type="template">
   </tag>
-  <tag name="aspect:Transcriptional Regulation" objectIdentifier="Gene_upstreamRegulatoryRegions" type="template">
+  <tag name="im:aspect:Transcriptional Regulation" objectIdentifier="Gene_upstreamRegulatoryRegions" type="template">
   </tag>
-  <tag name="aspect:Transcriptional Regulation" objectIdentifier="Chromosome_TFBindingSiteChromosomeGeneFactor" type="template">
+  <tag name="im:aspect:Transcriptional Regulation" objectIdentifier="Chromosome_TFBindingSiteChromosomeGeneFactor" type="template">
   </tag>
-  <tag name="aspect:Transcriptional Regulation" objectIdentifier="Protein_TFBindingSiteChromosomeGene" type="template">
+  <tag name="im:aspect:Transcriptional Regulation" objectIdentifier="Protein_TFBindingSiteChromosomeGene" type="template">
   </tag>
-  <tag name="aspect:Transcriptional Regulation" objectIdentifier="Gene_RegionOverlapTFbindingsite" type="template">
+  <tag name="im:aspect:Transcriptional Regulation" objectIdentifier="Gene_RegionOverlapTFbindingsite" type="template">
   </tag>
-  <tag name="aspect:Transcriptional Regulation" objectIdentifier="ChromLocation_RegionOverlappingTFBindingsite" type="template">
+  <tag name="im:aspect:Transcriptional Regulation" objectIdentifier="ChromLocation_RegionOverlappingTFBindingsite" type="template">
   </tag>
-  <tag name="aspect:Transcriptional Regulation" objectIdentifier="chromsosomeLocation2TFbindingSites" type="template">
+  <tag name="im:aspect:Transcriptional Regulation" objectIdentifier="chromsosomeLocation2TFbindingSites" type="template">
   </tag>
-  <tag name="aspect:Transcriptional Regulation" objectIdentifier="Gene_RegionLocation" type="template">
+  <tag name="im:aspect:Transcriptional Regulation" objectIdentifier="Gene_RegionLocation" type="template">
   </tag>
-  <tag name="aspect:Transcriptional Regulation" objectIdentifier="Gene_RegionOverlappingTFbindingsite" type="template">
+  <tag name="im:aspect:Transcriptional Regulation" objectIdentifier="Gene_RegionOverlappingTFbindingsite" type="template">
   </tag>
-  <tag name="aspect:Transcriptional Regulation" objectIdentifier="flyreg_info" type="template">
+  <tag name="im:aspect:Transcriptional Regulation" objectIdentifier="flyreg_info" type="template">
   </tag>
-  <tag name="aspect:Transcriptional Regulation" objectIdentifier="Gene_TFBindingSiteChromosomeFactor" type="template">
+  <tag name="im:aspect:Transcriptional Regulation" objectIdentifier="Gene_TFBindingSiteChromosomeFactor" type="template">
   </tag>
-  <tag name="aspect:Transcriptional Regulation" objectIdentifier="Gene_RegionChromosome" type="template">
+  <tag name="im:aspect:Transcriptional Regulation" objectIdentifier="Gene_RegionChromosome" type="template">
   </tag>
-  <tag name="aspect:Transcriptional Regulation" objectIdentifier="ChromLocation_Region" type="template">
+  <tag name="im:aspect:Transcriptional Regulation" objectIdentifier="ChromLocation_Region" type="template">
   </tag>
-  <tag name="aspect:Transcriptional Regulation" objectIdentifier="ChromosomeLocation_Region" type="template">
+  <tag name="im:aspect:Transcriptional Regulation" objectIdentifier="ChromosomeLocation_Region" type="template">
   </tag>
-  <tag name="aspect:Transcriptional Regulation" objectIdentifier="ChromosomeLocation_RegionOverlappingTFBindingsite" type="template">
+  <tag name="im:aspect:Transcriptional Regulation" objectIdentifier="ChromosomeLocation_RegionOverlappingTFBindingsite" type="template">
   </tag>
-  <tag name="aspect:Transcriptional Regulation" objectIdentifier="org.flymine.model.genomic.Gene" type="class">
+  <tag name="im:aspect:Transcriptional Regulation" objectIdentifier="org.flymine.model.genomic.Gene" type="class">
   </tag>
-  <tag name="aspect:Transcriptional Regulation" objectIdentifier="TraReg_TF2BSsequence" type="template">
+  <tag name="im:aspect:Transcriptional Regulation" objectIdentifier="TraReg_TF2BSsequence" type="template">
   </tag>
-  <tag name="aspect:Transcriptional Regulation" objectIdentifier="Gene_TFBindingSiteRegionLocation" type="template">
+  <tag name="im:aspect:Transcriptional Regulation" objectIdentifier="Gene_TFBindingSiteRegionLocation" type="template">
   </tag>
-  <tag name="aspect:Transcriptional Regulation" objectIdentifier="Chromosome_RegionOverlappingInsertion" type="template">
+  <tag name="im:aspect:Transcriptional Regulation" objectIdentifier="Chromosome_RegionOverlappingInsertion" type="template">
   </tag>
-  <tag name="aspect:Transcriptional Regulation" objectIdentifier="TraReg_TFBS2geneAndFactor" type="template">
+  <tag name="im:aspect:Transcriptional Regulation" objectIdentifier="TraReg_TFBS2geneAndFactor" type="template">
   </tag>
-  <tag name="aspect:Transcriptional Regulation" objectIdentifier="TraReg_twoTF2Gene" type="template">
+  <tag name="im:aspect:Transcriptional Regulation" objectIdentifier="TraReg_twoTF2Gene" type="template">
   </tag>
-  <tag name="aspect:Transcriptional Regulation" objectIdentifier="TraReg_TF2BS" type="template">
+  <tag name="im:aspect:Transcriptional Regulation" objectIdentifier="TraReg_TF2BS" type="template">
   </tag>
-  <tag name="aspect:Transcriptional Regulation" objectIdentifier="TraReg_TF2BS2" type="template">
+  <tag name="im:aspect:Transcriptional Regulation" objectIdentifier="TraReg_TF2BS2" type="template">
   </tag>
-  <tag name="aspect:Transcriptional Regulation" objectIdentifier="Gene_TFBindingSiteChromosomeFactorSequence" type="template">
+  <tag name="im:aspect:Transcriptional Regulation" objectIdentifier="Gene_TFBindingSiteChromosomeFactorSequence" type="template">
   </tag>
-  <tag name="aspect:Transcriptional Regulation" objectIdentifier="org.flymine.model.genomic.RegulatoryRegion" type="class">
+  <tag name="im:aspect:Transcriptional Regulation" objectIdentifier="org.flymine.model.genomic.RegulatoryRegion" type="class">
   </tag>
-  <tag name="aspect:Transcriptional Regulation" objectIdentifier="TFBindingSite_GeneFactor" type="template">
+  <tag name="im:aspect:Transcriptional Regulation" objectIdentifier="TFBindingSite_GeneFactor" type="template">
   </tag>
-  <tag name="aspect:Transcriptional Regulation" objectIdentifier="Organism_TFBindingSiteLocationFactor" type="template">
+  <tag name="im:aspect:Transcriptional Regulation" objectIdentifier="Organism_TFBindingSiteLocationFactor" type="template">
   </tag>
-  <tag name="aspect:Transcriptional Regulation" objectIdentifier="TraReg_ProteinBS" type="template">
+  <tag name="im:aspect:Transcriptional Regulation" objectIdentifier="TraReg_ProteinBS" type="template">
   </tag>
-  <tag name="aspect:Transcriptional Regulation" objectIdentifier="Gene_particularTF" type="template">
+  <tag name="im:aspect:Transcriptional Regulation" objectIdentifier="Gene_particularTF" type="template">
   </tag>
-  <tag name="aspect:Interactions" objectIdentifier="ProteinInteraction_OrthologueRNAi" type="template">
+  <tag name="im:aspect:Interactions" objectIdentifier="ProteinInteraction_OrthologueRNAi" type="template">
   </tag>
-  <tag name="aspect:Transcriptional Regulation" objectIdentifier="ChromLocation_TFBindingSiteLocationGeneFactor" type="template">
+  <tag name="im:aspect:Transcriptional Regulation" objectIdentifier="ChromLocation_TFBindingSiteLocationGeneFactor" type="template">
   </tag>
-  <tag name="aspects:Disease" objectIdentifier="Gene.omimDiseases" type="collection">
+  <tag name="im:aspect:Disease" objectIdentifier="Gene.omimDiseases" type="collection">
   </tag>
-  <tag name="aspeect:Comparative Genomics" objectIdentifier="RNAiphenotype2genes2orthologues" type="template">
+  <tag name="im:aspect:Comparative Genomics" objectIdentifier="RNAiphenotype2genes2orthologues" type="template">
   </tag>
   <tag name="im:converter" objectIdentifier="Translation_To_Transcript_Type_Converter" type="template">
   </tag>
@@ -4402,21 +4402,21 @@
   </tag>
   <tag name="im:public" objectIdentifier="Gene_particularTF" type="template">
   </tag>
-  <tag name="placement:summary" objectIdentifier="Protein.comments" type="collection">
+  <tag name="im:summary" objectIdentifier="Protein.comments" type="collection">
   </tag>
-  <tag name="placement:summary" objectIdentifier="RegulatoryRegion.gene" type="reference">
+  <tag name="im:summary" objectIdentifier="RegulatoryRegion.gene" type="reference">
   </tag>
-  <tag name="placement:summary" objectIdentifier="MicroarrayOligo.transcript" type="reference">
+  <tag name="im:summary" objectIdentifier="MicroarrayOligo.transcript" type="reference">
   </tag>
-  <tag name="placement:summary" objectIdentifier="BioEntity.synonyms" type="collection">
+  <tag name="im:summary" objectIdentifier="BioEntity.synonyms" type="collection">
   </tag>
-  <tag name="placement:summary" objectIdentifier="Protein.genes" type="collection">
+  <tag name="im:summary" objectIdentifier="Protein.genes" type="collection">
   </tag>
-  <tag name="placement:summary" objectIdentifier="BindingSite.factor" type="reference">
+  <tag name="im:summary" objectIdentifier="BindingSite.factor" type="reference">
   </tag>
-  <tag name="placement:summary" objectIdentifier="BioEntity.organism" type="reference">
+  <tag name="im:summary" objectIdentifier="BioEntity.organism" type="reference">
   </tag>
-  <tag name="placement:summary" objectIdentifier="Gene.proteins" type="collection">
+  <tag name="im:summary" objectIdentifier="Gene.proteins" type="collection">
   </tag>
 </tags>
 </userprofile>
