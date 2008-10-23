@@ -6,6 +6,8 @@ use strict;
 use IO::All;
 use URI::Escape;
 
-my $query = uri_escape(io('-')->slurp);
+my $query = io('-')->slurp;
 
-io->http("http://www.flymine.org/query/service/query/results?query=$query") > io('-');
+$query = uri_escape($query);
+
+io->http("http://www.flymine.org/query/service/query/results?size=100000&query=$query") > io('-');
