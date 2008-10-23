@@ -29,7 +29,7 @@
                 foundDisplayer == true ||
                 !empty templates}">
 
-    <c:set var="aspect" value="${fn:replace(placement, 'aspect:', '')}"
+    <c:set var="aspect" value="${fn:replace(placement, 'im:aspect:', '')}"
       scope="request" />
     <c:set var="templateCount" value="${fn:length(templates)}" />
 
