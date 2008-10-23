@@ -24,10 +24,10 @@
       <property name="src.data.dir" location="DATA_DIR/malaria/uniprot/"/>
     </source>
     <source name="go" type="go">
-      <property name="src.data.file" location="DATA_DIR/malaria/go-annotation/gene_ontology.obo"/>
+      <property name="src.data.file" location="DATA_DIR/malaria/go/gene_ontology.obo"/>
     </source>
     <source name="go-annotation" type="go-annotation" dump="true">
-      <property name="ontologyfile" location="DATA_DIR/malaria/go-annotation/gene_ontology.obo"/>
+      <property name="ontologyfile" location="DATA_DIR/malaria/go/gene_ontology.obo"/>
       <property name="src.data.dir" location="DATA_DIR/malaria/go-annotation/"/>
     </source>
     <source name="update-publications" type="update-publications">
