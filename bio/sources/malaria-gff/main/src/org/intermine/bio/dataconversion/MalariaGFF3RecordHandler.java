@@ -41,19 +41,16 @@ public class MalariaGFF3RecordHandler extends GFF3RecordHandler
         String clsName = XmlUtil.getFragmentFromURI(feature.getClassName());
 
         if ("Gene".equals(clsName)) {
-            String identifier = null;
-            String symbol = null;
+        	// move Gene.primaryIdentifier to Gene.secondaryIdentifier
+        	// move Gene.symbol to Gene.primaryIdentifier
+        	
+            if (feature.getAttribute("primaryIdentifier") != null) {
+                String secondary = feature.getAttribute("primaryIdentifier").getValue();
+                feature.setAttribute("secondaryIdentifier", secondary);
+            }
             if (feature.getAttribute("symbol") != null) {
-                identifier = feature.getAttribute("symbol").getValue();
-            }
-            if (feature.getAttribute("secondaryIdentifier") != null) {
-                symbol = feature.getAttribute("secondaryIdentifier").getValue();
-            }
-            if (identifier != null) {
-                feature.setAttribute("primaryIdentifier", identifier);
-            }
-            if (symbol != null) {
-                feature.setAttribute("primaryIdentifier", symbol);
+                String primary = feature.getAttribute("symbol").getValue();
+                feature.setAttribute("primaryIdentifier", primary);
                 feature.removeAttribute("symbol");
             }
         }
