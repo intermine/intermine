@@ -114,7 +114,7 @@ public class ObjectDetailsController extends InterMineAction
 
         Map<String, DisplayField> placementMap =
             new TreeMap<String, DisplayField>(String.CASE_INSENSITIVE_ORDER);
-        placementRefsAndCollections.put("placement:summary", placementMap);
+        placementRefsAndCollections.put(TagNames.IM_SUMMARY, placementMap);
 
         Set cds = os.getModel().getClassDescriptorsForClass(
                 dobj.getObject().getClass());
@@ -124,12 +124,12 @@ public class ObjectDetailsController extends InterMineAction
         while (cdIter.hasNext()) {
             ClassDescriptor cd = (ClassDescriptor) cdIter.next();
 
-            // get all placement:summary tags for all refs and collections of
+            // get all summary tags for all refs and collections of
             // this class
-            List<Tag> placementTags = new ArrayList<Tag>(pm.getTags("placement:summary",
+            List<Tag> placementTags = new ArrayList<Tag>(pm.getTags(TagNames.IM_SUMMARY,
                                                                     cd.getUnqualifiedName() + ".%",
                                                                     "reference", superuser));
-            placementTags.addAll(pm.getTags("placement:summary", cd.getUnqualifiedName() + ".%",
+            placementTags.addAll(pm.getTags(TagNames.IM_SUMMARY, cd.getUnqualifiedName() + ".%",
                                             "collection", superuser));
 
             Iterator<Tag> placementTagIter = placementTags.iterator();

@@ -55,7 +55,12 @@ public interface TagNames
      * String used to tag objects by Miscellaneous aspect  
      */
     public static final String IM_ASPECT_MISC = "aspect:Miscellaneous";
-    
+
+    /**
+     * String used to tag objects to appear in the summary section of the report page  
+     */
+    public static final String IM_SUMMARY = "placement:summary";
+
     /**
      * Tag separator. 
      */
