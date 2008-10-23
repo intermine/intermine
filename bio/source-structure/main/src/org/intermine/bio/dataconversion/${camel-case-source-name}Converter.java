@@ -26,7 +26,7 @@ import org.intermine.xml.full.Item;
  *
  * @author
  */
-public class WormBaseIdentifiersConverter extends BioFileConverter
+public class ${camel-case-source-name}Converter extends BioFileConverter
 {
     protected Item worm;
 
@@ -36,7 +36,7 @@ public class WormBaseIdentifiersConverter extends BioFileConverter
      * @param model the Model
      * @throws ObjectStoreException if an error occurs in storing
      */
-    public WormBaseIdentifiersConverter(ItemWriter writer, Model model)
+    public ${camel-case-source-name}Converter(ItemWriter writer, Model model)
 
     }
 
