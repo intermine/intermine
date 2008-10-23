@@ -37,7 +37,7 @@
       <fileset dir="${build.classes.dir}"/>
     </copy>
     <copy todir="${build.dir}/webapp">
-      <fileset dir="resources/webapp"/>
+      <fileset dir="resources/webapp" excludes="default-template-queries.xml"/> 
     </copy>
     <property name="jarFiles" refid="deploy.execute.path.fileset.text"/>
     <property name="extraDeps" refid="extra.dependencies.fileset.text"/>

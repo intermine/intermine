@@ -32,7 +32,7 @@
 
   <target name="-pre-init" depends="webapp.-pre-init">
     <!-- Files -->
-    <property name="default.template.queries" location="${src.dir}/default-template-queries.xml"/>
+    <property name="default.template.queries" location="${build.dir}/default-template-queries.xml"/>
     <!-- Location of model-less intermine-webapp.war -->
     <property name="source.intermine.webapp.war" location="${application.xml.basedir}/../${base.webapp.path}"/>
   </target>
