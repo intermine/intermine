@@ -26,7 +26,6 @@ USAGE
 
 my $source_name = shift;
 my $source_type = shift;
-my $source_dir = lc $source_name;
 
 my %project_properties = (
                           'custom-file' => <<PROPS
@@ -35,9 +34,11 @@ converter.class = org.intermine.bio.dataconversion.WormBaseIdentifiersConverter
 PROPS
                           );
 
+(my $camel_case_source_name = $source_name) =~ s/(\w)([^\-_]+)[_\-]?/\U$1\E$2/g;
+
 my %substitutions = (
                      'source-name' => $source_name,
-                     'source-dir' => $source_dir,
+                     'camel-case-source-name' => $camel_case_source_name,
                     );
 
 if (exists $project_properties{$source_type}) {
@@ -54,14 +55,28 @@ need to run in the top level of an intermine checkout (containing
 MESSAGE
 }
 
+sub substitute
+{
+  my $text = shift;
+
+  for my $subs_key (keys %substitutions) {
+    $text =~ s/\$\{$subs_key\}/$substitutions{$subs_key}/;
+  }
+
+  return $text;
+}
+
 my $start_dir = getcwd;
 
+# substitute ${foo} sequences in file contents and in file names
 sub process
 {
   my $orig_path = "$start_dir/$File::Find::name";
   my $dest_path = $File::Find::name;
 
-  $dest_path =~ s:$STRUCTURE_DIR(.*):$start_dir/$BIO_DIR/$source_dir$1:;
+  $dest_path =~ s:$STRUCTURE_DIR(.*):$start_dir/$BIO_DIR/$source_name$1:;
+
+  $dest_path = substitute($dest_path);
 
   if (-d $orig_path) {
     mkpath($dest_path);
@@ -70,9 +85,7 @@ sub process
     open my $dest, '>', $dest_path or die "can't open $dest_path: $!\n";
 
     while (my $line = <$orig>) {
-      for my $subs_key (keys %substitutions) {
-        $line =~ s/\$\{$subs_key\}/$substitutions{$subs_key}/;
-      }
+      $line = substitute($line);
 
       print $dest $line;
     }
