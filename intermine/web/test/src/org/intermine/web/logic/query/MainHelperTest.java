@@ -192,7 +192,7 @@ public class MainHelperTest extends TestCase {
         q.addFrom(qc2);
         QueryField qf1 = new QueryField(qc2, "name");
         QueryExpression qFunc = new QueryExpression(QueryExpression.LOWER, (QueryField) qf1);
-        SimpleConstraint sc1 = new SimpleConstraint(qFunc, ConstraintOp.EQUALS, new QueryValue("departmenta1"));
+        SimpleConstraint sc1 = new SimpleConstraint(qFunc, ConstraintOp.MATCHES, new QueryValue("departmenta1"));
         QueryObjectReference qor1 = new QueryObjectReference(qc1, "department");
         ContainsConstraint cc1 = new ContainsConstraint(qor1, ConstraintOp.CONTAINS, qc2);
         cs.addConstraint(cc1);
@@ -264,7 +264,7 @@ public class MainHelperTest extends TestCase {
         q.addFrom(qc2);
         QueryField qf1 = new QueryField(qc2, "name");
         QueryExpression qFunc = new QueryExpression(QueryExpression.LOWER, (QueryField) qf1);
-        SimpleConstraint sc1 = new SimpleConstraint(qFunc, ConstraintOp.EQUALS, new QueryValue("departmenta1"));
+        SimpleConstraint sc1 = new SimpleConstraint(qFunc, ConstraintOp.MATCHES, new QueryValue("departmenta1"));
         QueryObjectReference qor1 = new QueryObjectReference(qc1, "department");
         ContainsConstraint cc1 = new ContainsConstraint(qor1, ConstraintOp.CONTAINS, qc2);
         cs.addConstraint(cc1);
@@ -309,7 +309,7 @@ public class MainHelperTest extends TestCase {
 
     public void test5() throws Exception {
         doQuery("<query name=\"test\" model=\"testmodel\" view=\"Employee\" constraintLogic=\"(A or B) and C\"><node path=\"Employee\" type=\"Employee\"></node><node path=\"Employee.age\" type=\"int\"><constraint op=\"&gt;=\" value=\"10\" description=\"\" identifier=\"\" code=\"A\"></constraint></node><node path=\"Employee.fullTime\" type=\"boolean\"><constraint op=\"=\" value=\"true\" description=\"\" identifier=\"\" code=\"B\"></constraint></node><node path=\"Employee.name\" type=\"String\"><constraint op=\"=\" value=\"EmployeeA2\" description=\"\" identifier=\"\" code=\"C\"></constraint></node></query>",
-                "SELECT DISTINCT a1_ FROM org.intermine.model.testmodel.Employee AS a1_ WHERE ((a1_.age >= 10 OR a1_.fullTime = true) AND LOWER(a1_.name) = 'employeea2') ORDER BY a1_");
+                "SELECT DISTINCT a1_ FROM org.intermine.model.testmodel.Employee AS a1_ WHERE ((a1_.age >= 10 OR a1_.fullTime = true) AND LOWER(a1_.name) LIKE 'employeea2') ORDER BY a1_");
     }
 
     public void test7() throws Exception {
@@ -339,12 +339,12 @@ public class MainHelperTest extends TestCase {
 
     public void test12() throws Exception {
         doQuery("<query name=\"test\" model=\"testmodel\" view=\"Employee.name Employee.department.name Employee.department.company.name Employee.age Employee.fullTime Employee.department.company.address.address\" constraintLogic=\"A or B\"><node path=\"Employee\" type=\"Employee\"></node><node path=\"Employee.name\"><constraint op=\"=\" value=\"EmployeeA1\" code=\"A\"></constraint></node><node path=\"Employee.department\" type=\"Department\"></node><node path=\"Employee.department.company\" type=\"Company\"></node><node path=\"Employee.department.company.address\" type=\"Address\"><constraint op=\"=\" value=\"Employee.address\" description=\"\" identifier=\"\" code=\"B\"></constraint></node><node path=\"Employee.address\" type=\"Address\"></node></query>",
-                "SELECT DISTINCT a1_, a2_, a3_, a4_ FROM org.intermine.model.testmodel.Employee AS a1_, org.intermine.model.testmodel.Department AS a2_, org.intermine.model.testmodel.Company AS a3_, org.intermine.model.testmodel.Address AS a4_, org.intermine.model.testmodel.Address AS a5_ WHERE ((LOWER(a1_.name) = 'employeea1' OR a4_ = a5_) AND a1_.department CONTAINS a2_ AND a2_.company CONTAINS a3_ AND a3_.address CONTAINS a4_ AND a1_.address CONTAINS a5_) ORDER BY a1_.name, a2_.name, a3_.name, a1_.age, a1_.fullTime, a4_.address");
+                "SELECT DISTINCT a1_, a2_, a3_, a4_ FROM org.intermine.model.testmodel.Employee AS a1_, org.intermine.model.testmodel.Department AS a2_, org.intermine.model.testmodel.Company AS a3_, org.intermine.model.testmodel.Address AS a4_, org.intermine.model.testmodel.Address AS a5_ WHERE ((LOWER(a1_.name) LIKE 'employeea1' OR a4_ = a5_) AND a1_.department CONTAINS a2_ AND a2_.company CONTAINS a3_ AND a3_.address CONTAINS a4_ AND a1_.address CONTAINS a5_) ORDER BY a1_.name, a2_.name, a3_.name, a1_.age, a1_.fullTime, a4_.address");
     }
 
     public void test13() throws Exception {
         doQuery("<query name=\"test\" model=\"testmodel\" view=\"Employee.name Employee.department.name Employee.department.company.name Employee.age Employee.fullTime Employee.department.company.address.address\" constraintLogic=\"A and B and C\"><node path=\"Employee\" type=\"Employee\"></node><node path=\"Employee.name\"><constraint op=\"=\" value=\"EmployeeA1\" code=\"A\"></constraint></node><node path=\"Employee.department\" type=\"Department\"></node><node path=\"Employee.department.company\" type=\"Company\"></node><node path=\"Employee.department.company.address\" type=\"Address\"><constraint op=\"=\" value=\"Employee.address\" description=\"\" identifier=\"\" code=\"B\"></constraint></node><node path=\"Employee.address\" type=\"Address\"></node><node path=\"Employee.address.address\"><constraint op=\"!=\" value=\"fred\" code=\"C\"></constraint></node></query>",
-                "SELECT DISTINCT a1_, a2_, a3_, a4_ FROM org.intermine.model.testmodel.Employee AS a1_, org.intermine.model.testmodel.Department AS a2_, org.intermine.model.testmodel.Company AS a3_, org.intermine.model.testmodel.Address AS a4_ WHERE (LOWER(a1_.name) = 'employeea1' AND a1_.department CONTAINS a2_ AND a2_.company CONTAINS a3_ AND a1_.address CONTAINS a4_ AND LOWER(a4_.address) != 'fred' AND a3_.address CONTAINS a4_) ORDER BY a1_.name, a2_.name, a3_.name, a1_.age, a1_.fullTime, a4_.address");
+                "SELECT DISTINCT a1_, a2_, a3_, a4_ FROM org.intermine.model.testmodel.Employee AS a1_, org.intermine.model.testmodel.Department AS a2_, org.intermine.model.testmodel.Company AS a3_, org.intermine.model.testmodel.Address AS a4_ WHERE (LOWER(a1_.name) LIKE 'employeea1' AND a1_.department CONTAINS a2_ AND a2_.company CONTAINS a3_ AND a1_.address CONTAINS a4_ AND LOWER(a4_.address) NOT LIKE 'fred' AND a3_.address CONTAINS a4_) ORDER BY a1_.name, a2_.name, a3_.name, a1_.age, a1_.fullTime, a4_.address");
     }
 
     public void test14() throws Exception {
