@@ -283,7 +283,7 @@
   <%-- Each aspect --%>
   <c:forEach items="${CATEGORIES}" var="aspect" varStatus="status">
     <tiles:insert name="objectDetailsAspect.tile">
-      <tiles:put name="placement" value="aspect:${aspect}"/>
+      <tiles:put name="placement" value="im:aspect:${aspect}"/>
       <tiles:put name="trail" value="|bag.${bag.name}"/>
       <tiles:put name="interMineIdBag" beanName="bag"/>
       <tiles:put name="aspectId" value="${templateIdPrefix}${status.index}" />

@@ -561,7 +561,7 @@ function filterFavourites(type, wsListId) {
     } else {
         document.getElementById(id).value = "favourites";
         document.getElementById('filter_favourites_'+wsListId+'_'+type).src = 'images/filter_favourites_active.png';
-        tags['favourites_' + wsListId] = 'favourite';
+        tags['favourites_' + wsListId] = 'im:favourite';
     }
     var filterTextElement = document.getElementById(wsListId+'_'+type+'_filter_text');
     return filterWebSearchablesHandler(null, filterTextElement, type, wsListId);
@@ -574,7 +574,7 @@ function filterAspect(type, wsListId) {
 
     // aspects ON
     if(aspect != null && aspect.length > 1) {
-        aspect = 'aspect:'+ aspect;
+        aspect = 'im:aspect:'+ aspect;
         tags['aspects_' + wsListId] = aspect;
     } else {
         delete tags['aspects_' + wsListId]

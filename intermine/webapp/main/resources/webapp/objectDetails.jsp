@@ -133,7 +133,7 @@
           <c:forEach items="${object.clds}" var="cld">
             <tiles:insert page="/objectDetailsRefsCols.jsp">
               <tiles:put name="object" beanName="object"/>
-              <tiles:put name="placement" value="placement:summary"/>
+              <tiles:put name="placement" value="im:summary"/>
             </tiles:insert>
           </c:forEach>
 
@@ -231,7 +231,7 @@
     <%-- Each aspect --%>
     <c:forEach items="${CATEGORIES}" var="aspect" varStatus="status">
       <tiles:insert name="objectDetailsAspect.tile">
-        <tiles:put name="placement" value="aspect:${aspect}"/>
+        <tiles:put name="placement" value="im:aspect:${aspect}"/>
         <tiles:put name="displayObject" beanName="object"/>
         <tiles:put name="trail" value="${request.trail}"/>
         <tiles:put name="aspectId" value="${templateIdPrefix}${status.index}" />
@@ -252,7 +252,7 @@
     <imutil:disclosureBody styleClass="disclosureBody">
         <tiles:insert page="/objectDetailsRefsCols.jsp">
             <tiles:put name="object" beanName="object"/>
-            <tiles:put name="placement" value="aspect:Miscellaneous"/>
+            <tiles:put name="placement" value="im:aspect:Miscellaneous"/>
           </tiles:insert>
     </imutil:disclosureBody>
   </imutil:disclosure>
