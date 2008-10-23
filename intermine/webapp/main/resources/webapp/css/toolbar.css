@@ -3,7 +3,7 @@ div#tool_bar_div{
     padding:0 12px 0 0;
     margin:0;
     height:25px;
-    background: url('../images/icons/toolbar_right.png') no-repeat right;
+    background: url('../theme/icons/toolbar_right.png') no-repeat right;
 }
 
 ul#button_bar, ul#button_bar li {
@@ -14,96 +14,95 @@ ul#button_bar, ul#button_bar li {
 }
 ul#button_bar {
   padding-left:12px;
-  background: url('../images/icons/toolbar_left.png') no-repeat left;
+  background: url('../theme/icons/toolbar_left.png') no-repeat left;
 }
 
 #tool_bar_li_edit{
-    background-image: url('../images/icons/edit_grey.png');
+    background-image: url('../theme/icons/edit_grey.png');
 }
 #tool_bar_li_edit:hover{
-    background-image: url('../images/icons/edit_hover.png');
+    background-image: url('../theme/icons/edit_hover.png');
 }
 .tool_bar_button_edit{
-    background-image: url('../images/icons/edit_down.png');
+    background-image: url('../theme/icons/edit_down.png');
     background-color:#CCC;
 }
 
 #tool_bar_li_display {
-    background-image: url('../images/icons/display_grey.png');
+    background-image: url('../theme/icons/display_grey.png');
 }
 #tool_bar_li_display:hover {
-    background-image: url('../images/icons/display_hover.png');
+    background-image: url('../theme/icons/display_hover.png');
 }
 .tool_bar_button_display {
-    background-image: url('../images/icons/display_down.png');
+    background-image: url('../theme/icons/display_down.png');
 }
 
 #tool_bar_li_export {
-    background-image: url('../images/icons/export_grey.png');
+    background-image: url('../theme/icons/export_grey.png');
 }
 #tool_bar_li_export:hover {
-    background-image: url('../images/icons/export_hover.png');
+    background-image: url('../theme/icons/export_hover.png');
 }
 .tool_bar_button_export{
-    background-image: url('../images/icons/export_down.png');
+    background-image: url('../theme/icons/export_down.png');
 }
 
 #tool_bar_li_addcolumn {
-    background-image: url('../images/icons/addcolumn_grey.png');
+    background-image: url('../theme/icons/addcolumn_grey.png');
 }
 #tool_bar_li_addcolumn:hover {
-    background-image: url('../images/icons/addcolumn_hover.png');
+    background-image: url('../theme/icons/addcolumn_hover.png');
 }
 .tool_bar_button_addcolumn{
-    background-image: url('../images/icons/addcolumn_down.png');
+    background-image: url('../theme/icons/addcolumn_down.png');
 }
 
 
 #tool_bar_li_use {
-    background-image: url('../images/icons/use_grey.png');
+    background-image: url('../theme/icons/use_grey.png');
 }
 #tool_bar_li_use:hover {
-    background-image: url('../images/icons/use_hover.png');
+    background-image: url('../theme/icons/use_hover.png');
 }
 .tool_bar_button_use {
-    background-image: url('../images/icons/use_down.png');
+    background-image: url('../theme/icons/use_down.png');
 }
 
 
 #tool_bar_li_createlist {
-    background-image: url('../images/icons/createlist_grey.png');
+    background-image: url('../theme/icons/createlist_grey.png');
 }
 #tool_bar_li_createlist:hover {
-    background-image: url('../images/icons/createlist_hover.png');
+    background-image: url('../theme/icons/createlist_hover.png');
 }
 .tool_bar_button_createlist {
-    background-image: url('../images/icons/createlist_down.png');
+    background-image: url('../theme/icons/createlist_down.png');
 }
 
 #tool_bar_li_addtolist {
-    background-image: url('../images/icons/addtolist_grey.png');
+    background-image: url('../theme/icons/addtolist_grey.png');
 }
 #tool_bar_li_addtolist:hover {
-    background-image: url('../images/icons/addtolist_hover.png');
+    background-image: url('../theme/icons/addtolist_hover.png');
 }
 .tool_bar_button_addtolist {
-    background-image: url('../images/icons/addtolist_down.png');
+    background-image: url('../theme/icons/addtolist_down.png');
 }
 
 #tool_bar_li_summary {
-    background-image: url('../images/icons/summary_grey.png');
+    background-image: url('../theme/icons/summary_grey.png');
 }
 #tool_bar_li_summary:hover {
-    background-image: url('../images/icons/summary_hover.png');
+    background-image: url('../theme/icons/summary_hover.png');
 }
 .tool_bar_button_summary {
-    background-image: url('../images/icons/summary_down.png');
+    background-image: url('../theme/icons/summary_down.png');
 }
 
 .tool_bar_button {
 }
 .tool_bar_link {
-    background-color: #D0B5D7;
     color:#FFF;
     margin:50px;
     font-variant: small-caps;
@@ -119,7 +118,6 @@ ul#button_bar {
 }
 .tool_bar_separator {
     float: left;
-    background-color: #D0B5D7;
 }
 .tool_bar_separator span{
     float: left;

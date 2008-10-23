@@ -38,10 +38,8 @@ li {
   
 .listtoolbox { 
   padding: 0 10px 10px 10px; margin: 0 15px 15px 15px;
-  background-image: url('../images/widget_bg.png');
   background-repeat: repeat-x;
   background-position: bottom;
-  border:1px solid #D0B5D7;
   vertical-align: middle; text-align: left;}
   
 .listtoolbox h3, #bagDescriptionDiv h3 {
