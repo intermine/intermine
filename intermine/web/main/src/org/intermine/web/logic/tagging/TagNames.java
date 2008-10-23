@@ -32,34 +32,34 @@ public interface TagNames
     public static final String IM_NO_REPORT = "im:noreport";
     
     /**
-     * Prefix common for all InterMine internal tags (favourite can be exception) 
+     * Prefix common for all InterMine internal tags  
      */
     public static final String IM_PREFIX = "im:";
 
     /**
      * String used to tag favourite objects  
      */
-    public static final String IM_FAVOURITE = "favourite";
+    public static final String IM_FAVOURITE = "im:favourite";
 
     /**
      * String used to tag objects that should be hidden at jsp page  
      */
-    public static final String IM_HIDDEN = "hidden";
+    public static final String IM_HIDDEN = "im:hidden";
 
     /**
      * String used to tag objects by some aspect  
      */
-    public static final String IM_ASPECT_PREFIX = "aspect";
+    public static final String IM_ASPECT_PREFIX = "im:aspect:";
 
     /**
      * String used to tag objects by Miscellaneous aspect  
      */
-    public static final String IM_ASPECT_MISC = "aspect:Miscellaneous";
+    public static final String IM_ASPECT_MISC = "im:aspect:Miscellaneous";
 
     /**
      * String used to tag objects to appear in the summary section of the report page  
      */
-    public static final String IM_SUMMARY = "placement:summary";
+    public static final String IM_SUMMARY = "im:summary";
 
     /**
      * Tag separator. 
