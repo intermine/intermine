@@ -630,7 +630,7 @@ public class UniprotConverter extends FileConverter
                 // <entry><comment><text>
                 } else if (hasPrimary && qName.equals("text") && attName != null) {
                     String commentText = attValue.toString();
-                    if (comment != null && commentText != null) {
+                    if (comment != null && commentText != null && !commentText.equals("")) {
                         String refId = getComment(comment, dataset.getIdentifier(), commentText);
                         if (!protein.hasCollection("comments")) {
                             protein.addCollection(new ReferenceList("comments",
