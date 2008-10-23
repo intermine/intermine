@@ -104,10 +104,6 @@ table.results tr td.highlightObject {
     background-color: #ee6;
 }
 
-table.results tfoot tr td {
-    background-color: #d0b5d7;;
-}
-
 table.theadbuttons tr td {
     background:none;
     border:none;
