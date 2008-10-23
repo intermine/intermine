@@ -208,6 +208,9 @@ div#quicksearch {
  }
 
 
+table.results tfoot tr td {
+    background-color: #eee;
+}
 
 /* =SPAN
 -------------------------*/
