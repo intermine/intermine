@@ -1,0 +1,11 @@
+#!/usr/bin/perl
+
+use warnings;
+use strict;
+
+use IO::All;
+use URI::Escape;
+
+my $query = uri_escape(io('-')->slurp);
+
+io->http("http://www.flymine.org/query/service/query/results?query=$query") > io('-');
