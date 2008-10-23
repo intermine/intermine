@@ -357,7 +357,7 @@ CONF
   close $apache_conf_file;
 }
 
-{
+if ($need_apache_config) {
   open my $apache_conf_file, '>', $APACHE_CONF_FILENAME
     or die "can't open $APACHE_CONF_FILENAME for writing: $!\n";
 
