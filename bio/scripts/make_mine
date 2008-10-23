@@ -6,7 +6,8 @@ use File::Find;
 use File::Path;
 use Cwd;
 
-my $STRUCTURE_DIR = 'bio/mine-structure';
+my $BIO_DIR = 'bio';
+my $STRUCTURE_DIR = "$BIO_DIR/skeletons/mine';
 
 sub usage
 {
