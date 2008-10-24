@@ -145,6 +145,7 @@ public class Dependencies extends Task
      * Execute the task.
      * {@inheritDoc}
      */
+    @Override
     public void execute() throws BuildException {
         if (workspaceBaseDir == null) {
             throw new BuildException("basedir attribute required");
@@ -155,7 +156,7 @@ public class Dependencies extends Task
         String executePathId = type + ".execute.path";
         String artifactPathId = type + ".artifact.path";
         String extraDependenciesId = "extra.dependencies";
-        
+
         // Don't run twice if target not specified.
         if (getProject().getReference(compilePathId) != null && target == null) {
             return;
@@ -206,7 +207,7 @@ public class Dependencies extends Task
         executeFileSet = new FileSet();
         executeFileSet.setDir(new File(workspaceBaseDir.replace('/', File.separatorChar)));
         executeFileSet.setProject(getProject());
-        
+
         String compileIncludes = "";
         String dependIncludes = "";
         String executeIncludes = "";
@@ -221,7 +222,7 @@ public class Dependencies extends Task
         getProject().addReference(dependPathId, dependPath);
         getProject().addReference(executePathId, executePath);
         getProject().addReference(artifactPathId, artifactPath);
-        
+
         String projName = calcThisProjectName();
 
         if (getProject().getUserProperty("mine.name") == null) {
@@ -261,7 +262,7 @@ public class Dependencies extends Task
         compileIncludes += projName + "/lib/*.jar ";
         dependIncludes += projName + "/lib/*.jar ";
         executeIncludes += projName + "/lib/*.jar ";
-        
+
         for (int i = 0; i < allProjectNames.size(); i++) {
             String depName = (String) allProjectNames.get(i);
             File projDir = getProjectBaseDir(depName);
@@ -307,7 +308,7 @@ public class Dependencies extends Task
             dirset.setIncludes("build/classes");
             compilePath.addDirset(dirset);
 
-            executeIncludes += depName + "/dist/* ";
+            executeIncludes += depName + "/dist/*.jar " + depName + "/dist/*.war ";
 
             // Add lib/*.jar
             FileSet libFileSet = new FileSet();
@@ -322,7 +323,7 @@ public class Dependencies extends Task
             // Add dist/*.jar, dist/*.war
             FileSet distFileSet = new FileSet();
             distFileSet.setDir(projDir);
-            distFileSet.setIncludes("dist/*");
+            distFileSet.setIncludes("dist/*.jar dist/*.war");
             distFileSet.setProject(getProject());
 
             executePath.addFileset(distFileSet);
@@ -336,10 +337,10 @@ public class Dependencies extends Task
 
                 dependIncludes += depName + "/lib/*.jar ";
 
-                artifactIncludes += depName + "/dist/* ";
+                artifactIncludes += depName + "/dist/*.jar " + depName + "/dist/*.war ";
             } else {
-            	extraDependenciesIncludes += depName + "/dist/* ";
-            	extraDependenciesIncludes += depName + "/lib/*.jar ";
+                extraDependenciesIncludes += depName + "/dist/*.jar " + depName + "/dist/*.war ";
+                extraDependenciesIncludes += depName + "/lib/*.jar ";
             }
         }
 
@@ -360,12 +361,8 @@ public class Dependencies extends Task
 
 
         // add the extra dependencies fileset even if it is empty
-        getProject().addReference(extraDependenciesId 
-           		+ ".fileset.text", extraDependenciesIncludes);
-        //String key = extraDependenciesPathId + ".fileset.text";
-        //System.out.println("KEY " + key);
-        //getProject().addReference("monkey" 
-        //   		+ ".fileset.text", extraDependenciesIncludes);
+        getProject().addReference(extraDependenciesId
+                   + ".fileset.text", extraDependenciesIncludes);
 
         if (artifactIncludes.length() > 0) {
             artifactFileSet.setIncludes(artifactIncludes);
