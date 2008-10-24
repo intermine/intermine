@@ -182,9 +182,9 @@ my $new_prop_filename = "$PROP_FILE_PREFIX.r$new_version";
 
 create_properties_file($current_prop_filename, $new_prop_filename,
                        'db.production.datasource.databaseName',
-                       'db.userprofile-production.datasource.databaseName'
-                        'webapp.path', 'project.releaseVersion',
-                        'gbrowse.database.source');
+                       'db.userprofile-production.datasource.databaseName',
+                       'webapp.path', 'project.releaseVersion',
+                       'gbrowse.database.source');
 #create_properties_file($current_prop_filename, $new_prop_filename,
 #                       'db.production.datasource.databaseName',
 #                       'db.userprofile-production.datasource.databaseName');
