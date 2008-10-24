@@ -296,7 +296,9 @@
     <longdisplayers>
       <displayer src="attributeLinkDisplayer.tile"/>
       <displayer src="/model/locatedSequenceFeatureImage.jsp"/>
+<!--   NB MODMINE   
       <displayer src="geneMicroArrayDisplayer.tile"/>
+-->
     <displayer src="/model/proteinInteractionGraph.jsp"/>
     </longdisplayers>
     <bagdisplayers>
