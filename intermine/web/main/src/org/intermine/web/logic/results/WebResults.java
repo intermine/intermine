@@ -66,6 +66,12 @@ public class WebResults extends AbstractList<List<Object>> implements WebTable
     private Map<String, BagQueryResult> pathToBagQueryResult;
     private PathQuery pathQuery;
 
+    // incremented each time goFaster() is called, and decremented each time releaseGoFaster() is
+    // called.  the objectstore goFaster() method is only called when goingFaster == 1 and the
+    // objectstore releaseGoFaster() is only called when goingFaster == 0, so that multiple threads
+    // can call goFaster() on this WebResult
+    private int goingFaster = 0;
+
     /**
      * Create a new WebResults object.
      *
@@ -127,12 +133,12 @@ public class WebResults extends AbstractList<List<Object>> implements WebTable
 
     /**
      * Adds columns that should be displayed to the table.
-     * @param columnPaths columns correspond to paths and columns for these paths should be added  
+     * @param columnPaths columns correspond to paths and columns for these paths should be added
      */
     public void addColumns(List<Path> columnPaths) {
         addColumnsInternal(columnPaths);
     }
-    
+
     private void addColumnsInternal(List<Path> columnPaths) {
         List<String> types = new ArrayList<String>();
         int i = columns.size();
@@ -251,11 +257,14 @@ public class WebResults extends AbstractList<List<Object>> implements WebTable
      * ObjectStoreInterMineImpl.
      * @throws ObjectStoreException if ObjectStoreInterMineImpl.goFaster() throws the exception
      */
-    public void goFaster() throws ObjectStoreException {
-        osResults = WebUtil.changeResultBatchSize(osResults, BIG_BATCH_SIZE);
-        ObjectStore os = osResults.getObjectStore();
-        if (os instanceof ObjectStoreInterMineImpl) {
-            ((ObjectStoreInterMineImpl) os).goFaster(osResults.getQuery());
+    public synchronized void goFaster() throws ObjectStoreException {
+        goingFaster++;
+        if (goingFaster == 1) {
+            osResults = WebUtil.changeResultBatchSize(osResults, BIG_BATCH_SIZE);
+            ObjectStore os = osResults.getObjectStore();
+            if (os instanceof ObjectStoreInterMineImpl) {
+                ((ObjectStoreInterMineImpl) os).goFaster(osResults.getQuery());
+            }
         }
     }
 
@@ -265,10 +274,13 @@ public class WebResults extends AbstractList<List<Object>> implements WebTable
      * @throws ObjectStoreException if ObjectStoreInterMineImpl.releaseGoFaster() throws the
      * exception
      */
-    public void releaseGoFaster() throws ObjectStoreException {
-        ObjectStore os = osResults.getObjectStore();
-        if (os instanceof ObjectStoreInterMineImpl) {
-            ((ObjectStoreInterMineImpl) os).releaseGoFaster(osResults.getQuery());
+    public synchronized void releaseGoFaster() throws ObjectStoreException {
+        goingFaster--;
+        if (goingFaster == 0) {
+            ObjectStore os = osResults.getObjectStore();
+            if (os instanceof ObjectStoreInterMineImpl) {
+                ((ObjectStoreInterMineImpl) os).releaseGoFaster(osResults.getQuery());
+            }
         }
     }
 
