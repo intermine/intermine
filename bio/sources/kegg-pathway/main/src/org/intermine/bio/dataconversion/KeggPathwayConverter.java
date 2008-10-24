@@ -59,6 +59,8 @@ public class KeggPathwayConverter extends BioFileConverter
         keggOrganismToTaxonId.put("dme", "7227");
         // Homo sapiens
         keggOrganismToTaxonId.put("hsa", "9609");
+       // Plasmodium falciparum
+        keggOrganismToTaxonId.put("pfa", "36329");
         // Drosophila pseudoobscura
 //        keggOrganismToTaxonId.put("dpo", "7237");
         // Anopheles gambiae
@@ -108,12 +110,17 @@ public class KeggPathwayConverter extends BioFileConverter
                 if (taxonId != null && taxonId.length() != 0) {
                     String geneName = line[0];
 
-                    // There are a couple of Transcripts ID's so for the moment we don't want them
+                    // There are some strange ids for D. melanogaster, the rest start with Dmel_,
+                    // ignore any D. melanogaster ids without Dmel_ and strip this off the rest
+                    if (taxonId.equals("7227") && !geneName.startsWith("Dmel_")) {
+                    	continue;
+                    }
+                    
+                    // We don't want Dmel_ prefix on D. melanogaster genes
                     if (geneName.startsWith("Dmel_")) {
                         geneName = geneName.substring(5);
-                    } else {
-                        continue;
                     }
+                    
                     String mapIdentifiers = line[1];
                     ReferenceList referenceList = new ReferenceList("pathways");
                     String [] mapArray = mapIdentifiers.split(" ");
@@ -152,7 +159,7 @@ public class KeggPathwayConverter extends BioFileConverter
             } else if (taxonId.equals("9606")) {
                 gene.setAttribute("ncbiGeneNumber", geneCG);
             } else {
-                gene.setAttribute("secondaryIdentifier", identifier);
+                gene.setAttribute("primaryIdentifier", identifier);
             }
             gene.setReference("organism", organism);
             gene.addCollection(referenceList);
