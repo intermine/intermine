@@ -17,21 +17,7 @@
     <aspect-source name="Ensembl" url="http://www.genedb.org"/>
   </aspect>
 
-  <aspect name="Comparative Genomics">
-    <subtitle>Orthologues&lt;br/&gt;and paralogues</subtitle>
-    <icon-image>model/images/comparativeGenomics.png</icon-image>
-    <large-image>model/images/comparativeGenomics.png</large-image>
-    <intro-text>
-      Orthologues and Paralogues.  Orthologues are equivalent genes in
-      different species that evolved from a common ancestor by
-      speciation.  Paralogues are genes from the same homologous
-      superfamily found in another part of the genome of a particular
-      taxon. Paralogues are the result of gene duplication.
-    </intro-text>
-    <tile-name>model/inparanoid.jsp</tile-name>
-    <starting-points>Gene Orthologue Paralogue</starting-points>
-    <aspect-source name="Inparanoid" url="http://inparanoid.cgb.ki.se/"/>
-  </aspect>
+
 
   <aspect name="Proteins">
     <subtitle>Protein and proteomics&lt;br/&gt;data</subtitle>
@@ -46,20 +32,7 @@
     <aspect-source name="UniProt" url="http://www.uniprot.org"/>
   </aspect>
 
-  <aspect name="Interactions">
-    <subtitle>IntAct</subtitle>
-    <icon-image>model/images/interaction.gif</icon-image>
-    <large-image>model/images/interaction.gif</large-image>
-    <tile-name></tile-name>
-    <intro-text>
-      Proteins formatted in the Proteomics Standards Initiative (PSI)
-      molecular interaction (PSI MI) format can be mapped to the MalariaMine
-      data model.
-    </intro-text>
-    <starting-points>Gene Interaction InteractionExperiment</starting-points>
-    <tile-name>model/proteinInteraction.jsp</tile-name>
-    <aspect-source name="IntAct" url="http://www.ebi.ac.uk/intact/"/>
-  </aspect>
+
 
   <aspect name="Gene Ontology">
     <subtitle></subtitle>
