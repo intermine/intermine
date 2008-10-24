@@ -67,11 +67,6 @@ public abstract class WebService
     
     private static final String WEB_SERVICE_DISABLED_PROPERTY = "webservice.disabled";
 
-    /**
-     * Name of format parameter that specifies format of returned results.  
-     */
-    public static final String OUTPUT_PARAMETER = "format";
-    
     private static Logger logger = Logger.getLogger(WebService.class);
     
     private static final String FORWARD_PATH = "/webservice/table.jsp";
@@ -218,7 +213,7 @@ public abstract class WebService
      * @return format 
      */
     public int getFormat() {
-        String format = request.getParameter(OUTPUT_PARAMETER);
+        String format = request.getParameter(WebServiceRequestParser.OUTPUT_PARAMETER);
         if (format == null || format.equals("")) {
             return TSV_FORMAT;
         } else {

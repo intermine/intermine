@@ -19,7 +19,7 @@ import javax.servlet.http.HttpServletRequest;
  **/
 public class QueryResultRequestParser extends WebServiceRequestParser  
 {
-    private static final String QUERY_PARAMETER = "query";
+    public static final String QUERY_PARAMETER = "query";
 
     /** Compute total count parameter name. **/
     public static final String COMPUTE_TOTAL_COUNT_PARAMETER = "tcount";
