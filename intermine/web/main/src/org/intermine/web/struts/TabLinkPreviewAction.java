@@ -21,7 +21,6 @@ import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
 import org.intermine.web.util.HttpClient;
 import org.intermine.web.util.URLUtil;
-import org.intermine.webservice.WebService;
 import org.intermine.webservice.query.result.WebServiceRequestParser;
 
 
@@ -60,7 +59,7 @@ public class TabLinkPreviewAction extends InterMineAction
     private String prepareURL(String link) throws UnsupportedEncodingException {
         String url = link.replaceAll("qwertyui", "&");
         url = URLUtil.encodeURL(url); 
-        url = url + "&" + WebService.OUTPUT_PARAMETER + "=" 
+        url = url + "&" + WebServiceRequestParser.OUTPUT_PARAMETER + "=" 
             + WebServiceRequestParser.FORMAT_PARAMETER_TAB;
         return url;
     }

@@ -24,6 +24,8 @@ import org.intermine.web.logic.WebUtil;
 import org.intermine.web.logic.bag.InterMineBag;
 import org.intermine.web.logic.profile.Profile;
 import org.intermine.web.logic.query.MainHelper;
+import org.intermine.web.util.URLGenerator;
+import org.intermine.webservice.query.result.QueryResultLinkGenerator;
 
 import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletRequest;
@@ -82,23 +84,32 @@ public class ExportQueryAction extends InterMineAction
             LOG.error("Failed to find query " + name + " of type " + type);
             return null;
         }
+        
+        if (query.getViewStrings().size() == 0) {
+            response.getWriter().write("Invalid query. No fields selected for output.");
+            return null;
+        }
 
         response.setContentType("text/plain; charset=us-ascii");
 
-        if (StringUtils.isEmpty(request.getParameter("as"))
-            || request.getParameter("as").toLowerCase().equals("xml")) {
-            String modelName = query.getModel().getName();
-            String xml = PathQueryBinding.marshal(query, (name != null ? name : ""), modelName);
+        String format;
+        if (!StringUtils.isEmpty(request.getParameter("as"))) {
+            format = request.getParameter("as").toLowerCase();
+        } else {
+            format = "xml";
+        }
+        if (format.equals("xml")) {
+            String xml = getQueryXML(name, query);
             xml = XmlUtil.indentXmlSimple(xml);
             response.getWriter().write(xml);
-        } else if (request.getParameter("as").toLowerCase().equals("iql")) {
+        } else if (format.equals("iql")) {
             Map<String, InterMineBag> allBags =
                 WebUtil.getAllBags(profile.getSavedBags(), servletContext);
             Query osQuery = MainHelper.makeQuery(query, allBags, servletContext,
                     null);
             String iql = osQuery.toString();
             response.getWriter().println(iql);
-        } else if (request.getParameter("as").toLowerCase().equals("sql")) {
+        } else if (format.equals("sql")) {
             Query osQuery = MainHelper.makeQuery(query, profile.getSavedBags(), servletContext,
                     null);
             ObjectStore os = (ObjectStore) servletContext.getAttribute(Constants.OBJECTSTORE);
@@ -108,10 +119,26 @@ public class ExportQueryAction extends InterMineAction
             } else {
                 response.getWriter().println("Not an ObjectStoreInterMineImpl");
             }
+        }  else if (format.equals("link")) {
+            String serviceFormat;
+            if (request.getParameter("serviceFormat") != null) {
+                serviceFormat = request.getParameter("serviceFormat");
+            } else {
+                serviceFormat = "tab";
+            }
+            String xml = getQueryXML(name, query);
+            String link = new QueryResultLinkGenerator().getLink(new URLGenerator(request).
+                    getPermanentBaseURL(), xml, serviceFormat);
+            response.getWriter().write(link);                
         } else {
             response.getWriter().println("Unknown export type: " + request.getParameter("as"));
         }
 
         return null;
+    }
+
+    private String getQueryXML(String name, PathQuery query) {
+        String modelName = query.getModel().getName();
+        return PathQueryBinding.marshal(query, (name != null ? name : ""), modelName);
     }
 }

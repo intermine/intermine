@@ -48,6 +48,11 @@ public class WebServiceRequestParser
     public static final String FORMAT_PARAMETER_HTML = "html";
 
     /**
+     * Name of format parameter that specifies format of returned results.  
+     */
+    public static final String OUTPUT_PARAMETER = "format";
+
+    /**
      * Parses common parameters for all web services. Must be called from parseRequest
      * method in subclass else the parameters won't be set. 
      * @param request request

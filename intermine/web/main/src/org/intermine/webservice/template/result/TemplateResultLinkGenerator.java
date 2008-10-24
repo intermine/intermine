@@ -21,6 +21,7 @@ import org.intermine.pathquery.PathNode;
 import org.intermine.util.Util;
 import org.intermine.web.logic.template.TemplateQuery;
 import org.intermine.webservice.CodeTranslator;
+import org.intermine.webservice.LinkGeneratorBase;
 import org.intermine.webservice.WebServiceConstants;
 
 
@@ -28,7 +29,7 @@ import org.intermine.webservice.WebServiceConstants;
  * Class that implements generating links of TemplateResultService web service.
  * @author Jakub Kulaviak
  **/
-public class TemplateResultLinkGenerator
+public class TemplateResultLinkGenerator extends LinkGeneratorBase
 {
 
     /**
@@ -149,23 +150,6 @@ public class TemplateResultLinkGenerator
         }
     }
     
-    /**
-     *  Encodes object string value to be able to be part of url.
-     * @param o encoded object
-     * @return encoded string
-     */
-    private static String encode(Object o) {
-        if (o == null) {
-            return "";
-        } else {
-            try {
-                return URLEncoder.encode(o.toString(), "UTF-8");
-            } catch (UnsupportedEncodingException e) {
-                throw new RuntimeException("Encoding string failed", e);
-            }            
-        }
-    }
-
     /**
      * 
      * @return error if some happened
