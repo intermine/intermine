@@ -5596,8 +5596,6 @@
   </tag>
   <tag name="im:aspect:Genomics" objectIdentifier="Gene_Insertion" type="template">
   </tag>
-  <tag name="im:aspect:Genomics" objectIdentifier="A_Object_Identifiers" type="template">
-  </tag>
   <tag name="im:aspect:Genomics" objectIdentifier="LocatedSequenceFeature.chromosome" type="reference">
   </tag>
   <tag name="im:aspect:Genomics" objectIdentifier="AllGene_ChromosomeSequence" type="template">
@@ -6244,8 +6242,6 @@
   </tag>
   <tag name="im:aspect:Proteins" objectIdentifier="Gene_Protein" type="template">
   </tag>
-  <tag name="im:aspect:Proteins" objectIdentifier="A_Object_Identifiers" type="template">
-  </tag>
   <tag name="im:aspect:Proteins" objectIdentifier="BS_forTF" type="template">
   </tag>
   <tag name="im:aspect:Proteins" objectIdentifier="ProteinGeneGO" type="template">
@@ -6594,15 +6590,11 @@
   </tag>
   <tag name="im:aspect:Comparative Genomics" objectIdentifier="RNAiphenotype2genes2orthologues" type="template">
   </tag>
-  <tag name="im:favourite" objectIdentifier="RacheltestSubtract" type="bag">
-  </tag>
   <tag name="im:favourite" objectIdentifier="flyTF_all_candidates" type="bag">
   </tag>
   <tag name="im:favourite" objectIdentifier="rachelTestIntersect" type="bag">
   </tag>
   <tag name="im:favourite" objectIdentifier="gene_agLifecycleExpression" type="template">
-  </tag>
-  <tag name="foo" objectIdentifier="ChromLocation_GeneTranscriptExon" type="template">
   </tag>
   <tag name="im:hidden" objectIdentifier="BioEntity.objects" type="collection">
   </tag>
@@ -6689,8 +6681,6 @@
   <tag name="im:preferredBagType" objectIdentifier="org.flymine.model.genomic.Gene" type="class">
   </tag>
   <tag name="im:preferredBagType" objectIdentifier="org.flymine.model.genomic.Protein" type="class">
-  </tag>
-  <tag name="im:public" objectIdentifier="A_Object_Identifiers" type="template">
   </tag>
   <tag name="im:public" objectIdentifier="AllGene_Chromosome" type="template">
   </tag>
@@ -7149,8 +7139,6 @@
   <tag name="im:public" objectIdentifier="Stage_agLifecycleExpression" type="template">
   </tag>
   <tag name="im:public" objectIdentifier="StageRatio_agLifecycleExpression" type="template">
-  </tag>
-  <tag name="im:public" objectIdentifier="julie" type="template">
   </tag>
   <tag name="im:public" objectIdentifier="GeneralStage_agLifecycleExpression" type="template">
   </tag>
