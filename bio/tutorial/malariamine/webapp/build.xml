@@ -23,6 +23,17 @@
       <replacetoken><![CDATA[<!--@MODEL_INCLUDE@-->]]></replacetoken>
     </replace>
 
+
+    <loadfile property="model.struts.form.config" 
+              srcFile="./resources/struts-config-form-model.xml"/>
+
+    <replace file="${build.dir}/webapp/WEB-INF/struts-config.xml"
+             value="${model.struts.form.config}">
+      <!-- can't use normal token as xml must be parseable before this replacement -->
+      <replacetoken><![CDATA[<!--@MODEL_FORM_INCLUDE@-->]]></replacetoken>
+    </replace>
+
+
     <loadfile property="model.tiles.defs" srcFile="./resources/tiles-defs-model.xml"/>
 
     <replace file="${build.dir}/webapp/WEB-INF/tiles-defs.xml" value="${model.tiles.defs}">
