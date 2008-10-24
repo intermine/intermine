@@ -53,7 +53,7 @@
   <c:set var="name" value="${object.primaryIdentifier}"/>
 
   <c:if test="${cld.unqualifiedName == 'MRNA' || cld.unqualifiedName == 'Transcript'}">
-    <c:set var="name" value="mRNA:${name}"/>
+    <c:set var="name" value="MRNA:${name}"/>
   </c:if>
 
   <c:if test="${cld.unqualifiedName == 'Chromosome'}">
