@@ -5,26 +5,27 @@
 <!-- sequenceExportOptions.jsp -->
 <html:xhtml />
 
-Sequence to export:
-<br />
+<legend>Sequence to export:</legend>
+<ol>
 <c:forEach items="${exportClassPaths}" var="entry" varStatus="status">
 	<c:set var="path" value="${entry.key}" />
 	<c:choose>
 		<c:when test="${fn:length(exportClassPaths) == 1}">
-			<html:hidden property="sequencePath" value="${path}" />
-            ${entry.value}<br />
+			<li><html:hidden property="sequencePath" value="${path}" />
+            <label>${entry.value}</label></li>
 		</c:when>
 		<c:otherwise>
 		   <c:choose>
                 <c:when test="${status.first}">
-                    <input type="radio" name="sequencePath" value="${path}" checked="checked" />${entry.value}<br />
+                    <li><input type="radio" name="sequencePath" value="${path}" checked="checked" /><label>${entry.value}</label></li>
                 </c:when>
                 <c:otherwise>
-                     <input type="radio" name="sequencePath" value="${path}" />${entry.value}<br />
+                     <li><input type="radio" name="sequencePath" value="${path}" /><label>${entry.value}</label></li>
                 </c:otherwise>
             </c:choose>
 		</c:otherwise>
 	</c:choose>
 </c:forEach>
+</ol>
 
 <!-- /sequenceExportOptions.jsp -->
