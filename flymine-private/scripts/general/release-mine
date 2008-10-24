@@ -47,6 +47,7 @@ my $project_name = shift;
 
 my $PROP_FILE_PREFIX = "$project_name.properties";
 #my $BUILD_PROP_FILE_PREFIX = "build.properties.$project_name";
+my $CONF_DIR = "$ENV{HOME}/.intermine";
 my $WEBAPP_DIR = "$ENV{HOME}/svn/trunk/$project_name/webapp";
 my $APACHE_CONF_FILENAME = '/etc/httpd/conf.d/proxy_ajp.conf';
 my $OLDEST_VERSION = 1;
@@ -77,8 +78,11 @@ if (!-d "intermine") {
 #################
 
 warn "subversion update\n";
-
-system ("svn update >> $LOG_FILENAME 2>&1") == 0
+#should be 
+#system ("/svn update >> $LOG_FILENAME 2>&1") == 0
+#but problems after the update
+#svn: error while loading shared libraries: libdb-4.5.so: cannot open shared object file: No such file or directory
+system ("/usr/bin/svn update >> $LOG_FILENAME 2>&1") == 0
   or die_with_log "subversion update failed: $?";
 
 #################
@@ -86,9 +90,10 @@ warn "reading current properties file\n";
 
 my $current_version = -1;
 
-chdir $ENV{HOME} or die "can't change directory to $ENV{HOME}\n";
-
-opendir DIR, "." or die "can't open directory $ENV{HOME} for reading\n";
+#chdir $ENV{HOME} or die "can't change directory to $ENV{HOME}\n";
+#opendir DIR, "." or die "can't open directory $ENV{HOME} for reading\n";
+chdir $CONF_DIR or die "can't change directory to $CONF_DIR\n";
+opendir DIR, "." or die "can't open directory $CONF_DIR for reading\n";
 
 while (defined(my $filename = readdir(DIR))) {
   if ($filename =~ /^$PROP_FILE_PREFIX.r(\d+)$/) {
@@ -177,7 +182,12 @@ my $new_prop_filename = "$PROP_FILE_PREFIX.r$new_version";
 
 create_properties_file($current_prop_filename, $new_prop_filename,
                        'db.production.datasource.databaseName',
-                       'db.userprofile-production.datasource.databaseName');
+                       'db.userprofile-production.datasource.databaseName'
+                        'webapp.path', 'project.releaseVersion',
+                        'gbrowse.database.source');
+#create_properties_file($current_prop_filename, $new_prop_filename,
+#                       'db.production.datasource.databaseName',
+#                       'db.userprofile-production.datasource.databaseName');
 # create_properties_file($current_build_prop_filename, $new_build_prop_filename,
 #                        'webapp.path', 'project.releaseVersion',
 #                        'gbrowse.database.source');
