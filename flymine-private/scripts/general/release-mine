@@ -46,7 +46,7 @@ if (@ARGV != 1) {
 my $project_name = shift;
 
 my $PROP_FILE_PREFIX = "$project_name.properties";
-my $BUILD_PROP_FILE_PREFIX = "build.properties.$project_name";
+#my $BUILD_PROP_FILE_PREFIX = "build.properties.$project_name";
 my $WEBAPP_DIR = "$ENV{HOME}/svn/trunk/$project_name/webapp";
 my $APACHE_CONF_FILENAME = '/etc/httpd/conf.d/proxy_ajp.conf';
 my $OLDEST_VERSION = 1;
@@ -108,9 +108,8 @@ my $current_prop_filename = "$PROP_FILE_PREFIX.r$current_version";
 
 warn "current properties file: $current_prop_filename\n";
 
-my $current_build_prop_filename = "$BUILD_PROP_FILE_PREFIX.r$current_version";
-
-warn "current build properties file: $current_build_prop_filename\n";
+#my $current_build_prop_filename = "$BUILD_PROP_FILE_PREFIX.r$current_version";
+#warn "current build properties file: $current_build_prop_filename\n";
 
 my $new_version = $current_version + 1;
 
@@ -174,14 +173,14 @@ sub create_properties_file
 }
 
 my $new_prop_filename = "$PROP_FILE_PREFIX.r$new_version";
-my $new_build_prop_filename = "$BUILD_PROP_FILE_PREFIX.r$new_version";
+#my $new_build_prop_filename = "$BUILD_PROP_FILE_PREFIX.r$new_version";
 
 create_properties_file($current_prop_filename, $new_prop_filename,
                        'db.production.datasource.databaseName',
                        'db.userprofile-production.datasource.databaseName');
-create_properties_file($current_build_prop_filename, $new_build_prop_filename,
-                       'webapp.path', 'project.releaseVersion',
-                       'gbrowse.database.source');
+# create_properties_file($current_build_prop_filename, $new_build_prop_filename,
+#                        'webapp.path', 'project.releaseVersion',
+#                        'gbrowse.database.source');
 
 warn "reading properties from: $new_prop_filename\n";
 
@@ -326,6 +325,8 @@ warn "release new webapp r$new_version\n";
 my @TARGETS = qw(remove-webapp release-webapp);
 system ("ant -Drelease=r$new_version @TARGETS >> $LOG_FILENAME 2>&1") == 0
   or die_with_log "can't write userprofile XML: $?";
+
+exit;
 
 #################
 warn "update apache rewrite/redirect configuration\n";
