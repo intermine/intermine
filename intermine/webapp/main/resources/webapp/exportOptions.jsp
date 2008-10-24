@@ -44,9 +44,11 @@
 
 <fmt:message var="exportSubmitMessage" key="export.submit"/>
 
-<div class="body" align="center">
-<im:boxarea stylename="plainbox" fixedWidth="60%">
-<h2><c:choose>
+<div align="center">
+<div style="clear:both;width:60%" class="body" align="left">
+<html:form action="/${type}ExportAction" onsubmit="updatePathsString();">
+<fieldset>
+<legend><c:choose>
   <c:when test="${type == 'csv' || type == 'excel'}">
     <fmt:message key="exporter.${type}.description">
       <fmt:param value="${WEB_PROPERTIES['max.excel.export.size']}"/>
@@ -58,18 +60,17 @@
     <fmt:setBundle basename="model"/>
     <fmt:message key="exporter.${type}.description"/>
   </c:otherwise>
-</c:choose></h2>
-<div style="margin-top: 10px;">${exportReorderMessage}</div>
+</c:choose></legend>
 
 <!-- exporting type: ${type} -->
-
-<html:form action="/${type}ExportAction" onsubmit="updatePathsString();">
-  <div style="margin-top: 10px; margin-bottom: 10px;">
-  <c:choose>
+<ol>
+  <li><fieldset><c:choose>
     <c:when test="${type == 'csv'}">
-      Choose a format:<br/>
-      <html:radio property="format" value="csv"/>Comma separated values<br/>
-      <html:radio property="format" value="tab"/>Tab separated values<br/>
+      <legend>Choose a format:</legend>
+      <ol>
+        <li><html:radio property="format" value="csv"/><label>Comma separated values</label></li>
+        <li><html:radio property="format" value="tab"/><label>Tab separated values</label></li>
+      </ol>
     </c:when>
     <c:when test="${type == 'excel'}">
       <%-- no extra options --%>
@@ -78,21 +79,20 @@
       <c:set var="tileName" value="${type}ExportOptions.tile"/>
       <tiles:insert name="${tileName}"/>
     </c:otherwise>
-  </c:choose>
-  </div>
+  </c:choose></fieldset></li>
 
   <html:hidden property="pathsString" styleId="pathsString" value="${pathsString}"/>
   <html:hidden property="table" value="${table}"/>
   <html:hidden property="type" value="${type}"/>
 
-  Add column &nbsp;
+  <li><label>Add column:</label> &nbsp;
   <tiles:insert name="availableColumns.tile">
      <tiles:put name="table" value="${table}" />
   </tiles:insert>
   &nbsp;
-  <button type="button" onclick="javascript:addSelectedPath()">Add</button>    
-  <br />
+  <button type="button" onclick="javascript:addSelectedPath()">Add</button></li>    
 
+  <li><label>${exportReorderMessage}:</label>
   <ul id="pathsList">
   </ul>
   
@@ -102,12 +102,11 @@
 	  <c:forEach var="path" items="${pathsMap}">
 	     addPathElement("${path.key}", "${path.value}");
 	  </c:forEach>
-  </script>
-
-  <br clear="all"/>
-
-  <html:submit property="submit">${exportSubmitMessage}</html:submit>
+  </script></li>
+</ol>
+</fieldset>
+  <fieldset class="submit"><html:submit property="submit">${exportSubmitMessage}</html:submit></fieldset>
 </html:form>
-</im:boxarea>
+</div>
 </div>
 <!-- /exportOptions.jsp -->
