@@ -10,14 +10,19 @@ package org.intermine.bio.dataconversion;
  *
  */
 
-import java.io.InputStreamReader;
-import java.io.Reader;
 import java.util.HashMap;
 
 import org.intermine.dataconversion.ItemsTestCase;
 import org.intermine.dataconversion.MockItemWriter;
 import org.intermine.metadata.Model;
 import org.intermine.model.fulldata.Item;
+
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileWriter;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.io.Reader;
 
 public class PrideConverterTest extends ItemsTestCase
 {
@@ -31,18 +36,35 @@ public class PrideConverterTest extends ItemsTestCase
 
     public void testProcess() throws Exception {
 
-        Reader reader = 
+        Reader reader =
             new InputStreamReader(getClass().getClassLoader().getResourceAsStream("pride1.xml"));
 
         MockItemWriter itemWriter = new MockItemWriter(new HashMap<String, Item>());
         PrideConverter converter = new PrideConverter(itemWriter,
                                                           Model.getInstanceByName("genomic"));
-        converter.setFastaPath("resources");
+
+
+        File tmpFile = File.createTempFile("PrideConverterTest", "tmp");
+        FileWriter fw = new FileWriter(tmpFile);
+
+        InputStream is =
+            getClass().getClassLoader().getResourceAsStream("fasta.fasta");
+        BufferedReader br = new BufferedReader(new InputStreamReader(is));
+
+        String line = null;
+        while ((line = br.readLine()) != null) {
+            fw.write(line + "\n");
+        }
+
+        fw.close();
+        tmpFile.deleteOnExit();
+
+        converter.setFastaPath(tmpFile.getAbsolutePath());
 
         converter.process(reader);
         converter.close();
 
         // uncomment to write out a new target items file
-        writeItemsFile(itemWriter.getItems(), "pride_item_test.xml");
+        // writeItemsFile(itemWriter.getItems(), "/tmp/pride_item_test.xml");
     }
 }

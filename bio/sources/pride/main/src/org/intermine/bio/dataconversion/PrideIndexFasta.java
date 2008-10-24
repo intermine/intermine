@@ -26,12 +26,12 @@ import org.biojava.utils.ParserException;
  * PrideIndexFasta for indexing fasta files
  * @author Dominik Grimm and Michael Menden
  */
-public class PrideIndexFasta 
+public class PrideIndexFasta
 {
 
        private File[] fasta;
        private SequenceDBLite db;
-       
+
        /**
         * Constructor
         * @param path directory of the fasta files or one fasta file
@@ -40,18 +40,18 @@ public class PrideIndexFasta
               readFastaFiles(path);
               createIndexFile();
        }
-       
+
        private void readFastaFiles(String path) {
               File file = new File(path);
 
               if (file.isDirectory()) {
                      fasta = file.listFiles();
               } else {
-                     File[] fasta = new File[1];
+                     fasta = new File[1];
                      fasta[0] = new File(path);
               }
        }
-       
+
        private long getLastModifiedFasta() {
               long age = 0;
               for (int i = 0; i < fasta.length; i++) {
@@ -61,25 +61,25 @@ public class PrideIndexFasta
               }
               return age;
        }
-       
+
        private void createIndexFile() {
               String fileName = "build/IndexFile";
               File indexFolder = new File(fileName);
-              
+
               try {
                      if (!indexFolder.exists()) {
                             //create indexfolder and files
                             IndexTools.indexFasta("index", indexFolder , fasta, SeqIOConstants.AA);
                      } else if (getLastModifiedFasta() > indexFolder.lastModified()) {
-                     
+
                             File [] indexFiles = indexFolder.listFiles();
-       
+
                             //first delete the contents of the folder
                             for (int i = 0; i < indexFiles.length; i++) {
                                    indexFiles[i].delete();
                             }
                             indexFolder.delete();
-                            
+
                             //create indexfolder and files
                             IndexTools.indexFasta("index", indexFolder , fasta, SeqIOConstants.AA);
                      }
@@ -92,7 +92,7 @@ public class PrideIndexFasta
               } catch (BioException ex) {
                      ex.printStackTrace();
               }
-        
+
               try {
                      //create SequenceDB lockuptable (build in RAM)
                db = new FlatSequenceDB(fileName, "db");
@@ -100,26 +100,26 @@ public class PrideIndexFasta
                ex.printStackTrace();
         } catch (BioException ex) {
                ex.printStackTrace();
-        }       
+        }
        }
-       
+
        /**
         * Constructor
         * @param accession accessionId to find the equivalent protein
         * @return result returns the sequence of the protein
         */
        public String getProtein(String accession) {
-              
+
               String result = null;
-              
+
               try {
                      Sequence seq = db.getSequence(accession);
                      result = seq.seqString();
               } catch (BioException ex) {
                ex.printStackTrace();
-        } 
-        
+        }
+
               return result;
        }
-       
+
 }
