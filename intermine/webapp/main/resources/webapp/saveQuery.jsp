@@ -22,5 +22,10 @@
       XML
     </html:link>
   </div>
+  <div class="exportQueryLink">
+    <html:link action="/exportQuery?as=link&serviceFormat=tab">
+        Get the url  
+    </html:link> to run this query with a web service to get results as tab separated values. Modify url to get more results.
+  </div>
 </c:if>
 <!-- /saveQuery.jsp -->
