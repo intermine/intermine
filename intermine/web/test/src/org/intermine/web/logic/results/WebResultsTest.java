@@ -195,8 +195,7 @@ public class WebResultsTest extends TestCase
         Path path = new Path(model, "Company.CEO.name");
         Column col1 = new Column("description 1.name",0 ,Company.class);
         Column col2 = new Column("description 1.vatNumber",1 ,Company.class);
-        // TODO should Company be replaced by description 1 for CEO bellow?
-        Column col3 = new Column("Company.CEO.name",2 ,CEO.class);
+        Column col3 = new Column("description 1.CEO.name",2 ,CEO.class);
         Column col4 = new Column("Employee.name",3 ,Employee.class);
         expectedColumns.add(col1);
         expectedColumns.add(col2);
