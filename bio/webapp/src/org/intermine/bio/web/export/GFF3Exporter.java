@@ -117,12 +117,16 @@ public class GFF3Exporter implements Exporter
 
     private List<String> formatElementValue(ResultElement el) {
         List<String> ret = new ArrayList<String>();
-        Object obj = el.getField();
         String s;
-        if (obj == null) {
+        if (el == null) {
             s = "-";
         } else {
-            s = obj.toString();
+            Object obj = el.getField();
+            if (obj == null) {
+                s = "-";
+            } else {
+                s = obj.toString();
+            }
         }
         ret.add(s);
         return ret;
