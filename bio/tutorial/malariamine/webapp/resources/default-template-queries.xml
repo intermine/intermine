@@ -148,26 +148,6 @@
     </node>
   </query>
 </template>
-<template name="Gene_Inparalogue" title="Gene --&gt; InParalogues." longDescription="Show all the InParalogues of a specific gene, with the InParanoid score (if available). (Data Source: InParanoid, Drosophila Consortium)." comment="request from user">
-  <query name="Gene_Inparalogue" model="genomic" view="Gene.primaryIdentifier Gene.symbol Gene.homologues.homologue.primaryIdentifier Gene.homologues.homologue.secondaryIdentifier Gene.homologues.inParanoidScore Gene.homologues.type Gene.homologues.homologue.organism.name Gene.homologues.dataSets.title" sortOrder="Gene.primaryIdentifier asc" constraintLogic="A and B">
-    <pathDescription pathString="Gene.homologues" description="Homologue">
-    </pathDescription>
-    <pathDescription pathString="Gene.homologues.homologue.organism" description="Homologue &gt; organism">
-    </pathDescription>
-    <pathDescription pathString="Gene.homologues.homologue" description="Homologue">
-    </pathDescription>
-    <node path="Gene" type="Gene">
-      <constraint op="LOOKUP" value="CG3936" description="" identifier="" editable="true" code="B" extraValue="D. melanogaster">
-      </constraint>
-    </node>
-    <node path="Gene.homologues" type="Homologue">
-    </node>
-    <node path="Gene.homologues.type" type="String">
-      <constraint op="=" value="inParalogue" description="" identifier="" code="A">
-      </constraint>
-    </node>
-  </query>
-</template>
 <template name="Gene_Protein" title="Gene --&gt; Proteins." longDescription="Show the proteins for a particular gene." comment="06.06.07 updated to work from gene class - Philip">
   <query name="Gene_Protein" model="genomic" view="Gene.proteins.primaryAccession Gene.primaryIdentifier Gene.secondaryIdentifier" sortOrder="Gene.proteins.primaryAccession asc">
     <pathDescription pathString="Gene.proteins" description="Protein">
@@ -350,14 +330,6 @@
   </tag>
   <tag name="aspect:GO" objectIdentifier="GOtermidentifier_name" type="template">
   </tag>
-  <tag name="aspect:Interactions" objectIdentifier="org.flymine.model.genomic.Interaction" type="class">
-  </tag>
-  <tag name="aspect:Interactions" objectIdentifier="org.flymine.model.genomic.InteractionExperiment" type="class">
-  </tag>
-  <tag name="aspect:Interactions" objectIdentifier="org.flymine.model.genomic.Gene" type="class">
-  </tag>
-  <tag name="aspect:Interactions" objectIdentifier="org.flymine.model.genomic.InteractionTerm" type="class">
-  </tag>
   <tag name="aspect:Proteins" objectIdentifier="Organism_Protein" type="template">
   </tag>
   <tag name="aspect:Proteins" objectIdentifier="Protein_Gene" type="template">
@@ -366,46 +338,7 @@
   </tag>
   <tag name="aspect:Protein Structure" objectIdentifier="org.flymine.model.genomic.Protein" type="class">
   </tag>
-  <tag name="im:frontpage" objectIdentifier="AllGene_Chromosome" type="template">
-  </tag>
-  <tag name="im:frontpage" objectIdentifier="demo" type="bag">
-  </tag>
-  <tag name="im:frontpage" objectIdentifier="Chromosome_Gene" type="template">
-  </tag>
-  <tag name="im:frontpage" objectIdentifier="Exon_To_Gene_Type_Converter" type="template">
-  </tag>
-  <tag name="im:frontpage" objectIdentifier="Gene_Location" type="template">
-  </tag>
-  <tag name="im:frontpage" objectIdentifier="Gene_OverlapppingGenes" type="template">
-  </tag>
-  <tag name="im:frontpage" objectIdentifier="Gene_paralogues" type="template">
-  </tag>
-  <tag name="im:frontpage" objectIdentifier="Gene_Protein" type="template">
-  </tag>
-  <tag name="im:frontpage" objectIdentifier="Gene_To_Exon_Type_Converter" type="template">
-  </tag>
-  <tag name="im:frontpage" objectIdentifier="Gene_To_MRNA_Type_Converter" type="template">
-  </tag>
-  <tag name="im:frontpage" objectIdentifier="Gene_To_Protein_Type_Converter" type="template">
-  </tag>
-  <tag name="im:frontpage" objectIdentifier="GOtermidentifier_name" type="template">
-  </tag>
-  <tag name="im:frontpage" objectIdentifier="GO_name_Gene" type="template">
-  </tag>
-  <tag name="im:frontpage" objectIdentifier="A_IdentifierSynonym_Object" type="template">
-  </tag>
-  <tag name="im:frontpage" objectIdentifier="Organism_Gene" type="template">
-  </tag>
-  <tag name="im:frontpage" objectIdentifier="Organism_ProteinInteraction" type="template">
-  </tag>
-  <tag name="im:frontpage" objectIdentifier="Organism_Protein" type="template">
-  </tag>
-  <tag name="im:frontpage" objectIdentifier="Protein_Gene" type="template">
-  </tag>
-  <tag name="im:frontpage" objectIdentifier="Protein_ProteinInteraction" type="template">
-  </tag>
-  <tag name="im:frontpage" objectIdentifier="ChromLocation_GeneTranscriptExon" type="template">
-  </tag>
+
   <tag name="im:preferredBagType" objectIdentifier="org.flymine.model.genomic.Gene" type="class">
   </tag>
   <tag name="im:preferredBagType" objectIdentifier="org.flymine.model.genomic.Protein" type="class">
@@ -414,13 +347,9 @@
   </tag>
   <tag name="im:public" objectIdentifier="Protein_Gene" type="template">
   </tag>
-  <tag name="im:public" objectIdentifier="Organism_ProteinInteraction" type="template">
-  </tag>
   <tag name="im:public" objectIdentifier="AllGene_Chromosome" type="template">
   </tag>
   <tag name="im:public" objectIdentifier="GOtermidentifier_name" type="template">
-  </tag>
-  <tag name="im:public" objectIdentifier="Protein_ProteinInteraction" type="template">
   </tag>
   <tag name="im:public" objectIdentifier="ChromLocation_Gene" type="template">
   </tag>
