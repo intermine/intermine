@@ -20,7 +20,7 @@
     <source name="malaria-chromosome-fasta" type="fasta" dump="true">
       <property name="fasta.className" value="org.flymine.model.genomic.Chromosome"/>
       <property name="fasta.synonymSource" value="PlasmoDB"/>
-      <property name="fasta.dataSetTitle" value="PlasmoDB"/>
+      <property name="fasta.dataSetTitle" value="PlasmoDB chromosome sequence"/>
       <property name="fasta.taxonId" value="36329"/>
       <property name="src.data.dir" location="DATA_DIR/malaria/genome/fasta"/>
     </source>
