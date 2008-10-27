@@ -51,6 +51,8 @@ public class Model
     private final Map<Class, Map<String, FieldDescriptor>> classToFieldDescriptorMap
         = new HashMap<Class, Map<String, FieldDescriptor>>();
 
+    private boolean generatedClassesAvailable = true;
+
     /**
      * Return a Model for specified model name (loading Model if necessary)
      * @param name the name of the model
@@ -372,6 +374,35 @@ public class Model
             }
     
             return Class.forName("java.lang." + className).getName();
+        }
+    }
+
+    /**
+     * @return true if generated classes are available
+     * 
+     */
+    public boolean isGeneratedClassesAvailable() {
+        return generatedClassesAvailable;
+    }
+
+    /**
+     * Sets if generated classes are available.
+     * @param available if generated class is available 
+     */    
+    public void setGeneratedClassesAvailable(boolean available) {
+        this.generatedClassesAvailable = available;
+    }
+    
+    /**
+     * @param className class name
+     * @return true if class is defined else false
+     */
+    public boolean isGeneratedClassAvailable(String className) {
+        try {
+            getQualifiedTypeName(className);
+            return true;
+        } catch (ClassNotFoundException ex) {
+            return false;
         }
     }
 }
