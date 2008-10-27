@@ -15,6 +15,66 @@
     </node>
   </query>
 </template>
+<template name="ChromLocation_GeneTranscriptExon" title="Chromosomal location --&gt; All genes + Transcripts + Exons." longDescription="Show the genes, with their transcripts and exons, located between two points on a chromosome.  Give the location of the exons." comment="">
+  <query name="ChromLocation_GeneTranscriptExon" model="genomic" view="Chromosome.primaryIdentifier Chromosome.exons.gene.primaryIdentifier Chromosome.exons.gene.symbol Chromosome.exons.transcripts.primaryIdentifier Chromosome.exons.primaryIdentifier Chromosome.exons.objects.start Chromosome.exons.objects.end Chromosome.exons.objects.strand" sortOrder="Chromosome.primaryIdentifier asc" constraintLogic="D and A and C and B">
+    <pathDescription pathString="Chromosome.exons" description="Exon">
+    </pathDescription>
+    <pathDescription pathString="Chromosome.exons.transcripts" description="Transcript">
+    </pathDescription>
+    <pathDescription pathString="Chromosome.exons.gene" description="Gene">
+    </pathDescription>
+    <pathDescription pathString="Chromosome.exons.evidence" description="Dataset">
+    </pathDescription>
+    <pathDescription pathString="Chromosome.exons.objects" description="Exon &gt; Chromosome location">
+    </pathDescription>
+    <node path="Chromosome" type="Chromosome">
+    </node>
+    <node path="Chromosome.primaryIdentifier" type="String">
+      <constraint op="=" value="2L" description="Show the genes, transcripts and exons located on chromosome:" identifier="" editable="true" code="A">
+      </constraint>
+    </node>
+    <node path="Chromosome.organism" type="Organism">
+    </node>
+    <node path="Chromosome.organism.name" type="String">
+      <constraint op="=" value="Drosophila melanogaster" description="from:" identifier="" editable="true" code="B">
+      </constraint>
+    </node>
+    <node path="Chromosome.exons" type="Exon">
+    </node>
+    <node path="Chromosome.exons.objects" type="Location">
+    </node>
+    <node path="Chromosome.exons.objects.object" type="Chromosome">
+    </node>
+    <node path="Chromosome.exons.objects.start" type="Integer">
+      <constraint op="&gt;" value="1" description="between base:" identifier="" editable="true" code="C">
+      </constraint>
+    </node>
+    <node path="Chromosome.exons.objects.end" type="Integer">
+      <constraint op="&lt;" value="10000" description="and:" identifier="" editable="true" code="D">
+      </constraint>
+    </node>
+  </query>
+</template>
+<template name="Exon_To_Gene_Type_Converter" title="Exon to gene type converter" longDescription="" comment="">
+  <query name="Exon_To_Gene_Type_Converter" model="genomic" view="Exon.id Exon.gene.id" sortOrder="Exon.id asc">
+    <node path="Exon" type="Exon">
+    </node>
+    <node path="Exon.id" type="Integer">
+      <constraint op="=" value="0" description="Exon.id" identifier="Exon.id" editable="true" code="A">
+      </constraint>
+    </node>
+  </query>
+</template>
+<template name="Gene_To_Exon_Type_Converter" title="Gene to exon type converter" longDescription="" comment="">
+  <query name="Gene_To_Exon_Type_Converter" model="genomic" view="Gene.id Gene.exons.id" sortOrder="Gene.id asc">
+    <node path="Gene" type="Gene">
+    </node>
+    <node path="Gene.id" type="Integer">
+      <constraint op="=" value="0" description="Gene.id" identifier="Gene.id" editable="true" code="A">
+      </constraint>
+    </node>
+  </query>
+</template>
 <template name="All_Genes_In_Organism_To_Publications" title="All genes in organism --&gt; Publications." longDescription="Show the publications for each gene in one organism. References are loaded from FlyBase for all Drosophila species, and from NCBI for D. melanogaster, C. elegans and S. cerevisiae." comment="">
   <query name="All_Genes_In_Organism_To_Publications" model="genomic" view="Gene.primaryIdentifier Gene.secondaryIdentifier Gene.publications.pubMedId Gene.publications.firstAuthor Gene.publications.journal Gene.publications.year Gene.organism.name" sortOrder="Gene.primaryIdentifier asc">
     <node path="Gene" type="Gene">
@@ -999,6 +1059,10 @@
   <tag name="im:converter" objectIdentifier="Transcript_To_Gene_Type_Converter" type="template">
   </tag>
   <tag name="im:converter" objectIdentifier="Translation_To_Transcript_Type_Converter" type="template">
+  </tag>
+  <tag name="im:converter" objectIdentifier="Exon_To_Gene_Type_Converter" type="template">
+  </tag>
+  <tag name="im:converter" objectIdentifier="Gene_To_Exon_Type_Converter" type="template">
   </tag>
   <tag name="im:preferredBagType" objectIdentifier="org.flymine.model.genomic.Gene" type="class">
   </tag>
