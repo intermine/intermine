@@ -1,4 +1,4 @@
-package samples.template;
+package samples;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -18,8 +18,9 @@ import org.intermine.webservice.client.template.TemplateParameter;
  */
 
 /**
- * The TemplateClient demonstrates using of InterMine template web service. This example returns 
- * first 100 predicted orthologues between two organisms sorted by FlyBase gene identifier.  
+ * The TemplateClient is an example of client fetching template results from InterMine web service. 
+ * It demonstrates using of InterMine template web service.This example returns first 100 predicted 
+ * orthologues between two organisms sorted by FlyBase gene identifier.  
  * 
  * NOTE: The template name or template parameters can change at the server in next versions of 
  * FlyMine. In this case please download newer version of samples or modify sample properly.

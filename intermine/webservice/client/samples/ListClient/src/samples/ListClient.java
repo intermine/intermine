@@ -1,4 +1,4 @@
-package samples.list;
+package samples;
 
 /*
  * Copyright (C) 2002-2008 FlyMine
@@ -17,8 +17,8 @@ import org.intermine.webservice.client.services.ListService;
 
 
 /**
- * The ListClient demonstrates using of InterMine list web service. This example
- * fetches all public lists containing FBgn0000606 gene.
+ * The ListClient is an example of list client fetching all public lists containing FBgn0000606 gene
+ * from InterMine web service. It demonstrates using of InterMine list web service.
  * 
  * NOTE: The list will change probably in next FlyMine versions and it is possible, that
  * there won't be any result. In this case please download newer version of samples or 
