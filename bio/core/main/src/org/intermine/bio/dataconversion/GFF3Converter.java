@@ -243,10 +243,10 @@ public class GFF3Converter
         }
         Item relation;
         if (!record.getType().equals("chromosome") && seq != null) {
-            if (record.getStart() < 1 || record.getEnd() < 1 || dontCreateLocations
-                || !handler.createLocations(record)) {
-                relation = createItem("SimpleRelation");
-            } else {
+            boolean makeLocation =
+                record.getStart() >= 1 && record.getEnd() >= 1 && !dontCreateLocations
+                && handler.createLocations(record);
+            if (makeLocation) {
                 relation = createItem("Location");
                 int start = record.getStart();
                 int end = record.getEnd();
@@ -269,6 +269,14 @@ public class GFF3Converter
                 if (record.getPhase() != null) {
                     relation.setAttribute("phase", record.getPhase());
                 }
+                if (seqClsName.equals("Chromosome")) {
+                    feature.setReference("chromosomeLocation", relation);
+                }
+            } else {
+                relation = createItem("SimpleRelation");
+            }
+            if (makeLocation && seqClsName.equals("Chromosome")) {
+                feature.setReference("chromosomeLocation", relation);
             }
             relation.setReference("object", seq.getIdentifier());
             relation.setReference("subject", feature.getIdentifier());
@@ -447,15 +455,15 @@ public class GFF3Converter
     private Item getSeq(String id) throws ObjectStoreException {
         // the seqHandler may have changed the id used, e.g. if using an IdResolver
         String identifier = sequenceHandler.getSeqIdentifier(id);
-        
+
         if (identifier == null) {
             return null;
         }
-        
+
         if (identifier.startsWith("chr")) {
             identifier = identifier.substring(3);
         }
-        
+
         Item seq = (Item) seqs.get(identifier);
         if (seq == null) {
             seq = sequenceHandler.makeSequenceItem(this, identifier);
