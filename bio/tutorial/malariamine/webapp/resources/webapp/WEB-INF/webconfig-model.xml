@@ -1,11 +1,4 @@
 <webconfig>
-
-  <class className="org.flymine.model.genomic.AnalysisResult">
-    <fields>
-      <fieldconfig fieldExpr="confidence"/>
-    </fields>
-  </class>
-
   <class className="org.flymine.model.genomic.Author">
     <fields>
       <fieldconfig fieldExpr="name"/>
@@ -33,10 +26,10 @@
     </longdisplayers>
   </class>
 
-  <class className="org.flymine.model.genomic.ComputationalResult">
+  <class className="org.flymine.model.genomic.DataSet">
     <fields>
-      <fieldconfig fieldExpr="score"/>
-      <fieldconfig fieldExpr="confidence"/>
+      <fieldconfig fieldExpr="title"/>
+      <fieldconfig fieldExpr="url" doNotTruncate="true"/>
     </fields>
   </class>
 
@@ -108,6 +101,12 @@
     </longdisplayers>
   </class>
 
+   <class className="org.flymine.model.genomic.GOTerm">
+    <fields>
+      <fieldconfig fieldExpr="identifier"/>
+      <fieldconfig fieldExpr="name"/>
+    </fields>
+  </class>
 
   <class className="org.flymine.model.genomic.InfoSource">
     <fields>
@@ -212,6 +211,16 @@
     </fields>
   </class>
 
+  <class className="org.flymine.model.genomic.Sequence">
+    <fields>
+      <fieldconfig fieldExpr="residues" fieldExporter="org.intermine.bio.web.export.ResidueFieldExporter"
+                   sectionOnRight="true" sectionTitle="Residues" openByDefault="true"
+                   showInSummary="false" showInResults="false" showInInlineCollection="false"/>
+      <fieldconfig fieldExpr="length"/>
+    </fields>
+    <tabledisplayer src="/model/sequenceShortDisplayer.jsp"/>
+  </class>
+
   <class className="org.flymine.model.genomic.Synonym">
     <fields>
       <fieldconfig fieldExpr="value"/>
@@ -236,15 +245,13 @@
     </longdisplayers>
   </class>
 
-  <class className="org.flymine.model.genomic.Translation">
+  <class className="org.flymine.model.genomic.UniProtFeature">
     <fields>
-      <fieldconfig fieldExpr="primaryIdentifier"/>
-      <fieldconfig fieldExpr="secondaryIdentifier"/>
-      <fieldconfig fieldExpr="organism.name"/>
+      <fieldconfig fieldExpr="type"/>
+      <fieldconfig fieldExpr="description"/>
+      <fieldconfig fieldExpr="begin"/>
+      <fieldconfig fieldExpr="end"/>
     </fields>
-    <longdisplayers>
-      <displayer src="attributeLinkDisplayer.tile"/>
-    </longdisplayers>
   </class>
 
 <!-- exporters -->
