@@ -23,7 +23,8 @@ import org.intermine.webservice.client.services.QueryService;
 /**
  * The QueryAPIClient is an example of query client fetching results of query from InterMine web service. 
  * It demonstrates using InterMine query API. It retrieves the same data as QueryClient but demonstrates 
- * how to create path query from start and add constraints. This example displays first 100 Drosophila  melanogaster genes sorted by the FlyBase identifier. 
+ * how to create path query from start and add constraints. This example displays first 100 Drosophila  
+ * melanogaster genes sorted by the FlyBase identifier. 
  *
  * NOTE: The model can change at the server in next versions of FlyMine and sample won't work. For example
  * primaryIdentifier gene attribute can be renamed. In this case please download newer version of samples 
