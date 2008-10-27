@@ -11,13 +11,14 @@
     </source>
     <source name="malaria-gff" type="malaria-gff">
       <property name="gff3.taxonId" value="36329"/>
-      <property name="gff3.seqDataSourceName" value="GeneDB"/>
+      <property name="gff3.seqDataSourceName" value="PlasmoDB"/>
+      <property name="gff3.dataSourceName" value="PlasmoDB"/>
+      <property name="gff3.seqClsName" value="Chromosome"/>
+      <property name="gff3.dataSetTitle" value="PlasmoDB P. falciparum genome"/>
       <property name="src.data.dir" location="DATA_DIR/malaria/genome/gff"/>
     </source>
     <source name="malaria-chromosome-fasta" type="fasta" dump="true">
-      <property name="source.name" value="fasta"/>
       <property name="fasta.className" value="org.flymine.model.genomic.Chromosome"/>
-      <property name="fasta.includes" value="MAL*.fasta"/>
       <property name="fasta.synonymSource" value="PlasmoDB"/>
       <property name="fasta.dataSetTitle" value="PlasmoDB"/>
       <property name="fasta.taxonId" value="36329"/>
