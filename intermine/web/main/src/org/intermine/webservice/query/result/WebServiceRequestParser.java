@@ -32,7 +32,7 @@ public class WebServiceRequestParser
      */
     public static final String LIMIT_PARAMETER = "size";
     
-    private static final int DEFAULT_START = 1;
+    private static final int DEFAULT_START = 0;
     
     private static final int DEFAULT_MAX_COUNT = 10;
     
