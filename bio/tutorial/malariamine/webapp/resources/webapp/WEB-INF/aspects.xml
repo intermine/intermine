@@ -9,16 +9,8 @@
       all genome features that have chromosomal locations.
     </intro-text>
     <tile-name>model/genomics.jsp</tile-name>
-    <starting-points>
-      Gene Transcript Exon TRNA NcRNA Chromosome ChromosomeBand
-      Orthologue Paralogue IntergenicRegion GOTerm RepeatRegion TransposableElement TFBindingSite
-      Pseudogene RRNA SnRNA SnoRNA UTR MRNA
-    </starting-points>
-    <aspect-source name="Ensembl" url="http://www.genedb.org"/>
+    <aspect-source name="GeneDB" url="http://www.genedb.org"/>
   </aspect>
-
-
-
   <aspect name="Proteins">
     <subtitle>Protein and proteomics&lt;br/&gt;data</subtitle>
     <icon-image>model/images/proteins.png</icon-image>
@@ -27,13 +19,8 @@
       Protein annotation (including family and domain annotation) from UniProt.
     </intro-text>
     <tile-name>model/proteins.jsp</tile-name>
-    <starting-points>Protein ProteinFeature ProteinDomain ProteinFamily</starting-points>
-    <aspect-source name="InterPro" url="http://www.ebi.ac.uk/interpro"/>
     <aspect-source name="UniProt" url="http://www.uniprot.org"/>
   </aspect>
-
-
-
   <aspect name="Gene Ontology">
     <subtitle></subtitle>
     <icon-image>model/images/geneOntology.png</icon-image>
@@ -53,7 +40,6 @@
       Genes and so each gene has a reference (link) to a list of its GO
       annotations (if available).
     </intro-text>
-    <starting-points>Gene GOTerm GOAnnotation</starting-points>
     <tile-name>model/GO.jsp</tile-name>
     <aspect-source name="Gene Ontology Consortium" url="http://www.geneontology.org/"/>
   </aspect>
