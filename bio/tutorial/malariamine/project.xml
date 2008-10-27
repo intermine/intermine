@@ -49,7 +49,7 @@
     <post-process name="do-sources"/>
 
     <post-process name="summarise-objectstore"/>
-    <post-process name="create-lucene-index"/>
+    <post-process name="create-autocomplete-index"/>
 
   </post-processing>
 

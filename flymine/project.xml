@@ -527,7 +527,7 @@
     <post-process name="synonym-update"/>
     <post-process name="create-attribute-indexes"/>
     <post-process name="summarise-objectstore"/>
-    <post-process name="create-lucene-index"/>
+    <post-process name="create-autocomplete-index"/>
 
     <!-- grant-db-production/
     TODO: Not really post processing but just has to be done sometime...

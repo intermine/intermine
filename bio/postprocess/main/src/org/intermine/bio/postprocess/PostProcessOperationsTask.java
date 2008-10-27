@@ -238,7 +238,7 @@ public class PostProcessOperationsTask extends DynamicAttributeTask
                                       PropertiesUtil.serialize(oss.toProperties()));
             } else if ("precompute-queries".equals(operation)) {
                 PrecomputeTask.precompute(false, getObjectStoreWriter().getObjectStore(), 0);
-            } else if ("create-lucene-index".equals(operation)) {
+            } else if ("create-lucene-index".equals(operation) || "create-autocomplete-index".equals(operation)) {
                 System.out .println("create lucene index ...");
                 ObjectStore os = getObjectStoreWriter().getObjectStore();
                 if (!(os instanceof ObjectStoreInterMineImpl)) {
