@@ -61,6 +61,9 @@ public class ModelService extends Service
             model = fetchModel();
             models.put(key, model);
         }
+        // definitions of classes are not available in the client and you need to tell it to model 
+        // so it won't do checks when constructing path query  
+        model.setGeneratedClassesAvailable(false);
         return model;
     }
 
