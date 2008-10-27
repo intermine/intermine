@@ -29,8 +29,7 @@ import org.intermine.webservice.client.template.TemplateParameter;
  **/
 public class TemplateClient
 {
-    
-    private static String serviceRootUrl = "http://www.flymine.org/query/service";
+    private static String serviceRootUrl = "localhost:8080/query/service";
     
     public static void main(String[] args) {
         
@@ -43,7 +42,7 @@ public class TemplateClient
         // second organism should be equal to Caenorhabditis elegans
         parameters.add(new TemplateParameter("eq", "Caenorhabditis elegans"));
         // first 100 results are fetched
-        List<List<String>> result = service.getResult("GeneOrganism1_OrthologueOrganism2", parameters, 1, 100);
+        List<List<String>> result = service.getResult("GeneOrganism1_OrthologueOrganism2", parameters, 0, 100);
         System.out.println("First 100 predicted orthologues between two organisms sorted by FlyBase gene identifier:");
         for (List<String> row : result) {
             for (String cell : row) {

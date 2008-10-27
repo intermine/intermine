@@ -31,7 +31,7 @@ import org.intermine.webservice.client.services.QueryService;
 public class QueryClient
 {
     
-    private static String serviceRootUrl = "http://www.flymine.org/query/service";
+    private static String serviceRootUrl = "localhost:8080/query/service";
     
     public static void main(String[] args) throws IOException {
         
