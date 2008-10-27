@@ -77,7 +77,7 @@ public class QueryResultService extends WebService
                 request.getSession().getServletContext(), savedBags);
         if (builder.isQueryValid()) {
                 PathQuery query = builder.getQuery();
-                runPathQuery(query, input.getStart() - 1 , input.getMaxCount(), 
+                runPathQuery(query, input.getStart(), input.getMaxCount(), 
                         input.isComputeTotalCount(), null, null, input, null);
         } else {
             output.addErrors(builder.getErrors(), Output.SC_BAD_REQUEST);

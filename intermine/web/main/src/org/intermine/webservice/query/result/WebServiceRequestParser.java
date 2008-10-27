@@ -62,7 +62,7 @@ public class WebServiceRequestParser
         input.setMaxCount(DEFAULT_MAX_COUNT);
         input.setStart(DEFAULT_START);
         
-        Integer start = parseInteger(request.getParameter(START_PARAMETER), START_PARAMETER, 1, 
+        Integer start = parseInteger(request.getParameter(START_PARAMETER), START_PARAMETER, 0, 
                 Integer.MAX_VALUE, input);
         if (start != null) {
             input.setStart(start);
