@@ -51,6 +51,9 @@ public class AutoCompleter
     private Properties prob;
     private LuceneSearchEngine search = null;
 
+    private final static File TEMP_DIR =
+        new File("build" + File.separatorChar + "autocompleteIndexes");
+
     /**
      * Autocompleter standard constructor.
      */
@@ -121,7 +124,8 @@ public class AutoCompleter
             search = ramIndexMap.get(classDes);
         } else {
             try {
-                RAMDirectory ram = new RAMDirectory(classDes);
+                String indexFIle = TEMP_DIR.toString() + File.separatorChar + classDes;
+                RAMDirectory ram = new RAMDirectory(indexFIle);
                 search = new LuceneSearchEngine(ram);
                 ramIndexMap.put(classDes, search);
                 blobMap.put(classDes, ram);
@@ -197,14 +201,12 @@ public class AutoCompleter
     public void buildIndex(ObjectStore os)
         throws IOException, ObjectStoreException, ClassNotFoundException {
 
-        File tempDir = new File("build" + File.separatorChar + "autocompleteIndexes");
-
-        if (tempDir.exists()) {
-            if (!tempDir.isDirectory()) {
-                throw new RuntimeException(tempDir + " exists but isn't a directory - remove it");
+        if (TEMP_DIR.exists()) {
+            if (!TEMP_DIR.isDirectory()) {
+                throw new RuntimeException(TEMP_DIR + " exists but isn't a directory - remove it");
             }
         } else {
-            tempDir.mkdirs();
+            TEMP_DIR.mkdirs();
         }
 
     for (Map.Entry<Object, Object> entry: prob.entrySet()) {
@@ -223,9 +225,9 @@ public class AutoCompleter
         for (Iterator<String> i = fieldNames.iterator(); i.hasNext();) {
 
             String fieldName = i.next();
-            System.out.println("Indexing " + cld.getUnqualifiedName() + "." + fieldName);
-            fieldIndexMap.put(cld.getUnqualifiedName() + "."
-                    + fieldName, cld.getUnqualifiedName() + "." + fieldName);
+            String classAndField = cld.getUnqualifiedName() + "." + fieldName;
+            System.out .println("Indexing " + classAndField);
+            fieldIndexMap.put(classAndField, classAndField);
 
 
             Query q = new Query();
@@ -235,10 +237,8 @@ public class AutoCompleter
             q.addFrom(qc);
             Results results = os.execute(q);
 
-            LuceneObjectClass objectClass = new LuceneObjectClass(cld.getUnqualifiedName()
-                    + "." + fieldName);
+            LuceneObjectClass objectClass = new LuceneObjectClass(classAndField);
             objectClass.addField(fieldName);
-
 
             for (Object resRow: results) {
                 Object fieldValue = ((ResultsRow) resRow).get(0);
@@ -247,13 +247,12 @@ public class AutoCompleter
                 }
             }
 
-            String indexFileName =
-                tempDir.getPath() + File.separatorChar + cld.getUnqualifiedName() + "." + fieldName;
+            String indexFileName = TEMP_DIR.getPath() + File.separatorChar + classAndField;
             LuceneIndex indexer = new LuceneIndex(indexFileName);
             indexer.addClass(objectClass);
             indexer.rebuildClassIndexes();
 
-            createRAMIndex(indexFileName);
+            createRAMIndex(classAndField);
 
             }
         }
