@@ -789,11 +789,10 @@ public class PathQuery
 
         if (lastIndex == -1) {
             node = new PathNode(path);
-            // Check whether starting point exists
-            try {
-                model.getQualifiedTypeName(path);
-            } catch (ClassNotFoundException err) {
-                logPathError(err);
+            if (model.isGeneratedClassesAvailable()) {
+                if (!model.isGeneratedClassAvailable(path)) {
+                    logPathError(new ClassNotFoundException("Class " + path + " is not available."));
+                }                 
             }
         } else {
             String prefix = path.substring(0, lastIndex);
