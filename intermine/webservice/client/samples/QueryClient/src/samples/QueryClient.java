@@ -1,4 +1,4 @@
-package samples.query;
+package samples;
 
 /*
  * Copyright (C) 2002-2008 FlyMine
@@ -18,8 +18,9 @@ import org.intermine.webservice.client.services.QueryService;
 
 
 /**
- * The QueryClient demonstrates using of InterMine query web service.
- * This examples displays first 100 Drosophila  melanogaster genes sorted by the FlyBase identifier. 
+ * The QueryClient is an example of query client fetching query results from InterMine web service. 
+ * It demonstrates using of InterMine query web service.
+ * This example displays first 100 Drosophila  melanogaster genes sorted by the FlyBase identifier. 
  *
  * NOTE: The model can change at the server in next versions of FlyMine and sample won't work. For example
  * primaryIdentifier gene attribute can be renamed. In this case please download newer version of samples 
