@@ -7,7 +7,7 @@
   <tr>
     <td>
       <div class="heading2">
-        GO annotation in FlyMine
+        GO annotation
       </div>
       <div class="body">
         <DL>
@@ -19,7 +19,7 @@
           </P>
           <DT><I>Plasmodium falciparum 3D7</I></DT>
           <DD>
-            GO annotations for <I>Plasmodium falciparum 3D7</I> gene products assigned by <a href="http://www.informatics.jax.org">MGI</a>, updated 15th April 2006.<BR/>
+            GO annotations for <I>Plasmodium falciparum 3D7</I> gene products assigned by <a href="http://www.informatics.jax.org">MGI</a><BR/>
           </DD>
         </DL>
       </div>
