@@ -430,17 +430,9 @@
   </tag>
   <tag name="im:aspect:Gene Ontology" objectIdentifier="Gene.allGoAnnotation" type="collection">
   </tag>
-  <tag name="im:aspect:Gene Ontology" objectIdentifier="Gene_FlyAtlasGO" type="template">
-  </tag>
-  <tag name="im:aspect:Gene Ontology" objectIdentifier="GeneOrganism_OrthologueOrganismGO" type="template">
-  </tag>
   <tag name="im:aspect:Gene Ontology" objectIdentifier="Protein_GO" type="template">
   </tag>
-  <tag name="im:aspect:Gene Ontology" objectIdentifier="AAM_Gene2GO2NEW" type="template">
-  </tag>
   <tag name="im:aspect:Gene Ontology" objectIdentifier="org.flymine.model.genomic.GOTerm" type="class">
-  </tag>
-  <tag name="im:aspect:Gene Ontology" objectIdentifier="OrganismGoterm_genesDrosDelDeletion" type="template">
   </tag>
   <tag name="im:aspect:Gene Ontology" objectIdentifier="GO_GenesOrganism" type="template">
   </tag>
@@ -866,24 +858,6 @@
   </tag>
   <tag name="im:aspect:Genomics " objectIdentifier="Gene_ExonLocation2" type="template">
   </tag>
-  <tag name="im:aspect:Genomics Comparative Genomics" objectIdentifier="AAQ_orthologues" type="template">
-  </tag>
-  <tag name="im:aspect:Genomics Comparative Genomics" objectIdentifier="AAR_orthologues2transcripts" type="template">
-  </tag>
-  <tag name="im:aspect:Genomics Comparative Genomics RNAi" objectIdentifier="AAS_phenotype2genesWithOrthologues" type="template">
-  </tag>
-  <tag name="im:aspect:Genomics Gene Ontology" objectIdentifier="AAO_OrthologuesWithGO2" type="template">
-  </tag>
-  <tag name="im:aspect:Literature" objectIdentifier="All_Genes_In_Organism_To_Publications" type="template">
-  </tag>
-  <tag name="im:aspect:Literature" objectIdentifier="Gene_To_Publications" type="template">
-  </tag>
-  <tag name="im:aspect:Literature" objectIdentifier="Gene.publications" type="collection">
-  </tag>
-  <tag name="im:aspect:Literature" objectIdentifier="GeneSymbol_Identifier" type="template">
-  </tag>
-  <tag name="im:aspect:Location" objectIdentifier="Gene_Location" type="template">
-  </tag>
   <tag name="im:aspect:Proteins" objectIdentifier="org.flymine.model.genomic.Protein" type="class">
   </tag>
   <tag name="im:aspect:Proteins" objectIdentifier="Gene.proteins" type="collection">
@@ -997,62 +971,6 @@
   <tag name="im:aspect:Proteins" objectIdentifier="Protein.features" type="collection">
   </tag>
   <tag name="im:aspect:Proteins" objectIdentifier="Protein.keywords" type="collection">
-  </tag>
-  <tag name="im:aspect:Proteins Protein Interaction" objectIdentifier="AAD_GOidentifier2proteinInteractions" type="template">
-  </tag>
-  <tag name="im:aspect:Proteins Protein Structure" objectIdentifier="AAI_Pfam2proteinStructure" type="template">
-  </tag>
-  <tag name="im:aspect:Proteins Structure" objectIdentifier="GeneSymbol_Identifier" type="template">
-  </tag>
-  <tag name="im:aspect:RNAi" objectIdentifier="OthologuesRnai_forProtein" type="template">
-  </tag>
-  <tag name="im:aspect:Resources" objectIdentifier="ChromLocation_AmplimerPrimer" type="template">
-  </tag>
-  <tag name="im:aspect:Resources" objectIdentifier="ChromLocation_DrosDelDeletion" type="template">
-  </tag>
-  <tag name="im:aspect:Resources" objectIdentifier="Chromosome_AmplimerLocation" type="template">
-  </tag>
-  <tag name="im:aspect:Resources" objectIdentifier="Chromosome_GeneInsertionLocation" type="template">
-  </tag>
-  <tag name="im:aspect:Resources" objectIdentifier="Chromosome_RegionOverlappingInsertion" type="template">
-  </tag>
-  <tag name="im:aspect:Resources" objectIdentifier="ChromLocation_AmplimerPrimerPromoter" type="template">
-  </tag>
-  <tag name="im:aspect:Resources" objectIdentifier="ChromLocation_GeneTranscriptINDAC" type="template">
-  </tag>
-  <tag name="im:aspect:Resources" objectIdentifier="DrosDel_LocationGeneTranscriptINDAC" type="template">
-  </tag>
-  <tag name="im:aspect:Resources" objectIdentifier="DrosDel_GeneLocation" type="template">
-  </tag>
-  <tag name="im:aspect:Resources" objectIdentifier="Gene_DrosDelDeletionAvailable" type="template">
-  </tag>
-  <tag name="im:aspect:Resources" objectIdentifier="Gene_DrosDelDeletionInsertion" type="template">
-  </tag>
-  <tag name="im:aspect:Resources" objectIdentifier="Gene_DrosDelDeletion" type="template">
-  </tag>
-  <tag name="im:aspect:Resources" objectIdentifier="Gene_INDAC" type="template">
-  </tag>
-  <tag name="im:aspect:Resources" objectIdentifier="Gene_Insertion" type="template">
-  </tag>
-  <tag name="im:aspect:Resources" objectIdentifier="Gene_TilingPathSpanAmplimerLocation" type="template">
-  </tag>
-  <tag name="im:aspect:Resources" objectIdentifier="Gene_TilingPathSpanLocation" type="template">
-  </tag>
-  <tag name="im:aspect:Resources" objectIdentifier="Gene_TilingPathAmplimersLocation" type="template">
-  </tag>
-  <tag name="im:aspect:Resources" objectIdentifier="GeneSymbol_Identifier" type="template">
-  </tag>
-  <tag name="im:aspect:Resources" objectIdentifier="INDAC_GeneLocation" type="template">
-  </tag>
-  <tag name="im:aspect:Resources" objectIdentifier="OrganismGoterm_genesDrosDelDeletion" type="template">
-  </tag>
-  <tag name="im:aspect:Resources" objectIdentifier="Insertion_GeneLocation" type="template">
-  </tag>
-  <tag name="im:aspect:Resources" objectIdentifier="TilingPathSpan_GeneLocation" type="template">
-  </tag>
-  <tag name="im:aspect:Resources" objectIdentifier="Transcript_INDAC" type="template">
-  </tag>
-  <tag name="im:aspect:Resources" objectIdentifier="Probe_Gene" type="template">
   </tag>
   <tag name="im:hidden" objectIdentifier="BioEntity.objects" type="collection">
   </tag>

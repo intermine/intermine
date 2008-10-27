@@ -5118,35 +5118,7 @@
 </template-queries>
 
 <tags>
-  <tag name="im:aspect:Protein Interactions" objectIdentifier="interactionsForOrganism" type="template">
-  </tag>
-  <tag name="im:aspect:Binding Sites" objectIdentifier="TFbindingsite2geneAndFactor" type="template">
-  </tag>
-  <tag name="im:aspect:Binding Sites" objectIdentifier="org.flymine.model.genomic.ProteinBindingSite" type="class">
-  </tag>
-  <tag name="im:aspect:Binding Sites" objectIdentifier="org.flymine.model.genomic.TFBindingSite" type="class">
-  </tag>
-  <tag name="im:aspect:Binding Sites" objectIdentifier="chromsosomeLocation2TFbindingSites" type="template">
-  </tag>
-  <tag name="im:aspect:Binding Sites" objectIdentifier="BS_forTF" type="template">
-  </tag>
-  <tag name="im:aspect:Binding Sites" objectIdentifier="FlyRegBindingSites" type="template">
-  </tag>
-  <tag name="im:aspect:Binding Sites" objectIdentifier="Gene.regulatoryRegions" type="collection">
-  </tag>
-  <tag name="im:aspect:Binding Sites" objectIdentifier="org.flymine.model.genomic.Gene" type="class">
-  </tag>
-  <tag name="im:aspect:Binding Sites" objectIdentifier="Gene_for2TFs" type="template">
-  </tag>
-  <tag name="im:aspect:Binding Sites" objectIdentifier="transcriptionFactors1" type="template">
-  </tag>
-  <tag name="im:aspect:Binding Sites" objectIdentifier="FlyBaseProteinBindingSites" type="template">
-  </tag>
-  <tag name="im:aspect:Binding Sites" objectIdentifier="Gene2TFbindingsite" type="template">
-  </tag>
-  <tag name="im:aspect:Binding Sites" objectIdentifier="org.flymine.model.genomic.BindingSite" type="class">
-  </tag>
-  <tag name="im:aspect:Binding Sites" objectIdentifier="TFBindingsitesequence2geneAndFActor" type="template">
+  <tag name="im:aspect:Interactions" objectIdentifier="interactionsForOrganism" type="template">
   </tag>
   <tag name="im:aspect:Comparative Genomics" objectIdentifier="AAX_genes2CERNAi" type="template">
   </tag>
@@ -5331,48 +5303,6 @@
   <tag name="im:aspect:Disease" objectIdentifier="Gene_OrthologueDiseaseEValue" type="template">
   </tag>
   <tag name="im:aspect:Disease" objectIdentifier="Gene_OrthologueDiseaseRNAi_new" type="template">
-  </tag>
-  <tag name="im:aspect:DrosDel" objectIdentifier="drosDel2indac1" type="template">
-  </tag>
-  <tag name="im:aspect:DrosDel" objectIdentifier="gene2DrosDelDeletion2" type="template">
-  </tag>
-  <tag name="im:aspect:DrosDel" objectIdentifier="org.flymine.model.genomic.ChromosomalDeletion" type="class">
-  </tag>
-  <tag name="im:aspect:DrosDel" objectIdentifier="AAAA_Symbol_toCG" type="template">
-  </tag>
-  <tag name="im:aspect:DrosDel" objectIdentifier="org.flymine.model.genomic.Deletion" type="class">
-  </tag>
-  <tag name="im:aspect:DrosDel" objectIdentifier="gene2DrosDelDeletion1" type="template">
-  </tag>
-  <tag name="im:aspect:DrosDel" objectIdentifier="DrosDel_ChromosomeGeneTranscriptINDAC" type="template">
-  </tag>
-  <tag name="im:aspect:DrosDel" objectIdentifier="Chromosome_DrosDelDeletion" type="template">
-  </tag>
-  <tag name="im:aspect:DrosDel" objectIdentifier="drosDelGeneAll" type="template">
-  </tag>
-  <tag name="im:aspect:DrosDel" objectIdentifier="ChromosomalDeletion.element2" type="reference">
-  </tag>
-  <tag name="im:aspect:DrosDel" objectIdentifier="geneToInsertionSiteDetails" type="template">
-  </tag>
-  <tag name="im:aspect:DrosDel" objectIdentifier="org.flymine.model.genomic.InsertionSite" type="class">
-  </tag>
-  <tag name="im:aspect:DrosDel" objectIdentifier="geneToInsertionSite" type="template">
-  </tag>
-  <tag name="im:aspect:DrosDel" objectIdentifier="ChromosomalDeletion.element1" type="reference">
-  </tag>
-  <tag name="im:aspect:DrosDel" objectIdentifier="DrosDel_GeneChromosome" type="template">
-  </tag>
-  <tag name="im:aspect:DrosDel" objectIdentifier="drosDelGeneAvailable" type="template">
-  </tag>
-  <tag name="im:aspect:DrosDel" objectIdentifier="org.flymine.model.genomic.Gene" type="class">
-  </tag>
-  <tag name="im:aspect:DrosDel" objectIdentifier="chromosomeLocation2Deletion2" type="template">
-  </tag>
-  <tag name="im:aspect:DrosDel" objectIdentifier="org.flymine.model.genomic.TransposableElementInsertionSite" type="class">
-  </tag>
-  <tag name="im:aspect:DrosDel" objectIdentifier="DrosDel overlapping gene coordinates" type="template">
-  </tag>
-  <tag name="im:aspect:GO term" objectIdentifier="AAZ_OrthologuesWithGO2" type="template">
   </tag>
   <tag name="im:aspect:Gene Expression" objectIdentifier="ProbeSet_FlyAtlas" type="template">
   </tag>
@@ -5924,45 +5854,11 @@
   </tag>
   <tag name="im:aspect:Genomics" objectIdentifier="Organism_3UTR" type="template">
   </tag>
-  <tag name="im:aspect:Genomics " objectIdentifier="Gene_gotermPointMutation" type="template">
+  <tag name="im:aspect:Genomics" objectIdentifier="Gene_gotermPointMutation" type="template">
   </tag>
-  <tag name="im:aspect:Genomics " objectIdentifier="OrganismGoterm_genesDrosDelDeletion" type="template">
+  <tag name="im:aspect:Genomics" objectIdentifier="OrganismGoterm_genesDrosDelDeletion" type="template">
   </tag>
-  <tag name="im:aspect:Genomics " objectIdentifier="Gene_ExonLocation2" type="template">
-  </tag>
-  <tag name="im:aspect:Genomics Comparative Genomics" objectIdentifier="AAQ_orthologues" type="template">
-  </tag>
-  <tag name="im:aspect:Genomics Comparative Genomics" objectIdentifier="AAR_orthologues2transcripts" type="template">
-  </tag>
-  <tag name="im:aspect:Genomics Comparative Genomics RNAi" objectIdentifier="AAS_phenotype2genesWithOrthologues" type="template">
-  </tag>
-  <tag name="im:aspect:Genomics Gene Ontology" objectIdentifier="AAO_OrthologuesWithGO2" type="template">
-  </tag>
-  <tag name="im:aspect:INDAC" objectIdentifier="INDAC_GeneChromosomeLocation" type="template">
-  </tag>
-  <tag name="im:aspect:INDAC" objectIdentifier="indacToGene" type="template">
-  </tag>
-  <tag name="im:aspect:INDAC" objectIdentifier="transcript2longOligo" type="template">
-  </tag>
-  <tag name="im:aspect:INDAC" objectIdentifier="org.flymine.model.genomic.Transcript" type="class">
-  </tag>
-  <tag name="im:aspect:INDAC" objectIdentifier="drosDel2indac1" type="template">
-  </tag>
-  <tag name="im:aspect:INDAC" objectIdentifier="ChromosomeLocation_GeneTranscriptINDAC" type="template">
-  </tag>
-  <tag name="im:aspect:INDAC" objectIdentifier="org.flymine.model.genomic.MicroarrayOligo" type="class">
-  </tag>
-  <tag name="im:aspect:INDAC" objectIdentifier="AAAA_Symbol_toCG" type="template">
-  </tag>
-  <tag name="im:aspect:INDAC" objectIdentifier="microarrayOligo2chromosome" type="template">
-  </tag>
-  <tag name="im:aspect:INDAC" objectIdentifier="geneToIndac" type="template">
-  </tag>
-  <tag name="im:aspect:INDAC" objectIdentifier="ChromosomeLocation2IndacOligos" type="template">
-  </tag>
-  <tag name="im:aspect:INDAC" objectIdentifier="org.flymine.model.genomic.Gene" type="class">
-  </tag>
-  <tag name="im:aspect:INDAC DrosDel" objectIdentifier="drosDel2indac1" type="template">
+  <tag name="im:aspect:Genomics" objectIdentifier="Gene_ExonLocation2" type="template">
   </tag>
   <tag name="im:aspect:Literature" objectIdentifier="All_Genes_In_Organism_To_Publications" type="template">
   </tag>
@@ -6266,111 +6162,7 @@
   </tag>
   <tag name="im:aspect:Proteins" objectIdentifier="Protein.keywords" type="collection">
   </tag>
-  <tag name="im:aspect:Proteins Protein Interaction" objectIdentifier="AAD_GOidentifier2proteinInteractions" type="template">
-  </tag>
-  <tag name="im:aspect:Proteins Protein Structure" objectIdentifier="AAI_Pfam2proteinStructure" type="template">
-  </tag>
   <tag name="im:aspect:Proteins Structure" objectIdentifier="GeneSymbol_Identifier" type="template">
-  </tag>
-  <tag name="im:aspect:RNAi" objectIdentifier="OthologuesRnai_forProtein" type="template">
-  </tag>
-  <tag name="im:aspect:RNAi" objectIdentifier="AAT_RNAiwithOrthologues" type="template">
-  </tag>
-  <tag name="im:aspect:RNAi" objectIdentifier="AAU_phenotype2genes" type="template">
-  </tag>
-  <tag name="im:aspect:RNAi" objectIdentifier="Gene_OrthologueRNAi" type="template">
-  </tag>
-  <tag name="im:aspect:RNAi" objectIdentifier="tempOrthologuesPhenotypes" type="template">
-  </tag>
-  <tag name="im:aspect:RNAi" objectIdentifier="DRSCamplicon_ScreenHit" type="template">
-  </tag>
-  <tag name="im:aspect:RNAi" objectIdentifier="Gene_DRSCOrthologueRNAiPhenotype" type="template">
-  </tag>
-  <tag name="im:aspect:RNAi" objectIdentifier="DRSCgene" type="template">
-  </tag>
-  <tag name="im:aspect:RNAi" objectIdentifier="AmpliconDRSC" type="template">
-  </tag>
-  <tag name="im:aspect:RNAi" objectIdentifier="AAX_genes2CERNAi" type="template">
-  </tag>
-  <tag name="im:aspect:RNAi" objectIdentifier="DRSCScreen_ScreenHit." type="template">
-  </tag>
-  <tag name="im:aspect:RNAi" objectIdentifier="phenotype2genesWithOrthologues" type="template">
-  </tag>
-  <tag name="im:aspect:RNAi" objectIdentifier="orthologuesGenePhenotype" type="template">
-  </tag>
-  <tag name="im:aspect:RNAi" objectIdentifier="ProteinInteraction_OrthologueRNAi" type="template">
-  </tag>
-  <tag name="im:aspect:RNAi" objectIdentifier="RNAi_Gene" type="template">
-  </tag>
-  <tag name="im:aspect:RNAi" objectIdentifier="AAW_gene2CERNAi" type="template">
-  </tag>
-  <tag name="im:aspect:RNAi" objectIdentifier="DRSCamplicon" type="template">
-  </tag>
-  <tag name="im:aspect:RNAi" objectIdentifier="Gene_RNAiPhenotype" type="template">
-  </tag>
-  <tag name="im:aspect:RNAi" objectIdentifier="geneEvalueDiseaseRnai" type="template">
-  </tag>
-  <tag name="im:aspect:RNAi" objectIdentifier="org.flymine.model.genomic.Gene" type="class">
-  </tag>
-  <tag name="im:aspect:RNAi" objectIdentifier="AAU_phenotype2genes1" type="template">
-  </tag>
-  <tag name="im:aspect:RNAi" objectIdentifier="DRSCpubmedID" type="template">
-  </tag>
-  <tag name="im:aspect:RNAi" objectIdentifier="AAV_Gene2RNAi" type="template">
-  </tag>
-  <tag name="im:aspect:RNAi" objectIdentifier="GeneDRSC" type="template">
-  </tag>
-  <tag name="im:aspect:RNAi" objectIdentifier="GeneOrganism_OrthologueRNAi" type="template">
-  </tag>
-  <tag name="im:aspect:RNAi" objectIdentifier="org.flymine.model.genomic.RNAiScreen" type="class">
-  </tag>
-  <tag name="im:aspect:RNAi" objectIdentifier="testflyRNAi" type="template">
-  </tag>
-  <tag name="im:aspect:RNAi" objectIdentifier="AAAA_Symbol_toCG" type="template">
-  </tag>
-  <tag name="im:aspect:RNAi" objectIdentifier="org.flymine.model.genomic.Phenotype" type="class">
-  </tag>
-  <tag name="im:aspect:RNAi" objectIdentifier="Gene_RNAiOrthologue" type="template">
-  </tag>
-  <tag name="im:aspect:RNAi" objectIdentifier="Protein_OrthologueRNAi" type="template">
-  </tag>
-  <tag name="im:aspect:RNAi" objectIdentifier="RNAiPhenotype_GeneOrthologue" type="template">
-  </tag>
-  <tag name="im:aspect:RNAi" objectIdentifier="GeneSymbol_Identifier" type="template">
-  </tag>
-  <tag name="im:aspect:RNAi" objectIdentifier="Gene_DRSCScreenHit" type="template">
-  </tag>
-  <tag name="im:aspect:RNAi" objectIdentifier="Protein_ProteinInteractionOrthologueRNAi" type="template">
-  </tag>
-  <tag name="im:aspect:RNAi" objectIdentifier="ProteinInteractionsOrthologuesRNAi_forProtein" type="template">
-  </tag>
-  <tag name="im:aspect:RNAi" objectIdentifier="AAT_RNAiwithOrthologues2" type="template">
-  </tag>
-  <tag name="im:aspect:RNAi" objectIdentifier="RNAiphenotype2genes2orthologues" type="template">
-  </tag>
-  <tag name="im:aspect:RNAi" objectIdentifier="AAS_phenotype2genesWithOrthologues" type="template">
-  </tag>
-  <tag name="im:aspect:RNAi" objectIdentifier="Protein_ProteinInteractionDmRNAi" type="template">
-  </tag>
-  <tag name="im:aspect:RNAi" objectIdentifier="Gene.rnaiResults" type="collection">
-  </tag>
-  <tag name="im:aspect:RNAi" objectIdentifier="GeneOrganism_OrthologueRNAi2" type="template">
-  </tag>
-  <tag name="im:aspect:RNAi" objectIdentifier="Gene_OrthologueRNAi_new" type="template">
-  </tag>
-  <tag name="im:aspect:RNAi" objectIdentifier="Gene_RNAiOrthologue_new" type="template">
-  </tag>
-  <tag name="im:aspect:RNAi" objectIdentifier="Gene_OrthologueDiseaseRNAi_new" type="template">
-  </tag>
-  <tag name="im:aspect:RNAi" objectIdentifier="Gene_DRSCOrthologueRNAiPhenotype_new" type="template">
-  </tag>
-  <tag name="im:aspect:RNAi" objectIdentifier="Protein_Orthologue_RNAi_new" type="template">
-  </tag>
-  <tag name="im:aspect:RNAi" objectIdentifier="Protein_ProteinInteractionOrthologueRNAi_new" type="template">
-  </tag>
-  <tag name="im:aspect:RNAi" objectIdentifier="RNAiPhenotype_GeneOrthologue_new" type="template">
-  </tag>
-  <tag name="im:aspect:RNAi " objectIdentifier="Protein_Orthologue_RNAi" type="template">
   </tag>
   <tag name="im:aspect:Resources" objectIdentifier="ChromLocation_AmplimerPrimer" type="template">
   </tag>
@@ -6419,50 +6211,6 @@
   <tag name="im:aspect:Resources" objectIdentifier="Transcript_INDAC" type="template">
   </tag>
   <tag name="im:aspect:Resources" objectIdentifier="Probe_Gene" type="template">
-  </tag>
-  <tag name="im:aspect:Tiling Path" objectIdentifier="tilingSpanToGene" type="template">
-  </tag>
-  <tag name="im:aspect:Tiling Path" objectIdentifier="chromLoc2TilingPath" type="template">
-  </tag>
-  <tag name="im:aspect:Tiling Path" objectIdentifier="ChrLocation2TilingPathAmplimers2" type="template">
-  </tag>
-  <tag name="im:aspect:Tiling Path" objectIdentifier="PCRProduct.tilingPathSpan" type="reference">
-  </tag>
-  <tag name="im:aspect:Tiling Path" objectIdentifier="Gene_TilingPathSpanAmplimersChromosomeLocation" type="template">
-  </tag>
-  <tag name="im:aspect:Tiling Path" objectIdentifier="tilingAmpliconsInPromoter" type="template">
-  </tag>
-  <tag name="im:aspect:Tiling Path" objectIdentifier="chromosome2tilingAmplicon" type="template">
-  </tag>
-  <tag name="im:aspect:Tiling Path" objectIdentifier="org.flymine.model.genomic.Chromosome" type="class">
-  </tag>
-  <tag name="im:aspect:Tiling Path" objectIdentifier="org.flymine.model.genomic.Primer" type="class">
-  </tag>
-  <tag name="im:aspect:Tiling Path" objectIdentifier="geneToTilingPathAmplimers" type="template">
-  </tag>
-  <tag name="im:aspect:Tiling Path" objectIdentifier="ChrLocation2PCRProduct" type="template">
-  </tag>
-  <tag name="im:aspect:Tiling Path" objectIdentifier="org.flymine.model.genomic.Location" type="class">
-  </tag>
-  <tag name="im:aspect:Tiling Path" objectIdentifier="Chromosome_AmplimersLocation" type="template">
-  </tag>
-  <tag name="im:aspect:Tiling Path" objectIdentifier="org.flymine.model.genomic.PCRProduct" type="class">
-  </tag>
-  <tag name="im:aspect:Tiling Path" objectIdentifier="TilingPathSpan.pcrProducts" type="collection">
-  </tag>
-  <tag name="im:aspect:Tiling Path" objectIdentifier="ChromosomeLocation_AmplimersPrimers" type="template">
-  </tag>
-  <tag name="im:aspect:Tiling Path" objectIdentifier="geneToTilingSpan" type="template">
-  </tag>
-  <tag name="im:aspect:Tiling Path" objectIdentifier="org.flymine.model.genomic.TilingPathSpan" type="class">
-  </tag>
-  <tag name="im:aspect:Tiling Path" objectIdentifier="AAAA_Symbol_toCG" type="template">
-  </tag>
-  <tag name="im:aspect:TilingPath" objectIdentifier="Gene_TilingPathSpanChromosomeLocation" type="template">
-  </tag>
-  <tag name="im:aspect:TilingPath MicroArray amplimer chromosomeLocation" objectIdentifier="ChrLocation2PCRProduct" type="template">
-  </tag>
-  <tag name="im:aspect:TilingPath primers amplimer PCRProduct MicroArray" objectIdentifier="ChrLocation2TilingPathAmplimers2" type="template">
   </tag>
   <tag name="im:aspect:Transcriptional Regulation" objectIdentifier="Gene_for2TFs" type="template">
   </tag>
@@ -6589,12 +6337,6 @@
   <tag name="im:aspect:Disease" objectIdentifier="Gene.omimDiseases" type="collection">
   </tag>
   <tag name="im:aspect:Comparative Genomics" objectIdentifier="RNAiphenotype2genes2orthologues" type="template">
-  </tag>
-  <tag name="im:favourite" objectIdentifier="flyTF_all_candidates" type="bag">
-  </tag>
-  <tag name="im:favourite" objectIdentifier="rachelTestIntersect" type="bag">
-  </tag>
-  <tag name="im:favourite" objectIdentifier="gene_agLifecycleExpression" type="template">
   </tag>
   <tag name="im:hidden" objectIdentifier="BioEntity.objects" type="collection">
   </tag>
