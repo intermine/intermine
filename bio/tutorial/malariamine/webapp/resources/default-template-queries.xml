@@ -422,7 +422,7 @@
     </node>
   </query>
 </template>
-<template-queries>
+</template-queries>
 <tags>
   <tag name="im:aspect:Gene Ontology" objectIdentifier="OrganismGoTerm_Gene" type="template">
   </tag>
