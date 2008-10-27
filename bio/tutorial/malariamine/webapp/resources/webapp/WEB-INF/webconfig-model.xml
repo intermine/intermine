@@ -26,6 +26,13 @@
     </longdisplayers>
   </class>
 
+  <class className="org.flymine.model.genomic.Comment">
+    <fields>
+      <fieldconfig fieldExpr="type"/>
+      <fieldconfig fieldExpr="text"/>
+    </fields>
+  </class>
+
   <class className="org.flymine.model.genomic.DataSet">
     <fields>
       <fieldconfig fieldExpr="title"/>
@@ -259,6 +266,7 @@
   <tableExportConfig id="gff3" className="org.intermine.bio.web.export.GFF3HttpExporter"/>
 
 <!-- widgets -->
+<widgets>
       <graphdisplayer id="chromosome_distribution" title="Chromosome Distribution"
         domainLabel="Chromosome"
         rangeLabel="Count"
@@ -267,7 +275,7 @@
         description="Actual: number of items in this list found on each chromosome.  Expected: given the total number of items on the chromosome and the number of items in this list, the number of items expected to be found on each chromosome."
         graphType="BarChart"
         extraAttributeClass="org.intermine.bio.web.logic.BioUtil"
-        typeClass="org.flymine.model.genomic.Gene,org.flymine.model.genomic.LocatedSequenceFeature,org.flymine.model.genomic.TransposableElementInsertionSite"
+        typeClass="org.flymine.model.genomic.Gene,org.flymine.model.genomic.LocatedSequenceFeature"
        />
 
       <enrichmentwidgetdisplayer id="protein_features" title="UniProt Features"
@@ -294,5 +302,5 @@
                                  filterLabel="Ontology"
                                  typeClass="org.flymine.model.genomic.Gene,org.flymine.model.genomic.Protein"
                                  externalLink="http://amigo.geneontology.org/cgi-bin/amigo/term-details.cgi?term=" />
-
+</widgets>
 </webconfig>
