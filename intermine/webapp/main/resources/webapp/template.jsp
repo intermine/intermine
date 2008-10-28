@@ -164,7 +164,7 @@
 <im:boxarea stylename="plainbox" fixedWidth="60%">
   <html:form action="/templateAction">
     <h2 class="templateTitle">
-    <c:set var="templateTitle" value="${fn:replace(templateQuery.title,'-->','&nbsp;<img src=\"images/tmpl_arrow.png\" style=\"vertical-align:middle\">&nbsp;')}" />
+    <c:set var="templateTitle" value="${fn:replace(templateQuery.title,'-->','&nbsp;<img src=\"theme/tmpl_arrow.png\" style=\"vertical-align:middle\">&nbsp;')}" />
   ${templateTitle}
     <tiles:insert name="setFavourite.tile">
         <tiles:put name="name" value="${templateQuery.name}"/>
