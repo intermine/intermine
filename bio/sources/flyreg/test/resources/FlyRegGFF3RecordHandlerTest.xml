@@ -1,151 +1,157 @@
 <items>
-<item id="1_4" class="http://www.flymine.org/model/genomic#Gene">
-<attribute name="primaryIdentifier" value="FBgn001"/>
-<reference name="organism" ref_id="0_0"/>
-<collection name="dataSets"><reference ref_id="0_2"/></collection>
-</item>
-<item id="1_7" class="http://www.flymine.org/model/genomic#Publication">
-<attribute name="pubMedId" value="8458580"/>
-</item>
-<item id="0_5" class="http://www.flymine.org/model/genomic#Synonym">
-<attribute name="type" value="identifier"/>
-<attribute name="value" value="2L"/>
-<reference name="source" ref_id="0_3"/>
-<reference name="subject" ref_id="0_4"/>
-</item>
-<item id="0_3" class="http://www.flymine.org/model/genomic#DataSource">
-<attribute name="name" value="FlyBase"/>
-</item>
-<item id="0_13" class="http://www.flymine.org/model/genomic#Location">
-<attribute name="end" value="2456433"/>
-<attribute name="start" value="2456423"/>
-<attribute name="strand" value="0"/>
-<reference name="object" ref_id="0_4"/>
-<reference name="subject" ref_id="0_12"/>
-<collection name="dataSets"><reference ref_id="0_2"/></collection>
-</item>
-<item id="0_14" class="http://www.flymine.org/model/genomic#Synonym">
-<attribute name="type" value="identifier"/>
-<attribute name="value" value="Unspecified_dpp:REDFLY:TF000067"/>
-<reference name="source" ref_id="0_1"/>
-<reference name="subject" ref_id="0_12"/>
-</item>
-<item id="1_1" class="http://www.flymine.org/model/genomic#Synonym">
-<attribute name="type" value="identifier"/>
-<attribute name="value" value="TF000068"/>
-<reference name="source" ref_id="0_1"/>
-<reference name="subject" ref_id="0_6"/>
-</item>
-<item id="1_5" class="http://www.flymine.org/model/genomic#Synonym">
-<attribute name="type" value="identifier"/>
-<attribute name="value" value="TF000069"/>
-<reference name="source" ref_id="0_1"/>
-<reference name="subject" ref_id="0_9"/>
-</item>
-<item id="1_2" class="http://www.flymine.org/model/genomic#Synonym">
-<attribute name="type" value="internal_id"/>
-<attribute name="value" value="REDfly:644"/>
-<reference name="source" ref_id="0_1"/>
-<reference name="subject" ref_id="0_6"/>
-</item>
-<item id="0_6" class="http://www.flymine.org/model/genomic#TFBindingSite">
-<attribute name="evidenceMethod" value="footprint/binding assay"/>
-<attribute name="name" value="Unspecified_dpp:REDFLY:TF000068"/>
-<attribute name="primaryIdentifier" value="TF000068"/>
-<attribute name="secondaryIdentifier" value="644"/>
-<reference name="gene" ref_id="1_4"/>
-<reference name="organism" ref_id="0_0"/>
-<collection name="dataSets"><reference ref_id="0_2"/></collection>
-<collection name="publications"><reference ref_id="1_3"/></collection>
-</item>
-<item id="0_7" class="http://www.flymine.org/model/genomic#Location">
-<attribute name="end" value="2456372"/>
-<attribute name="start" value="2456365"/>
-<attribute name="strand" value="0"/>
-<reference name="object" ref_id="0_4"/>
-<reference name="subject" ref_id="0_6"/>
-<collection name="dataSets"><reference ref_id="0_2"/></collection>
-</item>
-<item id="1_6" class="http://www.flymine.org/model/genomic#Synonym">
-<attribute name="type" value="internal_id"/>
-<attribute name="value" value="REDfly:645"/>
-<reference name="source" ref_id="0_1"/>
-<reference name="subject" ref_id="0_9"/>
-</item>
-<item id="0_2" class="http://www.flymine.org/model/genomic#DataSet">
-<attribute name="title" value="FlyReg data set"/>
-<reference name="dataSource" ref_id="0_1"/>
-</item>
-<item id="0_0" class="http://www.flymine.org/model/genomic#Organism">
-<attribute name="taxonId" value="DM"/>
-</item>
-<item id="1_9" class="http://www.flymine.org/model/genomic#Synonym">
-<attribute name="type" value="identifier"/>
-<attribute name="value" value="TF000067"/>
-<reference name="source" ref_id="0_1"/>
-<reference name="subject" ref_id="0_12"/>
-</item>
-<item id="1_3" class="http://www.flymine.org/model/genomic#Publication">
-<attribute name="pubMedId" value="8543160"/>
-</item>
-<item id="0_8" class="http://www.flymine.org/model/genomic#Synonym">
-<attribute name="type" value="identifier"/>
-<attribute name="value" value="Unspecified_dpp:REDFLY:TF000068"/>
-<reference name="source" ref_id="0_1"/>
-<reference name="subject" ref_id="0_6"/>
-</item>
-<item id="0_9" class="http://www.flymine.org/model/genomic#TFBindingSite">
-<attribute name="evidenceMethod" value="footprint/binding assay"/>
-<attribute name="name" value="dl_dpp:REDFLY:TF000069"/>
-<attribute name="primaryIdentifier" value="TF000069"/>
-<attribute name="secondaryIdentifier" value="645"/>
-<reference name="factor" ref_id="1_8"/>
-<reference name="gene" ref_id="1_4"/>
-<reference name="organism" ref_id="0_0"/>
-<collection name="dataSets"><reference ref_id="0_2"/></collection>
-<collection name="publications"><reference ref_id="1_7"/></collection>
-</item>
-<item id="0_4" class="http://www.flymine.org/model/genomic#Chromosome">
-<attribute name="primaryIdentifier" value="2L"/>
-<reference name="organism" ref_id="0_0"/>
-<collection name="dataSets"><reference ref_id="0_2"/></collection>
-</item>
-<item id="0_10" class="http://www.flymine.org/model/genomic#Location">
-<attribute name="end" value="2456369"/>
-<attribute name="start" value="2456352"/>
-<attribute name="strand" value="0"/>
-<reference name="object" ref_id="0_4"/>
-<reference name="subject" ref_id="0_9"/>
-<collection name="dataSets"><reference ref_id="0_2"/></collection>
-</item>
-<item id="1_10" class="http://www.flymine.org/model/genomic#Synonym">
-<attribute name="type" value="internal_id"/>
-<attribute name="value" value="REDfly:643"/>
-<reference name="source" ref_id="0_1"/>
-<reference name="subject" ref_id="0_12"/>
-</item>
-<item id="0_11" class="http://www.flymine.org/model/genomic#Synonym">
-<attribute name="type" value="identifier"/>
-<attribute name="value" value="dl_dpp:REDFLY:TF000069"/>
-<reference name="source" ref_id="0_1"/>
-<reference name="subject" ref_id="0_9"/>
-</item>
-<item id="0_1" class="http://www.flymine.org/model/genomic#DataSource">
-<attribute name="name" value="FlyReg"/>
-</item>
-<item id="0_12" class="http://www.flymine.org/model/genomic#TFBindingSite">
-<attribute name="evidenceMethod" value="footprint/binding assay"/>
-<attribute name="name" value="Unspecified_dpp:REDFLY:TF000067"/>
-<attribute name="primaryIdentifier" value="TF000067"/>
-<attribute name="secondaryIdentifier" value="643"/>
-<reference name="gene" ref_id="1_4"/>
-<reference name="organism" ref_id="0_0"/>
-<collection name="dataSets"><reference ref_id="0_2"/></collection>
-<collection name="publications"><reference ref_id="1_3"/></collection>
-</item>
-<item id="1_8" class="http://www.flymine.org/model/genomic#Gene">
-<attribute name="primaryIdentifier" value="FBgn002"/>
-<reference name="organism" ref_id="0_0"/>
-<collection name="dataSets"><reference ref_id="0_2"/></collection>
-</item>
+  <item id="0_9" class="http://www.flymine.org/model/genomic#TFBindingSite">
+    <attribute name="evidenceMethod" value="footprint/binding assay"/>
+    <attribute name="name" value="dl_dpp:REDFLY:TF000069"/>
+    <attribute name="primaryIdentifier" value="TF000069"/>
+    <attribute name="secondaryIdentifier" value="645"/>
+    <reference name="chromosome" ref_id="0_4"/>
+    <reference name="chromosomeLocation" ref_id="0_10"/>
+    <reference name="factor" ref_id="1_8"/>
+    <reference name="gene" ref_id="1_4"/>
+    <reference name="organism" ref_id="0_0"/>
+    <collection name="dataSets"><reference ref_id="0_2"/></collection>
+    <collection name="publications"><reference ref_id="1_7"/></collection>
+  </item>
+  <item id="0_13" class="http://www.flymine.org/model/genomic#Location">
+    <attribute name="end" value="2456433"/>
+    <attribute name="start" value="2456423"/>
+    <attribute name="strand" value="0"/>
+    <reference name="object" ref_id="0_4"/>
+    <reference name="subject" ref_id="0_12"/>
+    <collection name="dataSets"><reference ref_id="0_2"/></collection>
+  </item>
+  <item id="1_10" class="http://www.flymine.org/model/genomic#Synonym">
+    <attribute name="type" value="internal_id"/>
+    <attribute name="value" value="REDfly:643"/>
+    <reference name="source" ref_id="0_1"/>
+    <reference name="subject" ref_id="0_12"/>
+  </item>
+  <item id="0_2" class="http://www.flymine.org/model/genomic#DataSet">
+    <attribute name="title" value="FlyReg data set"/>
+    <reference name="dataSource" ref_id="0_1"/>
+  </item>
+  <item id="0_11" class="http://www.flymine.org/model/genomic#Synonym">
+    <attribute name="type" value="identifier"/>
+    <attribute name="value" value="dl_dpp:REDFLY:TF000069"/>
+    <reference name="source" ref_id="0_1"/>
+    <reference name="subject" ref_id="0_9"/>
+  </item>
+  <item id="0_12" class="http://www.flymine.org/model/genomic#TFBindingSite">
+    <attribute name="evidenceMethod" value="footprint/binding assay"/>
+    <attribute name="name" value="Unspecified_dpp:REDFLY:TF000067"/>
+    <attribute name="primaryIdentifier" value="TF000067"/>
+    <attribute name="secondaryIdentifier" value="643"/>
+    <reference name="chromosome" ref_id="0_4"/>
+    <reference name="chromosomeLocation" ref_id="0_13"/>
+    <reference name="gene" ref_id="1_4"/>
+    <reference name="organism" ref_id="0_0"/>
+    <collection name="dataSets"><reference ref_id="0_2"/></collection>
+    <collection name="publications"><reference ref_id="1_3"/></collection>
+  </item>
+  <item id="0_4" class="http://www.flymine.org/model/genomic#Chromosome">
+    <attribute name="primaryIdentifier" value="2L"/>
+    <reference name="organism" ref_id="0_0"/>
+    <collection name="dataSets"><reference ref_id="0_2"/></collection>
+  </item>
+  <item id="0_10" class="http://www.flymine.org/model/genomic#Location">
+    <attribute name="end" value="2456369"/>
+    <attribute name="start" value="2456352"/>
+    <attribute name="strand" value="0"/>
+    <reference name="object" ref_id="0_4"/>
+    <reference name="subject" ref_id="0_9"/>
+    <collection name="dataSets"><reference ref_id="0_2"/></collection>
+  </item>
+  <item id="0_0" class="http://www.flymine.org/model/genomic#Organism">
+    <attribute name="taxonId" value="DM"/>
+  </item>
+  <item id="1_4" class="http://www.flymine.org/model/genomic#Gene">
+    <attribute name="primaryIdentifier" value="FBgn001"/>
+    <reference name="organism" ref_id="0_0"/>
+    <collection name="dataSets"><reference ref_id="0_2"/></collection>
+  </item>
+  <item id="1_8" class="http://www.flymine.org/model/genomic#Gene">
+    <attribute name="primaryIdentifier" value="FBgn002"/>
+    <reference name="organism" ref_id="0_0"/>
+    <collection name="dataSets"><reference ref_id="0_2"/></collection>
+  </item>
+  <item id="0_6" class="http://www.flymine.org/model/genomic#TFBindingSite">
+    <attribute name="evidenceMethod" value="footprint/binding assay"/>
+    <attribute name="name" value="Unspecified_dpp:REDFLY:TF000068"/>
+    <attribute name="primaryIdentifier" value="TF000068"/>
+    <attribute name="secondaryIdentifier" value="644"/>
+    <reference name="chromosome" ref_id="0_4"/>
+    <reference name="chromosomeLocation" ref_id="0_7"/>
+    <reference name="gene" ref_id="1_4"/>
+    <reference name="organism" ref_id="0_0"/>
+    <collection name="dataSets"><reference ref_id="0_2"/></collection>
+    <collection name="publications"><reference ref_id="1_3"/></collection>
+  </item>
+  <item id="1_2" class="http://www.flymine.org/model/genomic#Synonym">
+    <attribute name="type" value="internal_id"/>
+    <attribute name="value" value="REDfly:644"/>
+    <reference name="source" ref_id="0_1"/>
+    <reference name="subject" ref_id="0_6"/>
+  </item>
+  <item id="0_3" class="http://www.flymine.org/model/genomic#DataSource">
+    <attribute name="name" value="FlyBase"/>
+  </item>
+  <item id="0_7" class="http://www.flymine.org/model/genomic#Location">
+    <attribute name="end" value="2456372"/>
+    <attribute name="start" value="2456365"/>
+    <attribute name="strand" value="0"/>
+    <reference name="object" ref_id="0_4"/>
+    <reference name="subject" ref_id="0_6"/>
+    <collection name="dataSets"><reference ref_id="0_2"/></collection>
+  </item>
+  <item id="1_7" class="http://www.flymine.org/model/genomic#Publication">
+    <attribute name="pubMedId" value="8458580"/>
+  </item>
+  <item id="1_9" class="http://www.flymine.org/model/genomic#Synonym">
+    <attribute name="type" value="identifier"/>
+    <attribute name="value" value="TF000067"/>
+    <reference name="source" ref_id="0_1"/>
+    <reference name="subject" ref_id="0_12"/>
+  </item>
+  <item id="1_5" class="http://www.flymine.org/model/genomic#Synonym">
+    <attribute name="type" value="identifier"/>
+    <attribute name="value" value="TF000069"/>
+    <reference name="source" ref_id="0_1"/>
+    <reference name="subject" ref_id="0_9"/>
+  </item>
+  <item id="0_14" class="http://www.flymine.org/model/genomic#Synonym">
+    <attribute name="type" value="identifier"/>
+    <attribute name="value" value="Unspecified_dpp:REDFLY:TF000067"/>
+    <reference name="source" ref_id="0_1"/>
+    <reference name="subject" ref_id="0_12"/>
+  </item>
+  <item id="0_8" class="http://www.flymine.org/model/genomic#Synonym">
+    <attribute name="type" value="identifier"/>
+    <attribute name="value" value="Unspecified_dpp:REDFLY:TF000068"/>
+    <reference name="source" ref_id="0_1"/>
+    <reference name="subject" ref_id="0_6"/>
+  </item>
+  <item id="1_3" class="http://www.flymine.org/model/genomic#Publication">
+    <attribute name="pubMedId" value="8543160"/>
+  </item>
+  <item id="1_6" class="http://www.flymine.org/model/genomic#Synonym">
+    <attribute name="type" value="internal_id"/>
+    <attribute name="value" value="REDfly:645"/>
+    <reference name="source" ref_id="0_1"/>
+    <reference name="subject" ref_id="0_9"/>
+  </item>
+  <item id="1_1" class="http://www.flymine.org/model/genomic#Synonym">
+    <attribute name="type" value="identifier"/>
+    <attribute name="value" value="TF000068"/>
+    <reference name="source" ref_id="0_1"/>
+    <reference name="subject" ref_id="0_6"/>
+  </item>
+  <item id="0_1" class="http://www.flymine.org/model/genomic#DataSource">
+    <attribute name="name" value="FlyReg"/>
+  </item>
+  <item id="0_5" class="http://www.flymine.org/model/genomic#Synonym">
+    <attribute name="type" value="identifier"/>
+    <attribute name="value" value="2L"/>
+    <reference name="source" ref_id="0_3"/>
+    <reference name="subject" ref_id="0_4"/>
+  </item>
 </items>
