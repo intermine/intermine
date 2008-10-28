@@ -15,66 +15,6 @@
     </node>
   </query>
 </template>
-<template name="ChromLocation_GeneTranscriptExon" title="Chromosomal location --&gt; All genes + Transcripts + Exons." longDescription="Show the genes, with their transcripts and exons, located between two points on a chromosome.  Give the location of the exons." comment="">
-  <query name="ChromLocation_GeneTranscriptExon" model="genomic" view="Chromosome.primaryIdentifier Chromosome.exons.gene.primaryIdentifier Chromosome.exons.gene.symbol Chromosome.exons.transcripts.primaryIdentifier Chromosome.exons.primaryIdentifier Chromosome.exons.objects.start Chromosome.exons.objects.end Chromosome.exons.objects.strand" sortOrder="Chromosome.primaryIdentifier asc" constraintLogic="D and A and C and B">
-    <pathDescription pathString="Chromosome.exons" description="Exon">
-    </pathDescription>
-    <pathDescription pathString="Chromosome.exons.transcripts" description="Transcript">
-    </pathDescription>
-    <pathDescription pathString="Chromosome.exons.gene" description="Gene">
-    </pathDescription>
-    <pathDescription pathString="Chromosome.exons.evidence" description="Dataset">
-    </pathDescription>
-    <pathDescription pathString="Chromosome.exons.objects" description="Exon &gt; Chromosome location">
-    </pathDescription>
-    <node path="Chromosome" type="Chromosome">
-    </node>
-    <node path="Chromosome.primaryIdentifier" type="String">
-      <constraint op="=" value="2L" description="Show the genes, transcripts and exons located on chromosome:" identifier="" editable="true" code="A">
-      </constraint>
-    </node>
-    <node path="Chromosome.organism" type="Organism">
-    </node>
-    <node path="Chromosome.organism.name" type="String">
-      <constraint op="=" value="Drosophila melanogaster" description="from:" identifier="" editable="true" code="B">
-      </constraint>
-    </node>
-    <node path="Chromosome.exons" type="Exon">
-    </node>
-    <node path="Chromosome.exons.objects" type="Location">
-    </node>
-    <node path="Chromosome.exons.objects.object" type="Chromosome">
-    </node>
-    <node path="Chromosome.exons.objects.start" type="Integer">
-      <constraint op="&gt;" value="1" description="between base:" identifier="" editable="true" code="C">
-      </constraint>
-    </node>
-    <node path="Chromosome.exons.objects.end" type="Integer">
-      <constraint op="&lt;" value="10000" description="and:" identifier="" editable="true" code="D">
-      </constraint>
-    </node>
-  </query>
-</template>
-<template name="Exon_To_Gene_Type_Converter" title="Exon to gene type converter" longDescription="" comment="">
-  <query name="Exon_To_Gene_Type_Converter" model="genomic" view="Exon.id Exon.gene.id" sortOrder="Exon.id asc">
-    <node path="Exon" type="Exon">
-    </node>
-    <node path="Exon.id" type="Integer">
-      <constraint op="=" value="0" description="Exon.id" identifier="Exon.id" editable="true" code="A">
-      </constraint>
-    </node>
-  </query>
-</template>
-<template name="Gene_To_Exon_Type_Converter" title="Gene to exon type converter" longDescription="" comment="">
-  <query name="Gene_To_Exon_Type_Converter" model="genomic" view="Gene.id Gene.exons.id" sortOrder="Gene.id asc">
-    <node path="Gene" type="Gene">
-    </node>
-    <node path="Gene.id" type="Integer">
-      <constraint op="=" value="0" description="Gene.id" identifier="Gene.id" editable="true" code="A">
-      </constraint>
-    </node>
-  </query>
-</template>
 <template name="All_Genes_In_Organism_To_Publications" title="All genes in organism --&gt; Publications." longDescription="Show the publications for each gene in one organism. References are loaded from FlyBase for all Drosophila species, and from NCBI for D. melanogaster, C. elegans and S. cerevisiae." comment="">
   <query name="All_Genes_In_Organism_To_Publications" model="genomic" view="Gene.primaryIdentifier Gene.secondaryIdentifier Gene.publications.pubMedId Gene.publications.firstAuthor Gene.publications.journal Gene.publications.year Gene.organism.name" sortOrder="Gene.primaryIdentifier asc">
     <node path="Gene" type="Gene">
@@ -570,8 +510,6 @@
   </tag>
   <tag name="im:aspect:Genomics" objectIdentifier="AAT_RNAiwithOrthologues2" type="template">
   </tag>
-  <tag name="im:aspect:Genomics" objectIdentifier="AAJ_synonymGene2exonChromosomeLocations1" type="template">
-  </tag>
   <tag name="im:aspect:Genomics" objectIdentifier="AAS_phenotype2genesWithOrthologues" type="template">
   </tag>
   <tag name="im:aspect:Genomics" objectIdentifier="pointMutationToGene" type="template">
@@ -590,73 +528,17 @@
   </tag>
   <tag name="im:aspect:Genomics" objectIdentifier="Gene_Protein" type="template">
   </tag>
-  <tag name="im:aspect:Genomics" objectIdentifier="Exon.transcripts" type="collection">
-  </tag>
-  <tag name="im:aspect:Genomics" objectIdentifier="geneToInsertionSiteDetails" type="template">
-  </tag>
-  <tag name="im:aspect:Genomics" objectIdentifier="Gene_TranscriptIntronLocation" type="template">
-  </tag>
-  <tag name="im:aspect:Genomics" objectIdentifier="Gene_TranscriptOrthologues" type="template">
-  </tag>
-  <tag name="im:aspect:Genomics" objectIdentifier="Gene.upstreamIntergenicRegion" type="reference">
-  </tag>
   <tag name="im:aspect:Genomics" objectIdentifier="Gene_ChromosomeSequence" type="template">
-  </tag>
-  <tag name="im:aspect:Genomics" objectIdentifier="AAL_chromosomeLocation2genes2" type="template">
-  </tag>
-  <tag name="im:aspect:Genomics" objectIdentifier="AAR_orthologues2transcripts" type="template">
   </tag>
   <tag name="im:aspect:Genomics" objectIdentifier="Gene_PointMutationChromosome" type="template">
   </tag>
-  <tag name="im:aspect:Genomics" objectIdentifier="Insertion_GeneLocation" type="template">
-  </tag>
-  <tag name="im:aspect:Genomics" objectIdentifier="organism_InterProDomain" type="template">
-  </tag>
-  <tag name="im:aspect:Genomics" objectIdentifier="Gene_gotermTEinsertionsite" type="template">
-  </tag>
-  <tag name="im:aspect:Genomics" objectIdentifier="Gene_TranscriptExon" type="template">
-  </tag>
-  <tag name="im:aspect:Genomics" objectIdentifier="AAP_gene2orthologues" type="template">
-  </tag>
-  <tag name="im:aspect:Genomics" objectIdentifier="org.flymine.model.genomic.TransposableElement" type="class">
-  </tag>
-  <tag name="im:aspect:Genomics" objectIdentifier="Gene_paralogues" type="template">
-  </tag>
-  <tag name="im:aspect:Genomics" objectIdentifier="AAH_Genes2chromosome1" type="template">
-  </tag>
-  <tag name="im:aspect:Genomics" objectIdentifier="Gene_IntronChromosome" type="template">
-  </tag>
-  <tag name="im:aspect:Genomics" objectIdentifier="organismGenesAndPointMutations" type="template">
-  </tag>
-  <tag name="im:aspect:Genomics" objectIdentifier="OrganismGoterm_genesPointMutations" type="template">
-  </tag>
-  <tag name="im:aspect:Genomics" objectIdentifier="pathway_genes" type="template">
-  </tag>
   <tag name="im:aspect:Genomics" objectIdentifier="Gene_Chromosome" type="template">
-  </tag>
-  <tag name="im:aspect:Genomics" objectIdentifier="gene_adjacentgenes_allflyatlas" type="template">
-  </tag>
-  <tag name="im:aspect:Genomics" objectIdentifier="AAAA_Symbol_toCG" type="template">
-  </tag>
-  <tag name="im:aspect:Genomics" objectIdentifier="Gene_TranscriptExonChromosome" type="template">
   </tag>
   <tag name="im:aspect:Genomics" objectIdentifier="ProteinGeneLocation" type="template">
   </tag>
-  <tag name="im:aspect:Genomics" objectIdentifier="Gene.regulatoryRegions" type="collection">
-  </tag>
-  <tag name="im:aspect:Genomics" objectIdentifier="MRNA.fivePrimeUTR" type="reference">
-  </tag>
-  <tag name="im:aspect:Genomics" objectIdentifier="org.flymine.model.genomic.Intron" type="class">
-  </tag>
   <tag name="im:aspect:Genomics" objectIdentifier="org.flymine.model.genomic.Transcript" type="class">
   </tag>
-  <tag name="im:aspect:Genomics" objectIdentifier="org.flymine.model.genomic.SnRNA" type="class">
-  </tag>
-  <tag name="im:aspect:Genomics" objectIdentifier="geneTranscriptsIntrons" type="template">
-  </tag>
   <tag name="im:aspect:Genomics" objectIdentifier="Gene.transcripts" type="collection">
-  </tag>
-  <tag name="im:aspect:Genomics" objectIdentifier="geneOverlapppingGenes" type="template">
   </tag>
   <tag name="im:aspect:Genomics" objectIdentifier="Chromosome_GenesInsertionChromosome" type="template">
   </tag>
@@ -670,39 +552,9 @@
   </tag>
   <tag name="im:aspect:Genomics" objectIdentifier="AAO_OrthologuesWithGO2" type="template">
   </tag>
-  <tag name="im:aspect:Genomics" objectIdentifier="MRNA.CDSs" type="collection">
-  </tag>
-  <tag name="im:aspect:Genomics" objectIdentifier="AAF_gene2exonTranscript1" type="template">
-  </tag>
-  <tag name="im:aspect:Genomics" objectIdentifier="insertionSiteToGene" type="template">
-  </tag>
-  <tag name="im:aspect:Genomics" objectIdentifier="AAD_genes2fasta" type="template">
-  </tag>
-  <tag name="im:aspect:Genomics" objectIdentifier="Gene_TranscriptExonLocation" type="template">
-  </tag>
-  <tag name="im:aspect:Genomics" objectIdentifier="MicroarrayOligo.transcript" type="reference">
-  </tag>
   <tag name="im:aspect:Genomics" objectIdentifier="GeneSymbol_Identifier" type="template">
   </tag>
   <tag name="im:aspect:Genomics" objectIdentifier="OrthologueInOneSpecies" type="template">
-  </tag>
-  <tag name="im:aspect:Genomics" objectIdentifier="MRNA.threePrimeUTR" type="reference">
-  </tag>
-  <tag name="im:aspect:Genomics" objectIdentifier="Gene_upstreamAdjacent_FlyAtlas" type="template">
-  </tag>
-  <tag name="im:aspect:Genomics" objectIdentifier="PointMutation_Gene_Chromosome" type="template">
-  </tag>
-  <tag name="im:aspect:Genomics" objectIdentifier="Chromosome_GeneTranscriptExon" type="template">
-  </tag>
-  <tag name="im:aspect:Genomics" objectIdentifier="PointMutation_GeneChromosome" type="template">
-  </tag>
-  <tag name="im:aspect:Genomics" objectIdentifier="org.flymine.model.genomic.CDS" type="class">
-  </tag>
-  <tag name="im:aspect:Genomics" objectIdentifier="Gene_to_upstream_intergenic" type="template">
-  </tag>
-  <tag name="im:aspect:Genomics" objectIdentifier="Chromosome_IntergenicSequence" type="template">
-  </tag>
-  <tag name="im:aspect:Genomics" objectIdentifier="AAB_Synonyms" type="template">
   </tag>
   <tag name="im:aspect:Genomics" objectIdentifier="LocatedSequenceFeature.chromosomeLocation" type="reference">
   </tag>
@@ -710,25 +562,9 @@
   </tag>
   <tag name="im:aspect:Genomics" objectIdentifier="Chromosome.transcripts" type="collection">
   </tag>
-  <tag name="im:aspect:Genomics" objectIdentifier="Gene_ExonLocation" type="template">
-  </tag>
   <tag name="im:aspect:Genomics" objectIdentifier="org.flymine.model.genomic.GOTerm" type="class">
   </tag>
-  <tag name="im:aspect:Genomics" objectIdentifier="Gene_ExonChromosome" type="template">
-  </tag>
-  <tag name="im:aspect:Genomics" objectIdentifier="Transcript.exons" type="collection">
-  </tag>
   <tag name="im:aspect:Genomics" objectIdentifier="Protein_GeneChromosomeLength" type="template">
-  </tag>
-  <tag name="im:aspect:Genomics" objectIdentifier="Gene.CDSs" type="collection">
-  </tag>
-  <tag name="im:aspect:Genomics" objectIdentifier="Exon.gene" type="reference">
-  </tag>
-  <tag name="im:aspect:Genomics" objectIdentifier="org.flymine.model.genomic.RepeatRegion" type="class">
-  </tag>
-  <tag name="im:aspect:Genomics" objectIdentifier="geneToPointMutation" type="template">
-  </tag>
-  <tag name="im:aspect:Genomics" objectIdentifier="AAAB_geneIdentifiersFromSynonym" type="template">
   </tag>
   <tag name="im:aspect:Genomics" objectIdentifier="org.flymine.model.genomic.Gene" type="class">
   </tag>
@@ -764,30 +600,6 @@
   </tag>
   <tag name="im:aspect:Genomics" objectIdentifier="Organism_Gene" type="template">
   </tag>
-  <tag name="im:aspect:Genomics" objectIdentifier="org.flymine.model.genomic.RRNA" type="class">
-  </tag>
-  <tag name="im:aspect:Genomics" objectIdentifier="OrganismGOterm_GenesTEinsertionsite" type="template">
-  </tag>
-  <tag name="im:aspect:Genomics" objectIdentifier="UTR.gene" type="reference">
-  </tag>
-  <tag name="im:aspect:Genomics" objectIdentifier="org.flymine.model.genomic.TRNA" type="class">
-  </tag>
-  <tag name="im:aspect:Genomics" objectIdentifier="AAQ_orthologues" type="template">
-  </tag>
-  <tag name="im:aspect:Genomics" objectIdentifier="org.flymine.model.genomic.Exon" type="class">
-  </tag>
-  <tag name="im:aspect:Genomics" objectIdentifier="ChromLocation_GeneTranscriptExon" type="template">
-  </tag>
-  <tag name="im:aspect:Genomics" objectIdentifier="geneTranscriptsExons" type="template">
-  </tag>
-  <tag name="im:aspect:Genomics" objectIdentifier="three_prime_utrs" type="template">
-  </tag>
-  <tag name="im:aspect:Genomics" objectIdentifier="RegulatoryRegion.gene" type="reference">
-  </tag>
-  <tag name="im:aspect:Genomics" objectIdentifier="org.flymine.model.genomic.IntergenicRegion" type="class">
-  </tag>
-  <tag name="im:aspect:Genomics" objectIdentifier="Gene.downstreamIntergenicRegion" type="reference">
-  </tag>
   <tag name="im:aspect:Genomics" objectIdentifier="Protein.genes" type="collection">
   </tag>
   <tag name="im:aspect:Genomics" objectIdentifier="AllGene_Chromosome" type="template">
@@ -795,8 +607,6 @@
   <tag name="im:aspect:Genomics" objectIdentifier="org.flymine.model.genomic.Chromosome" type="class">
   </tag>
   <tag name="im:aspect:Genomics" objectIdentifier="ChromLocation_Gene" type="template">
-  </tag>
-  <tag name="im:aspect:Genomics" objectIdentifier="CDS.gene" type="reference">
   </tag>
   <tag name="im:aspect:Genomics" objectIdentifier="Chromosome_Gene" type="template">
   </tag>
@@ -814,21 +624,9 @@
   </tag>
   <tag name="im:aspect:Genomics" objectIdentifier="Transcript.introns" type="collection">
   </tag>
-  <tag name="im:aspect:Genomics" objectIdentifier="Gene.exons" type="collection">
-  </tag>
   <tag name="im:aspect:Genomics" objectIdentifier="AAG_gene2protein" type="template">
   </tag>
-  <tag name="im:aspect:Genomics" objectIdentifier="gene_downstreamAdjacentgene_FlyAtlas" type="template">
-  </tag>
-  <tag name="im:aspect:Genomics" objectIdentifier="org.flymine.model.genomic.Pseudogene" type="class">
-  </tag>
-  <tag name="im:aspect:Genomics" objectIdentifier="AAI_gene2ChromosomeLocation1" type="template">
-  </tag>
   <tag name="im:aspect:Genomics" objectIdentifier="Chromosome.features" type="collection">
-  </tag>
-  <tag name="im:aspect:Genomics" objectIdentifier="TranscriptOrthologuesFromGene" type="template">
-  </tag>
-  <tag name="im:aspect:Genomics" objectIdentifier="Chromosome.exons" type="collection">
   </tag>
   <tag name="im:aspect:Genomics" objectIdentifier="Organism_Transcript" type="template">
   </tag>
@@ -836,25 +634,7 @@
   </tag>
   <tag name="im:aspect:Genomics" objectIdentifier="org.flymine.model.genomic.TFBindingSite" type="class">
   </tag>
-  <tag name="im:aspect:Genomics" objectIdentifier="Gene_TranscriptExonIntron" type="template">
-  </tag>
-  <tag name="im:aspect:Genomics" objectIdentifier="geneToInsertionSite" type="template">
-  </tag>
-  <tag name="im:aspect:Genomics" objectIdentifier="IntergenicRegion.adjacentGenes" type="collection">
-  </tag>
   <tag name="im:aspect:Genomics" objectIdentifier="chromosome2genes" type="template">
-  </tag>
-  <tag name="im:aspect:Genomics" objectIdentifier="ChromosomeLocation_ESTcluster" type="template">
-  </tag>
-  <tag name="im:aspect:Genomics" objectIdentifier="ESTclustertype_chromosomelocation" type="template">
-  </tag>
-  <tag name="im:aspect:Genomics" objectIdentifier="ChromosomeLocation_ESTclusterandESTs" type="template">
-  </tag>
-  <tag name="im:aspect:Genomics" objectIdentifier="ESTclone_clusterLocation" type="template">
-  </tag>
-  <tag name="im:aspect:Genomics" objectIdentifier="ESTaccession_ClusterChromosomelocation" type="template">
-  </tag>
-  <tag name="im:aspect:Genomics" objectIdentifier="ESTcluster_ESTSchromosomelocation" type="template">
   </tag>
   <tag name="im:aspect:Genomics" objectIdentifier="All_Genes_In_Organism_To_Publications" type="template">
   </tag>
@@ -862,67 +642,11 @@
   </tag>
   <tag name="im:aspect:Genomics" objectIdentifier="Gene_To_Publications" type="template">
   </tag>
-  <tag name="im:aspect:Genomics" objectIdentifier="Gene_pointMutationsInExons" type="template">
-  </tag>
-  <tag name="im:aspect:Genomics" objectIdentifier="Gene_transposableElementsOverlappingExons" type="template">
-  </tag>
-  <tag name="im:aspect:Genomics" objectIdentifier="ESTclone_LocationDMorthologuePathway" type="template">
-  </tag>
-  <tag name="im:aspect:Genomics" objectIdentifier="ESTcluster_DMorthologuePathway" type="template">
-  </tag>
-  <tag name="im:aspect:Genomics" objectIdentifier="Pathway_ESTcluster" type="template">
-  </tag>
-  <tag name="im:aspect:Genomics" objectIdentifier="ESTclone_LocationOverlappingGeneOrthologue" type="template">
-  </tag>
-  <tag name="im:aspect:Genomics" objectIdentifier="ESTclone_LocationOverlappingGeneStructure" type="template">
-  </tag>
-  <tag name="im:aspect:Genomics" objectIdentifier="UnalignedESTclusters" type="template">
-  </tag>
-  <tag name="im:aspect:Genomics" objectIdentifier="Pathway_Genes" type="template">
-  </tag>
-  <tag name="im:aspect:Genomics" objectIdentifier="Pathway_GenesOrthol" type="template">
-  </tag>
-  <tag name="im:aspect:Genomics" objectIdentifier="Pathway_GenesOrtholEST" type="template">
-  </tag>
-  <tag name="im:aspect:Genomics" objectIdentifier="Gene_TranscriptTranslation_1" type="template">
-  </tag>
-  <tag name="im:aspect:Genomics" objectIdentifier="Probe_Gene" type="template">
-  </tag>
-  <tag name="im:aspect:Genomics" objectIdentifier="Gene_TranscriptTranslation" type="template">
-  </tag>
-  <tag name="im:aspect:Genomics" objectIdentifier="ESTclone_LocationOverlappingGene" type="template">
-  </tag>
   <tag name="im:aspect:Genomics" objectIdentifier="Gene_Identifiers" type="template">
-  </tag>
-  <tag name="im:aspect:Genomics" objectIdentifier="ESTclone_LocationDMorthologuePathway_new" type="template">
-  </tag>
-  <tag name="im:aspect:Genomics" objectIdentifier="ESTclone_LocationOverlappingGeneOrthologue_new" type="template">
-  </tag>
-  <tag name="im:aspect:Genomics" objectIdentifier="ESTcluster_DMorthologuePathway_new" type="template">
-  </tag>
-  <tag name="im:aspect:Genomics" objectIdentifier="gene_downstreamAdjacentgene_FlyAtlas_new" type="template">
-  </tag>
-  <tag name="im:aspect:Genomics" objectIdentifier="Gene_upstreamAdjacent_FlyAtlas_new" type="template">
-  </tag>
-  <tag name="im:aspect:Genomics" objectIdentifier="Pathway_GenesOrtholEST_new" type="template">
-  </tag>
-  <tag name="im:aspect:Genomics" objectIdentifier="Pathway_GenesOrthol_new" type="template">
-  </tag>
-  <tag name="im:aspect:Genomics" objectIdentifier="Organism_5UTR" type="template">
-  </tag>
-  <tag name="im:aspect:Genomics" objectIdentifier="Organism_3UTR" type="template">
-  </tag>
-  <tag name="im:aspect:Genomics " objectIdentifier="Gene_gotermPointMutation" type="template">
-  </tag>
-  <tag name="im:aspect:Genomics " objectIdentifier="OrganismGoterm_genesDrosDelDeletion" type="template">
-  </tag>
-  <tag name="im:aspect:Genomics " objectIdentifier="Gene_ExonLocation2" type="template">
   </tag>
   <tag name="im:aspect:Proteins" objectIdentifier="org.flymine.model.genomic.Protein" type="class">
   </tag>
   <tag name="im:aspect:Proteins" objectIdentifier="Gene.proteins" type="collection">
-  </tag>
-  <tag name="im:aspect:Proteins" objectIdentifier="ProteinInteractions2orthologuesAndPhenotypes" type="template">
   </tag>
   <tag name="im:aspect:Proteins" objectIdentifier="ProteinSynomyms" type="template">
   </tag>
@@ -1059,10 +783,6 @@
   <tag name="im:converter" objectIdentifier="Transcript_To_Gene_Type_Converter" type="template">
   </tag>
   <tag name="im:converter" objectIdentifier="Translation_To_Transcript_Type_Converter" type="template">
-  </tag>
-  <tag name="im:converter" objectIdentifier="Exon_To_Gene_Type_Converter" type="template">
-  </tag>
-  <tag name="im:converter" objectIdentifier="Gene_To_Exon_Type_Converter" type="template">
   </tag>
   <tag name="im:preferredBagType" objectIdentifier="org.flymine.model.genomic.Gene" type="class">
   </tag>
