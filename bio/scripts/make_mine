@@ -94,4 +94,4 @@ find({
      },
      $STRUCTURE_DIR);
 
-warn "created $mine_dir directory for $mine_name\n";
+warn "created $new_mine_dir directory for $mine_name\n";
