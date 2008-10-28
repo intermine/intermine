@@ -61,7 +61,7 @@ public class DiseaseRegionGFF3HandlerTest extends ItemsTestCase
         converter.store();
 
         // uncomment to write a new items xml file
-        //writeItemsFile(writer.getItems(), "diseaseregion_items.xml");
+        // writeItemsFile(writer.getItems(), "/tmp/diseaseregion_items.xml");
 
         Set expected = readItemSet("DiseaseRegionGFF3HandlerTest.xml");
         assertEquals(expected, writer.getItems());
