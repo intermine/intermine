@@ -269,14 +269,8 @@ public class GFF3Converter
                 if (record.getPhase() != null) {
                     relation.setAttribute("phase", record.getPhase());
                 }
-                if (seqClsName.equals("Chromosome")) {
-                    feature.setReference("chromosomeLocation", relation);
-                }
             } else {
                 relation = createItem("SimpleRelation");
-            }
-            if (makeLocation && seqClsName.equals("Chromosome")) {
-                feature.setReference("chromosomeLocation", relation);
             }
             relation.setReference("object", seq.getIdentifier());
             relation.setReference("subject", feature.getIdentifier());
@@ -285,6 +279,12 @@ public class GFF3Converter
                     dataSet.getIdentifier()
                 }));
             handler.setLocation(relation);
+            if (seqClsName.equals("Chromosome")) {
+                feature.setReference("chromosome", seq.getIdentifier());
+                if (makeLocation) {
+                    feature.setReference("chromosomeLocation", relation);
+                }
+            }
         }
         handler.addDataSet(dataSet);
         if (record.getScore() != null && !String.valueOf(record.getScore()).equals("")) {
