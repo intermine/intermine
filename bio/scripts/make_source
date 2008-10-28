@@ -9,6 +9,9 @@ use Cwd;
 my $BIO_DIR = 'bio';
 my $STRUCTURE_DIR = "$BIO_DIR/skeletons/source";
 
+my $CUSTOM_FILE_TYPE = 'custom-file';
+my $ITEMS_XML_FILE_TYPE = 'intermine-items-xml-file';
+
 sub usage
 {
   my $message = shift;
@@ -20,21 +23,34 @@ if (@ARGV != 2) {
   usage (<<USAGE);
 needs two arguments:
   - the source name (eg. foobase-gene-data)
-  - the source type (eg. custom-file)
+  - the source type (eg. custom-file, intermine-items-xml-file)
 USAGE
 }
 
 my $source_name = shift;
 my $source_type = shift;
 
-my %project_properties = (
-                          'custom-file' => <<PROPS
-have.file.custom.tgt = true
-converter.class = org.intermine.bio.dataconversion.WormBaseIdentifiersConverter
-PROPS
-                          );
-
 (my $camel_case_source_name = $source_name) =~ s/(\w)([^\-_]+)[_\-]?/\U$1\E$2/g;
+
+my $custom_file_props = <<PROPS;
+have.file.custom.tgt = true
+converter.class = org.intermine.bio.dataconversion.${camel_case_source_name}Converter
+PROPS
+
+my $xml_items_props = <<PROPS;
+have.file.xml.tgt = true
+PROPS
+
+my $create_main = 1;
+
+if ($source_type eq $ITEMS_XML_FILE_TYPE) {
+  $create_main = 0;
+}
+
+my %project_properties = (
+                          $CUSTOM_FILE_TYPE => $custom_file_props,
+                          $ITEMS_XML_FILE_TYPE => $xml_items_props,
+                         );
 
 my %substitutions = (
                      'source-name' => $source_name,
@@ -68,15 +84,26 @@ sub substitute
 
 my $start_dir = getcwd;
 
+sub is_main
+{
+  return m:^main(/.*)?$:;
+}
+
 # substitute ${foo} sequences in file contents and in file names
 sub process
 {
   my $orig_path = "$start_dir/$File::Find::name";
   my $dest_path = $File::Find::name;
 
-  $dest_path =~ s:$STRUCTURE_DIR(.*):$start_dir/$BIO_DIR/$source_name$1:;
+  $dest_path =~ s:$STRUCTURE_DIR/?::;
 
-  $dest_path = substitute($dest_path);
+  if (!$create_main) {
+    if (is_main($dest_path)) {
+      return;
+    }
+  }
+
+  $dest_path = "$start_dir/$BIO_DIR/sources/$source_name/" . substitute($dest_path);
 
   if (-d $orig_path) {
     mkpath($dest_path);
