@@ -13,13 +13,20 @@ sub usage
 {
   my $message = shift;
 
-  die "$0: $message\n";
+  die <<"MESSAGE";
+$0: $message
+usage:
+  $0 <mine-name>
+
+The mine will be created in directory with a lowercase name
+  eg. $0 FooMine
+will create a directory called foomine
+MESSAGE
 }
 
 if (@ARGV != 1) {
   usage (<<USAGE);
-needs one argument:
-  - the mine name (eg. FlyMine)
+needs one argument
 USAGE
 }
 
@@ -42,12 +49,20 @@ MESSAGE
 
 my $start_dir = getcwd;
 
+my $new_mine_dir = "$start_dir/$mine_dir";
+
+if (-e $new_mine_dir) {
+  usage (<<MESSAGE);
+$new_mine_dir already exists
+MESSAGE
+}
+
 sub process
 {
   my $orig_path = "$start_dir/$File::Find::name";
   my $dest_path = $File::Find::name;
 
-  $dest_path =~ s:$STRUCTURE_DIR(.*):$start_dir/$mine_dir$1:;
+  $dest_path =~ s:$STRUCTURE_DIR(.*):$new_mine_dir$1:;
 
   if (-d $orig_path) {
     mkpath($dest_path);
