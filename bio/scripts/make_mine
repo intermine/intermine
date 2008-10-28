@@ -57,7 +57,7 @@ sub process
 
     while (my $line = <$orig>) {
       for my $subs_key (keys %substitutions) {
-        $line =~ s/\$\{$subs_key\}/$substitutions{$subs_key}/;
+        $line =~ s/\$\{$subs_key\}/$substitutions{$subs_key}/g;
       }
 
       print $dest $line;
