@@ -22,6 +22,7 @@
       <property name="fasta.synonymSource" value="PlasmoDB"/>
       <property name="fasta.dataSetTitle" value="PlasmoDB chromosome sequence"/>
       <property name="fasta.taxonId" value="36329"/>
+      <property name="fasta.includes" value="MAL*.fasta"/>
       <property name="src.data.dir" location="DATA_DIR/malaria/genome/fasta"/>
     </source>
     <source name="go" type="go">
