@@ -48,10 +48,10 @@
       <property name="src.data.dir" location="/shared/data/modmine/go-annotation/"/>
       <property name="src.data.dir.includes" value="*/gene_association*"/>
     </source>
-    <source name="fly-anatomy-ontology" type="fly-anatomy-ontology">
+		<source name="fly-anatomy-ontology" type="fly-anatomy-ontology" dump="true">
       <property name="src.data.file" location="/shared/data/ontologies/fly_anatomy/current/fly_anatomy.obo"/>
     </source>
-    <source name="fly-development-ontology" type="fly-development-ontology">
+		<source name="fly-development-ontology" type="fly-development-ontology" dump="true">
       <property name="src.data.file" location="/shared/data/ontologies/fly_development/current/fly_development.obo"/>
     </source>
     <source name="fly-misc-cvterms" type="fly-misc-cvterms">

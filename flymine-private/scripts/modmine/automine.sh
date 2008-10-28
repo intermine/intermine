@@ -8,33 +8,43 @@
 # sc 09/08
 #
 # TODO: ant failing and exiting with 0!
-#       2 scenari: new build and incremental (i.e. new chado appended to existing mine)
+#       #3 scenari: new build, incremental (i.e. new chado added to existing mine), test
 #       test with file option
+#       analyse after stag?
+#       #-R restart after fails for full
+#       
 #
+
+
 
 # see after argument parsing for all envs related to the release
 
 FTPURL=ftp://ftp.modencode.org/pub/dcc/for_modmine
-DATADIR=/shared/data/modmine/subs/chado
-NEWDIR=/shared/data/modmine/subs/chado/new
-DBDIR=/shared/data/modmine/
+MODIR=/shared/data/modmine
+DATADIR=$MODIR/subs/chado
+NEWDIR=$DATADIR/new
 
 MINEDIR=$HOME/svn/dev/modmine
 SOURCES=modmine-static,modencode-metadata,entrez-organism
 
 # these should not be edited
-WEBAPP=y;   #defaults: build a webapp
-APPEND=y;   #          rebuild the db
-BUP=y       #          do a back up copy of the modchado database
-V=;         #          non-verbose mode
-#F=;         #          continue stag loading (also after errors)
-REL=dev;    #          if no release is passed, do a dev
-ONLYMETA=y  #          do only metadata
-STAG=y      #          run stag loading
-TESTS=y     #          do acceptance teests
-FOUND=n     #          y if new files downloaded
+WEBAPP=y       #defaults: build a webapp
+CHADOAPPEND=n  #          rebuild the chado db
+BUP=n          #          don't do a back up copy of the databases
+V=             #          non-verbose mode
+#F=;           #          continue stag loading (also after errors)
+REL=dev;       #          if no release is passed, do a dev
+STAG=y         #          run stag loading
+TESTS=y        #          do acceptance tests
+FOUND=n        #          y if new files downloaded
 INFILE=not_defined #   not using a given list of submissions
 TIMESTAMP=`date "+%y%m%d.%H%M"`  # used in the log
+
+INCR=y
+FULL=n
+TEST=n
+RESTART=n
+
 
 progname=$0
 
@@ -42,10 +52,12 @@ function usage () {
    cat <<EOF
 
 Usage: $progname [-b] [-c] [-f file_name] [-n] [-s] [-t] [-w] [-v]
-   -b: no back-up of modchado-$REL will be built
-   -c: all data, not only meta-data (FB and WB)
+   -F: full (modmine) rebuild
+   -T: test build
+   -R: restart full build after failure
+   -a: append to chado
+   -b: build a back-up of modchado-$REL
    -f file_name: using a given list of submissions
-   -n: new modMine build (default: data appended to the existing mine)
    -s: no new loading of chado (stag is not run)
    -t: no acceptance test run
    -w: no new webapp will be built
@@ -72,14 +84,17 @@ EOF
    exit 0
 }
 
-while getopts ":bcf:nstvw" opt; do
+while getopts ":FITRbcf:nstvw" opt; do
    case $opt in
 
-   b )  echo; echo "Don't build a back-up of the database." ; BUP=n;;
-   c )  echo; echo "Do all (not only meta-data)." ; ONLYMETA=n;;
+   F )  echo; echo "Full modMine realease"; FULL=y; BUP=y;;
+#   I )  echo; echo "Incremental modMine realease"; INCR=y;;
+   T )  echo; echo "Test realease"; TEST=y;;
+   R )  echo; echo "Restart full realease"; RESTART=y;;
+   b )  echo; echo "Build a back-up of the database." ; BUP=y;;
    f )  echo; INFILE=$OPTARG; echo "Using given list of chadoxml files:"; more $INFILE;;
-   n )  echo; echo "New build of chado (do not append)" ; APPEND=n;;
-   s )  echo; echo "Using previous load of chado (stag is not run)" ; STAG=n;;
+   a )  echo; echo "Append data in chado" ; CHADOAPPEND=y;;
+   s )  echo; echo "Using previous load of chado (stag is not run)" ; STAG=n; BUP=n;;
    t )  echo; echo "No acceptance test run" ; TESTS=n;;
    v )  echo; echo "Verbose mode" ; V=-v;;
    w )  echo; echo "No new webapp will be built" ; WEBAPP=n;;
@@ -101,13 +116,13 @@ then
 BUP=n
 fi
 
+
 LOADLOG="$DATADIR/loading_$REL.log"
 
 echo $LOADLOG
 
-
 #
-# Getting some values form the properties file.
+# Getting some values from the properties file.
 # NOTE: it is assumed that dbhost and dbuser are the same for chado and modmine!!
 #
 
@@ -119,9 +134,14 @@ CHADODB=`grep metadata.datasource.databaseName $HOME/modmine.properties.$REL | a
 MINEDB=`grep db.production.datasource.databaseName $HOME/modmine.properties.$REL | awk -F "=" '{print $2}'`
 
 
+echo "================================="
+echo "Building modmine-$REL on $DBHOST."
+echo "================================="
+echo "Logs: $LOADLOG"
+echo "      $DATADIR/wget.log"
 echo
-echo "building modmine-$REL on $DBHOST.."
-echo "press return to continue.."
+echo "Press return to continue.."
+echo -n "->"
 read
 
 #---------------------------------------
@@ -142,22 +162,18 @@ then
 echo
 echo "Getting data from $FTPURL. Log in $DATADIR/wget.log"
 echo
-
 #wget -r -nd -N -P$NEWDIR $FTPURL -A chadoxml  --progress=dot:mega -a wget.log
 wget -r -nd -N -P$NEWDIR $FTPURL -A chadoxml  --progress=dot:mega 2>&1 | tee -a $DATADIR/wget.log
 
 #wget -r -nd -np -l 2 -N -P$NEWDIR $FTPURL/*chadoxml  #?? to test
-
 #r recursive
 #nd the directories structure is NOT recreated locally
 #l 2 depth of recursion
 #np no parents: only files below a certain directory are retrieved
 #P destination dir
-#a append to the log
+#a CHADOAPPEND to the log
 
 echo $TIMESTAMP
-
-
 echo "press return to continue.."
 read
 
@@ -195,8 +211,6 @@ echo "$chadofile..."
 mv $chadofile $NEWDIR
 done
 
-
-
 fi #if $STAG=y
 
 #---------------------------------------
@@ -217,15 +231,15 @@ fi
 
 # build new?
 
-if [ "$APPEND" = "n" ] && [ "$STAG" = "y" ]
+if [ "$CHADOAPPEND" = "n" ] && [ "$STAG" = "y" ]
 then
 dropdb -e $CHADODB -h $DBHOST -U $DBUSER;
 createdb -e $CHADODB -h $DBHOST -U $DBUSER || { printf "%b" "\nMine building FAILED. Please check previous error message.\n\n" ; exit 1 ; }
 
-echo "press return to continue.."
-read
+#echo "press return to continue.."
+#read
 
-psql -d $CHADODB -h $DBHOST -U $DBUSER < $DBDIR/build_empty_chado.sql\
+psql -d $CHADODB -h $DBHOST -U $DBUSER < $MODIR/build_empty_chado.sql\
 || { printf "%b" "\nMine building FAILED. Please check previous error message.\n\n" ; exit 1 ; }
 echo "press return to continue.."
 read
@@ -279,13 +293,20 @@ cd $MINEDIR
 echo "Building modMine $REL"
 echo
 
-if [ $APPEND = "y" ]
+if [ $INCR = "y" ]
 then
 # just add to present mine
 # NB: if failing won't stop!! ant exit with 0!
+echo; echo "Appending new chado (metadata) to modmine-$REL.."
 cd integrate
 ant -v -Drelease=$REL -Dsource=modencode-metadata || { printf "%b" "\n modMine build FAILED.\n" ; exit 1 ; }
-elif [ $ONLYMETA = "y" ]
+elif [ $RESTART = "y" ]
+then
+# restart build after failure
+echo; echo "Restating build.."
+../bio/scripts/project_build -V $REL $V -l -t localhost /tmp/mod-all\
+ || { printf "%b" "\n modMine build FAILED.\n" ; exit 1 ; }
+elif [ $TEST = "y" ]
 then
 # new build. static, metadata, organism
 ../bio/scripts/project_build -a $SOURCES -V $REL $V -b -t localhost /tmp/mod-meta\
@@ -295,6 +316,23 @@ else
 ../bio/scripts/project_build -V $REL $V -b -t localhost /tmp/mod-all\
  || { printf "%b" "\n modMine build FAILED.\n" ; exit 1 ; }
 fi
+
+# if [ $CHADOAPPEND = "y" ]
+# then
+# # just add to present mine
+# # NB: if failing won't stop!! ant exit with 0!
+# cd integrate
+# ant -v -Drelease=$REL -Dsource=modencode-metadata || { printf "%b" "\n modMine build FAILED.\n" ; exit 1 ; }
+# elif [ $ONLYMETA = "y" ]
+# then
+# # new build. static, metadata, organism
+# ../bio/scripts/project_build -a $SOURCES -V $REL $V -b -t localhost /tmp/mod-meta\
+#  || { printf "%b" "\n modMine build FAILED.\n" ; exit 1 ; }
+# else
+# # new build, all the sources
+# ../bio/scripts/project_build -V $REL $V -b -t localhost /tmp/mod-all\
+#  || { printf "%b" "\n modMine build FAILED.\n" ; exit 1 ; }
+# fi
 
 echo "press return to continue.."
 read
