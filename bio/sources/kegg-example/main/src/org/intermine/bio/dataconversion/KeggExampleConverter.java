@@ -64,15 +64,13 @@ public class KeggExampleConverter extends BioFileConverter
         	throw new IllegalArgumentException("No taxonId provided: " + taxonId);
         }
 
-        // there a two files
-        // data is in format
-        // CG | list of space separated map Id's
-        // and
-        // Map Id | name
-
+        // There are two files:
+        // 		map_title.tab - pathway ids and their names
+        //      xxx_gene_map.tab - genes and the pathways they are involved in
+        // The following code works out which file we are reading and calls the corresponding method
         File currentFile = getCurrentFile();
             
-        if (currentFile.getName().startsWith("map_title")) {
+        if (currentFile.getName().equals("map_title.tab")) {
         	processMapTitleFile(reader);
         } else if (currentFile.getName().endsWith("gene_map.tab")) {
         	processGeneMapFile(reader);
@@ -96,6 +94,8 @@ public class KeggExampleConverter extends BioFileConverter
     	// this file has data of the format:
     	// pathway id | pathway name
     	while (lineIter.hasNext()) {
+    		// line is a string array with the one element for each tab separated value
+    		// on the next line of the file
     		String[] line = (String[]) lineIter.next();
 
     		String pathwayId = line [0];
@@ -117,6 +117,9 @@ public class KeggExampleConverter extends BioFileConverter
      * @throws ObjectStoreException
      */
     private void processGeneMapFile(Reader reader) throws IOException, ObjectStoreException {
+    	// this file has data of the format:
+    	// gene id | pathway ids (space separated)
+    	
     	Iterator lineIter = FormattedTextParser.parseTabDelimitedReader(reader);
     	
     	while (lineIter.hasNext()) {
