@@ -103,9 +103,10 @@ sub substitute
 
 my $start_dir = getcwd;
 
-sub is_main
+sub starts_with_main
 {
-  return m:^main(/.*)?$:;
+  my $path = shift;
+  return $path =~ m:^main($|/):;
 }
 
 my $full_source_dir = "$start_dir/$BIO_DIR/sources/$source_name";
@@ -126,7 +127,7 @@ sub process
   $dest_path =~ s:$STRUCTURE_DIR/?::;
 
   if (!$create_main) {
-    if (is_main($dest_path)) {
+    if (starts_with_main($dest_path)) {
       return;
     }
   }
