@@ -57,7 +57,7 @@ public class RegionGFF3HandlerTest extends ItemsTestCase
         converter.store();
 
         // uncomment to write a new target items file
-        //writeItemsFile(writer.getItems(), "region-tgt-items.xml");
+        // writeItemsFile(writer.getItems(), "/tmp/region-tgt-items.xml");
 
         Set expected = readItemSet("regiontgt.xml");
         assertEquals(expected, writer.getItems());
