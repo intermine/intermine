@@ -12,18 +12,19 @@ my $STRUCTURE_DIR = "$BIO_DIR/skeletons/source";
 my $CUSTOM_FILE_TYPE = 'custom-file';
 my $ITEMS_XML_FILE_TYPE = 'intermine-items-xml-file';
 
-sub usage
-{
-  my $message = shift;
+sub custom_file_props;
+sub xml_items_props;
 
-  die "$0: $message\n";
-}
+my %project_properties = (
+                          $CUSTOM_FILE_TYPE => \&custom_file_props,
+                          $ITEMS_XML_FILE_TYPE => \&xml_items_props,
+                         );
+
+my $source_types = join "\n", map { ' ' x 20 . $_ } sort keys %project_properties;
 
 if (@ARGV != 2) {
   usage (<<USAGE);
-needs two arguments:
-  - the source name (eg. foobase-gene-data)
-  - the source type (eg. custom-file, intermine-items-xml-file)
+needs two arguments
 USAGE
 }
 
@@ -32,14 +33,20 @@ my $source_type = shift;
 
 (my $camel_case_source_name = $source_name) =~ s/(\w)([^\-_]+)[_\-]?/\U$1\E$2/g;
 
-my $custom_file_props = <<PROPS;
+sub custom_file_props
+{
+  return <<PROPS;
 have.file.custom.tgt = true
 converter.class = org.intermine.bio.dataconversion.${camel_case_source_name}Converter
 PROPS
+}
 
-my $xml_items_props = <<PROPS;
+sub xml_items_props
+{
+  return <<PROPS;
 have.file.xml.tgt = true
 PROPS
+}
 
 my $create_main = 1;
 
@@ -47,10 +54,22 @@ if ($source_type eq $ITEMS_XML_FILE_TYPE) {
   $create_main = 0;
 }
 
-my %project_properties = (
-                          $CUSTOM_FILE_TYPE => $custom_file_props,
-                          $ITEMS_XML_FILE_TYPE => $xml_items_props,
-                         );
+
+sub usage
+{
+  my $message = shift;
+
+  die <<"MESSAGE";
+$0: $message
+usage:
+  $0 <source-name> <source-type>
+
+<source-name> - the name of the directory to create in $BIO_DIR/sources
+                eg. foobase-gene-data
+<source-type> - possible source types are:
+$source_types
+MESSAGE
+}
 
 my %substitutions = (
                      'source-name' => $source_name,
@@ -58,7 +77,7 @@ my %substitutions = (
                     );
 
 if (exists $project_properties{$source_type}) {
-  $substitutions{'project-properties'} = $project_properties{$source_type}
+  $substitutions{'project-properties'} = &{$project_properties{$source_type}};
 } else {
   usage ("unknown source type: $source_type");
 }
@@ -89,6 +108,8 @@ sub is_main
   return m:^main(/.*)?$:;
 }
 
+my $full_source_dir = "$start_dir/$BIO_DIR/sources/$source_name";
+
 # substitute ${foo} sequences in file contents and in file names
 sub process
 {
@@ -103,7 +124,7 @@ sub process
     }
   }
 
-  $dest_path = "$start_dir/$BIO_DIR/sources/$source_name/" . substitute($dest_path);
+  $dest_path = $full_source_dir . '/' . substitute($dest_path);
 
   if (-d $orig_path) {
     mkpath($dest_path);
@@ -132,3 +153,5 @@ find({
       preprocess => \&preprocess
      },
      $STRUCTURE_DIR);
+
+warn "created $full_source_dir directory for $source_name\n";
