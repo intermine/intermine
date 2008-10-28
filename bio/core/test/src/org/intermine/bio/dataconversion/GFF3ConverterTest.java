@@ -75,16 +75,8 @@ public class GFF3ConverterTest extends ItemsTestCase {
 
         Set expected = new HashSet(getExpectedLocatedItems());
 
-//      FileWriter fw = new FileWriter("GFF3ConverterTestLocated-tmp.xml");
-//      PrintWriter pw = new PrintWriter(fw);
-//      pw.println("<items>");
-//      for (Object item: writer.getItems()) {
-//      pw.println(item);
-//      }
-//      pw.println("</items>");
-//      pw.close();
-//      fw.close();
-
+        // uncomment to write out a new target items file
+        // writeItemsFile(writer.getItems(), "/tmp/gff_located_item_test.xml");
 
         assertEquals(expected, writer.getItems());
     }
@@ -107,15 +99,8 @@ public class GFF3ConverterTest extends ItemsTestCase {
 
         Set expected = new HashSet(getExpectedUnLocatedItems());
 
-//      FileWriter fw = new FileWriter("GFF3ConverterTestUnLocated-tmp.xml");
-//      PrintWriter pw = new PrintWriter(fw);
-//      pw.println("<items>");
-//      for (Object item: writer.getItems()) {
-//      pw.println(item);
-//      }
-//      pw.println("</items>");
-//      pw.close();
-//      fw.close();
+        // uncomment to write out a new target items file
+        // writeItemsFile(writer.getItems(), "/tmp/gff_unlocated_item_test.xml");
 
         assertEquals(expected, writer.getItems());
     }
