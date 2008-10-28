@@ -110,6 +110,13 @@ sub is_main
 
 my $full_source_dir = "$start_dir/$BIO_DIR/sources/$source_name";
 
+if (-e $full_source_dir) {
+  usage(<<MESSAGE);
+$full_source_dir already exists
+MESSAGE
+
+}
+
 # substitute ${foo} sequences in file contents and in file names
 sub process
 {
