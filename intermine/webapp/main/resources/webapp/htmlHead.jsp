@@ -32,6 +32,8 @@ if(new java.io.File(application.getRealPath("css")+"/"+pageName+".css").exists()
 
 <script type="text/javascript" src="<html:rewrite page='/js/jquery-1.2.6.js'/>"></script>
 <script type="text/javascript" src="<html:rewrite page='/js/jquery-ui-personalized-1.5.2.min.js'/>"></script>
+<script type="text/javascript" src="<html:rewrite page='/js/jquery.dimensions.min.js'/>"></script>
+<script type="text/javascript" src="<html:rewrite page='/js/jquery.center.js'/>"></script>
 <script type="text/javascript">
   jQuery.noConflict();
 </script>
@@ -75,37 +77,6 @@ if(new java.io.File(application.getRealPath("css")+"/"+pageName+".css").exists()
     document.getElementById("fbname").focus();
   }
 	
-  Position.center = function(element){
-      var options = Object.extend({
-            zIndex: 999,
-            update: false
-         }, arguments[1] || {});
-
-      element = $(element)
-
-      if(!element._centered){
-          Element.setStyle(element, {position: 'absolute', zIndex: options.zIndex });
-          element._centered = true;
-      }
-
-      var dims = Element.getDimensions(element);
-
-      Position.prepare();
-      var winSize = Position.getWindowSize();
-      var winWidth = winSize.width;
-      var winHeight = winSize.height;
-
-      var offLeft = (Position.deltaX + Math.floor((winWidth-dims.width)/2));
-      var offTop = (Position.deltaY + Math.floor((winHeight-dims.height)/2));
-      element.style.top = ((offTop != null && offTop > 0) ? offTop : '0')+ 'px';
-      element.style.left = ((offLeft != null && offLeft > 0) ? offLeft :'0') + 'px';
-
-      if (options.update) {
-          Event.observe(window, 'resize', function(evt) { Position.center(element); }, false);
-          Event.observe(window, 'scroll', function(evt) { Position.center(element); }, false);
-      }
-  }
-
 //-->
 </script>
 <!-- /htmlHead.jsp -->
