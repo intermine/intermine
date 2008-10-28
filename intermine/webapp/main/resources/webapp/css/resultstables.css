@@ -9,22 +9,28 @@ td.resBar {
   display:none;
   min-width:300px; padding:0;
   width:300px !important;
-  background-color:#fff; border: solid #CCC 1px;}
+  background-color:#fff;
+}
 
 #summary_loading {
-  width:200px;
+  width:100%;
   height:50px;
   padding-top:15px;
   text-align: center;
+  border:1px solid #CCC;
 }
 #summary_loaded {
   padding:5px;
+  background-color:white;
+  border:1px solid #CCC;
 }
 
 #handle {
     height:25px;
     background-image: url('../theme/heading-bg.gif');
     background-repeat: repeat-x;
+    cursor:move;
+    border-top:1px solid #CCC;
 }
 .summaryhead {
     font-weight: bold;

@@ -129,7 +129,9 @@ function resultsCountCallback(size) {
 function getColumnSummary(tableName, columnName, columnDisplayName) {
     document.getElementById('summary_loaded').style.display = "none";
     document.getElementById('summary_loading').style.display = "block";
-    // Position.center($('summary'));
+    if(jQuery.browser.msie != true) {
+      jQuery('#summary').center();
+    }
     jQuery('#summary').show(300);
     AjaxServices.getColumnSummary(tableName, columnName, function(str){
         var rows = str[0];
@@ -189,7 +191,6 @@ function getColumnSummary(tableName, columnName, columnDisplayName) {
         summaryLoadedElement.innerHTML = html;
         setTimeout("updateCountInColumnSummary()", 200);
         setTimeout("updateUniqueCountInColumnSummary(" + uniqueCountQid + ")", 300);
-        Position.center($('summary'));
    });
 
 }
