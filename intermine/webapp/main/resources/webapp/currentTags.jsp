@@ -11,7 +11,7 @@
  are obtained usinginlineTagEditorController, for refresh is used AjaxServices.getObjectTags  --%>
 <script type="text/javascript">
 	<c:forEach items="${currentTags}" var="item" varStatus="status">
-		 addTagSpan('${tagged}', '${type}', '${item}');
+		 addTagSpan('${editorId}', '${type}', '${item}');
 	</c:forEach>
 </script>
 
