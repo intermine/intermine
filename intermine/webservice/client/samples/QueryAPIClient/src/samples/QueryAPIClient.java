@@ -23,8 +23,8 @@ import org.intermine.webservice.client.services.QueryService;
 /**
  * The QueryAPIClient is an example of query client fetching results of query from InterMine web service. 
  * It demonstrates using InterMine query API. It retrieves the same data as QueryClient but demonstrates 
- * how to create path query from start and add constraints. This example displays first 100 Drosophila  
- * melanogaster genes sorted by the FlyBase identifier. 
+ * how to create path query from start and add constraints. 
+ * This example displays first 100 genes shorter than 1kB and sorted by the identifier.
  *
  * NOTE: The model can change at the server in next versions of FlyMine and sample won't work. For example
  * primaryIdentifier gene attribute can be renamed. In this case please download newer version of samples 
@@ -34,7 +34,7 @@ import org.intermine.webservice.client.services.QueryService;
  **/
 public class QueryAPIClient
 {
-    private static String serviceRootUrl = "localhost:8080/query/service";
+    private static String serviceRootUrl = "http://localhost:8080/query/service";
     
     public static void main(String[] args) throws IOException {
         QueryService service = new ServiceFactory(serviceRootUrl, "QueryAPIClient").getQueryService();
@@ -42,10 +42,10 @@ public class QueryAPIClient
         PathQuery query = new PathQuery(model);
         query.setView("Gene.primaryIdentifier Gene.secondaryIdentifier Gene.symbol Gene.name Gene.organism.shortName");
         query.setOrderBy("Gene.primaryIdentifier");
-        query.addConstraint("Gene.organism.name", Constraints.eq("Drosophila melanogaster"));
+        query.addConstraint("Gene.length", Constraints.lessThan(1000));
         // first 100 results are fetched
         List<List<String>> result = service.getResult(query, 0, 100);
-        System.out.println("First 100 Drosophila  melanogaster genes sorted according to the FlyBase identifier: ");
+        System.out.println("First 100 genes shorter than 1kB sorted according to the identifier: ");
         for (List<String> row : result) {
             for (String cell : row) {
                 System.out.print(cell + " ");

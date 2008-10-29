@@ -28,7 +28,7 @@ import org.intermine.webservice.client.services.ListService;
  **/
 public class ListClient
 {
-    private static String serviceRootUrl = "localhost:8080/query/service";
+    private static String serviceRootUrl = "http://localhost:8080/query/service";
     
     public static void main(String[] args) {
         
