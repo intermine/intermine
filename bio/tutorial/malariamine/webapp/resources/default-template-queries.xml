@@ -302,16 +302,6 @@
     </node>
   </query>
 </template>
-<template name="Pathway_Genes" title="KEGG pathway --&gt; D. melanogaster genes." longDescription="For a particular KEGG pathway, list all the D. melanogaster genes that are involved. (Data Source: KEGG)." comment="">
-  <query name="Pathway_Genes" model="genomic" view="Pathway.identifier Pathway.name Pathway.genes.secondaryIdentifier Pathway.genes.symbol" sortOrder="Pathway.identifier asc">
-    <node path="Pathway" type="Pathway">
-    </node>
-    <node path="Pathway.name" type="String">
-      <constraint op="=" value="Pentose phosphate pathway" description="Pathway name:" identifier="" editable="true" code="A">
-      </constraint>
-    </node>
-  </query>
-</template>
 <template name="Protein_GeneChromosomeLength" title="Protein --&gt; Gene." longDescription="Show the gene that codes for the following protein, with its chromosomal location and length." comment="06.06.07 updated to work from protein class - Philip">
   <query name="Protein_GeneChromosomeLength" model="genomic" view="Protein.primaryAccession Protein.genes.primaryIdentifier Protein.genes.symbol Protein.genes.chromosome.primaryIdentifier Protein.genes.chromosomeLocation.start Protein.genes.chromosomeLocation.end Protein.genes.chromosomeLocation.strand Protein.genes.length" sortOrder="Protein.primaryAccession asc">
     <pathDescription pathString="Protein.genes.chromosome" description="Chromosome">
@@ -424,6 +414,8 @@
 </template>
 </template-queries>
 <tags>
+  <tag name="im:public" objectIdentifier="Gene_Protein" type="template">
+  </tag>
   <tag name="im:aspect:Gene Ontology" objectIdentifier="OrganismGoTerm_Gene" type="template">
   </tag>
   <tag name="im:aspect:Gene Ontology" objectIdentifier="OrganismGoTerm_GeneWithannotation" type="template">
@@ -638,8 +630,6 @@
   </tag>
   <tag name="im:aspect:Genomics" objectIdentifier="All_Genes_In_Organism_To_Publications" type="template">
   </tag>
-  <tag name="im:aspect:Genomics" objectIdentifier="Gene_To_KEGG_Pathway_Id" type="template">
-  </tag>
   <tag name="im:aspect:Genomics" objectIdentifier="Gene_To_Publications" type="template">
   </tag>
   <tag name="im:aspect:Genomics" objectIdentifier="Gene_Identifiers" type="template">
@@ -803,8 +793,6 @@
   <tag name="im:summary" objectIdentifier="Protein.genes" type="collection">
   </tag>
   <tag name="im:summary" objectIdentifier="BindingSite.factor" type="reference">
-  </tag>
-  <tag name="im:summary" objectIdentifier="Gene.pathways" type="collection">
   </tag>
   <tag name="im:summary" objectIdentifier="Gene.publications" type="collection">
   </tag>
