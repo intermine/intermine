@@ -110,44 +110,14 @@ public class ObjectDetailsController extends InterMineAction
         }
 
         Map<String, Map> placementRefsAndCollections = new TreeMap<String, Map>();
-        Set aspects = new HashSet((Set<String>) servletContext.getAttribute(Constants.CATEGORIES));
+        Set<String> aspects = new HashSet((Set<String>) servletContext.getAttribute(Constants.CATEGORIES));
 
-        Map<String, DisplayField> placementMap =
-            new TreeMap<String, DisplayField>(String.CASE_INSENSITIVE_ORDER);
-        placementRefsAndCollections.put(TagNames.IM_SUMMARY, placementMap);
-
-        Set cds = os.getModel().getClassDescriptorsForClass(
+        Set<ClassDescriptor> cds = os.getModel().getClassDescriptorsForClass(
                 dobj.getObject().getClass());
 
-        Iterator cdIter = cds.iterator();
-
-        while (cdIter.hasNext()) {
-            ClassDescriptor cd = (ClassDescriptor) cdIter.next();
-
-            // get all summary tags for all refs and collections of
-            // this class
-            List<Tag> placementTags = new ArrayList<Tag>(pm.getTags(TagNames.IM_SUMMARY,
-                                                                    cd.getUnqualifiedName() + ".%",
-                                                                    "reference", superuser));
-            placementTags.addAll(pm.getTags(TagNames.IM_SUMMARY, cd.getUnqualifiedName() + ".%",
-                                            "collection", superuser));
-
-            Iterator<Tag> placementTagIter = placementTags.iterator();
-
-            while (placementTagIter.hasNext()) {
-                Tag tag = placementTagIter.next();
-
-                String objectIdentifier = tag.getObjectIdentifier();
-                int dotIndex = objectIdentifier.indexOf(".");
-                String fieldName = objectIdentifier.substring(dotIndex + 1);
-
-                placementMap.put(fieldName, dobj.getRefsAndCollections().get(fieldName));
-            }
-
-        }
-
-        for (Iterator i = aspects.iterator(); i.hasNext();) {
-            String aspect = (String) i.next();
+        placementRefsAndCollections.put(TagNames.IM_SUMMARY, getSummaryFields(pm, superuser, dobj, cds));
+        
+        for (String aspect : aspects) {
             placementRefsAndCollections.put(TagNames.IM_ASPECT_PREFIX + aspect,
                                             new TreeMap(String.CASE_INSENSITIVE_ORDER));
         }
@@ -194,6 +164,42 @@ public class ObjectDetailsController extends InterMineAction
         request.setAttribute("objectType", type);
 
         return null;
+    }
+
+    /**
+     * Returns fields that should be displayed in summary.
+     * @param pm
+     * @param superuser
+     * @param dobj
+     * @param cds
+     * @return
+     */
+    private Map<String, DisplayField> getSummaryFields(ProfileManager pm, String superuser,
+            DisplayObject dobj, Set<ClassDescriptor> cds) {
+        Map<String, DisplayField> ret = new TreeMap<String, DisplayField>(String.CASE_INSENSITIVE_ORDER);
+        for (ClassDescriptor cd : cds) {
+            
+            // get all summary tags for all refs and collections of
+            // this class
+            List<Tag> placementTags = new ArrayList<Tag>(pm.getTags(TagNames.IM_SUMMARY,
+                                                                    cd.getUnqualifiedName() + ".%",
+                                                                    "reference", superuser));
+            placementTags.addAll(pm.getTags(TagNames.IM_SUMMARY, cd.getUnqualifiedName() + ".%",
+                                            "collection", superuser));
+
+            for (Tag tag : placementTags) {
+                String name = getFieldName(tag);
+                ret.put(name, dobj.getRefsAndCollections().get(name));
+            }
+        }
+        return ret;
+    }
+
+    private String getFieldName(Tag tag) {
+        String objectIdentifier = tag.getObjectIdentifier();
+        int dotIndex = objectIdentifier.indexOf(".");
+        String fieldName = objectIdentifier.substring(dotIndex + 1);
+        return fieldName;
     }
 
     /**
