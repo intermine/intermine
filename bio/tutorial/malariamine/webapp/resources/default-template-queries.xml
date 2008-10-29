@@ -10,7 +10,7 @@
     <node path="Synonym" type="Synonym">
     </node>
     <node path="Synonym.value" type="String">
-      <constraint op="=" value="timeout" description="" identifier="Synonym.value.1" editable="true" code="A">
+      <constraint op="=" value="vapA" description="" identifier="Synonym.value.1" editable="true" code="A">
       </constraint>
     </node>
   </query>
@@ -32,7 +32,7 @@
     <node path="Gene.organism" type="Organism">
     </node>
     <node path="Gene.organism.name" type="String">
-      <constraint op="=" value="Drosophila melanogaster" description="Show the chromosome location and gene sequences for all genes from organism:" identifier="Organism.name" editable="true" code="A">
+      <constraint op="=" value="Plasmodium falciparum 3D7" description="Show the chromosome location and gene sequences for all genes from organism:" identifier="Organism.name" editable="true" code="A">
       </constraint>
     </node>
   </query>
@@ -44,13 +44,13 @@
     <node path="Gene.organism" type="Organism">
     </node>
     <node path="Gene.organism.name" type="String">
-      <constraint op="=" value="Drosophila melanogaster" description="Search for genes in:" identifier="" editable="true" code="B">
+      <constraint op="=" value="Plasmodium falciparum 3D7" description="Search for genes in:" identifier="" editable="true" code="B">
       </constraint>
     </node>
     <node path="Gene.allGoAnnotation" type="GOAnnotation">
     </node>
     <node path="Gene.allGoAnnotation.property" type="GOTerm">
-      <constraint op="LOOKUP" value="GO:0051707" description="that have the following GO term:" identifier="" editable="true" code="A" extraValue="">
+      <constraint op="LOOKUP" value="GO:0004117" description="that have the following GO term:" identifier="" editable="true" code="A" extraValue="">
       </constraint>
     </node>
   </query>
@@ -66,13 +66,13 @@
     <node path="Chromosome" type="Chromosome">
     </node>
     <node path="Chromosome.primaryIdentifier" type="String">
-      <constraint op="=" value="2L" description="Show the genes located on chromosome:" identifier="" editable="true" code="A">
+      <constraint op="=" value="MAL1" description="Show the genes located on chromosome:" identifier="" editable="true" code="A">
       </constraint>
     </node>
     <node path="Chromosome.organism" type="Organism">
     </node>
     <node path="Chromosome.organism.name" type="String">
-      <constraint op="=" value="Drosophila melanogaster" description="from organism:" identifier="from organism:" editable="true" code="B">
+      <constraint op="=" value="Plasmodium falciparum 3D7" description="from organism:" identifier="from organism:" editable="true" code="B">
       </constraint>
     </node>
     <node path="Chromosome.genes" type="Gene">
@@ -98,13 +98,13 @@
     <node path="Gene.chromosome" type="Chromosome">
     </node>
     <node path="Gene.chromosome.primaryIdentifier" type="String">
-      <constraint op="=" value="2L" description="Show genes located on chromosome" identifier="chromosome.primaryIdentifier" editable="true" code="A">
+      <constraint op="=" value="MAL1" description="Show genes located on chromosome" identifier="chromosome.primaryIdentifier" editable="true" code="A">
       </constraint>
     </node>
     <node path="Gene.organism" type="Organism">
     </node>
     <node path="Gene.organism.name" type="String">
-      <constraint op="=" value="Drosophila melanogaster" description="from" identifier="organism.name" editable="true" code="B">
+      <constraint op="=" value="Plasmodium falciparum 3D7" description="from" identifier="organism.name" editable="true" code="B">
       </constraint>
     </node>
   </query>
@@ -119,7 +119,7 @@
     <pathDescription pathString="Gene.goAnnotation.goEvidenceCodes" description="GO annotation &gt; evidence">
     </pathDescription>
     <node path="Gene" type="Gene">
-      <constraint op="LOOKUP" value="CG11348" description="Show GO annotations for gene:" identifier="Gene.class" editable="true" code="A" extraValue="">
+      <constraint op="LOOKUP" value="gene.38179" description="Show GO annotations for gene:" identifier="Gene.class" editable="true" code="A" extraValue="">
       </constraint>
     </node>
     <node path="Gene.allGoAnnotation" type="GOAnnotation">
@@ -137,7 +137,7 @@
     <pathDescription pathString="Gene.goAnnotation.goEvidenceCodes" description="GO annotation &gt; evidence">
     </pathDescription>
     <node path="Gene" type="Gene">
-      <constraint op="LOOKUP" value="CG11348" description="Show GO annotations for gene:" identifier="Gene.class" editable="true" code="A">
+      <constraint op="LOOKUP" value="gene.38179" description="Show GO annotations for gene:" identifier="Gene.class" editable="true" code="A">
       </constraint>
     </node>
     <node path="Gene.goAnnotation" type="GOAnnotation">
@@ -151,7 +151,7 @@
     <node path="Gene" type="Gene">
     </node>
     <node path="Gene.secondaryIdentifier" type="String">
-      <constraint op="=" value="CG1046" description="Gene.secondaryIdentifier" identifier="Gene.secondaryIdentifier" editable="true" code="A">
+      <constraint op="=" value="gene.38179" description="Gene.secondaryIdentifier" identifier="Gene.secondaryIdentifier" editable="true" code="A">
       </constraint>
     </node>
   </query>
@@ -159,13 +159,13 @@
 <template name="Gene_particularGoannotation" title="Gene + GO term name --&gt; Gene with the GO term name." longDescription="Show if the following gene has the following GO term." comment="">
   <query name="Gene_particularGoannotation" model="genomic" view="Gene.secondaryIdentifier Gene.symbol Gene.goAnnotation.name" sortOrder="Gene.secondaryIdentifier asc" constraintLogic="C and A">
     <node path="Gene" type="Gene">
-      <constraint op="LOOKUP" value="CG9015" description="For the gene(s):" identifier="" editable="true" code="A">
+      <constraint op="LOOKUP" value="gene.38179" description="For the gene(s):" identifier="" editable="true" code="A">
       </constraint>
     </node>
     <node path="Gene.goAnnotation" type="GOAnnotation">
     </node>
     <node path="Gene.goAnnotation.name" type="String">
-      <constraint op="LIKE" value="%transcription factor%" description="show whether it/they have been annotated with the following:" identifier="" editable="true" code="C">
+      <constraint op="LIKE" value="%membrane%" description="show whether it/they have been annotated with the following:" identifier="" editable="true" code="C">
       </constraint>
     </node>
   </query>
@@ -175,7 +175,7 @@
     <pathDescription pathString="Gene.proteins" description="Protein">
     </pathDescription>
     <node path="Gene" type="Gene">
-      <constraint op="LOOKUP" value="CG1046" description="" identifier="" editable="true" code="A">
+      <constraint op="LOOKUP" value="VAR" description="" identifier="" editable="true" code="A">
       </constraint>
     </node>
     <node path="Gene.proteins" type="Protein">
@@ -188,16 +188,6 @@
     </node>
     <node path="Gene.id" type="Integer">
       <constraint op="=" value="0" description="Gene.id" identifier="Gene.id" editable="true" code="A">
-      </constraint>
-    </node>
-  </query>
-</template>
-<template name="Gene_To_Publications" title="Gene --&gt; Publications." longDescription="Returns a list of publications that reference a selected gene. References are loaded from FlyBase for all Drosophila species, and from NCBI for D. melanogaster, C. elegans and S. cerevisiae." comment="06.06.07 updated to work from gene class - Philip">
-  <query name="Gene_To_Publications" model="genomic" view="Gene.primaryIdentifier Gene.secondaryIdentifier Gene.publications.pubMedId Gene.publications.title Gene.publications.firstAuthor Gene.publications.journal Gene.publications.year" sortOrder="Gene.primaryIdentifier asc">
-    <pathDescription pathString="Gene.publications" description="Publication">
-    </pathDescription>
-    <node path="Gene" type="Gene">
-      <constraint op="LOOKUP" value="CG1046" description="Find the publications referencing gene:" identifier="Gene.class" editable="true" code="A">
       </constraint>
     </node>
   </query>
@@ -225,7 +215,7 @@
     <node path="Gene.goAnnotation" type="GOAnnotation">
     </node>
     <node path="Gene.goAnnotation.property" type="GOTerm">
-      <constraint op="LOOKUP" value="*transcription factor activity*" description="annotated with Goterm/id:" identifier="" editable="true" code="A">
+      <constraint op="LOOKUP" value="*membrane*" description="annotated with Goterm/id:" identifier="" editable="true" code="A">
       </constraint>
     </node>
   </query>
@@ -245,7 +235,7 @@
     <node path="GOTerm" type="GOTerm">
     </node>
     <node path="GOTerm.identifier" type="String">
-      <constraint op="=" value="GO:0007350" description="" identifier="" editable="true" code="A">
+      <constraint op="=" value="GO:0020011" description="" identifier="" editable="true" code="A">
       </constraint>
     </node>
   </query>
@@ -259,7 +249,7 @@
     <node path="Gene.organism" type="Organism">
     </node>
     <node path="Gene.organism.name" type="String">
-      <constraint op="=" value="Drosophila melanogaster" description="Show all the genes from organism:" identifier="Organism.name" editable="true" code="A">
+      <constraint op="=" value="Plasmodium falciparum 3D7" description="Show all the genes from organism:" identifier="Organism.name" editable="true" code="A">
       </constraint>
     </node>
   </query>
@@ -271,7 +261,7 @@
     <node path="Protein.organism" type="Organism">
     </node>
     <node path="Protein.organism.name" type="String">
-      <constraint op="=" value="Drosophila melanogaster" description="Show all the proteins from the organism:" identifier="Organism.name" editable="true" code="A">
+      <constraint op="=" value="Plasmodium falciparum 3D7" description="Show all the proteins from the organism:" identifier="Organism.name" editable="true" code="A">
       </constraint>
     </node>
   </query>
@@ -285,7 +275,7 @@
     <node path="Transcript.organism" type="Organism">
     </node>
     <node path="Transcript.organism.name" type="String">
-      <constraint op="=" value="Apis mellifera" description="Restrict to organism:" identifier="Organism.name" editable="true" code="A" extraValue="">
+      <constraint op="=" value="Plasmodium falciparum 3D7" description="Restrict to organism:" identifier="Organism.name" editable="true" code="A" extraValue="">
       </constraint>
     </node>
   </query>
@@ -301,7 +291,7 @@
     <pathDescription pathString="Protein.genes.chromosomeLocation" description="Chromosome location">
     </pathDescription>
     <node path="Protein" type="Protein">
-      <constraint op="LOOKUP" value="P19107" description="" identifier="Protein.class" editable="true" code="A">
+      <constraint op="LOOKUP" value="SODF_PLAF7" description="" identifier="Protein.class" editable="true" code="A">
       </constraint>
     </node>
   </query>
@@ -313,7 +303,7 @@
     <pathDescription pathString="Protein.genes.goAnnotation.property" description="GO annotation">
     </pathDescription>
     <node path="Protein" type="Protein">
-      <constraint op="LOOKUP" value="P09089" description="" identifier="Protein.class" editable="true" code="A">
+      <constraint op="LOOKUP" value="CALM_PLAF7" description="" identifier="Protein.class" editable="true" code="A">
       </constraint>
     </node>
     <node path="Protein.genes" type="Gene">
@@ -331,7 +321,7 @@
     <pathDescription pathString="Protein.genes.goAnnotation.property" description="GO annotation">
     </pathDescription>
     <node path="Protein" type="Protein">
-      <constraint op="LOOKUP" value="P04755" description="Show GO annotaion for the following protein(s):" identifier="" editable="true" code="A" extraValue="D. melanogaster">
+      <constraint op="LOOKUP" value="Q8IAY6" description="Show GO annotaion for the following protein(s):" identifier="" editable="true" code="A" extraValue="D. melanogaster">
       </constraint>
     </node>
     <node path="Protein.genes" type="Gene">
@@ -362,20 +352,6 @@
     </node>
     <node path="Protein.id" type="Integer">
       <constraint op="=" value="0" description="Protein.id" identifier="Protein.id" editable="true" code="A">
-      </constraint>
-    </node>
-  </query>
-</template>
-<template name="Publication_Genes" title="Publication --&gt; Genes." longDescription="Show all genes that were mentioned in a specific publication. References are loaded from FlyBase for all Drosophila species, and from NCBI for D. melanogaster, C. elegans and S. cerevisiae." comment="">
-  <query name="Publication_Genes" model="genomic" view="Gene.primaryIdentifier Gene.secondaryIdentifier Gene.symbol Gene.publications.pubMedId Gene.publications.title Gene.publications.firstAuthor Gene.publications.year" sortOrder="Gene.primaryIdentifier asc">
-    <pathDescription pathString="Gene.publications" description="Publication">
-    </pathDescription>
-    <node path="Gene" type="Gene">
-    </node>
-    <node path="Gene.publications" type="Publication">
-    </node>
-    <node path="Gene.publications.pubMedId" type="String">
-      <constraint op="=" value="11875036" description="" identifier="" editable="true" code="B">
       </constraint>
     </node>
   </query>
