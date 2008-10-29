@@ -38,6 +38,9 @@ import org.intermine.web.logic.template.TemplateQuery;
  */
 public class InlineTagEditorController extends TilesAction
 {
+    
+    private static int counter = 0;
+    
     /**
      * {@inheritDoc}
      */
@@ -78,7 +81,7 @@ public class InlineTagEditorController extends TilesAction
             tagged = ((InterMineBag) taggable).getName();
         }
 
-        request.setAttribute("tagged", tagged);
+        request.setAttribute("editorId", createUniqueEditorId(tagged));
         request.setAttribute("type", type);
 
         Set<String> currentTags;
@@ -93,6 +96,10 @@ public class InlineTagEditorController extends TilesAction
         request.setAttribute("currentTags", currentTags);
         request.setAttribute("availableTags", availableTags);
         return null;
+    }
+
+    private String createUniqueEditorId(String tagged) {
+        return tagged + "@" + counter++; 
     }
 }
 
