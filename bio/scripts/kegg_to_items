@@ -36,7 +36,7 @@ my $data_set_item;
 my $org_item;
 
 
-# helper method that makes a new object of a particual class and saves it in 
+# helper method that makes a new object of a particular class and saves it in 
 # the @items array
 sub make_item
 {
