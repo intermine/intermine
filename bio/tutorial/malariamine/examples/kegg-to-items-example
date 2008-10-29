@@ -1,0 +1,49 @@
+#!/usr/bin/perl
+
+use warnings;
+use strict;
+
+BEGIN {
+  push (@INC, ($0 =~ m:(.*)/.*:)[0] . '/../intermine/perl/lib');
+}
+
+use XML::Writer;
+use InterMine::Item;
+use InterMine::ItemFactory;
+use InterMine::Model;
+
+if (@ARGV != 3) {
+  die "usage: $0 model_file kegg_map_title_file kegg_gene_map\n";
+}
+
+my ($model_file, $map_title_filename, $gene_map_filename) = @ARGV;
+
+my $data_source = 'Kegg';
+my $taxon_id = 36329;
+
+my @items = ();
+
+
+# The item factory needs the model so that it can check that new objects have
+# valid classnames and fields
+my $model = new InterMine::Model(file => $model_file);
+my $item_factory = new InterMine::ItemFactory(model => $model);
+
+
+# read the map title file into %pathways
+
+...
+
+# read the gene map file and create item objects
+
+...
+
+
+# write the items
+my $writer = new XML::Writer(DATA_MODE => 1, DATA_INDENT => 3);
+
+$writer->startTag("items");
+for my $item (@items) {
+  $item->as_xml($writer);
+}
+$writer->endTag("items");
