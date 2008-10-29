@@ -269,6 +269,9 @@ public class GFF3Converter
                 if (record.getPhase() != null) {
                     relation.setAttribute("phase", record.getPhase());
                 }
+                
+                int length = Math.abs(end - start) + 1;
+                feature.setAttribute("length", String.valueOf(length));
             } else {
                 relation = createItem("SimpleRelation");
             }
