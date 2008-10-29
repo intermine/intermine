@@ -26,8 +26,8 @@
 
 <style type="text/css" media="screen">
     #pathsList {
-        list-style-position: inside; 
-        cursor: hand; 
+        list-style-position: inside;
+        cursor: hand;
         cursor: pointer;
     }
     #pathsList li{
@@ -39,9 +39,9 @@
         margin:5px 1px 10px 1px;
     }
 </style>
-
+<%-- TODO FIXME
 <tiles:get name="objectTrail.tile"/>
-
+ --%>
 <fmt:message var="exportSubmitMessage" key="export.submit"/>
 
 <div align="center">
@@ -90,18 +90,18 @@
      <tiles:put name="table" value="${table}" />
   </tiles:insert>
   &nbsp;
-  <button type="button" onclick="javascript:addSelectedPath()">Add</button></li>    
+  <button type="button" onclick="javascript:addSelectedPath()">Add</button></li>
 
   <li><label>${exportReorderMessage}:</label>
   <ul id="pathsList">
   </ul>
-  
+
   <script type="text/javascript">
       pathIndex = 1;
-      
-	  <c:forEach var="path" items="${pathsMap}">
-	     addPathElement("${path.key}", "${path.value}");
-	  </c:forEach>
+
+    <c:forEach var="path" items="${pathsMap}">
+       addPathElement("${path.key}", "${path.value}");
+    </c:forEach>
   </script></li>
 </ol>
 </fieldset>
