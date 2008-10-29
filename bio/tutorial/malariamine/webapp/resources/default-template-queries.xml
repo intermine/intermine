@@ -15,18 +15,6 @@
     </node>
   </query>
 </template>
-<template name="All_Genes_In_Organism_To_Publications" title="All genes in organism --&gt; Publications." longDescription="Show the publications for each gene in one organism. References are loaded from FlyBase for all Drosophila species, and from NCBI for D. melanogaster, C. elegans and S. cerevisiae." comment="">
-  <query name="All_Genes_In_Organism_To_Publications" model="genomic" view="Gene.primaryIdentifier Gene.secondaryIdentifier Gene.publications.pubMedId Gene.publications.firstAuthor Gene.publications.journal Gene.publications.year Gene.organism.name" sortOrder="Gene.primaryIdentifier asc">
-    <node path="Gene" type="Gene">
-    </node>
-    <node path="Gene.organism" type="Organism">
-    </node>
-    <node path="Gene.organism.name" type="String">
-      <constraint op="=" value="Saccharomyces cerevisiae" description="Organism.name" identifier="Organism.name" editable="true" code="A">
-      </constraint>
-    </node>
-  </query>
-</template>
 <template name="AllGene_Chromosome" title="All genes in organism --&gt; All chromosomal locations." longDescription="Show the chromosomal location and sequence for all genes from a particular organism." comment="">
   <query name="AllGene_Chromosome" model="genomic" view="Gene.chromosome.primaryIdentifier Gene.chromosomeLocation.strand Gene.chromosomeLocation.start Gene.chromosomeLocation.end Gene.length Gene.primaryIdentifier Gene.symbol" sortOrder="Gene.chromosome.primaryIdentifier asc">
     <pathDescription pathString="Gene.chromosomeLocation" description="Chromosome location">
