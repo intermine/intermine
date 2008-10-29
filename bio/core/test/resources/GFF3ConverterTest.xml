@@ -5,6 +5,15 @@
     <reference name="source" ref_id="0_1"/>
     <reference name="subject" ref_id="0_10"/>
   </item>
+  <item id="0_10" class="http://www.flymine.org/model/genomic#Promoter">
+    <attribute name="length" value="570"/>
+    <attribute name="primaryIdentifier" value="promoter(2179-)"/>
+    <reference name="chromosome" ref_id="0_15"/>
+    <reference name="chromosomeLocation" ref_id="0_18"/>
+    <reference name="organism" ref_id="0_0"/>
+    <collection name="dataSets"><reference ref_id="0_2"/></collection>
+    <collection name="evidence"><reference ref_id="0_19"/></collection>
+  </item>
   <item id="0_31" class="http://www.flymine.org/model/genomic#Location">
     <attribute name="end" value="115406806"/>
     <attribute name="start" value="115406727"/>
@@ -51,6 +60,15 @@
     <attribute name="type" value="score"/>
     <reference name="analysis" ref_id="0_28"/>
   </item>
+  <item id="0_6" class="http://www.flymine.org/model/genomic#Promoter">
+    <attribute name="length" value="570"/>
+    <attribute name="primaryIdentifier" value="promoter(90+)"/>
+    <reference name="chromosome" ref_id="0_4"/>
+    <reference name="chromosomeLocation" ref_id="0_11"/>
+    <reference name="organism" ref_id="0_0"/>
+    <collection name="dataSets"><reference ref_id="0_2"/></collection>
+    <collection name="evidence"><reference ref_id="0_12"/></collection>
+  </item>
   <item id="0_21" class="http://www.flymine.org/model/genomic#Location">
     <attribute name="end" value="2097289"/>
     <attribute name="start" value="2097064"/>
@@ -69,15 +87,16 @@
     <attribute name="type" value="score"/>
     <reference name="analysis" ref_id="0_28"/>
   </item>
-  <item id="0_3" class="http://www.flymine.org/model/genomic#DataSource">
-    <attribute name="name" value="MGI"/>
-  </item>
   <item id="0_8" class="http://www.flymine.org/model/genomic#Exon">
+    <attribute name="length" value="226"/>
     <attribute name="primaryIdentifier" value="exon(2179-)#2"/>
     <reference name="chromosome" ref_id="0_4"/>
     <reference name="chromosomeLocation" ref_id="0_21"/>
     <reference name="organism" ref_id="0_0"/>
     <collection name="dataSets"><reference ref_id="0_2"/></collection>
+  </item>
+  <item id="0_3" class="http://www.flymine.org/model/genomic#DataSource">
+    <attribute name="name" value="MGI"/>
   </item>
   <item id="1_3" class="http://www.flymine.org/model/genomic#Chromosome">
     <attribute name="primaryIdentifier" value="13"/>
@@ -89,14 +108,6 @@
     <attribute name="value" value="2"/>
     <reference name="source" ref_id="0_3"/>
     <reference name="subject" ref_id="0_15"/>
-  </item>
-  <item id="0_6" class="http://www.flymine.org/model/genomic#Promoter">
-    <attribute name="primaryIdentifier" value="promoter(90+)"/>
-    <reference name="chromosome" ref_id="0_4"/>
-    <reference name="chromosomeLocation" ref_id="0_11"/>
-    <reference name="organism" ref_id="0_0"/>
-    <collection name="dataSets"><reference ref_id="0_2"/></collection>
-    <collection name="evidence"><reference ref_id="0_12"/></collection>
   </item>
   <item id="0_35" class="http://www.flymine.org/model/genomic#Location">
     <attribute name="end" value="115406795"/>
@@ -115,14 +126,6 @@
   <item id="0_17" class="http://www.flymine.org/model/genomic#SimpleRelation">
     <reference name="object" ref_id="0_8"/>
     <reference name="subject" ref_id="0_10"/>
-  </item>
-  <item id="0_10" class="http://www.flymine.org/model/genomic#Promoter">
-    <attribute name="primaryIdentifier" value="promoter(2179-)"/>
-    <reference name="chromosome" ref_id="0_15"/>
-    <reference name="chromosomeLocation" ref_id="0_18"/>
-    <reference name="organism" ref_id="0_0"/>
-    <collection name="dataSets"><reference ref_id="0_2"/></collection>
-    <collection name="evidence"><reference ref_id="0_19"/></collection>
   </item>
   <item id="0_18" class="http://www.flymine.org/model/genomic#Location">
     <attribute name="end" value="2097419"/>
@@ -147,6 +150,7 @@
     <collection name="dataSets"><reference ref_id="0_2"/></collection>
   </item>
   <item id="0_34" class="http://www.flymine.org/model/genomic#CrossGenomeMatch">
+    <attribute name="length" value="54"/>
     <attribute name="primaryIdentifier" value="Mousechain:4246045:10:58864978..58865031"/>
     <reference name="chromosome" ref_id="0_23"/>
     <reference name="chromosomeLocation" ref_id="0_35"/>
@@ -156,17 +160,6 @@
     <reference name="targetOrganism" ref_id="1_0"/>
     <collection name="dataSets"><reference ref_id="0_2"/></collection>
     <collection name="evidence"><reference ref_id="0_36"/></collection>
-  </item>
-  <item id="0_25" class="http://www.flymine.org/model/genomic#CrossGenomeMatch">
-    <attribute name="primaryIdentifier" value="Mousechain:14:6:3063417..48830107"/>
-    <reference name="chromosome" ref_id="0_23"/>
-    <reference name="chromosomeLocation" ref_id="0_26"/>
-    <reference name="organism" ref_id="0_0"/>
-    <reference name="targetLocatedSequenceFeature" ref_id="1_1"/>
-    <reference name="targetLocatedSequenceFeatureLocation" ref_id="1_2"/>
-    <reference name="targetOrganism" ref_id="1_0"/>
-    <collection name="dataSets"><reference ref_id="0_2"/></collection>
-    <collection name="evidence"><reference ref_id="0_27"/></collection>
   </item>
   <item id="1_4" class="http://www.flymine.org/model/genomic#Location">
     <attribute name="end" value="91454814"/>
@@ -180,6 +173,18 @@
     <attribute name="primaryIdentifier" value="6"/>
     <reference name="organism" ref_id="1_0"/>
     <collection name="dataSets"><reference ref_id="0_2"/></collection>
+  </item>
+  <item id="0_30" class="http://www.flymine.org/model/genomic#CrossGenomeMatch">
+    <attribute name="length" value="80"/>
+    <attribute name="primaryIdentifier" value="Mousechain:4162060:13:91454738..91454814"/>
+    <reference name="chromosome" ref_id="0_23"/>
+    <reference name="chromosomeLocation" ref_id="0_31"/>
+    <reference name="organism" ref_id="0_0"/>
+    <reference name="targetLocatedSequenceFeature" ref_id="1_3"/>
+    <reference name="targetLocatedSequenceFeatureLocation" ref_id="1_4"/>
+    <reference name="targetOrganism" ref_id="1_0"/>
+    <collection name="dataSets"><reference ref_id="0_2"/></collection>
+    <collection name="evidence"><reference ref_id="0_32"/></collection>
   </item>
   <item id="0_26" class="http://www.flymine.org/model/genomic#Location">
     <attribute name="end" value="149996044"/>
@@ -212,17 +217,6 @@
   <item id="0_28" class="http://www.flymine.org/model/genomic#ComputationalAnalysis">
     <attribute name="algorithm" value="mouseChain"/>
   </item>
-  <item id="0_30" class="http://www.flymine.org/model/genomic#CrossGenomeMatch">
-    <attribute name="primaryIdentifier" value="Mousechain:4162060:13:91454738..91454814"/>
-    <reference name="chromosome" ref_id="0_23"/>
-    <reference name="chromosomeLocation" ref_id="0_31"/>
-    <reference name="organism" ref_id="0_0"/>
-    <reference name="targetLocatedSequenceFeature" ref_id="1_3"/>
-    <reference name="targetLocatedSequenceFeatureLocation" ref_id="1_4"/>
-    <reference name="targetOrganism" ref_id="1_0"/>
-    <collection name="dataSets"><reference ref_id="0_2"/></collection>
-    <collection name="evidence"><reference ref_id="0_32"/></collection>
-  </item>
   <item id="0_22" class="http://www.flymine.org/model/genomic#Synonym">
     <attribute name="type" value="identifier"/>
     <attribute name="value" value="exon(2179-)#2"/>
@@ -250,6 +244,18 @@
     <attribute name="value" value="1"/>
     <reference name="source" ref_id="0_3"/>
     <reference name="subject" ref_id="0_4"/>
+  </item>
+  <item id="0_25" class="http://www.flymine.org/model/genomic#CrossGenomeMatch">
+    <attribute name="length" value="57592452"/>
+    <attribute name="primaryIdentifier" value="Mousechain:14:6:3063417..48830107"/>
+    <reference name="chromosome" ref_id="0_23"/>
+    <reference name="chromosomeLocation" ref_id="0_26"/>
+    <reference name="organism" ref_id="0_0"/>
+    <reference name="targetLocatedSequenceFeature" ref_id="1_1"/>
+    <reference name="targetLocatedSequenceFeatureLocation" ref_id="1_2"/>
+    <reference name="targetOrganism" ref_id="1_0"/>
+    <collection name="dataSets"><reference ref_id="0_2"/></collection>
+    <collection name="evidence"><reference ref_id="0_27"/></collection>
   </item>
   <item id="0_24" class="http://www.flymine.org/model/genomic#Synonym">
     <attribute name="type" value="identifier"/>
