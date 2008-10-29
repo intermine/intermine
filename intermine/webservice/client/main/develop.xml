@@ -51,13 +51,16 @@
 		<!-- stax-api-1.0.jar and stax-ri-1.0.jar is needed when java 1.5 is used for pathquery XML serialization and deserialization -->
 		<copyfile dest="${build.dir}/lib/stax-api-1.0.jar" src="../../../pathquery/main/lib/stax-api-1.0.jar"/>
 		<copyfile dest="${build.dir}/lib/stax-ri-1.0.jar" src="../../../pathquery/main/lib/stax-ri-1.0.jar"/>
-	    <copydir dest="${build.dir}/samples" src="../samples" excludes=".*"></copydir>
+	    <copydir dest="${build.dir}/samples" src="../samples" excludes=".*, bin/**"></copydir>
 		<copyfile dest="${build.dir}/README.txt" src="README.txt"/>
 	</target>
 
 	<target name="dist" depends="build, javadoc">
 	    <mkdir dir="${dist.dir}"/>
-		<zip destfile="${dist.dir}/intermine-client-${version}.zip" basedir="${build.dir}" />
+		<zip destfile="${dist.dir}/intermine-client-${version}.zip" >
+			<zipfileset dir="${build.dir}" excludes="samples/compile-run.sh" prefix="intermine-client-${version}" />
+			<zipfileset dir="${build.dir}" includes="samples/compile-run.sh" filemode="755" prefix="intermine-client-${version}"/>
+		</zip>
 	</target>
 
 </project>
