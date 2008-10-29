@@ -12,27 +12,32 @@ use InterMine::Item;
 use InterMine::ItemFactory;
 use InterMine::Model;
 
-if (@ARGV != 5) {
-  die "usage: $0 data_source taxon_id model_file kegg_map_title_file kegg_gene_map\n";
+if (@ARGV != 3) {
+  die "usage: $0 model_file kegg_map_title_file kegg_gene_map\n";
 }
 
-my ($data_source, $taxon_id, $model_file, $map_title_filename, $gene_map_filename) = @ARGV;
+my ($model_file, $map_title_filename, $gene_map_filename) = @ARGV;
+
+my $data_source = 'Kegg';
+my $taxon_id = 36329;
 
 my @items = ();
 
-my $model = new InterMine::Model(file => $model_file);
 
+# The item factory needs the model so that it can check that new objects have
+# valid classnames and fields
+my $model = new InterMine::Model(file => $model_file);
 my $item_factory = new InterMine::ItemFactory(model => $model);
 
-my $data_source_item = make_item("DataSource");
-$data_source_item->set('name', $data_source);
 
-my $data_set_item = make_item("DataSet");
-$data_set_item->set('title', "$data_source data set for taxon id: $taxon_id");
+# objects that the new Pathway and Gene objects will refer to
+my $data_source_item;
+my $data_set_item;
+my $org_item;
 
-my $org_item = make_item("Organism");
-$org_item->set("taxonId", $taxon_id);
 
+# helper method that makes a new object of a particual class and saves it in 
+# the @items array
 sub make_item
 {
   my $implements = shift;
@@ -41,11 +46,31 @@ sub make_item
   if ($item->valid_field('organism')) {
     $item->set('organism', $org_item);
   }
+  if ($item->valid_field('dataSets') && $implements ne 'DataSource') {
+    $item->set('dataSets', [$data_set_item]);
+  }
+  if ($item->valid_field('dataSource')) {
+    $item->set('dataSource', $data_source_item);
+  }
   return $item;
 }
 
+# make the objects that the new Pathway and Gene objects will refer to
+$data_source_item = make_item("DataSource");
+$data_source_item->set('name', $data_source);
+
+$data_set_item = make_item("DataSet");
+$data_set_item->set('title', "$data_source data set for taxon id: $taxon_id");
+
+$org_item = make_item("Organism");
+$org_item->set("taxonId", $taxon_id);
+
+
 # a map from pathway id to pathway item
 my %pathways = ();
+
+
+# read the map title file into %pathways
 
 open my $map_title_file, '<', $map_title_filename
   or die "can't open $map_title_filename for reading: $!\n";
@@ -65,12 +90,17 @@ while (my $line = <$map_title_file>) {
 
 close $map_title_file or die "can't close $map_title_filename\n";
 
+
+# read the gene map file and create item objects
+
 open my $gene_map_file, '<', $gene_map_filename
   or die "can't open $gene_map_filename for reading: $!\n";
 
 while (my $line = <$gene_map_file>) {
   chomp $line;
 
+  # make_item() automatically adds the new item to the @items array and sets 
+  # the organism reference if appropriate
   my $gene_item = make_item("Gene");
 
   my ($gene_name, $pathways_string) = split /\t/, $line;
@@ -82,12 +112,12 @@ while (my $line = <$gene_map_file>) {
   $gene_item->set('pathways', [map {$pathways{$_}} @pathway_identifiers]);
 }
 
+
+# write the items
 my $writer = new XML::Writer(DATA_MODE => 1, DATA_INDENT => 3);
 
 $writer->startTag("items");
-
 for my $item (@items) {
   $item->as_xml($writer);
 }
-
 $writer->endTag("items");
