@@ -1,12 +1,4 @@
 <items>
-  <item id="0_6" class="http://www.flymine.org/model/genomic#DefinedRegion">
-    <attribute name="primaryIdentifier" value="HMO_Idd3"/>
-    <attribute name="type" value="diseaseRegion"/>
-    <reference name="chromosome" ref_id="0_4"/>
-    <reference name="chromosomeLocation" ref_id="0_7"/>
-    <reference name="organism" ref_id="0_0"/>
-    <collection name="dataSets"><reference ref_id="0_2"/></collection>
-  </item>
   <item id="0_0" class="http://www.flymine.org/model/genomic#Organism">
     <attribute name="taxonId" value="HS"/>
   </item>
@@ -26,6 +18,15 @@
   </item>
   <item id="0_3" class="http://www.flymine.org/model/genomic#DataSource">
     <attribute name="name" value="test"/>
+  </item>
+  <item id="0_6" class="http://www.flymine.org/model/genomic#DefinedRegion">
+    <attribute name="length" value="1496613"/>
+    <attribute name="primaryIdentifier" value="HMO_Idd3"/>
+    <attribute name="type" value="diseaseRegion"/>
+    <reference name="chromosome" ref_id="0_4"/>
+    <reference name="chromosomeLocation" ref_id="0_7"/>
+    <reference name="organism" ref_id="0_0"/>
+    <collection name="dataSets"><reference ref_id="0_2"/></collection>
   </item>
   <item id="0_2" class="http://www.flymine.org/model/genomic#DataSet">
     <attribute name="title" value="T1DBase disease regions"/>
