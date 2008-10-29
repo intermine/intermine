@@ -55,7 +55,7 @@ public class KeggExampleConverter extends BioFileConverter
     }
 
     /**
-     * Read each line from flat file, create genes and synonyms.
+     * Called for each file found by ant.
      *
      * {@inheritDoc}
      */
@@ -77,8 +77,6 @@ public class KeggExampleConverter extends BioFileConverter
         } else {
         	throw new IllegalArgumentException("Unexpected file: " + currentFile.getName());
         }
-        
-        LOG.info(currentFile.getName() + " pathwayMap: " + pathwayMap.keySet());
     }
     
     
