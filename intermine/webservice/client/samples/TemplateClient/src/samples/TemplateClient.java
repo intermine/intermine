@@ -29,7 +29,7 @@ import org.intermine.webservice.client.template.TemplateParameter;
  **/
 public class TemplateClient
 {
-    private static String serviceRootUrl = "localhost:8080/query/service";
+    private static String serviceRootUrl = "http://localhost:8080/query/service";
     
     public static void main(String[] args) {
         
