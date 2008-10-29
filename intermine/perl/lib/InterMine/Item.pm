@@ -88,7 +88,7 @@ sub set
   my $value = shift;
 
   if (!defined $value) {
-    die "value undefined for $name\n";
+    die "value undefined while setting $name\n";
   }
 
   my $field = $self->get_object_field_by_name($name);
@@ -111,6 +111,7 @@ sub set
       # check the types of the elements in the collection and set the reverse
       # references if necessary
       my @items = @$value;
+
       for my $other_item (@items) {
         if ($other_item->instance_of($field->referenced_classdescriptor())) {
           if ($field->is_one_to_many()) {
