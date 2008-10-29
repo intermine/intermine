@@ -51,13 +51,15 @@ public class AutoCompleter
     private Properties prob;
     private LuceneSearchEngine search = null;
 
-    private final static File TEMP_DIR =
+    private static final File TEMP_DIR =
         new File("build" + File.separatorChar + "autocompleteIndexes");
 
     /**
      * Autocompleter standard constructor.
      */
-    public AutoCompleter() { }
+    public AutoCompleter() {
+        // empty
+    }
 
     /**
      * Autocompleter build index constructor.
