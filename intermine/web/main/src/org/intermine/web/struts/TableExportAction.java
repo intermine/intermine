@@ -65,6 +65,8 @@ public class TableExportAction extends InterMineAction
     // timeout for export is 1 day
     private static final int TIMEOUT = 24 * 60 * 60;
 
+    private static final int BATCH_SIZE = 5000;
+
     /**
      * Method called to export a PagedTable object.  Uses the type request parameter to choose the
      * export method.
@@ -114,7 +116,7 @@ public class TableExportAction extends InterMineAction
             }
 
             PagedTable newPt = reorderPagedTable(pt, tef.getPathsString(), request);
-
+            newPt.setPageSize(BATCH_SIZE);
             exporter.export(newPt, request, response, tef);
 
             // If null is returned then no forwarding is performed and
