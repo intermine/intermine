@@ -40,7 +40,7 @@ public class ModEncodeFeatureProcessor extends ChadoSequenceProcessor
 
     private static final String SUBFEATUREID_TEMP_TABLE_NAME = "modmine_subfeatureid_temp";
 
-    
+
     // feature type to query from the feature table
     private static final List<String> FEATURES = Arrays.asList(
          "gene", "mRNA", "transcript",
@@ -48,7 +48,7 @@ public class ModEncodeFeatureProcessor extends ChadoSequenceProcessor
          "five_prime_untranslated_region",
          "five_prime_UTR", "three_prime_untranslated_region",
          "three_prime_UTR", "origin_of_replication",
-         "binding_site", "protein_binding_site", "TF_binding_site", 
+         "binding_site", "protein_binding_site", "TF_binding_site",
          "transcript_region", "histone_binding_site"
     );
 
@@ -90,20 +90,20 @@ public class ModEncodeFeatureProcessor extends ChadoSequenceProcessor
 
         return "(cvterm.name = 'chromosome' OR cvterm.name = 'chromosome_arm') AND "
         + " feature_id IN ( SELECT featureloc.srcfeature_id "
-        + " FROM featureloc, " + SUBFEATUREID_TEMP_TABLE_NAME 
+        + " FROM featureloc, " + SUBFEATUREID_TEMP_TABLE_NAME
         + " WHERE featureloc.feature_id = " + SUBFEATUREID_TEMP_TABLE_NAME + ".feature_id) "
         + " OR feature_id IN ( SELECT feature_id "
         + " FROM " + SUBFEATUREID_TEMP_TABLE_NAME + " ) ";
 
 /*        return "(cvterm.name = 'chromosome' OR cvterm.name = 'chromosome_arm') AND "
         + " feature_id IN ( SELECT featureloc.srcfeature_id "
-        + " FROM featureloc " 
+        + " FROM featureloc "
         + " WHERE featureloc.feature_id IN ( SELECT feature_id "
         + " FROM " + SUBFEATUREID_TEMP_TABLE_NAME + " )) "
         + " OR feature_id IN ( SELECT feature_id "
-        + " FROM " + SUBFEATUREID_TEMP_TABLE_NAME + " ) ";        
+        + " FROM " + SUBFEATUREID_TEMP_TABLE_NAME + " ) ";
 */
-    
+
     }
 
 
@@ -138,7 +138,6 @@ public class ModEncodeFeatureProcessor extends ChadoSequenceProcessor
         Item location =
             super.makeLocation(start, end, strand, srcFeatureData, featureData, taxonId);
         processItem(location, taxonId);
-        getChadoDBConverter().store(location);
         return location;
     }
 
@@ -152,7 +151,6 @@ public class ModEncodeFeatureProcessor extends ChadoSequenceProcessor
         Item synonym = super.createSynonym(fdat, type, identifier, isPrimary, otherEvidence);
         OrganismData od = fdat.getOrganismData();
         processItem(synonym, od.getTaxonId());
-        getChadoDBConverter().store(synonym);
         return synonym;
     }
 
@@ -225,7 +223,7 @@ public class ModEncodeFeatureProcessor extends ChadoSequenceProcessor
         }
         return ql.toString();
     }
-    
+
     /**
      * Create a temporary table of all feature_ids.  The table will only have features
      * with locations.
@@ -234,13 +232,13 @@ public class ModEncodeFeatureProcessor extends ChadoSequenceProcessor
      */
     protected void createSubFeatureIdTempTable(Connection connection) throws SQLException {
         String queryList = forINclause();
-        
+
         String query =
             " CREATE TEMPORARY TABLE " + SUBFEATUREID_TEMP_TABLE_NAME
             + " AS SELECT data_feature.feature_id "
             + " FROM data_feature "
             + " WHERE data_id IN (" + queryList + ")";
-            
+
         Statement stmt = connection.createStatement();
         LOG.info("executing: " + query);
         stmt.execute(query);
@@ -253,21 +251,21 @@ public class ModEncodeFeatureProcessor extends ChadoSequenceProcessor
         stmt.execute(analyze);
     }
 
-  
-    
-    
+
+
+
     /**
      * {@inheritDoc}
      */
     @Override
    protected void earlyExtraProcessing(Connection connection) throws  SQLException {
         createSubFeatureIdTempTable(connection);
-        
+
         // override in subclasses as necessary
     }
 
-    
-    
+
+
     /**
      * Perform any actions needed after all processing is finished.
      * override ChadoSequenceProcessor
@@ -278,18 +276,18 @@ public class ModEncodeFeatureProcessor extends ChadoSequenceProcessor
      * {@inheritDoc}
      */
     @Override
-    protected void finishedProcessing(Connection connection, 
+    protected void finishedProcessing(Connection connection,
             Map<Integer, FeatureData> featureDataMap)
         throws SQLException {
         // override in subclasses as necessary
         String query =
             " DROP TABLE " + SUBFEATUREID_TEMP_TABLE_NAME;
-            
+
         Statement stmt = connection.createStatement();
         LOG.info("executing: " + query);
         stmt.execute(query);
-    
+
     }
 
-    
+
 }
