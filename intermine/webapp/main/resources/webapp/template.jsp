@@ -150,10 +150,29 @@
    }
 
    function filterByTag(tag) {
-		var callBack = function(filteredList) {
-			setSelectElement('bagSelect', '', filteredList);
-		}
-		AjaxServices.filterByTag('bag', tag, callBack);
+       if (tag != "") {
+           if (origSelectValues == null) {
+        	    saveOriginalSelect();
+           }
+           var callBack = function(filteredList) {
+               setSelectElement('bagSelect', '', filteredList);
+           }
+           AjaxServices.filterByTag('bag', tag, callBack);          
+       } else {
+    	   restoreOriginalSelect();
+       }
+   }
+
+   var origSelectValues = null;
+   
+   function saveOriginalSelect() {
+       origSelectValues = getSelectValues('bagSelect');    
+   }
+
+   function restoreOriginalSelect() {
+	    if (origSelectValues != null) {
+		    setSelectElement('bagSelect', '', origSelectValues);
+		}	    
    }
   //-->
 </script>
@@ -336,6 +355,7 @@
 	                    <tiles:put name="type" value="bag" />
 	                    <tiles:put name="onChangeFunction" value="filterByTag" />
 	                    <tiles:put name="selectId" value="tagSelect" />
+	                    <tiles:put name="title" value="-- filter by a tag --" />
 	                </tiles:insert>                                                
                 </c:if>
                 <c:if test="${empty bags}">
