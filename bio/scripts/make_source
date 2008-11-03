@@ -11,6 +11,7 @@ my $STRUCTURE_DIR = "$BIO_DIR/skeletons/source";
 
 my $CUSTOM_FILE_TYPE = 'custom-file';
 my $ITEMS_XML_FILE_TYPE = 'intermine-items-xml-file';
+my $LARGE_ITEMS_XML_FILE_TYPE = 'intermine-items-large-xml-file';
 
 sub custom_file_props;
 sub xml_items_props;
@@ -18,6 +19,7 @@ sub xml_items_props;
 my %project_properties = (
                           $CUSTOM_FILE_TYPE => \&custom_file_props,
                           $ITEMS_XML_FILE_TYPE => \&xml_items_props,
+                          $LARGE_ITEMS_XML_FILE_TYPE => \&large_xml_items_props,
                          );
 
 my $source_types = join "\n", map { ' ' x 20 . $_ } sort keys %project_properties;
@@ -48,9 +50,16 @@ have.file.xml.tgt = true
 PROPS
 }
 
+sub large_xml_items_props
+{
+  return <<PROPS;
+have.large.file.xml.tgt = true
+PROPS
+}
+
 my $create_main = 1;
 
-if ($source_type eq $ITEMS_XML_FILE_TYPE) {
+if ($source_type eq $ITEMS_XML_FILE_TYPE or $source_type eq $LARGE_ITEMS_XML_FILE_TYPE) {
   $create_main = 0;
 }
 
