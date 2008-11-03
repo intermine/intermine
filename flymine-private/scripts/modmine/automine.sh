@@ -23,6 +23,7 @@ FTPURL=ftp://ftp.modencode.org/pub/dcc/for_modmine
 MODIR=/shared/data/modmine
 DATADIR=$MODIR/subs/chado
 NEWDIR=$DATADIR/new
+PROPDIR=$HOME/.intermine
 
 MINEDIR=$HOME/svn/dev/modmine
 SOURCES=modmine-static,modencode-metadata,entrez-organism
@@ -51,7 +52,7 @@ progname=$0
 function usage () {
    cat <<EOF
 
-Usage: $progname [-b] [-c] [-f file_name] [-n] [-s] [-t] [-w] [-v]
+Usage: $progname [-a] [-b] [-c] [-f file_name] [-n] [-s] [-t] [-w] [-v]
    -F: full (modmine) rebuild
    -T: test build
    -R: restart full build after failure
@@ -84,13 +85,13 @@ EOF
    exit 0
 }
 
-while getopts ":FITRbcf:nstvw" opt; do
+while getopts ":FITRabcf:nstvw" opt; do
    case $opt in
 
-   F )  echo; echo "Full modMine realease"; FULL=y; BUP=y;;
+   F )  echo; echo "Full modMine realease"; FULL=y; BUP=y; INCR=n;;
 #   I )  echo; echo "Incremental modMine realease"; INCR=y;;
-   T )  echo; echo "Test realease"; TEST=y;;
-   R )  echo; echo "Restart full realease"; RESTART=y;;
+   T )  echo; echo "Test realease"; TEST=y; INCR=n;;
+   R )  echo; echo "Restart full realease"; RESTART=y; INCR=n;;
    b )  echo; echo "Build a back-up of the database." ; BUP=y;;
    f )  echo; INFILE=$OPTARG; echo "Using given list of chadoxml files:"; more $INFILE;;
    a )  echo; echo "Append data in chado" ; CHADOAPPEND=y;;
@@ -119,7 +120,7 @@ fi
 
 LOADLOG="$DATADIR/loading_$REL.log"
 
-echo $LOADLOG
+#echo $LOADLOG
 
 #
 # Getting some values from the properties file.
@@ -127,11 +128,11 @@ echo $LOADLOG
 #
 
 
-DBHOST=`grep metadata.datasource.serverName $HOME/modmine.properties.$REL | awk -F "=" '{print $2}'`
-DBUSER=`grep metadata.datasource.user $HOME/modmine.properties.$REL | awk -F "=" '{print $2}'`
-DBPW=`grep metadata.datasource.password $HOME/modmine.properties.$REL | awk -F "=" '{print $2}'`
-CHADODB=`grep metadata.datasource.databaseName $HOME/modmine.properties.$REL | awk -F "=" '{print $2}'`
-MINEDB=`grep db.production.datasource.databaseName $HOME/modmine.properties.$REL | awk -F "=" '{print $2}'`
+DBHOST=`grep metadata.datasource.serverName $PROPDIR/modmine.properties.$REL | awk -F "=" '{print $2}'`
+DBUSER=`grep metadata.datasource.user $PROPDIR/modmine.properties.$REL | awk -F "=" '{print $2}'`
+DBPW=`grep metadata.datasource.password $PROPDIR/modmine.properties.$REL | awk -F "=" '{print $2}'`
+CHADODB=`grep metadata.datasource.databaseName $PROPDIR/modmine.properties.$REL | awk -F "=" '{print $2}'`
+MINEDB=`grep db.production.datasource.databaseName $PROPDIR/modmine.properties.$REL | awk -F "=" '{print $2}'`
 
 
 echo "================================="
@@ -262,7 +263,7 @@ continue
 else
 
 echo 
-echo "filling the chado db with $sub..."
+echo "filling $CHADODB db with $sub..."
 echo "`date "+%y%m%d.%H%M"` $sub" >> $LOADLOG
 
 stag-storenode.pl -D "Pg:$CHADODB@$DBHOST" -user $DBUSER -password\
