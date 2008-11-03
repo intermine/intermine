@@ -27,8 +27,6 @@ BEGIN {
   my $DIR = ($0 =~ m:(.*)/.*:)[0];
   push (@INC, $DIR . '/../../../intermine/perl/lib');
   push (@INC, $DIR . '/lib');
-
-  die "@INC";
 }
 
 use strict;
