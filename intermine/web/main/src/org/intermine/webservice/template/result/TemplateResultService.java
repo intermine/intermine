@@ -18,6 +18,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.apache.struts.Globals;
+import org.intermine.objectstore.query.PathQueryUtil;
 import org.intermine.web.logic.template.TemplateHelper;
 import org.intermine.web.logic.template.TemplateQuery;
 import org.intermine.web.struts.TemplateAction;
@@ -54,9 +55,16 @@ public class TemplateResultService extends QueryResultService
         }
         template = new TemplateConfigurator().getConfiguredTemplate(template, 
                 input.getConstraints(), getLocale(request));
-        runPathQuery(template, input.getStart() - 1, input.getMaxCount(), 
-                input.isComputeTotalCount(), template.getTitle(), 
-                template.getDescription(), input, getMineLinkURL(request, input));
+        if (template.getPathQuery().isValid()) {
+            runPathQuery(template, input.getStart(), input.getMaxCount(), 
+                    input.isComputeTotalCount(), template.getTitle(), 
+                    template.getDescription(), input, getMineLinkURL(request, input));
+        } else {
+            String msg = "Required data source (template) is outdated and is in conflict "
+                + "with model: " 
+                + PathQueryUtil.getProblemsSummary(template.getPathQuery().getProblems());
+            output.addError(msg, Output.SC_BAD_REQUEST);           
+        }
     }
 
     private Locale getLocale(HttpServletRequest request) {
