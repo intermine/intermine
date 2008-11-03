@@ -83,10 +83,30 @@ function swapInputs(open) {
 
         updateConstraintForm(index, attrOpElement, attrOptsElement, attrValElement, fixedOps);
       }
-      
+
+      //Copied and modified from template.jsp because there is no clever way to reuse it
       function filterByTag(tag) {
-    		var callBack = function(filteredList) {
-    			setSelectElement('bag2', '', filteredList);
-    		}
-    		AjaxServices.filterByTag('bag', tag, callBack);
+          if (tag != "") {
+              if (origSelectValues == null) {
+           	    saveOriginalSelect();
+              }
+              var callBack = function(filteredList) {
+                  setSelectElement('bag2', '', filteredList);
+              }
+              AjaxServices.filterByTag('bag', tag, callBack);          
+          } else {
+       	   restoreOriginalSelect();
+          }
+      }
+
+      var origSelectValues = null;
+      
+      function saveOriginalSelect() {
+          origSelectValues = getSelectValues('bag2');    
+      }
+
+      function restoreOriginalSelect() {
+   	    if (origSelectValues != null) {
+   		    setSelectElement('bag2', '', origSelectValues);
+   		}	    
       }

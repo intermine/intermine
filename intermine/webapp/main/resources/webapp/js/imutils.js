@@ -300,3 +300,12 @@ function getSelectValue(id) {
     var select = document.getElementById(id);
     return select[select.selectedIndex].value;
 }
+
+function getSelectValues(id) {
+	var select = document.getElementById(id);
+	var ret = new Array();
+	for (var i = 0; i < select.length; i++) {
+		ret[i] = select[i].value;
+	}		
+	return ret;
+}
