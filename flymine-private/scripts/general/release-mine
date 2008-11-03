@@ -35,10 +35,6 @@ use Date::Manip;
 
 use InterMine::Util qw(get_property_value);
 
-# use Expect;
-# use Getopt::Std;
-# use Cwd;
-
 if (@ARGV != 1) {
   die "$0: error, this script needs one argument - the mine name\n";
 }
@@ -46,7 +42,6 @@ if (@ARGV != 1) {
 my $project_name = shift;
 
 my $PROP_FILE_PREFIX = "$project_name.properties";
-#my $BUILD_PROP_FILE_PREFIX = "build.properties.$project_name";
 my $CONF_DIR = "$ENV{HOME}/.intermine";
 my $WEBAPP_DIR = "$ENV{HOME}/svn/trunk/$project_name/webapp";
 my $APACHE_CONF_FILENAME = '/etc/httpd/conf.d/proxy_ajp.conf';
@@ -86,8 +81,6 @@ warn "reading current properties file\n";
 
 my $current_version = -1;
 
-#chdir $ENV{HOME} or die "can't change directory to $ENV{HOME}\n";
-#opendir DIR, "." or die "can't open directory $ENV{HOME} for reading\n";
 chdir $CONF_DIR or die "can't change directory to $CONF_DIR\n";
 opendir DIR, "." or die "can't open directory $CONF_DIR for reading\n";
 
@@ -109,11 +102,7 @@ my $current_prop_filename = "$PROP_FILE_PREFIX.r$current_version";
 
 warn "current properties file: $current_prop_filename\n";
 
-#my $current_build_prop_filename = "$BUILD_PROP_FILE_PREFIX.r$current_version";
-#warn "current build properties file: $current_build_prop_filename\n";
-
 my $new_version = $current_version + 1;
-
 
 
 #################
@@ -174,19 +163,12 @@ sub create_properties_file
 }
 
 my $new_prop_filename = "$PROP_FILE_PREFIX.r$new_version";
-#my $new_build_prop_filename = "$BUILD_PROP_FILE_PREFIX.r$new_version";
 
 create_properties_file($current_prop_filename, $new_prop_filename,
                        'db.production.datasource.databaseName',
                        'db.userprofile-production.datasource.databaseName',
                        'webapp.path', 'project.releaseVersion',
                        'gbrowse.database.source');
-#create_properties_file($current_prop_filename, $new_prop_filename,
-#                       'db.production.datasource.databaseName',
-#                       'db.userprofile-production.datasource.databaseName');
-# create_properties_file($current_build_prop_filename, $new_build_prop_filename,
-#                        'webapp.path', 'project.releaseVersion',
-#                        'gbrowse.database.source');
 
 warn "reading properties from: $new_prop_filename\n";
 
@@ -205,13 +187,6 @@ warn "  prod_host: $prod_host\n";
 warn "  prod_port: " . (defined($prod_port) ? $prod_port : "default") . "\n";
 warn "  prod_db: $prod_db\n";
 warn "  prod_user: $prod_user\n";
-
-# my $new_prop_symlink = "$project_name-webapp.properties.r$new_version";
-# symlink $new_prop_filename, $new_prop_symlink
-#   or die "can't create symlink to $new_prop_symlink: $!\n";
-# my $new_build_prop_symlink = "build.properties.$project_name-webapp.r$new_version";
-# symlink $new_build_prop_filename, $new_build_prop_symlink
-#   or die "can't create symlink to $new_build_prop_symlink: $!\n";
 
 sub create_gbrowse_conf
 {
