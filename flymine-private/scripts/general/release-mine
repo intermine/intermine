@@ -24,7 +24,11 @@
 #  - restart apache
 
 BEGIN {
-  push (@INC, ($0 =~ m:(.*)/.*:)[0] . '/../../../intermine/perl/lib');
+  my $DIR = ($0 =~ m:(.*)/.*:)[0];
+  push (@INC, $DIR . '/../../../intermine/perl/lib');
+  push (@INC, $DIR . '/lib');
+
+  die "@INC";
 }
 
 use strict;
@@ -316,6 +320,10 @@ my $need_apache_config = 1;
 
 my $apache_config = '';
 
+my $tomcat_host = get_property_value('webapp.deploy.url', $new_prop_filename);
+
+$tomcat_host =~ s!(http://(.*?)(:\d+)?!$1!;
+
 {
   open my $apache_conf_file, '<', $APACHE_CONF_FILENAME
     or die "can't open $APACHE_CONF_FILENAME for reading: $!\n";
@@ -328,8 +336,8 @@ my $apache_config = '';
 
     if ($line =~ m:</VirtualHost>:i) {
       $apache_config .= <<CONF;
-    ProxyPass /release-$new_version ajp://modprod0:8009/release-$new_version
-    ProxyPassReverse /release-$new_version http://modprod0/release-$new_version
+    ProxyPass /release-$new_version ajp://$tomcat_host:8009/release-$new_version
+    ProxyPassReverse /release-$new_version http://$tomcat_host:8009/release-$new_version
 CONF
     }
 
