@@ -71,9 +71,19 @@ $source_types
 MESSAGE
 }
 
+my @base_project_properties =
+  qw(intermine/objectstore/main bio/core/main intermine/integrate/main);
+
+my $project_dependencies = join ", \\\n           ", @base_project_properties;
+
+if ($create_main) {
+  $project_dependencies .= ", \\\n           bio/sources/${source_name}/main";
+}
+
 my %substitutions = (
                      'source-name' => $source_name,
                      'camel-case-source-name' => $camel_case_source_name,
+                     'project-dependencies' => $project_dependencies
                     );
 
 if (exists $project_properties{$source_type}) {
