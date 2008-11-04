@@ -115,7 +115,7 @@
     </fields>
     <longdisplayers>
       <displayer src="attributeLinkDisplayer.tile"/>
-      <displayer src="/model/locatedSequenceFeatureImage.jsp"/>
+      <displayer src="/model/modmineGBrowse.jsp"/>
     </longdisplayers>
   </class>
 
@@ -142,7 +142,7 @@
     </fields>
     <longdisplayers>
       <displayer src="attributeLinkDisplayer.tile"/>
-      <displayer src="/model/locatedSequenceFeatureImage.jsp"/>
+      <displayer src="/model/modmineGBrowse.jsp"/>
     </longdisplayers>
   </class>
 
@@ -154,7 +154,7 @@
     </fields>
     <longdisplayers>
       <displayer src="attributeLinkDisplayer.tile"/>
-      <displayer src="/model/locatedSequenceFeatureImage.jsp"/>
+      <displayer src="/model/modmineGBrowse.jsp"/>
     </longdisplayers>
   </class>
 
@@ -239,7 +239,7 @@
     </fields>
     <longdisplayers>
       <displayer src="attributeLinkDisplayer.tile"/>
-      <displayer src="/model/locatedSequenceFeatureImage.jsp"/>
+      <displayer src="/model/modmineGBrowse.jsp"/>
     </longdisplayers>
   </class>
 
@@ -258,7 +258,7 @@
     </fields>
     <longdisplayers>
       <displayer src="attributeLinkDisplayer.tile"/>
-      <displayer src="/model/locatedSequenceFeatureImage.jsp"/>
+      <displayer src="/model/modmineGBrowse.jsp"/>
     <displayer src="/model/proteinInteractionGraph.jsp"/>
     </longdisplayers>
     <bagdisplayers>
@@ -334,7 +334,7 @@
     </fields>
     <longdisplayers>
       <displayer src="attributeLinkDisplayer.tile"/>
-      <displayer src="/model/locatedSequenceFeatureImage.jsp"/>
+      <displayer src="/model/modmineGBrowse.jsp"/>
     </longdisplayers>
     <bagdisplayers>
     </bagdisplayers>
@@ -455,7 +455,7 @@
     </fields>
     <longdisplayers>
       <displayer src="attributeLinkDisplayer.tile"/>
-      <displayer src="/model/locatedSequenceFeatureImage.jsp"/>
+      <displayer src="/model/modmineGBrowse.jsp"/>
     </longdisplayers>
   </class>
 
@@ -510,7 +510,7 @@
     <longdisplayers>
       <displayer src="/model/tiffinBindingSiteDisplayer.jsp"/>
       <displayer src="attributeLinkDisplayer.tile"/>
-      <displayer src="/model/locatedSequenceFeatureImage.jsp"/>
+      <displayer src="/model/modmineGBrowse.jsp"/>
     </longdisplayers>
   </class>
 
@@ -534,7 +534,7 @@
     </fields>
     <longdisplayers>
       <displayer src="attributeLinkDisplayer.tile"/>
-      <displayer src="/model/locatedSequenceFeatureImage.jsp"/>
+      <displayer src="/model/modmineGBrowse.jsp"/>
     </longdisplayers>
   </class>
 
