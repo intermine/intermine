@@ -127,7 +127,7 @@ while (defined (my $line = <$current_file>)) {
           #$line = "$prop_name=$1$new_version$3\n";
           # changed to accomodate date..
           if (defined $date_string && $prop_name eq $RELEASE_VERSION_PROP) {
-            $line = "$prop_name=$1$new_version $date_string $3\n"
+            $line = "$prop_name=$1$new_version $date_string\n"
           } else {
             $line = "$prop_name=$1$new_version$3\n";
           }
