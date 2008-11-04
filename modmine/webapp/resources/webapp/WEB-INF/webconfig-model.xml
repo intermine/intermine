@@ -127,8 +127,8 @@
       <displayer src="attributeLinkDisplayer.tile"/>
     </longdisplayers>
   </class>
-  
-<!-- NOT IN MOD 
+
+<!-- NOT IN MOD
   <class className="org.flymine.model.genomic.BlastMatch">
     <fields>
       <fieldconfig fieldExpr="object.primaryIdentifier"/>
@@ -236,7 +236,7 @@
   </class>
 -->
 
-<!-- NOT IN MOD 
+<!-- NOT IN MOD
   <class className="org.flymine.model.genomic.Disease">
     <fields>
       <fieldconfig fieldExpr="omimId"/>
@@ -265,7 +265,7 @@
     </longdisplayers>
   </class>
 
-<!-- NOT IN MOD  
+<!-- NOT IN MOD
   <class className="org.flymine.model.genomic.FlyAtlasResult">
     <fields>
       <fieldconfig fieldExpr="affyCall"/>
@@ -296,7 +296,7 @@
     <longdisplayers>
       <displayer src="attributeLinkDisplayer.tile"/>
       <displayer src="/model/locatedSequenceFeatureImage.jsp"/>
-<!--   NB MODMINE   
+<!--   NB MODMINE
       <displayer src="geneMicroArrayDisplayer.tile"/>
 -->
     <displayer src="/model/proteinInteractionGraph.jsp"/>
@@ -347,7 +347,7 @@
     </fields>
   </class>
 
-<!-- NOT IN MOD 
+<!-- NOT IN MOD
   <class className="org.flymine.model.genomic.Image">
     <fieldconfig fieldExpr="url"/>
     <fields>
@@ -362,7 +362,7 @@
     </fields>
   </class>
 
-<!-- NOT IN MOD 
+<!-- NOT IN MOD
   <class className="org.flymine.model.genomic.Interaction">
    <fields>
      <fieldconfig fieldExpr="gene.primaryIdentifier"/>
@@ -413,7 +413,7 @@
     </bagdisplayers>
   </class>
 
-<!-- NOT IN MOD 
+<!-- NOT IN MOD
   <class className="org.flymine.model.genomic.MicroArrayExperiment">
     <fields>
       <fieldconfig fieldExpr="name"/>
@@ -475,7 +475,7 @@
     </fields>
   </class>
 -->
-<!-- NOT IN MOD 
+<!-- NOT IN MOD
   <class className="org.flymine.model.genomic.Mutagen">
     <fields>
       <fieldconfig fieldExpr="description"/>
@@ -519,7 +519,7 @@
     </longdisplayers>
   </class>
 
-<!-- NOT IN MOD 
+<!-- NOT IN MOD
   <class className="org.flymine.model.genomic.Pathway">
     <fields>
       <fieldconfig fieldExpr="identifier" />
@@ -551,7 +551,7 @@
     </fields>
   </class>
 
-<!-- NOT IN MOD 
+<!-- NOT IN MOD
   <class className="org.flymine.model.genomic.ProbeSet">
     <fields>
       <fieldconfig fieldExpr="primaryIdentifier"/>
@@ -592,7 +592,7 @@
     </longdisplayers>
   </class>
 
-<!-- NOT IN MOD 
+<!-- NOT IN MOD
   <class className="org.flymine.model.genomic.ProteinStructure">
     <fields>
       <fieldconfig fieldExpr="identifier"/>
@@ -657,7 +657,7 @@
     </fields>
   </class>
 
-<!-- NOT IN MOD 
+<!-- NOT IN MOD
   <class className="org.flymine.model.genomic.Reporter">
     <fields>
       <fieldconfig fieldExpr="controlType"/>
@@ -724,7 +724,7 @@
     <tabledisplayer src="/model/sequenceShortDisplayer.jsp"/>
   </class>
 
-<!-- NOT IN MOD 
+<!-- NOT IN MOD
    <class className="org.flymine.model.genomic.Stage">
     <fields>
       <fieldconfig fieldExpr="name"/>
@@ -821,22 +821,6 @@
     </bagdisplayers>
   </class>
 
-<!-- NOT IN MOD 
-  <class className="org.flymine.model.genomic.TreatmentParameter">
-    <fields>
-      <fieldconfig fieldExpr="type"/>
-      <fieldconfig fieldExpr="value"/>
-      <fieldconfig fieldExpr="units"/>
-    </fields>
-  </class>
-
-  <class className="org.flymine.model.genomic.Treatment">
-    <fields>
-      <fieldconfig fieldExpr="action"/>
-    </fields>
-  </class>
--->
-
   <class className="org.flymine.model.genomic.UniProtFeature">
     <fields>
       <fieldconfig fieldExpr="type"/>
@@ -863,29 +847,6 @@
         typeClass="org.flymine.model.genomic.Gene,org.flymine.model.genomic.LocatedSequenceFeature,org.flymine.model.genomic.TransposableElementInsertionSite"
        />
 
-<!-- NOT IN MOD 
-      <graphdisplayer id="flyatlas" title="Gene Expression in the Adult Fly (FlyAtlas)" domainLabel="Tissue" rangeLabel="Up (+) or Down (-) gene count" dataSetLoader="org.flymine.web.widget.FlyAtlasDataSetLdr"
-                      link="org.flymine.web.widget.FlyAtlasGraphURLGenerator"
-                      description="For each tissue in the adult fly, the number of genes from this list for which the levels of expression are significantly high (Up) or low (Down) according to &lt;a href=&quot;http://www.flyatlas.org/&quot; target=&quot;_new&quot;&gt;FlyAtlas&lt;/a&gt; AffyCall."
-                      typeClass="org.flymine.model.genomic.Gene"
-                      graphType="StackedBarChart" />
-
-      <graphdisplayer id="flyfish" title="mRNA subcellular localisation (fly-FISH)" domainLabel="Stage" rangeLabel="Gene count" dataSetLoader="org.flymine.web.widget.FlyFishDataSetLdr"
-                      link="org.flymine.web.widget.FlyFishGraphURLGenerator"
-                      description="Expression patterns of Drosophila mRNAs at the subcellular level during early embryogenesis - data from  &lt;a href=&quot;http://fly-fish.ccbr.utoronto.ca/&quot; target=&quot;_new&quot;&gt;Fly-FISH&lt;/a&gt;.  Note that not all genes have been assayed by &lt;a href=&quot;http://fly-fish.ccbr.utoronto.ca/&quot; target=&quot;_new&quot;&gt;Fly-FISH&lt;/a&gt;."
-                      typeClass="org.flymine.model.genomic.Gene"
-                      graphType="BarChart" />
-
-      <graphdisplayer id="bdgp" title="BDGP expression patterns"
-                      link="org.flymine.web.widget.BDGPinsituGraphURLGenerator"
-                      dataSetLoader="org.flymine.web.widget.BDGPinsituDataSetLdr"
-                      description="Expression patterns of Drosophila mRNAs during embryogenesis - data from  &lt;a href=&quot;http://www.fruitfly.org/cgi-bin/ex/insitu.pl&quot; target=&quot;_new&quot;&gt;BGDP&lt;/a&gt;.  Note that not all genes have been assayed by &lt;a href=&quot;http://www.fruitfly.org/cgi-bin/ex/insitu.pl&quot; target=&quot;_new&quot;&gt;BGDP&lt;/a&gt;. "
-                      domainLabel="Stage"
-                      rangeLabel="Gene count"
-                      typeClass="org.flymine.model.genomic.Gene"
-                      graphType="BarChart" />
--->
-
       <enrichmentwidgetdisplayer id="protein_features" title="UniProt Features"
                                  link="org.intermine.bio.web.widget.UniProtFeaturesURLQuery"
                                  dataSetLoader="org.intermine.bio.web.widget.UniProtFeaturesLdr"
@@ -909,7 +870,7 @@
                                  filterLabel="Ontology"
                                  typeClass="org.flymine.model.genomic.Gene,org.flymine.model.genomic.Protein"
                                  externalLink="http://amigo.geneontology.org/cgi-bin/amigo/term-details.cgi?term=" />
-<!--   NB MODMINE TOCHECK   
+<!--   NB MODMINE TOCHECK
       <enrichmentwidgetdisplayer id="prot_dom_enrichment" title="Protein Domain Enrichment"
                                  link="org.flymine.web.widget.ProteinDomainURLQuery"
                                  dataSetLoader="org.flymine.web.widget.ProteinDomainLdr"
@@ -928,7 +889,7 @@
                                  typeClass="org.flymine.model.genomic.Gene"
                                  externalLinkLabel="PubMed:" />
 
-<!-- NOT IN MOD 
+<!-- NOT IN MOD
       <enrichmentwidgetdisplayer id="bdgp_enrichment" title="BDGP Enrichment"
                                  link="org.flymine.web.widget.BDGPURLQuery"
                                  dataSetLoader="org.flymine.web.widget.BDGPLdr"
@@ -954,7 +915,7 @@
                          typeClass="org.flymine.model.genomic.Gene"
                          columnTitle="Orthologues"/>
 
-<!-- NOT IN MOD 
+<!-- NOT IN MOD
       <bagtabledisplayer id="interactions" title="Interactions"
                          pathStrings="Gene.interactions.interactingGenes"
                          link="org.intermine.bio.web.widget.InteractionURLQuery"
