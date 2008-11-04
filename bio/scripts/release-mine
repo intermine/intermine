@@ -25,7 +25,7 @@
 
 BEGIN {
   my $DIR = ($0 =~ m:(.*)/.*:)[0];
-  push (@INC, $DIR . '/../../../intermine/perl/lib');
+  push (@INC, $DIR . '/../../intermine/perl/lib');
   push (@INC, $DIR . '/lib');
 }
 
@@ -44,7 +44,6 @@ if (@ARGV != 1) {
 my $project_name = shift;
 
 my $PROP_FILE_PREFIX = "$project_name.properties";
-my $CONF_DIR = "$ENV{HOME}/.intermine";
 my $WEBAPP_DIR = "$ENV{HOME}/svn/trunk/$project_name/webapp";
 my $APACHE_CONF_FILENAME = '/etc/httpd/conf.d/proxy_ajp.conf';
 my $OLDEST_VERSION = 1;
@@ -79,22 +78,7 @@ system ("svn update >> $LOG_FILENAME 2>&1") == 0
 #################
 warn "reading current properties file\n";
 
-my $current_version = -1;
-
-chdir $CONF_DIR or die "can't change directory to $CONF_DIR\n";
-opendir DIR, "." or die "can't open directory $CONF_DIR for reading\n";
-
-while (defined(my $filename = readdir(DIR))) {
-  if ($filename =~ /^$PROP_FILE_PREFIX.r(\d+)$/) {
-    if ($1 > $current_version) {
-      $current_version = $1;
-    }
-  }
-}
-
-if ($current_version == -1) {
-  die "can't find a properties file for $project_name with prefix $PROP_FILE_PREFIX\n";
-}
+my $current_version = get_latest_properties_version("$PROP_FILE_PREFIX.r") - 1;
 
 warn "most recent version of $project_name: $current_version\n";
 
@@ -104,71 +88,7 @@ warn "current properties file: $current_prop_filename\n";
 
 my $new_version = $current_version + 1;
 
-
-#################
-warn "creating new properties files\n";
-
-sub create_properties_file
-{
-  my $current_prop_filename = shift;
-  my $new_prop_filename = shift;
-  my @prop_names = @_;
-
-  warn "  creating new properties file: $new_prop_filename\n";
-
-  if (-e $new_prop_filename) {
-    die "trying to overwrite: $new_prop_filename\n";
-  }
-
-  open my $new_prop_file, '>', $new_prop_filename or die "can't open $new_prop_filename: $!\n";
-
-  open my $current_file, '<', $current_prop_filename
-    or die "can't open $current_prop_filename: $!\n";
-
-  my %fixed = ();
-
-  while (defined (my $line = <$current_file>)) {
-    for my $prop_name (@prop_names) {
-      if ($line =~ /$prop_name=(.*?)(\d+)(.*)/) {
-        if ($2 == $current_version) {
-          $fixed{$prop_name} = 1;
-
-          #$line = "$prop_name=$1$new_version$3\n";
-          # changed to accomodate date..
-          if ($prop_name eq "project.releaseVersion")  {
-            $line = "$prop_name=$1$new_version $rel_date $3\n"
-          } else {
-            $line = "$prop_name=$1$new_version$3\n";
-          }
-
-          last;
-        } else {
-          die "line has wrong version ($1): $line\n";
-        }
-      }
-    }
-    print $new_prop_file $line;
-
-  }
-
-  close $new_prop_file or die "can't close $new_prop_filename: $!\n";
-  close $current_file or die "can't close $current_file: $!\n";
-
-  for my $prop_name (@prop_names) {
-    if (!exists $fixed{$prop_name}) {
-      unlink $new_prop_file;
-      die "can't find property $prop_name in $current_prop_filename\n";
-    }
-  }
-}
-
 my $new_prop_filename = "$PROP_FILE_PREFIX.r$new_version";
-
-create_properties_file($current_prop_filename, $new_prop_filename,
-                       'db.production.datasource.databaseName',
-                       'db.userprofile-production.datasource.databaseName',
-                       'webapp.path', 'project.releaseVersion',
-                       'gbrowse.database.source');
 
 warn "reading properties from: $new_prop_filename\n";
 
@@ -188,35 +108,35 @@ warn "  prod_port: " . (defined($prod_port) ? $prod_port : "default") . "\n";
 warn "  prod_db: $prod_db\n";
 warn "  prod_user: $prod_user\n";
 
-sub create_gbrowse_conf
-{
-  my $gbrowse_dir = shift;
-  my $old_version = shift;
-  my $new_version = shift;
+# sub create_gbrowse_conf
+# {
+#   my $gbrowse_dir = shift;
+#   my $old_version = shift;
+#   my $new_version = shift;
 
-  my $old_file_name = "$GBROWSE_CONF_DIR/modmine-r$old_version.conf";
-  my $new_file_name = "$GBROWSE_CONF_DIR/modmine-r$new_version.conf";
+#   my $old_file_name = "$GBROWSE_CONF_DIR/modmine-r$old_version.conf";
+#   my $new_file_name = "$GBROWSE_CONF_DIR/modmine-r$new_version.conf";
 
-  warn "  creating new gbrowse conf: $new_file_name\n";
+#   warn "  creating new gbrowse conf: $new_file_name\n";
 
-  if (-e $new_file_name) {
-    die "trying to overwrite: $new_file_name - exiting\n";
-  }
+#   if (-e $new_file_name) {
+#     die "trying to overwrite: $new_file_name - exiting\n";
+#   }
 
-  open my $new_file, '>', $new_file_name or die "can't open $new_file_name: $!\n";
+#   open my $new_file, '>', $new_file_name or die "can't open $new_file_name: $!\n";
 
-  open my $old_file, '<', $old_file_name
-    or die "can't open $old_file_name: $!\n";
+#   open my $old_file, '<', $old_file_name
+#     or die "can't open $old_file_name: $!\n";
 
-  while (<$old_file>) {
-    s/(description\s*=.*release) $old_version/$1 $new_version/;
-    s|/release-$old_version|/release-$new_version|;
-    print $new_file $_;
-  }
+#   while (<$old_file>) {
+#     s/(description\s*=.*release) $old_version/$1 $new_version/;
+#     s|/release-$old_version|/release-$new_version|;
+#     print $new_file $_;
+#   }
 
-  close $new_file or die "can't close $new_file_name: $!\n";
-  close $old_file or die "can't close $old_file_name: $!\n";
-}
+#   close $new_file or die "can't close $new_file_name: $!\n";
+#   close $old_file or die "can't close $old_file_name: $!\n";
+# }
 
 # create new databases
 
@@ -268,9 +188,9 @@ system ("ant -Drelease=r$new_version create-db-userprofile >> $LOG_FILENAME 2>&1
 
 #################
 
-warn "copying gbrowse properties\n";
+#warn "copying gbrowse properties\n";
 
-create_gbrowse_conf($GBROWSE_CONF_DIR, $current_version, $new_version);
+#create_gbrowse_conf($GBROWSE_CONF_DIR, $current_version, $new_version);
 
 #################
 #warn "stopping old webapp (r$current_version)\n";
@@ -314,7 +234,7 @@ my $apache_config = '';
 
 my $tomcat_host = get_property_value('webapp.deploy.url', $new_prop_filename);
 
-$tomcat_host =~ s!(http://(.*?)(:\d+)?!$1!;
+$tomcat_host =~ s!http://(.*?)(:\d+)?!$1!;
 
 {
   open my $apache_conf_file, '<', $APACHE_CONF_FILENAME
