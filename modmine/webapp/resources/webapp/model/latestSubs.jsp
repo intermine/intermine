@@ -110,6 +110,7 @@ dateStyle="short"
 </im:querylink>
 </td>
 <td>
+<!-- 
 <im:querylink text="   All submissions" showArrow="true" skipBuilder="true">
   <query name="" model="genomic"
     view="Submission.title Submission.design Submission.factorName Submission.factorType Submission.publicReleaseDate Submission.description"
@@ -119,7 +120,14 @@ dateStyle="short"
   <node path="Submission.bioEntities" type="BioEntity">
   </node>
   </query>
-</im:querylink> <br>
+</im:querylink> 
+-->
+
+<html:link
+          href="/${WEB_PROPERTIES['webapp.path']}/submissions.do"> All submissions <img border="0" class="arrow" src="images/right-arrow.gif" title="-&gt;"/>
+    </html:link>
+
+<br>
 </td>
 	</tr></table>
  

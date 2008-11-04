@@ -13,15 +13,15 @@
 <tr>
 <td valign="top">
 <!-- First column -->
+     <im:boxarea title="Submissions" titleLink="/${WEB_PROPERTIES['webapp.path']}/submissions.do" stylename="plainbox" floatValue="left" fixedWidth="300px">
+         <tiles:insert name="latestSubs.tile"/>
+    </im:boxarea>
 
      <im:boxarea title="Projects" titleLink="/${WEB_PROPERTIES['webapp.path']}/projects.do" stylename="plainbox" floatValue="left" fixedWidth="300px">
      <em><p><fmt:message key="projects.intro"/></p></em>     
      <tiles:insert name="projectList.tile"/>
     </im:boxarea>
 
-     <im:boxarea title="Submissions" titleLink="/${WEB_PROPERTIES['webapp.path']}/submissions.do" stylename="plainbox" floatValue="left" fixedWidth="300px">
-         <tiles:insert name="latestSubs.tile"/>
-    </im:boxarea>
 
 <%--
     <im:boxarea title="Data Categories" titleLink="/${WEB_PROPERTIES['webapp.path']}/dataCategories.do" stylename="plainbox" floatValue="left" fixedWidth="300px">
@@ -52,13 +52,13 @@
 <div id="rightColumn">
 <td valign="top">
 <!-- Second column - elastic -->
-
+<%-- 
 		<div><tiles:insert name="tipWrapper.tile" /> 
 		<tiles:insert name="news.tile">
 			<tiles:put name="rss"
 				value="${WEB_PROPERTIES['project.sitePrefix']}/rss.xml" />
 		</tiles:insert></div>
-
+--%>
 
 		<im:boxarea title="Templates" titleLink="/${WEB_PROPERTIES['webapp.path']}/templates.do" stylename="gradientbox">
         <em><p><fmt:message key="begin.templates"/></p></em>
