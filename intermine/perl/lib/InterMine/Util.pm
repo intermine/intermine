@@ -11,7 +11,10 @@ use strict;
 use Exporter;
 
 our @ISA = qw(Exporter);
-our @EXPORT_OK = qw(get_property_value);
+our @EXPORT_OK = qw(get_property_value $INTERMINE_CONF_DIR);
+
+# location of the InterMine properties files
+our $INTERMINE_CONF_DIR = "$ENV{HOME}/.intermine";
 
 =head2 get_property_value
  Title   : get_property_value
