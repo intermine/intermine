@@ -79,7 +79,10 @@ sub get_latest_properties_version
 
   if ($current_version == -1) {
     die <<"MESSAGE";
-$0: can't find a properties file with prefix $prop_file_prefix -
+$0: can't find a properties file with prefix:
+  "$prop_file_prefix"
+in
+  $INTERMINE_CONF_DIR
 looked for ${prop_file_prefix}0, ${prop_file_prefix}1, ${prop_file_prefix}2, etc
 MESSAGE
   }
