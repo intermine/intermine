@@ -38,14 +38,11 @@
 <!-- Second column - elastic -->
 <div id="rightColumn">
 
-         <div>
-         <c:if test="${!empty showtips}">
-           <tiles:insert name="tipWrapper.tile"/>
-         </c:if>
-         <c:if test="${!empty WEB_PROPERTIES['project.rss']}">
-           <tiles:insert name="news.tile" />
-         </c:if>
-         </div>
+      <div>
+        <c:if test="${!empty WEB_PROPERTIES['project.rss']}">
+          <tiles:insert name="news.tile" />
+        </c:if>
+      </div>
 
       <im:boxarea title="Templates" titleLink="/${WEB_PROPERTIES['webapp.path']}/templates.do" stylename="gradientbox">
         <em><p><fmt:message key="begin.templates"/></p></em>
