@@ -1,3 +1,5 @@
+@import url(bio.css);
+
 html, body {
     color: #000000;background-color: #FFF;}
 
@@ -68,6 +70,14 @@ div.filterBar {
 	color:#000;}
 
 
+table.results tfoot tr td {
+    background-color: #D4D4D4;
+}
+
+.tool_bar_link, .tool_bar_separator  {
+    background-color: #D4D4D4;
+}
+
 /* =/CUSTOMISABLE LOOK
 --------------------------*/
 
@@ -110,6 +120,10 @@ div.filterBar {
     width: 450px;
     background-color: #D4D4D4;
 }
+
+.widget_slide {
+	margin-top:10px; max-height:350px;
+    overflow-x:none;overflow-y:auto;overflow: auto;}
 
 #bagDescriptionDiv{
 	background-color: #D4D4D4;
