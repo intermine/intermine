@@ -1,22 +1,24 @@
-<definition name="orthologueDisplayer.tile" path="/model/orthologueDisplayer.jsp" 
-    controllerUrl="/initOrthologueDisplayer.do"/>
-    
-<definition name="attributeLinkDisplayer.tile" path="/model/attributeLinkDisplayer.jsp" 
+<definition name="sequenceExportOptions.tile" path="/model/sequenceExportOptions.jsp"
+        controllerUrl="/initSequenceExportOptions.do"/>
+
+<definition name="gff3ExportOptions.tile" path="/model/gff3ExportOptions.jsp" />
+
+<definition name="attributeLinkDisplayer.tile" path="/model/attributeLinkDisplayer.jsp"
           controllerUrl="/initAttributeLinkDisplayer.do"/>
 
-<definition name="labs.tile" path="/model/labs.jsp" 
+<definition name="labs.tile" path="/model/labs.jsp"
         controllerUrl="/initLabs.do"/>
-<definition name="projects.tile" path="/model/projects.jsp" 
+<definition name="projects.tile" path="/model/projects.jsp"
         controllerUrl="/initProjects.do"/>
-<definition name="submissions.tile" path="/model/submissions.jsp" 
+<definition name="submissions.tile" path="/model/submissions.jsp"
         controllerUrl="/initSubmissions.do"/>
 
-<definition name="latestSubs.tile" path="/model/latestSubs.jsp" 
+<definition name="latestSubs.tile" path="/model/latestSubs.jsp"
         controllerUrl="/initLatestSubs.do"/>
-<definition name="projectList.tile" path="/model/projectList.jsp" 
+<definition name="projectList.tile" path="/model/projectList.jsp"
         controllerUrl="/initProjectList.do"/>
 
-        
+
   <definition name="projects.page" extends="layout.template">
     <put name="body" value="projects.tile"/>
     <put name="pageName" value="projects"/>
@@ -31,4 +33,3 @@
     <put name="body" value="submissions.tile"/>
     <put name="pageName" value="submissions"/>
   </definition>
-  
