@@ -18,7 +18,6 @@
     </fields>
   </class>
 
-
   <class className="org.flymine.model.genomic.Protocol">
     <fields>
       <fieldconfig fieldExpr="name"/>
@@ -45,11 +44,13 @@
       <fieldconfig fieldExpr="experimentDate" displayer="model/dateDisplayer.jsp" showInResults="false" showInInlineCollection="false" />
       <fieldconfig fieldExpr="publicReleaseDate" displayer="model/dateDisplayer.jsp" showInResults="false"  showInInlineCollection="false" />
     </fields>
+    <longdisplayers>
+      <displayer src="submissionDisplayer.tile"/>
+    </longdisplayers>
   </class>
 
   <class className="org.flymine.model.genomic.SubmissionData">
     <fields>
-  <!--     <fieldconfig fieldExpr="direction"/> -->
       <fieldconfig fieldExpr="name"/>
       <fieldconfig fieldExpr="type"/>
       <fieldconfig fieldExpr="value"/>

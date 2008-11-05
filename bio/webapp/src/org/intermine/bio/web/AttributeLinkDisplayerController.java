@@ -70,7 +70,7 @@ public class AttributeLinkDisplayerController extends TilesAction
      * {@inheritDoc}
      */
     @Override
-    public ActionForward execute(@SuppressWarnings("unused")  ComponentContext context,
+    public ActionForward execute(@SuppressWarnings("unused") ComponentContext context,
                                  @SuppressWarnings("unused") ActionMapping mapping,
                                  @SuppressWarnings("unused") ActionForm form,
                                  HttpServletRequest request,
@@ -153,10 +153,10 @@ public class AttributeLinkDisplayerController extends TilesAction
                 // to pick the right type of link (list or object)
                 if (imo != null && imType != null) {
                     continue;
-                };
+                }
                 if (bag != null && imType == null) {
                     continue;
-                };
+                }
 
                 ConfigMap config;
 
@@ -311,9 +311,8 @@ public class AttributeLinkDisplayerController extends TilesAction
 
         if (dbName.equalsIgnoreCase("flybase")) {
             return StringUtil.join(results, "|");
-        } else {
-            return StringUtil.join(results, ",");
         }
+        return StringUtil.join(results, ",");
 }
 
     /**

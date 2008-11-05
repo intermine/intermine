@@ -3,6 +3,9 @@
 
 <definition name="gff3ExportOptions.tile" path="/model/gff3ExportOptions.jsp" />
 
+<definition name="submissionDisplayer.tile" path="/model/submissionDisplayer.jsp"
+          controllerUrl="/initSubmissionDisplayer.do"/>
+
 <definition name="attributeLinkDisplayer.tile" path="/model/attributeLinkDisplayer.jsp"
           controllerUrl="/initAttributeLinkDisplayer.do"/>
 
