@@ -23,41 +23,20 @@
     <th>Project</th>
     <th>Features count</th>
   </tr>
-  
   <c:forEach items="${subs}" var="sub">
     <tr>
-      <td><html:link
-        href="/${WEB_PROPERTIES['webapp.path']}/objectDetails.do?id=${sub.key.id}">
- ${sub.key.title}
-    </html:link>
+      <td><html:link href="/${WEB_PROPERTIES['webapp.path']}/objectDetails.do?id=${sub.key.id}">${sub.key.title}</html:link></td>
+      <td><fmt:formatDate value="${sub.key.publicReleaseDate}" type="date"/></td>
+      <td><html:link href="/${WEB_PROPERTIES['webapp.path']}/objectDetails.do?id=${sub.key.lab.id}">${sub.key.lab.name}</html:link></td>
+      <td>${sub.key.lab.affiliation}</td>
+      <td><html:link href="/${WEB_PROPERTIES['webapp.path']}/objectDetails.do?id=${sub.key.lab.project.id}">${sub.key.lab.project.name}</html:link></td>
+      <td>
 
-      <td><fmt:formatDate value="${sub.key.publicReleaseDate}"
-        type="date"/>
-
-<td> <html:link
-        href="/${WEB_PROPERTIES['webapp.path']}/objectDetails.do?id=${sub.key.lab.id}">
- ${sub.key.lab.name}
-    </html:link>
-
-<td> ${sub.key.lab.affiliation}
-<td> <html:link
-        href="/${WEB_PROPERTIES['webapp.path']}/objectDetails.do?id=${sub.key.lab.project.id}">
-${sub.key.lab.project.name}
-    </html:link>
-<%--
-<html:link
-        href="${sub.key.lab.project.url}">
-->
-    </html:link>
---%>
-
-<td>
-<table cellpadding="0" cellspacing="0" border="0" class="internal">
-        <c:forEach items="${sub.value}" var="fc" varStatus="status">
-          <tr>
-<%--done here because not sure if possible to do outer join in java --%>
-            <td><c:choose>
-
+      <table cellpadding="0" cellspacing="0" border="0" class="internal">
+          <c:forEach items="${sub.value}" var="fc" varStatus="status">
+            <tr>
+      <%--done here because not sure if possible to do outer join in java --%>
+              <td><c:choose>
 <%-- UNCOMMENT to see the chromosome
 
               <c:when test='${fc.key eq "Chromosome"}'>
@@ -80,22 +59,22 @@ ${sub.key.lab.project.name}
 --%>
 
               <c:when test='${fc.key eq "Chromosome"}'>
-                <td>
+                <td></td>
                 <td align="right">
               </c:when>
 
               <c:when test='${fc.key eq "-"}'>
               <!-- added because at the moment these features are without chromosome location-->
-                <td>${fc.key}
-                <td align="right">
+                <td>${fc.key}</td>
+                <td align="right"></td>
               </c:when>
 
               <c:when test='${fc.key eq "EST" || fc.key eq "MNRA"}'>
-                <td>${fc.key}
+                <td>${fc.key}</td>
                 <td align="right">
                 <im:querylink text="${fc.value}" skipBuilder="true">
                   <query name="" model="genomic"
-                    view="${fc.key}.dataSets.title ${fc.key}.primaryIdentifier ${fc.key}.secondaryIdentifier ${fc.key}.length 
+                    view="${fc.key}.dataSets.title ${fc.key}.primaryIdentifier ${fc.key}.secondaryIdentifier ${fc.key}.length
                   ${fc.key}.chromosomeLocation.object.primaryIdentifier ${fc.key}.chromosomeLocation.start ${fc.key}.chromosomeLocation.end"
                     sortOrder="${fc.key}.primaryIdentifier asc">
                   <node path="${fc.key}" type="${fc.key}">
@@ -111,15 +90,12 @@ ${sub.key.lab.project.name}
                 </im:querylink>
               </c:when>
 
-
-
-
               <c:otherwise>
                 <td>${fc.key}
                 <td align="right">
                 <im:querylink text="${fc.value}" skipBuilder="true">
                   <query name="" model="genomic"
-                    view="${fc.key}.dataSets.title ${fc.key}.secondaryIdentifier ${fc.key}.length 
+                    view="${fc.key}.dataSets.title ${fc.key}.secondaryIdentifier ${fc.key}.length
                   ${fc.key}.chromosomeLocation.object.primaryIdentifier ${fc.key}.chromosomeLocation.start ${fc.key}.chromosomeLocation.end"
                     sortOrder="${fc.key}.secondaryIdentifier asc">
                   <node path="${fc.key}" type="${fc.key}">
@@ -136,20 +112,14 @@ ${sub.key.lab.project.name}
               </c:otherwise>
             </c:choose>
             </td>
+        </tr>
         </c:forEach>
+        <!-- end feature loop -->
+        </table>
         </td>
-</tr>
-</table>
+  </tr>
 </c:forEach>
+<!-- end submission loop -->
 </table>
-
 </div>
 
-
-<%--
-      <td><html:link
-        href="/${WEB_PROPERTIES['webapp.path']}/objectDetails.do?id=${item.key.id}">
- ${item.key.name}
-    </html:link>
-    --%>
-    
