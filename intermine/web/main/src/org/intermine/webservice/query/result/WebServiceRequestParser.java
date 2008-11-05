@@ -14,6 +14,7 @@ import javax.servlet.http.HttpServletRequest;
 
 import org.intermine.webservice.PagedServiceInput;
 import org.intermine.webservice.WebServiceInput;
+import org.intermine.webservice.exceptions.BadRequestException;
 
 
 /**
@@ -82,13 +83,12 @@ public class WebServiceRequestParser
             try {
                 ret = new Integer(stringValue);
                 if (ret < minValue || ret > maxValue) {
-                    input.addError("Invalid value of " + name + " parameter: " + ret 
+                    throw new BadRequestException("Invalid value of " + name + " parameter: " + ret 
                             + " Parameter should have value from " + minValue + " to " 
                             + maxValue + ".");
                 }
             } catch (Exception ex) {
-                String value = stringValue;
-                input.addError("invalid " + name + " parameter: " + value);
+                throw new BadRequestException("Invalid " + name + " parameter: " + stringValue);
             }
         }
         return ret;

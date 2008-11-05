@@ -18,19 +18,19 @@ import javax.servlet.http.HttpServletRequest;
 import org.apache.log4j.Logger;
 import org.intermine.objectstore.query.ConstraintOp;
 import org.intermine.webservice.CodeTranslator;
+import org.intermine.webservice.exceptions.BadRequestException;
 import org.intermine.webservice.query.result.QueryResultRequestParser;
 import org.intermine.webservice.query.result.WebServiceRequestParser;
 
 /**
  * Processes service request. Evaluates parameters and validates them and check if 
  * its combination is valid. 
+ * 
  * @author Jakub Kulaviak
  **/
 public class TemplateResultRequestParser extends WebServiceRequestParser  
 {
     private static final String NAME_PARAMETER = "name";
-    
-    private List<String> errors = new ArrayList<String>();
     
     private HttpServletRequest request;
     
@@ -67,7 +67,6 @@ public class TemplateResultRequestParser extends WebServiceRequestParser
         input.setComputeTotalCount(parseComputeTotalCountParameter(request));
         input.setName(getRequiredStringParameter(NAME_PARAMETER));
         input.setConstraints(parseConstraints(request));
-        input.setErrors(getErrors());
     }
 
     private boolean parseComputeTotalCountParameter(HttpServletRequest request) {
@@ -93,23 +92,23 @@ public class TemplateResultRequestParser extends WebServiceRequestParser
             String extraValue = request.getParameter(extraParameter);
             
             if (opString != null && opString.length() > 0 && op == null) {
-                addError("invalid parameter: " + opParameter + " with value " 
+                throw new BadRequestException("invalid parameter: " + opParameter + " with value " 
                         + opString + " It must be valid operation code. Special characters "
                         + "must be encoded in request. See help for 'url encoding'.");
             }
 
             if (isPresent(op) && !isPresent(value)) {
-                addError("invalid parameter: " + valueParameter 
+                throw new BadRequestException("invalid parameter: " + valueParameter 
                         + " Operation was specified, but not value.");
             }
             
             if (isPresent(value) && !isPresent(op)) {
-                addError("invalid parameter: " + opParameter 
+                throw new BadRequestException("invalid parameter: " + opParameter 
                     + " Value was specified, but not operation.");
             }
             
             if (isPresent(extraValue) && (!isPresent(op) || !isPresent(value))) {
-                addError("invalid parameter: " + extraParameter 
+                throw new BadRequestException("invalid parameter: " + extraParameter 
                         + " Extra value was specified, but not operation or value.");
             }
             
@@ -131,30 +130,9 @@ public class TemplateResultRequestParser extends WebServiceRequestParser
     private String getRequiredStringParameter(String name) {
         String param = request.getParameter(name);
         if (param == null || param.equals("")) {
-            addError("invalid required parameter: " + name);
-            return null;
+            throw new BadRequestException("Missing required parameter: " + name);
         } else {
             return param;
         }
-    }
-    
-    private void addError(String error) {
-        errors.add(error);
-    }
-
-    /**
-     * Returns errors occurred  during request parsing.  
-     * @return errors
-     */
-    public List<String> getErrors() {
-        return errors;
-    }
-
-    /**
-     * Sets errors occurred during request parsing.
-     * @param errors errors
-     */
-    public void setErrors(List<String> errors) {
-        this.errors = errors;
-    }
+    }    
 }

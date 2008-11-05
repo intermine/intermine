@@ -25,15 +25,15 @@ public class StatusDictionary
     public static String getDescription(int statusCode) {
         switch (statusCode) {
         case Output.SC_BAD_REQUEST:
-            return "There is a problem on the client side (In the browser). Bad request.";
+            return "There is a problem on the client side (in the browser). Bad request. ";
         case Output.SC_FORBIDDEN:
-            return "Forbidden.";
+            return "Forbidden. ";
         case Output.SC_INTERNAL_SERVER_ERROR:
-            return "Internal server error.";
+            return "Internal server error. ";
         case Output.SC_NO_CONTENT:
-            return "Resource representation is empty.";
+            return "Resource representation is empty. ";
         case Output.SC_NOT_FOUND:
-            return "Resource not found.";
+            return "Resource not found. ";
         case Output.SC_OK:
             return "OK";
         default:

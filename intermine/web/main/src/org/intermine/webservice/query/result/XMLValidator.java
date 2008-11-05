@@ -18,7 +18,7 @@ import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 
 import org.apache.log4j.Logger;
-import org.intermine.webservice.WebServiceException;
+import org.intermine.webservice.exceptions.InternalErrorException;
 import org.xml.sax.InputSource;
 import org.xml.sax.SAXParseException;
 
@@ -60,7 +60,7 @@ public class XMLValidator
                 // it is displayed to  user
             }
         } catch (Exception ex) {
-            throw new WebServiceException("XML validation failed.", ex);
+            throw new InternalErrorException("XML validation failed.", ex);
         } 
     }
 

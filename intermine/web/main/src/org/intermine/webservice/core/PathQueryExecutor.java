@@ -19,14 +19,13 @@ import javax.servlet.http.HttpServletRequest;
 import org.intermine.objectstore.ObjectStore;
 import org.intermine.objectstore.ObjectStoreException;
 import org.intermine.objectstore.query.Query;
-import org.intermine.objectstore.query.QueryNode;
 import org.intermine.objectstore.query.QuerySelectable;
 import org.intermine.objectstore.query.Results;
 import org.intermine.pathquery.PathQuery;
 import org.intermine.web.logic.Constants;
 import org.intermine.web.logic.bag.InterMineBag;
 import org.intermine.web.logic.query.MainHelper;
-import org.intermine.webservice.WebServiceException;
+import org.intermine.webservice.exceptions.InternalErrorException;
 
 
 /**
@@ -77,7 +76,7 @@ public class PathQueryExecutor
             query = MainHelper.makeQuery(pathQuery, getSavedBags(), pathToQueryNode,
                     servletContext, null);
         } catch (ObjectStoreException ex) {
-            throw new WebServiceException("Making InterMineQuery failed.", ex);
+            throw new InternalErrorException(ex);
         }        
     }
 

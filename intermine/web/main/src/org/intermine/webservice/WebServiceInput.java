@@ -10,8 +10,6 @@ package org.intermine.webservice;
  *
  */
 
-import java.util.ArrayList;
-import java.util.List;
 
 
 /**
@@ -20,39 +18,5 @@ import java.util.List;
  **/
 public class WebServiceInput
 {
-
-    private List<String> errors = new ArrayList<String>();
-
-    /**
-     * Returns errors messages
-     * @return errors
-     */
-    public List<String> getErrors() {
-        return errors;
-    }
-
-    /**
-     * Set error messages.
-     * @param errors errors
-     */
-    public void setErrors(List<String> errors) {
-        this.errors = errors;
-    }
-    
-    /**
-     * Finds out if input is valid.
-     * @return true if input is valid
-     */
-    public boolean isValid() {
-        return errors.size() == 0;
-    }
-    
-    /**
-     * Add error message
-     * @param error error
-     */
-    public void addError(String error) {
-        errors.add(error);
-    }
     
 }
