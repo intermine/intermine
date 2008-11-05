@@ -4,7 +4,7 @@
 umask 0007
 
 # for TASK in production sybase java lims perl; do
-for TASK in java cvs perl; do
+for TASK in java cvs perl svn; do
     file=`pathfinder INIT bash/${TASK}.bashrc`
     if [ "$file" ]; then
 	. $file
