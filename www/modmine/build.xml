@@ -1,22 +1,5 @@
 <project name="modmine-www" default="transform-site" basedir=".">
 
-  <property name="build.properties.local.base" 
-            value="${user.home}/build.properties.modmine"/>
-  <condition property="build.properties.local" value="${build.properties.local.base}.${release}"
-             else="${build.properties.local.base}">
-    <available file="${build.properties.local.base}.${release}"/>
-  </condition>
-  <available file="${build.properties.local}" property="build.properties.local.present"/>
-  <fail message="${build.properties.local} not found" unless="build.properties.local.present"/>
-  
-  <property name="runtime.properties.local.base" value="${user.home}/modmine.properties" />
-  <condition property="runtime.properties.local" value="${runtime.properties.local.base}.${release}"
-             else="${runtime.properties.local.base}">
-    <available file="${runtime.properties.local.base}.${release}"/>
-  </condition>
-  <available file="${runtime.properties.local}" property="runtime.properties.local.present"/>
-  <fail message="${runtime.properties.local} not found" unless="runtime.properties.local.present"/>
-  
   <property name="common" location="../common"/>
   <property name="common.lib" location="${common}/lib"/>
   <property name="common.scripts" location="${common}/scripts"/>
@@ -37,11 +20,28 @@
     <fileset dir="${library.xml.basedir}/im-ant-tasks/lib" includes="*.jar"/>
   </path>
 
-  <target name="prepare">
-    <property name="build.properties.local" value="${user.home}/build.properties.modmine" />
-    <property file="${build.properties.local}"/>
+  <target name="-set-release-suffix-exists" if="release">
+    <property name="release-suffix" value=".${release}"/>
+  </target>
 
-   <copy todir="${build.www}">
+  <target name="-set-release-suffix-not-exists" unless="release">
+    <!-- default to no suffix -->
+    <property name="release-suffix" value=""/>
+  </target>
+
+  <target name="-init" depends="-set-release-suffix-exists, -set-release-suffix-not-exists"/>
+
+  <target name="prepare" depends="-init">
+    <property name="runtime.properties.base" value="${user.home}/.intermine/modmine.properties" />
+    <property name="runtime.properties" value="${runtime.properties.base}${release-suffix}" />
+    <condition property="runtime.properties.exists">
+      <available file="${runtime.properties}"/>
+    </condition>
+    <fail message="${runtime.properties} not found" unless="runtime.properties.exists"/>
+
+    <property file="${runtime.properties}"/>
+
+    <copy todir="${build.www}">
       <fileset dir="${src.www}">
         <include name="**/*"/>
       </fileset>
@@ -75,7 +75,7 @@
 
   <target name="style-site" depends="prepare">
     <xslt basedir="${src.www}/" destdir="${dist.www}" extension=".${output.extension}"
-           style="${common.xslt}/new.xsl" 
+           style="${common.xslt}/new.xsl"
            force="false">
       <classpath refid="xslt.class.path"/>
       <include name="**/*.html"/>
@@ -91,12 +91,12 @@
       <param name="outputext" expression="${output.extension}" />
     </xslt>
   </target>
-  
-  <target name="generate-help" depends="prepare" 
+
+  <target name="generate-help" depends="prepare"
           description="Generate html for tour and copy images to build directory">
- 
+
      <mkdir dir="${dist.www}/help"/>
- 
+
      <exec executable="${common.scripts}/process_help.pl">
        <arg value="${src.www}/help/whatcanidoonthispage/whatcanido.html"/>
        <arg value="modENCODE-mine Help"/>
@@ -110,8 +110,8 @@
       </fileset>
     </copy>
   </target>
-  
-  <target name="generate-tour" depends="prepare" 
+
+  <target name="generate-tour" depends="prepare"
           description="Generate html for tour and copy images to build directory">
      <mkdir dir="${dist.www}/help/tour"/>
 
@@ -129,7 +129,7 @@
     </copy>
   </target>
 
-  <target name="generate-tutorials" depends="prepare" 
+  <target name="generate-tutorials" depends="prepare"
           description="Generate html for tour and copy images to build directory">
      <mkdir dir="${dist.www}/help/tutorial1"/>
      <mkdir dir="${dist.www}/help/tutorial2"/>
@@ -162,10 +162,10 @@
   </target>
 
 
-  <target name="generate-sitemap" depends="prepare" 
+  <target name="generate-sitemap" depends="prepare"
           description="Generate sitemap for website">
 
-     <exec executable="${common.scripts}/sitemap_gen.pl">  
+     <exec executable="${common.scripts}/sitemap_gen.pl">
           <arg value="${dist.www}"/>
      </exec>
   </target>
@@ -185,7 +185,7 @@
         <exclude name="html/**/*"/>
       </fileset>
       <xmlcatalog>
-        <dtd 
+        <dtd
           publicId="-//W3C//DTD XHTML 1.0 Transitional//EN"
           location="${cache.dtd}/xhtml1-transitional.dtd"/>
         </xmlcatalog>
