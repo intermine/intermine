@@ -197,8 +197,8 @@ system ("ant -Drelease=r$new_version create-db-userprofile >> $LOG_FILENAME 2>&1
 #################
 #warn "stopping old webapp (r$current_version)\n";
 
-#system ("ant -Drelease=r$current_version stop-webapp >> $LOG_FILENAME 2>&1") == 0
-#  or die_with_log "can't stop webapp r$current_version: $!";
+system ("ant -Drelease=r$current_version stop-webapp >> $LOG_FILENAME 2>&1") == 0
+  or die_with_log "can't stop webapp r$current_version: $!";
 
 
 #################
@@ -224,8 +224,6 @@ warn "release new webapp r$new_version\n";
 my @TARGETS = qw(remove-webapp release-webapp);
 system ("ant -Drelease=r$new_version @TARGETS >> $LOG_FILENAME 2>&1") == 0
   or die_with_log "can't write userprofile XML: $?";
-
-exit;
 
 #################
 warn "update apache rewrite/redirect configuration\n";
