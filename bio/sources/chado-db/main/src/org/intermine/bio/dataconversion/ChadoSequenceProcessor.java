@@ -426,7 +426,7 @@ public class ChadoSequenceProcessor extends ChadoProcessor
      * Do any extra processing that is needed before the converter starts querying features
      * @param connection the Connection
      */
-    protected void earlyExtraProcessing(Connection connection) 
+    protected void earlyExtraProcessing(Connection connection)
     throws ObjectStoreException, SQLException {
         // override in subclasses as necessary
     }
@@ -475,6 +475,10 @@ public class ChadoSequenceProcessor extends ChadoProcessor
             Integer srcFeatureId = new Integer(res.getInt("srcfeature_id"));
             int start = res.getInt("fmin") + 1;
             int end = res.getInt("fmax");
+            if (start < 1 || end < 1) {
+                // ignore as this location not legal in flymine
+                continue;
+            }
             int strand = res.getInt("strand");
             if (featureMap.containsKey(srcFeatureId)) {
                 FeatureData srcFeatureData = featureMap.get(srcFeatureId);
