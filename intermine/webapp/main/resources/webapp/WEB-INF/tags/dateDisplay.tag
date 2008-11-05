@@ -5,12 +5,19 @@
 <%@ taglib tagdir="/WEB-INF/tags" prefix="im"%>
 
 <%@ attribute name="date" required="true" type="java.util.Date" %>
-<%@ attribute name="type" type="java.lang.Boolean" %>
+<%@ attribute name="type" type="java.lang.String" %>
 
 <span style="white-space: nowrap">
   <c:choose>
-    <c:when test="${!empty type && type == 'short'}">
-      <fmt:formatDate value="${date}" type="both" pattern="yyyy-MM-dd"/>
+    <c:when test="${!empty type}">
+      <c:choose>
+      <c:when test="${type == 'longDate'}">
+            <fmt:formatDate value="${date}" type="date" dateStyle="long" />
+      </c:when>
+      <c:otherwise>
+         <fmt:formatDate value="${date}" type="both" pattern="yyyy-MM-dd"/>
+      </c:otherwise>
+      </c:choose>
     </c:when>
     <c:otherwise>
       <fmt:formatDate value="${date}" type="both" pattern="yyyy-MM-dd HH:mm z"/>

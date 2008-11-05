@@ -42,7 +42,8 @@
       <fieldconfig fieldExpr="design"/>
       <fieldconfig fieldExpr="factorName"/>
       <fieldconfig fieldExpr="factorType"/>
-      <fieldconfig fieldExpr="experimentDate" displayer="model/dateDisplayer.jsp" />
+      <fieldconfig fieldExpr="experimentDate" displayer="model/dateDisplayer.jsp" showInResults="false" showInInlineCollection="false" />
+      <fieldconfig fieldExpr="publicReleaseDate" displayer="model/dateDisplayer.jsp" showInResults="false"  showInInlineCollection="false" />
     </fields>
   </class>
 

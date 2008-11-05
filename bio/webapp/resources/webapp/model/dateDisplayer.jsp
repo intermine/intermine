@@ -7,5 +7,5 @@
 <tiles:importAttribute name="expr" ignore="false"/>
 <html:xhtml/>
 <im:eval evalExpression="interMineObject.${expr}" evalVariable="outVal"/>
-<im:dateDisplay date="${outVal}" type="short"/>
+<im:dateDisplay date="${outVal}" type="longDate"/>
 <!-- /dateDisplayer.jsp -->
