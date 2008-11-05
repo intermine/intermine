@@ -13,10 +13,8 @@ package org.intermine.web.struts;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.io.PrintWriter;
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.LinkedList;
-import java.util.List;
 import java.util.Map;
 
 import javax.servlet.ServletContext;
@@ -24,7 +22,6 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
-import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionForward;
@@ -80,10 +77,10 @@ public class TableExportAction extends InterMineAction
      */
     @Override
     public ActionForward execute(ActionMapping mapping,
-                                 ActionForm form,
-                                 HttpServletRequest request,
-                                 HttpServletResponse response)
-        throws Exception {
+            ActionForm form,
+            HttpServletRequest request,
+            HttpServletResponse response)
+    throws Exception {
         HttpSession session = request.getSession();
         TableExportForm tef = (TableExportForm) form;
         String type = tef.getType();
@@ -136,7 +133,7 @@ public class TableExportAction extends InterMineAction
      * Copy the old PagedTable and make one with the new paths
      */
     private PagedTable reorderPagedTable(PagedTable pt, String pathsString,
-                                         HttpServletRequest request) throws ObjectStoreException {
+            HttpServletRequest request) throws ObjectStoreException {
         HttpSession session = request.getSession();
         Profile profile = (Profile) session.getAttribute(Constants.PROFILE);
         ServletContext servletContext = session.getServletContext();
@@ -144,14 +141,14 @@ public class TableExportAction extends InterMineAction
         Model model = os.getModel();
         PathQuery newPathQuery = new PathQuery(pt.getWebTable().getPathQuery());
         newPathQuery.setView(new LinkedList<String>(StringUtil
-				.serializedSortOrderToMap(pathsString).keySet()));
+                .serializedSortOrderToMap(pathsString).keySet()));
         Map<String, QuerySelectable> pathToQueryNode = new HashMap();
         Map<String, BagQueryResult> pathToBagQueryResult = new HashMap();
         Map<String, InterMineBag> allBags =
             WebUtil.getAllBags(profile.getSavedBags(), servletContext);
         return SessionMethods.doPathQueryGetPagedTable(newPathQuery, servletContext, os, model,
-                                                       pathToQueryNode, pathToBagQueryResult,
-                                                       allBags);
+                pathToQueryNode, pathToBagQueryResult,
+                allBags);
     }
 
     private ActionForward processException(ActionMapping mapping,
@@ -170,22 +167,22 @@ public class TableExportAction extends InterMineAction
         // If response wasn't commited then we can display error, else
         // there is only possibility to append error message to the end.
         if (!response.isCommitted()) {
-          PrintWriter writer = null;
-          response.reset();
-          try {
-              // Tricky. This is called to verify, that if the error will be forwarded to jsp
-              // page that it will be displayed. If getWriter() method throws exception there it
-              // means that getOutputStream() method already was called and displaying error message
-              // in proper jsp error page would fail.
-              response.getWriter();
-              recordError(new ActionMessage("errors.export.displayonlyparameters", msg), request);
-              return mapping.findForward("error");
-          } catch (IllegalStateException ex) {
-              OutputStream out = response.getOutputStream();
-              writer = new PrintWriter(out);
-              writer.println(msg);
-              writer.flush();
-          }
+            PrintWriter writer = null;
+            response.reset();
+            try {
+                // Tricky. This is called to verify, that if the error will be forwarded to jsp
+                // page that it will be displayed. If getWriter() method throws exception there it
+                // means that getOutputStream() method already was called and displaying error
+                // message in proper jsp error page would fail.
+                response.getWriter();
+                recordError(new ActionMessage("errors.export.displayonlyparameters", msg), request);
+                return mapping.findForward("error");
+            } catch (IllegalStateException ex) {
+                OutputStream out = response.getOutputStream();
+                writer = new PrintWriter(out);
+                writer.println(msg);
+                writer.flush();
+            }
         } else {
             // Attempt to write error to output stream where data was already sent.
             // If there are textual data user will see the error else it will
