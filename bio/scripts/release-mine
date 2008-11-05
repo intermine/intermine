@@ -4,12 +4,8 @@
 #
 # steps:
 #  - update from subversion
-#  - find current version from properties file
-#  - create new properties file
-#   * update version
-#   * update deploy location
-#  - createdb new databases <minename>-r<version> and <minename>-r<version>-userprofile
-#  - load dump file of production database (if needed)
+#  - find current and previous versions from properties file
+#  - createdb new userprofile database <minename>-r<version>-userprofile
 #  - precompute queries and templates
 #  - create-db-userprofile with new properties file
 #  - webapp clean-all
@@ -34,23 +30,26 @@ use warnings;
 
 use File::Copy;
 use Date::Manip;
+use Cwd;
 
-use InterMine::Util qw(get_property_value);
+use InterMine::Util qw(get_property_value get_latest_properties_version $INTERMINE_CONF_DIR);
 
-if (@ARGV != 1) {
-  die "$0: error, this script needs one argument - the mine name\n";
+if (@ARGV != 0) {
+  die "$0: error, this script needs no arguments\n";
 }
 
-my $project_name = shift;
+my $current_dir = getcwd();
+
+my $project_name = ($current_dir =~ m:.*/(.*):)[0];
 
 my $PROP_FILE_PREFIX = "$project_name.properties";
-my $WEBAPP_DIR = "$ENV{HOME}/svn/trunk/$project_name/webapp";
+my $WEBAPP_DIR = "$current_dir/webapp";
 my $APACHE_CONF_FILENAME = '/etc/httpd/conf.d/proxy_ajp.conf';
 my $OLDEST_VERSION = 1;
 my $USERPROFILE_XML_FILENAME = "build/userprofile.xml";
 my $USERPROFILE_XML_BACKUP_FILENAME = "$ENV{HOME}/backups/userprofile.xml";
 my $START_DATE = UnixDate("now", "%O");
-my $LOG_FILENAME = "$ENV{HOME}/logs/$START_DATE.log";
+my $LOG_FILENAME = "$current_dir/$START_DATE.log";
 my $GBROWSE_CONF_DIR = '/gbrowse/etc/gbrowse.conf/';
 
 my $rel_date = `date +"(%d%b%Y)"`; #it appears with the release version
@@ -64,15 +63,15 @@ sub die_with_log
 
 # start processing
 
-if (!-d "intermine") {
-  die "$0: no intermine directory - this script must be run in a checkout\n";
+if (!-d 'dbmodel') {
+  die "$0: no dbmodel directory - this script must be run in a mine directory\n";
 }
 
 
 #################
 
 warn "subversion update\n";
-system ("svn update >> $LOG_FILENAME 2>&1") == 0
+system ("cd ..; svn update --accept postpone >> $LOG_FILENAME 2>&1") == 0
   or die_with_log "subversion update failed: $?";
 
 #################
@@ -88,7 +87,7 @@ warn "current properties file: $current_prop_filename\n";
 
 my $new_version = $current_version + 1;
 
-my $new_prop_filename = "$PROP_FILE_PREFIX.r$new_version";
+my $new_prop_filename = "$INTERMINE_CONF_DIR/$PROP_FILE_PREFIX.r$new_version";
 
 warn "reading properties from: $new_prop_filename\n";
 
@@ -102,11 +101,15 @@ if ($prod_host =~ /(.+):(\d+)/) {
   $prod_port = $2;
 }
 
+my $new_userprofile = get_property_value("db.userprofile-production.datasource.databaseName",
+                                         $new_prop_filename);
+
 warn "read properties:\n";
 warn "  prod_host: $prod_host\n";
 warn "  prod_port: " . (defined($prod_port) ? $prod_port : "default") . "\n";
 warn "  prod_db: $prod_db\n";
 warn "  prod_user: $prod_user\n";
+warn "  new_userprofile: $new_userprofile:\n";
 
 # sub create_gbrowse_conf
 # {
@@ -138,12 +141,10 @@ warn "  prod_user: $prod_user\n";
 #   close $old_file or die "can't close $old_file_name: $!\n";
 # }
 
-# create new databases
 
-# system ("createdb -h $prod_host -U $prod_user -E SQL_ASCII -e $project_name-r$new_version >> $LOG_FILE 2>&1") == 0
-#   or die_with_log "createdb failed: $?\n";
+# create new userprofile database
 
-system ("createdb -h $prod_host -U $prod_user -E SQL_ASCII -e $project_name-r$new_version-userprofile >> $LOG_FILENAME 2>&1") == 0
+system ("createdb -h $prod_host -U $prod_user -E SQL_ASCII -e $new_userprofile >> $LOG_FILENAME 2>&1") == 0
    or die_with_log "createdb failed: $?";
 
 
@@ -159,16 +160,17 @@ if (@ARGV == 1) {
 #################
 # precompute queries and templates
 
+chdir $WEBAPP_DIR
+  or die "can't directory change to $WEBAPP_DIR (current dir:", $current_dir, ")\n";
+
 # XXX TODO
 
 
 #################
 warn "webapp clean-all\n";
 
-chdir $WEBAPP_DIR or die "can't directory change to $WEBAPP_DIR\n";
-
 system ("ant -Drelease=r$new_version clean-all >> $LOG_FILENAME 2>&1") == 0
-  or die_with_log "create-db-userprofile failed: $?";
+  or die_with_log "failed to run clean-all failed: $?";
 
 
 #################
@@ -177,7 +179,7 @@ warn "building new webapp\n";
 chdir $WEBAPP_DIR or die "can't directory change to $WEBAPP_DIR\n";
 
 system ("ant -Drelease=r$new_version default >> $LOG_FILENAME 2>&1") == 0
-  or die_with_log "create-db-userprofile failed: $?";
+  or die_with_log "failed to build webapp: $?";
 
 #################
 
