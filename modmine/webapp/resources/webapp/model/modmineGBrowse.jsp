@@ -5,8 +5,10 @@
 <!-- modmineGBrowse.jsp -->
 <fmt:setBundle basename="model"/>
 
-<c:if test="${(!empty object.chromosomeLocation && !empty object.chromosome) 
-                || cld.unqualifiedName == 'Chromosome'}">
+<c:if test="${((!empty object.chromosomeLocation && !empty object.chromosome) 
+                || cld.unqualifiedName == 'Chromosome')
+                && cld.unqualifiedName != 'Exon'
+                && cld.unqualifiedName != 'CDS'}">
 
   <c:set var="type" value="${cld.unqualifiedName}s"/>
 
@@ -38,28 +40,28 @@
   </c:if>
 
   <c:if test="${cld.unqualifiedName == 'CDS'}">
-    <%-- special case CDS FlyMineInternalIDs aren't in the GBrowse database,
-         so use gene ID instead, but add the CDS track --%>
+    <%-- special case show genes instead of cdss --%>
     <c:set var="name" value="${object.gene.primaryIdentifier}"/>
     <c:set var="type" value="${type}+CDSs"/>
     <c:set var="label" value="${label}-CDSs"/>
   </c:if>
 
-  <html:link href="${WEB_PROPERTIES['gbrowse.prefix']}/${WEB_PROPERTIES['gbrowse.database.source']}?source=${WEB_PROPERTIES['gbrowse.database.source']};label=${label};name=${name};width=750">
+  <c:choose>
+    <c:when test="${object.organism.taxonId == 6239}">
+      <c:set var="gbrowseSource" value="worm"/>
+    </c:when>
+    <c:otherwise>
+      <c:set var="gbrowseSource" value="fly"/>
+    </c:otherwise>
+  </c:choose>
+
+  <html:link href="${WEB_PROPERTIES['gbrowse.prefix']}/${gbrowseSource}?source=${gbrowseSource};type=${label};name=${name};width=750">
     <div>
-      <fmt:message key="locatedSequenceFeature.GBrowse.message"/>
+      modENCODE genome browser view (GBrowse):
     </div>
     <c:if test="${cld.unqualifiedName != 'Chromosome'}">
       <div>
-        <c:choose>
-          <c:when test="${object.organism.taxonId == 6239}">
-            <c:set var="gbrowseSource" value="worm"/>
-          </c:when>
-          <c:otherwise>
-            <c:set var="gbrowseSource" value="fly"/>
-          </c:otherwise>
-        </c:choose>
-        <html:img style="border: 1px solid black" src="${WEB_PROPERTIES['gbrowse_image.prefix']}/${WEB_PROPERTIES['gbrowse.database.source']}?source=${gbrowseSource;type=${type};name=${name};width=400;b=1" title="GBrowse"/>
+        <html:img style="border: 1px solid black" src="${WEB_PROPERTIES['gbrowse_image.prefix']}/${gbrowseSource}?source=${gbrowseSource};type=${type};name=${name};width=400;b=1" title="GBrowse"/>
       </div>
     </c:if>
   </html:link>
