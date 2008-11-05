@@ -12,13 +12,17 @@ package org.intermine.webservice.query.result;
 
 import javax.servlet.http.HttpServletRequest;
 
+import org.intermine.webservice.exceptions.BadRequestException;
+
 /**
  * Processes service request. Evaluates parameters and validates them and check if 
  * its combination is valid. 
+ * 
  * @author Jakub Kulaviak
  **/
 public class QueryResultRequestParser extends WebServiceRequestParser  
 {
+    /** Name of parameter with query **/ 
     public static final String QUERY_PARAMETER = "query";
 
     /** Compute total count parameter name. **/
@@ -34,11 +38,6 @@ public class QueryResultRequestParser extends WebServiceRequestParser
         this.request = request;
     }
 
-    private String invalidParameterMsg(String name, String value) {
-        return "invalid " + name +  " parameter: " + value;
-    }
-
-    
     /**
      * Returns parsed parameters in parameter object - so this 
      * values can be easily get from this object.
@@ -56,7 +55,8 @@ public class QueryResultRequestParser extends WebServiceRequestParser
         
         String xmlQuery = request.getParameter(QUERY_PARAMETER);
         if (xmlQuery == null || xmlQuery.equals("")) {
-            input.addError("invalid " + QUERY_PARAMETER + " parameter (empty or missing)");
+            throw new BadRequestException("invalid " + QUERY_PARAMETER 
+                    + " parameter (empty or missing)");
         } else {
             input.setXml(xmlQuery);
         }

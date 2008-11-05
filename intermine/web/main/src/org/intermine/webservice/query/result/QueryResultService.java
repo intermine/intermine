@@ -31,12 +31,10 @@ import org.intermine.web.logic.session.SessionMethods;
 import org.intermine.web.struts.InterMineAction;
 import org.intermine.webservice.PagedServiceInput;
 import org.intermine.webservice.WebService;
-import org.intermine.webservice.WebServiceConstants;
-import org.intermine.webservice.WebServiceException;
 import org.intermine.webservice.core.PathQueryExecutor;
 import org.intermine.webservice.core.ResultProcessor;
+import org.intermine.webservice.exceptions.InternalErrorException;
 import org.intermine.webservice.output.MemoryOutput;
-import org.intermine.webservice.output.Output;
 
 /**
  * Executes query and returns results. Other parameters in request can specify 
@@ -68,20 +66,16 @@ public class QueryResultService extends WebService
             HttpServletResponse response) {
 
         QueryResultInput input = getInput();
-        if (!validate(input)) { return; }
         
         savedBags = new HashMap<Object, InterMineBag>();
         
         PathQueryBuilder builder = new PathQueryBuilder(input.getXml(),
-                getXMLSchemaUrl(),
-                request.getSession().getServletContext(), savedBags);
-        if (builder.isQueryValid()) {
-                PathQuery query = builder.getQuery();
-                runPathQuery(query, input.getStart(), input.getMaxCount(), 
-                        input.isComputeTotalCount(), null, null, input, null);
-        } else {
-            output.addErrors(builder.getErrors(), Output.SC_BAD_REQUEST);
-        }
+        getXMLSchemaUrl(),
+        request.getSession().getServletContext(), savedBags);
+
+        PathQuery query = builder.getQuery();
+        runPathQuery(query, input.getStart(), input.getMaxCount(), 
+                input.isComputeTotalCount(), null, null, input, null);
     }
 
     private void forward(PathQuery pathQuery, String title, String description, 
@@ -104,7 +98,7 @@ public class QueryResultService extends WebService
             try {   
                 getHtmlForward().forward(request, response);
             } catch (Exception e) {
-                throw new WebServiceException(WebServiceConstants.SERVICE_FAILED_MSG, e);
+                throw new InternalErrorException(e);
             } 
         }        
     }
@@ -197,7 +191,7 @@ public class QueryResultService extends WebService
                     request.getServerPort(), relPath);
             return url.toString();
         } catch (MalformedURLException e) {
-            throw new WebServiceException("Invalid resource location.", e);
+            throw new InternalErrorException(e);
         }
     }
    

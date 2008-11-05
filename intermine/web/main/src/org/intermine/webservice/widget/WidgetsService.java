@@ -70,9 +70,6 @@ public class WidgetsService extends WebService
     protected void execute(HttpServletRequest request, HttpServletResponse response)
                     throws Exception {
         WidgetsServiceInput widgetsServiceInput = getInput();
-        if (!validate(widgetsServiceInput)) {
-            return;
-        }
         ServletContext servletContext = request.getSession().getServletContext();
         Profile profile = (Profile) request.getSession().getAttribute(Constants.PROFILE);
         

@@ -10,25 +10,26 @@ package org.intermine.webservice.query.result;
  *
  */
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
 import javax.servlet.ServletContext;
 
+import org.intermine.objectstore.query.PathQueryUtil;
 import org.intermine.pathquery.PathQuery;
 import org.intermine.web.logic.ServletMethods;
 import org.intermine.web.logic.bag.InterMineBag;
+import org.intermine.webservice.exceptions.BadRequestException;
 
 
 /**
  * PathQueryBuilder builds PathQuery object from xml and validates it. 
+ *
  * @author Jakub Kulaviak
  **/
 public class PathQueryBuilder 
 {
 
-    private List<String> errors = new ArrayList<String>();
     private PathQuery pathQuery;
 
     /**
@@ -52,25 +53,29 @@ public class PathQueryBuilder
                 pathQuery = ServletMethods.fromXml(xml, savedBags,
                         servletContext);                
             } catch (Exception ex) {
-                errors.add("XML is well formatted but contains invalid model data. "
+                String msg = "XML is well formatted but contains invalid model data. "
                         + "Check that your constraints are correct "
-                        + "and query corresponds to model. Cause:" + ex.getMessage());
-                return;
+                        + "and query corresponds to model. Cause:" + ex.getMessage();
+                throw new BadRequestException(msg, ex);
             }
             if (!pathQuery.isValid()) {
-                errors = convertProblems(pathQuery.getProblems());
+                throw new BadRequestException(PathQueryUtil.getProblemsSummary(pathQuery.
+                        getProblems()));
             }
         } else {
-            errors = validator.getErrorsAndWarnings();
+            throw new BadRequestException(formatMessage(validator.getErrorsAndWarnings()));
         }
     }
 
-    /**
-     * Returns true if query is valid.
-     * @return true if query  is valid
-     */
-    public boolean isQueryValid() {
-        return getErrors().size() == 0;
+    private String formatMessage(List<String> msgs) {
+        StringBuilder sb = new StringBuilder();
+        for (String msg : msgs) {
+            sb.append(msg);
+            if (!msg.endsWith(".")) {
+                sb.append(".");
+            }
+        }
+        return sb.toString();
     }
 
     /**
@@ -79,21 +84,5 @@ public class PathQueryBuilder
      */
     public PathQuery getQuery() {
         return pathQuery;
-    }
-
-    /**
-     * Returns errors that occurred during xml parsing.
-     * @return errors
-     */
-    public List<String> getErrors() {
-        return errors;
-    }
-
-    private List<String> convertProblems(Throwable[] problems) {
-        List<String> ret = new ArrayList<String>();
-        for (int i = 0; i < problems.length; i++) {
-            ret.add(problems[i].getMessage());
-        }
-        return ret;
     }
 }

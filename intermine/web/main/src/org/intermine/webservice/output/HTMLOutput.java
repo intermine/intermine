@@ -11,7 +11,6 @@ package org.intermine.webservice.output;
  */
 
 import java.io.PrintWriter;
-import java.util.List;
 
 /**
  * HTMLOutput extends is similar to MemoryOutput, only difference is, that it prints out errors
@@ -22,6 +21,7 @@ public class HTMLOutput extends MemoryOutput
 {
     
     private PrintWriter writer;
+    
     private boolean htmlHeaderWritten = false;
 
     /**
@@ -30,29 +30,6 @@ public class HTMLOutput extends MemoryOutput
      */
     public HTMLOutput(PrintWriter writer) {
         this.writer = writer;
-    }
-
-    /**
-     * Saves and prints errors.
-     * @param errors error messages
-     * @param statusCode web service status code that should be returned
-     */
-    @Override
-    public void addErrors(List<String> errors, int statusCode) {
-        super.addErrors(errors, statusCode);
-        if (!htmlHeaderWritten) {
-            writer.println("<html>");
-            writer.println("<head>");
-            writer.println("<title>Error</title>");
-            writer.println("</head>");
-            writer.println("<body>");
-            htmlHeaderWritten = true;
-        }
-        for (String error : errors) {
-            writer.print("<div style=\"font-size: 70%; color: red;\">");
-            writer.print(error);
-            writer.println("</div>");
-        }        
     }
     
     /**

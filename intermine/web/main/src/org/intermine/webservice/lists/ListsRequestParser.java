@@ -12,6 +12,8 @@ package org.intermine.webservice.lists;
 
 import javax.servlet.http.HttpServletRequest;
 
+import org.intermine.webservice.exceptions.BadRequestException;
+
 /**
  * Request processor for ListsService that process request, validates it and returns
  * parsed input as a parameter object.
@@ -54,9 +56,8 @@ public class ListsRequestParser
         String publicId = request.getParameter(PUBLIC_ID_PARAMETER);
         String mineId = request.getParameter(MINE_ID_PARAMETER);
         if ((publicId == null && mineId == null) || (publicId != null && mineId != null)) {
-            ret.addError("invalid parameters: " + MINE_ID_PARAMETER + " or " 
+            throw new BadRequestException("invalid parameters: " + MINE_ID_PARAMETER + " or " 
                     + PUBLIC_ID_PARAMETER + " are required.");
-            return ret;
         }
 
         if (publicId != null) {
@@ -65,13 +66,13 @@ public class ListsRequestParser
             if (type != null) {
                 ret.setType(type);
             } else {
-                ret.addError("missing parameter: " + TYPE_PARAMETER);
+                throw new BadRequestException("missing parameter: " + TYPE_PARAMETER);
             }
         } else {
             try {
                 ret.setMineId(Integer.parseInt(mineId));
             } catch (Throwable t) {
-                ret.addError("invalid parameter: " + MINE_ID_PARAMETER);
+                throw new BadRequestException("invalid parameter: " + MINE_ID_PARAMETER);
             }            
         }
         return ret;

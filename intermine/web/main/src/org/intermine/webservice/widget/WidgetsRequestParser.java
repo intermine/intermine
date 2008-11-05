@@ -14,6 +14,8 @@ import java.util.Arrays;
 
 import javax.servlet.http.HttpServletRequest;
 
+import org.intermine.webservice.exceptions.BadRequestException;
+
 /**
  * Request processor for WidgetsService that process request, validates it and returns
  * parsed input as a parameter object.
@@ -65,9 +67,8 @@ public class WidgetsRequestParser
         if (widgetId == null || widgetId.length() <= 0 
                         || className == null || className.length() <= 0
                         || ids == null || ids.length() <= 0) {
-            ret.addError("Parameters: " + WIDGET_ID + ", " + CLASS_NAME + ", "
+            throw new BadRequestException("Parameters: " + WIDGET_ID + ", " + CLASS_NAME + ", "
                          + EXTRA_ATTRIBUTES + ", " + IDS + " are required.");
-            return ret;
         }
         ret.setClassName(className);
         ret.setExtraAttributes(Arrays.asList(extraAttributes.split(",")));

@@ -20,7 +20,7 @@ import org.intermine.util.TypeUtil;
 import org.intermine.web.logic.template.ConstraintValueParser;
 import org.intermine.web.logic.template.ParseValueException;
 import org.intermine.web.logic.template.TemplateQuery;
-import org.intermine.webservice.WebServiceException;
+import org.intermine.webservice.exceptions.BadRequestException;
 
 
 /**
@@ -75,7 +75,7 @@ public class TemplateConfigurator
             ret = new ConstraintValueParser().parse(load.getValue(), getType(node), 
                     load.getConstraintOp(), locale);    
         } catch (ParseValueException ex) {
-            throw new WebServiceException("invalid value: " + load.getValue() + ". "
+            throw new BadRequestException("invalid value: " + load.getValue() + ". "
                     + ex.getMessage());                
         }
         return ret;
@@ -90,7 +90,7 @@ public class TemplateConfigurator
             ret = new ConstraintValueParser().parse(load.getExtraValue(), getType(node), 
                     load.getConstraintOp(), locale);    
         } catch (ParseValueException ex) {
-            throw new WebServiceException("invalid value: " + load.getExtraValue() + ". "
+            throw new BadRequestException("invalid value: " + load.getExtraValue() + ". "
                     + ex.getMessage());                
         }
         return ret;
@@ -111,7 +111,7 @@ public class TemplateConfigurator
         if (newConstraintIt.hasNext()) {
             return newConstraintIt.next();
         } else {
-            throw new WebServiceException("There is insufficient number of constraints in your " 
+            throw new BadRequestException("There is insufficient number of constraints in your " 
                     + "request. Template has more constrains than you have specified.");
         }
     }    

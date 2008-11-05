@@ -25,7 +25,8 @@ import org.intermine.web.struts.TemplateAction;
 import org.intermine.web.struts.TemplateForm;
 import org.intermine.web.util.URLGenerator;
 import org.intermine.webservice.core.TemplateManager;
-import org.intermine.webservice.output.Output;
+import org.intermine.webservice.exceptions.BadRequestException;
+import org.intermine.webservice.exceptions.ResourceNotFoundException;
 import org.intermine.webservice.query.result.QueryResultService;
 
 /**
@@ -42,16 +43,11 @@ public class TemplateResultService extends QueryResultService
     protected void execute(HttpServletRequest request,
             HttpServletResponse response) {
 
-        TemplateResultInput input = getInput();
-        if (!validate(input)) {
-            return;
-        }
-        
+        TemplateResultInput input = getInput();        
         TemplateQuery template = new TemplateManager(request).getGlobalTemplate(input.getName());
         if (template == null) {
-            output.addError("public template with name '" + input.getName() 
-                    + "' doesn't exist.", Output.SC_NOT_FOUND);
-            return;
+            throw new ResourceNotFoundException("public template with name '" + input.getName() 
+                    + "' doesn't exist.");
         }
         template = new TemplateConfigurator().getConfiguredTemplate(template, 
                 input.getConstraints(), getLocale(request));
@@ -63,7 +59,7 @@ public class TemplateResultService extends QueryResultService
             String msg = "Required data source (template) is outdated and is in conflict "
                 + "with model: " 
                 + PathQueryUtil.getProblemsSummary(template.getPathQuery().getProblems());
-            output.addError(msg, Output.SC_BAD_REQUEST);           
+            throw new BadRequestException(msg);
         }
     }
 

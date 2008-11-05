@@ -14,8 +14,6 @@ import java.io.PrintWriter;
 import java.util.List;
 import java.util.Map;
 
-import org.intermine.webservice.WebServiceException;
-
 /**
  * Immediately as the data or error messages are added they are streamed via http connection.
  * So the data can not be retrieved later. Before streaming they are formatted with 
@@ -93,7 +91,7 @@ public class StreamedOutput extends Output
     @Override
     public void setHeaderAttributes(Map<String, String> attributes) {
         if (headerPrinted) {
-            throw new WebServiceException("Attempt to set header attributes "
+            throw new RuntimeException("Attempt to set header attributes "
                 + "althought header was printed already.");
         }
         super.setHeaderAttributes(attributes);

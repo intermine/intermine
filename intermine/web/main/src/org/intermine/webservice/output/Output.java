@@ -10,27 +10,21 @@ package org.intermine.webservice.output;
  *
  */
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
 
 /**
- * Abstract class representing output of web service or something else.
- * Data written to output can be streamed to user via http or saved in memory or something else.
- * It depends at implementation.
- * If the data are saved in memory they can be retrieved later. 
- * @author Jakub Kulaviak
+ * Abstract class representing an output of a web service.
+ * It depends on the output implementation if the written data are streamed to the user via http 
+ * or saved in the memory.If the data are saved in memory they can be retrieved later. 
  * 
+ * @author Jakub Kulaviak
  */
 public abstract class Output  
 {
     
-    private List<String> errors = new ArrayList<String>();
-    
-    // implicit status code is ok, if something goes wrong that service 
-    // sets this code to different error status code
-    private int statusCode = Output.SC_OK;
+    private String errorMessage;
     
     private Map<String, String> headerAttributes;
 
@@ -71,17 +65,6 @@ public abstract class Output
     public abstract void addResultItem(List<String> item);
 
     /**
-     * Adds error message to output.
-     * @param error error message
-     * @param statusCode status code
-     */
-    public void addError(String error, int statusCode) {
-        List<String> errors = new ArrayList<String>();
-        errors.add(error);
-        addErrors(errors, statusCode);
-    }
-
-    /**
      * Flushes output. What it actually does depends at implementation. 
      */
     public abstract void flush();
@@ -101,52 +84,25 @@ public abstract class Output
     public Map<String, String>  getHeaderAttributes() {
         return headerAttributes;
     }
- 
-    /**
-     * @return returned status code
-     */
-    public int getStatus() {
-        if (statusCode == Output.SC_OK) {
-            if (getErrors().size() == 0 && getResultsCount() == 0) {
-                return Output.SC_NO_CONTENT;
-            }             
-        } 
-        return statusCode;
-    }
-    
-    /**
-     * @param code status code
-     */
-    public void setStatus(int code) {
-        this.statusCode = code;
-    }
-    
+     
     /**
      * @return number of written results
      */
     protected abstract int getResultsCount();
     
     /**
-     * @return errors error messages
+     * Sets error message.
+     * @param msg message
      */
-    public List<String> getErrors() {
-        return errors;
+    public void setErrorMessage(String msg) {
+        this.errorMessage = msg;
     }
     
     /**
-     * Set errors. 
-     * @param errors errors
+     * 
+     * @return error message
      */
-    public void setErrors(List<String> errors) {
-        this.errors = errors;
-    }
-
-     /**
-     * @param errors error messages
-     * @param statusCode status code of web service that should be returned
-     * */
-    public void addErrors(List<String> errors, int statusCode) {
-        this.errors.addAll(errors);
-        setStatus(statusCode);
+    public String getErrorMessage() {
+        return errorMessage;
     }
 }

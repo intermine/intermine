@@ -28,10 +28,11 @@ import org.intermine.pathquery.PathNode;
 import org.intermine.pathquery.PathQuery;
 import org.intermine.web.logic.Constants;
 import org.intermine.webservice.WebService;
-import org.intermine.webservice.WebServiceConstants;
-import org.intermine.webservice.WebServiceException;
 import org.intermine.webservice.core.ListManager;
 import org.intermine.webservice.core.PathQueryExecutor;
+import org.intermine.webservice.exceptions.BadRequestException;
+import org.intermine.webservice.exceptions.InternalErrorException;
+import org.intermine.webservice.exceptions.ResourceNotFoundException;
 import org.intermine.webservice.output.MemoryOutput;
 import org.intermine.webservice.output.Output;
 
@@ -59,9 +60,6 @@ public class ListsService extends WebService
     protected void execute(HttpServletRequest request, HttpServletResponse response) {
 
         ListsServiceInput input = getInput();
-        if (!validate(input)) {
-            return;
-        }
 
         Integer objectId = null;
         if (input.getMineId() == null) {
@@ -72,9 +70,7 @@ public class ListsService extends WebService
         } else {
             objectId = input.getMineId();
             if (!objectExists(request, objectId)) {
-                output.addError("object with specified id doesn't exist.", Output.SC_NOT_FOUND);
-                output.flush();
-                return;
+                throw new ResourceNotFoundException("object with specified id doesn't exist.");
             }
         }
 
@@ -110,11 +106,9 @@ public class ListsService extends WebService
 
         // checks  type
         if (model.getClassDescriptorByName(input.getType()) == null) {
-            output.addError("invalid " + ListsRequestParser.TYPE_PARAMETER + " parameter."
-                    + " Specified type of the object doesn't exist: " + input.getType(),
-                    Output.SC_BAD_REQUEST);
-            output.flush();
-            return null;
+            throw new BadRequestException("invalid " + ListsRequestParser.TYPE_PARAMETER 
+                    + " parameter." + " The specified type of the object doesn't exist: " 
+                    + input.getType());
         }
 
         PathQuery pathQuery = new PathQuery(model);
@@ -127,14 +121,12 @@ public class ListsService extends WebService
         Results results = executor.getResults();
         if (results.size() != 1) {
             if (results.size() == 0) {
-                output.addError("No objects of type " + input.getType() + " with public id "
-                        + input.getPublicId() + " were found.", Output.SC_NOT_FOUND);
+                throw new ResourceNotFoundException("No objects of type " + input.getType() 
+                        + " with public id " + input.getPublicId() + " were found.");
             } else {
-                output.addError("Multiple objects of type " + input.getType() + " with public id "
-                        + input.getPublicId() + " were found.", Output.SC_BAD_REQUEST);
+                throw new BadRequestException("Multiple objects of type " + input.getType() 
+                        + " with public id " + input.getPublicId() + " were found.");
             }
-            output.flush();
-            return null;
         }
         ResultsRow row = (ResultsRow) results.get(0);
         return ((InterMineObject) row.get(0)).getId();
@@ -151,7 +143,7 @@ public class ListsService extends WebService
             try {
                 getHtmlForward().forward(request, response);
             } catch (Exception e) {
-                throw new WebServiceException(WebServiceConstants.SERVICE_FAILED_MSG, e);
+                throw new InternalErrorException(e);
             }
         }
     }

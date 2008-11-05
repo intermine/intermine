@@ -19,7 +19,7 @@ import org.intermine.metadata.Model;
 import org.intermine.objectstore.ObjectStore;
 import org.intermine.web.logic.Constants;
 import org.intermine.webservice.WebService;
-import org.intermine.webservice.WebServiceException;
+import org.intermine.webservice.exceptions.InternalErrorException;
 
 /**
  * Web service that returns xml representation of model. 
@@ -38,7 +38,7 @@ public class ModelService extends WebService
         try {
             response.getWriter().append(model.toString());
         } catch (IOException e) {
-            throw new WebServiceException("Internal error", e); 
+            throw new InternalErrorException(e); 
         }
     }
 }
