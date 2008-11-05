@@ -3,7 +3,6 @@
 # release a new mine
 #
 # steps:
-#  - update from subversion
 #  - find current and previous versions from properties file
 #  - createdb new userprofile database <minename>-r<version>-userprofile
 #  - precompute queries and templates
@@ -70,11 +69,6 @@ if (!-d 'dbmodel') {
 
 #################
 
-warn "subversion update\n";
-system ("cd ..; svn update --accept postpone >> $LOG_FILENAME 2>&1") == 0
-  or die_with_log "subversion update failed: $?";
-
-#################
 warn "reading current properties file\n";
 
 my $current_version = get_latest_properties_version("$PROP_FILE_PREFIX.r") - 1;
