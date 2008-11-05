@@ -61,6 +61,7 @@ public class TagHandler extends DefaultHandler
         throws SAXException {
         if (qName.equals("tag")) {
             tagName = attrs.getValue("name");
+            tagName = translateTagName(tagName);
             tagObjectIdentifier = attrs.getValue("objectIdentifier");
             tagType = attrs.getValue("type");
         }
@@ -92,6 +93,30 @@ public class TagHandler extends DefaultHandler
             }
             reset();
         }
+    }
+    
+    /**
+     * Translates specific old tag names used for internal InterMine usage like favorite, 
+     * aspect: ... to new tag names that must start with 'im:'
+     * Calling this method should be removed after some time, when old profiles with old 
+     * tag names won't be load.
+     * @param oldName old name
+     * @return name with prefix 'im'
+     */
+    private String translateTagName(String oldName) {
+        if (oldName.equalsIgnoreCase("favourite")) {
+            return "im:favourite";
+        } 
+        if (oldName.equalsIgnoreCase("hidden")) {
+            return "im:hidden";
+        }
+        if (oldName.toLowerCase().startsWith("aspect:")) {
+            return "im:aspect:" + oldName.substring("aspect:".length());
+        }
+        if (oldName.equalsIgnoreCase("placement:summary")) {
+            return "im:summary";
+        }
+        return oldName;
     }
 
     private void reset() {
