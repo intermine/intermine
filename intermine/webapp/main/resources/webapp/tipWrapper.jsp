@@ -3,14 +3,8 @@
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 
 <!-- tipWrapper.jsp -->
-  <link rel="stylesheet" type="text/css" href="css/tips.css"/>
-    <script type="text/javascript">
-      window.onload=function(){
-         Nifty("div#tipbox","big");
-      }
-    </script>
-    <div id="tipbox" >
-       <tiles:insert name="tip.tile" />
-    </div>
+  <div id="tipbox" >
+      <tiles:insert name="tip.tile" />
+  </div>
 
 <!-- /tip.jsp -->

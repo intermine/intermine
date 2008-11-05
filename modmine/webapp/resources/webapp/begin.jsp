@@ -9,15 +9,14 @@
 <html:xhtml/>
 
 <div class="body">
-<table cellpadding="0" cellspacing="0" border="0">
-<tr>
-<td valign="top">
+
+<div id="leftcolumn">
 <!-- First column -->
-     <im:boxarea title="Submissions" titleLink="/${WEB_PROPERTIES['webapp.path']}/submissions.do" stylename="plainbox" floatValue="left" fixedWidth="300px">
+     <im:boxarea title="Submissions" titleLink="/${WEB_PROPERTIES['webapp.path']}/submissions.do" stylename="plainbox" fixedWidth="300px">
          <tiles:insert name="latestSubs.tile"/>
     </im:boxarea>
 
-     <im:boxarea title="Projects" titleLink="/${WEB_PROPERTIES['webapp.path']}/projects.do" stylename="plainbox" floatValue="left" fixedWidth="300px">
+     <im:boxarea title="Projects" titleLink="/${WEB_PROPERTIES['webapp.path']}/projects.do" stylename="plainbox" fixedWidth="300px">
      <em><p><fmt:message key="projects.intro"/></p></em>     
      <tiles:insert name="projectList.tile"/>
     </im:boxarea>
@@ -48,16 +47,15 @@
     </im:boxarea>
 --%>
 
-
-<div id="rightColumn">
-<td valign="top">
+</div>
+<div id="rightcolumn">
 <!-- Second column - elastic -->
 <%-- 
-		<div><tiles:insert name="tipWrapper.tile" /> 
-		<tiles:insert name="news.tile">
-			<tiles:put name="rss"
-				value="${WEB_PROPERTIES['project.sitePrefix']}/rss.xml" />
-		</tiles:insert></div>
+      <div>
+        <c:if test="${!empty WEB_PROPERTIES['project.rss']}">
+          <tiles:insert name="news.tile" />
+        </c:if>
+      </div>
 --%>
 
 		<im:boxarea title="Templates" titleLink="/${WEB_PROPERTIES['webapp.path']}/templates.do" stylename="gradientbox">
@@ -127,10 +125,6 @@
       </im:boxarea>
 
 </div>
-</td></tr>
-
-
-</table>
 </div>
 
 <!-- /begin.jsp -->
