@@ -14,108 +14,84 @@
 
 <div class="body">
 
-<table cellpadding="0" cellspacing="0" border="0" class="dbsources">
-  <tr>
-    <th>Lab</th>
-    <th>Affiliation</th>
-    <th>Project</th>
-    <th>Features count</th>
-  </tr>
-  <c:forEach items="${subs}" var="sub">
-    <tr>
-      <td><html:link href="/${WEB_PROPERTIES['webapp.path']}/objectDetails.do?id=${sub.key.lab.id}">${sub.key.lab.name}</html:link></td>
-      <td>${sub.key.lab.affiliation}</td>
-      <td><html:link href="/${WEB_PROPERTIES['webapp.path']}/objectDetails.do?id=${sub.key.lab.project.id}">${sub.key.lab.project.name}</html:link></td>
-      <td>
+  <table cellpadding="0" cellspacing="0" border="0">
 
-      <table cellpadding="0" cellspacing="0" border="0" class="internal">
-          <c:forEach items="${sub.value}" var="fc" varStatus="status">
-            <tr>
-      <%--done here because not sure if possible to do outer join in java --%>
-              <td><c:choose>
-<%-- UNCOMMENT to see the chromosome
+    <table cellpadding="0" cellspacing="0" border="0" class="dbsources">
+      <tr>
+        <th>Lab</th>
+        <th>Affiliation</th>
+      </tr>
+      <tr>
+        <td><html:link href="/${WEB_PROPERTIES['webapp.path']}/objectDetails.do?id=${object.lab.id}">${object.lab.name}</html:link></td>
+        <td>${object.lab.affiliation}</td>
+      </tr>
+    </table>
 
-              <c:when test='${fc.key eq "Chromosome"}'>
+    <table cellpadding="0" cellspacing="0" border="0" class="dbsources">
+      <tr>
+        <th>Project</th>
+      </tr>
+      <tr>
+        <td><html:link href="/${WEB_PROPERTIES['webapp.path']}/objectDetails.do?id=${object.lab.project.id}">${object.lab.project.name}</html:link></td>
+      </tr>
+    </table>
+
+    <table cellpadding="0" cellspacing="0" border="0" class="dbsources">
+      <tr>
+        <th>Feature type</th>
+        <th>count</th>
+      </tr>
+      <c:forEach items="${featureCounts}" var="fc" varStatus="status">
+        <tr>
+          <td>${fc.key}</td>
+          <c:choose>
+            <c:when test='${fc.key eq "EST" || fc.key eq "MNRA"}'>
+              <td align="right">
                 <im:querylink text="${fc.value}" skipBuilder="true">
                   <query name="" model="genomic"
-                    view="Chromosome.dataSets.title Chromosome.primaryIdentifier"
-                    sortOrder="Chromosome.primaryIdentifier asc">
-                  <node path="Chromosome" type="Chromosome">
-                  </node>
-                  <node path="Chromosome.dataSets" type="DataSet">
-                  </node>
-                  <node path="Chromosome.dataSets.title" type="String">
-                  <constraint op="=" value="${sub.key.title}" description=""
-                    identifier="" code="A">
-                  </constraint>
-                  </node>
+                         view="${fc.key}.dataSets.title ${fc.key}.primaryIdentifier ${fc.key}.secondaryIdentifier ${fc.key}.length
+                               ${fc.key}.chromosomeLocation.object.primaryIdentifier ${fc.key}.chromosomeLocation.start ${fc.key}.chromosomeLocation.end"
+                         sortOrder="${fc.key}.primaryIdentifier asc">
+                    <node path="${fc.key}" type="${fc.key}">
+                    </node>
+                    <node path="${fc.key}.dataSets" type="DataSet">
+                    </node>
+                    <node path="${fc.key}.dataSets.title" type="String">
+                      <constraint op="=" value="${object.title}" description=""
+                                  identifier="" code="A">
+                      </constraint>
+                    </node>
                   </query>
                 </im:querylink>
-              </c:when>
---%>
+              </td>
+            </c:when>
 
-              <c:when test='${fc.key eq "Chromosome"}'>
-                <td></td>
-                <td align="right">
-              </c:when>
-
-              <c:when test='${fc.key eq "-"}'>
-              <!-- added because at the moment these features are without chromosome location-->
-                <td>${fc.key}</td>
-                <td align="right"></td>
-              </c:when>
-
-              <c:when test='${fc.key eq "EST" || fc.key eq "MNRA"}'>
-                <td>${fc.key}</td>
-                <td align="right">
+            <c:otherwise>
+              <td align="right">
                 <im:querylink text="${fc.value}" skipBuilder="true">
                   <query name="" model="genomic"
-                    view="${fc.key}.dataSets.title ${fc.key}.primaryIdentifier ${fc.key}.secondaryIdentifier ${fc.key}.length
-                  ${fc.key}.chromosomeLocation.object.primaryIdentifier ${fc.key}.chromosomeLocation.start ${fc.key}.chromosomeLocation.end"
-                    sortOrder="${fc.key}.primaryIdentifier asc">
-                  <node path="${fc.key}" type="${fc.key}">
-                  </node>
-                  <node path="${fc.key}.dataSets" type="DataSet">
-                  </node>
-                  <node path="${fc.key}.dataSets.title" type="String">
-                  <constraint op="=" value="${sub.key.title}" description=""
-                    identifier="" code="A">
-                  </constraint>
-                  </node>
+                         view="${fc.key}.dataSets.title ${fc.key}.secondaryIdentifier ${fc.key}.length
+                               ${fc.key}.chromosomeLocation.object.primaryIdentifier ${fc.key}.chromosomeLocation.start ${fc.key}.chromosomeLocation.end"
+                         sortOrder="${fc.key}.secondaryIdentifier asc">
+                    <node path="${fc.key}" type="${fc.key}">
+                    </node>
+                    <node path="${fc.key}.dataSets" type="DataSet">
+                    </node>
+                    <node path="${fc.key}.dataSets.title" type="String">
+                      <constraint op="=" value="${object.title}" description=""
+                                  identifier="" code="A">
+                      </constraint>
+                    </node>
                   </query>
                 </im:querylink>
-              </c:when>
-
-              <c:otherwise>
-                <td>${fc.key}
-                <td align="right">
-                <im:querylink text="${fc.value}" skipBuilder="true">
-                  <query name="" model="genomic"
-                    view="${fc.key}.dataSets.title ${fc.key}.secondaryIdentifier ${fc.key}.length
-                  ${fc.key}.chromosomeLocation.object.primaryIdentifier ${fc.key}.chromosomeLocation.start ${fc.key}.chromosomeLocation.end"
-                    sortOrder="${fc.key}.secondaryIdentifier asc">
-                  <node path="${fc.key}" type="${fc.key}">
-                  </node>
-                  <node path="${fc.key}.dataSets" type="DataSet">
-                  </node>
-                  <node path="${fc.key}.dataSets.title" type="String">
-                  <constraint op="=" value="${sub.key.title}" description=""
-                    identifier="" code="A">
-                  </constraint>
-                  </node>
-                  </query>
-                </im:querylink>
-              </c:otherwise>
-            </c:choose>
-            </td>
+              </td>
+            </c:otherwise>
+          </c:choose>
         </tr>
-        </c:forEach>
-        <!-- end feature loop -->
-        </table>
-        </td>
-  </tr>
-</c:forEach>
-<!-- end submission loop -->
-</table>
+      </c:forEach>
+      <!-- end feature loop -->
+    </table>
+    <!-- end submission loop -->
+  </table>
 </div>
 

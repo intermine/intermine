@@ -76,7 +76,6 @@ public class SubmissionDisplayerController extends TilesAction
         q.addFrom(sub);
         q.addFrom(lsf);
 
-        q.addToSelect(sub);
         q.addToSelect(qfClass);
         q.addToSelect(new QueryFunction());
 
@@ -101,31 +100,21 @@ public class SubmissionDisplayerController extends TilesAction
 
         Results results = os.execute(q);
 
-        // normal case
-        Map<Submission, Map<String, Long>> subs =
-            new LinkedHashMap<Submission, Map<String, Long>>();
+
+        Map<String, Long> featureCounts = new LinkedHashMap<String, Long>();
 
         // for each classes set the values for jsp
         for (Iterator<ResultsRow> iter = results.iterator(); iter.hasNext(); ) {
             ResultsRow row = iter.next();
-            Submission submission = (Submission) row.get(0);
-            Class feat = (Class) row.get(1);
-            Long count = (Long) row.get(2);
+            Class feat = (Class) row.get(0);
+            Long count = (Long) row.get(1);
 
             Map<String, Long> fc = new LinkedHashMap<String, Long>();
             fc.put(TypeUtil.unqualifiedName(feat.getName()), count);
-
-            if (subs.containsKey(submission)) {
-                Map<String, Long> featureCountMap = new LinkedHashMap<String, Long>();
-                featureCountMap = subs.get(submission);
-                featureCountMap.put(TypeUtil.unqualifiedName(feat.getName()), count);
-                subs.put(submission, featureCountMap);
-            } else {
-                subs.put(submission, fc);
-            }
+            featureCounts.put(TypeUtil.unqualifiedName(feat.getName()), count);
         }
 
-        request.setAttribute("subs", subs);
+        request.setAttribute("featureCounts", featureCounts);
 
         return null;
     }
