@@ -115,10 +115,10 @@
       <!-- this source finds the publication ids (pubmed ids) in the
            objectstore, retrieves the details of the publication from Entrez
            into an InterMine format XML file, loads that file into a target
-           items DB, then into the final objectstore -->
+           items DB, then into the final objectstore dump="true"-->
       <property name="src.data.file" location="build/publications.xml"/>
     </source>
-    <source name="modencode-metadata" type="chado-db">
+<source name="modencode-metadata" type="chado-db" dump="true">
       <property name="organisms" value="7227"/>
       <property name="dataSourceName" value="modENCODE"/>
       <property name="dataSetTitle" value="modENCODE submission"/>
