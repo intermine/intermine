@@ -11,7 +11,6 @@ package org.intermine.web.logic.widget;
  */
 
 import java.util.List;
-import java.util.Vector;
 
 import org.intermine.web.logic.widget.config.WidgetConfig;
 
@@ -83,6 +82,10 @@ public abstract class Widget
         return config.getId();
     }
 
+    /**
+     * Get the widget title
+     * @return the title
+     */
     public String getTitle() {
         return config.getTitle();
     }

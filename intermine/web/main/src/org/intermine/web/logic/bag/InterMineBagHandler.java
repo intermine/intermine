@@ -76,8 +76,8 @@ public class InterMineBagHandler extends DefaultHandler
      * {@inheritDoc}
      */
     public void startElement(@SuppressWarnings("unused") String uri,
-                             @SuppressWarnings("unused") String localName,
-                             String qName,
+            @SuppressWarnings("unused") String localName,
+            String qName,
             Attributes attrs) throws SAXException {
         try {
             if (qName.equals("bag")) {
@@ -95,10 +95,10 @@ public class InterMineBagHandler extends DefaultHandler
                 String bagClsName = model.getPackageName() + "." + bagType;
                 if (model.hasClassDescriptor(bagClsName)) {
                     bag = new InterMineBag(bagName, bagType, bagDescription,
-                                           dateCreated, osw.getObjectStore(), userId, uosw);
+                            dateCreated, osw.getObjectStore(), userId, uosw);
                 } else {
                     LOG.warn("Not upgrading bag: " + bagName + " for user: " + userId
-                             + " - " + bagType + " no longer in model.");
+                            + " - " + bagType + " no longer in model.");
                 }
             }
 
@@ -107,7 +107,7 @@ public class InterMineBagHandler extends DefaultHandler
                 Integer id = new Integer(attrs.getValue("id"));
 
                 if (idUpgrader.doUpgrade() && idToObjectMap.containsKey(id)) {
-                //if (osw.getObjectById(id) == null && idToObjectMap.containsKey(id)) {
+                    //if (osw.getObjectById(id) == null && idToObjectMap.containsKey(id)) {
                     // the id isn't in the database and we have an Item representing the object from
                     // a previous database
                     InterMineObject oldObject = (InterMineObject) idToObjectMap.get(id);
@@ -118,9 +118,9 @@ public class InterMineBagHandler extends DefaultHandler
                         bagContents.add((Integer) newIdIter.next());
                     }
                 } else {
-                	if (osw.getObjectById(id) != null) {
-                		bagContents.add(id);
-                	}
+                    if (osw.getObjectById(id) != null) {
+                        bagContents.add(id);
+                    }
                 }
             }
         } catch (ObjectStoreException e) {
@@ -132,17 +132,17 @@ public class InterMineBagHandler extends DefaultHandler
      * {@inheritDoc}
      */
     public void endElement(@SuppressWarnings("unused") String uri,
-                           @SuppressWarnings("unused") String localName,
-                           String qName) throws SAXException {
+            @SuppressWarnings("unused") String localName,
+            String qName) throws SAXException {
         try {
             if (qName.equals("bag")) {
                 if (bag != null && !bagContents.isEmpty()) {
-                	osw.addAllToBag(bag.getOsb(), bagContents);
+                    osw.addAllToBag(bag.getOsb(), bagContents);
                     bags.put(bagName, bag);
                 }
                 LOG.debug("XML bag \"" + bagName + "\" contained " + elementsInOldBag
-                          + " elements, created bag with " + (bag == null ? "null"
-                              : "" + bag.size()) + " elements");
+                        + " elements, created bag with " + (bag == null ? "null"
+                                : "" + bag.size()) + " elements");
                 bag = null;
                 elementsInOldBag = 0;
             }

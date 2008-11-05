@@ -174,13 +174,13 @@ public class WebConfig
         }
         if (invalidClasses.length() > 0 || badFieldExpressions.length() > 0) {
             throw new RuntimeException("Invalid web config. "
-                                       + ((invalidClasses.length() > 0) ?
-                                          "Classes specified in web config that don't exist in model: "
-                                          + invalidClasses.toString() + ". " : "")
-                                       + ((badFieldExpressions.length() > 0) ?
-                                          "Path specified in a fieldExpr does note exist in model: "
-                                          + badFieldExpressions + ". " : "")
-                                       );
+                    + ((invalidClasses.length() > 0)
+                            ? "Classes specified in web config that don't exist in model: "
+                                    + invalidClasses.toString() + ". " : "")
+                            + ((badFieldExpressions.length() > 0)
+                                    ? "Path specified in a fieldExpr does note exist in model: "
+                                            + badFieldExpressions + ". " : "")
+            );
         }
     }
 
