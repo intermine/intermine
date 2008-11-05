@@ -28,3 +28,4 @@
 
 <action path="/gff3ExportAction" name="gff3ExportForm"
         type="org.intermine.web.struts.TableExportAction" parameter="method"/>
+

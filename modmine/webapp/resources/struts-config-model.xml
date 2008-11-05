@@ -38,5 +38,5 @@
 
 <action path="/submissions" forward="submissions.page" />
 
-<action path="/initSubmissionDisplayerController"
+<action path="/initSubmissionDisplayer"
   type="org.modmine.web.SubmissionDisplayerController" />
