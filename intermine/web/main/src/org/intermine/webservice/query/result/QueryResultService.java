@@ -29,8 +29,8 @@ import org.intermine.web.logic.bag.InterMineBag;
 import org.intermine.web.logic.results.WebResults;
 import org.intermine.web.logic.session.SessionMethods;
 import org.intermine.web.struts.InterMineAction;
-import org.intermine.webservice.PagedServiceInput;
 import org.intermine.webservice.WebService;
+import org.intermine.webservice.WebServiceInput;
 import org.intermine.webservice.core.PathQueryExecutor;
 import org.intermine.webservice.core.ResultProcessor;
 import org.intermine.webservice.exceptions.InternalErrorException;
@@ -79,7 +79,7 @@ public class QueryResultService extends WebService
     }
 
     private void forward(PathQuery pathQuery, String title, String description, 
-            PagedServiceInput input, String mineLink) {
+            WebServiceInput input, String mineLink) {
         List<String> columnNames = pathQuery.getViewStrings();
         if (getFormat() == WebService.HTML_FORMAT) {
             MemoryOutput mout = (MemoryOutput) output;
@@ -155,7 +155,7 @@ public class QueryResultService extends WebService
      */
     public void runPathQuery(PathQuery pathQuery, int firstResult, int maxResults,  
             boolean displayTotalCount, String title, String description, 
-            PagedServiceInput input, String mineLink) {
+            WebServiceInput input, String mineLink) {
         PathQueryExecutor executor = new PathQueryExecutor(request, pathQuery);
         Results results = executor.getResults();
         

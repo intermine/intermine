@@ -11,14 +11,14 @@ package org.intermine.webservice.template.result;
  */
 import java.util.List;
 
-import org.intermine.webservice.PagedServiceInput;
+import org.intermine.webservice.WebServiceInput;
 
 /**
  * TemplateResultInput is parameter object representing parameters for 
  * TemplateResultService web service.  
  * @author Jakub Kulaviak
  **/
-public class TemplateResultInput extends PagedServiceInput 
+public class TemplateResultInput extends WebServiceInput 
 {
     private String name;
     
