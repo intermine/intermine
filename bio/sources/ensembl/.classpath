@@ -13,6 +13,5 @@
 	<classpathentry kind="lib" path="main/resources"/>
 	<classpathentry kind="lib" path="test/resources"/>
 	<classpathentry kind="lib" path="srcmodel/resources"/>
-	<classpathentry kind="lib" path="srcmodel/build/main"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>
