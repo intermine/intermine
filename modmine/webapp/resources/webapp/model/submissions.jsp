@@ -42,7 +42,7 @@
               <c:when test='${fc.key eq "Chromosome"}'>
                 <im:querylink text="${fc.value}" skipBuilder="true">
                   <query name="" model="genomic"
-                    view="Chromosome.dataSets.title Chromosome.primaryIdentifier"
+                    view="Chromosome.primaryIdentifier Chromosome.dataSets.title"
                     sortOrder="Chromosome.primaryIdentifier asc">
                   <node path="Chromosome" type="Chromosome">
                   </node>
@@ -74,8 +74,8 @@
                 <td align="right">
                 <im:querylink text="${fc.value}" skipBuilder="true">
                   <query name="" model="genomic"
-                    view="${fc.key}.dataSets.title ${fc.key}.primaryIdentifier ${fc.key}.secondaryIdentifier ${fc.key}.length
-                  ${fc.key}.chromosomeLocation.object.primaryIdentifier ${fc.key}.chromosomeLocation.start ${fc.key}.chromosomeLocation.end"
+                    view="${fc.key}.primaryIdentifier ${fc.key}.secondaryIdentifier ${fc.key}.length
+                  ${fc.key}.chromosomeLocation.object.primaryIdentifier ${fc.key}.chromosomeLocation.start ${fc.key}.chromosomeLocation.end ${fc.key}.dataSets.title"
                     sortOrder="${fc.key}.primaryIdentifier asc">
                   <node path="${fc.key}" type="${fc.key}">
                   </node>
@@ -95,8 +95,8 @@
                 <td align="right">
                 <im:querylink text="${fc.value}" skipBuilder="true">
                   <query name="" model="genomic"
-                    view="${fc.key}.dataSets.title ${fc.key}.secondaryIdentifier ${fc.key}.length
-                  ${fc.key}.chromosomeLocation.object.primaryIdentifier ${fc.key}.chromosomeLocation.start ${fc.key}.chromosomeLocation.end"
+                    view="${fc.key}.secondaryIdentifier ${fc.key}.length
+                  ${fc.key}.chromosomeLocation.object.primaryIdentifier ${fc.key}.chromosomeLocation.start ${fc.key}.chromosomeLocation.end ${fc.key}.dataSets.title"
                     sortOrder="${fc.key}.secondaryIdentifier asc">
                   <node path="${fc.key}" type="${fc.key}">
                   </node>

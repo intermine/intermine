@@ -43,8 +43,8 @@ div#submissionLabName h3, div#submissionLabName div#submissionProject {
                 <c:when test='${fc.key eq "EST" || fc.key eq "MNRA"}'>
                   <im:querylink text="${fc.value}" skipBuilder="true">
                     <query name="" model="genomic"
-                           view="${fc.key}.dataSets.title ${fc.key}.primaryIdentifier ${fc.key}.secondaryIdentifier ${fc.key}.length
-                                 ${fc.key}.chromosomeLocation.object.primaryIdentifier ${fc.key}.chromosomeLocation.start ${fc.key}.chromosomeLocation.end"
+                           view="${fc.key}.primaryIdentifier ${fc.key}.secondaryIdentifier ${fc.key}.length
+                                 ${fc.key}.chromosomeLocation.object.primaryIdentifier ${fc.key}.chromosomeLocation.start ${fc.key}.chromosomeLocation.end ${fc.key}.dataSets.title"
                            sortOrder="${fc.key}.primaryIdentifier asc">
                       <node path="${fc.key}" type="${fc.key}">
                       </node>
@@ -62,8 +62,8 @@ div#submissionLabName h3, div#submissionLabName div#submissionProject {
                 <c:otherwise>
                   <im:querylink text="${fc.value}" skipBuilder="true">
                     <query name="" model="genomic"
-                           view="${fc.key}.dataSets.title ${fc.key}.secondaryIdentifier ${fc.key}.length
-                                 ${fc.key}.chromosomeLocation.object.primaryIdentifier ${fc.key}.chromosomeLocation.start ${fc.key}.chromosomeLocation.end"
+                           view="${fc.key}.secondaryIdentifier ${fc.key}.length
+                                 ${fc.key}.chromosomeLocation.object.primaryIdentifier ${fc.key}.chromosomeLocation.start ${fc.key}.chromosomeLocation.end ${fc.key}.dataSets.title"
                            sortOrder="${fc.key}.secondaryIdentifier asc">
                       <node path="${fc.key}" type="${fc.key}">
                       </node>
