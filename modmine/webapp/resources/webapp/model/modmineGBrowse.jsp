@@ -35,12 +35,8 @@
     <c:set var="name" value="MRNA:${name}"/>
   </c:if>
 
-  <c:if test="${cld.unqualifiedName == 'Chromosome'}">
-    <c:set var="name" value="${object.organism.genus}_${object.organism.species}_chr_${object.primaryIdentifier}"/>
-  </c:if>
-
   <c:if test="${cld.unqualifiedName == 'CDS'}">
-    <%-- special case show genes instead of cdss --%>
+    <%-- special case show genes instead of CDSs --%>
     <c:set var="name" value="${object.gene.primaryIdentifier}"/>
     <c:set var="type" value="${type}+CDSs"/>
     <c:set var="label" value="${label}-CDSs"/>
