@@ -106,6 +106,21 @@
     </fields>
   </class>
 
+  <class className="org.flymine.model.genomic.HistoneBindingSite">
+    <fields>
+      <fieldconfig fieldExpr="secondaryIdentifier"/>
+      <fieldconfig fieldExpr="length" displayer="/model/sequenceShortDisplayerWithField.jsp" />
+      <fieldconfig fieldExpr="chromosomeLocation" displayer="/model/chromosomeLocDisplayer.jsp" showInResults="false"/>
+      <fieldconfig fieldExpr="chromosome.primaryIdentifier" showInInlineCollection="false" showInSummary="false" />
+      <fieldconfig fieldExpr="chromosomeLocation.start" showInInlineCollection="false" showInSummary="false" />
+      <fieldconfig fieldExpr="chromosomeLocation.end" showInInlineCollection="false" showInSummary="false" />
+    </fields>
+    <longdisplayers>
+      <displayer src="attributeLinkDisplayer.tile"/>
+      <displayer src="/model/modmineGBrowse.jsp"/>
+    </longdisplayers>
+  </class>
+
   <class className="org.flymine.model.genomic.BindingSite">
     <fields>
 <!--     <fieldconfig fieldExpr="primaryIdentifier"/> -->
