@@ -28,6 +28,7 @@ public class PropertiesUtil
     private static final Logger LOG = Logger.getLogger(PropertiesUtil.class);
 
     private PropertiesUtil() {
+        // nothing to do
     }
 
     private static Properties globalProperties = new Properties();
@@ -49,9 +50,8 @@ public class PropertiesUtil
 
             if (is == null) {
                 throw new RuntimeException("intermine.properties is not in the classpath");
-            } else {
-                globalProperties.load(is);
             }
+            globalProperties.load(is);
 
         } catch (IOException e) {
             // Do nothing
