@@ -83,8 +83,8 @@ public class TemplateListController extends TilesAction
                 request.setAttribute("fieldExprMap", fieldExprs);
             }
 
-            String sup = (String) context.getAttribute(Constants.SUPERUSER_ACCOUNT);
             ProfileManager pm = SessionMethods.getProfileManager(servletContext);
+            String sup = pm.getSuperuser();
             List<Tag> noReportTags =
                 pm.getTags(TagNames.IM_NO_REPORT, null, TagTypes.TEMPLATE, sup);
 

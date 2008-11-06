@@ -65,8 +65,9 @@ public class TemplateListHelper
      * @return Set of TemplateQuerys
      */
     public static List<TemplateQuery> getAspectTemplates(String aspect, ServletContext context) {
-        String sup = (String) context.getAttribute(Constants.SUPERUSER_ACCOUNT);
+
         ProfileManager pm = SessionMethods.getProfileManager(context);
+        String sup = pm.getSuperuser();
         Profile p = pm.getProfile(sup);
 
         Map<String, TemplateQuery> templates = new TreeMap<String, TemplateQuery>();

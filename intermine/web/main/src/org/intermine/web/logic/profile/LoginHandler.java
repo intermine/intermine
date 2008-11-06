@@ -63,7 +63,7 @@ public abstract class LoginHandler extends InterMineAction
         Profile currentProfile = (Profile) session.getAttribute(Constants.PROFILE);
         ObjectStoreWriter uosw = ((ProfileManager) servletContext.getAttribute(
                     Constants.PROFILE_MANAGER)).getUserProfileObjectStore();
-        String superuser = (String) servletContext.getAttribute(Constants.SUPERUSER_ACCOUNT);
+        String superuser = pm.getSuperuser();
         Map mergeQueries = Collections.EMPTY_MAP;
         Map mergeBags = Collections.EMPTY_MAP;
         if (currentProfile != null && StringUtils.isEmpty(currentProfile.getUsername())) {

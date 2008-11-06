@@ -21,7 +21,9 @@ import org.apache.struts.action.ActionMapping;
 import org.apache.struts.action.ActionMessage;
 import org.intermine.web.logic.Constants;
 import org.intermine.web.logic.profile.Profile;
+import org.intermine.web.logic.profile.ProfileManager;
 import org.intermine.web.logic.search.SearchRepository;
+import org.intermine.web.logic.session.SessionMethods;
 import org.intermine.web.logic.template.TemplateQuery;
 
 /**
@@ -57,9 +59,7 @@ public class UserTemplateAction extends InterMineDispatchAction
             recordMessage(new ActionMessage("templateList.deleted", templateName), request);
             profile.deleteTemplate(templateName);
             // If superuser then rebuild shared templates
-            if (profile.getUsername() != null
-                && profile.getUsername().equals
-                    (servletContext.getAttribute(Constants.SUPERUSER_ACCOUNT))) {
+            if (SessionMethods.isSuperUser(session)) {
                 SearchRepository tr = SearchRepository.getGlobalSearchRepository(servletContext);
                 tr.webSearchableRemoved(template);
             }

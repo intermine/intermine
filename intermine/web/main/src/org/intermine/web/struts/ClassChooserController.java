@@ -64,7 +64,7 @@ public class ClassChooserController extends TilesAction
         Map classDescrs = (Map) servletContext.getAttribute("classDescriptions");
         StringBuffer sb = new StringBuffer();
 
-        String superUserName = (String) servletContext.getAttribute(Constants.SUPERUSER_ACCOUNT);
+        String superUserName = pm.getSuperuser();
 
         List preferredBagTypeTags = pm.getTags("im:preferredBagType", null, "class", superUserName);
 

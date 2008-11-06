@@ -115,9 +115,8 @@ public class TemplateHelper
             if (tq == null) {
                 return findTemplate(servletContext, session, userName,
                                     templateName, GLOBAL_TEMPLATE);
-            } else {
-                return tq;
             }
+            return tq;
         } else if (TEMP_TEMPLATE.equals(type)) {
             SavedQuery savedQuery = profile.getHistory().get(templateName);
             TemplateQuery t = null;
@@ -399,8 +398,8 @@ public class TemplateHelper
      * @param object object
      * @param bag bag
      * @param templateForm template form
-     * @param model model 
-     * @return true if successfull 
+     * @param model model
+     * @return true if successfull
      */
     public static boolean fillTemplateForm(TemplateQuery template, InterMineObject object,
                                             InterMineBag bag, TemplateForm templateForm,

@@ -12,15 +12,6 @@ package org.intermine.web.struts;
 
 import java.util.Map;
 
-import org.intermine.model.InterMineObject;
-import org.intermine.objectstore.ObjectStore;
-import org.intermine.web.logic.Constants;
-import org.intermine.web.logic.profile.Profile;
-import org.intermine.web.logic.results.DisplayObject;
-import org.intermine.web.logic.session.SessionMethods;
-import org.intermine.web.logic.template.TemplateHelper;
-import org.intermine.web.logic.template.TemplateQuery;
-
 import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -32,6 +23,15 @@ import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
 import org.apache.struts.tiles.ComponentContext;
 import org.apache.struts.tiles.actions.TilesAction;
+import org.intermine.model.InterMineObject;
+import org.intermine.objectstore.ObjectStore;
+import org.intermine.web.logic.Constants;
+import org.intermine.web.logic.profile.Profile;
+import org.intermine.web.logic.profile.ProfileManager;
+import org.intermine.web.logic.results.DisplayObject;
+import org.intermine.web.logic.session.SessionMethods;
+import org.intermine.web.logic.template.TemplateHelper;
+import org.intermine.web.logic.template.TemplateQuery;
 
 /**
  * Controller for the html head tile.  Determines what is shown on the title of the webpage
@@ -95,7 +95,8 @@ public class HtmlHeadController extends TilesAction
                 username = ((Profile) session
                                 .getAttribute(Constants.PROFILE)).getUsername();
             } else {
-                username = (String) servletContext.getAttribute(Constants.SUPERUSER_ACCOUNT);
+                ProfileManager pm = SessionMethods.getProfileManager(servletContext);
+                username = pm.getSuperuser();
             }
             TemplateQuery template = TemplateHelper.findTemplate(servletContext, session,
                                       username, name, TemplateHelper.ALL_TEMPLATE);
@@ -117,23 +118,23 @@ public class HtmlHeadController extends TilesAction
             if (dobj == null) {
                 dobj = ObjectDetailsController.makeDisplayObject(session, object);
             }
-           
+
             // TODO use the class keys instead
             String idForPageTitle = "";
             if (dobj.getAttributes().get("primaryIdentifier") != null) {
                 idForPageTitle = dobj.getAttributes().get("primaryIdentifier").toString();
             }
-            if (idForPageTitle == null 
-                            && !idForPageTitle.equals("") 
+            if (idForPageTitle == null
+                            && !idForPageTitle.equals("")
                             && dobj.getAttributes().get("secondaryIdentifier") != null) {
                 idForPageTitle = dobj.getAttributes().get("secondaryIdentifier").toString();
             }
-            if (idForPageTitle == null 
-                            && !idForPageTitle.equals("") 
+            if (idForPageTitle == null
+                            && !idForPageTitle.equals("")
                             && dobj.getAttributes().get("identifier") != null) {
                 idForPageTitle = dobj.getAttributes().get("identifier").toString();
             }
-            
+
             if (idForPageTitle != null && !idForPageTitle.equals("")) {
                 htmlPageTitle = htmlPageTitle + ":  " + idForPageTitle;
             }

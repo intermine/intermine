@@ -60,14 +60,15 @@ public class FavouritesController extends TilesAction
                 Constants.PROFILE_MANAGER);
         // Only continue if the user is logged in
         if (profile.getUsername() != null) {
-            String sup = (String) servletContext.getAttribute(Constants.SUPERUSER_ACCOUNT);
+            String sup = pm.getSuperuser();
             Profile superuserProfile = pm.getProfile(sup);
 
             Map<String, TemplateQuery> savedTemplates = new HashMap<String, TemplateQuery>();
             savedTemplates.putAll(superuserProfile.getSavedTemplates());
             savedTemplates.putAll(profile.getSavedTemplates());
 
-            List userTags = pm.getTags(TagNames.IM_FAVOURITE, null, TagTypes.TEMPLATE, profile.getUsername());
+            List userTags = pm.getTags(TagNames.IM_FAVOURITE, null,
+                                       TagTypes.TEMPLATE, profile.getUsername());
             for (Iterator iter = userTags.iterator(); iter.hasNext();) {
                 Tag element = (Tag) iter.next();
                 TemplateQuery templateQuery =

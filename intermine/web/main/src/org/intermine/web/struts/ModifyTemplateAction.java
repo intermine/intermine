@@ -107,9 +107,7 @@ public class ModifyTemplateAction extends InterMineAction
             profile.enableSaving();
         }
 
-        if (profile.getUsername() != null
-            && profile.getUsername()
-            .equals(servletContext.getAttribute(Constants.SUPERUSER_ACCOUNT))) {
+        if (SessionMethods.isSuperUser(session)) {
             SearchRepository tr = SearchRepository.getGlobalSearchRepository(servletContext);
             tr.globalChange(TagTypes.TEMPLATE);
         }

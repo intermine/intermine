@@ -14,12 +14,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
-import org.intermine.model.userprofile.Tag;
-import org.intermine.web.logic.Constants;
-import org.intermine.web.logic.aspects.Aspect;
-import org.intermine.web.logic.session.SessionMethods;
-import org.intermine.web.logic.tagging.TagNames;
-
 import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -33,6 +27,12 @@ import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
 import org.apache.struts.tiles.ComponentContext;
 import org.apache.struts.tiles.actions.TilesAction;
+import org.intermine.model.userprofile.Tag;
+import org.intermine.web.logic.Constants;
+import org.intermine.web.logic.aspects.Aspect;
+import org.intermine.web.logic.profile.ProfileManager;
+import org.intermine.web.logic.session.SessionMethods;
+import org.intermine.web.logic.tagging.TagNames;
 
 /**
  * Contoller for a single data set tile embedded in a page. Expects the request parameter
@@ -43,7 +43,7 @@ import org.apache.struts.tiles.actions.TilesAction;
  */
 public class AspectController extends TilesAction
 {
-    
+
     private static final Logger LOG = Logger.getLogger(AspectController.class);
 
     /**
@@ -65,13 +65,14 @@ public class AspectController extends TilesAction
         }
         context.putAttribute("aspect", set);
         // look up the classes for this aspect
-        String superuser = (String) servletContext.getAttribute(Constants.SUPERUSER_ACCOUNT);
+        ProfileManager pm = SessionMethods.getProfileManager(servletContext);
+        String superuser = pm.getSuperuser();
         List<Tag> tags = new ArrayList<Tag>(SessionMethods.getProfileManager(servletContext)
-            .getTags(TagNames.IM_ASPECT_PREFIX + request.getParameter("name"), null, "class", 
+            .getTags(TagNames.IM_ASPECT_PREFIX + request.getParameter("name"), null, "class",
                     superuser));
         CollectionUtils.transform(tags,
                 TransformerUtils.invokerTransformer("getObjectIdentifier"));
         context.putAttribute("startingPoints", tags);
         return null;
-    }    
+    }
 }
