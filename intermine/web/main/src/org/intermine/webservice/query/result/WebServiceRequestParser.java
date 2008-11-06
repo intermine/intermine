@@ -12,7 +12,6 @@ package org.intermine.webservice.query.result;
 
 import javax.servlet.http.HttpServletRequest;
 
-import org.intermine.webservice.PagedServiceInput;
 import org.intermine.webservice.WebServiceInput;
 import org.intermine.webservice.exceptions.BadRequestException;
 
@@ -59,7 +58,7 @@ public class WebServiceRequestParser
      * @param request request
      * @param input web service input in which the parameters are set
      */
-    public void parseRequest(HttpServletRequest request, PagedServiceInput input) {
+    public void parseRequest(HttpServletRequest request, WebServiceInput input) {
         input.setMaxCount(DEFAULT_MAX_COUNT);
         input.setStart(DEFAULT_START);
         

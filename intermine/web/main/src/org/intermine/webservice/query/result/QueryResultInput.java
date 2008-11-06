@@ -10,7 +10,7 @@ package org.intermine.webservice.query.result;
  *
  */
 
-import org.intermine.webservice.PagedServiceInput;
+import org.intermine.webservice.WebServiceInput;
 
 
 /**
@@ -18,7 +18,7 @@ import org.intermine.webservice.PagedServiceInput;
  * QueryResultService web service.  
  * @author Jakub Kulaviak
  **/
-public class QueryResultInput extends PagedServiceInput 
+public class QueryResultInput extends WebServiceInput 
 {
     
     private String xml;
