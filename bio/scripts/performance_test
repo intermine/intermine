@@ -3,9 +3,13 @@
 # The following environment variables need to be set
 # INTERMINE: location of local InterMine installation
 
+export whichmine=$*
+
 export INTERMINE=~/svn/dev/intermine
-export FLYMINE=~/svn/dev/flymine
+export MINE=~/svn/dev/$whichmine
 export BIO=~/svn/dev/bio
+
+echo $MINE
 
 CP=$CLASSPATH
 
@@ -28,12 +32,12 @@ CP=$CP:$INTERMINE/web/model/userprofile/dist/userprofile.jar
 for i in $INTERMINE/web/main/lib/*.jar ; do
     CP=$CP:$i
 done
-CP=$CP:$BIO/core/props/resources
 CP=$CP:$BIO/webapp/resources
 CP=$CP:~
-CP=$CP:$FLYMINE/webapp/build/main
-CP=$CP:$FLYMINE/dbmodel/build/classes
-CP=$CP:$FLYMINE/dbmodel/resources
+CP=$CP:$MINE/webapp/build/main
+CP=$CP:$MINE/dbmodel/build/model
+CP=$CP:$MINE/dbmodel/build/classes
+CP=$CP:$MINE/dbmodel/resources
 
 if test -z "$LD_LIBRARY_PATH" ; then
     export LD_LIBRARY_PATH=/usr/lib:/lib:/usr/lib/jni
@@ -44,5 +48,5 @@ fi
 echo "Using classpath: $CP"
 echo "Using LD_LIBRARY_PATH: $LD_LIBRARY_PATH"
 
-java -cp $CP -Xmx1000M org.intermine.web.logic.PerformanceTester $*
+java -cp $CP -Xmx1000M org.intermine.web.logic.PerformanceTester 20 
 

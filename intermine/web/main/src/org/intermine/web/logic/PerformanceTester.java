@@ -24,9 +24,10 @@ import org.intermine.objectstore.ObjectStore;
 import org.intermine.objectstore.ObjectStoreFactory;
 import org.intermine.objectstore.ObjectStoreWriter;
 import org.intermine.objectstore.ObjectStoreWriterFactory;
-import org.intermine.objectstore.query.Query;
 import org.intermine.objectstore.intermine.ObjectStoreInterMineImpl;
 import org.intermine.objectstore.intermine.SqlGenerator;
+import org.intermine.objectstore.query.Query;
+import org.intermine.util.PropertiesUtil;
 import org.intermine.util.SynchronisedIterator;
 import org.intermine.web.logic.bag.BagQueryConfig;
 import org.intermine.web.logic.bag.BagQueryHelper;
@@ -46,13 +47,14 @@ import org.intermine.web.logic.template.TemplateQuery;
 public class PerformanceTester
 {
 
-    public static final String SUPERUSER = "rachel@flymine.org";
+    private static String superuser;
 
-    /**
+    /**.
      * @param args number of threads you want to run
      * @throws Exception if something goes horribly wrong
      */
     public static void main(String args[]) throws Exception {
+        superuser = PropertiesUtil.getProperties().getProperty("superuser.account");
         ObjectStore productionOs = ObjectStoreFactory.getObjectStore("os.production");
         ObjectStoreFactory.getObjectStore("os.userprofile-production");
         ObjectStoreWriter userProfileOs = ObjectStoreWriterFactory
@@ -65,16 +67,10 @@ public class PerformanceTester
                 .getResourceAsStream("webapp/WEB-INF/bag-queries.xml"));
         Map classKeys = ClassKeyHelper.readKeys(productionOs.getModel(), classKeyProps);
         ProfileManager pm = new ProfileManager(productionOs, userProfileOs, null);
-        Profile p = pm.getProfile(SUPERUSER);
+        Profile p = pm.getProfile(superuser);
         Map<String, TemplateQuery> templates = p.getSavedTemplates();
         templates = pm.filterByTags(templates, Collections.singletonList(TagNames.IM_PUBLIC),
-                TagTypes.TEMPLATE, SUPERUSER);
-        // I think these work now.
-//        templates.remove("gene_adjacentgenes_allflyatlas");
-//        templates.remove("FlyFish_Genes");
-//        templates.remove("Gene_FlyFish");
-//        templates.remove("All_Genes_In_Organism_To_Publications");
-
+                TagTypes.TEMPLATE, superuser);
         int i = Integer.parseInt(args[0]);
         System .out.println("Running with " + i + " threads:");
         doRun(productionOs, classKeys, bagQueryConfig, templates, i);
