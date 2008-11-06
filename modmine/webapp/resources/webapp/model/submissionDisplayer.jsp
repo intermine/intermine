@@ -12,31 +12,24 @@
 
 <html:xhtml />
 
+<style type="text/css">
+div#submissionLabName h3, div#submissionLabName div#submissionProject {
+  color: black;
+  margin-bottom: 25px;
+}
+
+</style>
+
 <div class="body">
-
-  <table cellpadding="0" cellspacing="0" border="0">
-
-    <table cellpadding="0" cellspacing="0" border="0" class="dbsources">
-      <tr>
-        <th>Lab</th>
-        <th>Affiliation</th>
-      </tr>
-      <tr>
-        <td><html:link href="/${WEB_PROPERTIES['webapp.path']}/objectDetails.do?id=${object.lab.id}">${object.lab.name}</html:link></td>
-        <td>${object.lab.affiliation}</td>
-      </tr>
-    </table>
-
-    <table cellpadding="0" cellspacing="0" border="0" class="dbsources">
-      <tr>
-        <th>Project</th>
-      </tr>
-      <tr>
-        <td><html:link href="/${WEB_PROPERTIES['webapp.path']}/objectDetails.do?id=${object.lab.project.id}">${object.lab.project.name}</html:link></td>
-      </tr>
-    </table>
-
-    <table cellpadding="0" cellspacing="0" border="0" class="dbsources">
+  <div id="submissionLabName">
+    <h3>
+      <b>Lab:</b> <html:link href="/${WEB_PROPERTIES['webapp.path']}/objectDetails.do?id=${object.lab.id}">${object.lab.name}</html:link>
+      ${object.lab.affiliation}
+    </h3>
+    <div id="submissionProject">
+      <b>Project:</b> <html:link href="/${WEB_PROPERTIES['webapp.path']}/objectDetails.do?id=${object.lab.project.id}">${object.lab.project.name}</html:link>
+    </div>
+    <table cellpadding="0" cellspacing="0" border="0" class="results">
       <tr>
         <th>Feature type</th>
         <th>count</th>
@@ -44,9 +37,9 @@
       <c:forEach items="${featureCounts}" var="fc" varStatus="status">
         <tr>
           <td>${fc.key}</td>
-          <c:choose>
-            <c:when test='${fc.key eq "EST" || fc.key eq "MNRA"}'>
-              <td align="right">
+          <td align="right">
+            <c:choose>
+              <c:when test='${fc.key eq "EST" || fc.key eq "MNRA"}'>
                 <im:querylink text="${fc.value}" skipBuilder="true">
                   <query name="" model="genomic"
                          view="${fc.key}.dataSets.title ${fc.key}.primaryIdentifier ${fc.key}.secondaryIdentifier ${fc.key}.length
@@ -63,11 +56,9 @@
                     </node>
                   </query>
                 </im:querylink>
-              </td>
-            </c:when>
+              </c:when>
 
-            <c:otherwise>
-              <td align="right">
+              <c:otherwise>
                 <im:querylink text="${fc.value}" skipBuilder="true">
                   <query name="" model="genomic"
                          view="${fc.key}.dataSets.title ${fc.key}.secondaryIdentifier ${fc.key}.length
@@ -84,14 +75,12 @@
                     </node>
                   </query>
                 </im:querylink>
-              </td>
-            </c:otherwise>
-          </c:choose>
+              </c:otherwise>
+            </c:choose>
+          </td>
         </tr>
       </c:forEach>
-      <!-- end feature loop -->
+      <!-- end submission loop -->
     </table>
-    <!-- end submission loop -->
-  </table>
+  </div>
 </div>
-
