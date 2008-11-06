@@ -15,7 +15,7 @@
 <style type="text/css">
 div#submissionLabName h3, div#submissionLabName div#submissionProject {
   color: black;
-  margin-bottom: 25px;
+  margin-bottom: 20px;
 }
 
 </style>
@@ -35,50 +35,52 @@ div#submissionLabName h3, div#submissionLabName div#submissionProject {
         <th>count</th>
       </tr>
       <c:forEach items="${featureCounts}" var="fc" varStatus="status">
-        <tr>
-          <td>${fc.key}</td>
-          <td align="right">
-            <c:choose>
-              <c:when test='${fc.key eq "EST" || fc.key eq "MNRA"}'>
-                <im:querylink text="${fc.value}" skipBuilder="true">
-                  <query name="" model="genomic"
-                         view="${fc.key}.dataSets.title ${fc.key}.primaryIdentifier ${fc.key}.secondaryIdentifier ${fc.key}.length
-                               ${fc.key}.chromosomeLocation.object.primaryIdentifier ${fc.key}.chromosomeLocation.start ${fc.key}.chromosomeLocation.end"
-                         sortOrder="${fc.key}.primaryIdentifier asc">
-                    <node path="${fc.key}" type="${fc.key}">
-                    </node>
-                    <node path="${fc.key}.dataSets" type="DataSet">
-                    </node>
-                    <node path="${fc.key}.dataSets.title" type="String">
-                      <constraint op="=" value="${object.title}" description=""
-                                  identifier="" code="A">
-                      </constraint>
-                    </node>
-                  </query>
-                </im:querylink>
-              </c:when>
+        <c:if test='${fc.key != "Chromosome"}'>
+          <tr>
+            <td>${fc.key}</td>
+            <td align="right">
+              <c:choose>
+                <c:when test='${fc.key eq "EST" || fc.key eq "MNRA"}'>
+                  <im:querylink text="${fc.value}" skipBuilder="true">
+                    <query name="" model="genomic"
+                           view="${fc.key}.dataSets.title ${fc.key}.primaryIdentifier ${fc.key}.secondaryIdentifier ${fc.key}.length
+                                 ${fc.key}.chromosomeLocation.object.primaryIdentifier ${fc.key}.chromosomeLocation.start ${fc.key}.chromosomeLocation.end"
+                           sortOrder="${fc.key}.primaryIdentifier asc">
+                      <node path="${fc.key}" type="${fc.key}">
+                      </node>
+                      <node path="${fc.key}.dataSets" type="DataSet">
+                      </node>
+                      <node path="${fc.key}.dataSets.title" type="String">
+                        <constraint op="=" value="${object.title}" description=""
+                                    identifier="" code="A">
+                        </constraint>
+                      </node>
+                    </query>
+                  </im:querylink>
+                </c:when>
 
-              <c:otherwise>
-                <im:querylink text="${fc.value}" skipBuilder="true">
-                  <query name="" model="genomic"
-                         view="${fc.key}.dataSets.title ${fc.key}.secondaryIdentifier ${fc.key}.length
-                               ${fc.key}.chromosomeLocation.object.primaryIdentifier ${fc.key}.chromosomeLocation.start ${fc.key}.chromosomeLocation.end"
-                         sortOrder="${fc.key}.secondaryIdentifier asc">
-                    <node path="${fc.key}" type="${fc.key}">
-                    </node>
-                    <node path="${fc.key}.dataSets" type="DataSet">
-                    </node>
-                    <node path="${fc.key}.dataSets.title" type="String">
-                      <constraint op="=" value="${object.title}" description=""
-                                  identifier="" code="A">
-                      </constraint>
-                    </node>
-                  </query>
-                </im:querylink>
-              </c:otherwise>
-            </c:choose>
-          </td>
-        </tr>
+                <c:otherwise>
+                  <im:querylink text="${fc.value}" skipBuilder="true">
+                    <query name="" model="genomic"
+                           view="${fc.key}.dataSets.title ${fc.key}.secondaryIdentifier ${fc.key}.length
+                                 ${fc.key}.chromosomeLocation.object.primaryIdentifier ${fc.key}.chromosomeLocation.start ${fc.key}.chromosomeLocation.end"
+                           sortOrder="${fc.key}.secondaryIdentifier asc">
+                      <node path="${fc.key}" type="${fc.key}">
+                      </node>
+                      <node path="${fc.key}.dataSets" type="DataSet">
+                      </node>
+                      <node path="${fc.key}.dataSets.title" type="String">
+                        <constraint op="=" value="${object.title}" description=""
+                                    identifier="" code="A">
+                        </constraint>
+                      </node>
+                    </query>
+                  </im:querylink>
+                </c:otherwise>
+              </c:choose>
+            </td>
+          </tr>
+        </c:if>
       </c:forEach>
       <!-- end submission loop -->
     </table>
