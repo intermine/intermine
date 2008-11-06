@@ -24,7 +24,7 @@ div#submissionLabName h3, div#submissionLabName div#submissionProject {
   <div id="submissionLabName">
     <h3>
       <b>Lab:</b> <html:link href="/${WEB_PROPERTIES['webapp.path']}/objectDetails.do?id=${object.lab.id}">${object.lab.name}</html:link>
-      ${object.lab.affiliation}
+      - ${object.lab.affiliation}
     </h3>
     <div id="submissionProject">
       <b>Project:</b> <html:link href="/${WEB_PROPERTIES['webapp.path']}/objectDetails.do?id=${object.lab.project.id}">${object.lab.project.name}</html:link>
