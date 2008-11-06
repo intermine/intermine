@@ -134,7 +134,8 @@ public class AjaxServices
                     tags = pm.getTags(TagNames.IM_FAVOURITE, nameCopy, TagTypes.TEMPLATE,
                             profile.getUsername());
                 } else if (type.equals(TagTypes.BAG)) {
-                    tags = pm.getTags(TagNames.IM_FAVOURITE, nameCopy, TagTypes.BAG, profile.getUsername());
+                    tags = pm.getTags(TagNames.IM_FAVOURITE, nameCopy,
+                                      TagTypes.BAG, profile.getUsername());
                 } else {
                     throw new RuntimeException("Unknown tag type.");
                 }
@@ -147,7 +148,8 @@ public class AjaxServices
             // not a favourite.  turning on.
             } else {
                 if (type.equals(TagTypes.TEMPLATE)) {
-                    pm.addTag(TagNames.IM_FAVOURITE, nameCopy, TagTypes.TEMPLATE, profile.getUsername());
+                    pm.addTag(TagNames.IM_FAVOURITE, nameCopy,
+                              TagTypes.TEMPLATE, profile.getUsername());
                 } else if (type.equals(TagTypes.BAG)) {
                     pm.addTag(TagNames.IM_FAVOURITE, nameCopy, TagTypes.BAG, profile.getUsername());
                 } else {
@@ -158,7 +160,7 @@ public class AjaxServices
             processException(e);
         }
     }
-     
+
     private static void processException(Exception e) {
         LOG.error(ERROR_MSG, e);
         if (e instanceof RuntimeException) {
@@ -296,7 +298,7 @@ public class AjaxServices
                 }
                 InterMineBag bag = profile.getSavedBags().get(name);
                 bag.setName(newName, uosw);
-                getProfileManager(getRequest()).moveTagsToNewObject(name, newName, TagTypes.BAG, 
+                getProfileManager(getRequest()).moveTagsToNewObject(name, newName, TagTypes.BAG,
                         profile.getUsername());
                 profile.deleteBag(name);
                 profile.saveBag(newName, bag);
@@ -572,8 +574,7 @@ public class AjaxServices
                 }
             }
             if (aspectTags.size() > 0) {
-                wsMap = pm.filterByTags(wsMap, aspectTags, type,
-                        (String) servletContext.getAttribute(Constants.SUPERUSER_ACCOUNT));
+                wsMap = pm.filterByTags(wsMap, aspectTags, type, pm.getSuperuser());
             }
 
             if (profile.getUsername() != null && userTags.size() > 0) {
@@ -1021,9 +1022,9 @@ public class AjaxServices
     }
 
     /**
-     * 
+     *
      * @param servletContext
-     * @return 
+     * @return
      */
     @SuppressWarnings("unchecked")
     private static Map<String, List<FieldDescriptor>> getClassKeys(ServletContext servletContext) {
@@ -1104,8 +1105,8 @@ public class AjaxServices
                 if (counter > 4) {
                     break;
                 }
-                
-                // NB: apparently, the only accepted formats for getPublishedDate are 
+
+                // NB: apparently, the only accepted formats for getPublishedDate are
                 // Fri, 28 Jan 2008 11:02 GMT
                 // or
                 // Fri, 8 Jan 2008 11:02 GMT
@@ -1113,14 +1114,14 @@ public class AjaxServices
                 // Fri, 8 Jan 08 11:02 GMT
                 //
                 // an annoying error appears if the format is not followed, and news tile hangs.
-                // 
+                //
                 // the following is used to display the date without timestamp.
                 // this should always work since the retrieved date has a fixed format,
                 // independent of the one used in the xml.
                 String longDate = syndEntry.getPublishedDate().toString();
                 String dayMonth = longDate.substring(0, 10);
                 String year = longDate.substring(24);
-                                
+
                 html.append("<li>");
                 html.append("<strong>" + syndEntry.getTitle() + "</strong>");
                 html.append(" - <em>" + dayMonth + " " + year + "</em><br/>");
@@ -1138,12 +1139,12 @@ public class AjaxServices
         } catch (FeedException e) {
             return "<i>No news at specified URL</i>";
         }
-    }    
-    
+    }
+
     //*****************************************************************************
     // Tags AJAX Interface
     //*****************************************************************************
-    
+
     /**
      * Returns all objects names tagged with specified tag type and tag name.
      * @param type tag type
@@ -1162,21 +1163,22 @@ public class AjaxServices
         Map<String, WebSearchable> filteredMap = new TreeMap<String, WebSearchable>();
         List<String> tagList = new ArrayList<String>();
         tagList.add(tag);
-        filteredMap.putAll(profile.getProfileManager().filterByTags(map, tagList, type, 
-                profile.getUsername()));    
+        filteredMap.putAll(profile.getProfileManager().filterByTags(map, tagList, type,
+                profile.getUsername()));
         return filteredMap.keySet();
     }
 
     /**
      * Adds tag and assures that there is only one tag for this combination of tag name, tagged
      * Object and type.
-     * @param tagName tag name
+     * @param tag tag name
      * @param taggedObject object id that is tagged by this tag
      * @param type  tag type
      * @return 'ok' string if succeeded else error string
      */
-    public static String addTag(String tagName, String taggedObject, String type) {
-        LOG.info("Called addTag(). tagName:" + tagName + " taggedObject:" 
+    public static String addTag(String tag, String taggedObject, String type) {
+        String tagName = tag;
+        LOG.info("Called addTag(). tagName:" + tagName + " taggedObject:"
                 + taggedObject + " type: " + type);
         String errorMsg = "Adding tag failed.";
         String successMsg = "ok";
@@ -1186,25 +1188,25 @@ public class AjaxServices
             Profile profile = getProfile(request);
             tagName = tagName.trim();
             HttpSession session = request.getSession();
-            
-            if (profile.getUsername() != null 
+
+            if (profile.getUsername() != null
                     && !StringUtils.isEmpty(tagName)
                     && !StringUtils.isEmpty(type)
-                    && !StringUtils.isEmpty(taggedObject)) { 
+                    && !StringUtils.isEmpty(taggedObject)) {
                 if (tagExists(tagName, taggedObject, type)) {
                     return "Already tagged with this tag.";
                 }
                 if (!ProfileManager.isValidTagName(tagName)) {
                     return ProfileManager.getInvalidTagNameMessage();
                 }
-                if (tagName.startsWith(TagNames.IM_PREFIX) 
+                if (tagName.startsWith(TagNames.IM_PREFIX)
                         && !SessionMethods.isSuperUser(session)) {
-                    return "You cannot add tag starting at " + TagNames.IM_PREFIX + " ." 
+                    return "You cannot add tag starting at " + TagNames.IM_PREFIX + " ."
                         + "It is reserved for internal needs.";
                 }
-                
+
                 profileManager.addTag(tagName, taggedObject, type, profile.getUsername());
-                
+
                 ServletContext servletContext = session.getServletContext();
                 if (SessionMethods.isSuperUser(session)) {
                     SearchRepository tr = SearchRepository.
@@ -1212,31 +1214,30 @@ public class AjaxServices
                     tr.webSearchableTagged(type);
                 }
                 return successMsg;
-            } else {
-                return errorMsg;
             }
+            return errorMsg;
         } catch (Throwable e) {
             LOG.error("Adding tag failed", e);
             return errorMsg;
         }
     }
-        
+
     /**
      * Deletes tag.
-     * @param tagName tag name 
+     * @param tagName tag name
      * @param tagged id of tagged object
      * @param type tag type
      * @return 'ok' string if succeeded else error string
      */
     public static String deleteTag(String tagName, String tagged, String type) {
-        LOG.info("Called deleteTag(). tagName:" + tagName + " taggedObject:" 
+        LOG.info("Called deleteTag(). tagName:" + tagName + " taggedObject:"
                 + tagged + " type: " + type);
         String successMsg = "ok";
         String errorMsg = "Deleting tag failed.";
         try {
             HttpServletRequest request = getRequest();
             ProfileManager profileManager = getProfileManager(request);
-            Profile profile = getProfile(request);    
+            Profile profile = getProfile(request);
             profileManager.deleteTag(tagName, tagged, type, profile.getUsername());
             HttpSession session = request.getSession();
             ServletContext servletContext = session.getServletContext();
@@ -1249,12 +1250,12 @@ public class AjaxServices
         } catch (Throwable e) {
             LOG.error("Deleting tag failed", e);
             return errorMsg;
-        } 
+        }
     }
 
     /**
-     * Returns all tags of specified tag type together with prefixes of these tags. 
-     * For instance: for tag 'bio:experiment' it automatically adds 'bio' tag. 
+     * Returns all tags of specified tag type together with prefixes of these tags.
+     * For instance: for tag 'bio:experiment' it automatically adds 'bio' tag.
      * @param type tag type
      * @return tags
      */
@@ -1264,10 +1265,9 @@ public class AjaxServices
         ProfileManager profileManager = getProfileManager(request);
         Profile profile = getProfile(request);
         if (profile.isLoggedIn()) {
-            return profileManager.getUserTagNames(type, profile.getUsername());    
-        } else {
-            return new TreeSet<String>();
+            return profileManager.getUserTagNames(type, profile.getUsername());
         }
+        return new TreeSet<String>();
     }
 
     /**
@@ -1281,10 +1281,9 @@ public class AjaxServices
         ProfileManager profileManager = getProfileManager(request);
         Profile profile = getProfile(request);
         if (profile.isLoggedIn()) {
-            return profileManager.getObjectTagNames(tagged, type, profile.getUsername());    
-        } else {
-            return new TreeSet<String>();
+            return profileManager.getObjectTagNames(tagged, type, profile.getUsername());
         }
+        return new TreeSet<String>();
     }
 
     private static ProfileManager getProfileManager(HttpServletRequest request) {
@@ -1292,7 +1291,7 @@ public class AjaxServices
             .getServletContext().getAttribute(Constants.PROFILE_MANAGER);
         return pm;
     }
-        
+
     private static boolean tagExists(String tag, String taggedObject, String type) {
         HttpServletRequest request = getRequest();
         ProfileManager profileManager = getProfileManager(request);
@@ -1300,11 +1299,11 @@ public class AjaxServices
         return profileManager.getObjectTagNames(taggedObject, type, userName).contains(tag);
     }
 
-    
+
     private static Profile getProfile(HttpServletRequest request) {
         return (Profile) request.getSession().getAttribute(Constants.PROFILE);
     }
-    
+
     private static HttpServletRequest getRequest() {
         return WebContextFactory.get().getHttpServletRequest();
     }

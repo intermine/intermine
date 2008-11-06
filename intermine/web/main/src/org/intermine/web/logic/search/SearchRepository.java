@@ -149,13 +149,11 @@ public class SearchRepository
     private String getWebSearchableType(WebSearchable webSearchable) {
         if (webSearchable instanceof TemplateQuery) {
             return TagTypes.TEMPLATE;
-        } else {
-            if (webSearchable instanceof InterMineBag) {
-                return TagTypes.BAG;
-            } else {
-                throw new IllegalArgumentException("unknown argument: " + webSearchable);
-            }
         }
+        if (webSearchable instanceof InterMineBag) {
+            return TagTypes.BAG;
+        }
+        throw new IllegalArgumentException("unknown argument: " + webSearchable);
     }
 
     /**
@@ -199,12 +197,11 @@ public class SearchRepository
     public Directory getDirectory(String type) {
         if (directoryMap.containsKey(type) && directoryMap.get(type) != null) {
             return directoryMap.get(type);
-        } else {
-            Map<String, ? extends WebSearchable> webSearchables = webSearchablesMap.get(type);
-            RAMDirectory ram = indexWebSearchables(webSearchables, type);
-            directoryMap.put(type, ram);
-            return ram;
         }
+        Map<String, ? extends WebSearchable> webSearchables = webSearchablesMap.get(type);
+        RAMDirectory ram = indexWebSearchables(webSearchables, type);
+        directoryMap.put(type, ram);
+        return ram;
     }
 
     /**

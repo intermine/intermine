@@ -85,7 +85,7 @@ public class BagBuildController extends TilesAction
 
         ArrayList<String> typeList = new ArrayList<String>();
         ArrayList<String> preferedTypeList = new ArrayList<String>();
-        String superUserName = (String) servletContext.getAttribute(Constants.SUPERUSER_ACCOUNT);
+        String superUserName = pm.getSuperuser();
 
         List<Tag> preferredBagTypeTags =
             pm.getTags("im:preferredBagType", null, "class", superUserName);

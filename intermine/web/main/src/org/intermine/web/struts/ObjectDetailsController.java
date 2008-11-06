@@ -93,8 +93,7 @@ public class ObjectDetailsController extends InterMineAction
 
         ProfileManager pm = (ProfileManager) servletContext
                 .getAttribute(Constants.PROFILE_MANAGER);
-        String superuser = (String) servletContext
-                .getAttribute(Constants.SUPERUSER_ACCOUNT);
+        String superuser = pm.getSuperuser();
 
         DisplayObject dobj = displayObjects.get(id);
         if (dobj == null) {
@@ -110,15 +109,15 @@ public class ObjectDetailsController extends InterMineAction
         }
 
         Map<String, Map> placementRefsAndCollections = new TreeMap<String, Map>();
-        Set<String> aspects 
-        	= new HashSet((Set<String>) servletContext.getAttribute(Constants.CATEGORIES));
+        Set<String> aspects
+            = new HashSet((Set<String>) servletContext.getAttribute(Constants.CATEGORIES));
 
         Set<ClassDescriptor> cds = os.getModel().getClassDescriptorsForClass(
                 dobj.getObject().getClass());
 
-        placementRefsAndCollections.put(TagNames.IM_SUMMARY, 
-        		getSummaryFields(pm, superuser, dobj, cds));
-        
+        placementRefsAndCollections.put(TagNames.IM_SUMMARY,
+                getSummaryFields(pm, superuser, dobj, cds));
+
         for (String aspect : aspects) {
             placementRefsAndCollections.put(TagNames.IM_ASPECT_PREFIX + aspect,
                                             new TreeMap(String.CASE_INSENSITIVE_ORDER));
@@ -178,10 +177,10 @@ public class ObjectDetailsController extends InterMineAction
      */
     private Map<String, DisplayField> getSummaryFields(ProfileManager pm, String superuser,
             DisplayObject dobj, Set<ClassDescriptor> cds) {
-        Map<String, DisplayField> ret = 
-        	new TreeMap<String, DisplayField>(String.CASE_INSENSITIVE_ORDER);
+        Map<String, DisplayField> ret =
+            new TreeMap<String, DisplayField>(String.CASE_INSENSITIVE_ORDER);
         for (ClassDescriptor cd : cds) {
-            
+
             // get all summary tags for all refs and collections of
             // this class
             List<Tag> placementTags = new ArrayList<Tag>(pm.getTags(TagNames.IM_SUMMARY,

@@ -436,8 +436,9 @@ public class BagQueryRunner
      * @return a list of conversion templates
      */
     public static List<TemplateQuery> getConversionTemplates(ServletContext servletContext) {
-        String sup = (String) servletContext.getAttribute(Constants.SUPERUSER_ACCOUNT);
+
         ProfileManager pm = SessionMethods.getProfileManager(servletContext);
+        String sup = pm.getSuperuser();
         Profile p = pm.getProfile(sup);
 
         List<TemplateQuery> conversionTemplates = new ArrayList();

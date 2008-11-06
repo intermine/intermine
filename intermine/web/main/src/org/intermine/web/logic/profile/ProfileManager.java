@@ -58,6 +58,7 @@ import org.intermine.pathquery.PathQuery;
 import org.intermine.pathquery.PathQueryBinding;
 import org.intermine.util.CacheMap;
 import org.intermine.util.DynamicUtil;
+import org.intermine.util.PropertiesUtil;
 import org.intermine.web.logic.bag.InterMineBag;
 import org.intermine.web.logic.query.MainHelper;
 import org.intermine.web.logic.query.SavedQueryBinding;
@@ -82,6 +83,7 @@ public class ProfileManager
     private Map<String, TagChecker> tagCheckers = null;
     private HashMap<MultiKey, List<Tag>> tagCache = null;
     private Map<String, List<FieldDescriptor>> classKeys = null;
+    private String superuser = null;
 
     /**
      * Construct a ProfileManager for the webapp
@@ -89,10 +91,9 @@ public class ProfileManager
      * @param userProfileOS the object store that hold user profile information
      * @param classKeys classKeys
      */
-    public ProfileManager(ObjectStore os, ObjectStoreWriter userProfileOS,
-                          Map classKeys) {
+    public ProfileManager(ObjectStore os, ObjectStoreWriter userProfileOS, Map classKeys) {
         this.os = os;
-
+        superuser = PropertiesUtil.getProperties().getProperty("superuser.account");
         tagCheckers = makeTagCheckers(os.getModel());
         this.osw = userProfileOS;
     }
@@ -473,12 +474,12 @@ public class ProfileManager
      * @param taggedObject object id of tagged object
      * @param type tag type
      * @param userName user name
-     * 
+     *
      */
     public void deleteTag(String tagName, String taggedObject, String type, String userName) {
         List<Tag> tags = getTags(tagName, taggedObject, type, userName);
         if (tags.size() > 0 && tags.get(0) != null) {
-            deleteTag(tags.get(0));    
+            deleteTag(tags.get(0));
         }
     }
 
@@ -489,9 +490,9 @@ public class ProfileManager
         }
         return ret;
     }
-    
+
     /**
-     * Returns names of tags of specified user and tag type. For anonymous user returns empty set.  
+     * Returns names of tags of specified user and tag type. For anonymous user returns empty set.
      * @param type tag type
      * @param userName user name
      * @return tag names
@@ -504,14 +505,14 @@ public class ProfileManager
         List<Tag> tags = getTags(null, null, type, userName);
         return tagsToTagNames(tags);
     }
-    
+
     /**
-     * Returns names of tagged tags for specified object. For anonymous user returns empty set.  
+     * Returns names of tagged tags for specified object. For anonymous user returns empty set.
      * @param taggedObject tagged object
      * @param type tag type
      * @param userName user name
      * @return tag names
-     */    
+     */
     public Set<String> getObjectTagNames(String taggedObject, String type, String userName) {
         if (getProfile(userName) == null) {
             throw new UserNotFoundException("User: '" + userName + "' not found.");
@@ -519,9 +520,8 @@ public class ProfileManager
         if (!userName.equals("")) {
             List<Tag> tags = getTags(null, taggedObject, type, userName);
             return tagsToTagNames(tags);
-        } else {
-            return new TreeSet<String>();
         }
+        return new TreeSet<String>();
     }
 
     /**
@@ -675,35 +675,6 @@ public class ProfileManager
             tagKeys[1] = tag.getObjectIdentifier();
             tagKeys[2] = tag.getType();
             tagKeys[3] = tag.getUserProfile().getUsername();
-
-//            if (keyNullPartCount == 2) {
-//                // special case that allows the cache to be primed in a struts controller
-//                // eg. calling getTags(null, null, "template", "superuser@flymine") will prime the
-//                // cache so that getTags(null, "some_id", "template", "superuser@flymine") and
-//                // getTags("some_tag", null, "template", "superuser@flymine") will be fast
-//                for (int i = 0; i < 4; i++) {
-//                    if (key.getKey(i) == null) {
-//                        Object[] keysCopy = (Object[]) tagKeys.clone();
-//                        keysCopy[i] = null;
-//                        MultiKey keyCopy = new MultiKey(keysCopy);
-//                        if (cache.containsKey(keyCopy)) {
-//                            List existingList = (List) cache.get(keyCopy);
-//                            if (existingList instanceof ArrayList) {
-//                                existingList.add(tag);
-//                            } else {
-//                                ArrayList listCopy = new ArrayList(existingList);
-//                                listCopy.add(tag);
-//                                cache.put(keyCopy, listCopy);
-//                            }
-//                        } else {
-//                            List newList = new ArrayList();
-//                            newList.add(tag);
-//                            cache.put(keyCopy, newList);
-//                        }
-//                    }
-//                }
-//
-//            }
         }
 
     }
@@ -852,8 +823,10 @@ public class ProfileManager
         newTagCheckers.put("template", templateChecker);
 
         TagChecker bagChecker = new TagChecker() {
-            public void isValid(String tagName, String objectIdentifier, String type,
-                                UserProfile userProfile) {
+            public void isValid(@SuppressWarnings("unused") String tagName,
+                                @SuppressWarnings("unused") String objectIdentifier,
+                                @SuppressWarnings("unused") String type,
+                                @SuppressWarnings("unused") UserProfile userProfile) {
                 // OK
             }
         };
@@ -875,10 +848,10 @@ public class ProfileManager
         newTagCheckers.put("class", classChecker);
         return newTagCheckers;
     }
-    
+
     /**
      * Verifies that tag name can only contain A-Z, a-z, 0-9, '_', '-', ' ', ':'
-     * @param name tag name 
+     * @param name tag name
      * @return true if the name is valid else false
      */
     public static boolean isValidTagName(String name) {
@@ -887,9 +860,9 @@ public class ProfileManager
         }
         Pattern p = Pattern.compile("[^\\w\\s\\.\\-:]");
         Matcher m = p.matcher(name);
-        return !m.find();        
+        return !m.find();
     }
-    
+
     /**
      * Returns tag name error message saying which signs are allowed.
      * @return error message
@@ -898,7 +871,7 @@ public class ProfileManager
         return "Invalid tag name. Name can contain only alphabet characters, figures, space, dot"
             + ", colon and dash.";
     }
-    
+
     /**
      * Deletes all tags assigned to a specified object.
      * @param taggedObject tagged object
@@ -913,7 +886,7 @@ public class ProfileManager
     }
 
     /**
-     * Moves tags from one object to another. 
+     * Moves tags from one object to another.
      * @param oldTaggedObj name of original tagged object
      * @param newTaggedObj name of new tagged object
      * @param type tag type
@@ -927,25 +900,38 @@ public class ProfileManager
             deleteTag(tag);
         }
     }
-    
+
     /**
-     * Extracts aspect from tag name. For instance for aspect:Miscellaneous returns Miscellaneous 
+     * Extracts aspect from tag name. For instance for aspect:Miscellaneous returns Miscellaneous
      * @param tagName tag name
      * @return if it is aspect tag then returns aspect else null
      */
     public static String getAspect(String tagName) {
         if (isAspectTag(tagName)) {
             return tagName.substring(TagNames.IM_ASPECT_PREFIX.length()).trim();
-        } else {
-            return null;
         }
+        return null;
     }
-    
+
     /**
      * @param tagName tag name
      * @return true if tag is aspect tag else false
      */
     public static boolean isAspectTag(String tagName) {
         return tagName.startsWith(TagNames.IM_ASPECT_PREFIX);
+    }
+
+    /**
+     * @return the superuser
+     */
+    public String getSuperuser() {
+        return superuser;
+    }
+
+    /**
+     * @param superuser the superuser to set
+     */
+    public void setSuperuser(String superuser) {
+        this.superuser = superuser;
     }
 }
