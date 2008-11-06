@@ -9,18 +9,7 @@ export INTERMINE=~/svn/dev/intermine
 export MINE=~/svn/dev/$whichmine
 export BIO=~/svn/dev/bio
 
-echo $MINE
-
 CP=$CLASSPATH
-
-#for i in $INTERMINE/lib/*.jar ; do
-#    CP=$CP:$i
-#done
-
-#for i in $INTERMINE/dist/*.jar ; do
-#    CP=$CP:$i
-#done
-
 
 CP=$CP:$INTERMINE/objectstore/main/dist/intermine-objectstore.jar
 for i in $INTERMINE/objectstore/main/lib/*.jar ; do
