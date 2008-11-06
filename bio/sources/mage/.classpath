@@ -13,6 +13,5 @@
 	<classpathentry kind="lib" path="main/lib/MAGEstk-2004-11-29-v1.0-compatible.jar"/>
 	<classpathentry combineaccessrules="false" kind="src" path="/bio-postprocess-main"/>
 	<classpathentry kind="lib" path="test/resources"/>
-	<classpathentry kind="lib" path="srcmodel/build/main"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>
