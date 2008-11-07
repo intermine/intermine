@@ -699,7 +699,7 @@ public class TemplateHelper
 
         if (template.getBagNames().size() != 0) {
             throw new RuntimeException("Precomputed query can't be created "
-                                       + "for template with list. This functionality is not allowed.");
+                                       + "for a template with a list.");
         }
 
         List<String> indexPaths = new ArrayList<String>();
