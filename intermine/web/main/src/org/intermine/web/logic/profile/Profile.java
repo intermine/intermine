@@ -12,9 +12,11 @@ package org.intermine.web.logic.profile;
 
 import java.util.Collections;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.TreeMap;
 
 import org.apache.commons.collections.map.ListOrderedMap;
@@ -48,7 +50,6 @@ public class Profile
     protected Map<String, InterMineBag> savedBags = new TreeMap<String, InterMineBag>();
     protected Map<String, TemplateQuery> savedTemplates = new TreeMap<String, TemplateQuery>();
     protected Map<String, String> userOptions = new TreeMap<String, String>();
-    //protected Map categoryTemplates;
     protected Map queryHistory = new ListOrderedMap();
     private boolean savingDisabled;
     private SearchRepository searchRepository =
@@ -167,6 +168,23 @@ public class Profile
     }
 
     /**
+     * Get the users saved templates with specified tag
+     * @param tag filter the templates returned by this tag
+     * @return saved templates
+     */
+    public Map<String, TemplateQuery> getSavedTemplates(String tag) {
+        Map<String, TemplateQuery> filteredTemplates = new HashMap();
+        for (String template : savedTemplates.keySet()) {
+            Set<String> tags = manager.getObjectTagNames(template, TagTypes.TEMPLATE, username);
+            if (tags.contains(tag)) {
+                filteredTemplates.put(template, savedTemplates.get(template));
+            }
+        }
+        return Collections.unmodifiableMap(filteredTemplates);
+    }
+
+
+    /**
      * Save a template
      * @param name the template name
      * @param template the template
@@ -196,7 +214,8 @@ public class Profile
         savedTemplates.remove(name);
         if (manager != null) {
             manager.deleteObjectTags(name, TagTypes.TEMPLATE, username);
-            List favourites = manager.getTags(TagNames.IM_FAVOURITE, name, TagTypes.TEMPLATE, username);
+            List favourites = manager.getTags(TagNames.IM_FAVOURITE, name,
+                                              TagTypes.TEMPLATE, username);
             for (Iterator iter = favourites.iterator(); iter.hasNext();) {
                 Tag tag = (Tag) iter.next();
                 manager.deleteTag(tag);

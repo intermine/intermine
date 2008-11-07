@@ -508,8 +508,8 @@ public class ProfileManager
 
     /**
      * Returns names of tagged tags for specified object. For anonymous user returns empty set.
-     * @param taggedObject tagged object
-     * @param type tag type
+     * @param taggedObject tagged object, eg. template name
+     * @param type tag type, eg. TEMPLATE
      * @param userName user name
      * @return tag names
      */

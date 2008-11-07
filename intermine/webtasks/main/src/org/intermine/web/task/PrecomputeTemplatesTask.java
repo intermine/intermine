@@ -39,6 +39,7 @@ import org.intermine.web.logic.Constants;
 import org.intermine.web.logic.profile.Profile;
 import org.intermine.web.logic.profile.ProfileManager;
 import org.intermine.web.logic.search.SearchRepository;
+import org.intermine.web.logic.tagging.TagNames;
 import org.intermine.web.logic.template.TemplateHelper;
 import org.intermine.web.logic.template.TemplateQuery;
 
@@ -284,6 +285,6 @@ public class PrecomputeTemplatesTask extends Task
         SearchRepository sr = new SearchRepository(TemplateHelper.ALL_TEMPLATE);
         servletContext.setAttribute(Constants.GLOBAL_SEARCH_REPOSITORY, sr);
         Profile profile = pm.getProfile(username, pm.getPassword(username));
-        return profile.getSavedTemplates();
+        return profile.getSavedTemplates(TagNames.IM_PUBLIC);
     }
 }
