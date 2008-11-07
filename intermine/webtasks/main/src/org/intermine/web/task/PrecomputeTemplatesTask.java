@@ -56,7 +56,7 @@ public class PrecomputeTemplatesTask extends Task
     private static final Logger LOG = Logger.getLogger(PrecomputeTemplatesTask.class);
 
     /**
-     * The precomputede category to use for templates.
+     * The precompute category to use for templates.
      */
     public static final String PRECOMPUTE_CATEGORY_TEMPLATE = "template";
 
@@ -262,7 +262,6 @@ public class PrecomputeTemplatesTask extends Task
      * @throws BuildException if an IO error occurs loading the template queries
      */
     protected Map getPrecomputeTemplateQueries() throws BuildException {
-        ObjectStore os;
         ProfileManager pm;
         ServletContext servletContext = new ServletContextSimulator();
         try {

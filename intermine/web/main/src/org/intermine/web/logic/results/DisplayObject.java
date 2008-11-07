@@ -59,8 +59,6 @@ public class DisplayObject
     private Map<String, DisplayField> refsAndCollections = null;
     private Map<String, FieldConfig> fieldConfigMap = null;
     private List<String> fieldExprs = null;
-    //private Map classTemplateExprs = null;
-    //private HttpSession session;
     private Map<String, String> verbosity = new HashMap<String, String>();
     private final Map classKeys;
 
@@ -73,20 +71,14 @@ public class DisplayObject
      * @param classKeys map of classname to set of keys
      * @throws Exception if an error occurs
      */
-    public DisplayObject(/*HttpSession session,*/ InterMineObject object, Model model,
-                         WebConfig webConfig,
-                         Map webProperties,
-                         Map classKeys) throws Exception {
+    public DisplayObject(InterMineObject object, Model model, WebConfig webConfig,
+                         Map webProperties, Map classKeys)
+    throws Exception {
         this.object = object;
         this.model = model;
         this.webConfig = webConfig;
         this.webProperties = webProperties;
-        //this.session = session;
         this.classKeys = classKeys;
-
-        //ServletContext servletContext = session.getServletContext();
-        /*this.classTemplateExprs =
-            (Map) servletContext.getAttribute(Constants.CLASS_TEMPLATE_EXPRS);*/
         clds = getLeafClds(object.getClass(), model);
     }
 
