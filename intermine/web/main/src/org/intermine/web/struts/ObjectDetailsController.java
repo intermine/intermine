@@ -39,7 +39,6 @@ import org.intermine.objectstore.query.ObjectStoreBagsForObject;
 import org.intermine.objectstore.query.Query;
 import org.intermine.objectstore.query.Results;
 import org.intermine.util.DynamicUtil;
-import org.intermine.util.TypeUtil;
 import org.intermine.web.logic.Constants;
 import org.intermine.web.logic.bag.InterMineBag;
 import org.intermine.web.logic.config.WebConfig;
@@ -272,24 +271,26 @@ public class ObjectDetailsController extends InterMineAction
      * Read the port.verbose.fields.* properties from WEB_PROPERTIES and call
      * DisplayObject.setVerbosity(true) on the field in the property value.
      */
-    private static void setVerboseCollections(HttpSession session, DisplayObject dobj) {
-        ServletContext servletContext = session.getServletContext();
-        Map webProperties = (Map) servletContext.getAttribute(Constants.WEB_PROPERTIES);
-        Set clds = dobj.getClds();
-        Iterator iter = clds.iterator();
-        while (iter.hasNext()) {
-            ClassDescriptor cd = (ClassDescriptor) iter.next();
-            String propName = PORTAL_VERBOSE_FIELDS_PREFIX + TypeUtil.unqualifiedName(cd.getName());
-            String fieldNamesString = (String) webProperties.get(propName);
-            if (fieldNamesString != null) {
-                String[] fieldNames = fieldNamesString.split("\\s*,\\s*");
-                for (int i = 0; i < fieldNames.length; i++) {
-                    String fieldName = fieldNames[i];
-                    dobj.setVerbosity(fieldName, true);
-                }
-            }
-        }
-    }
+// disabled until portal can be fixed
+//    private static void setVerboseCollections(HttpSession session, DisplayObject dobj) {
+//        ServletContext servletContext = session.getServletContext();
+//        Map webProperties = (Map) servletContext.getAttribute(Constants.WEB_PROPERTIES);
+//        Set clds = dobj.getClds();
+//        Iterator iter = clds.iterator();
+//        while (iter.hasNext()) {
+//            ClassDescriptor cd = (ClassDescriptor) iter.next();
+//            String propName = PORTAL_VERBOSE_FIELDS_PREFIX
+//    + TypeUtil.unqualifiedName(cd.getName());
+//            String fieldNamesString = (String) webProperties.get(propName);
+//            if (fieldNamesString != null) {
+//                String[] fieldNames = fieldNamesString.split("\\s*,\\s*");
+//                for (int i = 0; i < fieldNames.length; i++) {
+//                    String fieldName = fieldNames[i];
+//                    dobj.setVerbosity(fieldName, true);
+//                }
+//            }
+//        }
+//    }
 
     /**
      * Make a new DisplayObject from the given object.
@@ -302,18 +303,14 @@ public class ObjectDetailsController extends InterMineAction
      * @throws Exception
      *             if an error occurs
      */
-    public static DisplayObject makeDisplayObject(HttpSession session,
-            InterMineObject object) throws Exception {
+    public static DisplayObject makeDisplayObject(HttpSession session, InterMineObject object)
+    throws Exception {
         ServletContext servletContext = session.getServletContext();
-        ObjectStore os = (ObjectStore) servletContext
-                .getAttribute(Constants.OBJECTSTORE);
-        WebConfig webConfig = (WebConfig) servletContext
-                .getAttribute(Constants.WEBCONFIG);
-        Map webPropertiesMap = (Map) servletContext
-                .getAttribute(Constants.WEB_PROPERTIES);
+        ObjectStore os = (ObjectStore) servletContext.getAttribute(Constants.OBJECTSTORE);
+        WebConfig webConfig = (WebConfig) servletContext.getAttribute(Constants.WEBCONFIG);
+        Map webPropertiesMap = (Map) servletContext.getAttribute(Constants.WEB_PROPERTIES);
         Map classKeys = (Map) servletContext.getAttribute(Constants.CLASS_KEYS);
-        return new DisplayObject(object, os.getModel(), webConfig,
-                webPropertiesMap, classKeys);
+        return new DisplayObject(object, os.getModel(), webConfig, webPropertiesMap, classKeys);
     }
 
     private static String getBags(ObjectStore os, HttpSession session,
