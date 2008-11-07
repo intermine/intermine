@@ -438,6 +438,16 @@
     </longdisplayers>
   </class>
 
+  <class className="org.flymine.model.genomic.Pathway">
+    <fields>
+      <fieldconfig fieldExpr="identifier" />
+      <fieldconfig fieldExpr="name" />
+    </fields>
+    <longdisplayers>
+      <displayer src="attributeLinkDisplayer.tile"/>
+    </longdisplayers>
+  </class>
+
   <class className="org.flymine.model.genomic.PhenotypeAnnotation">
     <fields>
       <fieldconfig fieldExpr="annotationType"/>
