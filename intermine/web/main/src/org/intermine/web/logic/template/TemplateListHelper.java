@@ -45,9 +45,7 @@ import org.intermine.web.logic.profile.ProfileManager;
 import org.intermine.web.logic.search.SearchRepository;
 import org.intermine.web.logic.search.WebSearchable;
 import org.intermine.web.logic.session.SessionMethods;
-import org.intermine.web.logic.tagging.TagNames;
 import org.intermine.web.logic.tagging.TagTypes;
-import org.intermine.web.struts.AspectController;
 
 /**
  * Helper methods for template lists.
@@ -93,16 +91,17 @@ public class TemplateListHelper
     /**
      * Get the Set of templates for a given aspect that contains constraints
      * that can be filled in with an attribute from the given InterMineObject.
-     * @param aspect aspect name
+     * @param datacategory aspect name
      * @param context ServletContext
      * @param object InterMineObject
      * @param fieldExprsOut field expressions to fill in
      * @return Set of TemplateQuerys
      */
-    public static List<TemplateQuery> getAspectTemplateForClass(String aspect,
+    public static List<TemplateQuery> getAspectTemplateForClass(String datacategory,
                                                  ServletContext context,
                                                  InterMineObject object,
                                                  Map<TemplateQuery, List<String>> fieldExprsOut) {
+        String aspect = datacategory;
         if (ProfileManager.isAspectTag(aspect)) {
             aspect = ProfileManager.getAspect(aspect);
         }
@@ -209,8 +208,8 @@ public class TemplateListHelper
                                                                      InterMineBag bag) {
         String type = bag.getType();
         HashMap<TemplateQuery, String> templates = new HashMap<TemplateQuery, String>();
-        String sup = (String) context.getAttribute(Constants.SUPERUSER_ACCOUNT);
         ProfileManager pm = SessionMethods.getProfileManager(context);
+        String sup = pm.getSuperuser();
         Profile p = pm.getProfile(sup);
         Collection templateList = p.getSavedTemplates().values();
         for (Iterator iter = templateList.iterator(); iter.hasNext();) {
@@ -239,20 +238,21 @@ public class TemplateListHelper
 
     /**
      * Get the Set of templates for a given aspect and a given type
-     * @param aspect aspect name
+     * @param datacategory aspect name
      * @param context servlet context
      * @param bag the bag from which to extract the type
      * @param fieldExprsOut a map to populate with matching node names
      * @return the List of templates
      */
-    public static List<TemplateQuery> getAspectTemplatesForType(String aspect,
+    public static List<TemplateQuery> getAspectTemplatesForType(String datacategory,
                               ServletContext context, InterMineBag bag, Map<TemplateQuery,
                               List<String>> fieldExprsOut) {
+        String aspect = datacategory;
         if (ProfileManager.isAspectTag(aspect)) {
             aspect = ProfileManager.getAspect(aspect);
         }
-        String sup = (String) context.getAttribute(Constants.SUPERUSER_ACCOUNT);
         ProfileManager pm = SessionMethods.getProfileManager(context);
+        String sup = pm.getSuperuser();
         Class bagClass;
         try {
             bagClass = Class.forName(bag.getQualifiedType());
@@ -344,7 +344,7 @@ public class TemplateListHelper
                                     } catch (ClassNotFoundException e) {
                                         String msg = "[d] Can't find class " + className
                                         + " for template " +  templateQuery.getTitle()
-                                        + " and tag " + tag.getTagName();;
+                                        + " and tag " + tag.getTagName();
                                         LOG.error(msg);
                                         continue TAGS;
                                     }
