@@ -43,6 +43,7 @@ import org.intermine.path.Path;
 import org.intermine.pathquery.OrderBy;
 import org.intermine.pathquery.PathQuery;
 import org.intermine.util.CacheMap;
+import org.intermine.util.PropertiesUtil;
 import org.intermine.web.logic.Constants;
 import org.intermine.web.logic.WebUtil;
 import org.intermine.web.logic.bag.BagQueryConfig;
@@ -777,8 +778,8 @@ public class SessionMethods
      * @return superuser Profile
      */
     public static Profile getSuperUserProfile(ServletContext context) {
-        String username = (String) context.getAttribute(Constants.SUPERUSER_ACCOUNT);
-        return getProfileManager(context).getProfile(username);
+        String superuser = PropertiesUtil.getProperties().getProperty("superuser.account");
+        return getProfileManager(context).getProfile(superuser);
     }
 
     /**

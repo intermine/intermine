@@ -134,8 +134,6 @@ public class InitialiserPlugin implements PlugIn
         loadBagQueries(servletContext, os);
 
         final ProfileManager pm = createProfileManager(servletContext, os);
-        // Loading shared template queries requires profile manager
-        loadSuperUserDetails(servletContext);
 
         // index global webSearchables
         SearchRepository searchRepository = new SearchRepository(TemplateHelper.GLOBAL_TEMPLATE);
@@ -404,17 +402,6 @@ public class InitialiserPlugin implements PlugIn
             }
         };
         servletContext.setAttribute(Constants.LEAF_DESCRIPTORS_MAP, leafDescriptorsMap);
-    }
-
-    /**
-     * Load superuser account name into servlet context attribute SUPERUSER_ACCOUNT
-     *
-     * @param servetContext  servlet context in which to place attribute
-     */
-    private void loadSuperUserDetails(ServletContext servletContext) {
-        Properties props = (Properties) servletContext.getAttribute(Constants.WEB_PROPERTIES);
-        String superuser = (String) props.get("superuser.account");
-        servletContext.setAttribute(Constants.SUPERUSER_ACCOUNT, superuser);
     }
 
     /**
