@@ -115,13 +115,6 @@ public interface Constants
     public static final String COLLAPSED = "COLLAPSED";
 
     /**
-     * Servlet attribute used to store username of superuser (this attribute
-     * will disappear when we implement a more fine-grained user privileges
-     * system).
-     */
-    public static final String SUPERUSER_ACCOUNT = "SUPERUSER_ACCOUNT";
-
-    /**
      * Session attribute that temporarily holds a Vector of messages that will be displayed by the
      * errorMessages.jsp on the next page viewed by the user and then removed (allows message
      * after redirect).
