@@ -48,10 +48,10 @@
       <property name="src.data.dir" location="/shared/data/modmine/go-annotation/"/>
       <property name="src.data.dir.includes" value="*/gene_association*"/>
     </source>
-                <source name="fly-anatomy-ontology" type="fly-anatomy-ontology" dump="true">
+    <source name="fly-anatomy-ontology" type="fly-anatomy-ontology" dump="true">
       <property name="src.data.file" location="/shared/data/ontologies/fly_anatomy/current/fly_anatomy.obo"/>
     </source>
-                <source name="fly-development-ontology" type="fly-development-ontology" dump="true">
+    <source name="fly-development-ontology" type="fly-development-ontology" dump="true">
       <property name="src.data.file" location="/shared/data/ontologies/fly_development/current/fly_development.obo"/>
     </source>
     <source name="fly-misc-cvterms" type="fly-misc-cvterms">
@@ -96,12 +96,12 @@
       <property name="fasta.synonymSource" value="FlyBase"/>
       <property name="src.data.dir" location="/shared/data/flybase/current/fasta"/>
     </source>
-                <source name="wormbase-c_elegans-chromosome-fasta" type="fasta" dump="true">
+    <source name="wormbase-c_elegans-chromosome-fasta" type="fasta" dump="true">
       <property name="fasta.taxonId" value="6239"/>
       <property name="fasta.className" value="org.flymine.model.genomic.Chromosome"/>
       <property name="fasta.includes" value="*chromosome*.fasta"/>
-                        <property name="fasta.dataSetTitle" value="WormBase C. Elegans data set"/>
-                        <property name="fasta.synonymSource" value="WormBase"/>
+      <property name="fasta.dataSetTitle" value="WormBase C. Elegans data set"/>
+      <property name="fasta.synonymSource" value="WormBase"/>
       <property name="src.data.dir" location="/shared/data/wormbase/ws175"/>
     </source>
     <source name="entrez-organism" type="entrez-organism">
@@ -118,7 +118,7 @@
            items DB, then into the final objectstore dump="true"-->
       <property name="src.data.file" location="build/publications.xml"/>
     </source>
-<source name="modencode-metadata" type="chado-db" dump="true">
+    <source name="modencode-metadata" type="chado-db" dump="true">
       <property name="organisms" value="7227"/>
       <property name="dataSourceName" value="modENCODE"/>
       <property name="dataSetTitle" value="modENCODE submission"/>
