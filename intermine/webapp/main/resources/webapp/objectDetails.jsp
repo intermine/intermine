@@ -82,7 +82,7 @@
                         &nbsp;
                       </c:when>
                       <c:otherwise>
-                        <b><im:value>${object.fieldValues[expr]}</im:value></b>
+                       <b><im:value>${object.fieldValues[expr]}</im:value></b>
                       </c:otherwise>
                     </c:choose>
                   </td>
@@ -119,7 +119,7 @@
                         </span>
                       </c:when>
                       <c:otherwise>
-                        <im:value>${entry.value}</im:value>
+                      <im:value>${entry.value}</im:value> 
                       </c:otherwise>
                     </c:choose>
                   </td>

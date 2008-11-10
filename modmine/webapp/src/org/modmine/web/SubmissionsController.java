@@ -115,7 +115,7 @@ public class SubmissionsController extends TilesAction
         Map<Submission, Map<String, Long>> submissions =
             new LinkedHashMap<Submission, Map<String, Long>>();
 
-        // for each classes set the values for jsp
+        // for each class set the values for jsp
         for (Iterator<ResultsRow> iter = results.iterator(); iter.hasNext(); ) {
             ResultsRow row = iter.next();
             Submission submission = (Submission) row.get(0);

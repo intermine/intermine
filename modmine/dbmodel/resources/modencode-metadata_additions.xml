@@ -17,6 +17,9 @@
 		<collection name="labs"
 			referenced-type="org.flymine.model.genomic.Lab"
 			reverse-reference="project" />
+    <collection name="submissions"
+      referenced-type="org.flymine.model.genomic.Submission"
+      reverse-reference="project" />
 		<!-- 
 			<collection name="organisms" referenced-type="org.flymine.model.genomic.Organism" 
 			reverse-reference="project"/>
@@ -60,6 +63,9 @@
 		<reference name="lab"
 			referenced-type="org.flymine.model.genomic.Lab"
 			reverse-reference="submissions" />
+    <reference name="project"
+      referenced-type="org.flymine.model.genomic.Project"
+      reverse-reference="submissions" />
 		<collection name="appliedProtocols"
 			referenced-type="org.flymine.model.genomic.AppliedProtocol"
 			reverse-reference="submission" />

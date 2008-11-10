@@ -20,6 +20,9 @@
 <action path="/initProjectList"
   type="org.modmine.web.ProjectsController" />
 
+<action path="/initProjectsSummary"
+  type="org.modmine.web.ProjectsSummaryController" />
+
 <action path="/initLatestSubs"
   type="org.modmine.web.LatestSubsController" />
 
