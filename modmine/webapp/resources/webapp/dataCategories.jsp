@@ -133,7 +133,7 @@
     <td> &nbsp;</td>
   </tr>
 
-
+<%--
   <tr><td rowspan="2" class="leftcol">
         <html:link action="/aspect?name=Gene%20Expression">
         <p> <img src="model/images/marray.gif" /></p>
@@ -152,7 +152,7 @@
     <td> Chintapalli et al - <a href="http://www.ncbi.nlm.nih.gov/entrez/query.fcgi?cmd=Retrieve&db=PubMed&dopt=Abstract&list_uids=17534367" target="_new">PubMed: 17534367</a></td>
     <td> &nbsp;</td>
   </tr>
-
+--%>
 
 <%-- 
   <tr><td rowspan="1" class="leftcol">

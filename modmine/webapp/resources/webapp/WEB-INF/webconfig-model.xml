@@ -28,7 +28,6 @@
 
   <class className="org.flymine.model.genomic.AppliedProtocol">
     <fields>
-      <fieldconfig fieldExpr="name"/>
       <fieldconfig fieldExpr="protocol.type"/>
       <fieldconfig fieldExpr="protocol.name"/>
       <fieldconfig fieldExpr="submission.title"/>
