@@ -25,7 +25,7 @@ import org.intermine.web.logic.bag.InterMineBag;
 import org.intermine.web.logic.profile.Profile;
 import org.intermine.web.logic.query.MainHelper;
 import org.intermine.web.util.URLGenerator;
-import org.intermine.webservice.query.result.QueryResultLinkGenerator;
+import org.intermine.webservice.server.query.result.QueryResultLinkGenerator;
 
 import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletRequest;
