@@ -1,4 +1,4 @@
-package org.intermine.webservice.template.result;
+package org.intermine.webservice.server.template.result;
 
 /*
  * Copyright (C) 2002-2008 FlyMine
@@ -19,7 +19,8 @@ import org.intermine.pathquery.PathQuery;
 import org.intermine.pathquery.PathQueryBinding;
 import org.intermine.web.logic.template.TemplateQuery;
 import org.intermine.web.logic.template.TemplateQueryBinding;
-import org.intermine.webservice.WebServiceConstants;
+import org.intermine.webservice.server.server.WebServiceConstants;
+import org.intermine.webservice.server.server.template.result.TemplateResultLinkGenerator;
 
 import junit.framework.TestCase;
 
