@@ -1,4 +1,4 @@
-package org.intermine.webservice;
+package org.intermine.webservice.server;
 
 import java.util.ArrayList;
 import java.util.List;
