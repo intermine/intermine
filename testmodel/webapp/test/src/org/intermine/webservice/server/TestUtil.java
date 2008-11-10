@@ -24,7 +24,6 @@ import javax.xml.parsers.SAXParserFactory;
 import junit.framework.TestCase;
 
 import org.intermine.web.task.PrecomputeTemplatesTask;
-import org.intermine.webservice.server.WebServiceConstants;
 import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
 
@@ -32,6 +31,7 @@ import com.meterware.httpunit.GetMethodWebRequest;
 import com.meterware.httpunit.HttpException;
 import com.meterware.httpunit.WebConversation;
 import com.meterware.httpunit.WebRequest;
+import com.meterware.httpunit.WebResponse;
 
 
 /**
@@ -66,7 +66,7 @@ public class TestUtil
     public static String getResult(String requestString) throws IOException,
             MalformedURLException, SAXException {
         WebConversation wc = new WebConversation();
-        WebRequest     req = new GetMethodWebRequest( requestString);
+        WebRequest     req = new GetMethodWebRequest(requestString);
         return wc.getResponse(req).getText();
     }
     
@@ -85,12 +85,14 @@ public class TestUtil
         try {
             WebConversation wc = new WebConversation();
             WebRequest     req = new GetMethodWebRequest( requestString);
-            return wc.getResponse(req).getResponseMessage();
+            WebResponse res = wc.getResponse(req);
+            return res.getResponseMessage();
+            
         } catch (HttpException e) {
             return e.getResponseMessage();
         }
     }
-
+    
     public static void checkEmployee(List<String> employee, String name,
             String age, String end, String fullTime) {
         TestCase.assertEquals(4, employee.size());
