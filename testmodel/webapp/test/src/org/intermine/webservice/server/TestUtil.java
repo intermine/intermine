@@ -1,4 +1,4 @@
-package org.intermine.webservice;
+package org.intermine.webservice.server;
 
 /*
  * Copyright (C) 2002-2008 FlyMine
@@ -24,6 +24,7 @@ import javax.xml.parsers.SAXParserFactory;
 import junit.framework.TestCase;
 
 import org.intermine.web.task.PrecomputeTemplatesTask;
+import org.intermine.webservice.server.WebServiceConstants;
 import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
 

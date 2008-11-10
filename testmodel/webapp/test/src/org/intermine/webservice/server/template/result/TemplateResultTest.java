@@ -1,4 +1,4 @@
-package org.intermine.webservice.template.result;
+package org.intermine.webservice.server.template.result;
 
 /*
  * Copyright (C) 2002-2008 FlyMine
@@ -10,23 +10,12 @@ package org.intermine.webservice.template.result;
  *
  */
 
-import java.io.BufferedReader;
-import java.io.FileNotFoundException;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.util.Collections;
 import java.util.List;
-import java.util.PropertyResourceBundle;
-import java.util.ResourceBundle;
-
 
 import junit.framework.TestCase;
 
-import org.intermine.web.task.PrecomputeTemplatesTask;
-import org.intermine.webservice.TestUtil;
-import org.intermine.webservice.WebServiceConstants;
-import org.intermine.webservice.output.Output;
+import org.intermine.webservice.server.TestUtil;
+import org.intermine.webservice.server.output.Output;
 
 
 

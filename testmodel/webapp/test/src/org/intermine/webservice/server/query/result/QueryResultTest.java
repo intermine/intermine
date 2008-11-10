@@ -1,4 +1,4 @@
-package org.intermine.webservice.query.result;
+package org.intermine.webservice.server.query.result;
 
 /*
  * Copyright (C) 2002-2008 FlyMine
@@ -17,13 +17,10 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.util.List;
 
-
 import junit.framework.TestCase;
 
-import org.intermine.webservice.TestUtil;
-import org.intermine.webservice.output.Output;
-
-import com.meterware.httpunit.HttpException;
+import org.intermine.webservice.server.TestUtil;
+import org.intermine.webservice.server.output.Output;
 
 
 
