@@ -9,12 +9,44 @@
 <html:xhtml/>
 
 <div class="body">
+     <im:boxarea title="Projects" titleLink="/${WEB_PROPERTIES['webapp.path']}/projects.do" stylename="plainbox" >
+         <tiles:insert name="projectsSummary.tile"/>
+    </im:boxarea>
 
 <div id="leftcolumn">
-<!-- First column -->
      <im:boxarea title="Submissions" titleLink="/${WEB_PROPERTIES['webapp.path']}/submissions.do" stylename="plainbox" fixedWidth="300px">
          <tiles:insert name="latestSubs.tile"/>
     </im:boxarea>
+
+      <im:boxarea title="Lists" titleLink="/${WEB_PROPERTIES['webapp.path']}/bag.do" stylename="gradientbox" fixedWidth="300px">
+        <p><em><fmt:message key="begin.bags"/></em></p>
+        <br/>
+        <div>
+          Example lists (<a href="/${WEB_PROPERTIES['webapp.path']}/bag.do?subtab=view">${bagCount} total</a>):
+        </div>
+        <div id="bagsList" class="frontBoxList">
+        <tiles:insert name="webSearchableList.tile">
+          <tiles:put name="limit" value="2"/>
+          <tiles:put name="wsListId" value="all_bag"/>
+          <%-- bag or template? --%>
+          <tiles:put name="type" value="bag"/>
+          <%-- user or global --%>
+          <tiles:put name="scope" value="all"/>
+          <tiles:put name="tags" value="im:frontpage"/>
+          <tiles:put name="showSearchBox" value="false"/>
+          <tiles:put name="showCount" value="true"/>
+          <%--<tiles:put name="height" value="100"/>--%>
+        </tiles:insert>
+        </div>
+        <im:useTransparentImage src="/theme/view_lists.png" id="view_lists" title="Click here to View Lists" link="/${WEB_PROPERTIES['webapp.path']}/bag.do?subtab=view" height="32px" width="115px" floatValue="right" breakFloat="true"/>
+        <im:useTransparentImage src="/theme/create_lists.png" id="create_lists" title="Click here to Upload Lists" link="/${WEB_PROPERTIES['webapp.path']}/bag.do?subtab=upload" height="22px" width="120px" floatValue="right" breakFloat="true"/>
+      </im:boxarea>
+
+
+
+<!-- First column -->
+<%--
+
 
      <im:boxarea title="Projects" titleLink="/${WEB_PROPERTIES['webapp.path']}/projects.do" stylename="plainbox" fixedWidth="300px">
      <em><p><fmt:message key="projects.intro"/></p></em>     
@@ -22,7 +54,6 @@
     </im:boxarea>
 
 
-<%--
     <im:boxarea title="Data Categories" titleLink="/${WEB_PROPERTIES['webapp.path']}/dataCategories.do" stylename="plainbox" floatValue="left" fixedWidth="300px">
      <em><p><fmt:message key="begin.data"/></p></em>
      <c:set var="numPerCol" value="${fn:length(ASPECTS)/2}"/>
@@ -58,7 +89,7 @@
       </div>
 --%>
 
-		<im:boxarea title="Templates" titleLink="/${WEB_PROPERTIES['webapp.path']}/templates.do" stylename="gradientbox">
+    <im:boxarea title="Templates" titleLink="/${WEB_PROPERTIES['webapp.path']}/templates.do" stylename="gradientbox">
         <em><p><fmt:message key="begin.templates"/></p></em>
         <br/>
         <div>
@@ -79,33 +110,10 @@
             <tiles:put name="showCount" value="false"/>
           </tiles:insert>
         </div>
+
+
         <im:useTransparentImage src="/theme/search_with_templates.png" id="search_with_templates" title="Click here to Search using Template Queries" link="/${WEB_PROPERTIES['webapp.path']}/templates.do" height="22px" width="153px" floatValue="right" breakFloat="true" />
       </im:boxarea>
-
-      <im:boxarea title="Lists" titleLink="/${WEB_PROPERTIES['webapp.path']}/bag.do" stylename="gradientbox">
-        <p><em><fmt:message key="begin.bags"/></em></p>
-        <br/>
-        <div>
-          Example lists (<a href="/${WEB_PROPERTIES['webapp.path']}/bag.do?subtab=view">${bagCount} total</a>):
-        </div>
-        <div id="bagsList" class="frontBoxList">
-        <tiles:insert name="webSearchableList.tile">
-          <tiles:put name="limit" value="2"/>
-          <tiles:put name="wsListId" value="all_bag"/>
-          <%-- bag or template? --%>
-          <tiles:put name="type" value="bag"/>
-          <%-- user or global --%>
-          <tiles:put name="scope" value="all"/>
-          <tiles:put name="tags" value="im:frontpage"/>
-          <tiles:put name="showSearchBox" value="false"/>
-          <tiles:put name="showCount" value="true"/>
-          <%--<tiles:put name="height" value="100"/>--%>
-        </tiles:insert>
-        </div>
-        <im:useTransparentImage src="/theme/view_lists.png" id="view_lists" title="Click here to View Lists" link="/${WEB_PROPERTIES['webapp.path']}/bag.do?subtab=view" height="32px" width="115px" floatValue="right" breakFloat="true"/>
-        <im:useTransparentImage src="/theme/create_lists.png" id="create_lists" title="Click here to Upload Lists" link="/${WEB_PROPERTIES['webapp.path']}/bag.do?subtab=upload" height="22px" width="120px" floatValue="right" breakFloat="true"/>
-      </im:boxarea>
-
       <im:boxarea title="Query Builder" titleLink="/${WEB_PROPERTIES['webapp.path']}/customQuery.do" stylename="gradientbox">
         <p><em><fmt:message key="begin.querybuilder"/></em></p>
         <br/>
@@ -124,7 +132,12 @@
         <im:useTransparentImage src="/theme/build_a_query.png" id="build_a_query" title="Click here to Build A Query" link="/${WEB_PROPERTIES['webapp.path']}/customQuery.do" height="22px" width="120px" floatValue="right" breakFloat="true"/>
       </im:boxarea>
 
+
+
 </div>
+
+
+
 </div>
 
 <!-- /begin.jsp -->
