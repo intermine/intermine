@@ -11,11 +11,7 @@ package org.intermine.web.struts;
  */
 
 import java.util.Map;
-
-import org.intermine.web.logic.Constants;
-import org.intermine.web.logic.search.SearchRepository;
-import org.intermine.web.logic.search.WebSearchable;
-import org.intermine.web.logic.session.SessionMethods;
+import java.util.Properties;
 
 import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletRequest;
@@ -25,6 +21,10 @@ import javax.servlet.http.HttpSession;
 import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
+import org.intermine.web.logic.Constants;
+import org.intermine.web.logic.search.SearchRepository;
+import org.intermine.web.logic.search.WebSearchable;
+import org.intermine.web.logic.session.SessionMethods;
 
 /**
  * Display the query builder (if there is a curernt query) or redirect to project.sitePrefix.
@@ -70,6 +70,11 @@ public class BeginAction extends InterMineAction
        request.setAttribute("bagCount", new Integer(bagCount));
        request.setAttribute("templateCount", new Integer(templateCount));
 
+       Properties properties = (Properties) request.getSession()
+                               .getServletContext().getAttribute(Constants.WEB_PROPERTIES);
+       String[] beginQueryClasses = (properties.get("begin.query.classes").toString())
+                                   .split("[ ,]+");
+       request.setAttribute("beginQueryClasses", beginQueryClasses);
        return mapping.findForward("begin");
    }
 }
