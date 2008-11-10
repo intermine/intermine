@@ -21,7 +21,7 @@ import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
 import org.intermine.web.util.HttpClient;
 import org.intermine.web.util.URLUtil;
-import org.intermine.webservice.query.result.WebServiceRequestParser;
+import org.intermine.webservice.server.query.result.WebServiceRequestParser;
 
 
 /**

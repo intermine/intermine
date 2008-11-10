@@ -33,7 +33,7 @@ import org.intermine.web.logic.session.SessionMethods;
 import org.intermine.web.logic.template.TemplateHelper;
 import org.intermine.web.logic.template.TemplateQuery;
 import org.intermine.web.util.URLGenerator;
-import org.intermine.webservice.template.result.TemplateResultLinkGenerator;
+import org.intermine.webservice.server.template.result.TemplateResultLinkGenerator;
 
 /**
  * Action to handle submit from the template page. <code>setSavingQueries</code>
