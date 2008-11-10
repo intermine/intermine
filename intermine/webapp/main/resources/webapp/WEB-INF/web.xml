@@ -58,7 +58,7 @@
 <!-- ================================================================================= -->
   <servlet>
 	<servlet-name>ws-query-results</servlet-name>
-	<servlet-class>org.intermine.webservice.query.result.QueryResultServlet</servlet-class>
+	<servlet-class>org.intermine.webservice.server.query.result.QueryResultServlet</servlet-class>
 	<init-param>
 	   <param-name>debug</param-name>
 	   <param-value>true</param-value>
@@ -72,7 +72,7 @@
 
   <servlet>
 	<servlet-name>ws-lists</servlet-name>
-	<servlet-class>org.intermine.webservice.lists.ListsServlet</servlet-class>
+	<servlet-class>org.intermine.webservice.server.lists.ListsServlet</servlet-class>
 	<init-param>
 	   <param-name>debug</param-name>
 	   <param-value>true</param-value>
@@ -86,7 +86,7 @@
 
   <servlet>
 	<servlet-name>ws-template-results</servlet-name>
-	<servlet-class>org.intermine.webservice.template.result.TemplateResultServlet</servlet-class>
+	<servlet-class>org.intermine.webservice.server.template.result.TemplateResultServlet</servlet-class>
 	<init-param>
 	   <param-name>debug</param-name>
 	   <param-value>true</param-value>
@@ -100,7 +100,7 @@
 
   <servlet>
     <servlet-name>ws-model</servlet-name>
-    <servlet-class>org.intermine.webservice.model.ModelServlet</servlet-class>
+    <servlet-class>org.intermine.webservice.server.model.ModelServlet</servlet-class>
     <init-param>
        <param-name>debug</param-name>
        <param-value>true</param-value>
@@ -114,7 +114,7 @@
   
   <servlet>
     <servlet-name>ws-widgets</servlet-name>
-    <servlet-class>org.intermine.webservice.widget.WidgetsServlet</servlet-class>
+    <servlet-class>org.intermine.webservice.server.widget.WidgetsServlet</servlet-class>
     <init-param>
        <param-name>debug</param-name>
        <param-value>true</param-value>
