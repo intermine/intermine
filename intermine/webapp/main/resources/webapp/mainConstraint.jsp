@@ -24,19 +24,18 @@ options displayConstraint.optionsList
 
 --%>
 
-<script type="text/javascript">
-if (${!empty constrainOnBag}) {
-  swapInputs('bag');
-}
-</script>
-
-
 <!-- mainConstraint.jsp -->
 
 <html:xhtml/>
+<%--<c:choose>--%>
+   <c:if test="${editingNode != null}">
+   </c:if>
+<%--   <c:otherwise><i>No Constraints</i></c:otherwise>
+</c:choose> --%>
 
+<div id="constraint" style="display:none">
 <html:form action="/mainAction" styleId="mainForm">
-
+  <html:hidden styleId="addType" property="addType" value=""/>
   <html:hidden property="path" value="${editingNode.pathString}"/>
   <html:hidden property="editingConstraintEditable" value="${editingConstraintEditable}"/>
   <c:if test="${editingConstraintIndex != null}">
@@ -50,12 +49,11 @@ if (${!empty constrainOnBag}) {
 
   <c:if test="${!editingTemplateConstraint}">
 
-    <div class="heading">
+    <div class="heading constraintTitle">
       <fmt:message key="query.constrain"/><%--Constraint--%>
     </div>
-
+    
     <div class="body">
-
       <c:if test="${editingConstraintIndex == null && fn:length(QUERY.allConstraints) > 0}">
 
         <h3><fmt:message key="query.andorHeading"/></h3><%--1. Choose a logical conjuction--%>
@@ -289,6 +287,11 @@ if (${!empty constrainOnBag}) {
                 </fmt:message>
               </span>
             </p>
+            <p>
+              <c:if test="${editingNode.reference}">
+                <H3>Warning</H3>Outer joins are not compatible with References. The outer join will be reversed to inner join for this node.
+              </c:if>
+            </p>
             <c:choose>
               <c:when test="${haveExtraConstraint}">
                 <p style="text-align: left;">
@@ -376,7 +379,11 @@ if (${!empty constrainOnBag}) {
                   </html:option>
                 </c:forEach>
               </html:select>
-              <html:submit property="loop" styleId="loopQuerySubmit" disabled="true" >
+              <c:if test="${loopQueryOJ == true}">
+                <h3>Warning</h3>
+                <p>Outer joins are not compatible with loop constraints. The outer join will be reversed to inner join for this node</p>
+              </c:if>
+              <html:submit property="loop" styleId="loopQuerySubmit" disabled="true">
                 <fmt:message key="query.submitConstraint"/><%--Add to query--%>
               </html:submit>
             </p>
@@ -464,7 +471,7 @@ if (${!empty constrainOnBag}) {
     </script>
 
     </div>
-    <div class="body" style="text-align:right">
+<%--    <div class="body" style="text-align:right">
       <span id="cancelButton"></span>
       <script language="JavaScript">
       <!--
@@ -481,12 +488,11 @@ if (${!empty constrainOnBag}) {
         </c:choose>
       //-->
       </script>
-    </div>
+    </div>--%>
 
   </c:if>
-
 </html:form>
-
+</div>
 
 <!-- /mainConstraint.jsp -->
 

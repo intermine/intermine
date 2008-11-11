@@ -5,6 +5,7 @@ import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -16,7 +17,6 @@ import org.intermine.objectstore.query.ResultsInfo;
 import org.intermine.path.Path;
 import org.intermine.path.PathError;
 import org.intermine.pathquery.Constraints;
-import org.intermine.pathquery.OrderBy;
 import org.intermine.pathquery.PathQuery;
 import org.intermine.pathquery.PathQueryBinding;
 
@@ -590,50 +590,50 @@ public class PathQueryTest extends TestCase
         e = (PathQuery) expected.get("orderByAsc");
         q = new PathQuery(model);
         q.setView("Employee.name,Employee.department.name");
-        q.setOrderBy("Employee.name", true);
+        q.setOrderBy("Employee.name", PathQuery.ASCENDING);
         assertEquals(e.getSortOrder(), q.getSortOrder());
 
         // desc
         e = (PathQuery) expected.get("orderByDesc");
         q = new PathQuery(model);
         q.setView("Employee.name,Employee.department.name");
-        q.setOrderBy("Employee.name", false);
+        q.setOrderBy("Employee.name", PathQuery.DESCENDING);
         assertEquals(e.getSortOrder(), q.getSortOrder());
 
         // long path
         e = (PathQuery) expected.get("longPath");
         q = new PathQuery(model);
         q.setView("Employee.name,Employee.department.name");
-        q.setOrderBy("Employee.department.name", true);
+        q.setOrderBy("Employee.department.name", PathQuery.ASCENDING);
         assertEquals(e.getSortOrder(), q.getSortOrder());
 
         // multiple paths
         e = (PathQuery) expected.get("orderByVat");
         q = new PathQuery(model);
         q.setView("Company.vatNumber,Company.name,Company.address.address");
-        q.setOrderBy("Company.vatNumber,Company.name,Company.departments.name", true);
+        q.setOrderBy("Company.vatNumber,Company.name,Company.departments.name", PathQuery.ASCENDING);
         assertEquals(e.getSortOrderStrings(), q.getSortOrderStrings());
 
         // overwrite current orderby
         e = (PathQuery) expected.get("orderByVat");
         q = new PathQuery(model);
         q.setView("Company.vatNumber,Company.name,Company.address.address");
-        q.setOrderBy("Company.address.address", false);
-        q.setOrderBy("Company.vatNumber,Company.name,Company.departments.name", true);
+        q.setOrderBy("Company.address.address", PathQuery.DESCENDING);
+        q.setOrderBy("Company.vatNumber,Company.name,Company.departments.name", PathQuery.ASCENDING);
         assertEquals(e.getSortOrderStrings(), q.getSortOrderStrings());
 
         q = (PathQuery) expected.get("orderByCompany");
-        q.setOrderBy("Company.departments.name", true);
+        q.setOrderBy("Company.departments.name", PathQuery.ASCENDING);
         assertEquals("Company.departments.name asc", q.getSortOrderStrings().get(0));
 
         // bad path
         q = (PathQuery) expected.get("companyName");
-        q.setOrderBy("monkey.pants", false);
+        q.setOrderBy("monkey.pants", PathQuery.DESCENDING);
         assertTrue(q.getSortOrder().isEmpty());
 
         // empty value
         q = (PathQuery) expected.get("companyName");
-        q.setOrderBy("", true);
+        q.setOrderBy("", PathQuery.ASCENDING);
         assertTrue(q.getSortOrder().isEmpty());
 
     }
@@ -668,7 +668,7 @@ public class PathQueryTest extends TestCase
         List orderBy = new ArrayList<String>() {{
             add("");
         }};
-        q.setOrderBy(orderBy, true);
+        q.setOrderBy(orderBy, PathQuery.ASCENDING);
         assertEquals(new ArrayList(), q.getSortOrder());
 
         // null
@@ -677,7 +677,7 @@ public class PathQueryTest extends TestCase
         orderBy = new ArrayList<String>() {{
             add(null);
         }};
-        q.setOrderBy(orderBy, true);
+        q.setOrderBy(orderBy, PathQuery.ASCENDING);
         assertEquals(new ArrayList(), q.getSortOrder());
 
         // one
@@ -686,7 +686,7 @@ public class PathQueryTest extends TestCase
         orderBy = new ArrayList<String>() {{
             add("Employee.name");
         }};
-        q.setOrderBy(orderBy, true);
+        q.setOrderBy(orderBy, PathQuery.ASCENDING);
         assertEquals(e.getSortOrder(), q.getSortOrder());
 
         // desc
@@ -695,7 +695,7 @@ public class PathQueryTest extends TestCase
         orderBy = new ArrayList<String>() {{
             add("Employee.name");
         }};
-        q.setOrderBy(orderBy, false);
+        q.setOrderBy(orderBy, PathQuery.ASCENDING);
         assertEquals(e.getSortOrder(), q.getSortOrder());
 
         //three
@@ -706,7 +706,7 @@ public class PathQueryTest extends TestCase
             add("Company.name");
             add("Company.departments.name");
         }};
-        q.setOrderBy(orderBy, true);
+        q.setOrderBy(orderBy, PathQuery.ASCENDING);
         assertEquals(e.getSortOrder(), q.getSortOrder());
 
         // bad path
@@ -714,7 +714,7 @@ public class PathQueryTest extends TestCase
         orderBy = new ArrayList<String>() {{
             add("Monkey.paths");
         }};
-        q.setOrderBy(orderBy, true);
+        q.setOrderBy(orderBy, PathQuery.ASCENDING);
         assertTrue(q.getSortOrderStrings().isEmpty());
         assertFalse(q.isValid());
 
@@ -726,7 +726,7 @@ public class PathQueryTest extends TestCase
             add("Monkey.paths");
             add("Company.departments.name");
         }};
-        q.setOrderBy(orderBy, true);
+        q.setOrderBy(orderBy, PathQuery.ASCENDING);
         assertEquals(e.getSortOrderStrings(), q.getSortOrderStrings());
         assertFalse(q.isValid());
 
@@ -738,7 +738,7 @@ public class PathQueryTest extends TestCase
             add("Company.name");
             add("Company.departments.name");
         }};
-        q.setOrderBy(orderBy, true);
+        q.setOrderBy(orderBy, PathQuery.ASCENDING);
         assertEquals(e.getSortOrderStrings(), q.getSortOrderStrings());
         assertFalse(q.isValid());
 
@@ -751,7 +751,7 @@ public class PathQueryTest extends TestCase
             add("Company.name");
             add("Company.departments.name");
         }};
-        q.setOrderBy(orderBy, true);
+        q.setOrderBy(orderBy, PathQuery.ASCENDING);
         assertEquals(e.getSortOrderStrings(), q.getSortOrderStrings());
         assertFalse(q.isValid());
     }
@@ -760,21 +760,21 @@ public class PathQueryTest extends TestCase
 
         e = (PathQuery) expected.get("orderByVat");
         q = new PathQuery(model);
-        List<OrderBy> orderBy = new ArrayList() {{
+        Map<Path, String> orderBy = new LinkedHashMap<Path, String>() {{
             Path p =  PathQuery.makePath(model, q, "Company.vatNumber");
-            add(new OrderBy(p, "asc"));
+            put(p, PathQuery.ASCENDING);
             p = PathQuery.makePath(model, q, "Company.name");
-            add(new OrderBy(p, "asc"));
+            put(p, PathQuery.ASCENDING);
             p = PathQuery.makePath(model, q, "Company.departments.name");
-            add(new OrderBy(p, "asc"));
+            put(p, PathQuery.ASCENDING);
         }};
         q.setOrderByList(orderBy);
         assertEquals(e.getSortOrder(), q.getSortOrder());
 
         // adding the same path again, should reset
-        orderBy = new ArrayList<OrderBy>() {{
+        orderBy = new LinkedHashMap<Path, String>() {{
             Path p =  PathQuery.makePath(model, q, "Company.name");
-            add(new OrderBy(p, "asc"));
+            put(p, PathQuery.ASCENDING);
         }};
         q.setOrderByList(orderBy);
         assertEquals(1, q.getSortOrder().size());
@@ -782,15 +782,15 @@ public class PathQueryTest extends TestCase
         // null paths
         e = (PathQuery) expected.get("orderByVat");
         q = new PathQuery(model);
-        orderBy = new ArrayList<OrderBy>() {{
+        orderBy = new LinkedHashMap<Path, String>() {{
             Path p = null;
-            add(new OrderBy(p, ""));
+            put(p, "");
             p = PathQuery.makePath(model, q, "Company.vatNumber");
-            add(new OrderBy(p, "asc"));
+            put(p, "asc");
             p = PathQuery.makePath(model, q, "Company.name");
-            add(new OrderBy(p, "asc"));
+            put(p, "asc");
             p = PathQuery.makePath(model, q, "Company.departments.name");
-            add(new OrderBy(p, "asc"));
+            put(p, "asc");
 
         }};
         q.setOrderByList(orderBy);
@@ -849,17 +849,17 @@ public class PathQueryTest extends TestCase
 //    }
 
     // --- old methods -- //
-
-    public void testChangeDirection() {
-
-        // simple
-        e = (PathQuery) expected.get("noOrderBy");
-        q = new PathQuery(model);
-        q.addView("Employee.name, Employee.department.name");
-        q.changeDirection("asc");
-        assertEquals(e.getViewStrings(), q.getViewStrings());
-
-    }
+//
+//    public void testChangeDirection() {
+//
+//        // simple
+//        e = (PathQuery) expected.get("noOrderBy");
+//        q = new PathQuery(model);
+//        q.addView("Employee.name, Employee.department.name");
+//        q.changeDirection("asc");
+//        assertEquals(e.getViewStrings(), q.getViewStrings());
+//
+//    }
 
 //    public void testAddPathStringToSortOrder() {
 //        fail("Not yet implemented");

@@ -969,7 +969,10 @@ public class ObjectStoreInterMineImpl extends ObjectStoreAbstractImpl implements
             }
             return objResults;
         } catch (SQLException e) {
-            throw new ObjectStoreException("Problem running SQL statement \"" + sql + "\"", e);
+            throw new ObjectStoreException("Problem running SQL statement \"" + sql
+                    + "\" while executing query \"" + q + "\"", e);
+        } catch (RuntimeException e) {
+            throw new ObjectStoreException("Problem executing query \"" + q + "\"", e);
         }
     }
 

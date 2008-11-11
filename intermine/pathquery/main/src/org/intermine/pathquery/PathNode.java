@@ -95,6 +95,14 @@ public class PathNode extends Node
     }
 
     /**
+     * Returns the value of isOuterJoin (used by jsp)
+     * @return a boolean
+     */
+    public boolean getIsOuterJoin() {
+        return isOuterJoin();
+    }
+    
+    /**
      * {@inheritDoc}
      */
     public String toString() {

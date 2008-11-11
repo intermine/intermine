@@ -24,6 +24,8 @@ import org.intermine.metadata.Model;
 import org.intermine.model.testmodel.Company;
 import org.intermine.model.testmodel.Department;
 import org.intermine.model.testmodel.Employee;
+import org.intermine.objectstore.ObjectStore;
+import org.intermine.objectstore.ObjectStoreFactory;
 import org.intermine.objectstore.query.ConstraintOp;
 import org.intermine.objectstore.query.ConstraintSet;
 import org.intermine.objectstore.query.ContainsConstraint;
@@ -38,6 +40,8 @@ import org.intermine.pathquery.LogicExpression;
 import org.intermine.pathquery.PathNode;
 import org.intermine.pathquery.PathQuery;
 import org.intermine.pathquery.PathQueryBinding;
+import org.intermine.web.logic.bag.BagQueryConfig;
+import org.intermine.web.logic.bag.BagQueryHelper;
 
 /**
  * Tests for the MainHelper class
@@ -47,6 +51,8 @@ import org.intermine.pathquery.PathQueryBinding;
 
 public class MainHelperTest extends TestCase {
     private Map classKeys;
+    private BagQueryConfig bagQueryConfig;
+    private ObjectStore os;
 
     public MainHelperTest(String arg) {
         super(arg);
@@ -54,7 +60,12 @@ public class MainHelperTest extends TestCase {
 
     public void setUp() throws Exception {
         super.setUp();
+        os = ObjectStoreFactory.getObjectStore("os.unittest");
         classKeys = TestUtil.getClassKeys(TestUtil.getModel());
+        InputStream config = MainHelperTest.class.getClassLoader()
+            .getResourceAsStream("bag-queries.xml");
+        System.out.println("Available: " + config.available());
+        bagQueryConfig = BagQueryHelper.readBagQueryConfig(os.getModel(), config);
     }
 
     public void testGetTypeForPath() throws Exception {
@@ -289,74 +300,221 @@ public class MainHelperTest extends TestCase {
     }
     public void test1() throws Exception {
         doQuery("<query name=\"test\" model=\"testmodel\" view=\"Employee\"></query>",
-                "SELECT DISTINCT a1_ FROM org.intermine.model.testmodel.Employee AS a1_ ORDER BY a1_");
+                "SELECT DISTINCT a1_ FROM org.intermine.model.testmodel.Employee AS a1_ ORDER BY a1_",
+                "org.intermine.objectstore.query.QueryClass");
     }
 
     public void test2() throws Exception {
         doQuery("<query name=\"test\" model=\"testmodel\" view=\"Employee\"><node path=\"Employee\" type=\"Employee\"></node><node path=\"Employee.age\" type=\"int\"><constraint op=\"&gt;=\" value=\"10\" description=\"\" identifier=\"\" code=\"A\"></constraint></node></query>",
-                "SELECT DISTINCT a1_ FROM org.intermine.model.testmodel.Employee AS a1_ WHERE a1_.age >= 10 ORDER BY a1_");
+                "SELECT DISTINCT a1_ FROM org.intermine.model.testmodel.Employee AS a1_ WHERE a1_.age >= 10 ORDER BY a1_",
+                "org.intermine.objectstore.query.QueryClass");
     }
 
     public void test3() throws Exception {
         doQuery("<query name=\"test\" model=\"testmodel\" view=\"Employee\" constraintLogic=\"A and B\"><node path=\"Employee\" type=\"Employee\"></node><node path=\"Employee.age\" type=\"int\"><constraint op=\"&gt;=\" value=\"10\" description=\"\" identifier=\"\" code=\"A\"></constraint></node><node path=\"Employee.fullTime\" type=\"boolean\"><constraint op=\"=\" value=\"true\" description=\"\" identifier=\"\" code=\"B\"></constraint></node></query>",
-                "SELECT DISTINCT a1_ FROM org.intermine.model.testmodel.Employee AS a1_ WHERE (a1_.age >= 10 AND a1_.fullTime = true) ORDER BY a1_");
+                "SELECT DISTINCT a1_ FROM org.intermine.model.testmodel.Employee AS a1_ WHERE (a1_.age >= 10 AND a1_.fullTime = true) ORDER BY a1_",
+                "org.intermine.objectstore.query.QueryClass");
     }
 
     public void test4() throws Exception {
         doQuery("<query name=\"test\" model=\"testmodel\" view=\"Employee\" constraintLogic=\"A or B\"><node path=\"Employee\" type=\"Employee\"></node><node path=\"Employee.age\" type=\"int\"><constraint op=\"&gt;=\" value=\"10\" description=\"\" identifier=\"\" code=\"A\"></constraint></node><node path=\"Employee.fullTime\" type=\"boolean\"><constraint op=\"=\" value=\"true\" description=\"\" identifier=\"\" code=\"B\"></constraint></node></query>",
-                "SELECT DISTINCT a1_ FROM org.intermine.model.testmodel.Employee AS a1_ WHERE (a1_.age >= 10 OR a1_.fullTime = true) ORDER BY a1_");
+                "SELECT DISTINCT a1_ FROM org.intermine.model.testmodel.Employee AS a1_ WHERE (a1_.age >= 10 OR a1_.fullTime = true) ORDER BY a1_",
+                "org.intermine.objectstore.query.QueryClass");
     }
 
     public void test5() throws Exception {
         doQuery("<query name=\"test\" model=\"testmodel\" view=\"Employee\" constraintLogic=\"(A or B) and C\"><node path=\"Employee\" type=\"Employee\"></node><node path=\"Employee.age\" type=\"int\"><constraint op=\"&gt;=\" value=\"10\" description=\"\" identifier=\"\" code=\"A\"></constraint></node><node path=\"Employee.fullTime\" type=\"boolean\"><constraint op=\"=\" value=\"true\" description=\"\" identifier=\"\" code=\"B\"></constraint></node><node path=\"Employee.name\" type=\"String\"><constraint op=\"=\" value=\"EmployeeA2\" description=\"\" identifier=\"\" code=\"C\"></constraint></node></query>",
-                "SELECT DISTINCT a1_ FROM org.intermine.model.testmodel.Employee AS a1_ WHERE ((a1_.age >= 10 OR a1_.fullTime = true) AND LOWER(a1_.name) LIKE 'employeea2') ORDER BY a1_");
+                "SELECT DISTINCT a1_ FROM org.intermine.model.testmodel.Employee AS a1_ WHERE ((a1_.age >= 10 OR a1_.fullTime = true) AND LOWER(a1_.name) = 'employeea2') ORDER BY a1_",
+                "org.intermine.objectstore.query.QueryClass");
     }
 
     public void test7() throws Exception {
         doQuery("<query name=\"test\" model=\"testmodel\" view=\"Employee Employee.department\"><node path=\"Employee\" type=\"Employee\"></node><node path=\"Employee.department\" type=\"Department\"></node><node path=\"Employee.department.employees\" type=\"Employee\"><constraint op=\"=\" value=\"Employee\"></constraint></node></query>",
-                "SELECT DISTINCT a1_, a2_ FROM org.intermine.model.testmodel.Employee AS a1_, org.intermine.model.testmodel.Department AS a2_ WHERE a1_.department CONTAINS a2_ ORDER BY a1_, a2_");
+                "SELECT DISTINCT a1_, a2_ FROM org.intermine.model.testmodel.Employee AS a1_, org.intermine.model.testmodel.Department AS a2_ WHERE (a1_.department CONTAINS a2_ AND a2_.employees CONTAINS a1_) ORDER BY a1_, a2_",
+                "org.intermine.objectstore.query.QueryClass",
+                "org.intermine.objectstore.query.QueryClass");
     }
 
     public void test8() throws Exception {
         doQuery("<query name=\"test\" model=\"testmodel\" view=\"Company.name Company.contractors.name\"><node path=\"Company\" type=\"Company\"></node><node path=\"Company.contractors\" type=\"Contractor\"></node><node path=\"Company.oldContracts\" type=\"Contractor\"><constraint op=\"=\" value=\"Company.contractors\" description=\"\" identifier=\"\" code=\"A\"></constraint></node></query>",
-                "SELECT DISTINCT a1_, a2_ FROM org.intermine.model.testmodel.Company AS a1_, org.intermine.model.testmodel.Contractor AS a2_ WHERE (a1_.contractors CONTAINS a2_ AND a1_.oldContracts CONTAINS a2_) ORDER BY a1_.name, a2_.name");
+                "SELECT DISTINCT a1_, a2_ FROM org.intermine.model.testmodel.Company AS a1_, org.intermine.model.testmodel.Contractor AS a2_ WHERE (a1_.contractors CONTAINS a2_ AND a1_.oldContracts CONTAINS a2_) ORDER BY a1_.name, a2_.name",
+                "SELECT DISTINCT a1_.a3_ AS a2_, COUNT(*) AS a3_ FROM (SELECT DISTINCT a1_, a2_, a1_.name AS a3_ FROM org.intermine.model.testmodel.Company AS a1_, org.intermine.model.testmodel.Contractor AS a2_ WHERE (a1_.contractors CONTAINS a2_ AND a1_.oldContracts CONTAINS a2_)) AS a1_ GROUP BY a1_.a3_ ORDER BY COUNT(*) DESC",
+                "SELECT DISTINCT a1_.a3_ AS a2_, COUNT(*) AS a3_ FROM (SELECT DISTINCT a1_, a2_, a2_.name AS a3_ FROM org.intermine.model.testmodel.Company AS a1_, org.intermine.model.testmodel.Contractor AS a2_ WHERE (a1_.contractors CONTAINS a2_ AND a1_.oldContracts CONTAINS a2_)) AS a1_ GROUP BY a1_.a3_ ORDER BY COUNT(*) DESC");
     }
 
     public void test9() throws Exception {
         doQuery("<query name=\"test\" model=\"testmodel\" view=\"Employee.name Employee.department.name Employee.department.company.name Employee.age Employee.fullTime Employee.address.address\"><node path=\"Employee\" type=\"Employee\"></node><node path=\"Employee.department\" type=\"Department\"></node><node path=\"Employee.department.company\" type=\"Company\"></node><node path=\"Employee.department.company.address\" type=\"Address\"><constraint op=\"=\" value=\"Employee.address\" description=\"\" identifier=\"\" code=\"A\"></constraint></node><node path=\"Employee.address\" type=\"Address\"></node></query>",
-                "SELECT DISTINCT a1_, a2_, a3_, a4_ FROM org.intermine.model.testmodel.Employee AS a1_, org.intermine.model.testmodel.Department AS a2_, org.intermine.model.testmodel.Company AS a3_, org.intermine.model.testmodel.Address AS a4_ WHERE (a1_.department CONTAINS a2_ AND a2_.company CONTAINS a3_ AND a1_.address CONTAINS a4_ AND a3_.address CONTAINS a4_) ORDER BY a1_.name, a2_.name, a3_.name, a1_.age, a1_.fullTime, a4_.address");
+                "SELECT DISTINCT a1_, a2_, a3_, a4_ FROM org.intermine.model.testmodel.Employee AS a1_, org.intermine.model.testmodel.Department AS a2_, org.intermine.model.testmodel.Company AS a3_, org.intermine.model.testmodel.Address AS a4_ WHERE (a1_.department CONTAINS a2_ AND a2_.company CONTAINS a3_ AND a1_.address CONTAINS a4_ AND a3_.address CONTAINS a4_) ORDER BY a1_.name, a2_.name, a3_.name, a1_.age, a1_.fullTime, a4_.address",
+                "SELECT DISTINCT a1_.a5_ AS a2_, COUNT(*) AS a3_ FROM (SELECT DISTINCT a1_, a2_, a3_, a4_, a1_.name AS a5_ FROM org.intermine.model.testmodel.Employee AS a1_, org.intermine.model.testmodel.Department AS a2_, org.intermine.model.testmodel.Company AS a3_, org.intermine.model.testmodel.Address AS a4_ WHERE (a1_.department CONTAINS a2_ AND a2_.company CONTAINS a3_ AND a1_.address CONTAINS a4_ AND a3_.address CONTAINS a4_)) AS a1_ GROUP BY a1_.a5_ ORDER BY COUNT(*) DESC",
+                "SELECT DISTINCT a1_.a5_ AS a2_, COUNT(*) AS a3_ FROM (SELECT DISTINCT a1_, a2_, a3_, a4_, a2_.name AS a5_ FROM org.intermine.model.testmodel.Employee AS a1_, org.intermine.model.testmodel.Department AS a2_, org.intermine.model.testmodel.Company AS a3_, org.intermine.model.testmodel.Address AS a4_ WHERE (a1_.department CONTAINS a2_ AND a2_.company CONTAINS a3_ AND a1_.address CONTAINS a4_ AND a3_.address CONTAINS a4_)) AS a1_ GROUP BY a1_.a5_ ORDER BY COUNT(*) DESC",
+                "SELECT DISTINCT a1_.a5_ AS a2_, COUNT(*) AS a3_ FROM (SELECT DISTINCT a1_, a2_, a3_, a4_, a3_.name AS a5_ FROM org.intermine.model.testmodel.Employee AS a1_, org.intermine.model.testmodel.Department AS a2_, org.intermine.model.testmodel.Company AS a3_, org.intermine.model.testmodel.Address AS a4_ WHERE (a1_.department CONTAINS a2_ AND a2_.company CONTAINS a3_ AND a1_.address CONTAINS a4_ AND a3_.address CONTAINS a4_)) AS a1_ GROUP BY a1_.a5_ ORDER BY COUNT(*) DESC",
+                "SELECT DISTINCT MIN(a1_.a5_) AS a2_, MAX(a1_.a5_) AS a3_, AVG(a1_.a5_) AS a4_, STDDEV(a1_.a5_) AS a5_ FROM (SELECT DISTINCT a1_, a2_, a3_, a4_, a1_.age AS a5_ FROM org.intermine.model.testmodel.Employee AS a1_, org.intermine.model.testmodel.Department AS a2_, org.intermine.model.testmodel.Company AS a3_, org.intermine.model.testmodel.Address AS a4_ WHERE (a1_.department CONTAINS a2_ AND a2_.company CONTAINS a3_ AND a1_.address CONTAINS a4_ AND a3_.address CONTAINS a4_)) AS a1_",
+                "SELECT DISTINCT a1_.a5_ AS a2_, COUNT(*) AS a3_ FROM (SELECT DISTINCT a1_, a2_, a3_, a4_, a1_.fullTime AS a5_ FROM org.intermine.model.testmodel.Employee AS a1_, org.intermine.model.testmodel.Department AS a2_, org.intermine.model.testmodel.Company AS a3_, org.intermine.model.testmodel.Address AS a4_ WHERE (a1_.department CONTAINS a2_ AND a2_.company CONTAINS a3_ AND a1_.address CONTAINS a4_ AND a3_.address CONTAINS a4_)) AS a1_ GROUP BY a1_.a5_ ORDER BY COUNT(*) DESC",
+                "SELECT DISTINCT a1_.a5_ AS a2_, COUNT(*) AS a3_ FROM (SELECT DISTINCT a1_, a2_, a3_, a4_, a4_.address AS a5_ FROM org.intermine.model.testmodel.Employee AS a1_, org.intermine.model.testmodel.Department AS a2_, org.intermine.model.testmodel.Company AS a3_, org.intermine.model.testmodel.Address AS a4_ WHERE (a1_.department CONTAINS a2_ AND a2_.company CONTAINS a3_ AND a1_.address CONTAINS a4_ AND a3_.address CONTAINS a4_)) AS a1_ GROUP BY a1_.a5_ ORDER BY COUNT(*) DESC");
     }
 
     public void test10() throws Exception {
         doQuery("<query name=\"test\" model=\"testmodel\" view=\"Employee.name Employee.department.name Employee.department.company.name Employee.age Employee.fullTime Employee.address.address\"><node path=\"Employee\" type=\"Employee\"></node><node path=\"Employee.department\" type=\"Department\"></node><node path=\"Employee.department.company\" type=\"Company\"></node><node path=\"Employee.department.company.address\" type=\"Address\"><constraint op=\"!=\" value=\"Employee.address\" description=\"\" identifier=\"\" code=\"A\"></constraint></node><node path=\"Employee.address\" type=\"Address\"></node></query>",
-                "SELECT DISTINCT a1_, a2_, a3_, a5_ FROM org.intermine.model.testmodel.Employee AS a1_, org.intermine.model.testmodel.Department AS a2_, org.intermine.model.testmodel.Company AS a3_, org.intermine.model.testmodel.Address AS a4_, org.intermine.model.testmodel.Address AS a5_ WHERE (a1_.department CONTAINS a2_ AND a2_.company CONTAINS a3_ AND a3_.address CONTAINS a4_ AND a1_.address CONTAINS a5_ AND a4_ != a5_) ORDER BY a1_.name, a2_.name, a3_.name, a1_.age, a1_.fullTime, a5_.address");
+                "SELECT DISTINCT a1_, a2_, a3_, a5_ FROM org.intermine.model.testmodel.Employee AS a1_, org.intermine.model.testmodel.Department AS a2_, org.intermine.model.testmodel.Company AS a3_, org.intermine.model.testmodel.Address AS a4_, org.intermine.model.testmodel.Address AS a5_ WHERE (a1_.department CONTAINS a2_ AND a2_.company CONTAINS a3_ AND a3_.address CONTAINS a4_ AND a1_.address CONTAINS a5_ AND a4_ != a5_) ORDER BY a1_.name, a2_.name, a3_.name, a1_.age, a1_.fullTime, a5_.address",
+                "SELECT DISTINCT a1_.a6_ AS a2_, COUNT(*) AS a3_ FROM (SELECT DISTINCT a1_, a2_, a3_, a5_, a1_.name AS a6_ FROM org.intermine.model.testmodel.Employee AS a1_, org.intermine.model.testmodel.Department AS a2_, org.intermine.model.testmodel.Company AS a3_, org.intermine.model.testmodel.Address AS a4_, org.intermine.model.testmodel.Address AS a5_ WHERE (a1_.department CONTAINS a2_ AND a2_.company CONTAINS a3_ AND a3_.address CONTAINS a4_ AND a1_.address CONTAINS a5_ AND a4_ != a5_)) AS a1_ GROUP BY a1_.a6_ ORDER BY COUNT(*) DESC",
+                "SELECT DISTINCT a1_.a6_ AS a2_, COUNT(*) AS a3_ FROM (SELECT DISTINCT a1_, a2_, a3_, a5_, a2_.name AS a6_ FROM org.intermine.model.testmodel.Employee AS a1_, org.intermine.model.testmodel.Department AS a2_, org.intermine.model.testmodel.Company AS a3_, org.intermine.model.testmodel.Address AS a4_, org.intermine.model.testmodel.Address AS a5_ WHERE (a1_.department CONTAINS a2_ AND a2_.company CONTAINS a3_ AND a3_.address CONTAINS a4_ AND a1_.address CONTAINS a5_ AND a4_ != a5_)) AS a1_ GROUP BY a1_.a6_ ORDER BY COUNT(*) DESC",
+                "SELECT DISTINCT a1_.a6_ AS a2_, COUNT(*) AS a3_ FROM (SELECT DISTINCT a1_, a2_, a3_, a5_, a3_.name AS a6_ FROM org.intermine.model.testmodel.Employee AS a1_, org.intermine.model.testmodel.Department AS a2_, org.intermine.model.testmodel.Company AS a3_, org.intermine.model.testmodel.Address AS a4_, org.intermine.model.testmodel.Address AS a5_ WHERE (a1_.department CONTAINS a2_ AND a2_.company CONTAINS a3_ AND a3_.address CONTAINS a4_ AND a1_.address CONTAINS a5_ AND a4_ != a5_)) AS a1_ GROUP BY a1_.a6_ ORDER BY COUNT(*) DESC",
+                "SELECT DISTINCT MIN(a1_.a6_) AS a2_, MAX(a1_.a6_) AS a3_, AVG(a1_.a6_) AS a4_, STDDEV(a1_.a6_) AS a5_ FROM (SELECT DISTINCT a1_, a2_, a3_, a5_, a1_.age AS a6_ FROM org.intermine.model.testmodel.Employee AS a1_, org.intermine.model.testmodel.Department AS a2_, org.intermine.model.testmodel.Company AS a3_, org.intermine.model.testmodel.Address AS a4_, org.intermine.model.testmodel.Address AS a5_ WHERE (a1_.department CONTAINS a2_ AND a2_.company CONTAINS a3_ AND a3_.address CONTAINS a4_ AND a1_.address CONTAINS a5_ AND a4_ != a5_)) AS a1_",
+                "SELECT DISTINCT a1_.a6_ AS a2_, COUNT(*) AS a3_ FROM (SELECT DISTINCT a1_, a2_, a3_, a5_, a1_.fullTime AS a6_ FROM org.intermine.model.testmodel.Employee AS a1_, org.intermine.model.testmodel.Department AS a2_, org.intermine.model.testmodel.Company AS a3_, org.intermine.model.testmodel.Address AS a4_, org.intermine.model.testmodel.Address AS a5_ WHERE (a1_.department CONTAINS a2_ AND a2_.company CONTAINS a3_ AND a3_.address CONTAINS a4_ AND a1_.address CONTAINS a5_ AND a4_ != a5_)) AS a1_ GROUP BY a1_.a6_ ORDER BY COUNT(*) DESC",
+                "SELECT DISTINCT a1_.a6_ AS a2_, COUNT(*) AS a3_ FROM (SELECT DISTINCT a1_, a2_, a3_, a5_, a5_.address AS a6_ FROM org.intermine.model.testmodel.Employee AS a1_, org.intermine.model.testmodel.Department AS a2_, org.intermine.model.testmodel.Company AS a3_, org.intermine.model.testmodel.Address AS a4_, org.intermine.model.testmodel.Address AS a5_ WHERE (a1_.department CONTAINS a2_ AND a2_.company CONTAINS a3_ AND a3_.address CONTAINS a4_ AND a1_.address CONTAINS a5_ AND a4_ != a5_)) AS a1_ GROUP BY a1_.a6_ ORDER BY COUNT(*) DESC");
     }
 
     public void test11() throws Exception {
         doQuery("<query name=\"test\" model=\"testmodel\" view=\"Employee.name Employee.department.name Employee.department.company.name Employee.age Employee.fullTime Employee.department.company.address.address\"><node path=\"Employee\" type=\"Employee\"></node><node path=\"Employee.department\" type=\"Department\"></node><node path=\"Employee.department.company\" type=\"Company\"></node><node path=\"Employee.department.company.address\" type=\"Address\"><constraint op=\"=\" value=\"Employee.address\" description=\"\" identifier=\"\" code=\"A\"></constraint></node><node path=\"Employee.address\" type=\"Address\"></node></query>",
-                "SELECT DISTINCT a1_, a2_, a3_, a4_ FROM org.intermine.model.testmodel.Employee AS a1_, org.intermine.model.testmodel.Department AS a2_, org.intermine.model.testmodel.Company AS a3_, org.intermine.model.testmodel.Address AS a4_ WHERE (a1_.department CONTAINS a2_ AND a2_.company CONTAINS a3_ AND a1_.address CONTAINS a4_ AND a3_.address CONTAINS a4_) ORDER BY a1_.name, a2_.name, a3_.name, a1_.age, a1_.fullTime, a4_.address");
+                "SELECT DISTINCT a1_, a2_, a3_, a4_ FROM org.intermine.model.testmodel.Employee AS a1_, org.intermine.model.testmodel.Department AS a2_, org.intermine.model.testmodel.Company AS a3_, org.intermine.model.testmodel.Address AS a4_ WHERE (a1_.department CONTAINS a2_ AND a2_.company CONTAINS a3_ AND a1_.address CONTAINS a4_ AND a3_.address CONTAINS a4_) ORDER BY a1_.name, a2_.name, a3_.name, a1_.age, a1_.fullTime, a4_.address",
+                "SELECT DISTINCT a1_.a5_ AS a2_, COUNT(*) AS a3_ FROM (SELECT DISTINCT a1_, a2_, a3_, a4_, a1_.name AS a5_ FROM org.intermine.model.testmodel.Employee AS a1_, org.intermine.model.testmodel.Department AS a2_, org.intermine.model.testmodel.Company AS a3_, org.intermine.model.testmodel.Address AS a4_ WHERE (a1_.department CONTAINS a2_ AND a2_.company CONTAINS a3_ AND a1_.address CONTAINS a4_ AND a3_.address CONTAINS a4_)) AS a1_ GROUP BY a1_.a5_ ORDER BY COUNT(*) DESC",
+                "SELECT DISTINCT a1_.a5_ AS a2_, COUNT(*) AS a3_ FROM (SELECT DISTINCT a1_, a2_, a3_, a4_, a2_.name AS a5_ FROM org.intermine.model.testmodel.Employee AS a1_, org.intermine.model.testmodel.Department AS a2_, org.intermine.model.testmodel.Company AS a3_, org.intermine.model.testmodel.Address AS a4_ WHERE (a1_.department CONTAINS a2_ AND a2_.company CONTAINS a3_ AND a1_.address CONTAINS a4_ AND a3_.address CONTAINS a4_)) AS a1_ GROUP BY a1_.a5_ ORDER BY COUNT(*) DESC",
+                "SELECT DISTINCT a1_.a5_ AS a2_, COUNT(*) AS a3_ FROM (SELECT DISTINCT a1_, a2_, a3_, a4_, a3_.name AS a5_ FROM org.intermine.model.testmodel.Employee AS a1_, org.intermine.model.testmodel.Department AS a2_, org.intermine.model.testmodel.Company AS a3_, org.intermine.model.testmodel.Address AS a4_ WHERE (a1_.department CONTAINS a2_ AND a2_.company CONTAINS a3_ AND a1_.address CONTAINS a4_ AND a3_.address CONTAINS a4_)) AS a1_ GROUP BY a1_.a5_ ORDER BY COUNT(*) DESC",
+                "SELECT DISTINCT MIN(a1_.a5_) AS a2_, MAX(a1_.a5_) AS a3_, AVG(a1_.a5_) AS a4_, STDDEV(a1_.a5_) AS a5_ FROM (SELECT DISTINCT a1_, a2_, a3_, a4_, a1_.age AS a5_ FROM org.intermine.model.testmodel.Employee AS a1_, org.intermine.model.testmodel.Department AS a2_, org.intermine.model.testmodel.Company AS a3_, org.intermine.model.testmodel.Address AS a4_ WHERE (a1_.department CONTAINS a2_ AND a2_.company CONTAINS a3_ AND a1_.address CONTAINS a4_ AND a3_.address CONTAINS a4_)) AS a1_",
+                "SELECT DISTINCT a1_.a5_ AS a2_, COUNT(*) AS a3_ FROM (SELECT DISTINCT a1_, a2_, a3_, a4_, a1_.fullTime AS a5_ FROM org.intermine.model.testmodel.Employee AS a1_, org.intermine.model.testmodel.Department AS a2_, org.intermine.model.testmodel.Company AS a3_, org.intermine.model.testmodel.Address AS a4_ WHERE (a1_.department CONTAINS a2_ AND a2_.company CONTAINS a3_ AND a1_.address CONTAINS a4_ AND a3_.address CONTAINS a4_)) AS a1_ GROUP BY a1_.a5_ ORDER BY COUNT(*) DESC",
+                "SELECT DISTINCT a1_.a5_ AS a2_, COUNT(*) AS a3_ FROM (SELECT DISTINCT a1_, a2_, a3_, a4_, a4_.address AS a5_ FROM org.intermine.model.testmodel.Employee AS a1_, org.intermine.model.testmodel.Department AS a2_, org.intermine.model.testmodel.Company AS a3_, org.intermine.model.testmodel.Address AS a4_ WHERE (a1_.department CONTAINS a2_ AND a2_.company CONTAINS a3_ AND a1_.address CONTAINS a4_ AND a3_.address CONTAINS a4_)) AS a1_ GROUP BY a1_.a5_ ORDER BY COUNT(*) DESC");
     }
 
     public void test12() throws Exception {
         doQuery("<query name=\"test\" model=\"testmodel\" view=\"Employee.name Employee.department.name Employee.department.company.name Employee.age Employee.fullTime Employee.department.company.address.address\" constraintLogic=\"A or B\"><node path=\"Employee\" type=\"Employee\"></node><node path=\"Employee.name\"><constraint op=\"=\" value=\"EmployeeA1\" code=\"A\"></constraint></node><node path=\"Employee.department\" type=\"Department\"></node><node path=\"Employee.department.company\" type=\"Company\"></node><node path=\"Employee.department.company.address\" type=\"Address\"><constraint op=\"=\" value=\"Employee.address\" description=\"\" identifier=\"\" code=\"B\"></constraint></node><node path=\"Employee.address\" type=\"Address\"></node></query>",
-                "SELECT DISTINCT a1_, a2_, a3_, a4_ FROM org.intermine.model.testmodel.Employee AS a1_, org.intermine.model.testmodel.Department AS a2_, org.intermine.model.testmodel.Company AS a3_, org.intermine.model.testmodel.Address AS a4_, org.intermine.model.testmodel.Address AS a5_ WHERE ((LOWER(a1_.name) LIKE 'employeea1' OR a4_ = a5_) AND a1_.department CONTAINS a2_ AND a2_.company CONTAINS a3_ AND a3_.address CONTAINS a4_ AND a1_.address CONTAINS a5_) ORDER BY a1_.name, a2_.name, a3_.name, a1_.age, a1_.fullTime, a4_.address");
+                "SELECT DISTINCT a1_, a2_, a3_, a4_ FROM org.intermine.model.testmodel.Employee AS a1_, org.intermine.model.testmodel.Department AS a2_, org.intermine.model.testmodel.Company AS a3_, org.intermine.model.testmodel.Address AS a4_, org.intermine.model.testmodel.Address AS a5_ WHERE ((LOWER(a1_.name) = 'employeea1' OR a4_ = a5_) AND a1_.department CONTAINS a2_ AND a2_.company CONTAINS a3_ AND a3_.address CONTAINS a4_ AND a1_.address CONTAINS a5_) ORDER BY a1_.name, a2_.name, a3_.name, a1_.age, a1_.fullTime, a4_.address",
+                "SELECT DISTINCT a1_.a6_ AS a2_, COUNT(*) AS a3_ FROM (SELECT DISTINCT a1_, a2_, a3_, a4_, a1_.name AS a6_ FROM org.intermine.model.testmodel.Employee AS a1_, org.intermine.model.testmodel.Department AS a2_, org.intermine.model.testmodel.Company AS a3_, org.intermine.model.testmodel.Address AS a4_, org.intermine.model.testmodel.Address AS a5_ WHERE ((LOWER(a1_.name) = 'employeea1' OR a4_ = a5_) AND a1_.department CONTAINS a2_ AND a2_.company CONTAINS a3_ AND a3_.address CONTAINS a4_ AND a1_.address CONTAINS a5_)) AS a1_ GROUP BY a1_.a6_ ORDER BY COUNT(*) DESC",
+                "SELECT DISTINCT a1_.a6_ AS a2_, COUNT(*) AS a3_ FROM (SELECT DISTINCT a1_, a2_, a3_, a4_, a2_.name AS a6_ FROM org.intermine.model.testmodel.Employee AS a1_, org.intermine.model.testmodel.Department AS a2_, org.intermine.model.testmodel.Company AS a3_, org.intermine.model.testmodel.Address AS a4_, org.intermine.model.testmodel.Address AS a5_ WHERE ((LOWER(a1_.name) = 'employeea1' OR a4_ = a5_) AND a1_.department CONTAINS a2_ AND a2_.company CONTAINS a3_ AND a3_.address CONTAINS a4_ AND a1_.address CONTAINS a5_)) AS a1_ GROUP BY a1_.a6_ ORDER BY COUNT(*) DESC",
+                "SELECT DISTINCT a1_.a6_ AS a2_, COUNT(*) AS a3_ FROM (SELECT DISTINCT a1_, a2_, a3_, a4_, a3_.name AS a6_ FROM org.intermine.model.testmodel.Employee AS a1_, org.intermine.model.testmodel.Department AS a2_, org.intermine.model.testmodel.Company AS a3_, org.intermine.model.testmodel.Address AS a4_, org.intermine.model.testmodel.Address AS a5_ WHERE ((LOWER(a1_.name) = 'employeea1' OR a4_ = a5_) AND a1_.department CONTAINS a2_ AND a2_.company CONTAINS a3_ AND a3_.address CONTAINS a4_ AND a1_.address CONTAINS a5_)) AS a1_ GROUP BY a1_.a6_ ORDER BY COUNT(*) DESC",
+                "SELECT DISTINCT MIN(a1_.a6_) AS a2_, MAX(a1_.a6_) AS a3_, AVG(a1_.a6_) AS a4_, STDDEV(a1_.a6_) AS a5_ FROM (SELECT DISTINCT a1_, a2_, a3_, a4_, a1_.age AS a6_ FROM org.intermine.model.testmodel.Employee AS a1_, org.intermine.model.testmodel.Department AS a2_, org.intermine.model.testmodel.Company AS a3_, org.intermine.model.testmodel.Address AS a4_, org.intermine.model.testmodel.Address AS a5_ WHERE ((LOWER(a1_.name) = 'employeea1' OR a4_ = a5_) AND a1_.department CONTAINS a2_ AND a2_.company CONTAINS a3_ AND a3_.address CONTAINS a4_ AND a1_.address CONTAINS a5_)) AS a1_",
+                "SELECT DISTINCT a1_.a6_ AS a2_, COUNT(*) AS a3_ FROM (SELECT DISTINCT a1_, a2_, a3_, a4_, a1_.fullTime AS a6_ FROM org.intermine.model.testmodel.Employee AS a1_, org.intermine.model.testmodel.Department AS a2_, org.intermine.model.testmodel.Company AS a3_, org.intermine.model.testmodel.Address AS a4_, org.intermine.model.testmodel.Address AS a5_ WHERE ((LOWER(a1_.name) = 'employeea1' OR a4_ = a5_) AND a1_.department CONTAINS a2_ AND a2_.company CONTAINS a3_ AND a3_.address CONTAINS a4_ AND a1_.address CONTAINS a5_)) AS a1_ GROUP BY a1_.a6_ ORDER BY COUNT(*) DESC",
+                "SELECT DISTINCT a1_.a6_ AS a2_, COUNT(*) AS a3_ FROM (SELECT DISTINCT a1_, a2_, a3_, a4_, a4_.address AS a6_ FROM org.intermine.model.testmodel.Employee AS a1_, org.intermine.model.testmodel.Department AS a2_, org.intermine.model.testmodel.Company AS a3_, org.intermine.model.testmodel.Address AS a4_, org.intermine.model.testmodel.Address AS a5_ WHERE ((LOWER(a1_.name) = 'employeea1' OR a4_ = a5_) AND a1_.department CONTAINS a2_ AND a2_.company CONTAINS a3_ AND a3_.address CONTAINS a4_ AND a1_.address CONTAINS a5_)) AS a1_ GROUP BY a1_.a6_ ORDER BY COUNT(*) DESC");
     }
 
     public void test13() throws Exception {
         doQuery("<query name=\"test\" model=\"testmodel\" view=\"Employee.name Employee.department.name Employee.department.company.name Employee.age Employee.fullTime Employee.department.company.address.address\" constraintLogic=\"A and B and C\"><node path=\"Employee\" type=\"Employee\"></node><node path=\"Employee.name\"><constraint op=\"=\" value=\"EmployeeA1\" code=\"A\"></constraint></node><node path=\"Employee.department\" type=\"Department\"></node><node path=\"Employee.department.company\" type=\"Company\"></node><node path=\"Employee.department.company.address\" type=\"Address\"><constraint op=\"=\" value=\"Employee.address\" description=\"\" identifier=\"\" code=\"B\"></constraint></node><node path=\"Employee.address\" type=\"Address\"></node><node path=\"Employee.address.address\"><constraint op=\"!=\" value=\"fred\" code=\"C\"></constraint></node></query>",
-                "SELECT DISTINCT a1_, a2_, a3_, a4_ FROM org.intermine.model.testmodel.Employee AS a1_, org.intermine.model.testmodel.Department AS a2_, org.intermine.model.testmodel.Company AS a3_, org.intermine.model.testmodel.Address AS a4_ WHERE (LOWER(a1_.name) LIKE 'employeea1' AND a1_.department CONTAINS a2_ AND a2_.company CONTAINS a3_ AND a1_.address CONTAINS a4_ AND LOWER(a4_.address) NOT LIKE 'fred' AND a3_.address CONTAINS a4_) ORDER BY a1_.name, a2_.name, a3_.name, a1_.age, a1_.fullTime, a4_.address");
+                "SELECT DISTINCT a1_, a2_, a3_, a4_ FROM org.intermine.model.testmodel.Employee AS a1_, org.intermine.model.testmodel.Department AS a2_, org.intermine.model.testmodel.Company AS a3_, org.intermine.model.testmodel.Address AS a4_ WHERE (LOWER(a1_.name) = 'employeea1' AND a1_.department CONTAINS a2_ AND a2_.company CONTAINS a3_ AND a1_.address CONTAINS a4_ AND LOWER(a4_.address) != 'fred' AND a3_.address CONTAINS a4_) ORDER BY a1_.name, a2_.name, a3_.name, a1_.age, a1_.fullTime, a4_.address",
+                "SELECT DISTINCT a1_.a5_ AS a2_, COUNT(*) AS a3_ FROM (SELECT DISTINCT a1_, a2_, a3_, a4_, a1_.name AS a5_ FROM org.intermine.model.testmodel.Employee AS a1_, org.intermine.model.testmodel.Department AS a2_, org.intermine.model.testmodel.Company AS a3_, org.intermine.model.testmodel.Address AS a4_ WHERE (LOWER(a1_.name) = 'employeea1' AND a1_.department CONTAINS a2_ AND a2_.company CONTAINS a3_ AND a1_.address CONTAINS a4_ AND LOWER(a4_.address) != 'fred' AND a3_.address CONTAINS a4_)) AS a1_ GROUP BY a1_.a5_ ORDER BY COUNT(*) DESC",
+                "SELECT DISTINCT a1_.a5_ AS a2_, COUNT(*) AS a3_ FROM (SELECT DISTINCT a1_, a2_, a3_, a4_, a2_.name AS a5_ FROM org.intermine.model.testmodel.Employee AS a1_, org.intermine.model.testmodel.Department AS a2_, org.intermine.model.testmodel.Company AS a3_, org.intermine.model.testmodel.Address AS a4_ WHERE (LOWER(a1_.name) = 'employeea1' AND a1_.department CONTAINS a2_ AND a2_.company CONTAINS a3_ AND a1_.address CONTAINS a4_ AND LOWER(a4_.address) != 'fred' AND a3_.address CONTAINS a4_)) AS a1_ GROUP BY a1_.a5_ ORDER BY COUNT(*) DESC",
+                "SELECT DISTINCT a1_.a5_ AS a2_, COUNT(*) AS a3_ FROM (SELECT DISTINCT a1_, a2_, a3_, a4_, a3_.name AS a5_ FROM org.intermine.model.testmodel.Employee AS a1_, org.intermine.model.testmodel.Department AS a2_, org.intermine.model.testmodel.Company AS a3_, org.intermine.model.testmodel.Address AS a4_ WHERE (LOWER(a1_.name) = 'employeea1' AND a1_.department CONTAINS a2_ AND a2_.company CONTAINS a3_ AND a1_.address CONTAINS a4_ AND LOWER(a4_.address) != 'fred' AND a3_.address CONTAINS a4_)) AS a1_ GROUP BY a1_.a5_ ORDER BY COUNT(*) DESC",
+                "SELECT DISTINCT MIN(a1_.a5_) AS a2_, MAX(a1_.a5_) AS a3_, AVG(a1_.a5_) AS a4_, STDDEV(a1_.a5_) AS a5_ FROM (SELECT DISTINCT a1_, a2_, a3_, a4_, a1_.age AS a5_ FROM org.intermine.model.testmodel.Employee AS a1_, org.intermine.model.testmodel.Department AS a2_, org.intermine.model.testmodel.Company AS a3_, org.intermine.model.testmodel.Address AS a4_ WHERE (LOWER(a1_.name) = 'employeea1' AND a1_.department CONTAINS a2_ AND a2_.company CONTAINS a3_ AND a1_.address CONTAINS a4_ AND LOWER(a4_.address) != 'fred' AND a3_.address CONTAINS a4_)) AS a1_",
+                "SELECT DISTINCT a1_.a5_ AS a2_, COUNT(*) AS a3_ FROM (SELECT DISTINCT a1_, a2_, a3_, a4_, a1_.fullTime AS a5_ FROM org.intermine.model.testmodel.Employee AS a1_, org.intermine.model.testmodel.Department AS a2_, org.intermine.model.testmodel.Company AS a3_, org.intermine.model.testmodel.Address AS a4_ WHERE (LOWER(a1_.name) = 'employeea1' AND a1_.department CONTAINS a2_ AND a2_.company CONTAINS a3_ AND a1_.address CONTAINS a4_ AND LOWER(a4_.address) != 'fred' AND a3_.address CONTAINS a4_)) AS a1_ GROUP BY a1_.a5_ ORDER BY COUNT(*) DESC",
+                "SELECT DISTINCT a1_.a5_ AS a2_, COUNT(*) AS a3_ FROM (SELECT DISTINCT a1_, a2_, a3_, a4_, a4_.address AS a5_ FROM org.intermine.model.testmodel.Employee AS a1_, org.intermine.model.testmodel.Department AS a2_, org.intermine.model.testmodel.Company AS a3_, org.intermine.model.testmodel.Address AS a4_ WHERE (LOWER(a1_.name) = 'employeea1' AND a1_.department CONTAINS a2_ AND a2_.company CONTAINS a3_ AND a1_.address CONTAINS a4_ AND LOWER(a4_.address) != 'fred' AND a3_.address CONTAINS a4_)) AS a1_ GROUP BY a1_.a5_ ORDER BY COUNT(*) DESC");
     }
 
     public void test14() throws Exception {
         doQuery("<query name=\"test\" model=\"testmodel\" view=\"Employee.name Employee.department.employees.name\"><node path=\"Employee\" type=\"Employee\"></node><node path=\"Employee.department\" type=\"Department\"></node><node path=\"Employee.department.employees\" type=\"Employee\"><constraint op=\"!=\" value=\"Employee\" description=\"\" identifier=\"\" code=\"A\"></constraint></node></query>",
-                "SELECT DISTINCT a1_, a3_ FROM org.intermine.model.testmodel.Employee AS a1_, org.intermine.model.testmodel.Department AS a2_, org.intermine.model.testmodel.Employee AS a3_ WHERE (a1_.department CONTAINS a2_ AND a2_.employees CONTAINS a3_ AND a3_ != a1_) ORDER BY a1_.name, a3_.name");
+                "SELECT DISTINCT a1_, a3_ FROM org.intermine.model.testmodel.Employee AS a1_, org.intermine.model.testmodel.Department AS a2_, org.intermine.model.testmodel.Employee AS a3_ WHERE (a1_.department CONTAINS a2_ AND a2_.employees CONTAINS a3_ AND a3_ != a1_) ORDER BY a1_.name, a3_.name",
+                "SELECT DISTINCT a1_.a4_ AS a2_, COUNT(*) AS a3_ FROM (SELECT DISTINCT a1_, a3_, a1_.name AS a4_ FROM org.intermine.model.testmodel.Employee AS a1_, org.intermine.model.testmodel.Department AS a2_, org.intermine.model.testmodel.Employee AS a3_ WHERE (a1_.department CONTAINS a2_ AND a2_.employees CONTAINS a3_ AND a3_ != a1_)) AS a1_ GROUP BY a1_.a4_ ORDER BY COUNT(*) DESC",
+                "SELECT DISTINCT a1_.a4_ AS a2_, COUNT(*) AS a3_ FROM (SELECT DISTINCT a1_, a3_, a3_.name AS a4_ FROM org.intermine.model.testmodel.Employee AS a1_, org.intermine.model.testmodel.Department AS a2_, org.intermine.model.testmodel.Employee AS a3_ WHERE (a1_.department CONTAINS a2_ AND a2_.employees CONTAINS a3_ AND a3_ != a1_)) AS a1_ GROUP BY a1_.a4_ ORDER BY COUNT(*) DESC");
     }
 
-    public void doQuery(String web, String iql) throws Exception {
-        Map parsed = PathQueryBinding.unmarshal(new StringReader(web), classKeys);
-        PathQuery pq = (PathQuery) parsed.get("test");
-        Query q = MainHelper.makeQuery(pq, Collections.EMPTY_MAP, null, null);
-        String got = q.toString();
-        assertEquals(iql, got);
+    public void test15() throws Exception {
+        doQuery("<query name=\"test\" model=\"testmodel\" view=\"Employee.name Employee:department.name\"/>",
+                "SELECT DISTINCT a1_, a1_.department AS a2_ FROM org.intermine.model.testmodel.Employee AS a1_ ORDER BY a1_.name",
+                "SELECT DISTINCT a1_.a2_ AS a2_, COUNT(*) AS a3_ FROM (SELECT DISTINCT a1_, a1_.name AS a2_ FROM org.intermine.model.testmodel.Employee AS a1_) AS a1_ GROUP BY a1_.a2_ ORDER BY COUNT(*) DESC",
+                "SELECT DISTINCT a1_.a3_ AS a2_, COUNT(*) AS a3_ FROM (SELECT DISTINCT a1_, a2_, a2_.name AS a3_ FROM org.intermine.model.testmodel.Employee AS a1_, org.intermine.model.testmodel.Department AS a2_ WHERE a1_.department CONTAINS a2_) AS a1_ GROUP BY a1_.a3_ ORDER BY COUNT(*) DESC");
+    }
+
+    public void test16() throws Exception {
+        doQuery("<query name=\"test\" model=\"testmodel\" view=\"Employee.name Employee:department.name Employee:department:company.name\"/>",
+                "SELECT DISTINCT a1_, a2_.1 AS a3_, a2_.2 AS a4_ FROM org.intermine.model.testmodel.Employee AS a1_ ORDER BY a1_.name PATH a1_.department(SELECT default, default.company) AS a2_",
+                "SELECT DISTINCT a1_.a4_ AS a2_, COUNT(*) AS a3_ FROM (SELECT DISTINCT a1_, a1_.name AS a4_ FROM org.intermine.model.testmodel.Employee AS a1_) AS a1_ GROUP BY a1_.a4_ ORDER BY COUNT(*) DESC",
+                "SELECT DISTINCT a1_.a5_ AS a2_, COUNT(*) AS a3_ FROM (SELECT DISTINCT a1_, a4_, a4_.name AS a5_ FROM org.intermine.model.testmodel.Employee AS a1_, org.intermine.model.testmodel.Department AS a4_ WHERE a1_.department CONTAINS a4_) AS a1_ GROUP BY a1_.a5_ ORDER BY COUNT(*) DESC",
+                "SELECT DISTINCT a1_.a5_ AS a2_, COUNT(*) AS a3_ FROM (SELECT DISTINCT a1_, a2_, a3_, a3_.name AS a5_ FROM org.intermine.model.testmodel.Employee AS a1_, org.intermine.model.testmodel.Department AS a2_, org.intermine.model.testmodel.Company AS a3_ WHERE a1_.department CONTAINS a2_ AND a2_.company CONTAINS a3_) AS a1_ GROUP BY a1_.a5_ ORDER BY COUNT(*) DESC");
+    }
+
+    public void test17() throws Exception {
+        doQuery("<query name=\"test\" model=\"testmodel\" view=\"Company.name Company:departments.name Company:departments:employees.name\"/>",
+                "SELECT DISTINCT a1_, a1_.departments(SELECT default, default.employees) AS a2_ FROM org.intermine.model.testmodel.Company AS a1_ ORDER BY a1_.name",
+                "SELECT DISTINCT a1_.a2_ AS a2_, COUNT(*) AS a3_ FROM (SELECT DISTINCT a1_, a1_.name AS a2_ FROM org.intermine.model.testmodel.Company AS a1_) AS a1_ GROUP BY a1_.a2_ ORDER BY COUNT(*) DESC",
+                "SELECT DISTINCT a1_.a5_ AS a2_, COUNT(*) AS a3_ FROM (SELECT DISTINCT a1_, a4_, a4_.name AS a5_ FROM org.intermine.model.testmodel.Company AS a1_, org.intermine.model.testmodel.Department AS a4_ WHERE a1_.departments CONTAINS a4_) AS a1_ GROUP BY a1_.a5_ ORDER BY COUNT(*) DESC",
+                "SELECT DISTINCT a1_.a6_ AS a2_, COUNT(*) AS a3_ FROM (SELECT DISTINCT a1_, a4_, a5_, a5_.name AS a6_ FROM org.intermine.model.testmodel.Company AS a1_, org.intermine.model.testmodel.Department AS a4_, org.intermine.model.testmodel.Employee AS a5_ WHERE a1_.departments CONTAINS a4_ AND a4_.employees CONTAINS a5_) AS a1_ GROUP BY a1_.a6_ ORDER BY COUNT(*) DESC");
+    }
+
+    public void test18() throws Exception {
+        doQuery("<query name=\"test\" model=\"testmodel\" view=\"Company.name\"><node path=\"Company\" type=\"Company\"><constraint op=\"LOOKUP\" value=\"CompanyAkjhadf\"/></node></query>",
+                "SELECT DISTINCT a1_ FROM org.intermine.model.testmodel.Company AS a1_ WHERE a1_.id IN ? ORDER BY a1_.name 1: []",
+                "SELECT DISTINCT a1_.a2_ AS a2_, COUNT(*) AS a3_ FROM (SELECT DISTINCT a1_, a1_.name FROM org.intermine.model.testmodel.Company AS a1_ WHERE a1_.id IN ?) AS a1_ GROUP BY a1_.a2_ ORDER BY COUNT(*) DESC 1: []");
+    }
+
+    public void test19() throws Exception {
+        doQuery("<query name=\"test\" model=\"testmodel\" view=\"Company.name Company:departments.name\"><node path=\"Company:departments.name\"><constraint op=\"=\" value=\"%1\"/></node></query>",
+                "SELECT DISTINCT a1_, a1_.departments(WHERE LOWER(default.name) LIKE '%1') AS a2_ FROM org.intermine.model.testmodel.Company AS a1_ ORDER BY a1_.name",
+                "SELECT DISTINCT a1_.a2_ AS a2_, COUNT(*) AS a3_ FROM (SELECT DISTINCT a1_, a1_.name AS a2_ FROM org.intermine.model.testmodel.Company AS a1_) AS a1_ GROUP BY a1_.a2_ ORDER BY COUNT(*) DESC",
+                "SELECT DISTINCT a1_.a5_ AS a2_, COUNT(*) AS a3_ FROM (SELECT DISTINCT a1_, a4_, a4_.name AS a5_ FROM org.intermine.model.testmodel.Company AS a1_, org.intermine.model.testmodel.Department AS a4_ WHERE a1_.departments CONTAINS a4_) AS a1_ GROUP BY a1_.a5_ ORDER BY COUNT(*) DESC");
+    }
+
+    public void test20() throws Exception {
+        doQuery("<query name=\"test\" model=\"testmodel\" view=\"Company.name Company:departments.name Company:departments.employees.name\"/>",
+                "SELECT DISTINCT a1_, a1_.departments(SELECT default, a1_ FROM org.intermine.model.testmodel.Employee AS a1_ WHERE default.employees CONTAINS a1_) AS a2_ FROM org.intermine.model.testmodel.Company AS a1_ ORDER BY a1_.name",
+                "SELECT DISTINCT a1_.a2_ AS a2_, COUNT(*) AS a3_ FROM (SELECT DISTINCT a1_, a1_.name AS a2_ FROM org.intermine.model.testmodel.Company AS a1_) AS a1_ GROUP BY a1_.a2_ ORDER BY COUNT(*) DESC",
+                "SELECT DISTINCT a1_.a6_ AS a2_, COUNT(*) AS a3_ FROM (SELECT DISTINCT a1_, a4_, a5_, a4_.name AS a6_ FROM org.intermine.model.testmodel.Company AS a1_, org.intermine.model.testmodel.Department AS a4_, org.intermine.model.testmodel.Employee AS a5_ WHERE a1_.departments CONTAINS a4_ AND a4_.employees CONTAINS a5_) AS a1_ GROUP BY a1_.a6_ ORDER BY COUNT(*) DESC",
+                "SELECT DISTINCT a1_.a6_ AS a2_, COUNT(*) AS a3_ FROM (SELECT DISTINCT a1_, a4_, a5_, a5_.name AS a6_ FROM org.intermine.model.testmodel.Company AS a1_, org.intermine.model.testmodel.Department AS a4_, org.intermine.model.testmodel.Employee AS a5_ WHERE a1_.departments CONTAINS a4_ AND a4_.employees CONTAINS a5_) AS a1_ GROUP BY a1_.a6_ ORDER BY COUNT(*) DESC");
+    }
+
+    public void test21() throws Exception {
+        doQuery("<query name=\"test\" model=\"testmodel\" view=\"Department.name Department:company.name Department:company.departments.name\"/>",
+                "SELECT DISTINCT a1_, a1_.company(SELECT default, a1_ FROM org.intermine.model.testmodel.Department AS a1_ WHERE default.departments CONTAINS a1_) AS a2_ FROM org.intermine.model.testmodel.Department AS a1_ ORDER BY a1_.name",
+                "SELECT DISTINCT a1_.a2_ AS a2_, COUNT(*) AS a3_ FROM (SELECT DISTINCT a1_, a1_.name AS a2_ FROM org.intermine.model.testmodel.Department AS a1_) AS a1_ GROUP BY a1_.a2_ ORDER BY COUNT(*) DESC",
+                "SELECT DISTINCT a1_.a6_ AS a2_, COUNT(*) AS a3_ FROM (SELECT DISTINCT a1_, a4_, a5_, a4_.name AS a6_ FROM org.intermine.model.testmodel.Department AS a1_, org.intermine.model.testmodel.Company AS a4_, org.intermine.model.testmodel.Department AS a5_ WHERE a1_.company CONTAINS a4_ AND a4_.departments CONTAINS a5_) AS a1_ GROUP BY a1_.a6_ ORDER BY COUNT(*) DESC",
+                "SELECT DISTINCT a1_.a6_ AS a2_, COUNT(*) AS a3_ FROM (SELECT DISTINCT a1_, a4_, a5_, a5_.name AS a6_ FROM org.intermine.model.testmodel.Department AS a1_, org.intermine.model.testmodel.Company AS a4_, org.intermine.model.testmodel.Department AS a5_ WHERE a1_.company CONTAINS a4_ AND a4_.departments CONTAINS a5_) AS a1_ GROUP BY a1_.a6_ ORDER BY COUNT(*) DESC");
+    }
+
+    public void test22() throws Exception {
+        doQuery("<query name=\"test\" model=\"testmodel\" view=\"Employee.name Employee:department:company.name\"/>",
+                "SELECT DISTINCT a1_, a1_.department(SELECT default.company) AS a2_ FROM org.intermine.model.testmodel.Employee AS a1_ ORDER BY a1_.name",
+                "SELECT DISTINCT a1_.a2_ AS a2_, COUNT(*) AS a3_ FROM (SELECT DISTINCT a1_, a1_.name AS a2_ FROM org.intermine.model.testmodel.Employee AS a1_) AS a1_ GROUP BY a1_.a2_ ORDER BY COUNT(*) DESC",
+                "SELECT DISTINCT a1_.a6_ AS a2_, COUNT(*) AS a3_ FROM (SELECT DISTINCT a1_, a5_, a5_.name AS a6_ FROM org.intermine.model.testmodel.Employee AS a1_, org.intermine.model.testmodel.Department AS a4_, org.intermine.model.testmodel.Company AS a5_ WHERE a1_.department CONTAINS a4_ AND a4_.company CONTAINS a5_) AS a1_ GROUP BY a1_.a6_ ORDER BY COUNT(*) DESC");
+    }
+
+    public void test23() throws Exception {
+        doQuery("<query name=\"test\" model=\"testmodel\" view=\"Department.name Department:company.name Department:company.departments.name\"><node path=\"Department\"><constraint op=\"=\" value=\"Department:company.departments\"/></node></query>",
+                "Error - loop constraint spans path expression from Department to Department:company.departments",
+                "Error - loop constraint spans path expression from Department to Department:company.departments",
+                "Error - loop constraint spans path expression from Department to Department:company.departments",
+                "Error - loop constraint spans path expression from Department to Department:company.departments");
+    }
+
+    public void test24() throws Exception {
+        doQuery("<query name=\"test\" model=\"testmodel\" view=\"Department.name Department.company.name Department.company.departments.name\"><node path=\"Department\"><constraint op=\"=\" value=\"Department.company.departments\"/></node></query>",
+                "SELECT DISTINCT a1_, a2_ FROM org.intermine.model.testmodel.Department AS a1_, org.intermine.model.testmodel.Company AS a2_ WHERE (a1_.company CONTAINS a2_ AND a2_.departments CONTAINS a1_) ORDER BY a1_.name, a2_.name",
+                "SELECT DISTINCT a1_.a3_ AS a2_, COUNT(*) AS a3_ FROM (SELECT DISTINCT a1_, a2_, a1_.name AS a3_ FROM org.intermine.model.testmodel.Department AS a1_, org.intermine.model.testmodel.Company AS a2_ WHERE (a1_.company CONTAINS a2_ AND a2_.departments CONTAINS a1_)) AS a1_ GROUP BY a1_.a3_ ORDER BY COUNT(*) DESC",
+                "SELECT DISTINCT a1_.a3_ AS a2_, COUNT(*) AS a3_ FROM (SELECT DISTINCT a1_, a2_, a2_.name AS a3_ FROM org.intermine.model.testmodel.Department AS a1_, org.intermine.model.testmodel.Company AS a2_ WHERE (a1_.company CONTAINS a2_ AND a2_.departments CONTAINS a1_)) AS a1_ GROUP BY a1_.a3_ ORDER BY COUNT(*) DESC",
+                "SELECT DISTINCT a1_.a3_ AS a2_, COUNT(*) AS a3_ FROM (SELECT DISTINCT a1_, a2_, a1_.name AS a3_ FROM org.intermine.model.testmodel.Department AS a1_, org.intermine.model.testmodel.Company AS a2_ WHERE (a1_.company CONTAINS a2_ AND a2_.departments CONTAINS a1_)) AS a1_ GROUP BY a1_.a3_ ORDER BY COUNT(*) DESC");
+    }
+
+    public void doQuery(String web, String iql, String ... summaries) throws Exception {
+        try {
+            Map parsed = PathQueryBinding.unmarshal(new StringReader(web), classKeys);
+            PathQuery pq = (PathQuery) parsed.get("test");
+            Query q = MainHelper.makeQuery(pq, new HashMap(), new HashMap(), null, null, false, os,
+                    classKeys, bagQueryConfig);
+            String got = q.toString();
+            assertEquals(iql, got);
+        } catch (Exception e) {
+            if (!e.getMessage().equals(iql)) {
+                throw e;
+            }
+        }
+        int columnNo = 0;
+        String summaryPath = null;
+        try {
+            Map parsed = PathQueryBinding.unmarshal(new StringReader(web), classKeys);
+            PathQuery pq = (PathQuery) parsed.get("test");
+            for (String summary : summaries) {
+                try {
+                    summaryPath = pq.getViewStrings().get(columnNo);
+                    Query q = MainHelper.makeSummaryQuery(pq, new HashMap(), new HashMap(), summaryPath, null, null, null, null);
+                    String got = q.toString();
+                    assertEquals("Failed for summaryPath " + summaryPath, summary, got);
+                    summaryPath = null;
+                } catch (Exception e) {
+                    if (!e.getMessage().equals(summary)) {
+                        throw e;
+                    }
+                } finally {
+                    columnNo++;
+                }
+            }
+            assertEquals("Columns do not have summary tests", pq.getViewStrings().size(), columnNo);
+        } catch (Exception e) {
+            throw new Exception("Exception while testing summaryPath " + summaryPath, e);
+        }
     }
 }

@@ -20,26 +20,28 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import org.intermine.objectstore.query.BagConstraint;
-import org.intermine.objectstore.query.ConstraintOp;
-import org.intermine.objectstore.query.ContainsConstraint;
-import org.intermine.objectstore.query.ObjectStoreBag;
-import org.intermine.objectstore.query.Query;
-import org.intermine.objectstore.query.QueryClass;
-import org.intermine.objectstore.query.QueryCloner;
-import org.intermine.objectstore.query.QueryField;
-import org.intermine.objectstore.query.QueryHelper;
-import org.intermine.objectstore.query.QueryObjectPathExpression;
-import org.intermine.objectstore.query.QueryObjectReference;
-import org.intermine.objectstore.query.QuerySelectable;
-import org.intermine.objectstore.query.Results;
+import javax.servlet.http.HttpSession;
 
 import org.intermine.metadata.FieldDescriptor;
 import org.intermine.model.InterMineObject;
 import org.intermine.objectstore.ObjectStore;
 import org.intermine.objectstore.ObjectStoreException;
 import org.intermine.objectstore.ObjectStoreWriter;
+import org.intermine.objectstore.flatouterjoins.MultiRow;
+import org.intermine.objectstore.flatouterjoins.MultiRowFirstValue;
+import org.intermine.objectstore.flatouterjoins.MultiRowValue;
 import org.intermine.objectstore.intermine.ObjectStoreWriterInterMineImpl;
+import org.intermine.objectstore.query.BagConstraint;
+import org.intermine.objectstore.query.ConstraintOp;
+import org.intermine.objectstore.query.ObjectStoreBag;
+import org.intermine.objectstore.query.Query;
+import org.intermine.objectstore.query.QueryClass;
+import org.intermine.objectstore.query.QueryCloner;
+import org.intermine.objectstore.query.QueryField;
+import org.intermine.objectstore.query.QueryHelper;
+import org.intermine.objectstore.query.QuerySelectable;
+import org.intermine.objectstore.query.Results;
+import org.intermine.objectstore.query.ResultsRow;
 import org.intermine.path.Path;
 import org.intermine.util.DynamicUtil;
 import org.intermine.util.TypeUtil;
@@ -47,8 +49,6 @@ import org.intermine.web.logic.Constants;
 import org.intermine.web.logic.bag.InterMineBag;
 import org.intermine.web.logic.profile.Profile;
 import org.intermine.web.logic.session.SessionMethods;
-
-import javax.servlet.http.HttpSession;
 
 /**
  * A pageable and configurable table of data.
@@ -147,6 +147,44 @@ public class PagedTable
             }
         }
         return count;
+    }
+
+    /**
+     * Move a column left
+     *
+     * @param index the index of the column to move
+     */
+    public void moveColumnLeft(int index) {
+        if (index > 0 && index <= getColumnsInternal().size() - 1) {
+            getColumnsInternal().add(index - 1, getColumnsInternal().remove(index));
+        }
+    }
+
+    /**
+     * Move a column right
+     *
+     * @param index the index of the column to move
+     */
+    public void moveColumnRight(int index) {
+        if (index >= 0 && index < getColumnsInternal().size() - 1) {
+            getColumnsInternal().add(index + 1, getColumnsInternal().remove(index));
+        }
+    }
+    
+    /**
+     * Swap 2 columns
+     * 
+     * @param index1 the index of column 1
+     * @param index2 the index of column 2
+     */
+    public void swapColumns(int index1, int index2) {
+        if (index2 < index1) {
+            int tmp = index2;
+            index2 = index1;
+            index1 = tmp;
+        }
+        getColumnsInternal().add(index1, getColumnsInternal().remove(index2));
+        getColumnsInternal().add(index2, getColumnsInternal().remove(index1+1));
     }
 
     /**
@@ -359,11 +397,29 @@ public class PagedTable
      * Search the visible rows and return the first ResultElement with the given ID./
      */
     private ResultElement findIdInVisible(Integer id) {
-        for (List<ResultElement> resultElements: getResultElementRows()) {
-            for (ResultElement resultElement : resultElements) {
-                if ((resultElement != null) && (resultElement.getId().equals(id))
-                    && (resultElement.isKeyField())) {
-                    return resultElement;
+        for (List<ResultElement> resultElements : getResultElementRows()) {
+            if (resultElements instanceof MultiRow) {
+                MultiRow mr = (MultiRow) resultElements;
+                for (Object obj : mr) {
+                    ResultsRow rv = (ResultsRow) obj;
+                    for (Object object : rv) {
+                        // We don't need to check other MultiRowValues are we've already seem them
+                        if (object instanceof MultiRowFirstValue) {
+                            MultiRowFirstValue mrv = (MultiRowFirstValue) object;
+                            ResultElement resultElement = (ResultElement) mrv.getValue();
+                            if ((resultElement != null) && (resultElement.getId().equals(id))
+                                && (resultElement.isKeyField())) {
+                                return resultElement;
+                            }
+                        }
+                    }
+                }
+            } else {
+                for (ResultElement resultElement : resultElements) {
+                    if ((resultElement != null) && (resultElement.getId().equals(id))
+                        && (resultElement.isKeyField())) {
+                        return resultElement;
+                    }
                 }
             }
         }
@@ -679,15 +735,24 @@ public class PagedTable
 
         for (int i = getStartRow(); i < getStartRow() + getPageSize(); i++) {
             try {
-                List<ResultElement> resultsRow = getAllRows().getResultElements(i);
+                List resultsRow = getAllRows().getResultElements(i);
                 // if some objects already selected, set corresponding  ResultElements here
                 if (!selectionIds.isEmpty()) {
-                    for (ResultElement re : resultsRow) {
-                        if (re != null && selectionIds.keySet().contains(re.getId())) {
-                            re.setSelected(true);
+                    for (Object obj : resultsRow) {
+                        if (obj instanceof ResultElement) {
+                            ResultElement re = (ResultElement) obj;
+                            if (re != null && selectionIds.keySet().contains(re.getId())) {
+                                re.setSelected(true);
+                            }
+                        } else if (obj instanceof MultiRowValue) {
+                            MultiRowValue mrv = (MultiRowValue) obj;
+                            ResultElement re = (ResultElement) mrv.getValue();
+                            if (re != null && selectionIds.keySet().contains(re.getId())) {
+                                re.setSelected(true);
+                            }
                         }
                     }
-                }
+                }                
                 newRows.add(resultsRow);
             } catch (IndexOutOfBoundsException e) {
                 // we're probably at the end of the results object, so stop looping
@@ -827,9 +892,9 @@ public class PagedTable
         QuerySelectable newSelectable = newQuery.getSelect().get(nodeIndex);
         newQuery.clearSelect();
         QueryClass newNode;
-        if (newSelectable instanceof QueryClass) {
+        //if (newSelectable instanceof QueryClass) {
             newNode = (QueryClass) newSelectable;
-        } else {
+        /*} else {
             QueryObjectPathExpression qope = (QueryObjectPathExpression) newSelectable;
             // We need to morph the query from an outer join to an inner join. This will not
             // affect the results, which are ids from the path expression, except by removing
@@ -842,17 +907,17 @@ public class PagedTable
                 QueryClass newQc = new QueryClass(nextQope.getType());
                 newQuery.addFrom(newQc);
                 QueryHelper.addAndConstraint(newQuery, new ContainsConstraint(
-                new QueryObjectReference(newQc, qope.getFieldName()),
-                ConstraintOp.CONTAINS, lastQc));
+                            new QueryObjectReference(newQc, qope.getFieldName()),
+                            ConstraintOp.CONTAINS, lastQc));
                 qope = nextQope;
                 lastQc = newQc;
                 nextQope = qope.getQope();
             }
             QueryClass rootQc = qope.getQueryClass();
             QueryHelper.addAndConstraint(newQuery, new ContainsConstraint(
-            new QueryObjectReference(rootQc, qope.getFieldName()),
-            ConstraintOp.CONTAINS, lastQc));
-        }
+                        new QueryObjectReference(rootQc, qope.getFieldName()),
+                        ConstraintOp.CONTAINS, lastQc));
+        }*/
 
         newQuery.addToSelect(newNode);
         BagConstraint bc =

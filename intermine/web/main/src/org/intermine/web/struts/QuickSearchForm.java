@@ -13,6 +13,8 @@ package org.intermine.web.struts;
 import java.util.Locale;
 
 import org.intermine.objectstore.query.ConstraintOp;
+import org.intermine.web.logic.template.ConstraintValueParser;
+import org.intermine.web.logic.template.ParseValueException;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
@@ -21,6 +23,7 @@ import org.apache.struts.Globals;
 import org.apache.struts.action.ActionErrors;
 import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionMapping;
+import org.apache.struts.action.ActionMessage;
 /**
  * @author Xavier Watkins
  *
@@ -87,8 +90,13 @@ public class QuickSearchForm extends ActionForm
         Locale locale = (Locale) session.getAttribute(Globals.LOCALE_KEY);
         ActionErrors errors = new ActionErrors();
 
-        Object o =
-            QueryBuilderForm.parseValue(value, String.class, ConstraintOp.EQUALS, locale, errors);
+        Object o = null;
+        try {
+            o = new ConstraintValueParser().parse(value, String.class, ConstraintOp.EQUALS, locale);
+        } catch (ParseValueException ex) {
+            errors.add(ActionErrors.GLOBAL_MESSAGE, 
+                            new ActionMessage("errors.message", ex.getMessage()));
+        }
         parsedValue = o.toString();
 
         return errors;

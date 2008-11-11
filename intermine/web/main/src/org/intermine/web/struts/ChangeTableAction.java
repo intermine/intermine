@@ -89,6 +89,63 @@ public class ChangeTableAction extends InterMineDispatchAction
         return makeForward(mapping, request, pt);
     }
 
+    /**
+     * Move a column left
+     * @param mapping The ActionMapping used to select this instance
+     * @param form The optional ActionForm bean for this request (if any)
+     * @param request The HTTP request we are processing
+     * @param response The HTTP response we are creating
+     * @return an ActionForward object defining where control goes next
+     */
+    public ActionForward moveColumnLeft(ActionMapping mapping,
+                                        @SuppressWarnings("unused") ActionForm form,
+                                        HttpServletRequest request,
+                                        @SuppressWarnings("unused") HttpServletResponse response) {
+        PagedTable pt = getPagedTable(request);
+
+        int index = Integer.parseInt(request.getParameter("index"));
+        pt.moveColumnLeft(index);
+
+        return makeForward(mapping, request, pt);
+    }
+
+    /**
+     * Move a column right
+     * @param mapping The ActionMapping used to select this instance
+     * @param form The optional ActionForm bean for this request (if any)
+     * @param request The HTTP request we are processing
+     * @param response The HTTP response we are creating
+     * @return an ActionForward object defining where control goes next
+     */
+    public ActionForward moveColumnRight(ActionMapping mapping,
+                                         @SuppressWarnings("unused") ActionForm form,
+                                         HttpServletRequest request,
+                                         @SuppressWarnings("unused") HttpServletResponse response) {
+        PagedTable pt = getPagedTable(request);
+        int index = Integer.parseInt(request.getParameter("index"));
+        pt.moveColumnRight(index);
+        return makeForward(mapping, request, pt);
+    }
+    
+    /**
+     * Swap two columns
+     * @param mapping The ActionMapping used to select this instance
+     * @param form The optional ActionForm bean for this request (if any)
+     * @param request The HTTP request we are processing
+     * @param response The HTTP response we are creating
+     * @return an ActionForward object defining where control goes next
+     */
+    public ActionForward swapColumns(ActionMapping mapping,
+                                     @SuppressWarnings("unused") ActionForm form,
+                                     HttpServletRequest request,
+                                     @SuppressWarnings("unused") HttpServletResponse response) {
+        PagedTable pt = getPagedTable(request);
+        int index1 = Integer.parseInt(request.getParameter("index1"));
+        int index2 = Integer.parseInt(request.getParameter("index2"));
+        pt.swapColumns(index1, index2);
+        return makeForward(mapping, request, pt);
+    }
+
     private PagedTable getPagedTable(HttpServletRequest request) {
         String forwardName = request.getParameter("currentPage");
         PagedTable pt = null;

@@ -17,18 +17,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Properties;
 
-import org.intermine.metadata.FieldDescriptor;
-import org.intermine.objectstore.ObjectStore;
-import org.intermine.path.Path;
-import org.intermine.pathquery.OrderBy;
-import org.intermine.pathquery.PathQuery;
-import org.intermine.web.logic.Constants;
-import org.intermine.web.logic.bag.BagQueryResult;
-import org.intermine.web.logic.results.Column;
-import org.intermine.web.logic.results.PagedTable;
-import org.intermine.web.logic.session.SessionMethods;
-import org.intermine.web.logic.template.TemplateQuery;
-
 import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -40,6 +28,16 @@ import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
 import org.apache.struts.tiles.ComponentContext;
 import org.apache.struts.tiles.actions.TilesAction;
+import org.intermine.metadata.FieldDescriptor;
+import org.intermine.objectstore.ObjectStore;
+import org.intermine.path.Path;
+import org.intermine.pathquery.PathQuery;
+import org.intermine.web.logic.Constants;
+import org.intermine.web.logic.bag.BagQueryResult;
+import org.intermine.web.logic.results.Column;
+import org.intermine.web.logic.results.PagedTable;
+import org.intermine.web.logic.session.SessionMethods;
+import org.intermine.web.logic.template.TemplateQuery;
 import org.stringtree.json.JSONWriter;
 
 /**
@@ -240,7 +238,7 @@ public class TableController extends TilesAction
     private HashMap<String, String> setSortOrderMap(PathQuery q) {
         HashMap<String, String> mappy = new HashMap<String, String>();
         String sortBy, direction = null;
-        List<OrderBy> sortOrderList = q.getSortOrder();
+        Map<Path, String> sortOrderList = q.getSortOrder();
         List<String> selectList = q.getViewStrings();
         if (selectList.isEmpty()) {
             return null;
@@ -248,10 +246,11 @@ public class TableController extends TilesAction
         if (sortOrderList.isEmpty()) {
             // do something if nothing selected
             sortBy = selectList.get(0);
-            direction = "asc";
+            direction = PathQuery.ASCENDING;
         } else {
-            sortBy = sortOrderList.get(0).getField().toStringNoConstraints();
-            direction = sortOrderList.get(0).getDirection();
+            Path path = sortOrderList.keySet().iterator().next();
+            sortBy = path.toStringNoConstraints();
+            direction = sortOrderList.get(path);
         }
 
         // loop through query and populate map

@@ -184,7 +184,7 @@
 <div id="tool_bar_item_export" style="visibility:hidden;width:370px" class="tool_bar_item">
     <c:set var="tableName" value="${param.table}" scope="request"/>
     <c:set var="pagedTable" value="${resultsTable}" scope="request"/>
-    <tiles:get name="export.tile"/>
+    <%--<tiles:get name="export.tile"/>--%>
     <hr>
   <a href="javascript:hideMenu('tool_bar_item_export')" ><fmt:message key="confirm.cancel"/></a>
 </div>

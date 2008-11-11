@@ -26,6 +26,7 @@ import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
 import org.apache.struts.tiles.ComponentContext;
 import org.apache.struts.tiles.actions.TilesAction;
+import org.intermine.dwr.AjaxServices;
 import org.intermine.metadata.FieldDescriptor;
 import org.intermine.metadata.Model;
 import org.intermine.metadata.ReferenceDescriptor;
@@ -103,6 +104,7 @@ public class QueryBuilderConstraintController extends TilesAction
                 }
 
                 Map attributeOps = MainHelper.mapOps(ClassConstraint.VALID_OPS);
+                request.setAttribute("loopQueryOJ", node.isOuterJoin());
                 request.setAttribute ("loopQueryOps", attributeOps);
                 request.setAttribute ("loopQueryPaths", paths);
             }

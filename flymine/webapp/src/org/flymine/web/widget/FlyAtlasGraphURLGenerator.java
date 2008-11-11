@@ -81,15 +81,16 @@ public class FlyAtlasGraphURLGenerator implements GraphCategoryURLGenerator
         // all results have to be in list
         q.addConstraint("FlyAtlasResult.genes", Constraints.in(bag.getName()));
 
+        // sort based on whether up or down regulated
+        String sortDirection = (category.equalsIgnoreCase("up") ? PathQuery.ASCENDING
+                                                               : PathQuery.DESCENDING);
         // affyCall (up or down) value has to match what the user clicked on
         q.addConstraint("FlyAtlasResult.affyCall", Constraints.eq(series));
 
         // assay (tissue) has to match what the user clicked on
         q.addConstraint("FlyAtlasResult.assays.name", Constraints.eq(category));
 
-        // sort based on whether up or down regulated
-        Boolean sortAscending = (category.equalsIgnoreCase("up") ? Boolean.FALSE : Boolean.TRUE);
-        q.setOrderBy("FlyAtlasResult.enrichment", sortAscending);
+        q.setOrderBy("FlyAtlasResult.enrichment", sortDirection);
         q.addOrderBy("FlyAtlasResult.genes.secondaryIdentifier");
 
         // set constraint logic

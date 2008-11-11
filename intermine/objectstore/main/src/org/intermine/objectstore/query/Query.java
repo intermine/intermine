@@ -31,7 +31,7 @@ import org.intermine.util.CombinedIterator;
  * @author Richard Smith
  * @author Matthew Wakeling
  */
-public class Query implements FromElement
+public class Query implements FromElement, Queryable
 {
     private boolean distinct = true;
     private Constraint constraint = null;
@@ -129,11 +129,9 @@ public class Query implements FromElement
        * Constrain this Query using either a single constraint or a set of constraints
        *
        * @param constraint the constraint or constraint set
-       * @return the updated query
        */
-    public Query setConstraint(Constraint constraint) {
+    public void setConstraint(Constraint constraint) {
         this.constraint = constraint;
-        return this;
     }
 
     /**
@@ -281,12 +279,13 @@ public class Query implements FromElement
      * Add a QuerySelectable to the SELECT clause of this Query
      *
      * @param node the QuerySelectable to add
-     * @return the updated Query
      */
-    public Query addToSelect(QuerySelectable node) {
+    public void addToSelect(QuerySelectable node) {
         select.add(node);
+        if (node instanceof PathExpressionField) {
+            alias(((PathExpressionField) node).getQope(), null);
+        }
         alias(node, null);
-        return this;
     }
 
     /**
@@ -298,6 +297,9 @@ public class Query implements FromElement
      */
     public Query addToSelect(QuerySelectable node, String alias) {
         select.add(node);
+        if (node instanceof PathExpressionField) {
+            alias(((PathExpressionField) node).getQope(), null);
+        }
         alias(node, alias);
         return this;
     }

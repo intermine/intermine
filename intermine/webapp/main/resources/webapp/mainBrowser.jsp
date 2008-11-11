@@ -9,13 +9,14 @@
 <!-- mainBrowser.jsp -->
 
 <html:xhtml/>
-
+<script type="text/javascript" src="<html:rewrite page='/js/jquery.boxy.js'/>"></script>
+<link rel="stylesheet" type="text/css" href="<html:rewrite page='/css/boxy.css'/>"/>
 <script type="text/javascript">
   <!--
   function toggleNode(id, path) {
-    if (isExplorer()) {
+    /*if (isExplorer()) {
       return true;
-    }
+    }*/
     if ($(id).innerHTML=='') {
       new Ajax.Updater(id, '<html:rewrite action="/mainChange"/>',
         {parameters:'method=ajaxExpand&path='+path, asynchronous:true});
@@ -32,14 +33,17 @@
   }
 
   function addConstraint(path) {
-    if (isExplorer()) {
+    /*if (isExplorer()) {
       return true;
-    }
+    }*/
     new Ajax.Updater('mainConstraint', '<html:rewrite action="/mainChange"/>',
       {parameters:'method=ajaxNewConstraint&path='+path, asynchronous:true, evalScripts:true,
       onSuccess: function() {
         new Ajax.Updater('main-paths', '<html:rewrite action="/mainChange"/>',
-          {parameters:'method=ajaxRenderPaths', asynchronous:true, evalScripts:true});
+          {parameters:'method=ajaxRenderPaths', asynchronous:true, evalScripts:true, onSuccess: function() {
+             new Boxy(jQuery('#constraint'), {title: "Constraint for " + path});
+          }
+        });
       }
     });
     return false;
@@ -54,7 +58,7 @@
 <div class="heading">
   <fmt:message key="query.currentclass"/>
 </div>
-<div class="body">
+<div class="body" id="browserbody">
   <div>
     <fmt:message key="query.currentclass.detail"/>
   </div>

@@ -136,9 +136,15 @@ li {
   background-color: white; text-align: center; font-size: 13px; white-space: nowrap;}
 
 .heading, .heading2 {
-  height: 1.5em; /* needed to prevent the peekaboo bug on IE: http://www.positioniseverything.net/explorer/peekaboo.html */
-  margin: 0 8px 4px 8px; padding:5px 0px 0px 10px; border: 1px solid #888;
-  font-size: 14px; font-weight:bold; background: url('../theme/heading-bg.gif') top center repeat; white-space: nowrap;}
+  /*height: 1.5em;*/ /* needed to prevent the peekaboo bug on IE: http://www.positioniseverything.net/explorer/peekaboo.html */
+  /*margin: 0 8px 4px 8px; padding:5px 0px 0px 10px; border: 1px solid #888;*/
+  border:1px solid #888;
+  margin:0 8pt 15px 8px;
+  padding: 5px 15px 5px 15px;
+  line-height: 1.14286;
+  background-color: transparent;
+  font-size: 14px; font-weight:bold; 
+  background: url('../theme/heading-bg.jpg') top center repeat-x; white-space: nowrap;}
 
 div.templateLine {
   margin-bottom: 5px; margin-top: 5px;}

@@ -480,7 +480,14 @@ public abstract class ObjectStoreTestCase extends StoreDataTestCase
                              { data.get("EmployeeB2"), data.get("Company Street, BVille") },
                              { data.get("EmployeeB3"), data.get("Company Street, BVille") } };
         results.put("ObjectPathExpression4", toList(r));
-        r = new Object[][] { { data.get("CompanyA"), "3fred"},
+        r = new Object[][] { { data.get("EmployeeA1"), data.get("DepartmentA1"), data.get("CompanyA"), data.get("Company Street, AVille") },
+                             { data.get("EmployeeA2"), data.get("DepartmentA1"), data.get("CompanyA"), data.get("Company Street, AVille") },
+                             { data.get("EmployeeA3"), data.get("DepartmentA1"), data.get("CompanyA"), data.get("Company Street, AVille") },
+                             { data.get("EmployeeB1"), data.get("DepartmentB1"), data.get("CompanyB"), data.get("Company Street, BVille") },
+                             { data.get("EmployeeB2"), data.get("DepartmentB1"), data.get("CompanyB"), data.get("Company Street, BVille") },
+                             { data.get("EmployeeB3"), data.get("DepartmentB2"), data.get("CompanyB"), data.get("Company Street, BVille") } };
+        results.put("ObjectPathExpression5", toList(r));
+        r = new Object[][] { { data.get("CompanyA"), null},
                              { data.get("CompanyB"), "EmployeeB1"} };
         results.put("FieldPathExpression", toList(r));
         r = new Object[][] { { data.get("EmployeeA1"), "Company Street, AVille" },
@@ -510,12 +517,6 @@ public abstract class ObjectStoreTestCase extends StoreDataTestCase
         r = new Object[][] { { data.get("CompanyA"), Collections.singletonList(data.get("DepartmentA1")) },
                              { data.get("CompanyB"), Collections.singletonList(data.get("DepartmentB1")) } };
         results.put("CollectionPathExpression5", toList(r));
-        r = new Object[][] { { data.get("CompanyA"), null},
-                             { data.get("CompanyB"), ((Employee) data.get("EmployeeB1")).getId()} };
-        results.put("ForeignKey", toList(r));
-        r = new Object[][] { { data.get("CompanyA"), new Integer(3)},
-                             { data.get("CompanyB"), ((Employee) data.get("EmployeeB1")).getId()} };
-        results.put("ForeignKey2", toList(r));
 
         r = new Object[][] { { data.get("CompanyA") },
                              { data.get("CompanyB") },
@@ -600,6 +601,14 @@ public abstract class ObjectStoreTestCase extends StoreDataTestCase
         r = new Object[][] { { DynamicUtil.composeClass(Broke.class, CEO.class), new Long(1) },
                              { DynamicUtil.composeClass(Broke.class, Contractor.class), new Long(1) } };
         results.put("SelectClassFromBrokeEmployable", toList(r));
+        r = new Object[][] { { data.get("DepartmentA1"), Arrays.asList(data.get("EmployeeA1")) },
+                             { data.get("DepartmentB1"), Arrays.asList(data.get("EmployeeB1")) },
+                             { data.get("DepartmentB2"), Collections.singletonList(data.get("EmployeeB3")) } };
+        results.put("SubclassCollection", toList(r));
+        r = new Object[][] { { data.get("DepartmentA1"), Collections.EMPTY_LIST },
+                             { data.get("DepartmentB1"), Arrays.asList(data.get("EmployeeB1")) },
+                             { data.get("DepartmentB2"), Collections.EMPTY_LIST } };
+        results.put("SubclassCollection2", toList(r));
         results.put("SelectWhereBackslash", Collections.emptyList());
     }
 

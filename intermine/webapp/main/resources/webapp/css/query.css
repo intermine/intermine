@@ -49,5 +49,73 @@ div.sortorderpath {
 table.query {
   border: none;}
 
-table.query td.modelbrowse {
+div.modelbrowse {
   border-right: 1px solid #888;}
+  
+#mainBrowser {
+  float:left;
+  width:50%;
+  /*margin-right:10px;*/
+}
+
+#browserbody {
+  height:400px;
+  overflow-y:auto;
+}
+  
+#rightColumn {
+  margin-left:50%;
+  width:50%;
+}
+
+/* Outer Joins diagram */
+li.block {
+  list-style:none;
+}
+
+.block {
+  border: 2px solid #0090DF;
+  background-color: #68BFEF;
+  width: 150px; 
+  height: 70px;
+  margin: 10px;
+}
+
+.canvas {
+  position: absolute;
+  z-index: -10;
+}
+
+.viewTitle {
+  background:#1863B8;
+  color:white;
+}
+
+.constraintTitle {
+  background:#B12A2A;
+  color:white;
+}
+
+.currentTitle {
+  background:#008000;
+  color:white;
+}
+
+#constraintLogic {
+  border-top:1px solid #CCC;
+  margin:25px 10px;
+  padding-top:5px;
+}
+
+form#submitform input, form#submitform {
+  vertical-align:top;
+  padding:0; margin:0;
+}
+
+.actions { 
+  padding-top: 5px;
+}
+
+.actions p {
+  margin-bottom:15px;
+}

@@ -10,20 +10,27 @@ package org.intermine.web.struts;
  *
  */
 
-import org.intermine.objectstore.query.ConstraintOp;
-import org.intermine.pathquery.Constraint;
-import org.intermine.pathquery.PathNode;
-import org.intermine.pathquery.PathQuery;
-import org.intermine.web.logic.Constants;
-import org.intermine.web.logic.session.SessionMethods;
+import java.util.Locale;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
+import org.apache.struts.Globals;
 import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
+import org.apache.struts.action.ActionMessage;
+import org.intermine.objectstore.query.ConstraintOp;
+import org.intermine.pathquery.Constraint;
+import org.intermine.pathquery.Node;
+import org.intermine.pathquery.PathNode;
+import org.intermine.pathquery.PathQuery;
+import org.intermine.util.TypeUtil;
+import org.intermine.web.logic.Constants;
+import org.intermine.web.logic.session.SessionMethods;
+import org.intermine.web.logic.template.ConstraintValueParser;
+import org.intermine.web.logic.template.ParseValueException;
 
 /**
  * Action to handle button presses on the main tile
@@ -96,10 +103,19 @@ public class QueryBuilderAction extends InterMineAction
                 id = mf.getTemplateId();
                 editable = mf.isEditable();
             }
+            Locale locale = (Locale) session.getAttribute(Globals.LOCALE_KEY);
 
             ConstraintOp constraintOp = ConstraintOp.getOpForIndex(Integer.valueOf(mf
                     .getAttributeOp()));
-            Object constraintValue = mf.getParsedAttributeValue();
+            Object constraintValue = null;
+            try {
+                constraintValue = parseValue(mf.getAttributeValue(), query, constraintOp, mf
+                                .getPath(), locale, request);
+            } catch (ParseValueException ex) {
+                recordMessage(new ActionMessage("errors.message", ex.getMessage()), request);
+                return null;
+            }
+
             //String extraValue = mf.getExtraValue();
             if (constraintValue.equals("NULL")) {
                 node.getConstraints().add(
@@ -108,6 +124,13 @@ public class QueryBuilderAction extends InterMineAction
                 Constraint c = new Constraint(constraintOp, constraintValue, editable, label, code,
                         id, mf.getExtraValue());
                 node.getConstraints().add(c);
+            }
+            Node referenceNode = node;
+            if (node.isAttribute()) {
+                referenceNode = node.getParent();
+            }
+            if (referenceNode.isReference() && referenceNode.isOuterJoin()) {
+                query.flipJoinStyle(referenceNode.getPathString());
             }
         } else if (request.getParameter("bag") != null) {
             ConstraintOp constraintOp = ConstraintOp.getOpForIndex(Integer.valueOf(mf.getBagOp()));
@@ -128,13 +151,27 @@ public class QueryBuilderAction extends InterMineAction
             if (node.getConstraints().size() == 0) {
                 query.getNodes().remove(node.getPathString());
             }
+            Node referenceNode = node;
+            if (node.isAttribute()) {
+                referenceNode = node.getParent();
+            }
+            if (referenceNode.isReference() && referenceNode.isOuterJoin()) {
+                query.flipJoinStyle(referenceNode.getPathString());
+            }
+        // Loop constraint
         } else if (request.getParameter("loop") != null) {
             ConstraintOp constraintOp = ConstraintOp.getOpForIndex(Integer.valueOf(mf
                     .getLoopQueryOp()));
             Object constraintValue = mf.getLoopQueryValue();
+            // switch join if outter join
+                    if (node.getPathString().lastIndexOf(".") < node.getPathString().lastIndexOf(
+                                    ":")) {
+                        query.flipJoinStyle(node.getPathString());
+                    }
             Constraint c = new Constraint(constraintOp, constraintValue, false, label, code, id,
                     null);
             node.getConstraints().add(c);
+        // 
         } else if (request.getParameter("subclass") != null) {
             node.setType(mf.getSubclassValue());
             session.setAttribute("path", mf.getSubclassValue());
@@ -147,6 +184,13 @@ public class QueryBuilderAction extends InterMineAction
             } else {
                 node.getConstraints().add(
                         new Constraint(ConstraintOp.IS_NULL, null, false, label, code, id, null));
+            }
+            Node referenceNode = node;
+            if (node.isAttribute()) {
+                referenceNode = node.getParent();
+            }
+            if (referenceNode.isReference() && referenceNode.isOuterJoin()) {
+                query.flipJoinStyle(referenceNode.getPathString());
             }
         } else if (request.getParameter("expression") != null) {
             query.setConstraintLogic(request.getParameter("expr"));
@@ -166,5 +210,28 @@ public class QueryBuilderAction extends InterMineAction
         mf.reset(mapping, request);
 
         return mapping.findForward("query");
+    }
+
+    /**
+     * Parse an attribute value
+     * 
+     * @param value the value as a String
+     * @param type the type of the parsed value
+     * @param constraintOp the constraint operator for which value is an intended argument
+     * @param locale the user's locale
+     * @param errors ActionErrors to which any parse errors are added
+     * @return the parsed value
+     */
+    public static Object parseValue(String value, PathQuery query, ConstraintOp constraintOp,
+                                    String path, Locale locale, HttpServletRequest request)
+                    throws ParseValueException {
+        PathNode node = query.getNodes().get(path);
+        Class fieldClass;
+        if (node.isAttribute()) {
+            fieldClass = TypeUtil.getClass(node.getType());
+        } else {
+            fieldClass = String.class;
+        }
+        return new ConstraintValueParser().parse(value, fieldClass, constraintOp, locale);
     }
 }

@@ -29,7 +29,6 @@ if(new java.io.File(application.getRealPath("css")+"/"+pageName+".css").exists()
 </c:if>
 <link rel="stylesheet" type="text/css" href="<html:rewrite page='/theme/theme.css'/>"/>
 
-
 <script type="text/javascript" src="<html:rewrite page='/js/jquery-1.2.6.js'/>"></script>
 <script type="text/javascript" src="<html:rewrite page='/js/jquery-ui-personalized-1.5.2.min.js'/>"></script>
 <script type="text/javascript" src="<html:rewrite page='/js/jquery.dimensions.min.js'/>"></script>

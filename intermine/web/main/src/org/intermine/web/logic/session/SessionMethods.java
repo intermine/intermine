@@ -40,7 +40,6 @@ import org.intermine.objectstore.query.Query;
 import org.intermine.objectstore.query.QuerySelectable;
 import org.intermine.objectstore.query.Results;
 import org.intermine.path.Path;
-import org.intermine.pathquery.OrderBy;
 import org.intermine.pathquery.PathQuery;
 import org.intermine.util.CacheMap;
 import org.intermine.util.PropertiesUtil;
@@ -257,8 +256,8 @@ public class SessionMethods
         session.setAttribute("path", pathString);
         // it's possible to not have a sort order
         if (query.getSortOrder() != null && !query.getSortOrder().isEmpty()) {
-            OrderBy sortOrder = query.getSortOrder().get(0);
-            String sortOrderString = sortOrder.getField().toStringNoConstraints();
+            Path sortPath = query.getSortOrder().keySet().iterator().next();
+            String sortOrderString = sortPath.toStringNoConstraints();
             if (sortOrderString.indexOf(".") != -1) {
                 sortOrderString  = sortOrderString.substring(0, sortOrderString.indexOf("."));
             }
@@ -288,7 +287,7 @@ public class SessionMethods
      * @param session current session
      * @return sort by list
      */
-    public static List<OrderBy> getEditingSortOrder(HttpSession session) {
+    public static Map<Path, String> getEditingSortOrder(HttpSession session) {
         PathQuery query = (PathQuery) session.getAttribute(Constants.QUERY);
         if (query == null) {
             throw new IllegalStateException("No query on session");
@@ -550,8 +549,13 @@ public class SessionMethods
                     } catch (Exception err) {
                         StringWriter sw = new StringWriter();
                         err.printStackTrace(new PrintWriter(sw));
-                        recordError(sw.toString(), session);
                         LOG.error(sw.toString());
+                        StringBuffer errorMessage = new StringBuffer("Error while running query");
+                        if (session.getAttribute(Constants.IS_SUPERUSER) != null
+                            && (Boolean) session.getAttribute(Constants.IS_SUPERUSER)) {
+                            errorMessage.append(": " + err.getMessage());
+                        }
+                        recordError(errorMessage.toString(), session);
                     } finally {
                         LOG.debug("unregisterRunningQuery qid " + qid);
                         ((Map) session.getAttribute("RUNNING_QUERIES")).remove(qid);

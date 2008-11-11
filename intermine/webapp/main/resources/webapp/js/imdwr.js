@@ -749,3 +749,17 @@ function validateBagName(formName) {
         }
    });
 }
+
+function switchJoin(element, pathName) {
+   AjaxServices.setOuterJoin(pathName,function(newPathName){
+   	 jQuery(element).attr('onClick','switchJoin(this,\''+newPathName+'\');');
+   	 AjaxServices.getSortOrderMap(function(sortMap) {
+   		reDrawSorters(sortMap);
+   	 });
+   });
+   if(jQuery(element).attr('src').indexOf('hollow')>-1) {
+   	 jQuery(element).attr('src','images/join_full.png');
+   } else {
+   	 jQuery(element).attr('src','images/join_hollow.png');
+   }
+}

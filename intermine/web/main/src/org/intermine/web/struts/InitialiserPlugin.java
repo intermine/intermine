@@ -99,79 +99,87 @@ public class InitialiserPlugin implements PlugIn
      */
     public void init(ActionServlet servlet,
                      @SuppressWarnings("unused") ModuleConfig config) throws ServletException {
-        final ServletContext servletContext = servlet.getServletContext();
-
-        System.setProperty("java.awt.headless", "true");
-
-        loadWebProperties(servletContext);
-
-        ObjectStore os = null;
-        Properties props = (Properties) servletContext.getAttribute(Constants.WEB_PROPERTIES);
-        String osAlias = (String) props.get("webapp.os.alias");
         try {
-            os = ObjectStoreFactory.getObjectStore(osAlias);
-        } catch (Exception e) {
-            Throwable cause = e.getCause();
-            if (cause != null) {
-                cause.printStackTrace();
+            final ServletContext servletContext = servlet.getServletContext();
+
+            System.setProperty("java.awt.headless", "true");
+
+            loadWebProperties(servletContext);
+
+            ObjectStore os = null;
+            Properties props = (Properties) servletContext.getAttribute(Constants.WEB_PROPERTIES);
+            String osAlias = (String) props.get("webapp.os.alias");
+            try {
+                os = ObjectStoreFactory.getObjectStore(osAlias);
+            } catch (Exception e) {
+                Throwable cause = e.getCause();
+                if (cause != null) {
+                    cause.printStackTrace();
+                }
+                throw new ServletException("Unable to instantiate ObjectStore " + osAlias, e);
             }
-            throw new ServletException("Unable to instantiate ObjectStore " + osAlias, e);
+            servletContext.setAttribute(Constants.OBJECTSTORE, os);
+
+            loadWebConfig(servletContext, os);
+            loadAspectsConfig(servletContext, os);
+
+            //loadClassCategories(servletContext, os);
+            loadClassDescriptions(servletContext, os);
+
+            summarizeObjectStore(servletContext, os);
+
+            // load class keys
+            loadClassKeys(servletContext, os);
+
+            // load custom bag queries
+            loadBagQueries(servletContext, os);
+
+            final ProfileManager pm = createProfileManager(servletContext, os);
+
+            // index global webSearchables
+            SearchRepository searchRepository = new SearchRepository(TemplateHelper.GLOBAL_TEMPLATE);
+            servletContext.setAttribute(Constants.GLOBAL_SEARCH_REPOSITORY, searchRepository);
+
+            final Profile superProfile = SessionMethods.getSuperUserProfile(servletContext);
+
+            AbstractMap<String, TemplateQuery> templateSearchableMap =
+                new AbstractMap<String, TemplateQuery>() {
+                    @Override
+                    public Set<Map.Entry<String, TemplateQuery>> entrySet() {
+                        return pm.filterByTags(superProfile.getSavedTemplates(), PUBLIC_TAG_LIST,
+                                               TagTypes.TEMPLATE,
+                                               superProfile.getUsername()).entrySet();
+                    }
+                };
+            searchRepository.addWebSearchables(TagTypes.TEMPLATE, templateSearchableMap);
+
+            AbstractMap<String, InterMineBag> bagSearchableMap =
+                new AbstractMap<String, InterMineBag>() {
+                    @Override
+                    public Set<Map.Entry<String, InterMineBag>> entrySet() {
+                        return pm.filterByTags(superProfile.getSavedBags(), PUBLIC_TAG_LIST,
+                                               TagTypes.BAG,
+                                               superProfile.getUsername()).entrySet();
+                    }
+                };
+            searchRepository.addWebSearchables(TagTypes.BAG, bagSearchableMap);
+
+            searchRepository.setProfile(superProfile);
+
+            servletContext.setAttribute(Constants.GRAPH_CACHE, new HashMap());
+
+            makeCache(servletContext, os);
+
+            loadAutoCompleter(servletContext, os);
+
+            cleanTags(pm);
+        } catch (ServletException e) {
+            LOG.error("ServletException", e);
+            throw e;
+        } catch (RuntimeException e) {
+            LOG.error("RuntimeException", e);
+            throw e;
         }
-        servletContext.setAttribute(Constants.OBJECTSTORE, os);
-
-        loadWebConfig(servletContext, os);
-        loadAspectsConfig(servletContext, os);
-
-        //loadClassCategories(servletContext, os);
-        loadClassDescriptions(servletContext, os);
-
-        summarizeObjectStore(servletContext, os);
-
-        // load class keys
-        loadClassKeys(servletContext, os);
-
-        // load custom bag queries
-        loadBagQueries(servletContext, os);
-
-        final ProfileManager pm = createProfileManager(servletContext, os);
-
-        // index global webSearchables
-        SearchRepository searchRepository = new SearchRepository(TemplateHelper.GLOBAL_TEMPLATE);
-        servletContext.setAttribute(Constants.GLOBAL_SEARCH_REPOSITORY, searchRepository);
-
-        final Profile superProfile = SessionMethods.getSuperUserProfile(servletContext);
-
-        AbstractMap<String, TemplateQuery> templateSearchableMap =
-            new AbstractMap<String, TemplateQuery>() {
-                @Override
-                public Set<Map.Entry<String, TemplateQuery>> entrySet() {
-                    return pm.filterByTags(superProfile.getSavedTemplates(), PUBLIC_TAG_LIST,
-                                           TagTypes.TEMPLATE,
-                                           superProfile.getUsername()).entrySet();
-                }
-            };
-        searchRepository.addWebSearchables(TagTypes.TEMPLATE, templateSearchableMap);
-
-        AbstractMap<String, InterMineBag> bagSearchableMap =
-            new AbstractMap<String, InterMineBag>() {
-                @Override
-                public Set<Map.Entry<String, InterMineBag>> entrySet() {
-                    return pm.filterByTags(superProfile.getSavedBags(), PUBLIC_TAG_LIST,
-                                           TagTypes.BAG,
-                                           superProfile.getUsername()).entrySet();
-                }
-            };
-        searchRepository.addWebSearchables(TagTypes.BAG, bagSearchableMap);
-
-        searchRepository.setProfile(superProfile);
-
-        servletContext.setAttribute(Constants.GRAPH_CACHE, new HashMap());
-
-        makeCache(servletContext, os);
-
-        loadAutoCompleter(servletContext, os);
-
-        cleanTags(pm);
     }
 
     /**
@@ -420,16 +428,20 @@ public class InitialiserPlugin implements PlugIn
      */
     private ProfileManager createProfileManager(ServletContext servletContext, ObjectStore os)
         throws ServletException {
-        try {
-            Properties props = (Properties) servletContext.getAttribute(Constants.WEB_PROPERTIES);
-            String userProfileAlias = (String) props.get("webapp.userprofile.os.alias");
-            Map classKeys = (Map) servletContext.getAttribute(Constants.CLASS_KEYS);
-            ObjectStoreWriter userProfileOS =
-                ObjectStoreWriterFactory.getObjectStoreWriter(userProfileAlias);
-            profileManager = new ProfileManager(os, userProfileOS, classKeys);
-        } catch (ObjectStoreException e) {
-            throw new ServletException("Unable to create profile manager - please check that the "
-                    + "userprofile database is available", e);
+        if (profileManager == null) {
+            try {
+                Properties props = (Properties) servletContext.getAttribute(Constants.WEB_PROPERTIES);
+                String userProfileAlias = (String) props.get("webapp.userprofile.os.alias");
+                Map classKeys = (Map) servletContext.getAttribute(Constants.CLASS_KEYS);
+                ObjectStoreWriter userProfileOS =
+                    ObjectStoreWriterFactory.getObjectStoreWriter(userProfileAlias);
+                profileManager = new ProfileManager(os, userProfileOS, classKeys);
+            } catch (ObjectStoreException e) {
+                LOG.error("Unable to create profile manager - please check that the "
+                        + "userprofile database is available", e);
+                throw new ServletException("Unable to create profile manager - please check that the "
+                        + "userprofile database is available", e);
+            }
         }
         servletContext.setAttribute(Constants.PROFILE_MANAGER, profileManager);
         return profileManager;

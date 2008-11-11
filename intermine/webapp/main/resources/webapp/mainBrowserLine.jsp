@@ -5,9 +5,10 @@
 <%@ taglib uri="http://java.sun.com/jsp/jstl/functions" prefix="fn" %>
 <%@ taglib tagdir="/WEB-INF/tags" prefix="im" %>
 
-<!-- mainBrowser.jsp -->
+<!-- mainBrowserLine.jsp -->
 
 <html:xhtml/>
+
     <div class="browserline">
       <c:if test="${node.indentation > 0}">
         <c:forEach begin="1" end="${node.indentation}">
@@ -67,7 +68,7 @@
           <c:if test="${isNull}">
             <c:set var="fieldNameClass" value="${fieldNameClass} nullReferenceField"/>
           </c:if>
-          <span class="${fieldNameClass}">
+          <span class="${fieldNameClass}" id="drag_${node.pathString}">
             <c:out value="${node.fieldName}"/>
           </span>
           <im:typehelp type="${node.parentType}.${node.fieldName}"/>
@@ -125,7 +126,7 @@
         </c:when>
         <c:otherwise>
           <html:link action="/mainChange?method=addPath&path=${node.pathString}" title="${addConstraintToTitle}"
-            onclick="return addConstraint('${node.pathString}');">
+            onclick="return addConstraint('${node.pathString}');" >
             <img class="arrow" src="images/constrain.gif" width="70" height="13" title="constrain"/>
           </html:link>
         </c:otherwise>

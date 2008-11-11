@@ -25,9 +25,8 @@ import org.intermine.util.Util;
 public class Node
 {
     private Node parent;
-    private String fieldName, pathString, prefix, type;
+    private String fieldName, type;
     private boolean attribute = false, reference = false, collection = false, outer = false;
-    private int indentation;
 
     /**
      * Constructor for a root node
@@ -35,9 +34,7 @@ public class Node
      */
     public Node(String type) {
         this.type = type;
-        pathString = type;
-        prefix = "";
-        indentation = 0;
+        parent = null;
     }
 
     /**
@@ -51,13 +48,6 @@ public class Node
         this.fieldName = fieldName;
         this.parent = parent;
         this.outer = outer;
-        prefix = parent.getPathString();
-        pathString = prefix + (outer ? ":" : ".") + fieldName;
-        //Exception e = new Exception();
-        //e.fillInStackTrace();
-        //LOG.error("New Node: " + pathString, e);
-
-        indentation = pathString.split("[.:]").length - 1;
     }
 
     /**
@@ -120,7 +110,7 @@ public class Node
      * @return the String value of pathString
      */
     public String getPathString()  {
-        return pathString;
+        return parent == null ? type : getPrefix() + (outer ? ":" : ".") + fieldName;
     }
 
     /**
@@ -147,7 +137,7 @@ public class Node
      * @return the value of prefix
      */
     public String getPrefix()  {
-        return prefix;
+        return parent == null ? "" : parent.getPathString();
     }
 
     /**
@@ -192,7 +182,7 @@ public class Node
      * @return the value of indentation
      */
     public int getIndentation()  {
-        return indentation;
+        return parent == null ? 0 : parent.getIndentation() + 1;
     }
 
     /**
@@ -205,10 +195,19 @@ public class Node
     }
 
     /**
+     * Sets whether this should be an outer join.
+     *
+     * @param outer a boolean
+     */
+    public void setOuterJoin(boolean outer) {
+        this.outer = outer;
+    }
+
+    /**
      * {@inheritDoc}
      */
     public String toString() {
-        return pathString + ":" + type;
+        return getPathString() + ":" + type;
     }
 
     /**
@@ -216,7 +215,6 @@ public class Node
      */
     public boolean equals(Object o) {
         return (o instanceof Node)
-            && pathString.equals(((Node) o).pathString)
             && Util.equals(type, ((Node) o).type)
             && Util.equals(parent, ((Node) o).parent);
     }
@@ -225,8 +223,7 @@ public class Node
      * {@inheritDoc}
      */
     public int hashCode() {
-        return 2 * pathString.hashCode()
-            + (type == null ? 0 : 3 * type.hashCode())
+        return (type == null ? 0 : 3 * type.hashCode())
             + (parent == null ? 0 : 5 * parent.hashCode());
     }
 }

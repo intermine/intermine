@@ -150,40 +150,41 @@ public class QueryCloner
         } else if (orig instanceof QueryCast) {
             return new QueryCast((QueryEvaluable) cloneThing(((QueryCast) orig).getValue(),
                         fromElementMap), ((QueryCast) orig).getType());
+        } else if (orig instanceof PathExpressionField) {
+            PathExpressionField origP = (PathExpressionField) orig;
+            QueryObjectPathExpression origQope = origP.getQope();
+            QueryObjectPathExpression newQope = (QueryObjectPathExpression) fromElementMap
+                .get(origQope);
+            if (newQope == null) {
+                newQope = (QueryObjectPathExpression) cloneThing(origQope, fromElementMap);
+                fromElementMap.put(origQope, newQope);
+            }
+            return new PathExpressionField(newQope, origP.getFieldNumber());
         } else if (orig instanceof QueryObjectPathExpression) {
             QueryObjectPathExpression origC = (QueryObjectPathExpression) orig;
-            if (origC.getQope() != null) {
-                return new QueryObjectPathExpression((QueryObjectPathExpression) cloneThing(origC
-                            .getQope(), fromElementMap), origC.getFieldName());
-            } else {
-                return new QueryObjectPathExpression((QueryClass) fromElementMap
-                        .get(origC.getQueryClass()), origC.getFieldName());
+            QueryObjectPathExpression retval = new QueryObjectPathExpression((QueryClass)
+                    fromElementMap.get(origC.getQueryClass()), origC.getFieldName());
+            Map subFromElementMap = new HashMap();
+            subFromElementMap.put(origC.getDefaultClass(), retval.getDefaultClass());
+            for (QuerySelectable selectable : origC.getSelect()) {
+                retval.addToSelect((QuerySelectable) cloneThing(selectable, subFromElementMap));
             }
-        } else if (orig instanceof QueryFieldPathExpression) {
-            QueryFieldPathExpression origC = (QueryFieldPathExpression) orig;
-            if (origC.getQope() != null) {
-                return new QueryFieldPathExpression((QueryObjectPathExpression) cloneThing(origC
-                            .getQope(), fromElementMap), origC.getReferenceName(),
-                        origC.getFieldName(), origC.getDefaultValue());
-            } else {
-                return new QueryFieldPathExpression((QueryClass) fromElementMap
-                        .get(origC.getQueryClass()), origC.getReferenceName(), origC.getFieldName(),
-                        origC.getDefaultValue());
-            }
+            retval.setConstraint((Constraint) cloneThing(origC.getConstraint(), subFromElementMap));
+            return retval;
         } else if (orig instanceof QueryCollectionPathExpression) {
             QueryCollectionPathExpression origC = (QueryCollectionPathExpression) orig;
             QueryCollectionPathExpression retval;
-            if (origC.getQope() != null) {
-                retval = new QueryCollectionPathExpression((QueryObjectPathExpression) cloneThing(
-                            origC.getQope(), fromElementMap), origC.getCollectionName());
-            } else {
-                try {
+            try {
+                if (origC.getSubclass() == null) {
                     retval = new QueryCollectionPathExpression((QueryClass) fromElementMap
-                            .get(origC.getQueryClass()), origC.getCollectionName());
-                } catch (NullPointerException e) {
-                    throw new NullPointerException("oldQc: " + origC.getQueryClass()
-                            + ", fromElementMap: " + fromElementMap);
+                            .get(origC.getQueryClass()), origC.getFieldName());
+                } else {
+                    retval = new QueryCollectionPathExpression((QueryClass) fromElementMap
+                            .get(origC.getQueryClass()), origC.getFieldName(), origC.getSubclass());
                 }
+            } catch (NullPointerException e) {
+                throw new NullPointerException("oldQc: " + origC.getQueryClass()
+                        + ", fromElementMap: " + fromElementMap);
             }
             retval.setSingleton(origC.isSingleton());
             Map subFromElementMap = new HashMap();

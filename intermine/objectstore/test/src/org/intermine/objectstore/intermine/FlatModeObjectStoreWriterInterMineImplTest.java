@@ -56,6 +56,7 @@ public class FlatModeObjectStoreWriterInterMineImplTest extends ObjectStoreWrite
                                         { Manager.class, new Long(2) } };
         results.put("SelectClassFromEmployee", toList(r));
         results.put("SelectClassFromBrokeEmployable", NO_RESULT);
+        results.put("SubclassCollection2", NO_RESULT);
     }
 
     public static void oneTimeTearDown() throws Exception {

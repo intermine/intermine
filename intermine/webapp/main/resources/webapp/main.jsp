@@ -14,28 +14,41 @@
 <%-- Javascript files must be included there because they are not processed when mainConstraint 
  tile is added by Ajax.Updater --%>
 <script type="text/javascript" src="js/autocompleter.js"></script>
-<script type="text/javascript" src="js/imdwr.js" ></script>
 <script type="text/javascript" src="js/tagSelect.js" ></script>
+
 <link rel="stylesheet" href="css/autocompleter.css" type="text/css" />
 
-<table class="query" width="100%" cellspacing="0">
+<%--<table class="query" width="100%" cellspacing="0">
   <tr>
-    <td rowspan="2" valign="top" width="50%" class="modelbrowse">
-      <tiles:insert page="/mainBrowser.jsp"/>
-    </td>
+    <td rowspan="2" valign="top" width="50%" class="modelbrowse">--%>
+      <div id="mainBrowser" class="modelbrowse" ><tiles:insert page="/mainBrowser.jsp"/></div>
+<div id="rightColumn" >
+<%--    </td>
 
-    <td valign="top">
+    <td valign="top">--%>
       <div id="main-paths">
         <tiles:insert name="mainPaths.tile"/>
       </div>
-      <tiles:insert page="/mainLogic.jsp"/>
-      	<div id="mainConstraint">
-          <c:if test="${editingNode != null}">
+<%--    </td>
+  </tr>--%>
+  <a name="constraint-editor"></a>
+<%--    <tr>
+      <td valign="top">--%>
+        <div id="mainConstraint">
             <tiles:insert name="mainConstraint.tile"/>
-          </c:if>
         </div>
-      </td>
+<%--      </td>
     </tr>
 </table>
+--%>
+</div>
+
+<div style="clear:both">
+<tiles:get name="view.tile"/>
+</div>
+
+<br clear="all"/>
+
+<%--<tiles:insert name="outerjoins.tile"/>--%>
 
 <!-- /main.jsp -->

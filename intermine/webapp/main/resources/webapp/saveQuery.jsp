@@ -7,25 +7,23 @@
 <html:xhtml/>
 <c:if test="${!empty QUERY}">
   <c:if test="${!empty PROFILE.username}">
-  
-  <fmt:message key="query.save.msg"/>
-    <html:form action="/saveQuery">
-      <html:text property="queryName"/>
+    <p><html:form action="/saveQuery">
+      or...&nbsp;<html:text property="queryName"/>
       <html:submit property="action">
         <fmt:message key="query.save"/>
       </html:submit>
-    </html:form>
+    </html:form></p>
   </c:if>
-  <div class="exportQueryLink">
-    <fmt:message key="query.export.as"/>
+  <p>
+    or... <fmt:message key="query.export.as"/>
     <html:link action="/exportQuery?as=xml">
       XML
     </html:link>
-  </div>
-  <div class="exportQueryLink">
-    <html:link action="/exportQuery?as=link&serviceFormat=tab">
-        Get the url  
-    </html:link> to run this query with a web service to get results as tab separated values. Modify url to get more results.
-  </div>
+  </p>
+  <p>
+    or... Get the <html:link action="/exportQuery?as=link&serviceFormat=tab">
+        Web Service url  
+    </html:link> for this query.
+  </p>
 </c:if>
 <!-- /saveQuery.jsp -->
