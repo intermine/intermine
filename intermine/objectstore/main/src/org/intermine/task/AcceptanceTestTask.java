@@ -54,7 +54,7 @@ public class AcceptanceTestTask extends Task
     /**
      * Prefix of the ticket pages in Trac.
      */
-    public static final String TRAC_TICKET_URL_PREFIX = "http://trac.flymine.org/ticket/";
+    public static final String TRAC_TICKET_URL_PREFIX = "http://intrac.flymine.org/ticket/";
 
     /**
      * Set the File to read configuration from
