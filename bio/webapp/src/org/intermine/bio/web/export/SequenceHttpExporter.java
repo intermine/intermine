@@ -51,7 +51,8 @@ public class SequenceHttpExporter implements TableHttpExporter
      * @param response response
      */
     public static void setSequenceExportHeader(HttpServletResponse response) {
-        ResponseUtil.setPlainTextHeader(response, "sequence" + StringUtil.uniqueString() + ".txt");
+        String fileName = "sequence" + StringUtil.uniqueString() + ".fasta";
+        ResponseUtil.setPlainTextHeader(response, fileName);
     }
 
     /**
@@ -113,8 +114,8 @@ public class SequenceHttpExporter implements TableHttpExporter
         for (Path seqPath: sequencePaths) {
             Class<?> seqPathClass = seqPath.getEndClassDescriptor().getType();
             if (LocatedSequenceFeature.class.isAssignableFrom(seqPathClass)) {
-                // skip chromosome class, so ...chromosome.chromosomeLocation doesn't appear in 
-                // paths, because chromosome.chromosomeLocation is empty and it caused empty 
+                // skip chromosome class, so ...chromosome.chromosomeLocation doesn't appear in
+                // paths, because chromosome.chromosomeLocation is empty and it caused empty
                 // export results
                 if (Chromosome.class.isAssignableFrom(seqPathClass)) {
                     continue;
