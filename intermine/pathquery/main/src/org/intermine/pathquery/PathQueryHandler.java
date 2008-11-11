@@ -275,7 +275,7 @@ public class PathQueryHandler extends DefaultHandler
             Map.Entry entry = (Map.Entry) it.next();
             String pathString = (String) entry.getKey();
             Boolean sortAscending = (Boolean) entry.getValue();
-            query.addOrderBy(pathString, sortAscending);
+            query.addOrderBy(pathString, PathQuery.ASCENDING);
         }
     }
 }

@@ -212,6 +212,8 @@ public class WithNotXmlSqlGeneratorTest extends SqlGeneratorTest
         results2.put("ObjectPathExpression3", new HashSet(Arrays.asList(new String[] {"Employee", "Department", "Company"})));
         results.put("ObjectPathExpression4", "SELECT a1_.OBJECT AS a1_, a1_.id AS a1_id FROM Employee AS a1_ ORDER BY a1_.id");
         results2.put("ObjectPathExpression4", new HashSet(Arrays.asList("Employee", "Department", "Company", "Address")));
+        results.put("ObjectPathExpression5", "SELECT a1_.OBJECT AS a1_, a1_.id AS a1_id FROM Employee AS a1_ ORDER BY a1_.id");
+        results2.put("ObjectPathExpression5", new HashSet(Arrays.asList("Employee", "Department", "Company", "Address")));
         results.put("FieldPathExpression", "SELECT a1_.OBJECT AS a1_, a1_.id AS a1_id FROM Company AS a1_ ORDER BY a1_.id");
         results2.put("FieldPathExpression", new HashSet(Arrays.asList(new String[] {"Company", "CEO"})));
         results.put("FieldPathExpression2", "SELECT a1_.OBJECT AS a1_, a1_.id AS a1_id FROM Employee AS a1_ ORDER BY a1_.id");
@@ -226,10 +228,6 @@ public class WithNotXmlSqlGeneratorTest extends SqlGeneratorTest
         results2.put("CollectionPathExpression4", new HashSet(Arrays.asList("Company", "Department", "Employee")));
         results.put("CollectionPathExpression5", "SELECT a1_.OBJECT AS a1_, a1_.id AS a1_id FROM Company AS a1_ ORDER BY a1_.id");
         results2.put("CollectionPathExpression5", new HashSet(Arrays.asList("Company", "Department")));
-        results.put("ForeignKey", "SELECT a1_.OBJECT AS a1_, a1_.id AS a1_id, a1_.CEOId AS a2_ FROM Company AS a1_ ORDER BY a1_.id");
-        results2.put("ForeignKey", Collections.singleton("Company"));
-        results.put("ForeignKey2", "SELECT a1_.OBJECT AS a1_, a1_.id AS a1_id, a1_.CEOId AS a2_ FROM Company AS a1_ ORDER BY a1_.id");
-        results2.put("ForeignKey2", Collections.singleton("Company"));
         results.put("ScientificNumber", "SELECT a1_.OBJECT AS a1_, a1_.id AS a1_id FROM Types AS a1_ WHERE a1_.doubleType < 1.3432E24 AND a1_.floatType > -8.56E-32::REAL ORDER BY a1_.id");
         results2.put("ScientificNumber", Collections.singleton("Types"));
         results.put("LowerBag", "SELECT a1_.OBJECT AS a1_, a1_.id AS a1_id FROM Employee AS a1_ WHERE LOWER(a1_.name) IN ('employeea1', 'employeea2', 'employeeb1') ORDER BY a1_.id");
@@ -246,6 +244,10 @@ public class WithNotXmlSqlGeneratorTest extends SqlGeneratorTest
         results2.put("MergeFalse", Collections.singleton("Employee"));
         results.put("MergeTrue", "SELECT a1_.OBJECT AS a1_, a1_.id AS a1_id FROM Employee AS a1_ WHERE a1_.age > 3 ORDER BY a1_.id");
         results2.put("MergeTrue", Collections.singleton("Employee"));
+        results.put("SubclassCollection", "SELECT a1_.OBJECT AS a1_, a1_.id AS a1_id FROM Department AS a1_ ORDER BY a1_.id");
+        results2.put("SubclassCollection", new HashSet(Arrays.asList("Department", "Manager")));
+        results.put("SubclassCollection2", "SELECT a1_.OBJECT AS a1_, a1_.id AS a1_id FROM Department AS a1_ ORDER BY a1_.id");
+        results2.put("SubclassCollection2", new HashSet(Arrays.asList("Department", "Employee", "Broke")));
         results.put("SelectWhereBackslash", "SELECT a1_.OBJECT AS a1_, a1_.id AS a1_id FROM Employee AS a1_ WHERE a1_.name = E'Fred\\\\Blog\\'s' ORDER BY a1_.id");
         results2.put("SelectWhereBackslash", Collections.singleton("Employee"));
     }

@@ -91,35 +91,30 @@ public class QueryTestCase extends OneTimeTestCase
             } else {
                 fail(msg + ": QueryClassBag does not match  " + qc2.getClass().getName());
             }
+        } else if (qc1 instanceof PathExpressionField) {
+            if (qc2 instanceof PathExpressionField) {
+                PathExpressionField pef1 = (PathExpressionField) qc1;
+                PathExpressionField pef2 = (PathExpressionField) qc2;
+                checkObjects(msg + ": PathExpressionField qopes are not equal", pef1.getQope(), pef2.getQope(), q1, q2);
+                assertEquals(msg + ": PathExpressionField column numbers are not equal", pef1.getFieldNumber(), pef2.getFieldNumber());
+            }
         } else if (qc1 instanceof QueryObjectPathExpression) {
             if (qc2 instanceof QueryObjectPathExpression) {
                 QueryObjectPathExpression pe1 = (QueryObjectPathExpression) qc1;
                 QueryObjectPathExpression pe2 = (QueryObjectPathExpression) qc2;
                 checkQueryNodes(msg + ": QueryClasses of QueryObjectPathExpressions don't match", pe1.getQueryClass(), pe2.getQueryClass(), q1, q2);
-                checkObjects(msg + ": Qopes of QueryObjectPathExpressions don't match", pe1.getQope(), pe2.getQope(), q1, q2);
                 assertEquals(msg + ": QueryObjectPathExpression fieldnames are not equal", pe1.getFieldName(), pe2.getFieldName());
+                checkQueryClassLists(msg + ": QueryObjectPathExpression SELECT lists are not equal", pe1.getSelect(), pe2.getSelect(), q1, q2);
+                checkConstraints(msg + ": QueryObjectPathExpression constraints are not equal", pe1.getConstraint(), pe2.getConstraint(), q1, q2);
             } else {
                 fail(msg + ": QueryObjectPathExpression does not match " + qc2.getClass().getName());
-            }
-        } else if (qc1 instanceof QueryFieldPathExpression) {
-            if (qc2 instanceof QueryFieldPathExpression) {
-                QueryFieldPathExpression pe1 = (QueryFieldPathExpression) qc1;
-                QueryFieldPathExpression pe2 = (QueryFieldPathExpression) qc2;
-                checkQueryNodes(msg + ": QueryClasses of QueryFieldPathExpressions don't match", pe1.getQueryClass(), pe2.getQueryClass(), q1, q2);
-                checkObjects(msg + ": Qopes of QueryFieldPathExpressions don't match", pe1.getQope(), pe2.getQope(), q1, q2);
-                assertEquals(msg + ": QueryFieldPathExpression referenceNames are not equal", pe1.getReferenceName(), pe2.getReferenceName());
-                assertEquals(msg + ": QueryFieldPathExpression fieldNames are not equal", pe1.getFieldName(), pe2.getFieldName());
-                assertEquals(msg + ": QueryFieldPathExpression defaultValues are not equal", pe1.getDefaultValue(), pe2.getDefaultValue());
-            } else {
-                fail(msg + ": QueryFieldPathExpression does not match " + qc2.getClass().getName());
             }
         } else if (qc1 instanceof QueryCollectionPathExpression) {
             if (qc2 instanceof QueryCollectionPathExpression) {
                 QueryCollectionPathExpression pe1 = (QueryCollectionPathExpression) qc1;
                 QueryCollectionPathExpression pe2 = (QueryCollectionPathExpression) qc2;
                 checkQueryNodes(msg + ": QueryClasses of QueryCollectionPathExpressions don't match", pe1.getQueryClass(), pe2.getQueryClass(), q1, q2);
-                checkObjects(msg + ": Qopes of QueryCollectionPathExpressions don't match", pe1.getQope(), pe2.getQope(), q1, q2);
-                assertEquals(msg + ": QueryCollectionPathExpression collectionNames are not equal", pe1.getCollectionName(), pe2.getCollectionName());
+                assertEquals(msg + ": QueryCollectionPathExpression fieldNames are not equal", pe1.getFieldName(), pe2.getFieldName());
                 checkQueryClassLists(msg + ": QueryCollectionPathExpression SELECT lists are not equal", pe1.getSelect(), pe2.getSelect(), q1, q2);
                 checkQueryClassLists(msg + ": QueryCollectionPathExpression FROM lists are not equal", pe1.getFrom(), pe2.getFrom(), q1, q2);
                 checkConstraints(msg + ": QueryCollectionPathExpression constraints are not equal", pe1.getConstraint(), pe2.getConstraint(), q1, q2);

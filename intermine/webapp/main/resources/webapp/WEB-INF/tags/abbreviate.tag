@@ -6,16 +6,16 @@
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 
 <%
-    value = org.apache.commons.lang.StringUtils.abbreviate(value, length.intValue());
+    String abbreviated = org.apache.commons.lang.StringUtils.abbreviate(value, length.intValue());
 %>
-  
+
 <c:if test="${!empty var}">
 <%
     String varName = (String) jspContext.getAttribute("var");
-    request.setAttribute(varName, jspContext.getAttribute("value"));
+    request.setAttribute(varName, jspContext.getAttribute("abbreviated"));
 %>
 </c:if>
 
 <c:if test="${empty var}">
-${value}
+<%= abbreviated %>
 </c:if>

@@ -410,7 +410,7 @@ public class CreateIndexesTask extends Task
                 }
                 if (fd == null) {
                     throw new MetaDataException("field (" + fieldName + ") not found for class: "
-                                                + cld.getName() + ".");
+                                                + cld.getName() + " for key name " + keyName + ".");
                 }
                 fieldNames.add(DatabaseUtil.getColumnName(fd));
                 firstOne = false;

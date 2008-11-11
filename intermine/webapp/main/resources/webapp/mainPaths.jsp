@@ -23,7 +23,7 @@
   //-->
 </script>
 
-<div class="heading">
+<div class="heading currentTitle">
   <fmt:message key="query.currentquery"/>
 </div>
 <div class="body">
@@ -32,19 +32,35 @@
 </div>
 <br/>
 <c:choose>
-  <c:when test="${empty QUERY.nodes}">
+  <c:when test="${empty qNodes}">
     <div class="smallnote altmessage"><fmt:message key="query.empty"/></div>
   </c:when>
   <c:otherwise>
-    <c:forEach var="entry" items="${QUERY.nodes}" varStatus="status">
+    <c:forEach var="entry" items="${qNodes}" varStatus="status">
       <div>
         <div style="white-space: nowrap">
-          <div>
+          <div> 
             <c:set var="node" value="${entry.value}"/>
             <c:if test="${node.indentation > 0}">
               <c:forEach begin="1" end="${node.indentation}">
                 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
               </c:forEach>
+            </c:if>
+            <c:set var="isClickable" value="false"/>
+            <c:forEach items="${clickableNodes}" var="clickable">
+              <c:if test="${node.pathString == clickable}">
+                 <c:set var="isClickable" value="true"/>
+              </c:if>
+            </c:forEach>
+            <c:if test="${isClickable == 'true'}">
+              <c:choose>
+                <c:when test="${! node.isOuterJoin}">
+                 <img src="images/join_hollow.png" id="join_arrow_${node.pathString}" alt="Switch join" title="Switch join" style="v-align:bottom;cursor:pointer" onClick="switchJoin(this,'${node.pathString}');"/>
+                </c:when>
+                <c:otherwise>
+                 <img src="images/join_full.png" id="join_arrow_${node.pathString}" alt="Switch join" title="Switch join" style="v-align:bottom;cursor:pointer" onClick="switchJoin(this,'${node.pathString}');"/>
+                </c:otherwise>
+              </c:choose>
             </c:if>
             <im:viewableSpan path="${node.pathString}" viewPaths="${viewPaths}" test="${!empty node.fieldName}" idPrefix="query">
               <span class="attributeField"><c:out value="${node.fieldName}"/></span>
@@ -92,11 +108,24 @@
               <fmt:message key="query.removeNodeTitle" var="removeNodeTitle">
                 <fmt:param value="${node.fieldName}"/>
               </fmt:message>
-              <html:link action="/mainChange?method=removeNode&amp;path=${node.pathString}"
-                         title="${removeNodeTitle}">
-                <img border="0" src="images/cross.gif" width="13" height="13"
-                     title="Remove this constraint"/>
-              </html:link>
+             <c:choose>
+              <%-- View only --%>
+              <c:when test="${(empty node.constraints) && (!empty viewPaths[node.pathString])}">
+                <html:link action="/viewChange?method=removeFromView&amp;path=${node.pathString}"
+                           title="${removeNodeTitle}">
+                  <img border="0" src="images/cross.gif" width="13" height="13"
+                       title="Remove this constraint"/>
+                </html:link>
+              </c:when>
+              <%-- Constraint --%>
+              <c:otherwise>
+                <html:link action="/mainChange?method=removeNode&amp;path=${node.pathString}"
+                           title="${removeNodeTitle}">
+                  <img border="0" src="images/cross.gif" width="13" height="13"
+                       title="Remove this constraint"/>
+                </html:link>
+              </c:otherwise>
+             </c:choose>
             </c:if>
             <c:if test="${lockedPaths[node.pathString]}">
               <img border="0" src="images/discross.gif" width="13" height="13"
@@ -198,6 +227,7 @@
     </c:forEach>
   </c:otherwise>
 </c:choose>
+<tiles:insert page="/mainLogic.jsp"/>
 </div>
 
 <!-- /mainPaths.jsp -->

@@ -11,7 +11,7 @@
   
 <div id="viewDivs">
   <c:forEach var="path" items="${viewStrings}" varStatus="status">
-    <c:set var="pathString" value="${path}"/>
+    <c:set var="pathString" value="${path.key}"/>
     <tiles:insert page="/viewElement.jsp">
       <tiles:put name="pathString" value="${pathString}"/>
       <tiles:put name="errorPath" value="false"/>

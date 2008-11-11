@@ -51,6 +51,7 @@ import org.intermine.objectstore.query.ObjectStoreBag;
 import org.intermine.objectstore.query.ObjectStoreBagCombination;
 import org.intermine.objectstore.query.ObjectStoreBagsForObject;
 import org.intermine.objectstore.query.OrderDescending;
+import org.intermine.objectstore.query.PathExpressionField;
 import org.intermine.objectstore.query.Query;
 import org.intermine.objectstore.query.QueryCast;
 import org.intermine.objectstore.query.QueryClass;
@@ -59,7 +60,6 @@ import org.intermine.objectstore.query.QueryCollectionPathExpression;
 import org.intermine.objectstore.query.QueryCollectionReference;
 import org.intermine.objectstore.query.QueryEvaluable;
 import org.intermine.objectstore.query.QueryField;
-import org.intermine.objectstore.query.QueryFieldPathExpression;
 import org.intermine.objectstore.query.QueryForeignKey;
 import org.intermine.objectstore.query.QueryExpression;
 import org.intermine.objectstore.query.QueryFunction;
@@ -658,10 +658,6 @@ public class SqlGenerator
                 }
             } else if (selectable instanceof QueryEvaluable) {
                 // Do nothing
-            } else if ((selectable instanceof QueryFieldPathExpression)
-                    && ("id".equals(((QueryFieldPathExpression) selectable).getFieldName()))
-                    && (((QueryFieldPathExpression) selectable).getQueryClass() != null)) {
-                // Do nothing
             } else if (selectable instanceof QueryForeignKey) {
                 // Do nothing
             } else if (selectable instanceof ObjectStoreBag) {
@@ -678,35 +674,20 @@ public class SqlGenerator
                 }
             } else if (selectable instanceof ObjectStoreBagsForObject) {
                 tablenames.add(INT_BAG_TABLE_NAME);
-            } else if (selectable instanceof QueryPathExpression) {
-                if (selectable instanceof QueryFieldPathExpression) {
-                    selectable = ((QueryFieldPathExpression) selectable).getParent();
-                }
-                if (selectable instanceof QueryCollectionPathExpression) {
-                    Class cls = ((QueryCollectionPathExpression) selectable).getDefaultClass()
-                        .getType();
-                    ClassDescriptor cld = schema.getModel().getClassDescriptorByName(cls.getName());
-                    if (cld == null) {
-                        throw new ObjectStoreException(cls + " is not in the model");
-                    }
-                    ClassDescriptor tableMaster = schema.getTableMaster(cld);
-                    tablenames.add(DatabaseUtil.getTableName(tableMaster));
-                    Collection<InterMineObject> empty = Collections.emptySet();
-                    findTableNames(tablenames, ((QueryCollectionPathExpression) selectable)
-                            .getQuery(empty), schema, addInterMineObject, individualOsbs);
-                    selectable = ((QueryCollectionPathExpression) selectable).getQope();
-                }
-                QueryObjectPathExpression qope = (QueryObjectPathExpression) selectable;
-                while (qope != null) {
-                    Class cls = qope.getType();
-                    ClassDescriptor cld = schema.getModel().getClassDescriptorByName(cls.getName());
-                    if (cld == null) {
-                        throw new ObjectStoreException(cls + " is not in the model");
-                    }
-                    ClassDescriptor tableMaster = schema.getTableMaster(cld);
-                    tablenames.add(DatabaseUtil.getTableName(tableMaster));
-                    qope = qope.getQope();
-                }
+            } else if (selectable instanceof QueryCollectionPathExpression) {
+                Collection<InterMineObject> empty = Collections.emptySet();
+                findTableNames(tablenames, ((QueryCollectionPathExpression) selectable)
+                        .getQuery(empty), schema, addInterMineObject, individualOsbs);
+            } else if (selectable instanceof QueryObjectPathExpression) {
+                Collection<Integer> empty = Collections.singleton(new Integer(1));
+                findTableNames(tablenames, ((QueryObjectPathExpression) selectable)
+                        .getQuery(empty, schema.isMissingNotXml()), schema,
+                        addInterMineObject, individualOsbs);
+            } else if (selectable instanceof PathExpressionField) {
+                Collection<Integer> empty = Collections.singleton(new Integer(1));
+                findTableNames(tablenames, ((PathExpressionField) selectable).getQope()
+                        .getQuery(empty, schema.isMissingNotXml()), schema,
+                        addInterMineObject, individualOsbs);
             } else {
                 throw new ObjectStoreException("Illegal entry in SELECT list: "
                         + selectable.getClass());
@@ -2084,26 +2065,6 @@ public class SqlGenerator
                 } else if (kind == QUERY_SUBQUERY_FROM) {
                     retval.append(" AS " + DatabaseUtil.generateSqlCompatibleName(alias));
                 }
-            } else if ((node instanceof QueryFieldPathExpression)
-                    && ("id".equals(((QueryFieldPathExpression) node).getFieldName()))) {
-                QueryFieldPathExpression pe = (QueryFieldPathExpression) node;
-                if (needComma) {
-                    retval.append(", ");
-                }
-                needComma = true;
-                // This is effectively a foreign key. Because we don't add this SELECT item to the
-                // artificial ORDER BY list, we must assert that the QueryClass or its ID already
-                // exists on the SELECT list - a weaker assertion than that we make for all
-                // other QueryFieldPathExpressions anyway.
-                if (!q.getSelect().contains(pe.getQueryClass())) {
-                    throw new ObjectStoreException("Foreign key specified by"
-                            + " QueryFieldPathExpression on SELECT list, but parent QueryClass not"
-                            + " present on SELECT list");
-                }
-                retval.append((String) state.getFieldToAlias(pe.getQueryClass())
-                        .get(pe.getReferenceName()))
-                    .append(" AS ")
-                    .append(DatabaseUtil.generateSqlCompatibleName(alias));
             } else if (node instanceof QueryPathExpression) {
                 // Do nothing
             } else {

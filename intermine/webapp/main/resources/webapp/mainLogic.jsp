@@ -8,10 +8,8 @@
 <!-- mainLogic.jsp -->
 
 <html:xhtml/>
-<div class="heading">
-  <fmt:message key="query.constraintLogic"/>
-</div>
-<div class="body">
+<div id="constraintLogic">
+<strong><fmt:message key="query.constraintLogic"/>:</strong>
   <c:choose>
     <c:when test="${param.editExpression != null}">
       <html:form action="/mainAction">
@@ -49,5 +47,4 @@
     </c:otherwise>
   </c:choose>
 </div>
-
 <!-- /mainLogic.jsp -->

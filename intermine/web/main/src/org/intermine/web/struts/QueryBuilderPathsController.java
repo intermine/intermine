@@ -10,6 +10,12 @@ package org.intermine.web.struts;
  *
  */
 
+import java.util.HashSet;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
@@ -19,6 +25,8 @@ import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
 import org.apache.struts.tiles.ComponentContext;
 import org.apache.struts.tiles.actions.TilesAction;
+import org.intermine.path.Path;
+import org.intermine.pathquery.PathNode;
 import org.intermine.pathquery.PathQuery;
 import org.intermine.web.logic.Constants;
 import org.intermine.web.logic.query.MainHelper;
@@ -46,6 +54,44 @@ public class QueryBuilderPathsController extends TilesAction
                                         @SuppressWarnings("unused") HttpServletResponse response) {
         HttpSession session = request.getSession();
         PathQuery query = (PathQuery) session.getAttribute(Constants.QUERY);
+        // First merge the query and the view
+        PathQuery q = query.clone();
+        Map<String, PathNode> qNodes = q.getNodes();
+        for (Path p : q.getView()) {
+            String path = p.toStringNoConstraints();
+            if (!qNodes.containsKey(path)) {
+                q.addNode(path);
+            }
+        }
+        
+        Set<String> constrainedPaths = new HashSet<String>();
+        for (Map.Entry<String, PathNode> entry : q.getNodes().entrySet()) {
+            if (entry.getValue().isAttribute()) {
+                PathNode node = entry.getValue();
+                if (!node.getConstraints().isEmpty()) {
+                    constrainedPaths.add(node.getPrefix());
+                }
+            }
+        }
+        
+        Set<String> clickableNodes = new HashSet<String>();
+		for (Map.Entry<String, PathNode> entry : q.getNodes().entrySet()) {
+            PathNode node = entry.getValue();
+			if (!entry.getValue().isAttribute()) {
+				if (entry.getKey().indexOf('.') == -1
+						&& entry.getKey().indexOf(':') == -1) {
+				} else if ((!node.isOuterJoin())
+						&& node.isReference()
+						&& ((!node.getConstraints().isEmpty()) || constrainedPaths
+								.contains(entry.getKey()))) {
+				} else {
+					clickableNodes.add(entry.getKey());
+				}
+			}
+		}
+        
+		request.setAttribute("clickableNodes", clickableNodes);
+        request.setAttribute("qNodes", q.getNodes());
         request.setAttribute("constraintDisplayValues", MainHelper.makeConstraintDisplayMap(query));
     }
 }

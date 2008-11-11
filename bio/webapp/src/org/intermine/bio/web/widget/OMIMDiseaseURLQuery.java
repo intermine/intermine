@@ -11,14 +11,15 @@ package org.intermine.bio.web.widget;
  */
 
 import java.util.ArrayList;
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.intermine.metadata.Model;
 import org.intermine.objectstore.ObjectStore;
 import org.intermine.objectstore.query.ConstraintOp;
 import org.intermine.path.Path;
 import org.intermine.pathquery.Constraint;
-import org.intermine.pathquery.OrderBy;
 import org.intermine.pathquery.PathNode;
 import org.intermine.pathquery.PathQuery;
 import org.intermine.web.logic.bag.InterMineBag;
@@ -88,8 +89,8 @@ public class OMIMDiseaseURLQuery implements WidgetURLQuery
         q.setConstraintLogic("A and B");
         q.syncLogicExpression("and");
 
-        List<OrderBy>  sortOrder = new ArrayList<OrderBy>();
-        sortOrder.add(new OrderBy(geneSymbol));
+        Map<Path, String>  sortOrder = new LinkedHashMap<Path, String>();
+        sortOrder.put(geneSymbol, PathQuery.ASCENDING);
 
         q.setSortOrder(sortOrder);
 

@@ -50,6 +50,7 @@ import org.intermine.objectstore.query.Query;
 import org.intermine.objectstore.query.QuerySelectable;
 import org.intermine.objectstore.query.Results;
 import org.intermine.path.Path;
+import org.intermine.pathquery.PathNode;
 import org.intermine.pathquery.PathQuery;
 import org.intermine.util.StringUtil;
 import org.intermine.util.TypeUtil;
@@ -1064,9 +1065,9 @@ public class AjaxServices
     public void reorder(String newOrder, String oldOrder) {
         HttpSession session = WebContextFactory.get().getSession();
         List<String> newOrderList = new LinkedList<String>(StringUtil
-                .serializedSortOrderToMap(newOrder).values());
-        List<String> oldOrderList = new LinkedList<String>(StringUtil
-                .serializedSortOrderToMap(oldOrder).values());
+				.serializedSortOrderToMap(newOrder).values());
+		List<String> oldOrderList = new LinkedList<String>(StringUtil
+				.serializedSortOrderToMap(oldOrder).values());
 
         List view = SessionMethods.getEditingView(session);
         ArrayList newView = new ArrayList();
@@ -1076,9 +1077,94 @@ public class AjaxServices
             int oldi = oldOrderList.indexOf(newi);
             newView.add(view.get(oldi));
         }
+        
+        PathQuery pathQuery = (PathQuery) session.getAttribute(Constants.QUERY);
+        pathQuery.setViewPaths(newView);
+    }
+    
+    /**
+     * Add a Node from the sort order
+     * @param index the index of the path to sort by
+     * @param direction the direction to sort by
+     * @return 
+     * @exception Exception if the application business logic throws
+     */
+    public void addToSortOrder(String path, String direction)
+        throws Exception {
+        HttpSession session = WebContextFactory.get().getSession();
+        PathQuery query = (PathQuery) session.getAttribute(Constants.QUERY);
+        query.setOrderBy(path, direction);
+    }
+    
+    /**
+     * Get the map of sort orders
+     * @return a map from Path String to sort direction
+     */
+    public Map<String, String> getSortOrderMap() {
+        HttpSession session = WebContextFactory.get().getSession();
+        List<Path> pathView = SessionMethods.getEditingView(session);
+        PathQuery query = (PathQuery) session.getAttribute(Constants.QUERY);
+        // create a map of fields to direction
+        Map<String, String> sortOrderMap = new HashMap<String,String>();
+        Map<Path, String> currentSortOrder = query.getSortOrder();
+        boolean sorting = false;
+        for (Path viewPath: pathView) {
+            String viewPathString = viewPath.toStringNoConstraints();
+            String sortState = new String();
+            // outer joins not allowed
+            if(!query.isValidOrderPath(viewPathString) && currentSortOrder.containsKey(viewPath)) {
+                query.resetOrderBy();
+                currentSortOrder = new LinkedHashMap<Path, String >();
+                sortState = "disabled";
+            } else if(!query.isValidOrderPath(viewPathString)) {
+                sortState = "disabled";
+            //if already sorted get the direction
+            } else if(currentSortOrder.containsKey(viewPath)) {
+                sortState = currentSortOrder.get(viewPath);
+            //default
+            } else if(currentSortOrder.size() <= 0 && !sorting) {
+                sortState = "asc";
+                sorting = true;
+            }
+            else {
+                sortState = "none";
+            }
+            sortOrderMap.put(viewPathString, sortState);
+        }
+        return sortOrderMap;
+    }
+    
+    /**
+     * Reset the sort order
+     */
+    public void clearSortOrder() {
+        HttpSession session = WebContextFactory.get().getSession();
+        PathQuery query = (PathQuery) session.getAttribute(Constants.QUERY);
+        query.resetOrderBy();
+    }
+    
+    /**
+     * Change a node from outer join to normal and vice-versa.
+     *
+     */
+    public String setOuterJoin(String pathName)
+    throws Exception {
+        HttpSession session = WebContextFactory.get().getSession();
+        ServletContext servletContext = session.getServletContext();
+        ObjectStore os = (ObjectStore) servletContext.getAttribute(Constants.OBJECTSTORE);
+        Model model = os.getModel();
+        WebConfig webConfig = (WebConfig) servletContext.getAttribute(Constants.WEBCONFIG);
+        List<Path> view = SessionMethods.getEditingView(session);
+        Map<Path, String> sortOrder = SessionMethods.getEditingSortOrder(session);
+        PathQuery query = (PathQuery) session.getAttribute(Constants.QUERY);
 
-        view.clear();
-        view.addAll(newView);
+        query = query.clone();
+
+        String newPathString = query.flipJoinStyle(pathName);
+
+        session.setAttribute(Constants.QUERY, query);
+
+        return newPathString;
     }
 
     /**
@@ -1167,7 +1253,6 @@ public class AjaxServices
                 profile.getUsername()));
         return filteredMap.keySet();
     }
-
     /**
      * Adds tag and assures that there is only one tag for this combination of tag name, tagged
      * Object and type.

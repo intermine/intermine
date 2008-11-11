@@ -1,0 +1,21 @@
+<bag-queries>
+  <extra-bag-query-class connect-field="department" class-name="org.intermine.model.testmodel.Department" constrain-field="name"/>
+  <bag-type type="Employee">
+    <query message="employee end" matchesAreIssues="true">
+      SELECT DISTINCT a1_.id as a2_, a1_.end as a3_ FROM org.intermine.model.testmodel.Employee AS a1_ WHERE a1_.end IN ? ORDER BY a1_
+    </query>
+    <query message="Employees by Department" matchesAreIssues="true">
+      SELECT DISTINCT a1_.id AS a3_, a2_.name AS a4_ FROM org.intermine.model.testmodel.Employee AS a1_, org.intermine.model.testmodel.Department AS a2_ WHERE a1_.department CONTAINS a2_ AND lower(a2_.name) IN ? ORDER BY a1_
+    </query>
+  </bag-type>
+  <bag-type type="Employable">
+    <query message="Employable by name" matchesAreIssues="true">
+      SELECT DISTINCT a1_.id as a2_, a1_.name as a3_ FROM org.intermine.model.testmodel.Employable AS a1_ WHERE lower(a1_.name) IN ? ORDER BY a1_
+    </query>
+  </bag-type>
+  <bag-type type="Address">
+    <query message="employees for conversion" matchesAreIssues="true">
+      SELECT DISTINCT a1_.id as a2_, a1_.name as a3_ FROM org.intermine.model.testmodel.Employee AS a1_ WHERE LOWER(a1_.name) IN ? ORDER BY a1_
+    </query>
+  </bag-type>
+</bag-queries>

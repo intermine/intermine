@@ -73,9 +73,9 @@
     </c:if>
 
     <%-- sort button --%>
-    <input type="image" id="btn_${viewIndex}" onclick="javascript:updateSortOrder('${pathString}', '${viewIndex}');"
-           width="39" height="11" title="Sort by this column" src="images/sort.gif"
-           title="Click to sort results by this field"/>
+    <img id="btn_${fn:replace(pathString,'.','_')}" onclick="javascript:updateSortOrder('${pathString}');"
+         width="17" height="16" title="Sort by this column" src="images/sort_disabled.png"
+         title="Click to sort results by this field"/>
 
     <c:if test="${!iePre7}">
       <c:out value="<noscript>" escapeXml="false"/>

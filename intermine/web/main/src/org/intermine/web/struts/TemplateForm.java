@@ -23,12 +23,15 @@ import org.apache.struts.Globals;
 import org.apache.struts.action.ActionErrors;
 import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionMapping;
+import org.apache.struts.action.ActionMessage;
 import org.intermine.objectstore.query.ConstraintOp;
 import org.intermine.pathquery.Constraint;
 import org.intermine.pathquery.PathNode;
 import org.intermine.util.TypeUtil;
 import org.intermine.web.logic.Constants;
 import org.intermine.web.logic.profile.Profile;
+import org.intermine.web.logic.template.ConstraintValueParser;
+import org.intermine.web.logic.template.ParseValueException;
 import org.intermine.web.logic.template.TemplateHelper;
 import org.intermine.web.logic.template.TemplateQuery;
 
@@ -340,8 +343,14 @@ public class TemplateForm extends ActionForm
                 } else {
                     Integer opIndex = Integer.valueOf((String) getAttributeOps(key));
                     ConstraintOp constraintOp = ConstraintOp.getOpForIndex(opIndex);
-                    Object parseVal = QueryBuilderForm.parseValue((String) attributeValues.get(key),
-                                                        fieldClass, constraintOp, locale, errors);
+                    Object parseVal = null;
+                    try {
+                        parseVal = new ConstraintValueParser().parse((String) attributeValues
+                                        .get(key), fieldClass, constraintOp, locale);
+                    } catch (ParseValueException ex) {
+                        errors.add(ActionErrors.GLOBAL_MESSAGE, 
+                                        new ActionMessage("errors.message", ex.getMessage()));
+                    }
                     if (parseVal instanceof String && appendWildcard) {
                          parseVal = ((String) parseVal) + "%";
                     }

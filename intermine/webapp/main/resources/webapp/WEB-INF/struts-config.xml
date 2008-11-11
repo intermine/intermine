@@ -236,7 +236,7 @@
       <forward name="waiting" path="waiting.page"/>
     </action>
     <action path="/viewAction" name="emptyForm" type="org.intermine.web.struts.ViewAction">
-      <forward name="waiting" redirect="true" path="/pollQuery.do"/>
+      <forward name="waiting" redirect="false" path="/pollQuery.do"/>
     </action>
     <action path="/createTemplate" type="org.intermine.web.struts.CreateTemplateAction">
       <forward name="mymine" redirect="true" path="/mymine.do"/>

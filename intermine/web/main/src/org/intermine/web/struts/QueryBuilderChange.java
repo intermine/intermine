@@ -12,31 +12,12 @@ package org.intermine.web.struts;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
-
-import org.intermine.objectstore.query.ConstraintOp;
-
-import org.intermine.metadata.ClassDescriptor;
-import org.intermine.metadata.FieldDescriptor;
-import org.intermine.metadata.Model;
-import org.intermine.metadata.ReferenceDescriptor;
-import org.intermine.objectstore.ObjectStore;
-import org.intermine.path.Path;
-import org.intermine.pathquery.Constraint;
-import org.intermine.pathquery.Node;
-import org.intermine.pathquery.OrderBy;
-import org.intermine.pathquery.PathNode;
-import org.intermine.pathquery.PathQuery;
-import org.intermine.web.logic.Constants;
-import org.intermine.web.logic.config.FieldConfig;
-import org.intermine.web.logic.config.FieldConfigHelper;
-import org.intermine.web.logic.config.WebConfig;
-import org.intermine.web.logic.query.MainHelper;
-import org.intermine.web.logic.session.SessionMethods;
-import org.intermine.web.logic.template.TemplateBuildState;
 
 import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletRequest;
@@ -48,6 +29,24 @@ import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
 import org.apache.struts.actions.DispatchAction;
+import org.intermine.metadata.ClassDescriptor;
+import org.intermine.metadata.FieldDescriptor;
+import org.intermine.metadata.Model;
+import org.intermine.metadata.ReferenceDescriptor;
+import org.intermine.objectstore.ObjectStore;
+import org.intermine.objectstore.query.ConstraintOp;
+import org.intermine.path.Path;
+import org.intermine.pathquery.Constraint;
+import org.intermine.pathquery.Node;
+import org.intermine.pathquery.PathNode;
+import org.intermine.pathquery.PathQuery;
+import org.intermine.web.logic.Constants;
+import org.intermine.web.logic.config.FieldConfig;
+import org.intermine.web.logic.config.FieldConfigHelper;
+import org.intermine.web.logic.config.WebConfig;
+import org.intermine.web.logic.query.MainHelper;
+import org.intermine.web.logic.session.SessionMethods;
+import org.intermine.web.logic.template.TemplateBuildState;
 
 /**
  * Action to handle links on main query builder tile.
@@ -82,6 +81,7 @@ public class QueryBuilderChange extends DispatchAction
         String path = request.getParameter("path");
 
         removeNode(pathQuery, path);
+        pathQuery.removeFromView(path);
         pathQuery.syncLogicExpression(SessionMethods.getDefaultOperator(session));
 
         String prefix;
@@ -178,11 +178,10 @@ public class QueryBuilderChange extends DispatchAction
                         }
                     }
                     if (pathQuery.getSortOrder() != null) {
-                        Iterator<OrderBy> sortOrderPathIter = pathQuery.getSortOrder().iterator();
-
-                        while (sortOrderPathIter.hasNext()) {
+                        Path removeSortPath = null;
+                        for (Path sortPath : pathQuery.getSortOrder().keySet()) {
                             String sortOrderPath
-                            = sortOrderPathIter.next().getField().toStringNoConstraints();
+                            = sortPath.toStringNoConstraints();
 
                             if (sortOrderPath.startsWith(path) && !sortOrderPath.equals(path)) {
                                 String fieldName = sortOrderPath.substring(path.length() + 1);
@@ -196,9 +195,12 @@ public class QueryBuilderChange extends DispatchAction
                                 if (fieldDescriptor == null) {
                                     // the field must be in a sub-class rather than the base class
                                     // so remove the sortPath
-                                    sortOrderPathIter.remove();
+                                    removeSortPath = sortPath;
                                 }
                             }
+                        }
+                        if (removeSortPath != null) {
+                            pathQuery.getSortOrder().remove(path);
                         }
                     }
                 }
@@ -206,10 +208,8 @@ public class QueryBuilderChange extends DispatchAction
         }
 
         pathQuery.getNodes().remove(path);
-        List<OrderBy> sortOrder = pathQuery.getSortOrder();
-        if (sortOrder != null && sortOrder.contains(path)) {
-            pathQuery.getSortOrder().remove(path);
-        }
+        Map<Path, String> sortOrder = pathQuery.getSortOrder();
+        pathQuery.getSortOrder().remove(path);
     }
 
     /**
@@ -381,6 +381,7 @@ public class QueryBuilderChange extends DispatchAction
         String path = request.getParameter("path");
 
         path = MainHelper.toPath(prefix, path);
+        path = query.getCorrectJoinStyle(path);
 
         // Figure out which path to delete if user cancels operation
         String bits[] = StringUtils.split(path, '.');
@@ -408,7 +409,7 @@ public class QueryBuilderChange extends DispatchAction
 
         return new ForwardParameters(mapping.findForward("query")).addParameter("deletePath",
                                                                                 deletePath)
-            .addAnchor("constraint-editor").forward();
+            .forward();
     }
 
     /**
@@ -440,7 +441,7 @@ public class QueryBuilderChange extends DispatchAction
             session.setAttribute("prefix", prefix);
         }
 
-        return new ForwardParameters(mapping.findForward("query")).addAnchor(path).forward();
+        return new ForwardParameters(mapping.findForward("query")).forward();
     }
 
     /**
@@ -521,11 +522,14 @@ public class QueryBuilderChange extends DispatchAction
         Model model = os.getModel();
         WebConfig webConfig = (WebConfig) servletContext.getAttribute(Constants.WEBCONFIG);
         List<Path> view = SessionMethods.getEditingView(session);
-        List<OrderBy> sortOrder = SessionMethods.getEditingSortOrder(session);
+        Map<Path, String> sortOrder = SessionMethods.getEditingSortOrder(session);
         String pathName = request.getParameter("path");
         PathQuery query = (PathQuery) session.getAttribute(Constants.QUERY);
         String prefix = (String) session.getAttribute("prefix");
-        String fullPathName = MainHelper.toPath(prefix, pathName);
+        Path pathPart = new Path(model, pathName);
+        String fullPathName = MainHelper.toPath(prefix, pathName, pathPart.endIsCollection()
+                || (pathPart.endIsAttribute() && pathPart.getPrefix().endIsCollection()));
+        fullPathName = query.getCorrectJoinStyle(fullPathName);
         Path path = PathQuery.makePath(model, query, fullPathName);
 
         /* this test can't just rely on the sort order being empty
@@ -546,27 +550,24 @@ public class QueryBuilderChange extends DispatchAction
                 if (pathToAdd.getEndClassDescriptor() == null
                                 && !view.contains(pathToAdd)
                                 && (fc.getDisplayer() == null && fc.getShowInSummary())) {
-                    view.add(pathToAdd);
+                    query.addViewPaths(Collections.singletonList(pathToAdd));
                     newQuery = false;
                 }
                 // if sort order is empty, then add first element to sort order
                 if (newQuery) {
-                    OrderBy o = new OrderBy(pathToAdd, "asc");
-                    sortOrder.add(o);
+                    sortOrder.put(pathToAdd, PathQuery.ASCENDING);
                 }
             }
         } else {
-            view.add(path);
+            query.addViewPaths(Collections.singletonList(path));
             // if sort order is empty, then add first element to sort order
             if (newQuery) {
-                OrderBy o = new OrderBy(path, "asc");
-                sortOrder.add(o);
+                sortOrder.put(path, PathQuery.ASCENDING);
             }
         }
 
         ForwardParameters fp = new ForwardParameters(mapping.findForward("query"));
-        fp.addAnchor(pathName);
-        return new ForwardParameters(mapping.findForward("query")).addAnchor(pathName).forward();
+        return new ForwardParameters(mapping.findForward("query")).forward();
     }
 
     /**

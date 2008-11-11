@@ -331,15 +331,17 @@ public class SqlGeneratorTest extends SetupDataTestCase
         results.put("SubqueryExistsConstraintNeg", "SELECT 'hello' AS a1_ WHERE EXISTS(SELECT a1_.id FROM Bank AS a1_)");
         results2.put("SubqueryExistsConstraintNeg", Collections.singleton("Bank"));
         results.put("ObjectPathExpression", "SELECT a1_.id AS a1_id FROM Employee AS a1_ ORDER BY a1_.id");
-        results2.put("ObjectPathExpression", new HashSet(Arrays.asList(new String[] {"InterMineObject", "Employee", "Department"})));
+        results2.put("ObjectPathExpression", new HashSet(Arrays.asList("InterMineObject", "Employee")));
         results.put("ObjectPathExpression2", "SELECT a1_.id AS a1_id FROM Employee AS a1_ ORDER BY a1_.id");
-        results2.put("ObjectPathExpression2", new HashSet(Arrays.asList("InterMineObject", "Employee", "Address")));
+        results2.put("ObjectPathExpression2", new HashSet(Arrays.asList("InterMineObject", "Employee")));
         results.put("ObjectPathExpression3", "SELECT a1_.id AS a1_id FROM Employee AS a1_ ORDER BY a1_.id");
-        results2.put("ObjectPathExpression3", new HashSet(Arrays.asList(new String[] {"InterMineObject", "Employee", "Department", "Company"})));
+        results2.put("ObjectPathExpression3", new HashSet(Arrays.asList("InterMineObject", "Employee", "Department")));
         results.put("ObjectPathExpression4", "SELECT a1_.id AS a1_id FROM Employee AS a1_ ORDER BY a1_.id");
-        results2.put("ObjectPathExpression4", new HashSet(Arrays.asList(new String[] {"InterMineObject", "Employee", "Department", "Company", "Address"})));
+        results2.put("ObjectPathExpression4", new HashSet(Arrays.asList("InterMineObject", "Employee", "Department", "Company")));
+        results.put("ObjectPathExpression5", "SELECT a1_.id AS a1_id FROM Employee AS a1_ ORDER BY a1_.id");
+        results2.put("ObjectPathExpression5", new HashSet(Arrays.asList("InterMineObject", "Employee", "Department", "Company")));
         results.put("FieldPathExpression", "SELECT a1_.id AS a1_id FROM Company AS a1_ ORDER BY a1_.id");
-        results2.put("FieldPathExpression", new HashSet(Arrays.asList(new String[] {"InterMineObject", "Company", "CEO"})));
+        results2.put("FieldPathExpression", new HashSet(Arrays.asList("InterMineObject", "Company", "CEO")));
         results.put("FieldPathExpression2", "SELECT a1_.id AS a1_id FROM Employee AS a1_ ORDER BY a1_.id");
         results2.put("FieldPathExpression2", new HashSet(Arrays.asList("InterMineObject", "Employee", "Department", "Company", "Address")));
         results.put("CollectionPathExpression", "SELECT a1_.id AS a1_id FROM Department AS a1_ ORDER BY a1_.id");
@@ -352,10 +354,6 @@ public class SqlGeneratorTest extends SetupDataTestCase
         results2.put("CollectionPathExpression4", new HashSet(Arrays.asList("InterMineObject", "Company", "Department", "Employee")));
         results.put("CollectionPathExpression5", "SELECT a1_.id AS a1_id FROM Company AS a1_ ORDER BY a1_.id");
         results2.put("CollectionPathExpression5", new HashSet(Arrays.asList("InterMineObject", "Company", "Department")));
-        results.put("ForeignKey", "SELECT a1_.id AS a1_id, a1_.CEOId AS a2_ FROM Company AS a1_ ORDER BY a1_.id");
-        results2.put("ForeignKey", new HashSet(Arrays.asList(new String[] {"InterMineObject", "Company"})));
-        results.put("ForeignKey2", "SELECT a1_.id AS a1_id, a1_.CEOId AS a2_ FROM Company AS a1_ ORDER BY a1_.id");
-        results2.put("ForeignKey2", new HashSet(Arrays.asList(new String[] {"InterMineObject", "Company"})));
         results.put("OrSubquery", "SELECT a1_.OBJECT AS a1_, a1_.id AS a1_id FROM InterMineObject AS a1_ WHERE (a1_.id IN (SELECT a1_.id FROM Company AS a1_ UNION SELECT a1_.id FROM Broke AS a1_)) ORDER BY a1_.id");
         results2.put("OrSubquery", new HashSet(Arrays.asList(new String[] {"InterMineObject", "Company", "Broke"})));
         results.put("ScientificNumber", "SELECT a1_.id AS a1_id FROM Types AS a1_ WHERE a1_.doubleType < 1.3432E24 AND a1_.floatType > -8.56E-32::REAL ORDER BY a1_.id");
@@ -405,6 +403,10 @@ public class SqlGeneratorTest extends SetupDataTestCase
         results2.put("SelectClassFromEmployee", Collections.singleton("Employee"));
         results.put("SelectClassFromBrokeEmployable", new HashSet(Arrays.asList("SELECT a1_.class AS a2_, COUNT(*) AS a3_ FROM Employable AS a1_, Broke AS a1__1 WHERE a1_.id = a1__1.id GROUP BY a1_.class ORDER BY a1_.class, COUNT(*)", "SELECT a1_.class AS a2_, COUNT(*) AS a3_ FROM Broke AS a1_, Employable AS a1__1 WHERE a1_.id = a1__1.id GROUP BY a1_.class ORDER BY a1_.class, COUNT(*)")));
         results2.put("SelectClassFromBrokeEmployable", new HashSet(Arrays.asList("Employable", "Broke")));
+        results.put("SubclassCollection", "SELECT a1_.id AS a1_id FROM Department AS a1_ ORDER BY a1_.id");
+        results2.put("SubclassCollection", new HashSet(Arrays.asList("InterMineObject", "Department", "Manager")));
+        results.put("SubclassCollection2", "SELECT a1_.id AS a1_id FROM Department AS a1_ ORDER BY a1_.id");
+        results2.put("SubclassCollection2", new HashSet(Arrays.asList("InterMineObject", "Department", "Employee", "Broke")));
         results.put("SelectWhereBackslash", "SELECT a1_.id AS a1_id FROM Employee AS a1_ WHERE a1_.name = E'Fred\\\\Blog\\'s' ORDER BY a1_.id");
         results2.put("SelectWhereBackslash", new HashSet(Arrays.asList("Employee", "InterMineObject")));
     }

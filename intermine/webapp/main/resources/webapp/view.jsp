@@ -12,13 +12,21 @@
 
 <a name="showing"></a>
 
-<div class="heading">
+<script type="text/javascript" src="js/view.js"></script>
+<script type="text/javascript">
+  jQuery(document).ready(function () {
+   	AjaxServices.getSortOrderMap(function(sortMap) {
+   		reDrawSorters(sortMap);
+   	});
+  });
+</script>
+
+<div class="heading viewTitle">
   <fmt:message key="view.notEmpty.description"/>
 </div>
 
-<div class="bodyPeekaboo">
 
-  <div>
+<div class="body">
     <h3><fmt:message key="view.heading"/></h3>
 
       <fmt:message key="view.instructions"/>
@@ -33,7 +41,8 @@
           // -->
         </script>
       </c:if>
-    </div>
+
+  <div class="bodyPeekaboo" id="viewDrop" style="float:left">
 
   <br/>
 
@@ -48,12 +57,9 @@
     </c:otherwise>
   </c:choose>
 
-  <br clear="all"/>
-  <br/>
 
   <c:if test="${fn:length(viewStrings) > 0}">
-
-    <div>
+<%--    <div>
       <h3><fmt:message key="sortOrder.heading"/></h3>
       <fmt:message key="sortOrder.instructions"/>
     </div>
@@ -67,112 +73,8 @@
 
     <br/>
     <br/>
-
-    <div style="clear:left; margin-bottom: 18px">
-      <p>
-        <html:form action="/viewAction">
-          <html:submit property="action">
-            <fmt:message key="view.showresults"/>
-          </html:submit>
-        </html:form>
-      </p>
-    </div>
-
-    <script type="text/javascript">
-     <!--
-       var previousOrder = '';
-
-	  jQuery(document).ready(function(){
-           jQuery('#viewDivs').sortable({dropOnEmpty:true,update:function() {
-               reorderOnServer();
-           }
-           });
-           recordCurrentOrder();
-	       updateSortImgs("${sortByIndex}");
-       });
-  
-
-       function recordCurrentOrder() {
-         previousOrder = jQuery('#viewDivs').sortable('serialize');
-       }
-
-       /**
-        * Send the previous order and the new order to the server.
-        */
-       function reorderOnServer() {
-         var newOrder = jQuery('#viewDivs').sortable('serialize');
-         //$('ser').innerHTML=newOrder;
-         
-         AjaxServices.reorder(newOrder, previousOrder);
-         recordCurrentOrder();
-       }
-
-    // change from ascending to descending sort, or vice versa
-      function reverseSortDirection() {
-        var img = document.getElementById('sortImg').src;
-        var newDirection;
-        if (img.match('desc.gif')) {
-          newDirection = 'asc';
-        } else {
-          newDirection = 'desc';
-        }
-         new Ajax.Request('<html:rewrite action="/sortOrderChange"/>', {
-           parameters:'method=changeDirection&direction='+newDirection,
-           asynchronous:true
-         });
-         document.getElementById('sortImg').src = 'images/' + newDirection + '.gif';
-       }
-
-    // called from viewElement.jsp
-      function updateSortOrder(pathString, index) {
-         new Ajax.Request('<html:rewrite action="/sortOrderChange"/>', {
-           parameters:'method=addToSortOrder&pathString='+pathString,
-           asynchronous:true
-         });
-         // replace . with >
-         s = new String(pathString);
-         s = s.replace(/\./g," > ");
-         document.getElementById('querySortOrder').innerHTML = s;
-       updateSortImgs(index);
-       // the sort direction has been reset, so reset img too.
-     document.getElementById('sortImg').src = 'images/asc.gif';
-       }
-
-       // enable all imgs, disable the one the user just selected
-       function updateSortImgs(index) {
-         for (i=0;true;i++) {
-           if (!document.getElementById("btn_" + i)) return;
-        var b = document.getElementById("btn_" + i);
-        if(i==index) {
-        disable(b);
-      } else {
-        enable(b);
-      }
-    }
-       }
-
-       function disable(b) {
-    b.src = "images/sort-disabled.gif";
-    b.disabled = true;
-       }
-     function enable(b) {
-    b.src = "images/sort.gif";
-    b.disabled = false;
-       }
-     //-->
-    </script>
+--%>
   </c:if>
 </div>
-
-<c:if test="${!empty PROFILE.username && TEMPLATE_BUILD_STATE == null}">
-  <div align="center">
-    <p>
-      <form action="<html:rewrite action="/mainChange"/>" method="post">
-        <input type="hidden" name="method" value="startTemplateBuild"/>
-        <input type="submit" value="Start building a template query" />
-      </form>
-    </p>
-  </div>
-</c:if>
 
 <!-- /view.jsp -->

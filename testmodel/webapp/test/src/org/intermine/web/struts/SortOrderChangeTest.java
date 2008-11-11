@@ -60,6 +60,6 @@ public class SortOrderChangeTest extends MockStrutsTestCase
 
         ArrayList<Path> expected = new ArrayList<Path>();
         expected.add(PathQuery.makePath(model, query, "Employee.age"));
-        assertEquals(expected.get(0), ((PathQuery) getSession().getAttribute(Constants.QUERY)).getSortOrder().get(0).getField());
+        assertEquals(expected.get(0), ((PathQuery) getSession().getAttribute(Constants.QUERY)).getSortOrder().keySet().iterator().next());
     }
 }

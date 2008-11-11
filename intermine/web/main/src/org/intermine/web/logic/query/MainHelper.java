@@ -16,6 +16,7 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.Comparator;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
@@ -23,7 +24,6 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-import java.util.Stack;
 import java.util.StringTokenizer;
 import java.util.TreeSet;
 import java.util.Map.Entry;
@@ -46,6 +46,7 @@ import org.intermine.objectstore.query.ConstraintOp;
 import org.intermine.objectstore.query.ConstraintSet;
 import org.intermine.objectstore.query.ContainsConstraint;
 import org.intermine.objectstore.query.OrderDescending;
+import org.intermine.objectstore.query.PathExpressionField;
 import org.intermine.objectstore.query.Query;
 import org.intermine.objectstore.query.QueryClass;
 import org.intermine.objectstore.query.QueryCollectionPathExpression;
@@ -58,19 +59,21 @@ import org.intermine.objectstore.query.QueryHelper;
 import org.intermine.objectstore.query.QueryNode;
 import org.intermine.objectstore.query.QueryObjectPathExpression;
 import org.intermine.objectstore.query.QueryObjectReference;
+import org.intermine.objectstore.query.QueryPathExpression;
 import org.intermine.objectstore.query.QueryReference;
 import org.intermine.objectstore.query.QuerySelectable;
 import org.intermine.objectstore.query.QueryValue;
+import org.intermine.objectstore.query.Queryable;
 import org.intermine.objectstore.query.SimpleConstraint;
 import org.intermine.path.Path;
 import org.intermine.pathquery.Constraint;
 import org.intermine.pathquery.LogicExpression;
 import org.intermine.pathquery.MetadataNode;
-import org.intermine.pathquery.OrderBy;
 import org.intermine.pathquery.PathNode;
 import org.intermine.pathquery.PathQuery;
 import org.intermine.util.StringUtil;
 import org.intermine.util.TypeUtil;
+import org.intermine.util.Util;
 import org.intermine.web.logic.Constants;
 import org.intermine.web.logic.bag.BagQueryConfig;
 import org.intermine.web.logic.bag.BagQueryResult;
@@ -305,9 +308,28 @@ public class MainHelper
             Map<String, QuerySelectable> pathToQueryNode, BagQueryRunner bagQueryRunner,
             Map returnBagQueryResults, boolean checkOnly) throws ObjectStoreException {
         PathQuery pathQuery = pathQueryOrig.clone();
+
+        //first merge the query and the view
         Map qNodes = pathQuery.getNodes();
-        List<Path> view = pathQuery.getView();
-        List<OrderBy> sortOrder = pathQuery.getSortOrder();
+        for (Path p : pathQuery.getView()) {
+            String path = p.toStringNoConstraints();
+            if (!qNodes.containsKey(path)) {
+                pathQuery.addNode(path);
+            }
+        }
+
+        //create the real query
+        Query q = new Query();
+
+        recursiveMakeQuery(q, pathQuery, null, savedBags, pathToQueryNode, bagQueryRunner,
+                returnBagQueryResults, checkOnly);
+        return q;
+    }
+
+    private static void recursiveMakeQuery(Queryable q, PathQuery pathQuery, PathNode root,
+            Map savedBags, Map<String, QuerySelectable> pathToQueryNode,
+            BagQueryRunner bagQueryRunner, Map returnBagQueryResults, boolean checkOnly) 
+    throws ObjectStoreException {
         Model model = pathQuery.getModel();
         Map<String, ConstraintSet> codeToCS = new HashMap<String, ConstraintSet>();
         ConstraintSet rootcs = null;
@@ -319,31 +341,25 @@ public class MainHelper
         } else if (pathQuery.getAllConstraints().size() > 1) {
             rootcs = makeConstraintSets(pathQuery.getLogic(), codeToCS, andcs);
         }
-
-        //first merge the query and the view
-        for (Iterator<Path> i = view.iterator(); i.hasNext();) {
-            String path = i.next().toStringNoConstraints();
-            if (!qNodes.containsKey(path)) {
-                pathQuery.addNode(path);
-            }
-        }
-
-        //create the real query
-        Query q = new Query();
         q.setConstraint(andcs);
         if ((rootcs != null) && (rootcs != andcs)) {
             andcs.addConstraint(rootcs);
         }
-
         // Work out which bits of the query are not outer joins - we construct the query with only
         // those nodes to begin with.
 
-        Set<PathNode> nonOuterNodes = findNonOuterNodes(pathQuery.getNodes(),
-                makeLoopsMap(pathQuery, codeToCS, andcs, false));
+        Set<PathNode> nonOuterNodes = findNonOuterNodes(pathQuery.getNodes(), root);
 
-        Map<String, String> loops = makeLoopsMap(pathQuery, codeToCS, andcs, true);
+        Map<String, String> loops = makeLoopsMap(pathQuery, codeToCS, andcs, true, nonOuterNodes,
+                root);
 
         Map<String, QuerySelectable> queryBits = new HashMap();
+        if (q instanceof QueryObjectPathExpression) {
+            queryBits.put(root.getPathString(), ((QueryObjectPathExpression) q).getDefaultClass());
+        } else if (q instanceof QueryCollectionPathExpression) {
+            queryBits.put(root.getPathString(), ((QueryCollectionPathExpression) q)
+                    .getDefaultClass());
+        }
         LinkedList<PathNode> queue = new LinkedList();
 
         //build the FROM and WHERE clauses
@@ -374,7 +390,7 @@ public class MainHelper
                             throw new IllegalArgumentException("class not found in the model: "
                                                                + node.getType(), e);
                         }
-                        q.addFrom(qc);
+                        ((Query) q).addFrom(qc);
                         queryBits.put(path, qc);
                     } else {
                         String fieldName = node.getFieldName();
@@ -408,7 +424,11 @@ public class MainHelper
                             }
                             andcs.addConstraint(new ContainsConstraint(qr, ConstraintOp.CONTAINS,
                                         qc));
-                            q.addFrom(qc);
+                            if (q instanceof Query) {
+                                ((Query) q).addFrom(qc);
+                            } else {
+                                ((QueryCollectionPathExpression) q).addFrom(qc);
+                            }
                             queryBits.put(path, qc);
                         }
                     }
@@ -424,7 +444,7 @@ public class MainHelper
                         queueDeferred++;
                         continue;
                     }
-                    if (finalPath.indexOf(".") != -1) {
+                    // TODO: Why? if (finalPath.indexOf(".") != -1) {
                         String fieldName = node.getFieldName();
                         QueryClass parentQc = (QueryClass) queryBits.get(node.getPrefix());
                         if (!node.isAttribute()) {
@@ -437,7 +457,7 @@ public class MainHelper
                             andcs.addConstraint(new ContainsConstraint(qr, ConstraintOp.CONTAINS,
                                         qc));
                         }
-                    }
+                    //}
                     queryBits.put(path, queryBits.get(finalPath));
                 }
 
@@ -510,16 +530,16 @@ public class MainHelper
                         }
                         if (qc == null) {
                             LOG.error("qc is null. queryBits = " + queryBits + ", finalPath = "
-                                    + finalPath + ", pathQuery: " + pathQueryOrig);
+                                    + finalPath + ", pathQuery: " + pathQuery);
                         }
                         if (bagQueryResult == null) {
                             LOG.error("bagQueryResult is null. queryBits = " + queryBits
                                     + ", finalPath = " + finalPath + ", pathQuery: "
-                                    + pathQueryOrig);
+                                    + pathQuery);
                         }
                         if (cs == null) {
                             LOG.error("cs is null. codeToCS = " + codeToCS + ", code = " + code
-                                    + ", pathQuery: " + pathQueryOrig);
+                                    + ", pathQuery: " + pathQuery);
                         }
                         cs.addConstraint(new BagConstraint(new QueryField(qc, "id"),
                                     ConstraintOp.IN, bagQueryResult.getMatchAndIssueIds()));
@@ -547,8 +567,10 @@ public class MainHelper
         }
 
         // build the SELECT list
-        for (Iterator<Path> i = view.iterator(); i.hasNext();) {
-            PathNode pn = pathQuery.getNodes().get(i.next().toStringNoConstraints());
+        HashSet<PathNode> done = new HashSet<PathNode>();
+        List<QuerySelectable> added = new ArrayList<QuerySelectable>();
+        for (Path p : pathQuery.getView()) {
+            PathNode pn = pathQuery.getNodes().get(p.toStringNoConstraints());
             if (nonOuterNodes.contains(pn)) {
                 QueryNode qn = null;
                 if (pn.isAttribute()) {
@@ -559,76 +581,129 @@ public class MainHelper
                 } else {
                     qn = (QueryNode) queryBits.get(pn.getPathString());
                 }
-                if (!q.getSelect().contains(qn)) {
-                    q.addToSelect(qn);
+                if (!added.contains(qn)) {
+                    added.add(qn);
                 }
             } else {
-                if (pn.isAttribute()) {
+                while (pn != null && (!nonOuterNodes.contains(pn.getParent()))
+                        && (!Util.equals(root, pn.getParent()))) {
                     pn = (PathNode) pn.getParent();
                 }
-                if (pn.isReference()) {
-                    PathNode tempPn = pn;
-                    Stack<String> pathEntries = new Stack();
-                    QueryClass qc = null;
-                    do {
-                        pathEntries.push(tempPn.getFieldName());
-                        tempPn = (PathNode) tempPn.getParent();
-                        QuerySelectable maybeQc = queryBits.get(tempPn.getPathString());
-                        if (maybeQc instanceof QueryClass) {
-                            qc = (QueryClass) maybeQc;
+                if (pn != null && (!done.contains(pn))) {
+                    done.add(pn);
+                    if (pn.isReference()) {
+                        QueryClass qc = (QueryClass) queryBits.get(pn.getParent().getPathString());
+                        if (qc == null) {
+                            throw new NullPointerException("Failed to get path "
+                                    + pn.getParent().getPathString() + " from " + queryBits);
                         }
-                    } while (qc == null);
-                    QuerySelectable qn = new QueryObjectPathExpression(qc, pathEntries.pop());
-                    while (!pathEntries.isEmpty()) {
-                        qn = new QueryObjectPathExpression((QueryObjectPathExpression) qn,
-                                pathEntries.pop());
+                        Class subclass;
+                        try {
+                            subclass = TypeUtil.getClass(pn.getType(), model);
+                        } catch (ClassNotFoundException e) {
+                            throw new IllegalArgumentException("Class not found in the model: "
+                                    + pn.getType(), e);
+                        }
+                        try {
+                            QueryObjectPathExpression qn = new QueryObjectPathExpression(qc,
+                                    pn.getFieldName(), subclass);
+                            recursiveMakeQuery(qn, pathQuery, pn, savedBags, pathToQueryNode,
+                                    bagQueryRunner, returnBagQueryResults, checkOnly);
+                            if (!added.contains(qc)) {
+                                added.add(qc);
+                            }
+                            if (!added.contains(qn)) {
+                                queryBits.put(pn.getPathString(), qn);
+                                added.add(qn);
+                            }
+                        } catch (ClassCastException e) {
+                            QueryCollectionPathExpression qn = new QueryCollectionPathExpression(qc,
+                                    pn.getFieldName(), subclass);
+                            recursiveMakeQuery(qn, pathQuery, pn, savedBags, pathToQueryNode,
+                                    bagQueryRunner, returnBagQueryResults, checkOnly);
+                            if (!added.contains(qc)) {
+                                added.add(qc);
+                            }
+                            if (!added.contains(qn)) {
+                                queryBits.put(pn.getPathString(), qn);
+                                added.add(qn);
+                            }
+                        }
+                    } else if (pn.isCollection()) {
+                        QueryClass qc = (QueryClass) queryBits.get(pn.getParent().getPathString());
+                        if (qc == null) {
+                            throw new NullPointerException("Failed to get path "
+                                    + pn.getParent().getPathString() + " from " + queryBits);
+                        }
+                        Class subclass;
+                        try {
+                            subclass = TypeUtil.getClass(pn.getType(), model);
+                        } catch (ClassNotFoundException e) {
+                            throw new IllegalArgumentException("class not found in the model: "
+                                    + pn.getType(), e);
+                        }
+                        QueryCollectionPathExpression qn = new QueryCollectionPathExpression(qc,
+                                pn.getFieldName(), subclass);
+                        recursiveMakeQuery(qn, pathQuery, pn, savedBags, pathToQueryNode,
+                                bagQueryRunner, returnBagQueryResults, checkOnly);
+                        if (!added.contains(qc)) {
+                            added.add(qc);
+                        }
+                        if (!added.contains(qn)) {
+                            queryBits.put(pn.getPathString(), qn);
+                            added.add(qn);
+                        }
                     }
-                    if (!q.getSelect().contains(qc)) {
-                        q.addToSelect(qc);
+                }
+            }
+        }
+        QueryClass defaultClass = null;
+        if (q instanceof QueryObjectPathExpression) {
+            defaultClass = ((QueryObjectPathExpression) q).getDefaultClass();
+        } else if (q instanceof QueryCollectionPathExpression) {
+            defaultClass = ((QueryCollectionPathExpression) q).getDefaultClass();
+        }
+        if ((added.size() == 1) && added.get(0).equals(defaultClass)) {
+            // Don't add anything to SELECT list - default is fine
+        } else {
+            for (QuerySelectable qs : added) {
+                if (qs instanceof QueryObjectPathExpression) {
+                    QueryObjectPathExpression qope = (QueryObjectPathExpression) qs;
+                    if (qope.getSelect().size() > 1) {
+                        for (int i = 1; i <= qope.getSelect().size(); i++) {
+                            q.addToSelect(new PathExpressionField(qope, i - 1));
+                        }
+                    } else {
+                        q.addToSelect(qope);
                     }
-                    if (!q.getSelect().contains(qn)) {
-                        queryBits.put(pn.getPathString(), qn);
-                        q.addToSelect(qn);
-                    }
-                } else if (pn.isCollection()) {
-                    QueryClass qc = (QueryClass) queryBits.get(pn.getParent().getPathString());
-                    if (qc == null) {
-                        throw new NullPointerException("Failed to get path "
-                                + pn.getParent().getPathString() + " from " + queryBits);
-                    }
-                    QuerySelectable qn = new QueryCollectionPathExpression(qc, pn.getFieldName());
-                    if (!q.getSelect().contains(qc)) {
-                        q.addToSelect(qc);
-                    }
-                    if (!q.getSelect().contains(qn)) {
-                        queryBits.put(pn.getPathString(), qn);
-                        q.addToSelect(qn);
-                    }
+                } else {
+                    q.addToSelect(qs);
                 }
             }
         }
 
         // build ORDER BY list
-        for (Iterator<OrderBy> i = sortOrder.iterator(); i.hasNext();) {
-            OrderBy o = i.next();
-            PathNode pn = pathQuery.getNodes().get(o.getField().toStringNoConstraints());
-            if (nonOuterNodes.contains(pn)) {
-                QueryNode qn = (QueryNode) queryBits.get(pn.getPathString());
+        if (q instanceof Query) {
+            for (Path path : pathQuery.getSortOrder().keySet()) {
+                PathNode pn = pathQuery.getNodes().get(path.toStringNoConstraints());
+                if (nonOuterNodes.contains(pn)) {
+                    QueryNode qn = (QueryNode) queryBits.get(pn.getPathString());
 
-                if (!q.getOrderBy().contains(qn)) {
-                    q.addToOrderBy(qn, o.getDirection());
+                    if (!((Query) q).getOrderBy().contains(qn)) {
+                        ((Query) q).addToOrderBy(qn, pathQuery.getSortOrder().get(path));
+                    }
                 }
             }
-        }
 
-        // put rest of select list in order by
-        for (Iterator<Path> i = view.iterator(); i.hasNext();) {
-            String ps = i.next().toStringNoConstraints();
-            PathNode pn = pathQuery.getNodes().get(ps);
-            if (nonOuterNodes.contains(pn)) {
-                QueryNode selectNode = (QueryNode) queryBits.get(pn.getPathString());
-                if (!q.getOrderBy().contains(selectNode)) {
-                    q.addToOrderBy(selectNode);
+            // put rest of select list in order by
+            for (Path p : pathQuery.getView()) {
+                String ps = p.toStringNoConstraints();
+                PathNode pn = pathQuery.getNodes().get(ps);
+                if (nonOuterNodes.contains(pn)) {
+                    QueryNode selectNode = (QueryNode) queryBits.get(pn.getPathString());
+                    if (!((Query) q).getOrderBy().contains(selectNode)) {
+                        ((Query) q).addToOrderBy(selectNode);
+                    }
                 }
             }
         }
@@ -637,12 +712,9 @@ public class MainHelper
         if (pathToQueryNode != null) {
             pathToQueryNode.putAll(queryBits);
         }
-
-        return q;
     }
 
-    private static Set<PathNode> findNonOuterNodes(Map<String, PathNode> nodes,
-            Map<String, String> loops) {
+    private static Set<PathNode> findNonOuterNodes(Map<String, PathNode> nodes, PathNode root) {
         Set<PathNode> retval = new LinkedHashSet();
         Set<PathNode> done = new LinkedHashSet();
         LinkedList<PathNode> queue = new LinkedList();
@@ -664,17 +736,8 @@ public class MainHelper
                 queue.addLast(node);
                 queueDeferred++;
             } else {
-                boolean isLoop = false;
-                for (Map.Entry<String, String> loopEntry : loops.entrySet()) {
-                    if (loopEntry.getKey().startsWith(node.getPathString() + ".")
-                            || loopEntry.getKey().equals(node.getPathString())
-                            || loopEntry.getValue().startsWith(node.getPathString() + ".")
-                            || loopEntry.getValue().equals(node.getPathString())) {
-                        isLoop = true;
-                    }
-                }
-                if (isLoop || (parent == null)
-                        || (retval.contains(parent) && (!node.isOuterJoin()))) {
+                if ((Util.equals(root, parent) || retval.contains(parent))
+                            && (!node.isOuterJoin())) {
                     retval.add(node);
                 }
                 done.add(node);
@@ -683,7 +746,6 @@ public class MainHelper
             }
         }
         return retval;
-        //return new HashSet(nodes.values());
     }
 
     /**
@@ -755,37 +817,63 @@ public class MainHelper
      * Build a map to collapse nodes in loop queries
      */
     private static Map<String, String> makeLoopsMap(PathQuery pathQuery,
-            Map<String, ConstraintSet> codeToCS, ConstraintSet andcs, boolean onlyEquals) {
+            Map<String, ConstraintSet> codeToCS, ConstraintSet andcs, boolean onlyEquals,
+            Set<PathNode> nonOuterNodes, PathNode root) {
+        if (root != null) {
+            nonOuterNodes = new HashSet(nonOuterNodes);
+            nonOuterNodes.add(root);
+        }
         Map<String, String> loops = new HashMap<String, String>();
-        for (Iterator i = pathQuery.getNodes().values().iterator(); i.hasNext();) {
-            PathNode node = (PathNode) i.next();
-            String path = node.getPathString();
-            for (Iterator j = node.getConstraints().iterator(); j.hasNext();) {
-                Constraint c = (Constraint) j.next();
-                if ((node.isReference() || node.isCollection())
-                        && ((!onlyEquals)
-                            || ((c.getOp() == ConstraintOp.EQUALS)
-                                && (codeToCS.get(c.getCode()) == andcs)))) {
+        for (PathNode node : pathQuery.getNodes().values()) {
+            if (nonOuterNodes.contains(node)) {
+                String path = node.getPathString();
+                for (Iterator j = node.getConstraints().iterator(); j.hasNext();) {
+                    Constraint c = (Constraint) j.next();
                     if (c.getValue() instanceof InterMineBag) {
                         continue;
                     }
-                    String dest = (String) c.getValue();
-                    String finalDest = loops.get(dest);
-                    if (finalDest == null) {
-                        finalDest = dest;
-                    }
-                    Map<String, String> newLoops = new HashMap<String, String>();
-                    newLoops.put(path, finalDest);
-                    for (Iterator<Entry<String, String>> k = loops.entrySet().iterator();
-                         k.hasNext();) {
-                        Entry<String, String> entry = k.next();
-                        String entryDest = entry.getValue();
-                        if (entryDest.equals(path)) {
-                            entryDest = finalDest;
+                    if ((node.isReference() || node.isCollection() || node.equals(root)
+                                || (node.getParent() == null))
+                            && ((c.getOp() == ConstraintOp.EQUALS)
+                                || (c.getOp() == ConstraintOp.NOT_EQUALS))) {
+                        String dest = (String) c.getValue();
+                        boolean okay = false;
+                        for (PathNode nonOuterNode : nonOuterNodes) {
+                            if (nonOuterNode.getPathString().equals(dest)) {
+                                okay = true;
+                            }
                         }
-                        newLoops.put(entry.getKey(), entryDest);
+                        if (!okay) {
+                            throw new IllegalArgumentException("Error - loop constraint spans path"
+                                    + " expression from " + path + " to " + dest);
+                        }
+                        if ((!onlyEquals) || ((c.getOp() == ConstraintOp.EQUALS)
+                                    && (codeToCS.get(c.getCode()) == andcs))) {
+                            String source;
+                            if (dest.startsWith(path)) {
+                                source = dest;
+                                dest = path;
+                            } else {
+                                source = path;
+                            }
+                            String finalDest = loops.get(dest);
+                            if (finalDest == null) {
+                                finalDest = dest;
+                            }
+                            Map<String, String> newLoops = new HashMap<String, String>();
+                            newLoops.put(source, finalDest);
+                            for (Iterator<Entry<String, String>> k = loops.entrySet().iterator();
+                                 k.hasNext();) {
+                                Entry<String, String> entry = k.next();
+                                String entryDest = entry.getValue();
+                                if (entryDest.equals(source)) {
+                                    entryDest = finalDest;
+                                }
+                                newLoops.put(entry.getKey(), entryDest);
+                            }
+                            loops = newLoops;
+                        }
                     }
-                    loops = newLoops;
                 }
             }
         }
@@ -1032,11 +1120,23 @@ public class MainHelper
      * @return the new path
      */
     public static String toPath(String prefix, String path) {
+        return toPath(prefix, path, false);
+    }
+
+    /**
+     * Convert a path and prefix to a path.
+     *
+     * @param prefix the prefix (eg null or Department.company)
+     * @param path the path (eg Company, Company.departments)
+     * @param outerJoin true if the join should be outer
+     * @return the new path
+     */
+    public static String toPath(String prefix, String path, boolean outerJoin) {
         if (prefix != null) {
             if (path.indexOf(".") == -1) {
                 path = prefix;
             } else {
-                path = prefix + "." + path.substring(path.indexOf(".") + 1);
+                path = prefix + (outerJoin ? ":" : ".") + path.substring(path.indexOf(".") + 1);
             }
         }
         return path;
@@ -1055,23 +1155,43 @@ public class MainHelper
     public static Query makeSummaryQuery(PathQuery pathQuery, Map savedBags,
             Map<String, QuerySelectable> pathToQueryNode, String summaryPath,
             ServletContext servletContext) {
+        return makeSummaryQuery(pathQuery, savedBags, pathToQueryNode, summaryPath,
+                (ObjectStore) servletContext.getAttribute(Constants.OBJECTSTORE),
+                (Map) servletContext.getAttribute(Constants.CLASS_KEYS),
+                (BagQueryConfig) servletContext.getAttribute(Constants.BAG_QUERY_CONFIG),
+                servletContext);
+    }
+
+    /**
+     * Generate a query from a PathQuery, to summarise a particular column of results.
+     *
+     * @param pathQuery the PathQuery
+     * @param savedBags the current saved bags map
+     * @param pathToQueryNode Map, into which columns to display will be placed
+     * @param summaryPath a String path of the column to summarise
+     * @param os an ObjectStore to do LOOKUP queries in
+     * @param classKeys class key config
+     * @param bagQueryConfig a BagQueryConfig object
+     * @param servletContext a ServletContext object
+     */
+    public static Query makeSummaryQuery(PathQuery pathQuery, Map savedBags,
+            Map<String, QuerySelectable> pathToQueryNode, String summaryPath, ObjectStore os,
+            Map classKeys, BagQueryConfig bagQueryConfig, ServletContext servletContext) {
         Map<String, QuerySelectable> origPathToQueryNode = new HashMap();
         Query subQ = null;
         try {
             subQ = makeQuery(pathQuery, savedBags, origPathToQueryNode, servletContext, null,
-                    false, (ObjectStore) servletContext.getAttribute(Constants.OBJECTSTORE),
-                    (Map) servletContext.getAttribute(Constants.CLASS_KEYS),
-                    (BagQueryConfig) servletContext.getAttribute(Constants.BAG_QUERY_CONFIG));
+                    false, os, classKeys, bagQueryConfig);
         } catch (ObjectStoreException e) {
             // Not possible if second-last argument is null
+            throw new IllegalArgumentException("Should not ever happen", e);
         }
         subQ.clearOrderBy();
-        Map<String, QuerySelectable> newSelect = new HashMap();
+        Map<String, QuerySelectable> newSelect = new LinkedHashMap();
         for (QuerySelectable qs : subQ.getSelect()) {
             if (qs instanceof QueryClass) {
-                newSelect.put(subQ.getAliases().get(qs) + "_id", new QueryField((QueryClass) qs,
-                            "id"));
-            } else {
+                newSelect.put(subQ.getAliases().get(qs), qs);
+            } else if (!(qs instanceof QueryPathExpression)) {
                 newSelect.put(subQ.getAliases().get(qs), qs);
             }
         }
@@ -1080,7 +1200,7 @@ public class MainHelper
             subQ.addToSelect(selectEntry.getValue(), selectEntry.getKey());
         }
         QueryField qf = (QueryField) origPathToQueryNode.get(summaryPath);
-        if (qf == null) {
+        if ((qf == null) || (!subQ.getFrom().contains(qf.getFromElement()))) {
             // This column may be an outer join
             String prefix = summaryPath.substring(0, summaryPath.lastIndexOf('.'));
             String fieldName = summaryPath.substring(summaryPath.lastIndexOf('.') + 1);
@@ -1092,58 +1212,29 @@ public class MainHelper
                 QueryObjectPathExpression qope = (QueryObjectPathExpression) qs;
                 // We need to add QueryClasses to the query for this outer join. This will make it
                 // an inner join, so the "no object" results will disappear.
-                QueryClass lastQc = new QueryClass(qope.getType());
+                QueryClass lastQc = qope.getDefaultClass();
                 qf = new QueryField(lastQc, fieldName);
                 subQ.addFrom(lastQc);
-                QueryObjectPathExpression nextQope = qope.getQope();
-                while (nextQope != null) {
-                    QueryClass nextQc = new QueryClass(nextQope.getType());
-                    subQ.addFrom(nextQc);
-                    QueryHelper.addAndConstraint(subQ, new ContainsConstraint(
-                                new QueryObjectReference(nextQc, qope.getFieldName()),
-                                ConstraintOp.CONTAINS, lastQc));
-                    qope = nextQope;
-                    lastQc = nextQc;
-                    nextQope = qope.getQope();
-                }
+                subQ.addToSelect(lastQc);
                 QueryClass rootQc = qope.getQueryClass();
                 QueryHelper.addAndConstraint(subQ, new ContainsConstraint(
                             new QueryObjectReference(rootQc, qope.getFieldName()),
                             ConstraintOp.CONTAINS, lastQc));
+                if (qope.getConstraint() != null) {
+                    QueryHelper.addAndConstraint(subQ, qope.getConstraint());
+                }
             } else if (qs instanceof QueryCollectionPathExpression) {
                 QueryCollectionPathExpression qcpe = (QueryCollectionPathExpression) qs;
-                if (qcpe.getSelect().isEmpty() && qcpe.getFrom().isEmpty()
-                        && (qcpe.getConstraint() == null)) {
-                    QueryClass firstQc = new QueryClass(qcpe.getDefaultClass().getType());
+                if (qcpe.getSelect().isEmpty() && qcpe.getFrom().isEmpty()) {
+                    QueryClass firstQc = qcpe.getDefaultClass();
                     qf = new QueryField(firstQc, fieldName);
                     subQ.addFrom(firstQc);
                     QueryClass rootQc = qcpe.getQueryClass();
-                    if (rootQc == null) {
-                        QueryObjectPathExpression qope = qcpe.getQope();
-                        QueryClass lastQc = new QueryClass(qope.getType());
-                        subQ.addFrom(lastQc);
-                        QueryHelper.addAndConstraint(subQ, new ContainsConstraint(
-                                    new QueryCollectionReference(lastQc, qcpe.getCollectionName()),
-                                    ConstraintOp.CONTAINS, firstQc));
-                        QueryObjectPathExpression nextQope = qope.getQope();
-                        while (nextQope != null) {
-                            QueryClass nextQc = new QueryClass(nextQope.getType());
-                            subQ.addFrom(nextQc);
-                            QueryHelper.addAndConstraint(subQ, new ContainsConstraint(
-                                        new QueryObjectReference(nextQc, qope.getFieldName()),
-                                        ConstraintOp.CONTAINS, lastQc));
-                            qope = nextQope;
-                            lastQc = nextQc;
-                            nextQope = qope.getQope();
-                        }
-                        rootQc = qope.getQueryClass();
-                        QueryHelper.addAndConstraint(subQ, new ContainsConstraint(
-                                    new QueryObjectReference(rootQc, qope.getFieldName()),
-                                    ConstraintOp.CONTAINS, lastQc));
-                    } else {
-                        QueryHelper.addAndConstraint(subQ, new ContainsConstraint(
-                                    new QueryCollectionReference(rootQc, qcpe.getCollectionName()),
-                                    ConstraintOp.CONTAINS, firstQc));
+                    QueryHelper.addAndConstraint(subQ, new ContainsConstraint(
+                                new QueryCollectionReference(rootQc, qcpe.getFieldName()),
+                                ConstraintOp.CONTAINS, firstQc));
+                    if (qcpe.getConstraint() != null) {
+                        QueryHelper.addAndConstraint(subQ, qcpe.getConstraint());
                     }
                 } else {
                     throw new IllegalArgumentException("QueryCollectionPathExpression is too"

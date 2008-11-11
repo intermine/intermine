@@ -18,89 +18,114 @@ import java.util.List;
 import java.util.Map;
 
 import org.intermine.model.InterMineObject;
+import org.intermine.util.DynamicUtil;
 import org.intermine.util.TypeUtil;
 
 /**
  * An element that can appear in the SELECT clause of a query, representing extra data to be
- * collected for the Results - namely a collection referenced in an object in the results. In order
- * to reference further into this collection, this class contains many of the features of Query.
+ * collected for the Results - namely a collection or reference referenced in an object in the
+ * results. The column in the Results associated with this object will be of type Collection. In
+ * order to reference further into this field, this class contains many of the features of Query.
  * That is, you can add QueryFields and QueryPathExpressions to the SELECT list. You can also add
  * QueryClasses to the FROM list and constraints to the WHERE clause. A default QueryClass
- * corresponding to the collection is available from the getDefaultClass() method.
+ * corresponding to the field is available from the getDefaultClass() method.
  *
  * @author Matthew Wakeling
  */
-public class QueryCollectionPathExpression implements QueryPathExpression
+public class QueryCollectionPathExpression implements QueryPathExpressionWithSelect, Queryable
 {
     private QueryClass qc;
-    private QueryObjectPathExpression qope;
-    private String collectionName;
+    private String fieldName;
     private Class type;
+    private Class subclass = null;
     private QueryClass defaultClass;
     private List<QuerySelectable> selectList = new ArrayList();
     private List<FromElement> additionalFromList = new ArrayList();
     private Constraint constraint = null;
     private boolean singleton = false;
+    private boolean isCollection;
     private Map<FromElement, String> aliases = new HashMap();
 
     /**
-     * Constructs a QueryCollectionPathExpression representing a collection reference from the given
-     * QueryClass to the given collection name.
+     * Constructs a QueryCollectionPathExpression representing a reference from the given
+     * QueryClass to the given field name.
      *
      * @param qc the QueryClass
-     * @param collectionName the name of the relevant collection
-     * @throws IllegalArgumentException if the field is not a collection
+     * @param fieldName the name of the relevant collection or reference
+     * @throws IllegalArgumentException if the field is not a collection or reference
      */
-    public QueryCollectionPathExpression(QueryClass qc, String collectionName) {
+    public QueryCollectionPathExpression(QueryClass qc, String fieldName) {
         if (qc == null) {
             throw new NullPointerException("QueryClass parameter is null");
         }
-        if (collectionName == null) {
+        if (fieldName == null) {
             throw new NullPointerException("Collection name parameter is null");
         }
-        type = TypeUtil.getFieldType(qc.getType(), collectionName);
+        type = TypeUtil.getFieldType(qc.getType(), fieldName);
         if (type == null) {
-            throw new IllegalArgumentException("Field " + collectionName + " not found in "
+            throw new IllegalArgumentException("Field " + fieldName + " not found in "
                     + qc.getType());
         }
-        if (!Collection.class.isAssignableFrom(type)) {
+        if (Collection.class.isAssignableFrom(type)) {
+            isCollection = true;
+            defaultClass = new QueryClass(TypeUtil.getElementType(qc.getType(), fieldName));
+        } else if (InterMineObject.class.isAssignableFrom(type)) {
+            isCollection = false;
+            defaultClass = new QueryClass(type);
+        } else {
             throw new IllegalArgumentException("Field " + qc.getType().getName() + "."
-                    + collectionName + " is not a collection");
+                    + fieldName + " is not a collection or reference");
         }
         this.qc = qc;
-        this.qope = null;
-        this.collectionName = collectionName;
-        defaultClass = new QueryClass(TypeUtil.getElementType(qc.getType(), collectionName));
+        this.fieldName = fieldName;
     }
 
     /**
-     * Constructs a QueryCollectionPathExpression representing a collection reference from the given
-     * QueryObjectPathExpression to the given collection name.
+     * Constructs a QueryCollectionPathExpression representing a reference from the given
+     * QueryClass to the given field name, constrained to be a particular subclass.
      *
-     * @param qope the QueryObjectPathExpression
-     * @param collectionName the name of the relevant collection
-     * @throws IllegalArgumentException if the field is not a collection
+     * @param qc the QueryClass
+     * @param fieldName the name of the relevant collection or reference
+     * @param subclasses a Class that is a subclass of the field class
+     * @throws IllegalArgumentException if the field is not a collection or reference
      */
-    public QueryCollectionPathExpression(QueryObjectPathExpression qope, String collectionName) {
-        if (qope == null) {
-            throw new NullPointerException("QueryObjectPathExpression parameter is null");
+    public QueryCollectionPathExpression(QueryClass qc, String fieldName, Class... subclasses) {
+        subclass = DynamicUtil.composeClass(subclasses);
+        if (qc == null) {
+            throw new NullPointerException("QueryClass parameter is null");
         }
-        if (collectionName == null) {
+        if (fieldName == null) {
             throw new NullPointerException("Collection name parameter is null");
         }
-        type = TypeUtil.getFieldType(qope.getType(), collectionName);
+        if (subclass == null) {
+            throw new NullPointerException("Subclass parameter is null");
+        }
+        type = TypeUtil.getFieldType(qc.getType(), fieldName);
         if (type == null) {
-            throw new IllegalArgumentException("Field " + collectionName + " not found in "
-                    + qope.getType());
+            throw new IllegalArgumentException("Field " + fieldName + " not found in "
+                    + qc.getType());
         }
-        if (!Collection.class.isAssignableFrom(type)) {
-            throw new IllegalArgumentException("Field " + qope.getType().getName() + "."
-                    + collectionName + " is not a collection");
+        if (Collection.class.isAssignableFrom(type)) {
+            isCollection = true;
+            if (!TypeUtil.getElementType(qc.getType(), fieldName).isAssignableFrom(subclass)) {
+                throw new IllegalArgumentException("subclass parameter " + subclass.getName()
+                        + " is not a subclass of collection element type "
+                        + TypeUtil.getElementType(qc.getType(), fieldName).getName());
+            }
+            defaultClass = new QueryClass(subclass);
+        } else if (InterMineObject.class.isAssignableFrom(type)) {
+            if (!type.isAssignableFrom(subclass)) {
+                throw new IllegalArgumentException("subclass parameter " + subclass.getName()
+                        + " is not a subclass of reference type " + type.getName());
+            }
+            isCollection = false;
+            defaultClass = new QueryClass(subclass);
+        } else {
+            throw new IllegalArgumentException("Field " + qc.getType().getName() + "."
+                    + fieldName + " is not a collection or reference");
         }
-        this.qc = null;
-        this.qope = qope;
-        this.collectionName = collectionName;
-        defaultClass = new QueryClass(TypeUtil.getElementType(qope.getType(), collectionName));
+        this.qc = qc;
+        this.fieldName = fieldName;
     }
 
     /**
@@ -113,21 +138,21 @@ public class QueryCollectionPathExpression implements QueryPathExpression
     }
 
     /**
-     * Returns the QueryObjectPathExpression of which the field is a member.
+     * Returns the name of the field.
      *
-     * @return the QueryObjectPathExpression
+     * @return field name
      */
-    public QueryObjectPathExpression getQope() {
-        return qope;
+    public String getFieldName() {
+        return fieldName;
     }
 
     /**
-     * Returns the name of the collection.
+     * Returns the subclass if it exists.
      *
-     * @return collection name
+     * @return the subclass
      */
-    public String getCollectionName() {
-        return collectionName;
+    public Class getSubclass() {
+        return subclass;
     }
 
     /**
@@ -224,37 +249,66 @@ public class QueryCollectionPathExpression implements QueryPathExpression
      * @return a Query
      */
     public Query getQuery(Collection<InterMineObject> bag) {
-        Query q = new Query();
-        QueryClassBag qcb = new QueryClassBag(qc == null ? qope.getType() : qc.getType(), bag);
-        q.addFrom(qcb, "bag");
-        q.addFrom(defaultClass, "default");
-        for (FromElement node : additionalFromList) {
-            if (aliases.containsKey(node)) {
-                q.addFrom(node, aliases.get(node));
+        if (isCollection) {
+            Query q = new Query();
+            QueryClassBag qcb = new QueryClassBag(qc.getType(), bag);
+            q.addFrom(qcb, "bag");
+            q.addFrom(defaultClass, "default");
+            for (FromElement node : additionalFromList) {
+                if (aliases.containsKey(node)) {
+                    q.addFrom(node, aliases.get(node));
+                } else {
+                    q.addFrom(node);
+                }
+            }
+            q.addToSelect(new QueryField(qcb), "bagId");
+            if (selectList.isEmpty()) {
+                q.addToSelect(defaultClass);
             } else {
-                q.addFrom(node);
+                for (QuerySelectable selectable : selectList) {
+                    q.addToSelect(selectable);
+                }
             }
-        }
-        q.addToSelect(new QueryField(qcb), "bagId");
-        if (selectList.isEmpty()) {
-            q.addToSelect(defaultClass);
-        } else {
-            for (QuerySelectable selectable : selectList) {
-                q.addToSelect(selectable);
+            if (constraint == null) {
+                q.setConstraint(new ContainsConstraint(new QueryCollectionReference(qcb,
+                                fieldName), ConstraintOp.CONTAINS, defaultClass));
+            } else {
+                ConstraintSet cs = new ConstraintSet(ConstraintOp.AND);
+                cs.addConstraint(constraint);
+                cs.addConstraint(new ContainsConstraint(new QueryCollectionReference(qcb,
+                                fieldName), ConstraintOp.CONTAINS, defaultClass));
+                q.setConstraint(cs);
             }
-        }
-        if (constraint == null) {
-            q.setConstraint(new ContainsConstraint(new QueryCollectionReference(qcb,
-                            collectionName), ConstraintOp.CONTAINS, defaultClass));
+            q.setDistinct(false);
+            return q;
         } else {
-            ConstraintSet cs = new ConstraintSet(ConstraintOp.AND);
-            cs.addConstraint(constraint);
-            cs.addConstraint(new ContainsConstraint(new QueryCollectionReference(qcb,
-                            collectionName), ConstraintOp.CONTAINS, defaultClass));
-            q.setConstraint(cs);
+            Query q = new Query();
+            q.addFrom(defaultClass, "default");
+            for (FromElement node : additionalFromList) {
+                if (aliases.containsKey(node)) {
+                    q.addFrom(node, aliases.get(node));
+                } else {
+                    q.addFrom(node);
+                }
+            }
+            if (selectList.isEmpty()) {
+                q.addToSelect(defaultClass);
+            } else {
+                for (QuerySelectable selectable : selectList) {
+                    q.addToSelect(selectable);
+                }
+            }
+            if (constraint == null) {
+                q.setConstraint(new BagConstraint(defaultClass, ConstraintOp.IN, bag));
+            } else {
+                ConstraintSet cs = new ConstraintSet(ConstraintOp.AND);
+                cs.addConstraint(constraint);
+                cs.addConstraint(new BagConstraint(defaultClass, ConstraintOp.IN, bag));
+                q.setConstraint(cs);
+            }
+            q.setDistinct(false);
+            return q;
         }
-        q.setDistinct(false);
-        return q;
     }
 
     /**

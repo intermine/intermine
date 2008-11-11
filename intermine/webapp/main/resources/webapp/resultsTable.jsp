@@ -29,6 +29,26 @@
   /*var columnsToDisable = ${columnsToDisable};
   var columnsToHighlight = ${columnsToHighlight};
   var bagType = null;*/
+
+jQuery(document).ready(function(){
+    jQuery('.th_drag').draggable({
+      revert: true, 
+      helper: "clone",
+      opacity: 0.40
+    });
+    jQuery('.th_drop').droppable({ 
+      accept: '.th_drag', 
+      hoverClass: 'droppable-col-hover', 
+      drop: function(ev, ui) {
+        var index1=jQuery(ui.draggable).attr('id');
+        var index2=jQuery(this).attr('id');
+        if(index1 != index2) {
+          top.location='<html:rewrite action="/changeTable.do?currentPage=${currentPage}&bagName=${bagName}&table=${param.table}&method=swapColumns&trail=${param.trail}"/>&index1='+index1+'&index2='+index2;
+        }
+      } 
+    });
+});  
+
 //]]>-->
 </script>
 
@@ -57,9 +77,18 @@
 
       <c:choose>
         <c:when test="${column.visible}">
-            <c:if test="${column.selectable}">
-            <c:set var="colcount" value="${colcount+1}"/>
-            <th align="center" class="checkbox">
+          <th align="center" valign="top" >
+            <div id="${column.index}" class="th_drop">
+             <%--<c:if test="${not empty sortOrderMap[column.name] && empty bag}">
+                  <img border="0"
+                       width="17" height="16" src="images/${sortOrderMap[column.name]}_gray.gif"
+                          title="Results are sorted by ${column.name}"/>
+             </c:if>--%>
+            <div id="${column.index}" class="th_drag">
+          
+          <c:if test="${column.selectable}">
+            <%--<c:set var="colcount" value="${colcount+1}"/>
+              <th align="center" class="checkbox">--%>
               <c:set var="disabled" value="false"/>
               <c:if test="${(!empty resultsTable.selectedClass) && (resultsTable.selectedClass != column.typeClsString)}">
                 <c:set var="disabled" value="true"/>
@@ -70,51 +99,17 @@
                              disabled="${disabled}">
                 <c:out value="${column.columnId}"/>
               </html:multibox>
-            </th>
+            <%--</th>--%>
           </c:if>
-
-          <th align="center" valign="top" >
-            <%-- put in left, right, hide and show buttons --%>
-            <table cellspacing="0" cellpadding="0" border="0" class="theadbuttons">
-            <tr>
-            <td align="left" width="100%">
+              <im:abbreviate value="${columnDisplayName}" length="20"/>
+              <im:typehelp type="${column.path}" fullPath="true"/>
               <%-- summary --%>
               <c:if test="${!empty column.path.noConstraintsString}">
-              <fmt:message key="columnsummary.getsummary" var="summaryTitle" />
+                <fmt:message key="columnsummary.getsummary" var="summaryTitle" />
                 <a href="javascript:getColumnSummary('${pagedResults.tableid}','${column.path.noConstraintsString}', &quot;${columnDisplayName}&quot;)"
                    title="${summaryTitle}"><img src="images/summary_maths.png" title="${summaryTitle}"/></a>
               </c:if>
-            </td>
-             <%-- sort img --%>
-             <c:if test="${not empty sortOrderMap[column.name] && empty bag}">
-               <td>
-                  <img border="0"
-                       width="17" height="16" src="images/${sortOrderMap[column.name]}_gray.gif"
-                          title="Results are sorted by ${column.name}"/>
-               </td>
-              </c:if>
-
-              <%-- show/hide --%>
-              <c:if test="${fn:length(pagedResults.columns) > 1}">
-                <c:if test="${pagedResults.visibleColumnCount > 1}">
-                <td>
-                  <fmt:message key="results.hideColumnHelp" var="hideColumnTitle">
-                    <fmt:param value="${column.name}"/>
-                  </fmt:message>
-                  <html:link action="/changeTable?currentPage=${currentPage}&amp;bagName=${bagName}&amp;table=${param.table}&amp;method=hideColumn&amp;index=${status.index}&amp;trail=${param.trail}"
-                             title="${hideColumnTitle}">
-                    <img border="0"
-                         src="images/close.png" title="${hideColumnTitle}" />
-                  </html:link>
-                </td>
-                </c:if>
-              </c:if>
-
-            </tr>
-            </table>
-            <div>
-              <c:out value="${columnDisplayName}" escapeXml="false"/>
-              <im:typehelp type="${column.path}" fullPath="true"/>
+            </div>
             </div>
           </th>
         </c:when>
@@ -164,36 +159,34 @@
                         <c:set var="highlightObjectClass" value="highlightObject"/>
                       </c:if>
 
+                      <%-- test whether already selected and highlight if needed --%>
+                      <c:set var="cellClass" value="${resultElement.id}"/>
+                      <c:if test="${resultElement.selected && empty bagName}">
+                        <c:set var="cellClass" value="${cellClass} highlightCell"/>
+                      </c:if>
+
+                      <td id="cell,${status2.index},${status.index},${subRow[column.index].value.typeClsString}"
+                       class="${highlightObjectClass} id_${resultElement.id} class_${subRow[column.index].value.typeClsString} ${ischecked}" rowspan="${subRow[column.index].rowspan}">
                       <%-- the checkbox to select this object --%>
                       <c:if test="${column.selectable}">
                         <c:set var="checkboxClass" value="checkbox ${resultElement.id}"/>
                         <c:if test="${resultElement.selected}">
                           <c:set var="checkboxClass" value="${checkboxClass} highlightCell"/>
                         </c:if>
-                        <td align="center" class="checkbox ${highlightObjectClass} id_${resultElement.id} class_${subRow[column.index].value.typeClsString} ${ischecked}" id="cell_checkbox,${status2.index},${(status.index + 1) * 1000 + multiRowStatus.index},${subRow[column.index].value.typeClsString}" rowspan="${subRow[column.index].rowspan}">
+                        <%--<td align="center" class="checkbox ${highlightObjectClass} id_${resultElement.id} class_${subRow[column.index].value.typeClsString} ${ischecked}" id="cell_checkbox,${status2.index},${(status.index + 1) * 1000 + multiRowStatus.index},${subRow[column.index].value.typeClsString}" rowspan="${subRow[column.index].rowspan}">--%>
                           <c:if test="${resultElement.id != null}">
                             <html:multibox property="currentSelectedIdStrings" name="pagedResults"
-                                 styleId="selectedObjects_${status2.index}_${(status.index + 1) * 1000 + multiRowStatus.index}_${subRow[column.index].value.typeClsString}"
-                                 styleClass="selectable"
-                                 onclick="itemChecked(${(status.index + 1) * 1000 + multiRowStatus.index}, ${status2.index}, '${pagedResults.tableid}', this)">
+                                 styleId="selectedObjects_${status2.index}_${status.index}_${subRow[column.index].value.typeClsString}"
+                                 styleClass="selectable id_${resultElement.id} index_${column.index} class_${subRow[column.index].value.typeClsString} class_${column.typeClsString}"
+                                 onclick="itemChecked(${status.index},${status2.index}, '${pagedResults.tableid}', this)"
+                                 disabled="${disabled}">
                               <c:out value="${resultElement.id}"/>
                             </html:multibox>
                           </c:if>
-                        </td>
+                        <%--</td>--%>
                       </c:if>
-
-                      <%-- test whether already selected and highlight if needed --%>
-                      <c:set var="cellClass" value="${resultElement.id}"/>
-                      <c:if test="${resultElement.selected}">
-                        <c:set var="cellClass" value="${cellClass} highlightCell"/>
-                      </c:if>
-
-                      <td id="cell,${status2.index},${(status.index + 1) * 1000 + multiRowStatus.index},${subRow[column.index].value.typeClsString}"
-                            class="${highlightObjectClass} id_${resultElement.id} class_${subRow[column.index].value.typeClsString} ${ischecked}" rowspan="${subRow[column.index].rowspan}">
                         <c:set var="columnType" value="${column.type}" scope="request"/>
-                        <div>
                           <tiles:insert name="objectView.tile" /> <%-- uses resultElement? --%>
-                        </div>
                       </td>
                     </c:if>
                   </c:when>
@@ -230,8 +223,13 @@
                   <c:if test="${(!empty resultsTable.selectedClass) && ((resultsTable.selectedClass != resultElement.typeClsString)&&(resultsTable.selectedClass != column.typeClsString) && resultsTable.selectedColumn != column.index)}">
                     <c:set var="disabled" value="true"/>
                   </c:if>
+                  <%-- test whether already selected and highlight if needed --%>
+                  <td id="cell,${status2.index},${status.index},${row[column.index].typeClsString}"
+                       class="${highlightObjectClass} id_${resultElement.id} class_${row[column.index].typeClsString} ${ischecked}">
+                    <c:set var="columnType" value="${column.type}" scope="request"/>
+                    <div>
                   <c:if test="${column.selectable}">
-                    <td align="center" class="checkbox ${highlightObjectClass} id_${resultElement.id} class_${row[column.index].typeClsString} ${ischecked}" id="cell_checkbox,${status2.index},${status.index},${row[column.index].typeClsString}">
+                    <%--<td align="center" class="checkbox ${highlightObjectClass} id_${resultElement.id} class_${row[column.index].typeClsString} ${ischecked}" id="cell_checkbox,${status2.index},${status.index},${row[column.index].typeClsString}">--%>
                       <c:if test="${resultElement.id != null}">
                         <html:multibox property="currentSelectedIdStrings" name="pagedResults"
                                  styleId="selectedObjects_${status2.index}_${status.index}_${row[column.index].typeClsString}"
@@ -241,15 +239,9 @@
                           <c:out value="${resultElement.id}"/>
                         </html:multibox>
                       </c:if>
-                    </td>
+                    <%--</td>--%>
                   </c:if>
-
-                  <%-- test whether already selected and highlight if needed --%>
-                  <td id="cell,${status2.index},${status.index},${row[column.index].typeClsString}"
-                       class="${highlightObjectClass} id_${resultElement.id} class_${row[column.index].typeClsString} ${ischecked}">
-                    <c:set var="columnType" value="${column.type}" scope="request"/>
-                    <div>
-                      <tiles:insert name="objectView.tile"/>
+                       <tiles:insert name="objectView.tile"/>
                     </div>
                   </td>
                 </c:when>

@@ -251,17 +251,16 @@ public abstract class IqlQueryTestCase extends SetupDataTestCase
         results.put("SubqueryExistsConstraintNeg", new IqlQuery("SELECT 'hello' AS a1_ WHERE EXISTS (SELECT a1_ FROM org.intermine.model.testmodel.Bank AS a1_)", null));
         results.put("ObjectPathExpression", new IqlQuery("SELECT a1_, a1_.department AS a2_ FROM org.intermine.model.testmodel.Employee AS a1_", null));
         results.put("ObjectPathExpression2", new IqlQuery("SELECT a1_, a1_.address AS a2_ FROM org.intermine.model.testmodel.Employee AS a1_", null));
-        results.put("ObjectPathExpression3", new IqlQuery("SELECT a1_, a1_.department.company AS a2_ FROM org.intermine.model.testmodel.Employee AS a1_", null));
-        results.put("ObjectPathExpression4", new IqlQuery("SELECT a1_, a1_.department.company.address AS a2_ FROM org.intermine.model.testmodel.Employee AS a1_", null));
-        results.put("FieldPathExpression", new IqlQuery("SELECT a1_, a1_.CEO.name(DEF '3fred') AS a2_ FROM org.intermine.model.testmodel.Company AS a1_", null));
-        results.put("FieldPathExpression2", new IqlQuery("SELECT a1_, a1_.department.company.address.address(DEF 'Nowhere') AS a2_ FROM org.intermine.model.testmodel.Employee AS a1_", null));
+        results.put("ObjectPathExpression3", new IqlQuery("SELECT a1_, a1_.department(SELECT default.company) AS a2_ FROM org.intermine.model.testmodel.Employee AS a1_", null));
+        results.put("ObjectPathExpression4", new IqlQuery("SELECT a1_, a1_.department(SELECT default.company(SELECT default.address)) AS a2_ FROM org.intermine.model.testmodel.Employee AS a1_", null));
+        results.put("ObjectPathExpression5", new IqlQuery("SELECT a1_, a2_.0 AS a3_, a2_.1 AS a4_, a2_.2 AS a5_ FROM org.intermine.model.testmodel.Employee AS a1_ PATH a1_.department(SELECT default, a2_.0, a2_.1 PATH default.company(SELECT default, default.address) AS a2_) AS a2_", null));
+        results.put("FieldPathExpression", new IqlQuery("SELECT a1_, a1_.CEO(SELECT default.name) AS a2_ FROM org.intermine.model.testmodel.Company AS a1_", null));
+        results.put("FieldPathExpression2", new IqlQuery("SELECT a1_, a1_.department(SELECT default.company(SELECT default.address(SELECT default.address))) AS a2_ FROM org.intermine.model.testmodel.Employee AS a1_", null));
         results.put("CollectionPathExpression", new IqlQuery("SELECT a1_, a1_.employees AS a2_ FROM org.intermine.model.testmodel.Department AS a1_", null));
-        results.put("CollectionPathExpression2", new IqlQuery("SELECT a1_, a1_.department.employees AS a2_ FROM org.intermine.model.testmodel.Employee AS a1_", null));
+        results.put("CollectionPathExpression2", new IqlQuery("SELECT a1_, a1_.department(SELECT default.employees) AS a2_ FROM org.intermine.model.testmodel.Employee AS a1_", null));
         results.put("CollectionPathExpression3", new IqlQuery("SELECT a1_, a1_.departments(SELECT default, default.employees) AS a2_ FROM org.intermine.model.testmodel.Company AS a1_", null));
         results.put("CollectionPathExpression4", new IqlQuery("SELECT a1_, a1_.departments(SELECT SINGLETON a1_ FROM org.intermine.model.testmodel.Employee AS a1_ WHERE default.employees CONTAINS a1_) AS a2_ FROM org.intermine.model.testmodel.Company AS a1_", null));
         results.put("CollectionPathExpression5", new IqlQuery("SELECT a1_, a1_.departments(WHERE default.name LIKE '%1') AS a2_ FROM org.intermine.model.testmodel.Company AS a1_", null));
-        results.put("ForeignKey", new IqlQuery("SELECT a1_, a1_.CEO.id(DEF null) AS a2_ FROM org.intermine.model.testmodel.Company AS a1_", null));
-        results.put("ForeignKey2", new IqlQuery("SELECT a1_, a1_.CEO.id(DEF 3) AS a2_ FROM org.intermine.model.testmodel.Company AS a1_", null));
         results.put("OrSubquery", new IqlQuery("SELECT a1_ FROM org.intermine.model.InterMineObject AS a1_ WHERE (a1_ IN (SELECT a1_ FROM org.intermine.model.testmodel.Company AS a1_) OR a1_ IN (SELECT a1_ FROM org.intermine.model.testmodel.Broke AS a1_))", null));
         results.put("ScientificNumber", new IqlQuery("SELECT a1_ FROM org.intermine.model.testmodel.Types AS a1_ WHERE (a1_.doubleType < 1.3432E24 AND a1_.floatType > -8.56E-32)", null));
         fq = new IqlQuery("SELECT a1_ FROM org.intermine.model.testmodel.Employee AS a1_ WHERE LOWER(a1_.name) IN ?", null);
@@ -292,6 +291,8 @@ public abstract class IqlQueryTestCase extends SetupDataTestCase
         results.put("SelectClassFromInterMineObject", new IqlQuery("SELECT a1_.class AS a2_, COUNT(*) AS a3_ FROM org.intermine.model.InterMineObject AS a1_ GROUP BY a1_.class", null));
         results.put("SelectClassFromEmployee", new IqlQuery("SELECT a1_.class AS a2_, COUNT(*) AS a3_ FROM org.intermine.model.testmodel.Employee AS a1_ GROUP BY a1_.class", null));
         results.put("SelectClassFromBrokeEmployable", new IqlQuery("SELECT a1_.class AS a2_, COUNT(*) AS a3_ FROM (org.intermine.model.testmodel.Broke, org.intermine.model.testmodel.Employable) AS a1_ GROUP BY a1_.class", null));
+        results.put("SubclassCollection", new IqlQuery("SELECT a1_, a1_.employees::org.intermine.model.testmodel.Manager AS a2_ FROM org.intermine.model.testmodel.Department AS a1_", null));
+        results.put("SubclassCollection2", new IqlQuery("SELECT a1_, a1_.employees::(org.intermine.model.testmodel.Broke, org.intermine.model.testmodel.Employee) AS a2_ FROM org.intermine.model.testmodel.Department AS a1_", null));
         results.put("SelectWhereBackslash", new IqlQuery("SELECT a1_ FROM org.intermine.model.testmodel.Employee AS a1_ WHERE a1_.name = 'Fred\\Blog's'", null));
         results.put("SelectWhereBackslash", NO_RESULT);
     }

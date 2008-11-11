@@ -139,12 +139,12 @@ public abstract class ObjectStoreQueriesTestCase extends QueryTestCase
 
         if (errorCount > 0) {
             if (failureCount > 0) {
-                throw new SummaryException(errorMessage.toString(), errorCount + " errors and " + failureCount + " failures present");
+                throw new SummaryException(errorMessage.toString().replace("<", "&amp;amp;lt;"), errorCount + " errors and " + failureCount + " failures present");
             } else {
-                throw new SummaryException(errorMessage.toString(), errorCount + " errors present");
+                throw new SummaryException(errorMessage.toString().replace("<", "&amp;amp;lt;"), errorCount + " errors present");
             }
         } else if (failureCount > 0) {
-            throw new SummaryAssertionFailedError(errorMessage.toString(), failureCount + " failures present");
+            throw new SummaryAssertionFailedError(errorMessage.toString().replace("<", "&amp;amp;lt;"), failureCount + " failures present");
         }
     }
 
@@ -234,6 +234,7 @@ public abstract class ObjectStoreQueriesTestCase extends QueryTestCase
         queries.put("ObjectPathExpression2", objectPathExpression2());
         queries.put("ObjectPathExpression3", objectPathExpression3());
         queries.put("ObjectPathExpression4", objectPathExpression4());
+        queries.put("ObjectPathExpression5", objectPathExpression5());
         queries.put("FieldPathExpression", fieldPathExpression());
         queries.put("FieldPathExpression2", fieldPathExpression2());
         queries.put("CollectionPathExpression", collectionPathExpression());
@@ -241,8 +242,6 @@ public abstract class ObjectStoreQueriesTestCase extends QueryTestCase
         queries.put("CollectionPathExpression3", collectionPathExpression3());
         queries.put("CollectionPathExpression4", collectionPathExpression4());
         queries.put("CollectionPathExpression5", collectionPathExpression5());
-        queries.put("ForeignKey", foreignKey());
-        queries.put("ForeignKey2", foreignKey2());
         queries.put("OrSubquery", orSubquery());
         queries.put("ScientificNumber", scientificNumber());
         queries.put("LowerBag", lowerBag());
@@ -267,6 +266,8 @@ public abstract class ObjectStoreQueriesTestCase extends QueryTestCase
         queries.put("SelectClassFromInterMineObject", selectClassFromInterMineObject());
         queries.put("SelectClassFromEmployee", selectClassFromEmployee());
         queries.put("SelectClassFromBrokeEmployable", selectClassFromBrokeEmployable());
+        queries.put("SubclassCollection", subclassCollection());
+        queries.put("SubclassCollection2", subclassCollection2());
         queries.put("SelectWhereBackslash", selectWhereBackslash());
     }
 
@@ -1573,7 +1574,9 @@ public abstract class ObjectStoreQueriesTestCase extends QueryTestCase
         QueryClass qc = new QueryClass(Employee.class);
         q.addFrom(qc);
         q.addToSelect(qc);
-        q.addToSelect(new QueryObjectPathExpression(new QueryObjectPathExpression(qc, "department"), "company"));
+        QueryObjectPathExpression qope1 = new QueryObjectPathExpression(qc, "department");
+        qope1.addToSelect(new QueryObjectPathExpression(qope1.getDefaultClass(), "company"));
+        q.addToSelect(qope1);
         q.setDistinct(false);
         return q;
     }
@@ -1586,7 +1589,33 @@ public abstract class ObjectStoreQueriesTestCase extends QueryTestCase
         QueryClass qc = new QueryClass(Employee.class);
         q.addFrom(qc);
         q.addToSelect(qc);
-        q.addToSelect(new QueryObjectPathExpression(new QueryObjectPathExpression(new QueryObjectPathExpression(qc, "department"), "company"), "address"));
+        QueryObjectPathExpression qope1 = new QueryObjectPathExpression(qc, "department");
+        QueryObjectPathExpression qope2 = new QueryObjectPathExpression(qope1.getDefaultClass(), "company");
+        qope2.addToSelect(new QueryObjectPathExpression(qope2.getDefaultClass(), "address"));
+        qope1.addToSelect(qope2);
+        q.addToSelect(qope1);
+        q.setDistinct(false);
+        return q;
+    }
+
+    /*
+     * SELECT a1_, a1_.department AS a2_, a1_.department.company AS a3_, a1_.department.company.address AS a4_ FROM Employee AS a1_
+     */
+    public static Query objectPathExpression5() throws Exception {
+        Query q = new Query();
+        QueryClass qc = new QueryClass(Employee.class);
+        q.addFrom(qc);
+        q.addToSelect(qc);
+        QueryObjectPathExpression qope1 = new QueryObjectPathExpression(qc, "department");
+        QueryObjectPathExpression qope2 = new QueryObjectPathExpression(qope1.getDefaultClass(), "company");
+        qope2.addToSelect(qope2.getDefaultClass());
+        qope2.addToSelect(new QueryObjectPathExpression(qope2.getDefaultClass(), "address"));
+        qope1.addToSelect(qope1.getDefaultClass());
+        qope1.addToSelect(new PathExpressionField(qope2, 0));
+        qope1.addToSelect(new PathExpressionField(qope2, 1));
+        q.addToSelect(new PathExpressionField(qope1, 0));
+        q.addToSelect(new PathExpressionField(qope1, 1));
+        q.addToSelect(new PathExpressionField(qope1, 2));
         q.setDistinct(false);
         return q;
     }
@@ -1599,7 +1628,9 @@ public abstract class ObjectStoreQueriesTestCase extends QueryTestCase
         QueryClass qc = new QueryClass(Company.class);
         q.addFrom(qc);
         q.addToSelect(qc);
-        q.addToSelect(new QueryFieldPathExpression(qc, "CEO", "name", "3fred"));
+        QueryObjectPathExpression qope1 = new QueryObjectPathExpression(qc, "CEO");
+        qope1.addToSelect(new QueryField(qope1.getDefaultClass(), "name"));
+        q.addToSelect(qope1);
         q.setDistinct(false);
         return q;
     }
@@ -1612,7 +1643,13 @@ public abstract class ObjectStoreQueriesTestCase extends QueryTestCase
         QueryClass qc = new QueryClass(Employee.class);
         q.addFrom(qc);
         q.addToSelect(qc);
-        q.addToSelect(new QueryFieldPathExpression(new QueryObjectPathExpression(new QueryObjectPathExpression(qc, "department"), "company"), "address", "address", "Nowhere"));
+        QueryObjectPathExpression qope1 = new QueryObjectPathExpression(qc, "department");
+        QueryObjectPathExpression qope2 = new QueryObjectPathExpression(qope1.getDefaultClass(), "company");
+        QueryObjectPathExpression qope3 = new QueryObjectPathExpression(qope2.getDefaultClass(), "address");
+        qope3.addToSelect(new QueryField(qope3.getDefaultClass(), "address"));
+        qope2.addToSelect(qope3);
+        qope1.addToSelect(qope2);
+        q.addToSelect(qope1);
         q.setDistinct(false);
         return q;
     }
@@ -1638,7 +1675,9 @@ public abstract class ObjectStoreQueriesTestCase extends QueryTestCase
         QueryClass qc = new QueryClass(Employee.class);
         q.addFrom(qc);
         q.addToSelect(qc);
-        q.addToSelect(new QueryCollectionPathExpression(new QueryObjectPathExpression(qc, "department"), "employees"));
+        QueryObjectPathExpression qope1 = new QueryObjectPathExpression(qc, "department");
+        qope1.addToSelect(new QueryCollectionPathExpression(qope1.getDefaultClass(), "employees"));
+        q.addToSelect(qope1);
         q.setDistinct(false);
         return q;
     }
@@ -1689,32 +1728,6 @@ public abstract class ObjectStoreQueriesTestCase extends QueryTestCase
         QueryCollectionPathExpression qcpe = new QueryCollectionPathExpression(qc, "departments");
         qcpe.setConstraint(new SimpleConstraint(new QueryField(qcpe.getDefaultClass(), "name"), ConstraintOp.MATCHES, new QueryValue("%1")));
         q.addToSelect(qcpe);
-        q.setDistinct(false);
-        return q;
-    }
-
-    /*
-     * SELECT a1_, a1_.CEO.id(DEF: null) AS a2_ FROM Company AS a1_
-     */
-    public static Query foreignKey() throws Exception {
-        Query q = new Query();
-        QueryClass qc = new QueryClass(Company.class);
-        q.addFrom(qc);
-        q.addToSelect(qc);
-        q.addToSelect(new QueryFieldPathExpression(qc, "CEO", "id", null));
-        q.setDistinct(false);
-        return q;
-    }
-
-    /*
-     * SELECT a1_, a1_.CEO.id(DEF: 3) AS a2_ FROM Company AS a1_
-     */
-    public static Query foreignKey2() throws Exception {
-        Query q = new Query();
-        QueryClass qc = new QueryClass(Company.class);
-        q.addFrom(qc);
-        q.addToSelect(qc);
-        q.addToSelect(new QueryFieldPathExpression(qc, "CEO", "id", new Integer(3)));
         q.setDistinct(false);
         return q;
     }
@@ -2081,6 +2094,32 @@ public abstract class ObjectStoreQueriesTestCase extends QueryTestCase
         q.addToSelect(qf);
         q.addToSelect(new QueryFunction());
         q.addToGroupBy(qf);
+        q.setDistinct(false);
+        return q;
+    }
+
+    /*
+     * SELECT a1_, a1_.employees::Manager FROM Department AS a1_
+     */
+    public static Query subclassCollection() throws Exception {
+        Query q = new Query();
+        QueryClass qc = new QueryClass(Department.class);
+        q.addFrom(qc);
+        q.addToSelect(qc);
+        q.addToSelect(new QueryCollectionPathExpression(qc, "employees", Manager.class));
+        q.setDistinct(false);
+        return q;
+    }
+
+    /*
+     * SELECT a1_, a1_.employees::(Broke, Employee) FROM Department AS a1_
+     */
+    public static Query subclassCollection2() throws Exception {
+        Query q = new Query();
+        QueryClass qc = new QueryClass(Department.class);
+        q.addFrom(qc);
+        q.addToSelect(qc);
+        q.addToSelect(new QueryCollectionPathExpression(qc, "employees", Broke.class, Employee.class));
         q.setDistinct(false);
         return q;
     }

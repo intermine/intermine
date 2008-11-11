@@ -12,6 +12,7 @@ package org.intermine.pathquery;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.IdentityHashMap;
@@ -43,12 +44,15 @@ public class PathQuery
     private Model model;
     protected LinkedHashMap<String, PathNode> nodes = new LinkedHashMap<String, PathNode>();
     private List<Path> view = new ArrayList<Path>();
-    private List<OrderBy> sortOrder = new ArrayList<OrderBy>();
+    private Map<Path, String> sortOrder = new LinkedHashMap<Path,String>();
     private ResultsInfo info;
     private List<Throwable> problems = new ArrayList<Throwable>();
     protected LogicExpression constraintLogic = null;
     private Map<Path, String> pathDescriptions = new HashMap<Path, String>();
     private static final String MSG = "Invalid path - path cannot be a null or empty string";
+    // Postgres does it the other way...
+    public static final String ASCENDING = "asc";
+    public static final String DESCENDING = "desc";
 
     /**
      * Construct a new instance of PathQuery.
@@ -67,7 +71,7 @@ public class PathQuery
         this.model = query.model;
         this.nodes = new LinkedHashMap<String, PathNode>(query.nodes);
         this.view = new ArrayList<Path>(query.view);
-        this.sortOrder = new ArrayList<OrderBy>(query.sortOrder);
+        this.sortOrder = new HashMap<Path, String>(query.sortOrder);
         this.info = query.info;
         this.problems = new ArrayList<Throwable>(query.problems);
         this.constraintLogic = query.constraintLogic;
@@ -157,6 +161,51 @@ public class PathQuery
     }
 
     /**
+     * Change the join style of a path in the query. All children will also be updated.
+     *
+     * @param path a path with the old join style
+     * @return the path, flipped
+     */
+    public String flipJoinStyle(String path) {
+        String oldPath = getCorrectJoinStyle(path);
+        if (!oldPath.equals(path)) {
+            throw new IllegalArgumentException("Path not found in query: " + path);
+        }
+
+        int lastDotIndex = path.lastIndexOf('.');
+        int lastColonIndex = path.lastIndexOf(':');
+        String newPathString;
+        if (lastDotIndex > lastColonIndex) {
+            newPathString = path.substring(0, lastDotIndex) + ':'
+                + path.substring(lastDotIndex + 1);
+        } else {
+            newPathString = path.substring(0, lastColonIndex) + '.'
+                + path.substring(lastColonIndex + 1);
+        }
+
+        List<Path> newView = new ArrayList<Path>();
+        for (Path viewPath : view) {
+            String viewPathString = viewPath.toStringNoConstraints();
+            viewPathString = viewPathString.replace(path, newPathString);
+            newView.add(new Path(model, viewPathString, viewPath.getSubClassConstraintPaths()));
+        }
+        view = newView;
+
+        PathNode node = getNode(path);
+        if (node != null) {
+            node.setOuterJoin(!node.isOuterJoin());
+        }
+
+        Map<String, PathNode> origNodes = getNodes();
+        List<PathNode> nodes = new ArrayList(origNodes.values());
+        origNodes.clear();
+        for (PathNode transferNode : nodes) {
+            origNodes.put(transferNode.getPathString(), transferNode);
+        }
+        return newPathString;
+    }
+
+    /**
      * Appends the paths to the end of the select list. Paths can be a single path
      * or a comma delimited list of paths.
      * @param paths a list of paths to be appended to the end of the view list
@@ -171,11 +220,23 @@ public class PathQuery
     }
 
     /**
-     * Appends the paths to the end of the select list, ignores any bad paths
-     * @param viewStrings a list of paths to be appended to the end of the view list
+     * Appends the paths to the end of the select list, ignores any bad paths.
+     *
+     * @param paths a list of paths to be appended to the end of the view list
      */
-    public void addView(List<String> viewStrings) {
-        addViewPaths(makePaths(viewStrings));
+    public void addView(List<String> paths) {
+        try {
+            for (String path : paths) {
+                if (!getCorrectJoinStyle(path).equals(path)) {
+                    throw new IllegalArgumentException("Adding two join types for same path: "
+                            + path + " and " + getCorrectJoinStyle(path));
+                }
+                view.add(makePath(model, this, path.trim()));
+            }
+        } catch (PathError e) {
+            LOG.error("Path error", e);
+            addProblem(e);
+        }
     }
 
     /**
@@ -189,7 +250,14 @@ public class PathQuery
             return;
         }
         try {
-            view.addAll(paths);
+            for (Path p : paths) {
+                String path = p.toStringNoConstraints();
+                if (!getCorrectJoinStyle(path).equals(path)) {
+                    throw new IllegalArgumentException("Adding two join types for same path: "
+                            + path + " and " + getCorrectJoinStyle(path));
+                }
+                view.add(p);
+            }
         } catch (PathError e) {
             logPathError(e);
         }
@@ -202,6 +270,10 @@ public class PathQuery
      */
     @Deprecated public void addPathStringToView(String viewString) {
         try {
+            if (!getCorrectJoinStyle(viewString).equals(viewString)) {
+                throw new IllegalArgumentException("Adding two join types for same path: "
+                        + viewString + " and " + getCorrectJoinStyle(viewString));
+            }
             view.add(PathQuery.makePath(model, this, viewString));
             validateOrderBy();
         } catch (PathError e) {
@@ -210,15 +282,17 @@ public class PathQuery
     }
 
     /**
-     * Gets the value of view
+     * Gets the value of view.
+     *
      * @return a List of paths
      */
     public List<Path> getView() {
-        return view;
+        return Collections.unmodifiableList(view);
     }
 
     /**
      * Return the view as a List of Strings.
+     *
      * @return the view as Strings
      */
     public List<String> getViewStrings() {
@@ -230,6 +304,19 @@ public class PathQuery
     }
 
     /**
+     * Returns the view as a List of Strings, but with dots instead of colons.
+     *
+     * @return a List of Strings
+     */
+    public List<String> getDottedViewStrings() {
+        List<String> retval = new ArrayList<String>();
+        for (Path path : view) {
+            retval.add(path.toStringNoConstraints().replace(':', '.'));
+        }
+        return retval;
+    }
+
+    /**
      * Remove the Path with the given String representation from the view.  If the pathString
      * refers to a path that appears in a PathError in the problems collection, remove that problem.
      * @param pathString the path to remove
@@ -238,7 +325,7 @@ public class PathQuery
         Iterator<Path> iter = view.iterator();
         while (iter.hasNext()) {
             Path viewPath = iter.next();
-            if (viewPath.toStringNoConstraints().equals(pathString)
+            if (viewPath.toStringNoConstraints().startsWith(pathString)
                             || viewPath.toString().equals(pathString)) {
                 iter.remove();
             }
@@ -472,9 +559,21 @@ public class PathQuery
         if (sortOrder.isEmpty()) {
             Path p = getFirstPathFromView();
             if (p != null) {
-                sortOrder.add(new OrderBy(p));
+                sortOrder.put(p, ASCENDING);
             }
         }
+    }
+
+    /**
+     * Returns whether the given path can be used in the Order By list of this query.
+     * Outer joined paths cannot be used.
+     *
+     * @param path a String path to check
+     * @return true if the path can be used
+     */
+    public boolean isValidOrderPath(String path) {
+        path = getCorrectJoinStyle(path);
+        return path.indexOf(':') == -1;
     }
 
     /**
@@ -483,28 +582,32 @@ public class PathQuery
      * @param paths paths to create the order by list
      */
     public void setOrderBy(String paths) {
-        if (paths == null || paths.equals("")) {
-            logPathError(MSG);
-            return;
-        }
-        setOrderBy(paths, Boolean.TRUE);
+        setOrderBy(paths, ASCENDING);
     }
 
     /**
      * Sets the order by list of the query to the list of paths given.  Paths can be a single path
      * or a comma delimited list of paths.  To append a path to the list instead use addOrderBy.
      * @param paths paths to create the order by list
-     * @param sortAscending whether or not to sort all fields in ascending order
+     * @param direction the sort direction
      */
-    public void setOrderBy(String paths, Boolean sortAscending) {
+    public void setOrderBy(String paths, String direction) {
         if (paths == null || paths.equals("")) {
             logPathError(MSG);
             return;
         }
-        List<OrderBy> orderBy = new ArrayList<OrderBy>();
+        Map<Path, String> orderBy = new LinkedHashMap<Path, String>();
         try {
             for (String path : paths.split("[, ]+")) {
-                orderBy.add(new OrderBy(makePath(model, this, path), sortAscending));
+                if (!isValidOrderPath(path)) {
+                    throw new IllegalArgumentException("Sort order path " + path + " cannot be in "
+                            + "the ORDER BY list");
+                }
+                if(direction.equals("desc")) {
+                    orderBy.put(makePath(model, this, path), DESCENDING);
+                } else if(direction.equals("asc")) {
+                    orderBy.put(makePath(model, this, path), ASCENDING);
+                }
             }
         } catch (PathError e) {
             logPathError(e);
@@ -519,29 +622,29 @@ public class PathQuery
      * @param paths paths to create the order by list
      */
     public void setOrderBy(List<String> paths) {
-        if (paths == null || paths.isEmpty()) {
-            logPathError(MSG);
-            return;
-        }
-        setOrderBy(paths, Boolean.TRUE);
+        setOrderBy(paths, ASCENDING);
     }
 
     /**
      * Sets the order by list of the query to the list of paths given.  Paths can be a single path
      * or a comma delimited list of paths.  To append a path to the list instead use addOrderBy.
      * @param paths paths to create the order by list
-     * @param sortAscending whether to sort all order by columns in ascending order
+     * @param direction the sort direction
      */
-    public void setOrderBy(List<String> paths, Boolean sortAscending) {
+    public void setOrderBy(List<String> paths, String direction) {
         if (paths == null || paths.isEmpty()) {
             logPathError(MSG);
             return;
         }
-        List<OrderBy> orderBy = new ArrayList<OrderBy>();
+        Map<Path, String> orderBy = new LinkedHashMap<Path, String>();
         for (String path : paths) {
             if (path != null && !path.equals("")) {
                 try {
-                    orderBy.add(new OrderBy(makePath(model, this, path), sortAscending));
+                    if (!isValidOrderPath(path)) {
+                        throw new IllegalArgumentException("Sort order path " + path + " cannot be "
+                                + "in the ORDER BY list");
+                    }
+                    orderBy.put(makePath(model, this, path), direction);
                 } catch (PathError e) {
                     logPathError(e);
                 }
@@ -560,19 +663,14 @@ public class PathQuery
      * assumes paths are valid
      * @param paths paths to create the order by list
      */
-    public void setOrderByList(List<OrderBy> paths) {
+    public void setOrderByList(Map<Path, String> paths) {
         if (paths.isEmpty()) {
             logPathError(MSG);
             return;
         }
-        List<OrderBy> orderByList = new ArrayList();
-        for (OrderBy orderBy : paths) {
-            if (orderBy != null && (orderBy.getField() != null
-                            && !orderBy.getDirection().equals(""))) {
-                orderByList.add(orderBy);
-            } else {
-                logPathError(MSG);
-            }
+        Map<Path, String> orderByList = new LinkedHashMap<Path, String>();
+        for (Path path : paths.keySet()) {
+            orderByList.put(path, paths.get(path));
         }
         if (!orderByList.isEmpty()) {
             sortOrder = orderByList;
@@ -585,11 +683,7 @@ public class PathQuery
      * @param paths a list of paths to be appended to the end of the order by list
      */
     public void addOrderBy(String paths) {
-        if (paths.equals("")) {
-            logPathError(MSG);
-            return;
-        }
-        addOrderBy(paths, Boolean.TRUE);
+        addOrderBy(paths, ASCENDING);
     }
 
     /**
@@ -598,17 +692,20 @@ public class PathQuery
      * @param paths a list of paths to be appended to the end of the order by list
      * @param sortAscending whether or not to sort these fields in ascending order
      */
-    public void addOrderBy(String paths, Boolean sortAscending) {
+    public void addOrderBy(String paths, String direction) {
         if (paths.equals("")) {
             logPathError(MSG);
             return;
         }
-        List<OrderBy> orderBy = new ArrayList<OrderBy>();
-        String direction = (sortAscending.booleanValue() ? "asc" : "desc");
+        Map<Path, String> orderBy = new LinkedHashMap<Path, String>();
         for (String path : paths.split("[, ]")) {
             if (path != null && !path.equals("")) {
                 try {
-                    orderBy.add(new OrderBy(makePath(model, this, path), direction));
+                    if (!isValidOrderPath(path)) {
+                        throw new IllegalArgumentException("Sort order path " + path + " cannot be "
+                                + "in the ORDER BY list");
+                    }
+                    orderBy.put(makePath(model, this, path), direction);
                 } catch (PathError e) {
                     logPathError(e);
                 }
@@ -616,7 +713,7 @@ public class PathQuery
                 logPathError(MSG);
             }
         }
-        sortOrder.addAll(orderBy);
+        sortOrder.putAll(orderBy);
     }
 
     /**
@@ -628,7 +725,7 @@ public class PathQuery
             logPathError(MSG);
             return;
         }
-        addOrderBy(paths, Boolean.TRUE);
+        addOrderBy(paths, ASCENDING);
     }
 
     /**
@@ -636,16 +733,20 @@ public class PathQuery
      * @param paths a list of paths to be appended to the end of the order by list
      * @param sortAscending whether or not to sort these fields in ascending order
      */
-    public void addOrderBy(List<String> paths, Boolean sortAscending) {
+    public void addOrderBy(List<String> paths, String direction) {
         if (paths.size() == 0) {
             logPathError(MSG);
             return;
         }
-        List<OrderBy> orderBy = new ArrayList<OrderBy>();
+        Map<Path, String> orderBy = new LinkedHashMap<Path, String>();
         try {
             for (String path : paths) {
                 if (path != null && !path.equals("")) {
-                    orderBy.add(new OrderBy(makePath(model, this, path)));
+                    if (!isValidOrderPath(path)) {
+                        throw new IllegalArgumentException("Sort order path " + path + " cannot be "
+                                + "in the ORDER BY list");
+                    }
+                    orderBy.put(makePath(model, this, path), direction);
                 } else {
                     logPathError(MSG);
                 }
@@ -654,32 +755,7 @@ public class PathQuery
             logPathError(e);
         }
         if (!orderBy.isEmpty()) {
-            sortOrder.addAll(orderBy);
-        }
-    }
-
-    /**
-     * Sets the sort order
-     * @param sortOrder list of paths
-     */
-    @Deprecated public void setSortOrder(List<OrderBy> sortOrder) {
-        this.sortOrder = sortOrder;
-    }
-
-    /**
-     * Add a path to the sort order
-     * @param sortOrderString the String version of the path to add - should not include any class
-     * constraints (ie. use "Departement.employee.name" not "Departement.employee[Contractor].name")
-     * @param direction asc or desc
-     */
-    @Deprecated public void addPathStringToSortOrder(String sortOrderString, String direction) {
-        try {
-            sortOrder.clear(); // there can only be one sort column
-            Path p = PathQuery.makePath(model, this, sortOrderString);
-            OrderBy o = new OrderBy(p, direction);
-            sortOrder.add(o);
-        } catch (PathError e) {
-            addProblem(e);
+            sortOrder.putAll(orderBy);
         }
     }
 
@@ -687,8 +763,16 @@ public class PathQuery
      * Gets the sort order
      * @return a List of paths
      */
-    public List<OrderBy> getSortOrder() {
+    public Map<Path, String> getSortOrder() {
         return sortOrder;
+    }
+    
+    /**
+     * Set a new sort order
+     * @param newSortOrder
+     */
+    public void setSortOrder(Map<Path, String> newSortOrder) {
+        sortOrder = newSortOrder;
     }
 
     /**
@@ -697,31 +781,10 @@ public class PathQuery
      */
     public List<String> getSortOrderStrings() {
         List<String> retList = new ArrayList<String>();
-        for (OrderBy orderBy: sortOrder) {
-            retList.add(orderBy.getField().toStringNoConstraints() + " " + orderBy.getDirection());
+        for (Path path: sortOrder.keySet()) {
+            retList.add(path.toStringNoConstraints() + " " + sortOrder.get(path));
         }
         return retList;
-    }
-
-    /**
-     * Change direction of the first field in the sort order.  used by javascripts on query
-     * builder page, which currently only has one sort field
-     * @param direction New sorting direction - asc or desc
-     */
-    public void changeDirection(String direction) {
-        if (!direction.equals("desc") && !direction.equals("asc")) {
-            logPathError("Invalid directional string, must be asc or desc");
-        }
-        if (sortOrder != null && !sortOrder.isEmpty()) {
-            sortOrder.get(0).setDirection(direction);
-        } else {
-            if (view.size() > 0) {
-                sortOrder = new ArrayList();
-                sortOrder.add(new OrderBy(view.get(0), direction));
-            } else {
-                logPathError("View list is empty");
-            }
-        }
     }
 
     /**
@@ -731,22 +794,22 @@ public class PathQuery
      * @param viewString The string being removed from the view list
      */
     private void removeOrderBy(String viewString) {
-        Iterator<OrderBy> iter = sortOrder.iterator();
-        while (iter.hasNext()) {
-            OrderBy sort = iter.next();
-            if (sort.getField().toStringNoConstraints().equals(viewString)) {
-                iter.remove();          // remove this path from the order by clause
-                validateOrderBy();      // QB requires that the order by clause not be empty
+        Path pathToRemove = null;
+        for (Path path : sortOrder.keySet()) {
+            if (path.toStringNoConstraints().equals(viewString)) {
+                pathToRemove = path;
                 return;
             }
         }
+        sortOrder.remove(pathToRemove);
+        validateOrderBy();
     }
 
     /**
      * Removes everything from the order by list and adds the first path in the view list
      */
     public void resetOrderBy() {
-        sortOrder = new ArrayList();
+        sortOrder = new LinkedHashMap<Path, String >();
         validateOrderBy();
     }
 
@@ -760,6 +823,59 @@ public class PathQuery
      */
     public Map<String, PathNode> getNodes() {
         return nodes;
+    }
+
+    /**
+     * Gets a Map from String path with dots instead of colons to String path.
+     *
+     * @return a Map from String to String
+     */
+    public Map<String, String> getPathsFromDots() {
+        Map<String, String> retval = new LinkedHashMap<String, String>();
+        for (Map.Entry<String, PathNode> entry : nodes.entrySet()) {
+            retval.put(entry.getKey().replace(':', '.'), entry.getValue().getPathString());
+        }
+        for (Path p : view) {
+            String path = p.toStringNoConstraints();
+            int lastIndex;
+            do {
+                String answerSoFar = retval.get(path.replace(':', '.'));
+                if (answerSoFar == null) {
+                    retval.put(path.replace(':', '.'), path);
+                } else if (!answerSoFar.equals(path)) {
+                    throw new IllegalArgumentException("Two join types exist for the same path: "
+                            + path + " and " + answerSoFar);
+                }
+                lastIndex = Math.max(path.lastIndexOf(':'), path.lastIndexOf('.'));
+                if (lastIndex != -1) {
+                    path = path.substring(0, lastIndex);
+                }
+            } while (lastIndex != -1);
+        }
+        return Collections.unmodifiableMap(retval);
+    }
+
+    /**
+     * Returns a String path with the correct join style.
+     *
+     * @param path a path string
+     * @return the path string, with colons instead of dots in the correct places.
+     */
+    public String getCorrectJoinStyle(String path) {
+        String dotPath = path.replace(':', '.');
+        Map<String, String> dots = getPathsFromDots();
+        String bestReplacement = null;
+        for (Map.Entry<String, String> dot : dots.entrySet()) {
+            if (dotPath.startsWith(dot.getKey())
+                    && (bestReplacement == null || dot.getValue().startsWith(bestReplacement))) {
+                bestReplacement = dot.getValue();
+            }
+        }
+        if (bestReplacement != null) {
+            return bestReplacement + path.substring(bestReplacement.length());
+        } else {
+            return path;
+        }
     }
 
     /**
@@ -777,6 +893,11 @@ public class PathQuery
      * @return the PathNode that was added to the nodes Map
      */
     public PathNode addNode(String path) {
+        if (!getCorrectJoinStyle(path).equals(path)) {
+            throw new IllegalArgumentException("Adding two join types for same path: "
+                    + path + " and " + getCorrectJoinStyle(path));
+        }
+
         PathNode node;
 
         if (nodes.get(path) != null) {
@@ -796,6 +917,7 @@ public class PathQuery
             }
         } else {
             String prefix = path.substring(0, lastIndex);
+            String pathFromDots = getPathsFromDots().get(path.replace(':', '.'));
             if (nodes.containsKey(prefix)) {
                 Iterator<String> pathsIter = nodes.keySet().iterator();
 
@@ -837,8 +959,8 @@ public class PathQuery
             query.getNodes().put(entry.getKey(), cloneNode(query, entry.getValue(), newNodes,
                                                            model));
         }
-        query.getView().addAll(view);
-        query.getSortOrder().addAll(sortOrder);
+        query.view.addAll(view);
+        query.getSortOrder().putAll(sortOrder);
         if (problems != null) {
             query.problems = new ArrayList<Throwable>(problems);
         }

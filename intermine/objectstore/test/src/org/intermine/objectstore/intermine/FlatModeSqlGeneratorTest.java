@@ -211,6 +211,8 @@ public class FlatModeSqlGeneratorTest extends SqlGeneratorTest
         results2.put("ObjectPathExpression3", new HashSet(Arrays.asList("Employee", "Department", "Company")));
         results.put("ObjectPathExpression4", "SELECT a1_.addressId AS a1_addressId, a1_.age AS a1_age, a1_.companyId AS a1_companyId, a1_.departmentId AS a1_departmentId, a1_.departmentThatRejectedMeId AS a1_departmentThatRejectedMeId, a1_.fullTime AS a1_fullTime, a1_.id AS a1_id, a1_.intermine_end AS a1_intermine_end, a1_.name AS a1_name, a1_.salary AS a1_salary, a1_.seniority AS a1_seniority, a1_.title AS a1_title, a1_.class AS a1_objectclass FROM Employee AS a1_ WHERE a1_.tableclass = 'org.intermine.model.testmodel.Employee' ORDER BY a1_.id");
         results2.put("ObjectPathExpression4", new HashSet(Arrays.asList("Employee", "Department", "Company", "Address")));
+        results.put("ObjectPathExpression5", "SELECT a1_.addressId AS a1_addressId, a1_.age AS a1_age, a1_.companyId AS a1_companyId, a1_.departmentId AS a1_departmentId, a1_.departmentThatRejectedMeId AS a1_departmentThatRejectedMeId, a1_.fullTime AS a1_fullTime, a1_.id AS a1_id, a1_.intermine_end AS a1_intermine_end, a1_.name AS a1_name, a1_.salary AS a1_salary, a1_.seniority AS a1_seniority, a1_.title AS a1_title, a1_.class AS a1_objectclass FROM Employee AS a1_ WHERE a1_.tableclass = 'org.intermine.model.testmodel.Employee' ORDER BY a1_.id");
+        results2.put("ObjectPathExpression5", new HashSet(Arrays.asList("Employee", "Department", "Company", "Address")));
         results.put("FieldPathExpression", "SELECT a1_.CEOId AS a1_CEOId, a1_.addressId AS a1_addressId, a1_.id AS a1_id, a1_.name AS a1_name, a1_.vatNumber AS a1_vatNumber FROM Company AS a1_ ORDER BY a1_.id");
         results2.put("FieldPathExpression", new HashSet(Arrays.asList(new String[] {"Company", "Employee"})));
         results.put("FieldPathExpression2", "SELECT a1_.addressId AS a1_addressId, a1_.age AS a1_age, a1_.companyId AS a1_companyId, a1_.departmentId AS a1_departmentId, a1_.departmentThatRejectedMeId AS a1_departmentThatRejectedMeId, a1_.fullTime AS a1_fullTime, a1_.id AS a1_id, a1_.intermine_end AS a1_intermine_end, a1_.name AS a1_name, a1_.salary AS a1_salary, a1_.seniority AS a1_seniority, a1_.title AS a1_title, a1_.class AS a1_objectclass FROM Employee AS a1_ WHERE a1_.tableclass = 'org.intermine.model.testmodel.Employee' ORDER BY a1_.id");
@@ -225,10 +227,6 @@ public class FlatModeSqlGeneratorTest extends SqlGeneratorTest
         results2.put("CollectionPathExpression4", new HashSet(Arrays.asList("Company", "Department", "Employee")));
         results.put("CollectionPathExpression5", "SELECT a1_.CEOId AS a1_CEOId, a1_.addressId AS a1_addressId, a1_.id AS a1_id, a1_.name AS a1_name, a1_.vatNumber AS a1_vatNumber FROM Company AS a1_ ORDER BY a1_.id");
         results2.put("CollectionPathExpression5", new HashSet(Arrays.asList("Company", "Department")));
-        results.put("ForeignKey", "SELECT a1_.CEOId AS a1_CEOId, a1_.addressId AS a1_addressId, a1_.id AS a1_id, a1_.name AS a1_name, a1_.vatNumber AS a1_vatNumber, a1_.CEOId AS a2_ FROM Company AS a1_ ORDER BY a1_.id");
-        results2.put("ForeignKey", Collections.singleton("Company"));
-        results.put("ForeignKey2", "SELECT a1_.CEOId AS a1_CEOId, a1_.addressId AS a1_addressId, a1_.id AS a1_id, a1_.name AS a1_name, a1_.vatNumber AS a1_vatNumber, a1_.CEOId AS a2_ FROM Company AS a1_ ORDER BY a1_.id");
-        results2.put("ForeignKey2", Collections.singleton("Company"));
         results.put("OrSubquery", NO_RESULT);
         results2.put("OrSubquery", NO_RESULT);
         results.put("ScientificNumber", "SELECT a1_.bigDecimalObjType AS a1_bigDecimalObjType, a1_.booleanObjType AS a1_booleanObjType, a1_.booleanType AS a1_booleanType, a1_.dateObjType AS a1_dateObjType, a1_.doubleObjType AS a1_doubleObjType, a1_.doubleType AS a1_doubleType, a1_.floatObjType AS a1_floatObjType, a1_.floatType AS a1_floatType, a1_.id AS a1_id, a1_.intObjType AS a1_intObjType, a1_.intType AS a1_intType, a1_.longObjType AS a1_longObjType, a1_.longType AS a1_longType, a1_.name AS a1_name, a1_.shortObjType AS a1_shortObjType, a1_.shortType AS a1_shortType, a1_.stringObjType AS a1_stringObjType FROM Types AS a1_ WHERE a1_.doubleType < 1.3432E24 AND a1_.floatType > -8.56E-32::REAL ORDER BY a1_.id");
@@ -252,6 +250,10 @@ public class FlatModeSqlGeneratorTest extends SqlGeneratorTest
         results.put("SelectFunctionNoGroup", "SELECT MIN(a1_.id) AS a2_ FROM Employee AS a1_ WHERE a1_.tableclass = 'org.intermine.model.testmodel.Employee'");
         results2.put("SelectFunctionNoGroup", Collections.singleton("Employee"));
         results.put("SelectClassFromEmployee", "SELECT a1_.class AS a2_, COUNT(*) AS a3_ FROM Employee AS a1_ WHERE a1_.tableclass = 'org.intermine.model.testmodel.Employee' GROUP BY a1_.class ORDER BY a1_.class, COUNT(*)");
+        results.put("SubclassCollection", "SELECT a1_.companyId AS a1_companyId, a1_.id AS a1_id, a1_.managerId AS a1_managerId, a1_.name AS a1_name FROM Department AS a1_ ORDER BY a1_.id");
+        results2.put("SubclassCollection", new HashSet(Arrays.asList("Department", "Employee")));
+        results.put("SubclassCollection2", NO_RESULT);
+        results2.put("SubclassCollection2", NO_RESULT);
         results.put("SelectWhereBackslash", "SELECT a1_.addressId AS a1_addressId, a1_.age AS a1_age, a1_.companyId AS a1_companyId, a1_.departmentId AS a1_departmentId, a1_.departmentThatRejectedMeId AS a1_departmentThatRejectedMeId, a1_.fullTime AS a1_fullTime, a1_.id AS a1_id, a1_.intermine_end AS a1_intermine_end, a1_.name AS a1_name, a1_.salary AS a1_salary, a1_.seniority AS a1_seniority, a1_.title AS a1_title, a1_.class AS a1_objectclass FROM Employee AS a1_ WHERE a1_.tableclass = 'org.intermine.model.testmodel.Employee' AND a1_.name = E'Fred\\\\Blog\\'s' ORDER BY a1_.id");
         results2.put("SelectWhereBackslash", Collections.singleton("Employee"));
     }

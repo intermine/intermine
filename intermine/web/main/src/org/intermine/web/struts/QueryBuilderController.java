@@ -36,7 +36,6 @@ import org.intermine.objectstore.query.BagConstraint;
 import org.intermine.path.Path;
 import org.intermine.pathquery.Constraint;
 import org.intermine.pathquery.MetadataNode;
-import org.intermine.pathquery.OrderBy;
 import org.intermine.pathquery.PathNode;
 import org.intermine.pathquery.PathQuery;
 import org.intermine.util.TypeUtil;
@@ -95,43 +94,41 @@ public class QueryBuilderController extends TilesAction
         List<Path> pathView = SessionMethods.getEditingView(session);
 
         // sort order
-        List<OrderBy> sortOrder = SessionMethods.getEditingSortOrder(session);
-        //List<String> sortOrderStrings = new ArrayList<String>();
-        LinkedHashMap<String, String> sortOrderMap = new LinkedHashMap<String, String>();
-
+        Map<Path, String> sortOrder = SessionMethods.getEditingSortOrder(session);
         // create a map of fields to direction
+        Map<String, String> sortOrderMap = new HashMap<String,String>();
         if (sortOrder != null) {
-            for (OrderBy o: sortOrder) {
-                sortOrderMap.put(o.getField().toStringNoConstraints(), o.getDirection());
+            for (Path path: sortOrder.keySet()) {
+                sortOrderMap.put(path.toStringNoConstraints(), sortOrder.get(path));
             }
         }
 
         Integer sortByIndex = new Integer(0); // sort-by-field's index in the select list
 
         // select list
-        List<String> viewStrings = new ArrayList<String>();
+        Map<String,String> viewStrings = new LinkedHashMap<String, String>();
         for (Path viewPath: pathView) {
             String viewPathString = viewPath.toStringNoConstraints();
-            viewStrings.add(viewPathString);
-            if (sortOrderMap.containsKey(viewPathString)) {
-                sortByIndex = new Integer(pathView.indexOf(viewPath));
+            String sortState = new String();
+            // outer joins not allowed
+            if(!query.isValidOrderPath(viewPathString)) {
+                sortState = "disabled";
+            //if already sorted get the direction
+            } else if(sortOrderMap.containsKey(viewPathString)) {
+                sortState = sortOrderMap.get(viewPathString);
+            //default
+            } else if(sortOrderMap.size() <= 0 && viewStrings.size() <= 0) {
+                sortState = "asc";
             }
+            else {
+                sortState = "none";
+            }
+            viewStrings.put(viewPathString, sortState);
         }
         request.setAttribute("viewStrings", viewStrings);
         request.setAttribute("sortByIndex", sortByIndex);
 
-        /* if sortOrderStrings are empty (probably a template), add first item in select */
-        if (sortOrderMap.isEmpty() && !viewStrings.isEmpty()) {
-            sortOrderMap.put(viewStrings.get(0), "asc");
-        }
-
-        request.setAttribute("sortOrderMap", sortOrderMap);
-        //request.setAttribute("sortOrderStrings", );
-        //request.setAttribute("sortOrderDirections", listToMap());
-
-        request.setAttribute("viewPaths", listToMap(viewStrings));
-        request.setAttribute("viewPathOrder", createIndexMap(viewStrings));
-        //request.setAttribute("viewPathTypes", getPathTypes(viewStrings, query));
+        request.setAttribute("viewPaths", listToMap(new ArrayList(viewStrings.keySet())));
 
         // set up the metadata
         WebConfig webConfig = (WebConfig) servletContext.getAttribute(Constants.WEBCONFIG);
@@ -140,6 +137,7 @@ public class QueryBuilderController extends TilesAction
         String prefix = (String) session.getAttribute("prefix");
         Collection nodes =
             MainHelper.makeNodes((String) session.getAttribute("path"), model, isSuperUser);
+        List<String> dottedViewStrings = query.getDottedViewStrings();
         for (Iterator iter = nodes.iterator(); iter.hasNext();) {
             MetadataNode node = (MetadataNode) iter.next();
             // Update view nodes
@@ -152,14 +150,14 @@ public class QueryBuilderController extends TilesAction
                 String pathNameWithoutClass = pathName.substring(firstDot + 1);
                 fullPath = prefix + "." + pathNameWithoutClass;
             }
-            if (viewStrings.contains(fullPath)) {
+            if (dottedViewStrings.contains(fullPath)) {
                 node.setSelected(true);
             } else {
                 Path path = new Path(model, pathName);
                 // If an object has been selected, select its fields instead
                 if (path.getEndFieldDescriptor() == null || path.endIsReference()
                     || path.endIsCollection()) {
-                    if (viewStrings.contains(path)) {
+                    if (viewStrings.keySet().contains(path)) {
                         ClassDescriptor cld = path.getEndClassDescriptor();
                         List cldFieldConfigs =
                             FieldConfigHelper.getClassFieldConfigs(webConfig, cld);
@@ -167,7 +165,7 @@ public class QueryBuilderController extends TilesAction
                         while (cldFieldConfigIter.hasNext()) {
                             FieldConfig fc = (FieldConfig) cldFieldConfigIter.next();
                             String pathFromField = pathName + "." + fc.getFieldExpr();
-                            if (viewStrings.contains(pathFromField)) {
+                            if (viewStrings.keySet().contains(pathFromField)) {
                                 node.setSelected(true);
                             } else {
                                 node.setSelected(false);
@@ -202,10 +200,10 @@ public class QueryBuilderController extends TilesAction
 
 
     private static void assureCorrectSortOrder(PathQuery pathQuery) {
-        List<OrderBy> newSortOrder = new ArrayList<OrderBy>();
-        for (OrderBy orderBy : pathQuery.getSortOrder()) {
-            if (pathQuery.getView().contains(orderBy.getField())) {
-                newSortOrder.add(orderBy);
+        Map<Path, String> newSortOrder = new LinkedHashMap<Path, String>();
+        for (Path path : pathQuery.getSortOrder().keySet()) {
+            if (pathQuery.getView().contains(path)) {
+                newSortOrder.put(path, pathQuery.getSortOrder().get(path));
             }
         }
         pathQuery.setSortOrder(newSortOrder);
