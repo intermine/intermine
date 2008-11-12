@@ -21,6 +21,7 @@ import org.intermine.web.logic.template.TemplateQuery;
 import org.intermine.webservice.server.CodeTranslator;
 import org.intermine.webservice.server.LinkGeneratorBase;
 import org.intermine.webservice.server.WebServiceConstants;
+import org.intermine.webservice.server.query.result.QueryResultRequestParser;
 
 
 /**
@@ -89,6 +90,7 @@ public class TemplateResultLinkGenerator extends LinkGeneratorBase
         }
         ret += "&size=";
         ret += format("" + DEFAULT_RESULT_SIZE, highlighted);
+        ret += "&" + QueryResultRequestParser.LAYOUT_PARAMETER + "=minelink";
         return ret;
     }
 
