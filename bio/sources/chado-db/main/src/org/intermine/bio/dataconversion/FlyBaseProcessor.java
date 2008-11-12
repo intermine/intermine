@@ -128,6 +128,9 @@ public class FlyBaseProcessor extends ChadoSequenceProcessor
     private Map<Integer, Integer> chromosomeStructureVariationTypes =
         new HashMap<Integer, Integer>();
 
+    private Map<String, String> interactionExperiments = new HashMap<String, String>();
+
+    private static final String LOCATED_GENES_TEMP_TABLE_NAME = "intermine_located_genes_temp";
     private static final String ALLELE_TEMP_TABLE_NAME = "intermine_flybase_allele_temp";
     private static final String INSERTION_TEMP_TABLE_NAME = "intermine_flybase_insertion_temp";
 
@@ -177,6 +180,12 @@ public class FlyBaseProcessor extends ChadoSequenceProcessor
             sequenceOntologyCV = getFlyBaseSequenceOntologyCV(connection);
         } catch (SQLException e) {
             throw new RuntimeException("can't execute query for so cv terms", e);
+        }
+
+        try {
+            createLocatedGenesTempTable(connection);
+        } catch (SQLException e) {
+            throw new RuntimeException("can't execute query for located genes", e);
         }
 
         getLocatedGeneIds(connection);
@@ -265,6 +274,40 @@ public class FlyBaseProcessor extends ChadoSequenceProcessor
         } catch (SQLException e) {
             throw new RuntimeException("problem while reading located genes", e);
         }
+    }
+
+
+    /**
+     * Create a temporary table containing the ids of the located genes.  This is a protected
+     * method so that it can be overriden for testing
+     * @param connection the Connection
+     * @throws SQLException if there is a database problem
+     */
+    protected void createLocatedGenesTempTable(Connection connection) throws SQLException {
+        String organismConstraint = getOrganismConstraint();
+        String orgConstraintForQuery = "";
+        if (!StringUtils.isEmpty(organismConstraint)) {
+            orgConstraintForQuery = " AND " + organismConstraint;
+        }
+
+        String query = "CREATE TEMPORARY TABLE " + LOCATED_GENES_TEMP_TABLE_NAME
+            + " AS SELECT feature.feature_id FROM feature, cvterm"
+            + "     WHERE feature.type_id = cvterm.cvterm_id"
+            + "       AND cvterm.name = 'gene' "
+            + "       AND NOT feature.is_obsolete "
+            + "       AND feature.feature_id IN (SELECT feature_id FROM featureloc) "
+            + orgConstraintForQuery;
+
+        Statement stmt = connection.createStatement();
+        LOG.info("executing: " + query);
+        stmt.execute(query);
+        String idIndexQuery = "CREATE INDEX " + LOCATED_GENES_TEMP_TABLE_NAME + "_feature_index ON "
+            + LOCATED_GENES_TEMP_TABLE_NAME + "(feature_id)";
+        LOG.info("executing: " + idIndexQuery);
+        stmt.execute(idIndexQuery);
+        String analyze = "ANALYZE " + LOCATED_GENES_TEMP_TABLE_NAME;
+        LOG.info("executing: " + analyze);
+        stmt.execute(analyze);
     }
 
     /**
@@ -424,19 +467,10 @@ public class FlyBaseProcessor extends ChadoSequenceProcessor
     }
 
     /**
-     * Return a query that gets the feature_ids of gene that have locations.
+     * Return a query that gets the feature_ids of genes that have locations.
      */
     private String getLocatedGenesSql() {
-        String organismConstraint = getOrganismConstraint();
-        String orgConstraintForQuery = "";
-        if (!StringUtils.isEmpty(organismConstraint)) {
-            orgConstraintForQuery = " AND " + organismConstraint;
-        }
-
-        return "SELECT feature.feature_id FROM feature, cvterm, featureloc"
-            + "   WHERE feature.type_id = cvterm.cvterm_id"
-            + "      AND feature.feature_id = featureloc.feature_id AND cvterm.name = 'gene'"
-            + " " + orgConstraintForQuery;
+        return "SELECT feature_id FROM " + LOCATED_GENES_TEMP_TABLE_NAME;
     }
 
     /**
@@ -832,7 +866,69 @@ public class FlyBaseProcessor extends ChadoSequenceProcessor
         createIndelReferences(connection);
         createDeletionLocations(connection);
         copyInsertionLocations(connection);
+
+        createInteractions(connection);
     }
+
+    /**
+     * Create Interaction objects.
+     */
+    private void createInteractions(Connection connection)
+        throws SQLException, ObjectStoreException {
+        ResultSet res = getInteractionResultSet(connection);
+        while (res.next()) {
+            Integer featureId = new Integer(res.getInt("feature_id"));
+            Integer otherFeatureId = new Integer(res.getInt("other_feature_id"));
+            String pubTitle = res.getString("pub_title");
+            Integer pubmedId = new Integer(res.getInt("pubmed_id"));
+
+            FeatureData featureData = getFeatureMap().get(featureId);
+            FeatureData otherFeatureData = getFeatureMap().get(otherFeatureId);
+
+            Item interaction = getChadoDBConverter().createItem("Interaction");
+
+            String shortName = "FlyBase" + ":" + featureData.getChadoFeatureUniqueName() + "_"
+                + otherFeatureData.getChadoFeatureUniqueName();
+            interaction.setAttribute("shortName", shortName);
+
+            interaction.setReference("gene", featureData.getItemIdentifier());
+            interaction.addToCollection("interactingGenes", otherFeatureData.getItemIdentifier());
+            interaction.setAttribute("interactionType", "genetic");
+
+            String publicationItemId = makePublication(pubmedId);
+
+            String experimentItemIdentifier =
+                makeInteractionExperiment(pubTitle, publicationItemId);
+
+            interaction.setReference("experiment", experimentItemIdentifier);
+            getChadoDBConverter().store(interaction);
+        }
+    }
+
+    /**
+     * Return the item identifier of the Interaction Item for the given pubmed id, creating the
+     * Item if necessary.
+     * @param experimentTitle the new title
+     * @param publicationItemIdentifier the item identifier of the publication for this experiment
+     * @return the interaction item identifier
+     * @throws ObjectStoreException if the item can't be stored
+     */
+    protected String makeInteractionExperiment(String experimentTitle,
+                                               String publicationItemIdentifier)
+        throws ObjectStoreException {
+        if (interactionExperiments.containsKey(experimentTitle)) {
+            return interactionExperiments.get(experimentTitle);
+        } else {
+            Item experiment = getChadoDBConverter().createItem("InteractionExperiment");
+            experiment.setAttribute("name", experimentTitle);
+            experiment.setReference("publication", publicationItemIdentifier);
+            getChadoDBConverter().store(experiment);
+            String experimentId = experiment.getIdentifier();
+            interactionExperiments.put(experimentTitle, experimentId);
+            return experimentId;
+        }
+    }
+
 
     private static final Pattern DELETION_LOC_PATTERN =
         Pattern.compile("^([^:]+):(\\d+)(?:-\\d+)?..(?:\\d+-)?(\\d+) \\(([^;\\)]+);?([^\\)]*)\\)$");
@@ -1290,6 +1386,38 @@ public class FlyBaseProcessor extends ChadoSequenceProcessor
             cvTermMap.put(identifier, cvTerm.getIdentifier());
             return cvTerm.getIdentifier();
         }
+    }
+
+    /**
+     * Return a result set containing the interaction genes pairs, the title of the publication
+     * that reported the interaction and its pubmed id.  The method is protected
+     * so that is can be overridden for testing.
+     * @param connection the Connection
+     * @throws SQLException if there is a database problem
+     * @return the ResultSet
+     */
+    protected ResultSet getInteractionResultSet(Connection connection) throws SQLException {
+        String query =
+            "      SELECT feature.feature_id as feature_id, "
+            + "           other_feature.feature_id as other_feature_id, "
+            + "           pub.title as pub_title, dbx.accession as pubmed_id "
+            + "      FROM feature, cvterm cvt, feature other_feature, "
+            + "           feature_relationship_pub frpb, pub, "
+            + "           feature_relationship fr, pub_dbxref pdbx, dbxref dbx, db "
+            + "     WHERE feature.feature_id = subject_id "
+            + "           AND object_id = other_feature.feature_id "
+            + "           AND fr.type_id = cvt.cvterm_id AND cvt.name = 'interacts_genetically' "
+            + "           AND fr.feature_relationship_id = frpb.feature_relationship_id "
+            + "           AND frpb.pub_id = pub.pub_id AND db.name='pubmed' "
+            + "           AND pdbx.is_current=true AND pub.pub_id=pdbx.pub_id "
+            + "           AND pdbx.dbxref_id = dbx.dbxref_id AND dbx.db_id=db.db_id "
+            + "           AND NOT feature.is_obsolete AND NOT other_feature.is_obsolete "
+            + "           AND feature.feature_id IN (" + getLocatedGenesSql() + ")"
+            + "           AND other_feature.feature_id IN (" + getLocatedGenesSql() + ")";
+        LOG.info("executing: " + query);
+        Statement stmt = connection.createStatement();
+        ResultSet res = stmt.executeQuery(query);
+        return res;
     }
 
     /**
