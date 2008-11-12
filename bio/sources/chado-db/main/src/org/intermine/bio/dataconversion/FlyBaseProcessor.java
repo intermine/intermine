@@ -57,15 +57,17 @@ public class FlyBaseProcessor extends ChadoSequenceProcessor
      */
     private static final String WT_CLASS_CVTERM = "wt_class";
 
-    /**
-     * The cv.name for the FlyBase miscellaneous CV.
-     */
-    static final String FLYBASE_MISCELLANEOUS_CV = "FlyBase miscellaneous CV";
+    private static final String FLYBASE_DB_NAME = "FlyBase";
 
     /**
      * The cv.name for the FlyBase miscellaneous CV.
      */
-    static final String FLYBASE_SO_CV_NAME = "SO";
+    private static final String FLYBASE_MISCELLANEOUS_CV = FLYBASE_DB_NAME + " miscellaneous CV";
+
+    /**
+     * The cv.name for the FlyBase miscellaneous CV.
+     */
+    private static final String FLYBASE_SO_CV_NAME = "SO";
 
     /**
      * A ConfigAction that changes FlyBase attribute tags (like "@FBcv0000289:hypomorph") to text
@@ -470,16 +472,17 @@ public class FlyBaseProcessor extends ChadoSequenceProcessor
             // db.name is "FlyBase Annotation IDs" and "is_current" is true, set the
             // "secondaryIdentifier" attribute of the new Gene to be this dbxref and then make a
             // Synonym object
-            map.put(new MultiKey("dbxref", "Gene", "FlyBase Annotation IDs", Boolean.TRUE),
+            map.put(new MultiKey("dbxref", "Gene", FLYBASE_DB_NAME + " Annotation IDs", Boolean.TRUE),
                     Arrays.asList(new SetFieldConfigAction("secondaryIdentifier"),
                                   CREATE_SYNONYM_ACTION));
-            map.put(new MultiKey("dbxref", "Gene", "FlyBase Annotation IDs", Boolean.FALSE),
+            map.put(new MultiKey("dbxref", "Gene", FLYBASE_DB_NAME + " Annotation IDs", Boolean.FALSE),
                     Arrays.asList(CREATE_SYNONYM_ACTION));
             // null for the "is_current" means either TRUE or FALSE is OK.
-            map.put(new MultiKey("dbxref", "Gene", "FlyBase", null),
+
+			map.put(new MultiKey("dbxref", "Gene", FLYBASE_DB_NAME, null),
                     Arrays.asList(CREATE_SYNONYM_ACTION));
 
-            map.put(new MultiKey("dbxref", "MRNA", "FlyBase Annotation IDs", Boolean.TRUE),
+            map.put(new MultiKey("dbxref", "MRNA", FLYBASE_DB_NAME + " Annotation IDs", Boolean.TRUE),
                     Arrays.asList(new SetFieldConfigAction("secondaryIdentifier"),
                                   CREATE_SYNONYM_ACTION));
             map.put(new MultiKey("dbxref", "TransposableElementInsertionSite", "drosdel", null),
@@ -511,9 +514,9 @@ public class FlyBaseProcessor extends ChadoSequenceProcessor
                                   CREATE_SYNONYM_ACTION));
             map.put(new MultiKey("synonym", "MRNA", "symbol", Boolean.FALSE),
                     Arrays.asList(CREATE_SYNONYM_ACTION));
-            map.put(new MultiKey("dbxref", "MRNA", "FlyBase Annotation IDs", null),
+            map.put(new MultiKey("dbxref", "MRNA", FLYBASE_DB_NAME + " Annotation IDs", null),
                     Arrays.asList(CREATE_SYNONYM_ACTION));
-            map.put(new MultiKey("dbxref", "MRNA", "FlyBase", null),
+            map.put(new MultiKey("dbxref", "MRNA", FLYBASE_DB_NAME, null),
                     Arrays.asList(CREATE_SYNONYM_ACTION));
 
             map.put(new MultiKey("relationship", "Allele", "alleleof", "Gene"),
@@ -555,17 +558,17 @@ public class FlyBaseProcessor extends ChadoSequenceProcessor
 
             // feature configuration example: for features of class "Exon", from "FlyBase",
             // set the Gene.symbol to be the "name" field from the chado feature
-            map.put(new MultiKey("feature", "Exon", "FlyBase", "name"),
+            map.put(new MultiKey("feature", "Exon", FLYBASE_DB_NAME, "name"),
                     Arrays.asList(new SetFieldConfigAction("symbol"),
                                   CREATE_SYNONYM_ACTION));
             // DO_NOTHING_ACTION means skip the name from this feature
-            map.put(new MultiKey("feature", "Chromosome", "FlyBase", "name"),
+            map.put(new MultiKey("feature", "Chromosome", FLYBASE_DB_NAME, "name"),
                     Arrays.asList(DO_NOTHING_ACTION));
 
-            map.put(new MultiKey("feature", "ChromosomeBand", "FlyBase", "name"),
+            map.put(new MultiKey("feature", "ChromosomeBand", FLYBASE_DB_NAME, "name"),
                     Arrays.asList(DO_NOTHING_ACTION));
 
-            map.put(new MultiKey("feature", "TransposableElementInsertionSite", "FlyBase",
+            map.put(new MultiKey("feature", "TransposableElementInsertionSite", FLYBASE_DB_NAME,
                                  "name"),
                     Arrays.asList(new SetFieldConfigAction("symbol",
                                                            PB_INSERTION_PATTERN),
@@ -573,40 +576,40 @@ public class FlyBaseProcessor extends ChadoSequenceProcessor
                                   new SetFieldConfigAction("secondaryIdentifier"),
                                   new CreateSynonymAction()));
 
-            map.put(new MultiKey("feature", "Gene", "FlyBase", "uniquename"),
+            map.put(new MultiKey("feature", "Gene", FLYBASE_DB_NAME, "uniquename"),
                     Arrays.asList(new SetFieldConfigAction("primaryIdentifier")));
-            map.put(new MultiKey("feature", "Gene", "FlyBase", "name"),
+            map.put(new MultiKey("feature", "Gene", FLYBASE_DB_NAME, "name"),
                     Arrays.asList(DO_NOTHING_ACTION));
 
-            map.put(new MultiKey("feature", "ChromosomeStructureVariation", "FlyBase", "name"),
+            map.put(new MultiKey("feature", "ChromosomeStructureVariation", FLYBASE_DB_NAME, "name"),
                     Arrays.asList(new SetFieldConfigAction("secondaryIdentifier"),
                                   CREATE_SYNONYM_ACTION));
 
-            map.put(new MultiKey("feature", "MRNA", "FlyBase", "uniquename"),
+            map.put(new MultiKey("feature", "MRNA", FLYBASE_DB_NAME, "uniquename"),
                     Arrays.asList(new SetFieldConfigAction("primaryIdentifier")));
 
-            map.put(new MultiKey("feature", "PointMutation", "FlyBase", "uniquename"),
+            map.put(new MultiKey("feature", "PointMutation", FLYBASE_DB_NAME, "uniquename"),
                     Arrays.asList(new SetFieldConfigAction("name"),
                                   new SetFieldConfigAction("primaryIdentifier"),
                                   CREATE_SYNONYM_ACTION));
             // name isn't set in flybase:
-            map.put(new MultiKey("feature", "PointMutation", "FlyBase", "name"),
+            map.put(new MultiKey("feature", "PointMutation", FLYBASE_DB_NAME, "name"),
                     Arrays.asList(DO_NOTHING_ACTION));
 
             if (taxonId == 7227) {
-                map.put(new MultiKey("dbxref", "Translation", "FlyBase Annotation IDs",
+                map.put(new MultiKey("dbxref", "Translation", FLYBASE_DB_NAME + " Annotation IDs",
                                      Boolean.TRUE),
                                      Arrays.asList(new SetFieldConfigAction("secondaryIdentifier"),
                                                    CREATE_SYNONYM_ACTION));
-                map.put(new MultiKey("feature", "Translation", "FlyBase", "name"),
+                map.put(new MultiKey("feature", "Translation", FLYBASE_DB_NAME, "name"),
                         Arrays.asList(new SetFieldConfigAction("symbol"),
                                       CREATE_SYNONYM_ACTION));
-                map.put(new MultiKey("feature", "Translation", "FlyBase", "uniquename"),
+                map.put(new MultiKey("feature", "Translation", FLYBASE_DB_NAME, "uniquename"),
                         Arrays.asList(new SetFieldConfigAction("primaryIdentifier")));
             } else {
-                map.put(new MultiKey("feature", "Translation", "FlyBase", "uniquename"),
+                map.put(new MultiKey("feature", "Translation", FLYBASE_DB_NAME, "uniquename"),
                         Arrays.asList(new SetFieldConfigAction("primaryIdentifier")));
-                map.put(new MultiKey("feature", "Translation", "FlyBase", "name"),
+                map.put(new MultiKey("feature", "Translation", FLYBASE_DB_NAME, "name"),
                         Arrays.asList(new SetFieldConfigAction("symbol"),
                                       CREATE_SYNONYM_ACTION));
                 map.put(new MultiKey("dbxref", "Translation", "GB_protein", null),
