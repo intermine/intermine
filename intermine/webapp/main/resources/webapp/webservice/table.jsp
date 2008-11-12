@@ -112,10 +112,11 @@ body {
         </c:otherwise>
     </c:choose>
     <imutil:table rows="${rows}" columnNames="${columnNames}" treatColNames="true" noResultsMessage="${noResultsMsg}"/>
-    <c:if test="${fn:contains(layout, 'mine') || fn:contains(layout, 'all')}">
+    <c:if test="${fn:contains(layout, 'minelink') || fn:contains(layout, 'all')}">
+        Source:&nbsp; 
         <a href="" onclick="javascript:window.open('${WEB_PROPERTIES['project.sitePrefix']}');return false;">
             ${WEB_PROPERTIES['project.title']}
-        </a> website.
+        </a> 
     </c:if>
 </div>
 
