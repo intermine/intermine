@@ -13,8 +13,9 @@ package org.intermine.web.logic.query;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.StringReader;
-import java.util.Collections;
 import java.util.HashMap;
+import java.util.LinkedList;
+import java.util.List;
 import java.util.Map;
 
 import junit.framework.TestCase;
@@ -36,6 +37,7 @@ import org.intermine.objectstore.query.QueryField;
 import org.intermine.objectstore.query.QueryObjectReference;
 import org.intermine.objectstore.query.QueryValue;
 import org.intermine.objectstore.query.SimpleConstraint;
+import org.intermine.path.Path;
 import org.intermine.pathquery.LogicExpression;
 import org.intermine.pathquery.PathNode;
 import org.intermine.pathquery.PathQuery;
@@ -77,13 +79,17 @@ public class MainHelperTest extends TestCase {
         query.addNode("Employee.age");
         PathNode managerNode = query.addNode("Employee.department.manager");
         managerNode.setType("CEO");
-        query.getView().add(PathQuery.makePath(model, query, "Employee"));
-        query.getView().add(PathQuery.makePath(model, query, "Employee.end"));
-        query.getView().add(PathQuery.makePath(model, query, "Employee.age"));
-        query.getView().add(PathQuery.makePath(model, query, "Employee.department.manager"));
-        query.getView().add(PathQuery.makePath(model, query, "Employee.department.manager.seniority"));
-        query.getView().add(PathQuery.makePath(model, query, "Employee.department.manager.secretarys.name"));
-        query.getView().add(PathQuery.makePath(model, query, "Employee.address.address"));
+        List<Path> paths = new LinkedList<Path> ();
+        
+        paths.add(PathQuery.makePath(model, query, "Employee"));
+        paths.add(PathQuery.makePath(model, query, "Employee.end"));
+        paths.add(PathQuery.makePath(model, query, "Employee.age"));
+        paths.add(PathQuery.makePath(model, query, "Employee.department.manager"));
+        paths.add(PathQuery.makePath(model, query, "Employee.department.manager.seniority"));
+        paths.add(PathQuery.makePath(model, query, "Employee.department.manager.secretarys.name"));
+        paths.add(PathQuery.makePath(model, query, "Employee.address.address"));
+        
+        query.addViewPaths(paths);
 
         assertEquals("org.intermine.model.testmodel.Employee",
                      MainHelper.getTypeForPath("Employee", query));
