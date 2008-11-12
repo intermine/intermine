@@ -28,6 +28,9 @@ public class QueryResultRequestParser extends WebServiceRequestParser
     /** Compute total count parameter name. **/
     public static final String COMPUTE_TOTAL_COUNT_PARAMETER = "tcount";
     
+    /** Layout parameter name. **/
+    public static final String LAYOUT_PARAMETER = "layout";
+    
     private HttpServletRequest request;
     
     /**
@@ -64,6 +67,8 @@ public class QueryResultRequestParser extends WebServiceRequestParser
         String totalCount = request.getParameter(COMPUTE_TOTAL_COUNT_PARAMETER);
         if (totalCount != null) {
             input.setComputeTotalCount(true);
-        }         
+        }
+        
+        input.setLayout(request.getParameter(LAYOUT_PARAMETER));
     }
 }

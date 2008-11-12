@@ -22,23 +22,23 @@ public class QueryResultInput extends WebServiceInput
 {
     
     private String xml;
+    
     private boolean computeTotalCount = false;
-    private String format;
+    
+    private String layout;
     
     /**
-     * Returns which format will be used for output.
-     * @return format
+     * @return layout string specifying result table layout
      */
-    public String getFormat() {
-        return format;
+    public String getLayout() {
+        return layout;
     }
 
     /**
-     * Sets output format.
-     * @param format format
+     * @param layout string specifying result table layout
      */
-    public void setFormat(String format) {
-        this.format = format;
+    public void setLayout(String layout) {
+        this.layout = layout;
     }
 
     /**

@@ -54,7 +54,8 @@ public class TemplateResultService extends QueryResultService
         if (template.getPathQuery().isValid()) {
             runPathQuery(template, input.getStart(), input.getMaxCount(), 
                     input.isComputeTotalCount(), template.getTitle(), 
-                    template.getDescription(), input, getMineLinkURL(request, input));
+                    template.getDescription(), input, getMineLinkURL(request, input), 
+                    input.getLayout());
         } else {
             String msg = "Required data source (template) is outdated and is in conflict "
                 + "with model: " 
