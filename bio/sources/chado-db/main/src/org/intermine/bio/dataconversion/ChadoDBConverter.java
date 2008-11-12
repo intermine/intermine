@@ -51,15 +51,26 @@ public class ChadoDBConverter extends BioDBConverter
 
     private final List<ChadoProcessor> completedProcessors = new ArrayList<ChadoProcessor>();
 
+    private Connection connection;
+
     /**
      * Create a new ChadoDBConverter object.
      * @param database the database to read from
      * @param tgtModel the Model used by the object store we will write to with the ItemWriter
      * @param writer an ItemWriter used to handle the resultant Items
+     * @throws SQLException if we fail to get a database connection
+
      */
-    public ChadoDBConverter(Database database, Model tgtModel, ItemWriter writer) {
+    public ChadoDBConverter(Database database, Model tgtModel, ItemWriter writer)
+        throws SQLException {
         super(database, tgtModel, writer);
         organismRepository = OrganismRepository.getOrganismRepository();
+        if (getDatabase() == null) {
+            // no Database when testing and no connection needed
+            connection = null;
+        } else {
+            connection = getDatabase().getConnection();
+        }
     }
 
     /**
@@ -106,24 +117,25 @@ public class ChadoDBConverter extends BioDBConverter
     }
 
     /**
+     * Get the connection to use when processing.
+     * @return the Connection, or null while testing
+     */
+    protected Connection getConnection() {
+        return connection;
+    }
+
+    /**
      * Process the data from the Database and write to the ItemWriter.
      * {@inheritDoc}
      */
     @Override
     public void process() throws Exception {
-        Connection connection;
-        if (getDatabase() == null) {
-            // no Database when testing and no connection needed
-            connection = null;
-        } else {
-            connection = getDatabase().getConnection();
-        }
 
         if (StringUtils.isEmpty(processors)) {
             throw new IllegalArgumentException("processors not set in ChadoDBConverter");
         }
 
-        Map<OrganismData, Integer> tempChadoOrgMap = getChadoOrganismIds(connection);
+        Map<OrganismData, Integer> tempChadoOrgMap = getChadoOrganismIds(getConnection());
 
         for (OrganismData od: organismsToProcess) {
             Integer chadoId = tempChadoOrgMap.get(od);
@@ -145,7 +157,7 @@ public class ChadoDBConverter extends BioDBConverter
                 Class<?> cls = Class.forName(className);
                 Constructor<?> constructor = cls.getDeclaredConstructor(ChadoDBConverter.class);
                 ChadoProcessor currentProcessor = (ChadoProcessor) constructor.newInstance(this);
-                currentProcessor.process(connection);
+                currentProcessor.process(getConnection());
                 getCompletedProcessors().add(currentProcessor);
             }
         }

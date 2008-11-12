@@ -30,8 +30,10 @@ public class GenomeDBConverter extends ChadoDBConverter
      * @param database the database to read from
      * @param tgtModel the Model used by the object store we will write to with the ItemWriter
      * @param writer an ItemWriter used to handle the resultant Items
+     * @throws SQLException if we fail to get a database connection
      */
-    public GenomeDBConverter(Database database, Model tgtModel, ItemWriter writer) {
+    public GenomeDBConverter(Database database, Model tgtModel, ItemWriter writer)
+        throws SQLException {
         super(database, tgtModel, writer);
     }
 
