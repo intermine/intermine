@@ -107,14 +107,7 @@ public class QueryBuilderAction extends InterMineAction
 
             ConstraintOp constraintOp = ConstraintOp.getOpForIndex(Integer.valueOf(mf
                     .getAttributeOp()));
-            Object constraintValue = null;
-            try {
-                constraintValue = parseValue(mf.getAttributeValue(), query, constraintOp, mf
-                                .getPath(), locale, request);
-            } catch (ParseValueException ex) {
-                recordMessage(new ActionMessage("errors.message", ex.getMessage()), request);
-                return null;
-            }
+            Object constraintValue = mf.getParsedAttributeValue();
 
             //String extraValue = mf.getExtraValue();
             if (constraintValue.equals("NULL")) {
@@ -210,28 +203,5 @@ public class QueryBuilderAction extends InterMineAction
         mf.reset(mapping, request);
 
         return mapping.findForward("query");
-    }
-
-    /**
-     * Parse an attribute value
-     * 
-     * @param value the value as a String
-     * @param type the type of the parsed value
-     * @param constraintOp the constraint operator for which value is an intended argument
-     * @param locale the user's locale
-     * @param errors ActionErrors to which any parse errors are added
-     * @return the parsed value
-     */
-    public static Object parseValue(String value, PathQuery query, ConstraintOp constraintOp,
-                                    String path, Locale locale, HttpServletRequest request)
-                    throws ParseValueException {
-        PathNode node = query.getNodes().get(path);
-        Class fieldClass;
-        if (node.isAttribute()) {
-            fieldClass = TypeUtil.getClass(node.getType());
-        } else {
-            fieldClass = String.class;
-        }
-        return new ConstraintValueParser().parse(value, fieldClass, constraintOp, locale);
     }
 }
