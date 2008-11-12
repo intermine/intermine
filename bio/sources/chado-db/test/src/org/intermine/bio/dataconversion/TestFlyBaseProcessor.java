@@ -54,6 +54,13 @@ public class TestFlyBaseProcessor extends FlyBaseProcessor
      * {@inheritDoc}
      */
     @Override
+    protected void createLocatedGenesTempTable(Connection connection) throws SQLException {
+        // empty
+    }
+    /**
+     * {@inheritDoc}
+     */
+    @Override
     protected ResultSet getFeatureResultSet(@SuppressWarnings("unused") Connection connection) {
         String[] columnNames = new String[] {
             "feature_id", "name", "uniquename", "type", "seqlen", "residues", "organism_id"
@@ -685,6 +692,24 @@ public class TestFlyBaseProcessor extends FlyBaseProcessor
                 11380181, 61021, "Xray", "FlyBasemiscellaneousCV"
             }
 
+        };
+
+        MockMultiRowResultSet res = new MockMultiRowResultSet();
+        res.setupRows(resObjects);
+        res.setupColumnNames(columnNames);
+        return res;
+    }
+
+    /* (non-Javadoc)
+     * @see org.intermine.bio.dataconversion.FlyBaseProcessor#getInteractionResultSet(java.sql.Connection)
+     */
+    @Override
+    protected ResultSet getInteractionResultSet(Connection connection) throws SQLException {
+        String[] columnNames = new String[] {
+            "feature_id", "other_feature_id", "pub_title", "pubmed_id"
+        };
+        Object[][] resObjects = new Object[][] {
+            // empty
         };
 
         MockMultiRowResultSet res = new MockMultiRowResultSet();
