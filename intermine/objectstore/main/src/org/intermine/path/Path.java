@@ -508,7 +508,7 @@ public class Path
 
     /**
      * Returns a representation of the Path as a String, with no class constraint markers.  eg.
-     * "Department.employees.seniority"
+     * "Department.employees.seniority" instead of "Department.employees[Manager].seniority"
      * @return a String version of the Path
      */
     public String toStringNoConstraints() {

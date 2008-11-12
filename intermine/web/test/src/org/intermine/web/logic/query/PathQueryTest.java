@@ -13,6 +13,7 @@ import junit.framework.TestCase;
 
 import org.intermine.TestUtil;
 import org.intermine.metadata.Model;
+import org.intermine.objectstore.query.PathQueryUtil;
 import org.intermine.objectstore.query.ResultsInfo;
 import org.intermine.path.Path;
 import org.intermine.path.PathError;
@@ -275,6 +276,7 @@ public class PathQueryTest extends TestCase
             add("Employee.department.company.name");
         }};
         q.addView(view);
+        System.out.println("PROBLEMS: " + PathQueryUtil.getProblemsSummary(q.getProblems()));
         assertEquals(e.getViewStrings(), q.getViewStrings());
         assertFalse(q.isValid());
 
