@@ -224,20 +224,11 @@ public class PathQuery
      *
      * @param paths a list of paths to be appended to the end of the view list
      */
-    public void addView(List<String> paths) {
-        try {
-            for (String path : paths) {
-                if (!getCorrectJoinStyle(path).equals(path)) {
-                    throw new IllegalArgumentException("Adding two join types for same path: "
-                            + path + " and " + getCorrectJoinStyle(path));
-                }
-                view.add(makePath(model, this, path.trim()));
-            }
-        } catch (PathError e) {
-            LOG.error("Path error", e);
-            addProblem(e);
-        }
+    public void addView(List<String> pathStrs) {
+        List<Path> paths = makePaths(pathStrs);
+        addViewPaths(paths);
     }
+    
 
     /**
      * Appends the paths to the end of the select list.
@@ -249,17 +240,18 @@ public class PathQuery
             logPathError(MSG);
             return;
         }
-        try {
-            for (Path p : paths) {
-                String path = p.toStringNoConstraints();
-                if (!getCorrectJoinStyle(path).equals(path)) {
-                    throw new IllegalArgumentException("Adding two join types for same path: "
-                            + path + " and " + getCorrectJoinStyle(path));
-                }
-                view.add(p);
+
+        for (Path p : paths) {
+            String path = p.toStringNoConstraints();
+            if (!getCorrectJoinStyle(path).equals(path)) {
+                throw new IllegalArgumentException("Adding two join types for same path: "
+                        + path + " and " + getCorrectJoinStyle(path));
             }
-        } catch (PathError e) {
-            logPathError(e);
+            try {
+                view.add(p);
+            } catch (PathError e) {
+                logPathError(e);
+            }
         }
     }
 

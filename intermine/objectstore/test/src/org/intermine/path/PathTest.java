@@ -244,7 +244,6 @@ public class PathTest extends TestCase
 
         String stringPath = "Department.manager.company.departments.employees.seniority";
         Path path = new Path(model, stringPath, constraintMap);
-
         assertEquals("Department.manager.company.departments.employees.seniority",
                      path.toStringNoConstraints());
     }
