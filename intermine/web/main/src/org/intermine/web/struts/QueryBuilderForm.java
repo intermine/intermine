@@ -48,6 +48,7 @@ public class QueryBuilderForm extends ActionForm
     protected String path;
     protected String operator = "and";
     protected String nullConstraint;
+    protected Object parsedAttributeValue;
 
     // template builder elements
 
@@ -250,6 +251,14 @@ public class QueryBuilderForm extends ActionForm
     }
 
     /**
+     * Gets the value of parsedAttributeValue
+     * @return the value of parsedAttributeValue
+     */
+    public Object getParsedAttributeValue()  {
+        return parsedAttributeValue;
+    }
+
+    /**
      * Get the template identifier.
      * @return the template identifier
      */
@@ -298,14 +307,38 @@ public class QueryBuilderForm extends ActionForm
     }
 
     /**
+     * Sets the value of parsedAttributeValue
+     *
+     * @param parsedAttributeValue value to assign to parsedAttributeValue
+     */
+    public void setParsedAttributeValue(Object parsedAttributeValue) {
+        this.parsedAttributeValue = parsedAttributeValue;
+    }
+
+    /**
      * {@inheritDoc}
      */
     public ActionErrors validate(@SuppressWarnings("unused") ActionMapping mapping,
                                  HttpServletRequest request) {
         HttpSession session = request.getSession();
+        Locale locale = (Locale) session.getAttribute(Globals.LOCALE_KEY);
         PathQuery query = (PathQuery) session.getAttribute(Constants.QUERY);
 
         ActionErrors errors = new ActionErrors();
+        ConstraintOp constraintOp = (getAttributeOp() == null) ? null
+                    : ConstraintOp.getOpForIndex(Integer.valueOf(getAttributeOp()));
+
+        if (request.getParameter("attribute") != null) {
+            PathNode node = query.getNodes().get(path);
+            Class fieldClass;
+            if (node.isAttribute()) {
+                fieldClass = TypeUtil.getClass(node.getType());
+            } else {
+                fieldClass = String.class;
+            }
+            parsedAttributeValue =
+                parseValue(attributeValue, fieldClass, constraintOp, locale, errors);
+        }
 
         if (errors.size() > 0) {
             session.setAttribute("editingNode", query.getNodes().get(path));
@@ -314,7 +347,26 @@ public class QueryBuilderForm extends ActionForm
         return errors;
     }
 
-   
+    /**
+     * Parse an attribute value
+     * @param value the value as a String
+     * @param type the type of the parsed value
+     * @param constraintOp the constraint operator for which value is an intended argument
+     * @param locale the user's locale
+     * @param errors ActionErrors to which any parse errors are added
+     * @return the parsed value
+     */
+    public static Object parseValue(String value, Class type, ConstraintOp constraintOp,
+                                    Locale locale, ActionMessages errors) {
+        try {
+            return new ConstraintValueParser().parse(value, type, constraintOp, locale);    
+        } catch (ParseValueException ex) {
+            errors.add(ActionErrors.GLOBAL_MESSAGE, 
+                    new ActionMessage("errors.message", ex.getMessage()));
+            return null;
+        }
+    }
+    
     /**
      * {@inheritDoc}
      */
