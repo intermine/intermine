@@ -46,7 +46,7 @@ public class PathQueryHandler extends DefaultHandler
     private Model model = null;
     private List<String> viewStrings = new ArrayList();
     private Map<String, String> pathStringDescriptions = new HashMap<String, String>();
-    private Map<String, Boolean> sortOrder = new LinkedHashMap();
+    private Map<String, String> sortOrder = new LinkedHashMap();
 
     /**
      * Constructor
@@ -83,17 +83,19 @@ public class PathQueryHandler extends DefaultHandler
             if (attrs.getValue("sortOrder") != null) {
                String[] s = (attrs.getValue("sortOrder")).split(" ");
                for (int i = 0; i < s.length; i++) {
-                   Boolean sortAscending = Boolean.TRUE;
+                   String sortDirection = null;
                    String orderByString = s[i];
                    // check if next string bit is a direction string
                    if ((s.length > i + 1) && (s[i + 1].equalsIgnoreCase("desc")
                                                    || s[i + 1].equalsIgnoreCase("asc"))) {
                        if (s[i + 1].equalsIgnoreCase("desc")) {
-                           sortAscending = Boolean.FALSE;
+                           sortDirection = PathQuery.DESCENDING;
+                       } else {
+                           sortDirection = PathQuery.ASCENDING;
                        }
                        i++;
                    }
-                   sortOrder.put(orderByString, sortAscending);
+                   sortOrder.put(orderByString, sortDirection);
                }
             }
             if (attrs.getValue("constraintLogic") != null) {
@@ -274,8 +276,8 @@ public class PathQueryHandler extends DefaultHandler
         while (it.hasNext()) {
             Map.Entry entry = (Map.Entry) it.next();
             String pathString = (String) entry.getKey();
-            Boolean sortAscending = (Boolean) entry.getValue();
-            query.addOrderBy(pathString, PathQuery.ASCENDING);
+            String direction = (String) entry.getValue();
+            query.addOrderBy(pathString, direction);
         }
     }
 }

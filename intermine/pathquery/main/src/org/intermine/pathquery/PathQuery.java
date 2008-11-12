@@ -662,7 +662,11 @@ public class PathQuery
         }
         Map<Path, String> orderByList = new LinkedHashMap<Path, String>();
         for (Path path : paths.keySet()) {
-            orderByList.put(path, paths.get(path));
+            if (path != null) {
+                orderByList.put(path, paths.get(path));
+            } else {
+                logPathError(MSG);
+            }
         }
         if (!orderByList.isEmpty()) {
             sortOrder = orderByList;
@@ -682,7 +686,7 @@ public class PathQuery
      * Appends the paths to the end of the order by list.  Paths can be a single path
      * or a comma delimited list of paths.
      * @param paths a list of paths to be appended to the end of the order by list
-     * @param sortAscending whether or not to sort these fields in ascending order
+     * @param direction the sort direction
      */
     public void addOrderBy(String paths, String direction) {
         if (paths.equals("")) {
@@ -723,7 +727,7 @@ public class PathQuery
     /**
      * Appends the paths to the end of the order by list.
      * @param paths a list of paths to be appended to the end of the order by list
-     * @param sortAscending whether or not to sort these fields in ascending order
+     * @param direction the sort direction
      */
     public void addOrderBy(List<String> paths, String direction) {
         if (paths.size() == 0) {

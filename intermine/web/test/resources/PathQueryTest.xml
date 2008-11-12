@@ -36,7 +36,6 @@
  <query name="orderByAsc" model="testmodel" view="Employee.name Employee.department.name" sortOrder="Employee.name asc"></query>
  <query name="orderByDesc" model="testmodel" view="Employee.name Employee.department.name" sortOrder="Employee.name desc"></query>
  <query name="longPath" model="testmodel" view="Employee.name Employee.department.name" sortOrder="Employee.department.name asc"></query>
- <query name="orderByDesc" model="testmodel" view="Employee.name Employee.department.name" sortOrder="Employee.name desc"></query>
- <query name="orderByCompany" model="testmodel" view="Company.name Company.vatNumber Company.address.address" sortOrder="Company.vatNumber desc Company.name"></query>
- <query name="orderByVat" model="testmodel" view="Company.name Company.vatNumber Company.address.address" sortOrder="Company.vatNumber Company.name Company.departments.name"></query>
+ <query name="orderByCompany" model="testmodel" view="Company.name Company.vatNumber Company.address.address" sortOrder="Company.vatNumber desc Company.name asc"></query>
+ <query name="orderByVat" model="testmodel" view="Company.name Company.vatNumber Company.address.address" sortOrder="Company.vatNumber asc Company.name asc Company.departments.name asc"></query>
 </query-list>
