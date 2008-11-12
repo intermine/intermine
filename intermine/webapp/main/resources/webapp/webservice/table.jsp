@@ -69,24 +69,42 @@ body {
 <body>
 
 <div>
-    <div class="title">${title}</div>
-    <span class="description">${description}</span>
+    <c:if test="${fn:contains(layout, 'title') || fn:contains(layout, 'all')}">
+        <div class="title">${title}</div>
+    </c:if>
+    
+    <c:if test="${fn:contains(layout, 'description') || fn:contains(layout, 'all')}">
+        <span class="description">${description}</span>
+    </c:if>
+    
     <div>
-         <span style="white-space:nowrap; margin-left:5px;">
-           <a href="" onclick="javascript:window.open('${mineLinkUrl}');return false;"><c:out value="${mineLinkText}" /></a>
-         </span>
-	     <span style="margin-left:15px;">
-	       <imutil:navigationBar baseLink="${baseLink}" pageSize="${pageSize}" currentPage="${currentPage}" nextEnabled="${pageSize == fn:length(rows)}"/>
-	     </span>
-	     <span style="margin-left:15px;">
-	       Results:&nbsp;<span id="resultCount">in progress</span>
-	     </span>
-         <span style="white-space:nowrap; margin-left:15px;">
-           <a href="" onclick="javascript:window.open(window.location.href);return false;">Open in new window</a>
-         </span>
+        
+        <c:if test="${fn:contains(layout, 'mineresults') || fn:contains(layout, 'all')}">
+	         <span style="white-space:nowrap;">
+	           <a href="" onclick="javascript:window.open('${mineLinkUrl}');return false;"><c:out value="${mineLinkText}" /></a>
+	         </span>
+         </c:if>
+         
+         <c:if test="${fn:contains(layout, 'paging') || fn:contains(layout, 'all')}">
+		     <span style="margin-left:15px;">
+		       <imutil:navigationBar baseLink="${baseLink}" pageSize="${pageSize}" currentPage="${currentPage}" nextEnabled="${pageSize == fn:length(rows)}"/>
+		     </span>
+	     </c:if>
+	    
+	     <c:if test="${fn:contains(layout, 'count') || fn:contains(layout, 'all')}">
+		     <span style="margin-left:15px;">
+		       Results:&nbsp;<span id="resultCount">in progress</span>
+		     </span>
+	     </c:if>
+	     
+	     <c:if test="${fn:contains(layout, 'newwindow') || fn:contains(layout, 'all')}">
+	         <span style="white-space:nowrap; margin-left:15px;">
+	           <a href="" onclick="javascript:window.open(window.location.href);return false;">Open in new window</a>
+	         </span>
+         </c:if>
     </div>
     <c:choose>
-        <c:when test="${currentPage == 0}">
+        <c:when test="${currentPage == 0 || fn:contains(layout, 'all')}">
             <c:set var="noResultsMsg" value="There are no results." />
         </c:when>
         <c:otherwise>
@@ -94,9 +112,11 @@ body {
         </c:otherwise>
     </c:choose>
     <imutil:table rows="${rows}" columnNames="${columnNames}" treatColNames="true" noResultsMessage="${noResultsMsg}"/>
-    <div style="margin-left:5px;"><a href="" onclick="javascript:window.open('${WEB_PROPERTIES['project.sitePrefix']}');return false;">${WEB_PROPERTIES['project.title']}</a> website.
-        <a href="" onclick="javascript:window.open('http://intermine.org/wiki/TemplateWebService');return false;">About embedding templates</a>.
-    </div>
+    <c:if test="${fn:contains(layout, 'mine') || fn:contains(layout, 'all')}">
+        <a href="" onclick="javascript:window.open('${WEB_PROPERTIES['project.sitePrefix']}');return false;">
+            ${WEB_PROPERTIES['project.title']}
+        </a> website.
+    </c:if>
 </div>
 
 </body>
