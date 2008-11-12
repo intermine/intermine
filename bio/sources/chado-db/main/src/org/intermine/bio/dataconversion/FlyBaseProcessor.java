@@ -163,17 +163,7 @@ public class FlyBaseProcessor extends ChadoSequenceProcessor
      */
     public FlyBaseProcessor(ChadoDBConverter chadoDBConverter) {
         super(chadoDBConverter);
-        Connection connection;
-        if (getDatabase() == null) {
-            // no Database when testing and no connection needed
-            connection = null;
-        } else {
-            try {
-                connection = getDatabase().getConnection();
-            } catch (SQLException e) {
-                throw new RuntimeException("can't get connection to the database", e);
-            }
-        }
+        Connection connection = getChadoDBConverter().getConnection();
 
         try {
             flyBaseMiscCv = getFlyBaseMiscCV(connection);

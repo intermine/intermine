@@ -98,7 +98,8 @@ public class ChadoDBConverterTest extends ItemsTestCase
     }
 
     private class TestChadoDBConverter extends GenomeDBConverter {
-        public TestChadoDBConverter(Database database, Model tgtModel, ItemWriter writer) {
+        public TestChadoDBConverter(Database database, Model tgtModel, ItemWriter writer)
+            throws SQLException {
             super(database, tgtModel, writer);
         }
 
