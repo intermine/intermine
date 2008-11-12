@@ -62,12 +62,12 @@ public class FlyBaseProcessor extends ChadoSequenceProcessor
     /**
      * The cv.name for the FlyBase miscellaneous CV.
      */
-    private static final String FLYBASE_MISCELLANEOUS_CV = FLYBASE_DB_NAME + " miscellaneous CV";
+    protected static final String FLYBASE_MISCELLANEOUS_CV = FLYBASE_DB_NAME + " miscellaneous CV";
 
     /**
      * The cv.name for the FlyBase miscellaneous CV.
      */
-    private static final String FLYBASE_SO_CV_NAME = "SO";
+    protected static final String FLYBASE_SO_CV_NAME = "SO";
 
     /**
      * A ConfigAction that changes FlyBase attribute tags (like "@FBcv0000289:hypomorph") to text
@@ -513,7 +513,7 @@ public class FlyBaseProcessor extends ChadoSequenceProcessor
                     Arrays.asList(CREATE_SYNONYM_ACTION));
             // null for the "is_current" means either TRUE or FALSE is OK.
 
-			map.put(new MultiKey("dbxref", "Gene", FLYBASE_DB_NAME, null),
+            map.put(new MultiKey("dbxref", "Gene", FLYBASE_DB_NAME, null),
                     Arrays.asList(CREATE_SYNONYM_ACTION));
 
             map.put(new MultiKey("dbxref", "MRNA", FLYBASE_DB_NAME + " Annotation IDs", Boolean.TRUE),

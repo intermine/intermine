@@ -17,6 +17,8 @@ import org.intermine.metadata.Model;
 import org.intermine.xml.full.Item;
 import org.intermine.sql.Database;
 
+import java.sql.SQLException;
+
 /**
  * A ChadoDBConverter that sets the dataset and datasource for genome databases (eg. WormBase and
  * FlyBase).
