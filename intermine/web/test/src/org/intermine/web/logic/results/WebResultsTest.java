@@ -262,6 +262,7 @@ public class WebResultsTest extends TestCase
         pathToQueryNode.put("Department.manager.company.vatNumber", compVatNumQF);
 
         QueryClass manQC = (QueryClass) query.getSelect().get(2);
+        pathToQueryNode.put("Department.employees", manQC);
         QueryField manSeniority = new QueryField(manQC, "seniority");
         pathToQueryNode.put("Department.employees.seniority", manSeniority);
         WebResults webResults =
@@ -278,32 +279,3 @@ public class WebResultsTest extends TestCase
         assertEquals(new Integer(103), ((List) webResults.get(2)).get(2));
     }
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

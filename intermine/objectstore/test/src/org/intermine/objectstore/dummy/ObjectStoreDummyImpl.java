@@ -204,7 +204,7 @@ public class ObjectStoreDummyImpl extends ObjectStoreAbstractImpl
         Iterator i = classes.iterator();
 
         while (i.hasNext()) {
-            QueryNode qn = (QueryNode) i.next();
+            QuerySelectable qn = (QuerySelectable) i.next();
             Object obj = null;
             if (qn instanceof QueryClass) {
                 try {
