@@ -18,4 +18,4 @@ CLASSPATH=../../lib/intermine-objectstore.jar:../../lib/intermine-pathquery.jar:
 cd $1;
 mkdir -p build;
 javac -d ./build -classpath ${CLASSPATH} ./src/samples/$1.java && \
-java -classpath ./build:${CLASSPATH} samples.$1;
+java -classpath ./build:${CLASSPATH} samples.$@;
