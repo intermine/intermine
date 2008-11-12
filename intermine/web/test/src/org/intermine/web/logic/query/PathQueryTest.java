@@ -649,7 +649,7 @@ public class PathQueryTest extends TestCase
             add("");
         }};
         q.setOrderBy(orderBy);
-        assertEquals(new ArrayList(), q.getSortOrder());
+        assertEquals(new HashMap(), q.getSortOrder());
 
         // null
         e = (PathQuery) expected.get("orderByAsc");
@@ -658,7 +658,7 @@ public class PathQueryTest extends TestCase
             add(null);
         }};
         q.setOrderBy(orderBy);
-        assertEquals(new ArrayList(), q.getSortOrder());
+        assertEquals(new HashMap(), q.getSortOrder());
 
     }
 
@@ -671,7 +671,7 @@ public class PathQueryTest extends TestCase
             add("");
         }};
         q.setOrderBy(orderBy, PathQuery.ASCENDING);
-        assertEquals(new ArrayList(), q.getSortOrder());
+        assertEquals(new HashMap(), q.getSortOrder());
 
         // null
         e = (PathQuery) expected.get("orderByAsc");
@@ -680,7 +680,7 @@ public class PathQueryTest extends TestCase
             add(null);
         }};
         q.setOrderBy(orderBy, PathQuery.ASCENDING);
-        assertEquals(new ArrayList(), q.getSortOrder());
+        assertEquals(new HashMap(), q.getSortOrder());
 
         // one
         e = (PathQuery) expected.get("orderByAsc");
@@ -697,7 +697,7 @@ public class PathQueryTest extends TestCase
         orderBy = new ArrayList<String>() {{
             add("Employee.name");
         }};
-        q.setOrderBy(orderBy, PathQuery.ASCENDING);
+        q.setOrderBy(orderBy, PathQuery.DESCENDING);
         assertEquals(e.getSortOrder(), q.getSortOrder());
 
         //three
