@@ -75,11 +75,11 @@ public class QueryResultService extends WebService
 
         PathQuery query = builder.getQuery();
         runPathQuery(query, input.getStart(), input.getMaxCount(), 
-                input.isComputeTotalCount(), null, null, input, null);
+                input.isComputeTotalCount(), null, null, input, null, input.getLayout());
     }
 
     private void forward(PathQuery pathQuery, String title, String description, 
-            WebServiceInput input, String mineLink) {
+            WebServiceInput input, String mineLink, String layout) {
         List<String> columnNames = pathQuery.getViewStrings();
         if (getFormat() == WebService.HTML_FORMAT) {
             MemoryOutput mout = (MemoryOutput) output;
@@ -90,6 +90,7 @@ public class QueryResultService extends WebService
             request.setAttribute("currentPage", (input.getStart() - 1) / input.getMaxCount());
             request.setAttribute("baseLink", createBaseLink());
             request.setAttribute("pageSize", input.getMaxCount());
+            request.setAttribute("layout", layout);
             if (mineLink != null) {
                 request.setAttribute("mineLinkText", "Results in " 
                         + InterMineAction.getWebProperties(request).getProperty("project.title"));
@@ -148,14 +149,15 @@ public class QueryResultService extends WebService
      * @param firstResult index of first result, that should be returned
      * @param maxResults maximum number of results
      * @param displayTotalCount if total result count should be displayed
-     * @param title title displayed in html output
-     * @param description description displayed in html output
+     * @param title title displayed in html output, can be null
+     * @param description description displayed in html output, can be null
      * @param input input of web service
-     * @param mineLink link pointing results of this query (template) in InterMine
+     * @param mineLink link pointing results of this query (template) in InterMine, can be null
+     * @param layout results table layout string, can be null
      */
     public void runPathQuery(PathQuery pathQuery, int firstResult, int maxResults,  
             boolean displayTotalCount, String title, String description, 
-            WebServiceInput input, String mineLink) {
+            WebServiceInput input, String mineLink, String layout) {
         PathQueryExecutor executor = new PathQueryExecutor(request, pathQuery);
         Results results = executor.getResults();
         
@@ -180,7 +182,7 @@ public class QueryResultService extends WebService
                 SessionMethods.getClassKeys(request.getSession().getServletContext()), null);
         ResultProcessor processor = new ResultProcessor(webResults, firstResult, maxResults);
         processor.write(output);              
-        forward(pathQuery, title, description, input, mineLink);
+        forward(pathQuery, title, description, input, mineLink, layout);
     }
 
     private String getXMLSchemaUrl() {

@@ -67,6 +67,7 @@ public class TemplateResultRequestParser extends WebServiceRequestParser
         input.setComputeTotalCount(parseComputeTotalCountParameter(request));
         input.setName(getRequiredStringParameter(NAME_PARAMETER));
         input.setConstraints(parseConstraints(request));
+        input.setLayout(request.getParameter(QueryResultRequestParser.LAYOUT_PARAMETER));
     }
 
     private boolean parseComputeTotalCountParameter(HttpServletRequest request) {

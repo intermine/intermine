@@ -26,6 +26,22 @@ public class TemplateResultInput extends WebServiceInput
     
     private boolean computeTotalCount = false;
 
+    private String layout;
+    
+    /**
+     * @return layout string specifying result table layout
+     */
+    public String getLayout() {
+        return layout;
+    }
+
+    /**
+     * @param layout string specifying result table layout
+     */
+    public void setLayout(String layout) {
+        this.layout = layout;
+    }
+
     /**
      * Returns template name.
      * @return name
