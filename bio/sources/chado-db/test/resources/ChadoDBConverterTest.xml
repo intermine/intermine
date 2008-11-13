@@ -23,6 +23,13 @@
     <reference name="subject" ref_id="12_6"/>
     <collection name="dataSets"><reference ref_id="4_1"/></collection>
   </item>
+  <item id="22_2" class="http://www.flymine.org/model/genomic#Interaction">
+    <attribute name="interactionType" value="genetic"/>
+    <attribute name="shortName" value="FlyBase:FBgn0000001_FBgn0036461-1"/>
+    <reference name="experiment" ref_id="23_2"/>
+    <reference name="gene" ref_id="0_1"/>
+    <collection name="interactingGenes"><reference ref_id="0_2"/></collection>
+  </item>
   <item id="2_9" class="http://www.flymine.org/model/genomic#Sequence">
     <attribute name="length" value="2345"/>
     <attribute name="residues" value="ccaggtg"/>
@@ -137,6 +144,9 @@
     <collection name="dataSets"><reference ref_id="4_1"/></collection>
     <collection name="transcripts"><reference ref_id="6_1"/><reference ref_id="6_2"/></collection>
   </item>
+  <item id="19_1" class="http://www.flymine.org/model/genomic#CVTerm">
+    <attribute name="identifier" value="FBcv:0000031"/>
+  </item>
   <item id="5_22" class="http://www.flymine.org/model/genomic#Synonym">
     <attribute name="isPrimary" value="true"/>
     <attribute name="type" value="identifier"/>
@@ -144,9 +154,6 @@
     <reference name="source" ref_id="3_1"/>
     <reference name="subject" ref_id="13_2"/>
     <collection name="dataSets"><reference ref_id="4_1"/></collection>
-  </item>
-  <item id="19_1" class="http://www.flymine.org/model/genomic#CVTerm">
-    <attribute name="identifier" value="FBcv:0000031"/>
   </item>
   <item id="5_43" class="http://www.flymine.org/model/genomic#Synonym">
     <attribute name="isPrimary" value="true"/>
@@ -163,6 +170,9 @@
     <reference name="source" ref_id="3_1"/>
     <reference name="subject" ref_id="11_1"/>
     <collection name="dataSets"><reference ref_id="4_1"/></collection>
+  </item>
+  <item id="15_9" class="http://www.flymine.org/model/genomic#Publication">
+    <attribute name="pubMedId" value="2345671"/>
   </item>
   <item id="16_2" class="http://www.flymine.org/model/genomic#Location">
     <attribute name="end" value="102000"/>
@@ -268,6 +278,10 @@
     <reference name="subject" ref_id="9_1"/>
     <collection name="dataSets"><reference ref_id="4_1"/></collection>
   </item>
+  <item id="23_1" class="http://www.flymine.org/model/genomic#InteractionExperiment">
+    <attribute name="name" value="An paper about interactions"/>
+    <reference name="publication" ref_id="15_1"/>
+  </item>
   <item id="5_3" class="http://www.flymine.org/model/genomic#Synonym">
     <attribute name="isPrimary" value="true"/>
     <attribute name="type" value="identifier"/>
@@ -351,6 +365,10 @@
   <item id="15_5" class="http://www.flymine.org/model/genomic#Publication">
     <attribute name="pubMedId" value="7720555"/>
   </item>
+  <item id="23_2" class="http://www.flymine.org/model/genomic#InteractionExperiment">
+    <attribute name="name" value="Another paper about interactions"/>
+    <reference name="publication" ref_id="15_9"/>
+  </item>
   <item id="17_1" class="http://www.flymine.org/model/genomic#PhenotypeAnnotation">
     <attribute name="annotationType" value="manifest in"/>
     <attribute name="description" value="wing, with ScerGAL4[sd-SG29.1]"/>
@@ -392,11 +410,11 @@
     <reference name="organism" ref_id="1_1"/>
     <collection name="dataSets"><reference ref_id="4_1"/></collection>
   </item>
-  <item id="18_1" class="http://www.flymine.org/model/genomic#AnatomyTerm">
-    <attribute name="identifier" value="FBbt:00004729"/>
-  </item>
   <item id="19_2" class="http://www.flymine.org/model/genomic#CVTerm">
     <attribute name="identifier" value="FBcv:0000351"/>
+  </item>
+  <item id="18_1" class="http://www.flymine.org/model/genomic#AnatomyTerm">
+    <attribute name="identifier" value="FBbt:00004729"/>
   </item>
   <item id="5_7" class="http://www.flymine.org/model/genomic#Synonym">
     <attribute name="isPrimary" value="true"/>
@@ -742,6 +760,13 @@
     <reference name="source" ref_id="3_1"/>
     <reference name="subject" ref_id="0_1"/>
     <collection name="dataSets"><reference ref_id="4_1"/></collection>
+  </item>
+  <item id="22_1" class="http://www.flymine.org/model/genomic#Interaction">
+    <attribute name="interactionType" value="genetic"/>
+    <attribute name="shortName" value="FlyBase:FBgn0000001_FBgn0036461"/>
+    <reference name="experiment" ref_id="23_1"/>
+    <reference name="gene" ref_id="0_1"/>
+    <collection name="interactingGenes"><reference ref_id="0_2"/></collection>
   </item>
   <item id="15_8" class="http://www.flymine.org/model/genomic#Publication">
     <attribute name="pubMedId" value="2226204"/>
