@@ -51,7 +51,7 @@
     </c:otherwise>
   </c:choose>
 
-  <html:link href="${WEB_PROPERTIES['gbrowse.prefix']}/${gbrowseSource}?source=${gbrowseSource};type=${label};name=${name};width=750">
+  <html:link href="${WEB_PROPERTIES['gbrowse.prefix']}/${gbrowseSource}?source=${gbrowseSource};label=${label};name=${name};width=750">
     <div>
       modENCODE genome browser view (GBrowse):
     </div>
