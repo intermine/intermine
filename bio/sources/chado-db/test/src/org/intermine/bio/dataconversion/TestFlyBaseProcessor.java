@@ -700,8 +700,8 @@ public class TestFlyBaseProcessor extends FlyBaseProcessor
         return res;
     }
 
-    /* (non-Javadoc)
-     * @see org.intermine.bio.dataconversion.FlyBaseProcessor#getInteractionResultSet(java.sql.Connection)
+    /**
+     * {@inheritDoc}
      */
     @Override
     protected ResultSet getInteractionResultSet(Connection connection) throws SQLException {
@@ -709,7 +709,12 @@ public class TestFlyBaseProcessor extends FlyBaseProcessor
             "feature_id", "other_feature_id", "pub_title", "pubmed_id"
         };
         Object[][] resObjects = new Object[][] {
-            // empty
+            {
+                23269151, 3117509, "An paper about interactions", 8344257
+            },
+            {
+                23269151, 3117509, "Another paper about interactions", 2345671
+            }
         };
 
         MockMultiRowResultSet res = new MockMultiRowResultSet();

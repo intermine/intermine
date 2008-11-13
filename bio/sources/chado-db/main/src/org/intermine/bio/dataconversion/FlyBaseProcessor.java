@@ -13,6 +13,7 @@ package org.intermine.bio.dataconversion;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -875,6 +876,7 @@ public class FlyBaseProcessor extends ChadoSequenceProcessor
      */
     private void createInteractions(Connection connection)
         throws SQLException, ObjectStoreException {
+        Set<String> seenInteractions = new HashSet<String>();
         ResultSet res = getInteractionResultSet(connection);
         while (res.next()) {
             Integer featureId = new Integer(res.getInt("feature_id"));
@@ -889,7 +891,17 @@ public class FlyBaseProcessor extends ChadoSequenceProcessor
 
             String shortName = "FlyBase" + ":" + featureData.getChadoFeatureUniqueName() + "_"
                 + otherFeatureData.getChadoFeatureUniqueName();
-            interaction.setAttribute("shortName", shortName);
+
+            int i = 0;
+            String newShortName = shortName;
+            while (seenInteractions.contains(newShortName)) {
+                i++;
+                newShortName = shortName + "-" + i;
+            }
+
+            seenInteractions.add(newShortName);
+
+            interaction.setAttribute("shortName", newShortName);
 
             interaction.setReference("gene", featureData.getItemIdentifier());
             interaction.addToCollection("interactingGenes", otherFeatureData.getItemIdentifier());
