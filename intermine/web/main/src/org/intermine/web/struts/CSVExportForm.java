@@ -16,14 +16,14 @@ package org.intermine.web.struts;
  */
 public class CSVExportForm extends TableExportForm
 {
-    private static final String FORMAT = "format";
+    private static final String CSV_FORMAT = "format";
 
     /**
      * Return the format field ("csv", "tab", ...)
      * @return the format
      */
     public String getFormat() {
-        return (String) getExtraParams().get(FORMAT);
+        return (String) getExtraParams().get(CSV_FORMAT);
     }
 
     /**
@@ -31,16 +31,15 @@ public class CSVExportForm extends TableExportForm
      * @param format the new format
      */
     public void setFormat(String format) {
-        getExtraParams().put(FORMAT, format);
+        getExtraParams().put(CSV_FORMAT, format);
     }
-
     /**
      * {@inheritDoc}
      */
     @Override
     public void initialise() {
         super.initialise();
-        getExtraParams().put(FORMAT, "csv");
+        getExtraParams().put(CSV_FORMAT, "csv");
     }
 
 }
