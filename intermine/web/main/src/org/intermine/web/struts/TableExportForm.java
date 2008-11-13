@@ -34,6 +34,8 @@ public class TableExportForm extends ActionForm
     // PagedTable identifier
     private String table = null;
 
+    private static final String INCLUDE_HEADERS = "cvs_include_headers";
+
     /**
      * Constructor
      */
@@ -71,6 +73,28 @@ public class TableExportForm extends ActionForm
      */
     public final void setType(String type) {
         this.type = type;
+    }
+
+    /**
+     * Set the includeHeaders flag.  If true column headers will be added to the output where
+     * possible.
+     * @param includeHeaders the new value.
+     */
+    public void setIncludeHeaders(boolean includeHeaders) {
+        getExtraParams().put(INCLUDE_HEADERS, includeHeaders);
+    }
+
+    /**
+     * Return the current value of the includeHeaders flag.
+     * @return the includeHeaders flag
+     */
+    public boolean getIncludeHeaders() {
+        Boolean flag = (Boolean) getExtraParams().get(INCLUDE_HEADERS);
+        if (flag == null) {
+            return false;
+        } else {
+            return flag.booleanValue();
+        }
     }
 
     /**

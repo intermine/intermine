@@ -64,13 +64,15 @@
 
 <!-- exporting type: ${type} -->
 <ol>
-  <li><fieldset><c:choose>
+  <li><fieldset>
+      <c:choose>
     <c:when test="${type == 'csv'}">
       <legend>Choose a format:</legend>
       <ol>
         <li><html:radio property="format" value="csv"/><label>Comma separated values</label></li>
         <li><html:radio property="format" value="tab"/><label>Tab separated values</label></li>
       </ol>
+
     </c:when>
     <c:when test="${type == 'excel'}">
       <%-- no extra options --%>
@@ -79,7 +81,15 @@
       <c:set var="tileName" value="${type}ExportOptions.tile"/>
       <tiles:insert name="${tileName}"/>
     </c:otherwise>
-  </c:choose></fieldset></li>
+      </c:choose>
+    </fieldset>
+  </li>
+  <c:if test="${type == 'csv'}">
+  <li class="columnHeaderOption">
+    <html:checkbox property="includeHeaders"/>
+    <label>Include column headers in output</label>
+  </li>
+  </c:if>
 
   <html:hidden property="pathsString" styleId="pathsString" value="${pathsString}"/>
   <html:hidden property="table" value="${table}"/>

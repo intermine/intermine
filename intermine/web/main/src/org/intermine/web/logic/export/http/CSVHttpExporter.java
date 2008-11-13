@@ -10,6 +10,8 @@ package org.intermine.web.logic.export.http;
  *
  */
 
+import java.util.List;
+
 import java.io.OutputStream;
 
 import javax.servlet.http.HttpServletResponse;
@@ -26,7 +28,7 @@ import org.intermine.web.logic.export.rowformatters.CSVRowFormatter;
  **/
 public class CSVHttpExporter extends HttpExporterBase
 {
-    
+
     /**
      * Constructor.
      */
@@ -44,7 +46,7 @@ public class CSVHttpExporter extends HttpExporterBase
      * {@inheritDoc}
      */
     @Override
-    protected Exporter getExporter(OutputStream out, String separator) {
-        return new ExporterImpl(out, new CSVRowFormatter(), separator);
+    protected Exporter getExporter(OutputStream out, String separator, List<String> headers) {
+        return new ExporterImpl(out, new CSVRowFormatter(), separator, headers);
     }
 }

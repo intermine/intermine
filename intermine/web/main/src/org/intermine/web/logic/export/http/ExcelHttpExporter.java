@@ -10,6 +10,8 @@ package org.intermine.web.logic.export.http;
  *
  */
 
+import java.util.List;
+
 import org.intermine.web.logic.WebUtil;
 import org.intermine.web.logic.export.ExcelExporter;
 import org.intermine.web.logic.export.ExportException;
@@ -56,7 +58,9 @@ public class ExcelHttpExporter extends HttpExporterBase
      * {@inheritDoc}
      */
     @Override
-    protected Exporter getExporter(OutputStream out, String lineSeparator) {
+    protected Exporter getExporter(OutputStream out,
+                                   @SuppressWarnings("unused") String lineSeparator,
+                                   List<String> headers) {
         // excel export is independent at the line separator
         return new ExcelExporter(out);
     }

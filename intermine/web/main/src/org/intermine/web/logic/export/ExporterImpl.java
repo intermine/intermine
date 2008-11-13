@@ -10,12 +10,11 @@ package org.intermine.web.logic.export;
  *
  */
 
+import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
 import org.intermine.objectstore.flatouterjoins.ReallyFlatIterator;
-import org.intermine.path.Path;
-import org.intermine.web.logic.results.PagedTable;
 import org.intermine.web.logic.results.ResultElement;
 
 import java.io.OutputStream;
@@ -36,12 +35,15 @@ public class ExporterImpl implements Exporter
 
     private int writtenResultsCount = 0;
 
+    private final List<String> headers;
+
     /**
      * Constructor.
      * @param out output stream
      * @param rowFormatter used row formatter.
      */
     public ExporterImpl(OutputStream out, RowFormatter rowFormatter) {
+        this.headers = null;
         this.out = new PrintWriter(out);
         this.rowFormatter = rowFormatter;
     }
@@ -51,8 +53,11 @@ public class ExporterImpl implements Exporter
      * @param out output stream
      * @param rowFormatter used row formatter.
      * @param separator line separator
+     * @param headers if non-null, a list of the column headers which will be written by export()
      */
-    public ExporterImpl(OutputStream out, RowFormatter rowFormatter, String separator) {
+    public ExporterImpl(OutputStream out, RowFormatter rowFormatter, String separator,
+                        List<String> headers) {
+        this.headers = headers;
         if (separator.equals(Exporter.WINDOWS_SEPARATOR)) {
             this.out = new CustomPrintWriter(out, Exporter.WINDOWS_SEPARATOR);
         } else {
@@ -66,6 +71,9 @@ public class ExporterImpl implements Exporter
      */
     public void export(List<List<ResultElement>> results) {
         try {
+            if (headers != null) {
+                out.println(rowFormatter.format(new ArrayList<Object>(headers)));
+            }
             ResultElementConverter converter = new ResultElementConverter();
             Iterator<List<ResultElement>> rowIter = new ReallyFlatIterator(results.iterator());
             while (rowIter.hasNext()) {
