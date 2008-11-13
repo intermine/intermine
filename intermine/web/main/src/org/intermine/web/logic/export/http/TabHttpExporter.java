@@ -10,6 +10,8 @@ package org.intermine.web.logic.export.http;
  *
  */
 
+import java.util.List;
+
 import java.io.OutputStream;
 
 import javax.servlet.http.HttpServletResponse;
@@ -42,7 +44,7 @@ public class TabHttpExporter extends HttpExporterBase
      * {@inheritDoc}
      */
     @Override
-    protected Exporter getExporter(OutputStream out, String separator) {
-        return new ExporterImpl(out, new TabRowFormatter(), separator);
+    protected Exporter getExporter(OutputStream out, String separator, List<String> headers) {
+        return new ExporterImpl(out, new TabRowFormatter(), separator, headers);
     }
 }

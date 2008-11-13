@@ -71,3 +71,13 @@ fieldset fieldset label {
     margin-left:0.5em;
     vertical-align: top;
 }
+
+li.columnHeaderOption label {
+    float: none;
+    margin-left: 0.5em;
+    vertical-align: top;
+}
+
+li.columnHeaderOption input {
+    float: left;
+}

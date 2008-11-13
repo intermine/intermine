@@ -55,6 +55,7 @@ public abstract class HttpExporterBase implements TableHttpExporter
      * @param pt exported PagedTable
      * @param request request
      * @param response response
+     * @param form the form
      */
     public void export(PagedTable pt, HttpServletRequest request,
                        HttpServletResponse response, TableExportForm form) {
@@ -72,20 +73,18 @@ public abstract class HttpExporterBase implements TableHttpExporter
         } else {
             separator = Exporter.UNIX_SEPARATOR;
         }
-        Exporter exporter = getExporter(out, separator);
+        List<String> headers = null;
+        if (form.getIncludeHeaders()) {
+            headers = new ArrayList<String>();
+            for (String columnName: pt.getColumnNames()) {
+                headers.add(columnName);
+            }
+        }
+        Exporter exporter = getExporter(out, separator, headers);
         exporter.export(pt.getAllResultElementRows());
         if (exporter.getWrittenResultsCount() == 0) {
             throw new ExportException("Nothing was found for export.");
         }
-    }
-
-    /**
-     * For TableHttpExporter we always return an empty list because all columns and classes are
-     * equal for this exporter.
-     * {@inheritDoc}
-     */
-    public List<Path> getExportClassPaths(@SuppressWarnings("unused") PagedTable pt) {
-        return new ArrayList<Path>();
     }
 
     /**
@@ -97,11 +96,14 @@ public abstract class HttpExporterBase implements TableHttpExporter
     }
 
     /**
+     * Do the export.
      * @param out output stream
      * @param separator line separator
+     * @param headers if non-null, a list of the column headers which will be written by export()
      * @return exporter that will perform the business logic of export.
      */
-    protected abstract Exporter getExporter(OutputStream out, String separator);
+    protected abstract Exporter getExporter(OutputStream out, String separator,
+                                            List<String> headers);
 
     /**
      * Sets header and content type of result in response.
