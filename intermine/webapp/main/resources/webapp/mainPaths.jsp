@@ -12,14 +12,37 @@
 <script>
   <!--
   function editConstraint(path, index) {
-    if (isExplorer()) {
+    /*if (isExplorer()) {
       return true;
-    }
+    }*/
     new Ajax.Updater('mainConstraint', '<html:rewrite action="/mainChange"/>',
       {parameters:'method=ajaxEditConstraint&path='+path+'&index='+index,
-       asynchronous:true, evalScripts:true});
+       asynchronous:true, evalScripts:true,
+      onSuccess: function() {
+        new Ajax.Updater('main-paths', '<html:rewrite action="/mainChange"/>',
+          {parameters:'method=ajaxRenderPaths', asynchronous:true, evalScripts:true, onSuccess: function() {
+             new Boxy(jQuery('#constraint'), {title: "Constraint for " + path});
+          }
+        });
+      }
+    });
     return false;
   }
+
+  function editTemplateConstraint(path, index) {
+    new Ajax.Updater('mainConstraint', '<html:rewrite action="/mainChange"/>',
+      {parameters:'method=ajaxEditTemplateConstraint&path='+path+'&index='+index,
+       asynchronous:true, evalScripts:true,
+      onSuccess: function() {
+        new Ajax.Updater('main-paths', '<html:rewrite action="/mainChange"/>',
+          {parameters:'method=ajaxRenderPaths', asynchronous:true, evalScripts:true, onSuccess: function() {
+             new Boxy(jQuery('#constraint'), {title: "Constraint for " + path});
+          }
+        });
+      }
+    });
+    return false;
+  } 
   //-->
 </script>
 
@@ -168,7 +191,7 @@
                 <c:choose>
                   <c:when test="${constraint.editableInTemplate}">
                     <html:link action="/mainChange?method=editTemplateConstraint&amp;path=${node.pathString}&amp;index=${status.index}"
-                               titleKey="templateBuilder.editTemplateConstraint.linktitle">
+                               titleKey="templateBuilder.editTemplateConstraint.linktitle" onclick="return editTemplateConstraint('${node.pathString}', '${status.index}')" >
                       <c:choose>
                         <c:when test="${constraint.editable}">
                           <img border="0" src="images/unlocked.gif" width="13" height="13" title="unlocked"/>
