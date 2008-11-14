@@ -18,6 +18,7 @@ import javax.servlet.http.HttpServletRequest;
 
 import org.intermine.objectstore.ObjectStore;
 import org.intermine.objectstore.ObjectStoreException;
+import org.intermine.objectstore.flatouterjoins.ObjectStoreFlatOuterJoinsImpl;
 import org.intermine.objectstore.query.Query;
 import org.intermine.objectstore.query.QuerySelectable;
 import org.intermine.objectstore.query.Results;
@@ -101,7 +102,7 @@ public class PathQueryExecutor
      * @return results
      */
     public Results getResults() {
-        return getObjectStore().execute(query);
+        return (new ObjectStoreFlatOuterJoinsImpl(getObjectStore())).execute(query);
     }
     
     private Map<Object, InterMineBag> getSavedBags() {

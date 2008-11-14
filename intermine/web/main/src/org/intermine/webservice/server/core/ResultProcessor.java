@@ -13,6 +13,8 @@ package org.intermine.webservice.server.core;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.intermine.objectstore.flatouterjoins.ReallyFlatIterator;
+import org.intermine.objectstore.query.ResultsRow;
 import org.intermine.web.logic.results.ResultElement;
 import org.intermine.web.logic.results.WebResults;
 import org.intermine.webservice.server.output.Output;
@@ -91,15 +93,15 @@ public class ResultProcessor
      * @see setMaxResults()
      */
     public void write(Output output) {
-        int end = maxResults + firstResult;
-        for (int i = firstResult; i < end; i++) {
-            try {
-                List<ResultElement> row = results.getResultElements(i);
-                output.addResultItem(convertResultElementsToStrings(row));
-            } catch (IndexOutOfBoundsException e) {
-                // At the end of results
+        ReallyFlatIterator it = new ReallyFlatIterator(results.iteratorFrom(firstResult));
+        int writtenCount = 0;
+        while (it.hasNext())  {
+            if (writtenCount >= maxResults) {
                 break;
             }
+            ResultsRow row = (ResultsRow) it.next();
+            output.addResultItem(convertResultElementsToStrings(row));
+            writtenCount++;
         }
     }
 
