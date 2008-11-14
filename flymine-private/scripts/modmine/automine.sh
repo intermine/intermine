@@ -425,7 +425,13 @@ echo
 echo "running acceptance tests"
 echo
 cd $MINEDIR/integrate
+
+if [ $FULL = "y" ]
+then
 ant $V -Drelease=$REL acceptance-tests
+else
+ant $V -Drelease=$REL acceptance-tests-metadata
+fi
 
 if [ $NAMESTAMP != "not_defined" ]
 then
