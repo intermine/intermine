@@ -90,7 +90,7 @@ public class QueryCollectionPathExpression implements QueryPathExpressionWithSel
      * @throws IllegalArgumentException if the field is not a collection or reference
      */
     public QueryCollectionPathExpression(QueryClass qc, String fieldName, Class... subclasses) {
-        subclass = DynamicUtil.composeClass(subclasses);
+        subclass = DynamicUtil.composeDescriptiveClass(subclasses);
         if (qc == null) {
             throw new NullPointerException("QueryClass parameter is null");
         }
@@ -105,9 +105,11 @@ public class QueryCollectionPathExpression implements QueryPathExpressionWithSel
             throw new IllegalArgumentException("Field " + fieldName + " not found in "
                     + qc.getType());
         }
+        Class referenceType = type;
         if (Collection.class.isAssignableFrom(type)) {
             isCollection = true;
-            if (!TypeUtil.getElementType(qc.getType(), fieldName).isAssignableFrom(subclass)) {
+            referenceType = TypeUtil.getElementType(qc.getType(), fieldName);
+            if (!referenceType.isAssignableFrom(subclass)) {
                 throw new IllegalArgumentException("subclass parameter " + subclass.getName()
                         + " is not a subclass of collection element type "
                         + TypeUtil.getElementType(qc.getType(), fieldName).getName());
@@ -126,6 +128,9 @@ public class QueryCollectionPathExpression implements QueryPathExpressionWithSel
         }
         this.qc = qc;
         this.fieldName = fieldName;
+        if (subclass.equals(referenceType)) {
+            subclass = null;
+        }
     }
 
     /**
