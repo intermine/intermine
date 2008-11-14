@@ -54,10 +54,15 @@
     <integrate projectXml="../project.xml" basedir="../.." source="uniprot" action="retrieve"/>
   </target>
 
-  <target name="acceptance-tests" depends="-init-properties, -init-integrate, -init-deps">
-    <acceptance-tests configFile="../../bio/core/test/resources/modmine_acceptance_test.conf"
+  <target name="acceptance-tests-metadata" depends="-init-properties, -init-integrate, -init-deps">
+    <acceptance-tests configFile="../../bio/core/test/resources/modmine_acceptance_test_metadata.conf"
                       outputFile="build/acceptance_test.html"
                       database="db.production"/>
   </target>
+	<target name="acceptance-tests" depends="-init-properties, -init-integrate, -init-deps">
+		<acceptance-tests configFile="../../bio/core/test/resources/modmine_acceptance_test.conf"
+											outputFile="build/acceptance_test.html"
+											database="db.production"/>
+	</target>
 </project>
 
