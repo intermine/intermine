@@ -89,7 +89,7 @@ public class QueryObjectPathExpression implements QueryPathExpressionWithSelect,
      * @throws IllegalArgumentException if the field is not an object reference
      */
     public QueryObjectPathExpression(QueryClass qc, String fieldName, Class... subclasses) {
-        subclass = DynamicUtil.composeClass(subclasses);
+        subclass = DynamicUtil.composeDescriptiveClass(subclasses);
         if (fieldName == null) {
             throw new NullPointerException("Field name parameter is null");
         }
@@ -119,6 +119,9 @@ public class QueryObjectPathExpression implements QueryPathExpressionWithSelect,
         this.fieldName = fieldName;
         this.type = field.getReturnType();
         defaultClass = new QueryClass(subclass);
+        if (subclass.equals(type)) {
+            subclass = null;
+        }
     }
 
     /**

@@ -122,6 +122,24 @@ public class DynamicUtil
     }
 
     /**
+     * Return the Class for the array of Class objects. This method returns a Class which is
+     * descriptive of the component classes, but not necessarily valid for instantiating.
+     * This means that passing a single interface into this method will return the interface rather
+     * than a class composed from it.
+     *
+     * @param classes the classes and interfaces to extend/implement
+     * @return the Class
+     * @throws IllegalArgumentException if there is more than one Class, or if the fields are not
+     * compatible.
+     */
+    public static Class composeDescriptiveClass(Class... classes) throws IllegalArgumentException {
+        if (classes.length == 1) {
+            return classes[0];
+        }
+        return composeClass(new HashSet(Arrays.asList(classes)));
+    }
+
+    /**
      * Return the Class for the array of Class objects.
      *
      * @param classes the classes and interfaces to extend/implement

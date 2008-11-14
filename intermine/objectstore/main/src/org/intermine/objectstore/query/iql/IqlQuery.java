@@ -290,7 +290,7 @@ public class IqlQuery
                 Collection<Class> subclasses = DynamicUtil.decomposeClass(subclass);
                 if (subclasses.size() == 1) {
                     retval.append("::")
-                        .append(ref.getSubclass().getName());
+                        .append(subclasses.iterator().next().getName());
                 } else {
                     boolean needComma = false;
                     for (Class subclas : subclasses) {
@@ -349,7 +349,7 @@ public class IqlQuery
                 Collection<Class> subclasses = DynamicUtil.decomposeClass(subclass);
                 if (subclasses.size() == 1) {
                     retval.append("::")
-                        .append(col.getSubclass().getName());
+                        .append(subclasses.iterator().next().getName());
                 } else {
                     boolean needComma = false;
                     for (Class subclas : subclasses) {
