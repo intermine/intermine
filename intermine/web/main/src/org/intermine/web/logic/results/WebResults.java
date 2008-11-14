@@ -170,9 +170,8 @@ public class WebResults extends AbstractList<List<Object>> implements WebTable
                                                    .getName());
             Class typeCls = columnPath.getLastClassDescriptor().getType();
 
-            String columnString = columnPath.toString();
-
-            String columnDescription = pathQuery.getPathDescription(columnPath.toStringNoConstraints());
+            String columnDescription = pathQuery.getPathDescription(columnPath.
+                    toStringNoConstraints());
             Column column;
 
             if (columnDescription.equals(columnPath.toStringNoConstraints())) {
@@ -334,7 +333,6 @@ public class WebResults extends AbstractList<List<Object>> implements WebTable
 
     // TODO javadoc to describe what this does
     private List translateRow(List initialList, boolean makeResultElements) {
-        //System.out.println("Translating row: " + initialList);
         try {
             if (initialList instanceof MultiRow) {
                 MultiRow retval = new MultiRow();
@@ -407,18 +405,18 @@ public class WebResults extends AbstractList<List<Object>> implements WebTable
                 try {
                     fieldValue = (o == null ? null : path.resolve(o));
                 } catch (PathError e) {
-                    throw new IllegalArgumentException(
-                                    "Path: \""
-                                                    + columnName
-                                                    + "\", pathToIndex: \""
-                                                    + pathToIndex
-                                                    + "\", prefix: \""
-                                                    + parentColumnName
-                                                    + "\", query: \""
-                                                    + PathQueryBinding.marshal(pathQuery, "",
-                                                                    pathQuery.getModel().getName())
-                                                    + "\", columnIndex: \"" + columnIndex
-                                                    + "\", initialList: \"" + initialList + "\"", e);
+                        throw new IllegalArgumentException(
+                        "Path: \""
+                        + columnName
+                        + "\", pathToIndex: \""
+                        + pathToIndex
+                        + "\", prefix: \""
+                        + parentColumnName
+                        + "\", query: \""
+                        + PathQueryBinding.marshal(pathQuery, "",
+                                        pathQuery.getModel().getName())
+                        + "\", columnIndex: \"" + columnIndex
+                        + "\", initialList: \"" + initialList + "\"", e);
                 }
                 if (makeResultElements && o != null) {
                     String fieldCDName = path.getLastClassDescriptor().getName();
@@ -457,10 +455,20 @@ public class WebResults extends AbstractList<List<Object>> implements WebTable
         }
     }
 
+    /**
+     * @return iterator over results
+     */
     public Iterator iterator() {
         return new Iter();
     }
 
+    /**
+     * @param start - first index from which start iteration
+     * @return iterator over results
+     */
+    public Iterator iteratorFrom(int start) {
+        return new Iter(start);
+    }
 
     /**
      * Returns the columns for these results.
@@ -471,6 +479,9 @@ public class WebResults extends AbstractList<List<Object>> implements WebTable
         return columns;
     }
 
+    /**
+     * @return path query
+     */
     public PathQuery getPathQuery() {
         return pathQuery;
     }
@@ -479,6 +490,10 @@ public class WebResults extends AbstractList<List<Object>> implements WebTable
     {
         private Iterator subIter;
 
+        public Iter(int start) {
+            subIter = osResults.iteratorFrom(start);
+        }        
+        
         public Iter() {
             subIter = osResults.iterator();
         }
