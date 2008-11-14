@@ -20,10 +20,10 @@
     <collection name="submissions"
       referenced-type="org.flymine.model.genomic.Submission"
       reverse-reference="project" />
-		<!-- 
+      <!-- 
 			<collection name="organisms" referenced-type="org.flymine.model.genomic.Organism" 
 			reverse-reference="project"/>
-		-->
+			-->
 	</class>
 
 	<class name="org.flymine.model.genomic.Lab"
@@ -49,14 +49,12 @@
 		<attribute name="qualityControl" type="java.lang.String" />
 		<attribute name="replicate" type="java.lang.String" />
     <attribute name="experimentDate" type="java.util.Date" />
-    <attribute name="publicReleaseDate" type="java.util.Date" />
-    <!-- temp. changed to string... 
-    <attribute name="experimentDate" type="java.lang.String" />
-    <attribute name="publicReleaseDate" type="java.lang.String" />
-    -->
-		<reference name="organism"
-			referenced-type="org.flymine.model.genomic.Organism" />
+    <attribute name="publicReleaseDate" type="java.util.Date" />     
+
 		<!-- 
+  <reference name="organism"
+      referenced-type="org.flymine.model.genomic.Organism" />
+
 			<reference name="publication" referenced-type="org.flymine.model.genomic.Publication"/>
 			<attribute name="fileFormat" type="java.lang.String"/>
 		-->
