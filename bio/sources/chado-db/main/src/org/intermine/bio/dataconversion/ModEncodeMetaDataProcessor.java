@@ -44,6 +44,12 @@ public class ModEncodeMetaDataProcessor extends ChadoProcessor
     private Map<Integer, Integer> appliedProtocolIdMap = new HashMap<Integer, Integer>();
     private Map<Integer, String> appliedProtocolIdRefMap = new HashMap<Integer, String>();
 
+    // for projects, the maps link the project name with the identifiers...
+    private Map<String, Integer> projectIdMap = new HashMap<String, Integer>();
+    private Map<String, String> projectIdRefMap = new HashMap<String, String>();
+    // ...we need a further map to link to submission 
+    private Map<Integer, String> submissionProjectMap = new HashMap<Integer, String>();
+
     // for labs, the maps link the lab name with the identifiers...
     private Map<String, Integer> labIdMap = new HashMap<String, Integer>();
     private Map<String, String> labIdRefMap = new HashMap<String, String>();
@@ -135,6 +141,10 @@ public class ModEncodeMetaDataProcessor extends ChadoProcessor
      */
     @Override
     public void process(Connection connection) throws Exception {
+
+        LOG.info("ICI:  project");
+        processProjectTable(connection);
+        //processLabAttributes(connection);
 
         LOG.info("ICI:  lab");
         processLabTable(connection);
@@ -635,7 +645,82 @@ public class ModEncodeMetaDataProcessor extends ChadoProcessor
         }
     }
 
+    
+    /**
+    *
+    * ==============
+    *    PROJECT
+    * ==============
+    *
+    * Labs are loaded statically. A map is built between submissionId and
+    * lab's name and used for the references. 2 maps store intermine
+    * objectId and itemId, with key the lab name.
+    * Note: the lab and the project are now put in the chadoxml now, as surnames,
+    * and we could use those instead.
+    * 
+    * @param connection
+    * @throws SQLException
+    * @throws ObjectStoreException
+    */
+   private void processProjectTable(Connection connection)
+   throws SQLException, ObjectStoreException {
+       ResultSet res = getProjectResultSet(connection);
+       int count = 0;
+       while (res.next()) {
+           Integer submissionId = new Integer(res.getInt("experiment_id"));
+           String value = res.getString("value");
+           submissionProjectMap.put(submissionId, value);
+           count++;
+       }
+       res.close();
 
+       Set <Integer> exp = submissionProjectMap.keySet();
+       Iterator <Integer> i  = exp.iterator();
+       while (i.hasNext()) {
+           Integer thisExp = i.next();
+           String project = submissionProjectMap.get(thisExp);  
+
+           if (projectIdMap.containsKey(project)) {
+               continue;
+           }
+           LOG.info("PROJECT: " + project);            
+           Item pro = getChadoDBConverter().createItem("Project");
+           LOG.info("PROJECT1: " + project);            
+           pro.setAttribute("surnamePI", project);
+           LOG.info("PROJECT2: " + project);            
+           Integer intermineObjectId = getChadoDBConverter().store(pro);
+           LOG.info("PROJECT3: " + project);            
+           storeInProjectMaps(pro, project, intermineObjectId);
+           LOG.info("PROJECT4: " + project);            
+       }
+       LOG.info("created " + projectIdMap.size() + " project");
+   }
+
+   /**
+    * Return the rows needed from the lab table.
+    * We use the surname of the Principal Investigator (person ranked 0)
+    * as the lab name.
+    * This is a protected method so that it can be overridden for testing
+    *
+    * @param connection the db connection
+    * @return the SQL result set
+    * @throws SQLException if a database problem occurs
+    */
+   protected ResultSet getProjectResultSet(Connection connection)
+   throws SQLException {
+       String query =
+
+           "SELECT distinct a.experiment_id, a.value "
+           + " FROM experiment_prop a "
+           + " where a.name = 'Project'";
+
+       LOG.info("executing: " + query);
+       Statement stmt = connection.createStatement();
+       ResultSet res = stmt.executeQuery(query);
+       return res;
+   }
+
+    
     /**
      *
      * ==============
@@ -783,6 +868,12 @@ public class ModEncodeMetaDataProcessor extends ChadoProcessor
             Item submission = getChadoDBConverter().createItem("Submission");
             // submission.setAttribute("name", name);
 
+            
+            String project = submissionProjectMap.get(submissionId);
+            String projectItemIdentifier = projectIdRefMap.get(project);
+            submission.setReference("project", projectItemIdentifier);
+
+            
             String labName = submissionLabMap.get(submissionId);
             String labItemIdentifier = labIdRefMap.get(labName);
             submission.setReference("lab", labItemIdentifier);
@@ -1557,6 +1648,27 @@ public class ModEncodeMetaDataProcessor extends ChadoProcessor
             throw new IllegalArgumentException("Type mismatch: expecting Protocol, getting "
                     + i.getClassName().substring(37) + " with intermineObjectId = "
                     + intermineObjectId + ", chadoId = " + chadoId);
+        }
+        debugMap .put(i.getIdentifier(), i.getClassName());
+    }
+
+    /**
+     * to store identifiers in project maps.
+     * @param i
+     * @param chadoId
+     * @param intermineObjectId
+     * @throws ObjectStoreException
+     */
+    private void storeInProjectMaps(Item i, String surnamePI, Integer intermineObjectId)
+    throws ObjectStoreException {
+        if (i.getClassName().equals("http://www.flymine.org/model/genomic#Project")) {
+            projectIdMap .put(surnamePI, intermineObjectId);
+            projectIdRefMap .put(surnamePI, i.getIdentifier());
+        } else {
+            throw new IllegalArgumentException(
+                    "Type mismatch: expecting Project, getting "
+                    + i.getClassName().substring(37) + " with intermineObjectId = "
+                    + intermineObjectId + ", project = " + surnamePI);
         }
         debugMap .put(i.getIdentifier(), i.getClassName());
     }
