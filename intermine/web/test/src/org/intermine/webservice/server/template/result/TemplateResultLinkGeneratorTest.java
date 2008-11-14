@@ -33,7 +33,7 @@ public class TemplateResultLinkGeneratorTest extends TestCase
         String link = new TemplateResultLinkGenerator().getLink("http://localhost:8080/query", tmpl);
         assertEquals(prefix + "/template/results?" +
         		"name=template1&op1=LOOKUP&value1=zen&" +
-        		"extra1=Drosophila%3Fmelanogaster&size=" + TemplateResultLinkGenerator.DEFAULT_RESULT_SIZE, link);
+        		"extra1=Drosophila%3Fmelanogaster&size=" + TemplateResultLinkGenerator.DEFAULT_RESULT_SIZE + "&layout=minelink", link);
     }
 
     private PathQuery getExtraValueQuery() {
@@ -50,7 +50,7 @@ public class TemplateResultLinkGeneratorTest extends TestCase
         String link = new TemplateResultLinkGenerator().getLink("http://localhost:8080/query", tmpl);
         assertEquals(prefix + "/template/results?" +
                 "name=template1&op1=CONTAINS&value1=zen&op2=lt&value2=100" + 
-                "&size=" + TemplateResultLinkGenerator.DEFAULT_RESULT_SIZE, link);        
+                "&size=" + TemplateResultLinkGenerator.DEFAULT_RESULT_SIZE + "&layout=minelink", link);        
     }
 
     private PathQuery getMultipleConstraintQuery() {
