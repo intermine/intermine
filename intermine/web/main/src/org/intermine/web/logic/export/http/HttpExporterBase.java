@@ -77,7 +77,7 @@ public abstract class HttpExporterBase implements TableHttpExporter
         if (form.getIncludeHeaders()) {
             headers = new ArrayList<String>();
             for (String columnName: pt.getColumnNames()) {
-                headers.add(columnName.replaceAll(".", ">"));
+                headers.add(columnName.replaceAll("\\.", ">"));
             }
         }
         Exporter exporter = getExporter(out, separator, headers);
