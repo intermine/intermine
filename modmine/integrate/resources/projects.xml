@@ -1,14 +1,30 @@
 <?xml version="1.0"?>
-<!-- TODO: collection from providers to project
--->
 
 <items>
-  <item id="0" class="" implements="http://www.flymine.org/model/genomic#DataSource">
-    <attribute name="name" value="FlyMine"/>
-    <attribute name="description"
-               value="The FlyMine Drosophila and Anopheles data warehouse"/>
-    <attribute name="url" value="http://www.flymine.org"/>
+  <item id="0" class="" implements="http://www.flymine.org/model/genomic#Organism">
+		<attribute name="taxonId" value="7227"/>
   </item>
+	<item id="1" class="" implements="http://www.flymine.org/model/genomic#Organism">
+		<attribute name="taxonId" value="6239"/>
+	</item>
+	<!--
+	<item id="0" class="" implements="http://www.flymine.org/model/genomic#Organism">
+		<attribute name="taxonid" value="7227"/>
+		<attribute name="shortName" value="D. melanogaster"/>
+		<attribute name="url" value="http://www.flymine.org"/>
+	</item>
+	<item id="1" class="" implements="http://www.flymine.org/model/genomic#Organism">
+		<attribute name="taxonid" value="6239"/>
+		<attribute name="shortName" value="C. elegans"/>
+		<attribute name="url" value="http://www.flymine.org"/>
+	</item>
+-->
+	<item id="5" class="" implements="http://www.flymine.org/model/genomic#DataSource">
+		<attribute name="name" value="FlyMine"/>
+		<attribute name="description"
+							 value="The FlyMine Drosophila and Anopheles data warehouse"/>
+		<attribute name="url" value="http://www.flymine.org"/>
+	</item>
 
   <item id="10" class="" implements="http://www.flymine.org/model/genomic#DataSource">
     <attribute name="name" value="UniProt"/>
@@ -197,7 +213,7 @@
     <attribute name="surnamePI" value="Waterstone"/>
     <attribute name="namePI" value="Robert"/>
     <attribute name="url" value="http://www.modencode.org/Waterston.shtml"/>
-<collection name="providers">
+<collection name="labs">
 	<reference ref_id="1097"/>
 	<reference ref_id="1062"/>
 	<reference ref_id="1065"/>
@@ -205,6 +221,9 @@
 	<reference ref_id="1082"/>
 	<reference ref_id="1090"/>
 	<reference ref_id="1094"/>
+</collection>
+<collection name="organisms">
+	<reference ref_id="1"/>
 </collection>
   </item>
 
@@ -214,7 +233,7 @@
     <attribute name="surnamePI" value="Lieb"/>
     <attribute name="namePI" value="Jason"/>
     <attribute name="url" value="http://www.modencode.org/Lieb.shtml"/>
-    <collection name="providers">
+    <collection name="labs">
 			<reference ref_id="1078"/>
 			<reference ref_id="1052"/>
 			<reference ref_id="1059"/>
@@ -224,6 +243,9 @@
 			<reference ref_id="1093"/>
 			<reference ref_id="1096"/>
 		</collection>
+		<collection name="organisms">
+			<reference ref_id="1"/>
+		</collection>
   </item>
 
   <item id="1012" class="" implements="http://www.flymine.org/model/genomic#Project">
@@ -232,24 +254,32 @@
     <attribute name="surnamePI" value="Henikoff"/>
     <attribute name="namePI" value="Steven"/>
     <attribute name="url" value="http://www.modencode.org/Henikoff.shtml"/>
-		<collection name="providers">
+		<collection name="labs">
 			<reference ref_id="1069"/>
 			<reference ref_id="1051"/>
 		</collection>
+		<collection name="organisms">
+			<reference ref_id="0"/>
+			<reference ref_id="1"/>
+		</collection>
   </item>
-  <item id="1013" class="" implements="http://www.flymine.org/model/genomic#Project">
+  
+	<item id="1013" class="" implements="http://www.flymine.org/model/genomic#Project">
     <attribute name="name" value="Regulatory Elements in C. elegans"/>
     <attribute name="title" value="Identification of Transcription Factor Binding Regions"/>
     <attribute name="surnamePI" value="Snyder"/>
     <attribute name="namePI" value="Michael"/>
     <attribute name="url" value="http://www.modencode.org/Snyder.shtml"/>
-		<collection name="providers">
+		<collection name="labs">
 			<reference ref_id="1095"/>
 			<reference ref_id="1062"/>
 			<reference ref_id="1071"/>
 			<reference ref_id="1075"/>
 			<reference ref_id="1090"/>
 			<reference ref_id="1097"/>
+		</collection>
+		<collection name="organisms">
+			<reference ref_id="1"/>
 		</collection>
   </item>
   <item id="1014" class="" implements="http://www.flymine.org/model/genomic#Project">
@@ -258,11 +288,14 @@
     <attribute name="surnamePI" value="Piano"/>
     <attribute name="namePI" value="Fabio"/>
     <attribute name="url" value="http://www.modencode.org/Piano.shtml"/>
-		<collection name="providers">
+		<collection name="labs">
 			<reference ref_id="1086"/>
 			<reference ref_id="1067"/>
 			<reference ref_id="1074"/>
 			<reference ref_id="1089"/>
+		</collection>
+		<collection name="organisms">
+			<reference ref_id="1"/>
 		</collection>
   </item>
   <item id="1020" class="" implements="http://www.flymine.org/model/genomic#Project">
@@ -271,7 +304,7 @@
     <attribute name="surnamePI" value="Celniker"/>
     <attribute name="namePI" value="Sue"/>
     <attribute name="url" value="http://www.modencode.org/Celniker.shtml"/>
-		<collection name="providers">
+		<collection name="labs">
 			<reference ref_id="1056"/>
 			<reference ref_id="1055"/>
 			<reference ref_id="1054"/>
@@ -281,6 +314,9 @@
 			<reference ref_id="1085"/>
 			<reference ref_id="1070"/>
 		</collection>
+		<collection name="organisms">
+			<reference ref_id="0"/>
+		</collection>
   </item>
   <item id="1021" class="" implements="http://www.flymine.org/model/genomic#Project">
     <attribute name="name" value="Regulatory Elements in Drosophila"/>
@@ -288,7 +324,7 @@
     <attribute name="surnamePI" value="White"/>
     <attribute name="namePI" value="Kevin"/>
     <attribute name="url" value="http://www.modencode.org/White.shtml"/>
-		<collection name="providers">
+		<collection name="labs">
 			<reference ref_id="1098"/>
 			<reference ref_id="1053"/>
 			<reference ref_id="1058"/>
@@ -299,6 +335,9 @@
 			<reference ref_id="1092"/>
 			<reference ref_id="1099"/>
 		</collection>
+		<collection name="organisms">
+			<reference ref_id="0"/>
+		</collection>
   </item>
   <item id="1022" class="" implements="http://www.flymine.org/model/genomic#Project">
     <attribute name="name" value="Chromosomal Proteins"/>
@@ -306,11 +345,14 @@
     <attribute name="surnamePI" value="Karpen"/>
     <attribute name="namePI" value="Kevin"/>
     <attribute name="url" value="http://www.modencode.org/Karpen.shtml"/>
-		<collection name="providers">
+		<collection name="labs">
 			<reference ref_id="1072"/>
 			<reference ref_id="1061"/>
 			<reference ref_id="1076"/>
 			<reference ref_id="1084"/>
+		</collection>
+		<collection name="organisms">
+			<reference ref_id="0"/>
 		</collection>
   </item>
   <item id="1023" class="" implements="http://www.flymine.org/model/genomic#Project">
@@ -319,9 +361,12 @@
     <attribute name="surnamePI" value="Lai"/>
     <attribute name="namePI" value="Eric"/>
     <attribute name="url" value="http://www.modencode.org/Lai.shtml"/>
-		<collection name="providers">
+		<collection name="labs">
 			<reference ref_id="1077"/>
 			<reference ref_id="1068"/>
+		</collection>
+		<collection name="organisms">
+			<reference ref_id="0"/>
 		</collection>
   </item>
   <item id="1024" class="" implements="http://www.flymine.org/model/genomic#Project">
@@ -330,9 +375,12 @@
     <attribute name="surnamePI" value="MacAlpine"/>
     <attribute name="namePI" value="David"/>
     <attribute name="url" value="http://www.modencode.org/MacAlpine.shtml"/>
-		<collection name="providers">
+		<collection name="labs">
 			<reference ref_id="1080"/>
 			<reference ref_id="1083"/>
+		</collection>
+		<collection name="organisms">
+			<reference ref_id="0"/>
 		</collection>
   </item>
 
