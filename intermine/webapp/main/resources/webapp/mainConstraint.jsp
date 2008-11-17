@@ -58,7 +58,7 @@ options displayConstraint.optionsList
 
         <h3><fmt:message key="query.andorHeading"/></h3><%--1. Choose a logical conjuction--%>
 
-        <fmt:message key="query.andor"/><%--Select AND below to filter your query to include only records where all constraints are true.  Select OR to filter your query to include records where any of the other constraints are true or this constraint is true.--%>
+        <div style="width:350px;text-align:justify;"><fmt:message key="query.andor"/></div><%--Select AND below to filter your query to include only records where all constraints are true.  Select OR to filter your query to include records where any of the other constraints are true or this constraint is true.--%>
         <br/>
         <br/>
         <div align="center">
@@ -362,7 +362,10 @@ options displayConstraint.optionsList
                 <fmt:message key="query.filterLoopQuery"/><%--Filter query results on the query loop.--%>
               </a>
             </h4>
-
+            <c:if test="${loopQueryOJ == true}">
+               <h3>Warning</h3>
+               <p>Outer joins are not compatible with loop constraints. The outer join will be reversed to inner join for this node</p>
+            </c:if>
             <p style="text-align: left;">
               <fmt:message key="query.loopQueryConstraint"/><%--Constraint to another field:--%>
               <html:select property="loopQueryOp" styleId="loopQuery1" disabled="true">
@@ -379,10 +382,7 @@ options displayConstraint.optionsList
                   </html:option>
                 </c:forEach>
               </html:select>
-              <c:if test="${loopQueryOJ == true}">
-                <h3>Warning</h3>
-                <p>Outer joins are not compatible with loop constraints. The outer join will be reversed to inner join for this node</p>
-              </c:if>
+
               <html:submit property="loop" styleId="loopQuerySubmit" disabled="true">
                 <fmt:message key="query.submitConstraint"/><%--Add to query--%>
               </html:submit>
