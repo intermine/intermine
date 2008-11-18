@@ -193,7 +193,7 @@ public class Query implements FromElement, Queryable
      * @return the updated Query
      */
     public Query addToOrderBy(QueryOrderable node, String direction) {
-        if (direction.equals("desc")) {
+        if ("desc".equals(direction)) {
             OrderDescending o = new OrderDescending(node);
             orderBy.add(o);
         } else {
