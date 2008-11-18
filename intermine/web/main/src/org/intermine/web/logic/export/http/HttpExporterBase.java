@@ -10,105 +10,93 @@ package org.intermine.web.logic.export.http;
  *
  */
 
-import java.util.ArrayList;
+import java.util.AbstractList;
 import java.util.List;
-
-import org.intermine.path.Path;
-import org.intermine.web.logic.RequestUtil;
-import org.intermine.web.logic.export.ExportException;
-import org.intermine.web.logic.export.ExportHelper;
-import org.intermine.web.logic.export.Exporter;
-import org.intermine.web.logic.results.PagedTable;
-import org.intermine.web.struts.TableExportForm;
-
-import java.io.IOException;
-import java.io.OutputStream;
+import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
+
+import org.intermine.objectstore.ObjectStoreException;
+import org.intermine.objectstore.query.Results;
+import org.intermine.pathquery.PathQuery;
+import org.intermine.web.logic.Constants;
+import org.intermine.web.logic.WebUtil;
+import org.intermine.web.logic.bag.InterMineBag;
+import org.intermine.web.logic.export.ExportException;
+import org.intermine.web.logic.profile.Profile;
+import org.intermine.web.logic.results.PagedTable;
+import org.intermine.web.logic.results.ResultElement;
+import org.intermine.web.logic.results.WebResults;
+import org.intermine.web.logic.session.SessionMethods;
+import org.intermine.webservice.server.core.PathQueryExecutor;
 
 /**
- * Abstract class that implements basic functionality common for exporters
- * exporting table with results in simple format like comma separated format.
- * The business logic of export is performed with exporter obtained via
- * getExport() method and so each subclass can redefine it overwriting this method.
+ * Abstract class with functionality common for all classes implementing TableHttpExporter 
+ * interface like getting result from paged table.   
+ * 
  * @author Jakub Kulaviak
- **/
-public abstract class HttpExporterBase implements TableHttpExporter
+ *
+ */
+public abstract class HttpExporterBase 
 {
 
-    /**
-     * Constructor.
-     */
-    public HttpExporterBase() { }
+    private static final int BATCH_SIZE = 5000;
+
+    private WebResults webResults;
 
     /**
-     * @param pt PagedTable
-     * @return true if given PagedTable can be exported with this exporter
-     */
-    public boolean canExport(PagedTable pt) {
-        return true;
-    }
-
-    /**
-     * Perform export.
-     * @param pt exported PagedTable
+     * @param pt paged table
      * @param request request
-     * @param response response
-     * @param form the form
+     * @return all results of pathquery corresponding specified paged table.
      */
-    public void export(PagedTable pt, HttpServletRequest request,
-                       HttpServletResponse response, TableExportForm form) {
+    public List<List<ResultElement>> getResultRows(PagedTable pt, HttpServletRequest request) {
+        PathQuery query = pt.getWebTable().getPathQuery();
+        HttpSession session = request.getSession();
+        Profile profile = (Profile) session.getAttribute(Constants.PROFILE);
+        Map<String, InterMineBag> bags = WebUtil.getAllBags(profile
+                .getSavedBags(), session.getServletContext());
+        PathQueryExecutor executor = new PathQueryExecutor(request, query, bags);
+        Results osResults = executor.getResults();
+        osResults.setBatchSize(BATCH_SIZE);
 
-        OutputStream out = null;
+        webResults = new WebResults(query, osResults, query.getModel(),
+                executor.getPathToQueryNode(),
+                SessionMethods.getClassKeys(request.getSession()
+                        .getServletContext()), null);
         try {
-            out = response.getOutputStream();
-        } catch (IOException e) {
-            throw new ExportException("Export failed.", e);
+            webResults.goFaster();
+        } catch (ObjectStoreException e) {
+            throw new ExportException("attempt to go faster failed", e);
         }
-        setResponseHeader(response);
-        String separator;
-        if (RequestUtil.isWindowsClient(request)) {
-            separator = Exporter.WINDOWS_SEPARATOR;
-        } else {
-            separator = Exporter.UNIX_SEPARATOR;
-        }
-        List<String> headers = null;
-        if (form.getIncludeHeaders()) {
-            headers = new ArrayList<String>();
-            for (String columnName: pt.getColumnNames()) {
-                headers.add(columnName.replaceAll("\\.", ">"));
+
+        List<List<ResultElement>> results = new AbstractList<List<ResultElement>>() {
+
+            @Override
+            public List<ResultElement> get(int index) {
+                return webResults.getResultElements(index);
             }
-        }
-        Exporter exporter = getExporter(out, separator, headers);
-        exporter.export(pt.getAllResultElementRows());
-        if (exporter.getWrittenResultsCount() == 0) {
-            throw new ExportException("Nothing was found for export.");
+
+            @Override
+            public int size() {
+                return webResults.size();
+            }
+
+        };
+        return results;
+    }
+    
+    /**
+     * Releases go faster. Must be called in finally block of block where method getResultRows
+     * is called. 
+     */
+    public void releaseGoFaster() {
+        try {
+            if (webResults != null) {
+                webResults.releaseGoFaster();
+            }
+        } catch (ObjectStoreException e) {
+            throw new ExportException("release GO faster failed", e);
         }
     }
-
-    /**
-     * The intial export path list is just the paths from the columns of the PagedTable.
-     * {@inheritDoc}
-     */
-    public List<Path> getInitialExportPaths(PagedTable pt) {
-        return ExportHelper.getColumnPaths(pt);
-    }
-
-    /**
-     * Do the export.
-     * @param out output stream
-     * @param separator line separator
-     * @param headers if non-null, a list of the column headers which will be written by export()
-     * @return exporter that will perform the business logic of export.
-     */
-    protected abstract Exporter getExporter(OutputStream out, String separator,
-                                            List<String> headers);
-
-    /**
-     * Sets header and content type of result in response.
-     * @param response response
-     */
-    protected abstract void setResponseHeader(HttpServletResponse response);
-
 }
