@@ -110,6 +110,7 @@ public class ObjectStoreInterMineImpl extends ObjectStoreAbstractImpl implements
     protected long statsConTime = 0;
     protected QueryOptimiserContext limitedContext;
     protected boolean verboseQueryLog = false;
+    protected boolean logBeforeExecute = false;
     protected int sequenceBase = 0;
     protected int sequenceOffset = SEQUENCE_MULTIPLE;
     protected static final int SEQUENCE_MULTIPLE = 1000000;
@@ -303,6 +304,7 @@ public class ObjectStoreInterMineImpl extends ObjectStoreAbstractImpl implements
         String loggerAlias = props.getProperty("logger");
         String verboseQueryLogString = props.getProperty("verboseQueryLog");
         String logExplainsString = props.getProperty("logExplains");
+        String logBeforeExecuteString = props.getProperty("logBeforeExecute");
 
         synchronized (instances) {
             ObjectStoreInterMineImpl os = (ObjectStoreInterMineImpl) instances.get(osAlias);
@@ -400,6 +402,9 @@ public class ObjectStoreInterMineImpl extends ObjectStoreAbstractImpl implements
                 if ("true".equals(logExplainsString)) {
                     os.setLogExplains(true);
                 }
+                if ("true".equals(logBeforeExecuteString)) {
+                    os.setLogBeforeExecute(true);
+                }
                 instances.put(osAlias, os);
             }
             return os;
@@ -492,6 +497,24 @@ public class ObjectStoreInterMineImpl extends ObjectStoreAbstractImpl implements
      */
     public boolean getLogEverything() {
         return logEverything;
+    }
+
+    /**
+     * Sets the logBeforeExecute configuration option.
+     *
+     * @param logBeforeExecute a boolean
+     */
+    public void setLogBeforeExecute(boolean logBeforeExecute) {
+        this.logBeforeExecute = logBeforeExecute;
+    }
+
+    /**
+     * Gets the logBeforeExecute configuration option.
+     *
+     * @return a boolean
+     */
+    public boolean getLogBeforeExecute() {
+        return logBeforeExecute;
     }
 
     /**
@@ -859,6 +882,11 @@ public class ObjectStoreInterMineImpl extends ObjectStoreAbstractImpl implements
                                 + explainResult.getTime() + ") greater than permitted maximum ("
                                 + getMaxTime() + "): IQL query: " + q + ", SQL query: " + sql));
                 }
+            }
+            if (getLogBeforeExecute()) {
+                LOG.info("(BEFORE EXECUTE) iql: " + q + "\n"
+                        + "generated sql: " + generatedSql + "\n"
+                        + "optimised sql: " + sql);
             }
             long preExecute = System.currentTimeMillis();
             Statement s = c.createStatement();
