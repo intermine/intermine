@@ -24,6 +24,7 @@ import org.intermine.web.logic.export.ExportHelper;
 import org.intermine.web.logic.export.Exporter;
 import org.intermine.web.logic.export.ResponseUtil;
 import org.intermine.web.logic.export.http.HttpExportUtil;
+import org.intermine.web.logic.export.http.HttpExporterBase;
 import org.intermine.web.logic.export.http.TableHttpExporter;
 import org.intermine.web.logic.results.PagedTable;
 import org.intermine.web.struts.TableExportForm;
@@ -46,7 +47,7 @@ import javax.servlet.http.HttpSession;
  * @author Kim Rutherford
  */
 
-public class GFF3HttpExporter implements TableHttpExporter
+public class GFF3HttpExporter extends HttpExporterBase implements TableHttpExporter
 {
     /**
      * The batch size to use when we need to iterate through the whole result set.
@@ -78,10 +79,13 @@ public class GFF3HttpExporter implements TableHttpExporter
             removeFirstItemInPaths(paths);
             exporter = new GFF3Exporter(writer,
                     indexes, getSoClassNames(servletContext), paths);
+            exporter.export(getResultRows(pt, request));
         } catch (Exception e) {
             throw new ExportException("Export failed", e);
+        } finally {
+            releaseGoFaster();
         }
-        exporter.export(pt.getAllResultElementRows());
+        
         if (exporter.getWrittenResultsCount() == 0) {
             throw new ExportException("Nothing was found for export");
         }
