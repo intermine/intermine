@@ -436,14 +436,14 @@ public class MainHelperTest extends TestCase {
     public void test18() throws Exception {
         doQuery("<query name=\"test\" model=\"testmodel\" view=\"Company.name\"><node path=\"Company\" type=\"Company\"><constraint op=\"LOOKUP\" value=\"CompanyAkjhadf\"/></node></query>",
                 "SELECT DISTINCT a1_ FROM org.intermine.model.testmodel.Company AS a1_ WHERE a1_.id IN ? ORDER BY a1_.name 1: []",
-                "SELECT DISTINCT a1_.a2_ AS a2_, COUNT(*) AS a3_ FROM (SELECT DISTINCT a1_, a1_.name FROM org.intermine.model.testmodel.Company AS a1_ WHERE a1_.id IN ?) AS a1_ GROUP BY a1_.a2_ ORDER BY COUNT(*) DESC 1: []");
+                "SELECT DISTINCT a1_.a2_ AS a2_, COUNT(*) AS a3_ FROM (SELECT DISTINCT a1_, a1_.name AS a2_ FROM org.intermine.model.testmodel.Company AS a1_ WHERE a1_.id IN ? 1: []) AS a1_ GROUP BY a1_.a2_ ORDER BY COUNT(*) DESC");
     }
 
     public void test19() throws Exception {
         doQuery("<query name=\"test\" model=\"testmodel\" view=\"Company.name Company:departments.name\"><node path=\"Company:departments.name\"><constraint op=\"=\" value=\"%1\"/></node></query>",
                 "SELECT DISTINCT a1_, a1_.departments(WHERE LOWER(default.name) LIKE '%1') AS a2_ FROM org.intermine.model.testmodel.Company AS a1_ ORDER BY a1_.name",
                 "SELECT DISTINCT a1_.a2_ AS a2_, COUNT(*) AS a3_ FROM (SELECT DISTINCT a1_, a1_.name AS a2_ FROM org.intermine.model.testmodel.Company AS a1_) AS a1_ GROUP BY a1_.a2_ ORDER BY COUNT(*) DESC",
-                "SELECT DISTINCT a1_.a5_ AS a2_, COUNT(*) AS a3_ FROM (SELECT DISTINCT a1_, a4_, a4_.name AS a5_ FROM org.intermine.model.testmodel.Company AS a1_, org.intermine.model.testmodel.Department AS a4_ WHERE a1_.departments CONTAINS a4_) AS a1_ GROUP BY a1_.a5_ ORDER BY COUNT(*) DESC");
+                "SELECT DISTINCT a1_.a3_ AS a2_, COUNT(*) AS a3_ FROM (SELECT DISTINCT a1_, a2_.name AS a3_ FROM org.intermine.model.testmodel.Company AS a1_, org.intermine.model.testmodel.Department AS a2_ WHERE a1_.departments CONTAINS a4_) AS a1_ GROUP BY a1_.a3_ ORDER BY COUNT(*) DESC");
     }
 
     public void test20() throws Exception {
@@ -506,12 +506,12 @@ public class MainHelperTest extends TestCase {
             for (String summary : summaries) {
                 try {
                     summaryPath = pq.getViewStrings().get(columnNo);
-                    Query q = MainHelper.makeSummaryQuery(pq, new HashMap(), new HashMap(), summaryPath, null, null, null, null);
+                    Query q = MainHelper.makeSummaryQuery(pq, new HashMap(), new HashMap(), summaryPath, os, classKeys, bagQueryConfig, null);
                     String got = q.toString();
-                    assertEquals("Failed for summaryPath " + summaryPath, summary, got);
+                    assertEquals("Failed for summaryPath " + summaryPath + ". Expected: " + summary + ", got; " + got, summary, got);
                     summaryPath = null;
                 } catch (Exception e) {
-                    if (!e.getMessage().equals(summary)) {
+                    if (!summary.equals(e.getMessage())) {
                         throw e;
                     }
                 } finally {
