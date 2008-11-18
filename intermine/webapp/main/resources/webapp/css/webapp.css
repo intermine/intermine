@@ -256,6 +256,7 @@ table.results tfoot tr td {
   color: #888;}
 
 .smallnote {
+  line-height:2em;
   font-size: 11px;}
 
 .tag {

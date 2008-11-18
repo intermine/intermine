@@ -75,7 +75,7 @@
                  <c:set var="isClickable" value="true"/>
               </c:if>
             </c:forEach>
-            <c:if test="${isClickable == 'true'}">
+            <c:if test="${isClickable == 'true' && !loopPaths[node]}">
               <c:choose>
                 <c:when test="${! node.isOuterJoin}">
                  <img src="images/join_hollow.png" id="join_arrow_${node.pathString}" alt="Switch join" title="Switch join" style="v-align:bottom;cursor:pointer" onClick="switchJoin(this,'${node.pathString}');"/>
