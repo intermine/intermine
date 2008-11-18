@@ -22,6 +22,7 @@ import org.intermine.web.logic.Constants;
 import org.intermine.web.logic.export.ExportException;
 import org.intermine.web.logic.export.ExportHelper;
 import org.intermine.web.logic.export.ResponseUtil;
+import org.intermine.web.logic.export.http.HttpExporterBase;
 import org.intermine.web.logic.export.http.TableHttpExporter;
 import org.intermine.web.logic.results.Column;
 import org.intermine.web.logic.results.PagedTable;
@@ -44,7 +45,7 @@ import javax.servlet.http.HttpSession;
  *
  * @author Kim Rutherford
  */
-public class SequenceHttpExporter implements TableHttpExporter
+public class SequenceHttpExporter extends HttpExporterBase implements TableHttpExporter
 {
     /**
      * Set response proper header.
@@ -94,8 +95,12 @@ public class SequenceHttpExporter implements TableHttpExporter
         }
 
         SequenceExporter exporter = new SequenceExporter(os, outputStream, realFeatureIndex);
-
-        exporter.export(pt.getAllResultElementRows());
+        try {
+            exporter.export(getResultRows(pt, request));    
+        } finally {
+            releaseGoFaster();
+        }
+        
         if (exporter.getWrittenResultsCount() == 0) {
             throw new ExportException("Nothing was found for export.");
         }
