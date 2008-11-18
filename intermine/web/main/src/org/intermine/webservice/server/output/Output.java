@@ -24,8 +24,6 @@ import java.util.Map;
 public abstract class Output  
 {
     
-    private String errorMessage;
-    
     private Map<String, String> headerAttributes;
 
     /**
@@ -70,7 +68,7 @@ public abstract class Output
     public abstract void flush();
     
     /**
-     * Sets header atributes that are displayed for example in xml header.
+     * Sets header attributes that are displayed for example in xml header.
      * @param attributes header attributes
      */
     public void setHeaderAttributes(Map<String, String> attributes) {
@@ -89,20 +87,4 @@ public abstract class Output
      * @return number of written results
      */
     protected abstract int getResultsCount();
-    
-    /**
-     * Sets error message.
-     * @param msg message
-     */
-    public void setErrorMessage(String msg) {
-        this.errorMessage = msg;
-    }
-    
-    /**
-     * 
-     * @return error message
-     */
-    public String getErrorMessage() {
-        return errorMessage;
-    }
 }

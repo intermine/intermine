@@ -24,6 +24,8 @@ import org.apache.struts.action.ActionMapping;
  */
 public class TableExportForm extends ActionForm
 {
+    private static final long serialVersionUID = 1L;
+
     private Map<String, Object> extraParams = new HashMap<String, Object>();
 
     // type of export, "tab", "excel", etc.
@@ -63,7 +65,7 @@ public class TableExportForm extends ActionForm
      * Return the export type: "tab", "excel", etc.
      * @return the type
      */
-    public final String getType() {
+    public String getType() {
         return type;
     }
 
@@ -134,8 +136,8 @@ public class TableExportForm extends ActionForm
      * @param request the request
      */
     @Override
-    public void reset(@SuppressWarnings("unused") ActionMapping mapping,
-                      @SuppressWarnings("unused") HttpServletRequest request) {
+    public void reset(ActionMapping mapping,
+                      HttpServletRequest request) {
         initialise();
     }
 }

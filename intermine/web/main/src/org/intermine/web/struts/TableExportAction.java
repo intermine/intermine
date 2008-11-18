@@ -43,7 +43,6 @@ import org.intermine.web.logic.export.http.TableExporterFactory;
 import org.intermine.web.logic.export.http.TableHttpExporter;
 import org.intermine.web.logic.profile.Profile;
 import org.intermine.web.logic.results.PagedTable;
-import org.intermine.web.logic.results.WebResults;
 import org.intermine.web.logic.session.SessionMethods;
 
 /**
@@ -58,11 +57,6 @@ public class TableExportAction extends InterMineAction
     protected static final Logger LOG = Logger.getLogger(TableExportAction.class);
 
     private static final String ERROR_MSG = "Export failed. Please contact support.";
-
-    // timeout for export is 1 day
-    private static final int TIMEOUT = 24 * 60 * 60;
-
-    private static final int BATCH_SIZE = 5000;
 
     /**
      * Method called to export a PagedTable object.  Uses the type request parameter to choose the
@@ -89,31 +83,12 @@ public class TableExportAction extends InterMineAction
         try {
             WebConfig webConfig = SessionMethods.getWebConfig(request);
             TableExporterFactory factory = new TableExporterFactory(webConfig);
-            // special case for csv/tab
-            if (type.equals("csv")) {
-                CSVExportForm csvform = (CSVExportForm) tef;
-                type = csvform.getFormat();
-            }
             TableHttpExporter exporter = factory.getExporter(type);
             pt = SessionMethods.getResultsTable(session, table);
 
-            if (pt == null) {
-                throw new ExportException("Export failed.");
-            }
-
-            if (pt.getExactSize() > pt.getMaxRetrievableIndex()) {
-                throw new ExportException("Result is too big for export. "
-                        + "Table for export can have at the most "
-                        + pt.getMaxRetrievableIndex() + " rows.");
-            }
-
-
-            if (pt.getWebTable() instanceof WebResults) {
-                ((WebResults) pt.getWebTable()).goFaster();
-            }
+            checkTable(pt);
 
             PagedTable newPt = reorderPagedTable(pt, tef.getPathsString(), request);
-            newPt.setPageSize(BATCH_SIZE);
             exporter.export(newPt, request, response, tef);
 
             // If null is returned then no forwarding is performed and
@@ -122,13 +97,21 @@ public class TableExportAction extends InterMineAction
             return null;
         } catch (RuntimeException e) {
             return processException(mapping, request, response, e);
-        } finally {
-            if (pt != null && pt.getWebTable() instanceof WebResults) {
-                ((WebResults) pt.getWebTable()).releaseGoFaster();
-            }
-        }
+        } 
     }
 
+    private void checkTable(PagedTable pt) {
+        if (pt == null) {
+            throw new ExportException("Export failed.");
+        }
+
+        if (pt.getExactSize() > pt.getMaxRetrievableIndex()) {
+            throw new ExportException("Result is too big for export. "
+                    + "Table for export can have at the most "
+                    + pt.getMaxRetrievableIndex() + " rows.");
+        }
+    }
+    
     /**
      * Copy the old PagedTable and make one with the new paths
      */

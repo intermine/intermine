@@ -26,7 +26,7 @@ import org.intermine.web.logic.export.rowformatters.CSVRowFormatter;
  * Exporter that exports table with results in comma separated format.
  * @author Jakub Kulaviak
  **/
-public class CSVHttpExporter extends HttpExporterBase
+public class CSVHttpExporter extends StandardHttpExporter
 {
 
     /**

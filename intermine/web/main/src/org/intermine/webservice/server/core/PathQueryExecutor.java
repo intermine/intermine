@@ -41,9 +41,14 @@ public class PathQueryExecutor
 {
 
     private HttpServletRequest request;
+
     private HashMap<String, QuerySelectable> pathToQueryNode;
+    
     private Query query;
+    
     private PathQuery pathQuery;
+    
+    private Map<String, InterMineBag> bags;
     
     /**
      * Returns object store query.
@@ -62,23 +67,40 @@ public class PathQueryExecutor
     }
 
     /**
-     * PathQueryExecutor constructor. 
+     * Constructor.. 
      * @param request request
      * @param pathQuery query
      */
     public PathQueryExecutor(HttpServletRequest request, PathQuery pathQuery) {
+        init(request, pathQuery, new HashMap<String, InterMineBag>());        
+    }
+
+    /**
+     * Constructor.. 
+     * @param request request
+     * @param pathQuery query
+     * @param bags required bags for executing query
+     */
+    public PathQueryExecutor(HttpServletRequest request, PathQuery pathQuery, 
+            Map<String, InterMineBag> bags) {
+        init(request, pathQuery, bags);        
+    }
+
+    private void init(HttpServletRequest request, PathQuery pathQuery, 
+            Map<String, InterMineBag> bags) {
         this.pathQuery = pathQuery;
         this.request = request;
+        this.bags = bags;
         ServletContext servletContext = request.getSession()
         .getServletContext();
         pathToQueryNode = new HashMap();
         try {
             // makeQuery initializes pathToQueryNode
-            query = MainHelper.makeQuery(pathQuery, getSavedBags(), pathToQueryNode,
+            query = MainHelper.makeQuery(pathQuery, getBags(), pathToQueryNode,
                     servletContext, null);
         } catch (ObjectStoreException ex) {
             throw new InternalErrorException(ex);
-        }        
+        }
     }
 
     /**
@@ -105,7 +127,7 @@ public class PathQueryExecutor
         return (new ObjectStoreFlatOuterJoinsImpl(getObjectStore())).execute(query);
     }
     
-    private Map<Object, InterMineBag> getSavedBags() {
-        return new HashMap<Object, InterMineBag>();
+    private Map<String, InterMineBag> getBags() {
+        return bags;
     }
 }

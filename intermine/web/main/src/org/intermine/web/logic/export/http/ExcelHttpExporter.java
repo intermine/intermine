@@ -28,9 +28,10 @@ import javax.servlet.http.HttpServletResponse;
 
 /**
  * Exporter that exports table with results in excel format.
+ * 
  * @author Jakub Kulaviak
  **/
-public class ExcelHttpExporter extends HttpExporterBase
+public class ExcelHttpExporter extends StandardHttpExporter
 {
     /**
      * {@inheritDoc}

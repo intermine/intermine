@@ -25,7 +25,7 @@ import org.intermine.web.logic.export.rowformatters.TabRowFormatter;
  * Exporter that exports table with results in excel format.
  * @author Jakub Kulaviak
  **/
-public class TabHttpExporter extends HttpExporterBase
+public class TabHttpExporter extends StandardHttpExporter
 {
     /**
      * Constructor.

@@ -1014,25 +1014,4 @@ public class PagedTable
         SessionMethods.invalidateBagTable(session, bagName);
         return i;
     }
-
-    /**
-     * Return a List of ResultElement Lists - one ResultElement for each element of the results
-     * table.
-     * @return the ResultElement table
-     */
-    public List<List<ResultElement>> getAllResultElementRows() {
-        return new AbstractList<List<ResultElement>>() {
-
-            @Override
-            public List<ResultElement> get(int index) {
-                return getWebTable().getResultElements(index);
-            }
-
-            @Override
-            public int size() {
-                return getWebTable().size();
-            }
-
-        };
-    }
 }
