@@ -18,6 +18,7 @@ package org.intermine.bio.web;
  * @author Florian Reisinger
  * @author Richard Smith
  */
+import java.io.PrintWriter;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
@@ -25,27 +26,23 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+
+import org.flymine.model.genomic.Interaction;
 import org.intermine.bio.networkview.FlyNetworkCreator;
 import org.intermine.bio.networkview.network.FlyNetwork;
 import org.intermine.model.InterMineObject;
-import org.intermine.objectstore.ObjectStoreException;
 import org.intermine.path.Path;
 import org.intermine.util.StringUtil;
 import org.intermine.web.logic.export.ExportException;
 import org.intermine.web.logic.export.ExportHelper;
 import org.intermine.web.logic.export.http.HttpExportUtil;
+import org.intermine.web.logic.export.http.HttpExporterBase;
 import org.intermine.web.logic.export.http.TableHttpExporter;
 import org.intermine.web.logic.results.PagedTable;
 import org.intermine.web.logic.results.ResultElement;
-import org.intermine.web.logic.results.WebTable;
 import org.intermine.web.struts.TableExportForm;
-
-import org.flymine.model.genomic.Interaction;
-
-import java.io.PrintWriter;
-
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
 
 /**
  * An implementation of TableHttpExporter that exports protein interactions
@@ -53,7 +50,7 @@ import javax.servlet.http.HttpServletResponse;
  *
  * @author Florian Reisinger
  */
-public class ProteinInteractionExporter implements TableHttpExporter
+public class ProteinInteractionExporter extends HttpExporterBase implements TableHttpExporter
 {
     static final boolean DEBUG = false;
 
@@ -69,38 +66,22 @@ public class ProteinInteractionExporter implements TableHttpExporter
 
         response.setContentType("text/plain");
         response.setHeader("Content-Disposition ", "attachment; filename=interaction"
-                + StringUtil.uniqueString() + ".sif"); //flo
+                + StringUtil.uniqueString() + ".sif"); 
 
         int realFeatureIndex = ExportHelper.getFirstColumnForClass(pt, Interaction.class);
 
-        int writtenInteractionsCount = 0; //flo
+        int writtenInteractionsCount = 0; 
         Set exported = new HashSet();
         PrintWriter printWriter = null;
 
         try {
-            WebTable rowList = pt.getAllRows(); // get all the data in rows
-
-            // loop over the rows
-            for (int rowIndex = 0; rowIndex < rowList.size()
-                    && rowIndex <= pt.getMaxRetrievableIndex(); rowIndex++) {
-                List<ResultElement> row;
-                try {
-                    row = rowList.getResultElements(rowIndex); // einzelne reihe des resultset
-                } catch (RuntimeException e) {
-                    // re-throw as a more specific exception
-                    if (e.getCause() instanceof ObjectStoreException) {
-                        throw (ObjectStoreException) e.getCause();
-                    } else {
-                        throw e;
-                    }
-                }
-                // das objekt aus der gueltigen spalte der aktuellen reihe holen
+            List<List<ResultElement>> rows = getResultRows(pt, request);
+            for (List<ResultElement> row : rows) {
                 // get object of interest - ProteinInteraction
                 InterMineObject object =
                     (InterMineObject) row.get(realFeatureIndex).getInterMineObject();
 
                 if (!exported.contains(object.getId())) {
-                    // cast to ProteinInteraction
                     Interaction feature = (Interaction) object;
 
                     // try to avoid opening the OutputStream until we know that the query is
@@ -129,6 +110,8 @@ public class ProteinInteractionExporter implements TableHttpExporter
             }
         } catch (Exception e) {
             throw new ExportException("Export failed", e);
+        } finally {
+            releaseGoFaster();
         }
     }
 
