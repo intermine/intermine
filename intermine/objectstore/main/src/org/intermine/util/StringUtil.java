@@ -466,10 +466,9 @@ public class StringUtil
         Map returnMap = new LinkedHashMap<String, String>();
         String[] strArray = str.split("&");
         for (String path: strArray) {
-			returnMap.put(StringUtils.split(path, "[]=")[0], StringUtils.split(
-					path, "[]=")[1]);
-		}
+            returnMap.put(StringUtils.split(path, "[]=")[0], StringUtils.split(
+                        path, "[]=")[1]);
+        }
         return returnMap;
     }
-    
 }

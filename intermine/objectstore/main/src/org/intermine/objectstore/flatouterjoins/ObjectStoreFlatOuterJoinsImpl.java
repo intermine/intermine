@@ -179,6 +179,14 @@ public class ObjectStoreFlatOuterJoinsImpl extends ObjectStorePassthruImpl
         return retval;
     }
 
+    /**
+     * Converts a SELECT list from a normal query into a representation of the columns returned
+     * by this ObjectStore.
+     *
+     * @param select a List of QuerySelectables - Query.getSelect()
+     * @return a List of QuerySelectables corresponding to the columns returned in the results
+     * of this ObjectStore
+     */
     public static List<QuerySelectable> getFlatSelect(List<QuerySelectable> select) {
         ArrayList<QuerySelectable> retval = new ArrayList<QuerySelectable>();
         addFlatSelect(retval, select, null, null);
