@@ -376,11 +376,16 @@ public class QueryBuilderChange extends DispatchAction
                                  @SuppressWarnings("unused") HttpServletResponse response)
         throws Exception {
         HttpSession session = request.getSession();
+        ServletContext servletContext = session.getServletContext();
+        ObjectStore os = (ObjectStore) servletContext.getAttribute(Constants.OBJECTSTORE);
+        
         PathQuery query = (PathQuery) session.getAttribute(Constants.QUERY);
         String prefix = (String) session.getAttribute("prefix");
         String path = request.getParameter("path");
 
-        path = MainHelper.toPath(prefix, path);
+        // This call will work out the default join style between prefix and path
+        path = MainHelper.toPathDefaultJoinStyle(os.getModel(), prefix, path);
+        // Now correct the join style deferring to any existing information in the query
         path = query.getCorrectJoinStyle(path);
 
         // Figure out which path to delete if user cancels operation
@@ -526,9 +531,15 @@ public class QueryBuilderChange extends DispatchAction
         String pathName = request.getParameter("path");
         PathQuery query = (PathQuery) session.getAttribute(Constants.QUERY);
         String prefix = (String) session.getAttribute("prefix");
-        Path pathPart = new Path(model, pathName);
-        String fullPathName = MainHelper.toPath(prefix, pathName, pathPart.endIsCollection()
-                || (pathPart.endIsAttribute() && pathPart.getPrefix().endIsCollection()));
+        
+        // we may be adding a long path to the query, there are several outer join considerations:
+        // - part of the path may already be in the query, we need to defer to existing join types
+        // - there may be several new components added, each one should get the correct default
+        //   join type
+        
+        // This call will work out the default join style between prefix and path
+        String fullPathName = MainHelper.toPathDefaultJoinStyle(model, prefix, pathName);
+        // Now correct the join style deferring to any existing information in the query
         fullPathName = query.getCorrectJoinStyle(fullPathName);
         Path path = PathQuery.makePath(model, query, fullPathName);
 

@@ -69,6 +69,18 @@ public class MainHelperTest extends TestCase {
         bagQueryConfig = BagQueryHelper.readBagQueryConfig(os.getModel(), config);
     }
 
+    // Method converts path to default join styles: outer joins for collections, normal join otherwise
+    public void testDefaultJoinStyles() {
+        Model model = TestUtil.getModel();
+        assertEquals("Company:departments", MainHelper.toPathDefaultJoinStyle(model, "Company.departments"));
+        assertEquals("Company:departments.manager", MainHelper.toPathDefaultJoinStyle(model, "Company.departments.manager"));
+        assertEquals("Company:departments.manager", MainHelper.toPathDefaultJoinStyle(model, "Company.departments:manager"));
+        
+        assertEquals("CEO.company:departments:employees.name", MainHelper.toPathDefaultJoinStyle(model, "CEO.company:departments:employees.name"));
+        assertEquals("Company.name", MainHelper.toPathDefaultJoinStyle(model, "Company.name"));
+    }
+    
+    
     public void testGetTypeForPath() throws Exception {
         Model model = Model.getInstanceByName("testmodel");
         PathQuery query = new PathQuery(model);
