@@ -41,7 +41,7 @@
       onSuccess: function() {
         new Ajax.Updater('main-paths', '<html:rewrite action="/mainChange"/>',
           {parameters:'method=ajaxRenderPaths', asynchronous:true, evalScripts:true, onSuccess: function() {
-             new Boxy(jQuery('#constraint'), {title: "Constraint for " + path});
+             new Boxy(jQuery('#constraint'), {title: "Constraint for " + path, modal:true});
           }
         });
       }

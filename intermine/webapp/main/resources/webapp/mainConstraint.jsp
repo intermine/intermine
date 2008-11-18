@@ -363,8 +363,7 @@ options displayConstraint.optionsList
               </a>
             </h4>
             <c:if test="${loopQueryOJ == true}">
-               <h3>Warning</h3>
-               <p>Outer joins are not compatible with loop constraints. The outer join will be reversed to inner join for this node</p>
+               <span class="smallnote"><b>Warning:</b> outer joins are not compatible with loop constraints. The outer join will be reversed to inner join for this node</span>
             </c:if>
             <p style="text-align: left;">
               <fmt:message key="query.loopQueryConstraint"/><%--Constraint to another field:--%>

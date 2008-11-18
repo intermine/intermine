@@ -91,6 +91,7 @@ public class QueryBuilderController extends TilesAction
 
         // constraint display values
         request.setAttribute("lockedPaths", listToMap(findLockedPaths(query)));
+        request.setAttribute("loopPaths", listToMap(findLoopConstraints(query)));
         List<Path> pathView = SessionMethods.getEditingView(session);
 
         // sort order
@@ -234,23 +235,20 @@ public class QueryBuilderController extends TilesAction
      */
     protected static List findLockedPaths(PathQuery pathquery) {
         ArrayList<String> paths = new ArrayList<String>();
-        Iterator iter = pathquery.getNodes().values().iterator();
-        while (iter.hasNext()) {
-            PathNode node = (PathNode) iter.next();
+        // loop query constraint
+        List<PathNode> nodes = findLoopConstraints(pathquery);
+        for (PathNode node : nodes) {
             Iterator citer = node.getConstraints().iterator();
             while (citer.hasNext()) {
                 Constraint con = (Constraint) citer.next();
-                if (!node.isAttribute() && !BagConstraint.VALID_OPS.contains(con.getOp())) {
-                    // loop query constraint
-                    // get path and superpaths
-                    String path = (String) con.getValue();
-                    while (path != null) {
-                        paths.add(path);
-                        if (path.indexOf('.') != -1) {
-                            path = path.substring(0, path.lastIndexOf('.'));
-                        } else {
-                            path = null;
-                        }
+                String path = (String) con.getValue();
+                // get path and superpaths
+                while (path != null) {
+                    paths.add(path);
+                    if (path.indexOf('.') != -1) {
+                        path = path.substring(0, path.lastIndexOf('.'));
+                    } else {
+                        path = null;
                     }
                 }
             }
@@ -322,5 +320,28 @@ public class QueryBuilderController extends TilesAction
             map.put(list.get(i), Boolean.TRUE);
         }
         return map;
+    }
+    
+    /**
+     * Returns a list of paths with loop constrained for a given query
+     * 
+     * @param pathQuery the PathQuery
+     * @return a list of paths
+     */
+    protected static List<PathNode> findLoopConstraints(PathQuery pathQuery) {
+        ArrayList<PathNode> paths = new ArrayList<PathNode>();
+        Iterator iter = pathQuery.getNodes().values().iterator();
+        while (iter.hasNext()) {
+            PathNode node = (PathNode) iter.next();
+            Iterator citer = node.getConstraints().iterator();
+            while (citer.hasNext()) {
+                Constraint con = (Constraint) citer.next();
+                if (!node.isAttribute() && !BagConstraint.VALID_OPS.contains(con.getOp())) {
+                    //String path = (String) con.getValue();
+                    paths.add(node);
+                }
+            }
+        }
+        return paths;
     }
 }
