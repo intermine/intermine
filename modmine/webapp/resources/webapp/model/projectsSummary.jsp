@@ -22,6 +22,28 @@
 <table cellpadding="0" cellspacing="0" border="0" class="dbsources">
 	<c:forEach items="${subs}" var="item" varStatus="status">
 		<c:if test="${status.count%2 eq 1}"><tr></c:if>
+		<td>
+    <c:forEach items="${item.key.organisms}" var="organism" varStatus="orgStatus">
+    <c:if test="${organism.taxonId eq 7227}"> 
+        <img border="0" class="arrow" src="images/f_vs.png" title="fly"/><br>
+    </c:if>
+    <c:if test="${organism.taxonId eq 6239}"> 
+        <img border="0" class="arrow" src="images/w_vs.png" title="fly"/><br>
+    </c:if>
+
+<%--
+<c:choose>
+		<c:when test="${organism.taxonId eq 7227}">
+		${organism.taxonId}<img border="0" class="arrow" src="images/f_vs.png" title="fly"/><br>
+		</c:when>
+		<c:when  test="${organism.taxonId eq 6239}">
+    ${organism.taxonId}<img border="0" class="arrow" src="images/w_vs.png" title="worm"/><br>		
+		</c:when>
+</c:choose>			
+--%>
+
+		</c:forEach>
+		</td>
 			<td><html:link
 				href="/${WEB_PROPERTIES['webapp.path']}/objectDetails.do?id=${item.key.id}">
  ${item.key.name}
