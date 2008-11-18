@@ -1188,13 +1188,16 @@ public class MainHelper
         }
         subQ.clearOrderBy();
         Map<String, QuerySelectable> newSelect = new LinkedHashMap();
+        Set<QuerySelectable> oldSelect = new HashSet();
         for (QuerySelectable qs : subQ.getSelect()) {
+            oldSelect.add(qs);
             if (qs instanceof QueryClass) {
                 newSelect.put(subQ.getAliases().get(qs), qs);
             } else if (!(qs instanceof QueryPathExpression)) {
                 newSelect.put(subQ.getAliases().get(qs), qs);
             }
         }
+        System.out.println("Original select: " + oldSelect);
         subQ.clearSelect();
         for (Map.Entry<String, QuerySelectable> selectEntry : newSelect.entrySet()) {
             subQ.addToSelect(selectEntry.getValue(), selectEntry.getKey());
@@ -1209,6 +1212,10 @@ public class MainHelper
                 throw new NullPointerException("Error - path " + summaryPath + " is not in map "
                         + origPathToQueryNode);
             } else if (qs instanceof QueryObjectPathExpression) {
+                if (!oldSelect.contains(qs)) {
+                    throw new IllegalArgumentException("QueryObjectPathExpression is too deeply"
+                           + " nested");
+                }
                 QueryObjectPathExpression qope = (QueryObjectPathExpression) qs;
                 // We need to add QueryClasses to the query for this outer join. This will make it
                 // an inner join, so the "no object" results will disappear.
@@ -1225,7 +1232,8 @@ public class MainHelper
                 }
             } else if (qs instanceof QueryCollectionPathExpression) {
                 QueryCollectionPathExpression qcpe = (QueryCollectionPathExpression) qs;
-                if (qcpe.getSelect().isEmpty() && qcpe.getFrom().isEmpty()) {
+                if (qcpe.getSelect().isEmpty() && qcpe.getFrom().isEmpty()
+                        && oldSelect.contains(qcpe)) {
                     QueryClass firstQc = qcpe.getDefaultClass();
                     qf = new QueryField(firstQc, fieldName);
                     subQ.addFrom(firstQc);
