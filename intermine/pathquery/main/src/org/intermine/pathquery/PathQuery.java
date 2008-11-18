@@ -822,7 +822,8 @@ public class PathQuery
     }
 
     /**
-     * Gets a Map from String path with dots instead of colons to String path.
+     * Gets a Map from String path with dots instead of colons to String path with actual join 
+     * types.
      *
      * @return a Map from String to String
      */
@@ -852,7 +853,10 @@ public class PathQuery
     }
 
     /**
-     * Returns a String path with the correct join style.
+     * Returns a String path with the correct join style, for a given path find and replace the join
+     * style according to paths already added to the the query, e.g. if adding
+     * Company.departments.name and Company:departments is already part of the query then return 
+     * Company:departments.name
      *
      * @param path a path string
      * @return the path string, with colons instead of dots in the correct places.

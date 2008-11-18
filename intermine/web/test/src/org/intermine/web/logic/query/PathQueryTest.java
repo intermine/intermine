@@ -4,6 +4,7 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -347,6 +348,18 @@ public class PathQueryTest extends TestCase
 
     }
 
+    
+    // Adding the same path with a different join style is invalud
+    public void testAddViewPathsInvalidJoinStyle() {
+        PathQuery pq = new PathQuery(model);
+        pq.addView("Company.departments.name");
+        try {
+            pq.addView("Company:departments.manager.name");
+            fail("Expected exception, can't have same paths with different join styles");
+        } catch (IllegalArgumentException e) {
+        }
+    }
+    
 //    public void testAddPathStringToView() {
 //        //deprecated
 //    }
@@ -968,6 +981,52 @@ public class PathQueryTest extends TestCase
         assertFalse(q.isValid());
     }
 
+    // this method should edit the join style (normal or outer join) of a path, deferring to any 
+    // path style already added to the query
+    public void testCorrectJoinStyle() {
+        PathQuery pq = new PathQuery(model);
+        pq.addNode("Company.departments:manager");        
+       
+        assertEquals("Company.departments", pq.getCorrectJoinStyle("Company.departments"));
+        assertEquals("Company.departments", pq.getCorrectJoinStyle("Company:departments"));
+        
+        assertEquals("Company.departments.name", pq.getCorrectJoinStyle("Company:departments.name"));
+        assertEquals("Company.departments.name", pq.getCorrectJoinStyle("Company.departments.name"));
+        
+        assertEquals("Company.departments:manager.name", pq.getCorrectJoinStyle("Company:departments.manager.name"));
+        assertEquals("Company.departments:manager.name", pq.getCorrectJoinStyle("Company:departments:manager.name"));    
+    }
+    
+    
+    // flip node changes the join style of the last join in the path
+    public void testFlipJoinStyle() {
+        PathQuery pq = new PathQuery(model);
+        pq.addNode("Company.departments.manager");
+        pq.addNode("Company.departments.manager.name");
+        pq.addView("Company.departments.manager.name");
+        
+        assertEquals("Company.departments:manager", pq.flipJoinStyle("Company.departments.manager"));
+        // child node should have been updated
+        assertNotNull(pq.getNode("Company.departments:manager.name"));
+        assertNull(pq.getNode("Company.departments.manager.name"));
+    
+        // the view list should be updated as well
+        assertEquals(new ArrayList<String>(Collections.singleton("Company.departments:manager.name")),
+                pq.getViewStrings());
+
+        // path doesn't exist this join style
+        try {
+            pq.flipJoinStyle("Company:departments");
+            fail("Expected as error, this path doesn't exist.");
+        } catch (IllegalArgumentException e) {
+        }
+        
+        
+        // test opposite flip for completenes
+        assertEquals("Company.departments.manager", pq.flipJoinStyle("Company.departments:manager"));
+    }
+    
+    
 //    public void testEqualsObject() {
 //        fail("Not yet implemented");
 //    }
