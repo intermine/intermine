@@ -77,6 +77,7 @@ public class QueryBuilderChange extends DispatchAction
                                     @SuppressWarnings("unused") HttpServletResponse response)
         throws Exception {
         HttpSession session = request.getSession();
+        
         PathQuery pathQuery = (PathQuery) session.getAttribute(Constants.QUERY);
         String path = request.getParameter("path");
 
@@ -84,12 +85,13 @@ public class QueryBuilderChange extends DispatchAction
         pathQuery.removeFromView(path);
         pathQuery.syncLogicExpression(SessionMethods.getDefaultOperator(session));
 
+        // set prefix and path back to start of the path, so model browser has focus on the top
         String prefix;
-        if (path.indexOf(".") == -1) {
+        if (MainHelper.getLastJoinIndex(path) == -1) {
             prefix = path;
         } else {
-            prefix = path.substring(0, path.lastIndexOf("."));
-            path = ((Node) pathQuery.getNodes().get(prefix)).getType();
+            prefix = path.substring(0, MainHelper.getFirstJoinIndex(path));
+            path = path.substring(0, MainHelper.getFirstJoinIndex(path));
         }
 
         session.setAttribute("prefix", prefix);

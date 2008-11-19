@@ -86,6 +86,24 @@ public class MainHelperTest extends TestCase {
         assertEquals("Company.name", MainHelper.toPathDefaultJoinStyle(model, "Company.name"));
     }
     
+    // Method gets the last index of a '.' or a ':'
+    public void testGetLastJoinIndex() {
+        assertEquals(3, MainHelper.getLastJoinIndex("CEO.company"));
+        assertEquals(3, MainHelper.getLastJoinIndex("CEO:company"));
+        assertEquals(11, MainHelper.getLastJoinIndex("CEO.company:department"));
+        assertEquals(11, MainHelper.getLastJoinIndex("CEO:company.department"));
+        assertEquals(-1, MainHelper.getLastJoinIndex("CEO"));
+    }
+    
+    // Method gets the first index of a '.' or a ':'
+    public void testGetFirstJoinIndex() {
+        assertEquals(3, MainHelper.getFirstJoinIndex("CEO.company"));
+        assertEquals(3, MainHelper.getFirstJoinIndex("CEO:company"));
+        assertEquals(3, MainHelper.getFirstJoinIndex("CEO.company:department"));
+        assertEquals(3, MainHelper.getFirstJoinIndex("CEO:company.department"));
+        assertEquals(-1, MainHelper.getFirstJoinIndex("CEO"));
+    }
+    
     
     public void testGetTypeForPath() throws Exception {
         Model model = Model.getInstanceByName("testmodel");
