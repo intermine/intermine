@@ -205,21 +205,16 @@ options displayConstraint.optionsList
                                                   buttonImage: 'images/calendar.png', 
                                                   buttonImageOnly: true,
                                                   dateFormat: 'yy-mm-dd',
-                                                  showOn: "both"
+                                                  showOn: "both",
+                                                  showAnim: 'blind',
+                                                  showOptions: {speed: 'fast'}
                                               }
                                            );
                                   </script>
                                 </c:if>
                             </c:otherwise>
-                         </c:choose>      
-                        
-                        
-                        
-                        
-                        
-                        
-                        
-                                 
+                         </c:choose>
+
                       <%-- might want to show up arrow --%>
                       <c:if test="${!empty options}">
                         <br/><im:vspacer height="2"/>

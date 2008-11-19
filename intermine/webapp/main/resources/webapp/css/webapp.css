@@ -416,3 +416,11 @@ ul#nav{
 ul#nav li{
     float:left;
     margin:0px 1px 0px 0px;}
+
+div#ui-datepicker-div {
+    z-index: 99999;
+}
+
+div#ui-datepicker-control {
+    background: #655;
+}
