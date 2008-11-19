@@ -27,7 +27,6 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-import java.util.SimpleTimeZone;
 import java.util.StringTokenizer;
 import java.util.TimeZone;
 import java.util.TreeSet;
@@ -1269,6 +1268,33 @@ public class MainHelper
         return currentPath.toString();
     }
 
+    /**
+     * Return the indexOf the last join in a path denoted by '.' or ':', return -1 if neither
+     * join type exists in the path
+     * @param path the path string to operate on
+     * @return indexOf the last ':' or '.' in the path string or -1 if none present
+     */
+    public static int getLastJoinIndex(String path) {
+        return (Math.max(path.indexOf("."), path.indexOf(":")));
+    }
+    
+    /**
+     * Return the indexOf the first join in a path denoted by '.' or ':', return -1 if neither
+     * join type exists in the path
+     * @param path the path string to operate on
+     * @return indexOf the first ':' or '.' in the path string or -1 if none present
+     */
+    public static int getFirstJoinIndex(String path) {
+        if (path.indexOf('.') < 0) {
+            return path.indexOf(':');
+        } else if (path.indexOf(":") < 0) {
+            return path.indexOf('.');
+        } else {
+            return Math.min(path.indexOf('.'), path.indexOf(':'));
+        }
+    }
+    
+    
     /**
      * Generate a query from a PathQuery, to summarise a particular column of results.
      *
