@@ -359,7 +359,7 @@ public class QueryBuilderForm extends ActionForm
     public static Object parseValue(String value, Class type, ConstraintOp constraintOp,
                                     Locale locale, ActionMessages errors) {
         try {
-            return new ConstraintValueParser().parse(value, type, constraintOp, locale);    
+            return new ConstraintValueParser().parse(value, type, constraintOp);    
         } catch (ParseValueException ex) {
             errors.add(ActionErrors.GLOBAL_MESSAGE, 
                     new ActionMessage("errors.message", ex.getMessage()));

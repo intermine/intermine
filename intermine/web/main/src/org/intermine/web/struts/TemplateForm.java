@@ -346,7 +346,7 @@ public class TemplateForm extends ActionForm
                     Object parseVal = null;
                     try {
                         parseVal = new ConstraintValueParser().parse((String) attributeValues
-                                        .get(key), fieldClass, constraintOp, locale);
+                                        .get(key), fieldClass, constraintOp);
                     } catch (ParseValueException ex) {
                         errors.add(ActionErrors.GLOBAL_MESSAGE, 
                                         new ActionMessage("errors.message", ex.getMessage()));

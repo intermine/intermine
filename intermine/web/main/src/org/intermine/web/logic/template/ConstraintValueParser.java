@@ -13,7 +13,6 @@ package org.intermine.web.logic.template;
 import static org.intermine.pathquery.Constraint.ISO_DATE_FORMAT;
 
 import java.util.Date;
-import java.util.Locale;
 
 import org.intermine.objectstore.query.ConstraintOp;
 
@@ -33,12 +32,11 @@ public class ConstraintValueParser
      * @param value parsed value
      * @param type Java type, it is type of returned object
      * @param constraintOp operation connected with this value
-     * @param locale locale used for parsing date, floats ...
      * @return converted object
      * @throws ParseValueException if value can not be converted to required type
      */
-    public Object parse(String value, Class type, ConstraintOp constraintOp,
-            Locale locale) throws ParseValueException {
+    public static Object parse(String value, Class type, ConstraintOp constraintOp)
+        throws ParseValueException {
         Object parsedValue = null;
 
         if (value == null || value.length() == 0) {
