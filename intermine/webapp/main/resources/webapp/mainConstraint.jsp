@@ -200,7 +200,14 @@ options displayConstraint.optionsList
 
                                 <c:if test="${editingNode.type == 'Date'}">
                                   <script type="text/javascript">
-                                    jQuery('.date-pick').datePicker({startDate:'01/01/1970'});
+                                    jQuery('.date-pick').datepicker(
+                                              {
+                                                  buttonImage: 'images/calendar.png', 
+                                                  buttonImageOnly: true,
+                                                  dateFormat: 'yy-mm-dd',
+                                                  showOn: "both"
+                                              }
+                                           );
                                   </script>
                                 </c:if>
                             </c:otherwise>

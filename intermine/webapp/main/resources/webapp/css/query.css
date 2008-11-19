@@ -119,3 +119,7 @@ form#submitform input, form#submitform {
 .actions p {
   margin-bottom:15px;
 }
+
+div#ui-datepicker-div {
+	z-index: 99999;
+}

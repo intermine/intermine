@@ -10,8 +10,17 @@ package org.intermine.pathquery;
  *
  */
 
+import java.util.Calendar;
+import java.util.Date;
+import java.util.GregorianCalendar;
+import java.util.TimeZone;
+
 import org.intermine.objectstore.query.ConstraintOp;
+
 import org.intermine.util.Util;
+
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 
 /**
  * A simple constraint representation
@@ -147,19 +156,33 @@ public class Constraint
     }
 
     /**
+     * A date format for ISO dates.
+     */
+    final public static DateFormat ISO_DATE_FORMAT = new SimpleDateFormat("yyyy-MM-dd");
+
+    static {
+        Calendar gregorianCalendar= GregorianCalendar.getInstance(TimeZone.getTimeZone("GMT"));
+        ISO_DATE_FORMAT.setCalendar(gregorianCalendar);
+    }
+
+    /**
      * Return value in display format. This performs conversion between SQL
      * wildcard % symbols and user wildcard * symbols.
      * @return  constraint value translated for the user as a string
      */
     public String getDisplayValue() {
-        if (op == ConstraintOp.MATCHES || op == ConstraintOp.DOES_NOT_MATCH
-            || op == ConstraintOp.EQUALS || op == ConstraintOp.NOT_EQUALS
-            || op == ConstraintOp.CONTAINS) {
-            return Util.wildcardSqlToUser(getValue().toString());
-        } else if (op == ConstraintOp.IS_NOT_NULL || op == ConstraintOp.IS_NULL) {
-            return "";
+        if (getValue() instanceof Date) {
+            return ISO_DATE_FORMAT.format(getValue());
         } else {
-            return "" + getValue();
+            if (op == ConstraintOp.MATCHES || op == ConstraintOp.DOES_NOT_MATCH
+                            || op == ConstraintOp.EQUALS || op == ConstraintOp.NOT_EQUALS
+                            || op == ConstraintOp.CONTAINS) {
+                return Util.wildcardSqlToUser(getValue().toString());
+            } else if (op == ConstraintOp.IS_NOT_NULL || op == ConstraintOp.IS_NULL) {
+                return "";
+            } else {
+                return "" + getValue();
+            }
         }
     }
 
@@ -171,17 +194,21 @@ public class Constraint
      * @return a String
      */
     public String getReallyDisplayValue() {
-        if (op == ConstraintOp.MATCHES || op == ConstraintOp.DOES_NOT_MATCH
-            || op == ConstraintOp.EQUALS || op == ConstraintOp.NOT_EQUALS
-            || op == ConstraintOp.CONTAINS) {
-            return Util.wildcardSqlToUser(getValue().toString());
-        } else if (op == ConstraintOp.IS_NOT_NULL || op == ConstraintOp.IS_NULL) {
-            return "";
-        } else if ((op == ConstraintOp.LOOKUP) && (extraValue != null)
-                && (!"".equals(extraValue))) {
-            return getValue() + " IN " + extraValue;
+        if (getValue() instanceof Date) {
+            return ISO_DATE_FORMAT.format(getValue());
         } else {
-            return "" + getValue();
+            if (op == ConstraintOp.MATCHES || op == ConstraintOp.DOES_NOT_MATCH
+                            || op == ConstraintOp.EQUALS || op == ConstraintOp.NOT_EQUALS
+                            || op == ConstraintOp.CONTAINS) {
+                return Util.wildcardSqlToUser(getValue().toString());
+            } else if (op == ConstraintOp.IS_NOT_NULL || op == ConstraintOp.IS_NULL) {
+                return "";
+            } else if ((op == ConstraintOp.LOOKUP) && (extraValue != null)
+                            && (!"".equals(extraValue))) {
+                return getValue() + " IN " + extraValue;
+            } else {
+                return "" + getValue();
+            }
         }
     }
 

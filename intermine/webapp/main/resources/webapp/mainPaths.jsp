@@ -167,7 +167,7 @@
                     <c:out value=" ${fn:replace(constraintDisplayValues[constraint], '.', ' > ')}"/>
                   </c:when>
                   <c:when test="${constraint.value.class.name == 'java.util.Date'}">
-                    <fmt:formatDate dateStyle="SHORT" value="${constraint.value}"/>
+                    <im:dateDisplay type="short" date="${constraint.value}"/>
                   </c:when>
                   <c:otherwise>
                     <c:out value=" ${constraintDisplayValues[constraint]}"/>

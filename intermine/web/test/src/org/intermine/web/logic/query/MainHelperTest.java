@@ -13,6 +13,8 @@ package org.intermine.web.logic.query;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.StringReader;
+
+import java.util.Date;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
@@ -27,17 +29,21 @@ import org.intermine.model.testmodel.Department;
 import org.intermine.model.testmodel.Employee;
 import org.intermine.objectstore.ObjectStore;
 import org.intermine.objectstore.ObjectStoreFactory;
+
 import org.intermine.objectstore.query.ConstraintOp;
 import org.intermine.objectstore.query.ConstraintSet;
 import org.intermine.objectstore.query.ContainsConstraint;
 import org.intermine.objectstore.query.Query;
 import org.intermine.objectstore.query.QueryClass;
+import org.intermine.objectstore.query.QueryEvaluable;
 import org.intermine.objectstore.query.QueryExpression;
 import org.intermine.objectstore.query.QueryField;
+import org.intermine.objectstore.query.QueryNode;
 import org.intermine.objectstore.query.QueryObjectReference;
 import org.intermine.objectstore.query.QueryValue;
 import org.intermine.objectstore.query.SimpleConstraint;
 import org.intermine.path.Path;
+import org.intermine.pathquery.Constraint;
 import org.intermine.pathquery.LogicExpression;
 import org.intermine.pathquery.PathNode;
 import org.intermine.pathquery.PathQuery;
@@ -91,7 +97,7 @@ public class MainHelperTest extends TestCase {
         PathNode managerNode = query.addNode("Employee.department.manager");
         managerNode.setType("CEO");
         List<Path> paths = new LinkedList<Path> ();
-        
+
         paths.add(PathQuery.makePath(model, query, "Employee"));
         paths.add(PathQuery.makePath(model, query, "Employee.end"));
         paths.add(PathQuery.makePath(model, query, "Employee.age"));
@@ -99,7 +105,7 @@ public class MainHelperTest extends TestCase {
         paths.add(PathQuery.makePath(model, query, "Employee.department.manager.seniority"));
         paths.add(PathQuery.makePath(model, query, "Employee.department.manager.secretarys.name"));
         paths.add(PathQuery.makePath(model, query, "Employee.address.address"));
-        
+
         query.addViewPaths(paths);
 
         assertEquals("org.intermine.model.testmodel.Employee",
@@ -308,6 +314,83 @@ public class MainHelperTest extends TestCase {
         q.addToOrderBy(new QueryField(qc3, "name"));
 
         assertEquals(q.toString(), MainHelper.makeQuery(pq, new HashMap(), new HashMap(), null, null, false, null, null, null).toString());
+    }
+
+    public void testMakeQueryDateConstraint() throws Exception {
+        // 11:02:39am Sun Nov 16, 2008
+        QueryNode qn = new QueryValue(new Date(1226833359000L));
+
+        // startOfDate < queryDate = 12:20:34am Mon Nov 17, 2008 < endOfDay
+        Date queryDate = new Date(1226881234565L);
+        Date startOfDay = new Date(1226880000000L);
+        Date endOfDay = new Date(1226966399999L);
+        SimpleConstraint expLTConstraint =
+                new SimpleConstraint((QueryEvaluable) qn, ConstraintOp.LESS_THAN,
+                                     new QueryValue(startOfDay));
+        Constraint ltConstraint = new Constraint(ConstraintOp.LESS_THAN, queryDate);
+        org.intermine.objectstore.query.Constraint resLTConstraint =
+            MainHelper.makeQueryDateConstraint(qn, ltConstraint);
+
+        assertEquals(expLTConstraint, resLTConstraint);
+
+        SimpleConstraint expLTEConstraint =
+            new SimpleConstraint((QueryEvaluable) qn, ConstraintOp.LESS_THAN_EQUALS,
+                                 new QueryValue(endOfDay));
+        Constraint lteConstraint = new Constraint(ConstraintOp.LESS_THAN_EQUALS, queryDate);
+        org.intermine.objectstore.query.Constraint resLTEConstraint =
+            MainHelper.makeQueryDateConstraint(qn, lteConstraint);
+
+        assertEquals(expLTEConstraint, resLTEConstraint);
+
+        SimpleConstraint expGTConstraint =
+            new SimpleConstraint((QueryEvaluable) qn, ConstraintOp.LESS_THAN,
+                                 new QueryValue(startOfDay));
+        Constraint gtConstraint = new Constraint(ConstraintOp.LESS_THAN, queryDate);
+        org.intermine.objectstore.query.Constraint resGTConstraint =
+            MainHelper.makeQueryDateConstraint(qn, gtConstraint);
+
+        assertEquals(expGTConstraint, resGTConstraint);
+
+        SimpleConstraint expGTEConstraint =
+            new SimpleConstraint((QueryEvaluable) qn, ConstraintOp.LESS_THAN_EQUALS,
+                                 new QueryValue(endOfDay));
+        Constraint gteConstraint = new Constraint(ConstraintOp.LESS_THAN_EQUALS, queryDate);
+        org.intermine.objectstore.query.Constraint resGTEConstraint =
+            MainHelper.makeQueryDateConstraint(qn, gteConstraint);
+
+        assertEquals(expGTEConstraint, resGTEConstraint);
+
+        ConstraintSet expEQConstraint =
+            new ConstraintSet(ConstraintOp.AND);
+        SimpleConstraint expEQStartConstraint =
+            new SimpleConstraint((QueryEvaluable) qn, ConstraintOp.GREATER_THAN_EQUALS,
+                                 new QueryValue(startOfDay));
+        SimpleConstraint expEQEndConstraint =
+            new SimpleConstraint((QueryEvaluable) qn, ConstraintOp.LESS_THAN_EQUALS,
+                                 new QueryValue(endOfDay));
+        expEQConstraint.addConstraint(expEQStartConstraint);
+        expEQConstraint.addConstraint(expEQEndConstraint);
+        Constraint eqConstraint = new Constraint(ConstraintOp.EQUALS, queryDate);
+        org.intermine.objectstore.query.Constraint resEQConstraint =
+            MainHelper.makeQueryDateConstraint(qn, eqConstraint);
+
+        assertEquals(expEQConstraint, resEQConstraint);
+
+        ConstraintSet expNEQConstraint =
+            new ConstraintSet(ConstraintOp.OR);
+        SimpleConstraint expNEQStartConstraint =
+            new SimpleConstraint((QueryEvaluable) qn, ConstraintOp.LESS_THAN,
+                                 new QueryValue(startOfDay));
+        SimpleConstraint expNEQEndConstraint =
+            new SimpleConstraint((QueryEvaluable) qn, ConstraintOp.GREATER_THAN,
+                                 new QueryValue(endOfDay));
+        expNEQConstraint.addConstraint(expNEQStartConstraint);
+        expNEQConstraint.addConstraint(expNEQEndConstraint);
+        Constraint neqConstraint = new Constraint(ConstraintOp.NOT_EQUALS, queryDate);
+        org.intermine.objectstore.query.Constraint resNEQConstraint =
+            MainHelper.makeQueryDateConstraint(qn, neqConstraint);
+
+        assertEquals(expNEQConstraint, resNEQConstraint);
     }
 
     private Map readQueries() throws Exception {
