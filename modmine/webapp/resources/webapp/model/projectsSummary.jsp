@@ -28,7 +28,7 @@
         <img border="0" class="arrow" src="images/f_vs.png" title="fly"/><br>
     </c:if>
     <c:if test="${organism.taxonId eq 6239}"> 
-        <img border="0" class="arrow" src="images/w_vs.png" title="fly"/><br>
+        <img border="0" class="arrow" src="images/w_vs.png" title="worm"/><br>
     </c:if>
 
 <%--
