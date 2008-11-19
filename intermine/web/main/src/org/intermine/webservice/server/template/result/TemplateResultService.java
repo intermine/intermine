@@ -30,11 +30,11 @@ import org.intermine.webservice.server.exceptions.ResourceNotFoundException;
 import org.intermine.webservice.server.query.result.QueryResultService;
 
 /**
- * Web service that returns results of public template constrained with values in request. 
- * All constraints operations and values that are in template must be specified in request. 
+ * Web service that returns results of public template constrained with values in request.
+ * All constraints operations and values that are in template must be specified in request.
  * @author Jakub Kulaviak
  */
-public class TemplateResultService extends QueryResultService 
+public class TemplateResultService extends QueryResultService
 {
 
     /**
@@ -43,22 +43,22 @@ public class TemplateResultService extends QueryResultService
     protected void execute(HttpServletRequest request,
             HttpServletResponse response) {
 
-        TemplateResultInput input = getInput();        
+        TemplateResultInput input = getInput();
         TemplateQuery template = new TemplateManager(request).getGlobalTemplate(input.getName());
         if (template == null) {
-            throw new ResourceNotFoundException("public template with name '" + input.getName() 
+            throw new ResourceNotFoundException("public template with name '" + input.getName()
                     + "' doesn't exist.");
         }
-        template = new TemplateConfigurator().getConfiguredTemplate(template, 
-                input.getConstraints(), getLocale(request));
+        template = new TemplateConfigurator().getConfiguredTemplate(template,
+                                                                    input.getConstraints());
         if (template.getPathQuery().isValid()) {
-            runPathQuery(template, input.getStart(), input.getMaxCount(), 
-                    input.isComputeTotalCount(), template.getTitle(), 
-                    template.getDescription(), input, getMineLinkURL(request, input), 
+            runPathQuery(template, input.getStart(), input.getMaxCount(),
+                    input.isComputeTotalCount(), template.getTitle(),
+                    template.getDescription(), input, getMineLinkURL(request, input),
                     input.getLayout());
         } else {
             String msg = "Required data source (template) is outdated and is in conflict "
-                + "with model: " 
+                + "with model: "
                 + PathQueryUtil.getProblemsSummary(template.getPathQuery().getProblems());
             throw new BadRequestException(msg);
         }
@@ -67,14 +67,14 @@ public class TemplateResultService extends QueryResultService
     private Locale getLocale(HttpServletRequest request) {
         return (Locale) request.getSession().getAttribute(Globals.LOCALE_KEY);
     }
-    
+
     private TemplateResultInput getInput() {
         return new TemplateResultRequestParser(request).getInput();
     }
-    
+
     private String getMineLinkURL(HttpServletRequest request, TemplateResultInput input) {
         String ret = new URLGenerator(request).getBaseURL();
-        ret += "/" + TemplateAction.TEMPLATE_ACTION_PATH; 
+        ret += "/" + TemplateAction.TEMPLATE_ACTION_PATH;
         ret += "?" + getQueryString(request, input);
         ret += "&" + TemplateAction.SKIP_BUILDER_PARAMETER + "&" + TemplateForm.TYPE_PARAMETER
             + "=" + TemplateHelper.ALL_TEMPLATE;
@@ -94,20 +94,20 @@ public class TemplateResultService extends QueryResultService
 
     private String constraintToString(ConstraintLoad load, int index) {
         String ret = "";
-        ret += en("attributeOps(" + index + ")") + "=" 
+        ret += en("attributeOps(" + index + ")") + "="
             + en(load.getConstraintOp().getIndex().toString()) + "&";
         ret += en("attributeValues(" + index + ")") + "=" + en(load.getValue()) + "&";
         if (load.getExtraValue() != null) {
-            ret += en("extraValues(" + index + ")") + "=" + en(load.getExtraValue()) + "&";  
+            ret += en("extraValues(" + index + ")") + "=" + en(load.getExtraValue()) + "&";
         }
         return ret;
     }
-    
+
     private String en(String value) {
         try {
             return URLEncoder.encode(value, "UTF-8");
         } catch (UnsupportedEncodingException e) {
             return "";
-        }        
+        }
     }
 }

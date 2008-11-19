@@ -92,7 +92,7 @@ public class QuickSearchForm extends ActionForm
 
         Object o = null;
         try {
-            o = new ConstraintValueParser().parse(value, String.class, ConstraintOp.EQUALS, locale);
+            o = new ConstraintValueParser().parse(value, String.class, ConstraintOp.EQUALS);
         } catch (ParseValueException ex) {
             errors.add(ActionErrors.GLOBAL_MESSAGE, 
                             new ActionMessage("errors.message", ex.getMessage()));

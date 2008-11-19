@@ -12,7 +12,6 @@ package org.intermine.webservice.server.template.result;
 
 import java.util.Iterator;
 import java.util.List;
-import java.util.Locale;
 
 import org.intermine.pathquery.Constraint;
 import org.intermine.pathquery.PathNode;
@@ -24,78 +23,77 @@ import org.intermine.webservice.server.exceptions.BadRequestException;
 
 
 /**
- * Configures original template. Old constraints are replaced with the similar 
+ * Configures original template. Old constraints are replaced with the similar
  * new constraints, that have different values.
  * @author Jakub Kulaviak
  **/
 public class TemplateConfigurator
-{ 
+{
 
-    private Iterator<ConstraintLoad> newConstraintIt;    
-   
+    private Iterator<ConstraintLoad> newConstraintIt;
+
     /**
      * Makes copy of original template and configures it with new constraints that have
      * new values. New constraints must correspond to old constraints. Actually this creates
      * very similar TemplateQuery with only different values.
      * @param origTemplate original template
      * @param newConstraints new constraints
-     * @param locale locale
      * @return new template
      */
     public TemplateQuery getConfiguredTemplate(TemplateQuery origTemplate,
-            List<ConstraintLoad> newConstraints, Locale locale) {
+                                               List<ConstraintLoad> newConstraints) {
         /* Made according to org.intermine.web.logic.template.
          * TemplateHelper.templateFormToTemplateQuery().
-         * Be carefull when changing this code. If you replace constraint 
-         * in list that was returned for example from getAllEditableConstraints method, 
+         * Be carefull when changing this code. If you replace constraint
+         * in list that was returned for example from getAllEditableConstraints method,
          * this change won't have effect to template*/
         TemplateQuery template = (TemplateQuery) origTemplate.clone();
         newConstraintIt = newConstraints.iterator();
         for (PathNode node : template.getEditableNodes()) {
             for (Constraint c : template.getEditableConstraints(node)) {
-                setConstraint(node, c, locale);
+                setConstraint(node, c);
             }
         }
         return template;
     }
 
-    private void setConstraint(PathNode node, Constraint c, Locale locale) {
+    private void setConstraint(PathNode node, Constraint c) {
         ConstraintLoad load = nextNewConstraint();
         int constraintIndex = node.getConstraints().indexOf(c);
-        Object extraValue = getExtraValue(c, load, node, locale);
-        Object value = getValue(c, load, node, locale);
-        Constraint newConstraint = new Constraint(load.getConstraintOp(), value, 
-                true, c.getDescription(), c.getCode(), c.getIdentifier(), extraValue); 
+        Object extraValue = getExtraValue(c, load, node);
+        Object value = getValue(c, load, node);
+        Constraint newConstraint = new Constraint(load.getConstraintOp(), value,
+                true, c.getDescription(), c.getCode(), c.getIdentifier(), extraValue);
         node.getConstraints().set(constraintIndex, newConstraint);
     }
 
-    private Object getValue(Constraint c, ConstraintLoad load, PathNode node, Locale locale) {
+    private Object getValue(Constraint c, ConstraintLoad load, PathNode node) {
         Object ret;
         try {
-            ret = new ConstraintValueParser().parse(load.getValue(), getType(node), 
-                    load.getConstraintOp(), locale);    
+            ret = ConstraintValueParser.parse(load.getValue(), getType(node),
+                                              load.getConstraintOp());
         } catch (ParseValueException ex) {
             throw new BadRequestException("invalid value: " + load.getValue() + ". "
-                    + ex.getMessage());                
+                    + ex.getMessage());
         }
         return ret;
     }
 
-    private Object getExtraValue(Constraint c, ConstraintLoad load, PathNode node, Locale locale) {
+    private Object getExtraValue(Constraint c, ConstraintLoad load, PathNode node) {
         Object ret;
         if (load.getExtraValue() == null || load.getExtraValue().trim().length() == 0) {
             return c.getExtraValue();
         }
         try {
-            ret = new ConstraintValueParser().parse(load.getExtraValue(), getType(node), 
-                    load.getConstraintOp(), locale);    
+            ret = ConstraintValueParser.parse(load.getExtraValue(), getType(node),
+                                              load.getConstraintOp());
         } catch (ParseValueException ex) {
             throw new BadRequestException("invalid value: " + load.getExtraValue() + ". "
-                    + ex.getMessage());                
+                    + ex.getMessage());
         }
         return ret;
     }
-    
+
     private Class getType(PathNode node) {
         Class fieldClass;
         if (node.isAttribute()) {
@@ -111,8 +109,8 @@ public class TemplateConfigurator
         if (newConstraintIt.hasNext()) {
             return newConstraintIt.next();
         } else {
-            throw new BadRequestException("There is insufficient number of constraints in your " 
+            throw new BadRequestException("There is insufficient number of constraints in your "
                     + "request. Template has more constrains than you have specified.");
         }
-    }    
+    }
 }
