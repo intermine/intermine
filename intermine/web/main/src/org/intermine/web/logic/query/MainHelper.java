@@ -13,8 +13,11 @@ package org.intermine.web.logic.query;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Calendar;
 import java.util.Collection;
 import java.util.Comparator;
+import java.util.Date;
+import java.util.GregorianCalendar;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -24,7 +27,9 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.SimpleTimeZone;
 import java.util.StringTokenizer;
+import java.util.TimeZone;
 import java.util.TreeSet;
 import java.util.Map.Entry;
 
@@ -328,7 +333,7 @@ public class MainHelper
 
     private static void recursiveMakeQuery(Queryable q, PathQuery pathQuery, PathNode root,
             Map savedBags, Map<String, QuerySelectable> pathToQueryNode,
-            BagQueryRunner bagQueryRunner, Map returnBagQueryResults, boolean checkOnly) 
+            BagQueryRunner bagQueryRunner, Map returnBagQueryResults, boolean checkOnly)
     throws ObjectStoreException {
         Model model = pathQuery.getModel();
         Map<String, ConstraintSet> codeToCS = new HashMap<String, ConstraintSet>();
@@ -486,17 +491,7 @@ public class MainHelper
                             cs.addConstraint(new BagConstraint(qf, c.getOp(), bag.getOsb()));
                         }
                     } else if (node.isAttribute()) { //assume, for now, that it's a SimpleConstraint
-                        if (c.getOp() == ConstraintOp.IS_NOT_NULL
-                            || c.getOp() == ConstraintOp.IS_NULL) {
-                            cs.addConstraint(new SimpleConstraint((QueryEvaluable) qn, c.getOp()));
-                        } else {
-                            if (qn.getType().equals(String.class)) {
-                                cs.addConstraint(makeQueryStringConstraint(qn, c));
-                            } else {
-                                cs.addConstraint(new SimpleConstraint((QueryField) qn, c.getOp(),
-                                            new QueryValue(c.getValue())));
-                            }
-                        }
+                        cs.addConstraint(makeAttributeConstraint(qn, c));
                     } else if (node.isReference() && (c.getOp() == ConstraintOp.IS_NOT_NULL
                                 || c.getOp() == ConstraintOp.IS_NULL)) {
                         cs.addConstraint(new ContainsConstraint((QueryObjectReference) qr,
@@ -714,6 +709,25 @@ public class MainHelper
         }
     }
 
+    private static org.intermine.objectstore.query.Constraint
+        makeAttributeConstraint(QueryNode qn, Constraint c) {
+        if (c.getOp() == ConstraintOp.IS_NOT_NULL
+            || c.getOp() == ConstraintOp.IS_NULL) {
+            return new SimpleConstraint((QueryEvaluable) qn, c.getOp());
+        } else {
+            if (qn.getType().equals(String.class)) {
+                return makeQueryStringConstraint(qn, c);
+            } else {
+                if (qn.getType().equals(Date.class)) {
+                    return makeQueryDateConstraint(qn, c);
+                } else {
+                    return new SimpleConstraint((QueryField) qn, c.getOp(),
+                                                new QueryValue(c.getValue()));
+                }
+            }
+        }
+    }
+
     private static Set<PathNode> findNonOuterNodes(Map<String, PathNode> nodes, PathNode root) {
         Set<PathNode> retval = new LinkedHashSet();
         Set<PathNode> done = new LinkedHashSet();
@@ -776,6 +790,86 @@ public class MainHelper
                                                 new QueryValue("%" + lowerCaseValue + "%"));
                 } else {
                     return new SimpleConstraint(qf, c.getOp(), new QueryValue(lowerCaseValue));
+                }
+            }
+        }
+    }
+
+
+    /**
+     * Make a SimpleConstraint for the given Date Constraint.  The time stored in the Date will be
+     * ignored.  Example webapp constraints and the coresponding object store constraints:
+     * "<= 2008-01-02"  -->  "<= 2008-01-02 23:59:59"
+     * " < 2008-01-02"  -->  " < 2008-01-02 00:00:00"
+     * " > 2008-01-02"  -->   "> 2008-01-02 23:59:59"
+     * ">= 2008-01-02"  -->   "> 2008-01-02 00:00:00"
+     * @param qn the QueryNode in the new query
+     * @param c the webapp constraint
+     * @return a new object store constraint
+     */
+    protected static org.intermine.objectstore.query.Constraint
+        makeQueryDateConstraint(QueryNode qn, Constraint c) {
+        Date dateValue = (Date) c.getValue();
+
+        Calendar startOfDay = GregorianCalendar.getInstance(TimeZone.getTimeZone("GMT"));
+        startOfDay.setTime(dateValue);
+        startOfDay.set(Calendar.HOUR_OF_DAY, 0);
+        startOfDay.set(Calendar.MINUTE, 0);
+        startOfDay.set(Calendar.SECOND, 0);
+        startOfDay.set(Calendar.MILLISECOND, 0);
+        QueryValue startOfDayQV = new QueryValue(startOfDay.getTime());
+
+        Calendar endOfDay = GregorianCalendar.getInstance(TimeZone.getTimeZone("GMT"));
+        endOfDay.setTime(dateValue);
+        endOfDay.set(Calendar.HOUR_OF_DAY, 23);
+        endOfDay.set(Calendar.MINUTE, 59);
+        endOfDay.set(Calendar.SECOND, 59);
+        endOfDay.set(Calendar.MILLISECOND, 999);
+        QueryValue endOfDayQV = new QueryValue(endOfDay.getTime());
+
+        if (c.getOp().equals(ConstraintOp.EQUALS)
+            || c.getOp().equals(ConstraintOp.NOT_EQUALS)) {
+            SimpleConstraint startConstraint;
+            SimpleConstraint endConstraint;
+            ConstraintOp op;
+            if (c.getOp().equals(ConstraintOp.EQUALS)) {
+                startConstraint =
+                    new SimpleConstraint((QueryEvaluable) qn, ConstraintOp.GREATER_THAN_EQUALS,
+                                         startOfDayQV);
+                endConstraint =
+                    new SimpleConstraint((QueryEvaluable) qn, ConstraintOp.LESS_THAN_EQUALS,
+                                         endOfDayQV);
+                op = ConstraintOp.AND;
+            } else {
+                // NOT_EQUALS
+                startConstraint =
+                    new SimpleConstraint((QueryEvaluable) qn, ConstraintOp.LESS_THAN,
+                                         startOfDayQV);
+                endConstraint =
+                    new SimpleConstraint((QueryEvaluable) qn, ConstraintOp.GREATER_THAN,
+                                         endOfDayQV);
+                op = ConstraintOp.OR;
+            }
+            ConstraintSet cs = new ConstraintSet(op);
+            cs.addConstraint(startConstraint);
+            cs.addConstraint(endConstraint);
+            return cs;
+        } else {
+            if (c.getOp().equals(ConstraintOp.LESS_THAN_EQUALS)) {
+                return new SimpleConstraint((QueryEvaluable) qn, c.getOp(), endOfDayQV);
+            } else {
+                if (c.getOp().equals(ConstraintOp.LESS_THAN)) {
+                    return new SimpleConstraint((QueryEvaluable) qn, c.getOp(), startOfDayQV);
+                } else {
+                    if (c.getOp().equals(ConstraintOp.GREATER_THAN)) {
+                        return new SimpleConstraint((QueryEvaluable) qn, c.getOp(), endOfDayQV);
+                    } else {
+                        if (c.getOp().equals(ConstraintOp.GREATER_THAN_EQUALS)) {
+                            return new SimpleConstraint((QueryEvaluable) qn, c.getOp(), endOfDayQV);
+                        } else {
+                            throw new RuntimeException("Unknown ConstraintOp: " + c);
+                        }
+                    }
                 }
             }
         }

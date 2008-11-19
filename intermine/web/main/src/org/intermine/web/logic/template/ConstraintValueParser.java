@@ -10,14 +10,17 @@ package org.intermine.web.logic.template;
  *
  */
 
-import java.text.DateFormat;
-import java.text.ParseException;
+import static org.intermine.pathquery.Constraint.ISO_DATE_FORMAT;
+
 import java.util.Date;
 import java.util.Locale;
 
 import org.intermine.objectstore.query.ConstraintOp;
+
 import org.intermine.util.TypeUtil;
 import org.intermine.util.Util;
+
+import java.text.ParseException;
 
 /**
  * Parser for parsing constraint value.
@@ -43,18 +46,11 @@ public class ConstraintValueParser
         }
 
         if (Date.class.equals(type)) {
-            DateFormat df;
-            if (locale == null) {
-                // use deafult locale
-                df =  DateFormat.getDateInstance(DateFormat.SHORT);
-            } else {
-                df =  DateFormat.getDateInstance(DateFormat.SHORT, locale);
-            }
             try {
-                parsedValue = df.parse(value);
+                parsedValue = ISO_DATE_FORMAT.parse(value);
             } catch (ParseException e) {
                 throw new ParseValueException(value + " is not a valid date - example: "
-                        + df.format(new Date()));
+                        + ISO_DATE_FORMAT.format(new Date()));
             }
         } else if (String.class.equals(type)) {
             if (value.length() == 0) {
