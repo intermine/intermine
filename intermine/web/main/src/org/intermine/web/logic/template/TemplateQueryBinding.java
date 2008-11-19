@@ -53,7 +53,6 @@ public class TemplateQueryBinding
             } else {
                 writer.writeAttribute("comment", template.getComment());
             }
-            // writer.writeAttribute("keywords", template.getKeywords());
 
             PathQueryBinding.marshal(template, template.getName(), template.getModel()
                     .getName(), writer);
@@ -90,11 +89,11 @@ public class TemplateQueryBinding
      * @param savedBags Map from bag name to bag
      * @param classKeys class keys
      */
-    public Map unmarshal(Reader reader, Map savedBags, Map<String, 
+    public Map unmarshal(Reader reader, Map savedBags, Map<String,
             List<FieldDescriptor>> classKeys) {
         Map templates = new LinkedHashMap();
         try {
-            SAXParser.parse(new InputSource(reader), new TemplateQueryHandler(templates, 
+            SAXParser.parse(new InputSource(reader), new TemplateQueryHandler(templates,
                     savedBags, classKeys));
         } catch (Exception e) {
             e.printStackTrace();
