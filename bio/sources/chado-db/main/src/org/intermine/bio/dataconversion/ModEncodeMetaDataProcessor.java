@@ -56,6 +56,10 @@ public class ModEncodeMetaDataProcessor extends ChadoProcessor
     // ...we need a further map to link to submission 
     private Map<Integer, String> submissionLabMap = new HashMap<Integer, String>();
 
+    private Map<String, Integer> organismIdMap = new HashMap<String, Integer>();
+    private Map<String, String> organismIdRefMap = new HashMap<String, String>();
+    private Map<Integer, String> submissionOrganismMap = new HashMap<Integer, String>();
+
     // maps from chado identifier to specific objects
     private Map<Integer, SubmissionDetails> submissionMap =
         new HashMap<Integer, SubmissionDetails>();
@@ -94,6 +98,8 @@ public class ModEncodeMetaDataProcessor extends ChadoProcessor
         private Integer interMineObjectId;
         // the identifier assigned to lab Item for this object
         private String labItemIdentifier;
+        // the identifier assigned to organism Item for this object
+        private String organismItemIdentifier;
     }
 
     /**
@@ -144,11 +150,11 @@ public class ModEncodeMetaDataProcessor extends ChadoProcessor
 
         LOG.info("ICI:  project");
         processProjectTable(connection);
-        //processLabAttributes(connection);
-
         LOG.info("ICI:  lab");
         processLabTable(connection);
         //processLabAttributes(connection);
+        LOG.info("ICI:  organism");
+        processSubmissionOrganism(connection);
 
         LOG.info("ICI:  experiment");
         processExperimentTable(connection);
@@ -652,11 +658,10 @@ public class ModEncodeMetaDataProcessor extends ChadoProcessor
     *    PROJECT
     * ==============
     *
-    * Labs are loaded statically. A map is built between submissionId and
-    * lab's name and used for the references. 2 maps store intermine
-    * objectId and itemId, with key the lab name.
-    * Note: the lab and the project are now put in the chadoxml now, as surnames,
-    * and we could use those instead.
+    * Projects are loaded statically. A map is built between submissionId and
+    * project's name and used for the references. 2 maps store intermine
+    * objectId and itemId, with key the project name.
+    * Note: the project name in chado is the surname of the PI
     * 
     * @param connection
     * @throws SQLException
@@ -685,13 +690,9 @@ public class ModEncodeMetaDataProcessor extends ChadoProcessor
            }
            LOG.info("PROJECT: " + project);            
            Item pro = getChadoDBConverter().createItem("Project");
-           LOG.info("PROJECT1: " + project);            
            pro.setAttribute("surnamePI", project);
-           LOG.info("PROJECT2: " + project);            
            Integer intermineObjectId = getChadoDBConverter().store(pro);
-           LOG.info("PROJECT3: " + project);            
            storeInProjectMaps(pro, project, intermineObjectId);
-           LOG.info("PROJECT4: " + project);            
        }
        LOG.info("created " + projectIdMap.size() + " project");
    }
@@ -848,6 +849,79 @@ public class ModEncodeMetaDataProcessor extends ChadoProcessor
         return res;
     }
 
+
+    /**
+    *
+    * ==============
+    *    ORGANISM
+    * ==============
+    *
+    * Organism for a submission is derived from the organism associated with
+    * the protocol of the first applied protocol (of the submission).
+    * it is the name. a request to associate the submission directly with
+    * the taxonid has been made to chado people.
+    * 
+    * @param connection
+    * @throws SQLException
+    * @throws ObjectStoreException
+    */
+   private void processSubmissionOrganism(Connection connection)
+   throws SQLException, ObjectStoreException {
+       ResultSet res = getSubmissionOrganism(connection);
+       int count = 0;
+       while (res.next()) {
+           Integer submissionId = new Integer(res.getInt("experiment_id"));
+           String value = res.getString("value");
+           submissionOrganismMap.put(submissionId, value);
+           count++;
+       }
+       res.close();
+
+       Set <Integer> exp = submissionOrganismMap.keySet();
+       Iterator <Integer> i  = exp.iterator();
+       while (i.hasNext()) {
+           Integer thisExp = i.next();
+           String thisOrganism = submissionOrganismMap.get(thisExp);  
+
+           if (organismIdMap.containsKey(thisOrganism)) {
+               continue;
+           }
+           LOG.info("SPECIES: " + thisOrganism);            
+           Item organism = getChadoDBConverter().createItem("Organism");
+           organism.setAttribute("name", thisOrganism);
+           Integer intermineObjectId = getChadoDBConverter().store(organism);
+           storeInOrganismMaps(organism, thisOrganism, intermineObjectId);
+       }
+       LOG.info("created " + organismIdMap.size() + " organisms");
+   }
+
+   /**
+    * Return the rows needed from the lab table.
+    * We use the surname of the Principal Investigator (person ranked 0)
+    * as the lab name.
+    * This is a protected method so that it can be overridden for testing
+    *
+    * @param connection the db connection
+    * @return the SQL result set
+    * @throws SQLException if a database problem occurs
+    */
+   protected ResultSet getSubmissionOrganism(Connection connection)
+   throws SQLException {
+       String query =
+           "select distinct eap.experiment_id, a.value "
+           + " from experiment_applied_protocol eap, applied_protocol ap, "
+           + " protocol_attribute pa, attribute a "
+           + " where eap.first_applied_protocol_id = ap.applied_protocol_id "
+           + " and ap.protocol_id=pa.protocol_id "
+           + " and pa.attribute_id=a.attribute_id "
+           + " and a.heading='species' ";
+       LOG.info("executing: " + query);
+       Statement stmt = connection.createStatement();
+       ResultSet res = stmt.executeQuery(query);
+       return res;
+   }
+
+    
     /**
      *
      * ================
@@ -877,6 +951,11 @@ public class ModEncodeMetaDataProcessor extends ChadoProcessor
             String labName = submissionLabMap.get(submissionId);
             String labItemIdentifier = labIdRefMap.get(labName);
             submission.setReference("lab", labItemIdentifier);
+
+            String organismName = submissionOrganismMap.get(submissionId);
+            String organismItemIdentifier = organismIdRefMap.get(organismName);
+            submission.setReference("organism", organismItemIdentifier);
+            
             // ..store all
             Integer intermineObjectId = getChadoDBConverter().store(submission);
             // ..and fill the SubmissionDetails object
@@ -884,6 +963,7 @@ public class ModEncodeMetaDataProcessor extends ChadoProcessor
             details.interMineObjectId = intermineObjectId;
             details.itemIdentifier = submission.getIdentifier();
             details.labItemIdentifier = labItemIdentifier;
+            details.organismItemIdentifier = organismItemIdentifier;
             submissionMap.put(submissionId, details);
 
             debugMap .put(details.itemIdentifier, submission.getClassName());
@@ -1690,6 +1770,27 @@ public class ModEncodeMetaDataProcessor extends ChadoProcessor
                     "Type mismatch: expecting Lab, getting "
                     + i.getClassName().substring(37) + " with intermineObjectId = "
                     + intermineObjectId + ", lab = " + labName);
+        }
+        debugMap .put(i.getIdentifier(), i.getClassName());
+    }
+
+    /**
+     * to store identifiers in organism maps.
+     * @param i
+     * @param chadoId
+     * @param intermineObjectId
+     * @throws ObjectStoreException
+     */
+    private void storeInOrganismMaps(Item i, String organism, Integer intermineObjectId)
+    throws ObjectStoreException {
+        if (i.getClassName().equals("http://www.flymine.org/model/genomic#Organism")) {
+            organismIdMap .put(organism, intermineObjectId);
+            organismIdRefMap .put(organism, i.getIdentifier());
+        } else {
+            throw new IllegalArgumentException(
+                    "Type mismatch: expecting Organism, getting "
+                    + i.getClassName().substring(37) + " with intermineObjectId = "
+                    + intermineObjectId + ", organism = " + organism);
         }
         debugMap .put(i.getIdentifier(), i.getClassName());
     }

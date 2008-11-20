@@ -48,10 +48,9 @@
 		<attribute name="replicate" type="java.lang.String" />
     <attribute name="experimentDate" type="java.util.Date" />
     <attribute name="publicReleaseDate" type="java.util.Date" />     
-    <!-- 
   <reference name="organism"
       referenced-type="org.flymine.model.genomic.Organism" />
-
+    <!-- 
 			<reference name="publication" referenced-type="org.flymine.model.genomic.Publication"/>
 			<attribute name="fileFormat" type="java.lang.String"/>
 		-->

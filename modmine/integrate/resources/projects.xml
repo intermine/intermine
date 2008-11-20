@@ -3,9 +3,11 @@
 <items>
   <item id="0" class="" implements="http://www.flymine.org/model/genomic#Organism">
 		<attribute name="taxonId" value="7227"/>
+    <attribute name="name" value="Drosophila melanogaster"/>
   </item>
 	<item id="1" class="" implements="http://www.flymine.org/model/genomic#Organism">
 		<attribute name="taxonId" value="6239"/>
+    <attribute name="name" value="Caenorhabditis elegans"/>
 	</item>
 	<!--
 	<item id="0" class="" implements="http://www.flymine.org/model/genomic#Organism">
