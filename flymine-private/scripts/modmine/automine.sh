@@ -12,7 +12,7 @@
 #       test with file option
 #       analyse after stag?
 #       #-R restart after fails for full
-#       
+#       -r recursive for validation
 #
 
 
@@ -438,11 +438,24 @@ then
  TIMESTAMP="$NAMESTAMP"
 fi
 
+
 mv $MINEDIR/integrate/build/acceptance_test.html $MINEDIR/integrate/build/$TIMESTAMP.html
-cp $MINEDIR/integrate/build/$TIMESTAMP.html $REPORTS/$TIMESTAMP.html
+#cp $MINEDIR/integrate/build/$TIMESTAMP.html $REPORTS/$TIMESTAMP.html
 
 #xterm -bg grey20 -hold -e "elinks file://$MINEDIR/integrate/build/$1.html" &
 elinks $MINEDIR/integrate/build/$TIMESTAMP.html
+
+
+# check chado for new features
+# crap code, use perl
+cd /tmp
+rm -f chadoclasses reporthead newreport
+psql -H -h $DBHOST -d $CHADODB -U $DBUSER -c 'select c.name, c.cvterm_id, count(*) from feature f, cvterm c where c.cvterm_id = f.type_id group by c.name, c.cvterm_id order by c.name;' > chadoclasses
+head -n -1 $MINEDIR/integrate/build/$TIMESTAMP.html > reporthead
+echo '<h3>Chado classes</h3>' | cat >> reporthead
+cat reporthead chadoclasses > newreport
+echo '</body></html>' | cat >> newreport
+cp newreport $REPORTS/$TIMESTAMP.html
 
 if [ $VALIDATING = "y" ]
 then
@@ -450,10 +463,9 @@ echo "sending mail!!"
 mail $RECIPIENTS -s "$TIMESTAMP report, also in $REPORTS" < $REPORTS/$TIMESTAMP.html
 fi
 
-
 echo
 echo "acceptance test results in "
-echo "$MINEDIR/integrate/build/$TIMESTAMP.html"
+echo "$REPORTS/$TIMESTAMP.html"
 echo
 fi
 
