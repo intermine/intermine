@@ -107,7 +107,7 @@ public class AcceptanceTestTask extends Task
             try {
                 fw = new FileWriter(outputFile);
             } catch (IOException e) {
-                throw new BuildException("failed to open outout file: " + outputFile, e);
+                throw new BuildException("failed to open output file: " + outputFile, e);
             }
             PrintWriter pw = new PrintWriter(fw);
 
@@ -160,7 +160,7 @@ public class AcceptanceTestTask extends Task
         pw.println("<html>");
         pw.println("<head><title>Acceptance Test Results</title></head>");
         pw.println("<body>");
-        pw.println("<h1>Acceptance Test Results</h1>");
+        pw.println("<h2>Acceptance Test Results</h2>");
 
         int testCount = 0;
 
@@ -173,30 +173,32 @@ public class AcceptanceTestTask extends Task
                 failingTestsCount++;
             }
 
-            pw.println("</ul>");
+//            pw.println("</ul>");
 
             testCount++;
         }
 
-        pw.println("<h2>Total tests: " + testCount + "</h2>");
+        pw.println("<h3>Total tests: " + testCount + "</h3>");
         if (testCount == 0) {
             pw.println("</body></html>");
             return;
         }
-        pw.println("<h2>Failing tests: " + failingTestsCount + "</h2>");
-        pw.println("<h2>Percentage passed: "
-                   + 100 * (testCount - failingTestsCount) / testCount + "%</h2>");
+        pw.println("<h3>Failing tests: " + failingTestsCount + "</h3>");
+        pw.println("<h3>Percentage passed: "
+                   + 100 * (testCount - failingTestsCount) / testCount + "%</h3>");
 
         int count = 0;
 
         if (failingTestsCount > 0) {
-            pw.println("<hr/><h2>Failing tests:</h2>");
+            pw.println("<hr/><h3>Failing tests:</h3>");
             pw.println("<p>");
+
+            pw.println("<ul>");
 
             for (Iterator testResultsIter = testResults.iterator(); testResultsIter.hasNext();) {
                 AcceptanceTestResult atr = (AcceptanceTestResult) testResultsIter.next();
 
-                pw.println("<ul>");
+//                pw.println("<ul>");
 
                 if (!atr.isSuccessful()) {
                     pw.println("<li><a href=\"#test" + count + "\">");
@@ -205,10 +207,12 @@ public class AcceptanceTestTask extends Task
                                + ")</font></p></li>");
                 }
 
-                pw.println("</ul>");
+//                pw.println("</ul>");
 
                 count++;
             }
+            pw.println("</ul>");
+
         }
 
         pw.println("</p><hr/>");
@@ -255,6 +259,8 @@ public class AcceptanceTestTask extends Task
 
         testResultsIter = testResults.iterator();
 
+        List<Integer> allTrackerIds = new ArrayList<Integer>();
+        
         while (testResultsIter.hasNext()) {
             AcceptanceTestResult atr = (AcceptanceTestResult) testResultsIter.next();
 
@@ -262,8 +268,15 @@ public class AcceptanceTestTask extends Task
 
             while (trackerIdIter.hasNext()) {
                 Integer id = (Integer) trackerIdIter.next();
-                List trackerRows = (List) atr.getTrackerMap().get(id);
 
+                // to avoid repeating trackers entries
+                if (allTrackerIds.contains(id)) {
+                    continue;
+                } else {
+                    allTrackerIds.add(id);                    
+                }
+                
+                List trackerRows = (List) atr.getTrackerMap().get(id);
                 pw.println("<h2><a name=\"object" + id + "\">Tracker entries for "
                            + id + "</a></h2>");
                 outputTable(pw, atr, null, trackerRows);
@@ -271,7 +284,8 @@ public class AcceptanceTestTask extends Task
             }
         }
 
-        pw.println("</ul></body></html>");
+        pw.println("</ul>");
+        pw.println("</body></html>");
         pw.close();
     }
 
@@ -279,7 +293,7 @@ public class AcceptanceTestTask extends Task
                              List results) {
         pw.println("<table border=1>");
         if (columnHeadings != null) {
-            pw.println("<tr>");
+            pw.println("<tr bgcolor=#eeeeee>");
             Iterator columnHeadingsIter = columnHeadings.iterator();
             while (columnHeadingsIter.hasNext()) {
                 pw.println("<th>" + columnHeadingsIter.next() + "</th>");
