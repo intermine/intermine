@@ -92,11 +92,14 @@
     <retrieve-metadata osName="${objectstore.name}" destDir="${build.model.dir}"/>
     <outofdate>
       <sourcefiles path="${build.model.dir}/${model.name}_model.xml"/>
-      <targetfiles path="${build.classes.dir}/${model.name}_model.xml"/>
+      <targetfiles path="${build.task.dir}/${model.name}_model.xml"/>
+      <sequential>
+        <copy file="${build.model.dir}/${model.name}_model.xml"
+              tofile="${build.task.dir}/${model.name}_model.xml"
+              preservelastmodified="true"/>
+        <property name="regenerate.java" value="true"/>
+      </sequential>
     </outofdate>
-    <sequential>
-      <property name="regenerate.java" value="true"/>
-    </sequential>
   </target>
 
   <target name="-pre-generate-properties"
