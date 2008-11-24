@@ -13,6 +13,7 @@
 #       analyse after stag?
 #       #-R restart after fails for full
 #       -r recursive for validation
+#       if -x => -s implicit
 #
 
 
@@ -118,11 +119,11 @@ done
 
 shift $(($OPTIND - 1))
 
-if [ -n "$1" ] && [ $VALIDATING = "n" ] && [ $STAG = "y" ]
+if [ -n "$1" ] && [ $VALIDATING = "y" ]
 then
-REL=$1
-else
 REL=val
+else
+REL=$1
 fi
 
 
@@ -323,12 +324,10 @@ ln -s ../$sub $sub
 
 if [ $VALIDATING = "y" ] #if we are validating an entry at a time
 then
-#NAMESTAMP="$sub"    # for the naming of the acceptance tests file
 NAMESTAMP=`echo $sub | awk -F "." '{print $1}'`    # for the naming of the acceptance tests file
 echo "******"
 echo $NAMESTAMP
 echo "******"
-
 break;
 fi
 
