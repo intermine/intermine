@@ -99,11 +99,22 @@
     <source name="wormbase-c_elegans-chromosome-fasta" type="fasta" dump="true">
       <property name="fasta.taxonId" value="6239"/>
       <property name="fasta.className" value="org.flymine.model.genomic.Chromosome"/>
-      <property name="fasta.includes" value="*chromosome*.fasta"/>
+      <property name="fasta.includes" value="*dna*.fasta"/>
       <property name="fasta.dataSetTitle" value="WormBase C. Elegans data set"/>
       <property name="fasta.synonymSource" value="WormBase"/>
       <property name="src.data.dir" location="/shared/data/wormbase/ws175"/>
     </source>
+<!-- INTEREACTION: added 24/11/08 
+    <source name="psi-intact" type="psi" dump="true">
+      <property name="src.data.dir" location="/shared/data/psi/intact/current"/>
+      <property name="organisms" value="7227 6239 4932"/>
+    </source>
+    <source name="biogrid" type="biogrid" dump="true">
+      <property name="src.data.dir" location="/shared/data/biogrid/current"/>
+      <property name="src.data.dir.includes" value="*psi25.xml"/>
+    </source>
+-->
+    
     <source name="entrez-organism" type="entrez-organism">
       <!-- this source finds the taxon ids in the objectstore, retrieves
            species name and genus from Entrez into an InterMine format XML
