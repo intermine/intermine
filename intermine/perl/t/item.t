@@ -44,7 +44,7 @@ my $emp3 = $factory->make_item("CEO");
 $emp3->set("name", "eric (ceo)");
 $emp3->set("age", "12.5");
 
-$dept->add_to_collection("employees", $emp3);
+$dept->_add_to_collection("employees", $emp3);
 
 ok(@{$dept->get("employees")} == 3);
 
@@ -56,14 +56,14 @@ ok($employees[2]->get("name") eq "eric (ceo)");
 my $sec1 = $factory->make_item("Secretary");
 $sec1->set("name", "secretary 1");
 
-$emp3->add_to_collection('secretarys', $sec1);
+$emp3->_add_to_collection('secretarys', $sec1);
 
 ok(@{$emp3->get('secretarys')} == 1);
 
 my $sec2 = $factory->make_item("Secretary");
 $sec2->set("name", "secretary 2");
 
-$emp3->add_to_collection('secretarys', $sec2);
+$emp3->_add_to_collection('secretarys', $sec2);
 
 ok(@{$emp3->get('secretarys')} == 2);
 
