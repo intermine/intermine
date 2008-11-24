@@ -99,8 +99,6 @@ sub set
     die "object ", $self->to_string(), " does not have a field called: $name\n";
   }
 
-  $self->{$name} = $value;
-
   if (ref $value) {
     if (ref $value eq 'ARRAY') {
       if (ref $field ne 'InterMine::Model::Collection') {
@@ -108,9 +106,17 @@ sub set
             "' to something other than type: ", $field->field_type(), "\n";
       }
 
+      $self->{$name} = $value;
+
+      my @items = @$value;
+
+      my $collection_hash_name = _get_collection_hash_name($name);
+      my %collection_hash = map {$_ => $_} @items;
+
+      $self->{$collection_hash_name} = \%collection_hash;
+
       # check the types of the elements in the collection and set the reverse
       # references if necessary
-      my @items = @$value;
 
       for my $other_item (@items) {
         if ($other_item->instance_of($field->referenced_classdescriptor())) {
@@ -121,10 +127,7 @@ sub set
             }
           } else {
             if ($field->is_many_to_many()) {
-              my @other_collection = @{$other_item->get($field->reverse_reference_name())};
-              if (!grep {$_ == $self} @other_collection) {
-                $other_item->add_to_collection($field->reverse_reference_name(), $self);
-              }
+              $other_item->_add_to_collection($field->reverse_reference_name(), $self);
             }
           }
         } else {
@@ -139,12 +142,12 @@ sub set
            "' to something other than type: ", $field->field_type(), "\n";
       }
 
-      if ($field->is_many_to_one()) {
-        # add this Item to the collection in the other Item
-        my @current_collection = @{$value->get($field->reverse_reference_name())};
-        if (!grep {$_ == $self} @current_collection) {
-          push @current_collection, $self;
-          $value->set($field->reverse_reference_name(), [@current_collection]);
+      if (!defined $self->{$name} || $self->{$name} != $value) {
+        $self->{$name} = $value;
+
+        if ($field->is_many_to_one()) {
+          # add this Item to the collection in the other Item
+          $value->_add_to_collection($field->reverse_reference_name(), $self);
         }
       }
     }
@@ -153,6 +156,8 @@ sub set
       die "tried to set field '$name' in class '", $self->to_string(),
           "' to something other than type: ", $field->field_type(), "\n";
     }
+
+    $self->{$name} = $value;
   }
 }
 
@@ -178,7 +183,13 @@ sub get
   }
 }
 
-sub add_to_collection
+sub _get_collection_hash_name
+{
+  my $name = shift;
+  return ":${name}:hash";
+}
+
+sub _add_to_collection
 {
   my $self = shift;
   my $name = shift;
@@ -196,14 +207,20 @@ sub add_to_collection
         qq(as it isn't an Item\n);
   }
 
-  my @old_val = @{$self->get($name)};
-  if (!grep {$_ == $self} @old_val) {
-    if (scalar(@old_val) == 0) {
-      $self->{$name} = [$value];
-    } else {
-      push @{$self->{$name}}, $value;
-    }
+  my $collection_hash_name = _get_collection_hash_name($name);
+
+  my %collection_hash;
+  if (defined $self->{$collection_hash_name}) {
+    %collection_hash = %{$self->{$collection_hash_name}}
+  } else {
+    %collection_hash = ();
   }
+
+  if (exists $collection_hash{$value}) {
+    return;
+  }
+
+  push @{$self->{$name}}, $value;
 }
 
 sub model
