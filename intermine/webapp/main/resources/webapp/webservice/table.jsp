@@ -12,10 +12,6 @@
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
 <link>
 
-<%-- JSP page rendering simple html output of results from web service --%>
-<link rel="stylesheet" type="text/css" href="${pageContext.request.contextPath}/css/webapp.css"/>
-<%-- Imported to be the style of table same as style of results table in webapp --%>
-<link rel="stylesheet" type="text/css" href="${pageContext.request.contextPath}/css/resultstables.css"/>
 
 <style type="text/css">
 
@@ -29,7 +25,6 @@
 
 .title {
 	padding:5px 10px 5px 15px;
-/*	font-size: 70%;*/
 	font-family:Verdana,arial,Helvetica,sans-serif;
 	color:#444444;
 	font-weight: bold;
@@ -43,8 +38,27 @@
 
 body {
     font-size:14px;
+    font-family: 'Lucida Grande',Verdana,Geneva,Lucida,Helvetica,Arial,sans-serif;
 }
 
+table.results {
+  clear:left;
+  border-left: solid 1px #666; 
+  border-top: solid 1px #666;
+  font-size: small;
+}
+
+table.results th, table.results td {
+  padding: 4px; 
+  border-right: solid 1px #666; 
+  border-bottom: solid 1px #666;
+  background: #fff;
+}
+
+table.results th {
+  background: #eee;
+  font-size: 12px;
+}
 
 </style>
 
