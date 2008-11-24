@@ -11,10 +11,12 @@ package org.intermine.webservice.server.core;
  */
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 import org.intermine.objectstore.flatouterjoins.ReallyFlatIterator;
 import org.intermine.objectstore.query.ResultsRow;
+import org.intermine.pathquery.Constraint;
 import org.intermine.web.logic.results.ResultElement;
 import org.intermine.web.logic.results.WebResults;
 import org.intermine.webservice.server.output.Output;
@@ -107,33 +109,19 @@ public class ResultProcessor
 
     private List<String> convertResultElementsToStrings(List<ResultElement> row) {
         List<String> ret = new ArrayList<String>();
+        String value;
         for (ResultElement el : row) {
             if (el != null && el.getField() != null) {
-                ret.add(el.getField().toString());    
+                if (el.getField() instanceof Date) {
+                    value = Constraint.ISO_DATE_FORMAT.format(el.getField());    
+                } else {
+                    value = el.getField().toString();    
+                }
+            } else {
+                value = "";
             }
+            ret.add(value);
         }
-        return ret;
-    }
-
-    /**
-     * Returns parsed results, i.e. each ResultsRow as a List<String>. Transformation
-     * performs associated parser.
-     * @see setFirstResult()
-     * @see setMaxResults()
-     * @return parsed results
-     */
-    public List<List<String>> getParsedResults() {
-        List<List<String>> ret = new ArrayList<List<String>>();
-        int end = maxResults + firstResult;
-        for (int i = firstResult; i < end; i++) {
-            try {
-                List<ResultElement> row = results.getResultElements(i);
-                ret.add(convertResultElementsToStrings(row));
-            } catch (IndexOutOfBoundsException e) {
-                // At the end of results
-                break;
-            }
-        }        
         return ret;
     }
 }
