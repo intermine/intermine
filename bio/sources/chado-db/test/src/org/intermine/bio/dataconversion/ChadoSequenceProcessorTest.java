@@ -22,13 +22,13 @@ public class ChadoSequenceProcessorTest extends ItemsTestCase
     public void testFeatureDataFlags() {
         FeatureData fdat = new FeatureData();
 
-        assertEquals(false, fdat.getFlag(FeatureData.DATASET_SET_BIT));
+        assertEquals(false, fdat.getFlag(FeatureData.DATASET_SET));
         assertEquals(false, fdat.getFlag(FeatureData.EVIDENCE_CREATED));
-        fdat.setFlag(FeatureData.DATASET_SET_BIT, true);
-        assertEquals(true, fdat.getFlag(FeatureData.DATASET_SET_BIT));
+        fdat.setFlag(FeatureData.DATASET_SET, true);
+        assertEquals(true, fdat.getFlag(FeatureData.DATASET_SET));
         assertEquals(false, fdat.getFlag(FeatureData.EVIDENCE_CREATED));
-        fdat.setFlag(FeatureData.DATASET_SET_BIT, false);
-        assertEquals(false, fdat.getFlag(FeatureData.DATASET_SET_BIT));
+        fdat.setFlag(FeatureData.DATASET_SET, false);
+        assertEquals(false, fdat.getFlag(FeatureData.DATASET_SET));
         assertEquals(false, fdat.getFlag(FeatureData.EVIDENCE_CREATED));
     }
 }
