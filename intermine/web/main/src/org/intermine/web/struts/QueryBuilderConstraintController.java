@@ -98,7 +98,11 @@ public class QueryBuilderConstraintController extends TilesAction
                 Iterator iter = query.getNodes().values().iterator();
                 while (iter.hasNext()) {
                     PathNode anode = (PathNode) iter.next();
-                    if (anode != node && anode.getType().equals(node.getType())) {
+                    // we can create a loop constraint if:
+                    // - there is another node of the same type
+                    // - the other node has no outer joins in its path
+                    if (anode != node && anode.getType().equals(node.getType()) 
+                            && (anode.getPathString().indexOf(":") == -1)) {
                         paths.add(anode.getPathString());
                     }
                 }
