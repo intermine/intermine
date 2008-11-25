@@ -233,7 +233,7 @@ public class ChadoSequenceProcessor extends ChadoProcessor
         feature.setReference("organism", organismItem);
         if (seqlen > 0) {
             feature.setAttribute("length", String.valueOf(seqlen));
-            fdat.flags |= FeatureData.LENGTH_SET;
+            fdat.setFlag(FeatureData.LENGTH_SET, true);
         }
         ChadoDBConverter chadoDBConverter = getChadoDBConverter();
 
@@ -268,7 +268,7 @@ public class ChadoSequenceProcessor extends ChadoProcessor
                             feature.setAttribute(attrAction.getFieldName(), newFieldValue);
                             fieldValuesSet.add(newFieldValue);
                             if (attrAction.getFieldName().equals("primaryIdentifier")) {
-                                fdat.flags |= FeatureData.IDENTIFIER_SET;
+                                fdat.setFlag(FeatureData.IDENTIFIER_SET, true);
                             }
                         }
                     }
@@ -293,7 +293,7 @@ public class ChadoSequenceProcessor extends ChadoProcessor
                         feature.setAttribute(attrAction.getFieldName(), newFieldValue);
                         fieldValuesSet.add(newFieldValue);
                         if (attrAction.getFieldName().equals("primaryIdentifier")) {
-                            fdat.flags |= FeatureData.IDENTIFIER_SET;
+                            fdat.setFlag(FeatureData.IDENTIFIER_SET, true);
                         }
                     }
                 }
@@ -425,9 +425,11 @@ public class ChadoSequenceProcessor extends ChadoProcessor
     /**
      * Do any extra processing that is needed before the converter starts querying features
      * @param connection the Connection
+     * @throws ObjectStoreException if there is a object store problem
+     * @throws SQLException if there is a database problem
      */
     protected void earlyExtraProcessing(Connection connection)
-    throws ObjectStoreException, SQLException {
+        throws ObjectStoreException, SQLException {
         // override in subclasses as necessary
     }
 
@@ -511,7 +513,7 @@ public class ChadoSequenceProcessor extends ChadoProcessor
                         locReference.setRefId(location.getIdentifier());
                         getChadoDBConverter().store(locReference, featureIntermineObjectId);
 
-                        if ((featureData.flags & FeatureData.LENGTH_SET) == 0) {
+                        if (!featureData.getFlag(FeatureData.LENGTH_SET)) {
                             setAttribute(featureData.intermineObjectId, "length",
                                          String.valueOf(end - start + 1));
                         }
@@ -928,7 +930,7 @@ public class ChadoSequenceProcessor extends ChadoProcessor
                                 existingAttributes.add(setAction.getFieldName());
                                 fieldsSet.add(newFieldValue);
                                 if (setAction.getFieldName().equals("primaryIdentifier")) {
-                                    fdat.flags |= FeatureData.IDENTIFIER_SET;
+                                    fdat.setFlag(FeatureData.IDENTIFIER_SET, true);
                                 }
                             }
                         }
@@ -1000,7 +1002,7 @@ public class ChadoSequenceProcessor extends ChadoProcessor
                                          newFieldValue);
                             fieldsSet.add(newFieldValue);
                             if (setAction.getFieldName().equals("primaryIdentifier")) {
-                                fdat.flags |= FeatureData.IDENTIFIER_SET;
+                                fdat.setFlag(FeatureData.IDENTIFIER_SET, true);
                             }
                         }
                     }
@@ -1091,7 +1093,7 @@ public class ChadoSequenceProcessor extends ChadoProcessor
                                      newFieldValue);
                         fieldsSet.add(newFieldValue);
                         if (setAction.getFieldName().equals("primaryIdentifier")) {
-                            fdat.flags |= FeatureData.IDENTIFIER_SET;
+                            fdat.setFlag(FeatureData.IDENTIFIER_SET, true);
                         }
                     }
                 } else {
@@ -1258,7 +1260,7 @@ public class ChadoSequenceProcessor extends ChadoProcessor
                             existingAttributes.add(setAction.getFieldName());
                             setField = true;
                             if (setAction.getFieldName().equals("primaryIdentifier")) {
-                                fdat.flags |= FeatureData.IDENTIFIER_SET;
+                                fdat.setFlag(FeatureData.IDENTIFIER_SET, true);
                             }
                         }
                     }
@@ -1759,15 +1761,11 @@ public class ChadoSequenceProcessor extends ChadoProcessor
         private String interMineType;
         private Integer intermineObjectId;
 
-        short flags = 0;
-        static final short EVIDENCE_CREATED_BIT = 0;
-        static final short EVIDENCE_CREATED = 1 << EVIDENCE_CREATED_BIT;
-        static final short IDENTIFIER_SET_BIT = 1;
-        static final short IDENTIFIER_SET = 1 << IDENTIFIER_SET_BIT;
-        static final short LENGTH_SET_BIT = 2;
-        static final short LENGTH_SET = 1 << LENGTH_SET_BIT;
-        static final short DATASET_SET_BIT = 3;
-        static final short DATASET_SET = 1 << DATASET_SET_BIT;
+        private short flagss = 0;
+        static final short EVIDENCE_CREATED = 0;
+        static final short IDENTIFIER_SET = 1;
+        static final short LENGTH_SET = 2;
+        static final short DATASET_SET = 3;
 
         /**
          * Return the id of the Item representing this feature.
@@ -1815,6 +1813,32 @@ public class ChadoSequenceProcessor extends ChadoProcessor
          */
         public String getInterMineType() {
             return interMineType;
+        }
+
+        private int shift(short flag) {
+            return (2 << flag);
+        }
+
+        /**
+         * Get the given flag.
+         * @param flag the flag constant eg. LENGTH_SET_BIT
+         * @return true if the flag is set
+         */
+        public boolean getFlag(short flag) {
+            return (flagss & shift(flag)) != 0;
+        }
+
+        /**
+         * Set a flag
+         * @param flag the flag constant
+         * @param value the new value
+         */
+        public void setFlag(short flag, boolean value) {
+            if (value) {
+                flagss |= shift(flag);
+            } else {
+                flagss &= ~shift(flag);
+            }
         }
     }
 }
