@@ -7,7 +7,6 @@
         <reference name="interactionDetectionMethod" referenced-type="org.flymine.model.genomic.InteractionTerm"/>
         <collection name="interactions" referenced-type="org.flymine.model.genomic.Interaction" ordered="true" reverse-reference="experiment"/>
     </class>
-<!-- moved to flybase 
     <class name="org.flymine.model.genomic.Interaction" is-interface="true">
       <attribute name="role" type="java.lang.String"/>
       <attribute name="name" type="java.lang.String"/>
@@ -21,7 +20,6 @@
       <collection name="dataSets" referenced-type="org.flymine.model.genomic.DataSet"/>
       <collection name="interactingRegions" referenced-type="org.flymine.model.genomic.InteractionRegion" ordered="true" reverse-reference="interaction"/>
     </class>
--->
     
     <class name="org.flymine.model.genomic.Gene" is-interface="true">
         <collection name="interactions" referenced-type="org.flymine.model.genomic.Interaction" ordered="true" reverse-reference="gene"/>
