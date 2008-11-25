@@ -842,7 +842,7 @@ public class FlyBaseProcessor extends ChadoSequenceProcessor
         createInsertionTempTable(connection);
 
         for (FeatureData featureData: features.values()) {
-            if ((featureData.flags & FeatureData.IDENTIFIER_SET) == 0) {
+            if (!featureData.getFlag(FeatureData.IDENTIFIER_SET)) {
                 setAttribute(featureData.getIntermineObjectId(), "primaryIdentifier",
                              featureData.getChadoFeatureUniqueName());
             }
