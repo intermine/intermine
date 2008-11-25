@@ -336,11 +336,19 @@ public class QueryBuilderController extends TilesAction
             Iterator citer = node.getConstraints().iterator();
             while (citer.hasNext()) {
                 Constraint con = (Constraint) citer.next();
+                // if a node isn't an attribute it can only be a bag constraint or loop constraint
                 if (!node.isAttribute() && !BagConstraint.VALID_OPS.contains(con.getOp())) {
                     // the parents of this node should also be un-editable loop constraint nodes
                     while (node.getParent() != null) {
                         paths.add(node);
                         node = (PathNode) node.getParent();
+                    }
+                    // also find the target of the loop constraint and disable join arrows for it
+                    PathNode otherNode = pathQuery.getNode((String) con.getValue());
+                    paths.add(otherNode);
+                    while (otherNode.getParent() != null) {
+                        paths.add(otherNode);
+                        otherNode = (PathNode) otherNode.getParent();
                     }
                 }
             }
