@@ -438,14 +438,15 @@ public class MainHelper
                     }
                     finalPath = path;
                 } else {
-                    if (queryBits.get(finalPath) == null) {
-                            //|| queryBits.get(node.getPrefix()) == null) {
+                    if (queryBits.get(finalPath) == null
+                            || queryBits.get(node.getPrefix()) == null) {
                         // We cannot process this node yet. It is looped onto another node that has
                         // not been processed yet or the parent of this node hasn't yet been
                         // processed. Put it to the back of the queue.
                         deferralReasons.put(node, "Could not process node " + node + " because it"
                                 + " is looped onto " + finalPath
-                                + " which has not been processed yet");
+                                + " which has not been processed yet or it's parent has not been"
+                                + " processed.");
                         queue.addLast(node);
                         queueDeferred++;
                         continue;
