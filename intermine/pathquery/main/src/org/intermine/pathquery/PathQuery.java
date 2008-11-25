@@ -205,6 +205,61 @@ public class PathQuery
         return newPathString;
     }
 
+    
+    /**
+     * Set the joins style of an entire given path to outer/normal.  This changes all joins in the
+     * path, updating all the relevant nodes and view elements.  
+     * e.g. call with (Company:departments.manger, false) -> Company.departments.manager
+     * @param path the path to set the join style for
+     * @param outer if true change the join style to outer, otherwise to normal
+     * @return the updated path
+     */
+    public String setJoinStyleForPath(String path, boolean outer) {
+        String oldPath = getCorrectJoinStyle(path);
+        if (!oldPath.equals(path)) {
+            throw new IllegalArgumentException("Path not found in query: " + path);
+        }
+        
+        // iterate over view and set join style
+        List<Path> newView = new ArrayList<Path>();
+        for (Path viewPath : view) {
+            String prefix = viewPath.toStringNoConstraints();
+            String lastElement = "";
+            if (viewPath.endIsAttribute()) {
+                prefix = viewPath.getPrefix().toStringNoConstraints();
+                lastElement = "." + viewPath.getLastElement();
+            }
+            String newPathStr = viewPath.toStringNoConstraints();
+            if (path.startsWith(prefix)) {
+                if (outer) {
+                    newPathStr = prefix.replaceAll("\\.", ":") + lastElement;
+                } else {
+                    newPathStr = prefix.replaceAll(":", "\\.") + lastElement;
+                }
+            }
+            newView.add(new Path(model, newPathStr, viewPath.getSubClassConstraintPaths()));
+        }
+        view = newView;
+        
+        // This is a really round-about way to update the join style of each node.  Nodes are stored
+        // in a map by their path so they need to be removed and re-added to the map.  This has to
+        // be done at the end because updating a parent node alters the path of its children.
+        PathNode node = getNode(path);
+        List<PathNode> newNodes = new ArrayList<PathNode>();
+        PathNode parent = node;
+        while ((parent.getParent()) != null) {
+            nodes.remove(parent.getPathString());
+            parent.setOuterJoin(outer);
+            newNodes.add(parent);
+            parent = (PathNode) parent.getParent();
+        }
+        // now all paths are set can add to nodes map again
+        for (PathNode nextNode : newNodes) {
+            nodes.put(nextNode.getPathString(), nextNode);
+        }
+        return node.getPathString();
+    }
+    
     /**
      * Appends the paths to the end of the select list. Paths can be a single path
      * or a comma delimited list of paths.

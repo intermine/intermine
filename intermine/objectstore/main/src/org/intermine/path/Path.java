@@ -347,6 +347,21 @@ public class Path
         return new Path(model, pathString.substring(0, lastIndex));
     }
 
+    
+    /**
+     * Return the last string element of this path, throw an exception of there is only one element,
+     * i.e. for 'Company.departments.manager' return 'manager'.
+     * @return the last string element of the path 
+     */
+    public String getLastElement() {
+        if (getElements().size() == 0) {
+            throw new RuntimeException("path (" + this + ") has only one element");
+        }
+        
+        return elements.get(elements.size() - 1);
+    }
+    
+    
     /**
      * Return new Path that has this Path as its prefix and has fieldName as the last element.
      * @param fieldName the field name
