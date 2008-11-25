@@ -107,18 +107,18 @@ public class QueryBuilderController extends TilesAction
         Integer sortByIndex = new Integer(0); // sort-by-field's index in the select list
 
         // select list
-        Map<String,String> viewStrings = new LinkedHashMap<String, String>();
+        Map<String, String> viewStrings = new LinkedHashMap<String, String>();
         for (Path viewPath: pathView) {
             String viewPathString = viewPath.toStringNoConstraints();
             String sortState = new String();
             // outer joins not allowed
-            if(!query.isValidOrderPath(viewPathString)) {
+            if (!query.isValidOrderPath(viewPathString)) {
                 sortState = "disabled";
             //if already sorted get the direction
-            } else if(sortOrderMap.containsKey(viewPathString)) {
+            } else if (sortOrderMap.containsKey(viewPathString)) {
                 sortState = sortOrderMap.get(viewPathString);
             //default
-            } else if(sortOrderMap.size() <= 0 && viewStrings.size() <= 0) {
+            } else if (sortOrderMap.size() <= 0 && viewStrings.size() <= 0) {
                 sortState = "asc";
             }
             else {
@@ -337,8 +337,11 @@ public class QueryBuilderController extends TilesAction
             while (citer.hasNext()) {
                 Constraint con = (Constraint) citer.next();
                 if (!node.isAttribute() && !BagConstraint.VALID_OPS.contains(con.getOp())) {
-                    //String path = (String) con.getValue();
-                    paths.add(node);
+                    // the parents of this node should also be un-editable loop constraint nodes
+                    while (node.getParent() != null) {
+                        paths.add(node);
+                        node = (PathNode) node.getParent();
+                    }
                 }
             }
         }

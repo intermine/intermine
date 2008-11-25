@@ -42,4 +42,14 @@
       </constraint>
     </node>
   </query>-->
+<query name="loopConstraint" model="testmodel" view="Company.name" sortOrder="Company.name asc">
+  <node path="Company" type="Company">
+  </node>
+  <node path="Company.departments" type="Department">
+  </node>
+  <node path="Company.departments.company" type="Company">
+    <constraint op="=" value="Company" description="" identifier="" code="A">
+    </constraint>
+  </node>
+</query>
 </query-list>

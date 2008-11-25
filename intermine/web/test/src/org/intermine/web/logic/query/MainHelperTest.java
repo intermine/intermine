@@ -411,11 +411,25 @@ public class MainHelperTest extends TestCase {
         assertEquals(expNEQConstraint, resNEQConstraint);
     }
 
+ 
+    // test that loop constraint queries are generated correctly
+    public void testLoopConstraint() throws Exception {
+        Map queries = readQueries();
+        PathQuery pq = (PathQuery) queries.get("loopConstraint");
+        Query q = MainHelper.makeQuery(pq, new HashMap(), new HashMap(), null, null, false, os,
+                classKeys, bagQueryConfig);
+        String got = q.toString();
+        String iql = "SELECT DISTINCT a1_ FROM org.intermine.model.testmodel.Company AS a1_, org.intermine.model.testmodel.Department AS a2_ WHERE (a1_.departments CONTAINS a2_ AND a2_.company CONTAINS a1_) ORDER BY a1_.name";
+        assertEquals("Expected: " + iql + ", got: " + got, iql, got);
+    }
+ 
+    
     private Map readQueries() throws Exception {
         InputStream is = getClass().getClassLoader().getResourceAsStream("MainHelperTest.xml");
         Map ret = PathQueryBinding.unmarshal(new InputStreamReader(is), classKeys);
         return ret;
     }
+    
     public void test1() throws Exception {
         doQuery("<query name=\"test\" model=\"testmodel\" view=\"Employee\"></query>",
                 "SELECT DISTINCT a1_ FROM org.intermine.model.testmodel.Employee AS a1_ ORDER BY a1_",
@@ -598,6 +612,9 @@ public class MainHelperTest extends TestCase {
                 "SELECT DISTINCT a1_.a3_ AS a2_, COUNT(*) AS a3_ FROM (SELECT DISTINCT a1_, a2_, a1_.name AS a3_ FROM org.intermine.model.testmodel.Department AS a1_, org.intermine.model.testmodel.Company AS a2_ WHERE (a1_.company CONTAINS a2_ AND a2_.departments CONTAINS a1_)) AS a1_ GROUP BY a1_.a3_ ORDER BY COUNT(*) DESC");
     }
 
+    
+
+    
     public void doQuery(String web, String iql, String ... summaries) throws Exception {
         try {
             Map parsed = PathQueryBinding.unmarshal(new StringReader(web), classKeys);

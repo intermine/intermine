@@ -1026,6 +1026,23 @@ public class PathQueryTest extends TestCase
         assertEquals("Company.departments.manager", pq.flipJoinStyle("Company.departments:manager"));
     }
     
+
+    public void testSetJoinStyleForPath() {
+        PathQuery pq = new PathQuery(model);
+        pq.addNode("Company.departments");
+        pq.addNode("Company.departments.manager");
+        pq.setView("Company.name, Company.departments, Company.departments.manager.name");
+        
+        pq.setJoinStyleForPath("Company.departments.manager", true);
+        
+        List<String> expectedView = Arrays.asList(new String[] {"Company.name", "Company:departments", "Company:departments:manager.name"});
+        assertEquals(expectedView, pq.getViewStrings());
+        System.out.println(pq.getNodes().keySet());
+        assertEquals(3, pq.getNodes().size());
+        assertNotNull(pq.getNode("Company:departments"));
+        assertNotNull(pq.getNode("Company:departments:manager"));
+        assertNotNull(pq.getNode("Company"));
+    }
     
 //    public void testEqualsObject() {
 //        fail("Not yet implemented");

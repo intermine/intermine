@@ -20,17 +20,13 @@ import org.apache.struts.Globals;
 import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
-import org.apache.struts.action.ActionMessage;
 import org.intermine.objectstore.query.ConstraintOp;
 import org.intermine.pathquery.Constraint;
 import org.intermine.pathquery.Node;
 import org.intermine.pathquery.PathNode;
 import org.intermine.pathquery.PathQuery;
-import org.intermine.util.TypeUtil;
 import org.intermine.web.logic.Constants;
 import org.intermine.web.logic.session.SessionMethods;
-import org.intermine.web.logic.template.ConstraintValueParser;
-import org.intermine.web.logic.template.ParseValueException;
 
 /**
  * Action to handle button presses on the main tile
@@ -156,15 +152,14 @@ public class QueryBuilderAction extends InterMineAction
             ConstraintOp constraintOp = ConstraintOp.getOpForIndex(Integer.valueOf(mf
                     .getLoopQueryOp()));
             Object constraintValue = mf.getLoopQueryValue();
-            // switch join if outter join
-                    if (node.getPathString().lastIndexOf(".") < node.getPathString().lastIndexOf(
-                                    ":")) {
-                        query.flipJoinStyle(node.getPathString());
-                    }
+            // Loop constraints can't operate over outer joins, switch all outer joins to normal
+            String updatedNodePath = query.setJoinStyleForPath(node.getPathString(), false);
+            PathNode updatedNode = query.getNode(updatedNodePath);
+
             Constraint c = new Constraint(constraintOp, constraintValue, false, label, code, id,
                     null);
-            node.getConstraints().add(c);
-        // 
+            updatedNode.getConstraints().add(c);
+            mf.setPath(updatedNodePath);
         } else if (request.getParameter("subclass") != null) {
             node.setType(mf.getSubclassValue());
             session.setAttribute("path", mf.getSubclassValue());
