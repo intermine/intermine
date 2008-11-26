@@ -11,10 +11,9 @@ package org.intermine.web.struts;
  */
 
 import java.util.HashSet;
-import java.util.LinkedHashMap;
-import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.TreeMap;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -41,29 +40,28 @@ public class QueryBuilderPathsController extends TilesAction
      * {@inheritDoc}
      */
     public ActionForward execute(@SuppressWarnings("unused") ComponentContext context,
-                                 @SuppressWarnings("unused") ActionMapping mapping,
-                                 @SuppressWarnings("unused") ActionForm form,
-                                 HttpServletRequest request,
-                                 HttpServletResponse response)
-        throws Exception {
+            @SuppressWarnings("unused") ActionMapping mapping,
+            @SuppressWarnings("unused") ActionForm form,
+            HttpServletRequest request,
+            HttpServletResponse response)
+    throws Exception {
         populateRequest(request, response);
         return null;
     }
 
     private static void populateRequest(HttpServletRequest request,
-                                        @SuppressWarnings("unused") HttpServletResponse response) {
+            @SuppressWarnings("unused") HttpServletResponse response) {
         HttpSession session = request.getSession();
         PathQuery query = (PathQuery) session.getAttribute(Constants.QUERY);
         // First merge the query and the view
         PathQuery q = query.clone();
-        Map<String, PathNode> qNodes = q.getNodes();
         for (Path p : q.getView()) {
             String path = p.toStringNoConstraints();
-            if (!qNodes.containsKey(path)) {
+            if (!q.getNodes().containsKey(path)) {    
                 q.addNode(path);
             }
         }
-        
+
         Set<String> constrainedPaths = new HashSet<String>();
         for (Map.Entry<String, PathNode> entry : q.getNodes().entrySet()) {
             if (entry.getValue().isAttribute()) {
@@ -73,25 +71,26 @@ public class QueryBuilderPathsController extends TilesAction
                 }
             }
         }
-        
+
         Set<String> clickableNodes = new HashSet<String>();
-		for (Map.Entry<String, PathNode> entry : q.getNodes().entrySet()) {
+        for (Map.Entry<String, PathNode> entry : q.getNodes().entrySet()) {
             PathNode node = entry.getValue();
-			if (!entry.getValue().isAttribute()) {
-				if (entry.getKey().indexOf('.') == -1
-						&& entry.getKey().indexOf(':') == -1) {
-				} else if ((!node.isOuterJoin())
-						&& node.isReference()
-						&& ((!node.getConstraints().isEmpty()) || constrainedPaths
-								.contains(entry.getKey()))) {
-				} else {
-					clickableNodes.add(entry.getKey());
-				}
-			}
-		}
-        
-		request.setAttribute("clickableNodes", clickableNodes);
-        request.setAttribute("qNodes", q.getNodes());
+            if (!entry.getValue().isAttribute()) {
+                if (entry.getKey().indexOf('.') == -1
+                        && entry.getKey().indexOf(':') == -1) {
+                } else if ((!node.isOuterJoin())
+                        && node.isReference()
+                        && ((!node.getConstraints().isEmpty()) || constrainedPaths
+                                .contains(entry.getKey()))) {
+                } else {
+                    clickableNodes.add(entry.getKey());
+                }
+            }
+        }
+        Map<String, PathNode> qNodes = new TreeMap<String, PathNode>(q.getNodes());
+
+        request.setAttribute("clickableNodes", clickableNodes);
+        request.setAttribute("qNodes", qNodes);
         request.setAttribute("constraintDisplayValues", MainHelper.makeConstraintDisplayMap(query));
     }
 }
