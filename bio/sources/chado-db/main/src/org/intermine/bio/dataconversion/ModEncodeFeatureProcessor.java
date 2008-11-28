@@ -55,8 +55,10 @@ public class ModEncodeFeatureProcessor extends ChadoSequenceProcessor
     /**
      * Create a new ModEncodeFeatureProcessor.
      * @param chadoDBConverter     the parent converter
-     * @param dataSetIdentifier    the item identifier of the DataSet
-     * @param dataSourceIdentifier the item identifier of the DataSource
+     * @param dataSetIdentifier    the item identifier of the DataSet, 
+     *                             i.e. the submissionItemIdentifier
+     * @param dataSourceIdentifier the item identifier of the DataSource, 
+     *                             i.e. the labItemIdentifier 
      * @param dataList             the list of data ids to be used in the subquery
      */
 
@@ -208,7 +210,7 @@ public class ModEncodeFeatureProcessor extends ChadoSequenceProcessor
      * in the string for a IN clause in SQL (comma separated)
      * @return String
      */
-    private String forINclause() {
+    protected String forINclause() {
 
         StringBuffer ql = new StringBuffer();
 

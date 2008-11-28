@@ -179,8 +179,8 @@ public class ModEncodeMetaDataProcessor extends ChadoProcessor
         LOG.info("ICI:  features");
         // process features and keep a map from chado feature_id to info
         Map<Integer, FeatureData> featureMap = processFeatures(connection, submissionMap);
-        LOG.info("ICI:  featureTableS");
-        processDataFeatureTable(connection, featureMap);
+//        LOG.info("ICI:  featureTableS");
+//        processDataFeatureTable(connection, featureMap);
 
         LOG.info("ICI:  InOut");
         // links submission inputs with their respective submission outputs
@@ -220,22 +220,26 @@ public class ModEncodeMetaDataProcessor extends ChadoProcessor
         ReferenceList collection = new ReferenceList();
         collection.setName("features");
 
+        LOG.info("============================================");
+
         Integer id = 0;
-        
+        Integer collectionSize = 0;
         while (res.next()) {
             Integer dataId = new Integer(res.getInt("data_id"));
             Integer featureId = new Integer(res.getInt("feature_id"));
             FeatureData featureData = featureMap.get(featureId);
-            id = dataId;
             if (featureData == null) {
-                LOG.error("FIXME: no data for feature_id: " + featureId
-                        + " in processDataFeatureTable()");
+//                LOG.error("FIXME: no data for feature_id: " + featureId
+//                        + " in processDataFeatureTable(), data_id =" + dataId);
+                LOG.error("FIXME: " + featureId + "|" + dataId);
                 continue;
             }
+            id = dataId;
+            LOG.info("id " + id + " " + dataId);
             String featureItemId = featureData.getItemIdentifier();
             FeatureData fd = featureData;
-            LOG.info("FD " + fd.getInterMineType() + ": " + fd.getChadoFeatureName()
-                    + ", " + fd.getChadoFeatureUniqueName());
+            LOG.info("FD " + fd.getInterMineType() + ": " + fd.getChadoFeatureName());
+//                    + ", " + fd.getChadoFeatureUniqueName());
 
             // old ref setting. should we consider one collection per different dataId?
 //            Reference featureRef = new Reference("feature", featureItemId);
@@ -243,8 +247,13 @@ public class ModEncodeMetaDataProcessor extends ChadoProcessor
 //                    appliedDataMap.get(dataId).intermineObjectId);
 
             collection.addRefId(featureItemId);
+            collectionSize++;
         }
+        //*****check
+        LOG.info("STORING collection for dataId " + id + ": " 
+                + appliedDataMap.get(id).intermineObjectId + " size:" + collectionSize); 
         getChadoDBConverter().store(collection, appliedDataMap.get(id).intermineObjectId);
+        collectionSize = 0;
     }
 
     private ResultSet getDataFeatureResultSet(Connection connection)
@@ -268,6 +277,9 @@ public class ModEncodeMetaDataProcessor extends ChadoProcessor
             throws Exception {
         Map<Integer, FeatureData> featureMap = new HashMap<Integer, FeatureData>();
         for (Map.Entry<Integer, SubmissionDetails> entry: submissionMap.entrySet()) {
+
+            Map<Integer, FeatureData> subFeatureMap = new HashMap<Integer, FeatureData>();
+            
             Integer chadoExperimentId = entry.getKey();
             SubmissionDetails submissionDetails = entry.getValue();
             String submissionItemIdentifier = submissionDetails.itemIdentifier;
@@ -278,11 +290,16 @@ public class ModEncodeMetaDataProcessor extends ChadoProcessor
                         labItemIdentifier, submissionDataMap.get(chadoExperimentId));
 
             processor.process(connection);
-            featureMap.putAll(processor.getFeatureMap());
+//            featureMap.putAll(processor.getFeatureMap());
+            subFeatureMap.putAll(processor.getFeatureMap());
+            featureMap.putAll(subFeatureMap);
 
             LOG.info("FEATMAP: submission " + chadoExperimentId + "|"    
                     + "featureMap keys: " + featureMap.keySet().size()
                     + " values: " + featureMap.values().size());
+            
+            LOG.info("IccI:  featureTableS");
+            processDataFeatureTable(connection, subFeatureMap);
         }
         return featureMap;
     }
