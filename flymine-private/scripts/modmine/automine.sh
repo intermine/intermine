@@ -169,19 +169,20 @@ echo
 # fi
 
 
-if [ $VALIDATING="y" ] && [ $STAG = "n" ] && [ -n "$1" ]
+if [ $VALIDATING = "y" ] && [ $STAG = "n" ] && [ -n "$1" ]
+#if [[ $VALIDATING = "y" && $STAG = "n" && -n "$1" ]]
 then
    NAMESTAMP="$1"
    echo "NOTE: you are restarting after a failed modMine build: the test result will be named $NAMESTAMP.html"
-   echo
-elif [ $VALIDATING="y" ] && [ $STAG = "n" ]
+   echo $VALIDATING
+elif [ $VALIDATING = "y" ] && [ $STAG = "n" ]
 then
    echo "NOTE: you have not passed a submission name after restarting a failed modMine build: the test result will be named $TIMESTAMP.html"
    echo
-elif [ $VALIDATING="y" ] && [ $STAG = "y" ] && [ ! -n $1 ]
+elif [ $VALIDATING = "y" ] && [ $STAG = "y" ] && [ ! -n $1 ]
 then
 echo OK
-# elif [ $VALIDATING="y" ] && [ $STAG = "y" ] && [ -n $1 ] && [ $1 != "val" ]
+# elif [ $VALIDATING = "y" ] && [ $STAG = "y" ] && [ -n $1 ] && [ $1 != "val" ]
 # then
 #     echo "NOTE: You are validating a submission using ===> $1 <=== mine"
 #     echo
@@ -251,14 +252,13 @@ fi
 
 # else read file, mv files to newdir and go
 # nb: check clobbing, and if files already in newdir (not links)
-elif [ !$INFILE = "not_defined" ]
+elif [ ! $INFILE = "not_defined" ]
 then
-for chadofile in `cat $INFILE`
+for chadofile in `cat $MINEDIR/$INFILE`
 do
 echo "$chadofile..."
 mv $chadofile $NEWDIR
 done
-
 fi #if $STAG=y
 
 #---------------------------------------
