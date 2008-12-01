@@ -102,7 +102,7 @@ while getopts ":FITRVabf:nstvwx" opt; do
    F )  echo; echo "Full modMine realease"; FULL=y; BUP=y; INCR=n;;
 #   I )  echo; echo "Incremental modMine realease"; INCR=y;;
    T )  echo; echo "Test realease"; TEST=y; INCR=n;;
-   R )  echo; echo "Restart full realease"; RESTART=y; INCR=n;;
+   R )  echo; echo "Restart full realease"; RESTART=y; INCR=n; STAG=n;;
    V )  echo; echo "Validating 1 submission"; VALIDATING=y; TEST=y; INCR=n; BUP=n; REL=val;;
    a )  echo; echo "Append data in chado" ; CHADOAPPEND=y;;
    b )  echo; echo "Build a back-up of the database." ; BUP=y;;
@@ -119,13 +119,15 @@ done
 
 shift $(($OPTIND - 1))
 
-if [ -n "$1" ] && [ $VALIDATING = "y" ]
+if [ -n "$1" ]
+then
+if [ $VALIDATING = "y" ]
 then
 REL=val
 else
 REL=$1
 fi
-
+fi
 
 # if we are using the same chado, no chado back up will be created
 if [ $STAG = "n" ]
@@ -174,7 +176,6 @@ if [ $VALIDATING = "y" ] && [ $STAG = "n" ] && [ -n "$1" ]
 then
    NAMESTAMP="$1"
    echo "NOTE: you are restarting after a failed modMine build: the test result will be named $NAMESTAMP.html"
-   echo $VALIDATING
 elif [ $VALIDATING = "y" ] && [ $STAG = "n" ]
 then
    echo "NOTE: you have not passed a submission name after restarting a failed modMine build: the test result will be named $TIMESTAMP.html"
