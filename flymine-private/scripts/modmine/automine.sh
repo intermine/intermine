@@ -28,9 +28,18 @@ NEWDIR=$DATADIR/new
 PROPDIR=$HOME/.intermine
 
 RECIPIENTS=contrino@flymine.org,kmr@flymine.org,rns@flymine.org
+SOURCES=modmine-static,modencode-metadata,entrez-organism
+
 
 MINEDIR=$HOME/svn/dev/modmine
-SOURCES=modmine-static,modencode-metadata,entrez-organism
+
+if [ ! -d $MINEDIR ]
+then
+MINEDIR=$HOME/svn/trunk/modmine
+echo "************"
+echo $MINEDIR
+fi
+
 
 # these should not be edited
 WEBAPP=y       #defaults: build a webapp
