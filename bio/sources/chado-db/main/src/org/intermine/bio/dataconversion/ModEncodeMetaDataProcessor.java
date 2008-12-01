@@ -25,6 +25,7 @@ import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.intermine.bio.dataconversion.ChadoSequenceProcessor.FeatureData;
 import org.intermine.objectstore.ObjectStoreException;
+import org.intermine.util.StringUtil;
 import org.intermine.xml.full.Item;
 import org.intermine.xml.full.Reference;
 import org.intermine.xml.full.ReferenceList;
@@ -178,7 +179,8 @@ public class ModEncodeMetaDataProcessor extends ChadoProcessor
 
         LOG.info("ICI:  features");
         // process features and keep a map from chado feature_id to info
-        Map<Integer, FeatureData> featureMap = processFeatures(connection, submissionMap);
+//        Map<Integer, FeatureData> featureMap = processFeatures(connection, submissionMap);
+        processFeatures(connection, submissionMap);
 //        LOG.info("ICI:  featureTableS");
 //        processDataFeatureTable(connection, featureMap);
 
@@ -213,14 +215,12 @@ public class ModEncodeMetaDataProcessor extends ChadoProcessor
      * @throws ObjectStoreException
      */
     private void processDataFeatureTable(Connection connection, Map<Integer,
-            FeatureData> featureMap)
+            FeatureData> featureMap, String queryList)
     throws SQLException, ObjectStoreException {
-        ResultSet res = getDataFeatureResultSet(connection);
+        ResultSet res = getDataFeatureResultSet(connection, queryList);
 
         ReferenceList collection = new ReferenceList();
         collection.setName("features");
-
-        LOG.info("============================================");
 
         Integer id = 0;
         Integer collectionSize = 0;
@@ -229,10 +229,10 @@ public class ModEncodeMetaDataProcessor extends ChadoProcessor
             Integer featureId = new Integer(res.getInt("feature_id"));
             FeatureData featureData = featureMap.get(featureId);
             if (featureData == null) {
-//                LOG.error("FIXME: no data for feature_id: " + featureId
-//                        + " in processDataFeatureTable(), data_id =" + dataId);
-                LOG.error("FIXME: " + featureId + "|" + dataId);
-                continue;
+                LOG.error("FIXME: no data for feature_id: " + featureId
+                        + " in processDataFeatureTable(), data_id =" + dataId);
+//                LOG.error("FIXME: " + featureId + "|" + dataId);
+//                continue;
             }
             id = dataId;
             LOG.info("id " + id + " " + dataId);
@@ -256,11 +256,12 @@ public class ModEncodeMetaDataProcessor extends ChadoProcessor
         collectionSize = 0;
     }
 
-    private ResultSet getDataFeatureResultSet(Connection connection)
+    private ResultSet getDataFeatureResultSet(Connection connection, String queryList)
     throws SQLException {
         String query =
             "SELECT df.data_id, df.feature_id"
-            + " FROM data_feature df";
+            + " FROM data_feature df "
+            + " WHERE data_id in (" + queryList + ")";
 
 //      "SELECT df.data_id, df.feature_id"
 //      + " FROM data d, data_feature df"
@@ -272,10 +273,11 @@ public class ModEncodeMetaDataProcessor extends ChadoProcessor
         return res;
     }
 
-    private Map<Integer, FeatureData> processFeatures(Connection connection,
+//    private Map<Integer, FeatureData> processFeatures(Connection connection,
+    private void processFeatures(Connection connection,
             Map<Integer, SubmissionDetails> submissionMap)
             throws Exception {
-        Map<Integer, FeatureData> featureMap = new HashMap<Integer, FeatureData>();
+//        Map<Integer, FeatureData> featureMap = new HashMap<Integer, FeatureData>();
         for (Map.Entry<Integer, SubmissionDetails> entry: submissionMap.entrySet()) {
 
             Map<Integer, FeatureData> subFeatureMap = new HashMap<Integer, FeatureData>();
@@ -285,23 +287,27 @@ public class ModEncodeMetaDataProcessor extends ChadoProcessor
             String submissionItemIdentifier = submissionDetails.itemIdentifier;
             String labItemIdentifier = submissionDetails.labItemIdentifier;
 
+            List<Integer> thisSubmissionDataIds = submissionDataMap.get(chadoExperimentId);
+            
             ModEncodeFeatureProcessor processor =
                 new ModEncodeFeatureProcessor(getChadoDBConverter(), submissionItemIdentifier,
-                        labItemIdentifier, submissionDataMap.get(chadoExperimentId));
+                        labItemIdentifier, thisSubmissionDataIds);
 
             processor.process(connection);
 //            featureMap.putAll(processor.getFeatureMap());
             subFeatureMap.putAll(processor.getFeatureMap());
-            featureMap.putAll(subFeatureMap);
+//            featureMap.putAll(subFeatureMap);
 
             LOG.info("FEATMAP: submission " + chadoExperimentId + "|"    
-                    + "featureMap keys: " + featureMap.keySet().size()
-                    + " values: " + featureMap.values().size());
+                    + "featureMap keys: " + subFeatureMap.keySet().size()
+                    + " values: " + subFeatureMap.values().size());
             
-            LOG.info("IccI:  featureTableS");
-            processDataFeatureTable(connection, subFeatureMap);
+//            LOG.info("IccI:  featureTableS");
+
+            String queryList = StringUtil.join(thisSubmissionDataIds, ",");
+            processDataFeatureTable(connection, subFeatureMap, queryList);
         }
-        return featureMap;
+//        return subFeatureMap;
     }
 
 
