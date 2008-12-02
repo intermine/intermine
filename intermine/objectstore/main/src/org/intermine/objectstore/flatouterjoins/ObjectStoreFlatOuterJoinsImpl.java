@@ -101,31 +101,31 @@ public class ObjectStoreFlatOuterJoinsImpl extends ObjectStorePassthruImpl
                 }
                 rowPosition[column] = 0;
             }
-            if (lcm == 1) {
-                ResultsRow newRow = new ResultsRow();
-                for (int column = 0; column < columns; column++) {
-                    Object columnValue = origRow.get(column);
-                    if ((columnValue instanceof List) && (((List) columnValue).size() > 0)) {
-                        // Because lcm = 1, we know that columnValue.size() cannot be more than one.
-                        columnValue = ((List) columnValue).get(0);
-                    } else if (columnValue instanceof List) {
-                        columnValue = null;
-                    }
-                    if (columnValue == null) {
-                        for (int i = 0; i < columnWidth[column]; i++) {
-                            newRow.add(null);
-                        }
-                    } else if (columnValue instanceof ResultsRow) {
-                        for (Object columnValue2 : ((ResultsRow) columnValue)) {
-                            newRow.add(columnValue2);
-                        }
-                    } else {
-                        newRow.add(columnValue);
-                    }
-                }
-                //LOG.error("Translated row " + origRow + " into " + newRow);
-                retval.add(newRow);
-            } else {
+//            if (lcm == 1) {
+//                ResultsRow newRow = new ResultsRow();
+//                for (int column = 0; column < columns; column++) {
+//                    Object columnValue = origRow.get(column);
+//                    if ((columnValue instanceof List) && (((List) columnValue).size() > 0)) {
+//                        // Because lcm = 1, we know that columnValue.size() cannot be more than one.
+//                        columnValue = ((List) columnValue).get(0);
+//                    } else if (columnValue instanceof List) {
+//                        columnValue = null;
+//                    }
+//                    if (columnValue == null) {
+//                        for (int i = 0; i < columnWidth[column]; i++) {
+//                            newRow.add(null);
+//                        }
+//                    } else if (columnValue instanceof ResultsRow) {
+//                        for (Object columnValue2 : ((ResultsRow) columnValue)) {
+//                            newRow.add(columnValue2);
+//                        }
+//                    } else {
+//                        newRow.add(columnValue);
+//                    }
+//                }
+//                //LOG.error("Translated row " + origRow + " into " + newRow);
+//                retval.add(newRow);
+//            } else {
                 MultiRow multiRow = new MultiRow();
                 for (int subRowNo = 0; subRowNo < lcm; subRowNo++) {
                     ResultsRow subRow = new ResultsRow();
@@ -171,7 +171,7 @@ public class ObjectStoreFlatOuterJoinsImpl extends ObjectStorePassthruImpl
                         }
                     }
                     multiRow.add(subRow);
-                }
+//                }
                 //LOG.error("Translated row " + origRow + " into " + multiRow);
                 retval.add(multiRow);
             }
