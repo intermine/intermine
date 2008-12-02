@@ -54,7 +54,7 @@ public class ObjectStoreFlatOuterJoinsImplTest extends ObjectStoreAbstractImplTe
 
     public static void setUpResults() throws Exception {
         ObjectStoreAbstractImplTestCase.setUpResults();
-/*        Map newResults = new LinkedHashMap();
+        Map newResults = new LinkedHashMap();
         for (Map.Entry resultsEntry : ((Set<Map.Entry>) results.entrySet())) {
             String testName = (String) resultsEntry.getKey();
             Object testValue = resultsEntry.getValue();
@@ -74,7 +74,7 @@ public class ObjectStoreFlatOuterJoinsImplTest extends ObjectStoreAbstractImplTe
             }
         }
         results = newResults;
-*/
+
         MultiRowFirstValue v1 = new MultiRowFirstValue(data.get("DepartmentA1"), 3);
         MultiRowFirstValue v2 = new MultiRowFirstValue(data.get("DepartmentB1"), 2);
         results.put("CollectionPathExpression", Arrays.asList(Arrays.asList(
