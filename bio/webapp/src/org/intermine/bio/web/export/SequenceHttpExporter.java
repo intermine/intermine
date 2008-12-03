@@ -10,13 +10,22 @@ package org.intermine.bio.web.export;
  *
  */
 
+import java.io.IOException;
+import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.servlet.ServletContext;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
+
+import org.flymine.model.genomic.Chromosome;
+import org.flymine.model.genomic.LocatedSequenceFeature;
 import org.intermine.bio.web.struts.SequenceExportForm;
 import org.intermine.bio.web.struts.SequenceExportOptionsController;
 import org.intermine.objectstore.ObjectStore;
-import org.intermine.path.Path;
+import org.intermine.pathquery.Path;
 import org.intermine.util.StringUtil;
 import org.intermine.web.logic.Constants;
 import org.intermine.web.logic.export.ExportException;
@@ -27,17 +36,6 @@ import org.intermine.web.logic.export.http.TableHttpExporter;
 import org.intermine.web.logic.results.Column;
 import org.intermine.web.logic.results.PagedTable;
 import org.intermine.web.struts.TableExportForm;
-
-import org.flymine.model.genomic.Chromosome;
-import org.flymine.model.genomic.LocatedSequenceFeature;
-
-import java.io.IOException;
-import java.io.OutputStream;
-
-import javax.servlet.ServletContext;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-import javax.servlet.http.HttpSession;
 
 /**
  * An implementation of TableExporter that exports sequence objects using the BioJava sequence and

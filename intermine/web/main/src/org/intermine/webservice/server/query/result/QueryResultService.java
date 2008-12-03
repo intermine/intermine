@@ -55,7 +55,7 @@ public class QueryResultService extends WebService
     
     private static final int BATCH_SIZE = 5000;
     
-    private Map<Object, InterMineBag> savedBags;
+    private Map<String, InterMineBag> savedBags;
 
     /**
      * Executes service specific logic. 
@@ -67,11 +67,11 @@ public class QueryResultService extends WebService
 
         QueryResultInput input = getInput();
         
-        savedBags = new HashMap<Object, InterMineBag>();
-        
+        savedBags = new HashMap<String, InterMineBag>();
+
         PathQueryBuilder builder = new PathQueryBuilder(input.getXml(),
-        getXMLSchemaUrl(),
-        request.getSession().getServletContext(), savedBags);
+        		getXMLSchemaUrl(),
+        		request.getSession().getServletContext(), savedBags);
 
         PathQuery query = builder.getQuery();
         runPathQuery(query, input.getStart(), input.getMaxCount(), 

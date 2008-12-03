@@ -15,7 +15,7 @@ import java.io.Serializable;
 import org.intermine.model.InterMineObject;
 import org.intermine.objectstore.ObjectStore;
 import org.intermine.objectstore.ObjectStoreException;
-import org.intermine.path.Path;
+import org.intermine.pathquery.Path;
 import org.intermine.util.TypeUtil;
 import org.intermine.util.Util;
 

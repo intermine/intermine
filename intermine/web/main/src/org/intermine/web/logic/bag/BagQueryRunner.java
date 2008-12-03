@@ -36,7 +36,6 @@ import org.intermine.objectstore.query.ResultsRow;
 import org.intermine.util.CollectionUtil;
 import org.intermine.util.DynamicUtil;
 import org.intermine.util.TypeUtil;
-import org.intermine.web.logic.Constants;
 import org.intermine.web.logic.profile.Profile;
 import org.intermine.web.logic.profile.ProfileManager;
 import org.intermine.web.logic.session.SessionMethods;
@@ -100,7 +99,6 @@ public class BagQueryRunner
      * @param doWildcards true if the strings should be evaluated as wildcards
      * @return the matches, issues and unresolved input
      * @throws ClassNotFoundException if the type isn't in the model
-     * @throws ObjectStoreException if there is an object store problem
      * @throws InterMineException if there is any other exception
      */
     public BagQueryResult searchForBag(String type, List input, String extraFieldValue,

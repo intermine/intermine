@@ -1,4 +1,4 @@
-package org.intermine.web.logic.query;
+package org.intermine.pathquery;
 
 /*
  * Copyright (C) 2002-2008 FlyMine
@@ -10,14 +10,6 @@ package org.intermine.web.logic.query;
  *
  */
 
-import java.util.Map;
-import java.util.Properties;
-
-import org.intermine.metadata.Model;
-import org.intermine.pathquery.Node;
-import org.intermine.pathquery.PathNode;
-import org.intermine.web.logic.ClassKeyHelper;
-
 import junit.framework.TestCase;
 
 /**
@@ -27,15 +19,6 @@ import junit.framework.TestCase;
  */
 public class PathNodeTest extends TestCase
 {
-    Map savedQueries, expected, classKeys;
-
-    public void setUp() throws Exception {
-        Model model = Model.getInstanceByName("testmodel");
-        Properties classKeyProps = new Properties();
-            classKeyProps.load(getClass().getClassLoader()
-                               .getResourceAsStream("class_keys.properties"));
-        classKeys = ClassKeyHelper.readKeys(model, classKeyProps);
-    }
 
     public PathNodeTest(String arg) {
         super(arg);

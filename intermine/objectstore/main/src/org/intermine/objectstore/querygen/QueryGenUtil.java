@@ -1,4 +1,4 @@
-package org.intermine.objectstore.query;
+package org.intermine.objectstore.querygen;
 
 /*
  * Copyright (C) 2002-2008 FlyMine
@@ -14,17 +14,24 @@ import java.util.Iterator;
 import java.util.LinkedHashSet;
 import java.util.Set;
 
-import org.apache.tools.ant.BuildException;
 import org.intermine.metadata.ClassDescriptor;
 import org.intermine.metadata.FieldDescriptor;
 import org.intermine.metadata.Model;
+import org.intermine.objectstore.query.ConstraintOp;
+import org.intermine.objectstore.query.ContainsConstraint;
+import org.intermine.objectstore.query.Query;
+import org.intermine.objectstore.query.QueryClass;
+import org.intermine.objectstore.query.QueryCollectionReference;
+import org.intermine.objectstore.query.QueryHelper;
+import org.intermine.objectstore.query.QueryObjectReference;
+import org.intermine.objectstore.query.QueryReference;
 import org.intermine.util.TypeUtil;
 
 /**
  * Utility methods for paths.
  * @author Kim Rutherford
  */
-public class PathQueryUtil
+public class QueryGenUtil
 {
     /**
      * Given a class return a set with the unqualified class name in and if preceded by
@@ -120,12 +127,8 @@ public class PathQueryUtil
             clsName = path;
         }
 
-        Set subs;
-        try {
-            subs = getClassNames(model, clsName);
-        } catch (IllegalArgumentException e) {
-            throw new BuildException("Cannot find class names", e);
-        }
+        Set subs = getClassNames(model, clsName);
+
         Iterator subIter = subs.iterator();
         while (subIter.hasNext()) {
             String subName = (String) subIter.next();
@@ -215,18 +218,5 @@ public class PathQueryUtil
         QueryHelper.addAndConstraint(q, cc);
 
         return qcEnd;
-    }
-
-    /**
-     * Get a summary of the Problems
-     * @param problems an Array of throwable
-     * @return a String
-     */
-    public static String getProblemsSummary(Throwable[] problems) {
-        StringBuilder sb = new StringBuilder();
-        for (int i = 0; i < problems.length; i++) {
-            sb.append(problems[i]);
-        }
-        return sb.toString();
     }
 }

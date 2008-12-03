@@ -432,10 +432,9 @@ public class InitialiserPlugin implements PlugIn
             try {
                 Properties props = (Properties) servletContext.getAttribute(Constants.WEB_PROPERTIES);
                 String userProfileAlias = (String) props.get("webapp.userprofile.os.alias");
-                Map classKeys = (Map) servletContext.getAttribute(Constants.CLASS_KEYS);
                 ObjectStoreWriter userProfileOS =
                     ObjectStoreWriterFactory.getObjectStoreWriter(userProfileAlias);
-                profileManager = new ProfileManager(os, userProfileOS, classKeys);
+                profileManager = new ProfileManager(os, userProfileOS);
             } catch (ObjectStoreException e) {
                 LOG.error("Unable to create profile manager - please check that the "
                         + "userprofile database is available", e);

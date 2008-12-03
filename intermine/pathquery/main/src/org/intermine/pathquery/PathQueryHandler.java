@@ -11,18 +11,15 @@ package org.intermine.pathquery;
  */
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.intermine.metadata.FieldDescriptor;
 import org.intermine.metadata.Model;
 import org.intermine.objectstore.query.BagConstraint;
 import org.intermine.objectstore.query.ConstraintOp;
-import org.intermine.path.PathError;
 import org.intermine.util.StringUtil;
 import org.intermine.util.TypeUtil;
 import org.xml.sax.Attributes;
@@ -37,7 +34,6 @@ import org.xml.sax.helpers.DefaultHandler;
  */
 public class PathQueryHandler extends DefaultHandler
 {
-    Map<String, List<FieldDescriptor>> classKeys;
     private Map<String, PathQuery> queries;
     private String queryName;
     private char gencode;
@@ -51,11 +47,8 @@ public class PathQueryHandler extends DefaultHandler
     /**
      * Constructor
      * @param queries Map from query name to PathQuery
-     * @param classKeys class keys
      */
-    public PathQueryHandler(Map<String, PathQuery> queries,
-            Map<String, List<FieldDescriptor>> classKeys) {
-        this.classKeys = classKeys;
+    public PathQueryHandler(Map<String, PathQuery> queries) {
         this.queries = queries;
     }
 
@@ -109,7 +102,6 @@ public class PathQueryHandler extends DefaultHandler
             }
         }
         if (qName.equals("constraint")) {
-            boolean constrainParent = false;
             int opIndex = toStrings(ConstraintOp.getValues()).indexOf(attrs.getValue("op"));
             ConstraintOp constraintOp = ConstraintOp.getOpForIndex(new Integer(opIndex));
             Object constraintValue = null;
@@ -124,19 +116,15 @@ public class PathQueryHandler extends DefaultHandler
                 // a) if a key field move it to parent
                 // b) otherwise throw an exception to disable query
                 if (node.isAttribute()) {
-                    if (isKeyField(classKeys, node.getParentType(),
-                                                  node.getFieldName())) {
-                        constrainParent = true;
-                    } else {
-                        Exception e = new Exception("Invalid bag constraint - only objects can be"
-                                + "constrained to be in bags.");
-                        // such complicated because list created by Arrays.asList doesn't
-                        // support add method
-                        List<Throwable> problems = new ArrayList<Throwable>(Arrays.asList(
-                                query.getProblems()));
-                        problems.add(e);
-                        query.setProblems(problems);
-                    }
+                    Exception e = new Exception("Invalid bag constraint - only objects can be"
+                            + "constrained to be in bags.");
+                    // such complicated because list created by Arrays.asList doesn't
+                    // support add method
+                    query.addProblem(e);
+                    //List<Throwable> problems = new ArrayList<Throwable>(Arrays.asList(
+                    //        query.getProblems()));
+                    //problems.add(e);
+                    //query.setProblems(problems);
                 }
             } else {
                 Class c = null;
@@ -169,38 +157,14 @@ public class PathQueryHandler extends DefaultHandler
                 gencode++;
             }
             String extraValue = attrs.getValue("extraValue");
-            if (constrainParent) {
-                PathNode parent = (PathNode) node.getParent();
-                parent.getConstraints().add(new Constraint(constraintOp, constraintValue,
-                            editableFlag, description, code, identifier, extraValue));
-            } else {
-                node.getConstraints().add(new Constraint(constraintOp, constraintValue,
-                            editableFlag, description, code, identifier, extraValue));
-            }
+            node.getConstraints().add(new Constraint(constraintOp, constraintValue,
+                    editableFlag, description, code, identifier, extraValue));
         }
         if (qName.equals("pathDescription")) {
             String pathString = attrs.getValue("pathString");
             String description = attrs.getValue("description");
             pathStringDescriptions.put(pathString, description);
         }
-    }
-
-    // copyed from ClassKeyHelper, so this class is independent at it and can be part of client
-    private static boolean isKeyField(Map<String, List<FieldDescriptor>> classKeys, String clsName,
-            String fieldName) {
-        String className = clsName;
-        if (clsName.indexOf('.') != -1) {
-            className = TypeUtil.unqualifiedName(clsName);
-        }
-        List<FieldDescriptor> keys = classKeys.get(className);
-        if (keys != null) {
-            for (FieldDescriptor key : keys) {
-                if (key.getName().equals(fieldName) && key.isAttribute()) {
-                    return true;
-                }
-            }
-        }
-        return false;
     }
 
 

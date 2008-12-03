@@ -82,16 +82,14 @@ public class ProfileManager
     protected CacheMap profileCache = new CacheMap();
     private Map<String, TagChecker> tagCheckers = null;
     private HashMap<MultiKey, List<Tag>> tagCache = null;
-    private Map<String, List<FieldDescriptor>> classKeys = null;
     private String superuser = null;
 
     /**
      * Construct a ProfileManager for the webapp
      * @param os the ObjectStore to which the webapp is providing an interface
      * @param userProfileOS the object store that hold user profile information
-     * @param classKeys classKeys
      */
-    public ProfileManager(ObjectStore os, ObjectStoreWriter userProfileOS, Map classKeys) {
+    public ProfileManager(ObjectStore os, ObjectStoreWriter userProfileOS) {
         this.os = os;
         superuser = PropertiesUtil.getProperties().getProperty("superuser.account");
         tagCheckers = makeTagCheckers(os.getModel());
@@ -232,11 +230,10 @@ public class ProfileManager
             SavedQuery query = (SavedQuery) i.next();
             try {
                 Map queries =
-                    SavedQueryBinding.unmarshal(new StringReader(query.getQuery()),
-                            savedBags, classKeys);
+                    SavedQueryBinding.unmarshal(new StringReader(query.getQuery()), savedBags);
                 if (queries.size() == 0) {
                     queries =
-                        PathQueryBinding.unmarshal(new StringReader(query.getQuery()), classKeys);
+                        PathQueryBinding.unmarshal(new StringReader(query.getQuery()));
                         MainHelper.checkPathQueries(queries, savedBags);
                     if (queries.size() == 1) {
                         Map.Entry entry = (Map.Entry) queries.entrySet().iterator().next();
@@ -259,7 +256,7 @@ public class ProfileManager
             SavedTemplateQuery template = (SavedTemplateQuery) i.next();
             try {
                 StringReader sr = new StringReader(template.getTemplateQuery());
-                Map templateMap = templateBinding.unmarshal(sr, savedBags, classKeys);
+                Map templateMap = templateBinding.unmarshal(sr, savedBags);
                 String templateName = (String) templateMap.keySet().iterator().next();
                 TemplateQuery templateQuery = (TemplateQuery) templateMap.get(templateName);
                 templateQuery.setSavedTemplateQuery(template);

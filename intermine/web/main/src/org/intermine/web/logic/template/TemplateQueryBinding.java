@@ -13,16 +13,15 @@ package org.intermine.web.logic.template;
 import java.io.Reader;
 import java.io.StringWriter;
 import java.util.LinkedHashMap;
-import java.util.List;
 import java.util.Map;
 
 import javax.xml.stream.XMLOutputFactory;
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamWriter;
 
-import org.intermine.metadata.FieldDescriptor;
 import org.intermine.pathquery.PathQueryBinding;
 import org.intermine.util.SAXParser;
+import org.intermine.web.logic.bag.InterMineBag;
 import org.xml.sax.InputSource;
 
 /**
@@ -87,14 +86,14 @@ public class TemplateQueryBinding
      * @param reader the saved templates
      * @return a Map from template name to TemplateQuery
      * @param savedBags Map from bag name to bag
-     * @param classKeys class keys
      */
-    public Map unmarshal(Reader reader, Map savedBags, Map<String,
-            List<FieldDescriptor>> classKeys) {
-        Map templates = new LinkedHashMap();
+    public Map<String, TemplateQuery> unmarshal(Reader reader, 
+            Map<String, InterMineBag> savedBags) {
+        Map<String, TemplateQuery> templates = new LinkedHashMap();
+
         try {
             SAXParser.parse(new InputSource(reader), new TemplateQueryHandler(templates,
-                    savedBags, classKeys));
+                    savedBags));
         } catch (Exception e) {
             e.printStackTrace();
             throw new RuntimeException(e);

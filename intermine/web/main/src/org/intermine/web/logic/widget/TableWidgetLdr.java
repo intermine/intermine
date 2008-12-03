@@ -43,9 +43,10 @@ import org.intermine.objectstore.query.QueryValue;
 import org.intermine.objectstore.query.Results;
 import org.intermine.objectstore.query.ResultsRow;
 import org.intermine.objectstore.query.SimpleConstraint;
-import org.intermine.path.Path;
+import org.intermine.pathquery.Path;
 import org.intermine.util.TypeUtil;
 import org.intermine.web.logic.ClassKeyHelper;
+import org.intermine.web.logic.PathUtil;
 import org.intermine.web.logic.bag.InterMineBag;
 import org.intermine.web.logic.config.FieldConfig;
 import org.intermine.web.logic.config.FieldConfigHelper;
@@ -154,7 +155,7 @@ public class TableWidgetLdr
 
                         String columnName = (String) iterator3.next();
                         Path path = new Path(model, columnName);
-                        Object fieldValue = path.resolve(o);
+                        Object fieldValue = PathUtil.resolvePath(path, o);
                         Class thisType = path.getStartClassDescriptor().getType();
                         String fieldName = path.getEndFieldDescriptor().getName();
                         boolean isKeyField = ClassKeyHelper.isKeyField(config.getClassKeys(),

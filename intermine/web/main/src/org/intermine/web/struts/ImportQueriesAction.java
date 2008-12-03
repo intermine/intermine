@@ -24,8 +24,8 @@ import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
 import org.apache.struts.action.ActionMessage;
 import org.apache.struts.action.ActionMessages;
-import org.intermine.objectstore.query.PathQueryUtil;
 import org.intermine.pathquery.PathQuery;
+import org.intermine.pathquery.PathQueryUtil;
 import org.intermine.web.logic.Constants;
 import org.intermine.web.logic.WebUtil;
 import org.intermine.web.logic.bag.InterMineBag;
@@ -55,7 +55,7 @@ public class ImportQueriesAction extends InterMineAction
         Map<String, InterMineBag> allBags =
             WebUtil.getAllBags(profile.getSavedBags(), servletContext);
         Map<String, PathQuery> queries = null;
-        queries = qif.getQueryMap(allBags, servletContext);
+        queries = qif.getQueryMap(allBags);
 
 
         if (queries.size() == 1

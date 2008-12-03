@@ -16,6 +16,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import javax.servlet.ServletContext;
+
 import org.intermine.metadata.AttributeDescriptor;
 import org.intermine.metadata.ClassDescriptor;
 import org.intermine.metadata.Model;
@@ -30,9 +32,9 @@ import org.intermine.objectstore.query.QueryCollectionReference;
 import org.intermine.objectstore.query.QueryField;
 import org.intermine.objectstore.query.QuerySelectable;
 import org.intermine.objectstore.query.Results;
-import org.intermine.path.Path;
 import org.intermine.pathquery.Constraint;
 import org.intermine.pathquery.Node;
+import org.intermine.pathquery.Path;
 import org.intermine.pathquery.PathQuery;
 import org.intermine.util.CollectionUtil;
 import org.intermine.util.DynamicUtil;
@@ -47,8 +49,6 @@ import org.intermine.web.logic.profile.Profile;
 import org.intermine.web.logic.query.MainHelper;
 import org.intermine.web.logic.results.TableHelper;
 import org.intermine.web.logic.results.WebResults;
-
-import javax.servlet.ServletContext;
 
 /**
  * Helper for everything related to PathQueryResults

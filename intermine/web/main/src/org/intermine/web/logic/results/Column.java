@@ -10,7 +10,7 @@ package org.intermine.web.logic.results;
  *
  */
 
-import org.intermine.path.Path;
+import org.intermine.pathquery.Path;
 import org.intermine.util.TypeUtil;
 
 /**

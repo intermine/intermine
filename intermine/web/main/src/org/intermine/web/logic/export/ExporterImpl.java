@@ -10,15 +10,14 @@ package org.intermine.web.logic.export;
  *
  */
 
+import java.io.OutputStream;
+import java.io.PrintWriter;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
 import org.intermine.objectstore.flatouterjoins.ReallyFlatIterator;
 import org.intermine.web.logic.results.ResultElement;
-
-import java.io.OutputStream;
-import java.io.PrintWriter;
 
 
 /**

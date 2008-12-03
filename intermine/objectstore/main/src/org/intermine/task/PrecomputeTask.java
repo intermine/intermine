@@ -10,6 +10,8 @@ package org.intermine.task;
  *
  */
 
+import java.io.IOException;
+import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Iterator;
@@ -21,28 +23,22 @@ import java.util.Set;
 import java.util.TreeMap;
 import java.util.TreeSet;
 
-import org.intermine.objectstore.query.PathQueryUtil;
-import org.intermine.objectstore.query.Query;
-import org.intermine.objectstore.query.QueryClass;
-import org.intermine.objectstore.query.QueryCloner;
-import org.intermine.objectstore.query.QueryField;
-import org.intermine.objectstore.query.QueryOrderable;
-import org.intermine.objectstore.query.QuerySelectable;
-import org.intermine.objectstore.query.ResultsInfo;
-import org.intermine.objectstore.query.iql.IqlQuery;
-
+import org.apache.log4j.Logger;
+import org.apache.tools.ant.BuildException;
+import org.apache.tools.ant.Task;
 import org.intermine.metadata.Model;
 import org.intermine.objectstore.ObjectStore;
 import org.intermine.objectstore.ObjectStoreException;
 import org.intermine.objectstore.ObjectStoreFactory;
 import org.intermine.objectstore.intermine.ObjectStoreInterMineImpl;
-
-import java.io.IOException;
-import java.io.InputStream;
-
-import org.apache.log4j.Logger;
-import org.apache.tools.ant.BuildException;
-import org.apache.tools.ant.Task;
+import org.intermine.objectstore.query.Query;
+import org.intermine.objectstore.query.QueryClass;
+import org.intermine.objectstore.query.QueryCloner;
+import org.intermine.objectstore.query.QueryOrderable;
+import org.intermine.objectstore.query.QuerySelectable;
+import org.intermine.objectstore.query.ResultsInfo;
+import org.intermine.objectstore.query.iql.IqlQuery;
+import org.intermine.objectstore.querygen.QueryGenUtil;
 
 /**
  * A Task that reads a list of queries from a properties file (eg. testmodel_precompute.properties)
@@ -259,11 +255,11 @@ public class PrecomputeTask extends Task
         List queries = new ArrayList();
 
         // expand '+' to all subclasses in path
-        Set paths = PathQueryUtil.expandPath(model, path);
+        Set paths = QueryGenUtil.expandPath(model, path);
         Iterator pathIter = paths.iterator();
         while (pathIter.hasNext()) {
             String nextPath = (String) pathIter.next();
-            Query q = PathQueryUtil.constructQuery(model, nextPath);
+            Query q = QueryGenUtil.constructQuery(model, nextPath);
             if (createAllOrders) {
                 queries.addAll(getOrderedQueries(q));
             } else {
@@ -300,25 +296,6 @@ public class PrecomputeTask extends Task
         return queryList;
     }
 
-
-    /**
-     * Add QueryFields for each of the field names in fieldNames to the given Query.
-     * @param q the Query to add to
-     * @param qc the QueryClass that the QueryFields should be created for
-     * @param fieldNames the field names to create QueryFields for
-     */
-    private void addFieldsToQuery(Query q, QueryClass qc, List fieldNames) {
-        Iterator fieldNameIter = fieldNames.iterator();
-
-        while (fieldNameIter.hasNext()) {
-            String fieldName = (String) fieldNameIter.next();
-            if (fieldName.equals("id")) {
-                continue;
-            }
-            QueryField qf = new QueryField(qc, fieldName);
-            q.addToSelect(qf);
-        }
-    }
 
     /**
      * For a given IQL query, return a Query object.

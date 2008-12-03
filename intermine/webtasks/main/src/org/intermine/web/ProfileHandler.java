@@ -22,20 +22,18 @@ import org.intermine.metadata.Model;
 import org.intermine.model.InterMineObject;
 import org.intermine.objectstore.ObjectStoreWriter;
 import org.intermine.web.logic.bag.IdUpgrader;
+import org.intermine.web.logic.bag.InterMineBag;
 import org.intermine.web.logic.bag.InterMineBagHandler;
 import org.intermine.web.logic.profile.Profile;
 import org.intermine.web.logic.profile.ProfileManager;
+import org.intermine.web.logic.query.SavedQuery;
 import org.intermine.web.logic.query.SavedQueryHandler;
-import org.intermine.web.logic.session.SessionMethods;
 import org.intermine.web.logic.tagging.TagHandler;
+import org.intermine.web.logic.template.TemplateQuery;
 import org.intermine.web.logic.template.TemplateQueryHandler;
 import org.intermine.xml.full.FullHandler;
 import org.intermine.xml.full.FullParser;
 import org.intermine.xml.full.Item;
-
-import javax.servlet.ServletContext;
-
-import org.apache.log4j.Logger;
 import org.xml.sax.Attributes;
 import org.xml.sax.SAXException;
 import org.xml.sax.helpers.DefaultHandler;
@@ -47,13 +45,12 @@ import org.xml.sax.helpers.DefaultHandler;
  */
 class ProfileHandler extends DefaultHandler
 {
-    private static final Logger LOG = Logger.getLogger(ProfileHandler.class);
     private ProfileManager profileManager;
     private String username;
     private String password;
-    private Map savedQueries, classKeys;
-    private Map savedBags;
-    private Map savedTemplates;
+    private Map<String, SavedQuery> savedQueries;
+    private Map<String, InterMineBag> savedBags;
+    private Map<String, TemplateQuery> savedTemplates;
     private Set tags;
     private List<Item> items;
     private Map<Integer, InterMineObject> idObjectMap;
@@ -68,7 +65,6 @@ class ProfileHandler extends DefaultHandler
      * subHandler.endElement(), etc will be called from this class.
      */
     DefaultHandler subHandler = null;
-    private final ServletContext servletContext;
     private boolean abortOnError;
 
     /**
@@ -76,16 +72,13 @@ class ProfileHandler extends DefaultHandler
      * @param profileManager the ProfileManager to pass to the Profile constructor
      * @param idUpgrader the IdUpgrader to use to find objects in the new ObjectStore that
      * correspond to object in old bags.
-     * @param servletContext global ServletContext object
      * @param osw an ObjectStoreWriter to the production database, to write bags
      * @param abortOnError if true, throw an exception if there is a problem.  If false, log the
      * problem and continue if possible (used by read-userprofile-xml).
      */
     public ProfileHandler(ProfileManager profileManager, IdUpgrader idUpgrader,
-                          ServletContext servletContext, ObjectStoreWriter osw,
-                          boolean abortOnError) {
-        this(profileManager, idUpgrader, null, null, new HashSet(), servletContext, osw,
-             abortOnError);
+                          ObjectStoreWriter osw, boolean abortOnError) {
+        this(profileManager, idUpgrader, null, null, new HashSet(), osw, abortOnError);
     }
 
     /**
@@ -96,24 +89,21 @@ class ProfileHandler extends DefaultHandler
      * @param defaultUsername default username
      * @param defaultPassword default password
      * @param tags a set to populate with user tags
-     * @param servletContext global ServletContext object
      * @param osw an ObjectStoreWriter to the production database, to write bags
      * @param abortOnError if true, throw an exception if there is a problem.  If false, log the
      * problem and continue if possible (used by read-userprofile-xml).
      */
     public ProfileHandler(ProfileManager profileManager, IdUpgrader idUpgrader,
                           String defaultUsername, String defaultPassword, Set tags,
-                          ServletContext servletContext, ObjectStoreWriter osw,
+                          ObjectStoreWriter osw,
                           boolean abortOnError) {
         super();
         this.profileManager = profileManager;
         this.idUpgrader = idUpgrader;
-        this.servletContext = servletContext;
-        items = new ArrayList();
+        items = new ArrayList<Item>();
         this.username = defaultUsername;
         this.password = defaultPassword;
         this.tags = tags;
-        this.classKeys = classKeys;
         this.osw = osw;
         this.abortOnError = abortOnError;
     }
@@ -126,13 +116,12 @@ class ProfileHandler extends DefaultHandler
      * @param defaultUsername default username
      * @param defaultPassword default password
      * @param tags a set to populate with user tags
-     * @param servletContext global ServletContext object
      * @param osw an ObjectStoreWriter to the production database, to write bags
      */
     public ProfileHandler(ProfileManager profileManager, IdUpgrader idUpgrader,
                           String defaultUsername, String defaultPassword, Set tags,
-                          ServletContext servletContext, ObjectStoreWriter osw) {
-        this(profileManager, idUpgrader, defaultPassword, defaultPassword, tags, servletContext,
+                          ObjectStoreWriter osw) {
+        this(profileManager, idUpgrader, defaultPassword, defaultPassword, tags,
              osw, true);
     }
 
@@ -177,13 +166,11 @@ class ProfileHandler extends DefaultHandler
         }
         if (qName.equals("template-queries")) {
             savedTemplates = new LinkedHashMap();
-            subHandler = new TemplateQueryHandler(savedTemplates, savedBags, 
-                    SessionMethods.getClassKeys(servletContext));
+            subHandler = new TemplateQueryHandler(savedTemplates, savedBags);
         }
         if (qName.equals("queries")) {
             savedQueries = new LinkedHashMap();
-            subHandler = new SavedQueryHandler(savedQueries, savedBags, 
-                    SessionMethods.getClassKeys(servletContext));
+            subHandler = new SavedQueryHandler(savedQueries, savedBags);
         }
         if (qName.equals("tags")) {
             subHandler = new TagHandler(username, tags);

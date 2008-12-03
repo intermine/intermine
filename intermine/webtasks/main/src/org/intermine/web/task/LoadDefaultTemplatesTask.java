@@ -10,15 +10,19 @@ package org.intermine.web.task;
  *
  */
 
+import java.io.FileReader;
+import java.io.Reader;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
-import java.util.List;
 import java.util.Map;
-import java.util.Properties;
 import java.util.Set;
 
-import org.intermine.metadata.FieldDescriptor;
+import javax.servlet.ServletContext;
+
+import org.apache.log4j.Logger;
+import org.apache.tools.ant.BuildException;
+import org.apache.tools.ant.Task;
 import org.intermine.model.userprofile.Tag;
 import org.intermine.objectstore.ObjectStore;
 import org.intermine.objectstore.ObjectStoreException;
@@ -27,7 +31,6 @@ import org.intermine.objectstore.ObjectStoreWriter;
 import org.intermine.objectstore.ObjectStoreWriterFactory;
 import org.intermine.objectstore.intermine.ObjectStoreWriterInterMineImpl;
 import org.intermine.web.ProfileBinding;
-import org.intermine.web.logic.ClassKeyHelper;
 import org.intermine.web.logic.Constants;
 import org.intermine.web.logic.profile.Profile;
 import org.intermine.web.logic.profile.ProfileManager;
@@ -35,15 +38,6 @@ import org.intermine.web.logic.search.SearchRepository;
 import org.intermine.web.logic.template.TemplateHelper;
 import org.intermine.web.logic.template.TemplateQuery;
 import org.intermine.web.struts.RequestPasswordAction;
-
-import java.io.FileReader;
-import java.io.Reader;
-
-import javax.servlet.ServletContext;
-
-import org.apache.log4j.Logger;
-import org.apache.tools.ant.BuildException;
-import org.apache.tools.ant.Task;
 
 import servletunit.ServletContextSimulator;
 
@@ -112,14 +106,10 @@ public class LoadDefaultTemplatesTask extends Task
             ObjectStore os = ObjectStoreFactory.getObjectStore(osAlias);
             ObjectStoreWriter userProfileOS =
                 ObjectStoreWriterFactory.getObjectStoreWriter(userProfileAlias);
-            Properties classKeyProps = new Properties();
-            classKeyProps.load(getClass().getClassLoader()
-                               .getResourceAsStream("class_keys.properties"));
-            Map<String, List<FieldDescriptor>> classKeys
-            = ClassKeyHelper.readKeys(os.getModel(), classKeyProps);
+            
             ServletContext servletContext = new ServletContextSimulator();
-            servletContext.setAttribute(Constants.CLASS_KEYS, classKeys);
-            ProfileManager pm = new ProfileManager(os, userProfileOS, classKeys);
+
+            ProfileManager pm = new ProfileManager(os, userProfileOS);
             Reader reader = new FileReader(xmlFile);
 
             // Copy into existing or new superuser profile
@@ -149,7 +139,7 @@ public class LoadDefaultTemplatesTask extends Task
             Set tags = new HashSet();
             osw = new ObjectStoreWriterInterMineImpl(os);
             Profile profileSrc = ProfileBinding.unmarshal(reader, pm, profileDest.getUsername(),
-                    profileDest.getPassword(), tags, servletContext, osw);
+                    profileDest.getPassword(), tags, osw);
 
             if (profileDest.getSavedTemplates().size() == 0) {
                 Iterator iter = profileSrc.getSavedTemplates().values().iterator();

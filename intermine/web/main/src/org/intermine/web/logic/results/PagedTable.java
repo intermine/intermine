@@ -10,7 +10,6 @@ package org.intermine.web.logic.results;
  *
  */
 
-import java.util.AbstractList;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Iterator;
@@ -42,7 +41,7 @@ import org.intermine.objectstore.query.QueryHelper;
 import org.intermine.objectstore.query.QuerySelectable;
 import org.intermine.objectstore.query.Results;
 import org.intermine.objectstore.query.ResultsRow;
-import org.intermine.path.Path;
+import org.intermine.pathquery.Path;
 import org.intermine.util.DynamicUtil;
 import org.intermine.util.TypeUtil;
 import org.intermine.web.logic.Constants;

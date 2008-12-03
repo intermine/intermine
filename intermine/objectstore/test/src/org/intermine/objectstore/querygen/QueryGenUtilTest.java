@@ -1,4 +1,11 @@
-package org.intermine.objectstore.query;
+package org.intermine.objectstore.querygen;
+
+import java.util.Arrays;
+import java.util.HashSet;
+import java.util.LinkedHashSet;
+import java.util.Set;
+
+import junit.framework.Test;
 
 import org.intermine.model.testmodel.Company;
 import org.intermine.model.testmodel.Department;
@@ -7,22 +14,18 @@ import org.intermine.model.testmodel.Manager;
 import org.intermine.objectstore.ObjectStore;
 import org.intermine.objectstore.ObjectStoreFactory;
 import org.intermine.objectstore.StoreDataTestCase;
-import org.intermine.task.PrecomputeTask;
-import org.intermine.task.PrecomputeTaskTest;
-import org.intermine.util.AlwaysMap;
+import org.intermine.objectstore.query.ConstraintOp;
+import org.intermine.objectstore.query.ConstraintSet;
+import org.intermine.objectstore.query.ContainsConstraint;
+import org.intermine.objectstore.query.Query;
+import org.intermine.objectstore.query.QueryClass;
+import org.intermine.objectstore.query.QueryCollectionReference;
+import org.intermine.objectstore.query.QueryObjectReference;
 
-import java.util.Arrays;
-import java.util.HashSet;
-import java.util.LinkedHashSet;
-import java.util.Set;
-
-import junit.framework.Test;
-import junit.framework.TestCase;
-
-public class PathQueryUtilTest extends StoreDataTestCase {
+public class QueryGenUtilTest extends StoreDataTestCase {
     ObjectStore os;
 
-    public PathQueryUtilTest (String arg) {
+    public QueryGenUtilTest (String arg) {
         super(arg);
     }
 
@@ -43,10 +46,10 @@ public class PathQueryUtilTest extends StoreDataTestCase {
     }
 
     public static Test suite() {
-        return buildSuite(PathQueryUtilTest.class);
+        return buildSuite(QueryGenUtilTest.class);
     }
     public void testConstructQuerySingleRef() throws Exception {
-        Query actual = PathQueryUtil.constructQuery(os.getModel(), "Employee department Department");
+        Query actual = QueryGenUtil.constructQuery(os.getModel(), "Employee department Department");
 
         Query q = new Query();
         QueryClass qcEmpl = new QueryClass(Employee.class);
@@ -68,7 +71,7 @@ public class PathQueryUtilTest extends StoreDataTestCase {
 
 
     public void testConstructQueryTwoRefs() throws Exception {
-        Query actual = PathQueryUtil.constructQuery(os.getModel(), "Company departments Department manager Manager");
+        Query actual = QueryGenUtil.constructQuery(os.getModel(), "Company departments Department manager Manager");
 
         Query q = new Query();
         QueryClass qcCom = new QueryClass(Company.class);
@@ -105,34 +108,33 @@ public class PathQueryUtilTest extends StoreDataTestCase {
 
     public void testValidatePath() throws Exception {
         try {
-            PathQueryUtil.validatePath("Company", os.getModel()); // too short
+            QueryGenUtil.validatePath("Company", os.getModel()); // too short
             fail("expected IllegalArgumentException");
         } catch (IllegalArgumentException e) {
         }
         try {
-            PathQueryUtil.validatePath("Company departments Department manager", os.getModel());  // wrong length
+            QueryGenUtil.validatePath("Company departments Department manager", os.getModel());  // wrong length
             fail("expected IllegalArgumentException");
         } catch (IllegalArgumentException e) {
         }
         try {
-            PathQueryUtil.validatePath("Department manager Monkey", os.getModel());  // no Monkeys
+            QueryGenUtil.validatePath("Department manager Monkey", os.getModel());  // no Monkeys
             fail("expected IllegalArgumentException");
         } catch (IllegalArgumentException e) {
         }
         try {
-            PathQueryUtil.validatePath("Department teaboy Employee", os.getModel());  // no teaboys
+            QueryGenUtil.validatePath("Department teaboy Employee", os.getModel());  // no teaboys
             fail("expected IllegalArgumentException");
         } catch (IllegalArgumentException e) {
         }
         // valid
-        PathQueryUtil.validatePath("Company departments Department", os.getModel());
-        PathQueryUtil.validatePath("Company address Address", os.getModel());  // inherited reference
-        PathQueryUtil.validatePath("Company departments Department manager Manager", os.getModel());
+        QueryGenUtil.validatePath("Company departments Department", os.getModel());
+        QueryGenUtil.validatePath("Company address Address", os.getModel());  // inherited reference
+        QueryGenUtil.validatePath("Company departments Department manager Manager", os.getModel());
     }
 
 
     public void testExpandPathStart() throws Exception {
-        PrecomputeTask pt = new PrecomputeTask();
         String original = "+Employee department Department";
 
         String exp1 = "Employee department Department";
@@ -140,12 +142,11 @@ public class PathQueryUtilTest extends StoreDataTestCase {
         String exp3 = "Manager department Department";
 
         Set expected = new LinkedHashSet(Arrays.asList(new Object[] {exp1, exp2, exp3}));
-        assertEquals(expected, PathQueryUtil.expandPath(os.getModel(), original));
+        assertEquals(expected, QueryGenUtil.expandPath(os.getModel(), original));
     }
 
 
     public void testExpandPathEnd() throws Exception {
-        PrecomputeTask pt = new PrecomputeTask();
         String original = "Company departments Department employees +Employee";
 
         String exp1 = "Company departments Department employees Employee";
@@ -153,16 +154,15 @@ public class PathQueryUtilTest extends StoreDataTestCase {
         String exp3 = "Company departments Department employees CEO";
 
         Set expected = new LinkedHashSet(Arrays.asList(new Object[] {exp1, exp2, exp3}));
-        assertEquals(expected, PathQueryUtil.expandPath(os.getModel(), original));
+        assertEquals(expected, QueryGenUtil.expandPath(os.getModel(), original));
     }
 
 
 
     public void testGetClassNames() throws Exception {
-        PrecomputeTask pt = new PrecomputeTask();
         String clsName = "+Employee";
         Set expected = new HashSet(Arrays.asList(new String[] {"Employee", "Manager", "CEO"}));
-        assertEquals(expected, PathQueryUtil.getClassNames(os.getModel(), clsName));
+        assertEquals(expected, QueryGenUtil.getClassNames(os.getModel(), clsName));
     }
 
 }

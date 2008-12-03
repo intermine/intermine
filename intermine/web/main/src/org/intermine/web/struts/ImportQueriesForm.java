@@ -10,17 +10,8 @@ package org.intermine.web.struts;
  *
  */
 
-import java.util.Map;
-
-import org.intermine.pathquery.PathQueryBinding;
-import org.intermine.web.logic.Constants;
-import org.intermine.web.logic.WebUtil;
-import org.intermine.web.logic.bag.InterMineBag;
-import org.intermine.web.logic.profile.Profile;
-import org.intermine.web.logic.query.MainHelper;
-import org.intermine.web.logic.session.SessionMethods;
-
 import java.io.StringReader;
+import java.util.Map;
 
 import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletRequest;
@@ -30,6 +21,13 @@ import org.apache.struts.action.ActionErrors;
 import org.apache.struts.action.ActionMapping;
 import org.apache.struts.action.ActionMessage;
 import org.apache.struts.validator.ValidatorForm;
+import org.intermine.pathquery.PathQuery;
+import org.intermine.pathquery.PathQueryBinding;
+import org.intermine.web.logic.Constants;
+import org.intermine.web.logic.WebUtil;
+import org.intermine.web.logic.bag.InterMineBag;
+import org.intermine.web.logic.profile.Profile;
+import org.intermine.web.logic.query.MainHelper;
 
 /**
  * Form bean representing query import form.
@@ -39,7 +37,7 @@ import org.apache.struts.validator.ValidatorForm;
 public class ImportQueriesForm extends ValidatorForm
 {
     private String xml;
-    private Map map;
+    private Map<String, PathQuery> map;
     private String queryBuilder;
 
     /**
@@ -52,18 +50,16 @@ public class ImportQueriesForm extends ValidatorForm
     /**
      * Return a Map from query name to Query object.
      * @param savedBags map from bag name to bag
-     * @param servletContext global ServletContext object
      * @return the Map
      */
-    public Map getQueryMap(Map savedBags, ServletContext servletContext) {
+    public Map<String, PathQuery> getQueryMap(Map<String, InterMineBag> savedBags) {
         if (map == null) {
             try {
-                map = PathQueryBinding.unmarshal(new StringReader(getXml()),
-                        SessionMethods.getClassKeys(servletContext));
+                map = PathQueryBinding.unmarshal(new StringReader(getXml()));
                 MainHelper.checkPathQueries(map, savedBags);
             } catch (Exception e) {
                 map = PathQueryBinding.unmarshal(new StringReader("<queries>" + getXml()
-                         + "</queries>"), SessionMethods.getClassKeys(servletContext));
+                         + "</queries>"));
                 MainHelper.checkPathQueries(map, savedBags);
             }
         }
@@ -136,7 +132,7 @@ public class ImportQueriesForm extends ValidatorForm
         try {
             Map<String, InterMineBag> allBags =
                 WebUtil.getAllBags(profile.getSavedBags(), servletContext);
-            if (getQueryMap(allBags, servletContext).size() == 0) {
+            if (getQueryMap(allBags).size() == 0) {
                if (errors == null) {
                    errors = new ActionErrors();
                }

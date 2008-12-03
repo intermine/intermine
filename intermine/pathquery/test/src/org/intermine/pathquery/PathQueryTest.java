@@ -1,4 +1,4 @@
-package org.intermine.web.logic.query;
+package org.intermine.pathquery;
 
 import java.io.InputStream;
 import java.io.InputStreamReader;
@@ -12,31 +12,23 @@ import java.util.Map;
 
 import junit.framework.TestCase;
 
-import org.intermine.TestUtil;
 import org.intermine.metadata.Model;
-import org.intermine.objectstore.query.PathQueryUtil;
 import org.intermine.objectstore.query.ResultsInfo;
-import org.intermine.path.Path;
-import org.intermine.path.PathError;
-import org.intermine.pathquery.Constraints;
-import org.intermine.pathquery.PathQuery;
-import org.intermine.pathquery.PathQueryBinding;
 
 
 
 public class PathQueryTest extends TestCase
 {
-    Map expected, classKeys;
+    Map expected;
     PathQuery e, q;
     Model model;
     private static final String MSG = "Invalid path - path cannot be a null or empty string";
 
     public void setUp() throws Exception {
         super.setUp();
-        model = TestUtil.getModel();
-        classKeys = TestUtil.getClassKeys(model);
+        model = Model.getInstanceByName("testmodel");
         InputStream is = getClass().getClassLoader().getResourceAsStream("PathQueryTest.xml");
-        expected = PathQueryBinding.unmarshal(new InputStreamReader(is), classKeys);
+        expected = PathQueryBinding.unmarshal(new InputStreamReader(is));
     }
 
     public PathQueryTest(String arg) {

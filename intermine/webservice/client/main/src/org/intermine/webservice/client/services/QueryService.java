@@ -11,11 +11,9 @@ package org.intermine.webservice.client.services;
  */
 
 import java.io.StringReader;
-import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 
-import org.intermine.metadata.FieldDescriptor;
 import org.intermine.metadata.Model;
 import org.intermine.pathquery.PathQuery;
 import org.intermine.pathquery.PathQueryBinding;
@@ -82,8 +80,7 @@ public class QueryService extends Service
         ModelService modelService = new ModelService(getRootUrl(), getApplicationName());
         Model model = modelService.getModel();
         Model.addModel(model.getName(), model);
-        return PathQueryBinding.unmarshalPathQuery(new StringReader(queryXml), 
-                new HashMap<String, List<FieldDescriptor>>());
+        return PathQueryBinding.unmarshalPathQuery(new StringReader(queryXml));
     }
 
     /**

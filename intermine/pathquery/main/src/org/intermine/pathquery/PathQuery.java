@@ -27,8 +27,6 @@ import org.apache.log4j.Logger;
 import org.intermine.metadata.Model;
 import org.intermine.objectstore.query.BagConstraint;
 import org.intermine.objectstore.query.ResultsInfo;
-import org.intermine.path.Path;
-import org.intermine.path.PathError;
 import org.intermine.util.CollectionUtil;
 import org.intermine.util.StringUtil;
 
@@ -967,7 +965,8 @@ public class PathQuery
             node = new PathNode(path);
             if (model.isGeneratedClassesAvailable()) {
                 if (!model.isGeneratedClassAvailable(path)) {
-                    logPathError(new ClassNotFoundException("Class " + path + " is not available."));
+                    logPathError(new ClassNotFoundException("Class " 
+                            + path + " is not available."));
                 }                 
             }
         } else {

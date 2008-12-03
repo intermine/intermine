@@ -10,9 +10,14 @@ package org.intermine.web;
  *
  */
 
+import java.io.Reader;
 import java.util.Iterator;
 import java.util.List;
 
+import javax.xml.stream.XMLStreamException;
+import javax.xml.stream.XMLStreamWriter;
+
+import org.apache.log4j.Logger;
 import org.intermine.model.userprofile.Tag;
 import org.intermine.objectstore.ObjectStoreWriter;
 import org.intermine.util.SAXParser;
@@ -20,14 +25,6 @@ import org.intermine.web.bag.PkQueryIdUpgrader;
 import org.intermine.web.logic.bag.IdUpgrader;
 import org.intermine.web.logic.profile.Profile;
 import org.intermine.web.logic.profile.ProfileManager;
-
-import java.io.Reader;
-
-import javax.servlet.ServletContext;
-import javax.xml.stream.XMLStreamException;
-import javax.xml.stream.XMLStreamWriter;
-
-import org.apache.log4j.Logger;
 import org.xml.sax.Attributes;
 import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
@@ -78,17 +75,15 @@ public class ProfileManagerBinding
      * @param osw ObjectStoreWriter used to resolve object ids and write bags
      * @param idUpgrader the IdUpgrader to use to find objects in the new ObjectStore that
      * correspond to object in old bags.
-     * @param servletContext global ServletContext object
      * @param abortOnError if true, throw an exception if there is a problem.  If false, log the
      * problem and continue if possible (used by read-userprofile-xml).
      */
     public static void unmarshal(Reader reader, ProfileManager profileManager,
                                  ObjectStoreWriter osw, PkQueryIdUpgrader idUpgrader,
-                                 ServletContext servletContext, boolean abortOnError) {
+                                 boolean abortOnError) {
         try {
             ProfileManagerHandler profileManagerHandler =
-                new ProfileManagerHandler(profileManager, idUpgrader, servletContext, osw,
-                                          abortOnError);
+                new ProfileManagerHandler(profileManager, idUpgrader, osw, abortOnError);
             SAXParser.parse(new InputSource(reader), profileManagerHandler);
         } catch (Exception e) {
             e.printStackTrace();
@@ -104,12 +99,10 @@ public class ProfileManagerBinding
      * @param osw ObjectStoreWriter used to resolve object ids and write bags
      * @param idUpgrader the IdUpgrader to use to find objects in the new ObjectStore that
      * correspond to object in old bags.
-     * @param servletContext global ServletContext object
      */
     public static void unmarshal(Reader reader, ProfileManager profileManager,
-                                 ObjectStoreWriter osw, PkQueryIdUpgrader idUpgrader,
-                                 ServletContext servletContext) {
-        unmarshal(reader, profileManager, osw, idUpgrader, servletContext, true);
+                                 ObjectStoreWriter osw, PkQueryIdUpgrader idUpgrader) {
+        unmarshal(reader, profileManager, osw, idUpgrader, true);
     }
 }
 
@@ -123,7 +116,6 @@ class ProfileManagerHandler extends DefaultHandler
     private ProfileManager profileManager = null;
     private IdUpgrader idUpgrader;
     private ObjectStoreWriter osw;
-    private final ServletContext servletContext;
     private boolean abortOnError;
     private long startTime = 0;
     private static final Logger LOG = Logger.getLogger(ProfileManagerBinding.class);
@@ -133,18 +125,15 @@ class ProfileManagerHandler extends DefaultHandler
      * @param profileManager the ProfileManager to store the unmarshalled Profile to
      * @param idUpgrader the IdUpgrader to use to find objects in the new ObjectStore that
      * correspond to object in old bags.
-     * @param servletContext global ServletContext object
      * @param osw an ObjectStoreWriter to the production database, to write bags
      * @param abortOnError if true, throw an exception if there is a problem.  If false, log the
      * problem and continue if possible (used by read-userprofile-xml).
      */
     public ProfileManagerHandler(ProfileManager profileManager, IdUpgrader idUpgrader,
-                                 ServletContext servletContext, ObjectStoreWriter osw,
-                                 boolean abortOnError) {
+                                 ObjectStoreWriter osw, boolean abortOnError) {
         super();
         this.profileManager = profileManager;
         this.idUpgrader = idUpgrader;
-        this.servletContext = servletContext;
         this.osw = osw;
         this.abortOnError = abortOnError;
     }
@@ -157,8 +146,7 @@ class ProfileManagerHandler extends DefaultHandler
         throws SAXException {
         if (qName.equals("userprofile")) {
             startTime = System.currentTimeMillis();
-            profileHandler = new ProfileHandler(profileManager, idUpgrader, servletContext, osw,
-                                                abortOnError);
+            profileHandler = new ProfileHandler(profileManager, idUpgrader, osw, abortOnError);
         }
         if (profileHandler != null) {
             profileHandler.startElement(uri, localName, qName, attrs);

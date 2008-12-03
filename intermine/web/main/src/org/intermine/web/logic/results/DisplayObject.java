@@ -28,9 +28,10 @@ import org.intermine.metadata.Model;
 import org.intermine.metadata.ReferenceDescriptor;
 import org.intermine.model.InterMineObject;
 import org.intermine.objectstore.proxy.ProxyReference;
-import org.intermine.path.Path;
+import org.intermine.pathquery.Path;
 import org.intermine.util.DynamicUtil;
 import org.intermine.util.TypeUtil;
+import org.intermine.web.logic.PathUtil;
 import org.intermine.web.logic.config.FieldConfig;
 import org.intermine.web.logic.config.FieldConfigHelper;
 import org.intermine.web.logic.config.WebConfig;
@@ -325,7 +326,7 @@ public class DisplayObject
                 }
                 String pathString = className + "." + expr;
                 Path path = new Path(model, pathString);
-                fieldValues.put(expr, path.resolve(object));
+                fieldValues.put(expr, PathUtil.resolvePath(path, object));
             }
         }
         return fieldValues;

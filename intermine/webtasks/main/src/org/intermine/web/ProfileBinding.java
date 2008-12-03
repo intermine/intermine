@@ -18,7 +18,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import javax.servlet.ServletContext;
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamWriter;
 
@@ -34,7 +33,6 @@ import org.intermine.model.userprofile.Tag;
 import org.intermine.objectstore.ObjectStore;
 import org.intermine.objectstore.ObjectStoreException;
 import org.intermine.objectstore.ObjectStoreWriter;
-import org.intermine.objectstore.query.ResultsRow;
 import org.intermine.util.SAXParser;
 import org.intermine.util.TypeUtil;
 import org.intermine.web.logic.bag.IdUpgrader;
@@ -292,17 +290,16 @@ public class ProfileBinding
      * @param username default username - used if there is no username in the XML
      * @param password default password
      * @param tags a set to populate with user tags
-     * @param servletContext global ServletContext object
      * @param osw an ObjectStoreWriter for the production database, to write bags
      * @return the new Profile
      */
     public static Profile unmarshal(Reader reader, ProfileManager profileManager, String username,
-            String password, Set tags, ServletContext servletContext, ObjectStoreWriter osw) {
+            String password, Set tags, ObjectStoreWriter osw) {
         try {
             IdUpgrader idUpgrader = IdUpgrader.ERROR_UPGRADER;
             ProfileHandler profileHandler =
                 new ProfileHandler(profileManager, idUpgrader, username, password, tags,
-                                   servletContext, osw, false);
+                                   osw, false);
             SAXParser.parse(new InputSource(reader), profileHandler);
             return profileHandler.getProfile();
         } catch (Exception e) {

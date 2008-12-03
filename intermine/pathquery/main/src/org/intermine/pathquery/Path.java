@@ -1,4 +1,4 @@
-package org.intermine.path;
+package org.intermine.pathquery;
 
 /*
  * Copyright (C) 2002-2008 FlyMine
@@ -11,12 +11,9 @@ package org.intermine.path;
  */
 
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 import java.util.StringTokenizer;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -28,7 +25,6 @@ import org.intermine.metadata.CollectionDescriptor;
 import org.intermine.metadata.FieldDescriptor;
 import org.intermine.metadata.Model;
 import org.intermine.metadata.ReferenceDescriptor;
-import org.intermine.util.DynamicUtil;
 import org.intermine.util.StringUtil;
 import org.intermine.util.TypeUtil;
 
@@ -347,21 +343,6 @@ public class Path
         return new Path(model, pathString.substring(0, lastIndex));
     }
 
-    
-    /**
-     * Return the last string element of this path, throw an exception of there is only one element,
-     * i.e. for 'Company.departments.manager' return 'manager'.
-     * @return the last string element of the path 
-     */
-    public String getLastElement() {
-        if (getElements().size() == 0) {
-            throw new RuntimeException("path (" + this + ") has only one element");
-        }
-        
-        return elements.get(elements.size() - 1);
-    }
-    
-    
     /**
      * Return new Path that has this Path as its prefix and has fieldName as the last element.
      * @param fieldName the field name
@@ -402,45 +383,18 @@ public class Path
     }
 
     /**
-     * Return the object at the end of the path, starting from the given object.
-     * @param o the start object
-     * @return the attribute, object or collection at the end of the path
+     * Return the last string element of this path, throw an exception of there is only one element,
+     * i.e. for 'Company.departments.manager' return 'manager'.
+     * @return the last string element of the path 
      */
-    public Object resolve(Object o) {
-        if (startCld != null) {
-            Set clds = model.getClassDescriptorsForClass(o.getClass());
-            if (!clds.contains(getStartClassDescriptor())) {
-                throw new PathError("ClassDescriptor from the start of path: " + path
-                        + " is not a superclass of the class: "
-                        + DynamicUtil.getFriendlyName(o.getClass()) + " while resolving object: "
-                        + o, path);
-            }
+    public String getLastElement() {
+        if (getElements().size() == 0) {
+            throw new RuntimeException("path (" + this + ") has only one element");
         }
-
-        Iterator<String> iter = elements.iterator();
-
-        Object current = o;
-
-        while (iter.hasNext()) {
-            String fieldName = iter.next();
-            try {
-                if (current == null) {
-                    return null;
-                }
-                current = TypeUtil.getFieldValue(current, fieldName);
-                if (current instanceof Collection) {
-                    throw new RuntimeException("Attempt to to get value of "
-                       + "field \"" + fieldName + "\" for collection: " + o
-                       + "It must be simple object. This operation is not allowed for collection.");
-                }
-            } catch (IllegalAccessException e) {
-                throw new RuntimeException("IllegalAccessException while trying to get value of "
-                                           + "field \"" + fieldName + "\" in object: " + o, e);
-            }
-        }
-
-        return current;
+        
+        return elements.get(elements.size() - 1);
     }
+
 
     /**
      * {@inheritDoc}
@@ -523,7 +477,7 @@ public class Path
 
     /**
      * Returns a representation of the Path as a String, with no class constraint markers.  eg.
-     * "Department.employees.seniority" instead of "Department.employees[Manager].seniority"
+     * "Department.employees.seniority"
      * @return a String version of the Path
      */
     public String toStringNoConstraints() {
@@ -551,5 +505,13 @@ public class Path
      */
     public Map<String, String> getSubClassConstraintPaths() {
         return subClassConstraintPaths;
+    }
+    
+    /**
+     * Return the model that this path is created for.
+     * @return the model
+     */
+    public Model getModel() {
+        return model;
     }
 }
