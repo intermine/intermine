@@ -122,7 +122,7 @@
            objectstore -->
       <property name="src.data.file" location="build/organisms.xml"/>
     </source>
-    <source name="update-publications" type="update-publications">
+    <source name="update-publications" type="update-publications" dump="true">
       <!-- this source finds the publication ids (pubmed ids) in the
            objectstore, retrieves the details of the publication from Entrez
            into an InterMine format XML file, loads that file into a target
