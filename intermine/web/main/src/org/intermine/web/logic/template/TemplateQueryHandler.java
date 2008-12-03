@@ -11,11 +11,9 @@ package org.intermine.web.logic.template;
  */
 
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 import org.apache.commons.lang.StringUtils;
-import org.intermine.metadata.FieldDescriptor;
 import org.intermine.pathquery.PathQueryHandler;
 import org.intermine.web.logic.bag.InterMineBag;
 import org.xml.sax.Attributes;
@@ -27,7 +25,7 @@ import org.xml.sax.SAXException;
  */
 public class TemplateQueryHandler extends PathQueryHandler
 {
-    Map templates;
+    Map<String, TemplateQuery> templates;
     String templateName;
     String templateDesc;
     String templateCat;
@@ -40,11 +38,10 @@ public class TemplateQueryHandler extends PathQueryHandler
      * Constructor
      * @param templates Map from template name to TemplateQuery
      * @param savedBags Map from bag name to bag
-     * @param classKeys class keys
      */
-    public TemplateQueryHandler(Map templates,
-            Map<String, InterMineBag> savedBags, Map<String, List<FieldDescriptor>> classKeys) {
-        super(new HashMap(), classKeys);
+    public TemplateQueryHandler(Map<String, TemplateQuery> templates, 
+            Map<String, InterMineBag> savedBags) {
+        super(new HashMap());
         this.templates = templates;
         reset();
     }

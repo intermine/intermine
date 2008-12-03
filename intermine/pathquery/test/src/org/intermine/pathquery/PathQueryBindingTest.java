@@ -1,4 +1,4 @@
-package org.intermine.web.logic.query;
+package org.intermine.pathquery;
 
 /*
  * Copyright (C) 2002-2008 FlyMine
@@ -15,21 +15,14 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
 import junit.framework.TestCase;
 
-import org.intermine.TestUtil;
 import org.intermine.metadata.Model;
 import org.intermine.objectstore.query.ConstraintOp;
-import org.intermine.path.Path;
-import org.intermine.pathquery.Constraint;
-import org.intermine.pathquery.PathNode;
-import org.intermine.pathquery.PathQuery;
-import org.intermine.pathquery.PathQueryBinding;
 
 /**
  * Tests for the PathQueryBinding class
@@ -38,15 +31,13 @@ import org.intermine.pathquery.PathQueryBinding;
  */
 public class PathQueryBindingTest extends TestCase
 {
-    Map savedQueries, expected, classKeys;
+    Map<String, PathQuery> savedQueries, expected;
 
     public void setUp() throws Exception {
         super.setUp();
         InputStream is = getClass().getClassLoader().getResourceAsStream("PathQueryBindingTest.xml");
-        classKeys = TestUtil.getClassKeys(TestUtil.getModel());
-        savedQueries = PathQueryBinding.unmarshal(new InputStreamReader(is), classKeys);
+        savedQueries = PathQueryBinding.unmarshal(new InputStreamReader(is));
         // checking can be removed maybe
-        MainHelper.checkPathQueries(savedQueries, new HashMap());
         expected = getExpectedQueries();
     }
 
@@ -55,8 +46,8 @@ public class PathQueryBindingTest extends TestCase
     }
 
 
-    public Map getExpectedQueries() {
-        Map expected = new LinkedHashMap();
+    public Map<String, PathQuery> getExpectedQueries() {
+        Map<String, PathQuery> expected = new LinkedHashMap<String, PathQuery>();
 
         Model model = Model.getInstanceByName("testmodel");
         // allCompanies
@@ -83,16 +74,15 @@ public class PathQueryBindingTest extends TestCase
                                                           "Department of the Employee");
         expected.put("employeesWithOldManagers", employeesWithOldManagers);
 
-        // vatNumberInBag
-        PathQuery vatNumberInBag = new PathQuery(model);
+        // companyInBag
+        PathQuery companyInBag = new PathQuery(model);
         view = new ArrayList();
-        view.add(PathQuery.makePath(model, vatNumberInBag, "Company"));
-        vatNumberInBag.setViewPaths(view);
-        PathNode company = vatNumberInBag.addNode("Company");
+        view.add(PathQuery.makePath(model, companyInBag, "Company"));
+        companyInBag.setViewPaths(view);
+        PathNode company = companyInBag.addNode("Company");
         company.getConstraints().add(new Constraint(ConstraintOp.IN, "bag1"));
-        PathNode vatNumber = vatNumberInBag.addNode("Company.vatNumber");
-        expected.put("vatNumberInBag", vatNumberInBag);
-
+        expected.put("companyInBag", companyInBag);
+        
         // queryWithConstraint
         PathQuery queryWithConstraint = new PathQuery(model);
         view = new ArrayList();
@@ -133,9 +123,13 @@ public class PathQueryBindingTest extends TestCase
         assertEquals(expected.get("employeesWithOldManagers"), savedQueries.get("employeesWithOldManagers"));
     }
 
-    // will move vatNumber bag constraint to parent node
+    // this will fail to validate - attributes cannot be in bags
     public void testVatNumberInBag() throws Exception {
-        assertEquals(expected.get("vatNumberInBag"), savedQueries.get("vatNumberInBag"));
+        //assertEquals(expected.get("vatNumberInBag"), savedQueries.get("vatNumberInBag"));
+    }
+
+    public void companyNumberInBag() throws Exception {
+        assertEquals(expected.get("companyInBag"), savedQueries.get("companyInBag"));
     }
 
     // this won't move bag constraint to parent, will not produce a valid query
@@ -152,9 +146,8 @@ public class PathQueryBindingTest extends TestCase
         String xml = PathQueryBinding.marshal((PathQuery) expected.get("employeesWithOldManagers"),
                                               "employeesWithOldManagers", "testmodel");
         Map readFromXml = new LinkedHashMap();
-        readFromXml = PathQueryBinding.unmarshal(new InputStreamReader(new ByteArrayInputStream(xml.getBytes())), classKeys);
+        readFromXml = PathQueryBinding.unmarshal(new InputStreamReader(new ByteArrayInputStream(xml.getBytes())));
         // checking can be removed maybe
-        MainHelper.checkPathQueries(readFromXml, new HashMap());
         Map expectedQuery = new LinkedHashMap();
         expectedQuery.put("employeesWithOldManagers", expected.get("employeesWithOldManagers"));
 
@@ -163,8 +156,7 @@ public class PathQueryBindingTest extends TestCase
         xml = PathQueryBinding.marshal((PathQuery) expected.get("queryWithConstraint"),
                                        "queryWithConstraint", "testmodel");
         readFromXml = new LinkedHashMap();
-        readFromXml = PathQueryBinding.unmarshal(new InputStreamReader(new ByteArrayInputStream(xml.getBytes())), classKeys);
-        MainHelper.checkPathQueries(readFromXml, new HashMap());
+        readFromXml = PathQueryBinding.unmarshal(new InputStreamReader(new ByteArrayInputStream(xml.getBytes())));
         expectedQuery = new LinkedHashMap();
         expectedQuery.put("queryWithConstraint", expected.get("queryWithConstraint"));
 

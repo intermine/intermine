@@ -10,31 +10,20 @@ package org.intermine.web.task;
  *
  */
 
-import java.util.List;
-import java.util.Map;
-import java.util.Properties;
-
-import org.intermine.metadata.FieldDescriptor;
-import org.intermine.objectstore.ObjectStore;
-import org.intermine.objectstore.ObjectStoreFactory;
-import org.intermine.objectstore.ObjectStoreWriter;
-import org.intermine.objectstore.ObjectStoreWriterFactory;
-import org.intermine.web.ProfileManagerBinding;
-import org.intermine.web.logic.ClassKeyHelper;
-import org.intermine.web.logic.Constants;
-import org.intermine.web.logic.profile.ProfileManager;
-
 import java.io.FileWriter;
 import java.io.IOException;
 
-import javax.servlet.ServletContext;
 import javax.xml.stream.XMLOutputFactory;
 import javax.xml.stream.XMLStreamWriter;
 
 import org.apache.tools.ant.BuildException;
 import org.apache.tools.ant.Task;
-
-import servletunit.ServletContextSimulator;
+import org.intermine.objectstore.ObjectStore;
+import org.intermine.objectstore.ObjectStoreFactory;
+import org.intermine.objectstore.ObjectStoreWriter;
+import org.intermine.objectstore.ObjectStoreWriterFactory;
+import org.intermine.web.ProfileManagerBinding;
+import org.intermine.web.logic.profile.ProfileManager;
 
 /**
  * Task to write an XML file of a webapp userprofile object store.
@@ -98,17 +87,9 @@ public class ProfileWriteTask extends Task
         try {
             ObjectStore os = ObjectStoreFactory.getObjectStore(osAlias);
             ObjectStoreWriter userProfileOS =
-                ObjectStoreWriterFactory.getObjectStoreWriter(userProfileAlias);
-            Properties classKeyProps = new Properties();
-            classKeyProps.load(getClass().getClassLoader()
-                               .getResourceAsStream("class_keys.properties"));
-            Map<String, List<FieldDescriptor>> classKeys 
-            = ClassKeyHelper.readKeys(os.getModel(), classKeyProps);    
+                ObjectStoreWriterFactory.getObjectStoreWriter(userProfileAlias);            
             
-            ServletContext servletContext = new ServletContextSimulator(); 
-            servletContext.setAttribute(Constants.CLASS_KEYS, classKeys);             
-            
-            ProfileManager pm = new ProfileManager(os, userProfileOS, classKeys);
+            ProfileManager pm = new ProfileManager(os, userProfileOS);
 
             XMLOutputFactory factory = XMLOutputFactory.newInstance();
 

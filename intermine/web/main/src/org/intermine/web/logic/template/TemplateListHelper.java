@@ -32,13 +32,14 @@ import org.intermine.model.InterMineObject;
 import org.intermine.model.userprofile.Tag;
 import org.intermine.objectstore.ObjectStore;
 import org.intermine.objectstore.query.ConstraintOp;
-import org.intermine.path.Path;
 import org.intermine.pathquery.Constraint;
+import org.intermine.pathquery.Path;
 import org.intermine.pathquery.PathNode;
 import org.intermine.util.DynamicUtil;
 import org.intermine.util.TypeUtil;
 import org.intermine.web.logic.ClassKeyHelper;
 import org.intermine.web.logic.Constants;
+import org.intermine.web.logic.PathUtil;
 import org.intermine.web.logic.bag.InterMineBag;
 import org.intermine.web.logic.profile.Profile;
 import org.intermine.web.logic.profile.ProfileManager;
@@ -171,7 +172,7 @@ public class TemplateListHelper
                                 && model.getClassDescriptorByName(className)
                                         .getFieldDescriptorByName(fieldName) != null) {
                                 Path path = new Path(model, fieldExpr);
-                                if (path.resolve(object) == null) {
+                                if (PathUtil.resolvePath(path, object) == null) {
                                     // ignore this template because putting a null into a template
                                     // isn't a good idea
                                     continue TEMPLATE;

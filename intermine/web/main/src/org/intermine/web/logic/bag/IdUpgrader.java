@@ -31,6 +31,10 @@ public interface IdUpgrader
      */
     public Set getNewIds(InterMineObject oldObject, ObjectStore os);
 
+    /**
+     * Return true if upgrade should be performed
+     * @return true if upgrade should be performed
+     */
     public boolean doUpgrade();
     
     /**
@@ -40,9 +44,9 @@ public interface IdUpgrader
         public Set getNewIds(InterMineObject oldObject, ObjectStore objectStore) {
             throw new RuntimeException("Shouldn't call getNewIds() in a running webapp");
         }
-        
+
         public boolean doUpgrade() {
-        	return false;
+            return false;
         }
     };
 }

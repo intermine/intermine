@@ -39,13 +39,14 @@ import org.intermine.objectstore.query.QuerySelectable;
 import org.intermine.objectstore.query.Results;
 import org.intermine.objectstore.query.ResultsInfo;
 import org.intermine.objectstore.query.ResultsRow;
-import org.intermine.path.Path;
-import org.intermine.path.PathError;
+import org.intermine.pathquery.Path;
+import org.intermine.pathquery.PathError;
 import org.intermine.pathquery.PathQuery;
 import org.intermine.pathquery.PathQueryBinding;
 import org.intermine.util.DynamicUtil;
 import org.intermine.util.TypeUtil;
 import org.intermine.web.logic.ClassKeyHelper;
+import org.intermine.web.logic.PathUtil;
 import org.intermine.web.logic.WebUtil;
 import org.intermine.web.logic.bag.BagQueryResult;
 
@@ -350,6 +351,7 @@ public class WebResults extends AbstractList<List<Object>> implements WebTable
                 if (columnIndexInteger == null) {
                     columnIndexInteger = (Integer) pathToIndex.get(parentColumnName);
                 }
+
                 if (columnIndexInteger == null) {
                     throw new NullPointerException("Path: \""
                                                    + columnName
@@ -403,7 +405,7 @@ public class WebResults extends AbstractList<List<Object>> implements WebTable
                 // 3) the object is null (outer join) so add null value rowCells
                 Object fieldValue;
                 try {
-                    fieldValue = (o == null ? null : path.resolve(o));
+                    fieldValue = (o == null ? null : PathUtil.resolvePath(path, o));
                 } catch (PathError e) {
                         throw new IllegalArgumentException(
                         "Path: \""

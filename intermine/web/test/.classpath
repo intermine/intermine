@@ -11,7 +11,6 @@
 	<classpathentry combineaccessrules="false" kind="src" path="/intermine-objectstore-test"/>
 	<classpathentry combineaccessrules="false" kind="src" path="/userprofile"/>
 	<classpathentry kind="lib" path="/intermine-objectstore-test/lib/junit.jar" sourcepath="/software/noarch/junit3.8.1/src.jar"/>
-	<classpathentry kind="lib" path="build/main"/>
 	<classpathentry combineaccessrules="false" kind="src" path="/testmodel-dbmodel"/>
 	<classpathentry kind="lib" path="/testmodel-dbmodel/resources"/>
 	<classpathentry kind="output" path="bin"/>

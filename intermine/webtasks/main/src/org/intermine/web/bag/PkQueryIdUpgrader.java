@@ -61,6 +61,10 @@ public class PkQueryIdUpgrader implements IdUpgrader
         this.eof = new BaseEquivalentObjectFetcher(os.getModel(), new IntToIntMap(), os);
     }
 
+    /**
+     * Return true if upgrade should be performed.
+     * @return true if upgrade shoule be performed
+     */
     public boolean doUpgrade() {
         return true;
     }

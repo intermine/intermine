@@ -108,7 +108,7 @@ public class TemplatesImportForm extends ValidatorForm
         try {
             Map<String, InterMineBag> allBags =
                 WebUtil.getAllBags(profile.getSavedBags(), servletContext);
-           TemplateHelper.xmlToTemplateMap(getXml(), allBags, servletContext);
+           TemplateHelper.xmlToTemplateMap(getXml(), allBags);
         } catch (Exception err) {
             if (errors == null) {
                 errors = new ActionErrors();

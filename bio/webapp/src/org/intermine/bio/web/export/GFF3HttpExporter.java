@@ -10,6 +10,8 @@ package org.intermine.bio.web.export;
  *
  */
 
+import java.io.InputStream;
+import java.io.PrintWriter;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.LinkedList;
@@ -17,7 +19,14 @@ import java.util.List;
 import java.util.Map;
 import java.util.Properties;
 
-import org.intermine.path.Path;
+import javax.servlet.ServletContext;
+import javax.servlet.ServletException;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
+
+import org.flymine.model.genomic.LocatedSequenceFeature;
+import org.intermine.pathquery.Path;
 import org.intermine.util.StringUtil;
 import org.intermine.web.logic.export.ExportException;
 import org.intermine.web.logic.export.ExportHelper;
@@ -28,17 +37,6 @@ import org.intermine.web.logic.export.http.HttpExporterBase;
 import org.intermine.web.logic.export.http.TableHttpExporter;
 import org.intermine.web.logic.results.PagedTable;
 import org.intermine.web.struts.TableExportForm;
-
-import org.flymine.model.genomic.LocatedSequenceFeature;
-
-import java.io.InputStream;
-import java.io.PrintWriter;
-
-import javax.servlet.ServletContext;
-import javax.servlet.ServletException;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-import javax.servlet.http.HttpSession;
 
 /**
  * An implementation of TableHttpExporter that exports LocatedSequenceFeature

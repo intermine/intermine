@@ -25,9 +25,10 @@ import org.intermine.model.InterMineObject;
 import org.intermine.objectstore.ObjectStore;
 import org.intermine.objectstore.proxy.LazyCollection;
 import org.intermine.objectstore.proxy.ProxyReference;
-import org.intermine.path.Path;
-import org.intermine.path.PathError;
+import org.intermine.pathquery.Path;
+import org.intermine.pathquery.PathError;
 import org.intermine.web.logic.ClassKeyHelper;
+import org.intermine.web.logic.PathUtil;
 import org.intermine.web.logic.config.FieldConfig;
 import org.intermine.web.logic.config.FieldConfigHelper;
 import org.intermine.web.logic.config.WebConfig;
@@ -221,7 +222,7 @@ public class InlineResultsTable
                 String pathString = "." + expr;
                 Path path = new Path(model, pathString);
 
-                fieldValues.put(expr, path.resolve(o));
+                fieldValues.put(expr, PathUtil.resolvePath(path, o));
 
 //                try {
 //                    fieldValues.put(expr, TypeUtil.getFieldValue(o, expr));
@@ -324,7 +325,7 @@ public class InlineResultsTable
                 String lastFieldName = path.getEndFieldDescriptor().getName();
                 boolean isKeyField =
                     ClassKeyHelper.isKeyField(classKeys, endTypeName, lastFieldName);
-                ResultElement resultElement = new ResultElement(os, path.resolve(o),
+                ResultElement resultElement = new ResultElement(os, PathUtil.resolvePath(path, o),
                         (o instanceof InterMineObject ? ((InterMineObject) o).getId() : null),
                         endType, path, isKeyField);
                 retList.add(resultElement);

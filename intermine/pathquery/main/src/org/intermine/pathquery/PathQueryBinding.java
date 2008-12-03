@@ -14,15 +14,12 @@ import java.io.Reader;
 import java.io.StringWriter;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
-import java.util.List;
 import java.util.Map;
 
 import javax.xml.stream.XMLOutputFactory;
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamWriter;
 
-import org.intermine.metadata.FieldDescriptor;
-import org.intermine.path.Path;
 import org.intermine.util.SAXParser;
 import org.intermine.util.StringUtil;
 import org.xml.sax.InputSource;
@@ -145,14 +142,12 @@ public class PathQueryBinding
     /**
      * Parse PathQueries from XML
      * @param reader the saved queries
-     * @param classKeys class keys
      * @return a Map from query name to PathQuery
      */
-    public static Map<String, PathQuery> unmarshal(Reader reader,
-            Map<String, List<FieldDescriptor>> classKeys) {
+    public static Map<String, PathQuery> unmarshal(Reader reader) {
         Map<String, PathQuery> queries = new LinkedHashMap<String, PathQuery>();
         try {
-            SAXParser.parse(new InputSource(reader), new PathQueryHandler(queries, classKeys));
+            SAXParser.parse(new InputSource(reader), new PathQueryHandler(queries));
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
@@ -162,12 +157,10 @@ public class PathQueryBinding
     /**
      * Parses PathQuery from XML.
      * @param reader reader containing XML
-     * @param classKeys class keys
      * @return PathQuery
      */
-    public static PathQuery unmarshalPathQuery(Reader reader,
-            Map<String, List<FieldDescriptor>> classKeys) {
-        Map<String, PathQuery> map =  unmarshal(reader, classKeys);
+    public static PathQuery unmarshalPathQuery(Reader reader) {
+        Map<String, PathQuery> map = unmarshal(reader);
         if (map.size() != 0) {
             return map.values().iterator().next();
         }

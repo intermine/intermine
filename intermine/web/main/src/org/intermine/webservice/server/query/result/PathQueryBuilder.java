@@ -15,8 +15,8 @@ import java.util.Map;
 
 import javax.servlet.ServletContext;
 
-import org.intermine.objectstore.query.PathQueryUtil;
 import org.intermine.pathquery.PathQuery;
+import org.intermine.pathquery.PathQueryUtil;
 import org.intermine.web.logic.ServletMethods;
 import org.intermine.web.logic.bag.InterMineBag;
 import org.intermine.webservice.server.exceptions.BadRequestException;
@@ -40,12 +40,12 @@ public class PathQueryBuilder
      * @param savedBags previously saved bags  
      */
     public PathQueryBuilder(String xml, String schemaUrl, ServletContext servletContext, 
-            Map<Object, InterMineBag> savedBags) {
+            Map<String, InterMineBag> savedBags) {
         buildQuery(xml, schemaUrl, servletContext, savedBags);
     }
 
     private void buildQuery(String xml, String schemaUrl, ServletContext servletContext, 
-            Map<Object, InterMineBag> savedBags) {
+            Map<String, InterMineBag> savedBags) {
         XMLValidator validator = new XMLValidator();
         validator.validate(xml, schemaUrl);
         if (validator.getErrorsAndWarnings().size() == 0) {

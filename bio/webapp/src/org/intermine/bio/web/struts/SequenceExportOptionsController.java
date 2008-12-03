@@ -16,18 +16,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import org.intermine.metadata.ClassDescriptor;
-import org.intermine.path.Path;
-import org.intermine.util.DynamicUtil;
-import org.intermine.web.logic.results.Column;
-import org.intermine.web.logic.results.PagedTable;
-import org.intermine.web.logic.session.SessionMethods;
-
-import org.flymine.model.genomic.LocatedSequenceFeature;
-import org.flymine.model.genomic.Protein;
-import org.flymine.model.genomic.Sequence;
-import org.flymine.model.genomic.Translation;
-
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
@@ -37,6 +25,16 @@ import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
 import org.apache.struts.tiles.ComponentContext;
 import org.apache.struts.tiles.actions.TilesAction;
+import org.flymine.model.genomic.LocatedSequenceFeature;
+import org.flymine.model.genomic.Protein;
+import org.flymine.model.genomic.Sequence;
+import org.flymine.model.genomic.Translation;
+import org.intermine.metadata.ClassDescriptor;
+import org.intermine.pathquery.Path;
+import org.intermine.util.DynamicUtil;
+import org.intermine.web.logic.results.Column;
+import org.intermine.web.logic.results.PagedTable;
+import org.intermine.web.logic.session.SessionMethods;
 
 /**
  * Controller for sequence export tile.

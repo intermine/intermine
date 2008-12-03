@@ -19,7 +19,6 @@ import java.util.Map;
 
 import junit.framework.TestCase;
 
-import org.apache.tools.ant.types.CommandlineJava.SysProperties;
 import org.intermine.metadata.FieldDescriptor;
 import org.intermine.metadata.Model;
 import org.intermine.model.testmodel.CEO;
@@ -31,17 +30,13 @@ import org.intermine.objectstore.dummy.ObjectStoreDummyImpl;
 import org.intermine.objectstore.query.Query;
 import org.intermine.objectstore.query.QueryClass;
 import org.intermine.objectstore.query.QueryField;
-import org.intermine.objectstore.query.QueryNode;
 import org.intermine.objectstore.query.QuerySelectable;
 import org.intermine.objectstore.query.Results;
 import org.intermine.objectstore.query.ResultsRow;
 import org.intermine.objectstore.query.iql.IqlQuery;
-import org.intermine.path.Path;
+import org.intermine.pathquery.Path;
 import org.intermine.pathquery.PathQuery;
-import org.intermine.pathquery.PathQueryHandler;
 import org.intermine.util.DynamicUtil;
-import org.intermine.web.logic.pathqueryresult.PathQueryResultHelper;
-import org.intermine.web.logic.profile.Profile;
 import org.intermine.web.logic.query.MainHelper;
 
 /**

@@ -10,19 +10,9 @@ package org.intermine.web.struts;
  *
  */
 
+import java.io.StringReader;
 import java.util.Map;
 
-import org.intermine.pathquery.PathQuery;
-import org.intermine.pathquery.PathQueryBinding;
-import org.intermine.web.logic.Constants;
-import org.intermine.web.logic.profile.Profile;
-import org.intermine.web.logic.query.MainHelper;
-import org.intermine.web.logic.query.QueryMonitorTimeout;
-import org.intermine.web.logic.session.SessionMethods;
-
-import java.io.StringReader;
-
-import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
@@ -33,6 +23,13 @@ import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
 import org.apache.struts.actions.DispatchAction;
 import org.apache.struts.util.MessageResources;
+import org.intermine.pathquery.PathQuery;
+import org.intermine.pathquery.PathQueryBinding;
+import org.intermine.web.logic.Constants;
+import org.intermine.web.logic.profile.Profile;
+import org.intermine.web.logic.query.MainHelper;
+import org.intermine.web.logic.query.QueryMonitorTimeout;
+import org.intermine.web.logic.session.SessionMethods;
 
 /**
  * Implementation of <strong>Action</strong> that sets the current Query for
@@ -60,7 +57,6 @@ public class LoadQueryAction extends DispatchAction
                               HttpServletResponse response)
         throws Exception {
         HttpSession session = request.getSession();
-        ServletContext servletContext = session.getServletContext();
         Profile profile = (Profile) session.getAttribute(Constants.PROFILE);
         String trail = request.getParameter("trail");
         String queryXml = request.getParameter("query");
@@ -69,8 +65,7 @@ public class LoadQueryAction extends DispatchAction
         //Map classKeys = (Map) servletContext.getAttribute(Constants.CLASS_KEYS);
         //Map<String, InterMineBag> allBags =
         //    WebUtil.getAllBags(profile.getSavedBags(), servletContext);
-        Map queries = PathQueryBinding.unmarshal(new StringReader(queryXml),
-                                                 SessionMethods.getClassKeys(servletContext));
+        Map<String, PathQuery> queries = PathQueryBinding.unmarshal(new StringReader(queryXml));
         MainHelper.checkPathQueries(queries, profile.getSavedBags());
         PathQuery query = (PathQuery) queries.values().iterator().next();
         SessionMethods.loadQuery(query, session, response);

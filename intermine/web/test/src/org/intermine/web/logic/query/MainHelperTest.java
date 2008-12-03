@@ -13,7 +13,7 @@ package org.intermine.web.logic.query;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.StringReader;
-
+import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.LinkedList;
@@ -23,13 +23,13 @@ import java.util.Map;
 import junit.framework.TestCase;
 
 import org.intermine.TestUtil;
+import org.intermine.metadata.FieldDescriptor;
 import org.intermine.metadata.Model;
 import org.intermine.model.testmodel.Company;
 import org.intermine.model.testmodel.Department;
 import org.intermine.model.testmodel.Employee;
 import org.intermine.objectstore.ObjectStore;
 import org.intermine.objectstore.ObjectStoreFactory;
-
 import org.intermine.objectstore.query.ConstraintOp;
 import org.intermine.objectstore.query.ConstraintSet;
 import org.intermine.objectstore.query.ContainsConstraint;
@@ -42,9 +42,9 @@ import org.intermine.objectstore.query.QueryNode;
 import org.intermine.objectstore.query.QueryObjectReference;
 import org.intermine.objectstore.query.QueryValue;
 import org.intermine.objectstore.query.SimpleConstraint;
-import org.intermine.path.Path;
 import org.intermine.pathquery.Constraint;
 import org.intermine.pathquery.LogicExpression;
+import org.intermine.pathquery.Path;
 import org.intermine.pathquery.PathNode;
 import org.intermine.pathquery.PathQuery;
 import org.intermine.pathquery.PathQueryBinding;
@@ -58,10 +58,10 @@ import org.intermine.web.logic.bag.BagQueryHelper;
  */
 
 public class MainHelperTest extends TestCase {
-    private Map classKeys;
     private BagQueryConfig bagQueryConfig;
     private ObjectStore os;
-
+    private Map<String, List<FieldDescriptor>> classKeys;
+    
     public MainHelperTest(String arg) {
         super(arg);
     }
@@ -426,7 +426,7 @@ public class MainHelperTest extends TestCase {
     
     private Map readQueries() throws Exception {
         InputStream is = getClass().getClassLoader().getResourceAsStream("MainHelperTest.xml");
-        Map ret = PathQueryBinding.unmarshal(new InputStreamReader(is), classKeys);
+        Map ret = PathQueryBinding.unmarshal(new InputStreamReader(is));
         return ret;
     }
     
@@ -537,6 +537,7 @@ public class MainHelperTest extends TestCase {
                 "SELECT DISTINCT a1_.a4_ AS a2_, COUNT(*) AS a3_ FROM (SELECT DISTINCT a1_, a3_, a3_.name AS a4_ FROM org.intermine.model.testmodel.Employee AS a1_, org.intermine.model.testmodel.Department AS a2_, org.intermine.model.testmodel.Employee AS a3_ WHERE (a1_.department CONTAINS a2_ AND a2_.employees CONTAINS a3_ AND a3_ != a1_)) AS a1_ GROUP BY a1_.a4_ ORDER BY COUNT(*) DESC");
     }
 
+
     public void test15() throws Exception {
         doQuery("<query name=\"test\" model=\"testmodel\" view=\"Employee.name Employee:department.name\"/>",
                 "SELECT DISTINCT a1_, a1_.department AS a2_ FROM org.intermine.model.testmodel.Employee AS a1_ ORDER BY a1_.name",
@@ -617,7 +618,7 @@ public class MainHelperTest extends TestCase {
     
     public void doQuery(String web, String iql, String ... summaries) throws Exception {
         try {
-            Map parsed = PathQueryBinding.unmarshal(new StringReader(web), classKeys);
+            Map parsed = PathQueryBinding.unmarshal(new StringReader(web));
             PathQuery pq = (PathQuery) parsed.get("test");
             Query q = MainHelper.makeQuery(pq, new HashMap(), new HashMap(), null, null, false, os,
                     classKeys, bagQueryConfig);
@@ -631,7 +632,7 @@ public class MainHelperTest extends TestCase {
         int columnNo = 0;
         String summaryPath = null;
         try {
-            Map parsed = PathQueryBinding.unmarshal(new StringReader(web), classKeys);
+            Map parsed = PathQueryBinding.unmarshal(new StringReader(web));
             PathQuery pq = (PathQuery) parsed.get("test");
             for (String summary : summaries) {
                 try {

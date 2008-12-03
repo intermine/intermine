@@ -12,10 +12,8 @@ package org.intermine.web.logic.query;
 
 import java.util.Date;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
-import org.intermine.metadata.FieldDescriptor;
 import org.intermine.pathquery.PathQuery;
 import org.intermine.pathquery.PathQueryHandler;
 import org.xml.sax.Attributes;
@@ -35,11 +33,9 @@ public class SavedQueryHandler extends PathQueryHandler
      * Constructor
      * @param queries Map from saved query name to SavedQuery
      * @param savedBags Map from bag name to bag
-     * @param classKeys class keys
      */
-    public SavedQueryHandler(Map<String, SavedQuery> queries, Map savedBags,
-            Map<String, List<FieldDescriptor>> classKeys) {
-        super(new HashMap<String, PathQuery> (), classKeys);
+    public SavedQueryHandler(Map<String, SavedQuery> queries, Map savedBags) {
+        super(new HashMap<String, PathQuery> ());
         this.queries = queries;
     }
 

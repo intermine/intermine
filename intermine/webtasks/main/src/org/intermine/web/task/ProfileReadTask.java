@@ -10,11 +10,11 @@ package org.intermine.web.task;
  *
  */
 
-import java.util.List;
-import java.util.Map;
-import java.util.Properties;
+import java.io.FileReader;
+import java.io.IOException;
 
-import org.intermine.metadata.FieldDescriptor;
+import org.apache.tools.ant.BuildException;
+import org.apache.tools.ant.Task;
 import org.intermine.objectstore.ObjectStore;
 import org.intermine.objectstore.ObjectStoreException;
 import org.intermine.objectstore.ObjectStoreFactory;
@@ -23,19 +23,7 @@ import org.intermine.objectstore.ObjectStoreWriterFactory;
 import org.intermine.objectstore.intermine.ObjectStoreWriterInterMineImpl;
 import org.intermine.web.ProfileManagerBinding;
 import org.intermine.web.bag.PkQueryIdUpgrader;
-import org.intermine.web.logic.ClassKeyHelper;
-import org.intermine.web.logic.Constants;
 import org.intermine.web.logic.profile.ProfileManager;
-
-import java.io.FileReader;
-import java.io.IOException;
-
-import javax.servlet.ServletContext;
-
-import org.apache.tools.ant.BuildException;
-import org.apache.tools.ant.Task;
-
-import servletunit.ServletContextSimulator;
 
 /**
  * Task to read an XML file of a webapp userprofiles into a userprofile ObjectStore.
@@ -114,14 +102,7 @@ public class ProfileReadTask extends Task
             ObjectStore os = ObjectStoreFactory.getObjectStore(osAlias);
             ObjectStoreWriter userProfileOS =
                 ObjectStoreWriterFactory.getObjectStoreWriter(userProfileAlias);
-            Properties classKeyProps = new Properties();
-            classKeyProps.load(getClass().getClassLoader()
-                               .getResourceAsStream("class_keys.properties"));
-            Map<String, List<FieldDescriptor>> classKeys 
-            = ClassKeyHelper.readKeys(os.getModel(), classKeyProps);
-            ServletContext servletContext = new ServletContextSimulator();
-            servletContext.setAttribute(Constants.CLASS_KEYS, classKeys);
-            ProfileManager pm = new ProfileManager(os, userProfileOS, classKeys);
+            ProfileManager pm = new ProfileManager(os, userProfileOS);
             osw = new ObjectStoreWriterInterMineImpl(os);
 
             PkQueryIdUpgrader upgrader;
@@ -130,7 +111,7 @@ public class ProfileReadTask extends Task
             } else {
                 upgrader = new PkQueryIdUpgrader(this.source, osw);
             }
-            ProfileManagerBinding.unmarshal(reader, pm, osw, upgrader, servletContext, false);
+            ProfileManagerBinding.unmarshal(reader, pm, osw, upgrader, false);
         } catch (Exception e) {
             throw new BuildException(e);
         } finally {

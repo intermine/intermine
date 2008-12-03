@@ -12,7 +12,6 @@ package org.intermine.model.testmodel.web;
 
 import java.io.IOException;
 import java.io.PrintWriter;
-
 import java.util.ArrayList;
 import java.util.List;
 
@@ -25,7 +24,7 @@ import org.apache.struts.action.ActionMessages;
 import org.intermine.metadata.ClassDescriptor;
 import org.intermine.model.testmodel.Employee;
 import org.intermine.objectstore.ObjectStoreException;
-import org.intermine.path.Path;
+import org.intermine.pathquery.Path;
 import org.intermine.web.logic.export.ExportException;
 import org.intermine.web.logic.export.ExportHelper;
 import org.intermine.web.logic.export.http.HttpExportUtil;

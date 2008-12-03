@@ -12,12 +12,12 @@ package org.intermine.web.logic.export.http;
 
 import java.util.List;
 
-import org.intermine.path.Path;
-import org.intermine.web.logic.results.PagedTable;
-import org.intermine.web.struts.TableExportForm;
-
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+
+import org.intermine.pathquery.Path;
+import org.intermine.web.logic.results.PagedTable;
+import org.intermine.web.struts.TableExportForm;
 
 /**
  * Implemented by objects that can export PagedTable.

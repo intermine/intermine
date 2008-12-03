@@ -12,7 +12,7 @@ package org.intermine.web.logic.export;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.intermine.path.Path;
+import org.intermine.pathquery.Path;
 import org.intermine.web.logic.results.Column;
 import org.intermine.web.logic.results.PagedTable;
 

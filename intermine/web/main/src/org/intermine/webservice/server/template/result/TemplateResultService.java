@@ -18,7 +18,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.apache.struts.Globals;
-import org.intermine.objectstore.query.PathQueryUtil;
+import org.intermine.pathquery.PathQueryUtil;
 import org.intermine.web.logic.template.TemplateHelper;
 import org.intermine.web.logic.template.TemplateQuery;
 import org.intermine.web.struts.TemplateAction;

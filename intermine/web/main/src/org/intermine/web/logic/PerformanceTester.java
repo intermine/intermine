@@ -66,8 +66,10 @@ public class PerformanceTester
                 PerformanceTester.class.getClassLoader()
                 .getResourceAsStream("webapp/WEB-INF/bag-queries.xml"));
         Map classKeys = ClassKeyHelper.readKeys(productionOs.getModel(), classKeyProps);
-        ProfileManager pm = new ProfileManager(productionOs, userProfileOs, null);
+
+        ProfileManager pm = new ProfileManager(productionOs, userProfileOs);
         Profile p = pm.getProfile(superuser);
+
         Map<String, TemplateQuery> templates = p.getSavedTemplates();
         templates = pm.filterByTags(templates, Collections.singletonList(TagNames.IM_PUBLIC),
                 TagTypes.TEMPLATE, superuser);

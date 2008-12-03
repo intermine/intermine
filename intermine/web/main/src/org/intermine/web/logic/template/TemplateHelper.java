@@ -364,15 +364,13 @@ public class TemplateHelper
      *
      * @param xml         the template queries in xml format
      * @param savedBags   Map from bag name to bag
-     * @param servletContext global ServletContext object
      * @return            Map from template name to TemplateQuery
      * @throws Exception  when a parse exception occurs (wrapped in a RuntimeException)
      */
-    public static Map xmlToTemplateMap(String xml, Map savedBags, ServletContext servletContext)
+    public static Map xmlToTemplateMap(String xml, Map<String, InterMineBag> savedBags)
     throws Exception {
         Reader templateQueriesReader = new StringReader(xml);
-        return new TemplateQueryBinding().unmarshal(templateQueriesReader, savedBags,
-                                                    SessionMethods.getClassKeys(servletContext));
+        return new TemplateQueryBinding().unmarshal(templateQueriesReader, savedBags);
     }
 
     /**
@@ -719,7 +717,7 @@ public class TemplateHelper
                 String path = node.getPathString();
                 if (!c.getOp().equals(ConstraintOp.LOOKUP)) {
                     if (!templateClone.viewContains(path)) {
-                        templateClone.addPathStringToView(path);
+                        templateClone.addView(path);
                     }
                     if (!indexPaths.contains(path)) {
                         indexPaths.add(path);

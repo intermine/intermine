@@ -1,14 +1,12 @@
 package org.intermine.web.logic.export;
 
+import java.io.ByteArrayOutputStream;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.intermine.path.Path;
-import org.intermine.web.logic.results.ResultElement;
-
-import java.io.ByteArrayOutputStream;
-
 import junit.framework.TestCase;
+
+import org.intermine.web.logic.results.ResultElement;
 
 /*
  * Copyright (C) 2002-2007 FlyMine

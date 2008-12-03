@@ -9,18 +9,15 @@ package org.intermine.web.logic.export;
  * information or http://www.gnu.org/copyleft/lesser.html.
  *
  */
-import java.util.Date;
-import java.util.List;
-
-import org.intermine.path.Path;
-import org.intermine.web.logic.results.ResultElement;
-
 import java.io.IOException;
 import java.io.OutputStream;
+import java.util.Date;
+import java.util.List;
 
 import org.apache.poi.hssf.usermodel.HSSFRow;
 import org.apache.poi.hssf.usermodel.HSSFSheet;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
+import org.intermine.web.logic.results.ResultElement;
 
 
 /**

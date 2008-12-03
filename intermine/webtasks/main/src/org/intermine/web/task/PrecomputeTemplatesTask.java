@@ -16,7 +16,6 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
-import java.util.Properties;
 import java.util.Set;
 
 import javax.servlet.ServletContext;
@@ -34,7 +33,6 @@ import org.intermine.objectstore.intermine.ObjectStoreInterMineImpl;
 import org.intermine.objectstore.query.ConstraintSet;
 import org.intermine.objectstore.query.Query;
 import org.intermine.objectstore.query.ResultsInfo;
-import org.intermine.web.logic.ClassKeyHelper;
 import org.intermine.web.logic.Constants;
 import org.intermine.web.logic.profile.Profile;
 import org.intermine.web.logic.profile.ProfileManager;
@@ -268,12 +266,7 @@ public class PrecomputeTemplatesTask extends Task
         try {
             os = ObjectStoreFactory.getObjectStore(alias);
             userProfileOS = ObjectStoreWriterFactory.getObjectStoreWriter(userProfileAlias);
-            Properties classKeyProps = new Properties();
-            classKeyProps.load(getClass().getClassLoader()
-                               .getResourceAsStream("class_keys.properties"));
-            Map classKeys = ClassKeyHelper.readKeys(os.getModel(), classKeyProps);
-            servletContext.setAttribute(Constants.CLASS_KEYS, classKeys);
-            pm = new ProfileManager(os, userProfileOS, classKeys);
+            pm = new ProfileManager(os, userProfileOS);
         } catch (Exception err) {
             throw new BuildException("Exception creating objectstore/profile manager", err);
         }

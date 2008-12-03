@@ -17,17 +17,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import org.intermine.model.userprofile.Tag;
-import org.intermine.web.logic.Constants;
-import org.intermine.web.logic.bag.InterMineBag;
-import org.intermine.web.logic.profile.ProfileManager;
-import org.intermine.web.logic.results.DisplayObject;
-import org.intermine.web.logic.session.SessionMethods;
-import org.intermine.web.logic.tagging.TagNames;
-import org.intermine.web.logic.tagging.TagTypes;
-import org.intermine.web.logic.template.TemplateListHelper;
-import org.intermine.web.logic.template.TemplateQuery;
-
 import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -39,6 +28,15 @@ import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
 import org.apache.struts.tiles.ComponentContext;
 import org.apache.struts.tiles.actions.TilesAction;
+import org.intermine.model.userprofile.Tag;
+import org.intermine.web.logic.bag.InterMineBag;
+import org.intermine.web.logic.profile.ProfileManager;
+import org.intermine.web.logic.results.DisplayObject;
+import org.intermine.web.logic.session.SessionMethods;
+import org.intermine.web.logic.tagging.TagNames;
+import org.intermine.web.logic.tagging.TagTypes;
+import org.intermine.web.logic.template.TemplateListHelper;
+import org.intermine.web.logic.template.TemplateQuery;
 
 /**
  * Controller for the template list tile.
