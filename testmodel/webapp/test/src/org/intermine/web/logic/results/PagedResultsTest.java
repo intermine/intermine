@@ -17,10 +17,8 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
-import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 
 import junit.framework.TestCase;
 
@@ -37,7 +35,7 @@ import org.intermine.objectstore.query.QueryField;
 import org.intermine.objectstore.query.Results;
 import org.intermine.objectstore.query.ResultsRow;
 import org.intermine.objectstore.query.iql.IqlQuery;
-import org.intermine.path.Path;
+import org.intermine.pathquery.Path;
 import org.intermine.pathquery.PathQuery;
 import org.intermine.pathquery.PathQueryBinding;
 import org.intermine.util.DynamicUtil;
@@ -237,7 +235,7 @@ public class PagedResultsTest extends TestCase
 
     private Map readQueries() throws Exception {
         InputStream is = getClass().getClassLoader().getResourceAsStream("MainHelperTest.xml");
-        return PathQueryBinding.unmarshal(new InputStreamReader(is), null);
+        return PathQueryBinding.unmarshal(new InputStreamReader(is));
     }
 
 //     public void testSizeLow() throws Exception {
