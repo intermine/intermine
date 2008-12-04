@@ -40,10 +40,11 @@ import org.intermine.objectstore.query.Query;
 import org.intermine.objectstore.query.Results;
 import org.intermine.util.DynamicUtil;
 import org.intermine.web.logic.Constants;
+import org.intermine.web.logic.aspects.AspectTagUtil;
 import org.intermine.web.logic.bag.InterMineBag;
 import org.intermine.web.logic.config.WebConfig;
 import org.intermine.web.logic.profile.Profile;
-import org.intermine.web.logic.profile.ProfileManager;
+import org.intermine.web.logic.profile.TagManager;
 import org.intermine.web.logic.results.DisplayCollection;
 import org.intermine.web.logic.results.DisplayField;
 import org.intermine.web.logic.results.DisplayObject;
@@ -77,6 +78,7 @@ public class ObjectDetailsController extends InterMineAction
                                  @SuppressWarnings("unused")
     HttpServletResponse response) throws Exception {
         HttpSession session = request.getSession();
+        TagManager tagManager = SessionMethods.getTagManager(session);
         ServletContext servletContext = session.getServletContext();
         ObjectStore os = (ObjectStore) servletContext
                 .getAttribute(Constants.OBJECTSTORE);
@@ -90,9 +92,7 @@ public class ObjectDetailsController extends InterMineAction
             return null;
         }
 
-        ProfileManager pm = (ProfileManager) servletContext
-                .getAttribute(Constants.PROFILE_MANAGER);
-        String superuser = pm.getSuperuser();
+        String superuser = SessionMethods.getProfileManager(servletContext).getSuperuser();
 
         DisplayObject dobj = displayObjects.get(id);
         if (dobj == null) {
@@ -115,7 +115,7 @@ public class ObjectDetailsController extends InterMineAction
                 dobj.getObject().getClass());
 
         placementRefsAndCollections.put(TagNames.IM_SUMMARY,
-                getSummaryFields(pm, superuser, dobj, cds));
+                getSummaryFields(tagManager, superuser, dobj, cds));
 
         for (String aspect : aspects) {
             placementRefsAndCollections.put(TagNames.IM_ASPECT_PREFIX + aspect,
@@ -131,12 +131,12 @@ public class ObjectDetailsController extends InterMineAction
             DisplayField df = (DisplayField) entry.getValue();
             if (df instanceof DisplayReference) {
                 categoriseBasedOnTags(((DisplayReference) df).getDescriptor(),
-                                      "reference", df, miscRefs, pm, superuser,
+                                      "reference", df, miscRefs, tagManager, superuser,
                                       placementRefsAndCollections, SessionMethods
                                       .isSuperUser(session));
             } else if (df instanceof DisplayCollection) {
                 categoriseBasedOnTags(((DisplayCollection) df).getDescriptor(),
-                                      "collection", df, miscRefs, pm, superuser,
+                                      "collection", df, miscRefs, tagManager, superuser,
                                       placementRefsAndCollections, SessionMethods
                                       .isSuperUser(session));
             }
@@ -168,13 +168,13 @@ public class ObjectDetailsController extends InterMineAction
 
     /**
      * Returns fields that should be displayed in summary.
-     * @param pm
+     * @param tagManager tag manager
      * @param superuser
      * @param dobj
      * @param cds
      * @return
      */
-    private Map<String, DisplayField> getSummaryFields(ProfileManager pm, String superuser,
+    private Map<String, DisplayField> getSummaryFields(TagManager tagManager, String superuser,
             DisplayObject dobj, Set<ClassDescriptor> cds) {
         Map<String, DisplayField> ret =
             new TreeMap<String, DisplayField>(String.CASE_INSENSITIVE_ORDER);
@@ -182,10 +182,10 @@ public class ObjectDetailsController extends InterMineAction
 
             // get all summary tags for all refs and collections of
             // this class
-            List<Tag> placementTags = new ArrayList<Tag>(pm.getTags(TagNames.IM_SUMMARY,
+            List<Tag> placementTags = new ArrayList<Tag>(tagManager.getTags(TagNames.IM_SUMMARY,
                                                                     cd.getUnqualifiedName() + ".%",
                                                                     "reference", superuser));
-            placementTags.addAll(pm.getTags(TagNames.IM_SUMMARY, cd.getUnqualifiedName() + ".%",
+            placementTags.addAll(tagManager.getTags(TagNames.IM_SUMMARY, cd.getUnqualifiedName() + ".%",
                                             "collection", superuser));
 
             for (Tag tag : placementTags) {
@@ -212,20 +212,19 @@ public class ObjectDetailsController extends InterMineAction
      * @param taggedType 'reference' or 'collection'
      * @param dispRef the corresponding DisplayReference or DisplayCollection
      * @param miscRefs map that contains dispRef (may be removed by this method)
-     * @param pm the ProfileManager
+     * @param tagManager the tag manager
      * @param sup  the superuser account name
      * @param placementRefsAndCollections take from the DisplayObject
      * @param isSuperUser if current user is superuser
      */
     public static void categoriseBasedOnTags(FieldDescriptor fd,
             String taggedType, DisplayField dispRef, Map miscRefs,
-            ProfileManager pm, String sup,
+            TagManager tagManager, String sup,
             Map<String, Map> placementRefsAndCollections, boolean isSuperUser) {
-        List tags = pm.getTags(null, fd.getClassDescriptor()
+        List<Tag> tags = tagManager.getTags(null, fd.getClassDescriptor()
                 .getUnqualifiedName()
                 + "." + fd.getName(), taggedType, sup);
-        for (Iterator ti = tags.iterator(); ti.hasNext();) {
-            Tag tag = (Tag) ti.next();
+        for (Tag tag : tags) {
             String tagName = tag.getTagName();
             if (!isSuperUser && tagName.equals(TagNames.IM_HIDDEN)) {
                 miscRefs.remove(fd.getName());
@@ -234,7 +233,7 @@ public class ObjectDetailsController extends InterMineAction
                 removeField(fd.getName(), placementRefsAndCollections);
                 return;
             }
-            if (ProfileManager.isAspectTag(tagName)) {
+            if (AspectTagUtil.isAspectTag(tagName)) {
                 Map<String, DisplayField> refs = placementRefsAndCollections.get(tagName);
                 if (refs != null) {
                     refs.put(fd.getName(), dispRef);

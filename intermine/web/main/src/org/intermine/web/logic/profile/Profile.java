@@ -14,14 +14,12 @@ import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Iterator;
-import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.TreeMap;
 
 import org.apache.commons.collections.map.ListOrderedMap;
 import org.apache.commons.lang.StringUtils;
-import org.intermine.model.userprofile.Tag;
 import org.intermine.objectstore.ObjectStore;
 import org.intermine.objectstore.ObjectStoreException;
 import org.intermine.objectstore.ObjectStoreWriter;
@@ -29,7 +27,6 @@ import org.intermine.web.logic.bag.InterMineBag;
 import org.intermine.web.logic.query.SavedQuery;
 import org.intermine.web.logic.search.SearchRepository;
 import org.intermine.web.logic.search.WebSearchable;
-import org.intermine.web.logic.tagging.TagNames;
 import org.intermine.web.logic.tagging.TagTypes;
 import org.intermine.web.logic.template.TemplateHelper;
 import org.intermine.web.logic.template.TemplateQuery;
@@ -174,8 +171,9 @@ public class Profile
      */
     public Map<String, TemplateQuery> getSavedTemplates(String tag) {
         Map<String, TemplateQuery> filteredTemplates = new HashMap();
+        TagManager tagManager = getTagManager();
         for (String template : savedTemplates.keySet()) {
-            Set<String> tags = manager.getObjectTagNames(template, TagTypes.TEMPLATE, username);
+            Set<String> tags = tagManager.getObjectTagNames(template, TagTypes.TEMPLATE, username);
             if (tags.contains(tag)) {
                 filteredTemplates.put(template, savedTemplates.get(template));
             }
@@ -213,13 +211,8 @@ public class Profile
     public void deleteTemplate(String name) {
         savedTemplates.remove(name);
         if (manager != null) {
-            manager.deleteObjectTags(name, TagTypes.TEMPLATE, username);
-            List favourites = manager.getTags(TagNames.IM_FAVOURITE, name,
-                                              TagTypes.TEMPLATE, username);
-            for (Iterator iter = favourites.iterator(); iter.hasNext();) {
-                Tag tag = (Tag) iter.next();
-                manager.deleteTag(tag);
-            }
+            TagManager tagManager = getTagManager();
+            tagManager.deleteObjectTags(name, TagTypes.TEMPLATE, username);
             if (!savingDisabled) {
                 manager.saveProfile(this);
                 reindex(TagTypes.TEMPLATE);
@@ -347,8 +340,15 @@ public class Profile
      */
     public void deleteBag(String name) {
         savedBags.remove(name);
-        manager.deleteObjectTags(name, TagTypes.BAG, username);
+        TagManager tagManager = getTagManager();
+        tagManager.deleteObjectTags(name, TagTypes.BAG, username);
         reindex(TagTypes.BAG);
+    }
+
+    private TagManager getTagManager() {
+        TagManager tagManager = new TagManagerFactory(manager.getProfileObjectStoreWriter())
+            .getTagManager();
+        return tagManager;
     }
 
     /**

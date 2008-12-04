@@ -10,8 +10,7 @@ package org.intermine.web.struts;
  *
  */
 
-import java.util.Iterator;
-import java.util.List;
+import java.util.Set;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -25,9 +24,9 @@ import org.apache.struts.tiles.actions.TilesAction;
 import org.intermine.model.userprofile.Tag;
 import org.intermine.web.logic.Constants;
 import org.intermine.web.logic.profile.Profile;
-import org.intermine.web.logic.profile.ProfileManager;
+import org.intermine.web.logic.profile.TagManager;
+import org.intermine.web.logic.session.SessionMethods;
 import org.intermine.web.logic.tagging.TagNames;
-import org.intermine.web.logic.tagging.TagTypes;
 
 /**
  * Controller for the starTemplate tile. This tile handles the display of the
@@ -52,20 +51,11 @@ public class SetFavouriteController extends TilesAction
         String type = (String) context.getAttribute("type");
         HttpSession session = request.getSession();
         Profile profile = (Profile) session.getAttribute(Constants.PROFILE);
-        ProfileManager pm = (ProfileManager) request.getSession().getServletContext().getAttribute(
-                Constants.PROFILE_MANAGER);
-        List userTags = null;
-        if (type.equals(TagTypes.TEMPLATE)) {
-            userTags = pm.getTags(null, name, TagTypes.TEMPLATE, profile.getUsername());
-        } else if (type.equals(TagTypes.BAG)) {
-            userTags = pm.getTags(null, name, TagTypes.BAG, profile.getUsername());
-        } else {
-            throw new RuntimeException("Wrong tag type:" + type);
-        }
+        TagManager tagManager = SessionMethods.getTagManager(session);
+        Set<String> userTags = tagManager.getObjectTagNames(name, type, profile.getUsername());
         String isFavourite = "false";
-        for (Iterator iter = userTags.iterator(); iter.hasNext();) {
-            Tag tag = (Tag) iter.next();
-            if (tag.getTagName().equals(TagNames.IM_FAVOURITE)) {
+        for (String tag : userTags) {
+            if (tag.equals(TagNames.IM_FAVOURITE)) {
                 isFavourite = "true";
                 break;
             }

@@ -12,7 +12,6 @@ package org.intermine.web.logic.profile;
 
 import java.io.StringReader;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -20,18 +19,11 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-import java.util.TreeSet;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 import net.sourceforge.iharder.Base64;
 
-import org.apache.commons.collections.keyvalue.MultiKey;
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
-import org.intermine.metadata.ClassDescriptor;
-import org.intermine.metadata.FieldDescriptor;
-import org.intermine.metadata.Model;
 import org.intermine.model.InterMineObject;
 import org.intermine.model.userprofile.SavedBag;
 import org.intermine.model.userprofile.SavedQuery;
@@ -44,20 +36,16 @@ import org.intermine.objectstore.ObjectStoreException;
 import org.intermine.objectstore.ObjectStoreWriter;
 import org.intermine.objectstore.proxy.ProxyReference;
 import org.intermine.objectstore.query.ConstraintOp;
-import org.intermine.objectstore.query.ConstraintSet;
 import org.intermine.objectstore.query.ContainsConstraint;
 import org.intermine.objectstore.query.Query;
 import org.intermine.objectstore.query.QueryClass;
 import org.intermine.objectstore.query.QueryField;
 import org.intermine.objectstore.query.QueryObjectReference;
-import org.intermine.objectstore.query.QueryValue;
 import org.intermine.objectstore.query.Results;
-import org.intermine.objectstore.query.SimpleConstraint;
 import org.intermine.objectstore.query.SingletonResults;
 import org.intermine.pathquery.PathQuery;
 import org.intermine.pathquery.PathQueryBinding;
 import org.intermine.util.CacheMap;
-import org.intermine.util.DynamicUtil;
 import org.intermine.util.PropertiesUtil;
 import org.intermine.web.logic.bag.InterMineBag;
 import org.intermine.web.logic.query.MainHelper;
@@ -80,8 +68,6 @@ public class ProfileManager
     protected ObjectStoreWriter osw;
     protected TemplateQueryBinding templateBinding = new TemplateQueryBinding();
     protected CacheMap profileCache = new CacheMap();
-    private Map<String, TagChecker> tagCheckers = null;
-    private HashMap<MultiKey, List<Tag>> tagCache = null;
     private String superuser = null;
 
     /**
@@ -92,7 +78,6 @@ public class ProfileManager
     public ProfileManager(ObjectStore os, ObjectStoreWriter userProfileOS) {
         this.os = os;
         superuser = PropertiesUtil.getProperties().getProperty("superuser.account");
-        tagCheckers = makeTagCheckers(os.getModel());
         this.osw = userProfileOS;
     }
 
@@ -108,7 +93,7 @@ public class ProfileManager
      * Return the userprofile ObjectStoreWriter that was passed to the constructor.
      * @return the userprofile  ObjectStoreWriter from the constructor
      */
-    public ObjectStoreWriter getUserProfileObjectStore() {
+    public ObjectStoreWriter getProfileObjectStoreWriter() {
         return osw;
     }
 
@@ -289,6 +274,7 @@ public class ProfileManager
      */
     public void convertTemplateKeywordsToTags(Map<String, TemplateQuery> savedTemplates,
                                               String username) {
+        TagManager tagManager = getTagManager();
         for (Iterator<TemplateQuery> iter = savedTemplates.values().iterator(); iter.hasNext(); ) {
             TemplateQuery tq = iter.next();
             String keywords = tq.getKeywords();
@@ -297,12 +283,19 @@ public class ProfileManager
                 for (int i = 0; i < aspects.length; i++) {
                     String aspect = aspects[i].trim();
                     String tag = TagNames.IM_ASPECT_PREFIX + aspect;
-                    if (getTags(tag, tq.getName(), TagTypes.TEMPLATE, username).size() == 0) {
-                        addTag(tag, tq.getName(), TagTypes.TEMPLATE, username);
+                    if (tagManager.getTags(tag, tq.getName(), TagTypes.TEMPLATE, username).size()
+                            == 0) {
+                        getTagManager().addTag(tag, tq.getName(), TagTypes.TEMPLATE, username);
                     }
                 }
             }
         }
+    }
+
+    private TagManager getTagManager() {
+        TagManager tagManager = new TagManagerFactory(getProfileObjectStoreWriter())
+            .getTagManager();
+        return tagManager;
     }
 
     /**
@@ -453,163 +446,6 @@ public class ProfileManager
     }
 
     /**
-     * Delete a tag object from the database.
-     * @param tag Tag object
-     */
-    public synchronized void deleteTag(Tag tag) {
-        try {
-            tagCache = null;
-            getUserProfileObjectStore().delete(tag);
-        } catch (ObjectStoreException err) {
-            LOG.error("deleteTag(): " + err);
-        }
-    }
-
-    /**
-     * Deletes tag object from the database.
-     * @param tagName tag name
-     * @param taggedObject object id of tagged object
-     * @param type tag type
-     * @param userName user name
-     *
-     */
-    public void deleteTag(String tagName, String taggedObject, String type, String userName) {
-        List<Tag> tags = getTags(tagName, taggedObject, type, userName);
-        if (tags.size() > 0 && tags.get(0) != null) {
-            deleteTag(tags.get(0));
-        }
-    }
-
-    private static Set<String> tagsToTagNames(List<Tag> tags) {
-        Set<String> ret = new TreeSet<String>();
-        for (Tag tag : tags) {
-            ret.add(tag.getTagName());
-        }
-        return ret;
-    }
-
-    /**
-     * Returns names of tags of specified user and tag type. For anonymous user returns empty set.
-     * @param type tag type
-     * @param userName user name
-     * @return tag names
-     * @throws UserNotFoundException if there isn't any user with this userName
-     */
-    public Set<String> getUserTagNames(String type, String userName) {
-        if (getProfile(userName) == null) {
-            throw new UserNotFoundException("User: '" + userName + "' not found.");
-        }
-        List<Tag> tags = getTags(null, null, type, userName);
-        return tagsToTagNames(tags);
-    }
-
-    /**
-     * Returns names of tagged tags for specified object. For anonymous user returns empty set.
-     * @param taggedObject tagged object, eg. template name
-     * @param type tag type, eg. TEMPLATE
-     * @param userName user name
-     * @return tag names
-     */
-    public Set<String> getObjectTagNames(String taggedObject, String type, String userName) {
-        if (getProfile(userName) == null) {
-            throw new UserNotFoundException("User: '" + userName + "' not found.");
-        }
-        if (!userName.equals("")) {
-            List<Tag> tags = getTags(null, taggedObject, type, userName);
-            return tagsToTagNames(tags);
-        }
-        return new TreeSet<String>();
-    }
-
-    /**
-     * Get Tag by object id.
-     * @param id intermine object id
-     * @return Tag
-     * @throws ObjectStoreException if something goes wrong
-     */
-    public synchronized Tag getTagById(int id) throws ObjectStoreException {
-        return (Tag) getUserProfileObjectStore().getObjectById(new Integer(id), Tag.class);
-    }
-
-    /**
-     * Return a List of Tags that match all the arguments.  Any null arguments will be treated as
-     * wildcards.
-     * @param tagName the tag name - any String
-     * @param objectIdentifier an object identifier that is appropriate for the given tag type
-     * (eg. "Department.name" for the "collection" type)
-     * @param type the tag type (eg. "collection", "reference", "attribute", "bag")
-     * @param userName the use name this tag is associated with
-     * @return the matching Tags
-     */
-    public synchronized List<Tag> getTags(String tagName, String objectIdentifier, String type,
-                        String userName) {
-        Map<MultiKey, List<Tag>> cache = getTagCache();
-        MultiKey key = makeKey(tagName, objectIdentifier, type, userName);
-
-        if (cache.containsKey(key)) {
-            return cache.get(key);
-        }
-
-        Query q = new Query();
-        QueryClass qc = new QueryClass(Tag.class);
-
-        q.addFrom(qc);
-        q.addToSelect(qc);
-
-        QueryField orderByField = new QueryField(qc, "tagName");
-
-        q.addToOrderBy(orderByField);
-
-        ConstraintSet cs = new ConstraintSet(ConstraintOp.AND);
-
-        if (tagName != null) {
-            QueryValue qv = new QueryValue(tagName);
-            QueryField qf = new QueryField(qc, "tagName");
-            SimpleConstraint c = new SimpleConstraint(qf, ConstraintOp.MATCHES, qv);
-            cs.addConstraint(c);
-        }
-
-        if (objectIdentifier != null) {
-            QueryValue qv = new QueryValue(objectIdentifier);
-            QueryField qf = new QueryField(qc, "objectIdentifier");
-            SimpleConstraint c = new SimpleConstraint(qf, ConstraintOp.MATCHES, qv);
-            cs.addConstraint(c);
-        }
-
-        if (type != null) {
-            QueryValue qv = new QueryValue(type);
-            QueryField qf = new QueryField(qc, "type");
-            SimpleConstraint c = new SimpleConstraint(qf, ConstraintOp.MATCHES, qv);
-            cs.addConstraint(c);
-        }
-
-        if (userName != null) {
-            QueryClass userProfileQC = new QueryClass(UserProfile.class);
-            q.addFrom(userProfileQC);
-            QueryValue qv = new QueryValue(userName);
-            QueryField qf = new QueryField(userProfileQC, "username");
-            SimpleConstraint c = new SimpleConstraint(qf, ConstraintOp.MATCHES, qv);
-            cs.addConstraint(c);
-
-            QueryObjectReference qr = new QueryObjectReference(qc, "userProfile");
-
-            ContainsConstraint cc =
-                new ContainsConstraint(qr, ConstraintOp.CONTAINS, userProfileQC);
-            cs.addConstraint(cc);
-        }
-        q.setConstraint(cs);
-
-        ObjectStore userprofileOS = osw.getObjectStore();
-
-        SingletonResults results = userprofileOS.executeSingleton(q);
-
-        addToCache(cache, key, results);
-
-        return results;
-    }
-
-
-    /**
      * Given a Map from name to WebSearchable, return a Map that contains only those name,
      * WebSearchable pairs where the name is tagged with all of the tags listed.
      * @param webSearchables the Map to filter
@@ -622,12 +458,13 @@ public class ProfileManager
     public <W extends WebSearchable> Map<String, W>
         filterByTags(Map<String, W> webSearchables,
                      List<String> tagNames, String tagType, String userName) {
+        TagManager tagManager = getTagManager();
         Map<String, W> returnMap =
             new LinkedHashMap<String, W>(webSearchables);
 
         // prime the cache
         for (String tagName: tagNames) {
-            getTags(tagName, null, tagType, userName);
+            tagManager.getTags(tagName, null, tagType, userName);
         }
         for (String tagName: tagNames) {
             if (StringUtils.isEmpty(tagName)) {
@@ -635,7 +472,7 @@ public class ProfileManager
             }
             for (Map.Entry<String, W> entry: webSearchables.entrySet()) {
                 String webSearchableName = entry.getKey();
-                List tags = getTags(tagName, webSearchableName, tagType, userName);
+                List<Tag> tags = tagManager.getTags(tagName, webSearchableName, tagType, userName);
                 if (tags.size() == 0) {
                     returnMap.remove(webSearchableName);
                 }
@@ -643,279 +480,6 @@ public class ProfileManager
         }
 
         return returnMap;
-    }
-
-    private MultiKey makeKey(String tagName, String objectIdentifier, String type,
-                             String userName) {
-        return new MultiKey(tagName, objectIdentifier, type, userName);
-    }
-
-    private void addToCache(Map<MultiKey, List<Tag>> cache, MultiKey key, List<Tag> results) {
-
-        cache.put(key, new ArrayList<Tag>(results));
-
-        int keyNullPartCount = 0;
-
-        for (int i = 0; i < 4; i++) {
-            if (key.getKey(i) == null) {
-                keyNullPartCount++;
-            }
-        }
-
-        Iterator resIter = results.iterator();
-
-        while (resIter.hasNext()) {
-            Tag tag = (Tag) resIter.next();
-
-            Object[] tagKeys = new Object[4];
-            tagKeys[0] = tag.getTagName();
-            tagKeys[1] = tag.getObjectIdentifier();
-            tagKeys[2] = tag.getType();
-            tagKeys[3] = tag.getUserProfile().getUsername();
-        }
-
-    }
-
-    private Map<MultiKey, List<Tag>> getTagCache() {
-        if (tagCache == null) {
-            tagCache  = new HashMap<MultiKey, List<Tag>>();
-        }
-        return tagCache;
-    }
-
-    /**
-     * Add a new tag.  The format of objectIdentifier depends on the tag type.
-     * For types "attribute", "reference" and "collection" the objectIdentifier should have the form
-     * "ClassName.fieldName".
-     * Throw an exception if there are any problems.
-     * @param tagName the tag name - any String
-     * @param objectIdentifier an object identifier that is appropriate for the given tag type
-     * (eg. "Department.name" for the "collection" type)
-     * @param type the tag type (eg. "collection", "reference", "attribute", "bag")
-     * @param userName the name of the UserProfile to associate this tag with
-     * @return the new Tag
-     */
-    public synchronized Tag addTag(String tagName, String objectIdentifier, String type,
-                                   String userName) {
-        return addTag(tagName, objectIdentifier, type, userName, true);
-    }
-
-    /**
-     * Add a new tag.  The format of objectIdentifier depends on the tag type.
-     * For types "attribute", "reference" and "collection" the objectIdentifier should have the form
-     * "ClassName.fieldName".
-     * @param tagName the tag name - any String
-     * @param objectIdentifier an object identifier that is appropriate for the given tag type
-     * (eg. "Department.name" for the "collection" type)
-     * @param type the tag type (eg. "collection", "reference", "attribute", "bag")
-     * @param userName the name of the UserProfile to associate this tag with
-     * @param abortOnError if true, throw an exception if there is a problem.  If false, log the
-     * problem and continue if possible
-     * @return the new Tag
-     */
-    public synchronized Tag addTag(String tagName, String objectIdentifier, String type,
-                                   String userName, boolean abortOnError) {
-
-        tagCache = null;
-        if (tagName == null) {
-            throw new IllegalArgumentException("tagName cannot be null");
-        }
-        if (objectIdentifier == null) {
-            throw new IllegalArgumentException("objectIdentifier cannot be null");
-        }
-        if (type == null) {
-            throw new IllegalArgumentException("type cannot be null");
-        }
-        if (userName == null) {
-            throw new IllegalArgumentException("userName cannot be null");
-        }
-        if (!tagCheckers.containsKey(type)) {
-            throw new IllegalArgumentException("unknown tag type: " + type);
-        }
-        UserProfile userProfile = getUserProfile(userName);
-
-        if (userProfile == null) {
-            throw new RuntimeException("no such user " + userName);
-        }
-
-        try {
-            tagCheckers.get(type).isValid(tagName, objectIdentifier, type, userProfile);
-        } catch (RuntimeException e) {
-            if (abortOnError) {
-                throw e;
-            }
-            LOG.warn("not storing invalid tag: " + tagName + " on " + objectIdentifier
-                         + " type " + type);
-        }
-        Tag tag = (Tag) DynamicUtil.createObject(Collections.singleton(Tag.class));
-        tag.setTagName(tagName);
-        tag.setObjectIdentifier(objectIdentifier);
-        tag.setType(type);
-        tag.setUserProfile(userProfile);
-
-        try {
-            osw.store(tag);
-            return tag;
-        } catch (ObjectStoreException e) {
-            throw new RuntimeException("cannot set tag", e);
-        }
-    }
-
-    /**
-     * Make TagChecker objects for this ProfileManager.
-     * @param model the Model
-     * @return a map from tag type ("template", "reference", "attribute", etc.) to TagChecker
-     */
-    protected Map<String, TagChecker> makeTagCheckers(final Model model) {
-        Map<String, TagChecker> newTagCheckers = new HashMap<String, TagChecker>();
-        TagChecker fieldChecker = new TagChecker() {
-            public void isValid(@SuppressWarnings("unused") String tagName,
-                                String objectIdentifier, String type,
-                                @SuppressWarnings("unused") UserProfile userProfile) {
-                int dotIndex = objectIdentifier.indexOf('.');
-                if (dotIndex == -1) {
-                    throw new RuntimeException("tried to tag an unknown field: "
-                                               + objectIdentifier);
-                }
-                String className = objectIdentifier.substring(0, dotIndex);
-                String fieldName = objectIdentifier.substring(dotIndex + 1);
-
-                ClassDescriptor cd =
-                    model.getClassDescriptorByName(model.getPackageName() + "." + className);
-                if (cd == null) {
-                    throw new RuntimeException("unknown class name \"" + className
-                                               + "\" while tagging: " + objectIdentifier);
-                }
-                FieldDescriptor fd = cd.getFieldDescriptorByName(fieldName);
-                if (fd == null) {
-                    throw new RuntimeException("unknown field name \"" + fieldName
-                                               + "\" in class \"" + className
-                                               + "\" while tagging: " + objectIdentifier);
-
-                }
-
-                if (type.equals("collection") && !fd.isCollection()) {
-                    throw new RuntimeException(objectIdentifier + " is not a collection");
-                }
-                if (type.equals("reference") && !fd.isReference()) {
-                    throw new RuntimeException(objectIdentifier + " is not a reference");
-                }
-                if (type.equals("attribute") && !fd.isAttribute()) {
-                    throw new RuntimeException(objectIdentifier + " is not a attribute");
-                }
-            }
-        };
-        newTagCheckers.put("collection", fieldChecker);
-        newTagCheckers.put("reference", fieldChecker);
-        newTagCheckers.put("attribute", fieldChecker);
-
-        TagChecker templateChecker = new TagChecker() {
-            public void isValid(@SuppressWarnings("unused") String tagName,
-                                @SuppressWarnings("unused") String objectIdentifier,
-                                @SuppressWarnings("unused") String type,
-                                @SuppressWarnings("unused") UserProfile userProfile) {
-                // OK
-            }
-        };
-        newTagCheckers.put("template", templateChecker);
-
-        TagChecker bagChecker = new TagChecker() {
-            public void isValid(@SuppressWarnings("unused") String tagName,
-                                @SuppressWarnings("unused") String objectIdentifier,
-                                @SuppressWarnings("unused") String type,
-                                @SuppressWarnings("unused") UserProfile userProfile) {
-                // OK
-            }
-        };
-        newTagCheckers.put("bag", bagChecker);
-
-        TagChecker classChecker = new TagChecker() {
-            public void isValid(@SuppressWarnings("unused") String tagName,
-                                String objectIdentifier,
-                                @SuppressWarnings("unused") String type,
-                                @SuppressWarnings("unused") UserProfile userProfile) {
-                String className = objectIdentifier;
-                ClassDescriptor cd = model.getClassDescriptorByName(className);
-                if (cd == null) {
-                    throw new RuntimeException("unknown class name \"" + className
-                                               + "\" while tagging: " + objectIdentifier);
-                }
-            }
-        };
-        newTagCheckers.put("class", classChecker);
-        return newTagCheckers;
-    }
-
-    /**
-     * Verifies that tag name can only contain A-Z, a-z, 0-9, '_', '-', ' ', ':'
-     * @param name tag name
-     * @return true if the name is valid else false
-     */
-    public static boolean isValidTagName(String name) {
-        if (name == null) {
-            return false;
-        }
-        Pattern p = Pattern.compile("[^\\w\\s\\.\\-:]");
-        Matcher m = p.matcher(name);
-        return !m.find();
-    }
-
-    /**
-     * Returns tag name error message saying which signs are allowed.
-     * @return error message
-     */
-    public static String getInvalidTagNameMessage() {
-        return "Invalid tag name. Name can contain only alphabet characters, figures, space, dot"
-            + ", colon and dash.";
-    }
-
-    /**
-     * Deletes all tags assigned to a specified object.
-     * @param taggedObject tagged object
-     * @param type tag type
-     * @param userName user name
-     */
-    public void deleteObjectTags(String taggedObject, String type, String userName) {
-        List<Tag> tags = getTags(null, taggedObject, type, userName);
-        for (Tag tag : tags) {
-            deleteTag(tag);
-        }
-    }
-
-    /**
-     * Moves tags from one object to another.
-     * @param oldTaggedObj name of original tagged object
-     * @param newTaggedObj name of new tagged object
-     * @param type tag type
-     * @param userName user name
-     */
-    public void moveTagsToNewObject(String oldTaggedObj, String newTaggedObj, String type,
-            String userName) {
-        List<Tag> tags = getTags(null, oldTaggedObj, type, userName);
-        for (Tag tag : tags) {
-            addTag(tag.getTagName(), newTaggedObj, type, userName);
-            deleteTag(tag);
-        }
-    }
-
-    /**
-     * Extracts aspect from tag name. For instance for aspect:Miscellaneous returns Miscellaneous
-     * @param tagName tag name
-     * @return if it is aspect tag then returns aspect else null
-     */
-    public static String getAspect(String tagName) {
-        if (isAspectTag(tagName)) {
-            return tagName.substring(TagNames.IM_ASPECT_PREFIX.length()).trim();
-        }
-        return null;
-    }
-
-    /**
-     * @param tagName tag name
-     * @return true if tag is aspect tag else false
-     */
-    public static boolean isAspectTag(String tagName) {
-        return tagName.startsWith(TagNames.IM_ASPECT_PREFIX);
     }
 
     /**

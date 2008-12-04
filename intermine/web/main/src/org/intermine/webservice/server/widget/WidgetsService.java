@@ -111,7 +111,7 @@ public class WidgetsService extends WebService
         } catch (ClassNotFoundException clse) {
             return null;
         }
-        ObjectStoreWriter uosw = profile.getProfileManager().getUserProfileObjectStore();
+        ObjectStoreWriter uosw = profile.getProfileManager().getProfileObjectStoreWriter();
         String bagName = null;
         Map<String, InterMineBag> profileBags = profile.getSavedBags();
         boolean bagExists = true;

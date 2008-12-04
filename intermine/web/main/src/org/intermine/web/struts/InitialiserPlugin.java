@@ -10,6 +10,8 @@ package org.intermine.web.struts;
  *
  */
 
+import java.io.InputStream;
+import java.sql.SQLException;
 import java.util.AbstractMap;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -24,6 +26,13 @@ import java.util.Properties;
 import java.util.Set;
 import java.util.TreeSet;
 
+import javax.servlet.ServletContext;
+import javax.servlet.ServletException;
+
+import org.apache.log4j.Logger;
+import org.apache.struts.action.ActionServlet;
+import org.apache.struts.action.PlugIn;
+import org.apache.struts.config.ModuleConfig;
 import org.intermine.cache.InterMineCache;
 import org.intermine.metadata.ClassDescriptor;
 import org.intermine.metadata.FieldDescriptor;
@@ -50,6 +59,8 @@ import org.intermine.web.logic.bag.InterMineBag;
 import org.intermine.web.logic.config.WebConfig;
 import org.intermine.web.logic.profile.Profile;
 import org.intermine.web.logic.profile.ProfileManager;
+import org.intermine.web.logic.profile.TagManager;
+import org.intermine.web.logic.profile.TagManagerFactory;
 import org.intermine.web.logic.query.MainHelper;
 import org.intermine.web.logic.results.DisplayObject;
 import org.intermine.web.logic.search.SearchRepository;
@@ -58,17 +69,6 @@ import org.intermine.web.logic.tagging.TagNames;
 import org.intermine.web.logic.tagging.TagTypes;
 import org.intermine.web.logic.template.TemplateHelper;
 import org.intermine.web.logic.template.TemplateQuery;
-
-import java.io.InputStream;
-import java.sql.SQLException;
-
-import javax.servlet.ServletContext;
-import javax.servlet.ServletException;
-
-import org.apache.log4j.Logger;
-import org.apache.struts.action.ActionServlet;
-import org.apache.struts.action.PlugIn;
-import org.apache.struts.config.ModuleConfig;
 
 /**
  * Initialiser for the InterMine web application.
@@ -172,7 +172,7 @@ public class InitialiserPlugin implements PlugIn
 
             loadAutoCompleter(servletContext, os);
 
-            cleanTags(pm);
+            cleanTags(SessionMethods.getTagManager(servletContext));
         } catch (ServletException e) {
             LOG.error("ServletException", e);
             throw e;
@@ -459,10 +459,18 @@ public class InitialiserPlugin implements PlugIn
 
     /**
      * Remove class tags from the user profile that refer to classes that non longer exist
+     * @param tagManager the ProfileManager to alter
+     */
+    /**
+     * Remove class tags from the user profile that refer to classes that non longer exist
+     * @param tagManager the tag manager
+     */
+    /**
+     * Remove class tags from the user profile that refer to classes that non longer exist
      * @param pm the ProfileManager to alter
      */
-    protected static void cleanTags(ProfileManager pm) {
-        List classTags = pm.getTags(null, null, "class", null);
+    protected static void cleanTags(TagManager tagManager) {
+        List classTags = tagManager.getTags(null, null, "class", null);
         List tagsToDelete = new ArrayList();
 
         Iterator iter = classTags.iterator();
@@ -479,12 +487,12 @@ public class InitialiserPlugin implements PlugIn
         iter = tagsToDelete.iterator();
         while (iter.hasNext()) {
             Tag tag = (Tag) iter.next();
-            pm.deleteTag(tag);
+            tagManager.deleteTag(tag);
         }
     }
-
+    
     /**
-     * Get the names of the type of this ClassDescriptor and all its descendents
+     * Get the names of the type of this ClassDescriptor and all its descendants
      * @param cld the ClassDescriptor
      * @return a Set of class names
      */

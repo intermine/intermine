@@ -40,9 +40,11 @@ import org.intermine.util.TypeUtil;
 import org.intermine.web.logic.ClassKeyHelper;
 import org.intermine.web.logic.Constants;
 import org.intermine.web.logic.PathUtil;
+import org.intermine.web.logic.aspects.AspectTagUtil;
 import org.intermine.web.logic.bag.InterMineBag;
 import org.intermine.web.logic.profile.Profile;
 import org.intermine.web.logic.profile.ProfileManager;
+import org.intermine.web.logic.profile.TagManager;
 import org.intermine.web.logic.search.SearchRepository;
 import org.intermine.web.logic.search.WebSearchable;
 import org.intermine.web.logic.session.SessionMethods;
@@ -70,12 +72,13 @@ public class TemplateListHelper
         Profile p = pm.getProfile(sup);
 
         Map<String, TemplateQuery> templates = new TreeMap<String, TemplateQuery>();
-        List tags = pm.getTags(null, null, TagTypes.TEMPLATE, sup);
+        TagManager tagManager = SessionMethods.getTagManager(context);
+        List tags = tagManager.getTags(null, null, TagTypes.TEMPLATE, sup);
 
         for (Iterator iter = tags.iterator(); iter.hasNext(); ) {
             Tag tag = (Tag) iter.next();
-            if (ProfileManager.isAspectTag(tag.getTagName())) {
-                if (StringUtils.equals(aspect, ProfileManager.getAspect(tag.getTagName()))) {
+            if (AspectTagUtil.isAspectTag(tag.getTagName())) {
+                if (StringUtils.equals(aspect, AspectTagUtil.getAspect(tag.getTagName()))) {
                     TemplateQuery tq = p.getSavedTemplates().get(tag.getObjectIdentifier());
                     if (tq != null) {
                         templates.put(tq.getName(), tq);
@@ -103,8 +106,8 @@ public class TemplateListHelper
                                                  InterMineObject object,
                                                  Map<TemplateQuery, List<String>> fieldExprsOut) {
         String aspect = datacategory;
-        if (ProfileManager.isAspectTag(aspect)) {
-            aspect = ProfileManager.getAspect(aspect);
+        if (AspectTagUtil.isAspectTag(aspect)) {
+            aspect = AspectTagUtil.getAspect(aspect);
         }
 
         List<TemplateQuery> templates = new ArrayList<TemplateQuery>();
@@ -249,11 +252,11 @@ public class TemplateListHelper
                               ServletContext context, InterMineBag bag, Map<TemplateQuery,
                               List<String>> fieldExprsOut) {
         String aspect = datacategory;
-        if (ProfileManager.isAspectTag(aspect)) {
-            aspect = ProfileManager.getAspect(aspect);
+        if (AspectTagUtil.isAspectTag(aspect)) {
+            aspect = AspectTagUtil.getAspect(aspect);
         }
-        ProfileManager pm = SessionMethods.getProfileManager(context);
-        String sup = pm.getSuperuser();
+        String sup = SessionMethods.getSuperUserProfile(context).getUsername();
+        TagManager tagManager = SessionMethods.getTagManager(context);
         Class bagClass;
         try {
             bagClass = Class.forName(bag.getQualifiedType());
@@ -271,15 +274,15 @@ public class TemplateListHelper
         ObjectStore os = (ObjectStore) context.getAttribute(Constants.OBJECTSTORE);
         Model model = os.getModel();
         List<TemplateQuery> templates = new ArrayList<TemplateQuery>();
-        List tags = pm.getTags(null, null, TagTypes.TEMPLATE, sup);
+        List tags = tagManager.getTags(null, null, TagTypes.TEMPLATE, sup);
 
 
       TAGS:
         for (Iterator iter = tags.iterator(); iter.hasNext(); ) {
             Tag tag = (Tag) iter.next();
 
-            if (ProfileManager.isAspectTag(tag.getTagName())) {
-                String aspectFromTagName = ProfileManager.getAspect(tag.getTagName());
+            if (AspectTagUtil.isAspectTag(tag.getTagName())) {
+                String aspectFromTagName = AspectTagUtil.getAspect(tag.getTagName());
 
 
                 if (StringUtils.equals(aspect, aspectFromTagName)) {

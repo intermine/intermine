@@ -62,7 +62,7 @@ public abstract class LoginHandler extends InterMineAction
         // Merge current history into loaded profile
         Profile currentProfile = (Profile) session.getAttribute(Constants.PROFILE);
         ObjectStoreWriter uosw = ((ProfileManager) servletContext.getAttribute(
-                    Constants.PROFILE_MANAGER)).getUserProfileObjectStore();
+                    Constants.PROFILE_MANAGER)).getProfileObjectStoreWriter();
         String superuser = pm.getSuperuser();
         Map mergeQueries = Collections.EMPTY_MAP;
         Map mergeBags = Collections.EMPTY_MAP;

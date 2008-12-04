@@ -29,6 +29,8 @@ import org.intermine.web.logic.Constants;
 import org.intermine.web.logic.bag.InterMineBag;
 import org.intermine.web.logic.profile.Profile;
 import org.intermine.web.logic.profile.ProfileManager;
+import org.intermine.web.logic.profile.TagManager;
+import org.intermine.web.logic.session.SessionMethods;
 import org.intermine.web.logic.tagging.TagTypes;
 import org.intermine.web.logic.template.TemplateQuery;
 
@@ -86,9 +88,10 @@ public class InlineTagEditorController extends TilesAction
 
         Set<String> currentTags;
         Set<String> availableTags;
+        TagManager tagManager = SessionMethods.getTagManager(request.getSession());
         if (profile.isLoggedIn()) {
-            currentTags = pm.getObjectTagNames(tagged, type, profile.getUsername());
-            availableTags = pm.getUserTagNames(type, profile.getUsername());
+            currentTags = tagManager.getObjectTagNames(tagged, type, profile.getUsername());
+            availableTags = tagManager.getUserTagNames(type, profile.getUsername());
         } else {
             currentTags = new TreeSet<String>();
             availableTags = new TreeSet<String>();

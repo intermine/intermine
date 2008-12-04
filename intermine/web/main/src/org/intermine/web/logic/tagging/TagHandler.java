@@ -14,6 +14,8 @@ import java.util.Set;
 
 import org.intermine.model.userprofile.Tag;
 import org.intermine.web.logic.profile.ProfileManager;
+import org.intermine.web.logic.profile.TagManager;
+import org.intermine.web.logic.profile.TagManagerFactory;
 import org.xml.sax.Attributes;
 import org.xml.sax.SAXException;
 import org.xml.sax.helpers.DefaultHandler;
@@ -79,15 +81,17 @@ public class TagHandler extends DefaultHandler
             tag.setTagName(tagName);
             tag.setObjectIdentifier(tagObjectIdentifier);
             tag.setType(tagType);
-
+            
             // either put tags in set to be added to unmarshalled profile or, when
             // called from ImportTagAction save the tags straight away.
             if (tags != null) {
                 tags.add(tag);
             } else {
-                if (profileManager.getTags(tagName, tagObjectIdentifier,
+                TagManager tagManager = new TagManagerFactory(profileManager
+                        .getProfileObjectStoreWriter()).getTagManager();
+                if (tagManager.getTags(tagName, tagObjectIdentifier,
                                            tagType, userName).isEmpty()) {
-                    profileManager.addTag(tagName, tagObjectIdentifier, tagType, userName);
+                    tagManager.addTag(tagName, tagObjectIdentifier, tagType, userName);
                     count++;
                 }
             }
@@ -99,22 +103,22 @@ public class TagHandler extends DefaultHandler
      * Translates specific old tag names used for internal InterMine usage like favorite, 
      * aspect: ... to new tag names that must start with 'im:'
      * Calling this method should be removed after some time, when old profiles with old 
-     * tag names won't be load.
+     * tag names won't be loaded.
      * @param oldName old name
      * @return name with prefix 'im'
      */
     private String translateTagName(String oldName) {
         if (oldName.equalsIgnoreCase("favourite")) {
-            return "im:favourite";
+            return TagNames.IM_FAVOURITE;
         } 
         if (oldName.equalsIgnoreCase("hidden")) {
-            return "im:hidden";
+            return TagNames.IM_HIDDEN;
         }
         if (oldName.toLowerCase().startsWith("aspect:")) {
-            return "im:aspect:" + oldName.substring("aspect:".length());
+            return TagNames.IM_ASPECT_PREFIX + oldName.substring("aspect:".length());
         }
         if (oldName.equalsIgnoreCase("placement:summary")) {
-            return "im:summary";
+            return TagNames.IM_SUMMARY;
         }
         return oldName;
     }

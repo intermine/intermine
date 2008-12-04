@@ -60,7 +60,7 @@ public class SummariseAllTemplatesAction extends InterMineAction
         Profile profile = (Profile) session.getAttribute(Constants.PROFILE);
         ObjectStore os = (ObjectStore) servletContext.getAttribute(Constants.OBJECTSTORE);
         ObjectStoreWriter osw = ((ProfileManager) servletContext.getAttribute(
-                    Constants.PROFILE_MANAGER)).getUserProfileObjectStore();
+                    Constants.PROFILE_MANAGER)).getProfileObjectStoreWriter();
         Map<String, TemplateQuery> templates = profile.getSavedTemplates();
 
         for (Map.Entry<String, TemplateQuery> entry : templates.entrySet()) {
