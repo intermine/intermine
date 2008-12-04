@@ -14,15 +14,8 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
-import java.util.Properties;
 
-import org.intermine.objectstore.query.ConstraintOp;
-import org.intermine.objectstore.query.Query;
-import org.intermine.objectstore.query.QueryClass;
-import org.intermine.objectstore.query.QueryField;
-import org.intermine.objectstore.query.QueryValue;
-import org.intermine.objectstore.query.SimpleConstraint;
-import org.intermine.objectstore.query.SingletonResults;
+import junit.framework.TestCase;
 
 import org.intermine.metadata.Model;
 import org.intermine.model.InterMineObject;
@@ -32,16 +25,16 @@ import org.intermine.objectstore.ObjectStore;
 import org.intermine.objectstore.ObjectStoreException;
 import org.intermine.objectstore.ObjectStoreWriter;
 import org.intermine.objectstore.ObjectStoreWriterFactory;
-import org.intermine.web.logic.ClassKeyHelper;
-import org.intermine.web.logic.Constants;
+import org.intermine.objectstore.query.ConstraintOp;
+import org.intermine.objectstore.query.Query;
+import org.intermine.objectstore.query.QueryClass;
+import org.intermine.objectstore.query.QueryField;
+import org.intermine.objectstore.query.QueryValue;
+import org.intermine.objectstore.query.SimpleConstraint;
+import org.intermine.objectstore.query.SingletonResults;
 import org.intermine.web.logic.profile.Profile;
 import org.intermine.web.logic.profile.ProfileManager;
 import org.intermine.web.logic.profile.TagChecker;
-
-import javax.servlet.ServletContext;
-
-import junit.framework.TestCase;
-import servletunit.ServletContextSimulator;
 
 /**
  *
@@ -55,7 +48,6 @@ public class InitialiserPluginTest extends TestCase
     private ObjectStoreWriter osw, userProfileOSW;
     private Integer bobId = new Integer(101);
     private String bobPass = "bob_pass";
-    private Map classKeys;
 
     public InitialiserPluginTest(String arg) {
         super(arg);
@@ -68,20 +60,12 @@ public class InitialiserPluginTest extends TestCase
 
         userProfileOSW =  ObjectStoreWriterFactory.getObjectStoreWriter("osw.userprofile-test");
         userProfileOS = userProfileOSW.getObjectStore();
-        Properties classKeyProps = new Properties();
-        classKeyProps.load(getClass().getClassLoader()
-                           .getResourceAsStream("class_keys.properties"));
-        classKeys = ClassKeyHelper.readKeys(os.getModel(), classKeyProps);
-
-        ServletContext servletContext = new ServletContextSimulator();
-        servletContext.setAttribute(Constants.CLASS_KEYS, classKeys);
-        pm = new NonCheckingProfileManager(os, userProfileOSW, servletContext);
+        pm = new NonCheckingProfileManager(os, userProfileOSW);
     }
 
     private class NonCheckingProfileManager extends ProfileManager {
-        public NonCheckingProfileManager(ObjectStore os, ObjectStoreWriter userProfileOSW,
-                                         ServletContext servletContext) {
-            super(os, userProfileOSW, classKeys);
+        public NonCheckingProfileManager(ObjectStore os, ObjectStoreWriter userProfileOSW) {
+            super(os, userProfileOSW);
         }
 
         // override to prevent the checker from objecting to

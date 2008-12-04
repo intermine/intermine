@@ -69,7 +69,7 @@ public class BagQueryRunnerTest extends MockStrutsTestCase {
         super.setUp();
         os = ObjectStoreFactory.getObjectStore("os.unittest");
         Properties props = new Properties();
-        props.load(getClass().getClassLoader().getResourceAsStream("WEB-INF/class_keys.properties"));
+        props.load(getClass().getClassLoader().getResourceAsStream("class_keys.properties"));
         Map classKeys = ClassKeyHelper.readKeys(os.getModel(), props);
         eIds = getEmployeeIds();
 
@@ -185,7 +185,7 @@ public class BagQueryRunnerTest extends MockStrutsTestCase {
         String contractorName = "EmployeeA2";
         List input = Arrays.asList(new Object[] {contractorName});
         Properties props = new Properties();
-        props.load(getClass().getClassLoader().getResourceAsStream("WEB-INF/class_keys.properties"));
+        props.load(getClass().getClassLoader().getResourceAsStream("class_keys.properties"));
         Map classKeys = ClassKeyHelper.readKeys(os.getModel(), props);
         InputStream is = getClass().getClassLoader().getResourceAsStream("WEB-INF/bag-queries.xml");
         BagQueryConfig bagQueryConfig = BagQueryHelper.readBagQueryConfig(os.getModel(), is);

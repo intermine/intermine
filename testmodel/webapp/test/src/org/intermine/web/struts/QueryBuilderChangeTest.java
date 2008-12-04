@@ -14,13 +14,12 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
+import junit.framework.TestCase;
+
 import org.intermine.metadata.Model;
-import org.intermine.path.Path;
+import org.intermine.pathquery.Path;
 import org.intermine.pathquery.PathNode;
 import org.intermine.pathquery.PathQuery;
-import org.intermine.web.struts.QueryBuilderChange;
-
-import junit.framework.TestCase;
 
 /**
  * Tests for the MainChange class

@@ -30,7 +30,7 @@ import org.intermine.objectstore.ObjectStore;
 import org.intermine.objectstore.ObjectStoreFactory;
 import org.intermine.objectstore.ObjectStoreWriter;
 import org.intermine.objectstore.ObjectStoreWriterFactory;
-import org.intermine.path.Path;
+import org.intermine.pathquery.Path;
 import org.intermine.pathquery.PathQuery;
 import org.intermine.web.logic.ClassKeyHelper;
 import org.intermine.web.logic.Constants;
@@ -108,7 +108,7 @@ public class PathQueryResultsHelperTest extends MockStrutsTestCase
         BagQueryConfig bagQueryConfig = null;
         ServletContext servletContext = new ServletContextSimulator();
         ObjectStoreWriter userProfileOSW =  ObjectStoreWriterFactory.getObjectStoreWriter("osw.userprofile-test");
-        ProfileManager profileManager = new ProfileManager(os, userProfileOSW, classKeys);
+        ProfileManager profileManager = new ProfileManager(os, userProfileOSW);
         int userId = 0;
         Profile profile = new Profile(profileManager, "modifyBagActionTest", userId, "pass",
                                       new HashMap(), new HashMap(), new HashMap());
