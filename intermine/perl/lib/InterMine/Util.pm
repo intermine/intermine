@@ -11,7 +11,8 @@ use strict;
 use Exporter;
 
 our @ISA = qw(Exporter);
-our @EXPORT_OK = qw(get_property_value get_latest_properties_version $INTERMINE_CONF_DIR);
+our @EXPORT_OK = qw(get_property_value get_latest_properties_version $INTERMINE_CONF_DIR
+                    get_java_type_name);
 
 # location of the InterMine properties files
 our $INTERMINE_CONF_DIR = "$ENV{HOME}/.intermine";
@@ -88,6 +89,25 @@ MESSAGE
   }
 
   return $current_version;
+}
+
+=head2 get_java_type_name
+ Title   : get_java_type_name
+ Usage   : $java_name = get_java_type_name('five_prime_UTR')
+ Function: Return a java class name for the given sequence ontology
+           name, eg. "five_prime_UTR" -> "FivePrimeUTR"
+=cut
+sub get_java_type_name
+{
+  if (@_ != 1) {
+    die "get_java_type_name() needs exactly one argument\n";
+  }
+
+  my $name = shift;
+
+  $name =~ s/([^\-\s_]+)[\-\s_]*/\u$1/g;
+
+  return $name;
 }
 
 1;
