@@ -33,6 +33,7 @@ import org.intermine.metadata.ClassDescriptor;
 import org.intermine.metadata.Model;
 import org.intermine.objectstore.ObjectStore;
 import org.intermine.objectstore.query.BagConstraint;
+import org.intermine.objectstore.query.ConstraintOp;
 import org.intermine.pathquery.Constraint;
 import org.intermine.pathquery.MetadataNode;
 import org.intermine.pathquery.Path;
@@ -336,8 +337,10 @@ public class QueryBuilderController extends TilesAction
             Iterator citer = node.getConstraints().iterator();
             while (citer.hasNext()) {
                 Constraint con = (Constraint) citer.next();
-                // if a node isn't an attribute it can only be a bag constraint or loop constraint
-                if (!node.isAttribute() && !BagConstraint.VALID_OPS.contains(con.getOp())) {
+                // if a node isn't an attribute and isn't a LOOKUP constraint it can only be a
+                // bag constraint or loop constraint
+                if (!node.isAttribute() && !BagConstraint.VALID_OPS.contains(con.getOp())
+                		&& !con.getOp().equals(ConstraintOp.LOOKUP)) {
                     // the parents of this node should also be un-editable loop constraint nodes
                     while (node.getParent() != null) {
                         paths.add(node);
