@@ -15,7 +15,6 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
-import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -28,7 +27,6 @@ import org.intermine.model.InterMineObject;
 import org.intermine.model.userprofile.SavedBag;
 import org.intermine.model.userprofile.SavedQuery;
 import org.intermine.model.userprofile.SavedTemplateQuery;
-import org.intermine.model.userprofile.Tag;
 import org.intermine.model.userprofile.TemplateSummary;
 import org.intermine.model.userprofile.UserProfile;
 import org.intermine.objectstore.ObjectStore;
@@ -50,7 +48,6 @@ import org.intermine.util.PropertiesUtil;
 import org.intermine.web.logic.bag.InterMineBag;
 import org.intermine.web.logic.query.MainHelper;
 import org.intermine.web.logic.query.SavedQueryBinding;
-import org.intermine.web.logic.search.WebSearchable;
 import org.intermine.web.logic.tagging.TagNames;
 import org.intermine.web.logic.tagging.TagTypes;
 import org.intermine.web.logic.template.TemplateQuery;
@@ -445,42 +442,6 @@ public class ProfileManager
         return usernames;
     }
 
-    /**
-     * Given a Map from name to WebSearchable, return a Map that contains only those name,
-     * WebSearchable pairs where the name is tagged with all of the tags listed.
-     * @param webSearchables the Map to filter
-     * @param tagNames the tag names to use for filtering
-     * @param tagType the tag type (from TagTypes)
-     * @param userName the user name to pass to getTags()
-     * @param <W> the type of WebSearchable
-     * @return the filtered Map
-     */
-    public <W extends WebSearchable> Map<String, W>
-        filterByTags(Map<String, W> webSearchables,
-                     List<String> tagNames, String tagType, String userName) {
-        TagManager tagManager = getTagManager();
-        Map<String, W> returnMap =
-            new LinkedHashMap<String, W>(webSearchables);
-
-        // prime the cache
-        for (String tagName: tagNames) {
-            tagManager.getTags(tagName, null, tagType, userName);
-        }
-        for (String tagName: tagNames) {
-            if (StringUtils.isEmpty(tagName)) {
-                continue;
-            }
-            for (Map.Entry<String, W> entry: webSearchables.entrySet()) {
-                String webSearchableName = entry.getKey();
-                List<Tag> tags = tagManager.getTags(tagName, webSearchableName, tagType, userName);
-                if (tags.size() == 0) {
-                    returnMap.remove(webSearchableName);
-                }
-            }
-        }
-
-        return returnMap;
-    }
 
     /**
      * @return the superuser

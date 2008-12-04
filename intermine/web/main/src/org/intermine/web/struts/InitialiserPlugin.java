@@ -63,6 +63,7 @@ import org.intermine.web.logic.profile.TagManager;
 import org.intermine.web.logic.profile.TagManagerFactory;
 import org.intermine.web.logic.query.MainHelper;
 import org.intermine.web.logic.results.DisplayObject;
+import org.intermine.web.logic.search.SearchFilterEngine;
 import org.intermine.web.logic.search.SearchRepository;
 import org.intermine.web.logic.session.SessionMethods;
 import org.intermine.web.logic.tagging.TagNames;
@@ -142,13 +143,14 @@ public class InitialiserPlugin implements PlugIn
 
             final Profile superProfile = SessionMethods.getSuperUserProfile(servletContext);
 
+            final TagManager tagManager = SessionMethods.getTagManager(servletContext);
             AbstractMap<String, TemplateQuery> templateSearchableMap =
                 new AbstractMap<String, TemplateQuery>() {
                     @Override
                     public Set<Map.Entry<String, TemplateQuery>> entrySet() {
-                        return pm.filterByTags(superProfile.getSavedTemplates(), PUBLIC_TAG_LIST,
-                                               TagTypes.TEMPLATE,
-                                               superProfile.getUsername()).entrySet();
+                        return new SearchFilterEngine().filterByTags(superProfile.getSavedTemplates(), 
+                                PUBLIC_TAG_LIST, TagTypes.TEMPLATE, superProfile.getUsername(), 
+                                tagManager).entrySet();
                     }
                 };
             searchRepository.addWebSearchables(TagTypes.TEMPLATE, templateSearchableMap);
@@ -157,9 +159,9 @@ public class InitialiserPlugin implements PlugIn
                 new AbstractMap<String, InterMineBag>() {
                     @Override
                     public Set<Map.Entry<String, InterMineBag>> entrySet() {
-                        return pm.filterByTags(superProfile.getSavedBags(), PUBLIC_TAG_LIST,
-                                               TagTypes.BAG,
-                                               superProfile.getUsername()).entrySet();
+                        return new SearchFilterEngine().filterByTags(superProfile.getSavedBags(), 
+                                PUBLIC_TAG_LIST, TagTypes.BAG, superProfile.getUsername(), 
+                                tagManager).entrySet();
                     }
                 };
             searchRepository.addWebSearchables(TagTypes.BAG, bagSearchableMap);

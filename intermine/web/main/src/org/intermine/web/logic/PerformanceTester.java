@@ -33,7 +33,9 @@ import org.intermine.web.logic.bag.BagQueryConfig;
 import org.intermine.web.logic.bag.BagQueryHelper;
 import org.intermine.web.logic.profile.Profile;
 import org.intermine.web.logic.profile.ProfileManager;
+import org.intermine.web.logic.profile.TagManagerFactory;
 import org.intermine.web.logic.query.MainHelper;
+import org.intermine.web.logic.search.SearchFilterEngine;
 import org.intermine.web.logic.tagging.TagNames;
 import org.intermine.web.logic.tagging.TagTypes;
 import org.intermine.web.logic.template.TemplateQuery;
@@ -71,8 +73,9 @@ public class PerformanceTester
         Profile p = pm.getProfile(superuser);
 
         Map<String, TemplateQuery> templates = p.getSavedTemplates();
-        templates = pm.filterByTags(templates, Collections.singletonList(TagNames.IM_PUBLIC),
-                TagTypes.TEMPLATE, superuser);
+        templates = new SearchFilterEngine().filterByTags(templates, 
+                Collections.singletonList(TagNames.IM_PUBLIC),
+                TagTypes.TEMPLATE, superuser, new TagManagerFactory(userProfileOs).getTagManager());
         int i = Integer.parseInt(args[0]);
         System .out.println("Running with " + i + " threads:");
         doRun(productionOs, classKeys, bagQueryConfig, templates, i);
