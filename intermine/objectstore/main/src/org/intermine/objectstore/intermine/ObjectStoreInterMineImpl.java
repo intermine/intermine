@@ -93,7 +93,6 @@ public class ObjectStoreInterMineImpl extends ObjectStoreAbstractImpl implements
     protected static final int CACHE_LARGEST_OBJECT = 5000000;
     protected static Map instances = new HashMap();
     protected Database db;
-    protected boolean everOptimise = true;
     protected Set writers = new HashSet();
     protected Writer log = null;
     protected DatabaseSchema schema;
@@ -237,6 +236,17 @@ public class ObjectStoreInterMineImpl extends ObjectStoreAbstractImpl implements
      */
     public Database getDatabase() {
         return db;
+    }
+
+    /**
+     * Returns whether optimisation should be permitted. For the ObjectStore, this will always be
+     * true, but for the ObjectStoreWriter, it may be false if there is written data that has not
+     * been committed yet.
+     *
+     * @return a boolean
+     */
+    public boolean everOptimise() {
+        return true;
     }
 
     /**
@@ -837,7 +847,7 @@ public class ObjectStoreInterMineImpl extends ObjectStoreAbstractImpl implements
             long estimatedTime = 0;
             long startOptimiseTime = System.currentTimeMillis();
             ExplainResult explainResult = null;
-            if (optimise && everOptimise) {
+            if (optimise && everOptimise()) {
                 PrecomputedTable pt = (PrecomputedTable) goFasterMap.get(q);
                 BestQuery bestQuery;
                 if (pt != null) {
@@ -1229,7 +1239,7 @@ public class ObjectStoreInterMineImpl extends ObjectStoreAbstractImpl implements
             return new ResultsInfo(0, 0, 0, 0, 0);
         }
         try {
-            if (everOptimise) {
+            if (everOptimise()) {
                 sql = QueryOptimiser.optimise(sql, db);
             }
             //long time = (new Date()).getTime();
@@ -1277,7 +1287,7 @@ public class ObjectStoreInterMineImpl extends ObjectStoreAbstractImpl implements
         String sql = null;
         try {
             sql = generateSql(c, q, 0, Integer.MAX_VALUE);
-            if (everOptimise) {
+            if (everOptimise()) {
                 sql = QueryOptimiser.optimise(sql, db);
             }
             sql = "SELECT COUNT(*) FROM (" + sql + ") as fake_table";

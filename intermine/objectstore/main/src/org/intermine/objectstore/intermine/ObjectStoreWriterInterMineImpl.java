@@ -94,7 +94,6 @@ public class ObjectStoreWriterInterMineImpl extends ObjectStoreInterMineImpl
         super(null, ((ObjectStoreInterMineImpl) os).getSchema());
         this.os = (ObjectStoreInterMineImpl) os;
         db = this.os.db;
-        everOptimise = false;
         try {
             conn = this.os.getConnection();
         } catch (SQLException e) {
@@ -120,6 +119,13 @@ public class ObjectStoreWriterInterMineImpl extends ObjectStoreInterMineImpl
         tableToInfo = new HashMap();
         tableToColNameArray = new HashMap();
         tableToCollections = new HashMap();
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public boolean everOptimise() {
+        return tablesAltered.isEmpty();
     }
 
     /**
@@ -975,7 +981,7 @@ public class ObjectStoreWriterInterMineImpl extends ObjectStoreInterMineImpl
         String sql = SqlGenerator.generate(query, schema, db, null, SqlGenerator.ID_ONLY,
                 bagConstraintTables);
         try {
-            if (everOptimise) {
+            if (everOptimise()) {
                 PrecomputedTable pt = (PrecomputedTable) goFasterMap.get(query);
                 BestQuery bestQuery;
                 if (pt != null) {
