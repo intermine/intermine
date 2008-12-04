@@ -92,7 +92,7 @@ public class BagUploadConfirmAction extends InterMineAction
 
         ProfileManager profileManager =
             (ProfileManager) servletContext.getAttribute(Constants.PROFILE_MANAGER);
-        ObjectStoreWriter profileOs = profileManager.getUserProfileObjectStore();
+        ObjectStoreWriter profileOs = profileManager.getProfileObjectStoreWriter();
 
         InterMineBag bag = new InterMineBag(bagName, bagType, null, new Date(), os,
                                             profile.getUserId(),

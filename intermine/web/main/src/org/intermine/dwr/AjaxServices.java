@@ -50,7 +50,6 @@ import org.intermine.objectstore.query.Query;
 import org.intermine.objectstore.query.QuerySelectable;
 import org.intermine.objectstore.query.Results;
 import org.intermine.pathquery.Path;
-import org.intermine.pathquery.PathNode;
 import org.intermine.pathquery.PathQuery;
 import org.intermine.util.StringUtil;
 import org.intermine.util.TypeUtil;
@@ -66,6 +65,7 @@ import org.intermine.web.logic.config.Type;
 import org.intermine.web.logic.config.WebConfig;
 import org.intermine.web.logic.profile.Profile;
 import org.intermine.web.logic.profile.ProfileManager;
+import org.intermine.web.logic.profile.TagManager;
 import org.intermine.web.logic.query.MainHelper;
 import org.intermine.web.logic.query.PageTableQueryMonitor;
 import org.intermine.web.logic.query.QueryMonitorTimeout;
@@ -122,40 +122,15 @@ public class AjaxServices
             WebContext ctx = WebContextFactory.get();
             HttpSession session = ctx.getSession();
             Profile profile = (Profile) session.getAttribute(Constants.PROFILE);
-            HttpServletRequest request = ctx.getHttpServletRequest();
             String nameCopy = name.replaceAll("#039;", "'");
-            ProfileManager pm = getProfileManager(request);
+            TagManager tagManager = getTagManager();
 
             // already a favourite.  turning off.
             if (isFavourite) {
-
-                List<Tag> tags;
-                Tag tag;
-                if (type.equals(TagTypes.TEMPLATE)) {
-                    tags = pm.getTags(TagNames.IM_FAVOURITE, nameCopy, TagTypes.TEMPLATE,
-                            profile.getUsername());
-                } else if (type.equals(TagTypes.BAG)) {
-                    tags = pm.getTags(TagNames.IM_FAVOURITE, nameCopy,
-                                      TagTypes.BAG, profile.getUsername());
-                } else {
-                    throw new RuntimeException("Unknown tag type.");
-                }
-                if (tags.isEmpty()) {
-                    throw new RuntimeException("User tried to mark a non-existent template "
-                                               + "as favourite");
-                }
-                tag = tags.get(0);
-                pm.deleteTag(tag);
+                tagManager.deleteTag(TagNames.IM_FAVOURITE, nameCopy, type, profile.getUsername());
             // not a favourite.  turning on.
             } else {
-                if (type.equals(TagTypes.TEMPLATE)) {
-                    pm.addTag(TagNames.IM_FAVOURITE, nameCopy,
-                              TagTypes.TEMPLATE, profile.getUsername());
-                } else if (type.equals(TagTypes.BAG)) {
-                    pm.addTag(TagNames.IM_FAVOURITE, nameCopy, TagTypes.BAG, profile.getUsername());
-                } else {
-                    throw new RuntimeException("Unknown tag type.");
-                }
+                tagManager.addTag(TagNames.IM_FAVOURITE, nameCopy, type, profile.getUsername());
             }
         } catch (RuntimeException e) {
             processException(e);
@@ -221,7 +196,7 @@ public class AjaxServices
             ObjectStoreInterMineImpl os = (ObjectStoreInterMineImpl) servletContext
                     .getAttribute(Constants.OBJECTSTORE);
             ObjectStoreWriter osw = ((ProfileManager) servletContext.getAttribute(
-                        Constants.PROFILE_MANAGER)).getUserProfileObjectStore();
+                        Constants.PROFILE_MANAGER)).getProfileObjectStoreWriter();
             try {
                 session.setAttribute("summarising_" + templateName, "true");
                 template.summarise(os, osw);
@@ -260,7 +235,7 @@ public class AjaxServices
             Profile profile = (Profile) session.getAttribute(Constants.PROFILE);
             ServletContext servletContext = ctx.getServletContext();
             ObjectStoreWriter uosw = ((ProfileManager) servletContext.getAttribute(
-                        Constants.PROFILE_MANAGER)).getUserProfileObjectStore();
+                        Constants.PROFILE_MANAGER)).getProfileObjectStoreWriter();
             SavedQuery sq;
             if (name.equals(newName) || StringUtils.isEmpty(newName)) {
                 return name;
@@ -299,8 +274,9 @@ public class AjaxServices
                 }
                 InterMineBag bag = profile.getSavedBags().get(name);
                 bag.setName(newName, uosw);
-                getProfileManager(getRequest()).moveTagsToNewObject(name, newName, TagTypes.BAG,
-                        profile.getUsername());
+                TagManager tagManager = getTagManager();
+                moveTagsToNewObject(name, newName, TagTypes.BAG,
+                        profile.getUsername(), tagManager);
                 profile.deleteBag(name);
                 profile.saveBag(newName, bag);
             } else {
@@ -313,6 +289,23 @@ public class AjaxServices
         }
     }
 
+    /**
+     * Moves tags from one object to another.
+     * @param oldTaggedObj name of original tagged object
+     * @param newTaggedObj name of new tagged object
+     * @param type tag type
+     * @param userName user name
+     * @param tagManager 
+     */
+    public static void moveTagsToNewObject(String oldTaggedObj, String newTaggedObj, String type,
+            String userName, TagManager tagManager) {
+        List<Tag> tags = tagManager.getTags(null, oldTaggedObj, type, userName);
+        for (Tag tag : tags) {
+            tagManager.addTag(tag.getTagName(), newTaggedObj, type, userName);
+            tagManager.deleteTag(tag);
+        }
+    }
+    
     /**
      * For a given bag, set its description
      * @param bagName the bag
@@ -327,7 +320,7 @@ public class AjaxServices
             Profile profile = (Profile) session.getAttribute(Constants.PROFILE);
             ServletContext servletContext = ctx.getServletContext();
             ObjectStoreWriter uosw = ((ProfileManager) servletContext.getAttribute(
-                        Constants.PROFILE_MANAGER)).getUserProfileObjectStore();
+                        Constants.PROFILE_MANAGER)).getProfileObjectStoreWriter();
             InterMineBag bag = profile.getSavedBags().get(bagName);
             if (bag == null) {
                 throw new InterMineException("List \"" + bagName + "\" not found.");
@@ -1269,7 +1262,6 @@ public class AjaxServices
         String successMsg = "ok";
         try {
             HttpServletRequest request = getRequest();
-            ProfileManager profileManager = getProfileManager(request);
             Profile profile = getProfile(request);
             tagName = tagName.trim();
             HttpSession session = request.getSession();
@@ -1281,8 +1273,8 @@ public class AjaxServices
                 if (tagExists(tagName, taggedObject, type)) {
                     return "Already tagged with this tag.";
                 }
-                if (!ProfileManager.isValidTagName(tagName)) {
-                    return ProfileManager.getInvalidTagNameMessage();
+                if (!TagManager.isValidTagName(tagName)) {
+                    return TagManager.getInvalidTagNameMessage();
                 }
                 if (tagName.startsWith(TagNames.IM_PREFIX)
                         && !SessionMethods.isSuperUser(session)) {
@@ -1290,7 +1282,8 @@ public class AjaxServices
                         + "It is reserved for internal needs.";
                 }
 
-                profileManager.addTag(tagName, taggedObject, type, profile.getUsername());
+                TagManager tagManager = getTagManager();
+                tagManager.addTag(tagName, taggedObject, type, profile.getUsername());
 
                 ServletContext servletContext = session.getServletContext();
                 if (SessionMethods.isSuperUser(session)) {
@@ -1321,9 +1314,9 @@ public class AjaxServices
         String errorMsg = "Deleting tag failed.";
         try {
             HttpServletRequest request = getRequest();
-            ProfileManager profileManager = getProfileManager(request);
-            Profile profile = getProfile(request);
-            profileManager.deleteTag(tagName, tagged, type, profile.getUsername());
+            Profile profile  = getProfile(request);
+            TagManager manager = SessionMethods.getTagManager(request.getSession());
+            manager.deleteTag(tagName, tagged, type, profile.getUsername());
             HttpSession session = request.getSession();
             ServletContext servletContext = session.getServletContext();
             if (SessionMethods.isSuperUser(session)) {
@@ -1347,10 +1340,10 @@ public class AjaxServices
     public static Set<String> getTags(String type) {
         LOG.info("Called getTags(). type: " + type);
         HttpServletRequest request = getRequest();
-        ProfileManager profileManager = getProfileManager(request);
+        TagManager tagManager = SessionMethods.getTagManager(request.getSession());
         Profile profile = getProfile(request);
         if (profile.isLoggedIn()) {
-            return profileManager.getUserTagNames(type, profile.getUsername());
+            return tagManager.getUserTagNames(type, profile.getUsername());
         }
         return new TreeSet<String>();
     }
@@ -1363,25 +1356,19 @@ public class AjaxServices
      */
     public static Set<String> getObjectTags(String type, String tagged) {
         HttpServletRequest request = getRequest();
-        ProfileManager profileManager = getProfileManager(request);
+        TagManager tagManager = SessionMethods.getTagManager(request.getSession());
         Profile profile = getProfile(request);
         if (profile.isLoggedIn()) {
-            return profileManager.getObjectTagNames(tagged, type, profile.getUsername());
+            return tagManager.getObjectTagNames(tagged, type, profile.getUsername());
         }
         return new TreeSet<String>();
     }
 
-    private static ProfileManager getProfileManager(HttpServletRequest request) {
-        ProfileManager pm = (ProfileManager) request.getSession()
-            .getServletContext().getAttribute(Constants.PROFILE_MANAGER);
-        return pm;
-    }
-
     private static boolean tagExists(String tag, String taggedObject, String type) {
         HttpServletRequest request = getRequest();
-        ProfileManager profileManager = getProfileManager(request);
+        TagManager tagManager = SessionMethods.getTagManager(request.getSession());
         String userName = getProfile(request).getUsername();
-        return profileManager.getObjectTagNames(taggedObject, type, userName).contains(tag);
+        return tagManager.getObjectTagNames(taggedObject, type, userName).contains(tag);
     }
 
 
@@ -1391,5 +1378,9 @@ public class AjaxServices
 
     private static HttpServletRequest getRequest() {
         return WebContextFactory.get().getHttpServletRequest();
+    }
+    
+    private static TagManager getTagManager() {
+        return SessionMethods.getTagManager(getRequest().getSession());
     }
 }

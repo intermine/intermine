@@ -152,7 +152,7 @@ public class PortalQueryAction extends InterMineAction
             recordError(new ActionMessage("errors.badportalclass"), request);
             return goToNoResults(mapping, session);
         }
-        ObjectStoreWriter uosw = profile.getProfileManager().getUserProfileObjectStore();
+        ObjectStoreWriter uosw = profile.getProfileManager().getProfileObjectStoreWriter();
         String bagName = null;
         Map<String, InterMineBag> profileBags = profile.getSavedBags();
         boolean bagExists = true;

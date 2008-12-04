@@ -38,6 +38,7 @@ import org.intermine.util.DynamicUtil;
 import org.intermine.util.TypeUtil;
 import org.intermine.web.logic.profile.Profile;
 import org.intermine.web.logic.profile.ProfileManager;
+import org.intermine.web.logic.profile.TagManager;
 import org.intermine.web.logic.session.SessionMethods;
 import org.intermine.web.logic.tagging.TagNames;
 import org.intermine.web.logic.tagging.TagTypes;
@@ -440,11 +441,10 @@ public class BagQueryRunner
         Profile p = pm.getProfile(sup);
 
         List<TemplateQuery> conversionTemplates = new ArrayList();
-        List tags = pm.getTags(TagNames.IM_CONVERTER, null, TagTypes.TEMPLATE, sup);
+        TagManager tagManager = SessionMethods.getTagManager(servletContext);
+        List<Tag> tags = tagManager.getTags(TagNames.IM_CONVERTER, null, TagTypes.TEMPLATE, sup);
 
-        Iterator iter = tags.iterator();
-        while (iter.hasNext()) {
-            Tag tag = (Tag) iter.next();
+        for (Tag tag : tags) {
             String oid = tag.getObjectIdentifier();
             TemplateQuery tq = p.getSavedTemplates().get(oid);
             if (tq != null) {

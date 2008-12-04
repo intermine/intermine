@@ -86,7 +86,7 @@ public class SaveBagAction extends InterMineAction
         PagedTable pt = SessionMethods.getResultsTable(session, request.getParameter("table"));
         SaveBagForm sbf = (SaveBagForm) form;
         ObjectStoreWriter uosw = ((ProfileManager) servletContext.getAttribute(Constants
-                    .PROFILE_MANAGER)).getUserProfileObjectStore();
+                    .PROFILE_MANAGER)).getProfileObjectStoreWriter();
 
         String bagName = null;
         String operation = "";

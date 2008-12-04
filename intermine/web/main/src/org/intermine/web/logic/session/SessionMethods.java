@@ -52,6 +52,8 @@ import org.intermine.web.logic.config.WebConfig;
 import org.intermine.web.logic.pathqueryresult.PathQueryResultHelper;
 import org.intermine.web.logic.profile.Profile;
 import org.intermine.web.logic.profile.ProfileManager;
+import org.intermine.web.logic.profile.TagManager;
+import org.intermine.web.logic.profile.TagManagerFactory;
 import org.intermine.web.logic.query.MainHelper;
 import org.intermine.web.logic.query.PageTableQueryMonitor;
 import org.intermine.web.logic.query.QueryMonitor;
@@ -946,5 +948,21 @@ public class SessionMethods
         }
         return webState;
     }
-
+    
+    /**
+     * @param session http session
+     * @return tag manager
+     */
+    public static TagManager getTagManager(HttpSession session) {
+        return getTagManager(session.getServletContext());
+    }
+    
+    /**
+     * @param context servlet context
+     * @return tag manager
+     */
+    public static TagManager getTagManager(ServletContext context) {
+        ProfileManager pm = getProfileManager(context);
+        return new TagManagerFactory(pm.getProfileObjectStoreWriter()).getTagManager();
+    }
 }

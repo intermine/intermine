@@ -13,6 +13,7 @@ package org.intermine.web.struts;
 import org.intermine.web.logic.Constants;
 import org.intermine.web.logic.profile.Profile;
 import org.intermine.web.logic.profile.ProfileManager;
+import org.intermine.web.logic.profile.TagManager;
 import org.intermine.web.logic.session.SessionMethods;
 import org.intermine.web.logic.tagging.TagTypes;
 
@@ -47,8 +48,7 @@ public class MyMineController extends TilesAction
                                  @SuppressWarnings("unused") HttpServletResponse response)
         throws Exception {
         HttpSession session = request.getSession();
-        ServletContext servletContext = session.getServletContext();
-        ProfileManager pm = SessionMethods.getProfileManager(servletContext);
+        TagManager tagManager = SessionMethods.getTagManager(session);
         String page = request.getParameter("page");
 
         Profile profile = (Profile) session.getAttribute(Constants.PROFILE);
@@ -70,7 +70,7 @@ public class MyMineController extends TilesAction
                 String userName = ((Profile) session.getAttribute(Constants.PROFILE)).getUsername();
                 if (userName != null) {
                     // discard result
-                    pm.getTags(null, null, TagTypes.TEMPLATE, userName);
+                    tagManager.getTags(null, null, TagTypes.TEMPLATE, userName);
                 }
             }
         }

@@ -44,9 +44,11 @@ import org.apache.lucene.store.Directory;
 import org.apache.lucene.store.RAMDirectory;
 import org.intermine.model.userprofile.Tag;
 import org.intermine.web.logic.Constants;
+import org.intermine.web.logic.aspects.AspectTagUtil;
 import org.intermine.web.logic.bag.InterMineBag;
 import org.intermine.web.logic.profile.Profile;
-import org.intermine.web.logic.profile.ProfileManager;
+import org.intermine.web.logic.profile.TagManager;
+import org.intermine.web.logic.profile.TagManagerFactory;
 import org.intermine.web.logic.tagging.TagTypes;
 import org.intermine.web.logic.template.TemplateQuery;
 
@@ -227,8 +229,9 @@ public class SearchRepository
         Iterator iter = webSearchableMap.values().iterator();
         int indexed = 0;
 
-        ProfileManager pm = profile.getProfileManager();
-
+        TagManager tagManager = new TagManagerFactory(profile.getProfileManager()
+                .getProfileObjectStoreWriter()).getTagManager();
+        
         while (iter.hasNext()) {
             WebSearchable webSearchable = (WebSearchable) iter.next();
 
@@ -237,11 +240,12 @@ public class SearchRepository
                               Field.Index.TOKENIZED));
             StringBuffer contentBuffer = new StringBuffer(webSearchable.getTitle() + " : "
                                                + webSearchable.getDescription());
-            List<Tag> tags = pm.getTags(null, webSearchable.getName(), type, profile.getUsername());
+            List<Tag> tags = tagManager.getTags(null, webSearchable.getName(), type, 
+                    profile.getUsername());
             for (Tag tag: tags) {
                 String tagName = tag.getTagName();
-                if (ProfileManager.isAspectTag(tagName)) {
-                    contentBuffer.append(' ').append(ProfileManager.getAspect(tagName));
+                if (AspectTagUtil.isAspectTag(tagName)) {
+                    contentBuffer.append(' ').append(AspectTagUtil.getAspect(tagName));
                 }
             }
 

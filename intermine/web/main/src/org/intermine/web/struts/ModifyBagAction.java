@@ -119,7 +119,7 @@ public class ModifyBagAction extends InterMineAction
 
         Map<String, InterMineBag> allBags = WebUtil.getAllBags
             (profile.getSavedBags(), request.getSession().getServletContext());
-        ObjectStoreWriter userOSW = profile.getProfileManager().getUserProfileObjectStore();
+        ObjectStoreWriter userOSW = profile.getProfileManager().getProfileObjectStoreWriter();
 
         String newNameTextBox = getNewNameTextBox(request, frm);
 
@@ -250,7 +250,7 @@ public class ModifyBagAction extends InterMineAction
         // Now combine
         String name = BagHelper.findNewBagName(allBags, mbf.getNewBagName());
         ObjectStoreWriter uosw = profile.getProfileManager()
-                .getUserProfileObjectStore();
+                .getProfileObjectStoreWriter();
         InterMineBag combined = new InterMineBag(name, type, null, new Date(),
                 os, profile.getUserId(), uosw);
         ObjectStoreBagCombination osbc = new ObjectStoreBagCombination(op);
@@ -370,7 +370,7 @@ public class ModifyBagAction extends InterMineAction
     private void deleteBag(HttpSession session, Profile profile,
             InterMineBag bag) throws ObjectStoreException {
         ObjectStoreWriter uosw = profile.getProfileManager()
-                .getUserProfileObjectStore();
+                .getProfileObjectStoreWriter();
         // removed a cached bag table from the session
         SessionMethods.invalidateBagTable(session, bag.getName());
         bag.setProfileId(null, uosw); // Deletes from database

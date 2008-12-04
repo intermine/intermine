@@ -23,6 +23,7 @@ import org.intermine.objectstore.ObjectStoreSummary;
 import org.intermine.util.TypeUtil;
 import org.intermine.web.logic.Constants;
 import org.intermine.web.logic.profile.ProfileManager;
+import org.intermine.web.logic.profile.TagManager;
 import org.intermine.web.logic.session.SessionMethods;
 
 import javax.servlet.ServletContext;
@@ -58,21 +59,21 @@ public class ClassChooserController extends TilesAction
         ObjectStore os = (ObjectStore) servletContext.getAttribute(Constants.OBJECTSTORE);
         ObjectStoreSummary oss =
             (ObjectStoreSummary) servletContext.getAttribute(Constants.OBJECT_STORE_SUMMARY);
-        ProfileManager pm = SessionMethods.getProfileManager(servletContext);
 
         Collection qualifiedTypes = os.getModel().getClassNames();
         Map classDescrs = (Map) servletContext.getAttribute("classDescriptions");
         StringBuffer sb = new StringBuffer();
 
-        String superUserName = pm.getSuperuser();
-
-        List preferredBagTypeTags = pm.getTags("im:preferredBagType", null, "class", superUserName);
+        String superUserName = SessionMethods.getProfileManager(servletContext).getSuperuser();
+        TagManager tagManager = SessionMethods.getTagManager(session);
+        
+        List<Tag> preferredBagTypeTags = tagManager.getTags("im:preferredBagType", null,
+                "class", superUserName);
 
         ArrayList<String> typeList = new ArrayList<String>();
         ArrayList<String> preferedTypeList = new ArrayList<String>();
 
-        for (Iterator iter = preferredBagTypeTags.iterator(); iter.hasNext();) {
-            Tag tag = (Tag) iter.next();
+        for (Tag tag : preferredBagTypeTags) {
             preferedTypeList.add(TypeUtil.unqualifiedName(tag.getObjectIdentifier()));
         }
 

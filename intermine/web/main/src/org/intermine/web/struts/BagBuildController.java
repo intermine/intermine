@@ -17,26 +17,6 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
-import org.intermine.objectstore.query.Query;
-import org.intermine.objectstore.query.QueryClass;
-import org.intermine.objectstore.query.QueryField;
-import org.intermine.objectstore.query.Results;
-import org.intermine.objectstore.query.ResultsRow;
-
-import org.intermine.metadata.ClassDescriptor;
-import org.intermine.metadata.FieldDescriptor;
-import org.intermine.metadata.Model;
-import org.intermine.metadata.ReferenceDescriptor;
-import org.intermine.model.userprofile.Tag;
-import org.intermine.objectstore.ObjectStore;
-import org.intermine.objectstore.ObjectStoreSummary;
-import org.intermine.util.TypeUtil;
-import org.intermine.web.logic.ClassKeyHelper;
-import org.intermine.web.logic.Constants;
-import org.intermine.web.logic.bag.BagQueryConfig;
-import org.intermine.web.logic.profile.ProfileManager;
-import org.intermine.web.logic.session.SessionMethods;
-
 import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -47,6 +27,25 @@ import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
 import org.apache.struts.tiles.actions.TilesAction;
+import org.intermine.metadata.ClassDescriptor;
+import org.intermine.metadata.FieldDescriptor;
+import org.intermine.metadata.Model;
+import org.intermine.metadata.ReferenceDescriptor;
+import org.intermine.model.userprofile.Tag;
+import org.intermine.objectstore.ObjectStore;
+import org.intermine.objectstore.ObjectStoreSummary;
+import org.intermine.objectstore.query.Query;
+import org.intermine.objectstore.query.QueryClass;
+import org.intermine.objectstore.query.QueryField;
+import org.intermine.objectstore.query.Results;
+import org.intermine.objectstore.query.ResultsRow;
+import org.intermine.util.TypeUtil;
+import org.intermine.web.logic.ClassKeyHelper;
+import org.intermine.web.logic.Constants;
+import org.intermine.web.logic.bag.BagQueryConfig;
+import org.intermine.web.logic.profile.ProfileManager;
+import org.intermine.web.logic.profile.TagManager;
+import org.intermine.web.logic.session.SessionMethods;
 
 /**
  * Controller Action for buildBag.jsp
@@ -87,10 +86,10 @@ public class BagBuildController extends TilesAction
         ArrayList<String> preferedTypeList = new ArrayList<String>();
         String superUserName = pm.getSuperuser();
 
+        TagManager tagManager = SessionMethods.getTagManager(session);
         List<Tag> preferredBagTypeTags =
-            pm.getTags("im:preferredBagType", null, "class", superUserName);
-        for (Iterator<Tag> iter = preferredBagTypeTags.iterator(); iter.hasNext();) {
-            Tag tag = iter.next();
+            tagManager.getTags("im:preferredBagType", null, "class", superUserName);
+        for (Tag tag : preferredBagTypeTags) {
             preferedTypeList.add(TypeUtil.unqualifiedName(tag.getObjectIdentifier()));
         }
         Map<String, List<FieldDescriptor>> classKeys =

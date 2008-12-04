@@ -27,6 +27,8 @@ import org.intermine.model.userprofile.Tag;
 import org.intermine.util.XmlUtil;
 import org.intermine.web.logic.Constants;
 import org.intermine.web.logic.profile.Profile;
+import org.intermine.web.logic.profile.TagManager;
+import org.intermine.web.logic.session.SessionMethods;
 import org.intermine.web.logic.tagging.TagBinding;
 
 /**
@@ -62,10 +64,9 @@ public class ExportTagsAction extends InterMineAction
         XMLStreamWriter writer = factory.createXMLStreamWriter(sw);
 
         writer.writeStartElement("tags");
-        List tags = profile.getProfileManager().getTags(null, null, null,
-                                                        profile.getUsername());
-        for (Iterator i = tags.iterator(); i.hasNext();) {
-            Tag tag = (Tag) i.next();
+        TagManager tagManager = SessionMethods.getTagManager(session);
+        List<Tag> tags = tagManager.getUserTags(profile.getUsername());
+        for (Tag tag : tags) {
             TagBinding.marshal(tag, writer);
         }
         writer.writeEndElement();

@@ -29,8 +29,9 @@ import org.apache.struts.action.ActionMapping;
 import org.apache.struts.tiles.ComponentContext;
 import org.apache.struts.tiles.actions.TilesAction;
 import org.intermine.model.userprofile.Tag;
+import org.intermine.web.logic.aspects.AspectTagUtil;
 import org.intermine.web.logic.bag.InterMineBag;
-import org.intermine.web.logic.profile.ProfileManager;
+import org.intermine.web.logic.profile.TagManager;
 import org.intermine.web.logic.results.DisplayObject;
 import org.intermine.web.logic.session.SessionMethods;
 import org.intermine.web.logic.tagging.TagNames;
@@ -58,8 +59,8 @@ public class TemplateListController extends TilesAction
         String scope = (String) context.getAttribute("scope");
         String aspect = (String) context.getAttribute("placement");
 
-        if (ProfileManager.isAspectTag(aspect)) {
-            aspect = ProfileManager.getAspect(aspect);
+        if (AspectTagUtil.isAspectTag(aspect)) {
+            aspect = AspectTagUtil.getAspect(aspect);
         }
 
         InterMineBag interMineIdBag = (InterMineBag) context.getAttribute("interMineIdBag");
@@ -81,10 +82,10 @@ public class TemplateListController extends TilesAction
                 request.setAttribute("fieldExprMap", fieldExprs);
             }
 
-            ProfileManager pm = SessionMethods.getProfileManager(servletContext);
-            String sup = pm.getSuperuser();
+            TagManager tagManager = SessionMethods.getTagManager(session);
+            String sup = SessionMethods.getProfileManager(servletContext).getSuperuser();
             List<Tag> noReportTags =
-                pm.getTags(TagNames.IM_NO_REPORT, null, TagTypes.TEMPLATE, sup);
+                tagManager.getTags(TagNames.IM_NO_REPORT, null, TagTypes.TEMPLATE, sup);
 
             Set<String> noReportNames = new HashSet<String>();
 
