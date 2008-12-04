@@ -20,6 +20,7 @@ import java.util.Set;
 
 import org.intermine.metadata.Model;
 import org.intermine.model.InterMineObject;
+import org.intermine.model.userprofile.Tag;
 import org.intermine.objectstore.ObjectStoreWriter;
 import org.intermine.web.logic.bag.IdUpgrader;
 import org.intermine.web.logic.bag.InterMineBag;
@@ -139,7 +140,7 @@ class ProfileHandler extends DefaultHandler
      * Return a set of Tag objects to add to the Profile.
      * @return the set Tags
      */
-    public Set getTags() {
+    public Set<Tag> getTags() {
         return tags;
     }
 
@@ -161,7 +162,7 @@ class ProfileHandler extends DefaultHandler
         }
         if (qName.equals("bags")) {
             savedBags = new LinkedHashMap();
-            subHandler = new InterMineBagHandler(profileManager.getUserProfileObjectStore(),
+            subHandler = new InterMineBagHandler(profileManager.getProfileObjectStoreWriter(),
                     osw, savedBags, null, idObjectMap, idUpgrader);
         }
         if (qName.equals("template-queries")) {

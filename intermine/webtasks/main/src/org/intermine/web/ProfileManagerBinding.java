@@ -13,6 +13,7 @@ package org.intermine.web;
 import java.io.Reader;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Set;
 
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamWriter;
@@ -25,6 +26,8 @@ import org.intermine.web.bag.PkQueryIdUpgrader;
 import org.intermine.web.logic.bag.IdUpgrader;
 import org.intermine.web.logic.profile.Profile;
 import org.intermine.web.logic.profile.ProfileManager;
+import org.intermine.web.logic.profile.TagManager;
+import org.intermine.web.logic.profile.TagManagerFactory;
 import org.xml.sax.Attributes;
 import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
@@ -162,12 +165,20 @@ class ProfileManagerHandler extends DefaultHandler
         if (qName.equals("userprofile")) {
             Profile profile = profileHandler.getProfile();
             profileManager.createProfile(profile);
-            Iterator tagIter = profileHandler.getTags().iterator();
-            while (tagIter.hasNext()) {
-                Tag tag = (Tag) tagIter.next();
-                profileManager.addTag(tag.getTagName(), tag.getObjectIdentifier(), tag.getType(),
-                                      profile.getUsername(), abortOnError);
-
+            Set<Tag> tags = profileHandler.getTags();
+            TagManager tagManager = new TagManagerFactory(profile.getProfileManager()
+                    .getProfileObjectStoreWriter()).getTagManager();
+            for (Tag tag : tags) {
+                try {
+                    tagManager.addTag(tag.getTagName(), tag.getObjectIdentifier(), tag.getType(),
+                            profile.getUsername());                                            
+                } catch (RuntimeException e) {
+                    if (abortOnError) {
+                        throw e;
+                    } else {
+                        LOG.error("Error during adding tag: " + tag.toString(), e);   
+                    }
+                }
             }
             profileHandler = null;
             long totalTime = System.currentTimeMillis() - startTime;

@@ -34,6 +34,8 @@ import org.intermine.web.ProfileBinding;
 import org.intermine.web.logic.Constants;
 import org.intermine.web.logic.profile.Profile;
 import org.intermine.web.logic.profile.ProfileManager;
+import org.intermine.web.logic.profile.TagManager;
+import org.intermine.web.logic.profile.TagManagerFactory;
 import org.intermine.web.logic.search.SearchRepository;
 import org.intermine.web.logic.template.TemplateHelper;
 import org.intermine.web.logic.template.TemplateQuery;
@@ -136,7 +138,7 @@ public class LoadDefaultTemplatesTask extends Task
                     new SearchRepository(pm.getProfile(username), TemplateHelper.ALL_TEMPLATE));
 
             // Unmarshal
-            Set tags = new HashSet();
+            Set<Tag> tags = new HashSet();
             osw = new ObjectStoreWriterInterMineImpl(os);
             Profile profileSrc = ProfileBinding.unmarshal(reader, pm, profileDest.getUsername(),
                     profileDest.getPassword(), tags, osw);
@@ -156,13 +158,16 @@ public class LoadDefaultTemplatesTask extends Task
             }
 
             // Tags not loaded automatically when unmarshalling profile
-             Iterator iter = tags.iterator();
-             while (iter.hasNext()) {
-                 Tag tag = (Tag) iter.next();
-                 if (pm.getTags(tag.getTagName(), tag.getObjectIdentifier(),
+            TagManager tagManager = new TagManagerFactory(userProfileOS).getTagManager();
+            for (Tag tag : tags) {
+                 if (tagManager.getTags(tag.getTagName(), tag.getObjectIdentifier(),
                                             tag.getType(), profileDest.getUsername()).isEmpty()) {
-                     pm.addTag(tag.getTagName(), tag.getObjectIdentifier(), tag.getType(),
-                                        profileDest.getUsername(), false);
+                     try {
+                         tagManager.addTag(tag.getTagName(), tag.getObjectIdentifier(), tag.getType(),
+                                 profileDest.getUsername());
+                     } catch (RuntimeException ex) {
+                         LOG.error("Error happened during adding tag. Ignored. Tag: " + tag.toString(), ex);
+                     }
                  }
              }
 
