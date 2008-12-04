@@ -30,7 +30,6 @@ public class ResultElement implements Serializable
     protected Object field;
     protected Class typeCls;
     protected Integer id;
-    protected String otherLink;
     protected String htmlId;
     private final boolean keyField;
     private final ObjectStore os;
@@ -55,20 +54,6 @@ public class ResultElement implements Serializable
         this.typeCls = typeCls;
         this.keyField = isKeyField;
         this.path = path;
-    }
-
-    /**
-     * Constructor used to create other types of results (like coming from counts)
-     * with a custom link
-     * @param value the field value
-     * @param otherLink a link to an action/page
-     */
-    public ResultElement(Object value, String otherLink) {
-        this.field = value;
-        this.otherLink = otherLink;
-        this.keyField = false;
-        this.path = null;
-        this.os = null;
     }
 
     /**
@@ -120,22 +105,6 @@ public class ResultElement implements Serializable
      */
     public void setTypeClass(Class typeCls) {
         this.typeCls = typeCls;
-    }
-
-    /**
-     * Get the action/page link
-     * @return a String
-     */
-    public String getOtherLink() {
-        return otherLink;
-    }
-
-    /**
-     * Set another custom action/page link
-     * @param otherLink a String
-     */
-    public void setOtherLink(String otherLink) {
-        this.otherLink = otherLink;
     }
 
     /**
