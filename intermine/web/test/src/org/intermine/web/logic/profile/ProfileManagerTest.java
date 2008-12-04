@@ -19,7 +19,6 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
-import java.util.List;
 import java.util.Set;
 
 import javax.xml.stream.XMLOutputFactory;
@@ -55,7 +54,6 @@ import org.intermine.web.ProfileManagerBinding;
 import org.intermine.web.bag.PkQueryIdUpgrader;
 import org.intermine.web.logic.bag.InterMineBag;
 import org.intermine.web.logic.query.SavedQuery;
-import org.intermine.web.logic.tagging.TagNames;
 import org.intermine.web.logic.template.TemplateQuery;
 
 /**
@@ -110,7 +108,6 @@ public class ProfileManagerTest extends StoreDataTestCase
         // bob's details
         String bobName = "bob";
 
-        Set contents = new HashSet();
         InterMineBag bag = new InterMineBag("bag1", "Department",
                                             "This is some description", date, os, bobId, uosw);
 
@@ -139,7 +136,6 @@ public class ProfileManagerTest extends StoreDataTestCase
         bobProfile.saveTemplate("template", template);
 
         query = new PathQuery(Model.getInstanceByName("testmodel"));
-        contents = new HashSet();
         sq = new SavedQuery("query1", date, query);
 
         // sally details
@@ -223,13 +219,14 @@ public class ProfileManagerTest extends StoreDataTestCase
         XMLUnit.setIgnoreWhitespace(true);
         StringWriter sw = new StringWriter();
         XMLOutputFactory factory = XMLOutputFactory.newInstance();
+        TagManager tagManager = getTagManager();
 
-        pm.addTag("test-tag", "Department.company", "reference", "bob");
-        pm.addTag("test-tag2", "Department.name", "attribute", "bob");
-        pm.addTag("test-tag2", "Department.company", "reference", "bob");
-        pm.addTag("test-tag2", "Department.employees", "collection", "bob");
+        tagManager.addTag("test-tag", "Department.company", "reference", "bob");
+        tagManager.addTag("test-tag2", "Department.name", "attribute", "bob");
+        tagManager.addTag("test-tag2", "Department.company", "reference", "bob");
+        tagManager.addTag("test-tag2", "Department.employees", "collection", "bob");
 
-        pm.addTag("test-tag", "Department.company", "reference", "sally");
+        tagManager.addTag("test-tag", "Department.company", "reference", "sally");
 
        
         try {
@@ -252,8 +249,8 @@ public class ProfileManagerTest extends StoreDataTestCase
         while ((line = bis.readLine()) != null) {
             sb.append(line.trim());
         }
-        String expectedXml = sb.toString();
-        String actualXml = sw.toString().trim();
+        //String expectedXml = sb.toString();
+        //String actualXml = sw.toString().trim();
         //System.out.println("expected: " + expectedXml);
         //System.out.println("actual: " + actualXml);
         // TODO this doesn't work because the ids don't match in the bag (as they are retrieved from
@@ -261,6 +258,10 @@ public class ProfileManagerTest extends StoreDataTestCase
 //        assertXMLEqual("XML doesn't match", expectedXml, actualXml);
     }
 
+    private TagManager getTagManager() {
+        return new TagManagerFactory(uosw).getTagManager();
+    }
+    
     public void testXMLRead() throws Exception {
         InputStream is =
             getClass().getClassLoader().getResourceAsStream("ProfileManagerBindingTestNewIDs.xml");
@@ -295,8 +296,6 @@ public class ProfileManagerTest extends StoreDataTestCase
         assertEquals(1, sallyProfile.getSavedQueries().size());
         assertEquals(1, sallyProfile.getSavedTemplates().size());
 
-        InterMineBag sallyBag = sallyProfile.getSavedBags().get("sally_bag1");
-
         Set expectedTags = new HashSet();
         Tag tag1 = (Tag) DynamicUtil.createObject(Collections.singleton(Tag.class));
 
@@ -328,7 +327,7 @@ public class ProfileManagerTest extends StoreDataTestCase
         expectedTags.add(tag3);
         expectedTags.add(tag4);
 
-        Set actualTags = new HashSet(pm.getTags(null, null, null, "bob"));
+        Set actualTags = new HashSet(getTagManager().getTags(null, null, null, "bob"));
 
         assertEquals(expectedTags.size(), actualTags.size());
 
@@ -354,158 +353,5 @@ public class ProfileManagerTest extends StoreDataTestCase
                  + actualTag.getObjectIdentifier() + ", "
                  + actualTag.getType());
         }
-    }
-
-    public void testAddTag() throws Exception {
-        InputStream is =
-            getClass().getClassLoader().getResourceAsStream("ProfileManagerBindingTestNewIDs.xml");
-        BufferedReader reader = new BufferedReader(new InputStreamReader(is));
-
-        ProfileManagerBinding.unmarshal(reader, pm, osw, new PkQueryIdUpgrader(os));
-
-        pm.addTag("test-tag", "Department.name", "attribute", "bob");
-        pm.addTag("test-tag", "Department.company", "reference", "bob");
-        pm.addTag("test-tag", "Department.employees", "collection", "bob");
-
-        try {
-            pm.addTag("test-tag", "Department.name", "error_tag_type", "bob");
-            fail("expected runtime exception");
-        } catch (RuntimeException e) {
-            // expected
-        }
-        try {
-            pm.addTag("test-tag", "Department.error_field", "collection", "bob");
-            fail("expected runtime exception");
-        } catch (RuntimeException e) {
-            // expected
-        }
-        try {
-            pm.addTag("test-tag", "Department.name", "collection", "bob");
-            fail("expected runtime exception");
-        } catch (RuntimeException e) {
-            // expected
-        }
-        try {
-            pm.addTag("test-tag", "Department.name", "reference", "bob");
-            fail("expected runtime exception");
-        } catch (RuntimeException e) {
-            // expected
-        }
-        try {
-            pm.addTag("test-tag", "Department.company", "attribute", "bob");
-            fail("expected runtime exception");
-        } catch (RuntimeException e) {
-            // expected
-        }
-        try {
-            pm.addTag("test-tag", "Department.company", "collection", "bob");
-            fail("expected runtime exception");
-        } catch (RuntimeException e) {
-            // expected
-        }
-        try {
-            pm.addTag("test-tag", "Department.employees", "attribute", "bob");
-            fail("expected runtime exception");
-        } catch (RuntimeException e) {
-            // expected
-        }
-        try {
-            pm.addTag("test-tag", "Department.employees", "reference", "bob");
-            fail("expected runtime exception");
-        } catch (RuntimeException e) {
-            // expected
-        }
-        try {
-            pm.addTag(null, "Department.name", "attribute", "bob");
-            fail("expected runtime exception because of null parameter");
-        } catch (RuntimeException e) {
-            // expected
-        }
-
-        try {
-            pm.addTag("test-tag", null, "attribute", "bob");
-            fail("expected runtime exception because of null parameter");
-        } catch (RuntimeException e) {
-            // expected
-        }
-        try {
-            pm.addTag("test-tag", "Department.name", null, "bob");
-            fail("expected runtime exception because of null parameter");
-        } catch (RuntimeException e) {
-            // expected
-        }
-        try {
-            pm.addTag("test-tag", "Department.name", "attribute", null);
-            fail("expected runtime exception because of null parameter");
-        } catch (RuntimeException e) {
-            // expected
-        }
-
-        pm.addTag("test-tag", "org.intermine.model.testmodel.Department", "class", "bob");
-    }
-
-    public void testGetTags() throws Exception {
-        InputStream is =
-            getClass().getClassLoader().getResourceAsStream("ProfileManagerBindingTestNewIDs.xml");
-        BufferedReader reader = new BufferedReader(new InputStreamReader(is));
-
-        ProfileManagerBinding.unmarshal(reader, pm, osw, new PkQueryIdUpgrader(os));
-
-        pm.addTag("test_tag1", "Department.name", "attribute", "bob");
-        pm.addTag("test_tag1", "Department.company", "reference", "bob");
-        pm.addTag("test_tag1", "Department.employees", "collection", "bob");
-
-        pm.addTag("test_tag2", "Department.name", "attribute", "bob");
-        pm.addTag("test_tag2", "Department.company", "reference", "bob");
-        pm.addTag("test_tag2", "Department.employees", "collection", "bob");
-
-        pm.addTag("test_tag1", "Department.name", "attribute", "sally");
-        pm.addTag("test_tag1", "Department.company", "reference", "sally");
-        pm.addTag("test_tag1", "Department.employees", "collection", "sally");
-
-        pm.addTag("test_tag3", "Department.name", "attribute", "sally");
-        pm.addTag("test_tag3", "Department.company", "reference", "sally");
-        pm.addTag("test_tag3", "Department.employees", "collection", "sally");
-
-        pm.addTag("test_tag3.1", "org.intermine.model.testmodel.Department", "class", "sally");
-
-        List allTags = pm.getTags(null, null, null, null);
-
-        List aspectTags = pm.getTags(TagNames.IM_ASPECT_PREFIX + "%", null, null, null);
-        List imTags = pm .getTags(TagNames.IM_PREFIX + "%", null, null, null);
-        int excludeSize = aspectTags.size() + imTags.size();
-
-        // 18 tags because ProfileManagerBindingTestNewIDs.xml has 5
-        assertEquals(18 + excludeSize, allTags.size());
-
-        List nameTags = pm.getTags("test_tag%", "Department.name", "attribute", "bob");
-        assertEquals(3, nameTags.size());
-
-        List bobAttributeTag1 = pm.getTags("test_tag1", null, "attribute", "bob");
-        assertEquals(1, bobAttributeTag1.size());
-
-        List bobTag1DeptName = pm.getTags("test_tag1", "Department.name", null, "bob");
-        assertEquals(1, bobTag1DeptName.size());
-
-        List allNameAttributeTag1s = pm.getTags("test_tag1", "Department.name", "attribute", null);
-        assertEquals(2, allNameAttributeTag1s.size());
-
-        List nameTagsPattern = pm.getTags("%tag3%", null, null, null);
-        assertEquals(4, nameTagsPattern.size());
-
-        List sallyNameTagsPattern = pm.getTags("test_tag%", null, null, "sal%");
-        assertEquals(8, sallyNameTagsPattern.size());
-
-        // "_" is a wildcard - add 3 from xml file
-        List bobDeptPattern = pm.getTags("test_tag_", "Department.%", null, "bob");
-        assertEquals(9, bobDeptPattern.size());
-
-        //add 2 from XML
-        List typeTestPattern = pm.getTags("test_tag_", "Department.%", "%e", "___");
-        assertEquals(6, typeTestPattern.size());
-
-        List allClassTags = pm.getTags(null, "org.intermine.model.testmodel.Department",
-                                       "class", null);
-        assertEquals(1, allClassTags.size());
     }
 }
