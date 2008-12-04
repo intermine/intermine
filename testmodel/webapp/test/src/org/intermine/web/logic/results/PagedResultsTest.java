@@ -234,7 +234,9 @@ public class PagedResultsTest extends TestCase
     }
 
     private Map readQueries() throws Exception {
-        InputStream is = getClass().getClassLoader().getResourceAsStream("MainHelperTest.xml");
+        // TODO PagedResultsTest.xml is a copy of MainHelperTest.xml, it can be removed if this
+        // test is ever moved into intermine/web/test
+        InputStream is = getClass().getClassLoader().getResourceAsStream("PagedResultsTest.xml");
         return PathQueryBinding.unmarshal(new InputStreamReader(is));
     }
 

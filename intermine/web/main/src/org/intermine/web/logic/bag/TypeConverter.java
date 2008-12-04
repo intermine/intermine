@@ -197,7 +197,7 @@ public class TypeConverter
         List<Path> view = pq.getView();
         for (Path viewElement : view) {
             if (viewElement.getStartClassDescriptor().getType().equals(typeA)) {
-                view.remove(viewElement);
+                pq.removeFromView(viewElement.toStringNoConstraints());
             }
         }
         return pq;
