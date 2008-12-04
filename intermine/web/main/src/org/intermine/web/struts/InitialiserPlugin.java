@@ -467,27 +467,18 @@ public class InitialiserPlugin implements PlugIn
      */
     /**
      * Remove class tags from the user profile that refer to classes that non longer exist
-     * @param pm the ProfileManager to alter
+     * @param tagManager tag manager
      */
     protected static void cleanTags(TagManager tagManager) {
-        List classTags = tagManager.getTags(null, null, "class", null);
-        List tagsToDelete = new ArrayList();
+        List<Tag> classTags = tagManager.getTags(null, null, "class", null);
 
-        Iterator iter = classTags.iterator();
-        while (iter.hasNext()) {
-            Tag tag = (Tag) iter.next();
+        for (Tag tag : classTags) {
             // check that class exists
             try {
                 Class.forName(tag.getObjectIdentifier());
             } catch (ClassNotFoundException e) {
-                tagsToDelete.add(tag);
+                tagManager.deleteTag(tag);
             }
-        }
-
-        iter = tagsToDelete.iterator();
-        while (iter.hasNext()) {
-            Tag tag = (Tag) iter.next();
-            tagManager.deleteTag(tag);
         }
     }
     
