@@ -74,6 +74,7 @@ import org.intermine.web.logic.results.PagedTable;
 import org.intermine.web.logic.results.WebResultsSimple;
 import org.intermine.web.logic.results.WebState;
 import org.intermine.web.logic.results.WebTable;
+import org.intermine.web.logic.search.SearchFilterEngine;
 import org.intermine.web.logic.search.SearchRepository;
 import org.intermine.web.logic.search.WebSearchable;
 import org.intermine.web.logic.session.QueryCountQueryMonitor;
@@ -568,11 +569,13 @@ public class AjaxServices
                 }
             }
             if (aspectTags.size() > 0) {
-                wsMap = pm.filterByTags(wsMap, aspectTags, type, pm.getSuperuser());
+                wsMap = new SearchFilterEngine().filterByTags(wsMap, aspectTags, type, pm.getSuperuser(),
+                        getTagManager());
             }
 
             if (profile.getUsername() != null && userTags.size() > 0) {
-                filteredWsMap = pm.filterByTags(wsMap, userTags, type, profile.getUsername());
+                filteredWsMap = new SearchFilterEngine().filterByTags(wsMap, userTags, type, 
+                        profile.getUsername(), getTagManager());
             } else {
                 filteredWsMap = wsMap;
             }
@@ -1242,8 +1245,8 @@ public class AjaxServices
         Map<String, WebSearchable> filteredMap = new TreeMap<String, WebSearchable>();
         List<String> tagList = new ArrayList<String>();
         tagList.add(tag);
-        filteredMap.putAll(profile.getProfileManager().filterByTags(map, tagList, type,
-                profile.getUsername()));
+        filteredMap.putAll(new SearchFilterEngine().filterByTags(map, tagList, type,
+                profile.getUsername(), getTagManager()));
         return filteredMap.keySet();
     }
     /**

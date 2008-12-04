@@ -37,7 +37,9 @@ import org.intermine.web.logic.WebUtil;
 import org.intermine.web.logic.bag.InterMineBag;
 import org.intermine.web.logic.profile.Profile;
 import org.intermine.web.logic.profile.ProfileManager;
+import org.intermine.web.logic.profile.TagManager;
 import org.intermine.web.logic.search.Scope;
+import org.intermine.web.logic.search.SearchFilterEngine;
 import org.intermine.web.logic.search.SearchRepository;
 import org.intermine.web.logic.search.WebSearchable;
 import org.intermine.web.logic.session.SessionMethods;
@@ -216,8 +218,7 @@ public class WebSearchableListController extends TilesAction
         Map<String, ? extends WebSearchable> webSearchables =
             searchRepository.getWebSearchableMap(type);
 
-        final ProfileManager pm =
-            (ProfileManager) servletContext.getAttribute(Constants.PROFILE_MANAGER);
+        TagManager tagManager = SessionMethods.getTagManager(session);
 
         filteredWebSearchables = webSearchables;
 
@@ -225,8 +226,8 @@ public class WebSearchableListController extends TilesAction
             // filter by tag if there are any otherwise return all
             if (tags.length() > 0) {
                 final List<String> tagList = Arrays.asList(StringUtil.split(tags.trim(), " "));
-                filteredWebSearchables =
-                    pm.filterByTags(filteredWebSearchables, tagList, type, profile.getUsername());
+                filteredWebSearchables = new SearchFilterEngine().filterByTags(filteredWebSearchables, 
+                        tagList, type, profile.getUsername(), tagManager);
             }
         }
 
