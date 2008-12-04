@@ -92,6 +92,11 @@ public class ObjectStoreWriterInterMineImpl extends ObjectStoreInterMineImpl
      */
     public ObjectStoreWriterInterMineImpl(ObjectStore os) throws ObjectStoreException {
         super(null, ((ObjectStoreInterMineImpl) os).getSchema());
+        if (os instanceof ObjectStoreWriter) {
+            throw new ObjectStoreException("Cannot create an ObjectStoreWriterInterMineImpl from "
+                    + "another ObjectStoreWriter. Call osw.getObjectStore() and construct from "
+                    + "the ObjectStore instead.");
+        }
         this.os = (ObjectStoreInterMineImpl) os;
         db = this.os.db;
         try {
