@@ -40,6 +40,8 @@ import org.intermine.web.logic.bag.InterMineBag;
 import org.intermine.web.logic.bag.InterMineBagBinding;
 import org.intermine.web.logic.profile.Profile;
 import org.intermine.web.logic.profile.ProfileManager;
+import org.intermine.web.logic.profile.TagManager;
+import org.intermine.web.logic.profile.TagManagerFactory;
 import org.intermine.web.logic.query.SavedQuery;
 import org.intermine.web.logic.query.SavedQueryBinding;
 import org.intermine.web.logic.tagging.TagBinding;
@@ -163,11 +165,11 @@ public class ProfileBinding
             writer.writeEndElement();
 
             writer.writeStartElement("tags");
+            TagManager tagManager = new TagManagerFactory(profile.getProfileManager()
+                    .getProfileObjectStoreWriter()).getTagManager();
             if (writeTags) {
-                List tags = profile.getProfileManager().getTags(null, null, null,
-                                                                profile.getUsername());
-                for (Iterator i = tags.iterator(); i.hasNext();) {
-                    Tag tag = (Tag) i.next();
+                List<Tag> tags = tagManager.getUserTags(profile.getUsername());
+                for (Tag tag : tags) {
                     if (!onlyConfigTags || tag.getTagName().indexOf(":") >= 0) {
                         TagBinding.marshal(tag, writer);
                     }
