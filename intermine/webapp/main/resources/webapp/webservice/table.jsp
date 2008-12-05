@@ -41,6 +41,10 @@ body {
     font-family: 'Lucida Grande',Verdana,Geneva,Lucida,Helvetica,Arial,sans-serif;
 }
 
+a {
+    text-decoration: none;
+}
+
 table.results {
   clear:left;
   border-left: solid 1px #666; 
