@@ -50,8 +50,6 @@ public class TagManager
 
     private static final Logger LOG = Logger.getLogger(TagManager.class);
     
-    protected ObjectStore os;
-
     protected ObjectStoreWriter osWriter;
     
     private HashMap<MultiKey, List<Tag>> tagCache = null;
@@ -61,7 +59,6 @@ public class TagManager
      * @param profileOsWriter user profile object store
      */
     public TagManager(ObjectStoreWriter profileOsWriter) {
-        this.os = profileOsWriter;
         this.osWriter = profileOsWriter;
     }
     
