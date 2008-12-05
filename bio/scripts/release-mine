@@ -51,7 +51,7 @@ my $START_DATE = UnixDate("now", "%O");
 my $LOG_FILENAME = "$current_dir/$START_DATE.log";
 my $GBROWSE_CONF_DIR = '/gbrowse/etc/gbrowse.conf/';
 
-my $rel_date = `date +"(%d%b%Y)"`; #it appears with the release version
+#my $rel_date = `date +"(%d%b%Y)"`; #it appears with the release version
 
 sub die_with_log
 {
