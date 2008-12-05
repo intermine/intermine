@@ -23,12 +23,17 @@ public class TagManagerFactory
 
     private static TagManager tagManager;
 
+    private static ObjectStoreWriter profileOsWriter;
+    
     /**
      * Constructor.
      * @param profileWriter user profile object store writer
      */
     public TagManagerFactory(ObjectStoreWriter profileWriter) {
-        if (tagManager == null) {
+        // if there is different profileWriter than used before use this one
+        // else use cached tag manager
+        if (profileWriter != profileOsWriter) {
+            profileOsWriter = profileWriter;
             tagManager = new TagManager(profileWriter);
         }
     }
