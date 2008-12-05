@@ -219,6 +219,7 @@ my @TARGETS = qw(remove-webapp release-webapp);
 system ("ant -Drelease=r$new_version @TARGETS >> $LOG_FILENAME 2>&1") == 0
   or die_with_log "can't write userprofile XML: $?";
 
+exit 0;
 #################
 warn "update apache rewrite/redirect configuration\n";
 
