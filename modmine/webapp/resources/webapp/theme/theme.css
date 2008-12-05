@@ -167,10 +167,11 @@ table.dbsources td.internal {
   border-bottom: 1px solid #C1DAD7;background: #fff;}
 
 table.internal {
-  margin:10px 20px 10px 20px;}
+    margin:0px 0px 0px 0px;}
+	/*  margin:10px 20px 10px 20px;}*/
 
 table.internal td {
-  padding: 3px 3px 3px 6px;
+  padding: 2px 2px 2px 2px;
   border-right: 0px solid #fff;border-bottom: 0px solid #fff;background: #fff;}
 
 #topnav {
@@ -178,3 +179,7 @@ table.internal td {
     background-color: #060707; color: #FFF; font: 0.95em Arial,sans-serif;
     /*background-color: #F18620; #F5F0FF  */
     padding:5px;}
+    
+#rightcolumn {
+	margin-left:333px;
+	}    

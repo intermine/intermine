@@ -25,10 +25,10 @@
 		<td>
     <c:forEach items="${item.key.organisms}" var="organism" varStatus="orgStatus">
     <c:if test="${organism.taxonId eq 7227}"> 
-        <img border="0" class="arrow" src="images/f_vs.png" title="fly"/><br>
+        <img border="0" class="arrow" src="model/images/f_vvs.png" title="fly"/><br>
     </c:if>
     <c:if test="${organism.taxonId eq 6239}"> 
-        <img border="0" class="arrow" src="images/w_vs.png" title="worm"/><br>
+        <img border="0" class="arrow" src="model/images/w_vvs.png" title="worm"/><br>
     </c:if>
 
 <%--
