@@ -48,7 +48,7 @@ public class TemplateResultServlet extends HttpServlet
     
     private void runService(HttpServletRequest request,
             HttpServletResponse response) {
-        new TemplateResultService().doGet(request, response);
+        new TemplateResultService().service(request, response);
     }
 
 }
