@@ -51,6 +51,6 @@ public class QueryResultServlet extends HttpServlet
         // Service has always new data and fields in executor are initialized
         // according new data
         // and not remember fields initialized according previous request data
-        new QueryResultService().doGet(request, response);
+        new QueryResultService().service(request, response);
     }
 }

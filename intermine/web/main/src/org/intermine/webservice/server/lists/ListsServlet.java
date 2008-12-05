@@ -51,6 +51,6 @@ public class ListsServlet extends HttpServlet
         // Service has always new data and fields in executor are initialized
         // according new data
         // and not remember fields initialized according previous request data
-        new ListsService().doGet(request, response);
+        new ListsService().service(request, response);
     }
 }

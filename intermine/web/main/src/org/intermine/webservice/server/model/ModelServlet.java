@@ -48,6 +48,6 @@ public class ModelServlet extends HttpServlet
     
     private void runService(HttpServletRequest request,
             HttpServletResponse response) {
-        new ModelService().doGet(request, response);
+        new ModelService().service(request, response);
     }
 }

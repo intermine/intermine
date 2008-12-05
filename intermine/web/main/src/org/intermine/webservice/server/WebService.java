@@ -58,7 +58,8 @@ import org.intermine.webservice.server.query.result.WebServiceRequestParser;
  * 
  * @author Jakub Kulaviak
  */
-public abstract class WebService {
+public abstract class WebService 
+{
     /** XML format constant **/
     public static final int XML_FORMAT = 0;
 
@@ -89,15 +90,12 @@ public abstract class WebService {
      * 
      * Ensures initialization of web service and makes steps common for all web
      * services and after that executes <tt>execute</tt> method, that should be
-     * overwriten with each web service.
+     * overwritten with each web service.
      * 
-     * @param request
-     *            request
-     * @param response
-     *            response
+     * @param request request
+     * @param response response
      */
-    @SuppressWarnings("deprecation")
-    public void doGet(HttpServletRequest request, HttpServletResponse response) {
+    public void service(HttpServletRequest request, HttpServletResponse response) {
         try {
 
             this.request = request;

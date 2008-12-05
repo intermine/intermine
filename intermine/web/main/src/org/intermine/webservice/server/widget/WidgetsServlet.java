@@ -49,7 +49,7 @@ public class WidgetsServlet extends HttpServlet
         // Service has always new data and fields in executor are initialized
         // according new data
         // and not remember fields initialized according previous request data
-        new WidgetsService().doGet(request, response);
+        new WidgetsService().service(request, response);
     }
 
 }
