@@ -122,7 +122,7 @@ while (defined (my $line = <$current_file>)) {
           $line = "$prop_name=$prop_value\n";
         }
       }
-      if ($prop_value =~ /(.*?(?:-|^r|-r))(\d+)(.*)/) {
+      if ($prop_value =~ /^(.*?-|r|.*?-r|)(\d+)(.*)/) {
         if ($2 == $current_version) {
           #$line = "$prop_name=$1$new_version$3\n";
           # changed to accomodate date..
