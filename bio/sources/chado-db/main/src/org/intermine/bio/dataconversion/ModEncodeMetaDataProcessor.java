@@ -231,15 +231,13 @@ public class ModEncodeMetaDataProcessor extends ChadoProcessor
             if (featureData == null) {
                 LOG.error("FIXME: no data for feature_id: " + featureId
                         + " in processDataFeatureTable(), data_id =" + dataId);
-//                LOG.error("FIXME: " + featureId + "|" + dataId);
-//                continue;
+                continue;
             }
             id = dataId;
-            LOG.info("id " + id + " " + dataId);
             String featureItemId = featureData.getItemIdentifier();
             FeatureData fd = featureData;
-            LOG.info("FD " + fd.getInterMineType() + ": " + fd.getChadoFeatureName());
-//                    + ", " + fd.getChadoFeatureUniqueName());
+            LOG.info("dataId " + id + " FD " + fd.getInterMineType() + ": " 
+                    + fd.getChadoFeatureName());
 
             // old ref setting. should we consider one collection per different dataId?
 //            Reference featureRef = new Reference("feature", featureItemId);
@@ -249,9 +247,8 @@ public class ModEncodeMetaDataProcessor extends ChadoProcessor
             collection.addRefId(featureItemId);
             collectionSize++;
         }
-        //*****check
-        LOG.info("STORING collection for dataId " + id + ": " 
-                + appliedDataMap.get(id).intermineObjectId + " size:" + collectionSize); 
+        //LOG.info("STORING collection for dataId " + id + ": " 
+        //        + appliedDataMap.get(id).intermineObjectId + " size:" + collectionSize); 
         getChadoDBConverter().store(collection, appliedDataMap.get(id).intermineObjectId);
         collectionSize = 0;
     }
@@ -298,11 +295,15 @@ public class ModEncodeMetaDataProcessor extends ChadoProcessor
             subFeatureMap.putAll(processor.getFeatureMap());
 //            featureMap.putAll(subFeatureMap);
 
+            if (subFeatureMap.keySet().size() == 0) {
+                LOG.error("FEATMAP: submission " + chadoExperimentId     
+                        + " has no featureMap keys.");
+                continue;
+            } 
+            
             LOG.info("FEATMAP: submission " + chadoExperimentId + "|"    
                     + "featureMap keys: " + subFeatureMap.keySet().size()
                     + " values: " + subFeatureMap.values().size());
-            
-//            LOG.info("IccI:  featureTableS");
 
             String queryList = StringUtil.join(thisSubmissionDataIds, ",");
             processDataFeatureTable(connection, subFeatureMap, queryList);
