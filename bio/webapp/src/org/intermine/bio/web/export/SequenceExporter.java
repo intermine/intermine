@@ -10,9 +10,21 @@ package org.intermine.bio.web.export;
  *
  */
 
+import java.io.OutputStream;
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 
+import org.biojava.bio.Annotation;
+import org.biojava.bio.seq.io.FastaFormat;
+import org.biojava.bio.seq.io.SeqIOTools;
+import org.biojava.bio.symbol.IllegalSymbolException;
+import org.flymine.model.genomic.BioEntity;
+import org.flymine.model.genomic.LocatedSequenceFeature;
+import org.flymine.model.genomic.Location;
+import org.flymine.model.genomic.Protein;
+import org.flymine.model.genomic.Sequence;
+import org.flymine.model.genomic.Translation;
 import org.intermine.bio.web.biojava.BioSequence;
 import org.intermine.bio.web.biojava.BioSequenceFactory;
 import org.intermine.metadata.ClassDescriptor;
@@ -25,20 +37,6 @@ import org.intermine.web.logic.export.ExportException;
 import org.intermine.web.logic.export.ExportHelper;
 import org.intermine.web.logic.export.Exporter;
 import org.intermine.web.logic.results.ResultElement;
-
-import org.flymine.model.genomic.BioEntity;
-import org.flymine.model.genomic.LocatedSequenceFeature;
-import org.flymine.model.genomic.Location;
-import org.flymine.model.genomic.Protein;
-import org.flymine.model.genomic.Sequence;
-import org.flymine.model.genomic.Translation;
-
-import java.io.OutputStream;
-
-import org.biojava.bio.Annotation;
-import org.biojava.bio.seq.io.FastaFormat;
-import org.biojava.bio.seq.io.SeqIOTools;
-import org.biojava.bio.symbol.IllegalSymbolException;
 
 
 /**
@@ -80,13 +78,13 @@ public class SequenceExporter implements Exporter
      * Lines are always separated with \n because third party tool writeFasta
      * is used for writing sequence.
      */
-    public void export(List<List<ResultElement>> results) {
+    public void export(Iterator<List<ResultElement>> resultIt) {
         // IDs of the features we have successfully output - used to avoid duplicates
         IntPresentSet exportedIDs = new IntPresentSet();
 
         try {
-            for (int rowIndex = 0; rowIndex < results.size(); rowIndex++) {
-                List<ResultElement> row = results.get(rowIndex);
+            while (resultIt.hasNext()) {
+                List<ResultElement> row = resultIt.next();
 
                 StringBuffer header = new StringBuffer();
 
