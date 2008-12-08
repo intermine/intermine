@@ -150,7 +150,7 @@ public class PathQueryExecutor
      * @return results
      */
     public Iterator<List<ResultElement>> getResults() {
-        return getResultsInternal().iterator();
+        return getResults(0, 10000000);
     }
 
     private WebResults getResultsInternal() {
