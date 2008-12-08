@@ -12,6 +12,7 @@ package org.intermine.web.logic.export;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.util.Date;
+import java.util.Iterator;
 import java.util.List;
 
 import org.apache.poi.hssf.usermodel.HSSFRow;
@@ -22,6 +23,7 @@ import org.intermine.web.logic.results.ResultElement;
 
 /**
  * Export results in excel format.
+ * 
  * @author Jakub Kulaviak
  **/
 public class ExcelExporter implements Exporter
@@ -41,16 +43,17 @@ public class ExcelExporter implements Exporter
     /**
      * {@inheritDoc}
      */
-    public void export(List<List<ResultElement>> results) {
+    public void export(Iterator<List<ResultElement>> resultIt) {
         try {
             HSSFWorkbook wb = new HSSFWorkbook();
             HSSFSheet sheet = wb.createSheet("results");
             ResultElementConverter converter = new ResultElementConverter();
 
-            for (int rowIndex = 0; rowIndex < results.size(); rowIndex++) {
-
-                HSSFRow excelRow = sheet.createRow((short) rowIndex);
-                List<Object> row = converter.convert(results.get(rowIndex));
+            int currentIndex = 0;
+            while (resultIt.hasNext()) {
+                
+                HSSFRow excelRow = sheet.createRow((short) currentIndex);
+                List<Object> row = converter.convert(resultIt.next());
 
                 for (short colIndex = 0; colIndex < row.size(); colIndex++) {
                     Object obj = row.get(colIndex);
@@ -75,6 +78,7 @@ public class ExcelExporter implements Exporter
 
                 }
                 writtenResultsCount++;
+                currentIndex++;
             }
             wb.write(out);
             out.flush();

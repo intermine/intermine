@@ -16,6 +16,7 @@ import org.intermine.webservice.server.WebServiceInput;
 /**
  * QueryServiceInput is parameter object representing parameters for 
  * QueryResultService web service.  
+ * 
  * @author Jakub Kulaviak
  **/
 public class QueryResultInput extends WebServiceInput 

@@ -66,7 +66,8 @@ public class QueryResultRequestParser extends WebServiceRequestParser
 
         String totalCount = request.getParameter(COMPUTE_TOTAL_COUNT_PARAMETER);
         if (totalCount != null) {
-            input.setComputeTotalCount(true);
+            throw new BadRequestException("Parameter " + COMPUTE_TOTAL_COUNT_PARAMETER 
+                    + " is not now supported. It is not possible to retrieve number of results.");
         }
         
         input.setLayout(request.getParameter(LAYOUT_PARAMETER));

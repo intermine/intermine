@@ -10,7 +10,7 @@ package org.intermine.web.logic.export.http;
  *
  */
 
-import java.util.AbstractList;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
@@ -18,7 +18,6 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 
 import org.intermine.objectstore.ObjectStoreException;
-import org.intermine.objectstore.query.Results;
 import org.intermine.pathquery.PathQuery;
 import org.intermine.web.logic.Constants;
 import org.intermine.web.logic.WebUtil;
@@ -28,7 +27,6 @@ import org.intermine.web.logic.profile.Profile;
 import org.intermine.web.logic.results.PagedTable;
 import org.intermine.web.logic.results.ResultElement;
 import org.intermine.web.logic.results.WebResults;
-import org.intermine.web.logic.session.SessionMethods;
 import org.intermine.webservice.server.core.PathQueryExecutor;
 
 /**
@@ -50,40 +48,15 @@ public abstract class HttpExporterBase
      * @param request request
      * @return all results of pathquery corresponding specified paged table.
      */
-    public List<List<ResultElement>> getResultRows(PagedTable pt, HttpServletRequest request) {
+    public Iterator<List<ResultElement>> getResultRows(PagedTable pt, HttpServletRequest request) {
         PathQuery query = pt.getWebTable().getPathQuery();
         HttpSession session = request.getSession();
         Profile profile = (Profile) session.getAttribute(Constants.PROFILE);
         Map<String, InterMineBag> bags = WebUtil.getAllBags(profile
                 .getSavedBags(), session.getServletContext());
         PathQueryExecutor executor = new PathQueryExecutor(request, query, bags);
-        Results osResults = executor.getResults();
-        osResults.setBatchSize(BATCH_SIZE);
-
-        webResults = new WebResults(query, osResults, query.getModel(),
-                executor.getPathToQueryNode(),
-                SessionMethods.getClassKeys(request.getSession()
-                        .getServletContext()), null);
-        try {
-            webResults.goFaster();
-        } catch (ObjectStoreException e) {
-            throw new ExportException("attempt to go faster failed", e);
-        }
-
-        List<List<ResultElement>> results = new AbstractList<List<ResultElement>>() {
-
-            @Override
-            public List<ResultElement> get(int index) {
-                return webResults.getResultElements(index);
-            }
-
-            @Override
-            public int size() {
-                return webResults.size();
-            }
-
-        };
-        return results;
+        executor.setBatchSize(BATCH_SIZE);
+        return executor.getResults();
     }
     
     /**

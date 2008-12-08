@@ -11,6 +11,7 @@ package org.intermine.webservice.server.lists;
  */
 
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
@@ -21,12 +22,12 @@ import org.intermine.model.InterMineObject;
 import org.intermine.objectstore.ObjectStore;
 import org.intermine.objectstore.ObjectStoreException;
 import org.intermine.objectstore.query.ConstraintOp;
-import org.intermine.objectstore.query.Results;
 import org.intermine.objectstore.query.ResultsRow;
 import org.intermine.pathquery.Constraint;
 import org.intermine.pathquery.PathNode;
 import org.intermine.pathquery.PathQuery;
 import org.intermine.web.logic.Constants;
+import org.intermine.web.logic.results.ResultElement;
 import org.intermine.webservice.server.WebService;
 import org.intermine.webservice.server.core.ListManager;
 import org.intermine.webservice.server.core.PathQueryExecutor;
@@ -118,18 +119,18 @@ public class ListsService extends WebService
         pathQuery.getNodes().put(input.getType(), node);
         pathQuery.addPathStringToView(input.getType());
         PathQueryExecutor executor = new PathQueryExecutor(request, pathQuery);
-        Results results = executor.getResults();
-        if (results.size() != 1) {
-            if (results.size() == 0) {
-                throw new ResourceNotFoundException("No objects of type " + input.getType() 
-                        + " with public id " + input.getPublicId() + " were found.");
-            } else {
+        Iterator<List<ResultElement>> it = executor.getResults();
+        if (it.hasNext()) {
+            ResultsRow row = (ResultsRow) it.next();
+            if (it.hasNext()) {
                 throw new BadRequestException("Multiple objects of type " + input.getType() 
                         + " with public id " + input.getPublicId() + " were found.");
             }
+            return ((InterMineObject) row.get(0)).getId();            
+        } else {
+            throw new ResourceNotFoundException("No objects of type " + input.getType() 
+                    + " with public id " + input.getPublicId() + " were found.");            
         }
-        ResultsRow row = (ResultsRow) results.get(0);
-        return ((InterMineObject) row.get(0)).getId();
     }
 
     private void forward(ListsServiceInput input, Output output) {
