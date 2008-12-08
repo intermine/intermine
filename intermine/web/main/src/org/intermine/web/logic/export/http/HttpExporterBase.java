@@ -17,16 +17,13 @@ import java.util.Map;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 
-import org.intermine.objectstore.ObjectStoreException;
 import org.intermine.pathquery.PathQuery;
 import org.intermine.web.logic.Constants;
 import org.intermine.web.logic.WebUtil;
 import org.intermine.web.logic.bag.InterMineBag;
-import org.intermine.web.logic.export.ExportException;
 import org.intermine.web.logic.profile.Profile;
 import org.intermine.web.logic.results.PagedTable;
 import org.intermine.web.logic.results.ResultElement;
-import org.intermine.web.logic.results.WebResults;
 import org.intermine.webservice.server.core.PathQueryExecutor;
 
 /**
@@ -41,7 +38,7 @@ public abstract class HttpExporterBase
 
     private static final int BATCH_SIZE = 5000;
 
-    private WebResults webResults;
+    private PathQueryExecutor executor;
 
     /**
      * @param pt paged table
@@ -54,7 +51,7 @@ public abstract class HttpExporterBase
         Profile profile = (Profile) session.getAttribute(Constants.PROFILE);
         Map<String, InterMineBag> bags = WebUtil.getAllBags(profile
                 .getSavedBags(), session.getServletContext());
-        PathQueryExecutor executor = new PathQueryExecutor(request, query, bags);
+        executor = new PathQueryExecutor(request, query, bags);
         executor.setBatchSize(BATCH_SIZE);
         return executor.getResults();
     }
@@ -64,12 +61,6 @@ public abstract class HttpExporterBase
      * is called. 
      */
     public void releaseGoFaster() {
-        try {
-            if (webResults != null) {
-                webResults.releaseGoFaster();
-            }
-        } catch (ObjectStoreException e) {
-            throw new ExportException("release GO faster failed", e);
-        }
+        // goFaster is not used now
     }
 }
