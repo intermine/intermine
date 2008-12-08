@@ -55,6 +55,7 @@ public class PathQueryResultsHelperTest extends MockStrutsTestCase
 {
     private Map<String,List<FieldDescriptor>> classKeys;
     private WebConfig webConfig;
+    ObjectStoreWriter uosw;
     
     public PathQueryResultsHelperTest(String testName) {
         super(testName);
@@ -68,7 +69,8 @@ public class PathQueryResultsHelperTest extends MockStrutsTestCase
         Model model = Model.getInstanceByName("testmodel");
         classKeys = ClassKeyHelper.readKeys(model, classKeyProps);
         webConfig = new WebConfig();
-
+        uosw = ObjectStoreWriterFactory.getObjectStoreWriter("osw.userprofile-test");
+        
         Type type  = new Type();
         type.setClassName("org.intermine.model.testmodel.Employee");
         FieldConfig df1 = new FieldConfig();
@@ -125,7 +127,6 @@ public class PathQueryResultsHelperTest extends MockStrutsTestCase
         Model model = Model.getInstanceByName("testmodel");
         ServletContext context = getActionServlet().getServletContext();
         ObjectStore os = (ObjectStore) context.getAttribute(Constants.OBJECTSTORE);
-        ObjectStoreWriter uosw = ((ProfileManager) context.getAttribute(Constants.PROFILE_MANAGER)).getUserProfileObjectStore();
         InterMineBag imBag = new InterMineBag("Fred", "Employee", "Test bag", new Date(), os, null, uosw);
         PathQuery pathQuery = PathQueryResultHelper.makePathQueryForBag(imBag, webConfig, model);
         String expectedXml = "<query name=\"\" model=\"testmodel\" view=\"Employee.name Employee.age Employee.fullTime\" sortOrder=\"Employee.name asc\">"

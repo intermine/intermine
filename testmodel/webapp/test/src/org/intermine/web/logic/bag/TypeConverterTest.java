@@ -25,6 +25,7 @@ import org.intermine.model.testmodel.Address;
 import org.intermine.model.testmodel.Employee;
 import org.intermine.objectstore.ObjectStore;
 import org.intermine.objectstore.ObjectStoreWriter;
+import org.intermine.objectstore.ObjectStoreWriterFactory;
 import org.intermine.objectstore.intermine.ObjectStoreWriterInterMineImpl;
 import org.intermine.objectstore.query.BagConstraint;
 import org.intermine.objectstore.query.ConstraintOp;
@@ -53,6 +54,7 @@ public class TypeConverterTest extends MockStrutsTestCase
 {
     ServletContext context;
     List<TemplateQuery> conversionTemplates;
+    ObjectStoreWriter uosw;
     
     public TypeConverterTest(String arg1) {
         super(arg1);
@@ -74,6 +76,7 @@ public class TypeConverterTest extends MockStrutsTestCase
         Map tqs = tqb.unmarshal(new StringReader(template), null);
         TemplateQuery tq = (TemplateQuery) tqs.get("convertEmployeesToAddresses");
         conversionTemplates = new ArrayList(Collections.singleton(tq));
+        uosw = ObjectStoreWriterFactory.getObjectStoreWriter("osw.userprofile-test");
     }
     
     public void tearDown() throws Exception {
@@ -82,7 +85,6 @@ public class TypeConverterTest extends MockStrutsTestCase
 
     public void testGetConvertedObjectMap() throws Exception {
         ObjectStore os = (ObjectStore) context.getAttribute(Constants.OBJECTSTORE);
-        ObjectStoreWriter uosw = ((ProfileManager) context.getAttribute(Constants.PROFILE_MANAGER)).getUserProfileObjectStore();
 
         Results r = getEmployeesAndAddresses();
         assertEquals("Results: " + r, 2, r.size());
@@ -103,7 +105,6 @@ public class TypeConverterTest extends MockStrutsTestCase
     
     public void testGetConvertedObjects() throws Exception {
         ObjectStore os = (ObjectStore) context.getAttribute(Constants.OBJECTSTORE);
-        ObjectStoreWriter uosw = ((ProfileManager) context.getAttribute(Constants.PROFILE_MANAGER)).getUserProfileObjectStore();
         
         Results r = getEmployeesAndAddresses();
         assertEquals("Results: " + r, 2, r.size());
