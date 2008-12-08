@@ -11,6 +11,8 @@ package org.intermine.webservice.server.core;
  */
 
 import java.util.HashMap;
+import java.util.Iterator;
+import java.util.List;
 import java.util.Map;
 
 import javax.servlet.ServletContext;
@@ -19,6 +21,7 @@ import javax.servlet.http.HttpServletRequest;
 import org.intermine.objectstore.ObjectStore;
 import org.intermine.objectstore.ObjectStoreException;
 import org.intermine.objectstore.flatouterjoins.ObjectStoreFlatOuterJoinsImpl;
+import org.intermine.objectstore.flatouterjoins.ReallyFlatIterator;
 import org.intermine.objectstore.query.Query;
 import org.intermine.objectstore.query.QuerySelectable;
 import org.intermine.objectstore.query.Results;
@@ -26,6 +29,9 @@ import org.intermine.pathquery.PathQuery;
 import org.intermine.web.logic.Constants;
 import org.intermine.web.logic.bag.InterMineBag;
 import org.intermine.web.logic.query.MainHelper;
+import org.intermine.web.logic.results.ResultElement;
+import org.intermine.web.logic.results.WebResults;
+import org.intermine.web.logic.session.SessionMethods;
 import org.intermine.webservice.server.exceptions.InternalErrorException;
 
 
@@ -49,6 +55,26 @@ public class PathQueryExecutor
     private PathQuery pathQuery;
     
     private Map<String, InterMineBag> bags;
+    
+    private static final int DEFAULT_BATCH_SIZE = 5000;
+    
+    private int batchSize = DEFAULT_BATCH_SIZE;
+    
+    /**
+     * 
+     * @return batch size
+     */
+    public int getBatchSize() {
+        return batchSize;
+    }
+
+    /**
+     * 
+     * @param batchSize batch size
+     */
+    public void setBatchSize(int batchSize) {
+        this.batchSize = batchSize;
+    }
     
     /**
      * Returns object store query.
@@ -119,12 +145,60 @@ public class PathQueryExecutor
     }
     
     /**
-     * Executes object store query and returns results.
-     * @param query
+     * Executes object store query and returns results as iterator over rows. Every row is a list 
+     * of result elements. 
      * @return results
      */
-    public Results getResults() {
-        return (new ObjectStoreFlatOuterJoinsImpl(getObjectStore())).execute(query);
+    public Iterator<List<ResultElement>> getResults() {
+        return getResultsInternal().iterator();
+    }
+
+    private WebResults getResultsInternal() {
+        // temporary implementation, will be changed after Matthew's implementation of export outer 
+        // join
+        Results results = new ObjectStoreFlatOuterJoinsImpl(getObjectStore()).execute(query);
+        results.setBatchSize(batchSize);
+        
+        WebResults webResults = new WebResults(pathQuery, results, pathQuery.getModel(), 
+                getPathToQueryNode(), SessionMethods.getClassKeys(request.getSession()
+                .getServletContext()), null);
+        return webResults;
+    }
+
+    /**
+     * Executes object store query and returns results as iterator over rows. Every row is a list 
+     * of result elements.
+     * @param start start index
+     * @param limit maximum number of results 
+     * @return results
+     */
+    public Iterator<List<ResultElement>> getResults(int start, final int limit) {
+        WebResults webResults = getResultsInternal();
+        final ReallyFlatIterator it = new ReallyFlatIterator(webResults.iteratorFrom(start));
+
+        Iterator<List<ResultElement>> ret = new Iterator<List<ResultElement>>() {
+
+            private int counter = 0;
+            
+            public boolean hasNext() {
+                if (counter >= limit) {
+                    return false;
+                } else {
+                    return it.hasNext();    
+                }
+            }
+
+            public List<ResultElement> next() {
+                List<ResultElement> ret = (List<ResultElement>) it.next();
+                counter++;
+                return ret;
+            }
+
+            public void remove() {
+                it.remove();
+            }
+        };
+        return ret;
     }
     
     private Map<String, InterMineBag> getBags() {

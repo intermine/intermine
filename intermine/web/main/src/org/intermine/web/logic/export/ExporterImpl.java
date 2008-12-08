@@ -16,13 +16,13 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
-import org.intermine.objectstore.flatouterjoins.ReallyFlatIterator;
 import org.intermine.web.logic.results.ResultElement;
 
 
 /**
  * Simple exporter exporting data as tab separated, comma separated
  * and so. It depends at used row formatter.
+ * 
  * @author Jakub Kulaviak
  **/
 public class ExporterImpl implements Exporter
@@ -68,15 +68,14 @@ public class ExporterImpl implements Exporter
     /**
      * {@inheritDoc}
      */
-    public void export(List<List<ResultElement>> results) {
+    public void export(Iterator<List<ResultElement>> resultIt) {
         try {
             if (headers != null) {
                 out.println(rowFormatter.format(new ArrayList<Object>(headers)));
             }
             ResultElementConverter converter = new ResultElementConverter();
-            Iterator<List<ResultElement>> rowIter = new ReallyFlatIterator(results.iterator());
-            while (rowIter.hasNext()) {
-                List<ResultElement> result = rowIter.next();
+            while (resultIt.hasNext()) {
+                List<ResultElement> result = resultIt.next();
                 out.println(rowFormatter.format(converter.convert(result)));
                 writtenResultsCount++;
             }

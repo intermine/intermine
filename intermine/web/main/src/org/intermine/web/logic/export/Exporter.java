@@ -9,6 +9,7 @@ package org.intermine.web.logic.export;
  * information or http://www.gnu.org/copyleft/lesser.html.
  *
  */
+import java.util.Iterator;
 import java.util.List;
 
 import org.intermine.web.logic.results.ResultElement;
@@ -29,9 +30,9 @@ public interface Exporter
 
     /**
      * Do export.
-     * @param results to be exported
+     * @param it iterator over stuff to be exported
      */
-    public void export(List<List<ResultElement>> results);
+    public void export(Iterator<List<ResultElement>> it);
 
     /**
      * This method finds out if result row composed from instances of these

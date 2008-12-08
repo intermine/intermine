@@ -14,8 +14,8 @@ import java.io.UnsupportedEncodingException;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLEncoder;
-import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
@@ -23,11 +23,9 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.apache.commons.collections.EnumerationUtils;
-import org.intermine.objectstore.query.Results;
 import org.intermine.pathquery.PathQuery;
 import org.intermine.web.logic.bag.InterMineBag;
-import org.intermine.web.logic.results.WebResults;
-import org.intermine.web.logic.session.SessionMethods;
+import org.intermine.web.logic.results.ResultElement;
 import org.intermine.web.struts.InterMineAction;
 import org.intermine.webservice.server.WebService;
 import org.intermine.webservice.server.WebServiceInput;
@@ -69,9 +67,8 @@ public class QueryResultService extends WebService
         
         savedBags = new HashMap<String, InterMineBag>();
 
-        PathQueryBuilder builder = new PathQueryBuilder(input.getXml(),
-        		getXMLSchemaUrl(),
-        		request.getSession().getServletContext(), savedBags);
+        PathQueryBuilder builder = new PathQueryBuilder(input.getXml(), getXMLSchemaUrl(),
+                request.getSession().getServletContext(), savedBags);
 
         PathQuery query = builder.getQuery();
         runPathQuery(query, input.getStart(), input.getMaxCount(), 
@@ -159,29 +156,12 @@ public class QueryResultService extends WebService
             boolean displayTotalCount, String title, String description, 
             WebServiceInput input, String mineLink, String layout) {
         PathQueryExecutor executor = new PathQueryExecutor(request, pathQuery);
-        Results results = executor.getResults();
-        
-        results.setBatchSize(BATCH_SIZE);
-        
-        if (displayTotalCount) {
-            if (getFormat() == WebService.XML_FORMAT) {
-                Map<String, String> attributes = new HashMap<String, String>();
-                attributes.put("totalResultsCount", "" + results.size());
-                output.setHeaderAttributes(attributes);                
-            }
-            if (getFormat() == WebService.TSV_FORMAT) {
-                List<String> list = new ArrayList<String>();
-                list.add("" + results.size());
-                output.addResultItem(list);
-                return;
-            }
-        }
-        
-        WebResults webResults = new WebResults(pathQuery, results, pathQuery.getModel(), 
-                executor.getPathToQueryNode(), 
-                SessionMethods.getClassKeys(request.getSession().getServletContext()), null);
-        ResultProcessor processor = new ResultProcessor(webResults, firstResult, maxResults);
-        processor.write(output);              
+        executor.setBatchSize(BATCH_SIZE);
+        Iterator<List<ResultElement>> resultIt = executor.getResults(firstResult, maxResults);
+
+        // displayTotalCount now without effect because information about results size
+        // is not available because of the implementation of the object store outer join 
+        new ResultProcessor().write(resultIt, output);              
         forward(pathQuery, title, description, input, mineLink, layout);
     }
 

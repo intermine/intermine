@@ -12,13 +12,12 @@ package org.intermine.webservice.server.core;
 
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.Iterator;
 import java.util.List;
 
-import org.intermine.objectstore.flatouterjoins.ReallyFlatIterator;
 import org.intermine.objectstore.query.ResultsRow;
 import org.intermine.pathquery.Constraint;
 import org.intermine.web.logic.results.ResultElement;
-import org.intermine.web.logic.results.WebResults;
 import org.intermine.webservice.server.output.Output;
 
 /**
@@ -37,77 +36,27 @@ import org.intermine.webservice.server.output.Output;
 public class ResultProcessor
 {
     
-    private WebResults results;
-    
-    private int firstResult;
-    
-    private int maxResults; 
-    
     /**
-     * ResultProcessor constructor.
-     * @param results Results object
-     * @param firstResult index of first result inclusive
-     * @param maxResults maximum number of results
+     * Constructor.
      */
-    public ResultProcessor(WebResults results, int firstResult, 
-            int maxResults) {
-        this.results = results;
-        this.firstResult = firstResult;
-        this.maxResults = maxResults;
+    public ResultProcessor() {
     }
     
-    /**
-     * Returns Results object.
-     * @return Results object
-     */
-    public WebResults getResults() {
-        return results;
-    }
-
-    /**
-     * Sets Results object.
-     * @param results Results object
-     */
-    public void setResults(WebResults results) {
-        this.results = results;
-    }
-
-    /**
-     * Sets index of result from which the data will be returned.
-     * @param firstResult index of first result inclusive
-     */
-    public void setFirstResult(int firstResult) {
-        this.firstResult = firstResult;
-    }
-
-    /**
-     * Sets maximum number of returned results.
-     * @param maxResults maximum number of results
-     */
-    public void setMaxResults(int maxResults) {
-        this.maxResults = maxResults;
-    }
-
     /**
      * Writes results to output.
+     * @param resultIt iterator over results row
      * @param output output
-     * @see setFirstResult()
-     * @see setMaxResults()
      */
-    public void write(Output output) {
-        ReallyFlatIterator it = new ReallyFlatIterator(results.iteratorFrom(firstResult));
+    public void write(Iterator<List<ResultElement>> resultIt, Output output) {
         int writtenCount = 0;
-        while (it.hasNext())  {
-            if (writtenCount >= maxResults) {
-                break;
-            }
-            ResultsRow row = (ResultsRow) it.next();
+        while (resultIt.hasNext())  {
+            ResultsRow row = (ResultsRow) resultIt.next();
             output.addResultItem(convertResultElementsToStrings(row));
             writtenCount++;
         }
     }
 
-    private List<String> convertResultElementsToStrings(List<ResultElement> row) {
+    private static List<String> convertResultElementsToStrings(List<ResultElement> row) {
         List<String> ret = new ArrayList<String>();
         String value;
         for (ResultElement el : row) {
