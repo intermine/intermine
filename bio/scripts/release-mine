@@ -33,9 +33,9 @@ use Cwd;
 
 use InterMine::Util qw(get_property_value get_latest_properties_version $INTERMINE_CONF_DIR);
 
-if (@ARGV != 0) {
-  die "$0: error, this script needs no arguments\n";
-}
+# if (@ARGV != 0) {
+#   die "$0: error, this script needs no arguments\n";
+# }
 
 my $current_dir = getcwd();
 
@@ -51,7 +51,34 @@ my $START_DATE = UnixDate("now", "%O");
 my $LOG_FILENAME = "$current_dir/$START_DATE.log";
 my $GBROWSE_CONF_DIR = '/gbrowse/etc/gbrowse.conf/';
 
-#my $rel_date = `date +"(%d%b%Y)"`; #it appears with the release version
+sub usage
+{
+  die <<"EOF";
+usage:
+  $0 [-b] [-e]
+
+flags:
+ -b run only the first part of the script, which
+   * find current and previous versions from properties file
+   * createdb new userprofile database <minename>-r<version>-userprofile
+   * precompute queries and templates
+   * create-db-userprofile with new properties file
+   * webapp clean-all
+   * stop old webapp
+   * write-userprofile-xml for current version
+   * read-userprofile-xml with new properties
+   * release webapp
+   N.B.: the current release webapp is now stopped!!
+
+ -e run only the second part of the script
+   * start new webapp
+   * start old webapp
+   * update apache rewrite/redirect configuration
+   * restart apache
+example:
+  $0 -b
+EOF
+}
 
 sub die_with_log
 {
@@ -67,7 +94,29 @@ if (!-d 'dbmodel') {
 }
 
 
+my %opts = ();
+if (!getopts('be', \%opts)) {
+  usage();
+}
+
+my $all = 1;
+my $begin = 0;
+my $end = 0;
+
+if ($opts{b}) {
+  $begin = 1;
+  $all = 0;
+}
+
+if ($opts{e}) {
+  $end = 1;
+  $all = 0;
+}
+
+
 #################
+
+if ($begin || $all) {
 
 warn "reading current properties file\n";
 
@@ -220,7 +269,11 @@ system ("ant -Drelease=r$new_version @TARGETS >> $LOG_FILENAME 2>&1") == 0
   or die_with_log "can't write userprofile XML: $?";
 
 exit 0;
+}
 #################
+
+if ($end || $all) {
+
 warn "update apache rewrite/redirect configuration\n";
 
 my $need_apache_config = 1;
@@ -285,3 +338,4 @@ chdir "../../www/$project_name" or die "can't directory change to www/$project_n
 system ("ant -Drelease=r$new_version clean release-www >> $LOG_FILENAME 2>&1") == 0
   or die_with_log "can't re-release web site with new version (r$current_version): $!";
 
+}
