@@ -35,6 +35,8 @@ import org.intermine.objectstore.query.SingletonResults;
 import org.intermine.web.logic.profile.Profile;
 import org.intermine.web.logic.profile.ProfileManager;
 import org.intermine.web.logic.profile.TagChecker;
+import org.intermine.web.logic.profile.TagManager;
+import org.intermine.web.logic.profile.TagManagerFactory;
 
 /**
  *
@@ -142,20 +144,21 @@ public class InitialiserPluginTest extends TestCase
 
     public void testCleanTags() throws Exception {
         setUpUserProfiles();
-        pm.addTag("test-tag1", "org.intermine.model.testmodel.Department", "class", "bob");
-        pm.addTag("test-tag2", "org.intermine.model.testmodel.Department", "class", "bob");
-        pm.addTag("test-tag2", "org.intermine.model.testmodel.Employee", "class", "bob");
-
-        List tags = pm.getTags("test_tag_", null, "class", null);
+        TagManager tagManager = new TagManagerFactory(userProfileOSW).getTagManager();
+        tagManager.addTag("test-tag1", "org.intermine.model.testmodel.Department", "class", "bob");
+        tagManager.addTag("test-tag2", "org.intermine.model.testmodel.Department", "class", "bob");
+        tagManager.addTag("test-tag2", "org.intermine.model.testmodel.Employee", "class", "bob");
+        
+        List tags = tagManager.getTags("test_tag_", null, "class", null);
         assertEquals(3, tags.size());
 
         // test that these go away
-        pm.addTag("test-tag", "org.intermine.model.testmodel.Wibble", "class", "bob");
-        pm.addTag("test-tag", "org.intermine.model.testmodel.Aardvark", "class", "bob");
+        tagManager.addTag("test-tag", "org.intermine.model.testmodel.Wibble", "class", "bob");
+        tagManager.addTag("test-tag", "org.intermine.model.testmodel.Aardvark", "class", "bob");
 
-        InitialiserPlugin.cleanTags(pm);
+        InitialiserPlugin.cleanTags(tagManager);
 
-        tags = pm.getTags("test_tag%", null, "class", null);
+        tags = tagManager.getTags("test_tag%", null, "class", null);
         assertEquals(3, tags.size());
     }
 }
