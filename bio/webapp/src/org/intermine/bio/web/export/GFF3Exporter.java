@@ -12,6 +12,7 @@ package org.intermine.bio.web.export;
 
 import java.io.PrintWriter;
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -62,13 +63,13 @@ public class GFF3Exporter implements Exporter
     /**
      * {@inheritDoc}
      */
-    public void export(List<List<ResultElement>> results) {
+    public void export(Iterator<List<ResultElement>> resultIt) {
         if (featureIndexes.size() == 0) {
             throw new ExportException("No columns with sequence");
         }
         try {
-            for (int i = 0; i < results.size(); i++) {
-                List<ResultElement> row = results.get(i);
+            while (resultIt.hasNext()) {
+                List<ResultElement> row = resultIt.next();
                 exportRow(row);
             }
             out.flush();
