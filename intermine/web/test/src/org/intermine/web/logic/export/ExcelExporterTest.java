@@ -41,7 +41,7 @@ public class ExcelExporterTest extends TestCase
 
         ByteArrayOutputStream out = new ByteArrayOutputStream();
         Exporter exporter = new ExcelExporter(out);
-        exporter.export(input);
+        exporter.export(input.iterator());
         InputStream is = new ByteArrayInputStream(out.toByteArray());
         HSSFWorkbook wb = new HSSFWorkbook(is);
         HSSFSheet sheet = wb.getSheet("results");
