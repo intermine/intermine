@@ -729,6 +729,8 @@ public class TemplateHelper
         HashMap<String, QuerySelectable> pathToQueryNode = new HashMap();
         Query query = null;
         try {
+            // we can get away with not passing in a BagQueryRunner and conversion templates here,
+            // we know that templates cannot contain non-editable lookup constraints.
             query = MainHelper.makeQuery(templateClone, new HashMap(), pathToQueryNode, null,
                                          null, false);
         } catch (ObjectStoreException e) {

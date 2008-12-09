@@ -56,6 +56,7 @@ import org.intermine.util.TypeUtil;
 import org.intermine.web.autocompletion.AutoCompleter;
 import org.intermine.web.logic.Constants;
 import org.intermine.web.logic.WebUtil;
+import org.intermine.web.logic.bag.BagConversionHelper;
 import org.intermine.web.logic.bag.BagHelper;
 import org.intermine.web.logic.bag.BagQueryConfig;
 import org.intermine.web.logic.bag.BagQueryRunner;
@@ -629,7 +630,7 @@ public class AjaxServices
                 Map<String, InterMineBag> bagMap = new HashMap<String, InterMineBag>();
                 bagMap.put(imBag.getName(), imBag);
 
-                PathQuery pathQuery = TypeConverter.getConversionQuery(BagQueryRunner.
+                PathQuery pathQuery = TypeConverter.getConversionQuery(BagConversionHelper.
                     getConversionTemplates(servletContext),
                     TypeUtil.instantiate(pckName + "." + imBag.getType()),
                     TypeUtil.instantiate(pckName + "." + type), imBag);

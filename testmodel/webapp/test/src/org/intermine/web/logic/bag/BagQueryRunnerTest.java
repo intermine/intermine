@@ -1,9 +1,14 @@
 package org.intermine.web.logic.bag;
 
+import java.io.File;
+import java.io.FileReader;
 import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.io.StringReader;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -12,50 +17,28 @@ import java.util.Map;
 import java.util.Properties;
 import java.util.Set;
 
-import javax.servlet.ServletContext;
+import junit.framework.TestCase;
 
+import org.intermine.metadata.FieldDescriptor;
 import org.intermine.model.testmodel.Employee;
 import org.intermine.model.testmodel.Manager;
 import org.intermine.objectstore.ObjectStore;
 import org.intermine.objectstore.ObjectStoreException;
 import org.intermine.objectstore.ObjectStoreFactory;
+import org.intermine.objectstore.ObjectStoreWriterFactory;
 import org.intermine.objectstore.query.Query;
 import org.intermine.objectstore.query.QueryClass;
 import org.intermine.objectstore.query.Results;
 import org.intermine.web.logic.ClassKeyHelper;
-
-import servletunit.struts.MockStrutsTestCase;
+import org.intermine.web.logic.template.TemplateQuery;
+import org.intermine.web.logic.template.TemplateQueryBinding;
 
 /*
  * NOTE - this test depends on data being present in os.unittest which is
  * currently inserted before running the testmodel webapp tests.  If this
  * changes then this class will need to extend StoreDataTestCase.
  */
-public class BagQueryRunnerTest extends MockStrutsTestCase {
-    /**
-     *
-     * @author Kim Rutherford
-     */
-    public class BagQueryRunnerNoConversion extends BagQueryRunner
-    {
-
-        /**
-         * @param os
-         * @param classKeys
-         * @param bagQueryConfig
-         * @param servletContext
-         */
-        public BagQueryRunnerNoConversion(ObjectStore os, Map classKeys,
-                                          BagQueryConfig bagQueryConfig,
-                                          ServletContext servletContext) {
-            super(os, classKeys, bagQueryConfig, servletContext);
-        }
-
-        // override to prevent type conversion
-        void convertObjects(BagQueryResult bqr, BagQuery bq, Class type, Map objsOfWrongType) {
-            return;
-        }
-    }
+public class BagQueryRunnerTest extends TestCase {
 
     private ObjectStore os;
     private Map<String, Employee> eIds;
@@ -70,14 +53,15 @@ public class BagQueryRunnerTest extends MockStrutsTestCase {
         os = ObjectStoreFactory.getObjectStore("os.unittest");
         Properties props = new Properties();
         props.load(getClass().getClassLoader().getResourceAsStream("class_keys.properties"));
-        Map classKeys = ClassKeyHelper.readKeys(os.getModel(), props);
+        Map<String, List<FieldDescriptor>> classKeys = ClassKeyHelper.readKeys(os.getModel(), props);
         eIds = getEmployeeIds();
 
         InputStream is = getClass().getClassLoader().getResourceAsStream("WEB-INF/bag-queries.xml");
         BagQueryConfig bagQueryConfig = BagQueryHelper.readBagQueryConfig(os.getModel(), is);
-        runner = new BagQueryRunner(os, classKeys, bagQueryConfig,
-                                    getActionServlet().getServletContext());
-
+        
+        TemplateQueryBinding tqb = new TemplateQueryBinding();
+        Map<String, TemplateQuery> tqs = tqb.unmarshal(new InputStreamReader(getClass().getClassLoader().getResourceAsStream("BagQueryRunnerTest_templates.xml")), null);
+        runner = new BagQueryRunner(os, classKeys, bagQueryConfig, new ArrayList<TemplateQuery>(tqs.values()));
     }
 
     // expect each input string to match one object
@@ -184,13 +168,6 @@ public class BagQueryRunnerTest extends MockStrutsTestCase {
     public void testObjectWrongType() throws Exception {
         String contractorName = "EmployeeA2";
         List input = Arrays.asList(new Object[] {contractorName});
-        Properties props = new Properties();
-        props.load(getClass().getClassLoader().getResourceAsStream("class_keys.properties"));
-        Map classKeys = ClassKeyHelper.readKeys(os.getModel(), props);
-        InputStream is = getClass().getClassLoader().getResourceAsStream("WEB-INF/bag-queries.xml");
-        BagQueryConfig bagQueryConfig = BagQueryHelper.readBagQueryConfig(os.getModel(), is);
-        runner = new BagQueryRunnerNoConversion(os, classKeys, bagQueryConfig,
-                                                getActionServlet().getServletContext());
         BagQueryResult res = runner.searchForBag("Contractor", input, null, true);
         assertEquals(0, res.getMatches().values().size());
         //fail("" + res.getIssues());
@@ -253,7 +230,7 @@ public class BagQueryRunnerTest extends MockStrutsTestCase {
             (Map) converted.get("Employable by name found by converting from x");
         assertEquals(1, convertedObjectMap.size());
         List emps = (List) convertedObjectMap.get(managerName);
-        assertEquals(4, emps.size());
+        assertEquals(6, emps.size());
     }
 
     // test that getMatchandIssueIds returns all ids - expect one match, one
@@ -262,7 +239,7 @@ public class BagQueryRunnerTest extends MockStrutsTestCase {
         List input = Arrays.asList(new Object[] {"EmployeeA1", "Mr.", "gibbon"});
         BagQueryResult res = runner.searchForBag("Manager", input, null, true);
         assertEquals(1, res.getMatches().size());
-        Set<Integer> ids = new HashSet(Arrays.asList(new Object[] {
+        Set<Integer> ids = new HashSet<Integer>(Arrays.asList(new Integer[] {
             eIds.get("EmployeeB1").getId(),
             eIds.get("EmployeeA1").getId(),
             eIds.get("EmployeeB3").getId()}));

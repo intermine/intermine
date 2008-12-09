@@ -79,12 +79,14 @@ import org.intermine.util.StringUtil;
 import org.intermine.util.TypeUtil;
 import org.intermine.util.Util;
 import org.intermine.web.logic.Constants;
+import org.intermine.web.logic.bag.BagConversionHelper;
 import org.intermine.web.logic.bag.BagQueryConfig;
 import org.intermine.web.logic.bag.BagQueryResult;
 import org.intermine.web.logic.bag.BagQueryRunner;
 import org.intermine.web.logic.bag.InterMineBag;
 import org.intermine.web.logic.results.Column;
 import org.intermine.web.logic.results.PagedTable;
+import org.intermine.web.logic.template.TemplateQuery;
 
 /**
  * Helper methods for main controller and main action
@@ -242,6 +244,7 @@ public class MainHelper
                 (BagQueryConfig) (servletContext == null ? null
                     : servletContext.getAttribute(Constants.BAG_QUERY_CONFIG)));
     }
+    
     /**
      * Make an InterMine query from a path query
      * @param pathQueryOrig the PathQuery
@@ -261,10 +264,11 @@ public class MainHelper
             Map<String, QuerySelectable> pathToQueryNode, ServletContext servletContext,
             Map returnBagQueryResults, boolean checkOnly, ObjectStore os,
             Map classKeys, BagQueryConfig bagQueryConfig) throws ObjectStoreException {
+        List<TemplateQuery> conversionTemplates = 
+            BagConversionHelper.getConversionTemplates(servletContext);
         BagQueryRunner bagQueryRunner = null;
         if (os != null) {
-            bagQueryRunner = new BagQueryRunner(os, classKeys,
-                    bagQueryConfig, servletContext);
+            bagQueryRunner = new BagQueryRunner(os, classKeys, bagQueryConfig, conversionTemplates);
         }
         return makeQuery(pathQueryOrig, savedBags, pathToQueryNode, bagQueryRunner,
                 returnBagQueryResults, checkOnly);
@@ -507,6 +511,11 @@ public class MainHelper
                                 throw new RuntimeException(e);
                             }
                             continue;
+                        }
+                        if (bagQueryRunner == null) {
+                            throw new IllegalArgumentException("Attempted to create a query with"
+                                    + " a LOOKUP constraint without providing a BagQueryRunner.");
+                                    
                         }
                         String identifiers = (String) c.getValue();
                         BagQueryResult bagQueryResult;
@@ -1308,8 +1317,10 @@ public class MainHelper
      * @param servletContext a ServletContext
      * @return an InterMine Query
      */
-    public static Query makeSummaryQuery(PathQuery pathQuery, Map savedBags,
-            Map<String, QuerySelectable> pathToQueryNode, String summaryPath,
+    public static Query makeSummaryQuery(PathQuery pathQuery,
+            Map savedBags,
+            Map<String, QuerySelectable> pathToQueryNode,
+            String summaryPath,
             ServletContext servletContext) {
         return makeSummaryQuery(pathQuery, savedBags, pathToQueryNode, summaryPath,
                 (ObjectStore) servletContext.getAttribute(Constants.OBJECTSTORE),
@@ -1331,14 +1342,45 @@ public class MainHelper
      * @param servletContext a ServletContext object
      * @return the generated summary query
      */
-    public static Query makeSummaryQuery(PathQuery pathQuery, Map savedBags,
-            Map<String, QuerySelectable> pathToQueryNode, String summaryPath, ObjectStore os,
-            Map classKeys, BagQueryConfig bagQueryConfig, ServletContext servletContext) {
+    public static Query makeSummaryQuery(PathQuery pathQuery,
+            Map savedBags,
+            Map<String, QuerySelectable> pathToQueryNode,
+            String summaryPath,
+            ObjectStore os,
+            Map<String, List<FieldDescriptor>> classKeys,
+            BagQueryConfig bagQueryConfig,
+            ServletContext servletContext) {
+        List<TemplateQuery> conversionTemplates = 
+            BagConversionHelper.getConversionTemplates(servletContext);
+        BagQueryRunner bagQueryRunner = null;
+        if (os != null) {
+            bagQueryRunner = new BagQueryRunner(os, classKeys, bagQueryConfig, conversionTemplates);
+        }
+        return MainHelper.makeSummaryQuery(pathQuery, summaryPath, savedBags, pathToQueryNode,
+                bagQueryRunner);
+    }
+        
+
+    /**
+     * Generate a query from a PathQuery, to summarise a particular column of results.
+     *
+     * @param pathQuery the PathQuery
+     * @param summaryPath a String path of the column to summarise
+     * @param savedBags the current saved bags map
+     * @param pathToQueryNode Map, into which columns to display will be placed
+     * @param bagQueryRunner a BagQueryRunner to execute bag queries
+     * @return the generated summary query
+     */
+     public static Query makeSummaryQuery(PathQuery pathQuery,
+             String summaryPath,
+             Map savedBags,
+             Map<String, QuerySelectable> pathToQueryNode,
+             BagQueryRunner bagQueryRunner) {   
         Map<String, QuerySelectable> origPathToQueryNode = new HashMap();
         Query subQ = null;
         try {
-            subQ = makeQuery(pathQuery, savedBags, origPathToQueryNode, servletContext, null,
-                    false, os, classKeys, bagQueryConfig);
+            subQ = MainHelper.makeQuery(pathQuery, savedBags, origPathToQueryNode, bagQueryRunner,
+                    null, false);
         } catch (ObjectStoreException e) {
             // Not possible if second-last argument is null
             throw new IllegalArgumentException("Should not ever happen", e);
@@ -1354,7 +1396,6 @@ public class MainHelper
                 newSelect.put(subQ.getAliases().get(qs), qs);
             }
         }
-        System.out.println("Original select: " + oldSelect);
         subQ.clearSelect();
         for (Map.Entry<String, QuerySelectable> selectEntry : newSelect.entrySet()) {
             subQ.addToSelect(selectEntry.getValue(), selectEntry.getKey());

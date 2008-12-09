@@ -49,5 +49,5 @@ public class ConvertedObjectPair
      */
     public InterMineObject getOldObject() {
         return oldObject;
-    }
+    }    
 }

@@ -51,8 +51,7 @@ public class TemplateHelperTest extends TestCase
         String queryXml = "<query name=\"\" model=\"testmodel\" view=\"Employee Employee.name\"><node path=\"Employee\" type=\"Employee\"></node></query>";
         Map pathToQueryNode = new HashMap();
         PathQuery pathQuery = PathQueryBinding.unmarshal(new StringReader(queryXml)).values().iterator().next();
-        MainHelper.makeQuery(pathQuery,
-                new HashMap(), pathToQueryNode, null, null, false, null, null, null);
+        MainHelper.makeQuery(pathQuery, new HashMap(), pathToQueryNode, null, null, false);
         List indexes = new ArrayList();
         String precomputeQuery = TemplateHelper.getPrecomputeQuery(t, indexes).toString();
         assertEquals(expIql, precomputeQuery);
@@ -116,25 +115,6 @@ public class TemplateHelperTest extends TestCase
 
     public void testBugWhereTrue() throws Exception {
         TemplateQueryBinding binding = new TemplateQueryBinding();
-        /*Reader reader = new StringReader("<template name=\"InterProDomain_ProteinInteractingProtein\" title=\"Protein Domain --&gt; Proteins + Interacting proteins.\" longDescription=\"For proteins with a particular domain, search for proteins they have been shown to interact with. Display the confidence of the interaction and the PubMed id of the paper describing the experiment.\" comment=\"\" important=\"false\">"
-                + "<query name=\"InterProDomain_ProteinInteractingProtein\" model=\"genomic\" view=\"Protein.proteinFeatures.interproId Protein.proteinFeatures.name Protein.identifier Protein.primaryAccession Protein.interactionRoles.interaction.interactors.protein.identifier Protein.interactionRoles.interaction.interactors.protein.primaryAccession Protein.interactionRoles.interaction.evidence.confidence Protein.interactionRoles.interaction.evidence.confidenceDesc Protein.interactionRoles.interaction.evidence.analysis.publication.pubMedId\" constraintLogic=\"A and B and C and D\">"
-                + "<node path=\"Protein\" type=\"Protein\"></node>"
-                + "<node path=\"Protein.interactionRoles\" type=\"ProteinInteractor\"></node>"
-                + "<node path=\"Protein.interactionRoles.interaction\" type=\"ProteinInteraction\"></node>"
-                + "<node path=\"Protein.interactionRoles.interaction.interactors\" type=\"ProteinInteractor\"></node>"
-                + "<node path=\"Protein.interactionRoles.interaction.interactors.protein\" type=\"Protein\">"
-                + "<constraint op=\"!=\" value=\"Protein\" description=\"\" identifier=\"\" code=\"A\"></constraint></node>"
-                + "<node path=\"Protein.interactionRoles.interaction.evidence\" type=\"ExperimentalResult\"></node>"
-                + "<node path=\"Protein.organism\" type=\"Organism\"></node>"
-                + "<node path=\"Protein.organism.shortName\" type=\"String\">"
-                + "<constraint op=\"=\" value=\"D. melanogaster\" description=\"Search for proteins from organism:\" identifier=\"\" editable=\"true\" code=\"B\"></constraint></node>"
-                + "<node path=\"Protein.proteinFeatures\" type=\"ProteinFeature\"></node>"
-                + "<node path=\"Protein.proteinFeatures.evidence\" type=\"Evidence\"></node>"
-                + "<node path=\"Protein.proteinFeatures.identifier\" type=\"String\">"
-                + "<constraint op=\"LIKE\" value=\"IPR%\" description=\"\" identifier=\"\" code=\"C\"></constraint></node>"
-                + "<node path=\"Protein.proteinFeatures.name\" type=\"String\">"
-                + "<constraint op=\"LIKE\" value=\"%leucine%\" description=\"Constrain the name of the domain, use '*' for wildcards:\" identifier=\"\" editable=\"true\" code=\"D\"></constraint></node>"
-                + "</query></template>");*/
         Reader reader = new StringReader("<template name=\"flibble\" title=\"flobble\" longDescription=\"wurble\" comment=\"wibble\" important=\"false\">"
                 + "<query name=\"flibble\" model=\"testmodel\" view=\"Employee.name\" constraintLogic=\"A and B and C and D\">"
                 + "<node path=\"Employee\" type=\"Employee\"></node>"

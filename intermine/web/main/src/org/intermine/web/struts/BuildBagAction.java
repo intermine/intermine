@@ -33,6 +33,7 @@ import org.apache.struts.upload.FormFile;
 import org.intermine.objectstore.ObjectStore;
 import org.intermine.web.logic.Constants;
 import org.intermine.web.logic.WebUtil;
+import org.intermine.web.logic.bag.BagConversionHelper;
 import org.intermine.web.logic.bag.BagQueryConfig;
 import org.intermine.web.logic.bag.BagQueryResult;
 import org.intermine.web.logic.bag.BagQueryRunner;
@@ -81,7 +82,8 @@ public class BuildBagAction extends InterMineAction
         BagQueryConfig bagQueryConfig =
             (BagQueryConfig) servletContext.getAttribute(Constants.BAG_QUERY_CONFIG);
         BagQueryRunner bagRunner =
-            new BagQueryRunner(os, classKeys, bagQueryConfig, servletContext);
+            new BagQueryRunner(os, classKeys, bagQueryConfig,
+                    BagConversionHelper.getConversionTemplates(servletContext));
 
         int maxBagSize = WebUtil.getIntSessionProperty(session, "max.bag.size", 100000);
         Profile profile = (Profile) session.getAttribute(Constants.PROFILE);

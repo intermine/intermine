@@ -17,11 +17,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
-import javax.servlet.ServletContext;
-import javax.servlet.http.HttpSession;
-
 import org.intermine.InterMineException;
-import org.intermine.metadata.Model;
 import org.intermine.model.InterMineObject;
 import org.intermine.objectstore.ObjectStore;
 import org.intermine.objectstore.ObjectStoreException;
@@ -32,19 +28,14 @@ import org.intermine.pathquery.Constraint;
 import org.intermine.pathquery.Path;
 import org.intermine.pathquery.PathNode;
 import org.intermine.pathquery.PathQuery;
-import org.intermine.util.TypeUtil;
-import org.intermine.web.logic.Constants;
-import org.intermine.web.logic.config.WebConfig;
-import org.intermine.web.logic.pathqueryresult.PathQueryResultHelper;
-import org.intermine.web.logic.profile.Profile;
 import org.intermine.web.logic.query.MainHelper;
-import org.intermine.web.logic.results.WebResults;
 import org.intermine.web.logic.template.TemplateQuery;
 
 /**
  * Static helper routines to convert bags between different types.
  *
  * @author Matthew Wakeling
+ * @author Richard Smith
  */
 public class TypeConverter
 {
@@ -52,18 +43,18 @@ public class TypeConverter
      * Converts a List of objects from one type to another type using a TemplateQuery,
      * returns a map from an original object to the converted object(s).
      *
-     * @param servletContext the ServletContext
      * @param conversionTemplates a list of templates to be used for conversion
      * @param typeA the type to convert from
      * @param typeB the type to convert to
      * @param bag an InterMineBag or Collection of objects of type typeA
+     * @param os the ObjectStore to execute queries in
      * @return a Map from original object to a List of converted objects, or null if conversion is
      * possible (because no suitable template is available)
      * @throws InterMineException if an error occurs
      */
     public static Map<InterMineObject, List<InterMineObject>>
-    getConvertedObjectMap(ServletContext servletContext, List<TemplateQuery> conversionTemplates,
-                          Class typeA, Class typeB, Object bag)
+    getConvertedObjectMap(List<TemplateQuery> conversionTemplates,
+                          Class typeA, Class typeB, Object bag, ObjectStore os)
     throws InterMineException {
         PathQuery pq = getConversionMapQuery(conversionTemplates, typeA, typeB, bag);
         if (pq == null) {
@@ -72,14 +63,12 @@ public class TypeConverter
 
         Query q;
         try {
-            q = MainHelper.makeQuery(pq, Collections.EMPTY_MAP, null, servletContext, null, false,
-                    (ObjectStore) servletContext.getAttribute(Constants.OBJECTSTORE),
-                    (Map) servletContext.getAttribute(Constants.CLASS_KEYS),
-                    (BagQueryConfig) servletContext.getAttribute(Constants.BAG_QUERY_CONFIG));
+            // we can call without a BagQueryRunner as a valid conversion query can't contain
+            // LOOKUP constraints.
+            q = MainHelper.makeQuery(pq, Collections.EMPTY_MAP, null, null, null, false);
         } catch (ObjectStoreException e) {
             throw new InterMineException(e);
         }
-        ObjectStore os = (ObjectStore) servletContext.getAttribute(Constants.OBJECTSTORE);
         Results r;
         Map<InterMineObject, List<InterMineObject>> retval =
             new HashMap<InterMineObject, List<InterMineObject>>();
@@ -101,7 +90,7 @@ public class TypeConverter
 
     /**
      * Get conversion query for the types provided, edited so that the first
-     * type is constrainted to be in the bag.
+     * type is constrained to be in the bag.
      *
      * @param conversionTemplates a list of templates to be used for conversion
      * @param typeA the type to convert from
@@ -131,54 +120,8 @@ public class TypeConverter
 
 
     /**
-     * Converts a List of objects from one type to another type using a TemplateQuery,
-     * returns the converted objects.
-     *
-     * @param session the session
-     * @param servletContext the ServletContext
-     * @param conversionTemplates a list of templates to be used for conversion
-     * @param typeA the type to convert from
-     * @param typeB the type to convert to
-     * @param imBag an InterMineBag or Collection of objects of type typeA
-     * @return a WebResults object containing the converted objects
-     * @throws InterMineException if an error occurs
-     * @throws ObjectStoreException if an error occurs
-     */
-    public static WebResults getConvertedObjects(HttpSession session,
-                                                 ServletContext servletContext,
-                                                 List<TemplateQuery> conversionTemplates,
-                                                 Class typeA, Class typeB, InterMineBag imBag)
-    throws InterMineException, ObjectStoreException {
-        PathQuery pq = getConversionQuery(conversionTemplates, typeA, typeB, imBag);
-        if (pq == null) {
-            return null;
-        }
-        Path configuredPath = pq.getView().get(0);
-        WebConfig webConfig = (WebConfig) servletContext.getAttribute(Constants.WEBCONFIG);
-        Model model = ((ObjectStore) servletContext.getAttribute(Constants.OBJECTSTORE)).getModel();
-        pq.setViewPaths(PathQueryResultHelper
-                        .getDefaultView(TypeUtil.unqualifiedName(typeB.getName()), model,
-                                        webConfig, configuredPath.getPrefix()
-                                                        .toStringNoConstraints(), false));
-        String label = null, id = null, code = pq.getUnusedConstraintCode();
-        Constraint c = new Constraint(ConstraintOp.IN, imBag.getName(), false,
-            label, code, id, null);
-        pq.addNode(imBag.getType()).getConstraints().add(c);
-        pq.syncLogicExpression("and");
-        pq.setConstraintLogic("A and B");
-        Profile profile = (Profile) session.getAttribute(Constants.PROFILE);
-        WebResults webResults = PathQueryResultHelper.createPathQueryGetResults(pq, profile,
-                        (ObjectStore) servletContext.getAttribute(Constants.OBJECTSTORE),
-                        (Map) servletContext.getAttribute(Constants.CLASS_KEYS),
-                        (BagQueryConfig) servletContext.getAttribute(Constants.BAG_QUERY_CONFIG),
-                        servletContext);
-        return webResults;
-    }
-
-
-    /**
      * Get conversion query for the types provided, edited so that the first
-     * type is constrainted to be in the bag and the first type is removed from the
+     * type is constrained to be in the bag and the first type is removed from the
      * view list so that the query only returns the converted type.
      *
      * @param conversionTemplates a list of templates to be used for conversion
