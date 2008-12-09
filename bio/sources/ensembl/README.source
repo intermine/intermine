@@ -1,2 +1,0 @@
-The Ensembl source reads directly from a local copy of an Ensembl database and
-create genomic model objects.
