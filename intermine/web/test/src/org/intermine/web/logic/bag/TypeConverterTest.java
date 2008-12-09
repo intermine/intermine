@@ -19,7 +19,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import junit.framework.TestCase;
+import junit.framework.Test;
 
 import org.intermine.model.testmodel.Address;
 import org.intermine.model.testmodel.Employee;
@@ -27,6 +27,7 @@ import org.intermine.objectstore.ObjectStore;
 import org.intermine.objectstore.ObjectStoreFactory;
 import org.intermine.objectstore.ObjectStoreWriter;
 import org.intermine.objectstore.ObjectStoreWriterFactory;
+import org.intermine.objectstore.StoreDataTestCase;
 import org.intermine.objectstore.intermine.ObjectStoreWriterInterMineImpl;
 import org.intermine.objectstore.query.BagConstraint;
 import org.intermine.objectstore.query.ConstraintOp;
@@ -40,6 +41,7 @@ import org.intermine.objectstore.query.QueryObjectReference;
 import org.intermine.objectstore.query.Results;
 import org.intermine.pathquery.Constraint;
 import org.intermine.pathquery.PathQuery;
+import org.intermine.web.logic.profile.ProfileManagerTest;
 import org.intermine.web.logic.template.TemplateQuery;
 import org.intermine.web.logic.template.TemplateQueryBinding;
 
@@ -47,7 +49,7 @@ import org.intermine.web.logic.template.TemplateQueryBinding;
  * @author Matthew Wakeling
  * @author Richard Smith
  */
-public class TypeConverterTest extends TestCase
+public class TypeConverterTest extends StoreDataTestCase
 {
     List<TemplateQuery> conversionTemplates;
     ObjectStoreWriter uosw;
@@ -76,6 +78,20 @@ public class TypeConverterTest extends TestCase
         TemplateQuery tq = (TemplateQuery) tqs.get("convertEmployeesToAddresses");
         conversionTemplates = new ArrayList(Collections.singleton(tq));
         uosw = ObjectStoreWriterFactory.getObjectStoreWriter("osw.userprofile-test");
+    }
+    
+    public void executeTest(String type) {
+    }
+
+    public void testQueries() throws Throwable {
+    }
+    
+    public static void oneTimeSetUp() throws Exception {
+        StoreDataTestCase.oneTimeSetUp();
+    }
+    
+    public static Test suite() {
+        return buildSuite(TypeConverterTest.class);
     }
     
     public void testGetConvertedObjectMap() throws Exception {
