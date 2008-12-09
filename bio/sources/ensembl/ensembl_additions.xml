@@ -1,0 +1,19 @@
+<?xml version="1.0"?>
+<classes>
+   <class name="org.flymine.model.genomic.Gene" is-interface="true">
+     <reference name="chromosome" referenced-type="org.flymine.model.genomic.Chromosome"/>
+     <collection name="transcripts" referenced-type="org.flymine.model.genomic.Transcript" ordered="true" reverse-reference="gene" />
+   </class>
+
+  <class name="org.flymine.model.genomic.Protein" extends="org.flymine.model.genomic.BioEntity" is-interface="true">
+    <attribute name="md5checksum" type="java.lang.String"/>
+  </class>
+
+   <class name="org.flymine.model.genomic.Transcripts" is-interface="true">
+     <reference name="gene" referenced-type="org.flymine.model.genomic.Gene" reverse-reference="transcripts" />
+     <collection name="exons" referenced-type="org.flymine.model.genomic.Exon" ordered="true" reverse-reference="transcripts" />
+   </class>
+   <class name="org.flymine.model.genomic.Exon" is-interface="true">
+     <collection name="transcripts" referenced-type="org.flymine.model.genomic.Transcript" reverse-reference="exons" />
+   </class>
+</classes>
