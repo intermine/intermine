@@ -27,6 +27,7 @@ BEGIN {
 use strict;
 use warnings;
 
+use Getopt::Std;
 use File::Copy;
 use Date::Manip;
 use Cwd;
@@ -57,8 +58,11 @@ sub usage
 usage:
   $0 [-b] [-e]
 
-flags:
+Without arguments the script will run the entire process of releasing the mine.
+
+With flags:
  -b run only the first part of the script, which
+
    * find current and previous versions from properties file
    * createdb new userprofile database <minename>-r<version>-userprofile
    * precompute queries and templates
@@ -71,6 +75,7 @@ flags:
    N.B.: the current release webapp is now stopped!!
 
  -e run only the second part of the script
+
    * start new webapp
    * start old webapp
    * update apache rewrite/redirect configuration
@@ -116,7 +121,6 @@ if ($opts{e}) {
 
 #################
 
-if ($begin || $all) {
 
 warn "reading current properties file\n";
 
@@ -128,9 +132,19 @@ my $current_prop_filename = "$PROP_FILE_PREFIX.r$current_version";
 
 warn "current properties file: $current_prop_filename\n";
 
-my $new_version = $current_version + 1;
+# setting new_version globally. if we are doing the all procedure or the beginning,
+# it will be increased by 1. otherwise we use (the already produced) new version
 
+my $new_version = $current_version;
 my $new_prop_filename = "$INTERMINE_CONF_DIR/$PROP_FILE_PREFIX.r$new_version";
+
+if ($begin || $all) {
+
+#my $new_version = $current_version + 1;
+$new_version = $current_version + 1;
+
+#my $new_prop_filename = "$INTERMINE_CONF_DIR/$PROP_FILE_PREFIX.r$new_version";
+$new_prop_filename = "$INTERMINE_CONF_DIR/$PROP_FILE_PREFIX.r$new_version";
 
 warn "reading properties from: $new_prop_filename\n";
 
@@ -268,7 +282,7 @@ my @TARGETS = qw(remove-webapp release-webapp);
 system ("ant -Drelease=r$new_version @TARGETS >> $LOG_FILENAME 2>&1") == 0
   or die_with_log "can't write userprofile XML: $?";
 
-exit 0;
+#exit 0;
 }
 #################
 
