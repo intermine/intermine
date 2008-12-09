@@ -19,8 +19,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import javax.servlet.ServletContext;
-
 import junit.framework.TestCase;
 
 import org.intermine.model.testmodel.Address;
@@ -42,16 +40,15 @@ import org.intermine.objectstore.query.QueryObjectReference;
 import org.intermine.objectstore.query.Results;
 import org.intermine.pathquery.Constraint;
 import org.intermine.pathquery.PathQuery;
-import org.intermine.web.logic.Constants;
 import org.intermine.web.logic.template.TemplateQuery;
 import org.intermine.web.logic.template.TemplateQueryBinding;
 
 /**
  * @author Matthew Wakeling
+ * @author Richard Smith
  */
 public class TypeConverterTest extends TestCase
 {
-    ServletContext context;
     List<TemplateQuery> conversionTemplates;
     ObjectStoreWriter uosw;
     ObjectStore os;
@@ -94,7 +91,6 @@ public class TypeConverterTest extends TestCase
         expected.put(((List) r.get(0)).get(0), Collections.singletonList(((List) r.get(0)).get(1)));
         expected.put(((List) r.get(1)).get(0), Collections.singletonList(((List) r.get(1)).get(1)));
 
-        //List<TemplateQuery> convTemplates = BagConversionHelper.getConversionTemplates(context);
         Map got = TypeConverter.getConvertedObjectMap(conversionTemplates, Employee.class, Address.class, imb, os);
 
         assertEquals(expected, got);
