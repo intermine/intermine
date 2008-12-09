@@ -101,80 +101,53 @@ public class ObjectStoreFlatOuterJoinsImpl extends ObjectStorePassthruImpl
                 }
                 rowPosition[column] = 0;
             }
-//            if (lcm == 1) {
-//                ResultsRow newRow = new ResultsRow();
-//                for (int column = 0; column < columns; column++) {
-//                    Object columnValue = origRow.get(column);
-//                    if ((columnValue instanceof List) && (((List) columnValue).size() > 0)) {
-//                        // Because lcm = 1, we know that columnValue.size() cannot be more than one.
-//                        columnValue = ((List) columnValue).get(0);
-//                    } else if (columnValue instanceof List) {
-//                        columnValue = null;
-//                    }
-//                    if (columnValue == null) {
-//                        for (int i = 0; i < columnWidth[column]; i++) {
-//                            newRow.add(null);
-//                        }
-//                    } else if (columnValue instanceof ResultsRow) {
-//                        for (Object columnValue2 : ((ResultsRow) columnValue)) {
-//                            newRow.add(columnValue2);
-//                        }
-//                    } else {
-//                        newRow.add(columnValue);
-//                    }
-//                }
-//                //LOG.error("Translated row " + origRow + " into " + newRow);
-//                retval.add(newRow);
-//            } else {
-                MultiRow multiRow = new MultiRow();
-                for (int subRowNo = 0; subRowNo < lcm; subRowNo++) {
-                    ResultsRow subRow = new ResultsRow();
-                    for (int column = 0; column < columns; column++) {
-                        if (rowPosition[column] <= 0) {
-                            Object columnValue = origRow.get(column);
-                            if ((columnValue instanceof List)
-                                    && (((List) columnValue).size() > 0)) {
-                                columnValue = ((List) columnValue).get(subRowNo
-                                        / (lcm / collectionSizes[column]));
-                            } else if (columnValue instanceof List) {
-                                columnValue = null;
-                            }
-                            if (columnValue == null) {
-                                for (int i = 0; i < columnWidth[column]; i++) {
-                                    MultiRowFirstValue value = new MultiRowFirstValue(null,
-                                            lcm / collectionSizes[column]);
-                                    subRow.add(value);
-                                    multiRowLaterValue[column] = Collections
-                                        .singletonList(value.getMrlv());
-                                    rowPosition[column] = lcm / collectionSizes[column] - 1;
-                                }
-                            } else if (columnValue instanceof ResultsRow) {
-                                multiRowLaterValue[column] = new ArrayList<MultiRowLaterValue>();
-                                for (Object columnValue2 : ((ResultsRow) columnValue)) {
-                                    MultiRowFirstValue value = new MultiRowFirstValue(columnValue2,
-                                            lcm / collectionSizes[column]);
-                                    subRow.add(value);
-                                    multiRowLaterValue[column].add(value.getMrlv());
-                                    rowPosition[column] = lcm / collectionSizes[column] - 1;
-                                }
-                            } else {
-                                MultiRowFirstValue value = new MultiRowFirstValue(columnValue,
-                                            lcm / collectionSizes[column]);
+            MultiRow multiRow = new MultiRow();
+            for (int subRowNo = 0; subRowNo < lcm; subRowNo++) {
+                ResultsRow subRow = new ResultsRow();
+                for (int column = 0; column < columns; column++) {
+                    if (rowPosition[column] <= 0) {
+                        Object columnValue = origRow.get(column);
+                        if ((columnValue instanceof List)
+                                && (((List) columnValue).size() > 0)) {
+                            columnValue = ((List) columnValue).get(subRowNo
+                                    / (lcm / collectionSizes[column]));
+                        } else if (columnValue instanceof List) {
+                            columnValue = null;
+                        }
+                        if (columnValue == null) {
+                            for (int i = 0; i < columnWidth[column]; i++) {
+                                MultiRowFirstValue value = new MultiRowFirstValue(null,
+                                        lcm / collectionSizes[column]);
                                 subRow.add(value);
                                 multiRowLaterValue[column] = Collections
                                     .singletonList(value.getMrlv());
                                 rowPosition[column] = lcm / collectionSizes[column] - 1;
                             }
+                        } else if (columnValue instanceof ResultsRow) {
+                            multiRowLaterValue[column] = new ArrayList<MultiRowLaterValue>();
+                            for (Object columnValue2 : ((ResultsRow) columnValue)) {
+                                MultiRowFirstValue value = new MultiRowFirstValue(columnValue2,
+                                        lcm / collectionSizes[column]);
+                                subRow.add(value);
+                                multiRowLaterValue[column].add(value.getMrlv());
+                                rowPosition[column] = lcm / collectionSizes[column] - 1;
+                            }
                         } else {
-                            subRow.addAll(multiRowLaterValue[column]);
-                            rowPosition[column]--;
+                            MultiRowFirstValue value = new MultiRowFirstValue(columnValue,
+                                        lcm / collectionSizes[column]);
+                            subRow.add(value);
+                            multiRowLaterValue[column] = Collections
+                                .singletonList(value.getMrlv());
+                            rowPosition[column] = lcm / collectionSizes[column] - 1;
                         }
+                    } else {
+                        subRow.addAll(multiRowLaterValue[column]);
+                        rowPosition[column]--;
                     }
-                    multiRow.add(subRow);
-//                }
-                //LOG.error("Translated row " + origRow + " into " + multiRow);
-                retval.add(multiRow);
+                }
+                multiRow.add(subRow);
             }
+            retval.add(multiRow);
         }
         return retval;
     }
