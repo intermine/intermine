@@ -47,10 +47,15 @@ public class WebServiceRequestParser
     /** Value of parameter when user wants html output to be returned. **/
     public static final String FORMAT_PARAMETER_HTML = "html";
 
+    /** Value of parameter when user wants comma separated output to be returned. **/
+    public static final String FORMAT_PARAMETER_CSV = "csv";
+    
     /**
      * Name of format parameter that specifies format of returned results.  
      */
     public static final String OUTPUT_PARAMETER = "format";
+
+
 
     /**
      * Parses common parameters for all web services. Must be called from parseRequest

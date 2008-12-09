@@ -25,6 +25,7 @@ import org.intermine.webservice.server.exceptions.BadRequestException;
 import org.intermine.webservice.server.exceptions.InternalErrorException;
 import org.intermine.webservice.server.exceptions.ServiceException;
 import org.intermine.webservice.server.exceptions.ServiceForbiddenException;
+import org.intermine.webservice.server.output.CSVFormatter;
 import org.intermine.webservice.server.output.HTMLOutput;
 import org.intermine.webservice.server.output.Output;
 import org.intermine.webservice.server.output.StreamedOutput;
@@ -69,6 +70,9 @@ public abstract class WebService
     /** HTML format constant **/
     public static final int HTML_FORMAT = 2;
 
+    /** CSV format constant **/
+    public static final int CSV_FORMAT = 3;
+    
     private static final String WEB_SERVICE_DISABLED_PROPERTY = "webservice.disabled";
 
     private static Logger logger = Logger.getLogger(WebService.class);
@@ -203,6 +207,10 @@ public abstract class WebService
             output = new StreamedOutput(out, new TabFormatter());
             ResponseUtil.setTabHeader(response, "result.tsv");
             break;
+        case CSV_FORMAT:
+            output = new StreamedOutput(out, new CSVFormatter());
+            ResponseUtil.setCSVHeader(response, "result.csv");
+            break;
         case HTML_FORMAT:
             output = new HTMLOutput(out);
             ResponseUtil.setHTMLContentType(response);
@@ -230,6 +238,10 @@ public abstract class WebService
             if (WebServiceRequestParser.FORMAT_PARAMETER_HTML
                     .equalsIgnoreCase(format)) {
                 return HTML_FORMAT;
+            } 
+            if (WebServiceRequestParser.FORMAT_PARAMETER_CSV
+                    .equalsIgnoreCase(format)) {
+                return CSV_FORMAT;
             } else {
                 return TSV_FORMAT;
             }
