@@ -13,7 +13,7 @@ import java.util.Map;
 import java.util.Properties;
 import java.util.Set;
 
-import junit.framework.TestCase;
+import junit.framework.Test;
 
 import org.intermine.metadata.FieldDescriptor;
 import org.intermine.model.testmodel.Employee;
@@ -21,10 +21,12 @@ import org.intermine.model.testmodel.Manager;
 import org.intermine.objectstore.ObjectStore;
 import org.intermine.objectstore.ObjectStoreException;
 import org.intermine.objectstore.ObjectStoreFactory;
+import org.intermine.objectstore.StoreDataTestCase;
 import org.intermine.objectstore.query.Query;
 import org.intermine.objectstore.query.QueryClass;
 import org.intermine.objectstore.query.Results;
 import org.intermine.web.logic.ClassKeyHelper;
+import org.intermine.web.logic.profile.ProfileManagerTest;
 import org.intermine.web.logic.template.TemplateQuery;
 import org.intermine.web.logic.template.TemplateQueryBinding;
 
@@ -33,7 +35,7 @@ import org.intermine.web.logic.template.TemplateQueryBinding;
  * currently inserted before running the testmodel webapp tests.  If this
  * changes then this class will need to extend StoreDataTestCase.
  */
-public class BagQueryRunnerTest extends TestCase {
+public class BagQueryRunnerTest extends StoreDataTestCase {
 
     private ObjectStore os;
     private Map<String, Employee> eIds;
@@ -51,7 +53,7 @@ public class BagQueryRunnerTest extends TestCase {
         Map<String, List<FieldDescriptor>> classKeys = ClassKeyHelper.readKeys(os.getModel(), props);
         eIds = getEmployeeIds();
 
-        InputStream is = getClass().getClassLoader().getResourceAsStream("WEB-INF/bag-queries.xml");
+        InputStream is = getClass().getClassLoader().getResourceAsStream("bag-queries.xml");
         BagQueryConfig bagQueryConfig = BagQueryHelper.readBagQueryConfig(os.getModel(), is);
         
         TemplateQueryBinding tqb = new TemplateQueryBinding();
@@ -59,6 +61,20 @@ public class BagQueryRunnerTest extends TestCase {
         runner = new BagQueryRunner(os, classKeys, bagQueryConfig, new ArrayList<TemplateQuery>(tqs.values()));
     }
 
+    public void executeTest(String type) {
+    }
+
+    public void testQueries() throws Throwable {
+    }
+    
+    public static void oneTimeSetUp() throws Exception {
+        StoreDataTestCase.oneTimeSetUp();
+    }
+    
+    public static Test suite() {
+        return buildSuite(BagQueryRunnerTest.class);
+    }
+    
     // expect each input string to match one object
     public void testSearchForBagMatches() throws Exception {
         List input = Arrays.asList(new Object[] {"EmployeeA1", "EmployeeA2"});

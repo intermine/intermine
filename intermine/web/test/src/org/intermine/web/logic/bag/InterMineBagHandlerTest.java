@@ -14,15 +14,17 @@ import java.util.Collections;
 import java.util.HashSet;
 import java.util.Set;
 
-import junit.framework.TestCase;
+import junit.framework.Test;
 
 import org.intermine.model.testmodel.Address;
 import org.intermine.model.testmodel.Company;
 import org.intermine.objectstore.ObjectStore;
 import org.intermine.objectstore.ObjectStoreWriter;
 import org.intermine.objectstore.ObjectStoreWriterFactory;
+import org.intermine.objectstore.StoreDataTestCase;
 import org.intermine.util.DynamicUtil;
 import org.intermine.web.bag.PkQueryIdUpgrader;
+import org.intermine.web.logic.profile.ProfileManagerTest;
 
 /**
  * Tests for the InterMineBagHandler class.
@@ -30,7 +32,7 @@ import org.intermine.web.bag.PkQueryIdUpgrader;
  * @author Kim Rutherford
  */
 
-public class InterMineBagHandlerTest extends TestCase
+public class InterMineBagHandlerTest extends StoreDataTestCase
 {
     private ObjectStore os;
 
@@ -44,6 +46,20 @@ public class InterMineBagHandlerTest extends TestCase
         os = osw.getObjectStore();
     }
 
+    public void executeTest(String type) {
+    }
+
+    public void testQueries() throws Throwable {
+    }
+    
+    public static void oneTimeSetUp() throws Exception {
+        StoreDataTestCase.oneTimeSetUp();
+    }
+    
+    public static Test suite() {
+        return buildSuite(InterMineBagHandlerTest.class);
+    }
+    
     public void testNoNewObject() throws Exception {
         Company oldCompany =
             (Company) DynamicUtil.createObject(Collections.singleton(Company.class));
