@@ -18,7 +18,6 @@ import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-import java.util.Map.Entry;
 import java.util.regex.Pattern;
 
 import org.intermine.InterMineException;
@@ -94,16 +93,14 @@ public class BagQueryRunner
      * @throws ClassNotFoundException if the type isn't in the model
      * @throws InterMineException if there is any other exception
      */
-    public BagQueryResult searchForBag(String type, List input, String extraFieldValue,
+    public BagQueryResult searchForBag(String type, List<String> input, String extraFieldValue,
             boolean doWildcards) throws ClassNotFoundException, InterMineException {
 
         Map<String, String> lowerCaseInput = new HashMap<String, String>();
         List<String> cleanInput = new ArrayList<String>();
         List<String> wildcardInput = new ArrayList<String>();
         Map<String, Pattern> patterns = new HashMap<String, Pattern>();
-        Iterator inputIter = input.iterator();
-        while (inputIter.hasNext()) {
-            String inputString = (String) inputIter.next();
+        for (String inputString : input) {
             if (!(inputString == null) && !(inputString.equals(""))) {
                 if (inputString.indexOf('*') == -1 || (!doWildcards)) {
                     if (!lowerCaseInput.containsKey(inputString.toLowerCase())) {
@@ -128,11 +125,9 @@ public class BagQueryRunner
         List<BagQuery> queries =
             getBagQueriesForType(bagQueryConfig, typeCls.getName());
         Set<String> unresolved = new LinkedHashSet<String>(cleanInput);
-        Set wildcardUnresolved = new LinkedHashSet(wildcardInput);
-        Iterator<BagQuery> qIter = queries.iterator();
+        Set<String> wildcardUnresolved = new LinkedHashSet<String>(wildcardInput);
         BagQueryResult bqr = new BagQueryResult();
-        while (qIter.hasNext()) {
-            BagQuery bq = qIter.next();
+        for (BagQuery bq : queries) {
             // run the next query on identifiers not yet resolved
             if (!unresolved.isEmpty()) {
                 Map<String, Set<Integer>> resMap = new HashMap<String, Set<Integer>>();
@@ -217,9 +212,8 @@ public class BagQueryRunner
 
         unresolved.addAll(wildcardUnresolved);
         Map<String, ?> unresolvedMap = new HashMap();
-        Iterator<String> iter = unresolved.iterator();
-        while (iter.hasNext()) {
-            unresolvedMap.put(iter.next(), null);
+        for (String unresolvedStr : unresolved) {
+            unresolvedMap.put(unresolvedStr, null);
         }
         bqr.getUnresolved().putAll(unresolvedMap);
 
@@ -235,11 +229,10 @@ public class BagQueryRunner
                             BagQueryResult bqr, BagQuery bq, Class<?> type, boolean areWildcards)
     throws InterMineException {
         Map<String, Set<Object>> objsOfWrongType = new HashMap<String, Set<Object>>();
-        Iterator mapIter = resMap.entrySet().iterator();
-        while (mapIter.hasNext()) {
-            Map.Entry entry = (Map.Entry) mapIter.next();
+        
+        for (Map.Entry entry : resMap.entrySet()) {
             String input = (String) entry.getKey();
-            Set ids = (Set) entry.getValue();
+            Set<Integer> ids = (Set<Integer>) entry.getValue();
             boolean resolved = true;
 
             if (!bq.matchesAreIssues()) {
@@ -314,21 +307,17 @@ public class BagQueryRunner
      * Find any objects in the objsOfWrongType Map that can be converted to the destination type,
      * add them to bqr as TYPE_CONVERTED issues and remove them from objsOfWrongType.
      */
-    private void convertObjects(BagQueryResult bqr, BagQuery bq, Class<?> type, Map<String,
-                                Set<Object>> objsOfWrongType)
+    private void convertObjects(BagQueryResult bqr, BagQuery bq, Class<?> type,
+            Map<String, Set<Object>> objsOfWrongType)
         throws InterMineException {
         if (!objsOfWrongType.isEmpty()) {
             // group objects by class
             Map<InterMineObject, Set<String> > objectToInput =
                 new HashMap<InterMineObject, Set<String> >();
-            Iterator iter = objsOfWrongType.entrySet().iterator();
-            while (iter.hasNext()) {
-                Entry entry = (Entry) iter.next();
-                String input = (String) entry.getKey();
-                Set set = (Set) entry.getValue();
-                Iterator objIter = set.iterator();
-                while (objIter.hasNext()) {
-                    InterMineObject imo = (InterMineObject) objIter.next();
+            for (Map.Entry<String, Set<Object>> entry : objsOfWrongType.entrySet()) {
+                String input = entry.getKey();
+                for (Object o : entry.getValue()) {
+                    InterMineObject imo = (InterMineObject) o;
                     Set<String> inputSet = objectToInput.get(imo);
                     if (inputSet == null) {
                         inputSet = new HashSet<String>();
@@ -347,9 +336,7 @@ public class BagQueryRunner
 
                 // we may have already converted some of these types, remove any that have been.
                 List<Object> objs = new ArrayList<Object>();
-                Iterator candidateIter = candidateObjs.iterator();
-                while (candidateIter.hasNext()) {
-                    Object candidate = candidateIter.next();
+                for (Object candidate : candidateObjs) {
                     if (objectToInput.containsKey(candidate)) {
                         objs.add(candidate);
                     }
@@ -361,35 +348,28 @@ public class BagQueryRunner
                 }
 
                 // try to convert objects to target type
-                Map convertedObjsMap = TypeConverter.getConvertedObjectMap(conversionTemplates,
-                                           fromClass, type, objs, os);
+                Map<InterMineObject, List<InterMineObject>> convertedObjsMap = 
+                    TypeConverter.getConvertedObjectMap(conversionTemplates, fromClass, 
+                            type, objs, os);
                 if (convertedObjsMap == null) {
                     // no conversion found
                     continue;
                 }
+                
                 // loop over the old objects
-                Iterator origObjIter = convertedObjsMap.keySet().iterator();
-                while (origObjIter.hasNext()) {
-                    InterMineObject origObj = (InterMineObject) origObjIter.next();
-                    List converterObjList = (List) convertedObjsMap.get(origObj);
-                    Iterator convertedObjListIter = converterObjList.iterator();
+                for (InterMineObject origObj : convertedObjsMap.keySet()) {
                     boolean toRemove = false;
                     // then for each new object ...
-                    while (convertedObjListIter.hasNext()) {
-                        InterMineObject convertedObj = (InterMineObject) convertedObjListIter
-                        .next();
+                    for (InterMineObject convertedObj : convertedObjsMap.get(origObj)) {
                         ConvertedObjectPair convertedPair = new ConvertedObjectPair(origObj,
                                                                                     convertedObj);
                         List<Object> objPairList = new ArrayList<Object>();
-                        Set origInputStringSet = objectToInput.get(origObj);
                         objPairList.add(convertedPair);
                         // remove this object so we don't try to convert it again
                         toRemove = true;
                         // make an issue for each input identifier that matched the objects in
                         // this old/new pair
-                        Iterator inputStringIter = origInputStringSet.iterator();
-                        while (inputStringIter.hasNext()) {
-                            String origInputString = (String) inputStringIter.next();
+                        for (String origInputString : objectToInput.get(origObj)) {
                             bqr.addIssue(BagQueryResult.TYPE_CONVERTED,
                                          bq.getMessage() + " found by converting from x",
                                          origInputString, objPairList);
