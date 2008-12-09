@@ -50,6 +50,7 @@ import org.intermine.pathquery.PathQuery;
 import org.intermine.pathquery.PathQueryBinding;
 import org.intermine.web.logic.bag.BagQueryConfig;
 import org.intermine.web.logic.bag.BagQueryHelper;
+import org.intermine.web.logic.bag.BagQueryRunner;
 
 /**
  * Tests for the MainHelper class
@@ -61,6 +62,7 @@ public class MainHelperTest extends TestCase {
     private BagQueryConfig bagQueryConfig;
     private ObjectStore os;
     private Map<String, List<FieldDescriptor>> classKeys;
+    private BagQueryRunner bagQueryRunner;
     
     public MainHelperTest(String arg) {
         super(arg);
@@ -73,6 +75,7 @@ public class MainHelperTest extends TestCase {
         InputStream config = MainHelperTest.class.getClassLoader()
             .getResourceAsStream("bag-queries.xml");
         bagQueryConfig = BagQueryHelper.readBagQueryConfig(os.getModel(), config);
+        bagQueryRunner = new BagQueryRunner(os, classKeys, bagQueryConfig, Collections.EMPTY_LIST);
     }
 
     // Method converts path to default join styles: outer joins for collections, normal join otherwise
@@ -224,8 +227,8 @@ public class MainHelperTest extends TestCase {
         q.addToSelect(qc1);
         q.addFrom(qc1);
         q.addToOrderBy(new QueryField(qc1, "name"));
-
-        assertEquals(q.toString(), MainHelper.makeQuery(pq, new HashMap(), new HashMap(), null, null, false, null, null, null).toString());
+        
+        assertEquals(q.toString(), MainHelper.makeQuery(pq, new HashMap(), null, bagQueryRunner, new HashMap(), false).toString());
     }
 
      // Select Employee.name, Employee.departments.name, Employee.departments.company.name
@@ -260,7 +263,7 @@ public class MainHelperTest extends TestCase {
         q.addToOrderBy(qf1);
         q.addToOrderBy(new QueryField(qc3, "name"));
 
-        assertEquals(q.toString(), MainHelper.makeQuery(pq, new HashMap(), new HashMap(), null, null, false, null, null, null).toString());
+        assertEquals(q.toString(), MainHelper.makeQuery(pq, new HashMap(), null, bagQueryRunner, new HashMap(), false).toString());
     }
 
     // As above but add a wildcard in the constraint which makes a MATCHES constraint
@@ -296,7 +299,7 @@ public class MainHelperTest extends TestCase {
         q.addToOrderBy(qf1);
         q.addToOrderBy(new QueryField(qc3, "name"));
 
-        assertEquals(q.toString(), MainHelper.makeQuery(pq, new HashMap(), new HashMap(), null, null, false, null, null, null).toString());
+        assertEquals(q.toString(), MainHelper.makeQuery(pq, new HashMap(), null, bagQueryRunner, new HashMap(), false).toString());
     }
 
 
@@ -331,7 +334,7 @@ public class MainHelperTest extends TestCase {
         q.addToOrderBy(new QueryField(qc1, "name"));
         q.addToOrderBy(new QueryField(qc3, "name"));
 
-        assertEquals(q.toString(), MainHelper.makeQuery(pq, new HashMap(), new HashMap(), null, null, false, null, null, null).toString());
+        assertEquals(q.toString(), MainHelper.makeQuery(pq, new HashMap(), null, bagQueryRunner, new HashMap(), false).toString());
     }
 
     public void testMakeQueryDateConstraint() throws Exception {
@@ -416,8 +419,7 @@ public class MainHelperTest extends TestCase {
     public void testLoopConstraint() throws Exception {
         Map queries = readQueries();
         PathQuery pq = (PathQuery) queries.get("loopConstraint");
-        Query q = MainHelper.makeQuery(pq, new HashMap(), new HashMap(), null, null, false, os,
-                classKeys, bagQueryConfig);
+        Query q = MainHelper.makeQuery(pq, new HashMap(), null, bagQueryRunner, new HashMap(), false);
         String got = q.toString();
         String iql = "SELECT DISTINCT a1_ FROM org.intermine.model.testmodel.Company AS a1_, org.intermine.model.testmodel.Department AS a2_ WHERE (a1_.departments CONTAINS a2_ AND a2_.company CONTAINS a1_) ORDER BY a1_.name";
         assertEquals("Expected: " + iql + ", got: " + got, iql, got);
@@ -620,8 +622,7 @@ public class MainHelperTest extends TestCase {
         try {
             Map parsed = PathQueryBinding.unmarshal(new StringReader(web));
             PathQuery pq = (PathQuery) parsed.get("test");
-            Query q = MainHelper.makeQuery(pq, new HashMap(), new HashMap(), null, null, false, os,
-                    classKeys, bagQueryConfig);
+            Query q = MainHelper.makeQuery(pq, new HashMap(), null, bagQueryRunner, new HashMap(), false);
             String got = q.toString();
             assertEquals("Expected: " + iql + ", got: " + got, iql, got);
         } catch (Exception e) {
@@ -637,7 +638,7 @@ public class MainHelperTest extends TestCase {
             for (String summary : summaries) {
                 try {
                     summaryPath = pq.getViewStrings().get(columnNo);
-                    Query q = MainHelper.makeSummaryQuery(pq, new HashMap(), new HashMap(), summaryPath, os, classKeys, bagQueryConfig, null);
+                    Query q = MainHelper.makeSummaryQuery(pq, summaryPath, new HashMap(), new HashMap(), bagQueryRunner);
                     String got = q.toString();
                     assertEquals("Failed for summaryPath " + summaryPath + ". Expected: " + summary + ", got; " + got, summary, got);
                     summaryPath = null;

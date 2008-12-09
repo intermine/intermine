@@ -13,7 +13,6 @@ package org.intermine.web.logic.profile;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Properties;
 
 import org.intermine.metadata.Model;
 import org.intermine.objectstore.ObjectStore;

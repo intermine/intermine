@@ -60,7 +60,6 @@ import org.intermine.web.logic.config.WebConfig;
 import org.intermine.web.logic.profile.Profile;
 import org.intermine.web.logic.profile.ProfileManager;
 import org.intermine.web.logic.profile.TagManager;
-import org.intermine.web.logic.profile.TagManagerFactory;
 import org.intermine.web.logic.query.MainHelper;
 import org.intermine.web.logic.results.DisplayObject;
 import org.intermine.web.logic.search.SearchFilterEngine;
@@ -138,7 +137,8 @@ public class InitialiserPlugin implements PlugIn
             final ProfileManager pm = createProfileManager(servletContext, os);
 
             // index global webSearchables
-            SearchRepository searchRepository = new SearchRepository(TemplateHelper.GLOBAL_TEMPLATE);
+            SearchRepository searchRepository = 
+                new SearchRepository(TemplateHelper.GLOBAL_TEMPLATE);
             servletContext.setAttribute(Constants.GLOBAL_SEARCH_REPOSITORY, searchRepository);
 
             final Profile superProfile = SessionMethods.getSuperUserProfile(servletContext);
@@ -148,7 +148,8 @@ public class InitialiserPlugin implements PlugIn
                 new AbstractMap<String, TemplateQuery>() {
                     @Override
                     public Set<Map.Entry<String, TemplateQuery>> entrySet() {
-                        return new SearchFilterEngine().filterByTags(superProfile.getSavedTemplates(), 
+                        return new SearchFilterEngine()
+                        .filterByTags(superProfile.getSavedTemplates(), 
                                 PUBLIC_TAG_LIST, TagTypes.TEMPLATE, superProfile.getUsername(), 
                                 tagManager).entrySet();
                     }
@@ -432,7 +433,8 @@ public class InitialiserPlugin implements PlugIn
         throws ServletException {
         if (profileManager == null) {
             try {
-                Properties props = (Properties) servletContext.getAttribute(Constants.WEB_PROPERTIES);
+                Properties props = 
+                    (Properties) servletContext.getAttribute(Constants.WEB_PROPERTIES);
                 String userProfileAlias = (String) props.get("webapp.userprofile.os.alias");
                 ObjectStoreWriter userProfileOS =
                     ObjectStoreWriterFactory.getObjectStoreWriter(userProfileAlias);
@@ -440,8 +442,8 @@ public class InitialiserPlugin implements PlugIn
             } catch (ObjectStoreException e) {
                 LOG.error("Unable to create profile manager - please check that the "
                         + "userprofile database is available", e);
-                throw new ServletException("Unable to create profile manager - please check that the "
-                        + "userprofile database is available", e);
+                throw new ServletException("Unable to create profile manager - please check that "
+                        + "the userprofile database is available", e);
             }
         }
         servletContext.setAttribute(Constants.PROFILE_MANAGER, profileManager);

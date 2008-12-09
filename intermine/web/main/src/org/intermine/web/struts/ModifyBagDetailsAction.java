@@ -26,12 +26,11 @@ import org.intermine.objectstore.ObjectStore;
 import org.intermine.pathquery.PathQuery;
 import org.intermine.util.TypeUtil;
 import org.intermine.web.logic.Constants;
+import org.intermine.web.logic.bag.BagConversionHelper;
 import org.intermine.web.logic.bag.BagConverter;
 import org.intermine.web.logic.bag.BagHelper;
 import org.intermine.web.logic.bag.BagQueryConfig;
-import org.intermine.web.logic.bag.BagQueryRunner;
 import org.intermine.web.logic.bag.InterMineBag;
-import org.intermine.web.logic.bag.TypeConverter;
 import org.intermine.web.logic.profile.Profile;
 import org.intermine.web.logic.results.PagedTable;
 import org.intermine.web.logic.results.WebResults;
@@ -143,8 +142,8 @@ public class ModifyBagDetailsAction extends InterMineAction
                         && request.getParameter("bagName") != null) {
             String type2 = request.getParameter("convert");
             Model model = os.getModel();
-            WebResults webResults = TypeConverter.getConvertedObjects(session, servletContext,
-                BagQueryRunner.getConversionTemplates(servletContext),
+            WebResults webResults = BagConversionHelper.getConvertedObjects(profile, servletContext,
+                BagConversionHelper.getConversionTemplates(servletContext),
                 TypeUtil.instantiate(model.getPackageName() + "." + imBag.getType()),
                 TypeUtil.instantiate(model.getPackageName() + "." + type2),
                 imBag);

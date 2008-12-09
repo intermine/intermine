@@ -31,8 +31,8 @@ import org.intermine.objectstore.ObjectStore;
 import org.intermine.objectstore.ObjectStoreSummary;
 import org.intermine.util.TypeUtil;
 import org.intermine.web.logic.Constants;
+import org.intermine.web.logic.bag.BagConversionHelper;
 import org.intermine.web.logic.bag.BagQueryConfig;
-import org.intermine.web.logic.bag.BagQueryRunner;
 import org.intermine.web.logic.bag.InterMineBag;
 import org.intermine.web.logic.bag.TypeConverter;
 import org.intermine.web.logic.config.FieldConfig;
@@ -64,7 +64,7 @@ public class ConvertBagController extends TilesAction
         Model model = os.getModel();
 
         Map<Class, TemplateQuery> conversionTypesMap = TypeConverter.getConversionTemplates(
-            BagQueryRunner.getConversionTemplates(servletContext), 
+            BagConversionHelper.getConversionTemplates(servletContext), 
             TypeUtil.instantiate(model.getPackageName() + "." + imBag.getType()));
         ArrayList<String> conversionTypes = new ArrayList<String>();
         Map fastaMap = new HashMap();

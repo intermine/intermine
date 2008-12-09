@@ -21,12 +21,10 @@ import java.util.Set;
 import java.util.Map.Entry;
 import java.util.regex.Pattern;
 
-import javax.servlet.ServletContext;
-
 import org.intermine.InterMineException;
+import org.intermine.metadata.FieldDescriptor;
 import org.intermine.metadata.Model;
 import org.intermine.model.InterMineObject;
-import org.intermine.model.userprofile.Tag;
 import org.intermine.objectstore.ObjectStore;
 import org.intermine.objectstore.ObjectStoreException;
 import org.intermine.objectstore.intermine.ObjectStoreInterMineImpl;
@@ -36,12 +34,6 @@ import org.intermine.objectstore.query.ResultsRow;
 import org.intermine.util.CollectionUtil;
 import org.intermine.util.DynamicUtil;
 import org.intermine.util.TypeUtil;
-import org.intermine.web.logic.profile.Profile;
-import org.intermine.web.logic.profile.ProfileManager;
-import org.intermine.web.logic.profile.TagManager;
-import org.intermine.web.logic.session.SessionMethods;
-import org.intermine.web.logic.tagging.TagNames;
-import org.intermine.web.logic.tagging.TagTypes;
 import org.intermine.web.logic.template.TemplateQuery;
 
 /**
@@ -57,11 +49,11 @@ public class BagQueryRunner
 
     private Model model;
 
-    private Map classKeys;
+    private Map<String, List<FieldDescriptor>> classKeys;
 
     private BagQueryConfig bagQueryConfig;
 
-    private ServletContext context;
+    private List<TemplateQuery> conversionTemplates;
 
     /**
      * Construct with configured bag queries and a map of type -&gt; key fields.
@@ -72,21 +64,21 @@ public class BagQueryRunner
      *            the class keys Map
      * @param bagQueryConfig
      *            the configuration for running queries
-     * @param context
-     *            the ServletContext used by type conversion
+     * @param conversionTemplates
+     *            a list of template queries to be used when type converting results
      */
-    public BagQueryRunner(ObjectStore os, Map classKeys, BagQueryConfig bagQueryConfig,
-                          ServletContext context) {
+    public BagQueryRunner(ObjectStore os, Map<String, List<FieldDescriptor>> classKeys,
+            BagQueryConfig bagQueryConfig, List<TemplateQuery> conversionTemplates) {
         this.os = (ObjectStoreInterMineImpl) os;
-        this.context = context;
         this.model = os.getModel();
         this.classKeys = classKeys;
         this.bagQueryConfig = bagQueryConfig;
+        this.conversionTemplates = conversionTemplates;
     }
 
     /**
      * Given an input list of string identifiers search for corresponding objects. First run a
-     * default query then any queries configured for the speified type.
+     * default query then any queries configured for the specified type.
      *
      * @param type
      *            an unqualified class name to search for objects
@@ -94,7 +86,7 @@ public class BagQueryRunner
      *            a list of strings to query
      * @param extraFieldValue
      *            the value used when adding an extra constraint to the bag query, configured in
-     *            BagQueryConfig (eg. if connectField is "organism", the extraClassName is
+     *            BagQueryConfig (e.g. if connectField is "organism", the extraClassName is
      *            "Organism" and the constrainField is "name", the extraFieldValue might be
      *            "Drosophila melanogaster")
      * @param doWildcards true if the strings should be evaluated as wildcards
@@ -369,9 +361,8 @@ public class BagQueryRunner
                 }
 
                 // try to convert objects to target type
-                Map convertedObjsMap = TypeConverter.getConvertedObjectMap(context,
-                                           getConversionTemplates(context),
-                                           fromClass, type, objs);
+                Map convertedObjsMap = TypeConverter.getConvertedObjectMap(conversionTemplates,
+                                           fromClass, type, objs, os);
                 if (convertedObjsMap == null) {
                     // no conversion found
                     continue;
@@ -427,30 +418,5 @@ public class BagQueryRunner
         queries.addAll(config.getBagQueries(TypeUtil.unqualifiedName(type)));
 
         return queries;
-    }
-
-    /**
-     * Find template queries that are tagged for use as converters.
-     * @param servletContext use to fetch ProfileManager and superuser account
-     * @return a list of conversion templates
-     */
-    public static List<TemplateQuery> getConversionTemplates(ServletContext servletContext) {
-
-        ProfileManager pm = SessionMethods.getProfileManager(servletContext);
-        String sup = pm.getSuperuser();
-        Profile p = pm.getProfile(sup);
-
-        List<TemplateQuery> conversionTemplates = new ArrayList();
-        TagManager tagManager = SessionMethods.getTagManager(servletContext);
-        List<Tag> tags = tagManager.getTags(TagNames.IM_CONVERTER, null, TagTypes.TEMPLATE, sup);
-
-        for (Tag tag : tags) {
-            String oid = tag.getObjectIdentifier();
-            TemplateQuery tq = p.getSavedTemplates().get(oid);
-            if (tq != null) {
-                conversionTemplates.add(tq);
-            }
-        }
-        return conversionTemplates;
     }
 }

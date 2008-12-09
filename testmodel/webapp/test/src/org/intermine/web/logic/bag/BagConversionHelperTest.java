@@ -1,27 +1,16 @@
 package org.intermine.web.logic.bag;
 
-/*
- * Copyright (C) 2002-2008 FlyMine
- *
- * This code may be freely distributed and modified under the
- * terms of the GNU Lesser General Public Licence.  This should
- * be distributed with the code.  See the LICENSE file for more
- * information or http://www.gnu.org/copyleft/lesser.html.
- *
- */
-
 import java.io.StringReader;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
 import javax.servlet.ServletContext;
-
-import junit.framework.TestCase;
 
 import org.intermine.model.testmodel.Address;
 import org.intermine.model.testmodel.Employee;
@@ -40,30 +29,25 @@ import org.intermine.objectstore.query.QueryClass;
 import org.intermine.objectstore.query.QueryField;
 import org.intermine.objectstore.query.QueryObjectReference;
 import org.intermine.objectstore.query.Results;
-import org.intermine.pathquery.Constraint;
-import org.intermine.pathquery.PathQuery;
 import org.intermine.web.logic.Constants;
+import org.intermine.web.logic.profile.Profile;
+import org.intermine.web.logic.profile.ProfileManager;
+import org.intermine.web.logic.results.ResultElement;
+import org.intermine.web.logic.results.WebResults;
 import org.intermine.web.logic.template.TemplateQuery;
 import org.intermine.web.logic.template.TemplateQueryBinding;
 
-/**
- * @author Matthew Wakeling
- */
-public class TypeConverterTest extends TestCase
-{
-    ServletContext context;
-    List<TemplateQuery> conversionTemplates;
-    ObjectStoreWriter uosw;
-    ObjectStore os;
-    
-    public TypeConverterTest(String arg1) {
-        super(arg1);
-    }
+import servletunit.struts.MockStrutsTestCase;
 
+public class BagConversionHelperTest extends MockStrutsTestCase {
+
+    ServletContext context;
+    ObjectStoreWriter uosw = null;
+    List<TemplateQuery> conversionTemplates;
+    Profile profile;
+    
     public void setUp() throws Exception {
         super.setUp();
-        os = ObjectStoreFactory.getObjectStore("os.unittest");
-
         String template = "<template name=\"convertEmployeesToAddresses\" title=\"Convert employees to addresses\" longDescription=\"\" comment=\"\" important=\"false\">\n" + 
                 "      <query name=\"convertEmployeesToAddresses\" model=\"testmodel\" view=\"Employee.id Employee.address.id\">\n" + 
                 "        <node path=\"Employee\" type=\"Employee\"/>\n" + 
@@ -74,33 +58,52 @@ public class TypeConverterTest extends TestCase
                 "      </query>\n" + 
                 "    </template>";
         uosw = ObjectStoreWriterFactory.getObjectStoreWriter("osw.userprofile-test");
+        context = getActionServlet().getServletContext();
         TemplateQueryBinding tqb = new TemplateQueryBinding();
         Map tqs = tqb.unmarshal(new StringReader(template), null);
         TemplateQuery tq = (TemplateQuery) tqs.get("convertEmployeesToAddresses");
-        conversionTemplates = new ArrayList(Collections.singleton(tq));
+        conversionTemplates = new ArrayList<TemplateQuery>(Collections.singleton(tq));
         uosw = ObjectStoreWriterFactory.getObjectStoreWriter("osw.userprofile-test");
+        
+        ObjectStore os = ObjectStoreFactory.getObjectStore("os.unittest");
+        ProfileManager profileManager = new ProfileManager(os, uosw);
+        profile = new Profile(profileManager, "test", new Integer(101), "testpass",
+                new HashMap(), new HashMap(), new HashMap());
     }
     
-    public void testGetConvertedObjectMap() throws Exception {
-
+    public void tearDown() throws Exception {
+        uosw.close();        
+    }
+    
+    // this calls getConvertedObjects with a list of Employees and gets back converted Addresses
+    public void testGetConvertedObjects() throws Exception {
+        ObjectStore os = (ObjectStore) context.getAttribute(Constants.OBJECTSTORE);
+        
         Results r = getEmployeesAndAddresses();
+        
         assertEquals("Results: " + r, 2, r.size());
         ObjectStoreWriter osw = new ObjectStoreWriterInterMineImpl(os);
         InterMineBag imb = new InterMineBag("Fred", "Employee", "Test bag", new Date(), os, null, uosw);
         ObjectStoreBag osb = imb.getOsb();
         osw.addToBag(osb, ((Employee) ((List) r.get(0)).get(0)).getId());
         osw.addToBag(osb, ((Employee) ((List) r.get(1)).get(0)).getId());
-        Map expected = new HashMap();
-        expected.put(((List) r.get(0)).get(0), Collections.singletonList(((List) r.get(0)).get(1)));
-        expected.put(((List) r.get(1)).get(0), Collections.singletonList(((List) r.get(1)).get(1)));
+        profile.saveBag("Fred", imb);
+        List expected = new ArrayList();
+        expected.add(((List) r.get(0)).get(1));
+        expected.add(((List) r.get(1)).get(1));
 
-        //List<TemplateQuery> convTemplates = BagConversionHelper.getConversionTemplates(context);
-        Map got = TypeConverter.getConvertedObjectMap(conversionTemplates, Employee.class, Address.class, imb, os);
-
+        WebResults results = BagConversionHelper.getConvertedObjects(profile, context, conversionTemplates, Employee.class, Address.class, imb);
+        List got = new ArrayList();
+        Iterator iter = results.iterator();
+        while (iter.hasNext()) {
+            List l = (List) iter.next();
+            got.add(((ResultElement) l.get(0)).getInterMineObject());
+        }
         assertEquals(expected, got);
     }
     
     private Results getEmployeesAndAddresses() throws Exception {
+        ObjectStore os = (ObjectStore) context.getAttribute(Constants.OBJECTSTORE);
         List names = Arrays.asList(new String[] {"EmployeeA3", "EmployeeB2"});
         Query q = new Query();
         QueryClass qc1 = new QueryClass(Employee.class);
@@ -116,22 +119,5 @@ public class TypeConverterTest extends TestCase
                     ConstraintOp.CONTAINS, qc2));
         return os.execute(q);
     }
-    
-    public void testGetConversionMapQuery() throws Exception {
-        String bag = "bag";
-        PathQuery pq = TypeConverter.getConversionMapQuery(conversionTemplates, Employee.class, Address.class, bag);
-        assertEquals(1, pq.getAllConstraints().size());
-        Constraint expected = new Constraint(ConstraintOp.IN, bag, false, "", "A", null, null);
-        assertEquals(expected, pq.getAllConstraints().get(0));
-    }
-    
-    public void testGetConversionQuery() throws Exception {
-        String bag = "bag";
-        PathQuery pq = TypeConverter.getConversionQuery(conversionTemplates, Employee.class, Address.class, bag);
-        assertEquals(1, pq.getAllConstraints().size());
-        Constraint expected = new Constraint(ConstraintOp.IN, bag, false, "", "A", null, null);
-        assertEquals(expected, pq.getAllConstraints().get(0));
-        List expectedView = new ArrayList(Collections.singleton("Employee.address.id"));
-        assertEquals(expectedView, pq.getViewStrings());
-    }
+
 }
