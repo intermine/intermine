@@ -159,7 +159,7 @@ public class BagQueryResult
      * that matched.
      * @param unresolved the new unresolved Map
      */
-    public void setUnresolved(Map unresolved) {
+    public void setUnresolved(Map<String, Object> unresolved) {
         this.unresolved = unresolved;
     }
 }
