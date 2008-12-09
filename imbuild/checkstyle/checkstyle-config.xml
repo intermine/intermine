@@ -225,6 +225,10 @@
     <module name="GenericIllegalRegexp">
       <property name="format" value="System\.exit"/>
     </module>
+    <!-- Do not allow (non-Javadoc) -->
+    <module name="GenericIllegalRegexp">
+      <property name="format" value="(non-Javadoc)"/>
+    </module>
 
     <module name="IllegalInstantiation">
       <property name="classes" value="java.lang.Boolean" />
