@@ -346,9 +346,7 @@ public class Profile
     }
 
     private TagManager getTagManager() {
-        TagManager tagManager = new TagManagerFactory(manager.getProfileObjectStoreWriter())
-            .getTagManager();
-        return tagManager;
+        return new TagManagerFactory(manager).getTagManager();
     }
 
     /**

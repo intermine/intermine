@@ -30,6 +30,10 @@ public class TagManagerFactory
      * @param profileWriter user profile object store writer
      */
     public TagManagerFactory(ObjectStoreWriter profileWriter) {
+        init(profileWriter);
+    }
+
+    private void init(ObjectStoreWriter profileWriter) {
         // if there is different profileWriter than used before use this one
         // else use cached tag manager
         if (profileWriter != profileOsWriter) {
@@ -37,6 +41,14 @@ public class TagManagerFactory
             tagManager = new TagManager(profileWriter);
         }
     }
+    
+    /**
+     * Constructor.
+     * @param manager profile manager
+     */
+    public TagManagerFactory(ProfileManager manager) {
+        init(manager.getProfileObjectStoreWriter());
+    }    
     
     /**
      * 

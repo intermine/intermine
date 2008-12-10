@@ -963,6 +963,6 @@ public class SessionMethods
      */
     public static TagManager getTagManager(ServletContext context) {
         ProfileManager pm = getProfileManager(context);
-        return new TagManagerFactory(pm.getProfileObjectStoreWriter()).getTagManager();
+        return new TagManagerFactory(pm).getTagManager();
     }
 }
