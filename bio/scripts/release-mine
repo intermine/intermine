@@ -135,16 +135,17 @@ warn "current properties file: $current_prop_filename\n";
 # setting new_version globally. if we are doing the all procedure or the beginning,
 # it will be increased by 1. otherwise we use (the already produced) new version
 
-my $new_version = $current_version;
+#my $new_version = $current_version;
+my $new_version = $current_version + 1;
+#$new_version = $current_version + 1;
+
 my $new_prop_filename = "$INTERMINE_CONF_DIR/$PROP_FILE_PREFIX.r$new_version";
 
 if ($begin || $all) {
 
-#my $new_version = $current_version + 1;
-$new_version = $current_version + 1;
 
 #my $new_prop_filename = "$INTERMINE_CONF_DIR/$PROP_FILE_PREFIX.r$new_version";
-$new_prop_filename = "$INTERMINE_CONF_DIR/$PROP_FILE_PREFIX.r$new_version";
+#$new_prop_filename = "$INTERMINE_CONF_DIR/$PROP_FILE_PREFIX.r$new_version";
 
 warn "reading properties from: $new_prop_filename\n";
 
