@@ -77,6 +77,21 @@ public class PagedTable
     // the index of the column the has all checkbox checked
     private int allSelected = -1;
 
+    /**
+     * @return the allSelected
+     */
+    public int getAllSelected() {
+        return allSelected;
+    }
+
+    /**
+     * @param allSelected the allSelected to set
+     */
+    public void setAllSelected(int allSelected) {
+        this.allSelected = allSelected;
+    }
+
+
     private String selectedClass;
     private int selectedColumn;
 
@@ -734,25 +749,7 @@ public class PagedTable
 
         for (int i = getStartRow(); i < getStartRow() + getPageSize(); i++) {
             try {
-                List resultsRow = getAllRows().getResultElements(i);
-                // if some objects already selected, set corresponding  ResultElements here
-                if (!selectionIds.isEmpty()) {
-                    for (Object obj : resultsRow) {
-                        if (obj instanceof ResultElement) {
-                            ResultElement re = (ResultElement) obj;
-                            if (re != null && selectionIds.keySet().contains(re.getId())) {
-                                re.setSelected(true);
-                            }
-                        } else if (obj instanceof MultiRowValue) {
-                            MultiRowValue mrv = (MultiRowValue) obj;
-                            ResultElement re = (ResultElement) mrv.getValue();
-                            if (re != null && selectionIds.keySet().contains(re.getId())) {
-                                re.setSelected(true);
-                            }
-                        }
-                    }
-                }                
-                newRows.add(resultsRow);
+                newRows.add(getAllRows().getResultElements(i));
             } catch (IndexOutOfBoundsException e) {
                 // we're probably at the end of the results object, so stop looping
                 break;
@@ -925,6 +922,20 @@ public class PagedTable
         QueryHelper.addAndConstraint(newQuery, bc);
         return newQuery;
 
+    }
+
+    /**
+     * @return the selectionIds
+     */
+    public Map<Integer, String> getSelectionIds() {
+        return selectionIds;
+    }
+
+    /**
+     * @param selectionIds the selectionIds to set
+     */
+    public void setSelectionIds(Map<Integer, String> selectionIds) {
+        this.selectionIds = selectionIds;
     }
 
     /**

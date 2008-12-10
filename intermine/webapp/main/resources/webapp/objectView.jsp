@@ -38,7 +38,7 @@
           <html:link action="${detailsLink}">
             <c:out value="${object}" default="${nullFieldText}"/>
           </html:link>
-          <c:if test="${(!empty columnType) && (resultElement.typeClass != columnType)}">
+          <c:if test="${(!empty columnType) && (resultElement.type != columnType)}">
              [<c:out value="${resultElement.type}" />]
           </c:if>
         </c:when>

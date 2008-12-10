@@ -16,9 +16,8 @@
     </noscript>
   </head>
   <body>
-  <div id="header"><tiles:insert page="/header.jsp"/></header>
-  <div style="clear:both;"/> 
-<div id="pagecontent">
+<div width="100%" align="center"/> 
+<div style="margin-top:200px">
     <div class="waitmsg">
       <fmt:message key="waiting.message"/>
       <p>

@@ -47,6 +47,9 @@ if(new java.io.File(application.getRealPath("css")+"/"+pageName+".css").exists()
 <script type="text/javascript" src="<html:rewrite page='/js/niftycube.js'/>"></script>
 
 <script type="text/javascript" src="<html:rewrite page='/js/date.js'/>"></script>
+<!--[if lt IE 7.]>
+  <script defer type="text/javascript" src="pngfix.js"></script>
+<![endif]-->
 
 <meta content="microarray, bioinformatics, drosophila, genomics" name="keywords"/>
 <meta content="Integrated queryable database for Drosophila and Anopheles genomics"

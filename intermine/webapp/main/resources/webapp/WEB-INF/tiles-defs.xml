@@ -161,7 +161,6 @@
   </definition>
 
   <definition name="htmlHead.page" path="/htmlHead.jsp"/>
-  <definition name="headMenu.page" path="/headMenu.jsp"/>  
   <!--tiles-->
   <definition name="error.tile" path="/error.jsp"/>
   <definition name="begin.tile" path="/begin.jsp"/>
@@ -234,7 +233,6 @@
   <definition name="bagDetails.tile" path="bagDetails.jsp" controllerUrl="/initBagDetails.do" />
   <definition name="bagView.tile" path="bagView.jsp" controllerUrl="/initBagView.do" />
   <definition name="dataCategories.tile" path="/dataCategories.jsp" />
-  <definition name="subMenu.tile" path="subMenu.jsp" controllerUrl="/initSubMenu.do" />  
   <definition name="convertBag.tile" path="convertBag.jsp" controllerUrl="/initConvertBag.do" />  
   <definition name="errorMessages.tile" path="errorMessages.jsp" controllerUrl="/initErrorMessages.do" />  
   <definition name="errorMessagesContainers.tile" path="errorMessagesContainers.jsp" />  
@@ -248,9 +246,9 @@
   <definition name="addColumn.tile" path="/addColumn.jsp"/>
   <definition name="availableColumns.tile" path="/availableColumns.jsp"  controllerUrl="/initAvailableColumns.do"/>
   <definition name="galaxy.tile" path="/galaxy.jsp"  controllerUrl="/initGalaxy.do"/>
-  <definition name="outerjoins.tile" path="outerjoins.jsp" controllerUrl="/outerjoins.do"/>
   <definition name="tagSelect.tile" path="/tagSelect.jsp" />
   <definition name="bagTagSelect.tile" path="/bagTagSelect.jsp" />
+  <definition name="headMenu.tile" path="/headMenu.jsp" controllerUrl="/initSubMenu.do" />  
   
   <!-- don't (re)move this - it's used for importing any model-specific actions -->
   <!--@MODEL_INCLUDE@-->

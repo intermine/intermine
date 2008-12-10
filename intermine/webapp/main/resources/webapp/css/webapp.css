@@ -15,7 +15,7 @@ CSS MUST FOLLOW THE PATTERN:
     margin:0px;}
 
 html, body {
-  margin: 0px; padding: 0px;
+  margin: 0; padding: 0;
   font-family: 'Lucida Grande', Verdana, Geneva, Lucida, Helvetica, Arial, sans-serif; font-size: 100%; /* NN4 */}
 
 /* =A */
@@ -37,9 +37,6 @@ pre {
   border:1px solid #66CC99;
 }
 
-ul#submenulist li a {
-    float:left;}
-
 /* =H */
 h1, h2, h3, h1 a, h1 a:visited, label {
    color:#5C0075; }
@@ -58,18 +55,131 @@ table td {
 
 li {
     margin-left: 30px;}
+    
+
+/* =HEADER TOP
+--------------------------*/
+#headercontainer {
+    width:100%;margin:0;padding:0;
+}
+
+#header {
+    width:1000px;
+    padding:0;margin:0;
+    height:50px;
+    font-size: 12px;
+}
+
+#header h1,
+#header h1 a:link,
+#header h1 a:visited {
+  margin: 0px; padding:0px;margin-top:5px;
+  color:#FFF; font-size: 1.4em; font-weight: bold; float:left;}
+  
+#header p {
+  margin: 20px 0 0 5px;;
+  color:white; font-size: 1em; font-weight: normal;float:left;}
+
+p#version {
+  font-size: 12px; color: #333; font-weight: bold;float:left}
+
+#topnav {
+    padding:5px;
+    margin:0;
+    position:absolute;
+    top:0;
+    right:0;
+    background-color: #5C0075; 
+    color: #FFF; font: 0.7em Arial,sans-serif;
+    white-space:nowrap;
+}
+
+#topnav  a:link, #topnav a:visited, #topnav{
+    color:#FFF;}
+
+#logo {
+   float:left;
+   margin: 5px;
+}
+
+/* =MENU
+--------------------------*/
+div#menucontainer {
+    clear:both;
+    padding-left:10px;
+    width: 1000px;
+}
+
+ul#nav{
+	font-size: 12px;
+    clear:both;
+    margin-left:10px;margin-bottom:0px;}
+
+ul#nav a{
+    float:left;
+    padding:0px 15px;line-height:2;}
+
+ul#nav,ul#nav li{
+    margin:0px;padding:0px;
+    list-style-type:none;}
+
+ul#nav li{
+    float:left;
+    margin:0px 1px 0px 0px;}
+
+ul#loginbar,ul#loginbar li{
+    margin:0px;padding:0px;
+    list-style-type:none;}
+
+ul#loginbar {
+    font-size:0.8em;
+    font-weight:bold;
+    float:right;
+}
+
+ul#loginbar li {
+    padding-top:5px;
+    float:left;
+}
+
+
+ul#loginbar a {
+    padding:0px 5px;
+}
+
+/* =SUBMENU
+--------------------------*/
+
+div#quicksearch {
+    margin-top:5px;float:right;
+    font-weight:bold; color:white;white-space: nowrap;}
+
+#submenu {
+    clear:both; float:left; width:100%; white-space:nowrap;
+    padding:0px; margin:0; height:36px;
+    color:#CCC; font-size: 12px;}
+    
+#submenufixed {
+    clear:both; width:1000px; white-space:nowrap;
+    padding:0px; margin:0; height:36px;
+    color:#CCC; font-size: 12px;}
+
+#submenudiv {
+    width:990px;
+}
+    
+ul#submenulist li a {
+    float:left;}
+    
+ul#submenulist, ul#submenulist li {
+    padding: 0px; margin:0px; line-height:3;
+    list-style: none;}
+
+ul#submenulist li {
+    float:left;}
 
 /* =DIV
 --------------------------*/
-#header {
-    padding: 90px 0 0 0;height:24px;margin:0;
-    font-size: 12px;}
-
-#title {
-   position:absolute; top:15px;
-   padding:0px;margin:0px;
-   width: 70%;
-}
 
 
 #leftCol{
@@ -81,35 +191,24 @@ li {
 #clearLine{
     clear:both;}
 
-#loginbar {
-    position:absolute; right:0px; top:85px;
-    padding:5px;}
-
-#topnavcontainer {
-    position:absolute; right:0px; top:0px;
-}
-#taketour {
-    float:right;
-    padding:5px 10px 0px 0px;
-    color:white;
-    font-style:italic;
-    font-weight:bold;
-    font-size:1.2em;
-}
-#taketour a:link,#taketour a:hover, #taketour a:visited {
-    color:white;
-}
-#topnav {
-    float:right;
-    background-color: #5C0075; color: #FFF; font: 0.95em Arial,sans-serif;
-    padding:5px;
-    white-space:nowrap;
-}
+#pagecontentcontainer {
+	/*background: url('../theme/blue_grad.png') repeat-x bottom #F5F0FF;*/margin:0;
+	clear:both;
+} 
 
 #pagecontent {
   clear:both;
-  margin: 10px 0 0 0; padding: 0px;}
+  background-color:#FFF;
+  text-align:left;
+  width:1000px;
+  margin:0; padding: 10px 0 0 0;}
 
+#pagecontentmax {
+  clear:both;
+  background-color:#FFF;
+  text-align:left;
+  width:100%;
+  margin:0; padding: 10px 0 0 0;}
 
 .clear-both {
   clear: both;
@@ -187,18 +286,15 @@ div.templateDetails {
   text-align: center;}
 
 div#navtrail{
-    padding-right:15px;margin:0;
+    padding:10px 10px 0 0;
+    margin:0 10px 0 10px;
     font-size:0.7em; text-align:right}
+    
+div#navtrail a:link, div#navtrail a:visited{
+    border-bottom:1px dotted #049;
+}
 
-div#quicksearch {
-    float:right;
-    padding-right:15px; margin-top:0.6em;
-    font-weight:bold; color:white;white-space: nowrap;}
 
-#submenu {
-    clear:both; display:block;
-    padding:0px; margin:0 0 5px 0; padding-left:15px;height:3em;
-    color:#CCC; font-size: 12px;}
 
 /* Default style of <disclosureBody> element*/
 .disclosureBody {
@@ -220,13 +316,6 @@ table.results tfoot tr td {
 
 /* =SPAN
 -------------------------*/
-#logo {
-   float: left;
-   margin-left: 5px;margin-right: 10px;}
-
-.version {
-  font-size: 12px; color: #333; font-weight: bold;}
-
 .errors {
   color: #c00;}
 
@@ -286,11 +375,6 @@ table.results tfoot tr td {
 
 /* =H
 -------------------------*/
-#header h1,
-#header h1 a:link,
-#header h1 a:visited {
-  margin: 0px; padding:0px;
-  color:#FFF; font-size: 1.6em; font-weight: bold;}
 
 .roundcorners h1, .gradientbox h1, .plainbox h1{
     margin:0; padding:0px;
@@ -305,13 +389,6 @@ table.results tfoot tr td {
 
 /* =P
 -------------------------*/
-#header p {
-  margin: 0; margin-left: 2px;
-  color:white; font-size: 1em; font-weight: normal;}
-
-#title p{
-   background:none;}
-
 .roundcorners p, .gradientbox p, .plainbox p {
     background:none;}
 
@@ -323,16 +400,6 @@ table.results tfoot tr td {
 
 /* =A
 -------------------------*/
-#topnav  a:link, #topnav a:visited, #topnav{
-    color:#FFF;}
-
-#loginbar  a, #loginbar  a:link, #loginbar a:visited, #loginbar{
-    font-family:"lucida grande", tahoma, verdana, arial, sans-serif;
-    font-size: 1.1em;}
-
-#loginbar  a, #loginbar  a:link, #loginbar a:visited{
-    font-weight: bold; text-decoration:underline;}
-
 .imbox a{
     color:white;}
 
@@ -348,10 +415,6 @@ a.constraintId {
 /* ???? */
 a.brokenTmplLink {
   color: #d00;}
-
-ul#nav a{
-    float:left;
-    padding:0px 15px;line-height:2;}
 
 /* =IMG
 -------------------------*/
@@ -383,12 +446,7 @@ hr.seperator {
 
 /* =LISTS
 -------------------------*/
-ul#submenulist, ul#submenulist li {
-    padding: 0px; margin:0px; line-height:3;
-    list-style: none;}
 
-ul#submenulist li {
-    float:left;}
 
 #sidebar li {
     margin-left: 20px;}
@@ -405,6 +463,8 @@ ul#submenulist li {
     padding:10px; margin:0;
     background: url('../images/roundcorner_b_r.png') no-repeat bottom right;}
 */
+
+/* CHECK THIS IS ACTUALLY NEEDED*/
 ul#nav,ul#nav li{
     margin:0px;padding:0px;
     list-style-type:none;}

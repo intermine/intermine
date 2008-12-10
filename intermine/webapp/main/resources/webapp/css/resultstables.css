@@ -91,7 +91,8 @@ table.results th {
 
 /* =TD £TABLE,£BAGDETAILS*/
 table.results td td {
-  border: none;}
+  border: 1px solid #CCC;
+}
 
 /* =TD £TABLE,£BAGDETAILS*/
 table.results tr.even TD{

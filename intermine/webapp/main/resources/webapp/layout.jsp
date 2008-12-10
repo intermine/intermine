@@ -48,12 +48,45 @@
   </head>
   <body>
 
-  <tiles:insert name="headMenu.jsp">
-    <tiles:put name="header"/>
-    <tiles:put name="menu"/>
+  <!-- Check if the current page has fixed layout -->
+  <c:forTokens items="${WEB_PROPERTIES['layout.fixed']}" delims="," var="currentPage">
+    <c:if test="${pageName == currentPage}">
+      <c:set var="fixedLayout" value="true" />
+    </c:if>
+  </c:forTokens>
+
+
+  <!-- Page header --> 
+  <tiles:insert name="headMenu.tile">
+    <tiles:put name="fixedLayout" value="${fixedLayout}"/>
   </tiles:insert>
 
-  <div id="pagecontent">
+  <div id="pagecontentcontainer" align="center">
+    <c:choose>
+    <c:when test="${!empty fixedLayout}">
+      <div id="pagecontent">
+    </c:when>
+    <c:otherwise>
+      <div id="pagecontentmax">
+    </c:otherwise>
+    </c:choose>
+    <fmt:message key="${pageName}.tab" var="tab" />
+	<!-- Nav trail -->
+	<c:if test="${tab != '???.tab???' && tab != '???tip.tab???'}">
+	<div id="navtrail">
+	  <html:link href="${WEB_PROPERTIES['project.sitePrefix']}"><c:out value="${WEB_PROPERTIES['project.title']}" escapeXml="false"/></html:link>
+	  <c:if test="${! empty tab }">
+	    &nbsp;&gt;&nbsp;<html:link action="${tab}"><fmt:message key="menu.${tab}" /></html:link>
+	    <c:if test="${pageName != tab}">
+	      <fmt:message key="${pageName}.title" var="pageTitle">
+	        <fmt:param value="${param.name}"/>
+	      </fmt:message>
+	      &nbsp;&gt;&nbsp;<c:out value="${pageTitle}" />
+	    </c:if>
+	  </c:if>
+	  <im:contextHelp/>
+	</div>
+	</c:if>
 
       <%-- Render messages --%>
       <tiles:get name="errorMessagesContainers"/>
@@ -74,8 +107,6 @@
           <tiles:insert page="/session.jsp"/>
       </c:if>
 
-    </div>
-
     <c:if test="${IS_SUPERUSER}">
       <div class="admin-msg">
         <span class="smallnote">
@@ -95,8 +126,11 @@
             pageTracker._trackPageview();
         </script>
     </c:if>
-
-  </body>
+    <c:if test="${!empty fixedLayout}">
+      </div>
+    </c:if>
+  </div>
+</body>
 </html:html>
 <!-- /layout.jsp -->
 

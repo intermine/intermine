@@ -433,11 +433,9 @@ public class WebResults extends AbstractList<List<Object>> implements WebTable
                     }
                     Set classes = DynamicUtil.decomposeClass(o.getClass());
                     Class cls = (Class) classes.iterator().next();
-                    ResultElement resultElement = new ResultElement(osResults.getObjectStore(),
-                                    fieldValue,
-                                    (o instanceof InterMineObject ? ((InterMineObject) o).getId()
-                                                                 : null), cls, columnPath,
-                                    isKeyField);
+                    ResultElement resultElement = new ResultElement(
+                                    (o instanceof InterMineObject ? (InterMineObject) o : null),
+                                    path, isKeyField);
                     if (rowspan >= 0) {
                         rowCells.add(new MultiRowFirstValue(resultElement, rowspan));
                     } else {

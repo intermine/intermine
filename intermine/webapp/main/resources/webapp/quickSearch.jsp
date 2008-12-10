@@ -41,7 +41,7 @@ function clearElement(e) {
   <option value="bgs" <c:if test="${quickSearchType=='bgs'}">selected</c:if>>Lists</option>
   </select>
 <fmt:message key="header.search.mid"/>
-<input style="width:260px;color:#666;font-style:italic;font-size:1em" type="text" id="quickSearchInput" name="value" value="${ids}" onFocus="clearElement(this);" />
+<input style="width:150px;color:#666;font-style:italic;font-size:1em" type="text" id="quickSearchInput" name="value" value="${ids}" onFocus="clearElement(this);" />
 <html:submit><fmt:message key="header.search.button"/></html:submit>
 </html:form>
 <!-- /quickSearch.jsp -->
