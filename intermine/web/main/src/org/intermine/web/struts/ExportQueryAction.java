@@ -24,6 +24,7 @@ import org.intermine.web.logic.WebUtil;
 import org.intermine.web.logic.bag.InterMineBag;
 import org.intermine.web.logic.profile.Profile;
 import org.intermine.web.logic.query.MainHelper;
+import org.intermine.web.logic.session.SessionMethods;
 import org.intermine.web.util.URLGenerator;
 import org.intermine.webservice.server.query.result.QueryResultLinkGenerator;
 
@@ -104,7 +105,8 @@ public class ExportQueryAction extends InterMineAction
             response.getWriter().write(xml);
         } else if (format.equals("iql")) {
             Map<String, InterMineBag> allBags =
-                WebUtil.getAllBags(profile.getSavedBags(), servletContext);
+                WebUtil.getAllBags(profile.getSavedBags(), SessionMethods
+                .getSearchRepository(servletContext));
             Query osQuery = MainHelper.makeQuery(query, allBags, servletContext,
                     null);
             String iql = osQuery.toString();

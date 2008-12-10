@@ -28,6 +28,7 @@ import org.intermine.web.logic.WebUtil;
 import org.intermine.web.logic.bag.InterMineBag;
 import org.intermine.web.logic.profile.Profile;
 import org.intermine.web.logic.query.MainHelper;
+import org.intermine.web.logic.session.SessionMethods;
 
 /**
  * Form bean representing query import form.
@@ -131,7 +132,8 @@ public class ImportQueriesForm extends ValidatorForm
 
         try {
             Map<String, InterMineBag> allBags =
-                WebUtil.getAllBags(profile.getSavedBags(), servletContext);
+                WebUtil.getAllBags(profile.getSavedBags(), SessionMethods.getSearchRepository(
+                        servletContext));
             if (getQueryMap(allBags).size() == 0) {
                if (errors == null) {
                    errors = new ActionErrors();

@@ -49,6 +49,7 @@ import org.intermine.web.logic.profile.Profile;
 import org.intermine.web.logic.query.MainHelper;
 import org.intermine.web.logic.results.TableHelper;
 import org.intermine.web.logic.results.WebResults;
+import org.intermine.web.logic.session.SessionMethods;
 
 /**
  * Helper for everything related to PathQueryResults
@@ -234,7 +235,7 @@ public class PathQueryResultHelper
         Model model = os.getModel();
         Map<String, QuerySelectable> pathToQueryNode = new HashMap();
         Map<String, InterMineBag> allBags = WebUtil.getAllBags(profile.getSavedBags(),
-                        servletContext);
+                        SessionMethods.getSearchRepository(servletContext));
         Query query = MainHelper.makeQuery(pathQuery, allBags, pathToQueryNode, servletContext,
                         returnBagQueryResults, false, os, classKeys, bagQueryConfig);
         Results results = TableHelper.makeResults(os, query);

@@ -52,8 +52,8 @@ public class ImportQueriesAction extends InterMineAction
         ImportQueriesForm qif = (ImportQueriesForm) form;
         Profile profile = (Profile) session.getAttribute(Constants.PROFILE);
         ServletContext servletContext = session.getServletContext();
-        Map<String, InterMineBag> allBags =
-            WebUtil.getAllBags(profile.getSavedBags(), servletContext);
+        Map<String, InterMineBag> allBags = WebUtil.getAllBags(profile.getSavedBags(), 
+                SessionMethods.getSearchRepository(servletContext));
         Map<String, PathQuery> queries = null;
         queries = qif.getQueryMap(allBags);
 

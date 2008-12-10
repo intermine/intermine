@@ -24,6 +24,7 @@ import org.intermine.web.logic.bag.InterMineBag;
 import org.intermine.web.logic.profile.Profile;
 import org.intermine.web.logic.results.PagedTable;
 import org.intermine.web.logic.results.ResultElement;
+import org.intermine.web.logic.session.SessionMethods;
 import org.intermine.webservice.server.core.PathQueryExecutor;
 
 /**
@@ -50,7 +51,7 @@ public abstract class HttpExporterBase
         HttpSession session = request.getSession();
         Profile profile = (Profile) session.getAttribute(Constants.PROFILE);
         Map<String, InterMineBag> bags = WebUtil.getAllBags(profile
-                .getSavedBags(), session.getServletContext());
+                .getSavedBags(), SessionMethods.getSearchRepository(session.getServletContext()));
         executor = new PathQueryExecutor(request, query, bags);
         executor.setBatchSize(BATCH_SIZE);
         return executor.getResults();

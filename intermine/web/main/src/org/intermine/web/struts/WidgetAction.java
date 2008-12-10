@@ -123,8 +123,8 @@ public class WidgetAction extends InterMineAction
         }
 
         Profile currentProfile = (Profile) session.getAttribute(Constants.PROFILE);
-        Map<String, InterMineBag> allBags =
-            WebUtil.getAllBags(currentProfile.getSavedBags(), servletContext);
+        Map<String, InterMineBag> allBags = WebUtil.getAllBags(currentProfile.getSavedBags(), 
+                SessionMethods.getSearchRepository(servletContext));
         InterMineBag bag = allBags.get(bagName);
 
         Class<?> clazz = TypeUtil.instantiate(ldr);
@@ -204,8 +204,8 @@ public class WidgetAction extends InterMineAction
         }
 
         Profile currentProfile = (Profile) session.getAttribute(Constants.PROFILE);
-        Map<String, InterMineBag> allBags =
-            WebUtil.getAllBags(currentProfile.getSavedBags(), servletContext);
+        Map<String, InterMineBag> allBags = WebUtil.getAllBags(currentProfile.getSavedBags(), 
+                SessionMethods.getSearchRepository(servletContext));
         InterMineBag bag = allBags.get(bagName);
 
         Class<?> clazz = TypeUtil.instantiate(link);
@@ -279,8 +279,8 @@ public class WidgetAction extends InterMineAction
                 attributes.add(widgetForm.getPValue());
                 attributes.add(widgetForm.getNumberOpt());
                 Profile currentProfile = (Profile) session.getAttribute(Constants.PROFILE);
-                Map<String, InterMineBag> allBags =
-                    WebUtil.getAllBags(currentProfile.getSavedBags(), servletContext);
+                Map<String, InterMineBag> allBags = WebUtil.getAllBags(currentProfile
+                        .getSavedBags(), SessionMethods.getSearchRepository(servletContext));
                 InterMineBag bag = allBags.get(widgetForm.getBagName());
                 Widget widget = widgetConfig.getWidget(bag, os, attributes);
                 stringExporter.export(widget.getExportResults(widgetForm.getSelected()));
