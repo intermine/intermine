@@ -252,7 +252,7 @@ system ("ant -Drelease=r$new_version create-db-userprofile >> $LOG_FILENAME 2>&1
 #create_gbrowse_conf($GBROWSE_CONF_DIR, $current_version, $new_version);
 
 #################
-#warn "stopping old webapp (r$current_version)\n";
+warn "stopping old webapp (r$current_version)\n";
 
 system ("ant -Drelease=r$current_version stop-webapp >> $LOG_FILENAME 2>&1") == 0
   or die_with_log "can't stop webapp r$current_version: $!";
