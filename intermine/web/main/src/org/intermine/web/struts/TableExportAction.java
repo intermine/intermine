@@ -127,8 +127,8 @@ public class TableExportAction extends InterMineAction
                 .serializedSortOrderToMap(pathsString).keySet()));
         Map<String, QuerySelectable> pathToQueryNode = new HashMap();
         Map<String, BagQueryResult> pathToBagQueryResult = new HashMap();
-        Map<String, InterMineBag> allBags =
-            WebUtil.getAllBags(profile.getSavedBags(), servletContext);
+        Map<String, InterMineBag> allBags = WebUtil.getAllBags(profile.getSavedBags(), 
+                SessionMethods.getSearchRepository(servletContext));
         return SessionMethods.doPathQueryGetPagedTable(newPathQuery, servletContext, os, model,
                 pathToQueryNode, pathToBagQueryResult,
                 allBags);

@@ -117,8 +117,8 @@ public class ModifyBagAction extends InterMineAction
         String[] selectedBagNames = frm.getSelectedBags();
 
 
-        Map<String, InterMineBag> allBags = WebUtil.getAllBags
-            (profile.getSavedBags(), request.getSession().getServletContext());
+        Map<String, InterMineBag> allBags = WebUtil.getAllBags(profile.getSavedBags(), 
+                SessionMethods.getSearchRepository(request.getSession().getServletContext()));
         ObjectStoreWriter userOSW = profile.getProfileManager().getProfileObjectStoreWriter();
 
         String newNameTextBox = getNewNameTextBox(request, frm);
@@ -231,7 +231,7 @@ public class ModifyBagAction extends InterMineAction
                 .getAttribute(Constants.OBJECTSTORE);
 
         Map<String, InterMineBag> allBags = WebUtil.getAllBags(profile
-                .getSavedBags(), servletContext);
+                .getSavedBags(), SessionMethods.getSearchRepository(servletContext));
 
         String[] selectedBags = mbf.getSelectedBags();
 

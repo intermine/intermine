@@ -50,6 +50,7 @@ import org.intermine.web.logic.bag.InterMineBag;
 import org.intermine.web.logic.profile.Profile;
 import org.intermine.web.logic.query.DisplayConstraint;
 import org.intermine.web.logic.query.MainHelper;
+import org.intermine.web.logic.session.SessionMethods;
 import org.intermine.web.logic.template.TemplateBuildState;
 import org.intermine.web.logic.template.TemplateHelper;
 import org.intermine.web.logic.template.TemplateQuery;
@@ -175,8 +176,8 @@ public class TemplateController extends TilesAction
 
         TemplateQuery displayTemplate = (TemplateQuery) template.clone();
 
-        Map<String, InterMineBag> searchBags =
-            WebUtil.getAllBags(profile.getSavedBags(), servletContext);
+        Map<String, InterMineBag> searchBags = WebUtil.getAllBags(profile.getSavedBags(), 
+                SessionMethods.getSearchRepository(servletContext));
 
         Map<String, PathNode> editableNodesMap = new HashMap<String, PathNode>();
         for (PathNode node : template.getEditableNodes()) {

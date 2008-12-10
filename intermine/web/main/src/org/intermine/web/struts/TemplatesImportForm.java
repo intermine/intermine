@@ -16,6 +16,7 @@ import org.intermine.web.logic.Constants;
 import org.intermine.web.logic.WebUtil;
 import org.intermine.web.logic.bag.InterMineBag;
 import org.intermine.web.logic.profile.Profile;
+import org.intermine.web.logic.session.SessionMethods;
 import org.intermine.web.logic.template.TemplateHelper;
 
 import javax.servlet.ServletContext;
@@ -106,8 +107,8 @@ public class TemplatesImportForm extends ValidatorForm
             return errors;
         }
         try {
-            Map<String, InterMineBag> allBags =
-                WebUtil.getAllBags(profile.getSavedBags(), servletContext);
+            Map<String, InterMineBag> allBags = WebUtil.getAllBags(profile.getSavedBags(), 
+                    SessionMethods.getSearchRepository(servletContext));
            TemplateHelper.xmlToTemplateMap(getXml(), allBags);
         } catch (Exception err) {
             if (errors == null) {

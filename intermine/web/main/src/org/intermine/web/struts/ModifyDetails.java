@@ -88,8 +88,8 @@ public class ModifyDetails extends DispatchAction
                 TemplateHelper.getInlineTemplateTable(servletContext, name,
                                                       objectId, userName);
         } else if (bagName != null && bagName.length() != 0) {
-            Map<String, InterMineBag> allBags =
-                WebUtil.getAllBags(profile.getSavedBags(), servletContext);
+            Map<String, InterMineBag> allBags = WebUtil.getAllBags(profile.getSavedBags(), 
+                    SessionMethods.getSearchRepository(servletContext));
             InterMineBag interMineBag = allBags.get(bagName);
             itt = TemplateHelper.getInlineTemplateTable(servletContext, name,
                                                         interMineBag, userName);
@@ -264,7 +264,8 @@ public class ModifyDetails extends DispatchAction
             return mapping.findForward("objectDetailsTemplateTable");
         }
         Profile profile = (Profile) session.getAttribute(Constants.PROFILE);
-        Map<String, InterMineBag> allBags = WebUtil.getAllBags(profile.getSavedBags(), sc);
+        Map<String, InterMineBag> allBags = WebUtil.getAllBags(profile.getSavedBags(), 
+                SessionMethods.getSearchRepository(sc));
         InterMineBag interMineIdBag = allBags.get(id);
         cc.putAttribute("interMineIdBag", interMineIdBag);
         cc.putAttribute("templateQuery", tq);

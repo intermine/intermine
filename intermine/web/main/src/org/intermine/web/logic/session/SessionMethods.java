@@ -65,6 +65,7 @@ import org.intermine.web.logic.results.PagedTable;
 import org.intermine.web.logic.results.TableHelper;
 import org.intermine.web.logic.results.WebResults;
 import org.intermine.web.logic.results.WebState;
+import org.intermine.web.logic.search.SearchRepository;
 import org.intermine.web.logic.template.TemplateBuildState;
 import org.intermine.web.logic.template.TemplateQuery;
 import org.intermine.web.struts.LoadQueryAction;
@@ -518,7 +519,8 @@ public class SessionMethods
                         Map<String, QuerySelectable> pathToQueryNode = new HashMap();
                         Map<String, BagQueryResult> pathToBagQueryResult = new HashMap();
                         Map<String, InterMineBag> allBags =
-                            WebUtil.getAllBags(profile.getSavedBags(), servletContext);
+                            WebUtil.getAllBags(profile.getSavedBags(), 
+                            SessionMethods.getSearchRepository(servletContext));
                         final PagedTable pr =
                             doPathQueryGetPagedTable(pathQuery, servletContext,
                                                      os, model, pathToQueryNode,
@@ -964,5 +966,13 @@ public class SessionMethods
     public static TagManager getTagManager(ServletContext context) {
         ProfileManager pm = getProfileManager(context);
         return new TagManagerFactory(pm).getTagManager();
+    }
+
+    /**
+     * @param servletContext servlet context
+     * @return search repository
+     */
+    public static SearchRepository getSearchRepository(ServletContext servletContext) {
+        return SearchRepository.getGlobalSearchRepository(servletContext);
     }
 }

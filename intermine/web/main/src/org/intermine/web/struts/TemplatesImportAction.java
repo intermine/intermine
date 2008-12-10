@@ -55,8 +55,8 @@ public class TemplatesImportAction extends InterMineAction
         TemplatesImportForm tif = (TemplatesImportForm) form;
         Map templates = null;
         int deleted = 0, imported = 0, renamed = 0;
-        Map<String, InterMineBag> allBags =
-            WebUtil.getAllBags(profile.getSavedBags(), servletContext);
+        Map<String, InterMineBag> allBags = WebUtil.getAllBags(profile.getSavedBags(), 
+                SessionMethods.getSearchRepository(servletContext));
         templates = TemplateHelper.xmlToTemplateMap(tif.getXml(), allBags);
 
         try {

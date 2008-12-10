@@ -295,16 +295,14 @@ public abstract class WebUtil
     }
 
     /**
-     * @param servletContext servlet context
+     * @param searchRepository search repository
      * @param userBags list of user's bags
      * @return map containing all bags
      */
     public static Map<String, InterMineBag> getAllBags(Map<String, InterMineBag> userBags,
-                                                       ServletContext servletContext) {
+                                                       SearchRepository searchRepository) {
         Map<String, InterMineBag> searchBags = new HashMap<String, InterMineBag>();
 
-        SearchRepository searchRepository =
-            SearchRepository.getGlobalSearchRepository(servletContext);
         Map<String, InterMineBag> publicBagMap =
             (Map<String, InterMineBag>) searchRepository.getWebSearchableMap(TagTypes.BAG);
 
