@@ -1,14 +1,22 @@
 @import url(bio.css);
 
 html, body {
-	color: #000000;background-color: #FFF;}
+	color: #000000;background-color: #FFF;
+}
+
+body {
+	background:#F5F0FF url('top_gradient.png') repeat-x;
+}
 
 
 /* =CUSTOMISABLE LOOK
 --------------------------*/
 
-#header{
-	background: url('top_gradient.png') repeat-x #DFD9EA;}
+#pagecontent {
+  border-left:1px solid #D3BAE3;
+  border-right:1px solid #D3BAE3;
+  border-bottom:1px solid #D3BAE3;
+}
 
 .plainbox {
 	padding:10px; border:1px solid #9E68AE;
@@ -46,7 +54,9 @@ ul#nav li{
 	text-align: center;background:#9F67AD url('corner_t_l.png') no-repeat;}
 
 .submenu{
-	background:#5C0075;}
+	background:#5C0075;
+	border-left:1px solid #5C0075;
+	border-right:1px solid #5C0075;}
 
 .submenu_mymine{
 	background:#9B89A7;}

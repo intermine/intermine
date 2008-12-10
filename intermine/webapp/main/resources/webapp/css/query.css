@@ -54,7 +54,7 @@ div.modelbrowse {
   
 #mainBrowser {
   float:left;
-  width:50%;
+  width:500px;
   /*margin-right:10px;*/
 }
 
@@ -64,8 +64,8 @@ div.modelbrowse {
 }
   
 #rightColumn {
-  margin-left:50%;
-  width:50%;
+  margin-left:500px;
+  width:500px;
 }
 
 /* Outer Joins diagram */

@@ -54,7 +54,7 @@ jQuery(document).ready(function(){
 
 <c:set var="colcount" value="0" />
 <%--<html:form action="/saveBag" >--%>
-<table class="results" cellspacing="0">
+<table class="results" cellspacing="0" width="100%">
 
   <%-- The headers --%>
   <thead>
@@ -161,23 +161,23 @@ jQuery(document).ready(function(){
 
                       <%-- test whether already selected and highlight if needed --%>
                       <c:set var="cellClass" value="${resultElement.id}"/>
-                      <c:if test="${resultElement.selected && empty bagName}">
+                      <c:if test="${(!empty pagedResults.selectionIds[resultElement.id] && pagedResults.allSelected == -1) && empty bagName}">
                         <c:set var="cellClass" value="${cellClass} highlightCell"/>
                       </c:if>
 
-                      <td id="cell,${status2.index},${status.index},${subRow[column.index].value.typeClsString}"
-                       class="${highlightObjectClass} id_${resultElement.id} class_${subRow[column.index].value.typeClsString} ${ischecked}" rowspan="${subRow[column.index].rowspan}">
+                      <td id="cell,${status2.index},${status.index},${subRow[column.index].value.type}"
+                       class="${highlightObjectClass} id_${resultElement.id} class_${subRow[column.index].value.type} ${ischecked}" rowspan="${subRow[column.index].rowspan}">
                       <%-- the checkbox to select this object --%>
                       <c:if test="${column.selectable}">
                         <c:set var="checkboxClass" value="checkbox ${resultElement.id}"/>
-                        <c:if test="${resultElement.selected}">
+                        <c:if test="${!empty pagedResults.selectionIds[resultElement.id] && pagedResults.allSelected == -1}">
                           <c:set var="checkboxClass" value="${checkboxClass} highlightCell"/>
                         </c:if>
-                        <%--<td align="center" class="checkbox ${highlightObjectClass} id_${resultElement.id} class_${subRow[column.index].value.typeClsString} ${ischecked}" id="cell_checkbox,${status2.index},${(status.index + 1) * 1000 + multiRowStatus.index},${subRow[column.index].value.typeClsString}" rowspan="${subRow[column.index].rowspan}">--%>
+                        <%--<td align="center" class="checkbox ${highlightObjectClass} id_${resultElement.id} class_${subRow[column.index].value.type} ${ischecked}" id="cell_checkbox,${status2.index},${(status.index + 1) * 1000 + multiRowStatus.index},${subRow[column.index].value.type}" rowspan="${subRow[column.index].rowspan}">--%>
                           <c:if test="${resultElement.id != null}">
                             <html:multibox property="currentSelectedIdStrings" name="pagedResults"
-                                 styleId="selectedObjects_${status2.index}_${status.index}_${subRow[column.index].value.typeClsString}"
-                                 styleClass="selectable id_${resultElement.id} index_${column.index} class_${subRow[column.index].value.typeClsString} class_${column.typeClsString}"
+                                 styleId="selectedObjects_${status2.index}_${status.index}_${subRow[column.index].value.type}"
+                                 styleClass="selectable id_${resultElement.id} index_${column.index} class_${subRow[column.index].value.type} class_${column.typeClsString}"
                                  onclick="itemChecked(${status.index},${status2.index}, '${pagedResults.tableid}', this)"
                                  disabled="${disabled}">
                               <c:out value="${resultElement.id}"/>
@@ -215,25 +215,25 @@ jQuery(document).ready(function(){
                   <c:set var="ischecked" value=""/>
                     <fmt:formatNumber value="${resultElement.id}" var="resultElementIdString" scope="page" />
                     <c:forEach items="${pagedResults.currentSelectedIdStrings}" var="selectedId">
-                      <c:if test="${(! empty resultElement.typeClsString) && (fn:replace(resultElementIdString,',','') == selectedId)}">
+                      <c:if test="${(! empty resultElement.type) && (fn:replace(resultElementIdString,',','') == selectedId)}">
                         <c:set var="ischecked" value="highlightCell"/>
                       </c:if>
                     </c:forEach>
                   <c:set var="disabled" value="false"/>
-                  <c:if test="${(!empty resultsTable.selectedClass) && ((resultsTable.selectedClass != resultElement.typeClsString)&&(resultsTable.selectedClass != column.typeClsString) && resultsTable.selectedColumn != column.index)}">
+                  <c:if test="${(!empty resultsTable.selectedClass) && ((resultsTable.selectedClass != resultElement.type)&&(resultsTable.selectedClass != column.typeClsString) && resultsTable.selectedColumn != column.index)}">
                     <c:set var="disabled" value="true"/>
                   </c:if>
                   <%-- test whether already selected and highlight if needed --%>
-                  <td id="cell,${status2.index},${status.index},${row[column.index].typeClsString}"
-                       class="${highlightObjectClass} id_${resultElement.id} class_${row[column.index].typeClsString} ${ischecked}">
+                  <td id="cell,${status2.index},${status.index},${row[column.index].type}"
+                       class="${highlightObjectClass} id_${resultElement.id} class_${row[column.index].type} ${ischecked}">
                     <c:set var="columnType" value="${column.type}" scope="request"/>
                     <div>
                   <c:if test="${column.selectable}">
-                    <%--<td align="center" class="checkbox ${highlightObjectClass} id_${resultElement.id} class_${row[column.index].typeClsString} ${ischecked}" id="cell_checkbox,${status2.index},${status.index},${row[column.index].typeClsString}">--%>
+                    <%--<td align="center" class="checkbox ${highlightObjectClass} id_${resultElement.id} class_${row[column.index].type} ${ischecked}" id="cell_checkbox,${status2.index},${status.index},${row[column.index].type}">--%>
                       <c:if test="${resultElement.id != null}">
                         <html:multibox property="currentSelectedIdStrings" name="pagedResults"
-                                 styleId="selectedObjects_${status2.index}_${status.index}_${row[column.index].typeClsString}"
-                                 styleClass="selectable id_${resultElement.id} index_${column.index} class_${row[column.index].typeClsString} class_${column.typeClsString}"
+                                 styleId="selectedObjects_${status2.index}_${status.index}_${row[column.index].type}"
+                                 styleClass="selectable id_${resultElement.id} index_${column.index} class_${row[column.index].type} class_${column.typeClsString}"
                                  onclick="itemChecked(${status.index},${status2.index}, '${pagedResults.tableid}', this)"
                                  disabled="${disabled}">
                           <c:out value="${resultElement.id}"/>

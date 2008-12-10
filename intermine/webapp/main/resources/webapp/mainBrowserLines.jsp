@@ -29,7 +29,7 @@
 </c:forEach>
   <%-- see above --%>
   <c:if test="${!noTreeIds}">
-    <!--last close--></div></div>
+    <!--last close--></div>
   </c:if>
 
 <!-- /mainBrowserLines.jsp -->

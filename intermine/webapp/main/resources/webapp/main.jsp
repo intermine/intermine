@@ -18,37 +18,21 @@
 
 <link rel="stylesheet" href="css/autocompleter.css" type="text/css" />
 
-<%--<table class="query" width="100%" cellspacing="0">
-  <tr>
-    <td rowspan="2" valign="top" width="50%" class="modelbrowse">--%>
-      <div id="mainBrowser" class="modelbrowse" ><tiles:insert page="/mainBrowser.jsp"/></div>
+<div id="mainBrowser" class="modelbrowse" ><tiles:insert page="/mainBrowser.jsp"/></div>
+
 <div id="rightColumn" >
-<%--    </td>
-
-    <td valign="top">--%>
-      <div id="main-paths">
-        <tiles:insert name="mainPaths.tile"/>
-      </div>
-<%--    </td>
-  </tr>--%>
+  <div id="main-paths">
+    <tiles:insert name="mainPaths.tile"/>
+  </div>
   <a name="constraint-editor"></a>
-<%--    <tr>
-      <td valign="top">--%>
-        <div id="mainConstraint">
-            <tiles:insert name="mainConstraint.tile"/>
-        </div>
-<%--      </td>
-    </tr>
-</table>
---%>
 </div>
 
-<div style="clear:both">
-<tiles:get name="view.tile"/>
+<div style="clear:both;">
+  <tiles:get name="view.tile"/>
 </div>
 
+<div id="mainConstraint">
+  <tiles:insert name="mainConstraint.tile"/>
+</div>
 <br clear="all"/>
-
-<%--<tiles:insert name="outerjoins.tile"/>--%>
-
 <!-- /main.jsp -->
