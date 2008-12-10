@@ -11,15 +11,7 @@ $head = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>";
 $indexfilename = "$dir/sitemap_index.xml";
 $indexhead = "<?xml version=\'1.0\' encoding=\'UTF-8\'?>\n<sitemapindex xmlns=\"http://www.sitemaps.org/schemas/sitemap/0.9\"\n xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\"\n xsi:schemaLocation=\"http://www.sitemaps.org/schemas/sitemap/0.9\n http://www.sitemaps.org/schemas/sitemap/0.9/siteindex.xsd\">";
 
-#TODO put this list in properties file
-@organisms = ("180454", "6239", "7227", "7237", "7217", "7220", "7222", "7230", "7234", "7238", "7240", "7244", "7260", "7245");
-
 @sitemaps = ("/sitemap.xml", "/query/sitemap.xml");
-
-foreach (@organisms) {
-    push(sitemaps, "/query/sitemap$_"."protein.xml");
-    push(sitemaps, "/query/sitemap$_"."gene.xml");
-}
 
 ($sec,$min,$hour,$mday,$mon,$year,$wday,$yday,$isdst)=localtime(time);
 $y = $year+1900;

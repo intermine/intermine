@@ -23,8 +23,29 @@ import org.apache.tools.ant.Task;
  */
 public class SiteMapTask extends Task
 {
-    private String objectStore;
-    private String outputFile;
+    private String objectStore, outputFile, taxonIds, paths, webappPages;
+    private String sitePrefix, targetModel, defaultContext;
+
+    /**
+     * @param sitePrefix the sitePrefix to set
+     */
+    public void setSitePrefix(String sitePrefix) {
+        this.sitePrefix = sitePrefix;
+    }
+
+    /**
+     * @param targetModel the targetModel to set
+     */
+    public void setTargetModel(String targetModel) {
+        this.targetModel = targetModel;
+    }
+
+    /**
+     * @param defaultContext the defaultContext to set
+     */
+    public void setDefaultContext(String defaultContext) {
+        this.defaultContext = defaultContext;
+    }
 
     /**
      * Sets the value of objectStore
@@ -62,10 +83,32 @@ public class SiteMapTask extends Task
 
         try {
             os = ObjectStoreFactory.getObjectStore(objectStore);
-            CreateSiteMapLinkIns.createSiteMap(os, outputFile);
+            CreateSiteMaps.createSiteMap(os, outputFile, taxonIds, paths, webappPages,
+                                         targetModel, sitePrefix, defaultContext);
         } catch (Exception e) {
             throw new BuildException(e);
         }
+    }
+
+    /**
+     * @param taxonIds the taxonIds to set
+     */
+    public void setTaxonIds(String taxonIds) {
+        this.taxonIds = taxonIds;
+    }
+
+    /**
+     * @param paths the paths to set
+     */
+    public void setPaths(String paths) {
+        this.paths = paths;
+    }
+
+    /**
+     * @param webappPages the webappPages to set
+     */
+    public void setWebappPages(String webappPages) {
+        this.webappPages = webappPages;
     }
 }
 
