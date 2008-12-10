@@ -87,8 +87,7 @@ public class TagHandler extends DefaultHandler
             if (tags != null) {
                 tags.add(tag);
             } else {
-                TagManager tagManager = new TagManagerFactory(profileManager
-                        .getProfileObjectStoreWriter()).getTagManager();
+                TagManager tagManager = new TagManagerFactory(profileManager).getTagManager();
                 if (tagManager.getTags(tagName, tagObjectIdentifier,
                                            tagType, userName).isEmpty()) {
                     tagManager.addTag(tagName, tagObjectIdentifier, tagType, userName);

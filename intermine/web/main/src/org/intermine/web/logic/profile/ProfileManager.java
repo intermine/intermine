@@ -290,9 +290,7 @@ public class ProfileManager
     }
 
     private TagManager getTagManager() {
-        TagManager tagManager = new TagManagerFactory(getProfileObjectStoreWriter())
-            .getTagManager();
-        return tagManager;
+        return new TagManagerFactory(this).getTagManager();
     }
 
     /**

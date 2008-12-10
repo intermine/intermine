@@ -229,8 +229,7 @@ public class SearchRepository
         Iterator iter = webSearchableMap.values().iterator();
         int indexed = 0;
 
-        TagManager tagManager = new TagManagerFactory(profile.getProfileManager()
-                .getProfileObjectStoreWriter()).getTagManager();
+        TagManager tagManager = new TagManagerFactory(profile.getProfileManager()).getTagManager();
         
         while (iter.hasNext()) {
             WebSearchable webSearchable = (WebSearchable) iter.next();
