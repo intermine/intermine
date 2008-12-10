@@ -165,8 +165,7 @@ public class ProfileBinding
             writer.writeEndElement();
 
             writer.writeStartElement("tags");
-            TagManager tagManager = new TagManagerFactory(profile.getProfileManager()
-                    .getProfileObjectStoreWriter()).getTagManager();
+            TagManager tagManager = new TagManagerFactory(profile.getProfileManager()).getTagManager();
             if (writeTags) {
                 List<Tag> tags = tagManager.getUserTags(profile.getUsername());
                 for (Tag tag : tags) {
