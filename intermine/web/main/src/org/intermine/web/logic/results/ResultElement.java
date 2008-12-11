@@ -130,7 +130,6 @@ public class ResultElement implements Serializable
     }
 
     /**
-     * (non-Javadoc)
      * {@inheritDoc}
      */
     public boolean equals(Object obj) {
@@ -150,7 +149,6 @@ public class ResultElement implements Serializable
     }
 
     /**
-     * (non-Javadoc)
      * {@inheritDoc}
      */
     public int hashCode() {

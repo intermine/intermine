@@ -10,13 +10,26 @@ package org.intermine.web.logic.results;
  *
  */
 
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashMap;
 import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
 import java.util.NoSuchElementException;
 
+import org.intermine.model.InterMineObject;
 import org.intermine.objectstore.ObjectStore;
+import org.intermine.objectstore.ObjectStoreException;
+import org.intermine.objectstore.query.Query;
+import org.intermine.objectstore.query.QueryCollectionPathExpression;
+import org.intermine.objectstore.query.QuerySelectable;
 import org.intermine.objectstore.query.Results;
 import org.intermine.objectstore.query.ResultsRow;
+import org.intermine.pathquery.Path;
 import org.intermine.pathquery.PathQuery;
+import org.intermine.web.logic.bag.BagQueryRunner;
+import org.intermine.web.logic.query.MainHelper;
 
 /**
  * An Iterator that produces data in a format suitable for exporting. The data is flattened, so if
@@ -26,19 +39,135 @@ import org.intermine.pathquery.PathQuery;
  */
 public class ExportResultsIterator implements Iterator<ResultsRow>
 {
+    private Iterator<ResultsRow> osIter;
+    private Iterator<ResultsRow> subIter;
+    // This object contains a description of the collections in the input.
+    private List columns;
+    private boolean simpleMode;
+    private static final ResultsRow EMPTY_RESULTSROW = new ResultsRow();
+    private int columnCount;
 
-    public ExportResultsIterator(ObjectStore os, PathQuery pq) {
+    public ExportResultsIterator(ObjectStore os, PathQuery pq, Map savedBags,
+            BagQueryRunner bagQueryRunner) throws ObjectStoreException {
+        Map<String, QuerySelectable> pathToQueryNode = new HashMap<String, QuerySelectable>();
+        Map returnBagQueryResults = new HashMap();
+        Query q = MainHelper.makeQuery(pq, savedBags, pathToQueryNode, bagQueryRunner,
+                returnBagQueryResults, false);
+        osIter = os.execute(q).iterator();
+        List<ResultsRow> empty = Collections.emptyList();
+        subIter = empty.iterator();
+        columns = convertColumnTypes(q.getSelect(), pq, pathToQueryNode);
+        simpleMode = true;
+        for (Object column : columns) {
+            if (column instanceof List) {
+                simpleMode = false;
+                break;
+            }
+        }
+        columnCount = pq.getView().size();
     }
 
     public boolean hasNext() {
-        return false;
+        while ((!subIter.hasNext()) && osIter.hasNext()) {
+            subIter = decodeRow(osIter.next()).iterator();
+        }
+        return subIter.hasNext();
     }
 
     public ResultsRow next() {
-        throw new NoSuchElementException();
+        while ((!subIter.hasNext()) && osIter.hasNext()) {
+            subIter = decodeRow(osIter.next()).iterator();
+        }
+        return subIter.next();
     }
 
     public void remove() {
         throw new UnsupportedOperationException();
+    }
+
+    private List convertColumnTypes(List<? extends QuerySelectable> select, PathQuery pq,
+            Map<String, QuerySelectable> pathToQueryNode) {
+        List retval = new ArrayList();
+        for (QuerySelectable qs : select) {
+            if (qs instanceof QueryCollectionPathExpression) {
+                QueryCollectionPathExpression qc = (QueryCollectionPathExpression) qs;
+                List<QuerySelectable> subSelect = qc.getSelect();
+                if (subSelect.isEmpty()) {
+                    retval.add(convertColumnTypes(Collections.singletonList(qc.getDefaultClass()),
+                                pq, pathToQueryNode));
+                } else {
+                    retval.add(convertColumnTypes(subSelect, pq, pathToQueryNode));
+                }
+            } else {
+                Map<Path, Integer> fieldToColumnNumber = new HashMap<Path, Integer>();
+                int columnNo = 0;
+                for (Path path : pq.getView()) {
+                    Path parent = path.getPrefix();
+                    QuerySelectable selectableForPath = pathToQueryNode.get(
+                            parent.toStringNoConstraints());
+                    if (selectableForPath instanceof QueryCollectionPathExpression) {
+                        selectableForPath = ((QueryCollectionPathExpression) selectableForPath)
+                            .getDefaultClass();
+                    }
+                    if (qs.equals(selectableForPath)) {
+                        fieldToColumnNumber.put(path, new Integer(columnNo));
+                    } else {
+                    }
+                    columnNo++;
+                }
+                retval.add(fieldToColumnNumber);
+            }
+        }
+        return retval;
+    }
+
+    private List<ResultsRow> decodeRow(ResultsRow row) {
+        if (simpleMode) {
+            return Collections.singletonList(row);
+        } else {
+            ResultsRow template = new ResultsRow();
+            for (int i = 0; i < columnCount; i++) {
+                template.add(null);
+            }
+            List<ResultsRow> retval = new ArrayList<ResultsRow>();
+            expandCollections(row, retval, template, columns);
+            return retval;
+        }
+    }
+
+    private void expandCollections(ResultsRow row, List<ResultsRow> retval, ResultsRow template,
+            List columns) {
+        if (row.size() != columns.size()) {
+            throw new IllegalArgumentException("Column description (size " + columns.size()
+                    + ") does not match input data (size " + row.size() + ")");
+        }
+        template = new ResultsRow(template);
+        int columnNo = 0;
+        for (Object column : columns) {
+            if (column instanceof Map) {
+                Map<Path, Integer> desc = (Map<Path, Integer>) column;
+                for (Map.Entry<Path, Integer> descEntry : desc.entrySet()) {
+                    template.set(descEntry.getValue().intValue(),
+                            new ResultElement((InterMineObject) row.get(columnNo),
+                                descEntry.getKey(), false));
+                }
+            }
+            columnNo++;
+        }
+        boolean hasCollections = false;
+        columnNo = 0;
+        for (Object column : columns) {
+            if (column instanceof List) {
+                hasCollections = true;
+                List<ResultsRow> collection = (List<ResultsRow>) row.get(columnNo);
+                for (ResultsRow subRow : collection) {
+                    expandCollections(subRow, retval, template, (List) column);
+                }
+            }
+            columnNo++;
+        }
+        if (!hasCollections) {
+            retval.add(template);
+        }
     }
 }
