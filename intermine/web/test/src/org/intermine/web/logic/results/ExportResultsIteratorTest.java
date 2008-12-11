@@ -217,4 +217,45 @@ public class ExportResultsIteratorTest extends TestCase
                 Arrays.asList(new ResultElement(company1, p1, false), new ResultElement(company1, p2, false), null, new ResultElement(contractor3, p4, false)));
         assertEquals(expected, got);
     }
+
+    public void testReference() throws Exception {
+        ObjectStoreDummyImpl os = new ObjectStoreDummyImpl();
+        os.setResultsSize(2);
+
+        // Set up some known objects in the first 3 results rows
+        Company company1 = (Company) DynamicUtil.createObject(Collections.singleton(Company.class));
+        company1.setName("Company1");
+        company1.setVatNumber(101);
+        company1.setId(new Integer(1));
+
+        Department department1 = new Department();
+        department1.setName("Department1");
+        department1.setId(new Integer(2));
+        Department department2 = new Department();
+        department2.setName("Department2");
+        department2.setId(new Integer(3));
+
+        ResultsRow row = new ResultsRow();
+        row.add(department1);
+        row.add(company1);
+        os.addRow(row);
+        row = new ResultsRow();
+        row.add(department2);
+        row.add(company1);
+        os.addRow(row);
+
+        PathQuery pq = new PathQuery(model);
+        final Path p1 = new Path(model, "Department.name");
+        final Path p2 = new Path(model, "Department:company.name");
+        List view = Arrays.asList(p1, p2);
+        pq.setViewPaths(view);
+        ExportResultsIterator iter = new ExportResultsIterator(os, pq, new HashMap(), null);
+        List got = new ArrayList();
+        for (ResultsRow gotRow : new IteratorIterable<ResultsRow>(iter)) {
+            got.add(gotRow);
+        }
+        List expected = Arrays.asList(Arrays.asList(new ResultElement(department1, p1, false), new ResultElement(company1, p2, false)),
+                Arrays.asList(new ResultElement(department2, p1, false), new ResultElement(company1, p2, false)));
+        assertEquals(expected, got);
+    }
 }
