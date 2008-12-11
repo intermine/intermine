@@ -14,13 +14,11 @@ import java.io.Serializable;
 import java.util.Set;
 
 import org.intermine.model.InterMineObject;
-import org.intermine.objectstore.ObjectStore;
 import org.intermine.objectstore.ObjectStoreException;
 import org.intermine.pathquery.Path;
 import org.intermine.util.DynamicUtil;
 import org.intermine.util.TypeUtil;
 import org.intermine.util.Util;
-import org.intermine.web.logic.PathUtil;
 
 /**
  * Cell of results table containing information
@@ -47,7 +45,11 @@ public class ResultElement implements Serializable
         this.imObj = imObj;
         this.keyField = isKeyField;
         this.path = path;
-        field = PathUtil.resolvePath(path, imObj);
+        try {
+            field = TypeUtil.getFieldValue(imObj, path.getEndFieldDescriptor().getName());
+        } catch (IllegalAccessException e) {
+            throw new RuntimeException(e);
+        }
     }
 
     /**
