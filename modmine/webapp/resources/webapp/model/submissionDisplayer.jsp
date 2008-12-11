@@ -17,6 +17,11 @@ div#submissionLabName h3, div#submissionLabName div#submissionProject {
   color: black;
   margin-bottom: 20px;
 }
+div#submissionOrganism {
+  color: black;
+  margin-bottom: 20px;
+}
+
 
 </style>
 
@@ -29,7 +34,13 @@ div#submissionLabName h3, div#submissionLabName div#submissionProject {
     <div id="submissionProject">
       <b>Project:</b> <html:link href="/${WEB_PROPERTIES['webapp.path']}/objectDetails.do?id=${object.lab.project.id}">${object.lab.project.name}</html:link>
     </div>
-    <table cellpadding="0" cellspacing="0" border="0" class="results">
+    <div id="submissionOrganism">
+      <b>Organism:</b> <html:link href="/${WEB_PROPERTIES['webapp.path']}/objectDetails.do?id=${object.organism.id}">${object.organism.shortName}</html:link>
+    </div>
+    <div id="submissionResults">
+    <b>Results:</b>
+    <p>
+        <table cellpadding="0" cellspacing="0" border="0" class="results">
       <tr>
         <th>Feature type</th>
         <th>count</th>
@@ -84,5 +95,6 @@ div#submissionLabName h3, div#submissionLabName div#submissionProject {
       </c:forEach>
       <!-- end submission loop -->
     </table>
+    </div>
   </div>
 </div>
