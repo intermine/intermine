@@ -43,7 +43,6 @@ public class ExportResultsIterator implements Iterator<ResultsRow>
     private Iterator<ResultsRow> subIter;
     // This object contains a description of the collections in the input.
     private List columns;
-    private boolean simpleMode;
     private static final ResultsRow EMPTY_RESULTSROW = new ResultsRow();
     private int columnCount;
 
@@ -57,13 +56,6 @@ public class ExportResultsIterator implements Iterator<ResultsRow>
         List<ResultsRow> empty = Collections.emptyList();
         subIter = empty.iterator();
         columns = convertColumnTypes(q.getSelect(), pq, pathToQueryNode);
-        simpleMode = true;
-        for (Object column : columns) {
-            if (column instanceof List) {
-                simpleMode = false;
-                break;
-            }
-        }
         columnCount = pq.getView().size();
     }
 
@@ -122,17 +114,13 @@ public class ExportResultsIterator implements Iterator<ResultsRow>
     }
 
     private List<ResultsRow> decodeRow(ResultsRow row) {
-        if (simpleMode) {
-            return Collections.singletonList(row);
-        } else {
-            ResultsRow template = new ResultsRow();
-            for (int i = 0; i < columnCount; i++) {
-                template.add(null);
-            }
-            List<ResultsRow> retval = new ArrayList<ResultsRow>();
-            expandCollections(row, retval, template, columns);
-            return retval;
+        ResultsRow template = new ResultsRow();
+        for (int i = 0; i < columnCount; i++) {
+            template.add(null);
         }
+        List<ResultsRow> retval = new ArrayList<ResultsRow>();
+        expandCollections(row, retval, template, columns);
+        return retval;
     }
 
     private void expandCollections(ResultsRow row, List<ResultsRow> retval, ResultsRow template,
