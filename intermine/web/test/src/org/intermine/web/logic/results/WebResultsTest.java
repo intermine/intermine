@@ -21,6 +21,7 @@ import junit.framework.TestCase;
 
 import org.intermine.metadata.FieldDescriptor;
 import org.intermine.metadata.Model;
+import org.intermine.model.InterMineObject;
 import org.intermine.model.testmodel.CEO;
 import org.intermine.model.testmodel.Company;
 import org.intermine.model.testmodel.Department;
@@ -216,8 +217,17 @@ public class WebResultsTest extends TestCase
          Results results = os.execute(query);
          WebResults webResults = new WebResults(pq, results, model, pathToQueryNode, classKeys, null);
          List row1 = webResults.getResultElements(0);
-         ResultElement res1 = new ResultElement(os, "Department1", new Integer(4), Department.class, new Path(model, "Department.name"), false);
-         ResultElement res2 = new ResultElement(os, "Company1", new Integer(1), Company.class, new Path(model, "Department.company.name"), false);
+ 
+         Department dept1 = new Department();
+         dept1.setId(new Integer(4));
+         dept1.setName("Department1");
+         ResultElement res1 = new ResultElement(dept1, new Path(model, "Department.name"), false);
+        
+         Company c1 = (Company) DynamicUtil.instantiateObject("org.intermine.model.testmodel.Company", null);
+         c1.setId(new Integer(1));
+         c1.setName("Company1");
+         ResultElement res2 = new ResultElement(c1, new Path(model, "Department.company.name"), false);
+         
          List expected = new ArrayList();
          expected.add(res1);
          expected.add(res2);
