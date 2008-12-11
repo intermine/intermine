@@ -185,8 +185,8 @@ public class ObjectDetailsController extends InterMineAction
             List<Tag> placementTags = new ArrayList<Tag>(tagManager.getTags(TagNames.IM_SUMMARY,
                                                                     cd.getUnqualifiedName() + ".%",
                                                                     "reference", superuser));
-            placementTags.addAll(tagManager.getTags(TagNames.IM_SUMMARY, cd.getUnqualifiedName() + ".%",
-                                            "collection", superuser));
+            placementTags.addAll(tagManager.getTags(TagNames.IM_SUMMARY, 
+                    cd.getUnqualifiedName() + ".%", "collection", superuser));
 
             for (Tag tag : placementTags) {
                 String name = getFieldName(tag);
