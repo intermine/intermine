@@ -42,7 +42,7 @@ public class PathQuery
     private Model model;
     protected LinkedHashMap<String, PathNode> nodes = new LinkedHashMap<String, PathNode>();
     private List<Path> view = new ArrayList<Path>();
-    private Map<Path, String> sortOrder = new LinkedHashMap<Path,String>();
+    private Map<Path, String> sortOrder = new LinkedHashMap<Path, String>();
     private ResultsInfo info;
     private List<Throwable> problems = new ArrayList<Throwable>();
     protected LogicExpression constraintLogic = null;
@@ -275,7 +275,7 @@ public class PathQuery
     /**
      * Appends the paths to the end of the select list, ignores any bad paths.
      *
-     * @param paths a list of paths to be appended to the end of the view list
+     * @param pathStrs a list of paths to be appended to the end of the view list
      */
     public void addView(List<String> pathStrs) {
         List<Path> paths = makePaths(pathStrs);
@@ -648,7 +648,7 @@ public class PathQuery
                     throw new IllegalArgumentException("Sort order path " + path + " cannot be in "
                             + "the ORDER BY list");
                 }
-                if(direction.equals("desc")) {
+                if (direction.equals("desc")) {
                     orderBy.put(makePath(model, this, path), DESCENDING);
                 } else if(direction.equals("asc")) {
                     orderBy.put(makePath(model, this, path), ASCENDING);

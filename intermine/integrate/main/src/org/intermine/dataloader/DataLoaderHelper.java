@@ -35,8 +35,6 @@ import org.intermine.util.IntToIntMap;
 import org.intermine.util.PropertiesUtil;
 import org.intermine.util.TypeUtil;
 
-import java.io.IOException;
-
 import org.apache.log4j.Logger;
 
 /**

@@ -11,7 +11,6 @@ package org.intermine.web.struts;
  */
 
 import java.io.StringWriter;
-import java.util.Iterator;
 import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;

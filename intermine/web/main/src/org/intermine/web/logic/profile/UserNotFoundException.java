@@ -12,11 +12,10 @@ package org.intermine.web.logic.profile;
 
 /**
  * Exception thrown when user is not found.  
- * @author Jakub Kulaviak
- *
+ * @author Jakub Kulaviak <jakub@flymine.org>
  */
-public class UserNotFoundException extends RuntimeException {
-
+public class UserNotFoundException extends RuntimeException
+{
     /**
      * Constructor with message.
      * @param msg message

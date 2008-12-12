@@ -26,14 +26,14 @@ import org.intermine.webservice.client.services.QueryService;
  * genes starting at position higher than start-tolerance and lower than start+tolerance and 
  * ending at position higher then end-tolerance and lower than end+tolerance will be retrieved.
  *
- * NOTE: The model can change at the server in next versions of FlyMine and sample won't work. For example
- * primaryIdentifier gene attribute can be renamed. In this case please download newer version of samples 
- * or modify sample properly.
+ * NOTE: The model can change at the server in next versions of FlyMine and sample won't work. For
+ * example primaryIdentifier gene attribute can be renamed. In this case please download newer
+ * version of samples or modify sample properly.
  * 
  * @author Jakub Kulaviak
  **/
-public class GenesFinder {
-
+public class GenesFinder
+{
     private static String serviceRootUrl = "http://www.flymine.org/query/service";
 
     public static void main(String[] args) throws IOException {
@@ -65,8 +65,10 @@ public class GenesFinder {
     }
 
     private static void printUsage() {
-        System.out.println("Required parameters: --file input_file --tolerance tolerance_value --type [Gene|LocatedSequenceFeature]");
-        System.out.println("Format of a line in the input file (fields must be tab separated): chromozome_id start end");
+        System.out.println("Required parameters: --file input_file"
+                           + " --tolerance tolerance_value --type [Gene|LocatedSequenceFeature]");
+        System.out.println("Format of a line in the input file"
+                           + " (fields must be tab separated): chromozome_id start end");
     }
 
     private static String getParameter(String name, String[] args) {
@@ -165,8 +167,8 @@ public class GenesFinder {
                 + "</node>"
                 + "<node path=\"LocatedSequenceFeature.chromosome\" type=\"Chromosome\">"
                 + "</node>"
-                + "<node path=\"LocatedSequenceFeature.chromosome.primaryIdentifier\" type=\"String\">"
-                + "<constraint op=\"=\" value=\""
+                + "<node path=\"LocatedSequenceFeature.chromosome.primaryIdentifier\" "
+                + "type=\"String\"> <constraint op=\"=\" value=\""
                 + chromozome
                 + "\" description=\"\" identifier=\"\" code=\"A\">"
                 + "</constraint>"
@@ -203,7 +205,8 @@ public class GenesFinder {
         return ret;
     }
 
-    static class GenesFinderException extends RuntimeException {
+    static class GenesFinderException extends RuntimeException
+    {
 
         private static final long serialVersionUID = 1L;
 

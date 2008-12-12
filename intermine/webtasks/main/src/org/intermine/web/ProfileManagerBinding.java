@@ -166,7 +166,8 @@ class ProfileManagerHandler extends DefaultHandler
             Profile profile = profileHandler.getProfile();
             profileManager.createProfile(profile);
             Set<Tag> tags = profileHandler.getTags();
-            TagManager tagManager = new TagManagerFactory(profile.getProfileManager()).getTagManager();
+            TagManager tagManager =
+                new TagManagerFactory(profile.getProfileManager()).getTagManager();
             for (Tag tag : tags) {
                 try {
                     tagManager.addTag(tag.getTagName(), tag.getObjectIdentifier(), tag.getType(),

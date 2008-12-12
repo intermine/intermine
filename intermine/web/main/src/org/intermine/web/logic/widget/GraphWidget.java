@@ -103,8 +103,8 @@ public class GraphWidget extends Widget
             CategoryDataset graphDataSet = dataSetLdr.getDataSet();
 
             /* stacked bar chart */
-            if (((GraphWidgetConfig) config).getGraphType() != null &&
-                            ((GraphWidgetConfig) config).getGraphType().equals("StackedBarChart")) {
+            if (((GraphWidgetConfig) config).getGraphType() != null 
+                && ((GraphWidgetConfig) config).getGraphType().equals("StackedBarChart")) {
                 chart = ChartFactory.createStackedBarChart(config.getTitle(), // chart title
                                 ((GraphWidgetConfig) config).getDomainLabel(), // domain axis label
                                 ((GraphWidgetConfig) config).getRangeLabel(), // range axis label

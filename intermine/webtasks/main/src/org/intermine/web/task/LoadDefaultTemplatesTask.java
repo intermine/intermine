@@ -163,10 +163,11 @@ public class LoadDefaultTemplatesTask extends Task
                  if (tagManager.getTags(tag.getTagName(), tag.getObjectIdentifier(),
                                             tag.getType(), profileDest.getUsername()).isEmpty()) {
                      try {
-                         tagManager.addTag(tag.getTagName(), tag.getObjectIdentifier(), tag.getType(),
-                                 profileDest.getUsername());
+                         tagManager.addTag(tag.getTagName(), tag.getObjectIdentifier(),
+                                           tag.getType(), profileDest.getUsername());
                      } catch (RuntimeException ex) {
-                         LOG.error("Error happened during adding tag. Ignored. Tag: " + tag.toString(), ex);
+                         LOG.error("Error happened during adding tag. Ignored. Tag: "
+                                   + tag.toString(), ex);
                      }
                  }
              }

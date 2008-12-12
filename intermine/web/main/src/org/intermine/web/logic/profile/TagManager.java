@@ -42,26 +42,27 @@ import org.intermine.objectstore.query.SingletonResults;
 import org.intermine.util.DynamicUtil;
 
 /**
- * Manager class for tags. Implements retrieving, adding and deleting tags in user profile 
- * database.  
+ * Manager class for tags. Implements retrieving, adding and deleting tags in user profile
+ * database.
+ * @author Jakub Kulaviak <jakub@flymine.org>
  */
-public class TagManager 
+public class TagManager
 {
 
     private static final Logger LOG = Logger.getLogger(TagManager.class);
-    
+
     protected ObjectStoreWriter osWriter;
-    
+
     private HashMap<MultiKey, List<Tag>> tagCache = null;
 
     /**
-     * Constructor. Use TagManagerFactory for creating tag manager. 
+     * Constructor. Use TagManagerFactory for creating tag manager.
      * @param profileOsWriter user profile object store
      */
     public TagManager(ObjectStoreWriter profileOsWriter) {
         this.osWriter = profileOsWriter;
     }
-    
+
     /**
      * Delete a tag object from the database.
      * @param tag Tag object
@@ -74,7 +75,7 @@ public class TagManager
             LOG.error("delete tag failed" + err);
         }
     }
-    
+
     private void checkUserExists(String userName) {
         UserProfile profile = getUserProfile(userName);
         if (profile == null) {
@@ -94,8 +95,8 @@ public class TagManager
         if (tags.size() > 0 && tags.get(0) != null) {
             deleteTag(tags.get(0));
         } else {
-            throw new RuntimeException("Attempt to delete non existing tag. tagName=" 
-                    + tagName + ", taggedObject=" + taggedObject + ", type=" + type 
+            throw new RuntimeException("Attempt to delete non existing tag. tagName="
+                    + tagName + ", taggedObject=" + taggedObject + ", type=" + type
                     + ", userName=" + userName);
         }
     }
@@ -125,7 +126,7 @@ public class TagManager
      * @return tags
      */
     public List<Tag> getUserTags(String userName) {
-        return getTags(null, null, null, userName);    
+        return getTags(null, null, null, userName);
     }
 
     /**
@@ -166,12 +167,12 @@ public class TagManager
     public synchronized List<Tag> getTags(String tagName, String taggedObjectId, String type,
                         String userName) {
         if (userName != null) {
-            checkUserExists(userName);    
+            checkUserExists(userName);
         }
         if (type != null) {
-            checkTagType(type);    
+            checkTagType(type);
         }
-        
+
         Map<MultiKey, List<Tag>> cache = getTagCache();
         MultiKey key = makeKey(tagName, taggedObjectId, type, userName);
 
@@ -303,7 +304,7 @@ public class TagManager
         if (userName == null) {
             throw new IllegalArgumentException("userName cannot be null");
         }
-        
+
         UserProfile userProfile = getUserProfile(userName);
 
         Tag tag = (Tag) DynamicUtil.createObject(Collections.singleton(Tag.class));
@@ -325,17 +326,17 @@ public class TagManager
             throw new IllegalArgumentException("unknown tag type: " + type);
         }
     }
-    
-    private boolean isKnownTagType(String type) {
-        return ("collection".equals(type) 
-                || "reference".equals(type) 
-                || "attribute".equals(type) 
-                || "bag".equals(type) 
-                || "template".equals(type) 
-                || "class".equals(type)); 
-    } 
 
-    // duplication of ProfileManager method here, so this class is not dependent on ProfileManager 
+    private boolean isKnownTagType(String type) {
+        return ("collection".equals(type)
+                || "reference".equals(type)
+                || "attribute".equals(type)
+                || "bag".equals(type)
+                || "template".equals(type)
+                || "class".equals(type));
+    }
+
+    // duplication of ProfileManager method here, so this class is not dependent on ProfileManager
     private UserProfile getUserProfile(String userName) {
         UserProfile profile = new UserProfile();
         profile.setUsername(userName);
