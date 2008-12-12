@@ -21,7 +21,6 @@ import org.apache.struts.action.ActionMapping;
 import org.apache.struts.action.ActionMessage;
 import org.intermine.web.logic.Constants;
 import org.intermine.web.logic.profile.Profile;
-import org.intermine.web.logic.profile.ProfileManager;
 import org.intermine.web.logic.search.SearchRepository;
 import org.intermine.web.logic.session.SessionMethods;
 import org.intermine.web.logic.template.TemplateQuery;

@@ -27,7 +27,6 @@ import org.intermine.objectstore.ObjectStore;
 import org.intermine.pathquery.PathQuery;
 import org.intermine.pathquery.PathQueryBinding;
 import org.intermine.web.logic.Constants;
-import org.intermine.web.logic.WebUtil;
 import org.intermine.web.util.URLGenerator;
 
 /**

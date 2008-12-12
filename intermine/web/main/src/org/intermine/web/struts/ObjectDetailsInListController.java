@@ -21,7 +21,6 @@ import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
 import org.apache.struts.tiles.ComponentContext;
 import org.apache.struts.tiles.actions.TilesAction;
-import org.intermine.web.logic.search.Scope;
 import org.intermine.web.logic.search.WebSearchable;
 import org.intermine.web.logic.template.TemplateHelper;
 

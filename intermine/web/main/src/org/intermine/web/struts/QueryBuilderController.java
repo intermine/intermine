@@ -340,7 +340,7 @@ public class QueryBuilderController extends TilesAction
                 // if a node isn't an attribute and isn't a LOOKUP constraint it can only be a
                 // bag constraint or loop constraint
                 if (!node.isAttribute() && !BagConstraint.VALID_OPS.contains(con.getOp())
-                		&& !con.getOp().equals(ConstraintOp.LOOKUP)) {
+                    && !con.getOp().equals(ConstraintOp.LOOKUP)) {
                     // the parents of this node should also be un-editable loop constraint nodes
                     while (node.getParent() != null) {
                         paths.add(node);
