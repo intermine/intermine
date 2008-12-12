@@ -336,7 +336,7 @@ public class EntrezPublicationsRetriever
         Item publication = itemFactory.makeItemForClass(TARGET_NS + "Publication");
         retSet.add(publication);
         publication.setAttribute("pubMedId", (String) map.get("id"));
-        if(map.get("title") != null && !map.get("title").equals("")) {
+        if (map.get("title") != null && !map.get("title").equals("")) {
             publication.setAttribute("journal", (String) map.get("journal"));
             publication.setAttribute("title", (String) map.get("title"));
         }

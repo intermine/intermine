@@ -1,9 +1,13 @@
 package org.intermine.biomart.retrieve;
 
 /*
- * Copyright (C) 2002-2008 FlyMine This code may be freely distributed and modified under the terms
- * of the GNU Lesser General Public Licence. This should be distributed with the code. See the
- * LICENSE file for more information or http://www.gnu.org/copyleft/lesser.html.
+ * Copyright (C) 2002-2008 FlyMine
+ *
+ * This code may be freely distributed and modified under the
+ * terms of the GNU Lesser General Public Licence.  This should
+ * be distributed with the code.  See the LICENSE file for more
+ * information or http://www.gnu.org/copyleft/lesser.html.
+ *
  */
 
 import java.io.BufferedReader;
@@ -80,7 +84,7 @@ public class Initialiser extends Task
             // if (line.length > 0 && !line[0].equals(" ")) {
             // String dataset = line[1];
             // String attrConf =
-            // getBioMartResponse("http://www.biomart.org/biomart/martservice?type=attributes&dataset="
+         // getBioMartResponse("http://www.biomart.org/biomart/martservice?type=attributes&dataset="
             // + dataset);
             // StringReader sr2 = new StringReader(attrConf);
             // BufferedReader br2 = new BufferedReader(sr2);

@@ -507,17 +507,20 @@ public class FlyBaseProcessor extends ChadoSequenceProcessor
             // db.name is "FlyBase Annotation IDs" and "is_current" is true, set the
             // "secondaryIdentifier" attribute of the new Gene to be this dbxref and then make a
             // Synonym object
-            map.put(new MultiKey("dbxref", "Gene", FLYBASE_DB_NAME + " Annotation IDs", Boolean.TRUE),
+            map.put(new MultiKey("dbxref", "Gene", FLYBASE_DB_NAME + " Annotation IDs",
+                                 Boolean.TRUE),
                     Arrays.asList(new SetFieldConfigAction("secondaryIdentifier"),
                                   CREATE_SYNONYM_ACTION));
-            map.put(new MultiKey("dbxref", "Gene", FLYBASE_DB_NAME + " Annotation IDs", Boolean.FALSE),
+            map.put(new MultiKey("dbxref", "Gene", FLYBASE_DB_NAME + " Annotation IDs",
+                                 Boolean.FALSE),
                     Arrays.asList(CREATE_SYNONYM_ACTION));
             // null for the "is_current" means either TRUE or FALSE is OK.
 
             map.put(new MultiKey("dbxref", "Gene", FLYBASE_DB_NAME, null),
                     Arrays.asList(CREATE_SYNONYM_ACTION));
 
-            map.put(new MultiKey("dbxref", "MRNA", FLYBASE_DB_NAME + " Annotation IDs", Boolean.TRUE),
+            map.put(new MultiKey("dbxref", "MRNA", FLYBASE_DB_NAME + " Annotation IDs",
+                                 Boolean.TRUE),
                     Arrays.asList(new SetFieldConfigAction("secondaryIdentifier"),
                                   CREATE_SYNONYM_ACTION));
             map.put(new MultiKey("dbxref", "TransposableElementInsertionSite", "drosdel", null),

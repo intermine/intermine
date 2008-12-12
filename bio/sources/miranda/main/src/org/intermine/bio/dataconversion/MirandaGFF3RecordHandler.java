@@ -1,9 +1,13 @@
 package org.intermine.bio.dataconversion;
 
 /*
- * Copyright (C) 2002-2008 FlyMine This code may be freely distributed and modified under the terms
- * of the GNU Lesser General Public Licence. This should be distributed with the code. See the
- * LICENSE file for more information or http://www.gnu.org/copyleft/lesser.html.
+ * Copyright (C) 2002-2008 FlyMine
+ *
+ * This code may be freely distributed and modified under the
+ * terms of the GNU Lesser General Public Licence.  This should
+ * be distributed with the code.  See the LICENSE file for more
+ * information or http://www.gnu.org/copyleft/lesser.html.
+ *
  */
 
 import java.net.URI;
@@ -32,12 +36,12 @@ public class MirandaGFF3RecordHandler extends GFF3RecordHandler
 
     protected IdResolverFactory geneResolverFactory;
     protected IdResolverFactory mrnaResolverFactory;
-    
+
     protected static final Logger LOG = Logger.getLogger(MirandaGFF3RecordHandler.class);
 
     /**
-     *
-     * @param tgtModel
+     * Create a new MirandaGFF3RecordHandler
+     * @param tgtModel the model for which items will be created
      */
     public MirandaGFF3RecordHandler(Model tgtModel) {
         super(tgtModel);
@@ -68,7 +72,7 @@ public class MirandaGFF3RecordHandler extends GFF3RecordHandler
 
     private Item getTarget(String targetName) {
         Item target = null;
-        
+
         IdResolver resolver = mrnaResolverFactory.getIdResolver();
         String primaryIdentifier = null;
         int resCount = resolver.countResolutions("7227", targetName);
@@ -86,7 +90,7 @@ public class MirandaGFF3RecordHandler extends GFF3RecordHandler
         } else {
             LOG.info("RESOLVER: failed to resolve mRNA to one identifier, ignoring mRNA: "
                      + targetName + " count: " + resCount);
-        }       
+        }
         return target;
     }
 

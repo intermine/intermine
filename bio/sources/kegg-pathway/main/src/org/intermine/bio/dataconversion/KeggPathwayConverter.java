@@ -12,8 +12,6 @@ package org.intermine.bio.dataconversion;
 
 import java.io.File;
 import java.io.Reader;
-import java.util.ArrayList;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
@@ -22,7 +20,6 @@ import java.util.regex.Pattern;
 
 import org.apache.log4j.Logger;
 import org.intermine.dataconversion.ItemWriter;
-import org.intermine.metadata.MetaDataException;
 import org.intermine.metadata.Model;
 import org.intermine.objectstore.ObjectStoreException;
 import org.intermine.util.FormattedTextParser;
@@ -49,8 +46,6 @@ public class KeggPathwayConverter extends BioFileConverter
      * Constructor
      * @param writer the ItemWriter used to handle the resultant items
      * @param model the Model
-     * @throws ObjectStoreException if an error occurs in storing
-     * @throws MetaDataException if cannot generate model
      */
     public KeggPathwayConverter(ItemWriter writer, Model model) {
         super(writer, model, "GenomeNet", "KEGG PATHWAY");
@@ -113,14 +108,14 @@ public class KeggPathwayConverter extends BioFileConverter
                     // There are some strange ids for D. melanogaster, the rest start with Dmel_,
                     // ignore any D. melanogaster ids without Dmel_ and strip this off the rest
                     if (taxonId.equals("7227") && !geneName.startsWith("Dmel_")) {
-                    	continue;
+                        continue;
                     }
-                    
+
                     // We don't want Dmel_ prefix on D. melanogaster genes
                     if (geneName.startsWith("Dmel_")) {
                         geneName = geneName.substring(5);
                     }
-                    
+
                     String mapIdentifiers = line[1];
                     ReferenceList referenceList = new ReferenceList("pathways");
                     String [] mapArray = mapIdentifiers.split(" ");
@@ -134,7 +129,8 @@ public class KeggPathwayConverter extends BioFileConverter
         }
     }
 
-    private Item getGene(String geneCG, String taxonId, ReferenceList referenceList) throws ObjectStoreException {
+    private Item getGene(String geneCG, String taxonId, ReferenceList referenceList)
+        throws ObjectStoreException {
         String identifier = null;
         IdResolver resolver = resolverFactory.getIdResolver(false);
         if (taxonId.equals("7227") && resolver != null) {
@@ -146,7 +142,7 @@ public class KeggPathwayConverter extends BioFileConverter
                 return null;
             }
             identifier = resolver.resolveId(taxonId, geneCG).iterator().next();
-        }else {
+        } else {
             identifier = geneCG;
         }
 

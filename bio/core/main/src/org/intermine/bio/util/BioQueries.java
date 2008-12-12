@@ -29,10 +29,8 @@ import org.intermine.objectstore.intermine.ObjectStoreInterMineImpl;
 
 import org.flymine.model.genomic.Location;
 
-import java.lang.String;
-
 /**
- *
+ * Bio utility methods for queries.
  * @author Kim Rutherford
  */
 public abstract class BioQueries

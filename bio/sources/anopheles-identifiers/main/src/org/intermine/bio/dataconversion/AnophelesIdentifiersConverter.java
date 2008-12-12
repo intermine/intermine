@@ -19,7 +19,6 @@ import java.util.List;
 import java.util.Set;
 
 import org.intermine.dataconversion.ItemWriter;
-import org.intermine.metadata.MetaDataException;
 import org.intermine.metadata.Model;
 import org.intermine.objectstore.ObjectStoreException;
 import org.intermine.util.FormattedTextParser;
@@ -43,7 +42,6 @@ public class AnophelesIdentifiersConverter extends BioFileConverter
      * @param writer the ItemWriter used to handle the resultant items
      * @param model the Model
      * @throws ObjectStoreException if an error occurs in storing
-     * @throws MetaDataException if cannot generate model
      */
     public AnophelesIdentifiersConverter(ItemWriter writer, Model model)
         throws ObjectStoreException {

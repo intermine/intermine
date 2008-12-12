@@ -124,7 +124,7 @@ public class WriteGFFTask extends Task
         }
     }
 
-    final private static Class<LocatedSequenceFeature> LOCATED_SEQUENCE_FEATURE_CLASS =
+    private static final Class<LocatedSequenceFeature> LOCATED_SEQUENCE_FEATURE_CLASS =
         LocatedSequenceFeature.class;
 
     /**

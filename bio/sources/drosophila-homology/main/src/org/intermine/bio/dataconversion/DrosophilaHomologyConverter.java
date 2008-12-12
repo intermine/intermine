@@ -21,7 +21,6 @@ import java.util.Map;
 import org.apache.log4j.Logger;
 import org.intermine.bio.util.OrganismData;
 import org.intermine.bio.util.OrganismRepository;
-import org.intermine.dataconversion.FileConverter;
 import org.intermine.dataconversion.ItemWriter;
 import org.intermine.metadata.MetaDataException;
 import org.intermine.metadata.Model;
