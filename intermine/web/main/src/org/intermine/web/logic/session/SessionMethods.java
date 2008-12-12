@@ -975,4 +975,20 @@ public class SessionMethods
     public static SearchRepository getSearchRepository(ServletContext servletContext) {
         return SearchRepository.getGlobalSearchRepository(servletContext);
     }
+
+    /**
+     * @param servletContext servlet context
+     * @return object store
+     */
+    public static ObjectStore getObjectStore(ServletContext servletContext) {
+        return (ObjectStore) servletContext.getAttribute(Constants.OBJECTSTORE);
+    }
+
+    /**
+     * @param servletContext servlet context
+     * @return bag query config
+     */
+    public static BagQueryConfig getBagQueryConfig(ServletContext servletContext) {
+        return (BagQueryConfig) servletContext.getAttribute(Constants.BAG_QUERY_CONFIG);
+    }
 }
