@@ -28,7 +28,6 @@ import org.intermine.objectstore.ObjectStoreException;
 import org.intermine.objectstore.ObjectStoreWriter;
 import org.intermine.objectstore.flatouterjoins.MultiRow;
 import org.intermine.objectstore.flatouterjoins.MultiRowFirstValue;
-import org.intermine.objectstore.flatouterjoins.MultiRowValue;
 import org.intermine.objectstore.intermine.ObjectStoreWriterInterMineImpl;
 import org.intermine.objectstore.query.BagConstraint;
 import org.intermine.objectstore.query.ConstraintOp;
@@ -198,7 +197,7 @@ public class PagedTable
             index1 = tmp;
         }
         getColumnsInternal().add(index1, getColumnsInternal().remove(index2));
-        getColumnsInternal().add(index2, getColumnsInternal().remove(index1+1));
+        getColumnsInternal().add(index2, getColumnsInternal().remove(index1 + 1));
     }
 
     /**

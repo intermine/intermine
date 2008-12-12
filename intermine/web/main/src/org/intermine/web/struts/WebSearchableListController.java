@@ -36,7 +36,6 @@ import org.intermine.web.logic.Constants;
 import org.intermine.web.logic.WebUtil;
 import org.intermine.web.logic.bag.InterMineBag;
 import org.intermine.web.logic.profile.Profile;
-import org.intermine.web.logic.profile.ProfileManager;
 import org.intermine.web.logic.profile.TagManager;
 import org.intermine.web.logic.search.Scope;
 import org.intermine.web.logic.search.SearchFilterEngine;
@@ -226,8 +225,9 @@ public class WebSearchableListController extends TilesAction
             // filter by tag if there are any otherwise return all
             if (tags.length() > 0) {
                 final List<String> tagList = Arrays.asList(StringUtil.split(tags.trim(), " "));
-                filteredWebSearchables = new SearchFilterEngine().filterByTags(filteredWebSearchables, 
-                        tagList, type, profile.getUsername(), tagManager);
+                filteredWebSearchables =
+                    new SearchFilterEngine().filterByTags(filteredWebSearchables, tagList, type,
+                                                          profile.getUsername(), tagManager);
             }
         }
 

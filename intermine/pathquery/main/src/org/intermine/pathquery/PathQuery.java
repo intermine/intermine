@@ -650,7 +650,7 @@ public class PathQuery
                 }
                 if (direction.equals("desc")) {
                     orderBy.put(makePath(model, this, path), DESCENDING);
-                } else if(direction.equals("asc")) {
+                } else if (direction.equals("asc")) {
                     orderBy.put(makePath(model, this, path), ASCENDING);
                 }
             }

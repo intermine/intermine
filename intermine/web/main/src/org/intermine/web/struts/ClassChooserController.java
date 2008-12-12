@@ -22,7 +22,6 @@ import org.intermine.objectstore.ObjectStore;
 import org.intermine.objectstore.ObjectStoreSummary;
 import org.intermine.util.TypeUtil;
 import org.intermine.web.logic.Constants;
-import org.intermine.web.logic.profile.ProfileManager;
 import org.intermine.web.logic.profile.TagManager;
 import org.intermine.web.logic.session.SessionMethods;
 
