@@ -16,7 +16,6 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
-import java.util.NoSuchElementException;
 
 import org.intermine.model.InterMineObject;
 import org.intermine.objectstore.ObjectStore;
@@ -24,7 +23,6 @@ import org.intermine.objectstore.ObjectStoreException;
 import org.intermine.objectstore.query.Query;
 import org.intermine.objectstore.query.QueryCollectionPathExpression;
 import org.intermine.objectstore.query.QuerySelectable;
-import org.intermine.objectstore.query.Results;
 import org.intermine.objectstore.query.ResultsRow;
 import org.intermine.pathquery.Path;
 import org.intermine.pathquery.PathQuery;
@@ -46,6 +44,16 @@ public class ExportResultsIterator implements Iterator<ResultsRow>
     private static final ResultsRow EMPTY_RESULTSROW = new ResultsRow();
     private int columnCount;
 
+    /**
+     * Constructor for ExportResultsIterator. This creates a new instance from the given
+     * ObjectStore, PathQuery, and other necessary objects.
+     *
+     * @param os an ObjectStore that the query will be run on
+     * @param pq a PathQuery to run
+     * @param savedBags a Map of the bags that the query may have used
+     * @param bagQueryRunner a BagQueryRunner for any LOOKUP constraints
+     * @throws ObjectStoreException if something goes wrong executing the query
+     */
     public ExportResultsIterator(ObjectStore os, PathQuery pq, Map savedBags,
             BagQueryRunner bagQueryRunner) throws ObjectStoreException {
         Map<String, QuerySelectable> pathToQueryNode = new HashMap<String, QuerySelectable>();
@@ -59,6 +67,9 @@ public class ExportResultsIterator implements Iterator<ResultsRow>
         columnCount = pq.getView().size();
     }
 
+    /**
+     * {@inheritDoc}
+     */
     public boolean hasNext() {
         while ((!subIter.hasNext()) && osIter.hasNext()) {
             subIter = decodeRow(osIter.next()).iterator();
@@ -66,6 +77,9 @@ public class ExportResultsIterator implements Iterator<ResultsRow>
         return subIter.hasNext();
     }
 
+    /**
+     * {@inheritDoc}
+     */
     public ResultsRow next() {
         while ((!subIter.hasNext()) && osIter.hasNext()) {
             subIter = decodeRow(osIter.next()).iterator();
@@ -73,6 +87,10 @@ public class ExportResultsIterator implements Iterator<ResultsRow>
         return subIter.next();
     }
 
+    /**
+     * This method is not supported.
+     * {@inheritDoc}
+     */
     public void remove() {
         throw new UnsupportedOperationException();
     }
