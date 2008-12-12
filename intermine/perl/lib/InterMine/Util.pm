@@ -21,7 +21,7 @@ our $INTERMINE_CONF_DIR = "$ENV{HOME}/.intermine";
  Title   : get_property_value
  Usage   : $property_value = 
               InterMine::Util::get_property_value('db.production.datasource.serverName',
-                                                  '/home/user/flymine.properties');
+                                                  '/home/user/.intermine/flymine.properties');
  Function: gets a value from a properties file
  Args    : $property_name, $property_file_name
 =cut
