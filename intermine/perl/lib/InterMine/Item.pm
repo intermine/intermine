@@ -1,10 +1,73 @@
 package InterMine::Item;
 
+=head1 NAME
+
+InterMine::Item - Representation of InterMine items
+
+=head1 SYNOPSIS
+
+  my $factory = new InterMine::ItemFactory(model => $model);
+
+  my $gene = $factory->make_item("Gene");
+  $gene->set("identifier", "CG10811");
+
+(See InterMine::ItemFactory for a longer Synopsis)
+
+=head1 EXPORT
+
+Nothing exported
+
+=head1 AUTHOR
+
+FlyMine C<< <support@flymine.org> >>
+
+=head1 BUGS
+
+Please report any bugs or feature requests to C<support@flymine.org>.
+
+=head1 SUPPORT
+
+You can find documentation for this module with the perldoc command.
+
+    perldoc InterMine::Item
+
+You can also look for information at:
+
+=over 4
+
+=item * FlyMine
+
+L<http://www.flymine.org>
+
+=item * Documentation
+
+L<http://www.intermine.org/wiki/ItemsAPIPerl>
+
+=head1 COPYRIGHT & LICENSE
+
+Copyright 2006,2007,2008 FlyMine, all rights reserved.
+
+This program is free software; you can redistribute it and/or modify it
+under the same terms as Perl itself.
+
+=head1 FUNCTIONS
+
+=cut
+
 use strict;
 
 use XML::Writer;
 
 my $ID_PREFIX = '0_';
+
+=head2 new
+
+ Title   : new
+ Usage   : $item = $factory->make_item("Gene");
+ Function: create a new Item
+ Args    : model - the InterMine::Model object to use to check field validity
+ Note    : call this method using an ItemFactory
+=cut
 
 sub new {
   my $class = shift;
