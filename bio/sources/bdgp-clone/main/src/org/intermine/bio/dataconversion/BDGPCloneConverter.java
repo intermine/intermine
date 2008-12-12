@@ -12,8 +12,6 @@ package org.intermine.bio.dataconversion;
 
 import java.io.BufferedReader;
 import java.io.Reader;
-import java.util.ArrayList;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -23,7 +21,6 @@ import org.intermine.metadata.MetaDataException;
 import org.intermine.metadata.Model;
 import org.intermine.objectstore.ObjectStoreException;
 import org.intermine.xml.full.Item;
-import org.intermine.xml.full.ReferenceList;
 
 /**
  * DataConverter to load flat file linking BDGP clones to Flybase genes.

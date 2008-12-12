@@ -1,6 +1,5 @@
 package org.intermine.bio.dataconversion;
 
-import java.io.BufferedReader;
 import java.io.Reader;
 import java.util.HashMap;
 import java.util.List;
@@ -14,7 +13,7 @@ import org.intermine.objectstore.ObjectStoreException;
 import org.intermine.xml.full.Item;
 import org.intermine.xml.full.Reference;
 
-public class OMIMConverter extends FileConverter{
+public class OMIMConverter extends FileConverter {
 
     protected static final String GENOMIC_NS = "http://www.flymine.org/model/genomic#";
     //private data fields
@@ -31,8 +30,7 @@ public class OMIMConverter extends FileConverter{
         organism.setAttribute("taxonId", "9606");
         store(organism);
     }
-    
-    
+
     /**
      * {@inheritDoc}
      */
@@ -48,28 +46,28 @@ public class OMIMConverter extends FileConverter{
         String readString;
 
         //read fields and values
-        while((readString = in.readLine()) != null) {
+        while ((readString = in.readLine()) != null) {
             String[] tmp = readString.split(delimiter);
             String disorders = null;
             String geneSymbols = tmp[5];
             String status = tmp[6];
             String title = tmp[7];
             String omimId = tmp[9];
-            
+
             for (int i = 13; i <= 15; i++) {
                 if (tmp[i] != null && !tmp[i].equals("")) {
                     disorders += tmp[i];
                 }
             }
-            
-            if(disorders != null) {
+
+            if (disorders != null) {
                 values.add(disorders);
             }
-            
+
             Item disease = createItem("Disease");
             if (omimId != null && !omimId.equals("")) {
                 disease.setAttribute("omimId", omimId);
-            
+
                 disease.setAttribute("status", status);
                 disease.setAttribute("description", disorders);
 
@@ -86,7 +84,7 @@ public class OMIMConverter extends FileConverter{
                     } else {
                         geneRefId = geneMap.get(geneSymbol[j]);
                     }
-                    disease.setReference("gene", geneRefId); 
+                    disease.setReference("gene", geneRefId);
                 }
                 store(disease);
             }

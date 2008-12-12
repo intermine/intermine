@@ -12,7 +12,6 @@ package org.intermine.bio.dataconversion;
 
 import java.util.Collection;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 import org.intermine.bio.io.gff3.GFF3Record;

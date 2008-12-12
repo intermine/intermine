@@ -169,12 +169,12 @@ public class UpdateOrthologuesTest extends XMLTestCase {
         Translation objTranslation = (Translation) DynamicUtil.createObject(Collections.singleton(Translation.class));
         objTranslation.setId(OBJ_TRANSLATION_ID);
         System.out.println("setUpData: objGenes= " + objGene);
-        objTranslation.setGene(objGene);
+//        objTranslation.setGene(objGene);
 
         Translation subTranslation = (Translation) DynamicUtil.createObject(Collections.singleton(Translation.class));
         subTranslation.setId(SUB_TRANSLATION_ID);
         System.out.println("setUpData: subGene = " + subGene);
-        subTranslation.setGene(subGene);
+//        subTranslation.setGene(subGene);
 
         String clsName = TypeUtil.unqualifiedName(relClass.getName());
         if (clsName.equals("Homologue")) {

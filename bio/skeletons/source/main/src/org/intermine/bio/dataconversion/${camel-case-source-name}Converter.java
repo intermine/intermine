@@ -23,7 +23,6 @@ import org.intermine.xml.full.Item;
 
 /**
  * 
- *
  * @author
  */
 public class ${camel-case-source-name}Converter extends BioFileConverter
