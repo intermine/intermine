@@ -51,7 +51,7 @@ format for use as input for sources.
 
 =head1 SEE ALSO
 
-http://trac.flymine.org/wiki/ItemsAPIPerl
+L<http://www.intermine.org/wiki/ItemsAPIPerl>
 
 =cut
 
