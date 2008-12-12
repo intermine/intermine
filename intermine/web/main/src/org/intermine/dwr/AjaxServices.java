@@ -59,7 +59,6 @@ import org.intermine.web.logic.WebUtil;
 import org.intermine.web.logic.bag.BagConversionHelper;
 import org.intermine.web.logic.bag.BagHelper;
 import org.intermine.web.logic.bag.BagQueryConfig;
-import org.intermine.web.logic.bag.BagQueryRunner;
 import org.intermine.web.logic.bag.InterMineBag;
 import org.intermine.web.logic.bag.TypeConverter;
 import org.intermine.web.logic.config.Type;
@@ -570,8 +569,8 @@ public class AjaxServices
                 }
             }
             if (aspectTags.size() > 0) {
-                wsMap = new SearchFilterEngine().filterByTags(wsMap, aspectTags, type, pm.getSuperuser(),
-                        getTagManager());
+                wsMap = new SearchFilterEngine().filterByTags(wsMap, aspectTags, type,
+                                                              pm.getSuperuser(), getTagManager());
             }
 
             if (profile.getUsername() != null && userTags.size() > 0) {
@@ -1061,10 +1060,10 @@ public class AjaxServices
      */
     public void reorder(String newOrder, String oldOrder) {
         HttpSession session = WebContextFactory.get().getSession();
-        List<String> newOrderList = new LinkedList<String>(StringUtil
-				.serializedSortOrderToMap(newOrder).values());
-		List<String> oldOrderList = new LinkedList<String>(StringUtil
-				.serializedSortOrderToMap(oldOrder).values());
+        List<String> newOrderList =
+            new LinkedList<String>(StringUtil.serializedSortOrderToMap(newOrder).values());
+        List<String> oldOrderList =
+            new LinkedList<String>(StringUtil.serializedSortOrderToMap(oldOrder).values());
 
         List view = SessionMethods.getEditingView(session);
         ArrayList newView = new ArrayList();
@@ -1081,9 +1080,7 @@ public class AjaxServices
     
     /**
      * Add a Node from the sort order
-     * @param index the index of the path to sort by
      * @param direction the direction to sort by
-     * @return 
      * @exception Exception if the application business logic throws
      */
     public void addToSortOrder(String path, String direction)
@@ -1102,24 +1099,24 @@ public class AjaxServices
         List<Path> pathView = SessionMethods.getEditingView(session);
         PathQuery query = (PathQuery) session.getAttribute(Constants.QUERY);
         // create a map of fields to direction
-        Map<String, String> sortOrderMap = new HashMap<String,String>();
+        Map<String, String> sortOrderMap = new HashMap<String, String>();
         Map<Path, String> currentSortOrder = query.getSortOrder();
         boolean sorting = false;
         for (Path viewPath: pathView) {
             String viewPathString = viewPath.toStringNoConstraints();
             String sortState = new String();
             // outer joins not allowed
-            if(!query.isValidOrderPath(viewPathString) && currentSortOrder.containsKey(viewPath)) {
+            if (!query.isValidOrderPath(viewPathString) && currentSortOrder.containsKey(viewPath)) {
                 query.resetOrderBy();
                 currentSortOrder = new LinkedHashMap<Path, String >();
                 sortState = "disabled";
-            } else if(!query.isValidOrderPath(viewPathString)) {
+            } else if (!query.isValidOrderPath(viewPathString)) {
                 sortState = "disabled";
             //if already sorted get the direction
-            } else if(currentSortOrder.containsKey(viewPath)) {
+            } else if (currentSortOrder.containsKey(viewPath)) {
                 sortState = currentSortOrder.get(viewPath);
             //default
-            } else if(currentSortOrder.size() <= 0 && !sorting) {
+            } else if (currentSortOrder.size() <= 0 && !sorting) {
                 sortState = "asc";
                 sorting = true;
             }

@@ -158,10 +158,10 @@ public class Constraint
     /**
      * A date format for ISO dates.
      */
-    final public static DateFormat ISO_DATE_FORMAT = new SimpleDateFormat("yyyy-MM-dd");
+    public static final DateFormat ISO_DATE_FORMAT = new SimpleDateFormat("yyyy-MM-dd");
 
     static {
-        Calendar gregorianCalendar= GregorianCalendar.getInstance(TimeZone.getTimeZone("GMT"));
+        Calendar gregorianCalendar = GregorianCalendar.getInstance(TimeZone.getTimeZone("GMT"));
         ISO_DATE_FORMAT.setCalendar(gregorianCalendar);
     }
 

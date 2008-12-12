@@ -22,9 +22,9 @@ import org.intermine.webservice.client.services.QueryService;
  * It demonstrates using of InterMine query web service.
  * This example displays first 100 genes shorter than 1kB and sorted by the identifier. 
  *
- * NOTE: The model can change at the server in next versions of FlyMine and sample won't work. For example
- * primaryIdentifier gene attribute can be renamed. In this case please download newer version of samples 
- * or modify sample properly.
+ * NOTE: The model can change at the server in next versions of FlyMine and sample won't work. For
+ * example primaryIdentifier gene attribute can be renamed. In this case please download newer
+ * version of samples or modify sample properly.
  * 
  * @author Jakub Kulaviak
  **/
@@ -36,8 +36,8 @@ public class QueryClient
     public static void main(String[] args) throws IOException {
         
         QueryService service = new ServiceFactory(serviceRootUrl, "QueryClient").getQueryService();
-        // XML representation of PathQuery, XML representation can be downloaded from InterMine website for your query or template
-        // following query fetches genes shorter than 1000 bases 
+        // XML representation of PathQuery, XML representation can be downloaded from InterMine
+        // website for your query or template following query fetches genes shorter than 1000 bases
         String queryXml = 
           "<query model=\"genomic\" view=\"Gene.primaryIdentifier Gene.secondaryIdentifier " 
           + "Gene.symbol Gene.name Gene.organism.shortName\" sortOrder=\"Gene.primaryIdentifier\">"

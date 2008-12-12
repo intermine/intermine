@@ -181,7 +181,8 @@ public class WidgetsService extends WebService
      * @return a String representing the generated HTML
      * @throws Exception an error has occured
      */
-    private String getHtml(WidgetConfig widgetConfig, InterMineBag bag, String prefix, ObjectStore os)
+    private String getHtml(WidgetConfig widgetConfig, InterMineBag bag, String prefix,
+                           ObjectStore os)
                     throws Exception {
         StringBuffer sb = new StringBuffer();
         sb.append("<html><head>");
@@ -200,10 +201,12 @@ public class WidgetsService extends WebService
         sb.append("</head><body>");
         sb.append("<form action=\"/widgetAction\" id=\"widgetaction"
                   + widgetConfig.getId() + "\">");
-        sb.append("<input type=\"hidden\" name=\"link\" value=\"" + widgetConfig.getLink() + "\"/>");
+        sb.append("<input type=\"hidden\" name=\"link\" value=\""
+                  + widgetConfig.getLink() + "\"/>");
         sb.append("<input type=\"hidden\" name=\"bagType\" value=\"" + bag.getType() + "\"/>");
         sb.append("<input type=\"hidden\" name=\"bagName\" value=\"" + bag.getName() + "\" />");
-        sb.append("<input type=\"hidden\" name=\"widgetid\" value=\"" + widgetConfig.getId() + "\" />");
+        sb.append("<input type=\"hidden\" name=\"widgetid\" value=\""
+                  + widgetConfig.getId() + "\" />");
         sb.append("<input type=\"hidden\" name=\"action\" value=\"\" styleId=\"action"
                   + widgetConfig.getId() + "\"/>");
         sb.append("<input type=\"hidden\" name=\"exporttype\" value=\"\" styleId=\"export"
@@ -216,7 +219,7 @@ public class WidgetsService extends WebService
          sb
                         .append("<span style=\"margin-top:5px\">Number of " + bag.getType()
                   + "s in this list not analysed in this widget:");
-         sb.append("<span id=\"widgetnotanalysed"+widgetConfig.getId()+"\"></span>");
+         sb.append("<span id=\"widgetnotanalysed" + widgetConfig.getId() + "\"></span>");
          sb.append("</span>");
         sb.append("</p>");
         // <c:set var="extraAttrMap" value="${widget2extraAttrs[widget.id]}" />
@@ -235,8 +238,8 @@ public class WidgetsService extends WebService
             sb.append("<select name=\"errorCorrection\" id=\"errorCorrection"
                       + widgetConfig.getId() + "\" onchange=\"getProcessEnrichmentWidgetConfig('"
                       + widgetConfig.getId() + "','" + bag.getName() + "}');\">");
-            sb
-                            .append("<html:option value=\"Benjamini and Hochberg\">Benjamini and Hochberg</html:option>");
+            sb.append("<html:option value=\"Benjamini and Hochberg\">"
+                      + "Benjamini and Hochberg</html:option>");
             sb.append("<option value=\"Bonferroni\">Bonferroni</option>");
             sb.append("<option value=\"None\">None</option>");
             sb.append("</select>");
@@ -277,10 +280,10 @@ public class WidgetsService extends WebService
             || widgetConfig instanceof TableWidgetConfig) {
             sb.append("<div id=\"widget_tool_bar_div_" + widgetConfig.getId()
                       + "\" class=\"widget_tool_bar_div\" >");
-            sb
-                            .append("<ul id=\"widget_button_bar_"
-                                    + widgetConfig.getId()
-                                    + "\" onclick=\"toggleToolBarMenu(event,'widget');\" class=\"widget_button_bar\" >");
+            sb.append("<ul id=\"widget_button_bar_"
+                      + widgetConfig.getId()
+                      + "\" onclick=\"toggleToolBarMenu(event,'widget');\""
+                      + " class=\"widget_button_bar\" >");
             sb.append("<li id=\"tool_bar_li_display_" + widgetConfig.getId()
                       + "\"><span id=\"tool_bar_button_display_" + widgetConfig.getId()
                       + "\" class=\"widget_tool_bar_button\">Display</span></li>");
@@ -322,10 +325,10 @@ public class WidgetsService extends WebService
         sb.append("<div id=\"widgetdatawait" + widgetConfig.getId()
                   + "\" class=\"widgetdatawait\"><img src=\"" + prefix
                   + "/images/wait30.gif\" title=\"Searching...\"/></div>");
-        sb
-                        .append("<div id=\"widgetdatanoresults"
-                                + widgetConfig.getId()
-                                + "\" class=\"widgetdatawait\" style=\"display:none;\"><i>no results found</i></div>");
+        sb.append("<div id=\"widgetdatanoresults"
+                  + widgetConfig.getId()
+                  + "\" class=\"widgetdatawait\" style=\"display:none;\">"
+                  + "<i>no results found</i></div>");
         sb.append("<script language=\"javascript\">");
         if (widgetConfig instanceof GraphWidgetConfig) {
             sb.append("<!--//<![CDATA[\n");

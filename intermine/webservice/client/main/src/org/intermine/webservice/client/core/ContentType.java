@@ -1,6 +1,5 @@
 package org.intermine.webservice.client.core;
 
-
 /*
  * Copyright (C) 2002-2008 FlyMine
  *

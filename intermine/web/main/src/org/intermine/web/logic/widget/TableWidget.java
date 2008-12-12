@@ -70,9 +70,9 @@ public class TableWidget extends Widget
             }
             String[] tmp = oj.toString().split(",");
             String identifier = null;
-            Pattern PrimaryIdentifier = Pattern.compile("P\\w+(I)\\w+(r)\\=\\w*");
+            Pattern primaryIdentifier = Pattern.compile("P\\w+(I)\\w+(r)\\=\\w*");
             for (int i = 0; i < tmp.length; i++) {
-                Matcher matcher = PrimaryIdentifier.matcher(tmp[i].trim());
+                Matcher matcher = primaryIdentifier.matcher(tmp[i].trim());
                 if (matcher.find()) {
                     identifier = tmp[i];
                     break;

@@ -21,7 +21,6 @@ import java.util.NoSuchElementException;
 import java.util.Set;
 
 import org.intermine.metadata.ClassDescriptor;
-import org.intermine.metadata.FieldDescriptor;
 import org.intermine.metadata.PrimaryKey;
 import org.intermine.model.InterMineObject;
 import org.intermine.objectstore.ObjectStoreException;
@@ -111,7 +110,8 @@ public class ParallelBatchingFetcher extends BatchingFetcher
         timeSpentPrefetchEquiv += time2 - time1;
     }
 
-    private class WorkUnit {
+    private class WorkUnit
+    {
         private PrimaryKey pk;
         private ClassDescriptor cld;
         private Map<InterMineObject, Set<InterMineObject>> results;
@@ -146,7 +146,8 @@ public class ParallelBatchingFetcher extends BatchingFetcher
         }
     }
 
-    private class Worker implements Runnable {
+    private class Worker implements Runnable
+    {
         public Worker() {
         }
 

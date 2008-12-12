@@ -20,8 +20,9 @@ import org.intermine.web.logic.profile.TagManager;
 
 /**
  * Class filtering web searchables according to the associated tags.
+ * @author Jakub Kulaviak <jakub@flymine.org>
  */
-public class SearchFilterEngine 
+public class SearchFilterEngine
 {
 
     /**
@@ -36,7 +37,7 @@ public class SearchFilterEngine
      * @return the filtered Map
      */
     public <W extends WebSearchable> Map<String, W>
-        filterByTags(Map<String, W> webSearchables, List<String> tagNames, String tagType, String 
+        filterByTags(Map<String, W> webSearchables, List<String> tagNames, String tagType, String
                 userName, TagManager tagManager) {
         Map<String, W> returnMap = new LinkedHashMap<String, W>(webSearchables);
 

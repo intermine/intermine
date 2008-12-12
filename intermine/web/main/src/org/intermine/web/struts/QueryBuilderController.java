@@ -98,7 +98,7 @@ public class QueryBuilderController extends TilesAction
         // sort order
         Map<Path, String> sortOrder = SessionMethods.getEditingSortOrder(session);
         // create a map of fields to direction
-        Map<String, String> sortOrderMap = new HashMap<String,String>();
+        Map<String, String> sortOrderMap = new HashMap<String, String>();
         if (sortOrder != null) {
             for (Path path: sortOrder.keySet()) {
                 sortOrderMap.put(path.toStringNoConstraints(), sortOrder.get(path));
