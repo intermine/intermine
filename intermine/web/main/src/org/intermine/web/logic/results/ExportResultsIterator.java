@@ -23,6 +23,7 @@ import org.intermine.objectstore.ObjectStoreException;
 import org.intermine.objectstore.query.Query;
 import org.intermine.objectstore.query.QueryCollectionPathExpression;
 import org.intermine.objectstore.query.QuerySelectable;
+import org.intermine.objectstore.query.Results;
 import org.intermine.objectstore.query.ResultsRow;
 import org.intermine.pathquery.Path;
 import org.intermine.pathquery.PathQuery;
@@ -41,8 +42,8 @@ public class ExportResultsIterator implements Iterator<ResultsRow>
     private Iterator<ResultsRow> subIter;
     // This object contains a description of the collections in the input.
     private List columns;
-    private static final ResultsRow EMPTY_RESULTSROW = new ResultsRow();
     private int columnCount;
+    private Results results;
 
     /**
      * Constructor for ExportResultsIterator. This creates a new instance from the given
@@ -60,13 +61,22 @@ public class ExportResultsIterator implements Iterator<ResultsRow>
         Map returnBagQueryResults = new HashMap();
         Query q = MainHelper.makeQuery(pq, savedBags, pathToQueryNode, bagQueryRunner,
                 returnBagQueryResults, false);
-        osIter = os.execute(q).iterator();
+        results = os.execute(q);
+        osIter = results.iterator();
         List<ResultsRow> empty = Collections.emptyList();
         subIter = empty.iterator();
         columns = convertColumnTypes(q.getSelect(), pq, pathToQueryNode);
         columnCount = pq.getView().size();
     }
 
+    /**
+     * Sets batch size.
+     * @param size size
+     */
+    public void setBatchSize(int  size) {
+        results.setBatchSize(size);
+    }
+        
     /**
      * {@inheritDoc}
      */
