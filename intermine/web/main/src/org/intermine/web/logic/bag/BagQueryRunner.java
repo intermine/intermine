@@ -44,7 +44,7 @@ import org.intermine.web.logic.template.TemplateQuery;
 public class BagQueryRunner
 {
     //private static final Logger LOG = Logger.getLogger(BagQueryRunner.class);
-    private ObjectStoreInterMineImpl os;
+    private ObjectStore os;
 
     private Model model;
 
@@ -68,7 +68,6 @@ public class BagQueryRunner
      */
     public BagQueryRunner(ObjectStore os, Map<String, List<FieldDescriptor>> classKeys,
             BagQueryConfig bagQueryConfig, List<TemplateQuery> conversionTemplates) {
-        this.os = (ObjectStoreInterMineImpl) os;
         this.model = os.getModel();
         this.classKeys = classKeys;
         this.bagQueryConfig = bagQueryConfig;
