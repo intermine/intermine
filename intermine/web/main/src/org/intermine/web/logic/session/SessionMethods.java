@@ -45,6 +45,7 @@ import org.intermine.util.CacheMap;
 import org.intermine.util.PropertiesUtil;
 import org.intermine.web.logic.Constants;
 import org.intermine.web.logic.WebUtil;
+import org.intermine.web.logic.bag.BagConversionHelper;
 import org.intermine.web.logic.bag.BagQueryConfig;
 import org.intermine.web.logic.bag.BagQueryResult;
 import org.intermine.web.logic.bag.InterMineBag;
@@ -59,6 +60,7 @@ import org.intermine.web.logic.query.PageTableQueryMonitor;
 import org.intermine.web.logic.query.QueryMonitor;
 import org.intermine.web.logic.query.SaveQueryHelper;
 import org.intermine.web.logic.query.SavedQuery;
+import org.intermine.web.logic.query.WebResultsExecutor;
 import org.intermine.web.logic.results.DisplayObject;
 import org.intermine.web.logic.results.DisplayObjectFactory;
 import org.intermine.web.logic.results.PagedTable;
@@ -503,10 +505,6 @@ public class SessionMethods
                                     final boolean saveQuery,
                                     final PathQuery pathQuery) {
         synchronized (session) {
-            final ServletContext servletContext = session.getServletContext();
-            final ObjectStore os = new ObjectStoreFlatOuterJoinsImpl((ObjectStore)
-                    servletContext.getAttribute(Constants.OBJECTSTORE));
-            final Model model = os.getModel();
 
             Map queries = getRunningQueries(session);
             final String qid = "" + topQueryId++;
@@ -516,15 +514,8 @@ public class SessionMethods
                 public void run () {
                     final Profile profile = (Profile) session.getAttribute(Constants.PROFILE);
                     try {
-                        Map<String, QuerySelectable> pathToQueryNode = new HashMap();
-                        Map<String, BagQueryResult> pathToBagQueryResult = new HashMap();
-                        Map<String, InterMineBag> allBags =
-                            WebUtil.getAllBags(profile.getSavedBags(), 
-                            SessionMethods.getSearchRepository(servletContext));
-                        final PagedTable pr =
-                            doPathQueryGetPagedTable(pathQuery, servletContext,
-                                                     os, model, pathToQueryNode,
-                                                     pathToBagQueryResult, allBags);
+                        WebResultsExecutor executor = SessionMethods.getWebResultsExecutor(session);
+                        final PagedTable pr = new PagedTable((executor.execute(pathQuery)));
                         Action action = new Action() {
                             public void process() {
                                 pr.getResultElementRows();
@@ -888,43 +879,6 @@ public class SessionMethods
     }
 
     /**
-     * Execute a path query and return a PagedTable.
-     * @param pathQuery the PathQuery
-     * @param servletContext the context
-     * @param os the ObjectStore
-     * @param model the Model
-     * @param pathToQueryNode optional parameter in which path to QueryNode map can be returned
-     * @param pathToBagQueryResult optional parameter in which any BagQueryResult objects can be
-     * returned
-     * @param allBags a Map of all bags available for this query
-     * @return the PagedTable
-     * @throws ObjectStoreException if there is an ObjectStore problem
-     */
-    public static PagedTable doPathQueryGetPagedTable(final PathQuery pathQuery,
-                                             final ServletContext servletContext,
-                                             final ObjectStore os, final Model model,
-                                             Map<String, QuerySelectable> pathToQueryNode,
-                                             Map<String, BagQueryResult> pathToBagQueryResult,
-                                             Map<String, InterMineBag> allBags)
-                    throws ObjectStoreException {
-        Map<String, List<FieldDescriptor>> classKeys = getClassKeys(servletContext);
-        Query q = MainHelper.makeQuery(pathQuery, allBags, pathToQueryNode,
-                     servletContext, pathToBagQueryResult, false,
-                     (ObjectStore) servletContext.getAttribute(Constants.OBJECTSTORE),
-                     classKeys,
-                     (BagQueryConfig) servletContext.getAttribute(Constants.BAG_QUERY_CONFIG));
-        Results results = TableHelper.makeResults(os, q);
-        results.setNoPrefetch();
-
-        WebResults webResults = new WebResults(pathQuery, results, model,
-            pathToQueryNode,
-            classKeys,
-            pathToBagQueryResult);
-        PagedTable pr = new PagedTable(webResults);
-        return pr;
-    }
-
-    /**
      * @param request request
      * @return WebConfig
      */
@@ -990,5 +944,34 @@ public class SessionMethods
      */
     public static BagQueryConfig getBagQueryConfig(ServletContext servletContext) {
         return (BagQueryConfig) servletContext.getAttribute(Constants.BAG_QUERY_CONFIG);
+    }
+    
+    /**
+     * Retrieves from session required objects and constructs path query executor returning
+     * results as WebResults.
+     * @param session session
+     * @return executor
+     */
+    public static WebResultsExecutor getWebResultsExecutor(HttpSession session) {
+        ServletContext servletContext = session.getServletContext();
+        List<TemplateQuery> conversionTemplates = BagConversionHelper.getConversionTemplates
+            (servletContext);
+        WebResultsExecutor ret = new WebResultsExecutor(
+                getObjectStore(servletContext),
+                getClassKeys(servletContext), 
+                getBagQueryConfig(servletContext),
+                getProfile(session),
+                conversionTemplates,
+                getSearchRepository(servletContext));
+        return ret;
+    }
+    
+    /**
+     * Returns user profile saved in session.
+     * @param session session
+     * @return user profile
+     */
+    public static Profile getProfile(HttpSession session) {
+        return (Profile) session.getAttribute(Constants.PROFILE);  
     }
 }

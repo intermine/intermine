@@ -42,6 +42,7 @@ import org.intermine.web.logic.export.ExportException;
 import org.intermine.web.logic.export.http.TableExporterFactory;
 import org.intermine.web.logic.export.http.TableHttpExporter;
 import org.intermine.web.logic.profile.Profile;
+import org.intermine.web.logic.query.WebResultsExecutor;
 import org.intermine.web.logic.results.PagedTable;
 import org.intermine.web.logic.session.SessionMethods;
 
@@ -118,20 +119,11 @@ public class TableExportAction extends InterMineAction
     private PagedTable reorderPagedTable(PagedTable pt, String pathsString,
             HttpServletRequest request) throws ObjectStoreException {
         HttpSession session = request.getSession();
-        Profile profile = (Profile) session.getAttribute(Constants.PROFILE);
-        ServletContext servletContext = session.getServletContext();
-        ObjectStore os = (ObjectStore) servletContext.getAttribute(Constants.OBJECTSTORE);
-        Model model = os.getModel();
         PathQuery newPathQuery = new PathQuery(pt.getWebTable().getPathQuery());
         newPathQuery.setView(new LinkedList<String>(StringUtil
                 .serializedSortOrderToMap(pathsString).keySet()));
-        Map<String, QuerySelectable> pathToQueryNode = new HashMap();
-        Map<String, BagQueryResult> pathToBagQueryResult = new HashMap();
-        Map<String, InterMineBag> allBags = WebUtil.getAllBags(profile.getSavedBags(), 
-                SessionMethods.getSearchRepository(servletContext));
-        return SessionMethods.doPathQueryGetPagedTable(newPathQuery, servletContext, os, model,
-                pathToQueryNode, pathToBagQueryResult,
-                allBags);
+        WebResultsExecutor executor = SessionMethods.getWebResultsExecutor(session);
+        return new PagedTable(executor.execute(newPathQuery));
     }
 
     private ActionForward processException(ActionMapping mapping,
