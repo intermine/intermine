@@ -69,6 +69,7 @@ public class BagQueryRunner
     public BagQueryRunner(ObjectStore os, Map<String, List<FieldDescriptor>> classKeys,
             BagQueryConfig bagQueryConfig, List<TemplateQuery> conversionTemplates) {
         this.model = os.getModel();
+        this.os = os;
         this.classKeys = classKeys;
         this.bagQueryConfig = bagQueryConfig;
         this.conversionTemplates = conversionTemplates;
