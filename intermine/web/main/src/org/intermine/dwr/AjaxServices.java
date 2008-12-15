@@ -296,7 +296,7 @@ public class AjaxServices
      * @param newTaggedObj name of new tagged object
      * @param type tag type
      * @param userName user name
-     * @param tagManager 
+     * @param tagManager tag manager 
      */
     public static void moveTagsToNewObject(String oldTaggedObj, String newTaggedObj, String type,
             String userName, TagManager tagManager) {
