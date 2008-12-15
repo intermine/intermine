@@ -58,7 +58,8 @@ public class EmployeeExporter implements TableHttpExporter
 
         PrintWriter printWriter;
         try {
-            printWriter = HttpExportUtil.getPrintWriterForClient(request, response.getOutputStream());
+            printWriter = HttpExportUtil.getPrintWriterForClient(request, 
+                    response.getOutputStream());
         } catch (IOException e) {
             throw new ExportException("Export failed.", e);
         }
@@ -123,7 +124,7 @@ public class EmployeeExporter implements TableHttpExporter
     }
 
     /**
-     * @see TableHttpExporter#canExport
+     * {@inheritDoc}
      */
     public boolean canExport(PagedTable pt) {
         List columns = pt.getColumns();
