@@ -111,16 +111,19 @@ public class PathQueryResultsHelperTest extends MockStrutsTestCase
         ServletContext servletContext = new ServletContextSimulator();
         ObjectStoreWriter userProfileOSW =  ObjectStoreWriterFactory.getObjectStoreWriter("osw.userprofile-test");
         ProfileManager profileManager = new ProfileManager(os, userProfileOSW);
+        servletContext.setAttribute(Constants.PROFILE_MANAGER, profileManager);
         int userId = 0;
         Profile profile = new Profile(profileManager, "modifyBagActionTest", userId, "pass",
                                       new HashMap(), new HashMap(), new HashMap());
         servletContext.setAttribute(Constants.GLOBAL_SEARCH_REPOSITORY, new SearchRepository(null));
         
         PathQuery pathQuery = new PathQuery(model);
-        pathQuery.getView().add(PathQuery.makePath(model, pathQuery, "Employee.age"));
-        pathQuery.getView().add(PathQuery.makePath(model, pathQuery, "Employee.name"));
+        List<Path> view = new ArrayList<Path>(pathQuery.getView());
+        view.add(PathQuery.makePath(model, pathQuery, "Employee.age"));
+        view.add(PathQuery.makePath(model, pathQuery, "Employee.name"));
+        pathQuery.setViewPaths(view);
         WebResults webResults = PathQueryResultHelper.createPathQueryGetResults(pathQuery, profile, os, classKeys, bagQueryConfig, servletContext);
-        assertEquals(webResults.size(), 1);
+        assertEquals(6, webResults.size());
     }
     
     public void testMakePathQueryForBag() throws Exception {
@@ -139,7 +142,6 @@ public class PathQueryResultsHelperTest extends MockStrutsTestCase
     }
 
     public void testMakePathQueryForCollection() throws Exception {
-        Model model = Model.getInstanceByName("testmodel");
         ServletContext context = getActionServlet().getServletContext();
         ObjectStore os = (ObjectStore) context.getAttribute(Constants.OBJECTSTORE);
         Department d1 = new Department();
@@ -152,13 +154,16 @@ public class PathQueryResultsHelperTest extends MockStrutsTestCase
         List<Class> sr = new ArrayList<Class>();
         sr.add(Employee.class);
         PathQuery pathQuery = PathQueryResultHelper.makePathQueryForCollectionForClass(webConfig, os, (InterMineObject)d1, "employees",sr);
-        String expectedXml = "<query name=\"\" model=\"testmodel\" view=\"Department.employees.name Department.employees.department.name Department.employees.department.company.name Department.employees.age Department.employees.fullTime\" sortOrder=\"Department.employees.name asc\">" +
-        		"<node path=\"Department\" type=\"Department\"></node><node path=\"Department.id\" type=\"Integer\">" +
-        		"<constraint op=\"=\" value=\"1\" description=\"\" identifier=\"\" code=\"A\">" +
-        		"</constraint>" +
+        String expectedXml = "<query name=\"\" model=\"testmodel\" view=\"Department.employees.name Department.employees:department.name Department.employees:department:company.name Department.employees.age Department.employees.fullTime\" sortOrder=\"Department.employees.name asc\">" +
+        		"<node path=\"Department\" type=\"Department\"></node>" +
+        		"<node path=\"Department.employees\" type=\"Employee\"></node>" +
+        		"<node path=\"Department.id\" type=\"Integer\">" +
+        		    "<constraint op=\"=\" value=\"1\" description=\"\" identifier=\"\" code=\"A\">" +
+        		    "</constraint>" +
         		"</node>" +
         		"</query>";
-        assertEquals(pathQuery.toXml(), expectedXml);
+        System.out.println(pathQuery.toXml());
+        assertEquals(expectedXml, pathQuery.toXml());
     }
     
 }
