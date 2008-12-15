@@ -522,7 +522,7 @@ public abstract class WebUtil
     
     /**
      * Formats column name. Replaces all dots and colons in path with '>'. 
-     * @param original
+     * @param original original column name
      * @return modified string
      */
     public static String formatColumnName(String original) {

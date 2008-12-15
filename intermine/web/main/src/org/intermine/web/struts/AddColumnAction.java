@@ -41,6 +41,15 @@ import org.intermine.web.logic.session.SessionMethods;
  */
 public class AddColumnAction extends InterMineAction
 {
+    /**
+     * Executes action. @see AddColumnAction
+     * @param mapping action mapping
+     * @param form not used
+     * @param request request
+     * @param response response
+     * @return action forward
+     * @throws Exception if an error happens
+     */
     public ActionForward execute(ActionMapping mapping,
             @SuppressWarnings("unused")
             ActionForm form, HttpServletRequest request,
