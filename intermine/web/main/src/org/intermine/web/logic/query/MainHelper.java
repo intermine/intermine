@@ -84,6 +84,7 @@ import org.intermine.web.logic.bag.BagQueryConfig;
 import org.intermine.web.logic.bag.BagQueryResult;
 import org.intermine.web.logic.bag.BagQueryRunner;
 import org.intermine.web.logic.bag.InterMineBag;
+import org.intermine.web.logic.profile.ProfileManager;
 import org.intermine.web.logic.results.Column;
 import org.intermine.web.logic.results.PagedTable;
 import org.intermine.web.logic.template.TemplateQuery;
@@ -211,18 +212,18 @@ public class MainHelper
      * @return an InterMine Query
      * @throws ObjectStoreException if something goes wrong
      */
-    public static Query makeQuery(PathQuery query, Map savedBags,
-            Map<String, QuerySelectable> pathToQueryNode, ServletContext servletContext,
-            Map returnBagQueryResults) throws ObjectStoreException {
-        return makeQuery(query, savedBags, pathToQueryNode, servletContext, returnBagQueryResults,
-                         false,
-                (ObjectStore) (servletContext == null ? null
-                    : servletContext.getAttribute(Constants.OBJECTSTORE)),
-                (Map) (servletContext == null ? null
-                    : servletContext.getAttribute(Constants.CLASS_KEYS)),
-                (BagQueryConfig) (servletContext == null ? null
-                    : servletContext.getAttribute(Constants.BAG_QUERY_CONFIG)));
-    }
+//    public static Query makeQuery(PathQuery query, Map savedBags,
+//            Map<String, QuerySelectable> pathToQueryNode, ServletContext servletContext,
+//            Map returnBagQueryResults) throws ObjectStoreException {
+//        return makeQuery(query, savedBags, pathToQueryNode, servletContext, returnBagQueryResults,
+//                         false,
+//                (ObjectStore) (servletContext == null ? null
+//                    : servletContext.getAttribute(Constants.OBJECTSTORE)),
+//                (Map) (servletContext == null ? null
+//                    : servletContext.getAttribute(Constants.CLASS_KEYS)),
+//                (BagQueryConfig) (servletContext == null ? null
+//                    : servletContext.getAttribute(Constants.BAG_QUERY_CONFIG)));
+//    }
 
     /**
      * Make an InterMine query from a path query
@@ -236,13 +237,12 @@ public class MainHelper
      */
     public static Query makeQuery(PathQuery query, Map savedBags, ServletContext servletContext,
             Map returnBagQueryResults) throws ObjectStoreException {
-        return makeQuery(query, savedBags, null, servletContext, returnBagQueryResults, false,
-                (ObjectStore) (servletContext == null ? null
-                    : servletContext.getAttribute(Constants.OBJECTSTORE)),
-                (Map) (servletContext == null ? null
-                    : servletContext.getAttribute(Constants.CLASS_KEYS)),
-                (BagQueryConfig) (servletContext == null ? null
-                    : servletContext.getAttribute(Constants.BAG_QUERY_CONFIG)));
+        return makeQuery(query, savedBags, null, 
+                (ProfileManager) servletContext.getAttribute(Constants.PROFILE_MANAGER),
+                returnBagQueryResults, false,
+                (ObjectStore) servletContext.getAttribute(Constants.OBJECTSTORE),
+                (Map) servletContext.getAttribute(Constants.CLASS_KEYS),
+                (BagQueryConfig) servletContext.getAttribute(Constants.BAG_QUERY_CONFIG));
     }
     
     /**
@@ -250,7 +250,7 @@ public class MainHelper
      * @param pathQueryOrig the PathQuery
      * @param savedBags the current saved bags map
      * @param pathToQueryNode optional parameter in which path to QueryNode map can be returned
-     * @param servletContext the current servlet context
+     * @param pm the ProfileManager to fetch the superuser profile
      * @param returnBagQueryResults optional parameter in which any BagQueryResult objects can be
      * @param checkOnly we're only checking the validity of the query, optimised to take less time
      * returned
@@ -261,11 +261,11 @@ public class MainHelper
      * @throws ObjectStoreException if something goes wrong
      */
     public static Query makeQuery(PathQuery pathQueryOrig, Map savedBags,
-            Map<String, QuerySelectable> pathToQueryNode, ServletContext servletContext,
+            Map<String, QuerySelectable> pathToQueryNode, ProfileManager pm,
             Map returnBagQueryResults, boolean checkOnly, ObjectStore os,
             Map classKeys, BagQueryConfig bagQueryConfig) throws ObjectStoreException {
         List<TemplateQuery> conversionTemplates = 
-            BagConversionHelper.getConversionTemplates(servletContext);
+            BagConversionHelper.getConversionTemplates(pm.getSuperuserProfile());
         BagQueryRunner bagQueryRunner = null;
         if (os != null) {
             bagQueryRunner = new BagQueryRunner(os, classKeys, bagQueryConfig, conversionTemplates);
@@ -1350,8 +1350,9 @@ public class MainHelper
             Map<String, List<FieldDescriptor>> classKeys,
             BagQueryConfig bagQueryConfig,
             ServletContext servletContext) {
+        ProfileManager pm = (ProfileManager) servletContext.getAttribute(Constants.PROFILE_MANAGER);
         List<TemplateQuery> conversionTemplates = 
-            BagConversionHelper.getConversionTemplates(servletContext);
+            BagConversionHelper.getConversionTemplates(pm.getSuperuserProfile());
         BagQueryRunner bagQueryRunner = null;
         if (os != null) {
             bagQueryRunner = new BagQueryRunner(os, classKeys, bagQueryConfig, conversionTemplates);

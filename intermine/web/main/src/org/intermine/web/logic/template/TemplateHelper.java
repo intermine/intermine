@@ -516,8 +516,9 @@ public class TemplateHelper
                                                                              new HashMap());
 
             Map<String, QuerySelectable> pathToQueryNode = new HashMap();
+            ProfileManager pm = SessionMethods.getProfileManager(servletContext);
             Query query = MainHelper.makeQuery(pathQuery, Collections.EMPTY_MAP, pathToQueryNode,
-                          servletContext, null, false,
+                          pm, null, false,
                           (ObjectStore) servletContext.getAttribute(Constants.OBJECTSTORE),
                           (Map) servletContext.getAttribute(Constants.CLASS_KEYS),
                           (BagQueryConfig) servletContext.getAttribute(Constants.BAG_QUERY_CONFIG));

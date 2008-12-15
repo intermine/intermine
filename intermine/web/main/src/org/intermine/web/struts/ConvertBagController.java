@@ -38,6 +38,7 @@ import org.intermine.web.logic.bag.TypeConverter;
 import org.intermine.web.logic.config.FieldConfig;
 import org.intermine.web.logic.config.Type;
 import org.intermine.web.logic.config.WebConfig;
+import org.intermine.web.logic.profile.ProfileManager;
 import org.intermine.web.logic.template.TemplateQuery;
 
 /**
@@ -63,8 +64,9 @@ public class ConvertBagController extends TilesAction
         WebConfig webConfig = (WebConfig) servletContext.getAttribute(Constants.WEBCONFIG);
         Model model = os.getModel();
 
+        ProfileManager pm = (ProfileManager) servletContext.getAttribute(Constants.PROFILE_MANAGER);
         Map<Class, TemplateQuery> conversionTypesMap = TypeConverter.getConversionTemplates(
-            BagConversionHelper.getConversionTemplates(servletContext), 
+            BagConversionHelper.getConversionTemplates(pm.getSuperuserProfile()), 
             TypeUtil.instantiate(model.getPackageName() + "." + imBag.getType()));
         ArrayList<String> conversionTypes = new ArrayList<String>();
         Map fastaMap = new HashMap();

@@ -30,10 +30,9 @@ import org.intermine.web.logic.Constants;
 import org.intermine.web.logic.config.WebConfig;
 import org.intermine.web.logic.pathqueryresult.PathQueryResultHelper;
 import org.intermine.web.logic.profile.Profile;
-import org.intermine.web.logic.profile.ProfileManager;
 import org.intermine.web.logic.profile.TagManager;
+import org.intermine.web.logic.profile.TagManagerFactory;
 import org.intermine.web.logic.results.WebResults;
-import org.intermine.web.logic.session.SessionMethods;
 import org.intermine.web.logic.tagging.TagNames;
 import org.intermine.web.logic.tagging.TagTypes;
 import org.intermine.web.logic.template.TemplateQuery;
@@ -48,22 +47,21 @@ public class BagConversionHelper
 
     /**
      * Find template queries that are tagged for use as converters.
-     * @param servletContext use to fetch ProfileManager and superuser account
+     * @param superProfile the superuser profile to fetch tags and templates
      * @return a list of conversion templates
      */
-    public static List<TemplateQuery> getConversionTemplates(ServletContext servletContext) {
-
-        ProfileManager pm = SessionMethods.getProfileManager(servletContext);
-        String sup = pm.getSuperuser();
-        Profile p = pm.getProfile(sup);
+    public static List<TemplateQuery> getConversionTemplates(Profile superProfile) {
 
         List<TemplateQuery> conversionTemplates = new ArrayList<TemplateQuery>();
-        TagManager tagManager = SessionMethods.getTagManager(servletContext);
-        List<Tag> tags = tagManager.getTags(TagNames.IM_CONVERTER, null, TagTypes.TEMPLATE, sup);
+        TagManager tagManager = 
+            new TagManagerFactory(superProfile.getProfileManager()).getTagManager();
+            
+        List<Tag> tags = tagManager.getTags(TagNames.IM_CONVERTER, null, TagTypes.TEMPLATE, 
+                superProfile.getUsername());
 
         for (Tag tag : tags) {
             String oid = tag.getObjectIdentifier();
-            TemplateQuery tq = p.getSavedTemplates().get(oid);
+            TemplateQuery tq = superProfile.getSavedTemplates().get(oid);
             if (tq != null) {
                 conversionTemplates.add(tq);
             }

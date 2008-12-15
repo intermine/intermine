@@ -91,7 +91,8 @@ public class PathQueryExecutor
         ObjectStore os = SessionMethods.getObjectStore(context);
         Map<String, List<FieldDescriptor>> classKeys = SessionMethods.getClassKeys(context);
         List<TemplateQuery> conversionTemplates = BagConversionHelper
-            .getConversionTemplates(context);
+            .getConversionTemplates(SessionMethods.getProfileManager(context)
+                    .getSuperuserProfile());
         return new BagQueryRunner(os, classKeys, SessionMethods.getBagQueryConfig(context), 
                 conversionTemplates);
     }

@@ -629,12 +629,14 @@ public class AjaxServices
                 Map<String, InterMineBag> bagMap = new HashMap<String, InterMineBag>();
                 bagMap.put(imBag.getName(), imBag);
 
+                ProfileManager pm = 
+                    (ProfileManager) servletContext.getAttribute(Constants.PROFILE_MANAGER);
                 PathQuery pathQuery = TypeConverter.getConversionQuery(BagConversionHelper.
-                    getConversionTemplates(servletContext),
+                    getConversionTemplates(pm.getSuperuserProfile()),
                     TypeUtil.instantiate(pckName + "." + imBag.getType()),
                     TypeUtil.instantiate(pckName + "." + type), imBag);
                 Query query = MainHelper.makeQuery(pathQuery, bagMap, pathToQueryNode,
-                    servletContext, null, false,
+                    pm, null, false,
                     (ObjectStore) servletContext.getAttribute(Constants.OBJECTSTORE),
                     getClassKeys(servletContext),
                     (BagQueryConfig) servletContext.getAttribute(Constants.BAG_QUERY_CONFIG));

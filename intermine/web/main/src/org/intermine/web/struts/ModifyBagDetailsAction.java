@@ -32,6 +32,7 @@ import org.intermine.web.logic.bag.BagHelper;
 import org.intermine.web.logic.bag.BagQueryConfig;
 import org.intermine.web.logic.bag.InterMineBag;
 import org.intermine.web.logic.profile.Profile;
+import org.intermine.web.logic.profile.ProfileManager;
 import org.intermine.web.logic.results.PagedTable;
 import org.intermine.web.logic.results.WebResults;
 import org.intermine.web.logic.search.SearchRepository;
@@ -142,8 +143,10 @@ public class ModifyBagDetailsAction extends InterMineAction
                         && request.getParameter("bagName") != null) {
             String type2 = request.getParameter("convert");
             Model model = os.getModel();
+            ProfileManager pm = 
+                (ProfileManager) servletContext.getAttribute(Constants.PROFILE_MANAGER); 
             WebResults webResults = BagConversionHelper.getConvertedObjects(profile, servletContext,
-                BagConversionHelper.getConversionTemplates(servletContext),
+                BagConversionHelper.getConversionTemplates(pm.getSuperuserProfile()),
                 TypeUtil.instantiate(model.getPackageName() + "." + imBag.getType()),
                 TypeUtil.instantiate(model.getPackageName() + "." + type2),
                 imBag);
