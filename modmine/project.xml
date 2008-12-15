@@ -12,7 +12,8 @@
       <property name="organisms" value="7227"/>
       <property name="dataSourceName" value="FlyBase"/>
       <property name="processors"
-                value="org.intermine.bio.dataconversion.FlyBaseProcessor"/>
+                value="org.intermine.bio.dataconversion.FlyBaseProcessor
+                       org.intermine.bio.dataconversion.StockProcessor"/>
       <property name="converter.class" 
                 value="org.intermine.bio.dataconversion.GenomeDBConverter"/>
     </source>
