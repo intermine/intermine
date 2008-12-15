@@ -23,7 +23,6 @@
       <property name="converter.class" 
                 value="org.intermine.bio.dataconversion.ChadoDBConverter"/>
     </source>
-<!--
     <source name="chado-db-flybase-others" type="chado-db">
       <property name="source.db.name" value="flybase"/>
       <property name="organisms" value="Dana Dere Dgri Dmoj Dper Dsec Dsim Dvir Dwil Dyak"/>
@@ -33,7 +32,6 @@
       <property name="converter.class" 
                 value="org.intermine.bio.dataconversion.ChadoDBConverter"/>
     </source>
--->
     <source name="drosophila-homology" type="drosophila-homology">
       <property name="src.data.dir" location="/shared/data/flybase/homology"/>
       <property name="src.data.dir.includes" value="frb.GLEANR.TEremoved.clusters.tsv"/>
