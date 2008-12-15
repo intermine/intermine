@@ -14,7 +14,8 @@ import org.intermine.objectstore.ObjectStoreException;
 import org.intermine.xml.full.Item;
 import org.intermine.xml.full.Reference;
 
-public class OMIMConverter extends FileConverter {
+public class OMIMConverter extends FileConverter
+{
 
     protected static final String GENOMIC_NS = "http://www.flymine.org/model/genomic#";
     //private data fields

@@ -258,7 +258,7 @@ Example
                 String text = characters.toString();
                 organism.setAttribute("name", text);
                 int spaceIndex = text.indexOf(" ");
-                if(spaceIndex == -1) {
+                if (spaceIndex == -1) {
                     organism.setAttribute("genus", text);
                 } else {
                     organism.setAttribute("genus", text.substring(0, spaceIndex));
