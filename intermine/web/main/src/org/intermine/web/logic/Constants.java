@@ -233,4 +233,9 @@ public interface Constants
      * Session attribute used to store WebState object.
      */
     public static final String WEB_STATE = "WEB_STATE";
+
+    /**
+     * Batch size for the underlying objectstore
+     */
+    public static final int BATCH_SIZE = 500;
 }

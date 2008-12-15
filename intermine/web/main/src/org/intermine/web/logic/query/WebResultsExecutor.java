@@ -12,13 +12,13 @@ import org.intermine.objectstore.query.QuerySelectable;
 import org.intermine.objectstore.query.Results;
 import org.intermine.objectstore.query.ResultsInfo;
 import org.intermine.pathquery.PathQuery;
+import org.intermine.web.logic.Constants;
 import org.intermine.web.logic.WebUtil;
 import org.intermine.web.logic.bag.BagQueryConfig;
 import org.intermine.web.logic.bag.BagQueryResult;
 import org.intermine.web.logic.bag.BagQueryRunner;
 import org.intermine.web.logic.bag.InterMineBag;
 import org.intermine.web.logic.profile.Profile;
-import org.intermine.web.logic.results.TableHelper;
 import org.intermine.web.logic.results.WebResults;
 import org.intermine.web.logic.search.SearchRepository;
 import org.intermine.web.logic.template.TemplateQuery;
@@ -62,7 +62,7 @@ public class WebResultsExecutor {
                 false);
 
         Results results = os.execute(q);
-        results.setBatchSize(TableHelper.BATCH_SIZE); 
+        results.setBatchSize(Constants.BATCH_SIZE); 
         results.setNoPrefetch(); 
 
         WebResults webResults = new WebResults(pq, results, os.getModel(),

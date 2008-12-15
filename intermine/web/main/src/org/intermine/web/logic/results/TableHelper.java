@@ -14,6 +14,7 @@ import org.intermine.objectstore.ObjectStore;
 import org.intermine.objectstore.ObjectStoreException;
 import org.intermine.objectstore.query.Query;
 import org.intermine.objectstore.query.Results;
+import org.intermine.web.logic.Constants;
 
 /**
  * Helper methods for the PagedTable object.
@@ -22,11 +23,6 @@ import org.intermine.objectstore.query.Results;
  */
 public abstract class TableHelper
 {
-    /**
-     * Batch size for the underlying objectstore
-     */
-    public static final int BATCH_SIZE = 500;
-
     /**
      * Must be called after makeResults to check that the query is valid and
      * fetch the first row.
@@ -61,7 +57,7 @@ public abstract class TableHelper
     public static Results makeResults(ObjectStore os, Query query)
         throws ObjectStoreException {
         Results r = os.execute(query);
-        r.setBatchSize(BATCH_SIZE);
+        r.setBatchSize(Constants.BATCH_SIZE);
         return r;
     }
 }
