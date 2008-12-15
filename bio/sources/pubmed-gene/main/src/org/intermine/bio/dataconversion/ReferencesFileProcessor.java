@@ -110,9 +110,6 @@ public class ReferencesFileProcessor
                             + "file is sorted according to the organism id else the "
                             + "behaviour is undefined.");
                 }
-                if (lineCounter % 1000000 == 0) {
-                    System.out.println("Processing line: " + lineCounter);
-                }
             }
             reader = null;
             return new PubMedReference(processedOrganism, references);
