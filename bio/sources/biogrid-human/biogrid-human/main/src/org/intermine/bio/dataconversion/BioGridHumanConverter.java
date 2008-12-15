@@ -29,7 +29,8 @@ import org.intermine.xml.full.Item;
 import org.intermine.xml.full.ItemHelper;
 import org.intermine.xml.full.ReferenceList;
 
-public class BioGridHumanConverter extends FileConverter {
+public class BioGridHumanConverter extends FileConverter 
+{
 
     protected static final String GENOMIC_NS = "http://www.flymine.org/model/genomic#";
     private static Map<String, String> masterList = new HashMap<String, String>();
@@ -87,10 +88,11 @@ public class BioGridHumanConverter extends FileConverter {
             while ((readString = in.readLine()) != null) {
                 String[] tmp = readString.split(delimiter);
 
-                if(tmp[6].equals("Phenotypic Enhancement") || tmp[6].equals("Phenotypic Suppression")) {
+                if (tmp[6].equals("Phenotypic Enhancement")
+                   || tmp[6].equals("Phenotypic Suppression")) {
                     values = new Vector<String>();
 
-                    for(int i=0; i < tmp.length; i++) {
+                    for (int i = 0; i < tmp.length; i++) {
                         switch(i) {
                             case 2: { //Gene 1
                                 values.add(tmp[i]);
@@ -133,13 +135,13 @@ public class BioGridHumanConverter extends FileConverter {
 
         private void storeInteractingGenes() throws ObjectStoreException {
 
-            for(int i = 0; i < valueRows.size(); i++) {
+            for (int i = 0; i < valueRows.size(); i++) {
 
                 values = valueRows.get(i);
 
                     String organismARefId, organismBRefId;
 
-                    if(organismMap.get(values.get(5)) == null) {
+                    if (organismMap.get(values.get(5)) == null) {
                         Item organism = createItem("Organism");
 
                         organism.setAttribute("taxonId", values.get(5));
@@ -153,7 +155,7 @@ public class BioGridHumanConverter extends FileConverter {
                         organismARefId = organismMap.get(values.get(5));
                     }
 
-                    if(organismMap.get(values.get(6)) == null) {
+                    if (organismMap.get(values.get(6)) == null) {
                         Item organism2 = createItem("Organism");
 
                         organism2.setAttribute("taxonId", values.get(6));
@@ -173,7 +175,7 @@ public class BioGridHumanConverter extends FileConverter {
 
                     String[] publications = values.get(4).split(";");
 
-                    for(int k = 0; k < publications.length; k++) {
+                    for (int k = 0; k < publications.length; k++) {
                         String itemId = pubs.get(publications[k]);
                         if (itemId == null) {
                                 Item pub = createItem("Publication");
