@@ -33,7 +33,12 @@ public class QueryClient
     
     private static String serviceRootUrl = "http://localhost:8080/query/service";
     
-    public static void main(String[] args) throws IOException {
+    /**
+     * 
+     * @param args command line arguments
+     * @throws IOException
+     */
+    public static void main(String[] args) {
         
         QueryService service = new ServiceFactory(serviceRootUrl, "QueryClient").getQueryService();
         // XML representation of PathQuery, XML representation can be downloaded from InterMine

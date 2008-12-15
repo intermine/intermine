@@ -31,9 +31,14 @@ public class TemplateClient
 {
     private static String serviceRootUrl = "http://localhost:8080/query/service";
 
+    /**
+     * 
+     * @param args command line arguments
+     */
     public static void main(String[] args) {
 
-        TemplateService service = new ServiceFactory(serviceRootUrl, "TemplateClient").getTemplateService();
+        TemplateService service = new ServiceFactory(serviceRootUrl, "TemplateClient")
+            .getTemplateService();
         List<TemplateParameter> parameters = new ArrayList<TemplateParameter>();
         // setting first template parameter
         // first organism should be equal to Drosophila melanogaster

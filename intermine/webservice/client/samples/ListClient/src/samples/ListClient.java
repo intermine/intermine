@@ -30,6 +30,9 @@ public class ListClient
 {
     private static String serviceRootUrl = "http://localhost:8080/query/service";
     
+    /**
+     * @param args command line arguments
+     */
     public static void main(String[] args) {
         
         ListService service = new ServiceFactory(serviceRootUrl, "ListClient").getListService();
