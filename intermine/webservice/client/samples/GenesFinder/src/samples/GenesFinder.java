@@ -36,7 +36,10 @@ public class GenesFinder
 {
     private static String serviceRootUrl = "http://www.flymine.org/query/service";
 
-    public static void main(String[] args) throws IOException {
+    /**
+     * @param args command line arguments
+     */
+    public static void main(String[] args)  {
         try {
 
             String inputFileName = getParameter("--file", args);
@@ -58,7 +61,7 @@ public class GenesFinder
 
             findFeatures(type, tolerance, locations);
         } catch (GenesFinderException e) {
-            System.err.println(e.getMessage());
+            System.out.println(e.getMessage());
             printUsage();
             System.exit(1);
         }
@@ -205,11 +208,19 @@ public class GenesFinder
         return ret;
     }
 
+    /**
+     * Example general exception. 
+     *
+     */
     static class GenesFinderException extends RuntimeException
     {
 
         private static final long serialVersionUID = 1L;
 
+        /**
+         * Constructor.
+         * @param msg error message
+         */
         public GenesFinderException(String msg) {
             super(msg);
         }

@@ -10,7 +10,6 @@ package samples;
  *
  */
 
-import java.io.IOException;
 import java.util.List;
 
 import org.intermine.metadata.Model;
@@ -36,7 +35,12 @@ public class QueryAPIClient
 {
     private static String serviceRootUrl = "http://localhost:8080/query/service";
 
-    public static void main(String[] args) throws IOException {
+    /**
+     * 
+     * @param args command line arguments
+     * @throws IOException
+     */
+    public static void main(String[] args) {
         QueryService service =
             new ServiceFactory(serviceRootUrl, "QueryAPIClient").getQueryService();
         Model model = getModel();
