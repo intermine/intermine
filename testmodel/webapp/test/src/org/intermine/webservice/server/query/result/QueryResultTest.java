@@ -84,15 +84,6 @@ public class QueryResultTest extends TestCase
         String req = getRequestString("query=a" + getQuery());
         assertEquals(Output.SC_BAD_REQUEST, TestUtil.getResponseCode(req));        
     }
-
-    /**
-     * Tests that when parameter 'onlyTotalCount' is set, then only total count of results is returned.
-     * @throws Exception when an error occurs 
-     */
-    public void testOnlyTotalCount() throws Exception {
-        String result = getResultForQueryString("tcount&query=" + getQuery()).trim();
-        assertEquals("6", result);
-    }
     
     public String getServiceUrl() {
         return serviceUrl;
