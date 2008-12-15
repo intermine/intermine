@@ -201,29 +201,6 @@ public class MainHelper
         }
     }
 
-    /**
-     * Make an InterMine query from a path query
-     * @param query the PathQuery
-     * @param savedBags the current saved bags map
-     * @param servletContext the current servlet context
-     * @param returnBagQueryResults optional parameter in which any BagQueryResult objects can be
-     * returned
-     * @param pathToQueryNode optional parameter in which path to QueryNode map can be returned
-     * @return an InterMine Query
-     * @throws ObjectStoreException if something goes wrong
-     */
-//    public static Query makeQuery(PathQuery query, Map savedBags,
-//            Map<String, QuerySelectable> pathToQueryNode, ServletContext servletContext,
-//            Map returnBagQueryResults) throws ObjectStoreException {
-//        return makeQuery(query, savedBags, pathToQueryNode, servletContext, returnBagQueryResults,
-//                         false,
-//                (ObjectStore) (servletContext == null ? null
-//                    : servletContext.getAttribute(Constants.OBJECTSTORE)),
-//                (Map) (servletContext == null ? null
-//                    : servletContext.getAttribute(Constants.CLASS_KEYS)),
-//                (BagQueryConfig) (servletContext == null ? null
-//                    : servletContext.getAttribute(Constants.BAG_QUERY_CONFIG)));
-//    }
 
     /**
      * Make an InterMine query from a path query
