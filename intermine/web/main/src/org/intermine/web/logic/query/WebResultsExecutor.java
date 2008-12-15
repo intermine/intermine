@@ -7,6 +7,7 @@ import java.util.Map;
 import org.intermine.metadata.FieldDescriptor;
 import org.intermine.objectstore.ObjectStore;
 import org.intermine.objectstore.ObjectStoreException;
+import org.intermine.objectstore.flatouterjoins.ObjectStoreFlatOuterJoinsImpl;
 import org.intermine.objectstore.query.Query;
 import org.intermine.objectstore.query.QuerySelectable;
 import org.intermine.objectstore.query.Results;
@@ -47,7 +48,7 @@ public class WebResultsExecutor {
         this.searchRepository = searchRepository;
     }
 
-    public WebResults execute(PathQuery pq) throws ObjectStoreException {
+    public WebResults execute(PathQuery pathQuery) throws ObjectStoreException {
         Map<String, QuerySelectable> pathToQueryNode = new HashMap<String, QuerySelectable>();
 
         Map<String, BagQueryResult> pathToBagQueryResult = new HashMap<String, BagQueryResult>();
@@ -58,14 +59,15 @@ public class WebResultsExecutor {
         Map<String, InterMineBag> allBags = WebUtil.getAllBags(profile.getSavedBags(), 
                 searchRepository);
         
-        Query q = MainHelper.makeQuery(pq, allBags, pathToQueryNode, bqr, pathToBagQueryResult,
+        Query q = MainHelper.makeQuery(pathQuery, allBags, pathToQueryNode, bqr, pathToBagQueryResult,
                 false);
 
-        Results results = os.execute(q);
+        ObjectStoreFlatOuterJoinsImpl joinsOs = new ObjectStoreFlatOuterJoinsImpl(os);
+        Results results = joinsOs.execute(q);
         results.setBatchSize(Constants.BATCH_SIZE); 
         results.setNoPrefetch(); 
 
-        WebResults webResults = new WebResults(pq, results, os.getModel(),
+        WebResults webResults = new WebResults(pathQuery, results, os.getModel(),
                 pathToQueryNode, classKeys, pathToBagQueryResult);
 
         return webResults;
