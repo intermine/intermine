@@ -1303,7 +1303,7 @@ public class MainHelper
                 (ObjectStore) servletContext.getAttribute(Constants.OBJECTSTORE),
                 (Map) servletContext.getAttribute(Constants.CLASS_KEYS),
                 (BagQueryConfig) servletContext.getAttribute(Constants.BAG_QUERY_CONFIG),
-                servletContext);
+                (ProfileManager) servletContext.getAttribute(Constants.PROFILE_MANAGER));
     }
 
     /**
@@ -1316,7 +1316,7 @@ public class MainHelper
      * @param os an ObjectStore to do LOOKUP queries in
      * @param classKeys class key config
      * @param bagQueryConfig a BagQueryConfig object
-     * @param servletContext a ServletContext object
+     * @param pm the ProfileManager to fetch the superuser profile from
      * @return the generated summary query
      */
     public static Query makeSummaryQuery(PathQuery pathQuery,
@@ -1326,8 +1326,7 @@ public class MainHelper
             ObjectStore os,
             Map<String, List<FieldDescriptor>> classKeys,
             BagQueryConfig bagQueryConfig,
-            ServletContext servletContext) {
-        ProfileManager pm = (ProfileManager) servletContext.getAttribute(Constants.PROFILE_MANAGER);
+            ProfileManager pm) {
         List<TemplateQuery> conversionTemplates = 
             BagConversionHelper.getConversionTemplates(pm.getSuperuserProfile());
         BagQueryRunner bagQueryRunner = null;
