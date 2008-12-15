@@ -29,25 +29,19 @@ import org.apache.commons.collections.map.LRUMap;
 import org.apache.log4j.Logger;
 import org.apache.struts.util.MessageResources;
 import org.intermine.metadata.FieldDescriptor;
-import org.intermine.metadata.Model;
 import org.intermine.model.InterMineObject;
 import org.intermine.objectstore.ObjectStore;
 import org.intermine.objectstore.ObjectStoreException;
 import org.intermine.objectstore.ObjectStoreQueryDurationException;
-import org.intermine.objectstore.flatouterjoins.ObjectStoreFlatOuterJoinsImpl;
 import org.intermine.objectstore.intermine.ObjectStoreInterMineImpl;
 import org.intermine.objectstore.query.Query;
-import org.intermine.objectstore.query.QuerySelectable;
-import org.intermine.objectstore.query.Results;
 import org.intermine.pathquery.Path;
 import org.intermine.pathquery.PathQuery;
 import org.intermine.util.CacheMap;
 import org.intermine.util.PropertiesUtil;
 import org.intermine.web.logic.Constants;
-import org.intermine.web.logic.WebUtil;
 import org.intermine.web.logic.bag.BagConversionHelper;
 import org.intermine.web.logic.bag.BagQueryConfig;
-import org.intermine.web.logic.bag.BagQueryResult;
 import org.intermine.web.logic.bag.InterMineBag;
 import org.intermine.web.logic.config.WebConfig;
 import org.intermine.web.logic.pathqueryresult.PathQueryResultHelper;
@@ -55,7 +49,6 @@ import org.intermine.web.logic.profile.Profile;
 import org.intermine.web.logic.profile.ProfileManager;
 import org.intermine.web.logic.profile.TagManager;
 import org.intermine.web.logic.profile.TagManagerFactory;
-import org.intermine.web.logic.query.MainHelper;
 import org.intermine.web.logic.query.PageTableQueryMonitor;
 import org.intermine.web.logic.query.QueryMonitor;
 import org.intermine.web.logic.query.SaveQueryHelper;
@@ -64,7 +57,6 @@ import org.intermine.web.logic.query.WebResultsExecutor;
 import org.intermine.web.logic.results.DisplayObject;
 import org.intermine.web.logic.results.DisplayObjectFactory;
 import org.intermine.web.logic.results.PagedTable;
-import org.intermine.web.logic.results.TableHelper;
 import org.intermine.web.logic.results.WebResults;
 import org.intermine.web.logic.results.WebState;
 import org.intermine.web.logic.search.SearchRepository;
@@ -955,7 +947,7 @@ public class SessionMethods
     public static WebResultsExecutor getWebResultsExecutor(HttpSession session) {
         ServletContext servletContext = session.getServletContext();
         List<TemplateQuery> conversionTemplates = BagConversionHelper.getConversionTemplates
-            (servletContext);
+            (getProfileManager(servletContext).getSuperuserProfile());
         WebResultsExecutor ret = new WebResultsExecutor(
                 getObjectStore(servletContext),
                 getClassKeys(servletContext), 

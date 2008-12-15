@@ -38,6 +38,7 @@ import org.intermine.web.logic.bag.BagQueryConfig;
 import org.intermine.web.logic.bag.BagQueryResult;
 import org.intermine.web.logic.bag.BagQueryRunner;
 import org.intermine.web.logic.profile.Profile;
+import org.intermine.web.logic.profile.ProfileManager;
 
 
 /**
@@ -81,9 +82,10 @@ public class BuildBagAction extends InterMineAction
         Map classKeys = (Map) servletContext.getAttribute(Constants.CLASS_KEYS);
         BagQueryConfig bagQueryConfig =
             (BagQueryConfig) servletContext.getAttribute(Constants.BAG_QUERY_CONFIG);
+        ProfileManager pm = (ProfileManager) servletContext.getAttribute(Constants.PROFILE_MANAGER);
         BagQueryRunner bagRunner =
             new BagQueryRunner(os, classKeys, bagQueryConfig,
-                    BagConversionHelper.getConversionTemplates(servletContext));
+                    BagConversionHelper.getConversionTemplates(pm.getSuperuserProfile()));
 
         int maxBagSize = WebUtil.getIntSessionProperty(session, "max.bag.size", 100000);
         Profile profile = (Profile) session.getAttribute(Constants.PROFILE);

@@ -442,16 +442,24 @@ public class ProfileManager
 
 
     /**
-     * @return the superuser
+     * @return the superuser name
      */
     public String getSuperuser() {
         return superuser;
     }
 
     /**
-     * @param superuser the superuser to set
+     * @param superuser the superuser name to set
      */
     public void setSuperuser(String superuser) {
         this.superuser = superuser;
+    }
+    
+
+    /**
+     * @return the superuser profile
+     */
+    public Profile getSuperuserProfile() {
+        return getProfile(superuser);
     }
 }
