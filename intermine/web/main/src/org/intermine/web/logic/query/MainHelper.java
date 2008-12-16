@@ -212,7 +212,8 @@ public class MainHelper
      * @return an InterMine Query
      * @throws ObjectStoreException if something goes wrong
      */
-    public static Query makeQuery(PathQuery query, Map savedBags, ServletContext servletContext,
+    public static Query makeQuery(PathQuery query, Map<String, InterMineBag> savedBags,
+            ServletContext servletContext,
             Map returnBagQueryResults) throws ObjectStoreException {
         return makeQuery(query, savedBags, null, 
                 (ProfileManager) servletContext.getAttribute(Constants.PROFILE_MANAGER),
@@ -237,10 +238,11 @@ public class MainHelper
      * @return an InterMine Query
      * @throws ObjectStoreException if something goes wrong
      */
-    public static Query makeQuery(PathQuery pathQueryOrig, Map savedBags,
+    public static Query makeQuery(PathQuery pathQueryOrig, Map<String, InterMineBag> savedBags,
             Map<String, QuerySelectable> pathToQueryNode, ProfileManager pm,
             Map returnBagQueryResults, boolean checkOnly, ObjectStore os,
-            Map classKeys, BagQueryConfig bagQueryConfig) throws ObjectStoreException {
+            Map<String, List<FieldDescriptor>> classKeys,
+            BagQueryConfig bagQueryConfig) throws ObjectStoreException {
         List<TemplateQuery> conversionTemplates = 
             BagConversionHelper.getConversionTemplates(pm.getSuperuserProfile());
         BagQueryRunner bagQueryRunner = null;
@@ -289,7 +291,7 @@ public class MainHelper
      * @return an InterMine Query
      * @throws ObjectStoreException if something goes wrong
      */
-    public static Query makeQuery(PathQuery pathQueryOrig, Map savedBags,
+    public static Query makeQuery(PathQuery pathQueryOrig, Map<String, InterMineBag> savedBags,
             Map<String, QuerySelectable> pathToQueryNode, BagQueryRunner bagQueryRunner,
             Map returnBagQueryResults, boolean checkOnly) throws ObjectStoreException {
         PathQuery pathQuery = pathQueryOrig.clone();
@@ -312,7 +314,7 @@ public class MainHelper
     }
 
     private static void recursiveMakeQuery(Queryable q, PathQuery pathQuery, PathNode root,
-            Map savedBags, Map<String, QuerySelectable> pathToQueryNode,
+            Map<String, InterMineBag> savedBags, Map<String, QuerySelectable> pathToQueryNode,
             BagQueryRunner bagQueryRunner, Map returnBagQueryResults, boolean checkOnly)
     throws ObjectStoreException {
         Model model = pathQuery.getModel();
@@ -348,8 +350,7 @@ public class MainHelper
         LinkedList<PathNode> queue = new LinkedList();
 
         //build the FROM and WHERE clauses
-        for (Iterator i = pathQuery.getNodes().values().iterator(); i.hasNext();) {
-            PathNode node = (PathNode) i.next();
+        for (PathNode node : pathQuery.getNodes().values()) {
             queue.addLast(node);
         }
 
@@ -466,7 +467,7 @@ public class MainHelper
                             }
                             cs.addConstraint(new BagConstraint(qf, c.getOp(), idBag));
                         } else {
-                            InterMineBag bag = (InterMineBag) savedBags.get(c.getValue());
+                            InterMineBag bag = savedBags.get(c.getValue());
                             if (bag == null) {
                                 throw new RuntimeException("a bag (" + c.getValue()
                                         + ") used by this query no longer exists");
@@ -1295,7 +1296,7 @@ public class MainHelper
      * @return an InterMine Query
      */
     public static Query makeSummaryQuery(PathQuery pathQuery,
-            Map savedBags,
+            Map<String, InterMineBag> savedBags,
             Map<String, QuerySelectable> pathToQueryNode,
             String summaryPath,
             ServletContext servletContext) {
@@ -1320,7 +1321,7 @@ public class MainHelper
      * @return the generated summary query
      */
     public static Query makeSummaryQuery(PathQuery pathQuery,
-            Map savedBags,
+            Map<String, InterMineBag> savedBags,
             Map<String, QuerySelectable> pathToQueryNode,
             String summaryPath,
             ObjectStore os,
@@ -1350,7 +1351,7 @@ public class MainHelper
      */
      public static Query makeSummaryQuery(PathQuery pathQuery,
              String summaryPath,
-             Map savedBags,
+             Map<String, InterMineBag> savedBags,
              Map<String, QuerySelectable> pathToQueryNode,
              BagQueryRunner bagQueryRunner) {   
         Map<String, QuerySelectable> origPathToQueryNode = new HashMap();
