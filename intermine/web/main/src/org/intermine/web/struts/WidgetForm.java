@@ -40,7 +40,7 @@ public class WidgetForm extends ActionForm
     private String highlight;
     private String pValue;
     private String numberOpt;
-    
+
 
     /**
      * returns the value of the checkboxes checked by the user on the form.
@@ -78,7 +78,7 @@ public class WidgetForm extends ActionForm
     public void setLink(String link) {
         this.link = link;
     }
-    
+
     /**
      * @return the pValue
      */
@@ -92,7 +92,7 @@ public class WidgetForm extends ActionForm
     public void setPValue(String pValue) {
         this.pValue = pValue;
     }
-    
+
     /**
      * @return the numberOpt
      */
@@ -101,7 +101,7 @@ public class WidgetForm extends ActionForm
     }
 
     /**
-     * @param pValue the pValue to set
+     * @param numberOpt the pValue to set
      */
     public void setNumberOpt(String numberOpt) {
         this.numberOpt = numberOpt;
@@ -215,7 +215,7 @@ public class WidgetForm extends ActionForm
     public void setSelectedExtraAttribute(String selectedExtraAttribute) {
         this.selectedExtraAttribute = selectedExtraAttribute;
     }
-    
+
 
     /**
      * @return the errorCorrection
@@ -237,7 +237,7 @@ public class WidgetForm extends ActionForm
     public String getMax() {
         return max;
     }
-    
+
     /**
      * @return the highlight
      */

@@ -130,6 +130,8 @@ foreach my $taxon_id(keys %organisms) {
                     my $protein_seq = $translation->seq();
                     my $protein_item = make_protein(\%proteins, $protein_seq);
 
+                    $protein_item->set('genes', [$gene_item]);
+
                     my $ctx = Digest::MD5->new;
                     $ctx->add($protein_seq);
                     my $digest = $ctx->hexdigest;
