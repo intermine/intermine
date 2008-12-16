@@ -93,7 +93,6 @@ public class BagElement implements Serializable
     }
 
     /**
-     * (non-Javadoc)
      * {@inheritDoc}
      */
     public int hashCode() {

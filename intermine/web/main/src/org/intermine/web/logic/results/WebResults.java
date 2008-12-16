@@ -17,7 +17,6 @@ import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 
 import org.apache.log4j.Logger;
 import org.intermine.metadata.FieldDescriptor;
@@ -44,7 +43,6 @@ import org.intermine.pathquery.Path;
 import org.intermine.pathquery.PathError;
 import org.intermine.pathquery.PathQuery;
 import org.intermine.pathquery.PathQueryBinding;
-import org.intermine.util.DynamicUtil;
 import org.intermine.util.TypeUtil;
 import org.intermine.web.logic.ClassKeyHelper;
 import org.intermine.web.logic.PathUtil;
@@ -435,8 +433,6 @@ public class WebResults extends AbstractList<List<Object>> implements WebTable
                         isKeyField = ClassKeyHelper.isKeyField(classKeys, unqualifiedFieldCD,
                                         fieldName);
                     }
-                    Set classes = DynamicUtil.decomposeClass(o.getClass());
-                    Class cls = (Class) classes.iterator().next();
                     ResultElement resultElement = new ResultElement(
                                     (o instanceof InterMineObject ? (InterMineObject) o : null),
                                     path, isKeyField);

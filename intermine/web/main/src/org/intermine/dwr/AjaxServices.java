@@ -1059,6 +1059,8 @@ public class AjaxServices
 
     /**
      * AJAX request - reorder view.
+     * @param newOrder the new order as a String
+     * @param oldOrder the previous order as a String
      */
     public void reorder(String newOrder, String oldOrder) {
         HttpSession session = WebContextFactory.get().getSession();
@@ -1082,6 +1084,7 @@ public class AjaxServices
     
     /**
      * Add a Node from the sort order
+     * @param path the Path as a String
      * @param direction the direction to sort by
      * @exception Exception if the application business logic throws
      */
@@ -1140,18 +1143,20 @@ public class AjaxServices
     }
     
     /**
-     * Change a node from outer join to normal and vice-versa.
-     *
+     * Swap between inner/outer join modes
+     * @param pathName the path for which to change the join type
+     * @return a String representing the updated path
+     * @throws Exception an exception
      */
     public String setOuterJoin(String pathName)
     throws Exception {
         HttpSession session = WebContextFactory.get().getSession();
-        ServletContext servletContext = session.getServletContext();
-        ObjectStore os = (ObjectStore) servletContext.getAttribute(Constants.OBJECTSTORE);
-        Model model = os.getModel();
-        WebConfig webConfig = (WebConfig) servletContext.getAttribute(Constants.WEBCONFIG);
-        List<Path> view = SessionMethods.getEditingView(session);
-        Map<Path, String> sortOrder = SessionMethods.getEditingSortOrder(session);
+        // ServletContext servletContext = session.getServletContext();
+        // ObjectStore os = (ObjectStore) servletContext.getAttribute(Constants.OBJECTSTORE);
+        // Model model = os.getModel();
+        // WebConfig webConfig = (WebConfig) servletContext.getAttribute(Constants.WEBCONFIG);
+        // List<Path> view = SessionMethods.getEditingView(session);
+        // Map<Path, String> sortOrder = SessionMethods.getEditingSortOrder(session);
         PathQuery query = (PathQuery) session.getAttribute(Constants.QUERY);
 
         query = query.clone();
@@ -1164,9 +1169,9 @@ public class AjaxServices
     }
 
     /**
-     * @return
-     * @throws MalformedURLException
-     * @throws FeedException
+     * Get the news
+     * @param rssURI the URI of the rss feed
+     * @return the news feed as html
      */
     public static String getNewsRead(String rssURI) {
         try {
