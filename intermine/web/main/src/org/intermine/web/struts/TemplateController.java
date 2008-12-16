@@ -109,7 +109,6 @@ public class TemplateController extends TilesAction
         if (idForLookup != null && idForLookup.length() != 0) {
             imObj = os.getObjectById(new Integer(idForLookup));
         }
-
         if (queryName == null) {
             queryName = request.getParameter("templateName");
         }
@@ -124,10 +123,9 @@ public class TemplateController extends TilesAction
         // replaced by constraining the id to be in the bag.
         TemplateQuery modifiedTemplate = null;
         if (loadModifiedTemplate != null) {
-            String userName = ((Profile) session
-                    .getAttribute(Constants.PROFILE)).getUsername();
-            modifiedTemplate = TemplateHelper.findTemplate(servletContext, session,
-                    userName, queryName, TemplateHelper.TEMP_TEMPLATE);
+            String userName = ((Profile) session.getAttribute(Constants.PROFILE)).getUsername();
+            modifiedTemplate = TemplateHelper.findTemplate(servletContext, session, userName,
+                                                           queryName, TemplateHelper.TEMP_TEMPLATE);
             queryName = modifiedTemplate.getName();
         }
 
@@ -145,12 +143,10 @@ public class TemplateController extends TilesAction
             if (scope == null) {
                 scope = TemplateHelper.ALL_TEMPLATE;
             }
-            String userName = ((Profile) session
-                    .getAttribute(Constants.PROFILE)).getUsername();
-            template = TemplateHelper.findTemplate(servletContext, session,
-                    userName, queryName, scope);
+            String userName = ((Profile) session.getAttribute(Constants.PROFILE)).getUsername();
+            template = TemplateHelper.findTemplate(servletContext, session, userName, queryName,
+                                                   scope);
         }
-
         if (template == null) {
             return null;
         }
@@ -163,20 +159,17 @@ public class TemplateController extends TilesAction
         Map selectedBagNames = new HashMap();
         Map keyFields = new HashMap();
         Map haveExtraConstraint = new HashMap();
+        Map classKeys = (Map) servletContext.getAttribute(Constants.CLASS_KEYS);
 
         // for the autocompleter
-        Map<String, String> classDesc = new HashMap<String, String>();
-        Map<String, String> fieldDesc = new HashMap<String, String>();
-
-        servletContext = session.getServletContext();
-        Map classKeys = (Map) servletContext.getAttribute(Constants.CLASS_KEYS);
+        Map<String, String> classDesc = new HashMap();
+        Map<String, String> fieldDesc = new HashMap();
 
         // For each node with an editable constraint, create a DisplayConstraint bean
         // and the human-readable "name" for each node (Department.company.name -> "Company name")
-
         TemplateQuery displayTemplate = (TemplateQuery) template.clone();
 
-        Map<String, InterMineBag> searchBags = WebUtil.getAllBags(profile.getSavedBags(), 
+        Map<String, InterMineBag> searchBags = WebUtil.getAllBags(profile.getSavedBags(),
                 SessionMethods.getSearchRepository(servletContext));
 
         Map<String, PathNode> editableNodesMap = new HashMap<String, PathNode>();
@@ -195,21 +188,10 @@ public class TemplateController extends TilesAction
         for (PathNode node : template.getEditableNodes()) {
             PathNode displayNode = displayTemplate.getNodes().get(node.getPathString());
 
-            // for the autocompleter
-            AutoCompleter ac = (AutoCompleter)
-            servletContext.getAttribute(Constants.AUTO_COMPLETER);
-            if (ac != null && ac.hasAutocompleter(node.getParentType(), node.getFieldName())) {
-                Path path = new Path(os.getModel(), node.getPathString());
-                if (path.getEndFieldDescriptor() != null) {
-                    fieldDesc.put(node.getPathString(), path.getEndFieldDescriptor().getName());
-                    String[] tmp =  path.getLastClassDescriptor().getName().split("\\.");
-                    classDesc.put(node.getPathString(), tmp[ tmp.length - 1]);
-                }
-            }
-
+            constructAutocompleteIndex(servletContext, os, node, classDesc, fieldDesc);
             int j = 1;
-            for (Iterator ci = displayTemplate.getEditableConstraints(node).iterator(); ci
-                    .hasNext();) {
+            for (Iterator ci = displayTemplate.getEditableConstraints(node).iterator();
+                ci.hasNext();) {
                 Constraint c = (Constraint) ci.next();
                 if (modifiedTemplate != null) {
                     Constraint modC = modifiedTemplate.getConstraintByCode(c.getCode());
@@ -256,8 +238,7 @@ public class TemplateController extends TilesAction
                         .getFieldName())) {
                     constraintBagTypes.put(c, parent.getType());
                     Map constraintBags =
-                        WebUtil.getBagsOfType(searchBags, parent.getType(),
-                                              os.getModel());
+                        WebUtil.getBagsOfType(searchBags, parent.getType(), os.getModel());
                     if (constraintBags != null && constraintBags.size() != 0) {
                         bags.put(c, constraintBags);
                         if (bagName != null && constraintBags.containsKey(bagName)) {
@@ -269,8 +250,7 @@ public class TemplateController extends TilesAction
                 if (!node.isAttribute()) {
                     constraintBagTypes.put(c, node.getType());
                     Map constraintBags =
-                        WebUtil.getBagsOfType(searchBags, node.getType(),
-                                              os.getModel());
+                        WebUtil.getBagsOfType(searchBags, node.getType(), os.getModel());
                     if (constraintBags != null && constraintBags.size() != 0) {
                         bags.put(c, constraintBags);
                         if (bagName != null && constraintBags.containsKey(bagName)) {
@@ -320,13 +300,9 @@ public class TemplateController extends TilesAction
             }
             constraints.put(displayNode, displayTemplate.getEditableConstraints(displayNode));
         }
-
         populateTemplateForm(displayTemplate, tf, request, servletContext, imObj);
-
         tf.setName(queryName);
         tf.setType(scope);
-
-
         // A Map which have as key the pathstring and as value the name of the last class
         request.setAttribute("classDesc", classDesc);
         // A Map which containts as key the pathstring and as value the field name
@@ -355,13 +331,23 @@ public class TemplateController extends TilesAction
         // A List of values for the extra constraint
         request.setAttribute("extraClassFieldValues", oss.getFieldValues(extraClassName,
                     bagQueryConfig.getConstrainField()));
-
         if (searchBags.size() > 0) {
-            request.setAttribute("bagOps", MainHelper
-                    .mapOps(BagConstraint.VALID_OPS));
+            request.setAttribute("bagOps", MainHelper.mapOps(BagConstraint.VALID_OPS));
         }
-
         return null;
+    }
+
+    private void constructAutocompleteIndex(ServletContext servletContext, ObjectStore os,
+                                            PathNode node, Map classDesc, Map fieldDesc) {
+        AutoCompleter ac = (AutoCompleter) servletContext.getAttribute(Constants.AUTO_COMPLETER);
+        if (ac != null && ac.hasAutocompleter(node.getParentType(), node.getFieldName())) {
+            Path path = new Path(os.getModel(), node.getPathString());
+            if (path.getEndFieldDescriptor() != null) {
+                fieldDesc.put(node.getPathString(), path.getEndFieldDescriptor().getName());
+                String[] tmp =  path.getLastClassDescriptor().getName().split("\\.");
+                classDesc.put(node.getPathString(), tmp[ tmp.length - 1]);
+            }
+        }
     }
 
     /**
