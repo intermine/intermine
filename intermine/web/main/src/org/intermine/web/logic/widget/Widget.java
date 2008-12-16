@@ -67,10 +67,9 @@ public abstract class Widget
      * @return the hasResults
      */
     public abstract boolean getHasResults();
-   
+
     /**
      * checks if elem is in bag
-     * @param elem element
      * @return true if elem is in bag
      */
     public abstract List<String> getElementInList();

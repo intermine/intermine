@@ -51,12 +51,12 @@ public class TableWidget extends Widget
         process();
     }
 
-    
+
     private void createBagContet() {
-        
+
         List<Integer> bagResults = bag.getContentsAsIds();
         Iterator<Integer> it = bagResults.iterator();
-        
+
         while (it.hasNext()) {
             InterMineObject oj = null;
             try {
@@ -76,26 +76,25 @@ public class TableWidget extends Widget
                 if (matcher.find()) {
                     identifier = tmp[i];
                     break;
-                }  
+                }
             }
             if (identifier != null) {
                 String[] tmp1 = identifier.split("\"");
-                if (tmp1.length > 1) { 
+                if (tmp1.length > 1) {
                     bagContent.add(tmp1[1]);
                 }
             }
         }
     }
-    
+
     /**
      * checks if elem is in bag
-     * @param elem element
      * @return true if elem is in bag
      */
     public List getElementInList() {
         return bagContent;
     }
-  
+
     /**
      * {@inheritDoc}
      */
