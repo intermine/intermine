@@ -20,10 +20,9 @@ import org.apache.tools.ant.Task;
 public class Initialiser extends Task
 {
 
-    /* (non-Javadoc)
-     * @see org.apache.tools.ant.Task#execute()
+    /**
+     * {@inheritDoc}
      */
-    @Override
     public void execute() throws BuildException {
         // TODO Read from the xml file and generate the model.
         super.execute();
