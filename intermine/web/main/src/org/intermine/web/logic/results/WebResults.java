@@ -20,6 +20,7 @@ import java.util.Map;
 import java.util.Set;
 
 import org.apache.log4j.Logger;
+import org.intermine.metadata.FieldDescriptor;
 import org.intermine.metadata.Model;
 import org.intermine.model.InterMineObject;
 import org.intermine.objectstore.ObjectStore;
@@ -60,12 +61,12 @@ public class WebResults extends AbstractList<List<Object>> implements WebTable
 {
     protected static final Logger LOG = Logger.getLogger(WebResults.class);
     private List<Path> columnPaths;
-    protected LinkedHashMap pathToIndex;
+    protected LinkedHashMap<String, Integer> pathToIndex;
     protected Model model;
     private final List<Column> columns = new ArrayList<Column>();
     private Results osResults;
     private List columnNames;
-    private Map classKeys;
+    private Map<String, List<FieldDescriptor>> classKeys;
     private Map<String, QuerySelectable> pathToQueryNode;
     private Map<String, BagQueryResult> pathToBagQueryResult;
     private PathQuery pathQuery;
@@ -89,7 +90,8 @@ public class WebResults extends AbstractList<List<Object>> implements WebTable
      */
     public WebResults(PathQuery pathQuery, Results results, Model model,
                       Map<String, QuerySelectable> pathToQueryNode,
-                      Map classKeys, Map<String, BagQueryResult> pathToBagQueryResult) {
+                      Map<String, List<FieldDescriptor>> classKeys, 
+                      Map<String, BagQueryResult> pathToBagQueryResult) {
         this.osResults = results;
         this.model = model;
         this.columnPaths = pathQuery.getView();
@@ -102,8 +104,13 @@ public class WebResults extends AbstractList<List<Object>> implements WebTable
         addColumnsInternal(columnPaths);
     }
 
-    // pathToQueryNode is map from string paths to QueryNodes from ObjectStore query
-    public static LinkedHashMap getPathToIndex(Query query,
+    /**
+     * Create a map from string paths to index of QueryNodes in the ObjectStore query
+     * @param query the ObjectStore query
+     * @param pathToQueryNode the map from PathQuery elements to ObjectStore query QueryNodes
+     * @return a map from string paths to the index of QueryNodes
+     */
+    protected static LinkedHashMap<String, Integer> getPathToIndex(Query query,
             Map<String, QuerySelectable> pathToQueryNode) {
         List<QuerySelectable> select = ObjectStoreFlatOuterJoinsImpl.getFlatSelect(query
                 .getSelect());
@@ -119,9 +126,8 @@ public class WebResults extends AbstractList<List<Object>> implements WebTable
             convSelect.add(qs);
         }
         select = convSelect;
-        LinkedHashMap returnMap =  new LinkedHashMap();
-        for (Iterator iter = pathToQueryNode.keySet().iterator(); iter.hasNext();) {
-            String path = (String) iter.next();
+        LinkedHashMap<String, Integer> returnMap =  new LinkedHashMap<String, Integer>();
+        for (String path : pathToQueryNode.keySet()) {
             QuerySelectable queryNode = pathToQueryNode.get(path);
             if ((queryNode instanceof QueryClass)
                     || (queryNode instanceof QueryObjectPathExpression)
@@ -131,7 +137,6 @@ public class WebResults extends AbstractList<List<Object>> implements WebTable
                     returnMap.put(path, new Integer(index));
                 }
             } else if (queryNode instanceof QueryField) {
-                QueryField queryField = (QueryField) queryNode;
                 String parentPath = path.substring(0, path.lastIndexOf('.'));
                 queryNode = pathToQueryNode.get(parentPath);
                 int index = select.indexOf(queryNode);
@@ -343,13 +348,12 @@ public class WebResults extends AbstractList<List<Object>> implements WebTable
                 return retval;
             }
             ArrayList rowCells = new ResultsRow();
-            for (Iterator iter = columnPaths.iterator(); iter.hasNext();) {
-                Path columnPath = (Path) iter.next();
+            for (Path columnPath : columnPaths) {
                 String columnName = columnPath.toStringNoConstraints();
-                Integer columnIndexInteger = (Integer) pathToIndex.get(columnName);
+                Integer columnIndexInteger = pathToIndex.get(columnName);
                 String parentColumnName = columnPath.getPrefix().toStringNoConstraints();
                 if (columnIndexInteger == null) {
-                    columnIndexInteger = (Integer) pathToIndex.get(parentColumnName);
+                    columnIndexInteger = pathToIndex.get(parentColumnName);
                 }
 
                 if (columnIndexInteger == null) {
@@ -498,14 +502,14 @@ public class WebResults extends AbstractList<List<Object>> implements WebTable
             subIter = osResults.iterator();
         }
 
-        /* (non-Javadoc)
+        /* 
          * @see java.util.Iterator#hasNext()
          */
         public boolean hasNext() {
             return subIter.hasNext();
         }
 
-        /* (non-Javadoc)
+        /* 
          * @see java.util.Iterator#next()
          */
         public Object next() {
