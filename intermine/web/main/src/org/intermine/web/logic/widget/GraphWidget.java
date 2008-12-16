@@ -74,6 +74,9 @@ public class GraphWidget extends Widget
         process();
     }
 
+    /**
+     * {@inheritDoc}
+     */
     public List getElementInList() {
         return new Vector();
     }
@@ -103,7 +106,7 @@ public class GraphWidget extends Widget
             CategoryDataset graphDataSet = dataSetLdr.getDataSet();
 
             /* stacked bar chart */
-            if (((GraphWidgetConfig) config).getGraphType() != null 
+            if (((GraphWidgetConfig) config).getGraphType() != null
                 && ((GraphWidgetConfig) config).getGraphType().equals("StackedBarChart")) {
                 chart = ChartFactory.createStackedBarChart(config.getTitle(), // chart title
                                 ((GraphWidgetConfig) config).getDomainLabel(), // domain axis label
