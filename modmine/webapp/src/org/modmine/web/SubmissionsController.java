@@ -46,6 +46,11 @@ import org.intermine.web.logic.Constants;
  */
 public class SubmissionsController extends TilesAction
 {
+
+    // this is defined here, so we can query only the first time.
+    private Map<Submission, Map<String, Long>> submissions =
+        new LinkedHashMap<Submission, Map<String, Long>>();
+    
     /**
      * {@inheritDoc}
      */
@@ -56,6 +61,12 @@ public class SubmissionsController extends TilesAction
                                  @SuppressWarnings("unused") HttpServletResponse response)
     throws Exception {
 
+
+        if (submissions.size() > 0) {
+            request.setAttribute("subs", submissions);
+            return null;            
+        }
+        
         HttpSession session = request.getSession();
         ObjectStore os =
             (ObjectStore) session.getServletContext().getAttribute(Constants.OBJECTSTORE);
@@ -112,8 +123,8 @@ public class SubmissionsController extends TilesAction
 
         results = os.execute(q);
 
-        Map<Submission, Map<String, Long>> submissions =
-            new LinkedHashMap<Submission, Map<String, Long>>();
+//        Map<Submission, Map<String, Long>> submissions =
+//            new LinkedHashMap<Submission, Map<String, Long>>();
 
         // for each class set the values for jsp
         for (Iterator<ResultsRow> iter = results.iterator(); iter.hasNext(); ) {
