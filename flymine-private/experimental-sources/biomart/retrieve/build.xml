@@ -1,0 +1,6 @@
+<project name="biomart-retrieve" default="default" basedir=".">
+  
+  <description></description>
+  <import file="../../../imbuild/library.xml"/>
+
+</project>
