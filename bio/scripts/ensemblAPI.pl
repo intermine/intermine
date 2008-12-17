@@ -129,8 +129,7 @@ foreach my $taxon_id(keys %organisms) {
                     }
                     my $protein_seq = $translation->seq();
                     my $protein_item = make_protein(\%proteins, $protein_seq);
-                    
-                    # TODO add to additions file
+                
                     $protein_item->set('genes', [$gene_item]);
                     $protein_item->set('transcripts', [$transcript_item]);
 
