@@ -1,19 +1,31 @@
 <?xml version="1.0"?>
 <classes>
-   <class name="org.flymine.model.genomic.Gene" is-interface="true">
+   <class name="org.flymine.model.genomic.Gene" extends="org.flymine.model.genomic.BioEntity" is-interface="true">
+     <attribute name="featureType" type="java.lang.String"/>
+     <attribute name="curated" type="java.lang.String"/>
      <reference name="chromosome" referenced-type="org.flymine.model.genomic.Chromosome"/>
      <collection name="transcripts" referenced-type="org.flymine.model.genomic.Transcript" ordered="true" reverse-reference="gene" />
    </class>
 
   <class name="org.flymine.model.genomic.Protein" extends="org.flymine.model.genomic.BioEntity" is-interface="true">
     <attribute name="md5checksum" type="java.lang.String"/>
+    <collection name="transcripts" referenced-type="org.flymine.model.genomic.Transcript" reverse-reference="proteins" />
   </class>
 
-   <class name="org.flymine.model.genomic.Transcripts" is-interface="true">
+   <class name="org.flymine.model.genomic.Transcripts" extends="org.flymine.model.genomic.BioEntity" is-interface="true">
      <reference name="gene" referenced-type="org.flymine.model.genomic.Gene" reverse-reference="transcripts" />
+     <reference name="sequence" referenced-type="org.flymine.model.genomic.Sequence" />
      <collection name="exons" referenced-type="org.flymine.model.genomic.Exon" ordered="true" reverse-reference="transcripts" />
+     <collection name="proteins" referenced-type="org.flymine.model.genomic.Protein" ordered="true" reverse-reference="transcripts" />
    </class>
-   <class name="org.flymine.model.genomic.Exon" is-interface="true">
+
+   <class name="org.flymine.model.genomic.Exon" extends="org.flymine.model.genomic.BioEntity" is-interface="true">
      <collection name="transcripts" referenced-type="org.flymine.model.genomic.Transcript" reverse-reference="exons" />
+   </class>
+
+   <class name="org.flymine.model.genomic.CDS" extends="org.flymine.model.genomic.BioEntity" is-interface="true">
+     <reference name="protein" referenced-type="org.flymine.model.genomic.Protein" reverse-reference="CDS" />
+     <reference name="sequence" referenced-type="org.flymine.model.genomic.Sequence" />
+     <reference name="MRNA" referenced-type="org.flymine.model.genomic.MRNA" reverse-reference="CDS" />
    </class>
 </classes>

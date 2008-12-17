@@ -189,6 +189,7 @@ public class TemplateController extends TilesAction
             PathNode displayNode = displayTemplate.getNodes().get(node.getPathString());
 
             constructAutocompleteIndex(servletContext, os, node, classDesc, fieldDesc);
+
             int j = 1;
             for (Iterator ci = displayTemplate.getEditableConstraints(node).iterator();
                 ci.hasNext();) {
