@@ -129,8 +129,10 @@ foreach my $taxon_id(keys %organisms) {
                     }
                     my $protein_seq = $translation->seq();
                     my $protein_item = make_protein(\%proteins, $protein_seq);
-
+                    
+                    # TODO add to additions file
                     $protein_item->set('genes', [$gene_item]);
+                    $protein_item->set('transcripts', [$transcript_item]);
 
                     my $ctx = Digest::MD5->new;
                     $ctx->add($protein_seq);
@@ -147,10 +149,10 @@ foreach my $taxon_id(keys %organisms) {
                     $cds_item->set('MRNA', $transcript_item);
                     $cds_item->set('protein', $protein_item);
                 }
-
+                                
                 my @exons = @{ $transcript->get_all_Exons() };
                 while ( my $exon = shift @exons ) {
-                    my $exon_item = make_item("Exon");
+                    my $exon_item = make_exon($exon->stable_id());
                     $exon_item->set('transcripts', [$transcript_item]);
                     $exon_item->set('gene', $gene_item);                    
                     $exon_item->set('sequence', make_seq($exon->seq->seq));
@@ -315,6 +317,22 @@ sub make_protein {
     }
     return $protein_item;
 }
+
+sub make_exon {
+
+    my ($exons, $primary_identifier) = @_;
+    my $exon_item;
+
+    if (defined $exons->{$primary_identifier}) {
+        $exon_item = $exons->{$primary_identifier};
+    } else {
+        $exon_item = make_item("Exon"); 
+        $exon_item->set('primaryIdentifier', $primary_identifier);
+        $exons->{$primary_identifier} = $exon_item;
+    }
+    return $exon_item;
+}
+
 
 sub make_seq {
 
