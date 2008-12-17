@@ -105,11 +105,12 @@ public class ProfileTest extends MockStrutsTestCase
 
         Profile profile = new Profile(null, "bob", bobId, "pass", queries, bags, tmpls);
         profile.deleteQuery("query1");
-        profile.deleteBag("bag1");
+        // It isn't possible to delete a bag without a manager but we never do in the code
+        //profile.deleteBag("bag1");
         profile.deleteTemplate("tmpl1");
 
         assertEquals(0, profile.getSavedQueries().size());
-        assertEquals(0, profile.getSavedBags().size());
+        //assertEquals(0, profile.getSavedBags().size());
         assertEquals(0, profile.getSavedTemplates().size());
     }
 

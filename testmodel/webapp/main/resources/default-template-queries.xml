@@ -151,6 +151,7 @@
     <tag name="im:aspect:People" objectIdentifier="employeesFromCompanyAndDepartment" type="template">
     </tag>
     <tag name="im:aspect:People" objectIdentifier="employeesOverACertainAgeFromDepartmentA" type="template"/>
+    <tag name="im:public" objectIdentifier="employeesOverACertainAgeFromDepartmentA" type="template"/>
     <tag name="im:public" objectIdentifier="employeesFromCompanyAndDepartment" type="template"/>
     <tag name="im:aspect:People" objectIdentifier="employeeByName" type="template"/>
     <tag name="im:public" objectIdentifier="employeeByName" type="template"/>
