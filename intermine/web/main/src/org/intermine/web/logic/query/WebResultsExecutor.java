@@ -17,7 +17,6 @@ import java.util.Map;
 import org.intermine.metadata.FieldDescriptor;
 import org.intermine.objectstore.ObjectStore;
 import org.intermine.objectstore.ObjectStoreException;
-import org.intermine.objectstore.flatouterjoins.ObjectStoreFlatOuterJoinsImpl;
 import org.intermine.objectstore.query.Query;
 import org.intermine.objectstore.query.QuerySelectable;
 import org.intermine.objectstore.query.Results;
@@ -92,8 +91,7 @@ public class WebResultsExecutor
         Query q = MainHelper.makeQuery(pathQuery, allBags, pathToQueryNode, bqr,
         		pathToBagQueryResult, false);
 
-        ObjectStoreFlatOuterJoinsImpl joinsOs = new ObjectStoreFlatOuterJoinsImpl(os);
-        Results results = joinsOs.execute(q);
+        Results results = os.execute(q);
         results.setBatchSize(Constants.BATCH_SIZE); 
         results.setNoPrefetch(); 
 

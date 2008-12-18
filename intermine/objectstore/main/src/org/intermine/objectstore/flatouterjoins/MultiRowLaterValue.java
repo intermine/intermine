@@ -15,24 +15,25 @@ package org.intermine.objectstore.flatouterjoins;
  * rowspan.
  *
  * @author Matthew Wakeling
+ * @param <E> The value type
  */
-public class MultiRowLaterValue extends MultiRowValue
+public class MultiRowLaterValue<E> extends MultiRowValue<E>
 {
-    private MultiRowFirstValue mrfv;
+    private MultiRowFirstValue<E> mrfv;
 
     /**
      * Constructor - should only really be called from MultiRowFirstValue.
      *
      * @param mrfv a MultiRowFirstValue object
      */
-    protected MultiRowLaterValue(MultiRowFirstValue mrfv) {
+    protected MultiRowLaterValue(MultiRowFirstValue<E> mrfv) {
         this.mrfv = mrfv;
     }
 
     /**
      * {@inheritDoc}
      */
-    public Object getValue() {
+    public E getValue() {
         return mrfv.getValue();
     }
 

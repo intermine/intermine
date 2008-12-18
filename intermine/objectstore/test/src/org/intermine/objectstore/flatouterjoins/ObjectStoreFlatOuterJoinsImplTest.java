@@ -15,6 +15,7 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -25,6 +26,7 @@ import junit.framework.Test;
 import org.intermine.metadata.FieldDescriptor;
 import org.intermine.model.testmodel.Company;
 import org.intermine.model.testmodel.Contractor;
+import org.intermine.objectstore.Failure;
 import org.intermine.objectstore.ObjectStoreAbstractImplTestCase;
 import org.intermine.objectstore.ObjectStoreFactory;
 import org.intermine.objectstore.intermine.ObjectStoreInterMineImpl;
@@ -39,7 +41,7 @@ public class ObjectStoreFlatOuterJoinsImplTest extends ObjectStoreAbstractImplTe
 {
     public static void oneTimeSetUp() throws Exception {
         osai = (ObjectStoreInterMineImpl) ObjectStoreFactory.getObjectStore("os.unittest");
-        os = new ObjectStoreFlatOuterJoinsImpl(osai);
+        os = osai;
         ObjectStoreAbstractImplTestCase.oneTimeSetUp();
         setUpResults();
     }
@@ -134,6 +136,47 @@ public class ObjectStoreFlatOuterJoinsImplTest extends ObjectStoreAbstractImplTe
                     Arrays.asList(data.get("CompanyA"), data.get("DepartmentA1")),
                     Arrays.asList(data.get("CompanyB"), data.get("DepartmentB1"))));
     }
+
+    /**
+     * Execute a test for a query. This should run the query and
+     * contain an assert call to assert that the returned results are
+     * those expected.
+     *
+     * @param type the type of query we are testing (ie. the key in the queries Map)
+     * @throws Exception if type does not appear in the queries map
+     */
+    public void executeTest(String type) throws Exception {
+        if (results.get(type) instanceof Failure) {
+            try {
+                Results res = os.execute((Query) queries.get(type));
+                res.setBatchSize(2);
+                Iterator iter = res.iterator();
+                while (iter.hasNext()) {
+                    iter.next();
+                }
+                fail(type + " was expected to fail");
+            } catch (Exception e) {
+                assertEquals(type + " was expected to produce a particular exception", results.get(type), new Failure(e));
+            }
+        } else {
+            Results res = os.execute((Query)queries.get(type));
+            res.setBatchSize(2);
+            List newRes = new ResultsFlatOuterJoinsImpl((List<ResultsRow>) res, (Query) queries.get(type));
+            List expected = (List) results.get(type);
+            if ((expected != null) && (!expected.equals(newRes))) {
+                Set a = new HashSet(expected);
+                Set b = new HashSet(newRes);
+                List la = resToNames(expected);
+                List lb = resToNames(newRes);
+                if (a.equals(b)) {
+                    assertEquals(type + " has failed - wrong order", la, lb);
+                }
+                fail(type + " has failed. Expected " + la + " but was " + lb);
+            }
+            //assertEquals(type + " has failed", results.get(type), newRes);
+        }
+    }
+
 
     public void testResults() throws Exception {
         // Don't

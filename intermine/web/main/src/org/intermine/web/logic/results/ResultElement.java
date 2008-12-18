@@ -14,7 +14,6 @@ import java.io.Serializable;
 import java.util.Set;
 
 import org.intermine.model.InterMineObject;
-import org.intermine.objectstore.ObjectStoreException;
 import org.intermine.pathquery.Path;
 import org.intermine.util.DynamicUtil;
 import org.intermine.util.TypeUtil;
@@ -29,7 +28,7 @@ import org.intermine.util.Util;
 public class ResultElement implements Serializable
 {
     protected Object field;
-    protected InterMineObject imObj;
+    protected Object imObj;
     protected String htmlId;
     private final boolean keyField;
     private final Path path;
@@ -37,18 +36,22 @@ public class ResultElement implements Serializable
 
     /**
      * Constructs a new ResultCell object
-     * @param imObj the InterMineObject to wrap
+     * @param imObj the InterMineObject or SimpleObject to wrap
      * @param path the Path
      * @param isKeyField should be true if this is an identifying field
      */
-    public ResultElement(InterMineObject imObj, Path path, boolean isKeyField) {
+    public ResultElement(Object imObj, Path path, boolean isKeyField) {
         this.imObj = imObj;
         this.keyField = isKeyField;
         this.path = path;
-        try {
-            field = TypeUtil.getFieldValue(imObj, path.getEndFieldDescriptor().getName());
-        } catch (IllegalAccessException e) {
-            throw new RuntimeException(e);
+        if (imObj != null) {
+            try {
+                field = TypeUtil.getFieldValue(imObj, path.getEndFieldDescriptor().getName());
+            } catch (IllegalAccessException e) {
+                throw new RuntimeException(e);
+            }
+        } else {
+            field = null;
         }
     }
 
@@ -83,6 +86,9 @@ public class ResultElement implements Serializable
      * @return the type
      */
     public String getType() {
+        if (imObj == null) {
+            return null;
+        }
         Set classes = DynamicUtil.decomposeClass(imObj.getClass());
         Class cls = (Class) classes.iterator().next();
         return TypeUtil.unqualifiedName(cls.getName());
@@ -98,11 +104,15 @@ public class ResultElement implements Serializable
     }
 
     /**
-     * Get the Id
+     * Get the Id.
+     *
      * @return the id
      */
     public Integer getId() {
-        return imObj.getId();
+        if (imObj instanceof InterMineObject) {
+            return ((InterMineObject) imObj).getId();
+        }
+        return null;
     }
     
     /**
@@ -113,16 +123,17 @@ public class ResultElement implements Serializable
     }
 
     /**
-     * Return the InterMineObject that contains this result element.
+     * Return the Object contained in this result element.
+     *
      * @return the InterMineObject
-     * @throws ObjectStoreException if there is a problem getting the object from the ObjectStore
      */
-    public InterMineObject getInterMineObject() throws ObjectStoreException {
+    public Object getObject() {
         return imObj;
     }
 
     /**
-     * Returns a String representation of the ResultElement
+     * Returns a String representation of the ResultElement.
+     *
      * @return a String
      */
     public String toString() {
@@ -136,9 +147,7 @@ public class ResultElement implements Serializable
         try {
             ResultElement cell = (ResultElement) obj;
             return (Util.equals(field, cell.getField())
-                    && imObj.equals(cell.getInterMineObject()));
-        } catch (ObjectStoreException e) {
-            throw new RuntimeException("Error with object:" + imObj.getId());
+                    && Util.equals(imObj, cell.getObject()));
         } catch (ClassCastException e) {
             throw new ClassCastException("Comparing a ResultsElement with a "
                     + obj.getClass().getName());
@@ -152,7 +161,8 @@ public class ResultElement implements Serializable
      * {@inheritDoc}
      */
     public int hashCode() {
-        return (field == null ? 0 : field.hashCode()) + 3 * imObj.hashCode();
+        return (field == null ? 0 : field.hashCode())
+            + (imObj == null ? 0 : 3 * imObj.hashCode());
     }
     
 }

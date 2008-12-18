@@ -496,7 +496,7 @@ public class Results extends AbstractList implements LazyCollection
     }
 
     /**
-     * Returns an iterator over the List, starting fromthe given position.
+     * Returns an iterator over the List, starting from the given position.
      * This method is mainly useful for testing.
      *
      * @param from the index of the first object to be fetched

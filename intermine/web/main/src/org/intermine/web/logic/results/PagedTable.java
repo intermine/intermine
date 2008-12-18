@@ -28,6 +28,7 @@ import org.intermine.objectstore.ObjectStoreException;
 import org.intermine.objectstore.ObjectStoreWriter;
 import org.intermine.objectstore.flatouterjoins.MultiRow;
 import org.intermine.objectstore.flatouterjoins.MultiRowFirstValue;
+import org.intermine.objectstore.flatouterjoins.MultiRowValue;
 import org.intermine.objectstore.intermine.ObjectStoreWriterInterMineImpl;
 import org.intermine.objectstore.query.BagConstraint;
 import org.intermine.objectstore.query.ConstraintOp;
@@ -59,14 +60,13 @@ public class PagedTable
     private static final int FIRST_SELECTED_FIELDS_COUNT = 25;
     private WebTable webTable;
     private List<String> columnNames = null;
-    private List<List<ResultElement>> resultElementRows = null;
     private int startRow = 0;
 
     private int pageSize = Constants.DEFAULT_TABLE_SIZE;
     private List<Column> columns;
     private String tableid;
 
-    private List<List<Object>> rows = null;
+    private List<MultiRow<ResultsRow<MultiRowValue<ResultElement>>>> rows = null;
 
     // object ids that have been selected in the table
     // TODO this may be more memory efficient with an IntPresentSet
@@ -208,7 +208,7 @@ public class PagedTable
     public void setPageSize(int pageSize) {
         this.pageSize = pageSize;
         startRow = (startRow / pageSize) * pageSize;
-        updateResultElementRows();
+        updateRows();
     }
 
     /**
@@ -245,7 +245,7 @@ public class PagedTable
     public void setPageAndPageSize(int page, int size) {
         this.pageSize = size;
         this.startRow = size * page;
-        updateResultElementRows();
+        updateRows();
     }
 
     /**
@@ -253,7 +253,7 @@ public class PagedTable
      * @return the index
      */
     public int getEndRow() {
-        return startRow + getResultElementRows().size() - 1;
+        return startRow + getRows().size() - 1;
     }
 
     /**
@@ -261,7 +261,7 @@ public class PagedTable
      */
     public void firstPage() {
         startRow = 0;
-        updateResultElementRows();
+        updateRows();
     }
 
     /**
@@ -277,7 +277,7 @@ public class PagedTable
      */
     public void lastPage() {
         startRow = ((getExactSize() - 1) / pageSize) * pageSize;
-        updateResultElementRows();
+        updateRows();
     }
 
     /**
@@ -295,7 +295,7 @@ public class PagedTable
         if (startRow >= pageSize) {
             startRow -= pageSize;
         }
-        updateResultElementRows();
+        updateRows();
     }
 
     /**
@@ -303,29 +303,19 @@ public class PagedTable
      */
     public void nextPage() {
         startRow += pageSize;
-        updateResultElementRows();
+        updateRows();
     }
 
     /**
      * Return the currently visible rows of the table as a List of Lists of ResultElement objects.
+     *
      * @return the resultElementRows of the table
      */
-    public List<List<Object>> getRows() {
+    public List<MultiRow<ResultsRow<MultiRowValue<ResultElement>>>> getRows() {
         if (rows == null) {
             updateRows();
         }
         return rows;
-    }
-
-    /**
-     * Return the currently visible rows of the table as a List of Lists of raw values/Objects.
-     * @return the ResultElement of the table as rows
-     */
-    public List<List<ResultElement>> getResultElementRows() {
-        if (resultElementRows == null) {
-            updateResultElementRows();
-        }
-        return resultElementRows;
     }
 
     /**
@@ -410,28 +400,16 @@ public class PagedTable
      * Search the visible rows and return the first ResultElement with the given ID./
      */
     private ResultElement findIdInVisible(Integer id) {
-        for (List<ResultElement> resultElements : getResultElementRows()) {
-            if (resultElements instanceof MultiRow) {
-                MultiRow mr = (MultiRow) resultElements;
-                for (Object obj : mr) {
-                    ResultsRow rv = (ResultsRow) obj;
-                    for (Object object : rv) {
-                        // We don't need to check other MultiRowValues are we've already seem them
-                        if (object instanceof MultiRowFirstValue) {
-                            MultiRowFirstValue mrv = (MultiRowFirstValue) object;
-                            ResultElement resultElement = (ResultElement) mrv.getValue();
-                            if ((resultElement != null) && (resultElement.getId().equals(id))
-                                && (resultElement.isKeyField())) {
-                                return resultElement;
-                            }
+        for (MultiRow<ResultsRow<MultiRowValue<ResultElement>>> mr : getRows()) {
+            for (ResultsRow<MultiRowValue<ResultElement>> rv : mr) {
+                for (MultiRowValue<ResultElement> mrv : rv) {
+                    // We don't need to check other MultiRowValues are we've already seen them
+                    if (mrv instanceof MultiRowFirstValue) {
+                        ResultElement resultElement = mrv.getValue();
+                        if ((resultElement != null) && (resultElement.getId().equals(id))
+                            && (resultElement.isKeyField())) {
+                            return resultElement;
                         }
-                    }
-                }
-            } else {
-                for (ResultElement resultElement : resultElements) {
-                    if ((resultElement != null) && (resultElement.getId().equals(id))
-                        && (resultElement.isKeyField())) {
-                        return resultElement;
                     }
                 }
             }
@@ -526,22 +504,32 @@ public class PagedTable
         List<String> selected = new ArrayList<String>();
         if (allSelected == -1) {
             if (!selectionIds.isEmpty()) {
-                for (List<ResultElement> currentRow: getResultElementRows()) {
-                    for (ResultElement resElt: currentRow) {
-                        if (resElt != null) {
-                            if (selectionIds.containsKey(resElt.getId())) {
-                                selected.add(resElt.getId().toString());
+                for (MultiRow<ResultsRow<MultiRowValue<ResultElement>>> multiRow : getRows()) {
+                    for (ResultsRow<MultiRowValue<ResultElement>> resultsRow : multiRow) {
+                        for (MultiRowValue<ResultElement> multiRowValue : resultsRow) {
+                            if (multiRowValue instanceof MultiRowFirstValue) {
+                                ResultElement resElt = multiRowValue.getValue();
+                                if (resElt != null) {
+                                    if (selectionIds.containsKey(resElt.getId())) {
+                                        selected.add(resElt.getId().toString());
+                                    }
+                                }
                             }
                         }
                     }
                 }
             }
         } else {
-            for (List<ResultElement> currentRow: getResultElementRows()) {
-                ResultElement resElt = currentRow.get(allSelected);
-                if (resElt != null) {
-                    if (!selectionIds.containsKey(resElt.getId())) {
-                        selected.add(resElt.getId().toString());
+            for (MultiRow<ResultsRow<MultiRowValue<ResultElement>>> multiRow : getRows()) {
+                for (ResultsRow<MultiRowValue<ResultElement>> resultsRow : multiRow) {
+                    MultiRowValue<ResultElement> multiRowValue = resultsRow.get(allSelected);
+                    if (multiRowValue instanceof MultiRowFirstValue) {
+                        ResultElement resElt = multiRowValue.getValue();
+                        if (resElt != null) {
+                            if (!selectionIds.containsKey(resElt.getId())) {
+                                selected.add(resElt.getId().toString());
+                            }
+                        }
                     }
                 }
             }
@@ -591,6 +579,7 @@ public class PagedTable
         return new Iterator<SelectionEntry>() {
             SelectionEntry nextEntry = null;
             int currentIndex = 0;
+            int multiRowIndex = 0;
             {
                 moveToNext();
             }
@@ -598,24 +587,34 @@ public class PagedTable
             private void moveToNext() {
                 while (true) {
                     try {
-                        List<ResultElement> row = getAllRows().getResultElements(currentIndex);
-                        ResultElement element = row.get(allSelected);
-                        Integer elementId = element.getId();
-                        if (!selectionIds.containsKey(elementId)) {
-                            nextEntry = new SelectionEntry();
-                            nextEntry.id = elementId;
-                            if (element.getField() == null) {
-                                nextEntry.fieldValue = null;
-                            } else {
-                                nextEntry.fieldValue = element.getField().toString();
+                        MultiRow<ResultsRow<MultiRowValue<ResultElement>>> multiRow
+                            = getAllRows().getResultElements(currentIndex);
+                        if (multiRow.size() <= multiRowIndex) {
+                            currentIndex++;
+                            multiRowIndex = 0;
+                        } else {
+                            ResultsRow<MultiRowValue<ResultElement>> row
+                                = multiRow.get(multiRowIndex);
+                            MultiRowValue<ResultElement> value = row.get(allSelected);
+                            if (value instanceof MultiRowFirstValue) {
+                                ResultElement element = value.getValue();
+                                Integer elementId = element.getId();
+                                if (!selectionIds.containsKey(elementId)) {
+                                    nextEntry = new SelectionEntry();
+                                    nextEntry.id = elementId;
+                                    if (element.getField() == null) {
+                                        nextEntry.fieldValue = null;
+                                    } else {
+                                        nextEntry.fieldValue = element.getField().toString();
+                                    }
+                                    break;
+                                }
                             }
-                            break;
+                            multiRowIndex++;
                         }
                     } catch (IndexOutOfBoundsException e) {
                         nextEntry = null;
                         break;
-                    } finally {
-                        currentIndex++;
                     }
                 }
             }
@@ -714,23 +713,8 @@ public class PagedTable
      * getResultElementRows().
      */
     private void updateRows() {
-        rows = new ArrayList<List<Object>>();
-        for (int i = getStartRow(); i < getStartRow() + getPageSize(); i++) {
-            try {
-                List<Object> newRow = getAllRows().get(i);
-                rows.add(newRow);
-            } catch (IndexOutOfBoundsException e) {
-                // we're probably at the end of the results object, so stop looping
-                break;
-            }
-        }
-    }
-
-    /**
-     * Update the internal row list
-     */
-    private void updateResultElementRows() {
-        List<List<ResultElement>> newRows = new ArrayList<List<ResultElement>>();
+        List<MultiRow<ResultsRow<MultiRowValue<ResultElement>>>> newRows
+            = new ArrayList<MultiRow<ResultsRow<MultiRowValue<ResultElement>>>>();
         String invalidStartMessage = "Invalid start row of table: " + getStartRow();
         if (getStartRow() < 0) {
             throw new PageOutOfRangeException(invalidStartMessage);
@@ -754,9 +738,7 @@ public class PagedTable
                 break;
             }
         }
-        this.resultElementRows = newRows;
-        // clear so that getRows() recreates it
-        this.rows = null;
+        this.rows = newRows;
     }
 
     /**

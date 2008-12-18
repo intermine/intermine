@@ -61,51 +61,56 @@ public class ModifyBagActionTest extends MockStrutsTestCase
         SessionMethods.initSession(this.getSession());
         userProfileOSW =  ObjectStoreWriterFactory.getObjectStoreWriter("osw.userprofile-test");
 
-        ObjectStore os = ObjectStoreFactory.getObjectStore("os.unittest");
-        ServletContext servletContext = new ServletContextSimulator();
-        servletContext.setAttribute(Constants.CLASS_KEYS, Collections.emptyMap());
-        profileManager = new ProfileManager(os, userProfileOSW);
+        try {
+            ObjectStore os = ObjectStoreFactory.getObjectStore("os.unittest");
+            ServletContext servletContext = new ServletContextSimulator();
+            servletContext.setAttribute(Constants.CLASS_KEYS, Collections.emptyMap());
+            profileManager = new ProfileManager(os, userProfileOSW);
 
-        Profile profile = new Profile(profileManager, "modifyBagActionTest", userId, "pass",
-                                      new HashMap(), new HashMap(), new HashMap());
-        profileManager.createProfile(profile);
+            Profile profile = new Profile(profileManager, "modifyBagActionTest", userId, "pass",
+                                          new HashMap(), new HashMap(), new HashMap());
+            profileManager.createProfile(profile);
 
-        //Get the realUserId
-        UserProfile realProfile = new UserProfile();
-        realProfile.setUsername("modifyBagActionTest");
-        Set fieldNames = new HashSet();
-        fieldNames.add("username");
-        ObjectStore uos = userProfileOSW.getObjectStore();
-        UserProfile profile4ID = (UserProfile) uos.getObjectByExample(realProfile, fieldNames);
-        userId = new Integer(profile4ID.getId());
+            //Get the realUserId
+            UserProfile realProfile = new UserProfile();
+            realProfile.setUsername("modifyBagActionTest");
+            Set fieldNames = new HashSet();
+            fieldNames.add("username");
+            ObjectStore uos = userProfileOSW.getObjectStore();
+            UserProfile profile4ID = (UserProfile) uos.getObjectByExample(realProfile, fieldNames);
+            userId = new Integer(profile4ID.getId());
 
 
-        HttpSession session = getSession();
-        session.setAttribute(Constants.PROFILE, profile);
+            HttpSession session = getSession();
+            session.setAttribute(Constants.PROFILE, profile);
 
-        Model model = Model.getInstanceByName("testmodel");
-        query = new PathQuery(model);
-        query.getView().add(PathQuery.makePath(model, query, "Employee"));
-        query.getView().add(PathQuery.makePath(model, query, "Employee.name"));
-        queryBag = new PathQuery(model);
+            Model model = Model.getInstanceByName("testmodel");
+            query = new PathQuery(model);
+            query.getView().add(PathQuery.makePath(model, query, "Employee"));
+            query.getView().add(PathQuery.makePath(model, query, "Employee.name"));
+            queryBag = new PathQuery(model);
 
-        queryBag.getView().add(PathQuery.makePath(model, query, "Employee"));
-        queryBag.getView().add(PathQuery.makePath(model, query, "Employee.name"));
-        queryBag.addNode("Employee.name").getConstraints().add(new Constraint(ConstraintOp.IN, "bag2"));
-        sq = new SavedQuery("query1", date, query);
-        sqBag = new SavedQuery("query3", date, queryBag);
-        hist = new SavedQuery("query2", date, (PathQuery) query.clone());
-        hist2 = new SavedQuery("query1", date, (PathQuery) query.clone());
-        template = new TemplateQuery("template", "ttitle", "tdesc", "tcomment",
-                                     new PathQuery(model),
-                                     "");
+            queryBag.getView().add(PathQuery.makePath(model, query, "Employee"));
+            queryBag.getView().add(PathQuery.makePath(model, query, "Employee.name"));
+            queryBag.addNode("Employee.name").getConstraints().add(new Constraint(ConstraintOp.IN, "bag2"));
+            sq = new SavedQuery("query1", date, query);
+            sqBag = new SavedQuery("query3", date, queryBag);
+            hist = new SavedQuery("query2", date, (PathQuery) query.clone());
+            hist2 = new SavedQuery("query1", date, (PathQuery) query.clone());
+            template = new TemplateQuery("template", "ttitle", "tdesc", "tcomment",
+                                         new PathQuery(model),
+                                         "");
 
-        //Profile profile = (Profile) getSession().getAttribute(Constants.PROFILE);
-        profile.saveQuery(sq.getName(), sq);
-        profile.saveQuery(sqBag.getName(), sqBag);
-        profile.saveBag("bag2", bag2);
-        profile.saveHistory(hist);
-        profile.saveHistory(hist2);
+            //Profile profile = (Profile) getSession().getAttribute(Constants.PROFILE);
+            profile.saveQuery(sq.getName(), sq);
+            profile.saveQuery(sqBag.getName(), sqBag);
+            profile.saveBag("bag2", bag2);
+            profile.saveHistory(hist);
+            profile.saveHistory(hist2);
+        } catch (Exception e) {
+            userProfileOSW.close();
+            throw e;
+        }
     }
 
     public void tearDown() throws Exception {

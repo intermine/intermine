@@ -418,6 +418,7 @@ public class ProfileManager
 
     /**
      * Return a List of the usernames in all of the stored profiles.
+     *
      * @return the usernames
      */
     public List getProfileUserNames() {
@@ -429,6 +430,7 @@ public class ProfileManager
 
         SingletonResults res = osw.executeSingleton(q);
 
+        // TODO: Why does this copy the data?
         List usernames = new ArrayList();
 
         Iterator resIter = res.iterator();

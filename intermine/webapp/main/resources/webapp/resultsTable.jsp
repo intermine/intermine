@@ -134,7 +134,7 @@ jQuery(document).ready(function(){
   <%-- Row --%>
   <c:if test="${pagedResults.estimatedSize > 0}">
   <tbody>
-    <c:forEach var="row" items="${pagedResults.resultElementRows}" varStatus="status">
+    <c:forEach var="row" items="${pagedResults.rows}" varStatus="status">
 
       <c:set var="rowClass">
         <c:choose>

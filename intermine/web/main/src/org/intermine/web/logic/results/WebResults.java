@@ -21,16 +21,14 @@ import java.util.Map;
 import org.apache.log4j.Logger;
 import org.intermine.metadata.FieldDescriptor;
 import org.intermine.metadata.Model;
-import org.intermine.model.InterMineObject;
 import org.intermine.objectstore.ObjectStore;
 import org.intermine.objectstore.ObjectStoreException;
 import org.intermine.objectstore.flatouterjoins.MultiRow;
 import org.intermine.objectstore.flatouterjoins.MultiRowFirstValue;
 import org.intermine.objectstore.flatouterjoins.MultiRowValue;
-import org.intermine.objectstore.flatouterjoins.ObjectStoreFlatOuterJoinsImpl;
+import org.intermine.objectstore.flatouterjoins.ResultsFlatOuterJoinsImpl;
 import org.intermine.objectstore.intermine.ObjectStoreInterMineImpl;
 import org.intermine.objectstore.query.PathExpressionField;
-import org.intermine.objectstore.query.Query;
 import org.intermine.objectstore.query.QueryClass;
 import org.intermine.objectstore.query.QueryCollectionPathExpression;
 import org.intermine.objectstore.query.QueryField;
@@ -55,7 +53,8 @@ import org.intermine.web.logic.bag.BagQueryResult;
  *
  * @author Kim Rutherford
  */
-public class WebResults extends AbstractList<List<Object>> implements WebTable
+public class WebResults extends AbstractList<MultiRow<ResultsRow<MultiRowValue<ResultElement>>>>
+implements WebTable
 {
     protected static final Logger LOG = Logger.getLogger(WebResults.class);
     private List<Path> columnPaths;
@@ -63,6 +62,7 @@ public class WebResults extends AbstractList<List<Object>> implements WebTable
     protected Model model;
     private final List<Column> columns = new ArrayList<Column>();
     private Results osResults;
+    private ResultsFlatOuterJoinsImpl flatResults;
     private List columnNames;
     private Map<String, List<FieldDescriptor>> classKeys;
     private Map<String, QuerySelectable> pathToQueryNode;
@@ -91,27 +91,26 @@ public class WebResults extends AbstractList<List<Object>> implements WebTable
                       Map<String, List<FieldDescriptor>> classKeys, 
                       Map<String, BagQueryResult> pathToBagQueryResult) {
         this.osResults = results;
+        this.flatResults = new ResultsFlatOuterJoinsImpl((List<ResultsRow>) osResults,
+                osResults.getQuery());
         this.model = model;
         this.columnPaths = pathQuery.getView();
         this.classKeys = classKeys;
         this.pathToQueryNode = pathToQueryNode;
         this.pathToBagQueryResult = pathToBagQueryResult;
         this.pathQuery = pathQuery;
-        pathToIndex = getPathToIndex(osResults.getQuery(), pathToQueryNode);
+        pathToIndex = getPathToIndex();
 
         addColumnsInternal(columnPaths);
     }
 
     /**
      * Create a map from string paths to index of QueryNodes in the ObjectStore query
-     * @param query the ObjectStore query
-     * @param pathToQueryNode the map from PathQuery elements to ObjectStore query QueryNodes
+     *
      * @return a map from string paths to the index of QueryNodes
      */
-    protected static LinkedHashMap<String, Integer> getPathToIndex(Query query,
-            Map<String, QuerySelectable> pathToQueryNode) {
-        List<QuerySelectable> select = ObjectStoreFlatOuterJoinsImpl.getFlatSelect(query
-                .getSelect());
+    protected LinkedHashMap<String, Integer> getPathToIndex() {
+        List<QuerySelectable> select = flatResults.getFlatSelect();
         List<QuerySelectable> convSelect = new ArrayList<QuerySelectable>();
         for (QuerySelectable qs : select) {
             while (qs instanceof PathExpressionField) {
@@ -147,7 +146,6 @@ public class WebResults extends AbstractList<List<Object>> implements WebTable
         }
         return returnMap;
     }
-
 
     /**
      * Return the names of the columns of the results.
@@ -203,8 +201,10 @@ public class WebResults extends AbstractList<List<Object>> implements WebTable
     /**
      * {@inheritDoc}
      */
-    public List<Object> get(int index) {
-        return getElementsInternal(index, false);
+    public MultiRow<ResultsRow<MultiRowValue<ResultElement>>> get(int index) {
+        //throw new RuntimeException("Throwing exception in WebResults.get because it has always "
+        //        + "returned an incorrect result.");
+        return getResultElements(index);
     }
 
     /**
@@ -326,130 +326,115 @@ public class WebResults extends AbstractList<List<Object>> implements WebTable
      * @param index the row of the results to fetch
      * @return the results row as ResultElement objects
      */
-    public List<ResultElement> getResultElements(int index) {
-        return getElementsInternal(index, true);
+    public MultiRow<ResultsRow<MultiRowValue<ResultElement>>> getResultElements(int index) {
+        return translateRow(flatResults.get(index));
     }
 
-    private List getElementsInternal(int index, boolean makeResultElements) {
-        ResultsRow resultsRow = (ResultsRow) osResults.get(index);
-        return translateRow(resultsRow, makeResultElements);
-     }
-
     // TODO javadoc to describe what this does
-    private List translateRow(List initialList, boolean makeResultElements) {
+    private MultiRow<ResultsRow<MultiRowValue<ResultElement>>> translateRow(
+            MultiRow<ResultsRow<MultiRowValue>> multiRow) {
         try {
-            if (initialList instanceof MultiRow) {
-                MultiRow retval = new MultiRow();
-                for (ResultsRow origRow : ((List<ResultsRow>) initialList)) {
-                    retval.add(translateRow(origRow, makeResultElements));
-                }
-                return retval;
-            }
-            ArrayList rowCells = new ResultsRow();
-            for (Path columnPath : columnPaths) {
-                String columnName = columnPath.toStringNoConstraints();
-                Integer columnIndexInteger = pathToIndex.get(columnName);
-                String parentColumnName = columnPath.getPrefix().toStringNoConstraints();
-                if (columnIndexInteger == null) {
-                    columnIndexInteger = pathToIndex.get(parentColumnName);
-                }
+            MultiRow<ResultsRow<MultiRowValue<ResultElement>>> retval
+                = new MultiRow<ResultsRow<MultiRowValue<ResultElement>>>();
+            for (ResultsRow<MultiRowValue> initialList : multiRow) {
+                ResultsRow<MultiRowValue<ResultElement>> rowCells
+                    = new ResultsRow<MultiRowValue<ResultElement>>();
+                for (Path columnPath : columnPaths) {
+                    String columnName = columnPath.toStringNoConstraints();
+                    Integer columnIndexInteger = pathToIndex.get(columnName);
+                    String parentColumnName = columnPath.getPrefix().toStringNoConstraints();
+                    if (columnIndexInteger == null) {
+                        columnIndexInteger = pathToIndex.get(parentColumnName);
+                    }
 
-                if (columnIndexInteger == null) {
-                    throw new NullPointerException("Path: \""
-                                                   + columnName
-                                                   + "\", pathToIndex: \""
-                                                   + pathToIndex
-                                                   + "\", prefix: \""
-                                                   + parentColumnName
-                                                   + "\", query: \""
-                                                   + PathQueryBinding.marshal(pathQuery, "",
-                                                                   pathQuery.getModel().getName())
-                                                   + "\"");
-                }
-                int columnIndex = columnIndexInteger.intValue();
-                Object origO = initialList.get(columnIndex);
-                Object o = origO;
-                int rowspan = -1;
-                if (o instanceof MultiRowValue) {
-                    if (o instanceof MultiRowFirstValue) {
-                        rowspan = ((MultiRowFirstValue) o).getRowspan();
+                    if (columnIndexInteger == null) {
+                        throw new NullPointerException("Path: \"" + columnName
+                                + "\", pathToIndex: \"" + pathToIndex + "\", prefix: \""
+                                + parentColumnName + "\", query: \""
+                                + PathQueryBinding.marshal(pathQuery, "",
+                                    pathQuery.getModel().getName()) + "\"");
                     }
-                    o = ((MultiRowValue) o).getValue();
-                }
-                String lastCd;
-                if (columnPath.endIsAttribute()) {
-                    lastCd = columnPath.getLastClassDescriptor().getName();
-                } else {
-                    // special case for columns that contain objects eg. Gene.chromosomeLocation
-                    lastCd = columnPath.getLastClassDescriptor().getName();
-                }
-                String type = TypeUtil.unqualifiedName(lastCd);
-                Path path;
-                String fieldName = null;
-                if (columnPath.endIsAttribute()) {
-                    fieldName = columnName.substring(columnName.lastIndexOf(".") + 1);
-                    path = new Path(model, type + '.' + fieldName);
-                } else {
-                    // special case for columns that contain objects
-                    path = new Path(model, type);
-                }
-                if (o instanceof Collection) {
-                    if (((Collection) o).isEmpty()) {
-                        o = null;
+                    int columnIndex = columnIndexInteger.intValue();
+                    MultiRowValue origO = initialList.get(columnIndex);
+                    Object o = origO.getValue();
+                    int rowspan = -1;
+                    if (origO instanceof MultiRowFirstValue) {
+                        rowspan = ((MultiRowFirstValue) origO).getRowspan();
+                    }
+                    String lastCd;
+                    if (columnPath.endIsAttribute()) {
+                        lastCd = columnPath.getLastClassDescriptor().getName();
                     } else {
-                        o = ((Collection) o).iterator().next();
+                        // special case for columns that contain objects eg. Gene.chromosomeLocation
+                        lastCd = columnPath.getLastClassDescriptor().getName();
                     }
-                }
-                // Three cases:
-                // 1) attribute has a value so create a result element
-                // 2) we have an object but attribute is null -> create a ResultElement with
-                // value null
-                // 3) the object is null (outer join) so add null value rowCells
-                Object fieldValue;
-                try {
-                    fieldValue = (o == null ? null : PathUtil.resolvePath(path, o));
-                } catch (PathError e) {
-                        throw new IllegalArgumentException(
-                        "Path: \""
-                        + columnName
-                        + "\", pathToIndex: \""
-                        + pathToIndex
-                        + "\", prefix: \""
-                        + parentColumnName
-                        + "\", query: \""
-                        + PathQueryBinding.marshal(pathQuery, "",
-                                        pathQuery.getModel().getName())
-                        + "\", columnIndex: \"" + columnIndex
-                        + "\", initialList: \"" + initialList + "\"", e);
-                }
-                if (makeResultElements && o != null) {
-                    String fieldCDName = path.getLastClassDescriptor().getName();
-                    String unqualifiedFieldCD = TypeUtil.unqualifiedName(fieldCDName);
-                    boolean isKeyField;
-                    if (fieldName == null) {
+                    String type = TypeUtil.unqualifiedName(lastCd);
+                    Path path;
+                    String fieldName = null;
+                    if (columnPath.endIsAttribute()) {
+                        fieldName = columnName.substring(columnName.lastIndexOf(".") + 1);
+                        path = new Path(model, type + '.' + fieldName);
+                    } else {
                         // special case for columns that contain objects
-                        isKeyField = false;
-                    } else {
-                        isKeyField = ClassKeyHelper.isKeyField(classKeys, unqualifiedFieldCD,
-                                        fieldName);
+                        path = new Path(model, type);
                     }
-                    ResultElement resultElement = new ResultElement(
-                                    (o instanceof InterMineObject ? (InterMineObject) o : null),
-                                    path, isKeyField);
-                    if (rowspan >= 0) {
-                        rowCells.add(new MultiRowFirstValue(resultElement, rowspan));
-                    } else {
-                        rowCells.add(resultElement);
+                    if (o instanceof Collection) {
+                        if (((Collection) o).isEmpty()) {
+                            o = null;
+                        } else {
+                            o = ((Collection) o).iterator().next();
+                        }
                     }
-                } else {
-                    if (rowspan >= 0) {
-                        rowCells.add(new MultiRowFirstValue(fieldValue, rowspan));
+                    // Three cases:
+                    // 1) attribute has a value so create a result element
+                    // 2) we have an object but attribute is null -> create a ResultElement with
+                    // value null
+                    // 3) the object is null (outer join) so add null value rowCells
+                    Object fieldValue;
+                    try {
+                        fieldValue = (o == null ? null : PathUtil.resolvePath(path, o));
+                    } catch (PathError e) {
+                            throw new IllegalArgumentException(
+                            "Path: \""
+                            + columnName
+                            + "\", pathToIndex: \""
+                            + pathToIndex
+                            + "\", prefix: \""
+                            + parentColumnName
+                            + "\", query: \""
+                            + PathQueryBinding.marshal(pathQuery, "",
+                                            pathQuery.getModel().getName())
+                            + "\", columnIndex: \"" + columnIndex
+                            + "\", initialList: \"" + initialList + "\"", e);
+                    }
+                    if (o != null) {
+                        String fieldCDName = path.getLastClassDescriptor().getName();
+                        String unqualifiedFieldCD = TypeUtil.unqualifiedName(fieldCDName);
+                        boolean isKeyField;
+                        if (fieldName == null) {
+                            // special case for columns that contain objects
+                            isKeyField = false;
+                        } else {
+                            isKeyField = ClassKeyHelper.isKeyField(classKeys, unqualifiedFieldCD,
+                                            fieldName);
+                        }
+                        ResultElement resultElement = new ResultElement(o, path, isKeyField);
+                        if (rowspan >= 0) {
+                            rowCells.add(new MultiRowFirstValue(resultElement, rowspan));
+                        } else {
+                            rowCells.add(null);
+                        }
                     } else {
-                        rowCells.add(fieldValue);
+                        if (rowspan >= 0) {
+                            rowCells.add(new MultiRowFirstValue(null, rowspan));
+                        } else {
+                            rowCells.add(null);
+                        }
                     }
                 }
+                retval.add(rowCells);
             }
-            return rowCells;
+            return retval;
         } catch (IndexOutOfBoundsException e) {
             throw new RuntimeException(e);
         }
@@ -458,7 +443,7 @@ public class WebResults extends AbstractList<List<Object>> implements WebTable
     /**
      * @return iterator over results
      */
-    public Iterator iterator() {
+    public Iterator<MultiRow<ResultsRow<MultiRowValue<ResultElement>>>> iterator() {
         return new Iter();
     }
 
@@ -466,7 +451,7 @@ public class WebResults extends AbstractList<List<Object>> implements WebTable
      * @param start - first index from which start iteration
      * @return iterator over results
      */
-    public Iterator iteratorFrom(int start) {
+    public Iterator<MultiRow<ResultsRow<MultiRowValue<ResultElement>>>> iteratorFrom(int start) {
         return new Iter(start);
     }
 
@@ -486,33 +471,35 @@ public class WebResults extends AbstractList<List<Object>> implements WebTable
         return pathQuery;
     }
 
-    private class Iter implements Iterator
+    private class Iter implements Iterator<MultiRow<ResultsRow<MultiRowValue<ResultElement>>>>
     {
-        private Iterator subIter;
+        private Iterator<MultiRow<ResultsRow<MultiRowValue>>> subIter;
 
         public Iter(int start) {
-            subIter = osResults.iteratorFrom(start);
+            subIter = flatResults.iteratorFrom(start);
         }        
         
         public Iter() {
-            subIter = osResults.iterator();
+            subIter = flatResults.iterator();
         }
 
-        /* 
-         * @see java.util.Iterator#hasNext()
+        /**
+         * {@inheritDoc}
          */
         public boolean hasNext() {
             return subIter.hasNext();
         }
 
-        /* 
-         * @see java.util.Iterator#next()
+        /** 
+         * {@inheritDoc}
          */
-        public Object next() {
-            List row = (List) subIter.next();
-            return translateRow(row, true);
+        public MultiRow<ResultsRow<MultiRowValue<ResultElement>>> next() {
+            return translateRow(subIter.next());
         }
 
+        /**
+         * {@inheritDoc}
+         */
         public void remove() {
             throw (new UnsupportedOperationException());
         }

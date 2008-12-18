@@ -511,7 +511,7 @@ public class SessionMethods
                         final PagedTable pr = new PagedTable((executor.execute(pathQuery)));
                         Action action = new Action() {
                             public void process() {
-                                pr.getResultElementRows();
+                                pr.getRows();
                             }
                         };
                         CompletionCallBack completionCallBack = new CompletionCallBack() {
@@ -771,7 +771,15 @@ public class SessionMethods
      */
     public static Profile getSuperUserProfile(ServletContext context) {
         String superuser = PropertiesUtil.getProperties().getProperty("superuser.account");
-        return getProfileManager(context).getProfile(superuser);
+        if (superuser == null) {
+            throw new RuntimeException("superuser.account has not been set in properties");
+        }
+        Profile suProfile = getProfileManager(context).getProfile(superuser);
+        if (suProfile == null) {
+            throw new RuntimeException("Cannot find superuser profile " + superuser + " in "
+                    + getProfileManager(context).getProfileUserNames());
+        }
+        return suProfile;
     }
 
     /**

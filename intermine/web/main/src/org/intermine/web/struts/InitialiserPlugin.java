@@ -178,8 +178,10 @@ public class InitialiserPlugin implements PlugIn
             cleanTags(SessionMethods.getTagManager(servletContext));
         } catch (ServletException e) {
             LOG.error("ServletException", e);
+            destroy();
             throw e;
         } catch (RuntimeException e) {
+            destroy();
             LOG.error("RuntimeException", e);
             throw e;
         }
