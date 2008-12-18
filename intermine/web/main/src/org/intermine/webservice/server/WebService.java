@@ -12,6 +12,9 @@ package org.intermine.webservice.server;
 
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.util.Enumeration;
+import java.util.List;
+import java.util.Map;
 import java.util.Properties;
 
 import javax.servlet.RequestDispatcher;
@@ -32,8 +35,6 @@ import org.intermine.webservice.server.output.StreamedOutput;
 import org.intermine.webservice.server.output.TabFormatter;
 import org.intermine.webservice.server.output.XMLFormatter;
 import org.intermine.webservice.server.query.result.WebServiceRequestParser;
-
-import com.sun.corba.se.impl.protocol.INSServerRequestDispatcher;
 
 /**
  * 
@@ -141,13 +142,28 @@ public abstract class WebService
 
     private void logError(Throwable t, String msg, int code) {
         if (code == Output.SC_INTERNAL_SERVER_ERROR) {
-            logger.error("Service failed by internal error", t);
+            logger.error("Service failed by internal error. Request parameters: \n" 
+                    + requestParametersToString(), t);
         } else {
             logger.debug("Service didn't succeed. It's not an internal error. "
                     + "Reason: " + getErrorDescription(msg, code));
         }
     }
     
+    private String requestParametersToString() {
+        StringBuilder sb = new StringBuilder();
+        Map<String, String[]> map = request.getParameterMap();
+        for (String name : map.keySet()) {
+            for (String value : map.get(name)) {
+                sb.append(name);
+                sb.append(": ");
+                sb.append(value);
+                sb.append("\n");
+            }
+        }
+        return sb.toString();
+    }
+
     private String getErrorDescription(String msg, int errorCode) {
         StringBuilder sb = new StringBuilder();
         sb.append(StatusDictionary.getDescription(errorCode));
