@@ -27,10 +27,11 @@ import org.intermine.pathquery.Constraint;
 import org.intermine.pathquery.PathNode;
 import org.intermine.pathquery.PathQuery;
 import org.intermine.web.logic.Constants;
+import org.intermine.web.logic.query.PathQueryExecutor;
 import org.intermine.web.logic.results.ResultElement;
+import org.intermine.web.logic.session.SessionMethods;
 import org.intermine.webservice.server.WebService;
 import org.intermine.webservice.server.core.ListManager;
-import org.intermine.webservice.server.core.PathQueryExecutor;
 import org.intermine.webservice.server.exceptions.BadRequestException;
 import org.intermine.webservice.server.exceptions.InternalErrorException;
 import org.intermine.webservice.server.exceptions.ResourceNotFoundException;
@@ -118,8 +119,8 @@ public class ListsService extends WebService
         node.getConstraints().add(constraint);
         pathQuery.getNodes().put(input.getType(), node);
         pathQuery.addPathStringToView(input.getType());
-        PathQueryExecutor executor = new PathQueryExecutor(request, pathQuery);
-        Iterator<List<ResultElement>> it = executor.getResults();
+        PathQueryExecutor executor = SessionMethods.getPathQueryExecutor(request.getSession());
+        Iterator<List<ResultElement>> it = executor.execute(pathQuery);
         if (it.hasNext()) {
             ResultsRow row = (ResultsRow) it.next();
             if (it.hasNext()) {
