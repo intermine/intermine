@@ -17,7 +17,8 @@
   <%-- class name --%>
   <div>
     <html:link action="/mainChange?method=changePath&amp;prefix=${viewPathLinkPrefixes[pathString]}&amp;path=${viewPathLinkPaths[viewPathLinkPrefixes[pathString]]}">
-      ${fn:replace(pathString, ".", " > ")}
+      <c:set var="linkName" value="${fn:replace(pathString, '.', ' > ')}" />
+      ${fn:replace(linkName, ":", " > ")}
     </html:link>
 
     <%-- (x) img --%>
@@ -73,7 +74,8 @@
     </c:if>
 
     <%-- sort button --%>
-    <img id="btn_${fn:replace(pathString,'.','_')}" onclick="javascript:updateSortOrder('${pathString}');"
+    <c:set var="btnName" value="${fn:replace(pathString,':','_')}"/>
+    <img id="btn_${fn:replace(btnName,'.','_')}" onclick="javascript:updateSortOrder('${pathString}');"
          width="17" height="16" title="Sort by this column" src="images/sort_disabled.png"
          title="Click to sort results by this field"/>
 
