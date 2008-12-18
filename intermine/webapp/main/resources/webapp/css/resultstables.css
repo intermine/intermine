@@ -98,6 +98,10 @@ table.results td td {
 table.results tr.even TD{
   background-color: #FBEBFF;}
 
+table.results tr.odd TD{
+  border-right:1px solid #FBEBFF;
+  border-bottom:1px solid #FBEBFF;}
+
 /* =TD, TH £TABLE,£BAGDETAILS*/
 table.results th.checkbox,table.results td.checkbox{
 }
