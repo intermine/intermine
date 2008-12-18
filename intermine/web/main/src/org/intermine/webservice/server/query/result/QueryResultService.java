@@ -158,8 +158,9 @@ public class QueryResultService extends WebService
             WebServiceInput input, String mineLink, String layout) {
         PathQueryExecutor executor = SessionMethods.getPathQueryExecutor(request.getSession());
         executor.setBatchSize(BATCH_SIZE);
-        Iterator<List<ResultElement>> resultIt = executor.execute(pathQuery, 
-                firstResult, maxResults);
+        // TODO: first result is not used, it is needed to implement it, but outer join object store
+        //implementation cannot work with it now
+        Iterator<List<ResultElement>> resultIt = executor.execute(pathQuery, maxResults);
 
         // displayTotalCount now without effect because information about results size
         // is not available because of the implementation of the object store outer join 

@@ -84,19 +84,17 @@ public class PathQueryExecutor
      * @return results
      */
     public Iterator<List<ResultElement>> execute(PathQuery pathQuery) {
-        return execute(pathQuery, 0, INFINITE_RESULTS_SIZE);
+        return execute(pathQuery, INFINITE_RESULTS_SIZE);
     }
 
     /**
      * Executes object store query and returns results as iterator over rows. Every row is a list 
      * of result elements.
      * @param pathQuery path query to be executed
-     * @param start start index
      * @param limit maximum number of results 
      * @return results
      */
-    public Iterator<List<ResultElement>> execute(PathQuery pathQuery, int start, 
-            final int limit) {
+    public Iterator<List<ResultElement>> execute(PathQuery pathQuery, final int limit) {
         final ExportResultsIterator resultIt;
         try {
             resultIt = new ExportResultsIterator(os, pathQuery, allBags, runner);
