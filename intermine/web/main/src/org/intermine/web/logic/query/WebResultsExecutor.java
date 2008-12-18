@@ -49,11 +49,11 @@ public class WebResultsExecutor
     private SearchRepository searchRepository;
 
     /**
-     * Construct with necessary objects to generate and ObjectStore query from a PathQuery and
+     * Constructor with necessary objects to generate an ObjectStore query from a PathQuery and
      * execute it.
      * @param os the ObjectStore to run the query in
      * @param classKeys key fields for classes in the data model
-     * @param bagQueryConfig bag queries to run when intepreting LOOKUP constraints
+     * @param bagQueryConfig bag queries to run when interpreting LOOKUP constraints
      * @param profile the user executing the query - for access to saved lists
      * @param conversionTemplates templates used for converting bag query results between types
      * @param searchRepository global search repository to fetch saved bags from
