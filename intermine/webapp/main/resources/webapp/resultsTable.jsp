@@ -101,7 +101,8 @@ jQuery(document).ready(function(){
               </html:multibox>
             <%--</th>--%>
           </c:if>
-              <im:abbreviate value="${columnDisplayName}" length="20"/>
+              <%--<im:abbreviate value="${columnDisplayName}" length="20"/>--%>
+              ${columnDisplayName}
               <im:typehelp type="${column.path}" fullPath="true"/>
               <%-- summary --%>
               <c:if test="${!empty column.path.noConstraintsString}">
@@ -185,7 +186,7 @@ jQuery(document).ready(function(){
                           </c:if>
                         <%--</td>--%>
                       </c:if>
-                        <c:set var="columnType" value="${column.type}" scope="request"/>
+                        <c:set var="columnType" value="${column.typeClsString}" scope="request"/>
                           <tiles:insert name="objectView.tile" /> <%-- uses resultElement? --%>
                       </td>
                     </c:if>
@@ -226,7 +227,7 @@ jQuery(document).ready(function(){
                   <%-- test whether already selected and highlight if needed --%>
                   <td id="cell,${status2.index},${status.index},${row[column.index].type}"
                        class="${highlightObjectClass} id_${resultElement.id} class_${row[column.index].type} ${ischecked}">
-                    <c:set var="columnType" value="${column.type}" scope="request"/>
+                    <c:set var="columnType" value="${column.typeClsString}" scope="request"/>
                     <div>
                   <c:if test="${column.selectable}">
                     <%--<td align="center" class="checkbox ${highlightObjectClass} id_${resultElement.id} class_${row[column.index].type} ${ischecked}" id="cell_checkbox,${status2.index},${status.index},${row[column.index].type}">--%>
