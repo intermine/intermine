@@ -56,7 +56,7 @@
   </c:forTokens>
 
 
-  <!-- Page header --> 
+  <!-- Page header -->
   <tiles:insert name="headMenu.tile">
     <tiles:put name="fixedLayout" value="${fixedLayout}"/>
   </tiles:insert>
