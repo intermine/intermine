@@ -16,6 +16,9 @@ import java.util.Map;
 import org.intermine.objectstore.query.ResultsInfo;
 
 import org.intermine.objectstore.ObjectStoreException;
+import org.intermine.objectstore.flatouterjoins.MultiRow;
+import org.intermine.objectstore.flatouterjoins.MultiRowValue;
+import org.intermine.objectstore.query.ResultsRow;
 import org.intermine.pathquery.PathQuery;
 import org.intermine.web.logic.bag.BagQueryResult;
 
@@ -23,14 +26,14 @@ import org.intermine.web.logic.bag.BagQueryResult;
  * A List that can understand ResultElement objects.
  * @author Kim Rutherford
  */
-public interface WebTable extends List<List<Object>>
+public interface WebTable extends List<MultiRow<ResultsRow<MultiRowValue<ResultElement>>>>
 {
     /**
      * Return a List containing a ResultElement object for each element given in the given row.
      * @param index the row of the results to fetch
      * @return the results row
      */
-    public List<ResultElement> getResultElements(int index);
+    public MultiRow<ResultsRow<MultiRowValue<ResultElement>>> getResultElements(int index);
 
     /**
      * Returns the Column objects for this table.

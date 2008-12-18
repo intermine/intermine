@@ -33,6 +33,7 @@ import org.apache.struts.action.ActionMessage;
 import org.apache.struts.action.ActionMessages;
 import org.apache.struts.util.MessageResources;
 import org.intermine.metadata.Model;
+import org.intermine.model.InterMineObject;
 import org.intermine.objectstore.ObjectStore;
 import org.intermine.objectstore.ObjectStoreException;
 import org.intermine.objectstore.ObjectStoreWriter;
@@ -239,7 +240,10 @@ public class PortalQueryAction extends InterMineAction
                     List<Integer> converted = new ArrayList<Integer>();
                     for (List resRow : convertedWebResult) {
                         ResultElement resElement = (ResultElement) resRow.get(0);
-                        converted.add((resElement.getInterMineObject().getId()));
+                        Object obj = resElement.getObject();
+                        if (obj instanceof InterMineObject) {
+                            converted.add(((InterMineObject) obj).getId());
+                        }
                     }
                     // No matches
                     if (converted.size() <= 0) {

@@ -16,8 +16,10 @@ import java.util.Collection;
 /**
  * @author Mark Woodbridge
  * @author Richard Smith
+ * @author Matthew Wakeling
+ * @param <E> The element type
  */
-public class ResultsRow extends ArrayList
+public class ResultsRow<E> extends ArrayList<E>
 {
     /**
      * @see ArrayList#ArrayList
@@ -31,7 +33,7 @@ public class ResultsRow extends ArrayList
      *
      * @param c an existing Collection
      */
-    public ResultsRow(Collection c) {
+    public ResultsRow(Collection<? extends E> c) {
         super(c);
     }
 }

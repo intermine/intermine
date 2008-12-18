@@ -17,6 +17,7 @@ import java.util.Iterator;
  * syntax when you only have an Iterator.
  *
  * @author Matthew Wakeling
+ * @param <T> The element type
  */
 public class IteratorIterable<T> implements Iterable<T>
 {

@@ -41,7 +41,7 @@ public class ReallyFlatIteratorTest extends ObjectStoreAbstractImplTestCase
 {
     public static void oneTimeSetUp() throws Exception {
         osai = (ObjectStoreInterMineImpl) ObjectStoreFactory.getObjectStore("os.unittest");
-        os = new ObjectStoreFlatOuterJoinsImpl(osai);
+        os = osai;
         ObjectStoreAbstractImplTestCase.oneTimeSetUp();
         setUpResults();
     }

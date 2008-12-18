@@ -49,6 +49,7 @@ import org.intermine.objectstore.intermine.ObjectStoreInterMineImpl;
 import org.intermine.objectstore.query.Query;
 import org.intermine.objectstore.query.QuerySelectable;
 import org.intermine.objectstore.query.Results;
+import org.intermine.objectstore.query.ResultsRow;
 import org.intermine.pathquery.Path;
 import org.intermine.pathquery.PathQuery;
 import org.intermine.util.StringUtil;
@@ -71,7 +72,6 @@ import org.intermine.web.logic.query.PageTableQueryMonitor;
 import org.intermine.web.logic.query.QueryMonitorTimeout;
 import org.intermine.web.logic.query.SavedQuery;
 import org.intermine.web.logic.results.PagedTable;
-import org.intermine.web.logic.results.WebResultsSimple;
 import org.intermine.web.logic.results.WebState;
 import org.intermine.web.logic.results.WebTable;
 import org.intermine.web.logic.search.SearchFilterEngine;
@@ -406,9 +406,6 @@ public class AjaxServices
                     new HashMap<String, QuerySelectable>(), summaryPath, servletContext);
 
             Results results = os.execute(distinctQuery);
-            WebResultsSimple webResults = new WebResultsSimple(results,
-                        Arrays.asList(new String[] {"col1", "col2"}));
-            PagedTable pagedTable = new PagedTable(webResults);
 
             // Start the count of results
             Query countQuery = MainHelper.makeSummaryQuery(pathQuery, allBags,
@@ -418,8 +415,17 @@ public class AjaxServices
             MessageResources messages = (MessageResources) ctx.getHttpServletRequest()
                                                               .getAttribute(Globals.MESSAGES_KEY);
             String qid = SessionMethods.startQueryCount(clientState, session, messages);
+            List<ResultsRow> pageSizeResults = new ArrayList<ResultsRow>();
+            int rowCount = 0;
+            for (ResultsRow row : (List<ResultsRow>) results) {
+                pageSizeResults.add(row);
+                rowCount++;
+                if (rowCount >= Constants.DEFAULT_TABLE_SIZE) {
+                    break;
+                }
+            }
             return Arrays.asList(new Object[] {
-                        pagedTable.getRows(), qid, new Integer(pagedTable.getExactSize())
+                        pageSizeResults, qid, new Integer(results.size())
                     });
         } catch (RuntimeException e) {
             processException(e);

@@ -14,6 +14,9 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
+import org.intermine.objectstore.flatouterjoins.MultiRow;
+import org.intermine.objectstore.flatouterjoins.MultiRowValue;
+import org.intermine.objectstore.query.ResultsRow;
 import org.intermine.web.logic.Constants;
 
 import java.io.Serializable;
@@ -27,9 +30,9 @@ import org.apache.log4j.Logger;
 public class InlineTemplateTable implements Serializable
 {
     private int inlineSize = -1;
-    private List<Object> inlineResults;
+    private List<MultiRow<ResultsRow<MultiRowValue<ResultElement>>>> inlineResults;
     private static final Logger LOG = Logger.getLogger(InlineTemplateTable.class);
-    private final List columnNames;
+    private final List<String> columnNames;
     private int resultsSize = -1;
     private int maxInlineTableSize = 10;
     private PagedTable pagedTable;
@@ -54,11 +57,12 @@ public class InlineTemplateTable implements Serializable
 
         inlineSize = maxInlineTableSize;
 
-        inlineResults = new ArrayList<Object>(inlineSize);
+        inlineResults
+            = new ArrayList<MultiRow<ResultsRow<MultiRowValue<ResultElement>>>>(inlineSize);
 
         for (int i = 0; i < inlineSize; i++) {
             try {
-                inlineResults.add(pagedResults.getResultElementRows().get(i));
+                inlineResults.add(pagedResults.getRows().get(i));
             } catch (IndexOutOfBoundsException e) {
                 // getExactSize() will now be fast because the Results object knows the size
                 break;
@@ -77,7 +81,7 @@ public class InlineTemplateTable implements Serializable
      * Return headings for the columns
      * @return the column names
      */
-    public List getColumnNames() {
+    public List<String> getColumnNames() {
         return columnNames;
     }
 
@@ -86,7 +90,7 @@ public class InlineTemplateTable implements Serializable
      * This is used only in JSP files currently.
      * @return the first getSize() rows from the Results object that was passed to the constructor
      */
-    public List getInlineResults() {
+    public List<MultiRow<ResultsRow<MultiRowValue<ResultElement>>>> getInlineResults() {
         return inlineResults;
     }
 

@@ -28,6 +28,8 @@ import org.intermine.model.testmodel.Department;
 import org.intermine.model.testmodel.Employee;
 import org.intermine.model.testmodel.Manager;
 import org.intermine.objectstore.dummy.ObjectStoreDummyImpl;
+import org.intermine.objectstore.flatouterjoins.MultiRow;
+import org.intermine.objectstore.flatouterjoins.MultiRowFirstValue;
 import org.intermine.objectstore.query.Query;
 import org.intermine.objectstore.query.QueryClass;
 import org.intermine.objectstore.query.QueryField;
@@ -159,7 +161,8 @@ public class WebResultsTest extends TestCase
          pathToQueryNode.put("Department.employees.name", empName);
 
          Query query = MainHelper.makeQuery(pathQuery , new HashMap(), pathToQueryNode, null, null, true);
-         LinkedHashMap<String, Integer> actual = WebResults.getPathToIndex(query, pathToQueryNode);
+         WebResults webResults = new WebResults(pathQuery, os.execute(query), os.getModel(), pathToQueryNode, new HashMap(), null);
+         LinkedHashMap<String, Integer> actual = webResults.pathToIndex;
          LinkedHashMap<String, Integer> expected = new LinkedHashMap<String, Integer>();
          expected.put("Department.employees.name", 2);
          expected.put("Department.name", 0);
@@ -205,34 +208,34 @@ public class WebResultsTest extends TestCase
 
     // Test with a PathQuery and some dummy results, call method with a made up row,
     // create expected ResultElements.  Doesn't need too much testing as Path.resolve() is tested.
-     public void testTranslateRow() throws Exception {
-         PathQuery pq = new PathQuery(model);
-         List view = new ArrayList() {{ // see: http://www.c2.com/cgi/wiki?DoubleBraceInitialization
-             add(new Path(model, "Department.name"));
-             add(new Path(model, "Department.company.name"));
-         }};
-         pq.setViewPaths(view);
-         Map<String, QuerySelectable> pathToQueryNode = new HashMap();
-         Query query = MainHelper.makeQuery(pq , new HashMap(), pathToQueryNode, null, null, true);
-         Results results = os.execute(query);
-         WebResults webResults = new WebResults(pq, results, model, pathToQueryNode, classKeys, null);
-         List row1 = webResults.getResultElements(0);
- 
-         Department dept1 = new Department();
-         dept1.setId(new Integer(4));
-         dept1.setName("Department1");
-         ResultElement res1 = new ResultElement(dept1, new Path(model, "Department.name"), false);
+    public void testTranslateRow() throws Exception {
+        PathQuery pq = new PathQuery(model);
+        List view = new ArrayList() {{ // see: http://www.c2.com/cgi/wiki?DoubleBraceInitialization
+            add(new Path(model, "Department.name"));
+            add(new Path(model, "Department.company.name"));
+        }};
+        pq.setViewPaths(view);
+        Map<String, QuerySelectable> pathToQueryNode = new HashMap();
+        Query query = MainHelper.makeQuery(pq , new HashMap(), pathToQueryNode, null, null, true);
+        Results results = os.execute(query);
+        WebResults webResults = new WebResults(pq, results, model, pathToQueryNode, classKeys, null);
+        List row1 = webResults.getResultElements(0);
+
+        Department dept1 = new Department();
+        dept1.setId(new Integer(4));
+        dept1.setName("Department1");
+        ResultElement res1 = new ResultElement(dept1, new Path(model, "Department.name"), false);
+       
+        Company c1 = (Company) DynamicUtil.instantiateObject("org.intermine.model.testmodel.Company", null);
+        c1.setId(new Integer(1));
+        c1.setName("Company1");
+        ResultElement res2 = new ResultElement(c1, new Path(model, "Department.company.name"), false);
         
-         Company c1 = (Company) DynamicUtil.instantiateObject("org.intermine.model.testmodel.Company", null);
-         c1.setId(new Integer(1));
-         c1.setName("Company1");
-         ResultElement res2 = new ResultElement(c1, new Path(model, "Department.company.name"), false);
-         
-         List expected = new ArrayList();
-         expected.add(res1);
-         expected.add(res2);
-         assertEquals(expected, row1);
-     }
+        ResultsRow expected = new ResultsRow();
+        expected.add(new MultiRowFirstValue(res1, 1));
+        expected.add(new MultiRowFirstValue(res2, 1));
+        assertEquals(new MultiRow(Collections.singletonList(expected)), row1);
+    }
 
     public void test() {
         IqlQuery fq =
@@ -273,14 +276,14 @@ public class WebResultsTest extends TestCase
         WebResults webResults =
             new WebResults(pathQuery, results, model, pathToQueryNode, classKeys, null);
 
-        assertEquals("Department1", ((List) webResults.get(0)).get(0));
-        assertEquals("Company1", ((List) webResults.get(0)).get(1));
-        assertEquals(new Integer(101), ((List) webResults.get(0)).get(2));
-        assertEquals("Department2", ((List) webResults.get(1)).get(0));
-        assertEquals("Company2", ((List) webResults.get(1)).get(1));
-        assertEquals(new Integer(102), ((List) webResults.get(1)).get(2));
-        assertEquals("Department3", ((List) webResults.get(2)).get(0));
-        assertEquals("Company3", ((List) webResults.get(2)).get(1));
-        assertEquals(new Integer(103), ((List) webResults.get(2)).get(2));
+        assertEquals("Department1", webResults.get(0).get(0).get(0).getValue().getField());
+        assertEquals("Company1", webResults.get(0).get(0).get(1).getValue().getField());
+        assertEquals(new Integer(101), webResults.get(0).get(0).get(2).getValue().getField());
+        assertEquals("Department2", webResults.get(1).get(0).get(0).getValue().getField());
+        assertEquals("Company2", webResults.get(1).get(0).get(1).getValue().getField());
+        assertEquals(new Integer(102), webResults.get(1).get(0).get(2).getValue().getField());
+        assertEquals("Department3", webResults.get(2).get(0).get(0).getValue().getField());
+        assertEquals("Company3", webResults.get(2).get(0).get(1).getValue().getField());
+        assertEquals(new Integer(103), webResults.get(2).get(0).get(2).getValue().getField());
     }
 }

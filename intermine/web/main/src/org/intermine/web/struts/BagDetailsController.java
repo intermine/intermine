@@ -29,6 +29,10 @@ import org.apache.struts.tiles.actions.TilesAction;
 import org.intermine.metadata.FieldDescriptor;
 import org.intermine.metadata.Model;
 import org.intermine.objectstore.ObjectStore;
+import org.intermine.objectstore.flatouterjoins.MultiRow;
+import org.intermine.objectstore.flatouterjoins.MultiRowFirstValue;
+import org.intermine.objectstore.flatouterjoins.MultiRowValue;
+import org.intermine.objectstore.query.ResultsRow;
 import org.intermine.web.logic.Constants;
 import org.intermine.web.logic.bag.BagQueryConfig;
 import org.intermine.web.logic.bag.InterMineBag;
@@ -173,13 +177,19 @@ public class BagDetailsController extends TilesAction
             WebTable webTable = pagedResults.getAllRows();
 
             for (int i = 0; i < webTable.size(); i++) {
-                List<ResultElement> row = webTable.getResultElements(i);
-                for (ResultElement resultElement: row) {
-                    if (resultElement != null) {
-                        Integer id = resultElement.getId();
-                        if (id.equals(highlightId)) {
-                            page = i / PAGE_SIZE;
-                            break;
+                MultiRow<ResultsRow<MultiRowValue<ResultElement>>> row
+                    = webTable.getResultElements(i);
+                for (ResultsRow<MultiRowValue<ResultElement>> resultsRow : row) {
+                    for (MultiRowValue<ResultElement> mrv : resultsRow) {
+                        if (mrv instanceof MultiRowFirstValue) {
+                            ResultElement resultElement = mrv.getValue();
+                            if (resultElement != null) {
+                                Integer id = resultElement.getId();
+                                if (id.equals(highlightId)) {
+                                    page = i / PAGE_SIZE;
+                                    break;
+                                }
+                            }
                         }
                     }
                 }

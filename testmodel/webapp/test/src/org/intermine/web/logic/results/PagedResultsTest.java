@@ -14,6 +14,7 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -29,6 +30,7 @@ import org.intermine.model.testmodel.Department;
 import org.intermine.model.testmodel.Employee;
 import org.intermine.objectstore.ObjectStore;
 import org.intermine.objectstore.dummy.ObjectStoreDummyImpl;
+import org.intermine.objectstore.flatouterjoins.MultiRowFirstValue;
 import org.intermine.objectstore.query.Query;
 import org.intermine.objectstore.query.QueryClass;
 import org.intermine.objectstore.query.QueryField;
@@ -111,11 +113,6 @@ public class PagedResultsTest extends TestCase
         return new PagedTable(webResults);
     }
 
-    public void testConstructor() throws Exception {
-        PagedTable dr = getExactResults();
-        assertEquals(4, dr.getColumns().size());
-    }
-
     public void testSizeExact() throws Exception {
         PagedTable dr = getExactResults();
         dr.setPageSize(10);
@@ -156,23 +153,23 @@ public class PagedResultsTest extends TestCase
 
         ObjectStore os = new ObjectStoreDummyImpl();
         results.put("employeeName", toList(new Object[][] { { e1 } }));
-        expected.put("employeeName", Arrays.asList(new Object[] {new ResultElement(e1, new Path(model, "Employee.name"), false)}));
+        expected.put("employeeName", Collections.singletonList(Collections.singletonList(new MultiRowFirstValue(new ResultElement(e1, new Path(model, "Employee.name"), false), 1))));
         headers.put("employeeName", toList(new Object[] {new Path(model, "Employee.name")}));
 
         results.put("employeeDepartmentName", toList(new Object[][] { { e1, d1 } }));
-        expected.put("employeeDepartmentName", Arrays.asList(new Object[] {new ResultElement(e1, new Path(model, "Employee.name"), false),
-                new ResultElement(d1, new Path(model, "Department.name"), false)}));
+        expected.put("employeeDepartmentName", Collections.singletonList(Arrays.asList(new MultiRowFirstValue(new ResultElement(e1, new Path(model, "Employee.name"), false), 1),
+                        new MultiRowFirstValue(new ResultElement(d1, new Path(model, "Department.name"), false), 1))));
         headers.put("employeeDepartmentName", toList(new Object[] {new Path(model, "Employee.name"), new Path(model, "Employee.department.name")}));
 
         results.put("employeeDepartmentCompany", toList(new Object[][] { { e1, d1, c1 } }));
-        expected.put("employeeDepartmentCompany", Arrays.asList(new Object[] {new ResultElement(e1, new Path(model, "Employee.name"), false),
-                new ResultElement(d1, new Path(model, "Department.name"), false),
-                new ResultElement(c1, new Path(model, "Company.name"), false)}));
+        expected.put("employeeDepartmentCompany", Collections.singletonList(Arrays.asList(new MultiRowFirstValue(new ResultElement(e1, new Path(model, "Employee.name"), false), 1),
+                        new MultiRowFirstValue(new ResultElement(d1, new Path(model, "Department.name"), false), 1),
+                        new MultiRowFirstValue(new ResultElement(c1, new Path(model, "Company.name"), false), 1))));
         headers.put("employeeDepartmentCompany", toList(new Object[] {new Path(model, "Employee.name"), new Path(model, "Employee.department.name"), new Path(model, "Employee.department.company.name")}));
 
         results.put("employeeCompany", toList(new Object[][] { { e1, c1 } }));
-        expected.put("employeeCompany", Arrays.asList(new Object[] {new ResultElement(e1, new Path(model, "Employee.name"), false),
-                new ResultElement(c1, new Path(model, "Company.name"), false)}));
+        expected.put("employeeCompany", Collections.singletonList(Arrays.asList(new MultiRowFirstValue(new ResultElement(e1, new Path(model, "Employee.name"), false), 1),
+                        new MultiRowFirstValue(new ResultElement(c1, new Path(model, "Company.name"), false), 1))));
         headers.put("employeeCompany", toList(new Object[] {new Path(model, "Employee.name"), new Path(model, "Employee.department.company.name")}));
 
 //        results.put("employeeDepartmentEmployees", toList(new Object[][] { { e1, d1, e2 } } ));
@@ -197,7 +194,7 @@ public class PagedResultsTest extends TestCase
             pq.setViewPaths((List) headers.get(queryName));
             WebResults webResults = new WebResults(pq,r, model, pathToQueryNode, classKeys, null);
             PagedTable pr = new PagedTable(webResults);
-            assertEquals("Failed with query: " + queryName + ". ", (List) expected.get(queryName), (List) pr.getResultElementRows().get(0));
+            assertEquals("Failed with query: " + queryName + ". ", (List) expected.get(queryName), (List) pr.getRows().get(0));
          }
     }
 

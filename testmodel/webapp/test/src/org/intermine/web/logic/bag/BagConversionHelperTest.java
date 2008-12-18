@@ -18,6 +18,8 @@ import org.intermine.objectstore.ObjectStore;
 import org.intermine.objectstore.ObjectStoreFactory;
 import org.intermine.objectstore.ObjectStoreWriter;
 import org.intermine.objectstore.ObjectStoreWriterFactory;
+import org.intermine.objectstore.flatouterjoins.MultiRow;
+import org.intermine.objectstore.flatouterjoins.MultiRowValue;
 import org.intermine.objectstore.intermine.ObjectStoreWriterInterMineImpl;
 import org.intermine.objectstore.query.BagConstraint;
 import org.intermine.objectstore.query.ConstraintOp;
@@ -29,6 +31,7 @@ import org.intermine.objectstore.query.QueryClass;
 import org.intermine.objectstore.query.QueryField;
 import org.intermine.objectstore.query.QueryObjectReference;
 import org.intermine.objectstore.query.Results;
+import org.intermine.objectstore.query.ResultsRow;
 import org.intermine.web.logic.Constants;
 import org.intermine.web.logic.profile.Profile;
 import org.intermine.web.logic.profile.ProfileManager;
@@ -94,10 +97,8 @@ public class BagConversionHelperTest extends MockStrutsTestCase {
 
         WebResults results = BagConversionHelper.getConvertedObjects(profile, context, conversionTemplates, Employee.class, Address.class, imb);
         List got = new ArrayList();
-        Iterator iter = results.iterator();
-        while (iter.hasNext()) {
-            List l = (List) iter.next();
-            got.add(((ResultElement) l.get(0)).getInterMineObject());
+        for (MultiRow<ResultsRow<MultiRowValue<ResultElement>>> mr : results) {
+            got.add(mr.get(0).get(0).getValue().getObject());
         }
         assertEquals(expected, got);
     }

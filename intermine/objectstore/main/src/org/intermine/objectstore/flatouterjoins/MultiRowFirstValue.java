@@ -16,10 +16,11 @@ import org.intermine.util.Util;
  * An object representing an entry in a MultiRow - the first instance of this value in a rowspan.
  *
  * @author Matthew Wakeling
+ * @param <E> The value type
  */
-public class MultiRowFirstValue extends MultiRowValue
+public class MultiRowFirstValue<E> extends MultiRowValue<E>
 {
-    private Object value;
+    private E value;
     private int rowspan;
     private MultiRowLaterValue mrlv;
 
@@ -29,7 +30,7 @@ public class MultiRowFirstValue extends MultiRowValue
      * @param value the value in the results
      * @param rowspan the number of rows that this value spans
      */
-    public MultiRowFirstValue(Object value, int rowspan) {
+    public MultiRowFirstValue(E value, int rowspan) {
         this.value = value;
         this.rowspan = rowspan;
         this.mrlv = new MultiRowLaterValue(this);
@@ -38,7 +39,7 @@ public class MultiRowFirstValue extends MultiRowValue
     /**
      * {@inheritDoc}
      */
-    public Object getValue() {
+    public E getValue() {
         return value;
     }
 

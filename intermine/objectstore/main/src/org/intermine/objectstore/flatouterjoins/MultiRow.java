@@ -10,17 +10,17 @@ package org.intermine.objectstore.flatouterjoins;
  *
  */
 
+import java.util.ArrayList;
 import java.util.Collection;
 
-import org.intermine.objectstore.query.ResultsRow;
-
 /**
- * A subclass of ResultsRow returned by the ObjectStoreFlatOuterJoinsImpl indicating a row that
+ * A subclass of ArrayList returned by the ResultsFlatOuterJoinsImpl indicating a row that
  * can be represented as multiple rows because of collections.
  *
  * @author Matthew Wakeling
+ * @param <E> The element type - usually ResultsRow
  */
-public class MultiRow extends ResultsRow
+public class MultiRow<E> extends ArrayList<E>
 {
     /**
      * @see ArrayList#ArrayList
@@ -34,7 +34,7 @@ public class MultiRow extends ResultsRow
      *
      * @param c an existing Collection
      */
-    public MultiRow(Collection c) {
+    public MultiRow(Collection<? extends E> c) {
         super(c);
     }
 }

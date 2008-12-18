@@ -14,13 +14,14 @@ package org.intermine.objectstore.flatouterjoins;
  * An object representing an entry in a MultiRow.
  *
  * @author Matthew Wakeling
+ * @param <E> The value type
  */
-public abstract class MultiRowValue
+public abstract class MultiRowValue<E>
 {
     /**
      * Returns the value of the entry.
      *
      * @return an object
      */
-    public abstract Object getValue();
+    public abstract E getValue();
 }
