@@ -118,7 +118,7 @@ public class ListsService extends WebService
         Constraint constraint = new Constraint(ConstraintOp.LOOKUP, input.getPublicId());
         node.getConstraints().add(constraint);
         pathQuery.getNodes().put(input.getType(), node);
-        pathQuery.addPathStringToView(input.getType());
+        pathQuery.addView(input.getType());
         PathQueryExecutor executor = SessionMethods.getPathQueryExecutor(request.getSession());
         Iterator<List<ResultElement>> it = executor.execute(pathQuery);
         if (it.hasNext()) {
