@@ -33,6 +33,8 @@ import org.intermine.webservice.server.output.TabFormatter;
 import org.intermine.webservice.server.output.XMLFormatter;
 import org.intermine.webservice.server.query.result.WebServiceRequestParser;
 
+import com.sun.corba.se.impl.protocol.INSServerRequestDispatcher;
+
 /**
  * 
  * Base class for web services. See methods of class to be able implement
@@ -133,12 +135,24 @@ public abstract class WebService
         } else {
             code = Output.SC_INTERNAL_SERVER_ERROR;
         }
+        logError(t, msg, code);
+        sendErrorMsg(response, formatErrorMsg(msg, code), code);
+    }
+
+    private void logError(Throwable t, String msg, int code) {
         if (code == Output.SC_INTERNAL_SERVER_ERROR) {
             logger.error("Service failed by internal error", t);
         } else {
-            logger.debug("Service didn't succeed.", t);
+            logger.debug("Service didn't succeed. It's not an internal error. "
+                    + "Reason: " + getErrorDescription(msg, code));
         }
-        sendErrorMsg(response, formatErrorMsg(msg, code), code);
+    }
+    
+    private String getErrorDescription(String msg, int errorCode) {
+        StringBuilder sb = new StringBuilder();
+        sb.append(StatusDictionary.getDescription(errorCode));
+        sb.append(msg);
+        return sb.toString();
     }
 
     private void sendErrorMsg(HttpServletResponse response, String msg, int code) {
