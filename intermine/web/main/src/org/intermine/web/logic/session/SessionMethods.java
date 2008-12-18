@@ -50,6 +50,7 @@ import org.intermine.web.logic.profile.ProfileManager;
 import org.intermine.web.logic.profile.TagManager;
 import org.intermine.web.logic.profile.TagManagerFactory;
 import org.intermine.web.logic.query.PageTableQueryMonitor;
+import org.intermine.web.logic.query.PathQueryExecutor;
 import org.intermine.web.logic.query.QueryMonitor;
 import org.intermine.web.logic.query.SaveQueryHelper;
 import org.intermine.web.logic.query.SavedQuery;
@@ -949,6 +950,26 @@ public class SessionMethods
         List<TemplateQuery> conversionTemplates = BagConversionHelper.getConversionTemplates
             (getProfileManager(servletContext).getSuperuserProfile());
         WebResultsExecutor ret = new WebResultsExecutor(
+                getObjectStore(servletContext),
+                getClassKeys(servletContext), 
+                getBagQueryConfig(servletContext),
+                getProfile(session),
+                conversionTemplates,
+                getSearchRepository(servletContext));
+        return ret;
+    }
+
+    /**
+     * Retrieves from session required objects and constructs path query executor returning
+     * results in format suitable for export and web services.
+     * @param session session
+     * @return executor
+     */
+    public static PathQueryExecutor getPathQueryExecutor(HttpSession session) {
+        ServletContext servletContext = session.getServletContext();
+        List<TemplateQuery> conversionTemplates = BagConversionHelper.getConversionTemplates
+            (getProfileManager(servletContext).getSuperuserProfile());
+        PathQueryExecutor ret = new PathQueryExecutor(
                 getObjectStore(servletContext),
                 getClassKeys(servletContext), 
                 getBagQueryConfig(servletContext),

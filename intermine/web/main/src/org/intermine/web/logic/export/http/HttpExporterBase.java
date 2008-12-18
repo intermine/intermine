@@ -12,20 +12,14 @@ package org.intermine.web.logic.export.http;
 
 import java.util.Iterator;
 import java.util.List;
-import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpSession;
 
 import org.intermine.pathquery.PathQuery;
-import org.intermine.web.logic.Constants;
-import org.intermine.web.logic.WebUtil;
-import org.intermine.web.logic.bag.InterMineBag;
-import org.intermine.web.logic.profile.Profile;
+import org.intermine.web.logic.query.PathQueryExecutor;
 import org.intermine.web.logic.results.PagedTable;
 import org.intermine.web.logic.results.ResultElement;
 import org.intermine.web.logic.session.SessionMethods;
-import org.intermine.webservice.server.core.PathQueryExecutor;
 
 /**
  * Abstract class with functionality common for all classes implementing TableHttpExporter 
@@ -47,14 +41,10 @@ public abstract class HttpExporterBase
      * @return all results of pathquery corresponding specified paged table.
      */
     public Iterator<List<ResultElement>> getResultRows(PagedTable pt, HttpServletRequest request) {
-        PathQuery query = pt.getWebTable().getPathQuery();
-        HttpSession session = request.getSession();
-        Profile profile = (Profile) session.getAttribute(Constants.PROFILE);
-        Map<String, InterMineBag> bags = WebUtil.getAllBags(profile
-                .getSavedBags(), SessionMethods.getSearchRepository(session.getServletContext()));
-        executor = new PathQueryExecutor(request, query, bags);
+        PathQuery pathQuery = pt.getWebTable().getPathQuery();
+        executor = SessionMethods.getPathQueryExecutor(request.getSession());
         executor.setBatchSize(BATCH_SIZE);
-        return executor.getResults();
+        return executor.execute(pathQuery);
     }
     
     /**
