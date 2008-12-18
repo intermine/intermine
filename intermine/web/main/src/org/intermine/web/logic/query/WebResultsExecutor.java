@@ -1,5 +1,15 @@
 package org.intermine.web.logic.query;
 
+/*
+ * Copyright (C) 2002-2008 FlyMine
+ *
+ * This code may be freely distributed and modified under the
+ * terms of the GNU Lesser General Public Licence.  This should
+ * be distributed with the code.  See the LICENSE file for more
+ * information or http://www.gnu.org/copyleft/lesser.html.
+ *
+ */
+
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -11,7 +21,6 @@ import org.intermine.objectstore.flatouterjoins.ObjectStoreFlatOuterJoinsImpl;
 import org.intermine.objectstore.query.Query;
 import org.intermine.objectstore.query.QuerySelectable;
 import org.intermine.objectstore.query.Results;
-import org.intermine.objectstore.query.ResultsInfo;
 import org.intermine.pathquery.PathQuery;
 import org.intermine.web.logic.Constants;
 import org.intermine.web.logic.WebUtil;
@@ -24,10 +33,14 @@ import org.intermine.web.logic.results.WebResults;
 import org.intermine.web.logic.search.SearchRepository;
 import org.intermine.web.logic.template.TemplateQuery;
 
-// Very preliminary version of path query executor returning WebResults, because it 
-// will be changed heavily checkstyle errors are ignored
-
-public class WebResultsExecutor {
+/**
+ * Executes a PathQuery and returns a WebResults object, to be used when multi-row
+ * style results are required.  
+ * @author Richard Smith
+ * @author Jakub Kulaviak
+ */
+public class WebResultsExecutor 
+{
     private ObjectStore os;
     private Map<String, List<FieldDescriptor>> classKeys;
     private BagQueryConfig bagQueryConfig;
@@ -35,6 +48,16 @@ public class WebResultsExecutor {
     private List<TemplateQuery> conversionTemplates;
     private SearchRepository searchRepository;
 
+    /**
+     * Construct with necessary objects to generate and ObjectStore query from a PathQuery and
+     * execute it.
+     * @param os the ObjectStore to run the query in
+     * @param classKeys key fields for classes in the data model
+     * @param bagQueryConfig bag queries to run when intepreting LOOKUP constraints
+     * @param profile the user executing the query - for access to saved lists
+     * @param conversionTemplates templates used for converting bag query results between types
+     * @param searchRepository global search repository to fetch saved bags from
+     */
     public WebResultsExecutor(ObjectStore os,
             Map<String, List<FieldDescriptor>> classKeys,
             BagQueryConfig bagQueryConfig,
@@ -48,6 +71,13 @@ public class WebResultsExecutor {
         this.searchRepository = searchRepository;
     }
 
+    /**
+     * Create and ObjectStore query from a PathQuery and execute it, returning results in a format
+     * appropriate for displaying a web table.
+     * @param pathQuery the query to execute
+     * @return results in a format appropriate for display in a web page table
+     * @throws ObjectStoreException if problem running query
+     */
     public WebResults execute(PathQuery pathQuery) throws ObjectStoreException {
         Map<String, QuerySelectable> pathToQueryNode = new HashMap<String, QuerySelectable>();
 
@@ -59,8 +89,8 @@ public class WebResultsExecutor {
         Map<String, InterMineBag> allBags = WebUtil.getAllBags(profile.getSavedBags(), 
                 searchRepository);
         
-        Query q = MainHelper.makeQuery(pathQuery, allBags, pathToQueryNode, bqr, pathToBagQueryResult,
-                false);
+        Query q = MainHelper.makeQuery(pathQuery, allBags, pathToQueryNode, bqr,
+        		pathToBagQueryResult, false);
 
         ObjectStoreFlatOuterJoinsImpl joinsOs = new ObjectStoreFlatOuterJoinsImpl(os);
         Results results = joinsOs.execute(q);
@@ -73,12 +103,12 @@ public class WebResultsExecutor {
         return webResults;
     }
 
-    public ResultsInfo estimate(PathQuery pq) {
-        return null;
-    }
-
-    public int count(PathQuery pq) {
-        return 0;
-
-    }
+//    public ResultsInfo estimate(PathQuery pq) {
+//        return null;
+//    }
+//
+//    public int count(PathQuery pq) {
+//        return 0;
+//
+//    }
 }
