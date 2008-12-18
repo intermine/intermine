@@ -3,12 +3,13 @@ html, body {
 
 a {
     color: #00e;}
+    
+body {
+	background:#FFF url('top_gradient.png') repeat-x;
+}
 
 /* =CUSTOMISABLE LOOK
 --------------------------*/
-
-#header{
-	background: url('top_gradient.png') repeat-x;}
 
 .plainbox {
 	padding:10px; border:1px solid #000;
