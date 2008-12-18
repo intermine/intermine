@@ -52,6 +52,7 @@ if ($release) {
 foreach my $taxon_id(keys %organisms) {
     
     my %proteins = ();
+    my %exons = ();
 
     $org_item = make_item("Organism");
     $org_item->set("taxonId", $taxon_id);
@@ -151,7 +152,7 @@ foreach my $taxon_id(keys %organisms) {
                                 
                 my @exons = @{ $transcript->get_all_Exons() };
                 while ( my $exon = shift @exons ) {
-                    my $exon_item = make_exon($exon->stable_id());
+                    my $exon_item = make_exon(\%exons, $exon->stable_id());
                     $exon_item->set('transcripts', [$transcript_item]);
                     $exon_item->set('gene', $gene_item);                    
                     $exon_item->set('sequence', make_seq($exon->seq->seq));
