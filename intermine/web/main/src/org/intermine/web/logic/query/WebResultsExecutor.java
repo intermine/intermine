@@ -85,7 +85,7 @@ public class WebResultsExecutor
      * Create and ObjectStore query from a PathQuery and execute it, returning results in a format
      * appropriate for displaying a web table.
      * @param pathQuery the query to execute
-     * @param pathToBagQueryResults will be populated with results from bag queries used in any
+     * @param pathToBagQueryResult will be populated with results from bag queries used in any
      * LOOKUP constraints
      * @return results in a format appropriate for display in a web page table
      * @throws ObjectStoreException if problem running query
