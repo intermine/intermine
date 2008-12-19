@@ -11,6 +11,7 @@ import java.util.List;
 import java.util.Map;
 
 import javax.servlet.ServletContext;
+import javax.servlet.http.HttpSession;
 
 import org.intermine.model.testmodel.Address;
 import org.intermine.model.testmodel.Employee;
@@ -48,6 +49,7 @@ public class BagConversionHelperTest extends MockStrutsTestCase {
     ObjectStoreWriter uosw = null;
     List<TemplateQuery> conversionTemplates;
     Profile profile;
+    HttpSession session;
     
     public void setUp() throws Exception {
         super.setUp();
@@ -67,11 +69,12 @@ public class BagConversionHelperTest extends MockStrutsTestCase {
         TemplateQuery tq = (TemplateQuery) tqs.get("convertEmployeesToAddresses");
         conversionTemplates = new ArrayList<TemplateQuery>(Collections.singleton(tq));
         uosw = ObjectStoreWriterFactory.getObjectStoreWriter("osw.userprofile-test");
-        
         ObjectStore os = ObjectStoreFactory.getObjectStore("os.unittest");
         ProfileManager profileManager = new ProfileManager(os, uosw);
         profile = new Profile(profileManager, "test", new Integer(101), "testpass",
                 new HashMap(), new HashMap(), new HashMap());
+        session = getSession();
+        session.setAttribute(Constants.PROFILE, profile);
     }
     
     public void tearDown() throws Exception {
@@ -95,7 +98,7 @@ public class BagConversionHelperTest extends MockStrutsTestCase {
         expected.add(((List) r.get(0)).get(1));
         expected.add(((List) r.get(1)).get(1));
 
-        WebResults results = BagConversionHelper.getConvertedObjects(profile, context, conversionTemplates, Employee.class, Address.class, imb);
+        WebResults results = BagConversionHelper.getConvertedObjects(getSession(), conversionTemplates, Employee.class, Address.class, imb);
         List got = new ArrayList();
         for (MultiRow<ResultsRow<MultiRowValue<ResultElement>>> mr : results) {
             got.add(mr.get(0).get(0).getValue().getObject());

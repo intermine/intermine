@@ -56,18 +56,18 @@ public class ObjectDetailsTemplateController extends TilesAction
         TemplateQuery templateQuery = (TemplateQuery) context.getAttribute("templateQuery");
         String templateName = templateQuery.getName();
 
-        String userName = ((Profile) session.getAttribute(Constants.PROFILE)).getUsername();
+        Profile profile = (Profile) session.getAttribute(Constants.PROFILE);
         InlineTemplateTable itt = null;
 
         if (displayObject != null) {
             Integer objectId = displayObject.getObject().getId();
             itt =
                 TemplateHelper.getInlineTemplateTable(servletContext, templateName,
-                                                  objectId, userName);
+                                                  objectId, profile);
         } else {
             itt =
                 TemplateHelper.getInlineTemplateTable(servletContext, templateName,
-                                                  interMineIdBag, userName);
+                                                  interMineIdBag, profile);
         }
 
         if (itt != null) {

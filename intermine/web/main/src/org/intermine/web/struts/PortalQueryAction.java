@@ -52,6 +52,7 @@ import org.intermine.web.logic.config.WebConfig;
 import org.intermine.web.logic.pathqueryresult.PathQueryResultHelper;
 import org.intermine.web.logic.profile.Profile;
 import org.intermine.web.logic.query.QueryMonitorTimeout;
+import org.intermine.web.logic.query.WebResultsExecutor;
 import org.intermine.web.logic.results.PagedTable;
 import org.intermine.web.logic.results.ResultElement;
 import org.intermine.web.logic.results.WebResults;
@@ -137,13 +138,9 @@ public class PortalQueryAction extends InterMineAction
 
         ObjectStore os = (ObjectStore) servletContext.getAttribute(Constants.OBJECTSTORE);
         WebConfig webConfig = (WebConfig) servletContext.getAttribute(Constants.WEBCONFIG);
-        Map classKeys = (Map) servletContext.getAttribute(Constants.CLASS_KEYS);
         Model model = os.getModel();
         BagQueryConfig bagQueryConfig =
                 (BagQueryConfig) servletContext.getAttribute(Constants.BAG_QUERY_CONFIG);
-
-//        BagQueryRunner bagRunner =
-//                new BagQueryRunner(os, classKeys, bagQueryConfig, servletContext);
 
         // If the class is not in the model, we can't continue
         try {
@@ -186,15 +183,10 @@ public class PortalQueryAction extends InterMineAction
         pathQuery.setConstraintLogic("A and B and C");
         pathQuery.syncLogicExpression("and");
 
-        Map returnBagQueryResults = new HashMap();
-        WebResults webResults = PathQueryResultHelper.createPathQueryGetResults(pathQuery, profile,
-                        os, classKeys,
-                        bagQueryConfig, returnBagQueryResults, servletContext);
-        // END
-
-
-//        BagQueryResult bagQueryResult =
-//            bagRunner.searchForBag(className, Arrays.asList(idList), organism, false);
+        Map<String, BagQueryResult> returnBagQueryResults = new HashMap<String, BagQueryResult>();
+        
+        WebResultsExecutor executor = SessionMethods.getWebResultsExecutor(session);
+        WebResults webResults = executor.execute(pathQuery, returnBagQueryResults);
 
         InterMineBag imBag = new InterMineBag(bagName,
                         className , null , new Date() ,
@@ -203,8 +195,7 @@ public class PortalQueryAction extends InterMineAction
         List <Integer> bagList = new ArrayList <Integer> ();
 
         // There's only one node, get the first value
-        BagQueryResult bagQueryResult = (BagQueryResult) returnBagQueryResults.values().iterator()
-                        .next();
+        BagQueryResult bagQueryResult = returnBagQueryResults.values().iterator().next();
         bagList.addAll(bagQueryResult.getMatchAndIssueIds());
 
         DisplayLookupMessageHandler.handleMessages(bagQueryResult, session,
@@ -250,8 +241,7 @@ public class PortalQueryAction extends InterMineAction
                         actionMessages.add(Constants.PORTAL_MSG,
                             new ActionMessage("portal.nomatches.orthologues", addparameter, extId));
                         session.setAttribute(Constants.PORTAL_MSG, actionMessages);
-                        return goToResults(mapping, os, model, className, webConfig, classKeys,
-                                           session, webResults);
+                        return goToResults(mapping, session, webResults);
                     }
                     actionMessages.add(Constants.PORTAL_MSG, bagConverter.getActionMessage(model,
                         extId, converted.size(), className, addparameter));
@@ -289,8 +279,7 @@ public class PortalQueryAction extends InterMineAction
 
         // Go to results page
         if ((bagList.size() > 1) && (idList.length == 1)) {
-            return goToResults(mapping, os, model, className, webConfig, classKeys,
-                session, webResults);
+            return goToResults(mapping, session, webResults);
         // Go to the object details page
         } else if ((bagList.size() == 1) && (idList.length == 1)) {
             return goToObjectDetails(mapping, bagList.get(0).toString());
@@ -299,8 +288,7 @@ public class PortalQueryAction extends InterMineAction
             return goToBagDetails(mapping, os, imBag, bagList, profile);
         // No matches
         } else {
-            return goToResults(mapping, os, model, className, webConfig, classKeys,
-                               session, webResults);
+            return goToResults(mapping, session, webResults);
         }
     }
 
@@ -316,11 +304,6 @@ public class PortalQueryAction extends InterMineAction
     }
 
     private ActionForward goToResults(ActionMapping mapping,
-                                      @SuppressWarnings("unused") ObjectStore os,
-                                      @SuppressWarnings("unused") Model model,
-                                      @SuppressWarnings("unused") String className,
-                                      @SuppressWarnings("unused") WebConfig webConfig,
-                                      @SuppressWarnings("unused") Map classKeys,
                                       HttpSession session, WebResults webResults) {
         PagedTable pc = new PagedTable(webResults);
         String identifier = "col" + index++;

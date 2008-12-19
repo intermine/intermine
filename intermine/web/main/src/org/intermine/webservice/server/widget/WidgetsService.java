@@ -20,6 +20,7 @@ import java.util.Map;
 import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
 
 import org.intermine.metadata.Model;
 import org.intermine.objectstore.ObjectStore;
@@ -33,13 +34,13 @@ import org.intermine.pathquery.PathQuery;
 import org.intermine.util.StringUtil;
 import org.intermine.util.TypeUtil;
 import org.intermine.web.logic.Constants;
-import org.intermine.web.logic.bag.BagQueryConfig;
 import org.intermine.web.logic.bag.BagQueryResult;
 import org.intermine.web.logic.bag.InterMineBag;
 import org.intermine.web.logic.config.WebConfig;
 import org.intermine.web.logic.pathqueryresult.PathQueryResultHelper;
 import org.intermine.web.logic.profile.Profile;
-import org.intermine.web.logic.results.WebResults;
+import org.intermine.web.logic.query.WebResultsExecutor;
+import org.intermine.web.logic.session.SessionMethods;
 import org.intermine.web.logic.widget.config.EnrichmentWidgetConfig;
 import org.intermine.web.logic.widget.config.GraphWidgetConfig;
 import org.intermine.web.logic.widget.config.TableWidgetConfig;
@@ -51,9 +52,16 @@ import org.intermine.webservice.server.WebService;
  * Web service that returns a widget for a given list of identifiers See
  * {@link WidgetsRequestProcessor} for parameter description 
  * URL examples: get an EnrichmentWidget
- * widgets?widgetId=go_enrichment&className=Gene&extraAttributes=Bonferroni,0.1,biological_process&ids=FBgn0011648,FBgn0011655,FBgn0025800&format=html
+ * /service/widgets?widgetId=go_enrichment
+ *   &className=Gene
+ *   &extraAttributes=Bonferroni,0.1,biological_process
+ *   &ids=FBgn0011648,FBgn0011655,FBgn0025800
+ *   &format=html
  * get a GraphWidget
- * http://sauron.flymine.org:8080/flymine/service/widgets?widgetId=flyatlas&className=Gene&extraAttributes=&ids=FBgn0011648,FBgn0011655,FBgn0025800&format=html
+ * /service/widgets?widgetId=flyatlas
+ *   &className=Gene&extraAttributes=
+ *   &ids=FBgn0011648,FBgn0011655,FBgn0025800
+ *   &format=html
  * 
  * @author "Xavier Watkins"
  */
@@ -101,9 +109,6 @@ public class WidgetsService extends WebService
                     throws ObjectStoreException {
         ObjectStore os = (ObjectStore) servletContext.getAttribute(Constants.OBJECTSTORE);
         WebConfig webConfig = (WebConfig) servletContext.getAttribute(Constants.WEBCONFIG);
-        Map classKeys = (Map) servletContext.getAttribute(Constants.CLASS_KEYS);
-        BagQueryConfig bagQueryConfig = (BagQueryConfig) servletContext
-                        .getAttribute(Constants.BAG_QUERY_CONFIG);
         Model model = os.getModel();
         try {
             className = StringUtil.capitalise(className);
@@ -148,14 +153,14 @@ public class WidgetsService extends WebService
         pathQuery.setConstraintLogic("A and B and C");
         pathQuery.syncLogicExpression("and");
 
-        Map returnBagQueryResults = new HashMap();
-        WebResults webResults = PathQueryResultHelper.createPathQueryGetResults(pathQuery, profile,
-                        os, classKeys,
-                        bagQueryConfig, returnBagQueryResults, servletContext);
+        Map<String, BagQueryResult> returnBagQueryResults = new HashMap<String, BagQueryResult>();
+        WebResultsExecutor executor = SessionMethods.getWebResultsExecutor(servletContext, profile);
         
+        // execute query, we just need the bag query results
+        executor.execute(pathQuery, returnBagQueryResults);
+                
         // There's only one node, get the first value
-        BagQueryResult bagQueryResult = (BagQueryResult) returnBagQueryResults.values().iterator()
-                        .next();
+        BagQueryResult bagQueryResult = returnBagQueryResults.values().iterator().next();
         List <Integer> bagList = new ArrayList <Integer> ();
         bagList.addAll(bagQueryResult.getMatchAndIssueIds());
 

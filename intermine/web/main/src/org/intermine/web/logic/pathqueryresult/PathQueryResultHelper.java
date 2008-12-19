@@ -16,22 +16,17 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import javax.servlet.ServletContext;
-
 import org.intermine.metadata.AttributeDescriptor;
 import org.intermine.metadata.ClassDescriptor;
 import org.intermine.metadata.Model;
 import org.intermine.model.InterMineObject;
 import org.intermine.objectstore.ObjectStore;
-import org.intermine.objectstore.ObjectStoreException;
 import org.intermine.objectstore.query.ConstraintOp;
 import org.intermine.objectstore.query.ContainsConstraint;
 import org.intermine.objectstore.query.Query;
 import org.intermine.objectstore.query.QueryClass;
 import org.intermine.objectstore.query.QueryCollectionReference;
 import org.intermine.objectstore.query.QueryField;
-import org.intermine.objectstore.query.QuerySelectable;
-import org.intermine.objectstore.query.Results;
 import org.intermine.pathquery.Constraint;
 import org.intermine.pathquery.Node;
 import org.intermine.pathquery.Path;
@@ -39,18 +34,10 @@ import org.intermine.pathquery.PathQuery;
 import org.intermine.util.CollectionUtil;
 import org.intermine.util.DynamicUtil;
 import org.intermine.util.TypeUtil;
-import org.intermine.web.logic.WebUtil;
-import org.intermine.web.logic.bag.BagQueryConfig;
 import org.intermine.web.logic.bag.InterMineBag;
 import org.intermine.web.logic.config.FieldConfig;
 import org.intermine.web.logic.config.FieldConfigHelper;
 import org.intermine.web.logic.config.WebConfig;
-import org.intermine.web.logic.profile.Profile;
-import org.intermine.web.logic.profile.ProfileManager;
-import org.intermine.web.logic.query.MainHelper;
-import org.intermine.web.logic.results.TableHelper;
-import org.intermine.web.logic.results.WebResults;
-import org.intermine.web.logic.session.SessionMethods;
 
 /**
  * Helper for everything related to PathQueryResults
@@ -213,58 +200,4 @@ public class PathQueryResultHelper
         pathQuery.syncLogicExpression("and");
         return pathQuery;
     }
-
-    /**
-     * Runs a PathQuery and return a WebResults object
-     *
-     * @param pathQuery the PathQuery to run
-     * @param profile the user Profile
-     * @param os the ObjectStore
-     * @param classKeys the ClassKeys
-     * @param bagQueryConfig the BagQueryConfig
-     * @param returnBagQueryResults populated by MainHelper.makeQuery
-     * @param servletContext the ServletContext
-     * @return a WebResult object
-     * @throws ObjectStoreException exception thrown
-     */
-    public static WebResults createPathQueryGetResults(PathQuery pathQuery, Profile profile,
-                                                    ObjectStore os, Map classKeys,
-                                                    BagQueryConfig bagQueryConfig,
-                                                    Map returnBagQueryResults,
-                                                    ServletContext servletContext)
-                    throws ObjectStoreException {
-        Model model = os.getModel();
-        Map<String, QuerySelectable> pathToQueryNode = new HashMap();
-        Map<String, InterMineBag> allBags = WebUtil.getAllBags(profile.getSavedBags(),
-                        SessionMethods.getSearchRepository(servletContext));
-        ProfileManager pm = SessionMethods.getProfileManager(servletContext);
-        Query query = MainHelper.makeQuery(pathQuery, allBags, pathToQueryNode, pm,
-                        returnBagQueryResults, false, os, classKeys, bagQueryConfig);
-        Results results = TableHelper.makeResults(os, query);
-        WebResults webResults = new WebResults(pathQuery, results, model, pathToQueryNode,
-                        classKeys, null);
-        return webResults;
-    }
-
-    /**
-     * Runs a PathQuery and return a WebResults object
-     *
-     * @param pathQuery the PathQuery to run
-     * @param profile the user Profile
-     * @param os the ObjectStore
-     * @param classKeys the ClassKeys
-     * @param bagQueryConfig the BagQueryConfig
-     * @param servletContext the ServletContext
-     * @return a WebResult object
-     * @throws ObjectStoreException exception thrown
-     */
-    public static WebResults createPathQueryGetResults (PathQuery pathQuery, Profile profile,
-                                                    ObjectStore os, Map classKeys,
-                                                    BagQueryConfig bagQueryConfig,
-                                                    ServletContext servletContext)
-                    throws ObjectStoreException {
-        return createPathQueryGetResults(pathQuery, profile, os, classKeys, bagQueryConfig, null,
-                        servletContext);
-    }
-
 }

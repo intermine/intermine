@@ -145,7 +145,7 @@ public class ModifyBagDetailsAction extends InterMineAction
             Model model = os.getModel();
             ProfileManager pm = 
                 (ProfileManager) servletContext.getAttribute(Constants.PROFILE_MANAGER); 
-            WebResults webResults = BagConversionHelper.getConvertedObjects(profile, servletContext,
+            WebResults webResults = BagConversionHelper.getConvertedObjects(session,
                 BagConversionHelper.getConversionTemplates(pm.getSuperuserProfile()),
                 TypeUtil.instantiate(model.getPackageName() + "." + imBag.getType()),
                 TypeUtil.instantiate(model.getPackageName() + "." + type2),

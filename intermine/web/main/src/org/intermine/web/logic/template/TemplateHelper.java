@@ -15,7 +15,6 @@ import java.io.Serializable;
 import java.io.StringReader;
 import java.io.StringWriter;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
@@ -41,19 +40,18 @@ import org.intermine.objectstore.query.ConstraintOp;
 import org.intermine.objectstore.query.Query;
 import org.intermine.objectstore.query.QueryNode;
 import org.intermine.objectstore.query.QuerySelectable;
-import org.intermine.objectstore.query.Results;
 import org.intermine.pathquery.Constraint;
 import org.intermine.pathquery.PathNode;
 import org.intermine.pathquery.PathQuery;
 import org.intermine.util.TypeUtil;
 import org.intermine.web.logic.Constants;
 import org.intermine.web.logic.ServletMethods;
-import org.intermine.web.logic.bag.BagQueryConfig;
 import org.intermine.web.logic.bag.InterMineBag;
 import org.intermine.web.logic.profile.Profile;
 import org.intermine.web.logic.profile.ProfileManager;
 import org.intermine.web.logic.query.MainHelper;
 import org.intermine.web.logic.query.SavedQuery;
+import org.intermine.web.logic.query.WebResultsExecutor;
 import org.intermine.web.logic.results.InlineTemplateTable;
 import org.intermine.web.logic.results.PagedTable;
 import org.intermine.web.logic.results.WebResults;
@@ -495,12 +493,14 @@ public class TemplateHelper
      * @param template template
      * @param object object
      * @param bag bag
+     * @param profile the user running the query
      * @return created template
      */
     public static InlineTemplateTable makeInlineTemplateTable(ServletContext servletContext,
                                                               TemplateQuery template,
                                                               InterMineObject object,
-                                                              InterMineBag bag) {
+                                                              InterMineBag bag,
+                                                              Profile profile) {
         try {
             TemplateForm templateForm = new TemplateForm();
             ObjectStore os = (ObjectStore) servletContext.getAttribute(Constants.OBJECTSTORE);
@@ -515,18 +515,12 @@ public class TemplateHelper
             PathQuery pathQuery = TemplateHelper.templateFormToTemplateQuery(templateForm, template,
                                                                              new HashMap());
 
-            Map<String, QuerySelectable> pathToQueryNode = new HashMap();
             ProfileManager pm = SessionMethods.getProfileManager(servletContext);
-            Query query = MainHelper.makeQuery(pathQuery, Collections.EMPTY_MAP, pathToQueryNode,
-                          pm, null, false,
-                          (ObjectStore) servletContext.getAttribute(Constants.OBJECTSTORE),
-                          (Map) servletContext.getAttribute(Constants.CLASS_KEYS),
-                          (BagQueryConfig) servletContext.getAttribute(Constants.BAG_QUERY_CONFIG));
-            Results results = os.execute(query);
-            Model model = os.getModel();
-            WebResults webResults =
-                new WebResults(pathQuery, results, model, pathToQueryNode,
-                               (Map) servletContext.getAttribute(Constants.CLASS_KEYS), null);
+            
+            WebResultsExecutor executor = SessionMethods.getWebResultsExecutor(servletContext,
+                    profile);
+            WebResults webResults = executor.execute(pathQuery);
+            
             PagedTable pagedResults = new PagedTable(webResults);
 
             InlineTemplateTable itt = new InlineTemplateTable(pagedResults, webProperties);
@@ -553,8 +547,6 @@ public class TemplateHelper
      */
     public static final String TEMPLATE_TABLE_CACHE_TAG = "template_table_tag";
 
-    private static final String NO_USERNAME_STRING = "__NO_USER_NAME__";
-
     /**
      * Register an ObjectCreator for creating inline template tables.
      * @param cache the InterMineCache
@@ -568,13 +560,10 @@ public class TemplateHelper
 
             @SuppressWarnings("unused")
             public Serializable create(String templateName, InterMineBag interMineIdBag,
-                                       String userName) {
-                String u = userName;
-                if (u.equals(NO_USERNAME_STRING)) {
-                    // the create method can't have a null argument, but null is the signal for
-                    // findTemplate() that there is no current user
-                    u = null;
-                }
+                                       Profile profile) {
+                // profile.getUsername returns null if user is not logged in.  null is the signal
+                // for findTemplate() that the user is not logged in
+                String u = profile.getUsername();
                 TemplateQuery template =
                     TemplateHelper.findTemplate(servletContext, null, u, templateName,
                                                 TemplateHelper.ALL_TEMPLATE);
@@ -583,16 +572,15 @@ public class TemplateHelper
                     throw new IllegalStateException("Could not find template \""
                                                     + templateName + "\"");
                 }
-                return makeInlineTemplateTable(servletContext, template, null, interMineIdBag);
+                return makeInlineTemplateTable(servletContext, template, null, interMineIdBag,
+                        profile);
             }
             @SuppressWarnings("unused")
-            public Serializable create(String templateName, Integer id, String userName) {
-                String u = userName;
-                if (u.equals(NO_USERNAME_STRING)) {
-                    // the create method can't have a null argument, but null is the signal for
-                    // findTemplate() that there is no current user
-                    u = null;
-                }
+            public Serializable create(String templateName, Integer id, Profile profile) {
+                // profile.getUsername returns null if user is not logged in.  null is the signal
+                // for findTemplate() that the user is not logged in
+                String u = profile.getUsername();
+
                 TemplateQuery template =
                     TemplateHelper.findTemplate(servletContext, null, u,
                                                 templateName, TemplateHelper.ALL_TEMPLATE);
@@ -608,7 +596,7 @@ public class TemplateHelper
                 } catch (ObjectStoreException e) {
                     throw new RuntimeException("cannot find object for ID: " + id);
                 }
-                return makeInlineTemplateTable(servletContext, template, object, null);
+                return makeInlineTemplateTable(servletContext, template, object, null, profile);
             }
         };
 
@@ -621,23 +609,16 @@ public class TemplateHelper
      * @param servletContext the ServletContext
      * @param templateName the template name
      * @param interMineIdBag the InterMineIdBag
-     * @param userName the user name
+     * @param profile the user running the query
      * @return the InlineTemplateTable
      */
     public static InlineTemplateTable getInlineTemplateTable(ServletContext servletContext,
                                                              String templateName,
                                                              InterMineBag interMineIdBag,
-                                                             String userName) {
-        String u = userName;
-        if (u == null) {
-            // the ObjectCreator.create() method can't have a null argument, but null is the signal
-            // for findTemplate() that there is no current user
-            u = NO_USERNAME_STRING;
-        }
-
+                                                             Profile profile) {
         InterMineCache cache = ServletMethods.getGlobalCache(servletContext);
         return (InlineTemplateTable) cache.get(TemplateHelper.TEMPLATE_TABLE_CACHE_TAG,
-                                               templateName, interMineIdBag, u);
+                                               templateName, interMineIdBag, profile);
     }
 
     /**
@@ -646,23 +627,16 @@ public class TemplateHelper
      * @param servletContext the ServletContext
      * @param templateName the template name
      * @param id the object Id
-     * @param userName the user name
+     * @param profile the user running the query
      * @return the InlineTemplateTable
      */
     public static InlineTemplateTable getInlineTemplateTable(ServletContext servletContext,
                                                              String templateName,
                                                              Integer id,
-                                                             String userName) {
-        String u = userName;
-        if (u == null) {
-            // the ObjectCreator.create() method can't have a null argument, but null is the signal
-            // for findTemplate() that there is no current user
-            u = NO_USERNAME_STRING;
-        }
-
+                                                             Profile profile) {
         InterMineCache cache = ServletMethods.getGlobalCache(servletContext);
         return (InlineTemplateTable) cache.get(TemplateHelper.TEMPLATE_TABLE_CACHE_TAG,
-                                               templateName, id, u);
+                                               templateName, id, profile);
     }
 
     /**

@@ -86,13 +86,13 @@ public class ModifyDetails extends DispatchAction
             Integer objectId = new Integer(idForLookup);
             itt =
                 TemplateHelper.getInlineTemplateTable(servletContext, name,
-                                                      objectId, userName);
+                                                      objectId, profile);
         } else if (bagName != null && bagName.length() != 0) {
             Map<String, InterMineBag> allBags = WebUtil.getAllBags(profile.getSavedBags(), 
                     SessionMethods.getSearchRepository(servletContext));
             InterMineBag interMineBag = allBags.get(bagName);
             itt = TemplateHelper.getInlineTemplateTable(servletContext, name,
-                                                        interMineBag, userName);
+                                                        interMineBag, profile);
         }
         String identifier = "itt." + template.getName() + "." + idForLookup;
         SessionMethods.setResultsTable(session, identifier, itt.getPagedTable());

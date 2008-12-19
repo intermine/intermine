@@ -78,9 +78,21 @@ public class WebResultsExecutor
      * @throws ObjectStoreException if problem running query
      */
     public WebResults execute(PathQuery pathQuery) throws ObjectStoreException {
+        return execute(pathQuery, new HashMap<String, BagQueryResult>());
+    }
+    
+    /**
+     * Create and ObjectStore query from a PathQuery and execute it, returning results in a format
+     * appropriate for displaying a web table.
+     * @param pathQuery the query to execute
+     * @param pathToBagQueryResults will be populated with results from bag queries used in any
+     * LOOKUP constraints
+     * @return results in a format appropriate for display in a web page table
+     * @throws ObjectStoreException if problem running query
+     */
+    public WebResults execute(PathQuery pathQuery, Map<String,
+            BagQueryResult> pathToBagQueryResult) throws ObjectStoreException {
         Map<String, QuerySelectable> pathToQueryNode = new HashMap<String, QuerySelectable>();
-
-        Map<String, BagQueryResult> pathToBagQueryResult = new HashMap<String, BagQueryResult>();
 
         BagQueryRunner bqr = new BagQueryRunner(os, classKeys, bagQueryConfig,
                 conversionTemplates);
@@ -89,7 +101,7 @@ public class WebResultsExecutor
                 searchRepository);
         
         Query q = MainHelper.makeQuery(pathQuery, allBags, pathToQueryNode, bqr,
-        		pathToBagQueryResult, false);
+                pathToBagQueryResult, false);
 
         Results results = os.execute(q);
         results.setBatchSize(Constants.BATCH_SIZE); 
