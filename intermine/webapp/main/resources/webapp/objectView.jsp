@@ -43,7 +43,7 @@
           </c:if>
         </c:when>
         <c:when test="${empty object}">
-          ${nullFieldText}
+          &nbsp;
         </c:when>
         <c:otherwise>
             <c:out escapeXml="false" value="${object}" default="${nullFieldText}"/>
