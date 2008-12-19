@@ -160,6 +160,7 @@ public class QueryBuilderChange extends DispatchAction
                     ReferenceDescriptor rf = (ReferenceDescriptor) fd;
                     ClassDescriptor realClassDescriptor = rf.getReferencedClassDescriptor();
 
+                    List<String> newView = new ArrayList<String>(pathQuery.getViewStrings());
                     Iterator<Path> viewPathIter = pathQuery.getView().iterator();
 
                     while (viewPathIter.hasNext()) {
@@ -175,10 +176,12 @@ public class QueryBuilderChange extends DispatchAction
                             if (realClassDescriptor.getFieldDescriptorByName(fieldName) == null) {
                                 // the field must be in a sub-class rather than the base class so
                                 // remove the viewPath
-                                viewPathIter.remove();
+                                newView.remove(viewPath);
                             }
                         }
                     }
+                    pathQuery.setView(newView);
+                    
                     if (pathQuery.getSortOrder() != null) {
                         Path removeSortPath = null;
                         for (Path sortPath : pathQuery.getSortOrder().keySet()) {

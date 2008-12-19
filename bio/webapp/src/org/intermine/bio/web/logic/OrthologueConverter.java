@@ -14,7 +14,6 @@ import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 
 import javax.servlet.ServletContext;
 import javax.servlet.http.HttpSession;
@@ -30,11 +29,11 @@ import org.intermine.pathquery.Path;
 import org.intermine.pathquery.PathQuery;
 import org.intermine.web.logic.Constants;
 import org.intermine.web.logic.bag.BagConverter;
-import org.intermine.web.logic.bag.BagQueryConfig;
 import org.intermine.web.logic.config.WebConfig;
 import org.intermine.web.logic.pathqueryresult.PathQueryResultHelper;
-import org.intermine.web.logic.profile.Profile;
+import org.intermine.web.logic.query.WebResultsExecutor;
 import org.intermine.web.logic.results.WebResults;
+import org.intermine.web.logic.session.SessionMethods;
 
 /**
  * @author "Xavier Watkins"
@@ -59,9 +58,9 @@ public class OrthologueConverter implements BagConverter
         ServletContext servletContext = session.getServletContext();
         Model model = ((ObjectStore) servletContext.getAttribute(Constants.OBJECTSTORE)).getModel();
         ObjectStore os = (ObjectStore) servletContext.getAttribute(Constants.OBJECTSTORE);
-        Profile profile = (Profile) session.getAttribute(Constants.PROFILE);
-        PathQuery pathQuery = new PathQuery(model);
         WebConfig webConfig = (WebConfig) servletContext.getAttribute(Constants.WEBCONFIG);
+
+        PathQuery pathQuery = new PathQuery(model);
         List<Path> view = PathQueryResultHelper.getDefaultView(type, model, webConfig,
                         "Gene.homologues.homologue", false);
         pathQuery.setViewPaths(view);
@@ -83,11 +82,9 @@ public class OrthologueConverter implements BagConverter
 
         pathQuery.setConstraintLogic("A and B and C");
         pathQuery.syncLogicExpression("and");
-
-        return PathQueryResultHelper.createPathQueryGetResults(pathQuery, profile, os,
-                        (Map) servletContext.getAttribute(Constants.CLASS_KEYS),
-                        (BagQueryConfig) servletContext.getAttribute(Constants.BAG_QUERY_CONFIG),
-                        servletContext);
+        
+        WebResultsExecutor executor = SessionMethods.getWebResultsExecutor(session);
+        return executor.execute(pathQuery);
     }
 
     /**
