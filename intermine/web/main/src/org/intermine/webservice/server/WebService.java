@@ -12,8 +12,6 @@ package org.intermine.webservice.server;
 
 import java.io.IOException;
 import java.io.PrintWriter;
-import java.util.Enumeration;
-import java.util.List;
 import java.util.Map;
 import java.util.Properties;
 
