@@ -86,7 +86,7 @@ public class GFF3Exporter implements Exporter
             return;
         }
 
-        LocatedSequenceFeature lsf = (LocatedSequenceFeature) elWithObject.getInterMineObject();
+        LocatedSequenceFeature lsf = (LocatedSequenceFeature) elWithObject.getObject();
 
         if (exportedIds.contains(lsf.getId())) {
             return;
