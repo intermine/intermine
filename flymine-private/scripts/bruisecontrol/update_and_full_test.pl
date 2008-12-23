@@ -215,7 +215,12 @@ sub pipe_to_log
       print $ant_log $line;
     }
 
-    close $pipe or warn "warning while closing pipe to $command: $!\n";
+    close $pipe or warn "problem while closing pipe to $command: $!\n";
+
+    if ($? != 0 && $command =~ /build-db/) {
+      warn "build-db failed: $command returned $?\n";
+      return $?;
+    }
   }
 
   return $?;
