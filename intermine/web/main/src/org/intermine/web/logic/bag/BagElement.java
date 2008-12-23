@@ -83,7 +83,6 @@ public class BagElement implements Serializable
     }
 
     /**
-     * (non-Javadoc)
      * {@inheritDoc}
      */
     public boolean equals(Object obj) {
