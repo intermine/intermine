@@ -48,8 +48,15 @@ public class PathQuery
     protected LogicExpression constraintLogic = null;
     private Map<Path, String> pathDescriptions = new HashMap<Path, String>();
     private static final String MSG = "Invalid path - path cannot be a null or empty string";
-    // Postgres does it the other way...
+
+    /**
+     * Ascending sort order.
+     */
     public static final String ASCENDING = "asc";
+
+    /**
+     * Descending sort order.
+     */
     public static final String DESCENDING = "desc";
 
     /**
@@ -203,10 +210,10 @@ public class PathQuery
         return newPathString;
     }
 
-    
+
     /**
      * Set the joins style of an entire given path to outer/normal.  This changes all joins in the
-     * path, updating all the relevant nodes and view elements.  
+     * path, updating all the relevant nodes and view elements.
      * e.g. call with (Company:departments.manger, false) -> Company.departments.manager
      * @param path the path to set the join style for
      * @param outer if true change the join style to outer, otherwise to normal
@@ -217,7 +224,7 @@ public class PathQuery
         if (!oldPath.equals(path)) {
             throw new IllegalArgumentException("Path not found in query: " + path);
         }
-        
+
         // iterate over view and set join style
         List<Path> newView = new ArrayList<Path>();
         for (Path viewPath : view) {
@@ -238,7 +245,7 @@ public class PathQuery
             newView.add(new Path(model, newPathStr, viewPath.getSubClassConstraintPaths()));
         }
         view = newView;
-        
+
         // This is a really round-about way to update the join style of each node.  Nodes are stored
         // in a map by their path so they need to be removed and re-added to the map.  This has to
         // be done at the end because updating a parent node alters the path of its children.
@@ -257,7 +264,7 @@ public class PathQuery
         }
         return node.getPathString();
     }
-    
+
     /**
      * Appends the paths to the end of the select list. Paths can be a single path
      * or a comma delimited list of paths.
@@ -281,7 +288,7 @@ public class PathQuery
         List<Path> paths = makePaths(pathStrs);
         addViewPaths(paths);
     }
-    
+
 
     /**
      * Appends the paths to the end of the select list.
@@ -815,10 +822,10 @@ public class PathQuery
     public Map<Path, String> getSortOrder() {
         return sortOrder;
     }
-    
+
     /**
      * Set a new sort order
-     * @param newSortOrder
+     * @param newSortOrder the new sort order.
      */
     public void setSortOrder(Map<Path, String> newSortOrder) {
         sortOrder = newSortOrder;
@@ -875,7 +882,7 @@ public class PathQuery
     }
 
     /**
-     * Gets a Map from String path with dots instead of colons to String path with actual join 
+     * Gets a Map from String path with dots instead of colons to String path with actual join
      * types.
      *
      * @return a Map from String to String
@@ -908,7 +915,7 @@ public class PathQuery
     /**
      * Returns a String path with the correct join style, for a given path find and replace the join
      * style according to paths already added to the the query, e.g. if adding
-     * Company.departments.name and Company:departments is already part of the query then return 
+     * Company.departments.name and Company:departments is already part of the query then return
      * Company:departments.name
      *
      * @param path a path string
@@ -965,9 +972,9 @@ public class PathQuery
             node = new PathNode(path);
             if (model.isGeneratedClassesAvailable()) {
                 if (!model.isGeneratedClassAvailable(path)) {
-                    logPathError(new ClassNotFoundException("Class " 
+                    logPathError(new ClassNotFoundException("Class "
                             + path + " is not available."));
-                }                 
+                }
             }
         } else {
             String prefix = path.substring(0, lastIndex);

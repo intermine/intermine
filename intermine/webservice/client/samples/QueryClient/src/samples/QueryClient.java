@@ -10,7 +10,6 @@ package samples;
  *
  */
 
-import java.io.IOException;
 import java.util.List;
 
 import org.intermine.webservice.client.core.ServiceFactory;
