@@ -1,6 +1,0 @@
-##gff-version 3 
-##ucsc firstEF predictions
-
-2	firstEF	promoter	2096850	2097419	1000	-	.	sourceDatabase=UCSC;ID=promoter(2179-):chr1:2096850..2097419;Name=promoter(2179-)
-1	firstEF	exon	2097064	2097289	.	-	.	sourceDatabase=UCSC;ID=exon(2179-)#2:chr1:2097064..2097289;Name=exon(2179-)#2
-1	firstEF	CpG_island	917400	917601	1000	+	.	sourceDatabase=UCSC;ID=CpGWindow(14%2b):chr1:917400..917601;Name=CpGWindow(14%2b)
