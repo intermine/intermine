@@ -55,7 +55,7 @@ public class OverlapViewTask
         String viewSql =
             "CREATE VIEW locatedsequencefeatureoverlappingfeatures "
             + " AS SELECT l1.subjectid AS overlappingfeatures, "
-            + "           l2.objectid AS locatedsequencefeature "
+            + "           l2.subjectid AS locatedsequencefeature "
             + "      FROM location l1, location l2 "
             + "     WHERE l1.objectid = l2.objectid "
             + "       AND bioseg_create(l1.intermine_start, l1.intermine_end) "
