@@ -43,7 +43,7 @@ public class OverlapViewTask
     /**
      * Drop the locatedsequencefeatureoverlappingfeatures table and replace it with a view that
      * uses the bioseg type to calculate the overlaps.
-     * @throws SQLException if there is a problem dropping the tabe or creating the view
+     * @throws SQLException if there is a problem dropping the table or creating the view
      */
     public void createView() throws SQLException {
         Database db = this.osw.getDatabase();
