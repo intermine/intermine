@@ -151,6 +151,7 @@
     <post-process name="do-sources"/>
 
     <post-process name="synonym-update"/>
+    <post-process name="create-bioseg-location-index"/>
     <post-process name="create-overlap-view"/>
     <post-process name="create-attribute-indexes"/>
     <post-process name="precompute-queries"/>
