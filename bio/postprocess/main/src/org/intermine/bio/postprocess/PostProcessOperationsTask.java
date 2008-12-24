@@ -268,6 +268,9 @@ public class PostProcessOperationsTask extends DynamicAttributeTask
             } else if ("create-overlap-view".equals(operation)) {
                 OverlapViewTask ovt = new OverlapViewTask(getObjectStoreWriter());
                 ovt.createView();
+            } else if ("create-bioseg-location-index".equals(operation)) {
+                BiosegIndexTask bit = new BiosegIndexTask(getObjectStoreWriter());
+                bit.createIndex();
             } else {
                 throw new BuildException("unknown operation: " + operation);
             }
