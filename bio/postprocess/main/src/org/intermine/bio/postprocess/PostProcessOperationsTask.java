@@ -47,7 +47,7 @@ import org.apache.tools.ant.BuildException;
  */
 public class PostProcessOperationsTask extends DynamicAttributeTask
 {
-    private static final Logger LOG = Logger.getLogger(PostProcessOperationsTask.class);
+    private static final Logger LOGGER = Logger.getLogger(PostProcessOperationsTask.class);
 
     protected String operation, objectStoreWriter, ensemblDb, organisms = null;
     protected File outputFile;
@@ -102,6 +102,7 @@ public class PostProcessOperationsTask extends DynamicAttributeTask
     /**
      * {@inheritDoc}
      */
+    @Override
     public void execute() throws BuildException {
         if (operation == null) {
             throw new BuildException("operation attribute is not set");
@@ -110,24 +111,24 @@ public class PostProcessOperationsTask extends DynamicAttributeTask
         try {
             if ("calculate-locations".equals(operation)) {
                 CalculateLocations cl = new CalculateLocations(getObjectStoreWriter());
-                LOG.info("Starting CalculateLocations.fixPartials()");
+                LOGGER.info("Starting CalculateLocations.fixPartials()");
                 cl.fixPartials();
-                LOG.info("Starting CalculateLocations.createLocations()");
+                LOGGER.info("Starting CalculateLocations.createLocations()");
                 cl.createLocations();
             } else if ("create-chromosome-locations-and-lengths".equals(operation)) {
                 CalculateLocations cl = new CalculateLocations(getObjectStoreWriter());
-                LOG.info("Starting CalculateLocations.setChromosomeLocationsAndLengths()");
+                LOGGER.info("Starting CalculateLocations.setChromosomeLocationsAndLengths()");
                 cl.setChromosomeLocationsAndLengths();
             } else if ("create-references".equals(operation)) {
                 CreateReferences cr = new CreateReferences(getObjectStoreWriter());
-                LOG.info("Starting CreateReferences.insertReferences()");
+                LOGGER.info("Starting CreateReferences.insertReferences()");
                 cr.insertReferences();
             } else if ("create-symmetrical-relation-references".equals(operation)) {
                 throw new BuildException("create-symmetrical-relation-references task is"
                         + " deprecated");
             } else if ("create-utr-references".equals(operation)) {
                 CreateReferences cr = new CreateReferences(getObjectStoreWriter());
-                LOG.info("Starting CreateReferences.createUtrRefs()");
+                LOGGER.info("Starting CreateReferences.createUtrRefs()");
                 cr.createUtrRefs();
             } else if ("fetch-ensembl-contig-sequences".equals(operation)) {
                 if (ensemblDb == null) {
@@ -135,7 +136,7 @@ public class PostProcessOperationsTask extends DynamicAttributeTask
                 }
                 Database db = DatabaseFactory.getDatabase(ensemblDb);
                 StoreSequences ss = new StoreSequences(getObjectStoreWriter(), db);
-                LOG.info("Starting StoreSequences.storeContigSequences()");
+                LOGGER.info("Starting StoreSequences.storeContigSequences()");
                 ss.storeContigSequences();
             } else if ("fetch-contig-sequences-ensembl".equals(operation)) {
                 if (ensemblDb == null) {
@@ -143,50 +144,50 @@ public class PostProcessOperationsTask extends DynamicAttributeTask
                 }
                 Database db = DatabaseFactory.getDatabase(ensemblDb);
                 StoreSequences ss = new StoreSequences(getObjectStoreWriter(), db);
-                LOG.info("Starting StoreSequences.storeContigSequences() for ensemblDb:"
+                LOGGER.info("Starting StoreSequences.storeContigSequences() for ensemblDb:"
                         + ensemblDb);
                 ss.storeContigSequences();
             } else if ("transfer-sequences".equals(operation)) {
                 TransferSequences ts = new TransferSequences(getObjectStoreWriter());
-                LOG.info("Starting TransferSequences.transferToChromosome()");
+                LOGGER.info("Starting TransferSequences.transferToChromosome()");
                 ts.transferToChromosome();
 
                 ts = new TransferSequences(getObjectStoreWriter());
-                LOG.info("Starting TransferSequences.transferToLocatedSequenceFeatures()");
+                LOGGER.info("Starting TransferSequences.transferToLocatedSequenceFeatures()");
                 ts.transferToLocatedSequenceFeatures();
 
                 ts = new TransferSequences(getObjectStoreWriter());
-                LOG.info("Starting TransferSequences.transferToTranscripts()");
+                LOGGER.info("Starting TransferSequences.transferToTranscripts()");
                 ts.transferToTranscripts();
             } else if ("transfer-sequences-chromosome".equals(operation)) {
                 TransferSequences ts = new TransferSequences(getObjectStoreWriter());
-                LOG.info("Starting TransferSequences.transferToChromosome()");
+                LOGGER.info("Starting TransferSequences.transferToChromosome()");
                 ts.transferToChromosome();
             } else if ("transfer-sequences-located-sequence-feature".equals(operation)) {
                 TransferSequences ts = new TransferSequences(getObjectStoreWriter());
-                LOG.info("Starting TransferSequences.transferToLocatedSequenceFeatures()");
+                LOGGER.info("Starting TransferSequences.transferToLocatedSequenceFeatures()");
                 ts.transferToLocatedSequenceFeatures();
             } else if ("transfer-sequences-transcripts".equals(operation)) {
                 TransferSequences ts = new TransferSequences(getObjectStoreWriter());
-                LOG.info("Starting TransferSequences.transferToTranscripts()");
+                LOGGER.info("Starting TransferSequences.transferToTranscripts()");
                 ts.transferToTranscripts();
             } else if ("make-spanning-locations".equals(operation)) {
                 CalculateLocations cl = new CalculateLocations(getObjectStoreWriter());
-                LOG.info("Starting CalculateLocations.createSpanningLocations()");
+                LOGGER.info("Starting CalculateLocations.createSpanningLocations()");
                 cl.createSpanningLocations(Transcript.class, Exon.class, "exons");
                 cl.createSpanningLocations(Gene.class, Transcript.class, "transcripts");
             } else if ("create-intergenic-region-features".equals(operation)) {
                 IntergenicRegionUtil ig = new IntergenicRegionUtil(getObjectStoreWriter());
-                LOG.info("Starting IntergenicRegionUtil.createIntergenicRegionFeatures()");
+                LOGGER.info("Starting IntergenicRegionUtil.createIntergenicRegionFeatures()");
                 ig.createIntergenicRegionFeatures();
             } else if ("create-intron-features".equals(operation)) {
                 IntronUtil iu = new IntronUtil(getObjectStoreWriter());
                 configureDynamicAttributes(iu);
-                LOG.info("Starting IntronUtil.createIntronFeatures()");
+                LOGGER.info("Starting IntronUtil.createIntronFeatures()");
                 iu.createIntronFeatures();
             } else if ("create-overlap-relations-flymine".equals(operation)) {
-                LOG.info("Starting CalculateLocations.createOverlapRelations()");
-                List classNamesToIgnoreList = new ArrayList();
+                LOGGER.info("Starting CalculateLocations.createOverlapRelations()");
+                List<String> classNamesToIgnoreList = new ArrayList<String>();
                 String ignoreFileName = "overlap.config";
                 ClassLoader classLoader = PostProcessOperationsTask.class.getClassLoader();
                 InputStream classesToIgnoreStream =
@@ -267,13 +268,13 @@ public class PostProcessOperationsTask extends DynamicAttributeTask
             } else {
                 throw new BuildException("unknown operation: " + operation);
             }
-            LOG.info("PP - " + operation + " took "
+            LOGGER.info("PP - " + operation + " took "
                      + (System.currentTimeMillis() - startTime) + " ms.");
         } catch (BuildException e) {
-            LOG.error("Failed postprocess. Operation was: " + operation, e);
+            LOGGER.error("Failed postprocess. Operation was: " + operation, e);
             throw e;
         } catch (Exception e) {
-            LOG.error("Failed postprocess. Operation was: " + operation, e);
+            LOGGER.error("Failed postprocess. Operation was: " + operation, e);
             throw new BuildException("Operation was:" + operation, e);
         } finally {
             try {
