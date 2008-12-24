@@ -265,6 +265,9 @@ public class PostProcessOperationsTask extends DynamicAttributeTask
                     MetadataManager.storeBinary(db, MetadataManager.AUTOCOMPLETE_INDEX,
                                         ac.getBinaryIndexMap());
                 }
+            } else if ("create-overlap-view".equals(operation)) {
+                OverlapViewTask ovt = new OverlapViewTask(getObjectStoreWriter());
+                ovt.createView();
             } else {
                 throw new BuildException("unknown operation: " + operation);
             }
