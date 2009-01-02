@@ -146,7 +146,6 @@
     <post-process name="transfer-sequences"/>
     <post-process name="create-references"/>
     <post-process name="create-intergenic-region-features" dump="true"/>
-    <post-process name="create-overlap-relations-flymine"/>
 
     <post-process name="do-sources"/>
 
