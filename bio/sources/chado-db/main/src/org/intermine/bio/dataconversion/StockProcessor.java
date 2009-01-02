@@ -68,6 +68,10 @@ public class StockProcessor extends ChadoProcessor
         List<Item> stocks = new ArrayList<Item>();
         while (res.next()) {
             Integer featureId = new Integer(res.getInt("feature_id"));
+            if (lastFeatureId != null && !featureId.equals(lastFeatureId)) {
+                storeStocks(features, lastFeatureId, stocks);
+                stocks = new ArrayList<Item>();
+            }
             if (!features.containsKey(featureId)) {
                 // probably an allele of an unlocated genes
                 continue;
@@ -89,10 +93,6 @@ public class StockProcessor extends ChadoProcessor
             stock.setReference("organism", organismItem);
             getChadoDBConverter().store(stock);
             stocks.add(stock);
-            if (lastFeatureId != null && !featureId.equals(lastFeatureId)) {
-                storeStocks(features, lastFeatureId, stocks);
-                stocks = new ArrayList<Item>();
-            }
             lastFeatureId = featureId;
         }
         if (lastFeatureId != null) {
