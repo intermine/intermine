@@ -32,6 +32,7 @@
 
   <class name="org.flymine.model.genomic.MRNA" extends="org.flymine.model.genomic.ProcessedTranscript" is-interface="true">
     <collection name="CDSs" referenced-type="org.flymine.model.genomic.CDS" reverse-reference="MRNA"/>
+    <collection name="proteins" referenced-type="org.flymine.model.genomic.Protein" ordered="true" reverse-reference="transcripts" />
   </class>
 
 </classes>
