@@ -55,9 +55,8 @@
     <source name="rnai" type="rnai">
       <property name="src.data.dir" location="/shared/data/wormbase_rnai/current"/>
     </source>
-    <source name="mage" type="mage">
-      <property name="src.data.dir" location="/shared/data/mage/arbeitman"/>
-      <property name="quantitationtypes" value="Signal med ratio"/>
+    <source name="arbeitman-items-xml" type="arbeitman-items-xml">
+      <property name="src.data.file" location="/shared/data/mage/arbeitman/arbeitman-tgt-items.xml"/>
     </source>
     <source name="bdgp-clone" type="bdgp-clone">
       <property name="src.data.dir" location="/shared/data/bdgp_clones"/>
