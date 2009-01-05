@@ -46,7 +46,12 @@ public class WormBaseProcessor extends ChadoSequenceProcessor
            config = new MultiKeyMap();
            config.put(new MultiKey("feature", "Gene", "WormBase", "uniquename"),
                       Arrays.asList(new SetFieldConfigAction("primaryIdentifier"),
-                                    new SetFieldConfigAction("secondaryIdentifier"),
+                                    CREATE_SYNONYM_ACTION));
+           config.put(new MultiKey("feature", "Gene", "WormBase", "name"),
+                      Arrays.asList(new SetFieldConfigAction("symbol"),
+                                    CREATE_SYNONYM_ACTION));
+           config.put(new MultiKey("prop", "Gene", "cds"),
+                      Arrays.asList(new SetFieldConfigAction("secondaryIdentifier"),
                                     CREATE_SYNONYM_ACTION));
        }
 
@@ -67,6 +72,7 @@ public class WormBaseProcessor extends ChadoSequenceProcessor
     protected List<String> getFeatures() {
         return FEATURES;
     }
+
     /**
      * Process the identifier and return a "cleaned" version.  For WormBase, remove the class name
      * prefix on identifiers from the uniqueName in the feature table ("Gene:WBGene00023466" ->
