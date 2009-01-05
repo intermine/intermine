@@ -57,8 +57,6 @@ public class ReallyFlatIteratorTest extends ObjectStoreAbstractImplTestCase
     public static void setUpResults() throws Exception {
         ObjectStoreAbstractImplTestCase.setUpResults();
 
-        MultiRowFirstValue v1 = new MultiRowFirstValue(data.get("DepartmentA1"), 3);
-        MultiRowFirstValue v2 = new MultiRowFirstValue(data.get("DepartmentB1"), 2);
         results.put("CollectionPathExpression", Arrays.asList(
                     Arrays.asList(data.get("DepartmentA1"), data.get("EmployeeA1")),
                     Arrays.asList(data.get("DepartmentA1"), data.get("EmployeeA2")),
@@ -66,11 +64,6 @@ public class ReallyFlatIteratorTest extends ObjectStoreAbstractImplTestCase
                     Arrays.asList(data.get("DepartmentB1"), data.get("EmployeeB1")),
                     Arrays.asList(data.get("DepartmentB1"), data.get("EmployeeB2")),
                     Arrays.asList(data.get("DepartmentB2"), data.get("EmployeeB3"))));
-        v1 = new MultiRowFirstValue(data.get("EmployeeA1"), 3);
-        v2 = new MultiRowFirstValue(data.get("EmployeeA2"), 3);
-        MultiRowFirstValue v3 = new MultiRowFirstValue(data.get("EmployeeA3"), 3);
-        MultiRowFirstValue v4 = new MultiRowFirstValue(data.get("EmployeeB1"), 2);
-        MultiRowFirstValue v5 = new MultiRowFirstValue(data.get("EmployeeB2"), 2);
         results.put("CollectionPathExpression2", Arrays.asList(
                     Arrays.asList(data.get("EmployeeA1"), data.get("EmployeeA1")),
                     Arrays.asList(data.get("EmployeeA1"), data.get("EmployeeA2")),
@@ -86,11 +79,6 @@ public class ReallyFlatIteratorTest extends ObjectStoreAbstractImplTestCase
                     Arrays.asList(data.get("EmployeeB2"), data.get("EmployeeB1")),
                     Arrays.asList(data.get("EmployeeB2"), data.get("EmployeeB2")),
                     Arrays.asList(data.get("EmployeeB3"), data.get("EmployeeB3"))));
-
-        v1 = new MultiRowFirstValue(data.get("CompanyA"), 3);
-        v2 = new MultiRowFirstValue(data.get("DepartmentA1"), 3);
-        v3 = new MultiRowFirstValue(data.get("CompanyB"), 3);
-        v4 = new MultiRowFirstValue(data.get("DepartmentB1"), 2);
         results.put("CollectionPathExpression3", Arrays.asList(
                     Arrays.asList(data.get("CompanyA"), data.get("DepartmentA1"), data.get("EmployeeA1")),
                     Arrays.asList(data.get("CompanyA"), data.get("DepartmentA1"), data.get("EmployeeA2")),
@@ -108,6 +96,14 @@ public class ReallyFlatIteratorTest extends ObjectStoreAbstractImplTestCase
         results.put("CollectionPathExpression5", Arrays.asList(
                     Arrays.asList(data.get("CompanyA"), data.get("DepartmentA1")),
                     Arrays.asList(data.get("CompanyB"), data.get("DepartmentB1"))));
+        results.put("SubclassCollection", Arrays.asList(
+                    Arrays.asList(data.get("DepartmentA1"), data.get("EmployeeA1")),
+                    Arrays.asList(data.get("DepartmentB1"), data.get("EmployeeB1")),
+                    Arrays.asList(data.get("DepartmentB2"), data.get("EmployeeB3"))));
+        results.put("SubclassCollection2", Arrays.asList(
+                    Arrays.asList(data.get("DepartmentA1"), null),
+                    Arrays.asList(data.get("DepartmentB1"), data.get("EmployeeB1")),
+                    Arrays.asList(data.get("DepartmentB2"), null)));
     }
 
     /**
@@ -134,7 +130,7 @@ public class ReallyFlatIteratorTest extends ObjectStoreAbstractImplTestCase
         } else {
             Results res = os.execute((Query)queries.get(type));
             res.setBatchSize(2);
-            Iterator resIter = new ReallyFlatIterator(res.iterator());
+            Iterator resIter = new ReallyFlatIterator(new ResultsFlatOuterJoinsImpl((List<ResultsRow>) res, (Query) queries.get(type)).iterator());
             List newRes = new ArrayList();
             while (resIter.hasNext()) {
                 newRes.add(resIter.next());
