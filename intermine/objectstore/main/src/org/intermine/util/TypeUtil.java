@@ -540,7 +540,7 @@ public class TypeUtil
                     try {
                         return DATE_FORMAT.parse(value);
                     } catch (Exception e1) {
-                        return new RuntimeException("Failed to parse " + value + " as a Date", e);
+                        throw new RuntimeException("Failed to parse " + value + " as a Date", e);
                     }
                 }
             }
