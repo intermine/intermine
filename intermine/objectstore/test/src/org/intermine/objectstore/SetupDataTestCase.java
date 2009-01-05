@@ -344,6 +344,20 @@ public abstract class SetupDataTestCase extends ObjectStoreQueriesTestCase
     }
 
     public static Object objectToName(Object o) throws Exception {
+        if (o instanceof Collection) {
+            StringBuffer sb = new StringBuffer();
+            boolean needComma = false;
+            sb.append("[");
+            for (Object p : ((Collection) o)) {
+                if (needComma) {
+                    sb.append(", ");
+                }
+                needComma = true;
+                sb.append(objectToName(p));
+            }
+            sb.append("]");
+            return sb.toString();
+        }
         Method name = null;
         try {
             name = o.getClass().getMethod("getName", new Class[] {});

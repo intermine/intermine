@@ -594,8 +594,8 @@ public class MainHelperTest extends TestCase {
 
     public void test22() throws Exception {
         doQuery("<query name=\"test\" model=\"testmodel\" view=\"Employee.name Employee:department:company.name\"/>",
-                "SELECT DISTINCT a1_, a1_.department(SELECT default.company) AS a2_ FROM org.intermine.model.testmodel.Employee AS a1_ ORDER BY a1_.name",
-                "SELECT DISTINCT a1_.a2_ AS a2_, COUNT(*) AS a3_ FROM (SELECT DISTINCT a1_, a1_.name AS a2_ FROM org.intermine.model.testmodel.Employee AS a1_) AS a1_ GROUP BY a1_.a2_ ORDER BY COUNT(*) DESC",
+                "SELECT DISTINCT a1_, a2_.0 AS a3_, a2_.1 AS a4_ FROM org.intermine.model.testmodel.Employee AS a1_ ORDER BY a1_.name PATH a1_.department(SELECT default, default.company) AS a2_",
+                "SELECT DISTINCT a1_.a4_ AS a2_, COUNT(*) AS a3_ FROM (SELECT DISTINCT a1_, a1_.name AS a4_ FROM org.intermine.model.testmodel.Employee AS a1_) AS a1_ GROUP BY a1_.a4_ ORDER BY COUNT(*) DESC",
                 "SELECT DISTINCT a1_.a6_ AS a2_, COUNT(*) AS a3_ FROM (SELECT DISTINCT a1_, a5_, a5_.name AS a6_ FROM org.intermine.model.testmodel.Employee AS a1_, org.intermine.model.testmodel.Department AS a4_, org.intermine.model.testmodel.Company AS a5_ WHERE a1_.department CONTAINS a4_ AND a4_.company CONTAINS a5_) AS a1_ GROUP BY a1_.a6_ ORDER BY COUNT(*) DESC");
     }
 
