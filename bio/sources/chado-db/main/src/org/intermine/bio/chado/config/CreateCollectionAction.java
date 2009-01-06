@@ -11,6 +11,7 @@ package org.intermine.bio.chado.config;
  */
 /**
  * An action that creates a collection of objects from value.
+ * @author Kim Rutherford
  */
 public class CreateCollectionAction extends MatchingFieldConfigAction
 {

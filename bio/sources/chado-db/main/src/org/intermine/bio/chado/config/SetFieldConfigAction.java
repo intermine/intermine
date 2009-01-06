@@ -14,6 +14,7 @@ import java.util.regex.Pattern;
 
 /**
  * An action that sets an attribute in a new Item.
+ * @author Kim Rutherford
  */
 public class SetFieldConfigAction extends MatchingFieldConfigAction
 {

@@ -1,5 +1,15 @@
 package org.intermine.bio.dataconversion;
 
+/*
+ * Copyright (C) 2002-2008 FlyMine
+ *
+ * This code may be freely distributed and modified under the
+ * terms of the GNU Lesser General Public Licence.  This should
+ * be distributed with the code.  See the LICENSE file for more
+ * information or http://www.gnu.org/copyleft/lesser.html.
+ *
+ */
+
 import java.io.BufferedReader;
 import java.io.Reader;
 import java.util.HashMap;
@@ -14,6 +24,11 @@ import org.intermine.objectstore.ObjectStoreException;
 import org.intermine.xml.full.Item;
 import org.intermine.xml.full.Reference;
 
+/**
+ * OMIM disease converter.
+ *
+ * @author Dominik Grimm
+ */
 public class OMIMConverter extends FileConverter
 {
 
@@ -26,6 +41,11 @@ public class OMIMConverter extends FileConverter
     private Map<String, String> geneMap = new HashMap<String, String>();
     private Item organism = null;
 
+    /**
+     * Create a new OMIMConverter object.
+     * @param writer the ItemWriter to write Items to
+     * @param model the Model to use when making Items
+     */
     public OMIMConverter(ItemWriter writer, Model model) throws ObjectStoreException {
         super(writer, model);
         organism = createItem("Organism");
