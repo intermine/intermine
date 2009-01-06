@@ -29,6 +29,11 @@ import org.intermine.xml.full.Item;
 import org.intermine.xml.full.ItemHelper;
 import org.intermine.xml.full.ReferenceList;
 
+/**
+ * BioGrid human data converter.
+ *
+ * @author Dominik Grimm
+ */
 public class BioGridHumanConverter extends FileConverter 
 {
 
@@ -37,6 +42,11 @@ public class BioGridHumanConverter extends FileConverter
     private Map<String, String> pubs = new HashMap<String, String>();
     protected IdResolverFactory resolverFactory;
 
+    /**
+     * Create a new BioGridHumanConverter object.
+     * @param writer the ItemWriter to write Items to
+     * @param model the Model to use when making Items
+     */
     public BioGridHumanConverter(ItemWriter writer, Model model) {
         super(writer, model);
     }

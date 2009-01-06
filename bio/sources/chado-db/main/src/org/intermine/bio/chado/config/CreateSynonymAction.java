@@ -14,6 +14,7 @@ import java.util.regex.Pattern;
 
 /**
  * An action that sets a Synonym.
+ * @author Kim Rutherford
  */
 public class CreateSynonymAction extends MatchingFieldConfigAction
 {

@@ -9,8 +9,10 @@ package org.intermine.bio.chado.config;
  * information or http://www.gnu.org/copyleft/lesser.html.
  *
  */
+
 /**
  * An action that does nothing.
+ * @author Kim Rutherford
  */
 public class DoNothingAction extends ConfigAction
 {

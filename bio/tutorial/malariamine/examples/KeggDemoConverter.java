@@ -41,7 +41,6 @@ public class KeggDemoConverter extends BioFileConverter
      * Constructor
      * @param writer the ItemWriter used to handle the resultant items
      * @param model the Model
-     * @throws ObjectStoreException if an error occurs in storing
      */
     public KeggDemoConverter(ItemWriter writer, Model model) {
         super(writer, model, "GenomeNet", "KEGG PATHWAY");
