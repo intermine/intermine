@@ -243,7 +243,7 @@ public class ChadoSequenceProcessor extends ChadoProcessor
 
         Set<String> fieldValuesSet = new HashSet<String>();
 
-        if (name != null) {
+        if (!StringUtils.isEmpty(name)) {
             String fixedName = fixIdentifier(interMineType, name);
             if (nameActionList == null || nameActionList.size() == 0) {
                 if (feature.checkAttribute("symbol")) {
