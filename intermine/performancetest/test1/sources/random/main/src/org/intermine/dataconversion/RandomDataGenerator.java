@@ -119,7 +119,7 @@ public class RandomDataGenerator extends FileConverter
         Set<String> itemFieldNames = new TreeSet<String>();
         Set<String> collectionFieldNames = new TreeSet<String>();
         Class clazz = Class.forName("org.intermine.model.performancetest1." + className);
-        for (Map.Entry<String, TypeUtil.FieldInfo> entry :
+        for (Map.Entry<String, TypeUtil.FieldInfo> entry:
                  TypeUtil.getFieldInfos(clazz).entrySet()) {
             if ("id".equals(entry.getKey())) {
                 // Do nothing
