@@ -3141,7 +3141,6 @@ Iterator chrBandExonIter = results.iterator();
         if (band == null) {
             band = (ChromosomeBand) DynamicUtil.createObject(Collections.singleton(ChromosomeBand.class));
             band.setChromosome(getChromosome());
-            band.setStain("blue");
             band.setId(new Integer(102));
         }
         return band;
