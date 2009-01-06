@@ -43,7 +43,7 @@ public class Item implements Comparable
     /**
      * Construct an item.
      */
-    public Item() { }
+    protected Item() { }
 
     /**
      * Construct an item.
@@ -53,7 +53,7 @@ public class Item implements Comparable
      * @param className name of described class
      * @param implementations names of implemented classes
      */
-    public Item(Model model, String identifier, String className, String implementations) {
+    protected Item(Model model, String identifier, String className, String implementations) {
         this.identifier = identifier;
         this.className = className;
         this.implementations = implementations;
@@ -68,7 +68,7 @@ public class Item implements Comparable
      * @param className name of described class
      * @param implementations names of implemented classes
      */
-    public Item(String identifier, String className, String implementations) {
+    protected Item(String identifier, String className, String implementations) {
         this(null, identifier, className, implementations);
     }
 
