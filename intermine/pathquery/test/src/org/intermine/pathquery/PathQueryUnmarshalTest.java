@@ -8,7 +8,7 @@ import junit.framework.TestCase;
 import org.intermine.metadata.Model;
 
 /*
- * Copyright (C) 2002-2008 FlyMine
+ * Copyright (C) 2002-2009 FlyMine
  *
  * This code may be freely distributed and modified under the
  * terms of the GNU Lesser General Public Licence.  This should
