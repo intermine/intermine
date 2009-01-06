@@ -243,7 +243,7 @@ public class ChadoSequenceProcessor extends ChadoProcessor
 
         Set<String> fieldValuesSet = new HashSet<String>();
 
-        if (!StringUtils.isEmpty(name)) {
+        if (!StringUtils.isBlank(name)) {
             String fixedName = fixIdentifier(interMineType, name);
             if (nameActionList == null || nameActionList.size() == 0) {
                 if (feature.checkAttribute("symbol")) {
@@ -320,7 +320,7 @@ public class ChadoSequenceProcessor extends ChadoProcessor
             createSynonym(fdat, "identifier", uniqueName, uniqueNameSet, null);
         getChadoDBConverter().store(uniqueNameSynonym);
 
-        if (name != null) {
+        if (!StringUtils.isBlank(name)) {
             String fixedName = fixIdentifier(interMineType, name);
 
             if (nameActionList == null || nameActionList.size() == 0) {
