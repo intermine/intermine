@@ -15,7 +15,7 @@ import junit.framework.TestCase;
 import org.intermine.metadata.Model;
 import org.intermine.xml.full.ItemHelper;
 
-public class OntologyUtilTest extends TestCase
+public class ItemHelperTest extends TestCase
 {
     public void testGenerateClassNamesNull() throws Exception {
         assertNull(ItemHelper.generateClassNames(null, null));
