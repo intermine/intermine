@@ -10,6 +10,8 @@ package org.intermine.objectstore.query;
  *
  */
 
+import org.intermine.util.Util;
+
 /**
  * An element that can appear in the SELECT clause of a query, representing extra data to be
  * collected for the Results - namely a part of the SELECT list of a QueryObjectPathExpression in
@@ -56,5 +58,23 @@ public class PathExpressionField implements QueryPathExpression
      */
     public Class getType() {
         return qope.getSelect().get(fieldNumber).getType();
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public boolean equals(Object o) {
+        if (o instanceof PathExpressionField) {
+            PathExpressionField pef = (PathExpressionField) o;
+            return Util.equals(qope, pef.qope) && (fieldNumber == pef.fieldNumber);
+        }
+        return false;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public int hashCode() {
+        return qope.hashCode() + 3 * fieldNumber;
     }
 }
