@@ -59,7 +59,7 @@ public class TSVFileReaderTaskTest extends TestCase
 
         TSVFileReaderTask tsvTask = new TSVFileReaderTask();
         tsvTask.setIgnoreDuplicates(true);
-        tsvTask.setIntegrationWriterAlias("integration.unittestsingle");
+        tsvTask.setIntegrationWriterAlias("integration.unittestmulti");
         tsvTask.setSourceName("testsource");
 
         cleanObjects(tsvTask.getDirectDataLoader().getIntegrationWriter());

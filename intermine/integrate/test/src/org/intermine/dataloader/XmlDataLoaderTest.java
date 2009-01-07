@@ -49,7 +49,7 @@ public class XmlDataLoaderTest extends TestCase
 
     public void setUp() throws Exception {
         writer = ObjectStoreWriterFactory.getObjectStoreWriter("osw.unittest");
-        iw = IntegrationWriterFactory.getIntegrationWriter("integration.unittestsingle");
+        iw = IntegrationWriterFactory.getIntegrationWriter("integration.unittestmulti");
         loader = new XmlDataLoader(iw);
         binding = new XmlBinding(writer.getModel());
         toDelete = new ArrayList();
