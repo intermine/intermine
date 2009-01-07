@@ -45,7 +45,6 @@ public class Integrate extends Task
 
     private String [] possibleActionsArray = {
         "retrieve",
-        "translate",
         "load",
         "clean"
     };
@@ -66,7 +65,7 @@ public class Integrate extends Task
     }
 
     /**
-     * Set the action (retrieve, translate or load) for this task.  null means run all actions.
+     * Set the action (retrieve or load) for this task.  null means run all actions.
      * @param action the action
      */
     public void setAction(String action) {
@@ -154,7 +153,6 @@ public class Integrate extends Task
 
     private void performAction(String sourceName, String sourceType) {
         performAction("retrieve", sourceName, sourceType);
-        performAction("translate", sourceName, sourceType);
         performAction("load", sourceName, sourceType);
     }
 

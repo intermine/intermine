@@ -1,5 +1,5 @@
 <project name="update-publications" default="default" basedir=".">
-  <description>update-publications retrieve, translate and load tasks</description>
+  <description>update-publications retrieve and load tasks</description>
   <import file="../../../imbuild/source.xml"/> 
 
   <!-- special case to create a ${src.data.file} (in InterMine XML format) by

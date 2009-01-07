@@ -8,9 +8,8 @@
   
   <import file="../../../imbuild/source.xml"/>
   
-  <!-- no retrieve or translate -->
+  <!-- no retrieve -->
   <target name="retrieve"/>
-  <target name="translate"/>
   
   <target name="-init-suffix" unless="fasta.idSuffix">
     <!-- set the default -->

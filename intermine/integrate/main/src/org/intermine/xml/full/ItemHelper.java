@@ -118,25 +118,6 @@ public class ItemHelper
         return newAtt;
     }
 
-    /**
-     * Convert a list of XML items to a list of data model items.
-     * @param items of XML item
-     * @return an equivalent list data model items
-     */
-    public static List<org.intermine.model.fulldata.Item> convertToFullDataItems(List<Item> items) {
-        List<org.intermine.model.fulldata.Item> results;
-        if (items instanceof RandomAccess) {
-            results = new LinkedList<org.intermine.model.fulldata.Item>();
-        } else {
-            results = new ArrayList<org.intermine.model.fulldata.Item>();
-        }
-        Iterator<Item> iter = items.iterator();
-        while (iter.hasNext()) {
-            Item item = iter.next();
-            results.add(convert(item));
-        }
-        return results;
-    }
 
     /**
      * Convert a data model item to an XML one
@@ -178,26 +159,6 @@ public class ItemHelper
         return newItem;
     }
 
-    /**
-     * Convert a list of full data items to a list of XML items.
-     * @param items in data model format
-     * @return an equivalent list of XML items
-     */
-    public static List<Item> convertFromFullDataItems(List items) {
-        List<Item> results;
-        if (items instanceof RandomAccess) {
-            results = new LinkedList<Item>();
-        } else {
-            results = new ArrayList<Item>();
-        }
-        Iterator iter = items.iterator();
-        while (iter.hasNext()) {
-            org.intermine.model.fulldata.Item item
-                = (org.intermine.model.fulldata.Item) iter.next();
-            results.add(convert(item));
-        }
-        return results;
-    }
 
     /**
      * org.intermine.model.fulldata.Item is auto-generated code and does not have a sensible

@@ -1,15 +1,7 @@
 
 <project name="intermine-integrate" default="default" basedir=".">
   <description>build, test, package intermine-integrate</description>
-  <property name="generating.code" value="true"/>
   <import file="../../../imbuild/library.xml"/>
-  
-  <target name="do-generate">
-    <mkdir dir="${gen.src.dir}/org/intermine/dataconversion"/>
-    <antlr target="${src.dir}/org/intermine/dataconversion/itempath.g"
-           outputdirectory="${gen.src.dir}/org/intermine/dataconversion">
-      <classpath refid="project.compile.path"/>
-    </antlr>
-  </target>
+
 </project>
 

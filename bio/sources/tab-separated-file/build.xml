@@ -2,9 +2,8 @@
   <description>build tab-separated-file</description>
   <import file="../../../imbuild/source.xml"/>
 
-  <!-- no retrieve or translate -->
+  <!-- no retrieve -->
   <target name="retrieve"/>
-  <target name="translate"/>
   
   <target name="load" depends="init, -init-deps">
     <taskdef name="read-tab-separated-file"
