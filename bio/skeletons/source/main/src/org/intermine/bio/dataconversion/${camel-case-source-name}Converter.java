@@ -35,10 +35,9 @@ public class ${camel-case-source-name}Converter extends BioFileConverter
      * @param model the Model
      * @throws ObjectStoreException if an error occurs in storing
      */
-    public ${camel-case-source-name}Converter(ItemWriter writer, Model model)
+    public ${camel-case-source-name}Converter(ItemWriter writer, Model model) {
 
     }
-
 
     /**
      * 
