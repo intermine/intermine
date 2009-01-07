@@ -49,11 +49,40 @@ Model
 The class implements factory objects for create XML in InterMine Items XML
 format for use as input for sources.
 
-=head1 SEE ALSO
+=head1 AUTHOR
+
+FlyMine C<< <support@flymine.org> >>
+
+=head1 BUGS
+
+Please report any bugs or feature requests to C<support@flymine.org>.
+
+=head1 SUPPORT
+
+You can find documentation for this module with the perldoc command.
+
+    perldoc InterMine::ItemFactory
+
+You can also look for information at:
+
+=over 4
+
+=item * FlyMine
+
+L<http://www.flymine.org>
+
+=item * Documentation
 
 L<http://www.intermine.org/wiki/ItemsAPIPerl>
 
-=cut
+=back
+
+=head1 COPYRIGHT & LICENSE
+
+Copyright 2006,2007,2008 FlyMine, all rights reserved.
+
+This program is free software; you can redistribute it and/or modify it
+under the same terms as Perl itself.
 
 =head1 FUNCTIONS
 

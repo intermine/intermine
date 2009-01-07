@@ -18,12 +18,14 @@ our @EXPORT_OK = qw(get_property_value get_latest_properties_version $INTERMINE_
 our $INTERMINE_CONF_DIR = "$ENV{HOME}/.intermine";
 
 =head2 get_property_value
+
  Title   : get_property_value
  Usage   : $property_value = 
               InterMine::Util::get_property_value('db.production.datasource.serverName',
                                                   '/home/user/.intermine/flymine.properties');
  Function: gets a value from a properties file
  Args    : $property_name, $property_file_name
+
 =cut
 
 sub get_property_value
@@ -50,6 +52,7 @@ sub get_property_value
 }
 
 =head2 get_latest_properties_version
+
  Title   : get_latest_properties_version
  Usage   : $version = 
               get_latest_properties_version('flymine.properties.r');
@@ -58,6 +61,7 @@ sub get_property_value
            'flymine.properties.r1', 'flymine.properties.r2',
            'flymine.properties.r3' then return "3" as an integer
  Args    : $property_file_name_prefix
+
 =cut
 sub get_latest_properties_version
 {
@@ -92,11 +96,14 @@ MESSAGE
 }
 
 =head2 get_java_type_name
+
  Title   : get_java_type_name
  Usage   : $java_name = get_java_type_name('five_prime_UTR')
  Function: Return a java class name for the given sequence ontology
            name, eg. "five_prime_UTR" -> "FivePrimeUTR"
+
 =cut
+
 sub get_java_type_name
 {
   if (@_ != 1) {
