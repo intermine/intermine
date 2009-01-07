@@ -51,6 +51,7 @@ import org.intermine.util.DynamicUtil;
 import org.intermine.util.TypeUtil;
 import org.intermine.util.StringUtil;
 import org.intermine.util.TypeUtil.FieldInfo;
+import org.intermine.xml.full.ItemHelper;
 
 import org.apache.log4j.Logger;
 
@@ -287,8 +288,8 @@ public class ItemToObjectTranslator extends Translator
         Object obj;
         try {
             obj = DynamicUtil.instantiateObject(
-                    OntologyUtil.generateClassNames(item.getClassName(), model),
-                    OntologyUtil.generateClassNames(item.getImplementations(), model));
+                    ItemHelper.generateClassNames(item.getClassName(), model),
+                    ItemHelper.generateClassNames(item.getImplementations(), model));
         } catch (ClassNotFoundException e) {
             throw new RuntimeException("class \"" + item.getClassName() + "\" not found in model",
                                        e);

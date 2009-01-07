@@ -16,7 +16,9 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.RandomAccess;
 
+import org.intermine.metadata.Model;
 import org.intermine.util.StringUtil;
+import org.intermine.util.XmlUtil;
 
 /**
 * Class providing Item utility methods
@@ -224,5 +226,25 @@ public class ItemHelper
         col.setName(name);
         col.setRefIds(refids);
         return col;
+    }
+
+    /**
+     * Generate a package qualified class name within the specified model from a space separated
+     * list of namespace qualified names
+     *
+     * @param classNames the list of namepace qualified names
+     * @param model the relevant model
+     * @return the package qualified names
+     */
+    public static String generateClassNames(String classNames, Model model) {
+        if (classNames == null) {
+            return null;
+        }
+        StringBuffer sb = new StringBuffer();
+        for (Iterator i = StringUtil.tokenize(classNames).iterator(); i.hasNext();) {
+            sb.append(model.getPackageName() + "."
+                      + XmlUtil.getFragmentFromURI((String) i.next()) + " ");
+        }
+        return sb.toString().trim();
     }
 }

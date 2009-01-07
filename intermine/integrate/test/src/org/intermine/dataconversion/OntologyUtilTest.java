@@ -13,27 +13,28 @@ package org.intermine.dataconversion;
 import junit.framework.TestCase;
 
 import org.intermine.metadata.Model;
+import org.intermine.xml.full.ItemHelper;
 
 public class OntologyUtilTest extends TestCase
 {
     public void testGenerateClassNamesNull() throws Exception {
-        assertNull(OntologyUtil.generateClassNames(null, null));
+        assertNull(ItemHelper.generateClassNames(null, null));
     }
 
     public void testGenerateClassNamesEmpty() throws Exception {
         Model model = Model.getInstanceByName("testmodel");
-        assertEquals("", OntologyUtil.generateClassNames("", model));
+        assertEquals("", ItemHelper.generateClassNames("", model));
     }
 
     public void testGenerateClassNamesSingle() throws Exception {
         Model model = Model.getInstanceByName("testmodel");
-        assertEquals("org.intermine.model.testmodel.Company", OntologyUtil.generateClassNames(model.getNameSpace() + "Company", model));
+        assertEquals("org.intermine.model.testmodel.Company", ItemHelper.generateClassNames(model.getNameSpace() + "Company", model));
     }
 
     public void testGenerateClassNamesMultiple() throws Exception {
         Model model = Model.getInstanceByName("testmodel");
         String classNames = " " + model.getNameSpace() + "Company " + model.getNameSpace() + "Department ";
         String expected = "org.intermine.model.testmodel.Company org.intermine.model.testmodel.Department";
-        assertEquals(expected, OntologyUtil.generateClassNames(classNames, model));
+        assertEquals(expected, ItemHelper.generateClassNames(classNames, model));
     }
 }

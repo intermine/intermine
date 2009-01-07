@@ -17,7 +17,6 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.intermine.dataconversion.OntologyUtil;
 import org.intermine.metadata.Model;
 import org.intermine.model.InterMineObject;
 import org.intermine.util.DynamicUtil;
@@ -95,8 +94,8 @@ public class FullParser
             if (item.getIdentifier() != null) {
                 try {
                     objMap.put(item.getIdentifier(), DynamicUtil.instantiateObject(
-                            OntologyUtil.generateClassNames(item.getClassName(), model),
-                            OntologyUtil.generateClassNames(item.getImplementations(), model)));
+                            ItemHelper.generateClassNames(item.getClassName(), model),
+                            ItemHelper.generateClassNames(item.getImplementations(), model)));
                 } catch (ClassNotFoundException e) {
                     if (abortOnError) {
                         throw e;
@@ -115,8 +114,8 @@ public class FullParser
             if (item.getIdentifier() == null) {
                 try {
                     instance = DynamicUtil.instantiateObject(
-                            OntologyUtil.generateClassNames(item.getClassName(), model),
-                            OntologyUtil.generateClassNames(item.getImplementations(), model));
+                            ItemHelper.generateClassNames(item.getClassName(), model),
+                            ItemHelper.generateClassNames(item.getImplementations(), model));
                 } catch (ClassNotFoundException e) {
                     if (abortOnError) {
                         throw e;
