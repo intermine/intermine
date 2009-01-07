@@ -49,6 +49,7 @@ import org.intermine.objectstore.query.ClassConstraint;
 import org.intermine.objectstore.query.ConstraintOp;
 import org.intermine.objectstore.query.ConstraintSet;
 import org.intermine.objectstore.query.ContainsConstraint;
+import org.intermine.objectstore.query.FromElement;
 import org.intermine.objectstore.query.OrderDescending;
 import org.intermine.objectstore.query.PathExpressionField;
 import org.intermine.objectstore.query.Query;
@@ -1388,11 +1389,12 @@ public class MainHelper
                 throw new NullPointerException("Error - path " + summaryPath + " is not in map "
                         + origPathToQueryNode);
             } else if (qs instanceof QueryObjectPathExpression) {
-                if (!oldSelect.contains(qs)) {
+                QueryObjectPathExpression qope = (QueryObjectPathExpression) qs;
+                if ((!oldSelect.contains(qs))
+                        && (!oldSelect.contains(new PathExpressionField(qope, 0)))) {
                     throw new IllegalArgumentException("QueryObjectPathExpression is too deeply"
                            + " nested");
                 }
-                QueryObjectPathExpression qope = (QueryObjectPathExpression) qs;
                 // We need to add QueryClasses to the query for this outer join. This will make it
                 // an inner join, so the "no object" results will disappear.
                 QueryClass lastQc = qope.getDefaultClass();
@@ -1408,15 +1410,32 @@ public class MainHelper
                 }
             } else if (qs instanceof QueryCollectionPathExpression) {
                 QueryCollectionPathExpression qcpe = (QueryCollectionPathExpression) qs;
-                if (qcpe.getSelect().isEmpty() && qcpe.getFrom().isEmpty()
-                        && oldSelect.contains(qcpe)) {
+                //if (qcpe.getSelect().isEmpty() && qcpe.getFrom().isEmpty()
+                //        && oldSelect.contains(qcpe)) {
+                if (oldSelect.contains(qcpe)) {
                     QueryClass firstQc = qcpe.getDefaultClass();
                     qf = new QueryField(firstQc, fieldName);
                     subQ.addFrom(firstQc);
+                    subQ.addToSelect(firstQc);
                     QueryClass rootQc = qcpe.getQueryClass();
-                    QueryHelper.addAndConstraint(subQ, new ContainsConstraint(
-                                new QueryCollectionReference(rootQc, qcpe.getFieldName()),
-                                ConstraintOp.CONTAINS, firstQc));
+                    try {
+                        QueryHelper.addAndConstraint(subQ, new ContainsConstraint(
+                                    new QueryCollectionReference(rootQc, qcpe.getFieldName()),
+                                    ConstraintOp.CONTAINS, firstQc));
+                    } catch (IllegalArgumentException e) {
+                        QueryHelper.addAndConstraint(subQ, new ContainsConstraint(
+                                    new QueryObjectReference(rootQc, qcpe.getFieldName()),
+                                    ConstraintOp.CONTAINS, firstQc));
+                    }
+                    for (FromElement extraQc : qcpe.getFrom()) {
+                        if (extraQc instanceof QueryClass) {
+                            subQ.addFrom(extraQc);
+                            subQ.addToSelect((QueryClass) extraQc);
+                        } else {
+                            throw new IllegalArgumentException("FromElement is not a QueryClass: "
+                                    + extraQc);
+                        }
+                    }
                     if (qcpe.getConstraint() != null) {
                         QueryHelper.addAndConstraint(subQ, qcpe.getConstraint());
                     }
