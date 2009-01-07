@@ -623,7 +623,14 @@ public class MainHelperTest extends TestCase {
                 "SELECT DISTINCT a1_.a4_ AS a2_, COUNT(*) AS a3_ FROM (SELECT DISTINCT a1_, a2_, a3_, a3_.name AS a4_ FROM org.intermine.model.testmodel.Department AS a1_, org.intermine.model.testmodel.Company AS a2_, org.intermine.model.testmodel.Department AS a3_ WHERE (a1_.company CONTAINS a2_ AND a2_.departments CONTAINS a3_)) AS a1_ GROUP BY a1_.a4_ ORDER BY COUNT(*) DESC");
     }
 
-    
+    public void test26() throws Exception {
+        doQuery("<query name=\"test\" model=\"testmodel\" view=\"Company.name Company:departments.name Company:departments:company.name\"/>",
+                "SELECT DISTINCT a1_, a1_.departments(SELECT default, default.company) AS a2_ FROM org.intermine.model.testmodel.Company AS a1_ ORDER BY a1_.name",
+                "SELECT DISTINCT a1_.a2_ AS a2_, COUNT(*) AS a3_ FROM (SELECT DISTINCT a1_, a1_.name AS a2_ FROM org.intermine.model.testmodel.Company AS a1_) AS a1_ GROUP BY a1_.a2_ ORDER BY COUNT(*) DESC",
+                "SELECT DISTINCT a1_.a3_ AS a2_, COUNT(*) AS a3_ FROM (SELECT DISTINCT a1_, a2_, a2_.name AS a3_ FROM org.intermine.model.testmodel.Company AS a1_, org.intermine.model.testmodel.Department AS a2_ WHERE a1_.departments CONTAINS a2_) AS a1_ GROUP BY a1_.a3_ ORDER BY COUNT(*) DESC",
+                "SELECT DISTINCT a1_.a6_ AS a2_, COUNT(*) AS a3_ FROM (SELECT DISTINCT a1_, a4_, a5_, a5_.name AS a6_ FROM org.intermine.model.testmodel.Company AS a1_, org.intermine.model.testmodel.Department AS a4_, org.intermine.model.testmodel.Company AS a5_ WHERE (a1_.departments CONTAINS a4_ AND a4_.company CONTAINS a5_)) AS a1_ GROUP BY a1_.a6_ ORDER BY COUNT(*) DESC");
+    }
+
 
     
     public void doQuery(String web, String iql, String ... summaries) throws Exception {
