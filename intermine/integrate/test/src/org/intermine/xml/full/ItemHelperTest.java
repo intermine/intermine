@@ -12,6 +12,7 @@ package org.intermine.xml.full;
 
 import java.util.Arrays;
 
+import org.intermine.metadata.Model;
 import org.intermine.model.testmodel.Department;
 import org.intermine.objectstore.ObjectStore;
 import org.intermine.objectstore.ObjectStoreFactory;
@@ -103,5 +104,26 @@ public class ItemHelperTest extends TestCase
         org.intermine.model.fulldata.ReferenceList resRefList = ItemHelper.convert(referenceList);
         resRefList.setId(2002);
         assertEquals(dbReferenceList, resRefList);
+    }
+    
+    public void testGenerateClassNamesNull() throws Exception {
+        assertNull(ItemHelper.generateClassNames(null, null));
+    }
+
+    public void testGenerateClassNamesEmpty() throws Exception {
+        Model model = Model.getInstanceByName("testmodel");
+        assertEquals("", ItemHelper.generateClassNames("", model));
+    }
+
+    public void testGenerateClassNamesSingle() throws Exception {
+        Model model = Model.getInstanceByName("testmodel");
+        assertEquals("org.intermine.model.testmodel.Company", ItemHelper.generateClassNames(model.getNameSpace() + "Company", model));
+    }
+
+    public void testGenerateClassNamesMultiple() throws Exception {
+        Model model = Model.getInstanceByName("testmodel");
+        String classNames = " " + model.getNameSpace() + "Company " + model.getNameSpace() + "Department ";
+        String expected = "org.intermine.model.testmodel.Company org.intermine.model.testmodel.Department";
+        assertEquals(expected, ItemHelper.generateClassNames(classNames, model));
     }
 }
