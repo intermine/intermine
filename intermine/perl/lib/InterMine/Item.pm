@@ -13,10 +13,6 @@ InterMine::Item - Representation of InterMine items
 
 (See InterMine::ItemFactory for a longer Synopsis)
 
-=head1 EXPORT
-
-Nothing exported
-
 =head1 AUTHOR
 
 FlyMine C<< <support@flymine.org> >>
@@ -43,6 +39,8 @@ L<http://www.flymine.org>
 
 L<http://www.intermine.org/wiki/ItemsAPIPerl>
 
+=back
+
 =head1 COPYRIGHT & LICENSE
 
 Copyright 2006,2007,2008 FlyMine, all rights reserved.
@@ -63,10 +61,10 @@ my $ID_PREFIX = '0_';
 =head2 new
 
  Title   : new
- Usage   : $item = $factory->make_item("Gene");
+ Usage   : $item = $factory->make_item("Gene");   # calls Item->new() implicitly
  Function: create a new Item
  Args    : model - the InterMine::Model object to use to check field validity
- Note    : call this method using an ItemFactory
+ Note    : use this method indirectly using an ItemFactory
 =cut
 
 sub new {
@@ -129,7 +127,7 @@ sub new {
   return $self;
 }
 
-sub get_object_field_by_name
+sub _get_object_field_by_name
 {
   my $self = shift;
   my $name = shift;
@@ -144,6 +142,18 @@ sub get_object_field_by_name
   return undef;
 }
 
+=head2 set
+
+ Title   : set
+ Usage   : $gene_item->set("name", "wtf7");
+       or: $gene_item->set("organism", $organism_item);
+ Function: set a field in the Item, checking that this object can have a field
+           with that name
+ Args    : $name - the name of the field to set
+           $value - the new value (must not be undefined)
+
+=cut
+
 sub set
 {
   my $self = shift;
@@ -154,7 +164,7 @@ sub set
     die "value undefined while setting $name\n";
   }
 
-  my $field = $self->get_object_field_by_name($name);
+  my $field = $self->_get_object_field_by_name($name);
 
   if (!defined $field) {
     my @class_descs = $self->all_class_descriptors();
@@ -224,11 +234,22 @@ sub set
   }
 }
 
+=head2 get
+
+ Title   : get
+ Usage   : $gene_name = $gene_item->get("name");
+       or: $organism_item = $gene_item->get("organism");
+ Function: get the value of a field from an Item
+ Args    : $name - the name of the field to get
+ Return  : the value
+
+=cut
+
 sub get
 {
   my $self = shift;
   my $fieldname = shift;
-  my $field = $self->get_object_field_by_name($fieldname);
+  my $field = $self->_get_object_field_by_name($fieldname);
 
   if (!defined $field) {
     die qq(object ") . $self->to_string() . qq(" doesn't have a field named: $fieldname\n);
@@ -258,7 +279,7 @@ sub _add_to_collection
   my $name = shift;
   my $value = shift;
 
-  my $field = $self->get_object_field_by_name($name);
+  my $field = $self->_get_object_field_by_name($name);
 
   if (ref $field ne 'InterMine::Model::Collection') {
     die "can't add $value to a field ($name in " . $self->to_string() .
@@ -286,11 +307,28 @@ sub _add_to_collection
   push @{$self->{$name}}, $value;
 }
 
+=head2 model
+
+ Title   : model
+ Usage   : $model = $item->model();
+ Function: return the model that this Item obeys
+
+=cut
+
 sub model
 {
   my $self = shift;
   return $self->{':model'};
 }
+
+=head2 classname
+
+ Title   : classname
+ Usage   : $classname = $item->classname();
+ Function: return the class name of this Item - ie the class name that will be
+           used when creating the object in InterMine
+
+=cut
 
 sub classname
 {
@@ -298,29 +336,54 @@ sub classname
   return $self->{':classname'};
 }
 
+=head2 classdescriptor
+
+ Title   : classdescriptor
+ Usage   : $cd = $item->classdescriptor();
+ Function: return the ClassDescriptor object from the model for this Item
+
+=cut
+
 sub classdescriptor
 {
   my $self = shift;
   return $self->{':classdesc'};
 }
 
-sub implements_classdescriptors
+sub _implements_classdescriptors
 {
   my $self = shift;
   return @{$self->{':implements_classdescs'}};
 }
 
+=head2 all_class_descriptors
+
+ Title   : all_class_descriptors
+ Usage   : @cds = $item->all_class_descriptors();
+ Function: return a list of ClassDescriptor objects from the model for this
+           Item, including the classdescriptors of all parent objects
+
+=cut
+
 sub all_class_descriptors
 {
   my $self = shift;
 
-  my @class_descs = $self->implements_classdescriptors();
+  my @class_descs = $self->_implements_classdescriptors();
   if (defined $self->classdescriptor()) {
     push @class_descs, $self->classdescriptor();
   }
   return @class_descs;
 }
 
+=head2 valid_field
+
+ Title   : valid_field
+ Usage   : if ($item->valid_field('someFieldName')) { ... };
+ Function: return true if and only if the given field name is valid for this
+           object according to the model
+
+=cut
 
 sub valid_field
 {
@@ -338,6 +401,17 @@ sub valid_field
   return 0;
 }
 
+=head2 instance_of
+
+ Title   : instance_of
+ Usage   : my $gene_cd = $model->get_classdescriptor_by_name("Gene");
+           if ($some_item->instance_of($gene_cd)) { ... }
+ Function: Return true if and only if this Item represents an object that has
+           the given class, or is a sub-class.
+
+=cut
+
+
 sub instance_of
 {
   my $self = shift;
@@ -351,6 +425,14 @@ sub instance_of
   return 0;
 }
 
+=head2 to_string
+
+ Title   : to_string
+ Usage   : warn('item: ', $item->to_string());
+ Function: return a text representation of this Item
+
+=cut
+
 sub to_string
 {
   my $self = shift;
@@ -363,6 +445,14 @@ sub to_string
   }
 }
 
+=head2 as_xml
+
+ Title   : as_xml
+ Usage   : $xml = $item->as_xml();
+ Function: return an XML representation of this Item
+
+=cut
+
 sub as_xml
 {
   my $self = shift;
@@ -371,9 +461,9 @@ sub as_xml
   my $classname = $self->{':classname'} || "";
   my $implements = $self->{':implements'} || "";
 
-  $classname = package_name_to_namespace($classname);
+  $classname = _package_name_to_namespace($classname);
   my @implements_list = split ' ', $implements;
-  $implements = join ' ', map { package_name_to_namespace($_) } @implements_list;
+  $implements = join ' ', map { _package_name_to_namespace($_) } @implements_list;
 
   $writer->startTag("item", id => $ID_PREFIX . $id,
                     class => $classname, implements => $implements);
@@ -405,7 +495,7 @@ sub as_xml
   $writer->endTag();
 }
 
-sub package_name_to_namespace
+sub _package_name_to_namespace
 {
   my $package_name = shift;
 
