@@ -14,10 +14,10 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
-import org.intermine.objectstore.flatouterjoins.MultiRow;
-import org.intermine.objectstore.flatouterjoins.MultiRowValue;
 import org.intermine.objectstore.query.ResultsRow;
 import org.intermine.web.logic.Constants;
+import org.intermine.web.logic.results.flatouterjoins.MultiRow;
+import org.intermine.web.logic.results.flatouterjoins.MultiRowValue;
 
 import java.io.Serializable;
 

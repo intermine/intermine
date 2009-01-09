@@ -16,11 +16,11 @@ import java.util.Map;
 import org.intermine.objectstore.query.ResultsInfo;
 
 import org.intermine.objectstore.ObjectStoreException;
-import org.intermine.objectstore.flatouterjoins.MultiRow;
-import org.intermine.objectstore.flatouterjoins.MultiRowValue;
 import org.intermine.objectstore.query.ResultsRow;
 import org.intermine.pathquery.PathQuery;
 import org.intermine.web.logic.bag.BagQueryResult;
+import org.intermine.web.logic.results.flatouterjoins.MultiRow;
+import org.intermine.web.logic.results.flatouterjoins.MultiRowValue;
 
 /**
  * A List that can understand ResultElement objects.

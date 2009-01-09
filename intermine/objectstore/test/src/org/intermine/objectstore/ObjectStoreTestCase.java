@@ -32,8 +32,6 @@ import org.intermine.model.testmodel.Manager;
 import org.intermine.model.testmodel.Secretary;
 import org.intermine.model.testmodel.SimpleObject;
 import org.intermine.model.testmodel.Types;
-import org.intermine.objectstore.flatouterjoins.MultiRowFirstValue;
-import org.intermine.objectstore.flatouterjoins.MultiRowLaterValue;
 import org.intermine.objectstore.proxy.Lazy;
 import org.intermine.objectstore.query.Constraint;
 import org.intermine.objectstore.query.ConstraintOp;
@@ -651,7 +649,7 @@ public abstract class ObjectStoreTestCase extends StoreDataTestCase
         }
     }
 
-    public static List resToNames(List res) throws Exception {
+    public List resToNames(List res) throws Exception {
         List aNames = new ArrayList();
         Iterator resIter = res.iterator();
         while (resIter.hasNext()) {
@@ -663,14 +661,7 @@ public abstract class ObjectStoreTestCase extends StoreDataTestCase
                 if (o instanceof List) {
                     List newO = new ArrayList();
                     for (Object p : ((List) o)) {
-                        if (p instanceof MultiRowFirstValue) {
-                            MultiRowFirstValue mrfv = (MultiRowFirstValue) p;
-                            newO.add("MRFV(" + objectToName(mrfv.getValue()) + ", " + mrfv.getRowspan() + ")");
-                        } else if (p instanceof MultiRowLaterValue) {
-                            newO.add("MRLV(" + objectToName(((MultiRowLaterValue) p).getValue()));
-                        } else {
-                            newO.add(objectToName(p));
-                        }
+                        newO.add(objectToName(p));
                     }
                     toRow.add(newO);
                 } else {

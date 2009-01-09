@@ -338,12 +338,31 @@ public abstract class SetupDataTestCase extends ObjectStoreQueriesTestCase
         Iterator iter = c.iterator();
         while(iter.hasNext()) {
             Object o = iter.next();
-            returnData.put(objectToName(o), o);
+            returnData.put(simpleObjectToName(o), o);
         }
         return returnData;
     }
 
-    public static Object objectToName(Object o) throws Exception {
+    public static Object simpleObjectToName(Object o) throws Exception {
+        Method name = null;
+        try {
+            name = o.getClass().getMethod("getName", new Class[] {});
+        } catch (Exception e) {
+            try {
+                name = o.getClass().getMethod("getAddress", new Class[] {});
+            } catch (Exception e2) {
+            }
+        }
+        if (name != null) {
+            return name.invoke(o, new Object[] {});
+        } else if (o instanceof InterMineObject) {
+            return new Integer(o.hashCode());
+        } else {
+            return o;
+        }
+    }
+
+    public Object objectToName(Object o) throws Exception {
         if (o instanceof Collection) {
             StringBuffer sb = new StringBuffer();
             boolean needComma = false;
