@@ -18,9 +18,6 @@
         name="retrieve-metadata"
         classname="org.intermine.task.RetrieveMetadataTask"/>
     <typedef
-        name="model-generation"
-        classname="org.intermine.modelproduction.ModelGenerationTask"/>
-    <typedef
         name="model-output"
         classname="org.intermine.task.ModelOutputTask"/>
     <typedef

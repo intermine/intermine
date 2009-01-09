@@ -27,9 +27,6 @@
         name="db-retriever"
         classname="org.intermine.dataconversion.DBRetrieverTask"/>
     <typedef
-        name="convert-xml-file"
-        classname="org.intermine.task.XmlConverterTask"/>
-    <typedef
         name="convert-fullxml-file"
         classname="org.intermine.task.FullXmlConverterTask"/>
     <typedef

@@ -1,0 +1,26 @@
+<?xml version="1.0"?>
+<model name="fulldata" namespace="http://www.intermine.org/model/fulldata#">
+  <class name="org.intermine.model.fulldata.Item" is-interface="false">
+    <attribute name="className" type="java.lang.String"/>
+    <attribute name="implementations" type="java.lang.String"/>
+    <attribute name="identifier" type="java.lang.String"/>
+    <collection name="attributes" referenced-type="org.intermine.model.fulldata.Attribute" reverse-reference="item"/>
+    <collection name="collections" referenced-type="org.intermine.model.fulldata.ReferenceList" reverse-reference="item"/>
+    <collection name="references" referenced-type="org.intermine.model.fulldata.Reference" reverse-reference="item"/>
+  </class>
+  <class name="org.intermine.model.fulldata.Attribute" is-interface="false">
+    <attribute name="name" type="java.lang.String"/>
+    <attribute name="value" type="java.lang.String"/>
+    <reference name="item" referenced-type="org.intermine.model.fulldata.Item" reverse-reference="attributes"/>
+  </class>
+  <class name="org.intermine.model.fulldata.ReferenceList" is-interface="false">
+    <attribute name="name" type="java.lang.String"/>
+    <attribute name="refIds" type="java.lang.String"/>
+    <reference name="item" referenced-type="org.intermine.model.fulldata.Item" reverse-reference="collections"/>
+  </class>
+  <class name="org.intermine.model.fulldata.Reference" is-interface="false">
+    <attribute name="name" type="java.lang.String"/>
+    <attribute name="refId" type="java.lang.String"/>
+    <reference name="item" referenced-type="org.intermine.model.fulldata.Item" reverse-reference="references"/>
+  </class>
+</model>
