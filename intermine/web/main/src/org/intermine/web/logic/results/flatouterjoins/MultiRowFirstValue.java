@@ -1,4 +1,4 @@
-package org.intermine.objectstore.flatouterjoins;
+package org.intermine.web.logic.results.flatouterjoins;
 
 /*
  * Copyright (C) 2002-2009 FlyMine

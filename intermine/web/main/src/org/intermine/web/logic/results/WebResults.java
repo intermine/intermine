@@ -23,10 +23,6 @@ import org.intermine.metadata.FieldDescriptor;
 import org.intermine.metadata.Model;
 import org.intermine.objectstore.ObjectStore;
 import org.intermine.objectstore.ObjectStoreException;
-import org.intermine.objectstore.flatouterjoins.MultiRow;
-import org.intermine.objectstore.flatouterjoins.MultiRowFirstValue;
-import org.intermine.objectstore.flatouterjoins.MultiRowValue;
-import org.intermine.objectstore.flatouterjoins.ResultsFlatOuterJoinsImpl;
 import org.intermine.objectstore.intermine.ObjectStoreInterMineImpl;
 import org.intermine.objectstore.query.PathExpressionField;
 import org.intermine.objectstore.query.QueryClass;
@@ -46,6 +42,10 @@ import org.intermine.web.logic.ClassKeyHelper;
 import org.intermine.web.logic.PathUtil;
 import org.intermine.web.logic.WebUtil;
 import org.intermine.web.logic.bag.BagQueryResult;
+import org.intermine.web.logic.results.flatouterjoins.MultiRow;
+import org.intermine.web.logic.results.flatouterjoins.MultiRowFirstValue;
+import org.intermine.web.logic.results.flatouterjoins.MultiRowValue;
+import org.intermine.web.logic.results.flatouterjoins.ResultsFlatOuterJoinsImpl;
 
 /**
  * The web version of a Results object.  This class handles the mapping between the paths that user

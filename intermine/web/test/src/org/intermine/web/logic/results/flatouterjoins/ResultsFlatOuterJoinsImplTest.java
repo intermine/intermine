@@ -1,4 +1,4 @@
-package org.intermine.objectstore.flatouterjoins;
+package org.intermine.web.logic.results.flatouterjoins;
 
 /*
  * Copyright (C) 2002-2007 FlyMine
@@ -195,6 +195,16 @@ public class ResultsFlatOuterJoinsImplTest extends ObjectStoreAbstractImplTestCa
         }
     }
 
+    public Object objectToName(Object o) throws Exception {
+        if (o instanceof MultiRowFirstValue) {
+            MultiRowFirstValue mrfv = (MultiRowFirstValue) o;
+            return "MRFV(" + objectToName(mrfv.getValue()) + ", " + mrfv.getRowspan() + ")";
+        } else if (o instanceof MultiRowLaterValue) {
+            return "MRLV(" + objectToName(((MultiRowLaterValue) o).getValue());
+        } else {
+            return super.objectToName(o);
+        }
+    }
 
     public void testResults() throws Exception {
         // Don't

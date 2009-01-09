@@ -28,8 +28,6 @@ import org.intermine.model.testmodel.Department;
 import org.intermine.model.testmodel.Employee;
 import org.intermine.model.testmodel.Manager;
 import org.intermine.objectstore.dummy.ObjectStoreDummyImpl;
-import org.intermine.objectstore.flatouterjoins.MultiRow;
-import org.intermine.objectstore.flatouterjoins.MultiRowFirstValue;
 import org.intermine.objectstore.query.Query;
 import org.intermine.objectstore.query.QueryClass;
 import org.intermine.objectstore.query.QueryField;
@@ -41,6 +39,8 @@ import org.intermine.pathquery.Path;
 import org.intermine.pathquery.PathQuery;
 import org.intermine.util.DynamicUtil;
 import org.intermine.web.logic.query.MainHelper;
+import org.intermine.web.logic.results.flatouterjoins.MultiRow;
+import org.intermine.web.logic.results.flatouterjoins.MultiRowFirstValue;
 
 /**
  * Tests for the WebResults class
