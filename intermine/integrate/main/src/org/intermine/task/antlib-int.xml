@@ -24,9 +24,6 @@
         name="model-merger"
         classname="org.intermine.task.ModelMergerTask"/>
     <typedef
-        name="db-retriever"
-        classname="org.intermine.dataconversion.DBRetrieverTask"/>
-    <typedef
         name="convert-fullxml-file"
         classname="org.intermine.task.FullXmlConverterTask"/>
     <typedef
