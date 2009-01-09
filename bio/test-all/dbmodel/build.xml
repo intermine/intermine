@@ -28,8 +28,8 @@
     <merge-additions file="bio/sources/bdgp-clone/bdgp-clone_additions.xml"/>
     <merge-additions file="bio/sources/drosdel-gff/drosdel-gff_additions.xml"/>
     <merge-additions file="bio/sources/redfly/redfly_additions.xml"/>
-    <merge-additions file="bio/sources/diseaseregion/diseaseregion_additions.xml"/>
     <merge-additions file="bio/sources/affy-probes/affy-probes_additions.xml"/>
+    <merge-additions file="bio/sources/arbeitman-items-xml/arbeitman-items-xml_additions.xml"/>
     <merge-additions file="bio/sources/flyatlas/flyatlas_additions.xml"/>
     <merge-additions file="bio/sources/flyrnai-screens/flyrnai-screens_additions.xml"/>
     <merge-additions file="bio/sources/kegg-pathway/kegg-pathway_additions.xml"/>
